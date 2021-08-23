@@ -75,7 +75,7 @@ def asm_script_tag(filename):
     get it from the compat folder instead so it's still cross-browser compliant and minified.
     """
     standalone = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
-        "onlineform_extra.js", "report_toolbar.js" ]
+        "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
     if ROLLUP_JS and filename in standalone and filename.find("/") == -1: filename = "compat/%s" % filename
     return "<script type=\"text/javascript\" src=\"static/js/%s?b=%s\"></script>\n" % (filename, BUILD)
 
@@ -87,9 +87,10 @@ def asm_script_tags(path):
         "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
         "header_additional.js", "header_edit_header.js" ]
     exclude = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
-        "onlineform_extra.js", "report_toolbar.js" ]
+        "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)
+    # or those we should exclude because they are standalone files
     for i in os.listdir(path + "static/js"):
         if i not in jsfiles and i not in exclude and not i.startswith(".") and i.endswith(".js"):
             jsfiles.append(i)
@@ -319,6 +320,28 @@ def tinymce_main(locale, action, recid="", mediaid = "", linktype = "", redirect
             "linktype": linktype, 
             "redirecturl": redirecturl, 
             "content": content }
+
+def js_page(include, title = "", controller = [], execline = ""):
+    """
+    Returns a page that just runs javascript to get the job done
+    include: a list of scripts or link tags (asm_script_tag or asm_css_tag calls)
+    controller: a global object to be output. will be turned into json
+    execline: a single line of javascript to run to start the page if needed
+    """
+    return """<!DOCTYPE html>
+        <html>
+        <head>
+        <title>%s</title>
+        %s
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        </head>
+        <body>
+        <script>
+        controller = %s;
+        %s
+        </script>
+        </body>
+        <html>""" % ( title, "\n".join(include), asm3.utils.json(controller), execline )
 
 def graph_js(l):
     return """

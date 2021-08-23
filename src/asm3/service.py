@@ -204,108 +204,26 @@ def sign_document_page(dbo, mid, email):
         return "<!DOCTYPE html><head><title>%s</title></head>" \
             "<body><p>%s</p></body></html>" % \
             ( _("Already Signed", l), _("Sorry, this document has already been signed", l))
-    h = []
-    h.append("""<!DOCTYPE html>
-    <html>
-    <head>
-    <title>
-    %(title)s
-    </title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    %(css)s
-    %(scripts)s
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $("#signature").signature({ guideline: true });
-            $("#sig-clear").click(function() {
-                $("#signature").signature("clear");
-            });
-            $("#sig-sign").click(function() {
-                var img = $("#signature canvas").get(0).toDataURL("image/png");
-                var formdata = "account=%(account)s&method=sign_document&formid=%(id)s&sig=" + encodeURIComponent(img);
-                formdata += "&signdate=" + encodeURIComponent(moment().format("YYYY-MM-DD HH:mm:ss"));
-                formdata += "&email=" + encodeURIComponent("%(email)s");
-                formdata += "&sendsigned=" + ($("#sendsigned").is(":checked") ? "on" : "");
-                if ($("#signature").signature("isEmpty")) {
-                    alert("Signature is required");
-                    return;
-                }
-                $("button").fadeOut();
-                $("#spinner").fadeIn();
-                $.ajax({
-                    type: "POST",
-                    url: "service",
-                    data: formdata,
-                    dataType: "text",
-                    mimeType: "textPlain",
-                    success: function(response) {
-                        $("body").empty().append("<p>%(thankyou)s</p>");
-                    },
-                    error: function(jqxhr, textstatus, response) {
-                        $("body").append("<p>" + response + "</p>");
-                    }
-                });
-            });
-            $("#reviewlink").click(function() {
-                $("#reviewlink").fadeOut();
-                $("#review").slideDown();
-            });
-        });
-    </script>
-    <style>
-    button {
-        padding: 10px;
-        font-size: 100%%;
-    }
-    #signature {
-        border: 1px solid #aaa;
-        height: 200px;
-        width: 100%%;
-        max-width: 500px;
-    }
-    </style>
-    </head>
-    <body>
-    """ % {
-        "title":    _("Signing Pad", l),
+    scripts = [ 
+        asm3.html.script_tag(JQUERY_JS),
+        asm3.html.script_tag(JQUERY_UI_JS),
+        asm3.html.script_tag(TOUCHPUNCH_JS),
+        asm3.html.script_tag(SIGNATURE_JS),
+        asm3.html.script_tag(MOMENT_JS),
+        asm3.html.asm_css_tag("asm-icon.css"),
+        asm3.html.script_i18n(dbo.locale),
+        asm3.html.asm_script_tag("service_sign_document.js") 
+    ]
+    dummy, dummy, dummy, contents = asm3.media.get_media_file_data(dbo, int(mid))
+    content = asm3.utils.fix_relative_document_uris(dbo, asm3.utils.bytes2str(contents))
+    controller = {
         "id":       mid,
         "account":  dbo.database,
         "email":    email,
-        "css":      asm3.html.asm_css_tag("asm-icon.css"),
-        "thankyou": _("Thank you, the document is now signed.", l),
-        "scripts":  asm3.html.script_tag(JQUERY_JS) + asm3.html.script_tag(JQUERY_UI_JS) +
-                    asm3.html.script_tag(TOUCHPUNCH_JS) + asm3.html.script_tag(SIGNATURE_JS) + asm3.html.script_tag(MOMENT_JS)
-    })
-    d = []
-    docnotes = []
-    docnotes.append(asm3.media.get_notes_for_id(dbo, int(mid)))
-    dummy, dummy, dummy, contents = asm3.media.get_media_file_data(dbo, int(mid))
-    content = asm3.utils.fix_relative_document_uris(dbo, asm3.utils.bytes2str(contents))
-    d.append(content)
-    d.append("<hr />")
-    h.append("<p><b>%s: %s</b></p>" % (_("Signing", l), ", ".join(docnotes)))
-    h.append('<p><a id="reviewlink" href="#">%s</a></p>' % _("View Document", l))
-    h.append('<div id="review" style="display: none">')
-    h.append("\n".join(d))
-    h.append('</div>')
-    h.append('<div id="signature"></div>')
-    h.append('<p>')
-    h.append('<button id="sig-clear" type="button">' + _("Clear", l) + '</button>')
-    h.append('<button id="sig-sign" type="button">' + _("Sign", l) + '</button>')
-    h.append('<img id="spinner" src="static/images/wait/rolling_black.svg" style="border: 0; display: none" />')
-    h.append('</p>')
-    h.append('<p>')
-    h.append(_("Please click the Sign button when you are finished.", l))
-    h.append('</p>')
-    h.append('<p>')
-    h.append('<input type="checkbox" id="sendsigned" checked="checked" /> <label for="sendsigned">')
-    h.append(_("Email me a signed copy of the document at {0}", l).format(email))
-    h.append('</label></p>')
-    h.append('<p>')
-    h.append(_("Once signed, this document cannot be edited or tampered with.", l))
-    h.append('</p>')
-    h.append("</body></html>")
-    return "\n".join(h)
+        "notes":    asm3.media.get_notes_for_id(dbo, int(mid)),
+        "content":  content
+    }
+    return asm3.html.js_page(scripts, _("Signing Pad", l), controller)
 
 def strip_personal_data(rows):
     """ Removes any personal data from animal rows 
