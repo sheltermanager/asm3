@@ -332,6 +332,7 @@ def page_sign(dbo, session, username):
     </script>
     %(scripts)s
     <style>
+    * { font-family: sans-serif }
     button { 
         padding: 10px; 
         font-size: 100%%; 

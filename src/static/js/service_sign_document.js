@@ -25,7 +25,7 @@ $(document).ready(function() {
         '<p>',
         '<input type="checkbox" id="sendsigned" checked="checked" />',
         '<label for="sendsigned">',
-            _("Email me a signed copy of the document at {0}").replace("{0}", email),
+            _("Email me a signed copy of the document at {0}").replace("{0}", controller.email),
         '</label>',
         '</p>',
         '<p>',
@@ -37,6 +37,7 @@ $(document).ready(function() {
 
     $("head").append([
         '<style>',
+            '* { font-family: sans-serif; }',
             'button {',
                 'padding: 10px;',
                 'font-size: 100%;',
