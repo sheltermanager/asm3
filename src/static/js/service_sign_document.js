@@ -69,7 +69,7 @@ $(document).ready(function() {
         };
 
         if ($("#signature").signature("isEmpty")) {
-            alert("Signature is required");
+            alert(_("Signature is required"));
             return;
         }
 

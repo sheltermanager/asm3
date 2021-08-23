@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-08-11 13:34+0000\n"
+"POT-Creation-Date: 2021-08-23 17:06+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -743,6 +743,10 @@ msgstr ""
 msgid "Adoption"
 msgstr ""
 
+#: options.js
+msgid "Adoption Checkout"
+msgstr ""
+
 #: html.py animal_new.js person_links.js reports.js common.js animal_bulk.js
 #: animal.js options.js shelterview.js header_edit_header.js
 msgid "Adoption Coordinator"
@@ -764,8 +768,16 @@ msgstr ""
 msgid "Adoption fee donations"
 msgstr ""
 
+#: options.js
+msgid "Adoption fee payment type"
+msgstr ""
+
 #: movement.py
 msgid "Adoption movements must have a valid adoption date."
+msgstr ""
+
+#: options.js
+msgid "Adoption paperwork template"
 msgstr ""
 
 #: move_adopt.js
@@ -2498,6 +2510,10 @@ msgstr ""
 msgid "Checkered Giant"
 msgstr ""
 
+#: options.js
+msgid "Checkout"
+msgstr ""
+
 #: dbupdate.py
 msgid "Cheque"
 msgstr ""
@@ -2584,8 +2600,9 @@ msgstr ""
 msgid "Class"
 msgstr ""
 
-#: service.py mobile.py onlineform.py common_personchooser.js common.js
-#: common_animalchoosermulti.js common_animalchooser.js media.js
+#: mobile.py onlineform.py common_personchooser.js common.js
+#: common_animalchoosermulti.js service_sign_document.js
+#: common_animalchooser.js media.js
 msgid "Clear"
 msgstr ""
 
@@ -4441,6 +4458,10 @@ msgstr ""
 msgid "Email address"
 msgstr ""
 
+#: onlineforms.js
+msgid "Email adoption coordinator"
+msgstr ""
+
 #: options.js
 msgid "Email diary note creators when a diary note is marked complete"
 msgstr ""
@@ -4459,7 +4480,7 @@ msgid ""
 "addresses"
 msgstr ""
 
-#: service.py
+#: service_sign_document.js
 msgid "Email me a signed copy of the document at {0}"
 msgstr ""
 
@@ -6149,6 +6170,12 @@ msgstr ""
 msgid ""
 "If this form has a populated emailaddress field during submission, send a "
 "confirmation email to it"
+msgstr ""
+
+#: onlineforms.js
+msgid ""
+"If this form has an animalname field, email this submission to the adoption "
+"coordinator for the selected animal"
 msgstr ""
 
 #: person.js
@@ -8460,7 +8487,7 @@ msgstr ""
 msgid "Once linked, a user account cannot access and edit its linked person record."
 msgstr ""
 
-#: service.py mobile.py
+#: mobile.py service_sign_document.js
 msgid "Once signed, this document cannot be edited or tampered with."
 msgstr ""
 
@@ -8540,6 +8567,14 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Opening balances"
+msgstr ""
+
+#: options.js
+msgid "Optional donation payment type"
+msgstr ""
+
+#: options.js
+msgid "Optional donation suggested amount"
 msgstr ""
 
 #: vaccination.js
@@ -9067,7 +9102,7 @@ msgstr ""
 msgid "Pixie-Bob"
 msgstr ""
 
-#: service.py mobile.py
+#: mobile.py service_sign_document.js
 msgid "Please click the Sign button when you are finished."
 msgstr ""
 
@@ -11038,7 +11073,7 @@ msgstr ""
 msgid "Sick/injured animal"
 msgstr ""
 
-#: service.py mobile.py media.js
+#: mobile.py service_sign_document.js media.js
 msgid "Sign"
 msgstr ""
 
@@ -11054,6 +11089,10 @@ msgstr ""
 msgid "Signature"
 msgstr ""
 
+#: service_sign_document.js
+msgid "Signature is required"
+msgstr ""
+
 #: media.js
 msgid "Signed"
 msgstr ""
@@ -11062,7 +11101,7 @@ msgstr ""
 msgid "Signed Document"
 msgstr ""
 
-#: service.py mobile.py
+#: mobile.py service_sign_document.js
 msgid "Signing"
 msgstr ""
 
@@ -11787,7 +11826,7 @@ msgstr ""
 msgid "Thank you for choosing Animal Shelter Manager for your shelter!"
 msgstr ""
 
-#: service.py
+#: service_sign_document.js
 msgid "Thank you, the document is now signed."
 msgstr ""
 
@@ -12372,6 +12411,12 @@ msgstr ""
 
 #: accounts.js
 msgid "This expense account is the source for costs of this type"
+msgstr ""
+
+#: options.js
+msgid ""
+"This feature allows you to email an adopter to have them sign their adoption "
+"paperwork, pay the adoption fee and make an optional donation."
 msgstr ""
 
 #: accounts.js
@@ -13499,7 +13544,7 @@ msgstr ""
 msgid "View Diets"
 msgstr ""
 
-#: service.py mobile.py
+#: mobile.py service_sign_document.js
 msgid "View Document"
 msgstr ""
 
