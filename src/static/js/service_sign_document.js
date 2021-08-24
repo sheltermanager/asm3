@@ -6,32 +6,59 @@ $(document).ready(function() {
 
     "use strict";
 
+    const show_dlg = function(title, body) {
+        $("#errortitle").html(title);
+        $("#errortext").html(body);
+        $("#errordlg").modal("show");
+    };
+
     let h = [
+        '<div class="modal fade" id="errordlg" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="errortitle" aria-hidden="true">',
+            '<div class="modal-dialog">',
+                '<div class="modal-content">',
+                    '<div class="modal-header">',
+                        '<h5 class="modal-title" id="errortitle">Error</h5>',
+                        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>',
+                    '</div>',
+                    '<div id="errortext" class="modal-body">',
+                    '</div>',
+                    '<div class="modal-footer">',
+                        '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' + _("Close") + '</button>',
+                    '</div>',
+                '</div>',
+            '</div>',
+        '</div>',
         '<div class="container">',
         '<h2>' + _("Signing") + ': ' + controller.notes + '</h2>',
-        '<button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#review" aria-expanded="false" aria-controls="review">',
-        _("View Document"),
-        '</button>',
+        '<div id="signature" style="max-width: 500px; width: 100%; height: 200px; border: 1px solid #aaa;"></div>',
+        '<div class="mb-3">',
+            '<small>' + _("Once signed, this document cannot be edited or tampered with.") + '</small>',
+        '</div>',
+        '<div class="form-group">',
+        '<label for="sendsigned" class="form-label">',
+            '<input type="checkbox" id="sendsigned" checked="checked" />',
+            _("Email me a signed copy of the document at {0}").replace("{0}", controller.email),
+        '</label>',
+        '</div>',
+        '<div id="buttons">',
+            '<button id="sig-sign" type="button" class="btn btn-primary">',
+                '<i class="bi-vector-pen"></i>',
+                _("Sign"),
+                '<div id="spinner" class="spinner-border spinner-border-sm" style="display: none"></div>',
+            '</button>',
+            '<button id="sig-clear" type="button" class="btn btn-secondary">',
+                '<i class="bi-x"></i>',
+                _("Clear") + '</button>',
+            '<button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#review" aria-expanded="false" aria-controls="review">',
+                '<i class="bi-file-earmark-arrow-down"></i>',
+                _("View Document"),
+            '</button>',
+        '</div>',
         '<div id="review" class="collapse">',
             '<hr />',
             controller.content,
             '<hr />',
         '</div>',
-        '<div id="signature" style="max-width: 500px; width: 100%; height: 200px; border: 1px solid #aaa;"></div>',
-        '<p>',
-            '<button id="sig-sign" type="button" class="btn btn-primary">' + _("Sign") + '</button>',
-            '<button id="sig-clear" type="button" class="btn btn-secondary">' + _("Clear") + '</button>',
-            '<img id="spinner" src="static/images/wait/rolling_black.svg" style="border: 0; display: none" />',
-        '</p>',
-        '<p>',
-        '<label for="sendsigned">',
-            '<input type="checkbox" id="sendsigned" checked="checked" />',
-            _("Email me a signed copy of the document at {0}").replace("{0}", controller.email),
-        '</label>',
-        '</p>',
-        '<p>',
-            _("Once signed, this document cannot be edited or tampered with."),
-        '</p>',
         '</div>'
     ].join("\n");
 
@@ -55,12 +82,12 @@ $(document).ready(function() {
         };
 
         if ($("#signature").signature("isEmpty")) {
-            alert(_("Signature is required"));
+            show_dlg("Error", _("Signature is required"));
             return;
         }
 
-        $("button").fadeOut();
-        $("#spinner").fadeIn();
+        $("#sig-sign").prop("disabled", true);
+        $("#spinner").show();
 
         $.ajax({
             type: "POST",
@@ -69,10 +96,13 @@ $(document).ready(function() {
             dataType: "text",
             mimeType: "textPlain",
             success: function(response) {
-                $("body").empty().append("<p>" + _("Thank you, the document is now signed.") + "</p>");
+                $("#sig-sign").hide();
+                show_dlg(_("Thank you"), _("Thank you, the document is now signed."));
             },
             error: function(jqxhr, textstatus, response) {
-                $("body").append("<p>" + response + "</p>");
+                $("#spinner").hide();
+                $("#sig-sign").prop("disabled", false);
+                show_dlg("Error", response);
             }
         });
     });
@@ -81,6 +111,11 @@ $(document).ready(function() {
         $("#reviewlink").fadeOut();
         $("#review").slideDown();
     });
+
+    if (controller.signed) {
+        show_dlg(_("Already Signed"), _("Sorry, this document has already been signed"));
+        $("#sig-sign").hide();
+    }
 
 });
 

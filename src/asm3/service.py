@@ -26,7 +26,8 @@ import asm3.reports
 import asm3.users
 import asm3.utils
 from asm3.i18n import _, now, add_seconds, subtract_seconds
-from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS, JQUERY_JS, JQUERY_UI_JS, MOMENT_JS, SIGNATURE_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_ICONS_CSS
+from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, MOMENT_JS, SIGNATURE_JS, TOUCHPUNCH_JS
 from asm3.sitedefs import BASE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
 
 # Service methods that require authentication
@@ -200,10 +201,6 @@ def sign_document_page(dbo, mid, email):
     """ Outputs a page that allows signing of document with media id mid. 
         email is the address to send a copy of the signed document to. """
     l = dbo.locale
-    if asm3.media.has_signature(dbo, mid):
-        return "<!DOCTYPE html><head><title>%s</title></head>" \
-            "<body><p>%s</p></body></html>" % \
-            ( _("Already Signed", l), _("Sorry, this document has already been signed", l))
     scripts = [ 
         asm3.html.script_tag(JQUERY_JS),
         asm3.html.script_tag(JQUERY_UI_JS),
@@ -212,7 +209,7 @@ def sign_document_page(dbo, mid, email):
         asm3.html.script_tag(SIGNATURE_JS),
         asm3.html.script_tag(MOMENT_JS),
         asm3.html.css_tag(BOOTSTRAP_CSS),
-        asm3.html.asm_css_tag("asm-icon.css"),
+        asm3.html.css_tag(BOOTSTRAP_ICONS_CSS),
         asm3.html.script_i18n(dbo.locale),
         asm3.html.asm_script_tag("service_sign_document.js") 
     ]
@@ -223,6 +220,7 @@ def sign_document_page(dbo, mid, email):
         "account":  dbo.database,
         "email":    email,
         "notes":    asm3.media.get_notes_for_id(dbo, int(mid)),
+        "signed":   asm3.media.has_signature(dbo, mid),
         "content":  content
     }
     return asm3.html.js_page(scripts, _("Signing Pad", l), controller)
