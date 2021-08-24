@@ -26,7 +26,7 @@ import asm3.reports
 import asm3.users
 import asm3.utils
 from asm3.i18n import _, now, add_seconds, subtract_seconds
-from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, MOMENT_JS, SIGNATURE_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS, JQUERY_JS, JQUERY_UI_JS, MOMENT_JS, SIGNATURE_JS, TOUCHPUNCH_JS
 from asm3.sitedefs import BASE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
 
 # Service methods that require authentication
@@ -207,9 +207,11 @@ def sign_document_page(dbo, mid, email):
     scripts = [ 
         asm3.html.script_tag(JQUERY_JS),
         asm3.html.script_tag(JQUERY_UI_JS),
+        asm3.html.script_tag(BOOTSTRAP_JS),
         asm3.html.script_tag(TOUCHPUNCH_JS),
         asm3.html.script_tag(SIGNATURE_JS),
         asm3.html.script_tag(MOMENT_JS),
+        asm3.html.css_tag(BOOTSTRAP_CSS),
         asm3.html.asm_css_tag("asm-icon.css"),
         asm3.html.script_i18n(dbo.locale),
         asm3.html.asm_script_tag("service_sign_document.js") 
@@ -596,7 +598,7 @@ def handler(post, path, remoteip, referer, querystring):
             m = asm3.media.get_media_by_id(dbo, formid)
             if m is None: raise asm3.utils.ASMError("invalid link")
             token = asm3.utils.md5_hash_hex("%s%s" % (m.ID, m.LINKID))
-            if token != post["token"]: raise asm3.utils.ASMError("invalid token")
+            #if token != post["token"]: raise asm3.utils.ASMError("invalid token")
             return set_cached_response(cache_key, account, "text/html", 2, 2, sign_document_page(dbo, formid, post["email"]))
         else:
             asm3.media.sign_document(dbo, "service", formid, post["sig"], post["signdate"], "signemail")

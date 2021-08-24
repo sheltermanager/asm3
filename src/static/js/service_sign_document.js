@@ -7,49 +7,35 @@ $(document).ready(function() {
     "use strict";
 
     let h = [
-        '<p><b>' + _("Signing") + ': ' + controller.notes + '</b></p>',
-        '<p><a id="reviewlink" href="#">' + _("View Document") + '</a></p>',
-        '<div id="review" style="display: none">',
+        '<div class="container">',
+        '<h2>' + _("Signing") + ': ' + controller.notes + '</h2>',
+        '<button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#review" aria-expanded="false" aria-controls="review">',
+        _("View Document"),
+        '</button>',
+        '<div id="review" class="collapse">',
+            '<hr />',
             controller.content,
             '<hr />',
         '</div>',
-        '<div id="signature"></div>',
+        '<div id="signature" style="max-width: 500px; width: 100%; height: 200px; border: 1px solid #aaa;"></div>',
         '<p>',
-            '<button id="sig-clear" type="button">' + _("Clear") + '</button>',
-            '<button id="sig-sign" type="button">' + _("Sign") + '</button>',
+            '<button id="sig-sign" type="button" class="btn btn-primary">' + _("Sign") + '</button>',
+            '<button id="sig-clear" type="button" class="btn btn-secondary">' + _("Clear") + '</button>',
             '<img id="spinner" src="static/images/wait/rolling_black.svg" style="border: 0; display: none" />',
         '</p>',
         '<p>',
-            _("Please click the Sign button when you are finished."),
-        '</p>',
-        '<p>',
-        '<input type="checkbox" id="sendsigned" checked="checked" />',
         '<label for="sendsigned">',
+            '<input type="checkbox" id="sendsigned" checked="checked" />',
             _("Email me a signed copy of the document at {0}").replace("{0}", controller.email),
         '</label>',
         '</p>',
         '<p>',
             _("Once signed, this document cannot be edited or tampered with."),
-        '</p>'
+        '</p>',
+        '</div>'
     ].join("\n");
 
     $("body").html(h);
-
-    $("head").append([
-        '<style>',
-            '* { font-family: sans-serif; }',
-            'button {',
-                'padding: 10px;',
-                'font-size: 100%;',
-            '}',
-            '#signature {',
-                'border: 1px solid #aaa;',
-                'height: 200px;',
-                'width: 100%%;',
-                'max-width: 500px;',
-            '}',
-        '</style>'
-    ].join("\n"));
 
     $("#signature").signature({ guideline: true });
 
