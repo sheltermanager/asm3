@@ -434,7 +434,7 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
     if query == "" and (classfilter == "all" or classfilter == "shelter"):
         locationfilter = get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
         sql = "%s WHERE a.Archived=0 %s ORDER BY a.AnimalName" % (get_animal_query(dbo), locationfilter)
-        return dbo.query(sql, limit=limit, distincton="ID")
+        return calc_ages(dbo, dbo.query(sql, limit=limit, distincton="ID"))
     ss = asm3.utils.SimpleSearchBuilder(dbo, query)
     ss.add_fields([ "a.AnimalName", "a.ShelterCode", "a.ShortCode", "a.AcceptanceNumber", "a.BreedName",
         "a.IdentichipNumber", "a.Identichip2Number", "a.TattooNumber", "a.RabiesTag", "il.LocationName", 
@@ -457,7 +457,9 @@ def get_animal_find_simple(dbo, query, classfilter = "all", limit = 0, locationf
         classfilter,
         get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids, andsuffix=True),
         " OR ".join(ss.ors))
-    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
+    rows = dbo.query(sql, ss.values, limit=limit, distincton="ID")
+    rows = calc_ages(dbo, rows)
+    return rows
 
 def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", siteid = 0, visibleanimalids = ""):
     """
@@ -620,7 +622,9 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     where = ""
     if len(ss.ands) > 0: where = "WHERE " + " AND ".join(ss.ands)
     sql = "%s %s ORDER BY a.AnimalName" % (get_animal_query(dbo), where)
-    return dbo.query(sql, ss.values, limit=limit, distincton="ID")
+    rows = dbo.query(sql, ss.values, limit=limit, distincton="ID")
+    rows = calc_ages(dbo, rows)
+    return rows
 
 def get_animals_no_rabies(dbo):
     """
@@ -1184,6 +1188,14 @@ def calc_age(dbo, animalid, a = None):
 
     # Format it as time period
     return date_diff(l, dob, stop, asm3.configuration.date_diff_cutoffs(dbo))
+
+def calc_ages(dbo, rows):
+    """
+    Updates the ANIMALAGE column on every result in rows
+    """
+    for a in rows:
+        a.ANIMALAGE = calc_age(dbo, a.ID, a)
+    return rows
 
 def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin):
     """

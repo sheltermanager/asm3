@@ -1,4 +1,4 @@
-/*global $, jQuery, alert, moment */
+/*global $, controller, moment */
 
 // This file is called by the service handler for the "sign by email" functionality
 
