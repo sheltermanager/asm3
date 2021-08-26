@@ -85,6 +85,7 @@ CACHE_PROTECT_METHODS = {
     "online_form_json": [ "formid" ]
     # "online_form_post" is a write method
     # "sign_document" is a write method
+    # "checkout_adoption" is a write method
 }
 
 # Service methods that require flood protection
@@ -196,6 +197,44 @@ def set_cached_response(cache_key, path, mime, clientage, serverage, content):
     # asm3.al.debug("PUT: %s (%d bytes)" % (cache_key, len(content)), "service.set_cached_response")
     asm3.cachedisk.put(cache_key, path, response, serverage)
     return response
+
+def checkout_adoption_page(dbo, token):
+    """ Outputs a page that generates paperwork, allows an adopter to sign it
+        and then pay their adoption fee and an optional donation """
+    l = dbo.locale
+    scripts = [ 
+        asm3.html.script_tag(JQUERY_JS),
+        asm3.html.script_tag(JQUERY_UI_JS),
+        asm3.html.script_tag(BOOTSTRAP_JS),
+        asm3.html.script_tag(TOUCHPUNCH_JS),
+        asm3.html.script_tag(SIGNATURE_JS),
+        asm3.html.script_tag(MOMENT_JS),
+        asm3.html.css_tag(BOOTSTRAP_CSS),
+        asm3.html.css_tag(BOOTSTRAP_ICONS_CSS),
+        asm3.html.script_i18n(dbo.locale),
+        asm3.html.asm_script_tag("service_checkout_adoption.js") 
+    ]
+    co = asm3.cachedisk.get(token, dbo.database)
+    if co is None:
+        raise asm3.utils.ASMError("invalid token")
+    # Generate the adoption paperwork if it has not been generated already
+    if co["mediaid"] == 0:
+        dtid = asm3.configuration.adoption_checkout_templateid(dbo)
+        content = asm3.wordprocessor.generate_movement_doc(dbo, dtid, co["movementid"], "checkout")
+        # Save the doc with the person and animal, record the person copy for signing
+        tempname = asm3.template.get_document_template_name(dbo, dtid)
+        tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, co["animalid"]), 
+            asm3.person.get_person_name(dbo, co["personid"]))
+        asm3.media.create_document_media(dbo, "checkout", asm3.media.ANIMAL, co["animalid"], tempname, content)
+        co["mediaid"] = asm3.media.create_document_media(dbo, "checkout", asm3.media.PERSON, co["personid"], tempname, content)
+        content = asm3.utils.fix_relative_document_uris(dbo, asm3.utils.bytes2str(content))
+        co["mediacontent"] = content
+        asm3.cachedisk.put(token, dbo.database, co, 86400 * 2)
+    # Include extra values
+    co["donationmsg"] = asm3.configuration.adoption_checkout_donation_msg(dbo)
+    co["donationtiers"] = asm3.configuration.adoption_checkout_donation_tiers(dbo)
+    co["token"] = token
+    return asm3.html.js_page(scripts, _("Adoption Checkout", l), co)
 
 def sign_document_page(dbo, mid, email):
     """ Outputs a page that allows signing of document with media id mid. 
@@ -354,6 +393,16 @@ def handler(post, path, remoteip, referer, querystring):
             return ("text/plain", 0, 0, "ERROR: Expired payref")
         return_url = post["return"] or asm3.configuration.payment_return_url(dbo)
         return set_cached_response(cache_key, account, "text/html", 120, 120, processor.checkoutPage(post["payref"], return_url, title))
+
+    elif method == "checkout_adoption":
+        if post["token"] == "":
+            raise asm3.utils.ASMError("method checkout_adoption requires a valid token")
+        elif post["sig"] == "":
+            return set_cached_response(cache_key, account, "text/html", 120, 120, checkout_adoption_page(dbo, post["token"]))
+        else:
+            # TODO: magic happens where doc is signed, payments are created
+            # and we redirect on to the payment processor to take the payment
+            pass
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)

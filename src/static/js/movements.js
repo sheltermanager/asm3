@@ -414,6 +414,39 @@ $(function() {
                             }
                         });
                     }
+                },
+                { id: "checkout", text: _("Adopter Checkout"), icon: "email", enabled: "one", perm: "emo",
+                    tooltip: _("Send a checkout email to the adopter"),
+                    hideif: function() {
+                        return controller.name.indexOf("move_book_foster") != -1 ||
+                            controller.name.indexOf("move_book_soft_release") != -1 ||
+                            controller.name.indexOf("move_book_recent_other") != -1 ||
+                            config.str("AdoptionCheckoutProcessor") == "";
+                    },
+                    click: function() {
+                        let row = tableform.table_selected_row(table);
+                        if (row.MOVEMENTTYPE > 1) { 
+                            header.show_error("Adopter checkout only applies to reservation and adoption movements.");
+                            return;
+                        }
+                        if (!row.FEE) {
+                            header.show_error("No adoption fee has been set for this animal.");
+                            return;
+                        }
+                        $("#emailform").emailform("show", {
+                            title: _("Email link to adopter checkout"),
+                            post: "movement",
+                            formdata: "mode=checkout&id=" + row.ID + "&animalid=" + row.ANIMALID + "&personid=" + row.OWNERID,
+                            name: row.OWNERNAME,
+                            email: row.EMAILADDRESS,
+                            subject: _("Adoption checkout for {0}").replace("{0}", row.ANIMALNAME),
+                            animalid: row.ANIMALID,
+                            personid: row.OWNERID,
+                            templates: controller.templates,
+                            logtypes: controller.logtypes,
+                            message: _("Please use the link below to sign adoption paperwork and pay the adoption fee.")
+                        });
+                    }
                 }
             ];
             this.dialog = dialog;
@@ -428,7 +461,8 @@ $(function() {
             s += '<div id="button-document-body" class="asm-menu-body">' +
                 '<ul class="asm-menu-list">' +
                 edit_header.template_list(controller.templates, "MOVEMENT", 0) +
-                '</ul></div>';
+                '</ul></div>' + 
+                '<div id="emailform"></div>';
             if (controller.name == "animal_movements") {
                 s += edit_header.animal_edit_header(controller.animal, "movements", controller.tabcounts);
             }
@@ -449,6 +483,8 @@ $(function() {
             if (controller.name == "animal_movements" || controller.name == "person_movements") {
                 $(".asm-tabbar").asmtabs();
             }
+            
+            $("#emailform").emailform();
 
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
@@ -799,6 +835,7 @@ $(function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#person");
             common.widget_destroy("#retailer");
+            common.widget_destroy("#emailform");
             tableform.dialog_destroy();
             this.lastanimal = null;
             this.lastperson = null;

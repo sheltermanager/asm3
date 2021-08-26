@@ -100,6 +100,8 @@ DEFAULTS = {
     "AddAnimalsShowTattoo": "No",
     "AddAnimalsShowTimeBroughtIn": "No",
     "AddAnimalsShowWeight": "No",
+    "AdoptionCheckoutDonationMsg": "Our organization depends on the kind donations of individuals to provide animals with medical care, food and shelter.\n<br/><br/><b>We need your help!</b>",
+    "AdoptionCheckoutDonationTiers": "$0=No thanks\n$10=Microchip one pet\n$25=One week of milk for a litter of kittens\n$50=Vaccinate a litter of puppies\n$100=Spay/neuter and vaccinate one pet\n$200=Contribute to surgery for pets in need",
     "AnimalFiguresSplitEntryReason": "No",
     "AnnualFiguresShowBabies": "Yes",
     "AnnualFiguresShowBabiesType": "Yes",
@@ -432,7 +434,7 @@ def csave(dbo, username, post):
     for k in post.data.keys():
         if k == "mode" or k == "filechooser": continue
         v = post.string(k, False)
-        if k in ("EmailSignature", "FostererEmailsMsg"):
+        if k in ("AdoptionCheckoutDonationMsg", "EmailSignature", "FostererEmailsMsg"):
             # It's HTML - don't XSS escape it
             put(k, v, sanitiseXSS = False)
         elif k == "CodingFormat":
@@ -496,6 +498,24 @@ def adoptapet_user(dbo):
 
 def adoptapet_password(dbo):
     return cstring(dbo, "SaveAPetFTPPassword")
+
+def adoption_checkout_donation_msg(dbo):
+    return cstring(dbo, "AdoptionCheckoutDonationMsg", DEFAULTS["AdoptionCheckoutDonationMsg"])
+
+def adoption_checkout_donationid(dbo):
+    return cint(dbo, "AdoptionCheckoutDonationID")
+
+def adoption_checkout_donation_tiers(dbo):
+    return cstring(dbo, "AdoptionCheckoutDonationTiers", DEFAULTS["AdoptionCheckoutDonationTiers"])
+
+def adoption_checkout_feeid(dbo):
+    return cint(dbo, "AdoptionCheckoutFeeID")
+
+def adoption_checkout_processor(dbo):
+    return cstring(dbo, "AdoptionCheckoutProcessor")
+
+def adoption_checkout_templateid(dbo):
+    return cint(dbo, "AdoptionCheckoutTemplateID")
 
 def advanced_find_animal(dbo):
     return cboolean(dbo, "AdvancedFindAnimal")

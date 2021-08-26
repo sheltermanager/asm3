@@ -16,6 +16,7 @@ import asm3.animal
 import asm3.animalcontrol
 import asm3.asynctask
 import asm3.audit
+import asm3.cachedisk
 import asm3.cachemem
 import asm3.clinic
 import asm3.configuration
@@ -1784,6 +1785,7 @@ class animal_movements(JSONEndpoint):
             "rows": movements,
             "animal": a,
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
+            "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
@@ -4115,6 +4117,7 @@ class move_book_recent_adoption(JSONEndpoint):
         return {
             "name": "move_book_recent_adoption",
             "rows": movements,
+            "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
@@ -4187,6 +4190,7 @@ class move_book_retailer(JSONEndpoint):
         return {
             "name": "move_book_retailer",
             "rows": movements,
+            "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
@@ -4223,6 +4227,7 @@ class move_book_trial_adoption(JSONEndpoint):
         return {
             "name": "move_book_trial_adoption",
             "rows": movements,
+            "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
@@ -4241,6 +4246,7 @@ class move_book_unneutered(JSONEndpoint):
         return {
             "name": "move_book_unneutered",
             "rows": movements,
+            "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
@@ -4368,6 +4374,56 @@ class movement(JSONEndpoint):
 
     def post_insurance(self, o):
         return asm3.movement.generate_insurance_number(o.dbo)
+
+    def post_checkout(self, o):
+        dbo = o.dbo
+        post = o.post
+        l = dbo.locale
+        aid = o.post.integer("animalid")
+        pid = o.post.integer("personid")
+        # Use a hash of animal/person as cache/state key so that repeated checkout requests 
+        # will always access the same cache value/state
+        key = asm3.utils.md5_hash_hex("a=%s|p=%s" % (aid, pid))
+        co = asm3.cachedisk.get(key, dbo.database)
+        # If it doesn't already exist, create the state for this adoption checkout
+        if co is None:
+            a = asm3.animal.get_animal(dbo, aid)
+            p = asm3.person.get_person(dbo, pid)
+            co = {
+                "database":     dbo.database,
+                "movementid":   o.post.integer("id"),
+                "mediaid":      0, # paperwork mediaid, generated in the next step
+                "mediacontent": "", # a copy of the generated paperwork with fixed urls for viewing
+                "animalid":     o.post.integer("animalid"),
+                "animalname":   a.ANIMALNAME,
+                "speciesname":  a.SPECIESNAME,
+                "sex":          a.SEXNAME,
+                "age":          a.ANIMALAGE,
+                "fee":          a.FEE,
+                "formatfee":    asm3.i18n.format_currency(l, a.FEE),
+                "personid":     o.post.integer("personid"),
+                "ownername":    p.OWNERNAME,
+                "address":      p.OWNERADDRESS,
+                "town":         p.OWNERTOWN,
+                "county":       p.OWNERCOUNTY,
+                "postcode":     p.OWNERPOSTCODE,
+                "email":        p.EMAILADDRESS,
+                "paymentfeeid": 0, # payment for fee, generated in the next step
+                "paymentdonid": 0, # payment for donation, generated in the next step
+                "receiptnum":   "", # receiptnumber for all payments, generated in next step
+            }
+            asm3.cachedisk.put(key, dbo.database, co, CACHE_ONE_DAY * 2) # persist for 2 days
+        # Send the email to the adopter
+        body = []
+        body.append(post["body"])
+        url = "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, dbo.database, key)
+        body.append("<p><a href=\"%s\">%s</a></p>" % (url, _("Adoption Checkout", l)))
+        asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], "\n".join(body), "html")
+        if post.boolean("addtolog"):
+            asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, pid, post.integer("logtype"), 
+                post["to"], post["subject"], "\n".join(body))
+        if asm3.configuration.audit_on_send_email(dbo): 
+            asm3.audit.email(dbo, o.user, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], "\n".join(body))
 
 class onlineform_incoming(JSONEndpoint):
     url = "onlineform_incoming"
@@ -5153,6 +5209,7 @@ class person_movements(JSONEndpoint):
             "rows": movements,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
+            "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
