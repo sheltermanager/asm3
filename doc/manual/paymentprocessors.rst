@@ -101,10 +101,12 @@ Initiating
 
 .. image:: images/adoption_checkout_start.png
 
-Checkout is initiated from the movement tab of the person or animal. It can be done
-from either a reservation or adoption movement (although if you do use a reservation
-you will need to manually convert it to an adoption afterwards). Select the movement
-and click the "Adopter checkout" button on the toolbar. 
+Checkout is initiated from the movement tab of the person or animal (or the
+reservation or "recently adopted" books). It can be done from either a
+reservation or adoption movement, although if you do use a reservation you will
+need to manually convert it to an adoption afterwards. 
+
+Select the movement and click the "Adopter checkout" button on the toolbar. 
 
 If you have not configured the feature, this button will not appear.
 
@@ -160,6 +162,10 @@ a PDF of the paperwork to the adopter if they requested it.
 Finally, the adopter will be redirected to the payment processor you have
 configured to take their payment online. 
 
+Depending on what apps are available on their device (eg: Google or Apple Pay)
+and which payment processor you are using, this can be an extremely trivial
+process that does not necessarily involve hand entering card numbers.
+
 When payment is complete, the received date will be set on the two payment
 records for the fee and donation and any accounting transactions created. The
 adopter will be redirected to the success URL you configured under the payment
@@ -177,6 +183,14 @@ and signed again. The adopter can choose a new donation tier if they wish and
 the system will update the due donation payment record to reflect the new value
 that they've chosen. If they choose the 0 tier, the donation payment record
 will be deleted.
+
+No matter how many times the adopter returns to the checkout, once payment has
+been made, the records will be updated. 
+
+The system will maintain the checkout state for 48 hours before removing it.
+After this period, the adopter will receive an error and will not be able to
+use their checkout link until a member of staff initiates the adoption checkout
+process again from the movement tab/book.
 
 License checkout
 ----------------
