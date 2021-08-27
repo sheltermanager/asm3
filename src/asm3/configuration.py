@@ -511,6 +511,9 @@ def adoption_checkout_donation_tiers(dbo):
 def adoption_checkout_feeid(dbo):
     return cint(dbo, "AdoptionCheckoutFeeID")
 
+def adoption_checkout_payment_method(dbo):
+    return cint(dbo, "AdoptionCheckoutPaymentMethod")
+
 def adoption_checkout_processor(dbo):
     return cstring(dbo, "AdoptionCheckoutProcessor")
 

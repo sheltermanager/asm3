@@ -1,4 +1,4 @@
-/*global $, controller, moment */
+/*global $, controller */
 
 // This file is called by the service handler for the "sign by email" functionality
 
@@ -81,7 +81,6 @@ $(document).ready(function() {
             "method":       "sign_document",
             "formid":       controller.id, 
             "sig":          $("#signature canvas").get(0).toDataURL("image/png"),
-            "signdate":     moment().format("YYYY-MM-DD HH:mm:ss"),
             "email":        controller.email,
             "sendsigned":   $("#sendsigned").is(":checked") ? "on" : ""
         };

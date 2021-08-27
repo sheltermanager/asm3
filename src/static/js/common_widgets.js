@@ -804,7 +804,7 @@ $.widget("asm.latlong", {
 
 /**
  * Widget to take one or more payments.
- * Relies on controller.accounts, controller.paymenttypes and controller.donationtypes
+ * Relies on controller.accounts, controller.paymentmethods and controller.donationtypes
  * target should be a container div
  */
 $.widget("asm.payments", {
@@ -886,7 +886,7 @@ $.widget("asm.payments", {
             '</td>',
             '<td>',
             '<select id="payment{i}" data="payment{i}" class="asm-halfselectbox">',
-            html.list_to_options(this.options.controller.paymenttypes, "ID", "PAYMENTNAME"),
+            html.list_to_options(this.options.controller.paymentmethods, "ID", "PAYMENTNAME"),
             '</select>',
             '</td>',
             '<td>',

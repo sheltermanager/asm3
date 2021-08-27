@@ -8,13 +8,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-08-25 14:07+0000\n"
+"POT-Creation-Date: 2021-08-27 15:45+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: service.py
+msgid " + donation"
+msgstr ""
 
 #: options.js
 msgid " days."
@@ -739,11 +743,15 @@ msgstr ""
 msgid "Adopter"
 msgstr ""
 
+#: movements.js
+msgid "Adopter Checkout"
+msgstr ""
+
 #: dbupdate.py publish_options.js
 msgid "Adoption"
 msgstr ""
 
-#: options.js
+#: code.py service.py options.js
 msgid "Adoption Checkout"
 msgstr ""
 
@@ -760,8 +768,13 @@ msgstr ""
 msgid "Adoption Event"
 msgstr ""
 
-#: dbupdate.py animal_new.js animal_bulk.js animal.js
+#: dbupdate.py service_checkout_adoption.js animal_new.js animal_bulk.js
+#: animal.js
 msgid "Adoption Fee"
+msgstr ""
+
+#: movements.js
+msgid "Adoption checkout for {0}"
 msgstr ""
 
 #: dbupdate.py
@@ -2225,7 +2238,7 @@ msgstr ""
 msgid "Cane Corso Mastiff"
 msgstr ""
 
-#: donations.js
+#: donations.js options.js
 msgid "Cardcom"
 msgstr ""
 
@@ -2600,8 +2613,8 @@ msgstr ""
 msgid "Class"
 msgstr ""
 
-#: mobile.py onlineform.py common_personchooser.js common.js
-#: common_animalchoosermulti.js service_sign_document.js
+#: mobile.py onlineform.py service_checkout_adoption.js common_personchooser.js
+#: common.js common_animalchoosermulti.js service_sign_document.js
 #: common_animalchooser.js media.js
 msgid "Clear"
 msgstr ""
@@ -2647,8 +2660,8 @@ msgstr ""
 msgid "Cloning..."
 msgstr ""
 
-#: animal_new.js onlineform_incoming.js common_widgets.js main.js
-#: service_sign_document.js
+#: service_checkout_adoption.js animal_new.js onlineform_incoming.js
+#: common_widgets.js main.js service_sign_document.js
 msgid "Close"
 msgstr ""
 
@@ -4070,12 +4083,28 @@ msgstr ""
 msgid "Don't scale"
 msgstr ""
 
+#: service_checkout_adoption.js
+msgid "Donate (3/3)"
+msgstr ""
+
 #: dbupdate.py
 msgid "Donated"
 msgstr ""
 
 #: dbupdate.py
 msgid "Donation"
+msgstr ""
+
+#: options.js
+msgid "Donation message"
+msgstr ""
+
+#: options.js
+msgid "Donation payment type"
+msgstr ""
+
+#: options.js
+msgid "Donation tiers"
 msgstr ""
 
 #: html.py waitinglist_results.js
@@ -4481,7 +4510,11 @@ msgid ""
 "addresses"
 msgstr ""
 
-#: service_sign_document.js
+#: movements.js
+msgid "Email link to adopter checkout"
+msgstr ""
+
+#: service_checkout_adoption.js service_sign_document.js
 msgid "Email me a signed copy of the document at {0}"
 msgstr ""
 
@@ -7109,7 +7142,8 @@ msgstr ""
 msgid "Llama"
 msgstr ""
 
-#: onlineform_incoming.js common_widgets.js common.js mailmerge.js header.js
+#: service_checkout_adoption.js onlineform_incoming.js common_widgets.js
+#: common.js mailmerge.js header.js
 msgid "Loading..."
 msgstr ""
 
@@ -8151,7 +8185,7 @@ msgstr ""
 msgid "Newfoundland Dog"
 msgstr ""
 
-#: common.js options.js
+#: service_checkout_adoption.js common.js options.js
 msgid "Next"
 msgstr ""
 
@@ -8488,7 +8522,7 @@ msgstr ""
 msgid "Once linked, a user account cannot access and edit its linked person record."
 msgstr ""
 
-#: mobile.py service_sign_document.js
+#: mobile.py service_checkout_adoption.js service_sign_document.js
 msgid "Once signed, this document cannot be edited or tampered with."
 msgstr ""
 
@@ -8568,14 +8602,6 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Opening balances"
-msgstr ""
-
-#: options.js
-msgid "Optional donation payment type"
-msgstr ""
-
-#: options.js
-msgid "Optional donation suggested amount"
 msgstr ""
 
 #: vaccination.js
@@ -8825,7 +8851,7 @@ msgstr ""
 msgid "Patterdale Terrier (Fell Terrier)"
 msgstr ""
 
-#: dbupdate.py donations.js
+#: dbupdate.py donations.js options.js
 msgid "PayPal"
 msgstr ""
 
@@ -8869,8 +8895,16 @@ msgstr ""
 msgid "Payment calendar"
 msgstr ""
 
+#: options.js
+msgid "Payment method"
+msgstr ""
+
 #: donation_receive.js
 msgid "Payment of {0} successfully received ({1})."
+msgstr ""
+
+#: options.js
+msgid "Payment processor"
 msgstr ""
 
 #: donations.js roles.js header_edit_header.js
@@ -9121,6 +9155,12 @@ msgstr ""
 
 #: donations.js
 msgid "Please use the link below to pay."
+msgstr ""
+
+#: movements.js
+msgid ""
+"Please use the link below to sign adoption paperwork and pay the adoption "
+"fee."
 msgstr ""
 
 #: media.js
@@ -10256,6 +10296,10 @@ msgstr ""
 msgid "Reupload animal images every time"
 msgstr ""
 
+#: service_checkout_adoption.js
+msgid "Review"
+msgstr ""
+
 #: dbupdate.py
 msgid "Rex"
 msgstr ""
@@ -10598,6 +10642,10 @@ msgstr ""
 
 #: mailmerge.js
 msgid "Send Emails"
+msgstr ""
+
+#: movements.js
+msgid "Send a checkout email to the adopter"
 msgstr ""
 
 #: options.js
@@ -11074,8 +11122,12 @@ msgstr ""
 msgid "Sick/injured animal"
 msgstr ""
 
-#: mobile.py service_sign_document.js media.js
+#: mobile.py service_checkout_adoption.js service_sign_document.js media.js
 msgid "Sign"
+msgstr ""
+
+#: service_checkout_adoption.js
+msgid "Sign adoption paperwork"
 msgstr ""
 
 #: media.js
@@ -11090,7 +11142,7 @@ msgstr ""
 msgid "Signature"
 msgstr ""
 
-#: service_sign_document.js
+#: service_checkout_adoption.js service_sign_document.js
 msgid "Signature is required"
 msgstr ""
 
@@ -11517,7 +11569,7 @@ msgstr ""
 msgid "Stray"
 msgstr ""
 
-#: dbupdate.py donations.js
+#: dbupdate.py donations.js options.js
 msgid "Stripe"
 msgstr ""
 
@@ -12117,6 +12169,12 @@ msgstr ""
 
 #: animal.js
 msgid "The tattoo number"
+msgstr ""
+
+#: options.js
+msgid ""
+"The text to show adopters when requesting a donation. Simple HTML formatting "
+"is allowed."
 msgstr ""
 
 #: stocklevel.js
@@ -13513,7 +13571,8 @@ msgstr ""
 msgid "Vietnamese Pot Bellied"
 msgstr ""
 
-#: onlineform_incoming.js common.js
+#: service_checkout_adoption.js onlineform_incoming.js common.js
+#: service_sign_document.js
 msgid "View"
 msgstr ""
 
@@ -13549,7 +13608,7 @@ msgstr ""
 msgid "View Diets"
 msgstr ""
 
-#: mobile.py service_sign_document.js
+#: mobile.py
 msgid "View Document"
 msgstr ""
 
@@ -14648,6 +14707,10 @@ msgstr ""
 
 #: staff_rota.js
 msgid "{0}, Week {1}"
+msgstr ""
+
+#: service.py
+msgid "{0}: Adoption fee"
 msgstr ""
 
 #: common.js

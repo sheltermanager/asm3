@@ -1218,7 +1218,7 @@ def get_movementtype_name(dbo, mid):
 def get_movement_types(dbo):
     return dbo.query("SELECT * FROM lksmovementtype ORDER BY ID")
 
-def get_payment_types(dbo):
+def get_payment_methods(dbo):
     return dbo.query("SELECT * FROM donationpayment ORDER BY PaymentName")
 
 def get_person_flags(dbo):

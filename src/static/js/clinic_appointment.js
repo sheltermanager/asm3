@@ -346,7 +346,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="paymentmethod">' + _("Method") + '</label></td>',
                 '<td><select id="paymentmethod" data="paymentmethod" class="asm-selectbox asm-field">',
-                html.list_to_options(controller.paymenttypes, "ID", "PAYMENTNAME"),
+                html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME"),
                 '</select></td>',
                 '</tr>',
                 '<tr>',

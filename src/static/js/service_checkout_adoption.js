@@ -30,7 +30,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="pane-review" class="container text-center">',
-        '<h2>' + _("Review") + ' (1/3)</h2>',
+        '<h2 class="mt-3">' + _("Review") + ' (1/3)</h2>',
         '<div class="mb-3">',
             '<img src="service?account=' + controller.database + '&method=animal_image&animalid=' + controller.animalid + 
                 '" style="width: 100%; max-width: 300px" />',
@@ -50,7 +50,7 @@ $(document).ready(function() {
 
         '<div id="pane-sign" class="container text-center" style="display: none">',
         '<form>',
-        '<h2>' + _("Sign adoption paperwork") + ' (2/3)</h2>',
+        '<h2 class="mt-3">' + _("Sign adoption paperwork") + ' (2/3)</h2>',
         '<div class="accordion" id="accordion-paperwork">',
             '<div class="accordion-item">',
                 '<h2 class="accordion-header" id="header-paperwork">',
@@ -91,11 +91,16 @@ $(document).ready(function() {
 
         '<div id="pane-donate" class="container text-center" style="display: none">',
         '<form>',
-        '<h2>' + _("Donate (3/3)") + '</h2>',
+        '<h2 class="mt-3">' + _("Donate (3/3)") + '</h2>',
         '<p>' + controller.donationmsg + '</p>',
         '<div id="buttons-donation">',
         '</div>',
         '</form>',
+        '</div>',
+
+        '<div id="pane-loading" class="container text-center" style="display: none">',
+        '<h1 class="mt-5">' + _("Loading...") + '</h1>',
+        '<div id="spinner" class="spinner-border spinner-border-lg"></div>',
         '</div>'
 
     ].join("\n");
@@ -131,9 +136,37 @@ $(document).ready(function() {
         $("#buttons-donation").append('<p><button type="button" data-amount="' + c + '" ' +
             'class="btn ' + col + '"><b>' + amt + '</b><br/>' + desc + '</button></p>');
     });
+
     $("#buttons-donation button").on("click", function() {
-        let amt = $(this).attr("data-amount");
-        // TODO: post the signature and chosen donation amount to the backend for redirecting on to the payment checkout
+        let formdata = {
+            "account":      controller.account,
+            "method":       "checkout_adoption",
+            "token":        controller.token,
+            "sig":          $("#signature canvas").get(0).toDataURL("image/png"),
+            "sendsigned":   $("#sendsigned").is(":checked") ? "on" : "",
+            "donationamt":  $(this).attr("data-amount")
+        };
+
+        $(".container").hide();
+        $("#pane-loading").show();
+
+        $.ajax({
+            type: "POST",
+            url: "service",
+            data: formdata,
+            dataType: "text",
+            mimeType: "textPlain",
+            success: function(response) {
+                // response is a URL to redirect to the payment processor
+                window.location = response;
+            },
+            error: function(jqxhr, textstatus, response) {
+                $(".container").hide();
+                $("#pane-donate").show();
+                show_dlg("Error", response);
+            }
+        });
+
     });
 
 });

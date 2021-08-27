@@ -44,7 +44,7 @@ class TestLookups(unittest.TestCase):
         assert len(asm3.lookups.get_licence_types(base.get_dbo())) > 0
         assert len(asm3.lookups.get_log_types(base.get_dbo())) > 0
         assert len(asm3.lookups.get_movement_types(base.get_dbo())) > 0
-        assert len(asm3.lookups.get_payment_types(base.get_dbo())) > 0
+        assert len(asm3.lookups.get_payment_methods(base.get_dbo())) > 0
         assert len(asm3.lookups.get_posneg(base.get_dbo())) > 0
         assert len(asm3.lookups.get_sexes(base.get_dbo())) > 0
         assert len(asm3.lookups.get_species(base.get_dbo())) > 0

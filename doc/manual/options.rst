@@ -281,6 +281,35 @@ of the year.
   Some licensing regions use a tag number that stays with the animal for
   life and need to allow duplicate licenses as a result.
 
+Checkout
+--------
+
+The checkout tab allows you to configure automated checkouts that take payment
+from members of the public (eg: for adoptions and license renewals).
+
+* Payment Processor: The payment processor to use for taking checkout payments.
+
+* Adoption paperwork template: A document template to use for generating
+  adoption paperwork.
+
+* Adoption fee payment type: The payment type to use when creating a payment
+  record for the adoption fee.
+
+* Donation payment type: The payment type to use when creating a payment record
+  for a donation during adoption checkout.
+
+* Payment method: The payment method to assign to the fee/donation payment
+  records.
+
+* Donation message: The message shown at the top of the adoption checkout
+  donate screen. Limited HTML formatting tags can be used here, such as <b>,
+  <u>, <i> and <br/>
+
+* Donation tiers: The available options adopters have for making a donation.
+  They are in the form amount=description. Currency symbols should be included
+  in the amount. You should include a zero/0 donation tier unless you want to
+  force your adopters to leave a donation. 
+
 Costs
 -----
 

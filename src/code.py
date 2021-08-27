@@ -1463,7 +1463,7 @@ class animal_clinic(JSONEndpoint):
             "animal": a,
             "clinicstatuses": asm3.lookups.get_clinic_statuses(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
-            "paymenttypes": asm3.lookups.get_payment_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users(dbo),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo),
@@ -1585,7 +1585,7 @@ class animal_donations(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "logtypes": asm3.lookups.get_log_types(dbo), 
-            "paymenttypes": asm3.lookups.get_payment_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
             "templates": asm3.template.get_document_templates(dbo)
         }
@@ -2259,7 +2259,7 @@ class clinic_consultingroom(JSONEndpoint):
             "filter": sf,
             "clinicstatuses": asm3.lookups.get_clinic_statuses(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
-            "paymenttypes": asm3.lookups.get_payment_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users(dbo),
             "templates": asm3.template.get_document_templates(dbo),
             "rows": rows
@@ -2281,7 +2281,7 @@ class clinic_waitingroom(JSONEndpoint):
             "filter": sf,
             "clinicstatuses": asm3.lookups.get_clinic_statuses(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
-            "paymenttypes": asm3.lookups.get_payment_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users(dbo),
             "templates": asm3.template.get_document_templates(dbo),
             "rows": rows
@@ -2333,7 +2333,7 @@ class csvimport_paypal(JSONEndpoint):
     def controller(self, o):
         return { 
             "donationtypes": asm3.lookups.get_donation_types(o.dbo),
-            "paymenttypes": asm3.lookups.get_payment_types(o.dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(o.dbo),
             "flags": asm3.lookups.get_person_flags(o.dbo)
         }
 
@@ -2853,7 +2853,7 @@ class donation(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "logtypes": asm3.lookups.get_log_types(dbo), 
-            "paymenttypes": asm3.lookups.get_payment_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
             "templates": asm3.template.get_document_templates(dbo),
             "rows": donations
@@ -2952,7 +2952,7 @@ class donation_receive(JSONEndpoint):
         asm3.al.debug("receiving donation", "code.donation_receive", dbo)
         return {
             "donationtypes": asm3.lookups.get_donation_types(dbo),
-            "paymenttypes": asm3.lookups.get_payment_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True)
         }
 
@@ -3439,7 +3439,7 @@ class licence_renewal(JSONEndpoint):
         return {
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "licencetypes": asm3.lookups.get_licence_types(dbo),
-            "paymenttypes": asm3.lookups.get_payment_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True)
         }
 
@@ -4061,7 +4061,7 @@ class move_adopt(JSONEndpoint):
         return {
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
-            "paymenttypes": asm3.lookups.get_payment_types(dbo)
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo)
         }
 
     def post_create(self, o):
@@ -4296,7 +4296,7 @@ class move_reclaim(JSONEndpoint):
         return {
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
-            "paymenttypes": asm3.lookups.get_payment_types(dbo)
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo)
         }
 
     def post_create(self, o):
@@ -4327,7 +4327,7 @@ class move_reserve(JSONEndpoint):
         return {
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
-            "paymenttypes": asm3.lookups.get_payment_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo)
         }
 
@@ -4381,38 +4381,41 @@ class movement(JSONEndpoint):
         l = dbo.locale
         aid = o.post.integer("animalid")
         pid = o.post.integer("personid")
-        # Use a hash of animal/person as cache/state key so that repeated checkout requests 
-        # will always access the same cache value/state
+        # Use a hash of animal/person as cache/state key so that it's always the same for
+        # the same animal/person.
+        # NOTE: we don't check here for an existing cache entry. This means that shelter
+        # staff can effectively start the checkout again for a customer with a new document 
+        # to sign and new payment records by sending out a new email. 
         key = asm3.utils.md5_hash_hex("a=%s|p=%s" % (aid, pid))
-        co = asm3.cachedisk.get(key, dbo.database)
-        # If it doesn't already exist, create the state for this adoption checkout
-        if co is None:
-            a = asm3.animal.get_animal(dbo, aid)
-            p = asm3.person.get_person(dbo, pid)
-            co = {
-                "database":     dbo.database,
-                "movementid":   o.post.integer("id"),
-                "mediaid":      0, # paperwork mediaid, generated in the next step
-                "mediacontent": "", # a copy of the generated paperwork with fixed urls for viewing
-                "animalid":     o.post.integer("animalid"),
-                "animalname":   a.ANIMALNAME,
-                "speciesname":  a.SPECIESNAME,
-                "sex":          a.SEXNAME,
-                "age":          a.ANIMALAGE,
-                "fee":          a.FEE,
-                "formatfee":    asm3.i18n.format_currency(l, a.FEE),
-                "personid":     o.post.integer("personid"),
-                "ownername":    p.OWNERNAME,
-                "address":      p.OWNERADDRESS,
-                "town":         p.OWNERTOWN,
-                "county":       p.OWNERCOUNTY,
-                "postcode":     p.OWNERPOSTCODE,
-                "email":        p.EMAILADDRESS,
-                "paymentfeeid": 0, # payment for fee, generated in the next step
-                "paymentdonid": 0, # payment for donation, generated in the next step
-                "receiptnum":   "", # receiptnumber for all payments, generated in next step
-            }
-            asm3.cachedisk.put(key, dbo.database, co, CACHE_ONE_DAY * 2) # persist for 2 days
+        a = asm3.animal.get_animal(dbo, aid)
+        p = asm3.person.get_person(dbo, pid)
+        co = {
+            "database":     dbo.database,
+            "movementid":   o.post.integer("id"),
+            "mediaid":      0, # paperwork mediaid, generated in the next step
+            "mediacontent": "", # a copy of the generated paperwork with fixed urls for viewing
+            "animalid":     o.post.integer("animalid"),
+            "animalname":   a.ANIMALNAME,
+            "speciesname":  a.SPECIESNAME,
+            "sex":          a.SEXNAME,
+            "age":          a.ANIMALAGE,
+            "fee":          a.FEE,
+            "formatfee":    asm3.i18n.format_currency(l, a.FEE),
+            "personid":     o.post.integer("personid"),
+            "personcode":   p.OWNERCODE,
+            "personname":   p.OWNERNAME,
+            "address":      p.OWNERADDRESS,
+            "town":         p.OWNERTOWN,
+            "county":       p.OWNERCOUNTY,
+            "postcode":     p.OWNERPOSTCODE,
+            "email":        p.EMAILADDRESS,
+            "giftaid":      p.ISGIFTAID,
+            "paymentfeeid": 0, # payment for fee, generated in the next step
+            "paymentdonid": 0, # payment for donation, generated in the next step
+            "receiptnumber": "", # receiptnumber for all payments, generated in next step
+            "payref":       "" # payref for the payment processor, generated in next step
+        }
+        asm3.cachedisk.put(key, dbo.database, co, CACHE_ONE_DAY * 2) # persist for 2 days
         # Send the email to the adopter
         body = []
         body.append(post["body"])
@@ -4669,7 +4672,7 @@ class options(JSONEndpoint):
             "locales": get_locales(),
             "locations": asm3.lookups.get_internal_locations(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
-            "paymenttypes": asm3.lookups.get_payment_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "personfindcolumns": asm3.html.json_personfindcolumns(dbo),
             "quicklinks": asm3.html.json_quicklinks(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
@@ -4896,7 +4899,7 @@ class person_clinic(JSONEndpoint):
             "tabcounts": asm3.person.get_satellite_counts(dbo, personid)[0],
             "clinicstatuses": asm3.lookups.get_clinic_statuses(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
-            "paymenttypes": asm3.lookups.get_payment_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users(dbo),
             "templates": asm3.template.get_document_templates(dbo),
             "rows": rows
@@ -4940,7 +4943,7 @@ class person_donations(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "logtypes": asm3.lookups.get_log_types(dbo), 
-            "paymenttypes": asm3.lookups.get_payment_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
             "templates": asm3.template.get_document_templates(dbo),
             "rows": donations

@@ -25,10 +25,10 @@ import asm3.publishers.html
 import asm3.reports
 import asm3.users
 import asm3.utils
-from asm3.i18n import _, now, add_seconds, subtract_seconds
+from asm3.i18n import _, now, add_seconds, format_time, python2display, subtract_seconds
 from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_ICONS_CSS
-from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, MOMENT_JS, SIGNATURE_JS, TOUCHPUNCH_JS
-from asm3.sitedefs import BASE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
+from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
 
 # Service methods that require authentication
 AUTH_METHODS = [
@@ -118,7 +118,7 @@ def flood_protect(method, remoteip):
     # Get the entry for this IP
     v = asm3.cachemem.get(cache_key)
     if v is None:
-        v = { "b": None, "h": [ asm3.i18n.now() ] } # b = banned until, h = list of hits as timestamps
+        v = { "b": None, "h": [ now() ] } # b = banned until, h = list of hits as timestamps
         asm3.cachemem.put(cache_key, v, CACHE_TTL) 
     else:
         # asm3.al.debug("protecting '%s' from '%s': cache: %s" % (method, remoteip, v), "service.flood_protect")
@@ -208,7 +208,6 @@ def checkout_adoption_page(dbo, token):
         asm3.html.script_tag(BOOTSTRAP_JS),
         asm3.html.script_tag(TOUCHPUNCH_JS),
         asm3.html.script_tag(SIGNATURE_JS),
-        asm3.html.script_tag(MOMENT_JS),
         asm3.html.css_tag(BOOTSTRAP_CSS),
         asm3.html.css_tag(BOOTSTRAP_ICONS_CSS),
         asm3.html.script_i18n(dbo.locale),
@@ -236,6 +235,81 @@ def checkout_adoption_page(dbo, token):
     co["token"] = token
     return asm3.html.js_page(scripts, _("Adoption Checkout", l), co)
 
+def checkout_adoption_post(dbo, post):
+    """
+    Called by the adoption checkout frontend with the document signature and donation amount.
+    Handles the document signing, triggers creation of the payment records, etc.
+    Returns the URL needed to redirect to the payment processor to complete payment.
+    """
+    l = dbo.locale
+    co = asm3.cachedisk.get(post["token"], dbo.database)
+    if co is None:
+        raise asm3.utils.ASMError("invalid token")
+    mediaid = co["mediaid"]
+    donationamt = post.integer("donationamt") * 100
+    # Sign the docs if they haven't been done already
+    if not asm3.media.has_signature(dbo, mediaid):
+        signdate = "%s %s" % (python2display(l, dbo.now()), format_time(dbo.now()))
+        asm3.media.sign_document(dbo, "service", mediaid, post["sig"], signdate, "signemail")
+        if post.boolean("sendsigned"):
+            m = asm3.media.get_media_by_id(dbo, mediaid)
+            if m is None: raise asm3.utils.ASMError("cannot find %s" % mediaid)
+            content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
+            contentpdf = asm3.utils.html_to_pdf(dbo, content)
+            attachments = [( "%s.pdf" % m.ID, "application/pdf", contentpdf )]
+            asm3.utils.send_email(dbo, asm3.configuration.email(dbo), co["email"], "", "", 
+                _("Signed Document", l), m.MEDIANOTES, "plain", attachments)
+    # Create the due payment records if they haven't been done already, along with a receipt/payref
+    if co["paymentfeeid"] == 0:
+        co["paymentprocessor"] = asm3.configuration.adoption_checkout_processor(dbo)
+        co["receiptnumber"] = asm3.financial.get_next_receipt_number(dbo) # Both go on the same receipt
+        co["payref"] = "%s-%s" % (co["personcode"], co["receiptnumber"])
+        # Adoption Fee
+        co["paymentfeeid"] = asm3.financial.insert_donation_from_form(dbo, "checkout", asm3.utils.PostedData({
+            "person":       str(co["personid"]),
+            "animal":       str(co["animalid"]),
+            "movement":     str(co["movementid"]),
+            "type":         asm3.configuration.adoption_checkout_feeid(dbo),
+            "payment":      asm3.configuration.adoption_checkout_payment_method(dbo),
+            "amount":       co["fee"],
+            "due":          python2display(l, dbo.now()),
+            "receiptnumber": co["receiptnumber"],
+            "giftaid":      str(co["giftaid"])
+        }, l))
+        # Donation (not linked to movement on purpose to avoid showing on adoption fee reports)
+        if donationamt > 0:
+            co["paymentdonid"] = asm3.financial.insert_donation_from_form(dbo, "checkout", asm3.utils.PostedData({
+                "person":       str(co["personid"]),
+                "animal":       str(co["animalid"]),
+                "type":         str(asm3.configuration.adoption_checkout_donationid(dbo)),
+                "payment":      str(asm3.configuration.adoption_checkout_payment_method(dbo)),
+                "amount":       str(donationamt),
+                "due":          python2display(l, dbo.now()),
+                "receiptnumber": co["receiptnumber"],
+                "giftaid":      str(co["giftaid"])
+            }, l))
+        # Update the cache entry
+        asm3.cachedisk.put(post["token"], dbo.database, co, 86400 * 2)
+    elif co["paymentdonid"] > 0 and donationamt > 0:
+        # payments have already been created, must be a user revisiting the checkout.
+        # update their donation amount in case they made a different choice this time.
+        dbo.update("ownerdonation", co["paymentdonid"], {
+            "Donation": donationamt
+        }, "checkout")
+    elif co["paymentdonid"] > 0 and donationamt == 0:
+        # The user has changed their voluntary donation amount to 0 - delete it
+        dbo.delete("ownerdonation", co["paymentdonid"], "checkout")
+    # Construct the payment checkout URL
+    params = { 
+        "account": dbo.database, 
+        "method": "checkout",
+        "processor": co["paymentprocessor"],
+        "payref": co["payref"],
+        "title": _("{0}: Adoption fee") + asm3.utils.iif(co["paymentdonid"] != "0", _(" + donation"), "")
+    }
+    url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
+    return url
+
 def sign_document_page(dbo, mid, email):
     """ Outputs a page that allows signing of document with media id mid. 
         email is the address to send a copy of the signed document to. """
@@ -246,7 +320,6 @@ def sign_document_page(dbo, mid, email):
         asm3.html.script_tag(BOOTSTRAP_JS),
         asm3.html.script_tag(TOUCHPUNCH_JS),
         asm3.html.script_tag(SIGNATURE_JS),
-        asm3.html.script_tag(MOMENT_JS),
         asm3.html.css_tag(BOOTSTRAP_CSS),
         asm3.html.css_tag(BOOTSTRAP_ICONS_CSS),
         asm3.html.script_i18n(dbo.locale),
@@ -392,7 +465,7 @@ def handler(post, path, remoteip, referer, querystring):
         if processor.isPaymentReceived(post["payref"]):
             return ("text/plain", 0, 0, "ERROR: Expired payref")
         return_url = post["return"] or asm3.configuration.payment_return_url(dbo)
-        return set_cached_response(cache_key, account, "text/html", 120, 120, processor.checkoutPage(post["payref"], return_url, title))
+        return set_cached_response(cache_key, account, "text/html", 15, 15, processor.checkoutPage(post["payref"], return_url, title))
 
     elif method == "checkout_adoption":
         if post["token"] == "":
@@ -400,9 +473,7 @@ def handler(post, path, remoteip, referer, querystring):
         elif post["sig"] == "":
             return set_cached_response(cache_key, account, "text/html", 120, 120, checkout_adoption_page(dbo, post["token"]))
         else:
-            # TODO: magic happens where doc is signed, payments are created
-            # and we redirect on to the payment processor to take the payment
-            pass
+            return ("text/plain", 0, 0, checkout_adoption_post(dbo, post))
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)
@@ -648,7 +719,8 @@ def handler(post, path, remoteip, referer, querystring):
             if token != post["token"]: raise asm3.utils.ASMError("invalid token")
             return set_cached_response(cache_key, account, "text/html", 2, 2, sign_document_page(dbo, formid, post["email"]))
         else:
-            asm3.media.sign_document(dbo, "service", formid, post["sig"], post["signdate"], "signemail")
+            signdate = "%s %s" % (python2display(l, dbo.now()), format_time(dbo.now()))
+            asm3.media.sign_document(dbo, "service", formid, post["sig"], signdate, "signemail")
             asm3.media.create_log(dbo, "service", formid, "ES02", _("Document signed", l))
             if post.boolean("sendsigned"):
                 m = asm3.media.get_media_by_id(dbo, formid)
