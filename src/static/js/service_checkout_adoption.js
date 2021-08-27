@@ -139,7 +139,7 @@ $(document).ready(function() {
 
     $("#buttons-donation button").on("click", function() {
         let formdata = {
-            "account":      controller.account,
+            "account":      controller.database,
             "method":       "checkout_adoption",
             "token":        controller.token,
             "sig":          $("#signature canvas").get(0).toDataURL("image/png"),
