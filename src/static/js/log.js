@@ -43,8 +43,7 @@ $(function() {
                 columns: [
                     { field: "LOGTYPENAME", display: _("Type") },
                     { field: "LASTCHANGEDBY", display: _("By") },
-                    { field: "DATE", display: _("Date"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
-                    { field: "DATE", display: _("Time"), formatter: tableform.format_time_blank },
+                    { field: "DATE", display: _("Date"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "desc" },
                     { field: "COMMENTS", display: _("Note"), formatter: tableform.format_comments }
                 ]
             };

@@ -1,6 +1,7 @@
 45
 ================
 
+29/08/21 Fix log sorting with date/time #1047
 26/08/21 Adoption self-checkout service #784
 25/08/21 Animal find/search updates ages in results
 23/08/21 Refactor sign_document_page into separate js file
