@@ -59,8 +59,7 @@ def _getfilename(key, path, mkpath=False):
         pass
     else:
         m = hashlib.md5()
-        if sys.version_info[0] > 2 and isinstance(key, str): # PYTHON3
-            key = key.encode("utf-8")
+        if isinstance(key, str): key = key.encode("utf-8") # turn str keys into bytes
         m.update(key)
         key = m.hexdigest()
     if not os.path.exists(DISK_CACHE):

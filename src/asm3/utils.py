@@ -24,33 +24,17 @@ import uuid
 import web
 import zipfile
 
-if sys.version_info[0] > 2: # PYTHON3
-    import _thread as thread
-    import urllib.request as urllib2
-    import urllib.parse
-    from io import BytesIO, StringIO
-    from html.parser import HTMLParser
-    from email.mime.base import MIMEBase
-    from email.mime.text import MIMEText
-    from email.mime.multipart import MIMEMultipart
-    from email.header import Header
-    from email.utils import make_msgid, formatdate
-    import email.encoders as Encoders
-else:
-    import thread
-    import urllib2
-    import urllib
-    import urlparse
-    from cStringIO import StringIO
-    from io import BytesIO
-    from HTMLParser import HTMLParser
-    from email.mime.base import MIMEBase
-    from email.mime.text import MIMEText
-    from email.mime.multipart import MIMEMultipart
-    from email.header import Header
-    from email.utils import make_msgid, formatdate
-    from email import Encoders
-
+import _thread as thread
+import urllib.request as urllib2
+import urllib.parse
+from io import BytesIO, StringIO
+from html.parser import HTMLParser
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.header import Header
+from email.utils import make_msgid, formatdate
+import email.encoders as Encoders
 
 # Global reference to the Python websession. This is used to allow
 # debug mode with webpy by keeping a global single copy of the
@@ -465,41 +449,23 @@ def is_unicode(s):
     """
     Returns true if the string s is unicode
     """
-    if sys.version_info[0] > 2: # PYTHON3
-        return isinstance(s, str)
-    else:
-        return isinstance(s, unicode) # noqa: F821
-
-def cunicode(s, encoding = "utf-8"):
-    """
-    Converts an encoded value to a unicode string
-    returns unicode/Python 2 or str/Python 3
-    If we ever abandon support for Python 2, this method can be removed and
-    all calls to it replaced with bytes2str instead.
-    """
-    if sys.version_info[0] > 2: # PYTHON3 - str should already be unicode, but convert bytes strings if we've got one
-        if is_bytes(s): return s.decode(encoding)
-        return str(s)
-    else:
-        return unicode(s, encoding) # noqa: F821
+    return isinstance(s, str)
 
 def str2bytes(s, encoding = "utf-8"):
     """
     Converts a unicode str to a utf-8 bytes string
-    Does nothing on python 2, since bytes == str
+    Does nothing if the value is not str
     """
-    if sys.version_info[0] > 2: # PYTHON3
-        if isinstance(s, str): return s.encode(encoding)
-    return s # Already byte string for python 2
+    if isinstance(s, str): return s.encode(encoding)
+    return s 
 
 def bytes2str(s, encoding = "utf-8"):
     """
     Converts a utf-8 bytes string to a unicode str.
-    Does nothing on python 2, since bytes == str
+    Does nothing if the value is not bytes
     """
-    if sys.version_info[0] > 2: # PYTHON3
-        if isinstance(s, bytes): return s.decode(encoding)
-    return s # Already str for python 2
+    if isinstance(s, bytes): return s.decode(encoding)
+    return s 
 
 def atoi(s):
     """
@@ -588,7 +554,7 @@ def json_handler(obj):
         return "%02d:%02d:%02d" % (hours, minutes, seconds)
     elif isinstance(obj, decimal.Decimal):
         return str(obj)
-    elif isinstance(obj, bytes): # PYTHON3 This is here for Python 3 byte encoded strings
+    elif isinstance(obj, bytes): 
         return str(obj)
     elif isinstance(obj, type):
         return str(obj)
@@ -611,10 +577,7 @@ def json(obj, readable = False):
 
 def parse_qs(s):
     """ Given a querystring, parses it and returns a dict of elements """
-    if sys.version_info[0] > 2: # PYTHON3
-        return dict(urllib.parse.parse_qsl(s))
-    else:
-        return dict(urlparse.parse_qsl(s))
+    return dict(urllib.parse.parse_qsl(s))
 
 def address_first_line(address):
     """
@@ -707,10 +670,7 @@ def decoded_substring(s, start, end = None):
         ur = us[start:]
     else:
         ur = us[start:end]
-    if sys.version_info[0] > 2: # PYTHON3 - keep the string as unicode str for lang features
-        return ur.encode("ascii", "xmlcharrefreplace").decode("ascii")
-    else:
-        return ur.encode("ascii", "xmlcharrefreplace")
+    return ur.encode("ascii", "xmlcharrefreplace").decode("ascii") # ENTITY
 
 def stringio(contents = ""):
     if contents != "": return StringIO(contents)
@@ -755,17 +715,12 @@ def decode_html(s):
 
 def encode_html(s):
     """
-    Accepts python2 unicode strings or python3 unicode str or utf-8 bytes
-    returns ascii str with HTML entities
+    Accepts str or utf-8 bytes
+    returns str with HTML entities instead of unicode code points
     """
     if s is None: return ""
-    if sys.version_info[0] > 2: # PYTHON3 - replace the entities but keep the string as unicode for lang features
-        if is_bytes(s): s = bytes2str(s) # If someone has fed us a byte string, turn it into a str
-        return s.encode("ascii", "xmlcharrefreplace").decode("ascii")
-    # PYTHON2
-    if is_str(s):
-        return cunicode(s).encode("ascii", "xmlcharrefreplace")
-    return s.encode("ascii", "xmlcharrefreplace")
+    if is_bytes(s): s = bytes2str(s) # If someone has fed us a byte string, turn it into a str
+    return s.encode("ascii", "xmlcharrefreplace").decode("ascii") # ENTITY 
 
 def html_to_uri(s):
     """
@@ -788,24 +743,18 @@ def list_overlap(l1, l2):
 
 def base64encode(s):
     """ Base64 encodes s, returning the result as a string """
-    if sys.version_info[0] > 2: # PYTHON3 
-        if not is_bytes(s): s = s.encode("utf-8") # Only byte strings can be encoded so convert first
-        return base64.b64encode(s).decode("utf-8") # Return the encoded value as a string rather than bytes
-    return base64.b64encode(s) # Python 2 behaviour
+    if not is_bytes(s): s = s.encode("utf-8") # Only byte strings can be encoded so convert first
+    return base64.b64encode(s).decode("utf-8") # Return the encoded value as a string rather than bytes
 
 def base64decode(s):
     """ Base64 decodes s, returning the result as bytes """
-    if sys.version_info[0] > 2: # PYTHON3 
-        if not is_bytes(s): s = s.encode("utf-8") # Only byte strings can be decoded so convert first
-        return base64.b64decode(s)
-    return base64.b64decode(s) # Python 2 behaviour
+    if not is_bytes(s): s = s.encode("utf-8") # Only byte strings can be decoded so convert first
+    return base64.b64decode(s)
 
 def base64decode_str(s):
     """ Base64 decodes, returning the result as a str. """
     rv = base64decode(s)
-    if sys.version_info[0] > 2: # PYTHON3
-        return rv.decode("utf-8")
-    return rv # Python 2 bytes/str interchangeable
+    return rv.decode("utf-8")
 
 def uuid_str():
     """ Returns a type 4 UUID as a string """
@@ -819,12 +768,8 @@ def pbkdf2_hash_hex(plaintext, salt="", algorithm="sha1", iterations=1000):
     """
     if salt == "": salt = base64.b64encode(os.urandom(16))
     hashfunc = getattr(hashlib, algorithm)
-    if sys.version_info[0] > 2: # PYTHON3
-        import asm3.pbkdf2.pbkdf23
-        return str(asm3.pbkdf2.pbkdf23.pbkdf2(hashfunc, str2bytes(plaintext), str2bytes(salt), iterations, 24).hex())
-    else:
-        import asm3.pbkdf2.pbkdf22
-        return str(asm3.pbkdf2.pbkdf22.pbkdf2_hex(str2bytes(plaintext), str2bytes(salt), iterations, 24, hashfunc))
+    import asm3.pbkdf2.pbkdf23
+    return str(asm3.pbkdf2.pbkdf23.pbkdf2(hashfunc, str2bytes(plaintext), str2bytes(salt), iterations, 24).hex())
 
 def regex_multi(pattern, findin):
     """
@@ -924,9 +869,8 @@ def csv_parse(s):
                 pos[1] = rpos+1 # advance next item start position
                 if item.startswith("\""): item = item[1:]
                 if item.endswith("\""): item = item[0:len(item)-1]
-                # Turn the item into an ascii/xmlcharrefreplace string
-                item = item.encode("ascii", "xmlcharrefreplace")
-                if sys.version_info[0] > 2: item = item.decode("ascii") # PYTHON3 turn it back into str
+                # ENTITY Turn the item into an ascii/xmlcharrefreplace string with HTML entities
+                item = item.encode("ascii", "xmlcharrefreplace").decode("ascii")
                 items.append(item.strip()) # strip whitespace before storing the item
             if not inquoted and (s[rpos:rpos+1] == "\n" or rpos == len(s)):
                 # Hit line break or end of file, move to the next line and return our set
@@ -1147,29 +1091,15 @@ def post_data(url, data, contenttype = "", httpmethod = "", headers = {}):
     httpmethod: POST by default.
     Returns dict of requestheaders (dict), requestbody (bytes), headers (str), response (str) and status (int)
     """
-    # PYTHON3
-    # Separate implementations here due to change in HTTPMessage response object
-    # between 2 and 3. (.headers disappears to be replaced with as_string() due to new superclass)
-    if sys.version_info[0] > 2:
-        try:
-            if contenttype != "": headers["Content-Type"] = contenttype
-            if isinstance(data, str): data = str2bytes(data)
-            req = urllib2.Request(url, data, headers)
-            if httpmethod != "": req.get_method = lambda: httpmethod
-            resp = urllib2.urlopen(req)
-            return { "requestheaders": headers, "requestbody": data, "headers": resp.info().as_string(), "response": bytes2str(resp.read()), "status": resp.getcode() }
-        except urllib2.HTTPError as e:
-            return { "requestheaders": headers, "requestbody": data, "headers": e.info().as_string(), "response": bytes2str(e.read()), "status": e.getcode() }
-    # PYTHON2
-    else:
-        try:
-            if contenttype != "": headers["Content-Type"] = contenttype
-            req = urllib2.Request(url, data, headers)
-            if httpmethod != "": req.get_method = lambda: httpmethod
-            resp = urllib2.urlopen(req)
-            return { "requestheaders": headers, "requestbody": data, "headers": resp.info().headers, "response": encode_html(cunicode(resp.read())), "status": resp.getcode() }
-        except urllib2.HTTPError as e:
-            return { "requestheaders": headers, "requestbody": data, "headers": e.info().headers, "response": encode_html(cunicode(e.read())), "status": e.getcode() }
+    try:
+        if contenttype != "": headers["Content-Type"] = contenttype
+        if isinstance(data, str): data = str2bytes(data)
+        req = urllib2.Request(url, data, headers)
+        if httpmethod != "": req.get_method = lambda: httpmethod
+        resp = urllib2.urlopen(req)
+        return { "requestheaders": headers, "requestbody": data, "headers": resp.info().as_string(), "response": bytes2str(resp.read()), "status": resp.getcode() }
+    except urllib2.HTTPError as e:
+        return { "requestheaders": headers, "requestbody": data, "headers": e.info().as_string(), "response": bytes2str(e.read()), "status": e.getcode() }
 
 def post_form(url, fields, headers = {}, cookies = {}):
     """
@@ -1224,12 +1154,7 @@ def urlencode(d):
     """
     URL encodes a dictionary of key/pair values.
     """
-    # PYTHON3
-    if sys.version_info[0] > 2: 
-        return urllib.parse.urlencode(d)
-    else:
-        #PYTHON2
-        return urllib.urlencode(d)
+    return urllib.parse.urlencode(d)
 
 def zip_extract(zipfilename, filename):
     """
@@ -1261,14 +1186,9 @@ def read_text_file(name):
     """
     Reads a text file and returns the result as a string.
     """
-    if sys.version_info[0] > 2: # PYTHON3
-        with codecs.open(name, 'r', encoding='utf8') as f:
-            text = f.read()
-        return text.encode("ascii", "xmlcharrefreplace").decode("ascii")
-    else:
-        with codecs.open(name, 'r', encoding='utf8') as f:
-            text = f.read()
-        return text.encode("ascii", "xmlcharrefreplace")
+    with codecs.open(name, 'r', encoding='utf8') as f:
+        text = f.read()
+    return text.encode("ascii", "xmlcharrefreplace").decode("ascii") # ENTITY 
 
 def read_binary_file(name):
     """

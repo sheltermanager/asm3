@@ -4,6 +4,8 @@ Animal Shelter Manager v3 (sheltermanager3)
 This program is covered by the terms of the GNU General Public Licence v3. 
 See the file LICENSE in this directory for details.
 
+As of version 45, ASM no longer supports Python 2.
+
 Dependencies
 ------------
 

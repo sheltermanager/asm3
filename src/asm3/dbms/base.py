@@ -236,8 +236,7 @@ class Database(object):
     def encode_str_after_read(self, v):
         """
         Encodes any string values returned by a query result.
-        If v is unicode, encodes it as an ascii str with HTML entities
-        If v is already a str, removes any non-ascii chars
+        If v is a str, re-encodes it as an ascii str with HTML entities
         If it is any other type, returns v untouched
         """
         def transform(s):
@@ -250,15 +249,9 @@ class Database(object):
         try:
             if v is None: 
                 return v
-            elif sys.version_info[0] > 2 and asm3.utils.is_str(v): # PYTHON3 - make sure a unicode str is returned
+            elif asm3.utils.is_str(v): 
                 v = transform(v)
-                return v.encode("ascii", "xmlcharrefreplace").decode("ascii")
-            elif asm3.utils.is_unicode(v):
-                v = transform(v)
-                return v.encode("ascii", "xmlcharrefreplace")
-            elif asm3.utils.is_str(v):
-                v = transform(v)
-                return v.decode("ascii", "ignore").encode("ascii", "ignore")
+                return v.encode("ascii", "xmlcharrefreplace").decode("ascii") # ENTITY
             else:
                 return v
         except Exception as err:

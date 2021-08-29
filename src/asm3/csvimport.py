@@ -243,7 +243,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     else:
         user = "import/%s" % user
 
-    rows = asm3.utils.csv_parse( asm3.utils.cunicode(csvdata, encoding=encoding) )
+    rows = asm3.utils.csv_parse( asm3.utils.bytes2str(csvdata, encoding=encoding) )
 
     # Make sure we have a valid header
     if len(rows) == 0:
@@ -827,7 +827,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
     else:
         user = "import/%s" % user
 
-    rows = asm3.utils.csv_parse( asm3.utils.cunicode(csvdata, encoding=encoding) )
+    rows = asm3.utils.csv_parse( asm3.utils.bytes2str(csvdata, encoding=encoding) )
     print(rows[0])
 
     errors = []
