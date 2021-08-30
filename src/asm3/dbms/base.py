@@ -889,10 +889,6 @@ class Database(object):
         if wrapParens: return "'%s'" % s
         return s
 
-    def sql_decode_html(self, expr):
-        """ Writes the SQL to decode HTML entities from an expression """
-        return expr
-
     def sql_greatest(self, items):
         """ Writes greatest for a list of items """
         return "GREATEST(%s)" % ",".join(items)

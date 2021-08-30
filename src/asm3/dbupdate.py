@@ -2842,12 +2842,12 @@ def replace_html_entities(dbo):
     Substitutes HTML entities in every text field in the database with their appropriate unicode codepoint.
     Used for the transition between v44 and v45 where we stopped storing unicode as HTML entities and an
     existing database needs to be switched. 
-    Only really needs to be run for non-English databases (en, en_GB, and en_AU)
+    Only really needs to be run for non-English databases (ie. NOT en, en_GB, and en_AU)
     """
     cols = {
         "accounts": [ "Code", "Description" ],
         "accountstrx": [ "Description" ],
-        "additional": [ "Value" ],
+        #"additional": [ "Value" ],
         "additionalfield": [ "FieldName", "FieldLabel", "Tooltip", "LookupValues", "DefaultValue" ],
         "adoption": [ "Comments", "ReasonForReturn" ],
         "animal": [ "BreedName", "Markings", "AgeGroup", "HiddenAnimalDetails", "AnimalComments", "ReasonForEntry", 
@@ -2948,8 +2948,17 @@ def replace_html_entities(dbo):
         "vaccinationtype": [ "VaccinationType", "VaccinationDescription" ]
     }
     for table, fields in cols.items():
-        clauses = [ f"{f}={dbo.sql_decode_html(f)}" for f in fields ]
-        dbo.execute_dbupdate(f"UPDATE {table} SET {','.join(clauses)}")
+        batch = []
+        rows = dbo.query(f"SELECT ID, {','.join(fields)} FROM {table} ORDER BY ID")
+        batchq = f"UPDATE {table} SET {','.join([ f + '=?' for f in fields ])} WHERE ID=?"
+        for r in rows:
+            ibatch = []
+            for f in fields:
+                ibatch.append(asm3.utils.decode_html(r[f.upper()]))
+            ibatch.append(r.ID)
+            batch.append(ibatch)
+        dbo.execute_many(batchq, batch)
+        asm3.al.info(f"{table} ({len(batch)} rows)", "dbupdate.replace_html_entities", dbo)
     if asm3.smcom.active(): asm3.smcom.vacuum_full(dbo)
 
 def check_for_updates(dbo):
@@ -5446,12 +5455,8 @@ def update_34501(dbo):
     dbo.execute_dbupdate("UPDATE onlineform SET EmailCoordinator = 0")
 
 def update_34502(dbo):
-    # Replace HTML entities in the database with unicode code points
-    # This only applies to smcom/postgresql as we assume open source users
-    # with other database backends either used the decode_html_entities
-    # option or are in English where it does not matter.
-    # This update does not run for English locales where non-latin characters
-    # will not be encountered.
-    if asm3.smcom.active() and dbo.locale not in ( "en", "en_GB", "en_AU" ):
+    # Replace HTML entities in the database with unicode code points now
+    # that they are no longer needed.
+    if dbo.locale not in ( "en", "en_GB", "en_AU" ):
         replace_html_entities(dbo)
 

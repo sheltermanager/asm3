@@ -696,6 +696,7 @@ def decode_html(s):
     """
     Decodes HTML entities in s and turns them into unicode
     """
+    if s is None: return ""
     parser = HTMLParser()
     return parser.unescape(s)
 
