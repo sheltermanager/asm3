@@ -17,7 +17,6 @@ import re
 import requests
 import smtplib
 import subprocess
-import sys
 import tempfile
 import time
 import uuid

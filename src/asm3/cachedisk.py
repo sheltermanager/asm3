@@ -11,7 +11,6 @@ import hashlib
 import os
 import pickle
 import re
-import sys
 import threading
 import time
 

@@ -38,7 +38,7 @@ VERSIONS = (
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
-    34409, 34410, 34411, 34500, 34501
+    34409, 34410, 34411, 34500, 34501, 34502
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -5332,4 +5332,7 @@ def update_34501(dbo):
     add_column(dbo, "onlineform", "EmailCoordinator", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineform SET EmailCoordinator = 0")
 
+def update_34502(dbo):
+    # Force an update of stored procedures so that asm_decode_html is available for subsequent updates
+    install_db_stored_procedures(dbo)
 

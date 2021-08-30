@@ -96,6 +96,16 @@ class DatabasePostgreSQL(Database):
             "WHEN OTHERS THEN r_float = 0.0;\n" \
             "END;\n" \
             "$$")
+        self.execute_dbupdate(\
+            "CREATE OR REPLACE FUNCTION asm_decode_html(p_in TEXT, OUT p_out TEXT)\n" \
+            "LANGUAGE plpgsql\n" \
+            "AS $$\n" \
+            "BEGIN\n" \
+            "p_out = (xpath('/z/text()', ('<z>' || p_in || '</z>')::xml))[1];\n" \
+            "EXCEPTION\n" \
+            "WHEN OTHERS THEN p_out = p_in;\n" \
+            "END;\n" \
+            "$$")
 
     def sql_cast(self, expr, newtype):
         """ Writes a database independent cast for expr to newtype """
