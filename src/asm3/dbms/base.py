@@ -10,7 +10,7 @@ import datetime
 import sys
 import time
 
-from asm3.sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES
+from asm3.sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES
 
 class ResultRow(dict):
     """
@@ -215,11 +215,7 @@ class Database(object):
             return s
 
         for k, v in values.copy().items(): # Work from a copy to prevent iterator problems
-            if asm3.utils.is_str(v) or asm3.utils.is_unicode(v):
-                if not DB_DECODE_HTML_ENTITIES:   # ENTITY 
-                    v = asm3.utils.encode_html(v) # Turn any unicode chars into HTML entities
-                else:
-                    v = asm3.utils.decode_html(v) # Turn HTML entities into unicode chars
+            if asm3.utils.is_str(v):
                 if k.find("*") != -1:
                     # If there's an asterisk in the name, remove it so that the
                     # value is stored again below, but without XSS escaping
@@ -250,8 +246,7 @@ class Database(object):
             if v is None: 
                 return v
             elif asm3.utils.is_str(v): 
-                v = transform(v)
-                return v.encode("ascii", "xmlcharrefreplace").decode("ascii") # ENTITY
+                return transform(v)
             else:
                 return v
         except Exception as err:
@@ -901,6 +896,13 @@ class Database(object):
     def sql_greatest(self, items):
         """ Writes greatest for a list of items """
         return "GREATEST(%s)" % ",".join(items)
+
+    def sql_ilike(self, expr1, expr2 = "?"):
+        """ Writes the SQL for an insensitive like comparison, 
+            eg: sql_ilike("field", "?")    ==     LOWER(field) LIKE ? 
+            requires expr2 to be lower case if it is a string literal.
+        """
+        return f"LOWER({expr1}) LIKE {expr2}"
 
     def sql_placeholders(self, l):
         """ Writes enough ? placeholders for items in l """

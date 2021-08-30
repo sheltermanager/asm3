@@ -40,11 +40,6 @@ class GeoProvider(object):
         self.country = country
         self.build_url()
 
-    def uri_encode(self, s):
-        """ Converts a parameter to URI encoding """
-        s = asm3.utils.html_to_uri(s) # Convert HTML entities to URI encoded entities &#255; becomes %ff
-        return s.replace("#", "").replace("&", "").replace("=", "").replace("^", "").replace(".", "").replace("\r", "").replace("\n", ",").replace(", ", ",").replace(" ", "+")
-
     def first_line(self, s):
         """ Returns just the first line of a string """
         if s.find("\n") == -1: return s
@@ -59,12 +54,12 @@ class GeoProvider(object):
     
     def build_url(self):
         """ Builds the URL """
-        street = self.uri_encode(self.first_line(self.address))
-        address = self.uri_encode(self.address)
-        town = self.uri_encode(self.town)
-        county = self.uri_encode(self.county)
-        postcode = self.uri_encode(self.postcode)
-        country = self.uri_encode(self.country)
+        street = asm3.utils.encode_uri(self.first_line(self.address))
+        address = asm3.utils.encode_uri(self.address)
+        town = asm3.utils.encode_uri(self.town)
+        county = asm3.utils.encode_uri(self.county)
+        postcode = asm3.utils.encode_uri(self.postcode)
+        country = asm3.utils.encode_uri(self.country)
         self.q = "%s,%s,%s,%s,%s" % (address, town, county, postcode, country)
         self.url = self.url.replace("{q}", self.q)
         self.url = self.url.replace("{street}", street).replace("{address}", address)

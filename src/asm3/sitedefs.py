@@ -106,13 +106,6 @@ DB_NAME = get_string("db_name", "asm")
 # update the primarykey table that ASM2 needs
 DB_HAS_ASM2_PK_TABLE = get_boolean("db_has_asm2_pk_table", False)
 
-# If False, HTML entities (all unicode chars) will be stored as is in the database.
-# (this is better for databases with non Unicode collation/storage and less of
-#  a security risk for Unicode SQL/XSS attacks)
-# If True, HTML entities will be decoded to Unicode before storing in the database
-# (storage is more efficient as UTF8 should be used for 2 bytes/char instead of 5)
-DB_DECODE_HTML_ENTITIES = get_boolean("db_decode_html_entities", False)
-
 # If set, all calls to db.execute will be logged to the file
 # named. Use {database} to substitute database name.
 DB_EXEC_LOG = get_string("db_exec_log")

@@ -1,6 +1,8 @@
 45
 ================
 
+30/08/21 Remove use of HTML entities at the backend #1038
+30/08/21 Use ILIKE when available for performance/indexes #1038
 30/08/21 Support for translating db html entities #1038
 29/08/21 Remove cruft and support for python 2 #1037
 29/08/21 Fix log sorting with date/time #1047

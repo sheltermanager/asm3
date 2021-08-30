@@ -108,6 +108,9 @@ class DatabasePostgreSQL(Database):
     def sql_decode_html(self, expr):
         return "(xpath('/z/text()', ('<z>' || %s || '</z>')::xml))[1]" % expr
 
+    def sql_ilike(self, expr1, expr2):
+        return "%s ILIKE %s" % (expr1, expr2)
+
     def sql_regexp_replace(self, fieldexpr, pattern="?", replacestr="?"):
         """ Writes a regexp replace expression that replaces characters matching pattern with replacestr """
         if pattern != "?": pattern = "'%s'" % pattern

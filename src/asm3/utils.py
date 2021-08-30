@@ -126,7 +126,7 @@ class PostedData(object):
     def string(self, field, strip=True, default=""):
         """ Returns a string key from a datafield """
         if field in self.data:
-            s = encode_html(self.data[field]) # ENTITY
+            s = self.data[field] 
             if strip: s = s.strip()
             return s
         else:
@@ -134,7 +134,7 @@ class PostedData(object):
 
     def filename(self, default=""):
         if "filechooser" in self.data:
-            return encode_html(self.data.filechooser.filename)
+            return self.data.filechooser.filename
         return default
 
     def filedata(self, default=""):
@@ -180,13 +180,13 @@ class AdvancedSearchBuilder(object):
     def add_id(self, cfield, field): 
         """ Adds a clause for comparing an ID field """
         if self.post[cfield] != "" and self.post.integer(cfield) > -1:
-            self.ands.append("%s = ?" % field)
+            self.ands.append(f"{field} = ?")
             self.values.append(self.post.integer(cfield))
 
     def add_id_pair(self, cfield, field, field2): 
         """ Adds a clause for a posted value to one of two ID fields (eg: breeds) """
         if self.post[cfield] != "" and self.post.integer(cfield) > 0: 
-            self.ands.append("(%s = ? OR %s = ?)" % (field, field2))
+            self.ands.append(f"({field} = ? OR {field2} = ?)")
             self.values.append(self.post.integer(cfield))
             self.values.append(self.post.integer(cfield))
 
@@ -194,17 +194,16 @@ class AdvancedSearchBuilder(object):
         """ Adds a clause for a posted value to a string field """
         if self.post[cfield] != "":
             x = self.post[cfield].lower().replace("'", "`")
-            x = "%%%s%%" % x
-            self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+            x = f"%{x}%"
+            self.ands.append(self.dbo.sql_ilike(field))
             self.values.append(x)
-            self.values.append(decode_html(x))
 
     def add_str_pair(self, cfield, field, field2): 
         """ Adds a clause for a posted value to one of two string fields """
         if self.post[cfield] != "":
             x = self.post[cfield].lower().replace("'", "`")
-            x = "%%%s%%" % x
-            self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field2))
+            x = f"%{x}%"
+            self.ands.append("(%s OR %s)" % (self.dbo.sql_ilike(field), self.dbo.sql_ilike(field2)))
             self.values.append(x)
             self.values.append(x)
 
@@ -212,8 +211,9 @@ class AdvancedSearchBuilder(object):
         """ Adds a clause for a posted value to one of three string fields """
         if self.post[cfield] != "":
             x = self.post[cfield].lower().replace("'", "`")
-            x = "%%%s%%" % x
-            self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field2, field3))
+            x = f"%{x}%"
+            self.ands.append("(%s OR %s OR %s)" % (self.dbo.sql_ilike(field), 
+                self.dbo.sql_ilike(field2), self.dbo.sql_ilike(field3)))
             self.values.append(x)
             self.values.append(x)
             self.values.append(x)
@@ -222,14 +222,14 @@ class AdvancedSearchBuilder(object):
         """ Adds a clause for a posted date range to a date field """
         if self.post[cfieldfrom] != "" and self.post[cfieldto] != "":
             self.post.data["dayend"] = "23:59:59"
-            self.ands.append("%s >= ? AND %s <= ?" % (field, field))
+            self.ands.append(f"{field} >= ? AND {field} <= ?")
             self.values.append(self.post.date(cfieldfrom))
             self.values.append(self.post.datetime(cfieldto, "dayend"))
 
     def add_date_since(self, cfield, field):
         """ Adds a claused for a date range between a cfield and now """
         if self.post[cfield] != "":
-            self.ands.append("%s >= ? AND %s <= ?" % (field, field))
+            self.ands.append(f"{field} >= ? AND {field} <= ?")
             self.values.append(self.post.date(cfield))
             self.values.append(self.dbo.now())
 
@@ -238,8 +238,9 @@ class AdvancedSearchBuilder(object):
         if self.post[cfield] != "":
             x = atoi(self.post[cfield])
             if x < 999: return # 4 digits required or likely to be far too many results
-            x = "%%%s%%" % atoi(self.post[cfield])
-            self.ands.append("(%s LIKE ? OR %s LIKE ? OR %s LIKE ?)" % (self.dbo.sql_atoi(field), self.dbo.sql_atoi(field2), self.dbo.sql_atoi(field3)))
+            x = f"%{x}%"
+            self.ands.append("(%s LIKE ? OR %s LIKE ? OR %s LIKE ?)" % (self.dbo.sql_atoi(field), 
+                self.dbo.sql_atoi(field2), self.dbo.sql_atoi(field3)))
             self.values.append(x)
             self.values.append(x)
             self.values.append(x)
@@ -258,10 +259,9 @@ class AdvancedSearchBuilder(object):
             words = self.post[cfield].split(" ")
             for w in words:
                 x = w.lower().replace("'", "`")
-                x = "%%%s%%" % x
-                self.ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+                x = f"%{x}%"
+                self.ands.append(self.dbo.sql_ilike(field))
                 self.values.append(x)
-                self.values.append(decode_html(x))
 
 class SimpleSearchBuilder(object):
     """
@@ -282,19 +282,18 @@ class SimpleSearchBuilder(object):
     def __init__(self, dbo, q):
         self.dbo = dbo
         self.q = q.replace("'", "`")
-        self.qlike = "%%%s%%" % self.q.lower()
+        self.qlike = f"%{self.q.lower()}%"
         self.ors = []
         self.values = []
 
     def add_field(self, field):
         """ Add a field to search """
-        self.ors.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+        self.ors.append(self.dbo.sql_ilike(field))
         self.values.append(self.qlike)
-        self.values.append(decode_html(self.qlike))
 
     def add_field_value(self, field, value):
         """ Add a field with a specific value """
-        self.ors.append("%s = ?" % field)
+        self.ors.append(f"{field} = ?")
         self.values.append(value)
 
     def add_field_phone(self, field):
@@ -307,8 +306,8 @@ class SimpleSearchBuilder(object):
         if len(self.q) == 0 or not is_numeric(self.q[0]): return
         x = atoi(self.q)
         if x < 99999: return # minimum 6 digits for searching phone numbers
-        self.ors.append("%s LIKE ?" % self.dbo.sql_atoi(field))
-        self.values.append("%%%s%%" % x)
+        self.ors.append(f"{self.dbo.sql_atoi(field)} LIKE ?")
+        self.values.append(f"%{x}%")
 
     def add_fields(self, fieldlist):
         """ Add clauses for many fields in one list """
@@ -329,10 +328,9 @@ class SimpleSearchBuilder(object):
         ands = []
         for w in self.q.split(" "):
             x = w.lower().replace("'", "`")
-            x = "%%%s%%" % x
-            ands.append("(LOWER(%s) LIKE ? OR LOWER(%s) LIKE ?)" % (field, field))
+            x = f"%{x}%"
+            ands.append(self.dbo.sql_ilike(field))
             self.values.append(x)
-            self.values.append(decode_html(x))
         self.ors.append("(" + " AND ".join(ands) + ")")
 
     def add_clause(self, clause):
@@ -660,17 +658,6 @@ def truncate(s, length = 100):
     if len(s) > length: return s[0:length]
     return s
 
-def decoded_substring(s, start, end = None):
-    """
-    Returns a substring, decoding any HTML entities in s first so that they count as one character.
-    """
-    us = decode_html(s)
-    if end is None or end > len(us):
-        ur = us[start:]
-    else:
-        ur = us[start:end]
-    return ur.encode("ascii", "xmlcharrefreplace").decode("ascii") # ENTITY
-
 def stringio(contents = ""):
     if contents != "": return StringIO(contents)
     return StringIO()
@@ -707,7 +694,7 @@ def strip_non_ascii(s):
 
 def decode_html(s):
     """
-    Decodes HTML entities in ascii string s and returns a unicode string.
+    Decodes HTML entities in s and turns them into unicode
     """
     parser = HTMLParser()
     return parser.unescape(s)
@@ -718,18 +705,16 @@ def encode_html(s):
     returns str with HTML entities instead of unicode code points
     """
     if s is None: return ""
-    if is_bytes(s): s = bytes2str(s) # If someone has fed us a byte string, turn it into a str
-    return s.encode("ascii", "xmlcharrefreplace").decode("ascii") # ENTITY 
+    if is_bytes(s): s = bytes2str(s)
+    return s.encode("ascii", "xmlcharrefreplace").decode("ascii") 
 
-def html_to_uri(s):
+def encode_uri(s):
     """
-    Converts HTML escaped entities to URI escaping.
-    &#256; -> %ff%01
+    Encodes unicode codepoints in a str as URI encoding
     """
-    for ent in re.findall("&#(\d+?);", s):
-        h = "%04x" % cint(ent)
-        s = s.replace("&#" + ent + ";", "%" + h[0:2] + "%" + h[2:4])
-    return s
+    if s is None: return ""
+    if is_bytes(s): s = bytes2str(s) 
+    return urllib.parse.quote_plus(s)
 
 def list_overlap(l1, l2):
     """
@@ -868,8 +853,6 @@ def csv_parse(s):
                 pos[1] = rpos+1 # advance next item start position
                 if item.startswith("\""): item = item[1:]
                 if item.endswith("\""): item = item[0:len(item)-1]
-                # ENTITY Turn the item into an ascii/xmlcharrefreplace string with HTML entities
-                item = item.encode("ascii", "xmlcharrefreplace").decode("ascii")
                 items.append(item.strip()) # strip whitespace before storing the item
             if not inquoted and (s[rpos:rpos+1] == "\n" or rpos == len(s)):
                 # Hit line break or end of file, move to the next line and return our set
@@ -951,7 +934,7 @@ def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False, ren
                     dateportion = "%s %s" % (dateportion, timeportion)
                 rd.append(dateportion)
             elif is_str(r[c]):
-                rd.append(decode_html(r[c].replace("\"", "''"))) # Escape any double quotes in strings
+                rd.append(r[c].replace("\"", "''")) # Escape any double quotes in strings
             else:
                 rd.append(r[c])
         writerow(rd)
@@ -1187,18 +1170,18 @@ def read_text_file(name):
     """
     with codecs.open(name, 'r', encoding='utf8') as f:
         text = f.read()
-    return text.encode("ascii", "xmlcharrefreplace").decode("ascii") # ENTITY 
+    return text
 
 def read_binary_file(name):
     """
-    Reads a binary file and returns the result
+    Reads a binary file and returns the result as bytes
     """
     with open(name, "rb") as f:
         return f.read()
 
 def write_binary_file(name, data):
     """
-    Writes a binary file
+    Writes a binary file (expects data = bytes)
     """
     with open(name, "wb") as f:
         f.write(data)
@@ -1416,7 +1399,7 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
         ad = template % { "name": rd["OWNERNAME"], "address": rd["OWNERADDRESS"], "town": rd["OWNERTOWN"],
             "county": rd["OWNERCOUNTY"], "postcode": rd["OWNERPOSTCODE"] }
         #al.debug("Adding to data col=%d, row=%d, val=%s" % (cold, rowd, ad))
-        datad[rowd][cold] = decode_html(ad)
+        datad[rowd][cold] = ad
 
     def addTable(datad):
         #al.debug("Adding data to table: " + str(datad))
@@ -1504,8 +1487,8 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
             # Instead, only include ascii chars and throw the rest away.
             # We don't use xmlcharref as elsewhere because the HTML entities
             # aren't really human readable and the semi-colons will cause some
-            # mail servers to see the address as mulitple addresses.
-            msg[header] = Header(decode_html(value).encode("ascii", "replace"))
+            # mail servers to see the address as multiple addresses.
+            msg[header] = Header(value.encode("ascii", "replace"))
         elif header in ("DISABLED"):
             # INFO: This code supports using QP-encoded UTF-8 for the realname
             # portion of email addresses in the headers listed above.
@@ -1515,11 +1498,11 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
             for a in value.split(","):
                 if len(str(h)) > 0: h.append(",", "ascii")
                 realname, address = parse_email_address(a)
-                h.append(decode_html(realname)) # auto uses utf-8 for non-ascii
+                h.append(realname) # auto uses utf-8 for non-ascii
                 h.append(address, "ascii")
             msg[header] = h
         else:
-            msg[header] = Header(decode_html(value))
+            msg[header] = Header(value)
 
     # If the email is plain text, but contains HTML escape characters, 
     # switch it to being an html message instead and make sure line 

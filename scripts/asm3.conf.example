@@ -38,13 +38,6 @@ db_name = asm
 # update the primarykey table that ASM2 needs
 db_has_asm2_pk_table = false
 
-# If false, HTML entities (all unicode chars) will be stored as is in the database.
-# (this is better for databases with non Unicode collation/storage and less of
-#  a security risk for Unicode SQL/XSS attacks)
-# If true, HTML entities will be decoded to Unicode before storing in the database
-# (storage is more efficient as UTF8 should be used for 2 bytes/char instead of 5)
-db_decode_html_entities = false
-
 # Time out queries that take longer than this (ms) to run
 db_timeout = 0
 

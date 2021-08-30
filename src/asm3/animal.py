@@ -1278,22 +1278,22 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
                 code.append(str(year))
                 x += 2
             elif fmt[x:x+2] == "TT":   
-                code.append(asm3.utils.decoded_substring(animaltype, 0, 2))
+                code.append(animaltype[:2])
                 x += 2
             elif fmt[x:x+1] == "T":    
-                code.append(asm3.utils.decoded_substring(animaltype, 0, 1))
+                code.append(animaltype[:1])
                 x += 1
             elif fmt[x:x+2] == "SS":   
-                code.append(asm3.utils.decoded_substring(species, 0, 2))
+                code.append(species[:2])
                 x += 2
             elif fmt[x:x+1] == "S":    
-                code.append(asm3.utils.decoded_substring(species, 0, 1))
+                code.append(species[:1])
                 x += 1
             elif fmt[x:x+2] == "EE":   
-                code.append(asm3.utils.decoded_substring(entryreason, 0, 2))
+                code.append(entryreason[:2])
                 x += 2
             elif fmt[x:x+1] == "E":    
-                code.append(asm3.utils.decoded_substring(entryreason, 0, 1))
+                code.append(entryreason[:1])
                 x += 1
             else:
                 code.append(fmt[x:x+1])
