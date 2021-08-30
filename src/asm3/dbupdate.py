@@ -2847,7 +2847,7 @@ def replace_html_entities(dbo):
     cols = {
         "accounts": [ "Code", "Description" ],
         "accountstrx": [ "Description" ],
-        #"additional": [ "Value" ],
+        #"additional": [ "Value" ], # Handled separately due to lack of ID field
         "additionalfield": [ "FieldName", "FieldLabel", "Tooltip", "LookupValues", "DefaultValue" ],
         "adoption": [ "Comments", "ReasonForReturn" ],
         "animal": [ "BreedName", "Markings", "AgeGroup", "HiddenAnimalDetails", "AnimalComments", "ReasonForEntry", 
@@ -2947,6 +2947,12 @@ def replace_html_entities(dbo):
         "voucher": [ "VoucherName", "VoucherDescription" ],
         "vaccinationtype": [ "VaccinationType", "VaccinationDescription" ]
     }
+    # Handle additional fields separately due to their lack of ID field
+    batch = []
+    for r in dbo.query("SELECT LinkType, LinkID, AdditionalFieldID, Value FROM additional"):
+        batch.append(( r.VALUE, r.LINKTYPE, r.LINKID, r.ADDITIONALFIELDID ))
+    asm3.al.info(f"additional ({len(batch)} rows)", "dbupdate.replace_html_entities", dbo)
+    dbo.execute_many("UPDATE additional SET Value=? WHERE LinkType=? AND LinkID=? AND AdditionalFieldID=?", batch)
     for table, fields in cols.items():
         batch = []
         rows = dbo.query(f"SELECT ID, {','.join(fields)} FROM {table} ORDER BY ID")
