@@ -521,8 +521,6 @@ def get_person_find_simple(dbo, query, username="", classfilter="all", includeSt
     if not includeVolunteers: cf += " AND o.IsVolunteer = 0"
     if siteid != 0: cf += " AND (o.SiteID = 0 OR o.SiteID = %d)" % siteid
     sql = get_person_query(dbo) + " WHERE (" + " OR ".join(ss.ors) + ")" + cf + " ORDER BY o.OwnerName"
-    print(sql)
-    print(ss.values)
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
 def get_person_find_advanced(dbo, criteria, username, includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):

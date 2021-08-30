@@ -38,7 +38,7 @@ VERSIONS = (
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
-    34409, 34410, 34411, 34500, 34501
+    34409, 34410, 34411, 34500, 34501, 34502
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -5445,4 +5445,13 @@ def update_34501(dbo):
     add_column(dbo, "onlineform", "EmailCoordinator", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineform SET EmailCoordinator = 0")
 
+def update_34502(dbo):
+    # Replace HTML entities in the database with unicode code points
+    # This only applies to smcom/postgresql as we assume open source users
+    # with other database backends either used the decode_html_entities
+    # option or are in English where it does not matter.
+    # This update does not run for English locales where non-latin characters
+    # will not be encountered.
+    if asm3.smcom.active() and dbo.locale not in ( "en", "en_GB", "en_AU" ):
+        replace_html_entities(dbo)
 
