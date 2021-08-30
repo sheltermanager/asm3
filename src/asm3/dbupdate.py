@@ -2820,20 +2820,22 @@ def diagnostic(dbo):
 
 def fix_preferred_photos(dbo):
     """
-    Resets the web and doc preferred flags on all photos to the latest one for animal/people records.
+    Resets the web and doc preferred flags on all photos to the latest one for all media records.
     This is useful in situations where users have borked them by running queries in the past.
     This should only be used as a last resort as all previous preferred photo info will be deleted.
     """
-    dbo.execute("UPDATE media SET WebsitePhoto=0, DocPhoto=0")
-    # Animals
-    ra = dbo.execute("UPDATE media INNER JOIN " \
-        "(SELECT MAX(ID) AS NewPref, LinkID FROM media WHERE MediaName LIKE '%.jpg' AND LinkTypeID = 0 GROUP BY LinkID) z " \
-        "ON z.NewPref=media.ID SET WebsitePhoto=1, DocPhoto=1")
-    # People
-    ra += dbo.execute("UPDATE media INNER JOIN " \
-        "(SELECT MAX(ID) AS NewPref, LinkID FROM media WHERE MediaName LIKE '%.jpg' AND LinkTypeID = 3 GROUP BY LinkID) z " \
-        "ON z.NewPref=media.ID SET WebsitePhoto=1, DocPhoto=1")
-    return ra
+    rows = dbo.query("SELECT LinkID, LinkTypeID, ID FROM media ORDER BY LinkID, LinkTypeID, ID DESC")
+    batch = []
+    lastlinkid = 0
+    lastlinktypeid = 0
+    for r in rows:
+        if lastlinkid != r.linkid and lastlinktypeid != r.linktypeid:
+            batch.append([r.id])
+            lastlinkid = r.linkid
+            lastlinktypeid = r.linktypeid
+    dbo.execute_dbupdate("UPDATE media SET WebsitePhoto=0, DocPhoto=0")
+    dbo.execute_many("UPDATE media SET WebsitePhoto=1, DocPhoto=1 WHERE ID=?", batch, override_lock=True) 
+    return len(batch)
 
 def replace_html_entities(dbo):
     """

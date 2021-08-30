@@ -6,6 +6,8 @@ See the file LICENSE in this directory for details.
 
 As of version 45, ASM no longer supports Python 2.
 
+Python >= 3.6 is required for f-string support.
+
 Dependencies
 ------------
 

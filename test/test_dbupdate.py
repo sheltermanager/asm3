@@ -9,6 +9,9 @@ class TestDBUpdate(unittest.TestCase):
     def test_diagnostic(self):
         asm3.dbupdate.diagnostic(base.get_dbo())
 
+    def test_fix_preferred_photos(self):
+        asm3.dbupdate.fix_preferred_photos(base.get_dbo())
+
     def test_replace_html_entities(self):
         asm3.dbupdate.replace_html_entities(base.get_dbo())
 
