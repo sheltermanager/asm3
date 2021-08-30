@@ -126,7 +126,7 @@ class PostedData(object):
     def string(self, field, strip=True, default=""):
         """ Returns a string key from a datafield """
         if field in self.data:
-            s = encode_html(self.data[field])
+            s = encode_html(self.data[field]) # ENTITY
             if strip: s = s.strip()
             return s
         else:

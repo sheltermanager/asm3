@@ -216,10 +216,10 @@ class Database(object):
 
         for k, v in values.copy().items(): # Work from a copy to prevent iterator problems
             if asm3.utils.is_str(v) or asm3.utils.is_unicode(v):
-                if not DB_DECODE_HTML_ENTITIES:         # Store HTML entities as is
-                    v = asm3.utils.encode_html(v)            # Turn any unicode chars into HTML entities
+                if not DB_DECODE_HTML_ENTITIES:   # ENTITY 
+                    v = asm3.utils.encode_html(v) # Turn any unicode chars into HTML entities
                 else:
-                    v = asm3.utils.decode_html(v)            # Turn HTML entities into unicode chars
+                    v = asm3.utils.decode_html(v) # Turn HTML entities into unicode chars
                 if k.find("*") != -1:
                     # If there's an asterisk in the name, remove it so that the
                     # value is stored again below, but without XSS escaping
