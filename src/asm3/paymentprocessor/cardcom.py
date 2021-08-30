@@ -20,7 +20,7 @@ class Cardcom(PaymentProcessor):
             price = round(record.DONATION, 2)
             if record.VATAMOUNT > 0: price += record.VATAMOUNT
             price = price / 100.0
-            yield {"InvoiceLines%d.Description" % index: asm3.utils.decode_html(description)[:250]}
+            yield {"InvoiceLines%d.Description" % index: description[:250]}
             yield {"InvoiceLines%d.Quantity" % index: 1}
             yield {"InvoiceLines%d.Price" % index: price} 
 
@@ -47,10 +47,10 @@ class Cardcom(PaymentProcessor):
             "TokenToCharge.CoinID": "1", # TODO: not critical - use ASM currency
             "TokenToCharge.UniqAsmachta": client_reference_id,
             "TokenToCharge.NumOfPayments": installments,
-            "InvoiceHead.CustName": asm3.utils.decode_html(p.OWNERNAME)[:50] , 
-            "InvoiceHead.CustAddresLine1": asm3.utils.decode_html(p.OWNERADDRESS)[:50], 
-            "InvoiceHead.CustCity": asm3.utils.decode_html(p.OWNERTOWN)[:50],            
-            "InvoiceHead.CustMobilePH": asm3.utils.decode_html(p.MOBILETELEPHONE)[:50],  
+            "InvoiceHead.CustName": p.OWNERNAME[:50] , 
+            "InvoiceHead.CustAddresLine1": p.OWNERADDRESS[:50], 
+            "InvoiceHead.CustCity": p.OWNERTOWN[:50],            
+            "InvoiceHead.CustMobilePH": p.MOBILETELEPHONE[:50],  
             "InvoiceHead.ExtIsVatFree": "true",# no VAT for nonprofit receipts. TODO: config?
             "InvoiceHead.SendByEmail": "false", # TODO: not critical - config?
             "InvoiceHead.Language": "he", # TODO: not critical - config / use locale?
@@ -141,10 +141,10 @@ class Cardcom(PaymentProcessor):
             more_params = {
                 "Operation": "2",  # charge + create token
                 "DocTypeToCreate": asm3.configuration.cardcom_documenttype(self.dbo), # 3 = nonprofit receipt
-                "InvoiceHead.CustName": asm3.utils.decode_html(p.OWNERNAME)[:50] , 
-                "InvoiceHead.CustAddresLine1": asm3.utils.decode_html(p.OWNERADDRESS)[:50], 
-                "InvoiceHead.CustCity": asm3.utils.decode_html(p.OWNERTOWN)[:50],            
-                "InvoiceHead.CustMobilePH": asm3.utils.decode_html(p.MOBILETELEPHONE)[:50],  
+                "InvoiceHead.CustName": p.OWNERNAME[:50] , 
+                "InvoiceHead.CustAddresLine1": p.OWNERADDRESS[:50], 
+                "InvoiceHead.CustCity": p.OWNERTOWN[:50],            
+                "InvoiceHead.CustMobilePH": p.MOBILETELEPHONE[:50],  
                 "InvoiceHead.ExtIsVatFree": "true",# no VAT for nonprofit receipts. TODO: config?
                 "InvoiceHead.SendByEmail": "true", # TODO: not critical - config?
                 "InvoiceHead.Language": "he", # TODO: not critical - config / use locale?
