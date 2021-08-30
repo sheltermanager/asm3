@@ -311,6 +311,26 @@ triggered by setting your second breed to "Crossbreed", "Unknown" or "Mix".
 
 .. warning:: You have to let PetFinder know that you are using ASM to upload your data. Do this by logging into the PetFinder members area, go to the Admin System Help Center, then Contact Us and send PetFinder Tech Support a message that you are using ASM to publish animal data via their FTP server. They should give you the FTP login information and make sure permissions and quotas are correct.
 
+PetFinder have a number of extra fields that you can set by creating additional
+animal fields with certain names in your database. The system responds to the
+field names, you can label them anything you want, they must be linked to
+animal records.
+
+* pfprimarycolor, pfsecondarycolor, pftertiarycolor (Text): ASM only uses a
+  single value for animal color, so our color field cannot be mapped to PetFinder. 
+  Instead, you can add the three color fields that PetFinder used and supply 
+  appropriate values. The values they will accept for color depend on the species
+  of your animal and can be found here: https://github.com/bobintetley/asm3/files/3487421/import.breeds.coats.colors.updated.Aug.2019.xlsx
+
+* pfcoatlength (Text): PetFinder can accept a coat length value, which is one of
+  Short, Long, Medium, Wire, Hairless, Curly
+
+* pfadoptionfeewaived (Bool): a 1 or 0 to indicate that there is no adoption fee 
+  for this animal.
+
+* pfspecialneedsnotes (Text): If the animal has special needs, you can add a
+  note about those needs to be output on their PetFinder listing.
+
 petrescue.com.au
 ----------------
 

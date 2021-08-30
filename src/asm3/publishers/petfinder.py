@@ -73,7 +73,7 @@ class PetFinderPublisher(FTPPublisher):
         # NOTE: We still publish even if there are no animals. This prevents situations
         # where the last animal can't be removed from PetFinder because the shelter
         # has no animals to send.
-        animals = self.getMatchingAnimals()
+        animals = self.getMatchingAnimals(includeAdditionalFields=True)
         if len(animals) == 0:
             self.logError("No animals found to publish, sending empty file.")
 
@@ -161,6 +161,18 @@ class PetFinderPublisher(FTPPublisher):
 
     def processAnimal(self, an, agebands = [ 182, 730, 3285 ]):
         """ Processes an animal and returns a CSV line """
+        primary_color = ""
+        secondary_color = ""
+        tertiary_color = ""
+        coat_length = ""
+        adoption_fee_waived = ""
+        special_needs_notes = ""
+        if "PFPRIMARYCOLOR" in an: primary_color = an.PFPRIMARYCOLOR
+        if "PFSECONDARYCOLOR" in an: secondary_color = an.PFSECONDARYCOLOR
+        if "PFTERTIARYCOLOR" in an: tertiary_color = an.PFTERTIARYCOLOR
+        if "PFCOATLENGTH" in an: coat_length = an.PFCOATLENGTH
+        if "PFADOPTIONFEEWAIVED" in an: adoption_fee_waived = an.PFADOPTIONFEEWAIVED
+        if "PFSPECIALNEEDSNOTES" in an: special_needs_notes = an.PFSPECIALNEEDSNOTES
         line = []
         # This specific CSV ordering has been mandated by PetFinder in their import docs of August 2019
         # ID
@@ -243,13 +255,13 @@ class PetFinderPublisher(FTPPublisher):
         # Birth Date
         line.append(self.pfDate(an.DATEOFBIRTH))
         # primaryColor
-        line.append("\"\"") # We don't send this
+        line.append(primary_color)
         # secondaryColor
-        line.append("\"\"") # or this
+        line.append(secondary_color)
         # tertiaryColor
-        line.append("\"\"") # or even this
+        line.append(tertiary_color)
         # coat_length
-        line.append("\"\"") # nope
+        line.append(coat_length)
         # Adoption Fee
         if an.FEE > 0:
             line.append("\"%0.2f\"" % (an.FEE / 100))
@@ -258,9 +270,9 @@ class PetFinderPublisher(FTPPublisher):
         # Display adoption fee?
         line.append(self.pfYesNo(an.FEE > 0))
         # Adoption fee waived
-        line.append("\"\"") # nope
-        # Special Needs Notes : Not used
-        line.append("\"\"")
+        line.append(adoption_fee_waived)
+        # Special Needs Notes 
+        line.append(special_needs_notes)
         # No Other pets?
         line.append("\"%s\"" % (self.pfYesNo(False)))
         # No Other Note
