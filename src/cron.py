@@ -330,6 +330,13 @@ def maint_db_reinstall_default_onlineforms(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_reinstall_default_onlineforms: %s" % em, "cron.maint_db_reinstall_default_onlineforms", dbo, sys.exc_info())
 
+def maint_db_replace_html_entities(dbo):
+    try:
+        dbupdate.replace_html_entities(dbo)
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_db_replace_html_entities: %s" % em, "cron.maint_db_replace_html_entities", dbo, sys.exc_info())
+
 def maint_db_reset(dbo):
     try:
         dbupdate.reset_db(dbo)
@@ -486,6 +493,8 @@ def run(dbo, mode):
         maint_db_reinstall_default_onlineforms(dbo)
     elif mode == "maint_db_reinstall_default_templates":
         maint_db_reinstall_default_templates(dbo)
+    elif mode == "maint_db_replace_html_entities":
+        maint_db_replace_html_entities(dbo)
     elif mode == "maint_db_reset":
         maint_db_reset(dbo)
     elif mode == "maint_db_update":
@@ -554,7 +563,6 @@ def print_usage():
     print("       maint_animal_figures - calculate all monthly/annual figures for all time")
     print("       maint_animal_figures_annual - calculate all annual figures for all time")
     print("       maint_db_diagnostic - run database diagnostics")
-    print("       maint_db_fix_preferred_photos - fix/reset preferred flags for all photo media to latest")
     print("       maint_db_dump - produce a dump of INSERT statements to recreate the db")
     print("       maint_db_dump_dbfs_base64 - dump the dbfs table and include all content as base64")
     print("       maint_db_dump_merge - produce a dump of INSERT statements, renumbering IDs to +100000")
@@ -563,10 +571,12 @@ def print_usage():
     print("       maint_db_dump_hsqldb - produce a complete HSQLDB file for ASM2")
     print("       maint_db_dump_lookups - produce an SQL dump of lookup tables only")
     print("       maint_db_dump_smcom - produce an SQL dump for import into sheltermanager.com")
+    print("       maint_db_fix_preferred_photos - fix/reset preferred flags for all photo media to latest")
     print("       maint_db_install - install structure/data into a new empty database")
     print("       maint_db_reinstall - wipe the db and reinstall all default data and templates")
     print("       maint_db_reinstall_default_onlineforms - reloads default online forms")
     print("       maint_db_reinstall_default_templates - reloads default document/publishing templates")
+    print("       maint_db_replace_html_entities - substitutes html entities for unicode in all text fields")
     print("       maint_db_reset - wipe the db of all but lookup data")
     print("       maint_db_delete_orphaned_media - delete all entries from the dbfs not in media")
     print("       maint_db_update - run any outstanding database updates")

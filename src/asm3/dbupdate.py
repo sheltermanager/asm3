@@ -38,7 +38,7 @@ VERSIONS = (
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
-    34409, 34410, 34411, 34500, 34501, 34502
+    34409, 34410, 34411, 34500, 34501
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -2835,6 +2835,121 @@ def fix_preferred_photos(dbo):
         "ON z.NewPref=media.ID SET WebsitePhoto=1, DocPhoto=1")
     return ra
 
+def replace_html_entities(dbo):
+    """
+    Substitutes HTML entities in every text field in the database with their appropriate unicode codepoint.
+    Used for the transition between v44 and v45 where we stopped storing unicode as HTML entities and an
+    existing database needs to be switched. 
+    Only really needs to be run for non-English databases (en, en_GB, and en_AU)
+    """
+    cols = {
+        "accounts": [ "Code", "Description" ],
+        "accountstrx": [ "Description" ],
+        "additional": [ "Value" ],
+        "additionalfield": [ "FieldName", "FieldLabel", "Tooltip", "LookupValues", "DefaultValue" ],
+        "adoption": [ "Comments", "ReasonForReturn" ],
+        "animal": [ "BreedName", "Markings", "AgeGroup", "HiddenAnimalDetails", "AnimalComments", "ReasonForEntry", 
+            "ReasonNO", "HealthProblems", "PTSReason", "AdditionalFlags", "ShelterLocationUnit", "TimeOnShelter", 
+            "TotalTimeOnShelter", "AgeGroupActiveMovement", "AnimalAge" ],
+        "animalcontrol": [ "CallNotes", "DispatchAddress", "DispatchTown", "DispatchCounty", "DispatchPostcode",
+                "DispatchLatLong", "DispatchedACO", "AnimalDescription", "AgeGroup"],
+        "animalcost": [ "Description" ],
+        "animaldiet": [ "Comments" ],
+        "animalfound": [ "AgeGroup", "DistFeat", "AreaFound", "AreaPostcode", "Comments" ],
+        "animallitter": [ "Comments" ],
+        "animallost": [ "AgeGroup", "DistFeat", "AreaLost", "AreaPostcode", "Comments" ],
+        "animalmedical": [ "TreatmentName", "Dosage", "Comments" ],
+        "animalmedicaltreatment": [ "GivenBy", "Comments" ],
+        "animaltest": [ "Comments" ],
+        "animaltransport": [ "TransportReference", "PickupAddress", "PickupTown", "PickupCounty", "PickupPostcode", 
+                "PickupCountry", "DropoffAddress", "DropoffTown", "DropoffCounty", "DropoffPostcode", "DropoffCountry", 
+                "Comments" ],
+        "animaltype": [ "AnimalType", "AnimalDescription" ],
+        "animalvaccination": [ "GivenBy", "Manufacturer", "Comments" ],
+        "animalwaitinglist": [ "AnimalDescription", "ReasonForWantingToPart", "ReasonForRemoval", "Comments" ],
+        "basecolour": [ "BaseColour", "BaseColourDescription" ],
+        "breed": [ "BreedName", "BreedDescription" ],
+        "citationtype": [ "CitationName", "CitationDescription" ],
+        "clinicappointment": [ "ApptFor", "ReasonForAppointment", "Comments" ],
+        "clinicinvoiceitem": [ "Description" ],
+        "costtype": [ "CostTypeName" ],
+        "deathreason": [ "ReasonName", "ReasonDescription" ],
+        "diary": [ "DiaryForName", "Subject", "Note", "Comments" ],
+        "diarytaskdetail": [ "WhoFor", "Subject", "Note" ],
+        "diarytaskhead": [ "Name" ],
+        "diet": [ "DietName", "DietDescription" ],
+        "donationtype": [ "DonationName", "DonationDescription" ],
+        "donationpayment": [ "PaymentName", "PaymentDescription" ],
+        "entryreason": [ "ReasonName", "ReasonDescription" ],
+        "incidentcompleted": [ "CompletedName", "CompletedDescription" ],
+        "incidenttype": [ "IncidentName", "IncidentDescription" ],
+        "internallocation": [ "LocationName", "LocationDescription", "Units" ],
+        "jurisdiction": [ "JurisdictionName", "JurisdictionDescription" ],
+        "licencetype": [ "LicenceTypeName", "LicenceTypeDescription" ],
+        "lksaccounttype": [ "AccountType" ],
+        "lkanimalflags": [ "Flag" ],
+        "lkownerflags": [ "Flag" ],
+        "lksclinicstatus": [ "Status" ],
+        "lkcoattype": [ "CoatType" ],
+        "lksex": [ "Sex" ],
+        "lksize": [ "Size" ],
+        "lksmovementtype": [ "MovementType" ],
+        "lksfieldlink": [ "LinkType" ],
+        "lksfieldtype": [ "FieldType" ],
+        "lksmedialink": [ "LinkType" ],
+        "lksmediatype": [ "MediaType" ],
+        "lksdiarylink": [ "LinkType" ],
+        "lksdonationfreq": [ "Frequency" ],
+        "lksloglink": [ "LinkType" ],
+        "lksrotatype": [ "RotaType" ],
+        "lkstransportstatus": [ "Name" ],
+        "lkurgency": [ "Urgency" ],
+        "lksyesno": [ "Name" ],
+        "lksynun": [ "Name" ],
+        "lksposneg": [ "Name" ],
+        "lkworktype": [ "WorkType" ],
+        "log": [ "Comments" ],
+        "logtype": [ "LogTypeName", "LogTypeDescription" ],
+        "media": [ "MediaNotes" ],
+        "medicalprofile": [ "ProfileName", "TreatmentName", "Dosage", "Comments" ],
+        "messages": [ "ForName", "Message" ],
+        "onlineform": [ "Name", "Description" ],
+        "onlineformfield": [ "Label", "Lookups" ],
+        "owner": [ "OwnerCode", "OwnerTitle", "OwnerInitials", "OwnerForeNames", "OwnerSurname", "OwnerName", 
+            "OwnerAddress", "OwnerTown", "OwnerCounty", "OwnerPostcode", "OwnerCountry", "LatLong", "HomeTelephone",
+            "WorkTelephone", "MobileTelephone", "EmailAddress", "Comments", "MembershipNumber", "AdditionalFlags",
+            "HomeCheckAreas", "MatchCommentsContain" ],
+        "ownercitation": [ "Comments" ],
+        "ownerdonation": [ "ChequeNumber", "Comments" ],
+        "ownerinvestigation": [ "Notes" ],
+        "ownerlicence": [ "LicenceNumber", "Comments" ],
+        "ownerrota": [ "Comments" ],
+        "ownertraploan": [ "TrapNumber", "Comments" ],
+        "ownervoucher": [ "VoucherCode", "Comments" ],
+        "pickuplocation": [ "LocationName", "LocationDescription" ],
+        "reservationstatus": [ "StatusName", "StatusDescription" ],
+        "role": [ "Rolename" ],
+        "site": [ "SiteName" ],
+        "species": [ "SpeciesName", "SpeciesDescription" ],
+        "stocklevel": [ "Name", "UnitName", "Description" ],
+        "stocklocation": [ "LocationName", "LocationDescription" ],
+        "stockusage": [ "Comments" ],
+        "stockusagetype": [ "UsageTypeName", "UsageTypeDescription" ], 
+        "templatedocument": [ "Name", "Path" ],
+        "templatehtml": [ "Name" ],
+        "testtype": [ "TestName", "TestDescription" ],
+        "testresult": [ "ResultName", "ResultDescription" ],
+        "traptype": [ "TrapTypeName", "TrapTypeDescription" ],
+        "transporttype": [ "TransportTypeName", "TransportTypeDescription" ],
+        "users": [ "UserName", "RealName" ],
+        "voucher": [ "VoucherName", "VoucherDescription" ],
+        "vaccinationtype": [ "VaccinationType", "VaccinationDescription" ]
+    }
+    for table, fields in cols.items():
+        clauses = [ f"{f}={dbo.sql_decode_html(f)}" for f in fields ]
+        dbo.execute_dbupdate(f"UPDATE {table} SET {','.join(clauses)}")
+    if asm3.smcom.active(): asm3.smcom.vacuum_full(dbo)
+
 def check_for_updates(dbo):
     """
     Checks to see what version the database is on and whether or
@@ -2926,15 +3041,11 @@ def remove_asm2_compatibility(dbo):
     # ASM2_COMPATIBILITY
     dbo.execute_dbupdate("ALTER TABLE users DROP COLUMN SecurityMap")
     dbo.execute_dbupdate("ALTER TABLE animal DROP COLUMN SmartTagSentDate")
-    dbo.execute_dbupdate("ALTER TABLE animal DROP COLUMN YearCodeID")
-    dbo.execute_dbupdate("ALTER TABLE animal DROP COLUMN UniqueCodeID")
     dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN LastPublished")
     dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN LastPublishedPF")
     dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN LastPublishedAP")
     dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN LastPublishedP911")
     dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN LastPublishedRG")
-    dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN NewSinceLastPublish")
-    dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN UpdatedSinceLastPublish")
 
 def update_3000(dbo):
     path = dbo.installpath
@@ -5332,7 +5443,4 @@ def update_34501(dbo):
     add_column(dbo, "onlineform", "EmailCoordinator", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineform SET EmailCoordinator = 0")
 
-def update_34502(dbo):
-    # Force an update of stored procedures so that asm_decode_html is available for subsequent updates
-    install_db_stored_procedures(dbo)
 
