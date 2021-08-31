@@ -241,9 +241,9 @@ def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, visualaid
         <html>
         <head>
         <title>%(title)s</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="shortcut icon" href="static/images/logo/icon-16.png" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" href="static/images/logo/icon-16.png">
         %(jquery)s
         %(css)s
         <script type="text/javascript">

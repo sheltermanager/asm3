@@ -1696,12 +1696,17 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
                         newval = newval.replace("&", "&amp;")
                         newval = newval.replace("<", "&lt;")
                         newval = newval.replace(">", "&gt;")
-            s = s[0:sp] + str(newval) + s[ep + len(closer):]
+            s = s[0:sp] + newval + s[ep + len(closer):]
             sp = s.find(opener, sp)
         else:
             # No end marker for this tag, stop processing
             break
-    return s
+    if use_xml_escaping:
+        # Escape all unicode chars as HTML entities. 
+        # TinyMCE will strip non-ascii chars when loading the document for some reason.
+        return asm3.utils.encode_html(s)
+    else:
+        return s
 
 def substitute_template(dbo, templateid, tags, imdata = None):
     """
