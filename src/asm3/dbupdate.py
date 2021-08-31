@@ -2875,6 +2875,7 @@ def replace_html_entities(dbo):
         "clinicappointment": [ "ApptFor", "ReasonForAppointment", "Comments" ],
         "clinicinvoiceitem": [ "Description" ],
         "costtype": [ "CostTypeName" ],
+        "customreport": [ "Title", "Category", "SQLCommand", "HTMLBody", "Description" ],
         "deathreason": [ "ReasonName", "ReasonDescription" ],
         "diary": [ "DiaryForName", "Subject", "Note", "Comments" ],
         "diarytaskdetail": [ "WhoFor", "Subject", "Note" ],
