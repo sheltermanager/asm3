@@ -1681,22 +1681,20 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
             matchtag = s[sp + len(opener):ep].upper()
             newval = ""
             if matchtag in tags:
-                newval = tags[matchtag]
-                if newval is not None:
-                    newval = str(newval)
-                    # Escape xml entities unless the replacement tag is an
-                    # image, URL or contains HTML entities
-                    if use_xml_escaping and \
-                        not newval.lower().startswith("<img") and \
-                        not newval.lower().find("&#") != -1 and \
-                        not newval.lower().find("/>") != -1 and \
-                        not newval.lower().startswith("<table") and \
-                        not newval.lower().startswith("http") and \
-                        not newval.lower().startswith("image?"):
-                        newval = newval.replace("&", "&amp;")
-                        newval = newval.replace("<", "&lt;")
-                        newval = newval.replace(">", "&gt;")
-            s = s[0:sp] + newval + s[ep + len(closer):]
+                newval = str(tags[matchtag])
+                # Escape xml entities unless the replacement tag is an
+                # image, URL or contains HTML entities
+                if use_xml_escaping and \
+                    not newval.lower().startswith("<img") and \
+                    not newval.lower().find("&#") != -1 and \
+                    not newval.lower().find("/>") != -1 and \
+                    not newval.lower().startswith("<table") and \
+                    not newval.lower().startswith("http") and \
+                    not newval.lower().startswith("image?"):
+                    newval = newval.replace("&", "&amp;")
+                    newval = newval.replace("<", "&lt;")
+                    newval = newval.replace(">", "&gt;")
+            s = "%s%s%s" % ( s[0:sp], newval, s[ep + len(closer):] )
             sp = s.find(opener, sp)
         else:
             # No end marker for this tag, stop processing
