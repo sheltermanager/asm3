@@ -2850,9 +2850,9 @@ def replace_html_entities(dbo):
         #"additional": [ "Value" ], # Handled separately due to lack of ID field
         "additionalfield": [ "FieldName", "FieldLabel", "Tooltip", "LookupValues", "DefaultValue" ],
         "adoption": [ "Comments", "ReasonForReturn" ],
-        "animal": [ "BreedName", "Markings", "AgeGroup", "HiddenAnimalDetails", "AnimalComments", "ReasonForEntry", 
-            "ReasonNO", "HealthProblems", "PTSReason", "AdditionalFlags", "ShelterLocationUnit", "TimeOnShelter", 
-            "TotalTimeOnShelter", "AgeGroupActiveMovement", "AnimalAge" ],
+        "animal": [ "AnimalName", "BreedName", "Markings", "AgeGroup", "HiddenAnimalDetails", "AnimalComments", 
+            "ReasonForEntry", "ReasonNO", "HealthProblems", "PTSReason", "AdditionalFlags", "ShelterLocationUnit", 
+            "TimeOnShelter", "TotalTimeOnShelter", "AgeGroupActiveMovement", "AnimalAge" ],
         "animalcontrol": [ "CallNotes", "DispatchAddress", "DispatchTown", "DispatchCounty", "DispatchPostcode",
                 "DispatchLatLong", "DispatchedACO", "AnimalDescription", "AgeGroup"],
         "animalcost": [ "Description" ],
