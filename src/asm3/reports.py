@@ -721,7 +721,13 @@ class Report:
         returns nothing.
         """
         if self.omitHeaderFooter:
-            return "<html><head><title></title></head><body>"
+            return "<!DOCTYPE html>\n" \
+                "<html>\n" \
+                "<head>\n" \
+                "<meta charset=\"utf-8\">\n" \
+                "<title></title>\n" \
+                "</head>\n" \
+                "<body>\n"
         elif self.isSubReport:
             return ""
         else:
