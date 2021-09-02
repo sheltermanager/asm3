@@ -2951,8 +2951,8 @@ def replace_html_entities(dbo):
     }
     # Handle additional fields separately due to their lack of ID field
     batch = []
-    for r in dbo.query("SELECT LinkType, LinkID, AdditionalFieldID, Value FROM additional"):
-        batch.append(( r.VALUE, r.LINKTYPE, r.LINKID, r.ADDITIONALFIELDID ))
+    for r in dbo.query("SELECT LinkType, LinkID, AdditionalFieldID, Value FROM additional WHERE Value LIKE '%&#%'"):
+        batch.append(( asm3.utils.decode_html(r.VALUE), r.LINKTYPE, r.LINKID, r.ADDITIONALFIELDID ))
     asm3.al.info(f"additional ({len(batch)} rows)", "dbupdate.replace_html_entities", dbo)
     dbo.execute_many("UPDATE additional SET Value=? WHERE LinkType=? AND LinkID=? AND AdditionalFieldID=?", batch)
     for table, fields in cols.items():
