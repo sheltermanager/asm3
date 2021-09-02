@@ -2909,6 +2909,7 @@ def replace_html_entities(dbo):
         "lkurgency": [ "Urgency" ],
         "lksyesno": [ "Name" ],
         "lksynun": [ "Name" ],
+        "lksynunk": [ "Name" ],
         "lksposneg": [ "Name" ],
         "lkworktype": [ "WorkType" ],
         "log": [ "Comments" ],
