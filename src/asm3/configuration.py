@@ -1259,6 +1259,9 @@ def savourlife_password(dbo):
 def savourlife_interstate(dbo):
     return cboolean(dbo, "SavourLifeInterstate")
 
+def savourlife_radius(dbo):
+    return cint(dbo, "SavourLifeRadius")
+
 def scale_pdfs(dbo):
     return cboolean(dbo, "ScalePDFs", DEFAULTS["ScalePDFs"] == "Yes")
 

@@ -630,6 +630,11 @@ $(function() {
                 '<td><select id="slinterstate" class="asm-selectbox cfg" data="SavourLifeInterstate">',
                 '<option>No</option><option>Yes</option></select></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="slradius">Max adoption distance (km)</label>',
+                '</td>',
+                '<td><input id="slradius" class="asm-textbox asm-numberbox cfg" data="SavourLifeRadius" /></td>',
+                '</tr>',
                 '</table>',
                 '</div>'
             ].join("\n");

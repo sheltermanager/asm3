@@ -1,6 +1,7 @@
 45
 ================
 
+02/09/21 Add radius attribute to SavourLife
 30/08/21 PetFinder allow additional fields for colors/coat_length #767
 30/08/21 Remove use of HTML entities at the backend #1038
 30/08/21 Use ILIKE when available for performance/indexes #1038
