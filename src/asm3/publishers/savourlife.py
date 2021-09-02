@@ -351,7 +351,7 @@ class SavourLifePublisher(AbstractPublisher):
             "SpecialNeeds":             "",
             "MedicalIssues":            self.replaceSmartHTMLEntities(an.HEALTHPROBLEMS),
             "InterstateAdoptionAvailable": interstate, 
-            "Radius":                   radius, 
+            "DistanceRestriction":      asm3.utils.iif(radius == 0, None, radius),
             "FosterCareRequired":       needs_foster,
             "BondedPair":               an.BONDEDANIMALID is not None and an.BONDEDANIMALID > 0,
             "SizeWhenAdult":            size,
