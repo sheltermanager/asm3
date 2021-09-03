@@ -38,7 +38,7 @@ VERSIONS = (
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
-    34409, 34410, 34411, 34500, 34501, 34502
+    34409, 34410, 34411, 34500, 34501, 34502, 34503
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1054,7 +1054,8 @@ def sql_structure(dbo):
         fid(), fstr("LinkType") ), False)
 
     sql += table("lksrotatype", (
-        fid(), fstr("RotaType") ), False)
+        fid(), fstr("RotaType"),
+        fint("IsRetired", True) ), False)
 
     sql += table("lkstransportstatus", (
         fid(), fstr("Name") ), False)
@@ -1075,7 +1076,8 @@ def sql_structure(dbo):
         fid(), fstr("Name") ), False)
 
     sql += table("lkworktype", (
-        fid(), fstr("WorkType") ), False)
+        fid(), fstr("WorkType"),
+        fint("IsRetired", True) ), False)
 
     sql += table("log", (
         fid(),
@@ -5467,4 +5469,9 @@ def update_34502(dbo):
     # that they are no longer needed.
     if dbo.locale not in ( "en", "en_GB", "en_AU" ):
         replace_html_entities(dbo)
+
+def update_34503(dbo):
+    # add lkworktype.IsRetired
+    add_column(dbo, "lkworktype", "IsRetired", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE lkworktype SET IsRetired = 0")
 
