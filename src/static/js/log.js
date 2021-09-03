@@ -18,7 +18,7 @@ $(function() {
                     { json_field: "LOGTYPEID", post_field: "type", label: _("Type"), type: "select", 
                         options: { displayfield: "LOGTYPENAME", valuefield: "ID", rows: controller.logtypes }},
                     { json_field: "DATE", post_field: "logdate", label: _("Date"), type: "date", validation: "notblank", defaultval: new Date() },
-                    { json_field: "DATE", post_field: "logtime", label: _("Time"), type: "time", defaultval: format.time(new Date()) },
+                    { json_field: "DATE", post_field: "logtime", label: _("Time"), type: "time" },
                     { json_field: "COMMENTS", post_field: "entry", label: _("Comments"), type: "textarea" }
                 ]
             };
@@ -54,6 +54,7 @@ $(function() {
                         await tableform.dialog_show_add(dialog, {
                             onload: function() {
                                 $("#type").select("value", config.integer("AFDefaultLogType"));    
+                                $("#logtime").val(format.time(new Date()));
                             },
                             onadd: async function() {
                                 try {
