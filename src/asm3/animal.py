@@ -204,6 +204,7 @@ def get_animal_query(dbo):
         "vid.MediaNotes AS WebsiteVideoNotes, " \
         "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
         "(SELECT COUNT(*) FROM media WHERE MediaMimeType = 'image/jpeg' AND Date >= %(twodaysago)s AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages, " \
+        "CASE WHEN EXISTS(SELECT ID FROM animalmedicaltreatment WHERE AnimalID=a.ID AND DateRequired <= %(today)s AND DateGiven Is Null) THEN 1 ELSE 0 END AS HasOutstandingMedical, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.NonShelterAnimal) AS NonShelterAnimalName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrueltyCase) AS CrueltyCaseName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrossBreed) AS CrossBreedName, " \

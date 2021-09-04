@@ -563,6 +563,11 @@ $(function() {
                     warn.push(_("This animal is part of a cruelty case and should not leave the shelter."));
                 }
 
+                // Outstanding medical
+                if (config.bool("WarnOSMedical") && a.HASOUTSTANDINGMEDICAL == 1) {
+                    warn.push(_("This animal has outstanding medical treatments."));
+                }
+
                 // Quarantined
                 if (a.ISQUARANTINE == 1) {
                     warn.push(_("This animal is currently quarantined and should not leave the shelter."));
@@ -579,12 +584,12 @@ $(function() {
                 }
 
                 // Check for bonded animals and warn
-                if (a.BONDEDANIMALID != "0" || a.BONDEDANIMAL2ID != "0") {
+                if (a.BONDEDANIMALID || a.BONDEDANIMAL2ID) {
                     let bw = "";
-                    if (a.BONDEDANIMAL1NAME != "" && a.BONDEDANIMAL1NAME != null) {
+                    if (a.BONDEDANIMAL1NAME) {
                         bw += a.BONDEDANIMAL1CODE + " - " + a.BONDEDANIMAL1NAME;
                     }
-                    if (a.BONDEDANIMAL2NAME != "" && a.BONDEDANIMAL2NAME != null) {
+                    if (a.BONDEDANIMAL2NAME) {
                         if (bw != "") { bw += ", "; }
                         bw += a.BONDEDANIMAL2CODE + " - " + a.BONDEDANIMAL2NAME;
                     }

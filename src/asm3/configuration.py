@@ -362,6 +362,7 @@ DEFAULTS = {
     "WarnNoHomeCheck": "Yes",
     "WarnBannedOwner": "Yes",
     "WarnOOPostcode": "Yes",
+    "WarnOSMedical": "Yes",
     "WarnSimilarAnimalName": "Yes",
     "WeightChangeLog": "Yes",
     "WeightChangeLogType": "4",

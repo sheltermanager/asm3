@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-08-27 15:45+0000\n"
+"POT-Creation-Date: 2021-09-04 16:48+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -12365,6 +12365,10 @@ msgstr ""
 msgid "This animal has not been microchipped."
 msgstr ""
 
+#: movements.js move_adopt.js
+msgid "This animal has outstanding medical treatments."
+msgstr ""
+
 #: animal.js
 msgid "This animal has special needs"
 msgstr ""
@@ -13892,6 +13896,10 @@ msgstr ""
 
 #: options.js
 msgid "Warn when adopting an animal who has not been microchipped"
+msgstr ""
+
+#: options.js
+msgid "Warn when adopting an animal who has outstanding medical treatments"
 msgstr ""
 
 #: options.js

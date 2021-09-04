@@ -1161,6 +1161,7 @@ $(function() {
                 '<p>',
                 '<input data="WarnUnaltered" id="warnunaltered" class="asm-checkbox" type="checkbox" /> <label for="warnunaltered">' + _("Warn when adopting an unaltered animal") + '</label><br />',
                 '<input data="WarnNoMicrochip" id="warnnomicrochip" class="asm-checkbox" type="checkbox" /> <label for="warnnomicrochip">' + _("Warn when adopting an animal who has not been microchipped") + '</label><br />',
+                '<input data="WarnOSMedical" id="warnosmedical" class="asm-checkbox" type="checkbox" /> <label for="warnosmedical">' + _("Warn when adopting an animal who has outstanding medical treatments") + '</label><br />',
                 '<input data="WarnNoHomeCheck" id="warnnohomecheck" class="asm-checkbox" type="checkbox" /> <label for="warnnohomecheck">' + _("Warn when adopting to a person who has not been homechecked") + '</label><br />',
                 '<input data="WarnBannedOwner" id="warnbanned" class="asm-checkbox" type="checkbox" /> <label for="warnbanned">' + _("Warn when adopting to a person who has been banned from adopting animals") + '</label><br />',
                 '<input data="WarnOOPostcode" id="warnoopostcode" class="asm-checkbox" type="checkbox" /> <label for="warnoopostcode">' + _("Warn when adopting to a person who lives in the same area as the original owner") + '</label><br />',

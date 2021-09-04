@@ -38,6 +38,7 @@ $(function() {
                 this.warnbox("quarantine", _("This animal is currently quarantined and should not leave the shelter.")),
                 this.warnbox("unaltered", _("This animal has not been altered.")),
                 this.warnbox("notmicrochipped", _("This animal has not been microchipped.")),
+                this.warnbox("outstandingmedical", _("This animal has outstanding medical treatments.")),
                 '<table class="asm-table-layout">',
                 '<tr>',
                 '<td>',
@@ -174,6 +175,7 @@ $(function() {
                 $("#quarantine").fadeOut();
                 $("#unaltered").fadeOut();
                 $("#notmicrochipped").fadeOut();
+                $("#outstandingmedical").fadeOut();
                 $("#adopt").button("enable");
 
                 // If the animal is not on the shelter and not fostered or at a retailer, 
@@ -218,6 +220,11 @@ $(function() {
                 // Not microchipped
                 if (config.bool("WarnNoMicrochip") && a.IDENTICHIPPED == 0) {
                     $("#notmicrochipped").fadeIn();
+                }
+
+                // Outstanding medical
+                if (config.bool("WarnOSMedical") && a.HASOUTSTANDINGMEDICAL == 1) {
+                    $("#outstandingmedical").fadeIn();
                 }
 
                 if (a.ACTIVEMOVEMENTTYPE == 2) {
@@ -338,6 +345,7 @@ $(function() {
             $("#quarantine").hide();
             $("#unaltered").hide();
             $("#notmicrochipped").hide();
+            $("#outstandingmedical").hide();
             $("#fosterinfo").hide();
             $("#reserveinfo").hide();
             $("#feeinfo").hide();
