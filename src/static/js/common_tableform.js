@@ -158,7 +158,7 @@ const tableform = {
 
     /** Formats a value as a date and time */
     format_datetime: function(row, v) {
-        return format.date(v) + " " + format.time(v);
+        return '<span style="white-space: nowrap;">' + format.date(v) + " " + format.time(v) + '</span>';
     },
 
     /** Formats a value as a string */
