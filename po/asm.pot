@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-09-04 16:48+0000\n"
+"POT-Creation-Date: 2021-09-04 17:16+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -6411,6 +6411,10 @@ msgstr ""
 
 #: incident.js diary.js citations.js media.js log.js
 msgid "Incident {0}, {1}: {2}"
+msgstr ""
+
+#: diary.py
+msgid "Incident: {0}"
 msgstr ""
 
 #: animal.js
