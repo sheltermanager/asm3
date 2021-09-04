@@ -99,6 +99,13 @@ def get_animalcontrol(dbo, acid):
         ac["EDITROLES"] = "|".join(editrolenames)
         return ac
 
+def get_animalcontrol_numbertype(dbo, acid):
+    """ Return the number and type of an incident (used by diary notes) """
+    ac = dbo.first_row(dbo.query("SELECT ac.ID, tt.IncidentName FROM animalcontrol ac INNER JOIN incidenttype tt ON " \
+        "tt.ID = ac.IncidentTypeID WHERE ac.ID = ?", [acid]))
+    if ac is None: return ""
+    return f"{ac.ID:06} - {ac.INCIDENTNAME}"
+
 def get_animalcontrol_animals(dbo, acid):
     """ Return the list of linked animals for an incident """
     return dbo.query(get_animalcontrol_animals_query(dbo) + " WHERE aca.AnimalControlID = ?", [acid])
@@ -454,6 +461,7 @@ def update_animalcontrol_from_form(dbo, post, username, geocode=True):
     }, username)
 
     asm3.additional.save_values_for_link(dbo, post, username, acid, "incident")
+    asm3.diary.update_link_info(dbo, username, asm3.diary.ANIMALCONTROL, acid)
     update_animalcontrol_roles(dbo, acid, post.integer_list("viewroles"), post.integer_list("editroles"))
 
     # Check/update the geocode for the dispatch address

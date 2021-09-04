@@ -312,6 +312,7 @@ def update_waitinglist_from_form(dbo, post, username):
     }, username)
 
     asm3.additional.save_values_for_link(dbo, post, username, wlid, "waitinglist")
+    asm3.diary.update_link_info(dbo, username, asm3.diary.WAITINGLIST, wlid)
 
 def insert_waitinglist_from_form(dbo, post, username):
     """

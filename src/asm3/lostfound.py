@@ -664,6 +664,7 @@ def update_lostanimal_from_form(dbo, post, username):
         "Comments":         post["comments"]
     }, username)
     asm3.additional.save_values_for_link(dbo, post, username, lfid, "lostanimal")
+    asm3.diary.update_link_info(dbo, username, asm3.diary.LOSTANIMAL, lfid)
 
 def insert_lostanimal_from_form(dbo, post, username):
     """
@@ -735,6 +736,7 @@ def update_foundanimal_from_form(dbo, post, username):
         "Comments":         post["comments"]
     }, username)
     asm3.additional.save_values_for_link(dbo, post, username, lfid, "foundanimal")
+    asm3.diary.update_link_info(dbo, username, asm3.diary.FOUNDANIMAL, lfid)
 
 def insert_foundanimal_from_form(dbo, post, username):
     """

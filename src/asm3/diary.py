@@ -282,8 +282,11 @@ def get_link_info(dbo, linktypeid, linkid):
     if linktypeid == ANIMAL:
         return "%s [%s]" % (asm3.animal.get_animal_namecode(dbo, linkid), asm3.animal.get_display_location_noq(dbo, linkid))
 
+    elif linktypeid == ANIMALCONTROL:
+        return asm3.animalcontrol.get_animalcontrol_numbertype(dbo, linkid)
+
     elif linktypeid == PERSON:
-        return asm3.person.get_person_name(dbo, linkid)
+        return asm3.i18n._("Incident: {0}", l).format(asm3.person.get_person_name(dbo, linkid))
 
     elif linktypeid == LOSTANIMAL:
         return asm3.i18n._("Lost Animal: {0}", l).format(asm3.lostfound.get_lost_person_name(dbo, linkid))
@@ -293,6 +296,14 @@ def get_link_info(dbo, linktypeid, linkid):
 
     elif linktypeid == WAITINGLIST:
         return asm3.i18n._("Waiting List: {0}", l).format(asm3.waitinglist.get_person_name(dbo, linkid))
+
+def update_link_info(dbo, username, linktypeid, linkid):
+    """
+    Updates all diary notes of linktypeid/linkid
+    """
+    dbo.update("diary", f"LinkType={linktypeid} AND LinkID={linkid}", {
+        "LinkInfo":     get_link_info(dbo, linktypeid, linkid)
+    }, username)
 
 def insert_diary_from_form(dbo, username, linktypeid, linkid, post):
     """

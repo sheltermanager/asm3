@@ -90,7 +90,7 @@ $(function() {
                             if (row.LINKTYPE == 3) { link = "lostanimal?id=" + row.LINKID; }
                             if (row.LINKTYPE == 4) { link = "foundanimal?id=" + row.LINKID; }
                             if (row.LINKTYPE == 5) { link = "waitinglist?id=" + row.LINKID; }
-                            if (row.LINKTYPE == 6) { link = "incident?id=" + row.LINKID; }
+                            if (row.LINKTYPE == 7) { link = "incident?id=" + row.LINKID; }
                             if (link != "#") { return '<a href="' + link + '">' + row.LINKINFO + '</a>'; }
                             return row.LINKINFO;
                         },

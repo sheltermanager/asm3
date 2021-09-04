@@ -919,6 +919,9 @@ def update_person_from_form(dbo, post, username, geocode=True):
     # Save any asm3.additional.field values given
     asm3.additional.save_values_for_link(dbo, post, username, pid, "person")
 
+    # Update diary link info
+    asm3.diary.update_link_info(dbo, username, asm3.diary.PERSON, pid)
+
     # Check/update the geocode for the person's address
     if geocode: update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"], post["country"])
 
