@@ -1699,13 +1699,7 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
         else:
             # No end marker for this tag, stop processing
             break
-    if use_xml_escaping:
-        # Escape all unicode chars as HTML entities. This solves a couple of problems:
-        # 1. People not specifying encoding in their HTML templates
-        # 2. TinyMCE will strip unicode chars for some reason, entity_encoding = raw/numeric does not work
-        return asm3.utils.encode_html(s)
-    else:
-        return s
+    return s
 
 def substitute_template(dbo, templateid, tags, imdata = None):
     """

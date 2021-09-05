@@ -819,7 +819,6 @@ def escape_tinymce(content):
     escaped or tinymce breaks. 
     """
     c = bytes2str(content)
-    c = strip_non_ascii(c)
     c = c.replace("&gt;", "&amp;gt;")
     c = c.replace("&lt;", "&amp;lt;")
     c = c.replace("<", "&lt;")
