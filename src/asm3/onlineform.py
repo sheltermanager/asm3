@@ -1171,7 +1171,7 @@ def create_animalcontrol(dbo, username, collationid):
     d["incidenttime"] = asm3.i18n.format_time(dbo.now())
     d["calldate"] = d["incidentdate"]
     d["calltime"] = d["incidenttime"]
-    d["incidenttype"] = 1
+    d["incidenttype"] = asm3.configuration.default_incident(dbo)
     for f in fields:
         if f.FIELDNAME == "callnotes": d["callnotes"] = f.VALUE
         if f.FIELDNAME == "dispatchaddress": d["dispatchaddress"] = f.VALUE
