@@ -622,7 +622,7 @@ def get_combined_due(dbo, animalid, start, end):
         "INNER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
         "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
-        "WHERE amt.DateGiven Is Null " \
+        "WHERE am.Status = 0 AND amt.DateGiven Is Null " \
         "AND (amt.DateRequired >= ? AND amt.DateRequired <= ?) AND a.ID = ? " \
         "UNION SELECT " \
         "v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber, " \
