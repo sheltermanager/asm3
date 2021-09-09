@@ -106,7 +106,7 @@ DEFAULTS = {
     "AnnualFiguresShowBabies": "Yes",
     "AnnualFiguresShowBabiesType": "Yes",
     "AnnualFiguresBabyMonths" : "6",
-    "AnnualFiguresSplitAdoptions": "Yes",
+    "AnnualFiguresSplitAdoptions": "No",
     "AnonymisePersonalData": "No",
     "AnonymiseAfterYears": "0",
     "AuditOnViewRecord": "Yes",
