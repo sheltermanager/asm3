@@ -915,14 +915,14 @@ the following order: Latest movement on file, latest reservation on file,
 current owner (if the animal is non-shelter)
 Log keys are available for people, but prefixed with PersonLog instead of just Log.
 
-OwnerTitle 
+Title / OwnerTitle
     The person's title
-OwnerInitials 
+Initials / OwnerInitials 
     The person's initials
-OwnerForenames 
-    (OwnerFirstNames for US users) 
-OwnerSurname 
-    (OwnerLastName for US users) 
+Forenames / OwnerForenames 
+    (Firstnames / OwnerFirstNames for US users) 
+Surname / OwnerSurname 
+    (Lastname / OwnerLastName for US users) 
 OwnerFlags
     A list of the flags assigned to a person, separated by commas.
 OwnerComments 
@@ -951,16 +951,18 @@ OwnerLastChangedDate
     The date this person record was last changed
 OwnerLastChangedBy 
     (OwnerLastChangedByName) - The person who last changed this person record
-OwnerAddress
+Address / OwnerAddress
     The person's address
-OwnerName 
+Name / OwnerName 
     The person's display name in the selected system display format
-OwnerTown 
-    (OwnerCity for US users) 
-OwnerCounty 
-    (OwnerState for US users) 
-OwnerPostcode 
-    (OwnerZipcode for US users) 
+Town / OwnerTown 
+    (City / OwnerCity for US users) 
+County / OwnerCounty 
+    (State / OwnerState for US users) 
+Postcode / OwnerPostcode 
+    (Zipcode / OwnerZipcode for US users) 
+Country / OwnerCountry
+    The country this person lives in
 OwnerLookingFor
     A summary of the "Looking for" slider on the person's record
 OwnerJurisdiction

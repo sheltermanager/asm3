@@ -1251,6 +1251,8 @@ def person_tags(dbo, p, includeImg=False, includeDonations=False, includeVoucher
         "POSTCODE"              : p["OWNERPOSTCODE"],
         "OWNERZIPCODE"          : p["OWNERPOSTCODE"],
         "ZIPCODE"               : p["OWNERPOSTCODE"],
+        "OWNERCOUNTRY"          : p["OWNERCOUNTRY"],
+        "COUNTRY"               : p["OWNERCOUNTRY"],
         "HOMETELEPHONE"         : p["HOMETELEPHONE"],
         "WORKTELEPHONE"         : p["WORKTELEPHONE"],
         "MOBILETELEPHONE"       : p["MOBILETELEPHONE"],
