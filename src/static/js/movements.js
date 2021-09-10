@@ -95,9 +95,14 @@ $(function() {
                     return false;
                 },
                 complete: function(row) {
-                    // If this is the trial book, completion is determined by trial end date passing
-                    if (controller.name == "move_book_trial_adoption" && row.ISTRAIL == 1 && row.TRIALENDDATE && format.date_js(row.TRIALENDDATE) <= new Date()) {
-                        return true;
+                    // If this is the trial book, completion is determined by trial end date passing or the flag being removed
+                    if (controller.name == "move_book_trial_adoption"){
+                        if (row.ISTRIAL == 1 && row.TRIALENDDATE && format.date_js(row.TRIALENDDATE) <= new Date()) {
+                            return true;
+                        }
+                        if (row.ISTRIAL == 0) {
+                            return true;
+                        }
                     }
                     // If this is a cancelled reservation
                     if (row.MOVEMENTTYPE == 0 && row.RESERVATIONCANCELLEDDATE != null) {
@@ -413,6 +418,21 @@ $(function() {
                                 movements.returndate_change();
                             }
                         });
+                    }
+                },
+                { id: "trialfull", text: _("Full Adoption"), icon: "complete", enabled: "multi", perm: "camv",
+                    tooltip: _("Convert this movement from a trial to full adoption"),
+                    hideif: function() {
+                        return controller.name.indexOf("move_book_trial") == -1;
+                    },
+                    click: async function() {
+                        await common.ajax_post("movement", "mode=trialfull&ids=" + tableform.table_ids(table));
+                        $.each(tableform.table_selected_rows(table), function(i, v) {
+                            v.ISTRIAL = 0;
+                            if (!v.TRIALENDDATE) { v.TRIALENDDATE = format.date_now_iso(); }
+                        });
+                        tableform.buttons_default_state(buttons);
+                        tableform.table_update(table);
                     }
                 },
                 { id: "checkout", text: _("Adopter Checkout"), icon: "email", enabled: "one", perm: "emo",

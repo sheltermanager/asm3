@@ -4375,6 +4375,11 @@ class movement(JSONEndpoint):
     def post_insurance(self, o):
         return asm3.movement.generate_insurance_number(o.dbo)
 
+    def post_trialfull(self, o):
+        self.check(asm3.users.CHANGE_MOVEMENT)
+        for mid in o.post.integer_list("ids"):
+            asm3.movement.trial_to_full_adoption(o.dbo, o.user, mid)
+
     def post_checkout(self, o):
         dbo = o.dbo
         post = o.post

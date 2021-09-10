@@ -498,6 +498,18 @@ def return_movement(dbo, movementid, username, animalid = 0, returndate = None):
     asm3.animal.update_animal_status(dbo, animalid)
     asm3.person.update_adopter_flag(dbo, username, personid)
 
+def trial_to_full_adoption(dbo, username, movementid):
+    """
+    Removes the trial flag from movementid
+    If the trial end date on the record is blank, sets it to today
+    """
+    m = dbo.first_row(dbo.query("SELECT AnimalID, OwnerID, TrialEndDate FROM adoption WHERE ID=?", [movementid]))
+    ud = { "IsTrial": 0 }
+    if m.TRIALENDDATE is None: ud["TrialEndDate"] = dbo.today()
+    dbo.update("adoption", movementid, ud, username)
+    asm3.animal.update_animal_status(dbo, m.ANIMALID)
+    asm3.person.update_adopter_flag(dbo, username, m.OWNERID)
+
 def insert_adoption_from_form(dbo, username, post, creating = [], create_payments = True):
     """
     Inserts a movement from the workflow adopt an animal screen.
