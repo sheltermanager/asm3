@@ -386,6 +386,7 @@ def get_animals_brief(animals):
             "HOLDUNTILDATE": a["HOLDUNTILDATE"],
             "ID": a["ID"], 
             "IDENTICHIPPED": a["IDENTICHIPPED"],
+            "ISCOURTESY": a["ISCOURTESY"],
             "ISGOODWITHCATS": a["ISGOODWITHCATS"],
             "ISGOODWITHCHILDREN": a["ISGOODWITHCHILDREN"],
             "ISGOODWITHDOGS": a["ISGOODWITHDOGS"],

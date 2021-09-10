@@ -200,6 +200,7 @@ DEFAULTS = {
     "EmailMessages": "Yes", 
     "EmblemAlwaysLocation": "No",
     "EmblemBonded": "Yes",
+    "EmblemCourtesy": "Yes",
     "EmblemCrueltyCase": "Yes",
     "EmblemDeceased": "Yes",
     "EmblemFutureAdoption": "Yes",

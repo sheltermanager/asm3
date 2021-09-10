@@ -542,6 +542,8 @@ $(function() {
                     html.icon("location") + ' <label for="alwaysshowlocation">' + _("Always show an emblem to indicate the current location") + '</label><br />',
                 '<input data="EmblemBonded" type="checkbox" id="showbonded" class="asm-checkbox" type="checkbox" />',
                     html.icon("bonded") + ' <label for="showbonded">' + _("Bonded") + '</label><br />',
+                '<input data="EmblemCourtesy" type="checkbox" id="showcourtesy" class="asm-checkbox" type="checkbox" />',
+                    html.icon("share") + ' <label for="showcourtesy">' + _("Courtesy Listing") + '</label><br />',
                 '<input data="EmblemCrueltyCase" type="checkbox" id="showcrueltycase" class="asm-checkbox" type="checkbox" />',
                     html.icon("case") + ' <label for="showcrueltycase">' + _("Cruelty Case") + '</label><br />',
                 '<input data="EmblemDeceased" type="checkbox" id="showdeceased" class="asm-checkbox" type="checkbox" />',

@@ -1697,6 +1697,9 @@ const html = {
         if (config.bool("EmblemLongTerm") && a.ARCHIVED == 0 && (a.DAYSONSHELTER > config.integer("LongTermMonths") * 30))  {
             s.push(html.icon("calendar", _("Long term")));
         }
+        if (config.bool("EmblemCourtesy") && a.ISCOURTESY == 1) {
+            s.push(html.icon("share", _("Courtesy Listing")));
+        }
         if (config.bool("EmblemDeceased") && a.DECEASEDDATE != null) {
             s.push(html.icon("death", _("Deceased")));
         }

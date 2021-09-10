@@ -835,7 +835,7 @@ $(function() {
                     { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
                     { id: "match", text: _("Match"), icon: "match", tooltip: _("Match this animal with the lost and found database") },
                     { id: "littermates", text: _("Littermates"), icon: "litter", tooltip: _("View littermates") },
-                    { id: "share", text: _("Share"), type: "buttonmenu", icon: "social" }
+                    { id: "share", text: _("Share"), type: "buttonmenu", icon: "share" }
                 ]),
                 '<div id="asm-details-accordion">',
                 this.render_details(),
