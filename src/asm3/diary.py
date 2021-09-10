@@ -1,6 +1,7 @@
 
 import asm3.al
 import asm3.animal
+import asm3.asynctask
 import asm3.configuration
 import asm3.i18n
 import asm3.lostfound
@@ -304,6 +305,17 @@ def update_link_info(dbo, username, linktypeid, linkid):
     dbo.update("diary", f"LinkType={linktypeid} AND LinkID={linkid}", {
         "LinkInfo":     get_link_info(dbo, linktypeid, linkid)
     }, username)
+
+def update_link_info_incomplete(dbo):
+    """
+    Updates the link info of all incomplete diary notes
+    """
+    rows = dbo.query("SELECT DISTINCT LinkType, LinkID FROM diary WHERE DateCompleted Is Null")
+    asm3.asynctask.set_progress_max(dbo, len(rows))
+    for d in rows:
+        update_link_info(dbo, "system", d.LINKTYPE, d.LINKID)
+        asm3.asynctask.increment_progress_value(dbo)
+    asm3.al.info(f"updated {len(rows)} diary link info elements", "diary.update_link_info_incomplete", dbo)
 
 def insert_diary_from_form(dbo, username, linktypeid, linkid, post):
     """

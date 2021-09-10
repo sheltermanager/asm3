@@ -1931,6 +1931,10 @@ class batch(JSONEndpoint):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Recalculate ALL animal ages/times", l), asm3.animal.update_all_variable_animal_data, o.dbo)
 
+    def post_gendiarylinkinfo(self, o):
+        l = o.locale
+        asm3.asynctask.function_task(o.dbo, _("Regenerate diary link info for incomplete notes", l), asm3.diary.update_link_info_incomplete, o.dbo)
+
     def post_genlookingfor(self, o):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Regenerate 'Person looking for' report", l), asm3.person.update_lookingfor_report, o.dbo)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-09-04 17:16+0000\n"
+"POT-Creation-Date: 2021-09-10 17:41+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -2875,6 +2875,10 @@ msgid "Conure"
 msgstr ""
 
 #: movements.js
+msgid "Convert this movement from a trial to full adoption"
+msgstr ""
+
+#: movements.js
 msgid "Convert this reservation to an adoption"
 msgstr ""
 
@@ -2971,7 +2975,7 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: html.py common.js header_edit_header.js
+#: html.py common.js options.js header_edit_header.js
 msgid "Courtesy Listing"
 msgstr ""
 
@@ -5565,6 +5569,10 @@ msgstr ""
 
 #: movement.py
 msgid "From retailer is only valid on adoption movements."
+msgstr ""
+
+#: movements.js
+msgid "Full Adoption"
 msgstr ""
 
 #: common.js options.js
@@ -9755,6 +9763,10 @@ msgstr ""
 
 #: code.py batch.js
 msgid "Regenerate annual animal figures for"
+msgstr ""
+
+#: code.py batch.js
+msgid "Regenerate diary link info for incomplete notes"
 msgstr ""
 
 #: code.py batch.js
