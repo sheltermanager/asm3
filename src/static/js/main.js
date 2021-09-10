@@ -399,7 +399,7 @@ $(function() {
                 if (d.LINKTYPE == 3) { link = "lostanimal?id=" + d.LINKID; }
                 if (d.LINKTYPE == 4) { link = "foundanimal?id=" + d.LINKID; }
                 if (d.LINKTYPE == 5) { link = "waitinglist?id=" + d.LINKID; }
-                if (d.LINKTYPE == 6) { link = "#"; }
+                if (d.LINKTYPE == 7) { link = "incident?id=" + d.LINKID; }
                 s += '<tr title="' + html.title(common.substitute(_("Added by {0} on {1}"), { "0": d.CREATEDBY, "1": format.date(d.CREATEDDATE) })) + '">';
                 s += '<td>' + format.date(d.DIARYDATETIME);
                 if (d.DIARYFORNAME != asm.user) {
