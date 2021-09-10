@@ -146,11 +146,14 @@ $$BODY
 <h2>Vaccinations</h2>
 {SUBREPORT.SUBREPORT_AnimalPrintVaccination.ANIMALID}
 
+<h2>Tests</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintTest.ANIMALID}
+
 <h2>Medical</h2>
 {SUBREPORT.SUBREPORT_AnimalPrintMedical.ANIMALID}
 
-<h2>Tests</h2>
-{SUBREPORT.SUBREPORT_AnimalPrintTest.ANIMALID}
+<h2>Clinic</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintClinic.ANIMALID}
 
 <h2>Diet</h2>
 {SUBREPORT.SUBREPORT_AnimalPrintDiet.ANIMALID}
@@ -283,6 +286,47 @@ $$HEADER
 HEADER$$
 $$BODY
 <tr><td>$TESTNAME</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFTEST</td><td>$GIVENBY</td><td>$RESULTNAME</td><td>$TESTCOMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintClinic
++++
+SELECT c.*, 
+o.OwnerName, o.OwnerAddress, o.ownerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone,
+a.AnimalName, a.BreedName, s.SpeciesName, a.AnimalAge, st.Status AS StatusName
+FROM clinicappointment c
+INNER JOIN lksclinicstatus st ON st.ID = c.Status
+LEFT OUTER JOIN animal a ON a.ID = c.AnimalID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN owner o ON o.ID = c.OwnerID
+WHERE a.ID = $PARENTKEY$
+ORDER BY c.DateTime
++++
+$$HEADER
+<table cellpadding="5">
+<tr>
+<th>Appointment</th>
+<th>With</th>
+<!--<th>Animal</th>-->
+<th>Person</th>
+<th>Status</th>
+<th>Reason</th>
+<th>Comments</th>
+</tr>
+HEADER$$
+$$BODY
+<tr>
+  <td>$DATETIME</td>
+  <td>$APPTFOR</td>
+  <!--<td>$ANIMALNAME ($BREEDNAME $SPECIESNAME aged $ANIMALAGE)</td>-->
+  <td>$OWNERNAME<br/>
+    $OWNERADDRESS $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE $HOMETELEPHONE $MOBILETELEPHONE</td>
+  <td>$STATUSNAME</td>
+  <td>$REASONFORAPPOINTMENT</td>
+  <td>$COMMENTS</td>
+</tr>
 BODY$$
 $$FOOTER
 </table>
