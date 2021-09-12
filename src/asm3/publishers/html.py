@@ -173,6 +173,7 @@ def get_animal_view_adoptable_html(dbo):
     head, body, foot = asm3.template.get_html_template(dbo, "animalviewadoptables")
     if head == "":
         head = "<!DOCTYPE html>\n<html>\n<head>\n<title>Adoptable Animals</title>\n" \
+            "<meta charset='utf-8'>\n" \
             "<style>\n" \
             ".asm3-adoptable-item { max-width: 200px; font-family: sans-serif; }\n" \
             ".asm3-adoptable-link { font-weight: bold; }\n" \
@@ -204,7 +205,7 @@ def get_animal_view_template(dbo):
     """ Returns a tuple of the header, body and footer for the animalview template """
     head, body, foot = asm3.template.get_html_template(dbo, "animalview")
     if head == "":
-        head = "<!DOCTYPE html>\n<html>\n<head>\n<title>$$SHELTERCODE$$ - $$ANIMALNAME$$</title></head>\n<body>"
+        head = "<!DOCTYPE html>\n<html>\n<head>\n<meta charset='utf-8'>\n<title>$$SHELTERCODE$$ - $$ANIMALNAME$$</title></head>\n<body>"
         body = "<h2>$$SHELTERCODE$$ - $$ANIMALNAME$$</h2><p><img src='$$WEBMEDIAFILENAME$$'/></p><p>$$WEBMEDIANOTES$$</p>"
         foot = "</body>\n</html>"
     return ( head, body, foot )
@@ -250,8 +251,10 @@ class HTMLPublisher(FTPPublisher):
     def getHeader(self):
         header, body, footer = asm3.template.get_html_template(self.dbo, self.pc.style)
         if header == "":
-            header = """<html>
+            header = """<!DOCTYPE html>
+            <html>
             <head>
+            <meta charset="utf-8">
             <title>Animals Available For Adoption</title>
             </head>
             <body>
