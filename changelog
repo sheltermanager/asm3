@@ -1,6 +1,7 @@
 45
 ================
 
+13/09/21 A 0 value in Petfinder notGood fields indicates yes
 10/09/21 Fix dead incident diary links
 10/09/21 Button to convert trial adoptions to full adoption #1030
 10/09/21 Emblem for courtesy listing flag #1036

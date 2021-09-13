@@ -38,6 +38,19 @@ class PetFinderPublisher(FTPPublisher):
         else:
             return "\"\""
 
+    def pfNotGoodWith(self, v):
+        """
+        Returns a CSV entry for yes, no, unknown based on the value.
+        In our scheme v is one of Yes=0, No=1, Unknown=2
+        In their scheme since it's notGood, Yes=0, No=1, Unknown=""
+        """
+        if v == 2:
+            return "\"\""
+        elif v == 1:
+            return "\"1\""
+        else:
+            return "\"0\""
+
     def pfImageUrl(self, urls, index):
         """
         Returns image URL index from urls, returning an empty string if it does not exist.
@@ -215,11 +228,11 @@ class PetFinderPublisher(FTPPublisher):
         # Altered
         line.append(self.pfYesNo(an.NEUTERED == 1))
         # No Dogs
-        line.append(self.pfYesNo(an.ISGOODWITHDOGS == 1))
+        line.append(self.pfNotGoodWith(an.ISGOODWITHDOGS))
         # No Cats
-        line.append(self.pfYesNo(an.ISGOODWITHCATS == 1))
+        line.append(self.pfNotGoodWith(an.ISGOODWITHCATS))
         # No Kids
-        line.append(self.pfYesNo(an.ISGOODWITHCHILDREN == 1))
+        line.append(self.pfNotGoodWith(an.ISGOODWITHCHILDREN))
         # Housetrained
         line.append(self.pfYesNo(an.ISHOUSETRAINED == 0))
         # Declawed
