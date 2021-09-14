@@ -67,6 +67,16 @@ FIELDTYPE_MAP = {
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
 
+AP_NO = 0
+AP_ATTACHANIMAL = 1
+AP_CREATEANIMAL = 2
+AP_CREATEPERSON = 3
+AP_CREATELOSTANIMAL = 4
+AP_CREATEFOUNDANIMAL = 5
+AP_CREATEINCIDENT = 6
+AP_CREATETRANSPORT = 7
+AP_CREATEWAITINGLIST = 8
+
 JSKEY_NAME = 'magicASJSkey'
 JSKEY_VALUE = '918273645'
 
@@ -551,6 +561,7 @@ def insert_onlineform_from_form(dbo, username, post):
     return dbo.insert("onlineform", {
         "Name":                 post["name"],
         "RedirectUrlAfterPOST": post["redirect"],
+        "AutoProcess":          post["autoprocess"],
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
@@ -568,6 +579,7 @@ def update_onlineform_from_form(dbo, username, post):
     return dbo.update("onlineform", post.integer("formid"), {
         "Name":                 post["name"],
         "RedirectUrlAfterPOST": post["redirect"],
+        "AutoProcess":          post["autoprocess"],
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
@@ -686,7 +698,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     formname = post["formname"]
     posteddate = dbo.now()
     flags = post["flags"]
-    submitteremail = ""
+    emailaddress = ""
     emailsubmissionto = ""
     firstnamelabel = ""
     firstname = ""
@@ -721,7 +733,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                         tooltip = fld.TOOLTIP
                         # Store a few known fields for access later
                         if fieldname == "emailaddress": 
-                            submitteremail = v
+                            emailaddress = v
                         if fieldname == "emailsubmissionto":
                             emailsubmissionto = v
                         if fieldname == "firstname" or fieldname == "forenames": 
@@ -796,35 +808,37 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         "Preview": ", ".join(preview) 
     })
 
-    # Do we have a valid emailaddress for the submitter and EmailSubmitter is set? 
-    # If so, send them a confirmation
-    emailsubmitter = dbo.query_int("SELECT o.EmailSubmitter FROM onlineform o " \
+    # Get the onlineform if we have one
+    formdef = dbo.first_row(dbo.query("SELECT * FROM onlineform o " \
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
-        "WHERE oi.CollationID = ?", [collationid])
+        "WHERE oi.CollationID = ?", [collationid]))
 
-    # The submitted form for including in emails (images are attached so not included)
+    # If there's no linked online form, we can't do any of the functionality that follows
+    # as it requires data from the online form.
+    if not formdef: return collationid
+
+    # A string containing the submitted form for including in emails 
+    # (images are set as attachments so not included)
     formdata = get_onlineformincoming_html_print(dbo, [collationid,], include_images=False)
 
-    if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter != 0:
+    # Do we have a valid emailaddress field for the submitter and 
+    # one of the options to email the submitter is set?
+    if emailaddress != "" and emailaddress.find("@") != -1 and formdef.emailsubmitter != 0:
         # Get the confirmation message
-        body = dbo.query_string("SELECT o.EmailMessage FROM onlineform o " \
-            "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
-            "WHERE oi.CollationID = ?", [collationid])
+        body = formdef.emailmessage
         attachments = []
         # Submission option 1 = include a copy of the form submission
-        if emailsubmitter == 1: 
+        if formdef.emailsubmitter == 1: 
             body += "\n" + formdata
             attachments = images
-        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), submitteremail, "", "", 
+        # Send
+        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emailaddress, "", "", 
             asm3.i18n._("Submission received: {0}", l).format(formname), 
             body, "html", attachments, exceptions=False)
 
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
-    email = dbo.query_string("SELECT o.EmailAddress FROM onlineform o " \
-        "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
-        "WHERE oi.CollationID = ?", [collationid])
-    if email is not None and email.strip() != "":
+    if formdef.emailaddress is not None and formdef.emailaddress.strip() != "":
         # If a submitter email has been set AND we sent the submitter a copy, 
         # use the submitter email as reply-to so staff and can reply to their
         # copy of the message and email the applicant/submitter.
@@ -833,17 +847,14 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         # and want to use an applicant's details but don't want them to see it or accidentally
         # reply to them about it (prime example, forms related to performing homechecks)
         replyto = ""
-        if emailsubmitter != 0: replyto = submitteremail 
+        if formdef.emailsubmitter != 0: replyto = emailaddress 
         if replyto == "": replyto = asm3.configuration.email(dbo)
-        asm3.utils.send_email(dbo, replyto, email, "", "", 
+        asm3.utils.send_email(dbo, replyto, formdef.emailaddress, "", "", 
             "%s - %s" % (formname, ", ".join(preview)), 
             formdata, "html", images, exceptions=False)
 
     # Was the option set to email the adoption coordinator linked to animalname?
-    emailcoordinator = dbo.query_int("SELECT EmailCoordinator FROM onlineform o " \
-        "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
-        "WHERE oi.CollationID = ?", [collationid])
-    if emailcoordinator == 1 and animalname != "":
+    if formdef.emailcoordinator == 1 and animalname != "":
         # If so, find the selected animal from the form
         animalid = get_animal_id_from_field(dbo, animalname)
         coordinatoremail = dbo.query_string("SELECT EmailAddress FROM animal " \
@@ -857,13 +868,40 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     # Did the form submission have a value in an "emailsubmissionto" field?
     if emailsubmissionto is not None and emailsubmissionto.strip() != "":
         # If a submitter email is set, use that to reply to instead
-        replyto = submitteremail 
+        replyto = emailaddress 
         if replyto == "": replyto = asm3.configuration.email(dbo)
         # Remove any line breaks from the list of addresses, this has caused malformed headers before
         emailsubmissionto = emailsubmissionto.replace("\n", "")
         asm3.utils.send_email(dbo, replyto, emailsubmissionto, "", "", 
             "%s - %s" % (formname, ", ".join(preview)), 
             formdata, "html", images, exceptions=False)
+
+    # Does this form have an option set to autoprocess it? If not, stop now
+    if formdef.autoprocess is None or formdef.autoprocess == AP_NO: return collationid
+
+    try:
+        if formdef.autoprocess == AP_ATTACHANIMAL:
+            attach_animal(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATEANIMAL:
+            create_animal(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATEPERSON:
+            create_person(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATELOSTANIMAL:
+            create_lostanimal(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATEFOUNDANIMAL:
+            create_foundanimal(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATEINCIDENT:
+            create_animalcontrol(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATETRANSPORT:
+            create_transport(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATEWAITINGLIST:
+            create_waitinglist(dbo, "autoprocess", collationid)
+        # We only get here if there were no issues processing the form and it's safe to delete it
+        delete_onlineformincoming(dbo, "autoprocess", collationid)
+    except asm3.utils.ASMValidationError as verr:
+        asm3.al.error("%s" % verr.getMsg(), "autoprocess", dbo)
+    except Exception as err:
+        asm3.al.error("%s" % err, "autoprocess", dbo)
 
     return collationid
 
@@ -972,7 +1010,7 @@ def attach_form(dbo, username, linktype, linkid, collationid):
 def attach_animal(dbo, username, collationid):
     """
     Finds the existing shelter animal with "animalname" and
-    attaches the form to it as person asm3.media.
+    attaches the form to it as animal asm3.media.
     Return value is a tuple of collationid, animalid, animal code/name
     """
     l = dbo.locale

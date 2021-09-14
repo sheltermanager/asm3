@@ -12,6 +12,18 @@ $(function() {
             { ID: 2, NAME: _("Send confirmation message only") }
         ],
 
+        auto_process_options: [
+            { ID: 0, NAME: _("Do not auto process") },
+            { ID: 1, NAME: _("Attach via animalname field") },
+            { ID: 2, NAME: _("Create animal") },
+            { ID: 3, NAME: _("Create person") },
+            { ID: 4, NAME: _("Create lost animal") },
+            { ID: 5, NAME: _("Create found animal") },
+            { ID: 6, NAME: _("Create incident") },
+            { ID: 7, NAME: _("Create transport") },
+            { ID: 8, NAME: _("Create waiting list") }
+        ],
+
         model: function() {
             const dialog = {
                 add_title: _("Add online form"),
@@ -27,6 +39,10 @@ $(function() {
                         tooltip: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL"),
                         callout: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL") },
                     { json_field: "SETOWNERFLAGS", post_field: "flags", label: _("Person Flags"), type: "selectmulti" },
+                    { json_field: "AUTOPROCESS", post_field: "autoprocess", label: _("Auto Process"), 
+                        type: "select", classes: "asm-doubleselectbox",
+                        callout: _("Process submissions of this form automatically and bypass the incoming forms queue"),
+                        options: { displayfield: "NAME", valuefield: "ID", rows: onlineforms.auto_process_options } },
                     { json_field: "EMAILADDRESS", post_field: "email", label: _("Email submissions to"), 
                         type: "textarea", rows: "2", 
                         validation: "validemail", 
