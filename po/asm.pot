@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-09-14 17:59+0000\n"
+"POT-Creation-Date: 2021-09-14 18:19+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1579,12 +1579,16 @@ msgstr ""
 msgid "Attach a link to a web resource"
 msgstr ""
 
-#: media.js
-msgid "Attach link"
+#: onlineforms.js
+msgid "Attach animal then create person"
 msgstr ""
 
 #: onlineforms.js
-msgid "Attach via animalname field"
+msgid "Attach animal via animalname field"
+msgstr ""
+
+#: media.js
+msgid "Attach link"
 msgstr ""
 
 #: common.js

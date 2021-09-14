@@ -76,6 +76,7 @@ AP_CREATEFOUNDANIMAL = 5
 AP_CREATEINCIDENT = 6
 AP_CREATETRANSPORT = 7
 AP_CREATEWAITINGLIST = 8
+AP_ATTACHANIMAL_CREATEPERSON = 9 
 
 JSKEY_NAME = 'magicASJSkey'
 JSKEY_VALUE = '918273645'
@@ -885,6 +886,9 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         elif formdef.autoprocess == AP_CREATEANIMAL:
             create_animal(dbo, "autoprocess", collationid)
         elif formdef.autoprocess == AP_CREATEPERSON:
+            create_person(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_ATTACHANIMAL_CREATEPERSON:
+            attach_animal(dbo, "autoprocess", collationid)
             create_person(dbo, "autoprocess", collationid)
         elif formdef.autoprocess == AP_CREATELOSTANIMAL:
             create_lostanimal(dbo, "autoprocess", collationid)
