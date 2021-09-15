@@ -2936,8 +2936,8 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     if cloneanimalid == 0:
         return
     # Any animal fields that should be copied to the new record
-    copyfrom = dbo.first_row( dbo.query("SELECT IsNotAvailableForAdoption, IsNotForRegistration, IsHold, AdditionalFlags, DateBroughtIn, " \
-        "Fee, AnimalComments FROM animal WHERE ID = ?", [cloneanimalid]) )
+    copyfrom = dbo.first_row( dbo.query("SELECT IsNotAvailableForAdoption, IsNotForRegistration, IsHold, AdditionalFlags, " \
+        "DateBroughtIn, Fee, CurrentVetID, AnimalComments FROM animal WHERE ID = ?", [cloneanimalid]) )
     broughtin = copyfrom.datebroughtin
     newbroughtin = dbo.query_date("SELECT DateBroughtIn FROM animal WHERE ID = ?", [animalid])
     # Only set flags on the new record if they are set on the template - just copying them
@@ -2948,6 +2948,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     if copyfrom.additionalflags and copyfrom.additionalflags != "": dbo.update("animal", animalid, { "AdditionalFlags": copyfrom.additionalflags })
     dbo.update("animal", animalid, {
         "Fee":                      copyfrom.fee,
+        "CurrentVetID":             copyfrom.currentvetid,
         "AnimalComments":           copyfrom.animalcomments
     }, username)
     # Helper function to work out the difference between intake and a date and add that

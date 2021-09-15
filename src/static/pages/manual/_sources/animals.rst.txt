@@ -407,6 +407,7 @@ When copying from a template animal, ASM will copy the following items to your
 new animal record:
 
 * The animal's adoption fee amount and description/bio field
+* The animal's current vet
 * The Hold, Is Not Available For Adoption and Do Not Register Microchip flags
 * Any additional flags the shelter has added to the system
 * Any additional fields the shelter has added to the system
