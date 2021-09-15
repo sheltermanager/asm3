@@ -4573,7 +4573,7 @@ class onlineform(JSONEndpoint):
             "rows": fields,
             "formid": formid,
             "formname": formname,
-            "formfields": asm3.onlineform.FORM_FIELDS,
+            "formfields": asm3.utils.deduplicate_list(asm3.onlineform.FORM_FIELDS),
             "species": asm3.lookups.get_species(dbo),
             "title": title
         }

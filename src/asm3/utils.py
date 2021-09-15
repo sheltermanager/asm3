@@ -499,6 +499,16 @@ def cmd(c, shell=False):
     except subprocess.CalledProcessError as e:
         return (e.returncode, e.output)
 
+def deduplicate_list(l):
+    """
+    Removes duplicates from the list l and returns a new list
+    """
+    uq = []
+    for i in l:
+        if i not in uq:
+            uq.append(i)
+    return uq
+
 def digits_only(s):
     """
     Returns only the digits from a string
