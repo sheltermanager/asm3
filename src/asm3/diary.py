@@ -392,8 +392,6 @@ def update_diary_from_form(dbo, username, post):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Diary date is not valid", l))
     if post["subject"] == "":
         raise asm3.utils.ASMValidationError(asm3.i18n._("Diary subject cannot be blank", l))
-    if post["note"] == "":
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Diary note cannot be blank", l))
     diarytime = post["diarytime"].strip()
     if diarytime != "":
         if diarytime.find(":") == -1:
