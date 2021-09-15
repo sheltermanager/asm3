@@ -1144,6 +1144,7 @@ def create_person(dbo, username, collationid):
         if f.FIELDNAME == "emailaddress": d["emailaddress"] = f.VALUE
         if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != asm3.i18n._("No", l): d["excludefrombulkemail"] = "on"
         if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = f.VALUE
+        if f.FIELDNAME == "comments": d["comments"] = f.VALUE
         if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
@@ -1255,6 +1256,7 @@ def create_lostanimal(dbo, username, collationid):
         if f.FIELDNAME == "areapostcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
+        if f.FIELDNAME == "comments": d["comments"] = f.VALUE
     if "datelost" not in d or asm3.i18n.display2python(l, d["datelost"]) is None:
         d["datelost"] = asm3.i18n.python2display(l, dbo.now())
     if "species" not in d: d["species"] = guess_species(dbo, "")
@@ -1297,6 +1299,7 @@ def create_foundanimal(dbo, username, collationid):
         if f.FIELDNAME == "areapostcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
+        if f.FIELDNAME == "comments": d["comments"] = f.VALUE
     if "datefound" not in d or asm3.i18n.display2python(l, d["datefound"]) is None:
         d["datefound"] = asm3.i18n.python2display(l, dbo.now())
     if "species" not in d: d["species"] = guess_species(dbo, "")
@@ -1382,6 +1385,7 @@ def create_waitinglist(dbo, username, collationid):
         if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
         if f.FIELDNAME == "description": d["description"] = f.VALUE
         if f.FIELDNAME == "reason": d["reasonforwantingtopart"] = f.VALUE
+        if f.FIELDNAME == "comments": d["comments"] = f.VALUE
     if "size" not in d: d["size"] = guess_size(dbo, "nomatchesusedefault")
     if "species" not in d: d["species"] = guess_species(dbo, "nomatchesusedefault")
     # Have we got enough info to create the waiting list record? We need a description

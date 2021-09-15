@@ -1,6 +1,7 @@
 45
 ================
 
+15/09/21 Support comments field on all online form records
 14/09/21 Option to allow auto processing of online forms #1051
 13/09/21 A 0 value in Petfinder notGood fields indicates yes
 10/09/21 Fix dead incident diary links
