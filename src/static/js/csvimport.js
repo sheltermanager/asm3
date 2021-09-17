@@ -13,8 +13,11 @@ $(function() {
                 '<form id="csvform" action="csvimport" method="post" enctype="multipart/form-data">',
                 html.info(_("Your CSV file should have a header row with field names ASM recognises.") + '<br/>' + 
                     _("Please see the manual for more information.")),
-                '<p>',
-                '<input id="cleartables" name="cleartables" type="checkbox" /> ',
+                '<table class="leftalign">',
+                '<tr>',
+                '<td></td>',
+                '<td>',
+                '<input id="cleartables" name="cleartables" type="checkbox" data-x="cleartablesexplain" /> ',
                 '<label for="cleartables">' + _("Delete database before importing") + '</label>',
                 '</p>',
                 '<div id="cleartablesexplain" style="display: none">',
@@ -22,7 +25,7 @@ $(function() {
                     _("This removal is permanent and cannot be reversed, are you absolutely sure you wish to do this?")),
                 '</div>',
                 '<p>',
-                '<input id="createmissinglookups" name="createmissinglookups" type="checkbox" /> ',
+                '<input id="createmissinglookups" name="createmissinglookups" type="checkbox" data-x="createmissinglookupsexplain"/> ',
                 '<label for="createmissinglookups">' + _("Create missing lookup values") + '</label>',
                 '</p>',
                  '<div id="createmissinglookupsexplain" style="display: none">',
@@ -30,23 +33,41 @@ $(function() {
                 '</div>',
                 '<p>',
                 '<p>',
-                '<input id="checkduplicates" name="checkduplicates" type="checkbox" /> ',
+                '<input id="checkduplicates" name="checkduplicates" type="checkbox" data-x="checkduplicatesexplain" /> ',
                 '<label for="checkduplicates">' + _("Merge duplicate records") + '</label>',
                 '</p>',
                  '<div id="checkduplicatesexplain" style="display: none">',
                 html.info(_("People or animal records that already exist in the database will not be imported again and movement/payment data will be attached to the existing records instead.")),
                 '</div>',
                 '<p>',
+                '<p>',
+                '<input id="prefixanimalcodes" name="prefixanimalcodes" type="checkbox" data-x="prefixanimalcodesexplain" /> ',
+                '<label for="prefixanimalcodes">' + _("Prefix animal codes") + '</label>',
+                '</p>',
+                 '<div id="prefixanimalcodesexplain" style="display: none">',
+                html.info(_("Animal records in the file will have a prefix added to their ANIMALCODE column to prevent clashes with existing animals in your database.")),
+                '</div>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td>',
                 _("Text Encoding"),
+                '</td>',
+                '<td>',
                 '<select id="encoding" name="encoding">',
                 '<option value="utf-8-sig" selected="selected">UTF-8</option>',
                 '<option value="utf16">UTF-16</option>',
                 '<option value="cp1252">cp1252 (Excel USA/Western Europe)</option>',
                 '</select>',
-                '</p>',
-                '<p>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td></td>',
+                '<td>',
                 '<input id="filechooser" name="filechooser" type="file" />',
-                '</p>',
+                '</td>',
+                '</tr>',
+                '</table>',
                 '<p>',
                 '<button id="import" type="button">' + _("Import") + '</button>',
                 '</p>',
@@ -62,36 +83,14 @@ $(function() {
                 $("#import").button("disable");
                 $("#csvform").submit();
             });
-            const cme = function() {
-                if ($("#createmissinglookups").prop("checked")) {
-                    $("#createmissinglookupsexplain").fadeIn();
+            $("input[type='checkbox']").click(function() {
+                if ($(this).prop("checked")) {
+                    $("#" + $(this).attr("data-x")).fadeIn();
                 }
                 else {
-                    $("#createmissinglookupsexplain").fadeOut();
+                    $("#" + $(this).attr("data-x")).fadeOut();
                 }
-            };
-            const cte = function() {
-                if ($("#cleartables").prop("checked")) {
-                    $("#cleartablesexplain").fadeIn();
-                }
-                else {
-                    $("#cleartablesexplain").fadeOut();
-                }
-            };
-            const cde = function() {
-                if ($("#checkduplicates").prop("checked")) {
-                    $("#checkduplicatesexplain").fadeIn();
-                }
-                else {
-                    $("#checkduplicatesexplain").fadeOut();
-                }
-            };
-            $("#cleartables").click(cte);
-            $("#cleartables").keypress(cte);
-            $("#createmissinglookups").click(cme);
-            $("#createmissinglookups").keypress(cme);
-            $("#checkduplicates").click(cde);
-            $("#checkduplicates").keypress(cde);
+            });
         },
 
         name: "csvimport",

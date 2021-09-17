@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-09-14 18:19+0000\n"
+"POT-Creation-Date: 2021-09-17 16:41+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1390,6 +1390,12 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Animal picked up"
+msgstr ""
+
+#: csvimport.js
+msgid ""
+"Animal records in the file will have a prefix added to their ANIMALCODE "
+"column to prevent clashes with existing animals in your database."
 msgstr ""
 
 #: options.js
@@ -3898,10 +3904,6 @@ msgstr ""
 
 #: main.js
 msgid "Diary for {0}"
-msgstr ""
-
-#: diary.py
-msgid "Diary note cannot be blank"
 msgstr ""
 
 #: mobile.py
@@ -9341,6 +9343,10 @@ msgstr ""
 
 #: options.js
 msgid "Prefill new media notes with the filename if left blank"
+msgstr ""
+
+#: csvimport.js
+msgid "Prefix animal codes"
 msgstr ""
 
 #: dbupdate.py

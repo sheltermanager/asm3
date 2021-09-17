@@ -65,8 +65,12 @@ select:disabled, input:disabled, textarea:disabled {
     text-align: center;
 }
 
+.leftalign {
+    text-align: start;
+}
+
 .rightalign {
-    text-align: right;
+    text-align: end;
 }
 
 .nowrap {

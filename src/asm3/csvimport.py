@@ -231,11 +231,12 @@ def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
     asm3.al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
     errors.append( (rowno, str(row), errmsg) )
 
-def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False):
+def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False, prefixanimalcodes = False):
     """
     Imports csvdata (bytes string, encoded with encoding)
     createmissinglookups: If a lookup value is given that's not in our data, add it
     cleartables: Clear down the animal, owner and adoption tables before import
+    prefixanimalcodes: Add a prefix to shelter codes to avoid clashes with the existing records
     """
 
     if user == "":
@@ -380,6 +381,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     # and start importing.
     errors = []
     rowno = 1
+    animalcodes = {}
     asm3.asynctask.set_progress_max(dbo, len(rows))
     for row in rows:
 
@@ -394,6 +396,17 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
         nonshelter = False
         originalownerid = 0
         if hasanimal and gks(row, "ANIMALNAME") != "":
+            animalcode = gks(row, "ANIMALCODE")
+            # If we're prefixing animal codes, we insert a prefix. The prefix is repeatable
+            # based on the position in the file. This means that codes in a file can't clash with
+            # normal codes in the database, but if you import the exact same file again, you'll
+            # get a repeatable code and it will update the same record.
+            if prefixanimalcodes:
+                if animalcode in animalcodes:
+                    animalcode = animalcodes[animalcode]
+                else:
+                    animalcodes[animalcode] = f"CSV{rowno:04}.{animalcode}"
+                    animalcode = animalcodes[animalcode]
             a = {}
             a["animalname"] = gks(row, "ANIMALNAME")
             a["sheltercode"] = gks(row, "ANIMALCODE")
