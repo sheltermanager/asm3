@@ -138,7 +138,12 @@ $(function() {
                         }
                     },
                     { field: "DATEEXPIRES", display: _("Expires"), formatter: tableform.format_date },
-                    { field: "MANUFACTURER", display: _("Manufacturer") },
+                    { field: "MANUFACTURER", display: _("Manufacturer"), 
+                        formatter: function(row) {
+                            return row.MANUFACTURER + " " + row.BATCHNUMBER; 
+                        }
+                    },
+                    { field: "RABIESTAG", display: _("Rabies Tag") },
                     { field: "COST", display: _("Cost"), formatter: tableform.format_currency,
                         hideif: function() { return !config.bool("ShowCostAmount"); }
                     },

@@ -1,6 +1,7 @@
 45
 ================
 
+22/09/21 Add Rabies Tag column to vaccination views
 17/09/21 Option to prefix animal codes during import #1027
 15/09/21 Copy the current vet from template animals
 15/09/21 Support comments field on all online form records
