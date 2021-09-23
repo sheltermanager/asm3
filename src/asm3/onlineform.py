@@ -562,7 +562,7 @@ def insert_onlineform_from_form(dbo, username, post):
     return dbo.insert("onlineform", {
         "Name":                 post["name"],
         "RedirectUrlAfterPOST": post["redirect"],
-        "AutoProcess":          post["autoprocess"],
+        "AutoProcess":          post.integer("autoprocess"),
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
@@ -580,7 +580,7 @@ def update_onlineform_from_form(dbo, username, post):
     return dbo.update("onlineform", post.integer("formid"), {
         "Name":                 post["name"],
         "RedirectUrlAfterPOST": post["redirect"],
-        "AutoProcess":          post["autoprocess"],
+        "AutoProcess":          post.integer("autoprocess"),
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
@@ -619,6 +619,7 @@ def clone_onlineform(dbo, username, formid):
     nfid = dbo.insert("onlineform", {
         "Name":                 asm3.i18n._("Copy of {0}", l).format(f.NAME),
         "RedirectUrlAfterPOST": f.REDIRECTURLAFTERPOST,
+        "AutoProcess":          f.AUTOPROCESS,
         "SetOwnerFlags":        f.SETOWNERFLAGS,
         "EmailAddress":         f.EMAILADDRESS,
         "EmailSubmitter":       f.EMAILSUBMITTER,
