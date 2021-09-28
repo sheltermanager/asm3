@@ -1,6 +1,7 @@
 45
 ================
 
+28/09/21 Add Identibase (972055*/en_GB) to known chips
 28/09/21 Do not show medical warning for non-active treatments
 23/09/21 Fix bad type coercion in clone/update onlineform.AutoProcess
 22/09/21 Add Rabies Tag column to vaccination views

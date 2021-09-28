@@ -136,6 +136,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^965", "name": "Microchip ID", "locales": "" },
     { "length": 15, "regex": r"^966", "name": "Petlog", "locales": "" },
     { "length": 15, "regex": r"^968", "name": "AKC CAR", "locales": "" },
+    { "length": 15, "regex": r"^972055", "name": "Identibase", "locales": "en_GB" },
     { "length": 15, "regex": r"^972", "name": "Planet ID", "locales": "" },
     { "length": 15, "regex": r"^977", "name": "AVID Europe", "locales": "" },
     { "length": 15, "regex": r"^978", "name": "Chevillot/Back Home", "locales": "" },
