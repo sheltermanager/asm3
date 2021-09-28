@@ -1,6 +1,7 @@
 45
 ================
 
+28/09/21 Do not show medical warning for non-active treatments
 23/09/21 Fix bad type coercion in clone/update onlineform.AutoProcess
 22/09/21 Add Rabies Tag column to vaccination views
 17/09/21 Option to prefix animal codes during import #1027

@@ -741,6 +741,9 @@ $(function() {
         },
 
         set_extra_fields: function(row) {
+            if (row.STATUS == 0) { row.NAMEDSTATUS = _("Active"); }
+            if (row.STATUS == 1) { row.NAMEDSTATUS = _("Held"); }
+            if (row.STATUS == 2) { row.NAMEDSTATUS = _("Completed"); }
             if (controller.animal) {
                 row.LOCATIONUNIT = controller.animal.SHELTERLOCATIONUNIT;
                 row.LOCATIONNAME = controller.animal.SHELTERLOCATIONNAME;
