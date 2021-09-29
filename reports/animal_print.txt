@@ -161,6 +161,9 @@ $$BODY
 <h2>Costs</h2>
 {SUBREPORT.SUBREPORT_AnimalPrintCost.ANIMALID}
 
+<h2>Licenses</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintLicence.ANIMALID}
+
 <h2>Payments</h2>
 {SUBREPORT.SUBREPORT_AnimalPrintDonation.ANIMALID}
 
@@ -395,6 +398,26 @@ BODY$$
 $$FOOTER
 </table>
 <h3>Total costs: <b>{SUM.COSTAMOUNT.2}</b></h3>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintLicence
++++
+SELECT ol.*, lt.LicenceTypeName, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode
+FROM ownerlicence ol 
+INNER JOIN licencetype lt ON lt.ID=ol.LicenceTypeID
+LEFT OUTER JOIN owner o ON o.ID = ol.OwnerID
+WHERE ol.OwnerID = $PARENTKEY$
+ORDER BY ol.IssueDate
++++
+$$HEADER
+<table>
+<tr><th>Number</th><th>Type</th><th>Person</th><th>Issued</th><th>Expires</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$LICENCENUMBER</td><td>$LICENCETYPENAME</td><td><b>$OWNERNAME</b> - $OWNERADDRESS $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE</td><td>$ISSUEDATE</td><td>$EXPIRYDATE</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
 FOOTER$$
 +++
 SUBREPORT_AnimalPrintDonation
