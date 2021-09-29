@@ -406,7 +406,7 @@ SELECT ol.*, lt.LicenceTypeName, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.Own
 FROM ownerlicence ol 
 INNER JOIN licencetype lt ON lt.ID=ol.LicenceTypeID
 LEFT OUTER JOIN owner o ON o.ID = ol.OwnerID
-WHERE ol.OwnerID = $PARENTKEY$
+WHERE ol.AnimalID = $PARENTKEY$
 ORDER BY ol.IssueDate
 +++
 $$HEADER
