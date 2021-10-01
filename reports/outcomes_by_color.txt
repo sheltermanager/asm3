@@ -1,0 +1,56 @@
+Outcomes by Color
+###
+Movements
+###
+Any
+###
+Outcome totals for animals entering between two dates, broken down by color
+###
+en
+###
+SELECT
+a.AnimalName, a.ShelterCode, a.DateOfBirth, s.SpeciesName, atp.AnimalType, 
+a.BreedName, c.BaseColour, e.ReasonName, o.OwnerName, a.DateBroughtIn, m.MovementDate,
+a.NeuteredDate, a.IdentichipNumber, oo.OwnerName AS OriginalOwner,
+CASE WHEN a.DeceasedDate Is Not Null AND PutToSleep = 0 THEN 'Died' 
+WHEN a.DeceasedDate Is Not Null AND PutToSleep = 1 THEN 'Euthanasia' 
+WHEN a.ActiveMovementDate Is Not Null THEN (SELECT MovementType FROM lksmovementtype WHERE ID = a.ActiveMovementType) 
+ELSE 'On Shelter' END AS OutcomeName,
+CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate 
+WHEN a.ActiveMovementDate Is Not Null THEN a.ActiveMovementDate 
+ELSE Null END AS OutcomeDate,
+CASE WHEN a.DeceasedDate Is Not Null THEN (SELECT ReasonName FROM deathreason WHERE ID = a.PTSReasonID)
+WHEN a.ActiveMovementDate Is Not Null THEN o.OwnerName
+ELSE '' END AS OutcomeQualifier
+FROM animal a
+INNER JOIN species s ON a.SpeciesID = s.ID
+INNER JOIN basecolour c ON a.BaseColourID = c.ID
+INNER JOIN animaltype atp ON a.AnimalTypeID = atp.ID
+LEFT OUTER JOIN adoption m ON m.ID = a.ActiveMovementID
+LEFT OUTER JOIN owner o ON m.OwnerID = o.ID 
+LEFT OUTER JOIN owner oo ON a.OriginalOwnerID = oo.ID
+INNER JOIN entryreason e ON a.EntryReasonID = e.ID 
+WHERE a.DateBroughtIn >= '$ASK DATE Entered shelter between$' AND a.DateBroughtIn <= '$ASK DATE and$' 
+AND NonShelterAnimal = 0 AND a.Archived = 1
+ORDER BY a.BreedName, OutcomeName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_BaseColour
+$$HEAD
+$$FOOT
+<h2>$BaseColour: {COUNT.BreedName}</h2>
+GROUP$$
+
+$$GROUP_OutcomeName
+$$HEAD
+$$FOOT
+<p>$BaseColour $OutcomeName: {COUNT.OutcomeName}</p>
+GROUP$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+FOOTER$$
