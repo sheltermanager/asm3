@@ -13,6 +13,16 @@ cd ~/usr/access2csv-master
 Make an /images folder in PATH below if you have photos or documents to import.
 
 2nd June, 2012 - 23rd Feb, 2017
+
+The following query can be run after import to fix any records that didn't have an entry in tbladoption but had a valid DateOUT
+
+insert into adoption (id, adoptionnumber, animalid, ownerid, retailerid, originalretailermovementid, movementdate, movementtype,
+	returndate, returnedreasonid, insurancenumber, reasonforreturn, returnedbyownerid, reservationstatusid, donation,
+    istrial, ispermanentfoster, trialenddate, comments,
+    createdby, createddate, lastchangedby, lastchangeddate, recordversion)
+    select nextval('seq_adoption'), sheltercode, id, 100, 0, 0, activemovementdate, 1, null, 0, '', '', 0, 0, 0, 0, 0, null, 'Fix for missing SB adopter info', 'missingfix', now(), 'missingfix', now(), 0
+    from animal where activemovementdate is not null and activemovementtype = 1 and not exists(select id from adoption where animalid=animal.id)
+
 """
 
 PATH = "/home/robin/tmp/asm3_import_data/shelterbuddy_gb2258/"
