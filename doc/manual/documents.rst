@@ -44,6 +44,9 @@ installed.
 
 .. image:: images/html_wp_to_pdf.png
 
+PDF Directives
+--------------
+
 You can embed directives in your document to give some hints to the PDF engine.
 These should take the form of HTML comments, embedded in <!-- and -->, and can
 be inserted by going to Tools->Source Code in the document editor::
