@@ -1,6 +1,7 @@
 45
 ================
 
+01/10/21 Do not include permanent fosters in long term animal alerts
 28/09/21 Add Identibase (972055*/en_GB) to known chips
 28/09/21 Do not show medical warning for non-active treatments
 23/09/21 Fix bad type coercion in clone/update onlineform.AutoProcess

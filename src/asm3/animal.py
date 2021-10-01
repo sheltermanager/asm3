@@ -765,7 +765,7 @@ def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age 
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry <= %(today)s) AS stexp, " \
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
-            "WHERE Archived = 0 AND DaysOnShelter > 182 %(locfilter)s) AS lngterm, " \
+            "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > 182 %(locfilter)s) AS lngterm, " \
         "(SELECT COUNT(*) FROM publishlog WHERE Alerts > 0 AND PublishDateTime >= %(today)s) AS publish " \
         "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, "endoftoday": endoftoday, "tomorrow": tomorrow, 
