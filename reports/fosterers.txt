@@ -14,7 +14,7 @@ OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTeleph
 Comments,
 AdditionalFlags,
 (SELECT COUNT(*) FROM adoption WHERE MovementType = 2 AND OwnerID = owner.ID AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')) AS ActiveFosters,
-i(SELECT string_agg(ShelterCode || ' ' || AnimalName, ', ') FROM adoption INNER JOIN animal ON animal.ActiveMovementID = adoption.ID WHERE adoption.OwnerID = owner.ID AND MovementType=2 AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')) AS FosterList,
+(SELECT string_agg(ShelterCode || ' ' || AnimalName, ', ') FROM adoption INNER JOIN animal ON animal.ActiveMovementID = adoption.ID WHERE adoption.OwnerID = owner.ID AND MovementType=2 AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')) AS FosterList,
 FosterCapacity
 FROM owner
 WHERE IsFosterer = 1 
