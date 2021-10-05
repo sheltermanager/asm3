@@ -170,7 +170,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0, siteid =
        agegroup - agegroup text to match
        sex - -1 for all or ID
        species - -1 for all or ID
-       filter - unpaid, incomplete, undispatched, requirefollowup
+       filter - incomplete, undispatched, requirefollowup, completed
        incidentfrom - incident date from in current display locale format
        incidentto - incident date to in current display locale format
        dispatchfrom - dispatch date from in current display locale format
@@ -212,6 +212,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0, siteid =
     ss.add_id("sex", "ac.Sex")
     ss.add_id("species", "ac.SpeciesID")
     ss.add_filter("incomplete", "ac.CompletedDate Is Null")
+    ss.add_filter("completed", "ac.CompletedDate Is Not Null")
     ss.add_filter("undispatched", "ac.CompletedDate Is Null AND ac.CallDateTime Is Not Null AND ac.DispatchDateTime Is Null")
     ss.add_filter("requirefollowup", "(" \
         "(ac.FollowupDateTime Is Not Null AND ac.FollowupDateTime <= %(now)s AND NOT ac.FollowupComplete = 1) OR " \
