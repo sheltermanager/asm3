@@ -100,13 +100,19 @@ FORM_FIELDS = [
 AUTOCOMPLETE_MAP = {
     "title":            "honorific",
     "firstname":        "given-name",
+    "forenames":        "given-name",
     "lastname":         "family-name",
+    "surname":          "family-name",
     "address":          "street-address",
     "city":             "address-level2",
+    "town":             "address-level2",
     "state":            "address-level3",
+    "county":           "address-level3",
     "country":          "country-name",
     "zipcode":          "postal-code",
+    "postcode":         "postal-code",
     "mobiletelephone":  "tel",
+    "celltelephone":    "tel",
     "emailaddress":     "email"
 }
 
