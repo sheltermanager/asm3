@@ -1626,7 +1626,7 @@ UNION SELECT
 
 extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
 extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
-'smallmammal' AS Species, 
+'small_mammal' AS Species, 
 
 TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
 TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
@@ -2024,7 +2024,7 @@ UNION SELECT
 
 extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
 extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
-'farmanimal' AS Species, 
+'farm_animal' AS Species, 
 
 TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
 TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
@@ -2821,7 +2821,7 @@ UNION SELECT
 
 extract(YEAR FROM DATE '$@from$')::integer AS "Record Year",
 extract(MONTH FROM DATE '$@from$')::integer AS "Record Month",
-'reptile' AS Species, 
+'reptile_or_amphibian' AS Species, 
 
 TO_CHAR('$@from$'::timestamp, 'YYYY-MM-DD') AS "Beginning Count Date",
 TO_CHAR('$@to$'::timestamp, 'YYYY-MM-DD') AS "Ending Count Date",
