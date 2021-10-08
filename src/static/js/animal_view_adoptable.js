@@ -212,6 +212,10 @@
 
         });
 
+        if (!h.length) {
+            h.push('<p class="asm3-adoptable-no-results">' + translate("No results") + '</p>');
+        }
+
         hostdiv.innerHTML = h.join("\n");
 
         if (use_iframe) {

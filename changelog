@@ -1,6 +1,7 @@
 45
 ================
 
+08/10/21 Output text when adoptable_js has no results #1052
 07/10/21 PetLink: temp fix for issues with quoted line breaks in CSV
 06/10/21 Include european field names in online form autofill
 05/10/21 Completed filter for find incident

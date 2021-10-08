@@ -496,13 +496,14 @@ It's possible to translate any of the text output by the adoptable list on the
 fly. By default, it only uses text from your database values so they will match
 the language of your database. 
 
-You can add on-the-fly translation by adding a script tag with a dictionary
+You can add on-the-fly translations by adding a script tag with a dictionary
 called asm3_adoptable_translations above the script that makes the service
 call. Eg to translate some English species to French and to change the default (any
-species) to all as well as the CLOSE link text::
+species) to all as well as the no results and CLOSE link text::
    
     <script>
     asm3_adoptable_translations = {
+        "No results": "We don't have any animals for adoption right now, check back soon!",
         "Dog": "Chien",
         "Cat": "Chat",
         "Pig": "Cochon",
