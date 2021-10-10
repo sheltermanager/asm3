@@ -1123,8 +1123,7 @@ class FTPPublisher(AbstractPublisher):
         try:
             # open it and login
             if ssl:
-                self.socket = ftplib.FTP_SSL(host=self.ftphost, timeout=15)
-                self.socket.prot_p() # encrypt data stream
+                self.socket = ftplib.FTP_TLS(host=self.ftphost, timeout=15)
             else:
                 self.socket = ftplib.FTP(host=self.ftphost, timeout=15)
             self.socket.login(self.ftpuser, self.ftppassword)
