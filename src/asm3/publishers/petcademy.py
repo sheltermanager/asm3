@@ -102,11 +102,8 @@ class PetcademyPublisher(FTPPublisher):
             self.setLastError("No animals found to publish.")
             return
 
-        if not self.openFTPSocket(): 
+        if not self.openFTPSocket(ssl=True): 
             self.setLastError("Failed opening FTP socket.")
-            if self.logSearch("530 Login") != -1:
-                self.log("Found 530 Login incorrect: disabling Petcademy publisher.")
-                asm3.configuration.publishers_enabled_disable(self.dbo, "pc")
             self.cleanup()
             return
 

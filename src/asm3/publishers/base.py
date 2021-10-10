@@ -1110,7 +1110,7 @@ class FTPPublisher(AbstractPublisher):
         s = s.strip()
         return s
 
-    def openFTPSocket(self):
+    def openFTPSocket(self, ssl = False):
         """
         Opens an FTP socket to the server and changes to the
         root FTP directory. Returns True if all was well or
@@ -1122,7 +1122,11 @@ class FTPPublisher(AbstractPublisher):
         
         try:
             # open it and login
-            self.socket = ftplib.FTP(host=self.ftphost, timeout=15)
+            if ssl:
+                self.socket = ftplib.FTP_SSL(host=self.ftphost, timeout=15)
+                self.socket.prot_p() # encrypt data stream
+            else:
+                self.socket = ftplib.FTP(host=self.ftphost, timeout=15)
             self.socket.login(self.ftpuser, self.ftppassword)
             self.socket.set_pasv(self.passive)
 
