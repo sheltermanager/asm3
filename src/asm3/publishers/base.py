@@ -1127,6 +1127,7 @@ class FTPPublisher(AbstractPublisher):
             else:
                 self.socket = ftplib.FTP(host=self.ftphost, timeout=15)
             self.socket.login(self.ftpuser, self.ftppassword)
+            if ssl: self.socket.prot_p()
             self.socket.set_pasv(self.passive)
 
             if self.ftproot is not None and self.ftproot != "":
