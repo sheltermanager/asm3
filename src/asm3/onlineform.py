@@ -895,7 +895,12 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         elif formdef.autoprocess == AP_CREATEPERSON:
             create_person(dbo, "autoprocess", collationid)
         elif formdef.autoprocess == AP_ATTACHANIMAL_CREATEPERSON:
-            attach_animal(dbo, "autoprocess", collationid)
+            try:
+                # If we fail to attach the animal (eg: because one wasn't specified)
+                # we still need to continue and create the person
+                attach_animal(dbo, "autoprocess", collationid)
+            except asm3.utils.ASMValidationError as aterr:
+                asm3.al.error("%s" % aterr.getMsg(), "autoprocess", dbo)
             create_person(dbo, "autoprocess", collationid)
         elif formdef.autoprocess == AP_CREATELOSTANIMAL:
             create_lostanimal(dbo, "autoprocess", collationid)

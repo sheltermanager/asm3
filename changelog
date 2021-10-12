@@ -1,6 +1,7 @@
 45
 ================
 
+12/10/21 Autoprocess attach->create should still create if attach fails
 10/10/21 Petcademy: now require encryption and named folder
 08/10/21 Output text when adoptable_js has no results #1052
 07/10/21 PetLink: temp fix for issues with quoted line breaks in CSV
