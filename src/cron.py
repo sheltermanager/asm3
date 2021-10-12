@@ -428,6 +428,7 @@ def run(dbo, mode):
         # Get the locale and timezone from the system 
         dbo.locale = configuration.locale(dbo) 
         dbo.timezone = configuration.timezone(dbo)
+        dbo.timezone_dst = configuration.timezone_dst(dbo)
     dbo.installpath = os.getcwd() + os.sep
     al.debug("set locale and timezone for database: %s, %d" % (dbo.locale, dbo.timezone), "cron", dbo)
     if mode == "all":
