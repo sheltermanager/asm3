@@ -3146,12 +3146,17 @@ def update_current_owner(dbo, username, animalid):
     """
     Updates the current owner for an animal from the available movements.
     """
+    exit_movements = "1,3,5"
+    # If treat fosters as on shelter is not set, fosters are an exit movement
+    if not asm3.configuration.foster_on_shelter(dbo): 
+        exit_movements = "1,2,3,5" 
+
     # The current owner for this animal
     animalownerid = dbo.query_int("SELECT OwnerID FROM animal WHERE ID=?", [animalid])
 
     # The latest exit movement for this animal (can't rely on denormalised)
     latestexitmoveid = dbo.query_int("SELECT ID FROM adoption WHERE AnimalID=? " \
-        "AND MovementType IN (1,3,5) AND MovementDate Is Not Null " \
+        f"AND MovementType IN ({exit_movements}) AND MovementDate Is Not Null " \
         "AND MovementDate <= ? AND (ReturnDate Is Null OR ReturnDate > ?) " \
         "ORDER BY MovementDate DESC", [animalid, dbo.today(), dbo.today()])
 
@@ -3161,7 +3166,7 @@ def update_current_owner(dbo, username, animalid):
     # The latest movement for this animal linked to the current owner that is not the latest
     # exit movement (ie. if this is >0 we know the current owner is from an old exit movement)
     lastownermoveid = dbo.query_int("SELECT ID FROM adoption WHERE AnimalID=? " \
-        "AND MovementType IN (1,3,5) AND OwnerID=? AND ID<>? " \
+        f"AND MovementType IN ({exit_movements}) AND OwnerID=? AND ID<>? " \
         "ORDER BY MovementDate DESC", [animalid, animalownerid, latestexitmoveid])
 
     # Set the current owner if the animal doesn't already have one 
