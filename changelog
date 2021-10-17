@@ -1,6 +1,7 @@
 45
 ================
 
+17/10/21 Add warn when adopting to a banned address #1054
 15/10/21 When checking current owner, fosters are exit if option not set
 14/10/21 If species is different, fail lost/found match altogether
 12/10/21 cron tasks not adjusting for dst

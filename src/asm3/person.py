@@ -85,13 +85,15 @@ def embellish_adoption_warnings(dbo, p):
     """ Adds the adoption warning columns to a person record p and returns it """
     warn = dbo.first_row(dbo.query("SELECT (SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS Investigation, " \
         "(SELECT COUNT(*) FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID OR ac.Owner3ID = o.ID) AS Incident, " \
-        "(SELECT COUNT(*) FROM animal bib WHERE NonShelterAnimal = 0 AND IsTransfer = 0 AND IsPickup = 0 AND bib.OriginalOwnerID = o.ID) AS Surrender " \
+        "(SELECT COUNT(*) FROM animal bib WHERE NonShelterAnimal = 0 AND IsTransfer = 0 AND IsPickup = 0 AND bib.OriginalOwnerID = o.ID) AS Surrender, " \
+        "(SELECT COUNT(*) FROM owner bo WHERE bo.OwnerAddress LIKE o.OwnerAddress AND bo.IsBanned=1) AS BannedAddress " \
         "FROM owner o " \
         "WHERE o.ID = ?", [p.ID]))
     if warn is not None:
         p.INVESTIGATION = warn.INVESTIGATION
         p.SURRENDER = warn.SURRENDER
         p.INCIDENT = warn.INCIDENT
+        p.BANNEDADDRESS = warn.BANNEDADDRESS
     return p
 
 def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "", address = "", siteid = 0):

@@ -40,37 +40,6 @@ along with comments and details on membership to your organisation.
 
 .. note:: The gift aid registered flag appears for people in the UK. Setting this will default the gift aid flag when creating payments from this owner for tracking gift aid claims to HMRC. 
 
-Warnings
-^^^^^^^^
-
-When you create new owner records and adopt animals to owners, the system will
-perform some checks for you. Some of these require options to be set in
-*Settings->Options* under the Movement tab (they are all switched on by
-default). 
-
-* Name Check: The system will check to see if there is someone with a similar
-  name on file to the one you just entered. If there is, you will be shown a
-  list of matches, with the option to view them and prompted as to whether you
-  want to continue. 
-
-* Address Check: The system will check to see if you have an owner on file at
-  the same address as the one listed. This is useful for fraudulent owners who
-  are banned from adopting animals getting family members to do it for them. 
-
-* Postcode Check: The system will warn the operator if they attempt to adopt an
-  animal to a new owner who lives in the same postcode as the animal's original
-  owner. 
-
-* Previous Owner Check: System will warn the operator if they attempt to adopt
-  an animal to a new owner with a name and address similar to someone who has
-  brought an animal into the shelter. 
-
-* Non-Homechecked: The system will warn the operator if they attempt to adopt
-  an animal to an owner who has not been homechecked. 
-
-* Banned: The system will warn the operator if they attempt to adopt an animal
-  to an owner who has been banned from adopting animals. 
-
 Looking For
 ^^^^^^^^^^^
 

@@ -651,6 +651,11 @@ $(function() {
                     warn.push(_("This person has previously surrendered an animal."));
                 }
 
+                // Person at this address previously banned?
+                if (p.BANNEDADDRESS > 0 && config.bool("WarnBannedAddress")) {
+                    warn.push(_("This person lives at the same address as someone who was previously banned."));
+                }
+
                 // Does this owner live in the same postcode area as the animal's
                 // original owner?
                 if ( format.postcode_prefix($(".animalchooser-oopostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ||

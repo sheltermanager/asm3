@@ -304,6 +304,13 @@ $(function() {
                     return;
                 }
 
+                // Person at this address previously banned?
+                if (p.BANNEDADDRESS > 0 && config.bool("WarnBannedAddress")) {
+                    $("#warntext").html(_("This person lives at the same address as someone who was previously banned."));
+                    $("#ownerwarn").fadeIn();
+                    return;
+                }
+
                 // Owner previously under investigation
                 if (p.INVESTIGATION > 0) {
                     $("#warntext").html(_("This person has been under investigation."));
@@ -330,6 +337,17 @@ $(function() {
                     $("#warntext").html(_("This person has not passed a homecheck."));
                     $("#ownerwarn").fadeIn();
                     return;
+                }
+
+                // Does this owner live in the same postcode area as the animal's
+                // original owner?
+                if ( format.postcode_prefix($(".animalchooser-oopostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ||
+                     format.postcode_prefix($(".animalchooser-bipostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ) {
+                    if (config.bool("WarnOOPostcode")) { 
+                        $("#warntext").html(_("This person lives in the same area as the person who brought the animal to the shelter.")); 
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
                 }
 
                 $("#ownerwarn").fadeOut();
