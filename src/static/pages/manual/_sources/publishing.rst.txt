@@ -110,7 +110,7 @@ and age, or arranged numerically with a fixed number of animals per page. In
 addition, a recently adopted page can be generated along with an rss.xml for
 feed readers.
 
-.. warning:: Static HTML publishing is deprecated for sheltermanager.com and will not be available in the future.
+.. warning:: Static HTML publishing is deprecated for sheltermanager.com and is no longer available.
 
 * Generate javascript database: The site search facilities require a Javascript
   database, indexing the available animal records. If you wish to include
