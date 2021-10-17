@@ -1,6 +1,8 @@
 45
 ================
 
+17/10/21 Allow old HTML/FTP publisher to be disabled via sitedef #1040
+17/10/21 Remove complicated smcom-specific HTML/FTP override code #1040
 17/10/21 Add warn when adopting to a banned address #1054
 15/10/21 When checking current owner, fosters are exit if option not set
 14/10/21 If species is different, fail lost/found match altogether

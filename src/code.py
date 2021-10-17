@@ -63,8 +63,8 @@ from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format,
 
 from asm3.sitedefs import BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
     AKC_REUNITE_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, \
-    LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_PUBLISH_URL, \
-    MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, \
+    LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, \
+    ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, HTMLFTP_PUBLISHER_ENABLED, \
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
     MAP_PROVIDER_KEY, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
     PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, QR_IMG_SRC, \
@@ -5377,12 +5377,11 @@ class publish_options(JSONEndpoint):
         dbo = o.dbo
         c = {
             "locations": asm3.lookups.get_internal_locations(dbo),
-            "publishurl": MULTIPLE_DATABASES_PUBLISH_URL,
             "flags": asm3.lookups.get_animal_flags(dbo),
             "hasakcreunite": AKC_REUNITE_BASE_URL != "",
-            "hasftpoverride": MULTIPLE_DATABASES_PUBLISH_FTP is not None and not asm3.configuration.publisher_ignore_ftp_override(dbo),
             "hasfoundanimals": FOUNDANIMALS_FTP_USER != "",
             "hashomeagain": HOMEAGAIN_BASE_URL != "",
+            "hashtmlftp": HTMLFTP_PUBLISHER_ENABLED,
             "hasmaddiesfund": MADDIES_FUND_TOKEN_URL != "",
             "haspetcademy": PETCADEMY_FTP_HOST != "",
             "haspetlink": PETLINK_BASE_URL != "",

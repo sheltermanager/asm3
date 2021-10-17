@@ -10,7 +10,7 @@ import asm3.media
 import asm3.movement
 import asm3.utils
 import asm3.wordprocessor
-from asm3.sitedefs import MULTIPLE_DATABASES_PUBLISH_DIR, MULTIPLE_DATABASES_PUBLISH_FTP, SERVICE_URL
+from asm3.sitedefs import SERVICE_URL
 
 import ftplib
 import glob
@@ -675,7 +675,7 @@ class AbstractPublisher(threading.Thread):
 
     def replaceMDBTokens(self, dbo, s):
         """
-        Replace MULTIPLE_DATABASE tokens in the string given.
+        Replace MULTIPLE_DATABASE tokens in the string given (redundant)
         """
         s = s.replace("{alias}", dbo.alias)
         s = s.replace("{database}", dbo.database)
@@ -744,29 +744,6 @@ class AbstractPublisher(threading.Thread):
         the one set in the criteria.
         """
         if self.publisherKey == "html":
-            # It's HTML publishing - we have some special rules
-            # If the publishing directory has been overridden, set it
-            if MULTIPLE_DATABASES_PUBLISH_DIR != "":
-                self.publishDir = MULTIPLE_DATABASES_PUBLISH_DIR
-                # Replace any tokens
-                self.publishDir = self.replaceMDBTokens(self.dbo, self.publishDir)
-                self.pc.ignoreLock = True
-                # Validate that the directory exists
-                if not os.path.exists(self.publishDir):
-                    self.setLastError("publishDir does not exist: %s" % self.publishDir)
-                    return
-                # If they've set the option to reupload animal images, clear down
-                # any existing images first
-                if self.pc.forceReupload:
-                    for f in os.listdir(self.publishDir):
-                        if f.lower().endswith(".jpg"):
-                            os.unlink(os.path.join(self.publishDir, f))
-                # Clear out any existing HTML pages
-                for f in os.listdir(self.publishDir):
-                    if f.lower().endswith(".html"):
-                        os.unlink(os.path.join(self.publishDir, f))
-                self.tempPublishDir = False
-                return
             if self.pc.publishDirectory is not None and self.pc.publishDirectory.strip() != "":
                 # The user has set a target directory for their HTML publishing, use that
                 self.publishDir = self.pc.publishDirectory
@@ -1131,10 +1108,6 @@ class FTPPublisher(AbstractPublisher):
             self.socket.set_pasv(self.passive)
 
             if self.ftproot is not None and self.ftproot != "":
-                # If we had an FTP override, try and create the directory
-                # before we change to it.
-                if MULTIPLE_DATABASES_PUBLISH_FTP is not None:
-                    self.mkdir(self.ftproot)
                 self.chdir(self.ftproot)
 
             return True

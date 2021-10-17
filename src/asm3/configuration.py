@@ -286,7 +286,6 @@ DEFAULTS = {
     "PDFInline": "Yes",
     "PDFZoom": "100",
     "PublisherUseComments": "Yes",
-    "PublisherIgnoreFTPOverride": "No",
     "PublisherPresets": "includefosters excludeunder=12",
     "PublisherSub24Frequency": "0",
     "QuicklinksID": "40,46,25,31,34,19,20",
@@ -1211,9 +1210,6 @@ def smarttag_accountid(dbo):
 
 def publisher_presets(dbo):
     return cstring(dbo, "PublisherPresets", DEFAULTS["PublisherPresets"])
-
-def publisher_ignore_ftp_override(dbo):
-    return cboolean(dbo, "PublisherIgnoreFTPOverride", DEFAULTS["PublisherIgnoreFTPOverride"] == "Yes")
 
 def publisher_sub24_frequency(dbo):
     return cint(dbo, "PublisherSub24Frequency", DEFAULTS["PublisherSub24Frequency"])

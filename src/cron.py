@@ -26,6 +26,7 @@ from asm3 import reports as extreports
 from asm3 import utils
 from asm3 import waitinglist
 from asm3.sitedefs import LOCALE, TIMEZONE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_MAP
+from asm3.sitedefs import HTMLFTP_PUBLISHER_ENABLED
 
 import time
 
@@ -172,7 +173,7 @@ def publish_3pty_sub24(dbo):
 
 def publish_html(dbo):
     try :
-        if configuration.publishers_enabled(dbo).find("html") != -1:
+        if HTMLFTP_PUBLISHER_ENABLED and configuration.publishers_enabled(dbo).find("html") != -1:
             publish.start_publisher(dbo, "html", user="system", newthread=False)
     except:
         em = str(sys.exc_info()[0])

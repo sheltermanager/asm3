@@ -11,7 +11,7 @@ import asm3.utils
 import asm3.wordprocessor
 
 from .base import FTPPublisher, PublishCriteria, get_animal_data, is_animal_adoptable
-from asm3.sitedefs import BASE_URL, MULTIPLE_DATABASES_PUBLISH_FTP, MULTIPLE_DATABASES_PUBLISH_URL, SERVICE_URL
+from asm3.sitedefs import BASE_URL, SERVICE_URL
 
 import math
 import os
@@ -221,24 +221,9 @@ class HTMLPublisher(FTPPublisher):
 
     def __init__(self, dbo, publishCriteria, user):
         l = dbo.locale
-        # If we have a database override and it's not been ignored, use it
-        if MULTIPLE_DATABASES_PUBLISH_FTP is not None and not asm3.configuration.publisher_ignore_ftp_override(dbo):
-            c = MULTIPLE_DATABASES_PUBLISH_FTP
-            publishCriteria.uploadDirectly = True
-            publishCriteria.clearExisting = True
-            publishCriteria.forceReupload = False
-            publishCriteria.scaleImages = 1
-            FTPPublisher.__init__(self, dbo, publishCriteria,
-                self.replaceMDBTokens(dbo, c["host"]),
-                self.replaceMDBTokens(dbo, c["user"]),
-                self.replaceMDBTokens(dbo, c["pass"]),
-                c["port"], 
-                self.replaceMDBTokens(dbo, c["chdir"]),
-                c["passive"])
-        else:                
-            FTPPublisher.__init__(self, dbo, publishCriteria, 
-                asm3.configuration.ftp_host(dbo), asm3.configuration.ftp_user(dbo), asm3.configuration.ftp_password(dbo),
-                asm3.configuration.ftp_port(dbo), asm3.configuration.ftp_root(dbo), asm3.configuration.ftp_passive(dbo))
+        FTPPublisher.__init__(self, dbo, publishCriteria, 
+            asm3.configuration.ftp_host(dbo), asm3.configuration.ftp_user(dbo), asm3.configuration.ftp_password(dbo),
+            asm3.configuration.ftp_port(dbo), asm3.configuration.ftp_root(dbo), asm3.configuration.ftp_passive(dbo))
         self.user = user
         self.initLog("html", asm3.i18n._("HTML/FTP Publisher", l))
 
@@ -803,9 +788,7 @@ class HTMLPublisher(FTPPublisher):
         thisPage = ""
         thisPageName = "rss.xml"
         totalAnimals = 0
-        link = MULTIPLE_DATABASES_PUBLISH_URL
-        link = self.replaceMDBTokens(self.dbo, link)
-        if link == "": link = BASE_URL
+        link = BASE_URL
 
         try:
             animals = self.getMatchingAnimals()

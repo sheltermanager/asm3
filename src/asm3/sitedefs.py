@@ -232,6 +232,9 @@ MULTIPLE_DATABASES_TYPE = get_string("multiple_databases_type", "map")
 # { "alias": { "dbtype": "MYSQL", "host": "localhost", "port": 3306, "username": "root", "password": "root", "database": "asm" } }
 MULTIPLE_DATABASES_MAP = get_dict("multiple_databases_map")
 
+# Whether the old HTML/FTP publisher of static files is enabled
+HTMLFTP_PUBLISHER_ENABLED = get_boolean("htmlftp_publisher_enabled", True)
+
 # FTP hosts and URLs for third party publishing services
 ADOPTAPET_FTP_HOST = get_string("adoptapet_ftp_host", "autoupload.adoptapet.com")
 AKC_REUNITE_BASE_URL = get_string("akc_reunite_base_url", "")
@@ -273,23 +276,6 @@ VETENVOY_US_AKC_REUNITE_RECIPIENTID = get_string("vetenvoy_us_akc_reunite_recipi
 
 # Config for payment processing services
 PAYPAL_VALIDATE_IPN_URL = get_string("paypal_validate_ipn_url", "")
-
-# Override the html publishDir with a fixed value and forbid
-# editing in the UI.
-# {alias} will be substituted for the current database alias 
-# {database} the current database name
-# {username} the current database username.
-# MULTIPLE_DATABASES_PUBLISH_DIR = "/home/somewhere/{alias}"
-MULTIPLE_DATABASES_PUBLISH_DIR = get_string("multiple_databases_publish_dir", "")
-
-# The URL to show in the UI when publish dir is overridden
-# MULTIPLE_DATABASES_PUBLISH_URL = "http://yoursite.com/{alias}"
-MULTIPLE_DATABASES_PUBLISH_URL = get_string("multiple_databases_publish_url", "")
-
-# Override the HTML/FTP upload credentials. Setting this
-# turns on FTP upload and hides those configuration fields in the UI
-#MULTIPLE_DATABASES_PUBLISH_FTP = { "host": "ftp.host.com", "user": "user", "pass": "pass", "port": 21, "chdir": "/home/{alias}", "passive": True }
-MULTIPLE_DATABASES_PUBLISH_FTP = get_dict("multiple_databases_publish_ftp", None)
 
 # Options available under the share button
 SHARE_BUTTON = get_string("share_button", "shareweb,sharepic,shareemail")
