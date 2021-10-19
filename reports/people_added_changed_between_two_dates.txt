@@ -1,6 +1,6 @@
 People added or updated between two dates
 ###
-Auditing
+People
 ###
 Any
 ###
@@ -11,10 +11,7 @@ en
 $VAR from DATE People added or changed between$
 $VAR to DATE and$
 
-SELECT 
-CreatedDate, OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode,
-HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress,
-AdditionalFlags
+SELECT *
 FROM owner
 WHERE (CreatedDate >= '$@from$' AND CreatedDate <= '$@to$') OR 
 (LastChangedDate >= '$@from$' AND LastChangedDate <= '$@to$')
@@ -24,10 +21,12 @@ $$HEADER
 <table border="1">
 <tr>
 <th>Added</th>
+<th>Code</th>
 <th>Name</th>
 <th>Address</th>
 <th>Tel</th>
 <th>Email</th>
+<th>GDPR</th>
 <th>Flags</th>
 </tr>
 HEADER$$
@@ -35,17 +34,19 @@ HEADER$$
 $$BODY
 <tr>
 <td>$CREATEDDATE</td>
+<td>$OWNERCODE</td>
 <td>$OWNERNAME</td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE</td>
 <td>H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
 <td>$EMAILADDRESS</td>
+<td>$GDPRCONTACTOPTIN</td>
 <td>$ADDITIONALFLAGS</td>
 </tr>
 BODY$$
 
 $$FOOTER
 </table>
-<p>{COUNT.OWNERNAME} person records added/updated.</p>
+<p>{COUNT.OWNERNAME} person records added/changed.</p>
 FOOTER$$
 
