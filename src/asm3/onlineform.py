@@ -716,6 +716,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     animalname = ""
     images = []
     post.data["formreceived"] = "%s %s" % (asm3.i18n.python2display(dbo.locale, posteddate), asm3.i18n.format_time(posteddate))
+    post.data["ipaddress"] = remoteip
 
     for k, v in post.data.items():
 
@@ -806,8 +807,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         if fieldssofar < 3:
             # Don't include raw markup or signature/image fields in the preview
             if fld.VALUE.startswith("RAW::") or fld.VALUE.startswith("data:"): continue
-            # Or the system added timestamp field, or fields we would have already added above
-            if fld.FIELDNAME in ("formreceived", "firstname", "forenames", "lastname", "surname"): continue
+            # Or the system added timestamp field, ip address, or fields we would have already added above
+            if fld.FIELDNAME in ("formreceived", "ipaddress", "firstname", "forenames", "lastname", "surname"): continue
             if fld.FIELDNAME in ("animalname", "reserveanimalname"): continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
