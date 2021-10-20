@@ -57,7 +57,7 @@ CACHE_PROTECT_METHODS = {
     "extra_image": [ "title" ],
     "media_image": [ "mediaid" ],
     "json_adoptable_animal": [ "animalid" ],
-    "html_adoptable_animals": [ "speciesid", "animaltypeid", "locationid", "template" ],
+    "html_adoptable_animals": [ "speciesid", "animaltypeid", "locationid", "template", "underweeks", "overweeks" ],
     "html_adopted_animals": [ "days", "template", "speciesid", "animaltypeid" ],
     "html_deceased_animals": [ "days", "template", "speciesid", "animaltypeid" ],
     "html_flagged_animals": [ "template", "speciesid", "animaltypeid", "flag", "all" ],
@@ -504,7 +504,9 @@ def handler(post, path, remoteip, referer, querystring):
     elif method == "html_adoptable_animals":
         return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
             asm3.publishers.html.get_adoptable_animals(dbo, style=post["template"], \
-                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), locationid=post.integer("locationid")))
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), \
+                locationid=post.integer("locationid"), underweeks=post.integer("underweeks"), \
+                overweeks=post.integer("overweeks")))
 
     elif method == "html_adopted_animals":
         return set_cached_response(cache_key, account, "text/html", 10800, 1800, \

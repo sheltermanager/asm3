@@ -714,6 +714,10 @@ it off will cause animalview to be used). It is also possible extra parameters:
 * locationid=X - only output animals in this location. Run this query at
   the SQL interface to find out the ID numbers: SELECT * FROM internallocation
 
+* underweeks=X - only output animals aged under X weeks.
+
+* overweeks=X - only output animals aged over X weeks
+
 The rules governing which animals are adoptable are those set under
 :menuselection:`Publishing --> Set Publishing Options --> Animal Selection`.
 You can view the set at :menuselection:`Publishing --> View Animals Matching

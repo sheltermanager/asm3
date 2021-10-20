@@ -17,15 +17,18 @@ import math
 import os
 import sys
 
-def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0, locationid=0):
+def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0, locationid=0, underweeks=0, overweeks=0):
     """ Returns a page of adoptable animals.
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
     locationid: 0 for all internal locations or a specific one
+    underweeks: Only return animals aged under this many weeks (0 to ignore)
+    overweeks: Only return animals aged over this many weeks (0 to ignore)
     """
     animals = get_animal_data(dbo, include_additional_fields=True)
-    return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid, locationid=locationid)
+    return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid, locationid=locationid, \
+        underweeks=underweeks, overweeks=overweeks)
 
 def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=0):
     """ Returns a page of adopted animals.
@@ -80,13 +83,15 @@ def get_held_animals(dbo, style="", speciesid=0, animaltypeid=0):
     animals = asm3.animal.get_animals_hold(dbo)
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locationid=0):
+def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locationid=0, underweeks=0, overweeks=0):
     """ Returns a page of animals.
     animals: A resultset containing animal records
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
     locationid: 0 for all internal locations or a specific one
+    underweeks: Only return animals aged under weeks, 0 = ignore
+    overweeks: Only return animals aged over weeks, 0 = ignore
     """
     # Get the specified template
     head, body, foot = asm3.template.get_html_template(dbo, style)
@@ -102,6 +107,8 @@ def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locatio
         if speciesid > 0 and a.SPECIESID != speciesid: continue
         if animaltypeid > 0 and a.ANIMALTYPEID != animaltypeid: continue
         if locationid > 0 and a.SHELTERLOCATION != locationid: continue
+        if underweeks > 0 and a.DATEOFBIRTH < dbo.today(offset=underweeks * -7): continue
+        if overweeks > 0 and a.DATEOFBIRTH >= dbo.today(offset=overweeks * -7): continue
         # Translate website media name to the service call for images
         if asm3.smcom.active():
             a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.database, a.ID)
