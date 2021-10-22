@@ -15,7 +15,6 @@ from asm3 import db
 from asm3 import dbfs
 from asm3 import dbupdate
 from asm3 import diary
-from asm3 import i18n
 from asm3 import lostfound
 from asm3 import media
 from asm3 import movement
@@ -132,7 +131,7 @@ def reports_email(dbo):
     """
     try:
         # Email any daily reports for local time of now
-        extreports.email_daily_reports(dbo, i18n.now(dbo.timezone))
+        extreports.email_daily_reports(dbo, dbo.now())
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: running daily email of reports_email: %s" % em, "cron.reports_email", dbo, sys.exc_info())
