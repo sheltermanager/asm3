@@ -1018,9 +1018,10 @@ def attach_form(dbo, username, linktype, linkid, collationid):
     for f in fields:
         if f.VALUE.startswith("data:image/jpeg"):
             d = {
+                "excludefrompublish": "1", # We should never be sending public uploaded images anywhere by default
                 "filename":     "image.jpg",
                 "filetype":     "image/jpeg",
-                "filedata":     f.VALUE,
+                "filedata":     f.VALUE
             }
             asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.utils.PostedData(d, dbo.locale))
 

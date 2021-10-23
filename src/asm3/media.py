@@ -319,6 +319,8 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     ispicture = ext == ".jpg" or ext == ".jpeg"
     ispdf = ext == ".pdf"
     excludefrompublish = 0
+    if "excludefrompublish" in post: 
+        excludefrompublish = post.integer("excludefrompublish")
     if asm3.configuration.auto_new_images_not_for_publish(dbo) and ispicture:
         excludefrompublish = 1
 
