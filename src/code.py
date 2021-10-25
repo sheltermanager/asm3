@@ -6,7 +6,7 @@ import os, sys
 PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
 
 # Prepend our modules to the path to make sure they're added first
-sys.path = [ PATH ] + sys.path
+sys.path.insert(0, PATH)
 
 import web
 
@@ -112,6 +112,7 @@ def session_manager():
     web.config.session_parameters["cookie_path"] = "/"
     web.config.session_parameters["timeout"] = 86400
     web.config.session_parameters["ignore_change_ip"] = True
+    web.config.session_parameters["ignore_expiry"] = False
     web.config.session_parameters["secure"] = SESSION_SECURE_COOKIE
     sess = None
     if asm3.utils.websession is None:
