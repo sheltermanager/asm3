@@ -1,6 +1,7 @@
 45
 ================
 
+25/10/21 Bundle web.py due to different broken versions shipping with distros
 23/10/21 Mark photos from online forms as exclude from publish by default
 20/10/21 Record IP address with online form submissions
 20/10/21 underweeks/overweeks parameters to service html_adoptable_animals

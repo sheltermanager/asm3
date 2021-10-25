@@ -5,8 +5,8 @@ import os, sys
 # The path to the folder containing the ASM3 modules
 PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
 
-# Put the rest of our modules on the path
-sys.path.append(PATH)
+# Prepend our modules to the path to make sure they're added first
+sys.path = [ PATH ] + sys.path
 
 import web
 
@@ -6426,17 +6426,6 @@ class waitinglist_results(JSONEndpoint):
 
 # List of routes constructed from class definitions
 routes = []
-
-# SSL for the server can be passed as an extra startup argument, eg:
-# python code.py 5000 ssl=true,cert=/etc/cert.crt,key=/etc/cert.key,chain=/etc/chain.crt
-if len(sys.argv) > 2:
-    from web.wsgiserver import CherryPyWSGIServer
-    for arg in sys.argv[2].split(","):
-        if arg.find("=") == -1: continue
-        k, v = arg.split("=")
-        if k == "cert": CherryPyWSGIServer.ssl_certificate = v
-        if k == "key": CherryPyWSGIServer.ssl_private_key = v
-        if k == "chain": CherryPyWSGIServer.ssl_certificate_chain = v
 
 # Setup the WSGI application object and session with mappings
 app = web.application(generate_routes(), globals())
