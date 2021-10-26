@@ -3925,6 +3925,14 @@ class maint_db_stats(ASMEndpoint):
                 s.totalpdf, s.pdfsize
             )
 
+class maint_deps(ASMEndpoint):
+    url = "maint_deps"
+
+    def content(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        return "web.py %s" % web.__version__
+
 class maint_latency(JSONEndpoint):
     url = "maint_latency"
 
