@@ -12,8 +12,10 @@ $(function() {
                 html.content_header(controller.title),
                 '<div id="criteriaform">',
                 '<input data-post="id" type="hidden" value="' + controller.id + '" />',
-                "<input data-post=\"hascriteria\" type=\"hidden\" value=\"true\" />",
+                '<input data-post="hascriteria" type="hidden" value="true" />',
+                '<div id="displayfields">',
                 controller.criteriahtml,
+                '</div>',
                 '</div>',
                 html.content_footer()
             ].join("\n");
@@ -22,15 +24,30 @@ $(function() {
         bind: function() {
 
             $("#submitcriteria").button().click(function() {
-                common.route(controller.target + "?" + $("#criteriaform input, #criteriaform select").toPOST(true));
+                report_criteria.submit();
+            });
+
+            $("#displayfields input").keypress(function(e) {
+                if (e.which == 13) {
+                    report_criteria.submit();
+                    return false;
+                }
             });
 
         },
 
         sync: function() {
+            // Focus the first displayed criteria field
+            setTimeout(function() {
+                $("#displayfields input, #displayfields select").first().focus();
+            }, 100);
         },
 
         destroy: function() {
+        },
+
+        submit: function() {
+            common.route(controller.target + "?" + $("#criteriaform input, #criteriaform select").toPOST(true));
         },
 
         name: "report_criteria",

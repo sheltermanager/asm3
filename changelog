@@ -1,6 +1,7 @@
 45
 ================
 
+26/10/21 Focus first field in report criteria, submit with return in input
 26/10/21 Upgrade to web.py 0.62 and include with codebase
 25/10/21 Bundle web.py due to different broken versions shipping with distros
 23/10/21 Mark photos from online forms as exclude from publish by default
