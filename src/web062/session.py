@@ -145,8 +145,8 @@ class Session(object):
 
     def _save(self):
         current_values = dict(self._data)
-        del current_values["session_id"]
-        del current_values["ip"]
+        if "session_id" in current_values: del current_values["session_id"]
+        if "ip" in current_values: del current_values["ip"]
 
         if not self.get("_killed"):
             self._setcookie(self.session_id)
