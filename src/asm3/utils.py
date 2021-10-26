@@ -6,6 +6,8 @@ import asm3.users
 
 from asm3.sitedefs import BASE_URL, MULTIPLE_DATABASES, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
 
+import web062 as web
+
 import base64
 import codecs
 import datetime
@@ -20,7 +22,6 @@ import subprocess
 import tempfile
 import time
 import uuid
-import web
 import zipfile
 
 import _thread as thread

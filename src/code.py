@@ -8,7 +8,7 @@ PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
 # Prepend our modules to the path to make sure they're added first
 sys.path.insert(0, PATH)
 
-import web
+import web062 as web
 
 import asm3.al
 import asm3.additional
