@@ -698,7 +698,7 @@ Images`).  Pass the name of the image in the title parameter::
 html_adoptable_animals
 ----------------------
 
-.. rubric:: Cache time: 30 minutes
+.. rubric:: Cache time: 10 minutes
 
 Returns a complete HTML document containing an HTML page of adoptable animals.
 

@@ -4750,7 +4750,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, asm3.movement.RELEASED),
             sp["ID"], sp["SPECIESNAME"], "SP_STOLEN", group, 130, showbabies, babymonths)
 
-    group = _("Live Releases {0}", l).format(year)
+    group = _("Live Outcomes {0}", l).format(year)
     for sp in allspecies:
         species_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
@@ -4958,7 +4958,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, asm3.movement.RELEASED),
             at["ID"], at["ANIMALTYPE"], "AT_STOLEN", group, 130, at["SHOWSPLIT"], babymonths)
 
-    group = _("Live Releases {0}", l).format(year)
+    group = _("Live Outcomes {0}", l).format(year)
     for at in alltypes:
         type_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
@@ -5166,7 +5166,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, asm3.movement.RELEASED),
             er["ID"], er["REASONNAME"], "ER_STOLEN", group, 130, er["SHOWSPLIT"], babymonths)
 
-    group = _("Live Releases {0}", l).format(year)
+    group = _("Live Outcomes {0}", l).format(year)
     for er in allreasons:
         entryreason_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \

@@ -1,6 +1,8 @@
 45
 ================
 
+27/10/21 Rename "Live Releases" to "Live Outcomes" for clarity
+27/10/21 Drop html_adoptable_animals cache time to 10 minutes
 26/10/21 Focus first field in report criteria, submit with return in input
 26/10/21 Upgrade to web.py 0.62 and include with codebase
 25/10/21 Bundle web.py due to different broken versions shipping with distros
