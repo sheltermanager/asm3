@@ -92,6 +92,9 @@ LOG_LOCATION = get_string("log_location", "syslog")
 # to disable debug messages
 LOG_DEBUG = get_boolean("log_debug", True)
 
+# Whether to reload the application when the code.py filestamp changes
+AUTORELOAD = get_boolean("autoreload", False)
+
 # Database info
 # MYSQL, POSTGRESQL, SQLITE or DB2
 DB_TYPE = get_string("db_type", "MYSQL")

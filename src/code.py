@@ -61,7 +61,8 @@ from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format,
     add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, \
     monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency
 
-from asm3.sitedefs import BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
+from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, \
+    ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
     AKC_REUNITE_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, \
     LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, \
     ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, HTMLFTP_PUBLISHER_ENABLED, \
@@ -6437,7 +6438,7 @@ class waitinglist_results(JSONEndpoint):
 routes = []
 
 # Setup the WSGI application object and session with mappings
-app = web.application(generate_routes(), globals())
+app = web.application(generate_routes(), globals(), autoreload=AUTORELOAD)
 app.notfound = asm_404
 if EMAIL_ERRORS:
     app.internalerror = asm_500_email

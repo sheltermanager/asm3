@@ -107,12 +107,12 @@ smcom-stable: clean version rollup schema
 	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it on a schedule
 	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
 	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable invalidatecache"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable invalidatecache restartapache"
 
 smcom-stable-dumpsessions: clean version rollup schema
 	@echo "[smcom stable dumpsessions] ==================="
 	rsync --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable dumpsessions invalidatecache"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable dumpsessions invalidatecache restartapache"
 
 smcom-stable-tgz: clean version rollup schema
 	@echo "[smcom stable tgz] ======================"
