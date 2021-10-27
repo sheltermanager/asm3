@@ -7,7 +7,8 @@ from asm3.sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
 import datetime
 import re
 import os, sys
-import web
+
+import web062 as web
 
 # Regex to remove invalid chars from an entered database
 INVALID_REMOVE = re.compile(r'[\/\.\*\?\ ]')

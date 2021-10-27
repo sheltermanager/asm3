@@ -19,7 +19,7 @@ import asm3.utils
 import asm3.waitinglist
 from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TOUCHPUNCH_JS
 
-import web
+import web062 as web
 
 FIELDTYPE_YESNO = 0
 FIELDTYPE_TEXT = 1

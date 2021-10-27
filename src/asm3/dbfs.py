@@ -3,11 +3,13 @@ import asm3.al
 import asm3.cachedisk
 import asm3.smcom
 import asm3.utils
+
 from asm3.sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, DBFS_S3_BUCKET
 
 import mimetypes
 import os, sys, threading, time
-import web
+
+import web062 as web
 
 class DBFSStorage(object):
     """ DBFSStorage factory """
