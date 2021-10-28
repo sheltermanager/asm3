@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-10-27 08:41+0000\n"
+"POT-Creation-Date: 2021-10-28 17:28+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -10706,6 +10706,10 @@ msgid "Selected On-Shelter Animals"
 msgstr ""
 
 #: dbupdate.py
+msgid "Selective"
+msgstr ""
+
+#: dbupdate.py
 msgid "Selkirk Rex"
 msgstr ""
 
@@ -11612,6 +11616,10 @@ msgstr ""
 
 #: stock.py
 msgid "Stock level must have a unit"
+msgstr ""
+
+#: stock.py
+msgid "Stock usage must have a date"
 msgstr ""
 
 #: dbupdate.py
