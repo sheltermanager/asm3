@@ -1,6 +1,7 @@
 45
 ================
 
+28/10/21 Include email subject in log when sending from media tab
 27/10/21 Stop using autoreload in production for performance reasons
 27/10/21 Rename "Live Releases" to "Live Outcomes" for clarity
 27/10/21 Drop html_adoptable_animals cache time to 10 minutes

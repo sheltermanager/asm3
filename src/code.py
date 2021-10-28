@@ -711,7 +711,7 @@ class media(ASMEndpoint):
         post = o.post
         emailadd = post["to"]
         attachments = []
-        notes = []
+        subject = [ post["subject"] ]
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
             if m is None: self.notfound()
@@ -721,13 +721,13 @@ class media(ASMEndpoint):
                 content = asm3.utils.fix_relative_document_uris(dbo, content)
                 content = asm3.utils.str2bytes(content)
             attachments.append(( m.MEDIANAME, m.MEDIAMIMETYPE, content ))
-            notes.append(m.MEDIANOTES)
+            subject.append(m.MEDIANOTES)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if asm3.configuration.audit_on_send_email(dbo): 
             asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), 
-                emailadd, ", ".join(notes), post["body"])
+                emailadd, ", ".join(subject), post["body"])
         return emailadd
 
     def post_emailpdf(self, o):
@@ -736,7 +736,7 @@ class media(ASMEndpoint):
         post = o.post
         emailadd = post["to"]
         attachments = []
-        notes = []
+        subject = [ post["subject"] ]
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
             if m is None: self.notfound()
@@ -744,13 +744,13 @@ class media(ASMEndpoint):
             content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
             contentpdf = asm3.utils.html_to_pdf(dbo, content)
             attachments.append(( "%s.pdf" % m.ID, "application/pdf", contentpdf ))
-            notes.append(m.MEDIANOTES)
+            subject.append(m.MEDIANOTES)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if asm3.configuration.audit_on_send_email(dbo): 
             asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
-                emailadd, ", ".join(notes), post["body"])
+                emailadd, ", ".join(subject), post["body"])
         return emailadd
 
     def post_emailsign(self, o):
