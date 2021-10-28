@@ -113,7 +113,7 @@ def session_manager():
     web.config.session_parameters["cookie_path"] = "/"
     web.config.session_parameters["timeout"] = 86400
     web.config.session_parameters["ignore_change_ip"] = True
-    web.config.session_parameters["ignore_expiry"] = False
+    web.config.session_parameters["ignore_expiry"] = True # session disappears on timeout set above 
     web.config.session_parameters["secure"] = SESSION_SECURE_COOKIE
     sess = None
     if asm3.utils.websession is None:
