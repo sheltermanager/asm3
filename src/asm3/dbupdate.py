@@ -38,7 +38,7 @@ VERSIONS = (
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
-    34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504
+    34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -2311,6 +2311,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksynun", "Name", 0, _("Yes", l))
     sql += lookup1("lksynun", "Name", 1, _("No", l))
     sql += lookup1("lksynun", "Name", 2, _("Unknown", l))
+    sql += lookup1("lksynun", "Name", 3, _("Selective", l))
     sql += lookup1("lksynunk", "Name", 0, _("Yes", l))
     sql += lookup1("lksynunk", "Name", 1, _("No", l))
     sql += lookup1("lksynunk", "Name", 2, _("Unknown", l))
@@ -5480,4 +5481,10 @@ def update_34504(dbo):
     # add onlineform.AutoProcess
     add_column(dbo, "onlineform", "AutoProcess", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineform SET AutoProcess=0")
+
+def update_34505(dbo):
+    # add extra row for Selective to good with
+    l = dbo.locale
+    dbo.execute_dbupdate("INSERT INTO lksynun VALUES (3, ?)", [ _("Selective", l) ])
+
 

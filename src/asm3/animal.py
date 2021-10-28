@@ -1989,7 +1989,7 @@ def insert_animal_from_form(dbo, post, username):
         # Generate a new code
         sheltercode, shortcode, unique, year = calc_shelter_code(dbo, post.integer("animaltype"), post.integer("entryreason"), post.integer("species"), datebroughtin)
 
-    # Default good with
+    # Default good with to unknown
     goodwithcats = 2
     if "goodwithcats" in post: goodwithcats = post.integer("goodwithcats")
     goodwithdogs = 2

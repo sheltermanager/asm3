@@ -41,10 +41,10 @@ class PetFinderPublisher(FTPPublisher):
     def pfNotGoodWith(self, v):
         """
         Returns a CSV entry for yes, no, unknown based on the value.
-        In our scheme v is one of Yes=0, No=1, Unknown=2
-        In their scheme since it's notGood, Yes=0, No=1, Unknown=""
+        In our scheme v is one of Yes=0, No=1, Unknown=2, Selective=3
+        In their scheme since it's notGood, Yes=0, No=1, Unknown="", Selective=""
         """
-        if v == 2:
+        if v >= 2:
             return "\"\""
         elif v == 1:
             return "\"1\""

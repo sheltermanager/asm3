@@ -1,6 +1,7 @@
 45
 ================
 
+28/10/21 Add "Selective" option to good with/housetrained fields #803
 28/10/21 Validate against empty usage dates when creating stock levels
 28/10/21 Include email subject in log when sending from media tab
 27/10/21 Stop using autoreload in production for performance reasons

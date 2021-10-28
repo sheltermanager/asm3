@@ -62,7 +62,7 @@ class SavourLifePublisher(AbstractPublisher):
 
     def good_with(self, x):
         """
-        Translates our good with fields Unknown/No/Yes to SOL's NULL/False/True
+        Translates our good with fields Selective/Unknown/No/Yes to SOL's NULL/False/True
         """
         if x == 0: return True
         elif x == 1: return False

@@ -38,7 +38,7 @@ class RescueGroupsPublisher(FTPPublisher):
 
     def rgYesNoBlank(self, v):
         """
-        Returns 0 == Yes, 1 == No, 2 == Empty string
+        Returns 0 == Yes, 1 == No, 2 or 3 == Empty string
         """
         if v == 0: return "Yes"
         elif v == 1: return "No"
