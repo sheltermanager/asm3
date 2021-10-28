@@ -29,6 +29,7 @@ import urllib.request as urllib2
 import urllib.parse
 from io import BytesIO, StringIO
 from html.parser import HTMLParser
+from html import unescape
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -708,8 +709,7 @@ def decode_html(s):
     Decodes HTML entities in s and turns them into unicode
     """
     if s is None: return ""
-    parser = HTMLParser()
-    return parser.unescape(s)
+    return unescape(s)
 
 def encode_html(s):
     """
@@ -903,8 +903,8 @@ def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False, ren
     def writerow(row):
         line = []
         for r in row:
-            line.append(u"\"%s\"" % r)
-        lines.append(u",".join(line))
+            line.append("\"%s\"" % r)
+        lines.append(",".join(line))
     if cols is None:
         cols = []
         for k in rows[0].keys():
@@ -950,7 +950,7 @@ def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False, ren
                 rd.append(r[c])
         writerow(rd)
     # Manually include a UTF-8 BOM to prevent Excel mangling files
-    return (u"\ufeff" + u"\n".join(lines)).encode("utf-8")
+    return ("\ufeff" + "\n".join(lines)).encode("utf-8")
 
 def fix_relative_document_uris(dbo, s):
     """

@@ -2305,7 +2305,7 @@ class csvexport_animals(ASMEndpoint):
         # If we're retrieving an already saved export, serve it.
         if o.post["get"] != "":
             self.content_type("text/csv")
-            self.header("Content-Disposition", u"attachment; filename=export.csv")
+            self.header("Content-Disposition", "attachment; filename=export.csv")
             v = asm3.cachedisk.get(o.post["get"], o.dbo.database)
             if v is None: self.notfound()
             return v
@@ -3879,7 +3879,7 @@ class mailmerge(JSONEndpoint):
         if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
         self.content_type("text/csv")
-        self.header("Content-Disposition", u"attachment; filename=" + asm3.utils.decode_html(post["mergetitle"]) + u".csv")
+        self.header("Content-Disposition", "attachment; filename=" + post["mergetitle"] + ".csv")
         includeheader = 1 == post.boolean("includeheader")
         return asm3.utils.csv(o.locale, rows, cols, includeheader)
 
