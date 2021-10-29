@@ -38,7 +38,7 @@ VERSIONS = (
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
-    34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505
+    34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -885,7 +885,8 @@ def sql_structure(dbo):
         flongstr("HTMLBody", False),
         flongstr("Description"),
         fint("OmitHeaderFooter"),
-        fint("OmitCriteria") ))
+        fint("OmitCriteria"),
+        fint("Revision", True) ))
     sql += index("customreport_Title", "customreport", "Title")
 
     sql += table("customreportrole", (
@@ -5486,5 +5487,10 @@ def update_34505(dbo):
     # add extra row for Selective to good with
     l = dbo.locale
     dbo.execute_dbupdate("INSERT INTO lksynun VALUES (3, ?)", [ _("Selective", l) ])
+
+def update_34506(dbo):
+    # add customreport.Revision
+    add_column(dbo, "customreport", "Revision", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE customreport SET Revision=0")
 
 

@@ -947,6 +947,8 @@ class main(JSONEndpoint):
             asm3.dbupdate.install_db_stored_procedures(dbo)
         # Install recommended reports if no reports are currently installed
         if dbo.query_int("SELECT COUNT(ID) FROM customreport") == 0: asm3.reports.install_recommended_smcom_reports(dbo, o.user)
+        # Update any reports that have newer versions available
+        asm3.reports.update_smcom_reports(dbo, o.user)
         # News
         news = asm3.cachedisk.get("news", "news")
         if news is None:
@@ -5616,7 +5618,7 @@ class reports(JSONEndpoint):
         asm3.reports.set_raw_report_headerfooter(o.dbo, o.post["header"], o.post["footer"])
 
     def post_smcomlist(self, o):
-        return asm3.utils.json(asm3.reports.get_smcom_reports(o.dbo))
+        return asm3.utils.json(asm3.reports.get_smcom_reports_installable(o.dbo))
 
     def post_smcominstall(self, o):
         self.check(asm3.users.ADD_REPORT)

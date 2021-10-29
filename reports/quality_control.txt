@@ -2,7 +2,7 @@ Quality Control
 ###
 Auditing
 ###
-34404/PostgreSQL
+34404/PostgreSQL rev01
 ###
 [Karen Waldroff] QC report, checks for common keying mistakes like adopting to rescues instead of transfers, bad state codes, capitalisations, etc.
 ###

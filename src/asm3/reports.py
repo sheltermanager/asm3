@@ -1,6 +1,9 @@
 
+import asm3.al
 import asm3.animal
+import asm3.cachedisk
 import asm3.configuration
+import asm3.dbms.base
 import asm3.dbupdate
 import asm3.i18n
 import asm3.lookups
@@ -69,7 +72,7 @@ def get_all_report_titles(dbo):
     include builtin reports since they don't count for ASM3 (and should be
     replaced when viewing available reports)
     """
-    return dbo.query("SELECT Title FROM customreport WHERE %s > 3 ORDER BY Title" % dbo.sql_char_length("HTMLBody"))
+    return dbo.query("SELECT Title, Category, Revision FROM customreport WHERE %s > 3 ORDER BY Title" % dbo.sql_char_length("HTMLBody"))
 
 def get_available_reports(dbo, include_with_criteria = True):
     """
@@ -292,7 +295,8 @@ def insert_report_from_form(dbo, username, post):
         "DailyEmailFrequency":  post.integer("dailyemailfrequency"),
         "Description":          post["description"],
         "OmitHeaderFooter":     post.boolean("omitheaderfooter"),
-        "OmitCriteria":         post.boolean("omitcriteria")
+        "OmitCriteria":         post.boolean("omitcriteria"),
+        "Revision":             post.integer("revision")
     }, username, setRecordVersion=False)
 
     dbo.delete("customreportrole", "ReportID=%d" % reportid)
@@ -402,14 +406,43 @@ def generate_html(dbo, username, sql):
     b += "</tr>\nBODY$$\n\n"
     return h + b + f
 
-def get_smcom_reports(dbo):
+def get_smcom_reports_installable(dbo):
     """
-    Returns the full collection of sheltermanager.com reports
+    Returns the collection of sheltermanager.com reports available to install
     as a list of dictionaries. Reports not suitable for this database
     type/version are automatically filtered out.
     [ { TITLE, CATEGORY, DATABASE, DESCRIPTION, LOCALE, SQL, HTML, SUBREPORTS } ]
     """
+    reports = get_smcom_reports(dbo)
+    return [ x for x in reports if x.INSTALLABLE ]
+
+def get_smcom_reports_update(dbo):
+    """
+    Returns the collection of sheltermanager.com reports that require an update
+    as a list of dictionaries. 
+    [ { TITLE, CATEGORY, DATABASE, DESCRIPTION, LOCALE, SQL, HTML, SUBREPORTS } ]
+    """
+    reports = get_smcom_reports(dbo)
+    return [ x for x in reports if x.UPDATE ]
+
+def get_smcom_reports(dbo):
+    """
+    Returns the full collection of sheltermanager.com reports
+    as a list of dictionaries. 
+    DATABASE string format is "VERSION/DBNAME [omitheader] [omitcriteria] [rev00]"
+    INSTALLABLE will be True if the report can be installed in this database.
+    UPDATE will be True if the report is already installed in this database and is older than the last revision.
+           (NB: the category as well as title has to match, so people can protect their copies by changing category)
+    [ { TITLE, CATEGORY, DATABASE, DESCRIPTION, LOCALE, SQL, HTML, SUBREPORTS, INSTALLABLE, REVISION, UPDATE} ]
+    """
     l = dbo.locale
+    # we use a short term 60s disk cache for retrieving the report file as this method is called a lot
+    reps = asm3.cachedisk.get("reports", "reports")
+    if reps is None:
+        s = asm3.utils.get_url(URL_REPORTS)["response"]
+        reps = s.split("&&&")
+        asm3.cachedisk.put("reports", "reports", reps, 60)
+    reports = []
     loaded = get_all_report_titles(dbo)
     def version_ok(rdb):
         if rdb.find("/") == -1: return True
@@ -427,43 +460,60 @@ def get_smcom_reports(dbo):
         return s.startswith("0")
     def installed(title):
         for lrec in loaded:
-            if lrec["TITLE"] == title: return True
+            if lrec.TITLE == title: return True
         return False
-    s = asm3.utils.get_url(URL_REPORTS)["response"]
-    reps = s.split("&&&")
-    reports = []
-    i = 0
+    def update(title, category, rev):
+        if rev == "": return False
+        for lrec in loaded:
+            if lrec.TITLE == title and lrec.CATEGORY == category and lrec.REVISION != rev: return True
+        return False
     for i, rp in enumerate(reps):
         b = rp.split("###")
-        d = { "TITLE" : b[0].strip(), "CATEGORY" : b[1].strip(), "DATABASE" : b[2].strip(), \
-            "DESCRIPTION" : b[3].strip(), "LOCALE" : b[4].strip(), "SQL" : b[5].strip(), \
-            "HTML" : b[6].strip(), "ID" : i+1, "TYPE": asm3.i18n._("Report", l) }
-        if d["HTML"].startswith("GRAPH"): d["TYPE"] = asm3.i18n._("Chart", l)
-        if d["HTML"].startswith("MAIL"): d["TYPE"] = asm3.i18n._("Mail Merge", l)
-        if d["HTML"].startswith("MAP"): d["TYPE"] = asm3.i18n._("Map", l)
+        d = asm3.dbms.base.ResultRow()
+        d.TITLE = b[0].strip()
+        d.CATEGORY = b[1].strip()
+        d.DATABASE = b[2].strip()
+        d.DESCRIPTION = b[3].strip()
+        d.LOCALE = b[4].strip()
+        d.SQL = b[5].strip()
+        d.HTML = b[6].strip()
+        d.ID = i+1
+        d.TYPE = asm3.i18n._("Report", l)
+        if d.HTML.startswith("GRAPH"): d.TYPE = asm3.i18n._("Chart", l)
+        if d.HTML.startswith("MAIL"): d.TYPE = asm3.i18n._("Mail Merge", l)
+        if d.HTML.startswith("MAP"): d.TYPE = asm3.i18n._("Map", l)
+        d.SUBREPORTS = ""
         if len(b) == 8: 
-            d["SUBREPORTS"] = b[7].strip()
-        else:
-            d["SUBREPORTS"] = ""
-        if not builtin(d["SQL"]) and not installed(d["TITLE"]) and database_ok(d["DATABASE"]) and version_ok(d["DATABASE"]):
-            reports.append(d)
+            d.SUBREPORTS = b[7].strip()
+        d.INSTALLABLE = not builtin(d.SQL) and not installed(d.TITLE) \
+            and database_ok(d.DATABASE) and version_ok(d.DATABASE)
+        d.REVISION = 0
+        revp = d.DATABASE.find("rev")
+        if revp != -1:
+            d.REVISION = asm3.utils.cint(d.DATABASE[revp+3:revp+5])
+        d.UPDATE = update(d.TITLE, d.CATEGORY, d.REVISION)
+        reports.append(d)
     return reports
 
 def install_smcom_report(dbo, user, r):
     """
-    Installs the sheltermanager.com report r (an item from get_smcom_reports)
+    Installs the sheltermanager.com report r (an item from get_smcom_reports).
+    If a report with the same title exists in the database already, deletes it first.
     """
-    data = {"title" : r["TITLE"], 
-        "category" : r["CATEGORY"], 
-        "sql" : r["SQL"],
-        "html": r["HTML"], 
-        "description" : r["DESCRIPTION"],
-        "omitheaderfooter" : r["DATABASE"].find("omitheader") != -1 and "on" or "",
-        "omitcriteria" : r["DATABASE"].find("omitcriteria") != -1 and "on" or ""}
+    xid = get_id(dbo, r.TITLE)
+    if xid > 0: dbo.delete("customreport", xid, user)
+    data = {"title" : r.TITLE, 
+        "category" : r.CATEGORY, 
+        "sql" : r.SQL,
+        "html": r.HTML, 
+        "description" : r.DESCRIPTION,
+        "revision": r.REVISION, 
+        "omitheaderfooter" : r.DATABASE.find("omitheader") != -1 and "on" or "",
+        "omitcriteria" : r.DATABASE.find("omitcriteria") != -1 and "on" or ""}
     insert_report_from_form(dbo, user, asm3.utils.PostedData(data, dbo.locale))
     # If the report has some subreports, install those too
-    if r["SUBREPORTS"] != "":
-        b = r["SUBREPORTS"].split("+++")
+    if r.SUBREPORTS != "":
+        b = r.SUBREPORTS.split("+++")
         while len(b) >= 3:
             dbo.delete("customreport", "Title LIKE '%s'" % b[0].strip().replace("'", "`"))
             data["title"] = b[0]
@@ -483,7 +533,8 @@ def install_smcom_reports(dbo, user, ids):
     """
     reports = get_smcom_reports(dbo)
     for r in reports:
-        if r["ID"] in ids: install_smcom_report(dbo, user, r)
+        if r.ID in ids: 
+            install_smcom_report(dbo, user, r)
 
 def install_recommended_smcom_reports(dbo, user):
     """
@@ -492,7 +543,8 @@ def install_recommended_smcom_reports(dbo, user):
     """
     reports = get_smcom_reports(dbo)
     for r in reports:
-        if r["TITLE"] in RECOMMENDED_REPORTS: install_smcom_report(dbo, user, r)
+        if r.TITLE in RECOMMENDED_REPORTS: 
+            install_smcom_report(dbo, user, r)
 
 def install_smcom_report_file(dbo, user, filename):
     """
@@ -506,19 +558,38 @@ def install_smcom_report_file(dbo, user, filename):
     reps = s.split("&&&")
     for rp in reps:
         b = rp.split("###")
-        d = { "TITLE" : b[0].strip(), "CATEGORY" : b[1].strip(), "DATABASE" : b[2].strip(), \
-            "DESCRIPTION" : b[3].strip(), "LOCALE" : b[4].strip(), "SQL" : b[5].strip(), \
-            "HTML" : b[6].strip(), "TYPE": asm3.i18n._("Report", l) }
-        if d["HTML"].startswith("GRAPH"): d["TYPE"] = asm3.i18n._("Chart", l)
-        if d["HTML"].startswith("MAIL"): d["TYPE"] = asm3.i18n._("Mail Merge", l)
-        if d["HTML"].startswith("MAP"): d["TYPE"] = asm3.i18n._("Map", l)
+        d = asm3.dbms.base.ResultRow()
+        d.TITLE = b[0].strip()
+        d.CATEGORY = b[1].strip()
+        d.DATABASE = b[2].strip()
+        d.DESCRIPTION = b[3].strip()
+        d.LOCALE = b[4].strip()
+        d.SQL = b[5].strip()
+        d.HTML = b[6].strip()
+        d.TYPE = asm3.i18n._("Report", l)
+        if d.HTML.startswith("GRAPH"): d.TYPE = asm3.i18n._("Chart", l)
+        if d.HTML.startswith("MAIL"): d.TYPE = asm3.i18n._("Mail Merge", l)
+        if d.HTML.startswith("MAP"): d.TYPE = asm3.i18n._("Map", l)
+        d.SUBREPORTS = ""
         if len(b) == 8: 
-            d["SUBREPORTS"] = b[7].strip()
-        else:
-            d["SUBREPORTS"] = ""
-        xid = get_id(dbo, d["TITLE"])
-        if xid > 0: dbo.delete("customreport", xid, user)
+            d.SUBREPORTS = b[7].strip()
+        d.REVISION = 0
+        revp = d.DATABASE.find("rev")
+        if revp != -1:
+            d.REVISION = asm3.utils.cint(d.DATABASE[revp+3:revp+5])
         install_smcom_report(dbo, user, d)
+
+def update_smcom_reports(dbo, user):
+    """
+    Finds all reports with available updates and updates them.
+    """
+    reports = get_smcom_reports(dbo)
+    updated = 0
+    for r in reports:
+        if r.UPDATE:
+            install_smcom_report(dbo, user, r)
+            updated += 1
+    asm3.al.info(f"updated {updated} reports.", "reports.update_smcom_reports", dbo)
 
 def get_reports_menu(dbo, roleids = "", superuser = False):
     """
