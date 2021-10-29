@@ -19,7 +19,7 @@ rcount = "&&&".join(s).count("&&&")
 print(f"Processed {len(s)} files containing {rcount} reports")
 
 with open("reports.txt", "w") as f:
-    f.write("&&&".join(s))
+    f.write("&&&\n".join(s))
 print("reports.txt written")
 
 # Upload to the server
