@@ -833,6 +833,16 @@ WHERE date_trunc('day', o.LASTCHANGEDDATE)  = current_date -1
    OR (regexp_replace(o.mobiletelephone, '\D','','g') <> '' AND regexp_replace(o.mobiletelephone, '\D','','g') LIKE regexp_replace(ow.mobiletelephone, '\D','','g') AND ow.mobiletelephone <> '')
    OR (regexp_replace(o.mobiletelephone, '\D','','g') <> '' AND regexp_replace(o.mobiletelephone, '\D','','g') LIKE regexp_replace(ow.hometelephone, '\D','','g') AND ow.hometelephone <> ''))
 
+-- Looks for invalid email addresses missing @ or . and looks for emails with space (emails can have a comma and space separating emails IF listing two or more addresses).  Added 10/28/2021
+UNION SELECT 
+  owner.ownername as name,
+  owner.ownercode as code,
+  date(owner.LastChangedDate) as issuedate,
+  'Invalid Email.' AS issue
+FROM owner
+WHERE (owner.EmailAddress NOT LIKE '%@%' OR owner.EmailAddress NOT LIKE '%.%' OR (owner.EmailAddress like '% %' AND owner.EmailAddress NOT LIKE '%, %'))
+  AND owner.EmailAddress <> ''
+
 --This alert compares the email of records that were modified the day before with emails
 --in the database.
 UNION SELECT
