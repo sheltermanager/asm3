@@ -552,6 +552,15 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-person-code { color: red; }
 .personchooser-noperm { font-weight: bold; }
 
+/** REPORTS =========================== */
+.asm-report-revision {
+    color: #366575;
+    background-color: #fffaed;
+    border: 1px solid #333;
+    padding: 3px;
+    margin: 1px;
+}
+
 /** ACCOUNTS ========================== */
 #table-trx { border-collapse: collapse; }
 #table-trx a { color: #000; }
