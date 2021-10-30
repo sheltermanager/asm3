@@ -72,7 +72,7 @@ def get_all_report_titles(dbo):
     include builtin reports since they don't count for ASM3 (and should be
     replaced when viewing available reports)
     """
-    return dbo.query("SELECT Title, Category, Revision FROM customreport WHERE %s > 3 ORDER BY Title" % dbo.sql_char_length("HTMLBody"))
+    return dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE %s > 3 ORDER BY Title" % dbo.sql_char_length("HTMLBody"))
 
 def get_available_reports(dbo, include_with_criteria = True):
     """
@@ -462,6 +462,10 @@ def get_smcom_reports(dbo):
         for lrec in loaded:
             if lrec.TITLE == title: return True
         return False
+    def customreportid(title):
+        for lrec in loaded:
+            if lrec.TITLE == title: return lrec.ID
+        return 0
     def update(title, category, rev):
         if rev == "": return False
         for lrec in loaded:
@@ -487,6 +491,7 @@ def get_smcom_reports(dbo):
             d.SUBREPORTS = b[7].strip()
         d.INSTALLABLE = not builtin(d.SQL) and not installed(d.TITLE) \
             and database_ok(d.DATABASE) and version_ok(d.DATABASE)
+        d.CUSTOMREPORTID = customreportid(d.TITLE)
         d.REVISION = 0
         revp = d.DATABASE.find("rev")
         if revp != -1:
@@ -511,20 +516,7 @@ def install_smcom_report(dbo, user, r):
         "omitheaderfooter" : r.DATABASE.find("omitheader") != -1 and "on" or "",
         "omitcriteria" : r.DATABASE.find("omitcriteria") != -1 and "on" or ""}
     insert_report_from_form(dbo, user, asm3.utils.PostedData(data, dbo.locale))
-    # If the report has some subreports, install those too
-    if r.SUBREPORTS != "":
-        b = r.SUBREPORTS.split("+++")
-        while len(b) >= 3:
-            dbo.delete("customreport", "Title LIKE '%s'" % b[0].strip().replace("'", "`"))
-            data["title"] = b[0]
-            data["sql"] = b[1]
-            data["html"] = b[2]
-            insert_report_from_form(dbo, user, asm3.utils.PostedData(data, dbo.locale))
-            # Reduce the list by the 3 elements we just saw
-            if len(b) > 3:
-                b = b[3:]
-            else:
-                break
+    install_smcom_subreports(dbo, user, r)
 
 def install_smcom_reports(dbo, user, ids):
     """
@@ -535,6 +527,27 @@ def install_smcom_reports(dbo, user, ids):
     for r in reports:
         if r.ID in ids: 
             install_smcom_report(dbo, user, r)
+
+def install_smcom_subreports(dbo, user, r):
+    """
+    Installs the subreports from smcom report r
+    """
+    if r.SUBREPORTS != "":
+        b = r.SUBREPORTS.split("+++")
+        while len(b) >= 3:
+            dbo.delete("customreport", "Title LIKE '%s'" % b[0].strip().replace("'", "`"))
+            data = { "title": b[0].strip(),
+                "category": r.CATEGORY,
+                "description": r.DESCRIPTION,
+                "revision": r.REVISION,
+                "sql": b[1],
+                "html": b[2] }
+            insert_report_from_form(dbo, user, asm3.utils.PostedData(data, dbo.locale))
+            # Reduce the list by the 3 elements we just saw
+            if len(b) > 3:
+                b = b[3:]
+            else:
+                break
 
 def install_recommended_smcom_reports(dbo, user):
     """
@@ -582,12 +595,19 @@ def install_smcom_report_file(dbo, user, filename):
 def update_smcom_reports(dbo, user):
     """
     Finds all reports with available updates and updates them.
+    Note that only the SQL, HTML and Revision are updated.
+    Any subreports are reinstalled.
     """
     reports = get_smcom_reports(dbo)
     updated = 0
     for r in reports:
         if r.UPDATE:
-            install_smcom_report(dbo, user, r)
+            dbo.update("customreport", r.CUSTOMREPORTID, {
+                "*SQLCommand":  r.SQL,
+                "*HTMLBody":    r.HTML,
+                "Revision":     r.REVISION
+            }, user)
+            install_smcom_subreports(dbo, user, r)
             updated += 1
     asm3.al.info(f"updated {updated} reports.", "reports.update_smcom_reports", dbo)
 

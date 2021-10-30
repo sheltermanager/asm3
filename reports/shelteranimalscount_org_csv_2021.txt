@@ -2,7 +2,7 @@ shelteranimalscount.org monthly CSV export 2021
 ###
 Figures
 ###
-33600/PostgreSQL rev09
+33600/PostgreSQL rev08
 ###
 When run from Export Reports as CSV, produces a file containing one month of data for importing into shelteranimalscount.org
 ###
