@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-10-28 17:28+0000\n"
+"POT-Creation-Date: 2021-10-31 10:53+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -246,7 +246,7 @@ msgstr ""
 msgid "Access Settings Menu"
 msgstr ""
 
-#: accounts_trx.js
+#: accounts_trx.js lookups.js
 msgid "Account"
 msgstr ""
 
@@ -2962,7 +2962,7 @@ msgstr ""
 msgid "Cost For"
 msgstr ""
 
-#: lookups.py accounts.js
+#: lookups.py
 msgid "Cost Type"
 msgstr ""
 
@@ -7605,6 +7605,10 @@ msgstr ""
 msgid "Match this animal with the lost and found database"
 msgstr ""
 
+#: lookups.js
+msgid "Matching account created"
+msgstr ""
+
 #: dbupdate.py
 msgid "Maternity"
 msgstr ""
@@ -8938,7 +8942,7 @@ msgstr ""
 msgid "Payment Processors"
 msgstr ""
 
-#: html.py reports.py accounts.js
+#: html.py reports.py
 msgid "Payment Type"
 msgstr ""
 
@@ -10098,6 +10102,10 @@ msgstr ""
 
 #: html.py mobile.py reports.js roles.js main.js options.js
 msgid "Reports"
+msgstr ""
+
+#: reports.js
+msgid "Repository revision"
 msgstr ""
 
 #: donations.js
@@ -12557,18 +12565,10 @@ msgstr ""
 msgid "This email address is the default From address when sending emails"
 msgstr ""
 
-#: accounts.js
-msgid "This expense account is the source for costs of this type"
-msgstr ""
-
 #: options.js
 msgid ""
 "This feature allows you to email an adopter to have them sign their adoption "
 "paperwork, pay the adoption fee and make an optional donation."
-msgstr ""
-
-#: accounts.js
-msgid "This income account is the source for payments received of this type"
 msgstr ""
 
 #: donations.js

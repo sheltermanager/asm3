@@ -18,6 +18,7 @@ import re
 #   pubbreed - has a PetFinderBreed column (breed)
 #   pubcol - has an AdoptAPetColour column (basecolour)
 #   sched - has a RescheduleDays column (testtype, vaccinationtype)
+#   acc - has an AccountID column (costtype, donationtype)
 #   cost - has a DefaultCost column (citationtype, costtype, donationtype, licencetype)
 #   units - has Units column (internallocation)
 #   site - has SiteID column (internallocation)
@@ -31,11 +32,11 @@ LOOKUP_TABLES = {
     "lkcoattype":       (_("Coat Types"), "CoatType", _("Coat Type"), "", "add del", ("animal.CoatType",)),
     "citationtype":     (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", "add del ret cost", ("ownercitation.CitationTypeID",)),
     "lksclinicstatus":  (_("Clinic Statuses"), "Status", _("Status"), "", "", ("clinicappointment.Status",)),
-    "costtype":         (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", "add del ret cost", ("animalcost.CostTypeID",)),
+    "costtype":         (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", "add del ret cost acc", ("animalcost.CostTypeID",)),
     "deathreason":      (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.PTSReasonID",)),
     "diet":             (_("Diets"), "DietName", _("Diet"), "DietDescription", "add del ret", ("animaldiet.DietID",)),
     "donationpayment":  (_("Payment Methods"), "PaymentName", _("Type"), "PaymentDescription", "add del ret", ("ownerdonation.DonationPaymentID",)),
-    "donationtype":     (_("Payment Types"), "DonationName", _("Type"), "DonationDescription", "add del ret cost vat", ("ownerdonation.DonationTypeID", "accounts.DonationTypeID")),
+    "donationtype":     (_("Payment Types"), "DonationName", _("Type"), "DonationDescription", "add del ret cost vat acc", ("ownerdonation.DonationTypeID", "accounts.DonationTypeID")),
     "entryreason":      (_("Entry Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.EntryReasonID", "adoption.ReturnedReasonID") ),
     "incidentcompleted":(_("Incident Completed Types"), "CompletedName", _("Completed Type"), "CompletedDescription", "add del ret", ("animalcontrol.IncidentCompletedID",)),
     "incidenttype":     (_("Incident Types"), "IncidentName", _("Type"), "IncidentDescription", "add del ret", ("animalcontrol.IncidentTypeID",)),
@@ -1026,7 +1027,7 @@ def get_lookup(dbo, tablename, namefield):
         return dbo.query("SELECT b.*, s.SpeciesName FROM breed b LEFT OUTER JOIN species s ON s.ID = b.SpeciesID ORDER BY b.BreedName")
     return dbo.query("SELECT * FROM %s ORDER BY %s" % ( tablename, namefield ))
 
-def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, defaultcost=0, vat=0, retired=0):
+def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, accountid=0, defaultcost=0, vat=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     nid = 0
     if lookup == "basecolour":
@@ -1060,25 +1061,29 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
             "IsRetired":            retired
         }, username, setCreated=False)
     elif lookup == "costtype":
+        # Create a matching account if the option is on and link it
+        if asm3.configuration.create_cost_trx(dbo): 
+            accountid = asm3.financial.insert_account_from_costtype(dbo, name, desc)
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
+            "AccountID":            accountid,
             "IsRetired":            retired
         }, username, setCreated=False)
-        # Create matching cost type account
-        if asm3.configuration.create_cost_trx(dbo): asm3.financial.insert_account_from_costtype(dbo, nid, name, desc)
         return nid
     elif lookup == "donationtype":
+        # Create a matching account if the option is on and link it
+        if asm3.configuration.create_donation_trx(dbo): 
+            accountid = asm3.financial.insert_account_from_donationtype(dbo, name, desc)
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
+            "AccountID":            accountid,
             "IsVAT":                vat,
             "IsRetired":            retired
         }, username, setCreated=False)
-        # Create a matching account if we have a donation type
-        if asm3.configuration.create_donation_trx(dbo): asm3.financial.insert_account_from_donationtype(dbo, nid, name, desc)
         return nid
     elif lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
         nid = dbo.insert(lookup, {
@@ -1116,7 +1121,7 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
         else:
             return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc }, username, setCreated=False)
 
-def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, defaultcost=0, vat=0, retired=0):
+def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, accountid=0, defaultcost=0, vat=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     if lookup == "basecolour":
         dbo.update("basecolour", iid, { 
@@ -1148,16 +1153,24 @@ def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbree
             "PetFinderSpecies":     pfspecies,
             "IsRetired":            retired
         }, username, setLastChanged=False)
+    elif lookup == "costtype":
+        dbo.update(lookup, iid, {
+            t[LOOKUP_NAMEFIELD]:    name,
+            t[LOOKUP_DESCFIELD]:    desc,
+            "DefaultCost":          defaultcost,
+            "AccountID":            accountid,
+            "IsRetired":            retired
+        }, username, setLastChanged=False)
     elif lookup == "donationtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
+            "AccountID":            accountid,
             "IsVAT":                vat,
             "IsRetired":            retired
         }, username, setLastChanged=False)
-    elif lookup == "costtype" or lookup == "voucher" \
-        or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
+    elif lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,

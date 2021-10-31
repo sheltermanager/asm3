@@ -38,7 +38,7 @@ VERSIONS = (
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
-    34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506
+    34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -151,12 +151,10 @@ def sql_structure(dbo):
         fstr("Description"),
         fint("Archived", True),
         fint("AccountType"),
-        fint("CostTypeID", True),
-        fint("DonationTypeID", True) ))
+        fint("CostTypeID", True), # ASM2_COMPATIBILITY - replaced by costtype.AccountID
+        fint("DonationTypeID", True) )) # ASM2_COMPATIBILITY - replaced by donationtype.AccountID
     sql += index("accounts_Code", "accounts", "Code", False)
     sql += index("accounts_Archived", "accounts", "Archived")
-    sql += index("accounts_CostTypeID", "accounts", "CostTypeID")
-    sql += index("accounts_DonationTypeID", "accounts", "DonationTypeID")
  
     sql += table("accountsrole", (
         fint("AccountID"),
@@ -263,11 +261,9 @@ def sql_structure(dbo):
         fstr("ShelterCode"),
         fstr("ShortCode"),
         fstr("ExtraIDs", True),
-        # ASM2_COMPATIBILITY
         fint("UniqueCodeID", True),
-        fdate("SmartTagSentDate", True),
         fint("YearCodeID", True),
-        # ASM2_COMPATIBILITY
+        fdate("SmartTagSentDate", True), # ASM2_COMPATIBILITY
         fstr("AcceptanceNumber"),
         fdate("DateOfBirth"),
         fint("EstimatedDOB"),
@@ -872,6 +868,7 @@ def sql_structure(dbo):
         fstr("CostTypeName"),
         fstr("CostTypeDescription", True),
         fint("DefaultCost", True),
+        fint("AccountID", True),
         fint("IsRetired", True) ), False)
 
     sql += table("customreport", (
@@ -961,6 +958,7 @@ def sql_structure(dbo):
         fstr("DonationName"),
         fstr("DonationDescription", True),
         fint("DefaultCost", True),
+        fint("AccountID", True),
         fint("IsVAT", True),
         fint("IsRetired", True) ), False)
 
@@ -5493,4 +5491,14 @@ def update_34506(dbo):
     add_column(dbo, "customreport", "Revision", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE customreport SET Revision=0")
 
+def update_34507(dbo):
+    # add costtype.AccountID, donationtype.AccountID
+    add_column(dbo, "costtype", "AccountID", dbo.type_integer)
+    add_column(dbo, "donationtype", "AccountID", dbo.type_integer)
+    # Copy the values from the redundant columns in accounts
+    for a in dbo.query("SELECT ID, CostTypeID, DonationTypeID FROM accounts"):
+        if a.COSTTYPEID is not None and a.COSTTYPEID > 0:
+            dbo.execute_dbupdate("UPDATE costtype SET AccountID=? WHERE ID=?", (a.ID, a.COSTTYPEID))
+        if a.DONATIONTYPEID is not None and a.DONATIONTYPEID > 0:
+            dbo.execute_dbupdate("UPDATE donationtype SET AccountID=? WHERE ID=?", (a.ID, a.DONATIONTYPEID))
 

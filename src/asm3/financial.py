@@ -824,15 +824,15 @@ def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0
 
     # Do we already have an existing transaction for this donation?
     # If we do, we only need to check the amounts as it's now the
-    # users problem if they picked the wrong donationtype/account
+    # users problem if they picked the wrong cost type/account
     trxid = dbo.query_int("SELECT ID FROM accountstrx WHERE AnimalCostID = ?", [acid])
     if trxid != 0:
         asm3.al.debug("Already have an existing transaction, updating amount to %d" % c.COSTAMOUNT, "financial.update_matching_cost_transaction", dbo)
         dbo.update("accountstrx", trxid, { "Amount": c.COSTAMOUNT })
         return
 
-    # Get the target account for this type of cost, use the first expense account on file for that type
-    target = dbo.query_int("SELECT ID FROM accounts WHERE AccountType = ? AND CostTypeID = ? ORDER BY ID", (EXPENSE, c.COSTTYPEID))
+    # Get the target account for this type of cost
+    target = dbo.query_int("SELECT AccountID FROM costtype WHERE ID = ?", [c.COSTTYPEID])
     if target == 0:
         # This shouldn't happen, but we can't go ahead without an account
         asm3.al.error("No target account found for cost type, can't create trx", "financial.update_matching_cost_transaction", dbo)
@@ -851,7 +851,7 @@ def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0
                 # Shouldn't happen, but we have no bank accounts on file
                 asm3.al.error("No bank accounts on file, can't set target for cost trx", "financial.update_matching_cost_transaction", dbo)
                 return
-        # Has a mapping been created by the user for this donation type
+        # Has a mapping been created by the user for this cost type
         # to a destination other than the default?
         # TODO: If requested in future possibly, not present right now
         # maps = asm3.configuration.cost_account_mappings(dbo)
@@ -885,7 +885,7 @@ def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0
 
 def update_matching_donation_transaction(dbo, username, odid, destinationaccount = 0):
     """
-    Creates a matching account transaction for a donation or updates
+    Creates a matching account transaction for a donation/payment or updates
     an existing trx if it already exists
     """
     l = dbo.locale
@@ -918,8 +918,8 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
         dbo.execute("UPDATE accountstrx SET Amount = ? WHERE ID = ?", (abs(d.DONATION), trxid))
         return
 
-    # Get the source account for this type of donation, use the first income account on file for that type
-    source = dbo.query_int("SELECT ID FROM accounts WHERE AccountType = ? AND DonationTypeID = ? ORDER BY ID", (INCOME, d.DONATIONTYPEID))
+    # Get the source account for this type of donation
+    source = dbo.query_int("SELECT AccountID FROM donationtype WHERE ID = ?", [d.DONATIONTYPEID])
     if source == 0:
         # This shouldn't happen, but we can't go ahead without an account
         asm3.al.error("No source account found for donation type, can't create trx", "financial.update_matching_donation_transaction", dbo)
@@ -1014,7 +1014,7 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
         }, username)
         asm3.al.debug("Fee trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
-def insert_account_from_costtype(dbo, ctid, name, desc):
+def insert_account_from_costtype(dbo, name, desc):
     """
     Creates an account from a donation type record
     """
@@ -1024,12 +1024,10 @@ def insert_account_from_costtype(dbo, ctid, name, desc):
         "Code":             acode,
         "Archived":         0,
         "AccountType":      EXPENSE,
-        "DonationTypeID":   0,
-        "CostTypeID":       ctid,
         "Description":      desc
     }, "system")
 
-def insert_account_from_donationtype(dbo, dtid, name, desc):
+def insert_account_from_donationtype(dbo, name, desc):
     """
     Creates an account from a donation type record
     """
@@ -1039,8 +1037,6 @@ def insert_account_from_donationtype(dbo, dtid, name, desc):
         "Code":             acode,
         "Archived":         0,
         "AccountType":      INCOME,
-        "DonationTypeID":   dtid,
-        "CostTypeID":       0,
         "Description":      desc
     }, "system")
 
@@ -1088,8 +1084,6 @@ def insert_account_from_form(dbo, username, post):
         "Code":             post["code"],
         "Archived":         post.integer("archived"),
         "AccountType":      post.integer("type"),
-        "DonationTypeID":   post.integer("donationtype"),
-        "CostTypeID":       post.integer("costtype"),
         "Description":      post["description"]
     }, username)
 
@@ -1113,8 +1107,6 @@ def update_account_from_form(dbo, username, post):
         "Code":             post["code"],
         "AccountType":      post.integer("type"),
         "Archived":         post.integer("archived"),
-        "DonationTypeID":   post.integer("donationtype"),
-        "CostTypeID":       post.integer("costtype"),
         "Description":      post["description"]
     }, username)
 

@@ -3555,6 +3555,7 @@ class lookups(JSONEndpoint):
             "haspfbreed": "pubbreed" in modifiers,
             "hasapcolour": "pubcol" in modifiers,
             "hasrescheduledays": "sched" in modifiers,
+            "hasaccountid": "acc" in modifiers,
             "hasdefaultcost": "cost" in modifiers,
             "hasunits": "units" in modifiers,
             "hassite": "site" in modifiers,
@@ -3562,6 +3563,7 @@ class lookups(JSONEndpoint):
             "canadd": "add" in modifiers,
             "candelete": "del" in modifiers,
             "canretire": "ret" in modifiers,
+            "accounts": asm3.financial.get_accounts(dbo, onlyactive=True),
             "species": asm3.lookups.get_species(dbo),
             "tables": asm3.html.json_lookup_tables(l)
         }
@@ -3569,12 +3571,12 @@ class lookups(JSONEndpoint):
     def post_create(self, o):
         post = o.post
         return asm3.lookups.insert_lookup(o.dbo, o.user, post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
 
     def post_update(self, o):
         post = o.post
         asm3.lookups.update_lookup(o.dbo, o.user, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
 
     def post_delete(self, o):
         for lid in o.post.integer_list("ids"):
