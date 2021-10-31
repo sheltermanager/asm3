@@ -483,6 +483,7 @@ check for newer versions of reports. If it finds any, it will update the SQL and
 of your copy of the report to the latest version. It will only change the SQL/HTML
 and update any subreports, it will not change the description if you updated it.
 
-If you change the category on your copy of a report, this will prevent it being 
-updated by the auto updater. You can use this to lock a report to a particular
-version.
+If you change the title or category on your copy of a report, this will prevent 
+it being updated by the auto updater. You can use this to lock a report to a 
+particular version.
+

@@ -1,38 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Search &mdash; ASM 45u documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Animals" href="animals.html" />
@@ -77,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -122,6 +123,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -156,18 +158,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Search</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/searching.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -190,52 +194,53 @@ enter a search term and press enter, all types of record will be searched.</p>
 you type.  You can prefix your term with a code to tell the search to only
 search a certain type of record.</p>
 <ul class="simple">
-<li>a:term will only search animals</li>
-<li>ac:term will only search animal control incidents</li>
-<li>p:term will only search people</li>
-<li>la:term and fa:term will search lost and found animals</li>
-<li>li:num will search issued license numbers</li>
-<li>vo:code will search issued vouchers</li>
-<li>wl:term will search waiting list entries.</li>
+<li><p>a:term will only search animals</p></li>
+<li><p>ac:term will only search animal control incidents</p></li>
+<li><p>p:term will only search people</p></li>
+<li><p>la:term and fa:term will search lost and found animals</p></li>
+<li><p>li:num will search issued license numbers</p></li>
+<li><p>vo:code will search issued vouchers</p></li>
+<li><p>wl:term will search waiting list entries.</p></li>
 </ul>
 <p>In addition to prefixes, you can add an extra clause to control sorting.</p>
 <ul class="simple">
-<li>sort:az will sort alphabetically a to z on name</li>
-<li>sort:za will sort alphabetically z to a on name</li>
-<li>sort:mr will sort by most recently changed</li>
-<li>sort:lr will sort by least recently changed</li>
-<li>sort:as will sort alphabetically a to z on species (only applies to animal
+<li><p>sort:az will sort alphabetically a to z on name</p></li>
+<li><p>sort:za will sort alphabetically z to a on name</p></li>
+<li><p>sort:mr will sort by most recently changed</p></li>
+<li><p>sort:lr will sort by least recently changed</p></li>
+<li><p>sort:as will sort alphabetically a to z on species (only applies to animal
 records – makes more sense in combination with animal search keywords like
-“forpublish” or “onshelter”)</li>
-<li>sort:sa will sort alphabetically z to a on species</li>
-<li>sort:rel will sort by most recently changed, but more relevant items will be
+“forpublish” or “onshelter”)</p></li>
+<li><p>sort:sa will sort alphabetically z to a on species</p></li>
+<li><p>sort:rel will sort by most recently changed, but more relevant items will be
 moved to the top. For example if the search term exactly matches an animal’s
 name or owner’s surname, they will be considered more relevant and appear
-first.</li>
+first.</p></li>
 </ul>
 <p>There are a number of special keyword terms you can use:</p>
 <ul class="simple">
-<li>onshelter (or os) – all on shelter animals</li>
-<li>longterm - all animals who have been on shelter longer than 6 months</li>
-<li>notforadoption – all animals flagged not for adoption</li>
-<li>notmicrochipped - all animals who are not microchipped</li>
-<li>hold – all animals currently being held in case of reclaim</li>
-<li>holdtoday - all animals with a hold that ends today</li>
-<li>quarantine – all animals currently quarantined</li>
-<li>deceased – animals deceased in the last 30 days</li>
-<li>forpublish – all animals available for adoption and matching publishing
-options</li>
-<li>people – all people</li>
-<li>fosterers, volunteers, shelters, aco, banned, staff, retailers, vets, homechecked,
-homecheckers, drivers, members and donors – all people with those flags set</li>
-<li>reservenohomecheck - active reservations where a homecheck has not been done</li>
-<li>activelost – all lost animals who have not been found yet</li>
-<li>activefound – all found animals who have not been returned</li>
+<li><p>onshelter (or os) – all on shelter animals</p></li>
+<li><p>longterm - all animals who have been on shelter longer than 6 months</p></li>
+<li><p>notforadoption – all animals flagged not for adoption</p></li>
+<li><p>notmicrochipped - all animals who are not microchipped</p></li>
+<li><p>hold – all animals currently being held in case of reclaim</p></li>
+<li><p>holdtoday - all animals with a hold that ends today</p></li>
+<li><p>quarantine – all animals currently quarantined</p></li>
+<li><p>deceased – animals deceased in the last 30 days</p></li>
+<li><p>forpublish – all animals available for adoption and matching publishing
+options</p></li>
+<li><p>people – all people</p></li>
+<li><p>fosterers, volunteers, shelters, aco, banned, staff, retailers, vets, homechecked,
+homecheckers, drivers, members and donors – all people with those flags set</p></li>
+<li><p>reservenohomecheck - active reservations where a homecheck has not been done</p></li>
+<li><p>activelost – all lost animals who have not been found yet</p></li>
+<li><p>activefound – all found animals who have not been returned</p></li>
 </ul>
 <p>Eg:</p>
 <blockquote>
-<div>a:Cat sort:az   - find all cats, sort by name
-a:Jack          - all animals called Jack</div></blockquote>
+<div><p>a:Cat sort:az   - find all cats, sort by name
+a:Jack          - all animals called Jack</p>
+</div></blockquote>
 <img alt="_images/searchresults.png" src="_images/searchresults.png" />
 </div>
 
@@ -244,29 +249,29 @@ a:Jack          - all animals called Jack</div></blockquote>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="animals.html" class="btn btn-neutral float-right" title="Animals" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="gettingstarted.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="animals.html" class="btn btn-neutral float-right" title="Animals" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="gettingstarted.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Sheltermanager, Ltd
+        &#169; Copyright 2020, Sheltermanager, Ltd.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -274,7 +279,6 @@ a:Jack          - all animals called Jack</div></blockquote>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

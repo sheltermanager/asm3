@@ -470,4 +470,20 @@ person on file, with their address when the marker is clicked::
 
     SELECT LatLong, OwnerAddress FROM owner
 
+Automatic updating of repository reports
+----------------------------------------
+
+When you install a report from the repository, some reports have a revision 
+number. This number will be shown in the list on the reports editing screen
+next to the report's title.
+
+If we update the repository with a newer version of that report, it will get a new
+revision number. Each time you visit the home page, the system will automatically 
+check for newer versions of reports. If it finds any, it will update the SQL and HTML 
+of your copy of the report to the latest version. It will only change the SQL/HTML
+and update any subreports, it will not change the description if you updated it.
+
+If you change the title or category on your copy of a report, this will prevent 
+it being updated by the auto updater. You can use this to lock a report to a 
+particular version.
 

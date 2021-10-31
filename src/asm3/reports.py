@@ -606,7 +606,7 @@ def update_smcom_reports(dbo, user):
                 "*SQLCommand":  r.SQL,
                 "*HTMLBody":    r.HTML,
                 "Revision":     r.REVISION
-            }, user)
+            }, user, setRecordVersion=False)
             install_smcom_subreports(dbo, user, r)
             updated += 1
     asm3.al.info(f"updated {updated} reports.", "reports.update_smcom_reports", dbo)
