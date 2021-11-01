@@ -1024,7 +1024,9 @@ def insert_account_from_costtype(dbo, name, desc):
         "Code":             acode,
         "Archived":         0,
         "AccountType":      EXPENSE,
-        "Description":      desc
+        "Description":      desc,
+        "DonationTypeID":   0, # ASM2_COMPATIBILITY
+        "CostTypeID":       0 # ASM2_COMPATIBILITY
     }, "system")
 
 def insert_account_from_donationtype(dbo, name, desc):
@@ -1037,7 +1039,9 @@ def insert_account_from_donationtype(dbo, name, desc):
         "Code":             acode,
         "Archived":         0,
         "AccountType":      INCOME,
-        "Description":      desc
+        "Description":      desc,
+        "DonationTypeID":   0, # ASM2_COMPATIBILITY
+        "CostTypeID":       0 # ASM2_COMPATIBILITY
     }, "system")
 
 def insert_account_roles(dbo, username, accountid, post):
@@ -1084,7 +1088,9 @@ def insert_account_from_form(dbo, username, post):
         "Code":             post["code"],
         "Archived":         post.integer("archived"),
         "AccountType":      post.integer("type"),
-        "Description":      post["description"]
+        "Description":      post["description"],
+        "DonationTypeID":   0, # ASM2_COMPATIBILITY
+        "CostTypeID":       0 # ASM2_COMPATIBILITY
     }, username)
 
     insert_account_roles(dbo, username, accountid, post)
