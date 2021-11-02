@@ -105,9 +105,13 @@ def get_waitinglist(dbo, priorityfloor = 5, species = -1, size = -1, addresscont
     if includeremoved == 0: add("a.DateRemovedFromList Is Null")
     if species != -1: add("a.SpeciesID = ?", species)
     if size != -1: add("a.Size = ?", size)
-    if addresscontains != "": add("UPPER(OwnerAddress) LIKE ?", "%%%s%%" % addresscontains.upper())
-    if namecontains != "": add("UPPER(OwnerName) LIKE ?", "%%%s%%" % namecontains.upper())
-    if descriptioncontains != "": add("UPPER(AnimalDescription) LIKE ?", "%%%s%%" % descriptioncontains.upper())
+    if addresscontains != "":
+        ands.append("(%s OR %s)" % (dbo.sql_ilike("OwnerAddress"), dbo.sql_ilike("OwnerTown")))
+        v = "%%%s%%" % addresscontains.lower()
+        values.append(v)
+        values.append(v)
+    if namecontains != "": add(dbo.sql_ilike("OwnerName"), "%%%s%%" % namecontains.lower())
+    if descriptioncontains != "": add(dbo.sql_ilike("AnimalDescription"), "%%%s%%" % descriptioncontains.lower())
     if siteid != 0: add("(o.SiteID = 0 OR o.SiteID = ?)", siteid)
 
     sql = "%s WHERE %s ORDER BY a.Urgency, a.DatePutOnList" % (get_waitinglist_query(dbo), " AND ".join(ands))
