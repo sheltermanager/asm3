@@ -49,6 +49,9 @@ class AKCReunitePublisher(AbstractPublisher):
         orgcounty = asm3.configuration.organisation_county(self.dbo)
         orgpostcode = asm3.configuration.organisation_postcode(self.dbo)
 
+        if asm3.configuration.akc_register_all(self.dbo):
+            self.microchipPatterns = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+
         animals = get_microchip_data(self.dbo, self.microchipPatterns, self.publisherKey)
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")

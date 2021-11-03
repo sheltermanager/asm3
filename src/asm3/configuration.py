@@ -144,6 +144,7 @@ DEFAULTS = {
     "AFDefaultTestType": "1",
     "AFDefaultVaccinationType": "1",
     "AFNonShelterType": "40",
+    "AKCRegisterAll": "No",
     "AlertSpeciesMicrochip": "1,2",
     "AlertSpeciesNeuter": "1,2",
     "AlertSpeciesRabies": "1,2",
@@ -558,6 +559,9 @@ def age_group_name(dbo, band):
 
 def akc_enrollmentsourceid(dbo):
     return cstring(dbo, "AKCEnrollmentSourceID")
+
+def akc_register_all(dbo):
+    return cboolean(dbo, "AKCRegisterAll")
 
 def alert_species_microchip(dbo):
     s = cstring(dbo, "AlertSpeciesMicrochip", DEFAULTS["AlertSpeciesMicrochip"])

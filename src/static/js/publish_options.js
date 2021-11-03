@@ -734,6 +734,14 @@ $(function() {
                 '<td><label for="akenrollmentid">AKC Reunite Enrollment Source ID</label></td>',
                 '<td><input id="akenrollmentid" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="AKCEnrollmentSourceID" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="akregisterall">Register</label></td>',
+                '<td><select id="akregisterall" class="asm-selectbox cfg" disabled="disabled" data="AKCRegisterAll">',
+                '<option value="No">Only AKC Microchips</option>',
+                '<option value="Yes">All Microchips</option>',
+                '</select>',
+                '</td>',
+                '</tr>',
                 '</table>',
                 '</div>'
             ].join("\n");

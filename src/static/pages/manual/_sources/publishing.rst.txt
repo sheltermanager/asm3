@@ -510,6 +510,9 @@ ASM can register microchips with AKC Reunite, part of the American Kennel Club,
 who supply microchips to US organisations and pet owners. AKC microchips are 
 either 15-digits, starting with 956 or 10-digits, starting with 0006 or 0007.
 
+They will optionally accept registration of any microchip, although this has
+to be agreed with them first. 
+
 FoundAnimals
 -------
 
