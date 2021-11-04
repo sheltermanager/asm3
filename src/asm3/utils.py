@@ -1512,6 +1512,11 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
                 h.append(realname) # auto uses utf-8 for non-ascii
                 h.append(address, "ascii")
             msg[header] = h
+        elif header == "Subject":
+            # The subject header should be fewer than 78 chars
+            # len("Subject: ") == 9, 78 - 9 == 69
+            # gmail and some providers hide the subject if it goes over this length
+            msg[header] = Header(truncate(value, 69))
         else:
             msg[header] = Header(value)
 
