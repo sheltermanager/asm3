@@ -4,7 +4,7 @@ Auditing
 ###
 34404/PostgreSQL
 ###
-[Karen Waldroff] QC report, checks for common keying mistakes like adopting to rescues instead of transfers, bad state codes, capitalisations, etc.
+[Karen Waldroff] QC report, checks for common keying mistakes like adopting to rescues instead of transfers, bad state codes, etc. Customization Required.
 ###
 en
 ###
@@ -204,6 +204,16 @@ UNION SELECT
 FROM animal
 WHERE acceptancenumber <> '' 
 AND NOT EXISTS(select ID FROM animallitter al WHERE al.acceptancenumber = animal.acceptancenumber)
+
+--Checks for Media with default name of New document.  Added 11/5/2021
+UNION SELECT
+  'See Code to search' as name,
+  CASE WHEN linktypeid = 0 THEN (SELECT sheltercode FROM animal a WHERE linkID = a.id)
+  ELSE (SELECT ownercode FROM owner o WHERE linkID = o.id) END AS code,
+  date(media.createddate) AS issuedate,
+  'Media Issue.  Rename document or delete blank <i>New document</i>.' AS issue
+FROM media
+WHERE medianotes = 'New document'
 
 --Alerts when adopted and marked microchip, but no microchip number entered.
 UNION SELECT 
@@ -715,6 +725,16 @@ UNION SELECT
 FROM owner
 WHERE owneraddress like '%  %'
 AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--Checks for cities entered with a comma.  Added 11/5/2021
+UNION SELECT 
+  owner.ownername AS name,
+  owner.ownercode AS code,
+  current_date -1 AS issuedate,
+  '<font color = "Red">Possible address issue.  Comma in City field. Alerts Only Once.</font>' AS issue
+FROM owner
+WHERE ownertown LIKE '%,%'
+AND date_trunc('day', LastChangedDate) = current_date -1
 
 --Checks for cities entered in ALL upper or lower case.  And common misspellings of city 
 --names.
