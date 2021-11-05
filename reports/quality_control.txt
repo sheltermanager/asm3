@@ -206,10 +206,15 @@ WHERE acceptancenumber <> ''
 AND NOT EXISTS(select ID FROM animallitter al WHERE al.acceptancenumber = animal.acceptancenumber)
 
 --Checks for Media with default name of New document.  Added 11/5/2021
-UNION SELECT
+UNION SELECT   
   'See Code to search' as name,
-  CASE WHEN linktypeid = 0 THEN (SELECT sheltercode FROM animal a WHERE linkID = a.id)
-  ELSE (SELECT ownercode FROM owner o WHERE linkID = o.id) END AS code,
+  CASE WHEN linktypeid = 0 THEN (SELECT 'Sheltercode ' || sheltercode FROM animal a WHERE linkID = a.id)
+   WHEN linktypeid = 1 THEN (SELECT 'Lost Animal ' || TO_CHAR(ID, '000000') FROM animallost al WHERE linkID = al.id)
+   WHEN linktypeid = 2 THEN (SELECT 'Found Animal ' || TO_CHAR(ID, '000000') FROM animalfound af WHERE linkID = af.id)
+   WHEN linktypeid = 3 THEN (SELECT 'Person Code ' || ownercode FROM owner o WHERE linkID = o.id)
+   WHEN linktypeid = 5 THEN (SELECT 'Waitlist ' || TO_CHAR(ID, '000000') FROM animalwaitinglist aw WHERE linkID = aw.id)
+   WHEN linktypeid = 6 THEN (SELECT 'AC Incident ' || TO_CHAR(ID, '000000') FROM animalcontrol ac WHERE linkID = ac.id)
+   END AS code,
   date(media.createddate) AS issuedate,
   'Media Issue.  Rename document or delete blank <i>New document</i>.' AS issue
 FROM media
