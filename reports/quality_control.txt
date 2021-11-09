@@ -811,40 +811,23 @@ WHERE ownerpostcode <>  ''
 --AND OWNER.LASTCHANGEDDATE > '2020-01-01'
   AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
---This strips out all characters and then alerts if phone number is not equal to 10
+--This strips out all characters and then alerts if phone number is not equal to 10 or 11 (in case someone enters a 1 in front of area code)
 --characters.  It will ignore this if two phone numbers are in same field but separated
 --by a slash (/)
 UNION SELECT
-  owner.ownername AS name,
-  owner.ownercode AS code,
+owner.ownername as name,
+  owner.ownercode as code,
   date(owner.LastChangedDate) AS issuedate,
- 'Invalid Phone Number Length.' AS issue  
+ 'Invalid Phone Number Length. If combining two, separate with /.' AS issue 
 FROM owner
-WHERE (LENGTH(NULLIF(regexp_replace(hometelephone, '\D','','g'), '')) <> 10 
-OR LENGTH(NULLIF(regexp_replace(mobiletelephone, '\D','','g'), '')) <> 10)
-  AND (hometelephone NOT LIKE '%/%' AND mobiletelephone NOT LIKE '%/%')
-  AND OWNER.LASTCHANGEDDATE > '2020-01-01'
-  AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
+WHERE (LENGTH(NULLIF(regexp_replace(hometelephone, '\D','','g'), '')) NOT IN (10,11) 
+OR LENGTH(NULLIF(regexp_replace(mobiletelephone, '\D','','g'), '')) NOT IN (10,11))
+AND (hometelephone NOT LIKE '%/%' AND mobiletelephone NOT LIKE '%/%')
+AND OWNER.LASTCHANGEDDATE > '2020-01-01'
+AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
---4/20/2020 THIS IS NO LONGER NEEDED since the new search box ignores characters.
---Only looks at phone numbers less than 13 characters to avoid phone numbers
---with additional text entered.  It is looking for periods entered within the number
---to limit what has to be searched on when searching for phone numbers.
---UNION SELECT
---owner.ownername as name,
---  owner.ownercode as code,
---   date(owner.LastChangedDate) as issuedate,
--- 'Invalid Phone Number Format.  Remove any periods or characters.' AS issue  
---FROM owner
---WHERE ((LENGTH(owner.WORKTELEPHONE) < 13 and owner.WORKTELEPHONE like '%.%')
---OR (length(owner.HOMETELEPHONE) < 13 and owner.HOMETELEPHONE like '%.%')
---OR (length(owner.MOBILETELEPHONE) < 13 and owner.MOBILETELEPHONE like '%.%')
---OR owner.hometelephone ~ '^[A-Za-z]'
---OR owner.mobiletelephone ~ '^[A-Za-z]')
---AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
-
---This alert strips out all characters and compares any records that were modified the day
---before with mobile and home numbers in the database. 
+--This alert strips out all characters and compares the last 10 digits of mobile and home phone numbers
+--for records that were modified the day before. 
 UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
@@ -853,10 +836,10 @@ UNION SELECT
 FROM owner o, owner ow
 WHERE date_trunc('day', o.LASTCHANGEDDATE)  = current_date -1
   AND o.id <> ow.id
-  AND ((regexp_replace(o.hometelephone, '\D','','g') <> '' AND regexp_replace(o.hometelephone, '\D','','g') LIKE regexp_replace(ow.hometelephone, '\D','','g') AND ow.hometelephone <> '')
-   OR (regexp_replace(o.hometelephone, '\D','','g') <> '' AND regexp_replace(o.hometelephone, '\D','','g') LIKE regexp_replace(ow.mobiletelephone, '\D','','g') AND ow.mobiletelephone <> '')
-   OR (regexp_replace(o.mobiletelephone, '\D','','g') <> '' AND regexp_replace(o.mobiletelephone, '\D','','g') LIKE regexp_replace(ow.mobiletelephone, '\D','','g') AND ow.mobiletelephone <> '')
-   OR (regexp_replace(o.mobiletelephone, '\D','','g') <> '' AND regexp_replace(o.mobiletelephone, '\D','','g') LIKE regexp_replace(ow.hometelephone, '\D','','g') AND ow.hometelephone <> ''))
+AND ((regexp_replace(o.hometelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.hometelephone, '\D','','g'),10) LIKE RIGHT(regexp_replace(ow.hometelephone, '\D','','g'),10) AND ow.hometelephone <> '')
+   OR (regexp_replace(o.hometelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.hometelephone, '\D','','g'),10) LIKE RIGHT(regexp_replace(ow.mobiletelephone, '\D','','g'),10) AND ow.mobiletelephone <> '')
+   OR (regexp_replace(o.mobiletelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.mobiletelephone, '\D','','g'),10) LIKE RIGHT(regexp_replace(ow.mobiletelephone, '\D','','g'),10) AND ow.mobiletelephone <> '')
+   OR (regexp_replace(o.mobiletelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.mobiletelephone, '\D','','g'),10) LIKE RIGHT(regexp_replace(ow.hometelephone, '\D','','g'),10) AND ow.hometelephone <> ''))
 
 -- Looks for invalid email addresses missing @ or . and looks for emails with space (emails can have a comma and space separating emails IF listing two or more addresses).  Added 10/28/2021
 UNION SELECT 
