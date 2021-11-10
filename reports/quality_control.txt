@@ -826,6 +826,19 @@ AND (hometelephone NOT LIKE '%/%' AND mobiletelephone NOT LIKE '%/%')
 AND OWNER.LASTCHANGEDDATE > '2020-01-01'
 AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
+--This strips out all characters and then alerts if phone number is 11 characters and the first character 
+--is not a 1 (in case someone enters a 1 in front of area code). Added 11/10/2021
+UNION SELECT
+owner.ownername as name,
+  owner.ownercode as code,
+  date(owner.LastChangedDate) AS issuedate,
+ 'Invalid Phone Number.  If 11 digits, should begin with <i>1</i>.' AS issue 
+FROM owner
+WHERE LENGTH(NULLIF(regexp_replace(hometelephone, '\D','','g'), '')) = 11
+   AND SUBSTRING(regexp_replace(hometelephone, '\D','','g'),1,1) <> '1'
+   AND OWNER.LASTCHANGEDDATE > '2000-01-01'
+   AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
 --This alert strips out all characters and compares the last 10 digits of mobile and home phone numbers
 --for records that were modified the day before. 
 UNION SELECT
