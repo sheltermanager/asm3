@@ -1002,6 +1002,12 @@ def generator2str(fn, *args):
         out.write(x)
     return out.getvalue()
 
+def generator2file(outfile, fn, *args):
+    """ Iterates a generator function, passing args and writing to outfile """
+    with open(outfile, "w") as f:
+        for x in fn(*args):
+            f.write(x)
+
 def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;", closer = "&gt;&gt;"):
     """
     Substitutes the dictionary of tags in "tags" for any found
