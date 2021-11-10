@@ -5822,13 +5822,11 @@ class sql_dump(ASMEndpoint):
         if mode == "dumpsql":
             asm3.al.info("%s executed SQL database dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
-            return asm3.dbupdate.dump(dbo)
-            #return asm3.utils.generator2str(asm3.dbupdate.dump, dbo)
+            return asm3.dbupdate.dump(dbo) # generator
         if mode == "dumpsqlmedia":
             asm3.al.info("%s executed SQL database dump (base64/media)" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"media.sql\"")
-            return asm3.dbupdate.dump_dbfs_base64(dbo)
-            #return asm3.utils.generator2str(asm3.dbupdate.dump_dbfs_base64, dbo)
+            return asm3.dbupdate.dump_dbfs_base64(dbo) # generator
         if mode == "dumpddlmysql":
             asm3.al.info("%s executed DDL dump MySQL" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_mysql.sql\"")
@@ -5854,14 +5852,12 @@ class sql_dump(ASMEndpoint):
             # ASM2_COMPATIBILITY
             asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB)" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
-            return asm3.dbupdate.dump_hsqldb(dbo)
-            #return asm3.utils.generator2str(asm3.dbupdate.dump_hsqldb, dbo)
+            return asm3.dbupdate.dump_hsqldb(dbo) # generator
         elif mode == "dumpsqlasm2nomedia":
             # ASM2_COMPATIBILITY
             asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB, without media)" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
-            return asm3.dbupdate.dump_hsqldb(dbo, includeDBFS = False)
-            #return asm3.utils.generator2str(asm3.dbupdate.dump_hsqldb, dbo, includeDBFS = False)
+            return asm3.dbupdate.dump_hsqldb(dbo, includeDBFS = False) # generator
         elif mode == "animalcsv":
             asm3.al.debug("%s executed CSV animal dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"animal.csv\"")
