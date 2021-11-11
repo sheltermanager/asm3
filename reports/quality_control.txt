@@ -834,8 +834,11 @@ owner.ownername as name,
   date(owner.LastChangedDate) AS issuedate,
  'Invalid Phone Number.  If 11 digits, should begin with <i>1</i>.' AS issue 
 FROM owner
-WHERE LENGTH(NULLIF(regexp_replace(hometelephone, '\D','','g'), '')) = 11
+WHERE (LENGTH(NULLIF(regexp_replace(hometelephone, '\D','','g'), '')) = 11
    AND SUBSTRING(regexp_replace(hometelephone, '\D','','g'),1,1) <> '1'
+OR
+LENGTH(NULLIF(regexp_replace(mobiletelephone, '\D','','g'), '')) = 11
+   AND SUBSTRING(regexp_replace(mobiletelephone, '\D','','g'),1,1) <> '1')
    AND OWNER.LASTCHANGEDDATE > '2000-01-01'
    AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
