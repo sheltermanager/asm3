@@ -2606,7 +2606,7 @@ def install(dbo):
 def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = True, \
         includeData = True, includeNonASM2 = True, includeUsers = True, includeLKS = True, \
         includeLookups = True, deleteDBV = False, deleteFirst = True, deleteViewSeq = False, \
-        escapeCR = "", uppernames = False, wrapTransaction = True):
+        escapeCR = "", uppernames = False, excludeDBFSTemplates=False, wrapTransaction = True):
     """
     Dumps all of the data in the database as DELETE/INSERT statements.
     includeConfig - include the config table
@@ -2620,6 +2620,7 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
     deleteFirst - issue DELETE FROM statements before INSERTs
     deleteViewSeq - issue DELETE DBViewSeqVersion from config after dump
     escapeCR - A substitute for any \n characters found in values
+    excludeDBFSTemplates - Throw away dbfs lines where the path is internet or template
     uppernames - upper case table names in the output
     wrapTransaction - wrap a transaction around the dump
 
@@ -2643,6 +2644,9 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
         try:
             sys.stderr.write("dumping %s.., \n" % t)
             for x in dbo.query_to_insert_sql("SELECT * FROM %s" % t, outtable, escapeCR):
+                if excludeDBFSTemplates and t == "dbfs" and \
+                    (x.find("template") != -1 or x.find("internet") != -1 or x.find("report") != -1): 
+                    continue
                 yield x
         except:
             em = str(sys.exc_info())
@@ -2703,9 +2707,20 @@ def dump_smcom(dbo):
     """
     Dumps the database in a convenient format for import to sheltermanager.com
     generator function.
+    For dumps that came from ASM2, may also want to:
+        1. Remove the DELETE FROM dbfs line manually from the output.
+        2. Remove the userrole and users tables from the output.
     """
-    for x in dump(dbo, includeDBFS = False, includeConfig = False, includeUsers = True, includeLKS = False, deleteDBV = True, deleteViewSeq = True, wrapTransaction = True):
+    yield "set ON_ERROR_STOP\n"
+    for x in dump(dbo, includeDBFS = True, includeConfig = False, includeUsers = True, includeLKS = False, deleteDBV = True, deleteViewSeq = True, excludeDBFSTemplates = True, wrapTransaction = True):
         yield x
+    # For ASM2 sources, we remove some constraints that were added in ASM3 to make import easy
+    yield "ALTER TABLE animal ALTER AcceptanceNumber DROP NOT NULL;"
+    yield "ALTER TABLE animal ALTER IdentichipNumber DROP NOT NULL;"
+    yield "ALTER TABLE animal ALTER TattooNumber DROP NOT NULL;"
+    yield "ALTER TABLE animal ALTER BondedAnimalID DROP NOT NULL;"
+    yield "ALTER TABLE animal ALTER BondedAnimal2ID DROP NOT NULL;"
+    yield "ALTER TABLE animalvaccination ALTER Cost DROP NOT NULL;"
 
 def dump_merge(dbo, deleteViewSeq = True):
     """
