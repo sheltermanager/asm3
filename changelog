@@ -1,6 +1,7 @@
 45
 ================
 
+12/11/21 Add DocumentQRShare token for link to animalview #595
 10/11/21 Revert to using generator functions directly for dumps #1062
 04/11/21 Truncate email subject header to 78 chars for compatibility
 03/11/21 Option to register any microchip with AKC Reunite

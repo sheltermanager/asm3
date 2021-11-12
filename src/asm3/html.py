@@ -11,7 +11,7 @@ import asm3.utils
 
 from asm3.i18n import BUILD, _, translate, format_currency, format_date, get_locales, now, python2display, python2unix, real_locale
 from asm3.sitedefs import QR_IMG_SRC
-from asm3.sitedefs import BASE_URL, LOCALE, ROLLUP_JS
+from asm3.sitedefs import BASE_URL, LOCALE, ROLLUP_JS, SERVICE_URL
 from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, HTMLFTP_PUBLISHER_ENABLED, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_5_JS, TOUCHPUNCH_JS
 
 import os
@@ -880,12 +880,19 @@ def findcolumns_selectedtofront(cols, vals):
                 break
     return vals
 
-def qr_animal_img_src(animalid, size = "150x150"):
+def qr_animal_img_record_src(animalid, size = "150x150"):
     """
-    Returns an img src attribute for a QR code to an animal.
+    Returns an img src attribute for a QR code to an animal's record.
     size is a sizespec eg: 150x150
     """
-    return QR_IMG_SRC % { "url": BASE_URL + "/animal?id=%s" % animalid, "size": size }
+    return QR_IMG_SRC % { "url": f"{BASE_URL}/animal?id={animalid}", "size": size }
+
+def qr_animal_img_share_src(dbo, animalid, size = "150x150"):
+    """
+    Returns an img src attribute for a QR code to the public animalview page for the animal.
+    size is a sizespec eg: 150x150
+    """
+    return QR_IMG_SRC % { "url": f"{SERVICE_URL}?account={dbo.database}&method=animal_view&animalid={animalid}", "size": size }
 
 def thumbnail_img_src(dbo, row, mode):
     """
