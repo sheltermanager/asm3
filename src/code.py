@@ -153,7 +153,8 @@ def asm_500_email():
     """
     Custom 500 error page that sends emails to the site admin
     """
-    web.emailerrors(ADMIN_EMAIL, web.webapi._InternalError)()
+    asm3.utils.send_error_email()
+    #web.emailerrors(ADMIN_EMAIL, web.webapi._InternalError)()
     s = """
         <html>
         <head>

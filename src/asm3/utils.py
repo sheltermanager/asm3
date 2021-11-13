@@ -4,7 +4,7 @@ import asm3.configuration
 import asm3.i18n
 import asm3.users
 
-from asm3.sitedefs import BASE_URL, MULTIPLE_DATABASES, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
+from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, MULTIPLE_DATABASES, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
 
 import web062 as web
 
@@ -19,6 +19,7 @@ import re
 import requests
 import smtplib
 import subprocess
+import sys
 import tempfile
 import time
 import uuid
@@ -1558,6 +1559,9 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     add_header(msg, "From", fromadd)
     add_header(msg, "To", toadd)
     if ccadd != "": add_header(msg, "Cc", ccadd)
+    if bccadd != "" and SMTP_SERVER and SMTP_SERVER["sendmail"]: 
+        # sendmail -t processes and removes Bcc header, where SMTP has all recipients (including Bcc) in tolist
+        add_header(msg, "Bcc", bccadd) 
     add_header(msg, "Reply-To", replyadd)
     add_header(msg, "Bounces-To", replyadd)
     add_header(msg, "Message-ID", make_msgid())
@@ -1602,6 +1606,17 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     asm3.al.debug("from: %s, reply-to: %s, to: %s, subject: %s, body: %s" % \
         (fromadd, replyadd, str(tolist), subject, body), "utils.send_email", dbo)
 
+    _send_email(msg, fromadd, tolist, dbo, exceptions=exceptions)
+
+def _send_email(msg, fromadd, tolist, dbo=None, exceptions=True):
+    """
+    Internal function to handle the final transmission of an email message.
+    msg: The python message object
+    fromadd: The from address "me@me.com"
+    tolist: A list of recipient addresses [ "add1@test.com", "add2@test.com" ... ]
+    dbo can be None, is only used for logging
+    exceptions: If True throws exceptions on error, otherwise returns success boolean
+    """
     # Load the server config over default vars
     sendmail = True
     host = ""
@@ -1618,14 +1633,11 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
         if "usetls" in SMTP_SERVER: usetls = SMTP_SERVER["usetls"]
         if "headers" in SMTP_SERVER: 
             for k, v in SMTP_SERVER["headers"].items():
-                add_header(msg, k, v)
+                msg[k] = Header(v)
      
     # Use sendmail or SMTP for the transport depending on config
     if sendmail:
         try:
-            if bccadd != "": 
-                # sendmail -t processes and removes Bcc header, where SMTP has all recipients (including Bcc) in tolist
-                add_header(msg, "Bcc", bccadd) 
             p = subprocess.Popen(["/usr/sbin/sendmail", "-t", "-oi"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdoutdata, stderrdata = p.communicate(str2bytes(msg.as_string()))
             if p.returncode != 0: raise Exception("%s %s" % (stdoutdata, stderrdata))
@@ -1665,6 +1677,20 @@ def send_bulk_email(dbo, fromadd, subject, body, rows, contenttype):
             asm3.al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
             send_email(dbo, fromadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False)
     thread.start_new_thread(do_send, ())
+
+def send_error_email():
+    """
+    Used for sending email messages about errors that have occurred.
+    """
+    tb = sys.exc_info()
+    error_name = tb[0]
+    error_value = tb[1]
+    msg = MIMEMultipart("mixed")
+    msg["From"] = Header(FROM_ADDRESS)
+    msg["To"] = Header(ADMIN_EMAIL)
+    msg["Subject"] = Header(f"{error_name}: {error_value} ({web.ctx.path})")
+    msg.attach(MIMEText(str(web.djangoerror()), "html"))
+    _send_email(msg, ADMIN_EMAIL, [ADMIN_EMAIL], exceptions=False)
 
 def send_user_email(dbo, sendinguser, user, subject, body):
     """
