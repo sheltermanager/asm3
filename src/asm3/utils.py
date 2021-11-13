@@ -1686,7 +1686,7 @@ def send_error_email():
     error_name = tb[0]
     error_value = tb[1]
     msg = MIMEMultipart("mixed")
-    msg["From"] = Header(FROM_ADDRESS)
+    msg["From"] = Header(ADMIN_EMAIL)
     msg["To"] = Header(ADMIN_EMAIL)
     msg["Subject"] = Header(f"{error_name}: {error_value} ({web.ctx.path})")
     msg.attach(MIMEText(str(web.djangoerror()), "html"))

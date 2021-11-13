@@ -3939,6 +3939,12 @@ class maint_deps(ASMEndpoint):
         self.cache_control(0)
         return "web.py %s" % web.__version__
 
+class maint_error(ASMEndpoint):
+    url = "maint_error"
+
+    def content(self, o):
+        return 1 / 0 # Test error handling
+
 class maint_latency(JSONEndpoint):
     url = "maint_latency"
 
