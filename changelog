@@ -1,6 +1,7 @@
 45
 ================
 
+16/11/21 Make entering times more forgiving when just numbers entered
 13/11/21 Fix exception emailing after webpy 0.62 upgrade
 12/11/21 Add DocumentQRShare token for link to animalview #595
 10/11/21 Revert to using generator functions directly for dumps #1062

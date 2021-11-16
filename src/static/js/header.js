@@ -80,9 +80,10 @@ const QUICKLINKS_SET = {
  */
 header = {
 
-    show_error: function(text) {
+    show_error: function(text, duration) {
+        if (!duration) { duration = 20000; }
         $("#asm-topline-error-text").html(text);
-        $("#asm-topline-error").fadeIn("slow");
+        $("#asm-topline-error").fadeIn("slow").delay(duration).fadeOut("slow");
     },
 
     hide_error: function() {

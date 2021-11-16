@@ -464,6 +464,26 @@ $.fn.time = function() {
                 e.preventDefault();
             }
         });
+        $(this).blur(function(e) {
+            // If the value in the box is not HH:MM try and coerce it
+            // people frequently enter times like 0900, 900 or 09.00 for some reason
+            let v = String($(this).val());
+            // Empty value or 5 chars with : in the middle is correct, do nothing
+            if (v.length == 0 || (v.length == 5 && v.indexOf(":") == 2)) { return; }
+            // If we've got 5 chars and a ., replace with a colon
+            else if (v.length == 5 && v.indexOf(".") == 2) { $(this).val( v.replace(".", ":")); }
+            // If we've got 4 chars and no colon, add one in the middle
+            else if (v.length == 4 && v.indexOf(":") == -1) { $(this).val( v.substring(0,2) + ":" + v.substring(2)); }
+            // If we've got 3 chars and no colon, add a leading zero and one in the middle
+            else if (v.length == 3 && v.indexOf(":") == -1) { $(this).val( "0" + v.substring(0,1) + ":" + v.substring(1)); }
+            // If we've got 1 or 2 chars, assume it's just the hour
+            else if (v.length == 2) { $(this).val(v + ":00"); }
+            else if (v.length == 1) { $(this).val("0" + v + ":00"); }
+            else {
+                $(this).val("");
+                header.show_error(_("'{0}' is not a valid time").replace("{0}", v), 5000);
+            }
+        });
     });
 };
 
