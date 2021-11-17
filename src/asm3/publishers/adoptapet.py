@@ -458,7 +458,7 @@ class AdoptAPetPublisher(FTPPublisher):
         # YouTube Video URL
         line.append(self.apYouTubeURL(an.WEBSITEVIDEOURL))
         # Birthdate
-        line.append(asm3.i18n.python2display(an.DATEOFBIRTH))
+        line.append(asm3.i18n.python2display(self.dbo.locale, an.DATEOFBIRTH))
         # Sizecurrent
         line.append(str(asm3.utils.cint(an.WEIGHT)))
         # SizeUOM
