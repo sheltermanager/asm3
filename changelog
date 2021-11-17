@@ -1,6 +1,7 @@
 45
 ================
 
+17/11/21 Main search now combs log files (4 char term minimum)  #15
 17/11/21 Add extra adoptapet fields for Weight/DOB/Fee #461
 16/11/21 Make entering times more forgiving when just numbers entered
 13/11/21 Fix exception emailing after webpy 0.62 upgrade

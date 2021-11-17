@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-10-31 10:53+0000\n"
+"POT-Creation-Date: 2021-11-17 14:36+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -22,6 +22,10 @@ msgstr ""
 
 #: options.js
 msgid " days."
+msgstr ""
+
+#: common_widgets.js
+msgid "'{0}' is not a valid time"
 msgstr ""
 
 #: html.py common_personchooser.js users.js incident.js waitinglist_results.js
@@ -7261,7 +7265,7 @@ msgstr ""
 msgid "Locked"
 msgstr ""
 
-#: mobile.py roles.js header_edit_header.js
+#: mobile.py search.js roles.js header_edit_header.js
 msgid "Log"
 msgstr ""
 
@@ -7303,6 +7307,10 @@ msgstr ""
 
 #: mobile.py common.js header.js
 msgid "Logout"
+msgstr ""
+
+#: search.py
+msgid "Logs matching '{0}'."
 msgstr ""
 
 #: dbupdate.py
@@ -14477,11 +14485,7 @@ msgid "estimate"
 msgstr ""
 
 #: header.js
-msgid ""
-"filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal "
-"keywords: onshelter/os, notforadoption, aco, banned, donors, deceased, vets, "
-"retailers, staff, fosterers, volunteers, homecheckers, members, activelost, "
-"activefound"
+msgid "filters"
 msgstr ""
 
 #: options.js
@@ -14498,6 +14502,10 @@ msgstr ""
 
 #: shelterview.js
 msgid "invalid"
+msgstr ""
+
+#: header.js
+msgid "keywords"
 msgstr ""
 
 #: wordprocessor.py animal_new.js animal.js

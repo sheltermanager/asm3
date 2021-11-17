@@ -370,7 +370,12 @@ header = {
                 '<div class="topline-element">',
                     '<span style="white-space: nowrap">',
                     '<input id="topline-q" name="q" type="text" class="asm-textbox" title="' + 
-                        html.title("ALT+SHIFT+S " + _("filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal keywords: onshelter/os, notforadoption, aco, banned, donors, deceased, vets, retailers, staff, fosterers, volunteers, homecheckers, members, activelost, activefound")) +
+                        html.title("ALT+SHIFT+S " + _("filters") + ": " +
+                            "a:animal, ac:animalcontrol, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal, " + 
+                            "li:licence, lo:logs, vo:voucher " +
+                            _("keywords") + ": " + "onshelter/os, notforadoption, aco, banned, donors, deceased, vets, " + 
+                            "retailers, staff, fosterers, volunteers, homecheckers, members, drivers, overduedonations, " +
+                            "signed, unsigned, activelost, activefound") +
                         '" placeholder="' + html.title(_("Search")) + '" />',
                     '<button id="searchgo" style="display: none">' + _("Search") + '</button>',
                     '</span>',

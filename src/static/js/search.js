@@ -109,6 +109,19 @@ $(function() {
                     h.push(html.truncate(r.COMMENTS));
                     h.push('</p>');
                 }
+                else if (r.RESULTTYPE == "LOG") {
+                    if (controller.results.length == 1) {
+                        common.route(r.RECORDTYPE + '_log?id=' + r.LINKID);
+                    }
+                    h.push('<p class="asm-search-result"><span class="asm-search-name">');
+                    h.push(html.icon("log", _("Log")));
+                    h.push('<a href="' + r.RECORDTYPE + '_log?id=' + r.LINKID + '">' + r.RECORDDETAIL + '</a></span> ');
+                    h.push('<br />');
+                    h.push('<span class="asm-search-personflags">' + r.LOGTYPENAME + '</span>');
+                    h.push('<br/>');
+                    h.push(html.truncate(r.COMMENTS));
+                    h.push('</p>');
+                }
                 else if (r.RESULTTYPE == "PERSON") {
                     if (controller.results.length == 1) {
                         common.route("person?id=" + r.ID);
