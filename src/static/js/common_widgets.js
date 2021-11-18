@@ -470,6 +470,8 @@ $.fn.time = function() {
             let v = String($(this).val());
             // Empty value or 5 chars with : in the middle is correct, do nothing
             if (v.length == 0 || (v.length == 5 && v.indexOf(":") == 2)) { return; }
+            // 8 chars with : in positions 2,5 00:00:00 is correct
+            if (v.length == 8 && v.indexOf(":") == 2 && v.lastIndexOf(":") == 5) { return; }
             // If we've got 5 chars and a ., replace with a colon
             else if (v.length == 5 && v.indexOf(".") == 2) { $(this).val( v.replace(".", ":")); }
             // If we've got 4 chars and no colon, add one in the middle
