@@ -488,8 +488,7 @@ FROM animal
   INNER JOIN species ON species.ID = animal.SpeciesID
   LEFT OUTER JOIN owner cw ON cw.ID = animal.adoptioncoordinatorID
 --INNER JOIN animaltest ON animaltest.ANIMALID = animal.id
-WHERE (animal.archived=0 OR animal.activemovementtype IN (1,11))
-  AND animal.ActiveMovementDate > '2020-01-01'
+WHERE (animal.archived=0 OR (animal.activemovementtype IN (1,11) AND animal.ActiveMovementDate > '2020-01-01'))
   AND animal.HeartwormTestResult = 2
   AND animal.speciesid = 1
   AND animal.HeartwormTestDate < CURRENT_DATE - INTERVAL '1 year'
@@ -740,6 +739,27 @@ UNION SELECT
 FROM owner
 WHERE ownertown LIKE '%,%'
 AND date_trunc('day', LastChangedDate) = current_date -1
+
+--This alert shows if North, South, East, West, etc.
+--It is important to stardardized entry of addresses so that this script can detect possible address duplications.    Added 11/18/2021
+UNION SELECT
+o.ownername as name,
+  o.ownercode as code,
+  current_date -1 AS issuedate,
+  '<font color = "Red">Possible address standardization issue (' || o.owneraddress || ').  North, South, First, etc.  Change to N., S., 1st, if needed. Alerts Only Once.</font>' AS issue
+FROM owner o
+where date_trunc('day', LastChangedDate) = current_date -1
+AND (upper(owneraddress) like '% NORTH %'
+     OR upper(owneraddress) like '% SOUTH %'
+     OR upper(owneraddress) like '% EAST %'
+     OR upper(owneraddress) like '% WEST %'
+     OR upper(owneraddress) like '% HIGHWAY %'
+     OR upper(owneraddress) like '% FIRST %'
+     OR upper(owneraddress) like '% SECOND %'
+     OR upper(owneraddress) like '% THIRD %'
+     OR upper(owneraddress) like '% FOURTH %'
+     OR upper(owneraddress) like '% FIFTH %'
+     OR upper(owneraddress) like '% SIXTH %') 
 
 --Checks for cities entered in ALL upper or lower case.  And common misspellings of city 
 --names.
