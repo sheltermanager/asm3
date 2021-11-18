@@ -1,6 +1,7 @@
 45
 ================
 
+18/11/21 Fix use of excludefrombulkemail in online forms
 18/11/21 Use utf-8 for locale file encodings (smaller)
 17/11/21 Allow searching of log records #15
 17/11/21 Add extra adoptapet fields for Weight/DOB/Fee #461

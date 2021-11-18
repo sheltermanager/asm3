@@ -1137,6 +1137,7 @@ def create_person(dbo, username, collationid):
     formreceived = asm3.i18n.python2display(l, dbo.now())
     for f in fields:
         if flags is None: flags = f.FLAGS
+        if flags is None: flags = ""
         if f.FIELDNAME == "title": d["title"] = f.VALUE
         if f.FIELDNAME == "initials": d["initials"] = f.VALUE
         if f.FIELDNAME == "forenames": d["forenames"] = f.VALUE
@@ -1156,7 +1157,8 @@ def create_person(dbo, username, collationid):
         if f.FIELDNAME == "mobiletelephone": d["mobiletelephone"] = f.VALUE
         if f.FIELDNAME == "celltelephone": d["mobiletelephone"] = f.VALUE
         if f.FIELDNAME == "emailaddress": d["emailaddress"] = f.VALUE
-        if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != asm3.i18n._("No", l): d["excludefrombulkemail"] = "on"
+        if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != asm3.i18n._("No", l): 
+            flags += ",excludefrombulkemail"
         if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
         if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = f.VALUE
