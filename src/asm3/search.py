@@ -478,8 +478,9 @@ def search(dbo, session, q):
             ar( asm3.lostfound.get_foundanimal_find_simple(dbo, q, limit=limit, siteid=siteid), "FOUNDANIMAL", fasort )
         if asm3.users.check_permission_bool(session, asm3.users.VIEW_LICENCE):
             ar( asm3.financial.get_licence_find_simple(dbo, q, limit), "LICENCE", lisort )
-        if asm3.users.check_permission_bool(session, asm3.users.VIEW_LOG):
-            ar( asm3.log.get_log_find_simple(dbo, q, limit=100), "LOG", losort )
+        # This pollutes search results too much, only allow log search with explicit lo:
+        #if asm3.users.check_permission_bool(session, asm3.users.VIEW_LOG):
+        #    ar( asm3.log.get_log_find_simple(dbo, q, limit=100), "LOG", losort )
         if asm3.users.check_permission_bool(session, asm3.users.VIEW_VOUCHER):
             ar( asm3.financial.get_voucher_find_simple(dbo, q, limit), "VOUCHER", vosort)
         explain = _("Results for '{0}'.", l).format(q)
