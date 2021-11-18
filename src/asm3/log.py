@@ -72,7 +72,8 @@ def get_log_find_simple(dbo, q, limit = 0):
         "ELSE '' END AS RecordDetail " \
         "from log " \
         "INNER JOIN logtype ON logtype.ID = log.LogTypeID " \
-        "WHERE LOWER(Comments) LIKE ?"
+        "WHERE LOWER(Comments) LIKE ? " \
+        "ORDER BY LastChangedDate DESC"
     return dbo.query(query, [q], limit=limit)
 
 def get_logs(dbo, linktypeid, linkid, logtype = 0, sort = DESCENDING):
