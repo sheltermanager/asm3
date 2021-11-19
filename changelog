@@ -1,6 +1,7 @@
 45
 ================
 
+19/11/21 AdoptAPet want fees in dollars rather than cents
 18/11/21 Cope with entering times in HH:MM:SS format as well as HH:MM
 18/11/21 Fix use of excludefrombulkemail in online forms
 18/11/21 Use utf-8 for locale file encodings (smaller)
