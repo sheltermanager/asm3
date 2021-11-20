@@ -708,11 +708,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     flags = post["flags"]
     emailaddress = ""
     emailsubmissionto = ""
-    firstnamelabel = ""
     firstname = ""
-    lastnamelabel = ""
     lastname = ""
-    animalnamelabel = ""
     animalname = ""
     images = []
     post.data["formreceived"] = "%s %s" % (asm3.i18n.python2display(dbo.locale, posteddate), asm3.i18n.format_time(posteddate))
@@ -747,13 +744,10 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             emailsubmissionto = v
                         if fieldname == "firstname" or fieldname == "forenames": 
                             firstname = v
-                            firstnamelabel = label
                         if fieldname == "lastname" or fieldname == "surname":
                             lastname = v
-                            lastnamelabel = label
                         if fieldname == "animalname" or fieldname == "reserveanimalname":
                             animalname = v
-                            animalnamelabel = asm3.i18n._("Name", l)
                         # If it's a raw markup field, store the markup as the value
                         if fieldtype == FIELDTYPE_RAWMARKUP:
                             v = "RAW::%s" % tooltip
@@ -794,13 +788,12 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
 
     # If we have first and last name, include them in the preview
     if firstname != "" and lastname != "":
-        preview.append("%s: %s" % (firstnamelabel, firstname))
-        preview.append("%s: %s" % (lastnamelabel, lastname))
+        preview.append("%s: %s %s" % ( asm3.i18n._("Name"), firstname, lastname ))
         fieldssofar += 2
 
-    # If we have an animal name, include that too
+    # If we have an animal, include that too
     if animalname != "":
-        preview.append("%s: %s" % (animalnamelabel, animalname))
+        preview.append("%s: %s" % ( asm3.i18n._("Animal"), animalname))
         fieldssofar += 1
 
     for fld in get_onlineformincoming_detail(dbo, collationid):
@@ -830,7 +823,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     # (images are set as attachments so not included)
     formdata = get_onlineformincoming_html_print(dbo, [collationid,], include_images=False)
 
-    # Do we have a valid emailaddress field for the submitter and 
+    # Do we have a valid emailaddress field for the form submitter and 
     # one of the options to email the submitter is set?
     if emailaddress != "" and emailaddress.find("@") != -1 and formdef.emailsubmitter != 0:
         # Get the confirmation message
@@ -844,6 +837,9 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emailaddress, "", "", 
             asm3.i18n._("Submission received: {0}", l).format(formname), 
             body, "html", attachments, exceptions=False)
+
+    # Subject line for email notifications to staff and coordinators (max 70 chars)
+    subject = "%s - %s" % (asm3.utils.truncate(formname, 32), ", ".join(preview))
 
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
@@ -859,8 +855,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         if formdef.emailsubmitter != 0: replyto = emailaddress 
         if replyto == "": replyto = asm3.configuration.email(dbo)
         asm3.utils.send_email(dbo, replyto, formdef.emailaddress, "", "", 
-            "%s - %s" % (formname, ", ".join(preview)), 
-            formdata, "html", images, exceptions=False)
+            subject, formdata, "html", images, exceptions=False)
 
     # Was the option set to email the adoption coordinator linked to animalname?
     if formdef.emailcoordinator == 1 and animalname != "":
@@ -871,8 +866,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             "WHERE animal.ID = ?", [animalid])
         if coordinatoremail != "":
             asm3.utils.send_email(dbo, asm3.configuration.email(dbo), coordinatoremail, "", "", 
-                "%s - %s" % (formname, ", ".join(preview)), 
-                formdata, "html", images, exceptions=False)
+                subject, formdata, "html", images, exceptions=False)
 
     # Did the form submission have a value in an "emailsubmissionto" field?
     if emailsubmissionto is not None and emailsubmissionto.strip() != "":
@@ -882,8 +876,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         # Remove any line breaks from the list of addresses, this has caused malformed headers before
         emailsubmissionto = emailsubmissionto.replace("\n", "")
         asm3.utils.send_email(dbo, replyto, emailsubmissionto, "", "", 
-            "%s - %s" % (formname, ", ".join(preview)), 
-            formdata, "html", images, exceptions=False)
+            subject, formdata, "html", images, exceptions=False)
 
     # Does this form have an option set to autoprocess it? If not, stop now
     if formdef.autoprocess is None or formdef.autoprocess == AP_NO: return collationid

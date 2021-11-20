@@ -1,6 +1,7 @@
 45
 ================
 
+20/11/21 Truncate form name and shorten preview for online form emails
 19/11/21 AdoptAPet want fees in dollars rather than cents
 18/11/21 Cope with entering times in HH:MM:SS format as well as HH:MM
 18/11/21 Fix use of excludefrombulkemail in online forms
