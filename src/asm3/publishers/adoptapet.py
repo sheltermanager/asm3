@@ -464,6 +464,9 @@ class AdoptAPetPublisher(FTPPublisher):
         # SizeUOM
         line.append("lbs")
         # AdoptionFee
-        line.append(str(int(asm3.utils.cint(an.FEE) / 100)))
+        if an.FEE == 0:
+            line.append("")
+        else:
+            line.append(str(int(asm3.utils.cint(an.FEE) / 100)))
         return self.csvLine(line)
 
