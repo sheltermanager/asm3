@@ -1,6 +1,7 @@
 45
 ================
 
+22/11/21 Fix vacc/neutered non-shelter by type sections of annual figures
 22/11/21 Always send adoptapet DOB as M/D/Y instead of locale (en_MX uses D/M/Y)
 20/11/21 Truncate form name and shorten preview for online form emails
 19/11/21 AdoptAPet want fees in dollars rather than cents

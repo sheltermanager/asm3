@@ -4973,7 +4973,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.AnimalTypeID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
             "AND a.NonShelterAnimal = 0 " \
-            "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_NEUTERSPAYSA", group, 170, at["SHOWSPLIT"], babymonths)
 
     group = _("Neutered/Spayed Non-Shelter Animals In {0}", l).format(year)
@@ -4982,7 +4982,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.AnimalTypeID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
             "AND a.NonShelterAnimal = 1 " \
-            "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_NEUTERSPAYNS", group, 180, at["SHOWSPLIT"], babymonths)
 
     group = _("Microchips Implanted In {0}", l).format(year)
@@ -4992,7 +4992,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "a.AnimalTypeID = %d AND a.IdentichipDate >= %s AND a.IdentichipDate <= %s " \
             "AND a.Identichipped = 1 " \
             "AND a.NonShelterAnimal = 0 " \
-            "GROUP BY a.IdentichipDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.IdentichipDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_MICROCHIPS", group, 190, at["SHOWSPLIT"], babymonths)
 
     group = _("Vaccinated Shelter Animals In {0}", l).format(year)
@@ -5002,7 +5002,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
             "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null) " \
             "AND a.NonShelterAnimal = 0 " \
-            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_VACCSA", group, 200, at["SHOWSPLIT"], babymonths)
 
     group = _("Vaccinated Non-Shelter Animals In {0}", l).format(year)
@@ -5012,7 +5012,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "a.AnimalTypeID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
             "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null) " \
             "AND a.NonShelterAnimal = 1 " \
-            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_VACCNS", group, 210, at["SHOWSPLIT"], babymonths)
 
     asm3.asynctask.set_progress_value(dbo, 2)
