@@ -63,7 +63,7 @@ UNION SELECT
   animal.animalname AS name,
   animal.sheltercode AS code,
   date(animal.LastChangedDate) AS issuedate,
-    'Animal in Foster Without Note in Comments/Bio for Public' AS issue
+    'Animal in Foster Without Note to the Public in Bio (Notes section > Description).' AS issue
 FROM animal
 INNER JOIN media ON media.LINKID = animal.id
 --INNER JOIN adoption ON animal.ID = adoption.AnimalID
@@ -404,7 +404,7 @@ UNION SELECT
   animal.animalname AS name,
   animal.sheltercode AS code,
   date(animal.LastChangedDate) AS issuedate,
-  'Published animal without bio in Comments (Notes section).' AS issue
+  'Published animal without bio in Description box (Notes section).' AS issue
 FROM animal
 INNER JOIN media ON media.LINKID = animal.id
 WHERE Archived = 0
