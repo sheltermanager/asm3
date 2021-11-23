@@ -68,11 +68,13 @@ $(document).ready(function() {
     const validate_signatures = function() {
         let rv = true;
         $(".asm-onlineform-signature").each(function() {
+            if (!$(this).attr("data-required")) { return; }
+            if (!$(this).parent().is(":visible")) { return; }
             try {
                 let img = $(this).find("canvas").get(0).toDataURL("image/png");
                 let fieldname = $(this).attr("data-name");
                 $("input[name='" + fieldname + "']").val(img);
-                if ($(this).signature("isEmpty") && $(this).attr("data-required")) {
+                if ($(this).signature("isEmpty")) {
                     alert("Signature is required.");
                     rv = false;
                     return false;
@@ -88,9 +90,11 @@ $(document).ready(function() {
     const validate_images = function() {
         let rv = true;
         $(".asm-onlineform-image").each(function() {
+            if (!$(this).attr("data-required")) { return; }
+            if (!$(this).parent().is(":visible")) { return; }
             let fieldname = $(this).attr("data-name"),
                 v = $(this).val();
-            if (!v && $(this).attr("data-required")) {
+            if (!v) {
                 alert("You must attach an image");
                 $(this).focus();
                 rv = false;
@@ -105,10 +109,12 @@ $(document).ready(function() {
     const validate_lookupmulti = function() {
         let rv = true;
         $(".asm-onlineform-lookupmulti").each(function() {
+            if (!$(this).attr("data-required")) { return; }
+            if (!$(this).parent().is(":visible")) { return; }
             let fieldname = $(this).attr("data-name"),
                 v = $(this).val();
             $("input[name='" + fieldname + "']").val(v);
-            if (!v && $(this).attr("data-required")) {
+            if (!v) {
                 alert("You must choose at least one option");
                 $(this).parent().find(".asmSelect").focus();
                 rv = false;
@@ -123,13 +129,15 @@ $(document).ready(function() {
     const validate_checkboxgroup = function() {
         let rv = true;
         $(".asm-onlineform-checkgroup").each(function() {
+            if (!$(this).attr("data-required")) { return; }
+            if (!$(this).parent().is(":visible")) { return; }
             let fieldname = $(this).attr("data-name"),
                 v = [];
             $(this).find("input[type='checkbox']:checked").each(function() {
                 v.push($(this).attr("data"));
             });
             $("input[name='" + fieldname + "']").val(v.join(","));
-            if (v.length == 0 && $(this).attr("data-required")) {
+            if (v.length == 0) {
                 alert("You must choose at least one option");
                 $(this).find("input[type='checkbox']").focus();
                 rv = false;
