@@ -1,6 +1,7 @@
 45
 ================
 
+24/11/21 Include time info for wp token generated tables (eg: ANIMALLOGS)
 23/11/21 Special form fields should not be mandatory if they are not visible
 22/11/21 AdoptAPet: Send $0 adoption fees as blank
 22/11/21 Fix vacc/neutered non-shelter by type sections of annual figures

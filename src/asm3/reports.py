@@ -884,12 +884,8 @@ class Report:
         l = self.dbo.locale
         if v is None: return ""
 
-        if asm3.utils.is_date(v) or str(v).find("00:00:00.00") != -1:
-            # If the time is midnight, omit it
-            if str(v).find("00:00:00") != -1:
-                return asm3.i18n.python2display(l, v)
-            else:
-                return "%s %s" % (asm3.i18n.python2display(l, v), asm3.i18n.format_time(v))
+        if asm3.utils.is_date(v):
+            return asm3.i18n.python2displaytime(l, v)
 
         if asm3.utils.is_currency(k):
             return asm3.i18n.format_currency(l, v)

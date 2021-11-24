@@ -18,7 +18,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
-from asm3.i18n import _, format_currency, format_currency_no_symbol, format_time, now, python2display, yes_no
+from asm3.i18n import _, format_currency, format_currency_no_symbol, format_time, now, python2display, python2displaytime, yes_no
 
 import zipfile
 
@@ -1542,8 +1542,9 @@ def html_table(l, rows, cols):
     for r in rows:
         h.append("<tr>")
         for colfield, coltext in cols:
-            if asm3.utils.is_date(r[colfield]):
-                h.append("<td>%s</td>" % python2display(l, r[colfield]))
+            v = r[colfield]
+            if asm3.utils.is_date(v):
+                h.append("<td>%s</td>" % python2displaytime(l, r[colfield]))
             elif asm3.utils.is_currency(colfield):
                 h.append("<td>%s</td>" % format_currency(l, r[colfield]))
             elif r[colfield] is None:
