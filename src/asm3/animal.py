@@ -2076,7 +2076,7 @@ def insert_animal_from_form(dbo, post, username):
         "CrueltyCase":      0,
         "BondedAnimalID":   0,
         "BondedAnimal2ID":  0,
-        "CoatType":         asm3.configuration.default_coattype(dbo),
+        "CoatType":         post.integer("coattype"),
         "EstimatedDOB":     estimateddob,
         "Fee":              post.integer("fee"),
         "Identichipped":    post.boolean("microchipped"),

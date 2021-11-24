@@ -1,6 +1,7 @@
 45
 ================
 
+24/11/21 Allow coat type on add animal screen #308
 24/11/21 Include time info for wp token generated tables (eg: ANIMALLOGS)
 23/11/21 Special form fields should not be mandatory if they are not visible
 22/11/21 AdoptAPet: Send $0 adoption fees as blank

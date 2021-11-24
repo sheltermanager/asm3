@@ -1810,6 +1810,7 @@ class animal_new(JSONEndpoint):
             "animaltypes": asm3.lookups.get_animal_types(dbo),
             "species": asm3.lookups.get_species(dbo),
             "breeds": asm3.lookups.get_breeds_by_species(dbo),
+            "coattypes": asm3.lookups.get_coattypes(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),
             "sexes": asm3.lookups.get_sexes(dbo),
