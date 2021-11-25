@@ -305,7 +305,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         h.append('<script>')
         h.append('document.write("<input " + \n"type=" + "\'hidden\'" + \n" name=" + "\'%s\'" + \n" value=" + "\'%s\'" + " />");' % (JSKEY_NAME, JSKEY_VALUE))
         h.append('</script>')
-    h.append('<p style="text-align: center"><input type="submit" value="Submit" /></p>')
+    h.append('<p style="text-align: center"><input type="submit" value="%s" /></p>' % asm3.i18n._("Submit", l))
     h.append('</form>')
     if completedocument:
         h.append(asm3.utils.nulltostr(form.FOOTER))
