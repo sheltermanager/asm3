@@ -6,6 +6,7 @@ $(function() {
 
     const BACKGROUND_COLOURS = {
         "asm":              "#ffffff",
+        "asm-dark":         "#000000",
         "base":             "#ffffff",
         "black-tie":        "#333333",
         "blitzer":          "#cc0000",

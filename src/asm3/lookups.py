@@ -206,6 +206,7 @@ CURRENCIES = [
 
 VISUAL_THEMES = [
     ( "asm", "ASM" ),
+    ( "asm-dark", "ASM (Dark)" ),
     ( "base", "Base" ),
     ( "black-tie", "Black Tie" ),
     ( "blitzer", "Blitzer" ),
