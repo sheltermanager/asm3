@@ -11,6 +11,10 @@
  * To view and modify this theme, visit http://jqueryui.com/themeroller/?scope=&folderName=custom-theme&bgImgOpacityHeader=&bgImgOpacityContent=&bgImgOpacityDefault=&bgImgOpacityHover=&bgImgOpacityActive=&bgImgOpacityHighlight=&bgImgOpacityError=&cornerRadiusShadow=8px&offsetLeftShadow=0px&offsetTopShadow=0px&thicknessShadow=5px&opacityShadow=30&bgImgOpacityShadow=0&bgTextureShadow=flat&bgColorShadow=%23666666&opacityOverlay=30&bgImgOpacityOverlay=0&bgTextureOverlay=flat&bgColorOverlay=%23aaaaaa&iconColorError=%23cc0000&fcError=%235f3f3f&borderColorError=%23f1a899&bgTextureError=flat&bgColorError=%23fddfdf&iconColorHighlight=%23777620&fcHighlight=%23777620&borderColorHighlight=%23dad55e&bgTextureHighlight=flat&bgColorHighlight=%23fffa90&iconColorActive=%23ffffff&fcActive=%23ffffff&borderColorActive=%23003eff&bgTextureActive=flat&bgColorActive=%23007fff&iconColorHover=%23fff&fcHover=%23fff&borderColorHover=%23cccccc&bgTextureHover=flat&bgColorHover=%23444&iconColorDefault=%23eee&fcDefault=%23eee&borderColorDefault=%23c5c5c5&bgTextureDefault=flat&bgColorDefault=%23222&iconColorContent=%23eee&fcContent=%23eee&borderColorContent=%23dddddd&bgTextureContent=flat&bgColorContent=%23222&iconColorHeader=%23eee&fcHeader=%23eeeeee&borderColorHeader=%23dddddd&bgTextureHeader=flat&bgColorHeader=%23444&cornerRadius=3px&fwDefault=normal&fsDefault=1em&ffDefault=Arial%2CHelvetica%2Csans-serif
  */
 
+/** NOTE: When recreating themes with themeroller, you need to copy everything below down to the comment starting "Component Containers" 
+ *  to the exported file because they put all that stuff in other CSS files by default now */
+
+
 /** ASM (Dark) **/
 
 /** --- BEGIN MANUAL ADDITIONS --- */
