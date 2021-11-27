@@ -4,8 +4,9 @@
 * To view and modify this theme, visit http://jqueryui.com/themeroller/?scope=&folderName=custom-theme&bgImgOpacityError=95&bgImgOpacityHighlight=55&bgImgOpacityActive=65&bgImgOpacityHover=75&bgImgOpacityDefault=75&bgImgOpacityContent=75&bgImgOpacityHeader=75&cornerRadiusShadow=8px&offsetLeftShadow=-8px&offsetTopShadow=-8px&thicknessShadow=8px&opacityShadow=30&bgImgOpacityShadow=0&bgTextureShadow=flat&bgColorShadow=%23aaaaaa&opacityOverlay=30&bgImgOpacityOverlay=0&bgTextureOverlay=flat&bgColorOverlay=%23aaaaaa&iconColorError=%23cd0a0a&fcError=%23cd0a0a&borderColorError=%23cd0a0a&bgTextureError=inset_hard&bgColorError=%23fef1ec&iconColorHighlight=%233a87cd&fcHighlight=%233a87cd&borderColorHighlight=%233a87cd&bgTextureHighlight=inset_hard&bgColorHighlight=%23d9edf7&iconColorActive=%23fff&fcActive=%23fff&borderColorActive=%233a87cd&bgTextureActive=flat&bgColorActive=%233a87cd&iconColorHover=%23454545&fcHover=%23212121&borderColorHover=%23999999&bgTextureHover=inset_hard&bgColorHover=%23d9edf7&iconColorDefault=%23888888&fcDefault=%23555555&borderColorDefault=%23d3d3d3&bgTextureDefault=flat&bgColorDefault=%23fff&iconColorContent=%23222222&fcContent=%23222222&borderColorContent=%23aaaaaa&bgTextureContent=flat&bgColorContent=%23ffffff&iconColorHeader=%23222222&fcHeader=%23222222&borderColorHeader=%23aaaaaa&bgTextureHeader=inset_hard&bgColorHeader=%23eaeaea&cornerRadius=4px&fwDefault=normal&fsDefault=1.1em&ffDefault=Verdana%2CArial%2Csans-serif
 * Copyright jQuery Foundation and other contributors; Licensed MIT */
 
-/** NOTE: When recreating themes with themeroller, you need to copy everything below down to the comment starting "Component Containers" 
- *  to the exported file because they put all that stuff in other CSS files by default now */
+/** NOTE: When recreating themes with themeroller, you need to copy everything below down 
+ *  to the comment starting "Component Containers" to the exported file because they put 
+ *  all that stuff in other CSS files by default now */
 
 /** ASM (Light) **/
 
