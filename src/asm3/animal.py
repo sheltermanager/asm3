@@ -4787,6 +4787,15 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY a.IdentichipDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_MICROCHIPS", group, 190, showbabies, babymonths)
 
+    group = _("Euthanized Non-Shelter Animals in {0}", l).format(year)
+    for sp in allspecies:
+        species_line("SELECT a.DeceasedDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.SpeciesID = %d AND a.DeceasedDate >= %s AND a.DeceasedDate <= %s " \
+            "AND a.PutToSleep = 1 AND a.NonShelterAnimal = 1 " \
+            "GROUP BY a.DeceasedDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            sp["ID"], sp["SPECIESNAME"], "SP_EUTHNS", group, 195, showbabies, babymonths)
+
     group = _("Vaccinated Shelter Animals In {0}", l).format(year)
     for sp in allspecies:
         species_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
@@ -4994,6 +5003,15 @@ def update_animal_figures_annual(dbo, year = 0):
             "AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.IdentichipDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_MICROCHIPS", group, 190, at["SHOWSPLIT"], babymonths)
+
+    group = _("Euthanized Non-Shelter Animals in {0}", l).format(year)
+    for at in alltypes:
+        type_line("SELECT a.DeceasedDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.AnimalTypeID = %d AND a.DeceasedDate >= %s AND a.DeceasedDate <= %s " \
+            "AND a.PutToSleep = 1 AND a.NonShelterAnimal = 1 " \
+            "GROUP BY a.DeceasedDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
+            at["ID"], at["ANIMALTYPE"], "AT_EUTHNS", group, 195, at["SHOWSPLIT"], babymonths)
 
     group = _("Vaccinated Shelter Animals In {0}", l).format(year)
     for at in alltypes:
