@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-11-29 11:59+0000\n"
+"POT-Creation-Date: 2021-11-29 16:09+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3032,6 +3032,10 @@ msgstr ""
 msgid "Create Waiting List"
 msgstr ""
 
+#: media.js
+msgid "Create a PDF of this image"
+msgstr ""
+
 #: move_reclaim.js move_adopt.js
 msgid "Create a cost record"
 msgstr ""
@@ -3611,6 +3615,10 @@ msgstr ""
 
 #: media.js
 msgid "Default video for publishing"
+msgstr ""
+
+#: media.js
+msgid "Default video link"
 msgstr ""
 
 #: options.js
@@ -6327,7 +6335,7 @@ msgstr ""
 msgid "Illyrian Sheepdog"
 msgstr ""
 
-#: html.py animal_find_results.js onlineform.js
+#: html.py animal_find_results.js onlineform.js media.js
 msgid "Image"
 msgstr ""
 
@@ -7480,17 +7488,11 @@ msgid "Maine Coon"
 msgstr ""
 
 #: media.js
+msgid "Make this the default image for the record"
+msgstr ""
+
+#: media.js
 msgid "Make this the default image when creating documents"
-msgstr ""
-
-#: media.js
-msgid ""
-"Make this the default image when viewing this record and publishing to the "
-"web"
-msgstr ""
-
-#: media.js
-msgid "Make this the default video link when publishing to the web"
 msgstr ""
 
 #: dbupdate.py

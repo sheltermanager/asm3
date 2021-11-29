@@ -1,6 +1,8 @@
 45
 ================
 
+29/11/21 Add facility to convert images into PDFs on the media tab #1046
+29/11/21 Move media image menu items into a menu button to save space #1046
 29/11/21 Add $ASK LOOKUP and $ASK PAYMENTMETHOD #525
 28/11/21 Add euthanized non-shelter animals section to annual figures
 27/11/21 Add ASM dark mode theme

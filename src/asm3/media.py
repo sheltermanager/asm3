@@ -613,6 +613,48 @@ def delete_media(dbo, username, mid):
             "ORDER BY ID DESC", (mr.LINKID, mr.LINKTYPEID)))
         if ml: dbo.update("media", ml.ID, { "DocPhoto": 1 })
 
+def convert_media_jpg2pdf(dbo, username, mid):
+    """
+    Converts an image into a new PDF file
+    """
+    mr = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
+    if not mr: raise asm3.utils.ASMError("Record does not exist")
+    # If it's not a jpg image, we can stop right now
+    if mr.MEDIAMIMETYPE != "image/jpeg": raise asm3.utils.ASMError("Image is not a JPEG file, cannot convert to PDF")
+    # Load and convert the image
+    imagedata = asm3.dbfs.get_string_id(dbo, mr.DBFSID)
+    pdfdata = asm3.utils.generate_image_pdf(dbo.locale, imagedata)
+    # Compress the new pdf
+    pdfdata = scale_pdf(pdfdata)
+    # Create a new media record for this pdf
+    mediaid = dbo.get_id("media")
+    path = get_dbfs_path(mr.LINKID, mr.LINKTYPEID)
+    name = str(mediaid) + ".pdf"
+    dbfsid = asm3.dbfs.put_string(dbo, name, path, pdfdata)
+    dbo.insert("media", {
+        "ID":                   mediaid,
+        "DBFSID":               dbfsid,
+        "MediaSize":            len(pdfdata),
+        "MediaName":            name,
+        "MediaMimeType":        "application/pdf",
+        "MediaType":            0,
+        "MediaNotes":           mr.MEDIANOTES,
+        "WebsitePhoto":         0,
+        "WebsiteVideo":         0,
+        "DocPhoto":             0,
+        "ExcludeFromPublish":   0,
+        # ASM2_COMPATIBILITY
+        "NewSinceLastPublish":  0,
+        "UpdatedSinceLastPublish": 0,
+        # ASM2_COMPATIBILITY
+        "LinkID":               mr.LINKID,
+        "LinkTypeID":           mr.LINKTYPEID,
+        "Date":                 dbo.now(),
+        "CreatedDate":          dbo.now(),
+        "RetainUntil":          mr.RETAINUNTIL
+    }, username, setCreated=False, generateID=False)
+    return mediaid
+
 def rotate_media(dbo, username, mid, clockwise = True):
     """
     Rotates an image media record 90 degrees if clockwise is true, or 270 degrees if false

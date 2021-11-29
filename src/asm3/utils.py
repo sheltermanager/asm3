@@ -1359,6 +1359,32 @@ def html_to_pdf_pisa(dbo, htmldata):
         raise IOError(pdf.err)
     return out.getvalue()
 
+def generate_image_pdf(locale, imagedata):
+    """
+    Generates a PDF from some imagedata.
+    Returns the PDF as a bytes string
+    """
+    from reportlab.lib.pagesizes import letter, A4
+    from reportlab.lib.units import cm
+    from reportlab.platypus import SimpleDocTemplate, Image
+    psize = A4
+    if locale == "en": psize = letter
+    fin = bytesio(imagedata)
+    fout = bytesio()
+    doc = SimpleDocTemplate(fout, pagesize=psize, leftMargin = 1 * cm, topMargin = 1 * cm, rightMargin = 0, bottomMargin = 0)
+    elements = []
+    im = Image(fin)
+    if psize == A4:
+        im.drawWidth = 19 * cm
+        im.drawHeight = 27 * cm
+    else:
+        im.drawWidth = 19 * cm
+        im.drawHeight = 25 * cm
+    elements.append(im)
+    # Build the PDF
+    doc.build(elements)
+    return fout.getvalue()
+
 def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, width, height, lmargin, tmargin, cols, rows):
     """
     Generates a PDF of labels from the rows given to the measurements provided.

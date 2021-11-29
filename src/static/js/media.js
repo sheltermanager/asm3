@@ -65,36 +65,20 @@ $(function() {
                         });
                         return rv;
                     };
-                    $("#button-web").button("option", "disabled", true); 
                     $("#button-video").button("option", "disabled", true); 
-                    $("#button-doc").button("option", "disabled", true); 
-                    $("#button-rotateanti").button("option", "disabled", true); 
-                    $("#button-rotateclock").button("option", "disabled", true); 
-                    $("#button-watermark").button("option", "disabled", true); 
-                    $("#button-include").button("option", "disabled", true); 
-                    $("#button-exclude").button("option", "disabled", true); 
                     $("#button-email").button("option", "disabled", true); 
                     $("#button-emailpdf").button("option", "disabled", true); 
+                    $("#button-image").addClass("ui-state-disabled").addClass("ui-button-disabled");
                     $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
-                    // Only allow the image preferred buttons to be pressed if the
-                    // selection size is one and the selection is an image
-                    if (rows.length == 1 && rows[0].MEDIAMIMETYPE == "image/jpeg") { 
-                        $("#button-web").button("option", "disabled", false); 
-                        $("#button-doc").button("option", "disabled", false); 
-                    }
                     // Only allow the video preferred button to be pressed if the
                     // selection size is one and the selection is a video link
                     if (rows.length == 1 && rows[0].MEDIATYPE == 2) {
                         $("#button-video").button("option", "disabled", false);
                     }
-                    // Only allow the rotate and include buttons to be pressed if the
-                    // selection only contains images
-                    if (rows.length > 0 && all_of_type("image/jpeg")) {
-                        $("#button-rotateanti").button("option", "disabled", false); 
-                        $("#button-rotateclock").button("option", "disabled", false); 
-                        $("#button-watermark").button("option", "disabled", false); 
-                        $("#button-include").button("option", "disabled", false); 
-                        $("#button-exclude").button("option", "disabled", false); 
+                    // Only allow the image buttons to be pressed if the
+                    // selection only contains images and the user has the permission to change media
+                    if (rows.length > 0 && all_of_type("image/jpeg") && common.has_permission("cam")) {
+                        $("#button-image").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
                     }
                     // Only allow the email button to be pressed if the selection
                     // does not contain any links
@@ -161,15 +145,9 @@ $(function() {
                 { id: "delete", text: _("Delete"), icon: "media-delete", enabled: "multi", perm: "dam" },
                 { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected media files") },
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
+                { id: "image", text: _("Image"), type: "buttonmenu", icon: "image", perm: "cam" },
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
-                { id: "rotateanti", icon: "rotate-anti", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees anticlockwise") },
-                { id: "rotateclock", icon: "rotate-clock", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees clockwise") },
-                { id: "watermark", icon: "watermark", enabled: "multi", perm: "cam", tooltip: _("Watermark image with name and logo") },
-                { id: "include", icon: "tick", enabled: "multi", perm: "cam", tooltip: _("Include this image when publishing") }, 
-                { id: "exclude", icon: "cross", enabled: "multi", perm: "cam", tooltip: _("Exclude this image when publishing") },
-                { id: "web", icon: "web", enabled: "one", perm: "cam", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
-                { id: "doc", icon: "document", enabled: "one", perm: "cam", tooltip: _("Make this the default image when creating documents") },
-                { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Make this the default video link when publishing to the web") },
+                { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
                 { type: "raw", markup: '<div class="asm-mediadroptarget mode-table"><p>' + _("Drop files here...") + '</p></div>',
                     hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || asm.mobileapp; }},
                 { id: "viewmode", text: "", icon: "batch", enabled: "always", tooltip: _("Toggle table/icon view") }
@@ -259,6 +237,28 @@ $(function() {
                         + ' href="#">' + html.icon("mobile") + ' ' + _("Mobile signing pad") + '</a></li>',
                     '<li id="button-signemail" class="sharebutton asm-menu-item"><a '
                         + ' href="#">' + html.icon("email") + ' ' + _("Request signature by email") + '</a></li>',
+                '</ul>',
+                '</div>',
+
+                '<div id="button-image-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                    '<li id="button-rotateanti" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("rotate-anti") + ' ' + _("Rotate image 90 degrees anticlockwise") + '</a></li>',
+                    '<li id="button-rotateclock" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("rotate-clock") + ' ' + _("Rotate image 90 degrees clockwise") + '</a></li>',
+                    '<li id="button-watermark" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("watermark") + ' ' + _("Watermark image with name and logo") + '</a></li>',
+                    '<li id="button-include" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("tick") + ' ' + _("Include this image when publishing") + '</a></li>',
+                    '<li id="button-exclude" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("cross") + ' ' + _("Exclude this image when publishing") + '</a></li>',
+                    '<li id="button-web" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("web") + ' ' + _("Make this the default image for the record") + '</a></li>',
+                    '<li id="button-doc" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("document") + ' ' + _("Make this the default image when creating documents") + '</a></li>',
+                    '<li id="button-jpg2pdf" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("pdf") + ' ' + _("Create a PDF of this image") + '</a></li>',
+
                 '</ul>',
                 '</div>',
 
@@ -815,8 +815,7 @@ $(function() {
                 $("#button-signscreen").hide();
             }
 
-            $("#button-web").button().click(function() {
-                $("#button-web").button("disable");
+            $("#button-web").click(function() {
                 let formdata = "mode=web&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
@@ -827,38 +826,37 @@ $(function() {
                 media.ajax(formdata);
             });
 
-            $("#button-rotateanti").button().click(function() {
-                $("#button-rotateanti").button("disable");
+            $("#button-rotateanti").click(function() {
                 let formdata = "mode=rotateanti&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            $("#button-rotateclock").button().click(function() {
-                $("#button-rotateclock").button("disable");
+            $("#button-rotateclock").click(function() {
                 let formdata = "mode=rotateclock&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            $("#button-watermark").button().click(function() {
-                $("#button-watermark").button("disable");
+            $("#button-watermark").click(function() {
                 let formdata = "mode=watermark&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            $("#button-doc").button().click(function() {
-                $("#button-doc").button("disable");
+            $("#button-jpg2pdf").click(function() {
+                let formdata = "mode=jpg2pdf&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-doc").click(function() {
                 let formdata = "mode=doc&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            $("#button-include").button().click(function() {
-                $("#button-include").button("disable");
+            $("#button-include").click(function() {
                 let formdata = "mode=include&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            $("#button-exclude").button().click(function() {
-                $("#button-exclude").button("disable");
+            $("#button-exclude").click(function() {
                 let formdata = "mode=exclude&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
@@ -934,6 +932,8 @@ $(function() {
                     logtypes: controller.logtypes
                 });
             });
+
+            $("#button-image").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
 
             $("#button-sign").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
 

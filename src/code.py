@@ -778,6 +778,11 @@ class media(ASMEndpoint):
                 asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body))
         return emailadd
 
+    def post_jpg2pdf(self, o):
+        self.check(asm3.users.CHANGE_MEDIA)
+        for mid in o.post.integer_list("ids"):
+            asm3.media.convert_media_jpg2pdf(o.dbo, o.user, mid)
+
     def post_sign(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
         for mid in o.post.integer_list("ids"):
