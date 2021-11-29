@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-11-28 10:24+0000\n"
+"POT-Creation-Date: 2021-11-29 11:59+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -75,11 +75,11 @@ msgstr ""
 msgid "(no deduction)"
 msgstr ""
 
-#: html.py shelterview.js
+#: shelterview.js
 msgid "(none)"
 msgstr ""
 
-#: html.py incident.js lostfound.js lostfound_find.js lostfound_new.js
+#: incident.js lostfound.js lostfound_find.js lostfound_new.js
 msgid "(unknown)"
 msgstr ""
 
@@ -119,7 +119,7 @@ msgstr ""
 msgid "4 weeks"
 msgstr ""
 
-#: html.py animal.js
+#: animal.js
 msgid "5 Year"
 msgstr ""
 
@@ -1427,7 +1427,7 @@ msgstr ""
 msgid "Animals per page"
 msgstr ""
 
-#: html.py animal.js
+#: animal.js
 msgid "Annual"
 msgstr ""
 
@@ -7116,7 +7116,7 @@ msgstr ""
 msgid "Licensing"
 msgstr ""
 
-#: html.py animal.js
+#: animal.js
 msgid "Lifetime"
 msgstr ""
 
@@ -8944,6 +8944,10 @@ msgstr ""
 
 #: accounts_trx.js
 msgid "Payment From"
+msgstr ""
+
+#: html.py reports.py
+msgid "Payment Method"
 msgstr ""
 
 #: lookups.py

@@ -204,6 +204,9 @@ def get_criteria_params(dbo, customreportid, post):
             p.append( ( name , question, dbo.sql_date(asm3.i18n.display2python(l, post[name]), includeTime=False, wrapParens=False), post[name]) )  
         elif rtype == "STRING":
             p.append( ( name, question, post[name], post[name] ) )
+        elif rtype == "LOOKUP":
+            question = question[0:question.find("|")]
+            p.append( ( name, question, post[name], post[name] ) )
         elif rtype == "NUMBER":
             p.append( ( name, question, post[name], post[name] ) )
         elif rtype == "ANIMAL" or rtype == "FSANIMAL" or rtype == "ALLANIMAL":
@@ -215,8 +218,10 @@ def get_criteria_params(dbo, customreportid, post):
             p.append( ( name, asm3.i18n._("Animals", l), post[name], ", ".join(animals) ))
         elif rtype == "ANIMALFLAG":
             p.append( ( name, asm3.i18n._("Flag", l), post[name], post[name] ) )
-        elif rtype == "DONATIONTYPE":
+        elif rtype == "DONATIONTYPE" or rtype == "PAYMENTTYPE":
             p.append( ( name, asm3.i18n._("Payment Type", l), post[name], asm3.lookups.get_donationtype_name(dbo, post.integer(name) )) )
+        elif rtype == "PAYMENTMETHOD":
+            p.append( ( name, asm3.i18n._("Payment Method", l), post[name], asm3.lookups.get_paymentmethod_name(dbo, post.integer(name) )) )
         elif rtype == "PERSON":
             p.append( ( name, asm3.i18n._("Person", l), post[name], asm3.person.get_person_name(dbo, post[name])) )
         elif rtype == "PERSONFLAG":
@@ -1316,9 +1321,8 @@ class Report:
         with their types
         'reportId' is the ID of the report to get parameters for.
         Returns a list of parameters, each item is a list containing a
-        variable name (or ASK with a number for a one-shot ask), a type 
-        (DATE, ANIMAL, ANIMALS, ANIMALFLAG, DONATIONTYPE, LITTER, SPECIES, LOCATION, PERSONFLAG,TYPE, NUMBER, STRING)
-        and a question string.
+            variable name (or ASK with a number for a one-shot ask), 
+            a type and a question string.
         """
         self._ReadReport(reportId)
         params = []
@@ -1352,7 +1356,7 @@ class Report:
                 paramtype = token[4:nsp]
 
                 # Does the type need a string?
-                if paramtype == "DATE" or paramtype == "NUMBER" or paramtype == "STRING":
+                if paramtype in ("DATE", "NUMBER", "STRING", "LOOKUP"):
                     question = token[nsp+1:]
 
             # VAR
@@ -1366,7 +1370,7 @@ class Report:
                 paramtype = fields[2]
 
                 # And the string if it needs one
-                if paramtype == "DATE" or paramtype == "NUMBER" or paramtype == "STRING":
+                if paramtype in ("DATE", "NUMBER", "STRING", "LOOKUP"):
                     sp1 = token.find(" ", 5)
                     sp2 = token.find(" ", sp1 + 1)
                     question = token[sp2+1:]

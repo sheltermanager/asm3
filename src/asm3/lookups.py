@@ -1248,6 +1248,10 @@ def get_movementtype_name(dbo, mid):
 def get_movement_types(dbo):
     return dbo.query("SELECT * FROM lksmovementtype ORDER BY ID")
 
+def get_paymentmethod_name(dbo, pid):
+    if pid is None: return ""
+    return dbo.query_string("SELECT PaymentName FROM donationpayment WHERE ID = ?", [pid])
+
 def get_payment_methods(dbo):
     return dbo.query("SELECT * FROM donationpayment ORDER BY PaymentName")
 

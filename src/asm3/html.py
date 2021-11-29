@@ -933,63 +933,32 @@ def option(name, value = None, selected = False):
     if value is not None: val = " value=\"%s\"" % value
     return "<option %s%s>%s</option>\n" % ( val, sel, name )
 
+def options(l, rows, displayfield, idfield = "ID", includeAll = False, includeRetired = False, selected = -1, alltext = "*"):
+    s = []
+    if includeAll:
+        if alltext == "*": alltext = _("(all)", l)
+        s.append(option(alltext, "-1", False))
+    for r in rows:
+        if not includeRetired and "ISRETIRED" in r and r.ISRETIRED: continue
+        if r[displayfield] == "ANIMALNAMECODE":
+            s.append(option("%s - %s" % (r.ANIMALNAME, r.SHELTERCODE), str(r[idfield]), r[idfield] == selected))
+        elif r[displayfield] == "PERSONNAMEADDRESS":
+            s.append(option("%s - %s" % (r.OWNERNAME, r.OWNERADDRESS), str(r[idfield]), r[idfield] == selected))
+        else: 
+            s.append(option("%s" % r[displayfield], str(r[idfield]), r[idfield] == selected))
+    return "".join(s)
+
 def options_accounts(dbo, includeAll = False, selected = -1, alltext = "*"):
-    s = ""
-    l = dbo.locale
-    if includeAll: 
-        if alltext == "*": s += option(_("(all)", l), "-1", False)
-        else: s += option(alltext, "-1", False)
-    ac = asm3.financial.get_accounts(dbo)
-    for a in ac:
-        s += option("%s" % a["CODE"],
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.financial.get_accounts(dbo), "CODE", includeAll=includeAll, alltext=alltext, selected=selected)
 
 def options_account_types(dbo, includeAll = False, selected = -1, alltext = "*"):
-    l = dbo.locale
-    s = ""
-    if includeAll: 
-        if alltext == "*": s += option(_("(all)", l), "-1", False)
-        else: s += option(alltext, "-1", False)
-    at = asm3.lookups.get_account_types(dbo)
-    for a in at:
-        s += option(a["ACCOUNTTYPE"],
-            str(a["ID"]),
-            int(a["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_account_types(dbo), "ACCOUNTTYPE", includeAll=includeAll, alltext=alltext, selected=selected)
 
 def options_additionalfield_links(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    al = asm3.lookups.get_additionalfield_links(dbo)
-    for a in al:
-        s += option(a["LINKTYPE"], 
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_additionalfield_links(dbo), "LINKTYPE", includeAll=includeAll, selected=selected)
 
 def options_additionalfield_types(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    at = asm3.lookups.get_additionalfield_types(dbo)
-    for a in at:
-        s += option(a["FIELDTYPE"], 
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
-
-def options_agegroups(dbo, includeAll = False, includeUnknown = False, selected = "-1"):
-    s = ""
-    l = dbo.locale
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    if includeUnknown: s += option(_("(unknown)", l), "Unknown", False)
-    ag = asm3.configuration.age_groups(dbo)
-    for a in ag:
-        s += option(a, a, a == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_additionalfield_types(dbo), "FIELDTYPE", includeAll=includeAll, selected=selected)
 
 def options_animal_flags(dbo):
     s = ""
@@ -1006,49 +975,16 @@ def options_animal_flags(dbo):
     return s
 
 def options_animals(dbo, includeAll = False, selected = -1):
-    s = ""
-    l = dbo.locale
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    an = asm3.animal.get_animals_namecode(dbo)
-    for a in an:
-        s += option("%s - %s" % ( a["ANIMALNAME"], a["SHELTERCODE"] ), 
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.animal.get_animals_namecode(dbo), "ANIMALNAMECODE", includeAll=includeAll, selected=selected)
 
 def options_animals_on_shelter(dbo, includeAll = False, selected = -1):
-    s = ""
-    l = dbo.locale
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    an = asm3.animal.get_animals_on_shelter_namecode(dbo)
-    for a in an:
-        s += option("%s - %s" % ( a["ANIMALNAME"], a["CODE"] ), 
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.animal.get_animals_on_shelter_namecode(dbo), "ANIMALNAMECODE", includeAll=includeAll, selected=selected)
 
 def options_animals_on_shelter_foster(dbo, includeAll = False, selected = -1):
-    s = ""
-    l = dbo.locale
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    an = asm3.animal.get_animals_on_shelter_foster_namecode(dbo)
-    for a in an:
-        s += option("%s - %s" % ( a["ANIMALNAME"], a["CODE"] ), 
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.animal.get_animals_on_shelter_foster_namecode(dbo), "ANIMALNAMECODE", includeAll=includeAll, selected=selected)
 
 def options_animal_types(dbo, includeAll = False, selected = -1, includeRetired = False):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    at = asm3.lookups.get_animal_types(dbo)
-    for a in at:
-        if not includeRetired and a.ISRETIRED: continue
-        s += option(a["ANIMALTYPE"], 
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_animal_types(dbo), "ANIMALTYPE", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_breeds(dbo, includeAll = False, selected = -1, includeRetired = False):
     l = dbo.locale
@@ -1073,126 +1009,37 @@ def options_breeds(dbo, includeAll = False, selected = -1, includeRetired = Fals
     return s
 
 def options_coattypes(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    ct = asm3.lookups.get_coattypes(dbo)
-    for c in ct:
-        s += option(c["COATTYPE"],
-            str(c["ID"]),
-            int(c["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_coattypes(dbo), "COATTYPE", includeAll=includeAll, selected=selected)
 
 def options_colours(dbo, includeAll = False, selected = -1, includeRetired = False):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    bc = asm3.lookups.get_basecolours(dbo)
-    for c in bc:
-        if not includeRetired and c.ISRETIRED: continue
-        s += option(c["BASECOLOUR"],
-            str(c["ID"]),
-            int(c["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_basecolours(dbo), "BASECOLOUR", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_cost_types(dbo, includeAll = False, selected = -1, includeRetired = False):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    bc = asm3.lookups.get_costtypes(dbo)
-    for c in bc:
-        if not includeRetired and c.ISRETIRED: continue
-        s += option(c["COSTTYPENAME"],
-            str(c["ID"]),
-            int(c["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_costtypes(dbo), "COSTTYPENAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_deathreasons(dbo, includeAll = False, selected = -1, includeRetired = False):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    dr = asm3.lookups.get_deathreasons(dbo)
-    for d in dr:
-        if not includeRetired and d.ISRETIRED: continue
-        s += option(d["REASONNAME"],
-            str(d["ID"]),
-            int(d["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_deathreasons(dbo), "REASONNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_diets(dbo, includeAll = False, selected = -1, includeRetired = False):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    di = asm3.lookups.get_diets(dbo)
-    for d in di:
-        if not includeRetired and d.ISRETIRED: continue
-        s += option(d["DIETNAME"],
-            str(d["ID"]),
-            int(d["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_diets(dbo), "DIETNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
-def options_donation_types(dbo, includeAll = False, includeNone = False, selected = -1, alltext = "*", includeRetired = False):
-    l = dbo.locale
-    s = ""
-    if includeAll: 
-        if alltext == "*": s += option(_("(all)", l), "-1", False)
-        else: s += option(alltext, "-1", False)
-    if includeNone:
-        s += option(_("(none)", l), "0", False)
-    dt = asm3.lookups.get_donation_types(dbo)
-    for d in dt:
-        if not includeRetired and d.ISRETIRED: continue
-        s += option(d["DONATIONNAME"],
-            str(d["ID"]),
-            int(d["ID"]) == selected)
-    return s
+def options_donation_types(dbo, includeAll = False, selected = -1, alltext = "*", includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_donation_types(dbo), "DONATIONNAME", includeAll=includeAll, alltext=alltext, selected=selected, includeRetired=includeRetired)
+
+def options_donation_methods(dbo, includeAll = False, selected = -1, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_payment_methods(dbo), "PAYMENTNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_donation_frequencies(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    df = asm3.lookups.get_donation_frequencies(dbo)
-    for d in df:
-        s += option(d["FREQUENCY"],
-            str(d["ID"]),
-            int(d["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_donation_frequencies(dbo), "FREQUENCY", includeAll=includeAll, selected=selected)
 
 def options_entryreasons(dbo, includeAll = False, selected = -1, includeRetired = False):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    er = asm3.lookups.get_entryreasons(dbo)
-    for e in er:
-        if not includeRetired and e.ISRETIRED: continue
-        s += option(e["REASONNAME"],
-            str(e["ID"]),
-            int(e["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_entryreasons(dbo), "REASONNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_incident_types(dbo, includeAll = False, selected = -1, includeRetired = False):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    er = asm3.lookups.get_incident_types(dbo)
-    for e in er:
-        if not includeRetired and e.ISRETIRED: continue
-        s += option(e["INCIDENTNAME"],
-            str(e["ID"]),
-            int(e["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_incident_types(dbo), "INCIDENTNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_internal_locations(dbo, includeAll = False, selected = -1, locationfilter = "", siteid = 0, includeRetired = False):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    lo = asm3.lookups.get_internal_locations(dbo, locationfilter, siteid)
-    for l in lo:
-        if not includeRetired and l.ISRETIRED: continue
-        s += option(l["LOCATIONNAME"], 
-            str(l["ID"]), 
-            int(l["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_internal_locations(dbo, locationfilter, siteid), "LOCATIONNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_litters(dbo, includeAll = False, selected = "-1"):
     l = dbo.locale
@@ -1220,38 +1067,13 @@ def options_locales():
     return s
 
 def options_log_types(dbo, includeAll = False, selected = -1, includeRetired = False):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    lt = asm3.lookups.get_log_types(dbo)
-    for l in lt:
-        if not includeRetired and l.ISRETIRED: continue
-        s += option(l["LOGTYPENAME"], 
-            str(l["ID"]), 
-            int(l["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_log_types(dbo), "LOGTYPENAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
-def options_medicalprofiles(dbo, includeNone = False, selected = 0):
-    s = ""
-    if includeNone: s += option("", "0", False)
-    mp = asm3.medical.get_profiles(dbo)
-    for m in mp:
-        s += option(m["PROFILENAME"], 
-            str(m["ID"]), 
-            int(m["ID"]) == selected)
-    return s
+def options_medicalprofiles(dbo, selected = -1):
+    return options(dbo.locale, asm3.medical.get_profiles(dbo), "PROFILENAME", selected=selected)
 
 def options_movement_types(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    mt = asm3.lookups.get_movement_types(dbo)
-    for m in mt:
-        if m["ID"] != 9 and m["ID"] != 10 and m["ID"] != 11:
-            s += option(m["MOVEMENTTYPE"], 
-                str(m["ID"]), 
-                int(m["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_movement_types(dbo), "MOVEMENTTYPE", includeAll=includeAll, selected=selected)
 
 def options_person_flags(dbo):
     s = ""
@@ -1280,115 +1102,28 @@ def options_person_flags(dbo):
     return s
 
 def options_people(dbo, includeAll = False, selected = -1):
-    s = ""
-    l = dbo.locale
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    pp = asm3.person.get_person_name_addresses(dbo)
-    for p in pp:
-        s += option("%s - %s" % ( p["OWNERNAME"], p["OWNERADDRESS"] ), 
-            str(p["ID"]), 
-            int(p["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.person.get_person_name_addresses(dbo), "PERSONNAMEADDRESS", includeAll=includeAll, selected=selected)
 
 def options_people_not_homechecked(dbo, includeAll = False, selected = -1):
-    s = ""
-    l = dbo.locale
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    pp = asm3.person.get_reserves_without_homechecks(dbo)
-    for p in pp:
-        s += option("%s - %s" % ( p["OWNERNAME"], p["OWNERADDRESS"] ), 
-            str(p["ID"]), 
-            int(p["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.person.get_reserves_without_homechecks(dbo), "PERSONNAMEADDRESS", includeAll=includeAll, selected=selected)
 
 def options_posneg(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    pn = asm3.lookups.get_posneg(dbo)
-    for p in pn:
-        s += option(p["NAME"],
-            str(p["ID"]),
-            int(p["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_posneg(dbo), "NAME", includeAll=includeAll, selected=selected)
 
 def options_species(dbo, includeAll = False, selected = -1, includeRetired = False):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    sp = asm3.lookups.get_species(dbo)
-    for sx in sp:
-        if not includeRetired and sx.ISRETIRED: continue
-        s += option(sx["SPECIESNAME"], 
-            str(sx["ID"]), 
-            int(sx["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_species(dbo), "SPECIESNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_sexes(dbo,  includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    se = asm3.lookups.get_sexes(dbo)
-    for sx in se:
-        s += option(sx["SEX"],
-            str(sx["ID"]),
-            int(sx["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_sexes(dbo), "SEX", includeAll=includeAll, selected=selected)
 
 def options_sizes(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    se = asm3.lookups.get_sizes(dbo)
-    for sz in se:
-        s += option(sz["SIZE"],
-            str(sz["ID"]),
-            int(sz["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_sizes(dbo), "SIZE", includeAll=includeAll, selected=selected)
 
 def options_sites(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    se = asm3.lookups.get_sites(dbo)
-    for i in se:
-        s += option(i["SITENAME"], 
-            str(i["ID"]), 
-            int(i["ID"]) == selected)
-    return s
-
-def options_smarttagtypes(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    st = [{ "ID" : 0, "TYPE" : _("Annual", l)},
-          { "ID" : 1, "TYPE" : _("5 Year", l)},
-          { "ID" : 2, "TYPE" : _("Lifetime", l)}]
-    for t in st:
-        s += option(t["TYPE"],
-            str(t["ID"]),
-            int(t["ID"]) == selected)
-    return s
-
-def options_urgencies(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "all", False)
-    wu = asm3.lookups.get_urgencies(dbo)
-    for u in wu:
-        s += option(u["URGENCY"],
-            str(u["ID"]),
-            int(u["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_sites(dbo), "SITENAME", includeAll=includeAll, selected=selected)
 
 def options_users(dbo, includeAll = False, selected = ""):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "all", selected == "all")
-    su = asm3.users.get_users(dbo)
-    for u in su:
-        s += option(u["USERNAME"], u["USERNAME"], u["USERNAME"] == selected)
-    return s
+    return options(dbo.locale, asm3.users.get_users(dbo), "USERNAME", idfield="USERNAME", includeAll=includeAll, selected=selected)
 
 def options_users_and_roles(dbo, includeAll = False, includeEveryone = False, selected = ""):
     l = dbo.locale
@@ -1401,50 +1136,16 @@ def options_users_and_roles(dbo, includeAll = False, includeEveryone = False, se
     return s
 
 def options_vaccination_types(dbo, includeAll = False, selected = -1, includeRetired = False):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    vt = asm3.lookups.get_vaccination_types(dbo)
-    for v in vt:
-        if not includeRetired and v.ISRETIRED: continue
-        s += option(v["VACCINATIONTYPE"],
-            str(v["ID"]),
-            int(v["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_vaccination_types(dbo), "VACCINATIONTYPE", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_voucher_types(dbo, includeAll = False, selected = -1, includeRetired = False):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    vt = asm3.lookups.get_voucher_types(dbo)
-    for v in vt:
-        if not includeRetired and v.ISRETIRED: continue
-        s += option(v["VOUCHERNAME"],
-            str(v["ID"]),
-            int(v["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_voucher_types(dbo), "VOUCHERNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_yesno(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    yn = asm3.lookups.get_yesno(dbo)
-    for y in yn:
-        s += option(y["NAME"],
-            str(y["ID"]),
-            int(y["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_yesno(dbo), "NAME", includeAll=includeAll, selected=selected)
   
 def options_ynun(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    yn = asm3.lookups.get_ynun(dbo)
-    for y in yn:
-        s += option(y["NAME"],
-            str(y["ID"]),
-            int(y["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_ynun(dbo), "NAME", includeAll=includeAll, selected=selected)
 
 def template_selection(templates, url):
     """
@@ -1493,6 +1194,21 @@ def report_criteria(dbo, crit, locationfilter = "", siteid = 0):
             <input class="asm-textbox" id="report-%s" data-post="%s" />
             </td>
             </tr>""" % ( question, name, name )
+        elif rtype == "LOOKUP":
+            values = question[question.find("|")+1:]
+            if question.find("|") != -1: question = question[0:question.find("|")]
+            sv = []
+            for v in values.split(","):
+                sv.append("<option>%s</option>" % v.strip())
+            s += """
+            <tr>
+            <td>%s</td>
+            <td>
+            <select class="asm-selectbox" id="report-%s" data-post="%s">
+            %s
+            </select>
+            </td>
+            </tr>""" % ( question, name, name, "\n".join(sv) )
         elif rtype == "NUMBER":
             s += """
             <tr>
@@ -1545,7 +1261,7 @@ def report_criteria(dbo, crit, locationfilter = "", siteid = 0):
             </select>
             </td>
             </tr>""" % ( _("Flag", l), name, name, options_person_flags(dbo))
-        elif rtype == "DONATIONTYPE":
+        elif rtype == "DONATIONTYPE" or rtype == "PAYMENTTYPE":
             s += """
             <tr>
             <td>%s</td>
@@ -1565,6 +1281,16 @@ def report_criteria(dbo, crit, locationfilter = "", siteid = 0):
             </select>
             </td>
             </tr>""" % ( _("Litter", l), name, name, options_litters(dbo) )
+        elif rtype == "PAYMENTMETHOD":
+            s += """
+            <tr>
+            <td>%s</td>
+            <td>
+            <select class="asm-selectbox" id="report-%s" data-post="%s">
+            %s
+            </select>
+            </td>
+            </tr>""" % ( _("Payment Method", l), name, name, options_donation_methods(dbo) )
         elif rtype == "SPECIES":
             s += """
             <tr>
@@ -1638,6 +1364,19 @@ def report_criteria_mobile(dbo, crit, locationfilter = "", siteid = 0):
             <input type="text" id="report-%s" data-post="%s" value="" />
             </div>
             """ % (name, question, name, name)
+        elif rtype == "LOOKUP":
+            values = question[question.find("|")+1:]
+            if question.find("|") != -1: question = question[0:question.find("|")]
+            sv = []
+            for v in values.split(","):
+                sv.append("<option>%s</option>" % v.strip())
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select class="asm-selectbox" id="report-%s" data-post="%s">
+            %s
+            </select>
+            </div>
+            """ % (name, question, name, name, "\n".join(sv))
         elif rtype == "NUMBER":
             s += """
             <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
@@ -1686,7 +1425,7 @@ def report_criteria_mobile(dbo, crit, locationfilter = "", siteid = 0):
             <select id="report-%s" data-post="%s">%s</select>
             </div>
             """ % (name, _("Flag", l), name, name, options_person_flags(dbo))
-        elif rtype == "DONATIONTYPE":
+        elif rtype == "DONATIONTYPE" or rtype == "PAYMENTTYPE":
             s += """
             <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
             <select id="report-%s" data-post="%s">%s</select>
@@ -1698,6 +1437,12 @@ def report_criteria_mobile(dbo, crit, locationfilter = "", siteid = 0):
             <select id="report-%s" data-post="%s">%s</select>
             </div>
             """ % (name, _("Litter", l), name, name, options_litters(dbo))
+        elif rtype == "PAYMENTMETHOD":
+            s += """
+            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
+            <select id="report-%s" data-post="%s">%s</select>
+            </div>
+            """ % (name, _("Payment Method", l), name, name, options_donation_methods(dbo))
         elif rtype == "SPECIES":
             s += """
             <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>

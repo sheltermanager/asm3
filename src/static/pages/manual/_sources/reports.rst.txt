@@ -189,7 +189,9 @@ The types are outlined below:
 * $ASK DIET$ - requests a diet from the user in the same manner as $ASK
   SPECIES$ 
 
-* $ASK DONATIONTYPE$ - requests a payment/donation type from the user in the
+* $ASK PAYMENTMETHOD$ - requests a payment method. 
+
+* $ASK PAYMENTTYPE$ - requests a payment/donation type from the user in the
   same manner as $ASK SPECIES$
 
 * $ASK LOGTYPE$ - requests a log type from the user in the same manner as $ASK
@@ -197,6 +199,9 @@ The types are outlined below:
 
 * $ASK TYPE$ - requests an animal type from the user in the same manner as $ASK
   SPECIES$ 
+
+* $ASK LOOKUP message|value1,value2,value3$ - requests one from a selection of 
+  fixed lookup values from the user.
 
 * $ASK NUMBER message$ - requests a numeric value from the user. A box is
   popped up containing the message and the user is given a standard text box to
