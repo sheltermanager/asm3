@@ -631,6 +631,52 @@ const common = {
     },
 
     /**
+     * Performs an AJAX GET for text response, handling errors
+     * action: The url to post to
+     * formdata: The formdata as a string
+     * successfunc: The callback function (will pass response)
+     * errorfunc: The callback function on error (will include response)
+     * returns a promise.
+     */
+    ajax_get: function(action, formdata, successfunc, errorfunc) {
+        var st = new Date().getTime(),
+            deferred = $.Deferred();
+        $.ajax({
+            type: "GET",
+            url: action,
+            data: formdata,
+            dataType: "text",
+            mimeType: "textPlain",
+            success: function(result) {
+                try {
+                    // This can cause an error if the dialog wasn't open
+                    header.hide_loading();
+                }
+                catch (ex) {}
+
+                if (successfunc) {
+                    successfunc(result, new Date().getTime() - st);
+                }
+                deferred.resolve(result, new Date().getTime() - st);
+            },
+            error: function(jqxhr, textstatus, response) {
+                try {
+                    // This can cause an error if the dialog wasn't open
+                    header.hide_loading();
+                }
+                catch (ex) {}
+                var errmessage = common.get_error_response(jqxhr, textstatus, response);
+                header.show_error(errmessage);
+                if (errorfunc) {
+                    errorfunc(errmessage);
+                }
+                deferred.reject(errmessage);
+            }
+        });
+        return deferred.promise();
+    },
+
+    /**
      * Performs an AJAX POST for text response, handling errors
      * action: The url to post to
      * formdata: The formdata as a string
