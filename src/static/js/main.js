@@ -642,7 +642,7 @@ $(function() {
             }),
             '</p>',
             '<div id="changelog">',
-                '<textarea class="asm-textarea" style="width: 650px; height: 400px;"></textarea>',
+                '<textarea class="asm-textarea" readonly="readonly" style="width: 650px; height: 400px;"></textarea>',
             '</div>',
             '</div>',
 
