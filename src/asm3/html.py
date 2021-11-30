@@ -940,9 +940,9 @@ def options(l, rows, displayfield, idfield = "ID", includeAll = False, includeRe
         s.append(option(alltext, "-1", False))
     for r in rows:
         if not includeRetired and "ISRETIRED" in r and r.ISRETIRED: continue
-        if r[displayfield] == "ANIMALNAMECODE":
+        if displayfield == "ANIMALNAMECODE":
             s.append(option("%s - %s" % (r.ANIMALNAME, r.SHELTERCODE), str(r[idfield]), r[idfield] == selected))
-        elif r[displayfield] == "PERSONNAMEADDRESS":
+        elif displayfield == "PERSONNAMEADDRESS":
             s.append(option("%s - %s" % (r.OWNERNAME, r.OWNERADDRESS), str(r[idfield]), r[idfield] == selected))
         else: 
             s.append(option("%s" % r[displayfield], str(r[idfield]), r[idfield] == selected))
