@@ -8,7 +8,7 @@
  *
  * http://api.jqueryui.com/category/theming/
  *
- * To view and modify this theme, visit http://jqueryui.com/themeroller/?scope=&folderName=custom-theme&bgImgOpacityError=95&bgImgOpacityHighlight=55&bgImgOpacityActive=&bgImgOpacityHover=&bgImgOpacityDefault=&bgImgOpacityContent=&bgImgOpacityHeader=&cornerRadiusShadow=8px&offsetLeftShadow=0px&offsetTopShadow=0px&thicknessShadow=5px&opacityShadow=30&bgImgOpacityShadow=0&bgTextureShadow=flat&bgColorShadow=%23666666&opacityOverlay=30&bgImgOpacityOverlay=0&bgTextureOverlay=flat&bgColorOverlay=%23aaaaaa&iconColorError=%23cd0a0a&fcError=%23cd0a0a&borderColorError=%23cd0a0a&bgTextureError=flat&bgColorError=%23fef1ec&iconColorHighlight=%233a87cd&fcHighlight=%233a87cd&borderColorHighlight=%233a87cd&bgTextureHighlight=flat&bgColorHighlight=%23d9edf7&iconColorActive=%23ffffff&fcActive=%23ffffff&borderColorActive=%23003eff&bgTextureActive=flat&bgColorActive=%23007fff&iconColorHover=%23fff&fcHover=%23fff&borderColorHover=%23cccccc&bgTextureHover=flat&bgColorHover=%23444&iconColorDefault=%23eee&fcDefault=%23eee&borderColorDefault=%23c5c5c5&bgTextureDefault=flat&bgColorDefault=%23222&iconColorContent=%23eee&fcContent=%23eee&borderColorContent=%23dddddd&bgTextureContent=flat&bgColorContent=%23222&iconColorHeader=%23eee&fcHeader=%23eeeeee&borderColorHeader=%23dddddd&bgTextureHeader=flat&bgColorHeader=%23444&cornerRadius=3px&fwDefault=normal&fsDefault=1.1em&ffDefault=Verdana%2CArial%2Csans-serif
+ * To view and modify this theme, visit http://jqueryui.com/themeroller/?scope=&folderName=custom-theme&bgImgOpacityHeader=&bgImgOpacityContent=&bgImgOpacityDefault=&bgImgOpacityHover=&bgImgOpacityActive=&bgImgOpacityHighlight=55&bgImgOpacityError=95&cornerRadiusShadow=8px&offsetLeftShadow=0px&offsetTopShadow=0px&thicknessShadow=5px&opacityShadow=30&bgImgOpacityShadow=0&bgTextureShadow=flat&bgColorShadow=%23666&opacityOverlay=30&bgImgOpacityOverlay=0&bgTextureOverlay=flat&bgColorOverlay=%23aaaaaa&iconColorError=%23fef1ec&fcError=%23fef1ec&borderColorError=%23fef1ec&bgTextureError=flat&bgColorError=%23cd0a0a&iconColorHighlight=%23d9edf7&fcHighlight=%23d9edf7&borderColorHighlight=%23d9edf7&bgTextureHighlight=flat&bgColorHighlight=%233a87cd&iconColorActive=%23ffffff&fcActive=%23ffffff&borderColorActive=%23003eff&bgTextureActive=flat&bgColorActive=%23007fff&iconColorHover=%23fff&fcHover=%23fff&borderColorHover=%23cccccc&bgTextureHover=flat&bgColorHover=%23444&iconColorDefault=%23eee&fcDefault=%23eee&borderColorDefault=%23c5c5c5&bgTextureDefault=flat&bgColorDefault=%23222&iconColorContent=%23eee&fcContent=%23eee&borderColorContent=%23dddddd&bgTextureContent=flat&bgColorContent=%23222&iconColorHeader=%23eee&fcHeader=%23eeeeee&borderColorHeader=%23dddddd&bgTextureHeader=flat&bgColorHeader=%23444&cornerRadius=3px&fwDefault=normal&fsDefault=1.1em&ffDefault=Verdana%2CArial%2Csans-serif
  */
 
 /** NOTE: When recreating themes with themeroller, you need to copy everything below down 
@@ -959,6 +959,8 @@ body .ui-tooltip {
 
 
 
+
+
 /* Component containers
 ----------------------------------*/
 .ui-widget {
@@ -972,7 +974,7 @@ body .ui-tooltip {
 .ui-widget select,
 .ui-widget textarea,
 .ui-widget button {
-	font-family: Arial,Helvetica,sans-serif;
+	font-family: Verdana,Arial,sans-serif;
 	font-size: 1em;
 }
 .ui-widget.ui-widget-content {
@@ -1080,35 +1082,35 @@ a.ui-button:active,
 .ui-state-highlight,
 .ui-widget-content .ui-state-highlight,
 .ui-widget-header .ui-state-highlight {
-	border: 1px solid #3a87cd;
-	background: #d9edf7 url("images/ui-bg_inset-hard_55_d9edf7_1x100.png") 50% bottom repeat-x;
-	color: #3a87cd;
+	border: 1px solid #d9edf7;
+	background: #3a87cd;
+	color: #d9edf7;
 }
 .ui-state-checked {
-	border: 1px solid #3a87cd;
-	background: #d9edf7;
+	border: 1px solid #d9edf7;
+	background: #3a87cd;
 }
 .ui-state-highlight a,
 .ui-widget-content .ui-state-highlight a,
 .ui-widget-header .ui-state-highlight a {
-	color: #3a87cd;
+	color: #d9edf7;
 }
 .ui-state-error,
 .ui-widget-content .ui-state-error,
 .ui-widget-header .ui-state-error {
-	border: 1px solid #cd0a0a;
-	background: #fef1ec url("images/ui-bg_inset-hard_95_fef1ec_1x100.png") 50% bottom repeat-x;
-	color: #cd0a0a;
+	border: 1px solid #fef1ec;
+	background: #cd0a0a;
+	color: #fef1ec;
 }
 .ui-state-error a,
 .ui-widget-content .ui-state-error a,
 .ui-widget-header .ui-state-error a {
-	color: #cd0a0a;
+	color: #fef1ec;
 }
 .ui-state-error-text,
 .ui-widget-content .ui-state-error-text,
 .ui-widget-header .ui-state-error-text {
-	color: #cd0a0a;
+	color: #fef1ec;
 }
 .ui-priority-primary,
 .ui-widget-content .ui-priority-primary,
@@ -1160,11 +1162,11 @@ a.ui-button:active,
 }
 .ui-state-highlight .ui-icon,
 .ui-button .ui-state-highlight.ui-icon {
-	background-image: url("images/ui-icons_3a87cd_256x240.png");
+	background-image: url("images/ui-icons_d9edf7_256x240.png");
 }
 .ui-state-error .ui-icon,
 .ui-state-error-text .ui-icon {
-	background-image: url("images/ui-icons_cd0a0a_256x240.png");
+	background-image: url("images/ui-icons_fef1ec_256x240.png");
 }
 .ui-button .ui-icon {
 	background-image: url("images/ui-icons_eee_256x240.png");
@@ -1385,6 +1387,6 @@ a.ui-button:active,
 	filter: Alpha(Opacity=30); /* support: IE8 */
 }
 .ui-widget-shadow {
-	-webkit-box-shadow: 0px 0px 5px #666666;
-	box-shadow: 0px 0px 5px #666666;
+	-webkit-box-shadow: 0px 0px 5px #666;
+	box-shadow: 0px 0px 5px #666;
 }
