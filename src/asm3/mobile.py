@@ -20,7 +20,7 @@ import asm3.utils
 
 from asm3.i18n import _, python2display, now, add_days, add_months, add_years, format_currency, format_time
 from asm3.sitedefs import MULTIPLE_DATABASES
-from asm3.sitedefs import ELECTRONIC_SIGNATURES, JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_MOBILE_JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS, MOMENT_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import ELECTRONIC_SIGNATURES, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_MOBILE_JQUERY_JS
 
 def header(l):
     return """<!DOCTYPE html>
@@ -311,83 +311,6 @@ def page(dbo, session, username):
     h += page_incidents(l, homelink, infp, "infp", _("Incidents Requiring Followup", l))
     h += page_find_person(l, homelink)
 
-    h.append("</body></html>")
-    return "\n".join(h)
-
-def page_sign(dbo, session, username):
-    l = session.locale
-    ids = asm3.configuration.signpad_ids(dbo, username)
-    h = []
-    h.append("""<!DOCTYPE html>
-    <html>
-    <head>
-    <title>
-    %(title)s
-    </title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1"> 
-    %(css)s
-    <script>
-        ids = "%(ids)s";
-    </script>
-    %(scripts)s
-    <style>
-    * { font-family: sans-serif }
-    button { 
-        padding: 10px; 
-        font-size: 100%%; 
-    }
-    #signature { 
-        border: 1px solid #aaa; 
-        height: 250px; 
-        width: 100%%;
-        max-width: 1000px;
-    }
-    </style>
-    </head>
-    <body>
-    """ % {
-        "title":    _("Signing Pad", l),
-        "ids":      ids,
-        "css":      asm3.html.asm_css_tag("asm-icon.css"),
-        "scripts":  asm3.html.script_tag(JQUERY_JS) + \
-            asm3.html.script_tag(JQUERY_UI_JS) + \
-            asm3.html.script_tag(TOUCHPUNCH_JS) + \
-            asm3.html.script_tag(SIGNATURE_JS) + \
-            asm3.html.script_tag(MOMENT_JS) + \
-            asm3.html.asm_script_tag("mobile_sign.js")
-    })
-    if ids.strip() == "":
-        h.append('<p>%s</p>' % _("Waiting for documents...", l))
-        h.append('<p><button id="sig-refresh">' + _("Reload", l) + '</button></p>')
-        #h.append('<p><button id="sig-home">' + _("Home", l) + '</button></p>')
-        if not session.mobileapp:
-            h.append('</p><button id="sig-logout">' + _("Logout", l) + '</button></p>')
-    else:
-        d = []
-        docnotes = []
-        for mid in ids.strip().split(","):
-            if mid.strip() != "": 
-                docnotes.append(asm3.media.get_notes_for_id(dbo, int(mid)))
-                dummy, dummy, dummy, contents = asm3.media.get_media_file_data(dbo, int(mid))
-                d.append(asm3.utils.bytes2str(contents))
-                d.append("<hr />")
-        h.append("<p><b>%s: %s</b></p>" % (_("Signing", l), ", ".join(docnotes)))
-        h.append('<p><a id="reviewlink" href="#">%s</a></p>' % _("View Document", l))
-        h.append('<div id="review" style="display: none">')
-        h.append("\n".join(d))
-        h.append('</div>')
-        h.append('<div id="signature"></div>')
-        h.append('<p>')
-        h.append('<button id="sig-clear" type="button">' + _("Clear", l) + '</button>')
-        h.append('<button id="sig-sign" type="button">' + _("Sign", l) + '</button>')
-        h.append('</p>')
-        h.append('<p>')
-        h.append(_("Please click the Sign button when you are finished.", l))
-        h.append('</p>')
-        h.append('<p>')
-        h.append(_("Once signed, this document cannot be edited or tampered with.", l))
-        h.append('</p>')
     h.append("</body></html>")
     return "\n".join(h)
 
@@ -914,15 +837,6 @@ def handler(session, post):
         # Update the stock levels from the posted values
         asm3.stock.stock_take_from_mobile_form(dbo, user, post)
         return "GO mobile"
-
-    elif mode == "sign":
-        # We're electronically signing a document
-        for mid in post.integer_list("ids"):
-            try:
-                asm3.media.sign_document(dbo, user, mid, post["sig"], post["signdate"], "signmobile")
-            finally:
-                asm3.configuration.signpad_ids(dbo, user, "")
-        return "ok"
 
 def handler_addanimal(l, homelink, dbo):
     h = []

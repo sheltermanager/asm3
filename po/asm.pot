@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-11-29 16:09+0000\n"
+"POT-Creation-Date: 2021-12-01 11:52+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -2635,9 +2635,9 @@ msgstr ""
 msgid "Class"
 msgstr ""
 
-#: mobile.py onlineform.py service_checkout_adoption.js common_personchooser.js
-#: common.js common_animalchoosermulti.js service_sign_document.js
-#: common_animalchooser.js media.js
+#: onlineform.py service_checkout_adoption.js common_personchooser.js common.js
+#: common_animalchoosermulti.js service_sign_document.js
+#: common_animalchooser.js media.js mobile_sign.js
 msgid "Clear"
 msgstr ""
 
@@ -2683,7 +2683,7 @@ msgid "Cloning..."
 msgstr ""
 
 #: service_checkout_adoption.js animal_new.js onlineform_incoming.js
-#: common_widgets.js main.js service_sign_document.js
+#: common_widgets.js main.js service_sign_document.js mobile_sign.js
 msgid "Close"
 msgstr ""
 
@@ -6145,7 +6145,7 @@ msgstr ""
 msgid "Holland Lop"
 msgstr ""
 
-#: html.py mobile.py header.js
+#: html.py mobile.py mobile_sign.js header.js
 msgid "Home"
 msgstr ""
 
@@ -7317,7 +7317,7 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: mobile.py common.js header.js
+#: mobile.py common.js mobile_sign.js header.js
 msgid "Logout"
 msgstr ""
 
@@ -8599,7 +8599,7 @@ msgstr ""
 msgid "Once linked, a user account cannot access and edit its linked person record."
 msgstr ""
 
-#: mobile.py service_checkout_adoption.js service_sign_document.js
+#: service_checkout_adoption.js service_sign_document.js mobile_sign.js
 msgid "Once signed, this document cannot be edited or tampered with."
 msgstr ""
 
@@ -9216,10 +9216,6 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Pixie-Bob"
-msgstr ""
-
-#: mobile.py
-msgid "Please click the Sign button when you are finished."
 msgstr ""
 
 #: csvexport.js csvimport.js
@@ -9884,7 +9880,7 @@ msgstr ""
 msgid "Released to Wild"
 msgstr ""
 
-#: mobile.py
+#: mobile_sign.js
 msgid "Reload"
 msgstr ""
 
@@ -11229,7 +11225,8 @@ msgstr ""
 msgid "Sick/injured animal"
 msgstr ""
 
-#: mobile.py service_checkout_adoption.js service_sign_document.js media.js
+#: service_checkout_adoption.js service_sign_document.js media.js
+#: mobile_sign.js
 msgid "Sign"
 msgstr ""
 
@@ -11249,7 +11246,7 @@ msgstr ""
 msgid "Signature"
 msgstr ""
 
-#: service_checkout_adoption.js service_sign_document.js
+#: service_checkout_adoption.js service_sign_document.js mobile_sign.js
 msgid "Signature is required"
 msgstr ""
 
@@ -11261,11 +11258,11 @@ msgstr ""
 msgid "Signed Document"
 msgstr ""
 
-#: mobile.py service_sign_document.js
+#: service_sign_document.js mobile_sign.js
 msgid "Signing"
 msgstr ""
 
-#: service.py mobile.py
+#: code.py service.py mobile.py
 msgid "Signing Pad"
 msgstr ""
 
@@ -13687,7 +13684,7 @@ msgid "Vietnamese Pot Bellied"
 msgstr ""
 
 #: service_checkout_adoption.js onlineform_incoming.js common.js
-#: service_sign_document.js
+#: service_sign_document.js mobile_sign.js
 msgid "View"
 msgstr ""
 
@@ -13721,10 +13718,6 @@ msgstr ""
 
 #: roles.js
 msgid "View Diets"
-msgstr ""
-
-#: mobile.py
-msgid "View Document"
 msgstr ""
 
 #: roles.js
@@ -13969,7 +13962,7 @@ msgstr ""
 msgid "Waiting Room"
 msgstr ""
 
-#: mobile.py
+#: mobile_sign.js
 msgid "Waiting for documents..."
 msgstr ""
 

@@ -925,7 +925,28 @@ class mobile_sign(ASMEndpoint):
 
     def content(self, o):
         self.content_type("text/html")
-        return asm3.mobile.page_sign(o.dbo, o.session, o.user)
+        ids = asm3.configuration.signpad_ids(o.dbo, o.user)
+        names = []
+        preview = []
+        for mid in ids.strip().split(","):
+            if mid.strip() != "": 
+                names.append(asm3.media.get_notes_for_id(o.dbo, int(mid)))
+                dummy, dummy, dummy, contents = asm3.media.get_media_file_data(o.dbo, int(mid))
+                preview.append(asm3.utils.bytes2str(contents))
+        l = o.dbo.locale
+        c = {
+            "ids": ids,
+            "count": len(names),
+            "names": ", ".join(names),
+            "preview": "\n<hr/>\n".join(preview),
+            "mobileapp": o.session.mobileapp
+        }
+        return asm3.html.mobile_page(l, _("Signing Pad", l), [ "mobile_sign.js" ], c)
+
+    def post_all(self, o):
+        for mid in o.post.integer_list("ids"):
+            asm3.media.sign_document(o.dbo, o.user, mid, o.post["sig"], o.post["signdate"], "signmobile")
+        asm3.configuration.signpad_ids(o.dbo, o.user, "")
 
 class main(JSONEndpoint):
     url = "main"

@@ -1,6 +1,7 @@
 45
 ================
 
+01/12/21 Rewrite mobile signing pad into bootstrap #1068
 01/12/21 PetRescue/SavourLife - use retailer postcode if available
 01/12/21 Dark mode for SQL/HTML editing, better shadows
 30/11/21 Update Czech translation (Jiří Podhorecký)
