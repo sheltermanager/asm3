@@ -57,9 +57,11 @@ select:disabled, input:disabled, textarea:disabled {
     display: none;
 }
 
-.dialogshadow, .menushadow, .thumbnailshadow {
+.dialogshadow, .menushadow, .thumbnailshadow, .popupshadow {
     box-shadow: 3px 3px 5px #888;
 }
+
+
 
 .centered {
     text-align: center;
@@ -673,10 +675,6 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-additional-fields-container {
 }
 
-.asm-callout-popup {
-    box-shadow: 3px 3px 5px #888;
-}
-
 .asm-textarea {
     width: 98%;
     border: 1px solid #555;
@@ -806,7 +804,6 @@ select:disabled, input:disabled, textarea:disabled {
     max-height: 85px;
     background-color: #fff;
     border-radius: 2px;
-    box-shadow: 3px 3px 5px #888;
 }
 
 .objectfit .asm-thumbnail {
@@ -819,7 +816,6 @@ select:disabled, input:disabled, textarea:disabled {
     object-fit: contain;
     background-color: #fff;
     border-radius: 2px;
-    box-shadow: 3px 3px 5px #888;
 }
 
 .objectfit .asm-thumbnail-male, .asm-thumbnail-male {

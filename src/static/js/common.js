@@ -1708,7 +1708,7 @@ const html = {
      */
     animal_link_thumb_classes: function(a) {
         var sxc = (a.SEX == 0 ? "asm-thumbnail-female" : (a.SEX == 1 ? "asm-thumbnail-male" : ""));
-        return "asm-thumbnail thumbnail-shadow " + (config.bool("ShowSexBorder") ? sxc : "");
+        return "asm-thumbnail thumbnailshadow " + (config.bool("ShowSexBorder") ? sxc : "");
     },
 
     /**

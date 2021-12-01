@@ -43,7 +43,7 @@ input:focus, textarea:focus, select:focus {
 }
 /* Change normal input/select background/text colors */
 .asm-selectbox, .asm-halfselectbox, .asm-halftextbox, .asm-textbox, .asm-doubleselectbox, .asm-doubletextbox, 
-.asm-textarea, .asm-textareafixed, .asm-textareafixeddouble, .asmSelect {
+.asm-textarea, .asm-textareafixed, .asm-textareafixeddouble, .asmSelect, .tablesorter-filter {
     background: #222 !important;
     color: #eee !important;
 }
@@ -72,6 +72,54 @@ input:focus, textarea:focus, select:focus {
     background: #3a87cd;
     color: #fff;
 }
+
+/* Make dropshadows look a little less weird */
+.dialogshadow, .menushadow, .thumbnailshadow, .popupshadow {
+    box-shadow: 3px 3px 5px #555 !important;
+}
+.asm-quicklinks a, .asm-calendar-legend {
+    box-shadow: 0 1px 3px #555 !important;
+}
+
+/* Dark mode for CodeMirror */
+.CodeMirror { background: #222; color: #b3b1ad; }
+div.CodeMirror-selected { background: #273747; }
+.CodeMirror-line::selection, .cm-s-ayu-dark .CodeMirror-line > span::selection, .cm-s-ayu-dark .CodeMirror-line > span > span::selection { background: rgba(39, 55, 71, 99); }
+.CodeMirror-line::-moz-selection, .cm-s-ayu-dark .CodeMirror-line > span::-moz-selection, .cm-s-ayu-dark .CodeMirror-line > span > span::-moz-selection { background: rgba(39, 55, 71, 99); }
+.CodeMirror-gutters { background: #0a0e14; border-right: 0px; }
+.CodeMirror-guttermarker { color: white; }
+.CodeMirror-guttermarker-subtle { color: #3d424d; }
+.CodeMirror-linenumber { color: #3d424d; }
+.CodeMirror-cursor { border-left: 1px solid #e6b450; }
+.cm-fat-cursor .CodeMirror-cursor { background-color: #a2a8a175 !important; }
+.cm-animate-fat-cursor { background-color: #a2a8a175 !important; }
+span.cm-comment { color: #626a73 !important; }
+span.cm-atom { color: #ae81ff !important; }
+span.cm-number { color: #e6b450 !important; }
+span.cm-comment.cm-attribute { color: #ffb454 !important; }
+span.cm-comment.cm-def { color: rgba(57, 186, 230, 80) !important; }
+span.cm-comment.cm-tag { color: #39bae6 !important; }
+span.cm-comment.cm-type { color: #5998a6 !important; }
+span.cm-property, span.cm-attribute { color: #ffb454 !important; }  
+span.cm-keyword { color: #ff8f40 !important; } 
+span.cm-builtin { color: #e6b450 !important; }
+span.cm-string { color: #c2d94c !important; }
+span.cm-variable { color: #b3b1ad !important; }
+span.cm-variable-2 { color: #f07178 !important; }
+span.cm-variable-3 { color: #39bae6 !important; }
+span.cm-type { color: #ff8f40 !important; }
+span.cm-def { color: #ffee99 !important; }
+span.cm-bracket { color: #f8f8f2 !important; }
+span.cm-tag { color: rgba(57, 186, 230, 80) !important; }
+span.cm-header { color: #c2d94c !important; }
+span.cm-link { color: #39bae6 !important; }
+span.cm-error { color: #ff3333 !important; } 
+.CodeMirror-activeline-background { background: #01060e !important; }
+.CodeMirror-matchingbracket {
+  text-decoration: underline;
+  color: white !important;
+}
+
 /** --- END MANUAL ADDITIONS --- */
 
 
