@@ -104,7 +104,7 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 #asm-login-window a {
-    color: #000 !important;
+    color: #000;
 }
 
 #asm-login-splash {
@@ -495,7 +495,7 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-table a:hover { text-decoration: underline !important; }
 .asm-table-sticky-header { top: 0; position: sticky; }
 .asm-completerow { opacity: 0.5; zoom: 1;}
-.asm-overduerow { font-style: italic !important; color: #ff0000 !important; }
+.asm-overduerow { font-style: italic; color: #ff0000; }
 .asm-warningrow { color: #ff0000; }
 #tableform-select-all { position: absolute; margin-top: 8px; margin-left: 5px; z-index: 1; }
 

@@ -228,6 +228,13 @@ const common = {
     },
 
     /**
+     * Returns true if the browser is in dark mode
+     */
+    is_dark_mode: function() {
+        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    },
+
+    /**
      * Returns true if v is a date or a string containing an ISO date
      */
     is_date: function(v) {
@@ -910,6 +917,15 @@ const common = {
                 $(selector).hide();
             }
         });
+    },
+
+    /**
+     * Applies the visual theme by loading the correct CSS file 
+     */
+    apply_theme: function(theme) {
+        let href = $("#jqt").attr("href");
+        href = href.substring(0, href.indexOf("themes/")) + "themes/" + theme + "/jquery-ui.css";
+        $("#jqt").attr("href", href);
     },
 
     /**

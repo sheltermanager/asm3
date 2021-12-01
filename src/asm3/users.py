@@ -5,6 +5,7 @@ import asm3.cachemem
 import asm3.configuration
 import asm3.db
 import asm3.dbupdate
+import asm3.lookups
 import asm3.i18n
 import asm3.utils
 

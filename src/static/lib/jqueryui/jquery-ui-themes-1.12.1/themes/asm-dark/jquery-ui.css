@@ -19,6 +19,11 @@
 /** ASM (Dark) **/
 
 /** --- BEGIN MANUAL ADDITIONS --- */
+body { background-color: #000 !important; }
+
+/* Take down some of the darker reds for overdue rows and mandatory fields */
+.asm-overduerow, .asm-has-validation, .asm-person-code { color: #963d3f !important; }
+
 /* Highlight the focused input field with a border style */
 input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 5px #3a87cd;
@@ -44,7 +49,8 @@ input:focus, textarea:focus, select:focus {
 /* Change normal input/select background/text colors */
 .asm-selectbox, .asm-halfselectbox, .asm-halftextbox, .asm-textbox, .asm-doubleselectbox, .asm-doubletextbox, 
 .asm-textarea, .asm-textareafixed, .asm-textareafixeddouble, .asmSelect, .tablesorter-filter, 
-.asm-staff-rota-cell, .asm-staff-rota-shift, .asm-staff-rota-day {
+.asm-staff-rota-cell, .asm-staff-rota-shift, .asm-staff-rota-day,
+#asm-login-window, #asm-login-window a {
     background: #222 !important;
     color: #eee !important;
 }

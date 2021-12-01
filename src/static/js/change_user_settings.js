@@ -4,6 +4,7 @@ $(function() {
 
     "use strict";
 
+    /* TODO: REDUNDANT
     const BACKGROUND_COLOURS = {
         "asm":              "#ffffff",
         "asm-dark":         "#000000",
@@ -33,6 +34,7 @@ $(function() {
         "ui-lightness":     "#ffffff",
         "vader":            "#888888"
     };
+    */
 
     const change_user_settings = {
 
@@ -62,7 +64,7 @@ $(function() {
                     '<label for="realname">' + _("Real name") + '</label>',
                     '</td>',
                     '<td>',
-                    '<input id="realname" data="realname" class="asm-textbox" />',
+                    '<input id="realname" data="realname" class="asm-doubletextbox" />',
                     '</td>',
                 '</tr>',
                 '<tr>',
@@ -70,7 +72,7 @@ $(function() {
                     '<label for="email">' + _("Email Address") + '</label>',
                     '</td>',
                     '<td>',
-                    '<input id="email" data="email" class="asm-textbox" />',
+                    '<input id="email" data="email" class="asm-doubletextbox" />',
                     '</td>',
                 '</tr>',
                 '<tr>',
@@ -79,7 +81,6 @@ $(function() {
                     '</td>',
                     '<td>',
                     '<select id="systemtheme" data="theme" class="asm-selectbox">',
-                    '<option value="">' + _("(use system)") + '</option>',
                     this.two_pair_options(controller.themes),
                     '</select>',
                     '</td>',
@@ -106,9 +107,9 @@ $(function() {
                     '</td>',
                 '</tr>',
                 '</table>',
-                '<div class="centered">',
+                '<p class="centered">',
                     '<button id="save">' + html.icon("save") + ' ' + _("Save") + '</button>',
-                '</div>',
+                '</p>',
                 html.content_footer()
             ].join("\n");
         },
@@ -159,7 +160,7 @@ $(function() {
                 }
                 let href = asm.jqueryuicss.replace("%(theme)s", theme);
                 $("#jqt").attr("href", href);
-                $("body").css("background-color", BACKGROUND_COLOURS[theme]);
+                // TODO: REDUNDANT SINCE IN CSS FILE: $("body").css("background-color", BACKGROUND_COLOURS[theme]);
             });
 
         },

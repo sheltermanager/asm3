@@ -205,8 +205,12 @@ CURRENCIES = [
 ]
 
 VISUAL_THEMES = [
-    ( "asm", "ASM" ),
-    ( "asm-dark", "ASM (Dark)" ),
+    ( "asm", "Light" ),
+    ( "asm-dark", "Dark" )
+]
+
+"""
+    TODO: REDUNDANT JQUI THEMES
     ( "base", "Base" ),
     ( "black-tie", "Black Tie" ),
     ( "blitzer", "Blitzer" ),
@@ -233,6 +237,7 @@ VISUAL_THEMES = [
     ( "ui-lightness", "UI Lightness"),
     ( "vader", "Vader")
 ]
+"""
 
 PETFINDER_BREEDS = (
     "Affenpinscher",

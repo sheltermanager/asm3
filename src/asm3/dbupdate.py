@@ -38,7 +38,8 @@ VERSIONS = (
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
-    34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507
+    34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
+    34508
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -5516,4 +5517,12 @@ def update_34507(dbo):
             dbo.execute_dbupdate("UPDATE costtype SET AccountID=? WHERE ID=?", (a.ID, a.COSTTYPEID))
         if a.DONATIONTYPEID is not None and a.DONATIONTYPEID > 0:
             dbo.execute_dbupdate("UPDATE donationtype SET AccountID=? WHERE ID=?", (a.ID, a.DONATIONTYPEID))
+
+def update_34508(dbo):
+    # Replace old JQUI themes with light or dark
+    dbo.execute_dbupdate("UPDATE users SET ThemeOverride='asm' WHERE ThemeOverride IN ('base','cupertino'," \
+        "'dot-luv','excite-bike','flick','hot-sneaks','humanity','le-frog','overcast','pepper-grinder','redmond'," \
+        "'smoothness','south-street','start','sunny','swanky-purse','ui-lightness')")
+    dbo.execute_dbupdate("UPDATE users SET ThemeOverride='asm-dark' WHERE ThemeOverride IN ('black-tie','blitzer'," \
+        "'dark-hive','eggplant','mint-choc','trontastic','ui-darkness','vader')")
 

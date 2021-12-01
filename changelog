@@ -1,6 +1,7 @@
 45
 ================
 
+01/12/21 Dump ancient/ugly JQUI themes, map them to ASM light/dark
 01/12/21 Rewrite mobile signing pad into bootstrap #1068
 01/12/21 PetRescue/SavourLife - use retailer postcode if available
 01/12/21 Dark mode for SQL/HTML editing, better shadows
