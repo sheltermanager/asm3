@@ -730,15 +730,19 @@ $(function() {
             });
 
             let signbuttons = {};
-            signbuttons[_("Sign")] = function() {
-                if ($("#signature").signature("isEmpty")) { return; }
-                $("#dialog-sign").disable_dialog_buttons();
-                var img = $("#signature canvas").get(0).toDataURL("image/png");
-                var formdata = "mode=sign&ids=" + tableform.table_ids(media.table);
-                formdata += "&signdate=" + encodeURIComponent(format.date(new Date()) + " " + format.time(new Date()));
-                formdata += "&sig=" + encodeURIComponent(img);
-                media.ajax(formdata);
-                $("#dialog-sign").dialog("close");
+            signbuttons[_("Sign")] = {
+                text: _("Sign"),
+                "class": 'asm-dialog-actionbutton',
+                click: function() {
+                    if ($("#signature").signature("isEmpty")) { return; }
+                    $("#dialog-sign").disable_dialog_buttons();
+                    var img = $("#signature canvas").get(0).toDataURL("image/png");
+                    var formdata = "mode=sign&ids=" + tableform.table_ids(media.table);
+                    formdata += "&signdate=" + encodeURIComponent(format.date(new Date()) + " " + format.time(new Date()));
+                    formdata += "&sig=" + encodeURIComponent(img);
+                    media.ajax(formdata);
+                    $("#dialog-sign").dialog("close");
+                }
             };
             signbuttons[_("Clear")] = function() {
                 $("#signature").signature("clear");

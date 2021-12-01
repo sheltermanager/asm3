@@ -1604,10 +1604,14 @@ const tableform = {
      */
     delete_dialog: function(callback, text) {
         var b = {}, deferred = $.Deferred(); 
-        b[_("Delete")] = function() {
-            $("#dialog-delete").dialog("close");
-            if (callback) { callback(); }
-            deferred.resolve();
+        b[_("Delete")] = {
+            text: _("Delete"),
+            "class": 'asm-redbutton',
+            click: function() {
+                $("#dialog-delete").dialog("close");
+                if (callback) { callback(); }
+                deferred.resolve();
+            }
         };
         b[_("Cancel")] = function() { 
             $(this).dialog("close"); 
