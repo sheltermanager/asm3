@@ -242,11 +242,11 @@ class PetRescuePublisher(AbstractPublisher):
         if not hwtreated: hwtreated = None
         if not wormed: wormed = None
 
-        # Use the fosterer's postcode, state and suburb if available
+        # Use the fosterer or retailer postcode, state and suburb if available
         location_postcode = postcode
         location_state_abbr = state
         location_suburb = suburb
-        if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE == 2:
+        if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE in (2, 8):
             fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM adoption m " \
                 "INNER JOIN owner o ON m.OwnerID = o.ID WHERE m.ID=?", [ an.ACTIVEMOVEMENTID ]))
             if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
