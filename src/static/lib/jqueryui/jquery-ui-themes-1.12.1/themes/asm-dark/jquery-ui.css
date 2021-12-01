@@ -43,7 +43,8 @@ input:focus, textarea:focus, select:focus {
 }
 /* Change normal input/select background/text colors */
 .asm-selectbox, .asm-halfselectbox, .asm-halftextbox, .asm-textbox, .asm-doubleselectbox, .asm-doubletextbox, 
-.asm-textarea, .asm-textareafixed, .asm-textareafixeddouble, .asmSelect, .tablesorter-filter {
+.asm-textarea, .asm-textareafixed, .asm-textareafixeddouble, .asmSelect, .tablesorter-filter, 
+.asm-staff-rota-cell, .asm-staff-rota-shift, .asm-staff-rota-day {
     background: #222 !important;
     color: #eee !important;
 }

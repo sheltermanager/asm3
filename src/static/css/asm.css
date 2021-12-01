@@ -421,18 +421,18 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 /** ROTA ======================== */
-.asm-staff-rota th { background-color: #fff; color: #666; padding: 8px; font-weight: normal; }
 .asm-staff-rota th { top: 0; position: sticky; } 
+.asm-staff-rota-day { background-color: #fff; color: #666; padding: 8px; font-weight: normal; }
 .asm-staff-rota-today { background-color: #f5f5dc !important; color: #000 !important; }
 .asm-staff-rota { width: 100%; border-collapse: collapse; }
 .asm-staff-rota td { border: 1px solid #dbdbdb; text-align: center; padding: 5px; }
 .asm-staff-rota td:first-child { text-align: right !important; }
 .asm-staff-rota-cell { background-color: #fff; cursor: pointer; }
 .asm-staff-rota-cell:hover { background-color: #eee; }
-.asm-staff-rota-shift { width: 80%; color: #000 !important; padding: 4px; display: inline-block; border: 1px solid transparent; }
+.asm-staff-rota-shift { width: 80%; color: #000; padding: 4px; display: inline-block; border: 1px solid transparent; }
 .asm-staff-rota-shift-work { font-size: 80%; }
 .asm-staff-rota-shift:hover { border: 1px dotted #555 !important; }
-.asm-staff-rota-overtime { width: 80%; background-color: #ff9999; color: #000 !important; padding: 4px; display: inline-block; border: 1px solid transparent; }
+.asm-staff-rota-overtime { width: 80%; background-color: #ff9999; color: #000; padding: 4px; display: inline-block; border: 1px solid transparent; }
 .asm-staff-rota-overtime:hover { border: 1px dotted #555 !important; }
 .asm-staff-rota-timeoff { width: 80%; background-color: #ffffcc; color: #000 !important; padding: 4px; display: inline-block; border: 1px solid transparent; }
 .asm-staff-rota-timeoff:hover { border: 1px dotted #555 !important; }
