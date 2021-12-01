@@ -845,6 +845,7 @@ select:disabled, input:disabled, textarea:disabled {
 
 .asm-redbutton {
     background: red !important;
+    font-weight: bold !important;
     border: 1px solid red !important;
     color: #fff !important;
 }
