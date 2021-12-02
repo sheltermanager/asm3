@@ -129,7 +129,8 @@ class PostedData(object):
     def string(self, field, strip=True, default=""):
         """ Returns a string key from a datafield """
         if field in self.data:
-            s = self.data[field] 
+            s = self.data[field]
+            if s is None: return ""
             if strip: s = s.strip()
             return s
         else:
