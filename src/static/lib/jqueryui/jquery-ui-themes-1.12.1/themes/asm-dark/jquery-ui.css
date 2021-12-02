@@ -8,7 +8,7 @@
  *
  * http://api.jqueryui.com/category/theming/
  *
- * To view and modify this theme, visit http://jqueryui.com/themeroller/?scope=&folderName=custom-theme&bgImgOpacityError=95&bgImgOpacityHighlight=55&bgImgOpacityActive=&bgImgOpacityHover=&bgImgOpacityDefault=&bgImgOpacityContent=&bgImgOpacityHeader=&cornerRadiusShadow=8px&offsetLeftShadow=0px&offsetTopShadow=0px&thicknessShadow=5px&opacityShadow=30&bgImgOpacityShadow=0&bgTextureShadow=flat&bgColorShadow=%23666&opacityOverlay=30&bgImgOpacityOverlay=0&bgTextureOverlay=flat&bgColorOverlay=%23aaaaaa&iconColorError=%23fef1ec&fcError=%23fef1ec&borderColorError=%23fef1ec&bgTextureError=flat&bgColorError=%23d76363&iconColorHighlight=%23d9edf7&fcHighlight=%23d9edf7&borderColorHighlight=%23d9edf7&bgTextureHighlight=flat&bgColorHighlight=%233a87cd&iconColorActive=%23ffffff&fcActive=%23ffffff&borderColorActive=%23003eff&bgTextureActive=flat&bgColorActive=%233a87cd&iconColorHover=%23fff&fcHover=%23fff&borderColorHover=%23cccccc&bgTextureHover=flat&bgColorHover=%23444&iconColorDefault=%23eee&fcDefault=%23eee&borderColorDefault=%23c5c5c5&bgTextureDefault=flat&bgColorDefault=%23222&iconColorContent=%23eee&fcContent=%23eee&borderColorContent=%23dddddd&bgTextureContent=flat&bgColorContent=%23222&iconColorHeader=%23eee&fcHeader=%23eeeeee&borderColorHeader=%23dddddd&bgTextureHeader=flat&bgColorHeader=%23444&cornerRadius=3px&fwDefault=normal&fsDefault=1.1em&ffDefault=Verdana%2CArial%2Csans-serif
+ * To view and modify this theme, visit http://jqueryui.com/themeroller/?scope=&folderName=custom-theme&bgImgOpacityHeader=&bgImgOpacityContent=&bgImgOpacityDefault=&bgImgOpacityHover=&bgImgOpacityActive=&bgImgOpacityHighlight=&bgImgOpacityError=95&cornerRadiusShadow=8px&offsetLeftShadow=0px&offsetTopShadow=0px&thicknessShadow=5px&opacityShadow=30&bgImgOpacityShadow=0&bgTextureShadow=flat&bgColorShadow=%23666&opacityOverlay=30&bgImgOpacityOverlay=0&bgTextureOverlay=flat&bgColorOverlay=%23aaaaaa&iconColorError=%23fef1ec&fcError=%23fef1ec&borderColorError=%23fef1ec&bgTextureError=flat&bgColorError=%23d76363&iconColorHighlight=%23777620&fcHighlight=%23777620&borderColorHighlight=%23dad55e&bgTextureHighlight=flat&bgColorHighlight=%23fffa90&iconColorActive=%23ffffff&fcActive=%23ffffff&borderColorActive=%23d9edf7&bgTextureActive=flat&bgColorActive=%233a87cd&iconColorHover=%23fff&fcHover=%23fff&borderColorHover=%23cccccc&bgTextureHover=flat&bgColorHover=%23444&iconColorDefault=%23eee&fcDefault=%23eee&borderColorDefault=%23c5c5c5&bgTextureDefault=flat&bgColorDefault=%23222&iconColorContent=%23eee&fcContent=%23eee&borderColorContent=%23dddddd&bgTextureContent=flat&bgColorContent=%23222&iconColorHeader=%23eee&fcHeader=%23eeeeee&borderColorHeader=%23dddddd&bgTextureHeader=flat&bgColorHeader=%23444&cornerRadius=3px&fwDefault=normal&fsDefault=1.1em&ffDefault=Verdana%2CArial%2Csans-serif
  */
 
 /** NOTE: When recreating themes with themeroller, you need to copy everything below down 
@@ -1117,14 +1117,14 @@ a.ui-button:focus {
 a.ui-button:active,
 .ui-button:active,
 .ui-button.ui-state-active:hover {
-	border: 1px solid #003eff;
+	border: 1px solid #d9edf7;
 	background: #3a87cd;
 	font-weight: normal;
 	color: #ffffff;
 }
 .ui-icon-background,
 .ui-state-active .ui-icon-background {
-	border: #003eff;
+	border: #d9edf7;
 	background-color: #ffffff;
 }
 .ui-state-active a,
@@ -1139,18 +1139,18 @@ a.ui-button:active,
 .ui-state-highlight,
 .ui-widget-content .ui-state-highlight,
 .ui-widget-header .ui-state-highlight {
-	border: 1px solid #d9edf7;
-	background: #3a87cd;
-	color: #d9edf7;
+	border: 1px solid #dad55e;
+	background: #fffa90;
+	color: #777620;
 }
 .ui-state-checked {
-	border: 1px solid #d9edf7;
-	background: #3a87cd;
+	border: 1px solid #dad55e;
+	background: #fffa90;
 }
 .ui-state-highlight a,
 .ui-widget-content .ui-state-highlight a,
 .ui-widget-header .ui-state-highlight a {
-	color: #d9edf7;
+	color: #777620;
 }
 .ui-state-error,
 .ui-widget-content .ui-state-error,
@@ -1219,7 +1219,7 @@ a.ui-button:active,
 }
 .ui-state-highlight .ui-icon,
 .ui-button .ui-state-highlight.ui-icon {
-	background-image: url("images/ui-icons_d9edf7_256x240.png");
+	background-image: url("images/ui-icons_777620_256x240.png");
 }
 .ui-state-error .ui-icon,
 .ui-state-error-text .ui-icon {

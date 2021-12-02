@@ -1,8 +1,15 @@
-/*! jQuery UI - v1.12.1 - 2020-03-07
-* http://jqueryui.com
-* Includes: draggable.css, core.css, resizable.css, selectable.css, sortable.css, accordion.css, autocomplete.css, menu.css, button.css, controlgroup.css, checkboxradio.css, datepicker.css, dialog.css, progressbar.css, selectmenu.css, slider.css, spinner.css, tabs.css, tooltip.css, theme.css
-* To view and modify this theme, visit http://jqueryui.com/themeroller/?scope=&folderName=custom-theme&bgImgOpacityError=95&bgImgOpacityHighlight=55&bgImgOpacityActive=65&bgImgOpacityHover=75&bgImgOpacityDefault=75&bgImgOpacityContent=75&bgImgOpacityHeader=75&cornerRadiusShadow=8px&offsetLeftShadow=-8px&offsetTopShadow=-8px&thicknessShadow=8px&opacityShadow=30&bgImgOpacityShadow=0&bgTextureShadow=flat&bgColorShadow=%23aaaaaa&opacityOverlay=30&bgImgOpacityOverlay=0&bgTextureOverlay=flat&bgColorOverlay=%23aaaaaa&iconColorError=%23cd0a0a&fcError=%23cd0a0a&borderColorError=%23cd0a0a&bgTextureError=inset_hard&bgColorError=%23fef1ec&iconColorHighlight=%233a87cd&fcHighlight=%233a87cd&borderColorHighlight=%233a87cd&bgTextureHighlight=inset_hard&bgColorHighlight=%23d9edf7&iconColorActive=%23fff&fcActive=%23fff&borderColorActive=%233a87cd&bgTextureActive=flat&bgColorActive=%233a87cd&iconColorHover=%23454545&fcHover=%23212121&borderColorHover=%23999999&bgTextureHover=inset_hard&bgColorHover=%23d9edf7&iconColorDefault=%23888888&fcDefault=%23555555&borderColorDefault=%23d3d3d3&bgTextureDefault=flat&bgColorDefault=%23fff&iconColorContent=%23222222&fcContent=%23222222&borderColorContent=%23aaaaaa&bgTextureContent=flat&bgColorContent=%23ffffff&iconColorHeader=%23222222&fcHeader=%23222222&borderColorHeader=%23aaaaaa&bgTextureHeader=inset_hard&bgColorHeader=%23eaeaea&cornerRadius=4px&fwDefault=normal&fsDefault=1.1em&ffDefault=Verdana%2CArial%2Csans-serif
-* Copyright jQuery Foundation and other contributors; Licensed MIT */
+/*!
+ * jQuery UI CSS Framework 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/category/theming/
+ *
+ * To view and modify this theme, visit http://jqueryui.com/themeroller/?scope=&folderName=custom-theme&bgImgOpacityHeader=&bgImgOpacityContent=&bgImgOpacityDefault=&bgImgOpacityHover=&bgImgOpacityActive=&bgImgOpacityHighlight=&bgImgOpacityError=&cornerRadiusShadow=8px&offsetLeftShadow=-8px&offsetTopShadow=-8px&thicknessShadow=8px&opacityShadow=30&bgImgOpacityShadow=0&bgTextureShadow=flat&bgColorShadow=%23aaaaaa&opacityOverlay=30&bgImgOpacityOverlay=0&bgTextureOverlay=flat&bgColorOverlay=%23aaaaaa&iconColorError=%23cd0a0a&fcError=%23cd0a0a&borderColorError=%23cd0a0a&bgTextureError=flat&bgColorError=%23fef1ec&iconColorHighlight=%233a87cd&fcHighlight=%233a87cd&borderColorHighlight=%233a87cd&bgTextureHighlight=flat&bgColorHighlight=%23d9edf7&iconColorActive=%23fff&fcActive=%23fff&borderColorActive=%233a87cd&bgTextureActive=flat&bgColorActive=%233a87cd&iconColorHover=%23454545&fcHover=%23212121&borderColorHover=%23999999&bgTextureHover=flat&bgColorHover=%23d9edf7&iconColorDefault=%23888888&fcDefault=%23555555&borderColorDefault=%23d3d3d3&bgTextureDefault=flat&bgColorDefault=%23fff&iconColorContent=%23222222&fcContent=%23222222&borderColorContent=%23aaaaaa&bgTextureContent=flat&bgColorContent=%23ffffff&iconColorHeader=%23222222&fcHeader=%23222222&borderColorHeader=%23aaaaaa&bgTextureHeader=flat&bgColorHeader=%23eaeaea&cornerRadius=4px&fwDefault=normal&fsDefault=1.1em&ffDefault=Verdana%2CArial%2Csans-serif
+ */
 
 /** NOTE: When recreating themes with themeroller, you need to copy everything below down 
  *  to the comment starting "Component Containers" to the exported file because they put 
@@ -942,6 +949,8 @@ body .ui-tooltip {
 	border-width: 2px;
 }
 
+
+
 /* Component containers
 ----------------------------------*/
 .ui-widget {
@@ -971,7 +980,7 @@ body .ui-tooltip {
 }
 .ui-widget-header {
 	border: 1px solid #aaaaaa;
-	background: #eaeaea url("images/ui-bg_inset-hard_75_eaeaea_1x100.png") 50% 50% repeat-x;
+	background: #eaeaea;
 	color: #222222;
 	font-weight: bold;
 }
@@ -1014,7 +1023,7 @@ a:visited.ui-button,
 .ui-button:hover,
 .ui-button:focus {
 	border: 1px solid #999999;
-	background: #d9edf7 url("images/ui-bg_inset-hard_75_d9edf7_1x100.png") 50% 50% repeat-x;
+	background: #d9edf7;
 	font-weight: normal;
 	color: #212121;
 }
@@ -1064,7 +1073,7 @@ a.ui-button:active,
 .ui-widget-content .ui-state-highlight,
 .ui-widget-header .ui-state-highlight {
 	border: 1px solid #3a87cd;
-	background: #d9edf7 url("images/ui-bg_inset-hard_55_d9edf7_1x100.png") 50% bottom repeat-x;
+	background: #d9edf7;
 	color: #3a87cd;
 }
 .ui-state-checked {
@@ -1080,7 +1089,7 @@ a.ui-button:active,
 .ui-widget-content .ui-state-error,
 .ui-widget-header .ui-state-error {
 	border: 1px solid #cd0a0a;
-	background: #fef1ec url("images/ui-bg_inset-hard_95_fef1ec_1x100.png") 50% bottom repeat-x;
+	background: #fef1ec;
 	color: #cd0a0a;
 }
 .ui-state-error a,
