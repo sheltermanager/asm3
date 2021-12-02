@@ -57,12 +57,7 @@ $(function() {
                     link += html.animal_emblems(row);
                     link += " <a id=\"action-" + row.ID + "\" href=\"animal?id=" + row.ID + "\">";
                     // Show the whole row in red if the animal is deceased
-                    if (row.DECEASEDDATE) {
-                        h.push("<td style=\"color: red\">");
-                    }
-                    else {
-                        h.push("<td>");
-                    }
+                    if (row.DECEASEDDATE) { h.push('<td class="asm-search-deceased">'); } else { h.push("<td>"); }
                     let value = "";
                     if (row.hasOwnProperty(name.toUpperCase())) {
                         value = row[name.toUpperCase()];

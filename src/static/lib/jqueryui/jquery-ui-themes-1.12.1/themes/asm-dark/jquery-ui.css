@@ -21,8 +21,14 @@
 /** --- BEGIN MANUAL ADDITIONS --- */
 body { background-color: #000 !important; }
 
-/* Take down some of the darker reds for overdue rows and mandatory fields */
-.asm-overduerow, .asm-has-validation, .asm-person-code, .asm-error-text { color: #963d3f !important; }
+/* Take down some of the darker reds */
+.asm-overduerow, .asm-has-validation, .asm-person-code, .asm-error-text, 
+.asm-search-deceased, .asm-search-notforadoption, .asm-search-fineunpaid { 
+    color: #963d3f !important; 
+}
+
+/* Table sort highlight is black by default */
+.tablesorter-headerAsc, .tablesorter-headerDesc { border-bottom: #3a87cd 2px solid !important; }
 
 /* Highlight the focused input field with a border style */
 input:focus, textarea:focus, select:focus {
