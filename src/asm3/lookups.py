@@ -209,36 +209,6 @@ VISUAL_THEMES = [
     ( "asm-dark", "Dark" )
 ]
 
-"""
-    TODO: REDUNDANT JQUI THEMES
-    ( "base", "Base" ),
-    ( "black-tie", "Black Tie" ),
-    ( "blitzer", "Blitzer" ),
-    ( "cupertino", "Cupertino") ,
-    ( "dark-hive", "Dark Hive"), 
-    ( "dot-luv", "Dot Luv"),
-    ( "eggplant", "Eggplant"),
-    ( "excite-bike", "Excite Bike"),
-    ( "flick", "Flick"),
-    ( "hot-sneaks", "Hot Sneaks"),
-    ( "humanity", "Humanity"),
-    ( "le-frog", "Le Frog"),
-    ( "mint-choc", "Mint Choc"),
-    ( "overcast", "Overcast"),
-    ( "pepper-grinder", "Pepper Grinder"),
-    ( "redmond", "Redmond"),
-    ( "smoothness", "Smoothness"),
-    ( "south-street", "South Street"),
-    ( "start", "Start"),
-    ( "sunny", "Sunny"),
-    ( "swanky-purse", "Swanky Purse"),
-    ( "trontastic", "Trontastic"),
-    ( "ui-darkness", "UI Darkness"),
-    ( "ui-lightness", "UI Lightness"),
-    ( "vader", "Vader")
-]
-"""
-
 PETFINDER_BREEDS = (
     "Affenpinscher",
     "Afghan Hound",

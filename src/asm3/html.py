@@ -16,39 +16,6 @@ from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, 
 
 import os
 
-"""
-    TODO: REDUNDANT
-BACKGROUND_COLOURS = {
-    "asm":              "#ffffff",
-    "asm-dark":         "#000000"
-    "base":             "#ffffff",
-    "black-tie":        "#333333",
-    "blitzer":          "#cc0000",
-    "cupertino":        "#deedf7",
-    "dark-hive":        "#444444",
-    "dot-luv":          "#0b3e6f",
-    "eggplant":         "#30273a",
-    "excite-bike":      "#f9f9f9",
-    "flick":            "#dddddd",
-    "hot-sneaks":       "#35414f",
-    "humanity":         "#cb842e",
-    "le-frog":          "#3a8104",
-    "mint-choc":        "#453326",
-    "overcast":         "#dddddd",
-    "pepper-grinder":   "#ffffff",
-    "redmond":          "#5c9ccc",
-    "smoothness":       "#cccccc",
-    "south-street":     "#ece8da",
-    "start":            "#2191c0",
-    "sunny":            "#817865",
-    "swanky-purse":     "#261803",
-    "trontastic":       "#9fda58",
-    "ui-darkness":      "#333333",
-    "ui-lightness":     "#ffffff",
-    "vader":            "#888888"
-}
-"""
-
 def css_tag(uri, idattr=""):
     """
     Returns a css link tag to a resource.

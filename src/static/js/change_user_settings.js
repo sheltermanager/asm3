@@ -4,38 +4,6 @@ $(function() {
 
     "use strict";
 
-    /* TODO: REDUNDANT
-    const BACKGROUND_COLOURS = {
-        "asm":              "#ffffff",
-        "asm-dark":         "#000000",
-        "base":             "#ffffff",
-        "black-tie":        "#333333",
-        "blitzer":          "#cc0000",
-        "cupertino":        "#deedf7",
-        "dark-hive":        "#444444",
-        "dot-luv":          "#0b3e6f",
-        "eggplant":         "#30273a",
-        "excite-bike":      "#f9f9f9",
-        "flick":            "#dddddd",
-        "hot-sneaks":       "#35414f",
-        "humanity":         "#cb842e",
-        "le-frog":          "#3a8104",
-        "mint-choc":        "#453326",
-        "overcast":         "#dddddd",
-        "pepper-grinder":   "#ffffff",
-        "redmond":          "#5c9ccc",
-        "smoothness":       "#cccccc",
-        "south-street":     "#ece8da",
-        "start":            "#2191c0",
-        "sunny":            "#817865",
-        "swanky-purse":     "#261803",
-        "trontastic":       "#9fda58",
-        "ui-darkness":      "#333333",
-        "ui-lightness":     "#ffffff",
-        "vader":            "#888888"
-    };
-    */
-
     const change_user_settings = {
 
         /** Where we have a list of pairs, first is value, second is label */
@@ -160,7 +128,6 @@ $(function() {
                 }
                 let href = asm.jqueryuicss.replace("%(theme)s", theme);
                 $("#jqt").attr("href", href);
-                // TODO: REDUNDANT SINCE IN CSS FILE: $("body").css("background-color", BACKGROUND_COLOURS[theme]);
             });
 
         },
