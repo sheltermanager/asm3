@@ -8,7 +8,7 @@
  *
  * http://api.jqueryui.com/category/theming/
  *
- * To view and modify this theme, visit http://jqueryui.com/themeroller/?scope=&folderName=custom-theme&bgImgOpacityHeader=&bgImgOpacityContent=&bgImgOpacityDefault=&bgImgOpacityHover=&bgImgOpacityActive=&bgImgOpacityHighlight=55&bgImgOpacityError=95&cornerRadiusShadow=8px&offsetLeftShadow=0px&offsetTopShadow=0px&thicknessShadow=5px&opacityShadow=30&bgImgOpacityShadow=0&bgTextureShadow=flat&bgColorShadow=%23666&opacityOverlay=30&bgImgOpacityOverlay=0&bgTextureOverlay=flat&bgColorOverlay=%23aaaaaa&iconColorError=%23fef1ec&fcError=%23fef1ec&borderColorError=%23fef1ec&bgTextureError=flat&bgColorError=%23cd0a0a&iconColorHighlight=%23d9edf7&fcHighlight=%23d9edf7&borderColorHighlight=%23d9edf7&bgTextureHighlight=flat&bgColorHighlight=%233a87cd&iconColorActive=%23ffffff&fcActive=%23ffffff&borderColorActive=%23003eff&bgTextureActive=flat&bgColorActive=%23007fff&iconColorHover=%23fff&fcHover=%23fff&borderColorHover=%23cccccc&bgTextureHover=flat&bgColorHover=%23444&iconColorDefault=%23eee&fcDefault=%23eee&borderColorDefault=%23c5c5c5&bgTextureDefault=flat&bgColorDefault=%23222&iconColorContent=%23eee&fcContent=%23eee&borderColorContent=%23dddddd&bgTextureContent=flat&bgColorContent=%23222&iconColorHeader=%23eee&fcHeader=%23eeeeee&borderColorHeader=%23dddddd&bgTextureHeader=flat&bgColorHeader=%23444&cornerRadius=3px&fwDefault=normal&fsDefault=1.1em&ffDefault=Verdana%2CArial%2Csans-serif
+ * To view and modify this theme, visit http://jqueryui.com/themeroller/?scope=&folderName=custom-theme&bgImgOpacityError=95&bgImgOpacityHighlight=55&bgImgOpacityActive=&bgImgOpacityHover=&bgImgOpacityDefault=&bgImgOpacityContent=&bgImgOpacityHeader=&cornerRadiusShadow=8px&offsetLeftShadow=0px&offsetTopShadow=0px&thicknessShadow=5px&opacityShadow=30&bgImgOpacityShadow=0&bgTextureShadow=flat&bgColorShadow=%23666&opacityOverlay=30&bgImgOpacityOverlay=0&bgTextureOverlay=flat&bgColorOverlay=%23aaaaaa&iconColorError=%23fef1ec&fcError=%23fef1ec&borderColorError=%23fef1ec&bgTextureError=flat&bgColorError=%23d76363&iconColorHighlight=%23d9edf7&fcHighlight=%23d9edf7&borderColorHighlight=%23d9edf7&bgTextureHighlight=flat&bgColorHighlight=%233a87cd&iconColorActive=%23ffffff&fcActive=%23ffffff&borderColorActive=%23003eff&bgTextureActive=flat&bgColorActive=%233a87cd&iconColorHover=%23fff&fcHover=%23fff&borderColorHover=%23cccccc&bgTextureHover=flat&bgColorHover=%23444&iconColorDefault=%23eee&fcDefault=%23eee&borderColorDefault=%23c5c5c5&bgTextureDefault=flat&bgColorDefault=%23222&iconColorContent=%23eee&fcContent=%23eee&borderColorContent=%23dddddd&bgTextureContent=flat&bgColorContent=%23222&iconColorHeader=%23eee&fcHeader=%23eeeeee&borderColorHeader=%23dddddd&bgTextureHeader=flat&bgColorHeader=%23444&cornerRadius=3px&fwDefault=normal&fsDefault=1.1em&ffDefault=Verdana%2CArial%2Csans-serif
  */
 
 /** NOTE: When recreating themes with themeroller, you need to copy everything below down 
@@ -22,7 +22,7 @@
 body { background-color: #000 !important; }
 
 /* Take down some of the darker reds for overdue rows and mandatory fields */
-.asm-overduerow, .asm-has-validation, .asm-person-code { color: #963d3f !important; }
+.asm-overduerow, .asm-has-validation, .asm-person-code, .asm-error-text { color: #963d3f !important; }
 
 /* Highlight the focused input field with a border style */
 input:focus, textarea:focus, select:focus {
@@ -1016,6 +1016,8 @@ body .ui-tooltip {
 
 
 
+
+
 /* Component containers
 ----------------------------------*/
 .ui-widget {
@@ -1116,7 +1118,7 @@ a.ui-button:active,
 .ui-button:active,
 .ui-button.ui-state-active:hover {
 	border: 1px solid #003eff;
-	background: #007fff;
+	background: #3a87cd;
 	font-weight: normal;
 	color: #ffffff;
 }
@@ -1154,7 +1156,7 @@ a.ui-button:active,
 .ui-widget-content .ui-state-error,
 .ui-widget-header .ui-state-error {
 	border: 1px solid #fef1ec;
-	background: #cd0a0a;
+	background: #d76363;
 	color: #fef1ec;
 }
 .ui-state-error a,

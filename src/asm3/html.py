@@ -16,9 +16,11 @@ from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, 
 
 import os
 
+"""
+    TODO: REDUNDANT
 BACKGROUND_COLOURS = {
     "asm":              "#ffffff",
-    "asm-dark":         "#000000",
+    "asm-dark":         "#000000"
     "base":             "#ffffff",
     "black-tie":        "#333333",
     "blitzer":          "#cc0000",
@@ -45,6 +47,7 @@ BACKGROUND_COLOURS = {
     "ui-lightness":     "#ffffff",
     "vader":            "#888888"
 }
+"""
 
 def css_tag(uri, idattr=""):
     """
@@ -57,7 +60,7 @@ def asm_css_tag(filename):
     """
     Returns a path to one of our stylesheets
     """
-    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"static/css/%s?b=%s\" />\n" % (filename, BUILD)
+    return css_tag("static/css/%s?b=%s" % (filename, BUILD))
 
 def script_i18n(l):
     return "<script type=\"text/javascript\" src=\"static/js/locales/locale_%s.js?b=%s\"></script>\n" % (real_locale(l), BUILD)
@@ -78,7 +81,7 @@ def asm_script_tag(filename):
     standalone = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
         "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
     if ROLLUP_JS and filename in standalone and filename.find("/") == -1: filename = "compat/%s" % filename
-    return "<script type=\"text/javascript\" src=\"static/js/%s?b=%s\"></script>\n" % (filename, BUILD)
+    return script_tag("static/js/%s?b=%s" % (filename, BUILD))
 
 def asm_script_tags(path):
     """
@@ -166,10 +169,15 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
         asm_scripts = asm_script_tag("bundle/rollup_compat.min.js")
     else:
         asm_scripts = asm_script_tags(asm3.utils.PATH) 
-    # Set the body colour from the theme
-    bgcol = BACKGROUND_COLOURS["asm"]
-    if theme in BACKGROUND_COLOURS:
-        bgcol = BACKGROUND_COLOURS[theme]
+    # Set the body colour from the theme and make sure the theme is a valid choice.
+    # Note that the theme CSS sets the body background color already, we set it on the tag again
+    # here so that the user doesn't see the body flash a different colour during page transitions.
+    BACKGROUND_COLOURS = {
+        "asm":              "#ffffff",
+        "asm-dark":         "#000000"
+    }
+    if theme not in BACKGROUND_COLOURS: theme = "asm"
+    bgcol = BACKGROUND_COLOURS[theme]
     return '<!DOCTYPE html>\n' \
         '<html>\n' \
         '<head>\n' \
