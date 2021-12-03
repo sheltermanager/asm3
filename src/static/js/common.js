@@ -2729,11 +2729,15 @@ const validate = {
          * target URL if the user says to leave */
     unsaved_dialog: function(target) {
         var b = {}, self = this;
-        b[_("Save and leave")] = function() {
-            $(this).dialog("close"); 
-            self.save(function() {
-                common.route(target);
-            });
+        b[_("Save and leave")] = {
+            text: _("Save and leave"),
+            "class": 'asm-dialog-actionbutton',
+            click: function() {
+                $(this).dialog("close"); 
+                self.save(function() {
+                    common.route(target);
+                });
+            }
         };
         b[_("Leave")] = function() {
             self.active = false;
