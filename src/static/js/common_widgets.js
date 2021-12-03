@@ -1107,7 +1107,9 @@ $.widget("asm.callout", {
     },
 
     destroy: function() {
-        this.options.popup.remove();
+        try {
+            this.options.popup.remove();
+        } catch (err) {}
     }
 
 });
@@ -1342,7 +1344,7 @@ $.widget("asm.richtextarea", {
         try {
             tinymce.get(this.element.attr("id")).remove();
         }
-        catch {} // uncaught exception can block module unload
+        catch (err) {} // uncaught exception can block module unload
     },
 
     value: function(newval) {
@@ -1453,7 +1455,10 @@ $.widget("asm.htmleditor", {
     },
 
     destroy: function() {
-        this.options.editor.destroy();
+        try {
+            this.options.editor.destroy();
+        }
+        catch (err) {}
     },
 
     fullscreen: function(cm, fs) {
@@ -1544,7 +1549,10 @@ $.widget("asm.sqleditor", {
     },
 
     destroy: function() {
-        this.options.editor.destroy();
+        try {
+            this.options.editor.destroy();
+        }
+        catch (err) {}
     },
 
     fullscreen: function(cm, fs) {
