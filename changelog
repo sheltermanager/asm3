@@ -1,6 +1,7 @@
 45
 ================
 
+03/12/21 Update to JQueryUI 1.13.0
 02/12/21 Regenerate light theme with flat textures
 01/12/21 Dump ancient/ugly JQUI themes, map them to ASM light/dark
 01/12/21 Rewrite mobile signing pad into bootstrap #1068

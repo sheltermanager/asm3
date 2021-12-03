@@ -1339,7 +1339,10 @@ $.widget("asm.richtextarea", {
     },
 
     destroy: function() {
-        tinymce.get(this.element.attr("id")).remove();
+        try {
+            tinymce.get(this.element.attr("id")).remove();
+        }
+        catch {} // uncaught exception can block module unload
     },
 
     value: function(newval) {
