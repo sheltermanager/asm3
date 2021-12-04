@@ -245,10 +245,12 @@ $(document).ready(function() {
     // Find every visibleif rule and show/hide accordingly
     const show_visibleif = function() {
         $("tr").each(function() {
-            let o = $(this), toshow = true;
-            if (!o.attr("data-visibleif")) { return; } // no rule, do nothing
-            // & can be used to separate conditions. Test each one.
-            $.each(o.attr("data-visibleif").split("&"), function(ci, cv) {
+            let o = $(this), expr = o.attr("data-visibleif"), mode = "and";
+            if (!expr) { return; } // no rule, do nothing
+            if (expr.indexOf("|") != -1) { mode = "or"; }
+            let clauses = (mode == "and" ? expr.split("&") : expr.split("|"));
+            let andshow = true, orshow = false; // evaluate all clauses for or/and, only one can be used
+            $.each(clauses, function(ci, cv) {
                 // Separate condition into field, operator (=!<>), value
                 let m = cv.trim().match(new RegExp("(.*)([=!<>])(.*)"));
                 let field = "", cond = "=", value = "";
@@ -263,17 +265,22 @@ $(document).ready(function() {
                         if ($(this).attr("type") && $(this).attr("type") == "checkbox") { v = $(this).is(":checked") ? "on" : "off"; }
                         // Radio buttons need reading differently to find the selected value
                         if ($(this).attr("type") && $(this).attr("type") == "radio") { v = $("[name='" + $(this).attr("name") + "']:checked").val(); }
-                        if (cond == "=" && v != value) { toshow = false; }
-                        else if (cond == "!" && v == value) { toshow = false; }
-                        else if (cond == ">" && v <= value) { toshow = false; }
-                        else if (cond == "<" && v >= value) { toshow = false; }
+                        if (cond == "=" && v != value) { andshow = false; }
+                        else if (cond == "!" && v == value) { andshow = false; }
+                        else if (cond == ">" && v <= value) { andshow = false; }
+                        else if (cond == "<" && v >= value) { andshow = false; }
+                        if (cond == "=" && v == value) { orshow = true; }
+                        else if (cond == "!" && v != value) { orshow = true; }
+                        else if (cond == ">" && v >= value) { orshow = true; }
+                        else if (cond == "<" && v <= value) { orshow = true; }
                         return false; // stop iterating fields, we found it
                     }
                 });
             });
             // Show or hide the field based on our final condition
-            o.toggle(toshow);
-            if (!toshow) {
+            if (mode == "and") { o.toggle(andshow); }
+            if (mode == "or") { o.toggle(orshow); }
+            if (!o.is(":visible")) {
                 // If we just hid a field that had the required attribute, 
                 // remove it, otherwise the form won't submit
                 o.find("input, select, textarea").prop("required", false);

@@ -150,11 +150,18 @@ for the first item::
    checkboxgroup0=on
    checkboxgroup1=off
 
-Multiple conditions can be specified. They will be ANDed together, so all
-conditions have to be true in order for the field to be displayed. Separate
-conditions with an ampersand & ::
+Multiple conditions can be specified. They can be either ANDed together or ORed
+together, but NOT both at the same time.
+
+In an AND expression, all conditions have to be true in order for the field to
+be displayed.  Separate your AND conditions with an ampersand & ::
 
    mycheck=on & fieldname=X
+
+In an OR expression, only one of the conditions has to be true in order for the
+field to be displayed. Separate your OR conditions with a pipe | ::
+
+   hascats=Yes | hasdogs=Yes
 
 .. note:: Only check boxes, radio buttons, text and lookup fields can be used with Show If
 
