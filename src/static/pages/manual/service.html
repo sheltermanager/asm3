@@ -849,10 +849,10 @@ iframes.</p>
 <p>Returns a complete HTML document that references animal_view_adoptable_js to
 show a list of adoptable animals. It looks for an HTML template called
 “animalviewadoptables” and falls back to a basic internal template if it does
-not exist.</p>
-<blockquote>
-<div><p><a class="reference external" href="http://localhost:5000/service?method=&amp;animal_view_adoptable_html">http://localhost:5000/service?method=&amp;animal_view_adoptable_html</a></p>
-</div></blockquote>
+not exist:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=&amp;animal_view_adoptable_html
+</pre></div>
+</div>
 </div>
 <div class="section" id="csv-mail-and-csv-report">
 <h2>csv_mail and csv_report<a class="headerlink" href="#csv-mail-and-csv-report" title="Permalink to this headline">¶</a></h2>
@@ -902,11 +902,11 @@ the SQL interface to find out the ID numbers: SELECT * FROM internallocation</p>
 <p>The rules governing which animals are adoptable are those set under
 <span class="menuselection">Publishing ‣ Set Publishing Options ‣ Animal Selection</span>.
 You can view the set at <span class="menuselection">Publishing ‣ View Animals Matching
-Publishing Options</span></p>
-<blockquote>
-<div><p><a class="reference external" href="http://localhost:5000/service?method=html_adoptable_animals&amp;template=littlebox&amp;speciesid=1">http://localhost:5000/service?method=html_adoptable_animals&amp;template=littlebox&amp;speciesid=1</a>
-<a class="reference external" href="http://localhost:5000/service?method=html_adoptable_animals">http://localhost:5000/service?method=html_adoptable_animals</a></p>
-</div></blockquote>
+Publishing Options</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_adoptable_animals&amp;template=littlebox&amp;speciesid=1
+http://localhost:5000/service?method=html_adoptable_animals
+</pre></div>
+</div>
 </div>
 <div class="section" id="html-adopted-animals">
 <h2>html_adopted_animals<a class="headerlink" href="#html-adopted-animals" title="Permalink to this headline">¶</a></h2>
@@ -919,11 +919,11 @@ speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
 <p>You can also pass a “days” parameter to indicate how far you would like to
 go back. If you do not set it, the default is animals adopted in the last 30
-days.</p>
-<blockquote>
-<div><p><a class="reference external" href="http://localhost:5000/service?method=html_adopted_animals&amp;template=littlebox&amp;speciesid=1&amp;days=60">http://localhost:5000/service?method=html_adopted_animals&amp;template=littlebox&amp;speciesid=1&amp;days=60</a>
-<a class="reference external" href="http://localhost:5000/service?method=html_adopted_animals">http://localhost:5000/service?method=html_adopted_animals</a></p>
-</div></blockquote>
+days:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_adopted_animals&amp;template=littlebox&amp;speciesid=1&amp;days=60
+http://localhost:5000/service?method=html_adopted_animals
+</pre></div>
+</div>
 </div>
 <div class="section" id="html-deceased-animals">
 <h2>html_deceased_animals<a class="headerlink" href="#html-deceased-animals" title="Permalink to this headline">¶</a></h2>
@@ -936,11 +936,11 @@ speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
 <p>You can also pass a “days” parameter to indicate how far you would like to
 go back. If you do not set it, the default is animals deceased in the last 30
-days.</p>
-<blockquote>
-<div><p><a class="reference external" href="http://localhost:5000/service?method=html_deceased_animals&amp;template=littlebox&amp;speciesid=1&amp;days=60">http://localhost:5000/service?method=html_deceased_animals&amp;template=littlebox&amp;speciesid=1&amp;days=60</a>
-<a class="reference external" href="http://localhost:5000/service?method=html_deceased_animals">http://localhost:5000/service?method=html_deceased_animals</a></p>
-</div></blockquote>
+days:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_deceased_animals&amp;template=littlebox&amp;speciesid=1&amp;days=60
+http://localhost:5000/service?method=html_deceased_animals
+</pre></div>
+</div>
 </div>
 <div class="section" id="html-flagged-animals">
 <h2>html_flagged_animals<a class="headerlink" href="#html-flagged-animals" title="Permalink to this headline">¶</a></h2>
@@ -954,11 +954,11 @@ and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</
 <p>A “flag” parameter must be passed to specify the flag you want the returned
 animals to have. If no flag is set, an error is returned. An “all=1”
 parameter can optionally be passed if you’d like all animals to be included,
-not just shelter animals.</p>
-<blockquote>
-<div><p><a class="reference external" href="http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;all=1&amp;flag=Needs+Foster">http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;all=1&amp;flag=Needs+Foster</a>
-<a class="reference external" href="http://localhost:5000/service?method=html_flagged_animals&amp;flag=At+Risk">http://localhost:5000/service?method=html_flagged_animals&amp;flag=At+Risk</a></p>
-</div></blockquote>
+not just shelter animals:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;all=1&amp;flag=Needs+Foster
+http://localhost:5000/service?method=html_flagged_animals&amp;flag=At+Risk
+</pre></div>
+</div>
 </div>
 <div class="section" id="html-held-animals">
 <h2>html_held_animals<a class="headerlink" href="#html-held-animals" title="Permalink to this headline">¶</a></h2>
@@ -967,11 +967,11 @@ not just shelter animals.</p>
 <p>You can pass an HTML template name in an optional “template” parameter (leaving
 it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
-and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
-<blockquote>
-<div><p><a class="reference external" href="http://localhost:5000/service?method=html_held_animals&amp;template=littlebox&amp;speciesid=1">http://localhost:5000/service?method=html_held_animals&amp;template=littlebox&amp;speciesid=1</a>
-<a class="reference external" href="http://localhost:5000/service?method=html_held_animals">http://localhost:5000/service?method=html_held_animals</a></p>
-</div></blockquote>
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_held_animals&amp;template=littlebox&amp;speciesid=1
+http://localhost:5000/service?method=html_held_animals
+</pre></div>
+</div>
 </div>
 <div class="section" id="html-report">
 <h2>html_report<a class="headerlink" href="#html-report" title="Permalink to this headline">¶</a></h2>
