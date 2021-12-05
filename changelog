@@ -1,6 +1,7 @@
 45
 ================
 
+05/12/21 Make dark mode easier to read, use qs to force theme reload
 04/12/21 Add OR support to online form showif
 03/12/21 Update to JQueryUI 1.13.0
 02/12/21 Regenerate light theme with flat textures

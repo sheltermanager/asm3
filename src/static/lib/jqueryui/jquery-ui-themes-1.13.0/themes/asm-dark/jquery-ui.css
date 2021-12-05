@@ -8,7 +8,7 @@
  *
  * http://api.jqueryui.com/category/theming/
  *
- * To view and modify this theme, visit http://jqueryui.com/themeroller/?scope=&folderName=custom-theme&bgImgOpacityHeader=&bgImgOpacityContent=&bgImgOpacityDefault=&bgImgOpacityHover=&bgImgOpacityActive=&bgImgOpacityHighlight=&bgImgOpacityError=&cornerRadiusShadow=8px&offsetLeftShadow=0px&offsetTopShadow=0px&thicknessShadow=5px&opacityShadow=30&bgImgOpacityShadow=0&bgTextureShadow=flat&bgColorShadow=%23666&opacityOverlay=30&bgImgOpacityOverlay=0&bgTextureOverlay=flat&bgColorOverlay=%23aaaaaa&iconColorError=%23fef1ec&fcError=%23fef1ec&borderColorError=%23fef1ec&bgTextureError=flat&bgColorError=%23d76363&iconColorHighlight=%23222&fcHighlight=%23222&borderColorHighlight=%23d5e7c3&bgTextureHighlight=flat&bgColorHighlight=%239fbf9c&iconColorActive=%23ffffff&fcActive=%23ffffff&borderColorActive=%23d9edf7&bgTextureActive=flat&bgColorActive=%233a87cd&iconColorHover=%23fff&fcHover=%23fff&borderColorHover=%23cccccc&bgTextureHover=flat&bgColorHover=%23444&iconColorDefault=%23eee&fcDefault=%23eee&borderColorDefault=%23c5c5c5&bgTextureDefault=flat&bgColorDefault=%23222&iconColorContent=%23eee&fcContent=%23eee&borderColorContent=%23dddddd&bgTextureContent=flat&bgColorContent=%23222&iconColorHeader=%23eee&fcHeader=%23eeeeee&borderColorHeader=%23dddddd&bgTextureHeader=flat&bgColorHeader=%23444&cornerRadius=3px&fwDefault=normal&fsDefault=1.1em&ffDefault=Verdana%2CArial%2Csans-serif
+ * To view and modify this theme, visit http://jqueryui.com/themeroller/?scope=&folderName=custom-theme&bgImgOpacityError=&bgImgOpacityHighlight=&bgImgOpacityActive=&bgImgOpacityHover=&bgImgOpacityDefault=&bgImgOpacityContent=&bgImgOpacityHeader=&cornerRadiusShadow=8px&offsetLeftShadow=0px&offsetTopShadow=0px&thicknessShadow=5px&opacityShadow=30&bgImgOpacityShadow=0&bgTextureShadow=flat&bgColorShadow=%23666&opacityOverlay=30&bgImgOpacityOverlay=0&bgTextureOverlay=flat&bgColorOverlay=%23aaaaaa&iconColorError=%23fef1ec&fcError=%23fef1ec&borderColorError=%23fef1ec&bgTextureError=flat&bgColorError=%23d76363&iconColorHighlight=%23222&fcHighlight=%23222&borderColorHighlight=%23d5e7c3&bgTextureHighlight=flat&bgColorHighlight=%239fbf9c&iconColorActive=%23ffffff&fcActive=%23ffffff&borderColorActive=%23d9edf7&bgTextureActive=flat&bgColorActive=%233a87cd&iconColorHover=%23fff&fcHover=%23fff&borderColorHover=%23fff&bgTextureHover=flat&bgColorHover=%23444&iconColorDefault=%23eee&fcDefault=%23bbb&borderColorDefault=%23bbb&bgTextureDefault=flat&bgColorDefault=%23111&iconColorContent=%23eee&fcContent=%23bbb&borderColorContent=%23bbb&bgTextureContent=flat&bgColorContent=%23111&iconColorHeader=%23bbb&fcHeader=%23bbb&borderColorHeader=%23bbb&bgTextureHeader=flat&bgColorHeader=%23444&cornerRadius=3px&fwDefault=normal&fsDefault=1.1em&ffDefault=Verdana%2CArial%2Csans-serif
  */
 
 /** NOTE: When recreating themes with themeroller, you need to copy everything below down 
@@ -57,8 +57,8 @@ input:focus, textarea:focus, select:focus {
 .asm-textarea, .asm-textareafixed, .asm-textareafixeddouble, .asmSelect, .tablesorter-filter, 
 .asm-staff-rota-cell, .asm-staff-rota-shift, .asm-staff-rota-day,
 #asm-login-window, #asm-login-window a {
-    background: #222 !important;
-    color: #eee !important;
+    background: #111 !important;
+    color: #ddd !important;
 }
 /* Style the fullcalendar buttons to match our action buttons */
 .fc-button {
@@ -95,7 +95,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 /* Dark mode for CodeMirror */
-.CodeMirror { background: #222; color: #b3b1ad; }
+.CodeMirror { background: #111; color: #b3b1ad; }
 div.CodeMirror-selected { background: #273747; }
 .CodeMirror-line::selection, .cm-s-ayu-dark .CodeMirror-line > span::selection, .cm-s-ayu-dark .CodeMirror-line > span > span::selection { background: rgba(39, 55, 71, 99); }
 .CodeMirror-line::-moz-selection, .cm-s-ayu-dark .CodeMirror-line > span::-moz-selection, .cm-s-ayu-dark .CodeMirror-line > span > span::-moz-selection { background: rgba(39, 55, 71, 99); }
@@ -1039,24 +1039,24 @@ body .ui-tooltip {
 	font-size: 1em;
 }
 .ui-widget.ui-widget-content {
-	border: 1px solid #c5c5c5;
+	border: 1px solid #bbb;
 }
 .ui-widget-content {
-	border: 1px solid #dddddd;
-	background: #222;
-	color: #eee;
+	border: 1px solid #bbb;
+	background: #111;
+	color: #bbb;
 }
 .ui-widget-content a {
-	color: #eee;
+	color: #bbb;
 }
 .ui-widget-header {
-	border: 1px solid #dddddd;
+	border: 1px solid #bbb;
 	background: #444;
-	color: #eeeeee;
+	color: #bbb;
 	font-weight: bold;
 }
 .ui-widget-header a {
-	color: #eeeeee;
+	color: #bbb;
 }
 
 /* Interaction states
@@ -1070,10 +1070,10 @@ body .ui-tooltip {
 works properly when clicked or hovered */
 html .ui-button.ui-state-disabled:hover,
 html .ui-button.ui-state-disabled:active {
-	border: 1px solid #c5c5c5;
-	background: #222;
+	border: 1px solid #bbb;
+	background: #111;
 	font-weight: normal;
-	color: #eee;
+	color: #bbb;
 }
 .ui-state-default a,
 .ui-state-default a:link,
@@ -1082,7 +1082,7 @@ a.ui-button,
 a:link.ui-button,
 a:visited.ui-button,
 .ui-button {
-	color: #eee;
+	color: #bbb;
 	text-decoration: none;
 }
 .ui-state-hover,
@@ -1093,7 +1093,7 @@ a:visited.ui-button,
 .ui-widget-header .ui-state-focus,
 .ui-button:hover,
 .ui-button:focus {
-	border: 1px solid #cccccc;
+	border: 1px solid #fff;
 	background: #444;
 	font-weight: normal;
 	color: #fff;
@@ -1209,7 +1209,7 @@ a.ui-button:active,
 	background-image: url("images/ui-icons_eee_256x240.png");
 }
 .ui-widget-header .ui-icon {
-	background-image: url("images/ui-icons_eee_256x240.png");
+	background-image: url("images/ui-icons_bbb_256x240.png");
 }
 .ui-state-hover .ui-icon,
 .ui-state-focus .ui-icon,

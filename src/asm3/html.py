@@ -16,28 +16,30 @@ from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, 
 
 import os
 
-def css_tag(uri, idattr=""):
+def css_tag(uri, idattr="", addbuild=False):
     """
     Returns a css link tag to a resource.
     """
     if idattr != "": idattr = "id=\"%s\"" % idattr
-    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" %s />\n" % (uri, idattr)
+    buildqs = asm3.utils.iif(addbuild, "?b=%s" % BUILD, "")
+    return f"<link rel=\"stylesheet\" type=\"text/css\" href=\"{uri}{buildqs}\" {idattr} />\n"
 
 def asm_css_tag(filename):
     """
     Returns a path to one of our stylesheets
     """
-    return css_tag("static/css/%s?b=%s" % (filename, BUILD))
+    return css_tag(f"static/css/{filename}", addbuild=True)
 
 def script_i18n(l):
-    return "<script type=\"text/javascript\" src=\"static/js/locales/locale_%s.js?b=%s\"></script>\n" % (real_locale(l), BUILD)
+    return f"<script type=\"text/javascript\" src=\"static/js/locales/locale_{real_locale(l)}.js?b={BUILD}\"></script>\n"
 
-def script_tag(uri, idattr=""):
+def script_tag(uri, idattr="", addbuild=False):
     """
     Returns a script tag to a resource.
     """
     if idattr != "": idattr = "id=\"%s\"" % idattr
-    return "<script type=\"text/javascript\" src=\"%s\" %s></script>\n" % (uri, idattr)
+    buildqs = asm3.utils.iif(addbuild, "?b=%s" % BUILD, "")
+    return f"<script type=\"text/javascript\" src=\"{uri}{buildqs}\" {idattr}></script>\n"
 
 def asm_script_tag(filename):
     """
@@ -47,8 +49,8 @@ def asm_script_tag(filename):
     """
     standalone = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
         "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
-    if ROLLUP_JS and filename in standalone and filename.find("/") == -1: filename = "compat/%s" % filename
-    return script_tag("static/js/%s?b=%s" % (filename, BUILD))
+    if ROLLUP_JS and filename in standalone and filename.find("/") == -1: filename = f"compat/{filename}"
+    return script_tag(f"static/js/{filename}", addbuild=True)
 
 def asm_script_tags(path):
     """
@@ -170,7 +172,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 css_tag(FULLCALENDAR_CSS) +
                 css_tag(TABLESORTER_CSS) + 
                 css_tag(TIMEPICKER_CSS) + 
-                css_tag(JQUERY_UI_CSS % { "theme": theme}, "jqt") +
+                css_tag(JQUERY_UI_CSS % { "theme": theme}, idattr="jqt", addbuild=True) +
                 asm_css_tag("asm-icon.css") +
                 asm_css_tag("asm.css") + 
                 script_tag("static/lib/modernizr/modernizr.min.js") + 
