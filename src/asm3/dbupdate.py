@@ -2712,16 +2712,16 @@ def dump_smcom(dbo):
         1. Remove the DELETE FROM dbfs line manually from the output.
         2. Remove the userrole and users tables from the output.
     """
+    # For ASM2 sources, we remove some constraints that were added in ASM3 to make import easy
     yield "set ON_ERROR_STOP\n"
+    yield "ALTER TABLE animal ALTER AcceptanceNumber DROP NOT NULL;\n"
+    yield "ALTER TABLE animal ALTER IdentichipNumber DROP NOT NULL;\n"
+    yield "ALTER TABLE animal ALTER TattooNumber DROP NOT NULL;\n"
+    yield "ALTER TABLE animal ALTER BondedAnimalID DROP NOT NULL;\n"
+    yield "ALTER TABLE animal ALTER BondedAnimal2ID DROP NOT NULL;\n"
+    yield "ALTER TABLE animalvaccination ALTER Cost DROP NOT NULL;\n"
     for x in dump(dbo, includeDBFS = True, includeConfig = False, includeUsers = True, includeLKS = False, deleteDBV = True, deleteViewSeq = True, excludeDBFSTemplates = True, wrapTransaction = True):
         yield x
-    # For ASM2 sources, we remove some constraints that were added in ASM3 to make import easy
-    yield "ALTER TABLE animal ALTER AcceptanceNumber DROP NOT NULL;"
-    yield "ALTER TABLE animal ALTER IdentichipNumber DROP NOT NULL;"
-    yield "ALTER TABLE animal ALTER TattooNumber DROP NOT NULL;"
-    yield "ALTER TABLE animal ALTER BondedAnimalID DROP NOT NULL;"
-    yield "ALTER TABLE animal ALTER BondedAnimal2ID DROP NOT NULL;"
-    yield "ALTER TABLE animalvaccination ALTER Cost DROP NOT NULL;"
 
 def dump_merge(dbo, deleteViewSeq = True):
     """
