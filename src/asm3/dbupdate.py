@@ -2713,7 +2713,7 @@ def dump_smcom(dbo):
         2. Remove the userrole and users tables from the output.
     """
     # For ASM2 sources, we remove some constraints that were added in ASM3 to make import easy
-    yield "set ON_ERROR_STOP\n"
+    yield "\\set ON_ERROR_STOP\n"
     yield "ALTER TABLE animal ALTER AcceptanceNumber DROP NOT NULL;\n"
     yield "ALTER TABLE animal ALTER IdentichipNumber DROP NOT NULL;\n"
     yield "ALTER TABLE animal ALTER TattooNumber DROP NOT NULL;\n"
