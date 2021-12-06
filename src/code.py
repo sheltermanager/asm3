@@ -1369,9 +1369,6 @@ class animal(JSONEndpoint):
         dbo = o.dbo
         a = asm3.animal.get_animal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
-        # We stop updating ages when animals are off shelter, so recalculate age just in case
-        # other variable fields like agegroup/timeonshelter not affected due to batch
-        a.ANIMALAGE = asm3.animal.calc_age(dbo, a.ID, a) 
         # If a location filter is set, prevent the user opening this animal if it's
         # not in their location.
         self.check_animal(a)

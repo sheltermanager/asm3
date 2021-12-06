@@ -316,14 +316,18 @@ def get_animal(dbo, animalid):
     (int) animalid: The animal to get
     """
     if animalid is None or animalid == 0: return None
-    return dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ID = ?", [animalid]) )
+    a = dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ID = ?", [animalid]) )
+    calc_ages(dbo, [a])
+    return a
 
 def get_animal_sheltercode(dbo, code):
     """
     Returns a complete animal row by ShelterCode
     """
     if code is None or code == "": return None
-    return dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ShelterCode = ?", [code]) )
+    a = dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ShelterCode = ?", [code]) )
+    calc_ages(dbo, [a])
+    return a
 
 def get_animals_ids(dbo, sort, q, limit = 5, cachetime = 60):
     """
@@ -337,7 +341,8 @@ def get_animals_ids(dbo, sort, q, limit = 5, cachetime = 60):
     for aid in dbo.query(q, limit=limit):
         aids.append(aid["ID"])
     if len(aids) == 0: return [] # Return empty recordset if no results
-    return dbo.query_cache(get_animal_query(dbo) + " WHERE a.ID IN (%s) ORDER BY %s" % (dbo.sql_placeholders(aids), sort), aids, age=cachetime, distincton="ID")
+    rows = dbo.query_cache(get_animal_query(dbo) + " WHERE a.ID IN (%s) ORDER BY %s" % (dbo.sql_placeholders(aids), sort), aids, age=cachetime, distincton="ID")
+    return calc_ages(dbo, rows)
 
 def get_animals_brief(animals):
     """

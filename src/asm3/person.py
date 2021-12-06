@@ -50,9 +50,11 @@ def get_person_query(dbo):
         "(SELECT MatchSummary FROM ownerlookingfor olf WHERE olf.OwnerID = o.ID GROUP BY MatchSummary) AS LookingForSummary " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
-        "LEFT OUTER JOIN adoption lf ON lf.ID = (SELECT MAX(ID) FROM adoption slf WHERE slf.OwnerID = o.ID AND slf.MovementType = 2 AND (slf.ReturnDate Is Null OR slf.ReturnDate > %s )) " \
+        "LEFT OUTER JOIN adoption lf ON lf.OwnerID = o.ID AND lf.MovementType = 2 AND lf.MovementDate = " \
+            "(SELECT MAX(MovementDate) FROM adoption slf WHERE slf.OwnerID = o.ID AND slf.MovementType = 2 AND (slf.ReturnDate Is Null OR slf.ReturnDate > %s )) " \
         "LEFT OUTER JOIN animal lfa ON lfa.ID = lf.AnimalID " \
-        "LEFT OUTER JOIN adoption lm ON lm.ID = (SELECT MAX(ID) FROM adoption slm WHERE slm.OwnerID = o.ID AND MovementType > 0 AND (slm.ReturnDate Is Null OR slm.ReturnDate > %s )) " \
+        "LEFT OUTER JOIN adoption lm ON lm.OwnerID = o.ID AND lm.MovementType > 0 AND lm.MovementDate = " \
+            "(SELECT MAX(MovementDate) FROM adoption slm WHERE slm.OwnerID = o.ID AND MovementType > 0 AND (slm.ReturnDate Is Null OR slm.ReturnDate > %s )) " \
         "LEFT OUTER JOIN animal lma ON lma.ID = lm.AnimalID " \
         "LEFT OUTER JOIN lksmovementtype lmat ON lmat.ID = lm.MovementType " \
         "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 " \

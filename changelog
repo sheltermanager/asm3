@@ -1,6 +1,8 @@
 45
 ================
 
+06/12/21 Last movement on person using latest ID instead of date
+06/12/21 Animal age not updating on all animal tabs
 05/12/21 Make dark mode easier to read, use qs to force theme reload
 04/12/21 Add OR support to online form showif
 03/12/21 Update to JQueryUI 1.13.0
