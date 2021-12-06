@@ -1,6 +1,7 @@
 45
 ================
 
+06/12/21 Fix regression with JQuery 1.13 and rearranging lists
 06/12/21 Last movement on person using latest ID instead of date
 06/12/21 Animal age not updating on all animal tabs
 05/12/21 Make dark mode easier to read, use qs to force theme reload
