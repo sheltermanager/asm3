@@ -478,6 +478,7 @@ def get_smcom_reports(dbo):
         return False
     for i, rp in enumerate(reps):
         b = rp.split("###")
+        if len(b) < 7: continue # Malformed if we have less than 7 elements
         d = asm3.dbms.base.ResultRow()
         d.TITLE = b[0].strip()
         d.CATEGORY = b[1].strip()
