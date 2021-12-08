@@ -105,6 +105,7 @@ def embellish_latest_movement(dbo, p):
         The query already does this and 99% of the time it will work fine and makes these columns available
         in v_person for the query builder. BUT if we have a data import where the movements were created out of
         order, MAX(ID) will fail and return the wrong movement. """
+    if p is None: return p
     lm = dbo.first_row(dbo.query("SELECT m.ID AS LatestMoveAnimalID, a.ID AS LatestMoveAnimalID, a.AnimalName AS LatestMoveAnimalName, " \
         "a.ShelterCode AS LatestMoveShelterCode, mt.MovementType AS LatestMoveTypeName " \
         "FROM adoption m "

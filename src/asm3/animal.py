@@ -1201,6 +1201,7 @@ def calc_ages(dbo, rows):
     Updates the ANIMALAGE column on every result in rows
     """
     for a in rows:
+        if a is None: continue
         a.ANIMALAGE = calc_age(dbo, a.ID, a)
     return rows
 
