@@ -409,6 +409,7 @@ $(function() {
                     _("DD = current day") + '<br />' + 
                     _("UUUUUUUUUU or UUUU = unique number") + '<br />' +
                     _("XXX or XX = number unique for this year") + '<br />' +
+                    _("OOO or OO = number unique for this month") + '<br />' +
                     _("NNN or NN = number unique for this type of animal for this year") + '<br />' +
                     _("Defaults formats for code and shortcode are TYYYYNNN and NNT")),
                 '<table>',

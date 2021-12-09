@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-12-01 11:52+0000\n"
+"POT-Creation-Date: 2021-12-09 14:16+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -8517,6 +8517,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Number of pets"
+msgstr ""
+
+#: options.js
+msgid "OOO or OO = number unique for this month"
 msgstr ""
 
 #: dbupdate.py

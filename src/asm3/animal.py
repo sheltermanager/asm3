@@ -1226,6 +1226,8 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
         UUUU - 4 digit padded code for next animal of all time
         XXX - 3 digit padded code for next animal for year
         XX - unpadded code for next animal for year
+        OOO - 3 digit padded code for next animal for month
+        OO - unpadded code for next animal for month
         NNN - 3 digit padded code for next animal of type for year
         NN - unpadded code for next animal of type for year
     """
@@ -1241,7 +1243,7 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
         s = s.strip()
         return s
 
-    def substitute_tokens(fmt, year, tyear, ever, datebroughtin, animaltype, species, entryreason):
+    def substitute_tokens(fmt, year, month, tyear, ever, datebroughtin, animaltype, species, entryreason):
         """
         Produces a code by switching tokens in the code format fmt.
         The format is parsed to left to right, testing for tokens. Anything
@@ -1285,6 +1287,12 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
             elif fmt[x:x+2] == "XX":   
                 code.append(str(year))
                 x += 2
+            elif fmt[x:x+3] == "OOO":  
+                code.append("%03d" % month)
+                x += 3
+            elif fmt[x:x+2] == "OO":   
+                code.append(str(month))
+                x += 2
             elif fmt[x:x+2] == "TT":   
                 code.append(animaltype[:2])
                 x += 2
@@ -1318,9 +1326,12 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
     species = clean_lookup(asm3.lookups.get_species_name(dbo, speciesid))
     beginningofyear = datetime.datetime(datebroughtin.year, 1, 1, 0, 0, 0)
     endofyear = datetime.datetime(datebroughtin.year, 12, 31, 23, 59, 59)
+    beginningofmonth = asm3.i18n.first_of_month(datebroughtin)
+    endofmonth = asm3.i18n.last_of_month(datebroughtin)
     oneyearago = subtract_years(dbo.today(), 1.0)
     highesttyear = 0
     highestyear = 0
+    highestmonth = 0
     highestever = 0
 
     # If our code uses N, calculate the highest code seen for this type this year
@@ -1338,6 +1349,13 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
             "DateBroughtIn <= ?", (beginningofyear, endofyear))
         highestyear += 1
 
+    # If our code uses O, calculate the highest code seen this month
+    if codeformat.find("O") != -1 or shortformat.find("O") != -1:
+        highestmonth = dbo.query_int("SELECT COUNT(ID) FROM animal WHERE " \
+            "DateBroughtIn >= ? AND " \
+            "DateBroughtIn <= ?", (beginningofmonth, endofmonth))
+        highestmonth += 1
+
     # If our code uses U, calculate the highest code ever seen
     if codeformat.find("U") != -1 or shortformat.find("U") != -1:
         highestever = dbo.query_int("SELECT MAX(UniqueCodeID) FROM animal WHERE " \
@@ -1350,8 +1368,8 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
     while not unique:
 
         # Generate the codes
-        code = substitute_tokens(codeformat, highestyear, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
-        shortcode = substitute_tokens(shortformat, highestyear, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
+        code = substitute_tokens(codeformat, highestyear, highestmonth, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
+        shortcode = substitute_tokens(shortformat, highestyear, highestmonth, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
 
         # Verify the code is unique
         unique = 0 == dbo.query_int("SELECT COUNT(*) FROM animal WHERE ShelterCode LIKE ?", [code])
