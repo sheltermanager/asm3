@@ -2,7 +2,7 @@ shelteranimalscount.org matrix 2021
 ###
 Figures
 ###
-33600/PostgreSQL rev08
+33600/PostgreSQL rev09
 ###
 Information needed to complete the shelteranimalscount.org basic data matrix 2021
 ###
@@ -230,7 +230,7 @@ AND NonShelterAnimal = 0) AS JuniorImpound,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%TNR%'
+WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 AND ReasonName NOT LIKE '%Stray%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
@@ -239,7 +239,7 @@ AND NonShelterAnimal = 0) AS AdultOtherIntake,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%TNR%'
+WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 AND ReasonName NOT LIKE '%Stray%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
