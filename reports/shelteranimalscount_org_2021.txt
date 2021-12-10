@@ -2,7 +2,7 @@ shelteranimalscount.org matrix 2021
 ###
 Figures
 ###
-33600/PostgreSQL rev09
+33600/PostgreSQL rev10
 ###
 Information needed to complete the shelteranimalscount.org basic data matrix 2021
 ###
@@ -472,7 +472,7 @@ $$BODY
 </tr>
 
 <tr>
-<td>Stray/At Large<sup>1</sup></td>
+<td>Intake: Stray/At Large<sup>1</sup></td>
 <td>$AdultStray</td>
 <td>$JuniorStray</td>
 <td>0</td>

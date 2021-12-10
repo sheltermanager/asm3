@@ -2,7 +2,7 @@ shelteranimalscount.org monthly CSV export 2021
 ###
 Figures
 ###
-33600/PostgreSQL rev08
+33600/PostgreSQL rev09
 ###
 When run from Export Reports as CSV, produces a file containing one month of data for importing into shelteranimalscount.org
 ###
@@ -207,7 +207,7 @@ AND NonShelterAnimal = 0) AS "Seized Or Impounded Up To 5 Months",
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%TNR%'
+WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 AND ReasonName NOT LIKE '%Stray%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
@@ -216,7 +216,7 @@ AND NonShelterAnimal = 0) AS "Other Intakes Adult",
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%TNR%'
+WHERE ReasonName NOT LIKE '%Surrender%' AND IsTransfer = 0 AND CrueltyCase = 0 AND ReasonName NOT LIKE '%Stray%'
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID IN ($CANINES$)
