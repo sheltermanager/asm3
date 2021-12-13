@@ -263,6 +263,21 @@ def get_media(dbo, linktype, linkid):
 def get_media_by_id(dbo, mid):
     return dbo.first_row(dbo.query("SELECT * FROM media WHERE ID = ?", [mid] ))
 
+def get_media_filename(dbo, mid):
+    """ Constructs a filename from media notes.
+        Truncates if notes are too long, removes unsafe punctuation and checks the extension. """
+    return _get_media_filename(get_media_by_id(dbo, mid))
+
+def _get_media_filename(m):
+    """ Constructs a filename from media notes.
+        Truncates if notes are too long, removes unsafe punctuation and checks the extension. """
+    s = m.MEDIANOTES
+    s = s.replace(" ", "_").replace("/", "_").replace("\\", "_").replace(":", "_")
+    s = asm3.utils.truncate(s, 20)
+    ext = m.MEDIANAME[m.MEDIANAME.rfind("."):]
+    if not s.endswith(ext): s += ext
+    return s
+
 def get_image_media(dbo, linktype, linkid, ignoreexcluded = False):
     if not ignoreexcluded:
         return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ? " \

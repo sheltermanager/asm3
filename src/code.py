@@ -715,14 +715,15 @@ class media(ASMEndpoint):
         subject = [ post["subject"] ]
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
+            filename = asm3.media._get_media_filename(m)
             if m is None: self.notfound()
             content = asm3.dbfs.get_string(dbo, m.MEDIANAME)
             if m.MEDIAMIMETYPE == "text/html":
                 content = asm3.utils.bytes2str(content)
                 content = asm3.utils.fix_relative_document_uris(dbo, content)
                 content = asm3.utils.str2bytes(content)
-            attachments.append(( m.MEDIANAME, m.MEDIAMIMETYPE, content ))
-            subject.append(m.MEDIANOTES)
+            attachments.append(( filename, m.MEDIAMIMETYPE, content ))
+            subject.append(filename)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if asm3.configuration.audit_on_send_email(dbo): 
             asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
@@ -744,8 +745,9 @@ class media(ASMEndpoint):
             if m.MEDIAMIMETYPE != "text/html": continue
             content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
             contentpdf = asm3.utils.html_to_pdf(dbo, content)
-            attachments.append(( "%s.pdf" % m.ID, "application/pdf", contentpdf ))
-            subject.append(m.MEDIANOTES)
+            filename = asm3.media._get_media_filename(m).replace(".html", ".pdf")
+            attachments.append(( filename, "application/pdf", contentpdf ))
+            subject.append(filename)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if asm3.configuration.audit_on_send_email(dbo): 
             asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])

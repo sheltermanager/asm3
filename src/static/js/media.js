@@ -897,13 +897,6 @@ $(function() {
                 toaddresses.push(controller.animal.BROUGHTINBYEMAILADDRESS);
             }
 
-            sanitise_subject = function(s) {
-                // Sanitise the email subject field when it is a filename from medianotes
-                s = s.replace(".html", "");
-                s = common.replace_all(s, "_", " ");
-                return s;
-            };
-
             $("#button-email").button().click(function() {
                 $("#emailform").emailform("show", {
                     title: _("Email media"),
@@ -913,7 +906,8 @@ $(function() {
                     name: defaultname,
                     email: defaultemail,
                     toaddresses: toaddresses,
-                    subject: sanitise_subject(tableform.table_selected_row(media.table).MEDIANOTES),
+                    subject: media.selected_filenames(),
+                    attachments: media.selected_filenames(),
                     animalid: (controller.animal && controller.animal.ID),
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
@@ -929,7 +923,8 @@ $(function() {
                         "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
-                    subject: sanitise_subject(tableform.table_selected_row(media.table).MEDIANOTES),
+                    subject: common.replace_all(media.selected_filenames(), ".html", ".pdf"),
+                    attachments: common.replace_all(media.selected_filenames(), ".html", ".pdf"),
                     animalid: (controller.animal && controller.animal.ID),
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
@@ -1038,6 +1033,18 @@ $(function() {
                 "object-fit": "contain"
             });
             media.icon_mode_active = false;
+        },
+
+        /** Return a comma separated readable list of selected filenames */
+        selected_filenames: function() {
+            let items = [];
+            $.each(tableform.table_selected_rows(media.table), function(i, v) {
+                let s = String(v.MEDIANOTES), ext = v.MEDIANAME.substring(v.MEDIANAME.lastIndexOf("."));
+                s = s.replace(" ", "_").replace("/", "_");
+                if (s.indexOf(ext) == -1) { s += ext; }
+                items.push(s);
+            });
+            return items.join(", ");
         },
 
         sync: function() {

@@ -635,6 +635,10 @@ $.widget("asm.emailform", {
             '<td><label for="em-subject">' + _("Subject") + '</label></td>',
             '<td><input id="em-subject" data="subject" type="text" class="asm-doubletextbox" /></td>',
             '</tr>',
+            '<tr id="em-attachmentrow">',
+            '<td><label for="em-attachments">' + _("Attachments") + '</label></td>',
+            '<td><span id="em-attachments" data="attachments" type="text" class="strong"></span></td>',
+            '</tr>',
             '<tr>',
             '<td></td>',
             '<td><input id="em-addtolog" data="addtolog" type="checkbox"',
@@ -752,6 +756,13 @@ $.widget("asm.emailform", {
         }
         if (o.toaddresses) {
             toaddresses = toaddresses.concat(o.toaddresses);
+        }
+        if (o.attachments) {
+            $("#em-attachments").html(o.attachments);
+            $("#em-attachmentrow").show();
+        }
+        else {
+            $("#em-attachmentrow").hide();
         }
         fromaddresses = fromaddresses.concat(config.str("EmailFromAddresses").split(","));
         toaddresses = toaddresses.concat(config.str("EmailToAddresses").split(","));
