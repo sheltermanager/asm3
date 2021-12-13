@@ -1,6 +1,7 @@
 45
 ================
 
+13/12/21 Hidden config for future limit on date brought in #1075
 09/12/21 Clickable icon in table header to show filter line #1073
 09/12/21 OOO token for animal codes (animals in month) #1071
 07/12/21 Fix regression with last movement duplicating staff rota people

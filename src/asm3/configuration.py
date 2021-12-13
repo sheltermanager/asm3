@@ -166,6 +166,7 @@ DEFAULTS = {
     "CodingFormat": "TYYYYNNN",
     "CurrencyCode": "USD",
     "ShortCodingFormat": "NNT",
+    "DateBroughtInFutureLimit": "30",
     "DateDiffCutoffs": "7|182|365",
     "DefaultAnimalAge": "1.0", 
     "DefaultDailyBoardingCost": "2000",
@@ -735,6 +736,9 @@ def create_donation_trx(dbo):
 
 def currency_code(dbo):
     return cstring(dbo, "CurrencyCode", DEFAULTS["CurrencyCode"])
+
+def date_brought_in_future_limit(dbo):
+    return cint(dbo, "DateBroughtInFutureLimit", DEFAULTS["DateBroughtInFutureLimit"])
 
 def date_diff_cutoffs(dbo):
     return cstring(dbo, "DateDiffCutoffs", DEFAULTS["DateDiffCutoffs"])

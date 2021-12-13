@@ -2032,7 +2032,9 @@ def insert_animal_from_form(dbo, post, username):
             raise asm3.utils.ASMValidationError(_("Microchip number {0} has already been allocated to another animal.", l).format(post["microchipnumber"]))
     if dob > dbo.today():
         raise asm3.utils.ASMValidationError(_("Date of birth cannot be in the future.", l))
-    if datebroughtin > dbo.today(offset=30):
+    # Enforce a limit on the number of days in the future that brought in date can be
+    futurelimit = asm3.configuration.date_brought_in_future_limit(dbo) 
+    if futurelimit and datebroughtin > dbo.today(offset=futurelimit):
         raise asm3.utils.ASMValidationError(_("Date brought in cannot be in the future.", l))
 
     # Set default brought in by if we have one and none was set
