@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-12-09 14:16+0000\n"
+"POT-Creation-Date: 2021-12-14 11:49+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -63,6 +63,10 @@ msgstr ""
 msgid "(everyone)"
 msgstr ""
 
+#: document_templates.js
+msgid "(everywhere)"
+msgstr ""
+
 #: users.js
 msgid "(master user, not editable)"
 msgstr ""
@@ -77,6 +81,10 @@ msgstr ""
 
 #: shelterview.js
 msgid "(none)"
+msgstr ""
+
+#: document_templates.js
+msgid "(nowhere)"
 msgstr ""
 
 #: incident.js lostfound.js lostfound_find.js lostfound_new.js
@@ -1406,8 +1414,9 @@ msgstr ""
 msgid "Animal shortcode format"
 msgstr ""
 
-#: html.py reports.py transport.js incident.js medical.js vaccination.js
-#: csvexport.js roles.js animal_bulk.js test.js options.js htmltemplates.js
+#: html.py reports.py document_templates.js transport.js incident.js medical.js
+#: vaccination.js csvexport.js roles.js animal_bulk.js test.js options.js
+#: htmltemplates.js
 msgid "Animals"
 msgstr ""
 
@@ -1599,6 +1608,10 @@ msgstr ""
 
 #: media.js
 msgid "Attach link"
+msgstr ""
+
+#: common_widgets.js
+msgid "Attachments"
 msgstr ""
 
 #: common.js
@@ -2341,7 +2354,7 @@ msgstr ""
 msgid "Champagne D'Argent"
 msgstr ""
 
-#: common_tableform.js common.js
+#: document_templates.js common_tableform.js common.js
 msgid "Change"
 msgstr ""
 
@@ -2645,7 +2658,7 @@ msgstr ""
 msgid "Clear and sign again"
 msgstr ""
 
-#: html.py calendarview.js roles.js header_edit_header.js
+#: html.py document_templates.js calendarview.js roles.js header_edit_header.js
 msgid "Clinic"
 msgstr ""
 
@@ -4623,6 +4636,10 @@ msgstr ""
 msgid "Email users their outstanding diary notes once per day"
 msgstr ""
 
+#: document_templates.js
+msgid "Emails"
+msgstr ""
+
 #: dbupdate.py
 msgid "Emu"
 msgstr ""
@@ -5198,7 +5215,7 @@ msgstr ""
 msgid "File"
 msgstr ""
 
-#: animal_find.js incident_find.js csvexport.js
+#: animal_find.js common_tableform.js incident_find.js csvexport.js
 msgid "Filter"
 msgstr ""
 
@@ -5548,6 +5565,10 @@ msgstr ""
 
 #: diary.py
 msgid "Found Animal: {0}"
+msgstr ""
+
+#: document_templates.js
+msgid "Found Animals"
 msgstr ""
 
 #: diary.js lostfound.js media.js log.js
@@ -6488,7 +6509,7 @@ msgstr ""
 msgid "Incident: {0}"
 msgstr ""
 
-#: animal.js
+#: document_templates.js animal.js
 msgid "Incidents"
 msgstr ""
 
@@ -7116,7 +7137,7 @@ msgstr ""
 msgid "Licensed"
 msgstr ""
 
-#: roles.js
+#: document_templates.js roles.js
 msgid "Licenses"
 msgstr ""
 
@@ -7397,6 +7418,10 @@ msgstr ""
 msgid "Lost Animal: {0}"
 msgstr ""
 
+#: document_templates.js
+msgid "Lost Animals"
+msgstr ""
+
 #: roles.js options.js
 msgid "Lost and Found"
 msgstr ""
@@ -7471,7 +7496,7 @@ msgstr ""
 msgid "Macaw"
 msgstr ""
 
-#: html.py
+#: html.py document_templates.js
 msgid "Mail"
 msgstr ""
 
@@ -7955,7 +7980,7 @@ msgstr ""
 msgid "Movement numbers must be unique."
 msgstr ""
 
-#: roles.js options.js header_edit_header.js
+#: document_templates.js roles.js options.js header_edit_header.js
 msgid "Movements"
 msgstr ""
 
@@ -8992,7 +9017,7 @@ msgstr ""
 msgid "Payment processor"
 msgstr ""
 
-#: donations.js roles.js header_edit_header.js
+#: document_templates.js donations.js roles.js header_edit_header.js
 msgid "Payments"
 msgstr ""
 
@@ -9036,7 +9061,7 @@ msgstr ""
 msgid "Pension"
 msgstr ""
 
-#: html.py roles.js options.js
+#: html.py document_templates.js roles.js options.js
 msgid "People"
 msgstr ""
 
@@ -10995,6 +11020,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Short"
+msgstr ""
+
+#: document_templates.js
+msgid "Show"
 msgstr ""
 
 #: options.js
@@ -13913,7 +13942,7 @@ msgstr ""
 msgid "Voucher codes matching '{0}'."
 msgstr ""
 
-#: roles.js header_edit_header.js
+#: document_templates.js roles.js header_edit_header.js
 msgid "Vouchers"
 msgstr ""
 
@@ -13929,8 +13958,8 @@ msgstr ""
 msgid "Waiting"
 msgstr ""
 
-#: html.py dbupdate.py search.js waitinglist_results.js onlineform_incoming.js
-#: roles.js options.js header_edit_header.js
+#: html.py dbupdate.py document_templates.js search.js waitinglist_results.js
+#: onlineform_incoming.js roles.js options.js header_edit_header.js
 msgid "Waiting List"
 msgstr ""
 

@@ -297,7 +297,7 @@ $(function() {
                     email: lostfound.current_person.EMAILADDRESS,
                     logtypes: controller.logtypes,
                     personid: controller.animal.OWNERID,
-                    templates: controller.templates
+                    templates: controller.templatesemail
                 });
             });
 

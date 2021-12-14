@@ -1402,7 +1402,8 @@ class animal(JSONEndpoint):
             "sizes": asm3.lookups.get_sizes(dbo),
             "sharebutton": SHARE_BUTTON,
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "animal"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "ynun": asm3.lookups.get_ynun(dbo),
             "ynunk": asm3.lookups.get_ynunk(dbo)
         }
@@ -1496,7 +1497,7 @@ class animal_clinic(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users(dbo),
             "rows": rows,
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0]
         }
 
@@ -1617,7 +1618,7 @@ class animal_donations(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "payment")
         }
 
 class animal_embed(ASMEndpoint):
@@ -1715,7 +1716,7 @@ class animal_licence(JSONEndpoint):
             "name": "animal_licence",
             "rows": licences,
             "animal": a,
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "licence"),
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
             "licencetypes": asm3.lookups.get_licence_types(dbo)
         }
@@ -1769,7 +1770,7 @@ class animal_media(JSONEndpoint):
             "newmedia": o.post.integer("newmedia") == 1,
             "name": self.url,
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -1819,7 +1820,7 @@ class animal_movements(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
             "name": self.url
         }
 
@@ -1902,7 +1903,7 @@ class animal_transport(JSONEndpoint):
             "animal": a,
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
             "statuses": asm3.lookups.get_transport_statuses(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "transport"),
             "transporttypes": asm3.lookups.get_transport_types(dbo),
             "rows": transports
         }
@@ -2296,7 +2297,7 @@ class clinic_consultingroom(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "rows": rows
         }
 
@@ -2318,7 +2319,7 @@ class clinic_waitingroom(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "rows": rows
         }
 
@@ -2785,7 +2786,7 @@ class document_repository(JSONEndpoint):
         asm3.al.debug("got %d documents in repository" % len(documents), "code.document_repository", o.dbo)
         return { 
             "rows": documents,
-            "templates": asm3.template.get_document_templates(o.dbo)
+            "templates": asm3.template.get_document_templates(o.dbo, "email")
         }
 
     def post_create(self, o):
@@ -2852,13 +2853,13 @@ class document_templates(JSONEndpoint):
         }
 
     def post_create(self, o):
-        return asm3.template.create_document_template(o.dbo, o.user, o.post["template"])
+        return asm3.template.create_document_template(o.dbo, o.user, o.post["template"], show = o.post["show"])
 
     def post_createodt(self, o):
         post = o.post
         fn = post.filename()
         if post["path"] != "": fn = post["path"] + "/" + fn
-        asm3.template.create_document_template(o.dbo, o.user, fn, ".odt", post.filedata())
+        asm3.template.create_document_template(o.dbo, o.user, fn, ".odt", post.filedata(), show = o.post["odtshow"])
         self.redirect("document_templates")
 
     def post_clone(self, o):
@@ -2871,6 +2872,10 @@ class document_templates(JSONEndpoint):
 
     def post_rename(self, o):
         asm3.template.rename_document_template(o.dbo, o.user, o.post.integer("dtid"), o.post["newname"])
+
+    def post_show(self, o):
+        for t in o.post.integer_list("ids"):
+            asm3.template.update_document_template_show(o.dbo, o.user, t, o.post["newshow"])
 
 class donation(JSONEndpoint):
     url = "donation"
@@ -2890,7 +2895,7 @@ class donation(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "payment"),
             "rows": donations
         }
 
@@ -3018,7 +3023,8 @@ class foundanimal(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "sexes": asm3.lookups.get_sexes(dbo),
             "species": asm3.lookups.get_species(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "foundanimal"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "tabcounts": asm3.lostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0]
         }
 
@@ -3139,7 +3145,7 @@ class foundanimal_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -3249,7 +3255,7 @@ class incident(JSONEndpoint):
             "sexes": asm3.lookups.get_sexes(dbo),
             "sites": asm3.lookups.get_sites(dbo),
             "tabcounts": asm3.animalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "incident"),
             "users": asm3.users.get_users(dbo)
         }
 
@@ -3404,7 +3410,7 @@ class incident_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -3446,7 +3452,7 @@ class licence(JSONEndpoint):
         return {
             "name": "licence",
             "rows": licences,
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "licence"),
             "licencetypes": asm3.lookups.get_licence_types(dbo)
         }
 
@@ -3640,7 +3646,8 @@ class lostanimal(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "sexes": asm3.lookups.get_sexes(dbo),
             "species": asm3.lookups.get_species(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "lostanimal"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "tabcounts": asm3.lostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0]
         }
 
@@ -3753,7 +3760,7 @@ class lostanimal_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url, 
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -3848,7 +3855,7 @@ class mailmerge(JSONEndpoint):
             "numrows": len(rows),
             "hasemail": "EMAILADDRESS" in fields,
             "hasaddress": "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERCOUNTY" in fields and "OWNERPOSTCODE" in fields,
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "mailmerge")
         }
    
     def post_email(self, o):
@@ -4153,7 +4160,7 @@ class move_book_foster(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_recent_adoption(JSONEndpoint):
@@ -4172,7 +4179,7 @@ class move_book_recent_adoption(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_recent_other(JSONEndpoint):
@@ -4190,7 +4197,7 @@ class move_book_recent_other(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_recent_transfer(JSONEndpoint):
@@ -4208,7 +4215,7 @@ class move_book_recent_transfer(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_reservation(JSONEndpoint):
@@ -4226,7 +4233,7 @@ class move_book_reservation(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_retailer(JSONEndpoint):
@@ -4245,7 +4252,7 @@ class move_book_retailer(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_soft_release(JSONEndpoint):
@@ -4263,7 +4270,7 @@ class move_book_soft_release(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_trial_adoption(JSONEndpoint):
@@ -4282,7 +4289,7 @@ class move_book_trial_adoption(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_unneutered(JSONEndpoint):
@@ -4301,7 +4308,7 @@ class move_book_unneutered(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_deceased(JSONEndpoint):
@@ -4335,7 +4342,7 @@ class move_gendoc(JSONEndpoint):
     def controller(self, o):
         return {
             "message": o.post["message"],
-            "templates": asm3.html.template_selection(asm3.template.get_document_templates(o.dbo), "document_gen?linktype=%s&id=%s" % (o.post["linktype"], o.post["id"]))
+            "templates": asm3.html.template_selection(asm3.template.get_document_templates(o.dbo, "movement"), "document_gen?linktype=%s&id=%s" % (o.post["linktype"], o.post["id"]))
         }
 
 class move_reclaim(JSONEndpoint):
@@ -4735,7 +4742,7 @@ class options(JSONEndpoint):
             "sizes": asm3.lookups.get_sizes(dbo),
             "species": asm3.lookups.get_species(dbo),
             "themes": asm3.lookups.VISUAL_THEMES,
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
             "testtypes": asm3.lookups.get_test_types(dbo),
             "types": asm3.lookups.get_animal_types(dbo),
             "urgencies": asm3.lookups.get_urgencies(dbo),
@@ -4894,7 +4901,7 @@ class person(JSONEndpoint):
             "counties": asm3.person.get_counties(dbo),
             "towncounties": asm3.person.get_town_to_county(dbo),
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.id)[0],
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "person"),
             "person": p
         }
 
@@ -4957,7 +4964,7 @@ class person_clinic(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "rows": rows
         }
 
@@ -5001,7 +5008,7 @@ class person_donations(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "payment"),
             "rows": donations
         }
 
@@ -5171,7 +5178,7 @@ class person_licence(JSONEndpoint):
             "name": "person_licence",
             "rows": licences,
             "person": p,
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "licence"),
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
             "licencetypes": asm3.lookups.get_licence_types(dbo)
         }
@@ -5248,7 +5255,7 @@ class person_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -5272,7 +5279,7 @@ class person_movements(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class person_new(JSONEndpoint):
@@ -5364,7 +5371,7 @@ class person_vouchers(JSONEndpoint):
             "rows": vouchers,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "voucher"),
             "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
 
@@ -6136,7 +6143,7 @@ class transport(JSONEndpoint):
         return {
             "name": "transport",
             "statuses": asm3.lookups.get_transport_statuses(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "transport"),
             "transporttypes": asm3.lookups.get_transport_types(dbo),
             "rows": transports
         }
@@ -6278,7 +6285,7 @@ class voucher(JSONEndpoint):
         return {
             "name": "voucher",
             "rows": vouchers,
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "voucher"),
             "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
 
@@ -6314,7 +6321,8 @@ class waitinglist(JSONEndpoint):
             "sizes": asm3.lookups.get_sizes(dbo),
             "species": asm3.lookups.get_species(dbo),
             "urgencies": asm3.lookups.get_urgencies(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "waitinglist"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "tabcounts": asm3.waitinglist.get_satellite_counts(dbo, a["ID"])[0]
         }
 
@@ -6401,7 +6409,7 @@ class waitinglist_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 

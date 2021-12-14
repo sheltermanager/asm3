@@ -1,6 +1,7 @@
 45
 ================
 
+14/12/21 Document template types, fixed template rename display bug #364
 13/12/21 Show attachments when emailing media, use name/notes #1074
 13/12/21 Hidden config for future limit on date brought in #1075
 09/12/21 Clickable icon in table header to show filter line #1073

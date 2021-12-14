@@ -39,7 +39,7 @@ VERSIONS = (
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
-    34508
+    34508, 34509
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1516,6 +1516,7 @@ def sql_structure(dbo):
         fid(),
         fstr("Name"),
         fstr("Path"),
+        fstr("Show", True),
         flongstr("Content") ), False)
     sql += index("templatedocument_NamePath", "templatedocument", "Name,Path", True)
 
@@ -2529,10 +2530,11 @@ def install_default_templates(dbo, removeFirst = False):
     """
     Installs the default templates files into the db
     """
-    def add_document_template_from_file(name, path, filename):
+    def add_document_template_from_file(show, name, path, filename):
         dbo.insert("templatedocument", {
             "Name":     name,
             "Path":     path,
+            "Show":     show,
             "Content":  asm3.utils.base64encode( asm3.utils.read_binary_file(filename) )
         })
     def add_html_template(name, head, body, foot, builtin):
@@ -2561,35 +2563,35 @@ def install_default_templates(dbo, removeFirst = False):
     add_html_template_from_files("responsive")
     add_html_template_from_files("plain")
     add_html_template_from_files("rss")
-    add_document_template_from_file("adoption_form.html", "/templates", path + "media/templates/adoption_form.html")
-    add_document_template_from_file("cat_assessment_form.html", "/templates", path + "media/templates/cat_assessment_form.html")
-    add_document_template_from_file("cat_cage_card.html", "/templates", path + "media/templates/cat_cage_card.html")
-    add_document_template_from_file("cat_information.html", "/templates", path + "media/templates/cat_information.html")
-    add_document_template_from_file("dog_assessment_form.html", "/templates", path + "media/templates/dog_assessment_form.html")
-    add_document_template_from_file("dog_cage_card.html", "/templates", path + "media/templates/dog_cage_card.html")
-    add_document_template_from_file("dog_information.html", "/templates", path + "media/templates/dog_information.html")
-    add_document_template_from_file("dog_license.html", "/templates", path + "media/templates/dog_license.html")
-    add_document_template_from_file("fancy_cage_card.html", "/templates", path + "media/templates/fancy_cage_card.html")
-    add_document_template_from_file("half_a4_cage_card.html", "/templates", path + "media/templates/half_a4_cage_card.html")
-    add_document_template_from_file("homecheck_form.html", "/templates", path + "media/templates/homecheck_form.html")
-    add_document_template_from_file("incident_information.html", "/templates", path + "media/templates/incident_information.html")
-    add_document_template_from_file("invoice.html", "/templates", path + "media/templates/invoice.html")
-    add_document_template_from_file("microchip_form.html", "/templates", path + "media/templates/microchip_form.html")
-    add_document_template_from_file("petplan.html", "/templates", path + "media/templates/petplan.html")
-    add_document_template_from_file("rabies_certificate.html", "/templates", path + "media/templates/rabies_certificate.html")
-    add_document_template_from_file("receipt.html", "/templates", path + "media/templates/receipt.html")
-    add_document_template_from_file("receipt_tax.html", "/templates", path + "media/templates/receipt_tax.html")
-    add_document_template_from_file("reclaim_release.html", "/templates", path + "media/templates/reclaim_release.html")
-    add_document_template_from_file("reserved.html", "/templates", path + "media/templates/reserved.html")
-    add_document_template_from_file("spay_neuter_voucher.html", "/templates", path + "media/templates/spay_neuter_voucher.html")
-    add_document_template_from_file("rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
-    add_document_template_from_file("rspca_behaviour_observations_cat.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_cat.html")
-    add_document_template_from_file("rspca_behaviour_observations_dog.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_dog.html")
-    add_document_template_from_file("rspca_behaviour_observations_rabbit.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_rabbit.html")
-    add_document_template_from_file("rspca_dog_advice_leaflet.html", "/templates/rspca", path + "media/templates/rspca/rspca_dog_advice_leaflet.html")
-    add_document_template_from_file("rspca_post_home_visit.html", "/templates/rspca", path + "media/templates/rspca/rspca_post_home_visit.html")
-    add_document_template_from_file("rspca_transfer_of_ownership.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_ownership.html")
-    add_document_template_from_file("rspca_transfer_of_title.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_title.html")
+    add_document_template_from_file("animal,movement", "adoption_form.html", "/templates", path + "media/templates/adoption_form.html")
+    add_document_template_from_file("animal", "cat_assessment_form.html", "/templates", path + "media/templates/cat_assessment_form.html")
+    add_document_template_from_file("animal", "cat_cage_card.html", "/templates", path + "media/templates/cat_cage_card.html")
+    add_document_template_from_file("animal", "cat_information.html", "/templates", path + "media/templates/cat_information.html")
+    add_document_template_from_file("animal", "dog_assessment_form.html", "/templates", path + "media/templates/dog_assessment_form.html")
+    add_document_template_from_file("animal", "dog_cage_card.html", "/templates", path + "media/templates/dog_cage_card.html")
+    add_document_template_from_file("animal", "dog_information.html", "/templates", path + "media/templates/dog_information.html")
+    add_document_template_from_file("licence", "dog_license.html", "/templates", path + "media/templates/dog_license.html")
+    add_document_template_from_file("animal", "fancy_cage_card.html", "/templates", path + "media/templates/fancy_cage_card.html")
+    add_document_template_from_file("animal", "half_a4_cage_card.html", "/templates", path + "media/templates/half_a4_cage_card.html")
+    add_document_template_from_file("movement", "homecheck_form.html", "/templates", path + "media/templates/homecheck_form.html")
+    add_document_template_from_file("incident", "incident_information.html", "/templates", path + "media/templates/incident_information.html")
+    add_document_template_from_file("payment", "invoice.html", "/templates", path + "media/templates/invoice.html")
+    add_document_template_from_file("animal,movement", "microchip_form.html", "/templates", path + "media/templates/microchip_form.html")
+    add_document_template_from_file("animal,movement", "petplan.html", "/templates", path + "media/templates/petplan.html")
+    add_document_template_from_file("animal,movement", "rabies_certificate.html", "/templates", path + "media/templates/rabies_certificate.html")
+    add_document_template_from_file("payment", "receipt.html", "/templates", path + "media/templates/receipt.html")
+    add_document_template_from_file("payment", "receipt_tax.html", "/templates", path + "media/templates/receipt_tax.html")
+    add_document_template_from_file("movement", "reclaim_release.html", "/templates", path + "media/templates/reclaim_release.html")
+    add_document_template_from_file("movement", "reserved.html", "/templates", path + "media/templates/reserved.html")
+    add_document_template_from_file("voucher", "spay_neuter_voucher.html", "/templates", path + "media/templates/spay_neuter_voucher.html")
+    add_document_template_from_file("animal,movement", "rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
+    add_document_template_from_file("animal", "rspca_behaviour_observations_cat.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_cat.html")
+    add_document_template_from_file("animal", "rspca_behaviour_observations_dog.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_dog.html")
+    add_document_template_from_file("animal", "rspca_behaviour_observations_rabbit.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_rabbit.html")
+    add_document_template_from_file("animal", "rspca_dog_advice_leaflet.html", "/templates/rspca", path + "media/templates/rspca/rspca_dog_advice_leaflet.html")
+    add_document_template_from_file("animal", "rspca_post_home_visit.html", "/templates/rspca", path + "media/templates/rspca/rspca_post_home_visit.html")
+    add_document_template_from_file("animal", "rspca_transfer_of_ownership.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_ownership.html")
+    add_document_template_from_file("animal", "rspca_transfer_of_title.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_title.html")
 
 def install(dbo):
     """
@@ -5525,4 +5527,8 @@ def update_34508(dbo):
         "'smoothness','south-street','start','sunny','swanky-purse','ui-lightness')")
     dbo.execute_dbupdate("UPDATE users SET ThemeOverride='asm-dark' WHERE ThemeOverride IN ('black-tie','blitzer'," \
         "'dark-hive','eggplant','mint-choc','trontastic','ui-darkness','vader')")
+
+def update_34509(dbo):
+    add_column(dbo, "templatedocument", "Show", dbo.type_shorttext)
+    dbo.execute_dbupdate("UPDATE templatedocument SET Show='everywhere'")
 
