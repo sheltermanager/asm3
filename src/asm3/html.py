@@ -143,7 +143,8 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     # here so that the user doesn't see the body flash a different colour during page transitions.
     BACKGROUND_COLOURS = {
         "asm":              "#ffffff",
-        "asm-dark":         "#000000"
+        "asm-dark":         "#000000",
+        "asm-mid":          "#bbbbbb"
     }
     if theme not in BACKGROUND_COLOURS: theme = "asm"
     bgcol = BACKGROUND_COLOURS[theme]

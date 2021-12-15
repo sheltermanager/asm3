@@ -206,7 +206,8 @@ CURRENCIES = [
 
 VISUAL_THEMES = [
     ( "asm", "Light" ),
-    ( "asm-dark", "Dark" )
+    ( "asm-mid", "Medium" ),
+    ( "asm-dark", "Dark" ),
 ]
 
 PETFINDER_BREEDS = (
