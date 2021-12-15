@@ -1811,7 +1811,9 @@ def generate_clinic_doc(dbo, templateid, appointmentid, username):
     if a is not None:
         tags = append_tags(tags, animal_tags(dbo, a, includeAdditional=True, includeCosts=False, includeDiet=False, includeDonations=False, \
             includeFutureOwner=False, includeIsVaccinated=False, includeLogs=False, includeMedical=False))
-    tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, c.OWNERID)))
+    p = asm3.person.get_person(dbo, c.OWNERID)
+    if p is not None:
+        tags = append_tags(tags, person_tags(dbo, p))
     return substitute_template(dbo, templateid, tags)
 
 def generate_person_doc(dbo, templateid, personid, username):
