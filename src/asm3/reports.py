@@ -21,12 +21,11 @@ DEFAULT_REPORT_HEADER = """
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>$$TITLE$$</title>
 <style>
-* {
-font-family: Verdana,Arial,Helvetica,Sans-Serif;
-}
+body { font-family: Verdana,Arial,Helvetica,Sans-Serif; }
 </style>
 </head>
 
