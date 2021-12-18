@@ -177,7 +177,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="odtshow">' + _("Show") + '</label></td>',
-                '<td><select id="odtshow" data="odtshow" multiple="multiple" class="asm-bsmselect">',
+                '<td><select id="odtshow" name="odtshow" multiple="multiple" class="asm-bsmselect">',
                 html.list_to_options(document_templates.doctypes, "VALUE", "DISPLAY"),
                 '</select></td>',
                 '</tr>',

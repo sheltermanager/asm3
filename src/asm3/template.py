@@ -45,7 +45,7 @@ def get_document_templates(dbo, show = ""):
     out = []
     for r in rows:
         if not allowodt and r.NAME.endswith(".odt"): continue
-        if show != "" and r.SHOW.find(show) == -1 and r.SHOW != "everywhere": continue
+        if show != "" and asm3.utils.nulltostr(r.SHOW).find(show) == -1 and r.SHOW != "everywhere": continue
         out.append(r)
     return out
 
