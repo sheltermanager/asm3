@@ -1114,6 +1114,9 @@ def petrescue_adoptable_in(dbo):
 def petrescue_all_desexed(dbo):
     return cboolean(dbo, "PetRescueAllDesexed")
 
+def petrescue_all_microchips(dbo):
+    return cboolean(dbo, "PetRescueAllMicrochips")
+
 def petrescue_email(dbo):
     return cstring(dbo, "PetRescueEmail")
 
@@ -1262,6 +1265,9 @@ def savourlife_username(dbo):
 
 def savourlife_password(dbo):
     return cstring(dbo, "SavourLifePassword")
+
+def savourlife_all_microchips(dbo):
+    return cboolean(dbo, "SavourLifeAllMicrochips")
 
 def savourlife_interstate(dbo):
     return cboolean(dbo, "SavourLifeInterstate")
