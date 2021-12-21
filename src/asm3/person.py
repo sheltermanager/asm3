@@ -109,7 +109,7 @@ def embellish_latest_movement(dbo, p):
     lm = dbo.first_row(dbo.query("SELECT m.ID AS LatestMoveAnimalID, a.ID AS LatestMoveAnimalID, a.AnimalName AS LatestMoveAnimalName, " \
         "a.ShelterCode AS LatestMoveShelterCode, mt.MovementType AS LatestMoveTypeName " \
         "FROM adoption m "
-        "INNER JOIN animal a ON m.AnimalID = m.ID " \
+        "INNER JOIN animal a ON m.AnimalID = a.ID " \
         "INNER JOIN lksmovementtype mt ON mt.ID = m.MovementType " \
         "WHERE m.MovementType > 0 AND m.OwnerID = ? AND (ReturnDate Is Null OR ReturnDate > ?)" \
         "ORDER BY m.MovementDate DESC", [p.ID, dbo.today()]))
