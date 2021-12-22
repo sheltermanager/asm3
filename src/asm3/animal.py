@@ -573,7 +573,6 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     if post.integer("agegroup") != -1:
         ss.add_str("agegroup", "a.AgeGroup")
     ss.add_date("outbetweenfrom", "outbetweento", "a.ActiveMovementDate")
-    ss.add_words("medianotes", "web.MediaNotes")
     ss.add_str("createdby", "a.CreatedBy")
 
     if post["agedbetweenfrom"] != "" and post["agedbetweento"] != "":
@@ -582,14 +581,19 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
         ss.values.append(subtract_years(dbo.now(), post.floating("agedbetweenfrom")))
 
     if post["insuranceno"] != "":
-        ss.ands.append("EXISTS (SELECT InsuranceNumber FROM adoption WHERE " \
-            "LOWER(InsuranceNumber) LIKE ? AND AnimalID = a.ID)")
-        ss.values.append( "%%%s%%" % post["insuranceno"] )
+        ilike = dbo.sql_ilike("InsuranceNumber", "?")
+        ss.ands.append(f"EXISTS (SELECT InsuranceNumber FROM adoption WHERE {ilike} AND AnimalID = a.ID)")
+        ss.values.append( "%%%s%%" % post["insuranceno"].lower() )
+
+    if post["medianotes"] != "":
+        ilike = dbo.sql_ilike("MediaNotes", "?")
+        ss.ands.append(f"EXISTS (SELECT ID FROM media WHERE {ilike} AND LinkID = a.ID AND LinkTypeID = 0)")
+        ss.values.append( "%%%s%%" % post["medianotes"].lower() )
 
     if post["adoptionno"] != "":
-        ss.ands.append("EXISTS (SELECT AdoptionNumber FROM adoption WHERE " \
-            "LOWER(AdoptionNumber) LIKE ? AND AnimalID = a.ID)")
-        ss.values.append( "%%%s%%" % post["adoptionno"] )
+        ilike = dbo.sql_ilike("AdoptionNumber", "?")
+        ss.ands.append(f"EXISTS (SELECT AdoptionNumber FROM adoption WHERE {ilike} AND AnimalID = a.ID)")
+        ss.values.append( "%%%s%%" % post["adoptionno"].lower() )
 
     if post["filter"].find("includedeceased") == -1 and post["logicallocation"] != "deceased":
         ss.ands.append("a.DeceasedDate Is Null")
