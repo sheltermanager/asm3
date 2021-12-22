@@ -323,7 +323,7 @@ def js_page(include, title = "", controller = [], execline = ""):
         %s
         </script>
         </body>
-        <html>""" % ( title, "\n".join(include), asm3.utils.json(controller), execline )
+        </html>""" % ( title, "\n".join(include), asm3.utils.json(controller), execline )
 
 def mobile_page(l, title, scripts = [], controller = {}, execline = ""):
     """
