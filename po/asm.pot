@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-12-15 10:37+0000\n"
+"POT-Creation-Date: 2021-12-23 09:44+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3286,6 +3286,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Dandi Dinmont Terrier"
+msgstr ""
+
+#: lookups.py
+msgid "Dark"
 msgstr ""
 
 #: html.py
@@ -7149,6 +7153,10 @@ msgstr ""
 msgid "Lifetime"
 msgstr ""
 
+#: lookups.py
+msgid "Light"
+msgstr ""
+
 #: dbupdate.py
 msgid "Light Amber"
 msgstr ""
@@ -7704,8 +7712,36 @@ msgstr ""
 msgid "Medicate Animal"
 msgstr ""
 
-#: dbupdate.py
+#: lookups.py dbupdate.py
 msgid "Medium"
+msgstr ""
+
+#: lookups.py
+msgid "Medium - Blue"
+msgstr ""
+
+#: lookups.py
+msgid "Medium - Green"
+msgstr ""
+
+#: lookups.py
+msgid "Medium - Lilac"
+msgstr ""
+
+#: lookups.py
+msgid "Medium - Orange"
+msgstr ""
+
+#: lookups.py
+msgid "Medium - Pink"
+msgstr ""
+
+#: lookups.py
+msgid "Medium - Red"
+msgstr ""
+
+#: lookups.py
+msgid "Medium - Teal"
 msgstr ""
 
 #: html.py reports.js common.js header_edit_header.js person_find_results.js

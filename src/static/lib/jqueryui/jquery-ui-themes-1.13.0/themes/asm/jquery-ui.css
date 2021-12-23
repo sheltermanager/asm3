@@ -18,7 +18,6 @@
 /** ASM (Light) **/
 
 /** --- BEGIN MANUAL ADDITIONS --- */
-body { background-color: #fff !important; }
 
 /* Highlight the focused input field with a border style */
 input:focus, textarea:focus, select:focus {

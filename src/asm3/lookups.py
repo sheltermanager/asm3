@@ -205,9 +205,16 @@ CURRENCIES = [
 ]
 
 VISUAL_THEMES = [
-    ( "asm", "Light" ),
-    ( "asm-mid", "Medium" ),
-    ( "asm-dark", "Dark" ),
+    ( "asm", "asm", "#ffffff", _("Light") ),
+    ( "asm-mid", "asm-mid", "#bbbbbb", _("Medium") ),
+    ( "asm-mid-blue", "asm-mid", "#4e7dbf", _("Medium - Blue") ),
+    ( "asm-mid-green", "asm-mid", "#47a56b", _("Medium - Green") ),
+    ( "asm-mid-lilac", "asm-mid", "#914b89", _("Medium - Lilac") ),
+    ( "asm-mid-orange", "asm-mid", "#eaae5b", _("Medium - Orange") ),
+    ( "asm-mid-pink", "asm-mid", "#9b7388", _("Medium - Pink") ),
+    ( "asm-mid-red", "asm-mid", "#ed5557", _("Medium - Red") ),
+    ( "asm-mid-teal", "asm-mid", "#47a59a", _("Medium - Teal") ),
+    ( "asm-dark", "asm-dark", "#000000", _("Dark") )
 ]
 
 PETFINDER_BREEDS = (
@@ -998,6 +1005,13 @@ def get_log_types(dbo):
 def get_logtype_name(dbo, tid):
     if tid is None: return ""
     return dbo.query_string("SELECT LogTypeName FROM logtype WHERE ID = ?", [tid])
+
+def get_theme(theme):
+    """ Returns a tuple of values code, jq, bg, name for a theme """
+    for code, jq, bg, name in VISUAL_THEMES:
+        if code == theme:
+            return (code, jq, bg, name)
+    return ("asm", "asm", "#ffffff", "Light")
 
 def get_lookup(dbo, tablename, namefield):
     if tablename == "breed":

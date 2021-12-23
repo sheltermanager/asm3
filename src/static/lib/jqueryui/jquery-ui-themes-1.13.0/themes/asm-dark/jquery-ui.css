@@ -19,7 +19,6 @@
 /** ASM (Dark) **/
 
 /** --- BEGIN MANUAL ADDITIONS --- */
-body { background-color: #000 !important; }
 
 /* Take down some of the darker reds */
 .asm-overduerow, .asm-has-validation, .asm-person-code, .asm-error-text, 

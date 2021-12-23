@@ -926,6 +926,7 @@ const common = {
         let href = $("#jqt").attr("href");
         href = href.substring(0, href.indexOf("themes/")) + "themes/" + theme + "/jquery-ui.css";
         $("#jqt").attr("href", href);
+        if (theme == "asm-dark") { $("body").css("background-color", "#000000"); }
     },
 
     /**

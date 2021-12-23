@@ -19,6 +19,14 @@ $(function() {
             return s.join("\n");
         },
 
+        theme_list: function() {
+            let s = [];
+            $.each(controller.themes, function(i, v) {
+                s.push('<option value="' + v[0] + '">' + _(v[3]) + '</option>');
+            });
+            return s.join("\n");
+        },
+
         render: function() {
             return [
                 html.content_header(_("Change User Settings")),
@@ -49,7 +57,7 @@ $(function() {
                     '</td>',
                     '<td>',
                     '<select id="systemtheme" data="theme" class="asm-selectbox">',
-                    this.two_pair_options(controller.themes),
+                    this.theme_list(),
                     '</select>',
                     '</td>',
                 '</tr>',
@@ -119,15 +127,20 @@ $(function() {
                 }
             });
 
-            // When the visual theme is changed, switch the CSS file so the
-            // theme updates immediately.
+            // When the visual theme is changed, switch the CSS file and
+            // the background.
             $("#systemtheme").change(function() {
                 let theme = $("#systemtheme").val();
-                if (theme == "") {
-                    theme = asm.theme;
-                }
-                let href = asm.jqueryuicss.replace("%(theme)s", theme);
-                $("#jqt").attr("href", href);
+                if (theme == "") { theme = asm.theme; }
+                $.each(controller.themes, function(i, v) {
+                    let [tcode, tjq, tbg, tname] = v;
+                    if (tcode == theme) {
+                        let href = asm.jqueryuicss.replace("%(theme)s", tjq);
+                        $("#jqt").attr("href", href);
+                        $("body").css("background-color", tbg);
+                        return false;
+                    }
+                });
             });
 
         },

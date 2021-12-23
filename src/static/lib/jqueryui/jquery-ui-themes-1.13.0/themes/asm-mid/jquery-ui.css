@@ -18,7 +18,6 @@
 /** ASM (Mid-tone) **/
 
 /** --- BEGIN MANUAL ADDITIONS --- */
-body { background-color: #bbb !important; }
 
 /* Highlight the focused input field with a border style */
 input:focus, textarea:focus, select:focus {

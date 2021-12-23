@@ -139,15 +139,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     else:
         asm_scripts = asm_script_tags(asm3.utils.PATH) 
     # Set the body colour from the theme and make sure the theme is a valid choice.
-    # Note that the theme CSS sets the body background color already, we set it on the tag again
-    # here so that the user doesn't see the body flash a different colour during page transitions.
-    BACKGROUND_COLOURS = {
-        "asm":              "#ffffff",
-        "asm-dark":         "#000000",
-        "asm-mid":          "#bbbbbb"
-    }
-    if theme not in BACKGROUND_COLOURS: theme = "asm"
-    bgcol = BACKGROUND_COLOURS[theme]
+    themecode, themejq, themebg, themename = asm3.lookups.get_theme(theme)
     return '<!DOCTYPE html>\n' \
         '<html>\n' \
         '<head>\n' \
@@ -173,7 +165,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 css_tag(FULLCALENDAR_CSS) +
                 css_tag(TABLESORTER_CSS) + 
                 css_tag(TIMEPICKER_CSS) + 
-                css_tag(JQUERY_UI_CSS % { "theme": theme}, idattr="jqt", addbuild=True) +
+                css_tag(JQUERY_UI_CSS % { "theme": themejq}, idattr="jqt", addbuild=True) +
                 asm_css_tag("asm-icon.css") +
                 asm_css_tag("asm.css") + 
                 script_tag("static/lib/modernizr/modernizr.min.js") + 
@@ -203,7 +195,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_i18n(locale) + 
                 script_schema() + 
                 asm_scripts,
-            "bgcol": bgcol }
+            "bgcol": themebg }
 
 def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, visualaids = True, onlysavewhendirty = False, readonly = False):
     """
