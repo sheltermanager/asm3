@@ -922,11 +922,11 @@ const common = {
     /**
      * Applies the visual theme by loading the correct CSS file 
      */
-    apply_theme: function(theme) {
+    apply_theme: function(theme, bg) {
         let href = $("#jqt").attr("href");
         href = href.substring(0, href.indexOf("themes/")) + "themes/" + theme + "/jquery-ui.css";
         $("#jqt").attr("href", href);
-        if (theme == "asm-dark") { $("body").css("background-color", "#000000"); }
+        $("body").css("background-color", bg);
     },
 
     /**

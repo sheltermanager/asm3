@@ -3758,8 +3758,9 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
 
         # Is this movement an active reservation?
         if not m.returndate and m.movementtype == asm3.movement.NO_MOVEMENT \
-            and not m.movementdate and not m.reservationcancelleddate and \
-            m.reservationdate and m.reservationdate <= dbo.today(settime="23:59:59"):
+            and not m.movementdate and m.reservationdate and \
+            m.reservationdate <= dbo.today(settime="23:59:59") and \
+            (not m.reservationcancelleddate or m.reservationcancelleddate > dbo.today(settime="23:59:59")):
             hasreserve = True
 
         # Update the last time the animal was returned

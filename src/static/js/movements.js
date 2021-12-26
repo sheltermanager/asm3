@@ -105,7 +105,7 @@ $(function() {
                         }
                     }
                     // If this is a cancelled reservation
-                    if (row.MOVEMENTTYPE == 0 && row.RESERVATIONCANCELLEDDATE != null) {
+                    if (row.MOVEMENTTYPE == 0 && row.RESERVATIONCANCELLEDDATE && format.date_js(row.RESERVATIONCANCELLEDDATE) <= new Date()) {
                         return true;
                     }
                     // If the movement is returned and not in the future
@@ -754,8 +754,8 @@ $(function() {
             }
             row.MOVEMENTNAME = common.get_field(controller.movementtypes, row.MOVEMENTTYPE, "MOVEMENTTYPE");
             row.RESERVATIONSTATUSNAME = common.get_field(controller.reservationstatuses, row.RESERVATIONSTATUSID, "STATUSNAME");
-            if (row.RESERVATIONDATE != null && row.RESERVATIONCANCELLEDDATE == null && !row.MOVEMENTDATE) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 9, "MOVEMENTTYPE"); }
-            if (row.RESERVATIONDATE != null && row.RESERVATIONCANCELLEDDATE != null && !row.MOVEMENTDATE) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 10, "MOVEMENTTYPE"); }
+            if (row.RESERVATIONDATE != null && !row.RESERVATIONCANCELLEDDATE && !row.MOVEMENTDATE) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 9, "MOVEMENTTYPE"); }
+            if (row.RESERVATIONDATE != null && row.RESERVATIONCANCELLEDDATE && format.date_js(row.RESERVATIONCANCELLEDDATE) <= new Date() && !row.MOVEMENTDATE) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 10, "MOVEMENTTYPE"); }
             if (row.MOVEMENTTYPE == 1 && row.ISTRIAL == 1) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 11, "MOVEMENTTYPE"); }
             if (row.MOVEMENTTYPE == 2 && row.ISPERMANENTFOSTER == 1) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 12, "MOVEMENTTYPE"); }
             if (row.MOVEMENTTYPE == 7 && movements.lastanimal && movements.lastanimal.SPECIESID == 2) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 13, "MOVEMENTTYPE"); }

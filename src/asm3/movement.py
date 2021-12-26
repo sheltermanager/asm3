@@ -45,7 +45,7 @@ def get_movement_query(dbo):
         "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
         "WHEN m.MovementType = 1 AND m.IsTrial = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \
-        "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null AND m.ReservationCancelledDate Is Not Null THEN " \
+        "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null AND m.ReservationCancelledDate Is Not Null AND m.ReservationCancelledDate < %(now)s THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=10) " \
         "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=9) " \
@@ -57,7 +57,7 @@ def get_movement_query(dbo):
         "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
         "WHEN m.MovementType = 1 AND m.IsTrial = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \
-        "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null AND m.ReservationCancelledDate Is Not Null THEN " \
+        "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null AND m.ReservationCancelledDate Is Not Null AND m.ReservationCancelledDate < %(now)s THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=10) " \
         "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=9) " \
@@ -84,7 +84,7 @@ def get_movement_query(dbo):
         "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
         "LEFT OUTER JOIN owner o ON m.OwnerID = o.ID " \
         "LEFT OUTER JOIN owner r ON m.RetailerID = r.ID " \
-        "LEFT OUTER JOIN owner rb ON m.ReturnedByOwnerID = rb.ID "
+        "LEFT OUTER JOIN owner rb ON m.ReturnedByOwnerID = rb.ID " % { "now": dbo.sql_now() }
 
 def get_transport_query(dbo):
     return "SELECT t.*, tt.TransportTypeName, " \

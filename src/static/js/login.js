@@ -319,7 +319,7 @@ const login = {
             if (e.which == 13) { self.login(); }
         });
 
-        if (common.is_dark_mode()) { common.apply_theme("asm-dark"); }
+        if (common.is_dark_mode()) { common.apply_theme("asm-dark", "#000000"); }
 
     }
 };
