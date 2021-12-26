@@ -1,6 +1,7 @@
 45
 ================
 
+26/12/21 Do not include emblems when sorting by animal name in find results
 26/12/21 HasActiveReserve should observe ReservationCancelledDate
 23/12/21 Additional colour options for medium theme
 22/12/21 Search all media for matching notes in find animal

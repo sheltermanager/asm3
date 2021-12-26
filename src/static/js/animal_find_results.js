@@ -63,8 +63,10 @@ $(function() {
                         value = row[name.toUpperCase()];
                     }
                     let formatted = animal_find_results.format_column(row, name, value, controller.additional);
-                    if (name == "AnimalName") { 
-                        formatted = link + formatted + "</a></span>";
+                    if (name == "AnimalName") {
+                        // Set the sort so only the name is sorted (no emblems or links)
+                        let sorted = '<span data-sort="' + html.title(formatted)  + '"></span>';
+                        formatted = sorted + link + formatted + "</a></span>";
                     }
                     h.push(formatted);
                     h.push("</td>");
