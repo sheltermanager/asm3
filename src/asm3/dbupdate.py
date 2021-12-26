@@ -38,7 +38,8 @@ VERSIONS = (
     34101, 34102, 34103, 34104, 34105, 34106, 34107, 34108, 34109, 34110, 34111,
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
-    34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504
+    34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
+    34508, 34509
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -151,12 +152,10 @@ def sql_structure(dbo):
         fstr("Description"),
         fint("Archived", True),
         fint("AccountType"),
-        fint("CostTypeID", True),
-        fint("DonationTypeID", True) ))
+        fint("CostTypeID", True), # ASM2_COMPATIBILITY - replaced by costtype.AccountID
+        fint("DonationTypeID", True) )) # ASM2_COMPATIBILITY - replaced by donationtype.AccountID
     sql += index("accounts_Code", "accounts", "Code", False)
     sql += index("accounts_Archived", "accounts", "Archived")
-    sql += index("accounts_CostTypeID", "accounts", "CostTypeID")
-    sql += index("accounts_DonationTypeID", "accounts", "DonationTypeID")
  
     sql += table("accountsrole", (
         fint("AccountID"),
@@ -263,11 +262,9 @@ def sql_structure(dbo):
         fstr("ShelterCode"),
         fstr("ShortCode"),
         fstr("ExtraIDs", True),
-        # ASM2_COMPATIBILITY
         fint("UniqueCodeID", True),
-        fdate("SmartTagSentDate", True),
         fint("YearCodeID", True),
-        # ASM2_COMPATIBILITY
+        fdate("SmartTagSentDate", True), # ASM2_COMPATIBILITY
         fstr("AcceptanceNumber"),
         fdate("DateOfBirth"),
         fint("EstimatedDOB"),
@@ -872,6 +869,7 @@ def sql_structure(dbo):
         fstr("CostTypeName"),
         fstr("CostTypeDescription", True),
         fint("DefaultCost", True),
+        fint("AccountID", True),
         fint("IsRetired", True) ), False)
 
     sql += table("customreport", (
@@ -885,7 +883,8 @@ def sql_structure(dbo):
         flongstr("HTMLBody", False),
         flongstr("Description"),
         fint("OmitHeaderFooter"),
-        fint("OmitCriteria") ))
+        fint("OmitCriteria"),
+        fint("Revision", True) ))
     sql += index("customreport_Title", "customreport", "Title")
 
     sql += table("customreportrole", (
@@ -960,6 +959,7 @@ def sql_structure(dbo):
         fstr("DonationName"),
         fstr("DonationDescription", True),
         fint("DefaultCost", True),
+        fint("AccountID", True),
         fint("IsVAT", True),
         fint("IsRetired", True) ), False)
 
@@ -1516,6 +1516,7 @@ def sql_structure(dbo):
         fid(),
         fstr("Name"),
         fstr("Path"),
+        fstr("Show", True),
         flongstr("Content") ), False)
     sql += index("templatedocument_NamePath", "templatedocument", "Name,Path", True)
 
@@ -2311,6 +2312,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksynun", "Name", 0, _("Yes", l))
     sql += lookup1("lksynun", "Name", 1, _("No", l))
     sql += lookup1("lksynun", "Name", 2, _("Unknown", l))
+    sql += lookup1("lksynun", "Name", 3, _("Selective", l))
     sql += lookup1("lksynunk", "Name", 0, _("Yes", l))
     sql += lookup1("lksynunk", "Name", 1, _("No", l))
     sql += lookup1("lksynunk", "Name", 2, _("Unknown", l))
@@ -2528,10 +2530,11 @@ def install_default_templates(dbo, removeFirst = False):
     """
     Installs the default templates files into the db
     """
-    def add_document_template_from_file(name, path, filename):
+    def add_document_template_from_file(show, name, path, filename):
         dbo.insert("templatedocument", {
             "Name":     name,
             "Path":     path,
+            "Show":     show,
             "Content":  asm3.utils.base64encode( asm3.utils.read_binary_file(filename) )
         })
     def add_html_template(name, head, body, foot, builtin):
@@ -2560,35 +2563,35 @@ def install_default_templates(dbo, removeFirst = False):
     add_html_template_from_files("responsive")
     add_html_template_from_files("plain")
     add_html_template_from_files("rss")
-    add_document_template_from_file("adoption_form.html", "/templates", path + "media/templates/adoption_form.html")
-    add_document_template_from_file("cat_assessment_form.html", "/templates", path + "media/templates/cat_assessment_form.html")
-    add_document_template_from_file("cat_cage_card.html", "/templates", path + "media/templates/cat_cage_card.html")
-    add_document_template_from_file("cat_information.html", "/templates", path + "media/templates/cat_information.html")
-    add_document_template_from_file("dog_assessment_form.html", "/templates", path + "media/templates/dog_assessment_form.html")
-    add_document_template_from_file("dog_cage_card.html", "/templates", path + "media/templates/dog_cage_card.html")
-    add_document_template_from_file("dog_information.html", "/templates", path + "media/templates/dog_information.html")
-    add_document_template_from_file("dog_license.html", "/templates", path + "media/templates/dog_license.html")
-    add_document_template_from_file("fancy_cage_card.html", "/templates", path + "media/templates/fancy_cage_card.html")
-    add_document_template_from_file("half_a4_cage_card.html", "/templates", path + "media/templates/half_a4_cage_card.html")
-    add_document_template_from_file("homecheck_form.html", "/templates", path + "media/templates/homecheck_form.html")
-    add_document_template_from_file("incident_information.html", "/templates", path + "media/templates/incident_information.html")
-    add_document_template_from_file("invoice.html", "/templates", path + "media/templates/invoice.html")
-    add_document_template_from_file("microchip_form.html", "/templates", path + "media/templates/microchip_form.html")
-    add_document_template_from_file("petplan.html", "/templates", path + "media/templates/petplan.html")
-    add_document_template_from_file("rabies_certificate.html", "/templates", path + "media/templates/rabies_certificate.html")
-    add_document_template_from_file("receipt.html", "/templates", path + "media/templates/receipt.html")
-    add_document_template_from_file("receipt_tax.html", "/templates", path + "media/templates/receipt_tax.html")
-    add_document_template_from_file("reclaim_release.html", "/templates", path + "media/templates/reclaim_release.html")
-    add_document_template_from_file("reserved.html", "/templates", path + "media/templates/reserved.html")
-    add_document_template_from_file("spay_neuter_voucher.html", "/templates", path + "media/templates/spay_neuter_voucher.html")
-    add_document_template_from_file("rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
-    add_document_template_from_file("rspca_behaviour_observations_cat.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_cat.html")
-    add_document_template_from_file("rspca_behaviour_observations_dog.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_dog.html")
-    add_document_template_from_file("rspca_behaviour_observations_rabbit.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_rabbit.html")
-    add_document_template_from_file("rspca_dog_advice_leaflet.html", "/templates/rspca", path + "media/templates/rspca/rspca_dog_advice_leaflet.html")
-    add_document_template_from_file("rspca_post_home_visit.html", "/templates/rspca", path + "media/templates/rspca/rspca_post_home_visit.html")
-    add_document_template_from_file("rspca_transfer_of_ownership.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_ownership.html")
-    add_document_template_from_file("rspca_transfer_of_title.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_title.html")
+    add_document_template_from_file("animal,movement", "adoption_form.html", "/templates", path + "media/templates/adoption_form.html")
+    add_document_template_from_file("animal", "cat_assessment_form.html", "/templates", path + "media/templates/cat_assessment_form.html")
+    add_document_template_from_file("animal", "cat_cage_card.html", "/templates", path + "media/templates/cat_cage_card.html")
+    add_document_template_from_file("animal", "cat_information.html", "/templates", path + "media/templates/cat_information.html")
+    add_document_template_from_file("animal", "dog_assessment_form.html", "/templates", path + "media/templates/dog_assessment_form.html")
+    add_document_template_from_file("animal", "dog_cage_card.html", "/templates", path + "media/templates/dog_cage_card.html")
+    add_document_template_from_file("animal", "dog_information.html", "/templates", path + "media/templates/dog_information.html")
+    add_document_template_from_file("licence", "dog_license.html", "/templates", path + "media/templates/dog_license.html")
+    add_document_template_from_file("animal", "fancy_cage_card.html", "/templates", path + "media/templates/fancy_cage_card.html")
+    add_document_template_from_file("animal", "half_a4_cage_card.html", "/templates", path + "media/templates/half_a4_cage_card.html")
+    add_document_template_from_file("movement", "homecheck_form.html", "/templates", path + "media/templates/homecheck_form.html")
+    add_document_template_from_file("incident", "incident_information.html", "/templates", path + "media/templates/incident_information.html")
+    add_document_template_from_file("payment", "invoice.html", "/templates", path + "media/templates/invoice.html")
+    add_document_template_from_file("animal,movement", "microchip_form.html", "/templates", path + "media/templates/microchip_form.html")
+    add_document_template_from_file("animal,movement", "petplan.html", "/templates", path + "media/templates/petplan.html")
+    add_document_template_from_file("animal,movement", "rabies_certificate.html", "/templates", path + "media/templates/rabies_certificate.html")
+    add_document_template_from_file("payment", "receipt.html", "/templates", path + "media/templates/receipt.html")
+    add_document_template_from_file("payment", "receipt_tax.html", "/templates", path + "media/templates/receipt_tax.html")
+    add_document_template_from_file("movement", "reclaim_release.html", "/templates", path + "media/templates/reclaim_release.html")
+    add_document_template_from_file("movement", "reserved.html", "/templates", path + "media/templates/reserved.html")
+    add_document_template_from_file("voucher", "spay_neuter_voucher.html", "/templates", path + "media/templates/spay_neuter_voucher.html")
+    add_document_template_from_file("animal,movement", "rspca_adoption.html", "/templates/rspca", path + "media/templates/rspca/rspca_adoption.html")
+    add_document_template_from_file("animal", "rspca_behaviour_observations_cat.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_cat.html")
+    add_document_template_from_file("animal", "rspca_behaviour_observations_dog.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_dog.html")
+    add_document_template_from_file("animal", "rspca_behaviour_observations_rabbit.html", "/templates/rspca", path + "media/templates/rspca/rspca_behaviour_observations_rabbit.html")
+    add_document_template_from_file("animal", "rspca_dog_advice_leaflet.html", "/templates/rspca", path + "media/templates/rspca/rspca_dog_advice_leaflet.html")
+    add_document_template_from_file("animal", "rspca_post_home_visit.html", "/templates/rspca", path + "media/templates/rspca/rspca_post_home_visit.html")
+    add_document_template_from_file("animal", "rspca_transfer_of_ownership.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_ownership.html")
+    add_document_template_from_file("animal", "rspca_transfer_of_title.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_title.html")
 
 def install(dbo):
     """
@@ -2606,7 +2609,7 @@ def install(dbo):
 def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = True, \
         includeData = True, includeNonASM2 = True, includeUsers = True, includeLKS = True, \
         includeLookups = True, deleteDBV = False, deleteFirst = True, deleteViewSeq = False, \
-        escapeCR = "", uppernames = False, wrapTransaction = True):
+        escapeCR = "", uppernames = False, excludeDBFSTemplates=False, wrapTransaction = True):
     """
     Dumps all of the data in the database as DELETE/INSERT statements.
     includeConfig - include the config table
@@ -2620,6 +2623,7 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
     deleteFirst - issue DELETE FROM statements before INSERTs
     deleteViewSeq - issue DELETE DBViewSeqVersion from config after dump
     escapeCR - A substitute for any \n characters found in values
+    excludeDBFSTemplates - Throw away dbfs lines where the path is internet or template
     uppernames - upper case table names in the output
     wrapTransaction - wrap a transaction around the dump
 
@@ -2643,6 +2647,9 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
         try:
             sys.stderr.write("dumping %s.., \n" % t)
             for x in dbo.query_to_insert_sql("SELECT * FROM %s" % t, outtable, escapeCR):
+                if excludeDBFSTemplates and t == "dbfs" and \
+                    (x.find("template") != -1 or x.find("internet") != -1 or x.find("report") != -1): 
+                    continue
                 yield x
         except:
             em = str(sys.exc_info())
@@ -2703,8 +2710,19 @@ def dump_smcom(dbo):
     """
     Dumps the database in a convenient format for import to sheltermanager.com
     generator function.
+    For dumps that came from ASM2, may also want to:
+        1. Remove the DELETE FROM dbfs line manually from the output.
+        2. Remove the userrole and users tables from the output.
     """
-    for x in dump(dbo, includeDBFS = False, includeConfig = False, includeUsers = True, includeLKS = False, deleteDBV = True, deleteViewSeq = True, wrapTransaction = True):
+    # For ASM2 sources, we remove some constraints that were added in ASM3 to make import easy
+    yield "\\set ON_ERROR_STOP\n"
+    yield "ALTER TABLE animal ALTER AcceptanceNumber DROP NOT NULL;\n"
+    yield "ALTER TABLE animal ALTER IdentichipNumber DROP NOT NULL;\n"
+    yield "ALTER TABLE animal ALTER TattooNumber DROP NOT NULL;\n"
+    yield "ALTER TABLE animal ALTER BondedAnimalID DROP NOT NULL;\n"
+    yield "ALTER TABLE animal ALTER BondedAnimal2ID DROP NOT NULL;\n"
+    yield "ALTER TABLE animalvaccination ALTER Cost DROP NOT NULL;\n"
+    for x in dump(dbo, includeDBFS = True, includeConfig = False, includeUsers = True, includeLKS = False, deleteDBV = True, deleteViewSeq = True, excludeDBFSTemplates = True, wrapTransaction = True):
         yield x
 
 def dump_merge(dbo, deleteViewSeq = True):
@@ -5480,4 +5498,37 @@ def update_34504(dbo):
     # add onlineform.AutoProcess
     add_column(dbo, "onlineform", "AutoProcess", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineform SET AutoProcess=0")
+
+def update_34505(dbo):
+    # add extra row for Selective to good with
+    l = dbo.locale
+    dbo.execute_dbupdate("INSERT INTO lksynun VALUES (3, ?)", [ _("Selective", l) ])
+
+def update_34506(dbo):
+    # add customreport.Revision
+    add_column(dbo, "customreport", "Revision", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE customreport SET Revision=0")
+
+def update_34507(dbo):
+    # add costtype.AccountID, donationtype.AccountID
+    add_column(dbo, "costtype", "AccountID", dbo.type_integer)
+    add_column(dbo, "donationtype", "AccountID", dbo.type_integer)
+    # Copy the values from the redundant columns in accounts
+    for a in dbo.query("SELECT ID, CostTypeID, DonationTypeID FROM accounts"):
+        if a.COSTTYPEID is not None and a.COSTTYPEID > 0:
+            dbo.execute_dbupdate("UPDATE costtype SET AccountID=? WHERE ID=?", (a.ID, a.COSTTYPEID))
+        if a.DONATIONTYPEID is not None and a.DONATIONTYPEID > 0:
+            dbo.execute_dbupdate("UPDATE donationtype SET AccountID=? WHERE ID=?", (a.ID, a.DONATIONTYPEID))
+
+def update_34508(dbo):
+    # Replace old JQUI themes with light or dark
+    dbo.execute_dbupdate("UPDATE users SET ThemeOverride='asm' WHERE ThemeOverride IN ('base','cupertino'," \
+        "'dot-luv','excite-bike','flick','hot-sneaks','humanity','le-frog','overcast','pepper-grinder','redmond'," \
+        "'smoothness','south-street','start','sunny','swanky-purse','ui-lightness')")
+    dbo.execute_dbupdate("UPDATE users SET ThemeOverride='asm-dark' WHERE ThemeOverride IN ('black-tie','blitzer'," \
+        "'dark-hive','eggplant','mint-choc','trontastic','ui-darkness','vader')")
+
+def update_34509(dbo):
+    add_column(dbo, "templatedocument", "Show", dbo.type_shorttext)
+    dbo.execute_dbupdate("UPDATE templatedocument SET Show='everywhere'")
 

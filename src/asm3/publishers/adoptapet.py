@@ -251,7 +251,11 @@ class AdoptAPetPublisher(FTPPublisher):
             "#18:Declawed=Declawed\n" \
             "#19:SpecialNeeds=SpecialNeeds\n" \
             "#20:HairLength=HairLength\n" \
-            "#21:YouTubeVideoURL=YouTubeVideoURL" 
+            "#21:YouTubeVideoURL=YouTubeVideoURL\n" \
+            "#22:Birthdate=Birthdate\n" \
+            "#23:Sizecurrent=Sizecurrent\n" \
+            "#24:SizeUOM=SizeUOM\n" \
+            "#25:AdoptionFee=AdoptionFee"
         else:
             defmap += "#10:Color=Color\n" \
             "#11:Description=Description\n" \
@@ -265,7 +269,12 @@ class AdoptAPetPublisher(FTPPublisher):
             "#19:Declawed=Declawed\n" \
             "#20:SpecialNeeds=SpecialNeeds\n" \
             "#21:HairLength=HairLength\n" \
-            "#22:YouTubeVideoURL=YouTubeVideoURL" 
+            "#22:YouTubeVideoURL=YouTubeVideoURL\n" \
+            "#23:Birthdate=Birthdate\n" \
+            "#24:Sizecurrent=Sizecurrent\n" \
+            "#25:SizeUOM=SizeUOM\n" \
+            "#26:AdoptionFee=AdoptionFee"
+
         return defmap
 
     def apYouTubeURL(self, u):
@@ -387,26 +396,26 @@ class AdoptAPetPublisher(FTPPublisher):
         """
         line = []
         # Id
-        line.append("\"%s\"" % an["SHELTERCODE"])
+        line.append(an.SHELTERCODE)
         # Species
-        line.append("\"%s\"" % an["PETFINDERSPECIES"])
+        line.append(an.PETFINDERSPECIES)
         # Breed 1
-        line.append("\"%s\"" % an["PETFINDERBREED"])
+        line.append(an.PETFINDERBREED)
         # Breed 2
-        line.append("\"%s\"" % self.getPublisherBreed(an, 2))
+        line.append(self.getPublisherBreed(an, 2))
         # Purebred
-        line.append(self.apYesNo(an["CROSSBREED"] == 0))
+        line.append(self.apYesNo(an.CROSSBREED == 0))
         # Age, one of Adult, Baby, Senior and Young
-        ageinyears = asm3.i18n.date_diff_days(an["DATEOFBIRTH"], asm3.i18n.now(self.dbo.timezone))
+        ageinyears = asm3.i18n.date_diff_days(an.DATEOFBIRTH, asm3.i18n.now(self.dbo.timezone))
         ageinyears /= 365.0
         agename = "Adult"
         if ageinyears < 0.5: agename = "Baby"
         elif ageinyears < 2: agename = "Young"
         elif ageinyears < 9: agename = "Adult"
         else: agename = "Senior"
-        line.append("\"%s\"" % agename)
+        line.append(agename)
         # Name
-        line.append("\"%s\"" % an["ANIMALNAME"])
+        line.append(an.ANIMALNAME)
         # Size, one of S, M, L, XL
         ansize = "M"
         if an["SIZE"] == 0: ansize = "XL"
@@ -417,36 +426,47 @@ class AdoptAPetPublisher(FTPPublisher):
         # adoptapet will throw errors otherwise
         if an["PETFINDERSPECIES"] != "Dog" and an["PETFINDERSPECIES"] != "Cat":
             ansize = ""
-        line.append("\"%s\"" % ansize)
+        line.append(ansize)
         # Sex, one of M or F
         sexname = "M"
         if an["SEX"] == 0: sexname = "F"
-        line.append("\"%s\"" % sexname)
+        line.append(sexname)
         # Colour
-        if self.pc.includeColours: line.append("\"%s\"" % an["ADOPTAPETCOLOUR"])
+        if self.pc.includeColours: line.append(an.ADOPTAPETCOLOUR)
         # Description
-        line.append("\"%s\"" % self.getDescription(an, crToBr=True))
+        line.append(self.getDescription(an, crToBr=True))
         # Status, one of Available, Adopted or Delete
-        line.append("\"Available\"")
+        line.append("Available")
         # Good with Kids
-        line.append(self.apYesNoUnknown(an["ISGOODWITHCHILDREN"]))
+        line.append(self.apYesNoUnknown(an.ISGOODWITHCHILDREN))
         # Good with Cats
-        line.append(self.apYesNoUnknown(an["ISGOODWITHCATS"]))
+        line.append(self.apYesNoUnknown(an.ISGOODWITHCATS))
         # Good with Dogs
-        line.append(self.apYesNoUnknown(an["ISGOODWITHDOGS"]))
+        line.append(self.apYesNoUnknown(an.ISGOODWITHDOGS))
         # Spayed/Neutered
-        line.append(self.apYesNo(an["NEUTERED"] == 1))
+        line.append(self.apYesNo(an.NEUTERED == 1))
         # Shots current
         line.append(self.apYesNo(asm3.medical.get_vaccinated(self.dbo, int(an["ID"]))))
         # Housetrained
-        line.append(self.apYesNoUnknown(an["ISHOUSETRAINED"]))
+        line.append(self.apYesNoUnknown(an.ISHOUSETRAINED))
         # Declawed
-        line.append(self.apYesNo(an["DECLAWED"] == 1))
+        line.append(self.apYesNo(an.DECLAWED == 1))
         # Special needs
-        line.append(self.apYesNo(an["CRUELTYCASE"] == 1 or an["HASSPECIALNEEDS"] == 1))
+        line.append(self.apYesNo(an.CRUELTYCASE == 1 or an.HASSPECIALNEEDS == 1))
         # Hair Length
         line.append(self.apHairLength(an))
         # YouTube Video URL
-        line.append(self.apYouTubeURL(an["WEBSITEVIDEOURL"]))
+        line.append(self.apYouTubeURL(an.WEBSITEVIDEOURL))
+        # Birthdate 
+        line.append(asm3.i18n.format_date(an.DATEOFBIRTH, "%m/%d/%Y"))
+        # Sizecurrent
+        line.append(str(asm3.utils.cint(an.WEIGHT)))
+        # SizeUOM
+        line.append("lbs")
+        # AdoptionFee
+        if an.FEE == 0:
+            line.append("")
+        else:
+            line.append(str(int(asm3.utils.cint(an.FEE) / 100)))
         return self.csvLine(line)
 

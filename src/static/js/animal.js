@@ -1606,7 +1606,7 @@ $(function() {
                     animalid: controller.animal.ID, 
                     subject: controller.animal.ANIMALNAME + " - " + controller.animal.CODE,
                     logtypes: controller.logtypes,
-                    templates: controller.templates
+                    templates: controller.templatesemail
                 });
             });
 

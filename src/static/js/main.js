@@ -641,7 +641,9 @@ $(function() {
                  "os": "<b>" + navigator.platform + "</b>"
             }),
             '</p>',
-            '<div id="changelog"></div>',
+            '<div id="changelog">',
+                '<textarea class="asm-textarea" readonly="readonly" style="width: 650px; height: 400px;"></textarea>',
+            '</div>',
             '</div>',
 
             '<div id="dialog-addmessage" style="display: none" title="' + _("Add message") + '">',
@@ -815,9 +817,10 @@ $(function() {
                 buttons: about_buttons
             });
 
-            $("#link-about").click(function() {
-                $("#changelog").html(
-                    '<iframe style="width: 650px; height: 400px;" src="static/pages/changelog.txt"></iframe>');
+            $("#link-about").click(async function() {
+                header.show_loading();
+                let changelog = await common.ajax_get("static/pages/changelog.txt");
+                $("#changelog>textarea").text(changelog);
                 $("#dialog-about").dialog("open");
                 return false; // squash href #
             });

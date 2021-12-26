@@ -2,7 +2,7 @@ Shelter Inventory at Date
 ###
 Inventories
 ###
-Any
+Any rev05
 ###
 Historical animal inventory for any date.
 ###
@@ -89,7 +89,7 @@ Shelter Inventory at Date (Include trial adoptions)
 ###
 Inventories
 ###
-3200/Any
+3200/Any rev05
 ###
 Historical animal inventory for any date. Treats trial adoptions as still on the shelter.
 ###

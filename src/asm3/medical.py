@@ -745,6 +745,8 @@ def reschedule_vaccination(dbo, username, vaccinationid, newdate, comments):
         "VaccinationID":        av.VACCINATIONID,
         "DateOfVaccination":    None,
         "DateRequired":         newdate,
+        "Manufacturer":         "",
+        "BatchNumber":          "",
         "Cost":                 av.COST,
         "CostPaidDate":         None,
         "Comments":             "" 

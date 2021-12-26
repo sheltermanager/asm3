@@ -226,7 +226,7 @@ class Database(object):
                     v = self.escape_xss(v)
                 # Any transformations before storing in the database
                 v = transform(v)
-                values[k] = u"%s" % v
+                values[k] = "%s" % v
         return values
 
     def encode_str_after_read(self, v):

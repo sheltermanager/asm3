@@ -237,7 +237,7 @@ const login = {
         }
         else {
             $("#asm-login-splash").css({
-                "background-image": "url(static/images/splash/splash_logo.jpg)"
+                "background-image": common.is_dark_mode() ? "url(static/images/splash/splash_logo_dark.jpg)" : "url(static/images/splash/splash_logo.jpg)"
             });
         }
         
@@ -318,5 +318,8 @@ const login = {
         $("input#database").keypress(function(e) {
             if (e.which == 13) { self.login(); }
         });
+
+        if (common.is_dark_mode()) { common.apply_theme("asm-dark"); }
+
     }
 };

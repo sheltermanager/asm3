@@ -90,6 +90,8 @@ def update_stocklevel_from_form(dbo, post, username):
         raise asm3.utils.ASMValidationError(_("Stock level must have a name", l))
     if post["unitname"] == "":
         raise asm3.utils.ASMValidationError(_("Stock level must have a unit", l))
+    if post.date("usagedate") is None:
+        raise asm3.utils.ASMValidationError(_("Stock usage must have a date", l))
 
     diff = post.floating("balance") - dbo.query_float("SELECT Balance FROM stocklevel WHERE ID = ?", [slid])
 
@@ -119,6 +121,8 @@ def insert_stocklevel_from_form(dbo, post, username):
         raise asm3.utils.ASMValidationError(_("Stock level must have a name", l))
     if post["unitname"] == "":
         raise asm3.utils.ASMValidationError(_("Stock level must have a unit", l))
+    if post.date("usagedate") is None:
+        raise asm3.utils.ASMValidationError(_("Stock usage must have a date", l))
    
     nid = dbo.insert("stocklevel", {
         "Name":             post["name"],

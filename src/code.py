@@ -5,10 +5,10 @@ import os, sys
 # The path to the folder containing the ASM3 modules
 PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
 
-# Put the rest of our modules on the path
-sys.path.append(PATH)
+# Prepend our modules to the path to make sure they're added first
+sys.path.insert(0, PATH)
 
-import web
+import web062 as web
 
 import asm3.al
 import asm3.additional
@@ -61,10 +61,11 @@ from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format,
     add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, \
     monday_of_week, sunday_of_week, first_of_year, last_of_year, now, format_currency
 
-from asm3.sitedefs import BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
+from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, \
+    ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
     AKC_REUNITE_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, \
-    LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, MULTIPLE_DATABASES_PUBLISH_URL, \
-    MULTIPLE_DATABASES_PUBLISH_FTP, ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, \
+    LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, \
+    ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, HTMLFTP_PUBLISHER_ENABLED, \
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
     MAP_PROVIDER_KEY, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
     PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, QR_IMG_SRC, \
@@ -112,6 +113,7 @@ def session_manager():
     web.config.session_parameters["cookie_path"] = "/"
     web.config.session_parameters["timeout"] = 86400
     web.config.session_parameters["ignore_change_ip"] = True
+    web.config.session_parameters["ignore_expiry"] = True # session disappears on timeout set above 
     web.config.session_parameters["secure"] = SESSION_SECURE_COOKIE
     sess = None
     if asm3.utils.websession is None:
@@ -151,7 +153,8 @@ def asm_500_email():
     """
     Custom 500 error page that sends emails to the site admin
     """
-    web.emailerrors(ADMIN_EMAIL, web.webapi._InternalError)()
+    asm3.utils.send_error_email()
+    #web.emailerrors(ADMIN_EMAIL, web.webapi._InternalError)()
     s = """
         <html>
         <head>
@@ -709,23 +712,24 @@ class media(ASMEndpoint):
         post = o.post
         emailadd = post["to"]
         attachments = []
-        notes = []
+        subject = [ post["subject"] ]
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
+            filename = asm3.media._get_media_filename(m)
             if m is None: self.notfound()
             content = asm3.dbfs.get_string(dbo, m.MEDIANAME)
             if m.MEDIAMIMETYPE == "text/html":
                 content = asm3.utils.bytes2str(content)
                 content = asm3.utils.fix_relative_document_uris(dbo, content)
                 content = asm3.utils.str2bytes(content)
-            attachments.append(( m.MEDIANAME, m.MEDIAMIMETYPE, content ))
-            notes.append(m.MEDIANOTES)
+            attachments.append(( filename, m.MEDIAMIMETYPE, content ))
+            subject.append(filename)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if asm3.configuration.audit_on_send_email(dbo): 
             asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), 
-                emailadd, ", ".join(notes), post["body"])
+                emailadd, ", ".join(subject), post["body"])
         return emailadd
 
     def post_emailpdf(self, o):
@@ -734,21 +738,22 @@ class media(ASMEndpoint):
         post = o.post
         emailadd = post["to"]
         attachments = []
-        notes = []
+        subject = [ post["subject"] ]
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
             if m is None: self.notfound()
             if m.MEDIAMIMETYPE != "text/html": continue
             content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
             contentpdf = asm3.utils.html_to_pdf(dbo, content)
-            attachments.append(( "%s.pdf" % m.ID, "application/pdf", contentpdf ))
-            notes.append(m.MEDIANOTES)
+            filename = asm3.media._get_media_filename(m).replace(".html", ".pdf")
+            attachments.append(( filename, "application/pdf", contentpdf ))
+            subject.append(filename)
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if asm3.configuration.audit_on_send_email(dbo): 
             asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
-                emailadd, ", ".join(notes), post["body"])
+                emailadd, ", ".join(subject), post["body"])
         return emailadd
 
     def post_emailsign(self, o):
@@ -774,6 +779,11 @@ class media(ASMEndpoint):
             if asm3.configuration.audit_on_send_email(dbo): 
                 asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body))
         return emailadd
+
+    def post_jpg2pdf(self, o):
+        self.check(asm3.users.CHANGE_MEDIA)
+        for mid in o.post.integer_list("ids"):
+            asm3.media.convert_media_jpg2pdf(o.dbo, o.user, mid)
 
     def post_sign(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
@@ -917,7 +927,28 @@ class mobile_sign(ASMEndpoint):
 
     def content(self, o):
         self.content_type("text/html")
-        return asm3.mobile.page_sign(o.dbo, o.session, o.user)
+        ids = asm3.configuration.signpad_ids(o.dbo, o.user)
+        names = []
+        preview = []
+        for mid in ids.strip().split(","):
+            if mid.strip() != "": 
+                names.append(asm3.media.get_notes_for_id(o.dbo, int(mid)))
+                dummy, dummy, dummy, contents = asm3.media.get_media_file_data(o.dbo, int(mid))
+                preview.append(asm3.utils.bytes2str(contents))
+        l = o.dbo.locale
+        c = {
+            "ids": ids,
+            "count": len(names),
+            "names": ", ".join(names),
+            "preview": "\n<hr/>\n".join(preview),
+            "mobileapp": o.session.mobileapp
+        }
+        return asm3.html.mobile_page(l, _("Signing Pad", l), [ "mobile_sign.js" ], c)
+
+    def post_all(self, o):
+        for mid in o.post.integer_list("ids"):
+            asm3.media.sign_document(o.dbo, o.user, mid, o.post["sig"], o.post["signdate"], "signmobile")
+        asm3.configuration.signpad_ids(o.dbo, o.user, "")
 
 class main(JSONEndpoint):
     url = "main"
@@ -945,6 +976,8 @@ class main(JSONEndpoint):
             asm3.dbupdate.install_db_stored_procedures(dbo)
         # Install recommended reports if no reports are currently installed
         if dbo.query_int("SELECT COUNT(ID) FROM customreport") == 0: asm3.reports.install_recommended_smcom_reports(dbo, o.user)
+        # Update any reports that have newer versions available
+        asm3.reports.update_smcom_reports(dbo, o.user)
         # News
         news = asm3.cachedisk.get("news", "news")
         if news is None:
@@ -1338,9 +1371,6 @@ class animal(JSONEndpoint):
         dbo = o.dbo
         a = asm3.animal.get_animal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
-        # We stop updating ages when animals are off shelter, so recalculate age just in case
-        # other variable fields like agegroup/timeonshelter not affected due to batch
-        a.ANIMALAGE = asm3.animal.calc_age(dbo, a.ID, a) 
         # If a location filter is set, prevent the user opening this animal if it's
         # not in their location.
         self.check_animal(a)
@@ -1372,7 +1402,8 @@ class animal(JSONEndpoint):
             "sizes": asm3.lookups.get_sizes(dbo),
             "sharebutton": SHARE_BUTTON,
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "animal"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "ynun": asm3.lookups.get_ynun(dbo),
             "ynunk": asm3.lookups.get_ynunk(dbo)
         }
@@ -1466,7 +1497,7 @@ class animal_clinic(JSONEndpoint):
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users(dbo),
             "rows": rows,
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0]
         }
 
@@ -1587,7 +1618,7 @@ class animal_donations(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "payment")
         }
 
 class animal_embed(ASMEndpoint):
@@ -1685,7 +1716,7 @@ class animal_licence(JSONEndpoint):
             "name": "animal_licence",
             "rows": licences,
             "animal": a,
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "licence"),
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
             "licencetypes": asm3.lookups.get_licence_types(dbo)
         }
@@ -1739,7 +1770,7 @@ class animal_media(JSONEndpoint):
             "newmedia": o.post.integer("newmedia") == 1,
             "name": self.url,
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -1789,7 +1820,7 @@ class animal_movements(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
             "name": self.url
         }
 
@@ -1805,6 +1836,7 @@ class animal_new(JSONEndpoint):
             "animaltypes": asm3.lookups.get_animal_types(dbo),
             "species": asm3.lookups.get_species(dbo),
             "breeds": asm3.lookups.get_breeds_by_species(dbo),
+            "coattypes": asm3.lookups.get_coattypes(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),
             "sexes": asm3.lookups.get_sexes(dbo),
@@ -1871,7 +1903,7 @@ class animal_transport(JSONEndpoint):
             "animal": a,
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
             "statuses": asm3.lookups.get_transport_statuses(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "transport"),
             "transporttypes": asm3.lookups.get_transport_types(dbo),
             "rows": transports
         }
@@ -2265,7 +2297,7 @@ class clinic_consultingroom(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "rows": rows
         }
 
@@ -2287,7 +2319,7 @@ class clinic_waitingroom(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "rows": rows
         }
 
@@ -2303,7 +2335,7 @@ class csvexport_animals(ASMEndpoint):
         # If we're retrieving an already saved export, serve it.
         if o.post["get"] != "":
             self.content_type("text/csv")
-            self.header("Content-Disposition", u"attachment; filename=export.csv")
+            self.header("Content-Disposition", "attachment; filename=export.csv")
             v = asm3.cachedisk.get(o.post["get"], o.dbo.database)
             if v is None: self.notfound()
             return v
@@ -2754,7 +2786,7 @@ class document_repository(JSONEndpoint):
         asm3.al.debug("got %d documents in repository" % len(documents), "code.document_repository", o.dbo)
         return { 
             "rows": documents,
-            "templates": asm3.template.get_document_templates(o.dbo)
+            "templates": asm3.template.get_document_templates(o.dbo, "email")
         }
 
     def post_create(self, o):
@@ -2821,13 +2853,13 @@ class document_templates(JSONEndpoint):
         }
 
     def post_create(self, o):
-        return asm3.template.create_document_template(o.dbo, o.user, o.post["template"])
+        return asm3.template.create_document_template(o.dbo, o.user, o.post["template"], show = o.post["show"])
 
     def post_createodt(self, o):
         post = o.post
         fn = post.filename()
         if post["path"] != "": fn = post["path"] + "/" + fn
-        asm3.template.create_document_template(o.dbo, o.user, fn, ".odt", post.filedata())
+        asm3.template.create_document_template(o.dbo, o.user, fn, ".odt", post.filedata(), show = o.post["odtshow"])
         self.redirect("document_templates")
 
     def post_clone(self, o):
@@ -2840,6 +2872,10 @@ class document_templates(JSONEndpoint):
 
     def post_rename(self, o):
         asm3.template.rename_document_template(o.dbo, o.user, o.post.integer("dtid"), o.post["newname"])
+
+    def post_show(self, o):
+        for t in o.post.integer_list("ids"):
+            asm3.template.update_document_template_show(o.dbo, o.user, t, o.post["newshow"])
 
 class donation(JSONEndpoint):
     url = "donation"
@@ -2859,7 +2895,7 @@ class donation(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "payment"),
             "rows": donations
         }
 
@@ -2987,7 +3023,8 @@ class foundanimal(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "sexes": asm3.lookups.get_sexes(dbo),
             "species": asm3.lookups.get_species(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "foundanimal"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "tabcounts": asm3.lostfound.get_foundanimal_satellite_counts(dbo, a["LFID"])[0]
         }
 
@@ -3108,7 +3145,7 @@ class foundanimal_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -3218,7 +3255,7 @@ class incident(JSONEndpoint):
             "sexes": asm3.lookups.get_sexes(dbo),
             "sites": asm3.lookups.get_sites(dbo),
             "tabcounts": asm3.animalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "incident"),
             "users": asm3.users.get_users(dbo)
         }
 
@@ -3373,7 +3410,7 @@ class incident_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -3415,7 +3452,7 @@ class licence(JSONEndpoint):
         return {
             "name": "licence",
             "rows": licences,
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "licence"),
             "licencetypes": asm3.lookups.get_licence_types(dbo)
         }
 
@@ -3551,6 +3588,7 @@ class lookups(JSONEndpoint):
             "haspfbreed": "pubbreed" in modifiers,
             "hasapcolour": "pubcol" in modifiers,
             "hasrescheduledays": "sched" in modifiers,
+            "hasaccountid": "acc" in modifiers,
             "hasdefaultcost": "cost" in modifiers,
             "hasunits": "units" in modifiers,
             "hassite": "site" in modifiers,
@@ -3558,6 +3596,7 @@ class lookups(JSONEndpoint):
             "canadd": "add" in modifiers,
             "candelete": "del" in modifiers,
             "canretire": "ret" in modifiers,
+            "accounts": asm3.financial.get_accounts(dbo, onlyactive=True),
             "species": asm3.lookups.get_species(dbo),
             "tables": asm3.html.json_lookup_tables(l)
         }
@@ -3565,12 +3604,12 @@ class lookups(JSONEndpoint):
     def post_create(self, o):
         post = o.post
         return asm3.lookups.insert_lookup(o.dbo, o.user, post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
 
     def post_update(self, o):
         post = o.post
         asm3.lookups.update_lookup(o.dbo, o.user, post.integer("id"), post["lookup"], post["lookupname"], post["lookupdesc"], \
-            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
+            post.integer("species"), post["pfbreed"], post["pfspecies"], post["apcolour"], post["units"], post.integer("site"), post.integer("rescheduledays"), post.integer("account"), post.integer("defaultcost"), post.integer("vat"), post.integer("retired"))
 
     def post_delete(self, o):
         for lid in o.post.integer_list("ids"):
@@ -3607,7 +3646,8 @@ class lostanimal(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "sexes": asm3.lookups.get_sexes(dbo),
             "species": asm3.lookups.get_species(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "lostanimal"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "tabcounts": asm3.lostfound.get_lostanimal_satellite_counts(dbo, a["LFID"])[0]
         }
 
@@ -3720,7 +3760,7 @@ class lostanimal_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url, 
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -3815,7 +3855,7 @@ class mailmerge(JSONEndpoint):
             "numrows": len(rows),
             "hasemail": "EMAILADDRESS" in fields,
             "hasaddress": "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERCOUNTY" in fields and "OWNERPOSTCODE" in fields,
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "mailmerge")
         }
    
     def post_email(self, o):
@@ -3877,7 +3917,7 @@ class mailmerge(JSONEndpoint):
         if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
         self.content_type("text/csv")
-        self.header("Content-Disposition", u"attachment; filename=" + asm3.utils.decode_html(post["mergetitle"]) + u".csv")
+        self.header("Content-Disposition", "attachment; filename=" + post["mergetitle"] + ".csv")
         includeheader = 1 == post.boolean("includeheader")
         return asm3.utils.csv(o.locale, rows, cols, includeheader)
 
@@ -3923,6 +3963,20 @@ class maint_db_stats(ASMEndpoint):
                 s.totaljpg, s.jpgsize,
                 s.totalpdf, s.pdfsize
             )
+
+class maint_deps(ASMEndpoint):
+    url = "maint_deps"
+
+    def content(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        return "web.py %s" % web.__version__
+
+class maint_error(ASMEndpoint):
+    url = "maint_error"
+
+    def content(self, o):
+        return 1 / 0 # Test error handling
 
 class maint_latency(JSONEndpoint):
     url = "maint_latency"
@@ -4106,7 +4160,7 @@ class move_book_foster(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_recent_adoption(JSONEndpoint):
@@ -4125,7 +4179,7 @@ class move_book_recent_adoption(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_recent_other(JSONEndpoint):
@@ -4143,7 +4197,7 @@ class move_book_recent_other(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_recent_transfer(JSONEndpoint):
@@ -4161,7 +4215,7 @@ class move_book_recent_transfer(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_reservation(JSONEndpoint):
@@ -4179,7 +4233,7 @@ class move_book_reservation(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_retailer(JSONEndpoint):
@@ -4198,7 +4252,7 @@ class move_book_retailer(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_soft_release(JSONEndpoint):
@@ -4216,7 +4270,7 @@ class move_book_soft_release(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_trial_adoption(JSONEndpoint):
@@ -4235,7 +4289,7 @@ class move_book_trial_adoption(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_book_unneutered(JSONEndpoint):
@@ -4254,7 +4308,7 @@ class move_book_unneutered(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class move_deceased(JSONEndpoint):
@@ -4288,7 +4342,7 @@ class move_gendoc(JSONEndpoint):
     def controller(self, o):
         return {
             "message": o.post["message"],
-            "templates": asm3.html.template_selection(asm3.template.get_document_templates(o.dbo), "document_gen?linktype=%s&id=%s" % (o.post["linktype"], o.post["id"]))
+            "templates": asm3.html.template_selection(asm3.template.get_document_templates(o.dbo, "movement"), "document_gen?linktype=%s&id=%s" % (o.post["linktype"], o.post["id"]))
         }
 
 class move_reclaim(JSONEndpoint):
@@ -4688,7 +4742,7 @@ class options(JSONEndpoint):
             "sizes": asm3.lookups.get_sizes(dbo),
             "species": asm3.lookups.get_species(dbo),
             "themes": asm3.lookups.VISUAL_THEMES,
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
             "testtypes": asm3.lookups.get_test_types(dbo),
             "types": asm3.lookups.get_animal_types(dbo),
             "urgencies": asm3.lookups.get_urgencies(dbo),
@@ -4847,7 +4901,7 @@ class person(JSONEndpoint):
             "counties": asm3.person.get_counties(dbo),
             "towncounties": asm3.person.get_town_to_county(dbo),
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.id)[0],
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "person"),
             "person": p
         }
 
@@ -4910,7 +4964,7 @@ class person_clinic(JSONEndpoint):
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "forlist": asm3.users.get_users(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "rows": rows
         }
 
@@ -4954,7 +5008,7 @@ class person_donations(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "frequencies": asm3.lookups.get_donation_frequencies(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "payment"),
             "rows": donations
         }
 
@@ -5124,7 +5178,7 @@ class person_licence(JSONEndpoint):
             "name": "person_licence",
             "rows": licences,
             "person": p,
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "licence"),
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
             "licencetypes": asm3.lookups.get_licence_types(dbo)
         }
@@ -5201,7 +5255,7 @@ class person_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -5225,7 +5279,7 @@ class person_movements(JSONEndpoint):
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo)
+            "templates": asm3.template.get_document_templates(dbo, "movement")
         }
 
 class person_new(JSONEndpoint):
@@ -5317,7 +5371,7 @@ class person_vouchers(JSONEndpoint):
             "rows": vouchers,
             "person": p,
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "voucher"),
             "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
 
@@ -5377,12 +5431,11 @@ class publish_options(JSONEndpoint):
         dbo = o.dbo
         c = {
             "locations": asm3.lookups.get_internal_locations(dbo),
-            "publishurl": MULTIPLE_DATABASES_PUBLISH_URL,
             "flags": asm3.lookups.get_animal_flags(dbo),
             "hasakcreunite": AKC_REUNITE_BASE_URL != "",
-            "hasftpoverride": MULTIPLE_DATABASES_PUBLISH_FTP is not None and not asm3.configuration.publisher_ignore_ftp_override(dbo),
             "hasfoundanimals": FOUNDANIMALS_FTP_USER != "",
             "hashomeagain": HOMEAGAIN_BASE_URL != "",
+            "hashtmlftp": HTMLFTP_PUBLISHER_ENABLED,
             "hasmaddiesfund": MADDIES_FUND_TOKEN_URL != "",
             "haspetcademy": PETCADEMY_FTP_HOST != "",
             "haspetlink": PETLINK_BASE_URL != "",
@@ -5607,7 +5660,7 @@ class reports(JSONEndpoint):
         asm3.reports.set_raw_report_headerfooter(o.dbo, o.post["header"], o.post["footer"])
 
     def post_smcomlist(self, o):
-        return asm3.utils.json(asm3.reports.get_smcom_reports(o.dbo))
+        return asm3.utils.json(asm3.reports.get_smcom_reports_installable(o.dbo))
 
     def post_smcominstall(self, o):
         self.check(asm3.users.ADD_REPORT)
@@ -5809,11 +5862,11 @@ class sql_dump(ASMEndpoint):
         if mode == "dumpsql":
             asm3.al.info("%s executed SQL database dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
-            return asm3.utils.generator2str(asm3.dbupdate.dump, dbo)
+            return asm3.dbupdate.dump(dbo) # generator
         if mode == "dumpsqlmedia":
             asm3.al.info("%s executed SQL database dump (base64/media)" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"media.sql\"")
-            return asm3.utils.generator2str(asm3.dbupdate.dump_dbfs_base64, dbo)
+            return asm3.dbupdate.dump_dbfs_base64(dbo) # generator
         if mode == "dumpddlmysql":
             asm3.al.info("%s executed DDL dump MySQL" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_mysql.sql\"")
@@ -5839,12 +5892,12 @@ class sql_dump(ASMEndpoint):
             # ASM2_COMPATIBILITY
             asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB)" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
-            return asm3.utils.generator2str(asm3.dbupdate.dump_hsqldb, dbo)
+            return asm3.dbupdate.dump_hsqldb(dbo) # generator
         elif mode == "dumpsqlasm2nomedia":
             # ASM2_COMPATIBILITY
             asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB, without media)" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
-            return asm3.utils.generator2str(asm3.dbupdate.dump_hsqldb, dbo, includeDBFS = False)
+            return asm3.dbupdate.dump_hsqldb(dbo, includeDBFS = False) # generator
         elif mode == "animalcsv":
             asm3.al.debug("%s executed CSV animal dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"animal.csv\"")
@@ -6090,7 +6143,7 @@ class transport(JSONEndpoint):
         return {
             "name": "transport",
             "statuses": asm3.lookups.get_transport_statuses(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "transport"),
             "transporttypes": asm3.lookups.get_transport_types(dbo),
             "rows": transports
         }
@@ -6232,7 +6285,7 @@ class voucher(JSONEndpoint):
         return {
             "name": "voucher",
             "rows": vouchers,
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "voucher"),
             "vouchertypes": asm3.lookups.get_voucher_types(dbo)
         }
 
@@ -6268,7 +6321,8 @@ class waitinglist(JSONEndpoint):
             "sizes": asm3.lookups.get_sizes(dbo),
             "species": asm3.lookups.get_species(dbo),
             "urgencies": asm3.lookups.get_urgencies(dbo),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "waitinglist"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "tabcounts": asm3.waitinglist.get_satellite_counts(dbo, a["ID"])[0]
         }
 
@@ -6355,7 +6409,7 @@ class waitinglist_media(JSONEndpoint):
             "logtypes": asm3.lookups.get_log_types(dbo),
             "name": self.url,
             "resizeimagespec": asm3.utils.iif(RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, ""),
-            "templates": asm3.template.get_document_templates(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "email"),
             "sigtype": ELECTRONIC_SIGNATURES
         }
 
@@ -6428,19 +6482,8 @@ class waitinglist_results(JSONEndpoint):
 # List of routes constructed from class definitions
 routes = []
 
-# SSL for the server can be passed as an extra startup argument, eg:
-# python code.py 5000 ssl=true,cert=/etc/cert.crt,key=/etc/cert.key,chain=/etc/chain.crt
-if len(sys.argv) > 2:
-    from web.wsgiserver import CherryPyWSGIServer
-    for arg in sys.argv[2].split(","):
-        if arg.find("=") == -1: continue
-        k, v = arg.split("=")
-        if k == "cert": CherryPyWSGIServer.ssl_certificate = v
-        if k == "key": CherryPyWSGIServer.ssl_private_key = v
-        if k == "chain": CherryPyWSGIServer.ssl_certificate_chain = v
-
 # Setup the WSGI application object and session with mappings
-app = web.application(generate_routes(), globals())
+app = web.application(generate_routes(), globals(), autoreload=AUTORELOAD)
 app.notfound = asm_404
 if EMAIL_ERRORS:
     app.internalerror = asm_500_email

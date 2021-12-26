@@ -263,6 +263,21 @@ def get_media(dbo, linktype, linkid):
 def get_media_by_id(dbo, mid):
     return dbo.first_row(dbo.query("SELECT * FROM media WHERE ID = ?", [mid] ))
 
+def get_media_filename(dbo, mid):
+    """ Constructs a filename from media notes.
+        Truncates if notes are too long, removes unsafe punctuation and checks the extension. """
+    return _get_media_filename(get_media_by_id(dbo, mid))
+
+def _get_media_filename(m):
+    """ Constructs a filename from media notes.
+        Truncates if notes are too long, removes unsafe punctuation and checks the extension. """
+    s = m.MEDIANOTES
+    s = s.replace(" ", "_").replace("/", "_").replace("\\", "_").replace(":", "_")
+    s = asm3.utils.truncate(s, 20)
+    ext = m.MEDIANAME[m.MEDIANAME.rfind("."):]
+    if not s.endswith(ext): s += ext
+    return s
+
 def get_image_media(dbo, linktype, linkid, ignoreexcluded = False):
     if not ignoreexcluded:
         return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ? " \
@@ -319,6 +334,8 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     ispicture = ext == ".jpg" or ext == ".jpeg"
     ispdf = ext == ".pdf"
     excludefrompublish = 0
+    if "excludefrompublish" in post: 
+        excludefrompublish = post.integer("excludefrompublish")
     if asm3.configuration.auto_new_images_not_for_publish(dbo) and ispicture:
         excludefrompublish = 1
 
@@ -610,6 +627,48 @@ def delete_media(dbo, username, mid):
             "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \
             "ORDER BY ID DESC", (mr.LINKID, mr.LINKTYPEID)))
         if ml: dbo.update("media", ml.ID, { "DocPhoto": 1 })
+
+def convert_media_jpg2pdf(dbo, username, mid):
+    """
+    Converts an image into a new PDF file
+    """
+    mr = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
+    if not mr: raise asm3.utils.ASMError("Record does not exist")
+    # If it's not a jpg image, we can stop right now
+    if mr.MEDIAMIMETYPE != "image/jpeg": raise asm3.utils.ASMError("Image is not a JPEG file, cannot convert to PDF")
+    # Load and convert the image
+    imagedata = asm3.dbfs.get_string_id(dbo, mr.DBFSID)
+    pdfdata = asm3.utils.generate_image_pdf(dbo.locale, imagedata)
+    # Compress the new pdf
+    pdfdata = scale_pdf(pdfdata)
+    # Create a new media record for this pdf
+    mediaid = dbo.get_id("media")
+    path = get_dbfs_path(mr.LINKID, mr.LINKTYPEID)
+    name = str(mediaid) + ".pdf"
+    dbfsid = asm3.dbfs.put_string(dbo, name, path, pdfdata)
+    dbo.insert("media", {
+        "ID":                   mediaid,
+        "DBFSID":               dbfsid,
+        "MediaSize":            len(pdfdata),
+        "MediaName":            name,
+        "MediaMimeType":        "application/pdf",
+        "MediaType":            0,
+        "MediaNotes":           mr.MEDIANOTES,
+        "WebsitePhoto":         0,
+        "WebsiteVideo":         0,
+        "DocPhoto":             0,
+        "ExcludeFromPublish":   0,
+        # ASM2_COMPATIBILITY
+        "NewSinceLastPublish":  0,
+        "UpdatedSinceLastPublish": 0,
+        # ASM2_COMPATIBILITY
+        "LinkID":               mr.LINKID,
+        "LinkTypeID":           mr.LINKTYPEID,
+        "Date":                 dbo.now(),
+        "CreatedDate":          dbo.now(),
+        "RetainUntil":          mr.RETAINUNTIL
+    }, username, setCreated=False, generateID=False)
+    return mediaid
 
 def rotate_media(dbo, username, mid, clockwise = True):
     """

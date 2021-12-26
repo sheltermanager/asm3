@@ -134,7 +134,7 @@ if __name__ == "__main__":
     import asm3.dbupdate
     asm3.dbupdate.install(base.get_dbo())
     s = unittest.TestSuite(fullsuite)
-    #s = unittest.TestSuite([suitedbupdate]) # How to run a single suite of tests
+    #s = unittest.TestSuite([suiteutils]) # How to run a single suite of tests
     runner = unittest.TextTestRunner()
     runner.run(s)
 

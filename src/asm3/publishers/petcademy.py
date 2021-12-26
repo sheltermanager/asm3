@@ -102,11 +102,8 @@ class PetcademyPublisher(FTPPublisher):
             self.setLastError("No animals found to publish.")
             return
 
-        if not self.openFTPSocket(): 
+        if not self.openFTPSocket(ssl=True): 
             self.setLastError("Failed opening FTP socket.")
-            if self.logSearch("530 Login") != -1:
-                self.log("Found 530 Login incorrect: disabling Petcademy publisher.")
-                asm3.configuration.publishers_enabled_disable(self.dbo, "pc")
             self.cleanup()
             return
 
@@ -137,7 +134,8 @@ class PetcademyPublisher(FTPPublisher):
         self.markAnimalsPublished(animals, first=True)
 
         fname = "%s_%s.csv" % ( token, asm3.i18n.format_date(asm3.i18n.now(), "%Y%m%d%H%M%S") )
-        # Upload the datafile
+        # Upload the datafile to a sheltermanager folder
+        self.chdir("sheltermanager")
         self.saveFile(os.path.join(self.publishDir, fname), "\n".join(csv))
         self.log("Uploading datafile %s" % fname)
         self.upload(fname)

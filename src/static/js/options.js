@@ -5,35 +5,6 @@ $(function() {
 
     "use strict";
 
-    const BACKGROUND_COLOURS = {
-        "asm":              "#ffffff",
-        "base":             "#ffffff",
-        "black-tie":        "#333333",
-        "blitzer":          "#cc0000",
-        "cupertino":        "#deedf7",
-        "dark-hive":        "#444444",
-        "dot-luv":          "#0b3e6f",
-        "eggplant":         "#30273a",
-        "excite-bike":      "#f9f9f9",
-        "flick":            "#dddddd",
-        "hot-sneaks":       "#35414f",
-        "humanity":         "#cb842e",
-        "le-frog":          "#3a8104",
-        "mint-choc":        "#453326",
-        "overcast":         "#dddddd",
-        "pepper-grinder":   "#ffffff",
-        "redmond":          "#5c9ccc",
-        "smoothness":       "#cccccc",
-        "south-street":     "#ece8da",
-        "start":            "#2191c0",
-        "sunny":            "#817865",
-        "swanky-purse":     "#261803",
-        "trontastic":       "#9fda58",
-        "ui-darkness":      "#333333",
-        "ui-lightness":     "#ffffff",
-        "vader":            "#888888"
-    };
-
     const options = {
 
         /** Where we have a list of pairs, first is value, second is label */
@@ -344,6 +315,7 @@ $(function() {
                 '<p>',
                 '<input data="AddAnimalsShowBreed" id="aashowbreed" class="asm-checkbox" type="checkbox" /> <label for="aashowbreed">' + _("Show the breed fields") + '</label><br />',
                 '<input data="UseSingleBreedField" id="singlebreed" class="asm-checkbox" type="checkbox" /> <label for="singlebreed">' + _("Use a single breed field") + '</label><br />',
+                '<input data="AddAnimalsShowCoatType" id="aashowcoattype" class="asm-checkbox" type="checkbox" /> <label for="aashowcoattype">' + _("Show the coat type field") + '</label><br />',
                 '<input data="AddAnimalsShowColour" id="aashowcolour" class="asm-checkbox" type="checkbox" /> <label for="aashowcolour">' + _("Show the color field") + '</label><br />',
                 '<input data="AddAnimalsShowFee" id="aashowfee" class="asm-checkbox" type="checkbox" /> <label for="aashowfee">' + _("Show the adoption fee field") + '</label><br />',
                 '<input data="AddAnimalsShowLocation" id="aashowlocation" class="asm-checkbox" type="checkbox" /> <label for="aashowlocation">' + _("Show the internal location field") + '</label><br />',
@@ -437,6 +409,7 @@ $(function() {
                     _("DD = current day") + '<br />' + 
                     _("UUUUUUUUUU or UUUU = unique number") + '<br />' +
                     _("XXX or XX = number unique for this year") + '<br />' +
+                    _("OOO or OO = number unique for this month") + '<br />' +
                     _("NNN or NN = number unique for this type of animal for this year") + '<br />' +
                     _("Defaults formats for code and shortcode are TYYYYNNN and NNT")),
                 '<table>',
@@ -1165,6 +1138,7 @@ $(function() {
                 '<input data="WarnNoMicrochip" id="warnnomicrochip" class="asm-checkbox" type="checkbox" /> <label for="warnnomicrochip">' + _("Warn when adopting an animal who has not been microchipped") + '</label><br />',
                 '<input data="WarnOSMedical" id="warnosmedical" class="asm-checkbox" type="checkbox" /> <label for="warnosmedical">' + _("Warn when adopting an animal who has outstanding medical treatments") + '</label><br />',
                 '<input data="WarnNoHomeCheck" id="warnnohomecheck" class="asm-checkbox" type="checkbox" /> <label for="warnnohomecheck">' + _("Warn when adopting to a person who has not been homechecked") + '</label><br />',
+                '<input data="WarnBannedAddress" id="warnbaddress" class="asm-checkbox" type="checkbox" /> <label for="warnbaddress">' + _("Warn when adopting to a person who lives at the same address as a banned person") + '</label><br />',
                 '<input data="WarnBannedOwner" id="warnbanned" class="asm-checkbox" type="checkbox" /> <label for="warnbanned">' + _("Warn when adopting to a person who has been banned from adopting animals") + '</label><br />',
                 '<input data="WarnOOPostcode" id="warnoopostcode" class="asm-checkbox" type="checkbox" /> <label for="warnoopostcode">' + _("Warn when adopting to a person who lives in the same area as the original owner") + '</label><br />',
                 '<input data="WarnBroughtIn" id="warnbroughtin" class="asm-checkbox" type="checkbox" /> <label for="warnbroughtin">' + _("Warn when adopting to a person who has previously brought an animal to the shelter") + '</label><br />',
@@ -1568,15 +1542,6 @@ $(function() {
                         $(this).richtextarea("value", config.str(d));
                     }
                 }
-            });
-
-            // When the visual theme is changed, switch the CSS file so the
-            // theme updates immediately.
-            $("#systemtheme").change(function() {
-                let theme = $("#systemtheme").val();
-                let href = asm.jqueryuicss.replace("%(theme)s", theme);
-                $("#jqt").attr("href", href);
-                $("body").css("background-color", BACKGROUND_COLOURS[theme]);
             });
 
             // Set donation type maps from DonationAccountMappings field

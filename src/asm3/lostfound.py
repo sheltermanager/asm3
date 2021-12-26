@@ -405,6 +405,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                 matchpoints = 0
                 if la["MICROCHIPNUMBER"] != "" and la["MICROCHIPNUMBER"] == fa["MICROCHIPNUMBER"]: matchpoints += matchmicrochip
                 if la["ANIMALTYPEID"] == fa["ANIMALTYPEID"]: matchpoints += matchspecies
+                if la["ANIMALTYPEID"] != fa["ANIMALTYPEID"]: matchpoints -= 9999 # if species is different, force no match
                 if la["BREEDID"] == fa["BREEDID"]: matchpoints += matchbreed
                 if la["AGEGROUP"] == fa["AGEGROUP"]: matchpoints += matchage
                 if la["SEX"] == fa["SEX"]: matchpoints += matchsex
@@ -466,6 +467,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                 foundpostcode = ""
                 if la["MICROCHIPNUMBER"] != "" and la["MICROCHIPNUMBER"] == a["IDENTICHIPNUMBER"]: matchpoints += matchmicrochip
                 if la["ANIMALTYPEID"] == a["SPECIESID"]: matchpoints += matchspecies
+                if la["ANIMALTYPEID"] != a["SPECIESID"]: matchpoints -= 9999 # if species is different, force no match
                 if la["BREEDID"] == a["BREEDID"] or la["BREEDID"] == a["BREED2ID"]: matchpoints += matchbreed
                 if la["BASECOLOURID"] == a["BASECOLOURID"]: matchpoints += matchcolour
                 if la["AGEGROUP"] == a["AGEGROUP"]: matchpoints += matchage

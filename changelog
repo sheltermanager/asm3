@@ -1,6 +1,79 @@
 45
 ================
 
+23/12/21 Additional colour options for medium theme
+22/12/21 Search all media for matching notes in find animal
+19/12/21 SavourLife/PetRescue option to send microchips for all listings
+15/12/21 Add a medium/mid-tone theme #1076
+15/12/21 Fix bug generating clinic documents with no person
+14/12/21 Document template types, fixed template rename display bug #364
+13/12/21 Show attachments when emailing media, use name/notes #1074
+13/12/21 Hidden config for future limit on date brought in #1075
+09/12/21 Clickable icon in table header to show filter line #1073
+09/12/21 OOO token for animal codes (animals in month) #1071
+07/12/21 Fix regression with last movement duplicating staff rota people
+06/12/21 Fix regression with JQuery 1.13 and rearranging lists
+06/12/21 Last movement on person using latest ID instead of date
+06/12/21 Animal age not updating on all animal tabs
+05/12/21 Make dark mode easier to read, use qs to force theme reload
+04/12/21 Add OR support to online form showif
+03/12/21 Update to JQueryUI 1.13.0
+02/12/21 Regenerate light theme with flat textures
+01/12/21 Dump ancient/ugly JQUI themes, map them to ASM light/dark
+01/12/21 Rewrite mobile signing pad into bootstrap #1068
+01/12/21 PetRescue/SavourLife - use retailer postcode if available
+01/12/21 Dark mode for SQL/HTML editing, better shadows
+30/11/21 Update Czech translation (Jiří Podhorecký)
+30/11/21 Fix changelog display in dark mode
+29/11/21 Add facility to convert images into PDFs on the media tab #1046
+29/11/21 Move media image menu items into a menu button to save space #1046
+29/11/21 Add $ASK LOOKUP and $ASK PAYMENTMETHOD #525
+28/11/21 Add euthanized non-shelter animals section to annual figures
+27/11/21 Add ASM dark mode theme
+26/11/21 Fix regression in assigning values in online form multi-lookups
+24/11/21 Allow coat type on add animal screen #308
+24/11/21 Include time info for wp token generated tables (eg: ANIMALLOGS)
+23/11/21 Special form fields should not be mandatory if they are not visible
+22/11/21 AdoptAPet: Send $0 adoption fees as blank
+22/11/21 Fix vacc/neutered non-shelter by type sections of annual figures
+22/11/21 Always send adoptapet DOB as M/D/Y instead of locale (en_MX uses D/M/Y)
+20/11/21 Truncate form name and shorten preview for online form emails
+19/11/21 AdoptAPet want fees in dollars rather than cents
+18/11/21 Cope with entering times in HH:MM:SS format as well as HH:MM
+18/11/21 Fix use of excludefrombulkemail in online forms
+18/11/21 Use utf-8 for locale file encodings (smaller)
+17/11/21 Allow searching of log records #15
+17/11/21 Add extra adoptapet fields for Weight/DOB/Fee #461
+16/11/21 Make entering times more forgiving when just numbers entered
+13/11/21 Fix exception emailing after webpy 0.62 upgrade
+12/11/21 Add DocumentQRShare token for link to animalview #595
+10/11/21 Revert to using generator functions directly for dumps #1062
+04/11/21 Truncate email subject header to 78 chars for compatibility
+03/11/21 Option to register any microchip with AKC Reunite
+02/11/21 Check town/city when filtering waiting list by address
+31/10/21 account ID->cost/payment type link wrong way around #293
+29/10/21 Add new revXX token to repository reports and auto update #721
+28/10/21 Add "Selective" option to good with/housetrained fields #803
+28/10/21 Validate against empty usage dates when creating stock levels
+28/10/21 Include email subject in log when sending from media tab
+27/10/21 Stop using autoreload in production for performance reasons
+27/10/21 Rename "Live Releases" to "Live Outcomes" for clarity
+27/10/21 Drop html_adoptable_animals cache time to 10 minutes
+26/10/21 Focus first field in report criteria, submit with return in input
+26/10/21 Upgrade to web.py 0.62 and include with codebase
+25/10/21 Bundle web.py due to different broken versions shipping with distros
+23/10/21 Mark photos from online forms as exclude from publish by default
+20/10/21 Record IP address with online form submissions
+20/10/21 underweeks/overweeks parameters to service html_adoptable_animals
+18/10/21 Blank Manufacturer/Batch when rescheduling vacc
+17/10/21 Allow old HTML/FTP publisher to be disabled via sitedef #1040
+17/10/21 Remove complicated smcom-specific HTML/FTP override code #1040
+17/10/21 Add warn when adopting to a banned address #1054
+15/10/21 When checking current owner, fosters are exit if option not set
+14/10/21 If species is different, fail lost/found match altogether
+12/10/21 cron tasks not adjusting for dst
+12/10/21 Autoprocess attach->create should still create if attach fails
+10/10/21 Petcademy: now require encryption and named folder
 08/10/21 Output text when adoptable_js has no results #1052
 07/10/21 PetLink: temp fix for issues with quoted line breaks in CSV
 06/10/21 Include european field names in online form autofill

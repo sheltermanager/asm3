@@ -207,7 +207,7 @@ $(function() {
             $("#species").select("value", controller.selspecies);
             $("#namecontains").val(controller.selnamecontains);
             $("#addresscontains").val(controller.seladdresscontains);
-            $("#descriptioncontains").val(controller.descriptioncontains);
+            $("#descriptioncontains").val(controller.seldescriptioncontains);
 
             // load the table results
             $("#table-waitinglist tbody").append(this.render_tablebody());

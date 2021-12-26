@@ -18,7 +18,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
-from asm3.i18n import _, format_currency, format_currency_no_symbol, format_time, now, python2display, yes_no
+from asm3.i18n import _, format_currency, format_currency_no_symbol, format_time, now, python2display, python2displaytime, yes_no
 
 import zipfile
 
@@ -440,11 +440,16 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "DOCUMENTIMGLINK500"    : "<img height=\"500\" src=\"" + asm3.html.doc_img_src(dbo, a) + "\" >",
         "DOCUMENTIMGTHUMBSRC"   : asm3.html.thumbnail_img_src(dbo, a, "animalthumb"),
         "DOCUMENTIMGTHUMBLINK"  : "<img src=\"" + asm3.html.thumbnail_img_src(dbo, a, "animalthumb") + "\" />",
-        "DOCUMENTQRLINK"        : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID),
-        "DOCUMENTQRLINK200"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "200x200"),
-        "DOCUMENTQRLINK150"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "150x150"),
-        "DOCUMENTQRLINK100"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "100x100"),
-        "DOCUMENTQRLINK50"      : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "50x50"),
+        "DOCUMENTQRLINK"        : "<img src=\"%s\" />" % asm3.html.qr_animal_img_record_src(a.ID),
+        "DOCUMENTQRLINK200"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_record_src(a.ID, "200x200"),
+        "DOCUMENTQRLINK150"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_record_src(a.ID, "150x150"),
+        "DOCUMENTQRLINK100"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_record_src(a.ID, "100x100"),
+        "DOCUMENTQRLINK50"      : "<img src=\"%s\" />" % asm3.html.qr_animal_img_record_src(a.ID, "50x50"),
+        "DOCUMENTQRSHARE"       : "<img src=\"%s\" />" % asm3.html.qr_animal_img_share_src(dbo, a.ID),
+        "DOCUMENTQRSHARE200"    : "<img src=\"%s\" />" % asm3.html.qr_animal_img_share_src(dbo, a.ID, "200x200"),
+        "DOCUMENTQRSHARE150"    : "<img src=\"%s\" />" % asm3.html.qr_animal_img_share_src(dbo, a.ID, "150x150"),
+        "DOCUMENTQRSHARE100"    : "<img src=\"%s\" />" % asm3.html.qr_animal_img_share_src(dbo, a.ID, "100x100"),
+        "DOCUMENTQRSHARE50"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_share_src(dbo, a.ID, "50x50"),
         "ADOPTIONSTATUS"        : asm3.publishers.base.get_adoption_status(dbo, a),
         "ANIMALISADOPTABLE"     : asm3.utils.iif(asm3.publishers.base.is_animal_adoptable(dbo, a), _("Yes", l), _("No", l)),
         "DATEAVAILABLEFORADOPTION": python2display(l, a["DATEAVAILABLEFORADOPTION"]),
@@ -1537,8 +1542,9 @@ def html_table(l, rows, cols):
     for r in rows:
         h.append("<tr>")
         for colfield, coltext in cols:
-            if asm3.utils.is_date(r[colfield]):
-                h.append("<td>%s</td>" % python2display(l, r[colfield]))
+            v = r[colfield]
+            if asm3.utils.is_date(v):
+                h.append("<td>%s</td>" % python2displaytime(l, r[colfield]))
             elif asm3.utils.is_currency(colfield):
                 h.append("<td>%s</td>" % format_currency(l, r[colfield]))
             elif r[colfield] is None:
@@ -1805,7 +1811,9 @@ def generate_clinic_doc(dbo, templateid, appointmentid, username):
     if a is not None:
         tags = append_tags(tags, animal_tags(dbo, a, includeAdditional=True, includeCosts=False, includeDiet=False, includeDonations=False, \
             includeFutureOwner=False, includeIsVaccinated=False, includeLogs=False, includeMedical=False))
-    tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, c.OWNERID)))
+    p = asm3.person.get_person(dbo, c.OWNERID)
+    if p is not None:
+        tags = append_tags(tags, person_tags(dbo, p))
     return substitute_template(dbo, templateid, tags)
 
 def generate_person_doc(dbo, templateid, personid, username):

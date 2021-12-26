@@ -6,8 +6,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "45u [Fri  8 Oct 09:37:03 BST 2021]"
-BUILD = "10080937"
+VERSION = "45u [Thu 23 Dec 09:45:55 GMT 2021]"
+BUILD = "12230945"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -393,12 +393,27 @@ def http_date(dt):
 
 def python2display(locale, d):
     """
-    Formats a python date as a display string. 'd' is
-    a Python date, return value is a display string.
+    Formats a python date as a display string. 
+    'd' is a Python date, return value is a display string.
     """
     if d is None: return ""
     try:
         return time.strftime(get_display_date_format(locale), d.timetuple())
+    except:
+        return ""
+
+def python2displaytime(locale, d):
+    """
+    Formats a python date as a display string with time info (if not midnight).
+    'd' is a Python date, return value is a display string with time info.
+    """
+    if d is None: return ""
+    try:
+        ds = time.strftime(get_display_date_format(locale), d.timetuple())
+        ts = ""
+        if str(d).find("00:00:00") == -1: 
+            return "%s %s" % (ds, format_time(d))
+        return ds
     except:
         return ""
 

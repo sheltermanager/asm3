@@ -308,13 +308,25 @@ you no longer need the original file. Since images are the most common use, the
 file browser will display previews of images, and if you click an image in the
 media list, it will be viewed full screen.
 
-The web publisher will use the notes attached to the default image as the
-animal's description when building a site or sending data to PetFinder or other
-third parties.
+The image button menu on the toolbar allows you to transform and manipulate
+various properties of the image. You can rotate it, convert it to a PDF
+document (useful for taking photos of paperwork), exclude it from being sent to
+your website or third party websites and watermark the image.
 
-If the content is a PDF, you can click it to have your browser view it (if it
-has an appropriate plugin). If the content is an HTML document, then clicking
-it will open it with ASM's built in word processor for editing and printing.
+Watermarking is a process where your logo is copied to the lower right of the
+image and the animal's name rendered over the lower left - this requires you to
+upload your logo named watermark.png to :menuselection:`Settings --> Reports
+--> Extra Images`
+
+If the content is a PDF, you can click it to have your browser view it. If the
+content is an HTML document, then clicking it will open it with ASM's built in
+word processor for editing and printing.
+
+One or more media elements can be emailed from here.
+
+HTML documents can be emailed as a PDF and signed. The Sign button menu allows
+you to sign on screen with a pen/mouse device, send the document to the mobile
+signing pad or send an email to someone with a request to sign the document.
 
 You can also attach document and video links (for example, to Google Docs or
 YouTube videos). Video links and images can have a default set for publishing
@@ -322,8 +334,9 @@ purposes. If you have the “publish all images” turned on in your publishing
 options and an animal has multiple images, you can individually choose which
 ones will be published with the tick/cross icon next to the image icon.
 
-Ticking the “Not for adoption” box on the details tab will ensure that the
-animal is not included in website publishing.
+Giving an animal the “Not for adoption” or "Not for publishing" flag on the
+details tab will ensure that the animal is not included in any website
+publishing.
 
 Notice that when an animal has media, the tab displays a graphic, indicating
 there is data under this tab. 

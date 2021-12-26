@@ -2,7 +2,7 @@ Vaccinations administered between two dates
 ###
 Medical
 ###
-33801/Any
+34409/Any
 ###
 List of all vaccinations administered between two dates
 ###
@@ -11,7 +11,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT animal.animalname, owner.ownername, owner.membershipnumber, vaccinationtype.vaccinationtype, animalvaccination.dateofvaccination, animalvaccination.dateexpires, animalvaccination.batchnumber, animalvaccination.manufacturer,animalvaccination.cost, animal.breedname, animal.displaylocation
+SELECT animal.animalname, owner.ownername, owner.membershipnumber, vaccinationtype.vaccinationtype, animalvaccination.dateofvaccination, animalvaccination.dateexpires, animalvaccination.batchnumber, animalvaccination.manufacturer, animalvaccination.rabiestag, animalvaccination.cost, animal.breedname, animal.displaylocation
 FROM animalvaccination
 INNER JOIN animal ON animalvaccination.animalid=animal.id
 INNER JOIN vaccinationtype ON animalvaccination.vaccinationid=vaccinationtype.id
@@ -37,12 +37,14 @@ $$HEAD
 <th>Expires</th>
 <th>Batch</th>
 <th>Manufacturer</th>
+<th>Rabies Tag</th>
 <th>Cost</th>
 </tr>
 $$FOOT
 <tr>
 <td></td> 
 <td></td>
+<td></td> 
 <td></td> 
 <td></td>
 <td></td>
@@ -72,6 +74,7 @@ $$BODY
 <td>$DATEEXPIRES</td>
 <td>$BATCHNUMBER</td>
 <td>$MANUFACTURER</td>
+<td>$RABIESTAG</td>
 <td>$COST</td>
 <tr/>
 
@@ -86,7 +89,7 @@ Vaccinations administered between two dates (on shelter)
 ###
 Medical
 ###
-33801/Any
+34409/Any
 ###
 List of all vaccinations administered between two dates for current shelter animals.
 ###
@@ -95,7 +98,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT animal.animalname, owner.ownername, owner.membershipnumber, vaccinationtype.vaccinationtype, animalvaccination.dateofvaccination, animalvaccination.dateexpires, animalvaccination.batchnumber, animalvaccination.manufacturer,animalvaccination.cost, animal.breedname, animal.displaylocation
+SELECT animal.animalname, owner.ownername, owner.membershipnumber, vaccinationtype.vaccinationtype, animalvaccination.dateofvaccination, animalvaccination.dateexpires, animalvaccination.batchnumber, animalvaccination.manufacturer,animalvaccination.cost, animalvaccination.rabiestag, animal.breedname, animal.displaylocation
 FROM animalvaccination
 INNER JOIN animal ON animalvaccination.animalid=animal.id
 INNER JOIN vaccinationtype ON animalvaccination.vaccinationid=vaccinationtype.id
@@ -121,6 +124,7 @@ $$HEAD
 <th>Expires</th>
 <th>Batch</th>
 <th>Manufacturer</th>
+<th>Rabies Tag</th>
 <th>Cost</th>
 </tr>
 $$FOOT
@@ -128,6 +132,7 @@ $$FOOT
 <td></td> 
 <td></td>
 <td></td> 
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -155,6 +160,7 @@ $$BODY
 <td>$DATEEXPIRES</td>
 <td>$BATCHNUMBER</td>
 <td>$MANUFACTURER</td>
+<td>$RABIESTAG</td>
 <td>$COST</td>
 <tr/>
 
@@ -169,7 +175,7 @@ Vaccinations of type administered between two dates
 ###
 Medical
 ###
-33801/Any
+34409/Any
 ###
 List of all vaccinations of a type administered between two dates
 ###
@@ -179,7 +185,7 @@ $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 $VAR vt STRING Vaccination type$
 
-SELECT animal.animalname, owner.ownername, owner.membershipnumber, vaccinationtype.vaccinationtype, animalvaccination.dateofvaccination, animalvaccination.dateexpires, animalvaccination.batchnumber, animalvaccination.manufacturer,animalvaccination.cost, animal.breedname, animal.displaylocation
+SELECT animal.animalname, owner.ownername, owner.membershipnumber, vaccinationtype.vaccinationtype, animalvaccination.dateofvaccination, animalvaccination.dateexpires, animalvaccination.batchnumber, animalvaccination.manufacturer, animalvaccination.rabiestag, animalvaccination.cost, animal.breedname, animal.displaylocation
 FROM animalvaccination
 INNER JOIN animal ON animalvaccination.animalid=animal.id
 INNER JOIN vaccinationtype ON animalvaccination.vaccinationid=vaccinationtype.id
@@ -206,6 +212,7 @@ $$HEAD
 <th>Expires</th>
 <th>Batch</th>
 <th>Manufacturer</th>
+<th>Rabies Tag</th>
 <th>Cost</th>
 </tr>
 $$FOOT
@@ -213,6 +220,7 @@ $$FOOT
 <td></td> 
 <td></td>
 <td></td> 
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -241,6 +249,7 @@ $$BODY
 <td>$DATEEXPIRES</td>
 <td>$BATCHNUMBER</td>
 <td>$MANUFACTURER</td>
+<td>$RABIESTAG</td>
 <td>$COST</td>
 <tr/>
 

@@ -1,38 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Appendix: CSV file import fields &mdash; ASM 45u documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Appendix: Database Tables/Columns" href="databasetables.html" />
@@ -77,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -122,6 +123,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -156,18 +158,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Appendix: CSV file import fields</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/csvimportfields.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -193,289 +197,289 @@ that will be overwritten on the existing animal from the CSV data. These fields
 are ANIMALNEUTERED[DATE], ANIMALMICROCHIP[DATE] and ANIMALHEALTHPROBLEMS. This
 allows you to use a spreadsheet of data on chipping/neutering days and import
 that data to your existing animals afterwards.</p>
-<dl class="docutils">
-<dt>ANIMALCODE</dt>
-<dd>A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.</dd>
-<dt>ANIMALNAME</dt>
-<dd>The animal’s name</dd>
-<dt>ANIMALIMAGE</dt>
-<dd>A photo for the animal, it can either be a fully qualified HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI</dd>
-<dt>ANIMALNONSHELTER</dt>
-<dd>Y/N to indicate whether this animal is a owned by a member of the public and not a shelter animal</dd>
-<dt>ANIMALNOTFORADOPTION</dt>
-<dd>Y/N to indicate whether this animal is not available for adoption (Y is not available).</dd>
-<dt>ANIMALTRANSFER</dt>
-<dd>Y/N to indicate whether this animal as transferred in. If set to Y, the ORIGINALOWNER fields will be used in the “Transferred From” field.</dd>
-<dt>ANIMALFLAGS</dt>
-<dd>A comma separated list of animal flags, including builtins courtesy,
-crueltycase, notforadoption, notforregistration, nonshelter, quarantine</dd>
-<dt>ANIMALSEX</dt>
-<dd>The animal’s gender. ASM looks for the initial letter “M” in the string to indicate male, “F” for Female or “U” for Unknown.</dd>
-<dt>ANIMALTYPE</dt>
-<dd>The animal’s type. This should correspond to one of ASM’s animal types from your database.</dd>
-<dt>ANIMALCOLOR</dt>
-<dd>The animal’s color. This should correspond to a color in your database.</dd>
-<dt>ANIMALBREED1</dt>
-<dd>The animal’s primary breed. It should match a breed in your database.</dd>
-<dt>ANIMALBREED2</dt>
-<dd>The animal’s secondary breed. If different from ANIMALBREED1, ASM will mark the animal as a crossbreed.</dd>
-<dt>ANIMALDOB</dt>
-<dd>The animal’s date of birth. This field, or ANIMALAGE must be supplied or the record will not be imported.</dd>
-<dt>ANIMALSIZE</dt>
-<dd>The animal’s size. This should correspond to a size in your database.</dd>
-<dt>ANIMALWEIGHT</dt>
-<dd>The animal’s weight as a floating point number of pounds or kilos (eg: 2.5 = 2 lb and 8 oz)</dd>
-<dt>ANIMALAGE</dt>
-<dd>The animal’s current age in years. ASM will calculate a date of birth from this during import if ANIMALDOB is not supplied or blank.</dd>
-<dt>ANIMALLOCATION</dt>
-<dd>The animal’s location within your shelter. This should correspond to a location in your database.</dd>
-<dt>ANIMALUNIT</dt>
-<dd>The unit within the animal’s location within the shelter, eg: pen/cage number.</dd>
-<dt>ANIMALJURISDICTION</dt>
-<dd>The jurisidiction to allocate the animal to based on entry circumstances (usually pickup)</dd>
-<dt>ANIMALSPECIES</dt>
-<dd>The animal’s species. This should match a species in your database.</dd>
-<dt>ANIMALHOUSETRAINED</dt>
-<dd>Y/N/U to indicate yes/no/unknown</dd>
-<dt>ANIMALGOODWITHCATS</dt>
-<dd>Y/N/U to indicate yes/no/unknown</dd>
-<dt>ANIMALGOODWITHDOGS</dt>
-<dd>Y/N/U to indicate yes/no/unknown</dd>
-<dt>ANIMALGOODWITHKIDS</dt>
-<dd>Y/N/U to indicate yes/no/unknown</dd>
-<dt>ANIMALCOMMENTS</dt>
-<dd>Some comments to put in the animal’s comment field.</dd>
-<dt>ANIMALHIDDENDETAILS</dt>
-<dd>Some comments for the animal’s hidden details field.</dd>
-<dt>ANIMALMARKINGS</dt>
-<dd>Some comments for the animal’s markings field.</dd>
-<dt>ANIMALHEALTHPROBLEMS</dt>
-<dd>Some comments for the animal’s health problems field.</dd>
-<dt>ANIMALNEUTERED</dt>
-<dd>Y/N to indicate yes/no</dd>
-<dt>ANIMALNEUTEREDDATE</dt>
-<dd>The date the animal was neuteured. If supplied and not blank, ANIMALNEUTERED = Y is also assumed.</dd>
-<dt>ANIMALMICROCHIP</dt>
-<dd>If not blank, ASM will mark the animal microchipped with this as the microchip number.</dd>
-<dt>ANIMALMICROCHIPDATE</dt>
-<dd>The date the microchip was implanted</dd>
-<dt>ANIMALENTRYDATE</dt>
-<dd>The date the animal entered the shelter (date brought in). Today’s date will be used if this column is not present or the value is blank.</dd>
-<dt>ANIMALENTRYCATEGORY</dt>
-<dd>The animal’s entry category, which should correspond to an entry category in your database.</dd>
-<dt>ANIMALREASONFORENTRY</dt>
-<dd>Free text, notes on the reason the animal entered the shelter.</dd>
-<dt>ANIMALDECEASEDDATE</dt>
-<dd>If the animal is deceased, the date it died.</dd>
-<dt>ANIMALADDITIONAL&lt;fieldname&gt;</dt>
-<dd>If you have animal additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called Weight, ANIMALADDITIONALWEIGHT</dd>
-<dt>CURRENTVETTITLE</dt>
-<dd>If we have current vet info for the animal, the vet’s title.</dd>
-<dt>CURRENTVETINITIALS</dt>
-<dd>Vet’s initials.</dd>
-<dt>CURRENTVETFIRSTNAME</dt>
-<dd>The vet’s first name(s).</dd>
-<dt>CURRENTVETLASTNAME</dt>
-<dd>The vet’s last name. This column being present and having data in it determines whether or not the importer will consider the animal as having current vet info.</dd>
-<dt>CURRENTVETADDRESS</dt>
-<dd>Vet’s address.</dd>
-<dt>CURRENTVETCITY</dt>
-<dd>The vet’s city/town.</dd>
-<dt>CURRENTVETSTATE</dt>
-<dd>The vet’s state/county.</dd>
-<dt>CURRENTVETZIPCODE</dt>
-<dd>The vet’s zip or postcode.</dd>
-<dt>CURRENTVETJURISDICTION</dt>
-<dd>The vet’s jurisdiction</dd>
-<dt>CURRENTVETHOMEPHONE</dt>
-<dd>The vet’s home phone.</dd>
-<dt>CURRENTVETWORKPHONE</dt>
-<dd>The vet’s work phone.</dd>
-<dt>CURRENTVETCELLPHONE</dt>
-<dd>The vet’s mobile phone.</dd>
-<dt>CURRENTVETEMAIL</dt>
-<dd>The vet’s email.</dd>
-<dt>CURRENTVETADDITIONAL&lt;fieldname&gt;</dt>
-<dd>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth CURRENTVETADDITIONALDATEOFBIRTH</dd>
-<dt>DONATIONDATE</dt>
-<dd>The date the donation amount on this line was received. If movement columns are present, it will be attached to the movement as well as the person. If no person columns are present, having this column in the CSV file will cause an error.</dd>
-<dt>DONATIONAMOUNT</dt>
-<dd>The amount of the donation on this line (as a floating point number)</dd>
-<dt>DONATIONFEE</dt>
-<dd>The amount of any transaction fee in handling the donation</dd>
-<dt>DONATIONCHECKNUMBER</dt>
-<dd>The cheque/check number for the donation</dd>
-<dt>DONATIONCOMMENTS</dt>
-<dd>Any comments to go with the donation</dd>
-<dt>DONATIONPAYMENT</dt>
-<dd>The payment method to use (should correspond to a payment method in your database, eg: Cash)</dd>
-<dt>DONATIONTYPE</dt>
-<dd>The payment type to use (should correspond to a payment type in your database).</dd>
-<dt>DONATIONGIFTAID</dt>
-<dd>Y / N if the payment should have the giftaid flag set</dd>
-<dt>LICENSETYPE</dt>
-<dd>The license type to use (licenses need at least person info)</dd>
-<dt>LICENSENUMBER</dt>
-<dd>The license number (mandatory)</dd>
-<dt>LICENSEFEE</dt>
-<dd>The fee paid for the license</dd>
-<dt>LICENSEISSUEDATE</dt>
-<dd>The date the license was issued</dd>
-<dt>LICENSEEXPIRESDATE</dt>
-<dd>The date the license expires</dd>
-<dt>LICENSECOMMENTS</dt>
-<dd>Any comments on the license</dd>
-<dt>LOGDATE</dt>
-<dd>The date of any log entry (only animal logs can be imported)</dd>
-<dt>LOGTYPE</dt>
-<dd>The type of log entry</dd>
-<dt>LOGCOMMENTS</dt>
-<dd>The log entry itself</dd>
-<dt>MEDICALNAME</dt>
-<dd>The name of the medical regimen for this line</dd>
-<dt>MEDICALDOSAGE</dt>
-<dd>The dosage of the medical regimen</dd>
-<dt>MEDICALGIVENDATE</dt>
-<dd>The date the medical regimen started (only one-off treatment regimens can be created via import)</dd>
-<dt>MEDICALCOMMENTS</dt>
-<dd>Any comments on the medical regimen</dd>
-<dt>MOVEMENTTYPE</dt>
-<dd>The type of movement for this line (0 = Reservation, 1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer. If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption. If MOVEMENTTYPE is 0, then MOVEMENTDATE and MOVEMENTRETURNDATE will be used to set the reservation date and reservation cancelled date fields.</dd>
-<dt>MOVEMENTDATE</dt>
-<dd>The date of the movement</dd>
-<dt>MOVEMENTRETURNDATE</dt>
-<dd>The return date of the movement</dd>
-<dt>MOVEMENTCOMMENTS</dt>
-<dd>Any comments for the movement</dd>
-<dt>ORIGINALOWNERTITLE</dt>
-<dd>If we have original owner info for the animal, the person’s title.</dd>
-<dt>ORIGINALOWNERINITIALS</dt>
-<dd>Original owner’s initials.</dd>
-<dt>ORIGINALOWNERFIRSTNAME</dt>
-<dd>The original owner’s first name(s).</dd>
-<dt>ORIGINALOWNERLASTNAME</dt>
-<dd>The original owner’s last name. This column being present and having data in it determines whether or not the importer will consider the animal as having original owner info.</dd>
-<dt>ORIGINALOWNERADDRESS</dt>
-<dd>Original owner’s address.</dd>
-<dt>ORIGINALOWNERCITY</dt>
-<dd>The original owner’s city/town.</dd>
-<dt>ORIGINALOWNERSTATE</dt>
-<dd>The original owner’s state/county.</dd>
-<dt>ORIGINALOWNERZIPCODE</dt>
-<dd>The original owner’s zip or postcode.</dd>
-<dt>ORIGINALOWNERJURISDICTION</dt>
-<dd>The original owner’s jurisdiction</dd>
-<dt>ORIGINALOWNERHOMEPHONE</dt>
-<dd>The original owner’s home phone.</dd>
-<dt>ORIGINALOWNERWORKPHONE</dt>
-<dd>The original owner’s work phone.</dd>
-<dt>ORIGINALOWNERCELLPHONE</dt>
-<dd>The original owner’s mobile phone.</dd>
-<dt>ORIGINALOWNEREMAIL</dt>
-<dd>The original owner’s email.</dd>
-<dt>ORIGINALOWNERADDITIONAL&lt;fieldname&gt;</dt>
-<dd>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth ORIGINALOWNERADDITIONALDATEOFBIRTH</dd>
-<dt>PERSONCLASS</dt>
-<dd>1 = Individual/Couple, 2 = Organisation</dd>
-<dt>PERSONTITLE</dt>
-<dd>The person’s title</dd>
-<dt>PERSONINITIALS</dt>
-<dd>The person’s initials</dd>
-<dt>PERSONFIRSTNAME</dt>
-<dd>The person’s first name (forenames)</dd>
-<dt>PERSONLASTNAME</dt>
-<dd>The person’s last name (surname)</dd>
-<dt>PERSONNAME</dt>
-<dd>If this field is supplied, ASM will assume it contains first names and a last name, overriding any fields that set those. Everything up to the last space is considered first names and everything up to the last space the last name.</dd>
-<dt>PERSONADDRESS</dt>
-<dd>The person’s address</dd>
-<dt>PERSONCITY</dt>
-<dd>The person’s town/city</dd>
-<dt>PERSONSTATE</dt>
-<dd>The person’s state/county</dd>
-<dt>PERSONZIPCODE</dt>
-<dd>The person’s zip or postcode</dd>
-<dt>PERSONJURISDICTION</dt>
-<dd>The person’s jurisdiction</dd>
-<dt>PERSONHOMEPHONE</dt>
-<dd>The person’s home phone number</dd>
-<dt>PERSONWORKPHONE</dt>
-<dd>The person’s work phone number</dd>
-<dt>PERSONCELLPHONE</dt>
-<dd>The person’s cell/mobile number</dd>
-<dt>PERSONEMAIL</dt>
-<dd>The person’s email address</dd>
-<dt>PERSONGDPRCONTACTOPTIN</dt>
-<dd>The GDPR contact optin values, separated by a comma. These values are: didnotask, declined, email, post, sms, phone</dd>
-<dt>PERSONMEMBER</dt>
-<dd>Y or 1 in this column to indicate the person should have the membership flag set.</dd>
-<dt>PERSONMEMBERSHIPNUMBER</dt>
-<dd>The person’s membership number</dd>
-<dt>PERSONMEMBERSHIPEXPIRY</dt>
-<dd>A date for when this person’s membership expires</dd>
-<dt>PERSONFOSTERER</dt>
-<dd>Y or 1 in this column to indicate the person should have the fosterer flag set.</dd>
-<dt>PERSONFOSTERCAPACITY</dt>
-<dd>The number of animals this person is willing to foster</dd>
-<dt>PERSONDONOR</dt>
-<dd>Y or 1 in this column to indicate the person is a regular donor.</dd>
-<dt>PERSONFLAGS</dt>
-<dd>This column can be used to set any other person flags on the imported person. Flags should be comma separated with no extra spaces. Built in flags are their lower case English names, eg: banned,aco,homechecked,homechecker,excludefrombulkemail
-Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag</dd>
-<dt>PERSONCOMMENTS</dt>
-<dd>Any comments to go with the person record.</dd>
-<dt>PERSONMATCHACTIVE</dt>
-<dd>Y or 1 in this column indicates the person is looking for an animal. If this field is not set to Y or 1, the other PERSONMATCH columns are ignored for this row.</dd>
-<dt>PERSONMATCHADDED</dt>
-<dd>The date the system should start looking for matches</dd>
-<dt>PERSONMATCHEXPIRES</dt>
-<dd>The date the system should stop looking for matches</dd>
-<dt>PERSONMATCHSEX</dt>
-<dd>The gender. ASM looks for the initial letter “M” in the string to indicate male, “F” for Female, “U” for Unknown or “A” for any</dd>
-<dt>PERSONMATCHSIZE</dt>
-<dd>The size of the animal the person is looking for</dd>
-<dt>PERSONMATCHCOLOR</dt>
-<dd>The color of the animal the person is looking for</dd>
-<dt>PERSONMATCHAGEFROM, PERSONMATCHAGETO</dt>
-<dd>The age range of the animal the person is looking for in years</dd>
-<dt>PERSONMATCHTYPE</dt>
-<dd>The animal type of the animal the person is looking for</dd>
-<dt>PERSONMATCHSPECIES</dt>
-<dd>The species of animal the person is looking for</dd>
-<dt>PERSONMATCHBREED1, PERSONMATCHBREED2</dt>
-<dd>The breed of the animal the person is looking for</dd>
-<dt>PERSONMATCHGOODWITHCATS, PERSONMATCHGOODWITHDOGS, PERSONMATCHGOODWITHCHILDREN, PERSONMATCHHOUSETRAINED</dt>
-<dd>The good with/housetrained flags of the animal the person is looking for</dd>
-<dt>PERSONMATCHCOMMENTSCONTAIN</dt>
-<dd>The animal this person is looking for will have this value in its comments</dd>
-<dt>PERSONADDITIONAL&lt;fieldname&gt;</dt>
-<dd>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH</dd>
-<dt>TESTTYPE</dt>
-<dd>The type of test on this line</dd>
-<dt>TESTRESULT</dt>
-<dd>The test result</dd>
-<dt>TESTDUEDATE</dt>
-<dd>The due date for the test</dd>
-<dt>TESTPERFORMEDDATE</dt>
-<dd>The date the test was performed</dd>
-<dt>TESTCOMMENTS</dt>
-<dd>Any comments for the test</dd>
-<dt>VACCINATIONTYPE</dt>
-<dd>The type of vaccination on this line</dd>
-<dt>VACCINATIONDUEDATE</dt>
-<dd>The due date for the vaccination</dd>
-<dt>VACCINATIONGIVENDATE</dt>
-<dd>The date the vaccination was given</dd>
-<dt>VACCINATIONEXPIRESDATE</dt>
-<dd>The date the vaccine wears off and needs to be re-administered</dd>
-<dt>VACCINATIONMANUFACTURER</dt>
-<dd>The manufacturer of the vaccine</dd>
-<dt>VACCINATIONBATCHNUMBER</dt>
-<dd>The serial/batch number of the vaccine</dd>
-<dt>VACCINATIONRABIESTAG</dt>
-<dd>The rabies tag accompanying the vaccine</dd>
-<dt>VACCINATIONCOMMENTS</dt>
-<dd>Comments on the vaccine</dd>
+<dl class="simple">
+<dt>ANIMALCODE</dt><dd><p>A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.</p>
+</dd>
+<dt>ANIMALNAME</dt><dd><p>The animal’s name</p>
+</dd>
+<dt>ANIMALIMAGE</dt><dd><p>A photo for the animal, it can either be a fully qualified HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI</p>
+</dd>
+<dt>ANIMALNONSHELTER</dt><dd><p>Y/N to indicate whether this animal is a owned by a member of the public and not a shelter animal</p>
+</dd>
+<dt>ANIMALNOTFORADOPTION</dt><dd><p>Y/N to indicate whether this animal is not available for adoption (Y is not available).</p>
+</dd>
+<dt>ANIMALTRANSFER</dt><dd><p>Y/N to indicate whether this animal as transferred in. If set to Y, the ORIGINALOWNER fields will be used in the “Transferred From” field.</p>
+</dd>
+<dt>ANIMALFLAGS</dt><dd><p>A comma separated list of animal flags, including builtins courtesy,
+crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
+</dd>
+<dt>ANIMALSEX</dt><dd><p>The animal’s gender. ASM looks for the initial letter “M” in the string to indicate male, “F” for Female or “U” for Unknown.</p>
+</dd>
+<dt>ANIMALTYPE</dt><dd><p>The animal’s type. This should correspond to one of ASM’s animal types from your database.</p>
+</dd>
+<dt>ANIMALCOLOR</dt><dd><p>The animal’s color. This should correspond to a color in your database.</p>
+</dd>
+<dt>ANIMALBREED1</dt><dd><p>The animal’s primary breed. It should match a breed in your database.</p>
+</dd>
+<dt>ANIMALBREED2</dt><dd><p>The animal’s secondary breed. If different from ANIMALBREED1, ASM will mark the animal as a crossbreed.</p>
+</dd>
+<dt>ANIMALDOB</dt><dd><p>The animal’s date of birth. This field, or ANIMALAGE must be supplied or the record will not be imported.</p>
+</dd>
+<dt>ANIMALSIZE</dt><dd><p>The animal’s size. This should correspond to a size in your database.</p>
+</dd>
+<dt>ANIMALWEIGHT</dt><dd><p>The animal’s weight as a floating point number of pounds or kilos (eg: 2.5 = 2 lb and 8 oz)</p>
+</dd>
+<dt>ANIMALAGE</dt><dd><p>The animal’s current age in years. ASM will calculate a date of birth from this during import if ANIMALDOB is not supplied or blank.</p>
+</dd>
+<dt>ANIMALLOCATION</dt><dd><p>The animal’s location within your shelter. This should correspond to a location in your database.</p>
+</dd>
+<dt>ANIMALUNIT</dt><dd><p>The unit within the animal’s location within the shelter, eg: pen/cage number.</p>
+</dd>
+<dt>ANIMALJURISDICTION</dt><dd><p>The jurisidiction to allocate the animal to based on entry circumstances (usually pickup)</p>
+</dd>
+<dt>ANIMALSPECIES</dt><dd><p>The animal’s species. This should match a species in your database.</p>
+</dd>
+<dt>ANIMALHOUSETRAINED</dt><dd><p>Y/N/U to indicate yes/no/unknown</p>
+</dd>
+<dt>ANIMALGOODWITHCATS</dt><dd><p>Y/N/U to indicate yes/no/unknown</p>
+</dd>
+<dt>ANIMALGOODWITHDOGS</dt><dd><p>Y/N/U to indicate yes/no/unknown</p>
+</dd>
+<dt>ANIMALGOODWITHKIDS</dt><dd><p>Y/N/U to indicate yes/no/unknown</p>
+</dd>
+<dt>ANIMALCOMMENTS</dt><dd><p>Some comments to put in the animal’s comment field.</p>
+</dd>
+<dt>ANIMALHIDDENDETAILS</dt><dd><p>Some comments for the animal’s hidden details field.</p>
+</dd>
+<dt>ANIMALMARKINGS</dt><dd><p>Some comments for the animal’s markings field.</p>
+</dd>
+<dt>ANIMALHEALTHPROBLEMS</dt><dd><p>Some comments for the animal’s health problems field.</p>
+</dd>
+<dt>ANIMALNEUTERED</dt><dd><p>Y/N to indicate yes/no</p>
+</dd>
+<dt>ANIMALNEUTEREDDATE</dt><dd><p>The date the animal was neuteured. If supplied and not blank, ANIMALNEUTERED = Y is also assumed.</p>
+</dd>
+<dt>ANIMALMICROCHIP</dt><dd><p>If not blank, ASM will mark the animal microchipped with this as the microchip number.</p>
+</dd>
+<dt>ANIMALMICROCHIPDATE</dt><dd><p>The date the microchip was implanted</p>
+</dd>
+<dt>ANIMALENTRYDATE</dt><dd><p>The date the animal entered the shelter (date brought in). Today’s date will be used if this column is not present or the value is blank.</p>
+</dd>
+<dt>ANIMALENTRYCATEGORY</dt><dd><p>The animal’s entry category, which should correspond to an entry category in your database.</p>
+</dd>
+<dt>ANIMALREASONFORENTRY</dt><dd><p>Free text, notes on the reason the animal entered the shelter.</p>
+</dd>
+<dt>ANIMALDECEASEDDATE</dt><dd><p>If the animal is deceased, the date it died.</p>
+</dd>
+<dt>ANIMALADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have animal additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called Weight, ANIMALADDITIONALWEIGHT</p>
+</dd>
+<dt>CURRENTVETTITLE</dt><dd><p>If we have current vet info for the animal, the vet’s title.</p>
+</dd>
+<dt>CURRENTVETINITIALS</dt><dd><p>Vet’s initials.</p>
+</dd>
+<dt>CURRENTVETFIRSTNAME</dt><dd><p>The vet’s first name(s).</p>
+</dd>
+<dt>CURRENTVETLASTNAME</dt><dd><p>The vet’s last name. This column being present and having data in it determines whether or not the importer will consider the animal as having current vet info.</p>
+</dd>
+<dt>CURRENTVETADDRESS</dt><dd><p>Vet’s address.</p>
+</dd>
+<dt>CURRENTVETCITY</dt><dd><p>The vet’s city/town.</p>
+</dd>
+<dt>CURRENTVETSTATE</dt><dd><p>The vet’s state/county.</p>
+</dd>
+<dt>CURRENTVETZIPCODE</dt><dd><p>The vet’s zip or postcode.</p>
+</dd>
+<dt>CURRENTVETJURISDICTION</dt><dd><p>The vet’s jurisdiction</p>
+</dd>
+<dt>CURRENTVETHOMEPHONE</dt><dd><p>The vet’s home phone.</p>
+</dd>
+<dt>CURRENTVETWORKPHONE</dt><dd><p>The vet’s work phone.</p>
+</dd>
+<dt>CURRENTVETCELLPHONE</dt><dd><p>The vet’s mobile phone.</p>
+</dd>
+<dt>CURRENTVETEMAIL</dt><dd><p>The vet’s email.</p>
+</dd>
+<dt>CURRENTVETADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth CURRENTVETADDITIONALDATEOFBIRTH</p>
+</dd>
+<dt>DONATIONDATE</dt><dd><p>The date the donation amount on this line was received. If movement columns are present, it will be attached to the movement as well as the person. If no person columns are present, having this column in the CSV file will cause an error.</p>
+</dd>
+<dt>DONATIONAMOUNT</dt><dd><p>The amount of the donation on this line (as a floating point number)</p>
+</dd>
+<dt>DONATIONFEE</dt><dd><p>The amount of any transaction fee in handling the donation</p>
+</dd>
+<dt>DONATIONCHECKNUMBER</dt><dd><p>The cheque/check number for the donation</p>
+</dd>
+<dt>DONATIONCOMMENTS</dt><dd><p>Any comments to go with the donation</p>
+</dd>
+<dt>DONATIONPAYMENT</dt><dd><p>The payment method to use (should correspond to a payment method in your database, eg: Cash)</p>
+</dd>
+<dt>DONATIONTYPE</dt><dd><p>The payment type to use (should correspond to a payment type in your database).</p>
+</dd>
+<dt>DONATIONGIFTAID</dt><dd><p>Y / N if the payment should have the giftaid flag set</p>
+</dd>
+<dt>LICENSETYPE</dt><dd><p>The license type to use (licenses need at least person info)</p>
+</dd>
+<dt>LICENSENUMBER</dt><dd><p>The license number (mandatory)</p>
+</dd>
+<dt>LICENSEFEE</dt><dd><p>The fee paid for the license</p>
+</dd>
+<dt>LICENSEISSUEDATE</dt><dd><p>The date the license was issued</p>
+</dd>
+<dt>LICENSEEXPIRESDATE</dt><dd><p>The date the license expires</p>
+</dd>
+<dt>LICENSECOMMENTS</dt><dd><p>Any comments on the license</p>
+</dd>
+<dt>LOGDATE</dt><dd><p>The date of any log entry (only animal logs can be imported)</p>
+</dd>
+<dt>LOGTYPE</dt><dd><p>The type of log entry</p>
+</dd>
+<dt>LOGCOMMENTS</dt><dd><p>The log entry itself</p>
+</dd>
+<dt>MEDICALNAME</dt><dd><p>The name of the medical regimen for this line</p>
+</dd>
+<dt>MEDICALDOSAGE</dt><dd><p>The dosage of the medical regimen</p>
+</dd>
+<dt>MEDICALGIVENDATE</dt><dd><p>The date the medical regimen started (only one-off treatment regimens can be created via import)</p>
+</dd>
+<dt>MEDICALCOMMENTS</dt><dd><p>Any comments on the medical regimen</p>
+</dd>
+<dt>MOVEMENTTYPE</dt><dd><p>The type of movement for this line (0 = Reservation, 1 = Adoption, 2 = Foster, 3 = Transfer, 4 = Escaped, 5 = Reclaimed, 6 = Stolen, 7 = Released to Wild, 8 = Moved to Retailer. If MOVEMENTTYPE is not specified, but a MOVEMENTDATE has been given, ASM will default the type to adoption. If MOVEMENTTYPE is 0, then MOVEMENTDATE and MOVEMENTRETURNDATE will be used to set the reservation date and reservation cancelled date fields.</p>
+</dd>
+<dt>MOVEMENTDATE</dt><dd><p>The date of the movement</p>
+</dd>
+<dt>MOVEMENTRETURNDATE</dt><dd><p>The return date of the movement</p>
+</dd>
+<dt>MOVEMENTCOMMENTS</dt><dd><p>Any comments for the movement</p>
+</dd>
+<dt>ORIGINALOWNERTITLE</dt><dd><p>If we have original owner info for the animal, the person’s title.</p>
+</dd>
+<dt>ORIGINALOWNERINITIALS</dt><dd><p>Original owner’s initials.</p>
+</dd>
+<dt>ORIGINALOWNERFIRSTNAME</dt><dd><p>The original owner’s first name(s).</p>
+</dd>
+<dt>ORIGINALOWNERLASTNAME</dt><dd><p>The original owner’s last name. This column being present and having data in it determines whether or not the importer will consider the animal as having original owner info.</p>
+</dd>
+<dt>ORIGINALOWNERADDRESS</dt><dd><p>Original owner’s address.</p>
+</dd>
+<dt>ORIGINALOWNERCITY</dt><dd><p>The original owner’s city/town.</p>
+</dd>
+<dt>ORIGINALOWNERSTATE</dt><dd><p>The original owner’s state/county.</p>
+</dd>
+<dt>ORIGINALOWNERZIPCODE</dt><dd><p>The original owner’s zip or postcode.</p>
+</dd>
+<dt>ORIGINALOWNERJURISDICTION</dt><dd><p>The original owner’s jurisdiction</p>
+</dd>
+<dt>ORIGINALOWNERHOMEPHONE</dt><dd><p>The original owner’s home phone.</p>
+</dd>
+<dt>ORIGINALOWNERWORKPHONE</dt><dd><p>The original owner’s work phone.</p>
+</dd>
+<dt>ORIGINALOWNERCELLPHONE</dt><dd><p>The original owner’s mobile phone.</p>
+</dd>
+<dt>ORIGINALOWNEREMAIL</dt><dd><p>The original owner’s email.</p>
+</dd>
+<dt>ORIGINALOWNERADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth ORIGINALOWNERADDITIONALDATEOFBIRTH</p>
+</dd>
+<dt>PERSONCLASS</dt><dd><p>1 = Individual/Couple, 2 = Organisation</p>
+</dd>
+<dt>PERSONTITLE</dt><dd><p>The person’s title</p>
+</dd>
+<dt>PERSONINITIALS</dt><dd><p>The person’s initials</p>
+</dd>
+<dt>PERSONFIRSTNAME</dt><dd><p>The person’s first name (forenames)</p>
+</dd>
+<dt>PERSONLASTNAME</dt><dd><p>The person’s last name (surname)</p>
+</dd>
+<dt>PERSONNAME</dt><dd><p>If this field is supplied, ASM will assume it contains first names and a last name, overriding any fields that set those. Everything up to the last space is considered first names and everything up to the last space the last name.</p>
+</dd>
+<dt>PERSONADDRESS</dt><dd><p>The person’s address</p>
+</dd>
+<dt>PERSONCITY</dt><dd><p>The person’s town/city</p>
+</dd>
+<dt>PERSONSTATE</dt><dd><p>The person’s state/county</p>
+</dd>
+<dt>PERSONZIPCODE</dt><dd><p>The person’s zip or postcode</p>
+</dd>
+<dt>PERSONJURISDICTION</dt><dd><p>The person’s jurisdiction</p>
+</dd>
+<dt>PERSONHOMEPHONE</dt><dd><p>The person’s home phone number</p>
+</dd>
+<dt>PERSONWORKPHONE</dt><dd><p>The person’s work phone number</p>
+</dd>
+<dt>PERSONCELLPHONE</dt><dd><p>The person’s cell/mobile number</p>
+</dd>
+<dt>PERSONEMAIL</dt><dd><p>The person’s email address</p>
+</dd>
+<dt>PERSONGDPRCONTACTOPTIN</dt><dd><p>The GDPR contact optin values, separated by a comma. These values are: didnotask, declined, email, post, sms, phone</p>
+</dd>
+<dt>PERSONMEMBER</dt><dd><p>Y or 1 in this column to indicate the person should have the membership flag set.</p>
+</dd>
+<dt>PERSONMEMBERSHIPNUMBER</dt><dd><p>The person’s membership number</p>
+</dd>
+<dt>PERSONMEMBERSHIPEXPIRY</dt><dd><p>A date for when this person’s membership expires</p>
+</dd>
+<dt>PERSONFOSTERER</dt><dd><p>Y or 1 in this column to indicate the person should have the fosterer flag set.</p>
+</dd>
+<dt>PERSONFOSTERCAPACITY</dt><dd><p>The number of animals this person is willing to foster</p>
+</dd>
+<dt>PERSONDONOR</dt><dd><p>Y or 1 in this column to indicate the person is a regular donor.</p>
+</dd>
+<dt>PERSONFLAGS</dt><dd><p>This column can be used to set any other person flags on the imported person. Flags should be comma separated with no extra spaces. Built in flags are their lower case English names, eg: banned,aco,homechecked,homechecker,excludefrombulkemail
+Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag</p>
+</dd>
+<dt>PERSONCOMMENTS</dt><dd><p>Any comments to go with the person record.</p>
+</dd>
+<dt>PERSONMATCHACTIVE</dt><dd><p>Y or 1 in this column indicates the person is looking for an animal. If this field is not set to Y or 1, the other PERSONMATCH columns are ignored for this row.</p>
+</dd>
+<dt>PERSONMATCHADDED</dt><dd><p>The date the system should start looking for matches</p>
+</dd>
+<dt>PERSONMATCHEXPIRES</dt><dd><p>The date the system should stop looking for matches</p>
+</dd>
+<dt>PERSONMATCHSEX</dt><dd><p>The gender. ASM looks for the initial letter “M” in the string to indicate male, “F” for Female, “U” for Unknown or “A” for any</p>
+</dd>
+<dt>PERSONMATCHSIZE</dt><dd><p>The size of the animal the person is looking for</p>
+</dd>
+<dt>PERSONMATCHCOLOR</dt><dd><p>The color of the animal the person is looking for</p>
+</dd>
+<dt>PERSONMATCHAGEFROM, PERSONMATCHAGETO</dt><dd><p>The age range of the animal the person is looking for in years</p>
+</dd>
+<dt>PERSONMATCHTYPE</dt><dd><p>The animal type of the animal the person is looking for</p>
+</dd>
+<dt>PERSONMATCHSPECIES</dt><dd><p>The species of animal the person is looking for</p>
+</dd>
+<dt>PERSONMATCHBREED1, PERSONMATCHBREED2</dt><dd><p>The breed of the animal the person is looking for</p>
+</dd>
+<dt>PERSONMATCHGOODWITHCATS, PERSONMATCHGOODWITHDOGS, PERSONMATCHGOODWITHCHILDREN, PERSONMATCHHOUSETRAINED</dt><dd><p>The good with/housetrained flags of the animal the person is looking for</p>
+</dd>
+<dt>PERSONMATCHCOMMENTSCONTAIN</dt><dd><p>The animal this person is looking for will have this value in its comments</p>
+</dd>
+<dt>PERSONADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH</p>
+</dd>
+<dt>TESTTYPE</dt><dd><p>The type of test on this line</p>
+</dd>
+<dt>TESTRESULT</dt><dd><p>The test result</p>
+</dd>
+<dt>TESTDUEDATE</dt><dd><p>The due date for the test</p>
+</dd>
+<dt>TESTPERFORMEDDATE</dt><dd><p>The date the test was performed</p>
+</dd>
+<dt>TESTCOMMENTS</dt><dd><p>Any comments for the test</p>
+</dd>
+<dt>VACCINATIONTYPE</dt><dd><p>The type of vaccination on this line</p>
+</dd>
+<dt>VACCINATIONDUEDATE</dt><dd><p>The due date for the vaccination</p>
+</dd>
+<dt>VACCINATIONGIVENDATE</dt><dd><p>The date the vaccination was given</p>
+</dd>
+<dt>VACCINATIONEXPIRESDATE</dt><dd><p>The date the vaccine wears off and needs to be re-administered</p>
+</dd>
+<dt>VACCINATIONMANUFACTURER</dt><dd><p>The manufacturer of the vaccine</p>
+</dd>
+<dt>VACCINATIONBATCHNUMBER</dt><dd><p>The serial/batch number of the vaccine</p>
+</dd>
+<dt>VACCINATIONRABIESTAG</dt><dd><p>The rabies tag accompanying the vaccine</p>
+</dd>
+<dt>VACCINATIONCOMMENTS</dt><dd><p>Comments on the vaccine</p>
+</dd>
 </dl>
 </div>
 
@@ -484,29 +488,29 @@ Additional flags that you have added to the system should exactly match their fl
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="databasetables.html" class="btn btn-neutral float-right" title="Appendix: Database Tables/Columns" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="faq.html" class="btn btn-neutral float-left" title="Appendix: Frequently Asked Questions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="databasetables.html" class="btn btn-neutral float-right" title="Appendix: Database Tables/Columns" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="faq.html" class="btn btn-neutral float-left" title="Appendix: Frequently Asked Questions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Sheltermanager, Ltd
+        &#169; Copyright 2020, Sheltermanager, Ltd.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -514,7 +518,6 @@ Additional flags that you have added to the system should exactly match their fl
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

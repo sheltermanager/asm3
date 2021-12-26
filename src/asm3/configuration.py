@@ -144,6 +144,7 @@ DEFAULTS = {
     "AFDefaultTestType": "1",
     "AFDefaultVaccinationType": "1",
     "AFNonShelterType": "40",
+    "AKCRegisterAll": "No",
     "AlertSpeciesMicrochip": "1,2",
     "AlertSpeciesNeuter": "1,2",
     "AlertSpeciesRabies": "1,2",
@@ -165,6 +166,7 @@ DEFAULTS = {
     "CodingFormat": "TYYYYNNN",
     "CurrencyCode": "USD",
     "ShortCodingFormat": "NNT",
+    "DateBroughtInFutureLimit": "30",
     "DateDiffCutoffs": "7|182|365",
     "DefaultAnimalAge": "1.0", 
     "DefaultDailyBoardingCost": "2000",
@@ -286,7 +288,6 @@ DEFAULTS = {
     "PDFInline": "Yes",
     "PDFZoom": "100",
     "PublisherUseComments": "Yes",
-    "PublisherIgnoreFTPOverride": "No",
     "PublisherPresets": "includefosters excludeunder=12",
     "PublisherSub24Frequency": "0",
     "QuicklinksID": "40,46,25,31,34,19,20",
@@ -361,6 +362,7 @@ DEFAULTS = {
     "WarnNoMicrochip": "Yes",
     "WarnNoPendingVacc": "Yes",
     "WarnNoHomeCheck": "Yes",
+    "WarnBannedAddress": "Yes",
     "WarnBannedOwner": "Yes",
     "WarnOOPostcode": "Yes",
     "WarnOSMedical": "Yes",
@@ -559,6 +561,9 @@ def age_group_name(dbo, band):
 def akc_enrollmentsourceid(dbo):
     return cstring(dbo, "AKCEnrollmentSourceID")
 
+def akc_register_all(dbo):
+    return cboolean(dbo, "AKCRegisterAll")
+
 def alert_species_microchip(dbo):
     s = cstring(dbo, "AlertSpeciesMicrochip", DEFAULTS["AlertSpeciesMicrochip"])
     if s == "": return "0" # Always return something due to IN clauses of queries
@@ -731,6 +736,9 @@ def create_donation_trx(dbo):
 
 def currency_code(dbo):
     return cstring(dbo, "CurrencyCode", DEFAULTS["CurrencyCode"])
+
+def date_brought_in_future_limit(dbo):
+    return cint(dbo, "DateBroughtInFutureLimit", DEFAULTS["DateBroughtInFutureLimit"])
 
 def date_diff_cutoffs(dbo):
     return cstring(dbo, "DateDiffCutoffs", DEFAULTS["DateDiffCutoffs"])
@@ -1106,6 +1114,9 @@ def petrescue_adoptable_in(dbo):
 def petrescue_all_desexed(dbo):
     return cboolean(dbo, "PetRescueAllDesexed")
 
+def petrescue_all_microchips(dbo):
+    return cboolean(dbo, "PetRescueAllMicrochips")
+
 def petrescue_email(dbo):
     return cstring(dbo, "PetRescueEmail")
 
@@ -1211,9 +1222,6 @@ def smarttag_accountid(dbo):
 def publisher_presets(dbo):
     return cstring(dbo, "PublisherPresets", DEFAULTS["PublisherPresets"])
 
-def publisher_ignore_ftp_override(dbo):
-    return cboolean(dbo, "PublisherIgnoreFTPOverride", DEFAULTS["PublisherIgnoreFTPOverride"] == "Yes")
-
 def publisher_sub24_frequency(dbo):
     return cint(dbo, "PublisherSub24Frequency", DEFAULTS["PublisherSub24Frequency"])
 
@@ -1257,6 +1265,9 @@ def savourlife_username(dbo):
 
 def savourlife_password(dbo):
     return cstring(dbo, "SavourLifePassword")
+
+def savourlife_all_microchips(dbo):
+    return cboolean(dbo, "SavourLifeAllMicrochips")
 
 def savourlife_interstate(dbo):
     return cboolean(dbo, "SavourLifeInterstate")

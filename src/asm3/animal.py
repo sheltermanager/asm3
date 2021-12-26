@@ -316,14 +316,18 @@ def get_animal(dbo, animalid):
     (int) animalid: The animal to get
     """
     if animalid is None or animalid == 0: return None
-    return dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ID = ?", [animalid]) )
+    a = dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ID = ?", [animalid]) )
+    calc_ages(dbo, [a])
+    return a
 
 def get_animal_sheltercode(dbo, code):
     """
     Returns a complete animal row by ShelterCode
     """
     if code is None or code == "": return None
-    return dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ShelterCode = ?", [code]) )
+    a = dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ShelterCode = ?", [code]) )
+    calc_ages(dbo, [a])
+    return a
 
 def get_animals_ids(dbo, sort, q, limit = 5, cachetime = 60):
     """
@@ -337,7 +341,8 @@ def get_animals_ids(dbo, sort, q, limit = 5, cachetime = 60):
     for aid in dbo.query(q, limit=limit):
         aids.append(aid["ID"])
     if len(aids) == 0: return [] # Return empty recordset if no results
-    return dbo.query_cache(get_animal_query(dbo) + " WHERE a.ID IN (%s) ORDER BY %s" % (dbo.sql_placeholders(aids), sort), aids, age=cachetime, distincton="ID")
+    rows = dbo.query_cache(get_animal_query(dbo) + " WHERE a.ID IN (%s) ORDER BY %s" % (dbo.sql_placeholders(aids), sort), aids, age=cachetime, distincton="ID")
+    return calc_ages(dbo, rows)
 
 def get_animals_brief(animals):
     """
@@ -568,7 +573,6 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     if post.integer("agegroup") != -1:
         ss.add_str("agegroup", "a.AgeGroup")
     ss.add_date("outbetweenfrom", "outbetweento", "a.ActiveMovementDate")
-    ss.add_words("medianotes", "web.MediaNotes")
     ss.add_str("createdby", "a.CreatedBy")
 
     if post["agedbetweenfrom"] != "" and post["agedbetweento"] != "":
@@ -577,14 +581,19 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
         ss.values.append(subtract_years(dbo.now(), post.floating("agedbetweenfrom")))
 
     if post["insuranceno"] != "":
-        ss.ands.append("EXISTS (SELECT InsuranceNumber FROM adoption WHERE " \
-            "LOWER(InsuranceNumber) LIKE ? AND AnimalID = a.ID)")
-        ss.values.append( "%%%s%%" % post["insuranceno"] )
+        ilike = dbo.sql_ilike("InsuranceNumber", "?")
+        ss.ands.append(f"EXISTS (SELECT InsuranceNumber FROM adoption WHERE {ilike} AND AnimalID = a.ID)")
+        ss.values.append( "%%%s%%" % post["insuranceno"].lower() )
+
+    if post["medianotes"] != "":
+        ilike = dbo.sql_ilike("MediaNotes", "?")
+        ss.ands.append(f"EXISTS (SELECT ID FROM media WHERE {ilike} AND LinkID = a.ID AND LinkTypeID = 0)")
+        ss.values.append( "%%%s%%" % post["medianotes"].lower() )
 
     if post["adoptionno"] != "":
-        ss.ands.append("EXISTS (SELECT AdoptionNumber FROM adoption WHERE " \
-            "LOWER(AdoptionNumber) LIKE ? AND AnimalID = a.ID)")
-        ss.values.append( "%%%s%%" % post["adoptionno"] )
+        ilike = dbo.sql_ilike("AdoptionNumber", "?")
+        ss.ands.append(f"EXISTS (SELECT AdoptionNumber FROM adoption WHERE {ilike} AND AnimalID = a.ID)")
+        ss.values.append( "%%%s%%" % post["adoptionno"].lower() )
 
     if post["filter"].find("includedeceased") == -1 and post["logicallocation"] != "deceased":
         ss.ands.append("a.DeceasedDate Is Null")
@@ -1196,6 +1205,7 @@ def calc_ages(dbo, rows):
     Updates the ANIMALAGE column on every result in rows
     """
     for a in rows:
+        if a is None: continue
         a.ANIMALAGE = calc_age(dbo, a.ID, a)
     return rows
 
@@ -1220,6 +1230,8 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
         UUUU - 4 digit padded code for next animal of all time
         XXX - 3 digit padded code for next animal for year
         XX - unpadded code for next animal for year
+        OOO - 3 digit padded code for next animal for month
+        OO - unpadded code for next animal for month
         NNN - 3 digit padded code for next animal of type for year
         NN - unpadded code for next animal of type for year
     """
@@ -1235,7 +1247,7 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
         s = s.strip()
         return s
 
-    def substitute_tokens(fmt, year, tyear, ever, datebroughtin, animaltype, species, entryreason):
+    def substitute_tokens(fmt, year, month, tyear, ever, datebroughtin, animaltype, species, entryreason):
         """
         Produces a code by switching tokens in the code format fmt.
         The format is parsed to left to right, testing for tokens. Anything
@@ -1279,6 +1291,12 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
             elif fmt[x:x+2] == "XX":   
                 code.append(str(year))
                 x += 2
+            elif fmt[x:x+3] == "OOO":  
+                code.append("%03d" % month)
+                x += 3
+            elif fmt[x:x+2] == "OO":   
+                code.append(str(month))
+                x += 2
             elif fmt[x:x+2] == "TT":   
                 code.append(animaltype[:2])
                 x += 2
@@ -1312,9 +1330,12 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
     species = clean_lookup(asm3.lookups.get_species_name(dbo, speciesid))
     beginningofyear = datetime.datetime(datebroughtin.year, 1, 1, 0, 0, 0)
     endofyear = datetime.datetime(datebroughtin.year, 12, 31, 23, 59, 59)
+    beginningofmonth = asm3.i18n.first_of_month(datebroughtin)
+    endofmonth = asm3.i18n.last_of_month(datebroughtin)
     oneyearago = subtract_years(dbo.today(), 1.0)
     highesttyear = 0
     highestyear = 0
+    highestmonth = 0
     highestever = 0
 
     # If our code uses N, calculate the highest code seen for this type this year
@@ -1332,6 +1353,13 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
             "DateBroughtIn <= ?", (beginningofyear, endofyear))
         highestyear += 1
 
+    # If our code uses O, calculate the highest code seen this month
+    if codeformat.find("O") != -1 or shortformat.find("O") != -1:
+        highestmonth = dbo.query_int("SELECT COUNT(ID) FROM animal WHERE " \
+            "DateBroughtIn >= ? AND " \
+            "DateBroughtIn <= ?", (beginningofmonth, endofmonth))
+        highestmonth += 1
+
     # If our code uses U, calculate the highest code ever seen
     if codeformat.find("U") != -1 or shortformat.find("U") != -1:
         highestever = dbo.query_int("SELECT MAX(UniqueCodeID) FROM animal WHERE " \
@@ -1344,8 +1372,8 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
     while not unique:
 
         # Generate the codes
-        code = substitute_tokens(codeformat, highestyear, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
-        shortcode = substitute_tokens(shortformat, highestyear, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
+        code = substitute_tokens(codeformat, highestyear, highestmonth, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
+        shortcode = substitute_tokens(shortformat, highestyear, highestmonth, highesttyear, highestever, datebroughtin, animaltype, species, entryreason)
 
         # Verify the code is unique
         unique = 0 == dbo.query_int("SELECT COUNT(*) FROM animal WHERE ShelterCode LIKE ?", [code])
@@ -1989,7 +2017,7 @@ def insert_animal_from_form(dbo, post, username):
         # Generate a new code
         sheltercode, shortcode, unique, year = calc_shelter_code(dbo, post.integer("animaltype"), post.integer("entryreason"), post.integer("species"), datebroughtin)
 
-    # Default good with
+    # Default good with to unknown
     goodwithcats = 2
     if "goodwithcats" in post: goodwithcats = post.integer("goodwithcats")
     goodwithdogs = 2
@@ -2008,7 +2036,9 @@ def insert_animal_from_form(dbo, post, username):
             raise asm3.utils.ASMValidationError(_("Microchip number {0} has already been allocated to another animal.", l).format(post["microchipnumber"]))
     if dob > dbo.today():
         raise asm3.utils.ASMValidationError(_("Date of birth cannot be in the future.", l))
-    if datebroughtin > dbo.today(offset=30):
+    # Enforce a limit on the number of days in the future that brought in date can be
+    futurelimit = asm3.configuration.date_brought_in_future_limit(dbo) 
+    if futurelimit and datebroughtin > dbo.today(offset=futurelimit):
         raise asm3.utils.ASMValidationError(_("Date brought in cannot be in the future.", l))
 
     # Set default brought in by if we have one and none was set
@@ -2076,7 +2106,7 @@ def insert_animal_from_form(dbo, post, username):
         "CrueltyCase":      0,
         "BondedAnimalID":   0,
         "BondedAnimal2ID":  0,
-        "CoatType":         asm3.configuration.default_coattype(dbo),
+        "CoatType":         post.integer("coattype"),
         "EstimatedDOB":     estimateddob,
         "Fee":              post.integer("fee"),
         "Identichipped":    post.boolean("microchipped"),
@@ -3146,12 +3176,17 @@ def update_current_owner(dbo, username, animalid):
     """
     Updates the current owner for an animal from the available movements.
     """
+    exit_movements = "1,3,5"
+    # If treat fosters as on shelter is not set, fosters are an exit movement
+    if not asm3.configuration.foster_on_shelter(dbo): 
+        exit_movements = "1,2,3,5" 
+
     # The current owner for this animal
     animalownerid = dbo.query_int("SELECT OwnerID FROM animal WHERE ID=?", [animalid])
 
     # The latest exit movement for this animal (can't rely on denormalised)
     latestexitmoveid = dbo.query_int("SELECT ID FROM adoption WHERE AnimalID=? " \
-        "AND MovementType IN (1,3,5) AND MovementDate Is Not Null " \
+        f"AND MovementType IN ({exit_movements}) AND MovementDate Is Not Null " \
         "AND MovementDate <= ? AND (ReturnDate Is Null OR ReturnDate > ?) " \
         "ORDER BY MovementDate DESC", [animalid, dbo.today(), dbo.today()])
 
@@ -3161,7 +3196,7 @@ def update_current_owner(dbo, username, animalid):
     # The latest movement for this animal linked to the current owner that is not the latest
     # exit movement (ie. if this is >0 we know the current owner is from an old exit movement)
     lastownermoveid = dbo.query_int("SELECT ID FROM adoption WHERE AnimalID=? " \
-        "AND MovementType IN (1,3,5) AND OwnerID=? AND ID<>? " \
+        f"AND MovementType IN ({exit_movements}) AND OwnerID=? AND ID<>? " \
         "ORDER BY MovementDate DESC", [animalid, animalownerid, latestexitmoveid])
 
     # Set the current owner if the animal doesn't already have one 
@@ -4745,7 +4780,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear, asm3.movement.RELEASED),
             sp["ID"], sp["SPECIESNAME"], "SP_STOLEN", group, 130, showbabies, babymonths)
 
-    group = _("Live Releases {0}", l).format(year)
+    group = _("Live Outcomes {0}", l).format(year)
     for sp in allspecies:
         species_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
@@ -4781,6 +4816,15 @@ def update_animal_figures_annual(dbo, year = 0):
             "AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.IdentichipDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_MICROCHIPS", group, 190, showbabies, babymonths)
+
+    group = _("Euthanized Non-Shelter Animals in {0}", l).format(year)
+    for sp in allspecies:
+        species_line("SELECT a.DeceasedDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.SpeciesID = %d AND a.DeceasedDate >= %s AND a.DeceasedDate <= %s " \
+            "AND a.PutToSleep = 1 AND a.NonShelterAnimal = 1 " \
+            "GROUP BY a.DeceasedDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            sp["ID"], sp["SPECIESNAME"], "SP_EUTHNS", group, 195, showbabies, babymonths)
 
     group = _("Vaccinated Shelter Animals In {0}", l).format(year)
     for sp in allspecies:
@@ -4953,7 +4997,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear, asm3.movement.RELEASED),
             at["ID"], at["ANIMALTYPE"], "AT_STOLEN", group, 130, at["SHOWSPLIT"], babymonths)
 
-    group = _("Live Releases {0}", l).format(year)
+    group = _("Live Outcomes {0}", l).format(year)
     for at in alltypes:
         type_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
@@ -4968,7 +5012,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.AnimalTypeID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
             "AND a.NonShelterAnimal = 0 " \
-            "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_NEUTERSPAYSA", group, 170, at["SHOWSPLIT"], babymonths)
 
     group = _("Neutered/Spayed Non-Shelter Animals In {0}", l).format(year)
@@ -4977,7 +5021,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.AnimalTypeID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
             "AND a.NonShelterAnimal = 1 " \
-            "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_NEUTERSPAYNS", group, 180, at["SHOWSPLIT"], babymonths)
 
     group = _("Microchips Implanted In {0}", l).format(year)
@@ -4987,8 +5031,17 @@ def update_animal_figures_annual(dbo, year = 0):
             "a.AnimalTypeID = %d AND a.IdentichipDate >= %s AND a.IdentichipDate <= %s " \
             "AND a.Identichipped = 1 " \
             "AND a.NonShelterAnimal = 0 " \
-            "GROUP BY a.IdentichipDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.IdentichipDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_MICROCHIPS", group, 190, at["SHOWSPLIT"], babymonths)
+
+    group = _("Euthanized Non-Shelter Animals in {0}", l).format(year)
+    for at in alltypes:
+        type_line("SELECT a.DeceasedDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.AnimalTypeID = %d AND a.DeceasedDate >= %s AND a.DeceasedDate <= %s " \
+            "AND a.PutToSleep = 1 AND a.NonShelterAnimal = 1 " \
+            "GROUP BY a.DeceasedDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
+            at["ID"], at["ANIMALTYPE"], "AT_EUTHNS", group, 195, at["SHOWSPLIT"], babymonths)
 
     group = _("Vaccinated Shelter Animals In {0}", l).format(year)
     for at in alltypes:
@@ -4997,7 +5050,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
             "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null) " \
             "AND a.NonShelterAnimal = 0 " \
-            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_VACCSA", group, 200, at["SHOWSPLIT"], babymonths)
 
     group = _("Vaccinated Non-Shelter Animals In {0}", l).format(year)
@@ -5007,7 +5060,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "a.AnimalTypeID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
             "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null) " \
             "AND a.NonShelterAnimal = 1 " \
-            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_VACCNS", group, 210, at["SHOWSPLIT"], babymonths)
 
     asm3.asynctask.set_progress_value(dbo, 2)
@@ -5161,7 +5214,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY ad.MovementDate, a.DateOfBirth" % (int(er["ID"]), firstofyear, lastofyear, asm3.movement.RELEASED),
             er["ID"], er["REASONNAME"], "ER_STOLEN", group, 130, er["SHOWSPLIT"], babymonths)
 
-    group = _("Live Releases {0}", l).format(year)
+    group = _("Live Outcomes {0}", l).format(year)
     for er in allreasons:
         entryreason_line("SELECT ad.MovementDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \

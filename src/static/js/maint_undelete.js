@@ -27,7 +27,7 @@ $(function() {
                         header.show_info("Restored.");
                      } 
                 },
-                { id: "selectall", type: "dropdownfilter", 
+                { id: "bulk", type: "dropdownfilter", 
                     options: [ "(select)", "animal", "customreport", "onlineformincoming" ],
                     click: function(selval) {
                         $("#tableform input[type='checkbox']").each(function() {

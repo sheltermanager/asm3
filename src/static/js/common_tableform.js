@@ -211,7 +211,9 @@ const tableform = {
         var t = [];
         if (!bodyonly) {
             t.push('<a id="tableform-select-all" href="#" ');
-            t.push('title="' + html.title(_("Select all")) + '">' + html.icon("selectall") + '</a>');
+            t.push('title="' + html.title(_("Select all")) + '"><span class="ui-icon ui-icon-check"></span></a>');
+            t.push('<a id="tableform-toggle-filter" href="#" ');
+            t.push('title="' + html.title(_("Filter")) + '"><span class="ui-icon ui-icon-search"></span></a>');
             t.push("<table id=\"tableform\" width=\"100%\"><thead><tr>");
             $.each(table.columns, function(i, v) {
                 if (v.hideif && v.hideif()) { return; }
@@ -419,21 +421,24 @@ const tableform = {
             return false;
         });
 
+        // Bind the toggle search/filter link in the table header
+        $("#tableform-toggle-filter").click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            table.filter_toggle = !table.filter_toggle;
+            $(".tablesorter-filter-row").toggle(table.filter_toggle);
+            return false;
+        });
+
         // Bind any widgets inside the table
         this.table_bind_widgets(table);
 
-        // Apply tablesorter widget
-        var options = {};
-        // If whether or not to show filters is explicitly set, do that
-        options.filter = false;
-        if (table.hasOwnProperty("showfilter")) { 
-            options.filter = table.showfilter; 
-        }
-        // Otherwise, show the filters if there are 10+ rows in the table
-        else if (table.rows && table.rows.length > 9) { 
-            options.filter = true; 
-        }
-        $("#tableform").table(options);
+        $("#tableform").table({ filter: true });
+        // old behaviour was to show the filter line if there were 10 or more rows
+        // table.filter_toggle = table.rows && table.rows.length >= 10; 
+        table.filter_toggle = false;
+        $(".tablesorter-filter-row").toggle(table.filter_toggle);
+        $(".tablesorter-filter").prop("placeholder", _("Filter"));
 
         // And the default sort
         this.table_apply_sort(table);
@@ -1604,10 +1609,14 @@ const tableform = {
      */
     delete_dialog: function(callback, text) {
         var b = {}, deferred = $.Deferred(); 
-        b[_("Delete")] = function() {
-            $("#dialog-delete").dialog("close");
-            if (callback) { callback(); }
-            deferred.resolve();
+        b[_("Delete")] = {
+            text: _("Delete"),
+            "class": 'asm-redbutton',
+            click: function() {
+                $("#dialog-delete").dialog("close");
+                if (callback) { callback(); }
+                deferred.resolve();
+            }
         };
         b[_("Cancel")] = function() { 
             $(this).dialog("close"); 

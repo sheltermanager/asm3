@@ -2,7 +2,7 @@ Quickbooks Export (Payments)
 ###
 Accounts
 ###
-2720/PostgreSQL
+2720/PostgreSQL rev01
 ###
 Incoming financial payments between two dates, exportable to CSV for Quickbooks
 ###

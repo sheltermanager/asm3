@@ -281,7 +281,12 @@ $(function() {
                     { field: "DAILYEMAIL", display: _("Email To"), formatter: function(row) {
                         return common.replace_all(row.DAILYEMAIL, ",", "\n");
                     }},
-                    { field: "TITLE", display: _("Report Title"), initialsort: true },
+                    { field: "TITLE", display: _("Report Title"), initialsort: true, formatter: function(row) {
+                        return row.TITLE + (row.REVISION ? 
+                            ' <span class="asm-report-revision" title="' + _("Repository revision") + '">' + 
+                            format.padleft(row.REVISION, 2) + '</span>' 
+                            : '');
+                    }},
                     { field: "DESCRIPTION", display: _("Description") }
                 ]
             };

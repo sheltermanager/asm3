@@ -760,7 +760,10 @@ Movements
 * Warn when adopting to a person who has not been homechecked: If the person
   record does not have them down as homechecked, the system can warn you if you
   try to adopt an animal to them. 
-  
+ 
+* Warn when adopting to a person who lives at the same address as a banned person:
+  If the adopter has the same address as someone previously banned, show a warning.
+
 * Warn when adopting to a person who has been banned from adopting animals: The
   system can warn you if you try to adopt an animal to a person who has been
   marked as banned. 

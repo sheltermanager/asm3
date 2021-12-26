@@ -53,7 +53,7 @@ for pofile in dirlist:
         s += "\n}\n"
         outfile = "locale_" + pofile.replace(".po", ".py")
         with open(outfile, "wb") as f:
-            f.write(s.encode("ascii", "xmlcharrefreplace"))
+            f.write(s.encode("utf-8"))
 
         # Now do a javascript version
         s = "// " + pofile + "\n\n"
@@ -89,6 +89,6 @@ for pofile in dirlist:
         """
         outfile = "locale_" + pofile.replace(".po", ".js")
         with open(outfile, "wb") as f:
-            f.write(s.encode("ascii", "xmlcharrefreplace"))
+            f.write(s.encode("utf-8"))
 
 

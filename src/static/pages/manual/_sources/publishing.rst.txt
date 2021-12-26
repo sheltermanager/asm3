@@ -110,7 +110,7 @@ and age, or arranged numerically with a fixed number of animals per page. In
 addition, a recently adopted page can be generated along with an rss.xml for
 feed readers.
 
-.. warning:: Static HTML publishing is deprecated for sheltermanager.com and will not be available in the future.
+.. warning:: Static HTML publishing is deprecated for sheltermanager.com and is no longer available.
 
 * Generate javascript database: The site search facilities require a Javascript
   database, indexing the available animal records. If you wish to include
@@ -509,6 +509,9 @@ AKC Reunite
 ASM can register microchips with AKC Reunite, part of the American Kennel Club,
 who supply microchips to US organisations and pet owners. AKC microchips are 
 either 15-digits, starting with 956 or 10-digits, starting with 0006 or 0007.
+
+They will optionally accept registration of any microchip, although this has
+to be agreed with them first. 
 
 FoundAnimals
 -------

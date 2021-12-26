@@ -107,12 +107,12 @@ smcom-stable: clean version rollup schema
 	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it on a schedule
 	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
 	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable invalidatecache"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable invalidatecache restartapache"
 
 smcom-stable-dumpsessions: clean version rollup schema
 	@echo "[smcom stable dumpsessions] ==================="
 	rsync --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable dumpsessions invalidatecache"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable dumpsessions invalidatecache restartapache"
 
 smcom-stable-tgz: clean version rollup schema
 	@echo "[smcom stable tgz] ======================"
@@ -152,11 +152,10 @@ tests:
 
 deps:
 	@echo "[deps] ========================="
-	apt-get install python3 python3-pip python3-pil python3-mysqldb python3-psycopg2
+	apt-get install python3 python3-pip python3-cheroot python3-pil python3-mysqldb python3-psycopg2
 	apt-get install python3-memcache python3-requests python3-reportlab python3-xhtml2pdf
 	apt-get install python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra
 	apt-get install exuberant-ctags flake8 imagemagick wkhtmltopdf nodejs npm
-	apt-get install python3-webpy # See README for fix
 	npm install
 
 

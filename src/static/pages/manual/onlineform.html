@@ -1,38 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Online Forms &mdash; ASM 45u documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Payment Processors" href="paymentprocessors.html" />
@@ -77,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -131,6 +132,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -165,18 +167,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Online Forms</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/onlineform.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -227,8 +231,8 @@ confirmation email will be sent to that address. The confirmation message
 field will form the first part of the body of the email. HTML can be used, but
 it must be a complete HTML document that contains an &lt;html&gt; tag.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">sheltermanager.com uses a short term 2 minute cache on forms, so if you make changes to a form you’ve recently viewed, you may have to wait 2 minutes for any changes you make to appear.</p>
+<p class="admonition-title">Warning</p>
+<p>sheltermanager.com uses a short term 2 minute cache on forms, so if you make changes to a form you’ve recently viewed, you may have to wait 2 minutes for any changes you make to appear.</p>
 </div>
 <p>If you declare a javascript function in your form’s header or footer named
 asm3_onlineform_submit, it will be called when form validation is successful
@@ -316,15 +320,21 @@ for the first item:</p>
 <span class="n">checkboxgroup1</span><span class="o">=</span><span class="n">off</span>
 </pre></div>
 </div>
-<p>Multiple conditions can be specified. They will be ANDed together, so all
-conditions have to be true in order for the field to be displayed. Separate
-conditions with an ampersand &amp;</p>
+<p>Multiple conditions can be specified. They can be either ANDed together or ORed
+together, but NOT both at the same time.</p>
+<p>In an AND expression, all conditions have to be true in order for the field to
+be displayed.  Separate your AND conditions with an ampersand &amp;</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mycheck</span><span class="o">=</span><span class="n">on</span> <span class="o">&amp;</span> <span class="n">fieldname</span><span class="o">=</span><span class="n">X</span>
 </pre></div>
 </div>
+<p>In an OR expression, only one of the conditions has to be true in order for the
+field to be displayed. Separate your OR conditions with a pipe |</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hascats</span><span class="o">=</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">hasdogs</span><span class="o">=</span><span class="n">Yes</span>
+</pre></div>
+</div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Only check boxes, radio buttons, text and lookup fields can be used with Show If</p>
+<p class="admonition-title">Note</p>
+<p>Only check boxes, radio buttons, text and lookup fields can be used with Show If</p>
 </div>
 </div>
 </div>
@@ -334,40 +344,40 @@ conditions with an ampersand &amp;</p>
 <p>Selecting a form allows you to intelligently create or attach records from the
 data, or explicitly attach the form to existing records.</p>
 <ul class="simple">
-<li>Attach Person: Prompts for a single person record and attaches a copy of the
-form to them as media.</li>
-<li>Attach Animal: Prompts for a single animal record and attaches a copy of the
-form to them as media.</li>
-<li>Attach Animal (via animalname): Attaches the form to a single animal
-record based on the animalname field in the form itself.</li>
-<li>Create Animal: Searches for an animal record matching the code field on the
+<li><p>Attach Person: Prompts for a single person record and attaches a copy of the
+form to them as media.</p></li>
+<li><p>Attach Animal: Prompts for a single animal record and attaches a copy of the
+form to them as media.</p></li>
+<li><p>Attach Animal (via animalname): Attaches the form to a single animal
+record based on the animalname field in the form itself.</p></li>
+<li><p>Create Animal: Searches for an animal record matching the code field on the
 form if present. If a match is found, the form is attached to that animal,
 otherwise a new animal record is created. While you can use the Species
 and Breed field types with the breed1/breed2/color fields, you can also
 use your own lookup lists containing subsets of these items for users
 to choose from. When creating animals, the animalname and one of dateofbirth
-or age are mandatory.</li>
-<li>Create Person: Searches for a person record matching either the email address
+or age are mandatory.</p></li>
+<li><p>Create Person: Searches for a person record matching either the email address
 if present, or the firstname, lastname and address fields on the form. If a
 match is found, the form is attached to that person. If no match is found, a
 new person record is created. If a “reserveanimalname” field was found on the
 form as well, a reservation to the matching animal is created to the person
-(these can be all viewed under <span class="menuselection">Move ‣ Reservation Book</span>).</li>
-<li>Create Lost Animal: Runs through the same steps as Person so needs enough
+(these can be all viewed under <span class="menuselection">Move ‣ Reservation Book</span>).</p></li>
+<li><p>Create Lost Animal: Runs through the same steps as Person so needs enough
 information to create/find a person as well. “description” and “arealost”
-fields are the minimum required to create the lost animal record.</li>
-<li>Create Found Animal: Runs through the same steps as Person so needs enough
+fields are the minimum required to create the lost animal record.</p></li>
+<li><p>Create Found Animal: Runs through the same steps as Person so needs enough
 information to create/find a person as well. “description” and “areafound”
-fields are the minimum required to create the found animal record.</li>
-<li>Create Incident: Runs through the same steps as Person so needs enough
+fields are the minimum required to create the found animal record.</p></li>
+<li><p>Create Incident: Runs through the same steps as Person so needs enough
 information to create/find a person as well. That person becomes the
 “caller”.  “callnotes” and “dispatchaddress” fields are the minimum required
-to create the incident record.</li>
-<li>Create Transport: Runs through the same steps as Animal, so needs
-an “animalname” field to figure out who to attach the transport to.</li>
-<li>Create Waiting List: Runs through the same steps as Person so needs enough
+to create the incident record.</p></li>
+<li><p>Create Transport: Runs through the same steps as Animal, so needs
+an “animalname” field to figure out who to attach the transport to.</p></li>
+<li><p>Create Waiting List: Runs through the same steps as Person so needs enough
 information to create/find a person as well. A “description” field is the
-minimum required to create the waiting list record.</li>
+minimum required to create the waiting list record.</p></li>
 </ul>
 <p>When you create a new record or attach the form, the whole form will be
 included in the media tab of any created records (animal, incident, person AND
@@ -444,29 +454,29 @@ form you already have ready for editing, eg:</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="paymentprocessors.html" class="btn btn-neutral float-right" title="Payment Processors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="litters.html" class="btn btn-neutral float-left" title="Litters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="paymentprocessors.html" class="btn btn-neutral float-right" title="Payment Processors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="litters.html" class="btn btn-neutral float-left" title="Litters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Sheltermanager, Ltd
+        &#169; Copyright 2020, Sheltermanager, Ltd.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -474,7 +484,6 @@ form you already have ready for editing, eg:</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

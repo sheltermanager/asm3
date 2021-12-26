@@ -659,7 +659,7 @@ animal_view_adoptable_html
 Returns a complete HTML document that references animal_view_adoptable_js to
 show a list of adoptable animals. It looks for an HTML template called
 "animalviewadoptables" and falls back to a basic internal template if it does
-not exist.
+not exist::
 
     http://localhost:5000/service?method=&animal_view_adoptable_html
 
@@ -698,7 +698,7 @@ Images`).  Pass the name of the image in the title parameter::
 html_adoptable_animals
 ----------------------
 
-.. rubric:: Cache time: 30 minutes
+.. rubric:: Cache time: 10 minutes
 
 Returns a complete HTML document containing an HTML page of adoptable animals.
 
@@ -714,10 +714,14 @@ it off will cause animalview to be used). It is also possible extra parameters:
 * locationid=X - only output animals in this location. Run this query at
   the SQL interface to find out the ID numbers: SELECT * FROM internallocation
 
+* underweeks=X - only output animals aged under X weeks.
+
+* overweeks=X - only output animals aged over X weeks
+
 The rules governing which animals are adoptable are those set under
 :menuselection:`Publishing --> Set Publishing Options --> Animal Selection`.
 You can view the set at :menuselection:`Publishing --> View Animals Matching
-Publishing Options`
+Publishing Options`::
  
     http://localhost:5000/service?method=html_adoptable_animals&template=littlebox&speciesid=1
     http://localhost:5000/service?method=html_adoptable_animals
@@ -737,7 +741,7 @@ and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 
 You can also pass a "days" parameter to indicate how far you would like to
 go back. If you do not set it, the default is animals adopted in the last 30
-days.
+days::
  
     http://localhost:5000/service?method=html_adopted_animals&template=littlebox&speciesid=1&days=60
     http://localhost:5000/service?method=html_adopted_animals
@@ -757,7 +761,7 @@ and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 
 You can also pass a "days" parameter to indicate how far you would like to
 go back. If you do not set it, the default is animals deceased in the last 30
-days.
+days::
  
     http://localhost:5000/service?method=html_deceased_animals&template=littlebox&speciesid=1&days=60
     http://localhost:5000/service?method=html_deceased_animals
@@ -778,7 +782,7 @@ and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 A "flag" parameter must be passed to specify the flag you want the returned
 animals to have. If no flag is set, an error is returned. An "all=1"
 parameter can optionally be passed if you'd like all animals to be included,
-not just shelter animals.
+not just shelter animals::
 
     http://localhost:5000/service?method=html_flagged_animals&template=littlebox&speciesid=1&all=1&flag=Needs+Foster
     http://localhost:5000/service?method=html_flagged_animals&flag=At+Risk
@@ -794,7 +798,7 @@ Returns a complete HTML document containing an HTML page of current held animals
 You can pass an HTML template name in an optional "template" parameter (leaving
 it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
-and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats::
 
     http://localhost:5000/service?method=html_held_animals&template=littlebox&speciesid=1
     http://localhost:5000/service?method=html_held_animals

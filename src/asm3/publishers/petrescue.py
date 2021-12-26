@@ -60,6 +60,7 @@ class PetRescuePublisher(AbstractPublisher):
 
         token = asm3.configuration.petrescue_token(self.dbo)
         all_desexed = asm3.configuration.petrescue_all_desexed(self.dbo)
+        all_microchips = asm3.configuration.petrescue_all_microchips(self.dbo)
         adoptable_in = asm3.configuration.petrescue_adoptable_in(self.dbo)
         postcode = asm3.configuration.organisation_postcode(self.dbo)
         suburb = asm3.configuration.organisation_town(self.dbo)
@@ -104,7 +105,7 @@ class PetRescuePublisher(AbstractPublisher):
                     self.cleanup()
                     return
       
-                data = self.processAnimal(an, all_desexed, adoptable_in, suburb, state, postcode, contact_name, contact_number, contact_email)
+                data = self.processAnimal(an, all_desexed, adoptable_in, suburb, state, postcode, contact_name, contact_number, contact_email, all_microchips)
 
                 # PetRescue will insert/update accordingly based on whether remote_id/remote_source exists
                 url = PETRESCUE_URL + "listings"
@@ -179,7 +180,7 @@ class PetRescuePublisher(AbstractPublisher):
 
         self.cleanup()
 
-    def processAnimal(self, an, all_desexed=False, adoptable_in="", suburb="", state="", postcode="", contact_name="", contact_number="", contact_email=""):
+    def processAnimal(self, an, all_desexed=False, adoptable_in="", suburb="", state="", postcode="", contact_name="", contact_number="", contact_email="", all_microchips=False):
         """ Processes an animal record and returns a data dictionary to upload as JSON """
         isdog = an.SPECIESID == 1
         iscat = an.SPECIESID == 2
@@ -242,24 +243,25 @@ class PetRescuePublisher(AbstractPublisher):
         if not hwtreated: hwtreated = None
         if not wormed: wormed = None
 
-        # Use the fosterer's postcode, state and suburb if available
+        # Use the fosterer or retailer postcode, state and suburb if available
         location_postcode = postcode
         location_state_abbr = state
         location_suburb = suburb
-        if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE == 2:
+        if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE in (2, 8):
             fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM adoption m " \
                 "INNER JOIN owner o ON m.OwnerID = o.ID WHERE m.ID=?", [ an.ACTIVEMOVEMENTID ]))
             if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
             if fr is not None and fr.OWNERCOUNTY: location_state_abbr = fr.OWNERCOUNTY
             if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
 
-        # Only send microchip_number for animals listed in or located in Victoria or New South Wales
+        # Only send microchip_number if all_microchips is turned on, or for animals listed in or 
+        # located in Victoria or New South Wales.
         # Since people can enter any old rubbish in the state field, we use postcode to figure out
         # location - 2XXX = NSW, 3XXX = VIC
         microchip_number = ""
         adoptable_in_list = adoptable_in.split(",")
-        if "VIC" in adoptable_in_list or "NSW" in adoptable_in_list or \
-            location_postcode.startswith("2") or location_postcode.startswith("3"):
+        if all_microchips or ("VIC" in adoptable_in_list or "NSW" in adoptable_in_list or \
+            location_postcode.startswith("2") or location_postcode.startswith("3")):
             microchip_number = asm3.utils.iif(an.IDENTICHIPPED == 1, an.IDENTICHIPNUMBER, "")
 
         # Construct and return a dictionary of info for this animal

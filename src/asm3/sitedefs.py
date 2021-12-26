@@ -92,6 +92,9 @@ LOG_LOCATION = get_string("log_location", "syslog")
 # to disable debug messages
 LOG_DEBUG = get_boolean("log_debug", True)
 
+# Whether to reload the application when the code.py filestamp changes
+AUTORELOAD = get_boolean("autoreload", False)
+
 # Database info
 # MYSQL, POSTGRESQL, SQLITE or DB2
 DB_TYPE = get_string("db_type", "MYSQL")
@@ -232,6 +235,9 @@ MULTIPLE_DATABASES_TYPE = get_string("multiple_databases_type", "map")
 # { "alias": { "dbtype": "MYSQL", "host": "localhost", "port": 3306, "username": "root", "password": "root", "database": "asm" } }
 MULTIPLE_DATABASES_MAP = get_dict("multiple_databases_map")
 
+# Whether the old HTML/FTP publisher of static files is enabled
+HTMLFTP_PUBLISHER_ENABLED = get_boolean("htmlftp_publisher_enabled", True)
+
 # FTP hosts and URLs for third party publishing services
 ADOPTAPET_FTP_HOST = get_string("adoptapet_ftp_host", "autoupload.adoptapet.com")
 AKC_REUNITE_BASE_URL = get_string("akc_reunite_base_url", "")
@@ -273,23 +279,6 @@ VETENVOY_US_AKC_REUNITE_RECIPIENTID = get_string("vetenvoy_us_akc_reunite_recipi
 
 # Config for payment processing services
 PAYPAL_VALIDATE_IPN_URL = get_string("paypal_validate_ipn_url", "")
-
-# Override the html publishDir with a fixed value and forbid
-# editing in the UI.
-# {alias} will be substituted for the current database alias 
-# {database} the current database name
-# {username} the current database username.
-# MULTIPLE_DATABASES_PUBLISH_DIR = "/home/somewhere/{alias}"
-MULTIPLE_DATABASES_PUBLISH_DIR = get_string("multiple_databases_publish_dir", "")
-
-# The URL to show in the UI when publish dir is overridden
-# MULTIPLE_DATABASES_PUBLISH_URL = "http://yoursite.com/{alias}"
-MULTIPLE_DATABASES_PUBLISH_URL = get_string("multiple_databases_publish_url", "")
-
-# Override the HTML/FTP upload credentials. Setting this
-# turns on FTP upload and hides those configuration fields in the UI
-#MULTIPLE_DATABASES_PUBLISH_FTP = { "host": "ftp.host.com", "user": "user", "pass": "pass", "port": 21, "chdir": "/home/{alias}", "passive": True }
-MULTIPLE_DATABASES_PUBLISH_FTP = get_dict("multiple_databases_publish_ftp", None)
 
 # Options available under the share button
 SHARE_BUTTON = get_string("share_button", "shareweb,sharepic,shareemail")
@@ -339,8 +328,8 @@ FLOT_JS = get_string("flot_js", 'static/lib/flot/0.8.3/jquery.flot.min.js')
 FLOT_PIE_JS = get_string("flot_pie_js", 'static/lib/flot/0.8.3/jquery.flot.pie.min.js')
 FULLCALENDAR_CSS = get_string("fullcalendar_css", 'static/lib/fullcalendar/3.10.2/fullcalendar.min.css')
 FULLCALENDAR_JS = get_string("fullcalendar_js", 'static/lib/fullcalendar/3.10.2/fullcalendar.min.js')
-JQUERY_UI_CSS = get_string("jquery_ui_css", 'static/lib/jqueryui/jquery-ui-themes-1.12.1/themes/%(theme)s/jquery-ui.css')
-JQUERY_UI_JS = get_string("jquery_ui_js", 'static/lib/jqueryui/jquery-ui-1.12.1/jquery-ui.min.js')
+JQUERY_UI_CSS = get_string("jquery_ui_css", 'static/lib/jqueryui/jquery-ui-themes-1.13.0/themes/%(theme)s/jquery-ui.css')
+JQUERY_UI_JS = get_string("jquery_ui_js", 'static/lib/jqueryui/jquery-ui-1.13.0/jquery-ui.min.js')
 JQUERY_JS = get_string("jquery_js", 'static/lib/jquery/3.6.0/jquery.min.js')
 JQUERY_MOBILE_CSS = get_string("jquery_mobile_css", 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.css')
 JQUERY_MOBILE_JS = get_string("jquery_mobile_js", 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.js')

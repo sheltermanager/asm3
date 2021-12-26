@@ -149,6 +149,12 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
+                '<tr id="coattyperow">',
+                '<td><label for="coattype">' + _("Coat Type") + '</label></td>',
+                '<td><select id="coattype" data="coattype" class="asm-selectbox">',
+                html.list_to_options(controller.coattypes, "ID", "COATTYPE"),
+                '</select></td>',
+                '</tr>',
                 '<tr id="locationrow">',
                 '<td>',
                 '<label for="internallocation">' + _("Internal Location") + '</label>',
@@ -506,6 +512,7 @@ $(function() {
             animal_new.update_breed_select();
             $("#breed1, #breed2").select("value", config.str("AFDefaultBreed"));
             $("#basecolour").select("value", config.str("AFDefaultColour"));
+            $("#coattype").select("value", config.str("AFDefaultCoatType"));
             $("#entryreason").select("value", config.str("AFDefaultEntryReason"));
             $("#internallocation").select("value", config.str("AFDefaultLocation"));
             $("#jurisdiction").select("value", config.str("DefaultJurisdiction"));
@@ -634,6 +641,7 @@ $(function() {
             if (!config.bool("AddAnimalsShowBroughtInBy")) { $("#broughtinbyrow").hide(); }
             if (!config.bool("AddAnimalsShowCoordinator")) { $("#coordinatorrow").hide(); }
             if (!config.bool("AddAnimalsShowOriginalOwner")) { $("#originalownerrow").hide(); }
+            if (!config.bool("AddAnimalsShowCoatType")) { $("#coattyperow").hide(); }
             if (!config.bool("AddAnimalsShowColour")) { $("#colourrow").hide(); }
             if (!config.bool("AddAnimalsShowDateBroughtIn")) { $("#datebroughtinrow").hide(); }
             if (!config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").hide(); }

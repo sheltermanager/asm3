@@ -19,7 +19,7 @@ import asm3.utils
 import asm3.waitinglist
 from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TOUCHPUNCH_JS
 
-import web
+import web062 as web
 
 FIELDTYPE_YESNO = 0
 FIELDTYPE_TEXT = 1
@@ -305,7 +305,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         h.append('<script>')
         h.append('document.write("<input " + \n"type=" + "\'hidden\'" + \n" name=" + "\'%s\'" + \n" value=" + "\'%s\'" + " />");' % (JSKEY_NAME, JSKEY_VALUE))
         h.append('</script>')
-    h.append('<p style="text-align: center"><input type="submit" value="Submit" /></p>')
+    h.append('<p style="text-align: center"><input type="submit" value="%s" /></p>' % asm3.i18n._("Submit", l))
     h.append('</form>')
     if completedocument:
         h.append(asm3.utils.nulltostr(form.FOOTER))
@@ -708,14 +708,12 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     flags = post["flags"]
     emailaddress = ""
     emailsubmissionto = ""
-    firstnamelabel = ""
     firstname = ""
-    lastnamelabel = ""
     lastname = ""
-    animalnamelabel = ""
     animalname = ""
     images = []
     post.data["formreceived"] = "%s %s" % (asm3.i18n.python2display(dbo.locale, posteddate), asm3.i18n.format_time(posteddate))
+    post.data["ipaddress"] = remoteip
 
     for k, v in post.data.items():
 
@@ -746,13 +744,10 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             emailsubmissionto = v
                         if fieldname == "firstname" or fieldname == "forenames": 
                             firstname = v
-                            firstnamelabel = label
                         if fieldname == "lastname" or fieldname == "surname":
                             lastname = v
-                            lastnamelabel = label
                         if fieldname == "animalname" or fieldname == "reserveanimalname":
                             animalname = v
-                            animalnamelabel = asm3.i18n._("Name", l)
                         # If it's a raw markup field, store the markup as the value
                         if fieldtype == FIELDTYPE_RAWMARKUP:
                             v = "RAW::%s" % tooltip
@@ -793,21 +788,20 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
 
     # If we have first and last name, include them in the preview
     if firstname != "" and lastname != "":
-        preview.append("%s: %s" % (firstnamelabel, firstname))
-        preview.append("%s: %s" % (lastnamelabel, lastname))
+        preview.append("%s: %s %s" % ( asm3.i18n._("Name"), firstname, lastname ))
         fieldssofar += 2
 
-    # If we have an animal name, include that too
+    # If we have an animal, include that too
     if animalname != "":
-        preview.append("%s: %s" % (animalnamelabel, animalname))
+        preview.append("%s: %s" % ( asm3.i18n._("Animal"), animalname))
         fieldssofar += 1
 
     for fld in get_onlineformincoming_detail(dbo, collationid):
         if fieldssofar < 3:
             # Don't include raw markup or signature/image fields in the preview
             if fld.VALUE.startswith("RAW::") or fld.VALUE.startswith("data:"): continue
-            # Or the system added timestamp field, or fields we would have already added above
-            if fld.FIELDNAME in ("formreceived", "firstname", "forenames", "lastname", "surname"): continue
+            # Or the system added timestamp field, ip address, or fields we would have already added above
+            if fld.FIELDNAME in ("formreceived", "ipaddress", "firstname", "forenames", "lastname", "surname"): continue
             if fld.FIELDNAME in ("animalname", "reserveanimalname"): continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
@@ -829,7 +823,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     # (images are set as attachments so not included)
     formdata = get_onlineformincoming_html_print(dbo, [collationid,], include_images=False)
 
-    # Do we have a valid emailaddress field for the submitter and 
+    # Do we have a valid emailaddress field for the form submitter and 
     # one of the options to email the submitter is set?
     if emailaddress != "" and emailaddress.find("@") != -1 and formdef.emailsubmitter != 0:
         # Get the confirmation message
@@ -843,6 +837,9 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emailaddress, "", "", 
             asm3.i18n._("Submission received: {0}", l).format(formname), 
             body, "html", attachments, exceptions=False)
+
+    # Subject line for email notifications to staff and coordinators (max 70 chars)
+    subject = "%s - %s" % (asm3.utils.truncate(formname, 32), ", ".join(preview))
 
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
@@ -858,8 +855,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         if formdef.emailsubmitter != 0: replyto = emailaddress 
         if replyto == "": replyto = asm3.configuration.email(dbo)
         asm3.utils.send_email(dbo, replyto, formdef.emailaddress, "", "", 
-            "%s - %s" % (formname, ", ".join(preview)), 
-            formdata, "html", images, exceptions=False)
+            subject, formdata, "html", images, exceptions=False)
 
     # Was the option set to email the adoption coordinator linked to animalname?
     if formdef.emailcoordinator == 1 and animalname != "":
@@ -870,8 +866,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             "WHERE animal.ID = ?", [animalid])
         if coordinatoremail != "":
             asm3.utils.send_email(dbo, asm3.configuration.email(dbo), coordinatoremail, "", "", 
-                "%s - %s" % (formname, ", ".join(preview)), 
-                formdata, "html", images, exceptions=False)
+                subject, formdata, "html", images, exceptions=False)
 
     # Did the form submission have a value in an "emailsubmissionto" field?
     if emailsubmissionto is not None and emailsubmissionto.strip() != "":
@@ -881,8 +876,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         # Remove any line breaks from the list of addresses, this has caused malformed headers before
         emailsubmissionto = emailsubmissionto.replace("\n", "")
         asm3.utils.send_email(dbo, replyto, emailsubmissionto, "", "", 
-            "%s - %s" % (formname, ", ".join(preview)), 
-            formdata, "html", images, exceptions=False)
+            subject, formdata, "html", images, exceptions=False)
 
     # Does this form have an option set to autoprocess it? If not, stop now
     if formdef.autoprocess is None or formdef.autoprocess == AP_NO: return collationid
@@ -895,7 +889,12 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         elif formdef.autoprocess == AP_CREATEPERSON:
             create_person(dbo, "autoprocess", collationid)
         elif formdef.autoprocess == AP_ATTACHANIMAL_CREATEPERSON:
-            attach_animal(dbo, "autoprocess", collationid)
+            try:
+                # If we fail to attach the animal (eg: because one wasn't specified)
+                # we still need to continue and create the person
+                attach_animal(dbo, "autoprocess", collationid)
+            except asm3.utils.ASMValidationError as aterr:
+                asm3.al.error("%s" % aterr.getMsg(), "autoprocess", dbo)
             create_person(dbo, "autoprocess", collationid)
         elif formdef.autoprocess == AP_CREATELOSTANIMAL:
             create_lostanimal(dbo, "autoprocess", collationid)
@@ -1012,9 +1011,10 @@ def attach_form(dbo, username, linktype, linkid, collationid):
     for f in fields:
         if f.VALUE.startswith("data:image/jpeg"):
             d = {
+                "excludefrompublish": "1", # We should never be sending public uploaded images anywhere by default
                 "filename":     "image.jpg",
                 "filetype":     "image/jpeg",
-                "filedata":     f.VALUE,
+                "filedata":     f.VALUE
             }
             asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.utils.PostedData(d, dbo.locale))
 
@@ -1130,6 +1130,7 @@ def create_person(dbo, username, collationid):
     formreceived = asm3.i18n.python2display(l, dbo.now())
     for f in fields:
         if flags is None: flags = f.FLAGS
+        if flags is None: flags = ""
         if f.FIELDNAME == "title": d["title"] = f.VALUE
         if f.FIELDNAME == "initials": d["initials"] = f.VALUE
         if f.FIELDNAME == "forenames": d["forenames"] = f.VALUE
@@ -1149,7 +1150,8 @@ def create_person(dbo, username, collationid):
         if f.FIELDNAME == "mobiletelephone": d["mobiletelephone"] = f.VALUE
         if f.FIELDNAME == "celltelephone": d["mobiletelephone"] = f.VALUE
         if f.FIELDNAME == "emailaddress": d["emailaddress"] = f.VALUE
-        if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != asm3.i18n._("No", l): d["excludefrombulkemail"] = "on"
+        if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != asm3.i18n._("No", l): 
+            flags += ",excludefrombulkemail"
         if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
         if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = f.VALUE

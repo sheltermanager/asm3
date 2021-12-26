@@ -464,6 +464,28 @@ $.fn.time = function() {
                 e.preventDefault();
             }
         });
+        $(this).blur(function(e) {
+            // If the value in the box is not HH:MM try and coerce it
+            // people frequently enter times like 0900, 900 or 09.00 for some reason
+            let v = String($(this).val());
+            // Empty value or 5 chars with : in the middle is correct, do nothing
+            if (v.length == 0 || (v.length == 5 && v.indexOf(":") == 2)) { return; }
+            // 8 chars with : in positions 2,5 00:00:00 is correct
+            if (v.length == 8 && v.indexOf(":") == 2 && v.lastIndexOf(":") == 5) { return; }
+            // If we've got 5 chars and a ., replace with a colon
+            else if (v.length == 5 && v.indexOf(".") == 2) { $(this).val( v.replace(".", ":")); }
+            // If we've got 4 chars and no colon, add one in the middle
+            else if (v.length == 4 && v.indexOf(":") == -1) { $(this).val( v.substring(0,2) + ":" + v.substring(2)); }
+            // If we've got 3 chars and no colon, add a leading zero and one in the middle
+            else if (v.length == 3 && v.indexOf(":") == -1) { $(this).val( "0" + v.substring(0,1) + ":" + v.substring(1)); }
+            // If we've got 1 or 2 chars, assume it's just the hour
+            else if (v.length == 2) { $(this).val(v + ":00"); }
+            else if (v.length == 1) { $(this).val("0" + v + ":00"); }
+            else {
+                $(this).val("");
+                header.show_error(_("'{0}' is not a valid time").replace("{0}", v), 5000);
+            }
+        });
     });
 };
 
@@ -613,6 +635,10 @@ $.widget("asm.emailform", {
             '<td><label for="em-subject">' + _("Subject") + '</label></td>',
             '<td><input id="em-subject" data="subject" type="text" class="asm-doubletextbox" /></td>',
             '</tr>',
+            '<tr id="em-attachmentrow">',
+            '<td><label for="em-attachments">' + _("Attachments") + '</label></td>',
+            '<td><span id="em-attachments" data="attachments" type="text" class="strong"></span></td>',
+            '</tr>',
             '<tr>',
             '<td></td>',
             '<td><input id="em-addtolog" data="addtolog" type="checkbox"',
@@ -730,6 +756,13 @@ $.widget("asm.emailform", {
         }
         if (o.toaddresses) {
             toaddresses = toaddresses.concat(o.toaddresses);
+        }
+        if (o.attachments) {
+            $("#em-attachments").html(o.attachments);
+            $("#em-attachmentrow").show();
+        }
+        else {
+            $("#em-attachmentrow").hide();
         }
         fromaddresses = fromaddresses.concat(config.str("EmailFromAddresses").split(","));
         toaddresses = toaddresses.concat(config.str("EmailToAddresses").split(","));
@@ -1057,7 +1090,7 @@ $.widget("asm.callout", {
         button.append(html.icon("callout"));
 
         // Create the callout
-        $("#asm-content").append('<div id="' + popupid + '" class="asm-callout-popup">' + html.info(content) + '</div>');
+        $("#asm-content").append('<div id="' + popupid + '" class="popupshadow asm-callout-popup">' + html.info(content) + '</div>');
         let popup = $("#" + popupid);
         this.options.popup = popup;
         popup.css("display", "none");
@@ -1085,7 +1118,9 @@ $.widget("asm.callout", {
     },
 
     destroy: function() {
-        this.options.popup.remove();
+        try {
+            this.options.popup.remove();
+        } catch (err) {}
     }
 
 });
@@ -1317,7 +1352,10 @@ $.widget("asm.richtextarea", {
     },
 
     destroy: function() {
-        tinymce.get(this.element.attr("id")).remove();
+        try {
+            tinymce.get(this.element.attr("id")).remove();
+        }
+        catch (err) {} // uncaught exception can block module unload
     },
 
     value: function(newval) {
@@ -1428,7 +1466,10 @@ $.widget("asm.htmleditor", {
     },
 
     destroy: function() {
-        this.options.editor.destroy();
+        try {
+            this.options.editor.destroy();
+        }
+        catch (err) {}
     },
 
     fullscreen: function(cm, fs) {
@@ -1519,7 +1560,10 @@ $.widget("asm.sqleditor", {
     },
 
     destroy: function() {
-        this.options.editor.destroy();
+        try {
+            this.options.editor.destroy();
+        }
+        catch (err) {}
     },
 
     fullscreen: function(cm, fs) {

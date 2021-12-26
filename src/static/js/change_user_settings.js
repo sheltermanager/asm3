@@ -4,35 +4,6 @@ $(function() {
 
     "use strict";
 
-    const BACKGROUND_COLOURS = {
-        "asm":              "#ffffff",
-        "base":             "#ffffff",
-        "black-tie":        "#333333",
-        "blitzer":          "#cc0000",
-        "cupertino":        "#deedf7",
-        "dark-hive":        "#444444",
-        "dot-luv":          "#0b3e6f",
-        "eggplant":         "#30273a",
-        "excite-bike":      "#f9f9f9",
-        "flick":            "#dddddd",
-        "hot-sneaks":       "#35414f",
-        "humanity":         "#cb842e",
-        "le-frog":          "#3a8104",
-        "mint-choc":        "#453326",
-        "overcast":         "#dddddd",
-        "pepper-grinder":   "#ffffff",
-        "redmond":          "#5c9ccc",
-        "smoothness":       "#cccccc",
-        "south-street":     "#ece8da",
-        "start":            "#2191c0",
-        "sunny":            "#817865",
-        "swanky-purse":     "#261803",
-        "trontastic":       "#9fda58",
-        "ui-darkness":      "#333333",
-        "ui-lightness":     "#ffffff",
-        "vader":            "#888888"
-    };
-
     const change_user_settings = {
 
         /** Where we have a list of pairs, first is value, second is label */
@@ -44,6 +15,14 @@ $(function() {
                     ds = 'data-style="background-image: url(static/images/flags/' + v[0] + '.png)"';
                 }
                 s.push('<option value="' + v[0] + '" ' + ds + '>' + v[1] + '</option>');
+            });
+            return s.join("\n");
+        },
+
+        theme_list: function() {
+            let s = [];
+            $.each(controller.themes, function(i, v) {
+                s.push('<option value="' + v[0] + '">' + _(v[3]) + '</option>');
             });
             return s.join("\n");
         },
@@ -61,7 +40,7 @@ $(function() {
                     '<label for="realname">' + _("Real name") + '</label>',
                     '</td>',
                     '<td>',
-                    '<input id="realname" data="realname" class="asm-textbox" />',
+                    '<input id="realname" data="realname" class="asm-doubletextbox" />',
                     '</td>',
                 '</tr>',
                 '<tr>',
@@ -69,7 +48,7 @@ $(function() {
                     '<label for="email">' + _("Email Address") + '</label>',
                     '</td>',
                     '<td>',
-                    '<input id="email" data="email" class="asm-textbox" />',
+                    '<input id="email" data="email" class="asm-doubletextbox" />',
                     '</td>',
                 '</tr>',
                 '<tr>',
@@ -78,8 +57,7 @@ $(function() {
                     '</td>',
                     '<td>',
                     '<select id="systemtheme" data="theme" class="asm-selectbox">',
-                    '<option value="">' + _("(use system)") + '</option>',
-                    this.two_pair_options(controller.themes),
+                    this.theme_list(),
                     '</select>',
                     '</td>',
                 '</tr>',
@@ -105,9 +83,9 @@ $(function() {
                     '</td>',
                 '</tr>',
                 '</table>',
-                '<div class="centered">',
+                '<p class="centered">',
                     '<button id="save">' + html.icon("save") + ' ' + _("Save") + '</button>',
-                '</div>',
+                '</p>',
                 html.content_footer()
             ].join("\n");
         },
@@ -149,16 +127,20 @@ $(function() {
                 }
             });
 
-            // When the visual theme is changed, switch the CSS file so the
-            // theme updates immediately.
+            // When the visual theme is changed, switch the CSS file and
+            // the background.
             $("#systemtheme").change(function() {
                 let theme = $("#systemtheme").val();
-                if (theme == "") {
-                    theme = asm.theme;
-                }
-                let href = asm.jqueryuicss.replace("%(theme)s", theme);
-                $("#jqt").attr("href", href);
-                $("body").css("background-color", BACKGROUND_COLOURS[theme]);
+                if (theme == "") { theme = asm.theme; }
+                $.each(controller.themes, function(i, v) {
+                    let [tcode, tjq, tbg, tname] = v;
+                    if (tcode == theme) {
+                        let href = asm.jqueryuicss.replace("%(theme)s", tjq);
+                        $("#jqt").attr("href", href);
+                        $("body").css("background-color", tbg);
+                        return false;
+                    }
+                });
             });
 
         },

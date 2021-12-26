@@ -11,7 +11,7 @@ $(function() {
                 '<ul>',
                 '<li><a href="#tab-animalselection">' + _("Animal Selection") + '</a></li>',
                 '<li><a href="#tab-allpublishers">' + _("All Publishers") + '</a></li>',
-                '<li><a href="#tab-htmlftp">' + _("HTML/FTP Publisher") + '</a></li>',
+                '<li class="hashtmlftp"><a href="#tab-htmlftp">' + _("HTML/FTP Publisher") + '</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-adoptapet">AdoptAPet</a></li>',
                 '<li><a href="#tab-helpinglostpets">HelpingLostPets</a></li>',
                 '<li class="english hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund</a></li>',
@@ -480,9 +480,6 @@ $(function() {
                 '<td><label for="publishdir">' + _("Publish to folder") + '</label></td>',
                 '<td><input id="publishdir" type="text" class="asm-textbox preset" data="publishdirectory" /></td>',
                 '</tr>',
-                '<tr id="publishdiroverride" style="display: none">',
-                '<td>' + _("Publish to folder") + '</td>',
-                '<td><a href="#"></a></td>',
                 '</table>',
                 '</td>',
                 '<td>',
@@ -566,6 +563,15 @@ $(function() {
                 '<option>No</option><option>Yes</option></select></td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="prmicrochips">Send microchip numbers for all animals</label>',
+                '<span id="callout-prmicrochips" class="asm-callout">',
+                'By default we only send microchip numbers for animals listed in a VIC or NSW postcode. Settings this to "Yes" will send the microchip number for all animals',
+                '</span>',
+                '</td>',
+                '<td><select id="prmicrochips" class="asm-selectbox cfg" data="PetRescueAllMicrochips">',
+                '<option>No</option><option>Yes</option></select></td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="pradoptablein">Adoptable in states</label>',
                 '<span id="callout-printerstate" class="asm-callout">',
                 'Choose the states your animals will be adoptable in. The state the animal is currently located in ',
@@ -642,6 +648,15 @@ $(function() {
                 '<option value="200">200 km</option>',
                 '<option value="500">500 km</option>',
                 '</select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="slmicrochips">Send microchip numbers for all animals</label>',
+                '<span id="callout-slmicrochips" class="asm-callout">',
+                'By default we only send microchip numbers for animals listed in a VIC or NSW postcode. Settings this to "Yes" will send the microchip number for all animals',
+                '</span>',
+                '</td>',
+                '<td><select id="slmicrochips" class="asm-selectbox cfg" data="SavourLifeAllMicrochips">',
+                '<option>No</option><option>Yes</option></select></td>',
                 '</tr>',
                 '</table>',
                 '</div>'
@@ -736,6 +751,14 @@ $(function() {
                 '<tr>',
                 '<td><label for="akenrollmentid">AKC Reunite Enrollment Source ID</label></td>',
                 '<td><input id="akenrollmentid" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="AKCEnrollmentSourceID" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="akregisterall">Register</label></td>',
+                '<td><select id="akregisterall" class="asm-selectbox cfg" disabled="disabled" data="AKCRegisterAll">',
+                '<option value="No">Only AKC Microchips</option>',
+                '<option value="Yes">All Microchips</option>',
+                '</select>',
+                '</td>',
                 '</tr>',
                 '</table>',
                 '</div>'
@@ -1072,22 +1095,6 @@ $(function() {
             // Disable publisher panels when the checkbox says they're disabled
             $(".enablecheck").change(change_checkbox);
 
-            // Disable publishing to a folder if it was overridden
-            if (controller.publishurl != "") {
-                $("#publishdirrow").hide();
-                $("#publishdiroverride").show();
-                let url = controller.publishurl;
-                url = url.replace("{alias}", asm.useraccountalias);
-                url = url.replace("{database}", asm.useraccount);
-                url = url.replace("{username}", asm.user);
-                $("#publishdiroverride a").attr("href", url).text(url);
-            }
-
-            // Disable ftp upload controls if ftp has been overridden
-            if (controller.hasftpoverride) {
-                $("#ftpuploadtable").hide();
-            }
-
             // Toolbar buttons
             $("#button-save").button().click(async function() {
                 $("#button-save").button("disable");
@@ -1120,6 +1127,7 @@ $(function() {
             // Disable services that require sitedef setup
             if (!controller.hasakcreunite) { $(".hasakcreunite").hide(); }
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
+            if (!controller.hashtmlftp) { $(".hashtmlftp").hide(); }
             if (!controller.hashomeagain) { $(".hashomeagain").hide(); }
             if (!controller.hasmaddiesfund) { $(".hasmaddiesfund").hide(); }
             if (!controller.haspetcademy) { $(".haspetcademy").hide(); }

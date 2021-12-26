@@ -89,7 +89,7 @@ $(function() {
             staff_rota.days = [];
             for (i = 0; i < 7; i += 1) {
                 css = "";
-                if (format.date(d) == format.date(new Date())) { css = 'asm-staff-rota-today'; }
+                if (format.date(d) == format.date(new Date())) { css = 'asm-staff-rota-today'; } else { css = 'asm-staff-rota-day'; }
                 h.push('<th class="' + css + '">' + format.weekdayname(i) + '. ' + format.monthname(d.getMonth()) + ' ' + d.getDate() + '</th>');
                 staff_rota.days.push(d);
                 d = common.add_days(d, 1);

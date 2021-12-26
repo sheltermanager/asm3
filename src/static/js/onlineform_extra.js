@@ -72,7 +72,9 @@ $(document).ready(function() {
                 let img = $(this).find("canvas").get(0).toDataURL("image/png");
                 let fieldname = $(this).attr("data-name");
                 $("input[name='" + fieldname + "']").val(img);
-                if ($(this).signature("isEmpty") && $(this).attr("data-required")) {
+                if (!$(this).attr("data-required")) { return; }
+                if (!$(this).parent().is(":visible")) { return; }
+                if ($(this).signature("isEmpty")) {
                     alert("Signature is required.");
                     rv = false;
                     return false;
@@ -88,9 +90,11 @@ $(document).ready(function() {
     const validate_images = function() {
         let rv = true;
         $(".asm-onlineform-image").each(function() {
+            if (!$(this).attr("data-required")) { return; }
+            if (!$(this).parent().is(":visible")) { return; }
             let fieldname = $(this).attr("data-name"),
                 v = $(this).val();
-            if (!v && $(this).attr("data-required")) {
+            if (!v) {
                 alert("You must attach an image");
                 $(this).focus();
                 rv = false;
@@ -108,7 +112,9 @@ $(document).ready(function() {
             let fieldname = $(this).attr("data-name"),
                 v = $(this).val();
             $("input[name='" + fieldname + "']").val(v);
-            if (!v && $(this).attr("data-required")) {
+            if (!$(this).attr("data-required")) { return; }
+            if (!$(this).parent().is(":visible")) { return; }
+            if (!v) {
                 alert("You must choose at least one option");
                 $(this).parent().find(".asmSelect").focus();
                 rv = false;
@@ -129,7 +135,9 @@ $(document).ready(function() {
                 v.push($(this).attr("data"));
             });
             $("input[name='" + fieldname + "']").val(v.join(","));
-            if (v.length == 0 && $(this).attr("data-required")) {
+            if (!$(this).attr("data-required")) { return; }
+            if (!$(this).parent().is(":visible")) { return; }
+            if (v.length == 0) {
                 alert("You must choose at least one option");
                 $(this).find("input[type='checkbox']").focus();
                 rv = false;
@@ -237,10 +245,12 @@ $(document).ready(function() {
     // Find every visibleif rule and show/hide accordingly
     const show_visibleif = function() {
         $("tr").each(function() {
-            let o = $(this), toshow = true;
-            if (!o.attr("data-visibleif")) { return; } // no rule, do nothing
-            // & can be used to separate conditions. Test each one.
-            $.each(o.attr("data-visibleif").split("&"), function(ci, cv) {
+            let o = $(this), expr = o.attr("data-visibleif"), mode = "and";
+            if (!expr) { return; } // no rule, do nothing
+            if (expr.indexOf("|") != -1) { mode = "or"; }
+            let clauses = (mode == "and" ? expr.split("&") : expr.split("|"));
+            let andshow = true, orshow = false; // evaluate all clauses for or/and, only one can be used
+            $.each(clauses, function(ci, cv) {
                 // Separate condition into field, operator (=!<>), value
                 let m = cv.trim().match(new RegExp("(.*)([=!<>])(.*)"));
                 let field = "", cond = "=", value = "";
@@ -255,17 +265,22 @@ $(document).ready(function() {
                         if ($(this).attr("type") && $(this).attr("type") == "checkbox") { v = $(this).is(":checked") ? "on" : "off"; }
                         // Radio buttons need reading differently to find the selected value
                         if ($(this).attr("type") && $(this).attr("type") == "radio") { v = $("[name='" + $(this).attr("name") + "']:checked").val(); }
-                        if (cond == "=" && v != value) { toshow = false; }
-                        else if (cond == "!" && v == value) { toshow = false; }
-                        else if (cond == ">" && v <= value) { toshow = false; }
-                        else if (cond == "<" && v >= value) { toshow = false; }
+                        if (cond == "=" && v != value) { andshow = false; }
+                        else if (cond == "!" && v == value) { andshow = false; }
+                        else if (cond == ">" && v <= value) { andshow = false; }
+                        else if (cond == "<" && v >= value) { andshow = false; }
+                        if (cond == "=" && v == value) { orshow = true; }
+                        else if (cond == "!" && v != value) { orshow = true; }
+                        else if (cond == ">" && v >= value) { orshow = true; }
+                        else if (cond == "<" && v <= value) { orshow = true; }
                         return false; // stop iterating fields, we found it
                     }
                 });
             });
             // Show or hide the field based on our final condition
-            o.toggle(toshow);
-            if (!toshow) {
+            if (mode == "and") { o.toggle(andshow); }
+            if (mode == "or") { o.toggle(orshow); }
+            if (!o.is(":visible")) {
                 // If we just hid a field that had the required attribute, 
                 // remove it, otherwise the form won't submit
                 o.find("input, select, textarea").prop("required", false);

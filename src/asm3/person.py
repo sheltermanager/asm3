@@ -50,9 +50,11 @@ def get_person_query(dbo):
         "(SELECT MatchSummary FROM ownerlookingfor olf WHERE olf.OwnerID = o.ID GROUP BY MatchSummary) AS LookingForSummary " \
         "FROM owner o " \
         "LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy " \
-        "LEFT OUTER JOIN adoption lf ON lf.ID = (SELECT MAX(ID) FROM adoption slf WHERE slf.OwnerID = o.ID AND slf.MovementType = 2 AND (slf.ReturnDate Is Null OR slf.ReturnDate > %s )) " \
+        "LEFT OUTER JOIN adoption lf ON lf.ID = " \
+            "(SELECT MAX(ID) FROM adoption slf WHERE slf.OwnerID = o.ID AND slf.MovementType = 2 AND (slf.ReturnDate Is Null OR slf.ReturnDate > %s )) " \
         "LEFT OUTER JOIN animal lfa ON lfa.ID = lf.AnimalID " \
-        "LEFT OUTER JOIN adoption lm ON lm.ID = (SELECT MAX(ID) FROM adoption slm WHERE slm.OwnerID = o.ID AND MovementType > 0 AND (slm.ReturnDate Is Null OR slm.ReturnDate > %s )) " \
+        "LEFT OUTER JOIN adoption lm ON lm.ID = " \
+            "(SELECT MAX(ID) FROM adoption slm WHERE slm.OwnerID = o.ID AND MovementType > 0 AND (slm.ReturnDate Is Null OR slm.ReturnDate > %s )) " \
         "LEFT OUTER JOIN animal lma ON lma.ID = lm.AnimalID " \
         "LEFT OUTER JOIN lksmovementtype lmat ON lmat.ID = lm.MovementType " \
         "LEFT OUTER JOIN media web ON web.LinkID = o.ID AND web.LinkTypeID = 3 AND web.WebsitePhoto = 1 " \
@@ -75,7 +77,9 @@ def get_person(dbo, personid):
     Returns a complete person row by id, or None if not found
     (int) personid: The person to get
     """
-    return dbo.first_row( dbo.query(get_person_query(dbo) + "WHERE o.ID = %d" % personid) )
+    p = dbo.first_row( dbo.query(get_person_query(dbo) + "WHERE o.ID = %d" % personid) )
+    p = embellish_latest_movement(dbo, p)
+    return p
 
 def get_person_embedded(dbo, personid):
     """ Returns a person record for the person chooser widget, uses a read-through cache for performance """
@@ -85,13 +89,35 @@ def embellish_adoption_warnings(dbo, p):
     """ Adds the adoption warning columns to a person record p and returns it """
     warn = dbo.first_row(dbo.query("SELECT (SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS Investigation, " \
         "(SELECT COUNT(*) FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID OR ac.Owner3ID = o.ID) AS Incident, " \
-        "(SELECT COUNT(*) FROM animal bib WHERE NonShelterAnimal = 0 AND IsTransfer = 0 AND IsPickup = 0 AND bib.OriginalOwnerID = o.ID) AS Surrender " \
+        "(SELECT COUNT(*) FROM animal bib WHERE NonShelterAnimal = 0 AND IsTransfer = 0 AND IsPickup = 0 AND bib.OriginalOwnerID = o.ID) AS Surrender, " \
+        "(SELECT COUNT(*) FROM owner bo WHERE bo.OwnerAddress LIKE o.OwnerAddress AND bo.IsBanned=1) AS BannedAddress " \
         "FROM owner o " \
         "WHERE o.ID = ?", [p.ID]))
     if warn is not None:
         p.INVESTIGATION = warn.INVESTIGATION
         p.SURRENDER = warn.SURRENDER
         p.INCIDENT = warn.INCIDENT
+        p.BANNEDADDRESS = warn.BANNEDADDRESS
+    return p
+
+def embellish_latest_movement(dbo, p):
+    """ Adds the latest movement info to a person record p and returns it.
+        The query already does this and 99% of the time it will work fine and makes these columns available
+        in v_person for the query builder. BUT if we have a data import where the movements were created out of
+        order, MAX(ID) will fail and return the wrong movement. """
+    if p is None: return p
+    lm = dbo.first_row(dbo.query("SELECT m.ID AS LatestMoveAnimalID, a.ID AS LatestMoveAnimalID, a.AnimalName AS LatestMoveAnimalName, " \
+        "a.ShelterCode AS LatestMoveShelterCode, mt.MovementType AS LatestMoveTypeName " \
+        "FROM adoption m "
+        "INNER JOIN animal a ON m.AnimalID = a.ID " \
+        "INNER JOIN lksmovementtype mt ON mt.ID = m.MovementType " \
+        "WHERE m.MovementType > 0 AND m.OwnerID = ? AND (ReturnDate Is Null OR ReturnDate > ?)" \
+        "ORDER BY m.MovementDate DESC", [p.ID, dbo.today()]))
+    if lm is not None:
+        p.LATESTMOVEANIMALID = lm.LATESTMOVEANIMALID
+        p.LATESTMOVEANIMALNAME = lm.LATESTMOVEANIMALNAME
+        p.LATESTMOVESHELTERCODE = lm.LATESTMOVESHELTERCODE
+        p.LATESTMOVETYPENAME = lm.LATESTMOVETYPENAME
     return p
 
 def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "", address = "", siteid = 0):

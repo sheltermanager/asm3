@@ -66,6 +66,7 @@ def email_note_on_change(dbo, n, username):
     username the user triggering the send by adding/updating a diary
     """
     if not asm3.configuration.email_diary_on_change(dbo): return
+    if n is None: return
     l = dbo.locale
     allusers = asm3.users.get_users(dbo)
     s = asm3.i18n._("Diary change triggered by {0} on {1}", l).format(username, asm3.i18n.python2display(l, dbo.now()))
@@ -89,6 +90,7 @@ def email_note_on_complete(dbo, n, username):
     username the user triggering the send by completing a diary
     """
     if not asm3.configuration.email_diary_on_complete(dbo): return
+    if n is None: return
     l = dbo.locale
     allusers = asm3.users.get_users(dbo)
     s = asm3.i18n._("Diary completion triggered by {0} on {1}", l).format(username, asm3.i18n.python2display(l, dbo.now()))
@@ -259,7 +261,7 @@ def get_diary(dbo, diaryid):
     """
     Returns a diary record
     """
-    return dbo.query("SELECT * FROM diary WHERE ID = ?", [diaryid])[0]
+    return dbo.first_row(dbo.query("SELECT * FROM diary WHERE ID = ?", [diaryid]))
 
 def delete_diary(dbo, username, diaryid):
     """

@@ -14,6 +14,10 @@ class TestUtils(unittest.TestCase):
     def test_send_email(self):
         asm3.utils.send_email( base.get_dbo(), "tests@example.com", "example@example.com", subject="Test", body="Test suite", exceptions=False )
 
+    def test_generate_image_pdf(self):
+        with open("%s/static/images/splash/splash_logo.jpg" % base.get_dbo().installpath, "rb") as f:
+            asm3.utils.generate_image_pdf("en", f.read())
+
     def test_generate_label_pdf(self):
         rows = [ { "OWNERNAME": "test", "OWNERADDRESS": "test", "OWNERCOUNTY": "test", "OWNERTOWN": "test", "OWNERPOSTCODE": "test" } ]
         asm3.utils.generate_label_pdf(base.get_dbo(), "en", rows, "A4", "cm", 1.0, 1.0, 5.0, 5.0, 0, 0, 2, 3)

@@ -72,7 +72,10 @@ By default, the system scores lost/found matches in this manner (all of these
 point values and how many points are required to appear can be changed in
 *Settings->Options*
 
-* 5 points - Same Species 
+* 5 points - Same Species (note, if the species is not the same, any potential
+  match will be abandoned regardless of whether other fields are a match -
+  while reporters might not be good at observing the breed, age or sex of an
+  animal, they should not have a problem with species!)
 
 * 5 points - Same colour 
 

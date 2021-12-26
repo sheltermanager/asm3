@@ -38,12 +38,16 @@ def delete_html_template(dbo, username, name):
     dbo.execute("DELETE FROM templatehtml WHERE Name = ?", [name])
     asm3.audit.delete(dbo, username, "templatehtml", 0, "", "delete template %s" % name)
 
-def get_document_templates(dbo):
-    """ Returns all document template info """
-    where = ""
-    if not asm3.configuration.allow_odt_document_templates(dbo):
-        where = " WHERE Name LIKE '%.html' "
-    return dbo.query("SELECT ID, Name, Path FROM templatedocument %s ORDER BY Path, Name" % where)
+def get_document_templates(dbo, show = ""):
+    """ Returns document template info. """
+    allowodt = asm3.configuration.allow_odt_document_templates(dbo)
+    rows = dbo.query("SELECT ID, Name, Path, Show FROM templatedocument ORDER BY Path, Name")
+    out = []
+    for r in rows:
+        if not allowodt and r.NAME.endswith(".odt"): continue
+        if show != "" and asm3.utils.nulltostr(r.SHOW).find(show) == -1 and r.SHOW != "everywhere": continue
+        out.append(r)
+    return out
 
 def get_document_template_content(dbo, dtid):
     """ Returns the document template content for a given ID as bytes """
@@ -53,7 +57,11 @@ def get_document_template_name(dbo, dtid):
     """ Returns the name for a document template with an ID """
     return dbo.query_string("SELECT Name FROM templatedocument WHERE ID = ?", [dtid])
 
-def create_document_template(dbo, username, name, ext = ".html", content = b"<p></p>"):
+def get_document_template_show(dbo, dtid):
+    """ Returns the type for a document template with an ID """
+    return dbo.query_string("SELECT Show FROM templatedocument WHERE ID = ?", [dtid])
+
+def create_document_template(dbo, username, name, ext = ".html", content = b"<p></p>", show = ""):
     """
     Creates a document template from the name given.
     If there's no extension, adds it
@@ -75,6 +83,7 @@ def create_document_template(dbo, username, name, ext = ".html", content = b"<p>
     dtid = dbo.insert("templatedocument", {
         "Name":     name,
         "Path":     path,
+        "Show":     show,
         "Content":  asm3.utils.bytes2str(asm3.utils.base64encode(content))
     })
     asm3.audit.create(dbo, username, "templatedocument", dtid, "", "id: %d, name: %s" % (dtid, name))
@@ -89,7 +98,8 @@ def clone_document_template(dbo, username, dtid, newname):
     if newname.rfind(".") != -1:
         ext = newname[newname.rfind("."):]
     content = get_document_template_content(dbo, dtid)
-    ndtid = create_document_template(dbo, username, newname, ext, content)
+    show = get_document_template_show(dbo, dtid)
+    ndtid = create_document_template(dbo, username, newname, ext, content, show)
     return ndtid
 
 def delete_document_template(dbo, username, dtid):
@@ -122,6 +132,15 @@ def update_document_template_content(dbo, dtid, content):
     dbo.update("templatedocument", dtid, {
         "Content":  asm3.utils.bytes2str(asm3.utils.base64encode(content))
     })
+
+def update_document_template_show(dbo, username, dtid, newshow):
+    """
+    Updates the show value for a document template for where it appears
+    """
+    dbo.update("templatedocument", dtid, {
+        "Show": newshow
+    })
+    asm3.audit.edit(dbo, username, "templatedocument", dtid, "", "update show value of %d to %s" % (dtid, newshow))
 
 def sanitise_path(path):
     """ Strips disallowed chars from new paths """

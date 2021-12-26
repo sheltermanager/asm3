@@ -8,10 +8,6 @@ $(function() {
 
         model: function() {
 
-            // Add empty values to the cost and payment types so that they can be unlinked
-            controller.costtypes.unshift({ ID: 0, COSTTYPENAME: "" });
-            controller.donationtypes.unshift({ ID: 0, DONATIONNAME: "" });
-
             const dialog = {
                 add_title: _("Add account"),
                 edit_title: _("Edit account"),
@@ -25,12 +21,6 @@ $(function() {
                         options: { displayfield: "ACCOUNTTYPE", valuefield: "ID", rows: controller.accounttypes }},
                     { json_field: "ARCHIVED", post_field: "archived", label: _("Active"), type: "select",
                         options: '<option value="0">' + _("Yes") + '</option><option value="1">' + _("No") + '</option>' },
-                    { json_field: "DONATIONTYPEID", post_field: "donationtype", label: _("Payment Type"), type: "select", 
-                        tooltip: _("This income account is the source for payments received of this type"),
-                        options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes }},
-                    { json_field: "COSTTYPEID", post_field: "costtype", label: _("Cost Type"), type: "select", 
-                        tooltip: _("This expense account is the source for costs of this type"),
-                        options: { displayfield: "COSTTYPENAME", valuefield: "ID", rows: controller.costtypes }},
                     { json_field: "VIEWROLEIDS", post_field: "viewroles", label: _("View Roles"), type: "selectmulti", 
                         callout: _("If you assign view or edit roles, only users within those roles will be able to view and edit this account."),
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
@@ -60,20 +50,6 @@ $(function() {
                     return row.ARCHIVED == 1 || row.ARCHIVED == "1";
                 },
                 edit: async function(row) {
-                    // Only show donation type links for income accounts
-                    if (row.ACCOUNTTYPE != 5) { 
-                        $("#donationtype").closest("tr").hide(); 
-                    }
-                    else {
-                        $("#donationtype").closest("tr").show(); 
-                    }
-                    // Only show cost type links for expense accounts
-                    if (row.ACCOUNTTYPE != 4) { 
-                        $("#costtype").closest("tr").hide(); 
-                    }
-                    else {
-                        $("#costtype").closest("tr").show(); 
-                    }
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
                     row.ACCOUNTTYPENAME = common.get_field(controller.accounttypes, row.ACCOUNTTYPE, "ACCOUNTTYPE");
@@ -109,10 +85,6 @@ $(function() {
                 { id: "new", text: _("New Account"), icon: "new", enabled: "always", perm: "aac",
                     click: async function() { 
                         $("#accounttype").select("value", "0");
-                        $("#donationtype").select("value", "0");
-                        $("#donationtype").closest("tr").hide(); 
-                        $("#costtype").select("value", "0");
-                        $("#costtype").closest("tr").hide(); 
                         await tableform.dialog_show_add(dialog);
                         let response = await tableform.fields_post(dialog.fields, "mode=create", "accounts");
                         let row = {};
@@ -162,9 +134,6 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            // Add an unmapped cost type selection
-            $("#donationtype").prepend('<option value="0"> </option>');
-            $("#costtype").prepend('<option value="0"> </option>');
         },
 
         sync: function() {

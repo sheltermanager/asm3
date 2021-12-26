@@ -228,6 +228,13 @@ const common = {
     },
 
     /**
+     * Returns true if the browser is in dark mode
+     */
+    is_dark_mode: function() {
+        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    },
+
+    /**
      * Returns true if v is a date or a string containing an ISO date
      */
     is_date: function(v) {
@@ -631,6 +638,52 @@ const common = {
     },
 
     /**
+     * Performs an AJAX GET for text response, handling errors
+     * action: The url to post to
+     * formdata: The formdata as a string
+     * successfunc: The callback function (will pass response)
+     * errorfunc: The callback function on error (will include response)
+     * returns a promise.
+     */
+    ajax_get: function(action, formdata, successfunc, errorfunc) {
+        var st = new Date().getTime(),
+            deferred = $.Deferred();
+        $.ajax({
+            type: "GET",
+            url: action,
+            data: formdata,
+            dataType: "text",
+            mimeType: "textPlain",
+            success: function(result) {
+                try {
+                    // This can cause an error if the dialog wasn't open
+                    header.hide_loading();
+                }
+                catch (ex) {}
+
+                if (successfunc) {
+                    successfunc(result, new Date().getTime() - st);
+                }
+                deferred.resolve(result, new Date().getTime() - st);
+            },
+            error: function(jqxhr, textstatus, response) {
+                try {
+                    // This can cause an error if the dialog wasn't open
+                    header.hide_loading();
+                }
+                catch (ex) {}
+                var errmessage = common.get_error_response(jqxhr, textstatus, response);
+                header.show_error(errmessage);
+                if (errorfunc) {
+                    errorfunc(errmessage);
+                }
+                deferred.reject(errmessage);
+            }
+        });
+        return deferred.promise();
+    },
+
+    /**
      * Performs an AJAX POST for text response, handling errors
      * action: The url to post to
      * formdata: The formdata as a string
@@ -864,6 +917,16 @@ const common = {
                 $(selector).hide();
             }
         });
+    },
+
+    /**
+     * Applies the visual theme by loading the correct CSS file 
+     */
+    apply_theme: function(theme) {
+        let href = $("#jqt").attr("href");
+        href = href.substring(0, href.indexOf("themes/")) + "themes/" + theme + "/jquery-ui.css";
+        $("#jqt").attr("href", href);
+        if (theme == "asm-dark") { $("body").css("background-color", "#000000"); }
     },
 
     /**
@@ -1662,7 +1725,7 @@ const html = {
      */
     animal_link_thumb_classes: function(a) {
         var sxc = (a.SEX == 0 ? "asm-thumbnail-female" : (a.SEX == 1 ? "asm-thumbnail-male" : ""));
-        return "asm-thumbnail thumbnail-shadow " + (config.bool("ShowSexBorder") ? sxc : "");
+        return "asm-thumbnail thumbnailshadow " + (config.bool("ShowSexBorder") ? sxc : "");
     },
 
     /**
@@ -2667,11 +2730,15 @@ const validate = {
          * target URL if the user says to leave */
     unsaved_dialog: function(target) {
         var b = {}, self = this;
-        b[_("Save and leave")] = function() {
-            $(this).dialog("close"); 
-            self.save(function() {
-                common.route(target);
-            });
+        b[_("Save and leave")] = {
+            text: _("Save and leave"),
+            "class": 'asm-dialog-actionbutton',
+            click: function() {
+                $(this).dialog("close"); 
+                self.save(function() {
+                    common.route(target);
+                });
+            }
         };
         b[_("Leave")] = function() {
             self.active = false;

@@ -15,6 +15,7 @@ search a certain type of record.
 * p:term will only search people
 * la:term and fa:term will search lost and found animals
 * li:num will search issued license numbers
+* lo:term will search logs for all records
 * vo:code will search issued vouchers
 * wl:term will search waiting list entries.
 

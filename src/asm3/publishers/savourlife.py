@@ -62,7 +62,7 @@ class SavourLifePublisher(AbstractPublisher):
 
     def good_with(self, x):
         """
-        Translates our good with fields Unknown/No/Yes to SOL's NULL/False/True
+        Translates our good with fields Selective/Unknown/No/Yes to SOL's NULL/False/True
         """
         if x == 0: return True
         elif x == 1: return False
@@ -80,6 +80,7 @@ class SavourLifePublisher(AbstractPublisher):
         username = asm3.configuration.savourlife_username(self.dbo)
         password = asm3.configuration.savourlife_password(self.dbo)
         interstate = asm3.configuration.savourlife_interstate(self.dbo)
+        all_microchips = asm3.configuration.savourlife_all_microchips(self.dbo)
         radius = asm3.configuration.savourlife_radius(self.dbo)
         postcode = asm3.configuration.organisation_postcode(self.dbo)
         suburb = asm3.configuration.organisation_town(self.dbo)
@@ -143,7 +144,7 @@ class SavourLifePublisher(AbstractPublisher):
                 # This function returns None if no match is found
                 dogid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_SAVOURLIFE)
 
-                data = self.processAnimal(an, dogid, postcode, state, suburb, username, token, radius, interstate)
+                data = self.processAnimal(an, dogid, postcode, state, suburb, username, token, radius, interstate, all_microchips)
 
                 # SavourLife will insert/update accordingly based on whether DogId is null or not
                 url = SAVOURLIFE_URL + "setDog"
@@ -226,7 +227,7 @@ class SavourLifePublisher(AbstractPublisher):
                             url = SAVOURLIFE_URL + "setDogAdopted"
                         elif status == "held":
                             # We're marking the listing as held
-                            data = self.processAnimal(an, dogid, postcode, state, suburb, username, token, radius, interstate, True)
+                            data = self.processAnimal(an, dogid, postcode, state, suburb, username, token, radius, interstate, all_microchips, True)
                             url = SAVOURLIFE_URL + "setDog"
                         else:
                             # We're deleting the listing
@@ -262,7 +263,7 @@ class SavourLifePublisher(AbstractPublisher):
 
         self.cleanup()
 
-    def processAnimal(self, an, dogid="", postcode="", state="", suburb="", username="", token="", radius=0, interstate=False, hold=False):
+    def processAnimal(self, an, dogid="", postcode="", state="", suburb="", username="", token="", radius=0, interstate=False, all_microchips=False, hold=False):
         """ Processes an animal record and returns a data dictionary for upload as JSON """
         # Size is 10 = small, 20 = medium, 30 = large, 40 = x large
         size = ""
@@ -302,22 +303,23 @@ class SavourLifePublisher(AbstractPublisher):
         if not hwtreated: hwtreated = None
         if not wormed: wormed = None
 
-        # Use the fosterer's postcode, state and suburb if available
+        # Use the fosterer or retailer postcode, state and suburb if available
         location_postcode = postcode
         location_state_abbr = self.get_state(state)
         location_suburb = suburb
-        if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE == 2:
+        if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE in (2, 8):
             fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM adoption m " \
                 "INNER JOIN owner o ON m.OwnerID = o.ID WHERE m.ID=?", [ an.ACTIVEMOVEMENTID ]))
             if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
             if fr is not None and fr.OWNERCOUNTY: location_state_abbr = self.get_state(fr.OWNERCOUNTY)
             if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
 
-        # MicrochipDetails should be "No" if we don't have one, the actual number for VIC or NSW (2XXX or 3XXX postcode)
+        # MicrochipDetails should be "No" if we don't have one, 
+        # the actual number if all_microchips is set or we're in VIC or NSW (2XXX or 3XXX postcode)
         # or "Yes" for others.
         microchipdetails = "No"
         if an.IDENTICHIPNUMBER != "":
-            if location_postcode.startswith("2") or location_postcode.startswith("3"):
+            if all_microchips or (location_postcode.startswith("2") or location_postcode.startswith("3")):
                 microchipdetails = an.IDENTICHIPNUMBER
             else:
                 microchipdetails = "Yes"

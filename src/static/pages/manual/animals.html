@@ -1,38 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Animals &mdash; ASM 45u documentation</title>
   
 
   
-  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="People" href="people.html" />
@@ -77,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -144,6 +145,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -178,18 +180,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Animals</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/animals.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -252,18 +256,18 @@ all animals of species “Dog” who are still on the shelter, located in a
 particular location and under 6 months old.</p>
 <p>The criteria fields follow one of three types:</p>
 <ul class="simple">
-<li>Drop Down Boxes: You should select something from the list or the “(all)”
-entry to specify that you do not want to filter by this criteria.</li>
-<li>Text Boxes: The system expects you to type part of a word, name or code etc.
+<li><p>Drop Down Boxes: You should select something from the list or the “(all)”
+entry to specify that you do not want to filter by this criteria.</p></li>
+<li><p>Text Boxes: The system expects you to type part of a word, name or code etc.
 For example, typing “ben” in the “Name” box on the find animal screen will
 return all animals who have “ben” somewhere in their name - eg: Ben, Benji,
 Benson etc. Some boxes require numbers - the “aged between” boxes require an
 animal age expressed as a year, or fraction of a year. Entering 0 in the
 “From Age” box and 0.5 in the “To Age” box will return animals who are six
-months old and younger.</li>
-<li>Filter: The filter dropdown allows selection of a number of options at the
+months old and younger.</p></li>
+<li><p>Filter: The filter dropdown allows selection of a number of options at the
 same time, such as only including animals that were transferred in from
-another organisation or housetrained.</li>
+another organisation or housetrained.</p></li>
 </ul>
 </div>
 <div class="section" id="edit-animal">
@@ -391,9 +395,9 @@ under <span class="menuselection">Medical ‣ Vaccination Book</span></p>
 for the individual vaccination.</p>
 <p>Vaccinations have three date fields:</p>
 <ul class="simple">
-<li>Required: This is the date that the vaccine is due to be administered to the animal</li>
-<li>Given: This is the date that the vaccine was actually administered to the animal</li>
-<li>Expires: This is the date that the vaccine “wears off” and needs to be administered again.</li>
+<li><p>Required: This is the date that the vaccine is due to be administered to the animal</p></li>
+<li><p>Given: This is the date that the vaccine was actually administered to the animal</p></li>
+<li><p>Expires: This is the date that the vaccine “wears off” and needs to be administered again.</p></li>
 </ul>
 <p>Due vaccinations for the purposes of reporting, alerts and the medical book are
 those that have a required date, but no given date yet.</p>
@@ -449,19 +453,29 @@ file to the animal. When you attach files, they are stored with the animal and
 you no longer need the original file. Since images are the most common use, the
 file browser will display previews of images, and if you click an image in the
 media list, it will be viewed full screen.</p>
-<p>The web publisher will use the notes attached to the default image as the
-animal’s description when building a site or sending data to PetFinder or other
-third parties.</p>
-<p>If the content is a PDF, you can click it to have your browser view it (if it
-has an appropriate plugin). If the content is an HTML document, then clicking
-it will open it with ASM’s built in word processor for editing and printing.</p>
+<p>The image button menu on the toolbar allows you to transform and manipulate
+various properties of the image. You can rotate it, convert it to a PDF
+document (useful for taking photos of paperwork), exclude it from being sent to
+your website or third party websites and watermark the image.</p>
+<p>Watermarking is a process where your logo is copied to the lower right of the
+image and the animal’s name rendered over the lower left - this requires you to
+upload your logo named watermark.png to <span class="menuselection">Settings ‣ Reports
+‣ Extra Images</span></p>
+<p>If the content is a PDF, you can click it to have your browser view it. If the
+content is an HTML document, then clicking it will open it with ASM’s built in
+word processor for editing and printing.</p>
+<p>One or more media elements can be emailed from here.</p>
+<p>HTML documents can be emailed as a PDF and signed. The Sign button menu allows
+you to sign on screen with a pen/mouse device, send the document to the mobile
+signing pad or send an email to someone with a request to sign the document.</p>
 <p>You can also attach document and video links (for example, to Google Docs or
 YouTube videos). Video links and images can have a default set for publishing
 purposes. If you have the “publish all images” turned on in your publishing
 options and an animal has multiple images, you can individually choose which
 ones will be published with the tick/cross icon next to the image icon.</p>
-<p>Ticking the “Not for adoption” box on the details tab will ensure that the
-animal is not included in website publishing.</p>
+<p>Giving an animal the “Not for adoption” or “Not for publishing” flag on the
+details tab will ensure that the animal is not included in any website
+publishing.</p>
 <p>Notice that when an animal has media, the tab displays a graphic, indicating
 there is data under this tab.</p>
 </div>
@@ -522,26 +536,26 @@ between the date brought in field of the template animal and the due/required
 date of the cloned records in question.</p>
 <p>For example:</p>
 <ul class="simple">
-<li>Template brought in date: 1st January 2016</li>
-<li>Required date of a vaccination on that template: 10th January 2016</li>
-<li>Day difference: 10 days</li>
-<li>Required date of that vaccination when added to the new animal will
-be today + 10 days</li>
+<li><p>Template brought in date: 1st January 2016</p></li>
+<li><p>Required date of a vaccination on that template: 10th January 2016</p></li>
+<li><p>Day difference: 10 days</p></li>
+<li><p>Required date of that vaccination when added to the new animal will
+be today + 10 days</p></li>
 </ul>
 <p>When copying from a template animal, ASM will copy the following items to your
 new animal record:</p>
 <ul class="simple">
-<li>The animal’s adoption fee amount and description/bio field</li>
-<li>The animal’s current vet</li>
-<li>The Hold, Is Not Available For Adoption and Do Not Register Microchip flags</li>
-<li>Any additional flags the shelter has added to the system</li>
-<li>Any additional fields the shelter has added to the system</li>
-<li>Vaccinations</li>
-<li>Tests</li>
-<li>Medical regimens</li>
-<li>Diets</li>
-<li>Costs</li>
-<li>Diary notes</li>
+<li><p>The animal’s adoption fee amount and description/bio field</p></li>
+<li><p>The animal’s current vet</p></li>
+<li><p>The Hold, Is Not Available For Adoption and Do Not Register Microchip flags</p></li>
+<li><p>Any additional flags the shelter has added to the system</p></li>
+<li><p>Any additional fields the shelter has added to the system</p></li>
+<li><p>Vaccinations</p></li>
+<li><p>Tests</p></li>
+<li><p>Medical regimens</p></li>
+<li><p>Diets</p></li>
+<li><p>Costs</p></li>
+<li><p>Diary notes</p></li>
 </ul>
 <p>In addition, you can further define a template animal for baby animals (puppies
 and kittens). If the animal’s age is under the system defined “baby split” of 6
@@ -556,29 +570,29 @@ and TemplateSpecies.</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="people.html" class="btn btn-neutral float-right" title="People" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="searching.html" class="btn btn-neutral float-left" title="Search" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="people.html" class="btn btn-neutral float-right" title="People" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="searching.html" class="btn btn-neutral float-left" title="Search" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Sheltermanager, Ltd
+        &#169; Copyright 2020, Sheltermanager, Ltd.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -586,7 +600,6 @@ and TemplateSpecies.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

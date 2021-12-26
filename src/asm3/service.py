@@ -57,7 +57,7 @@ CACHE_PROTECT_METHODS = {
     "extra_image": [ "title" ],
     "media_image": [ "mediaid" ],
     "json_adoptable_animal": [ "animalid" ],
-    "html_adoptable_animals": [ "speciesid", "animaltypeid", "locationid", "template" ],
+    "html_adoptable_animals": [ "speciesid", "animaltypeid", "locationid", "template", "underweeks", "overweeks" ],
     "html_adopted_animals": [ "days", "template", "speciesid", "animaltypeid" ],
     "html_deceased_animals": [ "days", "template", "speciesid", "animaltypeid" ],
     "html_flagged_animals": [ "template", "speciesid", "animaltypeid", "flag", "all" ],
@@ -502,9 +502,11 @@ def handler(post, path, remoteip, referer, querystring):
             return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "html_adoptable_animals":
-        return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
+        return set_cached_response(cache_key, account, "text/html", 600, 600, \
             asm3.publishers.html.get_adoptable_animals(dbo, style=post["template"], \
-                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), locationid=post.integer("locationid")))
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), \
+                locationid=post.integer("locationid"), underweeks=post.integer("underweeks"), \
+                overweeks=post.integer("overweeks")))
 
     elif method == "html_adopted_animals":
         return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
@@ -520,12 +522,12 @@ def handler(post, path, remoteip, referer, querystring):
         if post["flag"] == "":
             asm3.al.error("html_flagged_animals requested with no flag.", "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid flag")
-        return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
+        return set_cached_response(cache_key, account, "text/html", 1800, 1800, \
             asm3.publishers.html.get_flagged_animals(dbo, style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), flag=post["flag"], allanimals=post.integer("all")))
 
     elif method == "html_held_animals":
-        return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
+        return set_cached_response(cache_key, account, "text/html", 1800, 1800, \
             asm3.publishers.html.get_held_animals(dbo, style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
 
