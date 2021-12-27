@@ -1219,12 +1219,15 @@ def create_animalcontrol(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
+    has_person = False
+    status = 0 # Will always be a new record for the incident, but person status can override if given
     d["incidentdate"] = asm3.i18n.python2display(l, dbo.now())
     d["incidenttime"] = asm3.i18n.format_time(dbo.now())
     d["calldate"] = d["incidentdate"]
     d["calltime"] = d["incidenttime"]
     d["incidenttype"] = asm3.configuration.default_incident(dbo)
     for f in fields:
+        if f.FIELDNAME == "lastname" or f.FIELDNAME == "surname": has_person = True
         if f.FIELDNAME == "callnotes": d["callnotes"] = f.VALUE
         if f.FIELDNAME == "dispatchaddress": d["dispatchaddress"] = f.VALUE
         if f.FIELDNAME == "dispatchcity": d["dispatchtown"] = f.VALUE
@@ -1233,14 +1236,16 @@ def create_animalcontrol(dbo, username, collationid):
     # Have we got enough info to create the animal control record? We need notes and dispatchaddress
     if "callnotes" not in d or "dispatchaddress" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an incident record (need call notes and dispatch address).", l))
-    # We need the person/caller record before we create the incident
-    collationid, personid, personname, status = create_person(dbo, username, collationid)
-    d["caller"] = personid
-    # Create the incident 
+    # If we have person info, create that person as the caller
+    if has_person:
+        collationid, personid, personname, status = create_person(dbo, username, collationid)
+        d["caller"] = personid
+    # Create the incident
     incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, incidentid, "incident")
     attach_form(dbo, username, asm3.media.ANIMALCONTROL, incidentid, collationid)
-    return (collationid, incidentid, "%s - %s" % (asm3.utils.padleft(incidentid, 6), personname), status)
+    display = "%s - %s" % (asm3.utils.padleft(incidentid, 6), asm3.utils.truncate(d["dispatchaddress"], 20))
+    return (collationid, incidentid, display, status)
 
 def create_lostanimal(dbo, username, collationid):
     """

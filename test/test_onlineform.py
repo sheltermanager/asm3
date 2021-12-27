@@ -35,6 +35,22 @@ class TestOnlineForm(unittest.TestCase):
         }
         post = asm3.utils.PostedData(data, "en")
         self.collationid = asm3.onlineform.insert_onlineformincoming_from_form(base.get_dbo(), post, "0.0.0.0")
+        data = {
+            "formname":     "Test Form",
+            asm3.onlineform.JSKEY_NAME: asm3.onlineform.JSKEY_VALUE,
+            "surname": "Test",
+            "animalname": "UnitTestAnimal",
+            "callnotes": "Test",
+            "dispatchaddress": "Test",
+            "markings": "Test",
+            "arealost": "Test",
+            "areafound": "Test",
+            "pickupdate": "10/10/2021",
+            "dropoffdate": "10/10/2021",
+            "description": "Test"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        self.createcollationid = asm3.onlineform.insert_onlineformincoming_from_form(base.get_dbo(), post, "0.0.0.0")
 
     def tearDown(self):
         asm3.onlineform.delete_onlineform(base.get_dbo(), "test", self.nformid)
@@ -85,7 +101,29 @@ class TestOnlineForm(unittest.TestCase):
     def test_auto_remove_old_incoming_forms(self):
         asm3.onlineform.auto_remove_old_incoming_forms(base.get_dbo())
 
-    # TODO: Test create_RECORD methods - requires a more detailed form
+    def test_create_animal(self):
+        asm3.onlineform.create_animal(base.get_dbo(), "test", self.createcollationid)
+
+    def test_create_animalcontrol(self):
+        asm3.onlineform.create_animalcontrol(base.get_dbo(), "test", self.createcollationid)
+
+    def test_create_foundanimal(self):
+        asm3.onlineform.create_foundanimal(base.get_dbo(), "test", self.createcollationid)
+
+    def test_create_lostanimal(self):
+        asm3.onlineform.create_lostanimal(base.get_dbo(), "test", self.createcollationid)
+
+    def test_create_person(self):
+        asm3.onlineform.create_person(base.get_dbo(), "test", self.createcollationid)
+
+    def test_create_transport(self):
+        asm3.onlineform.create_transport(base.get_dbo(), "test", self.createcollationid)
+
+    def test_create_waitinglist(self):
+        asm3.onlineform.create_waitinglist(base.get_dbo(), "test", self.createcollationid)
+
+
+
 
 
 
