@@ -78,6 +78,7 @@ print("DELETE FROM animalmedical WHERE ID >= %s;" % START_ID)
 print("DELETE FROM animalmedicaltreatment WHERE ID >= %s;" % START_ID)
 print("DELETE FROM animaltest WHERE ID >= %s;" % START_ID)
 print("DELETE FROM animalvaccination WHERE ID >= %s;" % START_ID)
+print("DELETE FROM internallocation WHERE ID >= %s;" % START_ID)
 print("DELETE FROM owner WHERE ID >= %s;" % START_ID)
 print("DELETE FROM ownerdonation WHERE ID >= %s;" % START_ID)
 print("DELETE FROM testtype WHERE ID >= %s;" % START_ID)
@@ -190,7 +191,8 @@ for d in asm.csv_to_list("%s/intake.csv" % PATH):
     if "Location" in d and d["Location"] != "":
         locs = d["Location"] # Locations are a comma separated list, with latest on the right
         if locs.find(",") != -1: locs = locs[locs.rfind(",")+1:]
-        a.ShelterLocation = asm.location_from_db(locs)
+        a.ShelterLocation = asm.location_id_for_name(locs, True)
+        # a.ShelterLocation = asm.location_from_db(locs)
     if intaketype == "Transfer In":
         a.IsTransfer = 1
         a.EntryReasonID = 15
@@ -369,6 +371,8 @@ for a in animals:
 for k, v in asm.testtypes.iteritems():
     if v.ID >= START_ID: print v
 for k, v in asm.vaccinationtypes.iteritems():
+    if v.ID >= START_ID: print v
+for k, v in asm.locations.iteritems():
     if v.ID >= START_ID: print v
 for a in animals:
     print (a)
