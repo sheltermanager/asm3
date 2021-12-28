@@ -1,6 +1,7 @@
 45
 ================
 
+28/12/21 Use pdf.js to allow viewing of PDFs in the mobile app #584
 28/12/21 Allow a Retain For period in years for online form submissions #1077
 27/12/21 Person should not be mandatory to create an incident from online form
 26/12/21 Do not include emblems when sorting by animal name in find results

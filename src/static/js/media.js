@@ -328,7 +328,7 @@ $(function() {
                 h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/document-media.png" /></a>');
             }
             else if (m.MEDIAMIMETYPE == "application/pdf") {
-                h.push('<a href="media?id=' + m.ID + '">');
+                h.push('<a href="' + ( asm.mobileapp ? 'media_pdfjs' : 'media' ) + '?id=' + m.ID + '">');
                 h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/pdf-media.png" /></a>');
             }
             else {

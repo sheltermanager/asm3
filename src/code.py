@@ -833,6 +833,12 @@ class media(ASMEndpoint):
         for mid in o.post.integer_list("ids"):
             asm3.media.set_excluded(o.dbo, o.user, mid, 1)
 
+class media_pdfjs(ASMEndpoint):
+    url = "media_pdfjs"
+
+    def content(self, o):
+        self.redirect(f'static/lib/pdfjs/2.12.313/web/viewer.html?file=/media%3Fid={o.post["id"]}')
+
 class mobile(ASMEndpoint):
     url = "mobile"
     login_url = "/mobile_login"
