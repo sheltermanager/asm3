@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-12-23 09:44+0000\n"
+"POT-Creation-Date: 2021-12-28 15:52+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -111,7 +111,7 @@ msgstr ""
 msgid "1 week"
 msgstr ""
 
-#: publish_options.js lookups.js media.js
+#: publish_options.js onlineforms.js lookups.js media.js
 msgid "1 year"
 msgstr ""
 
@@ -6693,7 +6693,7 @@ msgstr ""
 msgid "Incomplete notes upto today"
 msgstr ""
 
-#: media.js
+#: onlineforms.js media.js
 msgid "Indefinitely"
 msgstr ""
 
@@ -10356,8 +10356,12 @@ msgstr ""
 msgid "Retain Until"
 msgstr ""
 
-#: media.js
+#: onlineforms.js media.js
 msgid "Retain for"
+msgstr ""
+
+#: onlineforms.js
+msgid "Retain processed form submissions on the media tab for a number of years"
 msgstr ""
 
 #: media.js
@@ -14768,7 +14772,7 @@ msgstr ""
 msgid "{0} weeks"
 msgstr ""
 
-#: lookups.js media.js
+#: onlineforms.js lookups.js media.js
 msgid "{0} years"
 msgstr ""
 
