@@ -25,6 +25,19 @@ $(function() {
             { ID: 8, NAME: _("Create waiting list") }
         ],
 
+        retain_for_years: [
+            { ID: 0, NAME: _("Indefinitely") },
+            { ID: 1, NAME: _("1 year") },
+            { ID: 2, NAME: _("{0} years").replace("{0}", 2) },
+            { ID: 3, NAME: _("{0} years").replace("{0}", 3) },
+            { ID: 4, NAME: _("{0} years").replace("{0}", 4) },
+            { ID: 5, NAME: _("{0} years").replace("{0}", 5) },
+            { ID: 6, NAME: _("{0} years").replace("{0}", 6) },
+            { ID: 7, NAME: _("{0} years").replace("{0}", 7) },
+            { ID: 8, NAME: _("{0} years").replace("{0}", 8) },
+            { ID: 9, NAME: _("{0} years").replace("{0}", 9) }
+        ],
+
         model: function() {
             const dialog = {
                 add_title: _("Add online form"),
@@ -44,6 +57,10 @@ $(function() {
                         type: "select", classes: "asm-doubleselectbox",
                         callout: _("Process submissions of this form automatically and bypass the incoming forms queue"),
                         options: { displayfield: "NAME", valuefield: "ID", rows: onlineforms.auto_process_options } },
+                    { json_field: "RETAINFOR", post_field: "retainfor", label: _("Retain for"),
+                        type: "select",
+                        callout: _("Retain processed form submissions on the media tab for a number of years"),
+                        options: { displayfield: "NAME", valuefield: "ID", rows: onlineforms.retain_for_years } },
                     { json_field: "EMAILADDRESS", post_field: "email", label: _("Email submissions to"), 
                         type: "textarea", rows: "2", 
                         validation: "validemail", 

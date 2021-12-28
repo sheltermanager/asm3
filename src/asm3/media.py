@@ -377,10 +377,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         comments = asm3.utils.filename_only(filename)
 
     # Calculate the retain until date from retainfor years
-    retainuntil = None
-    retainfor = post.integer("retainfor")
-    if (retainfor > 0):
-        retainuntil = dbo.today( retainfor * 365 )
+    retainuntil = calc_retainuntil_from_retainfor(dbo, post.integer("retainfor"))
     
     # Create the media record
     dbo.insert("media", {
@@ -447,6 +444,15 @@ def attach_link_from_form(dbo, username, linktype, linkid, post):
         "RetainUntil":          None
     }, username, setCreated=False)
 
+
+def calc_retainuntil_from_retainfor(dbo, retainfor):
+    """ Calculates the retain until date from a retain for in years (0 or None = Indefinitely) """
+    retainuntil = None
+    retainfor = asm3.utils.cint(retainfor)
+    if (retainfor > 0):
+        retainuntil = dbo.today( retainfor * 365 )
+    return retainuntil
+
 def check_default_web_doc_pic(dbo, mediaid, linkid, linktype):
     """
     Checks if linkid/type has a default pic for the web or documents. If not,
@@ -496,19 +502,21 @@ def create_blank_document_media(dbo, username, linktype, linkid):
     }, username, setCreated=False, generateID=False)
     return mediaid
 
-def create_document_media(dbo, username, linktype, linkid, template, content):
+def create_document_media(dbo, username, linktype, linkid, template, content, retainfor=0):
     """
     Creates a new media record for a document for the link given.
     linktype: ANIMAL, PERSON, etc
     linkid: ID for the link
     template: The name of the template used to create the document
     content: The document contents (bytes str, will be converted if str given)
+    retainfor: Number of years to retain this document (any non-integer or 0 = Indefinitely)
     """
     mediaid = dbo.get_id("media")
     path = get_dbfs_path(linkid, linktype)
     name = str(mediaid) + ".html"
     content = asm3.utils.str2bytes(content)
     dbfsid = asm3.dbfs.put_string(dbo, name, path, content)
+    retainuntil = calc_retainuntil_from_retainfor(dbo, retainfor)
     dbo.insert("media", {
         "ID":                   mediaid,
         "DBFSID":               dbfsid,
@@ -529,7 +537,7 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
         "LinkTypeID":           linktype,
         "Date":                 dbo.now(),
         "CreatedDate":          dbo.now(),
-        "RetainUntil":          None
+        "RetainUntil":          retainuntil
     }, username, setCreated=False, generateID=False)
     return mediaid
 

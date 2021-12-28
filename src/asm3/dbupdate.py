@@ -39,7 +39,7 @@ VERSIONS = (
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
-    34508, 34509
+    34508, 34509, 34510
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1163,6 +1163,7 @@ def sql_structure(dbo):
         fstr("RedirectUrlAfterPOST", True),
         fstr("SetOwnerFlags", True),
         fint("AutoProcess", True),
+        fint("RetainFor", True),
         fint("EmailSubmitter", True),
         fint("EmailCoordinator", True),
         flongstr("EmailAddress", True),
@@ -5531,4 +5532,8 @@ def update_34508(dbo):
 def update_34509(dbo):
     add_column(dbo, "templatedocument", "Show", dbo.type_shorttext)
     dbo.execute_dbupdate("UPDATE templatedocument SET Show='everywhere'")
+
+def update_34510(dbo):
+    add_column(dbo, "onlineform", "RetainFor", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE onlineform SET RetainFor=0")
 

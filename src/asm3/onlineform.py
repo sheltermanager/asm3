@@ -154,17 +154,18 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             asm3.html.asm_script_tag("onlineform_extra.js") + \
             "</head>"
         header = header.replace("</head>", extra)
-        h.append(header.replace("$$TITLE$$", form["NAME"]))
-        h.append('<h2 class="asm-onlineform-title">%s</h2>' % form["NAME"])
-        if form["DESCRIPTION"] is not None and form["DESCRIPTION"] != "":
-            h.append('<p class="asm-onlineform-description">%s</p>' % form["DESCRIPTION"])
-        h.append(asm3.utils.nulltostr(form["HEADER"]))
+        h.append(header.replace("$$TITLE$$", form.NAME))
+        h.append('<h2 class="asm-onlineform-title">%s</h2>' % form.NAME)
+        if form.DESCRIPTION is not None and form.DESCRIPTION != "":
+            h.append('<p class="asm-onlineform-description">%s</p>' % form.DESCRIPTION)
+        h.append(asm3.utils.nulltostr(form.HEADER))
     h.append('<form action="%s/service" method="post" accept-charset="utf-8">' % BASE_URL)
     h.append('<input type="hidden" name="method" value="online_form_post" />')
     h.append('<input type="hidden" name="account" value="%s" />' % dbo.alias)
-    h.append('<input type="hidden" name="redirect" value="%s" />' % form["REDIRECTURLAFTERPOST"])
-    h.append('<input type="hidden" name="flags" value="%s" />' % form["SETOWNERFLAGS"])
-    h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form["NAME"]))
+    h.append('<input type="hidden" name="redirect" value="%s" />' % form.REDIRECTURLAFTERPOST)
+    h.append('<input type="hidden" name="retainfor" value="%s" />' % form.RETAINFOR)
+    h.append('<input type="hidden" name="flags" value="%s" />' % form.SETOWNERFLAGS)
+    h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form.NAME))
     h.append('<table class="asm-onlineform-table">')
     for f in formfields:
         fname = "%s_%s" % (f.FIELDNAME, f.ID)
@@ -552,6 +553,10 @@ def get_onlineformincoming_name(dbo, collationid):
     """ Returns the form name for a collation id """
     return dbo.query_string("SELECT FormName FROM onlineformincoming WHERE CollationID = ? %s" % dbo.sql_limit(1), [collationid])
 
+def get_onlineformincoming_retainfor(dbo, collationid):
+    """ Returns the retain for period for a collation id """
+    return dbo.query_int("SELECT Value FROM onlineformincoming WHERE CollationID = ? AND FieldName = 'retainfor' %s" % dbo.sql_limit(1), [collationid])
+
 def get_animal_id_from_field(dbo, name):
     """ Used for ADOPTABLE/SHELTER animal fields, gets the ID from the value """
     if name.find("::") != -1:
@@ -569,6 +574,7 @@ def insert_onlineform_from_form(dbo, username, post):
         "Name":                 post["name"],
         "RedirectUrlAfterPOST": post["redirect"],
         "AutoProcess":          post.integer("autoprocess"),
+        "RetainFor":            post.integer("retainfor"),
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
@@ -587,6 +593,7 @@ def update_onlineform_from_form(dbo, username, post):
         "Name":                 post["name"],
         "RedirectUrlAfterPOST": post["redirect"],
         "AutoProcess":          post.integer("autoprocess"),
+        "RetainFor":            post.integer("retainfor"),
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
@@ -801,7 +808,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
             # Don't include raw markup or signature/image fields in the preview
             if fld.VALUE.startswith("RAW::") or fld.VALUE.startswith("data:"): continue
             # Or the system added timestamp field, ip address, or fields we would have already added above
-            if fld.FIELDNAME in ("formreceived", "ipaddress", "firstname", "forenames", "lastname", "surname"): continue
+            if fld.FIELDNAME in ("retainfor", "formreceived", "ipaddress", "firstname", "forenames", "lastname", "surname"): continue
             if fld.FIELDNAME in ("animalname", "reserveanimalname"): continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
@@ -1002,7 +1009,8 @@ def attach_form(dbo, username, linktype, linkid, collationid):
     l = dbo.locale
     formname = get_onlineformincoming_name(dbo, collationid)
     formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml )
+    retainfor = get_onlineformincoming_retainfor(dbo, collationid)
+    mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml, retainfor)
     if asm3.configuration.auto_hash_processed_forms(dbo):
         dtstr = "%s %s" % (asm3.i18n.python2display(l, dbo.now()), asm3.i18n.format_time(dbo.now()))
         asm3.media.sign_document(dbo, username, mid, "", \
@@ -1012,6 +1020,7 @@ def attach_form(dbo, username, linktype, linkid, collationid):
         if f.VALUE.startswith("data:image/jpeg"):
             d = {
                 "excludefrompublish": "1", # We should never be sending public uploaded images anywhere by default
+                "retainfor":    str(retainfor),
                 "filename":     "image.jpg",
                 "filetype":     "image/jpeg",
                 "filedata":     f.VALUE
