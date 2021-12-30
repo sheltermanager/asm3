@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-12-28 15:52+0000\n"
+"POT-Creation-Date: 2021-12-30 16:09+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -13244,7 +13244,8 @@ msgstr ""
 msgid "Trial"
 msgstr ""
 
-#: dbupdate.py publish_options.js common.js shelterview.js movements.js
+#: dbupdate.py publish_options.js common.js common_animalchoosermulti.js
+#: shelterview.js movements.js
 msgid "Trial Adoption"
 msgstr ""
 

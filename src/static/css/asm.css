@@ -298,6 +298,11 @@ select:disabled, input:disabled, textarea:disabled {
 }
 
 /** ANIMAL/PERSON CHOOSERS ========= */
+.asm-animalchoosermulti-filter {
+    padding-top: 5px;
+    display: inline-block;
+    vertical-align: top;
+}
 .asm-animalchoosermulti-result {
     display: inline-block;
     text-align: center;
