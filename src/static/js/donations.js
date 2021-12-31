@@ -351,6 +351,9 @@ $(function() {
             if (config.str("CardcomUserName")) {
                 s += '<li id="button-cardcom" class="processorbutton asm-menu-item"><a '
                         + ' target="_blank" href="#">' + html.icon("cardcom") + ' ' + _("Cardcom") + '</a></li>';
+                s += '<li id="button-cardcom-email" class="processorbutton asm-menu-item"><a '
+                        + ' target="_blank" href="#">' + html.icon("cardcom") + ' ' + _("Cardcom by Email") + '</a></li>';
+
                 if (controller.person && controller.person.EXTRAIDS) {
                     // Cardcom token payment provider only works in the context of a person who has stored tokens
                     let extra_ids = new URLSearchParams(controller.person.EXTRAIDS.replace(/\|/g, '&'));
@@ -493,6 +496,11 @@ $(function() {
 
             $("#button-cardcom").click(function() {
                 payment_processor_popup("cardcom");
+                return false;
+            });
+
+            $("#button-cardcom-email").click(function() {
+                payment_processor_email_dialog("cardcom");
                 return false;
             });
 
