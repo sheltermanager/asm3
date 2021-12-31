@@ -1787,7 +1787,7 @@ def get_active_litters(dbo, speciesid = -1):
         "FROM animallitter l " \
         "LEFT OUTER JOIN animal a ON l.ParentAnimalID = a.ID " \
         "INNER JOIN species s ON l.SpeciesID = s.ID " \
-        "WHERE (InvalidDate Is Null OR InvalidDate < ?) %s" \
+        "WHERE (InvalidDate Is Null OR InvalidDate > ?) %s" \
         "ORDER BY l.Date DESC" 
     values = [ dbo.today() ]
     if speciesid != -1: 
