@@ -1645,7 +1645,7 @@ class animal_embed(ASMEndpoint):
         rows = asm3.animal.get_animal_find_simple(dbo, "", "all", asm3.configuration.record_search_limit(dbo), o.locationfilter, o.siteid, o.visibleanimalids)
         locations = asm3.lookups.get_internal_locations(dbo)
         species = asm3.lookups.get_species(dbo)
-        litters = asm3.animal.get_litters(dbo)
+        litters = asm3.animal.get_active_litters(dbo)
         rv = { "rows": rows, "locations": locations, "species": species, "litters": litters }
         return asm3.utils.json(rv)
 
