@@ -1,6 +1,7 @@
 45
 ================
 
+31/12/21 Strip background-image CSS directives from online forms before storing
 30/12/21 Multi animal select now filters the list instead of bulk selecting
 28/12/21 Use pdf.js to allow viewing of PDFs in the mobile app #584
 28/12/21 Allow a Retain For period in years for online form submissions #1077

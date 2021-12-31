@@ -680,6 +680,12 @@ def bytesio(contents = ""):
     if contents != "": return BytesIO(contents)
     return BytesIO()
 
+def strip_background_images(s):
+    """
+    Removes background-image CSS directives from a string.
+    """
+    return re.sub(r'background-image:.*?;', '', s)
+
 def strip_duplicate_spaces(s):
     """
     Removes duplicate spaces from a string and strips, eg: ' Bad   Flag' becomes 'Bad Flag'

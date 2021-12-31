@@ -546,6 +546,7 @@ def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images
             h.append('<div style="page-break-before: always;"></div>')
     h.append("</body></html>")
     s = "\n".join(h)
+    if not include_images: s= asm3.utils.strip_background_images(s)
     if strip_scripts: s = asm3.utils.strip_script_tags(s)
     return s
 
