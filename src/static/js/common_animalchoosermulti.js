@@ -239,17 +239,6 @@ $.widget("asm.animalchoosermulti", {
         self._trigger("change", null, animalids);
     },
 
-    /**
-     * Turns a user's litter ID into an escaped version for putting
-     * in a data attribute
-     */
-    litterid_escape: function(s) {
-        s = common.replace_all(s, " ", "_"); 
-        s = common.replace_all(s, "'", "_"); 
-        s = common.replace_all(s, "\"", "_"); 
-        return s;
-    },
-
     load: function() {
         var self = this;
         var dialog = this.options.dialog, node = this.options.node, results = this.options.results, 
