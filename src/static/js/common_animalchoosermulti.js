@@ -125,14 +125,13 @@ $.widget("asm.animalchoosermulti", {
      */
     clear: function() {
         this.element.val("");
-        this.options.ids = "";
         this.options.display.html("");
         this.options.results.find(":checked").prop("checked", false);
         this.update_status();
     },
 
     is_empty: function() {
-        return this.options.ids == "";
+        return this.options.results.find(":checked").length == 0;
     },
 
     destroy: function() {
