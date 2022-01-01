@@ -136,6 +136,7 @@ $.widget("asm.animalchoosermulti", {
 
     destroy: function() {
         try {
+            this.options.dialog.empty();
             this.options.dialog.dialog("destroy"); 
         }
         catch (ex) {}
