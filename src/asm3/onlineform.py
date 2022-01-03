@@ -1238,7 +1238,8 @@ def create_animalcontrol(dbo, username, collationid):
     d["calltime"] = d["incidenttime"]
     d["incidenttype"] = asm3.configuration.default_incident(dbo)
     for f in fields:
-        if f.FIELDNAME == "lastname" or f.FIELDNAME == "surname": has_person = True
+        if f.FIELDNAME == "lastname" and f.VALUE != "": has_person = True
+        if f.FIELDNAME == "surname" and f.VALUE != "": has_person = True
         if f.FIELDNAME == "callnotes": d["callnotes"] = f.VALUE
         if f.FIELDNAME == "dispatchaddress": d["dispatchaddress"] = f.VALUE
         if f.FIELDNAME == "dispatchcity": d["dispatchtown"] = f.VALUE
