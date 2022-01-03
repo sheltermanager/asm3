@@ -24,6 +24,7 @@ $.widget("asm.animalchoosermulti", {
         locations: null,
         species: null,
         litters: null,
+        flags: null,
         loaded: false
     },
 
@@ -59,6 +60,10 @@ $.widget("asm.animalchoosermulti", {
             '<div class="asm-animalchoosermulti-filter">',
              _("Litters") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-litters asm-bsmselect"></select>', 
             '</div>',
+            '<div class="asm-animalchoosermulti-filter">',
+             _("Flags") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-flags asm-bsmselect"></select>', 
+            '</div>',
+
             '</div>',
             '<div class="animalchoosermulti-results">',
             '</div>',
@@ -77,6 +82,7 @@ $.widget("asm.animalchoosermulti", {
         this.options.locations = node.find(".animalchoosermulti-locations");
         this.options.species = node.find(".animalchoosermulti-species");
         this.options.litters = node.find(".animalchoosermulti-litters");
+        this.options.flags = node.find(".animalchoosermulti-flags");
         this.options.results = node.find(".animalchoosermulti-results");
         this.element.parent().append(node);
 
@@ -87,7 +93,7 @@ $.widget("asm.animalchoosermulti", {
         dialog.dialog({
             autoOpen: false,
             height: 600,
-            width: 800,
+            width: 875,
             modal: true,
             dialogClass: "dialogshadow",
             show: dlgfx.edit_show,
@@ -192,7 +198,7 @@ $.widget("asm.animalchoosermulti", {
      */
     update_filters: function() {
         let results = this.options.results, locations = this.options.locations, 
-            species = this.options.species, litters = this.options.litters, 
+            species = this.options.species, litters = this.options.litters, flags = this.options.flags, 
             dialog = this.options.dialog;
         $.each(this.rows, function(i, a) {
             let show = true;
@@ -207,6 +213,8 @@ $.widget("asm.animalchoosermulti", {
             }
             let sellitter = String(litters.val()).trim().split(",");
             if ( String(litters.val()).trim() && sellitter.length > 0 && sellitter.indexOf(a.ACCEPTANCENUMBER) == -1) { show = false; }
+            let selflag = String(flags.val()).trim().split(",");
+            if (String(flags.val()).trim() && selflag.length > 0 && !common.array_overlap(selflag, a.ADDITIONALFLAGS.split("|"))) { show = false; }
             // Show/hide the result appropriately
             dialog.find(".animalselect[data='" + a.ID + "']").closest(".asm-animalchoosermulti-result").toggle(show);
         });
@@ -243,7 +251,8 @@ $.widget("asm.animalchoosermulti", {
     load: function() {
         var self = this;
         var dialog = this.options.dialog, node = this.options.node, results = this.options.results, 
-            locations = this.options.locations, species = this.options.species, litters = this.options.litters;
+            locations = this.options.locations, species = this.options.species, litters = this.options.litters,
+            flags = this.options.flags;
         dialog.find("img").show();
         var formdata = "mode=multiselect";
         $.ajax({
@@ -285,6 +294,14 @@ $.widget("asm.animalchoosermulti", {
                 litters.html( lh.join("\n") );
                 litters.change();
                 litters.on("change", function(e) {
+                    self.update_filters();
+                });
+
+                // Flags list
+                html.animal_flag_options(null, rv.flags, flags);
+                //flags.html( html.list_to_options(rv.flags, "FLAG", "FLAG") );
+                flags.change();
+                flags.on("change", function(e) {
                     self.update_filters();
                 });
 

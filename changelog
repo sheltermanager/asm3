@@ -1,6 +1,7 @@
 45
 ================
 
+03/01/21 Flag filter on animal multi-select #633
 31/12/21 CardCom by email option (Saggi Neumann)
 31/12/21 Strip background-image CSS directives from online forms before storing
 30/12/21 Multi animal select now filters the list instead of bulk selecting
