@@ -1088,6 +1088,7 @@ $.widget("asm.callout", {
 
         // Style the button by adding an actual button with icon
         button.append(html.icon("callout"));
+        //button.append('<span class="ui-icon ui-icon-help bottomborder"></span>');
 
         // Create the callout
         $("#asm-content").append('<div id="' + popupid + '" class="popupshadow asm-callout-popup">' + html.info(content) + '</div>');

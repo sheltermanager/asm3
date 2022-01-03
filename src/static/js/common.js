@@ -1031,7 +1031,7 @@ const common = {
         $(".asm-textarea, .asm-textareafixed, .asm-textareafixeddouble").textarea();
         $(".asm-richtextarea").richtextarea();
         $(".asm-table").table();
-        if (_) {
+        if (_ && !$(".asm-bsmselect").attr("title")) {
             $(".asm-bsmselect").attr("title", _("Select"));
         }
         $(".asm-bsmselect").asmSelect({

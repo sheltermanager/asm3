@@ -93,6 +93,10 @@ select:disabled, input:disabled, textarea:disabled {
     font-weight: bold;
 }
 
+.underline {
+    text-decoration: underline; 
+}
+
 /** LOGIN SCREEN ============= */
 #asm-login-window {
     padding: 0px;
