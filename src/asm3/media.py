@@ -134,7 +134,7 @@ def get_media_export(dbo):
     """
     Produces a dataset of all media with link info for export
     """
-    return dbo.query("SELECT m.*, " \
+    rows = dbo.query("SELECT m.*, " \
         "CASE " \
         "WHEN m.LinkTypeID = 0 THEN (SELECT %s FROM animal WHERE ID = m.LinkID) " \
         "WHEN m.LinkTypeID = 3 THEN (SELECT OwnerName FROM owner WHERE ID = m.LinkID) " \
@@ -150,6 +150,12 @@ def get_media_export(dbo):
             dbo.sql_concat([ "'Found Animal '", "m.LinkID" ]),
             dbo.sql_concat([ "'Waiting List '", "m.LinkID" ]),
             dbo.sql_concat([ "'Incident '", "m.LinkID" ])  ))
+    for m in rows:
+        m.DBFSNAME = ""
+        if m.MEDIATYPE == MEDIATYPE_FILE:
+            ext = m.MEDIANAME[m.MEDIANAME.rfind("."):]
+            m.DBFSNAME = "%s%s" % (m.DBFSID, ext)
+    return rows
 
 def get_media_file_data(dbo, mid):
     """
