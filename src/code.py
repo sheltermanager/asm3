@@ -713,10 +713,14 @@ class media(ASMEndpoint):
         emailadd = post["to"]
         attachments = []
         subject = [ post["subject"] ]
+        linktypeid = 0
+        linkid = 0
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
             filename = asm3.media._get_media_filename(m)
             if m is None: self.notfound()
+            linktypeid = m.LINKTYPEID
+            linkid = m.LINKID
             content = asm3.dbfs.get_string(dbo, m.MEDIANAME)
             if m.MEDIAMIMETYPE == "text/html":
                 content = asm3.utils.bytes2str(content)
@@ -728,7 +732,7 @@ class media(ASMEndpoint):
         if asm3.configuration.audit_on_send_email(dbo): 
             asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
         if post.boolean("addtolog"):
-            asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m["LINKTYPEID"]), m["LINKID"], post.integer("logtype"), 
+            asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(linktypeid), linkid, post.integer("logtype"), 
                 emailadd, ", ".join(subject), post["body"])
         return emailadd
 
@@ -739,10 +743,14 @@ class media(ASMEndpoint):
         emailadd = post["to"]
         attachments = []
         subject = [ post["subject"] ]
+        linktypeid = 0
+        linkid = 0
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
             if m is None: self.notfound()
             if m.MEDIAMIMETYPE != "text/html": continue
+            linktypeid = m.LINKTYPEID
+            linkid = m.LINKID
             content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
             contentpdf = asm3.utils.html_to_pdf(dbo, content)
             filename = asm3.media._get_media_filename(m).replace(".html", ".pdf")
@@ -752,7 +760,7 @@ class media(ASMEndpoint):
         if asm3.configuration.audit_on_send_email(dbo): 
             asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
         if post.boolean("addtolog"):
-            asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
+            asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(linktypeid), linkid, post.integer("logtype"), 
                 emailadd, ", ".join(subject), post["body"])
         return emailadd
 
