@@ -778,7 +778,7 @@ class media(ASMEndpoint):
             if m.MEDIAMIMETYPE != "text/html": continue
             token = asm3.utils.md5_hash_hex("%s%s" % (m.ID, m.LINKID))
             url = "%s?account=%s&method=sign_document&email=%s&formid=%d&token=%s" % (SERVICE_URL, dbo.database, asm3.utils.strip_email_address(emailadd).replace("@", "%40"), mid, token)
-            body.append("<p><a href=\"%s\">%s</a></p>" % (url, m.MEDIANOTES))
+            body = replace_url_token(body, url, m.MEDIANOTES)
             if post.boolean("addtolog"):
                 asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
                     emailadd, _("Document signing request", l), "".join(body))
@@ -2961,6 +2961,17 @@ class donation(JSONEndpoint):
         except Exception as e:
             return (asm3.utils.json({"error": str(e)}))
 
+
+    def replace_url_token(body, url, text):
+        url_token = "$URL"
+        replace_html_string = "<a href=\"%s\">%s</a>"
+        append_html_string = "<p><a href=\"%s\">%s</a></p>"
+        if url_token in body:
+            body = body.replace(url_token, replace_html_string % (url, text))
+        else:
+            body.append(append_html_string % (url, text))
+
+
     def post_emailrequest(self, o):
         self.check(asm3.users.EMAIL_PERSON)
         dbo = o.dbo
@@ -2976,7 +2987,7 @@ class donation(JSONEndpoint):
             "title": post["subject"] 
         }
         url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
-        body.append("<p><a href=\"%s\">%s</a></p>" % (url, post["payref"]))
+        body = replace_url_token(body, url, post["payref"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), 
                 emailadd, post["subject"], "".join(body))
@@ -4498,7 +4509,7 @@ class movement(JSONEndpoint):
         body = []
         body.append(post["body"])
         url = "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, dbo.database, key)
-        body.append("<p><a href=\"%s\">%s</a></p>" % (url, _("Adoption Checkout", l)))
+        body = replace_url_token(body, url, _("Adoption Checkout", l))
         asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], "\n".join(body), "html")
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, pid, post.integer("logtype"), 
