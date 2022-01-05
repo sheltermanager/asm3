@@ -1493,6 +1493,25 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
     doc.build(elements)
     return fout.getvalue()
 
+def replace_url_token(body, url, text):
+    """
+    Used by email dialogs that want to send a URL in the message. 
+    If the token $URL is present in body, then substitute it for url, 
+    otherwise append url to the end of the body.
+    body: The body to replace $URL in
+    url: The the href
+    text: The anchor text
+    returns the new body
+    """
+    url_token = "$URL"
+    replace_html_string = "<a href=\"%s\">%s</a>"
+    append_html_string = "<p><a href=\"%s\">%s</a></p>"
+    if url_token in body:
+        body = body.replace(url_token, replace_html_string % (url, text))
+    else:
+        body += "\n" + append_html_string % (url, text)
+    return body
+
 def is_valid_email_address(s):
     """ Returns True if s is a valid email address """
     regex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"

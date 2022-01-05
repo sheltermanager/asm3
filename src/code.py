@@ -770,22 +770,21 @@ class media(ASMEndpoint):
         post = o.post
         l = o.locale
         emailadd = post["to"]
-        body = []
-        body.append(post["body"])
+        body = post["body"]
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
             if m is None: raise web.notfound()
             if m.MEDIAMIMETYPE != "text/html": continue
             token = asm3.utils.md5_hash_hex("%s%s" % (m.ID, m.LINKID))
             url = "%s?account=%s&method=sign_document&email=%s&formid=%d&token=%s" % (SERVICE_URL, dbo.database, asm3.utils.strip_email_address(emailadd).replace("@", "%40"), mid, token)
-            body = replace_url_token(body, url, m.MEDIANOTES)
+            body = asm3.utils.replace_url_token(body, url, m.MEDIANOTES)
             if post.boolean("addtolog"):
                 asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
-                    emailadd, _("Document signing request", l), "".join(body))
+                    emailadd, _("Document signing request", l), body)
             asm3.media.create_log(dbo, o.user, mid, "ES01", _("Document signing request", l))
-            asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body), "html")
+            asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body, "html")
             if asm3.configuration.audit_on_send_email(dbo): 
-                asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body))
+                asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body)
         return emailadd
 
     def post_jpg2pdf(self, o):
@@ -2961,24 +2960,12 @@ class donation(JSONEndpoint):
         except Exception as e:
             return (asm3.utils.json({"error": str(e)}))
 
-
-    def replace_url_token(body, url, text):
-        url_token = "$URL"
-        replace_html_string = "<a href=\"%s\">%s</a>"
-        append_html_string = "<p><a href=\"%s\">%s</a></p>"
-        if url_token in body:
-            body = body.replace(url_token, replace_html_string % (url, text))
-        else:
-            body.append(append_html_string % (url, text))
-
-
     def post_emailrequest(self, o):
         self.check(asm3.users.EMAIL_PERSON)
         dbo = o.dbo
         post = o.post
         emailadd = post["to"]
-        body = []
-        body.append(post["body"])
+        body = post["body"]
         params = { 
             "account": dbo.database, 
             "method": "checkout",
@@ -2987,13 +2974,13 @@ class donation(JSONEndpoint):
             "title": post["subject"] 
         }
         url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
-        body = replace_url_token(body, url, post["payref"])
+        body = asm3.utils.replace_url_token(body, url, post["payref"])
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), 
-                emailadd, post["subject"], "".join(body))
-        asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], "\n".join(body), "html")
+                emailadd, post["subject"], body)
+        asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body, "html")
         if asm3.configuration.audit_on_send_email(dbo): 
-            asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
+            asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body)
         return emailadd
 
     def post_nextreceipt(self, o):
@@ -4506,16 +4493,15 @@ class movement(JSONEndpoint):
         }
         asm3.cachedisk.put(key, dbo.database, co, CACHE_ONE_DAY * 2) # persist for 2 days
         # Send the email to the adopter
-        body = []
-        body.append(post["body"])
+        body = post["body"]
         url = "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, dbo.database, key)
-        body = replace_url_token(body, url, _("Adoption Checkout", l))
-        asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], "\n".join(body), "html")
+        body = asm3.utils.replace_url_token(body, url, _("Adoption Checkout", l))
+        asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body, "html")
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, pid, post.integer("logtype"), 
-                post["to"], post["subject"], "\n".join(body))
+                post["to"], post["subject"], body)
         if asm3.configuration.audit_on_send_email(dbo): 
-            asm3.audit.email(dbo, o.user, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], "\n".join(body))
+            asm3.audit.email(dbo, o.user, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body)
 
 class onlineform_incoming(JSONEndpoint):
     url = "onlineform_incoming"
