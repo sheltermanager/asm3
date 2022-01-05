@@ -41,11 +41,11 @@ def delete_html_template(dbo, username, name):
 def get_document_templates(dbo, show = ""):
     """ Returns document template info. """
     allowodt = asm3.configuration.allow_odt_document_templates(dbo)
-    rows = dbo.query("SELECT ID, Name, Path, Show FROM templatedocument ORDER BY Path, Name")
+    rows = dbo.query("SELECT ID, Name, Path, ShowAt FROM templatedocument ORDER BY Path, Name")
     out = []
     for r in rows:
         if not allowodt and r.NAME.endswith(".odt"): continue
-        if show != "" and asm3.utils.nulltostr(r.SHOW).find(show) == -1 and r.SHOW != "everywhere": continue
+        if show != "" and asm3.utils.nulltostr(r.SHOWAT).find(show) == -1 and r.SHOWAT != "everywhere": continue
         out.append(r)
     return out
 
@@ -59,7 +59,7 @@ def get_document_template_name(dbo, dtid):
 
 def get_document_template_show(dbo, dtid):
     """ Returns the type for a document template with an ID """
-    return dbo.query_string("SELECT Show FROM templatedocument WHERE ID = ?", [dtid])
+    return dbo.query_string("SELECT ShowAt FROM templatedocument WHERE ID = ?", [dtid])
 
 def create_document_template(dbo, username, name, ext = ".html", content = b"<p></p>", show = ""):
     """
@@ -83,7 +83,7 @@ def create_document_template(dbo, username, name, ext = ".html", content = b"<p>
     dtid = dbo.insert("templatedocument", {
         "Name":     name,
         "Path":     path,
-        "Show":     show,
+        "ShowAt":   show,
         "Content":  asm3.utils.bytes2str(asm3.utils.base64encode(content))
     })
     asm3.audit.create(dbo, username, "templatedocument", dtid, "", "id: %d, name: %s" % (dtid, name))
@@ -138,7 +138,7 @@ def update_document_template_show(dbo, username, dtid, newshow):
     Updates the show value for a document template for where it appears
     """
     dbo.update("templatedocument", dtid, {
-        "Show": newshow
+        "ShowAt": newshow
     })
     asm3.audit.edit(dbo, username, "templatedocument", dtid, "", "update show value of %d to %s" % (dtid, newshow))
 

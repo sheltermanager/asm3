@@ -46,9 +46,9 @@ $(function() {
                 },
                 columns: [
                     { field: "NAME", display: _("Template") },
-                    { field: "SHOW", display: _("Show"), formatter: function(row) {
+                    { field: "SHOWAT", display: _("Show"), formatter: function(row) {
                         let l = [];
-                        $.each(String(row.SHOW).split(","), function(i, v) {
+                        $.each(String(row.SHOWAT).split(","), function(i, v) {
                             $.each(document_templates.doctypes, function (id, vd) {
                                 if (vd.VALUE == v) { l.push(vd.DISPLAY); return false; }
                             });
@@ -103,7 +103,7 @@ $(function() {
                 },
                 { id: "show", text: _("Show"), icon: "document", enabled: "multi", 
                     click: function() { 
-                        $("#newshow").val(tableform.table_selected_row(table).SHOW);
+                        $("#newshow").val(tableform.table_selected_row(table).SHOWAT);
                         $("#newshow").change();
                         $("#dialog-show").dialog("open");
                     } 
@@ -234,7 +234,7 @@ $(function() {
                 $("#dialog-show").enable_dialog_buttons();
                 $("#dialog-show").dialog("close");
                 $.each(tableform.table_selected_rows(document_templates.table), function(i, v) {
-                    v.SHOW = newshow;
+                    v.SHOWAT = newshow;
                 });
                 tableform.table_update(document_templates.table);
             };

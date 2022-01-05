@@ -39,7 +39,7 @@ VERSIONS = (
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
-    34508, 34509, 34510
+    34508, 34509, 34510, 34511
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1517,7 +1517,7 @@ def sql_structure(dbo):
         fid(),
         fstr("Name"),
         fstr("Path"),
-        fstr("Show", True),
+        fstr("ShowAt", True),
         flongstr("Content") ), False)
     sql += index("templatedocument_NamePath", "templatedocument", "Name,Path", True)
 
@@ -2535,7 +2535,7 @@ def install_default_templates(dbo, removeFirst = False):
         dbo.insert("templatedocument", {
             "Name":     name,
             "Path":     path,
-            "Show":     show,
+            "ShowAt":   show,
             "Content":  asm3.utils.base64encode( asm3.utils.read_binary_file(filename) )
         })
     def add_html_template(name, head, body, foot, builtin):
@@ -5536,4 +5536,10 @@ def update_34509(dbo):
 def update_34510(dbo):
     add_column(dbo, "onlineform", "RetainFor", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineform SET RetainFor=0")
+
+def update_34511(dbo):
+    # Rename Show to ShowAt because it breaks on MySQL due to it being a keyword
+    add_column(dbo, "templatedocument", "ShowAt", dbo.type_shorttext)
+    dbo.execute_dbupdate("UPDATE templatedocument SET ShowAt=Show")
+    dbo.execute_dbupdate(dbo.ddl_drop_column("templatedocument", "Show"))
 
