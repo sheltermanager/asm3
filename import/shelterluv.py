@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import asm, os
 
@@ -22,11 +22,11 @@ The following files are needed:
     Events - Vaccines Administered -> vaccinations.csv
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/sluv_do2392"
+PATH = "/home/robin/tmp/asm3_import_data/sluv_kg2678"
 
 DEFAULT_BREED = 261 # default to dsh
 DATE_FORMAT = "MDY" # Normally MDY
-USE_SMDB_ENTRY_TYPE = True # If False, maps to new db defaults, if True looks up animal type and entry reason in target db
+USE_SMDB_ENTRY_TYPE = False # If False, maps to new db defaults, if True looks up animal type and entry reason in target db
 START_ID = 100
 
 animals = []
@@ -96,7 +96,7 @@ for d in asm.csv_to_list("%s/people.csv" % PATH):
     o.OwnerAddress = d["Street"]
     o.OwnerTown = d["City"]
     o.OwnerCounty = d["State"]
-    o.OwnerPostcode = d["Zip Code"]
+    if "Zip Code" in d: o.OwnerPostcode = d["Zip Code"]
     o.EmailAddress = d["Primary Email"]
     o.HomeTelephone = d["Phone"]
     # Last file I saw had repeated "Comments" columns, so need to be renumbered manually
@@ -131,8 +131,7 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
     a.ShelterCode = d["Animal ID"]
     ppa[d["Animal ID"]] = a
     a.AnimalName = d["Name"]
-    if "Intake Date" in d: a.DateBroughtIn = getdate(d["Intake Date"])
-    if a.DateBroughtIn is None and "Created Date" in d: a.DateBroughtIn = getdate(d["Created Date"])
+    if "Created Date" in d: a.DateBroughtIn = getdate(d["Created Date"])
     dob = a.DateBroughtIn
     a.EstimatedDOB = 1
     # Ages are stored as 2Y/ 4M/ 26D
@@ -181,8 +180,9 @@ for d in asm.csv_to_list("%s/intake.csv" % PATH):
     if d["Animal ID"] == "Animal ID": continue
     if d["Animal ID"] not in ppa: continue
     a = ppa[d["Animal ID"]]
-    intaketype = d["Entry Category"] # Seems to change names a lot, has been AnimalIntakeType
-    subtype = d["Animal Type"] # Also seems to change, has been AnimalIntakeSub-Type
+    intaketype = d["Intake Type"] # Seems to change names a lot, has been AnimalIntakeType, Entry Category
+    subtype = d["Intake Sub-Type"] # Also seems to change, has been AnimalIntakeSub-Type, Animal Type
+    if "Intake Date" in d: a.DateBroughtIn = getdate(d["Intake Date"])
     # Intake person
     linkperson = 0
     if "Intake From Name" in d and d["Intake From Name"] != "" and d["Intake From Name"] in ppo:
@@ -309,7 +309,7 @@ for d in asm.csv_to_list("%s/fosters.csv" % PATH):
     if d["Animal ID"] in ppa: a = ppa[d["Animal ID"]]
     if o is None or a is None: continue
     # Add some other values that weren't present in the animal file
-    a.IdentichipNumber = d["Microchip Number"]
+    if "Microchip Number" in d: a.IdentichipNumber = d["Microchip Number"]
     # Person has to be a fosterer
     o.IsFosterer = 1
     if a.IdentichipNumber != "": a.Identichipped = 1
@@ -341,7 +341,12 @@ if asm.file_exists("%s/procedures.csv" % PATH):
         if d["Animal ID"] not in ppa: continue
         a = ppa[d["Animal ID"]]
         meddate = getdate(d["Date"])
-        m = asm.animal_regimen_single(a.ID, meddate, d["Treatment"], "Procedure", d["Comments"])
+        treatmentname = ""
+        comments = ""
+        if "Treatment" in d: treatmentname = d["Treatment"]
+        if "Type" in d and treatmentname == "": treatmentname = d["Type"]
+        if "Comments" in d: comments = d["Comments"]
+        m = asm.animal_regimen_single(a.ID, meddate, treatmentname, "Procedure", comments)
         animalmedicals.append(m)
 
 if asm.file_exists("%s/medical.csv" % PATH):
@@ -359,7 +364,9 @@ if asm.file_exists("%s/vaccinations.csv" % PATH):
         if d["Animal ID"] not in ppa: continue
         a = ppa[d["Animal ID"]]
         vaccdate = getdate(d["Date given"])
-        t = asm.animal_vaccination(a.ID, vaccdate, vaccdate, d["Vaccine product"], rabiestag=d["Rabies tag number"], batchnumber = d["Lot #"])
+        lotno = ""
+        if "Lot #" in d: lotno = d["Lot #"]
+        t = asm.animal_vaccination(a.ID, vaccdate, vaccdate, d["Vaccine product"], rabiestag=d["Rabies tag number"], batchnumber = lotno)
         animalvaccinations.append(t)
 
 # Allow shelter animals to have their chips registered
@@ -368,12 +375,12 @@ for a in animals:
         a.IsNotForRegistration = 0
 
 # Now that everything else is done, output stored records
-for k, v in asm.testtypes.iteritems():
-    if v.ID >= START_ID: print v
-for k, v in asm.vaccinationtypes.iteritems():
-    if v.ID >= START_ID: print v
-for k, v in asm.locations.iteritems():
-    if v.ID >= START_ID: print v
+for k, v in asm.testtypes.items():
+    if v.ID >= START_ID: print(v)
+for k, v in asm.vaccinationtypes.items():
+    if v.ID >= START_ID: print(v)
+for k, v in asm.locations.items():
+    if v.ID >= START_ID: print(v)
 for a in animals:
     print (a)
 for o in owners:

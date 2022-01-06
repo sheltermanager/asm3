@@ -114,7 +114,7 @@ def csv_to_list(fname, strip = False, remove_control = False, remove_non_ascii =
     # Read the file into memory buffer b first
     # any raw transformations can be done on it there
     b = StringIO()
-    with open(fname, "rb") as f:
+    with open(fname, "r") as f:
         for s in f.readlines():
             if remove_control:
                 b.write(''.join(c for c in s if ord(c) >= 32))
