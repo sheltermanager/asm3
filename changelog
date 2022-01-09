@@ -1,6 +1,7 @@
 45
 ================
 
+09/01/21 Allow SMTP server to be overridden #942
 05/01/21 Rename templatedocument.Show to ShowAt to stop MySQL breaking
 05/01/21 Allow $URL to be used in payment/request signature/checkout emails #1083
 03/01/21 Flag filter on animal multi-select #633

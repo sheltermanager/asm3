@@ -1595,12 +1595,16 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     if contenttype == "html":
         body = fix_relative_document_uris(dbo, body)
 
-    # Build the from address from our sitedef
-    fromadd = FROM_ADDRESS
-    fromadd = fromadd.replace("{organisation}", asm3.configuration.organisation(dbo))
-    fromadd = fromadd.replace("{alias}", dbo.alias)
-    fromadd = fromadd.replace("{database}", dbo.database)
-    fromadd = fromadd.replace(",", "") # commas blow up address parsing
+    # Build the from address
+    # If we don't have an SMTPOverride, use the sitedef to construct the from address
+    # Otherwise, use the reply address
+    fromadd = replyadd
+    if not asm3.configuration.smtp_override(dbo):
+        fromadd = FROM_ADDRESS
+        fromadd = fromadd.replace("{organisation}", asm3.configuration.organisation(dbo))
+        fromadd = fromadd.replace("{alias}", dbo.alias)
+        fromadd = fromadd.replace("{database}", dbo.database)
+        fromadd = fromadd.replace(",", "") # commas blow up address parsing
 
     # Check for any problems in the reply address, such as unclosed address
     if replyadd.find("<") != -1 and replyadd.find(">") == -1:
@@ -1686,6 +1690,15 @@ def _send_email(msg, fromadd, tolist, dbo=None, exceptions=True):
         if "headers" in SMTP_SERVER: 
             for k, v in SMTP_SERVER["headers"].items():
                 msg[k] = Header(v)
+
+    # If we have a dbo and there's an smtp override in the database, use it
+    if dbo and asm3.configuration.smtp_override(dbo):
+        sendmail = False
+        host = asm3.configuration.smtp_server(dbo)
+        port = asm3.utils.cint(asm3.configuration.smtp_port(dbo))
+        usetls = asm3.configuration.smtp_server_tls(dbo)
+        username = asm3.configuration.smtp_username(dbo)
+        password = asm3.configuration.smtp_password(dbo)
      
     # Use sendmail or SMTP for the transport depending on config
     if sendmail:
@@ -1742,7 +1755,7 @@ def send_error_email():
     msg["To"] = Header(ADMIN_EMAIL)
     msg["Subject"] = Header(f"{error_name}: {error_value} ({web.ctx.path})")
     msg.attach(MIMEText(str(web.djangoerror()), "html"))
-    _send_email(msg, ADMIN_EMAIL, [ADMIN_EMAIL], exceptions=False)
+    _send_email(None, msg, ADMIN_EMAIL, [ADMIN_EMAIL], exceptions=False)
 
 def send_user_email(dbo, sendinguser, user, subject, body):
     """

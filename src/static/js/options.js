@@ -877,6 +877,32 @@ $(function() {
                 '</table>',
                 // end
                 '</td></tr></table>',
+                '<div class="smcom">',
+                '<p class="centered"><input id="smtpoverride" type="checkbox" class="asm-checkbox" data="SMTPOverride" /> <label for="smtpoverride">' + _("Specify an SMTP server for sending emails") + '</label>',
+                '<span class="asm-callout">' + _("Please do not enable this option if you do not understand what this means.") + '</span></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="smtpserver">' + _("SMTP Server") + '</label></td>',
+                '<td><input id="smtpserver" data="SMTPServer" type="text" class="asm-textbox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="smtpport">' + _("Port") + '</label></td>',
+                '<td><select id="smtpport" data="SMTPPort" class="asm-selectbox"><option>25</option><option>587</option></select></td>',
+                '</tr>',
+                '<tr>',
+                '<td></td>',
+                '<td><input id="smtptls" type="checkbox" data="SMTPServerUseTLS" class="asm-checkbox" /> <label for="smtptls">' + _("Use TLS") + '</label></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="smtpuser">' + _("Username") + '</label></td>',
+                '<td><input id="smtpuser" data="SMTPUsername" class="asm-textbox" type="text" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="smtppass">' + _("Password") + '</label></td>',
+                '<td><input id="smtppass" data="SMTPPassword" class="asm-textbox" type="text" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>',
                 '</div>'
             ].join("\n");
         },
@@ -1568,6 +1594,9 @@ $(function() {
             // Hide other non-relevant options
             if (!controller.haspaypal) {
                 $("#paypal-options").hide();
+            }
+            if (!asm.smcom) {
+                $(".smcom").hide();
             }
 
             validate.bind_dirty();

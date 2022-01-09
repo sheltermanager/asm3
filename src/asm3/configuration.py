@@ -328,6 +328,7 @@ DEFAULTS = {
     "ShowWeightInLbs": "Yes",
     "ShowWeightInLbsFraction": "No",
     "ShowWeightUnitsInLog": "Yes",
+    "SMTPOverride": "No",
     "SMTPPort": "25",
     "SoftReleases": "No",
     "SoftReleaseOnShelter": "No",
@@ -1328,6 +1329,9 @@ def signpad_ids(dbo, user, newval = None):
 
 def smdb_locked(dbo):
     return cboolean(dbo, "SMDBLocked")
+
+def smtp_override(dbo):
+    return cboolean(dbo, "SMTPOverride", DEFAULTS["SMTPOverride"] == "Yes")
 
 def smtp_server(dbo):
     return cstring(dbo, "SMTPServer")
