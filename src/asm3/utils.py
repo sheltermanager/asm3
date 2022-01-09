@@ -1755,7 +1755,7 @@ def send_error_email():
     msg["To"] = Header(ADMIN_EMAIL)
     msg["Subject"] = Header(f"{error_name}: {error_value} ({web.ctx.path})")
     msg.attach(MIMEText(str(web.djangoerror()), "html"))
-    _send_email(None, msg, ADMIN_EMAIL, [ADMIN_EMAIL], exceptions=False)
+    _send_email(msg, ADMIN_EMAIL, [ADMIN_EMAIL], exceptions=False)
 
 def send_user_email(dbo, sendinguser, user, subject, body):
     """
