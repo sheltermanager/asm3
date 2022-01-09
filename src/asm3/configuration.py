@@ -1339,14 +1339,14 @@ def smtp_server(dbo):
 def smtp_port(dbo):
     return cint(dbo, "SMTPPort", DEFAULTS["SMTPPort"])
 
-def smtp_server_username(dbo):
-    return cstring(dbo, "SMTPServerUsername")
+def smtp_username(dbo):
+    return cstring(dbo, "SMTPUsername")
 
-def smtp_server_password(dbo):
-    return cstring(dbo, "SMTPServerPassword")
+def smtp_password(dbo):
+    return cstring(dbo, "SMTPPassword")
 
-def smtp_server_tls(dbo):
-    return cboolean(dbo, "SMTPServerUseTLS")
+def smtp_use_tls(dbo):
+    return cboolean(dbo, "SMTPUseTLS")
 
 def softrelease_on_shelter(dbo):
     return cboolean(dbo, "SoftReleaseOnShelter", DEFAULTS["SoftReleaseOnShelter"] == "Yes")

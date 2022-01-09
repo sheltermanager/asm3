@@ -1696,7 +1696,7 @@ def _send_email(msg, fromadd, tolist, dbo=None, exceptions=True):
         sendmail = False
         host = asm3.configuration.smtp_server(dbo)
         port = asm3.utils.cint(asm3.configuration.smtp_port(dbo))
-        usetls = asm3.configuration.smtp_server_tls(dbo)
+        usetls = asm3.configuration.smtp_use_tls(dbo)
         username = asm3.configuration.smtp_username(dbo)
         password = asm3.configuration.smtp_password(dbo)
      

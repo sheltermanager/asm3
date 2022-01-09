@@ -891,7 +891,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td></td>',
-                '<td><input id="smtptls" type="checkbox" data="SMTPServerUseTLS" class="asm-checkbox" /> <label for="smtptls">' + _("Use TLS") + '</label></td>',
+                '<td><input id="smtptls" type="checkbox" data="SMTPUseTLS" class="asm-checkbox" /> <label for="smtptls">' + _("Use TLS") + '</label></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="smtpuser">' + _("Username") + '</label></td>',
