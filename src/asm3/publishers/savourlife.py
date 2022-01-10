@@ -352,7 +352,7 @@ class SavourLifePublisher(AbstractPublisher):
             "RequirementKidsUnder5":    self.good_with(an.ISGOODWITHCHILDREN),
             "SpecialNeeds":             "",
             "MedicalIssues":            self.replaceSmartHTMLEntities(an.HEALTHPROBLEMS),
-            "InterstateAdoptionAvailable": interstate, 
+            "InterstateAdoptionAvaliable": interstate, # NB: This attribute is deliberately spelled wrong due to mispelling at SL side
             "DistanceRestriction":      asm3.utils.iif(radius == 0, None, radius),
             "FosterCareRequired":       needs_foster,
             "BondedPair":               an.BONDEDANIMALID is not None and an.BONDEDANIMALID > 0,
