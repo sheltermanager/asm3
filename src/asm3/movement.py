@@ -886,6 +886,8 @@ def update_transport_from_form(dbo, username, post):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Transport requires an animal", l))
     if None is post.date("pickupdate") or None is post.date("dropoffdate"):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Transports must have valid pickup and dropoff dates and times.", l))
+    if post.date("pickupdate") > post.date("dropoffdate"):
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Pickup date cannot be later than dropoff date.", l))
     transportid = post.integer("transportid")
 
     dbo.update("animaltransport", transportid, {

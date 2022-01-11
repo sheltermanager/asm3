@@ -1,6 +1,7 @@
 45
 ================
 
+11/01/22 Fix bug with transport dialog buttons not re-enabling #1084
 11/01/22 Require 3 chars to be typed before autocomplete of city/state #1085
 09/01/22 Allow SMTP server to be overridden #942
 05/01/22 Rename templatedocument.Show to ShowAt to stop MySQL breaking

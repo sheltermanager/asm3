@@ -71,15 +71,17 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.dialog_show_edit(dialog, row, {
-                        onchange: function() {
+                        onchange: async function() {
                             tableform.fields_update_row(dialog.fields, row);
                             transport.set_extra_fields(row);
-                            tableform.fields_post(dialog.fields, "mode=update&transportid=" + row.ID, "transport", function(response) {
+                            try {
+                                await tableform.fields_post(dialog.fields, "mode=update&transportid=" + row.ID, "transport");
                                 tableform.table_update(table);
                                 tableform.dialog_close();
-                            }, function() { 
+                            }
+                            catch(err) {
                                 tableform.dialog_enable_buttons();
-                            });
+                            }
                         },
                         onload: function() {
                             $("#animal").closest("tr").show();
@@ -119,7 +121,7 @@ $(function() {
                         }
                     },
                     { field: "DRIVER", display: _("Driver"), formatter: function(row) {
-                            if (row.DRIVEROWNERID && common.has_permission("vo")) {
+                            if (row.DRIVEROWNERID && row.DRIVEROWNERNAME && common.has_permission("vo")) {
                                 return html.person_link(row.DRIVEROWNERID, row.DRIVEROWNERNAME) + '<br />' +
                                     row.DRIVEROWNERADDRESS + "<br/>" + row.DRIVEROWNERTOWN + "<br />" + row.DRIVEROWNERCOUNTY + " " + row.DRIVEROWNERPOSTCODE +
                                     (!config.bool("HideCountry") ? "<br/>" + row.DRIVEROWNERCOUNTRY : "");
