@@ -240,13 +240,13 @@ $(function() {
                 $("#site").select("value", asm.siteid);
             }
 
-            $("#town").autocomplete({ source: controller.towns });
+            $("#town").autocomplete({ source: controller.towns, minLength: 4 });
             $("#town").blur(function() {
                 if ($("#county").val() == "") {
                     $("#county").val(controller.towncounties[$("#town").val()]);
                 }
             });
-            if (!config.bool("USStateCodes")) { $("#county").autocomplete({ source: controller.counties }); }
+            if (!config.bool("USStateCodes")) { $("#county").autocomplete({ source: controller.counties, minLength: 3 }); }
 
             $("#add").button().click(function() {
                 person_new.create_and_edit = false;

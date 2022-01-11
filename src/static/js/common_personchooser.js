@@ -370,9 +370,9 @@ $.widget("asm.personchooser", {
                 // Add person flag options to the screen
                 html.person_flag_options(null, self.options.personflags, dialogadd.find(".personchooser-flags"));
                 // Setup autocomplete widgets with the towns/counties
-                dialogadd.find(".personchooser-town").autocomplete({ source: self.options.towns });
+                dialogadd.find(".personchooser-town").autocomplete({ source: self.options.towns, minLength: 4 });
                 if (!config.bool("USStateCodes")) {
-                    dialogadd.find(".personchooser-county").autocomplete({ source: self.options.counties });
+                    dialogadd.find(".personchooser-county").autocomplete({ source: self.options.counties, minLength: 3 });
                 }
                 // When the user changes a town, suggest a county if it's blank
                 dialogadd.find(".personchooser-town").blur(function() {

@@ -652,9 +652,9 @@ $(function() {
             $("#emailform").emailform();
 
             if (!config.bool("USStateCodes")) {
-                $("#county").autocomplete({ source: controller.counties });
+                $("#county").autocomplete({ source: controller.counties, minLength: 3 });
             }
-            $("#town").autocomplete({ source: controller.towns });
+            $("#town").autocomplete({ source: controller.towns, minLength: 4 });
             $("#town").blur(function() {
                 if ($("#county").val() == "") {
                     $("#county").val(controller.towncounties[$("#town").val()]);
