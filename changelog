@@ -1,10 +1,10 @@
 45
 ================
 
-09/01/21 Allow SMTP server to be overridden #942
-05/01/21 Rename templatedocument.Show to ShowAt to stop MySQL breaking
-05/01/21 Allow $URL to be used in payment/request signature/checkout emails #1083
-03/01/21 Flag filter on animal multi-select #633
+09/01/22 Allow SMTP server to be overridden #942
+05/01/22 Rename templatedocument.Show to ShowAt to stop MySQL breaking
+05/01/22 Allow $URL to be used in payment/request signature/checkout emails #1083
+03/01/22 Flag filter on animal multi-select #633
 31/12/21 CardCom by email option (Saggi Neumann)
 31/12/21 Strip background-image CSS directives from online forms before storing
 30/12/21 Multi animal select now filters the list instead of bulk selecting
