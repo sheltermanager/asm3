@@ -5530,16 +5530,17 @@ def update_34508(dbo):
         "'dark-hive','eggplant','mint-choc','trontastic','ui-darkness','vader')")
 
 def update_34509(dbo):
-    add_column(dbo, "templatedocument", "Show", dbo.type_shorttext)
-    dbo.execute_dbupdate("UPDATE templatedocument SET Show='everywhere'")
+    # This update broke MYSQL because Show is a reserved word. 
+    # it is superceded by update_34511
+    # add_column(dbo, "templatedocument", "Show", dbo.type_shorttext)
+    # dbo.execute_dbupdate("UPDATE templatedocument SET Show='everywhere'")
+    pass
 
 def update_34510(dbo):
     add_column(dbo, "onlineform", "RetainFor", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineform SET RetainFor=0")
 
 def update_34511(dbo):
-    # Rename Show to ShowAt because it breaks on MySQL due to it being a keyword
     add_column(dbo, "templatedocument", "ShowAt", dbo.type_shorttext)
-    dbo.execute_dbupdate("UPDATE templatedocument SET ShowAt=Show")
-    dbo.execute_dbupdate(dbo.ddl_drop_column("templatedocument", "Show"))
+    dbo.execute_dbupdate("UPDATE templatedocument SET ShowAt='everywhere'")
 
