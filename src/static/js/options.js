@@ -887,7 +887,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="smtpport">' + _("Port") + '</label></td>',
-                '<td><select id="smtpport" data="SMTPPort" class="asm-selectbox"><option>25</option><option>587</option></select></td>',
+                '<td><select id="smtpport" data="SMTPPort" class="asm-selectbox"><option>25</option><option>587</option><option>2525</option></select></td>',
                 '</tr>',
                 '<tr>',
                 '<td></td>',
