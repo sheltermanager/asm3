@@ -140,7 +140,9 @@ edit_header = {
                 '</td>',
                 '<td>',
                 '<h2>' + html.icon("animal", _("Animal")) + a.ANIMALNAME + ' - ' + a.CODE + ' ' + html.animal_emblems(a) + '</h2>',
-                '<p>' + common.substitute(_("{0} {1} aged {2}"), { "0": "<b>" + a.SEXNAME, "1": a.SPECIESNAME + "</b>", "2": "<b>" + a.ANIMALAGE + "</b>" })  + '<br />',
+                '<p>' + common.substitute(_("{0} {1} aged {2}"), { "0": "<b>" + a.SEXNAME, "1": a.SPECIESNAME + "</b>", "2": "<b>" + a.ANIMALAGE + "</b>" }),
+                a.SIZENAME + " / " + a.WEIGHT + (config.bool("ShowWeightInLbs") || config.bool("ShowWeightInLbsFraction") ? "lb" : "kg"),
+                '<br />',
                 html.truncate(banner.join(". "), 100),
                 '</td></tr></table>',
             '</div>'
