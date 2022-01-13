@@ -287,10 +287,10 @@ $(document).ready(function() {
             }
             else {
                 // Restore the required attribute to the now visible field 
-                // if the field had it previously. Deliberately avoid it on multiselects
-                // so the select dropdown does not become required.
+                // if the field had it previously. 
+                // Deliberately avoid it on multiselect elements so the inner fields do not become required.
                 if (o.find(".asm-onlineform-required").length > 0 && 
-                    o.find(".asm-onlineform-lookupmulti").length == 0) {
+                    o.find(".asm-onlineform-lookupmulti, .asm-onlineform-checkgroup, .asm-onlineform-radiogroup").length == 0) {
                     o.find("input, select, textarea").prop("required", true);
                 }
             }
