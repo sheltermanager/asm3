@@ -1,6 +1,7 @@
 45
 ================
 
+13/01/22 Multi-select should use last year of litters instead of active
 13/01/22 Prevent inner radio/check group fields becoming required with showif
 12/01/22 Show size/weight in banner to assist with giving medications
 11/01/22 Fix bug with transport dialog buttons not re-enabling #1084
