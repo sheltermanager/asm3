@@ -424,7 +424,7 @@ def csave(dbo, username, post):
         """
         Returns True if s has a valid code portion in it
         """
-        VALID_CODES = ("XX", "XXX", "NN", "NNN", "UUUU", "UUUUUUUUUU")
+        VALID_CODES = ("OO", "OOO", "XX", "XXX", "NN", "NNN", "UUUU", "UUUUUUUUUU")
         for v in VALID_CODES:
             if s.find(v) != -1:
                 return True
@@ -443,14 +443,14 @@ def csave(dbo, username, post):
             # It's HTML - don't XSS escape it
             put(k, v, sanitiseXSS = False)
         elif k == "CodingFormat":
-            # If there's no valid N, X or U tokens in there, it's not valid so reset to
+            # If there's no valid N, X, O or U tokens in there, it's not valid so reset to
             # the default.
             if not valid_code(v):
                 put(k, "TYYYYNNN")
             else:
                 put(k, v)
         elif k == "ShortCodingFormat":
-            # If there's no N, X or U in there, it's not valid so reset to
+            # If there's no N, X, O or U in there, it's not valid so reset to
             # the default.
             if not valid_code(v):
                 put(k, "NNT")
