@@ -133,15 +133,19 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
     a.AnimalName = d["Name"]
     if "Created Date" in d: a.DateBroughtIn = getdate(d["Created Date"])
     dob = a.DateBroughtIn
+    if dob is None: dob = asm.today()
     a.EstimatedDOB = 1
     # Ages are stored as 2Y/ 4M/ 26D
-    age = d["Age (Y/M/D)"]
-    for b in age.split("/"):
-        b = b.strip();
-        if b.endswith("Y"): dob = asm.subtract_days(dob, 365 * asm.atoi(b))
-        if b.endswith("M"): dob = asm.subtract_days(dob, 30 * asm.atoi(b))
-        if b.endswith("D"): dob = asm.subtract_days(dob, asm.atoi(b))
-    a.DateOfBirth = dob
+    # If this column isn't present, we've also seen an Age (Months) column in intake.csv
+    age = ""
+    if "Age (Y/M/D)" in d:
+        age = d["Age (Y/M/D)"]
+        for b in age.split("/"):
+            b = b.strip();
+            if b.endswith("Y"): dob = asm.subtract_days(dob, 365 * asm.atoi(b))
+            if b.endswith("M"): dob = asm.subtract_days(dob, 30 * asm.atoi(b))
+            if b.endswith("D"): dob = asm.subtract_days(dob, asm.atoi(b))
+        a.DateOfBirth = dob
     a.Sex = 1
     if d["Sex"].startswith("F"):
         a.Sex = 0
@@ -149,10 +153,12 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
     secondary = ""
     if "Secondary Breed" in d: secondary = d["Secondary Breed"]
     asm.breed_ids(a, primary, secondary, DEFAULT_BREED)
-    a.BaseColourID = asm.colour_id_for_name(d["Primary Color"])
+    color = "Black"
+    if "Primary Color" in d: color = d["Primary Color"]
+    a.BaseColourID = asm.colour_id_for_name(color)
     if "Current Weight" in d and d["Current Weight"] != "":
         a.Weight = asm.atof(d["Current Weight"])
-    a.HiddenAnimalDetails = "Age: %s, Breed: %s / %s, Color: %s" % (age, primary, secondary, d["Primary Color"])
+    a.HiddenAnimalDetails = "Age: %s, Breed: %s / %s, Color: %s" % (age, primary, secondary, color)
     if "Attributes" in d and d["Attributes"] != "":
         a.HiddenAnimalDetails += "\nAttributes: " + d["Attributes"]
         if d["Attributes"].find("Special Needs") != -1: a.HasSpecialNeeds = 1
@@ -167,10 +173,12 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
     if "Private**" in d and d["Private**"] != "": a.HiddenAnimalDetails += "\n" + d["History"]
     if "Medical" in d and d["Medical"] != "": a.HealthProblems = d["Medical"]
     if "Intake Memo" in d and d["Intake Memo"] != "": a.ReasonForEntry = d["Intake Memo"]
-    if d["Altered in Care"].startswith("Altered"):
+    if "Altered in Care" in d and d["Altered in Care"].startswith("Altered"):
         a.Neutered = 1
         a.NeuteredDate = a.DateBroughtIn
     if "Altered before Arrival" in d and d["Altered before Arrival"] == "Yes":
+        a.Neutered = 1
+    if "Altered" in d and d["Altered"] == "Yes":
         a.Neutered = 1
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
@@ -182,11 +190,15 @@ for d in asm.csv_to_list("%s/intake.csv" % PATH):
     a = ppa[d["Animal ID"]]
     intaketype = d["Intake Type"] # Seems to change names a lot, has been AnimalIntakeType, Entry Category
     subtype = d["Intake Sub-Type"] # Also seems to change, has been AnimalIntakeSub-Type, Animal Type
+    # Intake Date
     if "Intake Date" in d: a.DateBroughtIn = getdate(d["Intake Date"])
     # Intake person
     linkperson = 0
     if "Intake From Name" in d and d["Intake From Name"] != "" and d["Intake From Name"] in ppo:
         linkperson = ppo[d["Intake From Name"]].ID
+    # Age
+    if "Age (Months)" in d:
+        a.DateOfBirth = asm.subtract_days(a.DateBroughtIn, 30 * asm.atoi(asm.cint(d["Age (Months)"])))
     # Location
     if "Location" in d and d["Location"] != "":
         locs = d["Location"] # Locations are a comma separated list, with latest on the right
