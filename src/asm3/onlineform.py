@@ -1021,12 +1021,13 @@ def attach_form(dbo, username, linktype, linkid, collationid):
     for f in fields:
         if f.VALUE.startswith("data:image/jpeg"):
             d = {
-                "excludefrompublish": "1", # We should never be sending public uploaded images anywhere by default
                 "retainfor":    str(retainfor),
                 "filename":     "image.jpg",
                 "filetype":     "image/jpeg",
                 "filedata":     f.VALUE
             }
+            if linktype == 0:
+                d["excludefrompublish"] = "1" # auto exclude images for animals to prevent them going to adoption websites
             asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.utils.PostedData(d, dbo.locale))
 
 def attach_animal(dbo, username, collationid):
