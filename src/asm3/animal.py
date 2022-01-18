@@ -5240,6 +5240,14 @@ def auto_cancel_holds(dbo):
     count = dbo.execute(sql, [dbo.today()])
     asm3.al.debug("cancelled %d holds" % (count), "animal.auto_cancel_holds", dbo)
 
+def maintenance_reset_nnn_codes(dbo):
+    """
+    Resets the NNN shelter codes for this year.
+    """
+    changed = dbo.execute("UPDATE animal SET YearCodeID = 0 WHERE DateBroughtIn >= ?", [ first_of_year(dbo.today()) ] )
+    asm3.al.debug("Reset %d NNN codes" % changed, "animal.maintenance_reset_nnn_codes", dbo)
+    return "OK %d" % changed
+
 def maintenance_reassign_all_codes(dbo):
     """
     Goes through all animals in the system and regenerates their 

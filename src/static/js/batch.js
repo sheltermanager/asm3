@@ -26,6 +26,7 @@ $(function() {
                 '<option value="genlostfound">' + _("Regenerate 'Match lost and found animals' report") + '</option>',
                 '<option value="genfigyear">' + _("Regenerate annual animal figures for") + '</option>',
                 '<option value="genfigmonth">' + _("Regenerate monthly animal figures for") + '</option>',
+                '<option value="resetnnncodes">' + _("Reset NNN animal code counts for this year") + '</option>',
                 '</select>',
                 '<input id="taskdate" class="asm-textbox asm-datebox" style="display: none" />',
                 '<button id="button-go">' + _("Go") + '</button>',

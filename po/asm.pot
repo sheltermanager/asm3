@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2021-12-30 16:09+0000\n"
+"POT-Creation-Date: 2022-01-18 16:19+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -2305,6 +2305,10 @@ msgstr ""
 msgid "Cardcom User Name"
 msgstr ""
 
+#: donations.js
+msgid "Cardcom by Email"
+msgstr ""
+
 #: dbupdate.py
 msgid "Carolina Dog"
 msgstr ""
@@ -3496,6 +3500,10 @@ msgstr ""
 
 #: onlineform.py header_edit_header.js
 msgid "Declined"
+msgstr ""
+
+#: options.js
+msgid "Default Age"
 msgstr ""
 
 #: options.js
@@ -5220,6 +5228,7 @@ msgid "File"
 msgstr ""
 
 #: animal_find.js common_tableform.js incident_find.js csvexport.js
+#: common_animalchoosermulti.js
 msgid "Filter"
 msgstr ""
 
@@ -5404,8 +5413,9 @@ msgid "Flag {0}"
 msgstr ""
 
 #: html.py common_personchooser.js animal_find_results.js person.js
-#: animal_find.js onlineform.js animal.js options.js person_find.js
-#: shelterview.js person_new.js csvimport_paypal.js person_find_results.js
+#: animal_find.js common_animalchoosermulti.js onlineform.js animal.js
+#: options.js person_find.js shelterview.js person_new.js csvimport_paypal.js
+#: person_find_results.js
 msgid "Flags"
 msgstr ""
 
@@ -8961,7 +8971,7 @@ msgstr ""
 msgid "Pass Homecheck"
 msgstr ""
 
-#: mobile.py users.js login.js
+#: mobile.py users.js login.js options.js
 msgid "Password"
 msgstr ""
 
@@ -9283,6 +9293,10 @@ msgstr ""
 msgid "Pixie-Bob"
 msgstr ""
 
+#: options.js
+msgid "Please do not enable this option if you do not understand what this means."
+msgstr ""
+
 #: csvexport.js csvimport.js
 msgid "Please see the manual for more information."
 msgstr ""
@@ -9383,6 +9397,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Poodle"
+msgstr ""
+
+#: options.js
+msgid "Port"
 msgstr ""
 
 #: dbupdate.py
@@ -10285,6 +10303,10 @@ msgstr ""
 msgid "Reset"
 msgstr ""
 
+#: code.py batch.js
+msgid "Reset NNN animal code counts for this year"
+msgstr ""
+
 #: users.js
 msgid "Reset Password"
 msgstr ""
@@ -10558,6 +10580,10 @@ msgstr ""
 
 #: onlineform.py header_edit_header.js
 msgid "SMS"
+msgstr ""
+
+#: options.js
+msgid "SMTP Server"
 msgstr ""
 
 #: reports.js
@@ -11550,6 +11576,10 @@ msgstr ""
 
 #: vouchers.js
 msgid "Specify a unique code to identify this voucher"
+msgstr ""
+
+#: options.js
+msgid "Specify an SMTP server for sending emails"
 msgstr ""
 
 #: vaccination.js
@@ -13573,6 +13603,10 @@ msgid "Use SQL Interface"
 msgstr ""
 
 #: options.js
+msgid "Use TLS"
+msgstr ""
+
+#: options.js
 msgid "Use a single breed field"
 msgstr ""
 
@@ -13625,6 +13659,7 @@ msgid "User roles"
 msgstr ""
 
 #: mobile.py change_user_settings.js users.js login.js change_password.js
+#: options.js
 msgid "Username"
 msgstr ""
 

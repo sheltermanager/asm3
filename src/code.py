@@ -1997,6 +1997,10 @@ class batch(JSONEndpoint):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Regenerate 'Match lost and found animals' report", l), asm3.lostfound.update_match_report, o.dbo)
 
+    def post_resetnnncodes(self, o):
+        l = o.locale
+        asm3.asynctask.function_task(o.dbo, _("Reset NNN animal code counts for this year", l), asm3.animal.maintenance_reset_nnn_codes, o.dbo)
+
 class calendarview(JSONEndpoint):
     url = "calendarview"
     get_permissions = asm3.users.VIEW_ANIMAL
