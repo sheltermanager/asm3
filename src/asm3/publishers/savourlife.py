@@ -192,7 +192,7 @@ class SavourLifePublisher(AbstractPublisher):
                 for an in animals:
                     try:
                         status = "removed"
-                        if an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE == 1:
+                        if an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE == 1 and an.HASTRIALADOPTION == 1:
                             status = "adopted"
                         elif an.ARCHIVED == 0: # animal is still in care but not adoptable
                             status = "held"
