@@ -29,26 +29,26 @@ edit_header = {
      *           non-zero, an icon is shown on some tabs.
      */
     animal_edit_header: function(a, selected, counts) {
-        var check_display_icon = function(key, iconname) {
+        let check_display_icon = function(key, iconname) {
             if (key == "animal") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
                 return html.icon(iconname);
             }
             return html.icon("blank");
         };
-        var mediaprompt = "";
+        let mediaprompt = "";
         if (a.WEBSITEMEDIANAME == null) {
             mediaprompt = '<br /><span style="white-space: nowrap"><a href="animal_media?id=' + a.ID + '&newmedia=1">[ ' + _("Add a photo") + ' ]</a></span>';
         }
-        var currentowner = "";
+        let currentowner = "";
         if (a.CURRENTOWNERID) {
             currentowner = " " + html.person_link(a.CURRENTOWNERID, a.CURRENTOWNERNAME);
         }
-        var owner = "";
+        let owner = "";
         if (a.OWNERID) {
             owner = " " + html.person_link(a.OWNERID, a.OWNERNAME);
         }
-        var available = "";
+        let available = "";
         if (a.NONSHELTERANIMAL == 1) {
             // show non-shelter info link
             available = _("Non-Shelter Animal");
@@ -71,7 +71,7 @@ edit_header = {
             available = html.error(_("Not available for adoption") + 
                 "<br/>(" + html.is_animal_adoptable(a)[1] + ")");
         }
-        var banner = [];
+        let banner = [];
         if (common.nulltostr(a.HIDDENANIMALDETAILS) != "") {
             banner.push(a.HIDDENANIMALDETAILS);
         }
@@ -81,7 +81,7 @@ edit_header = {
         if (common.nulltostr(a.ANIMALCOMMENTS) != "") {
             banner.push(a.ANIMALCOMMENTS);
         }
-        var displaylocation = "";
+        let displaylocation = "";
         if (a.DECEASEDDATE != null) {
             var deathreason = a.DISPLAYLOCATIONNAME;
             if (a.DIEDOFFSHELTER == 1) { deathreason = _("Died off shelter"); }
@@ -101,31 +101,35 @@ edit_header = {
                 displaylocation = a.DISPLAYLOCATIONNAME;
             }
         }
-        var animalcontrol = "";
+        let animalcontrol = "";
         if (a.ANIMALCONTROLINCIDENTID) {
             animalcontrol = '<tr><td>' + _("Incident") + ':</td><td><b>' +
                 '<a href="incident?id=' + a.ANIMALCONTROLINCIDENTID + '">' +
                 format.date(a.ANIMALCONTROLINCIDENTDATE) + ' ' + 
                 a.ANIMALCONTROLINCIDENTNAME + '</b></td></tr>';
         }
-        var hold = "";
+        let hold = "";
         if (a.ISHOLD == 1 && a.HOLDUNTILDATE) {
             hold = '<tr><td>' + _("Hold until") + ':</td><td><b>' + format.date(a.HOLDUNTILDATE) + '</b></td></tr>';
         }
-        var coordinator = "";
+        let coordinator = "";
         if (a.ADOPTIONCOORDINATORID) {
             coordinator = '<tr><td>' + _("Adoption Coordinator") + ':</td><td><b>' + html.person_link(a.ADOPTIONCOORDINATORID, a.ADOPTIONCOORDINATORNAME) + '</b></td></tr>';
         }
-        var chipinfo = "";
+        let chipinfo = "";
         if (a.IDENTICHIPPED == 1) {
             chipinfo = '<tr><td>' + _("Microchip") + ':</td><td><b>' + a.IDENTICHIPNUMBER + " " + common.nulltostr(a.IDENTICHIP2NUMBER) + '</b></td></tr>';
         }
-        var leftshelterdate = "";
+        let leftshelterdate = "";
         if (a.ARCHIVED == 1 && a.DECEASEDDATE && a.DIEDOFFSHELTER == 0) { 
             leftshelterdate = format.date(a.DECEASEDDATE); 
         }
         else if (a.ARCHIVED == 1) { 
             leftshelterdate = format.date(a.ACTIVEMOVEMENTDATE); 
+        }
+        let sizeweight = "";
+        if (a.WEIGHT && !config.bool("DontShowSizeWeightHeader")) {
+            sizeweight = a.SIZENAME + " / " + a.WEIGHT + (config.bool("ShowWeightInLbs") || config.bool("ShowWeightInLbsFraction") ? "lb" : "kg");
         }
         var first_column = [
             '<input type="hidden" id="animalid" value="' + a.ID + '" />',
@@ -141,9 +145,10 @@ edit_header = {
                 '<td>',
                 '<h2>' + html.icon("animal", _("Animal")) + a.ANIMALNAME + ' - ' + a.CODE + ' ' + html.animal_emblems(a) + '</h2>',
                 '<p>' + common.substitute(_("{0} {1} aged {2}"), { "0": "<b>" + a.SEXNAME, "1": a.SPECIESNAME + "</b>", "2": "<b>" + a.ANIMALAGE + "</b>" }),
-                a.SIZENAME + " / " + a.WEIGHT + (config.bool("ShowWeightInLbs") || config.bool("ShowWeightInLbsFraction") ? "lb" : "kg"),
+                sizeweight,
                 '<br />',
                 html.truncate(banner.join(". "), 100),
+                '</p>',
                 '</td></tr></table>',
             '</div>'
         ].join("\n");
