@@ -1429,7 +1429,7 @@ $(function() {
                 '<span id="callout-wlupdate" class="asm-callout">' + _("Set to 0 to never update urgencies.") + '</span>',
                 '</td>',
                 '<td>',
-                '<input data="WaitingListUrgencyUpdatePeriod" id="wlupdate" data-min="1" data-max="365" class="asm-textbox asm-numberbox" type="text" title="' + _("The period in days before waiting list urgency is increased") + '" />',
+                '<input data="WaitingListUrgencyUpdatePeriod" id="wlupdate" data-min="0" data-max="365" class="asm-textbox asm-numberbox" type="text" title="' + _("The period in days before waiting list urgency is increased") + '" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
