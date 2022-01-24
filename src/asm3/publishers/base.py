@@ -613,12 +613,12 @@ class AbstractPublisher(threading.Thread):
         Returns a list of photo URLs for animalid. The preferred is always first.
         """
         photo_urls = []
-        photos = self.dbo.query("SELECT MediaName FROM media " \
+        photos = self.dbo.query("SELECT MediaName, Date FROM media " \
             "WHERE LinkTypeID = 0 AND LinkID = ? AND MediaMimeType = 'image/jpeg' " \
             "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
             "ORDER BY WebsitePhoto DESC, ID", [animalid])
         for m in photos:
-            photo_urls.append("%s?account=%s&method=dbfs_image&title=%s" % (SERVICE_URL, self.dbo.database, m.MEDIANAME))
+            photo_urls.append("%s?account=%s&method=dbfs_image&title=%s&ts=%s" % (SERVICE_URL, self.dbo.database, m.MEDIANAME, asm3.i18n.python2unix(m.DATE)))
         return photo_urls
 
     def getPublisherBreed(self, an, b1or2 = 1):

@@ -1,6 +1,7 @@
 45
 ================
 
+24/01/22 Include media date in photo URLs to petfinder to stop relisting issues #1087
 24/01/22 data-min prevented setting waiting list urgency to 0
 18/01/22 Trigger batch option to reset NNN code counts for the year
 18/01/22 Only auto exclude animal images from forms, people etc not sent anywhere
