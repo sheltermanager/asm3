@@ -615,7 +615,7 @@ header = {
         };
 
         // Search autocompletes to keywords and previous searches
-        $("#topline-q").autocomplete({ source: searches });
+        $("#topline-q").autocomplete({ source: searches, minLength: 3 });
 
         // Pressing enter starts the search
         $("#topline-q").keypress(function(e) {
