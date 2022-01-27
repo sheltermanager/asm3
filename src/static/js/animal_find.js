@@ -213,7 +213,7 @@ $(function() {
                 '<label for="pickuplocation">' + _("Pickup Location") + '</label>',
                 '</td>',
                 '<td>',
-                '<select id="pickuplocation" data="pickuplocataion" class="asm-selectbox">',
+                '<select id="pickuplocation" data="pickuplocation" class="asm-selectbox">',
                 '<option value="-1">' + _("(all)") + '</option>',
                 html.list_to_options(controller.pickuplocations, "ID", "LOCATIONNAME"),
                 '</select>',
