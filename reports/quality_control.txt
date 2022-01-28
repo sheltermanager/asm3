@@ -961,7 +961,7 @@ UNION SELECT DISTINCT
 o.ownername AS name,
   o.ownercode AS code,
  current_date -1 AS issuedate, 
- '<font color = "Red">Online Form Attached to Prior Person Record. Compare the data in the First and Last Name fields with the data on the NEW online form.  When ASM finds an email match, it ONLY updates the address and phone info. Alerts Only Once.</font>' AS issue
+ '<font color = "Red">Online Form Attached to existing Person Record. Compare the data in the First and Last Name fields with the data on the NEW online form.  When ASM finds a phone match, it ONLY updates the address, phone, and email info. Alerts Only Once.</font>' AS issue
 FROM owner o
 INNER JOIN media m ON m.linkid = o.ID
 WHERE  m.medianotes IN ('Cat Adoption Application', 'Dog Adoption Application','Getting Help - Cat', 'Getting Help - Dog','SNIP Application','Foster Application','Volunteer Application')
