@@ -110,7 +110,8 @@ class SavourLifePublisher(AbstractPublisher):
         # Authenticate first to get our token
         url = SAVOURLIFE_URL + "getToken"
         jsondata = '{ "Username": "%s", "Password": "%s", "Key": "%s" }' % ( username, password, SAVOURLIFE_API_KEY )
-        self.log("Token request to %s: %s" % ( url, jsondata))
+        # self.log("Token request to %s: %s" % ( url, jsondata)) # do not output API keys and passwords in the log
+        self.log("Token request to %s: { \"Username\": \"%s\", \"Password\": \"XXX\", \"Key\": \"XXX\" }" % (url, username))
         try:
             r = asm3.utils.post_json(url, jsondata)
             if r["status"] != 200:
