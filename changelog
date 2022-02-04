@@ -1,6 +1,7 @@
 45
 ================
 
+04/02/22 Add ANIMALPICKUPLOCATION/ANIMALPICKUPADDRESS CSV import fields
 27/01/22 Bug when advanced searching for pickup location
 25/01/22 Set global search autocomplete to require 3 chars #1089
 24/01/22 Include media date in photo URLs to petfinder to stop relisting issues #1087

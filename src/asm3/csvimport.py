@@ -21,6 +21,7 @@ import sys
 VALID_FIELDS = [
     "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1", 
     "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALJURISDICTION", 
+    "ANIMALPICKUPLOCATION", "ANIMALPICKUPADDRESS",
     "ANIMALSPECIES", "ANIMALAGE", 
     "ANIMALCOMMENTS", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
     "ANIMALENTRYDATE", "ANIMALENTRYCATEGORY", "ANIMALDECEASEDDATE", "ANIMALCODE", "ANIMALFLAGS",
@@ -171,8 +172,9 @@ def gkl(dbo, m, f, table, namefield, create):
         find a match then returns str(newid)
         returns "0" if key not present, or if no match was found and create is off,
         or the value was an empty string """
-    if f not in m: return "0"
+    if f not in m: return "0" # column not present
     lv = m[f]
+    if lv.strip() == "": return "0" # value is empty string
     matchid = dbo.query_int("SELECT ID FROM %s WHERE LOWER(%s) = ?" % (table, namefield), [ lv.strip().lower().replace("'", "`") ])
     if matchid == 0 and create and lv.strip() != "":
         nextid = dbo.insert(table, {
@@ -440,6 +442,12 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             a["jurisdiction"] = gkl(dbo, row, "ANIMALJURISDICTION", "jurisdiction", "JurisdictionName", createmissinglookups)
             if a["jurisdiction"] == "0":
                 a["jurisdiction"] = str(asm3.configuration.default_jurisdiction(dbo))
+            a["pickuplocation"] = gkl(dbo, row, "ANIMALPICKUPLOCATION", "pickuplocation", "LocationName", createmissinglookups)
+            if a["pickuplocation"] != "0":
+                a["pickedup"] = "on"
+            a["pickupaddress"] = gks(row, "ANIMALPICKUPADDRESS")
+            if a["pickupaddress"] != "":
+                a["pickedup"] = "on"
             a["entryreason"] = gkl(dbo, row, "ANIMALENTRYCATEGORY", "entryreason", "ReasonName", createmissinglookups)
             if a["entryreason"] == "0":
                 a["entryreason"] = str(asm3.configuration.default_entry_reason(dbo))
@@ -577,6 +585,16 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                             uq["DateOfBirth"] = asm3.i18n.display2python(dbo.locale, a["dateofbirth"])
                         if a["weight"] != "":
                             uq["Weight"] = asm3.utils.cfloat(a["weight"])
+                        if gks(row, "ANIMALLOCATION") != "":
+                            uq["ShelterLocation"] = asm3.utils.cint(a["internallocation"])
+                        if a["unit"] != "":
+                            uq["ShelterLocationUnit"] = a["unit"]
+                        if a["pickuplocation"] != "0":
+                            uq["PickupLocationID"] = asm3.utils.cint(a["pickuplocation"])
+                            uq["IsPickup"] = 1
+                        if a["pickupaddress"] != "":
+                            uq["PickupAddress"] = a["pickupaddress"]
+                            uq["IsPickup"] = 1
                         dbo.update("animal", dup.ID, uq, user)
                         # Update flags if present
                         if a["flags"] != "":
@@ -969,7 +987,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALSPECIES", "ANIMALCOMMENTS",
         "ANIMALHIDDENDETAILS", "ANIMALHEALTHPROBLEMS", "ANIMALMARKINGS", "ANIMALREASONFORENTRY", "ANIMALNEUTERED",
         "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", "ANIMALENTRYDATE", "ANIMALDECEASEDDATE",
-        "ANIMALJURISDICTION", "ANIMALENTRYCATEGORY",
+        "ANIMALJURISDICTION", "ANIMALPICKUPLOCATION", "ANIMALPICKUPADDRESS", "ANIMALENTRYCATEGORY",
         "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALTRANSFER",
         "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", "ANIMALHOUSETRAINED", 
         "CURRENTVETTITLE", "CURRENTVETINITIALS", "CURRENTVETFIRSTNAME",
@@ -1040,6 +1058,8 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
         row["ANIMALREASONFORENTRY"] = a["REASONFORENTRY"]
         row["ANIMALENTRYCATEGORY"] = a["ENTRYREASONNAME"]
         row["ANIMALJURISDICTION"] = a["JURISDICTIONNAME"]
+        row["ANIMALPICKUPLOCATION"] = a["PICKUPLOCATIONNAME"]
+        row["ANIMALPICKUPADDRESS"] = a["PICKUPADDRESS"]
         row["ANIMALNEUTERED"] = a["NEUTERED"]
         row["ANIMALNEUTEREDDATE"] = asm3.i18n.python2display(l, a["NEUTEREDDATE"])
         row["ANIMALMICROCHIP"] = a["IDENTICHIPNUMBER"]

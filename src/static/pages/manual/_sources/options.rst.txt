@@ -573,17 +573,17 @@ documents from templates.
   however newer versions do not do this. To get back the behaviour that older 
   versions of SM had with wkhtmltopdf <= 0.12.3, set this value to 130.
 
-Insurance
----------
+Email
+-----
 
-If you have an agreement with a pet insurer, Animal Shelter Manager can accept
-a range of numbers under this tab and allow you to assign them to adoptions as
-they are made. 
+Configure the email address used as the FROM address when sending from ASM. You
+can also configure autocomplete items for the from, to and cc address boxes.
 
-Simply fill in the start/end/next values and tick the box to ensure you are
-using automatic numbers. When you next adopt an animal, a button will appear at
-the side of the insurance number on the movement screen, allowing you to assign
-an insurance number to that adoption. 
+(sheltermanager.com only) You can override the use of smtp.sheltermanager.com
+and use your own SMTP server to send email if you wish. This is an advanced
+option for experienced users, if you do not understand what you are doing, do
+not enable the option to use your own SMTP server as you will likely break
+the email sending functionality for your database.
 
 Find Animal/Person
 ------------------
@@ -638,6 +638,18 @@ for adoption).
 * Show an alert when these species of animals are not altered: The recently
   adopted/unneutered animal alerts on the home page and emblems will only be 
   shown for these species of animals (by default, dogs and cats)
+
+Insurance
+---------
+
+If you have an agreement with a pet insurer, Animal Shelter Manager can accept
+a range of numbers under this tab and allow you to assign them to adoptions as
+they are made. 
+
+Simply fill in the start/end/next values and tick the box to ensure you are
+using automatic numbers. When you next adopt an animal, a button will appear at
+the side of the insurance number on the movement screen, allowing you to assign
+an insurance number to that adoption. 
 
 Lost and Found
 --------------

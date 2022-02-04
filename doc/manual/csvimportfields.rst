@@ -54,6 +54,10 @@ ANIMALUNIT
     The unit within the animal's location within the shelter, eg: pen/cage number.
 ANIMALJURISDICTION
     The jurisidiction to allocate the animal to based on entry circumstances (usually pickup)
+ANIMALPICKUPLOCATION
+    The location where the animal was picked up. This should match a value in the pickup location lookup.
+ANIMALPICKUPADDRESS
+    The address where the animal was picked up.
 ANIMALSPECIES
     The animal's species. This should match a species in your database.
 ANIMALHOUSETRAINED

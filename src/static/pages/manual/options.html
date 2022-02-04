@@ -123,9 +123,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#diary-and-messages">Diary and Messages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#display">Display</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#documents">Documents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#insurance">Insurance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#email">Email</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#find-animal-person">Find Animal/Person</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#home-page">Home page</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#insurance">Insurance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#lost-and-found">Lost and Found</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#medical">Medical</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#movements">Movements</a></li>
@@ -694,15 +695,15 @@ however newer versions do not do this. To get back the behaviour that older
 versions of SM had with wkhtmltopdf &lt;= 0.12.3, set this value to 130.</p></li>
 </ul>
 </div>
-<div class="section" id="insurance">
-<h2>Insurance<a class="headerlink" href="#insurance" title="Permalink to this headline">¶</a></h2>
-<p>If you have an agreement with a pet insurer, Animal Shelter Manager can accept
-a range of numbers under this tab and allow you to assign them to adoptions as
-they are made.</p>
-<p>Simply fill in the start/end/next values and tick the box to ensure you are
-using automatic numbers. When you next adopt an animal, a button will appear at
-the side of the insurance number on the movement screen, allowing you to assign
-an insurance number to that adoption.</p>
+<div class="section" id="email">
+<h2>Email<a class="headerlink" href="#email" title="Permalink to this headline">¶</a></h2>
+<p>Configure the email address used as the FROM address when sending from ASM. You
+can also configure autocomplete items for the from, to and cc address boxes.</p>
+<p>(sheltermanager.com only) You can override the use of smtp.sheltermanager.com
+and use your own SMTP server to send email if you wish. This is an advanced
+option for experienced users, if you do not understand what you are doing, do
+not enable the option to use your own SMTP server as you will likely break
+the email sending functionality for your database.</p>
 </div>
 <div class="section" id="find-animal-person">
 <h2>Find Animal/Person<a class="headerlink" href="#find-animal-person" title="Permalink to this headline">¶</a></h2>
@@ -748,6 +749,16 @@ animals (by default, dogs and cats)</p></li>
 adopted/unneutered animal alerts on the home page and emblems will only be
 shown for these species of animals (by default, dogs and cats)</p></li>
 </ul>
+</div>
+<div class="section" id="insurance">
+<h2>Insurance<a class="headerlink" href="#insurance" title="Permalink to this headline">¶</a></h2>
+<p>If you have an agreement with a pet insurer, Animal Shelter Manager can accept
+a range of numbers under this tab and allow you to assign them to adoptions as
+they are made.</p>
+<p>Simply fill in the start/end/next values and tick the box to ensure you are
+using automatic numbers. When you next adopt an animal, a button will appear at
+the side of the insurance number on the movement screen, allowing you to assign
+an insurance number to that adoption.</p>
 </div>
 <div class="section" id="lost-and-found">
 <h2>Lost and Found<a class="headerlink" href="#lost-and-found" title="Permalink to this headline">¶</a></h2>
