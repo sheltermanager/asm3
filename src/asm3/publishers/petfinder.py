@@ -29,6 +29,17 @@ class PetFinderPublisher(FTPPublisher):
         """ Returns a CSV entry for a date in YYYY-MM-DD """
         return "\"%s\"" % asm3.i18n.format_date(d, "%Y-%m-%d")
 
+    def pfStatus(self, an):
+        """ Returns the appropriate status code
+            A = Adoptable, H = Held, F = Found ("stray" entry category)
+        """
+        if an.ISHOLD == 1: 
+            return "H"
+        elif an.ENTRYREASONNAME.find("Stray") != -1: 
+            return "F"
+        else:
+            return "A"
+
     def pfYesNo(self, condition):
         """
         Returns a CSV entry for yes or no based on the condition
@@ -222,7 +233,7 @@ class PetFinderPublisher(FTPPublisher):
         # Type (Species)
         line.append("\"%s\"" % an.PETFINDERSPECIES)
         # Status
-        line.append("\"Adoptable\"") # TODO: check this
+        line.append(self.pfStatus(an))
         # Shots
         line.append(self.pfYesNo(asm3.medical.get_vaccinated(self.dbo, int(an.ID))))
         # Altered

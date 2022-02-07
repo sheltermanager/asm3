@@ -311,6 +311,12 @@ triggered by setting your second breed to "Crossbreed", "Unknown" or "Mix".
 
 .. warning:: You have to let PetFinder know that you are using ASM to upload your data. Do this by logging into the PetFinder members area, go to the Admin System Help Center, then Contact Us and send PetFinder Tech Support a message that you are using ASM to publish animal data via their FTP server. They should give you the FTP login information and make sure permissions and quotas are correct.
 
+ASM will set the PetFinder status field according to certain items on the 
+animal record. Typically, it will be "A" for adoptable. However, if the animal
+has the "Hold" box ticked, an "H" will be sent for Held. In addition, if the
+animal has the word "Stray" present in its entry category, the status "F"
+will be sent for Found.
+
 PetFinder have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
 field names, you can label them anything you want, they must be linked to

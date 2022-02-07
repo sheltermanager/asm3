@@ -1,6 +1,7 @@
 45
 ================
 
+07/02/22 PetFinder: Support Held and Found statuses
 07/02/22 Increase the size of profile/treatment/dosage boxes in medical
 04/02/22 Add ANIMALPICKUPLOCATION/ANIMALPICKUPADDRESS CSV import fields
 27/01/22 Bug when advanced searching for pickup location
