@@ -182,7 +182,7 @@ class SavourLifePublisher(AbstractPublisher):
             # Get the animal records for the ones we need to mark saved or remove
             if len(animalids_to_cancel) > 0:
 
-                animals = self.dbo.query("SELECT ID, ShelterCode, AnimalName, ActiveMovementDate, ActiveMovementType, DeceasedDate, ExtraIDs, " \
+                animals = self.dbo.query("SELECT ID, ShelterCode, AnimalName, ActiveMovementDate, ActiveMovementType, DeceasedDate, HasTrialAdoption, ExtraIDs, " \
                     "(SELECT Extra FROM animalpublished WHERE AnimalID=a.ID AND PublishedTo='savourlife') AS LastStatus " \
                     "FROM animal a WHERE ID IN (%s)" % ",".join(animalids_to_cancel))
 
