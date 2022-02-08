@@ -1261,11 +1261,8 @@ def rescuegroups_password(dbo):
 def retailer_on_shelter(dbo):
     return cboolean(dbo, "RetailerOnShelter", DEFAULTS["RetailerOnShelter"] == "Yes")
 
-def savourlife_username(dbo):
-    return cstring(dbo, "SavourLifeUsername")
-
-def savourlife_password(dbo):
-    return cstring(dbo, "SavourLifePassword")
+def savourlife_token(dbo):
+    return cstring(dbo, "SavourLifeToken")
 
 def savourlife_all_microchips(dbo):
     return cboolean(dbo, "SavourLifeAllMicrochips")

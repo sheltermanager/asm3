@@ -6,7 +6,8 @@ import asm3.medical
 import asm3.utils
 
 from .base import AbstractPublisher
-from asm3.sitedefs import SAVOURLIFE_URL, SAVOURLIFE_API_KEY
+from asm3.sitedefs import SAVOURLIFE_URL
+# from asm3.sitedefs import SAVOURLIFE_API_KEY - is this actually needed any more?
 
 import sys
 
@@ -77,8 +78,7 @@ class SavourLifePublisher(AbstractPublisher):
         self.setLastError("")
         self.setStartPublishing()
 
-        username = asm3.configuration.savourlife_username(self.dbo)
-        password = asm3.configuration.savourlife_password(self.dbo)
+        token = asm3.configuration.savourlife_token(self.dbo)
         interstate = asm3.configuration.savourlife_interstate(self.dbo)
         all_microchips = asm3.configuration.savourlife_all_microchips(self.dbo)
         radius = asm3.configuration.savourlife_radius(self.dbo)
@@ -86,12 +86,8 @@ class SavourLifePublisher(AbstractPublisher):
         suburb = asm3.configuration.organisation_town(self.dbo)
         state = asm3.configuration.organisation_county(self.dbo)
 
-        if username == "":
-            self.setLastError("No SavourLife username has been set.")
-            return
-
-        if password == "":
-            self.setLastError("No SavourLife password has been set.")
+        if token == "":
+            self.setLastError("No SavourLife token has been set.")
             return
 
         if postcode == "" or suburb == "" or state == "":
@@ -107,11 +103,14 @@ class SavourLifePublisher(AbstractPublisher):
         if len(animals) == 0:
             self.log("No animals found to publish.")
 
+        # Redundant code, we used to have to pass a username and password to get a token, but as of Feb 2022, the token itself should be configured
+        """
+        username = asm3.configuration.savourlife_username(self.dbo)
+        password = asm3.configuration.savourlife_password(self.dbo)
         # Authenticate first to get our token
         url = SAVOURLIFE_URL + "getToken"
         jsondata = '{ "Username": "%s", "Password": "%s", "Key": "%s" }' % ( username, password, SAVOURLIFE_API_KEY )
-        # self.log("Token request to %s: %s" % ( url, jsondata)) # do not output API keys and passwords in the log
-        self.log("Token request to %s: { \"Username\": \"%s\", \"Password\": \"XXX\", \"Key\": \"XXX\" }" % (url, username))
+        self.log("Token request to %s: %s" % ( url, jsondata)) 
         try:
             r = asm3.utils.post_json(url, jsondata)
             if r["status"] != 200:
@@ -126,6 +125,7 @@ class SavourLifePublisher(AbstractPublisher):
             self.logError("Failed getting token: %s" % err, sys.exc_info())
             self.cleanup()
             return
+        """
 
         anCount = 0
         for an in animals:
@@ -145,7 +145,7 @@ class SavourLifePublisher(AbstractPublisher):
                 # This function returns None if no match is found
                 dogid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_SAVOURLIFE)
 
-                data = self.processAnimal(an, dogid, postcode, state, suburb, username, token, radius, interstate, all_microchips)
+                data = self.processAnimal(an, dogid, postcode, state, suburb, token, radius, interstate, all_microchips)
 
                 # SavourLife will insert/update accordingly based on whether DogId is null or not
                 url = SAVOURLIFE_URL + "setDog"
@@ -193,7 +193,8 @@ class SavourLifePublisher(AbstractPublisher):
                 for an in animals:
                     try:
                         status = "removed"
-                        if an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE == 1 and an.HASTRIALADOPTION == 1:
+                        # this will pick up trials as well as full adoptions
+                        if an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE == 1:
                             status = "adopted"
                         elif an.ARCHIVED == 0: # animal is still in care but not adoptable
                             status = "held"
@@ -220,7 +221,6 @@ class SavourLifePublisher(AbstractPublisher):
                             if "ENQUIRYNUMBER" in an and an.ENQUIRYNUMBER != "":
                                 enquirynumber = an.ENQUIRYNUMBER
                             data = {
-                                "Username":     username,
                                 "Token":        token,
                                 "DogId":        dogid,
                                 "EnquiryNumber": enquirynumber
@@ -228,12 +228,11 @@ class SavourLifePublisher(AbstractPublisher):
                             url = SAVOURLIFE_URL + "setDogAdopted"
                         elif status == "held":
                             # We're marking the listing as held
-                            data = self.processAnimal(an, dogid, postcode, state, suburb, username, token, radius, interstate, all_microchips, True)
+                            data = self.processAnimal(an, dogid, postcode, state, suburb, token, radius, interstate, all_microchips, True)
                             url = SAVOURLIFE_URL + "setDog"
                         else:
                             # We're deleting the listing
                             data = {
-                                "Username":     username,
                                 "Token":        token,
                                 "DogId":        dogid
                             }
@@ -264,7 +263,7 @@ class SavourLifePublisher(AbstractPublisher):
 
         self.cleanup()
 
-    def processAnimal(self, an, dogid="", postcode="", state="", suburb="", username="", token="", radius=0, interstate=False, all_microchips=False, hold=False):
+    def processAnimal(self, an, dogid="", postcode="", state="", suburb="", token="", radius=0, interstate=False, all_microchips=False, hold=False):
         """ Processes an animal record and returns a data dictionary for upload as JSON """
         # Size is 10 = small, 20 = medium, 30 = large, 40 = x large
         size = ""
@@ -327,7 +326,6 @@ class SavourLifePublisher(AbstractPublisher):
 
         # Construct a dictionary of info for this animal
         return {
-            "Username":                 username,
             "Token":                    token,
             "DogId":                    dogid, # None in here translates to null and creates a new record
             "Description":              self.getDescription(an, replaceSmart=True),
