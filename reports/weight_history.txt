@@ -91,14 +91,14 @@ Weight Chart
 ###
 Auditing
 ###
-PostgreSQL
+PostgreSQL rev02
 ###
 Weight chart for the selected animal
 ###
 en
 ###
 SELECT to_char(l.Date, 'YYYY-MM-DD') AS WeightDate,
-substring(l.Comments FROM '[0-9]+') AS Weight
+NULLIF(regexp_replace(l.Comments, '\D','','g'), '')::numeric AS Weight
 FROM log l
 INNER JOIN logtype lt on lt.ID = l.LogTypeID
 WHERE l.LinkType = 0 AND l.LinkID = $ASK ANIMAL$ AND lt.LogTypeName LIKE 'Weight'
