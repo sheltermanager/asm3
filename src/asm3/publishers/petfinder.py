@@ -31,14 +31,18 @@ class PetFinderPublisher(FTPPublisher):
 
     def pfStatus(self, an):
         """ Returns the appropriate status code
-            A = Adoptable, H = Held, F = Found ("stray" entry category)
+            A = Adoptable, 
+            H = Held, 
+            F = Found
         """
         if an.ISHOLD == 1: 
             return "H"
-        elif an.ENTRYREASONNAME.find("Stray") != -1: 
-            return "F"
         else:
             return "A"
+        # This caused PetFinder not to show animals as adoptable which is not acceptable to shelters
+        # I don't think we have enough info a Found record to use those so we can't use this.
+        #elif an.ENTRYREASONNAME.find("Stray") != -1: 
+        #    return "F"
 
     def pfYesNo(self, condition):
         """
