@@ -296,6 +296,16 @@ WHERE  animal.deceaseddate IS NULL
   AND NOT animal.animalname LIKE 'Template%'
   AND datebroughtin > '2010-01-01'
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+  
+--Reports when a Non-Shelter Flag is added to an animal with an active movement. Added 2/9/2022
+UNION SELECT animal.animalname AS name,
+  animal.sheltercode AS code,
+  date(animal.LastChangedDate) AS issuedate,
+  '<font color - "Red"><i>Non-Shelter</i> Flag added to animal with an active movement. Alerts Only Once.</font>' AS issue
+FROM animal
+WHERE date_trunc('day', LastChangedDate) = current_date -1
+  AND nonshelteranimal = 1 
+  AND activemovementtype > 0
 
 --Reports animals adopted but not altered. Can use this or next option if you set a spay/neuter due date in Medical. 
 UNION SELECT
