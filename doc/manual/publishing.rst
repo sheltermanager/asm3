@@ -293,9 +293,13 @@ can also integrate with PetFinder.com and upload your animals for adoption
 directly to your account with them.  You will need to go to
 :menuselection:`Publishing --> Set Publishing Options` first and view the
 PetFinder panel. Here, you should enter the shelter Id given to you by
-PetFinder.com and your password. All you need to do then is choose Publish to
-PetFinder.com in place of the normal internet publisher. The options for
-filtering animals are the same (see previous section for reference).
+PetFinder.com and the FTP password they have assigned to you.
+
+You can also opt to have your shelter animals with the "Hold" flag sent with
+the PetFinder H status, and shelter animals who have the word "Stray" in
+their entry category sent with an F status. This will put those animals into
+PetFinder's lost and found database to help with reuniting stray pets with
+their owners.
 
 .. note:: If you have created new Species or Breeds within ASM, you will need to map them to the available publisher options under the Breed and Species sections of :menuselection:`Settings --> Lookup Data`
 
@@ -310,12 +314,6 @@ send that second breed as a blank to PetFinder. This behaviour can also be
 triggered by setting your second breed to "Crossbreed", "Unknown" or "Mix".
 
 .. warning:: You have to let PetFinder know that you are using ASM to upload your data. Do this by logging into the PetFinder members area, go to the Admin System Help Center, then Contact Us and send PetFinder Tech Support a message that you are using ASM to publish animal data via their FTP server. They should give you the FTP login information and make sure permissions and quotas are correct.
-
-ASM will set the PetFinder status field according to certain items on the 
-animal record. Typically, it will be "A" for adoptable. However, if the animal
-has the "Hold" box ticked, an "H" will be sent for Held. In addition, if the
-animal has the word "Stray" present in its entry category, the status "F"
-will be sent for Found.
 
 PetFinder have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the

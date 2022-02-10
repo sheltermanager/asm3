@@ -1,6 +1,7 @@
 45
 ================
 
+10/02/22 PetFinder: send H+F animals separate from adoptability and make an option
 08/02/22 SavourLife: Change to token based authentication
 07/02/22 PetFinder: Support Held and Found statuses
 07/02/22 Increase the size of profile/treatment/dosage boxes in medical

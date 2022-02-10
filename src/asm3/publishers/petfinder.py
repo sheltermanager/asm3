@@ -3,7 +3,7 @@ import asm3.configuration
 import asm3.i18n
 import asm3.medical
 
-from .base import FTPPublisher
+from .base import FTPPublisher, is_animal_adoptable
 from asm3.sitedefs import PETFINDER_FTP_HOST, PETFINDER_SEND_PHOTOS_BY_FTP
 
 import os
@@ -28,21 +28,6 @@ class PetFinderPublisher(FTPPublisher):
     def pfDate(self, d):
         """ Returns a CSV entry for a date in YYYY-MM-DD """
         return "\"%s\"" % asm3.i18n.format_date(d, "%Y-%m-%d")
-
-    def pfStatus(self, an):
-        """ Returns the appropriate status code
-            A = Adoptable, 
-            H = Held, 
-            F = Found
-        """
-        if an.ISHOLD == 1: 
-            return "H"
-        else:
-            return "A"
-        # This caused PetFinder not to show animals as adoptable which is not acceptable to shelters
-        # I don't think we have enough info a Found record to use those so we can't use this.
-        #elif an.ENTRYREASONNAME.find("Stray") != -1: 
-        #    return "F"
 
     def pfYesNo(self, condition):
         """
@@ -174,6 +159,19 @@ class PetFinderPublisher(FTPPublisher):
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
+        # Is the option to send strays on?
+        if asm3.configuration.petfinder_send_strays(self.dbo):
+            for an in self.dbo.query("%s WHERE Archived=0 AND EntryReasonName LIKE '%%Stray%%'" % asm3.animal.get_animal_query(self.dbo)):
+                if is_animal_adoptable(self.dbo, an): continue # do not re-send adoptable animals
+                csv.append( self.processAnimal(an, agebands, status = "F") )
+
+        # Is the option to send holds on?
+        if asm3.configuration.petfinder_send_holds(self.dbo):
+            for an in self.dbo.query("%s WHERE Archived=0 AND IsHold=1" % asm3.animal.get_animal_query(self.dbo)):
+                if is_animal_adoptable(self.dbo, an): continue # do not re-send adoptable animals
+                if an.ENTRYREASONNAME.find("Stray") != -1: continue # we already sent this animal as a stray above
+                csv.append( self.processAnimal(an, agebands, status = "H") )
+
         # Mark published
         self.markAnimalsPublished(animals, first=True)
 
@@ -187,7 +185,7 @@ class PetFinderPublisher(FTPPublisher):
         self.log("\n".join(csv))
         self.cleanup()
 
-    def processAnimal(self, an, agebands = [ 182, 730, 3285 ]):
+    def processAnimal(self, an, agebands = [ 182, 730, 3285 ], status = "A"):
         """ Processes an animal and returns a CSV line """
         primary_color = ""
         secondary_color = ""
@@ -237,7 +235,7 @@ class PetFinderPublisher(FTPPublisher):
         # Type (Species)
         line.append("\"%s\"" % an.PETFINDERSPECIES)
         # Status
-        line.append(self.pfStatus(an))
+        line.append(status)
         # Shots
         line.append(self.pfYesNo(asm3.medical.get_vaccinated(self.dbo, int(an.ID))))
         # Altered

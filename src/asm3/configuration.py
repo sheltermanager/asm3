@@ -1148,6 +1148,12 @@ def petfinder_age_bands(dbo):
 def petfinder_hide_unaltered(dbo):
     return cboolean(dbo, "PetFinderHideUnaltered", False)
 
+def petfinder_send_holds(dbo):
+    return cboolean(dbo, "PetFinderSendHolds", False)
+
+def petfinder_send_strays(dbo):
+    return cboolean(dbo, "PetFinderSendStrays", False)
+
 def petfinder_user(dbo):
     return cstring(dbo, "PetFinderFTPUser")
 
