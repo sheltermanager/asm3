@@ -254,6 +254,7 @@ $(document).ready(function() {
                 // Separate condition into field, operator (=!<>), value
                 let m = cv.trim().match(new RegExp("(.*)([=!<>])(.*)"));
                 let field = "", cond = "=", value = "";
+                if (!m) { return; } // The condition does not match our regex and is invalid, skip
                 if (m.length >= 2) { field = m[1]; }
                 if (m.length >= 3) { cond = m[2]; }
                 if (m.length >= 4) { value = m[3]; }
