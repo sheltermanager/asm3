@@ -141,10 +141,10 @@ def csv_to_list(fname, strip = False, remove_control = False, remove_non_ascii =
     reader = csv.DictReader(StringIO(b.getvalue()))
     for row in reader:
         if strip:
-            for k, v in row.iteritems():
+            for k, v in row.items():
                 row[k] = v.strip()
         if uppercasekeys:
-            row = {k.upper(): v for k, v in row.iteritems()}
+            row = {k.upper(): v for k, v in row.items()}
         o.append(row)
     return o
 
