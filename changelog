@@ -1,6 +1,7 @@
 45
 ================
 
+12/02/22 Do not warn for matching blank addresses of banned owners
 10/02/22 Stop malformed showif rules causing javascript errors
 10/02/22 PetFinder: send H+F animals separate from adoptability and make an option
 08/02/22 SavourLife: Change to token based authentication

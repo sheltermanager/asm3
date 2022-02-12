@@ -90,7 +90,7 @@ def embellish_adoption_warnings(dbo, p):
     warn = dbo.first_row(dbo.query("SELECT (SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS Investigation, " \
         "(SELECT COUNT(*) FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID OR ac.Owner3ID = o.ID) AS Incident, " \
         "(SELECT COUNT(*) FROM animal bib WHERE NonShelterAnimal = 0 AND IsTransfer = 0 AND IsPickup = 0 AND bib.OriginalOwnerID = o.ID) AS Surrender, " \
-        "(SELECT COUNT(*) FROM owner bo WHERE bo.OwnerAddress LIKE o.OwnerAddress AND bo.IsBanned=1) AS BannedAddress " \
+        "(SELECT COUNT(*) FROM owner bo WHERE bo.OwnerAddress <> '' AND bo.OwnerAddress LIKE o.OwnerAddress AND bo.IsBanned=1) AS BannedAddress " \
         "FROM owner o " \
         "WHERE o.ID = ?", [p.ID]))
     if warn is not None:
