@@ -1169,9 +1169,13 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("ownertraploan", "OwnerID")
     reparent("ownervoucher", "OwnerID")
     reparent("users", "OwnerID")
+    reparent("additional", "LinkID", asm3.additional.PERSON_IN, haslastchanged=False)
     reparent("media", "LinkID", "LinkTypeID", asm3.media.PERSON, haslastchanged=False)
     reparent("diary", "LinkID", "LinkType", asm3.diary.PERSON)
     reparent("log", "LinkID", "LinkType", asm3.log.PERSON, haslastchanged=False)
+              
+    # Change any additional field links pointing to the merge person
+    asm3.additional.update_merge_person(dbo, mergepersonid, personid)
 
     # Assign the adopter flag if we brought in new open adoption movements
     update_adopter_flag(dbo, username, personid)

@@ -3164,6 +3164,9 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     reparent("diary", "LinkID", "LinkType", asm3.diary.ANIMAL)
     reparent("log", "LinkID", "LinkType", asm3.log.ANIMAL, haslastchanged=False)
 
+    # Change any additional field links pointing to the merge animal
+    asm3.additional.update_merge_person(dbo, mergeanimalid, animalid)
+
     # Reparent the audit records for the reparented records in the audit log
     # by switching ParentLinks to the new ID.
     dbo.execute("UPDATE audittrail SET ParentLinks = %s WHERE ParentLinks LIKE '%%animal=%s %%'" % \

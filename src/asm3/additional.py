@@ -119,6 +119,17 @@ def get_field_definitions(dbo, linktype = "animal"):
     inclause = clause_for_linktype(linktype)
     return dbo.query("SELECT * FROM additionalfield WHERE LinkType IN (%s) ORDER BY DisplayIndex" % inclause)
 
+def get_ids_for_fieldtype(dbo, fieldtype):
+    """
+    Returns a list of ID numbers for additional field definitions of a particular field type 
+    (used by the update_merge functions below)
+    """
+    rows = dbo.query("SELECT ID FROM additionalfield WHERE FieldType=%s" % fieldtype)
+    out = []
+    for r in rows:
+        out.append(str(r.ID))
+    return out
+
 def get_fields(dbo):
     """
     Returns all additional fields 
@@ -190,6 +201,24 @@ def update_field_from_form(dbo, username, post):
         "LinkType":         post.integer("link"),
         "DisplayIndex":     post.integer("displayindex")
     })
+
+def update_merge_animal(dbo, oldanimalid, newanimalid):
+    """
+    When we merge an animal record, we want to update all additional fields that are 
+    of type ANIMAL_LOOKUP and have a value matching oldanimalid to newanimalid.
+    """
+    afs = get_ids_for_fieldtype(dbo, ANIMAL_LOOKUP)
+    if len(afs) == 0: afs = [ "0" ]
+    dbo.execute("UPDATE additional SET Value='%s' WHERE Value='%s' AND AdditionalFieldID IN (%s)" % (newanimalid, oldanimalid, ",".join(afs)))
+
+def update_merge_person(dbo, oldpersonid, newpersonid):
+    """
+    When we merge a person record, we want to update all additional fields that are 
+    of type PERSON_LOOKUP and have a value matching oldpersonid to newpersonid.
+    """
+    afs = get_ids_for_fieldtype(dbo, PERSON_LOOKUP)
+    if len(afs) == 0: afs = [ "0" ]
+    dbo.execute("UPDATE additional SET Value='%s' WHERE Value='%s' AND AdditionalFieldID IN (%s)" % (newpersonid, oldpersonid, ",".join(afs)))
 
 def delete_field(dbo, username, fid):
     """
