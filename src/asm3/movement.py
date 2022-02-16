@@ -1037,6 +1037,14 @@ def send_fosterer_emails(dbo):
                         m.TREATMENTNAME, m.DOSAGE, m.TREATMENTNUMBER, m.TOTALTREATMENTS, m.COMMENTS ))
                 lines.append("<hr/>")
 
+            clinics = asm3.clinic.get_animal_appointments_due(dbo, a.ANIMALID, dbo.today(), dbo.today(offset=7))
+            if len(clinics) > 0:
+                hasmedicaldue = True
+                pb(lines, asm3.i18n._("Upcoming clinic appointments", l))
+                for c in clinics:
+                    p(lines, "{0}: {1} {2}".format( asm3.i18n.python2displaytime(l, c.DATETIME), c.APPTFOR, c.REASONFORAPPOINTMENT ))
+                lines.append("<hr/>")
+
         # Email is complete, send to the fosterer (assuming there were some animals to send)
         if len(animals) > 0:
             # If the option to send emails if there were no medical items is off and there

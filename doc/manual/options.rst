@@ -681,8 +681,9 @@ Medical
 
 * Send a weekly email to fosterers with medical information about their
   animals: If set, an email will be sent to all active fosterers containing
-  info of overdue medications and medications that fall due in the coming week.
-  The email is sent as part of the overnight batch, early on Monday mornings.
+  info of overdue medications and medications/clinic appointments that fall due
+  in the coming week.  The email is sent as part of the overnight batch, early
+  on Monday mornings.
 
   An example of the email fosterers will receive looks like this:
 
