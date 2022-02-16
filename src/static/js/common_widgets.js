@@ -772,8 +772,23 @@ $.widget("asm.emailform", {
         $("#em-to").autocomplete("widget").css("z-index", 1000);
         $("#em-cc").autocomplete({source: toaddresses});
         $("#em-cc").autocomplete("widget").css("z-index", 1000);
+        $("#em-cc").on("autocompleteselect", function(event, ui) {
+            let xv = String($("#em-cc").val());
+            if (xv.length > 0) { xv += ", "; }
+            xv += ui.item.value;
+            $("#em-cc").val(xv);
+            return false;
+        });
         $("#em-bcc").autocomplete({source: toaddresses});
         $("#em-bcc").autocomplete("widget").css("z-index", 1000);
+        $("#em-bcc").on("autocompleteselect", function(event, ui) {
+            let xv = String($("#em-bcc").val());
+            if (xv.length > 0) { xv += ", "; }
+            xv += ui.item.value;
+            $("#em-bcc").val(xv);
+            return false;
+        });
+
         $("#em-from, #em-to, #em-cc, #em-bcc").bind("focus", function() {
             $(this).autocomplete("search", "@");
         });

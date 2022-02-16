@@ -1,6 +1,7 @@
 45
 ================
 
+16/02/22 CC and BCC email dropdowns append instead of replacing addresses #1060
 16/02/22 Include upcoming clinic appointments in fosterer email #1102
 15/02/22 Update animal and person links in additional fields during merge #1100
 15/02/22 Include batch number in AnimalVaccinations table token
