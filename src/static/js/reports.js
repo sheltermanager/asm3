@@ -91,10 +91,14 @@ $(function() {
                     "ActiveMovementDate>='$ASK DATE {0}$' AND ActiveMovementDate<='$ASK DATE {1}$'"
                     .replace("{0}", _("Fostered between"))
                     .replace("{1}", _("and")) ],
+                [ _("Good with cats"), "goodwithcats", "IsGoodWithCats=0" ],
+                [ _("Good with children"), "goodwithkids", "IsGoodWithChildren=0" ],
+                [ _("Good with dogs"), "goodwithdogs", "IsGoodWithDogs=0" ],
                 [ _("Heartworm+"), "heartwormplus", "HeartwormTested=1 AND HeartwormTestResult=2" ],
                 [ _("Heartworm-"), "heartwormneg", "HeartwormTested=1 AND HeartwormTestResult=1" ],
                 [ _("Heartworm Tested"), "heartwormtest", "HeartwormTested=1" ],
                 [ _("Held"), "held", "IsHold=1" ],
+                [ _("Housetrained"), "housetrained", "IsHouseTrained=0" ],
                 [ _("Left the shelter today"), "lefttoday", "Archived=1 AND ActiveMovementDate = '$CURRENT_DATE$'" ],
                 [ _("Left the shelter between two dates"), "lefttwodates", 
                     "ActiveMovementType NOT IN (2,8) AND ActiveMovementDate Is Not Null AND " +
