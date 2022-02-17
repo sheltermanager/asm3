@@ -161,13 +161,13 @@ class PetFinderPublisher(FTPPublisher):
 
         # Is the option to send strays on?
         if asm3.configuration.petfinder_send_strays(self.dbo):
-            for an in self.dbo.query("%s WHERE Archived=0 AND EntryReasonName LIKE '%%Stray%%'" % asm3.animal.get_animal_query(self.dbo)):
+            for an in self.dbo.query("%s WHERE a.Archived=0 AND er.ReasonName LIKE '%%Stray%%'" % asm3.animal.get_animal_query(self.dbo)):
                 if is_animal_adoptable(self.dbo, an): continue # do not re-send adoptable animals
                 csv.append( self.processAnimal(an, agebands, status = "F") )
 
         # Is the option to send holds on?
         if asm3.configuration.petfinder_send_holds(self.dbo):
-            for an in self.dbo.query("%s WHERE Archived=0 AND IsHold=1" % asm3.animal.get_animal_query(self.dbo)):
+            for an in self.dbo.query("%s WHERE a.Archived=0 AND a.IsHold=1" % asm3.animal.get_animal_query(self.dbo)):
                 if is_animal_adoptable(self.dbo, an): continue # do not re-send adoptable animals
                 if an.ENTRYREASONNAME.find("Stray") != -1: continue # we already sent this animal as a stray above
                 csv.append( self.processAnimal(an, agebands, status = "H") )
