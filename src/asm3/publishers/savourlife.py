@@ -291,6 +291,11 @@ class SavourLifePublisher(AbstractPublisher):
         if "NEEDSFOSTER" in an and an.NEEDSFOSTER != "" and an.NEEDSFOSTER != "0":
             needs_foster = True
 
+        # We have a config option for interstate adoptable. If this DB has an additional
+        # field for interstateadoptable on the animal with a value then we use that instead:
+        if "INTERSTATEADOPTABLE" in an and an.INTERSTATEADOPTABLE != "":
+            interstate = an.INTERSTATEADOPTABLE != "0"
+
         # Check whether we've been vaccinated, wormed and hw treated
         vaccinated = asm3.medical.get_vaccinated(self.dbo, an.ID)
         sixmonths = self.dbo.today(offset=-182)

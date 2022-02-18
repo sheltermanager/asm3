@@ -453,6 +453,9 @@ records.
 
 * needsfoster (Yes/No): Indicates that foster care is required for the animal.
 
+* interstateadoptable (Yes/No): Overrides the global interstate adoptable value on
+  the config screen and allows you to apply it on a per-animal basis instead.
+
 .. note:: SavourLife integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the SavourLife breeds, ASM will send it as "Mixed Breed" instead. 
 
 petslocated.com
