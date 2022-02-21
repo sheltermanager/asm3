@@ -121,6 +121,7 @@ $(function() {
             // Set default values
             $("#deceaseddate").datepicker("setDate", new Date());
             $("#deathcategory").select("value", config.str("AFDefaultDeathReason"));
+            $("#usagedate").datepicker("setDate", new Date());
 
             // Hide stock deductions if stock control is disabled
             if (config.bool("DisableStockControl")) {
