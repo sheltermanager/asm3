@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-02-15 13:07+0000\n"
+"POT-Creation-Date: 2022-02-21 14:37+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -75,7 +75,7 @@ msgstr ""
 msgid "(no change)"
 msgstr ""
 
-#: medical.js vaccination.js test.js
+#: medical.js move_deceased.js vaccination.js test.js
 msgid "(no deduction)"
 msgstr ""
 
@@ -2798,12 +2798,13 @@ msgstr ""
 
 #: html.py mobile.py person.py wordprocessor.py transport.js vouchers.js
 #: waitinglist_new.js medicalprofile.js litters.js move_reclaim.js
-#: waitinglist_results.js person.js medical.js move_retailer.js vaccination.js
-#: diary.js citations.js common_widgets.js stocklevel.js traploan.js
-#: donations.js waitinglist.js rota.js accounts.js staff_rota.js lostfound.js
-#: test.js animal_diet.js clinic_appointment.js move_reserve.js
-#: move_transfer.js header_edit_header.js log.js movements.js move_adopt.js
-#: licence.js lostfound_new.js move_foster.js person_find_results.js
+#: waitinglist_results.js person.js medical.js move_deceased.js
+#: move_retailer.js vaccination.js diary.js citations.js common_widgets.js
+#: stocklevel.js traploan.js donations.js waitinglist.js rota.js accounts.js
+#: staff_rota.js lostfound.js test.js animal_diet.js clinic_appointment.js
+#: move_reserve.js move_transfer.js header_edit_header.js log.js movements.js
+#: move_adopt.js licence.js lostfound_new.js move_foster.js
+#: person_find_results.js
 msgid "Comments"
 msgstr ""
 
@@ -5930,11 +5931,12 @@ msgstr ""
 msgid "Good with Dogs"
 msgstr ""
 
-#: person.py person.js animal_find.js animal_bulk.js animal.js shelterview.js
+#: person.py person.js animal_find.js reports.js animal_bulk.js animal.js
+#: shelterview.js
 msgid "Good with cats"
 msgstr ""
 
-#: person.py person.js animal_find.js animal.js shelterview.js
+#: person.py person.js animal_find.js reports.js animal.js shelterview.js
 msgid "Good with children"
 msgstr ""
 
@@ -5946,7 +5948,8 @@ msgstr ""
 msgid "Good with children over 5"
 msgstr ""
 
-#: person.py person.js animal_find.js animal_bulk.js animal.js shelterview.js
+#: person.py person.js animal_find.js reports.js animal_bulk.js animal.js
+#: shelterview.js
 msgid "Good with dogs"
 msgstr ""
 
@@ -6254,7 +6257,7 @@ msgid "Hours"
 msgstr ""
 
 #: html.py mobile.py person.py animal_find_results.js person.js animal_find.js
-#: animal_bulk.js animal.js shelterview.js
+#: reports.js animal_bulk.js animal.js shelterview.js
 msgid "Housetrained"
 msgstr ""
 
@@ -6852,7 +6855,7 @@ msgstr ""
 msgid "Italian Spinone"
 msgstr ""
 
-#: medical.js vaccination.js test.js
+#: medical.js move_deceased.js vaccination.js test.js
 msgid "Item"
 msgstr ""
 
@@ -9631,8 +9634,8 @@ msgstr ""
 msgid "Quaker Parakeet"
 msgstr ""
 
-#: medical.js vaccination.js common_widgets.js stocklevel.js donations.js
-#: test.js
+#: medical.js move_deceased.js vaccination.js common_widgets.js stocklevel.js
+#: donations.js test.js
 msgid "Quantity"
 msgstr ""
 
@@ -11716,7 +11719,7 @@ msgstr ""
 msgid "Stay"
 msgstr ""
 
-#: html.py stocklevel.js
+#: html.py move_deceased.js stocklevel.js
 msgid "Stock"
 msgstr ""
 
@@ -12474,6 +12477,10 @@ msgstr ""
 msgid ""
 "These batch processes are run each night by the system and should not need "
 "to be run manually."
+msgstr ""
+
+#: move_deceased.js
+msgid "These fields allow you to deduct stock for any euthanasia administered."
 msgstr ""
 
 #: test.js
@@ -13475,6 +13482,10 @@ msgid "Up for adoption"
 msgstr ""
 
 #: movement.py
+msgid "Upcoming clinic appointments"
+msgstr ""
+
+#: movement.py
 msgid "Upcoming medical items"
 msgstr ""
 
@@ -13574,11 +13585,12 @@ msgstr ""
 msgid "Urgent"
 msgstr ""
 
-#: medical.js vaccination.js stocklevel.js test.js
+#: medical.js move_deceased.js vaccination.js stocklevel.js test.js
 msgid "Usage Date"
 msgstr ""
 
-#: mobile.py lookups.py medical.js vaccination.js stocklevel.js test.js
+#: mobile.py lookups.py medical.js move_deceased.js vaccination.js
+#: stocklevel.js test.js
 msgid "Usage Type"
 msgstr ""
 

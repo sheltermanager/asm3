@@ -8,7 +8,8 @@ $(function() {
 
         render: function() {
             return [
-                html.content_header(_("Mark an animal deceased")),
+                '<div id="asm-content">',
+                html.content_header(_("Mark an animal deceased"), true),
                 '<table class="asm-table-layout">',
                 '<tr>',
                 '<td>',
@@ -53,10 +54,44 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '<div class="centered">',
+                html.content_footer(),
+                html.content_header(_("Stock"), true),
+                '<table id="stocktable" class="asm-table-layout tagstock">',
+                '<tr class="tagstock"><td></td><td>' + html.info(_("These fields allow you to deduct stock for any euthanasia administered.")) + '</td></tr>',
+                '<tr class="tagstock">',
+                '<td><label for="item">' + _("Item") + '</label></td>',
+                '<td><select id="item" data="item" class="asm-selectbox asm-field">',
+                '<option value="-1">' + _("(no deduction)") + '</option>',
+                html.list_to_options(controller.stockitems, "ID", "ITEMNAME"),
+                '</select></td>',
+                '</tr>',
+                '<tr class="tagstock">',
+                '<td><label for="quantity">' + _("Quantity") + '</label></td>',
+                '<td><input id="quantity" data="quantity" type="text" class="asm-textbox asm-numberbox asm-field" /></td>',
+                '</tr>',
+                '<tr class="tagstock">',
+                '<td><label for="usagetype">' + _("Usage Type") + '</label></td>',
+                '<td><select id="usagetype" data="usagetype" class="asm-selectbox asm-field">',
+                html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME"),
+                '</select></td>',
+                '</tr>',
+                '<tr class="tagstock">',
+                '<td><label for="usagedate">' + _("Usage Date") + '</label></td>',
+                '<td><input id="usagedate" data="usagedate" class="asm-textbox asm-datebox asm-field" />',
+                '</select></td>',
+                '</tr>',
+                '<tr class="tagstock">',
+                '<td><label for="usagecomments">' + _("Comments") + '</label></td>',
+                '<td><textarea id="usagecomments" data="usagecomments" class="asm-textarea asm-field"></textarea>',
+                '</td>',
+                '</tr>',
+                '</table>',
+                html.content_footer(),
+                html.box(5),
                 '<button id="deceased">' + html.icon("death") + ' ' + _("Mark Deceased") + '</button>',
                 '</div>',
-                html.content_footer()
+                html.content_footer(),
+                '</div>'
             ].join("\n");
         },
 
@@ -86,6 +121,12 @@ $(function() {
             // Set default values
             $("#deceaseddate").datepicker("setDate", new Date());
             $("#deathcategory").select("value", config.str("AFDefaultDeathReason"));
+
+            // Hide stock deductions if stock control is disabled
+            if (config.bool("DisableStockControl")) {
+                $(".tagstock").hide();
+                $("#stocktable").parent().hide();
+            }
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");

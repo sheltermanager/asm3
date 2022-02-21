@@ -1,6 +1,7 @@
 45
 ================
 
+21/02/22 Allow stock deduction when marking animal deceased #268
 18/02/22 SavourLife: Allow interstate adoptable to be set per animal
 17/02/22 Query builder criteria for good with cats/dogs/kids/housetrained
 16/02/22 CC and BCC email dropdowns append instead of replacing addresses #1060

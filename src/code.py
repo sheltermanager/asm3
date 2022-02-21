@@ -4335,11 +4335,15 @@ class move_deceased(JSONEndpoint):
 
     def controller(self, o):
         return {
-            "deathreasons": asm3.lookups.get_deathreasons(o.dbo)
+            "deathreasons": asm3.lookups.get_deathreasons(o.dbo),
+            "stockitems": asm3.stock.get_stock_items(o.dbo),
+            "stockusagetypes": asm3.lookups.get_stock_usage_types(o.dbo)
         }
 
     def post_create(self, o):
         asm3.animal.update_deceased_from_form(o.dbo, o.user, o.post)
+        if o.post.integer("item") != -1:
+            asm3.stock.deduct_stocklevel_from_form(o.dbo, o.user, o.post)
 
 class move_foster(JSONEndpoint):
     url = "move_foster"
