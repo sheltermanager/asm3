@@ -33,7 +33,10 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</div>',
-                '<div id="emailform"></div>'
+                '<div id="emailform"></div>',
+                '<div id="dialog-popupwarning" style="display: none" title="' + html.title(_("Warning")) + '">',
+                '<p>' + html.error(controller.person.POPUPWARNING) + '</p>',
+                '</div>'
             ].join("\n");
         },
 
@@ -238,9 +241,17 @@ $(function() {
                 '<!-- Right table -->',
                 '<table width="100%">',
                 '<tr>',
-                '<td><label for="comments">' + _("Comments") + '</label</td>',
+                '<td><label for="comments">' + _("Comments") + '</label></td>',
                 '<td>',
-                '<textarea id="comments" title="' + _("Comments") + '" data-json="COMMENTS" data-post="comments" rows="10" class="asm-textarea"></textarea>',
+                '<textarea id="comments" title="' + _("Comments") + '" data-json="COMMENTS" data-post="comments" rows="7" class="asm-textarea"></textarea>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="popupwarning">' + _("Warning") + '</label>',
+                '<span id="callout-popupwarning" class="asm-callout">' + _("Show a warning when viewing this person") + '</span>',
+                '</td>',
+                '<td>',
+                '<textarea id="popupwarning" title="' + _("Warning") + '" data-json="POPUPWARNING" data-post="popupwarning" rows="2" class="asm-textarea"></textarea>',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -637,6 +648,12 @@ $(function() {
             }, 50);
         },
 
+        show_popup_warning: async function() {
+            if (controller.person.POPUPWARNING) {
+                await tableform.show_okcancel_dialog("#dialog-popupwarning", _("Ok"), { hidecancel: true });
+            }
+        },
+
         bind: function() {
 
             // Load the tab strip and accordion
@@ -843,12 +860,17 @@ $(function() {
 
             // Dirty handling
             validate.bind_dirty([ "person_" ]);
+
+            // If a popup warning has been set, display it
+            person.show_popup_warning();
+
         },
 
         destroy: function() {
             validate.unbind_dirty();
             common.widget_destroy("#dialog-dt-date");
             common.widget_destroy("#dialog-merge");
+            common.widget_destroy("#dialog-popupwarning");
             common.widget_destroy("#emailform");
             common.widget_destroy("#mergeperson", "personchooser");
             common.widget_destroy("#homecheckedby", "personchooser");

@@ -9,6 +9,7 @@ $(function() {
         render: function() {
             return [
                 html.content_header(_("Report a new incident")),
+                '<div id="incident-warnings"></div>',
                 '<table class="asm-table-layout">',
                 '<tr>',
                 '<td><label for="incidenttype">' + _("Type") + '</label></td>',
@@ -173,6 +174,14 @@ $(function() {
 
             $("#reset").button().click(function() {
                 incident_new.reset();
+            });
+
+            $("#owner").personchooser().bind("personchooserchange", async function(event, rec) {
+                // Warn if the suspect is flagged as dangerous
+                $("#incident-warnings").empty();
+                if (rec.ISDANGEROUS) {
+                    $("#incident-warnings").html(html.error(_("This suspect has been flagged as dangerous")));
+                }
             });
 
             $("#dispatchtown").autocomplete({ source: controller.towns });

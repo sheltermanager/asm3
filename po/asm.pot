@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-02-21 14:37+0000\n"
+"POT-Creation-Date: 2022-02-23 11:26+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3291,6 +3291,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Dandi Dinmont Terrier"
+msgstr ""
+
+#: html.py common.js header_edit_header.js
+msgid "Dangerous"
 msgstr ""
 
 #: lookups.py
@@ -8613,7 +8617,7 @@ msgstr ""
 msgid "Office"
 msgstr ""
 
-#: animal.js
+#: person.js animal.js
 msgid "Ok"
 msgstr ""
 
@@ -11127,6 +11131,10 @@ msgstr ""
 msgid "Show a warning when viewing this animal"
 msgstr ""
 
+#: person.js
+msgid "Show a warning when viewing this person"
+msgstr ""
+
 #: options.js
 msgid "Show alerts on the home page"
 msgstr ""
@@ -12858,6 +12866,10 @@ msgid ""
 "reports and documents."
 msgstr ""
 
+#: incident_new.js
+msgid "This suspect has been flagged as dangerous"
+msgstr ""
+
 #: options.js
 msgid "This text will be added to the bottom of all send email dialogs"
 msgstr ""
@@ -14161,7 +14173,7 @@ msgstr ""
 msgid "Warn when creating multiple reservations on the same animal"
 msgstr ""
 
-#: animal.js
+#: person.js animal.js
 msgid "Warning"
 msgstr ""
 

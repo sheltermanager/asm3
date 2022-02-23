@@ -536,6 +536,7 @@ def get_person_find_simple(dbo, query, username="", classfilter="all", includeSt
         "shelter":          " AND o.IsShelter = 1",
         "aco":              " AND o.IsACO = 1",
         "banned":           " AND o.IsBanned = 1",
+        "dangerous":        " AND o.IsDangerous = 1",
         "homechecked":      " AND o.IDCheck = 1",
         "homechecker":      " AND o.IsHomeChecker = 1",
         "member":           " AND o.IsMember = 1",
@@ -592,6 +593,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
             if flag == "aco": ss.ands.append("o.IsACO=1")
             elif flag == "adopter": ss.ands.append("o.IsAdopter=1")
             elif flag == "banned": ss.ands.append("o.IsBanned=1")
+            elif flag == "dangerous": ss.ands.append("o.IsDangerous=1")
             elif flag == "coordinator": ss.ands.append("o.IsAdoptionCoordinator=1")
             elif flag == "deceased": ss.ands.append("o.IsDeceased=1")
             elif flag == "donor": ss.ands.append("o.IsDonor=1")
@@ -797,6 +799,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         "GDPRContactOptIn": post["gdprcontactoptin"],
         "JurisdictionID":   post.integer("jurisdiction"),
         "Comments":         post["comments"],
+        "PopupWarning":     post["popupwarning"],
         "SiteID":           post.integer("site"),
         "MembershipExpiryDate": post.date("membershipexpires"),
         "MembershipNumber": post["membershipnumber"],
@@ -827,6 +830,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         "IsAdopter":                0,
         "IsAdoptionCoordinator":    0,
         "IsBanned":                 0,
+        "IsDangerous":              0,
         "IsVolunteer":              0,
         "IsMember":                 0,
         "IsHomeChecker":            0,
@@ -913,6 +917,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
         "GDPRContactOptIn": post["gdprcontactoptin"],
         "JurisdictionID":   post.integer("jurisdiction"),
         "Comments":         post["comments"],
+        "PopupWarning":     post["popupwarning"],
         "SiteID":           post.integer("site"),
         "MembershipExpiryDate": post.date("membershipexpires"),
         "MembershipNumber": post["membershipnumber"],
@@ -968,6 +973,7 @@ def update_flags(dbo, username, personid, flags):
 
     homechecked = bi("homechecked" in flags)
     banned = bi("banned" in flags)
+    dangerous = bi("dangerous" in flags)
     adopter = bi("adopter" in flags)
     coordinator = bi("coordinator" in flags)
     volunteer = bi("volunteer" in flags)
@@ -992,6 +998,7 @@ def update_flags(dbo, username, personid, flags):
         "IsAdopter":                adopter,
         "IsAdoptionCoordinator":    coordinator,
         "IsBanned":                 banned,
+        "IsDangerous":              dangerous,
         "IsVolunteer":              volunteer,
         "IsMember":                 member,
         "IsHomeChecker":            homechecker,
@@ -1619,6 +1626,7 @@ def update_check_flags(dbo):
         "excludefrombulkemail": "ExcludeFromBulkEmail",
         "homechecked": "IDCheck",
         "banned": "IsBanned",
+        "dangerous": "IsDangerous",
         "volunteer": "IsVolunteer",
         "homechecker": "IsHomeChecker",
         "member": "IsMember",
@@ -1634,7 +1642,7 @@ def update_check_flags(dbo):
         "vet": "IsVet",
         "giftaid": "IsGiftAid"
     }
-    people = dbo.query("SELECT ID, AdditionalFlags, ExcludeFromBulkEmail, IDCheck, IsBanned, IsVolunteer, " \
+    people = dbo.query("SELECT ID, AdditionalFlags, ExcludeFromBulkEmail, IDCheck, IsBanned, IsDangerous, IsVolunteer, " \
         "IsHomeChecker, IsMember, IsAdopter, IsAdoptionCoordinator, IsDonor, IsDriver, " \
         "IsShelter, IsACO, IsStaff, IsFosterer, IsRetailer, IsVet, IsGiftAid FROM owner ORDER BY ID")
     lookupflags = [x["FLAG"] for x in dbo.query("SELECT Flag from lkownerflags ORDER BY Flag")]

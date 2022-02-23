@@ -581,6 +581,9 @@ edit_header = {
         if (p.ISBANNED == 1) {
             flags.push("<span style=\"color: red\">" + _("Banned") + "</span>");
         }
+        if (p.ISDANGEROUS == 1) {
+            flags.push("<span style=\"color: red\">" + _("Dangerous") + "</span>");
+        }
         if (p.INVESTIGATION > 0) {
             flags.push("<span style=\"color: red\">" + _("Investigation") + "</span>");
         }
@@ -633,7 +636,7 @@ edit_header = {
             flags.push(_("Exclude from bulk email"));
         }
         if (p.ADDITIONALFLAGS != null) {
-            var stock = [ "aco", "adopter", "banned", "coordinator", "deceased", "donor", "driver", "excludefrombulkemail",
+            var stock = [ "aco", "adopter", "banned", "dangerous", "coordinator", "deceased", "donor", "driver", "excludefrombulkemail",
                 "fosterer", "homechecked", "homechecker", "member", "shelter", "retailer", "staff", "giftaid", 
                 "vet", "volunteer"];
             $.each(p.ADDITIONALFLAGS.split("|"), function(i, v) {

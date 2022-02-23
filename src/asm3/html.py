@@ -787,6 +787,7 @@ def json_personfindcolumns(dbo):
         ( "Jurisdiction", _("Jurisdiction", l) ),
         ( "Comments", _("Comments", l) ),
         ( "IsBanned", _("Banned", l) ),
+        ( "IsDangerous", _("Dangerous", l) ),
         ( "IsVolunteer", _("Volunteer", l) ),
         ( "IsHomeChecker", _("Homechecker", l) ),
         ( "IsMember", _("Member", l) ),
@@ -1079,6 +1080,7 @@ def options_person_flags(dbo):
     s += option(_("Adopter", l), "adopter")
     s += option(_("Adoption Coordinator", l), "coordinator")
     s += option(_("Banned", l), "banned")
+    s += option(_("Dangerous", l), "dangerous")
     s += option(_("Deceased", l), "deceased")
     s += option(_("Donor", l), "donor")
     s += option(_("Driver", l), "driver")

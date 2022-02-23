@@ -39,7 +39,7 @@ VERSIONS = (
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
-    34508, 34509, 34510, 34511
+    34508, 34509, 34510, 34511, 34512
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1225,8 +1225,10 @@ def sql_structure(dbo):
         fint("JurisdictionID", True),
         fint("IDCheck", True),
         flongstr("Comments", True),
+        flongstr("PopupWarning", True),
         fint("SiteID", True),
         fint("IsBanned", True),
+        fint("IsDangerous", True),
         fint("IsVolunteer", True),
         fint("IsHomeChecker", True),
         fint("IsMember", True),
@@ -5543,4 +5545,9 @@ def update_34510(dbo):
 def update_34511(dbo):
     add_column(dbo, "templatedocument", "ShowAt", dbo.type_shorttext)
     dbo.execute_dbupdate("UPDATE templatedocument SET ShowAt='everywhere'")
+
+def update_34512(dbo):
+    add_column(dbo, "owner", "PopupWarning", dbo.type_longtext)
+    add_column(dbo, "owner", "IsDangerous", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE owner SET PopupWarning = '', IsDangerous = 0")
 
