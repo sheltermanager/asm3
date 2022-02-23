@@ -579,19 +579,19 @@ edit_header = {
             flags.push(_("ACO"));
         }
         if (p.ISBANNED == 1) {
-            flags.push("<span style=\"color: red\">" + _("Banned") + "</span>");
+            flags.push("<span class=\"asm-flag-banned\">" + _("Banned") + "</span>");
         }
         if (p.ISDANGEROUS == 1) {
-            flags.push("<span style=\"color: red\">" + _("Dangerous") + "</span>");
+            flags.push("<span class=\"asm-flag-dangerous\">" + _("Dangerous") + "</span>");
         }
         if (p.INVESTIGATION > 0) {
-            flags.push("<span style=\"color: red\">" + _("Investigation") + "</span>");
+            flags.push("<span class=\"asm-flag-investigation\">" + _("Investigation") + "</span>");
         }
         if (p.INCIDENT > 0) {
-            flags.push("<span style=\"color: red\">" + _("Incident") + "</span>");
+            flags.push("<span class=\"asm-flag-incident\">" + _("Incident") + "</span>");
         }
         if (p.ISDECEASED == 1) {
-            flags.push("<span style=\"color: red\">" + _("Deceased") + "</span>");
+            flags.push("<span class=\"asm-flag-deceased\">" + _("Deceased") + "</span>");
         }
         if (p.ISADOPTER == 1) {
             flags.push(_("Adopter"));

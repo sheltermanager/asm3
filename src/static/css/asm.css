@@ -347,6 +347,15 @@ select:disabled, input:disabled, textarea:disabled {
     white-space: nowrap;
 }
 
+.asm-flag-banned, .asm-flag-deceased, .asm-flag-incident, .asm-flag-investigation {
+    color: red;
+}
+
+.asm-flag-dangerous {
+    color: red; 
+    font-weight: bold;
+}
+
 .asm-search-name {
     font-size: 150%;
     font-weight: bold;
