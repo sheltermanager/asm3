@@ -795,13 +795,13 @@ def handler(session, post):
         return "GO mobile_post?posttype=vinc&id=%d" % pid
 
     elif mode == "vincdisp":
+        pc(asm3.users.DISPATCH_INCIDENT)
         # Mark the incident with id dispatched now with the current user as aco
-        pc(asm3.users.CHANGE_INCIDENT)
         asm3.animalcontrol.update_animalcontrol_dispatchnow(dbo, pid, user)
         return "GO mobile_post?posttype=vinc&id=%d" % pid
 
     elif mode == "vincresp":
-        pc(asm3.users.CHANGE_INCIDENT)
+        pc(asm3.users.RESPOND_INCIDENT)
         # Mark the incident with id responded to now
         asm3.animalcontrol.update_animalcontrol_respondnow(dbo, pid, user)
         return "GO mobile_post?posttype=vinc&id=%d" % pid
@@ -1099,7 +1099,7 @@ def handler_viewincident(session, l, dbo, a, amls, cit, dia, logs, homelink, pos
     h.append(tr( _("Notes", l), a["CALLNOTES"]))
     h.append(tr( _("Completion Date/Time", l), dt(a["COMPLETEDDATE"])))
     comptp = a["COMPLETEDNAME"]
-    if a["COMPLETEDDATE"] is None:
+    if a["COMPLETEDDATE"] is None and asm3.users.check_permissions_bool(session, asm3.users.CHANGE_INCIDENT):
         comptp = jqm_select("comptype", 
             '<option value="-1"></option>' + jqm_options(asm3.lookups.get_incident_completed_types(dbo), "ID", "COMPLETEDNAME"), 
             "completedtype", str(a["ID"]))
@@ -1120,11 +1120,11 @@ def handler_viewincident(session, l, dbo, a, amls, cit, dia, logs, homelink, pos
     h.append(tr( _("Zipcode", l), a["DISPATCHPOSTCODE"]))
     h.append(tr( _("Dispatched ACO", l), a["DISPATCHEDACO"]))
     dispdt = dt(a["DISPATCHDATETIME"])
-    if dispdt == "":
+    if dispdt == "" and asm3.users.check_permission_bool(session, asm3.users.DISPATCH_INCIDENT):
         dispdt = jqm_button("mobile_post?posttype=vincdisp&id=%d" % a["ID"], _("Dispatch", l), "calendar", "false")
     h.append(tr( _("Dispatch Date/Time", l), dispdt))
     respdt = dt(a["RESPONDEDDATETIME"])
-    if respdt == "":
+    if respdt == "" and asm3.users.check_permission_bool(session, asm3.users.RESPOND_INCIDENT):
         respdt = jqm_button("mobile_post?posttype=vincresp&id=%d" % a["ID"], _("Respond", l), "calendar", "false")
     # If it's not dispatched yet, don't allow respond
     if a["DISPATCHDATETIME"] is None: respdt = ""

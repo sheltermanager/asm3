@@ -172,6 +172,8 @@ ADD_INCIDENT                    = "aaci"
 VIEW_INCIDENT                   = "vaci"
 CHANGE_INCIDENT                 = "caci"
 DELETE_INCIDENT                 = "daci"
+DISPATCH_INCIDENT               = "cacd"
+RESPOND_INCIDENT                = "cacr"
 
 ADD_CITATION                    = "aacc"
 VIEW_CITATION                   = "vacc"

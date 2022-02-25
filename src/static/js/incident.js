@@ -332,8 +332,8 @@ $(function() {
                     //{ id: "toanimal", text: _("Create Animal"), icon: "animal-add", tooltip: _("Create a new animal from this incident") }
                     { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this incident") },
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Email incident notes to ACO") },
-                    { id: "dispatch", text: _("Dispatch"), icon: "calendar", tooltip: _("Mark dispatched now") },
-                    { id: "respond", text: _("Respond"), icon: "calendar", tooltip: _("Mark responded now") },
+                    { id: "dispatch", text: _("Dispatch"), icon: "calendar", perm: "cacd", tooltip: _("Mark dispatched now") },
+                    { id: "respond", text: _("Respond"), icon: "calendar", perm: "cacr", tooltip: _("Mark responded now") },
                     { id: "map", text: _("Map"), icon: "map", tooltip: _("Find this address on a map") }
                 ]),
                 '<div id="asm-details-accordion">',
@@ -534,6 +534,7 @@ $(function() {
                     $("#asm-details-accordion").accordion("option", "active", 2);
                     $("#button-dispatch").button("disable");
                     validate.dirty(true);
+                    validate.save();
                 }
             });
 
@@ -547,6 +548,7 @@ $(function() {
                     $("#asm-details-accordion").accordion("option", "active", 2);
                     $("#button-respond").button("disable");
                     validate.dirty(true);
+                    validate.save();
                 }
             });
 

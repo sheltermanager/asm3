@@ -157,6 +157,8 @@ $(function() {
                 cr("vaci", _("View Incidents")),
                 cr("caci", _("Change Incidents")),
                 cr("daci", _("Delete Incidents")),
+                cr("cacd", _("Dispatch Incident")),
+                cr("cacr", _("Respond to Incident")),
                 cl(_("Trap Loans")),
                 cr("aatl", _("Add Trap Loans")),
                 cr("vatl", _("View Trap Loans")),
