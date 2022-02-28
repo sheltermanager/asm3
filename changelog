@@ -1,6 +1,8 @@
 45
 ================
 
+28/02/22 Fix non-shelter owner additional fields in templates
+28/02/22 Shelterview: Location and Species (Age group tertiary sort)
 25/02/22 Separate permissions for dispatch and respond to incident #1104
 23/02/22 Warning popup for person records #1086
 23/02/22 Dangerous flag for individuals #902
