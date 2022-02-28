@@ -2225,7 +2225,7 @@ class Animal:
             ( "LastChangedBy", ds(self.LastChangedBy) ),
             ( "LastChangedDate", dd(self.LastChangedDate) )
             )
-        sys.stderr.write("animal: %d %s %s %s, %s %s, intake %s, dob %s\n" % (self.ID, self.AnimalName, self.ShelterCode, self.ShortCode, self.BreedName, species_name_for_id(self.SpeciesID), self.DateBroughtIn, self.DateOfBirth))
+        sys.stderr.write("animal: %d %s %s %s, %s %s, arc: %s, intake %s, dob %s\n" % (self.ID, self.AnimalName, self.ShelterCode, self.ShortCode, self.BreedName, species_name_for_id(self.SpeciesID), self.Archived, self.DateBroughtIn, self.DateOfBirth))
         return makesql("animal", s)
 
 class Log:

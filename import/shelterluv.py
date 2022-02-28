@@ -247,6 +247,30 @@ for d in asm.csv_to_list("%s/intake.csv" % PATH):
         a.EntryReasonID = asm.entryreason_from_db(intaketype)
         a.AnimalTypeID = asm.animaltype_from_db(subtype)
 
+for d in asm.csv_to_list("%s/fosters.csv" % PATH):
+    if d["Animal ID"] == "Animal ID": continue # skip repeated headers
+    o = None
+    if d["Foster Parent Name"] in ppo: o = ppo[d["Foster Parent Name"]]
+    a = None
+    if d["Animal ID"] in ppa: a = ppa[d["Animal ID"]]
+    if o is None or a is None: continue
+    # Add some other values that weren't present in the animal file
+    if "Microchip Number" in d: a.IdentichipNumber = d["Microchip Number"]
+    # Person has to be a fosterer
+    o.IsFosterer = 1
+    if a.IdentichipNumber != "": a.Identichipped = 1
+    m = asm.Movement()
+    m.AnimalID = a.ID
+    m.OwnerID = o.ID
+    m.MovementType = 2
+    m.MovementDate = getdate(d["Outcome Date"])
+    a.ActiveMovementID = m.ID
+    a.ActiveMovementDate = m.MovementDate
+    a.ActiveMovementType = 2
+    a.CreatedDate = m.MovementDate
+    a.LastChangedDate = m.MovementDate
+    movements.append(m)
+
 # This file was sent by one customer, it looks like the events - intake file, but contains
 # animals that only came in for some kind of service (typically feral spay/neuter), we
 # use it to flag animals as non-shelter
@@ -269,6 +293,8 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
     a = None
     if d["Animal ID"] in ppa: a = ppa[d["Animal ID"]]
     if a is None: continue
+    if d["Animal ID"].find("A-7368") != -1:
+        asm.stderr("OUTCOME TYPE='%s'" % d["Outcome Type"])
     if d["Outcome Type"] == "Adoption":
         if o is None: o = uo
         m = asm.Movement()
@@ -305,7 +331,7 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
         m.OwnerID = o.ID
         m.MovementType = 3
         m.MovementDate = getdate(d["Outcome Date"])
-        a.Archived = 3
+        a.Archived = 1
         a.ActiveMovementID = m.ID
         a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 1
@@ -313,14 +339,14 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
         if "Outcome By" in d: a.CreatedBy = "conversion/%s" % d["Outcome By"]
         a.LastChangedDate = m.MovementDate
         movements.append(m)
-    elif d["Outcome Type"] == "Return To Owner/Guardian" or d["Outcome Type"] == "Reclaimed":
+    elif d["Outcome Type"] == "Return to Owner/Guardian" or d["Outcome Type"] == "Reclaimed":
         if o is None: o = uo
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
         m.MovementType = 5
         m.MovementDate = getdate(d["Outcome Date"])
-        a.Archived = 5
+        a.Archived = 1
         a.ActiveMovementID = m.ID
         a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 5
@@ -338,31 +364,6 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
         a.PutToSleep = 0
         a.PTSReasonID = 2 # Died
         a.Archived = 1
-
-for d in asm.csv_to_list("%s/fosters.csv" % PATH):
-    if d["Animal ID"] == "Animal ID": continue # skip repeated headers
-    o = None
-    if d["Foster Parent Name"] in ppo: o = ppo[d["Foster Parent Name"]]
-    a = None
-    if d["Animal ID"] in ppa: a = ppa[d["Animal ID"]]
-    if o is None or a is None: continue
-    # Add some other values that weren't present in the animal file
-    if "Microchip Number" in d: a.IdentichipNumber = d["Microchip Number"]
-    # Person has to be a fosterer
-    o.IsFosterer = 1
-    if a.IdentichipNumber != "": a.Identichipped = 1
-    m = asm.Movement()
-    m.AnimalID = a.ID
-    m.OwnerID = o.ID
-    m.MovementType = 2
-    m.MovementDate = getdate(d["Outcome Date"])
-    a.Archived = 2
-    a.ActiveMovementID = m.ID
-    a.ActiveMovementDate = m.MovementDate
-    a.ActiveMovementType = 2
-    a.CreatedDate = m.MovementDate
-    a.LastChangedDate = m.MovementDate
-    movements.append(m)
 
 if asm.file_exists("%s/tests.csv" % PATH):
     for d in asm.csv_to_list("%s/tests.csv" % PATH):
