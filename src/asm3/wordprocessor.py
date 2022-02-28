@@ -481,7 +481,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         tags["CURRENTOWNERMOBILEPHONE"] = a["ORIGINALOWNERMOBILETELEPHONE"]
         tags["CURRENTOWNERCELLPHONE"] = a["ORIGINALOWNERMOBILETELEPHONE"]
         tags["CURRENTOWNEREMAIL"] = a["ORIGINALOWNEREMAILADDRESS"]
-        tags["CURRENTOWNERJURISDICTION" : a["ORIGINALOWNERJURISDICTION"],
+        tags["CURRENTOWNERJURISDICTION"] = a["ORIGINALOWNERJURISDICTION"]
 
     # If the animal doesn't have a current owner, but does have an open
     # movement with a future date on it, look up the owner and use that 
