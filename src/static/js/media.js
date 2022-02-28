@@ -923,6 +923,7 @@ $(function() {
                         "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
+                    toaddresses: toaddresses,
                     subject: common.replace_all(media.selected_filenames(), ".html", ".pdf"),
                     attachments: common.replace_all(media.selected_filenames(), ".html", ".pdf"),
                     animalid: (controller.animal && controller.animal.ID),
