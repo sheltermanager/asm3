@@ -1099,7 +1099,7 @@ def handler_viewincident(session, l, dbo, a, amls, cit, dia, logs, homelink, pos
     h.append(tr( _("Notes", l), a["CALLNOTES"]))
     h.append(tr( _("Completion Date/Time", l), dt(a["COMPLETEDDATE"])))
     comptp = a["COMPLETEDNAME"]
-    if a["COMPLETEDDATE"] is None and asm3.users.check_permissions_bool(session, asm3.users.CHANGE_INCIDENT):
+    if a["COMPLETEDDATE"] is None and asm3.users.check_permission_bool(session, asm3.users.CHANGE_INCIDENT):
         comptp = jqm_select("comptype", 
             '<option value="-1"></option>' + jqm_options(asm3.lookups.get_incident_completed_types(dbo), "ID", "COMPLETEDNAME"), 
             "completedtype", str(a["ID"]))
