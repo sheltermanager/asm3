@@ -22,7 +22,7 @@ The following files are needed:
     Events - Vaccines Administered -> vaccinations.csv
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/sluv_sm2706"
+PATH = "/home/robin/tmp/asm3_import_data/sluv_bg2689"
 
 DEFAULT_BREED = 261 # default to dsh
 DATE_FORMAT = "MDY" # Normally MDY
@@ -65,11 +65,18 @@ def size_id_for_name(name):
         "X-LARGE": 0
     }[name.upper().strip()]
 
-#uo = asm.Owner()
-#owners.append(uo)
-#uo.OwnerSurname = "Unknown Owner"
-#uo.OwnerName = "Unknown Owner"
-#uo.Comments = "Catchall for adopted animal data from ShelterLuv"
+uo = asm.Owner()
+owners.append(uo)
+uo.OwnerSurname = "Unknown Owner"
+uo.OwnerName = "Unknown Owner"
+uo.Comments = "Catchall for adopted animal data from ShelterLuv"
+
+ur = asm.Owner()
+owners.append(ur)
+ur.OwnerSurname = "Unknown Rescue"
+ur.OwnerName = "Unknown Rescue"
+ur.OwnerType = 2
+ur.Comments = "Catchall for transferred animal data from ShelterLuv"
 
 print("\\set ON_ERROR_STOP\nBEGIN;")
 print("DELETE FROM adoption WHERE ID >= %s;" % START_ID)
@@ -130,7 +137,7 @@ for d in asm.csv_to_list("%s/animals.csv" % PATH):
     a.ShortCode = d["Animal ID"]
     a.ShelterCode = d["Animal ID"]
     ppa[d["Animal ID"]] = a
-    a.AnimalName = d["Name"]
+    if "Name" in d: a.AnimalName = d["Name"]
     if "Created Date" in d: a.DateBroughtIn = getdate(d["Created Date"])
     dob = a.DateBroughtIn
     if dob is None: dob = asm.today()
@@ -190,6 +197,8 @@ for d in asm.csv_to_list("%s/intake.csv" % PATH):
     a = ppa[d["Animal ID"]]
     intaketype = d["Intake Type"] # Seems to change names a lot, has been AnimalIntakeType, Entry Category
     subtype = d["Intake Sub-Type"] # Also seems to change, has been AnimalIntakeSub-Type, Animal Type
+    # Animal name
+    if "Name" in d: a.AnimalName = d["Name"]
     # Intake Date
     if "Intake Date" in d: a.DateBroughtIn = getdate(d["Intake Date"])
     # Intake person
@@ -259,8 +268,9 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
     if d["Assoc. Person Name"] in ppo: o = ppo[d["Assoc. Person Name"]]
     a = None
     if d["Animal ID"] in ppa: a = ppa[d["Animal ID"]]
-    if o is None or a is None: continue
+    if a is None: continue
     if d["Outcome Type"] == "Adoption":
+        if o is None: o = uo
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
@@ -275,6 +285,21 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
         a.LastChangedDate = m.MovementDate
         movements.append(m)
     elif d["Outcome Type"] == "Transfer Out" or d["Outcome Type"] == "Transfer":
+        # Looks like transfer out doesn't require a person in shelterluv. If we don't have one, look
+        # at the "Transfer To" column to get the name and create a person. If we don't have one or
+        # it's blank use an unknown person.
+        if o is None and "Transfer To" in d:
+            if d["Transfer To"] in ppo:
+                o = ppo[d["Transfer To"]]
+            else:
+                o = asm.Owner()
+                owners.append(o)
+                ppo[d["Transfer To"]] = o
+                o.OwnerSurname = d["Transfer To"]
+                o.OwnerName = d["Transfer To"]
+                o.OwnerType = 2
+        else:
+            o = ur
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
@@ -289,6 +314,7 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
         a.LastChangedDate = m.MovementDate
         movements.append(m)
     elif d["Outcome Type"] == "Return To Owner/Guardian" or d["Outcome Type"] == "Reclaimed":
+        if o is None: o = uo
         m = asm.Movement()
         m.AnimalID = a.ID
         m.OwnerID = o.ID
