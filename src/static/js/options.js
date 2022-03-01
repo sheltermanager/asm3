@@ -1320,7 +1320,7 @@ $(function() {
                 '<option value="location">' + _("Location") + '</option>',
                 '<option value="locationbreed">' + _("Location and Breed") + '</option>',
                 '<option value="locationspecies">' + _("Location and Species") + '</option>',
-                '<option value="locationspeciesage">' + _("Location and Species (Age Group)") + '</option>',
+                '<option value="locationspeciesage">' + _("Location and Species (Age)") + '</option>',
                 '<option value="locationtype">' + _("Location and Type") + '</option>',
                 '<option value="locationunit">' + _("Location and Unit") + '</option>',
                 '<option value="locationnv">' + _("Location (No Virtual)") + '</option>',

@@ -519,7 +519,7 @@ $(function() {
                 this.render_view("DISPLAYLOCATIONNAME", "SPECIESNAME", "DISPLAYLOCATIONNAME,SPECIESNAME,ANIMALNAME", true, false);
             }
             else if (viewmode == "locationspeciesage") {
-                this.render_view("DISPLAYLOCATIONNAME", "SPECIESNAME", "DISPLAYLOCATIONNAME,SPECIESNAME,AGEGROUP,ANIMALNAME", true, false);
+                this.render_view("DISPLAYLOCATIONNAME", "SPECIESNAME", "DISPLAYLOCATIONNAME,SPECIESNAME,-DATEOFBIRTH,ANIMALNAME", true, false);
             }
             else if (viewmode == "locationtype") {
                 this.render_view("DISPLAYLOCATIONNAME", "ANIMALTYPENAME", "DISPLAYLOCATIONNAME,ANIMALTYPENAME,ANIMALNAME", true, false);
@@ -625,7 +625,7 @@ $(function() {
             h.push('<option value="location">' + _("Location") + '</option>');
             h.push('<option value="locationbreed">' + _("Location and Breed") + '</option>');
             h.push('<option value="locationspecies">' + _("Location and Species") + '</option>');
-            h.push('<option value="locationspeciesage">' + _("Location and Species (Age Group)") + '</option>');
+            h.push('<option value="locationspeciesage">' + _("Location and Species (Age)") + '</option>');
             h.push('<option value="locationtype">' + _("Location and Type") + '</option>');
             h.push('<option value="locationunit">' + _("Location and Unit") + '</option>');
             h.push('<option value="locationnv">' + _("Location (No Virtual)") + '</option>');
