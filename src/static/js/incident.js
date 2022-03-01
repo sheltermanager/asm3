@@ -533,8 +533,10 @@ $(function() {
                     $("#dispatchtime").val(format.time(new Date()));
                     $("#asm-details-accordion").accordion("option", "active", 2);
                     $("#button-dispatch").button("disable");
-                    validate.dirty(true);
-                    validate.save();
+                    header.show_loading(_("Saving..."));
+                    validate.save(function() {
+                        common.route_reload();
+                    });
                 }
             });
 
@@ -547,8 +549,10 @@ $(function() {
                     $("#respondedtime").val(format.time(new Date()));
                     $("#asm-details-accordion").accordion("option", "active", 2);
                     $("#button-respond").button("disable");
-                    validate.dirty(true);
-                    validate.save();
+                    header.show_loading(_("Saving..."));
+                    validate.save(function() {
+                        common.route_reload();
+                    });
                 }
             });
 
