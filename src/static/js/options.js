@@ -453,6 +453,7 @@ $(function() {
                     8962,  // House
                     9113,  // Print
                     9114,  // Clear screen
+                    9200,  // Alarm clock
                     9728,  // Sun
                     9729,  // Cloud
                     9731,  // Snowman
@@ -486,13 +487,23 @@ $(function() {
                     10052, // Snowflake
                     10062, // White heavy cross
                     10084, // Heavy heart
+                    127798, // Spicy pepper
                     127960, // House - buildings
                     127968, // House - building
                     128008, // Cat
                     128021, // Dog
                     128049, // Cat Face
                     128054, // Dog Face,
-                    128571 // Cat with heart eyes
+                    128137, // Syringe
+                    128138, // Pill
+                    128266, // Speaker with high volume
+                    128272, // Lock with key
+                    128571, // Cat with heart eyes
+                    129440, // Microbe
+                    129460, // Bone
+                    129514, // Test tube
+                    129516, // DNA
+                    129745  // Bell pepper
                 ],
                 emblemoptions = [],
                 condoptions = '<option></option><option value="has">' + _("if animal has") + 
