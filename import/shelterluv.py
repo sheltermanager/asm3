@@ -27,7 +27,7 @@ PATH = "/home/robin/tmp/asm3_import_data/sluv_bg2689"
 DEFAULT_BREED = 261 # default to dsh
 DATE_FORMAT = "MDY" # Normally MDY
 USE_SMDB_ENTRY_TYPE = False # If False, maps to new db defaults, if True looks up animal type and entry reason in target db
-START_ID = 100
+START_ID = 500
 
 animals = []
 animaltests = []
@@ -293,8 +293,6 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
     a = None
     if d["Animal ID"] in ppa: a = ppa[d["Animal ID"]]
     if a is None: continue
-    if d["Animal ID"].find("A-7368") != -1:
-        asm.stderr("OUTCOME TYPE='%s'" % d["Outcome Type"])
     if d["Outcome Type"] == "Adoption":
         if o is None: o = uo
         m = asm.Movement()
@@ -339,7 +337,7 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
         if "Outcome By" in d: a.CreatedBy = "conversion/%s" % d["Outcome By"]
         a.LastChangedDate = m.MovementDate
         movements.append(m)
-    elif d["Outcome Type"] == "Return to Owner/Guardian" or d["Outcome Type"] == "Reclaimed":
+    elif d["Outcome Type"] == "Return To Owner/Guardian" or d["Outcome Type"] == "Return to Owner/Guardian" or d["Outcome Type"] == "Reclaimed":
         if o is None: o = uo
         m = asm.Movement()
         m.AnimalID = a.ID
@@ -354,6 +352,35 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
         if "Outcome By" in d: a.CreatedBy = "conversion/%s" % d["Outcome By"]
         a.LastChangedDate = m.MovementDate
         movements.append(m)
+    elif d["Outcome Type"] == "Stolen / Lost":
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.OwnerID = 0
+        m.MovementType = 6
+        m.MovementDate = getdate(d["Outcome Date"])
+        a.Archived = 1
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 6
+        a.CreatedDate = m.MovementDate
+        if "Outcome By" in d: a.CreatedBy = "conversion/%s" % d["Outcome By"]
+        a.LastChangedDate = m.MovementDate
+        movements.append(m)
+    elif d["Outcome Type"] == "Service Out" or d["Outcome Type"] == "feral/wildlife":
+        # This seems to be what ShelterLuv calls TNRs
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.OwnerID = 0
+        m.MovementType = 7
+        m.MovementDate = getdate(d["Outcome Date"])
+        a.Archived = 1
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 7
+        a.CreatedDate = m.MovementDate
+        if "Outcome By" in d: a.CreatedBy = "conversion/%s" % d["Outcome By"]
+        a.LastChangedDate = m.MovementDate
+        movements.append(m)
     elif d["Outcome Type"] == "Euthanasia":
         a.DeceasedDate = getdate(d["Outcome Date"])
         a.PutToSleep = 1
@@ -364,6 +391,8 @@ for d in asm.csv_to_list("%s/outcomes.csv" % PATH):
         a.PutToSleep = 0
         a.PTSReasonID = 2 # Died
         a.Archived = 1
+    else:
+        asm.stderr("UNKNOWN OUTCOME TYPE '%s'" % d["Outcome Type"])
 
 if asm.file_exists("%s/tests.csv" % PATH):
     for d in asm.csv_to_list("%s/tests.csv" % PATH):
