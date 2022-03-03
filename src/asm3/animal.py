@@ -1678,8 +1678,7 @@ def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid 
     """
     # Don't do anything if there's no filter
     if locationfilter == "" and siteid == 0 and visibleanimalids == "": return ""
-    if tablequalifier != "" and not tablequalifier.endswith("."): tablequalifier += "."
-    if tablequalifier == "": tablequalifier = "animal."
+    if tablequalifier == "": tablequalifier = "animal"
     clauses = []
     hasvisibleidsfilter = locationfilter.find("-12") != -1
     # Strip anything that has set visibleanimalids as they are not locations or movement types
@@ -1688,19 +1687,21 @@ def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid 
         # If movement types are included in the filter, build another in clause
         locs = locationfilter.split(",")
         mtfilter = "0"
+        nsfilter = ""
         if "-1" in locs: mtfilter += ",1"
         if "-2" in locs: mtfilter += ",2"
         if "-8" in locs: mtfilter += ",8"
-        clauses.append("(%(tq)sShelterLocation IN (%(lf)s) OR %(tq)sActiveMovementType IN (%(mt)s))" % { "tq": tablequalifier, "lf": locationfilter, "mt": mtfilter })
+        if "-9" in locs: nsfilter = " OR NonShelterAnimal=1"
+        clauses.append(f"({tablequalifier}.ShelterLocation IN ({locationfilter}) OR {tablequalifier}.ActiveMovementType IN ({mtfilter}) {nsfilter})")
     if siteid != 0:
         clauses.append("il.SiteID = %s" % siteid)
     if visibleanimalids != "":
-        clauses.append("%(tq)sID IN (%(va)s)" % { "tq": tablequalifier, "va": visibleanimalids })
+        clauses.append(f"{tablequalifier}.ID IN ({visibleanimalids})")
     # Special case - the only location filter the user has is one of the visible ids
     # filters like "My Fosters" - but they don't have any IDs listed.
     # if we don't restrict them now, they'll see everything since we'll be left with no clauses
     if visibleanimalids == "" and hasvisibleidsfilter and locationfilter == "":
-        clauses.append("%sID IN (0)" % tablequalifier)
+        clauses.append(f"{tablequalifier}.ID IN (0)")
     c = "(" + " OR ".join(clauses) + ")"
     # If we've got nothing left by this point, don't add a prefix/suffix/where
     if c == "": return ""
