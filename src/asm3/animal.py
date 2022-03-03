@@ -1691,7 +1691,7 @@ def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid 
         if "-1" in locs: mtfilter += ",1"
         if "-2" in locs: mtfilter += ",2"
         if "-8" in locs: mtfilter += ",8"
-        if "-9" in locs: nsfilter = " OR NonShelterAnimal=1"
+        if "-9" in locs: nsfilter = f" OR {tablequalifier}.NonShelterAnimal=1"
         clauses.append(f"({tablequalifier}.ShelterLocation IN ({locationfilter}) OR {tablequalifier}.ActiveMovementType IN ({mtfilter}) {nsfilter})")
     if siteid != 0:
         clauses.append("il.SiteID = %s" % siteid)
