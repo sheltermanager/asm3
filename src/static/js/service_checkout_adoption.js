@@ -65,8 +65,7 @@ $(document).ready(function() {
                 '</div>',
             '</div>',
         '</div>',
-        '<div id="signature" style="margin-left: auto; margin-right: auto; ' +
-            'max-width: 500px; width: 100%; height: 200px; border: 1px solid #aaa;"></div>',
+        '<div id="signature" style="margin-left: auto; margin-right: auto; max-height: 300px; max-width: 800px; width: 95vw; height: 70vh; border: 1px solid #aaa;"></div>',
         '<div class="mb-3">',
             '<small class="text-muted">' + _("Once signed, this document cannot be edited or tampered with.") + '</small>',
         '</div>',

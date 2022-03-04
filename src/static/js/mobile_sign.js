@@ -59,7 +59,7 @@ $(document).ready(function() {
                     '</div>',
                 '</div>',
             '</div>',
-            '<div id="signature" style="max-width: 500px; width: 100%; height: 200px; border: 1px solid #aaa;"></div>',
+            '<div id="signature" style="max-height: 300px; max-width: 800px; width: 95vw; height: 70vh; border: 1px solid #aaa;"></div>',
             '<div class="mb-3">',
                 '<small class="text-muted">' + _("Once signed, this document cannot be edited or tampered with.") + '</small>',
             '</div>',
@@ -78,7 +78,9 @@ $(document).ready(function() {
 
     $("body").html(h);
 
-    $("#signature").signature({ guideline: true });
+    setTimeout(function() {
+        $("#signature").signature({ guideline: true });
+    }, 200);
 
     $("#sig-clear").click(function() {
         $("#signature").signature("clear");

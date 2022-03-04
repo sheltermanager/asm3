@@ -1,6 +1,7 @@
 45
 ================
 
+04/03/22 Use viewport units to increase sig size on mobile #1109
 03/03/22 Fix non-shelter location filter with search #1107
 03/03/22 Clone microchip number if allowing duplicates is on
 02/03/22 Add some additional emblem icons
