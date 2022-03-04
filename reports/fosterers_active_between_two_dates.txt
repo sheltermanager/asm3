@@ -2,7 +2,7 @@ Fosterers Active between two Dates
 ###
 Movements
 ###
-3000/Any
+3000/Any rev02
 ###
 Fosterers who fostered between two dates with contact info and notes
 ###
@@ -20,7 +20,13 @@ AdditionalFlags,
 FosterCapacity
 FROM owner
 WHERE IsFosterer = 1
-AND EXISTS(SELECT ID FROM adoption WHERE MovementType = 2 AND OwnerID = owner.ID AND (MovementDate <= '$@from$' OR MovementDate <= '$@to$') AND (ReturnDate Is Null OR ReturnDate >= '$@from$' OR ReturnDate >= '$@to$'))
+AND EXISTS(SELECT ID FROM adoption 
+    INNER JOIN animal ON animal.ID = adoption.ID 
+    WHERE MovementType = 2 
+    AND OwnerID = owner.ID 
+    AND (MovementDate <= '$@from$' OR MovementDate <= '$@to$') 
+    AND (ReturnDate Is Null OR ReturnDate >= '$@from$') 
+    AND (DeceasedDate Is Null OR DeceasedDate >= '@$from$'))
 ORDER BY OwnerName
 ###
 $$HEADER
