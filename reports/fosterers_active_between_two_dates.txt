@@ -2,7 +2,7 @@ Fosterers Active between two Dates
 ###
 Movements
 ###
-3000/Any rev04
+3000/Any rev05
 ###
 Fosterers with active fosters between two dates
 ###
@@ -17,7 +17,7 @@ OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, EmailAddress, HomeTelephone
 Comments,
 AdditionalFlags,
 (SELECT COUNT(*) FROM adoption 
- 	INNER JOIN animal ON animal.ID = adoption.ID 
+ 	INNER JOIN animal ON animal.ID = adoption.AnimalID 
  	WHERE MovementType=2
  	AND adoption.OwnerID = owner.ID
     AND (MovementDate <= '$@to$') 
@@ -27,7 +27,7 @@ FosterCapacity
 FROM owner
 WHERE IsFosterer = 1
 AND EXISTS(SELECT adoption.ID FROM adoption 
-    INNER JOIN animal ON animal.ID = adoption.ID 
+    INNER JOIN animal ON animal.ID = adoption.AnimalID 
     WHERE MovementType = 2 
     AND adoption.OwnerID = owner.ID 
     AND (MovementDate <= '$@to$') 
