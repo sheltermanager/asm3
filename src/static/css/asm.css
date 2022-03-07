@@ -808,6 +808,10 @@ select:disabled, input:disabled, textarea:disabled {
     cursor: pointer;
 }
 
+.asm-table-fullwidth {
+    width: 100%;
+}
+
 .asm-table-layout {
     border-spacing: 5px 1px;
 }

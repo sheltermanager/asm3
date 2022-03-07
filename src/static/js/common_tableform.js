@@ -959,6 +959,7 @@ const tableform = {
      *        label: "label", 
      *        labelpos: "left", (or above, only really valid for textareas)
      *        type: "check|text|textarea|richtextarea|date|currency|number|select|animal|person|raw|nextcol", 
+     *        rowid: "thisrow", ( id for the row containing the label/field)
      *        readonly: false, (read only for editing, ok for creating)
      *        halfsize: false, (use the asm-halftextbox class)
      *        justwidget: false, (output tr/td/label)
@@ -978,23 +979,26 @@ const tableform = {
      *        personfilter: "all",   (only valid for person type)
      *        personmode: "full",    (only valid for person type)
      *        change: function(changeevent), 
-     *        blur: function(blurevent)
+     *        blur: function(blurevent),
+     *        xbutton: "text" (render an extra button to the right of the item with id button-post_field and inner text)
      *      } ]
      * columns: number of cols to render (1 if undefined)
-     * dontrenderoutertable: don't render the outer table tag (undefined means render it)
+     * options: - if undefined: { render_container: true; full_width: true; }
      */
-    fields_render: function(fields, columns, dontrenderoutertable) {
-        let d = "";
+    fields_render: function(fields, columns, coptions) {
+        let d = "", 
+            options = { render_container: true, full_width: true };
         if (columns === undefined) { columns = 1; }
-        if (!dontrenderoutertable) {
-            d = "<table width=\"100%\">";
+        if (coptions !== undefined) { options = Object.assign(options, coptions); }
+        if (options.render_container) {
+            d = '<table class="asm-table-layout ' + (options.full_width ? "asm-table-fullwidth" : "" ) + '">';
         }
         if (columns > 1) {
             // We have multiple columns, start the first one
             d += "<tr><td><table>";
         }
         $.each(fields, function(i, v) {
-            let labelx = "";
+            let labelx = "", tr = "<tr>";
             if (v.hideif && v.hideif()) {
                 return;
             }
@@ -1004,8 +1008,9 @@ const tableform = {
             if (v.callout) {
                 labelx += '&nbsp;<span id="callout-' + v.post_field + '" class="asm-callout">' + v.callout + '</span>';
             }
+            if (v.rowid) { tr = '<tr id="' + v.rowid + '">'; }
             if (v.type == "check") {
-                if (!v.justwidget) { d += "<tr><td></td><td>"; }
+                if (!v.justwidget) { d += tr + "<td></td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"checkbox\" class=\"asm-checkbox\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1014,7 +1019,7 @@ const tableform = {
                 if (!v.justwidget) { d += "<label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td></tr>"; }
             }
             else if (v.type == "text") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox " + v.classes;
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
@@ -1024,15 +1029,16 @@ const tableform = {
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
                 if (v.maxlength) { d += "maxlength=" + v.maxlength; }
                 d += "/>";
+                if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "textarea") {
                 if (!v.justwidget) {
                     if (v.labelpos && v.labelpos == "above") {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
                     }
                     else {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
                     }
                 }
                 if (!v.rows) { v.rows = 5; }
@@ -1041,6 +1047,7 @@ const tableform = {
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
+                if (!v.tooltip) { d += "title=\"" + html.title(v.label) + "\" "; } // use the label if a title wasn't given
                 if (v.maxlength) { d += "maxlength=" + v.maxlength; }
                 d += "></textarea>";
                 if (!v.justwidget) { d += "</td></tr>"; }
@@ -1048,10 +1055,10 @@ const tableform = {
             else if (v.type == "richtextarea") {
                 if (!v.justwidget) {
                     if (v.labelpos && v.labelpos == "above") {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
                     }
                     else {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
                     }
                 }
                 if (!v.width) { v.width = "100%"; }
@@ -1067,12 +1074,12 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "htmleditor") {
-                    if (!v.justwidget) {
+                if (!v.justwidget) {
                     if (v.labelpos && v.labelpos == "above") {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
                     }
                     else {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
                     }
                 }
                 if (!v.width) { v.width = "100%"; }
@@ -1087,12 +1094,12 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "sqleditor") {
-                    if (!v.justwidget) {
+                if (!v.justwidget) {
                     if (v.labelpos && v.labelpos == "above") {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
                     }
                     else {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
                     }
                 }
                 if (!v.width) { v.width = "100%"; }
@@ -1107,7 +1114,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "date") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-datebox";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1120,7 +1127,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "time") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-timebox ";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1133,7 +1140,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "datetime") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<span style=\"white-space: nowrap\">";
                 d += "<input id=\"" + v.post_field + "date\" type=\"text\" class=\"asm-textbox asm-datebox asm-halftextbox\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "date\" ";
@@ -1152,7 +1159,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "currency") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-currencybox";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1165,7 +1172,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "intnumber") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-intbox ";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1178,7 +1185,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "number") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-numberbox ";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1191,7 +1198,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "select") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<select id=\"" + v.post_field + "\" class=\"asm-selectbox";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1203,7 +1210,13 @@ const tableform = {
                 d += ">";
                 if (common.is_array(v.options)) {
                     $.each(v.options, function(ia, va) {
-                        d += "<option>" + va + "</option>";
+                        if (va.indexOf("|") != -1) {
+                            let [ov, ol] = va.split("|");
+                            d += '<option value="' + ov + '">' + ol + '</option>';
+                        }
+                        else {
+                            d += "<option>" + va + "</option>";
+                        }
                     });
                 }
                 else if (common.is_string(v.options)) {
@@ -1217,7 +1230,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "selectmulti") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<select id=\"" + v.post_field + "\" multiple=\"multiple\" class=\"asm-bsmselect";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1238,7 +1251,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "person") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-personchooser\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1249,7 +1262,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "animal") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-animalchooser\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1259,7 +1272,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "animalmulti") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-animalchoosermulti\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1269,7 +1282,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "file") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" name=\"" + v.post_field + "\" type=\"file\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1293,7 +1306,7 @@ const tableform = {
             // Close out the current column for multi column layouts
             d += "</table></td></tr>";
         }
-        if (!dontrenderoutertable) {
+        if (options.render_container) {
             d += "</table>";
         }
         return d;
