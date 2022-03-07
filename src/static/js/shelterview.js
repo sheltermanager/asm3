@@ -486,7 +486,7 @@ $(function() {
                 this.render_view("ADOPTIONCOORDINATORNAME", "", "ADOPTIONCOORDINATORNAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "coordinatorfosterer") {
-                this.render_view("ADOPTIONCOORDINATORNAME", "CURRENTOWNERNAME", "ADOPTIONCOORDINATORNAME,CURRENTOWNERNAME,ANIMALNAME", false, false);
+                this.render_view("ADOPTIONCOORDINATORNAME", "CURRENTOWNERNAME", "ADOPTIONCOORDINATORNAME,CURRENTOWNERNAME,SPECIESNAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "entrycategory") {
                 this.render_view("ENTRYREASONNAME", "", "ENTRYREASONNAME,ANIMALNAME", false, false);
