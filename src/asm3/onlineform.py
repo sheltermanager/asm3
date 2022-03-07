@@ -661,6 +661,13 @@ def insert_onlineformfield_from_form(dbo, username, post):
     """
     Create an onlineformfield record from posted data
     """
+    l = dbo.locale
+    samename = dbo.query_int("SELECT COUNT(ID) FROM onlineformfield " \
+        "WHERE OnlineFormID=? AND UPPER(FieldName) LIKE UPPER(?)", \
+        [post.integer("formid"), post["fieldname"]])
+    if samename > 0:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("You have already used field name '{0}' in this form", l).format(post["fieldname"]))
+
     return dbo.insert("onlineformfield", {
         "OnlineFormID":     post.integer("formid"),
         "FieldName":        post["fieldname"],
@@ -678,6 +685,13 @@ def update_onlineformfield_from_form(dbo, username, post):
     """
     Update an onlineformfield record from posted data
     """
+    l = dbo.locale
+    samename = dbo.query_int("SELECT COUNT(ID) FROM onlineformfield " \
+        "WHERE ID<>? AND OnlineFormID=? AND UPPER(FieldName) LIKE UPPER(?)", \
+        [post.integer("formfieldid"), post.integer("formid"), post["fieldname"]])
+    if samename > 0:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("You have already used field name '{0}' in this form", l).format(post["fieldname"]))
+
     dbo.update("onlineformfield", post.integer("formfieldid"), {
         "FieldName":        post["fieldname"],
         "FieldType":        post.integer("fieldtype"),

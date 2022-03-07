@@ -64,7 +64,7 @@ $(function() {
                     try {
                         await tableform.dialog_show_edit(dialog, row, { onload: onlineform.check_controls });
                         tableform.fields_update_row(dialog.fields, row);
-                        await tableform.fields_post(dialog.fields, "mode=update&formfieldid=" + row.ID, "onlineform");
+                        await tableform.fields_post(dialog.fields, "mode=update&formid=" + controller.formid + "&formfieldid=" + row.ID, "onlineform");
                         tableform.table_update(table);
                         tableform.dialog_close();
                     }
