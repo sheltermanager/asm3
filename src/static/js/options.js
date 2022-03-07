@@ -496,6 +496,7 @@ $(function() {
                     128054, // Dog Face,
                     128137, // Syringe
                     128138, // Pill
+                    128169, // Poop
                     128266, // Speaker with high volume
                     128272, // Lock with key
                     128571, // Cat with heart eyes
@@ -503,6 +504,7 @@ $(function() {
                     129460, // Bone
                     129514, // Test tube
                     129516, // DNA
+                    129713, // Worm
                     129745  // Bell pepper
                 ],
                 emblemoptions = [],
