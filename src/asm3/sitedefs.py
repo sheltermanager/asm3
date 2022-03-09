@@ -320,6 +320,7 @@ ASMSELECT_JS = get_string("asmselect_js", 'static/lib/asmselect/1.0.4a/jquery.as
 BASE64_JS = get_string("base64_js", 'static/lib/base64/0.3.0/base64.min.js')
 BOOTSTRAP_JS = get_string("bootstrap_js", 'static/lib/bootstrap/5.1.0/js/bootstrap.min.js')
 BOOTSTRAP_CSS = get_string("bootstrap_css", 'static/lib/bootstrap/5.1.0/css/bootstrap.min.css')
+BOOTSTRAP_GRID_CSS = get_string("bootstrap_grid_css", 'static/lib/bootstrap/5.1.0/css/bootstrap-grid.min.css')
 BOOTSTRAP_ICONS_CSS = get_string("bootstrap_icons_css", 'static/lib/bootstrap-icons/1.5.0/bootstrap-icons.css')
 CODEMIRROR_JS = get_string("codemirror_js", 'static/lib/codemirror/5.11/lib/codemirror.js')
 CODEMIRROR_CSS = get_string("codemirror_css", 'static/lib/codemirror/5.11/lib/codemirror.css')
