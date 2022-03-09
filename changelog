@@ -1,6 +1,8 @@
 46
 ================
 
+09/03/22 Fix RTL issues with SQL/HTML editor
+09/03/22 Update CodeMirror to latest stable release
 07/03/22 Validate that online form field names are unique #1111
 07/03/22 Coordinator/fosterer shelter view group by species
 

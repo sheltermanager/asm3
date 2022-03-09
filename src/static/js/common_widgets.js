@@ -1446,6 +1446,7 @@ $.widget("asm.htmleditor", {
                 mode: "htmlmixed",
                 matchBrackets: true,
                 autofocus: false,
+                //direction: (asm.locale == "ar" || asm.locale == "he") ? "rtl" : "ltr",
                 extraKeys: {
                     "F11": function(cm) {
                         self.fullscreen(cm, !cm.getOption("fullScreen"));
@@ -1538,6 +1539,7 @@ $.widget("asm.sqleditor", {
                 mode: "text/x-sql",
                 matchBrackets: true,
                 autofocus: false,
+                //direction: (asm.locale == "ar" || asm.locale == "he") ? "rtl" : "ltr",
                 extraKeys: {
                     "F11": function(cm) {
                         self.fullscreen(cm, !cm.getOption("fullScreen"));
