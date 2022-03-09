@@ -552,7 +552,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     ss.add_id("pickuplocation", "a.PickupLocationID")
     ss.add_str("sheltercode", "a.ShelterCode")
     ss.add_str("litterid", "a.AcceptanceNumber")
-    ss.add_date("inbetweenfrom", "inbetweento", "a.MostRecentEntryDate")
+    ss.add_date_pair("inbetweenfrom", "inbetweento", "a.DateBroughtIn", "a.MostRecentEntryDate")
     ss.add_filter("goodwithchildren", "a.IsGoodWithChildren = 0")
     ss.add_filter("goodwithdogs", "a.IsGoodWithDogs = 0")
     ss.add_filter("goodwithcats", "a.IsGoodWithCats = 0")
