@@ -14,17 +14,15 @@ VIEWS = [ "adoption", "animal", "animalcontrol", "animalfound", "animallost", "a
 tables = {}
 for table in db.query("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"):
     tname = table.name
-    cols = {}
+    cols = []
     for col in db.query("pragma table_info(%s)" % tname):
-        cname = col.name
-        cols[cname] = ""
+        cols.append(col.name)
     tables[tname] = cols
 
 for v in VIEWS:
-    cols = {}
+    cols = []
     for col in db.query("pragma table_info(v_%s)" % v):
-        cname = col.name
-        cols[cname] = ""
+        cols.append(col.name)
     tables["v_%s" % v] = cols
 
 print("schema=%s;" % json.dumps(tables))
