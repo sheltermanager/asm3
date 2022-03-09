@@ -220,7 +220,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0, siteid =
         "(ac.FollowupDateTime3 Is Not Null AND ac.FollowupDateTime3 <= %(now)s AND NOT ac.FollowupComplete3 = 1) " \
         ")" % { "now": dbo.sql_date(dbo.now(settime="23:59:59")) } )
 
-    sql = "%s WHERE %s ORDER BY ac.ID" % (get_animalcontrol_query(dbo), " AND ".join(ss.ands))
+    sql = "%s WHERE %s ORDER BY ac.ID DESC" % (get_animalcontrol_query(dbo), " AND ".join(ss.ands))
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
 def reduce_find_results(dbo, username, rows):
