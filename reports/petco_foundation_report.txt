@@ -2,7 +2,7 @@ Petco Foundation Report
 ###
 Figures
 ###
-33600/PostgreSQL rev02
+33600/PostgreSQL rev03
 ###
 Annual figures for Petco Foundation grants
 ###
@@ -129,9 +129,9 @@ WHEN a.SpeciesID = 2 THEN 'Cats'
 ELSE 'Other' END AS AgeGroup,
 1 AS AllSources,
 CASE WHEN IsTransfer = 1 THEN 1 ELSE 0 END AS Transfers, 
-CASE WHEN ReasonName LIKE '%Surrender%' THEN 1 ELSE 0 END AS OwnerSurrender,
-CASE WHEN ReasonName LIKE '%Stray%' THEN 1 ELSE 0 END AS Stray,
-CASE WHEN ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%Stray%' AND IsTransfer = 0 THEN 1 ELSE 0 END AS OtherSources
+CASE WHEN IsTransfer = 0 AND ReasonName LIKE '%Surrender%' THEN 1 ELSE 0 END AS OwnerSurrender,
+CASE WHEN IsTransfer = 0 AND ReasonName LIKE '%Stray%' THEN 1 ELSE 0 END AS Stray,
+CASE WHEN IsTransfer = 0 AND ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%Stray%' THEN 1 ELSE 0 END AS OtherSources
 FROM animal a
 INNER JOIN entryreason er ON er.ID = a.EntryReasonID
 WHERE DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$'
@@ -144,12 +144,12 @@ WHEN a.SpeciesID = 2 THEN 'Cats'
 ELSE 'Other' END AS AgeGroup,
 1 AS AllSources,
 0 AS Transfers,
-1 AS OwnerSurrender,
-0 AS Stray,
-0 AS OtherSources
+CASE WHEN ad.MovementType=1 THEN 1 ELSE 0 END AS OwnerSurrender,
+CASE WHEN ad.MovementType=5 THEN 1 ELSE 0 END AS Stray,
+CASE WHEN ad.MovementType IN (3,4,6,7) THEN 1 ELSE 0 END AS OtherSources
 FROM adoption ad
 INNER JOIN animal a ON ad.AnimalID = a.ID
-WHERE ad.ReturnDate Is Not Null AND ad.ReturnDate >= '$PARENTARG1$' AND ad.ReturnDate <= '$PARENTARG2$' AND ad.MovementType IN (1,3,4,5,6)
+WHERE ad.ReturnDate Is Not Null AND ad.ReturnDate >= '$PARENTARG1$' AND ad.ReturnDate <= '$PARENTARG2$' AND ad.MovementType IN (1,3,4,5,6,7)
 AND NonShelterAnimal = 0
 ) dummy
 ORDER BY AgeGroup
@@ -215,8 +215,8 @@ ELSE 'Other' END AS AgeGroup,
 0 AS Adopted,
 0 AS Transferred,
 0 AS ReturnedToOwner,
-CASE WHEN DeceasedDate Is Not Null AND a.DiedOffShelter=0 AND a.PutToSleep = 1 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS Euthanized,
-CASE WHEN DeceasedDate Is Not Null AND a.DiedOffShelter=0 AND a.PutToSleep = 0 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS DiedInCare,
+CASE WHEN DeceasedDate Is Not Null AND a.PutToSleep = 1 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS Euthanized,
+CASE WHEN DeceasedDate Is Not Null AND a.PutToSleep = 0 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS DiedInCare,
 CASE WHEN DeceasedDate Is Not Null AND a.IsDOA = 1 THEN 1 ELSE 0 END AS Other
 FROM animal a
 WHERE DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0
