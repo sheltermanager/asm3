@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import asm, datetime, os
+import asm, datetime, os, dbfread
 
 """
 Import script for Shelterpro databases in DBF format
@@ -17,15 +17,15 @@ Will also look in PATH/images/IMAGEKEY.[jpg|JPG] for animal photos if available.
 29th December, 2016 - 2nd April 2020
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/shelterpro_bc2243"
+PATH = "/home/robin/tmp/asm3_import_data/shelterpro_mm2710"
 
 START_ID = 100
 
-INCIDENT_IMPORT = False
+INCIDENT_IMPORT = True
 LICENCE_IMPORT = False
-PICTURE_IMPORT = True
+PICTURE_IMPORT = False
 VACCINATION_IMPORT = True
-NOTE_IMPORT = True
+NOTE_IMPORT = False
 SHELTER_IMPORT = True 
 
 SEPARATE_ADDRESS_TABLE = True
@@ -41,7 +41,7 @@ class ExtraFieldParser(dbfread.FieldParser):
             return data
 
 def open_dbf(name):
-    return asm.read_dbf(name)
+    return asm.read_dbf("%s/%s.dbf" % (PATH, name))
 
 def gettype(animaldes):
     spmap = {
@@ -235,7 +235,7 @@ for row in canimal:
     a.Size = getsize(asm.strip(row["WEIGHT"]))
     a.BaseColourID = asm.colour_id_for_names(asm.strip(row["FURCOLR1"]), asm.strip(row["FURCOLR2"]))
     a.IdentichipNumber = asm.strip(row["MICROCHIP"])
-    if a.IdentichipNumber <> "": a.Identichipped = 1
+    if a.IdentichipNumber != "": a.Identichipped = 1
     comments = "Original breed: " + asm.strip(row["BREED1"]) + "/" + asm.strip(row["CROSSBREED"]) + ", age: " + age
     comments += ",Color: " + asm.strip(row["FURCOLR1"]) + "/" + asm.strip(row["FURCOLR2"])
     comments += ", Coat: " + asm.strip(row["COAT"])
