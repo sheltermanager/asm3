@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Service API &mdash; ASM 45u documentation</title>
+  <title>Service API &mdash; ASM 46u documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                45u
+                46u
               </div>
             
           
@@ -139,6 +139,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#json-recent-adoptions-and-xml-recent-adoptions">json_recent_adoptions and xml_recent_adoptions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-recent-changes-and-xml-recent-changes">json_recent_changes and xml_recent_changes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-shelter-animals-and-xml-shelter-animals">json_shelter_animals and xml_shelter_animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#media-file">media_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rss-timeline">rss_timeline</a></li>
 </ul>
 </li>
@@ -1058,6 +1059,15 @@ The method determines whether the format returned is JSON or XML:</p>
 information of fosterers and surrenders) will be stripped from the results. If
 you wish them to be included, pass an extra sensitive=1 parameter:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_shelter_animals&amp;username=user&amp;password=letmein&amp;sensitive=1
+</pre></div>
+</div>
+</div>
+<div class="section" id="media-file">
+<h2>media_file<a class="headerlink" href="#media-file" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 1 day</p>
+<p>Responds with media file data for the mediaid given. The content type is set to
+the correct MIME type for the data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=media_file&amp;username=user&amp;password=letmein&amp;mediaid=52
 </pre></div>
 </div>
 </div>

@@ -899,6 +899,16 @@ you wish them to be included, pass an extra sensitive=1 parameter::
 
     http://localhost:5000/service?method=xml_shelter_animals&username=user&password=letmein&sensitive=1
 
+media_file
+----------
+
+.. rubric:: Cache time: 1 day
+
+Responds with media file data for the mediaid given. The content type is set to
+the correct MIME type for the data::
+    
+    http://localhost:5000/service?method=media_file&username=user&password=letmein&mediaid=52
+
 rss_timeline
 ------------
 
