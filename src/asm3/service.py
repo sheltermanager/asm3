@@ -33,7 +33,7 @@ from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVI
 # Service methods that require authentication
 AUTH_METHODS = [
     "csv_mail", "csv_report", "json_report", "jsonp_report", "json_mail", "jsonp_mail",
-    "html_report", "rss_timeline", "upload_animal_image", "xml_adoptable_animal", 
+    "html_report", "media_file", "rss_timeline", "upload_animal_image", "xml_adoptable_animal", 
     "json_adoptable_animal", "xml_adoptable_animals", "json_adoptable_animals", 
     "jsonp_adoptable_animals", "xml_found_animals", "json_found_animals", 
     "jsonp_found_animals", "xml_held_animals", "json_held_animals", 
@@ -56,6 +56,7 @@ CACHE_PROTECT_METHODS = {
     "document_repository": [ "mediaid" ],
     "extra_image": [ "title" ],
     "media_image": [ "mediaid" ],
+    "media_file": [ "mediaid" ],
     "json_adoptable_animal": [ "animalid" ],
     "html_adoptable_animals": [ "speciesid", "animaltypeid", "locationid", "template", "underweeks", "overweeks" ],
     "html_adopted_animals": [ "days", "template", "speciesid", "animaltypeid" ],
@@ -488,8 +489,14 @@ def handler(post, path, remoteip, referer, querystring):
 
     elif method =="media_image":
         hotlink_protect("media_image", referer)
-        return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, 
-            asm3.dbfs.get_string_id( dbo, dbo.query_int("select dbfsid from media where id = ?", [mediaid]) ))
+        lastmodified, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, mediaid)
+        if medianame == "": return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
+        return set_cached_response(cache_key, account, mimetype, 86400, 86400, filedata)
+
+    elif method =="media_file":
+        lastmodified, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, mediaid)
+        if medianame == "": return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
+        return set_cached_response(cache_key, account, mimetype, 86400, 86400, filedata)
 
     elif method == "json_adoptable_animal":
         if asm3.utils.cint(animalid) == 0:
