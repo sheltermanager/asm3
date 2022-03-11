@@ -31,6 +31,8 @@ SHELTER_IMPORT = True
 SEPARATE_ADDRESS_TABLE = True
 IMPORT_ANIMALS_WITH_NO_NAME = True
 
+FAKE_ADOPTIONS_TO_EMPTY_SHELTER = True
+
 """ when faced with a field type it doesn't understand, dbfread can produce an error
     'Unknown field type xx'. This parser returns anything unrecognised as binary data """
 class ExtraFieldParser(dbfread.FieldParser):
@@ -173,8 +175,8 @@ for row in cperson:
     if "PERSONKEY" in row: personkey = row["PERSONKEY"]
     elif "UNIQUE" in row: personkey = row["UNIQUE"]
     ppo[personkey] = o
-    o.OwnerForeNames = asm.strip(row["FNAME"])
-    o.OwnerSurname = asm.strip(row["LNAME"])
+    o.OwnerForeNames = asm.strip(row["FNAME"]).title()
+    o.OwnerSurname = asm.strip(row["LNAME"]).title()
     o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
     # Find the address if it's in a separate table
     if SEPARATE_ADDRESS_TABLE:
@@ -182,17 +184,17 @@ for row in cperson:
             addrkey = addrlink[personkey]
             if addrkey in addresses:
                 add = addresses[addrkey]
-                o.OwnerAddress = add["address"]
-                o.OwnerTown = add["city"]
+                o.OwnerAddress = add["address"].title()
+                o.OwnerTown = add["city"].title()
                 o.OwnerCounty = add["state"]
-                o.OwnerPostcode = add["zip"]
+                o.OwnerPostcode = add["zip"].title()
     else:
         # Otherwise, address fields are in the person table
-        o.OwnerAddress = row["ADDR1"].encode("ascii", "xmlcharrefreplace") + "\n" + row["ADDR2"].encode("ascii", "xmlcharrefreplace")
-        o.OwnerTown = row["CITY"]
+        o.OwnerAddress = row["ADDR1"].encode("ascii", "xmlcharrefreplace").title() + "\n" + row["ADDR2"].encode("ascii", "xmlcharrefreplace").title()
+        o.OwnerTown = row["CITY"].title()
         o.OwnerCounty = row["STATE"]
         o.OwnerPostcode = row["POSTAL_ID"]
-    if asm.strip(row["EMAIL"]) != "(": o.EmailAddress = asm.strip(row["EMAIL"])
+    if asm.strip(row["EMAIL"]) != "(": o.EmailAddress = asm.strip(row["EMAIL"]).lower()
     if row["HOME_PH"] != 0: o.HomeTelephone = asm.strip(row["HOME_PH"])
     if row["WORK_PH"] != 0: o.WorkTelephone = asm.strip(row["WORK_PH"])
     if row["THIRD_PH"] != 0: o.MobileTelephone = asm.strip(row["THIRD_PH"])
@@ -506,9 +508,10 @@ if NOTE_IMPORT:
                 l.Date = asm.now()
             l.Comments = memo
 
-# Run back through the animals, if we have any that are still
-# on shelter after 2 years, add an adoption to an unknown owner
-#asm.adopt_older_than(animals, movements, uo.ID, 365*2)
+# If the option is on, take all leftover shelter animals off
+# shelter to an unknown adopter
+if FAKE_ADOPTIONS_TO_EMPTY_SHELTER:
+    asm.adopt_older_than(animals, movements, uo.ID, 0)
 
 # Now that everything else is done, output stored records
 for a in animals:
