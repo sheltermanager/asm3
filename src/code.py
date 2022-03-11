@@ -2619,10 +2619,16 @@ class document_gen(ASMEndpoint):
             c = asm3.clinic.get_appointment(dbo, recid)
             if c is None:
                 raise asm3.utils.ASMValidationError("%d is not a valid clinic id" % recid)
-            ownerid = c.OWNERID
-            tempname += " - " + c.OWNERNAME
-            asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
-            self.redirect("person_media?id=%d" % ownerid)
+            animalid = c["ANIMALID"]
+            ownerid = c["OWNERID"]
+            if ownerid: 
+                tempname = "%s - %s" % (tempname, asm3.person.get_person_name(dbo, ownerid))
+                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+                self.redirect("person_media?id=%d" % ownerid)
+            else:
+                tempname = "%s - %s" % (tempname, asm3.animal.get_animal_namecode(dbo, animalid))
+                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+                self.redirect("animal_media?id=%d" % animalid)
         elif linktype == "FOUNDANIMAL":
             tempname += " - " + asm3.utils.padleft(recid, 6)
             asm3.media.create_document_media(dbo, o.user, asm3.media.FOUNDANIMAL, recid, tempname, post["document"])
