@@ -143,9 +143,10 @@ class S3Storage(DBFSStorage):
 
     def _cache_ttl(self, name):
         """ Gets the cache ttl for a file based on its name/extension """
-        name = name.lower()
-        if name.endswith(".jpg") or name.endswith(".jpeg"): return (86400 * 7) # Cache images for a week
-        return (86400 * 2) # Cache everything else for two days
+        #name = name.lower()
+        #if name.endswith(".jpg") or name.endswith(".jpeg"): return (86400 * 7) # Cache images for a week
+        #return (86400 * 2) # Cache everything else for two days
+        return (86400 * 7) # Cache everything for 1 week
 
     def _s3client(self):
         """ Gets an s3 client.
@@ -163,7 +164,7 @@ class S3Storage(DBFSStorage):
         """ Returns the file data for url, reads through the disk cache """
         cachekey = self._cache_key(url)
         cachettl = self._cache_ttl(url)
-        cachedata = asm3.cachedisk.touch(cachekey, self.dbo.database, ttlremaining=86400, newttl=cachettl) # Use touch to refresh items expiring in less than 24 hours
+        cachedata = asm3.cachedisk.touch(cachekey, self.dbo.database, cachettl) # Use touch so accessed items stay in the cache longer
         if cachedata is not None:
             return cachedata
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))

@@ -254,11 +254,6 @@ class ASMEndpoint(object):
         if not asm3.animal.is_animal_in_location_filter(a, session.locationfilter, session.siteid, session.visibleanimalids):
             raise asm3.utils.ASMPermissionError("animal not in location filter/site")
 
-    def check_referer(self):
-        """ Checks whether we got here by a link from our UI """
-        if self.referer().find(BASE_URL) == -1:
-            raise asm3.utils.ASMError("Bad request")
-
     def check_locked_db(self):
         if session.dbo and session.dbo.locked: 
             l = session.locale
@@ -518,7 +513,6 @@ class image(ASMEndpoint):
     user_activity = False
 
     def content(self, o):
-        self.check_referer()
         try:
             lastmod, imagedata = asm3.media.get_image_file_data(o.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
         except Exception as err:
@@ -675,7 +669,6 @@ class media(ASMEndpoint):
     url = "media"
 
     def content(self, o):
-        self.check_referer()
         lastmod, medianame, mimetype, filedata = asm3.media.get_media_file_data(o.dbo, o.post.integer("id"))
         self.content_type(mimetype)
         self.header("Content-Disposition", "inline; filename=\"%s\"" % medianame)

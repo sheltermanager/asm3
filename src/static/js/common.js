@@ -812,10 +812,13 @@ const common = {
       uses the global schema object. */
     get_table_columns(tablename) {
         let a = [];
-        $.each(schema[tablename], function(k, v) {
-            a.push(k);
-        });
-        return a.sort();
+        // Updating codemirror from 5.11 to 5.65 changed the columns from a
+        // dictionary to a list, so this is no longer needed.
+        //$.each(schema[tablename], function(k, v) {
+        //    a.push(k);
+        //});
+        //return a.sort();
+        return schema[tablename].sort();
     },
 
     /**
@@ -2253,7 +2256,7 @@ const html = {
         var h = "", retired = "";
         $.each(l, function(i, v) {
             if (!valueprop) {
-                if (v.indexOf("|") == -1) {
+                if (v.indexOf && v.indexOf("|") == -1) {
                     h += "<option value=\"" + html.title(v) + "\">" + v + "</option>";
                 }
                 else {

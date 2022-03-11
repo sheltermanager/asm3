@@ -147,9 +147,9 @@ def put(key, path, value, ttl):
     except Exception as err:
         asm3.al.error("%s/%s: %s" % (path, key, err), "cachedisk.put")
 
-def touch(key, path, ttlremaining = 0, newttl = 0):
+def touch(key, path, newttl = 0):
     """
-    Retrieves a value from our disk cache and updates its ttl if there is less than ttlremaining until expiry.
+    Retrieves a value from our disk cache and resets its ttl.
     This can be used to make our timed expiry cache into a sort of hybrid with LRU.
     Returns None if the value is not found or has expired.
     """
@@ -169,16 +169,14 @@ def touch(key, path, ttlremaining = 0, newttl = 0):
             delete(key, path)
             return None
 
-        # Is there less than ttlremaining to expiry? If so update it to newttl
-        if o["expires"] - now < ttlremaining:
-            o["expires"] = now + newttl
-            with open(fname, "wb") as f:
-                pickle.dump(o, f)
+        # Reset the ttl
+        o["expires"] = now + newttl
+        with open(fname, "wb") as f:
+            pickle.dump(o, f)
 
         return o["value"]
     except Exception as err:
         asm3.al.error("%s/%s: %s" % (path, key, err), "cachedisk.touch")
-
 
 def remove_expired(path):
     """
