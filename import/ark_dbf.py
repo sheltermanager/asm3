@@ -6,11 +6,14 @@ import asm
 Import script for ARK DBF databases, covers people, animals, payments, events, licences and complaints
 
 21st March, 2015
-Last changed: 23rd Dec, 2019
+Last changed: 12th Mar, 2022
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/ark_im2058"
+PATH = "/home/robin/tmp/asm3_import_data/ark_tp2734"
 START_ID = 1000
+PICTURE_IMPORT = True
+
+BLANK_DATE = asm.parse_date("2015-01-01", "%Y-%m-%d") # Date used for licenses and incidents when the date was blank in ARK
 
 owners = []
 ownerdonations = []
@@ -36,6 +39,8 @@ asm.setid("ownerlicence", START_ID)
 asm.setid("adoption", START_ID)
 asm.setid("animalcontrol", START_ID)
 asm.setid("log", START_ID)
+asm.setid("media", START_ID)
+asm.setid("dbfs", START_ID)
 
 print("\\set ON_ERROR_STOP\nBEGIN;")
 print("DELETE FROM animal WHERE ID >= %s;" % START_ID)
@@ -45,6 +50,8 @@ print("DELETE FROM ownerdonation WHERE ID >= %s;" % START_ID)
 print("DELETE FROM ownerlicence WHERE ID >= %s;" % START_ID)
 print("DELETE FROM adoption WHERE ID >= %s;" % START_ID)
 print("DELETE FROM log WHERE ID >= %s;" % START_ID)
+print("DELETE FROM media WHERE ID >= %s;" % START_ID)
+print("DELETE FROM dbfs WHERE ID >= %s;" % START_ID)
 
 # Create an unknown owner
 uo = asm.Owner()
@@ -163,32 +170,37 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
             a.Archived = 1
             a.ActiveMovementType = m.MovementType
             a.ActiveMovementDate = m.MovementDate
+    if PICTURE_IMPORT and d["IMAGE"] != "" and d["IMAGE"] != "no_image.jpg" and d["IMAGE"] != "NO_IMAGE.JPG":
+        fpath = "%s/pictures/Animals/%s" % (PATH, d["IMAGE"])
+        imdata = asm.load_image_from_file(fpath, case_sensitive = False) # ARK is a Windows program
+        if imdata is not None:
+            asm.animal_image(a.ID, imdata)
 
 for p in asm.read_dbf("%s/PAYMENTS.DBF" % PATH):
+    if p["PMNT_ID"] not in ppo: continue
     od = asm.OwnerDonation()
     ownerdonations.append(od)
-    if p["PMNT_ID"] in ppo:
-        o = ppo[p["PMNT_ID"]]
-        od.OwnerID = o.ID
-        od.Donation = asm.get_currency(p["AMOUNT"])
-        od.Date = p["PMNT_DATE"]
-        od.DonationTypeID = 4 # Surrender
-        if p["PMNT_CODE"] == "ADP":
-            od.DonationTypeID = 2
+    o = ppo[p["PMNT_ID"]]
+    od.OwnerID = o.ID
+    od.Donation = asm.get_currency(p["AMOUNT"])
+    od.Date = p["PMNT_DATE"]
+    od.DonationTypeID = 4 # Surrender
+    if p["PMNT_CODE"] == "ADP":
+        od.DonationTypeID = 2
 
 for l in asm.read_dbf("%s/LICENSE.DBF" % PATH):
+    if l["OWNER_ID"] not in ppo: continue
     ol = asm.OwnerLicence()
     ownerlicences.append(ol)
-    if l["OWNER_ID"] in ppo:
-        o = ppo[l["OWNER_ID"]]
-        ol.OwnerID = o.ID
-        ol.LicenceTypeID = 1
-        ol.LicenceNumber = l["LIC_NUM"]
-        if "FEE" in l: ol.LicenceFee = asm.get_currency(l["FEE"])
-        ol.IssueDate = l["LIC_DATE"]
-        if ol.IssueDate is None: ol.IssueDate = asm.parse_date("2015-01-01", "%Y-%m-%d")
-        ol.ExpiryDate = l["LIC_EXDATE"]
-        if ol.ExpiryDate is None: ol.ExpiryDate = asm.parse_date("2015-01-01", "%Y-%m-%d")
+    o = ppo[l["OWNER_ID"]]
+    ol.OwnerID = o.ID
+    ol.LicenceTypeID = 1
+    ol.LicenceNumber = l["LIC_NUM"]
+    if "FEE" in l: ol.LicenceFee = asm.get_currency(l["FEE"])
+    ol.IssueDate = l["LIC_DATE"]
+    if ol.IssueDate is None: ol.IssueDate = BLANK_DATE
+    ol.ExpiryDate = l["LIC_EXDATE"]
+    if ol.ExpiryDate is None: ol.ExpiryDate = BLANK_DATE
 
 for c in asm.read_dbf("%s/CMPLAINT.DBF" % PATH):
     ac = asm.AnimalControl()
@@ -199,7 +211,7 @@ for c in asm.read_dbf("%s/CMPLAINT.DBF" % PATH):
         ac.OwnerID = ppo[c["ABOUT_ID"]].ID
     ac.CallDateTime = c["DATE"]
     if ac.CallDateTime is None:
-        ac.CallDateTime = asm.parse_date("2015-01-01", "%Y-%m-%d")
+        ac.CallDateTime = BLANK_DATE
     ac.IncidentDateTime = ac.CallDateTime
     ac.DispatchDateTime = ac.CallDateTime
     ac.CompletedDate = ac.CallDateTime

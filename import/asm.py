@@ -1511,11 +1511,23 @@ def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comme
     amt = makesql("animalmedicaltreatment", s)
     return "%s\n%s\n" % (am, amt)
 
-def load_image_from_file(filename):
+def load_image_from_file(fpath, case_sensitive = True):
     """ Reads image data from a disk file or returns None if the file does not exist """
-    if not os.path.exists(filename): return None
+    if case_sensitive and not os.path.exists(filename): return None
+    if not case_sensitive:
+        # Search the directory for the filename and compare case insensitive, then
+        # update fpath if we find the file
+        filename = fpath[fpath.rfind("/") + 1:]
+        foldername = fpath[0:fpath.rfind("/")]
+        result = False
+        for x in os.listdir(foldername):
+            if x.lower() == filename.lower():
+                fpath = foldername + "/" + x
+                result = True
+                break
+        if not result: return None
     try:
-        f = open(filename, "rb")
+        f = open(fpath, "rb")
         s = f.read()
         f.close()
         return s
