@@ -117,10 +117,22 @@
 <li class="toctree-l2"><a class="reference internal" href="#adoptapet-com">adoptapet.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#helpinglostpets-com">helpinglostpets.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#maddiesfund-org-maddie-s-pet-assistant">maddiesfund.org / Maddie’s Pet Assistant</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#petfinder-com">petfinder.com</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#petrescue-com-au">petrescue.com.au</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#petfinder-com">petfinder.com</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#extra-fields">Extra fields</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#petrescue-com-au">petrescue.com.au</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sending-microchip-numbers">Sending microchip numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#determing-whether-an-animal-is-vaccinated">Determing whether an animal is vaccinated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Extra fields</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#rescuegroups-org">rescuegroups.org</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#savour-life-com-au">savour-life.com.au</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#savour-life-com-au">savour-life.com.au</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Determing whether an animal is vaccinated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Extra fields</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#petslocated-com">petslocated.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#avid-pettrac-uk">AVID/PETtrac UK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#identichip-anibase-uk">idENTICHIP/Anibase UK</a></li>
@@ -472,6 +484,8 @@ triggered by setting your second breed to “Crossbreed”, “Unknown” or “
 <p class="admonition-title">Warning</p>
 <p>You have to let PetFinder know that you are using ASM to upload your data. Do this by logging into the PetFinder members area, go to the Admin System Help Center, then Contact Us and send PetFinder Tech Support a message that you are using ASM to publish animal data via their FTP server. They should give you the FTP login information and make sure permissions and quotas are correct.</p>
 </div>
+<div class="section" id="extra-fields">
+<h3>Extra fields<a class="headerlink" href="#extra-fields" title="Permalink to this headline">¶</a></h3>
 <p>PetFinder have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
 field names, you can label them anything you want, they must be linked to
@@ -490,6 +504,7 @@ for this animal.</p></li>
 note about those needs to be output on their PetFinder listing.</p></li>
 </ul>
 </div>
+</div>
 <div class="section" id="petrescue-com-au">
 <h2>petrescue.com.au<a class="headerlink" href="#petrescue-com-au" title="Permalink to this headline">¶</a></h2>
 <p>In addition to creating standalone websites with animals up for adoption, ASM
@@ -501,12 +516,25 @@ to you by PetRescue.com.au. All you need to do then is choose
 Publish to PetRescue.com.au in place of the normal internet publisher. The
 options for filtering animals are the same (see previous section for
 reference).</p>
-<p>Options are available to override the desex flag to send all your animals and to
-indicate which states you will adopt animals to. These are necessary as some
-states have different rules on whether a microchip number or other identifier
-is needed. The state the animal is currently located in (from the fosterer
-record if available or shelter details) is implicitly added to this set.</p>
-<p>ASM will determined if your animals are vaccinated, wormed or heartworm treated
+<div class="section" id="sending-microchip-numbers">
+<h3>Sending microchip numbers<a class="headerlink" href="#sending-microchip-numbers" title="Permalink to this headline">¶</a></h3>
+<p>Some Australian states have different rules on whether a microchip number or
+other identifier is needed. The state the animal is currently located in (from
+the fosterer record if available or shelter details) is implicitly added to
+this set.</p>
+<p>ASM will send the microchip number IF:</p>
+<ol class="arabic simple">
+<li><p>The publishing option “Send microchip numbers for all animals” is set to YES.</p></li>
+<li><p>The “Adoptable in states” publishing option contains VIC or NSW. A microchip
+number is mandatory in these states.</p></li>
+<li><p>The animal’s location postcode starts with a 2 or 3 for VIC/NSW. The
+animal’s location is either the shelter’s address from the main options page
+or the address of the person fostering the animal.</p></li>
+</ol>
+</div>
+<div class="section" id="determing-whether-an-animal-is-vaccinated">
+<h3>Determing whether an animal is vaccinated<a class="headerlink" href="#determing-whether-an-animal-is-vaccinated" title="Permalink to this headline">¶</a></h3>
+<p>ASM will determine if your animals are vaccinated, wormed or heartworm treated
 and indicate this to PetRescue via the following rules:</p>
 <ul class="simple">
 <li><p>If the animal has at least 1 previously given vaccination on file and there
@@ -516,6 +544,9 @@ the word “heart” in the last 6 months, the wormed flag is set.</p></li>
 <li><p>If the animal has a medical treatment containing the words “heart” and
 “worm” in the last 6 months, the heartworm treated flag is set.</p></li>
 </ul>
+</div>
+<div class="section" id="id1">
+<h3>Extra fields<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>PetRescue have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
 field names, you can label them anything you want, they must be linked to
@@ -539,6 +570,7 @@ microchip number OR breederid must be supplied.</p></li>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>PetRescue integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the PetRescue breeds, ASM will send it as “Mixed Breed” instead.</p>
+</div>
 </div>
 </div>
 <div class="section" id="rescuegroups-org">
@@ -573,6 +605,8 @@ first and view the SavourLife panel. Here, you should enter the username and
 password given to you by SavourLife. The options for filtering animals are the
 same as for other publishers, although ASM will only send dogs (Species 1) as
 SavourLife will not accept listings for other species of animals.</p>
+<div class="section" id="id2">
+<h3>Determing whether an animal is vaccinated<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>ASM will determined if your dogs are vaccinated, wormed or heartworm treated
 and indicate this to SavourLife via the following rules:</p>
 <ul class="simple">
@@ -583,6 +617,9 @@ the word “heart” in the last 6 months, the wormed flag is set.</p></li>
 <li><p>If the animal has a medical treatment containing the words “heart” and
 “worm” in the last 6 months, the heartworm treated flag is set.</p></li>
 </ul>
+</div>
+<div class="section" id="id3">
+<h3>Extra fields<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <p>SavourLife have extra fields that you can set by creating additional
 fields with certain names in your database. The system responds to the field
 names, you can label them anything you want, they must be linked to animal
@@ -599,6 +636,7 @@ the config screen and allows you to apply it on a per-animal basis instead.</p><
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>SavourLife integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the SavourLife breeds, ASM will send it as “Mixed Breed” instead.</p>
+</div>
 </div>
 </div>
 <div class="section" id="petslocated-com">

@@ -315,6 +315,9 @@ triggered by setting your second breed to "Crossbreed", "Unknown" or "Mix".
 
 .. warning:: You have to let PetFinder know that you are using ASM to upload your data. Do this by logging into the PetFinder members area, go to the Admin System Help Center, then Contact Us and send PetFinder Tech Support a message that you are using ASM to publish animal data via their FTP server. They should give you the FTP login information and make sure permissions and quotas are correct.
 
+Extra fields
+^^^^^^^^^^^^
+
 PetFinder have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
 field names, you can label them anything you want, they must be linked to
@@ -349,13 +352,29 @@ Publish to PetRescue.com.au in place of the normal internet publisher. The
 options for filtering animals are the same (see previous section for
 reference).
 
-Options are available to override the desex flag to send all your animals and to 
-indicate which states you will adopt animals to. These are necessary as some
-states have different rules on whether a microchip number or other identifier 
-is needed. The state the animal is currently located in (from the fosterer
-record if available or shelter details) is implicitly added to this set.
+Sending microchip numbers
+^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+Some Australian states have different rules on whether a microchip number or
+other identifier is needed. The state the animal is currently located in (from
+the fosterer record if available or shelter details) is implicitly added to
+this set.
 
-ASM will determined if your animals are vaccinated, wormed or heartworm treated
+ASM will send the microchip number IF:
+
+1. The publishing option "Send microchip numbers for all animals" is set to YES.
+
+2. The "Adoptable in states" publishing option contains VIC or NSW. A microchip
+   number is mandatory in these states.
+   
+3. The animal's location postcode starts with a 2 or 3 for VIC/NSW. The
+   animal's location is either the shelter's address from the main options page
+   or the address of the person fostering the animal.
+
+Determing whether an animal is vaccinated
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ASM will determine if your animals are vaccinated, wormed or heartworm treated
 and indicate this to PetRescue via the following rules:
 
 * If the animal has at least 1 previously given vaccination on file and there
@@ -366,6 +385,9 @@ and indicate this to PetRescue via the following rules:
 
 * If the animal has a medical treatment containing the words "heart" and
   "worm" in the last 6 months, the heartworm treated flag is set.
+
+Extra fields
+^^^^^^^^^^^^
 
 PetRescue have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
@@ -429,6 +451,9 @@ password given to you by SavourLife. The options for filtering animals are the
 same as for other publishers, although ASM will only send dogs (Species 1) as
 SavourLife will not accept listings for other species of animals.
 
+Determing whether an animal is vaccinated
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 ASM will determined if your dogs are vaccinated, wormed or heartworm treated
 and indicate this to SavourLife via the following rules:
 
@@ -440,6 +465,9 @@ and indicate this to SavourLife via the following rules:
 
 * If the animal has a medical treatment containing the words "heart" and
   "worm" in the last 6 months, the heartworm treated flag is set.
+
+Extra fields
+^^^^^^^^^^^^
 
 SavourLife have extra fields that you can set by creating additional 
 fields with certain names in your database. The system responds to the field
