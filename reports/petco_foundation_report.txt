@@ -2,7 +2,7 @@ Petco Foundation Report
 ###
 Figures
 ###
-33600/PostgreSQL rev03
+33600/PostgreSQL rev04
 ###
 Annual figures for Petco Foundation grants
 ###
@@ -217,7 +217,7 @@ ELSE 'Other' END AS AgeGroup,
 0 AS ReturnedToOwner,
 CASE WHEN DeceasedDate Is Not Null AND a.PutToSleep = 1 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS Euthanized,
 CASE WHEN DeceasedDate Is Not Null AND a.PutToSleep = 0 AND a.IsDOA = 0 THEN 1 ELSE 0 END AS DiedInCare,
-CASE WHEN DeceasedDate Is Not Null AND a.IsDOA = 1 THEN 1 ELSE 0 END AS Other
+CASE WHEN DeceasedDate Is Not Null AND a.PutToSleep = 0 AND a.IsDOA = 1 THEN 1 ELSE 0 END AS Other
 FROM animal a
 WHERE DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0
 ) dummy
