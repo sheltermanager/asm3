@@ -4142,12 +4142,30 @@ class move_adopt(JSONEndpoint):
         return {
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
-            "paymentmethods": asm3.lookups.get_payment_methods(dbo)
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email")
         }
 
     def post_create(self, o):
         self.check(asm3.users.ADD_MOVEMENT)
-        return str(asm3.movement.insert_adoption_from_form(o.dbo, o.user, o.post))
+        movementid = str(asm3.movement.insert_adoption_from_form(o.dbo, o.user, o.post))
+        if o.post.boolean("checkoutcreate") and o.post["emailaddress"] != "":
+            l = o.dbo.locale
+            body = asm3.wordprocessor.generate_donation_doc(o.dbo, o.post.integer("emailtemplateid"), movementid, o.user)
+            d = {
+                "id":       movementid,
+                "animalid": o.post["animal"],
+                "personid": o.post["person"],
+                "templateid": o.post["templateid"],
+                "feetypeid": o.post["feetypeid"],
+                "from":     asm3.configuration.email(o.dbo),
+                "to":       o.post["emailaddress"],
+                "subject":  _("Adoption Checkout", l),
+                "body":     body
+            }
+            asm3.movement.send_adoption_checkout(o.dbo, o.user, asm3.utils.PostedData(d, o.dbo.locale))
+        return movementid
 
     def post_cost(self, o):
         dbo = o.dbo
@@ -4466,56 +4484,7 @@ class movement(JSONEndpoint):
             asm3.movement.trial_to_full_adoption(o.dbo, o.user, mid)
 
     def post_checkout(self, o):
-        dbo = o.dbo
-        post = o.post
-        l = dbo.locale
-        aid = o.post.integer("animalid")
-        pid = o.post.integer("personid")
-        # Use a hash of animal/person as cache/state key so that it's always the same for
-        # the same animal/person.
-        # NOTE: we don't check here for an existing cache entry. This means that shelter
-        # staff can effectively start the checkout again for a customer with a new document 
-        # to sign and new payment records by sending out a new email. 
-        key = asm3.utils.md5_hash_hex("a=%s|p=%s" % (aid, pid))
-        a = asm3.animal.get_animal(dbo, aid)
-        p = asm3.person.get_person(dbo, pid)
-        co = {
-            "database":     dbo.database,
-            "movementid":   o.post.integer("id"),
-            "mediaid":      0, # paperwork mediaid, generated in the next step
-            "mediacontent": "", # a copy of the generated paperwork with fixed urls for viewing
-            "animalid":     o.post.integer("animalid"),
-            "animalname":   a.ANIMALNAME,
-            "speciesname":  a.SPECIESNAME,
-            "sex":          a.SEXNAME,
-            "age":          a.ANIMALAGE,
-            "fee":          a.FEE,
-            "formatfee":    asm3.i18n.format_currency(l, a.FEE),
-            "personid":     o.post.integer("personid"),
-            "personcode":   p.OWNERCODE,
-            "personname":   p.OWNERNAME,
-            "address":      p.OWNERADDRESS,
-            "town":         p.OWNERTOWN,
-            "county":       p.OWNERCOUNTY,
-            "postcode":     p.OWNERPOSTCODE,
-            "email":        p.EMAILADDRESS,
-            "giftaid":      p.ISGIFTAID,
-            "paymentfeeid": 0, # payment for fee, generated in the next step
-            "paymentdonid": 0, # payment for donation, generated in the next step
-            "receiptnumber": "", # receiptnumber for all payments, generated in next step
-            "payref":       "" # payref for the payment processor, generated in next step
-        }
-        asm3.cachedisk.put(key, dbo.database, co, CACHE_ONE_DAY * 2) # persist for 2 days
-        # Send the email to the adopter
-        body = post["body"]
-        url = "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, dbo.database, key)
-        body = asm3.utils.replace_url_token(body, url, _("Adoption Checkout", l))
-        asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body, "html")
-        if post.boolean("addtolog"):
-            asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, pid, post.integer("logtype"), 
-                post["to"], post["subject"], body)
-        if asm3.configuration.audit_on_send_email(dbo): 
-            asm3.audit.email(dbo, o.user, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body)
+        asm3.movement.send_adoption_checkout(o.dbo, o.user, o.post)
 
 class onlineform_incoming(JSONEndpoint):
     url = "onlineform_incoming"

@@ -1,12 +1,17 @@
 
 import asm3.al
 import asm3.animal
+import asm3.audit
+import asm3.cachedisk
 import asm3.configuration
 import asm3.financial
+import asm3.log
 import asm3.medical
 import asm3.i18n
 import asm3.person
 import asm3.utils
+
+from asm3.sitedefs import SERVICE_URL
 
 NO_MOVEMENT = 0
 ADOPTION = 1
@@ -606,8 +611,8 @@ def insert_adoption_from_form(dbo, username, post, creating = [], create_payment
     # Then any boarding cost record
     cost_amount = post.integer("costamount")
     cost_type = post["costtype"]
-    cost_create = post.integer("costcreate")
-    if cost_amount > 0 and cost_type != "" and cost_create == 1:
+    cost_create = post.boolean("costcreate")
+    if cost_amount > 0 and cost_type != "" and cost_create:
         boc_dict = {
             "animalid"          : post["animal"],
             "type"              : cost_type,
@@ -950,6 +955,68 @@ def auto_cancel_reservations(dbo):
         "WHERE MovementDate Is Null AND ReservationCancelledDate Is Null AND " \
         "MovementType = 0 AND ReservationDate < ?", (dbo.today(), dbo.now(), cancelcutoff))
     asm3.al.debug("cancelled %d reservations older than %s days" % (count, cancelafter), "movement.auto_cancel_reservations", dbo)
+
+def send_adoption_checkout(dbo, username, post):
+    """
+    Sets up an adoption checkout cache object and sends the email 
+    with the checkout link to the adopter.
+    """
+    l = dbo.locale
+    aid = post.integer("animalid")
+    pid = post.integer("personid")
+    # Use a hash of animal/person as cache/state key so that it's always the same for
+    # the same animal/person.
+    # NOTE: we don't check here for an existing cache entry. This means that shelter
+    # staff can effectively start the checkout again for the same customer/animal 
+    # with a new document to sign and new payment records by sending out a new email. 
+    key = asm3.utils.md5_hash_hex("a=%s|p=%s" % (aid, pid))
+    a = asm3.animal.get_animal(dbo, aid)
+    p = asm3.person.get_person(dbo, pid)
+    # template id for paperwork - can be passed or fall back to option
+    templateid = post.integer("templateid")
+    if templateid == 0: templateid = asm3.configuration.adoption_checkout_templateid(dbo)
+    # payment type id for the fee
+    feetypeid = post.integer("feetypeid")
+    if feetypeid == 0: asm3.configuration.adoption_checkout_feeid(dbo)
+    co = {
+        "database":     dbo.database,
+        "movementid":   post.integer("id"),
+        "templateid":   templateid, 
+        "mediaid":      0, # paperwork mediaid, generated in the next step
+        "mediacontent": "", # a copy of the generated paperwork with fixed urls for viewing
+        "animalid":     post.integer("animalid"),
+        "animalname":   a.ANIMALNAME,
+        "speciesname":  a.SPECIESNAME,
+        "sex":          a.SEXNAME,
+        "age":          a.ANIMALAGE,
+        "fee":          a.FEE,
+        "formatfee":    asm3.i18n.format_currency(l, a.FEE),
+        "personid":     post.integer("personid"),
+        "personcode":   p.OWNERCODE,
+        "personname":   p.OWNERNAME,
+        "address":      p.OWNERADDRESS,
+        "town":         p.OWNERTOWN,
+        "county":       p.OWNERCOUNTY,
+        "postcode":     p.OWNERPOSTCODE,
+        "email":        p.EMAILADDRESS,
+        "giftaid":      p.ISGIFTAID,
+        "feetypeid":    feetypeid, 
+        "paymentfeeid": 0, # payment for fee, generated in the next step
+        "paymentdonid": 0, # payment for donation, generated in the next step
+        "receiptnumber": "", # receiptnumber for all payments, generated in next step
+        "payref":       "" # payref for the payment processor, generated in next step
+    }
+    asm3.cachedisk.put(key, dbo.database, co, 86400 * 2) # persist for 2 days
+    # Send the email to the adopter
+    body = post["body"]
+    url = "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, dbo.database, key)
+    body = asm3.utils.replace_url_token(body, url, asm3.i18n._("Adoption Checkout", l))
+    asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body, "html")
+    if post.boolean("addtolog"):
+        asm3.log.add_log_email(dbo, username, asm3.log.PERSON, pid, post.integer("logtype"), 
+            post["to"], post["subject"], body)
+    if asm3.configuration.audit_on_send_email(dbo): 
+        asm3.audit.email(dbo, username, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body)
 
 def send_fosterer_emails(dbo):
     """

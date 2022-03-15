@@ -57,8 +57,19 @@ $(function() {
                 '<input id="costamount" data="costamount" type="hidden" />',
                 '<input id="costtype" data="costtype" type="hidden" />',
                 tableform.fields_render([
-                    { post_field: "costcreate", label: _("Cost record"), type: "select", 
-                        options: [ "0|" + _("Don't create a cost record"), "1|" + _("Create a cost record") ] }
+                    { post_field: "costcreate", label: _("Create a cost record"), type: "check" }
+                ], 1, { full_width: false }),
+                html.content_footer(),
+                html.content_header(_("Adoption Checkout"), true),
+                tableform.fields_render([
+                    { post_field: "checkoutcreate", label: _("Send the checkout email to the adopter"), type: "check" },
+                    { post_field: "templateid", label: _("Adoption paperwork template"), type: "select",
+                        options: edit_header.template_list_options(controller.templates) },
+                    { post_field: "feetypeid", label: _("Adoption fee payment type"), type: "select",
+                        options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes } },
+                    { post_field: "emailaddress", label: _("Adopter email address"), type: "text" },
+                    { post_field: "emailtemplateid", label: _("Email template"), type: "select", 
+                        options: edit_header.template_list_options(controller.templatesemail) },
                 ], 1, { full_width: false }),
                 html.content_footer(),
                 html.box(5),
@@ -101,6 +112,7 @@ $(function() {
                 // Hide things before we start
                 $("#bonddisplay").fadeOut();
                 $("#costdisplay").closest(".ui-widget").fadeOut();
+                $("#checkoutcreate").closest(".ui-widget").fadeOut();
                 $("#fosterinfo").fadeOut();
                 $("#reserveinfo").fadeOut();
                 $("#retailerinfo").fadeOut();
@@ -223,6 +235,14 @@ $(function() {
                 let response = await edit_header.person_with_adoption_warnings(rec.ID);
                 let p = jQuery.parseJSON(response)[0];
 
+                // Show the checkout section if it's configured
+                if (config.str("AdoptionCheckoutProcessor") != "") {
+                    $("#emailaddress").val(p.EMAILADDRESS);
+                    $("#templateid").select("value", config.str("AdoptionCheckoutTemplateID"));
+                    $("#feetypeid").select("value", config.str("AdoptionCheckoutFeeID"));
+                    $("#checkoutcreate").closest(".ui-widget").show();
+                }
+
                 // Show tickbox if owner not homechecked
                 if (p.IDCHECK == 0) {
                     $("#markhomechecked").attr("checked", false);
@@ -292,6 +312,7 @@ $(function() {
             });
 
             $("#costdisplay").closest(".ui-widget").hide();
+            $("#checkoutcreate").closest(".ui-widget").hide();
             $("#bonddisplay").hide();
             $("#ownerwarn").hide();
             $("#notonshelter").hide();

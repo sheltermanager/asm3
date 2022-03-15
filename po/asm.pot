@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-03-01 10:43+0000\n"
+"POT-Creation-Date: 2022-03-15 16:20+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -759,11 +759,15 @@ msgstr ""
 msgid "Adopter Checkout"
 msgstr ""
 
+#: move_adopt.js
+msgid "Adopter email address"
+msgstr ""
+
 #: dbupdate.py publish_options.js
 msgid "Adoption"
 msgstr ""
 
-#: code.py service.py options.js
+#: code.py service.py movement.py options.js move_adopt.js
 msgid "Adoption Checkout"
 msgstr ""
 
@@ -793,7 +797,7 @@ msgstr ""
 msgid "Adoption fee donations"
 msgstr ""
 
-#: options.js
+#: options.js move_adopt.js
 msgid "Adoption fee payment type"
 msgstr ""
 
@@ -801,7 +805,7 @@ msgstr ""
 msgid "Adoption movements must have a valid adoption date."
 msgstr ""
 
-#: options.js
+#: options.js move_adopt.js
 msgid "Adoption paperwork template"
 msgstr ""
 
@@ -2996,7 +3000,7 @@ msgstr ""
 msgid "Cost date must be a valid date"
 msgstr ""
 
-#: move_reclaim.js move_adopt.js
+#: move_reclaim.js
 msgid "Cost record"
 msgstr ""
 
@@ -4172,7 +4176,7 @@ msgstr ""
 msgid "Domestic Short Hair"
 msgstr ""
 
-#: move_reclaim.js move_adopt.js
+#: move_reclaim.js
 msgid "Don't create a cost record"
 msgstr ""
 
@@ -4637,6 +4641,10 @@ msgstr ""
 
 #: onlineforms.js
 msgid "Email submissions to"
+msgstr ""
+
+#: move_adopt.js
+msgid "Email template"
 msgstr ""
 
 #: main.js
@@ -6311,7 +6319,7 @@ msgstr ""
 msgid "If left blank, the user can login from any IP address."
 msgstr ""
 
-#: movements.js move_adopt.js
+#: movements.js
 msgid ""
 "If the shelter provides initial insurance cover to new adopters, the policy "
 "number"
@@ -6827,7 +6835,7 @@ msgstr ""
 msgid "Is this a permanent foster?"
 msgstr ""
 
-#: movements.js move_adopt.js
+#: movements.js
 msgid "Is this a trial adoption?"
 msgstr ""
 
@@ -10899,6 +10907,10 @@ msgstr ""
 msgid "Send mass emails and perform mail merges"
 msgstr ""
 
+#: move_adopt.js
+msgid "Send the checkout email to the adopter"
+msgstr ""
+
 #: report_toolbar.js
 msgid "Send to"
 msgstr ""
@@ -12191,10 +12203,6 @@ msgstr ""
 msgid "The date the animal was FIV/L tested"
 msgstr ""
 
-#: move_adopt.js
-msgid "The date the animal was adopted"
-msgstr ""
-
 #: animal.js
 msgid "The date the animal was altered"
 msgstr ""
@@ -12255,7 +12263,7 @@ msgstr ""
 msgid "The date the transfer is effective from"
 msgstr ""
 
-#: movements.js move_adopt.js
+#: movements.js
 msgid "The date the trial adoption is over"
 msgstr ""
 
@@ -14571,6 +14579,10 @@ msgstr ""
 
 #: animal_find_results.js
 msgid "You didn't specify any search criteria, so an on-shelter search was assumed."
+msgstr ""
+
+#: onlineform.py
+msgid "You have already used field name '{0}' in this form"
 msgstr ""
 
 #: common.js header.js

@@ -218,7 +218,7 @@ def checkout_adoption_page(dbo, token):
         raise asm3.utils.ASMError("invalid token")
     # Generate the adoption paperwork if it has not been generated already
     if co["mediaid"] == 0:
-        dtid = asm3.configuration.adoption_checkout_templateid(dbo)
+        dtid = co["templateid"]
         content = asm3.wordprocessor.generate_movement_doc(dbo, dtid, co["movementid"], "checkout")
         # Save the doc with the person and animal, record the person copy for signing
         tempname = asm3.template.get_document_template_name(dbo, dtid)
@@ -269,7 +269,7 @@ def checkout_adoption_post(dbo, post):
             "person":       str(co["personid"]),
             "animal":       str(co["animalid"]),
             "movement":     str(co["movementid"]),
-            "type":         asm3.configuration.adoption_checkout_feeid(dbo),
+            "type":         co["feetypeid"], 
             "payment":      asm3.configuration.adoption_checkout_payment_method(dbo),
             "amount":       co["fee"],
             "due":          python2display(l, dbo.now()),
