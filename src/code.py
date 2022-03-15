@@ -4149,7 +4149,7 @@ class move_adopt(JSONEndpoint):
 
     def post_create(self, o):
         self.check(asm3.users.ADD_MOVEMENT)
-        movementid = str(asm3.movement.insert_adoption_from_form(o.dbo, o.user, o.post))
+        movementid = str(asm3.movement.insert_adoption_from_form(o.dbo, o.user, o.post, create_payments = not o.post.boolean("checkoutcreate")))
         if o.post.boolean("checkoutcreate") and o.post["emailaddress"] != "":
             l = o.dbo.locale
             body = asm3.wordprocessor.generate_donation_doc(o.dbo, o.post.integer("emailtemplateid"), movementid, o.user)

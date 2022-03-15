@@ -345,6 +345,11 @@ $(function() {
                 $("#payment").payments({ controller: controller });
             }
 
+            // If checkout is turned on, hide the payments section
+            $("#checkoutcreate").change(function() {
+                $("#payment").toggle(!$("#checkoutcreate").prop("checked"));
+            });
+
             // Insurance related stuff
             $("#button-insurance")
                 .button({ icons: { primary: "ui-icon-cart" }, text: false })
