@@ -1,6 +1,8 @@
 46
 ================
 
+15/03/22 SavourLife: Clear dogId after calling setDogAdopted/DeleteDog
+15/03/22 Auto-updater should still check DB type/version
 14/03/22 DB update to remove old ASM2 report definitions
 11/03/22 Send saved clinic documents to animal if owner not available
 11/03/22 Audit emails sent by diary notes

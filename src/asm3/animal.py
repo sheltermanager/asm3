@@ -1464,7 +1464,7 @@ def get_extra_id(dbo, a, idtype):
     in the form:  key1=value1|key2=value2 ...
     a: An animal result from get_animal_query containing ExtraIDs
     idtype: A string key
-    Returns the extra ID (string) or None if there was no match
+    Returns the extra ID (string) or empty string if there was no match
     """
     if "EXTRAIDS" in a and a.EXTRAIDS is not None:
         for x in a.EXTRAIDS.split("|"):
@@ -1472,7 +1472,7 @@ def get_extra_id(dbo, a, idtype):
                 k, v = x.split("=")
                 if k == idtype:
                     return v
-    return None
+    return ""
 
 def set_extra_id(dbo, user, a, idtype, idvalue):
     """

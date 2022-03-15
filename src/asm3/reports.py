@@ -501,7 +501,8 @@ def get_smcom_reports(dbo):
         revp = d.DATABASE.find("rev")
         if revp != -1:
             d.REVISION = asm3.utils.cint(d.DATABASE[revp+3:revp+5])
-        d.UPDATE = update(d.TITLE, d.CATEGORY, d.REVISION)
+        d.UPDATE = update(d.TITLE, d.CATEGORY, d.REVISION) and database_ok(d.DATABASE) \
+            and version_ok(d.DATABASE) and not builtin(d.SQL)
         reports.append(d)
     return reports
 

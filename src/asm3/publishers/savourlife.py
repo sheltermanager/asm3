@@ -208,7 +208,7 @@ class SavourLifePublisher(AbstractPublisher):
                         dogid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_SAVOURLIFE)
 
                         # If there isn't a dogid, stop now because we can't do anything
-                        if dogid is None: continue
+                        if dogid == "": continue
 
                         data = {}
                         url = ""
@@ -226,6 +226,8 @@ class SavourLifePublisher(AbstractPublisher):
                                 "EnquiryNumber": enquirynumber
                             }
                             url = SAVOURLIFE_URL + "setDogAdopted"
+                            # Clear the dogId on adoption, so if the animal returns it gets a new listing
+                            asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, IDTYPE_SAVOURLIFE, "")
                         elif status == "held":
                             # We're marking the listing as held
                             data = self.processAnimal(an, dogid, postcode, state, suburb, token, radius, interstate, all_microchips, True)
@@ -237,6 +239,8 @@ class SavourLifePublisher(AbstractPublisher):
                                 "DogId":        dogid
                             }
                             url = SAVOURLIFE_URL + "DeleteDog"
+                            # Clear the dogId since the listing has been deleted
+                            asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, IDTYPE_SAVOURLIFE, "")
 
                         jsondata = asm3.utils.json(data)
                         self.log("Sending POST to %s to mark animal '%s - %s' %s: %s" % (url, an.SHELTERCODE, an.ANIMALNAME, status, jsondata))
