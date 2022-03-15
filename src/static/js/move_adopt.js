@@ -102,6 +102,23 @@ $(function() {
                     validate.highlight("movementdate");
                     return false;
                 }
+                // checkout email
+                if ($("#checkoutcreate").prop("checked") && $("#emailaddress").val() == "") {
+                    validate.highlight("emailaddress");
+                    return false;
+                }
+                // checkout template
+                if ($("#checkoutcreate").prop("checked") && $("#templateid").select("value") == "") {
+                    validate.highlight("templateid");
+                    return false;
+                }
+
+                // checkout email template
+                if ($("#checkoutcreate").prop("checked") && $("#emailtemplateid").select("value") == "") {
+                    validate.highlight("emailtemplateid");
+                    return false;
+                }
+
                 return true;
             };
 
