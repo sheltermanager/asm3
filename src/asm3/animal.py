@@ -3537,16 +3537,10 @@ def update_all_animal_statuses(dbo):
     movements = dbo.query(get_animal_movement_status_query(dbo) + " ORDER BY MovementDate DESC")
     animalupdatebatch = []
     diaryupdatebatch = []
-    cfg = {
-        "foster_on_shelter": asm3.configuration.foster_on_shelter(dbo),
-        "retailer_on_shelter": asm3.configuration.retailer_on_shelter(dbo),
-        "trial_on_shelter": asm3.configuration.trial_on_shelter(dbo),
-        "softrelease_on_shelter": asm3.configuration.softrelease_on_shelter(dbo)
-    }
 
     asm3.asynctask.set_progress_max(dbo, len(animals))
     for a in animals:
-        update_animal_status(dbo, a.id, a, movements, animalupdatebatch, diaryupdatebatch, cfg)
+        update_animal_status(dbo, a.id, a, movements, animalupdatebatch, diaryupdatebatch)
         asm3.asynctask.increment_progress_value(dbo)
 
     aff = dbo.execute_many("UPDATE animal SET " \
@@ -3580,15 +3574,9 @@ def update_foster_animal_statuses(dbo):
         " WHERE AnimalID IN (SELECT ID FROM animal WHERE ActiveMovementType = 2) ORDER BY MovementDate DESC")
     animalupdatebatch = []
     diaryupdatebatch = []
-    cfg = {
-        "foster_on_shelter": asm3.configuration.foster_on_shelter(dbo),
-        "retailer_on_shelter": asm3.configuration.retailer_on_shelter(dbo),
-        "trial_on_shelter": asm3.configuration.trial_on_shelter(dbo),
-        "softrelease_on_shelter": asm3.configuration.softrelease_on_shelter(dbo)
-    }
 
     for a in animals:
-        update_animal_status(dbo, a.id, a, movements, animalupdatebatch, diaryupdatebatch, cfg)
+        update_animal_status(dbo, a.id, a, movements, animalupdatebatch, diaryupdatebatch)
 
     aff = dbo.execute_many("UPDATE animal SET " \
         "Archived = ?, " \
@@ -3620,16 +3608,9 @@ def update_on_shelter_animal_statuses(dbo):
         " WHERE AnimalID IN (SELECT ID FROM animal WHERE Archived = 0 OR (Archived = 1 AND ActiveMovementReturn > ?)) ORDER BY MovementDate DESC", [cutoff])
     animalupdatebatch = []
     diaryupdatebatch = []
-    cfg = {
-        "foster_on_shelter": asm3.configuration.foster_on_shelter(dbo),
-        "retailer_on_shelter": asm3.configuration.retailer_on_shelter(dbo),
-        "trial_on_shelter": asm3.configuration.trial_on_shelter(dbo),
-        "softrelease_on_shelter": asm3.configuration.softrelease_on_shelter(dbo)
-    }
-
     asm3.asynctask.set_progress_max(dbo, len(animals))
     for a in animals:
-        update_animal_status(dbo, a.id, a, movements, animalupdatebatch, diaryupdatebatch, cfg)
+        update_animal_status(dbo, a.id, a, movements, animalupdatebatch, diaryupdatebatch)
         asm3.asynctask.increment_progress_value(dbo)
 
     aff = dbo.execute_many("UPDATE animal SET " \
@@ -3651,7 +3632,7 @@ def update_on_shelter_animal_statuses(dbo):
     asm3.al.debug("updated %d on shelter animal statuses (%d)" % (aff, len(animals)), "animal.update_on_shelter_animal_statuses", dbo)
     return "OK %d" % len(animals)
 
-def update_animal_status(dbo, animalid, a = None, movements = None, animalupdatebatch = None, diaryupdatebatch = None, cfg = None):
+def update_animal_status(dbo, animalid, a = None, movements = None, animalupdatebatch = None, diaryupdatebatch = None):
     """
     Updates the movement status fields on an animal record: 
         ActiveMovement*, HasActiveReserve, HasTrialAdoption, MostRecentEntryDate, 
@@ -3700,17 +3681,10 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     # Start with the existing value for the current owner
     ownerid = a.ownerid
 
-    # Just look these up once
-    if cfg is None:
-        cfg_foster_on_shelter = asm3.configuration.foster_on_shelter(dbo)
-        cfg_retailer_on_shelter = asm3.configuration.retailer_on_shelter(dbo)
-        cfg_trial_on_shelter = asm3.configuration.trial_on_shelter(dbo)
-        cfg_softrelease_on_shelter = asm3.configuration.softrelease_on_shelter(dbo)
-    else:
-        cfg_foster_on_shelter = cfg["foster_on_shelter"]
-        cfg_retailer_on_shelter = cfg["retailer_on_shelter"]
-        cfg_trial_on_shelter = cfg["trial_on_shelter"]
-        cfg_softrelease_on_shelter = cfg["softrelease_on_shelter"]
+    cfg_foster_on_shelter = asm3.configuration.foster_on_shelter(dbo)
+    cfg_retailer_on_shelter = asm3.configuration.retailer_on_shelter(dbo)
+    cfg_trial_on_shelter = asm3.configuration.trial_on_shelter(dbo)
+    cfg_softrelease_on_shelter = asm3.configuration.softrelease_on_shelter(dbo)
 
     for m in movements:
 
