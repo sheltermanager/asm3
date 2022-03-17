@@ -1,6 +1,7 @@
 46
 ================
 
+17/03/22 Prevent endless loop with collisions using OOO coding scheme
 17/03/22 Bulk change animals can now remove flags #1112
 17/03/22 Publishing option to include/exclude non-microchipped #1113
 17/03/22 CSV import: allow import of PDF files via ANIMALPDFDATA/NAME #888

@@ -1383,6 +1383,7 @@ def calc_shelter_code(dbo, animaltypeid, entryreasonid, speciesid, datebroughtin
             if codeformat.find("U") != -1: highestever += 1
             if codeformat.find("N") != -1: highesttyear += 1
             if codeformat.find("X") != -1: highestyear += 1
+            if codeformat.find("O") != -1: highestmonth += 1
 
     asm3.al.debug("sheltercode: code=%s, short=%s for type %s, entry %s, species %s, datebroughtin %s" % \
         (code, shortcode, animaltype, entryreason, species, datebroughtin),
