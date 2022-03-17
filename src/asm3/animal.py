@@ -2526,6 +2526,15 @@ def update_animals_from_form(dbo, username, post):
                 newflags = "%s%s|" % (a.additionalflags, post["addflag"])
                 dbo.update("animal", a["ID"], { "AdditionalFlags": newflags })
                 aud.append("AdditionalFlags %s --> %s" % (a.additionalflags, newflags))
+    if post["removeflag"] != "":
+        animals = dbo.query("SELECT ID, AdditionalFlags FROM animal WHERE ID IN (%s)" % post["animals"])
+        for a in animals:
+            if not a.additionalflags: a.additionalflags = ""
+            fs = "%s|" % post["removeflag"]
+            if a.additionalflags.find(fs) != -1:
+                newflags = a.additionalflags.replace(fs, "")
+                dbo.update("animal", a["ID"], { "AdditionalFlags": newflags })
+                aud.append("AdditionalFlags %s --> %s" % (a.additionalflags, newflags))
     if post.integer("movementtype") != -1:
         default_return_reason = asm3.configuration.default_return_reason(dbo)
         for animalid in post.integer_list("animals"):
