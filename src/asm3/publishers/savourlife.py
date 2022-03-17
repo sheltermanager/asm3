@@ -142,7 +142,7 @@ class SavourLifePublisher(AbstractPublisher):
                     return
 
                 # Do we already have a SavourLife ID for this animal?
-                # This function returns None if no match is found
+                # This function returns empty string for no dogid
                 dogid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_SAVOURLIFE)
 
                 data = self.processAnimal(an, dogid, postcode, state, suburb, token, radius, interstate, all_microchips)
@@ -162,7 +162,7 @@ class SavourLifePublisher(AbstractPublisher):
 
                     # If we didn't have a dogid, extract it from the response and store it
                     # so future postings will update this dog's listing.
-                    if dogid is None:
+                    if dogid == "":
                         dogid = r["response"]
                         asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, IDTYPE_SAVOURLIFE, dogid)  
 
@@ -336,7 +336,7 @@ class SavourLifePublisher(AbstractPublisher):
         # Construct a dictionary of info for this animal
         return {
             "Token":                    token,
-            "DogId":                    dogid, # None in here translates to null and creates a new record
+            "DogId":                    asm3.utils.iif(dogid == "", None, dogid), # SL expect a null in this field for no dogid
             "Description":              self.getDescription(an, replaceSmart=True),
             "DogName":                  an.ANIMALNAME.title(),
             "Images":                   self.getPhotoUrls(an.ID),
