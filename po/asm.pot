@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-03-17 09:58+0000\n"
+"POT-Creation-Date: 2022-03-17 10:59+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -6598,6 +6598,10 @@ msgstr ""
 msgid "Include incomplete medical records when generating document templates"
 msgstr ""
 
+#: publish_options.js
+msgid "Include non-microchipped animals"
+msgstr ""
+
 #: animal_find.js
 msgid "Include non-shelter animals"
 msgstr ""
@@ -8540,7 +8544,7 @@ msgstr ""
 msgid "Not in chosen publisher location"
 msgstr ""
 
-#: reports.js
+#: reports.js common.js
 msgid "Not microchipped"
 msgstr ""
 

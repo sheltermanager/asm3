@@ -153,6 +153,8 @@ def get_animal_data_query(dbo, pc, animalid=0, publisher_key=""):
         sql += " AND a.CrueltyCase = 0"
     if not pc.includeNonNeutered:
         sql += " AND (a.Neutered = 1 OR a.SpeciesID NOT IN (%s))" % asm3.configuration.alert_species_neuter(dbo)
+    if not pc.includeNonMicrochipped:
+        sql += " AND (a.Identichipped = 1 OR a.SpeciesID NOT IN (%s))" % asm3.configuration.alert_species_microchip(dbo)
     if not pc.includeWithoutImage: 
         sql += " AND EXISTS(SELECT ID FROM media WHERE WebsitePhoto = 1 AND ExcludeFromPublish = 0 AND LinkID = a.ID AND LinkTypeID = 0)"
     if not pc.includeReservedAnimals: 
@@ -377,6 +379,7 @@ def is_animal_adoptable(dbo, a):
     if a.HASPERMANENTFOSTER == 1: return False
     if a.CRUELTYCASE == 1 and not p.includeCaseAnimals: return False
     if a.NEUTERED == 0 and not p.includeNonNeutered and str(a.SPECIESID) in asm3.configuration.alert_species_neuter(dbo).split(","): return False
+    if a.IDENTICHIPPED == 0 and not p.includeNonMicrochipped and str(a.SPECIESID) in asm3.configuration.alert_species_microchip(dbo).split(","): return False
     if a.HASACTIVERESERVE == 1 and not p.includeReservedAnimals: return False
     if a.ISHOLD == 1 and not p.includeHold: return False
     if a.ISQUARANTINE == 1 and not p.includeQuarantine: return False
@@ -399,6 +402,7 @@ class PublishCriteria(object):
     """
     includeCaseAnimals = False
     includeNonNeutered = False
+    includeNonMicrochipped = False
     includeReservedAnimals = False
     includeRetailerAnimals = False
     includeFosterAnimals = False
@@ -457,6 +461,7 @@ class PublishCriteria(object):
         for s in fromstring.split(" "):
             if s == "includecase": self.includeCaseAnimals = True
             if s == "includenonneutered": self.includeNonNeutered = True
+            if s == "includenonmicrochip": self.includeNonMicrochipped = True
             if s == "includereserved": self.includeReservedAnimals = True
             if s == "includeretailer": self.includeRetailerAnimals = True
             if s == "includefosters": self.includeFosterAnimals = True
@@ -503,6 +508,7 @@ class PublishCriteria(object):
         s = ""
         if self.includeCaseAnimals: s += " includecase"
         if self.includeNonNeutered: s += " includenonneutered"
+        if self.includeNonMicrochipped: s += " includenonmicrochip"
         if self.includeReservedAnimals: s += " includereserved"
         if self.includeRetailerAnimals: s += " includeretailer"
         if self.includeFosterAnimals: s += " includefosters"

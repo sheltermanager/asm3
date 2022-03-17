@@ -1603,6 +1603,9 @@ const html = {
         if (a.NEUTERED == 0 && p.indexOf("includenonneutered") == -1 && 
             common.array_in(String(a.SPECIESID), config.str("AlertSpeciesNeuter").split(","))
             ) { return [ false, _("Unaltered") ]; }
+        if (a.IDENTICHIPPED == 0 && p.indexOf("includenonmicrochip") == -1 && 
+            common.array_in(String(a.SPECIESID), config.str("AlertSpeciesMicrochip").split(","))
+            ) { return [ false, _("Not microchipped") ]; }
         if (a.HASACTIVERESERVE == 1 && a.RESERVEDOWNERID && p.indexOf("includereserved") == -1) {
             return [ false, _("Reserved") + " " + html.icon("right") + " " + 
                     html.person_link(a.RESERVEDOWNERID, a.RESERVEDOWNERNAME) ];
