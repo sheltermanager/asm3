@@ -352,25 +352,6 @@ Publish to PetRescue.com.au in place of the normal internet publisher. The
 options for filtering animals are the same (see previous section for
 reference).
 
-Sending microchip numbers
-^^^^^^^^^^^^^^^^^^^^^^^^^
- 
-Some Australian states have different rules on whether a microchip number or
-other identifier is needed. The state the animal is currently located in (from
-the fosterer record if available or shelter details) is implicitly added to
-this set.
-
-ASM will send the microchip number IF:
-
-1. The publishing option "Send microchip numbers for all animals" is set to YES.
-
-2. The "Adoptable in states" publishing option contains VIC or NSW. A microchip
-   number is mandatory in these states.
-   
-3. The animal's location postcode starts with a 2 or 3 for VIC/NSW. The
-   animal's location is either the shelter's address from the main options page
-   or the address of the person fostering the animal.
-
 Determing whether an animal is vaccinated
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

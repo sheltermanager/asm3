@@ -576,6 +576,8 @@ $(function() {
                 '<td><select id="prdesex" class="asm-selectbox cfg" data="PetRescueAllDesexed">',
                 '<option>No</option><option>Yes</option></select></td>',
                 '</tr>',
+                /*
+                 * No longer needed - PetRescue have an option to hide the microchip numbers
                 '<tr>',
                 '<td><label for="prmicrochips">Send microchip numbers for all animals</label>',
                 '<span id="callout-prmicrochips" class="asm-callout">',
@@ -585,6 +587,7 @@ $(function() {
                 '<td><select id="prmicrochips" class="asm-selectbox cfg" data="PetRescueAllMicrochips">',
                 '<option>No</option><option>Yes</option></select></td>',
                 '</tr>',
+                */
                 '<tr>',
                 '<td><label for="pradoptablein">Adoptable in states</label>',
                 '<span id="callout-printerstate" class="asm-callout">',

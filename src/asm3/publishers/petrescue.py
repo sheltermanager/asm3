@@ -60,7 +60,8 @@ class PetRescuePublisher(AbstractPublisher):
 
         token = asm3.configuration.petrescue_token(self.dbo)
         all_desexed = asm3.configuration.petrescue_all_desexed(self.dbo)
-        all_microchips = asm3.configuration.petrescue_all_microchips(self.dbo)
+        #all_microchips = asm3.configuration.petrescue_all_microchips(self.dbo)
+        all_microchips = True # PetRescue have an option to hide them at their end now, so we always send them
         adoptable_in = asm3.configuration.petrescue_adoptable_in(self.dbo)
         postcode = asm3.configuration.organisation_postcode(self.dbo)
         suburb = asm3.configuration.organisation_town(self.dbo)
