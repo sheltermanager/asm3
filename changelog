@@ -1,6 +1,7 @@
 46
 ================
 
+17/03/22 CSV import: allow import of PDF files via ANIMALPDFDATA/NAME #888
 17/03/22 PetRescue: always send microchips as they have a hide option now
 15/03/22 Allow adoption checkout from Move->Adopt an animal #1110
 15/03/22 SavourLife: Clear dogId after calling setDogAdopted/DeleteDog

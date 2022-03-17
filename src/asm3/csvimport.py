@@ -494,7 +494,31 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 pass
             else:
                 # We don't know what it is, don't try and do anything with it
+                row_error(errors, "animal", rowno, row, "WARN: unrecognised image content, ignoring", dbo, sys.exc_info())
                 imagedata = ""
+            # pdf data if any was supplied
+            pdfdata = gks(row, "ANIMALPDFDATA")
+            pdfname = gks(row, "ANIMALPDFNAME")
+            if pdfdata.startswith("http"):
+                # It's a URL, get the PDF from the remote server
+                r = asm3.utils.get_image_url(imagedata, timeout=5000)
+                if r["status"] == 200:
+                    asm3.al.debug("retrieved PDF from %s (%s bytes)" % (pdfdata, len(r["response"])), "csvimport.csvimport", dbo)
+                    pdfdata = "data:application/pdf;base64,%s" % asm3.utils.base64encode(r["response"])
+                else:
+                    row_error(errors, "animal", rowno, row, "error reading pdf from '%s': %s" % (pdfdata, r), dbo, sys.exc_info())
+                    continue
+            elif imagedata.startswith("data:"):
+                # It's a base64 encoded data URI - do nothing as attach_file requires it
+                pass
+            else:
+                # We don't know what it is, don't try and do anything with it
+                row_error(errors, "animal", rowno, row, "WARN: unrecognised PDF content, ignoring", dbo, sys.exc_info())
+                pdfdata = ""
+            if pdfdata != "" and pdfname == "":
+                row_error(errors, "animal", rowno, row, "ANIMALPDFNAME must be set for data", dbo, sys.exc_info())
+                continue
+
             # If an original owner is specified, create a person record
             # for them and attach it to the animal as original owner
             if gks(row, "ORIGINALOWNERLASTNAME") != "":
@@ -610,6 +634,10 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 if len(imagedata) > 0:
                     imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
                     asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, imagepost)
+                # If we have some PDF data, add that to the animal
+                if len(pdfdata) > 0:
+                    pdfpost = asm3.utils.PostedData({ "filename": pdfname, "filetype": "application/pdf", "filedata": pdfdata }, dbo.locale)
+                    asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, pdfpost)
             except Exception as e:
                 row_error(errors, "animal", rowno, row, e, dbo, sys.exc_info())
 

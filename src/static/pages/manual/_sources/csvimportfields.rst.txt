@@ -21,6 +21,10 @@ ANIMALNAME
     The animal's name
 ANIMALIMAGE
     A photo for the animal, it can either be a fully qualified HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI
+ANIMALPDFDATA
+    A PDF file to attach to the animal. Like image, it can be a fully qualified URL or a base64 encoded PDF as a data URI
+ANIMALPDFNAME
+    The filename associated with the PDF data
 ANIMALNONSHELTER
     Y/N to indicate whether this animal is a owned by a member of the public and not a shelter animal
 ANIMALNOTFORADOPTION
