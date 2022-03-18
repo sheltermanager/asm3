@@ -1193,7 +1193,7 @@ $(function() {
             $.each(cl.split(" "), function(i, o) {
                 // Deal with boolean flags in command line
                 $.each( [ "includecase", "includereserved", "includefosters", 
-                    "includewithoutdescription", "includewithoutimage", "includenonneutered", 
+                    "includewithoutdescription", "includewithoutimage", "includenonneutered", "includenonmicrochip", 
                     "includecolours", "includeretailer", "includehold", "includequarantine", "includetrial",
                     "bondedassingle", "clearexisting", "uploadall", "forcereupload", 
                     "generatejavascriptdb","thumbnails", "checksocket", "uploaddirectly", 
