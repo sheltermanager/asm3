@@ -95,9 +95,9 @@ def get_donation_query(dbo):
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
         "LEFT OUTER JOIN donationpayment p ON od.DonationPaymentID = p.ID " \
         "LEFT OUTER JOIN lksyesno lk ON lk.ID = od.IsGiftAid " \
-        "INNER JOIN owner o ON o.ID = od.OwnerID " \
-        "INNER JOIN donationtype dt ON dt.ID = od.DonationTypeID " \
-        "INNER JOIN lksdonationfreq fr ON fr.ID = od.Frequency "
+        "LEFT OUTER JOIN owner o ON o.ID = od.OwnerID " \
+        "LEFT OUTER JOIN donationtype dt ON dt.ID = od.DonationTypeID " \
+        "LEFT OUTER JOIN lksdonationfreq fr ON fr.ID = od.Frequency "
 
 def get_licence_query(dbo):
     return "SELECT ol.ID, ol.LicenceTypeID, ol.IssueDate, ol.ExpiryDate, lt.LicenceTypeName, " \

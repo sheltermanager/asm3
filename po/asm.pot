@@ -8,17 +8,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-03-17 11:54+0000\n"
+"POT-Creation-Date: 2022-03-19 09:52+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: service.py
-msgid " + donation"
-msgstr ""
 
 #: options.js
 msgid " days."
@@ -14994,6 +14990,10 @@ msgstr ""
 
 #: service.py
 msgid "{0}: Adoption fee"
+msgstr ""
+
+#: service.py
+msgid "{0}: Adoption fee and donation"
 msgstr ""
 
 #: common.js

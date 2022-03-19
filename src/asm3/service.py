@@ -300,12 +300,14 @@ def checkout_adoption_post(dbo, post):
         # The user has changed their voluntary donation amount to 0 - delete it
         dbo.delete("ownerdonation", co["paymentdonid"], "checkout")
     # Construct the payment checkout URL
+    title = _("{0}: Adoption fee", l)
+    if co["paymentdonid"] != "0": title = _("{0}: Adoption fee and donation", l)
     params = { 
         "account": dbo.database, 
         "method": "checkout",
         "processor": co["paymentprocessor"],
         "payref": co["payref"],
-        "title": _("{0}: Adoption fee") + asm3.utils.iif(co["paymentdonid"] != "0", _(" + donation"), "")
+        "title": title.format(co["animalname"])
     }
     url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
     return url
