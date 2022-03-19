@@ -1,6 +1,7 @@
 46
 ================
 
+19/03/22 Remove redundant tooltips from animals, add callouts/placeholders
 19/03/22 Fix CurrentOwnerFirstname/Lastname tokens for non-shelter animals
 17/03/22 Prevent endless loop with collisions using OOO coding scheme
 17/03/22 Bulk change animals can now remove flags #1112

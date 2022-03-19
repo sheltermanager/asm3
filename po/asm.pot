@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-03-19 09:52+0000\n"
+"POT-Creation-Date: 2022-03-19 14:57+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -163,7 +163,7 @@ msgstr ""
 msgid "A publish job is already running."
 msgstr ""
 
-#: animal_new.js animal.js
+#: animal_new.js
 msgid "A short version of the reference number"
 msgstr ""
 
@@ -1458,16 +1458,8 @@ msgid ""
 "that aren't already in the database will be created during the import."
 msgstr ""
 
-#: animal.js
-msgid "Any health problems the animal has"
-msgstr ""
-
 #: lostfound.js lostfound_new.js
 msgid "Any information about the animal"
-msgstr ""
-
-#: animal.js
-msgid "Any markings or distinguishing features the animal has"
 msgstr ""
 
 #: dbupdate.py
@@ -6136,10 +6128,6 @@ msgid "Hidden Comments"
 msgstr ""
 
 #: animal.js
-msgid "Hidden comments about the animal"
-msgstr ""
-
-#: animal.js
 msgid ""
 "Hidden comments are for staff information only and will never be used on any "
 "adoption websites"
@@ -8566,10 +8554,6 @@ msgstr ""
 msgid "Notes"
 msgstr ""
 
-#: animal.js
-msgid "Notes about the death of the animal"
-msgstr ""
-
 #: clinic_calendar.js calendarview.js common.js
 msgid "Nov"
 msgstr ""
@@ -9777,10 +9761,6 @@ msgstr ""
 
 #: animal.js
 msgid "Reason not from Owner"
-msgstr ""
-
-#: animal.js
-msgid "Reason the owner did not bring in the animal themselves"
 msgstr ""
 
 #: code.py batch.js
@@ -12153,36 +12133,12 @@ msgstr ""
 msgid "The CSV file should be created by PayPal's \"All Activity\" report."
 msgstr ""
 
-#: animal.js
-msgid "The SmartTag PETID number"
-msgstr ""
-
-#: animal.js
-msgid "The SmartTag type"
-msgstr ""
-
 #: media.js
 msgid "The URL is the address of a web resource, eg: www.youtube.com/watch?v=xxxxxx"
 msgstr ""
 
-#: animal.js
-msgid "The animal name"
-msgstr ""
-
 #: animal.py
 msgid "The animal record to merge must be different from the original."
-msgstr ""
-
-#: animal.js
-msgid "The animal sex"
-msgstr ""
-
-#: animal.js
-msgid "The base color of this animal"
-msgstr ""
-
-#: animal.js
-msgid "The coat type of this animal"
 msgstr ""
 
 #: onlineforms.js
@@ -12199,40 +12155,16 @@ msgstr ""
 msgid "The date reported to the shelter"
 msgstr ""
 
-#: move_deceased.js animal.js
+#: move_deceased.js
 msgid "The date the animal died"
-msgstr ""
-
-#: animal.js
-msgid "The date the animal was FIV/L tested"
-msgstr ""
-
-#: animal.js
-msgid "The date the animal was altered"
 msgstr ""
 
 #: animal_new.js animal.js
 msgid "The date the animal was born"
 msgstr ""
 
-#: animal.js
-msgid "The date the animal was brought into the shelter"
-msgstr ""
-
-#: animal.js
-msgid "The date the animal was heartworm tested"
-msgstr ""
-
-#: animal.js
-msgid "The date the animal was microchipped"
-msgstr ""
-
 #: move_reclaim.js
 msgid "The date the animal was reclaimed"
-msgstr ""
-
-#: animal.js
-msgid "The date the animal was tattooed"
 msgstr ""
 
 #: move_foster.js
@@ -12315,22 +12247,18 @@ msgstr ""
 msgid "The default username is 'user' with the password 'letmein'"
 msgstr ""
 
-#: animal_bulk.js animal.js
-msgid "The entry reason for this animal"
+#: animal.js
+msgid "The description is used for the animal's bio on adoption websites"
 msgstr ""
 
-#: animal.js
-msgid "The litter this animal belongs to"
+#: animal_bulk.js
+msgid "The entry reason for this animal"
 msgstr ""
 
 #: options.js
 msgid ""
 "The locale determines the language ASM will use when displaying text, dates "
 "and currencies."
-msgstr ""
-
-#: animal.js
-msgid "The microchip number"
 msgstr ""
 
 #: movement.py
@@ -12349,10 +12277,6 @@ msgstr ""
 msgid "The person record to merge must be different from the original."
 msgstr ""
 
-#: animal.js
-msgid "The primary breed of this animal"
-msgstr ""
-
 #: waitinglist_new.js waitinglist.js
 msgid "The reason the owner wants to part with the animal"
 msgstr ""
@@ -12365,35 +12289,15 @@ msgstr ""
 msgid "The remaining units in the container"
 msgstr ""
 
-#: animal.js
-msgid "The result of the FIV test"
-msgstr ""
-
-#: animal.js
-msgid "The result of the FLV test"
-msgstr ""
-
-#: animal.js
-msgid "The result of the heartworm test"
-msgstr ""
-
 #: stocklevel.js
 msgid "The retail/resale price per unit"
-msgstr ""
-
-#: animal.js
-msgid "The secondary breed of this animal"
 msgstr ""
 
 #: report_images.js
 msgid "The selected file is not an image."
 msgstr ""
 
-#: animal.js
-msgid "The shelter category for this animal"
-msgstr ""
-
-#: animal_new.js animal.js
+#: animal_new.js
 msgid "The shelter reference number"
 msgstr ""
 
@@ -12407,18 +12311,6 @@ msgstr ""
 msgid ""
 "The sheltermanager.com admin account password cannot be reset here, please "
 "visit {0}"
-msgstr ""
-
-#: animal.js
-msgid "The size of this animal"
-msgstr ""
-
-#: animal.js
-msgid "The species of this animal"
-msgstr ""
-
-#: animal.js
-msgid "The tattoo number"
 msgstr ""
 
 #: options.js
@@ -12575,36 +12467,12 @@ msgstr ""
 msgid "This animal already has an active reservation."
 msgstr ""
 
-#: animal.js
-msgid "This animal has a SmartTag PETID"
-msgstr ""
-
-#: animal.js
-msgid "This animal has a tattoo"
-msgstr ""
-
 #: move_reclaim.js move_adopt.js
 msgid "This animal has active reservations, they will be cancelled."
 msgstr ""
 
 #: move_reserve.js move_adopt.js
 msgid "This animal has an adoption fee of {0}"
-msgstr ""
-
-#: animal.js
-msgid "This animal has been FIV/L tested"
-msgstr ""
-
-#: animal.js
-msgid "This animal has been altered"
-msgstr ""
-
-#: animal.js
-msgid "This animal has been declawed"
-msgstr ""
-
-#: animal.js
-msgid "This animal has been heartworm tested"
 msgstr ""
 
 #: animal.py
@@ -12631,10 +12499,6 @@ msgstr ""
 msgid ""
 "This animal has the same name as another animal recently added to the "
 "system."
-msgstr ""
-
-#: animal.js
-msgid "This animal is a crossbreed"
 msgstr ""
 
 #: movements.js
@@ -12669,10 +12533,6 @@ msgstr ""
 msgid "This animal is marked not for adoption."
 msgstr ""
 
-#: animal.js
-msgid "This animal is microchipped"
-msgstr ""
-
 #: move_reclaim.js move_retailer.js move_reserve.js move_transfer.js
 #: move_adopt.js move_foster.js
 msgid "This animal is not on the shelter."
@@ -12692,19 +12552,15 @@ msgid ""
 "shelter"
 msgstr ""
 
-#: move_deceased.js animal.js
+#: move_deceased.js
 msgid "This animal was dead on arrival to the shelter"
 msgstr ""
 
-#: move_deceased.js animal.js
+#: move_deceased.js
 msgid "This animal was euthanized"
 msgstr ""
 
-#: animal.js
-msgid "This animal was picked up"
-msgstr ""
-
-#: animal_new.js animal.js
+#: animal_new.js
 msgid "This animal was transferred from another shelter"
 msgstr ""
 
