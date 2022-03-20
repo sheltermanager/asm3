@@ -282,7 +282,7 @@ def get_animal_query(dbo):
 
 def get_animal_status_query(dbo):
     return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.AnimalComments, " \
-        "a.DeceasedDate, a.DateOfBirth, a.DiedOffShelter, a.PutToSleep, a.Neutered, a.SpeciesID, " \
+        "a.DeceasedDate, a.DateOfBirth, a.DiedOffShelter, a.PutToSleep, a.Neutered, a.Identichipped, a.SpeciesID, " \
         "dr.ReasonName AS PTSReasonName, " \
         "il.LocationName AS ShelterLocationName, " \
         "a.ShelterLocation, a.ShelterLocationUnit, " \
