@@ -995,7 +995,7 @@ const tableform = {
         }
         if (columns > 1) {
             // We have multiple columns, start the first one
-            d += "<tr><td><table>";
+            d += '<tr><td class="asm-nested-table-td"><table>';
         }
         $.each(fields, function(i, v) {
             let labelx = "", tr = "<tr>";
@@ -1299,7 +1299,7 @@ const tableform = {
             }
             else if (v.type == "nextcol") {
                 // Special fake widget that causes rendering to move to the next column
-                d += "</table><td><td><table>";
+                d += '</table><td><td class="asm-nested-table-td"><table>';
             }
         });
         if (columns > 1) {

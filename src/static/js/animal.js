@@ -54,7 +54,7 @@ $(function() {
                 '<table width="100%">',
                 '<tr>',
                 // left table
-                '<td width="40%">',
+                '<td width="40%" class="asm-nested-table-td">',
                 '<table>',
                 '<tr>',
                 '<td><label for="sheltercode">' + _("Code") + '</label></td>',
@@ -132,12 +132,12 @@ $(function() {
                 '</tr>',
                 '</table>',
                 // right table
-                '<td>',
+                '<td class="asm-nested-table-td">',
                 '<table>',
                 '<tr>',
                 '<td>',
                 // second column
-                '<table class="additionaltarget" data="to2">',
+                '<table class="additionaltarget asm-nested-table-td" data="to2">',
                 '<tr>',
                 '<td><label for="species">' + _("Species") + '</label></td>',
                 '<td><select id="species" data-json="SPECIESID" data-post="species" class="asm-selectbox">',
@@ -238,7 +238,7 @@ $(function() {
                 // outer table
                 '<table width="100%">',
                 '<tr>',
-                '<td width="50%">',
+                '<td width="50%" class="asm-nested-table-td">',
                 // left table
                 '<table width="100%">',
                 '<tr id="coordinatorrow">',
@@ -268,7 +268,7 @@ $(function() {
                 '</table>',
                 // right table
                 '</td>',
-                '<td width="50%">',
+                '<td width="50%" class="asm-nested-table-td">',
                 '<table width="100%" class="additionaltarget" data="to4">',
                 '<tr id="datebroughtinrow">',
                 '<td>',
@@ -406,7 +406,7 @@ $(function() {
                 // outer table
                 '<table width="100%">',
                 '<tr>',
-                '<td>',
+                '<td class="asm-nested-table-td">',
                 // tested flags
                 '<table>',
                 '<tr id="microchiprow">',
@@ -525,7 +525,7 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</td>',
-                '<td>',
+                '<td class="asm-nested-table-td">',
                 // health problems/vet fields
                 '<label for="healthproblems">' + _("Health Problems") + '</label><br />',
                 '<textarea id="healthproblems" data-json="HEALTHPROBLEMS" data-post="healthproblems" class="asm-textarea" rows="4"></textarea>',
@@ -604,7 +604,7 @@ $(function() {
                 // outer table
                 '<table width="100%">',
                 '<tr>',
-                '<td>',
+                '<td class="asm-nested-table-td">',
                 // comments table
                 '<table>',
                 '<tr id="markingsrow">',
@@ -645,7 +645,7 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</td>',
-                '<td>',
+                '<td class="asm-nested-table-td">',
                 // good with table
                 '<table class="additionaltarget" data="to3">',
                 '<tr class="goodwith">',

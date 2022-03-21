@@ -36,8 +36,8 @@ $(function() {
                 '<div>',
                 '<table width="100%">',
                 '<tr>',
-                '<!-- left column -->',
-                '<td>',
+                // left column
+                '<td class="asm-nested-table-td">',
                 '<table width="100%">',
                 '<tr>',
                 '<td>' + _("Number") + '</td>',
@@ -117,8 +117,8 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</td>',
-                '<!-- right column -->',
-                '<td>',
+                // right column
+                '<td class="asm-nested-table-td">',
                 mode == "lost" ? '<table width="100%" class="additionaltarget" data="to10">' : "",
                 mode == "found" ? '<table width="100%" class="additionaltarget" data="to12">' : "",
                 '<tr>',

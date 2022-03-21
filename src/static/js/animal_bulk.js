@@ -24,7 +24,7 @@ $(function() {
                 html.content_header(_("Bulk change animals")),
                 '<table width="100%" class="asm-table-layout" style="padding-bottom: 5px;">',
                 '<tr>',
-                '<td>',
+                '<td class="asm-nested-table-td">',
                 
                 // left table
                 '<table width="60%" class="asm-table-layout">',
@@ -180,7 +180,7 @@ $(function() {
 
                 // end left table
                 '</td>',
-                '<td>',
+                '<td class="asm-nested-table-td">',
 
                 // right table
                 '<table>',

@@ -46,8 +46,8 @@ $(function() {
                 '<div>',
                 '<table width="100%">',
                 '<tr>',
-                '<!-- left table -->',
-                '<td width="35%">',
+                // left table
+                '<td width="35%" class="asm-nested-table-td">',
                 '<table class="additionaltarget" data="to7">',
                 '<tr>',
                 '<td><label for="code">' + _("Code") + '</label></td>',
@@ -141,8 +141,8 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '<!-- right table -->',
-                '<td width="30%">',
+                // right table 
+                '<td width="30%" class="asm-nested-table-td">',
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="address">' + _("Address") + '</label></td>',
@@ -182,13 +182,13 @@ $(function() {
                 '</label></td>',
                 '<td><input type="text" class="asm-latlong" id="latlong" data-json="LATLONG" data-post="latlong" /></td>',
                 '</tr>',
-                '<!-- end right table -->',
+                // end right table
                 '</table>',
-                '<!-- Third column, embedded map placeholder -->',
+                // Third column, embedded map placeholder
                 '</td>',
-                '<td width="35%">',
+                '<td width="35%" class="asm-nested-table-td">',
                 '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div>',
-                '<!-- end outer table -->',
+                // end outer table
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -200,11 +200,11 @@ $(function() {
             return [
                 '<h3><a href="#">' + _("Type") + '</a></h3>',
                 '<div>',
-                '<!-- Outer table -->',
+                // Outer table
                 '<table width="100%">',
                 '<tr>',
-                '<td width="50%">',
-                '<!-- Left table -->',
+                '<td width="50%" class="asm-nested-table-td">',
+                // Left table
                 '<table class="additionaltarget" data="to8">',
                 '<tr>',
                 '<td><label for="flags">' + _("Flags") + '</label></td>',
@@ -237,8 +237,8 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</td>',
-                '<td>',
-                '<!-- Right table -->',
+                '<td class="asm-nested-table-td">',
+                // Right table
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="comments">' + _("Comments") + '</label></td>',
@@ -267,15 +267,15 @@ $(function() {
             return [
                 '<h3 id="accordion-homechecker"><a href="#">' + _("Homechecker") + '</a></h3>',
                 '<div>',
-                '<!-- outer table -->',
+                // outer table
                 '<table width="100%">',
                 '<tr>',
-                '<td width="50%">',
+                '<td width="50%" class="asm-nested-table-td">',
                 '<p class="asm-header"><label for="areas">' + _("Homecheck Areas") + '</label></p>',
                 '<textarea id="areas" class="asm-textarea" data-json="HOMECHECKAREAS" data-post="areas" rows="8" title="' + html.title(_("A list of areas this person will homecheck - eg: S60 S61")) + '"></textarea>',
                 '</td>',
-                '<td width="50%" valign="top">',
-                '<!-- history table -->',
+                '<td width="50%" valign="top" class="asm-nested-table-td">',
+                // history table
                 '<p class="asm-header"><label>' + _("Homecheck History") + '</label></p>',
                 '<table id="homecheckhistory" width="100%">',
                 '<thead>',
@@ -288,7 +288,7 @@ $(function() {
                 '<tbody>',
                 '</tbody>',
                 '</table>',
-                '<!-- end outer table -->',
+                // end outer table
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -299,11 +299,11 @@ $(function() {
         render_lookingfor: function() {
             return [
                 '<h3><a href="#">' + _("Looking for") + ' <span id="tabcriteria" style="display: none" class="asm-icon asm-icon-animal"></span></a></h3><div>',
-                '<!-- Outer table -->',
+                // Outer table
                 '<table width="100%">',
                 '<tr>',
-                '<td>',
-                '<!-- left table -->',
+                '<td class="asm-nested-table-td">',
+                // left table
                 '<table>',
                 '<tr>',
                 '<td><label for="matchactive">' + _("Status") + '</label></td>',
@@ -338,8 +338,8 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</td>',
-                '<td>',
-                '<!-- right table -->',
+                '<td class="asm-nested-table-td">',
+                // right table
                 '<table>',
                 '<tr>',
                 '<td><label for="matchsex">' + _("Sex") + '</label></td>',
@@ -392,9 +392,9 @@ $(function() {
                 '</select></td>',
                 '</tr>',
                 '</table>',
-                '<!-- far right table -->',
+                // far right table
                 '</td>',
-                '<td>',
+                '<td class="asm-nested-table-td">',
                 '<table>',
                 '<tr>',
                 '<td><label for="matchgoodwithcats">' + _("Good with cats") + '</label></td>',
@@ -426,7 +426,7 @@ $(function() {
                 '</select></td>',
                 '</tr>',
                 '</table>',
-                '<!-- end outer table -->',
+                // end outer table
                 '</td>',
                 '</tr>',
                 '</table>',

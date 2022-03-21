@@ -913,6 +913,16 @@ select:disabled, input:disabled, textarea:disabled {
     text-decoration: none;
 }
 
+
+/** Tweaks for when displaying on portrait mobile devices */
+@media screen and (max-device-width:480px) {
+
+    /** Stack table cells containing nested tables on mobile so
+     *  that they don't overflow and require horizontal scrolling */
+    .asm-nested-table-td { display: block; }
+
+}
+
 /** Hide elements from printing by giving them the no-print class */
 @media print
 {

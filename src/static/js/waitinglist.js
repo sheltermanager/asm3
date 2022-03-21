@@ -29,8 +29,8 @@ $(function() {
                 '<div>',
                 '<table width="100%">',
                 '<tr>',
-                '<!-- left column -->',
-                '<td>',
+                // left column
+                '<td class="asm-nested-table-td">',
                 '<table width="100%">',
                 '<tr>',
                 '<td>' + _("Number") + '</td>',
@@ -76,8 +76,8 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</td>',
-                '<!-- right column -->',
-                '<td>',
+                // right column 
+                '<td class="asm-nested-table-td">',
                 '<table width="100%" class="additionaltarget" data="to14">',
                 '<tr>',
                 '<td><label for="canafforddonation">' + _("Can afford donation?") + '</label></td>',
