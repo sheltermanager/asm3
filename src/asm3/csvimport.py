@@ -538,6 +538,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 p["worktelephone"] = gks(row, "ORIGINALOWNERWORKPHONE")
                 p["mobiletelephone"] = gks(row, "ORIGINALOWNERCELLPHONE")
                 p["emailaddress"] = gks(row, "ORIGINALOWNEREMAIL")
+                p["flags"] = gks(row, "ORIGINALOWNERFLAGS")
                 try:
                     originalownerid = 0
                     if checkduplicates:
