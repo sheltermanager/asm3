@@ -2468,10 +2468,13 @@ def update_animals_from_form(dbo, username, post):
     if post.integer("animaltype") != -1:
         dbo.execute("UPDATE animal SET AnimalTypeID = %d WHERE ID IN (%s)" % (post.integer("animaltype"), post["animals"]))
         aud.append("AnimalTypeID = %s" % post["animaltype"])
-    if post.integer("location") != -1:
+    if post.integer("location") != -1 and post["unit"] != "-1":
+        for animalid in post.integer_list("animals"):
+            update_location_unit(dbo, username, animalid, post.integer("location"), post["unit"])
+    elif post.integer("location") != -1:
         dbo.execute("UPDATE animal SET ShelterLocation = %d WHERE ID IN (%s)" % (post.integer("location"), post["animals"]))
         aud.append("ShelterLocation = %s" % post["location"])
-    if post["unit"] != "-1":
+    elif post["unit"] != "-1":
         dbo.execute("UPDATE animal SET ShelterLocationUnit = %s WHERE ID IN (%s)" % (dbo.sql_value(post["unit"]), post["animals"]))
         aud.append("ShelterLocationUnit = %s" % post["unit"])
     if post.integer("entryreason") != -1:
