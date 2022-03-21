@@ -22,12 +22,12 @@ The following files are needed:
     Events - Vaccines Administered -> vaccinations.csv
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/sluv_bg2689"
+PATH = "/home/robin/tmp/asm3_import_data/sluv_ad2738"
 
 DEFAULT_BREED = 261 # default to dsh
 DATE_FORMAT = "MDY" # Normally MDY
 USE_SMDB_ENTRY_TYPE = False # If False, maps to new db defaults, if True looks up animal type and entry reason in target db
-START_ID = 500
+START_ID = 100
 
 animals = []
 animaltests = []
