@@ -909,7 +909,7 @@ const tableform = {
                 if (bp.find("#dialog-tableform-activity").length == 0 && row.CREATEDBY && row.CREATEDDATE && row.LASTCHANGEDBY && row.LASTCHANGEDDATE) {
                     var activity = 
                         _("Added by {0} on {1}").replace("{0}", row.CREATEDBY)
-                            .replace("{1}", format.date(row.CREATEDDATE) + " " + format.time(row.LASTCHANGEDDATE)) + '<br/>' +
+                            .replace("{1}", format.date(row.CREATEDDATE) + " " + format.time(row.CREATEDDATE)) + '<br/>' +
                         _("Last changed by {0} on {1}").replace("{0}", row.LASTCHANGEDBY)
                             .replace("{1}", format.date(row.LASTCHANGEDDATE) + " " + format.time(row.LASTCHANGEDDATE));
                     bp.append('<button id="button-dialog-tableform-activity" title="' + 

@@ -1,6 +1,7 @@
 46
 ================
 
+22/03/22 Dialogs were showing last changed instead of created time
 21/03/22 csvimport: Support ORIGINALOWNERFLAGS column
 21/03/22 Setting location+unit via bulk change animals now writes log entries
 21/03/22 Stack nested tables vertically on mobile to prevent h scroll #1103
