@@ -198,6 +198,7 @@ def get_animal_query(dbo):
         "web.MediaNotes AS WebsiteMediaNotes, " \
         "(SELECT COUNT(*) FROM media mtc WHERE MediaMimeType = 'image/jpeg' AND mtc.LinkTypeID = 0 AND mtc.LinkID = a.ID " \
             "AND ExcludeFromPublish = 0) AS WebsiteImageCount, " \
+        "doc.ID AS DocMediaID, " \
         "doc.MediaName AS DocMediaName, " \
         "doc.Date AS DocMediaDate, " \
         "vid.MediaName AS WebsiteVideoURL, " \

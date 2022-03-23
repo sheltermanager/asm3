@@ -1,6 +1,7 @@
 46
 ================
 
+23/03/22 Use DOCMEDIAID not name for document images, stop issues with duplicates
 22/03/22 Dialogs were showing last changed instead of created time
 21/03/22 csvimport: Support ORIGINALOWNERFLAGS column
 21/03/22 Setting location+unit via bulk change animals now writes log entries

@@ -524,12 +524,12 @@ def doc_img_src(dbo, row):
     """
     Gets the img src attribute/link for a document picture. If the row
     doesn't have doc preferred media, the nopic src is returned instead.
-    row: A query containing DOCMEDIANAME
+    row: A query containing DOCMEDIAID
     """
-    if row["DOCMEDIANAME"] is None or row["DOCMEDIANAME"] == "":
+    if row["DOCMEDIAID"] is None or row["DOCMEDIAID"] == "":
         return "image?db=%s&mode=nopic" % dbo.database
     else:
-        return "image?db=%s&mode=dbfs&id=%s&date=%s" % (dbo.database, row["DOCMEDIANAME"], row["DOCMEDIADATE"].isoformat())
+        return "image?db=%s&mode=media&id=%s&date=%s" % (dbo.database, row["DOCMEDIAID"], row["DOCMEDIADATE"].isoformat())
 
 def menu_structure(l, publisherlist, reports, mailmerges):
     """
