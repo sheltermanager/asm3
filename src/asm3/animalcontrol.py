@@ -28,6 +28,7 @@ def get_animalcontrol_query(dbo):
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
+        "doc.ID AS DocMediaID, " \
         "doc.MediaName AS DocMediaName, " \
         "doc.Date AS DocMediaDate " \
         "FROM animalcontrol ac " \

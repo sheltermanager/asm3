@@ -45,6 +45,7 @@ def get_person_query(dbo):
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
+        "doc.ID AS DocMediaID, " \
         "doc.MediaName AS DocMediaName, " \
         "doc.Date AS DocMediaDate, " \
         "(SELECT MatchSummary FROM ownerlookingfor olf WHERE olf.OwnerID = o.ID GROUP BY MatchSummary) AS LookingForSummary " \
