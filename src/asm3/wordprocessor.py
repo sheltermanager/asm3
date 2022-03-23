@@ -748,6 +748,9 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         totalcosts = totalvaccinations + totaltransports + totaltests + totalmedicals + totallines
         dailyboardingcost = a["DAILYBOARDINGCOST"] or 0
         daysonshelter = a["DAYSONSHELTER"] or 0
+        currentboardingcost = dailyboardingcost * daysonshelter
+        # Only add the current boarding cost to total if this is a shelter animal
+        if a["ARCHIVED"] == 0: totalcosts += currentboardingcost
         costtags = {
             "TOTALVACCINATIONCOSTS": format_currency_no_symbol(l, totalvaccinations),
             "TOTALTRANSPORTCOSTS": format_currency_no_symbol(l, totaltransports),
@@ -755,8 +758,8 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "TOTALMEDICALCOSTS": format_currency_no_symbol(l, totalmedicals),
             "TOTALLINECOSTS": format_currency_no_symbol(l, totallines),
             "DAILYBOARDINGCOST": format_currency_no_symbol(l, dailyboardingcost),
-            "CURRENTBOARDINGCOST": format_currency_no_symbol(l, dailyboardingcost * daysonshelter),
-            "TOTALCOSTS": format_currency_no_symbol(l, dailyboardingcost * daysonshelter + totalcosts)
+            "CURRENTBOARDINGCOST": format_currency_no_symbol(l, currentboardingcost),
+            "TOTALCOSTS": format_currency_no_symbol(l, totalcosts)
         }
         tags = append_tags(tags, costtags)
 
