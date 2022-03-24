@@ -1,6 +1,7 @@
 46
 ================
 
+23/03/22 Adoption checkout causing blank payment types from movement tab
 23/03/22 SQL interface counting select query results off by 1
 23/03/22 Docs: Do not include boarding in TOTALCOSTS for off-shelter animals
 23/03/22 Use DOCMEDIAID not name for document images, stop issues with duplicates

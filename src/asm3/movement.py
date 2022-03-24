@@ -977,7 +977,7 @@ def send_adoption_checkout(dbo, username, post):
     if templateid == 0: templateid = asm3.configuration.adoption_checkout_templateid(dbo)
     # payment type id for the fee
     feetypeid = post.integer("feetypeid")
-    if feetypeid == 0: asm3.configuration.adoption_checkout_feeid(dbo)
+    if feetypeid == 0: feetypeid = asm3.configuration.adoption_checkout_feeid(dbo)
     co = {
         "database":     dbo.database,
         "movementid":   post.integer("id"),
