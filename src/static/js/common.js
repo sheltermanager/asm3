@@ -2500,7 +2500,9 @@ const html = {
      * Removes HTML tags from a string
      */
     strip_tags: function(s) {
-        return $("<p>" + s + "</p>").text();
+        if (!s) { return ""; }
+        /*jslint regexp: true */
+        return String(s).replace(/<[^>]+>/g,"");
     },
 
     /**
