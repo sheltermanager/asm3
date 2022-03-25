@@ -356,7 +356,8 @@ Returns an animal's preferred image as a thumbnail. Send the id of the animal::
     http://localhost:5000/service?method=animal_thumbnail&animalid=520
 
 The thumbnail will be sized to whatever the main application is using
-(typically 150 pixels along the longest side).
+(default is 150 pixels along the longest side). You can choose the thumbnail
+size under :menuselection:`Publishing -> Set Publishing Options -> All Publishers`
 
 animal_view
 -----------
@@ -473,17 +474,19 @@ animals with reservations, try this::
 Thumbnail Size
 ^^^^^^^^^^^^^^
 
-By default, animal thumbnails will be displayed at the default system size (150px). 
+By default, animal thumbnails will be displayed at the default system size
+(150px), which can be set up to a maximum of 300px in the options at 
+:menuselection:`Publishing -> Set Publishing Options -> All Publishers`
 
-If you would like to use larger images in the thumbnail list, you can choose to
-inject full size images rather than thumbnails, then use CSS to constrain them
-to the size you prefer::
+If you would like to use larger images than 300px in the thumbnail list, you
+can choose to use the full size images rather than thumbnails, then use CSS to
+constrain them to the size you prefer::
 
     <script>
     asm3_adoptable_fullsize_images = true;
     </script>
     <style>
-    .asm3-adoptable-thumbnail { max-width: 200px; } 
+    .asm3-adoptable-thumbnail { max-width: 400px; } 
     </style>
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
