@@ -6,8 +6,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "46u [Sat 26 Mar 16:02:19 GMT 2022]"
-BUILD = "03261602"
+VERSION = "46u [Sat 26 Mar 16:12:53 GMT 2022]"
+BUILD = "03261612"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -160,8 +160,8 @@ def real_locale(locale = "en"):
     #   en_CA (Canada)
     #   en_GB (UK)
     if locale in ("en_AE", "en_BE", "en_BG", "en_BM", "en_BQ", "en_CH", "en_CN", "en_CY", "en_ES", 
-        "en_HK", "en_IE", "en_IN", "en_JP", "en_KE", "en_KH", "en_LB", "en_LU", "en_MU", "en_MY", "en_NA", 
-        "en_PH", "en_QA", "en_TH", "en_TW", "en_TW2", "en_TZ", "en_VN", "en_ZA"):
+        "en_HK", "en_IE", "en_IN", "en_JP", "en_KE", "en_KH", "en_LB", "en_LU", "en_MU", "en_MY", "en_MZ", 
+        "en_NA", "en_PH", "en_QA", "en_TH", "en_TW", "en_TW2", "en_TZ", "en_VN", "en_ZA"):
         locale = "en_GB"
     if locale in ("en_AW", "en_BH", "en_CO", "en_CR", "en_KW", "en_KY", "en_IL", "en_LB", 
         "en_MX"):
@@ -180,6 +180,9 @@ def real_locale(locale = "en"):
     # Italian locales
     if locale in ("it_CH",):
         locale = "it"
+    # Portguese locales
+    if locale in ("pt_MZ",):
+        locale = "pt"
     # Spanish locales
     if locale in ("es_CO", "es_CR", "es_EC", "es_MX"):
         locale = "es"
