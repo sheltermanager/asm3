@@ -5772,7 +5772,7 @@ class sql(JSONEndpoint):
         return self.exec_sql(o.dbo, o.user, sql)
 
     def post_execfile(self, o):
-        sql = o.post["sqlfile"].strip()
+        sql = asm3.utils.bytes2str(o.post.filedata())
         self.content_type("text/plain")
         return self.exec_sql_from_file(o.dbo, o.user, sql)
 

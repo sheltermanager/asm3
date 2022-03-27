@@ -55,7 +55,7 @@ $(function() {
                 '<div id="dialog-script" style="display: none" title="' + html.title(_("Execute Script")) + '">',
                 '<form id="sqlfileform" action="sql" method="post" enctype="multipart/form-data">',
                 '<input name="mode" value="execfile" type="hidden" />',
-                '<label for="sqlfile">' + _("Script") + ' <input id="sqlfile" type="file" name="sqlfile" /></label>',
+                '<label for="sqlfile">' + _("Script") + ' <input id="sqlfile" type="file" name="filechooser" /></label>',
                 '</form>',
                 '</div>'
             ].join("\n");
