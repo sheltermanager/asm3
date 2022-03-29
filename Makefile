@@ -93,9 +93,9 @@ compilepy:
 	flake8 --config=scripts/flake8 src/*.py src/asm3/*.py src/asm3/dbms/*.py src/asm3/publishers/*.py src/asm3/paymentprocessor/*.py
 
 smcom-dev: clean version schema
-	@echo "[smcom dev us17b] ===================="
+	@echo "[smcom dev eur04b] ===================="
 	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_eur04b"
 
 smcom-dev-all: clean version schema
 	@echo "[smcom dev all] ======================"
