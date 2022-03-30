@@ -20,7 +20,7 @@ class TestPublish(unittest.TestCase):
         }
         post = asm3.utils.PostedData(data, "en")
         self.nid, self.code = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")
-        asm3.configuration.cset(base.get_dbo(), "PublisherPresets", "includewithoutimage includewithoutdescription includenonneutered excludeunder=1")
+        asm3.configuration.cset(base.get_dbo(), "PublisherPresets", "includewithoutimage includewithoutdescription includenonneutered includenonmicrochip excludeunder=1")
 
     def tearDown(self):
         asm3.animal.delete_animal(base.get_dbo(), "test", self.nid)

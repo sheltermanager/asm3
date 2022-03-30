@@ -91,6 +91,14 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
         """
         for r in rows:
             if r.ID == aid:
+                # Add some useful values for publishers that can accept bonded animal info
+                a.BONDEDNAME1 = a.ANIMALNAME
+                a.BONDEDNAME2 = r.ANIMALNAME
+                a.BONDEDSEX = r.SEX
+                a.BONDEDMICROCHIPNUMBER = r.IDENTICHIPNUMBER
+                a.BONDEDBREEDNAME = r.BREEDNAME
+                a.BONDEDSIZE = r.SIZE
+                a.BONDEDDATEOFBIRTH = r.DATEOFBIRTH
                 a.ANIMALNAME = "%s / %s" % (a.ANIMALNAME, r.ANIMALNAME)
                 r.REMOVE = True # Flag this row for removal
                 asm3.al.debug("merged animal %d into %d" % (aid, a.ID), "publishers.base.get_animal_data", dbo)

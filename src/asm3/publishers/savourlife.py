@@ -22,20 +22,21 @@ class SavourLifePublisher(AbstractPublisher):
     def __init__(self, dbo, publishCriteria):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
+        publishCriteria.bondedAsSingle = True
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("savourlife", "SavourLife Publisher")
 
-    def get_breed_id(self, an):
+    def get_breed_id(self, breedname, crossbreed = False):
         """
-        Returns a savourlife breed for an asm3.animal.
+        Returns a savourlife breed for a given breedname
         """
-        breed = asm3.utils.nulltostr(an.BREEDNAME1)
-        if an.CROSSBREED == 1:
+        breed = asm3.utils.nulltostr(breedname)
+        if crossbreed:
             breed = "%s cross" % breed
         for k, v in DOG_BREEDS.items():
             if v.lower() == breed.lower():
                 return int(k)
-        self.log("'%s' is not a valid SavourLife breed, using default 'Cross Breed'" % an.BREEDNAME1)
+        self.log("'%s' is not a valid SavourLife breed, using default 'Cross Breed'" % breedname)
         return 305
 
     def get_state(self, s):
@@ -334,13 +335,13 @@ class SavourLifePublisher(AbstractPublisher):
                 microchipdetails = "Yes"
 
         # Construct a dictionary of info for this animal
-        return {
+        d = {
             "Token":                    token,
             "DogId":                    asm3.utils.iif(dogid == "", None, dogid), # SL expect a null in this field for no dogid
             "Description":              self.getDescription(an, replaceSmart=True),
             "DogName":                  an.ANIMALNAME.title(),
             "Images":                   self.getPhotoUrls(an.ID),
-            "BreedId":                  self.get_breed_id(an),
+            "BreedId":                  self.get_breed_id(an.BREEDNAME1, an.CROSSBREED == 1),
             "Suburb":                   location_suburb,
             "State":                    location_state_abbr,
             "Postcode":                 location_postcode,
@@ -369,6 +370,35 @@ class SavourLifePublisher(AbstractPublisher):
             "MicrochipDetails":         microchipdetails,
             "IsOnHold":                 hold # Typically false, but the change status code will do this
         }
+
+        # If this animal is bonded, override its name back to the original value
+        # and add info for the bonded animal
+        if "BONDEDNAME1" in an:
+            d["DogName"] = an.BONDEDNAME1.title()
+            d["DogName2"] = an.BONDEDNAME2.title()
+            d["IsMale2"] = an.BONDEDSEX == 1
+            d["Breed2"] = self.get_breed_id(an.BONDEDBREEDNAME, an.CROSSBREED == 1)
+            d["DOB2"] = an.DATEOFBIRTH
+
+            # MicrochipDetails2 should be "No" if we don't have one, 
+            # the actual number if all_microchips is set or we're in VIC or NSW (2XXX or 3XXX postcode)
+            # or "Yes" for others.
+            microchipdetails2 = "No"
+            if an.BONDEDMICROCHIPNUMBER != "":
+                if all_microchips or (location_postcode.startswith("2") or location_postcode.startswith("3")):
+                    microchipdetails2 = an.BONDEDMICROCHIPNUMBER
+                else:
+                    microchipdetails2 = "Yes"
+            d["MicrochipDetails2"] = microchipdetails2
+
+            # Size is 10 = small, 20 = medium, 30 = large, 40 = x large
+            size2 = ""
+            if an.BONDEDSIZE == 2: size2 = 20
+            elif an.BONDEDSIZE < 2: size2 = 30
+            else: size2 = 10
+            d["SizeWhenAdult2"] = size2
+
+        return d
 
 
 
