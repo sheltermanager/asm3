@@ -623,12 +623,12 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                         dbo.update("animal", dup.ID, uq, user)
                         # Update flags if present
                         if a["flags"] != "":
-                            asm3.animal.update_flags(dbo, user, dup.ID, a["flags"])
+                            asm3.animal.update_flags(dbo, user, dup.ID, a["flags"].split(","))
                 if animalid == 0:
                     animalid, dummy = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(a, dbo.locale), user)
                     # Add any flags that were set
                     if a["flags"] != "":
-                        asm3.animal.update_flags(dbo, user, animalid, a["flags"])
+                        asm3.animal.update_flags(dbo, user, animalid, a["flags"].split(","))
                 # Identify any ANIMALADDITIONAL additional fields and create/merge them
                 create_additional_fields(dbo, row, errors, rowno, "ANIMALADDITIONAL", "animal", animalid)
                 # If we have some image data, add it to the animal

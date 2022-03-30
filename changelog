@@ -1,6 +1,7 @@
 46
 ================
 
+30/03/22 CSV import: Fix for merging ANIMALFLAGS
 27/03/22 Fix decoding bug when using SQL Interface->Execute Script
 26/03/22 Add Mozambique en/pt locales
 24/03/22 Use safer/quicker regex rather than DOM for removing HTML tags 
