@@ -5,7 +5,7 @@ import asm, os
 """
 Import module to read from ShelterLuv CSV export.
 
-Last updated 3rd Mar, 2022
+Last updated 1st Apr, 2022
 
 The following files are needed:
 
@@ -22,7 +22,7 @@ The following files are needed:
     Events - Vaccines Administered -> vaccinations.csv
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/sluv_ad2738"
+PATH = "/home/robin/tmp/asm3_import_data/sluv_rc2755"
 
 DEFAULT_BREED = 261 # default to dsh
 DATE_FORMAT = "MDY" # Normally MDY
@@ -247,29 +247,30 @@ for d in asm.csv_to_list("%s/intake.csv" % PATH):
         a.EntryReasonID = asm.entryreason_from_db(intaketype)
         a.AnimalTypeID = asm.animaltype_from_db(subtype)
 
-for d in asm.csv_to_list("%s/fosters.csv" % PATH):
-    if d["Animal ID"] == "Animal ID": continue # skip repeated headers
-    o = None
-    if d["Foster Parent Name"] in ppo: o = ppo[d["Foster Parent Name"]]
-    a = None
-    if d["Animal ID"] in ppa: a = ppa[d["Animal ID"]]
-    if o is None or a is None: continue
-    # Add some other values that weren't present in the animal file
-    if "Microchip Number" in d: a.IdentichipNumber = d["Microchip Number"]
-    # Person has to be a fosterer
-    o.IsFosterer = 1
-    if a.IdentichipNumber != "": a.Identichipped = 1
-    m = asm.Movement()
-    m.AnimalID = a.ID
-    m.OwnerID = o.ID
-    m.MovementType = 2
-    m.MovementDate = getdate(d["Outcome Date"])
-    a.ActiveMovementID = m.ID
-    a.ActiveMovementDate = m.MovementDate
-    a.ActiveMovementType = 2
-    a.CreatedDate = m.MovementDate
-    a.LastChangedDate = m.MovementDate
-    movements.append(m)
+if asm.file_exists("%s/fosters.csv" % PATH):
+    for d in asm.csv_to_list("%s/fosters.csv" % PATH):
+        if d["Animal ID"] == "Animal ID": continue # skip repeated headers
+        o = None
+        if d["Foster Parent Name"] in ppo: o = ppo[d["Foster Parent Name"]]
+        a = None
+        if d["Animal ID"] in ppa: a = ppa[d["Animal ID"]]
+        if o is None or a is None: continue
+        # Add some other values that weren't present in the animal file
+        if "Microchip Number" in d: a.IdentichipNumber = d["Microchip Number"]
+        # Person has to be a fosterer
+        o.IsFosterer = 1
+        if a.IdentichipNumber != "": a.Identichipped = 1
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.OwnerID = o.ID
+        m.MovementType = 2
+        m.MovementDate = getdate(d["Outcome Date"])
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 2
+        a.CreatedDate = m.MovementDate
+        a.LastChangedDate = m.MovementDate
+        movements.append(m)
 
 # This file was sent by one customer, it looks like the events - intake file, but contains
 # animals that only came in for some kind of service (typically feral spay/neuter), we
