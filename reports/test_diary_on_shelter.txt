@@ -2,20 +2,19 @@ Test Diary (On Shelter)
 ###
 Diary
 ###
-33012/Any
+33012/Any rev02
 ###
 Tests required to date for shelter animals.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName, a.ShelterLocationUnit, 
+a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation, 
 tt.TestName, at.DateRequired, at.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animaltest at ON a.ID = at.AnimalID
 INNER JOIN testtype tt ON at.TestTypeID = tt.ID
-INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE at.DateOfTest Is Null
 AND at.DateRequired <= '$CURRENT_DATE$'
 AND a.Archived = 0
@@ -37,7 +36,7 @@ $$BODY<tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
-<td>$LOCATIONNAME $SHELTERLOCATIONUNIT</td>
+<td>$DISPLAYLOCATION</td>
 <td>$TESTNAME</td>
 <td>$DATEREQUIRED</td>
 <td>$COMMENTS</td>
@@ -52,20 +51,19 @@ Test Diary (On Shelter, Date Range)
 ###
 Diary
 ###
-3309/Any
+3309/Any rev02
 ###
 Tests required between two dates for shelter animals.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName, a.ShelterLocationUnit, 
+a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation, 
 tt.TestName, at.DateRequired, at.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animaltest at ON a.ID = at.AnimalID
 INNER JOIN testtype tt ON at.TestTypeID = tt.ID
-INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE at.DateOfTest Is Null
 AND at.DateRequired >= '$ASK DATE Enter the from date$'
 AND at.DateRequired <= '$ASK DATE Enter the to date$'
@@ -88,7 +86,7 @@ $$BODY<tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
-<td>$LOCATIONNAME $SHELTERLOCATIONUNIT</td>
+<td>$DISPLAYLOCATION</td>
 <td>$TESTNAME</td>
 <td>$DATEREQUIRED</td>
 <td>$COMMENTS</td>

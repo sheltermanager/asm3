@@ -2,7 +2,7 @@ Medical Diary
 ###
 Diary
 ###
-33012/Any
+33012/Any rev02
 ###
 Generates the medical diary for today.
 ###
@@ -11,13 +11,12 @@ en
 SELECT
 a.ShelterCode, a.AnimalName,
 t.AnimalType, s.SpeciesName,
-il.LocationName, a.ShelterLocationUnit, am.TreatmentName,
+a.DisplayLocation, am.TreatmentName,
 am.Dosage, amt.TreatmentNumber, amt.TotalTreatments,
 amt.DateRequired, am.Comments AS RegimeComments, amt.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
-INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 INNER JOIN animalmedical am ON a.ID = am.AnimalID
 INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
 WHERE amt.DateGiven Is Null 
@@ -31,7 +30,7 @@ $$HEADER
 <td><b>Name</b></td>
 <td><b>Type</b></td>
 <td><b>Species</b></td>
-<td><b>Internal Loc</b></td>
+<td><b>Location</b></td>
 <td><b>Therapy</b></td>
 <td><b>Dosage</b></td>
 <td><b>Number</b></td>
@@ -46,7 +45,7 @@ $$BODY<tr>
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
-<td>$LOCATIONNAME $SHELTERLOCATIONUNIT</td>
+<td>$DISPLAYLOCATION</td>
 <td>$TREATMENTNAME</td>
 <td>$DOSAGE</td>
 <td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>

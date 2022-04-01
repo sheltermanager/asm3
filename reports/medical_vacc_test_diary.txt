@@ -2,7 +2,7 @@ Medical, Vaccination and Test Diary
 ###
 Diary
 ###
-33012/Any
+33012/Any rev02
 ###
 The medical, vaccination and test diary for today in one report
 ###
@@ -14,13 +14,12 @@ SELECT * FROM
 
 SELECT
 'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
-t.AnimalType, s.SpeciesName, il.LocationName, a.ShelterLocationUnit, 
+t.AnimalType, s.SpeciesName, a.DisplayLocation, 
 am.TreatmentName, am.Dosage, amt.TreatmentNumber, 
 amt.TotalTreatments, amt.DateRequired, am.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
-INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 INNER JOIN animalmedical am ON a.ID = am.AnimalID
 INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
 WHERE amt.DateGiven Is Null 
@@ -29,7 +28,7 @@ AND a.Archived = 0
 
 UNION SELECT
 'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
-t.AnimalType, sp.SpeciesName, il.LocationName, a.ShelterLocationUnit, 
+t.AnimalType, sp.SpeciesName, a.DisplayLocation, 
 v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
 '1' AS TotalTreatments, av.DateRequired, av.Comments
 FROM animal a
@@ -37,14 +36,13 @@ INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animalvaccination av ON a.ID = av.AnimalID
 INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
-INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE av.DateOfVaccination Is Null
 AND av.DateRequired <= '$CURRENT_DATE$'
 AND a.Archived = 0
 
 UNION SELECT
 'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
-t.AnimalType, sp.SpeciesName, il.LocationName, a.ShelterLocationUnit, 
+t.AnimalType, sp.SpeciesName, a.DisplayLocation, 
 tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
 '1' AS TotalTreatments, at.DateRequired, at.Comments
 FROM animal a
@@ -52,7 +50,6 @@ INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animaltest at ON a.ID = at.AnimalID
 INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN testtype tt ON at.TestTypeID = tt.ID
-INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE at.DateOfTest Is Null
 AND at.DateRequired <= '$CURRENT_DATE$'
 AND a.Archived = 0
@@ -79,7 +76,7 @@ $$BODY<tr>
 <td><a target="_blank" href="animal?id=$AID">$SHELTERCODE $ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
-<td>$LOCATIONNAME $SHELTERLOCATIONUNIT</td>
+<td>$DISPLAYLOCATION</td>
 <td><b>$MTYPE: $TREATMENTNAME</b></td>
 <td>$DOSAGE</td>
 <td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
