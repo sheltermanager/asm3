@@ -2,7 +2,7 @@ Medical, Vaccination and Test Diary
 ###
 Diary
 ###
-33012/Any rev02
+33012/Any rev03
 ###
 The medical, vaccination and test diary for today in one report
 ###
@@ -63,7 +63,7 @@ $$HEADER
 <td><b>Animal</b></td>
 <td><b>Type</b></td>
 <td><b>Species</b></td>
-<td><b>Internal Loc</b></td>
+<td><b>Location</b></td>
 <td><b>Therapy</b></td>
 <td><b>Dosage</b></td>
 <td><b>Number</b></td>

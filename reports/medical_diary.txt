@@ -58,3 +58,69 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
+&&&
+Medical Diary (On shelter by Location)
+###
+Diary
+###
+33012/Any rev01
+###
+Generates the medical diary for today, grouped by location.
+###
+en
+###
+SELECT
+a.ShelterCode, a.AnimalName,
+t.AnimalType, s.SpeciesName,
+a.DisplayLocation, am.TreatmentName,
+am.Dosage, amt.TreatmentNumber, amt.TotalTreatments,
+amt.DateRequired, am.Comments AS RegimeComments, amt.Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
+WHERE amt.DateGiven Is Null 
+AND amt.DateRequired <= '$CURRENT_DATE$'
+AND a.Archived = 0
+ORDER BY a.DisplayLocation, amt.DateRequired 
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_DisplayLocation
+$$HEAD
+<h2>$DisplayLocation</h2>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Species</b></td>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>Number</b></td>
+<td><b>Date Required</b></td>
+<td><b>Regimen Comments</b></td>
+<td><b>Comments</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $DisplayLocation: {COUNT.SHELTERCODE}</p>
+GROUP$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
+<td>$TREATMENTNAME</td>
+<td>$DOSAGE</td>
+<td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
+<td>$DATEREQUIRED</td>
+<td>$REGIMECOMMENTS</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

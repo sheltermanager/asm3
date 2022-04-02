@@ -96,3 +96,58 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
+&&&
+Test Diary (On Shelter by Location)
+###
+Diary
+###
+33012/Any rev01
+###
+Tests required to date for shelter animals, grouped by location.
+###
+en
+###
+SELECT
+a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation, 
+tt.TestName, at.DateRequired, at.Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN animaltest at ON a.ID = at.AnimalID
+INNER JOIN testtype tt ON at.TestTypeID = tt.ID
+WHERE at.DateOfTest Is Null
+AND at.DateRequired <= '$CURRENT_DATE$'
+AND a.Archived = 0
+ORDER BY a.DisplayLocation, at.DateRequired
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_DisplayLocation
+$$HEAD
+<h2>$DisplayLocation</h2>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Test Type</b></td>
+<td><b>Required</b></td>
+<td><b>Comments</b></td>
+</tr>
+$FOOT
+</table>
+<p>Total $DisplayLocation: {COUNT.SHELTERCODE}</p>
+GROUP$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$ANIMALTYPE</td>
+<td>$TESTNAME</td>
+<td>$DATEREQUIRED</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+
