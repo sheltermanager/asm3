@@ -377,7 +377,7 @@ class SavourLifePublisher(AbstractPublisher):
             d["DogName"] = an.BONDEDNAME1.title()
             d["DogName2"] = an.BONDEDNAME2.title()
             d["IsMale2"] = an.BONDEDSEX == 1
-            d["Breed2"] = self.get_breed_id(an.BONDEDBREEDNAME, an.CROSSBREED == 1)
+            d["BreedId2"] = self.get_breed_id(an.BONDEDBREEDNAME, an.CROSSBREED == 1)
             d["DOB2"] = an.DATEOFBIRTH
 
             # MicrochipDetails2 should be "No" if we don't have one, 
