@@ -1254,24 +1254,28 @@ class FTPPublisher(AbstractPublisher):
         if save_log: self.saveLog()
         self.setPublisherComplete()
 
-    def uploadImage(self, a, medianame, imagename):
+    def uploadImage(self, a, mediaid, medianame, imagename):
         """
-        Retrieves image with medianame from the DBFS to the publish
+        Retrieves image with mediaid from the DBFS to the publish
         folder and uploads it via FTP with imagename
         """
         try:
             # Check if the image is already on the server if 
             # forceReupload is off and the animal doesn't
             # have any recently changed images
-            if not self.pc.forceReupload and a["RECENTLYCHANGEDIMAGES"] == 0:
+            if not self.pc.forceReupload and a.RECENTLYCHANGEDIMAGES == 0:
                 if self.existingImageList is None:
                     self.existingImageList = self.lsdir()
                 elif imagename in self.existingImageList:
                     self.log("%s: skipping, already on server" % imagename)
                     return
+            dbfsid = self.dbo.query_int("SELECT DBFSID FROM media WHERE ID=?", [mediaid])
+            if dbfsid == 0:
+                self.log("%s: skipping, no DBFSID link for media id %s" % (imagename, mediaid))
+                return
             imagefile = os.path.join(self.publishDir, imagename)
             thumbnail = os.path.join(self.publishDir, "tn_" + imagename)
-            asm3.dbfs.get_file(self.dbo, medianame, "", imagefile)
+            asm3.dbfs.get_file_id(self.dbo, dbfsid, imagefile)
             self.log("Retrieved image: %d::%s::%s" % ( a["ID"], medianame, imagename ))
             # If scaling is on, do it
             if str(self.pc.scaleImages) in ( "2", "3", "4", "5", "6", "7" ) or str(self.pc.scaleImages).find("x") > -1:
@@ -1304,13 +1308,14 @@ class FTPPublisher(AbstractPublisher):
         """
         # The first image is always the preferred
         totalimages = 0
-        animalcode = a["SHELTERCODE"]
-        animalweb = a["WEBSITEMEDIANAME"]
+        animalcode = a.SHELTERCODE
+        animalweb = a.WEBSITEMEDIANAME
+        animalwebid = a.WEBSITEMEDIAID
         if animalweb is None or animalweb == "": return totalimages
         # If we've got HTML entities in our sheltercode, it's going to
         # mess up filenames. Use the animalid instead.
         if animalcode.find("&#") != -1:
-            animalcode = str(a["ID"])
+            animalcode = str(a.ID)
         # Name it sheltercode-1.jpg or sheltercode.jpg if uploadall is off
         imagename = animalcode + ".jpg"
         if self.pc.uploadAllImages:
@@ -1318,7 +1323,7 @@ class FTPPublisher(AbstractPublisher):
         # If we're forcing reupload or the animal has
         # some recently changed images, remove all the images
         # for this animal before doing anything.
-        if self.pc.forceReupload or a["RECENTLYCHANGEDIMAGES"] > 0:
+        if self.pc.forceReupload or a.RECENTLYCHANGEDIMAGES > 0:
             if self.existingImageList is None:
                 self.existingImageList = self.lsdir()
             for ei in self.existingImageList:
@@ -1327,10 +1332,10 @@ class FTPPublisher(AbstractPublisher):
                     self.delete(ei)
         # Save it to the publish directory
         totalimages = 1
-        self.uploadImage(a, animalweb, imagename)
+        self.uploadImage(a, animalwebid, animalweb, imagename)
         # If we're saving a copy with the media ID, do that too
         if copyWithMediaIDAsName:
-            self.uploadImage(a, animalweb, animalweb)
+            self.uploadImage(a, animalwebid, animalweb, animalweb)
         # If upload all is set, we need to grab the rest of
         # the animal's images upto the limit. If the limit is
         # zero, we upload everything.
@@ -1339,16 +1344,17 @@ class FTPPublisher(AbstractPublisher):
             self.log("Animal has %d media files (%d recently changed)" % (len(mrecs), a["RECENTLYCHANGEDIMAGES"]))
             for m in mrecs:
                 # Ignore the main media since we used that
-                if m["MEDIANAME"] == animalweb:
+                if m.ID == animalwebid:
                     continue
                 # Have we hit our limit?
                 if totalimages == limit:
                     return totalimages
                 totalimages += 1
                 # Get the image
-                otherpic = m["MEDIANAME"]
+                otherpic = m.MEDIANAME
+                otherpicid = m.ID
                 imagename = "%s-%d.jpg" % ( animalcode, totalimages )
-                self.uploadImage(a, otherpic, imagename)
+                self.uploadImage(a, otherpicid, otherpic, imagename)
         return totalimages
 
 

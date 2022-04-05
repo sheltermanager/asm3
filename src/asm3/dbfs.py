@@ -379,6 +379,14 @@ def get_file(dbo, name, path, saveto):
     asm3.utils.write_binary_file(saveto, get_string(dbo, name, path))
     return True
 
+def get_file_id(dbo, dbfsid, saveto):
+    """
+    Gets DBFS file contents and saves them to the
+    filename given. Returns True for success
+    """
+    asm3.utils.write_binary_file(saveto, get_string_id(dbo, dbfsid))
+    return True
+
 def file_exists(dbo, name):
     """
     Return True if a file with name exists in the database.

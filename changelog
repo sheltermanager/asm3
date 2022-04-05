@@ -1,7 +1,8 @@
 46
 ================
 
-05/04/22 PetFinder: Fix photo urls to use IDs rather than names
+05/04/22 All publishers: FTP photo upload uses IDs rather than medianame #1117
+05/04/22 PetFinder: Fix photo urls to use IDs rather than names #1117
 30/03/22 SavourLife: Support sending bonded animals
 30/03/22 CSV import: Fix for merging ANIMALFLAGS
 27/03/22 Fix decoding bug when using SQL Interface->Execute Script
