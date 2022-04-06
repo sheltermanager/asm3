@@ -1420,21 +1420,63 @@ def adopt_older_than(animals, movements, ownerid=100, days=365):
 			movements.append(m)
 	return movements
 
+def mime_type(filename):
+    """
+    Returns the mime type for a file with the given name
+    """
+    types = {
+        "jpg"   : "image/jpeg",
+        "jpeg"  : "image/jpeg",
+        "bmp"   : "image/bmp",
+        "gif"   : "image/gif",
+        "png"   : "image/png",
+        "doc"   : "application/msword",
+        "xls"   : "application/vnd.ms-excel",
+        "ppt"   : "application/vnd.ms-powerpoint",
+        "docx"  : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "pptx"  : "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "xslx"  : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "odt"   : "application/vnd.oasis.opendocument.text",
+        "sxw"   : "application/vnd.oasis.opendocument.text",
+        "ods"   : "application/vnd.oasis.opendocument.spreadsheet",
+        "odp"   : "application/vnd.oasis.opendocument.presentation",
+        "pdf"   : "application/pdf",
+        "mpg"   : "video/mpg",
+        "mp3"   : "audio/mpeg3",
+        "avi"   : "video/avi",
+        "htm"   : "text/html",
+        "html"  : "text/html"
+    }
+    ext = filename[filename.rfind(".")+1:].lower()
+    if ext in types:
+        return types[ext]
+    return "application/octet-stream"
+
 def animal_image(animalid, imagedata):
     """ Writes the media and dbfs entries to add an image to an animal """
-    if imagedata is None: return
+    media_file(0, animalid, "x.jpg", imagedata)
+
+def media_file(linktypeid, linkid, filename, filedata):
+    """ Writes the media and dbfs entries to add a piece of media to an animal or person """
+    if filedata is None: return
     mediaid = getid("media")
-    medianame = str(mediaid) + '.jpg'
-    encoded = base64.b64encode(imagedata)
+    if filename.rfind(".") == -1: return
+    extension = filename[filename.rfind("."):].lower()
+    medianame = str(mediaid) + extension
+    mimetype = mime_type(filename)
+    encoded = base64.b64encode(filedata)
     if sys.version_info[0] > 2: encoded = encoded.decode("ascii") # PYTHON3
-    print("UPDATE media SET websitephoto = 0, docphoto = 0 WHERE linkid = %d AND linktypeid = 0;" % animalid)
-    print("INSERT INTO media (id, medianame, medianotes, mediasize, mediamimetype, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
-        "excludefrompublish, linkid, linktypeid, recordversion, date) VALUES (%d, '%s', %s, %s, 'image/jpeg', 1, 1, 0, 0, 0, %d, 0, 0, %s);" % \
-        ( mediaid, medianame, ds(""), len(imagedata), animalid, dd(datetime.datetime.today()) ))
-    print("INSERT INTO dbfs (id, name, path, content) VALUES (%d, '%s', '%s', '');" % ( getid("dbfs"), str(animalid), '/animal' ))
+    websitephoto = extension == ".jpg" and 1 or 0
+    dbfsidpath = "/animal"
+    if linktypeid > 0: dbfsidpath = "/owner"
+    print(f"UPDATE media SET websitephoto = 0, docphoto = 0 WHERE linkid = {linkid} AND linktypeid = {linktypeid};")
+    print(f"INSERT INTO media (id, medianame, medianotes, mediasize, mediamimetype, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
+        f"excludefrompublish, linkid, linktypeid, recordversion, date) VALUES ({mediaid}, '{medianame}', '{filename}', {len(filedata)}, '{mimetype}', {websitephoto}, {websitephoto}, 0, 0, 0, " \
+        f"{linkid}, {linktypeid}, 0, {dd(datetime.datetime.today())});")
+    print(f"INSERT INTO dbfs (id, name, path, content) VALUES ({getid('dbfs')}, '{linkid}', '{dbfsidpath}', '');")
     dbfsid = getid("dbfs")
-    print("INSERT INTO dbfs (id, name, path, url, content) VALUES (%d, '%s', '%s', 'base64:', '%s');" % (dbfsid, medianame, "/animal/" + str(animalid), encoded))
-    print("UPDATE media SET DBFSID = %d WHERE ID = %d;" % (dbfsid, mediaid))
+    print(f"INSERT INTO dbfs (id, name, path, url, content) VALUES ({dbfsid}, '{medianame}', '{dbfsidpath + '/' + str(linkid)}', 'base64:', '{encoded}');")
+    print(f"UPDATE media SET DBFSID = {dbfsid} WHERE ID = {mediaid};")
 
 def animal_test(animalid, required, given, typename, resultname, comments = ""):
     """ Returns an animaltest object """
@@ -1463,7 +1505,7 @@ def animal_vaccination(animalid, required, given, typename, comments = "", batch
     av.Comments = comments
     return av
 
-def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comments = ""):
+def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comments = "", cost = 0):
     """ Writes a regimen and treatment record for a single given treatment """
     regimenid = getid("animalmedical")
     treatmentid = getid("animalmedicaltreatment")
@@ -1475,7 +1517,7 @@ def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comme
         ( "Dosage", ds(dosage)),
         ( "StartDate", dd(dategiven)),
         ( "Status", di(2)), # Completed
-        ( "Cost", di(0)),
+        ( "Cost", di(cost)),
         ( "CostPaidDate", dd(None)),
         ( "TimingRule", di(0)),
         ( "TimingRuleFrequency", di(0)),
@@ -1535,14 +1577,17 @@ def load_image_from_file(fpath, case_sensitive = True):
         return None
 
 def load_image_from_url(imageurl):
+    return load_file_from_url(imageurl)
+
+def load_file_from_url(url):
     try:
-        sys.stderr.write("GET %s\n" % imageurl)
-        jpgdata = urllib2.urlopen(imageurl).read()
-        sys.stderr.write("200 OK %s\n" % imageurl)
+        sys.stderr.write("GET %s\n" % url)
+        filedata = urllib2.urlopen(url).read()
+        sys.stderr.write("200 OK %s\n" % url)
     except Exception as err:
         sys.stderr.write(str(err) + "\n")
         return None
-    return jpgdata
+    return filedata
 
 def petfinder_get_adoptable(shelterid):
     """
@@ -2399,13 +2444,16 @@ class Owner:
     def __init__(self, ID = 0):
         self.ID = ID
         if ID == 0: self.ID = getid("owner")
-    def SplitName(self, name):
+    def SplitName(self, name, lastwordassurname = True):
         """
         Uses the last word as surname and first ones as
-        forenames, sets ownername
+        forenames, sets ownername.
+        if lastwordassurname is False, uses first word as forenames and
+        everything else as surname.
         """
         self.OwnerName = name
         lastspace = name.rfind(" ")
+        if lastwordassurname == False: lastspace = name.find(" ")
         if lastspace == -1:
             self.OwnerSurname = name
         else:
