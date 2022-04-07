@@ -2,7 +2,7 @@ Heartworm Positive Adoptions by Date
 ###
 Movements
 ###
-Any
+Any rev02
 ###
 Heartworm positive animals adopted between two dates 
 ###
@@ -19,7 +19,8 @@ sx.Sex,
 t.AnimalType,
 s.SpeciesName,
 a.ActiveMovementDate,
-o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
