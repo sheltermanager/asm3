@@ -388,7 +388,7 @@ $(function() {
             $("#movementdate").datepicker("setDate", new Date());
 
             // Remove any retired lookups from the lists
-            $(".asm-selectbox").select("removeRetiredOptions");
+            $(".asm-selectbox").select("removeRetiredOptions", "all");
 
             // Show trial fields if option is set
             if (config.bool("TrialAdoptions")) {

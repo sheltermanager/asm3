@@ -210,7 +210,7 @@ $(function() {
             $("#reservationstatus").select("value", config.str("AFDefaultReservationStatus"));
 
             // Remove any retired lookups from the lists
-            $(".asm-selectbox").select("removeRetiredOptions");
+            $(".asm-selectbox").select("removeRetiredOptions", "all");
 
             // If we aren't taking payments on this screen, disable both
             if (!config.bool("DonationOnMoveReserve")) { 

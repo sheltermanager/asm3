@@ -172,8 +172,8 @@ $(function() {
                                     donations.update_movements(controller.person.ID);
                                 }
                                 $("#quantity").val("1");
-                                $("#type").select("value", config.integer("AFDefaultDonationType"));
-                                $("#payment").select("value", config.integer("AFDefaultPaymentMethod"));
+                                $("#type").select("value", config.str("AFDefaultDonationType"));
+                                $("#payment").select("value", config.str("AFDefaultPaymentMethod"));
                                 $("#giftaid").prop("checked", false);
                                 $("#receiptnumber").val("");
                                 $("#receiptnumber").closest("tr").hide();
