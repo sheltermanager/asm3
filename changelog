@@ -1,6 +1,7 @@
 46
 ================
 
+17/04/22 Updated Swedish translation (Carina Lekare)
 11/04/22 move_* screens: if first lookup item was inactive it still displayed
 05/04/22 All publishers: FTP photo upload uses IDs rather than medianame #1117
 05/04/22 PetFinder: Fix photo urls to use IDs rather than names #1117
