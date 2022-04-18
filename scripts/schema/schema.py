@@ -7,8 +7,9 @@ import web, json
 
 db = web.database( dbn = "sqlite", db = "scripts/schema/schema.db" )
 
-VIEWS = [ "adoption", "animal", "animalcontrol", "animalfound", "animallost", "animalmedicaltreatment", 
-    "animaltest", "animalvaccination", "animalwaitinglist", "owner", "ownercitation", "ownerdonation", 
+VIEWS = [ "adoption", "animal", "animalcontrol", "animalfound", "animallost", 
+    "animalmedicalcombined", "animalmedicaltreatment", "animaltest", "animalvaccination", 
+    "animalwaitinglist", "owner", "ownercitation", "ownerdonation", 
     "ownerlicence", "ownertraploan", "ownervoucher" ]
 
 tables = {}

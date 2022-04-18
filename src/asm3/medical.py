@@ -102,6 +102,79 @@ def get_medicaltreatment_query(dbo):
                 "numbertreatments": dbo.sql_concat(["(am.TimingRule * am.TotalNumberOfTreatments)", "' treatments'"])
             }
 
+def get_medicalcombined_query(dbo):
+    return "SELECT * FROM (" \
+        "SELECT " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
+        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
+        "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
+        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
+        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
+        "(SELECT AnimalType FROM animaltype WHERE ID = a.AnimalTypeID) AS AnimalTypeName, " \
+        "(SELECT LocationName FROM internallocation WHERE ID = a.ShelterLocation) AS ShelterLocationName, " \
+        "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
+        "ma.MediaName AS WebsiteMediaName, ma.ID as WebsiteMediaID, " \
+        "adv.OwnerName AS AdministeringVetName, " \
+        "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
+        "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
+        "am.TreatmentName, '' AS TreatmentResult, am.Dosage, amt.TreatmentNumber, " \
+        "amt.TotalTreatments, amt.DateRequired, amt.DateGiven, am.Comments " \
+        "FROM animal a " \
+        "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
+        "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
+        "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
+        "LEFT OUTER JOIN owner adv ON adv.ID = amt.AdministeringVetID " \
+        "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
+        "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
+        "" \
+        "UNION SELECT " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
+        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
+        "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
+        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
+        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
+        "(SELECT AnimalType FROM animaltype WHERE ID = a.AnimalTypeID) AS AnimalTypeName, " \
+        "(SELECT LocationName FROM internallocation WHERE ID = a.ShelterLocation) AS ShelterLocationName, " \
+        "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
+        "ma.MediaName AS WebsiteMediaName, ma.ID as WebsiteMediaID, " \
+        "adv.OwnerName AS AdministeringVetName, " \
+        "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
+        "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
+        "v.VaccinationType AS TreatmentName, '' AS TreatmentResult, '1' AS Dosage, '1' AS TreatmentNumber, " \
+        "'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.Comments " \
+        "FROM animal a " \
+        "INNER JOIN animalvaccination av ON a.ID = av.AnimalID " \
+        "INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID " \
+        "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
+        "LEFT OUTER JOIN owner adv ON adv.ID = av.AdministeringVetID " \
+        "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
+        "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
+        "" \
+        "UNION SELECT " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
+        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
+        "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
+        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
+        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
+        "(SELECT AnimalType FROM animaltype WHERE ID = a.AnimalTypeID) AS AnimalTypeName, " \
+        "(SELECT LocationName FROM internallocation WHERE ID = a.ShelterLocation) AS ShelterLocationName, " \
+        "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
+        "ma.MediaName AS WebsiteMediaName, ma.ID as WebsiteMediaID, " \
+        "adv.OwnerName AS AdministeringVetName, " \
+        "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
+        "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
+        "tt.TestName AS TreatmentName, tr.ResultName AS TreatmentResult, '1' AS Dosage, '1' AS TreatmentNumber, " \
+        "'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, at.Comments " \
+        "FROM animal a " \
+        "INNER JOIN animaltest at ON a.ID = at.AnimalID " \
+        "INNER JOIN testtype tt ON at.TestTypeID = tt.ID " \
+        "LEFT OUTER JOIN testresult tr ON tr.ID = at.TestResultID " \
+        "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
+        "LEFT OUTER JOIN owner adv ON adv.ID = at.AdministeringVetID " \
+        "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
+        "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
+        ") dummy " 
+
 def get_test_query(dbo):
     return "SELECT at.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \

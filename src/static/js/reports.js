@@ -163,6 +163,21 @@ $(function() {
             [ _("Site matches current user"), "site", "SiteID=$SITE$" ]
         ];
 
+        const QB_MEDICAL_CRITERIA = [ 
+            [ _("Due"), "duenow", "DateGiven Is Null" ],
+            [ _("Due between two dates"), "duetwo", 
+                "DateRequired>='$ASK DATE {0}$' AND DateRequired<='$ASK DATE {1}$'"
+                .replace("{0}", _("Due between"))
+                .replace("{1}", _("and")) ],
+            [ _("Ask the user for a treatment"), "asktreatment", "TreatmentName LIKE '%$ASK STRING {0}$%'"
+                .replace("{0}", _("Enter a treatment name")) ],
+            [ _("Given"), "givennow", "DateGiven Is Not Null" ],
+            [ _("Given between two dates"), "giventwo", 
+                "DateGiven>='$ASK DATE {0}$' AND DateGiven<='$ASK DATE {1}$'"
+                .replace("{0}", _("Given between"))
+                .replace("{1}", _("and")) ]
+        ];
+
         const QB_PERSON_CRITERIA = [
                 [ _("ACO"), "aco", "IsACO=1" ],
                 [ _("Active license held"), "haslicense", "EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=v_owner.ID " +
@@ -200,6 +215,7 @@ $(function() {
         qb_active_criteria: null, 
         qb_animal_criteria: null,
         qb_incident_criteria: null,
+        qb_medical_criteria: null,
         qb_person_criteria: null,
 
         model: function() {
@@ -414,6 +430,7 @@ $(function() {
                 '<select id="qbtype" data="qbtype" class="qb asm-selectbox">',
                 '<option value="animal">' + _("Animal") + '</option>',
                 '<option value="animalcontrol">' + _("Incident") + '</option>',
+                '<option value="animalmedicalcombined">' + _("Medical") + '</option>',
                 '<option value="owner">' + _("Person") + '</option>',
                 '</select>',
                 '</td>',
@@ -592,6 +609,7 @@ $(function() {
             // Build the criteria lists
             reports.qb_animal_criteria = Array.from(QB_ANIMAL_CRITERIA);
             reports.qb_incident_criteria = Array.from(QB_INCIDENT_CRITERIA);
+            reports.qb_medical_criteria = Array.from(QB_MEDICAL_CRITERIA);
             reports.qb_person_criteria = Array.from(QB_PERSON_CRITERIA);
             $.each(controller.additionalfields, function(i, v) {
                 if (!common.array_in(v.LINKTYPE, ADDITIONAL_ANIMAL)) { return; } // skip non-animal additional fields
@@ -876,6 +894,15 @@ $(function() {
                 $("#qbsort").change();
                 $("#qbcriteria").change();
                 reports.qb_active_criteria = reports.qb_incident_criteria;
+            }
+            else if (type == "animalmedicalcombined") {
+                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_animalmedicalcombined")));
+                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_animalmedicalcombined")));
+                $("#qbcriteria").html(html.list_to_options(build_criteria(reports.qb_medical_criteria)));
+                $("#qbfields").change();
+                $("#qbsort").change();
+                $("#qbcriteria").change();
+                reports.qb_active_criteria = reports.qb_medical_criteria;
             }
             else if (type == "owner") {
                 $("#qbfields").html(html.list_to_options(common.get_table_columns("v_owner").concat(get_additional(type))));

@@ -109,9 +109,9 @@ TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "br
     "vaccinationtype", "voucher" )
 
 VIEWS = ( "v_adoption", "v_animal", "v_animalcontrol", "v_animalfound", "v_animallost", 
-    "v_animalmedicaltreatment", "v_animaltest", "v_animalvaccination", "v_animalwaitinglist", 
-    "v_owner", "v_ownercitation", "v_ownerdonation", "v_ownerlicence", "v_ownertraploan", 
-    "v_ownervoucher" )
+    "v_animalmedicalcombined", "v_animalmedicaltreatment", "v_animaltest", "v_animalvaccination", 
+    "v_animalwaitinglist", "v_owner", "v_ownercitation", "v_ownerdonation", "v_ownerlicence", 
+    "v_ownertraploan", "v_ownervoucher" )
 
 def sql_structure(dbo):
     """
@@ -2461,6 +2461,7 @@ def install_db_views(dbo):
     create_view("v_animalfound", asm3.lostfound.get_foundanimal_query(dbo))
     create_view("v_animallost", asm3.lostfound.get_lostanimal_query(dbo))
     create_view("v_animalmedicaltreatment", asm3.medical.get_medicaltreatment_query(dbo))
+    create_view("v_animalmedicalcombined", asm3.medical.get_medicalcombined_query(dbo))
     create_view("v_animaltest", asm3.medical.get_test_query(dbo))
     create_view("v_animalvaccination", asm3.medical.get_vaccination_query(dbo))
     create_view("v_animalwaitinglist", asm3.waitinglist.get_waitinglist_query(dbo))
