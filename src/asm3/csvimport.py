@@ -501,14 +501,14 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             pdfname = gks(row, "ANIMALPDFNAME")
             if pdfdata.startswith("http"):
                 # It's a URL, get the PDF from the remote server
-                r = asm3.utils.get_image_url(imagedata, timeout=5000)
+                r = asm3.utils.get_image_url(pdfdata, timeout=5000)
                 if r["status"] == 200:
                     asm3.al.debug("retrieved PDF from %s (%s bytes)" % (pdfdata, len(r["response"])), "csvimport.csvimport", dbo)
                     pdfdata = "data:application/pdf;base64,%s" % asm3.utils.base64encode(r["response"])
                 else:
                     row_error(errors, "animal", rowno, row, "error reading pdf from '%s': %s" % (pdfdata, r), dbo, sys.exc_info())
                     continue
-            elif imagedata.startswith("data:"):
+            elif pdfdata.startswith("data:"):
                 # It's a base64 encoded data URI - do nothing as attach_file requires it
                 pass
             else:

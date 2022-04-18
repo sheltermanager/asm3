@@ -2,7 +2,7 @@ Print Animal Record
 ###
 Auditing
 ###
-34111/Any
+34111/Any rev02
 ###
 A complete printout of an animal record.
 ###
@@ -197,6 +197,8 @@ animalvaccination.Cost,
 animalvaccination.DateRequired,
 animalvaccination.DateOfVaccination,
 animalvaccination.DateExpires,
+animalvaccination.Manufacturer,
+animalvaccination.BatchNumber, 
 animalvaccination.Comments AS VaccComments,
 CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE animalvaccination.GivenBy END AS GivenBy
 FROM animalvaccination
@@ -207,10 +209,10 @@ ORDER BY DateOfVaccination
 +++
 $$HEADER
 <table cellpadding="5">
-<tr><th>Type</th><th>Required</th><th>Cost</th><th>Given</th><th>Expires</th><th>By</th><th>Comments</th></tr>
+<tr><th>Type</th><th>Batch</th><th>Required</th><th>Cost</th><th>Given</th><th>Expires</th><th>By</th><th>Comments</th></tr>
 HEADER$$
 $$BODY
-<tr><td>$VACCINATIONTYPE</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFVACCINATION</td><td>$DATEEXPIRES</td><td>$GIVENBY</td><td>$VACCCOMMENTS</td></tr>
+<tr><td>$VACCINATIONTYPE</td><td>$MANUFACTURER $BATCHNUMBER</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFVACCINATION</td><td>$DATEEXPIRES</td><td>$GIVENBY</td><td>$VACCCOMMENTS</td></tr>
 BODY$$
 $$FOOTER
 </table>

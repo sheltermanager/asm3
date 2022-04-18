@@ -2,14 +2,14 @@ Vaccination Diary (On Shelter by Location)
 ###
 Diary
 ###
-33012/Any rev02
+33012/Any rev03
 ###
 Vaccinations required to date for shelter animals, broken down by location.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation
+a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation,
 v.VaccinationType, av.DateRequired, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
