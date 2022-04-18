@@ -4,6 +4,10 @@ $(function() {
 
     "use strict";
 
+    const ADDITIONAL_ANIMAL = [0,2,3,4,5,6];
+    const ADDITIONAL_PERSON = [1,7,8];
+    const ADDITIONAL_INCIDENT = [16,17,18,19,20];
+
     const emailhours = [
         { display: _("With overnight batch"), value: -1 },
         { display: "00:00", value: 0 },
@@ -589,6 +593,18 @@ $(function() {
             reports.qb_animal_criteria = Array.from(QB_ANIMAL_CRITERIA);
             reports.qb_incident_criteria = Array.from(QB_INCIDENT_CRITERIA);
             reports.qb_person_criteria = Array.from(QB_PERSON_CRITERIA);
+            $.each(controller.additionalfields, function(i, v) {
+                if (!common.array_in(v.LINKTYPE, ADDITIONAL_ANIMAL)) { return; } // skip non-animal additional fields
+                reports.qb_animal_criteria.push(
+                    [_("Additional field {0} has a value").replace("{0}", v.FIELDNAME), "af" + v.ID,
+                        "EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_animal.ID AND Value<>'')" ]);
+            });
+            $.each(controller.additionalfields, function(i, v) {
+                if (!common.array_in(v.LINKTYPE, ADDITIONAL_ANIMAL)) { return; } // skip non-animal additional fields
+                reports.qb_animal_criteria.push(
+                    [_("Additional field {0} is blank").replace("{0}", v.FIELDNAME), "naf" + v.ID,
+                        "NOT EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_animal.ID AND Value<>'')" ]);
+            });
             $.each(controller.entryreasons, function(i, v) {
                 reports.qb_animal_criteria.push(
                     [_("Entry category is {0}").replace("{0}", v.REASONNAME), "entryreason" + v.ID, "EntryReasonID=" + v.ID]);
@@ -828,9 +844,9 @@ $(function() {
                 // Returns a list of additional field names for the type ready for the dropdowns
                 let f = [];
                 $.each(controller.additionalfields, function(i, v) {
-                    if ( (t == "animal" && common.array_in(v.LINKTYPE, [0,2,3,4,5,6])) ||
-                        (t == "owner" && common.array_in(v.LINKTYPE, [1,7,8])) ||
-                        (t == "animalcontrol" && common.array_in(v.LINKTYPE, [16,17,18,19,20])) ) {
+                    if ( (t == "animal" && common.array_in(v.LINKTYPE, ADDITIONAL_ANIMAL)) ||
+                        (t == "owner" && common.array_in(v.LINKTYPE, ADDITIONAL_PERSON)) ||
+                        (t == "animalcontrol" && common.array_in(v.LINKTYPE, ADDITIONAL_INCIDENT)) ) {
                         // Use different prefixes to indicate the additional field type for
                         // expansion into different query types later
                         if (v.FIELDTYPE == 0) {

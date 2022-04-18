@@ -1,6 +1,7 @@
 46
 ================
 
+18/04/22 Query builder: test for additional fields with/without value #1122
 17/04/22 Updated Swedish translation (Carina Lekare)
 11/04/22 move_* screens: if first lookup item was inactive it still displayed
 05/04/22 All publishers: FTP photo upload uses IDs rather than medianame #1117

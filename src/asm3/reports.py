@@ -402,7 +402,7 @@ def generate_html(dbo, username, sql):
     rs, cols = dbo.query_tuple_columns(sql)
     h = "$$HEADER\n<table border=\"1\">\n<tr>\n"
     b = "$$BODY\n<tr>\n"
-    f = "$$FOOTER\n</table>\nFOOTER$$\n"
+    f = "$$FOOTER\n</table>\n<p>Total: {COUNT.%s}</p>\nFOOTER$$\n" % cols[0].upper()
     for c in cols:
         h += "<th>%s</th>\n" % c
         b += "<td>$%s</td>\n" % c.upper()
