@@ -1,6 +1,7 @@
 46
 ================
 
+19/04/22 Datepickers disable choice of future dates in give dialogs
 18/04/22 Query builder: support combined medical data #1116
 18/04/22 Query builder: test for additional fields with/without value #1122
 17/04/22 Updated Swedish translation (Carina Lekare)

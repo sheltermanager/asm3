@@ -968,6 +968,9 @@ const tableform = {
      *        validation: "notblank|notzero|validemail",
      *        maxlength: (omit or number of chars limit for text/textarea),
      *        classes: "extraclass anotherone",
+     *        date_onlydays: "0,1,2,3,4,5,6" (for datepicker fields, only allow days to be selected monday-sunday)
+     *        date_nofuture: true|false, (for datepicker fields)
+     *        date_nopast: true| false, (for datepicker fields)
      *        tooltip: _("Text"), 
      *        callout: _("Text"), mixed markup allowed
      *        hideif: function() { return true; // should hide },
@@ -1119,6 +1122,9 @@ const tableform = {
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
+                if (v.date_onlydays) { d += "data-onlydays=\"" + v.onlydays + "\" "; }
+                if (v.date_nofuture) { d+= "data-nofuture=\"true\" "; }
+                if (v.date_nopast) { d+= "data-nopast=\"true\" "; }
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
