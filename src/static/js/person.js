@@ -477,7 +477,7 @@ $(function() {
                 additional.additional_fields(controller.additional),
                 '</div>',
                 person.render_homechecker(),
-                person.render_lookingfor(),
+                !config.bool("HideLookingFor") ? person.render_lookingfor() : '',
                 html.audit_trail_accordion(controller),
                 '</div> <!-- accordion -->',
                 '</div> <!-- asmcontent -->',
@@ -587,6 +587,7 @@ $(function() {
             $("#jurisdictionrow").toggle( !config.bool("DisableAnimalControl") );
             $("#button-anonymise").toggle( config.bool("AnonymisePersonalData") );
             $("#gdprcontactoptinrow").toggle( config.bool("ShowGDPRContactOptIn") );
+            $("#button-lookingfor").toggle( !config.bool("HideLookingFor") );
 
             // SECURITY =============================================================
             if (!common.has_permission("co")) { $("#button-save, #button-anonymise").hide(); }
@@ -889,4 +890,3 @@ $(function() {
     common.module_register(person);
 
 });
-
