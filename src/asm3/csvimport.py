@@ -480,44 +480,46 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             a["flags"] = gks(row, "ANIMALFLAGS")
             # image data if any was supplied
             imagedata = gks(row, "ANIMALIMAGE")
-            if imagedata.startswith("http"):
-                # It's a URL, get the image from the remote server
-                r = asm3.utils.get_image_url(imagedata, timeout=5000)
-                if r["status"] == 200:
-                    asm3.al.debug("retrieved image from %s (%s bytes)" % (imagedata, len(r["response"])), "csvimport.csvimport", dbo)
-                    imagedata = "data:image/jpeg;base64,%s" % asm3.utils.base64encode(r["response"])
+            if imagedata != "":
+                if imagedata.startswith("http"):
+                    # It's a URL, get the image from the remote server
+                    r = asm3.utils.get_image_url(imagedata, timeout=5000)
+                    if r["status"] == 200:
+                        asm3.al.debug("retrieved image from %s (%s bytes)" % (imagedata, len(r["response"])), "csvimport.csvimport", dbo)
+                        imagedata = "data:image/jpeg;base64,%s" % asm3.utils.base64encode(r["response"])
+                    else:
+                        row_error(errors, "animal", rowno, row, "error reading image from '%s': %s" % (imagedata, r), dbo, sys.exc_info())
+                        continue
+                elif imagedata.startswith("data:image"):
+                    # It's a base64 encoded data URI - do nothing as attach_file requires it
+                    pass
                 else:
-                    row_error(errors, "animal", rowno, row, "error reading image from '%s': %s" % (imagedata, r), dbo, sys.exc_info())
-                    continue
-            elif imagedata.startswith("data:image"):
-                # It's a base64 encoded data URI - do nothing as attach_file requires it
-                pass
-            else:
-                # We don't know what it is, don't try and do anything with it
-                row_error(errors, "animal", rowno, row, "WARN: unrecognised image content, ignoring", dbo, sys.exc_info())
-                imagedata = ""
+                    # We don't know what it is, don't try and do anything with it
+                    row_error(errors, "animal", rowno, row, "WARN: unrecognised image content, ignoring", dbo, sys.exc_info())
+                    imagedata = ""
             # pdf data if any was supplied
             pdfdata = gks(row, "ANIMALPDFDATA")
             pdfname = gks(row, "ANIMALPDFNAME")
-            if pdfdata.startswith("http"):
-                # It's a URL, get the PDF from the remote server
-                r = asm3.utils.get_image_url(pdfdata, timeout=5000)
-                if r["status"] == 200:
-                    asm3.al.debug("retrieved PDF from %s (%s bytes)" % (pdfdata, len(r["response"])), "csvimport.csvimport", dbo)
-                    pdfdata = "data:application/pdf;base64,%s" % asm3.utils.base64encode(r["response"])
+            if pdfdata != "":
+                if pdfdata.startswith("http"):
+                    # It's a URL, get the PDF from the remote server
+                    r = asm3.utils.get_image_url(pdfdata, timeout=5000)
+                    if r["status"] == 200:
+                        asm3.al.debug("retrieved PDF from %s (%s bytes)" % (pdfdata, len(r["response"])), "csvimport.csvimport", dbo)
+                        pdfdata = "data:application/pdf;base64,%s" % asm3.utils.base64encode(r["response"])
+                    else:
+                        row_error(errors, "animal", rowno, row, "error reading pdf from '%s': %s" % (pdfdata, r), dbo, sys.exc_info())
+                        continue
+                elif pdfdata.startswith("data:"):
+                    # It's a base64 encoded data URI - do nothing as attach_file requires it
+                    pass
                 else:
-                    row_error(errors, "animal", rowno, row, "error reading pdf from '%s': %s" % (pdfdata, r), dbo, sys.exc_info())
+                    # We don't know what it is, don't try and do anything with it
+                    row_error(errors, "animal", rowno, row, "WARN: unrecognised PDF content, ignoring", dbo, sys.exc_info())
+                    pdfdata = ""
+                if pdfdata != "" and pdfname == "":
+                    row_error(errors, "animal", rowno, row, "ANIMALPDFNAME must be set for data", dbo, sys.exc_info())
                     continue
-            elif pdfdata.startswith("data:"):
-                # It's a base64 encoded data URI - do nothing as attach_file requires it
-                pass
-            else:
-                # We don't know what it is, don't try and do anything with it
-                row_error(errors, "animal", rowno, row, "WARN: unrecognised PDF content, ignoring", dbo, sys.exc_info())
-                pdfdata = ""
-            if pdfdata != "" and pdfname == "":
-                row_error(errors, "animal", rowno, row, "ANIMALPDFNAME must be set for data", dbo, sys.exc_info())
-                continue
 
             # If an original owner is specified, create a person record
             # for them and attach it to the animal as original owner
@@ -1196,4 +1198,3 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
     h = '<p>%s <a target="_blank" href="csvexport_animals?get=%s"><b>%s</b></p>' % ( \
         asm3.i18n._("Export complete ({0} entries).", l).format(len(ids)), key, asm3.i18n._("Download File", l) )
     return h
-
