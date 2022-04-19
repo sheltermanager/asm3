@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-03-19 14:57+0000\n"
+"POT-Creation-Date: 2022-04-19 13:34+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -685,6 +685,14 @@ msgstr ""
 
 #: additional.js
 msgid "Additional Fields"
+msgstr ""
+
+#: reports.js
+msgid "Additional field {0} has a value"
+msgstr ""
+
+#: reports.js
+msgid "Additional field {0} is blank"
 msgstr ""
 
 #: html.py
@@ -1539,6 +1547,10 @@ msgid "Arrived"
 msgstr ""
 
 #: reports.js
+msgid "Ask the user for a check number"
+msgstr ""
+
+#: reports.js
 msgid "Ask the user for a city"
 msgstr ""
 
@@ -1555,7 +1567,23 @@ msgid "Ask the user for a location"
 msgstr ""
 
 #: reports.js
+msgid "Ask the user for a payment method"
+msgstr ""
+
+#: reports.js
+msgid "Ask the user for a payment type"
+msgstr ""
+
+#: reports.js
+msgid "Ask the user for a receipt number"
+msgstr ""
+
+#: reports.js
 msgid "Ask the user for a species"
+msgstr ""
+
+#: reports.js
+msgid "Ask the user for a treatment"
 msgstr ""
 
 #: reports.js
@@ -2526,7 +2554,7 @@ msgstr ""
 msgid "Chartreux"
 msgstr ""
 
-#: mobile.py
+#: mobile.py reports.js
 msgid "Check"
 msgstr ""
 
@@ -4261,9 +4289,17 @@ msgstr ""
 msgid "Duck"
 msgstr ""
 
-#: wordprocessor.py citations.js common_widgets.js traploan.js donations.js
-#: clinic_appointment.js
+#: wordprocessor.py reports.js citations.js common_widgets.js traploan.js
+#: donations.js clinic_appointment.js
 msgid "Due"
+msgstr ""
+
+#: reports.js
+msgid "Due between"
+msgstr ""
+
+#: reports.js
+msgid "Due between two dates"
 msgstr ""
 
 #: medical.js vaccination.js donations.js test.js
@@ -4763,6 +4799,10 @@ msgstr ""
 
 #: reports.js
 msgid "Enter a city"
+msgstr ""
+
+#: reports.js
+msgid "Enter a treatment name"
 msgstr ""
 
 #: publish_options.js
@@ -5847,8 +5887,16 @@ msgstr ""
 msgid "Give Vaccination"
 msgstr ""
 
-#: wordprocessor.py medical.js vaccination.js
+#: wordprocessor.py medical.js vaccination.js reports.js
 msgid "Given"
+msgstr ""
+
+#: reports.js
+msgid "Given between"
+msgstr ""
+
+#: reports.js
+msgid "Given between two dates"
 msgstr ""
 
 #: medical.js vaccination.js test.js
@@ -7701,7 +7749,8 @@ msgstr ""
 msgid "Media notes contain"
 msgstr ""
 
-#: html.py mobile.py calendarview.js roles.js options.js header_edit_header.js
+#: html.py mobile.py reports.js calendarview.js roles.js options.js
+#: header_edit_header.js
 msgid "Medical"
 msgstr ""
 
@@ -9018,7 +9067,7 @@ msgstr ""
 msgid "PayPal Business Email"
 msgstr ""
 
-#: calendarview.js common_widgets.js
+#: reports.js calendarview.js common_widgets.js
 msgid "Payment"
 msgstr ""
 
@@ -9062,12 +9111,20 @@ msgstr ""
 msgid "Payment method"
 msgstr ""
 
+#: reports.js
+msgid "Payment method {0}"
+msgstr ""
+
 #: donation_receive.js
 msgid "Payment of {0} successfully received ({1})."
 msgstr ""
 
 #: options.js
 msgid "Payment processor"
+msgstr ""
+
+#: reports.js
+msgid "Payment type {0}"
 msgstr ""
 
 #: document_templates.js donations.js roles.js header_edit_header.js
@@ -9775,7 +9832,7 @@ msgstr ""
 msgid "Recalculate on-shelter animal locations"
 msgstr ""
 
-#: wordprocessor.py
+#: wordprocessor.py reports.js
 msgid "Receipt"
 msgstr ""
 
@@ -9795,9 +9852,17 @@ msgstr ""
 msgid "Receive a payment"
 msgstr ""
 
-#: onlineform_incoming.js common_widgets.js donations.js donation_receive.js
-#: clinic_appointment.js
+#: reports.js onlineform_incoming.js common_widgets.js donations.js
+#: donation_receive.js clinic_appointment.js
 msgid "Received"
+msgstr ""
+
+#: reports.js
+msgid "Received between"
+msgstr ""
+
+#: reports.js
+msgid "Received between two dates"
 msgstr ""
 
 #: donations.js
@@ -11735,7 +11800,7 @@ msgstr ""
 msgid "Stay"
 msgstr ""
 
-#: html.py move_deceased.js stocklevel.js
+#: html.py medical.js move_deceased.js vaccination.js stocklevel.js test.js
 msgid "Stock"
 msgstr ""
 
