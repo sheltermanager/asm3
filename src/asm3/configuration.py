@@ -233,6 +233,7 @@ DEFAULTS = {
     "GenerateDocumentLogType": "5",
     "HideCountry": "Yes",
     "HideHomeCheckedNoFlag": "Yes",
+    "HideLookingFor": "No",
     "HoldChangeLog": "Yes",
     "HoldChangeLogType": "3",
     "IncidentPermissions": "No",
@@ -1428,5 +1429,3 @@ def weight_change_log(dbo):
 
 def weight_change_log_type(dbo):
     return cint(dbo, "WeightChangeLogType", DEFAULTS["WeightChangeLogType"])
-
-

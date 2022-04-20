@@ -1388,6 +1388,7 @@ $(function() {
                 '<input data="HideCountry" id="hcountry" class="asm-checkbox" type="checkbox" /> <label for="hcountry">' + _("Remove the country field from person details") + '</label><br />',
                 '<input data="HideHomeCheckedNoFlag" id="hhomechecked" class="asm-checkbox" type="checkbox" /> <label for="hhomechecked">' + _("Remove the homechecked/by fields from person type according to the homechecked flag") + '</label><br />',
                 '<input data="DontShowInsurance" id="insuranceno" class="asm-checkbox" type="checkbox" /> <label for="insuranceno">' + _("Remove the insurance number field from the movement screens") + '</label><br />',
+                '<input data="HideLookingFor" id="lookingforno" class="asm-checkbox" type="checkbox" /> <label for="lookingforno">' + _("Remove the looking for functionality from the person menus and screens") + '</label><br />',
 
                 '</td><td>',
 
@@ -1639,4 +1640,3 @@ $(function() {
     common.module_register(options);
 
 });
-
