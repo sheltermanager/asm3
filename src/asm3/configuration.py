@@ -236,6 +236,11 @@ DEFAULTS = {
     "HoldChangeLog": "Yes",
     "HoldChangeLogType": "3",
     "IncidentPermissions": "No",
+    "IncidentSearchColumns": "IncidentType,IncidentNumber,IncidentDateTime," \
+        "DispatchAddress,DispatchTown,DispatchPostcode,JurisdictionName," \
+        "LocationName,Suspect,DispatchDateTime,RespondedDateTime," \
+        "DispatchedACO,FollowupDateTime,CompletedDate,CompletedName," \
+        "CallNotes",
     "InactivityTimer": "No",
     "InactivityTimeout": "20", 
     "IncludeIncompleteMedicalDoc": "Yes",
@@ -1138,6 +1143,9 @@ def pdf_zoom(dbo):
 
 def person_search_columns(dbo):
     return cstring(dbo, "OwnerSearchColumns", DEFAULTS["OwnerSearchColumns"])
+
+def incident_search_columns(dbo):
+    return cstring(dbo, "IncidentSearchColumns", DEFAULTS["IncidentSearchColumns"])
 
 def petcademy_token(dbo):
     return cstring(dbo, "PetcademyToken")

@@ -814,6 +814,30 @@ def json_personfindcolumns(dbo):
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, asm3.configuration.person_search_columns(dbo))
     return cols
+    
+def json_incidentfindcolumns(dbo):
+    l = dbo.locale
+    cols = [ 
+        ( "IncidentType", _("Incident Type", l) ),
+        ( "IncidentNumber", _("Number", l) ),
+        ( "IncidentDateTime", _("Incident Date/Time", l) ),
+        ( "DispatchAddress", _("Address", l) ),
+        ( "DispatchTown", _("City", l) ),
+        ( "DispatchPostcode", _("Zipcode", l) ),
+        ( "JurisdictionName", _("Jurisdiction", l) ),
+        ( "LocationName", _("Location", l) ),
+        ( "Suspect", _("Suspect", l) ),
+        ( "DispatchDateTime", _("Dispatch Date/Time", l) ),
+        ( "RespondedDateTime", _("Responded Date/Time", l) ),
+        ( "DispatchedACO", _("ACO", l) ),
+        ( "FollowupDateTime", _("Followup Date", l) ),
+        ( "CompletedDate", _("Completed Date", l) ),
+        ( "CompletedName", _("Completed Type", l) ),
+        ( "CallNotes", _("Notes", l) )
+        ]
+    cols = findcolumns_sort(cols)
+    findcolumns_selectedtofront(cols, asm3.configuration.incident_search_columns(dbo))
+    return cols
 
 def json_quicklinks(dbo):
     l = dbo.locale
