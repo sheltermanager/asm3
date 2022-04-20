@@ -7,7 +7,10 @@ import asm3.db
 import asm3.dbupdate
 import asm3.lookups
 import asm3.i18n
+import asm3.smcom
 import asm3.utils
+
+from asm3.sitedefs import BASE_URL
 
 import os
 import sys
@@ -564,6 +567,24 @@ def insert_user_from_form(dbo, username, post):
         for rid in roles.split(","):
             if rid.strip() != "":
                 dbo.insert("userrole", { "UserID": nuserid, "RoleID": rid }, generateID=False)
+
+    # If the option was set, email these new credentials to the user
+    # Note: we do not audit the actual email content to prevent plaintext passwords appearing in the audit log
+    if post.boolean("emailcred") and post["email"] != "":
+        fromaddress = asm3.configuration.email(dbo)
+        subject = asm3.i18n._("New user account", l)
+        url = "%s/login" % BASE_URL
+        if asm3.smcom.active(): url = asm3.smcom.get_login_url(dbo)
+        bodynopass = "%s:\n\n%s: {url}\n%s: {user}\n%s: {pass}" % (
+            asm3.i18n._("A new ASM user account has been set up for you", l), 
+            asm3.i18n._("URL", l), asm3.i18n._("Username", l), asm3.i18n._("Password", l) )
+        bodynopass = bodynopass.replace("{url}", url)
+        bodynopass = bodynopass.replace("{user}", post["username"])
+        body = bodynopass.replace("{pass}", post["password"])
+        asm3.utils.send_email(dbo, fromaddress, post["email"], "", "", subject, body, "plain", exceptions=False)
+        if asm3.configuration.audit_on_send_email(dbo): 
+            asm3.audit.email(dbo, username, fromaddress, post["email"], "", "", subject, bodynopass)
+
     return nuserid
 
 def update_user_settings(dbo, username, email = "", realname = "", locale = "", theme = "", signature = ""):

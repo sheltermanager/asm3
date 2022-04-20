@@ -28,15 +28,16 @@ $(function() {
                     { json_field: "USERNAME", post_field: "username", label: _("Username"), type: "text", validation: "notblank", readonly: true },
                     { json_field: "PASSWORD", post_field: "password", label: _("Password"), type: "text", validation: "notblank", readonly: true },
                     { json_field: "REALNAME", post_field: "realname", label: _("Real name"), type: "text" },
+                    { json_field: "", post_field: "emailcred", label: _("Email these credentials to the user"), type: "check", readonly: true },
                     { json_field: "EMAILADDRESS", post_field: "email", label: _("Email"), type: "text" },
-                    { json_field: "SUPERUSER", post_field: "superuser", label: _("Type"),  type: "select", defaultval: "0", options: 
-                        '<option value="0">' + _("Normal user") + '</option>' +
-                        '<option value="1">' + _("Super user") + '</option>'},
                     { json_field: "DISABLELOGIN", post_field: "disablelogin", label: _("Can Login"),  type: "select", defaultval: "0", 
                         callout: _("Set wether or not this user account can log in to the user interface.") + " " +
                                  _("User accounts that will only ever call the Service API should set this to No."),
                         options: '<option value="0">' + _("Yes") + '</option>' +
                         '<option value="1">' + _("No") + '</option>'},
+                    { json_field: "SUPERUSER", post_field: "superuser", label: _("Type"),  type: "select", defaultval: "0", options: 
+                        '<option value="0">' + _("Normal user") + '</option>' +
+                        '<option value="1">' + _("Super user") + '</option>'},
                     { json_field: "ROLEIDS", post_field: "roles", label: _("Roles"), type: "selectmulti", 
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
                     { json_field: "SITEID", post_field: "site", label: _("Site"), type: "select", 
@@ -65,6 +66,7 @@ $(function() {
                 showfilter: false, 
                 edit: async function(row) {
                     if (row.USERNAME == asm.useraccount) { return false; }
+                    $("#roles").closest("tr").toggle( row.SUPERUSER == 0 );
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
                     users.set_extra_fields(row);
@@ -141,6 +143,7 @@ $(function() {
             const buttons = [
                 { id: "new", text: _("New User"), icon: "new", enabled: "always", 
                     click: async function() { 
+                        $("#roles").closest("tr").show();
                         await tableform.dialog_show_add(dialog);
                         try {
                             let response = await tableform.fields_post(dialog.fields, "mode=create", "systemusers");
@@ -255,6 +258,9 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+            $("#superuser").change(function() {
+                $("#roles").closest("tr").toggle( $("#superuser").val() == "0" );
+            });
             $("#site").closest("tr").toggle( config.bool("MultiSiteEnabled") );
             validate.indicator([ "newpassword", "confirmpassword" ]);
         },

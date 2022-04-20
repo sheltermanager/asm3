@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-04-19 13:34+0000\n"
+"POT-Creation-Date: 2022-04-20 09:14+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -153,6 +153,10 @@ msgstr ""
 
 #: movements.js
 msgid "A movement must have a reservation date or type."
+msgstr ""
+
+#: users.py
+msgid "A new ASM user account has been set up for you"
 msgstr ""
 
 #: movement.py
@@ -4671,6 +4675,10 @@ msgstr ""
 msgid "Email template"
 msgstr ""
 
+#: users.js
+msgid "Email these credentials to the user"
+msgstr ""
+
 #: main.js
 msgid "Email this message to all matching users"
 msgstr ""
@@ -8389,6 +8397,10 @@ msgstr ""
 msgid "New template"
 msgstr ""
 
+#: users.py
+msgid "New user account"
+msgstr ""
+
 #: dbupdate.py
 msgid "Newfoundland Dog"
 msgstr ""
@@ -9027,7 +9039,7 @@ msgstr ""
 msgid "Pass Homecheck"
 msgstr ""
 
-#: mobile.py users.js login.js options.js
+#: users.py mobile.py users.js login.js options.js
 msgid "Password"
 msgstr ""
 
@@ -13328,7 +13340,7 @@ msgstr ""
 msgid "UK Giftaid"
 msgstr ""
 
-#: report_images.js media.js
+#: users.py report_images.js media.js
 msgid "URL"
 msgstr ""
 
@@ -13627,8 +13639,8 @@ msgstr ""
 msgid "User roles"
 msgstr ""
 
-#: mobile.py change_user_settings.js users.js login.js change_password.js
-#: options.js
+#: users.py mobile.py change_user_settings.js users.js login.js
+#: change_password.js options.js
 msgid "Username"
 msgstr ""
 
