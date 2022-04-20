@@ -37,7 +37,7 @@ $(function() {
                 '<li><a href="#tab-display">' + _("Display") + '</a></li>',
                 '<li><a href="#tab-documents">' + _("Documents") + '</a></li>',
                 '<li><a href="#tab-email">' + _("Email") + '</a></li>',
-                '<li><a href="#tab-findanimalperson">' + _("Find Animal/Person") + '</a></li>',
+                '<li><a href="#tab-findanimalperson">' + _("Find Animal/Person/Incident") + '</a></li>',
                 '<li><a href="#tab-homepage">' + _("Home page") + '</a></li>',
                 '<li><a href="#tab-insurance">' + _("Insurance") + '</a></li>',
                 '<li><a href="#tab-lostandfound">' + _("Lost and Found") + '</a></li>',

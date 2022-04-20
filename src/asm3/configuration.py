@@ -236,10 +236,10 @@ DEFAULTS = {
     "HoldChangeLog": "Yes",
     "HoldChangeLogType": "3",
     "IncidentPermissions": "No",
-    "IncidentSearchColumns": "IncidentType,IncidentNumber,IncidentDateTime," \
-        "DispatchAddress,DispatchTown,DispatchPostcode,JurisdictionName," \
-        "LocationName,Suspect,DispatchDateTime,RespondedDateTime," \
-        "DispatchedACO,FollowupDateTime,CompletedDate,CompletedName," \
+    "IncidentSearchColumns": "IncidentType,IncidentNumber,IncidentDateTime,"
+        "DispatchAddress,DispatchTown,DispatchPostcode,JurisdictionName,"
+        "LocationName,Suspect,DispatchDateTime,RespondedDateTime,"
+        "DispatchedACO,FollowupDateTime,CompletedDate,CompletedName,"
         "CallNotes",
     "InactivityTimer": "No",
     "InactivityTimeout": "20", 

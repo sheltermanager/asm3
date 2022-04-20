@@ -27,7 +27,7 @@ $(function() {
         },
 
         /**
-         * Renders the table.head tag with columns in the right order
+         * Renders the table.head tag
          */
         render_tablehead: function() {
             let labels = incident_find_results.column_labels();
@@ -72,8 +72,7 @@ $(function() {
         // },
 
         /**
-         * Renders the table body with columns in the right order and
-         * highlighting styling applied, etc.
+         * Renders the table body with columns
          */
         render_tablebody: function() {
             let h = [];
@@ -81,7 +80,6 @@ $(function() {
                 h.push("<tr>");
                 $.each(incident_find_results.column_names(), function(ic, name) {
                   let formatted = '';
-                    // Generate the incident selector
                     h.push("<td>");
                     if(name == "Suspect"){
                       if (row.OWNERNAME1) { formatted += html.person_link(row.OWNERID, row.OWNERNAME1); }

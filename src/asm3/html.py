@@ -819,13 +819,13 @@ def json_incidentfindcolumns(dbo):
     l = dbo.locale
     cols = [ 
         ( "IncidentType", _("Incident Type", l) ),
-        ( "IncidentNumber", _("Number", l) ),
+        ( "IncidentNumber", _("Incident Number", l) ),
         ( "IncidentDateTime", _("Incident Date/Time", l) ),
         ( "DispatchAddress", _("Address", l) ),
         ( "DispatchTown", _("City", l) ),
         ( "DispatchPostcode", _("Zipcode", l) ),
         ( "JurisdictionName", _("Jurisdiction", l) ),
-        ( "LocationName", _("Location", l) ),
+        ( "LocationName", _("Pickup Location", l) ),
         ( "Suspect", _("Suspect", l) ),
         ( "DispatchDateTime", _("Dispatch Date/Time", l) ),
         ( "RespondedDateTime", _("Responded Date/Time", l) ),
