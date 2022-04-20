@@ -1,6 +1,7 @@
 46
 ================
 
+20/04/22 Option to hide looking for (Peter Van Caeseele) #1034
 20/04/22 Option to email login credentials when creating a user account #362
 19/04/22 wordkeys: Extra DisplayXIf tokens for entire/neutered animals
 19/04/22 csvimport: fix bug where warnings were logged for blank image/pdf rows

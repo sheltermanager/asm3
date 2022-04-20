@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-04-20 09:14+0000\n"
+"POT-Creation-Date: 2022-04-20 09:26+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -10203,6 +10203,10 @@ msgstr ""
 
 #: options.js
 msgid "Remove the location unit field from animal details"
+msgstr ""
+
+#: options.js
+msgid "Remove the looking for functionality from the person menus and screens"
 msgstr ""
 
 #: options.js
