@@ -154,7 +154,7 @@ $(function() {
             STRING_FIELDS = [ "DispatchedACO", "DispatchAddress", "DispatchTown", "DispatchPostcode", "JurisdictionName", "LocationName", "CompletedName" ];
             let rv = "";
             if (name == "IncidentNumber") {
-              rv  = format.padleft(row.ID, 6)
+              rv  = format.padleft(row.ID, 6);
             }
             else if (name == "IncidentType") {
                 rv = row.INCIDENTNAME;

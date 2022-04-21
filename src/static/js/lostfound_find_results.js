@@ -154,7 +154,7 @@ $(function() {
             const DATE_FIELDS = [ "DateFound", "DateLost" ];
             let rv = "";
             if (name == "LostFoundID") {
-              rv  = format.padleft(row.ID, 6)
+              rv  = format.padleft(row.ID, 6);
             }
             else if ($.inArray(name, STRING_FIELDS) > -1) {
                 rv = common.nulltostr(value);
