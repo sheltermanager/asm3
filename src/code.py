@@ -4744,7 +4744,9 @@ class options(JSONEndpoint):
             "urgencies": asm3.lookups.get_urgencies(dbo),
             "usersandroles": asm3.users.get_users_and_roles(dbo),
             "vaccinationtypes": asm3.lookups.get_vaccination_types(dbo),
-            "waitinglistcolumns": asm3.html.json_waitinglistcolumns(dbo)
+            "waitinglistcolumns": asm3.html.json_waitinglistcolumns(dbo),
+            "incidentfindcolumns": asm3.html.json_incidentfindcolumns(dbo),
+            "lostfoundanimalfindcolumns": asm3.html.json_lostfoundanimalfindcolumns(dbo)
         }
         asm3.al.debug("lookups loaded", "code.options", dbo)
         return c

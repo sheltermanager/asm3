@@ -20,23 +20,9 @@ $(function() {
                 '</p>',
                 '</div>',
                 '<table id="searchresults">',
-                '<thead>',
-                '<tr>',
-                '<th>' + _("Number") + '</th>',
-                '<th>' + _("Contact") + '</th>',
-                '<th>' + _("Microchip") + '</th>',
-                '<th>' + _("Area") + '</th>',
-                '<th>' + _("Zipcode") + '</th>',
-                '<th>' + _("Date") + '</th>',
-                '<th>' + _("Age Group") + '</th>',
-                '<th>' + _("Sex") + '</th>',
-                '<th>' + _("Species") + '</th>',
-                '<th>' + _("Breed") + '</th>',
-                '<th>' + _("Color") + '</th>',
-                '<th>' + _("Features") + '</th>',
-                '</thead>',
+                lostfound_find_results.render_tablehead(),
                 '<tbody>',
-                this.render_results(),
+                lostfound_find_results.render_tablebody(),
                 '</tbody>',
                 '</table>',
                 '</div>',
@@ -44,47 +30,148 @@ $(function() {
             ].join("\n");
         },
 
-        render_results: function() {
+        /**
+         * Renders the table.head tag
+         */
+        render_tablehead: function() {
+            let labels = lostfound_find_results.column_labels();
+            let s = [];
+            s.push("<thead>");
+            s.push("<tr>");
+            $.each(labels, function(i, label) {
+                s.push("<th>" + label + "</th>");
+            });
+            s.push("</tr>");
+            s.push("</thead>");
+            return s.join("\n");
+        },
+
+        /**
+         * Renders the table body with columns
+         */
+        render_tablebody: function() {
             let h = [];
-            $.each(controller.rows, function(i, r) {
-                h.push('<tr>');
-                if (lostfound_find_results.mode == "lost") {
-                    h.push('<td><a href="lostanimal?id=' + r.ID + '">' + format.padleft(r.ID, 6) + '</a></td>');
-                }
-                else {
-                    h.push('<td><a href="foundanimal?id=' + r.ID + '">' + format.padleft(r.ID, 6) + '</a></td>');
-                }
-                h.push('<td>' + html.person_link(r.OWNERID, r.OWNERNAME) + '</td>');
-                h.push('<td>' + common.nulltostr(r.MICROCHIPNUMBER) + '</td>');
-                if (lostfound_find_results.mode == "lost") {
-                    h.push('<td>' + r.AREALOST + '</td>');
-                }
-                else {
-                    h.push('<td>' + r.AREAFOUND + '</td>');
-                }
-                h.push('<td>' + r.AREAPOSTCODE + '</td>');
-                if (lostfound_find_results.mode == "lost") {
-                    h.push('<td>' + format.date(r.DATELOST) + '</td>');
-                }
-                else {
-                    h.push('<td>' + format.date(r.DATEFOUND) + '</td>');
-                }
-                h.push('<td>' + r.AGEGROUP + '</td>');
-                h.push('<td>' + r.SEXNAME + '</td>');
-                h.push('<td>' + r.SPECIESNAME + '</td>');
-                h.push('<td>' + r.BREEDNAME + '</td>');
-                h.push('<td>' + r.BASECOLOURNAME + '</td>');
-                h.push('<td>' + r.DISTFEAT + '</td>');
-                h.push('</tr>');
+            $.each(controller.rows, function(ir, row) {
+                h.push("<tr>");
+                $.each(lostfound_find_results.column_names(), function(ic, name) {
+                  let formatted = '';
+                    h.push("<td>");
+                    if(name == "Owner"){
+                      formatted += html.person_link(row.OWNERID, row.OWNERNAME);
+                    } else {
+                      let value = "";
+                      if (row.hasOwnProperty(name.toUpperCase())) {
+                          value = row[name.toUpperCase()];
+                      }
+                      formatted = lostfound_find_results.format_column(row, name, value);
+                      if(name == 'LostFoundID') {
+                        if (lostfound_find_results.mode == "lost") {
+                            let link = '<a href="lostanimal?id=' + row.ID + '">';
+                            formatted = link + formatted + "</a>";
+                        }
+                        else {
+                            let link = '<a href="foundanimal?id=' + row.ID + '">';
+                            formatted = link + formatted + "</a></span>";
+                        }
+                      }
+                    }
+                    h.push(formatted);
+                    h.push("</td>");
+                });
+                h.push("</tr>");
             });
             return h.join("\n");
         },
-
+        
         bind: function() {
             $("#searchresults").table();
-            $("#searchresults").trigger("sorton", [[[4, 0]]]); // Sort on date descending (col 4, 0=desc)
         },
 
+        /** 
+         * Returns a list of our configured viewable column names
+         */
+        column_names: function() {
+            let cols = [];
+            $.each(config.str("LostFoundAnimalSearchColumns").split(","), function(i, v) {
+                cols.push(common.trim(v));
+            });
+            // If LostFoundID is not present in the list, insert it as the first column to make
+            // sure there's still a link displayed to the target record
+            if (!common.array_in("LostFoundID", cols)) { cols.unshift("LostFoundID"); } 
+            return cols;
+        },
+
+        /**
+         * Returns a list of our configured viewable column labels
+         */
+        column_labels: function() {
+            let names = lostfound_find_results.column_names();
+            let labels = [];
+            $.each(names, function(i, name) {
+                labels.push(lostfound_find_results.column_label(name));
+            });
+            return labels;
+        },
+
+        /**
+         * Returns the i18n translated label for a column with name
+         */
+
+        column_label: function(name) {
+            let labels = {
+                "LostFoundID": _("Number"),
+                "Owner": _("Contact"),
+                "MicrochipNumber":  _("Microchip"),
+                "AreaLostFound":  _("Area"),
+                "AreaPostCode":  _("Zipcode"),
+                "DateLostFound":  _("Date"),
+                "AgeGroup":  _("Age Group"),
+                "SexName":  _("Sex"),
+                "SpeciesName":  _("Species"),
+                "BreedName":  _("Breed"),
+                "BaseColourName":  _("Color"),
+                "DistFeat":  _("Features")
+            };
+            if (labels.hasOwnProperty(name)) {
+                return labels[name];
+            }
+            return name;
+        },
+
+        /**
+         * Returns a formatted column
+         * row: The lost/found resultset row
+         * name: The name of the column
+         * value: The value of the row/column to format from the resultset
+         */
+        format_column: function(row, name, value) {
+            const STRING_FIELDS = [ "MicrochipNumber", "AreaPostCode", "AgeGroup", "SexName", "SpeciesName", "BreedName", "BaseColourName", "DistFeat" ];
+            let rv = "";
+            if (name == "LostFoundID") {
+              rv  = format.padleft(row.ID, 6)
+            }
+            else if (name == "AreaLostFound") {
+              if (lostfound_find_results.mode == "lost") {
+                  rv = common.nulltostr(row.AREALOST);
+              }
+              else {
+                  rv = common.nulltostr(row.AREAFOUND);
+              }
+            }
+            else if (name == "DateLostFound") {
+              if (lostfound_find_results.mode == "lost") {
+                  rv = format.date(row.DATELOST);
+              }
+              else {
+                  rv = format.date(row.DATEFOUND);
+              }
+            }
+            else if ($.inArray(name, STRING_FIELDS) > -1) {
+                rv = common.nulltostr(value);
+            }
+            return rv;
+        },
+        
         name: "lostfound_find_results",
         animation: "results",
         autofocus: "#asm-content a:first",
