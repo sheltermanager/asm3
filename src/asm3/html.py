@@ -842,7 +842,7 @@ def json_incidentfindcolumns(dbo):
 def json_lostfoundanimalfindcolumns(dbo):
     l = dbo.locale
     cols = [ 
-        ("LostFoundNumber", _("Number", l))
+        ("LostFoundID", _("Number", l))
         , ("Owner", _("Contact", l))
         , ("MicrochipNumber", _("Microchip", l))
         , ("AreaLostFound", _("Area", l))
