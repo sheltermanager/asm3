@@ -42,35 +42,6 @@ $(function() {
             return s.join("\n");
         },
 
-        // render_results: function() {
-        //     let h = [];
-        //     $.each(controller.rows, function(i, r) {
-        //         h.push('<tr>');
-        //         h.push('<td><a href="incident?id=' + r.ID + '">' + r.INCIDENTNAME + '</a></td>');
-        //         h.push('<td>' + format.padleft(r.ID, 6) + '</td>');
-        //         h.push('<td>' + format.date(r.INCIDENTDATETIME) + ' ' + format.time(r.INCIDENTDATETIME) + '</td>');
-        //         h.push('<td>' + common.nulltostr(r.DISPATCHADDRESS) + '</td>');
-        //         h.push('<td>' + common.nulltostr(r.DISPATCHTOWN) + '</td>');
-        //         h.push('<td>' + common.nulltostr(r.DISPATCHPOSTCODE) + '</td>');
-        //         h.push('<td>' + common.nulltostr(r.JURISDICTIONNAME) + '</td>');
-        //         h.push('<td>' + common.nulltostr(r.LOCATIONNAME) + '</td>');
-        //         h.push('<td>');
-        //         if (r.OWNERNAME1) { h.push(html.person_link(r.OWNERID, r.OWNERNAME1)); }
-        //         if (r.OWNERNAME2) { h.push('<br/>' + html.person_link(r.OWNER2ID, r.OWNERNAME2)); }
-        //         if (r.OWNERNAME3) { h.push('<br/>' + html.person_link(r.OWNER3ID, r.OWNERNAME3)); }
-        //         h.push('</td>');
-        //         h.push('<td>' + format.date(r.DISPATCHDATETIME) + ' ' + format.time(r.DISPATCHDATETIME) + '</td>');
-        //         h.push('<td>' + format.date(r.RESPONDEDDATETIME) + ' ' + format.time(r.RESPONDEDDATETIME) + '</td>');
-        //         h.push('<td>' + common.nulltostr(r.DISPATCHEDACO) + '</td>');
-        //         h.push('<td>' + format.date(r.FOLLOWUPDATETIME) + '</td>');
-        //         h.push('<td>' + format.date(r.COMPLETEDDATE) + '</td>');
-        //         h.push('<td>' + common.nulltostr(r.COMPLETEDNAME) + '</td>');
-        //         h.push('<td>' + html.truncate(r.CALLNOTES) + '</td>');
-        //         h.push('</tr>');
-        //     });
-        //     return h.join("\n");
-        // },
-
         /**
          * Renders the table body with columns
          */
@@ -91,7 +62,7 @@ $(function() {
                           value = row[name.toUpperCase()];
                       }
                       formatted = incident_find_results.format_column(row, name, value);
-                      if (name == "IncidentNumber") { 
+                      if (name == "IncidentType") { 
                         let link = "<span style=\"white-space: nowrap\"><a href=\"incident?id=" + row.ID + "\">";
                         formatted = link + formatted + "</a></span>";
                       }
@@ -120,9 +91,9 @@ $(function() {
             $.each(config.str("IncidentSearchColumns").split(","), function(i, v) {
                 cols.push(common.trim(v));
             });
-            // If IncidentNumber is not present in the list, insert it as the first column to make
+            // If IncidentType is not present in the list, insert it as the first column to make
             // sure there's still a link displayed to the target record
-            if (!common.array_in("IncidentNumber", cols)) { cols.unshift("IncidentNumber"); } 
+            if (!common.array_in("IncidentType", cols)) { cols.unshift("IncidentType"); } 
             return cols;
         },
 

@@ -839,6 +839,26 @@ def json_incidentfindcolumns(dbo):
     findcolumns_selectedtofront(cols, asm3.configuration.incident_search_columns(dbo))
     return cols
 
+def json_lostfoundanimalfindcolumns(dbo):
+    l = dbo.locale
+    cols = [ 
+        ("LostFoundNumber", _("Number", l))
+        , ("Owner", _("Contact", l))
+        , ("MicrochipNumber", _("Microchip", l))
+        , ("AreaLostFound", _("Area", l))
+        , ("AreaPostCode", _("Zipcode", l))
+        , ("DateLostFound", _("Date", l))
+        , ("AgeGroup", _("Age Group", l))
+        , ("SexName", _("Sex", l))
+        , ("SpeciesName", _("Species", l))
+        , ("BreedName", _("Breed", l))
+        , ("BaseColourName", _("Color", l))
+        , ("DistFeat", _("Features", l))
+        ]
+    cols = findcolumns_sort(cols)
+    findcolumns_selectedtofront(cols, asm3.configuration.lostfoundanimal_search_columns(dbo))
+    return cols
+
 def json_quicklinks(dbo):
     l = dbo.locale
     ql = []
