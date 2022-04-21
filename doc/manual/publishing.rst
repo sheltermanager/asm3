@@ -432,6 +432,10 @@ password given to you by SavourLife. The options for filtering animals are the
 same as for other publishers, although ASM will only send dogs (Species 1) as
 SavourLife will not accept listings for other species of animals.
 
+Note that regardless of whether you have set the publishing option to
+"Include animals who don't have a picture", SavourLife will not accept listings
+without a photo, so we will not send animals who do not have a photo.
+
 Determing whether an animal is vaccinated
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

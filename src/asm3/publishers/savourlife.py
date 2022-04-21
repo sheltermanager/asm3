@@ -23,6 +23,7 @@ class SavourLifePublisher(AbstractPublisher):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         publishCriteria.bondedAsSingle = True
+        publishCriteria.includeWithoutImage = False # SL do not want listings without images
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("savourlife", "SavourLife Publisher")
 
