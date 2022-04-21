@@ -63,7 +63,7 @@ $(function() {
                       if (row.hasOwnProperty(name.toUpperCase())) {
                           value = row[name.toUpperCase()];
                       }
-                      formatted = lostfound_find_results.format_column(row, name, value);
+                      formatted = lostfound_find_results.format_column(row, name, value, controller.additional);
                       if(name == 'LostFoundID') {
                         if (lostfound_find_results.mode == "lost") {
                             let link = '<a href="lostanimal?id=' + row.ID + '">';
@@ -108,7 +108,7 @@ $(function() {
             let names = lostfound_find_results.column_names();
             let labels = [];
             $.each(names, function(i, name) {
-                labels.push(lostfound_find_results.column_label(name));
+                labels.push(lostfound_find_results.column_label(name, controller.additional));
             });
             return labels;
         },
@@ -116,7 +116,7 @@ $(function() {
         /**
          * Returns the i18n translated label for a column with name
          */
-        column_label: function(name) {
+        column_label: function(name, add) {
             let labels = {
                 "LostFoundID": _("Number"),
                 "Owner": _("Contact"),
@@ -148,8 +148,9 @@ $(function() {
          * row: The lost/found resultset row
          * name: The name of the column
          * value: The value of the row/column to format from the resultset
+         * add: The additional row results
          */
-        format_column: function(row, name, value) {
+        format_column: function(row, name, value, add) {
             const STRING_FIELDS = [ "MicrochipNumber", "AreaLost", "AreaFound", "AreaPostCode", "AgeGroup", "SexName", "SpeciesName", "BreedName", "BaseColourName", "DistFeat" ];
             const DATE_FIELDS = [ "DateFound", "DateLost" ];
             let rv = "";

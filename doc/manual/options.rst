@@ -585,15 +585,11 @@ option for experienced users, if you do not understand what you are doing, do
 not enable the option to use your own SMTP server as you will likely break
 the email sending functionality for your database.
 
-Find Animal/Person
-------------------
+Find Screens
+------------
 
-The find animal and person columns boxes allows you to specify which columns
-are used on the find animal screens and in what order they appear. The waiting
-list columns box operates similarly. 
-
-A comma separated list of field names should be given here. You can also use
-additional field names for your custom fields. 
+This tab allows you to configure which columns are present on all the find
+screens and in which order they are displayed.
 
 * Default to advanced find animal screen: If ticked, the find animal screen
   will appear in advanced mode by default. 

@@ -61,7 +61,7 @@ $(function() {
                       if (row.hasOwnProperty(name.toUpperCase())) {
                           value = row[name.toUpperCase()];
                       }
-                      formatted = incident_find_results.format_column(row, name, value);
+                      formatted = incident_find_results.format_column(row, name, value, controller.additional);
                       if (name == "IncidentNumber") { 
                         let link = "<span style=\"white-space: nowrap\"><a href=\"incident?id=" + row.ID + "\">";
                         formatted = link + formatted + "</a></span>";
@@ -104,7 +104,7 @@ $(function() {
             let names = incident_find_results.column_names();
             let labels = [];
             $.each(names, function(i, name) {
-                labels.push(incident_find_results.column_label(name));
+                labels.push(incident_find_results.column_label(name, controller.additional));
             });
             return labels;
         },
@@ -113,7 +113,7 @@ $(function() {
          * Returns the i18n translated label for a column with name
          */
 
-        column_label: function(name) {
+        column_label: function(name, add) {
             let labels = {
                 "IncidentType": _("Incident Type"),
                 "IncidentNumber": _("Number"),
@@ -147,8 +147,9 @@ $(function() {
          * row: The incident resultset row
          * name: The name of the column
          * value: The value of the row/column to format from the resultset
+         * add: The additional row results
          */
-        format_column: function(row, name, value) {
+        format_column: function(row, name, value, add) {
             const DATE_FIELDS = [ "FollowupDateTime", "CompletedDate" ],
             DATETIME_FIELDS = [ "IncidentDateTime", "DispatchDateTime", "RespondedDateTime" ],
             STRING_FIELDS = [ "DispatchedACO", "DispatchAddress", "DispatchTown", "DispatchPostcode", "JurisdictionName", "LocationName", "CompletedName" ];

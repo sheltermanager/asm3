@@ -95,7 +95,7 @@ compilepy:
 smcom-dev: clean version schema
 	@echo "[smcom dev eur04b] ===================="
 	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_eur04b"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev invalidatecache only_eur04b"
 
 smcom-dev-all: clean version schema
 	@echo "[smcom dev all] ======================"
