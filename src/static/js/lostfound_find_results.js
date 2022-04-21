@@ -91,8 +91,8 @@ $(function() {
          * Returns a list of our configured viewable column names
          */
         column_names: function() {
-            let cols = [];
-            $.each(config.str("LostFoundAnimalSearchColumns").split(","), function(i, v) {
+            let cols = [], cfgstr = (lostfound_find_results.mode == "lost" ? "LostAnimalSearchColumns" : "FoundAnimalSearchColumns");
+            $.each(config.str(cfgstr).split(","), function(i, v) {
                 cols.push(common.trim(v));
             });
             // If LostFoundID is not present in the list, insert it as the first column to make
@@ -116,15 +116,16 @@ $(function() {
         /**
          * Returns the i18n translated label for a column with name
          */
-
         column_label: function(name) {
             let labels = {
                 "LostFoundID": _("Number"),
                 "Owner": _("Contact"),
                 "MicrochipNumber":  _("Microchip"),
-                "AreaLostFound":  _("Area"),
+                "AreaLost":  _("Area"),
+                "AreaFound":  _("Area"),
                 "AreaPostCode":  _("Zipcode"),
-                "DateLostFound":  _("Date"),
+                "DateLost":  _("Date"),
+                "DateFound":  _("Date"),
                 "AgeGroup":  _("Age Group"),
                 "SexName":  _("Sex"),
                 "SpeciesName":  _("Species"),
@@ -134,6 +135,10 @@ $(function() {
             };
             if (labels.hasOwnProperty(name)) {
                 return labels[name];
+            }
+            if (add) {
+                let addrow = common.get_row(add, name, "FIELDNAME");
+                if (addrow) { return addrow.FIELDLABEL; }
             }
             return name;
         },
@@ -145,29 +150,39 @@ $(function() {
          * value: The value of the row/column to format from the resultset
          */
         format_column: function(row, name, value) {
-            const STRING_FIELDS = [ "MicrochipNumber", "AreaPostCode", "AgeGroup", "SexName", "SpeciesName", "BreedName", "BaseColourName", "DistFeat" ];
+            const STRING_FIELDS = [ "MicrochipNumber", "AreaLost", "AreaFound", "AreaPostCode", "AgeGroup", "SexName", "SpeciesName", "BreedName", "BaseColourName", "DistFeat" ];
+            const DATE_FIELDS = [ "DateFound", "DateLost" ];
             let rv = "";
             if (name == "LostFoundID") {
               rv  = format.padleft(row.ID, 6)
             }
-            else if (name == "AreaLostFound") {
-              if (lostfound_find_results.mode == "lost") {
-                  rv = common.nulltostr(row.AREALOST);
-              }
-              else {
-                  rv = common.nulltostr(row.AREAFOUND);
-              }
-            }
-            else if (name == "DateLostFound") {
-              if (lostfound_find_results.mode == "lost") {
-                  rv = format.date(row.DATELOST);
-              }
-              else {
-                  rv = format.date(row.DATEFOUND);
-              }
-            }
             else if ($.inArray(name, STRING_FIELDS) > -1) {
                 rv = common.nulltostr(value);
+            }
+            else if ($.inArray(name, DATE_FIELDS) > -1) {
+                rv = format.date(value);
+            }
+            else if (add) {
+                $.each(add, function(i, v) {
+                    if (v.LINKID == row.ID && v.FIELDNAME.toLowerCase() == name.toLowerCase()) {
+                        if (v.FIELDTYPE == additional.YESNO) { 
+                            rv = v.VALUE == "1" ? _("Yes") : _("No");
+                        }
+                        else if (v.FIELDTYPE == additional.MONEY) {
+                            rv = format.currency(v.VALUE);
+                        }
+                        else if (v.FIELDTYPE == additional.ANIMAL_LOOKUP) {
+                            rv = '<a href="animal?id=' + v.VALUE + '">' + v.ANIMALNAME + '</a>';
+                        }
+                        else if (v.FIELDTYPE == additional.PERSON_LOOKUP) {
+                            rv = html.person_link(v.VALUE, v.OWNERNAME);
+                        }
+                        else {
+                            rv = v.VALUE;
+                        }
+                        return false; // break
+                    }
+                });
             }
             return rv;
         },

@@ -225,6 +225,9 @@ DEFAULTS = {
     "FostererEmails": "No", 
     "FostererEmailOverdueDays": "-30",
     "FostererEmailSkipNoMedical": "No",
+    "FoundAnimalSearchColumns": "LostFoundID,Owner,MicrochipNumber,AreaFound,"
+        "AreaPostCode,DateFound,AgeGroup,SexName,SpeciesName,BreedName,"
+        "BaseColourName,DistFeat",
     "ShowGDPRContactOptIn": "No",
     "GDPRContactChangeLog": "No",
     "GDPRContactChangeLogType": "6",
@@ -237,7 +240,7 @@ DEFAULTS = {
     "HoldChangeLog": "Yes",
     "HoldChangeLogType": "3",
     "IncidentPermissions": "No",
-    "IncidentSearchColumns": "IncidentType,IncidentNumber,IncidentDateTime,"
+    "IncidentSearchColumns": "IncidentNumber,IncidentType,IncidentDateTime,"
         "DispatchAddress,DispatchTown,DispatchPostcode,JurisdictionName,"
         "LocationName,Suspect,DispatchDateTime,RespondedDateTime,"
         "DispatchedACO,FollowupDateTime,CompletedDate,CompletedName,"
@@ -251,8 +254,8 @@ DEFAULTS = {
     "LocationChangeLogType": "3",
     "LocationFiltersEnabled": "No",
     "LongTermMonths": "6",
-    "LostFoundAnimalSearchColumns": "LostFoundID,Owner,MicrochipNumber,AreaLostFound,"
-        "AreaPostCode,DateLostFound,AgeGroup,SexName,SpeciesName,BreedName,"
+    "LostAnimalSearchColumns": "LostFoundID,Owner,MicrochipNumber,AreaLost,"
+        "AreaPostCode,DateLost,AgeGroup,SexName,SpeciesName,BreedName,"
         "BaseColourName,DistFeat",
     "MailMergeMaxEmails": "2000",
     "MainScreenAnimalLinkMode": "recentlychanged",
@@ -909,6 +912,9 @@ def fosterer_emails_reply_to(dbo):
 def fosterer_emails_msg(dbo):
     return cstring(dbo, "FostererEmailsMsg")
 
+def foundanimal_search_columns(dbo):
+    return cstring(dbo, "FoundAnimalSearchColumns", DEFAULTS["FoundAnimalSearchColumns"])
+
 def foundanimals_cutoff_days(dbo):
     return cint(dbo, "FoundAnimalsCutoffDays")
 
@@ -1151,8 +1157,8 @@ def person_search_columns(dbo):
 def incident_search_columns(dbo):
     return cstring(dbo, "IncidentSearchColumns", DEFAULTS["IncidentSearchColumns"])
 
-def lostfoundanimal_search_columns(dbo):
-    return cstring(dbo, "LostFoundAnimalSearchColumns", DEFAULTS["LostFoundAnimalSearchColumns"])
+def lostanimal_search_columns(dbo):
+    return cstring(dbo, "LostAnimalSearchColumns", DEFAULTS["LostAnimalSearchColumns"])
 
 def petcademy_token(dbo):
     return cstring(dbo, "PetcademyToken")

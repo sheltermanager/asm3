@@ -3117,8 +3117,12 @@ class foundanimal_find_results(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         results = asm3.lostfound.get_foundanimal_find_advanced(dbo, o.post.data, asm3.configuration.record_search_limit(dbo))
+        add = None
+        if len(results) > 0: 
+            add = asm3.additional.get_additional_fields_ids(dbo, results, "foundanimal")
         asm3.al.debug("found %d results for %s" % (len(results), self.query()), "code.foundanimal_find_results", dbo)
         return {
+            "additional": add,
             "rows": results,
             "name": "foundanimal_find_results"
         }
@@ -3349,8 +3353,12 @@ class incident_find_results(JSONEndpoint):
 
     def controller(self, o):
         results = asm3.animalcontrol.get_animalcontrol_find_advanced(o.dbo, o.post.data, o.user, asm3.configuration.record_search_limit(o.dbo))
+        add = None
+        if len(results) > 0: 
+            add = asm3.additional.get_additional_fields_ids(o.dbo, results, "incident")
         asm3.al.debug("found %d results for %s" % (len(results), self.query()), "code.incident_find_results", o.dbo)
         return {
+            "additional": add,
             "rows": results
         }
 
@@ -3732,8 +3740,12 @@ class lostanimal_find_results(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         results = asm3.lostfound.get_lostanimal_find_advanced(dbo, o.post.data, asm3.configuration.record_search_limit(dbo))
+        add = None
+        if len(results) > 0: 
+            add = asm3.additional.get_additional_fields_ids(dbo, results, "lostanimal")
         asm3.al.debug("found %d results for %s" % (len(results), self.query()), "code.lostanimal_find_results", dbo)
         return {
+            "additional": add,
             "rows": results,
             "name": "lostanimal_find_results"
         }
@@ -4725,12 +4737,15 @@ class options(JSONEndpoint):
             "deathreasons": asm3.lookups.get_deathreasons(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
+            "foundanimalfindcolumns": asm3.html.json_foundanimalfindcolumns(dbo),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "haspaypal": PAYPAL_VALIDATE_IPN_URL != "",
+            "incidentfindcolumns": asm3.html.json_incidentfindcolumns(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "locales": get_locales(),
             "locations": asm3.lookups.get_internal_locations(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
+            "lostanimalfindcolumns": asm3.html.json_lostanimalfindcolumns(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "personfindcolumns": asm3.html.json_personfindcolumns(dbo),
             "quicklinks": asm3.html.json_quicklinks(dbo),
@@ -4744,9 +4759,7 @@ class options(JSONEndpoint):
             "urgencies": asm3.lookups.get_urgencies(dbo),
             "usersandroles": asm3.users.get_users_and_roles(dbo),
             "vaccinationtypes": asm3.lookups.get_vaccination_types(dbo),
-            "waitinglistcolumns": asm3.html.json_waitinglistcolumns(dbo),
-            "incidentfindcolumns": asm3.html.json_incidentfindcolumns(dbo),
-            "lostfoundanimalfindcolumns": asm3.html.json_lostfoundanimalfindcolumns(dbo)
+            "waitinglistcolumns": asm3.html.json_waitinglistcolumns(dbo)
         }
         asm3.al.debug("lookups loaded", "code.options", dbo)
         return c

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-04-20 09:26+0000\n"
+"POT-Creation-Date: 2022-04-21 09:08+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1518,7 +1518,7 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
-#: lostfound_find.js lostfound_find_results.js
+#: html.py lostfound_find.js lostfound_find_results.js
 msgid "Area"
 msgstr ""
 
@@ -2856,9 +2856,8 @@ msgstr ""
 msgid "Complete Tasks"
 msgstr ""
 
-#: mobile.py medical.py dbupdate.py transport.js medical.js
-#: incident_find_results.js diary.js reports.js incident_find.js animal.js
-#: header_edit_header.js
+#: mobile.py medical.py dbupdate.py transport.js medical.js diary.js reports.js
+#: incident_find.js animal.js header_edit_header.js
 msgid "Completed"
 msgstr ""
 
@@ -2866,7 +2865,11 @@ msgstr ""
 msgid "Completed Between"
 msgstr ""
 
-#: lookups.py incident_find.js
+#: html.py
+msgid "Completed Date"
+msgstr ""
+
+#: html.py lookups.py incident_find.js
 msgid "Completed Type"
 msgstr ""
 
@@ -2886,11 +2889,15 @@ msgstr ""
 msgid "Completed type {0}"
 msgstr ""
 
+#: incident_find_results.js
+msgid "Completion Date"
+msgstr ""
+
 #: mobile.py incident.js
 msgid "Completion Date/Time"
 msgstr ""
 
-#: mobile.py incident.js
+#: mobile.py incident.js incident_find_results.js
 msgid "Completion Type"
 msgstr ""
 
@@ -2926,7 +2933,7 @@ msgstr ""
 msgid "Consumed"
 msgstr ""
 
-#: lostfound.py waitinglist_new.js waitinglist.js lostfound.js
+#: html.py lostfound.py waitinglist_new.js waitinglist.js lostfound.js
 #: lostfound_find_results.js lostfound_new.js
 msgid "Contact"
 msgstr ""
@@ -3337,7 +3344,7 @@ msgstr ""
 msgid "Database"
 msgstr ""
 
-#: mobile.py dbupdate.py wordprocessor.py animal_new.js move_reclaim.js
+#: html.py mobile.py dbupdate.py wordprocessor.py animal_new.js move_reclaim.js
 #: animal_find_results.js person.js animal_costs.js move_retailer.js
 #: person_links.js diary.js citations.js traploan.js common.js
 #: person_investigation.js onlineform.js accounts_trx.js log_new.js animal.js
@@ -4061,7 +4068,7 @@ msgstr ""
 msgid "Dispatch Between"
 msgstr ""
 
-#: mobile.py incident.js incident_find_results.js
+#: html.py mobile.py incident.js incident_find_results.js
 msgid "Dispatch Date/Time"
 msgstr ""
 
@@ -5297,10 +5304,6 @@ msgstr ""
 msgid "Find Animal"
 msgstr ""
 
-#: options.js
-msgid "Find Animal/Person"
-msgstr ""
-
 #: lostfound_find.js
 msgid "Find Found Animal"
 msgstr ""
@@ -5315,6 +5318,10 @@ msgstr ""
 
 #: mobile.py person_find.js
 msgid "Find Person"
+msgstr ""
+
+#: options.js
+msgid "Find Screens"
 msgstr ""
 
 #: html.py configuration.py header.js
@@ -5361,6 +5368,10 @@ msgstr ""
 msgid "Find fosterer"
 msgstr ""
 
+#: options.js
+msgid "Find found animal columns"
+msgstr ""
+
 #: lostfound_find_results.js
 msgid "Find found animal returned {0} results."
 msgstr ""
@@ -5375,6 +5386,14 @@ msgstr ""
 
 #: html.py
 msgid "Find incident"
+msgstr ""
+
+#: options.js
+msgid "Find incident columns"
+msgstr ""
+
+#: options.js
+msgid "Find lost animal columns"
 msgstr ""
 
 #: lostfound_find_results.js
@@ -5484,12 +5503,16 @@ msgstr ""
 msgid "Florida White"
 msgstr ""
 
-#: incident_find_results.js header_edit_header.js
+#: header_edit_header.js
 msgid "Followup"
 msgstr ""
 
 #: incident_find.js
 msgid "Followup Between"
+msgstr ""
+
+#: html.py incident_find_results.js
+msgid "Followup Date"
 msgstr ""
 
 #: mobile.py incident.js
@@ -6542,11 +6565,16 @@ msgstr ""
 msgid "Incident Completed Types"
 msgstr ""
 
-#: mobile.py incident.js incident_find_results.js animal.js incident_new.js
+#: html.py mobile.py incident.js incident_find_results.js animal.js
+#: incident_new.js
 msgid "Incident Date/Time"
 msgstr ""
 
-#: incident_find.js
+#: html.py
+msgid "Incident Number"
+msgstr ""
+
+#: html.py incident_find_results.js incident_find.js
 msgid "Incident Type"
 msgstr ""
 
@@ -7895,7 +7923,7 @@ msgstr ""
 msgid "Method"
 msgstr ""
 
-#: lostfound.py animal_find_results.js lostfound.js lostfound_find.js
+#: html.py lostfound.py animal_find_results.js lostfound.js lostfound_find.js
 #: common_animalchooser.js lostfound_find_results.js header_edit_header.js
 #: lostfound_new.js
 msgid "Microchip"
@@ -8411,8 +8439,8 @@ msgstr ""
 
 #: mobile.py onlineform.py i18n.py dbupdate.py wordprocessor.py
 #: publish_options.js users.js animal_find_results.js waitinglist_results.js
-#: reports.js sql.js accounts.js lostfound_find.js additional.js lookups.js
-#: person_find_results.js
+#: incident_find_results.js reports.js sql.js accounts.js lostfound_find.js
+#: additional.js lookups.js lostfound_find_results.js person_find_results.js
 msgid "No"
 msgstr ""
 
@@ -8609,9 +8637,9 @@ msgstr ""
 msgid "Note"
 msgstr ""
 
-#: mobile.py dbupdate.py incident.js move_deceased.js incident_find_results.js
-#: incident_find.js person_investigation.js onlineform.js animal.js media.js
-#: incident_new.js
+#: html.py mobile.py dbupdate.py incident.js move_deceased.js
+#: incident_find_results.js incident_find.js person_investigation.js
+#: onlineform.js animal.js media.js incident_new.js
 msgid "Notes"
 msgstr ""
 
@@ -10419,7 +10447,7 @@ msgstr ""
 msgid "Responded Between"
 msgstr ""
 
-#: mobile.py incident.js incident_find_results.js
+#: html.py mobile.py incident.js incident_find_results.js
 msgid "Responded Date/Time"
 msgstr ""
 
@@ -11960,7 +11988,7 @@ msgstr ""
 msgid "Surrender Pickup"
 msgstr ""
 
-#: incident.js incident_find_results.js animal.js incident_new.js
+#: html.py incident.js incident_find_results.js animal.js incident_new.js
 msgid "Suspect"
 msgstr ""
 
@@ -12508,8 +12536,8 @@ msgstr ""
 
 #: options.js
 msgid ""
-"These fields determine which columns are shown on the find animal and find "
-"person screens."
+"These fields determine which columns are shown on the find screens. You can "
+"drag and drop to rearrange the order."
 msgstr ""
 
 #: options.js
@@ -13317,14 +13345,13 @@ msgstr ""
 
 #: html.py mobile.py lookups.py wordprocessor.py reports.py transport.js
 #: vouchers.js animal_new.js users.js incident.js animal_find_results.js
-#: person.js animal_costs.js person_links.js incident_find_results.js
-#: vaccination.js animal_find.js reports.js licence_renewal.js citations.js
-#: common_widgets.js traploan.js mailmerge.js donations.js onlineform.js
-#: document_repository.js rota.js accounts.js log_new.js animal_bulk.js
-#: staff_rota.js test.js animal.js options.js animal_diet.js
-#: clinic_appointment.js diarytasks.js additional.js common_animalchooser.js
-#: shelterview.js media.js log.js movements.js incident_new.js
-#: csvimport_paypal.js licence.js
+#: person.js animal_costs.js person_links.js vaccination.js animal_find.js
+#: reports.js licence_renewal.js citations.js common_widgets.js traploan.js
+#: mailmerge.js donations.js onlineform.js document_repository.js rota.js
+#: accounts.js log_new.js animal_bulk.js staff_rota.js test.js animal.js
+#: options.js animal_diet.js clinic_appointment.js diarytasks.js additional.js
+#: common_animalchooser.js shelterview.js media.js log.js movements.js
+#: incident_new.js csvimport_paypal.js licence.js
 msgid "Type"
 msgstr ""
 
@@ -14441,8 +14468,9 @@ msgstr ""
 
 #: mobile.py onlineform.py i18n.py dbupdate.py wordprocessor.py
 #: publish_options.js users.js animal_find_results.js waitinglist_results.js
-#: reports.js sql.js donations.js accounts.js lostfound_find.js additional.js
-#: lookups.js person_find_results.js
+#: incident_find_results.js reports.js sql.js donations.js accounts.js
+#: lostfound_find.js additional.js lookups.js lostfound_find_results.js
+#: person_find_results.js
 msgid "Yes"
 msgstr ""
 

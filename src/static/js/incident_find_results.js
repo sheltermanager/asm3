@@ -62,7 +62,7 @@ $(function() {
                           value = row[name.toUpperCase()];
                       }
                       formatted = incident_find_results.format_column(row, name, value);
-                      if (name == "IncidentType") { 
+                      if (name == "IncidentNumber") { 
                         let link = "<span style=\"white-space: nowrap\"><a href=\"incident?id=" + row.ID + "\">";
                         formatted = link + formatted + "</a></span>";
                       }
@@ -91,9 +91,9 @@ $(function() {
             $.each(config.str("IncidentSearchColumns").split(","), function(i, v) {
                 cols.push(common.trim(v));
             });
-            // If IncidentType is not present in the list, insert it as the first column to make
+            // If IncidentNumber is not present in the list, insert it as the first column to make
             // sure there's still a link displayed to the target record
-            if (!common.array_in("IncidentType", cols)) { cols.unshift("IncidentType"); } 
+            if (!common.array_in("IncidentNumber", cols)) { cols.unshift("IncidentNumber"); } 
             return cols;
         },
 
@@ -135,6 +135,10 @@ $(function() {
             if (labels.hasOwnProperty(name)) {
                 return labels[name];
             }
+            if (add) {
+                let addrow = common.get_row(add, name, "FIELDNAME");
+                if (addrow) { return addrow.FIELDLABEL; }
+            }
             return name;
         },
         
@@ -169,6 +173,28 @@ $(function() {
             }
             else if ($.inArray(name, STRING_FIELDS) > -1) {
                 rv = common.nulltostr(value);
+            }
+            else if (add) {
+                $.each(add, function(i, v) {
+                    if (v.LINKID == row.ID && v.FIELDNAME.toLowerCase() == name.toLowerCase()) {
+                        if (v.FIELDTYPE == additional.YESNO) { 
+                            rv = v.VALUE == "1" ? _("Yes") : _("No");
+                        }
+                        else if (v.FIELDTYPE == additional.MONEY) {
+                            rv = format.currency(v.VALUE);
+                        }
+                        else if (v.FIELDTYPE == additional.ANIMAL_LOOKUP) {
+                            rv = '<a href="animal?id=' + v.VALUE + '">' + v.ANIMALNAME + '</a>';
+                        }
+                        else if (v.FIELDTYPE == additional.PERSON_LOOKUP) {
+                            rv = html.person_link(v.VALUE, v.OWNERNAME);
+                        }
+                        else {
+                            rv = v.VALUE;
+                        }
+                        return false; // break
+                    }
+                });
             }
             return rv;
         },

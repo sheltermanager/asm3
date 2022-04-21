@@ -835,28 +835,57 @@ def json_incidentfindcolumns(dbo):
         ( "CompletedName", _("Completed Type", l) ),
         ( "CallNotes", _("Notes", l) )
         ]
+    fd = asm3.additional.get_field_definitions(dbo, "incident")
+    for f in fd:
+        cols.append( (f["FIELDNAME"], f["FIELDLABEL"]) )
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, asm3.configuration.incident_search_columns(dbo))
     return cols
 
-def json_lostfoundanimalfindcolumns(dbo):
+def json_foundanimalfindcolumns(dbo):
     l = dbo.locale
     cols = [ 
-        ("LostFoundID", _("Number", l))
-        , ("Owner", _("Contact", l))
-        , ("MicrochipNumber", _("Microchip", l))
-        , ("AreaLostFound", _("Area", l))
-        , ("AreaPostCode", _("Zipcode", l))
-        , ("DateLostFound", _("Date", l))
-        , ("AgeGroup", _("Age Group", l))
-        , ("SexName", _("Sex", l))
-        , ("SpeciesName", _("Species", l))
-        , ("BreedName", _("Breed", l))
-        , ("BaseColourName", _("Color", l))
-        , ("DistFeat", _("Features", l))
+        ("LostFoundID", _("Number", l)),
+        ("Owner", _("Contact", l)),
+        ("MicrochipNumber", _("Microchip", l)),
+        ("AreaFound", _("Area", l)),
+        ("AreaPostCode", _("Zipcode", l)),
+        ("DateFound", _("Date", l)),
+        ("AgeGroup", _("Age Group", l)),
+        ("SexName", _("Sex", l)),
+        ("SpeciesName", _("Species", l)),
+        ("BreedName", _("Breed", l)),
+        ("BaseColourName", _("Color", l)),
+        ("DistFeat", _("Features", l))
         ]
+    fd = asm3.additional.get_field_definitions(dbo, "foundanimal")
+    for f in fd:
+        cols.append( (f["FIELDNAME"], f["FIELDLABEL"]) )
     cols = findcolumns_sort(cols)
-    findcolumns_selectedtofront(cols, asm3.configuration.lostfoundanimal_search_columns(dbo))
+    findcolumns_selectedtofront(cols, asm3.configuration.foundanimal_search_columns(dbo))
+    return cols
+
+def json_lostanimalfindcolumns(dbo):
+    l = dbo.locale
+    cols = [ 
+        ("LostFoundID", _("Number", l)),
+        ("Owner", _("Contact", l)),
+        ("MicrochipNumber", _("Microchip", l)),
+        ("AreaLost", _("Area", l)),
+        ("AreaPostCode", _("Zipcode", l)),
+        ("DateLost", _("Date", l)),
+        ("AgeGroup", _("Age Group", l)),
+        ("SexName", _("Sex", l)),
+        ("SpeciesName", _("Species", l)),
+        ("BreedName", _("Breed", l)),
+        ("BaseColourName", _("Color", l)),
+        ("DistFeat", _("Features", l))
+        ]
+    fd = asm3.additional.get_field_definitions(dbo, "lostanimal")
+    for f in fd:
+        cols.append( (f["FIELDNAME"], f["FIELDLABEL"]) )
+    cols = findcolumns_sort(cols)
+    findcolumns_selectedtofront(cols, asm3.configuration.lostanimal_search_columns(dbo))
     return cols
 
 def json_quicklinks(dbo):
