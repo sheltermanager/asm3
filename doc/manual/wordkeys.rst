@@ -397,6 +397,10 @@ DisplayXIfCat / DisplayXIfDog / DisplayXIfRabbit / DisplayXIfMale / DisplayXIfFe
     Outputs an X if this animal is a cat, dog, rabbit, male or female (used for form boxes)
 DisplayXIfPedigree / DisplayXIfCrossbreed
     Outputs an X if this animal is a pure or crossbreed
+DisplayXIfNeutered / DisplayXIfFixedMale / DisplayXIfFixedFemale
+    Outputs an X if this animal is neutered/spayed
+DisplayXIfNotNeutered / DisplayXIfEntireMale / DisplayXIfEntireFemale
+    Outputs an X if this animal is not neutered/spayed
 EntryCategory
     The entry category of the animal 
 ReasonForEntry

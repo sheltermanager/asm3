@@ -89,6 +89,12 @@ def get_expiry_date(dbo):
     except:
         return None
 
+def get_login_url(dbo):
+    """
+    Returns the login url for this account
+    """
+    return "http://%s.sheltermanager.com" % dbo.alias or dbo.database
+
 def go_smcom_my(dbo):
     """
     Goes to the my account page for this database

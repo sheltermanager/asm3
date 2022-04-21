@@ -298,7 +298,7 @@ $(function() {
 
         render_lookingfor: function() {
             return [
-                '<h3><a href="#">' + _("Looking for") + ' <span id="tabcriteria" style="display: none" class="asm-icon asm-icon-animal"></span></a></h3><div>',
+                '<h3 id="accordion-lookingfor"><a href="#">' + _("Looking for") + ' <span id="tabcriteria" style="display: none" class="asm-icon asm-icon-animal"></span></a></h3><div>',
                 // Outer table
                 '<table width="100%">',
                 '<tr>',
@@ -587,6 +587,11 @@ $(function() {
             $("#jurisdictionrow").toggle( !config.bool("DisableAnimalControl") );
             $("#button-anonymise").toggle( config.bool("AnonymisePersonalData") );
             $("#gdprcontactoptinrow").toggle( config.bool("ShowGDPRContactOptIn") );
+            $("#button-lookingfor").toggle( !config.bool("HideLookingFor") );
+            if (config.bool("HideLookingFor")) {
+                $("#accordion-lookingfor").hide();
+                $("#accordion-lookingfor").next().hide();
+            }
 
             // SECURITY =============================================================
             if (!common.has_permission("co")) { $("#button-save, #button-anonymise").hide(); }
@@ -889,4 +894,3 @@ $(function() {
     common.module_register(person);
 
 });
-

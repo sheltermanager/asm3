@@ -359,7 +359,8 @@ $.fn.date = function() {
         disable_autocomplete($(this));
         let dayfilter = $(this).attr("data-onlydays");
         let nopast = $(this).attr("data-nopast");
-        if (dayfilter) {
+        let nofuture = $(this).attr("data-nofuture");
+        if (dayfilter || nopast || nofuture) {
             $(this).datepicker({ 
                 changeMonth: true, 
                 changeYear: true,
@@ -368,13 +369,19 @@ $.fn.date = function() {
                 beforeShowDay: function(a) {
                     let day = a.getDay();
                     let rv = false;
-                    $.each(dayfilter.split(","), function(i, v) {
-                        if (v == String(day)) {
-                            rv = true;
-                        }
-                        return false;
-                    });
+                    if (dayfilter) {
+                        $.each(dayfilter.split(","), function(i, v) {
+                            if (v == String(day)) {
+                                rv = true;
+                            }
+                            return false;
+                        });
+                    }
+                    else {
+                        rv = true;
+                    }
                     if (nopast && a < new Date()) { rv = false; }
+                    if (nofuture && a > new Date()) { rv = false; }
                     return [rv, ""];
                 }
             });

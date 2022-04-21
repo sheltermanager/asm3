@@ -164,17 +164,36 @@ $(function() {
         ];
 
         const QB_MEDICAL_CRITERIA = [ 
+            [ _("Ask the user for a treatment"), "asktreatment", "TreatmentName LIKE '%$ASK STRING {0}$%'"
+                .replace("{0}", _("Enter a treatment name")) ],
             [ _("Due"), "duenow", "DateGiven Is Null" ],
             [ _("Due between two dates"), "duetwo", 
                 "DateRequired>='$ASK DATE {0}$' AND DateRequired<='$ASK DATE {1}$'"
                 .replace("{0}", _("Due between"))
                 .replace("{1}", _("and")) ],
-            [ _("Ask the user for a treatment"), "asktreatment", "TreatmentName LIKE '%$ASK STRING {0}$%'"
-                .replace("{0}", _("Enter a treatment name")) ],
             [ _("Given"), "givennow", "DateGiven Is Not Null" ],
             [ _("Given between two dates"), "giventwo", 
                 "DateGiven>='$ASK DATE {0}$' AND DateGiven<='$ASK DATE {1}$'"
                 .replace("{0}", _("Given between"))
+                .replace("{1}", _("and")) ]
+        ];
+
+        const QB_PAYMENT_CRITERIA = [
+            [ _("Ask the user for a check number"), "askcheck", "ChequeNumber LIKE '%$ASK NUMBER {0}$%'"
+                .replace("{0}", _("Check")) ],
+            [ _("Ask the user for a payment type"), "askpaymenttype", "DonationTypeID=$ASK PAYMENTTYPE$'" ],
+            [ _("Ask the user for a payment method"), "askpaymentmethod", "DonationPaymentID=$ASK PAYMENTMETHOD$'" ],
+            [ _("Ask the user for a receipt number"), "askreceipt", "ReceiptNumber LIKE '%$ASK NUMBER {0}$%'"
+                .replace("{0}", _("Receipt")) ],
+            [ _("Due"), "duenow", "DateDue Is Null" ],
+            [ _("Due between two dates"), "duetwo", 
+                "DateDue>='$ASK DATE {0}$' AND DateDue<='$ASK DATE {1}$'"
+                .replace("{0}", _("Due between"))
+                .replace("{1}", _("and")) ],
+            [ _("Received"), "receivednow", "Date Is Not Null" ],
+            [ _("Received between two dates"), "receivedtwo", 
+                "Date>='$ASK DATE {0}$' AND Date<='$ASK DATE {1}$'"
+                .replace("{0}", _("Received between"))
                 .replace("{1}", _("and")) ]
         ];
 
@@ -431,6 +450,7 @@ $(function() {
                 '<option value="animal">' + _("Animal") + '</option>',
                 '<option value="animalcontrol">' + _("Incident") + '</option>',
                 '<option value="animalmedicalcombined">' + _("Medical") + '</option>',
+                '<option value="ownerdonation">' + _("Payment") + '</option>',
                 '<option value="owner">' + _("Person") + '</option>',
                 '</select>',
                 '</td>',
@@ -610,6 +630,7 @@ $(function() {
             reports.qb_animal_criteria = Array.from(QB_ANIMAL_CRITERIA);
             reports.qb_incident_criteria = Array.from(QB_INCIDENT_CRITERIA);
             reports.qb_medical_criteria = Array.from(QB_MEDICAL_CRITERIA);
+            reports.qb_payment_criteria = Array.from(QB_PAYMENT_CRITERIA);
             reports.qb_person_criteria = Array.from(QB_PERSON_CRITERIA);
             $.each(controller.additionalfields, function(i, v) {
                 if (!common.array_in(v.LINKTYPE, ADDITIONAL_ANIMAL)) { return; } // skip non-animal additional fields
@@ -654,6 +675,14 @@ $(function() {
             $.each(controller.completedtypes, function(i, v) {
                 reports.qb_incident_criteria.push(
                     [_("Completed type {0}").replace("{0}", v.COMPLETEDNAME), "completed" + v.ID, "IncidentCompletedID=" + v.ID]);
+            });
+            $.each(controller.donationtypes, function(i, v) {
+                reports.qb_payment_criteria.push(
+                    [_("Payment type {0}").replace("{0}", v.DONATIONNAME), "paymenttype" + v.ID, "DonationTypeID=" + v.ID]);
+            });
+            $.each(controller.paymentmethods, function(i, v) {
+                reports.qb_payment_criteria.push(
+                    [_("Payment method {0}").replace("{0}", v.PAYMENTNAME), "paymentmethod" + v.ID, "DonationPaymentID=" + v.ID]);
             });
             $.each(controller.locations, function(i, v) {
                 reports.qb_animal_criteria.push(
@@ -912,6 +941,15 @@ $(function() {
                 $("#qbsort").change();
                 $("#qbcriteria").change();
                 reports.qb_active_criteria = reports.qb_person_criteria;
+            }
+            else if (type == "ownerdonation") {
+                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_ownerdonation")));
+                $("#qbsort").html(html.list_to_options(common.get_table_columns("v_ownerdonation")));
+                $("#qbcriteria").html(html.list_to_options(build_criteria(reports.qb_payment_criteria)));
+                $("#qbfields").change();
+                $("#qbsort").change();
+                $("#qbcriteria").change();
+                reports.qb_active_criteria = reports.qb_payment_criteria;
             }
         },
 
