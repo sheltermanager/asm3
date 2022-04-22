@@ -313,6 +313,7 @@ $(function() {
                 '<option value="fivplus">' + _("FIV+") + '</option>',
                 '<option value="flvplus">' + _("FLV+") + '</option>',
                 '<option value="heartwormplus">' + _("Heartworm+") + '</option>',
+                '<option value="heartwormneg">' + _("Heartworm-") + '</option>',
                 '<option value="unaltered">' + _("Unaltered") + '</option>',
                 '<option value="includedeceased">' + _("Include deceased animals") + '</option>',
                 '<option value="includenonshelter">' + _("Include non-shelter animals") + '</option>',

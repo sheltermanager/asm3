@@ -1,6 +1,8 @@
 46
 ================
 
+22/04/22 Query builder: Animal date of birth between two dates criteria
+22/04/22 Animal find: filter option for heartworm negative
 21/04/22 Tweak Peter's patch to split lost/found and support additional fields #648
 21/04/22 Allow incident/lost/found column config (Peter Van Caeseele) #648
 21/04/22 SavourLife: do not send animals without a photo
