@@ -703,6 +703,31 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 if "PERSONMATCHGOODWITHCHILDREN" in cols: p["matchgoodwithchildren"] = gkynu(row, "PERSONMATCHGOODWITHCHILDREN")
                 if "PERSONMATCHHOUSETRAINED" in cols: p["matchhousetrained"] = gkynu(row, "PERSONMATCHHOUSETRAINED")
                 if "PERSONMATCHCOMMENTSCONTAIN" in cols: p["matchcommentscontain"] = gks(row, "PERSONMATCHCOMMENTSCONTAIN")
+            
+            # pdf data if any was supplied
+            pdfdata = gks(row, "PERSONPDFDATA")
+            pdfname = gks(row, "PERSONPDFNAME")
+            if pdfdata != "":
+                if pdfdata.startswith("http"):
+                    # It's a URL, get the PDF from the remote server
+                    r = asm3.utils.get_image_url(pdfdata, timeout=5000)
+                    if r["status"] == 200:
+                        asm3.al.debug("retrieved PDF from %s (%s bytes)" % (pdfdata, len(r["response"])), "csvimport.csvimport", dbo)
+                        pdfdata = "data:application/pdf;base64,%s" % asm3.utils.base64encode(r["response"])
+                    else:
+                        row_error(errors, "person", rowno, row, "error reading pdf from '%s': %s" % (pdfdata, r), dbo, sys.exc_info())
+                        continue
+                elif pdfdata.startswith("data:"):
+                    # It's a base64 encoded data URI - do nothing as attach_file requires it
+                    pass
+                else:
+                    # We don't know what it is, don't try and do anything with it
+                    row_error(errors, "person", rowno, row, "WARN: unrecognised PDF content, ignoring", dbo, sys.exc_info())
+                    pdfdata = ""
+                if pdfdata != "" and pdfname == "":
+                    row_error(errors, "person", rowno, row, "PERSONPDFNAME must be set for data", dbo, sys.exc_info())
+                    continue
+
             try:
                 if checkduplicates:
                     dups = asm3.person.get_person_similar(dbo, p["emailaddress"], p["mobiletelephone"], p["surname"], p["forenames"], p["address"])
@@ -720,6 +745,10 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                     personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
                 # Identify any PERSONADDITIONAL additional fields and create/merge them
                 create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
+                # If we have some PDF data, add that to the person
+                if len(pdfdata) > 0:
+                    pdfpost = asm3.utils.PostedData({ "filename": pdfname, "filetype": "application/pdf", "filedata": pdfdata }, dbo.locale)
+                    asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, pdfpost)
             except Exception as e:
                 row_error(errors, "person", rowno, row, e, dbo, sys.exc_info())
 
