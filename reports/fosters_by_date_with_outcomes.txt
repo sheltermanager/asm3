@@ -72,7 +72,7 @@ Fosters by Date and Fosterer with Outcomes
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Foster animals between two dates with their final outcomes by fosterer
 ###
@@ -95,13 +95,14 @@ LEFT OUTER JOIN lksmovementtype mt ON a.ActiveMovementType = mt.ID
 LEFT OUTER JOIN adoption ma ON ma.ID = a.ActiveMovementID
 LEFT OUTER JOIN owner no ON no.ID = ma.OwnerID
 WHERE m.MovementType = 2 AND m.MovementDate >= '$ASK DATE Fostered between$' AND m.MovementDate <= '$ASK DATE and$' 
-ORDER BY m.MovementDate
+ORDER BY o.OwnerName, m.MovementDate
 ###
 $$HEADER
 HEADER$$
 
 $$GROUP_OwnerName
 $$HEAD
+<h2>$OwnerName</h2>
 <table border="1">
 <tr>
 <th>Animal</th>
@@ -117,7 +118,7 @@ $$HEAD
 </tr>
 $$FOOT
 </table>
-<h2>Total $OwnerName: {COUNT.OwnerName}</h2>
+<p>Total $OwnerName: {COUNT.OwnerName}</p>
 GROUP$$
 
 $$BODY
