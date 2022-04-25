@@ -1,6 +1,7 @@
 46
 ================
 
+25/04/22 Allow future dates in vacc/test give dialogs again due to outcry
 22/04/22 Query builder: Animal date of birth between two dates criteria
 22/04/22 Animal find: filter option for heartworm negative
 21/04/22 Tweak Peter's patch to split lost/found and support additional fields #648
