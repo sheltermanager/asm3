@@ -763,7 +763,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                     personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
                 # Identify any PERSONADDITIONAL additional fields and create/merge them
                 create_additional_fields(dbo, row, errors, rowno, "PERSONADDITIONAL", "person", personid)
-                # If we have some image data, add it to the animal
+                # If we have some image data, add it to the person
                 if len(imagedata) > 0:
                     imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
                     asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, imagepost)
