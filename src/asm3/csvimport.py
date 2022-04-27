@@ -478,6 +478,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             if a["microchipnumber"] != "": a["microchipped"] = "on"
             a["microchipdate"] = gkd(dbo, row, "ANIMALMICROCHIPDATE")
             a["flags"] = gks(row, "ANIMALFLAGS")
+            a["declawed"] = gkbc(row, "ANIMALDECLAWED")
+            a["specialneeds"] = gkbc(row, "ANIMALHASSPECIALNEEDS")
             # image data if any was supplied
             imagedata = gks(row, "ANIMALIMAGE")
             if imagedata != "":
