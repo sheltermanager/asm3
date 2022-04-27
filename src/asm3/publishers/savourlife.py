@@ -184,15 +184,15 @@ class SavourLifePublisher(AbstractPublisher):
             # Get the animal records for the ones we need to mark saved or remove
             if len(animalids_to_cancel) > 0:
 
-                animals = self.dbo.query("SELECT ID, ShelterCode, AnimalName, Archived, ActiveMovementDate, ActiveMovementType, DeceasedDate, HasTrialAdoption, ExtraIDs, " \
-                    "(SELECT Extra FROM animalpublished WHERE AnimalID=a.ID AND PublishedTo='savourlife') AS LastStatus " \
-                    "FROM animal a WHERE ID IN (%s)" % ",".join(animalids_to_cancel))
+                animals = self.dbo.query(asm3.animal.get_animal_query(self.dbo) + "WHERE a.ID IN (%s)" % ",".join(animalids_to_cancel))
 
                 # Append the additional fields so we can get the enquiry number
                 asm3.additional.append_to_results(self.dbo, animals, "animal")
 
                 # Cancel the inactive listings - we can either mark a dog as adopted, held, or we can delete the listing.
+                anCount = 0
                 for an in animals:
+                    anCount += 1
                     try:
                         status = "removed"
                         # this will pick up trials as well as full adoptions
@@ -201,10 +201,10 @@ class SavourLifePublisher(AbstractPublisher):
                         elif an.ARCHIVED == 0: # animal is still in care but not adoptable
                             status = "held"
 
-                        # We have the last status update in the LastStatus field 
-                        # (which is animalpublished.Extra for this animal)
+                        # Get the previous status for this animal from animalpublished.Extra
                         # Don't send the same update again.
-                        if an.LASTSTATUS == status: continue
+                        laststatus = self.dbo.query_string("SELECT Extra FROM animalpublished WHERE AnimalID=? AND PublishedTo='savourlife'", [an.ID])
+                        if laststatus == status: continue
 
                         # The savourlife dogid field that they returned when we first sent the record
                         dogid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_SAVOURLIFE)
@@ -231,8 +231,9 @@ class SavourLifePublisher(AbstractPublisher):
                             # Clear the dogId on adoption, so if the animal returns it gets a new listing
                             asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, IDTYPE_SAVOURLIFE, "")
                         elif status == "held":
-                            # We're marking the listing as held
-                            data = self.processAnimal(an, dogid, postcode, state, suburb, token, radius, interstate, all_microchips, True)
+                            # We're marking the listing as held. We can't just send the held flag, we have to send
+                            # the entire listing again.
+                            data = self.processAnimal(an, dogid, postcode, state, suburb, token, radius, interstate, all_microchips, hold=True)
                             url = SAVOURLIFE_URL + "setDog"
                         else:
                             # We're deleting the listing

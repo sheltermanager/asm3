@@ -1,6 +1,7 @@
 46
 ================
 
+27/04/22 SavourLife: Fix bug with updating held status
 25/04/22 csvimport: Support person image/PDF (Peter Van Caeseele) #1126
 25/04/22 Allow future dates in vacc/test give dialogs again due to outcry
 22/04/22 Query builder: Animal date of birth between two dates criteria
