@@ -2128,7 +2128,7 @@ def insert_animal_from_form(dbo, post, username):
         "Neutered":         post.boolean("neutered"),
         "NeuteredDate":     post.date("neutereddate"),
         "NeuteredByVetID":  post.integer("neuteringvet"),
-        "Declawed":         0,
+        "Declawed":         post.boolean("declawed"),
         # ASM2_COMPATIBILITY
         "HeartwormTested":  0,
         "HeartwormTestDate": None,
@@ -2168,7 +2168,7 @@ def insert_animal_from_form(dbo, post, username):
         "AsilomarIsTransferExternal": 0,
         "AsilomarOwnerRequestedEuthanasia": 0,
         "HealthProblems":   post["healthproblems"],
-        "HasSpecialNeeds":  0,
+        "HasSpecialNeeds":  post.boolean("specialneeds"),
         "RabiesTag":        "",
         "CurrentVetID":     post.integer("currentvet",0),
         "OwnersVetID":      0,

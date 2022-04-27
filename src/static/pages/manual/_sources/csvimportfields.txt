@@ -57,6 +57,14 @@ ANIMALMICROCHIP
     If not blank, ASM will mark the animal microchipped with this as the microchip number.
 ANIMALMICROCHIPDATE
     The date the microchip was implanted
+ANIMALTATTOO
+    If not blank, ASM will mark the animal tattooed with this as the tattoo number.
+ANIMALTATTOODATE
+    The date the tattoo was implanted
+ANIMALDECLAWED
+    Y/N to indicate yes/no
+ANIMALHASSPECIALNEEDS
+    Y/N to indicate yes/no
 ANIMALENTRYDATE
     The date the animal entered the shelter (date brought in). Today's date will be used if this column is not present or the value is blank.
 ANIMALREASONFORENTRY
