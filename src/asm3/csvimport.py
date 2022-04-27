@@ -477,6 +477,9 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             a["microchipnumber"] = gks(row, "ANIMALMICROCHIP")
             if a["microchipnumber"] != "": a["microchipped"] = "on"
             a["microchipdate"] = gkd(dbo, row, "ANIMALMICROCHIPDATE")
+            a["tattoonumber"] = gks(row, "ANIMALTATTOO")
+            if a["tattoonumber"] != "": a["tattoo"] = "on"
+            a["tattoodate"] = gkd(dbo, row, "ANIMALTATTOODATE")
             a["flags"] = gks(row, "ANIMALFLAGS")
             a["declawed"] = gkbc(row, "ANIMALDECLAWED")
             a["specialneeds"] = gkbc(row, "ANIMALHASSPECIALNEEDS")
