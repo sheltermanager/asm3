@@ -14,7 +14,7 @@ Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available
 6th Oct, 2014 - 11th February, 2022
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/shelterpro_ka2700"
+PATH = "/home/robin/tmp/asm3_import_data/shelterpro_sh2771"
 
 START_ID = 100
 
