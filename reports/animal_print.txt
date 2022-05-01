@@ -2,7 +2,7 @@ Print Animal Record
 ###
 Auditing
 ###
-34111/Any rev02
+34111/Any rev03
 ###
 A complete printout of an animal record.
 ###
@@ -269,6 +269,49 @@ $$FOOTER
 </table>
 FOOTER$$
 +++
+SUBREPORT_AnimalPrintMedicalRegimenOnly
++++
+SELECT
+a.ShelterCode, a.AnimalName,
+t.AnimalType, s.SpeciesName,
+il.LocationName, am.TreatmentName, am.StartDate,
+am.Dosage, am.TreatmentsGiven, am.TreatmentsRemaining, am.TotalNumberOfTreatments,
+am.Cost, am.Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+WHERE a.ID = $PARENTKEY$
+ORDER BY am.StartDate
++++
+$$HEADER
+<table cellpadding="5">
+<tr>
+<td><b>Started</b></td>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>Regimen Cost</b></td>
+<td><b>Number</b></td>
+<td><b>Comments</b></td>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$STARTDATE</td>
+<td>$TREATMENTNAME</td>
+<td>$DOSAGE</td>
+<td>$COST</td>
+<td>$TREATMENTSGIVEN / $TOTALNUMBEROFTREATMENTS</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
++++
 SUBREPORT_AnimalPrintTest
 +++
 SELECT testtype.TestName,
@@ -508,6 +551,28 @@ HEADER$$
 $$BODY
 <tr><td>$ADOPTIONNUMBER</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS</br />$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br />H: $HOMETELEPHONE<br />M: $MOBILETELEPHONE<br />$EMAILADDRESS</td>
 <td>$RESERVATIONDATE</td><td>$RESERVATIONCANCELLEDDATE</td><td>$MOVEMENTDATE</td><td>$MOVEMENTTYPE</td><td>$RETURNDATE $RETURNEDBY</td><td>$RETURNEDREASONNAME $REASONFORRETURN</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintMovementNoPerson
++++
+SELECT ad.*, mt.MovementType,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone, o.EmailAddress
+FROM adoption ad
+INNER JOIN lksmovementtype mt ON mt.ID = ad.MovementType
+LEFT OUTER JOIN owner o ON o.ID = ad.OwnerID
+WHERE ad.AnimalID = $PARENTKEY$
+ORDER BY ad.ReservationDate, ad.MovementDate
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>Number</th><th>Owner</th><th>Reservation</th><th>Cancelled</th><th>Movement</th><th>Type</th><th>Returned</th><th>Reason</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$ADOPTIONNUMBER</td>
+<td>$RESERVATIONDATE</td><td>$RESERVATIONCANCELLEDDATE</td><td>$MOVEMENTDATE</td><td>$MOVEMENTTYPE</td><td>$RETURNDATE</td><td>$REASONFORRETURN</td><td>$COMMENTS</td></tr>
 BODY$$
 $$FOOTER
 </table>
