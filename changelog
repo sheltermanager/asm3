@@ -1,6 +1,7 @@
 46
 ================
 
+03/05/22 Do not allow ES01/2 log messages to be edited #1094
 27/04/22 csvimport: support declawed and special needs (Peter Van Caeseele)
 27/04/22 SavourLife: Fix bug with updating held status
 25/04/22 csvimport: Support person image/PDF (Peter Van Caeseele) #1126
