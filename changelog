@@ -1,6 +1,7 @@
 46
 ================
 
+04/05/22 Regimen edits are now audited correctly #1129
 04/05/22 Fix smartquote replacement to use unicode rather than HTML entities
 03/05/22 Do not allow ES01/2 log messages to be edited #1094
 27/04/22 csvimport: support declawed and special needs (Peter Van Caeseele)

@@ -1008,6 +1008,7 @@ def update_regimen_from_form(dbo, username, post):
         raise asm3.utils.ASMValidationError(_("Treatment name cannot be blank", l))
 
     dbo.update("animalmedical", regimenid, {
+        "AnimalID":         post.integer("animal"),
         "TreatmentName":    post["treatmentname"],
         "Dosage":           post["dosage"],
         "StartDate":        post.date("startdate"),
