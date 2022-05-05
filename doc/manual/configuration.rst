@@ -307,6 +307,13 @@ person will be created.
 The net amount will be used as the payment amount and the PayPal transaction
 fee will be recorded with the payment.
 
+It is possible to override the payment type on a per transaction basis by
+editing the PayPal CSV file and adding a column named "ASM Payment Type". You
+can then assign values from your payment types lookup in this column. Note that
+they must match exactly (same case) the payment type name from your lookup. If
+the column does not exist, contains a blank or the system could not find a match
+then the payment type from the import screen will be used.
+
 Trigger Batch Processes
 -----------------------
 

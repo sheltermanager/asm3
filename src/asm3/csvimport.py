@@ -1017,6 +1017,15 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
         except Exception as e:
             row_error(errors, "person", rowno, r, e, dbo, sys.exc_info())
 
+        # Sort out which payment type is being used. Look for a user-added column called "ASM Payment Type"
+        # if it doesn't exist, is blank or we couldn't find a match in the donation type table 
+        # then we fall back to the one the user chose during import.
+        sdonationtypeid = v(r, "ASM Payment Type")
+        if sdonationtypeid != "":
+            sdonationtypeid = dbo.query_str("SELECT ID FROM donationtype WHERE DonationName=?", [sdonationtypeid])
+        if sdonationtypeid == "":
+            sdonationtypeid = str(donationtypeid)
+
         # Donation info
         gross = asm3.utils.cint(asm3.utils.cfloat(v(r, "Gross")) * 100) 
         net = asm3.utils.cint(asm3.utils.cfloat(v(r, "Net")) * 100) 
@@ -1037,7 +1046,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
                 v(r, "Gross"), v(r, "Fee"), v(r, "Net"), v(r, "Subject"), v(r, "Note") )
             d["comments"] = comments
             d["received"] = asm3.i18n.python2display(dbo.locale, pdate)
-            d["type"] = str(donationtypeid)
+            d["type"] = sdonationtypeid
             d["payment"] = str(donationpaymentid)
             try:
                 asm3.financial.insert_donation_from_form(dbo, user, asm3.utils.PostedData(d, dbo.locale))
