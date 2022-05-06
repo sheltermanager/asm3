@@ -1,6 +1,7 @@
 46
 ================
 
+06/05/22 Left align online form checkboxes on mobile
 05/05/22 import PayPal CSV: allow payment type to be set per transaction #963
 04/05/22 No longer hide the person field for TNR/Release movements 
 04/05/22 Regimen edits are now audited correctly #1129
