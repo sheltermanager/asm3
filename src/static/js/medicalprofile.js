@@ -18,7 +18,10 @@ $(function() {
                     { json_field: "PROFILENAME", post_field: "profilename", label: _("Profile"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
-                    { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency" },
+                    { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency",
+                        callout: _("The total cost of all treatments.") },
+                    { json_field: "COSTPERTREATMENT", post_field: "costpertreatment", label: _("Cost per Treatment"), type: "currency",
+                        callout: _("If this field has a value, the cost field above will be automatically calculated after each treatment is given.") },
                     { post_field: "singlemulti", label: _("Frequency"), type: "select",  
                         options: '<option value="0">' + _("Single Treatment") + '</option>' +
                         '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' },

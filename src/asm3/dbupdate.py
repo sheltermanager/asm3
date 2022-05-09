@@ -39,7 +39,7 @@ VERSIONS = (
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
-    34508, 34509, 34510, 34511, 34512, 34600
+    34508, 34509, 34510, 34511, 34512, 34600, 34601
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -644,6 +644,7 @@ def sql_structure(dbo):
         fdate("StartDate"),
         fstr("Dosage", True),
         fint("Cost"),
+        fint("CostPerTreatment", True),
         fdate("CostPaidDate", True),
         fint("TimingRule"),
         fint("TimingRuleFrequency"),
@@ -1140,6 +1141,7 @@ def sql_structure(dbo):
         fstr("TreatmentName"),
         fstr("Dosage"),
         fint("Cost"),
+        fint("CostPerTreatment", True),
         fint("TimingRule"),
         fint("TimingRuleFrequency"),
         fint("TimingRuleNoFrequencies"),
@@ -5555,4 +5557,11 @@ def update_34512(dbo):
 def update_34600(dbo):
     # Remove the old ASM2 report definitions as they break versioning on them if present
     dbo.execute_dbupdate("DELETE FROM customreport WHERE SQLCommand LIKE '0%'")
+
+def update_34601(dbo):
+    # Add cost per treatment fields
+    add_column(dbo, "animalmedical", "CostPerTreatment", dbo.type_integer)
+    add_column(dbo, "medicalprofile", "CostPerTreatment", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE animalmedical SET CostPerTreatment=0")
+    dbo.execute_dbupdate("UPDATE medicalprofile SET CostPerTreatment=0")
 

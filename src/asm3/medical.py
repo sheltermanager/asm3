@@ -751,11 +751,14 @@ def calculate_given_remaining(dbo, amid):
     Calculates the number of treatments given and remaining
     """
     given = dbo.query_int("SELECT COUNT(*) FROM animalmedicaltreatment " +
-        "WHERE AnimalMedicalID = ? AND DateGiven Is Not Null", [amid])
+        "WHERE AnimalMedicalID = ? AND DateGiven Is Not Null", [amid]) 
+    cpt = dbo.query_int("SELECT CostPerTreatment FROM animalmedical WHERE ID=?", [amid])
     dbo.execute("UPDATE animalmedical SET " \
         "TreatmentsGiven = ?, " \
         "TreatmentsRemaining = ((TotalNumberOfTreatments * TimingRule) - ?) " \
         "WHERE ID = ?", (given, given, amid))
+    if cpt > 0 and given > 0:
+        dbo.execute("UPDATE animalmedical SET Cost = ? WHERE ID = ?", [ cpt * given, amid ])
 
 def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", vetid = 0, dateexpires = None, batchnumber = "", manufacturer = "", rabiestag = ""):
     """
@@ -969,6 +972,7 @@ def insert_regimen_from_form(dbo, username, post):
         "StartDate":                post.date("startdate"),
         "Status":                   ACTIVE,
         "Cost":                     post.integer("cost"),
+        "CostPerTreatment":         post.integer("costpertreatment"),
         "CostPaidDate":             post.date("costpaid"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
@@ -1014,6 +1018,7 @@ def update_regimen_from_form(dbo, username, post):
         "StartDate":        post.date("startdate"),
         "Status":           post.integer("status"),
         "Cost":             post.integer("cost"),
+        "CostPerTreatment": post.integer("costpertreatment"),
         "CostPaidDate":     post.date("costpaid"),
         "Comments":         post["comments"]
     }, username)
@@ -1252,6 +1257,7 @@ def insert_profile_from_form(dbo, username, post):
         "TreatmentName":            post["treatmentname"],
         "Dosage":                   post["dosage"],
         "Cost":                     post.integer("cost"),
+        "CostPerTreatment":         post.integer("costpertreatment"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
@@ -1289,6 +1295,7 @@ def update_profile_from_form(dbo, username, post):
         "TreatmentName":            post["treatmentname"],
         "Dosage":                   post["dosage"],
         "Cost":                     post.integer("cost"),
+        "CostPerTreatment":         post.integer("costpertreatment"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
