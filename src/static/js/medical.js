@@ -25,13 +25,13 @@ $(function() {
                         html.list_to_options(controller.profiles, "ID", "PROFILENAME") },
                     { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
-                    { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", 
+                    { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", defaultval: 0, 
                         callout: _("The total cost of all treatments."),
                         defaultval: "0", hideif: function() { return !config.bool("ShowCostAmount"); } },
-                    { json_field: "COSTPERTREATMENT", post_field: "costpertreatment", label: _("Cost per Treatment"), type: "currency",
+                    { json_field: "COSTPERTREATMENT", post_field: "costpertreatment", label: _("Cost per Treatment"), type: "currency", defaultval: 0, 
                         callout: _("If this field has a value, the cost field above will be automatically calculated after each treatment is given.") },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
-                    { json_field: "STARTDATE", post_field: "startdate", label: _("Start Date"), type: "date", validation: "notblank" },
+                    { json_field: "STARTDATE", post_field: "startdate", label: _("Start Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select",
                         options: '<option value="0">' + _("Active") + '</option><option value="1">' 
                             + _("Held") + '</option><option value="2">' + _("Completed") + '</option>' },
@@ -436,7 +436,6 @@ $(function() {
                         $("#animal").animalchooser("clear");
                     }
                     $("#animals").closest("tr").hide();
-                    $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#profileid").closest("tr").show();
                     $("#profileid").select("value", "");
                     $("#treatmentrulecalc").show();
@@ -465,7 +464,6 @@ $(function() {
                     $("#animal").closest("tr").hide();
                     $("#animals").closest("tr").show();
                     $("#animals").animalchoosermulti("clear");
-                    $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#profileid").closest("tr").show();
                     $("#treatmentrulecalc").show();
                     $("#status").select("value", "0");
