@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-04-21 09:08+0000\n"
+"POT-Creation-Date: 2022-05-10 09:52+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3027,6 +3027,10 @@ msgstr ""
 msgid "Cost date must be a valid date"
 msgstr ""
 
+#: medicalprofile.js medical.js
+msgid "Cost per Treatment"
+msgstr ""
+
 #: move_reclaim.js
 msgid "Cost record"
 msgstr ""
@@ -3419,6 +3423,14 @@ msgstr ""
 
 #: animal_new.js animal.js
 msgid "Date of Birth"
+msgstr ""
+
+#: reports.js
+msgid "Date of birth between"
+msgstr ""
+
+#: reports.js
+msgid "Date of birth between two dates"
 msgstr ""
 
 #: animal.py animal_new.js animal.js
@@ -6172,7 +6184,7 @@ msgstr ""
 msgid "Heartworm+"
 msgstr ""
 
-#: reports.js
+#: animal_find.js reports.js
 msgid "Heartworm-"
 msgstr ""
 
@@ -6386,6 +6398,12 @@ msgstr ""
 msgid ""
 "If the shelter provides initial insurance cover to new adopters, the policy "
 "number"
+msgstr ""
+
+#: medicalprofile.js medical.js
+msgid ""
+"If this field has a value, the cost field above will be automatically "
+"calculated after each treatment is given."
 msgstr ""
 
 #: onlineforms.js
@@ -12426,6 +12444,10 @@ msgstr ""
 msgid ""
 "The text to show adopters when requesting a donation. Simple HTML formatting "
 "is allowed."
+msgstr ""
+
+#: medicalprofile.js medical.js
+msgid "The total cost of all treatments."
 msgstr ""
 
 #: stocklevel.js
