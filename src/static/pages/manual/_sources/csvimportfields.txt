@@ -19,6 +19,8 @@ ANIMALTYPE
     The animal's type. This should correspond to one of ASM's animal types from your database.
 ANIMALCOLOR
     The animal's color. This should correspond to a color in your database.
+ANIMALCOATTYPE
+    The animal's coat type. This should correspond to a coat type in your database.
 ANIMALBREED1
     The animal's primary breed. It should match a breed in your database.
 ANIMALBREED2
