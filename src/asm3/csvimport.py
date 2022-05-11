@@ -483,6 +483,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             a["flags"] = gks(row, "ANIMALFLAGS")
             a["declawed"] = gkbc(row, "ANIMALDECLAWED")
             a["specialneeds"] = gkbc(row, "ANIMALHASSPECIALNEEDS")
+            a["coattype"] = gkl(dbo, row, "ANIMALCOATTYPE", "lkcoattype", "CoatType", createmissinglookups)
             # image data if any was supplied
             imagedata = gks(row, "ANIMALIMAGE")
             if imagedata != "":
