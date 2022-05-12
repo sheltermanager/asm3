@@ -72,12 +72,14 @@ $(document).ready(function() {
             dataType: "text",
             mimeType: "textPlain",
             success: function(response) {
-                $("#spinner").hide();
-                $("#btn-login").prop("disabled", false);
                 if (response == "FAIL") {
+                    $("#spinner").hide();
+                    $("#btn-login").prop("disabled", false);
                     show_dlg("Error", _("Invalid username or password."));
                 }
                 else if (response == "DISABLED") {
+                    $("#spinner").hide();
+                    $("#btn-login").prop("disabled", false);
                     show_dlg("Error", _("Account disabled."));
                 }
                 else if (response == "WRONGSERVER") {
