@@ -1,6 +1,7 @@
 46
 ================
 
+12/05/22 Mobile login rewritten, fleshing out of new mobile interface #1096
 11/05/22 csvimport: support ANIMALCOATTYPE (Peter Van Caeseele) #1132
 10/05/22 Fix bug in medical regimens removing default values on load
 09/05/22 Add cost per treatment for medical regimens/profiles #1095

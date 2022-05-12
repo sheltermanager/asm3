@@ -27,7 +27,7 @@ $(function() {
                     { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", defaultval: 0, 
                         callout: _("The total cost of all treatments."),
-                        defaultval: "0", hideif: function() { return !config.bool("ShowCostAmount"); } },
+                        hideif: function() { return !config.bool("ShowCostAmount"); } },
                     { json_field: "COSTPERTREATMENT", post_field: "costpertreatment", label: _("Cost per Treatment"), type: "currency", defaultval: 0, 
                         callout: _("If this field has a value, the cost field above will be automatically calculated after each treatment is given.") },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },

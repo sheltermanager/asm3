@@ -854,28 +854,62 @@ class mobile(ASMEndpoint):
         self.content_type("text/html")
         return asm3.mobile.page(o.dbo, o.session, o.user)
 
+class mobile2(ASMEndpoint):
+    url = "mobile2"
+    login_url = "/mobile2_login"
+
+    def content(self, o):
+        dbo = o.dbo
+        animals = asm3.animal.get_shelterview_animals(dbo, o.locationfilter, o.siteid, o.visibleanimalids)
+        asm3.al.debug("mobile2 for '%s' (%s animals)" % (o.user, len(animals)), "code.mobile2", dbo)
+        c = {
+            "animals":      animals,
+            "reports":      asm3.reports.get_available_reports(dbo),
+            "vaccinations": asm3.medical.get_vaccinations_outstanding(dbo),
+            "tests":        asm3.medical.get_tests_outstanding(dbo),
+            "medicals":     asm3.medical.get_treatments_outstanding(dbo),
+            "diaries":      asm3.diary.get_uncompleted_upto_today(dbo, o.user),
+            "rsvhomecheck": asm3.person.get_reserves_without_homechecks(dbo),
+            "messages":     asm3.lookups.get_messages(dbo, session.user, session.roles, session.superuser),
+            "testresults":  asm3.lookups.get_test_results(dbo),
+            "stocklocations": asm3.stock.get_stock_locations_totals(dbo),
+            "incidentsmy":  asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "incomplete" }, o.user),
+            "incidentsundispatched": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "undispatched" }, o.user),
+            "incidentsincomplete": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user),
+            "incidentsfollowup": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" }, o.user),
+            "smdblocked":   asm3.configuration.smdb_locked(dbo)
+        }
+        self.content_type("text/html")
+        return asm3.html.mobile_page(o.locale, "", [ "mobile2.js" ], c)
+
 class mobile_login(ASMEndpoint):
     url = "mobile_login"
     check_logged_in = False
 
     def content(self, o):
+        l = o.locale
         if not MULTIPLE_DATABASES:
             dbo = asm3.db.get_database()
             o.locale = asm3.configuration.locale(dbo)
         self.content_type("text/html")
-        return asm3.mobile.page_login(o.locale, o.post)
-
-    def post_all(self, o):
-        self.redirect( asm3.mobile.login(o.post, o.session, self.remote_ip(), self.user_agent(), PATH) )
+        c = {
+            "smcom": asm3.smcom.active(),
+            "multipledatabases": MULTIPLE_DATABASES,
+            "smcomloginurl": SMCOM_LOGIN_URL,
+            "smaccount": o.post["smaccount"],
+            "username": o.post["username"],
+            "password": o.post["password"]
+        }
+        return asm3.html.mobile_page(l, _("Login"), [ "mobile_login.js" ], c)
 
 class mobile_logout(ASMEndpoint):
     url = "mobile_logout"
-    login_url = "/mobile_login"
+    check_logged_in = False
 
     def content(self, o):
         url = "mobile_login"
         if o.post["smaccount"] != "":
-            url = "login?smaccount=" + o.post["smaccount"]
+            url = "mobile_login?smaccount=" + o.post["smaccount"]
         elif MULTIPLE_DATABASES and o.dbo is not None and o.dbo.alias is not None:
             url = "mobile_login?smaccount=" + o.dbo.alias
         asm3.users.update_user_activity(o.dbo, o.user, False)
