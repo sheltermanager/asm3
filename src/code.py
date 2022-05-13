@@ -877,7 +877,8 @@ class mobile2(ASMEndpoint):
             "incidentsundispatched": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "undispatched" }, o.user),
             "incidentsincomplete": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user),
             "incidentsfollowup": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" }, o.user),
-            "smdblocked":   asm3.configuration.smdb_locked(dbo)
+            "smdblocked":   asm3.configuration.smdb_locked(dbo),
+            "user":         o.user
         }
         self.content_type("text/html")
         return asm3.html.mobile_page(o.locale, "", [ "mobile2.js" ], c)
