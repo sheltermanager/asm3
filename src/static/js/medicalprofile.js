@@ -78,7 +78,13 @@ $(function() {
                     { field: "PROFILENAME", display: _("Name"), initialsort: true },
                     { field: "TREATMENTNAME", display: _("Treatment") },
                     { field: "DOSAGE", display: _("Dosage") },
-                    { field: "COST", display: _("Cost"), formatter: tableform.format_currency },
+                    { field: "COST", display: _("Cost"), 
+                        formatter: function(row) {
+                            if (row.COSTPERTREATMENT) { return format.currency(row.COSTPERTREATMENT); }
+                            return format.currency(row.COST);
+                        },
+                        hideif: function() { return !config.bool("ShowCostAmount"); }
+                    },
                     { field: "NAMEDFREQUENCY", display: _("Frequency") },
                     { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]

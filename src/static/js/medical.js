@@ -153,7 +153,11 @@ $(function() {
                                 _("({0} given, {1} remaining)").replace("{0}", row.TREATMENTSGIVEN).replace("{1}", row.TREATMENTSREMAINING) 
                                 : "");
                     }},
-                    { field: "COST", display: _("Cost"), formatter: tableform.format_currency,
+                    { field: "COST", display: _("Cost"), 
+                        formatter: function(row) {
+                            if (row.COSTPERTREATMENT) { return format.currency(row.COSTPERTREATMENT); }
+                            return format.currency(row.COST);
+                        },
                         hideif: function() { return !config.bool("ShowCostAmount"); }
                     },
                     { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
