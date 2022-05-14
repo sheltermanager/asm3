@@ -717,6 +717,7 @@ $(function() {
                 $("#treatmentname").val( html.decode(p.TREATMENTNAME));
                 $("#dosage").val( html.decode(p.DOSAGE) );
                 $("#cost").currency("value", p.COST );
+                $("#costpertreatment").currency("value", p.COSTPERTREATMENT );
                 $("#comments").val( html.decode(p.COMMENTS) );
                 $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
                 $("#singlemulti").val( p.TOTALNUMBEROFTREATMENTS == 1 ? "0" : "1" );
