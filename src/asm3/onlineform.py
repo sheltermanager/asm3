@@ -1452,6 +1452,6 @@ def auto_remove_old_incoming_forms(dbo):
         return
     removecutoff = dbo.today(offset=removeafter*-1)
     asm3.al.debug("remove date: incoming forms < %s" % removecutoff, "onlineform.auto_remove_old_incoming_forms", dbo)
-    count = dbo.execute("DELETE FROM onlineformincoming WHERE PostedDate < ?", [removecutoff])
+    count = dbo.delete("onlineformincoming", "PostedDate < %s" % dbo.sql_date(removecutoff), "system")
     asm3.al.debug("removed %s incoming forms older than %s days" % (count, removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
 
