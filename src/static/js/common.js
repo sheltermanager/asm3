@@ -1829,7 +1829,7 @@ const html = {
         if (a.POPUPWARNING) {
             s.push(html.icon("warning", String(a.POPUPWARNING)));
         }
-        $.each([1,2,3,4,5,6,7,8,9,10], function(i, v) {
+        $.each([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], function(i, v) {
             var cflag = config.str("EmblemsCustomFlag" + v), ccond = config.str("EmblemsCustomCond" + v), cemblem = config.str("EmblemsCustomValue" + v);
             if (cflag && cemblem && (ccond == "has" || !ccond) && html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
                 s.push('<span class="custom" title="' + html.title(cflag) + '">' + cemblem + '</span>');

@@ -1,6 +1,7 @@
 46
 ================
 
+14/05/22 Allow 15 slots for custom animal emblems (increase from 10)
 12/05/22 Mobile login rewritten, fleshing out of new mobile interface #1096
 11/05/22 csvimport: support ANIMALCOATTYPE (Peter Van Caeseele) #1132
 10/05/22 Fix bug in medical regimens removing default values on load
