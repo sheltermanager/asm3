@@ -841,6 +841,18 @@ WHERE ownerpostcode <>  ''
 --AND OWNER.LASTCHANGEDDATE > '2020-01-01'
   AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
+--Checks for Countries entered in lower case.  And common misspellings of Country names. Added 5/14/2022
+UNION SELECT 
+  owner.ownername as name,
+  owner.ownercode as code,
+  date(owner.LastChangedDate) as issuedate,
+  'Invalid Country or Capitalization.' AS issue
+FROM owner
+WHERE ownercountry <> ''
+ --AND (upper(ownertown) = ownertown
+ AND (lower(ownercountry) = ownercountry
+ OR ownercountry in ('Grand Cayman','The Cayman Islands')) -- Checks for common country misspellings or errors
+
 --This strips out all characters and then alerts if phone number is not equal to 10 or 11 (in case someone enters a 1 in front of area code)
 --characters.  It will ignore this if two phone numbers are in same field but separated
 --by a slash (/)
@@ -1002,6 +1014,7 @@ AND NOT EXISTS(SELECT ID FROM animaltest WHERE AdministeringVetID = o.ID)
 AND NOT EXISTS(SELECT ID FROM animalvaccination WHERE AdministeringVetID = o.ID)
 AND NOT EXISTS(SELECT ID FROM clinicappointment WHERE OwnerID = o.ID)
 AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = o.ID AND LinkType = 1)
+AND NOT EXISTS(SELECT ID FROM media WHERE media.LinkID = o.ID AND media.LinkTypeID = 3) 
 AND NOT EXISTS(SELECT ID FROM ownercitation WHERE OwnerID = o.ID)
 AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = o.ID)
 AND NOT EXISTS(SELECT ID FROM ownerinvestigation WHERE OwnerID = o.ID)
