@@ -30,8 +30,8 @@ $(document).ready(function() {
             '<center><img src="static/images/logo/icon-128.png"></center>',
             '<form method="post" action="mobile_login">',
             '<div class="mb-3">',
-                '<label for="smaccount" class="form-label">' + _("Database") + '</label>',
-                '<input type="text" class="form-control" id="smaccount">',
+                '<label for="database" class="form-label">' + _("Database") + '</label>',
+                '<input type="text" class="form-control" id="database">',
             '</div>',
             '<div class="mb-3">',
                 '<label for="username" class="form-label">' + _("Username") + '</label>',
@@ -53,7 +53,7 @@ $(document).ready(function() {
 
     const do_login = function() {
         let formdata = {
-            "smaccount":    $("#smaccount").val(),
+            "database":     $("#database").val(),
             "username":     $("#username").val(),
             "password":     $("#password").val()
         };
@@ -99,10 +99,10 @@ $(document).ready(function() {
         });
     };
 
-    if (controller.smcom) { $("label[for='smaccount']").text(_("SM Account")); }
-    if (!controller.multipledatabases) { $("#smaccount").parent().hide(); }
+    if (controller.smcom) { $("label[for='database']").text(_("SM Account")); }
+    if (!controller.multipledatabases) { $("#database").parent().hide(); }
 
-    if (controller.smaccount) { $("#smaccount").val(controller.smaccount); }
+    if (controller.smaccount) { $("#database").val(controller.smaccount); }
     if (controller.username) { $("#username").val(controller.username); }
     if (controller.password) { $("#password").val(controller.password); }
 
