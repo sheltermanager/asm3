@@ -209,6 +209,11 @@ $(document).ready(function() {
         });
     });
 
+    // Make the mobile submenu collapse when an internal link is clicked
+    $(".navbar-collapse").on("click", ".internal-link", function() {
+        $(".navbar-collapse").collapse("hide");
+    });
+
     // Load shelter animals list
     $("#content-shelteranimals .list-group").empty();
     $.each(controller.animals, function(i, v) {
