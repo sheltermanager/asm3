@@ -9,7 +9,6 @@ from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, MULTIPLE_DATABASES, SMTP_SERVER
 import web062 as web
 
 import base64
-import codecs
 import datetime
 import decimal
 import hashlib
@@ -1201,11 +1200,19 @@ def zip_replace(zipfilename, filename, content):
 
 def read_text_file(name):
     """
-    Reads a text file and returns the result as a string.
+    Reads a utf-8 text file and returns the result as a unicode str.
     """
-    with codecs.open(name, 'r', encoding='utf8') as f:
+    with open(name, 'r', encoding='utf-8') as f:
         text = f.read()
     return text
+
+def write_text_file(name, data):
+    """
+    Writes a text file (expects data to be a unicode str).
+    """
+    with open(name, 'w', encoding='utf-8') as f:
+        f.write(data)
+        f.flush()
 
 def read_binary_file(name):
     """

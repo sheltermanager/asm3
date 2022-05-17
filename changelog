@@ -1,6 +1,7 @@
 46
 ================
 
+17/05/22 Fix unicode bug when creating CSV files from publishers #1134
 14/05/22 Audit and store auto-deleted online forms in the deletion log
 14/05/22 Allow 15 slots for custom animal emblems (increase from 10)
 12/05/22 Mobile login rewritten, fleshing out of new mobile interface #1096

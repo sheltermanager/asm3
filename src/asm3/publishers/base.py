@@ -962,10 +962,7 @@ class AbstractPublisher(threading.Thread):
 
     def saveFile(self, path, contents):
         try:
-            f = open(path, "w")
-            f.write(contents)
-            f.flush()
-            f.close()
+            asm3.utils.write_text_file(path, contents)
         except Exception as err:
             self.logError(str(err), sys.exc_info())
 
