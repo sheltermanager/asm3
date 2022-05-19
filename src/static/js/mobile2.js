@@ -35,7 +35,7 @@ $(document).ready(function() {
                 '<div class="collapse navbar-collapse" id="navbar-content">',
                 '<ul class="navbar-nav me-auto mb-2 mb-lg-0">',
                 '<li class="nav-item">',
-                    '<a class="nav-link" href="#">' + _("Messages"),
+                    '<a class="nav-link internal-link" data-link="messages" href="#">' + _("Messages"),
                         '<span class="badge bg-primary rounded-pill">' + controller.messages.length + '</span>',
                     '</a>',
                 '</li>',
@@ -159,6 +159,12 @@ $(document).ready(function() {
             '</div>',
         '</nav>',
 
+        '<div id="content-messages" class="container" style="display: none">',
+        '<h2>' + _("Messages") + '</h2>',
+        '<div class="list-group">',
+        '</div>',
+        '</div>',
+
         '<div id="content-shelteranimals" class="container" style="display: none">',
         '<h2>' + _("Shelter Animals") + '</h2>',
         '<div class="mb-3">',
@@ -218,10 +224,20 @@ $(document).ready(function() {
     $("#content-shelteranimals .list-group").empty();
     $.each(controller.animals, function(i, v) {
         let h = '<a href="#" class="list-group-item list-group-item-action">' +
+            '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
             '<h5 class="mb-1">' + v.ANIMALNAME + ' - ' + v.CODE + '</h5>' +
             '<small>(' + v.SEXNAME + ' ' + v.BREEDNAME + ' ' + v.SPECIESNAME + ') ' + v.IDENTICHIPNUMBER + '</small>' +
             '</a>';
         $("#content-shelteranimals .list-group").append(h);
+    });
+
+    // Load messages 
+    $("#content-messages .list-group").empty();
+    $.each(controller.messages, function(i, v) {
+        let h = '<div class="list-group-item">' +
+            '<h5>' + format.date(v.ADDED) + ' ' + v.CREATEDBY + ' &#8594; ' + v.FORNAME + '</h5>' + 
+            '<small>' + v.MESSAGE + '</small>';
+        $("#content-messages .list-group").append(h);
     });
 
     // Handle filtering the shelter animals list with the search box

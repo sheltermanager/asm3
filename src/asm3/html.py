@@ -128,7 +128,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     if config_db == "asm" and config_ts == "0":
         config_ts = python2unix(now())
     def script_config():
-        return "<script type=\"text/javascript\" src=\"config.js?db=%s&ts=%s\"></script>\n" % (config_db, config_ts)
+        return script_tag("config.js?db=%s&ts=%s" % (config_db, config_ts))
     def script_schema():
         return asm_script_tag("bundle/schema.js") # statically generated
     # Use the default if we have no locale
@@ -332,10 +332,12 @@ def mobile_page(l, title, scripts = [], controller = {}, execline = ""):
         script_tag(JQUERY_UI_JS),
         script_tag(BOOTSTRAP_JS),
         script_tag(MOMENT_JS),
+        script_tag(MOUSETRAP_JS),
         script_tag(TOUCHPUNCH_JS),
         script_tag(SIGNATURE_JS),
         css_tag(BOOTSTRAP_CSS),
         css_tag(BOOTSTRAP_ICONS_CSS),
+        script_tag("config.js?ts=%s" % python2unix(now())),
         script_i18n(l)
     ]
     for s in scripts:
@@ -364,14 +366,14 @@ def map_js():
     return """
         %(jquery)s
         %(mousetrap)s
-        <script type="text/javascript" src="config.js?ts=%(time)s"></script>
+        %(config)s
         %(common)s
         %(commonmap)s
-    """ % { "mousetrap": script_tag(MOUSETRAP_JS),
-            "jquery": script_tag(JQUERY_JS), 
-            "time": escape(now()),
+    """ % { "jquery": script_tag(JQUERY_JS), 
+            "mousetrap": script_tag(MOUSETRAP_JS),
+            "config": script_tag("config.js?ts=%s" % python2unix(now())),
             "common": asm_script_tag("common.js"),
-            "commonmap": asm_script_tag("common_map.js") }
+            "commonmap": asm_script_tag("common_map.js")  }
 
 def report_js(l):
     return """
