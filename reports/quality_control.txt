@@ -301,7 +301,7 @@ WHERE  animal.deceaseddate IS NULL
 UNION SELECT animal.animalname AS name,
   animal.sheltercode AS code,
   date(animal.LastChangedDate) AS issuedate,
-  '<font color - "Red"><i>Non-Shelter</i> Flag added to animal with an active movement. Alerts Only Once.</font>' AS issue
+  '<font color = "Red"><i>Non-Shelter</i> Flag added to animal with an active movement. Alerts Only Once.</font>' AS issue
 FROM animal
 WHERE date_trunc('day', LastChangedDate) = current_date -1
   AND nonshelteranimal = 1 
