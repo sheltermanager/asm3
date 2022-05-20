@@ -1,6 +1,7 @@
 46
 ================
 
+20/05/22 Updated Hebrew Translation (Saggi Neuemann)
 20/05/22 Updated Swedish Translation (Carina Lekare)
 17/05/22 Fix unicode bug when creating CSV files from publishers #1134
 14/05/22 Audit and store auto-deleted online forms in the deletion log
