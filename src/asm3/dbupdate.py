@@ -5010,7 +5010,7 @@ def update_34015(dbo):
     # Set sizes to 0 they'll be updated by another process later 
     dbo.execute_dbupdate("UPDATE media SET MediaSize = 0")
     # Find the right DBFS element for each media item
-    dbo.execute_dbupdate("UPDATE media SET DBFSID = (SELECT MAX(ID) FROM dbfs WHERE Name LIKE media.MediaName)")
+    dbo.execute_dbupdate("UPDATE media SET DBFSID = (SELECT MAX(ID) FROM dbfs WHERE MediaType=0 AND Name LIKE media.MediaName)")
     dbo.execute_dbupdate("UPDATE media SET DBFSID = 0 WHERE DBFSID Is Null")
     # Remove any _scaled component of names from both media and dbfs
     dbo.execute_dbupdate("UPDATE media SET MediaName = %s WHERE MediaName LIKE '%%_scaled%%'" % dbo.sql_replace("MediaName", "_scaled", ""))
