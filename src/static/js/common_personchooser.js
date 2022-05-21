@@ -376,7 +376,7 @@ $.widget("asm.personchooser", {
                 }
                 // When the user changes a town, suggest a county if it's blank
                 dialogadd.find(".personchooser-town").blur(function() {
-                    if (dialogadd.find(".personchooser-county").val() == "") {
+                    if (dialogadd.find(".personchooser-county").val() == "" && dialogadd.find(".personchooser-town").val() != "") {
                         dialogadd.find(".personchooser-county").val(self.options.towncounties[dialogadd.find(".personchooser-town").val()]);
                     }
                 });
