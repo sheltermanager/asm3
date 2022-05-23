@@ -6,8 +6,8 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "46u [Sat 21 May 07:50:26 BST 2022]"
-BUILD = "05210750"
+VERSION = "46u [Mon 23 May 08:09:41 BST 2022]"
+BUILD = "05230809"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
