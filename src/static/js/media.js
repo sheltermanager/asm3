@@ -1052,8 +1052,13 @@ $(function() {
 
             if (controller.newmedia) { media.new_media(); }
 
-            // Start in icon mode
-            this.mode_icon();
+            // Start in the correct mode
+            if (config.bool("MediaTableMode") { 
+                this.mode_table();
+            }
+            else {
+                this.mode_icon();
+            }
 
             // Check if we have pictures but no preferred set and choose one if we don't
             media.check_preferred_images();

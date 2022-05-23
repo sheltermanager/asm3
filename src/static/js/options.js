@@ -804,6 +804,7 @@ $(function() {
                 '<input data="ShowPersonMiniMap" id="minimap" class="asm-checkbox" type="checkbox" /> <label for="minimap">' + _("Show a minimap of the address on person screens") + '</label><br />',
                 common.iif(asm.locale == "en", '<input data="USStateCodes" id="usstatecodes" class="asm-checkbox" type="checkbox" /> <label for="usstatecodes">' + _("When entering addresses, restrict states to valid US 2 letter state codes") + '</label><br />', ""),
                 '<input data="ShowLatLong" id="latlong" class="asm-checkbox" type="checkbox" /> <label for="latlong">' + _("Allow editing of latitude/longitude with minimaps") + '</label><br />',
+                '<input data="MediaTableMode" id="mediatablemode" class="asm-checkbox" type="checkbox" /> <label for="mediatablemode">' + _("Default to table mode when viewing media tabs") + '</label><br />',
                 '<input data="ShowWeightInLbs" id="showlbs" class="asm-checkbox" type="checkbox" /> <label for="showlbs">' + _("Show weights as lb and oz") + '</label><br />',
                 '<input data="ShowWeightInLbsFraction" id="showlbsf" class="asm-checkbox" type="checkbox" /> <label for="showlbsf">' + _("Show weights as decimal lb") + '</label><br />',
                 '<input data="ShowFullCommentsInTables" id="showfullcommentstables" class="asm-checkbox" type="checkbox" /> <label for="showfullcommentstables">' + _("Show complete comments in table views") + '</label><br />',

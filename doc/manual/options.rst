@@ -470,6 +470,11 @@ Display
   geocodes to be hand edited in fields near the minimap and address. Right clicking
   on the minimap will add a new pin and update the fields.
 
+* Default to table mode when viewing media tabs: When accessing the media tab
+  of records, show the media records in a sortable table with metadata
+  information. You can toggle the view mode of media tabs with the button on
+  the right side of the toolbar.
+
 * Show weights as lb and oz: Enter and show weights with separate pounds and
   ounces. eg: 5 lbs and 6 oz
 

@@ -276,6 +276,7 @@ DEFAULTS = {
     "MaxMediaFileSize": "1000",
     "MediaAllowJPG": "Yes",
     "MediaAllowPDF": "Yes",
+    "MediaTableMode": "No",
     "MedicalItemDisplayLimit": "500",
     "MicrochipRegisterMovements": "1,5",
     "MovementDonationsDefaultDue": "No",
