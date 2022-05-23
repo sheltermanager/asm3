@@ -1053,7 +1053,7 @@ $(function() {
             if (controller.newmedia) { media.new_media(); }
 
             // Start in the correct mode
-            if (config.bool("MediaTableMode") { 
+            if (config.bool("MediaTableMode")) { 
                 this.mode_table();
             }
             else {
