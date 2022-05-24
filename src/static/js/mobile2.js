@@ -40,7 +40,7 @@ $(document).ready(function() {
                     '</a>',
                 '</li>',
                 '<li class="nav-item">',
-                    '<a class="nav-link" href="#">' + _("Generate Report"),
+                    '<a class="nav-link internal-link" data-link="reports" href="#">' + _("Generate Report"),
                     '</a>',
                 '</li>',
                 '<li class="nav-item">',
@@ -165,6 +165,12 @@ $(document).ready(function() {
         '</div>',
         '</div>',
 
+        '<div id="content-reports" class="container" style="display: none">',
+        '<h2>' + _("Reports") + '</h2>',
+        '<div class="list-group">',
+        '</div>',
+        '</div>',
+
         '<div id="content-shelteranimals" class="container" style="display: none">',
         '<h2>' + _("Shelter Animals") + '</h2>',
         '<div class="mb-3">',
@@ -199,6 +205,10 @@ $(document).ready(function() {
             if (!value) { value = ""; }
             return '<div class="row align-items-start"><div class="col">' + label + '</div><div class="col">' + value + '</div></div>';
         }
+        const n = function(s) {
+            if (!s) { return ""; }
+            return s;
+        }
         let [adoptable, adoptreason] = html.is_animal_adoptable(a);
         let h = [
             '<div class="list-group" style="margin-top: 5px">',
@@ -214,7 +224,8 @@ $(document).ready(function() {
             '</div>',
             '</div>',
 
-            i(_("Status"), adoptable ? _("Available for adoption") : _("Not available for adoption") + " (" + adoptreason + ")"),
+            i(_("Status"), adoptable ? '<span class="text-success">' + _("Available for adoption") + '</span>' : 
+                '<span class="text-danger">' + _("Not available for adoption") + " (" + adoptreason + ")</span>"),
             i(_("Type"), a.ANIMALTYPENAME),
             i(_("Location"), a.DISPLAYLOCATION),
             i(_("Color"), a.BASECOLOURNAME),
@@ -235,7 +246,7 @@ $(document).ready(function() {
             common.has_permission("vo") ? i(_("Brought In By"), a.BROUGHTINBYOWNERNAME) : "",
 
             i(_("Date Brought In"), format.date(a.DATEBROUGHTIN)),
-            i(_("Bonded With"), a.BONDEDANIMAL1CODE + " " + a.BONDEDANIMAL1NAME + " " + a.BONDEDANIMAL2CODE + " " + a.BONDEDANIMAL2NAME),
+            i(_("Bonded With"), n(a.BONDEDANIMAL1CODE) + " " + n(a.BONDEDANIMAL1NAME) + " " + n(a.BONDEDANIMAL2CODE) + " " + n(a.BONDEDANIMAL2NAME)),
             i(_("Transfer"), a.ISTRANSFERNAME),
             i(_("Entry Category"), a.ENTRYREASONNAME),
             i(_("Entry Reason"), a.REASONFORENTRY),
@@ -249,7 +260,7 @@ $(document).ready(function() {
             i(_("Health Problems"), a.HEALTHPROBLEMS),
             i(_("Rabies Tag"), a.RABIESTAG),
             i(_("Special Needs"), a.HASSPECIALNEEDSNAME),
-            i(_("Current Vet"), a.CURRENTVETNAME + " " + a.CURRENTVETWORKTELEPHONE)
+            i(_("Current Vet"), n(a.CURRENTVETNAME) + " " + n(a.CURRENTVETWORKTELEPHONE))
         ];
         return h.join("\n");
     };
@@ -307,6 +318,18 @@ $(document).ready(function() {
             '<h5>' + format.date(v.ADDED) + ' ' + v.CREATEDBY + ' &#8594; ' + v.FORNAME + '</h5>' + 
             '<small>' + v.MESSAGE + '</small>';
         $("#content-messages .list-group").append(h);
+    });
+
+    // Load reports
+    $("#content-reports .list-group").empty();
+    let cgroup = "";
+    $.each(controller.reports, function(i, v) {
+        if (cgroup != v.CATEGORY) {
+            cgroup = v.CATEGORY;
+            $("#content-reports .list-group").append('<div class="list-group-item bg-secondary text-white fw-bold">' + v.CATEGORY + '</div>');
+        }
+        let h = '<a class="list-group-item list-group-item-action" href="mobile_report?id=' + v.ID + '">' + v.TITLE + '</a>';
+        $("#content-reports .list-group").append(h);
     });
 
     // Handle filtering the shelter animals list with the search box
