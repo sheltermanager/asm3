@@ -1232,7 +1232,6 @@ def pdf_count_pages(filedata):
     """
     Given a PDF in filedata (bytes string), returns the number of pages.
     """
-    if type(filedata) != bytes: return 0 # If we aren't given a bytes string we can't do anything
     patterns = [ b"/Type/Page", b"/Type /Page" ]
     pages = 0
     for p in patterns:

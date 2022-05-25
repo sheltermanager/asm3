@@ -993,16 +993,18 @@ def scale_all_pdf(dbo):
     mp = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' ORDER BY ID DESC")
     total = 0
     for i, m in enumerate(mp):
-        odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
-        data = scale_pdf(odata)
-        asm3.al.debug("scaling %s (%d of %d): old size %d, new size %d" % (m.MEDIANAME, i, len(mp), len(odata), len(data)), "check_and_scale_pdfs", dbo)
-        # Store the new compressed PDF file data - if it's smaller
-        if len(data) < len(odata):
-            asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, data)
-            dbo.update("media", m.ID, { "MediaSize": len(data) })
-            total += 1
+        try:
+            odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
+            data = scale_pdf(odata)
+            asm3.al.debug("scaling %s (%d of %d): old size %d, new size %d" % (m.MEDIANAME, i, len(mp), len(odata), len(data)), "check_and_scale_pdfs", dbo)
+            # Store the new compressed PDF file data - if it's smaller
+            if len(data) < len(odata):
+                asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, data)
+                dbo.update("media", m.ID, { "MediaSize": len(data) })
+                total += 1
+        except Exception as err:
+            asm3.al.error("failed scaling PDF: %s" % str(err), "media.scale_all_pdf", dbo)
     asm3.al.debug("scaled %d of %d pdfs" % (total, len(mp)), "media.scale_all_pdf", dbo)
-
 
 def watermark_with_transparency(dbo, imagedata, animalname):
     """
