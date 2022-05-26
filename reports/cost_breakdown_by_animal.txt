@@ -2,7 +2,7 @@ Cost Breakdown by Animal
 ###
 Financial
 ###
-34601/PostgreSQL rev06
+34601/PostgreSQL rev07
 ###
 Costs between two dates, broken down by animal.
 ###
@@ -105,7 +105,7 @@ INNER JOIN owner ON animaltransport.DropoffOwnerID = owner.ID
 WHERE PickupDateTime >= '$@from$' AND PickupDateTime <= '$@to$'
 
 
-) dummy WHERE amt > 0 ORDER BY code, date DESC
+) dummy ORDER BY code, date DESC
 ###
 $$HEADER
 HEADER$$
