@@ -2,7 +2,7 @@ Cost Breakdown by Animal
 ###
 Financial
 ###
-34601/PostgreSQL rev07
+34601/PostgreSQL rev08
 ###
 Costs between two dates, broken down by animal.
 ###
@@ -87,7 +87,7 @@ animalmedical.Comments AS description2
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
-WHERE StartDate >= '$@from$' AND StartDate <= '$@to$'
+WHERE StartDate >= '$@from$' AND StartDate <= '$@to$' AND TreatmentsGiven > 0
 
 UNION SELECT
 animaltransport.PickupDateTime AS date,
