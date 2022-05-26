@@ -122,3 +122,6 @@ class DatabasePostgreSQL(Database):
         """ Writes a function that zero pads an expression with zeroes to digits """
         return "TO_CHAR(%s, 'FM%s')" % (fieldexpr, "0"*digits)
 
+    def vacuum(self, tablename=""):
+        self.execute("VACUUM %s" % tablename)
+

@@ -75,3 +75,6 @@ class DatabaseMySQL(Database):
         """ Writes a function that zero pads an expression with zeroes to digits """
         return "LPAD(%s, %s, '0')" % (fieldexpr, digits)
 
+    def vacuum(self, tablename=""):
+        self.execute("OPTIMIZE TABLE %s" % tablename)
+

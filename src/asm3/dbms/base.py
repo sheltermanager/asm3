@@ -978,6 +978,9 @@ class Database(object):
         except:
             pass
 
+    def vacuum(self, tablename = ""):
+        pass # implement in derived classes
+
     def __repr__(self):
         return "Database->locale=%s:dbtype=%s:host=%s:port=%d:db=%s:user=%s:timeout=%s" % ( self.locale, self.dbtype, self.host, self.port, self.database, self.username, self.timeout )
 

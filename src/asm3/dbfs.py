@@ -565,6 +565,9 @@ def switch_storage(dbo):
             dbo.execute("UPDATE media SET MediaSize=? WHERE DBFSID=?", ( len(filedata), r.id ))
         except Exception as err:
             asm3.al.error("Error reading, skipping: %s" % str(err), "dbfs.switch_storage", dbo)
+    # reclaim any space from the deletion
+    dbo.vacuum("dbfs")
     # smcom only - perform postgresql full vacuum after switching
     if asm3.smcom.active(): asm3.smcom.vacuum_full(dbo)
+
 
