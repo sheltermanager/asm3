@@ -522,7 +522,7 @@ class image(ASMEndpoint):
             asm3.al.error(str(err), "code.image", o.dbo, sys.exc_info())
             raise asm3.utils.ASMError("invalid image call")
 
-        if imagedata != "NOPIC":
+        if imagedata != b"NOPIC":
             self.content_type("image/jpeg")
             if o.post["date"] != "":
                 # if we have a date parameter, it can be used to invalidate any cache

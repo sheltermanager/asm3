@@ -276,21 +276,18 @@ def get_string(dbo, name, path = ""):
     else:
         r = dbo.query("SELECT ID, URL FROM dbfs WHERE Name=?", [name])
     if len(r) == 0:
-        return "" # compatibility with old behaviour - relied on by publishers
-        #raise DBFSError("No element found for path=%s, name=%s" % (path, name))
+        raise DBFSError("No element found for path=%s, name=%s" % (path, name))
     r = r[0]
     o = DBFSStorage(dbo, r.url)
     return o.get(r.id, r.url)
 
 def get_string_id(dbo, dbfsid):
     """
-    Gets DBFS file contents as a bytes string. Returns
-    an empty string if the file is not found.
+    Gets DBFS file contents as a bytes string.
     """
     r = dbo.query("SELECT URL FROM dbfs WHERE ID=?", [dbfsid])
     if len(r) == 0:
-        return "" # compatibility with old behaviour - relied on by publishers
-        #raise DBFSError("No row found with ID %s" % dbfsid)
+        raise DBFSError("No row found with ID %s" % dbfsid)
     r = r[0]
     o = DBFSStorage(dbo, r.url)
     return o.get(dbfsid, r.url)
