@@ -520,7 +520,7 @@ class image(ASMEndpoint):
             # images via unsubstituted tokens in documents, etc. 
             # Log them instead of throwing an error that will end up in our error box
             asm3.al.error(str(err), "code.image", o.dbo, sys.exc_info())
-            raise asm3.utils.ASMError("invalid image call")
+            raise asm3.utils.ASMError("failure retrieving image")
 
         if imagedata != b"NOPIC":
             self.content_type("image/jpeg")
