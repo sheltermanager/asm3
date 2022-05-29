@@ -204,11 +204,11 @@ $(document).ready(function() {
         const i = function(label, value) {
             if (!value) { value = ""; }
             return '<div class="row align-items-start"><div class="col">' + label + '</div><div class="col">' + value + '</div></div>';
-        }
+        };
         const n = function(s) {
             if (!s) { return ""; }
             return s;
-        }
+        };
         let [adoptable, adoptreason] = html.is_animal_adoptable(a);
         let h = [
             '<div class="list-group" style="margin-top: 5px">',
