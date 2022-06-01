@@ -612,10 +612,13 @@ $(function() {
          */
         youtube_thumbnail: function(s) {
             let yid = "";
-            if (s.indexOf("youtube") != -1 && s.indexOf("=") != -1) {
-                yid = s.substring(s.indexOf("=") +1);
+            if (s.indexOf("youtube.com") != -1 && s.indexOf("?v=") != -1) {
+                yid = s.substring(s.lastIndexOf("=") +1);
             }
-            if (s.indexOf("youtu.be") != -1 && s.lastIndexOf("/") != -1) {
+            else if (s.indexOf("youtube.com/shorts/") != -1) {
+                yid = s.substring(s.lastIndexOf("/") +1);
+            }
+            else if (s.indexOf("youtu.be") != -1 && s.lastIndexOf("/") != -1) {
                 yid = s.substring(s.lastIndexOf("/") +1);
             }
             if (yid) {

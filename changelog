@@ -1,6 +1,7 @@
 46
 ================
 
+01/06/22 Handle thumbnails for youtube.com/shorts URL format
 01/06/22 Limit microchip fields to 15 chars
 01/06/22 Implement "remember me" for mobile login #1096
 23/05/22 Option to set the starting display of media tabs to table mode
