@@ -96,7 +96,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="microchip">' + _("Microchip") + '</label></td>',
-                '<td><input id="microchip" data="microchip" type="text" class="asm-textbox" /></td>',
+                '<td><input id="microchip" data="microchip" type="text" maxlength="15" class="asm-textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<tr>',
