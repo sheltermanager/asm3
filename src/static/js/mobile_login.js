@@ -41,6 +41,10 @@ $(document).ready(function() {
                 '<label for="password" class="form-label">' + _("Password") + '</label>',
                 '<input type="password" class="form-control" id="password">',
             '</div>',
+            '<div class="mb-3 form-check">',
+                '<input type="checkbox" class="form-check-input" id="remember">',
+                '<label for="remember" class="form-check-label">' + _("Remember me on this device") + '</label>',
+            '</div>',
             '<center><button id="btn-login" type="button" class="btn btn-primary">Login',
             '<div id="spinner" class="spinner-border spinner-border-sm" style="display: none"></div>',
             '</button>',
@@ -55,7 +59,8 @@ $(document).ready(function() {
         let formdata = {
             "database":     $("#database").val(),
             "username":     $("#username").val(),
-            "password":     $("#password").val()
+            "password":     $("#password").val(),
+            "rememberme":   $("#remember").prop("checked") ? "on" : ""
         };
         if (!$("#username").val() || !$("#password").val()) {
             show_dlg("Error", _("Username and password are required"));

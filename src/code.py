@@ -892,6 +892,18 @@ class mobile_login(ASMEndpoint):
         if not MULTIPLE_DATABASES:
             dbo = asm3.db.get_database()
             o.locale = asm3.configuration.locale(dbo)
+        # Do we have a remember me token?
+        rmtoken = self.get_cookie("asm_remember_me")
+        if rmtoken:
+            cred = asm3.cachemem.get(rmtoken)
+            if cred and cred.find("|") != -1:
+                database, username, password = cred.split("|")
+                rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
+                asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "code.login")
+                user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
+                if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
+                    self.redirect("mobile")
+                    return
         self.content_type("text/html")
         c = {
             "smcom": asm3.smcom.active(),
@@ -915,6 +927,7 @@ class mobile_logout(ASMEndpoint):
             url = "mobile_login?smaccount=" + o.dbo.alias
         asm3.users.update_user_activity(o.dbo, o.user, False)
         asm3.users.logout(o.session, self.remote_ip(), self.user_agent())
+        self.set_cookie("asm_remember_me", "", 0) # user explicitly logged out, remove remember me
         self.redirect(url)
 
 class mobile_post(ASMEndpoint):
