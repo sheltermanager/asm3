@@ -1,6 +1,7 @@
 46
 ================
 
+02/06/22 Fix insurance not hiding from movements correctly when set to remove
 02/06/22 Allow media to be moved to other animal/person records #822
 01/06/22 Handle thumbnails for youtube.com/shorts URL format
 01/06/22 Limit microchip fields to 15 chars

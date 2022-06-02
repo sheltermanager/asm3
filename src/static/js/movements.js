@@ -809,7 +809,7 @@ $(function() {
                 $("#retailer").closest("tr").hide();
             }
             // Show the insurance row for adoptions
-            if (mt == 1) {
+            if (mt == 1 && !config.bool("DontShowInsurance")) {
                 $("#insurance").closest("tr").fadeIn();
             }
             else {
