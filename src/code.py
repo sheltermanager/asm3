@@ -792,6 +792,16 @@ class media(ASMEndpoint):
         for mid in o.post.integer_list("ids"):
             asm3.media.convert_media_jpg2pdf(o.dbo, o.user, mid)
 
+    def post_moveanimal(self, o):
+        self.check(asm3.users.CHANGE_MEDIA)
+        for mid in o.post.integer_list("ids"):
+            asm3.media.update_media_link(o.dbo, o.user, mid, asm3.media.ANIMAL, o.post.integer("animalid"))
+
+    def post_moveperson(self, o):
+        self.check(asm3.users.CHANGE_MEDIA)
+        for mid in o.post.integer_list("ids"):
+            asm3.media.update_media_link(o.dbo, o.user, mid, asm3.media.PERSON, o.post.integer("personid"))
+
     def post_sign(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
         for mid in o.post.integer_list("ids"):

@@ -69,6 +69,7 @@ $(function() {
                     $("#button-email").button("option", "disabled", true); 
                     $("#button-emailpdf").button("option", "disabled", true); 
                     $("#button-image").addClass("ui-state-disabled").addClass("ui-button-disabled");
+                    $("#button-move").addClass("ui-state-disabled").addClass("ui-button-disabled");
                     $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
                     // Only allow the video preferred button to be pressed if the
                     // selection size is one and the selection is a video link
@@ -94,6 +95,10 @@ $(function() {
                     // selection only contains unsigned documents
                     if (rows.length > 0 && all_of_type("text/html") && !rows[0].SIGNATUREHASH) {
                         $("#button-sign").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
+                    }
+                    // Move is allowed as long as we have at least 1 row selected
+                    if (rows.length > 0) {
+                        $("#button-move").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
                     }
                 },
                 columns: [
@@ -147,6 +152,7 @@ $(function() {
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
                 { id: "image", text: _("Image"), type: "buttonmenu", icon: "image", perm: "cam" },
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
+                { id: "move", text: _("Move"), type: "buttonmenu", icon: "copy" },
                 { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
                 { type: "raw", markup: '<div class="asm-mediadroptarget mode-table"><p>' + _("Drop files here...") + '</p></div>',
                     hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || asm.mobileapp; }},
@@ -227,6 +233,24 @@ $(function() {
                 '</table>',
                 '</div>',
 
+                '<div id="dialog-moveanimal" style="display: none" title="' + html.title(_("Move to an animal")) + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="moveanimal">' + _("Animal") + '</label></td>',
+                '<td><input type="hidden" class="asm-animalchooser" id="moveanimal" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>',
+
+                '<div id="dialog-moveperson" style="display: none" title="' + html.title(_("Move to a person")) + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="moveperson">' + _("Person") + '</label></td>',
+                '<td><input type="hidden" class="asm-personchooser" id="moveperson" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>',
+
                 '<div id="emailform"></div>',
 
                 '<div id="button-sign-body" class="asm-menu-body">',
@@ -237,6 +261,15 @@ $(function() {
                         + ' href="#">' + html.icon("mobile") + ' ' + _("Mobile signing pad") + '</a></li>',
                     '<li id="button-signemail" class="sharebutton asm-menu-item"><a '
                         + ' href="#">' + html.icon("email") + ' ' + _("Request signature by email") + '</a></li>',
+                '</ul>',
+                '</div>',
+
+                '<div id="button-move-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                    '<li id="button-moveanimal" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("animal") + ' ' + _("Move to an animal") + '</a></li>',
+                    '<li id="button-moveperson" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("person") + ' ' + _("Move to a person") + '</a></li>',
                 '</ul>',
                 '</div>',
 
@@ -764,6 +797,56 @@ $(function() {
                 buttons: signbuttons
             });
 
+            let moveanimalbuttons = {};
+            moveanimalbuttons[_("Move")] = {
+                text: _("Move"),
+                "class": 'asm-dialog-actionbutton',
+                click: function() {
+                    if (!validate.notblank([ "moveanimal" ])) { return; }
+                    let formdata = "mode=moveanimal&animalid=" + $("#moveanimal").val() + "&ids=" + tableform.table_ids(media.table);
+                    media.ajax(formdata);
+                    common.route_reload();
+                }
+            };
+            moveanimalbuttons[_("Cancel")] = function() {
+                $("#dialog-moveanimal").dialog("close");
+            };
+
+            $("#dialog-moveanimal").dialog({
+                autoOpen: false,
+                width: 450,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.add_show,
+                hide: dlgfx.add_hide,
+                buttons: moveanimalbuttons
+            });
+
+            let movepersonbuttons = {};
+            movepersonbuttons[_("Move")] = {
+                text: _("Move"),
+                "class": 'asm-dialog-actionbutton',
+                click: function() {
+                    if (!validate.notblank([ "moveperson" ])) { return; }
+                    let formdata = "mode=moveperson&personid=" + $("#moveperson").val() + "&ids=" + tableform.table_ids(media.table);
+                    media.ajax(formdata);
+                    common.route_reload();
+                }
+            };
+            movepersonbuttons[_("Cancel")] = function() {
+                $("#dialog-moveperson").dialog("close");
+            };
+
+            $("#dialog-moveperson").dialog({
+                autoOpen: false,
+                width: 450,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.add_show,
+                hide: dlgfx.add_hide,
+                buttons: movepersonbuttons
+            });
+
             $("#button-viewmode").button().click(function() {
                 if (media.icon_mode_active) {
                     media.mode_table();
@@ -937,7 +1020,7 @@ $(function() {
             });
 
             $("#button-image").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
-
+            $("#button-move").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
             $("#button-sign").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
 
             $("#button-signemail").click(function() {
@@ -977,6 +1060,16 @@ $(function() {
             if (controller.sigtype != "touch") {
                 $("#button-sign").hide();
             }
+
+            $("#button-moveanimal").click(function() {
+                $("#button-move").asmmenu("hide_all");
+                $("#dialog-moveanimal").dialog("open");
+            });
+
+            $("#button-moveperson").click(function() {
+                $("#button-move").asmmenu("hide_all");
+                $("#dialog-moveperson").dialog("open");
+            });
 
         },
 
@@ -1072,6 +1165,8 @@ $(function() {
             common.widget_destroy("#dialog-add");
             common.widget_destroy("#dialog-addlink");
             common.widget_destroy("#dialog-sign");
+            common.widget_destroy("#dialog-moveanimal");
+            common.widget_destroy("#dialog-moveperson");
             common.widget_destroy("#emailform");
         },
 

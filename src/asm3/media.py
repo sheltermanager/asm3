@@ -622,6 +622,13 @@ def update_media_from_form(dbo, username, post):
         "UpdatedSinceLastPublish": 1
     }, username, setLastChanged=False)
 
+def update_media_link(dbo, username, mediaid, linktypeid, linkid):
+    dbo.update("media", mediaid, {
+        "LinkID":   linkid,
+        "LinkTypeID": linktypeid,
+        "Date":     dbo.now()
+    }, username, setLastChanged=False)
+
 def delete_media(dbo, username, mid):
     """
     Deletes a media record from the system
