@@ -1,6 +1,7 @@
 46
 ================
 
+05/06/22 Record the user-agent with online form submissions
 02/06/22 Fix insurance not hiding from movements correctly when set to remove
 02/06/22 Allow media to be moved to other animal/person records #822
 01/06/22 Handle thumbnails for youtube.com/shorts URL format

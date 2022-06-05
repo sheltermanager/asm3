@@ -711,7 +711,7 @@ def delete_onlineformfield(dbo, username, fieldid):
     """
     dbo.delete("onlineformfield", fieldid, username)
 
-def insert_onlineformincoming_from_form(dbo, post, remoteip):
+def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
     """
     Create onlineformincoming records from posted data. We 
     create a row for every key/value pair in the posted data
@@ -738,6 +738,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     images = []
     post.data["formreceived"] = "%s %s" % (asm3.i18n.python2display(dbo.locale, posteddate), asm3.i18n.format_time(posteddate))
     post.data["ipaddress"] = remoteip
+    post.data["useragent"] = useragent
 
     for k, v in post.data.items():
 
@@ -824,8 +825,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         if fieldssofar < 3:
             # Don't include raw markup or signature/image fields in the preview
             if fld.VALUE.startswith("RAW::") or fld.VALUE.startswith("data:"): continue
-            # Or the system added timestamp field, ip address, or fields we would have already added above
-            if fld.FIELDNAME in ("retainfor", "formreceived", "ipaddress", "firstname", "forenames", "lastname", "surname"): continue
+            # Or the system added timestamp field, ip address, user agent or fields we would have already added above
+            if fld.FIELDNAME in ("retainfor", "formreceived", "ipaddress", "useragent", "firstname", "forenames", "lastname", "surname"): continue
             if fld.FIELDNAME in ("animalname", "reserveanimalname"): continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))

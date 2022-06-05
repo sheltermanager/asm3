@@ -349,12 +349,13 @@ def strip_personal_data(rows):
                 r[k] = ""
     return rows
 
-def handler(post, path, remoteip, referer, querystring):
+def handler(post, path, remoteip, referer, useragent, querystring):
     """ Handles the various service method types.
     post:        The GET/POST parameters
     path:        The current system path/code.PATH
     remoteip:    The IP of the caller
     referer:     The referer HTTP header
+    useragent:   The user-agent HTTP header
     querystring: The complete querystring
     return value is a tuple containing MIME type, max-age, content
     """
@@ -713,7 +714,7 @@ def handler(post, path, remoteip, referer, querystring):
         return set_cached_response(cache_key, account, "application/json; charset=utf-8", 30, 30, asm3.onlineform.get_onlineform_json(dbo, formid))
 
     elif method == "online_form_post":
-        asm3.onlineform.insert_onlineformincoming_from_form(dbo, post, remoteip)
+        asm3.onlineform.insert_onlineformincoming_from_form(dbo, post, remoteip, useragent)
         redirect = post["redirect"]
         if redirect == "":
             redirect = BASE_URL + "/static/pages/form_submitted.html"

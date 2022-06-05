@@ -5780,7 +5780,7 @@ class service(ASMEndpoint):
     check_logged_in = False
 
     def handle(self, o):
-        contenttype, client_ttl, cache_ttl, response = asm3.service.handler(o.post, PATH, self.remote_ip(), self.referer(), self.query())
+        contenttype, client_ttl, cache_ttl, response = asm3.service.handler(o.post, PATH, self.remote_ip(), self.referer(), self.user_agent(), self.query())
         if contenttype == "redirect":
             self.redirect(response)
         else:
