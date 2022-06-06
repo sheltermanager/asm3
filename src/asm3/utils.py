@@ -1478,13 +1478,6 @@ def generate_label_pdf(dbo, locale, records, papersize, units, fontpt, hpitch, v
             ("FONTSIZE", (0,0), (-1,-1), asm3.utils.cint(fontpt)),
             ("FONTNAME", (0,0), (-1,-1), fontname)
             ]))
-        # If we have more than 8 labels vertically, use a smaller font size
-        if rows > 8:
-            t.setStyle(TableStyle([
-                ("VALIGN", (0,0), (-1,-1), "TOP"),
-                ("FONTSIZE", (0,0), (-1,-1), 8),
-                ("FONTNAME", (0,0), (-1,-1), fontname)
-                ]))
         elements.append(t)
 
     data = newData()
