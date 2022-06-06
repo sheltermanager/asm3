@@ -5,17 +5,17 @@ $(function() {
     "use strict";
 
     const presets = {
-        "Avery 5160" :  [ "letter", "inch", "2.75", "1.0", "0.19", "0.5", "3", "10" ],
-        "Avery 5360" :  [ "letter", "inch", "2.83", "1.5", "0", "0.25", "3", "7" ],
-        "Avery 5363" :  [ "letter", "inch", "2.83", "1.375", "0", "0", "3", "8" ],
-        "Avery A4 L7159" : [ "a4", "cm", "6.65", "3.39", "0.65", "1.31", "3", "8" ],
-        "Avery A4 L7161" : [ "a4", "cm", "6.60", "4.66", "0.72", "0.88", "3", "6" ],
-        "Avery A4 L7162" : [ "a4", "cm", "10.16", "3.39", "0.47", "1.30", "2", "8" ],
-        "OL5350" :      [ "letter", "inch", "2.83", "1.5", "0", "0.25", "3", "7" ],
-        "OL6950" :      [ "letter", "inch", "2.75", "1", "0.375", "0.625", "3", "10" ],
-        "OL870" :       [ "letter", "inch", "2.83", "1.375", "0", "0", "3", "8" ],
-        "OL875" :       [ "letter", "cm", "6.99", "2.54", "0.48", "1.27", "3", "10" ],
-        "OL950" :       [ "letter", "inch", "2.75", "0.875", "0.1875", "0.6875", "3", "11" ]
+        "Avery 5160" :  [ "letter", "inch", "8", "2.75", "1.0", "0.19", "0.5", "3", "10" ],
+        "Avery 5360" :  [ "letter", "inch", "10", "2.83", "1.5", "0", "0.25", "3", "7" ],
+        "Avery 5363" :  [ "letter", "inch", "8", "2.83", "1.375", "0", "0", "3", "8" ],
+        "Avery A4 L7159" : [ "a4", "cm", "8", "6.65", "3.39", "0.65", "1.31", "3", "8" ],
+        "Avery A4 L7161" : [ "a4", "cm", "10", "6.60", "4.66", "0.72", "0.88", "3", "6" ],
+        "Avery A4 L7162" : [ "a4", "cm", "8", "10.16", "3.39", "0.47", "1.30", "2", "8" ],
+        "OL5350" :      [ "letter", "inch", "10", "2.83", "1.5", "0", "0.25", "3", "7" ],
+        "OL6950" :      [ "letter", "inch", "8", "2.75", "1", "0.375", "0.625", "3", "10" ],
+        "OL870" :       [ "letter", "inch", "8", "2.83", "1.375", "0", "0", "3", "8" ],
+        "OL875" :       [ "letter", "cm", "8", "6.99", "2.54", "0.48", "1.27", "3", "10" ],
+        "OL950" :       [ "letter", "inch", "8", "2.75", "0.875", "0.1875", "0.6875", "3", "11" ]
     };
 
     const mailmerge = {
@@ -94,6 +94,10 @@ $(function() {
                 '<td><input id="cols" name="cols" type="text" class="asm-halftextbox asm-numberbox" /></td>',
                 '<td><label for="rows">' + _("Rows") + '</label></td>',
                 '<td><input id="rows" name="rows" type="text" class="asm-halftextbox asm-numberbox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="fontpt">' + _("Font Size (pt)") + '</label></td>',
+                '<td><input id="fontpt" name="fontpt" type="text" class="asm-halftextbox asm-numberbox" data-min="6" data-max="16" /></td>',
                 '</tr>',
                 '</table>',
                 '<p class="centered"><button id="button-pdflabels" type="submit">' + _("Download") + '</button></p>',
@@ -177,12 +181,13 @@ $(function() {
                 if (bits === undefined) { return; }
                 $("#papersize").select("value", bits[0]);
                 $("#units").select("value", bits[1]);
-                $("#hpitch").val(bits[2]);
-                $("#vpitch").val(bits[3]);
-                $("#lmargin").val(bits[4]);
-                $("#tmargin").val(bits[5]);
-                $("#cols").val(bits[6]);
-                $("#rows").val(bits[7]);
+                $("#fontpt").select("value", bits[2]);
+                $("#hpitch").val(bits[3]);
+                $("#vpitch").val(bits[4]);
+                $("#lmargin").val(bits[5]);
+                $("#tmargin").val(bits[6]);
+                $("#cols").val(bits[7]);
+                $("#rows").val(bits[8]);
             };
 
             let types = "";

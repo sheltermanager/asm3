@@ -1409,7 +1409,7 @@ def generate_image_pdf(locale, imagedata):
     doc.build(elements)
     return fout.getvalue()
 
-def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, width, height, lmargin, tmargin, cols, rows):
+def generate_label_pdf(dbo, locale, records, papersize, units, fontpt, hpitch, vpitch, width, height, lmargin, tmargin, cols, rows):
     """
     Generates a PDF of labels from the rows given to the measurements provided.
     papersize can be "a4" or "letter"
@@ -1475,6 +1475,7 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
         t.hAlign = "LEFT"
         t.setStyle(TableStyle([
             ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("FONTSIZE", (0,0), (-1,-1), asm3.utils.cint(fontpt)),
             ("FONTNAME", (0,0), (-1,-1), fontname)
             ]))
         # If we have more than 8 labels vertically, use a smaller font size

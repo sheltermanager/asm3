@@ -3997,7 +3997,7 @@ class mailmerge(JSONEndpoint):
         self.content_type("application/pdf")
         disposition = asm3.configuration.pdf_inline(dbo) and "inline; filename=%s" or "attachment; filename=%s"
         self.header("Content-Disposition", disposition % post["mergetitle"] + ".pdf")
-        return asm3.utils.generate_label_pdf(dbo, o.locale, rows, post["papersize"], post["units"],
+        return asm3.utils.generate_label_pdf(dbo, o.locale, rows, post["papersize"], post["units"], post["fontpt"], 
             post.floating("hpitch"), post.floating("vpitch"), 
             post.floating("width"), post.floating("height"), 
             post.floating("lmargin"), post.floating("tmargin"),
