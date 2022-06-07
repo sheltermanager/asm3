@@ -2,7 +2,7 @@ Cage Card with Vaccination, Medical and Test History
 ###
 Inventories
 ###
-3309/Any omitcriteria omitheaderfooter
+3309/Any omitcriteria omitheaderfooter rev01
 ###
 An animal cage card with image, vaccination, medical and test history.
 ###
@@ -224,7 +224,7 @@ Cage Card with Vaccination, Medical and Test History (selected)
 ###
 Inventories
 ###
-3309/Any omitcriteria omitheaderfooter
+3309/Any omitcriteria omitheaderfooter rev01
 ###
 Selected animal cage cards with image, vaccination, medical and test history.
 ###

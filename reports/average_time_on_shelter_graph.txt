@@ -22,7 +22,7 @@ Average Time On Shelter By Year
 ###
 Movement Charts
 ###
-33018/MySQL
+33018/MySQL rev01
 ###
 Shows the average time spent on shelter for all animals by year.
 ###
@@ -42,7 +42,7 @@ Average Time On Shelter
 ###
 Movement Charts
 ###
-33018/PostgreSQL
+33018/PostgreSQL rev01
 ###
 Shows the average time spent on shelter for all animals by year.
 ###

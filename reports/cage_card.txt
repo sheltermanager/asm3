@@ -2,7 +2,7 @@ Cage Card
 ###
 Inventories
 ###
-2732/Any omitcriteria omitheaderfooter
+2732/Any omitcriteria omitheaderfooter rev01
 ###
 An animal cage card with image.
 ###
@@ -130,7 +130,7 @@ Cage Card (retain bio line breaks)
 ###
 Inventories
 ###
-2732/PostgreSQL omitcriteria omitheaderfooter
+2732/PostgreSQL omitcriteria omitheaderfooter rev01
 ###
 An animal cage card with image.
 ###
