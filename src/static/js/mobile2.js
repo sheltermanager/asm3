@@ -70,7 +70,7 @@ $(document).ready(function() {
                             '</a>',
                         '</li>',
                         '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link" href="#">' + _("Medicate Animal"),
+                            '<a class="nav-link internal-link" data-link="medicate" href="#">' + _("Medicate Animal"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.medicals.length + '</span>',
                             '</a>',
                         '</li>',
@@ -182,6 +182,17 @@ $(document).ready(function() {
         '<div id="content-animal" class="container" style="display: none">',
         '</div>',
 
+        '<div id="content-medicate" class="container" style="display: none">',
+        '<h2>' + _("Medicate Animal") + '</h2>',
+        '<div class="mb-3">',
+        '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
+        '</div>',
+        '<div class="list-group">',
+        '</div>',
+        '</div>',
+        '<div id="content-medicateanimal" class="container" style="display: none">',
+        '</div>',
+
         '<div id="content-checklicence" class="container" style="display: none">',
         '<h2>' + _("Check License") + '</h2>',
             '<div class="mb-3">',
@@ -220,7 +231,10 @@ $(document).ready(function() {
             '<h5 class="mb-1">' + a.ANIMALNAME + ' - ' + a.CODE + '</h5>',
             '<small>' + common.substitute(_("{0} {1} {2} aged {3}"), { "0": a.SEXNAME, "1": a.BREEDNAME, "2": a.SPECIESNAME, "3": a.ANIMALAGE }) + '<br/>',
             a.IDENTICHIPNUMBER + '</small><br/>',
-            '<input type="file" accept="image/*" id="uploadphoto" />',
+            '<button type="button" id="uploadphoto" class="btn btn-primary">' + _("Upload"),
+            '<i class="bi-cloud-upload-fill"></i>',
+            '</button>',
+            '<input type="file" accept="image/*" id="uploadphotofile" style="display: none" />',
             '</div>',
             '</div>',
 
@@ -279,6 +293,15 @@ $(document).ready(function() {
         }
     });
 
+    // Delegate handler for filtering list groups with search inputs
+    $("body").on("keyup", ".search", function() {
+        let v = $(this).val().toLowerCase(),
+            lg = $(this).closest(".container").find(".list-group");
+        lg.find("a").filter(function() {
+           $(this).toggle($(this).find("h5").text().toLowerCase().indexOf(v) > -1 || $(this).find("small").text().toLowerCase().indexOf(v) > -1);
+        });
+    });
+
     // Make the mobile submenu collapse when an internal link is clicked
     $(".navbar-collapse").on("click", ".internal-link", function() {
         $(".navbar-collapse").collapse("hide");
@@ -305,10 +328,23 @@ $(document).ready(function() {
             $(".container").hide();
             $("#content-animal").show();
             // Handle the uploading of a photo when one is chosen
-            $("#uploadphoto").change(function() {
-                alert($("#uploadphoto").val());
-            });
+            $("#uploadphoto").click(function() { $("#uploadphotofile").click(); });
+            $("#uploadphotofile").change(function() { alert($("#uploadphotofile").val()); });
         }
+    });
+   
+    // Load list of animals to medicate
+    $("#content-medicate .list-group").empty();
+    $.each(controller.medicals, function(i, v) {
+        let h = '<a href="#" data-id="' + v.TREATMENTID + '" class="list-group-item list-group-item-action">' +
+            '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
+            '<h5 class="mb-1">' + v.ANIMALNAME + ' - ' + v.SHELTERCODE + '</h5>' +
+            '<small>(' + v.TREATMENTNAME + ', ' + format.date(v.DATEREQUIRED) + ')</small>' +
+            '</a>';
+        $("#content-medicate .list-group").append(h);
+    });
+    $("#content-medicate").on("click", "a", function() {
+        // TODO: render more info on the medication with a button to mark it given
     });
 
     // Load messages 
@@ -330,14 +366,6 @@ $(document).ready(function() {
         }
         let h = '<a class="list-group-item list-group-item-action" href="mobile_report?id=' + v.ID + '">' + v.TITLE + '</a>';
         $("#content-reports .list-group").append(h);
-    });
-
-    // Handle filtering the shelter animals list with the search box
-    $("#content-shelteranimals input").on("keyup", function() {
-        let v = $(this).val().toLowerCase();
-        $("#content-shelteranimals .list-group a").filter(function() {
-           $(this).toggle($(this).find("h5").text().toLowerCase().indexOf(v) > -1 || $(this).find("small").text().toLowerCase().indexOf(v) > -1);
-        });
     });
 
     document.title = controller.user + ": " + _("ASM");
