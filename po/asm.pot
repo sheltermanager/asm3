@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-06-06 17:42+0000\n"
+"POT-Creation-Date: 2022-06-08 16:32+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -18,6 +18,12 @@ msgstr ""
 
 #: options.js
 msgid " days."
+msgstr ""
+
+#: users.js
+msgid ""
+"'Super' users automatically have all permissions granted, where 'Normal' "
+"users need one or more roles to grant them permissions"
 msgstr ""
 
 #: common_widgets.js
@@ -13589,7 +13595,7 @@ msgstr ""
 msgid "Updating..."
 msgstr ""
 
-#: document_templates.js
+#: document_templates.js mobile2.js
 msgid "Upload"
 msgstr ""
 
