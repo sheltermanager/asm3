@@ -1002,7 +1002,7 @@ FROM owner o
 WHERE date_trunc('day', o.createddate) = current_date - 1
 AND (o.additionalflags = '|' OR o.additionalflags = '')
 AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = o.ID OR ReturnedByOwnerID = o.ID)
-AND NOT EXISTS(SELECT ID FROM animal WHERE OriginalOwnerID = o.ID OR BroughtInByOwnerID = o.ID OR CurrentVetID = o.ID OR OwnersVetID = o.ID 
+AND NOT EXISTS(SELECT ID FROM animal WHERE OriginalOwnerID = o.ID OR BroughtInByOwnerID = o.ID OR OwnerID = o.ID OR CurrentVetID = o.ID OR OwnersVetID = o.ID 
     OR AdoptionCoordinatorID = o.ID OR NeuteredByVetID = o.ID)
 AND NOT EXISTS(SELECT ID FROM animalcontrol WHERE VictimID = o.ID OR CallerID = o.ID OR OwnerID = o.ID OR Owner2ID = o.ID OR Owner3ID = o.ID)
 AND NOT EXISTS(SELECT ID FROM animalfound WHERE OwnerID = o.ID)
