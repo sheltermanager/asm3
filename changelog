@@ -1,6 +1,7 @@
 46
 ================
 
+09/06/22 fix PDF images: iif was causing both expressions to be evaluated
 08/06/22 Revert validation fix, roles still need to be visible for super users
 06/06/22 Allow font size to be chosen when printing mailing labels
 05/06/22 Record the user-agent with online form submissions

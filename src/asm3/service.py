@@ -480,8 +480,11 @@ def handler(post, path, remoteip, referer, useragent, querystring):
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)
-        return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, asm3.utils.iif(title.startswith("/"),
-            asm3.dbfs.get_string_filepath(dbo, title), asm3.dbfs.get_string(dbo, title)))
+        if title.startswith("/"):
+            imagedata = asm3.dbfs.get_string_filepath(dbo, title)
+        else:
+            imagedata = asm3.dbfs.get_string(dbo, title)
+        return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, imagedata)
 
     elif method =="document_repository":
         return set_cached_response(cache_key, account, asm3.media.mime_type(asm3.dbfs.get_name_for_id(dbo, mediaid)), 86400, 86400, asm3.dbfs.get_string_id(dbo, mediaid))
