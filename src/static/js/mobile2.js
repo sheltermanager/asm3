@@ -339,7 +339,7 @@ $(document).ready(function() {
         let h = '<a href="#" data-id="' + v.TREATMENTID + '" class="list-group-item list-group-item-action">' +
             '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
             '<h5 class="mb-1">' + v.ANIMALNAME + ' - ' + v.SHELTERCODE + '</h5>' +
-            '<small>(' + v.TREATMENTNAME + ', ' + format.date(v.DATEREQUIRED) + ')</small>' +
+            '<small>(' + v.TREATMENTNAME + ', ' + format.date(v.DATEREQUIRED) + ') ' + v.DISPLAYLOCATION + '</small>' +
             '</a>';
         $("#content-medicate .list-group").append(h);
     });

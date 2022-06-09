@@ -31,7 +31,7 @@ DESCENDING_GIVEN = 2
 
 def get_medicaltreatment_query(dbo):
     return "SELECT a.ShelterCode, a.ShortCode, a.AnimalName, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
+        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
@@ -177,7 +177,7 @@ def get_medicalcombined_query(dbo):
 
 def get_test_query(dbo):
     return "SELECT at.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
+        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
@@ -223,7 +223,7 @@ def get_test_query(dbo):
 
 def get_vaccination_query(dbo):
     return "SELECT av.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
+        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
