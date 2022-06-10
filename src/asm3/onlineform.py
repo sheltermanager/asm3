@@ -1452,7 +1452,8 @@ def auto_remove_old_incoming_forms(dbo):
         asm3.al.debug("auto remove incoming forms is off.", "onlineform.auto_remove_old_incoming_forms", dbo)
         return
     removecutoff = dbo.today(offset=removeafter*-1)
-    asm3.al.debug("remove date: incoming forms < %s" % removecutoff, "onlineform.auto_remove_old_incoming_forms", dbo)
-    count = dbo.delete("onlineformincoming", "PostedDate < %s" % dbo.sql_date(removecutoff), "system")
-    asm3.al.debug("removed %s incoming forms older than %s days" % (count, removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
+    rows = dbo.query("SELECT DISTINCT(CollationID) FROM onlineformincoming WHERE PostedDate < %s" % dbo.sql_date(removecutoff))
+    for r in rows:
+        delete_onlineformincoming(dbo, "system", r.COLLATIONID)
+    asm3.al.debug("removed %s incoming forms older than %s days" % (len(rows), removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
 

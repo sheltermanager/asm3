@@ -1,6 +1,7 @@
 46
 ================
 
+10/06/22 Expired online forms are saved in the deletion log now
 09/06/22 fix PDF images: iif was causing both expressions to be evaluated
 08/06/22 Revert validation fix, roles still need to be visible for super users
 06/06/22 Allow font size to be chosen when printing mailing labels
