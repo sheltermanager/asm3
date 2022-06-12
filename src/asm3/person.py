@@ -1374,7 +1374,6 @@ def update_investigation_from_form(dbo, username, post):
     Updates an investigation record from posted form data
     """
     dbo.update("ownerinvestigation", post.integer("investigationid"), {
-        "OwnerID":      post.integer("personid"),
         "Date":         post.date("date"),
         "Notes":        post["notes"]
     }, username)
