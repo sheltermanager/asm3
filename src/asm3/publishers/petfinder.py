@@ -310,3 +310,46 @@ class PetFinderPublisher(FTPPublisher):
         line.append("\"\"")
         return self.csvLine(line)
 
+    def clearListings(self):
+        """
+        We've had many issues in the past caused by people sending the wrong images and
+        then finding they can't update them. This process sends a blank file to PetFinder
+        to remove all the existing listings (so any existing images are forgotten). It
+        then touches the access date on all the publishable images for adoptable animals
+        so that PetFinder will get a new URL for them and download them again.
+        """
+                
+        self.log("PetFinderPublisher clearing listings ...")
+
+        shelterid = asm3.configuration.petfinder_user(self.dbo)
+        if shelterid == "":
+            raise Exception("No PetFinder.com shelter id has been set.")
+
+        if not self.openFTPSocket(): 
+            raise Exception("Failed opening FTP socket.")
+
+        # Touch all the date fields of publishable media for adoptable animals 
+        # so that they get a different photo URL due to the timestamp so PetFinder will 
+        # retrieve them again
+        self.dbo.execute("UPDATE media SET Date=? WHERE LinkTypeID=0 AND LinkID IN (SELECT ID FROM animal WHERE Adoptable=1) AND ExcludeFromPublish=0", 
+            [ self.dbo.now() ])
+
+        csv = [ "ID,Internal,AnimalName,PrimaryBreed,SecondaryBreed,Sex,Size,Age,Desc,Type,Status," \
+            "Shots,Altered,NoDogs,NoCats,NoKids,Housetrained,Declawed,specialNeeds,Mix," \
+            "photo1,photo2,photo3,photo4,photo5,photo6,arrival_date,birth_date," \
+            "primaryColor,secondaryColor,tertiaryColor,coat_length," \
+            "adoption_fee,display_adoption_fee,adoption_fee_waived," \
+            "special_needs_notes,no_other,no_other_note,tags" ]
+
+        # Upload the empty datafile
+        self.chdir("import")
+        self.saveFile(os.path.join(self.publishDir, shelterid), "\n".join(csv))
+        self.log("Uploading datafile, %s" % shelterid)
+        self.upload(shelterid)
+        self.log("Uploaded %s" % shelterid)
+        self.log("-- FILE DATA -- (csv)")
+        self.log("\n".join(csv))
+        self.cleanup()
+        return "\n".join(self.logBuffer)
+
+

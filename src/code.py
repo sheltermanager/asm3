@@ -4082,6 +4082,20 @@ class maint_latency(JSONEndpoint):
         self.cache_control(0)
         return "pong"
 
+class maint_petfinder(ASMEndpoint):
+    url = "maint_petfinder"
+
+    def content(self, o):
+        """ Clears all PetFinder listings """
+        self.content_type("text/plain")
+        self.cache_control(0)
+        try:
+            pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(o.dbo))
+            p = asm3.publishers.petfinder.PetFinderPublisher(o.dbo, pc)
+            return p.clearListings()
+        except Exception as err:
+            return str(err)
+
 class maint_time(ASMEndpoint):
     url = "maint_time"
 
