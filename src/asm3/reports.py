@@ -187,6 +187,12 @@ def is_mailmerge(dbo, crid):
     """
     return dbo.query_string("SELECT HTMLBody FROM customreport WHERE ID = ?", [crid]).startswith("MAIL")
 
+def get_criteria(dbo, customreportid):
+    """
+    Returns the criteria list for a report as a list of tuples containing name, type and question
+    """
+    return Report(dbo).GetParams(customreportid)
+
 def get_criteria_params(dbo, customreportid, post):
     """
     Creates a list of criteria parameters to pass to a report. The post

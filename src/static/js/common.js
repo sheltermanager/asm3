@@ -2253,10 +2253,11 @@ const html = {
      *     if the values have a pipe delimiter, we assume value/label pairs
      * l: The list object
      * valueprop: The name of the value property
-     * displayprop: The name of the display property
+     * displayprop: The name of the display property. You can also specify multiple columns to concatenate,
+     *              separated with ++ eg: SHELTERCODE++ANIMALNAME++SPECIESNAME
      */
     list_to_options: function(l, valueprop, displayprop) {
-        var h = "", retired = "";
+        var h = "", retired = "", displayval = "";
         $.each(l, function(i, v) {
             if (!valueprop) {
                 if (v.indexOf && v.indexOf("|") == -1) {
@@ -2268,8 +2269,18 @@ const html = {
             }
             else {
                 retired = "";
+                displayval = "";
+                if (displayprop.indexOf("++") != -1) {
+                    $.each(displayprop.split("++"), function(idp, vdp) {
+                        if (displayval != "") { displayval += " - "; }
+                        displayval += v[vdp];
+                    });
+                }
+                else {
+                    displayval = v[displayprop];
+                }
                 if (v.ISRETIRED && v.ISRETIRED == 1) { retired = "data-retired=\"1\""; }
-                h += "<option " + retired + " value=\"" + v[valueprop] + "\">" + v[displayprop] + "</option>\n";
+                h += "<option " + retired + " value=\"" + v[valueprop] + "\">" + displayval + "</option>\n";
             }
         });
         return h;

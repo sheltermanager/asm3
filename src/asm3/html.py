@@ -47,7 +47,8 @@ def asm_script_tag(filename):
     If we're in rollup mode and one of our standalone files is requested,
     get it from the compat folder instead so it's still cross-browser compliant and minified.
     """
-    standalone = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile2.js", "mobile_login.js", "mobile_sign.js", 
+    standalone = [ "animal_view_adoptable.js", "document_edit.js", 
+        "mobile.js", "mobile2.js", "mobile_login.js", "mobile_report.js", "mobile_sign.js", 
         "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
     if ROLLUP_JS and filename in standalone and filename.find("/") == -1: filename = f"compat/{filename}"
     return script_tag(f"static/js/{filename}", addbuild=True)
@@ -59,7 +60,8 @@ def asm_script_tags(path):
     jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
         "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
         "header_additional.js", "header_edit_header.js" ]
-    exclude = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile2.js", "mobile_login.js", "mobile_sign.js", 
+    exclude = [ "animal_view_adoptable.js", "document_edit.js", 
+        "mobile.js", "mobile2.js", "mobile_login.js", "mobile_report.js", "mobile_sign.js", 
         "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)

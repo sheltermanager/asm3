@@ -973,18 +973,44 @@ class mobile_report(ASMEndpoint):
         crid = post.integer("id")
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
-        crit = asm3.reports.get_criteria_controls(dbo, crid, mode = "MOBILE", locationfilter = o.locationfilter, siteid = o.siteid) 
+        crit = asm3.reports.get_criteria(dbo, crid) 
+        # Function to check whether a particular criteria type is referred to
+        def has_criteria(c):
+            for name, rtype, question in crit:
+                if rtype == c: return True
+            return False
         self.content_type("text/html")
         self.cache_control(0)
         # If the report doesn't take criteria, just show it
-        if crit == "":
+        if len(crit) == 0:
             asm3.al.debug("report %d has no criteria, displaying" % crid, "code.mobile_report", dbo)
             return asm3.reports.execute(dbo, crid, user)
         # If we're in criteria mode (and there are some to get here), ask for them
         elif mode == "":
             title = asm3.reports.get_title(dbo, crid)
             asm3.al.debug("building criteria form for report %d %s" % (crid, title), "code.mobile_report", dbo)
-            return asm3.mobile.report_criteria(dbo, crid, title, crit)
+            c = {
+                "crid":         crid,
+                "criteria":     crit,
+                "title":        title,
+                "user":         o.user
+            }
+            # Only load lookup items for criteria that need them to save bandwidth
+            if has_criteria("ANIMAL") or has_criteria("FSANIMAL") or has_criteria("ALLANIMAL") or has_criteria("ANIMALS"):
+                c["animals"] = asm3.animal.get_animals_on_shelter_namecode(dbo)
+            if has_criteria("ANIMALFLAG"): c["animalflags"] = asm3.lookups.get_animal_flags(dbo)
+            if has_criteria("DONATIONTYPE") or has_criteria("PAYMENTTYPE"): c["donationtypes"] = asm3.lookups.get_donation_types(dbo)
+            if has_criteria("LITTER"): c["litters"] = asm3.animal.get_active_litters_brief(dbo)
+            if has_criteria("LOCATION"): c["locations"] = asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid)
+            if has_criteria("LOGTYPES"): c["logtypes"] = asm3.lookups.get_log_types(dbo)
+            if has_criteria("PAYMENTMETHOD") or has_criteria("PAYMENTTYPE"): c["paymentmethods"] = asm3.lookups.get_payment_methods(dbo)
+            if has_criteria("PERSON"): c["people"] = asm3.person.get_person_name_addresses(dbo)
+            if has_criteria("PERSONFLAG"): c["personflags"] = asm3.lookups.get_person_flags(dbo)
+            if has_criteria("SITE"): c["sites"] = asm3.lookups.get_sites(dbo)
+            if has_criteria("SPECIES"): c["species"] = asm3.lookups.get_species(dbo)
+            if has_criteria("TYPE"): c["types"] = asm3.lookups.get_animal_types(dbo)
+            self.content_type("text/html")
+            return asm3.html.mobile_page(o.locale, "", [ "common.js", "mobile_report.js" ], c)
         # The user has entered the criteria and we're in exec mode, unpack
         # the criteria and run the report
         elif mode == "exec":
