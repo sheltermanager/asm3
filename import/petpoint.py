@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import asm
 
@@ -41,7 +41,7 @@ header will also need to be removed or odd/even will be thrown out.
 # The shelter's petfinder ID for grabbing animal images for adoptable animals
 PETFINDER_ID = ""
 START_ID = 100
-ACCOUNT = "bb2582"
+ACCOUNT = "ch2801"
 
 INTAKE_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/animals.csv" % ACCOUNT
 CASES_FILENAME = "/home/robin/tmp/asm3_import_data/petpoint_%s/cases.csv" % ACCOUNT
@@ -93,15 +93,15 @@ asm.setid("log", START_ID)
 asm.setid("owner", START_ID)
 asm.setid("adoption", START_ID)
 
-print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM internallocation;"
-print "DELETE FROM animal WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM animalcontrol WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM animaltest WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM animalvaccination WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM log WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM owner WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM adoption WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID
+print("\\set ON_ERROR_STOP\nBEGIN;")
+print("DELETE FROM internallocation;")
+print("DELETE FROM animal WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM animalcontrol WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM animaltest WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM animalvaccination WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM log WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM owner WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM adoption WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 
 # Create an unknown owner
 uo = asm.Owner()
@@ -113,8 +113,8 @@ pf = ""
 if PETFINDER_ID != "":
     asm.setid("media", START_ID)
     asm.setid("dbfs", START_ID)
-    print "DELETE FROM media WHERE ID >= %s;" % START_ID
-    print "DELETE FROM dbfs WHERE ID >= %s;" % START_ID
+    print("DELETE FROM media WHERE ID >= %s;" % START_ID)
+    print("DELETE FROM dbfs WHERE ID >= %s;" % START_ID)
     pf = asm.petfinder_get_adoptable(PETFINDER_ID)
 
 # Deal with people first (if set)
@@ -151,7 +151,7 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
     # If it's a blank row, skip
     if d["Animal #"] == "": continue
     # Each row contains an animal, intake and outcome
-    if ppa.has_key(d["Animal #"]):
+    if d["Animal #"] in ppa:
         a = ppa[d["Animal #"]]
     else:
         a = asm.Animal()
@@ -447,7 +447,7 @@ if LOCATION_FILENAME != "" and asm.file_exists(LOCATION_FILENAME):
     for d in asm.csv_to_list(LOCATION_FILENAME):
         if idfield not in d: continue # Can't do anything without field present
         if d[idfield] == idfield: continue # Ignore repeated headers
-        if ppa.has_key(d[idfield]):
+        if d[idfield] in ppa:
             name1, name2 = d[colfield].split("/", 1)
             a = ppa[d[idfield]]
             a.BaseColourID = asm.colour_id_for_names(name1, name2)
@@ -456,7 +456,7 @@ if LOCATION_FILENAME != "" and asm.file_exists(LOCATION_FILENAME):
 
 def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
     """ Processes a vaccination record. PP have multiple formats of this data file """
-    if ppa.has_key(animalno):
+    if animalno in ppa:
         a = ppa[animalno]
     else:
         asm.stderr("cannot process vacc %s, %s, %s, - no matching animal" % (animalno, vaccdate, vaccname))
@@ -479,7 +479,7 @@ def process_vacc(animalno, vaccdate = None, vaccexpires = None, vaccname = ""):
         "FVRCP": 14,
         "Distemper": 1
     }
-    for k, i in vaccmap.iteritems():
+    for k, i in vaccmap.items():
         if vaccname.find(k) != -1: av.VaccinationID = i
     av.DateRequired = vaccdate
     av.DateOfVaccination = vaccdate
@@ -511,7 +511,7 @@ if VACC_FILENAME != "" and asm.file_exists(VACC_FILENAME):
 
 def process_test(animalno, testdate = None, testname = "", result = ""):
     """ Process a test record """
-    if ppa.has_key(animalno):
+    if animalno in ppa:
         a = ppa[animalno]
     else:
         asm.stderr("cannot process test %s, %s, %s, %s - no matching animal" % (animalno, testdate, testname, result))
@@ -573,29 +573,29 @@ if TEST_FILENAME != "" and asm.file_exists(TEST_FILENAME):
 asm.adopt_older_than(animals, movements, uo.ID, 365)
 
 # Now that everything else is done, output stored records
-for k,v in asm.locations.iteritems():
-    print v
+for k,v in asm.locations.items():
+    print(v)
 if len(asm.jurisdictions.keys()) > 0:
-    print "DELETE FROM jurisdiction;"
-    for k,v in asm.jurisdictions.iteritems():
-        print v
+    print("DELETE FROM jurisdiction;")
+    for k,v in asm.jurisdictions.items():
+        print(v)
 for a in animals:
-    print a
+    print(a)
 for at in animaltests:
-    print at
+    print(at)
 for av in animalvaccinations:
-    print av
+    print(av)
 for o in owners:
-    print o
+    print(o)
 for m in movements:
-    print m
+    print(m)
 for l in logs:
-    print l
+    print(l)
 for ac in animalcontrol:
-    print ac
+    print(ac)
 
 asm.stderr_summary(animals=animals, animalcontrol=animalcontrol, animaltests=animaltests, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements)
 
-print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
-print "COMMIT;"
+print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
+print("COMMIT;")
 
