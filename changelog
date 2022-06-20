@@ -1,10 +1,11 @@
 46
 ================
 
+20/06/22 Fix error that can cause bad data to prevent the calendar loading
 17/06/22 Prevent auto disabling of RescueGroups publisher due to transient 530
 11/06/22 Stop edits to investigation records removing the person
 10/06/22 Expired online forms are saved in the deletion log now
-09/06/22 fix PDF images: iif was causing both expressions to be evaluated
+09/06/22 Fix images in PDFs: iif was causing both expressions to be evaluated
 08/06/22 Revert validation fix, roles still need to be visible for super users
 06/06/22 Allow font size to be chosen when printing mailing labels
 05/06/22 Record the user-agent with online form submissions
