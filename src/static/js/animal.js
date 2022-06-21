@@ -418,7 +418,7 @@ $(function() {
                 '<input id="microchipdate" data-json="IDENTICHIPDATE" data-post="microchipdate" class="asm-halftextbox asm-datebox" placeholder="' + html.title(_("Date")) + '" />',
                 '</td>',
                 '<td>',
-                '<input type="text" id="microchipnumber" data-json="IDENTICHIPNUMBER" data-post="microchipnumber" class="asm-textbox" maxlength="15" placeholder="' + html.title(_("Number")) + '" /> <span id="microchipbrand"></span> <button id="button-microchipcheck">' + _("Check") + '</button>',
+                '<input type="text" id="microchipnumber" data-json="IDENTICHIPNUMBER" data-post="microchipnumber" class="asm-textbox" maxlength="15" placeholder="' + html.title(_("Number")) + '" /> <span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>',
                 '</td>',
                 '</tr>',
                 '<tr id="microchiprow2">',

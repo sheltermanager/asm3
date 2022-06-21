@@ -1,4 +1,4 @@
-/*global $, _, common, asm */
+/*global $, _, common, asm, header */
 /*global microchip: true */
 
 "use strict";
@@ -40,16 +40,24 @@ const microchip = {
         return asm.locale == "en" || asm.locale == "en_GB";
     },
 
+    check_site_name: function() {
+        if (asm.locale == "en") { return _("Check {0}").replace("{0}", "www.aaha.org"); }
+        else if (asm.locale == "en_GB") { return _("Check {0}").replace("{0}", "www.checkachip.com"); }
+        return "";
+    },
+
     /* Calls out to chip checking services for the user's locale so they can find out where a chip
      * is registered.
      */
     check: function(chipnumber) {
         // USA - use AAHA
         if (asm.locale == "en") {
-            window.open("https://www.aaha.org/your-pet/pet-microchip-lookup/microchip-search/?microchip_id=" + chipnumber + "&AllowNonAlphaNumberic=0");
+            header.show_loading(_("Loading..."));
+            window.location = "https://www.aaha.org/your-pet/pet-microchip-lookup/microchip-search/?microchip_id=" + chipnumber + "&AllowNonAlphaNumberic=0";
         }
         // UK - use checkachip.com
         else if (asm.locale == "en_GB") {
+            header.show_loading(_("Loading..."));
             $("body").append(
                 '<form id="cac" method="post" action="https://www.checkachip.com/microchipsearch/">' +
                 '<input type="hidden" name="microchip_number" value="' + chipnumber + '">' +

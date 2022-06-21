@@ -136,7 +136,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="microchip">' + _("Microchip") + '</label></td>',
                 '<td><input id="microchip" data-json="MICROCHIPNUMBER" data-post="microchip" type="text" maxlength="15" class="asm-textbox" />',
-                ' <span id="microchipbrand"></span> <button id="button-microchipcheck">' + _("Check") + '</button>',
+                ' <span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>',
                 '</td>',
                 '</tr>',
                 '<tr>',
