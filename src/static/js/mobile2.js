@@ -313,7 +313,7 @@ $(document).ready(function() {
         let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
             '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
             '<h5 class="mb-1">' + v.ANIMALNAME + ' - ' + v.CODE + '</h5>' +
-            '<small>(' + v.SEXNAME + ' ' + v.BREEDNAME + ' ' + v.SPECIESNAME + ') ' + v.IDENTICHIPNUMBER + '</small>' +
+            '<small>(' + v.SEXNAME + ' ' + v.BREEDNAME + ' ' + v.SPECIESNAME + ')<br/>' + v.IDENTICHIPNUMBER + ' ' + v.DISPLAYLOCATION + '</small>' +
             '</a>';
         $("#content-shelteranimals .list-group").append(h);
     });
