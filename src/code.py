@@ -1010,7 +1010,7 @@ class mobile_report(ASMEndpoint):
             if has_criteria("SPECIES"): c["species"] = asm3.lookups.get_species(dbo)
             if has_criteria("TYPE"): c["types"] = asm3.lookups.get_animal_types(dbo)
             self.content_type("text/html")
-            return asm3.html.mobile_page(o.locale, "", [ "common.js", "mobile_report.js" ], c)
+            return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile_report.js" ], c)
         # The user has entered the criteria and we're in exec mode, unpack
         # the criteria and run the report
         elif mode == "exec":

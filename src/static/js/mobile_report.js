@@ -50,8 +50,8 @@ $(document).ready(function() {
             '</div>');
         }
         else if (rtype == "LOOKUP") {
-            let values = question.substring(question.indexOf("|")+1);
-            if (question.indexOf("|") != -1) { question = question(0, question.indexOf("|")); } 
+            let values = question.substring(question.indexOf("|")+1).split(",");
+            if (question.indexOf("|") != -1) { question = question.substring(0, question.indexOf("|")); } 
             h.push('<div class="mb-3">' + 
                 '<label for="report-' + name + '" class="form-label">' + question + '</label>' +
                 '<select class="form-control" id="report-' + name + '" name="' + name + '">' +
