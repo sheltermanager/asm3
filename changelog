@@ -1,6 +1,7 @@
 46
 ================
 
+21/06/22 Refactor/split common out into html/validate/microchip js #1144
 20/06/22 Annual figures section for non-shelter microchips implanted #1140
 20/06/22 Re-implement mobile report criteria in new UI #1096
 20/06/22 Fix error that can cause bad data to prevent the calendar loading

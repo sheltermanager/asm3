@@ -1,4 +1,4 @@
-/*global $, _, asm, common, config, controller, dlgfx, additional, edit_header, format, header, html, log, social, tableform, validate */
+/*global $, _, asm, common, config, controller, dlgfx, additional, edit_header, format, header, html, log, microchip, social, tableform, validate */
 
 $(function() {
 
@@ -1198,8 +1198,8 @@ $(function() {
         },
 
         show_microchip_supplier: function() {
-            html.microchip_manufacturer("#microchipnumber", "#microchipbrand");
-            html.microchip_manufacturer("#microchipnumber2", "#microchipbrand2");
+            microchip.manufacturer("#microchipnumber", "#microchipbrand");
+            microchip.manufacturer("#microchipnumber2", "#microchipbrand2");
         },
 
         show_popup_warning: async function() {

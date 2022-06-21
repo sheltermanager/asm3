@@ -57,17 +57,17 @@ def asm_script_tags(path):
     """
     Returns separate script tags for all ASM javascript files.
     """
-    jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
-        "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
+    jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
+        "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_microchip.js", "header.js",
         "header_additional.js", "header_edit_header.js" ]
-    exclude = [ "animal_view_adoptable.js", "document_edit.js", 
+    standalone = [ "animal_view_adoptable.js", "document_edit.js", 
         "mobile.js", "mobile2.js", "mobile_login.js", "mobile_report.js", "mobile_sign.js", 
         "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)
     # or those we should exclude because they are standalone files
     for i in os.listdir(path + "static/js"):
-        if i not in jsfiles and i not in exclude and not i.startswith(".") and i.endswith(".js"):
+        if i not in jsfiles and i not in standalone and not i.startswith(".") and i.endswith(".js"):
             jsfiles.append(i)
     buf = []
     for i in jsfiles:

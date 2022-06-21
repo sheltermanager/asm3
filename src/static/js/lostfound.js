@@ -1,4 +1,4 @@
-/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
+/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, microchip, tableform, validate */
 
 $(function() {
 
@@ -178,7 +178,7 @@ $(function() {
             }
 
             // Show the microchip manufacturer
-            html.microchip_manufacturer("#microchip", "#microchipbrand");
+            microchip.manufacturer("#microchip", "#microchipbrand");
 
             if (!common.has_permission("aa")) { $("#button-toanimal").hide(); }
             if (!common.has_permission("awl")) { $("#button-towaitinglist").hide(); }

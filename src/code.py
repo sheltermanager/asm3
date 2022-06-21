@@ -891,7 +891,7 @@ class mobile2(ASMEndpoint):
             "user":         o.user
         }
         self.content_type("text/html")
-        return asm3.html.mobile_page(o.locale, "", [ "common.js", "mobile2.js" ], c)
+        return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile2.js" ], c)
 
 class mobile_login(ASMEndpoint):
     url = "mobile_login"
