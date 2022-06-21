@@ -136,7 +136,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="microchip">' + _("Microchip") + '</label></td>',
                 '<td><input id="microchip" data-json="MICROCHIPNUMBER" data-post="microchip" type="text" maxlength="15" class="asm-textbox" />',
-                ' <span id="microchipbrand"></span>',
+                ' <span id="microchipbrand"></span> <button id="button-microchipcheck">' + _("Check") + '</button>',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -179,6 +179,10 @@ $(function() {
 
             // Show the microchip manufacturer
             microchip.manufacturer("#microchip", "#microchipbrand");
+
+            // Show the microchip check button
+            $("#button-microchipcheck").hide();
+            if (microchip.is_check_available($("#microchip").val())) { $("#button-microchipcheck").show(); }
 
             if (!common.has_permission("aa")) { $("#button-toanimal").hide(); }
             if (!common.has_permission("awl")) { $("#button-towaitinglist").hide(); }
@@ -300,6 +304,10 @@ $(function() {
                     templates: controller.templatesemail
                 });
             });
+
+            $("#button-microchipcheck")
+                .button({ icons: { primary: "ui-icon-search" }, text: false })
+                .click(function() { microchip.check($("#microchip").val()); });
 
             $("#button-toanimal").button().click(async function() {
                 $("#button-toanimal").button("disable");

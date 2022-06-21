@@ -418,7 +418,7 @@ $(function() {
                 '<input id="microchipdate" data-json="IDENTICHIPDATE" data-post="microchipdate" class="asm-halftextbox asm-datebox" placeholder="' + html.title(_("Date")) + '" />',
                 '</td>',
                 '<td>',
-                '<input type="text" id="microchipnumber" data-json="IDENTICHIPNUMBER" data-post="microchipnumber" class="asm-textbox" maxlength="15" placeholder="' + html.title(_("Number")) + '" /> <span id="microchipbrand"></span>',
+                '<input type="text" id="microchipnumber" data-json="IDENTICHIPNUMBER" data-post="microchipnumber" class="asm-textbox" maxlength="15" placeholder="' + html.title(_("Number")) + '" /> <span id="microchipbrand"></span> <button id="button-microchipcheck">' + _("Check") + '</button>',
                 '</td>',
                 '</tr>',
                 '<tr id="microchiprow2">',
@@ -1200,6 +1200,9 @@ $(function() {
         show_microchip_supplier: function() {
             microchip.manufacturer("#microchipnumber", "#microchipbrand");
             microchip.manufacturer("#microchipnumber2", "#microchipbrand2");
+            // Show the microchip check button
+            $("#button-microchipcheck").hide();
+            if (microchip.is_check_available($("#microchipnumber").val())) { $("#button-microchipcheck").show(); }
         },
 
         show_popup_warning: async function() {
@@ -1624,6 +1627,10 @@ $(function() {
             $("#button-gencode")
                 .button({ icons: { primary: "ui-icon-refresh" }, text: false })
                 .click(animal.generate_code);
+
+            $("#button-microchipcheck")
+                .button({ icons: { primary: "ui-icon-search" }, text: false })
+                .click(function() { microchip.check($("#microchipnumber").val()); });
 
             $("#button-randomname")
                 .button({ icons: { primary: "ui-icon-tag" }, text: false })

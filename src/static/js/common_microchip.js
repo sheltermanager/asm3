@@ -10,6 +10,7 @@ const microchip = {
 
     /**
      * Looks up the manufacturer for a given microchip number.
+     * The manufacturer list is passed as part of config.js in the asm global (from lookup.py)
      * selnumber: DOM selector for the input containing the number
      * selbrand:  DOM selector for the label showing the manufacturer
      */
@@ -32,6 +33,31 @@ const microchip = {
         }
         $(selbrand).html(m);
         $(selbrand).fadeIn();
+    },
+
+    is_check_available: function(chipnumber) {
+        if (chipnumber.length != 15 && chipnumber.length != 10 && chipnumber.length != 9) { return false; }
+        return asm.locale == "en" || asm.locale == "en_GB";
+    },
+
+    /* Calls out to chip checking services for the user's locale so they can find out where a chip
+     * is registered.
+     */
+    check: function(chipnumber) {
+        // USA - use AAHA
+        if (asm.locale == "en") {
+            window.open("https://www.aaha.org/your-pet/pet-microchip-lookup/microchip-search/?microchip_id=" + chipnumber + "&AllowNonAlphaNumberic=0");
+        }
+        // UK - use checkachip.com
+        else if (asm.locale == "en_GB") {
+            $("body").append(
+                '<form id="cac" method="post" action="https://www.checkachip.com/microchipsearch/">' +
+                '<input type="hidden" name="microchip_number" value="' + chipnumber + '">' +
+                '<input type="hidden" name="are_you" value="no">' + 
+                '<input type="hidden" name="phone_number" value="">' + 
+                '</form>');
+            $("#cac").submit();
+        }
     }
 
 };
