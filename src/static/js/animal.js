@@ -427,7 +427,7 @@ $(function() {
                 '<input id="microchipdate2" data-json="IDENTICHIP2DATE" data-post="microchipdate2" class="asm-halftextbox asm-datebox" placeholder="' + html.title(_("Date")) + '" />',
                 '</td>',
                 '<td>',
-                '<input type="text" id="microchipnumber2" data-json="IDENTICHIP2NUMBER" data-post="microchipnumber2" class="asm-textbox" maxlength="15" placeholder="' + html.title(_("Number")) + '" /> <span id="microchipbrand2"></span>',
+                '<input type="text" id="microchipnumber2" data-json="IDENTICHIP2NUMBER" data-post="microchipnumber2" class="asm-textbox" maxlength="15" placeholder="' + html.title(_("Number")) + '" /> <span id="microchipbrand2"></span> <button id="button-microchipcheck2">' + microchip.check_site_name() + '</button>',
                 '</td>',
                 '</tr>',
                 '<tr id="tattoorow">',
@@ -1200,9 +1200,10 @@ $(function() {
         show_microchip_supplier: function() {
             microchip.manufacturer("#microchipnumber", "#microchipbrand");
             microchip.manufacturer("#microchipnumber2", "#microchipbrand2");
-            // Show the microchip check button
-            $("#button-microchipcheck").hide();
+            // Show the microchip check buttons
+            $("#button-microchipcheck, #button-microchipcheck2").hide();
             if (microchip.is_check_available($("#microchipnumber").val())) { $("#button-microchipcheck").show(); }
+            if (microchip.is_check_available($("#microchipnumber2").val())) { $("#button-microchipcheck2").show(); }
         },
 
         show_popup_warning: async function() {
@@ -1631,6 +1632,10 @@ $(function() {
             $("#button-microchipcheck")
                 .button({ icons: { primary: "ui-icon-search" }, text: false })
                 .click(function() { microchip.check($("#microchipnumber").val()); });
+
+            $("#button-microchipcheck2")
+                .button({ icons: { primary: "ui-icon-search" }, text: false })
+                .click(function() { microchip.check($("#microchipnumber2").val()); });
 
             $("#button-randomname")
                 .button({ icons: { primary: "ui-icon-tag" }, text: false })
