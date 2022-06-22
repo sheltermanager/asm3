@@ -31,7 +31,7 @@ $(document).ready(function() {
         '<h2>' + controller.title + '</h2>',
         '<form action="mobile_report" method="get">',
         '<input name="id" type="hidden" value="' + controller.crid + '" >',
-        '<input name="mode" type="hidden" value="exec" >'
+        '<input name="hascriteria" type="hidden" value="true" >'
 
     ];
 
@@ -120,7 +120,7 @@ $(document).ready(function() {
             h.push('<div class="mb-3">' + 
                 '<label for="report-' + name + '" class="form-label">' + _("Payment Method") + '</label>' +
                 '<select class="form-control animalflags" id="report-' + name + '" name="' + name + '">' +
-                html.list_to_options(controller.donationtypes, "ID", "PAYMENTNAME") + 
+                html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME") + 
                 '</select></div>');
         }
         else if (rtype == "SITE") {

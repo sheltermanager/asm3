@@ -1,6 +1,8 @@
 46
 ================
 
+22/06/22 Refactoring old stuff out of html.py #1145
+22/06/22 Refactoring report criteria for consistency #1145
 22/06/22 (sm.com) make sure account alias is set correctly when sending email
 21/06/22 basic check-a-chip integration for the UK and US #1144
 21/06/22 Refactor/split common out into html/validate/microchip js #1144

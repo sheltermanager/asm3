@@ -699,7 +699,13 @@ def handler(post, path, remoteip, referer, useragent, querystring):
 
     elif method == "rss_timeline":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
-        return set_cached_response(cache_key, account, "application/rss+xml", 3600, 3600, asm3.html.timeline_rss(dbo))
+        RSS_LIMIT = 500
+        rows = asm3.animal.get_timeline(dbo, RSS_LIMIT)
+        h = []
+        for r in rows:
+            h.append( asm3.utils.rss_item( r["DESCRIPTION"], "%s/%s?id=%d" % (BASE_URL, r["LINKTARGET"], r["ID"]), "") )
+        rssdocument = asm3.utils.rss("\n".join(h), _("Showing {0} timeline events.", l).format(RSS_LIMIT), BASE_URL, "")
+        return set_cached_response(cache_key, account, "application/rss+xml", 3600, 3600, rssdocument)
 
     elif method == "upload_animal_image":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.ADD_MEDIA)

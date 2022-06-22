@@ -631,6 +631,27 @@ def address_street_name(address):
         return bits[1]
     return ""
 
+def rss(inner, title, link, description):
+    """ Renders an RSS document """
+    return '<?xml version="1.0" encoding="UTF-8"?>' \
+        '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" >' \
+        '<channel rdf:about="%s">' \
+        '<title>%s</title>' \
+        '<description>%s</description>' \
+        '<link>%s</link>' \
+        '</channel>' \
+        '%s' \
+        '</rdf:RDF>' % (BASE_URL, title, description, link, inner)
+
+def rss_item(title, link, description):
+    return '<item rdf:about="%s">' \
+        '<title>%s</title>' \
+        '<link>%s</link>' \
+        '<description>' \
+        '%s' \
+        '</description>' \
+        '</item>' % (BASE_URL, title, link, description)
+
 def spaceleft(s, spaces):
     """
     leftpads a string to a number of spaces

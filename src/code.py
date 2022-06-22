@@ -967,56 +967,61 @@ class mobile_report(ASMEndpoint):
 
     def content(self, o):
         dbo = o.dbo
-        user = o.user
         post = o.post
-        mode = post["mode"]
         crid = post.integer("id")
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
         crit = asm3.reports.get_criteria(dbo, crid) 
-        # Function to check whether a particular criteria type is referred to
+        self.content_type("text/html")
+        self.cache_control(0)
+        # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
+        if len(crit) != 0 and post["hascriteria"] == "": self.redirect("mobile_report_criteria?id=%s" % post.integer("id"))
+        title = asm3.reports.get_title(dbo, crid)
+        asm3.al.debug("got criteria (%s), executing report %d" % (str(post.data), crid), "code.report", dbo)
+        p = asm3.reports.get_criteria_params(dbo, crid, post)
+        if asm3.configuration.audit_on_view_report(dbo):
+            asm3.audit.view_report(dbo, o.user, title, str(post.data))
+        s = asm3.reports.execute(dbo, crid, o.user, p)
+        return s
+
+class mobile_report_criteria(ASMEndpoint):
+    url = "mobile_report_criteria"
+    get_permissions = asm3.users.VIEW_REPORT
+
+    def content(self, o):
+        dbo = o.dbo
+        crid = o.post.integer("id")
+        crit = asm3.reports.get_criteria(dbo, crid) 
+        title = asm3.reports.get_title(dbo, crid)
+        self.content_type("text/html")
+        self.cache_control(0)
         def has_criteria(c):
             for name, rtype, question in crit:
                 if rtype == c: return True
             return False
+        asm3.al.debug("building criteria form for report %d %s" % (crid, title), "code.mobile_report", dbo)
+        c = {
+            "crid":         crid,
+            "criteria":     crit,
+            "title":        title,
+            "user":         o.user
+        }
+        # Only load lookup items for criteria that need them to save bandwidth
+        if has_criteria("ANIMAL") or has_criteria("FSANIMAL") or has_criteria("ALLANIMAL") or has_criteria("ANIMALS"):
+            c["animals"] = asm3.animal.get_animals_on_shelter_namecode(dbo)
+        if has_criteria("ANIMALFLAG"): c["animalflags"] = asm3.lookups.get_animal_flags(dbo)
+        if has_criteria("DONATIONTYPE") or has_criteria("PAYMENTTYPE"): c["donationtypes"] = asm3.lookups.get_donation_types(dbo)
+        if has_criteria("LITTER"): c["litters"] = asm3.animal.get_active_litters_brief(dbo)
+        if has_criteria("LOCATION"): c["locations"] = asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid)
+        if has_criteria("LOGTYPES"): c["logtypes"] = asm3.lookups.get_log_types(dbo)
+        if has_criteria("PAYMENTMETHOD") or has_criteria("PAYMENTTYPE"): c["paymentmethods"] = asm3.lookups.get_payment_methods(dbo)
+        if has_criteria("PERSON"): c["people"] = asm3.person.get_person_name_addresses(dbo)
+        if has_criteria("PERSONFLAG"): c["personflags"] = asm3.lookups.get_person_flags(dbo)
+        if has_criteria("SITE"): c["sites"] = asm3.lookups.get_sites(dbo)
+        if has_criteria("SPECIES"): c["species"] = asm3.lookups.get_species(dbo)
+        if has_criteria("TYPE"): c["types"] = asm3.lookups.get_animal_types(dbo)
         self.content_type("text/html")
-        self.cache_control(0)
-        # If the report doesn't take criteria, just show it
-        if len(crit) == 0:
-            asm3.al.debug("report %d has no criteria, displaying" % crid, "code.mobile_report", dbo)
-            return asm3.reports.execute(dbo, crid, user)
-        # If we're in criteria mode (and there are some to get here), ask for them
-        elif mode == "":
-            title = asm3.reports.get_title(dbo, crid)
-            asm3.al.debug("building criteria form for report %d %s" % (crid, title), "code.mobile_report", dbo)
-            c = {
-                "crid":         crid,
-                "criteria":     crit,
-                "title":        title,
-                "user":         o.user
-            }
-            # Only load lookup items for criteria that need them to save bandwidth
-            if has_criteria("ANIMAL") or has_criteria("FSANIMAL") or has_criteria("ALLANIMAL") or has_criteria("ANIMALS"):
-                c["animals"] = asm3.animal.get_animals_on_shelter_namecode(dbo)
-            if has_criteria("ANIMALFLAG"): c["animalflags"] = asm3.lookups.get_animal_flags(dbo)
-            if has_criteria("DONATIONTYPE") or has_criteria("PAYMENTTYPE"): c["donationtypes"] = asm3.lookups.get_donation_types(dbo)
-            if has_criteria("LITTER"): c["litters"] = asm3.animal.get_active_litters_brief(dbo)
-            if has_criteria("LOCATION"): c["locations"] = asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid)
-            if has_criteria("LOGTYPES"): c["logtypes"] = asm3.lookups.get_log_types(dbo)
-            if has_criteria("PAYMENTMETHOD") or has_criteria("PAYMENTTYPE"): c["paymentmethods"] = asm3.lookups.get_payment_methods(dbo)
-            if has_criteria("PERSON"): c["people"] = asm3.person.get_person_name_addresses(dbo)
-            if has_criteria("PERSONFLAG"): c["personflags"] = asm3.lookups.get_person_flags(dbo)
-            if has_criteria("SITE"): c["sites"] = asm3.lookups.get_sites(dbo)
-            if has_criteria("SPECIES"): c["species"] = asm3.lookups.get_species(dbo)
-            if has_criteria("TYPE"): c["types"] = asm3.lookups.get_animal_types(dbo)
-            self.content_type("text/html")
-            return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile_report.js" ], c)
-        # The user has entered the criteria and we're in exec mode, unpack
-        # the criteria and run the report
-        elif mode == "exec":
-            asm3.al.debug("got criteria (%s), executing report %d" % (str(post.data), crid), "code.report", dbo)
-            p = asm3.reports.get_criteria_params(dbo, crid, post)
-            return asm3.reports.execute(dbo, crid, user, p)
+        return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile_report.js" ], c)
 
 class mobile_sign(ASMEndpoint):
     url = "mobile_sign"
@@ -3924,21 +3929,6 @@ class lostfound_match(ASMEndpoint):
             asm3.al.debug("match lost=%d, found=%d, animal=%d" % (lostanimalid, foundanimalid, animalid), "code.lostfound_match", dbo)
             return asm3.lostfound.match_report(dbo, o.user, lostanimalid, foundanimalid, animalid)
 
-class mailmerge_criteria(JSONEndpoint):
-    url = "mailmerge_criteria"
-    get_permissions = asm3.users.MAIL_MERGE
-
-    def controller(self, o):
-        dbo = o.dbo
-        post = o.post
-        title = asm3.reports.get_title(o.dbo, o.post.integer("id"))
-        asm3.al.debug("building report criteria form for mailmerge %d %s" % (post.integer("id"), title), "code.mailmerge", dbo)
-        return {
-            "id": post.integer("id"),
-            "title": title,
-            "criteriahtml": asm3.reports.get_criteria_controls(o.dbo, o.post.integer("id"))
-        }
-
 class mailmerge(JSONEndpoint):
     url = "mailmerge"
     get_permissions = asm3.users.MAIL_MERGE
@@ -3949,10 +3939,10 @@ class mailmerge(JSONEndpoint):
         dbo = o.dbo
         post = o.post
         crid = post.integer("id")
-        crit = asm3.reports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
+        crit = asm3.reports.get_criteria(dbo, crid)
         title = asm3.reports.get_title(dbo, crid)
         # If this mail merge takes criteria and none were supplied, go to the criteria screen to get them
-        if crit != "" and post["hascriteria"] == "": self.redirect("mailmerge_criteria?id=%d" % crid)
+        if len(crit) != 0 and post["hascriteria"] == "": self.redirect("report_criteria?id=%s&target=mailmerge" % crid)
         asm3.al.debug("entering mail merge selection mode for %d" % post.integer("id"), "code.mailmerge", dbo)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
@@ -4498,7 +4488,9 @@ class move_gendoc(JSONEndpoint):
     def controller(self, o):
         return {
             "message": o.post["message"],
-            "templates": asm3.html.template_selection(asm3.template.get_document_templates(o.dbo, "movement"), "document_gen?linktype=%s&id=%s" % (o.post["linktype"], o.post["id"]))
+            "id": o.post["id"],
+            "linktype": o.post["linktype"],
+            "templates": asm3.template.get_document_templates(o.dbo, "movement")
         }
 
 class move_reclaim(JSONEndpoint):
@@ -5578,11 +5570,11 @@ class report(ASMEndpoint):
         crid = post.integer("id")
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
-        crit = asm3.reports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
+        crit = asm3.reports.get_criteria(dbo, crid)
         self.content_type("text/html")
         self.cache_control(0)
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
-        if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report" % post.integer("id"))
+        if len(crit) != 0 and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report" % post.integer("id"))
         title = asm3.reports.get_title(dbo, crid)
         asm3.al.debug("got criteria (%s), executing report %d %s" % (str(post.data), crid, title), "code.report", dbo)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
@@ -5598,14 +5590,31 @@ class report_criteria(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         post = o.post
-        title = asm3.reports.get_title(o.dbo, o.post.integer("id"))
+        title = asm3.reports.get_title(o.dbo, post.integer("id"))
+        crit = asm3.reports.get_criteria(dbo, post.integer("id"))
         asm3.al.debug("building report criteria form for report %d %s" % (post.integer("id"), title), "code.report_criteria", dbo)
-        return {
-            "id": post.integer("id"),
-            "title": title,
-            "target": post["target"],
-            "criteriahtml": asm3.reports.get_criteria_controls(o.dbo, o.post.integer("id"), locationfilter = o.locationfilter, siteid = o.siteid)
+        def has_criteria(c):
+            for name, rtype, question in crit:
+                if rtype == c: return True
+            return False
+        c = {
+            "id":           post.integer("id"),
+            "title":        title,
+            "target":       post["target"],
+            "criteria":     crit
         }
+        if has_criteria("ANIMALFLAG"): c["animalflags"] = asm3.lookups.get_animal_flags(dbo)
+        if has_criteria("DONATIONTYPE") or has_criteria("PAYMENTTYPE"): c["donationtypes"] = asm3.lookups.get_donation_types(dbo)
+        if has_criteria("LITTER"): c["litters"] = asm3.animal.get_active_litters_brief(dbo)
+        if has_criteria("LOCATION"): c["locations"] = asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid)
+        if has_criteria("LOGTYPES"): c["logtypes"] = asm3.lookups.get_log_types(dbo)
+        if has_criteria("PAYMENTMETHOD") or has_criteria("PAYMENTTYPE"): c["paymentmethods"] = asm3.lookups.get_payment_methods(dbo)
+        if has_criteria("PERSON"): c["people"] = asm3.person.get_person_name_addresses(dbo)
+        if has_criteria("PERSONFLAG"): c["personflags"] = asm3.lookups.get_person_flags(dbo)
+        if has_criteria("SITE"): c["sites"] = asm3.lookups.get_sites(dbo)
+        if has_criteria("SPECIES"): c["species"] = asm3.lookups.get_species(dbo)
+        if has_criteria("TYPE"): c["types"] = asm3.lookups.get_animal_types(dbo)
+        return c
 
 class report_export(JSONEndpoint):
     url = "report_export"
@@ -5627,9 +5636,9 @@ class report_export_csv(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         crid = post.integer("id")
-        crit = asm3.reports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
+        crit = asm3.reports.get_criteria(dbo, crid)
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
-        if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_csv" % crid)
+        if len(crit) != 0 and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_csv" % crid)
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
         title = asm3.reports.get_title(dbo, crid)
@@ -5656,9 +5665,9 @@ class report_export_email(ASMEndpoint):
         post = o.post
         crid = post.integer("id")
         email = post["email"]
-        crit = asm3.reports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
+        crit = asm3.reports.get_criteria(dbo, crid)
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
-        if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_email" % crid)
+        if len(crit) != 0 and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_email" % crid)
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
         title = asm3.reports.get_title(dbo, crid)
@@ -5675,9 +5684,9 @@ class report_export_pdf(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         crid = post.integer("id")
-        crit = asm3.reports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
+        crit = asm3.reports.get_criteria(dbo, crid)
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
-        if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_pdf" % crid)
+        if len(crit) != 0 and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_pdf" % crid)
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
