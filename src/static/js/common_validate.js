@@ -160,7 +160,7 @@ const validate = {
 
     /**
      * Validates one or more email addresses separated by commas.
-     * Shows a global error and returns false if one or more of the addresses is invalid.
+     * Returns true if the address is valid.
      */
     email: function(v) {
         /*jslint regexp: true */
@@ -171,7 +171,6 @@ const validate = {
             if (e.indexOf("<") != -1 && e.indexOf(">") != -1) { e = e.substring(e.indexOf("<")+1, e.indexOf(">")); }
             if (!re.test(String(e).toLowerCase())) { 
                 rv = false; 
-                header.show_error(_("Invalid email address '{0}'").replace("{0}", e));
             }
         });
         return rv;

@@ -670,11 +670,12 @@ $.widget("asm.emailform", {
         b[_("Send")] = {
             text: _("Send"),
             "class": "asm-dialog-actionbutton",
-            click: function() { 
-                if (!validate.email($("#em-from").val())) { return; }
-                if (!validate.email($("#em-to").val())) { return; }
-                if ($("#em-cc").val() != "" && !validate.email($("#em-cc").val())) { return; }
-                if ($("#em-bcc").val() != "" && !validate.email($("#em-bcc").val())) { return; }
+            click: function() {
+                validate.reset("dialog-email");
+                if (!validate.notblank(["em-from", "em-to"])) { return; }
+                if (!validate.validemail(["em-from", "em-to"])) { return; }
+                if ($("#em-cc").val() != "" && !validate.validemail(["em-cc"])) { return; }
+                if ($("#em-bcc").val() != "" && !validate.validemail(["em-bcc"])) { return; }
                 let o = self.options.o;
                 if (o.formdata) { o.formdata += "&"; }
                 o.formdata += $("#dialog-email input, #dialog-email select, #dialog-email .asm-richtextarea").toPOST();
