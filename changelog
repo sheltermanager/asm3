@@ -1,6 +1,7 @@
 46
 ================
 
+22/06/22 (sm.com) make sure account alias is set correctly when sending email
 21/06/22 basic check-a-chip integration for the UK and US #1144
 21/06/22 Refactor/split common out into html/validate/microchip js #1144
 20/06/22 Annual figures section for non-shelter microchips implanted #1140

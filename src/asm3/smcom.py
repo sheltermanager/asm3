@@ -62,9 +62,16 @@ def get_database_info(alias):
         dbo.database = "FAIL"
         return dbo
 
-    dbo.database = str(a["user"])
+    dbo.database = a["user"]
     dbo.username = dbo.database
     dbo.password = dbo.database
+
+    # dbo.alias is used in particular when sending emails to make a friendlier
+    # bounce address. If the account has one, set it here. We used to just set
+    # this on login above, but if they logged in with their account number the 
+    # alias was not set.
+    if a["alias"] != "":
+        dbo.alias = a["alias"]
 
     # Is this sm.com account disabled or removed from the server?
     if a["expired"] or a["archived"]:
