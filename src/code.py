@@ -858,7 +858,7 @@ class media_pdfjs(ASMEndpoint):
 
 class mobile(ASMEndpoint):
     url = "mobile"
-    login_url = "/mobile_login"
+    login_url = "mobile_login"
 
     def content(self, o):
         self.content_type("text/html")
@@ -866,7 +866,7 @@ class mobile(ASMEndpoint):
 
 class mobile2(ASMEndpoint):
     url = "mobile2"
-    login_url = "/mobile2_login"
+    login_url = "mobile_login"
 
     def content(self, o):
         dbo = o.dbo
@@ -917,8 +917,9 @@ class mobile_login(ASMEndpoint):
         self.content_type("text/html")
         c = {
             "smcom": asm3.smcom.active(),
-            "multipledatabases": MULTIPLE_DATABASES,
             "smcomloginurl": SMCOM_LOGIN_URL,
+            "multipledatabases": MULTIPLE_DATABASES,
+            "target": o.post["target"],
             "smaccount": o.post["smaccount"],
             "username": o.post["username"],
             "password": o.post["password"]
@@ -942,7 +943,7 @@ class mobile_logout(ASMEndpoint):
 
 class mobile_post(ASMEndpoint):
     url = "mobile_post"
-    login_url = "/mobile_login"
+    login_url = "mobile_login"
 
     def handle(self, o):
         s = asm3.mobile.handler(o.session, o.post)
@@ -962,7 +963,7 @@ class mobile_post(ASMEndpoint):
 
 class mobile_report(ASMEndpoint):
     url = "mobile_report"
-    login_url = "/mobile_login"
+    login_url = "mobile_login"
     get_permissions = asm3.users.VIEW_REPORT
 
     def content(self, o):

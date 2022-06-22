@@ -93,7 +93,12 @@ $(document).ready(function() {
                     window.location = controller.smcomloginurl;
                 }
                 else {
-                    window.location = "mobile";
+                    if (controller.target) {
+                        window.location = controller.target;
+                    }
+                    else {
+                        window.location = "mobile";
+                    }
                 }
             },
             error: function(jqxhr, textstatus, response) {
