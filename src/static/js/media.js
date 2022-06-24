@@ -353,8 +353,8 @@ $(function() {
                 h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="' + linkimage + '" /></a>');
             }
             else if (m.MEDIAMIMETYPE == "image/jpeg") {
-                h.push('<a href="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
-                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" /></a>');
+                h.push('<a href="image?db=' + asm.useraccount + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
+                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="image?db=' + asm.useraccount + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" /></a>');
             }
             else if (m.MEDIAMIMETYPE == "text/html") {
                 h.push('<a href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
