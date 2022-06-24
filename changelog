@@ -1,6 +1,7 @@
 46
 ================
 
+24/06/22 Read through disk cache for thumbnail images to avoid reliance on CDN
 22/06/22 Highlight bad email addresses in dialog, stop using global error #1138
 22/06/22 Refactoring old stuff out of html.py #1145
 22/06/22 Refactoring report criteria for consistency #1145

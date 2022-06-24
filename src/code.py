@@ -514,9 +514,21 @@ class image(ASMEndpoint):
 
     def content(self, o):
         try:
-            lastmod, imagedata = asm3.media.get_image_file_data(o.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
+            # Use a read through disk cache for thumbnails.
+            # This saves on database calls and thumbnail scaling for busier sites.
+            # We only cache if a date parameter is specified so that changing the date can invalidate the cache.
+            if o.post["date"] != "" and o.post["mode"].endswith("thumb"):
+                cache_key = "%s:id=%s:seq=%s:date=%s" % ( o.post["mode"], o.post["id"], o.post.integer("seq"), o.post["date"])
+                cache_path = o.dbo.database
+                imagedata = asm3.cachedisk.get(cache_key, cache_path)
+                if imagedata is None:
+                    lastmod, imagedata = asm3.media.get_image_file_data(o.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
+                    if len(imagedata) > 50: # Never cache empty/broken thumbnails
+                        asm3.cachedisk.put(cache_key, cache_path, imagedata, CACHE_ONE_WEEK)
+            else:
+                lastmod, imagedata = asm3.media.get_image_file_data(o.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
         except Exception as err:
-            # This call in this endpoint produces a lot of errors when people try to access 
+            # The call to get_image_file_data can produce a lot of errors when people try to access 
             # images via unsubstituted tokens in documents, etc. 
             # Log them instead of throwing an error that will end up in our error box
             asm3.al.error(str(err), "code.image", o.dbo, sys.exc_info())
@@ -525,7 +537,7 @@ class image(ASMEndpoint):
         if imagedata != b"NOPIC":
             self.content_type("image/jpeg")
             if o.post["date"] != "":
-                # if we have a date parameter, it can be used to invalidate any cache
+                # if we have a date parameter, it can be used to invalidate any cache, so cache on the client for a long time
                 self.cache_control(CACHE_ONE_YEAR)
             else:
                 # otherwise cache for an hour in CDNs and just for the day locally
