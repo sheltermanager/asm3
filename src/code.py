@@ -517,10 +517,12 @@ class image(ASMEndpoint):
             # Use a read through disk cache for thumbnails.
             # This saves on database calls and thumbnail scaling for busier sites.
             # We only cache if a date parameter is specified so that changing the date can invalidate the cache.
+            cache_indicator = ""
             if o.post["date"] != "" and o.post["mode"].endswith("thumb"):
                 cache_key = "%s:id=%s:seq=%s:date=%s" % ( o.post["mode"], o.post["id"], o.post.integer("seq"), o.post["date"])
                 cache_path = o.dbo.database
                 imagedata = asm3.cachedisk.get(cache_key, cache_path)
+                cache_indicator = asm3.utils.iif(imagedata is None, "", " from cache")
                 if imagedata is None:
                     lastmod, imagedata = asm3.media.get_image_file_data(o.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
                     if len(imagedata) > 50: # Never cache empty/broken thumbnails
@@ -542,7 +544,7 @@ class image(ASMEndpoint):
             else:
                 # otherwise cache for an hour in CDNs and just for the day locally
                 self.cache_control(CACHE_ONE_DAY, CACHE_ONE_HOUR)
-            asm3.al.debug("mode=%s id=%s seq=%s (%s bytes)" % (o.post["mode"], o.post["id"], o.post["seq"], len(imagedata)), "image.content", o.dbo)
+            asm3.al.debug("mode=%s id=%s seq=%s (%s bytes%s)" % (o.post["mode"], o.post["id"], o.post["seq"], len(imagedata), cache_indicator), "image.content", o.dbo)
             return imagedata
         else:
             # If a parameter of nopic=404 is passed, we return a 404 instead of redirecting to nopic
