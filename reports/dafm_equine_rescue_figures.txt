@@ -18,7 +18,7 @@ SELECT
 CASE WHEN a.IsTransfer = 1 THEN 'Transfer from ' || bo.OwnerName ELSE er.ReasonName END AS Origin,
 to_char(a.DateBroughtIn, 'DD/MM/YYYY') AS DateRequineRescued,
 a.IdentichipNumber AS Microchip,
-(SELECT LicenceNumber FROM ownerlicence WHERE AnimalID = a.ID AND LicenceTypeID=$UELN$ ORDER BY IssueDate DESC LIMIT 1) AS UELN,
+(SELECT LicenceNumber FROM ownerlicence WHERE AnimalID = a.ID AND LicenceTypeID=$EULN$ ORDER BY IssueDate DESC LIMIT 1) AS UELN,
 CASE WHEN a.ActiveMovementType IN (1,2) THEN (SELECT LicenceNumber FROM ownerlicence WHERE OwnerID = no.ID AND LicenceTypeID=$EPN$ ORDER BY IssueDate DESC LIMIT 1) ELSE il.LocationName END AS EPN,
 CASE WHEN a.ActiveMovementType IN (1,2) THEN a.ActiveMovementDate ELSE NULL END AS RehomingDate,
 a.DeceasedDate,
