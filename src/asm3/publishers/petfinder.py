@@ -123,6 +123,11 @@ class PetFinderPublisher(FTPPublisher):
         # in these cases.
         hide_unaltered = asm3.configuration.petfinder_hide_unaltered(self.dbo)
 
+        # If the size field has been hidden, just send "M" to PetFinder because
+        # it's mandatory for them, but the user can't see the value in their
+        # data and if they picked an unusual default size it will look weird.
+        hide_size = asm3.configuration.dont_show_size(self.dbo)
+
         csv = [ "ID,Internal,AnimalName,PrimaryBreed,SecondaryBreed,Sex,Size,Age,Desc,Type,Status," \
             "Shots,Altered,NoDogs,NoCats,NoKids,Housetrained,Declawed,specialNeeds,Mix," \
             "photo1,photo2,photo3,photo4,photo5,photo6,arrival_date,birth_date," \
@@ -151,7 +156,7 @@ class PetFinderPublisher(FTPPublisher):
                     self.log("%s is unaltered and petfinder_hide_unaltered == true" % an["ANIMALNAME"])
                     continue
 
-                csv.append( self.processAnimal(an, agebands) )
+                csv.append( self.processAnimal(an, agebands, hide_size = hide_size) )
 
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
@@ -164,7 +169,7 @@ class PetFinderPublisher(FTPPublisher):
             rows = self.dbo.query("%s WHERE a.Archived=0 AND a.HasPermanentFoster=0 AND a.HasTrialAdoption=0 AND er.ReasonName LIKE '%%Stray%%'" % asm3.animal.get_animal_query(self.dbo))
             for an in rows:
                 if is_animal_adoptable(self.dbo, an): continue # do not re-send adoptable animals
-                csv.append( self.processAnimal(an, agebands, status = "F") )
+                csv.append( self.processAnimal(an, agebands, status = "F", hide_size = hide_size) )
 
         # Is the option to send holds on?
         if asm3.configuration.petfinder_send_holds(self.dbo):
@@ -172,7 +177,7 @@ class PetFinderPublisher(FTPPublisher):
             for an in rows:
                 if is_animal_adoptable(self.dbo, an): continue # do not re-send adoptable animals
                 if an.ENTRYREASONNAME.find("Stray") != -1: continue # we already sent this animal as a stray above
-                csv.append( self.processAnimal(an, agebands, status = "H") )
+                csv.append( self.processAnimal(an, agebands, status = "H", hide_size = hide_size ) )
 
         # Mark published
         self.markAnimalsPublished(animals, first=True)
@@ -187,7 +192,7 @@ class PetFinderPublisher(FTPPublisher):
         self.log("\n".join(csv))
         self.cleanup()
 
-    def processAnimal(self, an, agebands = [ 182, 730, 3285 ], status = "A"):
+    def processAnimal(self, an, agebands = [ 182, 730, 3285 ], status = "A", hide_size = False):
         """ Processes an animal and returns a CSV line """
         primary_color = ""
         secondary_color = ""
@@ -204,26 +209,27 @@ class PetFinderPublisher(FTPPublisher):
         line = []
         # This specific CSV ordering has been mandated by PetFinder in their import docs of August 2019
         # ID
-        line.append("\"%s\"" % an.SHELTERCODE)
+        line.append(an.SHELTERCODE)
         # Internal
-        line.append("\"%s\"" % an.SHELTERCODE)
+        line.append(an.SHELTERCODE)
         # AnimalName
-        line.append("\"%s\"" % an.ANIMALNAME)
+        line.append(an.ANIMALNAME)
         # PrimaryBreed
-        line.append("\"%s\"" % an.PETFINDERBREED)
+        line.append(an.PETFINDERBREED)
         # SecondaryBreed
-        line.append("\"%s\"" % self.getPublisherBreed(an, 2))
+        line.append(self.getPublisherBreed(an, 2))
         # Sex, one of M or F
         sexname = "M"
         if an.SEX == 0: sexname = "F"
-        line.append("\"%s\"" % sexname)
+        line.append(sexname)
         # Size, one of S, M, L, XL
         ansize = "M"
-        if an.SIZE == 0: ansize = "XL"
+        if hide_size: ansize = "M"
+        elif an.SIZE == 0: ansize = "XL"
         elif an.SIZE == 1: ansize = "L"
         elif an.SIZE == 2: ansize = "M"
         elif an.SIZE == 3: ansize = "S"
-        line.append("\"%s\"" % ansize)
+        line.append(ansize)
         # Age, one of Adult, Baby, Senior and Young
         ageindays = asm3.i18n.date_diff_days(an.DATEOFBIRTH, asm3.i18n.now(self.dbo.timezone))
         agename = "Adult"
@@ -231,11 +237,11 @@ class PetFinderPublisher(FTPPublisher):
         elif ageindays < agebands[1]: agename = "Young"
         elif ageindays < agebands[2]: agename = "Adult"
         else: agename = "Senior"
-        line.append("\"%s\"" % agename)
+        line.append(agename)
         # Description
-        line.append("\"%s\"" % self.getDescription(an, crToHE=True, replaceSmart=True))
+        line.append(self.getDescription(an, crToHE=True, replaceSmart=True))
         # Type (Species)
-        line.append("\"%s\"" % an.PETFINDERSPECIES)
+        line.append(an.PETFINDERSPECIES)
         # Status
         line.append(status)
         # Shots
@@ -254,30 +260,30 @@ class PetFinderPublisher(FTPPublisher):
         line.append(self.pfYesNo(an.DECLAWED == 1))
         # Special needs
         if an.CRUELTYCASE == 1:
-            line.append("\"1\"")
+            line.append("1")
         elif an.HASSPECIALNEEDS == 1:
-            line.append("\"1\"")
+            line.append("1")
         else:
-            line.append("\"\"")
+            line.append("")
         # Mix
         line.append(self.pfYesNo(an.CROSSBREED == 1))
         # photo1-6
         if PETFINDER_SEND_PHOTOS_BY_FTP:
             # Send blanks for the 6 images if we already sent them by FTP
-            line.append("\"\"")
-            line.append("\"\"")
-            line.append("\"\"")
-            line.append("\"\"")
-            line.append("\"\"")
-            line.append("\"\"")
+            line.append("")
+            line.append("")
+            line.append("")
+            line.append("")
+            line.append("")
+            line.append("")
         else:
             urls = self.getPhotoUrls(an.ID)
-            line.append("\"%s\"" % self.pfImageUrl(urls, 0)) # photo1
-            line.append("\"%s\"" % self.pfImageUrl(urls, 1)) # photo2
-            line.append("\"%s\"" % self.pfImageUrl(urls, 2)) # photo3
-            line.append("\"%s\"" % self.pfImageUrl(urls, 3)) # photo4
-            line.append("\"%s\"" % self.pfImageUrl(urls, 4)) # photo5
-            line.append("\"%s\"" % self.pfImageUrl(urls, 5)) # photo6
+            line.append(self.pfImageUrl(urls, 0)) # photo1
+            line.append(self.pfImageUrl(urls, 1)) # photo2
+            line.append(self.pfImageUrl(urls, 2)) # photo3
+            line.append(self.pfImageUrl(urls, 3)) # photo4
+            line.append(self.pfImageUrl(urls, 4)) # photo5
+            line.append(self.pfImageUrl(urls, 5)) # photo6
         # Arrival Date
         line.append(self.pfDate(an.MOSTRECENTENTRYDATE))
         # Birth Date
@@ -293,9 +299,9 @@ class PetFinderPublisher(FTPPublisher):
         # Adoption Fee
         adoptionfee = asm3.utils.cint(an.FEE)
         if adoptionfee > 0:
-            line.append("\"%0.2f\"" % (adoptionfee / 100))
+            line.append("%0.2f" % (adoptionfee / 100))
         else:
-            line.append("\"\"") # send 0 fees as a blank as PF seem to ignore their own display adoption fee flag below
+            line.append("") # send 0 fees as a blank as PF seem to ignore their own display adoption fee flag below
         # Display adoption fee?
         line.append(self.pfYesNo(an.FEE > 0))
         # Adoption fee waived
@@ -303,11 +309,11 @@ class PetFinderPublisher(FTPPublisher):
         # Special Needs Notes 
         line.append(special_needs_notes)
         # No Other pets?
-        line.append("\"%s\"" % (self.pfYesNo(False)))
+        line.append((self.pfYesNo(False)))
         # No Other Note
-        line.append("\"\"")
+        line.append("")
         # Tags
-        line.append("\"\"")
+        line.append("")
         return self.csvLine(line)
 
     def clearListings(self):

@@ -195,6 +195,7 @@ DEFAULTS = {
     "DonationVATAccount": "22",
     "DonationOnMoveReserve": "Yes",
     "DontShowRabies": "Yes",
+    "DontShowSize": "No",
     "EmailDiaryNotes": "Yes", 
     "EmailDiaryOnChange": "No",
     "EmailDiaryOnComplete": "No",
@@ -876,6 +877,9 @@ def donation_trx_override(dbo):
 
 def donation_vat_account(dbo):
     return cint(dbo, "DonationVATAccount", DEFAULTS["DonationVATAccount"])
+
+def dont_show_size(dbo):
+    return cboolean(dbo, "DontShowSize", DEFAULTS["DontShowSize"] == "Yes")
 
 def email(dbo):
     return cstring(dbo, "EmailAddress")
