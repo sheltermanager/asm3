@@ -2739,6 +2739,7 @@ def clone_animal(dbo, username, animalid):
         "IsTransfer":       a.istransfer,
         "IsPickup":         a.ispickup,
         "PickupLocationID": a.pickuplocationid,
+        "PickupAddress":    a.pickupaddress,
         "JurisdictionID":   a.jurisdictionid,
         "IsGoodWithCats":   a.isgoodwithcats,
         "IsGoodWithDogs":   a.isgoodwithdogs,

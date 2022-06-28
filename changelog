@@ -1,6 +1,7 @@
 46
 ================
 
+28/06/22 Copy pickupaddress column when cloning an animal
 28/06/22 Allow S3 credentials/endpoint to be set as sitedefs #1146
 28/06/22 Hide intake time as well as date for non-shelter animals
 27/06/22 If size is removed, always send M to PetFinder
