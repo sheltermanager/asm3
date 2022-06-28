@@ -4,7 +4,8 @@ import asm3.cachedisk
 import asm3.smcom
 import asm3.utils
 
-from asm3.sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, DBFS_S3_BUCKET
+from asm3.sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER
+from asm3.sitedefs import DBFS_S3_BUCKET, DBFS_S3_ACCESS_KEY_ID, DBFS_S3_SECRET_ACCESS_KEY, DBFS_S3_ENDPOINT_URL
 
 import mimetypes
 import os, sys, threading, time
@@ -158,7 +159,12 @@ class S3Storage(DBFSStorage):
         """
         import boto3
         session = boto3.Session() 
-        return session.client("s3")
+        if DBFS_S3_ENDPOINT_URL != "" and DBFS_S3_ACCESS_KEY_ID != "" and DBFS_S3_SECRET_ACCESS_KEY != "":
+            return session.client("s3", endpoint_url=DBFS_S3_ENDPOINT_URL, aws_access_key_id=DBFS_S3_ACCESS_KEY_ID, aws_secret_access_key=DBFS_S3_SECRET_ACCESS_KEY)
+        elif DBFS_S3_ACCESS_KEY_ID != "" and DBFS_S3_SECRET_ACCESS_KEY != "":
+            return session.client("s3", aws_access_key_id=DBFS_S3_ACCESS_KEY_ID, aws_secret_access_key=DBFS_S3_SECRET_ACCESS_KEY)
+        else:
+            return session.client("s3")
 
     def get(self, dbfsid, url):
         """ Returns the file data for url, reads through the disk cache """
