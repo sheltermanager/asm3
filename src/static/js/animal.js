@@ -1035,6 +1035,7 @@ $(function() {
                     // Only hide the fee and intake date for non-shelter non-template animals
                     $("#feerow").hide(); 
                     $("#datebroughtinrow").hide();
+                    $("#timebroughtinrow").hide();
                 } 
                 $("#transferinrow").hide();
                 $("#pickeduprow").hide();

@@ -1,6 +1,7 @@
 46
 ================
 
+28/06/22 Hide intake time as well as date for non-shelter animals
 27/06/22 If size is removed, always send M to PetFinder
 24/06/22 Read through disk cache for thumbnail images to avoid reliance on CDN
 22/06/22 Highlight bad email addresses in dialog, stop using global error #1138
