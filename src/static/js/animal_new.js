@@ -516,7 +516,6 @@ $(function() {
             $("#entryreason").select("value", config.str("AFDefaultEntryReason"));
             $("#internallocation").select("value", config.str("AFDefaultLocation"));
             $("#jurisdiction").select("value", config.str("DefaultJurisdiction"));
-            $("#pickuplocation").select("firstvalue");
             $("#size").select("value", config.str("AFDefaultSize"));
             $("#sex").select("value", "2"); // Unknown
 
