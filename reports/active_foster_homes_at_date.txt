@@ -1,0 +1,42 @@
+Active Foster Homes at Date by Species
+###
+Movements
+###
+Any rev01
+###
+The number of active foster homes on a given date by species
+###
+en
+###
+$VAR date DATE Active on$
+SELECT
+SpeciesName,
+COUNT(DISTINCT m.OwnerID) AS TotalHomes
+FROM adoption m
+INNER JOIN animal a ON a.ID = m.AnimalID
+INNER JOIN species s ON s.ID = a.SpeciesID
+WHERE m.MovementType = 2
+AND m.MovementDate <= '$@date$' AND (m.ReturnDate Is NULL or m.ReturnDate > '$@date$')
+AND (a.DeceasedDate Is Null OR a.DeceasedDate > '$@date$')
+GROUP BY SpeciesName
+###
+$$HEADER
+<table>
+<tr>
+<th>Species</th>
+<th>Active Foster Homes</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$SpeciesName</td>
+<td>$TotalHomes</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<p>Total active foster homes: <b>{SUM.TotalHomes.0}</b></p>
+FOOTER$$
+
