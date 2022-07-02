@@ -1,6 +1,7 @@
 46
 ================
 
+02/07/22 Set base tag for online forms so that they can be proxied #1147
 01/07/22 Do not show the report toolbar for the html_report service call
 01/07/22 Prevent hidden pickuplocation on new animal choosing an inactive item
 28/06/22 Copy pickupaddress column when cloning an animal
