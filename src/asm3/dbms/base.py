@@ -482,7 +482,7 @@ class Database(object):
         if params:
             for p in params:
                 sql = sql.replace("%s", self.sql_value(p), 1)
-        with open(DB_EXEC_LOG.replace("{database}", self.database), "a") as f:
+        with open(DB_EXEC_LOG.replace("{database}", self.database), "a", encoding="utf-8") as f:
             f.write("-- %s\n%s;\n" % (self.now(), sql))
 
     def now(self, timenow=True, offset=0, settime=""):
