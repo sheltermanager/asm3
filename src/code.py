@@ -5921,10 +5921,15 @@ class sql(JSONEndpoint):
             q is already stripped and converted to lower case by the exec_sql caller.
             If one of our tamper proofed tables is touched, an Exception is raised
             and the query not run.
+            This will also throw an error if we have an update or delete query
+            without a where clause to prevent people doing something daft
+            (easy to get around with WHERE 1=1 or something)
         """
         for t in ( "audittrail", "deletion", "signaturehash" ):
             if q.find(t) != -1:
                 raise Exception("Forbidden: %s" % q)
+        if q.find("where") == -1 and (q.startswith("delete") or q.startswith("update")):
+            raise Exception("Forbidden: DELETE or UPDATE")
 
     def exec_sql(self, dbo, user, sql):
         l = dbo.locale
