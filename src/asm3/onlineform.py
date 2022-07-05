@@ -488,7 +488,7 @@ def get_onlineformincoming_detail(dbo, collationid):
     return dbo.query("SELECT * FROM onlineformincoming WHERE CollationID = ? ORDER BY DisplayIndex", [collationid])
 
 def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_images=True):
-    """ Returns an HTML fragment of the incoming form data """
+    """ Returns a partial HTML document of the incoming form data fields """
     h = []
     h.append('<table width="100%">')
     for f in get_onlineformincoming_detail(dbo, collationid):
@@ -505,6 +505,14 @@ def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_imag
             h.append('<tr>')
             h.append('<td>%s</td>' % label )
             h.append('<td><img src="%s" border="0" /></td>' % v)
+            h.append('</tr>')
+        elif f.FIELDNAME == "useragent":
+            # Some user agent strings can be huge and without wrappable characters,
+            # so they throw off the formatting of the rest of the form when viewing
+            # in the dialog or printing.
+            h.append('<tr>')
+            h.append('<td>%s</td>' % label )
+            h.append('<td><div style="word-wrap: anywhere; max-width: 400px">%s</div></td>' % v)
             h.append('</tr>')
         else:
             h.append('<tr>')

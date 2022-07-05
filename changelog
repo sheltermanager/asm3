@@ -1,6 +1,7 @@
 46
 ================
 
+05/07/22 Restrict the maximum width of the useragent in incoming forms
 05/07/22 Visual improvements to default online form template
 05/07/22 Use efficient memory cache for collation/receipt sequences #1149
 02/07/22 Use utf-8 when writing transaction logs
