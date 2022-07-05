@@ -158,7 +158,6 @@ DEFAULTS = {
     "CardcomDocumentType": "3",
     "CardcomMaxInstallments": "6",
     "CloneAnimalIncludeLogs": "Yes",
-    "CollationIDNext": "0",
     "CostSourceAccount": "9",
     "CreateBoardingCostOnAdoption": "Yes",
     "CreateCostTrx": "No",
@@ -307,7 +306,6 @@ DEFAULTS = {
     "QuicklinksID": "40,46,25,31,34,19,20",
     "QuicklinksHomeScreen": "Yes",
     "QuicklinksAllScreens": "No",
-    "ReceiptNumberNext": "0",
     "RecordSearchLimit": "1000",
     "ReloadMedical": "Yes",
     "ReportToolbar": "Yes",
@@ -731,14 +729,6 @@ def coding_format(dbo):
 
 def coding_format_short(dbo):
     return cstring(dbo, "ShortCodingFormat", DEFAULTS["ShortCodingFormat"])
-
-def collation_id_next(dbo):
-    """ Returns the CollationIDNext value and increments it """
-    nrn = cint(dbo, "CollationIDNext", 0)
-    if nrn == 0:
-        nrn = 1 + dbo.query_int("SELECT MAX(CollationID) FROM onlineformincoming")
-    cset(dbo, "CollationIDNext", str(nrn + 1))
-    return nrn
 
 def cost_source_account(dbo):
     return cint(dbo, "CostSourceAccount", DEFAULTS["CostSourceAccount"])
@@ -1272,14 +1262,6 @@ def quicklinks_id(dbo, newval = None):
         return cstring(dbo, "QuicklinksID", DEFAULTS["QuicklinksID"])
     else:
         cset(dbo, "QuicklinksID", newval)
-
-def receipt_number_next(dbo):
-    """ Returns the ReceiptNumberNext value and increments it """
-    nrn = cint(dbo, "ReceiptNumberNext", 0)
-    if nrn == 0:
-        nrn = 1 + dbo.query_int("SELECT MAX(ID) FROM ownerdonation")
-    cset(dbo, "ReceiptNumberNext", str(nrn + 1))
-    return nrn
 
 def report_toolbar(dbo):
     return cboolean(dbo, "ReportToolbar", DEFAULTS["ReportToolbar"] == "Yes")

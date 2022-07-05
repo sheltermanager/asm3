@@ -1,5 +1,6 @@
 
 import asm3.al
+import asm3.cachemem
 import asm3.configuration
 import asm3.i18n
 import asm3.users
@@ -511,6 +512,20 @@ def cmd(c, shell=False):
         return (0, output)
     except subprocess.CalledProcessError as e:
         return (e.returncode, e.output)
+
+def cache_sequence(dbo, name, vsql):
+    """
+    Returns the next value in an incrementing sequence with "name".
+    Uses memcache incr to handle state among processes.
+    vsql: A query that returns the next value for this sequence from the database.
+          If the cache is empty, this value is returned+1 and the cache initialised.
+    """
+    cache_key = "%s_sq_%s" % (dbo.database, name)
+    seq = asm3.cachemem.increment(cache_key)
+    if seq is None:
+        seq = 1 + dbo.query_int(vsql)
+        asm3.cachemem.put(cache_key, seq, 86400)
+    return seq
 
 def deduplicate_list(l):
     """

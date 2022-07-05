@@ -393,7 +393,7 @@ def get_movement_donations(dbo, mid):
 
 def get_next_receipt_number(dbo):
     """ Returns the next receipt number for the frontend """
-    return asm3.utils.padleft(asm3.configuration.receipt_number_next(dbo), 8)
+    return asm3.utils.padleft( asm3.utils.cache_sequence(dbo, "receipt", "SELECT MAX(ReceiptNumber) FROM ownerdonation"), 8 )
 
 def get_donations(dbo, offset = "m31"):
     """

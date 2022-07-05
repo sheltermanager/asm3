@@ -1,6 +1,7 @@
 46
 ================
 
+05/07/22 Use efficient memory cache for collation/receipt sequences #1149
 02/07/22 Use utf-8 when writing transaction logs
 02/07/22 Set base tag for online forms so that they can be proxied #1147
 01/07/22 Do not show the report toolbar for the html_report service call
