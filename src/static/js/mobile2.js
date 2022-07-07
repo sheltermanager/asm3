@@ -4,10 +4,31 @@ $(document).ready(function() {
 
     "use strict";
 
-    const show_dlg = function(title, body) {
+    const show_error = function(title, body) {
         $("#errortitle").html(title);
         $("#errortext").html(body);
         $("#errordlg").modal("show");
+    };
+
+    const ajax_post = function(formdata, successfunc, errorfunc) {
+        $.ajax({
+            type: "POST",
+            url: "mobile2",
+            data: formdata,
+            dataType: "text",
+            mimeType: "textPlain",
+            success: function(result) {
+                if (successfunc) {
+                    successfunc(result);
+                }
+            },
+            error: function(jqxhr, textstatus, response) {
+                if (errorfunc) {
+                    errorfunc(textstatus, response);
+                }
+                show_error(textstatus, response);
+            }
+        });
     };
 
     let h = [
@@ -22,6 +43,21 @@ $(document).ready(function() {
                     '</div>',
                     '<div class="modal-footer">',
                         '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' + _("Close") + '</button>',
+                    '</div>',
+                '</div>',
+            '</div>',
+        '</div>',
+        '<div class="modal fade" id="administerdlg" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="administertitle" aria-hidden="true">',
+            '<div class="modal-dialog">',
+                '<div class="modal-content">',
+                    '<div class="modal-header">',
+                        '<h5 class="modal-title" id="administertitle">' + _("Give") + '</h5>',
+                    '</div>',
+                    '<div id="administertext" class="modal-body">',
+                    '</div>',
+                    '<div class="modal-footer">',
+                        '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' + _("Cancel") + '</button>',
+                        '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' + _("Give") + '</button>',
                     '</div>',
                 '</div>',
             '</div>',
@@ -60,12 +96,12 @@ $(document).ready(function() {
                             '</a>',
                         '</li>',
                         '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link" href="#">' + _("Vaccinate Animal"),
+                            '<a class="nav-link internal-link" data-link="vaccinate" href="#">' + _("Vaccinate Animal"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.vaccinations.length + '</span>',
                             '</a>',
                         '</li>',
                         '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link" href="#">' + _("Test Animal"),
+                            '<a class="nav-link internal-link" data-link="test" href="#">' + _("Test Animal"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.tests.length + '</span>',
                             '</a>',
                         '</li>',
@@ -190,7 +226,23 @@ $(document).ready(function() {
         '<div class="list-group">',
         '</div>',
         '</div>',
-        '<div id="content-medicateanimal" class="container" style="display: none">',
+
+        '<div id="content-vaccinate" class="container" style="display: none">',
+        '<h2>' + _("Vaccinate Animal") + '</h2>',
+        '<div class="mb-3">',
+        '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
+        '</div>',
+        '<div class="list-group">',
+        '</div>',
+        '</div>',
+
+        '<div id="content-test" class="container" style="display: none">',
+        '<h2>' + _("Test Animal") + '</h2>',
+        '<div class="mb-3">',
+        '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
+        '</div>',
+        '<div class="list-group">',
+        '</div>',
         '</div>',
 
         '<div id="content-checklicence" class="container" style="display: none">',
@@ -343,8 +395,78 @@ $(document).ready(function() {
             '</a>';
         $("#content-medicate .list-group").append(h);
     });
+    // Handle clicking an animal to medicate and showing a popup dialog to confirm
     $("#content-medicate").on("click", "a", function() {
-        // TODO: render more info on the medication with a button to mark it given
+        let treatmentid = $(this).attr("data-id");
+        $.each(controller.medicals, function(i, v) {
+            if (v.TREATMENTID == treatmentid) {
+                $("#administerdlg .btn-primary").unbind("click");
+                $("#administerdlg .btn-primary").click(function() {
+                    ajax_post("mode=medical&id=" + treatmentid, function() {
+                        $("#content-medicate [data-id='" + treatmentid + "']").remove(); // remove the item from the list on success
+                    });
+                });
+                $("#administertitle").html(_("Give Treatments"));
+                $("#administertext").html(format.date(v.DATEREQUIRED) + ": " + v.ANIMALNAME + ' - ' + v.SHELTERCODE + ': ' + v.TREATMENTNAME);
+                $("#administerdlg").modal("show");
+            }
+        });
+    });
+
+    // Load list of animals to test
+    $("#content-test .list-group").empty();
+    $.each(controller.tests, function(i, v) {
+        let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
+            '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
+            '<h5 class="mb-1">' + v.ANIMALNAME + ' - ' + v.SHELTERCODE + '</h5>' +
+            '<small>(' + v.TESTNAME + ', ' + format.date(v.DATEREQUIRED) + ') ' + v.DISPLAYLOCATION + '</small>' +
+            '</a>';
+        $("#content-test .list-group").append(h);
+    });
+    // Handle clicking an animal to test and showing a popup dialog to confirm
+    $("#content-test").on("click", "a", function() {
+        let testid = $(this).attr("data-id");
+        $.each(controller.tests, function(i, v) {
+            if (v.ID == testid) {
+                $("#administerdlg .btn-primary").unbind("click");
+                $("#administerdlg .btn-primary").click(function() {
+                    ajax_post("mode=test&id=" + testid, function() {
+                        $("#content-test [data-id='" + testid + "']").remove(); // remove the item from the list on success
+                    });
+                });
+                $("#administertitle").html(_("Perform Test"));
+                $("#administertext").html(format.date(v.DATEREQUIRED) + ": " + v.ANIMALNAME + ' - ' + v.SHELTERCODE + ': ' + v.TESTNAME);
+                $("#administerdlg").modal("show");
+            }
+        });
+    });
+
+    // Load list of animals to vaccinate
+    $("#content-vaccinate .list-group").empty();
+    $.each(controller.vaccinations, function(i, v) {
+        let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
+            '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
+            '<h5 class="mb-1">' + v.ANIMALNAME + ' - ' + v.SHELTERCODE + '</h5>' +
+            '<small>(' + v.VACCINATIONTYPE + ', ' + format.date(v.DATEREQUIRED) + ') ' + v.DISPLAYLOCATION + '</small>' +
+            '</a>';
+        $("#content-vaccinate .list-group").append(h);
+    });
+    // Handle clicking an animal to vaccinate and showing a popup dialog to confirm
+    $("#content-vaccinate").on("click", "a", function() {
+        let vaccid = $(this).attr("data-id");
+        $.each(controller.vaccinations, function(i, v) {
+            if (v.ID == vaccid) {
+                $("#administerdlg .btn-primary").unbind("click");
+                $("#administerdlg .btn-primary").click(function() {
+                    ajax_post("mode=vaccinate&id=" + vaccid, function() {
+                        $("#content-vaccinate [data-id='" + vaccid + "']").remove(); // remove the item from the list on success
+                    });
+                });
+                $("#administertitle").html(_("Give Vaccination"));
+                $("#administertext").html(format.date(v.DATEREQUIRED) + ": " + v.ANIMALNAME + ' - ' + v.SHELTERCODE + ': ' + v.VACCINATIONTYPE);
+                $("#administerdlg").modal("show");
+            }
+        });
     });
 
     // Load messages 

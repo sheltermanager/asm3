@@ -907,6 +907,19 @@ class mobile2(ASMEndpoint):
         self.content_type("text/html")
         return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile2.js" ], c)
 
+    def post_medical(self, o):
+        self.check(asm3.users.CHANGE_MEDICAL)
+        #asm3.medical.update_treatment_today(o.dbo, o.user, o.post.integer("id"))
+
+    def post_test(self, o):
+        self.check(asm3.users.CHANGE_TEST)
+        #asm3.medical.update_test_today(o.dbo, o.user, post.integer("id"))
+
+    def post_vaccinate(self, o):
+        self.check(asm3.users.CHANGE_VACCINATION)
+        #asm3.medical.update_vaccination_today(o.dbo, o.user, o.post.integer("id"))
+
+
 class mobile_login(ASMEndpoint):
     url = "mobile_login"
     check_logged_in = False
