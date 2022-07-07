@@ -2854,7 +2854,7 @@ def clone_animal(dbo, username, animalid):
             "DateDue":              dt.datedue,
             "Donation":             dt.donation,
             "ChequeNumber":         dt.chequenumber,
-            "ReceiptNumber":        asm3.utils.padleft(asm3.configuration.receipt_number_next(dbo), 8),
+            "ReceiptNumber":        asm3.financial.get_next_receipt_number(dbo),
             "IsGiftAid":            dt.isgiftaid,
             "Frequency":            dt.frequency,
             "NextCreated":          dt.nextcreated,
