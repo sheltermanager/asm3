@@ -1,6 +1,7 @@
 46
 ================
 
+07/07/22 Fix bug that causes display of SQL interface errors to be delayed
 07/07/22 Fix bug using LOGTYPE in reports after refactoring #1096
 05/07/22 Restrict the maximum width of the useragent in incoming forms
 05/07/22 Visual improvements to default online form template
