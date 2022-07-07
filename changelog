@@ -1,6 +1,7 @@
 46
 ================
 
+07/07/22 Fix bug using LOGTYPE in reports after refactoring #1096
 05/07/22 Restrict the maximum width of the useragent in incoming forms
 05/07/22 Visual improvements to default online form template
 05/07/22 Use efficient memory cache for collation/receipt sequences #1149
