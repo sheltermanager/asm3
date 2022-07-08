@@ -277,7 +277,6 @@ def get_string(dbo, name, path = ""):
     If no path is supplied, just finds the first file with that name
     in the dbfs (useful for media files, which have unique names)
     """
-    print(f"Called with name={name} path={path}")
     if path != "":
         r = dbo.query("SELECT ID, URL FROM dbfs WHERE Name=? AND Path=?", (name, path))
     else:
