@@ -2,9 +2,9 @@ Adoptions by Date with no License
 ###
 Animal Control
 ###
-Any rev01
+Any rev02
 ###
-Adoptions between two dates where the animal has no license on file.
+Adoptions between two dates where the dog has no license on file.
 ###
 en
 ###
@@ -30,6 +30,7 @@ INNER JOIN species ON species.ID = animal.SpeciesID
 LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
 WHERE MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=no.ID AND AnimalID=animal.ID)
+AND animal.SpeciesID = 1
 ORDER BY MovementDate
 ###
 $$HEADER
