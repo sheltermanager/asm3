@@ -3008,6 +3008,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             adjdate = subtract_days(newbroughtin, dayoffset)
         else:
             adjdate = add_days(newbroughtin, dayoffset)
+        adjdate = adjdate.replace(hour=0, minute=0, second=0, microsecond=0) # throw away any time info that might have been on the original date
         return dbo.sql_date(adjdate)
     # Additional Fields (don't include newrecord ones or ones with default values as they are already set by the new animal screen)
     for af in dbo.query("SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
