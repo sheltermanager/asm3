@@ -1,6 +1,7 @@
 46
 ================
 
+12/07/22 Fix partially implemented additional field type for Time
 12/07/22 Fix bug where clone_from_template copied the time of DateBroughtIn
 08/07/22 ActiveLitterMates wordkey
 07/07/22 Fix bug that causes display of SQL interface errors to be delayed

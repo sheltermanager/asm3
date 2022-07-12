@@ -39,7 +39,7 @@ VERSIONS = (
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
-    34508, 34509, 34510, 34511, 34512, 34600, 34601
+    34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -2305,6 +2305,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksfieldtype", "FieldType", 7, _("Multi-Lookup", l))
     sql += lookup1("lksfieldtype", "FieldType", 8, _("Animal", l))
     sql += lookup1("lksfieldtype", "FieldType", 9, _("Person", l))
+    sql += lookup1("lksfieldtype", "FieldType", 10, _("Time", l))
     sql += lookup1("lksloglink", "LinkType", 0, _("Animal", l))
     sql += lookup1("lksloglink", "LinkType", 1, _("Owner", l))
     sql += lookup1("lksloglink", "LinkType", 2, _("Lost Animal", l))
@@ -5564,4 +5565,9 @@ def update_34601(dbo):
     add_column(dbo, "medicalprofile", "CostPerTreatment", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE animalmedical SET CostPerTreatment=0")
     dbo.execute_dbupdate("UPDATE medicalprofile SET CostPerTreatment=0")
+
+def update_34602(dbo):
+    # Add time fieldtype
+    l = dbo.locale
+    dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (10, ?)", [ _("Time", l) ])
 
