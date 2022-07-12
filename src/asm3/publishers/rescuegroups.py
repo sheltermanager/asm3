@@ -86,7 +86,7 @@ class RescueGroupsPublisher(FTPPublisher):
 
         # Do the images first
         self.mkdir("import")
-        self.chdir("import")
+        self.chdir("import", "import")
         self.mkdir("pictures")
         self.chdir("pictures", "import/pictures")
 

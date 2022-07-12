@@ -1192,16 +1192,16 @@ class FTPPublisher(AbstractPublisher):
         except Exception as err:
             self.log("mkdir %s: already exists (%s)" % (newdir, err))
 
-    def chdir(self, newdir, fromroot = ""):
-        """ Changes FTP folder. Returns True on success, False for failure """
+    def chdir(self, newdir, fromroot):
+        """ Changes FTP folder. 
+            newdir: The folder to change into
+            fromroot: The path to this folder from the root for recovery/reconnection
+            Returns True on success, False for failure """
         if not self.pc.uploadDirectly: return True
         self.log("FTP chdir to %s" % newdir)
         try:
             self.socket.cwd(newdir)
-            if fromroot == "":
-                self.currentDir = newdir
-            else:
-                self.currentDir = fromroot
+            self.currentDir = fromroot
             return True
         except Exception as err:
             self.logError("chdir %s: %s" % (newdir, err), sys.exc_info())

@@ -73,7 +73,7 @@ class SmartTagPublisher(FTPPublisher):
         folder = "%s_%s" % (shelterid, dateportion)
         outputfile = "%s_%s.csv" % (shelterid, dateportion)
         self.mkdir(folder)
-        self.chdir(folder)
+        self.chdir(folder, folder)
 
         csv = []
 

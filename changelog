@@ -1,6 +1,7 @@
 46
 ================
 
+12/07/22 Fix FTP chdir/recovery path for reconnection in AdoptAPet
 12/07/22 Fix partially implemented additional field type for Time
 12/07/22 Fix bug where clone_from_template copied the time of DateBroughtIn
 08/07/22 ActiveLitterMates wordkey

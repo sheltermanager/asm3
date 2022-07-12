@@ -100,9 +100,9 @@ class PetFinderPublisher(FTPPublisher):
 
         # Make sure necessary folders exist
         self.mkdir("import")
-        self.chdir("import")
+        self.chdir("import", "import")
         self.mkdir("photos")
-        self.chdir("photos")
+        self.chdir("photos", "import/photos")
 
         # Build a list of age bands for petfinder ages. It's
         # a list of integers in days for each band.
@@ -348,7 +348,7 @@ class PetFinderPublisher(FTPPublisher):
             "special_needs_notes,no_other,no_other_note,tags" ]
 
         # Upload the empty datafile
-        self.chdir("import")
+        self.chdir("import", "import")
         self.saveFile(os.path.join(self.publishDir, shelterid), "\n".join(csv))
         self.log("Uploading datafile, %s" % shelterid)
         self.upload(shelterid)

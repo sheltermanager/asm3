@@ -338,7 +338,7 @@ class AdoptAPetPublisher(FTPPublisher):
 
         # Do the images first
         self.mkdir("photos")
-        self.chdir("photos")
+        self.chdir("photos", "photos")
 
         csv = []
 

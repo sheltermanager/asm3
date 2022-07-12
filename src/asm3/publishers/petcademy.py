@@ -135,7 +135,7 @@ class PetcademyPublisher(FTPPublisher):
 
         fname = "%s_%s.csv" % ( token, asm3.i18n.format_date(asm3.i18n.now(), "%Y%m%d%H%M%S") )
         # Upload the datafile to a sheltermanager folder
-        self.chdir("sheltermanager")
+        self.chdir("sheltermanager", "sheltermanager")
         self.saveFile(os.path.join(self.publishDir, fname), "\n".join(csv))
         self.log("Uploading datafile %s" % fname)
         self.upload(fname)
