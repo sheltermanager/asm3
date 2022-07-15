@@ -748,9 +748,9 @@ def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age 
             "MovementType = 0 AND ReservationDate Is Not Null AND ReservationCancelledDate Is Null AND IDCheck = 0) AS rsvhck," \
         "(SELECT COUNT(DISTINCT OwnerID) FROM ownerdonation WHERE DateDue <= %(today)s AND Date Is Null) AS duedon," \
         "(SELECT COUNT(*) FROM adoption WHERE IsTrial = 1 AND ReturnDate Is Null AND MovementType = 1 AND TrialEndDate <= %(today)s) AS endtrial," \
-        "(SELECT COUNT(*) FROM log WHERE LinkType=1 AND Date >= %(onemonth)s AND Comments LIKE 'ES01%%') - " \
-        "(SELECT COUNT(*) FROM log WHERE LinkType=1 AND Date >= %(onemonth)s AND Comments LIKE 'ES02%%') AS docunsigned, " \
-        "(SELECT COUNT(*) FROM log WHERE LinkType=1 AND Date >= %(oneweek)s AND Comments LIKE 'ES02%%') AS docsigned, " \
+        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(onemonth)s AND Comments LIKE 'ES01%%') - " \
+        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(onemonth)s AND Comments LIKE 'ES02%%') AS docunsigned, " \
+        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(oneweek)s AND Comments LIKE 'ES02%%') AS docsigned, " \
         "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON adoption.AnimalID = animal.ID WHERE " \
             "Archived = 0 AND DeceasedDate Is Null AND ReservationDate Is Not Null AND ReservationDate <= %(oneweek)s " \
             "AND ReservationCancelledDate Is Null AND MovementType = 0 AND MovementDate Is Null) AS longrsv," \
@@ -1926,6 +1926,24 @@ def get_shelter_animals(dbo, include_additional_fields=True):
     if include_additional_fields: 
         rows = asm3.additional.append_to_results(dbo, rows, "animal")
     return rows
+
+def get_signed_requests(dbo, cutoff=7):
+    """
+    Returns animals that have a fulfilled a signing request in the last cutoff days
+    """
+    cutoffdate = dbo.today(cutoff * -1)
+    return dbo.query(get_animal_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=0 " \
+        "AND l.Date >= ? AND l.Comments LIKE 'ES02%%'", [cutoffdate], distincton="ID")
+
+def get_unsigned_requests(dbo, cutoff=31):
+    """
+    Returns animals that have more signing requests in the last cutoff days than signed
+    """
+    cutoffdate = dbo.today(cutoff * -1)
+    return dbo.query(get_animal_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=0 AND l.Date >= ? AND l.Comments LIKE 'ES01%%' " \
+        "WHERE (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=0 AND Date >= ? AND Comments LIKE 'ES01%%') " \
+        " > (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=0 AND Date >= ? AND Comments LIKE 'ES02%%') ", 
+        [cutoffdate, cutoffdate, cutoffdate], distincton="ID")
 
 def get_units_with_availability(dbo, locationid):
     """

@@ -123,6 +123,12 @@ class TestAnimal(unittest.TestCase):
     def test_get_shelterview_animals(self):
         assert len(asm3.animal.get_shelterview_animals(base.get_dbo())) > 0
 
+    def test_get_signed_requests(self):
+        asm3.animal.get_signed_requests(base.get_dbo())
+
+    def test_get_unsigned_requests(self):
+        asm3.animal.get_unsigned_requests(base.get_dbo())
+
     def test_get_timeline(self):
         assert len(asm3.animal.get_timeline(base.get_dbo())) > 0
 
