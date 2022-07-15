@@ -1932,7 +1932,7 @@ def get_signed_requests(dbo, cutoff=7):
     Returns animals that have a fulfilled a signing request in the last cutoff days
     """
     cutoffdate = dbo.today(cutoff * -1)
-    return dbo.query(get_animal_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=0 " \
+    return dbo.query(get_animal_query(dbo) + "INNER JOIN log l ON a.ID = l.LinkID AND l.LinkType=0 " \
         "AND l.Date >= ? AND l.Comments LIKE 'ES02%%'", [cutoffdate], distincton="ID")
 
 def get_unsigned_requests(dbo, cutoff=31):
@@ -1940,9 +1940,9 @@ def get_unsigned_requests(dbo, cutoff=31):
     Returns animals that have more signing requests in the last cutoff days than signed
     """
     cutoffdate = dbo.today(cutoff * -1)
-    return dbo.query(get_animal_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=0 AND l.Date >= ? AND l.Comments LIKE 'ES01%%' " \
-        "WHERE (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=0 AND Date >= ? AND Comments LIKE 'ES01%%') " \
-        " > (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=0 AND Date >= ? AND Comments LIKE 'ES02%%') ", 
+    return dbo.query(get_animal_query(dbo) + "INNER JOIN log l ON a.ID = l.LinkID AND l.LinkType=0 AND l.Date >= ? AND l.Comments LIKE 'ES01%%' " \
+        "WHERE (SELECT COUNT(*) FROM log WHERE LinkID=a.ID AND LinkType=0 AND Date >= ? AND Comments LIKE 'ES01%%') " \
+        " > (SELECT COUNT(*) FROM log WHERE LinkID=a.ID AND LinkType=0 AND Date >= ? AND Comments LIKE 'ES02%%') ", 
         [cutoffdate, cutoffdate, cutoffdate], distincton="ID")
 
 def get_units_with_availability(dbo, locationid):
