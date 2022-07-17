@@ -710,6 +710,7 @@ $.widget("asm.personchooser", {
         else if (f == "member") { title = _("Find member"); }
         else if (f == "donor") { title = _("Find donor"); }
         else if (f == "driver") { title = _("Find driver"); }
+        else if (f == "sponsor") { title = _("Find sponsor"); }
         else { title = _("Find person"); }
 
         this.options.title = title;

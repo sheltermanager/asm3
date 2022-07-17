@@ -457,7 +457,8 @@ const html = {
             { label: _("Other Shelter"), html: field_option("ISSHELTER", "shelter", _("Other Shelter")) },
             { label: _("Staff"), html: field_option("ISSTAFF", "staff", _("Staff")) },
             { label: _("Vet"), html: field_option("ISVET", "vet", _("Vet")) },
-            { label: _("Volunteer"), html: field_option("ISVOLUNTEER", "volunteer", _("Volunteer")) }
+            { label: _("Volunteer"), html: field_option("ISVOLUNTEER", "volunteer", _("Volunteer")) },
+            { label: _("Sponsor"), html: field_option("ISSPONSOR", "sponsor", _("Sponsor")) }
         ];
 
         if (!config.bool("DisableRetailer")) {

@@ -789,11 +789,12 @@ def json_personfindcolumns(dbo):
         ( "LookingForSummary", _("Looking For", l) ),
         ( "HomeCheckAreas", _("Homecheck Areas", l) ),
         ( "DateLastHomeChecked", _("Homecheck Date", l) ),
-        ( "HomeCheckedBy", _("Homechecked By", l) )
+        ( "HomeCheckedBy", _("Homechecked By", l) ),
+        ("IsSponsor", _("Sponsor", l) )
         ]
     fd = asm3.additional.get_field_definitions(dbo, "person")
     for f in fd:
-        cols.append( (f["FIELDNAME"], f["FIELDLABEL"]) )
+        cols.append((f["FIELDNAME"], f["FIELDLABEL"]))
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, asm3.configuration.person_search_columns(dbo))
     return cols
@@ -1152,6 +1153,7 @@ def options_person_flags(dbo):
     if l == "en_GB": s += option(_("UK Giftaid", l), "giftaid")
     s += option(_("Vet", l), "vet")
     s += option(_("Volunteer", l), "volunteer")
+    s += option(_("Sponsor", l), "sponsor")
     for p in pf:
         s += option(p["FLAG"])
     return s
