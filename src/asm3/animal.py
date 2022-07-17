@@ -3719,6 +3719,12 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     # Start with the existing value for the current owner
     ownerid = a.ownerid
 
+    # Start with onshelter at True/False based on whether
+    # the intake date is older than now.
+    # (subsequent exit movement and flag checks will set it to False where needed)
+    # This is to prevent animals with a future intake date appearing on shelter.
+    onshelter = today >= a.datebroughtin
+
     cfg_foster_on_shelter = asm3.configuration.foster_on_shelter(dbo)
     cfg_retailer_on_shelter = asm3.configuration.retailer_on_shelter(dbo)
     cfg_trial_on_shelter = asm3.configuration.trial_on_shelter(dbo)
