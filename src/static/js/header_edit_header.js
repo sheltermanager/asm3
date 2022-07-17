@@ -635,6 +635,9 @@ edit_header = {
         if (p.EXCLUDEFROMBULKEMAIL == 1) {
             flags.push(_("Exclude from bulk email"));
         }
+        if (p.ISSPONSOR == 1){
+            flags.push(_("Sponsor"));
+        }
         if (p.ADDITIONALFLAGS != null) {
             var stock = [ "aco", "adopter", "banned", "dangerous", "coordinator", "deceased", "donor", "driver", "excludefrombulkemail",
                 "fosterer", "homechecked", "homechecker", "member", "shelter", "retailer", "staff", "giftaid", 
