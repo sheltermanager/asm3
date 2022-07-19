@@ -646,6 +646,9 @@ def auto_cancel_reserves_days(dbo):
 def auto_cancel_hold_days(dbo):
     return cint(dbo, "AutoCancelHoldDays", int(DEFAULTS["AutoCancelHoldDays"]))
 
+def auto_default_vacc_batch(dbo):
+    return cboolean(dbo, "AutoDefaultVaccBatch", DEFAULTS["AutoDefaultVaccBatch"])
+
 def auto_hash_processed_forms(dbo):
     return cboolean(dbo, "AutoHashProcessedForms", DEFAULTS["AutoHashProcessedForms"] == "Yes")
 

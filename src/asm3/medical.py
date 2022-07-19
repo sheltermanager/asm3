@@ -295,14 +295,17 @@ def get_vaccinated(dbo, animalid):
 
 def get_batch_for_vaccination_types(dbo):
     """
-    Returns vaccination types and 
-    last non-empty batch number and manufacturer we saw for that type
+    Returns vaccination types and last non-empty batch number and manufacturer we saw for that type.
+    Does nothing if the option for inserting the last batch/manufacturer is disabled.
+    In databases with a lot of vaccinations, this can take quite a long time to run and slow things down,
+    so we use a 15 minute read-through cache.
     """
-    return dbo.query("SELECT ID, " \
+    if not asm3.configuration.auto_default_vacc_batch(dbo): return []
+    return dbo.query_cache("SELECT ID, " \
         "(SELECT BatchNumber FROM animalvaccination v1 WHERE v1.ID = (SELECT MAX(v2.ID) FROM animalvaccination v2 WHERE v2.BatchNumber <> '' AND vt.ID = v2.VaccinationID AND DateOfVaccination Is Not Null)) AS BatchNumber, " \
         "(SELECT Manufacturer FROM animalvaccination v1 WHERE v1.ID = (SELECT MAX(v2.ID) FROM animalvaccination v2 WHERE v2.BatchNumber <> '' AND vt.ID = v2.VaccinationID AND DateOfVaccination Is Not Null)) AS Manufacturer " \
         "FROM vaccinationtype vt " \
-        "ORDER BY vt.ID")
+        "ORDER BY vt.ID", age=900)
 
 def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED):
     """
