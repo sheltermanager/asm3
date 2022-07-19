@@ -16,7 +16,7 @@ import asm3.publishers.base
 import asm3.users
 import asm3.utils
 
-from asm3.i18n import _, date_diff, date_diff_days, format_diff, python2display, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
+from asm3.i18n import _, date_diff, date_diff_days, format_diff, python2display, remove_time, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
 
 import datetime
 from random import choice
@@ -3714,7 +3714,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
             " WHERE AnimalID = ? ORDER BY MovementDate DESC", [animalid])
 
     # Start at first intake for most recent entry date
-    mostrecententrydate = a.datebroughtin
+    mostrecententrydate = remove_time(a.datebroughtin)
 
     # Start with the existing value for the current owner
     ownerid = a.ownerid
@@ -3723,7 +3723,7 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     # the intake date is older than now.
     # (subsequent exit movement and flag checks will set it to False where needed)
     # This is to prevent animals with a future intake date appearing on shelter.
-    onshelter = today >= a.datebroughtin
+    onshelter = today >= remove_time(a.datebroughtin)
 
     cfg_foster_on_shelter = asm3.configuration.foster_on_shelter(dbo)
     cfg_retailer_on_shelter = asm3.configuration.retailer_on_shelter(dbo)
