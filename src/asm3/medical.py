@@ -295,17 +295,18 @@ def get_vaccinated(dbo, animalid):
 
 def get_batch_for_vaccination_types(dbo):
     """
-    Returns vaccination types and last non-empty batch number and manufacturer we saw for that type.
+    Returns vaccination types and last non-empty batch number and manufacturer 
+        we saw for that type in the last month.
+        Uses our distincton to throw away everything but the first row for 
+        each vaccinationid (aliased to id)
     Does nothing if the option for inserting the last batch/manufacturer is disabled.
-    In databases with a lot of vaccinations, this can take quite a long time to run and slow things down,
-    so we use a 15 minute read-through cache.
     """
     if not asm3.configuration.auto_default_vacc_batch(dbo): return []
-    return dbo.query_cache("SELECT ID, " \
-        "(SELECT BatchNumber FROM animalvaccination v1 WHERE v1.ID = (SELECT MAX(v2.ID) FROM animalvaccination v2 WHERE v2.BatchNumber <> '' AND vt.ID = v2.VaccinationID AND DateOfVaccination Is Not Null)) AS BatchNumber, " \
-        "(SELECT Manufacturer FROM animalvaccination v1 WHERE v1.ID = (SELECT MAX(v2.ID) FROM animalvaccination v2 WHERE v2.BatchNumber <> '' AND vt.ID = v2.VaccinationID AND DateOfVaccination Is Not Null)) AS Manufacturer " \
-        "FROM vaccinationtype vt " \
-        "ORDER BY vt.ID", age=900)
+    return dbo.query("SELECT VaccinationID AS ID, BatchNumber, Manufacturer " \
+        "FROM animalvaccination " \
+        "WHERE BatchNumber <> '' AND Manufacturer <> '' " \
+        "AND DateOfVaccination Is Not Null AND DateOfVaccination >= ? " \
+        "ORDER BY animalvaccination.ID DESC, VaccinationID", [ dbo.today(offset=-31) ], distincton="ID")
 
 def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED):
     """
