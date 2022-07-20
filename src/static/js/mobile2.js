@@ -4,6 +4,8 @@ $(document).ready(function() {
 
     "use strict";
 
+    const post_handler = "mobile2";
+
     const show_error = function(title, body) {
         $("#errortitle").html(title);
         $("#errortext").html(body);
@@ -13,7 +15,7 @@ $(document).ready(function() {
     const ajax_post = function(formdata, successfunc, errorfunc) {
         $.ajax({
             type: "POST",
-            url: "mobile2",
+            url: post_handler,
             data: formdata,
             dataType: "text",
             mimeType: "textPlain",
@@ -88,7 +90,7 @@ $(document).ready(function() {
                     _("Animals") + '</a>',
                     '<ul class="dropdown-menu" aria-labelledby="dropdown-animals">',
                         '<li class="dropdown-item">',
-                            '<a class="nav-link" href="#">' + _("Add Animal") + '</a>',
+                            '<a class="nav-link internal-link" data-link="addanimal" href="#">' + _("Add Animal") + '</a>',
                         '</li>',
                         '<li class="dropdown-item hideifzero">',
                             '<a class="nav-link internal-link" data-link="shelteranimals" href="#">' + _("Shelter Animals"),
@@ -205,6 +207,73 @@ $(document).ready(function() {
         '<h2>' + _("Reports") + '</h2>',
         '<div class="list-group">',
         '</div>',
+        '</div>',
+
+        '<div id="content-addanimal" class="container" style="display: none">',
+        '<h2>' + _("Add Animal") + '</h2>',
+        '<form method="post" action="' + post_handler + '">',
+        '<input type="hidden" name="mode" value="addanimal">',
+        '<div class="mb-3">',
+            '<label for="name" class="form-label">' + _("Name") + '</label>',
+            '<input type="text" class="form-control" id="name" name="name">',
+        '</div>',
+        '<div class="mb-3">',
+            '<label for="sheltercode" class="form-label">' + _("Code") + '</label>',
+            '<input type="text" class="form-control" id="sheltercode" name="sheltercode">',
+        '</div>',
+        '<div class="mb-3">',
+            '<label for="age" class="form-label">' + _("Age") + '</label>',
+            '<input type="text" class="form-control" id="age" name="age" value="1.0">',
+        '</div>',
+        '<div class="mb-3">',
+            '<label for="sex" class="form-label">' + _("Sex") + '</label>',
+            '<select class="form-control" name="sex" id="sex">',
+            html.list_to_options(controller.sexes, "ID", "SEX"),
+            '</select>',
+        '</div>',
+        '<div class="mb-3">',
+            '<label for="animaltype" class="form-label">' + _("Type") + '</label>',
+            '<select class="form-control" name="animaltype" id="animaltype">',
+            html.list_to_options(controller.animaltypes, "ID", "ANIMALTYPE"),
+            '</select>',
+        '</div>',
+        '<div class="mb-3">',
+            '<label for="species" class="form-label">' + _("Species") + '</label>',
+            '<select class="form-control" name="species" id="species">',
+            html.list_to_options(controller.species, "ID", "SPECIESNAME"),
+            '</select>',
+        '</div>',
+        '<div class="mb-3">',
+            '<label for="breed1" class="form-label">' + _("Breed") + '</label>',
+            '<select class="form-control" name="breed1" id="breed1">',
+            html.list_to_options_breeds(controller.breeds),
+            '</select>',
+        '</div>',
+        '<div class="mb-3">',
+            '<label for="basecolour" class="form-label">' + _("Color") + '</label>',
+            '<select class="form-control" name="basecolour" id="basecolour">',
+            html.list_to_options(controller.colours, "ID", "BASECOLOUR"),
+            '</select>',
+        '</div>',
+        '<div class="mb-3">',
+            '<label for="size" class="form-label">' + _("Size") + '</label>',
+            '<select class="form-control" name="size" id="size">',
+            html.list_to_options(controller.sizes, "ID", "SIZE"),
+            '</select>',
+        '</div>',
+        '<div class="mb-3">',
+            '<label for="internallocation" class="form-label">' + _("Location") + '</label>',
+            '<select class="form-control" name="internallocation" id="internallocation">',
+            html.list_to_options(controller.internallocations, "ID", "LOCATIONNAME"),
+            '</select>',
+        '</div>',
+        '<div class="mb-3">',
+            '<label for="unit" class="form-label">' + _("Unit") + '</label>',
+            '<input type="text" class="form-control" id="unit" name="unit">',
+        '</div>',
+        '<div class="d-flex justify-content-center pb-2"><button id="btn-addanimal-submit" type="submit" class="btn btn-primary">' + _("Create") + 
+        '<div class="spinner-border spinner-border-sm" style="display: none"></div></div>',
+        '</form>',
         '</div>',
 
         '<div id="content-shelteranimals" class="container" style="display: none">',
@@ -384,6 +453,17 @@ $(document).ready(function() {
             $("#uploadphotofile").change(function() { alert($("#uploadphotofile").val()); });
         }
     });
+
+    // Initialise add animal screen
+    $("#age").val(config.str("DefaultAnimalAge"));
+    $("#animaltype").val(config.str("AFDefaultType"));
+    $("#species").val(config.str("AFDefaultSpecies"));
+    $("#breed1").val(config.str("AFDefaultBreed"));
+    $("#basecolour").val(config.str("AFDefaultColour"));
+    $("#internallocation").val(config.str("AFDefaultLocation"));
+    $("#unit").val("");
+    $("#size").val(config.str("AFDefaultSize"));
+    $("#sheltercode").closest("div").toggle(config.bool("ManualCodes"));
    
     // Load list of animals to medicate
     $("#content-medicate .list-group").empty();

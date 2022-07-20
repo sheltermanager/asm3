@@ -901,11 +901,22 @@ class mobile2(ASMEndpoint):
             "incidentsundispatched": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "undispatched" }, o.user),
             "incidentsincomplete": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user),
             "incidentsfollowup": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" }, o.user),
+            "animaltypes":  asm3.lookups.get_animal_types(dbo),
+            "breeds":       asm3.lookups.get_breeds_by_species(dbo),
+            "colours":      asm3.lookups.get_basecolours(dbo),
+            "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "sexes":        asm3.lookups.get_sexes(dbo),
+            "sizes":        asm3.lookups.get_sizes(dbo),
             "smdblocked":   asm3.configuration.smdb_locked(dbo),
+            "species":      asm3.lookups.get_species(dbo),
             "user":         o.user
         }
         self.content_type("text/html")
         return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile2.js" ], c)
+
+    def post_addanimal(self, o):
+        self.check(asm3.users.ADD_ANIMAL)
+        pass # TODO
 
     def post_medical(self, o):
         self.check(asm3.users.CHANGE_MEDICAL)
