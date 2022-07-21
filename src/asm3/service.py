@@ -349,12 +349,13 @@ def strip_personal_data(rows):
                 r[k] = ""
     return rows
 
-def handler(post, path, remoteip, referer, querystring):
+def handler(post, path, remoteip, referer, useragent, querystring):
     """ Handles the various service method types.
     post:        The GET/POST parameters
     path:        The current system path/code.PATH
     remoteip:    The IP of the caller
     referer:     The referer HTTP header
+    useragent:   The user-agent HTTP header
     querystring: The complete querystring
     return value is a tuple containing MIME type, max-age, content
     """
@@ -479,8 +480,11 @@ def handler(post, path, remoteip, referer, querystring):
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)
-        return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, asm3.utils.iif(title.startswith("/"),
-            asm3.dbfs.get_string_filepath(dbo, title), asm3.dbfs.get_string(dbo, title)))
+        if title.startswith("/"):
+            imagedata = asm3.dbfs.get_string_filepath(dbo, title)
+        else:
+            imagedata = asm3.dbfs.get_string(dbo, title)
+        return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, imagedata)
 
     elif method =="document_repository":
         return set_cached_response(cache_key, account, asm3.media.mime_type(asm3.dbfs.get_name_for_id(dbo, mediaid)), 86400, 86400, asm3.dbfs.get_string_id(dbo, mediaid))
@@ -634,7 +638,7 @@ def handler(post, path, remoteip, referer, querystring):
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_REPORT)
         crid = asm3.reports.get_id(dbo, title)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
-        rhtml = asm3.reports.execute(dbo, crid, username, p)
+        rhtml = asm3.reports.execute(dbo, crid, username, p, toolbar=False)
         rhtml = asm3.utils.fix_relative_document_uris(dbo, rhtml)
         return set_cached_response(cache_key, account, "text/html", 600, 600, rhtml)
 
@@ -695,7 +699,13 @@ def handler(post, path, remoteip, referer, querystring):
 
     elif method == "rss_timeline":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
-        return set_cached_response(cache_key, account, "application/rss+xml", 3600, 3600, asm3.html.timeline_rss(dbo))
+        RSS_LIMIT = 500
+        rows = asm3.animal.get_timeline(dbo, RSS_LIMIT)
+        h = []
+        for r in rows:
+            h.append( asm3.utils.rss_item( r["DESCRIPTION"], "%s/%s?id=%d" % (BASE_URL, r["LINKTARGET"], r["ID"]), "") )
+        rssdocument = asm3.utils.rss("\n".join(h), _("Showing {0} timeline events.", l).format(RSS_LIMIT), BASE_URL, "")
+        return set_cached_response(cache_key, account, "application/rss+xml", 3600, 3600, rssdocument)
 
     elif method == "upload_animal_image":
         asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.ADD_MEDIA)
@@ -713,7 +723,7 @@ def handler(post, path, remoteip, referer, querystring):
         return set_cached_response(cache_key, account, "application/json; charset=utf-8", 30, 30, asm3.onlineform.get_onlineform_json(dbo, formid))
 
     elif method == "online_form_post":
-        asm3.onlineform.insert_onlineformincoming_from_form(dbo, post, remoteip)
+        asm3.onlineform.insert_onlineformincoming_from_form(dbo, post, remoteip, useragent)
         redirect = post["redirect"]
         if redirect == "":
             redirect = BASE_URL + "/static/pages/form_submitted.html"

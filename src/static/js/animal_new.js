@@ -241,7 +241,7 @@ $(function() {
                 '<input id="microchipped" data="microchipped" type="checkbox" class="asm-checkbox" />',
                 '<input id="microchipdate" data="microchipdate" class="asm-textbox asm-datebox" placeholder="',
                 html.title(_("Date")) + '" />',
-                '<input type="text" id="microchipnumber" data="microchipnumber" class="asm-textbox" placeholder="', 
+                '<input type="text" id="microchipnumber" data="microchipnumber" maxlength="15" class="asm-textbox" placeholder="', 
                 html.title(_("Number")) + '" />',
                 '</td>',
                 '</tr>',
@@ -516,7 +516,6 @@ $(function() {
             $("#entryreason").select("value", config.str("AFDefaultEntryReason"));
             $("#internallocation").select("value", config.str("AFDefaultLocation"));
             $("#jurisdiction").select("value", config.str("DefaultJurisdiction"));
-            $("#pickuplocation").select("firstvalue");
             $("#size").select("value", config.str("AFDefaultSize"));
             $("#sex").select("value", "2"); // Unknown
 

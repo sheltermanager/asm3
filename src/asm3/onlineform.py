@@ -118,7 +118,7 @@ AUTOCOMPLETE_MAP = {
 
 def get_collationid(dbo):
     """ Returns the next collation ID value for online forms. """
-    return asm3.configuration.collation_id_next(dbo)
+    return asm3.utils.cache_sequence(dbo, "collation", "SELECT MAX(CollationID) FROM onlineformincoming")
 
 def get_onlineform(dbo, formid):
     """ Returns the online form with ID formid """
@@ -142,6 +142,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         df = asm3.i18n.get_display_date_format(l)
         df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
         extra = "<script>\nDATE_FORMAT = '%s';\n</script>\n" % df
+        extra += "<base href=\"%s\" />\n" % BASE_URL
         extra += asm3.html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "asm")) + \
             asm3.html.css_tag(ASMSELECT_CSS) + \
             asm3.html.css_tag(TIMEPICKER_CSS) + \
@@ -403,37 +404,45 @@ def get_onlineform_header(dbo):
         "<title>$$TITLE$$</title>\n" \
         "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n" \
         "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0\">\n" \
+        "<link href='//fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>\n" \
         "<style>\n" \
-        "body { font-family: sans-serif; }\n" \
         "input:focus, textarea:focus, select:focus { box-shadow: 0 0 5px #3a87cd; border: 1px solid #3a87cd; }\n" \
         ".asm-onlineform-title, .asm-onlineform-description { text-align: center; }\n" \
         "input, textarea, select { border: 1px solid #aaa; }\n" \
         "input[type='submit'] { padding: 10px; cursor: pointer; }\n" \
         "/* phones and smaller devices */\n" \
         "@media screen and (max-device-width:480px) {\n" \
+        "    body { font-family: sans-serif; }\n" \
         "    * { font-size: 110%; }\n" \
         "    h2 { font-size: 200%; }\n" \
         "    .asm-onlineform-table td { display: block; width: 100%; margin-bottom: 20px; }\n" \
-        "    label, input[type='file'], input[type='text'], input[type='email'], select, textarea { width: 97%; padding: 5px; }" \
+        "    label, input[type='file'], input[type='text'], input[type='email'], select, textarea { width: 97%; padding: 5px; }\n" \
         "    label { word-wrap: anywhere; }\n" \
+        "    input[type='checkbox'] { float: left; width: auto; position: relative; top: 10px }\n" \
         "    input[type='submit'] { background-color: #2CBBBB; border: 1px solid #27A0A0; color: #fff; padding: 20px; }\n" \
         "}\n" \
         "/* full size computers and tablets */\n" \
         "@media screen and (min-device-width:481px) {\n" \
+        "	body { background-color: #aaa; font-family: 'Roboto', sans-serif; }\n" \
+        "   #page { width: 70%; margin-left: 15%; " \
+        "       background-color: #fff; box-shadow: 2px 2px 4px #888; " \
+        "       padding-top: 20px; padding-bottom: 20px; }\n" \
         "    .asm-onlineform-td:first-child { max-width: 400px; }\n" \
         "    .asm-onlineform-checkboxlabel { max-width: 400px; display: inline-block; }\n" \
         "    .asm-onlineform-table { margin-left: auto; margin-right: auto }\n" \
         "    textarea { width: 300px; height: 150px; }\n" \
         "    td, input, textarea, select, label { font-size: 110%; }\n" \
+        "    td { padding-bottom: 10px; }\n" \
         "}\n" \
        "</style>\n" \
        "</head>\n" \
-       "<body>"
+       "<body>\n" \
+       "    <div id=\"page\">"
     return header
 
 def get_onlineform_footer(dbo):
     footer = asm3.template.get_html_template(dbo, "onlineform")[2]
-    if footer == "": footer = "</body>\n</html>"
+    if footer == "": footer = "</div>\n</body>\n</html>"
     return footer
 
 def set_onlineform_headerfooter(dbo, head, foot):
@@ -479,7 +488,7 @@ def get_onlineformincoming_detail(dbo, collationid):
     return dbo.query("SELECT * FROM onlineformincoming WHERE CollationID = ? ORDER BY DisplayIndex", [collationid])
 
 def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_images=True):
-    """ Returns an HTML fragment of the incoming form data """
+    """ Returns a partial HTML document of the incoming form data fields """
     h = []
     h.append('<table width="100%">')
     for f in get_onlineformincoming_detail(dbo, collationid):
@@ -496,6 +505,14 @@ def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_imag
             h.append('<tr>')
             h.append('<td>%s</td>' % label )
             h.append('<td><img src="%s" border="0" /></td>' % v)
+            h.append('</tr>')
+        elif f.FIELDNAME == "useragent":
+            # Some user agent strings can be huge and without wrappable characters,
+            # so they throw off the formatting of the rest of the form when viewing
+            # in the dialog or printing.
+            h.append('<tr>')
+            h.append('<td>%s</td>' % label )
+            h.append('<td><div style="word-wrap: anywhere; max-width: 400px">%s</div></td>' % v)
             h.append('</tr>')
         else:
             h.append('<tr>')
@@ -710,7 +727,7 @@ def delete_onlineformfield(dbo, username, fieldid):
     """
     dbo.delete("onlineformfield", fieldid, username)
 
-def insert_onlineformincoming_from_form(dbo, post, remoteip):
+def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
     """
     Create onlineformincoming records from posted data. We 
     create a row for every key/value pair in the posted data
@@ -737,6 +754,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     images = []
     post.data["formreceived"] = "%s %s" % (asm3.i18n.python2display(dbo.locale, posteddate), asm3.i18n.format_time(posteddate))
     post.data["ipaddress"] = remoteip
+    post.data["useragent"] = useragent
 
     for k, v in post.data.items():
 
@@ -823,8 +841,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         if fieldssofar < 3:
             # Don't include raw markup or signature/image fields in the preview
             if fld.VALUE.startswith("RAW::") or fld.VALUE.startswith("data:"): continue
-            # Or the system added timestamp field, ip address, or fields we would have already added above
-            if fld.FIELDNAME in ("retainfor", "formreceived", "ipaddress", "firstname", "forenames", "lastname", "surname"): continue
+            # Or the system added timestamp field, ip address, user agent or fields we would have already added above
+            if fld.FIELDNAME in ("retainfor", "formreceived", "ipaddress", "useragent", "firstname", "forenames", "lastname", "surname"): continue
             if fld.FIELDNAME in ("animalname", "reserveanimalname"): continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
@@ -1450,7 +1468,8 @@ def auto_remove_old_incoming_forms(dbo):
         asm3.al.debug("auto remove incoming forms is off.", "onlineform.auto_remove_old_incoming_forms", dbo)
         return
     removecutoff = dbo.today(offset=removeafter*-1)
-    asm3.al.debug("remove date: incoming forms < %s" % removecutoff, "onlineform.auto_remove_old_incoming_forms", dbo)
-    count = dbo.execute("DELETE FROM onlineformincoming WHERE PostedDate < ?", [removecutoff])
-    asm3.al.debug("removed %s incoming forms older than %s days" % (count, removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
+    rows = dbo.query("SELECT DISTINCT(CollationID) FROM onlineformincoming WHERE PostedDate < %s" % dbo.sql_date(removecutoff))
+    for r in rows:
+        delete_onlineformincoming(dbo, "system", r.COLLATIONID)
+    asm3.al.debug("removed %s incoming forms older than %s days" % (len(rows), removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
 

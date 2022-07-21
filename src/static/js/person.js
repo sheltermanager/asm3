@@ -621,6 +621,8 @@ $(function() {
             // email
             if (common.trim($("#email").val()) != "") {
                 if (!validate.email($("#email").val())) {
+                    header.show_error(_("Invalid email address '{0}'").replace("{0}", $("#email").val()));
+                    validate.highlight("email");
                     return false;
                 }
             }

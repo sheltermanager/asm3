@@ -1,4 +1,4 @@
-/*global $, _, asm, common, config, controller, dlgfx, additional, edit_header, format, header, html, log, social, tableform, validate */
+/*global $, _, asm, common, config, controller, dlgfx, additional, edit_header, format, header, html, log, microchip, social, tableform, validate */
 
 $(function() {
 
@@ -418,7 +418,7 @@ $(function() {
                 '<input id="microchipdate" data-json="IDENTICHIPDATE" data-post="microchipdate" class="asm-halftextbox asm-datebox" placeholder="' + html.title(_("Date")) + '" />',
                 '</td>',
                 '<td>',
-                '<input type="text" id="microchipnumber" data-json="IDENTICHIPNUMBER" data-post="microchipnumber" class="asm-textbox" placeholder="' + html.title(_("Number")) + '" /> <span id="microchipbrand"></span>',
+                '<input type="text" id="microchipnumber" data-json="IDENTICHIPNUMBER" data-post="microchipnumber" class="asm-textbox" maxlength="15" placeholder="' + html.title(_("Number")) + '" /> <span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>',
                 '</td>',
                 '</tr>',
                 '<tr id="microchiprow2">',
@@ -427,7 +427,7 @@ $(function() {
                 '<input id="microchipdate2" data-json="IDENTICHIP2DATE" data-post="microchipdate2" class="asm-halftextbox asm-datebox" placeholder="' + html.title(_("Date")) + '" />',
                 '</td>',
                 '<td>',
-                '<input type="text" id="microchipnumber2" data-json="IDENTICHIP2NUMBER" data-post="microchipnumber2" class="asm-textbox" placeholder="' + html.title(_("Number")) + '" /> <span id="microchipbrand2"></span>',
+                '<input type="text" id="microchipnumber2" data-json="IDENTICHIP2NUMBER" data-post="microchipnumber2" class="asm-textbox" maxlength="15" placeholder="' + html.title(_("Number")) + '" /> <span id="microchipbrand2"></span> <button id="button-microchipcheck2">' + microchip.check_site_name() + '</button>',
                 '</td>',
                 '</tr>',
                 '<tr id="tattoorow">',
@@ -1035,6 +1035,7 @@ $(function() {
                     // Only hide the fee and intake date for non-shelter non-template animals
                     $("#feerow").hide(); 
                     $("#datebroughtinrow").hide();
+                    $("#timebroughtinrow").hide();
                 } 
                 $("#transferinrow").hide();
                 $("#pickeduprow").hide();
@@ -1198,8 +1199,12 @@ $(function() {
         },
 
         show_microchip_supplier: function() {
-            html.microchip_manufacturer("#microchipnumber", "#microchipbrand");
-            html.microchip_manufacturer("#microchipnumber2", "#microchipbrand2");
+            microchip.manufacturer("#microchipnumber", "#microchipbrand");
+            microchip.manufacturer("#microchipnumber2", "#microchipbrand2");
+            // Show the microchip check buttons
+            $("#button-microchipcheck, #button-microchipcheck2").hide();
+            if (microchip.is_check_available($("#microchipnumber").val())) { $("#button-microchipcheck").show(); }
+            if (microchip.is_check_available($("#microchipnumber2").val())) { $("#button-microchipcheck2").show(); }
         },
 
         show_popup_warning: async function() {
@@ -1624,6 +1629,14 @@ $(function() {
             $("#button-gencode")
                 .button({ icons: { primary: "ui-icon-refresh" }, text: false })
                 .click(animal.generate_code);
+
+            $("#button-microchipcheck")
+                .button({ icons: { primary: "ui-icon-search" }, text: false })
+                .click(function() { microchip.check($("#microchipnumber").val()); });
+
+            $("#button-microchipcheck2")
+                .button({ icons: { primary: "ui-icon-search" }, text: false })
+                .click(function() { microchip.check($("#microchipnumber2").val()); });
 
             $("#button-randomname")
                 .button({ icons: { primary: "ui-icon-tag" }, text: false })

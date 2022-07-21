@@ -34,7 +34,7 @@ class TestOnlineForm(unittest.TestCase):
             "testfield_%s" % self.nfieldid: "Test Value"
         }
         post = asm3.utils.PostedData(data, "en")
-        self.collationid = asm3.onlineform.insert_onlineformincoming_from_form(base.get_dbo(), post, "0.0.0.0")
+        self.collationid = asm3.onlineform.insert_onlineformincoming_from_form(base.get_dbo(), post, "0.0.0.0", "FAKE UA")
         data = {
             "formname":     "Test Form",
             asm3.onlineform.JSKEY_NAME: asm3.onlineform.JSKEY_VALUE,
@@ -50,7 +50,7 @@ class TestOnlineForm(unittest.TestCase):
             "description": "Test"
         }
         post = asm3.utils.PostedData(data, "en")
-        self.createcollationid = asm3.onlineform.insert_onlineformincoming_from_form(base.get_dbo(), post, "0.0.0.0")
+        self.createcollationid = asm3.onlineform.insert_onlineformincoming_from_form(base.get_dbo(), post, "0.0.0.0", "FAKE UA")
 
     def tearDown(self):
         asm3.onlineform.delete_onlineform(base.get_dbo(), "test", self.nformid)

@@ -482,7 +482,7 @@ class Database(object):
         if params:
             for p in params:
                 sql = sql.replace("%s", self.sql_value(p), 1)
-        with open(DB_EXEC_LOG.replace("{database}", self.database), "a") as f:
+        with open(DB_EXEC_LOG.replace("{database}", self.database), "a", encoding="utf-8") as f:
             f.write("-- %s\n%s;\n" % (self.now(), sql))
 
     def now(self, timenow=True, offset=0, settime=""):
@@ -977,6 +977,9 @@ class Database(object):
             self.execute("INSERT INTO primarykey (TableName, NextID) VALUES (?, ?)", (table, nextid))
         except:
             pass
+
+    def vacuum(self, tablename = ""):
+        pass # implement in derived classes
 
     def __repr__(self):
         return "Database->locale=%s:dbtype=%s:host=%s:port=%d:db=%s:user=%s:timeout=%s" % ( self.locale, self.dbtype, self.host, self.port, self.database, self.username, self.timeout )

@@ -242,7 +242,7 @@ $(function() {
 
             $("#town").autocomplete({ source: controller.towns, minLength: 4 });
             $("#town").blur(function() {
-                if ($("#county").val() == "") {
+                if ($("#county").val() == "" && $("#town").val() != "") {
                     $("#county").val(controller.towncounties[$("#town").val()]);
                 }
             });

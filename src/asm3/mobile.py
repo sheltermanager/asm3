@@ -19,7 +19,6 @@ import asm3.users
 import asm3.utils
 
 from asm3.i18n import _, python2display, now, add_days, add_months, add_years, format_currency, format_time
-from asm3.sitedefs import MULTIPLE_DATABASES
 from asm3.sitedefs import ELECTRONIC_SIGNATURES, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_MOBILE_JQUERY_JS
 
 def header(l):
@@ -86,12 +85,13 @@ def jqm_h3(s):
 def jqm_hidden(name, value):
     return "<input type=\"hidden\" id=\"%(name)s\" name=\"%(name)s\" value=\"%(value)s\" />\n" % { "name": name, "value": value }
 
-def jqm_link(href, text, icon = "", linkclass = "", theme = ""):
+def jqm_link(href, text, icon = "", linkclass = "", theme = "", ajax = ""):
     if linkclass != "": linkclass = "class=\"" + linkclass + "\""
     if icon != "": icon = "data-icon=\"" + icon + "\""
     if theme != "": theme = "data-theme=\"" + theme + "\""
-    return "<a href=\"%(href)s\" %(linkclass)s %(icon)s %(theme)s>%(text)s</a>\n" % {
-        "href": href, "text": text, "icon": icon, "linkclass": linkclass, "theme": theme }
+    if ajax != "": ajax = "data-ajax=\"%s\"" % ajax
+    return "<a href=\"%(href)s\" %(ajax)s %(linkclass)s %(icon)s %(theme)s>%(text)s</a>\n" % {
+        "href": href, "ajax": ajax, "text": text, "icon": icon, "linkclass": linkclass, "theme": theme }
 
 def jqm_list(s, showfilter = False):
     return "<ul data-role=\"listview\" data-filter=\"%s\">\n%s</ul>\n" % (showfilter and "true" or "false", s)
@@ -232,7 +232,7 @@ def page(dbo, session, username):
 
     logoutlink = ""
     if not session.mobileapp: 
-        logoutlink = jqm_link("mobile_logout", _("Logout", l), "delete", "ui-btn-right", "b")
+        logoutlink = jqm_link("mobile_logout", _("Logout", l), "delete", "ui-btn-right", "b", ajax="false")
 
     h.append(jqm_page_header("home", "%s : %s" % (username, _("ASM", l)), logoutlink , False))
     items = []
@@ -565,40 +565,6 @@ def page_incidents(l, homelink, inc, pageid = "inmy", pagetitle = ""):
     h.append(jqm_list("\n".join(vlist), True))
     h.append(jqm_page_footer())
     return h
-
-def page_login(l, post):
-    accountline = ""
-    accounttext = _("Database", l)
-    if asm3.smcom.active(): accounttext = _("SM Account", l)
-    if MULTIPLE_DATABASES:
-        accountline = "<div data-role='fieldcontain'><label for='database'>%s</label><input type='text' id='database' name='database' value='%s'/></div>" % (accounttext, asm3.html.escape(post["smaccount"]))
-    return header(l) + """
-        <div data-role='page' id='login'>
-        <div data-role='header'>
-        <h1>%s</h1>
-        </div>
-        <div data-role='content'>
-        <form id="loginform" action="mobile_login" target="_self" method="post">
-        <h2>%s</h2>
-        %s
-        <div data-role="fieldcontain">
-            <label for="username">%s</label>
-            <input type="text" id="username" name="username" value='%s' autocomplete="username" />
-        </div>
-        <div data-role="fieldcontain">
-            <label for="password">%s</label>
-            <input type="password" id="password" name="password" value='%s' autocomplete="current-password" />
-        </div>
-        <button type="submit">%s</button>
-        </form>
-        </div>
-        </div>
-        </body>
-        </html>
-    """ % ( _("Login", l), _("Login", l), accountline, 
-        _("Username", l), asm3.html.escape(post["username"]), 
-        _("Password", l), asm3.html.escape(post["password"]),
-        _("Login", l) )
 
 def handler(session, post):
     """
@@ -1305,16 +1271,6 @@ def handler_stocklocation(l, homelink, locationname, sl, su):
     h.append(jqm_page_footer())
     h.append("</body></html>")
     return "\n".join(h)
-
-def login(post, session, remoteip, useragent, path):
-    """
-    Handles the login post
-    """
-    url = asm3.users.web_login(post, session, remoteip, useragent, path)
-    if url == "FAIL" or url == "DISABLED":
-        return "mobile_login"
-    else:
-        return "mobile"
 
 def report_criteria(dbo, crid, title, crit):
     """

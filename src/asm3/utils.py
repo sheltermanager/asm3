@@ -1,5 +1,6 @@
 
 import asm3.al
+import asm3.cachemem
 import asm3.configuration
 import asm3.i18n
 import asm3.users
@@ -9,7 +10,6 @@ from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, MULTIPLE_DATABASES, SMTP_SERVER
 import web062 as web
 
 import base64
-import codecs
 import datetime
 import decimal
 import hashlib
@@ -513,6 +513,20 @@ def cmd(c, shell=False):
     except subprocess.CalledProcessError as e:
         return (e.returncode, e.output)
 
+def cache_sequence(dbo, name, vsql):
+    """
+    Returns the next value in an incrementing sequence with "name".
+    Uses memcache incr to handle state among processes.
+    vsql: A query that returns the next value for this sequence from the database.
+          If the cache is empty, this value is returned+1 and the cache initialised.
+    """
+    cache_key = "%s_sq_%s" % (dbo.database, name)
+    seq = asm3.cachemem.increment(cache_key)
+    if seq is None:
+        seq = 1 + dbo.query_int(vsql)
+        asm3.cachemem.put(cache_key, seq, 86400)
+    return seq
+
 def deduplicate_list(l):
     """
     Removes duplicates from the list l and returns a new list
@@ -631,6 +645,27 @@ def address_street_name(address):
     if len(bits) == 2:
         return bits[1]
     return ""
+
+def rss(inner, title, link, description):
+    """ Renders an RSS document """
+    return '<?xml version="1.0" encoding="UTF-8"?>' \
+        '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" >' \
+        '<channel rdf:about="%s">' \
+        '<title>%s</title>' \
+        '<description>%s</description>' \
+        '<link>%s</link>' \
+        '</channel>' \
+        '%s' \
+        '</rdf:RDF>' % (BASE_URL, title, description, link, inner)
+
+def rss_item(title, link, description):
+    return '<item rdf:about="%s">' \
+        '<title>%s</title>' \
+        '<link>%s</link>' \
+        '<description>' \
+        '%s' \
+        '</description>' \
+        '</item>' % (BASE_URL, title, link, description)
 
 def spaceleft(s, spaces):
     """
@@ -1201,11 +1236,19 @@ def zip_replace(zipfilename, filename, content):
 
 def read_text_file(name):
     """
-    Reads a text file and returns the result as a string.
+    Reads a utf-8 text file and returns the result as a unicode str.
     """
-    with codecs.open(name, 'r', encoding='utf8') as f:
+    with open(name, 'r', encoding='utf-8') as f:
         text = f.read()
     return text
+
+def write_text_file(name, data):
+    """
+    Writes a text file (expects data to be a unicode str).
+    """
+    with open(name, 'w', encoding='utf-8') as f:
+        f.write(data)
+        f.flush()
 
 def read_binary_file(name):
     """
@@ -1402,7 +1445,7 @@ def generate_image_pdf(locale, imagedata):
     doc.build(elements)
     return fout.getvalue()
 
-def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, width, height, lmargin, tmargin, cols, rows):
+def generate_label_pdf(dbo, locale, records, papersize, units, fontpt, hpitch, vpitch, width, height, lmargin, tmargin, cols, rows):
     """
     Generates a PDF of labels from the rows given to the measurements provided.
     papersize can be "a4" or "letter"
@@ -1468,15 +1511,9 @@ def generate_label_pdf(dbo, locale, records, papersize, units, hpitch, vpitch, w
         t.hAlign = "LEFT"
         t.setStyle(TableStyle([
             ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("FONTSIZE", (0,0), (-1,-1), asm3.utils.cint(fontpt)),
             ("FONTNAME", (0,0), (-1,-1), fontname)
             ]))
-        # If we have more than 8 labels vertically, use a smaller font size
-        if rows > 8:
-            t.setStyle(TableStyle([
-                ("VALIGN", (0,0), (-1,-1), "TOP"),
-                ("FONTSIZE", (0,0), (-1,-1), 8),
-                ("FONTNAME", (0,0), (-1,-1), fontname)
-                ]))
         elements.append(t)
 
     data = newData()

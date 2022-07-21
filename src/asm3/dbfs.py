@@ -4,7 +4,8 @@ import asm3.cachedisk
 import asm3.smcom
 import asm3.utils
 
-from asm3.sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, DBFS_S3_BUCKET
+from asm3.sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER
+from asm3.sitedefs import DBFS_S3_BUCKET, DBFS_S3_ACCESS_KEY_ID, DBFS_S3_SECRET_ACCESS_KEY, DBFS_S3_ENDPOINT_URL
 
 import mimetypes
 import os, sys, threading, time
@@ -158,7 +159,12 @@ class S3Storage(DBFSStorage):
         """
         import boto3
         session = boto3.Session() 
-        return session.client("s3")
+        if DBFS_S3_ENDPOINT_URL != "" and DBFS_S3_ACCESS_KEY_ID != "" and DBFS_S3_SECRET_ACCESS_KEY != "":
+            return session.client("s3", endpoint_url=DBFS_S3_ENDPOINT_URL, aws_access_key_id=DBFS_S3_ACCESS_KEY_ID, aws_secret_access_key=DBFS_S3_SECRET_ACCESS_KEY)
+        elif DBFS_S3_ACCESS_KEY_ID != "" and DBFS_S3_SECRET_ACCESS_KEY != "":
+            return session.client("s3", aws_access_key_id=DBFS_S3_ACCESS_KEY_ID, aws_secret_access_key=DBFS_S3_SECRET_ACCESS_KEY)
+        else:
+            return session.client("s3")
 
     def get(self, dbfsid, url):
         """ Returns the file data for url, reads through the disk cache """
@@ -276,21 +282,18 @@ def get_string(dbo, name, path = ""):
     else:
         r = dbo.query("SELECT ID, URL FROM dbfs WHERE Name=?", [name])
     if len(r) == 0:
-        return "" # compatibility with old behaviour - relied on by publishers
-        #raise DBFSError("No element found for path=%s, name=%s" % (path, name))
+        raise DBFSError("No element found for path=%s, name=%s" % (path, name))
     r = r[0]
     o = DBFSStorage(dbo, r.url)
     return o.get(r.id, r.url)
 
 def get_string_id(dbo, dbfsid):
     """
-    Gets DBFS file contents as a bytes string. Returns
-    an empty string if the file is not found.
+    Gets DBFS file contents as a bytes string.
     """
     r = dbo.query("SELECT URL FROM dbfs WHERE ID=?", [dbfsid])
     if len(r) == 0:
-        return "" # compatibility with old behaviour - relied on by publishers
-        #raise DBFSError("No row found with ID %s" % dbfsid)
+        raise DBFSError("No row found with ID %s" % dbfsid)
     r = r[0]
     o = DBFSStorage(dbo, r.url)
     return o.get(dbfsid, r.url)
@@ -568,6 +571,9 @@ def switch_storage(dbo):
             dbo.execute("UPDATE media SET MediaSize=? WHERE DBFSID=?", ( len(filedata), r.id ))
         except Exception as err:
             asm3.al.error("Error reading, skipping: %s" % str(err), "dbfs.switch_storage", dbo)
+    # reclaim any space from the deletion
+    dbo.vacuum("dbfs")
     # smcom only - perform postgresql full vacuum after switching
     if asm3.smcom.active(): asm3.smcom.vacuum_full(dbo)
+
 

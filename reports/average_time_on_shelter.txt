@@ -38,7 +38,7 @@ Average Time On Shelter By Year
 ###
 Statistics
 ###
-33018/MySQL
+33018/MySQL rev01
 ###
 Average time spent on shelter for all animals by year.
 ###
@@ -74,7 +74,7 @@ Average Time On Shelter By Year
 ###
 Statistics
 ###
-33018/PostgreSQL
+33018/PostgreSQL rev01
 ###
 Average time spent on shelter for all animals by year.
 ###

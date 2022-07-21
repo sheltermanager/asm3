@@ -1,6 +1,69 @@
 46
 ================
 
+19/07/22 Do not look up manufacturer/batch numbers at all if option is off
+18/07/22 Annual figures: do not count neuter/spays before datebroughtin
+17/07/22 Stop new animals with future intake date appearing on shelter #1150
+15/07/22 Fix bug where person chooser not showing similar people during add
+15/07/22 Show alerts for unsigned/signed documents on animal records
+12/07/22 Fix FTP chdir/recovery path for reconnection in AdoptAPet
+12/07/22 Fix partially implemented additional field type for Time
+12/07/22 Fix bug where clone_from_template copied the time of DateBroughtIn
+08/07/22 ActiveLitterMates wordkey
+07/07/22 Fix bug that causes display of SQL interface errors to be delayed
+07/07/22 Fix bug using LOGTYPE in reports after refactoring #1096
+05/07/22 Restrict the maximum width of the useragent in incoming forms
+05/07/22 Visual improvements to default online form template
+05/07/22 Use efficient memory cache for collation/receipt sequences #1149
+02/07/22 Use utf-8 when writing transaction logs
+02/07/22 Set base tag for online forms so that they can be proxied #1147
+01/07/22 Do not show the report toolbar for the html_report service call
+01/07/22 Prevent hidden pickuplocation on new animal choosing an inactive item
+28/06/22 Copy pickupaddress column when cloning an animal
+28/06/22 Allow S3 credentials/endpoint to be set as sitedefs #1146
+28/06/22 Hide intake time as well as date for non-shelter animals
+27/06/22 If size is removed, always send M to PetFinder
+24/06/22 Read through disk cache for thumbnail images to avoid reliance on CDN
+22/06/22 Highlight bad email addresses in dialog, stop using global error #1138
+22/06/22 Refactoring old stuff out of html.py #1145
+22/06/22 Refactoring report criteria for consistency #1145
+22/06/22 (sm.com) make sure account alias is set correctly when sending email
+21/06/22 basic check-a-chip integration for the UK and US #1144
+21/06/22 Refactor/split common out into html/validate/microchip js #1144
+20/06/22 Annual figures section for non-shelter microchips implanted #1140
+20/06/22 Re-implement mobile report criteria in new UI #1096
+20/06/22 Fix error that can cause bad data to prevent the calendar loading
+17/06/22 Prevent auto disabling of RescueGroups publisher due to transient 530
+11/06/22 Stop edits to investigation records removing the person
+10/06/22 Expired online forms are saved in the deletion log now
+09/06/22 Fix images in PDFs: iif was causing both expressions to be evaluated
+08/06/22 Revert validation fix, roles still need to be visible for super users
+06/06/22 Allow font size to be chosen when printing mailing labels
+05/06/22 Record the user-agent with online form submissions
+02/06/22 Fix insurance not hiding from movements correctly when set to remove
+02/06/22 Allow media to be moved to other animal/person records #822
+01/06/22 Handle thumbnails for youtube.com/shorts URL format
+01/06/22 Limit microchip fields to 15 chars
+01/06/22 Implement "remember me" for mobile login #1096
+23/05/22 Option to set the starting display of media tabs to table mode
+21/05/22 Don't suggest state if city is blank
+20/05/22 Updated Hebrew Translation (Saggi Neuemann)
+20/05/22 Updated Swedish Translation (Carina Lekare)
+17/05/22 Fix unicode bug when creating CSV files from publishers #1134
+14/05/22 Audit and store auto-deleted online forms in the deletion log
+14/05/22 Allow 15 slots for custom animal emblems (increase from 10)
+12/05/22 Mobile login rewritten, fleshing out of new mobile interface #1096
+11/05/22 csvimport: support ANIMALCOATTYPE (Peter Van Caeseele) #1132
+10/05/22 Fix bug in medical regimens removing default values on load
+09/05/22 Add cost per treatment for medical regimens/profiles #1095
+06/05/22 Left align online form checkboxes on mobile
+05/05/22 import PayPal CSV: allow payment type to be set per transaction #963
+04/05/22 No longer hide the person field for TNR/Release movements 
+04/05/22 Regimen edits are now audited correctly #1129
+04/05/22 Fix smartquote replacement to use unicode rather than HTML entities
+03/05/22 Do not allow ES01/2 log messages to be edited #1094
+27/04/22 csvimport: support declawed and special needs (Peter Van Caeseele)
+27/04/22 SavourLife: Fix bug with updating held status
 25/04/22 csvimport: Support person image/PDF (Peter Van Caeseele) #1126
 25/04/22 Allow future dates in vacc/test give dialogs again due to outcry
 22/04/22 Query builder: Animal date of birth between two dates criteria

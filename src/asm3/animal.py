@@ -16,7 +16,7 @@ import asm3.publishers.base
 import asm3.users
 import asm3.utils
 
-from asm3.i18n import _, date_diff, date_diff_days, format_diff, python2display, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
+from asm3.i18n import _, date_diff, date_diff_days, format_diff, python2display, remove_time, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
 
 import datetime
 from random import choice
@@ -748,9 +748,9 @@ def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age 
             "MovementType = 0 AND ReservationDate Is Not Null AND ReservationCancelledDate Is Null AND IDCheck = 0) AS rsvhck," \
         "(SELECT COUNT(DISTINCT OwnerID) FROM ownerdonation WHERE DateDue <= %(today)s AND Date Is Null) AS duedon," \
         "(SELECT COUNT(*) FROM adoption WHERE IsTrial = 1 AND ReturnDate Is Null AND MovementType = 1 AND TrialEndDate <= %(today)s) AS endtrial," \
-        "(SELECT COUNT(*) FROM log WHERE LinkType=1 AND Date >= %(onemonth)s AND Comments LIKE 'ES01%%') - " \
-        "(SELECT COUNT(*) FROM log WHERE LinkType=1 AND Date >= %(onemonth)s AND Comments LIKE 'ES02%%') AS docunsigned, " \
-        "(SELECT COUNT(*) FROM log WHERE LinkType=1 AND Date >= %(oneweek)s AND Comments LIKE 'ES02%%') AS docsigned, " \
+        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(onemonth)s AND Comments LIKE 'ES01%%') - " \
+        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(onemonth)s AND Comments LIKE 'ES02%%') AS docunsigned, " \
+        "(SELECT COUNT(*) FROM log WHERE LinkType IN (0,1) AND Date >= %(oneweek)s AND Comments LIKE 'ES02%%') AS docsigned, " \
         "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON adoption.AnimalID = animal.ID WHERE " \
             "Archived = 0 AND DeceasedDate Is Null AND ReservationDate Is Not Null AND ReservationDate <= %(oneweek)s " \
             "AND ReservationCancelledDate Is Null AND MovementType = 0 AND MovementDate Is Null) AS longrsv," \
@@ -1927,6 +1927,24 @@ def get_shelter_animals(dbo, include_additional_fields=True):
         rows = asm3.additional.append_to_results(dbo, rows, "animal")
     return rows
 
+def get_signed_requests(dbo, cutoff=7):
+    """
+    Returns animals that have a fulfilled a signing request in the last cutoff days
+    """
+    cutoffdate = dbo.today(cutoff * -1)
+    return dbo.query(get_animal_query(dbo) + "INNER JOIN log l ON a.ID = l.LinkID AND l.LinkType=0 " \
+        "AND l.Date >= ? AND l.Comments LIKE 'ES02%%'", [cutoffdate], distincton="ID")
+
+def get_unsigned_requests(dbo, cutoff=31):
+    """
+    Returns animals that have more signing requests in the last cutoff days than signed
+    """
+    cutoffdate = dbo.today(cutoff * -1)
+    return dbo.query(get_animal_query(dbo) + "INNER JOIN log l ON a.ID = l.LinkID AND l.LinkType=0 AND l.Date >= ? AND l.Comments LIKE 'ES01%%' " \
+        "WHERE (SELECT COUNT(*) FROM log WHERE LinkID=a.ID AND LinkType=0 AND Date >= ? AND Comments LIKE 'ES01%%') " \
+        " > (SELECT COUNT(*) FROM log WHERE LinkID=a.ID AND LinkType=0 AND Date >= ? AND Comments LIKE 'ES02%%') ", 
+        [cutoffdate, cutoffdate, cutoffdate], distincton="ID")
+
 def get_units_with_availability(dbo, locationid):
     """
     Returns a list of location units for location id.
@@ -2128,7 +2146,7 @@ def insert_animal_from_form(dbo, post, username):
         "Neutered":         post.boolean("neutered"),
         "NeuteredDate":     post.date("neutereddate"),
         "NeuteredByVetID":  post.integer("neuteringvet"),
-        "Declawed":         0,
+        "Declawed":         post.boolean("declawed"),
         # ASM2_COMPATIBILITY
         "HeartwormTested":  0,
         "HeartwormTestDate": None,
@@ -2168,7 +2186,7 @@ def insert_animal_from_form(dbo, post, username):
         "AsilomarIsTransferExternal": 0,
         "AsilomarOwnerRequestedEuthanasia": 0,
         "HealthProblems":   post["healthproblems"],
-        "HasSpecialNeeds":  0,
+        "HasSpecialNeeds":  post.boolean("specialneeds"),
         "RabiesTag":        "",
         "CurrentVetID":     post.integer("currentvet",0),
         "OwnersVetID":      0,
@@ -2739,6 +2757,7 @@ def clone_animal(dbo, username, animalid):
         "IsTransfer":       a.istransfer,
         "IsPickup":         a.ispickup,
         "PickupLocationID": a.pickuplocationid,
+        "PickupAddress":    a.pickupaddress,
         "JurisdictionID":   a.jurisdictionid,
         "IsGoodWithCats":   a.isgoodwithcats,
         "IsGoodWithDogs":   a.isgoodwithdogs,
@@ -2801,6 +2820,7 @@ def clone_animal(dbo, username, animalid):
             "StartDate":            am.startdate,
             "Dosage":               am.dosage,
             "Cost":                 am.cost,
+            "CostPerTreatment":     am.costpertreatment,
             "TimingRule":           am.timingrule,
             "TimingRuleFrequency":  am.timingrulefrequency,
             "TimingRuleNoFrequencies": am.timingrulenofrequencies,
@@ -2852,7 +2872,7 @@ def clone_animal(dbo, username, animalid):
             "DateDue":              dt.datedue,
             "Donation":             dt.donation,
             "ChequeNumber":         dt.chequenumber,
-            "ReceiptNumber":        asm3.utils.padleft(asm3.configuration.receipt_number_next(dbo), 8),
+            "ReceiptNumber":        asm3.financial.get_next_receipt_number(dbo),
             "IsGiftAid":            dt.isgiftaid,
             "Frequency":            dt.frequency,
             "NextCreated":          dt.nextcreated,
@@ -3006,6 +3026,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             adjdate = subtract_days(newbroughtin, dayoffset)
         else:
             adjdate = add_days(newbroughtin, dayoffset)
+        adjdate = adjdate.replace(hour=0, minute=0, second=0, microsecond=0) # throw away any time info that might have been on the original date
         return dbo.sql_date(adjdate)
     # Additional Fields (don't include newrecord ones or ones with default values as they are already set by the new animal screen)
     for af in dbo.query("SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
@@ -3049,6 +3070,7 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
             "StartDate":            newdate,
             "Dosage":               am.dosage,
             "Cost":                 am.cost,
+            "CostPerTreatment":     am.costpertreatment,
             "TimingRule":           am.timingrule,
             "TimingRuleFrequency":  am.timingrulefrequency,
             "TimingRuleNoFrequencies": am.timingrulenofrequencies,
@@ -3692,10 +3714,16 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
             " WHERE AnimalID = ? ORDER BY MovementDate DESC", [animalid])
 
     # Start at first intake for most recent entry date
-    mostrecententrydate = a.datebroughtin
+    mostrecententrydate = remove_time(a.datebroughtin)
 
     # Start with the existing value for the current owner
     ownerid = a.ownerid
+
+    # Start with onshelter at True/False based on whether
+    # the intake date is older than now.
+    # (subsequent exit movement and flag checks will set it to False where needed)
+    # This is to prevent animals with a future intake date appearing on shelter.
+    onshelter = today >= remove_time(a.datebroughtin)
 
     cfg_foster_on_shelter = asm3.configuration.foster_on_shelter(dbo)
     cfg_retailer_on_shelter = asm3.configuration.retailer_on_shelter(dbo)
@@ -4789,6 +4817,7 @@ def update_animal_figures_annual(dbo, year = 0):
         species_line("SELECT a.NeuteredDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.SpeciesID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
+            "AND a.NeuteredDate >= a.DateBroughtIn " \
             "AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_NEUTERSPAYSA", group, 170, showbabies, babymonths)
@@ -4802,7 +4831,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_NEUTERSPAYNS", group, 180, showbabies, babymonths)
 
-    group = _("Microchips Implanted In {0}", l).format(year)
+    group = _("Microchipped Shelter Animals In {0}", l).format(year)
     for sp in allspecies:
         species_line("SELECT a.IdentichipDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
@@ -4811,6 +4840,16 @@ def update_animal_figures_annual(dbo, year = 0):
             "AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.IdentichipDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_MICROCHIPS", group, 190, showbabies, babymonths)
+
+    group = _("Microchipped Non-Shelter Animals In {0}", l).format(year)
+    for sp in allspecies:
+        species_line("SELECT a.IdentichipDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.SpeciesID = %d AND a.IdentichipDate >= %s AND a.IdentichipDate <= %s " \
+            "AND a.Identichipped = 1 " \
+            "AND a.NonShelterAnimal = 1 " \
+            "GROUP BY a.IdentichipDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
+            sp["ID"], sp["SPECIESNAME"], "SP_MICROCHIPSNS", group, 192, showbabies, babymonths)
 
     group = _("Euthanized Non-Shelter Animals in {0}", l).format(year)
     for sp in allspecies:
@@ -5006,6 +5045,7 @@ def update_animal_figures_annual(dbo, year = 0):
         type_line("SELECT a.NeuteredDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.AnimalTypeID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
+            "AND a.NeuteredDate >= a.DateBroughtIn " \
             "AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_NEUTERSPAYSA", group, 170, at["SHOWSPLIT"], babymonths)
@@ -5019,7 +5059,7 @@ def update_animal_figures_annual(dbo, year = 0):
             "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_NEUTERSPAYNS", group, 180, at["SHOWSPLIT"], babymonths)
 
-    group = _("Microchips Implanted In {0}", l).format(year)
+    group = _("Microchipped Shelter Animals In {0}", l).format(year)
     for at in alltypes:
         type_line("SELECT a.IdentichipDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
@@ -5028,6 +5068,16 @@ def update_animal_figures_annual(dbo, year = 0):
             "AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.IdentichipDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_MICROCHIPS", group, 190, at["SHOWSPLIT"], babymonths)
+
+    group = _("Microchipped Non-Shelter Animals In {0}", l).format(year)
+    for at in alltypes:
+        type_line("SELECT a.IdentichipDate AS TheDate, a.DateOfBirth AS DOB, " \
+            "COUNT(a.ID) AS Total FROM animal a WHERE " \
+            "a.AnimalTypeID = %d AND a.IdentichipDate >= %s AND a.IdentichipDate <= %s " \
+            "AND a.Identichipped = 1 " \
+            "AND a.NonShelterAnimal = 1 " \
+            "GROUP BY a.IdentichipDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
+            at["ID"], at["ANIMALTYPE"], "AT_MICROCHIPSNS", group, 192, at["SHOWSPLIT"], babymonths)
 
     group = _("Euthanized Non-Shelter Animals in {0}", l).format(year)
     for at in alltypes:

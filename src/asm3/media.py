@@ -182,11 +182,11 @@ def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
     def nopic():
         NOPIC_DATE = datetime.datetime(2011, 1, 1)
         if justdate: return NOPIC_DATE
-        return (NOPIC_DATE, "NOPIC")
+        return (NOPIC_DATE, b"NOPIC")
     def thumb_nopic():
         NOPIC_DATE = datetime.datetime(2011, 1, 1)
         if justdate: return NOPIC_DATE
-        return (NOPIC_DATE, "NOPIC")
+        return (NOPIC_DATE, b"NOPIC")
     def mrec(mm):
         if mm is None: return nopic()
         if justdate: return mm.DATE
@@ -622,6 +622,13 @@ def update_media_from_form(dbo, username, post):
         "UpdatedSinceLastPublish": 1
     }, username, setLastChanged=False)
 
+def update_media_link(dbo, username, mediaid, linktypeid, linkid):
+    dbo.update("media", mediaid, {
+        "LinkID":   linkid,
+        "LinkTypeID": linktypeid,
+        "Date":     dbo.now()
+    }, username, setLastChanged=False)
+
 def delete_media(dbo, username, mid):
     """
     Deletes a media record from the system
@@ -941,27 +948,26 @@ def scale_all_animal_images(dbo):
     Goes through all animal images in the database and scales
     them to the current incoming media scaling factor.
     """
-    mp = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'image/jpeg' AND LinkTypeID = 0")
+    mp = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'image/jpeg' AND LinkTypeID = 0 ORDER BY ID")
     for i, m in enumerate(mp):
-        inputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-        outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-        odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
-        inputfile.write(odata)
-        inputfile.flush()
-        inputfile.close()
-        outputfile.close()
-        asm3.al.debug("scaling %s (%d of %d)" % (m.MEDIANAME, i, len(mp)), "media.scale_all_animal_images", dbo)
         try:
+            inputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+            outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+            odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
+            inputfile.write(odata)
+            inputfile.flush()
+            inputfile.close()
+            outputfile.close()
+            asm3.al.debug("scaling %s (%d of %d)" % (m.MEDIANAME, i, len(mp)), "media.scale_all_animal_images", dbo)
             scale_image_file(inputfile.name, outputfile.name, RESIZE_IMAGES_SPEC)
+            data = asm3.utils.read_binary_file(outputfile.name)
+            os.unlink(inputfile.name)
+            os.unlink(outputfile.name)
+            # Update the image file data
+            asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, data)
+            dbo.update("media", m.ID, { "MediaSize": len(data) })
         except Exception as err:
-            asm3.al.error("failed scaling image, doing nothing: %s" % err, "media.scale_all_animal_images", dbo)
-            continue
-        data = asm3.utils.read_binary_file(outputfile.name)
-        os.unlink(inputfile.name)
-        os.unlink(outputfile.name)
-        # Update the image file data
-        asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, data)
-        dbo.update("media", m.ID, { "MediaSize": len(data) })
+            asm3.al.error("failed scaling image (ID=%s, DBFSID=%s): %s" % (m.ID, m.DBFSID, err), "media.scale_all_animal_images", dbo)
     asm3.al.debug("scaled %d images" % len(mp), "media.scale_all_animal_images", dbo)
 
 def scale_all_odt(dbo):
@@ -969,40 +975,42 @@ def scale_all_odt(dbo):
     Goes through all odt files attached to records in the database and 
     scales them down (throws away images and objects so only the text remains to save space)
     """
-    mo = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'application/vnd.oasis.opendocument.text'")
+    mo = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'application/vnd.oasis.opendocument.text' ORDER BY ID")
     total = 0
     for i, m in enumerate(mo):
-        asm3.al.debug("scaling %s (%d of %d)" % (m.MEDIANAME, i, len(mo)), "media.scale_all_odt", dbo)
-        odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
-        if odata == "":
-            asm3.al.error("file %s does not exist" % m.MEDIANAME, "media.scale_all_odt", dbo)
-            continue
-        ndata = scale_odt(odata)
-        if len(ndata) < 512:
-            asm3.al.error("scaled odt %s came back at %d bytes, abandoning" % (m.MEDIANAME, len(ndata)), "scale_all_odt", dbo)
-        else:
-            asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, ndata)
-            dbo.update("media", m.ID, { "MediaSize": len(ndata) }) 
-            total += 1
+        try:
+            asm3.al.debug("scaling %s (%d of %d)" % (m.MEDIANAME, i, len(mo)), "media.scale_all_odt", dbo)
+            odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
+            ndata = scale_odt(odata)
+            if len(ndata) < 512:
+                asm3.al.error("scaled odt %s came back at %d bytes, abandoning" % (m.MEDIANAME, len(ndata)), "scale_all_odt", dbo)
+            else:
+                asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, ndata)
+                dbo.update("media", m.ID, { "MediaSize": len(ndata) }) 
+                total += 1
+        except Exception as err:
+            asm3.al.error("failed scaling ODT (ID=%s, DBFSID=%s): %s" % (m.ID, m.DBFSID, err), "media.scale_all_odt", dbo)
     asm3.al.debug("scaled %d of %d odts" % (total, len(mo)), "media.scale_all_odt", dbo)
 
 def scale_all_pdf(dbo):
     """
     Goes through all PDFs in the database and attempts to scale them down.
     """
-    mp = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' ORDER BY ID DESC")
+    mp = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' ORDER BY ID")
     total = 0
     for i, m in enumerate(mp):
-        odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
-        data = scale_pdf(odata)
-        asm3.al.debug("scaling %s (%d of %d): old size %d, new size %d" % (m.MEDIANAME, i, len(mp), len(odata), len(data)), "check_and_scale_pdfs", dbo)
-        # Store the new compressed PDF file data - if it's smaller
-        if len(data) < len(odata):
-            asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, data)
-            dbo.update("media", m.ID, { "MediaSize": len(data) })
-            total += 1
+        try:
+            odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
+            data = scale_pdf(odata)
+            asm3.al.debug("scaled %s (DBFSID=%s) (%d of %d): old size %d, new size %d" % (m.MEDIANAME, m.DBFSID, i, len(mp), len(odata), len(data)), "check_and_scale_pdfs", dbo)
+            # Store the new compressed PDF file data - if it's smaller
+            if len(data) < len(odata):
+                asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, data)
+                dbo.update("media", m.ID, { "MediaSize": len(data) })
+                total += 1
+        except Exception as err:
+            asm3.al.error("failed scaling PDF (ID=%s, DBFSID=%s): %s" % (m.ID, m.DBFSID, err), "media.scale_all_pdf", dbo)
     asm3.al.debug("scaled %d of %d pdfs" % (total, len(mp)), "media.scale_all_pdf", dbo)
-
 
 def watermark_with_transparency(dbo, imagedata, animalname):
     """

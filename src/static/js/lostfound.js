@@ -1,4 +1,4 @@
-/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
+/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, microchip, tableform, validate */
 
 $(function() {
 
@@ -135,8 +135,8 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="microchip">' + _("Microchip") + '</label></td>',
-                '<td><input id="microchip" data-json="MICROCHIPNUMBER" data-post="microchip" type="text" class="asm-textbox" />',
-                ' <span id="microchipbrand"></span>',
+                '<td><input id="microchip" data-json="MICROCHIPNUMBER" data-post="microchip" type="text" maxlength="15" class="asm-textbox" />',
+                ' <span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -178,7 +178,11 @@ $(function() {
             }
 
             // Show the microchip manufacturer
-            html.microchip_manufacturer("#microchip", "#microchipbrand");
+            microchip.manufacturer("#microchip", "#microchipbrand");
+
+            // Show the microchip check button
+            $("#button-microchipcheck").hide();
+            if (microchip.is_check_available($("#microchip").val())) { $("#button-microchipcheck").show(); }
 
             if (!common.has_permission("aa")) { $("#button-toanimal").hide(); }
             if (!common.has_permission("awl")) { $("#button-towaitinglist").hide(); }
@@ -300,6 +304,10 @@ $(function() {
                     templates: controller.templatesemail
                 });
             });
+
+            $("#button-microchipcheck")
+                .button({ icons: { primary: "ui-icon-search" }, text: false })
+                .click(function() { microchip.check($("#microchip").val()); });
 
             $("#button-toanimal").button().click(async function() {
                 $("#button-toanimal").button("disable");

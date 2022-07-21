@@ -1,4 +1,4 @@
-/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, header, html, validate */
+/*global $, jQuery, _, asm, common, config, controller, dlgfx, format, edit_header, header, html, validate */
 
 $(function() {
 
@@ -15,7 +15,7 @@ $(function() {
                 '</p>',
                 '</div>',
                 '<div id="templatelist">',
-                controller.templates,
+                edit_header.template_list(controller.templates, controller.linktype, controller.id),
                 '</div>',
                 html.content_footer()
             ].join("\n");

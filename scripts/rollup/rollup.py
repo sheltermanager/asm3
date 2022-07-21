@@ -7,11 +7,12 @@
 
 import os
 
-jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
-    "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
+jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
+    "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_microchip.js", "header.js",
     "header_additional.js", "header_edit_header.js" ]
 
-exclude = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
+exclude = [ "animal_view_adoptable.js", "document_edit.js", 
+    "mobile.js", "mobile2.js", "mobile_login.js", "mobile_report.js", "mobile_sign.js", 
     "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
 
 for i in os.listdir("src/static/js"):

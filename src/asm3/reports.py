@@ -187,6 +187,12 @@ def is_mailmerge(dbo, crid):
     """
     return dbo.query_string("SELECT HTMLBody FROM customreport WHERE ID = ?", [crid]).startswith("MAIL")
 
+def get_criteria(dbo, customreportid):
+    """
+    Returns the criteria list for a report as a list of tuples containing name, type and question
+    """
+    return Report(dbo).GetParams(customreportid)
+
 def get_criteria_params(dbo, customreportid, post):
     """
     Creates a list of criteria parameters to pass to a report. The post
@@ -705,10 +711,12 @@ def email_daily_reports(dbo, now = None):
             continue
         asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emails, "", "", r.TITLE, body, "html", exceptions=False)
 
-def execute_title(dbo, title, username = "system", params = None):
+def execute_title(dbo, title, username = "system", params = None, toolbar = True):
     """
     Executes a custom report by a match on its title. 'params' is a tuple
     of parameters. username is the name of the user running the report.
+    if toolbar is True and it's a report we're running, the toolbar will be injected
+    into the report document.
     See the Report._SubstituteSQLParameters function for more info.
     Return value is a string containing the report as an HTML document.
     """
@@ -716,17 +724,21 @@ def execute_title(dbo, title, username = "system", params = None):
     if crid == 0:
         return "<html><body><h1>404 Not Found</h1><p>The report '%s' does not exist.</p></body></html>" % title
     else:
-        return execute(dbo, crid, username, params)
+        return execute(dbo, crid, username, params, toolbar)
 
-def execute(dbo, customreportid, username = "system", params = None):
+def execute(dbo, customreportid, username = "system", params = None, toolbar = True):
     """
     Executes a custom report by its ID. 'params' is a tuple of 
     parameters. username is the name of the user running the 
     report. See the Report._SubstituteSQLParameters function for
-    more info. Return value is a string containing the report as an
+    more info. 
+    if toolbar is True and it's a report we're running, the toolbar will be injected
+    into the report document.
+    Return value is a string containing the report as an
     HTML document.
     """
     r = Report(dbo)
+    r.toolbar = toolbar
     return r.Execute(customreportid, username, params)
 
 def execute_query(dbo, customreportid, username = "system", params = None):
@@ -784,6 +796,7 @@ class Report:
     omitCriteria = False
     omitHeaderFooter = False
     isSubReport = False
+    toolbar = False
     output = ""
     
     def __init__(self, dbo):
@@ -1717,7 +1730,7 @@ class Report:
             htmlheader = self.html[htmlheaderstart+12:htmlheaderend]
 
         # Inject the script tags needed into the header for showing the print toolbar
-        if asm3.configuration.report_toolbar(self.dbo) and not self.isSubReport:
+        if self.toolbar and asm3.configuration.report_toolbar(self.dbo) and not self.isSubReport:
             htmlheader = htmlheader.replace("</head>", asm3.html.report_js(l) + "\n</head>")
 
         htmlfooter = self._ReadFooter()

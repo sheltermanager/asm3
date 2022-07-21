@@ -31,7 +31,7 @@ DESCENDING_GIVEN = 2
 
 def get_medicaltreatment_query(dbo):
     return "SELECT a.ShelterCode, a.ShortCode, a.AnimalName, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
+        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
@@ -177,7 +177,7 @@ def get_medicalcombined_query(dbo):
 
 def get_test_query(dbo):
     return "SELECT at.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
+        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
@@ -223,7 +223,7 @@ def get_test_query(dbo):
 
 def get_vaccination_query(dbo):
     return "SELECT av.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
+        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
@@ -295,14 +295,18 @@ def get_vaccinated(dbo, animalid):
 
 def get_batch_for_vaccination_types(dbo):
     """
-    Returns vaccination types and 
-    last non-empty batch number and manufacturer we saw for that type
+    Returns vaccination types and last non-empty batch number and manufacturer 
+        we saw for that type in the last month.
+        Uses our distincton to throw away everything but the first row for 
+        each vaccinationid (aliased to id)
+    Does nothing if the option for inserting the last batch/manufacturer is disabled.
     """
-    return dbo.query("SELECT ID, " \
-        "(SELECT BatchNumber FROM animalvaccination v1 WHERE v1.ID = (SELECT MAX(v2.ID) FROM animalvaccination v2 WHERE v2.BatchNumber <> '' AND vt.ID = v2.VaccinationID AND DateOfVaccination Is Not Null)) AS BatchNumber, " \
-        "(SELECT Manufacturer FROM animalvaccination v1 WHERE v1.ID = (SELECT MAX(v2.ID) FROM animalvaccination v2 WHERE v2.BatchNumber <> '' AND vt.ID = v2.VaccinationID AND DateOfVaccination Is Not Null)) AS Manufacturer " \
-        "FROM vaccinationtype vt " \
-        "ORDER BY vt.ID")
+    if not asm3.configuration.auto_default_vacc_batch(dbo): return []
+    return dbo.query("SELECT VaccinationID AS ID, BatchNumber, Manufacturer " \
+        "FROM animalvaccination " \
+        "WHERE BatchNumber <> '' AND Manufacturer <> '' " \
+        "AND DateOfVaccination Is Not Null AND DateOfVaccination >= ? " \
+        "ORDER BY animalvaccination.ID DESC, VaccinationID", [ dbo.today(offset=-31) ], distincton="ID")
 
 def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED):
     """
@@ -751,11 +755,14 @@ def calculate_given_remaining(dbo, amid):
     Calculates the number of treatments given and remaining
     """
     given = dbo.query_int("SELECT COUNT(*) FROM animalmedicaltreatment " +
-        "WHERE AnimalMedicalID = ? AND DateGiven Is Not Null", [amid])
+        "WHERE AnimalMedicalID = ? AND DateGiven Is Not Null", [amid]) 
+    cpt = dbo.query_int("SELECT CostPerTreatment FROM animalmedical WHERE ID=?", [amid])
     dbo.execute("UPDATE animalmedical SET " \
         "TreatmentsGiven = ?, " \
         "TreatmentsRemaining = ((TotalNumberOfTreatments * TimingRule) - ?) " \
         "WHERE ID = ?", (given, given, amid))
+    if cpt > 0 and given > 0:
+        dbo.execute("UPDATE animalmedical SET Cost = ? WHERE ID = ?", [ cpt * given, amid ])
 
 def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", vetid = 0, dateexpires = None, batchnumber = "", manufacturer = "", rabiestag = ""):
     """
@@ -969,6 +976,7 @@ def insert_regimen_from_form(dbo, username, post):
         "StartDate":                post.date("startdate"),
         "Status":                   ACTIVE,
         "Cost":                     post.integer("cost"),
+        "CostPerTreatment":         post.integer("costpertreatment"),
         "CostPaidDate":             post.date("costpaid"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
@@ -1008,11 +1016,13 @@ def update_regimen_from_form(dbo, username, post):
         raise asm3.utils.ASMValidationError(_("Treatment name cannot be blank", l))
 
     dbo.update("animalmedical", regimenid, {
+        "AnimalID":         post.integer("animal"),
         "TreatmentName":    post["treatmentname"],
         "Dosage":           post["dosage"],
         "StartDate":        post.date("startdate"),
         "Status":           post.integer("status"),
         "Cost":             post.integer("cost"),
+        "CostPerTreatment": post.integer("costpertreatment"),
         "CostPaidDate":     post.date("costpaid"),
         "Comments":         post["comments"]
     }, username)
@@ -1251,6 +1261,7 @@ def insert_profile_from_form(dbo, username, post):
         "TreatmentName":            post["treatmentname"],
         "Dosage":                   post["dosage"],
         "Cost":                     post.integer("cost"),
+        "CostPerTreatment":         post.integer("costpertreatment"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
@@ -1288,6 +1299,7 @@ def update_profile_from_form(dbo, username, post):
         "TreatmentName":            post["treatmentname"],
         "Dosage":                   post["dosage"],
         "Cost":                     post.integer("cost"),
+        "CostPerTreatment":         post.integer("costpertreatment"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,

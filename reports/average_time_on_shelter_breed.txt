@@ -2,7 +2,7 @@ Average Time On Shelter By Date and Breed
 ###
 Statistics
 ###
-33018/PostgreSQL
+33018/PostgreSQL rev01
 ###
 Average time spent on shelter for all animals by breed and date.
 ###
@@ -41,7 +41,7 @@ Average Time On Shelter By Date and Breed
 ###
 Statistics
 ###
-33018/MySQL
+33018/MySQL rev01
 ###
 Average time spent on shelter for all animals by breed and date.
 ###

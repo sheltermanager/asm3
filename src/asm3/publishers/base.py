@@ -791,33 +791,33 @@ class AbstractPublisher(threading.Thread):
         if self.tempPublishDir:
             shutil.rmtree(self.publishDir, True)
 
-    def replaceSmartHTMLEntities(self, s):
+    def replaceSmartQuotes(self, s):
         """
-        Replaces well known "smart" HTML entities with ASCII characters (mainly aimed at smartquotes)
+        Replaces well known "smart" quotes/points with ASCII characters (mainly aimed at smartquotes)
         """
         ENTITIES = {
-            "180":  "'", # spacing acute
-            "8211": "-", # endash
-            "8212": "--", # emdash
-            "8216": "'", # left single quote
-            "8217": "'", # right single quote
-            "8218": ",", # single low quote (comma)
-            "8220": "\"", # left double quotes
-            "8221": "\"", # right double quotes
-            "8222": ",,", # double low quote (comma comma)
-            "8226": "*", # bullet
-            "8230": "...", # ellipsis
-            "8242": "'", # prime (stopwatch)
-            "8243": "\"", # double prime,
-            "10003": "/", # check
-            "10004": "/", # heavy check
-            "10005": "x", # multiplication x
-            "10006": "x", # heavy multiplication x
-            "10007": "x", # ballot x
-            "10008": "x"  # heavy ballot x
+            "\u00b4":  "'", # spacing acute
+            "\u2013": "-", # endash
+            "\u2014": "--", # emdash
+            "\u2018": "'", # left single quote
+            "\u2019": "'", # right single quote
+            "\u201a": ",", # single low quote (comma)
+            "\u201c": "\"", # left double quotes
+            "\u201d": "\"", # right double quotes
+            "\u201e": ",,", # double low quote (comma comma)
+            "\u2022": "*", # bullet
+            "\u2026": "...", # ellipsis
+            "\u2032": "'", # prime (stopwatch)
+            "\u2033": "\"", # double prime,
+            "\u2713": "/", # check
+            "\u2714": "/", # heavy check
+            "\u2715": "x", # multiplication x
+            "\u2716": "x", # heavy multiplication x
+            "\u2717": "x", # ballot x
+            "\u2718": "x"  # heavy ballot x
         }
         for k, v in ENTITIES.items():
-            s = s.replace("&#" + k + ";", v)
+            s = s.replace(k, v)
         return s
 
     def getLocaleForCountry(self, c):
@@ -847,7 +847,7 @@ class AbstractPublisher(threading.Thread):
         crToBr: Convert line breaks to <br /> tags
         crToHE: Convert line breaks to html entity &#10;
         crToLF: Convert line breaks to LF
-        replaceSmart: Replace smart HTML entities (mainly apostrophes and quotes) with regular ASCII
+        replaceSmart: Replace smart quotes (mainly apostrophes and quotes) with regular ASCII
         """
         # Note: WEBSITEMEDIANOTES becomes ANIMALCOMMENTS in get_animal_data when publisher_use_comments is on
         notes = asm3.utils.nulltostr(an["WEBSITEMEDIANOTES"])
@@ -867,7 +867,7 @@ class AbstractPublisher(threading.Thread):
         notes = notes.replace("\n", cr)
         # Smart quotes and apostrophes
         if replaceSmart:
-            notes = self.replaceSmartHTMLEntities(notes)
+            notes = self.replaceSmartQuotes(notes)
         # Escape speechmarks
         notes = notes.replace("\"", "\"\"")
         return notes
@@ -962,10 +962,7 @@ class AbstractPublisher(threading.Thread):
 
     def saveFile(self, path, contents):
         try:
-            f = open(path, "w")
-            f.write(contents)
-            f.flush()
-            f.close()
+            asm3.utils.write_text_file(path, contents)
         except Exception as err:
             self.logError(str(err), sys.exc_info())
 
@@ -1195,16 +1192,16 @@ class FTPPublisher(AbstractPublisher):
         except Exception as err:
             self.log("mkdir %s: already exists (%s)" % (newdir, err))
 
-    def chdir(self, newdir, fromroot = ""):
-        """ Changes FTP folder. Returns True on success, False for failure """
+    def chdir(self, newdir, fromroot):
+        """ Changes FTP folder. 
+            newdir: The folder to change into
+            fromroot: The path to this folder from the root for recovery/reconnection
+            Returns True on success, False for failure """
         if not self.pc.uploadDirectly: return True
         self.log("FTP chdir to %s" % newdir)
         try:
             self.socket.cwd(newdir)
-            if fromroot == "":
-                self.currentDir = newdir
-            else:
-                self.currentDir = fromroot
+            self.currentDir = fromroot
             return True
         except Exception as err:
             self.logError("chdir %s: %s" % (newdir, err), sys.exc_info())

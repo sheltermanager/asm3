@@ -49,6 +49,7 @@ LOOKUP = 6
 MULTI_LOOKUP = 7
 ANIMAL_LOOKUP = 8
 PERSON_LOOKUP = 9
+TIME = 10
 
 def clause_for_linktype(linktype):
     """ Returns the appropriate clause for a link type """

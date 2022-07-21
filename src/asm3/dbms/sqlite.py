@@ -28,3 +28,7 @@ class DatabaseSQLite3(Database):
 
     def switch_param_placeholder(self, sql):
         return sql # SQLite3 driver wants ? placeholders rather than usual %s so leave as is
+
+    def vacuum(self, tablename = ""):
+        self.execute("VACUUM") # sqlite3 vacuum does the whole file and cannot accept a table argument
+

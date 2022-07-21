@@ -376,7 +376,7 @@ $.widget("asm.personchooser", {
                 }
                 // When the user changes a town, suggest a county if it's blank
                 dialogadd.find(".personchooser-town").blur(function() {
-                    if (dialogadd.find(".personchooser-county").val() == "") {
+                    if (dialogadd.find(".personchooser-county").val() == "" && dialogadd.find(".personchooser-town").val() != "") {
                         dialogadd.find(".personchooser-county").val(self.options.towncounties[dialogadd.find(".personchooser-town").val()]);
                     }
                 });
@@ -630,7 +630,7 @@ $.widget("asm.personchooser", {
      */
     check_similar: function() {
         var self = this, dialogadd = this.options.dialogadd, dialogsimilar = this.options.dialogsimilar;
-        var formdata = "mode=similar&" + dialogadd.find("input[data='emailaddress'], input[data='mobiletelephone'], input[data='surname'], input[data='forenames'], input[data='address']").toPOST();
+        var formdata = "mode=similar&" + dialogadd.find("input[data='emailaddress'], input[data='mobiletelephone'], input[data='surname'], input[data='forenames'], textarea[data='address']").toPOST();
         $.ajax({
             type: "POST",
             url:  "person_embed",

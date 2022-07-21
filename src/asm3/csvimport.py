@@ -477,7 +477,13 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             a["microchipnumber"] = gks(row, "ANIMALMICROCHIP")
             if a["microchipnumber"] != "": a["microchipped"] = "on"
             a["microchipdate"] = gkd(dbo, row, "ANIMALMICROCHIPDATE")
+            a["tattoonumber"] = gks(row, "ANIMALTATTOO")
+            if a["tattoonumber"] != "": a["tattoo"] = "on"
+            a["tattoodate"] = gkd(dbo, row, "ANIMALTATTOODATE")
             a["flags"] = gks(row, "ANIMALFLAGS")
+            a["declawed"] = gkbc(row, "ANIMALDECLAWED")
+            a["specialneeds"] = gkbc(row, "ANIMALHASSPECIALNEEDS")
+            a["coattype"] = gkl(dbo, row, "ANIMALCOATTYPE", "lkcoattype", "CoatType", createmissinglookups)
             # image data if any was supplied
             imagedata = gks(row, "ANIMALIMAGE")
             if imagedata != "":
@@ -1012,6 +1018,15 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
         except Exception as e:
             row_error(errors, "person", rowno, r, e, dbo, sys.exc_info())
 
+        # Sort out which payment type is being used. Look for a user-added column called "ASM Payment Type"
+        # if it doesn't exist, is blank or we couldn't find a match in the donation type table 
+        # then we fall back to the one the user chose during import.
+        sdonationtypeid = v(r, "ASM Payment Type")
+        if sdonationtypeid != "":
+            sdonationtypeid = dbo.query_str("SELECT ID FROM donationtype WHERE DonationName=?", [sdonationtypeid])
+        if sdonationtypeid == "":
+            sdonationtypeid = str(donationtypeid)
+
         # Donation info
         gross = asm3.utils.cint(asm3.utils.cfloat(v(r, "Gross")) * 100) 
         net = asm3.utils.cint(asm3.utils.cfloat(v(r, "Net")) * 100) 
@@ -1032,7 +1047,7 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
                 v(r, "Gross"), v(r, "Fee"), v(r, "Net"), v(r, "Subject"), v(r, "Note") )
             d["comments"] = comments
             d["received"] = asm3.i18n.python2display(dbo.locale, pdate)
-            d["type"] = str(donationtypeid)
+            d["type"] = sdonationtypeid
             d["payment"] = str(donationpaymentid)
             try:
                 asm3.financial.insert_donation_from_form(dbo, user, asm3.utils.PostedData(d, dbo.locale))

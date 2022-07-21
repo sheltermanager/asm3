@@ -771,8 +771,17 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
 
     if includeLitterMates and a["ACCEPTANCENUMBER"] is not None and len(a["ACCEPTANCENUMBER"]) > 2:
         # Littermates
-        lm = dbo.query("SELECT AnimalName, ShelterCode FROM animal WHERE AcceptanceNumber = ? AND ID <> ?", [ a["ACCEPTANCENUMBER"], a["ID"] ])
+        lm = dbo.query("SELECT AnimalName, ShelterCode FROM animal " \
+            "WHERE AcceptanceNumber = ? AND ID <> ? " \
+            "ORDER BY AnimalName", [ a["ACCEPTANCENUMBER"], a["ID"] ])
         tags["LITTERMATES"] = html_table(l, lm, (
+            ( "SHELTERCODE", _("Code", l)),
+            ( "ANIMALNAME", _("Name", l))
+        ))
+        lma = dbo.query("SELECT AnimalName, ShelterCode FROM animal " \
+            "WHERE AcceptanceNumber = ? AND ID <> ? AND Archived = 0 " \
+            "ORDER BY AnimalName", [ a["ACCEPTANCENUMBER"], a["ID"] ])
+        tags["ACTIVELITTERMATES"] = html_table(l, lma, (
             ( "SHELTERCODE", _("Code", l)),
             ( "ANIMALNAME", _("Name", l))
         ))

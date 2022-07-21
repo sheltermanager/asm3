@@ -454,6 +454,12 @@ person records where possible. If an existing record cannot be found, a new
 person will be created.</p>
 <p>The net amount will be used as the payment amount and the PayPal transaction
 fee will be recorded with the payment.</p>
+<p>It is possible to override the payment type on a per transaction basis by
+editing the PayPal CSV file and adding a column named “ASM Payment Type”. You
+can then assign values from your payment types lookup in this column. Note that
+they must match exactly (same case) the payment type name from your lookup. If
+the column does not exist, contains a blank or the system could not find a match
+then the payment type from the import screen will be used.</p>
 </div>
 <div class="section" id="trigger-batch-processes">
 <h2>Trigger Batch Processes<a class="headerlink" href="#trigger-batch-processes" title="Permalink to this headline">¶</a></h2>
@@ -482,7 +488,7 @@ database for other users. They should be used sparingly.</p>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Sheltermanager, Ltd.
+        &#169; Copyright 2022, Sheltermanager, Ltd.
 
     </p>
   </div>

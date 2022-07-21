@@ -83,17 +83,18 @@ header = {
     show_error: function(text, duration) {
         if (!duration) { duration = 20000; }
         $("#asm-topline-error-text").html(text);
-        $("#asm-topline-error").fadeIn("slow").delay(duration).fadeOut("slow");
+        // INFO: use of stop() to cancel delay() if show_info/error is called again before delay has finished
+        $("#asm-topline-error").stop().fadeIn("slow").delay(duration).fadeOut("slow");
     },
 
     hide_error: function() {
-        $("#asm-topline-error").hide();
+        $("#asm-topline-error").stop().hide();
     },
 
     show_info: function(text, duration) {
         if (!duration) { duration = 5000; }
         $("#asm-topline-info-text").html(text);
-        $("#asm-topline-info").fadeIn("slow").delay(duration).fadeOut("slow");
+        $("#asm-topline-info").stop().fadeIn("slow").delay(duration).fadeOut("slow");
     },
 
     show_loading: function(text) {

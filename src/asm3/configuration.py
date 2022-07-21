@@ -158,7 +158,6 @@ DEFAULTS = {
     "CardcomDocumentType": "3",
     "CardcomMaxInstallments": "6",
     "CloneAnimalIncludeLogs": "Yes",
-    "CollationIDNext": "0",
     "CostSourceAccount": "9",
     "CreateBoardingCostOnAdoption": "Yes",
     "CreateCostTrx": "No",
@@ -195,6 +194,7 @@ DEFAULTS = {
     "DonationVATAccount": "22",
     "DonationOnMoveReserve": "Yes",
     "DontShowRabies": "Yes",
+    "DontShowSize": "No",
     "EmailDiaryNotes": "Yes", 
     "EmailDiaryOnChange": "No",
     "EmailDiaryOnComplete": "No",
@@ -276,6 +276,7 @@ DEFAULTS = {
     "MaxMediaFileSize": "1000",
     "MediaAllowJPG": "Yes",
     "MediaAllowPDF": "Yes",
+    "MediaTableMode": "No",
     "MedicalItemDisplayLimit": "500",
     "MicrochipRegisterMovements": "1,5",
     "MovementDonationsDefaultDue": "No",
@@ -305,7 +306,6 @@ DEFAULTS = {
     "QuicklinksID": "40,46,25,31,34,19,20",
     "QuicklinksHomeScreen": "Yes",
     "QuicklinksAllScreens": "No",
-    "ReceiptNumberNext": "0",
     "RecordSearchLimit": "1000",
     "ReloadMedical": "Yes",
     "ReportToolbar": "Yes",
@@ -646,6 +646,9 @@ def auto_cancel_reserves_days(dbo):
 def auto_cancel_hold_days(dbo):
     return cint(dbo, "AutoCancelHoldDays", int(DEFAULTS["AutoCancelHoldDays"]))
 
+def auto_default_vacc_batch(dbo):
+    return cboolean(dbo, "AutoDefaultVaccBatch", DEFAULTS["AutoDefaultVaccBatch"])
+
 def auto_hash_processed_forms(dbo):
     return cboolean(dbo, "AutoHashProcessedForms", DEFAULTS["AutoHashProcessedForms"] == "Yes")
 
@@ -729,14 +732,6 @@ def coding_format(dbo):
 
 def coding_format_short(dbo):
     return cstring(dbo, "ShortCodingFormat", DEFAULTS["ShortCodingFormat"])
-
-def collation_id_next(dbo):
-    """ Returns the CollationIDNext value and increments it """
-    nrn = cint(dbo, "CollationIDNext", 0)
-    if nrn == 0:
-        nrn = 1 + dbo.query_int("SELECT MAX(CollationID) FROM onlineformincoming")
-    cset(dbo, "CollationIDNext", str(nrn + 1))
-    return nrn
 
 def cost_source_account(dbo):
     return cint(dbo, "CostSourceAccount", DEFAULTS["CostSourceAccount"])
@@ -875,6 +870,9 @@ def donation_trx_override(dbo):
 
 def donation_vat_account(dbo):
     return cint(dbo, "DonationVATAccount", DEFAULTS["DonationVATAccount"])
+
+def dont_show_size(dbo):
+    return cboolean(dbo, "DontShowSize", DEFAULTS["DontShowSize"] == "Yes")
 
 def email(dbo):
     return cstring(dbo, "EmailAddress")
@@ -1267,14 +1265,6 @@ def quicklinks_id(dbo, newval = None):
         return cstring(dbo, "QuicklinksID", DEFAULTS["QuicklinksID"])
     else:
         cset(dbo, "QuicklinksID", newval)
-
-def receipt_number_next(dbo):
-    """ Returns the ReceiptNumberNext value and increments it """
-    nrn = cint(dbo, "ReceiptNumberNext", 0)
-    if nrn == 0:
-        nrn = 1 + dbo.query_int("SELECT MAX(ID) FROM ownerdonation")
-    cset(dbo, "ReceiptNumberNext", str(nrn + 1))
-    return nrn
 
 def report_toolbar(dbo):
     return cboolean(dbo, "ReportToolbar", DEFAULTS["ReportToolbar"] == "Yes")

@@ -392,11 +392,13 @@ def search(dbo, session, q):
         explain = _("Document signing requests received in the last week", l)
         if viewperson:
             ar(asm3.person.get_signed_requests(dbo, 7), "PERSON", personsort)
+            ar(asm3.animal.get_signed_requests(dbo, 7), "ANIMAL", animalsort)
 
     elif q == "unsigned":
         explain = _("Document signing requests issued in the last month that are unsigned", l)
         if viewperson:
             ar(asm3.person.get_unsigned_requests(dbo, 31), "PERSON", personsort)
+            ar(asm3.animal.get_unsigned_requests(dbo, 31), "ANIMAL", animalsort)
 
     elif q == "activelost":
         explain = _("Lost animals reported in the last 30 days.", l)

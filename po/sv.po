@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: db@sheltermanager.com\n"
 "POT-Creation-Date: 2013-01-24 10:55+0000\n"
-"PO-Revision-Date: 2022-04-15 13:12+0200\n"
+"PO-Revision-Date: 2022-05-20 12:27+0200\n"
 "Last-Translator: Josephine Holmström <johol77@gmail.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "Language: sv\n"
@@ -356,7 +356,7 @@ msgstr "Lägg till utredning"
 
 #: clinic_invoice.js
 msgid "Add Invoice Item"
-msgstr ""
+msgstr "Lägg till på faktura"
 
 #: roles.js
 msgid "Add Licenses"
@@ -894,7 +894,7 @@ msgstr "Varningar"
 
 #: csvexport.js
 msgid "All Animals"
-msgstr ""
+msgstr "Alla djur"
 
 #: csvexport.js
 msgid "All On-Shelter Animals"
@@ -922,11 +922,11 @@ msgstr "Alla djur som matchar gällande publiceringsalternativ."
 
 #: search.py
 msgid "All animals on the shelter."
-msgstr "Alla djur i djurhemmet"
+msgstr "Alla djur i katthemmet."
 
 #: search.py
 msgid "All animals where the hold ends today."
-msgstr "Alla djur där reservation upphör idag"
+msgstr "Alla djur där reservation upphör idag."
 
 #: search.py
 msgid "All animals who are currently held in case of reclaim."
@@ -938,11 +938,11 @@ msgstr "Alla djur som är för närvarande i karantän."
 
 #: search.py
 msgid "All animals who are flagged as not for adoption."
-msgstr "Alla katter som är inte är bokningsbara"
+msgstr "Alla katter som är inte är bokningsbara."
 
 #: search.py
 msgid "All animals who have been on the shelter longer than {0} months."
-msgstr "Alla djur som har varit i djurhem längre än  {0} månader"
+msgstr "Alla djur som har varit i djurhem längre än  {0} månader."
 
 #: search.py
 msgid "All animals who have not been microchipped"
@@ -962,7 +962,7 @@ msgstr "Alla registrerade donatorer."
 
 #: search.py
 msgid "All drivers on file."
-msgstr "Alla registrerade chaufförer"
+msgstr "Alla registrerade chaufförer."
 
 #: csvimport.js
 msgid ""
@@ -978,7 +978,7 @@ msgstr "Alla fält ska fyllas."
 
 #: search.py
 msgid "All fosterers on file."
-msgstr "Alla registrerade akuthem"
+msgstr "Alla registrerade akuthem."
 
 #: search.py
 msgid "All homechecked owners on file."
@@ -1038,11 +1038,11 @@ msgstr ""
 
 #: options.js
 msgid "Allow drag and drop to move animals between locations"
-msgstr ""
+msgstr "Tillåt dra och släpp för att flytta djur mellan platser"
 
 #: options.js
 msgid "Allow duplicate license numbers"
-msgstr ""
+msgstr "Tillåt dubbla licensnummer"
 
 #: options.js
 msgid "Allow duplicate microchip numbers"
@@ -1396,7 +1396,7 @@ msgstr "Alla information om djuret"
 
 #: animal.js
 msgid "Any markings or distinguishing features the animal has"
-msgstr "Eventuella markeringar eller särskiljda kännetecken djuret har"
+msgstr "Eventuella markeringar eller särskilja kännetecken djuret har"
 
 #: dbupdate.py
 msgid "Appaloosa"
@@ -1416,15 +1416,15 @@ msgstr "Besök"
 
 #: clinic.py
 msgid "Appointment date must be a valid date"
-msgstr ""
+msgstr "Besöksdatum måste vara ett giltigt datum"
 
 #: clinic_invoice.js clinic.py
 msgid "Appointment {0}. {1} on {2} for {3}"
-msgstr ""
+msgstr "Besök {0}. {1} på {2} för {3}"
 
 #: clinic_appointment.js
 msgid "Appointments need a date and time."
-msgstr ""
+msgstr "Besök måste ha ett datum och klockslag."
 
 #: dbupdate.py
 msgid "Approved"
@@ -1472,7 +1472,7 @@ msgstr "Områden"
 
 #: clinic_appointment.js
 msgid "Arrived"
-msgstr ""
+msgstr "Ankom"
 
 #: dbupdate.py
 msgid "Asset"
@@ -1544,7 +1544,7 @@ msgstr "Automatiskt logga ut användare efter så här många minuters inaktivit
 
 #: waitinglist.py
 msgid "Auto removed due to lack of owner contact."
-msgstr "Ta bort automatiskt pga brist på kontakt med ägaren"
+msgstr "Ta bort automatiskt pga brist på kontakt med ägaren."
 
 #: options.js
 msgid ""
@@ -1829,7 +1829,7 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Born in Shelter"
-msgstr ""
+msgstr "Född på katthem"
 
 #: animal.py
 msgid "Born on Foster {0}"
@@ -2316,11 +2316,11 @@ msgstr "Ändra överföringar"
 
 #: roles.js
 msgid "Change Transport"
-msgstr ""
+msgstr "Ändra transport"
 
 #: roles.js
 msgid "Change Trap Loans"
-msgstr ""
+msgstr "Ändra lån av fälla"
 
 #: change_user_settings.js header.js
 msgid "Change User Settings"
@@ -2661,11 +2661,11 @@ msgstr "Slutförd"
 
 #: incident_find.js
 msgid "Completed Between"
-msgstr ""
+msgstr "Avslutad mellan"
 
 #: incident_find.js lookups.py
 msgid "Completed Type"
-msgstr ""
+msgstr "Avslutad typ"
 
 #: diary.js
 msgid "Completed notes upto today"
@@ -2673,11 +2673,11 @@ msgstr "Slutförda anteckningar upp till idag"
 
 #: incident.js mobile.py
 msgid "Completion Date"
-msgstr ""
+msgstr "Avslutsdatum"
 
 #: incident.js mobile.py
 msgid "Completion Type"
-msgstr ""
+msgstr "Avslutstyp"
 
 #: html.py
 msgid "Configuration"
@@ -2693,12 +2693,11 @@ msgstr "Bekräfta lösenord"
 
 #: onlineforms.js
 msgid "Confirmation message"
-msgstr ""
+msgstr "Bekräftelsemeddelande"
 
 #: transport.js
-#, fuzzy
 msgid "Confirmed"
-msgstr "Godkänn"
+msgstr "Godkänd"
 
 #: html.py
 msgid "Consulting Room"
@@ -2799,11 +2798,11 @@ msgstr "Coton de Tulear"
 
 #: onlineform.py
 msgid "Could not find animal with name '{0}'"
-msgstr ""
+msgstr "Kunde ej hitta djur med namnet '{0}'"
 
 #: options.js
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 #: header_edit_header.js common.js html.py
 msgid "Courtesy Listing"
@@ -3046,7 +3045,7 @@ msgstr "Datum"
 
 #: financial.py
 msgid "Date '{0}' is not valid."
-msgstr ""
+msgstr "Datum '{0}' är inte giltigt."
 
 #: animal.js animal_new.js mobile.py html.py
 msgid "Date Brought In"
@@ -3098,7 +3097,7 @@ msgstr "Datum (upphittat) kan inte vara tomt"
 
 #: lostfound_new.js
 msgid "Date found cannot be blank."
-msgstr "Datum (upphittat) kan inte vara tomt"
+msgstr "Datum (upphittat) kan inte vara tomt."
 
 #: lostfound.js lostfound.py
 msgid "Date lost cannot be blank"
@@ -3106,7 +3105,7 @@ msgstr "Datum (försvunnen) kan inte vara tomt"
 
 #: lostfound_new.js
 msgid "Date lost cannot be blank."
-msgstr "Datum (försvunnen) kan inte vara tomt"
+msgstr "Datum (försvunnen) kan inte vara tomt."
 
 #: animal.js animal_new.js
 msgid "Date of Birth"
@@ -3118,7 +3117,7 @@ msgstr "Födelsedatum kan inte vara tomt"
 
 #: animal.py
 msgid "Date of birth cannot be in the future."
-msgstr ""
+msgstr "Födelsedatum kan inte vara ett framtida datum."
 
 #: animal.py
 msgid "Date of birth is not valid"
@@ -3150,7 +3149,7 @@ msgstr "Rapporterad datum kan inte vara tomt"
 
 #: lostfound_new.js
 msgid "Date reported cannot be blank."
-msgstr "Rapporterad datum kan inte vara tomt"
+msgstr "Rapporterad datum kan inte vara tomt."
 
 #: incident.js
 msgid "Date/Time"
@@ -3480,7 +3479,7 @@ msgstr ""
 
 #: roles.js
 msgid "Delete Stock"
-msgstr ""
+msgstr "Ta bort lager"
 
 #: roles.js
 msgid "Delete Tests"
@@ -3488,11 +3487,11 @@ msgstr "Ta bort tester"
 
 #: roles.js
 msgid "Delete Transport"
-msgstr ""
+msgstr "Ta bort transport"
 
 #: roles.js
 msgid "Delete Trap Loans"
-msgstr ""
+msgstr "Ta bort lån av fälla"
 
 #: medical.js
 msgid "Delete Treatments"
@@ -3536,11 +3535,11 @@ msgstr "Ta bort denna väntelista posten"
 
 #: dbupdate.py
 msgid "Denied"
-msgstr ""
+msgstr "Nekad"
 
 #: traploan.js accounts_trx.js
 msgid "Deposit"
-msgstr "Insättning"
+msgstr "Deposition"
 
 #: donations.js common_widgets.js
 msgid "Deposit Account"
@@ -3555,7 +3554,7 @@ msgstr ""
 #: accounts_trx.js incident.js incident_find.js accounts.js onlineforms.js
 #: stocklevel.js lookups.js mobile.py lostfound.py html.py
 msgid "Description"
-msgstr "Beskrivning"
+msgstr "Bakgrund"
 
 #: waitinglist_results.js
 msgid "Description Contains"
@@ -3567,7 +3566,7 @@ msgstr "Beskrivning kan inte vara tom"
 
 #: common_widgets.js
 msgid "Deselect"
-msgstr ""
+msgstr "Avmarkera"
 
 #: waitinglist.js header_edit_header.js animal.js incident.js lostfound.js
 msgid "Details"
@@ -3647,11 +3646,11 @@ msgstr "Dagboksuppgifter behöver en pivot, ett ämne och anmärkning."
 
 #: diarytasks.js
 msgid "Diary tasks need a name."
-msgstr "Dagboksuppgift behöver ett namn"
+msgstr "Dagboksuppgift behöver ett namn."
 
 #: header_edit_header.js
 msgid "Did not ask"
-msgstr ""
+msgstr "Frågade inte"
 
 #: header.js
 msgid "Did you know?"
@@ -3679,7 +3678,7 @@ msgstr "Dieter"
 
 #: animal_diet.js
 msgid "Diets need a start date."
-msgstr "Dieter behöver ett startdatum"
+msgstr "Dieter behöver ett startdatum."
 
 #: header_edit_header.js incident.js mobile.py
 msgid "Dispatch"
@@ -3719,11 +3718,11 @@ msgstr "Visa en sökknappen till höger om sökrutan"
 
 #: dbupdate.py
 msgid "Distemper"
-msgstr ""
+msgstr "Valpsjuka"
 
 #: common.js
 msgid "Do Not Publish"
-msgstr ""
+msgstr "Publicera inte"
 
 #: animal_bulk.js common.js
 msgid "Do Not Register Microchip"
@@ -3760,11 +3759,11 @@ msgstr "Dokument filer"
 
 #: service.py
 msgid "Document signed"
-msgstr ""
+msgstr "Undertecknat dokument"
 
 #: code.py
 msgid "Document signing request"
-msgstr ""
+msgstr "Begäran om undertecknande av dokument"
 
 #: html.py
 msgid "Document templates"
@@ -3813,7 +3812,7 @@ msgstr "Skalera inte"
 
 #: dbupdate.py
 msgid "Donated"
-msgstr ""
+msgstr "Donerat"
 
 #: dbupdate.py
 msgid "Donation"
@@ -3863,15 +3862,15 @@ msgstr "Utkast"
 #: header_edit_header.js onlineforms.js transport.js common.js html.py
 #: person.py
 msgid "Driver"
-msgstr ""
+msgstr "Chaufför"
 
 #: document_repository.js media.js
 msgid "Drop files here..."
-msgstr ""
+msgstr "Lägg filer här.."
 
 #: transport.js
 msgid "Dropoff"
-msgstr ""
+msgstr "Avlämning"
 
 #: dbupdate.py
 msgid "Duck"
@@ -3919,9 +3918,8 @@ msgid "Dwarf Eared"
 msgstr "Dwarf Eared"
 
 #: options.js
-#, fuzzy
 msgid "E = first letter of animal entry category"
-msgstr "TT = första och andra bokstaven i djurtyp"
+msgstr "TT = första bokstaven i djurtyp"
 
 #: options.js
 #, fuzzy
@@ -3993,9 +3991,8 @@ msgid "Edit additional field"
 msgstr "Redigera tillagt fält"
 
 #: citations.js
-#, fuzzy
 msgid "Edit citation"
-msgstr "Redigera vaccination"
+msgstr "Redigera citat"
 
 #: animal_costs.js
 msgid "Edit cost"
@@ -4035,11 +4032,11 @@ msgstr "Redigera utredning"
 
 #: clinic_appointment.js
 msgid "Edit invoice"
-msgstr ""
+msgstr "Redigera faktura"
 
 #: licence.js
 msgid "Edit license"
-msgstr ""
+msgstr "Redigera licens"
 
 #: litters.js
 msgid "Edit litter"
@@ -4111,11 +4108,11 @@ msgstr "Redigera roller"
 
 #: staff_rota.js
 msgid "Edit rota item"
-msgstr ""
+msgstr "Redigera rota objekt"
 
 #: stocklevel.js
 msgid "Edit stock"
-msgstr ""
+msgstr "Redigera lagwer"
 
 #: users.js
 msgid "Edit system users"
@@ -4139,11 +4136,11 @@ msgstr "Redigera transaktion"
 
 #: transport.js
 msgid "Edit transport"
-msgstr ""
+msgstr "Redigera transport"
 
 #: traploan.js
 msgid "Edit trap loan"
-msgstr ""
+msgstr "Redigera lån av fälla"
 
 #: users.js
 msgid "Edit user"
@@ -4190,7 +4187,7 @@ msgstr "Epost person"
 
 #: reports.js
 msgid "Email To"
-msgstr ""
+msgstr "Epost till"
 
 #: media.js
 msgid "Email a copy of the selected HTML documents as PDFs"
@@ -4288,7 +4285,7 @@ msgstr "Slutet av dagen"
 
 #: rota.js
 msgid "End Time"
-msgstr ""
+msgstr "Slut datum"
 
 #: options.js
 msgid "End at"
@@ -4296,15 +4293,15 @@ msgstr "Slut på"
 
 #: reports.js
 msgid "End of month"
-msgstr ""
+msgstr "Slut av månad"
 
 #: reports.js
 msgid "End of year"
-msgstr ""
+msgstr "Slut av år"
 
 #: staff_rota.js
 msgid "Ends"
-msgstr ""
+msgstr "Slutar"
 
 #: medical.js medicalprofile.js
 msgid "Ends after"
@@ -4375,8 +4372,9 @@ msgid ""
 "Entering 'activelost' or 'activefound' in the search box will show you lost "
 "and found animals reported in the last 30 days."
 msgstr ""
-"Inmatning av \"aktivförsvunnen\" eller \"aktivupphittat\" i sökrutan kommer "
-"att visa dig upphittade djur som rapporterades under de senaste 30 dagarna."
+"Inmatning av \"aktiv försvunnen\" eller \"aktiv upphittat\" i sökrutan "
+"kommer att visa dig upphittade djur som rapporterades under de senaste 30 "
+"dagarna."
 
 #: main.js
 msgid ""
@@ -4397,12 +4395,12 @@ msgid ""
 "Entering 'notforadoption' in the search box will show you all shelter "
 "animals with the not for adoption flag set."
 msgstr ""
-"Inmatning av 'inteföradoption' i sökrutan visar dig alla djur som har en "
+"Inmatning av 'inte för adoption' i sökrutan visar dig alla djur som har en "
 "'inte för adoption' flagga."
 
 #: main.js
 msgid "Entering 'os' in the search box will show you all shelter animals."
-msgstr "Inmatning av 'os' i sökrutan visar alla djur i djurhemmet"
+msgstr "Inmatning av 'os' i sökrutan visar alla djur i katthemmet."
 
 #: dbupdate.py
 msgid "Entlebucher"
@@ -4430,7 +4428,7 @@ msgstr "Intagsanledning kategori"
 
 #: lookups.py
 msgid "Entry Reasons"
-msgstr "Intagsanledning"
+msgstr "Intagsanledningar"
 
 #: waitinglist.js waitinglist_new.js
 msgid "Entry reason"
@@ -4438,7 +4436,7 @@ msgstr "Intagsanledning"
 
 #: login.js
 msgid "Error contacting server."
-msgstr ""
+msgstr "Fel vid kontakt av servern."
 
 #: animal_find.js dbupdate.py animal.py
 msgid "Escaped"
@@ -4466,7 +4464,7 @@ msgstr "Avlivat {0}"
 
 #: reports.js
 msgid "Every day"
-msgstr ""
+msgstr "Varje dag"
 
 #: publish_options.js
 msgid "Exclude animals who are aged under"
@@ -4513,9 +4511,8 @@ msgid "Expense"
 msgstr "Utgift"
 
 #: financial.py
-#, fuzzy
 msgid "Expense::"
-msgstr "Utgift"
+msgstr "Utgift:"
 
 #: dbupdate.py
 #, fuzzy
@@ -4551,22 +4548,20 @@ msgid "Expenses::Water"
 msgstr "Utgifter::Vatten"
 
 #: vaccination.js
-#, fuzzy
 msgid "Expire in next month"
-msgstr "Planerad till nästa månad"
+msgstr "Utgår nästa månad"
 
 #: vaccination.js
-#, fuzzy
 msgid "Expired"
-msgstr "Utgår"
+msgstr "Utgått"
 
 #: licence.js
 msgid "Expired in the last month"
-msgstr ""
+msgstr "Utgått senaste månaden"
 
 #: licence.js
 msgid "Expired in the last week"
-msgstr ""
+msgstr "Utgått senaste veckan"
 
 #: person.js main.js litters.js person_vouchers.js licence.js vaccination.js
 #: mobile.py
@@ -4587,11 +4582,11 @@ msgstr "Exportera"
 
 #: csvexport.js html.py
 msgid "Export Animals as CSV"
-msgstr ""
+msgstr "Exportera djur som CSV"
 
 #: roles.js
 msgid "Export Report"
-msgstr ""
+msgstr "Exportera djur"
 
 #: report_export.js html.py
 msgid "Export Reports as CSV"
@@ -4634,9 +4629,8 @@ msgid "FECV/FeCoV"
 msgstr ""
 
 #: dbupdate.py
-#, fuzzy
 msgid "FIPV"
-msgstr "FIV"
+msgstr "FIPV"
 
 #: animal_find_results.js dbupdate.py
 msgid "FIV"
@@ -4694,15 +4688,15 @@ msgstr "Facebook"
 
 #: code.py
 msgid "Failed sending email"
-msgstr ""
+msgstr "Kunde inte skicka email"
 
 #: donation_receive.js
 msgid "Failed to create payment."
-msgstr ""
+msgstr "Kunde ej skapa betalning."
 
 #: licence_renewal.js
 msgid "Failed to renew license."
-msgstr ""
+msgstr "Kunde ej förnya licens."
 
 #: dbupdate.py
 msgid "Fawn"
@@ -4724,7 +4718,7 @@ msgstr "Kännetecken"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Feb"
-msgstr "feb"
+msgstr "Feb"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "February"
@@ -4732,7 +4726,7 @@ msgstr "Februari"
 
 #: licence_renewal.js licence.js
 msgid "Fee"
-msgstr ""
+msgstr "Avgift"
 
 #: dbupdate.py
 msgid "Female"
@@ -4776,11 +4770,11 @@ msgstr "Fink"
 
 #: animal_find.js
 msgid "Find Animal"
-msgstr "Hitta Djur"
+msgstr "Sök Djur"
 
 #: options.js
 msgid "Find Animal/Person"
-msgstr "Hitta djur/person"
+msgstr "Sök djur/person"
 
 #: lostfound_find.js
 msgid "Find Found Animal"
@@ -4788,7 +4782,7 @@ msgstr "Sök upphittat djur"
 
 #: incident_find.js
 msgid "Find Incident"
-msgstr ""
+msgstr "Sök incident"
 
 #: lostfound_find.js
 msgid "Find Lost Animal"
@@ -4820,7 +4814,7 @@ msgstr "Sök djur"
 
 #: options.js
 msgid "Find animal columns"
-msgstr "Hitta djur kolumner"
+msgstr "Sök djur kolumner"
 
 #: incident_find_results.js
 msgid "Find animal control incidents returned {0} results."
@@ -4836,15 +4830,15 @@ msgstr ""
 
 #: common_personchooser.js
 msgid "Find driver"
-msgstr ""
+msgstr "Sök chaufför"
 
 #: common_personchooser.js
 msgid "Find fosterer"
-msgstr ""
+msgstr "Sökakuthem"
 
 #: lostfound_find_results.js
 msgid "Find found animal returned {0} results."
-msgstr "Sök upphittat djur - åter hos ägaren"
+msgstr "Sök upphittad återlämnad katt {0} result."
 
 #: common_personchooser.js
 msgid "Find homechecked"
@@ -4856,15 +4850,15 @@ msgstr ""
 
 #: html.py
 msgid "Find incident"
-msgstr ""
+msgstr "Sök incident"
 
 #: lostfound_find_results.js
 msgid "Find lost animal returned {0} results."
-msgstr "Sök försvunnet djur, åter hos ägaren"
+msgstr "Sök försvunnen katt, åter hos ägaren."
 
 #: common_personchooser.js
 msgid "Find member"
-msgstr ""
+msgstr "Sök medlem"
 
 #: header.js common_personchooser.js html.py configuration.py
 msgid "Find person"
@@ -4872,7 +4866,7 @@ msgstr "Sök person"
 
 #: options.js
 msgid "Find person columns"
-msgstr "Hitta person kolumner"
+msgstr "Sök person kolumner"
 
 #: common_personchooser.js
 msgid "Find retailer"
@@ -4880,27 +4874,27 @@ msgstr ""
 
 #: common_personchooser.js
 msgid "Find shelter"
-msgstr ""
+msgstr "Sök katthem"
 
 #: common_personchooser.js
 msgid "Find staff"
-msgstr ""
+msgstr "Sök personal"
 
 #: common_personchooser.js
 msgid "Find staff/volunteer"
-msgstr ""
+msgstr "Sök personal/volontär"
 
 #: person.js incident.js
 msgid "Find this address on a map"
-msgstr "Hitta den här adressen på en karta"
+msgstr "Sök den här adressen på en karta"
 
 #: common_personchooser.js
 msgid "Find vet"
-msgstr ""
+msgstr "Sök veterinär"
 
 #: common_personchooser.js
 msgid "Find volunteer"
-msgstr ""
+msgstr "Sök volontär"
 
 #: citations.js
 msgid "Fine Amount"
@@ -4957,15 +4951,15 @@ msgstr "Florida White"
 
 #: header_edit_header.js incident_find_results.js
 msgid "Followup"
-msgstr ""
+msgstr "Uppföljning"
 
 #: incident_find.js
 msgid "Followup Between"
-msgstr ""
+msgstr "Uppföljning mellan"
 
 #: incident.js mobile.py
 msgid "Followup Date/Time"
-msgstr ""
+msgstr "Uppföljning datum/tid"
 
 #: htmltemplates.js reports.js onlineforms.js
 msgid "Footer"
@@ -5005,11 +4999,11 @@ msgstr "Akuthemsbok"
 
 #: person.js mobile.py
 msgid "Foster Capacity"
-msgstr ""
+msgstr "Akuthem kapacitet"
 
 #: dbupdate.py
 msgid "Foster Transfer"
-msgstr ""
+msgstr "Akuthem överflyttning"
 
 #: header.js move_foster.js html.py configuration.py
 msgid "Foster an animal"
@@ -5033,11 +5027,11 @@ msgstr "I akuthem"
 
 #: users.js
 msgid "Fostered Animals"
-msgstr ""
+msgstr "Katter i akuthem"
 
 #: movement.py
 msgid "Fostered to {0} since {1}"
-msgstr ""
+msgstr "I akuthem till {0} sedan {1}"
 
 #: person_find_results.js options.js animal_find_results.js
 #: header_edit_header.js onlineforms.js animal_new.js shelterview.js common.js
@@ -5135,7 +5129,7 @@ msgstr "Intervall"
 
 #: header.js
 msgid "Frequently Asked Questions"
-msgstr ""
+msgstr "Ofta förekommande frågor"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Fri"
@@ -5183,9 +5177,8 @@ msgid "Gecko"
 msgstr "Gecko"
 
 #: dbupdate.py
-#, fuzzy
 msgid "General"
-msgstr "Skapa"
+msgstr "Allmän"
 
 #: html.py
 msgid "Generate"
@@ -5208,9 +5201,8 @@ msgid "Generate a document from this animal"
 msgstr "Skapa ett dokument från detta djur"
 
 #: incident.js
-#, fuzzy
 msgid "Generate a document from this incident"
-msgstr "Skapa ett dokument från detta djur"
+msgstr "Skapa ett dokument från denna incident"
 
 #: movements.js
 msgid "Generate a document from this movement"
@@ -5241,18 +5233,16 @@ msgid "Generate document from this appointment"
 msgstr ""
 
 #: licence.js
-#, fuzzy
 msgid "Generate document from this license"
-msgstr "Skapa ett dokument från den här personen"
+msgstr "Skapa ett dokument från den här licensen"
 
 #: donations.js
-#, fuzzy
 msgid "Generate document from this payment"
-msgstr "Skapa ett dokument från den här personen"
+msgstr "Skapa ett dokument från den här betalningen"
 
 #: transport.js
 msgid "Generate document from this transport"
-msgstr ""
+msgstr "Skapa ett dokument från den här transporten"
 
 #: move_gendoc.js
 msgid "Generate documentation"
@@ -5321,12 +5311,11 @@ msgstr "Ge"
 
 #: medical.js
 msgid "Give Treatments"
-msgstr ""
+msgstr "Ge behandling"
 
 #: vaccination.js
-#, fuzzy
 msgid "Give Vaccination"
-msgstr "Fler vaccinationer"
+msgstr "Ge vaccination"
 
 #: medical.js vaccination.js
 msgid "Given"
@@ -5338,7 +5327,7 @@ msgstr "Irish glen of imaal terrier"
 
 #: batch.js
 msgid "Go"
-msgstr ""
+msgstr "Gå"
 
 #: main.js
 msgid ""
@@ -5555,9 +5544,8 @@ msgid "Held"
 msgstr "Hålls kvar"
 
 #: header.js
-#, fuzzy
 msgid "Help"
-msgstr "Hålls kvar"
+msgstr "Hjälp"
 
 #: dbupdate.py
 msgid "Hepatitis"
@@ -5585,7 +5573,7 @@ msgstr "Dolda kommentarer om djuret"
 
 #: options.js
 msgid "Hide deceased animals from the home page"
-msgstr ""
+msgstr "Dölj avlidna djur på hemsidan"
 
 #: dbupdate.py
 msgid "High"
@@ -5760,7 +5748,7 @@ msgstr ""
 msgid ""
 "If this person is a fosterer, the maximum number of animals they can care "
 "for."
-msgstr ""
+msgstr "Om denna person är akuthem, max antal djur de kan ha."
 
 #: person.js
 msgid "If this person is a member, the date that membership expires."
@@ -5768,7 +5756,7 @@ msgstr "Om denna person är medlem, den dag som medlemskapet upphör."
 
 #: person.js
 msgid "If this person is a member, their membership number"
-msgstr ""
+msgstr "Om denna person är medlem, deras medlemsnummer"
 
 #: person.js
 msgid "If this person is a member, their membership number."
@@ -5826,11 +5814,11 @@ msgstr "Importera en CSV-fil"
 
 #: csvimport_paypal.js code.py html.py
 msgid "Import a PayPal CSV file"
-msgstr ""
+msgstr "Importera en PayPal CSV fil"
 
 #: onlineforms.js
 msgid "Import from file"
-msgstr ""
+msgstr "Import från fil"
 
 #: main.js mobile.py
 msgid "Important"
@@ -5846,19 +5834,19 @@ msgstr "Intag delsumma"
 
 #: publish_options.js
 msgid "In the last month"
-msgstr ""
+msgstr "Senaste månaden"
 
 #: publish_options.js
 msgid "In the last quarter"
-msgstr ""
+msgstr "Senaste kvartalet"
 
 #: publish_options.js
 msgid "In the last week"
-msgstr ""
+msgstr "Senaste veckan"
 
 #: publish_options.js
 msgid "In the last year"
-msgstr ""
+msgstr "Senaste året"
 
 #: dbupdate.py
 msgid "In-Kind Donation"
@@ -5866,7 +5854,7 @@ msgstr ""
 
 #: lookups.js
 msgid "Inactive"
-msgstr ""
+msgstr "Inaktiv"
 
 #: person.js
 msgid "Inactive - do not include"
@@ -5918,9 +5906,8 @@ msgid "Incident Types"
 msgstr ""
 
 #: incident.js animalcontrol.py
-#, fuzzy
 msgid "Incident date cannot be blank"
-msgstr "Dagboksdatum kan inte vara tomt"
+msgstr "Datum för incident kan inte vara tomt"
 
 #: calendarview.js
 msgid "Incident followup"
@@ -5960,7 +5947,7 @@ msgstr ""
 
 #: publish_options.js
 msgid "Include animals who don't have a description"
-msgstr ""
+msgstr "Inkludera djur som saknar beskrivning"
 
 #: publish_options.js
 msgid "Include animals who don't have a picture"
@@ -6143,7 +6130,7 @@ msgstr "Försäkringsnummer"
 
 #: publish_options.js
 msgid "Intake"
-msgstr ""
+msgstr "Intag"
 
 #: animal.py
 msgid "Intakes {0}"
@@ -6163,20 +6150,19 @@ msgstr "Ogiltig e-postadress"
 
 #: common.js
 msgid "Invalid email address '{0}'"
-msgstr ""
+msgstr "Ogiltig e-postadress '{0}'"
 
 #: animal.js lookups.py
 msgid "Invalid microchip number length"
-msgstr "Ogiltig längs på mickochipnumret"
+msgstr "Ogiltig längd på mickochipnumret"
 
 #: common.js
-#, fuzzy
 msgid "Invalid time '{0}', times should be in 00:00 format"
-msgstr "Ogiltig tid, bör alltid vara i HH:MM format"
+msgstr "Ogiltigt klockslag '{0}', tid ska ha formatet 00:00"
 
 #: diary.py
 msgid "Invalid time, times should be in HH:MM format"
-msgstr "Ogiltig tid, bör alltid vara i HH:MM format"
+msgstr "Ogiltig klockslag, tid ska ha formatet HH:MM"
 
 #: login.js
 msgid "Invalid username or password."
@@ -6292,7 +6278,7 @@ msgstr "Jindo"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Jul"
-msgstr "juli"
+msgstr "Juli"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "July"
@@ -6316,7 +6302,7 @@ msgstr "Gå till förflyttningar"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Jun"
-msgstr "juni"
+msgstr "Juni"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "June"
@@ -6538,7 +6524,7 @@ msgstr "Livstid"
 
 #: dbupdate.py
 msgid "Light Amber"
-msgstr "ljus bärnstensfärgad"
+msgstr "Ljus bärnstensfärgad"
 
 #: dbupdate.py
 msgid "Lilac"
@@ -6592,7 +6578,7 @@ msgstr "Kull referens"
 
 #: animal.js litters.js
 msgid "Littermates"
-msgstr "kullsyskon"
+msgstr "Kullsyskon"
 
 #: common_animalchoosermulti.js roles.js litters.js animal.py
 msgid "Litters"
@@ -6687,7 +6673,7 @@ msgstr "Logg datum måste vara ett giltigt datum"
 
 #: log.js
 msgid "Log entries need a date and text."
-msgstr "Logg inlägg måste ha ett giltigt datum"
+msgstr "Logg inlägg måste ha ett giltigt datum."
 
 #: log_new.js
 msgid "Log requires a date."
@@ -6752,7 +6738,7 @@ msgstr "Sökuppgifter"
 
 #: onlineform.js
 msgid "Lookups"
-msgstr "sökningar"
+msgstr "Sökningar"
 
 #: dbupdate.py
 msgid "Lop Eared"
@@ -6934,7 +6920,7 @@ msgstr ""
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "Mar"
-msgstr "mars"
+msgstr "Mars"
 
 #: calendarview.js clinic_calendar.js common.js
 msgid "March"
@@ -6982,7 +6968,7 @@ msgstr "Marknadsförare"
 
 #: animal.js animal_find.js mobile.py
 msgid "Markings"
-msgstr "Bakgrund"
+msgstr "Beskrivning"
 
 #: onlineform.js
 msgid "Markup"
@@ -7237,7 +7223,7 @@ msgstr "Pengar"
 
 #: calendarview.js clinic_calendar.js
 msgid "Month"
-msgstr ""
+msgstr "Månad"
 
 #: dbupdate.py
 msgid "Monthly"
@@ -7245,7 +7231,7 @@ msgstr "Månadsvis"
 
 #: dbupdate.py
 msgid "More Info Needed"
-msgstr ""
+msgstr "Mer info behövs"
 
 #: mobile.py
 msgid "More Medications"
@@ -7355,11 +7341,11 @@ msgstr "Förflyttningar"
 #: movements.js move_transfer.js move_retailer.js move_reserve.js
 #: move_foster.js movement.py
 msgid "Movements require an animal"
-msgstr "Förflyttningar kräver ett djur"
+msgstr "Förflyttningar kräver en katt"
 
 #: move_reclaim.js move_adopt.js
 msgid "Movements require an animal."
-msgstr "Förflyttningar kräver ett djur"
+msgstr "Förflyttningar kräver en katt."
 
 #: shelterview.js
 msgid "Moving..."
@@ -7589,11 +7575,11 @@ msgstr "Nytt test"
 
 #: transport.js
 msgid "New Transport"
-msgstr ""
+msgstr "Ny transport"
 
 #: traploan.js
 msgid "New Trap Loan"
-msgstr ""
+msgstr "Nytt lån av fälla"
 
 #: users.js
 msgid "New User"
@@ -7672,7 +7658,7 @@ msgstr "Ingen data."
 
 #: common.js
 msgid "No description"
-msgstr ""
+msgstr "Ingen beskrivning"
 
 #: person.js person.py
 msgid "No longer retained"
@@ -7684,7 +7670,7 @@ msgstr "Inga träffar hittade."
 
 #: common.js
 msgid "No picture"
-msgstr ""
+msgstr "Ingen bild"
 
 #: publish.js
 msgid "No publishers are running."
@@ -7720,11 +7706,11 @@ msgstr "Djur som är ej i djurhem"
 
 #: csvexport.js
 msgid "Non-Shelter Animals"
-msgstr ""
+msgstr "Djur som ej är i djurhem"
 
 #: users.js
 msgid "Non-shelter Animals"
-msgstr ""
+msgstr "Djur som ej är i djurhem"
 
 #: dbupdate.py
 msgid "None"
@@ -7760,7 +7746,7 @@ msgstr "Norwichterrier"
 
 #: dbupdate.py
 msgid "Not Arrived"
-msgstr ""
+msgstr "Inte anlänt"
 
 #: html.py
 msgid "Not Available For Adoption"
@@ -7794,7 +7780,7 @@ msgstr ""
 
 #: header.js configuration.py
 msgid "Not for adoption"
-msgstr "Ej omplaceringsbar"
+msgstr "Ej för adoption"
 
 #: common.js
 msgid "Not for adoption flag set"
@@ -8028,7 +8014,7 @@ msgstr "Organisation"
 
 #: person.js person_new.js common_personchooser.js
 msgid "Organization name"
-msgstr ""
+msgstr "Organisationsnamn"
 
 #: dbupdate.py
 msgid "Oriental Long Hair"
@@ -8151,7 +8137,7 @@ msgstr ""
 
 #: animal_costs.js medical.js test.js citations.js transport.js vaccination.js
 msgid "Paid"
-msgstr ""
+msgstr "Betald"
 
 #: dbupdate.py
 msgid "Paint/Pinto"
@@ -8207,7 +8193,7 @@ msgstr "Lösenord"
 
 #: users.js
 msgid "Password for '{0}' has been reset."
-msgstr ""
+msgstr "Lösenord för '{0}' har återställts."
 
 #: users.py
 msgid "Password is incorrect."
@@ -8267,11 +8253,11 @@ msgstr ""
 
 #: donation_receive.js
 msgid "Payment of {0} successfully received ({1})."
-msgstr ""
+msgstr "Betalning för {0} har mottagits ({1})."
 
 #: header_edit_header.js roles.js
 msgid "Payments"
-msgstr ""
+msgstr "Betalningar"
 
 #: donations.js
 msgid "Payments need at least one date, an amount and a person."
@@ -8349,9 +8335,8 @@ msgid "Percheron"
 msgstr "Percheron"
 
 #: test.js
-#, fuzzy
 msgid "Perform"
-msgstr "Utförd"
+msgstr "Utför"
 
 #: mobile.py
 msgid "Perform Homecheck"
@@ -8402,14 +8387,12 @@ msgid "Person looking for report"
 msgstr "Person som söker rapporten"
 
 #: person_new.js
-#, fuzzy
 msgid "Person successfully created"
-msgstr "Adoption skapats."
+msgstr "Person har skapats"
 
 #: dbupdate.py
-#, fuzzy
 msgid "Personal"
-msgstr "Person"
+msgstr "Personlig"
 
 #: dbupdate.py
 msgid "Peruvian Inca Orchid"
@@ -8654,7 +8637,7 @@ msgstr "Förhandsvisning"
 
 #: common.js
 msgid "Previous"
-msgstr ""
+msgstr "Föregående"
 
 #: common.js
 msgid "Previous Adopter"
@@ -8666,15 +8649,15 @@ msgstr "Striv ut"
 
 #: code.py
 msgid "Print Preview"
-msgstr ""
+msgstr "Förhandsgranska"
 
 #: onlineform_incoming.js
 msgid "Print selected forms"
-msgstr ""
+msgstr "Skriv ut valt formuär"
 
 #: header.js
 msgid "Printable Manual"
-msgstr ""
+msgstr "Utskrivningsbar manual"
 
 #: options.js
 msgid "Printing word processor documents uses hidden iframe and window.print"
@@ -8706,7 +8689,7 @@ msgstr "Profil namnet kan inte vara tomt"
 
 #: dbupdate.py
 msgid "Public Holiday"
-msgstr ""
+msgstr "Helgdag"
 
 #: roles.js
 msgid "Publish Animals to the Internet"
@@ -8794,7 +8777,7 @@ msgstr ""
 
 #: donations.js
 msgid "Qty"
-msgstr ""
+msgstr "Antal"
 
 #: dbupdate.py
 msgid "Quaker Parakeet"
@@ -8803,7 +8786,7 @@ msgstr "Munkparakit"
 #: donations.js medical.js test.js stocklevel.js common_widgets.js
 #: vaccination.js
 msgid "Quantity"
-msgstr ""
+msgstr "Antal"
 
 #: options.js animal_find_results.js header_edit_header.js shelterview.js
 #: common.js html.py
@@ -8835,7 +8818,7 @@ msgstr ""
 
 #: accounts_trx.js
 msgid "R"
-msgstr "Avst."
+msgstr "Avst"
 
 #: dbupdate.py
 msgid "Rabbit"
@@ -9005,26 +8988,24 @@ msgid "Reception"
 msgstr ""
 
 #: move_reclaim.js publish_options.js
-#, fuzzy
 msgid "Reclaim"
-msgstr "Återförenad med ägare"
+msgstr "Reklamera"
 
 #: move_reclaim.js header.js html.py configuration.py
 msgid "Reclaim an animal"
-msgstr ""
+msgstr "Reklamera ett djur"
 
 #: movement.py
 msgid "Reclaim movements must have a valid reclaim date."
-msgstr ""
+msgstr "Reklamering måste ha ett giltigt datum."
 
 #: move_reclaim.js
-#, fuzzy
 msgid "Reclaim successfully created."
-msgstr "Tingning skapats."
+msgstr "Reklamering har skapats."
 
 #: animal_find.js dbupdate.py
 msgid "Reclaimed"
-msgstr "Återförenad med ägare"
+msgstr "Reklamerad"
 
 #: accounts_trx.js
 msgid "Reconcile"
@@ -9155,9 +9136,8 @@ msgid "Remove short shelter code box from the animal details screen"
 msgstr "Ta bort kort shelter kod rutan från djuret detaljskärm"
 
 #: options.js
-#, fuzzy
 msgid "Remove the FIV/L test fields from animal health details"
-msgstr "Ta bort kastrerad rutan från djurets hälsodetaljer"
+msgstr "Ta bort FIV/L rutan från djurets hälsodetaljer"
 
 #: options.js
 msgid "Remove the Litter ID field from animal details"
@@ -9250,7 +9230,7 @@ msgstr ""
 
 #: options.js
 msgid "Remove the tattoo fields from animal identification details"
-msgstr "Ta bort tatueringsrutan från djurets identifieringsdetaljer."
+msgstr "Ta bort tatueringsrutan från kattens identifieringsdetaljer"
 
 #: options.js
 msgid "Remove the transport functionality from menus and screens"
@@ -9453,9 +9433,8 @@ msgid "Retriever"
 msgstr "Retriever"
 
 #: movements.js
-#, fuzzy
 msgid "Return"
-msgstr "Återlämnad"
+msgstr "Återlämna"
 
 #: movements.js
 msgid "Return Category"
@@ -9495,7 +9474,7 @@ msgstr "Återlämnad"
 
 #: movements.js person.py
 msgid "Returned By"
-msgstr ""
+msgstr "Återlämnad av"
 
 #: animal.py
 msgid "Returned To Owner"
@@ -9503,11 +9482,11 @@ msgstr "Återlämnad till ägare"
 
 #: lostfound_find.js
 msgid "Returned from"
-msgstr ""
+msgstr "Återlämnad från"
 
 #: lostfound_find.js
 msgid "Returned to"
-msgstr ""
+msgstr "Återlämnad till"
 
 #: animal.py
 msgid "Returned to Owner {0}"
@@ -11137,7 +11116,7 @@ msgstr "Datumet detta djur återlämnades till sin ägare"
 
 #: person.js
 msgid "The date this person was homechecked."
-msgstr "Datumet den här personen fick hembesök"
+msgstr "Datumet den här personen fick hembesök."
 
 #: login.js
 msgid "The default username is 'user' with the password 'letmein'"
@@ -11385,7 +11364,7 @@ msgid ""
 "them if you are translating to another language."
 msgstr ""
 "Dessa värden krävs för korrekt drift av systemet. OBS: BARA ändra dem om du "
-"översätter till ett annat språk!"
+"översätter till ett annat språk."
 
 #: dbupdate.py
 msgid "Third offence"
@@ -11521,7 +11500,7 @@ msgstr ""
 
 #: animal.js animal_new.js
 msgid "This animal should be held in case it is reclaimed"
-msgstr "Detta djur hålls kvar för närvarande i fall någon gör anspråk."
+msgstr "Denna katt hålls kvar för närvarande i fall någon gör anspråk"
 
 #: animal_new.js
 msgid ""
@@ -12352,7 +12331,7 @@ msgstr "Uppdatera databas till version {0}"
 
 #: reports.js onlineforms.js
 msgid "Updated."
-msgstr "Uppdaterad"
+msgstr "Uppdaterad."
 
 #: move_deceased.js animal_bulk.js
 msgid "Updating..."
@@ -12964,7 +12943,7 @@ msgstr "Onsdag"
 
 #: calendarview.js clinic_calendar.js
 msgid "Week"
-msgstr "veckor"
+msgstr "Vecka"
 
 #: staff_rota.js
 msgid "Week beginning {0}"
@@ -13273,7 +13252,7 @@ msgid ""
 "the end of your search - sort:az, sort:za, sort:mr, sort:lr"
 msgstr ""
 "Du kan styra sorteringen av sökresultat genom att skriva in - sort:az, sort:"
-"za, sort:mr, sort:lr i slutet av ditt sökbegrepp."
+"za, sort:mr, sort:lr i slutet av ditt sökbegrepp"
 
 #: main.js
 msgid ""
@@ -13464,7 +13443,7 @@ msgstr "veckor"
 
 #: waitinglist.js
 msgid "weeks after last contact."
-msgstr "veckor efter sista kontakt"
+msgstr "veckor efter sista kontakt."
 
 #: medical.js medicalprofile.js medical.py
 msgid "years"
@@ -13525,16 +13504,15 @@ msgstr ""
 
 #: main.js
 msgid "{0} received"
-msgstr ""
+msgstr "{0} mottagna"
 
 #: mailmerge.js
 msgid "{0} record(s) match the mail merge."
 msgstr ""
 
 #: sql.js
-#, fuzzy
 msgid "{0} results."
-msgstr "Inga resultat."
+msgstr "{0} resultat."
 
 #: code.py
 msgid "{0} rows affected."
@@ -13582,7 +13560,7 @@ msgstr ""
 
 #: animal.py
 msgid "{0} {1}: adopted by {2}"
-msgstr ""
+msgstr "{0} {1}: adopterad av {2}"
 
 #: animal.py
 msgid "{0} {1}: altered"
@@ -13594,7 +13572,7 @@ msgstr ""
 
 #: animal.py
 msgid "{0} {1}: died ({2})"
-msgstr ""
+msgstr "{0} {1}: avlidna ({2})"
 
 #: animal.py
 msgid "{0} {1}: entered the shelter"
@@ -13626,7 +13604,7 @@ msgstr ""
 
 #: animal.py
 msgid "{0} {1}: quarantined"
-msgstr ""
+msgstr "{0} {1}: i karantän"
 
 #: animal.py
 msgid "{0} {1}: received {2}"
@@ -13654,7 +13632,7 @@ msgstr ""
 
 #: animal.py
 msgid "{0} {1}: stolen"
-msgstr ""
+msgstr "{0} {1}: stulen"
 
 #: animal.py
 msgid "{0} {1}: tested positive for FIV"
@@ -13674,7 +13652,7 @@ msgstr ""
 
 #: staff_rota.js
 msgid "{0}, Week {1}"
-msgstr ""
+msgstr "{0}, vecka {1}"
 
 #: common.js
 msgid ""
@@ -13683,15 +13661,15 @@ msgstr ""
 
 #: animal.py
 msgid "{0}: closed {1} ({2})"
-msgstr ""
+msgstr "{0}: stängd {1} ({2})"
 
 #: animal.py
 msgid "{0}: opened {1}"
-msgstr ""
+msgstr "{0}: öppnad {1}"
 
 #: animal.py
 msgid "{0}: waiting list - {1}"
-msgstr ""
+msgstr "{0}: väntelista - {1}"
 
 #: html.py animal.py
 msgid "{0}: {1} {2} - {3} {4}"
@@ -13731,11 +13709,11 @@ msgstr ""
 
 #: main.js
 msgid "{plural0} animal is not available for adoption"
-msgstr ""
+msgstr "{plural0} katter är inte tillgängliga för adoption"
 
 #: main.js
 msgid "{plural0} animal was adopted"
-msgstr ""
+msgstr "{plural0} katter blev adopterade"
 
 #: main.js
 msgid "{plural0} animal was euthanized"
@@ -13751,7 +13729,7 @@ msgstr "{plural0}Djuret överfört till annat djurhem"
 
 #: i18n.py
 msgid "{plural0} day."
-msgstr "{plural0}dag"
+msgstr "{plural0} dag."
 
 #: main.js
 msgid "{plural0} incomplete animal control call"
@@ -13771,7 +13749,7 @@ msgstr ""
 
 #: i18n.py
 msgid "{plural0} month."
-msgstr ""
+msgstr "{plural0} månad."
 
 #: main.js
 msgid "{plural0} new online form submission"
@@ -13783,7 +13761,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural0} person with an active reservation has not been homechecked"
-msgstr "{plural0} personer med en aktiv tingning har inte fått hembesök."
+msgstr "{plural0} personer med en aktiv tingning har inte fått hembesök"
 
 #: main.js
 msgid "{plural0} potential match for a lost animal"
@@ -13843,19 +13821,19 @@ msgstr ""
 
 #: main.js
 msgid "{plural0} vaccination has expired"
-msgstr ""
+msgstr "{plural0} vaccinationer har utgått"
 
 #: main.js
 msgid "{plural0} vaccination needs to be administered today"
-msgstr ""
+msgstr "{plural0} vaccinationer behöver administreras i dag"
 
 #: i18n.py
 msgid "{plural0} week."
-msgstr ""
+msgstr "{plural0} vecka."
 
 #: i18n.py
 msgid "{plural0} year."
-msgstr ""
+msgstr "{plural0} år."
 
 #: main.js
 msgid "{plural1} animal control calls due for followup today"
@@ -13875,7 +13853,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} animals have been on the shelter longer than {0} months"
-msgstr ""
+msgstr "{plural1} djur har varit på katthemmet längre än {0} månader"
 
 #: main.js
 msgid "{plural1} animals have holds ending today"
@@ -13898,13 +13876,12 @@ msgid "{plural1} animals were reclaimed by their owners"
 msgstr ""
 
 #: main.js
-#, fuzzy
 msgid "{plural1} animals were transferred to other shelters"
-msgstr "Detta djur överfördes från ettannat djurhem"
+msgstr "Detta djur överfördes från till annat djurhem"
 
 #: i18n.py
 msgid "{plural1} days."
-msgstr ""
+msgstr "{plural1} dagar."
 
 #: main.js
 msgid "{plural1} incomplete animal control calls"
@@ -13924,7 +13901,7 @@ msgstr ""
 
 #: i18n.py
 msgid "{plural1} months."
-msgstr ""
+msgstr "{plural1} månader."
 
 #: main.js
 msgid "{plural1} new online form submissions"
@@ -13936,7 +13913,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} people with active reservations have not been homechecked"
-msgstr "{plural1} personer med aktiva tingningar har inte fått hembesök."
+msgstr "{plural1} personer med aktiva tingningar har inte fått hembesök"
 
 #: main.js
 msgid "{plural1} potential matches for lost animals"
@@ -13956,7 +13933,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} shelter animals have not been microchipped"
-msgstr ""
+msgstr "{plural1} katter som inte blivit microchippade"
 
 #: main.js
 msgid "{plural1} shelter animals have people looking for them"
@@ -13964,15 +13941,15 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} tests need to be performed today"
-msgstr ""
+msgstr "{plural1} prover behöver utföras idag"
 
 #: main.js
 msgid "{plural1} transports do not have a driver assigned"
-msgstr ""
+msgstr "{plural1} transporter saknar en tilldelad chaufför"
 
 #: main.js
 msgid "{plural1} traps are overdue for return"
-msgstr ""
+msgstr "{plural1} lån att fälla har ej återlämnats i tid"
 
 #: main.js
 msgid "{plural1} trial adoptions have ended"
@@ -13992,23 +13969,23 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} urgent entries on the waiting list"
-msgstr ""
+msgstr "{plural1} brådskande ärenden på väntelistan"
 
 #: main.js
 msgid "{plural1} vaccinations have expired"
-msgstr ""
+msgstr "{plural1} vaccinationer har utgått"
 
 #: main.js
 msgid "{plural1} vaccinations need to be administered today"
-msgstr ""
+msgstr "{plural1} vaccinationer behöver administreras i dag"
 
 #: i18n.py
 msgid "{plural1} weeks."
-msgstr ""
+msgstr "{plural1} veckor."
 
 #: i18n.py
 msgid "{plural1} years."
-msgstr ""
+msgstr "{plural1} år."
 
 #: main.js
 msgid "{plural2} animal control calls due for followup today"
@@ -14020,15 +13997,15 @@ msgstr ""
 
 #: main.js
 msgid "{plural2} animals died"
-msgstr ""
+msgstr "{plural2} avlidna djur"
 
 #: main.js
 msgid "{plural2} animals entered the shelter"
-msgstr ""
+msgstr "{plural2} djur har ankommit till katthemmet"
 
 #: main.js
 msgid "{plural2} animals have been on the shelter longer than {0} months"
-msgstr ""
+msgstr "{plural2} djur har varit på katthemmet längre än {0} månader"
 
 #: main.js
 msgid "{plural2} animals have holds ending today"
@@ -14036,7 +14013,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural2} animals were adopted"
-msgstr ""
+msgstr "{plural2} djur har adopterats"
 
 #: main.js
 msgid "{plural2} animals were dead on arrival"
@@ -14051,13 +14028,12 @@ msgid "{plural2} animals were reclaimed by their owners"
 msgstr ""
 
 #: main.js
-#, fuzzy
 msgid "{plural2} animals were transferred to other shelters"
-msgstr "Detta djur överfördes från ettannat djurhem"
+msgstr "{plural2} djur överfördes till att annat katthem"
 
 #: i18n.py
 msgid "{plural2} days."
-msgstr ""
+msgstr "{plural2} dagar."
 
 #: main.js
 msgid "{plural2} incomplete animal control calls"
@@ -14073,11 +14049,11 @@ msgstr ""
 
 #: main.js
 msgid "{plural2} medical treatments need to be administered today"
-msgstr ""
+msgstr "{plural2} medicinska behandlingar behöver administreras i dag"
 
 #: i18n.py
 msgid "{plural2} months."
-msgstr ""
+msgstr "{plural2} månader."
 
 #: main.js
 msgid "{plural2} new online form submissions"
@@ -14089,11 +14065,11 @@ msgstr ""
 
 #: main.js
 msgid "{plural2} people with active reservations have not been homechecked"
-msgstr "{plural2} personer med aktiva tingningar har inte fått hembesök."
+msgstr "{plural2} personer med aktiva tingningar har inte fått hembesök"
 
 #: main.js
 msgid "{plural2} potential matches for lost animals"
-msgstr ""
+msgstr "{plural2} potentiella matchningar för försvunnet djur"
 
 #: main.js
 msgid "{plural2} recent publisher runs had errors"
@@ -14109,7 +14085,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural2} shelter animals have not been microchipped"
-msgstr ""
+msgstr "{plural2} katter som inte blivit microchippade"
 
 #: main.js
 msgid "{plural2} shelter animals have people looking for them"
@@ -14117,11 +14093,11 @@ msgstr ""
 
 #: main.js
 msgid "{plural2} tests need to be performed today"
-msgstr ""
+msgstr "{plural2} prover behöver utföras idag"
 
 #: main.js
 msgid "{plural2} transports do not have a driver assigned"
-msgstr ""
+msgstr "{plural2} transporter saknar en tilldelad chaufför"
 
 #: main.js
 msgid "{plural2} traps are overdue for return"
@@ -14145,23 +14121,23 @@ msgstr ""
 
 #: main.js
 msgid "{plural2} urgent entries on the waiting list"
-msgstr ""
+msgstr "{plural2} brådskande ärenden på väntelistan"
 
 #: main.js
 msgid "{plural2} vaccinations have expired"
-msgstr ""
+msgstr "{plural2} vaccinationer har utgått"
 
 #: main.js
 msgid "{plural2} vaccinations need to be administered today"
-msgstr ""
+msgstr "{plural2} vaccinationer behöver administreras idag"
 
 #: i18n.py
 msgid "{plural2} weeks."
-msgstr ""
+msgstr "{plural2} veckor."
 
 #: i18n.py
 msgid "{plural2} years."
-msgstr ""
+msgstr "{plural2} år."
 
 #: main.js
 msgid "{plural3} animal control calls due for followup today"
@@ -14169,19 +14145,19 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} animals are not available for adoption"
-msgstr ""
+msgstr "{plural3} djur är ej tillgängliga för adoption"
 
 #: main.js
 msgid "{plural3} animals died"
-msgstr ""
+msgstr "{plural3} avlidna djur"
 
 #: main.js
 msgid "{plural3} animals entered the shelter"
-msgstr ""
+msgstr "{plural3} djur har inkommit till katthemmet"
 
 #: main.js
 msgid "{plural3} animals have been on the shelter longer than {0} months"
-msgstr ""
+msgstr "{plural3} djur har varit på katthemmet längre än {0} månader"
 
 #: main.js
 msgid "{plural3} animals have holds ending today"
@@ -14189,7 +14165,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} animals were adopted"
-msgstr ""
+msgstr "{plural3} djur har adopterats"
 
 #: main.js
 msgid "{plural3} animals were dead on arrival"
@@ -14201,20 +14177,19 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} animals were reclaimed by their owners"
-msgstr ""
+msgstr "{plural3} djur har reklamerats av sina ägare"
 
 #: main.js
-#, fuzzy
 msgid "{plural3} animals were transferred to other shelters"
-msgstr "Detta djur överfördes från ettannat djurhem"
+msgstr "Denna katt överfördes från ett annat katthem"
 
 #: i18n.py
 msgid "{plural3} days."
-msgstr ""
+msgstr "{plural3} dagar."
 
 #: main.js
 msgid "{plural3} incomplete animal control calls"
-msgstr ""
+msgstr "{plural3} ej kompletta djurkontrollsamtal"
 
 #: main.js
 msgid "{plural3} items of stock expire in the next month"
@@ -14226,11 +14201,11 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} medical treatments need to be administered today"
-msgstr ""
+msgstr "{plural3} medicinska behandlingar behöver administreras i dag"
 
 #: i18n.py
 msgid "{plural3} months."
-msgstr ""
+msgstr "{plural3} månader."
 
 #: main.js
 msgid "{plural3} new online form submissions"
@@ -14242,11 +14217,11 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} people with active reservations have not been homechecked"
-msgstr "{plural3} personer med aktiva tingningar har inte fått hembesök."
+msgstr "{plural3} personer med aktiva tingningar har inte fått hembesök"
 
 #: main.js
 msgid "{plural3} potential matches for lost animals"
-msgstr ""
+msgstr "{plural3} potentiella matchningar för försvunnet djur"
 
 #: main.js
 msgid "{plural3} recent publisher runs had errors"
@@ -14258,11 +14233,11 @@ msgstr "{plural3} tingningar har varit aktiv under en vecka utan adoption"
 
 #: search.js
 msgid "{plural3} results found in {1} seconds. Order: {2}"
-msgstr ""
+msgstr "{plural3} resultat hittade på {1} sekunder. Order: {2}"
 
 #: main.js
 msgid "{plural3} shelter animals have not been microchipped"
-msgstr ""
+msgstr "{plural3} katter som inte blivit microchippade"
 
 #: main.js
 msgid "{plural3} shelter animals have people looking for them"
@@ -14270,15 +14245,15 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} tests need to be performed today"
-msgstr ""
+msgstr "{plural3} prover behöver utföras i dag"
 
 #: main.js
 msgid "{plural3} transports do not have a driver assigned"
-msgstr ""
+msgstr "{plural3} transporter som saknar en tilldelad chaufför"
 
 #: main.js
 msgid "{plural3} traps are overdue for return"
-msgstr ""
+msgstr "{plural3} lån av fälla har ej lämnats tillbaks i tid"
 
 #: main.js
 msgid "{plural3} trial adoptions have ended"
@@ -14286,7 +14261,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} unaltered animals have been adopted in the last month"
-msgstr "{plural3} okastrerade djur har adopterats under den senaste månaden"
+msgstr "{plural3} okastrerade katter har adopterats under den senaste månaden"
 
 #: main.js
 msgid "{plural3} undispatched animal control calls"
@@ -14298,20 +14273,20 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} urgent entries on the waiting list"
-msgstr ""
+msgstr "{plural3} brådskande ärenden på väntelistan"
 
 #: main.js
 msgid "{plural3} vaccinations have expired"
-msgstr ""
+msgstr "{plural3} vaccinationer har utgått"
 
 #: main.js
 msgid "{plural3} vaccinations need to be administered today"
-msgstr ""
+msgstr "{plural3} vaccinationer behöver administreras idag"
 
 #: i18n.py
 msgid "{plural3} weeks."
-msgstr ""
+msgstr "{plural3} veckor."
 
 #: i18n.py
 msgid "{plural3} years."
-msgstr ""
+msgstr "{plural3} år."

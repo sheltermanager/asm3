@@ -2,9 +2,9 @@ Expired licenses in the last year
 ###
 Animal Control
 ###
-33307/PostgreSQL
+33307/PostgreSQL rev02
 ###
-People on file with expired licenses in the last year and no renewal
+People on file with expired licenses in the last year and no renewal, where the animal is still alive
 ###
 en
 ###
@@ -18,6 +18,7 @@ INNER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID
 INNER JOIN owner o ON o.ID = ol.OwnerID
 LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID 
 WHERE ol.ExpiryDate <= CURRENT_DATE AND ol.ExpiryDate > CURRENT_DATE - INTERVAL '365 days'
+AND (ol.AnimalID = 0 OR a.DeceasedDate Is Null)
 AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=o.ID AND AnimalID=a.ID AND ExpiryDate > '$CURRENT_DATE$') AND a.DeceasedDate Is Null 
 ORDER BY ol.ExpiryDate
 ###

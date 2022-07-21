@@ -9,7 +9,7 @@ import asm3.person
 import asm3.users
 import asm3.utils
 
-from asm3.i18n import BUILD, _, translate, format_currency, format_date, get_locales, now, python2display, python2unix, real_locale
+from asm3.i18n import BUILD, _, translate, format_currency, get_locales, now, python2unix, real_locale
 from asm3.sitedefs import QR_IMG_SRC
 from asm3.sitedefs import BASE_URL, LOCALE, ROLLUP_JS, SERVICE_URL
 from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_GRID_CSS, BOOTSTRAP_ICONS_CSS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, HTMLFTP_PUBLISHER_ENABLED, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_5_JS, TOUCHPUNCH_JS
@@ -47,7 +47,8 @@ def asm_script_tag(filename):
     If we're in rollup mode and one of our standalone files is requested,
     get it from the compat folder instead so it's still cross-browser compliant and minified.
     """
-    standalone = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
+    standalone = [ "animal_view_adoptable.js", "document_edit.js", 
+        "mobile.js", "mobile2.js", "mobile_login.js", "mobile_report.js", "mobile_sign.js", 
         "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
     if ROLLUP_JS and filename in standalone and filename.find("/") == -1: filename = f"compat/{filename}"
     return script_tag(f"static/js/{filename}", addbuild=True)
@@ -56,16 +57,17 @@ def asm_script_tags(path):
     """
     Returns separate script tags for all ASM javascript files.
     """
-    jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
-        "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
+    jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
+        "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_microchip.js", "header.js",
         "header_additional.js", "header_edit_header.js" ]
-    exclude = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
+    standalone = [ "animal_view_adoptable.js", "document_edit.js", 
+        "mobile.js", "mobile2.js", "mobile_login.js", "mobile_report.js", "mobile_sign.js", 
         "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)
     # or those we should exclude because they are standalone files
     for i in os.listdir(path + "static/js"):
-        if i not in jsfiles and i not in exclude and not i.startswith(".") and i.endswith(".js"):
+        if i not in jsfiles and i not in standalone and not i.startswith(".") and i.endswith(".js"):
             jsfiles.append(i)
     buf = []
     for i in jsfiles:
@@ -128,7 +130,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     if config_db == "asm" and config_ts == "0":
         config_ts = python2unix(now())
     def script_config():
-        return "<script type=\"text/javascript\" src=\"config.js?db=%s&ts=%s\"></script>\n" % (config_db, config_ts)
+        return script_tag("config.js?db=%s&ts=%s" % (config_db, config_ts))
     def script_schema():
         return asm_script_tag("bundle/schema.js") # statically generated
     # Use the default if we have no locale
@@ -332,10 +334,12 @@ def mobile_page(l, title, scripts = [], controller = {}, execline = ""):
         script_tag(JQUERY_UI_JS),
         script_tag(BOOTSTRAP_JS),
         script_tag(MOMENT_JS),
+        script_tag(MOUSETRAP_JS),
         script_tag(TOUCHPUNCH_JS),
         script_tag(SIGNATURE_JS),
         css_tag(BOOTSTRAP_CSS),
         css_tag(BOOTSTRAP_ICONS_CSS),
+        script_tag("config.js?ts=%s" % python2unix(now())),
         script_i18n(l)
     ]
     for s in scripts:
@@ -364,14 +368,14 @@ def map_js():
     return """
         %(jquery)s
         %(mousetrap)s
-        <script type="text/javascript" src="config.js?ts=%(time)s"></script>
+        %(config)s
         %(common)s
         %(commonmap)s
-    """ % { "mousetrap": script_tag(MOUSETRAP_JS),
-            "jquery": script_tag(JQUERY_JS), 
-            "time": escape(now()),
+    """ % { "jquery": script_tag(JQUERY_JS), 
+            "mousetrap": script_tag(MOUSETRAP_JS),
+            "config": script_tag("config.js?ts=%s" % python2unix(now())),
             "common": asm_script_tag("common.js"),
-            "commonmap": asm_script_tag("common_map.js") }
+            "commonmap": asm_script_tag("common_map.js")  }
 
 def report_js(l):
     return """
@@ -489,27 +493,6 @@ def script_var_str(varname, v, prefix = "controller."):
     """
     v = "'" + v.replace("'", "\\'").replace("\n", " ") + "'"
     return script_var(varname, v, prefix)
-
-def rss(inner, title, link, description):
-    """ Renders an RSS document """
-    return '<?xml version="1.0" encoding="UTF-8"?>' \
-        '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" >' \
-        '<channel rdf:about="%s">' \
-        '<title>%s</title>' \
-        '<description>%s</description>' \
-        '<link>%s</link>' \
-        '</channel>' \
-        '%s' \
-        '</rdf:RDF>' % (BASE_URL, title, description, link, inner)
-
-def rss_item(title, link, description):
-    return '<item rdf:about="%s">' \
-        '<title>%s</title>' \
-        '<link>%s</link>' \
-        '<description>' \
-        '%s' \
-        '</description>' \
-        '</item>' % (BASE_URL, title, link, description)
 
 def icon(name, title = ""):
     """
@@ -1219,332 +1202,4 @@ def options_yesno(dbo, includeAll = False, selected = -1):
 def options_ynun(dbo, includeAll = False, selected = -1):
     return options(dbo.locale, asm3.lookups.get_ynun(dbo), "NAME", includeAll=includeAll, selected=selected)
 
-def template_selection(templates, url):
-    """
-    templates: A list of templates pathnames
-    url: The initial portion of the url
-    """
-    s = ""
-    lastpath = ""
-    for t in templates:
-        if t["PATH"] != lastpath:
-            s += "<li class=\"asm-menu-category\">%s</li>" % ( t["PATH"] )
-            lastpath = t["PATH"]
-        s += "<li class=\"asm-menu-item\"><a target=\"_blank\" class=\"templatelink\" data=\"%d\" href=\"%s&dtid=%s\">%s</a></li>" % (t["ID"], url, t["ID"], t["NAME"])
-    return s
-
-def timeline_rss(dbo, limit = 500):
-    l = dbo.locale
-    rows = asm3.animal.get_timeline(dbo, limit)
-    h = []
-    for r in rows:
-        h.append( rss_item( r["DESCRIPTION"], "%s/%s?id=%d" % (BASE_URL, r["LINKTARGET"], r["ID"]), "") )
-    return rss("\n".join(h), _("Showing {0} timeline events.", l).format(limit), BASE_URL, "")
-
-def report_criteria(dbo, crit, locationfilter = "", siteid = 0):
-    """
-    Renders report criteria as an HTML form
-    crit: The criteria - a list of tuples containing name, type and a question
-    locationfilter: A comma separated list of location ids for filtering the internal location list
-    """
-    l = dbo.locale
-    s = "<table>"
-    for name, rtype, question in crit:
-        if rtype == "DATE":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <input class="asm-textbox asm-datebox" id="report-%s" data-post="%s" value="%s" />
-            </td>
-            </tr>""" % ( question, name, name, python2display(l, now(dbo.timezone)) )
-        elif rtype == "STRING":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <input class="asm-textbox" id="report-%s" data-post="%s" />
-            </td>
-            </tr>""" % ( question, name, name )
-        elif rtype == "LOOKUP":
-            values = question[question.find("|")+1:]
-            if question.find("|") != -1: question = question[0:question.find("|")]
-            sv = []
-            for v in values.split(","):
-                sv.append("<option>%s</option>" % v.strip())
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( question, name, name, "\n".join(sv) )
-        elif rtype == "NUMBER":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <input class="asm-textbox asm-numberbox" id="report-%s" data-post="%s" />
-            </td>
-            </tr>""" % ( question, name, name )
-        elif rtype == "ANIMAL" or rtype == "FSANIMAL" or rtype == "ALLANIMAL":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <input class="asm-animalchooser" id="report-%s" data-post="%s" type="hidden" />
-            </td>
-            </tr>""" % ( _("Animal", l), name, name )
-        elif rtype == "ANIMALS":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <input class="asm-animalchoosermulti" id="report-%s" data-post="%s" type="hidden" />
-            </td>
-            </tr>""" % ( _("Animals", l), name, name )
-        elif rtype == "ANIMALFLAG":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Flag", l), name, name, options_animal_flags(dbo))
-        elif rtype == "PERSON":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <input class="asm-personchooser" id="report-%s" data-post="%s" type="hidden" />
-            </td>
-            </tr>""" % ( _("Person", l), name, name )
-        elif rtype == "PERSONFLAG":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Flag", l), name, name, options_person_flags(dbo))
-        elif rtype == "DONATIONTYPE" or rtype == "PAYMENTTYPE":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Payment Type", l), name, name, options_donation_types(dbo) )
-        elif rtype == "LITTER":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Litter", l), name, name, options_litters(dbo) )
-        elif rtype == "PAYMENTMETHOD":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Payment Method", l), name, name, options_donation_methods(dbo) )
-        elif rtype == "SPECIES":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Species", l), name, name, options_species(dbo) )
-        elif rtype == "LOCATION":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Location", l), name, name, options_internal_locations(dbo, False, -1, locationfilter, siteid) )
-        elif rtype == "LOGTYPE":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Log Type", l), name, name, options_log_types(dbo, False, -1) )
-        elif rtype == "SITE":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Site", l), name, name, options_sites(dbo, False, -1) )
-        elif rtype == "TYPE":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Type", l), name, name, options_animal_types(dbo) )
-    s += "<tr><td></td><td><button id=\"submitcriteria\">%s</button></td></tr></table>" % _("Generate", l)
-    return s
-
-def report_criteria_mobile(dbo, crit, locationfilter = "", siteid = 0):
-    """
-    l: The locale
-    crit: The criteria - a list of tuples containing name, type and a question
-    """
-    l = dbo.locale
-    s = ""
-    for name, rtype, question in crit:
-        if rtype == "DATE":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <input type="date" id="report-%s" data-post="%s" value="%s" />
-            </div>
-            """ % (name, question, name, name, format_date(now(dbo.timezone), "%Y-%m-%d"))
-        elif rtype == "STRING":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <input type="text" id="report-%s" data-post="%s" value="" />
-            </div>
-            """ % (name, question, name, name)
-        elif rtype == "LOOKUP":
-            values = question[question.find("|")+1:]
-            if question.find("|") != -1: question = question[0:question.find("|")]
-            sv = []
-            for v in values.split(","):
-                sv.append("<option>%s</option>" % v.strip())
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </div>
-            """ % (name, question, name, name, "\n".join(sv))
-        elif rtype == "NUMBER":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <input type="number" id="report-%s" data-post="%s" value="" />
-            </div>
-            """ % (name, question, name, name)
-        elif rtype == "ANIMAL":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Animal", l), name, name, options_animals_on_shelter(dbo))
-        elif rtype == "FSANIMAL":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Animal", l), name, name, options_animals_on_shelter_foster(dbo))
-        elif rtype == "ALLANIMAL":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Animal", l), name, name, options_animals(dbo))
-        elif rtype == "ANIMALS":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select multiple=\"multiple\" id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Animals", l), name, name, options_animals_on_shelter(dbo))
-        elif rtype == "ANIMALFLAG":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Flag", l), name, name, options_animal_flags(dbo))
-        elif rtype == "PERSON":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Person", l), name, name, options_people(dbo))
-        elif rtype == "PERSONFLAG":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Flag", l), name, name, options_person_flags(dbo))
-        elif rtype == "DONATIONTYPE" or rtype == "PAYMENTTYPE":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Payment Type", l), name, name, options_donation_types(dbo))
-        elif rtype == "LITTER":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Litter", l), name, name, options_litters(dbo))
-        elif rtype == "PAYMENTMETHOD":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Payment Method", l), name, name, options_donation_methods(dbo))
-        elif rtype == "SPECIES":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Species", l), name, name, options_species(dbo))
-        elif rtype == "LOCATION":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Location", l), name, name, options_internal_locations(dbo, False, -1, locationfilter, siteid))
-        elif rtype == "LOGTYPE":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Log Type", l), name, name, options_log_types(dbo, False, -1))
-        elif rtype == "SITE":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Site", l), name, name, options_sites(dbo, False, -1))
-        elif rtype == "TYPE":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Type", l), name, name, options_animal_types(dbo))
-    s += "<input id=\"submitcriteria\" type=\"submit\" value=\"%s\" />" % _("Generate", l)
-    return s
 

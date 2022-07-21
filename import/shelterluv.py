@@ -22,7 +22,7 @@ The following files are needed:
     Events - Vaccines Administered -> vaccinations.csv
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/sluv_rc2755"
+PATH = "/home/robin/tmp/asm3_import_data/sluv_cs2772"
 
 DEFAULT_BREED = 261 # default to dsh
 DATE_FORMAT = "MDY" # Normally MDY

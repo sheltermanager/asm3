@@ -809,7 +809,7 @@ $(function() {
                 $("#retailer").closest("tr").hide();
             }
             // Show the insurance row for adoptions
-            if (mt == 1) {
+            if (mt == 1 && !config.bool("DontShowInsurance")) {
                 $("#insurance").closest("tr").fadeIn();
             }
             else {
@@ -836,7 +836,7 @@ $(function() {
                 $("#returndate").closest("tr").fadeIn();
             }
             // If the movement is one that doesn't require a person, hide the person row
-            if (mt == 4 || mt == 6 || mt == 7) {
+            if (mt == 4 || mt == 6) {
                 $("#person").closest("tr").fadeOut();
             }
             else {

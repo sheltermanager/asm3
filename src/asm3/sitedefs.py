@@ -153,15 +153,20 @@ MEMCACHED_SERVER = get_string("memcached_server", "")
 # Where to store media files.
 # database - media files are base64 encoded in the dbfs.content db column
 # file - media files are stored in a folder 
-# s3 - media files are stored in amazon s3
+# s3 - media files are stored in S3 compatible storage
 DBFS_STORE = get_string("dbfs_store", "database")
 
 # DBFS_STORE = file: The folder where media files are stored.
 # It must exist and ASM must have write permissions. It should never end with a /
 DBFS_FILESTORAGE_FOLDER = get_string("dbfs_filestorage_folder", "/home/robin/tmp/dbfs")
 
-# DBFS_STORE = s3: The S3 bucket to store media in
+# DBFS_STORE = s3: The S3 bucket to store media in and credentials/URL
 DBFS_S3_BUCKET = get_string("dbfs_s3_bucket", "")
+# DBFS_STORE = s3: Credentials, if these aren't set, $HOME/.aws/credentials or env will be used
+DBFS_S3_ACCESS_KEY_ID = get_string("dbfs_s3_access_key_id", "")
+DBFS_S3_SECRET_ACCESS_KEY = get_string("dbfs_s3_secret_access_key", "")
+# DBFS_STORE = s3: endpoint URL if you are using an S3 compatible service rather than AWS S3
+DBFS_S3_ENDPOINT_URL = get_string("dbfs_s3_endpoint_url", "")
 
 # The directory to use to cache elements on disk. Must already exist
 # as the application will not attempt to create it.

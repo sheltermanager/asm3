@@ -2,7 +2,7 @@ Fosters by Date with Outcomes
 ###
 Movements
 ###
-Any rev02
+Any rev03
 ###
 Foster animals between two dates with their final outcomes
 ###
@@ -11,6 +11,7 @@ en
 SELECT
 a.AnimalName, a.ShelterCode, a.DateOfBirth,
 e.ReasonName, o.OwnerName, m.MovementDate, m.ReturnDate, 
+o.OwnerAddress AS FostererAddress, o.MobileTelephone AS FostererPhone, o.EmailAddress AS FostererEmail,
 a.NeuteredDate,
 CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType > 0 THEN mt.MovementType ELSE 'None' END AS OutcomeName,
 CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate,
@@ -50,7 +51,9 @@ $$BODY
 <td>$SHELTERCODE</td>
 <td>$DATEOFBIRTH</td>
 <td>$REASONNAME</td>
-<td>$OWNERNAME</td>
+<td><b>$OWNERNAME</b><br/>
+$FostererAddress, $FostererPhone $FostererEmail
+</td>
 <td>$MOVEMENTDATE</td>
 <td>$RETURNDATE</td>
 <td>$NEUTEREDDATE</td>
@@ -72,7 +75,7 @@ Fosters by Date and Fosterer with Outcomes
 ###
 Auditing
 ###
-Any rev03
+Any rev04
 ###
 Foster animals between two dates with their final outcomes by fosterer
 ###
@@ -81,6 +84,7 @@ en
 SELECT
 a.AnimalName, a.ShelterCode, a.DateOfBirth,
 e.ReasonName, o.OwnerName, m.MovementDate, m.ReturnDate, 
+o.OwnerAddress AS FostererAddress, o.MobileTelephone AS FostererPhone, o.EmailAddress AS FostererEmail,
 a.NeuteredDate,
 CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType > 0 THEN mt.MovementType ELSE 'None' END AS OutcomeName,
 CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate,
@@ -103,6 +107,7 @@ HEADER$$
 $$GROUP_OwnerName
 $$HEAD
 <h2>$OwnerName</h2>
+<p>$FostererAddress, $FostererPhone $FostererEmail</p>
 <table border="1">
 <tr>
 <th>Animal</th>

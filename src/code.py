@@ -514,23 +514,37 @@ class image(ASMEndpoint):
 
     def content(self, o):
         try:
-            lastmod, imagedata = asm3.media.get_image_file_data(o.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
+            # Use a read through disk cache for thumbnails.
+            # This saves on database calls and thumbnail scaling for busier sites.
+            # We only cache if a date parameter is specified so that changing the date can invalidate the cache.
+            cache_indicator = ""
+            if o.post["date"] != "" and o.post["mode"].endswith("thumb"):
+                cache_key = "%s:id=%s:seq=%s:date=%s" % ( o.post["mode"], o.post["id"], o.post.integer("seq"), o.post["date"])
+                cache_path = o.dbo.database
+                imagedata = asm3.cachedisk.get(cache_key, cache_path)
+                cache_indicator = asm3.utils.iif(imagedata is None, "", " from cache")
+                if imagedata is None:
+                    lastmod, imagedata = asm3.media.get_image_file_data(o.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
+                    if len(imagedata) > 50: # Never cache empty/broken thumbnails
+                        asm3.cachedisk.put(cache_key, cache_path, imagedata, CACHE_ONE_WEEK)
+            else:
+                lastmod, imagedata = asm3.media.get_image_file_data(o.dbo, o.post["mode"], o.post["id"], o.post.integer("seq"), False)
         except Exception as err:
-            # This call in this endpoint produces a lot of errors when people try to access 
+            # The call to get_image_file_data can produce a lot of errors when people try to access 
             # images via unsubstituted tokens in documents, etc. 
             # Log them instead of throwing an error that will end up in our error box
             asm3.al.error(str(err), "code.image", o.dbo, sys.exc_info())
-            raise asm3.utils.ASMError("invalid image call")
+            raise asm3.utils.ASMError("failure retrieving image")
 
-        if imagedata != "NOPIC":
+        if imagedata != b"NOPIC":
             self.content_type("image/jpeg")
             if o.post["date"] != "":
-                # if we have a date parameter, it can be used to invalidate any cache
+                # if we have a date parameter, it can be used to invalidate any cache, so cache on the client for a long time
                 self.cache_control(CACHE_ONE_YEAR)
             else:
                 # otherwise cache for an hour in CDNs and just for the day locally
                 self.cache_control(CACHE_ONE_DAY, CACHE_ONE_HOUR)
-            asm3.al.debug("mode=%s id=%s seq=%s (%s bytes)" % (o.post["mode"], o.post["id"], o.post["seq"], len(imagedata)), "image.content", o.dbo)
+            asm3.al.debug("mode=%s id=%s seq=%s (%s bytes%s)" % (o.post["mode"], o.post["id"], o.post["seq"], len(imagedata), cache_indicator), "image.content", o.dbo)
             return imagedata
         else:
             # If a parameter of nopic=404 is passed, we return a 404 instead of redirecting to nopic
@@ -792,6 +806,16 @@ class media(ASMEndpoint):
         for mid in o.post.integer_list("ids"):
             asm3.media.convert_media_jpg2pdf(o.dbo, o.user, mid)
 
+    def post_moveanimal(self, o):
+        self.check(asm3.users.CHANGE_MEDIA)
+        for mid in o.post.integer_list("ids"):
+            asm3.media.update_media_link(o.dbo, o.user, mid, asm3.media.ANIMAL, o.post.integer("animalid"))
+
+    def post_moveperson(self, o):
+        self.check(asm3.users.CHANGE_MEDIA)
+        for mid in o.post.integer_list("ids"):
+            asm3.media.update_media_link(o.dbo, o.user, mid, asm3.media.PERSON, o.post.integer("personid"))
+
     def post_sign(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
         for mid in o.post.integer_list("ids"):
@@ -848,43 +872,116 @@ class media_pdfjs(ASMEndpoint):
 
 class mobile(ASMEndpoint):
     url = "mobile"
-    login_url = "/mobile_login"
+    login_url = "mobile_login"
 
     def content(self, o):
         self.content_type("text/html")
         return asm3.mobile.page(o.dbo, o.session, o.user)
+
+class mobile2(ASMEndpoint):
+    url = "mobile2"
+    login_url = "mobile_login"
+
+    def content(self, o):
+        dbo = o.dbo
+        animals = asm3.animal.get_shelterview_animals(dbo, o.locationfilter, o.siteid, o.visibleanimalids)
+        asm3.al.debug("mobile2 for '%s' (%s animals)" % (o.user, len(animals)), "code.mobile2", dbo)
+        c = {
+            "animals":      animals,
+            "reports":      asm3.reports.get_available_reports(dbo),
+            "vaccinations": asm3.medical.get_vaccinations_outstanding(dbo),
+            "tests":        asm3.medical.get_tests_outstanding(dbo),
+            "medicals":     asm3.medical.get_treatments_outstanding(dbo),
+            "diaries":      asm3.diary.get_uncompleted_upto_today(dbo, o.user),
+            "rsvhomecheck": asm3.person.get_reserves_without_homechecks(dbo),
+            "messages":     asm3.lookups.get_messages(dbo, session.user, session.roles, session.superuser),
+            "testresults":  asm3.lookups.get_test_results(dbo),
+            "stocklocations": asm3.stock.get_stock_locations_totals(dbo),
+            "incidentsmy":  asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "incomplete" }, o.user),
+            "incidentsundispatched": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "undispatched" }, o.user),
+            "incidentsincomplete": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user),
+            "incidentsfollowup": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" }, o.user),
+            "animaltypes":  asm3.lookups.get_animal_types(dbo),
+            "breeds":       asm3.lookups.get_breeds_by_species(dbo),
+            "colours":      asm3.lookups.get_basecolours(dbo),
+            "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "sexes":        asm3.lookups.get_sexes(dbo),
+            "sizes":        asm3.lookups.get_sizes(dbo),
+            "smdblocked":   asm3.configuration.smdb_locked(dbo),
+            "species":      asm3.lookups.get_species(dbo),
+            "user":         o.user
+        }
+        self.content_type("text/html")
+        return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile2.js" ], c)
+
+    def post_addanimal(self, o):
+        self.check(asm3.users.ADD_ANIMAL)
+        pass # TODO
+
+    def post_medical(self, o):
+        self.check(asm3.users.CHANGE_MEDICAL)
+        #asm3.medical.update_treatment_today(o.dbo, o.user, o.post.integer("id"))
+
+    def post_test(self, o):
+        self.check(asm3.users.CHANGE_TEST)
+        #asm3.medical.update_test_today(o.dbo, o.user, post.integer("id"))
+
+    def post_vaccinate(self, o):
+        self.check(asm3.users.CHANGE_VACCINATION)
+        #asm3.medical.update_vaccination_today(o.dbo, o.user, o.post.integer("id"))
+
 
 class mobile_login(ASMEndpoint):
     url = "mobile_login"
     check_logged_in = False
 
     def content(self, o):
+        l = o.locale
         if not MULTIPLE_DATABASES:
             dbo = asm3.db.get_database()
             o.locale = asm3.configuration.locale(dbo)
+        # Do we have a remember me token?
+        rmtoken = self.get_cookie("asm_remember_me")
+        if rmtoken:
+            cred = asm3.cachemem.get(rmtoken)
+            if cred and cred.find("|") != -1:
+                database, username, password = cred.split("|")
+                rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
+                asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "code.login")
+                user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
+                if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
+                    self.redirect("mobile")
+                    return
         self.content_type("text/html")
-        return asm3.mobile.page_login(o.locale, o.post)
-
-    def post_all(self, o):
-        self.redirect( asm3.mobile.login(o.post, o.session, self.remote_ip(), self.user_agent(), PATH) )
+        c = {
+            "smcom": asm3.smcom.active(),
+            "smcomloginurl": SMCOM_LOGIN_URL,
+            "multipledatabases": MULTIPLE_DATABASES,
+            "target": o.post["target"],
+            "smaccount": o.post["smaccount"],
+            "username": o.post["username"],
+            "password": o.post["password"]
+        }
+        return asm3.html.mobile_page(l, _("Login"), [ "mobile_login.js" ], c)
 
 class mobile_logout(ASMEndpoint):
     url = "mobile_logout"
-    login_url = "/mobile_login"
+    check_logged_in = False
 
     def content(self, o):
         url = "mobile_login"
         if o.post["smaccount"] != "":
-            url = "login?smaccount=" + o.post["smaccount"]
+            url = "mobile_login?smaccount=" + o.post["smaccount"]
         elif MULTIPLE_DATABASES and o.dbo is not None and o.dbo.alias is not None:
             url = "mobile_login?smaccount=" + o.dbo.alias
         asm3.users.update_user_activity(o.dbo, o.user, False)
         asm3.users.logout(o.session, self.remote_ip(), self.user_agent())
+        self.set_cookie("asm_remember_me", "", 0) # user explicitly logged out, remove remember me
         self.redirect(url)
 
 class mobile_post(ASMEndpoint):
     url = "mobile_post"
-    login_url = "/mobile_login"
+    login_url = "mobile_login"
 
     def handle(self, o):
         s = asm3.mobile.handler(o.session, o.post)
@@ -904,35 +1001,66 @@ class mobile_post(ASMEndpoint):
 
 class mobile_report(ASMEndpoint):
     url = "mobile_report"
-    login_url = "/mobile_login"
+    login_url = "mobile_login"
     get_permissions = asm3.users.VIEW_REPORT
 
     def content(self, o):
         dbo = o.dbo
-        user = o.user
         post = o.post
-        mode = post["mode"]
         crid = post.integer("id")
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
-        crit = asm3.reports.get_criteria_controls(dbo, crid, mode = "MOBILE", locationfilter = o.locationfilter, siteid = o.siteid) 
+        crit = asm3.reports.get_criteria(dbo, crid) 
         self.content_type("text/html")
         self.cache_control(0)
-        # If the report doesn't take criteria, just show it
-        if crit == "":
-            asm3.al.debug("report %d has no criteria, displaying" % crid, "code.mobile_report", dbo)
-            return asm3.reports.execute(dbo, crid, user)
-        # If we're in criteria mode (and there are some to get here), ask for them
-        elif mode == "":
-            title = asm3.reports.get_title(dbo, crid)
-            asm3.al.debug("building criteria form for report %d %s" % (crid, title), "code.mobile_report", dbo)
-            return asm3.mobile.report_criteria(dbo, crid, title, crit)
-        # The user has entered the criteria and we're in exec mode, unpack
-        # the criteria and run the report
-        elif mode == "exec":
-            asm3.al.debug("got criteria (%s), executing report %d" % (str(post.data), crid), "code.report", dbo)
-            p = asm3.reports.get_criteria_params(dbo, crid, post)
-            return asm3.reports.execute(dbo, crid, user, p)
+        # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
+        if len(crit) != 0 and post["hascriteria"] == "": self.redirect("mobile_report_criteria?id=%s" % post.integer("id"))
+        title = asm3.reports.get_title(dbo, crid)
+        asm3.al.debug("got criteria (%s), executing report %d" % (str(post.data), crid), "code.report", dbo)
+        p = asm3.reports.get_criteria_params(dbo, crid, post)
+        if asm3.configuration.audit_on_view_report(dbo):
+            asm3.audit.view_report(dbo, o.user, title, str(post.data))
+        s = asm3.reports.execute(dbo, crid, o.user, p)
+        return s
+
+class mobile_report_criteria(ASMEndpoint):
+    url = "mobile_report_criteria"
+    get_permissions = asm3.users.VIEW_REPORT
+
+    def content(self, o):
+        dbo = o.dbo
+        crid = o.post.integer("id")
+        crit = asm3.reports.get_criteria(dbo, crid) 
+        title = asm3.reports.get_title(dbo, crid)
+        self.content_type("text/html")
+        self.cache_control(0)
+        def has_criteria(c):
+            for name, rtype, question in crit:
+                if rtype == c: return True
+            return False
+        asm3.al.debug("building criteria form for report %d %s" % (crid, title), "code.mobile_report", dbo)
+        c = {
+            "crid":         crid,
+            "criteria":     crit,
+            "title":        title,
+            "user":         o.user
+        }
+        # Only load lookup items for criteria that need them to save bandwidth
+        if has_criteria("ANIMAL") or has_criteria("FSANIMAL") or has_criteria("ALLANIMAL") or has_criteria("ANIMALS"):
+            c["animals"] = asm3.animal.get_animals_on_shelter_namecode(dbo)
+        if has_criteria("ANIMALFLAG"): c["animalflags"] = asm3.lookups.get_animal_flags(dbo)
+        if has_criteria("DONATIONTYPE") or has_criteria("PAYMENTTYPE"): c["donationtypes"] = asm3.lookups.get_donation_types(dbo)
+        if has_criteria("LITTER"): c["litters"] = asm3.animal.get_active_litters_brief(dbo)
+        if has_criteria("LOCATION"): c["locations"] = asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid)
+        if has_criteria("LOGTYPE"): c["logtypes"] = asm3.lookups.get_log_types(dbo)
+        if has_criteria("PAYMENTMETHOD") or has_criteria("PAYMENTTYPE"): c["paymentmethods"] = asm3.lookups.get_payment_methods(dbo)
+        if has_criteria("PERSON"): c["people"] = asm3.person.get_person_name_addresses(dbo)
+        if has_criteria("PERSONFLAG"): c["personflags"] = asm3.lookups.get_person_flags(dbo)
+        if has_criteria("SITE"): c["sites"] = asm3.lookups.get_sites(dbo)
+        if has_criteria("SPECIES"): c["species"] = asm3.lookups.get_species(dbo)
+        if has_criteria("TYPE"): c["types"] = asm3.lookups.get_animal_types(dbo)
+        self.content_type("text/html")
+        return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile_report.js" ], c)
 
 class mobile_sign(ASMEndpoint):
     url = "mobile_sign"
@@ -2048,7 +2176,7 @@ class calendar_events(ASMEndpoint):
                     "start": v["DATEREQUIRED"], 
                     "tooltip": tit, 
                     "icon": "vaccination",
-                    "link": "animal_vaccination?id=%d" % v["ANIMALID"] })
+                    "link": "animal_vaccination?id=%s" % v["ANIMALID"] })
             for v in asm3.medical.get_vaccinations_expiring_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
                 sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
                 tit = "%s - %s %s (%s) %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["DISPLAYLOCATIONNAME"], v["COMMENTS"])
@@ -2058,7 +2186,7 @@ class calendar_events(ASMEndpoint):
                     "start": v["DATEEXPIRES"], 
                     "tooltip": tit, 
                     "icon": "vaccination",
-                    "link": "animal_vaccination?id=%d" % v["ANIMALID"] })
+                    "link": "animal_vaccination?id=%s" % v["ANIMALID"] })
         if "m" in ev and self.checkb(asm3.users.VIEW_MEDICAL):
             for m in asm3.medical.get_treatments_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
                 sub = "%s - %s" % (m["TREATMENTNAME"], m["ANIMALNAME"])
@@ -2069,7 +2197,7 @@ class calendar_events(ASMEndpoint):
                     "start": m["DATEREQUIRED"], 
                     "tooltip": tit, 
                     "icon": "medical",
-                    "link": "animal_medical?id=%d" % m["ANIMALID"] })
+                    "link": "animal_medical?id=%s" % m["ANIMALID"] })
         if "t" in ev and self.checkb(asm3.users.VIEW_TEST):
             for t in asm3.medical.get_tests_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
                 sub = "%s - %s" % (t["TESTNAME"], t["ANIMALNAME"])
@@ -2080,17 +2208,17 @@ class calendar_events(ASMEndpoint):
                     "start": t["DATEREQUIRED"], 
                     "tooltip": tit, 
                     "icon": "test",
-                    "link": "animal_test?id=%d" % t["ANIMALID"] })
+                    "link": "animal_test?id=%s" % t["ANIMALID"] })
         if "c" in ev and self.checkb(asm3.users.VIEW_CLINIC):
             for c in asm3.clinic.get_appointments_two_dates(dbo, start, end, o.post["apptfor"], o.siteid):
                 if c.OWNERNAME is not None:
                     sub = "%s - %s" % (c.OWNERNAME, c.ANIMALNAME)
                     tit = "%s - %s (%s) %s" % (c.OWNERNAME, c.ANIMALNAME, c.APPTFOR, c.REASONFORAPPOINTMENT)
-                    link = "person_clinic?id=%d" % c.OWNERID
+                    link = "person_clinic?id=%s" % c.OWNERID
                 else:
                     sub = "%s" % c.ANIMALNAME
                     tit = "%s (%s) %s" % (c.ANIMALNAME, c.APPTFOR, c.REASONFORAPPOINTMENT)
-                    link = "animal_clinic?id=%d" % c.ANIMALID
+                    link = "animal_clinic?id=%s" % c.ANIMALID
                 events.append({ 
                     "title": sub, 
                     "allDay": False, 
@@ -2109,7 +2237,7 @@ class calendar_events(ASMEndpoint):
                     "start": p["DATEDUE"], 
                     "tooltip": tit, 
                     "icon": "donation",
-                    "link": "person_donations?id=%d" % p["OWNERID"] })
+                    "link": "person_donations?id=%s" % p["OWNERID"] })
         if "o" in ev and self.checkb(asm3.users.VIEW_INCIDENT):
             for o in asm3.animalcontrol.get_followup_two_dates(dbo, start, end):
                 sub = "%s - %s" % (o["INCIDENTNAME"], o["OWNERNAME"])
@@ -2120,7 +2248,7 @@ class calendar_events(ASMEndpoint):
                     "start": o["FOLLOWUPDATETIME"], 
                     "tooltip": tit, 
                     "icon": "call",
-                    "link": "incident?id=%d" % o["ACID"] })
+                    "link": "incident?id=%s" % o["ACID"] })
         if "r" in ev and self.checkb(asm3.users.VIEW_TRANSPORT):
             for r in asm3.movement.get_transport_two_dates(dbo, start, end):
                 sub = "%s - %s" % (r["ANIMALNAME"], r["SHELTERCODE"])
@@ -2135,7 +2263,7 @@ class calendar_events(ASMEndpoint):
                     "end": r["DROPOFFDATETIME"],
                     "tooltip": tit, 
                     "icon": "transport",
-                    "link": "animal_transport?id=%d" % r["ANIMALID"]})
+                    "link": "animal_transport?id=%s" % r["ANIMALID"]})
         if "l" in ev and self.checkb(asm3.users.VIEW_TRAPLOAN):
             for l in asm3.animalcontrol.get_traploan_two_dates(dbo, start, end):
                 sub = "%s - %s" % (l["TRAPTYPENAME"], l["OWNERNAME"])
@@ -2146,7 +2274,7 @@ class calendar_events(ASMEndpoint):
                     "start": l["RETURNDUEDATE"], 
                     "tooltip": tit, 
                     "icon": "traploan",
-                    "link": "person_traploan?id=%d" % l["OWNERID"]})
+                    "link": "person_traploan?id=%s" % l["OWNERID"]})
         asm3.al.debug("calendarview found %d events (%s->%s)" % (len(events), start, end), "code.calendarview", dbo)
         self.content_type("application/json")
         return asm3.utils.json(events)
@@ -3840,21 +3968,6 @@ class lostfound_match(ASMEndpoint):
             asm3.al.debug("match lost=%d, found=%d, animal=%d" % (lostanimalid, foundanimalid, animalid), "code.lostfound_match", dbo)
             return asm3.lostfound.match_report(dbo, o.user, lostanimalid, foundanimalid, animalid)
 
-class mailmerge_criteria(JSONEndpoint):
-    url = "mailmerge_criteria"
-    get_permissions = asm3.users.MAIL_MERGE
-
-    def controller(self, o):
-        dbo = o.dbo
-        post = o.post
-        title = asm3.reports.get_title(o.dbo, o.post.integer("id"))
-        asm3.al.debug("building report criteria form for mailmerge %d %s" % (post.integer("id"), title), "code.mailmerge", dbo)
-        return {
-            "id": post.integer("id"),
-            "title": title,
-            "criteriahtml": asm3.reports.get_criteria_controls(o.dbo, o.post.integer("id"))
-        }
-
 class mailmerge(JSONEndpoint):
     url = "mailmerge"
     get_permissions = asm3.users.MAIL_MERGE
@@ -3865,10 +3978,10 @@ class mailmerge(JSONEndpoint):
         dbo = o.dbo
         post = o.post
         crid = post.integer("id")
-        crit = asm3.reports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
+        crit = asm3.reports.get_criteria(dbo, crid)
         title = asm3.reports.get_title(dbo, crid)
         # If this mail merge takes criteria and none were supplied, go to the criteria screen to get them
-        if crit != "" and post["hascriteria"] == "": self.redirect("mailmerge_criteria?id=%d" % crid)
+        if len(crit) != 0 and post["hascriteria"] == "": self.redirect("report_criteria?id=%s&target=mailmerge" % crid)
         asm3.al.debug("entering mail merge selection mode for %d" % post.integer("id"), "code.mailmerge", dbo)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
@@ -3939,7 +4052,7 @@ class mailmerge(JSONEndpoint):
         self.content_type("application/pdf")
         disposition = asm3.configuration.pdf_inline(dbo) and "inline; filename=%s" or "attachment; filename=%s"
         self.header("Content-Disposition", disposition % post["mergetitle"] + ".pdf")
-        return asm3.utils.generate_label_pdf(dbo, o.locale, rows, post["papersize"], post["units"],
+        return asm3.utils.generate_label_pdf(dbo, o.locale, rows, post["papersize"], post["units"], post["fontpt"], 
             post.floating("hpitch"), post.floating("vpitch"), 
             post.floating("width"), post.floating("height"), 
             post.floating("lmargin"), post.floating("tmargin"),
@@ -4023,6 +4136,20 @@ class maint_latency(JSONEndpoint):
         self.content_type("text/plain")
         self.cache_control(0)
         return "pong"
+
+class maint_petfinder(ASMEndpoint):
+    url = "maint_petfinder"
+
+    def content(self, o):
+        """ Clears all PetFinder listings """
+        self.content_type("text/plain")
+        self.cache_control(0)
+        try:
+            pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(o.dbo))
+            p = asm3.publishers.petfinder.PetFinderPublisher(o.dbo, pc)
+            return p.clearListings()
+        except Exception as err:
+            return str(err)
 
 class maint_time(ASMEndpoint):
     url = "maint_time"
@@ -4400,7 +4527,9 @@ class move_gendoc(JSONEndpoint):
     def controller(self, o):
         return {
             "message": o.post["message"],
-            "templates": asm3.html.template_selection(asm3.template.get_document_templates(o.dbo, "movement"), "document_gen?linktype=%s&id=%s" % (o.post["linktype"], o.post["id"]))
+            "id": o.post["id"],
+            "linktype": o.post["linktype"],
+            "templates": asm3.template.get_document_templates(o.dbo, "movement")
         }
 
 class move_reclaim(JSONEndpoint):
@@ -5480,11 +5609,11 @@ class report(ASMEndpoint):
         crid = post.integer("id")
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
-        crit = asm3.reports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
+        crit = asm3.reports.get_criteria(dbo, crid)
         self.content_type("text/html")
         self.cache_control(0)
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
-        if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report" % post.integer("id"))
+        if len(crit) != 0 and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report" % post.integer("id"))
         title = asm3.reports.get_title(dbo, crid)
         asm3.al.debug("got criteria (%s), executing report %d %s" % (str(post.data), crid, title), "code.report", dbo)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
@@ -5500,14 +5629,31 @@ class report_criteria(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         post = o.post
-        title = asm3.reports.get_title(o.dbo, o.post.integer("id"))
+        title = asm3.reports.get_title(o.dbo, post.integer("id"))
+        crit = asm3.reports.get_criteria(dbo, post.integer("id"))
         asm3.al.debug("building report criteria form for report %d %s" % (post.integer("id"), title), "code.report_criteria", dbo)
-        return {
-            "id": post.integer("id"),
-            "title": title,
-            "target": post["target"],
-            "criteriahtml": asm3.reports.get_criteria_controls(o.dbo, o.post.integer("id"), locationfilter = o.locationfilter, siteid = o.siteid)
+        def has_criteria(c):
+            for name, rtype, question in crit:
+                if rtype == c: return True
+            return False
+        c = {
+            "id":           post.integer("id"),
+            "title":        title,
+            "target":       post["target"],
+            "criteria":     crit
         }
+        if has_criteria("ANIMALFLAG"): c["animalflags"] = asm3.lookups.get_animal_flags(dbo)
+        if has_criteria("DONATIONTYPE") or has_criteria("PAYMENTTYPE"): c["donationtypes"] = asm3.lookups.get_donation_types(dbo)
+        if has_criteria("LITTER"): c["litters"] = asm3.animal.get_active_litters_brief(dbo)
+        if has_criteria("LOCATION"): c["locations"] = asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid)
+        if has_criteria("LOGTYPE"): c["logtypes"] = asm3.lookups.get_log_types(dbo)
+        if has_criteria("PAYMENTMETHOD") or has_criteria("PAYMENTTYPE"): c["paymentmethods"] = asm3.lookups.get_payment_methods(dbo)
+        if has_criteria("PERSON"): c["people"] = asm3.person.get_person_name_addresses(dbo)
+        if has_criteria("PERSONFLAG"): c["personflags"] = asm3.lookups.get_person_flags(dbo)
+        if has_criteria("SITE"): c["sites"] = asm3.lookups.get_sites(dbo)
+        if has_criteria("SPECIES"): c["species"] = asm3.lookups.get_species(dbo)
+        if has_criteria("TYPE"): c["types"] = asm3.lookups.get_animal_types(dbo)
+        return c
 
 class report_export(JSONEndpoint):
     url = "report_export"
@@ -5529,9 +5675,9 @@ class report_export_csv(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         crid = post.integer("id")
-        crit = asm3.reports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
+        crit = asm3.reports.get_criteria(dbo, crid)
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
-        if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_csv" % crid)
+        if len(crit) != 0 and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_csv" % crid)
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
         title = asm3.reports.get_title(dbo, crid)
@@ -5558,9 +5704,9 @@ class report_export_email(ASMEndpoint):
         post = o.post
         crid = post.integer("id")
         email = post["email"]
-        crit = asm3.reports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
+        crit = asm3.reports.get_criteria(dbo, crid)
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
-        if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_email" % crid)
+        if len(crit) != 0 and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_email" % crid)
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
         title = asm3.reports.get_title(dbo, crid)
@@ -5577,9 +5723,9 @@ class report_export_pdf(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         crid = post.integer("id")
-        crit = asm3.reports.get_criteria_controls(dbo, crid, locationfilter = o.locationfilter, siteid = o.siteid) 
+        crit = asm3.reports.get_criteria(dbo, crid)
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
-        if crit != "" and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_pdf" % crid)
+        if len(crit) != 0 and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_pdf" % crid)
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
@@ -5722,7 +5868,7 @@ class service(ASMEndpoint):
     check_logged_in = False
 
     def handle(self, o):
-        contenttype, client_ttl, cache_ttl, response = asm3.service.handler(o.post, PATH, self.remote_ip(), self.referer(), self.query())
+        contenttype, client_ttl, cache_ttl, response = asm3.service.handler(o.post, PATH, self.remote_ip(), self.referer(), self.user_agent(), self.query())
         if contenttype == "redirect":
             self.redirect(response)
         else:
@@ -5799,10 +5945,15 @@ class sql(JSONEndpoint):
             q is already stripped and converted to lower case by the exec_sql caller.
             If one of our tamper proofed tables is touched, an Exception is raised
             and the query not run.
+            This will also throw an error if we have an update or delete query
+            without a where clause to prevent people doing something daft
+            (easy to get around with WHERE 1=1 or something)
         """
         for t in ( "audittrail", "deletion", "signaturehash" ):
             if q.find(t) != -1:
                 raise Exception("Forbidden: %s" % q)
+        if q.find("where") == -1 and (q.startswith("delete") or q.startswith("update")):
+            raise Exception("Forbidden: DELETE or UPDATE")
 
     def exec_sql(self, dbo, user, sql):
         l = dbo.locale
