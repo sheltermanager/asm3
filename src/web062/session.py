@@ -56,6 +56,7 @@ class Session(object):
         "store",
         "_initializer",
         "_last_cleanup_time",
+        "_no_cookie", # RRT 22/07/2022
         "_config",
         "_data",
         "__getitem__",
@@ -67,6 +68,7 @@ class Session(object):
         self.store = store
         self._initializer = initializer
         self._last_cleanup_time = 0
+        self._no_cookie = False
         self._config = utils.storage(web.config.session_parameters)
         self._data = utils.threadeddict()
 
@@ -147,7 +149,13 @@ class Session(object):
         current_values = dict(self._data)
         if "session_id" in current_values: del current_values["session_id"]
         if "ip" in current_values: del current_values["ip"]
-
+        # RRT 22/07/2022: Stops the cookie being sent for the next request
+        #      via the caller doing session._no_cookie = True
+        #      This is useful because Cloudflare and CDNs will not honour
+        #      Cache-Control directives when a Set-Cookie is present.
+        if self._no_cookie: 
+            self.no_cookie = False
+            return
         if not self.get("_killed"):
             self._setcookie(self.session_id)
             self.store[self.session_id] = dict(self._data)

@@ -212,6 +212,7 @@ class ASMEndpoint(object):
     get_permissions = ( )  # List of permissions needed to GET
     post_permissions = ( ) # List of permissions needed to POST
     check_logged_in = True # Check whether we have a valid login
+    session_cookie = True  # Whether to send a session cookie
     user_activity = True   # Hitting this endpoint qualifies as user activity
     use_web_input = True   # Unpack values with webpy's web.input()
     login_url = "login"    # The url to go to if not logged in
@@ -235,6 +236,8 @@ class ASMEndpoint(object):
 
     def check(self, permissions):
         """ Check logged in and permissions (which can be a single permission string or a list/tuple) """
+        if not self.session_cookie:
+            session._no_cookie = True # The session object will set this to False after skipping Set-Cookie
         if self.check_logged_in:
             self.check_loggedin(session, web, self.login_url)
         if isinstance(permissions, str):
@@ -511,6 +514,7 @@ class database(ASMEndpoint):
 class image(ASMEndpoint):
     url = "image"
     user_activity = False
+    session_cookie = False # Only disables sending the cookie with the response to assist with caching
 
     def content(self, o):
         try:
@@ -5866,6 +5870,7 @@ class search(JSONEndpoint):
 class service(ASMEndpoint):
     url = "service"
     check_logged_in = False
+    session_cookie = False
 
     def handle(self, o):
         contenttype, client_ttl, cache_ttl, response = asm3.service.handler(o.post, PATH, self.remote_ip(), self.referer(), self.user_agent(), self.query())
