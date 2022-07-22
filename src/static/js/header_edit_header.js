@@ -640,7 +640,7 @@ edit_header = {
         }
         if (p.ADDITIONALFLAGS != null) {
             var stock = [ "aco", "adopter", "banned", "dangerous", "coordinator", "deceased", "donor", "driver", "excludefrombulkemail",
-                "fosterer", "homechecked", "homechecker", "member", "shelter", "retailer", "staff", "giftaid", 
+                "fosterer", "homechecked", "homechecker", "member", "shelter", "retailer", "sponsor", "staff", "giftaid",
                 "vet", "volunteer"];
             $.each(p.ADDITIONALFLAGS.split("|"), function(i, v) {
                 if (v != "" && $.inArray(v, stock) == -1) {

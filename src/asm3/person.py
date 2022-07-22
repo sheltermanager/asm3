@@ -607,11 +607,11 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
             elif flag == "member": ss.ands.append("o.IsMember=1")
             elif flag == "retailer": ss.ands.append("o.IsRetailer=1")
             elif flag == "shelter": ss.ands.append("o.IsShelter=1")
+            elif flag == "sponsor": ss.ands.append("o.IsSponsor=1")
             elif flag == "staff": ss.ands.append("o.IsStaff=1")
             elif flag == "giftaid": ss.ands.append("o.IsGiftAid=1")
             elif flag == "vet": ss.ands.append("o.IsVet=1")
             elif flag == "volunteer": ss.ands.append("o.IsVolunteer=1")
-            elif flag == "sponsor": ss.ands.append("o.IsSponsor=1")
             elif flag == "padopter": ss.ands.append("EXISTS(SELECT OwnerID FROM adoption WHERE OwnerID = o.ID AND MovementType=1)")
             else: 
                 ss.ands.append("LOWER(o.AdditionalFlags) LIKE ?")
@@ -1016,9 +1016,9 @@ def update_flags(dbo, username, personid, flags):
         "IsFosterer":               fosterer,
         "IsRetailer":               retailer,
         "IsVet":                    vet,
+        "IsSponsor":                sponsor,
         "IsGiftAid":                giftaid,
-        "AdditionalFlags":          flagstr,
-        "IsSponsor":                sponsor
+        "AdditionalFlags":          flagstr
     }, username)
 
 def update_adopter_flag(dbo, username, personid):

@@ -46,7 +46,7 @@ LATEST_VERSION = VERSIONS[-1]
 
 # All ASM3 tables
 TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
-    "adoption", "adoptionevent", "adoptioneventanimal", "animal", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost",
+    "adoption", "animal", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost",
     "animaldiet", "animalfigures", "animalfiguresannual",  
     "animalfound", "animalcontrolanimal", "animallitter", "animallost", "animallostfoundmatch", 
     "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
@@ -54,7 +54,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "basecolour", "breed", "citationtype", "clinicappointment", "clinicinvoiceitem", "configuration", 
     "costtype", "customreport", "customreportrole", "dbfs", "deathreason", "deletion", "diary", 
     "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
-    "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", "licencetype", "lkanimalflags", "lkcoattype", 
+    "entryreason", "event", "eventanimal", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", "licencetype", "lkanimalflags", "lkcoattype",
     "lkownerflags", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksex", 
     "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
     "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", 
@@ -226,7 +226,7 @@ def sql_structure(dbo):
         fint("IsPermanentFoster", True),
         fdate("TrialEndDate", True),
         flongstr("Comments"),
-        fint("AdoptionEventID", True) ))
+        fint("EventID", True) ))
     sql += index("adoption_AdoptionNumber", "adoption", "AdoptionNumber", True)
     sql += index("adoption_AnimalID", "adoption", "AnimalID")
     sql += index("adoption_CreatedBy", "adoption", "CreatedBy")
@@ -243,26 +243,26 @@ def sql_structure(dbo):
     sql += index("adoption_ReturnedReasonID", "adoption", "ReturnedReasonID")
     sql += index("adoption_ReturnedByOwnerID", "adoption", "ReturnedByOwnerID")
     sql += index("adoption_TrialEndDate", "adoption", "TrialEndDate")
-    sql += index("adoption_AdoptionEventId", "adoption", "AdoptionEventID")
+    sql += index("adoption_EventID", "adoption", "EventID")
 
-    sql += table("adoptionevent", (
+    sql += table("event", (
         fid(),
         fdate("StartDateTime"),
         fdate("EndDateTime"),
         fstr("EventName", True),
         flongstr("EventDescription", True)))
-    sql += index("adoptionevent_StartDateTime", "adoptionevent", "StartDateTime")
-    sql += index("adoptionevent_EndDateTime", "adoptionevent", "EndDateTime")
-    sql += index("adoptionevent_EventName", "adoptionevent", "EventName")
+    sql += index("event_StartDateTime", "event", "StartDateTime")
+    sql += index("event_EndDateTime", "event", "EndDateTime")
+    sql += index("event_EventName", "event", "EventName")
 
-    sql += table("adoptioneventanimal", (
+    sql += table("eventanimal", (
         fid(),
-        fint("AdoptionEventID"),
+        fint("EventID"),
         fint("AnimalID"),
         fint("WillReturnToFoster", True),
         fdate("ArrivalDate")))
-    sql += index("adoptioneventanimal_AdoptionEventID", "adoptioneventanimal", "AdoptionEventID")
-    sql += index("adoptioneventanimal_AnimalID", "adoptioneventanimal", "AnimalID")
+    sql += index("eventanimal_EventID", "eventanimal", "EventID")
+    sql += index("eventanimal_AnimalID", "eventanimal", "AnimalID")
 
     sql += table("animal", (
         fid(),
@@ -2318,6 +2318,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksfieldlink", "LinkType", 18, _("Incident - Owner", l))
     sql += lookup1("lksfieldlink", "LinkType", 19, _("Incident - Citation", l))
     sql += lookup1("lksfieldlink", "LinkType", 20, _("Incident - Additional", l))
+    sql += lookup1("lksfieldlink", "LinkType", 21, _("Event - Details", l))
     sql += lookup1("lksfieldtype", "FieldType", 0, _("Yes/No", l))
     sql += lookup1("lksfieldtype", "FieldType", 1, _("Text", l))
     sql += lookup1("lksfieldtype", "FieldType", 2, _("Notes", l))
@@ -5599,28 +5600,28 @@ def update_34602(dbo):
 def update_34603(dbo):
     l = dbo.locale
     # added adoptioneventid its index to the adoption table
-    add_index(dbo, "adoption_AdoptionEventId", "adoption", "AdoptionEventID")
-    dbo.execute_dbupdate("ALTER TABLE adoption ADD AdoptionEventID INTEGER")
+    add_index(dbo, "adoption_EventId", "adoption", "EventID")
+    dbo.execute_dbupdate("ALTER TABLE adoption ADD EventID INTEGER")
 
     # creating 2 tables for adoptionevent (adoptionevent, adoptioneventanimal)
-    dbo.execute_update("CREATE TABLE adoptionevent(ID %s NOT NULL PRIMARY KEY, StartDateTime  %s, EndDateTime %s, "
-                       "EventName %s NOT NULL, EventDescription %s NOT NULL, "
+    dbo.execute_update("CREATE TABLE event(ID %s NOT NULL PRIMARY KEY, StartDateTime  %s, EndDateTime %s, "
+                       "EventName %s NOT NULL, EventDescription %s NOT NULL,"
                        "RecordVersion %s, CreatedBy %s, CreatedDate %s, LastChangedBy %s, LastChangedDate %s)"
                        % (dbo.type_integer, dbo.type_datetime, dbo.type_datetime, dbo.type_shorttext, dbo.type_longtext, dbo.type_integer,
                           dbo.type_shorttext, dbo.type_datetime, dbo.type_shorttext, dbo.type_datetime))
 
-    dbo.execute_update("CREATE TABLE adoptioneventanimal(ID %s NOT NULL PRIMARY KEY, AdoptionEventID %s, WillReturnToFoster %s NOT NULL, ArrivalDate %s, "
+    dbo.execute_update("CREATE TABLE eventanimal(ID %s NOT NULL PRIMARY KEY, EventID %s, WillReturnToFoster %s NOT NULL, ArrivalDate %s, "
                        "RecordVersion %s, CreatedBy %s, CreatedDate %s, LastChangedBy %s, LastChangedDate %s)"
                        % (dbo.type_integer, dbo.type_integer, dbo.type_integer, dbo.type_datetime,
                           dbo.type_integer, dbo.type_shorttext, dbo.type_datetime, dbo.type_shorttext, dbo.type_datetime))
-    add_index("adoptionevent_StartDateTime", "adoptionevent", "StartDateTime")
-    add_index("adoptionevent_EndDateTime", "adoptionevent", "EndDateTime")
-    add_index("adoptionevent_EventName", "adoptionevent", "EventName")
-    add_index("adoptioneventanimal_AdoptionEventID", "adoptioneventanimal", "AdoptionEventID")
-    add_index("adoptioneventanimal_AnimalID", "adoptioneventanimal", "AnimalID")
+    add_index("event_StartDateTime", "event", "StartDateTime")
+    add_index("event_EndDateTime", "event", "EndDateTime")
+    add_index("event_EventName", "event", "EventName")
+    add_index("eventanimal_AdoptionEventID", "eventanimal", "EventID")
+    add_index("eventanimal_AnimalID", "eventanimal", "AnimalID")
 
     # added Adoption Event to the additional field links
-    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (21, '%s')" % _("Adoption Event - Details", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (21, '%s')" % _("Event - Details", l))
     # added sponsor and vet to the type in additional field
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (11, '" + _("Sponsor", l) + "')")
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (12, '" + _("Vet", l) + "')")
