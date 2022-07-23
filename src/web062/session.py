@@ -157,6 +157,8 @@ class Session(object):
             self._no_cookie = False
             return
         if not self.get("_killed"):
+            # NOTE: RRT webpy is setting the cookie for every single response, surely
+            # it should only be doing this if the cookie is not present in web.cookies() ?
             self._setcookie(self.session_id)
             self.store[self.session_id] = dict(self._data)
         else:
