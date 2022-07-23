@@ -228,6 +228,7 @@ DEFAULTS = {
     "FoundAnimalSearchColumns": "LostFoundID,Owner,MicrochipNumber,AreaFound,"
         "AreaPostCode,DateFound,AgeGroup,SexName,SpeciesName,BreedName,"
         "BaseColourName,DistFeat",
+    "FutureOnShelter": "Yes",
     "ShowGDPRContactOptIn": "No",
     "GDPRContactChangeLog": "No",
     "GDPRContactChangeLogType": "6",
@@ -921,6 +922,9 @@ def foundanimals_email(dbo):
 
 def foundanimals_folder(dbo):
     return cstring(dbo, "FoundAnimalsFolder")
+
+def future_on_shelter(dbo):
+    return cboolean(dbo, "FutureOnShelter", DEFAULTS["FutureOnShelter"] == "Yes")
 
 def ftp_host(dbo):
     return cstring(dbo, "FTPURL")

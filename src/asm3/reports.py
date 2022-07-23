@@ -446,12 +446,12 @@ def get_smcom_reports(dbo):
     [ { TITLE, CATEGORY, DATABASE, DESCRIPTION, LOCALE, SQL, HTML, SUBREPORTS, INSTALLABLE, REVISION, UPDATE} ]
     """
     l = dbo.locale
-    # we use a short term 60s disk cache for retrieving the report file as this method is called a lot
+    REPORTS_CACHE_TTL = 60 * 5 # 5 minutes
     reps = asm3.cachedisk.get("reports", "reports")
     if reps is None:
         s = asm3.utils.get_url(URL_REPORTS)["response"]
         reps = s.split("&&&")
-        asm3.cachedisk.put("reports", "reports", reps, 60)
+        asm3.cachedisk.put("reports", "reports", reps, REPORTS_CACHE_TTL)
     reports = []
     loaded = get_all_report_titles(dbo)
     def version_ok(rdb):

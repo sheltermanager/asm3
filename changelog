@@ -1,6 +1,7 @@
 46
 ================
 
+23/07/22 Config option to allow future intakes on shelter (on by default) #1154
 22/07/22 Prevent /image and /service sending session cookie for caching
 22/07/22 Retry and error notification mechanism for failed S3 PUT #1155
 22/07/22 Use block elements instead of <br> in adoptable_js
