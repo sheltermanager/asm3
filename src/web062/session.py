@@ -154,7 +154,7 @@ class Session(object):
         #      This is useful because Cloudflare and CDNs will not honour
         #      Cache-Control directives when a Set-Cookie is present.
         if self._no_cookie: 
-            self.no_cookie = False
+            self._no_cookie = False
             return
         if not self.get("_killed"):
             self._setcookie(self.session_id)
