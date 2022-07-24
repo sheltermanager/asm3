@@ -528,6 +528,7 @@ class database(ASMEndpoint):
 class faviconico(ASMEndpoint):
     url = "favicon.ico"
     session_cookie = False
+    check_logged_in = False
 
     def content(self, o):
         self.cache_control(CACHE_ONE_HOUR, CACHE_ONE_HOUR)
