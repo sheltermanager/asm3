@@ -1,6 +1,7 @@
 46
 ================
 
+24/07/22 Cache 404s at proxy/CDN level as they can be a DoS vector
 23/07/22 Config option to allow future intakes on shelter (on by default) #1154
 22/07/22 Prevent /image and /service sending session cookie for caching
 22/07/22 Retry and error notification mechanism for failed S3 PUT #1155

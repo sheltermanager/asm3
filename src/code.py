@@ -147,6 +147,7 @@ def asm_404():
         </body>
         </html>
     """
+    web.header("Cache-Control", "public, max-age=3600, s-maxage=3600") # Cache 404s for an hour at any proxy/CDN as they can be a DoS vector
     return web.notfound(s)
 
 def asm_500_email():
