@@ -229,6 +229,15 @@ class S3Storage(DBFSStorage):
             asm3.al.debug("put_object in %0.2fs" % (time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
         except Exception as err:
             asm3.al.error(str(err), "dbfs.S3Storage._s3_put_object", self.dbo)
+            try:
+                # The PUT has failed. Wait 10 seconds and try to do it again. 
+                # If that fails, send an error email to the admin as this is a lost file and critical.
+                time.sleep(10)
+                self._s3client().put_object(Bucket=bucket, Key=key, Body=body)
+                asm3.al.debug("put_object in %0.2fs" % (time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
+            except Exception as err2:
+                asm3.al.error("retry fail: %s" % err2, "dbfs.S3Storage._s3_put_object", self.dbo)
+                asm3.utils.send_error_email()
 
     def url_prefix(self):
         return "s3:"

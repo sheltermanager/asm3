@@ -128,10 +128,15 @@ def asm_404():
     """
     Custom 404 page
     """
-    s = """
+    s = """<!DOCTYPE html>
         <html>
         <head>
         <title>404</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="shortcut icon" href="static/images/logo/icon-16.png">
+        <link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32">
+        <link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48">
+        <link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128">
         </head>
         <body style="background-color: #999">
         <div style="position: absolute; left: 20%; width: 60%; padding: 20px; background-color: white">
@@ -139,7 +144,7 @@ def asm_404():
         <img src="static/images/logo/icon-64.png" align="right" />
         <h2>Error 404</h2>
 
-        <p>Sorry, but the record you tried to access was not found.</p>
+        <p>Sorry, but the record or resource you tried to access was not found.</p>
 
         <p><a href="javascript:history.back()">Go Back</a></p>
 
@@ -147,6 +152,9 @@ def asm_404():
         </body>
         </html>
     """
+    web.header("Content-Type", "text/html")
+    web.header("Cache-Control", "public, max-age=3600, s-maxage=3600") # Cache 404s for an hour at any proxy/CDN as they can be a DoS vector
+    session.no_cookie = True
     return web.notfound(s)
 
 def asm_500_email():
@@ -154,12 +162,16 @@ def asm_500_email():
     Custom 500 error page that sends emails to the site admin
     """
     asm3.utils.send_error_email()
-    #web.emailerrors(ADMIN_EMAIL, web.webapi._InternalError)()
     s = """
         <html>
         <head>
         <title>500</title>
         <meta http-equiv="refresh" content="5;url=main">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="shortcut icon" href="static/images/logo/icon-16.png">
+        <link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32">
+        <link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48">
+        <link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128">
         </head>
         <body style="background-color: #999">
         <div style="position: absolute; left: 20%; width: 60%; padding: 20px; background-color: white">
@@ -180,6 +192,8 @@ def asm_500_email():
         </body>
         </html>
     """
+    web.header("Content-Type", "text/html")
+    web.header("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0") # Never cache 500 errors
     return web.internalerror(s)
 
 def emergency_notice():
@@ -212,6 +226,7 @@ class ASMEndpoint(object):
     get_permissions = ( )  # List of permissions needed to GET
     post_permissions = ( ) # List of permissions needed to POST
     check_logged_in = True # Check whether we have a valid login
+    session_cookie = True  # Whether to send a session cookie
     user_activity = True   # Hitting this endpoint qualifies as user activity
     use_web_input = True   # Unpack values with webpy's web.input()
     login_url = "login"    # The url to go to if not logged in
@@ -235,6 +250,8 @@ class ASMEndpoint(object):
 
     def check(self, permissions):
         """ Check logged in and permissions (which can be a single permission string or a list/tuple) """
+        if not self.session_cookie:
+            session.no_cookie = True # Stop the session object calling setcookie
         if self.check_logged_in:
             self.check_loggedin(session, web, self.login_url)
         if isinstance(permissions, str):
@@ -508,9 +525,19 @@ class database(ASMEndpoint):
         asm3.dbupdate.install(dbo)
         self.redirect("login")
 
+class faviconico(ASMEndpoint):
+    url = "favicon.ico"
+    session_cookie = False
+    check_logged_in = False
+
+    def content(self, o):
+        self.cache_control(CACHE_ONE_HOUR, CACHE_ONE_HOUR)
+        self.redirect("static/images/logo/icon-16.png")
+
 class image(ASMEndpoint):
     url = "image"
     user_activity = False
+    session_cookie = False # Disable sending the cookie with the response to assist with caching
 
     def content(self, o):
         try:
@@ -901,11 +928,22 @@ class mobile2(ASMEndpoint):
             "incidentsundispatched": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "undispatched" }, o.user),
             "incidentsincomplete": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user),
             "incidentsfollowup": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" }, o.user),
+            "animaltypes":  asm3.lookups.get_animal_types(dbo),
+            "breeds":       asm3.lookups.get_breeds_by_species(dbo),
+            "colours":      asm3.lookups.get_basecolours(dbo),
+            "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "sexes":        asm3.lookups.get_sexes(dbo),
+            "sizes":        asm3.lookups.get_sizes(dbo),
             "smdblocked":   asm3.configuration.smdb_locked(dbo),
+            "species":      asm3.lookups.get_species(dbo),
             "user":         o.user
         }
         self.content_type("text/html")
         return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile2.js" ], c)
+
+    def post_addanimal(self, o):
+        self.check(asm3.users.ADD_ANIMAL)
+        pass # TODO
 
     def post_medical(self, o):
         self.check(asm3.users.CHANGE_MEDICAL)
@@ -5855,6 +5893,7 @@ class search(JSONEndpoint):
 class service(ASMEndpoint):
     url = "service"
     check_logged_in = False
+    session_cookie = False
 
     def handle(self, o):
         contenttype, client_ttl, cache_ttl, response = asm3.service.handler(o.post, PATH, self.remote_ip(), self.referer(), self.user_agent(), self.query())

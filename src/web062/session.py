@@ -107,6 +107,7 @@ class Session(object):
         """Load the session from the store, by the id from cookie"""
         cookie_name = self._config.cookie_name
         self.session_id = web.cookies().get(cookie_name)
+        self.no_cookie = False # RRT 24/07/2022
 
         # protection against session_id tampering
         if self.session_id and not self._valid_session_id(self.session_id):
@@ -147,7 +148,13 @@ class Session(object):
         current_values = dict(self._data)
         if "session_id" in current_values: del current_values["session_id"]
         if "ip" in current_values: del current_values["ip"]
-
+        # RRT 22/07/2022: Stops the cookie being set for this response
+        #      via the handler/endpoint doing session.no_cookie = True
+        #      This is useful because Cloudflare and CDNs will not honour
+        #      Cache-Control directives when a Set-Cookie is present.
+        if self.no_cookie: 
+            self.no_cookie = False
+            return
         if not self.get("_killed"):
             self._setcookie(self.session_id)
             self.store[self.session_id] = dict(self._data)

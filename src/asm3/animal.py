@@ -16,7 +16,7 @@ import asm3.publishers.base
 import asm3.users
 import asm3.utils
 
-from asm3.i18n import _, date_diff, date_diff_days, format_diff, python2display, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
+from asm3.i18n import _, date_diff, date_diff_days, format_diff, python2display, remove_time, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
 
 import datetime
 from random import choice
@@ -3714,21 +3714,24 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
             " WHERE AnimalID = ? ORDER BY MovementDate DESC", [animalid])
 
     # Start at first intake for most recent entry date
-    mostrecententrydate = a.datebroughtin
+    mostrecententrydate = remove_time(a.datebroughtin)
 
     # Start with the existing value for the current owner
     ownerid = a.ownerid
 
-    # Start with onshelter at True/False based on whether
-    # the intake date is older than now.
-    # (subsequent exit movement and flag checks will set it to False where needed)
-    # This is to prevent animals with a future intake date appearing on shelter.
-    onshelter = today >= a.datebroughtin
-
     cfg_foster_on_shelter = asm3.configuration.foster_on_shelter(dbo)
+    cfg_future_on_shelter = asm3.configuration.future_on_shelter(dbo)
     cfg_retailer_on_shelter = asm3.configuration.retailer_on_shelter(dbo)
     cfg_trial_on_shelter = asm3.configuration.trial_on_shelter(dbo)
     cfg_softrelease_on_shelter = asm3.configuration.softrelease_on_shelter(dbo)
+
+    # onshelter defaults to true, which means animals start as onshelter
+    # until a movement later takes them off shelter. Animals with an intake
+    # date in the future will stay onshelter.
+    # If this database has turned off the option to show future intakes as on shelter,
+    # then we check the intake date against today and set onshelter accordingly
+    if not cfg_future_on_shelter:
+        onshelter = today >= remove_time(a.datebroughtin)
 
     for m in movements:
 
@@ -4817,6 +4820,7 @@ def update_animal_figures_annual(dbo, year = 0):
         species_line("SELECT a.NeuteredDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.SpeciesID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
+            "AND a.NeuteredDate >= a.DateBroughtIn " \
             "AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_NEUTERSPAYSA", group, 170, showbabies, babymonths)
@@ -5044,6 +5048,7 @@ def update_animal_figures_annual(dbo, year = 0):
         type_line("SELECT a.NeuteredDate AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.AnimalTypeID = %d AND a.NeuteredDate >= %s AND a.NeuteredDate <= %s " \
+            "AND a.NeuteredDate >= a.DateBroughtIn " \
             "AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.NeuteredDate, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
             at["ID"], at["ANIMALTYPE"], "AT_NEUTERSPAYSA", group, 170, at["SHOWSPLIT"], babymonths)

@@ -705,6 +705,10 @@ Movements
   field of new animals. When the date is reached, the hold flag is automatically
   removed.
 
+* Treat animals with a future intake date as part of the shelter inventory: This
+  option will treat animals who have not arrived yet (Date Brought In > Today)
+  as on shelter so that they are visible in shelter view etc.
+
 * Treat foster animals as part of the shelter inventory: Setting this option
   will make ASM treat fostered animals as if they are on the shelter (with
   appropriate visual output to show they are fostered). 

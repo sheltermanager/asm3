@@ -1187,6 +1187,7 @@ $(function() {
                 '<p><label for="autoremoveholddays">' + _("Remove holds after") + '</label>',
                 '<span id="callout-autoremoveholddays" class="asm-callout">' + _("Cancel holds on animals this many days after the brought in date, or 0 to never cancel") + '</span>',
                 '<input data="AutoRemoveHoldDays" id="autoremoveholddays" type="text" data-min="0" data-max="365" class="asm-textbox asm-halftextbox asm-numberbox" /> ' + _(" days.") + '</p>',
+                '<input data="FutureOnShelter" id="futureonshelter" class="asm-checkbox" type="checkbox" /> <label for="futureonshelter">' + _("Treat animals with a future intake date as part of the shelter inventory") + '</label><br />',
                 '<input data="FosterOnShelter" id="fosteronshelter" class="asm-checkbox" type="checkbox" /> <label for="fosteronshelter">' + _("Treat foster animals as part of the shelter inventory") + '</label><br />',
                 '<input data="RetailerOnShelter" id="retaileronshelter" class="asm-checkbox" type="checkbox" /> <label for="retaileronshelter">' + _("Treat animals at retailers as part of the shelter inventory") + '</label><br />',
                 '<input data="TrialAdoptions" id="trialadoptions" class="asm-checkbox" type="checkbox" /> <label for="trialadoptions">' + _("Our shelter does trial adoptions, allow us to mark these on movement screens") + '</label><br />',

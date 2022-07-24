@@ -1,0 +1,52 @@
+Total Length of Stay
+###
+Statistics
+###
+33718/PostgreSQL rev01
+###
+Shows total time on shelter (all stays) for all animals entering the shelter between two dates
+###
+en
+###
+SELECT
+a.AnimalName, a.ShelterCode,
+s.SpeciesName, e.ReasonName,
+a.DateBroughtIn, a.TotalTimeOnShelter, a.TotalDaysOnShelter, a.AnimalAge, 
+CASE WHEN a.ActiveMovementType = 2 THEN Null ELSE a.ActiveMovementDate END AS DateExit
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN entryreason e ON e.ID = a.EntryReasonID
+WHERE a.DateBroughtIn >= '$ASK DATE Animals entering the shelter between$' AND a.DateBroughtIn <= '$ASK DATE and$'
+AND NonShelterAnimal = 0 
+ORDER BY s.SpeciesName, a.DateBroughtIn
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>Age</th>
+<th>Entry Category</th>
+<th>Entered</th>
+<th>Left</th>
+<th>Total Days In Care</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$ANIMALAGE</td>
+<td>$REASONNAME</td>
+<td>$DATEBROUGHTIN</td>
+<td>$DATEEXIT</td>
+<td>$TOTALDAYSONSHELTER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<p>Total: {COUNT.ShelterCode}, Average: {AVG.TotalDaysOnShelter.2} days</p>
+FOOTER$$
+

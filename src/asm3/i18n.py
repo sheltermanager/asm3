@@ -6,8 +6,9 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "46u [Fri 22 Jul 2022 15:44:58 IDT]"
-BUILD = "07221544"
+
+VERSION = "46u [Sun 24 Jul 12:11:07 BST 2022]"
+BUILD = "07241211"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -483,6 +484,13 @@ def parse_time(d, t):
     t = datetime.time(hour, minute, second)
     d = d.combine(d, t)
     return d
+
+def remove_time(d):
+    """
+    Removes the time component of a date by setting it to midnight
+    """
+    if d is None: return d
+    return d.replace(hour=0, minute=0, second=0, microsecond=0)
 
 def yes_no(l, condition):
     if condition:

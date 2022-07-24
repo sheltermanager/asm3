@@ -228,6 +228,7 @@ DEFAULTS = {
     "FoundAnimalSearchColumns": "LostFoundID,Owner,MicrochipNumber,AreaFound,"
         "AreaPostCode,DateFound,AgeGroup,SexName,SpeciesName,BreedName,"
         "BaseColourName,DistFeat",
+    "FutureOnShelter": "Yes",
     "ShowGDPRContactOptIn": "No",
     "GDPRContactChangeLog": "No",
     "GDPRContactChangeLogType": "6",
@@ -646,6 +647,9 @@ def auto_cancel_reserves_days(dbo):
 def auto_cancel_hold_days(dbo):
     return cint(dbo, "AutoCancelHoldDays", int(DEFAULTS["AutoCancelHoldDays"]))
 
+def auto_default_vacc_batch(dbo):
+    return cboolean(dbo, "AutoDefaultVaccBatch", DEFAULTS["AutoDefaultVaccBatch"])
+
 def auto_hash_processed_forms(dbo):
     return cboolean(dbo, "AutoHashProcessedForms", DEFAULTS["AutoHashProcessedForms"] == "Yes")
 
@@ -918,6 +922,9 @@ def foundanimals_email(dbo):
 
 def foundanimals_folder(dbo):
     return cstring(dbo, "FoundAnimalsFolder")
+
+def future_on_shelter(dbo):
+    return cboolean(dbo, "FutureOnShelter", DEFAULTS["FutureOnShelter"] == "Yes")
 
 def ftp_host(dbo):
     return cstring(dbo, "FTPURL")
