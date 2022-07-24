@@ -29,6 +29,7 @@ FOUNDANIMAL_DETAILS = 12
 WAITINGLIST = 13
 WAITINGLIST_DETAILS = 14
 WAITINGLIST_REMOVAL = 15
+EVENT = 21
 
 # IN clauses
 ANIMAL_IN = "0, 2, 3, 4, 5, 6"
@@ -37,6 +38,7 @@ INCIDENT_IN = "16, 17, 18, 19, 20"
 LOSTANIMAL_IN = "9, 10"
 FOUNDANIMAL_IN = "11, 12"
 WAITINGLIST_IN = "13, 14, 15"
+EVENT_IN = "21"
 
 # Field types
 YESNO = 0
@@ -60,6 +62,8 @@ def clause_for_linktype(linktype):
         inclause = PERSON_IN
     elif linktype == "incident":
         inclause = INCIDENT_IN
+    elif linktype == "event":
+        inclause = EVENT_IN
     elif linktype == "lostanimal":
         inclause = LOSTANIMAL_IN
     elif linktype == "foundanimal":
