@@ -30,7 +30,8 @@ additional = {
     ANIMAL_LOOKUP: 8,
     PERSON_LOOKUP: 9,
     TIME: 10,
-
+    SPONSOR: 11,
+    VET: 12,
     /**
      * Renders and lays out additional fields from data from the backend 
      * additional.get_additional_fields call as HTML controls. 
@@ -221,6 +222,16 @@ additional = {
             fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
             fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
             fh.push('value="' + html.title(fieldval) + '"/></td>');
+        }
+        else if (f.FIELDTYPE == additional.SPONSOR) {
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
+            fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
+            fh.push('value="' + html.title(fieldval) + '" data-filter="sponsor"/></td>');
+        }
+        else if (f.FIELDTYPE == additional.VET) {
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
+            fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
+            fh.push('value="' + html.title(fieldval) + '" data-filter="vet"/></td>');
         }
         return fh.join("\n");
     },

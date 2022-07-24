@@ -542,7 +542,8 @@ def get_person_find_simple(dbo, query, username="", classfilter="all", includeSt
         "homechecker":      " AND o.IsHomeChecker = 1",
         "member":           " AND o.IsMember = 1",
         "donor":            " AND o.IsDonor = 1",
-        "driver":           " AND o.IsDriver = 1"
+        "driver":           " AND o.IsDriver = 1",
+        "sponsor":          " AND o.IsSponsor = 1"
     }
     cf = classfilters[classfilter]
     if not includeStaff: cf += " AND o.IsStaff = 0"
@@ -606,6 +607,7 @@ def get_person_find_advanced(dbo, criteria, username, includeStaff = False, incl
             elif flag == "member": ss.ands.append("o.IsMember=1")
             elif flag == "retailer": ss.ands.append("o.IsRetailer=1")
             elif flag == "shelter": ss.ands.append("o.IsShelter=1")
+            elif flag == "sponsor": ss.ands.append("o.IsSponsor=1")
             elif flag == "staff": ss.ands.append("o.IsStaff=1")
             elif flag == "giftaid": ss.ands.append("o.IsGiftAid=1")
             elif flag == "vet": ss.ands.append("o.IsVet=1")
@@ -845,6 +847,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         "IsRetailer":               0,
         "IsVet":                    0,
         "IsGiftAid":                0,
+        "IsSponsor":                0,
         "AdditionalFlags":          ""
     }, username, generateID=False)
 
@@ -991,6 +994,7 @@ def update_flags(dbo, username, personid, flags):
     vet = bi("vet" in flags)
     giftaid = bi("giftaid" in flags)
     excludefrombulkemail = bi("excludefrombulkemail" in flags)
+    sponsor = bi("sponsor" in flags)
     flagstr = "|".join(flags) + "|"
 
     dbo.update("owner", personid, {
@@ -1012,6 +1016,7 @@ def update_flags(dbo, username, personid, flags):
         "IsFosterer":               fosterer,
         "IsRetailer":               retailer,
         "IsVet":                    vet,
+        "IsSponsor":                sponsor,
         "IsGiftAid":                giftaid,
         "AdditionalFlags":          flagstr
     }, username)
@@ -1644,7 +1649,7 @@ def update_check_flags(dbo):
     }
     people = dbo.query("SELECT ID, AdditionalFlags, ExcludeFromBulkEmail, IDCheck, IsBanned, IsDangerous, IsVolunteer, " \
         "IsHomeChecker, IsMember, IsAdopter, IsAdoptionCoordinator, IsDonor, IsDriver, " \
-        "IsShelter, IsACO, IsStaff, IsFosterer, IsRetailer, IsVet, IsGiftAid FROM owner ORDER BY ID")
+        "IsShelter, IsACO, IsStaff, IsFosterer, IsRetailer, IsVet, IsGiftAid, IsSponsor FROM owner ORDER BY ID")
     lookupflags = [x["FLAG"] for x in dbo.query("SELECT Flag from lkownerflags ORDER BY Flag")]
     batch = []
     asm3.asynctask.set_progress_max(dbo, len(people))

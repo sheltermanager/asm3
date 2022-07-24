@@ -455,6 +455,7 @@ const html = {
             { label: _("Homechecker"), html: field_option("ISHOMECHECKER", "homechecker", _("Homechecker")) },
             { label: _("Member"), html: field_option("ISMEMBER", "member", _("Member")) },
             { label: _("Other Shelter"), html: field_option("ISSHELTER", "shelter", _("Other Shelter")) },
+            { label: _("Sponsor"), html: field_option("ISSPONSOR", "sponsor", _("Sponsor")) },
             { label: _("Staff"), html: field_option("ISSTAFF", "staff", _("Staff")) },
             { label: _("Vet"), html: field_option("ISVET", "vet", _("Vet")) },
             { label: _("Volunteer"), html: field_option("ISVOLUNTEER", "volunteer", _("Volunteer")) }
