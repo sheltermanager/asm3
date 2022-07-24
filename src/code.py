@@ -128,10 +128,15 @@ def asm_404():
     """
     Custom 404 page
     """
-    s = """
+    s = """<!DOCTYPE html>
         <html>
         <head>
         <title>404</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="shortcut icon" href="static/images/logo/icon-16.png">
+        <link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32">
+        <link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48">
+        <link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128">
         </head>
         <body style="background-color: #999">
         <div style="position: absolute; left: 20%; width: 60%; padding: 20px; background-color: white">
@@ -139,7 +144,7 @@ def asm_404():
         <img src="static/images/logo/icon-64.png" align="right" />
         <h2>Error 404</h2>
 
-        <p>Sorry, but the record you tried to access was not found.</p>
+        <p>Sorry, but the record or resource you tried to access was not found.</p>
 
         <p><a href="javascript:history.back()">Go Back</a></p>
 
@@ -147,6 +152,7 @@ def asm_404():
         </body>
         </html>
     """
+    web.header("Content-Type", "text/html")
     web.header("Cache-Control", "public, max-age=3600, s-maxage=3600") # Cache 404s for an hour at any proxy/CDN as they can be a DoS vector
     session.no_cookie = True
     return web.notfound(s)
@@ -156,12 +162,16 @@ def asm_500_email():
     Custom 500 error page that sends emails to the site admin
     """
     asm3.utils.send_error_email()
-    #web.emailerrors(ADMIN_EMAIL, web.webapi._InternalError)()
     s = """
         <html>
         <head>
         <title>500</title>
         <meta http-equiv="refresh" content="5;url=main">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="shortcut icon" href="static/images/logo/icon-16.png">
+        <link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32">
+        <link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48">
+        <link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128">
         </head>
         <body style="background-color: #999">
         <div style="position: absolute; left: 20%; width: 60%; padding: 20px; background-color: white">
@@ -182,6 +192,8 @@ def asm_500_email():
         </body>
         </html>
     """
+    web.header("Content-Type", "text/html")
+    web.header("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0") # Never cache 500 errors
     return web.internalerror(s)
 
 def emergency_notice():
@@ -512,6 +524,14 @@ class database(ASMEndpoint):
         dbo.installpath = PATH
         asm3.dbupdate.install(dbo)
         self.redirect("login")
+
+class faviconico(ASMEndpoint):
+    url = "favicon.ico"
+    session_cookie = False
+
+    def content(self, o):
+        self.cache_control(CACHE_ONE_HOUR, CACHE_ONE_HOUR)
+        self.redirect("static/images/logo/icon-16.png")
 
 class image(ASMEndpoint):
     url = "image"
