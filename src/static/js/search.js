@@ -103,6 +103,8 @@ $(function() {
                     h.push('<br/>');
                     h.push(r.OWNERADDRESS);
                     h.push('<br />');
+                    h.push(r.OWNERTOWN + ", " + r.OWNERCOUNTY + " " + r.OWNERPOSTCODE);
+                    h.push('<br />');
                     h.push('<span class="asm-search-personflags">' + r.LICENCETYPENAME + ', ' + format.date(r.ISSUEDATE) + 
                         ' - ' + format.date(r.EXPIRYDATE) + '</span>');
                     h.push('<br/>');
@@ -134,10 +136,14 @@ $(function() {
                     h.push('<a href="person_donations?id=' + r.ID + '">' + html.icon("donation", _("Jump to donations")) + '</a>');
                     h.push('<a href="person_movements?id=' + r.ID + '">' + html.icon("movement", _("Jump to movements")) + '</a>');
                     h.push('<br/>');
+                    if (edit_header.person_flags(r)) { 
+                        h.push('<span class="asm-search-personflags">' + edit_header.person_flags(r) + '</span>');
+                        h.push('<br/>'); 
+                    }
                     h.push(r.OWNERADDRESS);
                     h.push('<br />');
-                    h.push('<span class="asm-search-personflags">' + edit_header.person_flags(r) + '</span>');
-                    h.push('<br/>');
+                    h.push(r.OWNERTOWN + ", " + r.OWNERCOUNTY + " " + r.OWNERPOSTCODE);
+                    h.push('<br />');
                     h.push(html.truncate(r.COMMENTS));
                     h.push('</p>');
                 }
@@ -150,6 +156,8 @@ $(function() {
                     h.push('<a href="person_vouchers?id=' + r.OWNERID + '">' + r.OWNERNAME  + ' - ' + r.VOUCHERCODE + '</a></span> ');
                     h.push('<br/>');
                     h.push(r.OWNERADDRESS);
+                    h.push('<br />');
+                    h.push(r.OWNERTOWN + ", " + r.OWNERCOUNTY + " " + r.OWNERPOSTCODE);
                     h.push('<br />');
                     h.push('<span class="asm-search-personflags">' + r.VOUCHERNAME + ', ' + format.date(r.DATEISSUED) + 
                         ' - ' + format.date(r.DATEREDEEMED) + '</span>');

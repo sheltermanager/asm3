@@ -1,6 +1,7 @@
 46
 ================
 
+27/07/22 Show complete address for people under general search
 27/07/22 Add maint_db_dump_dbfs_files cron task
 24/07/22 Merge/fix PR #1151, add Sponsor flag and Sponsor/Vet fields (Roman Safovich)
 24/07/22 Handle favicon.ico calls from old browsers
