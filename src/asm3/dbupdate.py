@@ -2715,6 +2715,36 @@ def dump_dbfs_base64(dbo):
         yield "INSERT INTO dbfs (ID, Name, Path, URL, Content) VALUES (%d, '%s', '%s', '%s', '%s');\n" % (r["ID"], r["NAME"], r["PATH"], url, content)
         del content
 
+def dump_dbfs_files(dbo):
+    """
+    Generator function that dumps the DBFS table, reading every single
+    file and outputting it to /tmp/dump_dbfs_files. 
+    The content column output will be null and the URL updated to
+    file:[DBFSID].[Extension]
+    This can be used to extract large dbfs tables to files and get a copy
+    without changing the original table. It's easy to switch file for s3
+    post insert if necessary.
+    """
+    yield "DELETE FROM dbfs;\n"
+    rows = dbo.query("SELECT ID, Name, Path FROM dbfs ORDER BY ID")
+    for r in rows:
+        name = r.NAME
+        content = ""
+        url = ""
+        # Only try and read the dbfs file if it has an extension and is actually a file
+        if name.find(".") != -1:
+            try:
+                content = asm3.dbfs.get_string_id(dbo, r.ID)
+            except:
+                # Ignore if we couldn't read, leaving content blank
+                pass
+        if content != "":
+            filename = "%s.%s" % (r.ID, name[name.rfind(".")+1:])
+            url = "file:%s" % filename
+            asm3.utils.write_binary_file("/tmp/dump_dbfs_files/%s" % filename, content)
+        yield "INSERT INTO dbfs (ID, Name, Path, URL, Content) VALUES (%d, '%s', '%s', '%s', NULL);\n" % (r.ID, r.NAME, r.PATH, url)
+        del content
+
 def dump_hsqldb(dbo, includeDBFS = True):
     """
     Produces a dump in hsqldb format for use with ASM2

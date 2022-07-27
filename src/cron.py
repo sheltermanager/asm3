@@ -265,6 +265,14 @@ def maint_db_dump_dbfs_base64(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_dbfs_base64: %s" % em, "cron.maint_db_dump_dbfs_base64", dbo, sys.exc_info())
 
+def maint_db_dump_dbfs_files(dbo):
+    try:
+        for x in dbupdate.dump_dbfs_files(dbo):
+            print(x)
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_db_dump_dbfs_files: %s" % em, "cron.maint_db_dump_dbfs_files", dbo, sys.exc_info())
+
 def maint_db_dump_lookups(dbo):
     try:
         for x in dbupdate.dump_lookups(dbo):
@@ -474,6 +482,8 @@ def run(dbo, mode):
         maint_db_dump(dbo)
     elif mode == "maint_db_dump_dbfs_base64":
         maint_db_dump_dbfs_base64(dbo)
+    elif mode == "maint_db_dump_dbfs_files":
+        maint_db_dump_dbfs_files(dbo)
     elif mode == "maint_db_dump_lookups":
         maint_db_dump_lookups(dbo)
     elif mode == "maint_db_dump_merge":
@@ -566,6 +576,7 @@ def print_usage():
     print("       maint_db_diagnostic - run database diagnostics")
     print("       maint_db_dump - produce a dump of INSERT statements to recreate the db")
     print("       maint_db_dump_dbfs_base64 - dump the dbfs table and include all content as base64")
+    print("       maint_db_dump_dbfs_files - dump the dbfs table, output as files to /tmp/dump_dbfs_files")
     print("       maint_db_dump_merge - produce a dump of INSERT statements, renumbering IDs to +100000")
     print("       maint_db_dump_animalcsv - produce a CSV of animal/adoption/owner data")
     print("       maint_db_dump_personcsv - produce a CSV of person data")

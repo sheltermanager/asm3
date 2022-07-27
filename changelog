@@ -1,6 +1,7 @@
 46
 ================
 
+27/07/22 Add maint_db_dump_dbfs_files cron task
 24/07/22 Merge/fix PR #1151, add Sponsor flag and Sponsor/Vet fields (Roman Safovich)
 24/07/22 Handle favicon.ico calls from old browsers
 24/07/22 Cache 404s at proxy/CDN level as they can be a DoS vector
