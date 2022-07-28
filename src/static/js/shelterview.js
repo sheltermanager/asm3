@@ -257,7 +257,7 @@ $(function() {
             // Load the whole thing into the DOM
             $("#viewcontainer").html(h.join("\n"));
 
-            if (config.bool("ShelterViewDragDrop") && !asm.mobileapp) {
+            if (config.bool("ShelterViewDragDrop") && !asm.mobileapp && !common.browser_is.mobile) {
                 $(".animaldragtarget").draggable();
                 $(".persondroptarget").droppable({
                     over: function(event, ui) {
@@ -414,7 +414,7 @@ $(function() {
             $("#viewcontainer").html(h.join("\n"));
 
             // Handle drag and drop if enabled for this view
-            if (dragdrop && config.bool("ShelterViewDragDrop") && !asm.mobileapp) {
+            if (dragdrop && config.bool("ShelterViewDragDrop") && !asm.mobileapp && !common.browser_is.mobile) {
                 $(".animaldragtarget").draggable();
                 $(".locationdroptarget").droppable({
                     over: function(event, ui) {
