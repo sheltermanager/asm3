@@ -811,12 +811,14 @@ def json_incidentfindcolumns(dbo):
         ( "JurisdictionName", _("Jurisdiction", l) ),
         ( "LocationName", _("Pickup Location", l) ),
         ( "Suspect", _("Suspect", l) ),
+        ( "Victim", _("Victim", l) ),
         ( "DispatchDateTime", _("Dispatch Date/Time", l) ),
         ( "RespondedDateTime", _("Responded Date/Time", l) ),
         ( "DispatchedACO", _("ACO", l) ),
         ( "FollowupDateTime", _("Followup Date", l) ),
         ( "CompletedDate", _("Completed Date", l) ),
         ( "CompletedName", _("Completed Type", l) ),
+        ( "Caller", _("Caller", l) ),
         ( "CallNotes", _("Notes", l) )
         ]
     fd = asm3.additional.get_field_definitions(dbo, "incident")
