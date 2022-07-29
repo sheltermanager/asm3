@@ -222,6 +222,19 @@ const common = {
     },
 
     /**
+     * Copies all properties from source to target, returning target
+     * Basically Object.assign
+     */
+    copy_object: function(target, source) {
+        for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+                target[key] = source[key];
+            }
+        }
+        return target;
+    },
+
+    /**
      * Returns true if v is an array
      */
     is_array: function(v) {

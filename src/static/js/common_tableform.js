@@ -992,7 +992,7 @@ const tableform = {
         let d = "", 
             options = { render_container: true, full_width: true };
         if (columns === undefined) { columns = 1; }
-        if (coptions !== undefined) { options = Object.assign(options, coptions); }
+        if (coptions !== undefined) { options = common.copy_object(options, coptions); }
         if (options.render_container) {
             d = '<table class="asm-table-layout ' + (options.full_width ? "asm-table-fullwidth" : "" ) + '">';
         }
