@@ -453,13 +453,13 @@ def handler(post, path, remoteip, referer, useragent, querystring):
             asm3.al.error("animal_view failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
-            return set_cached_response(cache_key, account, "text/html", 86400, 120, asm3.publishers.html.get_animal_view(dbo, asm3.utils.cint(animalid)))
+            return set_cached_response(cache_key, account, "text/html", 86400, 600, asm3.publishers.html.get_animal_view(dbo, asm3.utils.cint(animalid)))
 
     elif method == "animal_view_adoptable_js":
         return set_cached_response(cache_key, account, "application/javascript", 10800, 600, asm3.publishers.html.get_animal_view_adoptable_js(dbo))
 
     elif method == "animal_view_adoptable_html":
-        return set_cached_response(cache_key, account, "text/html", 86400, 120, asm3.publishers.html.get_animal_view_adoptable_html(dbo))
+        return set_cached_response(cache_key, account, "text/html", 86400, 600, asm3.publishers.html.get_animal_view_adoptable_html(dbo))
 
     elif method == "checkout":
         processor = asm3.financial.get_payment_processor(dbo, post["processor"])
@@ -715,12 +715,12 @@ def handler(post, path, remoteip, referer, useragent, querystring):
     elif method == "online_form_html":
         if formid == 0:
             raise asm3.utils.ASMError("method online_form_html requires a valid formid")
-        return set_cached_response(cache_key, account, "text/html; charset=utf-8", 120, 120, asm3.onlineform.get_onlineform_html(dbo, formid))
+        return set_cached_response(cache_key, account, "text/html; charset=utf-8", 1800, 1800, asm3.onlineform.get_onlineform_html(dbo, formid))
 
     elif method == "online_form_json":
         if formid == 0:
             raise asm3.utils.ASMError("method online_form_json requires a valid formid")
-        return set_cached_response(cache_key, account, "application/json; charset=utf-8", 30, 30, asm3.onlineform.get_onlineform_json(dbo, formid))
+        return set_cached_response(cache_key, account, "application/json; charset=utf-8", 1800, 1800, asm3.onlineform.get_onlineform_json(dbo, formid))
 
     elif method == "online_form_post":
         asm3.onlineform.insert_onlineformincoming_from_form(dbo, post, remoteip, useragent)

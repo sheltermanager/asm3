@@ -4861,6 +4861,7 @@ class onlineform_json(ASMEndpoint):
 
     def content(self, o):
         self.content_type("application/json")
+        self.cache_control(0)
         return asm3.onlineform.get_onlineform_json(o.dbo, o.post.integer("formid"))
 
 class onlineform_view(ASMEndpoint):

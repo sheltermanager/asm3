@@ -362,7 +362,7 @@ size under :menuselection:`Publishing -> Set Publishing Options -> All Publisher
 animal_view
 -----------
 
-.. rubric:: Cache time: 2 minutes
+.. rubric:: Cache time: 10 minutes
 
 Returns a webpage with information for one adoptable animal, constructed from the
 animalview HTML publishing template (editable at :menuselection:`Publishing ->
@@ -657,7 +657,7 @@ iframes.
 animal_view_adoptable_html
 --------------------------
 
-.. rubric:: Cache time: 2 minutes
+.. rubric:: Cache time: 10 minutes
 
 Returns a complete HTML document that references animal_view_adoptable_js to
 show a list of adoptable animals. It looks for an HTML template called
@@ -911,6 +911,15 @@ Responds with media file data for the mediaid given. The content type is set to
 the correct MIME type for the data::
     
     http://localhost:5000/service?method=media_file&username=user&password=letmein&mediaid=52
+
+online_form_html and online_form_json
+-------------------------------------
+
+.. rubric:: Cache time: 30 minutes
+
+Responds with the online form HTML or JSON for the id given.
+
+    http://localhost:5000/service?method=online_form_html&id=1
 
 rss_timeline
 ------------
