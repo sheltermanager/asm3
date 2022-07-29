@@ -192,12 +192,6 @@ $(function() {
                         await tableform.show_okcancel_dialog("#dialog-import", _("Import"), { notblank: ["filechooser"] });
                         $("#importform").submit();
                     }
-                },
-                { id: "preview", text: _("Preview"), icon: "web", enabled: "one",
-                    tooltip: _("Preview this online form, bypassing server-side caching to see your changes immediately"),
-                    click: function() {
-                        window.open("onlineform_view?formid=" + tableform.table_selected_id(table));
-                    }
                 }
             ];
             this.dialog = dialog;
