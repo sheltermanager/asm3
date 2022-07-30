@@ -133,7 +133,6 @@ $.fn.table = function(options) {
     let defaults = {
         css:        'asm-table',
         filter:     false,
-        style_td:   true,
         row_hover:  true,
         row_select: true,
         sticky_header: true
@@ -159,11 +158,6 @@ $.fn.table = function(options) {
                     $(this).closest("tr").find("td").removeClass("ui-state-highlight");
                 }
             });
-        }
-        input.find("th").addClass("ui-state-default");
-        if (options.style_td) {
-            input.prop("data-style-td", "true");
-            input.find("td").addClass("ui-widget-content");
         }
         input.addClass("tablesorter");
         let tablewidgets = [];

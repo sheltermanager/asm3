@@ -153,7 +153,6 @@ $(function() {
 
         bind: function() {
             $("#table-waitinglist").table({ 
-                style_td: false, 
                 row_hover: false,
                 row_select: false
             });
