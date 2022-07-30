@@ -18,6 +18,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
+import asm3.event
 from asm3.i18n import _, format_currency, format_currency_no_symbol, format_time, now, python2display, python2displaytime, yes_no
 
 import zipfile
@@ -1547,6 +1548,23 @@ def waitinglist_tags(dbo, a):
     tags.update(table_tags(dbo, d, asm3.log.get_logs(dbo, asm3.log.WAITINGLIST, a["ID"], 0, asm3.log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
     return tags
 
+def event_tags(dbo, e):
+    """
+    Generate a tag dictionary for events
+    e - event object that created from asm3.event.get_event
+    """
+    tags = {
+        "STARTDATETIME":    e["STARTDATETIME"],
+        "ENDDATETIME":      e["ENDDATETIME"],
+        "EVENTNAME":        e["EVENTNAME"],
+        "EVENTDESCRIPTION": e["EVENTDESCRIPTION"],
+        "RECORDVERSION":    e["RECORDVERSION"],
+        "CREATEDBY":        e["CREATEDBY"],
+        "LASTCHANGEDBY":    e["LASTCHANGEDBY"],
+        "LASTCHANGEDDATE":  e["LASTCHANGEDDATE"]
+    }
+    return tags
+
 def append_tags(tags1, tags2):
     """
     Adds two dictionaries of tags together and returns
@@ -1942,6 +1960,8 @@ def generate_movement_doc(dbo, templateid, movementid, username):
         tags = animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID))
     if m.OWNERID is not None and m.OWNERID != 0:
         tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, m.OWNERID)))
+    if m.EVENTID is not None and m.EVENTID != 0:
+        tags = append_tags(tags, event_tags(dbo, asm3.event.get_event(dbo, m.EVENTID)))
     tags = append_tags(tags, movement_tags(dbo, m))
     tags = append_tags(tags, donation_tags(dbo, asm3.financial.get_movement_donations(dbo, movementid)))
     tags = append_tags(tags, org_tags(dbo, username))
