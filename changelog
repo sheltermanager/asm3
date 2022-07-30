@@ -1,7 +1,8 @@
 46
 ================
 
-30/07/22 Tables do not need to addClass/ui-widget, causes OOM on smaller devices
+30/07/22 Improve look of tables by applying row styles
+30/07/22 Fix OOM bug on iPhone due to needlessly applying table cell styles
 29/07/22 Replace use of Object.assign with common.copy_object due to error reports
 29/07/22 Increase cache times for animal_view and online_form_* #1158
 28/07/22 Add caller and victim as columns for incident results #1157

@@ -66,6 +66,10 @@ input:focus, textarea:focus, select:focus {
     background: #3a87cd;
     color: #fff;
 }
+/* needed for sticky table headers so that they aren't transparent, should match ui-widget-content */
+.asm-table th {
+	background: #ddd;
+}
 /** --- END MANUAL ADDITIONS --- */
 
 

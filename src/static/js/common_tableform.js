@@ -245,7 +245,7 @@ const tableform = {
                 if (formatter === tableform.format_currency) {
                     extraclasses += " rightalign";
                 }
-                t.push("<td class=\"ui-widget-content " + extraclasses + "\">");
+                t.push("<td class=\"" + extraclasses + "\">");
                 if (vc.sorttext) {
                     t.push("<span data-sort=\"" + html.title(html.truncate(vc.sorttext(vr))) + "\"></span>");
                 }

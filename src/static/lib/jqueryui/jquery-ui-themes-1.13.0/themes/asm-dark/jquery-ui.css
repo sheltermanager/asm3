@@ -84,6 +84,11 @@ input:focus, textarea:focus, select:focus {
     background: #3a87cd;
     color: #fff;
 }
+/* needed for sticky table headers so that they aren't transparent, should match ui-widget-content */
+.asm-table th {
+	background: #111;
+}
+
 
 /* Make dropshadows look a little less weird */
 .dialogshadow, .menushadow, .thumbnailshadow, .popupshadow {
