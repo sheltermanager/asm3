@@ -1,6 +1,7 @@
 46
 ================
 
+30/07/22 Thumbnails not styled correctly and missing sex in medical/test/vacc books
 30/07/22 Improve look of tables by applying row styles
 30/07/22 Fix OOM bug on iPhone due to needlessly applying table cell styles
 29/07/22 Replace use of Object.assign with common.copy_object due to error reports
