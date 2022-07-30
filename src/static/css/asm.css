@@ -505,7 +505,7 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-timeline-item { border-bottom: 1px dotted #555; padding: 10px; }
 
 /** TABLES ========================== */
-.asm-table { border-collapse: separate; }
+.asm-table { border-collapse: collapse; }
 .asm-table td { font-weight: normal !important; padding: .4em; border-top-width: 0px !important; }
 .asm-table th { text-align: center; padding: .8em .4em; }
 .asm-table td.first, .asm-table th.first { border-left-width: 0px !important; }

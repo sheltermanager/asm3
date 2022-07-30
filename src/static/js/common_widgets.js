@@ -142,10 +142,10 @@ $.fn.table = function(options) {
         let tbl = $(this);
         tbl.addClass(options.css);
         if (options.row_hover) {
-            tbl.on("mouseover", "tr", function() {
+            tbl.on("mouseover", "tbody tr", function() {
                 $(this).addClass("ui-state-hover");
             });
-            tbl.on("mouseout", "tr", function() {
+            tbl.on("mouseout", "tbody tr", function() {
                 $(this).removeClass("ui-state-hover");
             });
         }

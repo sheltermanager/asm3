@@ -87,6 +87,10 @@ input:focus, textarea:focus, select:focus {
 /* needed for sticky table headers so that they aren't transparent, should match ui-widget-content */
 .asm-table th {
 	background: #111;
+	border-bottom: 1px solid #fff;
+}
+.asm-table td {
+	border-bottom: 1px dotted #fff;
 }
 
 
