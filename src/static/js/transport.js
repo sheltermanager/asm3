@@ -102,7 +102,7 @@ $(function() {
                     { field: "IMAGE", display: "", 
                         formatter: function(row) {
                             if (!row.ANIMALID) { return ""; }
-                            return '<a href="animal?id=' + row.ANIMALID + '"><img src=' + html.thumbnail_src(row, "animalthumb") + ' style="margin-right: 8px" class="asm-thumbnail thumbnailshadow" /></a>';
+                            return html.animal_link_thumb_bare(row);
                         },
                         hideif: function(row) {
                             // Don't show this column if we're in the animal's record or the option is turned off

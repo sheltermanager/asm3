@@ -208,7 +208,7 @@ $(function() {
                 rv = edit_header.person_flags(row);
             }
             else if ( name == "Image" ) {
-                rv = "<img class=\"asm-thumbnail thumbnailshadow\" src=\"" + html.thumbnail_src(row, "animalthumb") + "\" />";
+                rv = "<img class=\"asm-thumbnail thumbnailshadow\" src=\"" + html.thumbnail_src(row, "personthumb") + "\" />";
             }
             else if (add) {
                 $.each(add, function(i, v) {
