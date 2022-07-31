@@ -1569,6 +1569,9 @@ def event_tags(dbo, e):
         "EVENTLASTCHANGEDBY":   e["LASTCHANGEDBY"],
         "EVENTLASTCHANGEDDATE": python2display(l, e["LASTCHANGEDDATE"])
     }
+
+    tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, e["ID"], "event")))
+
     return tags
 
 def append_tags(tags1, tags2):
