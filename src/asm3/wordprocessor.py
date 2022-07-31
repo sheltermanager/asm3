@@ -1214,7 +1214,10 @@ def movement_tags(dbo, m):
         ( "PAYMENTNAME", _("Method", l) ),
         ( "DONATION", _("Amount", l) )
     ))
-    return tags    
+    # adding event tags to the movement tags
+    if m.EVENTID is not None and m.EVENTID != 0:
+        tags = append_tags(tags, event_tags(dbo, asm3.event.get_event(dbo, m.EVENTID)))
+    return tags
 
 def clinic_tags(dbo, c):
     """
@@ -1553,15 +1556,17 @@ def event_tags(dbo, e):
     Generate a tag dictionary for events
     e - event object that created from asm3.event.get_event
     """
+    l = dbo.locale
     tags = {
-        "STARTDATETIME":    e["STARTDATETIME"],
-        "ENDDATETIME":      e["ENDDATETIME"],
-        "EVENTNAME":        e["EVENTNAME"],
-        "EVENTDESCRIPTION": e["EVENTDESCRIPTION"],
-        "RECORDVERSION":    e["RECORDVERSION"],
-        "CREATEDBY":        e["CREATEDBY"],
-        "LASTCHANGEDBY":    e["LASTCHANGEDBY"],
-        "LASTCHANGEDDATE":  e["LASTCHANGEDDATE"]
+        "STARTDATETIME":        python2display(l, e["STARTDATETIME"]),
+        "ENDDATETIME":          python2display(l, e["ENDDATETIME"]),
+        "EVENTNAME":            e["EVENTNAME"],
+        "EVENTDESCRIPTION":     e["EVENTDESCRIPTION"],
+        "EVENTRECORDVERSION":   e["RECORDVERSION"],
+        "EVENTCREATEDBY":       e["CREATEDBY"],
+        "EVENTCREATEDDATE":     python2display(l, e["CREATEDDATE"]),
+        "EVENTLASTCHANGEDBY":   e["LASTCHANGEDBY"],
+        "EVENTLASTCHANGEDDATE": python2display(l, e["LASTCHANGEDDATE"])
     }
     return tags
 
@@ -1960,8 +1965,6 @@ def generate_movement_doc(dbo, templateid, movementid, username):
         tags = animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID))
     if m.OWNERID is not None and m.OWNERID != 0:
         tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, m.OWNERID)))
-    if m.EVENTID is not None and m.EVENTID != 0:
-        tags = append_tags(tags, event_tags(dbo, asm3.event.get_event(dbo, m.EVENTID)))
     tags = append_tags(tags, movement_tags(dbo, m))
     tags = append_tags(tags, donation_tags(dbo, asm3.financial.get_movement_donations(dbo, movementid)))
     tags = append_tags(tags, org_tags(dbo, username))
