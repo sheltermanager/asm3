@@ -45,7 +45,7 @@ confirmation email will be sent to that address. The confirmation message
 field will form the first part of the body of the email. HTML can be used, but
 it must be a complete HTML document that contains an <html> tag. 
 
-.. warning:: sheltermanager.com uses a short term 2 minute cache on forms, so if you make changes to a form you've recently viewed, you may have to wait 2 minutes for any changes you make to appear.
+.. warning:: sheltermanager.com uses a short term 10 minute cache on forms, so if you make changes to a form you've recently viewed, you may have to wait 10 minutes for any changes you make to appear.
 
 If you declare a javascript function in your form's header or footer named
 asm3_onlineform_submit, it will be called when form validation is successful
@@ -236,6 +236,9 @@ ASM calls an application a "reservation". If your form has a field named
 "reserveanimalname" of type "Adoptable Animal", then using "Create Person" on
 an incoming form submission will create a reservation for the new person to
 that animal.
+
+If you want to allow a person to apply for more than one animal, then you
+can add fields called reserveanimalname2, reserveanimalname3, etc.
 
 The reservation will link the new person and the animal record. That link can be
 viewed under the movement tab of the person or animal, and you can view all
