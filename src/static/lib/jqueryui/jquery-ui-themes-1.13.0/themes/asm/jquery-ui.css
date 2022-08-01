@@ -72,7 +72,7 @@ input:focus, textarea:focus, select:focus {
 	border-bottom: 1px dotted #aaa;
 }
 .asm-table td {
-	border-bottom: 1px dotted #aaa;
+	border: 1px dotted #aaa;
 }
 /** --- END MANUAL ADDITIONS --- */
 
