@@ -6,7 +6,24 @@
 import asm3.al
 import asm3.configuration
 
-import asm3.publishers.adoptapet, asm3.publishers.akcreunite, asm3.publishers.anibaseuk, asm3.publishers.foundanimals, asm3.publishers.homeagain, asm3.publishers.helpinglostpets, asm3.publishers.html, asm3.publishers.maddiesfund, asm3.publishers.petcademy, asm3.publishers.petfinder, asm3.publishers.petlink, asm3.publishers.petrescue, asm3.publishers.petslocateduk, asm3.publishers.pettracuk, asm3.publishers.rescuegroups, asm3.publishers.savourlife, asm3.publishers.smarttag
+import asm3.publishers.adoptapet
+import asm3.publishers.akcreunite
+import asm3.publishers.anibaseuk
+import asm3.publishers.foundanimals
+import asm3.publishers.homeagain
+import asm3.publishers.helpinglostpets
+import asm3.publishers.html
+import asm3.publishers.maddiesfund
+import asm3.publishers.petcademy 
+import asm3.publishers.petfinder
+import asm3.publishers.petlink
+import asm3.publishers.petrescue
+import asm3.publishers.petslocateduk
+import asm3.publishers.pettracuk
+import asm3.publishers.rescuegroups
+import asm3.publishers.sacmetrics
+import asm3.publishers.savourlife
+import asm3.publishers.smarttag
 
 from asm3.publishers.base import PublishCriteria
 

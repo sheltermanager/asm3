@@ -1202,6 +1202,13 @@ def post_xml(url, xml, headers = {}):
     """
     return post_data(url, xml, contenttype="text/xml", headers=headers)
 
+def put_json(url, json, headers = {}):
+    """
+    Posts a JSON document to a URL with the PUT HTTP method. json can be str or bytes
+    """
+    return post_data(url, json, contenttype="application/json", httpmethod="PUT", headers=headers)
+
+
 def urlencode(d):
     """
     URL encodes a dictionary of key/pair values.

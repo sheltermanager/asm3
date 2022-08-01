@@ -21,6 +21,13 @@ class DatabaseSQLite3(Database):
         """ SQLite does not have a GREATEST() function, MAX() should be used instead """
         return "MAX(%s)" % ",".join(items)
 
+    def sql_interval(self, columnname, number, sign="+", units="months"):
+        """
+        Used to add or a subtract a period to/from a date columndef  
+        SQLite does not support INTERVAL and uses its own built in datetime() function.
+        """
+        return f"datetime({columnname}, '{sign}{number} {units}')"
+
     def sql_regexp_replace(self, fieldexpr, pattern="?", replacestr="?"):
         """ SQLite does not have a regexp replace function. Do nothing but at least warn the user. """
         print("WARNING: SQLite cannot regexp_replace('%s', '%s', '%s')"% (fieldexpr, pattern, replacestr))

@@ -346,6 +346,9 @@ DEFAULTS = {
     "SoftReleases": "No",
     "SoftReleaseOnShelter": "No",
     "StickyTableHeaders": "Yes",
+    "SACStrayCategory": "7",
+    "SACSurrenderCategory": "17",
+    "SACTNRCategory": "14",
     "TableHeadersVisible": "Yes",
     "TemplatesForNonShelter": "No",
     "ThumbnailSize": "150x150",
@@ -1281,6 +1284,15 @@ def rescuegroups_password(dbo):
 
 def retailer_on_shelter(dbo):
     return cboolean(dbo, "RetailerOnShelter", DEFAULTS["RetailerOnShelter"] == "Yes")
+
+def sac_stray_category(dbo):
+    return cint(dbo, "SACStrayCategory", DEFAULTS["SACStrayCategory"])
+
+def sac_surrender_category(dbo):
+    return cint(dbo, "SACSurrenderCategory", DEFAULTS["SACSurrenderCategory"])
+
+def sac_tnr_category(dbo):
+    return cint(dbo, "SACTNRCategory", DEFAULTS["SACTNRCategory"])
 
 def savourlife_token(dbo):
     return cstring(dbo, "SavourLifeToken")
