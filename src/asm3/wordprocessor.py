@@ -1559,8 +1559,8 @@ def event_tags(dbo, e):
     """
     l = dbo.locale
     tags = {
-        "STARTDATETIME":        python2display(l, e["STARTDATETIME"]),
-        "ENDDATETIME":          python2display(l, e["ENDDATETIME"]),
+        "EVENTSTARTDATE":        python2display(l, e["STARTDATETIME"]),
+        "EVENTENDDATE":          python2display(l, e["ENDDATETIME"]),
         "EVENTNAME":            e["EVENTNAME"],
         "EVENTDESCRIPTION":     e["EVENTDESCRIPTION"],
         "EVENTRECORDVERSION":   e["RECORDVERSION"],
@@ -1570,7 +1570,7 @@ def event_tags(dbo, e):
         "EVENTLASTCHANGEDDATE": python2display(l, e["LASTCHANGEDDATE"])
     }
 
-    tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, e["ID"], "event")))
+    tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, e["ID"], "event"), "EVENT"))
 
     return tags
 

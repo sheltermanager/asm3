@@ -93,7 +93,7 @@ def get_additional_fields(dbo, linkid, linktype = "animal"):
     inclause = clause_for_linktype(linktype)
     return dbo.query("SELECT af.*, a.Value, " \
         "CASE WHEN af.FieldType = 8 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT AnimalName FROM animal WHERE %s = a.Value) ELSE '' END AS AnimalName, " \
-        "CASE WHEN af.FieldType = 9 OR af.FieldType = 11 OR af.FieldType = 12 AND a.Value <> '' AND a.Value <> '0' " \
+        "CASE WHEN af.FieldType IN (9, 11, 12) AND a.Value <> '' AND a.Value <> '0' " \
                      "THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
         "FROM additionalfield af LEFT OUTER JOIN additional a ON af.ID = a.AdditionalFieldID " \
         "AND a.LinkID = %d " \
