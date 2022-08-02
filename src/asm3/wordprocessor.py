@@ -153,6 +153,9 @@ def additional_field_tags(dbo, fields, prefix = ""):
             val = af["ANIMALNAME"]
         if af["FIELDTYPE"] in human_flags:
             val = af["OWNERNAME"]
+            human = asm3.additional.get_human_record(dbo, int(af["VALUE"]))[0]
+            for data in human:
+                tags[af["FIELDNAME"].upper() + data] = human[data]
         tags[prefix + af["FIELDNAME"].upper()] = val
     return tags
 
