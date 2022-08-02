@@ -1,6 +1,7 @@
 46
 ================
 
+02/08/22 Re-check animal status when animal is unlinked from a reservation
 01/08/22 Implement and unit test new SAC Metrics API publisher #1153
 30/07/22 Thumbnail style incorrect in transport book, person find/image broken
 30/07/22 Thumbnails not styled correctly and missing sex in medical/test/vacc books

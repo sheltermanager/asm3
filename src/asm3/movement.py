@@ -464,7 +464,7 @@ def update_movement_from_form(dbo, username, post):
 
     # If the animal ID has been changed, update the previous animal to prevent
     # its active movement being left pointing at this movement
-    if post.integer("animal") > 0 and post.integer("animal") != oanimalid:
+    if oanimalid > 0 and post.integer("animal") != oanimalid:
         asm3.animal.update_animal_status(dbo, oanimalid)
 
     if post.integer("animal") > 0:
