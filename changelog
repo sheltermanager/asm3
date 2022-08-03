@@ -1,6 +1,7 @@
 46
 ================
 
+03/08/22 Reports, use longer cache ttl, move onto smcom servers for performance
 02/08/22 Re-check animal status when animal is unlinked from a reservation
 01/08/22 Implement and unit test new SAC Metrics API publisher #1153
 30/07/22 Thumbnail style incorrect in transport book, person find/image broken

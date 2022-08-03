@@ -1106,7 +1106,7 @@ def md5_hash_hex(s):
 def get_asm_news(dbo):
     """ Retrieves the latest asm news from the server """
     try:
-        s = get_url(URL_NEWS)["response"]
+        s = get_url(URL_NEWS, timeout=10)["response"]
         asm3.al.debug("Retrieved ASM news, got %d bytes" % len(s), "utils.get_asm_news", dbo)
         return s
     except Exception as err:
