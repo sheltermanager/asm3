@@ -1,6 +1,7 @@
 46
 ================
 
+03/08/22 Report update checks need only be done as part of cron/daily
 03/08/22 New movements with a return category not displaying correctly in the table
 03/08/22 Reports, use longer cache ttl, move onto smcom servers for performance
 02/08/22 Re-check animal status when animal is unlinked from a reservation

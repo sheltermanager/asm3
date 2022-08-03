@@ -618,7 +618,7 @@ def install_smcom_report_file(dbo, user, filename):
             d.REVISION = asm3.utils.cint(d.DATABASE[revp+3:revp+5])
         install_smcom_report(dbo, user, d)
 
-def update_smcom_reports(dbo, user):
+def update_smcom_reports(dbo, user="system"):
     """
     Finds all reports with available updates and updates them.
     Note that only the SQL, HTML and Revision are updated.
@@ -636,6 +636,7 @@ def update_smcom_reports(dbo, user):
             install_smcom_subreports(dbo, user, r)
             updated += 1
     asm3.al.info(f"updated {updated} reports.", "reports.update_smcom_reports", dbo)
+    return updated
 
 def get_reports_menu(dbo, roleids = "", superuser = False):
     """

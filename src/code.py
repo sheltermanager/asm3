@@ -1124,9 +1124,8 @@ class main(JSONEndpoint):
     def controller(self, o):
         l = o.locale
         dbo = o.dbo
-        # If there's something wrong with the database, logout
-        if not dbo.has_structure():
-            self.redirect("logout")
+        # If there's something wrong with the database, stop now
+        if not dbo.has_structure(): raise asm3.utils.ASMError("no database structure")
         # If a b (build) parameter was passed to indicate the client wants to
         # get the latest js files, invalidate the config so that the
         # frontend doesn't keep receiving the same build number via configjs 
@@ -1144,8 +1143,6 @@ class main(JSONEndpoint):
             asm3.dbupdate.install_db_stored_procedures(dbo)
         # Install recommended reports if no reports are currently installed
         if dbo.query_int("SELECT COUNT(ID) FROM customreport") == 0: asm3.reports.install_recommended_smcom_reports(dbo, o.user)
-        # Update any reports that have newer versions available
-        asm3.reports.update_smcom_reports(dbo, o.user)
         # News
         news = asm3.cachedisk.get("news", "news")
         if news is None:
@@ -4202,6 +4199,14 @@ class maint_undelete(JSONEndpoint):
             if i == "": continue
             tablename, iid = i.split(":")
             asm3.audit.undelete(o.dbo, asm3.utils.cint(iid), tablename)
+
+class maint_update_reports(ASMEndpoint):
+    url = "maint_update_reports"
+
+    def content(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        return "%s reports updated" % asm3.reports.update_smcom_reports(dbo, o.user)
 
 class medical(JSONEndpoint):
     url = "medical"
