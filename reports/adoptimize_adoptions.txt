@@ -50,8 +50,8 @@ $$BODY
 <td>$SPECIESNAME</td>
 <td>$BREEDNAME</td>
 <td>$SEX</td>
-<td>$FIRSTNAME</td>
-<td>$LASTNAME</td>
+<td>$OWNERFORENAMES</td>
+<td>$OWNERSURNAME</td>
 <td>$EMAILADDRESS</td>
 <td>$MOBILETELEPHONE</td>
 </tr>
