@@ -753,6 +753,7 @@ $(function() {
                 row.RETAILERNAME = "";
             }
             row.MOVEMENTNAME = common.get_field(controller.movementtypes, row.MOVEMENTTYPE, "MOVEMENTTYPE");
+            row.RETURNEDREASONNAME = common.get_field(controller.returncategories, row.RETURNEDREASONID, "REASONNAME");
             row.RESERVATIONSTATUSNAME = common.get_field(controller.reservationstatuses, row.RESERVATIONSTATUSID, "STATUSNAME");
             if (row.RESERVATIONDATE != null && !row.RESERVATIONCANCELLEDDATE && !row.MOVEMENTDATE) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 9, "MOVEMENTTYPE"); }
             if (row.RESERVATIONDATE != null && row.RESERVATIONCANCELLEDDATE && format.date_js(row.RESERVATIONCANCELLEDDATE) <= new Date() && !row.MOVEMENTDATE) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 10, "MOVEMENTTYPE"); }
