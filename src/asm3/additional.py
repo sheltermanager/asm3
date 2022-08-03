@@ -82,11 +82,6 @@ def table_for_linktype(linktype):
         return "animalfound"
     return linktype
 
-def get_human_record(dbo, humanid):
-    return dbo.query("SELECT * "
-                     "FROM owner o "
-                     "WHERE o.ID = %d" % humanid)
-
 def get_additional_fields(dbo, linkid, linktype = "animal"):
     """
     Returns a list of additional fields for the link

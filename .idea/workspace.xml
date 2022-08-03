@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d9717413-2ed6-4524-8f32-d7f5f67656da" name="Changes" comment="* fixed prefixes">
+    <list default="true" id="d9717413-2ed6-4524-8f32-d7f5f67656da" name="Changes" comment="added the option of getting data of vet, sponsor and person in the document template">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/asm3/additional.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/asm3/additional.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/asm3/sitedefs.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/asm3/sitedefs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/asm3/wordprocessor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/asm3/wordprocessor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/code_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/web062/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web062/application.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,7 +63,7 @@
     <setting file="file://$PROJECT_DIR$/src/asm3/movement.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/asm3/person.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/asm3/wordprocessor.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/code.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/code_test.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/js/common.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/js/common_html.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/js/common_personchooser.js" root0="FORCE_HIGHLIGHTING" />
@@ -360,7 +363,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659367980519</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="added the option of getting data of vet, sponsor and person in the document template">
+      <created>1659429356640</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1659429356640</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -393,7 +403,8 @@
     <MESSAGE value="* sponsor and vet now working with document template" />
     <MESSAGE value="* added additional field to event" />
     <MESSAGE value="* fixed prefixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="* fixed prefixes" />
+    <MESSAGE value="added the option of getting data of vet, sponsor and person in the document template" />
+    <option name="LAST_COMMIT_MESSAGE" value="added the option of getting data of vet, sponsor and person in the document template" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -402,11 +413,6 @@
           <url>file://$PROJECT_DIR$/src/asm3/html.py</url>
           <line>748</line>
           <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/asm3/person.py</url>
-          <line>904</line>
-          <option name="timeStamp" value="12" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/../asm3 - new/src/code.py</url>
@@ -418,21 +424,14 @@
           <line>2652</line>
           <option name="timeStamp" value="17" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/asm3/wordprocessor.py</url>
-          <line>1575</line>
-          <option name="timeStamp" value="40" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/asm3/wordprocessor.py</url>
-          <line>158</line>
-          <option name="timeStamp" value="49" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="tags" language="Python" />
+        <watch expression="tags" language="Python" />
+        <watch expression="af[&quot;VALUE&quot;]" language="Python" />
+        <watch expression="af" language="Python" />
       </configuration>
     </watches-manager>
   </component>
