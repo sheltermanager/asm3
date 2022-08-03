@@ -95,6 +95,7 @@ class TestAnimal(unittest.TestCase):
         asm3.animal.get_diets(base.get_dbo(), self.nid)
 
     def test_get_links(self):
+        asm3.animal.get_links_adoptable(base.get_dbo())
         asm3.animal.get_links_recently_adopted(base.get_dbo())
         asm3.animal.get_links_recently_fostered(base.get_dbo())
         asm3.animal.get_links_recently_changed(base.get_dbo())

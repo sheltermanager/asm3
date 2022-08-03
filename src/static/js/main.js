@@ -20,8 +20,8 @@ $(function() {
                 "version":  controller.version.substring(0, controller.version.indexOf(" ")),
                 "user":     asm.user,
                 "org":      config.str("Organisation")});
-            s += "</div>";
-            s += "</div>";
+            s += '</div>';
+            s += '</div>';
             return s;
         },
 
@@ -372,8 +372,11 @@ $(function() {
 
         render_animal_links: function() {
             let s = [];
+            let callout = '<span class="asm-callout" id="callout-linkstale">';
+            callout +=  _("Animal links, Timeline, Stats and Alerts shown on this screen may be upto {0} minutes out of date due to caching.").replace("{0}", (controller.age / 60));
+            callout += '</span>';
             if (controller.linkname != "none" && controller.animallinks.length > 0) {
-                s.push('<p class="asm-menu-category">' + controller.linkname + '</p>');
+                s.push('<p class="asm-menu-category">' + controller.linkname + ' ' + callout + '</p>');
                 $.each(controller.animallinks, function(i, a) {
                     // Skip this one if the animal is deceased and we aren't showing them
                     if (!config.bool("ShowDeceasedHomePage") && a.DECEASEDDATE) { return; }

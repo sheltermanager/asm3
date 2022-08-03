@@ -1,6 +1,9 @@
 46
 ================
 
+03/08/22 Visual indicator of cache time used on home screen sections
+03/08/22 "Up for adoption" home page links should obey sites/location filters
+03/08/22 News checks should be part of the batch with no blocking of home page
 03/08/22 Report update checks need only be done as part of cron/daily
 03/08/22 New movements with a return category not displaying correctly in the table
 03/08/22 Reports, use longer cache ttl, move onto smcom servers for performance

@@ -1632,42 +1632,61 @@ def get_has_animal_on_shelter(dbo):
     """
     return dbo.query_int("SELECT COUNT(ID) FROM animal a WHERE a.Archived = 0") > 0
 
-def get_links_recently_adopted(dbo, limit = 5, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_links_adoptable(dbo, limit=5, locationfilter="", siteid=0, visibleanimalids="", cachetime=120):
+    """
+    Returns link info for animals who are adoptable
+    """
+    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    return get_animals_ids(dbo, "a.AnimalName", 
+        "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Adoptable = 1 %s ORDER BY AnimalName" % \
+        locationfilter, limit=limit, cachetime=cachetime)
+
+def get_links_recently_adopted(dbo, limit=5, locationfilter="", siteid=0, visibleanimalids="", cachetime=120):
     """
     Returns link info for animals who were recently adopted
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
-    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 1 %s ORDER BY ActiveMovementDate DESC" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", 
+        "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 1 %s ORDER BY ActiveMovementDate DESC" % \
+        locationfilter, limit=limit, cachetime=cachetime)
 
-def get_links_recently_fostered(dbo, limit = 5, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_links_recently_fostered(dbo, limit=5, locationfilter="", siteid=0, visibleanimalids="", cachetime=120):
     """
     Returns link info for animals who were recently fostered
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
-    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 2 %s ORDER BY ActiveMovementDate DESC" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", 
+        "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 2 %s ORDER BY ActiveMovementDate DESC" % \
+        locationfilter, limit=limit, cachetime=cachetime)
 
-def get_links_recently_changed(dbo, limit = 5, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_links_recently_changed(dbo, limit=5, locationfilter="", siteid=0, visibleanimalids="", cachetime=120):
     """
     Returns link info for animals who have recently been changed.
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, whereprefix=True)
-    return get_animals_ids(dbo, "a.LastChangedDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation %s ORDER BY LastChangedDate DESC" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.LastChangedDate DESC", 
+        "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation %s ORDER BY LastChangedDate DESC" % \
+        locationfilter, limit=limit, cachetime=cachetime)
 
-def get_links_recently_entered(dbo, limit = 5, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_links_recently_entered(dbo, limit=5, locationfilter="", siteid=0, visibleanimalids="", cachetime=120):
     """
     Returns link info for animals who recently entered the shelter.
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
-    return get_animals_ids(dbo, "a.MostRecentEntryDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate DESC" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.MostRecentEntryDate DESC", 
+        "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate DESC" % \
+        locationfilter, limit=limit, cachetime=cachetime)
 
-def get_links_longest_on_shelter(dbo, limit = 5, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_links_longest_on_shelter(dbo, limit=5, locationfilter="", siteid=0, visibleanimalids="", cachetime=120):
     """
     Returns link info for animals who have been on the shelter the longest
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
-    return get_animals_ids(dbo, "a.MostRecentEntryDate", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.MostRecentEntryDate", 
+        "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate" % \
+        locationfilter, limit=limit, cachetime=cachetime)
 
-def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid = 0, visibleanimalids = "", whereprefix = False, andprefix = False, andsuffix = False):
+def get_location_filter_clause(locationfilter="", tablequalifier="", siteid=0, visibleanimalids="", whereprefix=False, andprefix=False, andsuffix=False):
     """
     Returns a where clause that excludes animals not in the locationfilter
     locationfilter: comma separated list of internallocation IDs and special values
@@ -1717,7 +1736,7 @@ def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid 
         c = " WHERE %s" % c
     return c
 
-def is_animal_in_location_filter(a, locationfilter, siteid = 0, visibleanimalids = ""):
+def is_animal_in_location_filter(a, locationfilter, siteid=0, visibleanimalids=""):
     """
     Returns True if the animal a is included in the locationfilter or site given
     """

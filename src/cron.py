@@ -58,6 +58,9 @@ def daily(dbo):
             ttask(dbupdate.install_db_sequences, dbo)
             ttask(dbupdate.install_db_stored_procedures, dbo)
 
+        # Update news file
+        ttask(utils.get_asm_news, dbo)
+
         # Update any reports that have newer versions available
         ttask(extreports.update_smcom_reports, dbo)
 
