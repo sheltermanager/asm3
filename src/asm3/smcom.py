@@ -106,7 +106,7 @@ def get_reports():
     """
     Returns the reports.txt file
     """
-    with open("/root/asmdb/reports.txt", "r") as f:
+    with open("/root/asmdb/reports.txt", "r", encoding="utf-8") as f:
         s = f.read()
     return s
 
