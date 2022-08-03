@@ -373,7 +373,7 @@ $(function() {
         render_animal_links: function() {
             let s = [];
             let callout = '<span class="asm-callout" id="callout-linkstale">';
-            callout +=  _("Animal links, Timeline, Stats and Alerts shown on this screen may be upto {0} minutes out of date due to caching.").replace("{0}", (controller.age / 60));
+            callout +=  _("Some data shown on this screen may be up to {0} minutes out of date.").replace("{0}", (controller.age / 60));
             callout += '</span>';
             if (controller.linkname != "none" && controller.animallinks.length > 0) {
                 s.push('<p class="asm-menu-category">' + controller.linkname + ' ' + callout + '</p>');
