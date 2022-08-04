@@ -18,6 +18,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
+import asm3.event
 from asm3.i18n import _, format_currency, format_currency_no_symbol, format_time, now, python2display, python2displaytime, yes_no
 
 import zipfile
@@ -136,9 +137,12 @@ def separate_results(rows, f):
         result.append(orows)
     return result
 
-def additional_field_tags(dbo, fields, prefix = ""):
-    """ Process additional fields and returns them as tags """
+def additional_field_tags(dbo, fields, prefix = "", depth=2):
+    """ Process additional fields and returns them as tags
+        depth - the level of the recursion when human document regenerated
+    """
     l = dbo.locale
+    person_types = [asm3.additional.PERSON_LOOKUP, asm3.additional.VET, asm3.additional.SPONSOR]
     tags = {}
     for af in fields:
         val = af["VALUE"]
@@ -149,8 +153,13 @@ def additional_field_tags(dbo, fields, prefix = ""):
             val = format_currency_no_symbol(l, af["VALUE"])
         if af["FIELDTYPE"] == asm3.additional.ANIMAL_LOOKUP:
             val = af["ANIMALNAME"]
-        if af["FIELDTYPE"] == asm3.additional.PERSON_LOOKUP:
+        if af["FIELDTYPE"] in person_types:
             val = af["OWNERNAME"]
+            person = asm3.person.get_person(dbo, int(af["VALUE"]))
+            # if there no human record
+            if person == None:
+                continue
+            tags = append_tags(tags, additional_field_person_tags(dbo, person, prefix, af["FIELDNAME"].upper(), depth))
         tags[prefix + af["FIELDNAME"].upper()] = val
     return tags
 
@@ -1213,7 +1222,10 @@ def movement_tags(dbo, m):
         ( "PAYMENTNAME", _("Method", l) ),
         ( "DONATION", _("Amount", l) )
     ))
-    return tags    
+    # adding event tags to the movement tags
+    if m.EVENTID is not None and m.EVENTID != 0:
+        tags = append_tags(tags, event_tags(dbo, asm3.event.get_event(dbo, m.EVENTID)))
+    return tags
 
 def clinic_tags(dbo, c):
     """
@@ -1545,6 +1557,61 @@ def waitinglist_tags(dbo, a):
         "LOGCREATEDBY":       "CREATEDBY"
     }
     tags.update(table_tags(dbo, d, asm3.log.get_logs(dbo, asm3.log.WAITINGLIST, a["ID"], 0, asm3.log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
+    return tags
+
+def additional_field_person_tags(dbo, human, prefix, fieldname, depth):
+    """
+    Generate a tag dictionary for human being (person, sponsor, vet)
+    human - the object that holds all the human parameters
+    fieldname - the name of the additional field
+    depth - the recursion level when human doc regenerated
+    """
+    tags = {
+        prefix + fieldname + "NAME":            human["OWNERNAME"],
+        prefix + fieldname + "TITLE":           human["OWNERTITLE"],
+        prefix + fieldname + "FIRSTNAME":       human["OWNERFORENAMES"],
+        prefix + fieldname + "FORENAMES":       human["OWNERFORENAMES"],
+        prefix + fieldname + "LASTNAME":        human["OWNERSURNAME"],
+        prefix + fieldname + "SURNAME":         human["OWNERSURNAME"],
+        prefix + fieldname + "OWNERADDRESS":    human["OWNERADDRESS"],
+        prefix + fieldname + "TOWN":            human["OWNERTOWN"],
+        prefix + fieldname + "COUNTRY":         human["OWNERCOUNTRY"],
+        prefix + fieldname + "POSTCODE":        human["OWNERPOSTCODE"],
+        prefix + fieldname + "ZIPCODE":         human["OWNERPOSTCODE"],
+        prefix + fieldname + "CITY":            human["OWNERTOWN"],
+        prefix + fieldname + "STATE":           human["OWNERCOUNTY"],
+        prefix + fieldname + "HOMEPHONE":       human["HOMETELEPHONE"],
+        prefix + fieldname + "PHONE":           human["HOMETELEPHONE"],
+        prefix + fieldname + "WORKPHONE":       human["WORKTELEPHONE"],
+        prefix + fieldname + "MOBILEPHONE":     human["MOBILETELEPHONE"],
+        prefix + fieldname + "CELLPHONE":       human["MOBILETELEPHONE"],
+        prefix + fieldname + "EMAIL":           human["EMAILADDRESS"],
+        prefix + fieldname + "JURISDICTION":    human["JURISDICTIONNAME"]
+    }
+    if depth > 0:
+        tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, human["ID"], "person"), prefix + fieldname, depth - 1))
+    return tags
+
+def event_tags(dbo, e):
+    """
+    Generate a tag dictionary for events
+    e - event object that created from asm3.event.get_event
+    """
+    l = dbo.locale
+    tags = {
+        "EVENTSTARTDATE":        python2display(l, e["STARTDATETIME"]),
+        "EVENTENDDATE":          python2display(l, e["ENDDATETIME"]),
+        "EVENTNAME":            e["EVENTNAME"],
+        "EVENTDESCRIPTION":     e["EVENTDESCRIPTION"],
+        "EVENTRECORDVERSION":   e["RECORDVERSION"],
+        "EVENTCREATEDBY":       e["CREATEDBY"],
+        "EVENTCREATEDDATE":     python2display(l, e["CREATEDDATE"]),
+        "EVENTLASTCHANGEDBY":   e["LASTCHANGEDBY"],
+        "EVENTLASTCHANGEDDATE": python2display(l, e["LASTCHANGEDDATE"])
+    }
+
+    tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, e["ID"], "event"), "EVENT"))
+
     return tags
 
 def append_tags(tags1, tags2):
