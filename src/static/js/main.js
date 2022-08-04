@@ -566,7 +566,10 @@ $(function() {
                     _("{plural3} animals were dead on arrival")
                     ]) + '<br />';
             }
-
+            if (stats.LIVERELEASE > 0 && common.has_permission("vamv") && config.bool("ShowDeceasedHomePage")) {
+                let rate = Math.round((stats.LIVERELEASE / (stats.ENTERED + stats.BEGINCOUNT)) * 100);
+                s += html.icon("report") + ' ' + _("{0}% live release rate").replace("{0}", rate) + "<br />";
+            }
             if (stats.DONATIONS > 0 && common.has_permission("ovod") && config.bool("ShowFinancialHomePage")) {
                 s += html.icon("donation") + ' ' + 
                     _("{0} received").replace("{0}", format.currency(stats.DONATIONS))

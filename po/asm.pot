@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-08-04 09:43+0000\n"
+"POT-Creation-Date: 2022-08-04 11:19+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -15054,6 +15054,10 @@ msgstr ""
 
 #: animal.py
 msgid "{0} {1}: trial adoption to {2}"
+msgstr ""
+
+#: main.js
+msgid "{0}% live release rate"
 msgstr ""
 
 #: staff_rota.js

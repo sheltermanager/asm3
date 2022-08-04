@@ -1122,7 +1122,6 @@ class main(JSONEndpoint):
     url = "main"
 
     def controller(self, o):
-        l = o.locale
         dbo = o.dbo
         # If a b (build) parameter was passed to indicate the client wants to
         # get the latest js files, invalidate the config so that the
