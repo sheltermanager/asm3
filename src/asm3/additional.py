@@ -14,6 +14,7 @@ ANIMAL_NOTES = 3
 ANIMAL_ENTRY = 4
 ANIMAL_HEALTH = 5
 ANIMAL_DEATH = 6
+EVENT = 21
 INCIDENT_DETAILS = 16
 INCIDENT_DISPATCH = 17
 INCIDENT_OWNER = 18
@@ -29,16 +30,15 @@ FOUNDANIMAL_DETAILS = 12
 WAITINGLIST = 13
 WAITINGLIST_DETAILS = 14
 WAITINGLIST_REMOVAL = 15
-EVENT = 21
 
 # IN clauses
 ANIMAL_IN = "0, 2, 3, 4, 5, 6"
-PERSON_IN = "1, 7, 8"
+EVENT_IN = "21"
+FOUNDANIMAL_IN = "11, 12"
 INCIDENT_IN = "16, 17, 18, 19, 20"
 LOSTANIMAL_IN = "9, 10"
-FOUNDANIMAL_IN = "11, 12"
+PERSON_IN = "1, 7, 8"
 WAITINGLIST_IN = "13, 14, 15"
-EVENT_IN = "21"
 
 # Field types
 YESNO = 0
@@ -94,8 +94,9 @@ def get_additional_fields(dbo, linkid, linktype = "animal"):
     return dbo.query("SELECT af.*, a.Value, " \
         "CASE WHEN af.FieldType = 8 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT AnimalName FROM animal WHERE %s = a.Value) ELSE '' END AS AnimalName, " \
         "CASE WHEN af.FieldType IN (9, 11, 12) AND a.Value <> '' AND a.Value <> '0' " \
-                     "THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
-        "FROM additionalfield af LEFT OUTER JOIN additional a ON af.ID = a.AdditionalFieldID " \
+            "THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
+        "FROM additionalfield af " \
+        "LEFT OUTER JOIN additional a ON af.ID = a.AdditionalFieldID " \
         "AND a.LinkID = %d " \
         "WHERE af.LinkType IN (%s) " \
         "ORDER BY af.DisplayIndex" % ( dbo.sql_cast_char("animal.ID"), dbo.sql_cast_char("owner.ID"), linkid, inclause ))
