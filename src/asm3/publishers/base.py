@@ -400,7 +400,7 @@ def is_animal_adoptable(dbo, a):
     if not p.includeWithoutDescription and asm3.configuration.publisher_use_comments(dbo) and a.ANIMALCOMMENTS == "": return False
     if not p.includeWithoutDescription and not asm3.configuration.publisher_use_comments(dbo) and a.WEBSITEMEDIANOTES == "": return False
     if p.excludeUnderWeeks > 0 and asm3.i18n.add_days(a.DATEOFBIRTH, 7 * p.excludeUnderWeeks) > dbo.today(): return False
-    if len(p.internalLocations) > 0 and a.ACTIVEMOVEMENTTYPE == 0 and str(a.SHELTERLOCATION) not in p.internalLocations: return False
+    if len(p.internalLocations) > 0 and a.ACTIVEMOVEMENTTYPE is None and str(a.SHELTERLOCATION) not in p.internalLocations: return False
     return True
 
 class PublishCriteria(object):
@@ -503,7 +503,7 @@ class PublishCriteria(object):
             if s.startswith("extension"): self.extension = self.get_str(s)
             if s.startswith("scaleimages"): self.scaleImages = self.get_str(s)
             if s.startswith("thumbnailsize"): self.thumbnailSize = self.get_str(s)
-            if s.startswith("includelocations"): self.internalLocations = self.get_str(s).split(",")
+            if s.startswith("includelocations") and len(self.get_str(s)) > 0: self.internalLocations = self.get_str(s).split(",")
             if s.startswith("publishdirectory"): self.publishDirectory = self.get_str(s)
             if s.startswith("childadultsplit"): self.childAdultSplit = self.get_int(s)
 

@@ -1,6 +1,7 @@
 46
 ================
 
+04/08/22 Fix bug where adoptable=1 can be set when location does not match
 04/08/22 Final refactor/speed improvements to home screen
 03/08/22 Visual indicator of cache time used on home screen sections
 03/08/22 "Up for adoption" home page links should obey sites/location filters
