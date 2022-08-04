@@ -142,7 +142,7 @@ def additional_field_tags(dbo, fields, prefix = "", depth=2):
         depth - the level of the recursion when human document regenerated
     """
     l = dbo.locale
-    human_flags = [asm3.additional.PERSON_LOOKUP, asm3.additional.VET, asm3.additional.SPONSOR]
+    person_types = [asm3.additional.PERSON_LOOKUP, asm3.additional.VET, asm3.additional.SPONSOR]
     tags = {}
     for af in fields:
         val = af["VALUE"]
@@ -153,13 +153,13 @@ def additional_field_tags(dbo, fields, prefix = "", depth=2):
             val = format_currency_no_symbol(l, af["VALUE"])
         if af["FIELDTYPE"] == asm3.additional.ANIMAL_LOOKUP:
             val = af["ANIMALNAME"]
-        if af["FIELDTYPE"] in human_flags:
+        if af["FIELDTYPE"] in person_types:
             val = af["OWNERNAME"]
-            human = asm3.person.get_person(dbo, int(af["VALUE"]))
+            person = asm3.person.get_person(dbo, int(af["VALUE"]))
             # if there no human record
-            if human == None:
+            if person == None:
                 continue
-            tags = append_tags(tags, human_tags(dbo, human, prefix, af["FIELDNAME"].upper(), depth))
+            tags = append_tags(tags, human_tags(dbo, person, prefix, af["FIELDNAME"].upper(), depth))
         tags[prefix + af["FIELDNAME"].upper()] = val
     return tags
 
