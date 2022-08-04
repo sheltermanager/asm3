@@ -159,7 +159,7 @@ def additional_field_tags(dbo, fields, prefix = "", depth=2):
             # if there no human record
             if person == None:
                 continue
-            tags = append_tags(tags, human_tags(dbo, person, prefix, af["FIELDNAME"].upper(), depth))
+            tags = append_tags(tags, additional_field_person_tags(dbo, person, prefix, af["FIELDNAME"].upper(), depth))
         tags[prefix + af["FIELDNAME"].upper()] = val
     return tags
 
@@ -1559,7 +1559,7 @@ def waitinglist_tags(dbo, a):
     tags.update(table_tags(dbo, d, asm3.log.get_logs(dbo, asm3.log.WAITINGLIST, a["ID"], 0, asm3.log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
     return tags
 
-def human_tags(dbo, human, prefix, fieldname, depth):
+def additional_field_person_tags(dbo, human, prefix, fieldname, depth):
     """
     Generate a tag dictionary for human being (person, sponsor, vet)
     human - the object that holds all the human parameters
