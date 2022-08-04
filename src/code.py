@@ -1122,77 +1122,48 @@ class main(JSONEndpoint):
     url = "main"
 
     def controller(self, o):
-        l = o.locale
         dbo = o.dbo
-        # If there's something wrong with the database, logout
-        if not dbo.has_structure():
-            self.redirect("logout")
         # If a b (build) parameter was passed to indicate the client wants to
         # get the latest js files, invalidate the config so that the
         # frontend doesn't keep receiving the same build number via configjs 
         # and get into an endless loop of reloads
         if o.post["b"] != "": self.reload_config()
         # Database update checks
-        dbmessage = ""
+        dbupdated = ""
         if asm3.dbupdate.check_for_updates(dbo):
-            newversion = asm3.dbupdate.perform_updates(dbo)
-            if newversion != "":
-                dbmessage = _("Updated database to version {0}", l).format(str(newversion))
+            dbupdated = asm3.dbupdate.perform_updates(dbo)
         if asm3.dbupdate.check_for_view_seq_changes(dbo):
             asm3.dbupdate.install_db_views(dbo)
             asm3.dbupdate.install_db_sequences(dbo)
             asm3.dbupdate.install_db_stored_procedures(dbo)
-        # Install recommended reports if no reports are currently installed
-        if dbo.query_int("SELECT COUNT(ID) FROM customreport") == 0: asm3.reports.install_recommended_smcom_reports(dbo, o.user)
-        # Update any reports that have newer versions available
-        asm3.reports.update_smcom_reports(dbo, o.user)
-        # News
-        news = asm3.cachedisk.get("news", "news")
-        if news is None:
-            news = asm3.utils.get_asm_news(dbo)
-            asm3.cachedisk.put("news", "news", news, CACHE_ONE_DAY)
         # Welcome dialog
         showwelcome = False
         if asm3.configuration.show_first_time_screen(dbo) and o.session.superuser == 1:
             showwelcome = True
-        # Animal links
+            # If we're showing the first time screen, install recommended reports if there aren't any installed
+            if len(asm3.reports.get_all_report_titles(dbo)) == 0: asm3.reports.install_recommended_smcom_reports(dbo, o.user)
+        # News (text file on disk that is retrieved as part of the batch)
+        news = asm3.utils.get_asm_news(dbo)
+        # Use a 5 minute cache, with a longer cache time of 15 minutes for big databases
+        # on the following calls for links, stats, alerts and the timeline
+        age = 300
+        if dbo.is_large_db: age = 900
+        # Animal links 
         linkmode = asm3.configuration.main_screen_animal_link_mode(dbo)
         linkmax = asm3.configuration.main_screen_animal_link_max(dbo)
         animallinks = []
-        linkname = ""
-        if linkmode == "recentlychanged":
-            linkname = _("Recently Changed", l)
-            animallinks = asm3.animal.get_links_recently_changed(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids)
-        elif linkmode == "recentlyentered":
-            linkname = _("Recently Entered Shelter", l)
-            animallinks = asm3.animal.get_links_recently_entered(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids)
-        elif linkmode == "recentlyadopted":
-            linkname = _("Recently Adopted", l)
-            animallinks = asm3.animal.get_links_recently_adopted(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids)
-        elif linkmode == "recentlyfostered":
-            linkname = _("Recently Fostered", l)
-            animallinks = asm3.animal.get_links_recently_fostered(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids)
+        if linkmode == "adoptable":
+            animallinks = asm3.animal.get_links_adoptable(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
         elif linkmode == "longestonshelter":
-            linkname = _("Longest On Shelter", l)
-            animallinks = asm3.animal.get_links_longest_on_shelter(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids)
-        elif linkmode == "adoptable":
-            linkname = _("Up for adoption", l)
-            animallinks = asm3.publishers.base.get_animal_data(dbo, limit=linkmax)
-        # Users and roles, active users
-        usersandroles = asm3.users.get_users_and_roles(dbo)
-        activeusers = asm3.users.get_active_users(dbo)
-        # Messages
-        mess = asm3.lookups.get_messages(dbo, o.session.user, o.session.roles, o.session.superuser)
-        # Diary Notes
-        dm = None
-        if asm3.configuration.all_diary_home_page(dbo): 
-            dm = asm3.diary.get_uncompleted_upto_today(dbo, "", includecreatedby=False, offset=-365)
-        else:
-            dm = asm3.diary.get_uncompleted_upto_today(dbo, o.user, includecreatedby=False, offset=-365)
-        # Use a 2 minute cache, with a longer cache time of 15 minutes for big databases
-        # on the following complex calls for stats, alerts and the timeline
-        age = 120
-        if dbo.is_large_db: age = 900
+            animallinks = asm3.animal.get_links_longest_on_shelter(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
+        elif linkmode == "recentlyadopted":
+            animallinks = asm3.animal.get_links_recently_adopted(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
+        elif linkmode == "recentlychanged":
+            animallinks = asm3.animal.get_links_recently_changed(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
+        elif linkmode == "recentlyentered":
+            animallinks = asm3.animal.get_links_recently_entered(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
+        elif linkmode == "recentlyfostered":
+            animallinks = asm3.animal.get_links_recently_fostered(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
         # Alerts
         alerts = []
         if asm3.configuration.show_alerts_home_page(dbo):
@@ -1208,16 +1179,29 @@ class main(JSONEndpoint):
         timeline = []
         if asm3.configuration.show_timeline_home_page(dbo):
             timeline = asm3.animal.get_timeline(dbo, 10, age=age)
+        # Users and roles - for adding messages
+        usersandroles = asm3.users.get_users_and_roles(dbo)
+        # Active users for display (all done through memory cache)
+        activeusers = asm3.users.get_active_users(dbo)
+        # Messages
+        mess = asm3.lookups.get_messages(dbo, o.session.user, o.session.roles, o.session.superuser)
+        # Diary Notes
+        dm = None
+        if asm3.configuration.all_diary_home_page(dbo): 
+            dm = asm3.diary.get_uncompleted_upto_today(dbo, "", includecreatedby=False, offset=-365)
+        else:
+            dm = asm3.diary.get_uncompleted_upto_today(dbo, o.user, includecreatedby=False, offset=-365)
         asm3.al.debug("main for '%s', %d diary notes, %d messages" % (o.user, len(dm), len(mess)), "code.main", dbo)
         return {
+            "age": age,
             "showwelcome": showwelcome,
             "build": BUILD,
             "noreload": o.post["b"] != "", 
             "news": news,
-            "dbmessage": dbmessage,
+            "dbupdated": dbupdated,
             "version": get_version(),
             "emergencynotice": emergency_notice(),
-            "linkname": linkname,
+            "linkmode": linkmode,
             "activeusers": activeusers,
             "usersandroles": usersandroles,
             "alerts": alerts,
@@ -4203,6 +4187,14 @@ class maint_undelete(JSONEndpoint):
             tablename, iid = i.split(":")
             asm3.audit.undelete(o.dbo, asm3.utils.cint(iid), tablename)
 
+class maint_update_reports(ASMEndpoint):
+    url = "maint_update_reports"
+
+    def content(self, o):
+        self.content_type("text/plain")
+        self.cache_control(0)
+        return "%s reports updated" % asm3.reports.update_smcom_reports(o.dbo, o.user)
+
 class medical(JSONEndpoint):
     url = "medical"
     get_permissions = asm3.users.VIEW_MEDICAL
@@ -4861,6 +4853,7 @@ class onlineform_json(ASMEndpoint):
 
     def content(self, o):
         self.content_type("application/json")
+        self.cache_control(0)
         return asm3.onlineform.get_onlineform_json(o.dbo, o.post.integer("formid"))
 
 class onlineform_view(ASMEndpoint):

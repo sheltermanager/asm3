@@ -140,6 +140,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#json-recent-changes-and-xml-recent-changes">json_recent_changes and xml_recent_changes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-shelter-animals-and-xml-shelter-animals">json_shelter_animals and xml_shelter_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#media-file">media_file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#online-form-html-and-online-form-json">online_form_html and online_form_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rss-timeline">rss_timeline</a></li>
 </ul>
 </li>
@@ -570,7 +571,7 @@ size under <span class="menuselection">Publishing -&gt; Set Publishing Options -
 </div>
 <div class="section" id="animal-view">
 <h2>animal_view<a class="headerlink" href="#animal-view" title="Permalink to this headline">¶</a></h2>
-<p class="rubric">Cache time: 2 minutes</p>
+<p class="rubric">Cache time: 10 minutes</p>
 <p>Returns a webpage with information for one adoptable animal, constructed from the
 animalview HTML publishing template (editable at <span class="menuselection">Publishing -&gt;
 Edit HTML publishing templates</span>). Pass the id of the animal:</p>
@@ -849,7 +850,7 @@ iframes.</p>
 </div>
 <div class="section" id="animal-view-adoptable-html">
 <h2>animal_view_adoptable_html<a class="headerlink" href="#animal-view-adoptable-html" title="Permalink to this headline">¶</a></h2>
-<p class="rubric">Cache time: 2 minutes</p>
+<p class="rubric">Cache time: 10 minutes</p>
 <p>Returns a complete HTML document that references animal_view_adoptable_js to
 show a list of adoptable animals. It looks for an HTML template called
 “animalviewadoptables” and falls back to a basic internal template if it does
@@ -1073,6 +1074,14 @@ the correct MIME type for the data:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=media_file&amp;username=user&amp;password=letmein&amp;mediaid=52
 </pre></div>
 </div>
+</div>
+<div class="section" id="online-form-html-and-online-form-json">
+<h2>online_form_html and online_form_json<a class="headerlink" href="#online-form-html-and-online-form-json" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Cache time: 30 minutes</p>
+<p>Responds with the online form HTML or JSON for the id given.</p>
+<blockquote>
+<div><p><a class="reference external" href="http://localhost:5000/service?method=online_form_html&amp;id=1">http://localhost:5000/service?method=online_form_html&amp;id=1</a></p>
+</div></blockquote>
 </div>
 <div class="section" id="rss-timeline">
 <h2>rss_timeline<a class="headerlink" href="#rss-timeline" title="Permalink to this headline">¶</a></h2>

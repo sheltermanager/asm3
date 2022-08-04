@@ -133,46 +133,40 @@ $.fn.table = function(options) {
     let defaults = {
         css:        'asm-table',
         filter:     false,
-        style_td:   true,
         row_hover:  true,
         row_select: true,
         sticky_header: true
     };
     options = $.extend(defaults, options);
     return this.each(function () {
-        let input = $(this);
-        input.addClass(options.css);
+        let tbl = $(this);
+        tbl.addClass(options.css);
         if (options.row_hover) {
-            input.on("mouseover", "tr", function() {
-                $(this).children("td").addClass("ui-state-hover");
+            tbl.on("mouseover", "tbody tr", function() {
+                $(this).addClass("ui-state-hover");
             });
-            input.on("mouseout", "tr", function() {
-                $(this).children("td").removeClass("ui-state-hover");
+            tbl.on("mouseout", "tbody tr", function() {
+                $(this).removeClass("ui-state-hover");
             });
         }
         if (options.row_select) {
-            input.on("click", "input:checkbox", function() {
+            tbl.on("click", "input:checkbox", function() {
                 if ($(this).is(":checked")) {
-                    $(this).closest("tr").find("td").addClass("ui-state-highlight");
+                    $(this).closest("tr").addClass("ui-state-highlight");
                 }
                 else {
-                    $(this).closest("tr").find("td").removeClass("ui-state-highlight");
+                    $(this).closest("tr").removeClass("ui-state-highlight");
                 }
             });
         }
-        input.find("th").addClass("ui-state-default");
-        if (options.style_td) {
-            input.prop("data-style-td", "true");
-            input.find("td").addClass("ui-widget-content");
-        }
-        input.addClass("tablesorter");
+        tbl.addClass("tablesorter");
         let tablewidgets = [];
         if (options.filter) { tablewidgets.push("filter"); }
         if (options.sticky_header && config.bool("StickyTableHeaders")) { 
             //tablewidgets.push("stickyHeaders"); Use native browser support via position: sticky instead
-            input.find("th").addClass("asm-table-sticky-header");
+            tbl.find("th").addClass("asm-table-sticky-header");
         }
-        input.tablesorter({
+        tbl.tablesorter({
             sortColumn: options.sortColumn,
             sortList: options.sortList,
             widgets: tablewidgets,

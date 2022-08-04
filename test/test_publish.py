@@ -189,6 +189,12 @@ class TestPublish(unittest.TestCase):
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         assert asm3.publishers.rescuegroups.RescueGroupsPublisher(base.get_dbo(), pc).processAnimal(a) is not None
 
+    # sacmetrics
+    def test_sacmetrics(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        asm3.publishers.sacmetrics.SACMetricsPublisher(base.get_dbo(), pc).analyseMonths()
+        asm3.publishers.sacmetrics.SACMetricsPublisher(base.get_dbo(), pc).processStats(8, 2022, "Canines")
+
     # savourlife
     def test_savourlife(self):
         pc = asm3.publishers.base.PublishCriteria()

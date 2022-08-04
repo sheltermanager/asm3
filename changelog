@@ -1,6 +1,25 @@
 46
 ================
 
+04/08/22 Add live release rate to stats on home page
+04/08/22 Fix bug where adoptable=1 can be set when location does not match
+04/08/22 Final refactor/speed improvements to home screen
+03/08/22 Visual indicator of cache time used on home screen sections
+03/08/22 "Up for adoption" home page links should obey sites/location filters
+03/08/22 News checks should be part of the batch with no blocking of home page
+03/08/22 Report update checks need only be done as part of cron/daily
+03/08/22 New movements with a return category not displaying correctly in the table
+03/08/22 Reports, use longer cache ttl, move onto smcom servers for performance
+02/08/22 Re-check animal status when animal is unlinked from a reservation
+01/08/22 Implement and unit test new SAC Metrics API publisher #1153
+30/07/22 Thumbnail style incorrect in transport book, person find/image broken
+30/07/22 Thumbnails not styled correctly and missing sex in medical/test/vacc books
+30/07/22 Improve look of tables by applying row styles
+30/07/22 Fix OOM bug on iPhone due to needlessly applying table cell styles
+29/07/22 Replace use of Object.assign with common.copy_object due to error reports
+29/07/22 Increase cache times for animal_view and online_form_* #1158
+28/07/22 Add caller and victim as columns for incident results #1157
+28/07/22 Auto disable shelterview drag and drop for mobile devices
 27/07/22 Show complete address for people under general search
 27/07/22 Add maint_db_dump_dbfs_files cron task
 24/07/22 Merge/fix PR #1151, add Sponsor flag and Sponsor/Vet fields (Roman Safovich)

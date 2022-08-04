@@ -58,6 +58,12 @@ def daily(dbo):
             ttask(dbupdate.install_db_sequences, dbo)
             ttask(dbupdate.install_db_stored_procedures, dbo)
 
+        # Update news file
+        ttask(utils.get_asm_news, dbo)
+
+        # Update any reports that have newer versions available
+        ttask(extreports.update_smcom_reports, dbo)
+
         # Update on shelter and foster animal location fields
         ttask(animal.update_on_shelter_animal_statuses, dbo)
         ttask(animal.update_foster_animal_statuses, dbo)

@@ -2,7 +2,7 @@ Total Length of Stay by Outcome
 ###
 Statistics
 ###
-33718/PostgreSQL rev01
+33718/PostgreSQL rev02
 ###
 Shows the total time on shelter (all stays) by outcome for animals entering the shelter between two dates
 ###
@@ -12,7 +12,7 @@ SELECT
 a.AnimalName, a.ShelterCode,
 s.SpeciesName, e.ReasonName, a.BreedName,
 a.DateBroughtIn, a.TotalTimeOnShelter, a.TotalDaysOnShelter, a.AnimalAge, 
-CASE WHEN a.ActiveMovementType = 2 THEN Null ELSE a.ActiveMovementDate END AS DateExit,
+CASE WHEN a.ActiveMovementType = 2 THEN Null WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate ELSE a.ActiveMovementDate END AS DateExit
 CASE WHEN a.DeceasedDate Is Not Null THEN 'Deceased' WHEN a.Archived = 0 THEN 'On Shelter' ELSE mt.MovementType END AS Outcome
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID

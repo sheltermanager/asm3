@@ -20,8 +20,8 @@ $(function() {
                 "version":  controller.version.substring(0, controller.version.indexOf(" ")),
                 "user":     asm.user,
                 "org":      config.str("Organisation")});
-            s += "</div>";
-            s += "</div>";
+            s += '</div>';
+            s += '</div>';
             return s;
         },
 
@@ -372,8 +372,17 @@ $(function() {
 
         render_animal_links: function() {
             let s = [];
-            if (controller.linkname != "none" && controller.animallinks.length > 0) {
-                s.push('<p class="asm-menu-category">' + controller.linkname + '</p>');
+            let linknames = { "recentlychanged": _("Recently Changed"), 
+                "recentlyentered": _("Recently Entered Shelter"),
+                "recentlyadopted": _("Recently Adopted"), 
+                "recentlyfostered": _("RecentlyFostered"),
+                "adoptable": _("Up for adoption"), 
+                "longestonshelter": _("Longest On Shelter") };
+            let callout = '<span class="asm-callout" id="callout-linkstale">';
+            callout +=  _("Some data on this screen may be up to {0} minutes out of date.").replace("{0}", (controller.age / 60));
+            callout += '</span>';
+            if (controller.linkmode != "none" && controller.animallinks.length > 0) {
+                s.push('<p class="asm-menu-category">' + linknames[controller.linkmode] + ' ' + callout + '</p>');
                 $.each(controller.animallinks, function(i, a) {
                     // Skip this one if the animal is deceased and we aren't showing them
                     if (!config.bool("ShowDeceasedHomePage") && a.DECEASEDDATE) { return; }
@@ -557,7 +566,10 @@ $(function() {
                     _("{plural3} animals were dead on arrival")
                     ]) + '<br />';
             }
-
+            if (stats.LIVERELEASE > 0 && common.has_permission("vamv") && config.bool("ShowDeceasedHomePage")) {
+                let rate = Math.round((stats.LIVERELEASE / (stats.ENTERED + stats.BEGINCOUNT)) * 100);
+                s += html.icon("report") + ' ' + _("{0}% live release rate").replace("{0}", rate) + "<br />";
+            }
             if (stats.DONATIONS > 0 && common.has_permission("ovod") && config.bool("ShowFinancialHomePage")) {
                 s += html.icon("donation") + ' ' + 
                     _("{0} received").replace("{0}", format.currency(stats.DONATIONS))
@@ -714,8 +726,8 @@ $(function() {
 
         bind: function () {
 
-            if (controller.dbmessage != "") {
-                header.show_info(controller.dbmessage);
+            if (controller.dbupdated != "") {
+                header.show_info( _("Updated database to version {0}").replace("{0}", controller.dbupdated) );
             }
 
             if (asm.smcom && asm.smcomexpiry) {

@@ -435,6 +435,24 @@ def get_smcom_reports_update(dbo):
     reports = get_smcom_reports(dbo)
     return [ x for x in reports if x.UPDATE ]
 
+def get_smcom_reports_txt(dbo):
+    """
+    Retrieves the reports.txt file with standard report definitions from sheltermanager.com
+    """
+    try:
+        if asm3.smcom.active():
+            s = asm3.smcom.get_reports()
+        else:
+            REPORTS_CACHE_TTL = 86400
+            s = asm3.cachedisk.get("reports", "reports")
+            if s is None:
+                s = asm3.utils.get_url(URL_REPORTS)["response"]
+                asm3.cachedisk.put("reports", "reports", s, REPORTS_CACHE_TTL)
+        asm3.al.debug("read reports.txt (%s bytes)" % len(s), "reports.get_smcom_reports_txt", dbo)
+        return s
+    except Exception as err:
+        asm3.al.error("Failed reading reports_txt: %s" % err, "reports.get_smcom_reports_txt", dbo)
+
 def get_smcom_reports(dbo):
     """
     Returns the full collection of sheltermanager.com reports
@@ -446,12 +464,8 @@ def get_smcom_reports(dbo):
     [ { TITLE, CATEGORY, DATABASE, DESCRIPTION, LOCALE, SQL, HTML, SUBREPORTS, INSTALLABLE, REVISION, UPDATE} ]
     """
     l = dbo.locale
-    REPORTS_CACHE_TTL = 60 * 5 # 5 minutes
-    reps = asm3.cachedisk.get("reports", "reports")
-    if reps is None:
-        s = asm3.utils.get_url(URL_REPORTS)["response"]
-        reps = s.split("&&&")
-        asm3.cachedisk.put("reports", "reports", reps, REPORTS_CACHE_TTL)
+    s = get_smcom_reports_txt(dbo)
+    reps = s.split("&&&")
     reports = []
     loaded = get_all_report_titles(dbo)
     def version_ok(rdb):
@@ -604,7 +618,7 @@ def install_smcom_report_file(dbo, user, filename):
             d.REVISION = asm3.utils.cint(d.DATABASE[revp+3:revp+5])
         install_smcom_report(dbo, user, d)
 
-def update_smcom_reports(dbo, user):
+def update_smcom_reports(dbo, user="system"):
     """
     Finds all reports with available updates and updates them.
     Note that only the SQL, HTML and Revision are updated.
@@ -622,6 +636,7 @@ def update_smcom_reports(dbo, user):
             install_smcom_subreports(dbo, user, r)
             updated += 1
     asm3.al.info(f"updated {updated} reports.", "reports.update_smcom_reports", dbo)
+    return updated
 
 def get_reports_menu(dbo, roleids = "", superuser = False):
     """

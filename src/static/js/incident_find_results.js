@@ -50,22 +50,29 @@ $(function() {
             $.each(controller.rows, function(ir, row) {
                 h.push("<tr>");
                 $.each(incident_find_results.column_names(), function(ic, name) {
-                  let formatted = '';
+                    let formatted = '';
                     h.push("<td>");
-                    if(name == "Suspect"){
-                      if (row.OWNERNAME1) { formatted += html.person_link(row.OWNERID, row.OWNERNAME1); }
-                      if (row.OWNERNAME2) { formatted += '<br/>' + html.person_link(row.OWNER2ID, row.OWNERNAME2); }
-                      if (row.OWNERNAME3) { formatted += '<br/>' + html.person_link(row.OWNER3ID, row.OWNERNAME3); }
-                    } else {
-                      let value = "";
-                      if (row.hasOwnProperty(name.toUpperCase())) {
-                          value = row[name.toUpperCase()];
-                      }
-                      formatted = incident_find_results.format_column(row, name, value, controller.additional);
-                      if (name == "IncidentNumber") { 
-                        let link = "<span style=\"white-space: nowrap\"><a href=\"incident?id=" + row.ID + "\">";
-                        formatted = link + formatted + "</a></span>";
-                      }
+                    if (name == "Suspect") {
+                        if (row.OWNERNAME1) { formatted += html.person_link(row.OWNERID, row.OWNERNAME1); }
+                        if (row.OWNERNAME2) { formatted += '<br/>' + html.person_link(row.OWNER2ID, row.OWNERNAME2); }
+                        if (row.OWNERNAME3) { formatted += '<br/>' + html.person_link(row.OWNER3ID, row.OWNERNAME3); }
+                    } 
+                    else if (name == "Caller") {
+                        formatted += html.person_link(row.CALLERID, row.CALLERNAME);
+                    }
+                    else if (name == "Victim") {
+                        formatted += html.person_link(row.VICTIMID, row.VICTIMNAME);
+                    }
+                    else {
+                        let value = "";
+                        if (row.hasOwnProperty(name.toUpperCase())) {
+                            value = row[name.toUpperCase()];
+                        }
+                        formatted = incident_find_results.format_column(row, name, value, controller.additional);
+                        if (name == "IncidentNumber") { 
+                            let link = "<span style=\"white-space: nowrap\"><a href=\"incident?id=" + row.ID + "\">";
+                            formatted = link + formatted + "</a></span>";
+                        }
                     }
                     h.push(formatted);
                     h.push("</td>");
@@ -124,12 +131,14 @@ $(function() {
                 "JurisdictionName":  _("Jurisdiction"),
                 "LocationName":  _("Location"),
                 "Suspect":  _("Suspect"),
+                "Victim":  _("Victim"),
                 "DispatchDateTime":  _("Dispatch Date/Time"),
                 "RespondedDateTime":  _("Responded Date/Time"),
                 "DispatchedACO":  _("ACO"),
                 "FollowupDateTime":  _("Followup Date"),
                 "CompletedDate":  _("Completion Date"),
                 "CompletedName": _("Completion Type"),
+                "Caller": _("Caller"),
                 "CallNotes":  _("Notes")
             };
             if (labels.hasOwnProperty(name)) {

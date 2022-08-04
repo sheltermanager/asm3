@@ -106,14 +106,13 @@ def get_transport_query(dbo):
         "t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode, t.PickupCountry, " \
         "t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode, t.DropoffCountry, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
-        "a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, x.Sex, " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, a.Sex, " \
         "st.Name AS StatusName " \
         "FROM animaltransport t " \
         "INNER JOIN transporttype tt ON tt.ID = t.TransportTypeID " \
         "LEFT OUTER JOIN lkstransportstatus st ON st.ID = t.Status " \
         "LEFT OUTER JOIN animal a ON t.AnimalID = a.ID " \
         "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
-        "LEFT OUTER JOIN lksex x ON x.ID = a.Sex " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN owner d ON t.DriverOwnerID = d.ID " \
         "LEFT OUTER JOIN owner p ON t.PickupOwnerID = p.ID " \
@@ -465,7 +464,7 @@ def update_movement_from_form(dbo, username, post):
 
     # If the animal ID has been changed, update the previous animal to prevent
     # its active movement being left pointing at this movement
-    if post.integer("animal") > 0 and post.integer("animal") != oanimalid:
+    if oanimalid > 0 and post.integer("animal") != oanimalid:
         asm3.animal.update_animal_status(dbo, oanimalid)
 
     if post.integer("animal") > 0:

@@ -900,6 +900,12 @@ class Database(object):
         """
         return f"LOWER({expr1}) LIKE {expr2}"
 
+    def sql_interval(self, columnname, number, sign="+", units="months"):
+        """
+        Used to add or a subtract a period to/from a date column 
+        """
+        return f"{columnname} {sign} INTERVAL '{number} {units}'"
+
     def sql_placeholders(self, l):
         """ Writes enough ? placeholders for items in l """
         return ",".join('?'*len(l))

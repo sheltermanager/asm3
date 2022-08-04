@@ -100,7 +100,15 @@ def get_login_url(dbo):
     """
     Returns the login url for this account
     """
-    return "http://%s.sheltermanager.com" % dbo.alias or dbo.database
+    return "https://sheltermanager.com/login/%s" % dbo.alias or dbo.database
+
+def get_reports():
+    """
+    Returns the reports.txt file
+    """
+    with open("/root/asmdb/reports.txt", "r", encoding="utf-8") as f:
+        s = f.read()
+    return s
 
 def go_smcom_my(dbo):
     """

@@ -5,7 +5,7 @@ import asm3.configuration
 import asm3.i18n
 import asm3.users
 
-from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, MULTIPLE_DATABASES, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
+from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, DISK_CACHE, MULTIPLE_DATABASES, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
 
 import web062 as web
 
@@ -1104,11 +1104,25 @@ def md5_hash_hex(s):
     return s
 
 def get_asm_news(dbo):
-    """ Retrieves the latest asm news from the server """
+    """ 
+    Retrieves the latest asm news from the server and stores it locally in the disk cache.
+    Does nothing if the file was already updated in the last 24 hours.
+    We do this manually instead of using the cachedisk module so that there isn't a cache expiry
+    period and if everything fails, it will just do nothing and use the last file.
+    """
     try:
-        s = get_url(URL_NEWS)["response"]
-        asm3.al.debug("Retrieved ASM news, got %d bytes" % len(s), "utils.get_asm_news", dbo)
-        return s
+        NEWS_FILE = os.path.join(DISK_CACHE, "news.txt")
+        # If the file exists and has been retrieved in the last 24 hours, just return it instead
+        ONE_DAY_AGO = time.time() - 86400
+        if os.path.exists(NEWS_FILE) and os.path.getmtime(NEWS_FILE) > ONE_DAY_AGO:
+            s = read_text_file(NEWS_FILE)
+            asm3.al.debug("Loaded cached news.txt, got %d bytes" % len(s), "utils.get_asm_news", dbo)
+            return s
+        else:
+            s = get_url(URL_NEWS, timeout=10)["response"]
+            asm3.al.debug("Retrieved ASM news from %s, got %d bytes" % (URL_NEWS, len(s)), "utils.get_asm_news", dbo)
+            write_text_file(NEWS_FILE, s)
+            return s
     except Exception as err:
         asm3.al.error("Failed reading ASM news: %s" % err, "utils.get_asm_news", dbo)
 
@@ -1201,6 +1215,13 @@ def post_xml(url, xml, headers = {}):
     Posts an XML document to a URL. xml can be str or bytes.
     """
     return post_data(url, xml, contenttype="text/xml", headers=headers)
+
+def put_json(url, json, headers = {}):
+    """
+    Posts a JSON document to a URL with the PUT HTTP method. json can be str or bytes
+    """
+    return post_data(url, json, contenttype="application/json", httpmethod="PUT", headers=headers)
+
 
 def urlencode(d):
     """

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-07-25 07:58+0000\n"
+"POT-Creation-Date: 2022-08-04 11:19+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -2234,7 +2234,7 @@ msgstr ""
 msgid "Call between two dates"
 msgstr ""
 
-#: mobile.py incident.js incident_new.js
+#: html.py mobile.py incident.js incident_find_results.js incident_new.js
 msgid "Caller"
 msgstr ""
 
@@ -7526,7 +7526,7 @@ msgstr ""
 msgid "Long term"
 msgstr ""
 
-#: code.py options.js
+#: main.js options.js
 msgid "Longest On Shelter"
 msgstr ""
 
@@ -9998,19 +9998,19 @@ msgstr ""
 msgid "Received today"
 msgstr ""
 
-#: code.py options.js
+#: main.js options.js
 msgid "Recently Adopted"
 msgstr ""
 
-#: code.py options.js
+#: main.js options.js
 msgid "Recently Changed"
 msgstr ""
 
-#: code.py options.js
+#: main.js options.js
 msgid "Recently Entered Shelter"
 msgstr ""
 
-#: code.py options.js
+#: options.js
 msgid "Recently Fostered"
 msgstr ""
 
@@ -10020,6 +10020,10 @@ msgstr ""
 
 #: search.py
 msgid "Recently deceased shelter animals (last 30 days)."
+msgstr ""
+
+#: main.js
+msgid "RecentlyFostered"
 msgstr ""
 
 #: dbupdate.py
@@ -11709,6 +11713,10 @@ msgstr ""
 msgid ""
 "Some browsers allow shortcut keys, press SHIFT+ALT+A in Chrome or Firefox to "
 "jump to the animal adoption screen."
+msgstr ""
+
+#: main.js
+msgid "Some data on this screen may be up to {0} minutes out of date."
 msgstr ""
 
 #: common_tableform.js
@@ -13572,7 +13580,7 @@ msgstr ""
 msgid "Unsuitable Accomodation"
 msgstr ""
 
-#: code.py configuration.py options.js header.js
+#: configuration.py main.js options.js header.js
 msgid "Up for adoption"
 msgstr ""
 
@@ -13614,7 +13622,7 @@ msgstr ""
 msgid "Updated"
 msgstr ""
 
-#: code.py
+#: main.js
 msgid "Updated database to version {0}"
 msgstr ""
 
@@ -13887,7 +13895,7 @@ msgstr ""
 msgid "Vet Visit"
 msgstr ""
 
-#: mobile.py incident.js incident_new.js
+#: html.py mobile.py incident.js incident_find_results.js incident_new.js
 msgid "Victim"
 msgstr ""
 
@@ -15046,6 +15054,10 @@ msgstr ""
 
 #: animal.py
 msgid "{0} {1}: trial adoption to {2}"
+msgstr ""
+
+#: main.js
+msgid "{0}% live release rate"
 msgstr ""
 
 #: staff_rota.js

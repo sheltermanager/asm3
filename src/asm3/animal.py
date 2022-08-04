@@ -797,15 +797,19 @@ def get_stats(dbo, age=120):
     if statperiod == "thisyear": statdate = first_of_year(statdate)
     if statperiod == "alltime": statdate = datetime.datetime(1900, 1, 1)
     return dbo.query_named_params("SELECT " \
-        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DateBroughtIn >= :from) AS Entered," \
+        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND MostRecentEntryDate >= :from) AS Entered," \
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType = :adoption) AS Adopted," \
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType = :reclaimed) AS Reclaimed, " \
         "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType = :transfer) AS Transferred, " \
+        "(SELECT COUNT(*) FROM adoption WHERE MovementDate >= :from AND MovementType IN (1,3,5,7)) AS LiveRelease, " \
         "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON animal.ID=adoption.AnimalID WHERE SpeciesID <> 2 AND MovementDate >= :from AND MovementType = :released) AS Released, " \
         "(SELECT COUNT(*) FROM adoption INNER JOIN animal ON animal.ID=adoption.AnimalID WHERE SpeciesID = 2 AND MovementDate >= :from AND MovementType = :released) AS TNR, " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 1) AS PTS, " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 0 AND IsDOA = 0) AS Died, " \
         "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= :from AND PutToSleep = 0 AND IsDOA = 1) AS DOA, " \
+        "(SELECT COUNT(*) FROM animal WHERE NonShelterAnimal = 0 AND IsDOA = 0 AND DateBroughtIn < :from AND " \
+            "NOT EXISTS(SELECT MovementDate FROM adoption WHERE MovementDate < :from AND " \
+            "(ReturnDate Is Null OR ReturnDate >= :from) AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)) AS BeginCount, " \
         "(SELECT SUM(Donation) - COALESCE(SUM(VATAmount), 0) - COALESCE(SUM(Fee), 0) FROM ownerdonation WHERE Date >= :from) AS Donations, " \
         "(SELECT SUM(CostAmount) FROM animalcost WHERE CostDate >= :from) + " \
             "(SELECT SUM(Cost) FROM animalvaccination WHERE DateOfVaccination >= :from) + " \
@@ -1632,42 +1636,61 @@ def get_has_animal_on_shelter(dbo):
     """
     return dbo.query_int("SELECT COUNT(ID) FROM animal a WHERE a.Archived = 0") > 0
 
-def get_links_recently_adopted(dbo, limit = 5, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_links_adoptable(dbo, limit=5, locationfilter="", siteid=0, visibleanimalids="", cachetime=120):
+    """
+    Returns link info for animals who are adoptable
+    """
+    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    return get_animals_ids(dbo, "a.AnimalName", 
+        "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Adoptable = 1 %s ORDER BY AnimalName" % \
+        locationfilter, limit=limit, cachetime=cachetime)
+
+def get_links_recently_adopted(dbo, limit=5, locationfilter="", siteid=0, visibleanimalids="", cachetime=120):
     """
     Returns link info for animals who were recently adopted
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
-    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 1 %s ORDER BY ActiveMovementDate DESC" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", 
+        "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 1 %s ORDER BY ActiveMovementDate DESC" % \
+        locationfilter, limit=limit, cachetime=cachetime)
 
-def get_links_recently_fostered(dbo, limit = 5, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_links_recently_fostered(dbo, limit=5, locationfilter="", siteid=0, visibleanimalids="", cachetime=120):
     """
     Returns link info for animals who were recently fostered
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
-    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 2 %s ORDER BY ActiveMovementDate DESC" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.ActiveMovementDate DESC", 
+        "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 2 %s ORDER BY ActiveMovementDate DESC" % \
+        locationfilter, limit=limit, cachetime=cachetime)
 
-def get_links_recently_changed(dbo, limit = 5, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_links_recently_changed(dbo, limit=5, locationfilter="", siteid=0, visibleanimalids="", cachetime=120):
     """
     Returns link info for animals who have recently been changed.
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, whereprefix=True)
-    return get_animals_ids(dbo, "a.LastChangedDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation %s ORDER BY LastChangedDate DESC" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.LastChangedDate DESC", 
+        "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation %s ORDER BY LastChangedDate DESC" % \
+        locationfilter, limit=limit, cachetime=cachetime)
 
-def get_links_recently_entered(dbo, limit = 5, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_links_recently_entered(dbo, limit=5, locationfilter="", siteid=0, visibleanimalids="", cachetime=120):
     """
     Returns link info for animals who recently entered the shelter.
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
-    return get_animals_ids(dbo, "a.MostRecentEntryDate DESC", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate DESC" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.MostRecentEntryDate DESC", 
+        "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate DESC" % \
+        locationfilter, limit=limit, cachetime=cachetime)
 
-def get_links_longest_on_shelter(dbo, limit = 5, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_links_longest_on_shelter(dbo, limit=5, locationfilter="", siteid=0, visibleanimalids="", cachetime=120):
     """
     Returns link info for animals who have been on the shelter the longest
     """
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
-    return get_animals_ids(dbo, "a.MostRecentEntryDate", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate" % locationfilter, limit=limit, cachetime=120)
+    return get_animals_ids(dbo, "a.MostRecentEntryDate", 
+        "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate" % \
+        locationfilter, limit=limit, cachetime=cachetime)
 
-def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid = 0, visibleanimalids = "", whereprefix = False, andprefix = False, andsuffix = False):
+def get_location_filter_clause(locationfilter="", tablequalifier="", siteid=0, visibleanimalids="", whereprefix=False, andprefix=False, andsuffix=False):
     """
     Returns a where clause that excludes animals not in the locationfilter
     locationfilter: comma separated list of internallocation IDs and special values
@@ -1717,7 +1740,7 @@ def get_location_filter_clause(locationfilter = "", tablequalifier = "", siteid 
         c = " WHERE %s" % c
     return c
 
-def is_animal_in_location_filter(a, locationfilter, siteid = 0, visibleanimalids = ""):
+def is_animal_in_location_filter(a, locationfilter, siteid=0, visibleanimalids=""):
     """
     Returns True if the animal a is included in the locationfilter or site given
     """

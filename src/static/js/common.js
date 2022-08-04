@@ -222,6 +222,19 @@ const common = {
     },
 
     /**
+     * Copies all properties from source to target, returning target
+     * Basically Object.assign
+     */
+    copy_object: function(target, source) {
+        for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+                target[key] = source[key];
+            }
+        }
+        return target;
+    },
+
+    /**
      * Returns true if v is an array
      */
     is_array: function(v) {
@@ -254,13 +267,14 @@ const common = {
 
     browser_is: {
         android: navigator.userAgent.match(/Android/i) != null,
-        ios:     navigator.userAgent.match(/iPod|iPad/i) != null,
+        ios:     navigator.userAgent.match(/iPod|iPad|iPhone/i) != null,
         chrome:  navigator.userAgent.match(/Chrome/i) != null,
+        edge:    navigator.userAgent.match(/Edge/i) != null,
         safari:  navigator.userAgent.match(/Safari/i) != null,
         opera:   navigator.userAgent.match(/Opera/i) != null,
         ie610:   navigator.userAgent.match(/MSIE/i) != null,
         ie11:    navigator.userAgent.match(/rv:11.0/) != null,
-        mobile:  navigator.userAgent.match(/Android|iPhone|iPod|BlackBerry|Windows Phone|webOS/i) != null
+        mobile:  navigator.userAgent.match(/Android|iPhone|iPod|iPad|BlackBerry|Windows Phone|webOS/i) != null
     },
 
     /**
