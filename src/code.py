@@ -1130,21 +1130,19 @@ class main(JSONEndpoint):
         # and get into an endless loop of reloads
         if o.post["b"] != "": self.reload_config()
         # Database update checks
-        dbmessage = ""
+        dbupdated = ""
         if asm3.dbupdate.check_for_updates(dbo):
-            newversion = asm3.dbupdate.perform_updates(dbo)
-            if newversion != "":
-                dbmessage = _("Updated database to version {0}", l).format(str(newversion))
+            dbupdated = asm3.dbupdate.perform_updates(dbo)
         if asm3.dbupdate.check_for_view_seq_changes(dbo):
             asm3.dbupdate.install_db_views(dbo)
             asm3.dbupdate.install_db_sequences(dbo)
             asm3.dbupdate.install_db_stored_procedures(dbo)
-        # Install recommended reports if no reports are currently installed
-        if dbo.query_int("SELECT COUNT(ID) FROM customreport") == 0: asm3.reports.install_recommended_smcom_reports(dbo, o.user)
         # Welcome dialog
         showwelcome = False
         if asm3.configuration.show_first_time_screen(dbo) and o.session.superuser == 1:
             showwelcome = True
+            # If we're showing the first time screen, install recommended reports if there aren't any installed
+            if len(asm3.reports.get_all_report_titles(dbo)) == 0: asm3.reports.install_recommended_smcom_reports(dbo, o.user)
         # News (text file on disk that is retrieved as part of the batch)
         news = asm3.utils.get_asm_news(dbo)
         # Use a 5 minute cache, with a longer cache time of 15 minutes for big databases
@@ -1155,25 +1153,18 @@ class main(JSONEndpoint):
         linkmode = asm3.configuration.main_screen_animal_link_mode(dbo)
         linkmax = asm3.configuration.main_screen_animal_link_max(dbo)
         animallinks = []
-        linkname = ""
-        if linkmode == "recentlychanged":
-            linkname = _("Recently Changed", l)
+        if linkmode == "adoptable":
+            animallinks = asm3.animal.get_links_adoptable(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
+        elif linkmode == "longestonshelter":
+            animallinks = asm3.animal.get_links_longest_on_shelter(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
+        elif linkmode == "recentlyadopted":
+            animallinks = asm3.animal.get_links_recently_adopted(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
+        elif linkmode == "recentlychanged":
             animallinks = asm3.animal.get_links_recently_changed(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
         elif linkmode == "recentlyentered":
-            linkname = _("Recently Entered Shelter", l)
             animallinks = asm3.animal.get_links_recently_entered(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
-        elif linkmode == "recentlyadopted":
-            linkname = _("Recently Adopted", l)
-            animallinks = asm3.animal.get_links_recently_adopted(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
         elif linkmode == "recentlyfostered":
-            linkname = _("Recently Fostered", l)
             animallinks = asm3.animal.get_links_recently_fostered(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
-        elif linkmode == "longestonshelter":
-            linkname = _("Longest On Shelter", l)
-            animallinks = asm3.animal.get_links_longest_on_shelter(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
-        elif linkmode == "adoptable":
-            linkname = _("Up for adoption", l)
-            animallinks = asm3.animal.get_links_adoptable(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
         # Alerts
         alerts = []
         if asm3.configuration.show_alerts_home_page(dbo):
@@ -1208,10 +1199,10 @@ class main(JSONEndpoint):
             "build": BUILD,
             "noreload": o.post["b"] != "", 
             "news": news,
-            "dbmessage": dbmessage,
+            "dbupdated": dbupdated,
             "version": get_version(),
             "emergencynotice": emergency_notice(),
-            "linkname": linkname,
+            "linkmode": linkmode,
             "activeusers": activeusers,
             "usersandroles": usersandroles,
             "alerts": alerts,

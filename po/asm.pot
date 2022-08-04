@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-08-03 19:35+0000\n"
+"POT-Creation-Date: 2022-08-04 09:10+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -7526,7 +7526,7 @@ msgstr ""
 msgid "Long term"
 msgstr ""
 
-#: code.py options.js
+#: main.js options.js
 msgid "Longest On Shelter"
 msgstr ""
 
@@ -9998,19 +9998,19 @@ msgstr ""
 msgid "Received today"
 msgstr ""
 
-#: code.py options.js
+#: main.js options.js
 msgid "Recently Adopted"
 msgstr ""
 
-#: code.py options.js
+#: main.js options.js
 msgid "Recently Changed"
 msgstr ""
 
-#: code.py options.js
+#: main.js options.js
 msgid "Recently Entered Shelter"
 msgstr ""
 
-#: code.py options.js
+#: options.js
 msgid "Recently Fostered"
 msgstr ""
 
@@ -10020,6 +10020,10 @@ msgstr ""
 
 #: search.py
 msgid "Recently deceased shelter animals (last 30 days)."
+msgstr ""
+
+#: main.js
+msgid "RecentlyFostered"
 msgstr ""
 
 #: dbupdate.py
@@ -11712,7 +11716,7 @@ msgid ""
 msgstr ""
 
 #: main.js
-msgid "Some data shown on this screen may be up to {0} minutes out of date."
+msgid "Some data on this screen may be up to {0} minutes out of date."
 msgstr ""
 
 #: common_tableform.js
@@ -13576,7 +13580,7 @@ msgstr ""
 msgid "Unsuitable Accomodation"
 msgstr ""
 
-#: code.py configuration.py options.js header.js
+#: configuration.py main.js options.js header.js
 msgid "Up for adoption"
 msgstr ""
 
@@ -13618,7 +13622,7 @@ msgstr ""
 msgid "Updated"
 msgstr ""
 
-#: code.py
+#: main.js
 msgid "Updated database to version {0}"
 msgstr ""
 

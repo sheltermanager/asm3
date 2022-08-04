@@ -372,11 +372,17 @@ $(function() {
 
         render_animal_links: function() {
             let s = [];
+            let linknames = { "recentlychanged": _("Recently Changed"), 
+                "recentlyentered": _("Recently Entered Shelter"),
+                "recentlyadopted": _("Recently Adopted"), 
+                "recentlyfostered": _("RecentlyFostered"),
+                "adoptable": _("Up for adoption"), 
+                "longestonshelter": _("Longest On Shelter") };
             let callout = '<span class="asm-callout" id="callout-linkstale">';
-            callout +=  _("Some data shown on this screen may be up to {0} minutes out of date.").replace("{0}", (controller.age / 60));
+            callout +=  _("Some data on this screen may be up to {0} minutes out of date.").replace("{0}", (controller.age / 60));
             callout += '</span>';
-            if (controller.linkname != "none" && controller.animallinks.length > 0) {
-                s.push('<p class="asm-menu-category">' + controller.linkname + ' ' + callout + '</p>');
+            if (controller.linkmode != "none" && controller.animallinks.length > 0) {
+                s.push('<p class="asm-menu-category">' + linknames[controller.linkmode] + ' ' + callout + '</p>');
                 $.each(controller.animallinks, function(i, a) {
                     // Skip this one if the animal is deceased and we aren't showing them
                     if (!config.bool("ShowDeceasedHomePage") && a.DECEASEDDATE) { return; }
@@ -717,8 +723,8 @@ $(function() {
 
         bind: function () {
 
-            if (controller.dbmessage != "") {
-                header.show_info(controller.dbmessage);
+            if (controller.dbupdated != "") {
+                header.show_info( _("Updated database to version {0}").replace("{0}", controller.dbupdated) );
             }
 
             if (asm.smcom && asm.smcomexpiry) {
