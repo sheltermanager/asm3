@@ -262,7 +262,7 @@ class S3Storage(DBFSStorage):
                 self._s3client().put_object(Bucket=bucket, Key=key, Body=body)
                 asm3.al.debug("put_object(s3://%s/%s) %s bytes in %0.2fs" % (bucket, key, len(body), time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
             except Exception as err2:
-                asm3.al.error("retry fail: %s" % err2, "dbfs.S3Storage._s3_put_object", self.dbo)
+                asm3.al.error("retry failed (%s): %s" % (key, err2), "dbfs.S3Storage._s3_put_object", self.dbo)
                 asm3.utils.send_error_email()
 
     def url_prefix(self):
