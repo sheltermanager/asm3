@@ -160,21 +160,30 @@ DBFS_STORE = get_string("dbfs_store", "database")
 # It must exist and ASM must have write permissions. It should never end with a /
 DBFS_FILESTORAGE_FOLDER = get_string("dbfs_filestorage_folder", "/home/robin/tmp/dbfs")
 
-# DBFS_STORE = s3: The S3 bucket to store media in and credentials/URL
+# DBFS_STORE = s3: The S3 bucket and credentials, endpoint url is only necessary for non-AWS
+# If no credentials are set, $HOME/.aws/credentials or env vars will be used.
 DBFS_S3_BUCKET = get_string("dbfs_s3_bucket", "")
-# DBFS_STORE = s3: Credentials, if these aren't set, $HOME/.aws/credentials or env will be used
 DBFS_S3_ACCESS_KEY_ID = get_string("dbfs_s3_access_key_id", "")
 DBFS_S3_SECRET_ACCESS_KEY = get_string("dbfs_s3_secret_access_key", "")
-# DBFS_STORE = s3: endpoint URL if you are using an S3 compatible service rather than AWS S3
 DBFS_S3_ENDPOINT_URL = get_string("dbfs_s3_endpoint_url", "")
+
+# If you are migrating away from one S3 provider to another, you can set the old provider's
+# credentials here. The DBFS module will look in the new provider first, and if it doesn't
+# find an object, look in the old provider and copy it to the new one.
+# This allows you to switch to another provider straight away. You can then optionally
+# use something like rclone to move objects from the old provider to the new one. 
+DBFS_S3_MIGRATE_BUCKET = get_string("dbfs_s3_migrate_bucket", "")
+DBFS_S3_MIGRATE_ACCESS_KEY_ID = get_string("dbfs_s3_migrate_access_key_id", "")
+DBFS_S3_MIGRATE_SECRET_ACCESS_KEY = get_string("dbfs_s3_migrate_secret_access_key", "")
+DBFS_S3_MIGRATE_ENDPOINT_URL = get_string("dbfs_s3_migrate_endpoint_url", "")
 
 # The directory to use to cache elements on disk. Must already exist
 # as the application will not attempt to create it.
 DISK_CACHE = get_string("disk_cache", "/tmp/asm_disk_cache")
 
-# Cache results of the most common, less important queries for
-# a short period (60 seconds) in the disk cache to help performance. 
-# These queries include shelterview animals and main screen links) 
+# Allow some non-critical queries to be cached for short periods in the 
+# disk cache to help with performance. The majority of these are queries for
+# to populate the home page so that it can load quickly. 
 CACHE_COMMON_QUERIES = get_boolean("cache_common_queries", False)
 
 # Cache service call responses on the server side according
