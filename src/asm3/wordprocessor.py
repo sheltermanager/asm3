@@ -155,7 +155,7 @@ def additional_field_tags(dbo, fields, prefix="", depth=0):
             val = af["ANIMALNAME"]
         if af["FIELDTYPE"] in person_types:
             val = af["OWNERNAME"]
-            p = asm3.person.get_person(dbo, int(af["VALUE"]))
+            p = asm3.person.get_person(dbo, asm3.utils.cint(af["VALUE"]))
             if p is not None: tags = append_tags(tags, additional_field_person_tags(dbo, p, prefix, af["FIELDNAME"].upper(), depth))
         tags[prefix + af["FIELDNAME"].upper()] = val
     return tags

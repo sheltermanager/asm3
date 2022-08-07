@@ -1,6 +1,7 @@
 46
 ================
 
+05/08/22 Code to be able to migrate to another S3 compatible provider
 04/08/22 Event module start and wp tags (Roman Safovich) #1161
 04/08/22 Add live release rate to stats on home page
 04/08/22 Fix bug where adoptable=1 can be set when location does not match

@@ -567,7 +567,8 @@ $(function() {
                     ]) + '<br />';
             }
             if (stats.LIVERELEASE > 0 && common.has_permission("vamv") && config.bool("ShowDeceasedHomePage")) {
-                let rate = Math.round((stats.LIVERELEASE / (stats.ENTERED + stats.BEGINCOUNT)) * 100);
+                // let rate = Math.round((stats.LIVERELEASE / (stats.ENTERED + stats.BEGINCOUNT)) * 100); // more "correct" but will lag until period end due to inventory
+                let rate = Math.round((stats.LIVERELEASE / (stats.LIVERELEASE + stats.LOSTSTOLEN + stats.DIED + stats.PTS)) * 100);
                 s += html.icon("report") + ' ' + _("{0}% live release rate").replace("{0}", rate) + "<br />";
             }
             if (stats.DONATIONS > 0 && common.has_permission("ovod") && config.bool("ShowFinancialHomePage")) {

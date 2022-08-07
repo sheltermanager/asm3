@@ -6,6 +6,7 @@ import asm3.utils
 
 from asm3.sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER
 from asm3.sitedefs import DBFS_S3_BUCKET, DBFS_S3_ACCESS_KEY_ID, DBFS_S3_SECRET_ACCESS_KEY, DBFS_S3_ENDPOINT_URL
+from asm3.sitedefs import DBFS_S3_MIGRATE_BUCKET, DBFS_S3_MIGRATE_ACCESS_KEY_ID, DBFS_S3_MIGRATE_SECRET_ACCESS_KEY, DBFS_S3_MIGRATE_ENDPOINT_URL
 
 import mimetypes
 import os, sys, threading, time
@@ -134,9 +135,22 @@ class FileStorage(DBFSStorage):
 class S3Storage(DBFSStorage):
     """ Storage class for putting media in Amazon S3 """
     dbo = None
+    access_key_id = ""
+    secret_access_key = ""
+    endpoint_url = ""
+    bucket = ""
     
-    def __init__(self, dbo):
+    def __init__(self, dbo, access_key_id="", secret_access_key="", endpoint_url="", bucket=""):
         self.dbo = dbo
+        self.access_key_id = DBFS_S3_ACCESS_KEY_ID
+        self.secret_access_key = DBFS_S3_SECRET_ACCESS_KEY
+        self.endpoint_url = DBFS_S3_ENDPOINT_URL
+        self.bucket = DBFS_S3_BUCKET
+        if access_key_id != "": self.access_key_id = access_key_id
+        if secret_access_key != "": self.secret_access_key = secret_access_key
+        if bucket != "": self.bucket = bucket
+        if endpoint_url != "": self.endpoint_url = endpoint_url 
+        if self.endpoint_url == "aws": self.endpoint_url = "" # use "aws" in config files for aws default
 
     def _cache_key(self, url):
         """ Calculates a cache key for url """
@@ -152,21 +166,24 @@ class S3Storage(DBFSStorage):
     def _s3client(self):
         """ Gets an s3 client.
             Creates a new boto3 session each time as the default one is not thread safe
-            This does has a significant performance impact. There's a boto issue to make sessions thread safe in future.
+            This does have a significant performance impact. There's a boto issue to make sessions thread safe in future.
             To use the default session, self.s3client = boto3.client("s3")
             We avoid some of the performance problems by using our disk cache and
-            forcing operations onto a background thread.
+            forcing put/delete operations onto a background thread.
         """
         import boto3
         session = boto3.Session() 
-        if DBFS_S3_ENDPOINT_URL != "" and DBFS_S3_ACCESS_KEY_ID != "" and DBFS_S3_SECRET_ACCESS_KEY != "":
-            return session.client("s3", endpoint_url=DBFS_S3_ENDPOINT_URL, aws_access_key_id=DBFS_S3_ACCESS_KEY_ID, aws_secret_access_key=DBFS_S3_SECRET_ACCESS_KEY)
-        elif DBFS_S3_ACCESS_KEY_ID != "" and DBFS_S3_SECRET_ACCESS_KEY != "":
-            return session.client("s3", aws_access_key_id=DBFS_S3_ACCESS_KEY_ID, aws_secret_access_key=DBFS_S3_SECRET_ACCESS_KEY)
+        # Non-AWS S3 provider with an endpoint url
+        if self.endpoint_url != "" and self.access_key_id != "" and self.secret_access_key != "":
+            return session.client("s3", endpoint_url=self.endpoint_url, aws_access_key_id=self.access_key_id, aws_secret_access_key=self.secret_access_key)
+        # AWS S3
+        elif self.access_key_id != "" and self.secret_access_key != "":
+            return session.client("s3", aws_access_key_id=self.access_key_id, aws_secret_access_key=self.secret_access_key)
+        # Use $HOME/.aws/credentials
         else:
             return session.client("s3")
 
-    def get(self, dbfsid, url):
+    def get(self, dbfsid, url, migrate=True):
         """ Returns the file data for url, reads through the disk cache """
         cachekey = self._cache_key(url)
         cachettl = self._cache_ttl(url)
@@ -175,16 +192,25 @@ class S3Storage(DBFSStorage):
             return cachedata
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
         try:
-            asm3.al.debug("GET: %s" % object_key, "S3Storage.get", self.dbo)
+            asm3.al.debug("GET: s3://%s/%s" % (self.bucket, object_key), "S3Storage.get", self.dbo)
             x = time.time()
-            response = self._s3client().get_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
-            asm3.al.debug("get_object in %0.2fs" % (time.time() - x), "dbfs.S3Storage.get", self.dbo)
+            response = self._s3client().get_object(Bucket=self.bucket, Key=object_key)
             body = response["Body"].read()
+            asm3.al.debug("get_object(s3://%s/%s), %s bytes in %0.2fs" % (self.bucket, object_key, len(body), time.time() - x), "dbfs.S3Storage.get", self.dbo)
             asm3.cachedisk.put(cachekey, self.dbo.database, body, cachettl)
             return body
         except Exception as err:
-            asm3.al.error(str(err), "dbfs.S3Storage.get", self.dbo)
-            raise DBFSError("Failed retrieving from S3: %s" % err)
+            # We couldn't retrieve the object. Retrieve it from S3 migrate credentials if we have them.
+            # On success, copy the migrated object to our current S3 storage on a background thread.
+            if migrate and DBFS_S3_MIGRATE_ACCESS_KEY_ID != "":
+                asm3.al.debug("%s not found in '%s', migrating from '%s'" % (object_key, self.endpoint_url, DBFS_S3_MIGRATE_ENDPOINT_URL), "dbfs.S3Storage.get", self.dbo)
+                migrate = S3Storage(self.dbo, DBFS_S3_MIGRATE_ACCESS_KEY_ID, DBFS_S3_MIGRATE_SECRET_ACCESS_KEY, DBFS_S3_MIGRATE_ENDPOINT_URL, DBFS_S3_MIGRATE_BUCKET)
+                body = migrate.get(dbfsid, url, migrate=False)
+                threading.Thread(target=self._s3_put_object, args=[self.bucket, object_key, body]).start()
+                return body
+            else:
+                asm3.al.error(str(err), "dbfs.S3Storage.get", self.dbo)
+                raise DBFSError("Failed retrieving from S3 (endpoint=%s): %s" % (self.endpoint_url, err))
 
     def put(self, dbfsid, filename, filedata):
         """ Stores the file data (clearing the Content column) and returns the URL """
@@ -192,10 +218,10 @@ class S3Storage(DBFSStorage):
         object_key = "%s/%s%s" % (self.dbo.database, dbfsid, extension)
         url = "s3:%s%s" % (dbfsid, extension)
         try:
-            asm3.al.debug("PUT: %s" % object_key, "S3Storage.put", self.dbo)
+            asm3.al.debug("PUT: s3://%s/%s" % (self.bucket, object_key), "S3Storage.put", self.dbo)
             asm3.cachedisk.put(self._cache_key(url), self.dbo.database, filedata, self._cache_ttl(filename))
             self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
-            threading.Thread(target=self._s3_put_object, args=[DBFS_S3_BUCKET, object_key, filedata]).start()
+            threading.Thread(target=self._s3_put_object, args=[self.bucket, object_key, filedata]).start()
             return url
         except Exception as err:
             asm3.al.error(str(err), "dbfs.S3Storage.put", self.dbo)
@@ -205,9 +231,9 @@ class S3Storage(DBFSStorage):
         """ Deletes the file data """
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
         try:
-            asm3.al.debug("DELETE: %s" % object_key, "S3Storage.delete", self.dbo)
+            asm3.al.debug("DELETE: s3://%s/%s" % (self.bucket, object_key), "S3Storage.delete", self.dbo)
             asm3.cachedisk.delete(self._cache_key(url), self.dbo.database)
-            threading.Thread(target=self._s3_delete_object, args=[DBFS_S3_BUCKET, object_key]).start()
+            threading.Thread(target=self._s3_delete_object, args=[self.bucket, object_key]).start()
         except Exception as err:
             asm3.al.error(str(err), "dbfs.S3Storage.delete", self.dbo)
             raise DBFSError("Failed deleting from S3: %s" % err)
@@ -217,7 +243,7 @@ class S3Storage(DBFSStorage):
         try:
             x = time.time()
             self._s3client().delete_object(Bucket=bucket, Key=key)
-            asm3.al.debug("delete_object in %0.2fs" % (time.time() - x), "dbfs.S3Storage._s3_delete_object", self.dbo)
+            asm3.al.debug("delete_object(s3://%s/%s) in %0.2fs" % (bucket, key, time.time() - x), "dbfs.S3Storage._s3_delete_object", self.dbo)
         except Exception as err:
             asm3.al.error(str(err), "dbfs.S3Storage._s3_delete_object", self.dbo)
 
@@ -226,7 +252,7 @@ class S3Storage(DBFSStorage):
         try:
             x = time.time()
             self._s3client().put_object(Bucket=bucket, Key=key, Body=body)
-            asm3.al.debug("put_object in %0.2fs" % (time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
+            asm3.al.debug("put_object(s3://%s/%s) %s bytes in %0.2fs" % (bucket, key, len(body), time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
         except Exception as err:
             asm3.al.error(str(err), "dbfs.S3Storage._s3_put_object", self.dbo)
             try:
@@ -234,9 +260,9 @@ class S3Storage(DBFSStorage):
                 # If that fails, send an error email to the admin as this is a lost file and critical.
                 time.sleep(10)
                 self._s3client().put_object(Bucket=bucket, Key=key, Body=body)
-                asm3.al.debug("put_object in %0.2fs" % (time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
+                asm3.al.debug("put_object(s3://%s/%s) %s bytes in %0.2fs" % (bucket, key, len(body), time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
             except Exception as err2:
-                asm3.al.error("retry fail: %s" % err2, "dbfs.S3Storage._s3_put_object", self.dbo)
+                asm3.al.error("retry failed (%s): %s" % (key, err2), "dbfs.S3Storage._s3_put_object", self.dbo)
                 asm3.utils.send_error_email()
 
     def url_prefix(self):

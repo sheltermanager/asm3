@@ -1818,10 +1818,15 @@ def send_error_email():
     tb = sys.exc_info()
     error_name = tb[0]
     error_value = tb[1]
+    path = ""
+    try:
+        path = web.ctx.path # we use this call from async S3 methods where web.ctx will be None
+    except:
+        pass
     msg = MIMEMultipart("mixed")
     msg["From"] = Header(ADMIN_EMAIL)
     msg["To"] = Header(ADMIN_EMAIL)
-    msg["Subject"] = Header(f"{error_name}: {error_value} ({web.ctx.path})")
+    msg["Subject"] = Header(f"{error_name}: {error_value} ({path})")
     msg.attach(MIMEText(str(web.djangoerror()), "html"))
     _send_email(msg, ADMIN_EMAIL, [ADMIN_EMAIL], exceptions=False)
 
