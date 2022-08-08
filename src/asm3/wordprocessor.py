@@ -137,7 +137,7 @@ def separate_results(rows, f):
         result.append(orows)
     return result
 
-def additional_field_tags(dbo, fields, prefix="", depth=0):
+def additional_field_tags(dbo, fields, prefix="", depth=2):
     """ Process additional fields and returns them as tags
         depth - the level of the recursion for resolving additional person links in an additional person
     """
