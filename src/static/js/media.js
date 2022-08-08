@@ -1091,7 +1091,7 @@ $(function() {
             $(".mode-icon").show();
             $("#tableform thead").hide();
             $("#tableform").css({ "text-align": "center" });
-            $("#tableform tr").css({ "display": "inline-block", "vertical-align": "bottom" });
+            $("#tableform tr").css({ "display": "inline-block", "vertical-align": "bottom", "border": "1px none transparent" });
             $(".asm-media-thumb img").css({
                 "min-width": "85px",
                 "min-height": "85px",

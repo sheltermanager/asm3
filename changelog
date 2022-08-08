@@ -1,6 +1,7 @@
 46
 ================
 
+08/08/22 Fix hover style for media icon mode (stops icons moving around)
 05/08/22 Code to be able to migrate to another S3 compatible provider
 04/08/22 Event module start and wp tags (Roman Safovich) #1161
 04/08/22 Add live release rate to stats on home page
