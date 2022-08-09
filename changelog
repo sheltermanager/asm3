@@ -1,6 +1,7 @@
 46
 ================
 
+09/08/22 maint endpoint for sac metrics, integration tests #1153
 09/08/22 First draft of UI/config for SAC Metrics publisher #1153
 08/08/22 Restrict simple search to 30 chars (attacks with long queries)
 08/08/22 Fix hover style for media icon mode (stops icons moving around)

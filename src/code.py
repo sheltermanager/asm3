@@ -4162,6 +4162,27 @@ class maint_petfinder(ASMEndpoint):
         except Exception as err:
             return str(err)
 
+class maint_sac_metrics(ASMEndpoint):
+    url = "maint_sac_metrics"
+
+    def content(self, o):
+        """ Forces an upload of a particular month, year and species to SAC """
+        self.content_type("text/plain")
+        self.cache_control(0)
+        year = o.post.integer("year")
+        month = o.post.integer("month")
+        species = o.post["species"]
+        if year == 0 or month == 0 or species == "": 
+            raise asm3.utils.ASMValidationError("Endpoint requires parameters for year (int), month (int) and species (str, from SAC_SPECIES - eg: canine, feline)")
+        try:
+            pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(o.dbo))
+            p = asm3.publishers.sacmetrics.SACMetricsPublisher(o.dbo, pc)
+            data = p.processStats(month, year, species)
+            p.putData(data)
+            return "\n".join(p.logBuffer)
+        except Exception as err:
+            return str(err)
+
 class maint_time(ASMEndpoint):
     url = "maint_time"
 
