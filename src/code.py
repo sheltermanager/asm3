@@ -69,8 +69,8 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
     MAP_PROVIDER_KEY, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
     PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, QR_IMG_SRC, \
-    RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, \
-    SAVOURLIFE_URL,SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
+    RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SAC_METRICS_URL, \
+    SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
     SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL
 
 CACHE_ONE_HOUR = 3600
@@ -5600,10 +5600,12 @@ class publish_options(JSONEndpoint):
             "haspetcademy": PETCADEMY_FTP_HOST != "",
             "haspetlink": PETLINK_BASE_URL != "",
             "haspetslocated": PETSLOCATED_FTP_USER != "",
+            "hassac": SAC_METRICS_URL != "",
             "hassmarttag": SMARTTAG_FTP_USER != "",
             "hasvetenvoy": False, # Disabled. VETENVOY_US_BASE_URL != "",
             "haspetrescue": PETRESCUE_URL != "",
             "hassavourlife": SAVOURLIFE_URL != "",
+            "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
             "styles": asm3.template.get_html_template_names(dbo),
             "users": asm3.users.get_users(dbo)

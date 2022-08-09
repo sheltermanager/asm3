@@ -21,6 +21,7 @@ $(function() {
                 '<li class="localeau haspetrescue"><a href="#tab-petrescue">PetRescue</a></li>', 
                 '<li class="localeau hassavourlife"><a href="#tab-savourlife">SavourLife</a></li>', 
                 '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups</a></li>',
+                '<li class="localeus hassac"><a href="#tab-sac">ShelterAnimalsCount</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
                 '<li class="localeus hasakcreunite"><a href="#tab-akcreunite">AKC Reunite Microchips</a></li>',
@@ -637,6 +638,35 @@ $(function() {
             ].join("\n");
         },
 
+        render_sac: function() {
+            return [
+                '<div id="tab-sac">',
+                html.info('Signup at <a href="http://shelteranimalscount.org">shelteranimalscount.org</a>'),
+                '<p><input id="enabledsac" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledsac">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="sacstray">Stray Category</label></td>',
+                '<td><select id="sacstray" class="asm-selectbox cfg" data="SACStrayCategory">',
+                html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
+                '</select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="sacsurrender">Surrender Category</label></td>',
+                '<td><select id="sacsurrender" class="asm-selectbox cfg" data="SACSurrenderCategory">',
+                html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
+                '</select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="sactnr">TNR Category</label></td>',
+                '<td><select id="sactnr" class="asm-selectbox cfg" data="SACTNRCategory">',
+                html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
+                '</select></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_savourlife: function() {
             return [
                 '<div id="tab-savourlife">',
@@ -1014,6 +1044,7 @@ $(function() {
                 this.render_htmlftp(),
                 this.render_petfinder(),
                 this.render_petrescue(), 
+                this.render_sac(), 
                 this.render_savourlife(), 
                 this.render_petslocated(),
                 this.render_rescuegroups(),
@@ -1154,6 +1185,7 @@ $(function() {
             if (!controller.haspetlink) { $(".haspetlink").hide(); }
             if (!controller.haspetrescue) { $(".haspetrescue").hide(); }
             if (!controller.haspetslocated) { $(".haspetslocated").hide(); }
+            if (!controller.hassac) { $(".hassac").hide(); }
             if (!controller.hassavourlife) { $(".hassavourlife").hide(); }
             if (!controller.hasvetenvoy) { $(".hasvetenvoy").hide(); }
             if (!controller.hassmarttag) { $(".hassmarttag").hide(); }
