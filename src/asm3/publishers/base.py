@@ -503,7 +503,7 @@ class PublishCriteria(object):
             if s.startswith("extension"): self.extension = self.get_str(s)
             if s.startswith("scaleimages"): self.scaleImages = self.get_str(s)
             if s.startswith("thumbnailsize"): self.thumbnailSize = self.get_str(s)
-            if s.startswith("includelocations") and len(self.get_str(s)) > 0: self.internalLocations = self.get_str(s).split(",")
+            if s.startswith("includelocations") and len(self.get_str(s)) > 0 and self.get_str(s) != "null": self.internalLocations = self.get_str(s).split(",")
             if s.startswith("publishdirectory"): self.publishDirectory = self.get_str(s)
             if s.startswith("childadultsplit"): self.childAdultSplit = self.get_int(s)
 

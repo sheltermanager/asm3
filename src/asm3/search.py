@@ -120,6 +120,7 @@ def search(dbo, session, q):
     searchsort = asm3.configuration.search_sort(dbo)
 
     q = q.replace("'", "`")
+    q = asm3.utils.truncate(q, 30) # limit search queries to 30 chars
 
     # Allow the sort to be overridden
     if q.find("sort:") != -1:

@@ -296,6 +296,7 @@ class SimpleSearchBuilder(object):
     def __init__(self, dbo, q):
         self.dbo = dbo
         self.q = q.replace("'", "`")
+        self.q = truncate(self.q, 30) # limit search queries to 30 chars
         self.qlike = f"%{self.q.lower()}%"
         self.ors = []
         self.values = []

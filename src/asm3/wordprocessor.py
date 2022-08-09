@@ -137,7 +137,7 @@ def separate_results(rows, f):
         result.append(orows)
     return result
 
-def additional_field_tags(dbo, fields, prefix="", depth=0):
+def additional_field_tags(dbo, fields, prefix="", depth=2):
     """ Process additional fields and returns them as tags
         depth - the level of the recursion for resolving additional person links in an additional person
     """
@@ -162,7 +162,7 @@ def additional_field_tags(dbo, fields, prefix="", depth=0):
 
 def additional_field_person_tags(dbo, p, prefix, fieldname, depth):
     """
-    Generate a tag dictionary for human being (person, sponsor, vet)
+    Generate a tag dictionary for a person record (person, sponsor, vet)
     p - person record
     prefix - the tag prefix to use
     fieldname - the name of the additional field

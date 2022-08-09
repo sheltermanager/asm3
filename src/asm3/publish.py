@@ -72,6 +72,12 @@ PUBLISHER_LIST["pr"] = {
     "locales":  "en_AU",
     "sub24hour": True
 }
+PUBLISHER_LIST["sac"] = {
+    "label":    "Publish to shelteranimalscount.org",
+    "class":    asm3.publishers.sacmetrics.SACMetricsPublisher,
+    "locales":  "en",
+    "sub24hour": False
+}
 PUBLISHER_LIST["sl"] = {
     "label":    "Publish to Savour-Life.com.au",
     "class":    asm3.publishers.savourlife.SavourLifePublisher,

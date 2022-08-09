@@ -107,22 +107,32 @@ class SACMetricsPublisher(AbstractPublisher):
                     return
 
                 # Run our query for every species set, and post the JSON to SAC
-                for specieslist in [ "Canines", "Felines", "Rabbits", "Equines", "Small Mammals", "Farm Animals", "Birds", "Reptiles" ]:
+                for specieslist in [ "canine", "feline", "rabbit", "equine", "small_mammal", "bird", "farm_animal", "reptile_or_amphibian" ]:
                     data = self.processStats(month, year, specieslist)
-                    url = SAC_METRICS_URL 
-                    jsondata = asm3.utils.json(data)
-                    self.log("Sending PUT to %s to upsert metrics: %s" % (url, jsondata))
-                    r = asm3.utils.put_json(url, jsondata)
-                    if r["status"] != 200:
-                        self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                    else:
-                        self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                        self.logSuccess("Processed: year=%s, month=%s, species=%s" % ( year, month, specieslist ))
+                    self.putData(data)
               
             except Exception as err:
                 self.logError("Failed processing period: year=%s, month=%s '%s'" % (year, month, err), sys.exc_info())
 
         self.cleanup()
+
+    def putData(self, data):
+        """ Sends the data (obj tree) to SAC """
+        try:
+            url = SAC_METRICS_URL 
+            year = data["recordYear"]
+            month = data["recordMonth"]
+            speciesname = data["species"]
+            jsondata = asm3.utils.json(data)
+            self.log("Sending PUT to %s to upsert metrics: \n\n%s\n" % (url, jsondata))
+            r = asm3.utils.put_json(url, jsondata)
+            if r["status"] != 200:
+                self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+            else:
+                self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                self.logSuccess("Processed: year=%s, month=%s, species=%s" % ( year, month, speciesname ))
+        except Exception as err:
+            self.logError("Failed processing period: year=%s, month=%s, species=%s '%s'" % (year, month, speciesname, err), sys.exc_info())
 
     def processStats(self, month, year, speciesname):
         """ Given a month, year and a key from SAC_SPECIES, produces the list of 
@@ -206,9 +216,9 @@ class SACMetricsPublisher(AbstractPublisher):
             },
             "organization": {
                 "externalId": dbo.database,
-                "incorporationDate": "",
+                "incorporationDate": "2020-01-01", # TODO: We do not have this info, but it is required by SAC
                 "location": {
-                    "id": "",
+                    "id": "1", # TODO: Again, we don't know what this is
                     "type": "",
                     "name": asm3.configuration.organisation_address(dbo),
                     "city": asm3.configuration.organisation_town(dbo),
@@ -217,7 +227,7 @@ class SACMetricsPublisher(AbstractPublisher):
                     "zipCode": asm3.configuration.organisation_postcode(dbo)
                 },
                 "name": asm3.configuration.organisation(dbo),
-                "vendorName": "Animal Shelter Manager"
+                "vendorName": "Shelter_Manager"
             },
             "outComes": {
                 "liveOutcomes": {
@@ -292,14 +302,14 @@ SAC_SP_BIRDS = "3,14,15,17"
 SAC_SP_REPTILES = "11,12,13"
 
 SAC_SPECIES = {
-    "Canines": SAC_SP_CANINES,
-    "Felines": SAC_SP_FELINES,
-    "Rabbits": SAC_SP_RABBITS,
-    "Equines": SAC_SP_EQUINES,
-    "Small Mammals": SAC_SP_SMALLMAMMALS,
-    "Farm Animals": SAC_SP_FARMANIMALS,
-    "Birds": SAC_SP_BIRDS,
-    "Reptiles": SAC_SP_REPTILES
+    "canine": SAC_SP_CANINES,
+    "feline": SAC_SP_FELINES,
+    "rabbit": SAC_SP_RABBITS,
+    "equine": SAC_SP_EQUINES,
+    "small_mammal": SAC_SP_SMALLMAMMALS,
+    "farm_animal": SAC_SP_FARMANIMALS,
+    "bird": SAC_SP_BIRDS,
+    "reptile_or_amphibian": SAC_SP_REPTILES
 }
 
 SAC_SPECIES_QUERY = """SELECT 
