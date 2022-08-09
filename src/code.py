@@ -251,7 +251,7 @@ class ASMEndpoint(object):
     def check(self, permissions):
         """ Check logged in and permissions (which can be a single permission string or a list/tuple) """
         if not self.session_cookie:
-            session.no_cookie = True # Stop the session object calling setcookie
+            session.send_cookie = False # Stop the session object calling setcookie
         if self.check_logged_in:
             self.check_loggedin(session, web, self.login_url)
         if isinstance(permissions, str):
