@@ -546,7 +546,7 @@ $(function() {
                 $(".tagstock").hide();
             }
             // Autocomplete manufacturers
-            $("#manufacturer").autocomplete({ source: html.decode(controller.manufacturers.split("|")) });
+            $("#manufacturer").autocomplete({ source: html.decode(controller.manufacturers.split("|")), minLength: 3 });
             $("#manufacturer").autocomplete("option", "appendTo", "#dialog-tableform");
 
         },
