@@ -162,7 +162,7 @@ def additional_field_tags(dbo, fields, prefix="", depth=2):
 
 def additional_field_person_tags(dbo, p, prefix, fieldname, depth):
     """
-    Generate a tag dictionary for human being (person, sponsor, vet)
+    Generate a tag dictionary for a person record (person, sponsor, vet)
     p - person record
     prefix - the tag prefix to use
     fieldname - the name of the additional field
