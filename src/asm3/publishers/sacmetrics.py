@@ -135,13 +135,14 @@ class SACMetricsPublisher(AbstractPublisher):
         except Exception as err:
             self.logError("Failed processing period: year=%s, month=%s, species=%s '%s'" % (year, month, speciesname, err), sys.exc_info())
 
-    def processStats(self, month, year, speciesname):
+    def processStats(self, month, year, speciesname, externalId=""):
         """ Given a month, year and a key from SAC_SPECIES, produces the list of 
             SAC Metrics for that combination and returns an object representation
             of the JSON document that will fulfil SAC metricsDataDto
             month: (int)
             year: (int)
             speciesname: (str) from SAC_SPECIES
+            externalId: The externalId value to use, defaults to dbo.database (sm account number) if not set
         """
         dbo = self.dbo
         fromdate = asm3.i18n.parse_date("%Y-%m-%d", "%s-%02d-01" % (year, month))
@@ -216,7 +217,7 @@ class SACMetricsPublisher(AbstractPublisher):
                 }
             },
             "organization": {
-                "externalId": dbo.database,
+                "externalId": asm3.utils.iif(externalId != "", externalId, dbo.database),
                 "name": asm3.configuration.organisation(dbo),
                 "vendorName": "Shelter_Manager"
             },

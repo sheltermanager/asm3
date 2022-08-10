@@ -4172,12 +4172,13 @@ class maint_sac_metrics(ASMEndpoint):
         year = o.post.integer("year")
         month = o.post.integer("month")
         species = o.post["species"]
+        externalid = o.post["externalid"]
         if year == 0 or month == 0 or species == "": 
             raise asm3.utils.ASMValidationError("Endpoint requires parameters for year (int), month (int) and species (str, from SAC_SPECIES - eg: canine, feline)")
         try:
             pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(o.dbo))
             p = asm3.publishers.sacmetrics.SACMetricsPublisher(o.dbo, pc)
-            data = p.processStats(month, year, species)
+            data = p.processStats(month, year, species, externalid)
             p.putData(data)
             return "\n".join(p.logBuffer)
         except Exception as err:
