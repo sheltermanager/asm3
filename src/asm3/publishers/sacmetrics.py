@@ -5,7 +5,7 @@ import asm3.medical
 import asm3.utils
 
 from .base import AbstractPublisher
-from asm3.sitedefs import SAC_METRICS_URL
+from asm3.sitedefs import SAC_METRICS_URL, SAC_METRICS_API_KEY
 
 import sys
 
@@ -124,12 +124,13 @@ class SACMetricsPublisher(AbstractPublisher):
             month = data["recordMonth"]
             speciesname = data["species"]
             jsondata = asm3.utils.json(data)
+            headers = { "apikey": SAC_METRICS_API_KEY }
             self.log("Sending PUT to %s to upsert metrics: \n\n%s\n" % (url, jsondata))
-            r = asm3.utils.put_json(url, jsondata)
+            r = asm3.utils.put_json(url, jsondata, headers=headers)
             if r["status"] != 200:
-                self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                self.logError("HTTP %d, headers: %s\nresponse: %s" % (r["status"], r["headers"], r["response"]))
             else:
-                self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                self.log("HTTP %d, headers: %s\nresponse: %s" % (r["status"], r["headers"], r["response"]))
                 self.logSuccess("Processed: year=%s, month=%s, species=%s" % ( year, month, speciesname ))
         except Exception as err:
             self.logError("Failed processing period: year=%s, month=%s, species=%s '%s'" % (year, month, speciesname, err), sys.exc_info())
@@ -216,16 +217,6 @@ class SACMetricsPublisher(AbstractPublisher):
             },
             "organization": {
                 "externalId": dbo.database,
-                "incorporationDate": "2020-01-01", # TODO: We do not have this info, but it is required by SAC
-                "location": {
-                    "id": "1", # TODO: Again, we don't know what this is
-                    "type": "",
-                    "name": asm3.configuration.organisation_address(dbo),
-                    "city": asm3.configuration.organisation_town(dbo),
-                    "county": "",
-                    "state": asm3.configuration.organisation_county(dbo),
-                    "zipCode": asm3.configuration.organisation_postcode(dbo)
-                },
                 "name": asm3.configuration.organisation(dbo),
                 "vendorName": "Shelter_Manager"
             },

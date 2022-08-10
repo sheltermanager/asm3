@@ -277,6 +277,7 @@ RESCUEGROUPS_FTP_HOST = get_string("rescuegroups_ftp_host", "ftp.rescuegroups.or
 SAVOURLIFE_API_KEY = get_string("savourlife_api_key", "")
 SAVOURLIFE_URL = get_string("savourlife_url", "")
 SAC_METRICS_URL = get_string("sac_metrics_url", "")
+SAC_METRICS_API_KEY = get_string("sac_metrics_api_key", "")
 SMARTTAG_FTP_HOST = get_string("smarttag_ftp_host", "ftp.idtag.com")
 SMARTTAG_FTP_USER = get_string("smarttag_ftp_user", "")
 SMARTTAG_FTP_PASSWORD = get_string("smarttag_ftp_password", "")
