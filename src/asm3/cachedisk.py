@@ -160,8 +160,7 @@ def touch(key, path, newttl = 0):
         if not os.path.exists(fname): return None
 
         # Pull the entry out
-        with open(fname, "rb") as f:
-            o = pickle.load(f)
+        o = _lrunpickle(fname)
 
         # Has the entry expired?
         now = time.time()
@@ -171,8 +170,7 @@ def touch(key, path, newttl = 0):
 
         # Reset the ttl
         o["expires"] = now + newttl
-        with open(fname, "wb") as f:
-            pickle.dump(o, f)
+        _lwpickle(fname, o)
 
         return o["value"]
     except Exception as err:
@@ -193,8 +191,7 @@ def remove_expired(path):
             checked += 1
             try:
                 fpath = os.path.join(root, name)
-                with open(fpath, "rb") as f:
-                    o = pickle.load(f)
+                o = _lrunpickle(fpath)
                 if o["expires"] < time.time():
                     os.unlink(fpath)
                     removed += 1
