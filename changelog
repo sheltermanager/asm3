@@ -1,6 +1,7 @@
 46
 ================
 
+11/08/22 Add Indonesia/English locale
 09/08/22 Require 3 chars to be entered for vacc/manufacturer autocomplete
 09/08/22 maint endpoint for sac metrics, integration tests #1153
 09/08/22 First draft of UI/config for SAC Metrics publisher #1153

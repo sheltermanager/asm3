@@ -2,7 +2,7 @@ Banned Owners
 ###
 Auditing
 ###
-Any
+Any rev02
 ###
 Owners banned from adopting animals.
 ###
@@ -11,7 +11,7 @@ en
 SELECT ownername, owneraddress, ownertown, ownercounty, ownerpostcode, comments, lastchangeddate
 FROM owner 
 WHERE isbanned = 1
-ORDER BY ownername
+ORDER BY ownersurname, ownerforenames
 ###
 $$HEADER
 <table border="1">
@@ -44,7 +44,7 @@ Banned Owners between two dates
 ###
 Auditing
 ###
-Any
+Any rev02
 ###
 Owners banned from adopting animals between two dates (last changed).
 ###
@@ -55,7 +55,7 @@ FROM owner
 WHERE isbanned = 1 
 AND LastChangedDate >= '$ASK DATE Enter the from date$' 
 AND LastChangedDate <= '$ASK DATE Enter the to date$'
-ORDER BY ownername
+ORDER BY ownersurname, ownerforenames
 ###
 $$HEADER
 <table border="1">
