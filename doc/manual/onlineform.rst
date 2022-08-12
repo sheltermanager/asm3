@@ -171,7 +171,7 @@ Incoming Forms
 .. image:: images/onlineform_incoming.png
 
 Selecting a form allows you to intelligently create or attach records from the
-data, or explicitly attach the form to existing records. 
+data, or explicitly attach the form to existing records.
 
 * Attach Person: Prompts for a single person record and attaches a copy of the
   form to them as media.

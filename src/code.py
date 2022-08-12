@@ -4774,6 +4774,15 @@ class onlineform_incoming(JSONEndpoint):
             rv.append("%d|%d|%s|%s" % (collationid, wlid, personname, status))
         return "^$".join(rv)
 
+class onlineform_incoming_csv(ASMEndpoint):
+    url = "onlineform_incoming_csv"
+    get_permissions = asm3.users.VIEW_INCOMING_FORMS
+
+    def content(self, o):
+        self.content_type("text/csv")
+        self.cache_control(0)
+        return asm3.onlineform.get_onlineformincoming_csv(o.dbo, o.post.integer_list("ids"))
+
 class onlineform_incoming_print(ASMEndpoint):
     url = "onlineform_incoming_print"
     get_permissions = asm3.users.VIEW_INCOMING_FORMS

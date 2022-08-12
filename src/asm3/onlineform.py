@@ -533,6 +533,25 @@ def get_onlineformincoming_plain(dbo, collationid):
         h.append("%s: %s\n" % (label, f.VALUE))
     return "\n".join(h)
 
+def get_onlineformincoming_csv(dbo, ids):
+    """
+    Returns all the forms with collationid in ids as CSV data.
+    The form fields are laid out as columns with each form as a row.
+    """
+    rows = []
+    cols = []
+    buildcols = True # build column list from the first collation id
+    for collationid in ids:
+        row = {}
+        for f in get_onlineformincoming_detail(dbo, collationid):
+            if f.VALUE.startswith("RAW::") or f.VALUE.startswith("data:"): continue
+            label = f.LABEL or f.FIELDNAME
+            if buildcols: cols.append(label)
+            row[label] = f.VALUE
+        buildcols = False
+        rows.append(row)
+    return asm3.utils.csv(dbo.locale, rows, cols)
+
 def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images=True, include_system=True, strip_bgimages=True, strip_script=True, strip_style=True):
     """
     Returns a complete printable version of the online form

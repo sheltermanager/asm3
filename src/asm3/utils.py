@@ -991,6 +991,7 @@ def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False, ren
     for r in rows:
         rd = []
         for c in cols:
+            if c not in r: continue # skip if this row doesn't have the column
             if is_currency(c):
                 rd.append(asm3.i18n.format_currency_no_symbol(l, r[c]))
             elif is_date(r[c]):
