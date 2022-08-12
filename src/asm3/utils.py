@@ -752,6 +752,12 @@ def strip_script_tags(s):
     """
     return re.sub(r'<(script).*?</\1>(?s)', '', s)
 
+def strip_style_tags(s):
+    """
+    Removes all style tags from a string
+    """
+    return re.sub(r'<(style).*?</\1>(?s)', '', s)
+
 def strip_non_ascii(s):
     """
     Remove any non-ascii characters from a string str
