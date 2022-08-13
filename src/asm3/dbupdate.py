@@ -39,7 +39,8 @@ VERSIONS = (
     34112, 34200, 34201, 34202, 34203, 34204, 34300, 34301, 34302, 34303, 34304,
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
-    34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605
+    34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
+    34606
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -984,7 +985,13 @@ def sql_structure(dbo):
         fdate("StartDateTime"),
         fdate("EndDateTime"),
         fstr("EventName"),
-        flongstr("EventDescription", True)))
+        flongstr("EventDescription", True),
+        fint("EventOwnerID"),
+        fstr("EventAddress", True),
+        fstr("EventTown", True),
+        fstr("EventCounty", True),
+        fstr("EventPostCode", True),
+        fstr("EventCountry", True) ))
     sql += index("event_StartDateTime", "event", "StartDateTime")
     sql += index("event_EndDateTime", "event", "EndDateTime")
     sql += index("event_EventName", "event", "EventName")
@@ -993,7 +1000,7 @@ def sql_structure(dbo):
         fid(),
         fint("EventID"),
         fint("AnimalID"),
-        fdate("ArrivalDate")))
+        fdate("ArrivalDate") ))
     sql += index("eventanimal_EventAnimalID", "eventanimal", "EventID,AnimalID", True)
     sql += index("eventanimal_ArrivalDate", "eventanimal", "ArrivalDate")
 
@@ -5661,3 +5668,11 @@ def update_34605(dbo):
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (12, '" + _("Vet", l) + "')")
 
 
+def update_34606(dbo):
+    # add columns to event table
+    dbo.execute_dbupdate("ALTER TABLE event ADD EventOwnerID %s NOT NULL" % dbo.type_integer)
+    add_column(dbo, "event", "EventAddress", dbo.type_shorttext)
+    add_column(dbo, "event", "EventTown", dbo.type_shorttext)
+    add_column(dbo, "event", "EventCounty", dbo.type_shorttext)
+    add_column(dbo, "event", "EventPostCode", dbo.type_shorttext)
+    add_column(dbo, "event", "EventCountry", dbo.type_shorttext)
