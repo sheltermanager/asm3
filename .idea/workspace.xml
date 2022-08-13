@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3d2b2233-3ce7-4843-ace4-96bec9d9bf8a" name="Changes" comment="">
+    <list default="true" id="3d2b2233-3ce7-4843-ace4-96bec9d9bf8a" name="Changes" comment="updated the database">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/asm3/dbupdate.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/asm3/dbupdate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/asm3/event.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/asm3/event.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/asm3/sitedefs.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/asm3/sitedefs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/asm3/wordprocessor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/asm3/wordprocessor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/test_code.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/web062/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web062/application.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,13 +35,13 @@
     <setting file="file://$PROJECT_DIR$/src/asm3/movement.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/asm3/person.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/asm3/wordprocessor.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/code.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/js/common.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/js/common_html.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/js/common_personchooser.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/js/header_additional.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/js/header_edit_header.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/pages/manual/wordkeys.html" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/test_code.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/web062/application.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/web062/session.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file:///usr/lib/python3.9/json/__init__.py" root0="SKIP_INSPECTION" />
@@ -148,6 +152,14 @@
       <option name="presentableId" value="Default" />
       <updated>1660052395571</updated>
     </task>
+    <task id="LOCAL-00001" summary="updated the database">
+      <created>1660401001654</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1660401001654</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -160,6 +172,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="updated the database" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated the database" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -193,6 +209,16 @@
           <url>file://$PROJECT_DIR$/../asm3 - new/src/code.py</url>
           <line>2652</line>
           <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/asm3/wordprocessor.py</url>
+          <line>1929</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/asm3/wordprocessor.py</url>
+          <line>2012</line>
+          <option name="timeStamp" value="22" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
