@@ -1602,7 +1602,12 @@ def event_tags(dbo, e):
         "EVENTCREATEDBY":       e["CREATEDBY"],
         "EVENTCREATEDDATE":     python2display(l, e["CREATEDDATE"]),
         "EVENTLASTCHANGEDBY":   e["LASTCHANGEDBY"],
-        "EVENTLASTCHANGEDDATE": python2display(l, e["LASTCHANGEDDATE"])
+        "EVENTLASTCHANGEDDATE": python2display(l, e["LASTCHANGEDDATE"]),
+        "EVENTOWNERNAME":       e["EVENTOWNERNAME"],
+        "EVENTADDRESS":         e["EVENTADDRESS"],
+        "EVENTTOWN":            e["EVENTCOUNTY"],
+        "EVENTPOSTCODE":        e["EVENTPOSTCODE"],
+        "EVENTCOUNTRY":         e["EVENTCOUNTRY"]
     }
 
     tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, e["ID"], "event"), "EVENT"))
