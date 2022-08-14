@@ -1,7 +1,8 @@
 
 def get_event_query(dbo):
-    return "SELECT ev.* " \
-           "FROM event ev"
+    return "SELECT ev.*, owner.OwnerName AS EventOwnerName " \
+           "FROM event ev " \
+           "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID "
 
 def get_event(dbo, eventid):
     """
