@@ -987,7 +987,7 @@ def sql_structure(dbo):
         fstr("EventName"),
         flongstr("EventDescription", True),
         fint("EventOwnerID"),
-        fstr("EventAddress", True),
+        flongstr("EventAddress", True),
         fstr("EventTown", True),
         fstr("EventCounty", True),
         fstr("EventPostCode", True),
@@ -5671,7 +5671,7 @@ def update_34605(dbo):
 def update_34606(dbo):
     # add columns to event table
     dbo.execute_dbupdate("ALTER TABLE event ADD EventOwnerID %s NOT NULL" % dbo.type_integer)
-    add_column(dbo, "event", "EventAddress", dbo.type_shorttext)
+    add_column(dbo, "event", "EventAddress", dbo.type_longtext)
     add_column(dbo, "event", "EventTown", dbo.type_shorttext)
     add_column(dbo, "event", "EventCounty", dbo.type_shorttext)
     add_column(dbo, "event", "EventPostCode", dbo.type_shorttext)

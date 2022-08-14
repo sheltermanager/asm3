@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3d2b2233-3ce7-4843-ace4-96bec9d9bf8a" name="Changes" comment="updated the database">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/asm3/event.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/asm3/event.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/asm3/sitedefs.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/asm3/sitedefs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/asm3/wordprocessor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/asm3/wordprocessor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/test_code.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/web062/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web062/application.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/asm3/dbupdate.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/asm3/dbupdate.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,6 +17,20 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="recentNewPullRequestHead">
+      <RepoCoordinatesHolder>
+        <option name="owner" value="RomanSafovich" />
+        <option name="repository" value="asm3" />
+      </RepoCoordinatesHolder>
+    </option>
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="f98529a7-e709-4479-ad26-1447fe02d901" />
+        <option name="url" value="https://github.com/bobintetley/asm3.git" />
+      </UrlAndAccount>
+    </option>
+  </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/../.cache/JetBrains/PyCharmCE2022.1/python_stubs/-1247971760/builtins.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/RELEASE" root0="FORCE_HIGHLIGHTING" />
@@ -35,13 +44,13 @@
     <setting file="file://$PROJECT_DIR$/src/asm3/movement.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/asm3/person.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/asm3/wordprocessor.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/code.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/js/common.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/js/common_html.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/js/common_personchooser.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/js/header_additional.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/js/header_edit_header.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/static/pages/manual/wordkeys.html" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/test_code.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/web062/application.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/web062/session.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file:///usr/lib/python3.9/json/__init__.py" root0="SKIP_INSPECTION" />
