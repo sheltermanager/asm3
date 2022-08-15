@@ -193,7 +193,7 @@ class TestPublish(unittest.TestCase):
     def test_sacmetrics(self):
         pc = asm3.publishers.base.PublishCriteria()
         asm3.publishers.sacmetrics.SACMetricsPublisher(base.get_dbo(), pc).analyseMonths()
-        asm3.publishers.sacmetrics.SACMetricsPublisher(base.get_dbo(), pc).processStats(8, 2022, "Canines")
+        asm3.publishers.sacmetrics.SACMetricsPublisher(base.get_dbo(), pc).processStats(8, 2022, "canine")
 
     # savourlife
     def test_savourlife(self):
