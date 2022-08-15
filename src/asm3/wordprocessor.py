@@ -1605,8 +1605,12 @@ def event_tags(dbo, e):
         "EVENTLASTCHANGEDDATE": python2display(l, e["LASTCHANGEDDATE"]),
         "EVENTOWNERNAME":       e["EVENTOWNERNAME"],
         "EVENTADDRESS":         e["EVENTADDRESS"],
-        "EVENTTOWN":            e["EVENTCOUNTY"],
+        "EVENTTOWN":            e["EVENTTOWN"],
+        "EVENTCITY":            e["EVENTTOWN"],
+        "EVENTCOUNTY":          e["EVENTCOUNTY"],
+        "EVENTSTATE":           e["EVENTCOUNTY"],
         "EVENTPOSTCODE":        e["EVENTPOSTCODE"],
+        "EVENTZIPCODE":         e["EVENTPOSTCODE"],
         "EVENTCOUNTRY":         e["EVENTCOUNTRY"]
     }
 

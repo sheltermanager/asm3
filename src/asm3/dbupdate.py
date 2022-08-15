@@ -94,9 +94,10 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
     "animalcost", "animaldiet", "animalfigures", "animalfiguresannual", 
     "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
     "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
-    "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "log", "ownerlookingfor", "publishlog",
-    "media", "messages", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", "ownerlicence", 
-    "ownerrota", "ownertraploan", "ownervoucher", "stocklevel", "stockusage" )
+    "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "event", "eventanimal", 
+    "log", "ownerlookingfor", "publishlog", "media", "messages", "owner", "ownercitation", 
+    "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrota", "ownertraploan", "ownervoucher", 
+    "stocklevel", "stockusage" )
 
 # Tables that contain lookup data. used by dump with includeLookups
 TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
@@ -995,6 +996,8 @@ def sql_structure(dbo):
     sql += index("event_StartDateTime", "event", "StartDateTime")
     sql += index("event_EndDateTime", "event", "EndDateTime")
     sql += index("event_EventName", "event", "EventName")
+    sql += index("event_EventOwnerID", "event", "EventOwnerID")
+    sql += index("event_EventAddress", "event", "EventAddress")
 
     sql += table("eventanimal", (
         fid(),
@@ -5667,12 +5670,14 @@ def update_34605(dbo):
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (11, '" + _("Sponsor", l) + "')")
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (12, '" + _("Vet", l) + "')")
 
-
 def update_34606(dbo):
-    # add columns to event table
-    dbo.execute_dbupdate("ALTER TABLE event ADD EventOwnerID %s NOT NULL" % dbo.type_integer)
+    # add location columns to event table
+    add_column(dbo, "event", "EventOwnerID", dbo.type_integer)
     add_column(dbo, "event", "EventAddress", dbo.type_longtext)
     add_column(dbo, "event", "EventTown", dbo.type_shorttext)
     add_column(dbo, "event", "EventCounty", dbo.type_shorttext)
     add_column(dbo, "event", "EventPostCode", dbo.type_shorttext)
     add_column(dbo, "event", "EventCountry", dbo.type_shorttext)
+    add_index(dbo, "event_EventOwnerID", "event", "EventOwnerID")
+    add_index(dbo, "event_EventAddress", "event", "EventAddress")
+
