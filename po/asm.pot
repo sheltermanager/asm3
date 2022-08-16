@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-08-16 12:27+0000\n"
+"POT-Creation-Date: 2022-08-16 16:40+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -2320,6 +2320,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Cane Corso Mastiff"
+msgstr ""
+
+#: users.js
+msgid "Cannot Login"
 msgstr ""
 
 #: donations.js options.js
@@ -5551,7 +5555,7 @@ msgstr ""
 msgid "Flag {0}"
 msgstr ""
 
-#: html.py common_personchooser.js users.js animal_find_results.js person.js
+#: html.py common_personchooser.js animal_find_results.js person.js
 #: animal_find.js common_animalchoosermulti.js onlineform.js animal.js
 #: options.js person_find.js shelterview.js person_new.js csvimport_paypal.js
 #: person_find_results.js
