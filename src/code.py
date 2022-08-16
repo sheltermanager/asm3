@@ -2311,8 +2311,15 @@ class change_user_settings(JSONEndpoint):
 
     def controller(self, o):
         asm3.al.debug("%s change user settings screen" % o.user, "code.change_user_settings", o.dbo)
+        u = asm3.users.get_user(o.dbo, o.user)
+        if not u.OTPSECRET:
+            asm3.al.debug("missing otp secret for user %s, generating" % o.user, "code.change_user_settings", o.dbo)
+            secret = asm3.utils.otp_secret()
+            u.OTPSECRET = secret
+            asm3.users.update_user_otp_secret(o.dbo, u.ID, secret)
         return {
-            "user": asm3.users.get_users(o.dbo, o.user),
+            "user": u,
+            "smcom": asm3.smcom.active(),
             "locales": get_locales(),
             "sigtype": ELECTRONIC_SIGNATURES,
             "themes": asm3.lookups.VISUAL_THEMES
@@ -2325,8 +2332,9 @@ class change_user_settings(JSONEndpoint):
         realname = post["realname"]
         email = post["email"]
         signature = post["signature"]
-        asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s" % (o.user, theme, locale, realname, email), "code.change_password", o.dbo)
-        asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature)
+        enabletotp = post.boolean("enabletotp")
+        asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, totp=%s" % (o.user, theme, locale, realname, email, enabletotp), "code.change_password", o.dbo)
+        asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature, enabletotp)
         self.reload_config()
 
 class citations(JSONEndpoint):

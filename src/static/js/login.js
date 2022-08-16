@@ -32,6 +32,14 @@ const login = {
                 '<input class="asm-textbox ui-widget" id="password" name="password" type="password" autocomplete="current-password" />',
             '</td>',
             '</tr>',
+            '<tr class="2fa" style="display: none">',
+            '<td>',
+                '<label for="onetimepass">' + _("2FA Code") + '</label>',
+            '</td>',
+            '<td>',
+                '<input class="asm-textbox ui-widget" id="onetimepass" name="onetimepass" type="text" autocomplete="onetimepass" />',
+            '</td>',
+            '</tr>',
             '</table>',
 
             '<div class="centered" style="padding-bottom: 10px">',
@@ -54,6 +62,15 @@ const login = {
                     '</p>',
                 '</div>',
             '</div>',
+            '<div class="centered asm-bad2fa" style="display: none">',
+                '<div class="ui-state-error">',
+                    '<p>',
+                        '<span class="ui-icon ui-icon-alert"></span>',
+                        _("Invalid 2FA Code."),
+                    '</p>',
+                '</div>',
+            '</div>',
+
             '<div class="centered" style="margin-bottom: 5px">',
                 '<span id="resetpassword" style="display: none; margin-top: 5px;"><a href="#">Reset my password</a></span>',
             '</div>',
@@ -160,10 +177,12 @@ const login = {
         let username = $("input#username").val();
         let password = $("input#password").val();
         let database = $("input#database").val();
+        let onetimepass = $("input#onetimepass").val();
         let remember = $("input#rememberme").prop("checked") ? "on" : "";
         let formdata = { "database": database, 
                             "username" : username, 
                             "password" : password,
+                            "onetimepass": onetimepass,
                             "rememberme": remember,
                             "nologconnection" : controller.nologconnection };
         $.ajax({
@@ -191,6 +210,16 @@ const login = {
                     // This is smcom specific - if the database is not on this
                     // server, go back to the main login screen to prompt for an account
                     window.location = controller.smcomloginurl;
+                }
+                else if (String(data).indexOf("ASK2FA") != -1) {
+                    $(".2fa").fadeIn();
+                    $("input#onetimepass").focus();
+                    $("#loginbutton").button("enable");
+                }
+                else if (String(data).indexOf("BAD2FA") != -1) {
+                    $(".asm-bad2fa").fadeIn("slow").delay(3000).fadeOut("slow");
+                    $("input#onetimepass").focus();
+                    $("#loginbutton").button("enable");
                 }
                 else {
                     $("#asm-login-window").fadeOut("slow", function() {
@@ -307,15 +336,7 @@ const login = {
             self.login();
         });
 
-        $("input#username").keypress(function(e) {
-            if (e.which == 13) { self.login(); }
-        });
-
-        $("input#password").keypress(function(e) {
-            if (e.which == 13) { self.login(); }
-        });
-
-        $("input#database").keypress(function(e) {
+        $("input#username, input#password, input#onetimepass, input#database").keypress(function(e) {
             if (e.which == 13) { self.login(); }
         });
 
