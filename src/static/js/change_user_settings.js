@@ -188,6 +188,7 @@ $(function() {
             }
             let issuer = "ASM";
             if (controller.smcom) { issuer = "sheltermanager"; }
+            if (controller.smcom && asm.user == asm.useraccount) { $("#enabletotp").closest("tr").hide(); } // disable 2FA for smcom master user for now
             let tfa_url = "otpauth://totp/" + issuer + ":" + encodeURIComponent(u.USERNAME) + "?secret=" + encodeURIComponent(u.OTPSECRET) + "&issuer=" + encodeURIComponent(issuer);
             new QRCode(document.getElementById("qr2fa"), tfa_url);
         },

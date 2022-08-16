@@ -104,8 +104,8 @@ $(function() {
                         }},
                     { field: "SUPERUSER", display: _("Flags"), formatter: function(row) {
                         let tags = [];
-                        if (row.SUPERUSER == 1) { tags.push(_("Superuser")); }
                         if (row.DISABLELOGIN == 0) { tags.push(_("Can Login")); }
+                        if (row.SUPERUSER == 1) { tags.push(_("Superuser")); }
                         if (row.ENABLETOTP == 1) { tags.push(_("2FA Enabled")); }
                         return tags.join(", ");
                         }},
