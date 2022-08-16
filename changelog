@@ -1,6 +1,7 @@
 46
 ================
 
+16/08/22 Add QRCodeJS lib, backend code for one time passwords #1055
 12/08/22 Option to export incoming forms in a CSV file #1164
 12/08/22 Suppress system generated form fields in notification emails #1166
 12/08/22 Strip style tags when storing forms #1165
