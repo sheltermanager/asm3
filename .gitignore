@@ -4,6 +4,7 @@ BREAKING_CHANGES
 build
 node_modules
 tags
+.idea
 .vscode
 doc/manual/_build
 install/deb/sheltermanager3

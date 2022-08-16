@@ -192,7 +192,6 @@ class S3Storage(DBFSStorage):
             return cachedata
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
         try:
-            asm3.al.debug("GET: s3://%s/%s" % (self.bucket, object_key), "S3Storage.get", self.dbo)
             x = time.time()
             response = self._s3client().get_object(Bucket=self.bucket, Key=object_key)
             body = response["Body"].read()
@@ -218,7 +217,6 @@ class S3Storage(DBFSStorage):
         object_key = "%s/%s%s" % (self.dbo.database, dbfsid, extension)
         url = "s3:%s%s" % (dbfsid, extension)
         try:
-            asm3.al.debug("PUT: s3://%s/%s" % (self.bucket, object_key), "S3Storage.put", self.dbo)
             asm3.cachedisk.put(self._cache_key(url), self.dbo.database, filedata, self._cache_ttl(filename))
             self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
             threading.Thread(target=self._s3_put_object, args=[self.bucket, object_key, filedata]).start()
@@ -231,7 +229,6 @@ class S3Storage(DBFSStorage):
         """ Deletes the file data """
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
         try:
-            asm3.al.debug("DELETE: s3://%s/%s" % (self.bucket, object_key), "S3Storage.delete", self.dbo)
             asm3.cachedisk.delete(self._cache_key(url), self.dbo.database)
             threading.Thread(target=self._s3_delete_object, args=[self.bucket, object_key]).start()
         except Exception as err:

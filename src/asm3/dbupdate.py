@@ -40,7 +40,7 @@ VERSIONS = (
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
-    34606
+    34606, 34607
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -94,9 +94,10 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
     "animalcost", "animaldiet", "animalfigures", "animalfiguresannual", 
     "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
     "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
-    "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "log", "ownerlookingfor", "publishlog",
-    "media", "messages", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", "ownerlicence", 
-    "ownerrota", "ownertraploan", "ownervoucher", "stocklevel", "stockusage" )
+    "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "event", "eventanimal", 
+    "log", "ownerlookingfor", "publishlog", "media", "messages", "owner", "ownercitation", 
+    "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrota", "ownertraploan", "ownervoucher", 
+    "stocklevel", "stockusage" )
 
 # Tables that contain lookup data. used by dump with includeLookups
 TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
@@ -995,6 +996,8 @@ def sql_structure(dbo):
     sql += index("event_StartDateTime", "event", "StartDateTime")
     sql += index("event_EndDateTime", "event", "EndDateTime")
     sql += index("event_EventName", "event", "EventName")
+    sql += index("event_EventOwnerID", "event", "EventOwnerID")
+    sql += index("event_EventAddress", "event", "EventAddress")
 
     sql += table("eventanimal", (
         fid(),
@@ -1597,6 +1600,8 @@ def sql_structure(dbo):
         fstr("RealName", True),
         fstr("EmailAddress", True),
         fstr("Password"),
+        fint("EnableTOTP", True),
+        fstr("OTPSecret", True),
         fint("SuperUser"),
         fint("OwnerID", True),
         flongstr("SecurityMap", True),
@@ -5667,12 +5672,20 @@ def update_34605(dbo):
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (11, '" + _("Sponsor", l) + "')")
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (12, '" + _("Vet", l) + "')")
 
-
 def update_34606(dbo):
-    # add columns to event table
-    dbo.execute_dbupdate("ALTER TABLE event ADD EventOwnerID %s NOT NULL" % dbo.type_integer)
+    # add location columns to event table
+    add_column(dbo, "event", "EventOwnerID", dbo.type_integer)
     add_column(dbo, "event", "EventAddress", dbo.type_shorttext)
     add_column(dbo, "event", "EventTown", dbo.type_shorttext)
     add_column(dbo, "event", "EventCounty", dbo.type_shorttext)
     add_column(dbo, "event", "EventPostCode", dbo.type_shorttext)
     add_column(dbo, "event", "EventCountry", dbo.type_shorttext)
+    add_index(dbo, "event_EventOwnerID", "event", "EventOwnerID")
+    add_index(dbo, "event_EventAddress", "event", "EventAddress")
+
+def update_34607(dbo):
+    # add 2FA columns to users table
+    add_column(dbo, "users", "EnableTOTP", dbo.type_integer)
+    add_column(dbo, "users", "OTPSecret", dbo.type_shorttext)
+    dbo.execute_dbupdate("UPDATE users SET EnableTOTP=0, OTPSecret=''")
+

@@ -1,6 +1,14 @@
 46
 ================
 
+16/08/22 User screen shows login/super/2fa enabled in a single column #1055
+16/08/22 Support for 2FA via Google Authenticator #1055
+16/08/22 Add QRCodeJS lib, backend code for one time passwords #1055
+12/08/22 Option to export incoming forms in a CSV file #1164
+12/08/22 Suppress system generated form fields in notification emails #1166
+12/08/22 Strip style tags when storing forms #1165
+11/08/22 Add Indonesia/English locale
+09/08/22 Require 3 chars to be entered for vacc/manufacturer autocomplete
 09/08/22 maint endpoint for sac metrics, integration tests #1153
 09/08/22 First draft of UI/config for SAC Metrics publisher #1153
 08/08/22 Restrict simple search to 30 chars (attacks with long queries)

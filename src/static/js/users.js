@@ -102,17 +102,13 @@ $(function() {
                     { field: "ROLES", display: _("Roles"), formatter: function(row) {
                             return common.nulltostr(row.ROLES).replace(/[|]+/g, ", ");
                         }},
-                    { field: "SUPERUSER", display: _("Superuser"), formatter: function(row) {
-                            if (row.SUPERUSER == 1) {
-                                return _("Yes");
-                            }
-                            return _("No");
-                        }},
-                    { field: "DISABLELOGIN", display: _("Can Login"), formatter: function(row) {
-                            if (row.DISABLELOGIN == 1) {
-                                return _("No");
-                            }
-                            return _("Yes");
+                    { field: "SUPERUSER", display: _("Type"), formatter: function(row) {
+                        let tags = [];
+                        if (row.DISABLELOGIN == 1) { tags.push(_("Cannot Login")); }
+                        if (row.SUPERUSER == 1) { tags.push(_("Superuser")); }
+                        if (row.ENABLETOTP == 1) { tags.push(_("2FA Enabled")); }
+                        if (row.LOCALEOVERRIDE && row.LOCALEOVERRIDE != config.str("Locale")) { tags.push(row.LOCALEOVERRIDE); }
+                        return tags.join(", ");
                         }},
                     { field: "SITEID", display: _("Site"), 
                         formatter: function(row) {

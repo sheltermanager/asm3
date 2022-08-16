@@ -487,7 +487,7 @@ def get_onlineformincoming_detail(dbo, collationid):
     """ Returns the detail lines for an incoming post """
     return dbo.query("SELECT * FROM onlineformincoming WHERE CollationID = ? ORDER BY DisplayIndex", [collationid])
 
-def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_images=True):
+def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_images=True, include_system=True):
     """ Returns a partial HTML document of the incoming form data fields """
     h = []
     h.append('<table width="100%">')
@@ -495,6 +495,7 @@ def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_imag
         label = f.LABEL
         if label is None or label == "": label = f.FIELDNAME
         v = f.VALUE
+        if f.FIELDNAME in ( "useragent", "ipaddress", "retainfor", "formreceived" ) and not include_system: continue
         if v.startswith("RAW::") and not include_raw: continue
         if v.startswith("data:") and not include_images: continue
         if v.startswith("RAW::"): 
@@ -532,14 +533,35 @@ def get_onlineformincoming_plain(dbo, collationid):
         h.append("%s: %s\n" % (label, f.VALUE))
     return "\n".join(h)
 
-def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images=True, strip_bgimages=True, strip_scripts=True):
+def get_onlineformincoming_csv(dbo, ids):
+    """
+    Returns all the forms with collationid in ids as CSV data.
+    The form fields are laid out as columns with each form as a row.
+    """
+    rows = []
+    cols = []
+    buildcols = True # build column list from the first collation id
+    for collationid in ids:
+        row = {}
+        for f in get_onlineformincoming_detail(dbo, collationid):
+            if f.VALUE.startswith("RAW::") or f.VALUE.startswith("data:"): continue
+            label = f.LABEL or f.FIELDNAME
+            if buildcols: cols.append(label)
+            row[label] = f.VALUE
+        buildcols = False
+        rows.append(row)
+    return asm3.utils.csv(dbo.locale, rows, cols)
+
+def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images=True, include_system=True, strip_bgimages=True, strip_script=True, strip_style=True):
     """
     Returns a complete printable version of the online form
     (header/footer wrapped around the html call above)
     ids: A list of integer ids
     include_raw: Include fields that are raw markup
     include_images: Include base64 encoded images
+    include_system: Include system generated fields (ipaddress, retainfor, etc)
     strip_script: Remove any script tags from the form
+    strip_style: Remove any style tags from the form
     strip_bgimages: Remove any background-image CSS directives from the form
     """
     title = get_onlineformincoming_formname(dbo, ids[0])
@@ -556,7 +578,7 @@ def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images
         h.append(headercontent)
         formheader = get_onlineformincoming_formheader(dbo, collationid)
         h.append(formheader)
-        h.append(get_onlineformincoming_html(dbo, asm3.utils.cint(collationid), include_raw=include_raw, include_images=include_images))
+        h.append(get_onlineformincoming_html(dbo, asm3.utils.cint(collationid), include_raw=include_raw, include_images=include_images, include_system=include_system))
         formfooter = get_onlineformincoming_formfooter(dbo, collationid)
         h.append(formfooter)
         h.append(footercontent)
@@ -565,7 +587,8 @@ def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images
     h.append("</body></html>")
     s = "\n".join(h)
     if strip_bgimages: s= asm3.utils.strip_background_images(s)
-    if strip_scripts: s = asm3.utils.strip_script_tags(s)
+    if strip_script: s = asm3.utils.strip_script_tags(s)
+    if strip_style: s = asm3.utils.strip_style_tags(s)
     return s
 
 def get_onlineformincoming_name(dbo, collationid):
@@ -861,8 +884,9 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
     if not formdef: return collationid
 
     # A string containing the submitted form for including in emails 
-    # (images are set as attachments so not included)
-    formdata = get_onlineformincoming_html_print(dbo, [collationid,], include_images=False)
+    # (images are included as attachments so not in the form output)
+    # (we also suppress system generated fields as most do not find them helpful in the email)
+    formdata = get_onlineformincoming_html_print(dbo, [collationid,], include_system=False, include_images=False)
 
     # Do we have a valid emailaddress field for the form submitter and 
     # one of the options to email the submitter is set?

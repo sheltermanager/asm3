@@ -251,7 +251,7 @@ class ASMEndpoint(object):
     def check(self, permissions):
         """ Check logged in and permissions (which can be a single permission string or a list/tuple) """
         if not self.session_cookie:
-            session.no_cookie = True # Stop the session object calling setcookie
+            session.send_cookie = False # Stop the session object calling setcookie
         if self.check_logged_in:
             self.check_loggedin(session, web, self.login_url)
         if isinstance(permissions, str):
@@ -2311,8 +2311,15 @@ class change_user_settings(JSONEndpoint):
 
     def controller(self, o):
         asm3.al.debug("%s change user settings screen" % o.user, "code.change_user_settings", o.dbo)
+        u = asm3.users.get_user(o.dbo, o.user)
+        if not u.OTPSECRET:
+            asm3.al.debug("missing otp secret for user %s, generating" % o.user, "code.change_user_settings", o.dbo)
+            secret = asm3.utils.otp_secret()
+            u.OTPSECRET = secret
+            asm3.users.update_user_otp_secret(o.dbo, u.ID, secret)
         return {
-            "user": asm3.users.get_users(o.dbo, o.user),
+            "user": u,
+            "smcom": asm3.smcom.active(),
             "locales": get_locales(),
             "sigtype": ELECTRONIC_SIGNATURES,
             "themes": asm3.lookups.VISUAL_THEMES
@@ -2325,8 +2332,9 @@ class change_user_settings(JSONEndpoint):
         realname = post["realname"]
         email = post["email"]
         signature = post["signature"]
-        asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s" % (o.user, theme, locale, realname, email), "code.change_password", o.dbo)
-        asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature)
+        enabletotp = post.boolean("enabletotp")
+        asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, totp=%s" % (o.user, theme, locale, realname, email, enabletotp), "code.change_password", o.dbo)
+        asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature, enabletotp)
         self.reload_config()
 
 class citations(JSONEndpoint):
@@ -4172,12 +4180,13 @@ class maint_sac_metrics(ASMEndpoint):
         year = o.post.integer("year")
         month = o.post.integer("month")
         species = o.post["species"]
+        externalid = o.post["externalid"]
         if year == 0 or month == 0 or species == "": 
             raise asm3.utils.ASMValidationError("Endpoint requires parameters for year (int), month (int) and species (str, from SAC_SPECIES - eg: canine, feline)")
         try:
             pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(o.dbo))
             p = asm3.publishers.sacmetrics.SACMetricsPublisher(o.dbo, pc)
-            data = p.processStats(month, year, species)
+            data = p.processStats(month, year, species, externalid)
             p.putData(data)
             return "\n".join(p.logBuffer)
         except Exception as err:
@@ -4772,6 +4781,15 @@ class onlineform_incoming(JSONEndpoint):
             collationid, wlid, personname, status = asm3.onlineform.create_waitinglist(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, wlid, personname, status))
         return "^$".join(rv)
+
+class onlineform_incoming_csv(ASMEndpoint):
+    url = "onlineform_incoming_csv"
+    get_permissions = asm3.users.VIEW_INCOMING_FORMS
+
+    def content(self, o):
+        self.content_type("text/csv")
+        self.cache_control(0)
+        return asm3.onlineform.get_onlineformincoming_csv(o.dbo, o.post.integer_list("ids"))
 
 class onlineform_incoming_print(ASMEndpoint):
     url = "onlineform_incoming_print"

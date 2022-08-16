@@ -41,6 +41,10 @@ $(document).ready(function() {
                 '<label for="password" class="form-label">' + _("Password") + '</label>',
                 '<input type="password" class="form-control" id="password">',
             '</div>',
+            '<div class="mb-3 2fa" style="display: none">',
+                '<label for="onetimepass" class="form-label">' + _("2FA Code") + '</label>',
+                '<input type="onetimepass" class="form-control" id="onetimepass">',
+            '</div>',
             '<div class="mb-3 form-check">',
                 '<input type="checkbox" class="form-check-input" id="remember">',
                 '<label for="remember" class="form-check-label">' + _("Remember me on this device") + '</label>',
@@ -60,6 +64,7 @@ $(document).ready(function() {
             "database":     $("#database").val(),
             "username":     $("#username").val(),
             "password":     $("#password").val(),
+            "onetimepass":  $("#onetimepass").val(),
             "rememberme":   $("#remember").prop("checked") ? "on" : ""
         };
         if (!$("#username").val() || !$("#password").val()) {
@@ -91,6 +96,18 @@ $(document).ready(function() {
                     // This is smcom specific - if the database is not on this
                     // server, go back to the main login screen to prompt for an account
                     window.location = controller.smcomloginurl;
+                }
+                else if (response == "ASK2FA") {
+                    $("#spinner").hide();
+                    $(".2fa").fadeIn();
+                    $("#onetimepass").focus();
+                    $("#btn-login").prop("disabled", false);
+                }
+                else if (response == "BAD2FA") {
+                    $("#spinner").hide();
+                    $("#onetimepass").focus();
+                    $("#btn-login").prop("disabled", false);
+                    show_dlg("Error", _("Invalid 2FA Code."));
                 }
                 else {
                     if (controller.target) {

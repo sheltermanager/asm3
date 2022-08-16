@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-08-09 09:50+0000\n"
+"POT-Creation-Date: 2022-08-16 16:40+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -119,6 +119,14 @@ msgstr ""
 
 #: publish_options.js
 msgid "2 weeks"
+msgstr ""
+
+#: login.js mobile_login.js
+msgid "2FA Code"
+msgstr ""
+
+#: users.js
+msgid "2FA Enabled"
 msgstr ""
 
 #: publish_options.js
@@ -2166,6 +2174,10 @@ msgstr ""
 msgid "CC"
 msgstr ""
 
+#: onlineform_incoming.js
+msgid "CSV"
+msgstr ""
+
 #: sql.js
 msgid "CSV of animal/adopter data"
 msgstr ""
@@ -2308,6 +2320,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Cane Corso Mastiff"
+msgstr ""
+
+#: users.js
+msgid "Cannot Login"
 msgstr ""
 
 #: donations.js options.js
@@ -4775,6 +4791,10 @@ msgstr ""
 msgid "Enable the waiting list functionality"
 msgstr ""
 
+#: change_user_settings.js
+msgid "Enable two-factor authentication (2FA)"
+msgstr ""
+
 #: options.js
 msgid "Enable visual effects"
 msgstr ""
@@ -5157,6 +5177,10 @@ msgstr ""
 
 #: csvimport.py
 msgid "Export complete ({0} entries)."
+msgstr ""
+
+#: onlineform_incoming.js
+msgid "Export selected forms to a CSV file"
 msgstr ""
 
 #: sql.js
@@ -6908,6 +6932,10 @@ msgstr ""
 
 #: lookups.py
 msgid "Internal Locations"
+msgstr ""
+
+#: login.js mobile_login.js
+msgid "Invalid 2FA Code."
 msgstr ""
 
 #: person.js report_toolbar.js
@@ -10895,6 +10923,12 @@ msgstr ""
 
 #: publish_options.js
 msgid "Scale published animal images to"
+msgstr ""
+
+#: change_user_settings.js
+msgid ""
+"Scan the QR code below with the Google Authenticator app for your mobile "
+"device."
 msgstr ""
 
 #: dbupdate.py transport.js

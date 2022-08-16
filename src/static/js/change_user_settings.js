@@ -82,12 +82,32 @@ $(function() {
                     '<img id="existingsig" style="display: none; border: 0" />',
                     '</td>',
                 '</tr>',
+                '<tr>',
+                    '<td></td>',
+                    '<td>',
+                    '<input id="enabletotp" data="enabletotp" class="asm-checkbox" type="checkbox" />',
+                    '<label for="enabletotp">' + _("Enable two-factor authentication (2FA)") + '</label>',
+                    '</td>',
+                '<tr>',
+                '<tr class="totp">',
+                    '<td></td>',
+                    '<td>' + html.info( _("Scan the QR code below with the Google Authenticator app for your mobile device.") ) + '</td>',
+                '</tr>',
+                '<tr class="totp">',
+                    '<td></td>',
+                    '<td><div id="qr2fa" style="padding: 10px; background: #fff;"></div></td>',
+                '</tr>',
+
                 '</table>',
                 '<p class="centered">',
                     '<button id="save">' + html.icon("save") + ' ' + _("Save") + '</button>',
                 '</p>',
                 html.content_footer()
             ].join("\n");
+        },
+
+        totp_change: function() {
+            $(".totp").toggle( $("#enabletotp").prop("checked") );
         },
 
         bind: function() {
@@ -105,6 +125,8 @@ $(function() {
             catch (excanvas) {
                 log.error("failed creating signature canvas");   
             }
+
+            $("#enabletotp").change(change_user_settings.totp_change);
 
             $("#save").button().click(async function() {
                 $(".asm-content button").button("disable");
@@ -146,11 +168,13 @@ $(function() {
         },
 
         sync: function() {
-            let u = controller.user[0];
+            let u = controller.user;
             $("#realname").val(html.decode(u.REALNAME));
             $("#email").val(u.EMAILADDRESS);
             $("#olocale").select("value", u.LOCALEOVERRIDE);
             $("#systemtheme").select("value", u.THEMEOVERRIDE);
+            $("#enabletotp").prop("checked", u.ENABLETOTP == 1);
+            this.totp_change();
             if (controller.sigtype != "touch") { 
                 $("#signature").closest("tr").hide(); 
             }
@@ -162,6 +186,11 @@ $(function() {
                 $("#existingsig").hide();
                 $("#signature").show();
             }
+            let issuer = "ASM";
+            if (controller.smcom) { issuer = "sheltermanager"; }
+            if (controller.smcom && asm.user == asm.useraccount) { $("#enabletotp").closest("tr").hide(); } // disable 2FA for smcom master user for now
+            let tfa_url = "otpauth://totp/" + issuer + ":" + encodeURIComponent(u.USERNAME) + "?secret=" + encodeURIComponent(u.OTPSECRET) + "&issuer=" + encodeURIComponent(issuer);
+            new QRCode(document.getElementById("qr2fa"), tfa_url);
         },
 
         name: "change_user_settings",

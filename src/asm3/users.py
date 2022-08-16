@@ -472,6 +472,15 @@ def get_users(dbo, user='%'):
         u.ROLES = "|".join(rolenames)
     return users
 
+def get_user(dbo, user):
+    """
+    Returns a single user account by name. Returns None if no user account is found.
+    """
+    for u in dbo.query("SELECT UserName FROM users"):
+        if u.USERNAME.upper() == user.upper():
+            return dbo.first_row( get_users(dbo, u.USERNAME) )
+    return None
+
 def get_active_users(dbo):
     """
     Returns a list of active users on the system
@@ -551,6 +560,8 @@ def insert_user_from_form(dbo, username, post):
         "RealName":             post["realname"],
         "EmailAddress":         post["email"],
         "Password":             hash_password(post["password"]),
+        "EnableTOTP":           0,
+        "OTPSecret":            asm3.utils.otp_secret(),
         "SuperUser":            post.integer("superuser"),
         "DisableLogin":         post.integer("disablelogin"),
         "RecordVersion":        0,
@@ -587,7 +598,7 @@ def insert_user_from_form(dbo, username, post):
 
     return nuserid
 
-def update_user_settings(dbo, username, email = "", realname = "", locale = "", theme = "", signature = ""):
+def update_user_settings(dbo, username, email = "", realname = "", locale = "", theme = "", signature = "", enable_totp = 0):
     """
     Updates the user account settings for email, name, locale, theme and signature
     """
@@ -597,8 +608,15 @@ def update_user_settings(dbo, username, email = "", realname = "", locale = "", 
         "EmailAddress":     email,
         "ThemeOverride":    theme,
         "LocaleOverride":   locale,
+        "EnableTOTP":       enable_totp,
         "Signature":        signature
     }, username, setLastChanged=False)
+
+def update_user_otp_secret(dbo, userid, secret):
+    """
+    Updates the OTP secret for a user account
+    """
+    dbo.update("users", userid, { "OTPSecret": secret })
 
 def update_user_from_form(dbo, username, post):
     """
@@ -610,6 +628,7 @@ def update_user_from_form(dbo, username, post):
     dbo.update("users", userid, {
         "RealName":         post["realname"],
         "EmailAddress":     post["email"],
+        "EnableTOTP":       post.boolean("enabletotp"),
         "SuperUser":        post.integer("superuser"),
         "DisableLogin":     post.integer("disablelogin"),
         "OwnerID":          post.integer("person"),
@@ -665,9 +684,10 @@ def delete_role(dbo, username, rid):
 
 def reset_password(dbo, userid, password):
     """
-    Resets the password for the given user to "password"
+    Resets the password for the given user to "password".
+    Also, clears 2FA from the account.
     """
-    dbo.update("users", userid, { "Password": hash_password(password) })
+    dbo.update("users", userid, { "Password": hash_password(password), "EnableTOTP": 0 })
 
 def update_session(session):
     """
@@ -703,6 +723,7 @@ def web_login(post, session, remoteip, useragent, path):
     database = post["database"]
     username = post["username"]
     password = post["password"]
+    onetimepass = post["onetimepass"]
     mobileapp = post["mobile"] == "true"
     rememberme = post["rememberme"] == "on"
     nologconnection = post["nologconnection"] == "true"
@@ -720,9 +741,19 @@ def web_login(post, session, remoteip, useragent, path):
         asm3.al.error("user %s from %s [%s] failed ip restriction check '%s'" % (username, remoteip, useragent, user.IPRESTRICTION), "users.web_login", dbo)
         return "FAIL"
     
+    # Check if this user has been disabled from logging in
     if user is not None and "DISABLELOGIN" in user and user.DISABLELOGIN == 1:
         asm3.al.error("user %s from %s [%s] failed as account has logins disabled" % (username, remoteip, useragent), "users.web_login", dbo)
         return "FAIL"
+
+    # If the user has 2FA enabled, check it
+    if user is not None and "ENABLETOTP" in user and "OTPSECRET" in user and user.ENABLETOTP == 1:
+        if onetimepass == "":
+            asm3.al.debug("user %s has 2FA enabled and no code has been given" % username, "users.web_login", dbo)
+            return "ASK2FA"
+        if onetimepass != str(asm3.utils.totp(user.OTPSECRET)):
+            asm3.al.error("user %s failed OTP check" % username, "users.web_login", dbo)
+            return "BAD2FA"
 
     if user is not None:
         asm3.al.info("%s successfully authenticated from %s [%s]" % (username, remoteip, useragent), "users.web_login", dbo)

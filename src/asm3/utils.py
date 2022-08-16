@@ -13,11 +13,14 @@ import base64
 import datetime
 import decimal
 import hashlib
+import hmac
 import json as extjson
 import os
+import random
 import re
 import requests
 import smtplib
+import struct
 import subprocess
 import sys
 import tempfile
@@ -752,6 +755,12 @@ def strip_script_tags(s):
     """
     return re.sub(r'<(script).*?</\1>(?s)', '', s)
 
+def strip_style_tags(s):
+    """
+    Removes all style tags from a string
+    """
+    return re.sub(r'<(style).*?</\1>(?s)', '', s)
+
 def strip_non_ascii(s):
     """
     Remove any non-ascii characters from a string str
@@ -820,6 +829,24 @@ def pbkdf2_hash_hex(plaintext, salt="", algorithm="sha1", iterations=1000):
     hashfunc = getattr(hashlib, algorithm)
     import asm3.pbkdf2.pbkdf23
     return str(asm3.pbkdf2.pbkdf23.pbkdf2(hashfunc, str2bytes(plaintext), str2bytes(salt), iterations, 24).hex())
+
+def otp_secret(): 
+    """
+    Generate a 16 character secret for use with one time passwords
+    """
+    secret = ""
+    while len(secret) < 16:
+        secret += random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567")
+    return secret
+
+def totp(secret):
+    intervals_no=int(time.time())//30
+    key = base64.b32decode(secret, True)
+    msg = struct.pack(">Q", intervals_no)
+    h = hmac.new(key, msg, hashlib.sha1).digest()
+    o = h[19] & 15
+    h = (struct.unpack(">I", h[o:o+4])[0] & 0x7fffffff) % 1000000
+    return h
 
 def regex_multi(pattern, findin):
     """
@@ -985,6 +1012,7 @@ def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False, ren
     for r in rows:
         rd = []
         for c in cols:
+            if c not in r: continue # skip if this row doesn't have the column
             if is_currency(c):
                 rd.append(asm3.i18n.format_currency_no_symbol(l, r[c]))
             elif is_date(r[c]):
