@@ -175,8 +175,8 @@ or IPv6 prefixes. Eg:
 
    192.168.1.0/24 172.16.31.34 2001:db8:abcd:0012
 
-Location Filter
-^^^^^^^^^^^^^^^^
+Site and Location Filters
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Setting a location filter (a group of internal locations) for a user account
 will prevent that account from seeing or opening animals who are not in those
@@ -212,7 +212,36 @@ users see:
 
 * Retailer Animals: Allows the user to see animals currently with retailers
 
-* My Fosters: Restricts the user to ONLY see animals they are currently fostering
+* My Fosters: Allows the user to see animals that are fostered to the person
+  record linked to their user account.
+
+Two-Factor Authentication (2FA)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ASM supports two-factor authentication for user accounts with the Google
+Authenticator app for mobile devices. 
+
+.. image:: images/changeusersettings_2fa.png
+
+To enable it, log in with your user account, then choose "Change User Settings"
+from the user menu at the top right of the screen (the button with your
+username on it).
+
+Install the Google Authenticator app on your mobile device from the Play or
+iTunes store. Tick the box to enable 2FA and the screen will show you a
+QR code. In the Google Authenticator app, click the add button and choose "QR
+Code", then scan the on screen code with your camera. 
+
+An entry will appear in Google Authenticator for ASM (if you are self hosted)
+or sheltermanager (for sheltermanager.com customers) with your username and a
+time-based one time passcode that will update every 30 seconds. When you login
+in future, you will be challenged for this 2FA code from your mobile device. 
+
+.. image:: images/google_authenticator.png
+
+If you are ever locked out of your account because your mobile device is no
+longer available, you can disable 2FA by resetting your password from either
+the login screen, or via :menuselection:`Settings --> System user accounts`
 
 User roles
 ----------
