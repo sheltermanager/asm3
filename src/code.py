@@ -559,8 +559,10 @@ class image(ASMEndpoint):
         except Exception as err:
             # The call to get_image_file_data can produce a lot of errors when people try to access 
             # images via unsubstituted tokens in documents, etc. 
-            # Log them instead of throwing an error that will end up in our error box
-            asm3.al.error(str(err), "code.image", o.dbo, sys.exc_info())
+            # Log them and rethrow an error that won't end up in our unhandled error box
+            msg = str(err)
+            if err.msg: msg = err.msg # Our custom exceptions like DBFSError, ASMError, etc all have a msg attribute
+            asm3.al.error(msg, "code.image", o.dbo, sys.exc_info())
             raise asm3.utils.ASMError("failure retrieving image")
 
         if imagedata != b"NOPIC":

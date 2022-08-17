@@ -883,7 +883,9 @@ class ASMPermissionError(web.HTTPError):
     """
     Custom error thrown by data modules when permission checks fail
     """
+    msg = ""
     def __init__(self, msg):
+        self.msg = msg
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>Permission Error</h1><p>%s</p>" % msg
@@ -894,7 +896,9 @@ class ASMError(web.HTTPError):
     """
     Custom error thrown by data modules 
     """
+    msg = ""
     def __init__(self, msg):
+        self.msg = msg
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>Error</h1><p>%s</p>" % msg
