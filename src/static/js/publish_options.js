@@ -641,7 +641,8 @@ $(function() {
         render_sac: function() {
             return [
                 '<div id="tab-sac">',
-                html.info('Signup at <a href="http://shelteranimalscount.org">shelteranimalscount.org</a>'),
+                html.info('Signup at <a href="http://shelteranimalscount.org">shelteranimalscount.org</a><br>' + 
+                    'You will need to give SAC your account number of "' + asm.useraccount + '" in order for them to accept uploads from you.'),
                 '<p><input id="enabledsac" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledsac">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
