@@ -6695,7 +6695,25 @@ class waitinglist_results(JSONEndpoint):
         for wid in o.post.integer_list("ids"):
             asm3.waitinglist.update_waitinglist_highlight(o.dbo, wid, o.post["himode"])
 
+class event_new(JSONEndpoint):
+    url = "event_new"
 
+    def controller(self, o):
+        dbo = o.dbo
+        asm3.al.debug("add event", "code.event_new", dbo)
+        return {}
+    # def controller(self, o):
+    #     dbo = o.dbo
+    #     asm3.al.debug("add event", "code.event_new", dbo)
+    #     return {
+    #         # "towns": asm3.person.get_towns(dbo),
+    #         # "counties": asm3.person.get_counties(dbo),
+    #         # "towncounties": asm3.person.get_town_to_county(dbo),
+    #         # "additional": asm3.additional.get_additional_fields(dbo, 0, "person"),
+    #         # "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
+    #         # "flags": asm3.lookups.get_person_flags(dbo),
+    #         # "sites": asm3.lookups.get_sites(dbo)
+    #     }
 
 # List of routes constructed from class definitions
 routes = []
