@@ -1,6 +1,7 @@
 46
 ================
 
+22/08/22 Change medical profile column labels to match dialog (Name->Profile)
 18/08/22 Add locale for Zimbabwe en_ZW
 18/08/22 SAC Metrics publisher now live #1153
 16/08/22 User screen shows login/super/2fa enabled in a single column #1055
