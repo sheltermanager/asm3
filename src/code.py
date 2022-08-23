@@ -561,7 +561,7 @@ class image(ASMEndpoint):
             # images via unsubstituted tokens in documents, etc. 
             # Log them and rethrow an error that won't end up in our unhandled error box
             msg = str(err)
-            if err.msg: msg = err.msg # Our custom exceptions like DBFSError, ASMError, etc all have a msg attribute
+            if hasattr(err, "msg"): msg = err.msg # Our custom exceptions like DBFSError, ASMError, etc all have a msg attribute
             asm3.al.error(msg, "code.image", o.dbo, sys.exc_info())
             raise asm3.utils.ASMError("failure retrieving image")
 
