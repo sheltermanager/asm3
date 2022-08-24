@@ -139,6 +139,7 @@ def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "
     surname = surname.replace("'", "`").lower().strip()
     email = email.replace("'", "`").lower().strip()
     eq = []
+    hq = []
     mq = []
     per = []
     if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
