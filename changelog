@@ -1,6 +1,7 @@
 46
 ================
 
+25/08/22 Allow multiple entry categories to be set for sac metrics #1153
 24/08/22 Allow upto 20 custom emblems
 23/08/22 Check the home telephone field when finding similar people
 22/08/22 Change medical profile column labels to match dialog (Name->Profile)

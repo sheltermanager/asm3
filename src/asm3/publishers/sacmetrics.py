@@ -336,7 +336,7 @@ AND (DeceasedDate Is Null OR DeceasedDate > {to})) AS EndingOnFoster,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE EntryReasonID={stray} AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryReasonID IN ({stray}) AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth < {broughtinm5}
@@ -344,14 +344,14 @@ AND NonShelterAnimal = 0) AS AdultStray,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE EntryReasonID={stray} AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryReasonID IN ({stray}) AND IsTransfer = 0 AND CrueltyCase = 0
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth >= {broughtinm5}
 AND NonShelterAnimal = 0) AS JuniorStray,
 
 (SELECT COUNT(*) FROM animal
-WHERE EntryReasonID={surrender} AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryReasonID IN ({surrender}) AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
@@ -359,7 +359,7 @@ AND DateOfBirth < {broughtinm5}
 AND NonShelterAnimal = 0) AS AdultSurrender,
 
 (SELECT COUNT(*) FROM animal 
-WHERE EntryReasonID={surrender} AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryReasonID IN ({surrender}) AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
@@ -433,7 +433,7 @@ AND DateOfBirth >= {broughtinm5}
 AND NonShelterAnimal = 0) AS JuniorImpound,
 
 (SELECT COUNT(*) FROM animal
-WHERE EntryReasonID <> {surrender} AND EntryReasonID <> {stray} AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryReasonID NOT IN ({surrender}) AND EntryReasonID NOT IN ({stray}) AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
@@ -441,7 +441,7 @@ AND DateOfBirth < {broughtinm5}
 AND NonShelterAnimal = 0) AS AdultOtherIntake,
 
 (SELECT COUNT(*) FROM animal 
-WHERE EntryReasonID <> {surrender} AND EntryReasonID <> {stray} AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryReasonID NOT IN ({surrender}) AND EntryReasonID NOT IN ({stray}) AND IsTransfer = 0 AND CrueltyCase = 0
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
@@ -554,7 +554,7 @@ AND NonShelterAnimal = 0) AS JuniorTransferOutOutState,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7 AND EntryReasonID <> {tnr}
+WHERE MovementType = 7 AND EntryReasonID NOT IN ({tnr})
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth < {movementm5} 
@@ -562,7 +562,7 @@ AND NonShelterAnimal = 0) AS AdultReturnToField,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7 AND EntryReasonID <> {tnr}
+WHERE MovementType = 7 AND EntryReasonID NOT IN ({tnr})
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth >= {movementm5} 
@@ -588,7 +588,7 @@ AND NonShelterAnimal = 0) AS JuniorLostInCare,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7 AND EntryReasonID = {tnr}
+WHERE MovementType = 7 AND EntryReasonID IN ({tnr})
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth < {movementm5} 
@@ -596,7 +596,7 @@ AND NonShelterAnimal = 0) AS AdultOtherLive,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7 AND EntryReasonID = {tnr}
+WHERE MovementType = 7 AND EntryReasonID IN ({tnr})
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth >= {movementm5} 

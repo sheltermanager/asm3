@@ -1286,13 +1286,13 @@ def retailer_on_shelter(dbo):
     return cboolean(dbo, "RetailerOnShelter", DEFAULTS["RetailerOnShelter"] == "Yes")
 
 def sac_stray_category(dbo):
-    return cint(dbo, "SACStrayCategory", DEFAULTS["SACStrayCategory"])
+    return cstring(dbo, "SACStrayCategory", DEFAULTS["SACStrayCategory"])
 
 def sac_surrender_category(dbo):
-    return cint(dbo, "SACSurrenderCategory", DEFAULTS["SACSurrenderCategory"])
+    return cstring(dbo, "SACSurrenderCategory", DEFAULTS["SACSurrenderCategory"])
 
 def sac_tnr_category(dbo):
-    return cint(dbo, "SACTNRCategory", DEFAULTS["SACTNRCategory"])
+    return cstring(dbo, "SACTNRCategory", DEFAULTS["SACTNRCategory"])
 
 def savourlife_token(dbo):
     return cstring(dbo, "SavourLifeToken")
