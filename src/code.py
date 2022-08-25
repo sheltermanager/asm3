@@ -6701,7 +6701,9 @@ class event_new(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         asm3.al.debug("add event", "code.event_new", dbo)
-        return {}
+        return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "event")
+        }
 
 
 # List of routes constructed from class definitions
