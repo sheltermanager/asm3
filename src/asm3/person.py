@@ -1552,7 +1552,7 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
         animals = dbo.query(asm3.animal.get_animal_query(dbo) + " WHERE " + " AND ".join(ands) + " ORDER BY a.LastChangedDate DESC", v)
 
         # Output owner info
-        h.append("<h2>%s (%s) %s %s</h2>" % (p.OWNERNAME, p.OWNERADDRESS, p.HOMETELEPHONE, p.MOBILETELEPHONE))
+        h.append("<h2><a target='_blank' href='person?id=%s'>%s</a> (%s) %s %s</h2>" % (p.ID, p.OWNERNAME, p.OWNERADDRESS, p.HOMETELEPHONE, p.MOBILETELEPHONE))
         if p.MATCHADDED is not None or p.MATCHEXPIRES is not None:
             h.append( "<p style='font-size: 8pt'>%s - %s</p>" % (python2display(l, p.MATCHADDED), python2display(l, p.MATCHEXPIRES)) )
         if p.COMMENTS != "" and p.COMMENTS is not None: 
@@ -1570,7 +1570,7 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
                 h.append("".join(ah))
             h.append( "<tr>")
             h.append( td(a.CODE))
-            h.append( td(a.ANIMALNAME))
+            h.append( td("<a target='_blank' href='animal?id=%s'>%s</a>" % (a.ID, a.ANIMALNAME)) )
             h.append( td(a.ANIMALAGE))
             h.append( td(a.SEXNAME))
             h.append( td(a.SIZENAME))
