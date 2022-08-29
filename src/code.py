@@ -5228,6 +5228,7 @@ class person_embed(ASMEndpoint):
             "towns": asm3.person.get_towns(dbo),
             "counties": asm3.person.get_counties(dbo),
             "towncounties": asm3.person.get_town_to_county(dbo),
+            "postcodelookup": asm3.geo.get_postcode_lookup_available(o.locale),
             "flags": asm3.lookups.get_person_flags(dbo),
             "sites": asm3.lookups.get_sites(dbo)
         })
@@ -5268,6 +5269,11 @@ class person_embed(ASMEndpoint):
         else:
             asm3.person.embellish_adoption_warnings(dbo, p)
             return asm3.utils.json((p,))
+
+    def post_postcodelookup(self, o):
+        self.content_type("application/json")
+        self.cache_control(120)
+        return asm3.geo.get_address(o.dbo, o.post["postcode"], o.post["country"])
 
     def post_similar(self, o):
         self.check(asm3.users.VIEW_PERSON)
@@ -5497,6 +5503,7 @@ class person_new(JSONEndpoint):
             "towncounties": asm3.person.get_town_to_county(dbo),
             "additional": asm3.additional.get_additional_fields(dbo, 0, "person"),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
+            "postcodelookup": asm3.geo.get_postcode_lookup_available(o.locale),
             "flags": asm3.lookups.get_person_flags(dbo),
             "sites": asm3.lookups.get_sites(dbo)
         }

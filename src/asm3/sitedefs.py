@@ -238,6 +238,7 @@ OSM_MAP_TILES = get_string("osm_map_tiles", "https://{s}.tile.openstreetmap.org/
 GEO_PROVIDER = get_string("geo_provider", "nominatim")  # Geocode provider to use - nominatim or google
 GEO_PROVIDER_KEY = get_string("geo_provider_key", "")   # For google, the API key to use when making geocoding requests
 GEO_SMCOM_URL = get_string("geo_smcom_url", "")
+GEO_SMCOM_ADDRESS_URL = get_string("geo_smcom_address_url", "")
 GEO_BATCH = get_boolean("geo_batch", False)             # Whether or not to try and lookup geocodes as part of the batch
 GEO_LIMIT = get_integer("geo_limit", 100)               # How many geocodes to lookup as part of the batch
 GEO_LOOKUP_TIMEOUT = get_integer("geo_lookup_timeout", 5) # Timeout in seconds when doing geocode lookups
