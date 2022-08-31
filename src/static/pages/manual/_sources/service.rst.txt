@@ -742,12 +742,29 @@ it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 
+An "order" parameter can be passed to indicate what order you would like the 
+results to be in. The default is adoption date descending. Options are:
+
+* adopted_asc / adopted_desc - the adoption date in ascending or descending order
+
+* created_asc / created_desc - creation date of the animal record
+
+* dateofbirth_asc / dateofbirth_desc - the animal's date of birth
+
+* deceased_asc / deceased_desc - the date the animal died
+
+* entered_asc / entered_desc - the most recent date the animal entered care
+
+* holduntil_asc / holduntil_desc - the date the animal's hold ends
+
+* lastchanged_asc / lastchanged_desc - the last changed date of the animal record
+
 You can also pass a "days" parameter to indicate how far you would like to
 go back. If you do not set it, the default is animals adopted in the last 30
 days::
  
     http://localhost:5000/service?method=html_adopted_animals&template=littlebox&speciesid=1&days=60
-    http://localhost:5000/service?method=html_adopted_animals
+    http://localhost:5000/service?method=html_adopted_animals&order=adopted_asc
 
 html_deceased_animals
 ----------------------
@@ -762,12 +779,15 @@ it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 
+An "order" parameter can be passed to indicate the sort order (see
+html_adopted_animals). The default is deceased date descending.
+
 You can also pass a "days" parameter to indicate how far you would like to
 go back. If you do not set it, the default is animals deceased in the last 30
 days::
  
     http://localhost:5000/service?method=html_deceased_animals&template=littlebox&speciesid=1&days=60
-    http://localhost:5000/service?method=html_deceased_animals
+    http://localhost:5000/service?method=html_deceased_animals&order=deceased_desc
 
 html_flagged_animals
 ----------------------
@@ -782,14 +802,16 @@ it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 
+An "order" parameter can be passed to indicate the sort order (see
+html_adopted_animals). The default is entered date descending.
+
 A "flag" parameter must be passed to specify the flag you want the returned
 animals to have. If no flag is set, an error is returned. An "all=1"
 parameter can optionally be passed if you'd like all animals to be included,
 not just shelter animals::
 
     http://localhost:5000/service?method=html_flagged_animals&template=littlebox&speciesid=1&all=1&flag=Needs+Foster
-    http://localhost:5000/service?method=html_flagged_animals&flag=At+Risk
-
+    http://localhost:5000/service?method=html_flagged_animals&flag=At+Risk&order=entered_asc
 
 html_held_animals
 ----------------------
@@ -798,14 +820,16 @@ html_held_animals
 
 Returns a complete HTML document containing an HTML page of current held animals.
 
+An "order" parameter can be passed to indicate the sort order (see
+html_adopted_animals). The default is entered date descending.
+
 You can pass an HTML template name in an optional "template" parameter (leaving
 it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats::
 
-    http://localhost:5000/service?method=html_held_animals&template=littlebox&speciesid=1
+    http://localhost:5000/service?method=html_held_animals&template=littlebox&speciesid=1&order=holduntildate_desc
     http://localhost:5000/service?method=html_held_animals
-
 
 html_report
 -----------

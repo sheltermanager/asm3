@@ -922,11 +922,22 @@ animals.</p>
 it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
+<p>An “order” parameter can be passed to indicate what order you would like the
+results to be in. The default is adoption date descending. Options are:</p>
+<ul class="simple">
+<li><p>adopted_asc / adopted_desc - the adoption date in ascending or descending order</p></li>
+<li><p>created_asc / created_desc - creation date of the animal record</p></li>
+<li><p>dateofbirth_asc / dateofbirth_desc - the animal’s date of birth</p></li>
+<li><p>deceased_asc / deceased_desc - the date the animal died</p></li>
+<li><p>entered_asc / entered_desc - the most recent date the animal entered care</p></li>
+<li><p>holduntil_asc / holduntil_desc - the date the animal’s hold ends</p></li>
+<li><p>lastchanged_asc / lastchanged_desc - the last changed date of the animal record</p></li>
+</ul>
 <p>You can also pass a “days” parameter to indicate how far you would like to
 go back. If you do not set it, the default is animals adopted in the last 30
 days:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_adopted_animals&amp;template=littlebox&amp;speciesid=1&amp;days=60
-http://localhost:5000/service?method=html_adopted_animals
+http://localhost:5000/service?method=html_adopted_animals&amp;order=adopted_asc
 </pre></div>
 </div>
 </div>
@@ -939,11 +950,13 @@ animals.</p>
 it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
+<p>An “order” parameter can be passed to indicate the sort order (see
+html_adopted_animals). The default is deceased date descending.</p>
 <p>You can also pass a “days” parameter to indicate how far you would like to
 go back. If you do not set it, the default is animals deceased in the last 30
 days:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_deceased_animals&amp;template=littlebox&amp;speciesid=1&amp;days=60
-http://localhost:5000/service?method=html_deceased_animals
+http://localhost:5000/service?method=html_deceased_animals&amp;order=deceased_desc
 </pre></div>
 </div>
 </div>
@@ -956,12 +969,14 @@ that have a particular flag.</p>
 it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.</p>
+<p>An “order” parameter can be passed to indicate the sort order (see
+html_adopted_animals). The default is entered date descending.</p>
 <p>A “flag” parameter must be passed to specify the flag you want the returned
 animals to have. If no flag is set, an error is returned. An “all=1”
 parameter can optionally be passed if you’d like all animals to be included,
 not just shelter animals:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_flagged_animals&amp;template=littlebox&amp;speciesid=1&amp;all=1&amp;flag=Needs+Foster
-http://localhost:5000/service?method=html_flagged_animals&amp;flag=At+Risk
+http://localhost:5000/service?method=html_flagged_animals&amp;flag=At+Risk&amp;order=entered_asc
 </pre></div>
 </div>
 </div>
@@ -969,11 +984,13 @@ http://localhost:5000/service?method=html_flagged_animals&amp;flag=At+Risk
 <h2>html_held_animals<a class="headerlink" href="#html-held-animals" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
 <p>Returns a complete HTML document containing an HTML page of current held animals.</p>
+<p>An “order” parameter can be passed to indicate the sort order (see
+html_adopted_animals). The default is entered date descending.</p>
 <p>You can pass an HTML template name in an optional “template” parameter (leaving
 it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_held_animals&amp;template=littlebox&amp;speciesid=1
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_held_animals&amp;template=littlebox&amp;speciesid=1&amp;order=holduntildate_desc
 http://localhost:5000/service?method=html_held_animals
 </pre></div>
 </div>
