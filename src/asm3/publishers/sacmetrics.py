@@ -30,7 +30,7 @@ class SACMetricsPublisher(AbstractPublisher):
         def d2m(d):
             return "%s%02d" % (d.year, d.month)
         def m2t(m):
-            return (asm3.utils.cint(m[4:]), asm3.utils.cint(m[0:3]))
+            return (asm3.utils.cint(m[4:]), asm3.utils.cint(m[0:4]))
         dbo = self.dbo
 
         # Construct the list of months that we are going to run for.
