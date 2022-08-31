@@ -745,19 +745,25 @@ and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 An "order" parameter can be passed to indicate what order you would like the 
 results to be in. The default is adoption date descending. Options are:
 
-* adopted_asc / adopted_desc - the adoption date in ascending or descending order
+* adopted_asc / adopted_desc - adoption date in ascending or descending order
 
-* created_asc / created_desc - creation date of the animal record
+* code_asc / code_desc - shelter code of the animals
 
-* dateofbirth_asc / dateofbirth_desc - the animal's date of birth
+* created_asc / created_desc - creation date of the animal records
 
-* deceased_asc / deceased_desc - the date the animal died
+* dateofbirth_asc / dateofbirth_desc - the date of birth of the animals
 
-* entered_asc / entered_desc - the most recent date the animal entered care
+* deceased_asc / deceased_desc - the date the animals died
 
-* holduntil_asc / holduntil_desc - the date the animal's hold ends
+* entered_asc / entered_desc - the most recent date the animals entered care
 
-* lastchanged_asc / lastchanged_desc - the last changed date of the animal record
+* holduntil_asc / holduntil_desc - the date the animal holds end
+
+* lastchanged_asc / lastchanged_desc - the last changed date of the animal records
+
+* litterid_asc / litterid_desc - animal litter ID
+
+* name_asc / name_desc - animal name
 
 You can also pass a "days" parameter to indicate how far you would like to
 go back. If you do not set it, the default is animals adopted in the last 30

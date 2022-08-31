@@ -99,6 +99,8 @@ def get_orderby_const(c):
     CLAUSES = {
         "adopted_asc":      "a.ActiveMovementDate",
         "adopted_desc":     "a.ActiveMovementDate DESC",
+        "code_asc":         "a.ShelterCode",
+        "code_desc":        "a.ShelterCode DESC",
         "created_asc":      "a.CreatedDate",
         "created_desc":     "a.CreatedDate DESC",
         "dateofbirth_asc":  "a.DateOfBirth",
@@ -110,7 +112,11 @@ def get_orderby_const(c):
         "holduntil_asc":    "a.HoldUntilDate",
         "holduntil_desc":   "a.HoldUntilDate DESC",
         "lastchanged_asc":  "a.LastChangedDate", 
-        "lastchanged_desc": "a.LastChangedDate DESC"
+        "lastchanged_desc": "a.LastChangedDate DESC",
+        "litterid_asc":     "a.AcceptanceNumber",
+        "litterid_desc":    "a.AcceptanceNumber DESC",
+        "name_asc":         "a.AnimalName",
+        "name_desc":        "a.AnimalName DESC"
     }
     if c in CLAUSES:
         return CLAUSES[c]
