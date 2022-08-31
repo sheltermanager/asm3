@@ -2,7 +2,7 @@ Non-Neutered/Spayed Adopted Animals
 ###
 Movements
 ###
-Any rev01
+Any rev02
 ###
 Adopted animals who have not been neutered/spayed.
 ###
@@ -20,6 +20,7 @@ INNER JOIN adoption ad ON a.ActiveMovementID = ad.ID
 INNER JOIN owner o ON o.ID = ad.OwnerID
 WHERE a.Neutered = 0 AND DeceasedDate Is Null AND ad.MovementType = 1 
 AND ad.MovementDate >= '$ASK DATE Adopted between$' AND ad.MovementDate <= '$ASK DATE and$'
+AND a.SpeciesID IN (1,2)
 ORDER BY ad.MovementDate, t.AnimalType, a.AnimalName
 ###
 $$HEADER
