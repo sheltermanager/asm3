@@ -2546,6 +2546,24 @@ class csvimport_paypal(JSONEndpoint):
             o.post.filedata(), o.post.integer("type"), o.post.integer("payment"), o.post["flags"], o.user, o.post["encoding"])
         self.redirect("task")
 
+class csvimport_stripe(JSONEndpoint):
+    url = "csvimport_stripe"
+    get_permissions = asm3.users.IMPORT_CSV_FILE
+    post_permissions = asm3.users.IMPORT_CSV_FILE
+
+    def controller(self, o):
+        return { 
+            "donationtypes": asm3.lookups.get_donation_types(o.dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(o.dbo),
+            "flags": asm3.lookups.get_person_flags(o.dbo)
+        }
+
+    def post_all(self, o):
+        l = o.locale
+        asm3.asynctask.function_task(o.dbo, _("Import a Stripe CSV file", l), asm3.csvimport.csvimport_stripe, o.dbo, \
+            o.post.filedata(), o.post.integer("type"), o.post.integer("payment"), o.post["flags"], o.user, o.post["encoding"])
+        self.redirect("task")
+
 class diary(ASMEndpoint):
     url = "diary"
 
