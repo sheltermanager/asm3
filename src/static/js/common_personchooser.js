@@ -324,6 +324,7 @@ $.widget("asm.personchooser", {
                     .click(async function() {
                         let country = dialogadd.find(".personchooser-country").val();
                         let postcode = dialogadd.find(".personchooser-postcode").val();
+                        if (!postcode) { return; }
                         if (!country) { country = config.str("OrganisationCountry"); }
                         let formdata = "mode=postcodelookup&country=" + country + "&postcode=" + postcode + "&locale=" + asm.locale + "&account=" + asm.useraccount;
                         const response = await common.ajax_post("person_embed", formdata);

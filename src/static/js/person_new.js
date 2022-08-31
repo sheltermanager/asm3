@@ -254,8 +254,10 @@ $(function() {
                 .button({ icons: { primary: "ui-icon-search" }, text: false })
                 .click(async function() {
                     let country = $("#country").val();
+                    let postcode = $("#postcode").val();
+                    if (!postcode) { return; }
                     if (!country) { country = config.str("OrganisationCountry"); }
-                    let formdata = "mode=postcodelookup&country=" + country + "&postcode=" + $("#postcode").val() + "&locale=" + asm.locale + "&account=" + asm.useraccount;
+                    let formdata = "mode=postcodelookup&country=" + country + "&postcode=" + postcode + "&locale=" + asm.locale + "&account=" + asm.useraccount;
                     const response = await common.ajax_post("person_embed", formdata);
                     const rows = jQuery.parseJSON(response);
                     $("#address").val( rows[0].street );
