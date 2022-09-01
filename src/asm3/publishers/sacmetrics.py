@@ -158,9 +158,9 @@ class SACMetricsPublisher(AbstractPublisher):
             "deceasedm5": dbo.sql_interval("DeceasedDate", sign="-", number=5, units="months"),
             "returnedm5": dbo.sql_interval("ReturnDate", sign="-", number=5, units="months"),
             "movementm5": dbo.sql_interval("MovementDate", sign="-", number=5, units="months"),
-            "stray": asm3.configuration.sac_stray_category(dbo),
-            "surrender": asm3.configuration.sac_surrender_category(dbo),
-            "tnr": asm3.configuration.sac_tnr_category(dbo)
+            "stray": asm3.configuration.sac_stray_category(dbo) or "-1", # turn no config into -1, which will never match an entry reason
+            "surrender": asm3.configuration.sac_surrender_category(dbo) or "-1",
+            "tnr": asm3.configuration.sac_tnr_category(dbo) or "-1"
         }
         sql = SAC_SPECIES_QUERY.format(**tokens)
         r = self.dbo.first_row(self.dbo.query(sql))
