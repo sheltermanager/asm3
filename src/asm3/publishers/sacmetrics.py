@@ -65,8 +65,9 @@ class SACMetricsPublisher(AbstractPublisher):
                 self.log("Add month %s (return), triggered by changes to animal %s" % (d2m(m.RETURNDATE), a.ID))
 
         # Remove this month from the set as we would be premature doing this month now.
-        self.log("remove this month: %s" % d2m(dbo.today()))
-        monthset.remove( d2m(dbo.today()) )
+        thismonth = d2m(dbo.today())
+        self.log("remove this month: %s" % thismonth)
+        if thismonth in monthset: monthset.remove(thismonth)
 
         self.log("Running SAC Metrics for months: %s" % monthset)
 
