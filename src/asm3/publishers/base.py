@@ -859,7 +859,7 @@ class AbstractPublisher(threading.Thread):
             notes += sig
         # Escape carriage returns
         cr = ""
-        if crToBr: cr = "<br />"
+        if crToBr: cr = "<br>"
         elif crToHE: cr = "&#10;"
         elif crToLF: cr = "\n"
         notes = notes.replace("\r\n", cr)
