@@ -37,6 +37,8 @@ $(function() {
                 '<td><label for="location">' + _("Location") + '</label>',
                 '<span class="asm-has-validation">*</span>',
                 '</td>',
+                '<td><input type="hidden" id="location" class="asm-personchooser" />',
+                '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="address">' + _("Address") +'</label></td>',
@@ -48,7 +50,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="county">' + _("State") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="100" id="town" data="town" type="text" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="100" id="county" data="county" type="text" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="postcode">' + _("Zipcode") + '</label></td>',
@@ -67,28 +69,38 @@ $(function() {
                 '<button id="reset">' + _("Reset") + '</button>',
                 '</div>',
                 html.content_footer()
-                ].join("\n");
-            },
+            ].join("\n");
+        },
 
         bind: function(){
             $("#reset").button().click(function(){
                 event_new.reset();
             });
-
+            $("[data='ownertype']").val(2);
+            $("#ui-id-4").text("Find organization");
+            $("#ui-id-6").text("Add organization");
+            $("#location").personchooser().bind("personchooserchange", function(event, rec){
+                $("#address").val(html.decode(rec.OWNERADDRESS));
+                $("#town").val(html.decode(rec.OWNERTOWN));
+                $("#county").val(html.decode(rec.OWNERCOUNTY));
+                $("#postcode").val(html.decode(rec.OWNERPOSTCODE));
+                $("#country").val(html.decode(rec.OWNERCOUNTRY));
+            });
         },
 
         reset: function(){
+
             $(".asm-textbox").val("").change();
             $("#address").val("").change();
         },
 
-            name: "event_new",
-            animation: "newdata",
-            autofocus: "#eventtype",
-            title: function() { return _("Add a new event"); },
-            routes: {
-                "event_new": function() { common.module_loadandstart("event_new", "event_new"); }
-            }
-        };
-        common.module_register(event_new);
-    });
+        name: "event_new",
+        animation: "newdata",
+        autofocus: "#eventtype",
+        title: function() { return _("Add a new event"); },
+        routes: {
+            "event_new": function() { common.module_loadandstart("event_new", "event_new"); }
+        }
+    };
+    common.module_register(event_new);
+});
