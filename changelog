@@ -1,6 +1,7 @@
 46
 ================
 
+04/09/22 Have fullcalendar obey ltr/rtl 
 31/08/22 Support for importing Stripe CSV files #1172
 31/08/22 Allow sort to be set for html_X_animals service methods #720
 29/08/22 Address lookup from postcode for UK/Ireland/Canada/Holland #306
