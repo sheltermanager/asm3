@@ -1,6 +1,7 @@
 46
 ================
 
+04/09/22 Set clinic calendar isRTL as well #1173
 04/09/22 Set calendar isRTL for Hebrew/Arabic #1173
 31/08/22 Support for importing Stripe CSV files #1172
 31/08/22 Allow sort to be set for html_X_animals service methods #720
