@@ -72,14 +72,13 @@ $(function() {
         },
 
         bind: function() {
-            let textdirection = (asm.locale == "ar" || asm.locale == "he") ? "rtl" : "ltr";
             $("#calendar").fullCalendar({
                 header: {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'month,agendaWeek,agendaDay,listMonth'
                 }, 
-                direction: textdirection,
+                isRTL: (asm.locale == "ar" || asm.locale == "he"),
                 editable: false,
                 firstDay: config.integer("FirstDayOfWeek"),
                 eventLimit: true,
