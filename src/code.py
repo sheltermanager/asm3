@@ -1714,7 +1714,7 @@ class animal_diary(JSONEndpoint):
             "name": "animal_diary",
             "linkid": animalid,
             "linktypeid": asm3.diary.ANIMAL,
-            "forlist": asm3.users.get_users_and_roles(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
 class animal_diet(JSONEndpoint):
@@ -2608,7 +2608,7 @@ class diary_edit(JSONEndpoint):
             "name": "diary_edit",
             "linkid": 0,
             "linktypeid": asm3.diary.NO_LINK,
-            "forlist": asm3.users.get_users_and_roles(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
 class diary_edit_my(JSONEndpoint):
@@ -2635,7 +2635,7 @@ class diary_edit_my(JSONEndpoint):
             "name": "diary_edit_my",
             "linkid": 0,
             "linktypeid": asm3.diary.NO_LINK,
-            "forlist": asm3.users.get_users_and_roles(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
 class diarytask(JSONEndpoint):
@@ -2653,7 +2653,7 @@ class diarytask(JSONEndpoint):
             "rows": diarytaskdetail,
             "taskid": taskid,
             "taskname": taskname,
-            "forlist": asm3.users.get_users_and_roles(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
     def post_create(self, o):
@@ -3256,7 +3256,7 @@ class foundanimal_diary(JSONEndpoint):
             "name": "foundanimal_diary",
             "linkid": a["LFID"],
             "linktypeid": asm3.diary.FOUNDANIMAL,
-            "forlist": asm3.users.get_users_and_roles(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
 class foundanimal_find(JSONEndpoint):
@@ -3547,7 +3547,7 @@ class incident_diary(JSONEndpoint):
             "name": "incident_diary",
             "linkid": a["ACID"],
             "linktypeid": asm3.diary.ANIMALCONTROL,
-            "forlist": asm3.users.get_users_and_roles(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
 class incident_log(JSONEndpoint):
@@ -3879,7 +3879,7 @@ class lostanimal_diary(JSONEndpoint):
             "name": "lostanimal_diary",
             "linkid": a["LFID"],
             "linktypeid": asm3.diary.LOSTANIMAL,
-            "forlist": asm3.users.get_users_and_roles(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
 class lostanimal_find(JSONEndpoint):
@@ -5205,7 +5205,7 @@ class person_diary(JSONEndpoint):
             "name": "person_diary",
             "linkid": p["ID"],
             "linktypeid": asm3.diary.PERSON,
-            "forlist": asm3.users.get_users_and_roles(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
 class person_donations(JSONEndpoint):
@@ -6613,7 +6613,7 @@ class waitinglist_diary(JSONEndpoint):
             "name": "waitinglist_diary",
             "linkid": a["WLID"],
             "linktypeid": asm3.diary.WAITINGLIST,
-            "forlist": asm3.users.get_users_and_roles(dbo)
+            "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
 class waitinglist_log(JSONEndpoint):
