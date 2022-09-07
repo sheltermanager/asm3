@@ -938,7 +938,8 @@ class mobile2(ASMEndpoint):
             "sizes":        asm3.lookups.get_sizes(dbo),
             "smdblocked":   asm3.configuration.smdb_locked(dbo),
             "species":      asm3.lookups.get_species(dbo),
-            "user":         o.user
+            "user":         o.user,
+            "locale":       o.locale
         }
         self.content_type("text/html")
         return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile2.js" ], c)
@@ -959,6 +960,47 @@ class mobile2(ASMEndpoint):
         self.check(asm3.users.CHANGE_VACCINATION)
         #asm3.medical.update_vaccination_today(o.dbo, o.user, o.post.integer("id"))
 
+    def post_loadanimal(self, o):
+        self.check(asm3.users.VIEW_INCIDENT)
+        l = o.locale
+        dbo = o.dbo
+        pid = o.post.integer("id")
+        self.content_type("application/json")
+        af = asm3.additional.get_additional_fields(dbo, pid, "animal")
+        afout = []
+        if len(af) > 0:
+            for d in af:
+                if d["FIELDTYPE"] == asm3.additional.ANIMAL_LOOKUP:
+                    afout.append({ "NAME": d["FIELDLABEL"], "VALUE": asm3.animal.get_animal_namecode(dbo, asm3.utils.cint(d["VALUE"]))})
+                elif d["FIELDTYPE"] == asm3.additional.PERSON_LOOKUP:
+                    afout.append({ "NAME": d["FIELDLABEL"], "VALUE": asm3.animal.get_person_namecode(dbo, asm3.utils.cint(d["VALUE"]))})
+                elif d["FIELDTYPE"] == asm3.additional.MONEY:
+                    afout.append({ "NAME": d["FIELDLABEL"], "VALUE": format_currency(l, d["VALUE"]) })
+                elif d["FIELDTYPE"] == asm3.additional.YESNO:
+                    afout.append({ "NAME": d["FIELDLABEL"], "VALUE": d["VALUE"] == "1" and _("Yes", l) or _("No", l) })
+                else:
+                    afout.append({ "NAME": d["FIELDLABEL"], "VALUE": d["VALUE"] })
+        return asm3.utils.json({
+            "additional": afout,
+            "diary": asm3.diary.get_diaries(dbo, asm3.diary.ANIMAL, pid),
+            "diets": asm3.animal.get_diets(dbo, pid),
+            "vaccinations": asm3.medical.get_vaccinations(dbo, pid),
+            "tests": asm3.medical.get_tests(dbo, pid),
+            "medicals": asm3.medical.get_regimens(dbo, pid),
+            "logs": asm3.log.get_logs(dbo, asm3.log.ANIMAL, pid)
+        })
+
+    def post_loadincident(self, o):
+        self.check(asm3.users.VIEW_INCIDENT)
+        dbo = o.dbo
+        pid = o.post.integer("id")
+        self.content_type("application/json")
+        return asm3.utils.json({
+            "animals": asm3.animalcontrol.get_animalcontrol_animals(dbo, pid),
+            "citations": asm3.financial.get_incident_citations(dbo, pid),
+            "diary": asm3.diary.get_diaries(dbo, asm3.diary.ANIMALCONTROL, pid),
+            "logs": asm3.log.get_logs(dbo, asm3.log.ANIMALCONTROL, pid)
+        })
 
 class mobile_login(ASMEndpoint):
     url = "mobile_login"
