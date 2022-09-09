@@ -1215,15 +1215,7 @@ const tableform = {
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += ">";
                 if (common.is_array(v.options)) {
-                    $.each(v.options, function(ia, va) {
-                        if (va.indexOf("|") != -1) {
-                            let [ov, ol] = va.split("|");
-                            d += '<option value="' + ov + '">' + ol + '</option>';
-                        }
-                        else {
-                            d += "<option>" + va + "</option>";
-                        }
-                    });
+                    d += html.list_to_options_array(v.options); 
                 }
                 else if (common.is_string(v.options)) {
                     d += v.options;

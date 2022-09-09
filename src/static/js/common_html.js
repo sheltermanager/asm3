@@ -708,6 +708,42 @@ const html = {
     },
 
     /**
+     * Reads an array of strings and produces HTML options from it.
+     * Encode values and labels with a pipe |, eg: value|label - no pipe means no value attribute
+     * If the label starts with **, outputs as a group/header instead.
+     */
+    list_to_options_array: function(a) {
+        let d = "", ingroup = false;
+        $.each(a, function(ia, va) {
+            if (va.indexOf("|") != -1) {
+                let [ov, ol] = va.split("|");
+                if (ol.indexOf("**--") == 0) { 
+                    if (ingroup) { d += "</optgroup>"; }
+                    ingroup = true;
+                    d += '<optgroup label="' + ol.replace("**--", "") + '">';
+                }
+                else {
+                    d += '<option value="' + ov + '">' + ol + '</option>';
+                }
+            }
+            else {
+                if (va.indexOf("**--") == 0) { 
+                    if (ingroup) { d += "</optgroup>"; }
+                    ingroup = true;
+                    d += '<optgroup label="' + va.replace("**--", "") + '">';
+                }
+                else {
+                    d += "<option>" + va + "</option>";
+                }
+            }
+        });
+        if (ingroup) {
+            d += "</optgroup>";
+        }
+        return d;
+    },
+
+    /**
      * Special list to options for breeds, outputs an 
      * option group for each species
      */
