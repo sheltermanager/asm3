@@ -317,7 +317,11 @@ $(function() {
 
             // If there are more than MailMergeMaxEmails results, hide the 
             // email section and replace it with a message explaining why.
-            if (controller.numrows > config.integer("MailMergeMaxEmails")) {
+            if (asm.smcom && controller.numrows > asm.smcommaxemails) {
+                $("#sendemail").html( html.error( _("Please tighten the scope of your email campaign to {0} emails or less.").replace("{0}", asm.smcommaxemails) +
+                    " " + _("Sending {0} emails is considered abusive and will damage the reputation of the email server.").replace("{0}", controller.numrows) ) );
+            }
+            else if (controller.numrows > config.integer("MailMergeMaxEmails")) {
                 $("#sendemail").html( html.error( _("Please tighten the scope of your email campaign to {0} emails or less.").replace("{0}", config.str("MailMergeMaxEmails")) +
                     " " + _("Sending {0} emails is considered abusive and will damage the reputation of the email server.").replace("{0}", controller.numrows) ) );
             }

@@ -258,7 +258,7 @@ DEFAULTS = {
     "LostAnimalSearchColumns": "LostFoundID,Owner,MicrochipNumber,AreaLost,"
         "AreaPostCode,DateLost,AgeGroup,SexName,SpeciesName,BreedName,"
         "BaseColourName,DistFeat",
-    "MailMergeMaxEmails": "2000",
+    "MailMergeMaxEmails": "3000",
     "MainScreenAnimalLinkMode": "recentlychanged",
     "MainScreenAnimalLinkMax": "9",
     "ManualCodes": "No",
@@ -1009,6 +1009,9 @@ def maddies_fund_username(dbo):
 
 def maddies_fund_password(dbo):
     return cstring(dbo, "MaddiesFundPassword")
+
+def mail_merge_max_emails(dbo):
+    return cint(dbo, "MailMergeMaxEmails", int(DEFAULTS["MailMergeMaxEmails"]))
 
 def main_screen_animal_link_mode(dbo):
     return cstring(dbo, "MainScreenAnimalLinkMode", DEFAULTS["MainScreenAnimalLinkMode"])
