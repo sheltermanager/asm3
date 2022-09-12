@@ -33,7 +33,7 @@ o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
 WHERE o.IsMember = 1 
-AND o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 
+AND o.IsDeceased = 0 
 AND (o.MembershipExpiryDate > '$CURRENT_DATE$' OR o.MembershipExpiryDate Is NULL)
 AND GDPRContactOptIn LIKE '%post%' AND GDPRContactOptIn NOT LIKE '%email%'
 ###
