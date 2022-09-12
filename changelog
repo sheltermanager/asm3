@@ -1,6 +1,7 @@
 46
 ================
 
+12/09/22 Email sending limits now do not apply to self configured smtp
 10/09/22 Separate smcom email sending limit from config limit for open source users
 09/09/22 Stop publisher colour categories being chosen, add breed categories #1175
 06/09/22 Remove users without VIEW_DIARY permission as diary note targets #1174

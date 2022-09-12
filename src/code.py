@@ -653,7 +653,6 @@ class configjs(ASMEndpoint):
             "manualvideo": MANUAL_VIDEO_URL,
             "microchipmanufacturers": asm3.lookups.MICROCHIP_MANUFACTURERS,
             "smcom": asm3.smcom.active(),
-            "smcommaxemails": asm3.smcom.MAX_EMAILS,
             "smcomexpiry": expirydate,
             "smcomexpirydisplay": expirydatedisplay,
             "smcompaymentlink": SMCOM_PAYMENT_LINK.replace("{alias}", dbo.alias).replace("{database}", dbo.database),
@@ -4079,6 +4078,8 @@ class mailmerge(JSONEndpoint):
         return {
             "title": title,
             "fields": fields,
+            "issmcomsmtp": asm3.utils.is_smcom_smtp(dbo),
+            "smcommaxemails": asm3.smcom.MAX_EMAILS,
             "mergeparams": asm3.utils.json(p),
             "mergereport": crid,
             "mergetitle": title.replace(" ", "_").replace("\"", "").replace("'", "").lower(),
@@ -4094,8 +4095,7 @@ class mailmerge(JSONEndpoint):
         mergeparams = ""
         if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
-        # TODO: NO! THIS NEEDS TO BE CHECKING THE SERVER HOSTNAME INSTEAD SO THAT PEOPLE USING THEIR OWN SERVER ARE NOT CHECKED
-        if asm3.smcom.active() and len(rows) > asm3.smcom.MAX_EMAILS:
+        if asm3.utils.is_smcom_smtp(dbo) and len(rows) > asm3.smcom.MAX_EMAILS:
             raise asm3.utils.ASMError("{0} exceeds limit of {1} emails allowed through sheltermanager.com email server".format(len(rows), asm3.smcom.MAX_EMAILS))
         if len(rows) > asm3.configuration.mail_merge_max_emails(dbo):
             raise asm3.utils.ASMError("{0} exceeds configured limit of {1} emails via mail merge".format(len(rows), asm3.configuration.mail_merge_max_emails(dbo)))

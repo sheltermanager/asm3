@@ -1613,6 +1613,17 @@ def replace_url_token(body, url, text):
         body += "\n" + append_html_string % (url, text)
     return body
 
+def is_smcom_smtp(dbo):
+    """ 
+    Returns True if the outbound email server to be used for sending emails is sheltermanager.com
+    """
+    host = ""
+    if SMTP_SERVER is not None:
+        if "host" in SMTP_SERVER: host = SMTP_SERVER["host"]
+    if dbo and asm3.configuration.smtp_override(dbo):
+        host = asm3.configuration.smtp_server(dbo)
+    return host.find("sheltermanager.com") != -1
+
 def is_valid_email_address(s):
     """ Returns True if s is a valid email address """
     regex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
