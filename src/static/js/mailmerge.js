@@ -315,6 +315,7 @@ $(function() {
                 $("#recipientstab").hide().next().hide();
             }
 
+            // TODO: NO! CHECK THE HOSTNAME
             // If there are more than MailMergeMaxEmails results, hide the 
             // email section and replace it with a message explaining why.
             if (asm.smcom && controller.numrows > asm.smcommaxemails) {
