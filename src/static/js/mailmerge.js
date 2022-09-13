@@ -320,7 +320,7 @@ $(function() {
             // The first clause is for sheltermanager.com only and means that the limit can be lifted
             // by configuring the use of another SMTP server in sheltermanager.com accounts.
             if (controller.issmcomsmtp && controller.numrows > controller.smcommaxemails) {
-                $("#sendemail").html( html.error( _("Please tighten the scope of your email campaign to {0} emails or less.").replace("{0}", asm.smcommaxemails) +
+                $("#sendemail").html( html.error( _("Please tighten the scope of your email campaign to {0} emails or less.").replace("{0}", controller.smcommaxemails) +
                     " " + _("Sending {0} emails is considered abusive and will damage the reputation of the email server.").replace("{0}", controller.numrows) ) );
             }
             else if (controller.numrows > config.integer("MailMergeMaxEmails")) {
