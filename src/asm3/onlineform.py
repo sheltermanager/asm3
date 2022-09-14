@@ -227,7 +227,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                 h.append('<option>%s</option>' % lv)
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_RADIOGROUP:
-            h.append('<div class="asm-onlineform-radiogroup" style="display: inline-block">')
+            h.append('<div id="%s" class="asm-onlineform-radiogroup" style="display: inline-block">' % (fid))
             for i, lv in enumerate(asm3.utils.nulltostr(f.LOOKUPS).split("|")):
                 rid = "%s_%s" % (fid, i)
                 h.append('<input type="radio" class="asm-onlineform-radio" id="%s" name="%s" value="%s" %s /> ' \
@@ -235,7 +235,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('</div>')
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOXGROUP:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
-            h.append('<div class="asm-onlineform-checkgroup" data-name="%s" data-required="%s" style="display: inline-block">' % (cname, asm3.utils.iif(required != "", "required", "")))
+            h.append('<div id="%s" class="asm-onlineform-checkgroup" data-name="%s" data-required="%s" style="display: inline-block">' % (fid, cname, asm3.utils.iif(required != "", "required", "")))
             for i, lv in enumerate(asm3.utils.nulltostr(f.LOOKUPS).split("|")):
                 rid = "%s_%s" % (fid, i)
                 rname = "%s%s_" % (f.FIELDNAME, i)

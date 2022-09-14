@@ -1,6 +1,7 @@
 46
 ================
 
+14/09/22 f### id attributes for online form checkboxgroup/radio buttons
 14/09/22 Visual indicator that system log messages cannot be edited
 14/09/22 System log messages AC01/AC02/AC03 relating to adoption checkout #1177
 12/09/22 Smcom email sending limits now do not apply to self configured smtp
