@@ -446,11 +446,11 @@ $(function() {
                     click: function() {
                         let row = tableform.table_selected_row(table);
                         if (row.MOVEMENTTYPE > 1) { 
-                            header.show_error("Adopter checkout only applies to reservation and adoption movements.");
+                            header.show_error(_("Adopter checkout only applies to reservation and adoption movements."));
                             return;
                         }
                         if (!row.FEE) {
-                            header.show_error("No adoption fee has been set for this animal.");
+                            header.show_error(_("No adoption fee has been set for this animal."));
                             return;
                         }
                         $("#emailform").emailform("show", {
