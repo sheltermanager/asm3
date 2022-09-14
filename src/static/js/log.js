@@ -28,6 +28,7 @@ $(function() {
                 idcolumn: "ID",
                 edit: async function(row) {
                     if (row.COMMENTS.indexOf("ES0") == 0) { return; } // Do not allow editing electronic signature related logs
+                    if (row.COMMENTS.indexOf("AC0") == 0) { return; } // Do not allow editing adoption checkout related logs
                     tableform.fields_populate_from_json(dialog.fields, row);
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);

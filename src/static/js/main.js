@@ -214,6 +214,17 @@ $(function() {
                         _("{plural3} document signing requests have been received in the last week")
                     ]) + '</a><br />';
             }
+            if (alerts.OPENCHECKOUT > 0 && common.has_permission("vo")) {
+                totalalerts += alerts.OPENCHECKOUT;
+                s += '<a href="search?q=opencheckout">' + html.icon("movement") + ' ' + 
+                    common.ntranslate(alerts.OPENCHECKOUT, [
+                        _("{plural0} adoption checkout request initiated in the last week is still open"),
+                        _("{plural1} adoption checkout requests initiated in the last week are still open"),
+                        _("{plural2} adoption checkout requests initiated in the last week are still open"),
+                        _("{plural3} adoption checkout requests initiated in the last week are still open")
+                    ]) + '</a><br />';
+            }
+
             if (alerts.NOTADOPT > 0 && common.has_permission("va") && config.bool("EmblemNotForAdoption")) {
                 totalalerts += alerts.NOTADOPT;
                 s += '<a href="search?q=notforadoption">' + html.icon("notforadoption") + ' ' + 

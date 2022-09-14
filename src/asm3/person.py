@@ -266,6 +266,16 @@ def get_reserves_without_homechecks(dbo):
     return dbo.query(get_person_query(dbo) + " INNER JOIN adoption a ON a.OwnerID = o.ID " \
         "WHERE a.MovementType = 0 AND a.ReservationDate Is Not Null AND a.ReservationCancelledDate Is Null AND o.IDCheck = 0")
 
+def get_open_adoption_checkout(dbo, cutoff=7):
+    """
+    Returns owners with adoption checkout initiated, but not complete in the last cutoff days
+    """
+    cutoffdate = dbo.today(cutoff * -1)
+    return dbo.query(get_person_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=1 AND l.Date >= ? AND l.Comments LIKE 'AC01%%' " \
+        "WHERE (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=1 AND Date >= ? AND Comments LIKE 'AC01%%') " \
+        " > (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=1 AND Date >= ? AND Comments LIKE 'AC03%%') ", 
+        [cutoffdate, cutoffdate, cutoffdate], distincton="ID")
+
 def get_overdue_donations(dbo):
     """
     Returns owners that have an overdue regular donation

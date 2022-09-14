@@ -233,6 +233,10 @@ def checkout_adoption_page(dbo, token):
     co["donationmsg"] = asm3.configuration.adoption_checkout_donation_msg(dbo)
     co["donationtiers"] = asm3.configuration.adoption_checkout_donation_tiers(dbo)
     co["token"] = token
+    # Record that the checkout was accessed in the log
+    logtypeid = asm3.configuration.generate_document_log_type(dbo)
+    logmsg = "AC02:%s:%s(%s)-->%s(%s)" % (co["movementid"], co["animalname"], co["animalid"], co["personname"], co["personid"])
+    asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["personid"], logtypeid, logmsg)
     return asm3.html.js_page(scripts, _("Adoption Checkout", l), co)
 
 def checkout_adoption_post(dbo, post):
@@ -299,6 +303,10 @@ def checkout_adoption_post(dbo, post):
     elif co["paymentdonid"] > 0 and donationamt == 0:
         # The user has changed their voluntary donation amount to 0 - delete it
         dbo.delete("ownerdonation", co["paymentdonid"], "checkout")
+    # Record that the checkout was completed in the log
+    logtypeid = asm3.configuration.generate_document_log_type(dbo)
+    logmsg = "AC03:%s:%s(%s)-->%s(%s):volamt=%s" % (co["movementid"], co["animalname"], co["animalid"], co["personname"], co["personid"], donationamt)
+    asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["personid"], logtypeid, logmsg)
     # Construct the payment checkout URL
     title = _("{0}: Adoption fee", l)
     if co["paymentdonid"] != "0": title = _("{0}: Adoption fee and donation", l)
