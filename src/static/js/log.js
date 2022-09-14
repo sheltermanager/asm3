@@ -42,6 +42,9 @@ $(function() {
                         tableform.dialog_enable_buttons();
                     }
                 },
+                complete: function(row) {
+                    return row.COMMENTS.indexOf("ES0") == 0 || row.COMMENTS.indexOf("AC0") == 0;
+                },
                 columns: [
                     { field: "LOGTYPENAME", display: _("Type") },
                     { field: "LASTCHANGEDBY", display: _("By") },
