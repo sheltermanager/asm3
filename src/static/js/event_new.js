@@ -82,7 +82,7 @@ $(function() {
                 $("#asm-content button").button("disable");
                 check_for_similar();
             });
-            $("addedit").button().click(function(){
+            $("#addedit").button().click(function(){
                 event_new.create_and_edit = true;
                 $("#asm-content button").button("disable");
                 check_for_similar();
@@ -117,10 +117,14 @@ $(function() {
                 try{
                     console.log($("#location").personchooser());
                     let formdata = "ownerid=" + $("#location").personchooser().val() + "&" + $("input, textarea, select, #location").toPOST();
-                    console.log(formdata);
                     let eventid = await common.ajax_post("event_new", formdata);
+                    if(eventid && event_new.create_and_edit)
+                        common.route("event?id=" + eventid);
+                    else
+                        header.show_info(_("Event successfully created"));
                 }
                 finally{
+                    $("#asm-content button").button("enable");
                 }
             }
 
@@ -132,7 +136,6 @@ $(function() {
         },
 
         reset: function(){
-
             $(".asm-textbox").val("").change();
             $("#address").val("").change();
         },
