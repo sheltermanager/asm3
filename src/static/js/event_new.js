@@ -35,13 +35,14 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="location">' + _("Location") + '</label>',
-                '<span class="asm-has-validation">*</span>',
                 '</td>',
                 '<td><input type="hidden" id="location" class="asm-personchooser" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="address">' + _("Address") +'</label></td>',
+                '<td><label for="address">' + _("Address") +'</label>',
+                '<span class="asm-has-validation">*</span>',
+                '</td>',
                 '<td><textarea class="asm-textareafixed newform" id="address" data="address" rows="3"></textarea></td>',
                 '</tr>',
                 '<tr>',
@@ -76,6 +77,17 @@ $(function() {
             $("#reset").button().click(function(){
                 event_new.reset();
             });
+            $("#add").button().click(function(){
+                event_new.create_and_edit = false;
+                $("#asm-content button").button("disable");
+                check_for_similar();
+            });
+            $("addedit").button().click(function(){
+                event_new.create_and_edit = true;
+                $("#asm-content button").button("disable");
+                check_for_similar();
+            });
+            // changing the search type to organization
             $("[data='ownertype']").val(2);
             $("#ui-id-4").text("Find organization");
             $("#ui-id-6").text("Add organization");
@@ -86,6 +98,37 @@ $(function() {
                 $("#postcode").val(html.decode(rec.OWNERPOSTCODE));
                 $("#country").val(html.decode(rec.OWNERCOUNTRY));
             });
+
+            const check_for_similar = async function(){
+                if(!validation()){
+                   $("#asm-content button").button("disable");
+                   return;
+                }
+//                let formdata = "mode=similar&" + $("#emailaddress, #mobiletelephone, #surname, #forenames, #address").toPOST();
+                add_event();
+            }
+
+            const add_event = async function(){
+                if(!validation()){
+                   $("#asm-content button").button("disable");
+                   return;
+                }
+                header.show_loading(_("Creating..."));
+                try{
+                    console.log($("#location").personchooser());
+                    let formdata = "ownerid=" + $("#location").personchooser().val() + "&" + $("input, textarea, select, #location").toPOST();
+                    console.log(formdata);
+                    let eventid = await common.ajax_post("event_new", formdata);
+                }
+                finally{
+                }
+            }
+
+
+
+            const validation = async function(){
+                return true;
+            }
         },
 
         reset: function(){
