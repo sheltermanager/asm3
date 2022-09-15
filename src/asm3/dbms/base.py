@@ -596,7 +596,7 @@ class Database(object):
         If CACHE_COMMON_QUERIES is set to false, just runs the query
         without doing any caching and is equivalent to Database.query()
         """
-        if not CACHE_COMMON_QUERIES: return self.query(sql, params=params, limit=limit)
+        if not CACHE_COMMON_QUERIES or age == 0: return self.query(sql, params=params, limit=limit)
         cache_key = "%s:%s:%s" % (self.database, sql, params)
         results = asm3.cachedisk.get(cache_key, self.database, expectedtype=list)
         if results is not None:
@@ -899,6 +899,14 @@ class Database(object):
             requires expr2 to be lower case if it is a string literal.
         """
         return f"LOWER({expr1}) LIKE {expr2}"
+
+    def sql_in(self, results, columnname = "ID"):
+        """ Writes a SQL IN clause using columnname for each row in the results, return value does not include parentheses, eg: 1,2 """
+        ins = []
+        for r in results:
+            ins.append(str(r[columnname]))
+        if len(ins) == 0: ins.append("-999") # insert a dummy value that will never match anything so the clause is always valid
+        return "%s" % ",".join(ins)
 
     def sql_interval(self, columnname, number, sign="+", units="months"):
         """

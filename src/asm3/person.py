@@ -271,10 +271,12 @@ def get_open_adoption_checkout(dbo, cutoff=7):
     Returns owners with adoption checkout initiated, but not complete in the last cutoff days
     """
     cutoffdate = dbo.today(cutoff * -1)
-    return dbo.query(get_person_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=1 AND l.Date >= ? AND l.Comments LIKE 'AC01%%' " \
-        "WHERE (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=1 AND Date >= ? AND Comments LIKE 'AC01%%') " \
-        " > (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=1 AND Date >= ? AND Comments LIKE 'AC03%%') ", 
+    rows = dbo.query("SELECT l.LinkID AS ID FROM log l " \
+        "WHERE l.LinkType=1 AND l.Date >= ? AND l.Comments LIKE 'AC01%%' " \
+        "AND (SELECT COUNT(*) FROM log WHERE LinkID=l.LinkID AND LinkType=1 AND Date >= ? AND Comments LIKE 'AC01%%') " \
+        " > (SELECT COUNT(*) FROM log WHERE LinkID=l.LinkID AND LinkType=1 AND Date >= ? AND Comments LIKE 'AC03%%') ", \
         [cutoffdate, cutoffdate, cutoffdate], distincton="ID")
+    return dbo.query(get_person_query(dbo) + "WHERE o.ID IN (%s)" % dbo.sql_in(rows))
 
 def get_overdue_donations(dbo):
     """
@@ -288,18 +290,21 @@ def get_signed_requests(dbo, cutoff=7):
     Returns owners that have a fulfilled a signing request in the last cutoff days
     """
     cutoffdate = dbo.today(cutoff * -1)
-    return dbo.query(get_person_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=1 " \
-        "AND l.Date >= ? AND l.Comments LIKE 'ES02%%'", [cutoffdate], distincton="ID")
+    rows = dbo.query("SELECT l.LinkID AS ID FROM log l " \
+        "WHERE l.LinkType=1 AND l.Date >= ? AND l.Comments LIKE 'ES02%%'", [cutoffdate], distincton="ID")
+    return dbo.query(get_person_query(dbo) + "WHERE o.ID IN (%s)" % dbo.sql_in(rows))
 
 def get_unsigned_requests(dbo, cutoff=31):
     """
     Returns owners that have more signing requests in the last cutoff days than signed
     """
     cutoffdate = dbo.today(cutoff * -1)
-    return dbo.query(get_person_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=1 AND l.Date >= ? AND l.Comments LIKE 'ES01%%' " \
-        "WHERE (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=1 AND Date >= ? AND Comments LIKE 'ES01%%') " \
-        " > (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=1 AND Date >= ? AND Comments LIKE 'ES02%%') ", 
+    rows = dbo.query("SELECT l.LinkID AS ID FROM log l " \
+        "WHERE l.LinkType=1 AND l.Date >= ? AND l.Comments LIKE 'ES01%%' " \
+        "AND (SELECT COUNT(*) FROM log WHERE LinkID=l.LinkID AND LinkType=1 AND Date >= ? AND Comments LIKE 'ES01%%') " \
+        " > (SELECT COUNT(*) FROM log WHERE LinkID=l.LinkID AND LinkType=1 AND Date >= ? AND Comments LIKE 'ES02%%') ", \
         [cutoffdate, cutoffdate, cutoffdate], distincton="ID")
+    return dbo.query(get_person_query(dbo) + "WHERE o.ID IN (%s)" % dbo.sql_in(rows))
 
 def get_links(dbo, pid):
     """
