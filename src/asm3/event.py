@@ -1,4 +1,8 @@
+import datetime
+
 import asm3.additional
+
+from asm3.i18n import _
 
 
 def get_event_query(dbo):
@@ -19,13 +23,28 @@ def get_event(dbo, eventid):
 def insert_event_from_form(dbo, post, username):
     l = dbo.locale
     pid = dbo.get_id("event")
+    ownerid = post["ownerid"]
+    if ownerid == "":
+        ownerid = None
+
+    if post["startdate"].strip() == "":
+        raise asm3.utils.ASMValidationError(_("Event must have a start date.", l))
+
+    if post["enddate"].strip() == "":
+        raise asm3.utils.ASMValidationError(_("Event must have an end date.", l))
+
+    if post["address"].strip() == "":
+        raise asm3.utils.ASMValidationError(_("Event must have an address.", l))
+
+    if post.date("startdate") > post.date("enddate"):
+        raise asm3.utils.ASMValidationError(_("End date must be equal to or later than start date."))
 
     dbo.insert("event", {
         "ID": pid,
         "StartDateTime": post.date("startdate"),
         "EndDateTime": post.date("enddate"),
         "EventName": post["eventname"],
-        "EventOwnerID": post["ownerid"],
+        "EventOwnerID": ownerid,
         "EventAddress": post["address"],
         "EventTown": post["town"],
         "EventCounty": post["county"],

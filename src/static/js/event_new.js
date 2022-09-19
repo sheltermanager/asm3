@@ -99,25 +99,32 @@ $(function() {
                 $("#country").val(html.decode(rec.OWNERCOUNTRY));
             });
 
+            $("#startdate").bind("change", function(){
+                window.alert($("#enddate").val())
+                if($("#enddate").val() == "" && $("#startdate").val() != "")
+                    $("#enddate").val($("#startdate").val());
+            });
+
             const check_for_similar = async function(){
-                if(!validation()){
-                   $("#asm-content button").button("disable");
-                   return;
+                if(!event_new.validation()){
+                    $("#asm-content button").button("enable");
+                    return;
                 }
 //                let formdata = "mode=similar&" + $("#emailaddress, #mobiletelephone, #surname, #forenames, #address").toPOST();
                 add_event();
-            }
+            };
 
             const add_event = async function(){
-                if(!validation()){
-                   $("#asm-content button").button("disable");
-                   return;
+                if(!event_new.validation())
+                {
+                    $("#asm-content button").button("enable");
+                    return;
                 }
                 header.show_loading(_("Creating..."));
                 try{
-                    console.log($("#location").personchooser());
                     let formdata = "ownerid=" + $("#location").personchooser().val() + "&" + $("input, textarea, select, #location").toPOST();
                     let eventid = await common.ajax_post("event_new", formdata);
+                    window.alert(eventid);
                     if(eventid && event_new.create_and_edit)
                         common.route("event?id=" + eventid);
                     else
@@ -126,13 +133,30 @@ $(function() {
                 finally{
                     $("#asm-content button").button("enable");
                 }
+            };
+        },
+
+        validation: function(){
+            header.hide_error();
+            validate.reset();
+            if(common.trim($("#startdate").val()) == ""){
+                header.show_error(_("Event must have a start date."));
+                validate.highlight("startdate");
+                return false;
             }
-
-
-
-            const validation = async function(){
-                return true;
+            if (common.trim($("#enddate").val()) == ""){
+                header.show_error(_("Event must have an end date."));
+                validate.highlight("enddate");
+                return false;
             }
+            if (common.trim($("#address").val()) == ""){
+                header.show_error(_("Event must have an address."));
+                validate.highlight("address");
+                return false;
+            }
+            // mandatory additional fields
+            if (!additional.validate_mandatory()) { return false; }
+            return true;
         },
 
         reset: function(){

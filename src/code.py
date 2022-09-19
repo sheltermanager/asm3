@@ -6697,7 +6697,7 @@ class waitinglist_results(JSONEndpoint):
 
 class event_new(JSONEndpoint):
     url = "event_new"
-
+    #TODO: need to add permissions
     def controller(self, o):
         dbo = o.dbo
         asm3.al.debug("add event", "code.event_new", dbo)
@@ -6705,6 +6705,8 @@ class event_new(JSONEndpoint):
             "additional": asm3.additional.get_additional_fields(dbo, 0, "event")
         }
 
+    def post_all(self, o):
+        return str(asm3.event.insert_event_from_form(o.dbo, o.post, o.user))
 
 # List of routes constructed from class definitions
 routes = []
