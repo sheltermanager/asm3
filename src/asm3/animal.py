@@ -2312,33 +2312,32 @@ def update_animal_from_form(dbo, post, username):
         if deceaseddate is not None and datebroughtin is not None and deceaseddate < datebroughtin:
             raise asm3.utils.ASMValidationError(_("Animal cannot be deceased before it was brought to the shelter", l))
 
+    # Look up the row pre-change so that we can see if any log messages need to be triggered
+    prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, IsHold, AdditionalFlags FROM animal WHERE ID=?", [aid]))
+
     # If the option is on and the internal location or unit has changed, log it
     if asm3.configuration.location_change_log(dbo):
-        oldloc = dbo.first_row( dbo.query("SELECT ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=?", [aid]) )
-        if oldloc:
-            oldlocid = oldloc.shelterlocation
-            oldlocunit = oldloc.shelterlocationunit
-            if post.integer("location") != oldlocid or post["unit"] != oldlocunit:
-                oldlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [oldlocid])
-                if oldlocunit is not None and oldlocunit != "":
-                    oldlocation += "-" + oldlocunit
-                newlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [post.integer("location")])
-                if post["unit"] != "":
-                    newlocation += "-" + post["unit"]
-                asm3.log.add_log(dbo, username, asm3.log.ANIMAL, aid, asm3.configuration.location_change_log_type(dbo), 
-                    _("{0} {1}: Moved from {2} to {3}", l).format(post["sheltercode"], post["animalname"], oldlocation, newlocation))
+        oldlocid = prerow.shelterlocation
+        oldlocunit = prerow.shelterlocationunit
+        if post.integer("location") != oldlocid or post["unit"] != oldlocunit:
+            oldlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [oldlocid])
+            if oldlocunit is not None and oldlocunit != "":
+                oldlocation += "-" + oldlocunit
+            newlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [post.integer("location")])
+            if post["unit"] != "":
+                newlocation += "-" + post["unit"]
+            asm3.log.add_log(dbo, username, asm3.log.ANIMAL, aid, asm3.configuration.location_change_log_type(dbo), 
+                _("{0} {1}: Moved from {2} to {3}", l).format(post["sheltercode"], post["animalname"], oldlocation, newlocation))
 
     # If the option is on and the hold status has changed, log it
     if asm3.configuration.hold_change_log(dbo):
-        oldhold = dbo.query_int("SELECT IsHold FROM animal WHERE ID=?", [aid])
-        if oldhold == 0 and post.boolean("hold"):
+        if prerow.ISHOLD == 0 and post.boolean("hold"):
             asm3.log.add_log(dbo, username, asm3.log.ANIMAL, aid, asm3.configuration.hold_change_log_type(dbo),
                 _("Hold until {0}", l).format(post["holduntil"]))
 
     # If the option is on and the weight has changed, log it
     if asm3.configuration.weight_change_log(dbo):
-        oldweight = dbo.query_float("SELECT Weight FROM animal WHERE ID=?", [aid])
-        if post.floating("weight") != oldweight:
+        if post.floating("weight") != prerow.WEIGHT:
             weight = str(post.floating("weight"))
             units = ""
             if asm3.configuration.show_weight_units_in_log(dbo):
@@ -2348,8 +2347,7 @@ def update_animal_from_form(dbo, post, username):
 
     # If the animal is newly deceased, mark any diary notes completed
     if post.date("deceaseddate") is not None:
-        olddecdate = dbo.query_date("SELECT DeceasedDate FROM animal WHERE ID=?", [aid])
-        if olddecdate != post.date("deceaseddate"):
+        if prerow.DECEASEDDATE != post.date("deceaseddate"):
             asm3.diary.complete_diary_notes_for_animal(dbo, username, aid)
 
     # Sort out any flags
@@ -2364,6 +2362,12 @@ def update_animal_from_form(dbo, post, username):
     nonshelter = bi("nonshelter" in flags)
     quarantine = bi("quarantine" in flags)
     flagstr = "|".join(flags) + "|"
+
+    # If the option is on and the flags have changed, log it
+    if asm3.configuration.flag_change_log(dbo):
+        if flagstr != prerow.ADDITIONALFLAGS:
+            asm3.log.add_log(dbo, username, asm3.log.ANIMAL, aid, asm3.configuration.flag_change_log_type(dbo),
+                _("Flags changed from '{0}' to '{1}'", l).format(prerow.ADDITIONALFLAGS, flagstr))
 
     # If the animal is non-shelter, make sure that any movements are returned on the same
     # day. Non shelter animals don't have visible movements and this prevents a bug where

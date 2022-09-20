@@ -220,6 +220,8 @@ DEFAULTS = {
     "EmblemUnneutered": "Yes",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
+    "FlagChangeLog": "Yes",
+    "FlagChangeLogType": "3",
     "FormatPhoneNumbers": "Yes",
     "FosterOnShelter": "Yes",
     "FostererEmails": "No", 
@@ -895,6 +897,12 @@ def email_empty_reports(dbo):
 
 def email_messages(dbo):
     return cboolean(dbo, "EmailMessages", DEFAULTS["EmailMessages"] == "Yes")
+
+def flag_change_log(dbo):
+    return cboolean(dbo, "FlagChangeLog", DEFAULTS["FlagChangeLog"] == "Yes")
+
+def flag_change_log_type(dbo):
+    return cint(dbo, "FlagChangeLogType", DEFAULTS["FlagChangeLogType"])
 
 def foster_on_shelter(dbo):
     return cboolean(dbo, "FosterOnShelter", DEFAULTS["FosterOnShelter"] == "Yes")

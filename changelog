@@ -1,6 +1,7 @@
 46
 ================
 
+20/09/22 Record changes to person/animal flags in the log #1176
 20/09/22 Back button now closes iframe on adoptable_js #1156
 19/09/22 Fix codemirror z-index issue with dialogs #1178
 15/09/22 Fix performance issues with searching ES0X/AC0X records

@@ -914,7 +914,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
 
     # If we're using GDPR contact options and email is not set, set the exclude from bulk email flag
     if asm3.configuration.show_gdpr_contact_optin(dbo):
-        if post["gdprcontactoptin"].find("email") == -1:
+        if post["gdprcontactoptin"].find("email") == -1 and post["flags"].find("excludefrombulkemail") == -1:
             post["flags"] += ",excludefrombulkemail"
 
     dbo.update("owner", pid, {
@@ -992,6 +992,8 @@ def update_flags(dbo, username, personid, flags):
     def bi(b): 
         return b and 1 or 0
 
+    l = dbo.locale
+
     homechecked = bi("homechecked" in flags)
     banned = bi("banned" in flags)
     dangerous = bi("dangerous" in flags)
@@ -1013,6 +1015,13 @@ def update_flags(dbo, username, personid, flags):
     excludefrombulkemail = bi("excludefrombulkemail" in flags)
     sponsor = bi("sponsor" in flags)
     flagstr = "|".join(flags) + "|"
+
+    # If the option is on and the flags have changed, log it
+    if asm3.configuration.flag_change_log(dbo):
+        oldflags = dbo.query_string("SELECT AdditionalFlags FROM owner WHERE ID=?", [personid])
+        if oldflags != flagstr:
+            asm3.log.add_log(dbo, username, asm3.log.PERSON, personid, asm3.configuration.flag_change_log_type(dbo),
+                _("Flags changed from '{0}' to '{1}'", l).format(oldflags, flagstr))
 
     dbo.update("owner", personid, {
         "IDCheck":                  homechecked,
