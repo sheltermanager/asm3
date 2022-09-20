@@ -1,6 +1,7 @@
 46
 ================
 
+19/09/22 Fix codemirror z-index issue with dialogs #1178
 15/09/22 Fix performance issues with searching ES0X/AC0X records
 14/09/22 f### id attributes for online form checkboxgroup/radio buttons
 14/09/22 Visual indicator that system log messages cannot be edited
