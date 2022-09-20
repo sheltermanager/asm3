@@ -277,8 +277,9 @@
             overlay.innerHTML = substitute(overlay_template, { "iframe_position": iframe_position, "iframe_height": iframe_height, "iframe_bgcolor": iframe_bgcolor });
             document.body.appendChild(overlay);
             document.getElementById("asm3-adoptable-iframe-close").addEventListener("click", function(e) {
-                document.getElementById("asm3-adoptable-iframe").src = "about:blank";
-                document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
+                window.history.back(); // popstate handler closes the frame
+                //document.getElementById("asm3-adoptable-iframe").src = "about:blank";
+                //document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
                 e.preventDefault();
             });
         }
