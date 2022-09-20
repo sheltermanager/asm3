@@ -223,11 +223,18 @@
                     document.getElementById("asm3-adoptable-iframe").src = this.href;
                     document.getElementById("asm3-adoptable-iframe-overlay").style.display = "block";
                     if (!iframe_fixed) { window.scrollTo(0, 0); }
+                    window.history.pushState("close", "", "");
                     e.preventDefault();
                 };
             for (i = 0; i < links.length; i++) {
                 links[i].addEventListener("click", handler);
             }
+            window.history.pushState("close", "", ""); // initial page state necessary or popstate does not work the first time
+            window.addEventListener("popstate", function(e) {
+                if (e.state != "close") { return; }
+                document.getElementById("asm3-adoptable-iframe").src = "about:blank";
+                document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
+            });
         }
 
     };
