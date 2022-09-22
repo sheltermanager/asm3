@@ -41,6 +41,7 @@ $.widget("asm.personchooser", {
         personflags: [],
         filter: "all",
         mode: "full",
+        type: "all",
         title: _("Find person")
     },
 
@@ -53,6 +54,10 @@ $.widget("asm.personchooser", {
 
         if (this.element.attr("data-mode")) {
             this.options.mode = this.element.attr("data-mode");
+        }
+
+        if(this.element.attr("data-type")){
+            this.options.type = this.element.attr("data-type");
         }
 
         var h = [
@@ -484,7 +489,8 @@ $.widget("asm.personchooser", {
         dialog.find("button").button("disable");
         var q = encodeURIComponent(dialog.find("input").val());
         var filter = this.options.filter;
-        var formdata = "mode=find&filter=" + filter + "&q=" + q;
+        var type = this.options.type
+        var formdata = "mode=find&filter=" + filter + "&q=" + q + "&type=" + type;
         $.ajax({
             type: "POST",
             url:  "person_embed",

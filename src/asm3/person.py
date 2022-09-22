@@ -511,7 +511,7 @@ def get_investigation(dbo, personid, sort = ASCENDING):
         sql += "ORDER BY o.Date DESC"
     return dbo.query(sql, [personid])
 
-def get_person_find_simple(dbo, query, username="", classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
+def get_person_find_simple(dbo, query, username="", classfilter="all", datatype="all", includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
     """
     Returns rows for simple person searches.
     query: The search criteria
@@ -545,11 +545,19 @@ def get_person_find_simple(dbo, query, username="", classfilter="all", includeSt
         "driver":           " AND o.IsDriver = 1",
         "sponsor":          " AND o.IsSponsor = 1"
     }
+
+    datatypes = {
+        "all":          "",
+        "individual":   " AND o.OwnerType=1",
+        "organization": " AND o.OwnerType=2"
+    }
+
     cf = classfilters[classfilter]
+    dt = datatypes[datatype]
     if not includeStaff: cf += " AND o.IsStaff = 0"
     if not includeVolunteers: cf += " AND o.IsVolunteer = 0"
     if siteid != 0: cf += " AND (o.SiteID = 0 OR o.SiteID = %d)" % siteid
-    sql = get_person_query(dbo) + " WHERE (" + " OR ".join(ss.ors) + ")" + cf + " ORDER BY o.OwnerName"
+    sql = get_person_query(dbo) + " WHERE (" + " OR ".join(ss.ors) + ")" + cf + dt + " ORDER BY o.OwnerName"
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
 def get_person_find_advanced(dbo, criteria, username, includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
