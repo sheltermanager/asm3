@@ -126,6 +126,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#export-animals-as-csv">Export Animals as CSV</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#import-a-csv-file">Import a CSV file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#import-a-paypal-csv-file">Import a PayPal CSV file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-a-stripe-csv-file">Import a Stripe CSV file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#trigger-batch-processes">Trigger Batch Processes</a></li>
 </ul>
 </li>
@@ -483,6 +484,13 @@ can then assign values from your payment types lookup in this column. Note that
 they must match exactly (same case) the payment type name from your lookup. If
 the column does not exist, contains a blank or the system could not find a match
 then the payment type from the import screen will be used.</p>
+</div>
+<div class="section" id="import-a-stripe-csv-file">
+<h2>Import a Stripe CSV file<a class="headerlink" href="#import-a-stripe-csv-file" title="Permalink to this headline">¶</a></h2>
+<p>Similar to PayPal, ASM can import data from CSV files exported with the Export
+button on Stripe’s payments screen.</p>
+<p>The Stripe fee will be recorded with the payment and the payment amount will
+have the fee deducted.</p>
 </div>
 <div class="section" id="trigger-batch-processes">
 <h2>Trigger Batch Processes<a class="headerlink" href="#trigger-batch-processes" title="Permalink to this headline">¶</a></h2>

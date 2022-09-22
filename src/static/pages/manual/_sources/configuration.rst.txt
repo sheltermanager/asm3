@@ -343,6 +343,15 @@ they must match exactly (same case) the payment type name from your lookup. If
 the column does not exist, contains a blank or the system could not find a match
 then the payment type from the import screen will be used.
 
+Import a Stripe CSV file
+------------------------
+
+Similar to PayPal, ASM can import data from CSV files exported with the Export
+button on Stripe's payments screen.
+
+The Stripe fee will be recorded with the payment and the payment amount will
+have the fee deducted.
+
 Trigger Batch Processes
 -----------------------
 

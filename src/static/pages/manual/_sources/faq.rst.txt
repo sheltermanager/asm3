@@ -298,3 +298,13 @@ generate the figures for.
 
 .. note:: The report will only work correctly for one calendar month. Run the report multiple times for multiple months.
 
+.. note:: While this process can still be done manually, it has been superceded by the shelteranimalscount.org publisher, which will automatically update your figures every month without user intervention via their API.
+
+How do I export my data from the system for import somewhere else?
+------------------------------------------------------------------
+
+The "Export" button under :menuselection:`Settings --> SQL Interface` allows
+you to export your data in various formats. You can export a number of CSV
+files from different areas of the system for reading via spreadsheets. You can
+also export a database dump for use with either self-hosted ASM3 or our older
+ASM2 desktop software.
