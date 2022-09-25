@@ -2,7 +2,7 @@ Shelter animals with flag
 ###
 Auditing
 ###
-33713/Any
+33713/Any rev02
 ###
 Shelter animals with a particular flag.
 ###
@@ -45,7 +45,7 @@ Non-shelter animals with flag
 ###
 Auditing
 ###
-33713/Any
+33713/Any rev02
 ###
 Non-shelter animals with a particular flag.
 ###
@@ -60,7 +60,7 @@ o.EmailAddress, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN owner o ON a.OriginalOwnerID = o.ID
-WHERE a.IsNonShelterAnimal = 1 AND a.AdditionalFlags LIKE '%$@flag$|%' 
+WHERE a.NonShelterAnimal = 1 AND a.AdditionalFlags LIKE '%$@flag$|%' 
 ORDER BY t.AnimalType, a.AnimalName
 ###
 $$HEADER

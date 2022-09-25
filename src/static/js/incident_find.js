@@ -155,6 +155,7 @@ $(function() {
                 '<option value="incomplete" selected="selected">' + _("Incomplete incidents") + '</option>',
                 '<option value="undispatched">' + _("Not dispatched") + '</option>',
                 '<option value="requirefollowup">' + _("Require followup") + '</option>',
+                '<option value="completed">' + _("Completed") + '</option>',
                 '</select>',
                 '</td>',
                 '</tr>',

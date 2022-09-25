@@ -2,7 +2,7 @@ Non-Neutered/Spayed Shelter Animals Born Before
 ###
 Auditing
 ###
-Any
+Any rev02
 ###
 Non-neutered/spayed animals born before a certain date
 ###
@@ -17,6 +17,7 @@ INNER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
 INNER JOIN species ON animal.SpeciesID = species.ID
 INNER JOIN lksex ON animal.Sex = lksex.ID
 WHERE Archived = 0 AND Neutered = 0
+AND SpeciesID IN (1,2)
 AND DateOfBirth <= '$ASK DATE Animals born before$'
 ###
 $$HEADER

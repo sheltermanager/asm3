@@ -31,7 +31,7 @@ DESCENDING_GIVEN = 2
 
 def get_medicaltreatment_query(dbo):
     return "SELECT a.ShelterCode, a.ShortCode, a.AnimalName, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
+        "a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
@@ -68,6 +68,7 @@ def get_medicaltreatment_query(dbo):
         "'' ELSE a.ShelterLocationUnit END AS LocationUnit, " \
         "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
         "%(compositeid)s AS CompositeID, " \
+        "%(givenremaining)s AS NamedGivenRemaining, " \
         "CASE " \
         "WHEN am.TimingRule = 0 THEN 'One Off' " \
         "WHEN am.TimingRuleFrequency = 0 THEN %(daily)s " \
@@ -93,6 +94,7 @@ def get_medicaltreatment_query(dbo):
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " % \
             { 
                 "compositeid": dbo.sql_concat(["am.ID", "'_'", "amt.ID"]),
+                "givenremaining": dbo.sql_concat(["am.TreatmentsGiven", "' / '", "am.TreatmentsRemaining"]),
                 "daily": dbo.sql_concat(["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' days'"]),
                 "weekly": dbo.sql_concat(["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' weeks'"]),
                 "monthly": dbo.sql_concat(["am.TimingRule", "' treatments every '", "am.TimingRuleNoFrequencies", "' months'"]),
@@ -100,9 +102,82 @@ def get_medicaltreatment_query(dbo):
                 "numbertreatments": dbo.sql_concat(["(am.TimingRule * am.TotalNumberOfTreatments)", "' treatments'"])
             }
 
+def get_medicalcombined_query(dbo):
+    return "SELECT * FROM (" \
+        "SELECT " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
+        "a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
+        "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
+        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
+        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
+        "(SELECT AnimalType FROM animaltype WHERE ID = a.AnimalTypeID) AS AnimalTypeName, " \
+        "(SELECT LocationName FROM internallocation WHERE ID = a.ShelterLocation) AS ShelterLocationName, " \
+        "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
+        "ma.MediaName AS WebsiteMediaName, ma.ID as WebsiteMediaID, " \
+        "adv.OwnerName AS AdministeringVetName, " \
+        "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
+        "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
+        "am.TreatmentName, '' AS TreatmentResult, am.Dosage, amt.TreatmentNumber, " \
+        "amt.TotalTreatments, amt.DateRequired, amt.DateGiven, am.Comments " \
+        "FROM animal a " \
+        "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
+        "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
+        "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
+        "LEFT OUTER JOIN owner adv ON adv.ID = amt.AdministeringVetID " \
+        "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
+        "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
+        "" \
+        "UNION SELECT " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
+        "a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
+        "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
+        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
+        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
+        "(SELECT AnimalType FROM animaltype WHERE ID = a.AnimalTypeID) AS AnimalTypeName, " \
+        "(SELECT LocationName FROM internallocation WHERE ID = a.ShelterLocation) AS ShelterLocationName, " \
+        "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
+        "ma.MediaName AS WebsiteMediaName, ma.ID as WebsiteMediaID, " \
+        "adv.OwnerName AS AdministeringVetName, " \
+        "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
+        "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
+        "v.VaccinationType AS TreatmentName, '' AS TreatmentResult, '1' AS Dosage, '1' AS TreatmentNumber, " \
+        "'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.Comments " \
+        "FROM animal a " \
+        "INNER JOIN animalvaccination av ON a.ID = av.AnimalID " \
+        "INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID " \
+        "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
+        "LEFT OUTER JOIN owner adv ON adv.ID = av.AdministeringVetID " \
+        "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
+        "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
+        "" \
+        "UNION SELECT " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
+        "a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
+        "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
+        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
+        "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
+        "(SELECT AnimalType FROM animaltype WHERE ID = a.AnimalTypeID) AS AnimalTypeName, " \
+        "(SELECT LocationName FROM internallocation WHERE ID = a.ShelterLocation) AS ShelterLocationName, " \
+        "co.ID AS CurrentOwnerID, co.OwnerName AS CurrentOwnerName, " \
+        "ma.MediaName AS WebsiteMediaName, ma.ID as WebsiteMediaID, " \
+        "adv.OwnerName AS AdministeringVetName, " \
+        "adv.OwnerAddress AS AdministeringVetAddress, adv.OwnerTown AS AdministeringVetTown, adv.OwnerCounty AS AdministeringVetCounty, " \
+        "adv.OwnerPostcode AS AdministeringVetPostcode, adv.EmailAddress AS AdministeringVetEmail, adv.MembershipNumber AS AdministeringVetLicence, " \
+        "tt.TestName AS TreatmentName, tr.ResultName AS TreatmentResult, '1' AS Dosage, '1' AS TreatmentNumber, " \
+        "'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, at.Comments " \
+        "FROM animal a " \
+        "INNER JOIN animaltest at ON a.ID = at.AnimalID " \
+        "INNER JOIN testtype tt ON at.TestTypeID = tt.ID " \
+        "LEFT OUTER JOIN testresult tr ON tr.ID = at.TestResultID " \
+        "LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID " \
+        "LEFT OUTER JOIN owner adv ON adv.ID = at.AdministeringVetID " \
+        "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
+        "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
+        ") dummy " 
+
 def get_test_query(dbo):
     return "SELECT at.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
+        "a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
@@ -148,7 +223,7 @@ def get_test_query(dbo):
 
 def get_vaccination_query(dbo):
     return "SELECT av.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, " \
+        "a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
@@ -220,14 +295,18 @@ def get_vaccinated(dbo, animalid):
 
 def get_batch_for_vaccination_types(dbo):
     """
-    Returns vaccination types and 
-    last non-empty batch number and manufacturer we saw for that type
+    Returns vaccination types and last non-empty batch number and manufacturer 
+        we saw for that type in the last month.
+        Uses our distincton to throw away everything but the first row for 
+        each vaccinationid (aliased to id)
+    Does nothing if the option for inserting the last batch/manufacturer is disabled.
     """
-    return dbo.query("SELECT ID, " \
-        "(SELECT BatchNumber FROM animalvaccination v1 WHERE v1.ID = (SELECT MAX(v2.ID) FROM animalvaccination v2 WHERE v2.BatchNumber <> '' AND vt.ID = v2.VaccinationID AND DateOfVaccination Is Not Null)) AS BatchNumber, " \
-        "(SELECT Manufacturer FROM animalvaccination v1 WHERE v1.ID = (SELECT MAX(v2.ID) FROM animalvaccination v2 WHERE v2.BatchNumber <> '' AND vt.ID = v2.VaccinationID AND DateOfVaccination Is Not Null)) AS Manufacturer " \
-        "FROM vaccinationtype vt " \
-        "ORDER BY vt.ID")
+    if not asm3.configuration.auto_default_vacc_batch(dbo): return []
+    return dbo.query("SELECT VaccinationID AS ID, BatchNumber, Manufacturer " \
+        "FROM animalvaccination " \
+        "WHERE BatchNumber <> '' AND Manufacturer <> '' " \
+        "AND DateOfVaccination Is Not Null AND DateOfVaccination >= ? " \
+        "ORDER BY animalvaccination.ID DESC, VaccinationID", [ dbo.today(offset=-31) ], distincton="ID")
 
 def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED):
     """
@@ -247,8 +326,12 @@ def get_regimens(dbo, animalid, onlycomplete = False, sort = ASCENDING_REQUIRED)
         "(SELECT amt.DateGiven FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
         "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentGiven, " \
         "(SELECT amt.Comments FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
-        "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentComments " \
-        "FROM animalmedical am WHERE am.AnimalID = %d %s " % (dbo.sql_limit(1), dbo.sql_limit(1), dbo.sql_limit(1), animalid, sc)
+        "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentComments, " \
+        "(SELECT adv.OwnerName FROM animalmedicaltreatment amt INNER JOIN owner adv ON adv.ID=amt.AdministeringVetID " \
+        "WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
+        "ORDER BY amt.DateGiven DESC %s) AS LastTreatmentVetName " \
+        "FROM animalmedical am WHERE am.AnimalID = %d %s " % \
+            (dbo.sql_limit(1), dbo.sql_limit(1), dbo.sql_limit(1), dbo.sql_limit(1), animalid, sc)
     if sort == ASCENDING_REQUIRED:
         sql += " ORDER BY am.StartDate"
     elif sort == DESCENDING_REQUIRED:
@@ -349,7 +432,7 @@ def embellish_regimen(l, rows):
     """
     Adds the following fields to a resultset containing
     regimen rows:
-    NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS, NAMEDSTATUS, COMPOSITEID
+    NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS, NAMEDSTATUS, NAMEDGIVENREMAINING, COMPOSITEID
     """
     for r in rows:
         st = 0
@@ -391,6 +474,14 @@ def embellish_regimen(l, rows):
             r.NAMEDNUMBEROFTREATMENTS = _("Unspecified", l)
         else:
             r.NAMEDNUMBEROFTREATMENTS = str(_("{0} {1} ({2} treatments)", l)).format(tnt, tp, tr * tnt)
+        # NAMEDGIVENREMAINING - shows how many treatments 
+        # have been given and how many are remaining. This is also called
+        # by get_profiles, which does not have treatmentsgiven or treatmentsremaining
+        if "TREATMENTSREMAINING" in r:
+            if r.TREATMENTSREMAINING > 0:
+                r.NAMEDGIVENREMAINING = _("({0} given, {1} remaining)", l).format(r.TREATMENTSGIVEN, r.TREATMENTSREMAINING)
+            else:
+                r.NAMEDGIVENREMAINING = _("({0} given)", l).format(r.TREATMENTSGIVEN)
         # NAMEDSTATUS
         if st == ACTIVE:
             r.NAMEDSTATUS = _("Active", l)
@@ -608,7 +699,7 @@ def get_combined_due(dbo, animalid, start, end):
         "INNER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "INNER JOIN animalmedical am ON a.ID = am.AnimalID " \
         "INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID " \
-        "WHERE amt.DateGiven Is Null " \
+        "WHERE am.Status = 0 AND amt.DateGiven Is Null " \
         "AND (amt.DateRequired >= ? AND amt.DateRequired <= ?) AND a.ID = ? " \
         "UNION SELECT " \
         "v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber, " \
@@ -640,20 +731,23 @@ def update_test_today(dbo, username, testid, resultid):
     """
     Marks a test record as performed today. 
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animaltest WHERE ID = ?", [testid])
     dbo.update("animaltest", testid, {
+        "AnimalID":     animalid,
         "DateOfTest":   dbo.today(),
         "TestResultID": resultid
     }, username)
-    # ASM2_COMPATIBILITY
-    update_asm2_tests(dbo, testid)
+    update_animal_tests(dbo, testid)
 
 def update_vaccination_today(dbo, username, vaccid):
     """
     Marks a vaccination record as given today. 
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalvaccination WHERE ID = ?", [vaccid])
     dbo.update("animalvaccination", vaccid, {
-        "DateOfVaccination": dbo.today(),
-        "GivenBy": username
+        "AnimalID":             animalid,
+        "DateOfVaccination":    dbo.today(),
+        "GivenBy":              username
     }, username)
 
 def calculate_given_remaining(dbo, amid):
@@ -661,36 +755,62 @@ def calculate_given_remaining(dbo, amid):
     Calculates the number of treatments given and remaining
     """
     given = dbo.query_int("SELECT COUNT(*) FROM animalmedicaltreatment " +
-        "WHERE AnimalMedicalID = ? AND DateGiven Is Not Null", [amid])
+        "WHERE AnimalMedicalID = ? AND DateGiven Is Not Null", [amid]) 
+    cpt = dbo.query_int("SELECT CostPerTreatment FROM animalmedical WHERE ID=?", [amid])
     dbo.execute("UPDATE animalmedical SET " \
         "TreatmentsGiven = ?, " \
         "TreatmentsRemaining = ((TotalNumberOfTreatments * TimingRule) - ?) " \
         "WHERE ID = ?", (given, given, amid))
+    if cpt > 0 and given > 0:
+        dbo.execute("UPDATE animalmedical SET Cost = ? WHERE ID = ?", [ cpt * given, amid ])
 
-def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", vetid = 0, dateexpires = None, batchnumber = "", manufacturer = ""):
+def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", vetid = 0, dateexpires = None, batchnumber = "", manufacturer = "", rabiestag = ""):
     """
     Marks a vaccination given/completed on newdate
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalvaccination WHERE ID = ?", [vaccinationid])
     dbo.update("animalvaccination", vaccinationid, {
+        "AnimalID":             animalid,
         "DateOfVaccination":    newdate,
         "DateExpires":          dateexpires,
         "GivenBy":              asm3.utils.iif(givenby == "", username, givenby),
         "AdministeringVetID":   vetid,
         "BatchNumber":          batchnumber,
-        "Manufacturer":         manufacturer
+        "Manufacturer":         manufacturer,
+        "RabiesTag":            rabiestag
     }, username)
+    update_rabies_tag(dbo, username, animalid)
 
 def complete_test(dbo, username, testid, newdate, testresult, vetid = 0):
     """
     Marks a test performed on newdate with testresult
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animaltest WHERE ID = ?", [testid])
     dbo.update("animaltest", testid, {
+        "AnimalID":             animalid,
         "DateOfTest":           newdate,
         "TestResultID":         testresult,
         "AdministeringVetID":   vetid
     }, username)
-    # ASM2_COMPATIBILITY
-    update_asm2_tests(dbo, testid)
+    update_animal_tests(dbo, testid)
+
+def reschedule_test(dbo, username, testid, newdate, comments):
+    """
+    Reschedules a test for a new date, copying data from the existing one.
+    Comments are appended on the existing test.
+    """
+    av = dbo.first_row(dbo.query("SELECT * FROM animaltest WHERE ID = ?", [testid]))
+    if av.COMMENTS != "": comments = "%s\n%s" % (av.COMMENTS, comments)
+    dbo.update("animaltest", testid, { "Comments": comments }, username)
+    dbo.insert("animaltest", {
+        "AnimalID":             av.ANIMALID,
+        "TestTypeID":           av.TESTTYPEID,
+        "TestResultID":         0,
+        "DateOfTest":           None,
+        "DateRequired":         newdate,
+        "Comments":             "",
+        "Cost":                 av.COST
+    }, username)
 
 def reschedule_vaccination(dbo, username, vaccinationid, newdate, comments):
     """
@@ -705,6 +825,8 @@ def reschedule_vaccination(dbo, username, vaccinationid, newdate, comments):
         "VaccinationID":        av.VACCINATIONID,
         "DateOfVaccination":    None,
         "DateRequired":         newdate,
+        "Manufacturer":         "",
+        "BatchNumber":          "",
         "Cost":                 av.COST,
         "CostPaidDate":         None,
         "Comments":             "" 
@@ -854,6 +976,7 @@ def insert_regimen_from_form(dbo, username, post):
         "StartDate":                post.date("startdate"),
         "Status":                   ACTIVE,
         "Cost":                     post.integer("cost"),
+        "CostPerTreatment":         post.integer("costpertreatment"),
         "CostPaidDate":             post.date("costpaid"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
@@ -893,11 +1016,13 @@ def update_regimen_from_form(dbo, username, post):
         raise asm3.utils.ASMValidationError(_("Treatment name cannot be blank", l))
 
     dbo.update("animalmedical", regimenid, {
+        "AnimalID":         post.integer("animal"),
         "TreatmentName":    post["treatmentname"],
         "Dosage":           post["dosage"],
         "StartDate":        post.date("startdate"),
         "Status":           post.integer("status"),
         "Cost":             post.integer("cost"),
+        "CostPerTreatment": post.integer("costpertreatment"),
         "CostPaidDate":     post.date("costpaid"),
         "Comments":         post["comments"]
     }, username)
@@ -915,7 +1040,7 @@ def insert_vaccination_from_form(dbo, username, post):
     if post.date("required") is None:
         raise asm3.utils.ASMValidationError(_("Required date must be a valid date", l))
 
-    return dbo.insert("animalvaccination", {
+    vaccid = dbo.insert("animalvaccination", {
         "AnimalID":             post.integer("animal"),
         "VaccinationID":        post.integer("type"),
         "AdministeringVetID":   post.integer("administeringvet"),
@@ -925,10 +1050,14 @@ def insert_vaccination_from_form(dbo, username, post):
         "DateExpires":          post.date("expires"),
         "BatchNumber":          post["batchnumber"],
         "Manufacturer":         post["manufacturer"],
+        "RabiesTag":            post["rabiestag"],
         "Cost":                 post.integer("cost"),
         "CostPaidDate":         post.date("costpaid"),
         "Comments":             post["comments"]
     }, username)
+
+    update_rabies_tag(dbo, username, post.integer("animal"))
+    return vaccid
 
 def update_vaccination_from_form(dbo, username, post):
     """
@@ -949,10 +1078,23 @@ def update_vaccination_from_form(dbo, username, post):
         "DateExpires":          post.date("expires"),
         "BatchNumber":          post["batchnumber"],
         "Manufacturer":         post["manufacturer"],
+        "RabiesTag":            post["rabiestag"],
         "Cost":                 post.integer("cost"),
         "CostPaidDate":         post.date("costpaid"),
         "Comments":             post["comments"]
     }, username)
+
+    update_rabies_tag(dbo, username, post.integer("animal"))
+
+def update_rabies_tag(dbo, username, animalid):
+    """
+    Updates the rabies tag field on an animal record to the
+    latest from its vaccinations
+    """
+    rabiestag = dbo.query_string("SELECT RabiesTag FROM animalvaccination " \
+        "WHERE AnimalID=? AND DateOfVaccination Is Not Null AND RabiesTag Is Not Null " \
+        "AND RabiesTag <> '' ORDER BY DateOfVaccination DESC", [animalid])
+    if rabiestag != "": dbo.update("animal", animalid, { "RabiesTag": rabiestag }, username)
 
 def update_vaccination_batch_stock(dbo, username, vid, slid):
     """
@@ -989,8 +1131,7 @@ def insert_test_from_form(dbo, username, post):
         "Comments":         post["comments"]
     }, username)
 
-    # ASM2_COMPATIBILITY
-    update_asm2_tests(dbo, ntestid, "insert")
+    update_animal_tests(dbo, ntestid, "insert")
     return ntestid
 
 def update_test_from_form(dbo, username, post):
@@ -1014,15 +1155,14 @@ def update_test_from_form(dbo, username, post):
         "Comments":         post["comments"]
     }, username)
 
-    # ASM2_COMPATIBILITY
-    update_asm2_tests(dbo, testid, "update")
+    update_animal_tests(dbo, testid, "update")
 
-def update_asm2_tests(dbo, testid, action = "insert"):
+def update_animal_tests(dbo, testid, action = "insert"):
     """
-    Used for asm2 compatibility, checks the test with testid and if it's
-    a FIV, FLV or Heartworm test updates the old ASM2 fields for them.
+    Checks the test with testid and if it's a FIV, FLV or Heartworm 
+    test updates the denormalised animal test fields.
     """
-    # ASM2_COMPATIBILITY
+    if not asm3.configuration.update_animal_test_fields(dbo): return # Do nothing if disabled
     t = dbo.first_row(dbo.query("SELECT AnimalID, TestName, DateOfTest, ResultName FROM animaltest " \
         "INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID " \
         "INNER JOIN testresult ON testresult.ID = animaltest.TestResultID " \
@@ -1079,15 +1219,16 @@ def delete_test(dbo, username, testid):
     """
     Deletes a test record
     """
-    # ASM2_COMPATIBILITY
-    update_asm2_tests(dbo, testid, "delete")
+    update_animal_tests(dbo, testid, "delete")
     dbo.delete("animaltest", testid, username)
 
 def delete_vaccination(dbo, username, vaccinationid):
     """
     Deletes a vaccination record
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalvaccination WHERE ID = ?", [vaccinationid])
     dbo.delete("animalvaccination", vaccinationid, username)
+    update_rabies_tag(dbo, username, animalid)
 
 def insert_profile_from_form(dbo, username, post):
     """
@@ -1120,6 +1261,7 @@ def insert_profile_from_form(dbo, username, post):
         "TreatmentName":            post["treatmentname"],
         "Dosage":                   post["dosage"],
         "Cost":                     post.integer("cost"),
+        "CostPerTreatment":         post.integer("costpertreatment"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
@@ -1157,6 +1299,7 @@ def update_profile_from_form(dbo, username, post):
         "TreatmentName":            post["treatmentname"],
         "Dosage":                   post["dosage"],
         "Cost":                     post.integer("cost"),
+        "CostPerTreatment":         post.integer("costpertreatment"),
         "TimingRule":               timingrule,
         "TimingRuleFrequency":      timingrulefrequency,
         "TimingRuleNoFrequencies":  timingrulenofrequencies,
@@ -1176,7 +1319,9 @@ def update_treatment_today(dbo, username, amtid):
     Marks a treatment record as given today. 
     """
     amid = dbo.query_int("SELECT AnimalMedicalID FROM animalmedicaltreatment WHERE ID = ?", [amtid])
+    animalid = dbo.query_int("SELECT AnimalID FROM animalmedicaltreatment WHERE ID=?", [amtid])
     dbo.update("animalmedicaltreatment", amtid, {
+        "AnimalID":     animalid,
         "DateGiven":    dbo.today(),
         "GivenBy":      username
     }, username)
@@ -1193,7 +1338,9 @@ def update_treatment_given(dbo, username, amtid, newdate, by = "", vetid = 0, co
     Marks a treatment record as given on newdate, assuming that newdate is valid.
     """
     amid = dbo.query_int("SELECT AnimalMedicalID FROM animalmedicaltreatment WHERE ID = ?", [amtid])
+    animalid = dbo.query_int("SELECT AnimalID FROM animalmedicaltreatment WHERE ID=?", [amtid])
     dbo.update("animalmedicaltreatment", amtid, {
+        "AnimalID":             animalid,
         "AdministeringVetID":   vetid,
         "DateGiven":            newdate,
         "GivenBy":              by,
@@ -1212,7 +1359,9 @@ def update_treatment_required(dbo, username, amtid, newdate):
     Marks a treatment record as required on newdate, assuming
     that newdate is valid.
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalmedicaltreatment WHERE ID=?", [amtid])
     dbo.update("animalmedicaltreatment", amtid, {
+        "AnimalID":         animalid,
         "DateRequired":     newdate
     }, username)
 
@@ -1221,7 +1370,9 @@ def update_vaccination_required(dbo, username, vaccid, newdate):
     Gives a vaccination record a required date of newdate, assuming
     that newdate is valid.
     """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalvaccination WHERE ID=?", [vaccid])
     dbo.update("animalvaccination", vaccid, {
+        "AnimalID":         animalid,
         "DateRequired":     newdate
     }, username)
 

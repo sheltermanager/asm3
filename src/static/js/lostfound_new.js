@@ -96,7 +96,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="microchip">' + _("Microchip") + '</label></td>',
-                '<td><input id="microchip" data="microchip" type="text" class="asm-textbox" /></td>',
+                '<td><input id="microchip" data="microchip" type="text" maxlength="15" class="asm-textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<tr>',
@@ -149,7 +149,7 @@ $(function() {
                 validate.reset();
 
                 // owner
-                if ($("#owner").val() == "") {
+                if ($("#owner").val() == "0") {
                     header.show_error(_("Lost and found entries must have a contact"));
                     validate.highlight("owner");
                     return false;
@@ -182,6 +182,8 @@ $(function() {
                 return true;
 
             };
+
+            validate.indicator([ "datelost", "datefound", "datereported", "owner" ]);
 
             const add_lf_animal = async function(addmode) {
                 if (!validation()) { return; }

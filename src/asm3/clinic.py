@@ -58,6 +58,13 @@ def get_animal_appointments(dbo, animalid):
     """
     return dbo.query("%s WHERE ca.AnimalID = ?" % get_clinic_appointment_query(dbo), [animalid])
 
+def get_animal_appointments_due(dbo, animalid, start, end):
+    """
+    Returns all appointments for an animal between start and end (dates)
+    """
+    return dbo.query("%s WHERE ca.Status = 0 AND ca.AnimalID = ? AND ca.DateTime >= ? AND ca.DateTime <= ? ORDER BY ca.DateTime" % \
+        get_clinic_appointment_query(dbo), [animalid, start, end])
+
 def get_person_appointments(dbo, personid):
     """
     Returns all appointments for a person

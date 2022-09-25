@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import asm, datetime, os
+import asm, datetime, os, dbfread
 
 """
 Import script for Shelterpro databases in DBF format
@@ -17,19 +17,21 @@ Will also look in PATH/images/IMAGEKEY.[jpg|JPG] for animal photos if available.
 29th December, 2016 - 2nd April 2020
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/shelterpro_bc2243"
+PATH = "/home/robin/tmp/asm3_import_data/shelterpro_mm2710"
 
 START_ID = 100
 
-INCIDENT_IMPORT = False
+INCIDENT_IMPORT = True
 LICENCE_IMPORT = False
-PICTURE_IMPORT = True
+PICTURE_IMPORT = False
 VACCINATION_IMPORT = True
-NOTE_IMPORT = True
+NOTE_IMPORT = False
 SHELTER_IMPORT = True 
 
 SEPARATE_ADDRESS_TABLE = True
 IMPORT_ANIMALS_WITH_NO_NAME = True
+
+FAKE_ADOPTIONS_TO_EMPTY_SHELTER = True
 
 """ when faced with a field type it doesn't understand, dbfread can produce an error
     'Unknown field type xx'. This parser returns anything unrecognised as binary data """
@@ -41,7 +43,7 @@ class ExtraFieldParser(dbfread.FieldParser):
             return data
 
 def open_dbf(name):
-    return asm.read_dbf(name)
+    return asm.read_dbf("%s/%s.dbf" % (PATH, name))
 
 def gettype(animaldes):
     spmap = {
@@ -173,8 +175,8 @@ for row in cperson:
     if "PERSONKEY" in row: personkey = row["PERSONKEY"]
     elif "UNIQUE" in row: personkey = row["UNIQUE"]
     ppo[personkey] = o
-    o.OwnerForeNames = asm.strip(row["FNAME"])
-    o.OwnerSurname = asm.strip(row["LNAME"])
+    o.OwnerForeNames = asm.strip(row["FNAME"]).title()
+    o.OwnerSurname = asm.strip(row["LNAME"]).title()
     o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
     # Find the address if it's in a separate table
     if SEPARATE_ADDRESS_TABLE:
@@ -182,17 +184,17 @@ for row in cperson:
             addrkey = addrlink[personkey]
             if addrkey in addresses:
                 add = addresses[addrkey]
-                o.OwnerAddress = add["address"]
-                o.OwnerTown = add["city"]
+                o.OwnerAddress = add["address"].title()
+                o.OwnerTown = add["city"].title()
                 o.OwnerCounty = add["state"]
-                o.OwnerPostcode = add["zip"]
+                o.OwnerPostcode = add["zip"].title()
     else:
         # Otherwise, address fields are in the person table
-        o.OwnerAddress = row["ADDR1"].encode("ascii", "xmlcharrefreplace") + "\n" + row["ADDR2"].encode("ascii", "xmlcharrefreplace")
-        o.OwnerTown = row["CITY"]
+        o.OwnerAddress = row["ADDR1"].encode("ascii", "xmlcharrefreplace").title() + "\n" + row["ADDR2"].encode("ascii", "xmlcharrefreplace").title()
+        o.OwnerTown = row["CITY"].title()
         o.OwnerCounty = row["STATE"]
         o.OwnerPostcode = row["POSTAL_ID"]
-    if asm.strip(row["EMAIL"]) != "(": o.EmailAddress = asm.strip(row["EMAIL"])
+    if asm.strip(row["EMAIL"]) != "(": o.EmailAddress = asm.strip(row["EMAIL"]).lower()
     if row["HOME_PH"] != 0: o.HomeTelephone = asm.strip(row["HOME_PH"])
     if row["WORK_PH"] != 0: o.WorkTelephone = asm.strip(row["WORK_PH"])
     if row["THIRD_PH"] != 0: o.MobileTelephone = asm.strip(row["THIRD_PH"])
@@ -235,7 +237,7 @@ for row in canimal:
     a.Size = getsize(asm.strip(row["WEIGHT"]))
     a.BaseColourID = asm.colour_id_for_names(asm.strip(row["FURCOLR1"]), asm.strip(row["FURCOLR2"]))
     a.IdentichipNumber = asm.strip(row["MICROCHIP"])
-    if a.IdentichipNumber <> "": a.Identichipped = 1
+    if a.IdentichipNumber != "": a.Identichipped = 1
     comments = "Original breed: " + asm.strip(row["BREED1"]) + "/" + asm.strip(row["CROSSBREED"]) + ", age: " + age
     comments += ",Color: " + asm.strip(row["FURCOLR1"]) + "/" + asm.strip(row["FURCOLR2"])
     comments += ", Coat: " + asm.strip(row["COAT"])
@@ -506,9 +508,10 @@ if NOTE_IMPORT:
                 l.Date = asm.now()
             l.Comments = memo
 
-# Run back through the animals, if we have any that are still
-# on shelter after 2 years, add an adoption to an unknown owner
-#asm.adopt_older_than(animals, movements, uo.ID, 365*2)
+# If the option is on, take all leftover shelter animals off
+# shelter to an unknown adopter
+if FAKE_ADOPTIONS_TO_EMPTY_SHELTER:
+    asm.adopt_older_than(animals, movements, uo.ID, 0)
 
 # Now that everything else is done, output stored records
 for a in animals:

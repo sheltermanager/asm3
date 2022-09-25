@@ -1,12 +1,17 @@
 
 import asm3.al
 import asm3.animal
+import asm3.audit
+import asm3.cachedisk
 import asm3.configuration
 import asm3.financial
+import asm3.log
 import asm3.medical
 import asm3.i18n
 import asm3.person
 import asm3.utils
+
+from asm3.sitedefs import SERVICE_URL
 
 NO_MOVEMENT = 0
 ADOPTION = 1
@@ -24,9 +29,10 @@ PERMANENT_FOSTER = 12
 
 def get_movement_query(dbo):
     return "SELECT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
-        "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
+        "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
+        "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, " \
         "rs.StatusName AS ReservationStatusName, " \
-        "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, " \
+        "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, a.Fee, " \
         "a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
         "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.ActiveMovementType, a.Archived, a.IsNotAvailableForAdoption, " \
@@ -37,24 +43,37 @@ def get_movement_query(dbo):
         "a.Sex, s.SpeciesName, rr.ReasonName AS ReturnedReasonName, " \
         "CASE WHEN m.MovementType = 0 AND m.MovementDate Is Null THEN " \
         "m.ReservationDate ELSE m.MovementDate END AS ActiveDate, " \
-        "CASE WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
+        "CASE " \
+        "WHEN m.MovementType = 7 AND a.SpeciesID = 2 THEN " \
+        "(SELECT MovementType FROM lksmovementtype WHERE ID=13) " \
+        "WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
         "WHEN m.MovementType = 1 AND m.IsTrial = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \
-        "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null AND m.ReservationCancelledDate Is Not Null THEN " \
+        "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null AND m.ReservationCancelledDate Is Not Null AND m.ReservationCancelledDate < %(now)s THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=10) " \
         "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=9) " \
         "ELSE l.MovementType END AS MovementName, " \
-        "CASE WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
+        "CASE " \
+        "WHEN m.MovementType = 7 AND a.SpeciesID = 2 THEN " \
+        "(SELECT MovementType FROM lksmovementtype WHERE ID=13) " \
+        "WHEN m.MovementType = 2 AND m.IsPermanentFoster = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=12) " \
         "WHEN m.MovementType = 1 AND m.IsTrial = 1 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=11) " \
-        "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null AND m.ReservationCancelledDate Is Not Null THEN " \
+        "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null AND m.ReservationCancelledDate Is Not Null AND m.ReservationCancelledDate < %(now)s THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=10) " \
         "WHEN m.MovementDate Is Null AND m.ReservationDate Is Not Null THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=9) " \
-        "ELSE l.MovementType END AS DisplayLocationName, co.OwnerName AS CurrentOwnerName, " \
+        "ELSE l.MovementType END AS DisplayLocationName, " \
+        "co.OwnerName AS CurrentOwnerName, " \
+        "rb.OwnerName AS ReturnedByOwnerName, rb.OwnerForeNames AS ReturnedByOwnerForenames, " \
+        "rb.OwnerSurname AS ReturnedByOwnerSurname, rb.OwnerAddress AS ReturnedByOwnerAddress, " \
+        "rb.OwnerTown AS ReturnedByOwnerTown, rb.OwnerCounty AS ReturnedByOwnerCounty, " \
+        "rb.OwnerPostcode AS ReturnedByOwnerPostcode, rb.HomeTelephone AS ReturnedByHomeTelephone, " \
+        "rb.WorkTelephone AS ReturnedByWorkTelephone, rb.MobileTelephone AS ReturnedByMobileTelephone, " \
+        "rb.EmailAddress AS ReturnedByEmailAddress, " \
         "a.AdoptionCoordinatorID, ac.OwnerName AS AdoptionCoordinatorName " \
         "FROM adoption m " \
         "LEFT OUTER JOIN reservationstatus rs ON rs.ID = m.ReservationStatusID " \
@@ -69,7 +88,8 @@ def get_movement_query(dbo):
         "LEFT OUTER JOIN species s ON a.SpeciesID = s.ID " \
         "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
         "LEFT OUTER JOIN owner o ON m.OwnerID = o.ID " \
-        "LEFT OUTER JOIN owner r ON m.RetailerID = r.ID "
+        "LEFT OUTER JOIN owner r ON m.RetailerID = r.ID " \
+        "LEFT OUTER JOIN owner rb ON m.ReturnedByOwnerID = rb.ID " % { "now": dbo.sql_now() }
 
 def get_transport_query(dbo):
     return "SELECT t.*, tt.TransportTypeName, " \
@@ -86,14 +106,13 @@ def get_transport_query(dbo):
         "t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode, t.PickupCountry, " \
         "t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode, t.DropoffCountry, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
-        "a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, x.Sex, " \
+        "a.AnimalName, a.ShelterCode, a.ShortCode, s.SpeciesName, a.BreedName, a.Sex, " \
         "st.Name AS StatusName " \
         "FROM animaltransport t " \
         "INNER JOIN transporttype tt ON tt.ID = t.TransportTypeID " \
         "LEFT OUTER JOIN lkstransportstatus st ON st.ID = t.Status " \
         "LEFT OUTER JOIN animal a ON t.AnimalID = a.ID " \
         "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
-        "LEFT OUTER JOIN lksex x ON x.ID = a.Sex " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN owner d ON t.DriverOwnerID = d.ID " \
         "LEFT OUTER JOIN owner p ON t.PickupOwnerID = p.ID " \
@@ -404,7 +423,8 @@ def insert_movement_from_form(dbo, username, post):
         "Comments":                     post["comments"]
     }, username, generateID=False)
 
-    if post.integer("animal") > 0:
+    if animalid > 0:
+        asm3.animal.update_current_owner(dbo, username, animalid)
         asm3.animal.update_animal_status(dbo, animalid)
         asm3.animal.update_variable_animal_data(dbo, animalid)
         update_movement_donation(dbo, movementid)
@@ -417,9 +437,7 @@ def update_movement_from_form(dbo, username, post):
     """
     validate_movement_form_data(dbo, post)
     movementid = post.integer("movementid")
-
-    oldpersonid = dbo.query_int("SELECT OwnerID FROM adoption WHERE ID=?", [movementid])
-    animalownerid = dbo.query_int("SELECT OwnerID FROM animal WHERE ID=?", [post.integer("animal")])
+    oanimalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID=?", [movementid])
 
     dbo.update("adoption", movementid, {
         "AdoptionNumber":               post["adoptionno"],
@@ -444,12 +462,13 @@ def update_movement_from_form(dbo, username, post):
         "Comments":                     post["comments"]
     }, username)
 
-    # If the movement person has changed, and that person was the current owner
-    # on the animal record, update it
-    if oldpersonid != post.integer("person") and animalownerid == oldpersonid:
-        dbo.update("animal", post.integer("animal"), { "OwnerID" : post.integer("person") }, username)
+    # If the animal ID has been changed, update the previous animal to prevent
+    # its active movement being left pointing at this movement
+    if oanimalid > 0 and post.integer("animal") != oanimalid:
+        asm3.animal.update_animal_status(dbo, oanimalid)
 
     if post.integer("animal") > 0:
+        asm3.animal.update_current_owner(dbo, username, post.integer("animal"))
         asm3.animal.update_animal_status(dbo, post.integer("animal"))
         asm3.animal.update_variable_animal_data(dbo, post.integer("animal"))
         update_movement_donation(dbo, movementid)
@@ -465,6 +484,7 @@ def delete_movement(dbo, username, mid):
     dbo.execute("UPDATE ownerdonation SET MovementID = 0 WHERE MovementID = ?", [mid])
     dbo.delete("adoption", mid, username)
     if m.ANIMALID > 0:
+        asm3.animal.update_current_owner(dbo, username, m.ANIMALID)
         asm3.animal.update_animal_status(dbo, m.ANIMALID)
         asm3.animal.update_variable_animal_data(dbo, m.ANIMALID)
         asm3.person.update_adopter_flag(dbo, username, m.OWNERID)
@@ -481,6 +501,18 @@ def return_movement(dbo, movementid, username, animalid = 0, returndate = None):
     dbo.update("adoption", movementid, { "ReturnDate": returndate })
     asm3.animal.update_animal_status(dbo, animalid)
     asm3.person.update_adopter_flag(dbo, username, personid)
+
+def trial_to_full_adoption(dbo, username, movementid):
+    """
+    Removes the trial flag from movementid
+    If the trial end date on the record is blank, sets it to today
+    """
+    m = dbo.first_row(dbo.query("SELECT AnimalID, OwnerID, TrialEndDate FROM adoption WHERE ID=?", [movementid]))
+    ud = { "IsTrial": 0 }
+    if m.TRIALENDDATE is None: ud["TrialEndDate"] = dbo.today()
+    dbo.update("adoption", movementid, ud, username)
+    asm3.animal.update_animal_status(dbo, m.ANIMALID)
+    asm3.person.update_adopter_flag(dbo, username, m.OWNERID)
 
 def insert_adoption_from_form(dbo, username, post, creating = [], create_payments = True):
     """
@@ -578,8 +610,8 @@ def insert_adoption_from_form(dbo, username, post, creating = [], create_payment
     # Then any boarding cost record
     cost_amount = post.integer("costamount")
     cost_type = post["costtype"]
-    cost_create = post.integer("costcreate")
-    if cost_amount > 0 and cost_type != "" and cost_create == 1:
+    cost_create = post.boolean("costcreate")
+    if cost_amount > 0 and cost_type != "" and cost_create:
         boc_dict = {
             "animalid"          : post["animal"],
             "type"              : cost_type,
@@ -662,9 +694,6 @@ def insert_reclaim_from_form(dbo, username, post):
             return_movement(dbo, m["ID"], username, post.integer("animal"), post.date("movementdate"))
             move_dict["originalretailermovement"] = str(m.ID)
             move_dict["retailer"] = str(m.OWNERID)
-    # If the animal was flagged as not available for adoption, then it
-    # shouldn't be since we've just reclaimed it.
-    dbo.update("animal", post.integer("animal"), { "IsNotAvailableForAdoption": 0 })
     # Is the animal reserved? Should clear it if so
     cancel_reserves = asm3.configuration.cancel_reserves_on_adoption(dbo)
     for m in fm:
@@ -823,6 +852,8 @@ def insert_transport_from_form(dbo, username, post):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Transport requires an animal", l))
     if None is post.date("pickupdate") or None is post.date("dropoffdate"):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Transports must have valid pickup and dropoff dates and times.", l))
+    if post.date("pickupdate") > post.date("dropoffdate"):
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Pickup date cannot be later than dropoff date.", l))
 
     return dbo.insert("animaltransport", {
         "TransportReference":   post["reference"],
@@ -859,6 +890,8 @@ def update_transport_from_form(dbo, username, post):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Transport requires an animal", l))
     if None is post.date("pickupdate") or None is post.date("dropoffdate"):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Transports must have valid pickup and dropoff dates and times.", l))
+    if post.date("pickupdate") > post.date("dropoffdate"):
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Pickup date cannot be later than dropoff date.", l))
     transportid = post.integer("transportid")
 
     dbo.update("animaltransport", transportid, {
@@ -922,6 +955,73 @@ def auto_cancel_reservations(dbo):
         "MovementType = 0 AND ReservationDate < ?", (dbo.today(), dbo.now(), cancelcutoff))
     asm3.al.debug("cancelled %d reservations older than %s days" % (count, cancelafter), "movement.auto_cancel_reservations", dbo)
 
+def send_adoption_checkout(dbo, username, post):
+    """
+    Sets up an adoption checkout cache object and sends the email 
+    with the checkout link to the adopter.
+    """
+    l = dbo.locale
+    aid = post.integer("animalid")
+    pid = post.integer("personid")
+    # Use a hash of animal/person as cache/state key so that it's always the same for
+    # the same animal/person.
+    # NOTE: we don't check here for an existing cache entry. This means that shelter
+    # staff can effectively start the checkout again for the same customer/animal 
+    # with a new document to sign and new payment records by sending out a new email. 
+    key = asm3.utils.md5_hash_hex("a=%s|p=%s" % (aid, pid))
+    a = asm3.animal.get_animal(dbo, aid)
+    p = asm3.person.get_person(dbo, pid)
+    # template id for paperwork - can be passed or fall back to option
+    templateid = post.integer("templateid")
+    if templateid == 0: templateid = asm3.configuration.adoption_checkout_templateid(dbo)
+    # payment type id for the fee
+    feetypeid = post.integer("feetypeid")
+    if feetypeid == 0: feetypeid = asm3.configuration.adoption_checkout_feeid(dbo)
+    co = {
+        "database":     dbo.database,
+        "movementid":   post.integer("id"),
+        "templateid":   templateid, 
+        "mediaid":      0, # paperwork mediaid, generated in the next step
+        "mediacontent": "", # a copy of the generated paperwork with fixed urls for viewing
+        "animalid":     post.integer("animalid"),
+        "animalname":   a.ANIMALNAME,
+        "speciesname":  a.SPECIESNAME,
+        "sex":          a.SEXNAME,
+        "age":          a.ANIMALAGE,
+        "fee":          a.FEE,
+        "formatfee":    asm3.i18n.format_currency(l, a.FEE),
+        "personid":     post.integer("personid"),
+        "personcode":   p.OWNERCODE,
+        "personname":   p.OWNERNAME,
+        "address":      p.OWNERADDRESS,
+        "town":         p.OWNERTOWN,
+        "county":       p.OWNERCOUNTY,
+        "postcode":     p.OWNERPOSTCODE,
+        "email":        p.EMAILADDRESS,
+        "giftaid":      p.ISGIFTAID,
+        "feetypeid":    feetypeid, 
+        "paymentfeeid": 0, # payment for fee, generated in the next step
+        "paymentdonid": 0, # payment for donation, generated in the next step
+        "receiptnumber": "", # receiptnumber for all payments, generated in next step
+        "payref":       "" # payref for the payment processor, generated in next step
+    }
+    asm3.cachedisk.put(key, dbo.database, co, 86400 * 2) # persist for 2 days
+    # Send the email to the adopter
+    body = post["body"]
+    url = "%s?account=%s&method=checkout_adoption&token=%s" % (SERVICE_URL, dbo.database, key)
+    body = asm3.utils.replace_url_token(body, url, asm3.i18n._("Adoption Checkout", l))
+    asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body, "html")
+    # Record that the checkout email was sent in the log
+    logtypeid = asm3.configuration.generate_document_log_type(dbo)
+    logmsg = "AC01:%s:%s(%s)-->%s(%s)" % (co["movementid"], co["animalname"], co["animalid"], co["personname"], co["personid"])
+    asm3.log.add_log(dbo, username, asm3.log.PERSON, co["personid"], logtypeid, logmsg)
+    # (this is if checkout was initiated from the movement tab with a custom email)
+    if post.boolean("addtolog"):
+        asm3.log.add_log_email(dbo, username, asm3.log.PERSON, pid, post.integer("logtype"), 
+            post["to"], post["subject"], body)
+    if asm3.configuration.audit_on_send_email(dbo): 
+        asm3.audit.email(dbo, username, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body)
+
 def send_fosterer_emails(dbo):
     """
     Finds all people on file with at least 1 active foster, then constructs an email 
@@ -972,10 +1072,12 @@ def send_fosterer_emails(dbo):
             "INNER JOIN animal a ON a.ID = m.AnimalID " \
             "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
             "LEFT OUTER JOIN lksex x ON x.ID = a.Sex " \
-            "WHERE m.OwnerID = ? AND MovementType = 2 AND MovementDate <= ? AND a.DeceasedDate Is Null " \
+            "WHERE m.OwnerID = ? AND MovementType = 2 " \
+            "AND MovementDate <= ? AND a.DeceasedDate Is Null " \
             "AND (ReturnDate Is Null OR ReturnDate > ?) ORDER BY MovementDate", ( f.ID, dbo.today(), dbo.today() ))
         asm3.al.debug("%d animals found for fosterer '%s'" % (len(animals), f.OWNERNAME), "movement.send_fosterer_emails", dbo)
 
+        hasmedicaldue = False
         for a in animals:
             pb(lines, "%s - %s" % (a.ANIMALNAME, a.SHELTERCODE) )
             p(lines, asm3.i18n._("{0} {1} {2} aged {3}", l).format(a.SEX, a.BREEDNAME, a.SPECIESNAME, a.ANIMALAGE))
@@ -990,6 +1092,7 @@ def send_fosterer_emails(dbo):
 
             overdue = asm3.medical.get_combined_due(dbo, a.ANIMALID, dbo.today(offset=overduedays), dbo.today(offset=-1))
             if len(overdue) > 0:
+                hasmedicaldue = True
                 pb(lines, asm3.i18n._("Overdue medical items", l))
                 for m in overdue:
                     p(lines, "{0}: {1} {2} {3}/{4} {5}".format( asm3.i18n.python2display(l, m.DATEREQUIRED), \
@@ -998,14 +1101,31 @@ def send_fosterer_emails(dbo):
 
             nextdue = asm3.medical.get_combined_due(dbo, a.ANIMALID, dbo.today(), dbo.today(offset=7))
             if len(nextdue) > 0:
+                hasmedicaldue = True
                 pb(lines, asm3.i18n._("Upcoming medical items", l))
                 for m in nextdue:
                     p(lines, "{0}: {1} {2} {3}/{4} {5}".format( asm3.i18n.python2display(l, m.DATEREQUIRED), \
                         m.TREATMENTNAME, m.DOSAGE, m.TREATMENTNUMBER, m.TOTALTREATMENTS, m.COMMENTS ))
                 lines.append("<hr/>")
 
+            clinics = asm3.clinic.get_animal_appointments_due(dbo, a.ANIMALID, dbo.today(), dbo.today(offset=7))
+            if len(clinics) > 0:
+                hasmedicaldue = True
+                pb(lines, asm3.i18n._("Upcoming clinic appointments", l))
+                for c in clinics:
+                    p(lines, "{0}: {1} {2}".format( asm3.i18n.python2displaytime(l, c.DATETIME), c.APPTFOR, c.REASONFORAPPOINTMENT ))
+                lines.append("<hr/>")
+
         # Email is complete, send to the fosterer (assuming there were some animals to send)
         if len(animals) > 0:
-            asm3.utils.send_email(dbo, replyto, f.EMAILADDRESS, subject = asm3.i18n._("Fosterer Medical Report", l), body="\n".join(lines), contenttype="html", exceptions=False)
+            # If the option to send emails if there were no medical items is off and there
+            # weren't any medical items, skip to the next fosterer
+            if asm3.configuration.fosterer_email_skip_no_medical(dbo) and not hasmedicaldue: continue
+            subject = asm3.i18n._("Fosterer Medical Report", l)
+            body = "\n".join(lines)
+            asm3.utils.send_email(dbo, replyto, f.EMAILADDRESS, subject=subject, body=body, contenttype="html", exceptions=False)
+            if asm3.configuration.audit_on_send_email(dbo): 
+                asm3.audit.email(dbo, "system", replyto, f.EMAILADDRESS, "", "", subject, body)
+
 
 

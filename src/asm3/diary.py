@@ -1,6 +1,7 @@
 
 import asm3.al
 import asm3.animal
+import asm3.asynctask
 import asm3.configuration
 import asm3.i18n
 import asm3.lostfound
@@ -47,7 +48,7 @@ def email_uncompleted_upto_today(dbo):
                 # Is this note relevant for this user?
                 if (n.diaryforname == "*") \
                 or (n.diaryforname == u.username) \
-                or (u.roles.find(n.diaryforname) != -1):
+                or (n.diaryforname in u.roles.split("|")):
                     s += "%s %s - %s - " % (asm3.i18n.python2display(l, n.diarydatetime), asm3.i18n.format_time(n.diarydatetime), n.diaryforname)
                     s += n.subject
                     if n.linkinfo is not None and n.linkinfo != "": s += " / %s" % n.linkinfo
@@ -56,8 +57,10 @@ def email_uncompleted_upto_today(dbo):
                     totalforuser += 1
             if totalforuser > 0:
                 asm3.al.debug("got %d notes for user %s" % (totalforuser, u.username), "diary.email_uncompleted_upto_today", dbo)
-                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", 
-                    asm3.i18n._("Diary notes for: {0}", l).format(asm3.i18n.python2display(l, dbo.now())), s, exceptions=False)
+                subject = asm3.i18n._("Diary notes for: {0}", l).format(asm3.i18n.python2display(l, dbo.now()))
+                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s, exceptions=False)
+                if asm3.configuration.audit_on_send_email(dbo): 
+                    asm3.audit.email(dbo, "system", asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s)
 
 def email_note_on_change(dbo, n, username):
     """
@@ -65,6 +68,7 @@ def email_note_on_change(dbo, n, username):
     username the user triggering the send by adding/updating a diary
     """
     if not asm3.configuration.email_diary_on_change(dbo): return
+    if n is None: return
     l = dbo.locale
     allusers = asm3.users.get_users(dbo)
     s = asm3.i18n._("Diary change triggered by {0} on {1}", l).format(username, asm3.i18n.python2display(l, dbo.now()))
@@ -77,17 +81,20 @@ def email_note_on_change(dbo, n, username):
             # Is this note relevant for this user?
             if (n.diaryforname == "*") \
             or (n.diaryforname == u.username) \
-            or (u.roles.find(n.diaryforname) != -1):
+            or (n.diaryforname in u.roles.split("|")):
                 # Yes, send it to them
-                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", 
-                    asm3.i18n._("Diary update: {0}", l).format(n.subject), s, exceptions=False)
+                subject = asm3.i18n._("Diary update: {0}", l).format(n.subject)
+                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s, exceptions=False)
+                if asm3.configuration.audit_on_send_email(dbo): 
+                    asm3.audit.email(dbo, username, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s)
 
 def email_note_on_complete(dbo, n, username):
     """
     Emails the creator of a diary note n with the note's content 
     username the user triggering the send by completing a diary
     """
-    if not asm3.configuration.email_diary_on_change(dbo): return
+    if not asm3.configuration.email_diary_on_complete(dbo): return
+    if n is None: return
     l = dbo.locale
     allusers = asm3.users.get_users(dbo)
     s = asm3.i18n._("Diary completion triggered by {0} on {1}", l).format(username, asm3.i18n.python2display(l, dbo.now()))
@@ -100,8 +107,10 @@ def email_note_on_complete(dbo, n, username):
             # Is this note relevant for this user?
             if (n.createdby == u.username):
                 # Yes, send it to them
-                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", 
-                    asm3.i18n._("Diary complete: {0}", l).format(n.subject), s, exceptions=False)
+                subject = asm3.i18n._("Diary complete: {0}", l).format(n.subject)
+                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s, exceptions=False)
+                if asm3.configuration.audit_on_send_email(dbo): 
+                    asm3.audit.email(dbo, username, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s)
 
 def user_role_where_clause(dbo, user = "", includecreatedby = True):
     """
@@ -258,7 +267,7 @@ def get_diary(dbo, diaryid):
     """
     Returns a diary record
     """
-    return dbo.query("SELECT * FROM diary WHERE ID = ?", [diaryid])[0]
+    return dbo.first_row(dbo.query("SELECT * FROM diary WHERE ID = ?", [diaryid]))
 
 def delete_diary(dbo, username, diaryid):
     """
@@ -282,6 +291,9 @@ def get_link_info(dbo, linktypeid, linkid):
     if linktypeid == ANIMAL:
         return "%s [%s]" % (asm3.animal.get_animal_namecode(dbo, linkid), asm3.animal.get_display_location_noq(dbo, linkid))
 
+    elif linktypeid == ANIMALCONTROL:
+        return asm3.i18n._("Incident: {0}").format(asm3.animalcontrol.get_animalcontrol_numbertype(dbo, linkid))
+
     elif linktypeid == PERSON:
         return asm3.person.get_person_name(dbo, linkid)
 
@@ -293,6 +305,25 @@ def get_link_info(dbo, linktypeid, linkid):
 
     elif linktypeid == WAITINGLIST:
         return asm3.i18n._("Waiting List: {0}", l).format(asm3.waitinglist.get_person_name(dbo, linkid))
+
+def update_link_info(dbo, username, linktypeid, linkid):
+    """
+    Updates all diary notes of linktypeid/linkid
+    """
+    dbo.update("diary", f"LinkType={linktypeid} AND LinkID={linkid}", {
+        "LinkInfo":     get_link_info(dbo, linktypeid, linkid)
+    }, username)
+
+def update_link_info_incomplete(dbo):
+    """
+    Updates the link info of all incomplete diary notes
+    """
+    rows = dbo.query("SELECT DISTINCT LinkType, LinkID FROM diary WHERE DateCompleted Is Null")
+    asm3.asynctask.set_progress_max(dbo, len(rows))
+    for d in rows:
+        update_link_info(dbo, "system", d.LINKTYPE, d.LINKID)
+        asm3.asynctask.increment_progress_value(dbo)
+    asm3.al.info(f"updated {len(rows)} diary link info elements", "diary.update_link_info_incomplete", dbo)
 
 def insert_diary_from_form(dbo, username, linktypeid, linkid, post):
     """
@@ -308,8 +339,6 @@ def insert_diary_from_form(dbo, username, linktypeid, linkid, post):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Diary date is not valid", l))
     if post["subject"] == "":
         raise asm3.utils.ASMValidationError(asm3.i18n._("Diary subject cannot be blank", l))
-    if post["note"] == "":
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Diary note cannot be blank", l))
     diarytime = post["diarytime"].strip()
     if diarytime != "":
         if diarytime.find(":") == -1:
@@ -371,8 +400,6 @@ def update_diary_from_form(dbo, username, post):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Diary date is not valid", l))
     if post["subject"] == "":
         raise asm3.utils.ASMValidationError(asm3.i18n._("Diary subject cannot be blank", l))
-    if post["note"] == "":
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Diary note cannot be blank", l))
     diarytime = post["diarytime"].strip()
     if diarytime != "":
         if diarytime.find(":") == -1:
@@ -390,7 +417,7 @@ def update_diary_from_form(dbo, username, post):
         "DateCompleted":    post.date("completed")
     }, username)
 
-    if post.date("completed") is not None:
+    if post.date("completed") is None:
         email_note_on_change(dbo, get_diary(dbo, diaryid), username)
     else:
         email_note_on_complete(dbo, get_diary(dbo, diaryid), username)

@@ -92,6 +92,9 @@ LOG_LOCATION = get_string("log_location", "syslog")
 # to disable debug messages
 LOG_DEBUG = get_boolean("log_debug", True)
 
+# Whether to reload the application when the code.py filestamp changes
+AUTORELOAD = get_boolean("autoreload", False)
+
 # Database info
 # MYSQL, POSTGRESQL, SQLITE or DB2
 DB_TYPE = get_string("db_type", "MYSQL")
@@ -105,13 +108,6 @@ DB_NAME = get_string("db_name", "asm")
 # accessing your database, setting this will have ASM3
 # update the primarykey table that ASM2 needs
 DB_HAS_ASM2_PK_TABLE = get_boolean("db_has_asm2_pk_table", False)
-
-# If False, HTML entities (all unicode chars) will be stored as is in the database.
-# (this is better for databases with non Unicode collation/storage and less of
-#  a security risk for Unicode SQL/XSS attacks)
-# If True, HTML entities will be decoded to Unicode before storing in the database
-# (storage is more efficient as UTF8 should be used for 2 bytes/char instead of 5)
-DB_DECODE_HTML_ENTITIES = get_boolean("db_decode_html_entities", False)
 
 # If set, all calls to db.execute will be logged to the file
 # named. Use {database} to substitute database name.
@@ -143,6 +139,11 @@ SESSION_SECURE_COOKIE = get_boolean("session_secure_cookie", False)
 # Output debug info on sessions
 SESSION_DEBUG = get_boolean("session_debug", False)
 
+# The Content-Security-Policy header to send, or blank for no policy
+# Include 'nonce-%(nonce)s' in any policy to prevent the bootstrap 
+# inline script breaking
+CONTENT_SECURITY_POLICY = get_string("content_security_policy", "")
+
 # The host/port that memcached is running on if it is to be used.
 # If memcache is not available, an in memory dictionary will be
 # used instead.
@@ -152,23 +153,37 @@ MEMCACHED_SERVER = get_string("memcached_server", "")
 # Where to store media files.
 # database - media files are base64 encoded in the dbfs.content db column
 # file - media files are stored in a folder 
-# s3 - media files are stored in amazon s3
+# s3 - media files are stored in S3 compatible storage
 DBFS_STORE = get_string("dbfs_store", "database")
 
 # DBFS_STORE = file: The folder where media files are stored.
 # It must exist and ASM must have write permissions. It should never end with a /
 DBFS_FILESTORAGE_FOLDER = get_string("dbfs_filestorage_folder", "/home/robin/tmp/dbfs")
 
-# DBFS_STORE = s3: The S3 bucket to store media in
+# DBFS_STORE = s3: The S3 bucket and credentials, endpoint url is only necessary for non-AWS
+# If no credentials are set, $HOME/.aws/credentials or env vars will be used.
 DBFS_S3_BUCKET = get_string("dbfs_s3_bucket", "")
+DBFS_S3_ACCESS_KEY_ID = get_string("dbfs_s3_access_key_id", "")
+DBFS_S3_SECRET_ACCESS_KEY = get_string("dbfs_s3_secret_access_key", "")
+DBFS_S3_ENDPOINT_URL = get_string("dbfs_s3_endpoint_url", "")
+
+# If you are migrating away from one S3 provider to another, you can set the old provider's
+# credentials here. The DBFS module will look in the new provider first, and if it doesn't
+# find an object, look in the old provider and copy it to the new one.
+# This allows you to switch to another provider straight away. You can then optionally
+# use something like rclone to move objects from the old provider to the new one. 
+DBFS_S3_MIGRATE_BUCKET = get_string("dbfs_s3_migrate_bucket", "")
+DBFS_S3_MIGRATE_ACCESS_KEY_ID = get_string("dbfs_s3_migrate_access_key_id", "")
+DBFS_S3_MIGRATE_SECRET_ACCESS_KEY = get_string("dbfs_s3_migrate_secret_access_key", "")
+DBFS_S3_MIGRATE_ENDPOINT_URL = get_string("dbfs_s3_migrate_endpoint_url", "")
 
 # The directory to use to cache elements on disk. Must already exist
 # as the application will not attempt to create it.
 DISK_CACHE = get_string("disk_cache", "/tmp/asm_disk_cache")
 
-# Cache results of the most common, less important queries for
-# a short period (60 seconds) in the disk cache to help performance. 
-# These queries include shelterview animals and main screen links) 
+# Allow some non-critical queries to be cached for short periods in the 
+# disk cache to help with performance. The majority of these are queries for
+# to populate the home page so that it can load quickly. 
 CACHE_COMMON_QUERIES = get_boolean("cache_common_queries", False)
 
 # Cache service call responses on the server side according
@@ -198,6 +213,10 @@ LARGE_FILES_CHUNKED = get_boolean("large_files_chunked", True)
 # QR code provider. "url" and "size" tokens will be substituted
 QR_IMG_SRC = get_string("qr_img_src", "//chart.googleapis.com/chart?cht=qr&chl=%(url)s&chs=%(size)s")
 
+# Whether to resize incoming images
+RESIZE_IMAGES_DURING_ATTACH = get_boolean("resize_images_during_attach", True)
+RESIZE_IMAGES_SPEC = get_string("resize_images_spec", "1024x1024")
+
 # Shell command to use to compress PDFs
 SCALE_PDF_DURING_ATTACH = get_boolean("scale_pdf_during_attach", False)
 SCALE_PDF_CMD = get_string("scale_pdf_cmd", "convert -density 120 -quality 60 %(input)s -compress Jpeg %(output)s")
@@ -219,6 +238,7 @@ OSM_MAP_TILES = get_string("osm_map_tiles", "https://{s}.tile.openstreetmap.org/
 GEO_PROVIDER = get_string("geo_provider", "nominatim")  # Geocode provider to use - nominatim or google
 GEO_PROVIDER_KEY = get_string("geo_provider_key", "")   # For google, the API key to use when making geocoding requests
 GEO_SMCOM_URL = get_string("geo_smcom_url", "")
+GEO_SMCOM_ADDRESS_URL = get_string("geo_smcom_address_url", "")
 GEO_BATCH = get_boolean("geo_batch", False)             # Whether or not to try and lookup geocodes as part of the batch
 GEO_LIMIT = get_integer("geo_limit", 100)               # How many geocodes to lookup as part of the batch
 GEO_LOOKUP_TIMEOUT = get_integer("geo_lookup_timeout", 5) # Timeout in seconds when doing geocode lookups
@@ -229,6 +249,9 @@ MULTIPLE_DATABASES = get_boolean("multiple_databases", False)
 MULTIPLE_DATABASES_TYPE = get_string("multiple_databases_type", "map")
 # { "alias": { "dbtype": "MYSQL", "host": "localhost", "port": 3306, "username": "root", "password": "root", "database": "asm" } }
 MULTIPLE_DATABASES_MAP = get_dict("multiple_databases_map")
+
+# Whether the old HTML/FTP publisher of static files is enabled
+HTMLFTP_PUBLISHER_ENABLED = get_boolean("htmlftp_publisher_enabled", True)
 
 # FTP hosts and URLs for third party publishing services
 ADOPTAPET_FTP_HOST = get_string("adoptapet_ftp_host", "autoupload.adoptapet.com")
@@ -254,6 +277,8 @@ PETRESCUE_URL = get_string("petrescue_url", "")
 RESCUEGROUPS_FTP_HOST = get_string("rescuegroups_ftp_host", "ftp.rescuegroups.org")
 SAVOURLIFE_API_KEY = get_string("savourlife_api_key", "")
 SAVOURLIFE_URL = get_string("savourlife_url", "")
+SAC_METRICS_URL = get_string("sac_metrics_url", "")
+SAC_METRICS_API_KEY = get_string("sac_metrics_api_key", "")
 SMARTTAG_FTP_HOST = get_string("smarttag_ftp_host", "ftp.idtag.com")
 SMARTTAG_FTP_USER = get_string("smarttag_ftp_user", "")
 SMARTTAG_FTP_PASSWORD = get_string("smarttag_ftp_password", "")
@@ -271,23 +296,6 @@ VETENVOY_US_AKC_REUNITE_RECIPIENTID = get_string("vetenvoy_us_akc_reunite_recipi
 
 # Config for payment processing services
 PAYPAL_VALIDATE_IPN_URL = get_string("paypal_validate_ipn_url", "")
-
-# Override the html publishDir with a fixed value and forbid
-# editing in the UI.
-# {alias} will be substituted for the current database alias 
-# {database} the current database name
-# {username} the current database username.
-# MULTIPLE_DATABASES_PUBLISH_DIR = "/home/somewhere/{alias}"
-MULTIPLE_DATABASES_PUBLISH_DIR = get_string("multiple_databases_publish_dir", "")
-
-# The URL to show in the UI when publish dir is overridden
-# MULTIPLE_DATABASES_PUBLISH_URL = "http://yoursite.com/{alias}"
-MULTIPLE_DATABASES_PUBLISH_URL = get_string("multiple_databases_publish_url", "")
-
-# Override the HTML/FTP upload credentials. Setting this
-# turns on FTP upload and hides those configuration fields in the UI
-#MULTIPLE_DATABASES_PUBLISH_FTP = { "host": "ftp.host.com", "user": "user", "pass": "pass", "port": 21, "chdir": "/home/{alias}", "passive": True }
-MULTIPLE_DATABASES_PUBLISH_FTP = get_dict("multiple_databases_publish_ftp", None)
 
 # Options available under the share button
 SHARE_BUTTON = get_string("share_button", "shareweb,sharepic,shareemail")
@@ -327,31 +335,36 @@ SMCOM_LOGIN_URL = get_string("smcom_login_url", "")
 ASMSELECT_CSS = get_string("asmselect_css", 'static/lib/asmselect/1.0.4a/jquery.asmselect.css')
 ASMSELECT_JS = get_string("asmselect_js", 'static/lib/asmselect/1.0.4a/jquery.asmselect.js')
 BASE64_JS = get_string("base64_js", 'static/lib/base64/0.3.0/base64.min.js')
-CODEMIRROR_JS = get_string("codemirror_js", 'static/lib/codemirror/5.11/lib/codemirror.js')
-CODEMIRROR_CSS = get_string("codemirror_css", 'static/lib/codemirror/5.11/lib/codemirror.css')
-CODEMIRROR_BASE = get_string("codemirror_base", 'static/lib/codemirror/5.11/')
+BOOTSTRAP_JS = get_string("bootstrap_js", 'static/lib/bootstrap/5.1.0/js/bootstrap.min.js')
+BOOTSTRAP_CSS = get_string("bootstrap_css", 'static/lib/bootstrap/5.1.0/css/bootstrap.min.css')
+BOOTSTRAP_GRID_CSS = get_string("bootstrap_grid_css", 'static/lib/bootstrap/5.1.0/css/bootstrap-grid.min.css')
+BOOTSTRAP_ICONS_CSS = get_string("bootstrap_icons_css", 'static/lib/bootstrap-icons/1.5.0/bootstrap-icons.css')
+CODEMIRROR_JS = get_string("codemirror_js", 'static/lib/codemirror/5.65.2.asm/lib/codemirror.js')
+CODEMIRROR_CSS = get_string("codemirror_css", 'static/lib/codemirror/5.65.2.asm/lib/codemirror.css')
+CODEMIRROR_BASE = get_string("codemirror_base", 'static/lib/codemirror/5.65.2.asm/')
 FLOT_JS = get_string("flot_js", 'static/lib/flot/0.8.3/jquery.flot.min.js')
 FLOT_PIE_JS = get_string("flot_pie_js", 'static/lib/flot/0.8.3/jquery.flot.pie.min.js')
-FULLCALENDAR_CSS = get_string("fullcalendar_css", 'static/lib/fullcalendar/3.2.0/fullcalendar.min.css')
-FULLCALENDAR_JS = get_string("fullcalendar_js", 'static/lib/fullcalendar/3.2.0/fullcalendar.min.js')
-JQUERY_UI_CSS = get_string("jquery_ui_css", 'static/lib/jqueryui/jquery-ui-themes-1.12.1/themes/%(theme)s/jquery-ui.css')
-JQUERY_UI_JS = get_string("jquery_ui_js", 'static/lib/jqueryui/jquery-ui-1.12.1/jquery-ui.min.js')
-JQUERY_JS = get_string("jquery_js", 'static/lib/jquery/3.4.1/jquery.min.js')
+FULLCALENDAR_CSS = get_string("fullcalendar_css", 'static/lib/fullcalendar/3.10.2/fullcalendar.min.css')
+FULLCALENDAR_JS = get_string("fullcalendar_js", 'static/lib/fullcalendar/3.10.2/fullcalendar.min.js')
+JQUERY_UI_CSS = get_string("jquery_ui_css", 'static/lib/jqueryui/jquery-ui-themes-1.13.0/themes/%(theme)s/jquery-ui.css')
+JQUERY_UI_JS = get_string("jquery_ui_js", 'static/lib/jqueryui/jquery-ui-1.13.0/jquery-ui.min.js')
+JQUERY_JS = get_string("jquery_js", 'static/lib/jquery/3.6.0/jquery.min.js')
 JQUERY_MOBILE_CSS = get_string("jquery_mobile_css", 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.css')
 JQUERY_MOBILE_JS = get_string("jquery_mobile_js", 'static/lib/jquerymobile/1.4.5/jquery.mobile.min.js')
 JQUERY_MOBILE_JQUERY_JS = get_string("jquery_mobile_jquery_js", 'static/lib/jquery/2.2.4/jquery.min.js')
 LEAFLET_CSS = get_string("leaflet_css", 'static/lib/leaflet/1.3.1/leaflet.css')
 LEAFLET_JS = get_string("leaflet_js", 'static/lib/leaflet/1.3.1/leaflet.js')
-MOMENT_JS = get_string("moment_js", 'static/lib/moment/2.17.1/moment.min.js')
+MOMENT_JS = get_string("moment_js", 'static/lib/moment/2.29.1/moment.min.js')
 MOUSETRAP_JS = get_string("mousetrap_js", 'static/lib/mousetrap/1.4.6/mousetrap.min.js')
 PATH_JS = get_string("path_js", 'static/lib/pathjs/0.8.4.smcom/path.min.js')
+QRCODE_JS = get_string("qrcode_js", 'static/lib/qrcodejs/1.0.0/qrcode.min.js')
 SIGNATURE_JS = get_string("signature_js", 'static/lib/signature/1.1.1/jquery.signature.min.js')
 TABLESORTER_CSS = get_string("tablesorter_css", 'static/lib/tablesorter/2.7.12/themes/theme.asm.css')
 TABLESORTER_JS = get_string("tablesorter_js", 'static/lib/tablesorter/2.7.12/jquery.tablesorter.min.js')
 TABLESORTER_WIDGETS_JS = get_string("tablesorter_widgets_js", 'static/lib/tablesorter/2.7.12/jquery.tablesorter.widgets.min.js')
 TIMEPICKER_CSS = get_string("timepicker_css", 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.css')
 TIMEPICKER_JS = get_string("timepicker_js", 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.js')
-TINYMCE_4_JS = get_string("tinymce_4_js", 'static/lib/tinymce/4.7.13-asm1/tinymce/js/tinymce/tinymce.min.js')
+TINYMCE_5_JS = get_string("tinymce_4_js", 'static/lib/tinymce/5.5.1/tinymce/js/tinymce/tinymce.min.js')
 TOUCHPUNCH_JS = get_string("touchpunch_js", 'static/lib/touchpunch/0.2.3/jquery.ui.touch-punch.min.js')
 
 # Watermark Settings for adding an animal's name and shelter logo to an image

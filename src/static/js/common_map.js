@@ -49,6 +49,17 @@ const mapping = {
         }
     },
 
+    /** Loads a script inline and calls onload on complete.
+     *  We use this instead of jQuery.getScript because this method
+     *  does not trigger CSP and require 'unsafe-inline'
+     */
+    _get_script: function(url, onload) {
+        let s= document.createElement("script");
+        s.onload = onload;
+        s.src = url;
+        document.head.appendChild(s);
+    },
+
     /**
      * Returns the first valid latlong value from the list of markers
      */
@@ -65,7 +76,7 @@ const mapping = {
 
     _leaflet_draw_map: function(divid, zoom, latlong, markers) {
         $("head").append('<link rel="stylesheet" href="' + asm.leafletcss + '" />');
-        $.getScript(asm.leafletjs, function() {
+        mapping._get_script(asm.leafletjs, function() {
             var ll = latlong.split(",");
             var map = L.map(divid).setView([ll[0], ll[1]], 15);
             L.Icon.Default.imagePath = asm.leafletjs.substring(0, asm.leafletjs.lastIndexOf("/")) + "/images/";
@@ -151,7 +162,7 @@ const mapping = {
             window._goomapcallback();
         }
         else {
-            $.getScript("//maps.google.com/maps/api/js?v=3.x&sensor=false&async=2{key}&callback=_goomapcallback".replace("{key}", key), function() { mapping.google_loaded = true; });
+            mapping._get_script("//maps.google.com/maps/api/js?v=3.x&sensor=false&async=2{key}&callback=_goomapcallback".replace("{key}", key), function() { mapping.google_loaded = true; });
         }
     }
 

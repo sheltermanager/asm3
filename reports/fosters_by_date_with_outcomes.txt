@@ -2,7 +2,7 @@ Fosters by Date with Outcomes
 ###
 Movements
 ###
-Any
+Any rev03
 ###
 Foster animals between two dates with their final outcomes
 ###
@@ -10,7 +10,8 @@ en
 ###
 SELECT
 a.AnimalName, a.ShelterCode, a.DateOfBirth,
-e.ReasonName, o.OwnerName, m.MovementDate,
+e.ReasonName, o.OwnerName, m.MovementDate, m.ReturnDate, 
+o.OwnerAddress AS FostererAddress, o.MobileTelephone AS FostererPhone, o.EmailAddress AS FostererEmail,
 a.NeuteredDate,
 CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType > 0 THEN mt.MovementType ELSE 'None' END AS OutcomeName,
 CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate,
@@ -24,7 +25,7 @@ INNER JOIN entryreason e ON a.EntryReasonID = e.ID
 LEFT OUTER JOIN lksmovementtype mt ON a.ActiveMovementType = mt.ID
 LEFT OUTER JOIN adoption ma ON ma.ID = a.ActiveMovementID
 LEFT OUTER JOIN owner no ON no.ID = ma.OwnerID
-WHERE m.MovementType = 2 AND a.ActiveMovementType <> 2 AND m.MovementDate >= '$ASK DATE Enter from date$' AND m.MovementDate <= '$ASK DATE Enter to date$' 
+WHERE m.MovementType = 2 AND m.MovementDate >= '$ASK DATE Fostered between$' AND m.MovementDate <= '$ASK DATE and$' 
 ORDER BY m.MovementDate
 ###
 $$HEADER
@@ -36,6 +37,7 @@ $$HEADER
 <th>Entry category</th>
 <th>Fosterer</th>
 <th>Foster Date</th>
+<th>Foster Ended</th>
 <th>Neutered/Spayed</th>
 <th>Outcome</th>
 <th>Outcome date</th>
@@ -49,8 +51,11 @@ $$BODY
 <td>$SHELTERCODE</td>
 <td>$DATEOFBIRTH</td>
 <td>$REASONNAME</td>
-<td>$OWNERNAME</td>
+<td><b>$OWNERNAME</b><br/>
+$FostererAddress, $FostererPhone $FostererEmail
+</td>
 <td>$MOVEMENTDATE</td>
+<td>$RETURNDATE</td>
 <td>$NEUTEREDDATE</td>
 <td>$OUTCOMENAME</td>
 <td>$OUTCOMEDATE</td>
@@ -70,7 +75,7 @@ Fosters by Date and Fosterer with Outcomes
 ###
 Auditing
 ###
-Any
+Any rev04
 ###
 Foster animals between two dates with their final outcomes by fosterer
 ###
@@ -78,7 +83,8 @@ en
 ###
 SELECT
 a.AnimalName, a.ShelterCode, a.DateOfBirth,
-e.ReasonName, o.OwnerName, m.MovementDate,
+e.ReasonName, o.OwnerName, m.MovementDate, m.ReturnDate, 
+o.OwnerAddress AS FostererAddress, o.MobileTelephone AS FostererPhone, o.EmailAddress AS FostererEmail,
 a.NeuteredDate,
 CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType > 0 THEN mt.MovementType ELSE 'None' END AS OutcomeName,
 CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate,
@@ -92,14 +98,16 @@ INNER JOIN entryreason e ON a.EntryReasonID = e.ID
 LEFT OUTER JOIN lksmovementtype mt ON a.ActiveMovementType = mt.ID
 LEFT OUTER JOIN adoption ma ON ma.ID = a.ActiveMovementID
 LEFT OUTER JOIN owner no ON no.ID = ma.OwnerID
-WHERE m.MovementType = 2 AND a.ActiveMovementType <> 2 AND m.MovementDate >= '$ASK DATE Enter from date$' AND m.MovementDate <= '$ASK DATE Enter to date$' 
-ORDER BY m.MovementDate
+WHERE m.MovementType = 2 AND m.MovementDate >= '$ASK DATE Fostered between$' AND m.MovementDate <= '$ASK DATE and$' 
+ORDER BY o.OwnerName, m.MovementDate
 ###
 $$HEADER
 HEADER$$
 
 $$GROUP_OwnerName
 $$HEAD
+<h2>$OwnerName</h2>
+<p>$FostererAddress, $FostererPhone $FostererEmail</p>
 <table border="1">
 <tr>
 <th>Animal</th>
@@ -107,6 +115,7 @@ $$HEAD
 <th>DOB</th>
 <th>Entry category</th>
 <th>Foster Date</th>
+<th>Foster Ended</th>
 <th>Neutered/Spayed</th>
 <th>Outcome</th>
 <th>Outcome date</th>
@@ -114,7 +123,7 @@ $$HEAD
 </tr>
 $$FOOT
 </table>
-<h2>Total $OwnerName: {COUNT.OwnerName}</h2>
+<p>Total $OwnerName: {COUNT.OwnerName}</p>
 GROUP$$
 
 $$BODY
@@ -124,6 +133,7 @@ $$BODY
 <td>$DATEOFBIRTH</td>
 <td>$REASONNAME</td>
 <td>$MOVEMENTDATE</td>
+<td>$RETURNDATE</td>
 <td>$NEUTEREDDATE</td>
 <td>$OUTCOMENAME</td>
 <td>$OUTCOMEDATE</td>

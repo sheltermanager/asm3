@@ -10,7 +10,7 @@ en
 ###
 SELECT latlong, ownername || '<br>' || owneraddress || '<br>' || ownertown || ' ' || ownercounty || ' ' || ownerpostcode || '<br>' || emailaddress || '<br>' || hometelephone
 FROM owner o
-WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 AND o.AdditionalFlags LIKE '%$ASK PERSONFLAG$%'
+WHERE o.IsDeceased = 0 AND o.AdditionalFlags LIKE '%$ASK PERSONFLAG$%'
 ORDER BY o.OwnerSurname
 ###
 MAP

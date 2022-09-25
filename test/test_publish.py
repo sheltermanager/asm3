@@ -20,7 +20,7 @@ class TestPublish(unittest.TestCase):
         }
         post = asm3.utils.PostedData(data, "en")
         self.nid, self.code = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")
-        asm3.configuration.cset(base.get_dbo(), "PublisherPresets", "includewithoutimage includewithoutdescription includenonneutered excludeunder=1")
+        asm3.configuration.cset(base.get_dbo(), "PublisherPresets", "includewithoutimage includewithoutdescription includenonneutered includenonmicrochip excludeunder=1")
 
     def tearDown(self):
         asm3.animal.delete_animal(base.get_dbo(), "test", self.nid)
@@ -84,7 +84,7 @@ class TestPublish(unittest.TestCase):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         assert asm3.publishers.foundanimals.FoundAnimalsPublisher(base.get_dbo(), pc).processAnimal(a) is not None
-        asm3.publishers.foundanimals.FoundAnimalsPublisher(base.get_dbo(), pc).validate(a)
+        asm3.publishers.foundanimals.FoundAnimalsPublisher(base.get_dbo(), pc).validate(a, -1000)
 
     # helpinglostpets
     def test_helpinglostpets(self):
@@ -124,7 +124,7 @@ class TestPublish(unittest.TestCase):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         assert asm3.publishers.petlink.PetLinkPublisher(base.get_dbo(), pc).processAnimal(a) is not None
-        asm3.publishers.petlink.PetLinkPublisher(base.get_dbo(), pc).validate(a)
+        asm3.publishers.petlink.PetLinkPublisher(base.get_dbo(), pc).validate(a, -1000)
 
     # petrescue
     def test_petrescue(self):
@@ -188,6 +188,12 @@ class TestPublish(unittest.TestCase):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         assert asm3.publishers.rescuegroups.RescueGroupsPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+
+    # sacmetrics
+    def test_sacmetrics(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        asm3.publishers.sacmetrics.SACMetricsPublisher(base.get_dbo(), pc).analyseMonths()
+        asm3.publishers.sacmetrics.SACMetricsPublisher(base.get_dbo(), pc).processStats(8, 2022, "canine")
 
     # savourlife
     def test_savourlife(self):

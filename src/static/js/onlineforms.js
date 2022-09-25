@@ -12,12 +12,37 @@ $(function() {
             { ID: 2, NAME: _("Send confirmation message only") }
         ],
 
+        auto_process_options: [
+            { ID: 0, NAME: _("Do not auto process") },
+            { ID: 1, NAME: _("Attach animal via animalname field") },
+            { ID: 9, NAME: _("Attach animal then create person") },
+            { ID: 2, NAME: _("Create animal") },
+            { ID: 3, NAME: _("Create person") },
+            { ID: 4, NAME: _("Create lost animal") },
+            { ID: 5, NAME: _("Create found animal") },
+            { ID: 6, NAME: _("Create incident") },
+            { ID: 7, NAME: _("Create transport") },
+            { ID: 8, NAME: _("Create waiting list") }
+        ],
+
+        retain_for_years: [
+            { ID: 0, NAME: _("Indefinitely") },
+            { ID: 1, NAME: _("1 year") },
+            { ID: 2, NAME: _("{0} years").replace("{0}", 2) },
+            { ID: 3, NAME: _("{0} years").replace("{0}", 3) },
+            { ID: 4, NAME: _("{0} years").replace("{0}", 4) },
+            { ID: 5, NAME: _("{0} years").replace("{0}", 5) },
+            { ID: 6, NAME: _("{0} years").replace("{0}", 6) },
+            { ID: 7, NAME: _("{0} years").replace("{0}", 7) },
+            { ID: 8, NAME: _("{0} years").replace("{0}", 8) },
+            { ID: 9, NAME: _("{0} years").replace("{0}", 9) }
+        ],
+
         model: function() {
             const dialog = {
                 add_title: _("Add online form"),
                 edit_title: _("Edit online form"),
                 edit_perm: 'eof',
-                helper_text: _("Forms need a name."),
                 close_on_ok: false,
                 columns: 1,
                 width: 850,
@@ -28,10 +53,24 @@ $(function() {
                         tooltip: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL"),
                         callout: _("After the user presses submit and ASM has accepted the form, redirect the user to this URL") },
                     { json_field: "SETOWNERFLAGS", post_field: "flags", label: _("Person Flags"), type: "selectmulti" },
-                    { json_field: "EMAILADDRESS", post_field: "email", label: _("Email submissions to"), type: "textarea", rows: "2", 
+                    { json_field: "AUTOPROCESS", post_field: "autoprocess", label: _("Auto Process"), 
+                        type: "select", classes: "asm-doubleselectbox",
+                        callout: _("Process submissions of this form automatically and bypass the incoming forms queue"),
+                        options: { displayfield: "NAME", valuefield: "ID", rows: onlineforms.auto_process_options } },
+                    { json_field: "RETAINFOR", post_field: "retainfor", label: _("Retain for"),
+                        type: "select",
+                        callout: _("Retain processed form submissions on the media tab for a number of years"),
+                        options: { displayfield: "NAME", valuefield: "ID", rows: onlineforms.retain_for_years } },
+                    { json_field: "EMAILADDRESS", post_field: "email", label: _("Email submissions to"), 
+                        type: "textarea", rows: "2", 
                         validation: "validemail", 
                         tooltip: _("Email incoming form submissions to this comma separated list of email addresses"), 
                         callout: _("Email incoming form submissions to this comma separated list of email addresses") }, 
+                    { json_field: "EMAILCOORDINATOR", post_field: "emailcoordinator", 
+                        label: _("Email adoption coordinator"), 
+                        type: "check",
+                        callout: _("If this form has an animalname field, email this submission to the adoption coordinator for the selected animal")
+                    },
                     { json_field: "EMAILSUBMITTER", post_field: "emailsubmitter", label: _("Send confirmation email to form submitter"), 
                         type: "select", classes: "asm-doubleselectbox",
                         callout: _("If this form has a populated emailaddress field during submission, send a confirmation email to it"),
@@ -69,6 +108,9 @@ $(function() {
                         header.show_info(_("Successfully copied to the clipboard."));
                         return false;
                     }
+                    else if ($(this).attr("data-link")) {
+                        common.route($(this).attr("data-link"), true);
+                    }
                 },
                 columns: [
                     { field: "NAME", display: _("Name"), initialsort: true, formatter: function(row) {
@@ -85,7 +127,10 @@ $(function() {
                             return '<span style="white-space: nowrap">' + 
                                 '<a target="_blank" href="' + u + '">' + _("View Form") + '</a>' +
                                 ' <button data-icon="clipboard" data-text="false" data-url="' + u + '">' + 
-                                _("Copy form URL to the clipboard") + '</button></span>';
+                                _("Copy form URL to the clipboard") + '</button>' +
+                                '<button data-icon="wrench" data-text="false" data-link="onlineform_view?formid=' + row.ID +
+                                '">' + _("View the form in development mode without caching") + '</button>' +
+                                '</span>';
                         }},
                     { field: "REDIRECTURLAFTERPOST", display: _("Redirect to URL after POST") },
                     { field: "EMAILADDRESS", display: _("Email submissions to"), formatter: function(row) {

@@ -12,8 +12,8 @@ $(function() {
                 '<div>',
                 '<table width="100%">',
                 '<tr>',
-                '<!-- left column -->',
-                '<td width="35%">',
+                // left column
+                '<td width="35%" class="asm-nested-table-td">',
                 '<table width="100%" class="additionaltarget" data="to16">',
                 '<tr>',
                 '<td>' + _("Number") + '</td>',
@@ -67,8 +67,8 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</td>',
-                '<!-- right column -->',
-                '<td width="35%">',
+                // right column
+                '<td width="35%" class="asm-nested-table-td">',
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="calldate">' + _("Call Date/Time") + '</label></td>',
@@ -107,8 +107,8 @@ $(function() {
                 '<div>',
                 '<table width="100%">',
                 '<tr>',
-                '<!-- left table -->',
-                '<td width="35%">',
+                // left table 
+                '<td width="35%" class="asm-nested-table-td">',
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="dispatchaddress">' + _("Address") + '</label></td>',
@@ -125,7 +125,11 @@ $(function() {
                 '<tr class="towncounty">',
                 '<td><label for="dispatchcounty">' + _("State") + '</label></td>',
                 '<td>',
-                '<input type="text" id="dispatchcounty" data-json="DISPATCHCOUNTY" data-post="dispatchcounty" maxlength="100" class="asm-textbox" />',
+                common.iif(config.bool("USStateCodes"),
+                    '<select id="dispatchcounty" data-json="DISPATCHCOUNTY" data-post="dispatchcounty" class="asm-selectbox">' +
+                    html.states_us_options() + '</select>',
+                    '<input type="text" id="dispatchcounty" data-json="DISPATCHCOUNTY" data-post="dispatchcounty" maxlength="100" ' + 
+                    'class="asm-textbox" />'),
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -155,16 +159,15 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-                '<!-- end left table -->',
+                // end left table
                 '</table>',
-                '<!-- Second column -->',
+                // Second column
                 '</td>',
-                '<td width="30%">',
+                '<td width="30%" class="asm-nested-table-td">',
                 '<table width="100%" class="additionaltarget" data="to17">',
                 '<tr>',
                 '<td><label for="dispatchedaco">' + _("Dispatched ACO") + '</label></td>',
-                '<td><select id="dispatchedaco" data-json="DISPATCHEDACO" data-post="dispatchedaco" class="asm-selectbox">',
-                '<option> </option>',
+                '<td><select id="dispatchedaco" data-json="DISPATCHEDACO" data-post="dispatchedaco" class="asm-bsmselect" multiple="multiple">',
                 html.list_to_options(controller.users, "USERNAME", "USERNAME"),
                 '</td>',
                 '</tr>',
@@ -205,10 +208,10 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '<!-- Third column, embedded map placeholder -->',
+                // Third column, embedded map placeholder
                 '</td>',
-                '<td width="35%">',
-                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000" />',
+                '<td width="35%" class="asm-nested-table-td">',
+                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div>',
                 '<!-- end outer table -->',
                 '</td>',
                 '</tr>',
@@ -223,8 +226,8 @@ $(function() {
                 '<div>',
                 '<table width="100%">',
                 '<tr>',
-                '<td width="50%">',
-                '<!-- left table -->',
+                '<td width="50%" class="asm-nested-table-td">',
+                // left table 
                 '<table width="100%" class="additionaltarget" data="to18">',
                 '<tr>',
                 '<td>' + _("Suspect 1") + '</td>',
@@ -242,9 +245,9 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '<!-- right table -->',
+                // right table
                 '</td>',
-                '<td>',
+                '<td class="asm-nested-table-td">',
                 '<table width="100%">',
                 '<td><label for="species">' + _("Species") + '</label></td>',
                 '<td nowrap="nowrap">',
@@ -275,7 +278,7 @@ $(function() {
                 '<td><textarea id="animaldescription" data-json="ANIMALDESCRIPTION" data-post="animaldescription" class="asm-textarea"></textarea></td>',
                 '</tr>',
                 '</table>',
-                '<!-- end right table -->',
+                // end right table
 
                 '<p class="asm-menu-category">' + _("Animals") + ' <button id="button-linkanimal">' + _("Link an animal") + '</button></p>',
                 '<div id="animallist">',
@@ -313,7 +316,7 @@ $(function() {
                 edit_header.template_list(controller.templates, "ANIMALCONTROL", controller.incident.ID),
                 '</ul>',
                 '</div>',
-                '<div id="emailform" />',
+                '<div id="emailform"></div>',
                 '<div id="dialog-linkanimal" style="display: none" title="' + html.title(_("Link an animal")) + '">',
                 '<table width="100%">',
                 '<tr>',
@@ -329,8 +332,8 @@ $(function() {
                     //{ id: "toanimal", text: _("Create Animal"), icon: "animal-add", tooltip: _("Create a new animal from this incident") }
                     { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this incident") },
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Email incident notes to ACO") },
-                    { id: "dispatch", text: _("Dispatch"), icon: "calendar", tooltip: _("Mark dispatched now") },
-                    { id: "respond", text: _("Respond"), icon: "calendar", tooltip: _("Mark responded now") },
+                    { id: "dispatch", text: _("Dispatch"), icon: "calendar", perm: "cacd", tooltip: _("Mark dispatched now") },
+                    { id: "respond", text: _("Respond"), icon: "calendar", perm: "cacr", tooltip: _("Mark responded now") },
                     { id: "map", text: _("Map"), icon: "map", tooltip: _("Find this address on a map") }
                 ]),
                 '<div id="asm-details-accordion">',
@@ -484,11 +487,12 @@ $(function() {
             });
 
             $("#button-email").button().click(function() {
-                let emailname = "", emailaddress = "";
+                let emailaddress = "", emailname = "";
                 $.each(controller.users, function(i, v) {
-                    if (v.USERNAME == $("#dispatchedaco").select("value")) {
+                    if (common.array_in(v.USERNAME, String($("#dispatchedaco").val()).split(","))) {
+                        if (emailaddress != "") { emailaddress += ", "; }
                         emailname = v.REALNAME;
-                        emailaddress = v.EMAILADDRESS;
+                        emailaddress += v.EMAILADDRESS;
                     }
                 });
                 let i = controller.incident;
@@ -508,7 +512,7 @@ $(function() {
                     title: _("Email incident notes to ACO"),
                     post: "incident",
                     formdata: "mode=email",
-                    name: emailname,
+                    name: common.iif(emailaddress.indexOf(",") == -1, emailname, ""),
                     email: emailaddress,
                     message: "<p>" + common.replace_all(html.decode(msg), "\n", "<br/>") + "</p>",
                     subject: subject
@@ -529,7 +533,10 @@ $(function() {
                     $("#dispatchtime").val(format.time(new Date()));
                     $("#asm-details-accordion").accordion("option", "active", 2);
                     $("#button-dispatch").button("disable");
-                    validate.dirty(true);
+                    header.show_loading(_("Saving..."));
+                    validate.save(function() {
+                        common.route_reload();
+                    });
                 }
             });
 
@@ -542,7 +549,10 @@ $(function() {
                     $("#respondedtime").val(format.time(new Date()));
                     $("#asm-details-accordion").accordion("option", "active", 2);
                     $("#button-respond").button("disable");
-                    validate.dirty(true);
+                    header.show_loading(_("Saving..."));
+                    validate.save(function() {
+                        common.route_reload();
+                    });
                 }
             });
 
@@ -569,20 +579,21 @@ $(function() {
 
         sync: function() {
 
+            // If any of the dispatched ACOs are not in the list (can happen if a
+            // user account is later deleted), add it to the aco list so that it doesn't
+            // disappear.
+            $.each(controller.incident.DISPATCHEDACO.split(","), function(ia, aco) {
+                let acoinlist = false;
+                $.each(controller.users, function(i, v) {
+                    if (v.USERNAME == aco) { acoinlist = true; return false; }
+                });
+                if (!acoinlist) {
+                    $("#dispatchedaco").append("<option value=\"" + html.title(aco) + "\">" + aco + "</option>");
+                }
+            });
+
             // Load the data into the controls for the screen
             $("#asm-content input, #asm-content select, #asm-content textarea").fromJSON(controller.incident);
-
-            // If the dispatch ACO is not in the list (can happen if the
-            // user account is later deleted), add it back so that it doesn't
-            // disappear.
-            let acoinlist = false;
-            $.each(controller.users, function(i, v) {
-                if (v.USERNAME == controller.incident.DISPATCHEDACO) { acoinlist = true; return false; }
-            });
-            if (!acoinlist) {
-                $("#dispatchedaco").append("<option>" + controller.incident.DISPATCHEDACO + "</option>");
-                $("#dispatchedaco").select("value", controller.incident.DISPATCHEDACO);
-            }
 
             // Update the lat/long
             $(".asm-latlong").latlong("load");
@@ -596,6 +607,7 @@ $(function() {
 
             // Dirty handling
             validate.bind_dirty([ "incident_" ]);
+            validate.indicator([ "incidentdate", "calldate" ]);
 
         },
 

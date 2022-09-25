@@ -153,7 +153,6 @@ $(function() {
 
         bind: function() {
             $("#table-waitinglist").table({ 
-                style_td: false, 
                 row_hover: false,
                 row_select: false
             });
@@ -207,7 +206,7 @@ $(function() {
             $("#species").select("value", controller.selspecies);
             $("#namecontains").val(controller.selnamecontains);
             $("#addresscontains").val(controller.seladdresscontains);
-            $("#descriptioncontains").val(controller.descriptioncontains);
+            $("#descriptioncontains").val(controller.seldescriptioncontains);
 
             // load the table results
             $("#table-waitinglist tbody").append(this.render_tablebody());
@@ -228,6 +227,9 @@ $(function() {
             $.each(config.str("WaitingListViewColumns").split(","), function(i, v) {
                 cols.push(common.trim(v));
             });
+            // If OwnerName is not present in the list, insert it as the first column to make
+            // sure there's still a link displayed to the target record
+            if (!common.array_in("OwnerName", cols)) { cols.unshift("OwnerName"); } 
             return cols;
         },
 
@@ -256,6 +258,7 @@ $(function() {
          */
         column_label: function(name, add) {
             let labels = {
+                "Number": _("Number"),
                 "CreatedBy": _("Created By"),
                 "Rank": _("Rank"),
                 "SpeciesID": _("Species"),
@@ -304,7 +307,10 @@ $(function() {
                     "ReasonForRemoval", "Comments", "Rank", "TimeOnList" ],
                 YES_NO_FIELDS = [ "CanAffordDonation" ];
             let rv = "";
-            if (name == "SpeciesID") {
+            if (name == "Number") {
+                rv = format.padleft(row.ID, 6);
+            }
+            else if (name == "SpeciesID") {
                 rv = row.SPECIESNAME;
             }
             else if (name == "Size") {

@@ -1,38 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Configuration &mdash; ASM 44u documentation</title>
+  <title>Configuration &mdash; ASM 46u documentation</title>
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Options" href="options.html" />
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                44u
+                46u
               </div>
             
           
@@ -77,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -117,13 +118,15 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#system-user-accounts">System user accounts</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#location-filter">Location Filter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#site-and-location-filters">Site and Location Filters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#two-factor-authentication-2fa">Two-Factor Authentication (2FA)</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#user-roles">User roles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#export-animals-as-csv">Export Animals as CSV</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#import-a-csv-file">Import a CSV file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#import-a-paypal-csv-file">Import a PayPal CSV file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-a-stripe-csv-file">Import a Stripe CSV file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#trigger-batch-processes">Trigger Batch Processes</a></li>
 </ul>
 </li>
@@ -140,6 +143,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -174,18 +178,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Configuration</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/configuration.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -298,23 +304,23 @@ so you can reference them in reports and document templates.</p>
 <p>There are certain special names for images that the system will use to override
 some of its standard pictures:</p>
 <ul class="simple">
-<li>nopic.jpg – this is the image the system will display when an animal does not
+<li><p>nopic.jpg – this is the image the system will display when an animal does not
 have any image media. You cannot delete this image, however you can upload a
-new image called nopic.jpg to replace it.</li>
-<li>logo.jpg – this is the image the system will use for the home logo at the top
+new image called nopic.jpg to replace it.</p></li>
+<li><p>logo.jpg – this is the image the system will use for the home logo at the top
 left corner. By default, it’s the ASM logo but it can be changed for your
 shelter. Ideally, your logo should not be more than 32 pixels high, but the
-system will scale down larger images.</li>
-<li>splash.jpg – this is the image the system will show on the login screen
+system will scale down larger images.</p></li>
+<li><p>splash.jpg – this is the image the system will show on the login screen
 instead of the default ASM splash screens. Your splash image should be
-400x200 pixels.</li>
-<li>watermark.png – this should be a version of your logo with a transparent
+400x200 pixels.</p></li>
+<li><p>watermark.png – this should be a version of your logo with a transparent
 background. If you supply a watermark image, then the watermark toolbar
 button will appear on animal media tabs. This button will add the watermark
 image to the bottom right of the chosen picture and the animal’s name in the
 lower left. Note that the original image will be changed, so you should
 upload images multiple times if you want to retain a copy without the
-watermark.</li>
+watermark.</p></li>
 </ul>
 </div>
 </div>
@@ -342,21 +348,22 @@ addresses that match the set. IP restrictions should be separated with spaces
 and can be either complete IPv4 of IPv6 addresses, IPv4 blocks in CIDR notation
 or IPv6 prefixes. Eg:</p>
 <blockquote>
-<div>192.168.1.0/24 172.16.31.34 2001:db8:abcd:0012</div></blockquote>
-<div class="section" id="location-filter">
-<h3>Location Filter<a class="headerlink" href="#location-filter" title="Permalink to this headline">¶</a></h3>
+<div><p>192.168.1.0/24 172.16.31.34 2001:db8:abcd:0012</p>
+</div></blockquote>
+<div class="section" id="site-and-location-filters">
+<h3>Site and Location Filters<a class="headerlink" href="#site-and-location-filters" title="Permalink to this headline">¶</a></h3>
 <p>Setting a location filter (a group of internal locations) for a user account
 will prevent that account from seeing or opening animals who are not in those
 locations when:</p>
 <ul class="simple">
-<li>Directly viewing an animal record.</li>
-<li>Displaying animal links on the home page.</li>
-<li>Displaying shelter view, search results or find animal results (basic or
-advanced).</li>
-<li>When adding or editing animals, the internal location dropdown will only show
-those locations.</li>
-<li>When choosing report criteria, they will only be able to select one of the
-filter locations for any $ASK LOCATION$ tags.</li>
+<li><p>Directly viewing an animal record.</p></li>
+<li><p>Displaying animal links on the home page.</p></li>
+<li><p>Displaying shelter view, search results or find animal results (basic or
+advanced).</p></li>
+<li><p>When adding or editing animals, the internal location dropdown will only show
+those locations.</p></li>
+<li><p>When choosing report criteria, they will only be able to select one of the
+filter locations for any $ASK LOCATION$ tags.</p></li>
 </ul>
 <p>If ASM has been configured with multi-site mode, a site dropdown will also
 appear on the user record, allowing a site to be assigned to the user. Each
@@ -368,11 +375,33 @@ not at that site without having to configure individual location filters.</p>
 animals outside the shelter with particular movements that you may wish to let your
 users see:</p>
 <ul class="simple">
-<li>Adopted Animals: Allows the user to see previously adopted animals</li>
-<li>Fostered Animals: Allows the user to see animals currently on foster</li>
-<li>Retailer Animals: Allows the user to see animals currently with retailers</li>
-<li>My Fosters: Restricts the user to ONLY see animals they are currently fostering</li>
+<li><p>Adopted Animals: Allows the user to see previously adopted animals</p></li>
+<li><p>Fostered Animals: Allows the user to see animals currently on foster</p></li>
+<li><p>Retailer Animals: Allows the user to see animals currently with retailers</p></li>
+<li><p>My Fosters: Allows the user to see animals that are fostered to the person
+record linked to their user account.</p></li>
 </ul>
+</div>
+<div class="section" id="two-factor-authentication-2fa">
+<h3>Two-Factor Authentication (2FA)<a class="headerlink" href="#two-factor-authentication-2fa" title="Permalink to this headline">¶</a></h3>
+<p>ASM supports two-factor authentication for user accounts with the Google
+Authenticator app for mobile devices.</p>
+<img alt="_images/changeusersettings_2fa.png" src="_images/changeusersettings_2fa.png" />
+<p>To enable it, log in with your user account, then choose “Change User Settings”
+from the user menu at the top right of the screen (the button with your
+username on it).</p>
+<p>Install the Google Authenticator app on your mobile device from the Play or
+iTunes store. Tick the box to enable 2FA and the screen will show you a
+QR code. In the Google Authenticator app, click the add button and choose “QR
+Code”, then scan the on screen code with your camera.</p>
+<p>An entry will appear in Google Authenticator for ASM (if you are self hosted)
+or sheltermanager (for sheltermanager.com customers) with your username and a
+time-based one time passcode that will update every 30 seconds. When you login
+in future, you will be challenged for this 2FA code from your mobile device.</p>
+<img alt="_images/google_authenticator.png" src="_images/google_authenticator.png" />
+<p>If you are ever locked out of your account because your mobile device is no
+longer available, you can disable 2FA by resetting your password from either
+the login screen, or via <span class="menuselection">Settings ‣ System user accounts</span></p>
 </div>
 </div>
 <div class="section" id="user-roles">
@@ -401,8 +430,8 @@ of the current on shelter animals.</p>
 <p>Microsoft Excel, OpenOffice Calc, Gnumeric, Google Docs and many other
 spreadsheet products can all export individual sheets in CSV format.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The screen <span class="menuselection">Settings ‣ Export Animals as CSV</span> produces CSV files in a format that ASM can import. This can be used to export and import animals from one ASM database to another.</p>
+<p class="admonition-title">Note</p>
+<p>The screen <span class="menuselection">Settings ‣ Export Animals as CSV</span> produces CSV files in a format that ASM can import. This can be used to export and import animals from one ASM database to another.</p>
 </div>
 <img alt="_images/import_csv.png" src="_images/import_csv.png" />
 <p>The CSV file should have a header row that contains column names that ASM
@@ -449,6 +478,19 @@ person records where possible. If an existing record cannot be found, a new
 person will be created.</p>
 <p>The net amount will be used as the payment amount and the PayPal transaction
 fee will be recorded with the payment.</p>
+<p>It is possible to override the payment type on a per transaction basis by
+editing the PayPal CSV file and adding a column named “ASM Payment Type”. You
+can then assign values from your payment types lookup in this column. Note that
+they must match exactly (same case) the payment type name from your lookup. If
+the column does not exist, contains a blank or the system could not find a match
+then the payment type from the import screen will be used.</p>
+</div>
+<div class="section" id="import-a-stripe-csv-file">
+<h2>Import a Stripe CSV file<a class="headerlink" href="#import-a-stripe-csv-file" title="Permalink to this headline">¶</a></h2>
+<p>Similar to PayPal, ASM can import data from CSV files exported with the Export
+button on Stripe’s payments screen.</p>
+<p>The Stripe fee will be recorded with the payment and the payment amount will
+have the fee deducted.</p>
 </div>
 <div class="section" id="trigger-batch-processes">
 <h2>Trigger Batch Processes<a class="headerlink" href="#trigger-batch-processes" title="Permalink to this headline">¶</a></h2>
@@ -468,29 +510,29 @@ database for other users. They should be used sparingly.</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="options.html" class="btn btn-neutral float-right" title="Options" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="mailmerge.html" class="btn btn-neutral float-left" title="Mail Merge Sources" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="options.html" class="btn btn-neutral float-right" title="Options" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mailmerge.html" class="btn btn-neutral float-left" title="Mail Merge Sources" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Sheltermanager, Ltd
+        &#169; Copyright 2022, Sheltermanager, Ltd.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -498,7 +540,6 @@ database for other users. They should be used sparingly.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

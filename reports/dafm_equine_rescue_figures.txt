@@ -2,22 +2,25 @@ DAFM Equine Rescue Figures
 ###
 Figures
 ###
-33306/PostgreSQL
+33306/PostgreSQL rev02
 ###
 Equine rescue figures for the Irish DAFM
 ###
 en_IE
 ###
 -- Requires an additional field of type person called "Knackery" for knackery to work
--- Expects licences to be used for EULN and EPN
+-- Expects licences with the following IDs to be used for EULN and EPN
+
+$CONST EULN=5$
+$CONST EPN=7$
 
 SELECT
 CASE WHEN a.IsTransfer = 1 THEN 'Transfer from ' || bo.OwnerName ELSE er.ReasonName END AS Origin,
 to_char(a.DateBroughtIn, 'DD/MM/YYYY') AS DateRequineRescued,
 a.IdentichipNumber AS Microchip,
-(SELECT LicenceNumber FROM ownerlicence WHERE AnimalID = a.ID ORDER BY IssueDate DESC LIMIT 1) AS UELN,
-CASE WHEN a.ActiveMovementType = IN (1,2) THEN (SELECT LicenceNumber FROM ownerlicence WHERE OwnerID = no.ID ORDER BY IssueDate DESC LIMIT 1) ELSE il.LocationName END AS EPN,
-CASE WHEN a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE NULL END AS RehomingDate,
+(SELECT LicenceNumber FROM ownerlicence WHERE AnimalID = a.ID AND LicenceTypeID=$EULN$ ORDER BY IssueDate DESC LIMIT 1) AS UELN,
+CASE WHEN a.ActiveMovementType IN (1,2) THEN (SELECT LicenceNumber FROM ownerlicence WHERE OwnerID = no.ID AND LicenceTypeID=$EPN$ ORDER BY IssueDate DESC LIMIT 1) ELSE il.LocationName END AS EPN,
+CASE WHEN a.ActiveMovementType IN (1,2) THEN a.ActiveMovementDate ELSE NULL END AS RehomingDate,
 a.DeceasedDate,
 (SELECT OwnerName FROM owner INNER JOIN additional af ON asm_to_integer(af.Value) = owner.ID INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID WHERE af.LinkID = a.ID AND aff.FieldName = 'Knackery') AS Knackery,
 a.AnimalName,
@@ -40,11 +43,11 @@ $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1">
 <tr>
+<th>Microchip</th>
+<th>UELN</th>
 <th>Origin of Equine</th>
 <th>Date Equine Rescued</th>
 <th>Did you pay a fee?</th>
-<th>Microchip</th>
-<th>UELN</th>
 <th>EPN</th>
 <th>Rehoming Date</th>
 <th>Euthanasia Date</th>
@@ -58,11 +61,11 @@ GROUP$$
 
 $$BODY
 <tr>
+<td>$MICROCHIP</td>
+<td>$UELN</td>
 <td>$ORIGIN</td>
 <td>$DATEREQUINERESCUED</td>
 <td>No</td>
-<td>$MICROCHIP</td>
-<td>$UELN</td>
 <td>$EPN</td>
 <td>$REHOMINGDATE</td>
 <td>$DECEASEDDATE</td>

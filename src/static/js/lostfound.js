@@ -1,4 +1,4 @@
-/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
+/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, microchip, tableform, validate */
 
 $(function() {
 
@@ -13,7 +13,7 @@ $(function() {
             let mode = controller.name.indexOf("lost") != -1 ? "lost" : "found";
             this.mode = mode;
             return [
-                '<div id="emailform" />',
+                '<div id="emailform"></div>',
                 '<div id="button-document-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                 edit_header.template_list(controller.templates, ( mode == "lost" ? "LOSTANIMAL" : "FOUNDANIMAL" ), controller.animal.ID),
@@ -36,8 +36,8 @@ $(function() {
                 '<div>',
                 '<table width="100%">',
                 '<tr>',
-                '<!-- left column -->',
-                '<td>',
+                // left column
+                '<td class="asm-nested-table-td">',
                 '<table width="100%">',
                 '<tr>',
                 '<td>' + _("Number") + '</td>',
@@ -117,8 +117,8 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</td>',
-                '<!-- right column -->',
-                '<td>',
+                // right column
+                '<td class="asm-nested-table-td">',
                 mode == "lost" ? '<table width="100%" class="additionaltarget" data="to10">' : "",
                 mode == "found" ? '<table width="100%" class="additionaltarget" data="to12">' : "",
                 '<tr>',
@@ -135,8 +135,8 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="microchip">' + _("Microchip") + '</label></td>',
-                '<td><input id="microchip" data-json="MICROCHIPNUMBER" data-post="microchip" type="text" class="asm-textbox" />',
-                ' <span id="microchipbrand"></span>',
+                '<td><input id="microchip" data-json="MICROCHIPNUMBER" data-post="microchip" type="text" maxlength="15" class="asm-textbox" />',
+                ' <span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -178,7 +178,11 @@ $(function() {
             }
 
             // Show the microchip manufacturer
-            html.microchip_manufacturer("#microchip", "#microchipbrand");
+            microchip.manufacturer("#microchip", "#microchipbrand");
+
+            // Show the microchip check button
+            $("#button-microchipcheck").hide();
+            if (microchip.is_check_available($("#microchip").val())) { $("#button-microchipcheck").show(); }
 
             if (!common.has_permission("aa")) { $("#button-toanimal").hide(); }
             if (!common.has_permission("awl")) { $("#button-towaitinglist").hide(); }
@@ -297,9 +301,13 @@ $(function() {
                     email: lostfound.current_person.EMAILADDRESS,
                     logtypes: controller.logtypes,
                     personid: controller.animal.OWNERID,
-                    templates: controller.templates
+                    templates: controller.templatesemail
                 });
             });
+
+            $("#button-microchipcheck")
+                .button({ icons: { primary: "ui-icon-search" }, text: false })
+                .click(function() { microchip.check($("#microchip").val()); });
 
             $("#button-toanimal").button().click(async function() {
                 $("#button-toanimal").button("disable");
@@ -365,6 +373,8 @@ $(function() {
 
             // Dirty handling
             validate.bind_dirty([ "lostanimal_", "foundanimal_" ]);
+            if (this.mode == "lost") { validate.indicator([ "datelost", "datereported", "owner" ]); }
+            if (this.mode == "found") { validate.indicator([ "datefound", "datereported", "owner" ]); }
         },
 
         destroy: function() {

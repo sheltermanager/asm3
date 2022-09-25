@@ -58,35 +58,33 @@ $(function() {
                         });
                         return rv;
                     };
-                    $("#button-web").button("option", "disabled", true); 
+                    const no_links = function() {
+                        let rv = true;
+                        $.each(rows, function(i, v) {
+                            if (v.MEDIATYPE != 0) { rv = false; }
+                        });
+                        return rv;
+                    };
                     $("#button-video").button("option", "disabled", true); 
-                    $("#button-doc").button("option", "disabled", true); 
-                    $("#button-rotateanti").button("option", "disabled", true); 
-                    $("#button-rotateclock").button("option", "disabled", true); 
-                    $("#button-watermark").button("option", "disabled", true); 
-                    $("#button-include").button("option", "disabled", true); 
-                    $("#button-exclude").button("option", "disabled", true); 
+                    $("#button-email").button("option", "disabled", true); 
                     $("#button-emailpdf").button("option", "disabled", true); 
+                    $("#button-image").addClass("ui-state-disabled").addClass("ui-button-disabled");
+                    $("#button-move").addClass("ui-state-disabled").addClass("ui-button-disabled");
                     $("#button-sign").addClass("ui-state-disabled").addClass("ui-button-disabled");
-                    // Only allow the image preferred buttons to be pressed if the
-                    // selection size is one and the selection is an image
-                    if (rows.length == 1 && rows[0].MEDIAMIMETYPE == "image/jpeg") { 
-                        $("#button-web").button("option", "disabled", false); 
-                        $("#button-doc").button("option", "disabled", false); 
-                    }
                     // Only allow the video preferred button to be pressed if the
                     // selection size is one and the selection is a video link
                     if (rows.length == 1 && rows[0].MEDIATYPE == 2) {
                         $("#button-video").button("option", "disabled", false);
                     }
-                    // Only allow the rotate and include buttons to be pressed if the
-                    // selection only contains images
-                    if (rows.length > 0 && all_of_type("image/jpeg")) {
-                        $("#button-rotateanti").button("option", "disabled", false); 
-                        $("#button-rotateclock").button("option", "disabled", false); 
-                        $("#button-watermark").button("option", "disabled", false); 
-                        $("#button-include").button("option", "disabled", false); 
-                        $("#button-exclude").button("option", "disabled", false); 
+                    // Only allow the image buttons to be pressed if the
+                    // selection only contains images and the user has the permission to change media
+                    if (rows.length > 0 && all_of_type("image/jpeg") && common.has_permission("cam")) {
+                        $("#button-image").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
+                    }
+                    // Only allow the email button to be pressed if the selection
+                    // does not contain any links
+                    if (rows.length > 0 && no_links()) {
+                        $("#button-email").button("option", "disabled", false);
                     }
                     // Only allow the email pdf button to be pressed if the
                     // selection only contains documents
@@ -97,6 +95,10 @@ $(function() {
                     // selection only contains unsigned documents
                     if (rows.length > 0 && all_of_type("text/html") && !rows[0].SIGNATUREHASH) {
                         $("#button-sign").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
+                    }
+                    // Move is allowed as long as we have at least 1 row selected
+                    if (rows.length > 0) {
+                        $("#button-move").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
                     }
                 },
                 columns: [
@@ -121,8 +123,8 @@ $(function() {
                             return m.MEDIASIZE; 
                         }
                     },
-                    { field: "CREATEDDATE", classes: "mode-table", display: _("Added"), formatter: tableform.format_date },
-                    { field: "DATE", classes: "mode-table", display: _("Updated"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "CREATEDDATE", classes: "mode-table", display: _("Added"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
+                    { field: "DATE", classes: "mode-table", display: _("Updated"), formatter: tableform.format_date },
                     { field: "MEDIAMIMETYPE", classes: "mode-table", display: _("Type") },
                     { field: "PREVIEWICON", classes: "mode-icon", display: "", formatter: function(m) {
                         let h = [];
@@ -135,6 +137,7 @@ $(function() {
                         h.push("<a href=\"#\" class=\"link-edit\" data-id=\"" + m.ID + "\">" + format.date(m.DATE) + "</a>");
                         h.push("</span><br/>");
                         h.push(media.render_mods(m));
+                        h.push("</div>");
                         return h.join("");
                     }}
                 ]
@@ -147,15 +150,10 @@ $(function() {
                 { id: "delete", text: _("Delete"), icon: "media-delete", enabled: "multi", perm: "dam" },
                 { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected media files") },
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
+                { id: "image", text: _("Image"), type: "buttonmenu", icon: "image", perm: "cam" },
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
-                { id: "rotateanti", icon: "rotate-anti", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees anticlockwise") },
-                { id: "rotateclock", icon: "rotate-clock", enabled: "multi", perm: "cam", tooltip: _("Rotate image 90 degrees clockwise") },
-                { id: "watermark", icon: "watermark", enabled: "multi", perm: "cam", tooltip: _("Watermark image with name and logo") },
-                { id: "include", icon: "tick", enabled: "multi", perm: "cam", tooltip: _("Include this image when publishing") }, 
-                { id: "exclude", icon: "cross", enabled: "multi", perm: "cam", tooltip: _("Exclude this image when publishing") },
-                { id: "web", icon: "web", enabled: "one", perm: "cam", tooltip: _("Make this the default image when viewing this record and publishing to the web") },
-                { id: "doc", icon: "document", enabled: "one", perm: "cam", tooltip: _("Make this the default image when creating documents") },
-                { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Make this the default video link when publishing to the web") },
+                { id: "move", text: _("Move"), type: "buttonmenu", icon: "copy" },
+                { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
                 { type: "raw", markup: '<div class="asm-mediadroptarget mode-table"><p>' + _("Drop files here...") + '</p></div>',
                     hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || asm.mobileapp; }},
                 { id: "viewmode", text: "", icon: "batch", enabled: "always", tooltip: _("Toggle table/icon view") }
@@ -235,7 +233,25 @@ $(function() {
                 '</table>',
                 '</div>',
 
-                '<div id="emailform" />',
+                '<div id="dialog-moveanimal" style="display: none" title="' + html.title(_("Move to an animal")) + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="moveanimal">' + _("Animal") + '</label></td>',
+                '<td><input type="hidden" class="asm-animalchooser" id="moveanimal" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>',
+
+                '<div id="dialog-moveperson" style="display: none" title="' + html.title(_("Move to a person")) + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="moveperson">' + _("Person") + '</label></td>',
+                '<td><input type="hidden" class="asm-personchooser" id="moveperson" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>',
+
+                '<div id="emailform"></div>',
 
                 '<div id="button-sign-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
@@ -248,8 +264,39 @@ $(function() {
                 '</ul>',
                 '</div>',
 
+                '<div id="button-move-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                    '<li id="button-moveanimal" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("animal") + ' ' + _("Move to an animal") + '</a></li>',
+                    '<li id="button-moveperson" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("person") + ' ' + _("Move to a person") + '</a></li>',
+                '</ul>',
+                '</div>',
+
+                '<div id="button-image-body" class="asm-menu-body">',
+                '<ul class="asm-menu-list">',
+                    '<li id="button-rotateanti" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("rotate-anti") + ' ' + _("Rotate image 90 degrees anticlockwise") + '</a></li>',
+                    '<li id="button-rotateclock" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("rotate-clock") + ' ' + _("Rotate image 90 degrees clockwise") + '</a></li>',
+                    '<li id="button-watermark" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("watermark") + ' ' + _("Watermark image with name and logo") + '</a></li>',
+                    '<li id="button-include" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("tick") + ' ' + _("Include this image when publishing") + '</a></li>',
+                    '<li id="button-exclude" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("cross") + ' ' + _("Exclude this image when publishing") + '</a></li>',
+                    '<li id="button-web" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("web") + ' ' + _("Make this the default image for the record") + '</a></li>',
+                    '<li id="button-doc" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("document") + ' ' + _("Make this the default image when creating documents") + '</a></li>',
+                    '<li id="button-jpg2pdf" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("pdf") + ' ' + _("Create a PDF of this image") + '</a></li>',
+
+                '</ul>',
+                '</div>',
+
                 '<div id="dialog-sign" style="display: none" title="' + _("Sign document") + '">',
-                '<div id="signature" style="width: 500px; height: 200px;" />',
+                '<div id="signature" style="width: 500px; height: 200px;"></div>',
                 '</div>',
 
                 '<form id="newdocform" method="post" action="media">',
@@ -306,15 +353,15 @@ $(function() {
                 h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="' + linkimage + '" /></a>');
             }
             else if (m.MEDIAMIMETYPE == "image/jpeg") {
-                h.push('<a href="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
-                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="image?db=' + asm.user + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" /></a>');
+                h.push('<a href="image?db=' + asm.useraccount + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
+                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="image?db=' + asm.useraccount + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" /></a>');
             }
             else if (m.MEDIAMIMETYPE == "text/html") {
                 h.push('<a href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
                 h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/document-media.png" /></a>');
             }
             else if (m.MEDIAMIMETYPE == "application/pdf") {
-                h.push('<a href="media?id=' + m.ID + '">');
+                h.push('<a href="' + ( asm.mobileapp ? 'media_pdfjs' : 'media' ) + '?id=' + m.ID + '">');
                 h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/pdf-media.png" /></a>');
             }
             else {
@@ -335,7 +382,12 @@ $(function() {
                 mod_out("link", _("Link to an external web resource"));
             }
             if (m.SIGNATUREHASH) {
-                mod_out("signature", _("Signed"));
+                if (m.SIGNATUREHASH.indexOf("onlineform") == 0) {
+                    mod_out("locked", _("Locked"));
+                }
+                else {
+                    mod_out("signature", _("Signed"));
+                }
             }
             if (m.WEBSITEPHOTO == 1 && controller.showpreferred) {
                 mod_out("web", _("Default image for this record and the web"));
@@ -403,17 +455,16 @@ $(function() {
                 return deferred.promise();
             }
 
-            // Is this an image and scaling option is on? 
+            // Is this an image, the scaling option is on and we have a resize spec?
             // If so, try to scale it down before sending
-            if (file.type.match('image.*') && !config.bool("DontUseHTML5Scaling")) {
+            if (file.type.match('image.*') && !config.bool("DontUseHTML5Scaling") && controller.resizeimagespec) {
 
                 // Figure out the size we're scaling to
-                let media_scaling = config.str("IncomingMediaScaling");
-                if (!media_scaling || media_scaling == "None") { media_scaling = "640x640"; }
+                let media_scaling = controller.resizeimagespec;
                 let max_width = format.to_int(media_scaling.split("x")[0]);
                 let max_height = format.to_int(media_scaling.split("x")[1]);
-                if (!max_width) { max_width = 640; }
-                if (!max_height) { max_height = 640; }
+                if (!max_width) { max_width = 1024; } // This stops images being mangled if spec is bad
+                if (!max_height) { max_height = 1024; }
 
                 // Read the file to an image tag, then scale it
                 let img, img_width, img_height;
@@ -594,10 +645,13 @@ $(function() {
          */
         youtube_thumbnail: function(s) {
             let yid = "";
-            if (s.indexOf("youtube") != -1 && s.indexOf("=") != -1) {
-                yid = s.substring(s.indexOf("=") +1);
+            if (s.indexOf("youtube.com") != -1 && s.indexOf("?v=") != -1) {
+                yid = s.substring(s.lastIndexOf("=") +1);
             }
-            if (s.indexOf("youtu.be") != -1 && s.lastIndexOf("/") != -1) {
+            else if (s.indexOf("youtube.com/shorts/") != -1) {
+                yid = s.substring(s.lastIndexOf("/") +1);
+            }
+            else if (s.indexOf("youtu.be") != -1 && s.lastIndexOf("/") != -1) {
                 yid = s.substring(s.lastIndexOf("/") +1);
             }
             if (yid) {
@@ -712,15 +766,19 @@ $(function() {
             });
 
             let signbuttons = {};
-            signbuttons[_("Sign")] = function() {
-                if ($("#signature").signature("isEmpty")) { return; }
-                $("#dialog-sign").disable_dialog_buttons();
-                var img = $("#signature canvas").get(0).toDataURL("image/png");
-                var formdata = "mode=sign&ids=" + tableform.table_ids(media.table);
-                formdata += "&signdate=" + encodeURIComponent(format.date(new Date()) + " " + format.time(new Date()));
-                formdata += "&sig=" + encodeURIComponent(img);
-                media.ajax(formdata);
-                $("#dialog-sign").dialog("close");
+            signbuttons[_("Sign")] = {
+                text: _("Sign"),
+                "class": 'asm-dialog-actionbutton',
+                click: function() {
+                    if ($("#signature").signature("isEmpty")) { return; }
+                    $("#dialog-sign").disable_dialog_buttons();
+                    var img = $("#signature canvas").get(0).toDataURL("image/png");
+                    var formdata = "mode=sign&ids=" + tableform.table_ids(media.table);
+                    formdata += "&signdate=" + encodeURIComponent(format.date(new Date()) + " " + format.time(new Date()));
+                    formdata += "&sig=" + encodeURIComponent(img);
+                    media.ajax(formdata);
+                    $("#dialog-sign").dialog("close");
+                }
             };
             signbuttons[_("Clear")] = function() {
                 $("#signature").signature("clear");
@@ -737,6 +795,56 @@ $(function() {
                 show: dlgfx.edit_show,
                 hide: dlgfx.edit_hide,
                 buttons: signbuttons
+            });
+
+            let moveanimalbuttons = {};
+            moveanimalbuttons[_("Move")] = {
+                text: _("Move"),
+                "class": 'asm-dialog-actionbutton',
+                click: function() {
+                    if (!validate.notblank([ "moveanimal" ])) { return; }
+                    let formdata = "mode=moveanimal&animalid=" + $("#moveanimal").val() + "&ids=" + tableform.table_ids(media.table);
+                    media.ajax(formdata);
+                    common.route_reload();
+                }
+            };
+            moveanimalbuttons[_("Cancel")] = function() {
+                $("#dialog-moveanimal").dialog("close");
+            };
+
+            $("#dialog-moveanimal").dialog({
+                autoOpen: false,
+                width: 450,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.add_show,
+                hide: dlgfx.add_hide,
+                buttons: moveanimalbuttons
+            });
+
+            let movepersonbuttons = {};
+            movepersonbuttons[_("Move")] = {
+                text: _("Move"),
+                "class": 'asm-dialog-actionbutton',
+                click: function() {
+                    if (!validate.notblank([ "moveperson" ])) { return; }
+                    let formdata = "mode=moveperson&personid=" + $("#moveperson").val() + "&ids=" + tableform.table_ids(media.table);
+                    media.ajax(formdata);
+                    common.route_reload();
+                }
+            };
+            movepersonbuttons[_("Cancel")] = function() {
+                $("#dialog-moveperson").dialog("close");
+            };
+
+            $("#dialog-moveperson").dialog({
+                autoOpen: false,
+                width: 450,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.add_show,
+                hide: dlgfx.add_hide,
+                buttons: movepersonbuttons
             });
 
             $("#button-viewmode").button().click(function() {
@@ -797,8 +905,7 @@ $(function() {
                 $("#button-signscreen").hide();
             }
 
-            $("#button-web").button().click(function() {
-                $("#button-web").button("disable");
+            $("#button-web").click(function() {
                 let formdata = "mode=web&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
@@ -809,43 +916,42 @@ $(function() {
                 media.ajax(formdata);
             });
 
-            $("#button-rotateanti").button().click(function() {
-                $("#button-rotateanti").button("disable");
+            $("#button-rotateanti").click(function() {
                 let formdata = "mode=rotateanti&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            $("#button-rotateclock").button().click(function() {
-                $("#button-rotateclock").button("disable");
+            $("#button-rotateclock").click(function() {
                 let formdata = "mode=rotateclock&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            $("#button-watermark").button().click(function() {
-                $("#button-watermark").button("disable");
+            $("#button-watermark").click(function() {
                 let formdata = "mode=watermark&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            $("#button-doc").button().click(function() {
-                $("#button-doc").button("disable");
+            $("#button-jpg2pdf").click(function() {
+                let formdata = "mode=jpg2pdf&ids=" + tableform.table_ids(media.table);
+                media.ajax(formdata);
+            });
+
+            $("#button-doc").click(function() {
                 let formdata = "mode=doc&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            $("#button-include").button().click(function() {
-                $("#button-include").button("disable");
+            $("#button-include").click(function() {
                 let formdata = "mode=include&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            $("#button-exclude").button().click(function() {
-                $("#button-exclude").button("disable");
+            $("#button-exclude").click(function() {
                 let formdata = "mode=exclude&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 
-            let defaultemail = "", defaultname = "";
+            let defaultemail = "", defaultname = "", toaddresses = [];
             // If we have a person, default the email address
             if (controller.person && controller.person.EMAILADDRESS) {
                 defaultemail = controller.person.EMAILADDRESS;
@@ -860,6 +966,22 @@ $(function() {
                 defaultemail = controller.animal.CURRENTOWNEREMAILADDRESS;
                 defaultname = controller.animal.CURRENTOWNERNAME;
             }
+            // Other useful email addresses for animals
+            if (controller.animal && controller.animal.RESERVEDOWNEREMAILADDRESS) { 
+                toaddresses.push(controller.animal.RESERVEDOWNEREMAILADDRESS);
+            }
+            if (controller.animal && controller.animal.CURRENTOWNEREMAILADDRESS) { 
+                toaddresses.push(controller.animal.CURRENTOWNEREMAILADDRESS);
+            }
+            if (controller.animal && controller.animal.ADOPTIONCOORDINATOREMAILADDRESS) {
+                toaddresses.push(controller.animal.ADOPTIONCOORDINATOREMAILADDRESS);
+            }
+            if (controller.animal && controller.animal.ORIGINALOWNEREMAILADDRESS) {
+                toaddresses.push(controller.animal.ORIGINALOWNEREMAILADDRESS);
+            }
+            if (controller.animal && controller.animal.BROUGHTINBYEMAILADDRESS) {
+                toaddresses.push(controller.animal.BROUGHTINBYEMAILADDRESS);
+            }
 
             $("#button-email").button().click(function() {
                 $("#emailform").emailform("show", {
@@ -869,7 +991,9 @@ $(function() {
                         "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
-                    subject: tableform.table_selected_row(media.table).MEDIANOTES,
+                    toaddresses: toaddresses,
+                    subject: media.selected_filenames(),
+                    attachments: media.selected_filenames(),
                     animalid: (controller.animal && controller.animal.ID),
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
@@ -885,7 +1009,9 @@ $(function() {
                         "&ids=" + tableform.table_ids(media.table),
                     name: defaultname,
                     email: defaultemail,
-                    subject: tableform.table_selected_row(media.table).MEDIANOTES,
+                    toaddresses: toaddresses,
+                    subject: common.replace_all(media.selected_filenames(), ".html", ".pdf"),
+                    attachments: common.replace_all(media.selected_filenames(), ".html", ".pdf"),
                     animalid: (controller.animal && controller.animal.ID),
                     personid: (controller.person && controller.person.ID),
                     templates: controller.templates,
@@ -893,6 +1019,8 @@ $(function() {
                 });
             });
 
+            $("#button-image").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
+            $("#button-move").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
             $("#button-sign").asmmenu().addClass("ui-state-disabled").addClass("ui-button-disabled");
 
             $("#button-signemail").click(function() {
@@ -933,6 +1061,16 @@ $(function() {
                 $("#button-sign").hide();
             }
 
+            $("#button-moveanimal").click(function() {
+                $("#button-move").asmmenu("hide_all");
+                $("#dialog-moveanimal").dialog("open");
+            });
+
+            $("#button-moveperson").click(function() {
+                $("#button-move").asmmenu("hide_all");
+                $("#dialog-moveperson").dialog("open");
+            });
+
         },
 
         new_link: function() {
@@ -953,7 +1091,7 @@ $(function() {
             $(".mode-icon").show();
             $("#tableform thead").hide();
             $("#tableform").css({ "text-align": "center" });
-            $("#tableform tr").css({ "display": "inline-block", "vertical-align": "bottom" });
+            $("#tableform tr").css({ "display": "inline-block", "vertical-align": "bottom", "border": "1px none transparent" });
             $(".asm-media-thumb img").css({
                 "min-width": "85px",
                 "min-height": "85px",
@@ -994,12 +1132,29 @@ $(function() {
             media.icon_mode_active = false;
         },
 
+        /** Return a comma separated readable list of selected filenames */
+        selected_filenames: function() {
+            let items = [];
+            $.each(tableform.table_selected_rows(media.table), function(i, v) {
+                let s = String(v.MEDIANOTES), ext = v.MEDIANAME.substring(v.MEDIANAME.lastIndexOf("."));
+                s = s.replace(" ", "_").replace("/", "_");
+                if (s.indexOf(ext) == -1) { s += ext; }
+                items.push(s);
+            });
+            return items.join(", ");
+        },
+
         sync: function() {
 
             if (controller.newmedia) { media.new_media(); }
 
-            // Start in icon mode
-            this.mode_icon();
+            // Start in the correct mode
+            if (config.bool("MediaTableMode")) { 
+                this.mode_table();
+            }
+            else {
+                this.mode_icon();
+            }
 
             // Check if we have pictures but no preferred set and choose one if we don't
             media.check_preferred_images();
@@ -1010,6 +1165,8 @@ $(function() {
             common.widget_destroy("#dialog-add");
             common.widget_destroy("#dialog-addlink");
             common.widget_destroy("#dialog-sign");
+            common.widget_destroy("#dialog-moveanimal");
+            common.widget_destroy("#dialog-moveperson");
             common.widget_destroy("#emailform");
         },
 

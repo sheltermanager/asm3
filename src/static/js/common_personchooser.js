@@ -36,6 +36,7 @@ $.widget("asm.personchooser", {
         towns: "",
         counties: "",
         towncounties: "",
+        postcodelookup: false,
         sites: [],
         jurisdictions: [],
         personflags: [],
@@ -72,7 +73,7 @@ $.widget("asm.personchooser", {
             '</tr>',
             '</table>',
             '<div class="personchooser-similar" style="display: none" title="' + html.title(_("Similar Person")) + '">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>',
+                '<p><span class="ui-icon ui-icon-alert"></span>',
                 _("This person is very similar to another person on file, carry on creating this record?"),
                 '<br /><br />',
                 '<span class="similar-person"></span>',
@@ -98,11 +99,6 @@ $.widget("asm.personchooser", {
             '</table>',
             '</div>',
             '<div class="personchooser-add" style="display: none" title="' + _("Add person") + '">',
-            '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-            '<p><span class="ui-icon ui-icon-info"></span>',
-            _("At least the last name should be completed."),
-            '</p>',
-            '</div>',
             '<table width="100%">',
             '<tr>',
             '<td><label>' + _("Class") + '</label></td>',
@@ -125,12 +121,14 @@ $.widget("asm.personchooser", {
             '</tr>',
             '<tr>',
             '<td><label class="tag-individual">' + _("Last name") + '</label>',
-            '<label class="tag-organisation">' + _("Organization name") + '</label></td>',
+            '<label class="tag-organisation">' + _("Organization name") + '</label>',
+            '<span class="asm-has-validation">*</span>',
+            '</td>',
             '<td><input class="asm-textbox chooser" maxlength="100" data="surname" type="textbox" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Address") + '</label></td>',
-            '<td><textarea class="asm-textareafixed chooser" data="address" rows="3"></textarea></td>',
+            '<td><textarea class="asm-textareafixed chooser personchooser-address" data="address" rows="3"></textarea></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("City") + '</label></td>',
@@ -138,11 +136,18 @@ $.widget("asm.personchooser", {
             '</tr>',
             '<tr>',
             '<td><label>' + _("State") + '</label></td>',
-            '<td><input class="asm-textbox chooser personchooser-county" maxlength="100" data="county" type="textbox" /></td>',
+            '<td>',
+            common.iif(config.bool("USStateCodes"),
+                '<select data="county" class="asm-selectbox chooser personchooser-county">' +
+                html.states_us_options(config.str("OrganisationCounty")) + '</select>',
+                '<input type="text" data="county" maxlength="100" class="asm-textbox chooser personchooser-county" />'),
+            '</td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Zipcode") + '</label></td>',
-            '<td><input class="asm-textbox chooser" data="postcode" type="textbox" /></td>',
+            '<td><input class="asm-textbox chooser personchooser-postcode" data="postcode" type="textbox" />',
+            '<button class="personchooser-postcodelookup">' + _("Lookup Address") + '</button>',
+            '</td>',
             '</tr>',
             '<tr class="personchooser-countryrow">',
             '<td><label>' + _("Country") + '</label></td>',
@@ -150,15 +155,15 @@ $.widget("asm.personchooser", {
             '</tr>',
             '<tr>',
             '<td><label>' + _("Home Phone") + '</label></td>',
-            '<td><input class="asm-textbox chooser" data="hometelephone" type="textbox" /></td>',
+            '<td><input class="asm-textbox asm-phone chooser" data="hometelephone" type="textbox" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Work Phone") + '</label></td>',
-            '<td><input class="asm-textbox chooser" data="worktelephone" type="textbox" /></td>',
+            '<td><input class="asm-textbox asm-phone chooser" data="worktelephone" type="textbox" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Cell Phone") + '</label></td>',
-            '<td><input class="asm-textbox chooser" data="mobiletelephone" type="textbox" /></td>',
+            '<td><input class="asm-textbox asm-phone chooser" data="mobiletelephone" type="textbox" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Email Address") + '</label></td>',
@@ -297,7 +302,7 @@ $.widget("asm.personchooser", {
 
         dialogadd.dialog({
             autoOpen: false,
-            width: 400,
+            width: 500,
             modal: true,
             dialogClass: "dialogshadow",
             show: dlgfx.add_show,
@@ -313,6 +318,21 @@ $.widget("asm.personchooser", {
                 dialogadd.find(".personchooser-country").val(config.str("OrganisationCountry"));
                 // Default the jurisdiction
                 dialogadd.find(".personchooser-jurisdiction").select("value", config.str("DefaultJurisdiction"));
+                // Postcode lookup button
+                dialogadd.find(".personchooser-postcodelookup")
+                    .button({ icons: { primary: "ui-icon-search" }, text: false })
+                    .click(async function() {
+                        let country = dialogadd.find(".personchooser-country").val();
+                        let postcode = dialogadd.find(".personchooser-postcode").val();
+                        if (!postcode) { return; }
+                        if (!country) { country = config.str("OrganisationCountry"); }
+                        let formdata = "mode=postcodelookup&country=" + country + "&postcode=" + postcode + "&locale=" + asm.locale + "&account=" + asm.useraccount;
+                        const response = await common.ajax_post("person_embed", formdata);
+                        const rows = jQuery.parseJSON(response);
+                        dialogadd.find(".personchooser-address").val( rows[0].street );
+                        dialogadd.find(".personchooser-town").val( rows[0].town );
+                        dialogadd.find(".personchooser-county").val( rows[0].county );
+                    });
                 // If we have a filter, set the appropriate person flags to match
                 if (self.options.filter) {
                     dialogadd.find(".personchooser-flags option[value='" + self.options.filter + "']").prop("selected", true);
@@ -362,22 +382,23 @@ $.widget("asm.personchooser", {
                 self.options.towns = d.towns;
                 self.options.counties = d.counties;
                 self.options.towncounties = d.towncounties;
+                self.options.postcodelookup = d.postcodelookup;
                 self.options.personflags = d.flags;
                 self.options.sites = d.sites;
                 self.options.jurisdictions = d.jurisdictions;
                 // Add person flag options to the screen
                 html.person_flag_options(null, self.options.personflags, dialogadd.find(".personchooser-flags"));
                 // Setup autocomplete widgets with the towns/counties
-                dialogadd.find(".personchooser-town").autocomplete({ source: html.decode(self.options.towns).split("|") });
-                dialogadd.find(".personchooser-county").autocomplete({ source: html.decode(self.options.counties).split("|") });
+                dialogadd.find(".personchooser-town").autocomplete({ source: self.options.towns, minLength: 4 });
+                if (!config.bool("USStateCodes")) {
+                    dialogadd.find(".personchooser-county").autocomplete({ source: self.options.counties, minLength: 3 });
+                }
+                // Toggle visibility of postcode lookup
+                dialogadd.find(".personchooser-postcodelookup").toggle( d.postcodelookup );
                 // When the user changes a town, suggest a county if it's blank
                 dialogadd.find(".personchooser-town").blur(function() {
-                    if (dialogadd.find(".personchooser-county").val() == "") {
-                        var tc = html.decode(self.options.towncounties);
-                        var idx = tc.indexOf(dialogadd.find(".personchooser-town").val() + "^");
-                        if (idx != -1) {
-                            dialogadd.find(".personchooser-county").val(tc.substring(tc.indexOf("^^", idx) + 2, tc.indexOf("|", idx)));
-                        }
+                    if (dialogadd.find(".personchooser-county").val() == "" && dialogadd.find(".personchooser-town").val() != "") {
+                        dialogadd.find(".personchooser-county").val(self.options.towncounties[dialogadd.find(".personchooser-town").val()]);
                     }
                 });
                 // Setup person flag select widget
@@ -402,6 +423,8 @@ $.widget("asm.personchooser", {
                     listItemLabelClass: 'bsmListItemLabel-custom',
                     removeClass: 'bsmListItemRemove-custom'
                 });
+                // Setup phone number widgets
+                dialogadd.find(".asm-phone").phone();
                 // Add sites
                 dialogadd.find(".personchooser-site").html('<option value="0">' + _("(all)") + '</option>' + 
                     html.list_to_options(self.options.sites, "ID", "SITENAME"));
@@ -628,7 +651,7 @@ $.widget("asm.personchooser", {
      */
     check_similar: function() {
         var self = this, dialogadd = this.options.dialogadd, dialogsimilar = this.options.dialogsimilar;
-        var formdata = "mode=similar&" + dialogadd.find("input[data='emailaddress'], input[data='mobiletelephone'], input[data='surname'], input[data='forenames'], input[data='address']").toPOST();
+        var formdata = "mode=similar&" + dialogadd.find("input[data='emailaddress'], input[data='mobiletelephone'], input[data='surname'], input[data='forenames'], textarea[data='address']").toPOST();
         $.ajax({
             type: "POST",
             url:  "person_embed",
@@ -708,6 +731,7 @@ $.widget("asm.personchooser", {
         else if (f == "member") { title = _("Find member"); }
         else if (f == "donor") { title = _("Find donor"); }
         else if (f == "driver") { title = _("Find driver"); }
+        else if (f == "sponsor") { title = _("Find sponsor"); }
         else { title = _("Find person"); }
 
         this.options.title = title;

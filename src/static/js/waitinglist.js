@@ -10,7 +10,7 @@ $(function() {
 
         render: function() {
             return [
-                '<div id="emailform" />',
+                '<div id="emailform"></div>',
                 '<div id="button-document-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                 edit_header.template_list(controller.templates, "WAITINGLIST", controller.animal.ID),
@@ -29,8 +29,8 @@ $(function() {
                 '<div>',
                 '<table width="100%">',
                 '<tr>',
-                '<!-- left column -->',
-                '<td>',
+                // left column
+                '<td class="asm-nested-table-td">',
                 '<table width="100%">',
                 '<tr>',
                 '<td>' + _("Number") + '</td>',
@@ -76,8 +76,8 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</td>',
-                '<!-- right column -->',
-                '<td>',
+                // right column 
+                '<td class="asm-nested-table-td">',
                 '<table width="100%" class="additionaltarget" data="to14">',
                 '<tr>',
                 '<td><label for="canafforddonation">' + _("Can afford donation?") + '</label></td>',
@@ -250,7 +250,7 @@ $(function() {
                     email: waitinglist.current_person.EMAILADDRESS,
                     logtypes: controller.logtypes,
                     personid: controller.animal.OWNERID,
-                    templates: controller.templates
+                    templates: controller.templatesemail
                 });
             });
 
@@ -285,6 +285,7 @@ $(function() {
 
             // Dirty handling
             validate.bind_dirty([ "waitinglist_" ]);
+            validate.indicator([ "owner", "dateputon", "description" ]);
 
         },
 

@@ -4,6 +4,10 @@ Animal Shelter Manager v3 (sheltermanager3)
 This program is covered by the terms of the GNU General Public Licence v3. 
 See the file LICENSE in this directory for details.
 
+As of version 45, ASM no longer supports Python 2.
+
+Python >= 3.6 is required for f-string support.
+
 Dependencies
 ------------
 
@@ -12,7 +16,7 @@ install all the software you need to run ASM. If you are using the
 sheltermanager3 deb package it already has dependencies set for these and will
 install them for you.
 
-* apt-get install make python3 python3-webpy python3-pil python3-mysqldb python3-psycopg2
+* apt-get install make python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2
 
 Extra, non-mandatory packages:
 
@@ -39,31 +43,8 @@ run this command in the source folder:
 If you're using Debian and want to do development, you can use "make deps"
 as a convenient way to install the needed dependencies.
 
-Debian python3-webpy
---------------------
-
-The version of web.py currently packaged in Debian Buster (and possibly Ubuntu)
-as python3-webpy has a fault. It cannot serve static content and will only work
-if you deploy your application with mod_wsgi, uwsgi, etc.
-
-You can fix it manually by editing
-/usr/lib/python3/dist-packages/web/httpserver.py and adding the new line
-self.directory = os.getcwd() at line 198 at the bottom of the __init__
-function, like this:
-
-```
-class StaticApp(SimpleHTTPRequestHandler):
-    """WSGI application for serving static files."""
-    def __init__(self, environ, start_response):
-        self.headers = []
-        self.environ = environ
-        self.start_response = start_response
-        self.directory = os.getcwd()
-```
-
-You do not need this fix if you are deploying your application to run with
-Apache as recommended, this only applies to running a standalone server via
-code.py from the command line.
+Running locally
+---------------
 
 In a development environment, you can start a test instance on port 5000 with:
 

@@ -9,61 +9,37 @@ import asm3.person
 import asm3.users
 import asm3.utils
 
-from asm3.i18n import BUILD, _, translate, format_currency, format_date, get_locales, now, python2display, python2unix, real_locale
+from asm3.i18n import BUILD, _, translate, format_currency, get_locales, now, python2unix, real_locale
 from asm3.sitedefs import QR_IMG_SRC
-from asm3.sitedefs import BASE_URL, LOCALE, ROLLUP_JS
-from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_4_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import BASE_URL, LOCALE, ROLLUP_JS, SERVICE_URL
+from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_GRID_CSS, BOOTSTRAP_ICONS_CSS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, HTMLFTP_PUBLISHER_ENABLED, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, QRCODE_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_5_JS, TOUCHPUNCH_JS
 
 import os
 
-BACKGROUND_COLOURS = {
-    "asm":              "#ffffff",
-    "base":             "#ffffff",
-    "black-tie":        "#333333",
-    "blitzer":          "#cc0000",
-    "cupertino":        "#deedf7",
-    "dark-hive":        "#444444",
-    "dot-luv":          "#0b3e6f",
-    "eggplant":         "#30273a",
-    "excite-bike":      "#f9f9f9",
-    "flick":            "#dddddd",
-    "hot-sneaks":       "#35414f",
-    "humanity":         "#cb842e",
-    "le-frog":          "#3a8104",
-    "mint-choc":        "#453326",
-    "overcast":         "#dddddd",
-    "pepper-grinder":   "#ffffff",
-    "redmond":          "#5c9ccc",
-    "smoothness":       "#cccccc",
-    "south-street":     "#ece8da",
-    "start":            "#2191c0",
-    "sunny":            "#817865",
-    "swanky-purse":     "#261803",
-    "trontastic":       "#9fda58",
-    "ui-darkness":      "#333333",
-    "ui-lightness":     "#ffffff",
-    "vader":            "#888888"
-}
-
-def css_tag(uri, idattr=""):
+def css_tag(uri, idattr="", addbuild=False):
     """
     Returns a css link tag to a resource.
     """
     if idattr != "": idattr = "id=\"%s\"" % idattr
-    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\" %s />\n" % (uri, idattr)
+    buildqs = asm3.utils.iif(addbuild, "?b=%s" % BUILD, "")
+    return f"<link rel=\"stylesheet\" type=\"text/css\" href=\"{uri}{buildqs}\" {idattr} />\n"
 
 def asm_css_tag(filename):
     """
     Returns a path to one of our stylesheets
     """
-    return "<link rel=\"stylesheet\" type=\"text/css\" href=\"static/css/%s?b=%s\" />\n" % (filename, BUILD)
+    return css_tag(f"static/css/{filename}", addbuild=True)
 
-def script_tag(uri, idattr=""):
+def script_i18n(l):
+    return f"<script type=\"text/javascript\" src=\"static/js/locales/locale_{real_locale(l)}.js?b={BUILD}\"></script>\n"
+
+def script_tag(uri, idattr="", addbuild=False):
     """
     Returns a script tag to a resource.
     """
     if idattr != "": idattr = "id=\"%s\"" % idattr
-    return "<script type=\"text/javascript\" src=\"%s\" %s></script>\n" % (uri, idattr)
+    buildqs = asm3.utils.iif(addbuild, "?b=%s" % BUILD, "")
+    return f"<script type=\"text/javascript\" src=\"{uri}{buildqs}\" {idattr}></script>\n"
 
 def asm_script_tag(filename):
     """
@@ -71,24 +47,27 @@ def asm_script_tag(filename):
     If we're in rollup mode and one of our standalone files is requested,
     get it from the compat folder instead so it's still cross-browser compliant and minified.
     """
-    standalone = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
-        "onlineform_extra.js" ]
-    if ROLLUP_JS and filename in standalone and filename.find("/") == -1: filename = "compat/%s" % filename
-    return "<script type=\"text/javascript\" src=\"static/js/%s?b=%s\"></script>\n" % (filename, BUILD)
+    standalone = [ "animal_view_adoptable.js", "document_edit.js", 
+        "mobile.js", "mobile2.js", "mobile_login.js", "mobile_report.js", "mobile_sign.js", 
+        "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
+    if ROLLUP_JS and filename in standalone and filename.find("/") == -1: filename = f"compat/{filename}"
+    return script_tag(f"static/js/{filename}", addbuild=True)
 
 def asm_script_tags(path):
     """
     Returns separate script tags for all ASM javascript files.
     """
-    jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
-        "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
+    jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
+        "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_microchip.js", "header.js",
         "header_additional.js", "header_edit_header.js" ]
-    exclude = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
-        "onlineform_extra.js" ]
+    standalone = [ "animal_view_adoptable.js", "document_edit.js", 
+        "mobile.js", "mobile2.js", "mobile_login.js", "mobile_report.js", "mobile_sign.js", 
+        "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)
+    # or those we should exclude because they are standalone files
     for i in os.listdir(path + "static/js"):
-        if i not in jsfiles and i not in exclude and not i.startswith(".") and i.endswith(".js"):
+        if i not in jsfiles and i not in standalone and not i.startswith(".") and i.endswith(".js"):
             jsfiles.append(i)
     buf = []
     for i in jsfiles:
@@ -150,10 +129,8 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
     """
     if config_db == "asm" and config_ts == "0":
         config_ts = python2unix(now())
-    def script_i18n(l):
-        return "<script type=\"text/javascript\" src=\"static/js/locales/locale_%s.js?b=%s\"></script>\n" % (real_locale(l), BUILD)
     def script_config():
-        return "<script type=\"text/javascript\" src=\"config.js?db=%s&ts=%s\"></script>\n" % (config_db, config_ts)
+        return script_tag("config.js?db=%s&ts=%s" % (config_db, config_ts))
     def script_schema():
         return asm_script_tag("bundle/schema.js") # statically generated
     # Use the default if we have no locale
@@ -163,10 +140,8 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
         asm_scripts = asm_script_tag("bundle/rollup_compat.min.js")
     else:
         asm_scripts = asm_script_tags(asm3.utils.PATH) 
-    # Set the body colour from the theme
-    bgcol = BACKGROUND_COLOURS["asm"]
-    if theme in BACKGROUND_COLOURS:
-        bgcol = BACKGROUND_COLOURS[theme]
+    # Set the body colour from the theme and make sure the theme is a valid choice.
+    themecode, themejq, themebg, themename = asm3.lookups.get_theme(theme)
     return '<!DOCTYPE html>\n' \
         '<html>\n' \
         '<head>\n' \
@@ -192,7 +167,8 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 css_tag(FULLCALENDAR_CSS) +
                 css_tag(TABLESORTER_CSS) + 
                 css_tag(TIMEPICKER_CSS) + 
-                css_tag(JQUERY_UI_CSS % { "theme": theme}, "jqt") +
+                css_tag(JQUERY_UI_CSS % { "theme": themejq}, idattr="jqt", addbuild=True) +
+                css_tag(BOOTSTRAP_GRID_CSS) +
                 asm_css_tag("asm-icon.css") +
                 asm_css_tag("asm.css") + 
                 script_tag("static/lib/modernizr/modernizr.min.js") + 
@@ -203,6 +179,7 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_tag(MOUSETRAP_JS) + 
                 script_tag(ASMSELECT_JS) + 
                 script_tag(BASE64_JS) + 
+                script_tag(QRCODE_JS) +
                 script_tag(CODEMIRROR_JS) + 
                 script_tag(CODEMIRROR_BASE + "addon/display/fullscreen.js") + 
                 script_tag(CODEMIRROR_BASE + "addon/hint/show-hint.js") + 
@@ -216,13 +193,13 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_tag(TABLESORTER_JS) + 
                 script_tag(TABLESORTER_WIDGETS_JS) + 
                 script_tag(TIMEPICKER_JS) +
-                script_tag(TINYMCE_4_JS) +
+                script_tag(TINYMCE_5_JS) +
                 script_tag(PATH_JS) + 
                 script_config() + 
                 script_i18n(locale) + 
                 script_schema() + 
                 asm_scripts,
-            "bgcol": bgcol }
+            "bgcol": themebg }
 
 def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, visualaids = True, onlysavewhendirty = False, readonly = False):
     """
@@ -239,9 +216,11 @@ def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, visualaid
         <html>
         <head>
         <title>%(title)s</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link rel="shortcut icon" href="static/images/logo/icon-16.png" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" href="static/images/logo/icon-16.png">
         %(jquery)s
+        %(css)s
         <script type="text/javascript">
         var baseurl = '%(baseurl)s';
         var buildno = '%(buildno)s';
@@ -257,7 +236,8 @@ def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, visualaid
         <body>
     """ % { "title": title,
            "jquery": script_tag(JQUERY_JS), 
-           "tinymce": script_tag(TINYMCE_4_JS),
+           "tinymce": script_tag(TINYMCE_5_JS),
+           "css": asm_css_tag("asm-tinymce.css"),
            "script": asm_script_tag(js),
            "baseurl": BASE_URL,
            "buildno": BUILD,
@@ -316,46 +296,102 @@ def tinymce_main(locale, action, recid="", mediaid = "", linktype = "", redirect
             "redirecturl": redirecturl, 
             "content": content }
 
-def graph_header(title):
+def js_page(include, title = "", controller = [], execline = ""):
+    """
+    Returns a page that just runs javascript to get the job done
+    include: a list of scripts or link tags (asm_script_tag or asm_css_tag calls)
+    controller: a global object to be output. will be turned into json
+    execline: a single line of javascript to run to start the page if needed
+    """
     return """<!DOCTYPE html>
         <html>
         <head>
-        <title>%(title)s</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link href="static/css/asm.css" rel="stylesheet" />
+        <meta charset="utf-8">
+        <title>%s</title>
+        %s
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" href="static/images/logo/icon-16.png">
+        </head>
+        <body>
+        <noscript>Sorry. ASM will not work without Javascript.</noscript>
+        <script>
+        controller = %s;
+        %s
+        </script>
+        </body>
+        </html>""" % ( title, "\n".join(include), asm3.utils.json(controller), execline )
+
+def mobile_page(l, title, scripts = [], controller = {}, execline = ""):
+    """
+    Outputs the boilerplate stuff for mobile pages using bootstrap.
+    l: The current locale
+    title: The page title
+    scripts: A list of script names (will be passed to asm_script_tag for resolution)
+    controller: A dictionary of values to pass to the page
+    execline: A line of javascript to run to start the page if needed
+    """
+    tags = [ 
+        script_tag(JQUERY_JS),
+        script_tag(JQUERY_UI_JS),
+        script_tag(BOOTSTRAP_JS),
+        script_tag(MOMENT_JS),
+        script_tag(MOUSETRAP_JS),
+        script_tag(TOUCHPUNCH_JS),
+        script_tag(SIGNATURE_JS),
+        css_tag(BOOTSTRAP_CSS),
+        css_tag(BOOTSTRAP_ICONS_CSS),
+        script_tag("config.js?ts=%s" % python2unix(now())),
+        script_i18n(l)
+    ]
+    for s in scripts:
+        tags.append(asm_script_tag(s))
+    return js_page(tags, title, controller, execline)
+
+def graph_js(l):
+    return """
         %(jquery)s
         %(flot)s
         %(flotpie)s
-        </head>
-        <body>
-        <h2 class="asm-header">%(title)s</h2>
-        <div id="placeholder" style="display: none; width: 100%%; height: 500px;"></div>
-    """ % { "title" : title, 
+        %(jqueryui)s
+        %(jqueryuicss)s
+        %(i18n)s
+        %(asmcss)s
+    """ % { "asmcss": asm_css_tag("asm.css"),
             "jquery": script_tag(JQUERY_JS), 
             "flot": script_tag(FLOT_JS), 
-            "flotpie": script_tag(FLOT_PIE_JS) }
+            "flotpie": script_tag(FLOT_PIE_JS),
+            "i18n": script_i18n(l),
+            "jqueryui": script_tag(JQUERY_UI_JS),
+            "jqueryuicss": css_tag(JQUERY_UI_CSS % { "theme": "asm" })
+          }
 
-def map_header(title):
-    return """<!DOCTYPE html>
-        <html>
-        <head>
-        <title>%(title)s</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link href="static/css/asm.css" rel="stylesheet" />
+def map_js():
+    return """
         %(jquery)s
         %(mousetrap)s
-        <script type="text/javascript" src="config.js?ts=%(time)s"></script>
+        %(config)s
         %(common)s
         %(commonmap)s
-        </head>
-        <body>
-        <h2 class="asm-header">%(title)s</h2>
-    """ % { "title" : title, 
+    """ % { "jquery": script_tag(JQUERY_JS), 
             "mousetrap": script_tag(MOUSETRAP_JS),
-            "jquery": script_tag(JQUERY_JS), 
-            "time": escape(now()),
+            "config": script_tag("config.js?ts=%s" % python2unix(now())),
             "common": asm_script_tag("common.js"),
-            "commonmap": asm_script_tag("common_map.js") }
+            "commonmap": asm_script_tag("common_map.js")  }
+
+def report_js(l):
+    return """
+        %(jqueryuicss)s
+        %(jquery)s
+        %(jqueryui)s
+        %(i18n)s
+        %(asmcss)s
+        %(report_toolbar)s
+    """ % { "asmcss": asm_css_tag("asm.css"),
+            "jquery": script_tag(JQUERY_JS),
+            "jqueryui": script_tag(JQUERY_UI_JS),
+            "jqueryuicss": css_tag(JQUERY_UI_CSS % { "theme": "asm" }),
+            "i18n": script_i18n(l),
+            "report_toolbar": asm_script_tag("report_toolbar.js") }
 
 def escape(s):
     if s is None: return ""
@@ -459,27 +495,6 @@ def script_var_str(varname, v, prefix = "controller."):
     v = "'" + v.replace("'", "\\'").replace("\n", " ") + "'"
     return script_var(varname, v, prefix)
 
-def rss(inner, title, link, description):
-    """ Renders an RSS document """
-    return '<?xml version="1.0" encoding="UTF-8"?>' \
-        '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" >' \
-        '<channel rdf:about="%s">' \
-        '<title>%s</title>' \
-        '<description>%s</description>' \
-        '<link>%s</link>' \
-        '</channel>' \
-        '%s' \
-        '</rdf:RDF>' % (BASE_URL, title, description, link, inner)
-
-def rss_item(title, link, description):
-    return '<item rdf:about="%s">' \
-        '<title>%s</title>' \
-        '<link>%s</link>' \
-        '<description>' \
-        '%s' \
-        '</description>' \
-        '</item>' % (BASE_URL, title, link, description)
-
 def icon(name, title = ""):
     """
     Outputs a span tag containing an icon
@@ -493,12 +508,12 @@ def doc_img_src(dbo, row):
     """
     Gets the img src attribute/link for a document picture. If the row
     doesn't have doc preferred media, the nopic src is returned instead.
-    row: A query containing DOCMEDIANAME
+    row: A query containing DOCMEDIAID
     """
-    if row["DOCMEDIANAME"] is None or row["DOCMEDIANAME"] == "":
+    if row["DOCMEDIAID"] is None or row["DOCMEDIAID"] == "":
         return "image?db=%s&mode=nopic" % dbo.database
     else:
-        return "image?db=%s&mode=dbfs&id=%s&date=%s" % (dbo.database, row["DOCMEDIANAME"], row["DOCMEDIADATE"].isoformat())
+        return "image?db=%s&mode=media&id=%s&date=%s" % (dbo.database, row["DOCMEDIAID"], row["DOCMEDIADATE"].isoformat())
 
 def menu_structure(l, publisherlist, reports, mailmerges):
     """
@@ -510,6 +525,7 @@ def menu_structure(l, publisherlist, reports, mailmerges):
     """
     publishers = []
     for k, v in publisherlist.items():
+        if k == "html" and not HTMLFTP_PUBLISHER_ENABLED: continue # Hide HTML publisher if it's disabled by sitedef
         if k == "html": # HTML requires translated text, where other publishers are localised/English
             publishers.append(("", "", "", "publish?mode=html", "asm-icon-blank", _("Publish HTML via FTP", l) ))
         else:
@@ -541,7 +557,7 @@ def menu_structure(l, publisherlist, reports, mailmerges):
             ( asm3.users.ADD_INCIDENT, "alt+shift+i", "taganimalcontrol", "incident_new", "asm-icon-blank", _("Report a new incident", l) ),
             ( asm3.users.VIEW_INCIDENT, "", "taganimalcontrol", "incident_find", "asm-icon-blank", _("Find incident", l) ),
             ( asm3.users.VIEW_INCIDENT, "", "taganimalcontrol", "incident_map", "asm-icon-map", _("Map of active incidents", l) ),
-            ( asm3.users.VIEW_TRAPLOAN, "", "tagtraploan", "traploan?filter=active", "asm-icon-traploan", _("Trap loans", l) ),
+            ( asm3.users.VIEW_TRAPLOAN, "", "tagtraploan", "traploan?filter=active", "asm-icon-traploan", _("Equipment loans", l) ),
             ( asm3.users.VIEW_LICENCE, "", "taganimalcontrol", "licence?offset=i31", "asm-icon-licence", _("Licensing", l) ),
             ( asm3.users.ADD_LICENCE, "", "taganimalcontrol", "licence_renewal", "asm-icon-blank", _("Renew license", l) ),
             ( asm3.users.VIEW_INCIDENT, "", "taganimalcontrol", "calendarview?ev=ol", "asm-icon-calendar", _("Animal control calendar", l) ),
@@ -639,9 +655,10 @@ def menu_structure(l, publisherlist, reports, mailmerges):
             (asm3.users.SYSTEM_OPTIONS, "", "", "options", "asm-icon-settings", _("Options", l) ),
             ("", "", "", "--cat", "asm-icon-database", _("Data", l)),
             (asm3.users.EXPORT_REPORT, "", "", "report_export", "asm-icon-report", _("Export Reports as CSV", l) ),
-            (asm3.users.EXPORT_REPORT, "", "", "csvexport", "asm-icon-animal", _("Export Animals as CSV", l) ),
-            (asm3.users.USE_SQL_INTERFACE, "", "", "csvimport", "asm-icon-database", _("Import a CSV file", l) ),
-            (asm3.users.USE_SQL_INTERFACE, "", "", "csvimport_paypal", "asm-icon-paypal", _("Import a PayPal CSV file", l) ),
+            (asm3.users.EXPORT_ANIMAL_CSV, "", "", "csvexport", "asm-icon-animal", _("Export Animals as CSV", l) ),
+            (asm3.users.IMPORT_CSV_FILE, "", "", "csvimport", "asm-icon-database", _("Import a CSV file", l) ),
+            (asm3.users.IMPORT_CSV_FILE, "", "", "csvimport_paypal", "asm-icon-paypal", _("Import a PayPal CSV file", l) ),
+            (asm3.users.IMPORT_CSV_FILE, "", "", "csvimport_stripe", "asm-icon-stripe", _("Import a Stripe CSV file", l) ),
             (asm3.users.TRIGGER_BATCH, "", "", "batch", "asm-icon-batch", _("Trigger Batch Processes", l) )
         ))
     )
@@ -756,6 +773,7 @@ def json_personfindcolumns(dbo):
         ( "Jurisdiction", _("Jurisdiction", l) ),
         ( "Comments", _("Comments", l) ),
         ( "IsBanned", _("Banned", l) ),
+        ( "IsDangerous", _("Dangerous", l) ),
         ( "IsVolunteer", _("Volunteer", l) ),
         ( "IsHomeChecker", _("Homechecker", l) ),
         ( "IsMember", _("Member", l) ),
@@ -773,13 +791,89 @@ def json_personfindcolumns(dbo):
         ( "LookingForSummary", _("Looking For", l) ),
         ( "HomeCheckAreas", _("Homecheck Areas", l) ),
         ( "DateLastHomeChecked", _("Homecheck Date", l) ),
-        ( "HomeCheckedBy", _("Homechecked By", l) )
+        ( "HomeCheckedBy", _("Homechecked By", l) ),
+        ("IsSponsor", _("Sponsor", l) )
         ]
     fd = asm3.additional.get_field_definitions(dbo, "person")
     for f in fd:
-        cols.append( (f["FIELDNAME"], f["FIELDLABEL"]) )
+        cols.append((f["FIELDNAME"], f["FIELDLABEL"]))
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, asm3.configuration.person_search_columns(dbo))
+    return cols
+    
+def json_incidentfindcolumns(dbo):
+    l = dbo.locale
+    cols = [ 
+        ( "IncidentType", _("Incident Type", l) ),
+        ( "IncidentNumber", _("Incident Number", l) ),
+        ( "IncidentDateTime", _("Incident Date/Time", l) ),
+        ( "DispatchAddress", _("Address", l) ),
+        ( "DispatchTown", _("City", l) ),
+        ( "DispatchPostcode", _("Zipcode", l) ),
+        ( "JurisdictionName", _("Jurisdiction", l) ),
+        ( "LocationName", _("Pickup Location", l) ),
+        ( "Suspect", _("Suspect", l) ),
+        ( "Victim", _("Victim", l) ),
+        ( "DispatchDateTime", _("Dispatch Date/Time", l) ),
+        ( "RespondedDateTime", _("Responded Date/Time", l) ),
+        ( "DispatchedACO", _("ACO", l) ),
+        ( "FollowupDateTime", _("Followup Date", l) ),
+        ( "CompletedDate", _("Completed Date", l) ),
+        ( "CompletedName", _("Completed Type", l) ),
+        ( "Caller", _("Caller", l) ),
+        ( "CallNotes", _("Notes", l) )
+        ]
+    fd = asm3.additional.get_field_definitions(dbo, "incident")
+    for f in fd:
+        cols.append( (f["FIELDNAME"], f["FIELDLABEL"]) )
+    cols = findcolumns_sort(cols)
+    findcolumns_selectedtofront(cols, asm3.configuration.incident_search_columns(dbo))
+    return cols
+
+def json_foundanimalfindcolumns(dbo):
+    l = dbo.locale
+    cols = [ 
+        ("LostFoundID", _("Number", l)),
+        ("Owner", _("Contact", l)),
+        ("MicrochipNumber", _("Microchip", l)),
+        ("AreaFound", _("Area", l)),
+        ("AreaPostCode", _("Zipcode", l)),
+        ("DateFound", _("Date", l)),
+        ("AgeGroup", _("Age Group", l)),
+        ("SexName", _("Sex", l)),
+        ("SpeciesName", _("Species", l)),
+        ("BreedName", _("Breed", l)),
+        ("BaseColourName", _("Color", l)),
+        ("DistFeat", _("Features", l))
+        ]
+    fd = asm3.additional.get_field_definitions(dbo, "foundanimal")
+    for f in fd:
+        cols.append( (f["FIELDNAME"], f["FIELDLABEL"]) )
+    cols = findcolumns_sort(cols)
+    findcolumns_selectedtofront(cols, asm3.configuration.foundanimal_search_columns(dbo))
+    return cols
+
+def json_lostanimalfindcolumns(dbo):
+    l = dbo.locale
+    cols = [ 
+        ("LostFoundID", _("Number", l)),
+        ("Owner", _("Contact", l)),
+        ("MicrochipNumber", _("Microchip", l)),
+        ("AreaLost", _("Area", l)),
+        ("AreaPostCode", _("Zipcode", l)),
+        ("DateLost", _("Date", l)),
+        ("AgeGroup", _("Age Group", l)),
+        ("SexName", _("Sex", l)),
+        ("SpeciesName", _("Species", l)),
+        ("BreedName", _("Breed", l)),
+        ("BaseColourName", _("Color", l)),
+        ("DistFeat", _("Features", l))
+        ]
+    fd = asm3.additional.get_field_definitions(dbo, "lostanimal")
+    for f in fd:
+        cols.append( (f["FIELDNAME"], f["FIELDLABEL"]) )
+    cols = findcolumns_sort(cols)
+    findcolumns_selectedtofront(cols, asm3.configuration.lostanimal_search_columns(dbo))
     return cols
 
 def json_quicklinks(dbo):
@@ -794,6 +888,7 @@ def json_quicklinks(dbo):
 def json_waitinglistcolumns(dbo):
     l = dbo.locale
     cols = [ 
+        ( "Number", _("Number", l) ),
         ( "CreatedBy", _("Created By", l) ),
         ( "Rank", _("Rank", l) ),
         ( "SpeciesID", _("Species", l) ),
@@ -845,12 +940,19 @@ def findcolumns_selectedtofront(cols, vals):
                 break
     return vals
 
-def qr_animal_img_src(animalid, size = "150x150"):
+def qr_animal_img_record_src(animalid, size = "150x150"):
     """
-    Returns an img src attribute for a QR code to an animal.
+    Returns an img src attribute for a QR code to an animal's record.
     size is a sizespec eg: 150x150
     """
-    return QR_IMG_SRC % { "url": BASE_URL + "/animal?id=%s" % animalid, "size": size }
+    return QR_IMG_SRC % { "url": f"{BASE_URL}/animal?id={animalid}", "size": size }
+
+def qr_animal_img_share_src(dbo, animalid, size = "150x150"):
+    """
+    Returns an img src attribute for a QR code to the public animalview page for the animal.
+    size is a sizespec eg: 150x150
+    """
+    return QR_IMG_SRC % { "url": f"{SERVICE_URL}?account={dbo.database}&method=animal_view&animalid={animalid}", "size": size }
 
 def thumbnail_img_src(dbo, row, mode):
     """
@@ -890,63 +992,32 @@ def option(name, value = None, selected = False):
     if value is not None: val = " value=\"%s\"" % value
     return "<option %s%s>%s</option>\n" % ( val, sel, name )
 
+def options(l, rows, displayfield, idfield = "ID", includeAll = False, includeRetired = False, selected = -1, alltext = "*"):
+    s = []
+    if includeAll:
+        if alltext == "*": alltext = _("(all)", l)
+        s.append(option(alltext, "-1", False))
+    for r in rows:
+        if not includeRetired and "ISRETIRED" in r and r.ISRETIRED: continue
+        if displayfield == "ANIMALNAMECODE":
+            s.append(option("%s - %s" % (r.ANIMALNAME, r.SHELTERCODE), str(r[idfield]), r[idfield] == selected))
+        elif displayfield == "PERSONNAMEADDRESS":
+            s.append(option("%s - %s" % (r.OWNERNAME, r.OWNERADDRESS), str(r[idfield]), r[idfield] == selected))
+        else: 
+            s.append(option("%s" % r[displayfield], str(r[idfield]), r[idfield] == selected))
+    return "".join(s)
+
 def options_accounts(dbo, includeAll = False, selected = -1, alltext = "*"):
-    s = ""
-    l = dbo.locale
-    if includeAll: 
-        if alltext == "*": s += option(_("(all)", l), "-1", False)
-        else: s += option(alltext, "-1", False)
-    ac = asm3.financial.get_accounts(dbo)
-    for a in ac:
-        s += option("%s" % a["CODE"],
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.financial.get_accounts(dbo), "CODE", includeAll=includeAll, alltext=alltext, selected=selected)
 
 def options_account_types(dbo, includeAll = False, selected = -1, alltext = "*"):
-    l = dbo.locale
-    s = ""
-    if includeAll: 
-        if alltext == "*": s += option(_("(all)", l), "-1", False)
-        else: s += option(alltext, "-1", False)
-    at = asm3.lookups.get_account_types(dbo)
-    for a in at:
-        s += option(a["ACCOUNTTYPE"],
-            str(a["ID"]),
-            int(a["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_account_types(dbo), "ACCOUNTTYPE", includeAll=includeAll, alltext=alltext, selected=selected)
 
 def options_additionalfield_links(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    al = asm3.lookups.get_additionalfield_links(dbo)
-    for a in al:
-        s += option(a["LINKTYPE"], 
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_additionalfield_links(dbo), "LINKTYPE", includeAll=includeAll, selected=selected)
 
 def options_additionalfield_types(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    at = asm3.lookups.get_additionalfield_types(dbo)
-    for a in at:
-        s += option(a["FIELDTYPE"], 
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
-
-def options_agegroups(dbo, includeAll = False, includeUnknown = False, selected = "-1"):
-    s = ""
-    l = dbo.locale
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    if includeUnknown: s += option(_("(unknown)", l), "Unknown", False)
-    ag = asm3.configuration.age_groups(dbo)
-    for a in ag:
-        s += option(a, a, a == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_additionalfield_types(dbo), "FIELDTYPE", includeAll=includeAll, selected=selected)
 
 def options_animal_flags(dbo):
     s = ""
@@ -954,6 +1025,7 @@ def options_animal_flags(dbo):
     pf = asm3.lookups.get_animal_flags(dbo)
     s += option(_("Courtesy Listing", l), "courtesy")
     s += option(_("Cruelty Case", l), "crueltycase")
+    s += option(_("Do Not Register Microchip", l), "notforregistration")
     s += option(_("Non-Shelter", l), "nonshelter")
     s += option(_("Not For Adoption", l), "notforadoption")
     s += option(_("Quarantine", l), "quarantine")
@@ -962,50 +1034,18 @@ def options_animal_flags(dbo):
     return s
 
 def options_animals(dbo, includeAll = False, selected = -1):
-    s = ""
-    l = dbo.locale
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    an = asm3.animal.get_animals_namecode(dbo)
-    for a in an:
-        s += option("%s - %s" % ( a["ANIMALNAME"], a["SHELTERCODE"] ), 
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.animal.get_animals_namecode(dbo), "ANIMALNAMECODE", includeAll=includeAll, selected=selected)
 
 def options_animals_on_shelter(dbo, includeAll = False, selected = -1):
-    s = ""
-    l = dbo.locale
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    an = asm3.animal.get_animals_on_shelter_namecode(dbo)
-    for a in an:
-        s += option("%s - %s" % ( a["ANIMALNAME"], a["CODE"] ), 
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.animal.get_animals_on_shelter_namecode(dbo), "ANIMALNAMECODE", includeAll=includeAll, selected=selected)
 
 def options_animals_on_shelter_foster(dbo, includeAll = False, selected = -1):
-    s = ""
-    l = dbo.locale
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    an = asm3.animal.get_animals_on_shelter_foster_namecode(dbo)
-    for a in an:
-        s += option("%s - %s" % ( a["ANIMALNAME"], a["CODE"] ), 
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.animal.get_animals_on_shelter_foster_namecode(dbo), "ANIMALNAMECODE", includeAll=includeAll, selected=selected)
 
-def options_animal_types(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    at = asm3.lookups.get_animal_types(dbo)
-    for a in at:
-        s += option(a["ANIMALTYPE"], 
-            str(a["ID"]), 
-            int(a["ID"]) == selected)
-    return s
+def options_animal_types(dbo, includeAll = False, selected = -1, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_animal_types(dbo), "ANIMALTYPE", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
-def options_breeds(dbo, includeAll = False, selected = -1):
+def options_breeds(dbo, includeAll = False, selected = -1, includeRetired = False):
     l = dbo.locale
     s = ""
     if includeAll: s += option(_("(all)", l), "-1", False)
@@ -1023,124 +1063,42 @@ def options_breeds(dbo, includeAll = False, selected = -1):
             s += "<optgroup id='ngp-" + str(b["SPECIESID"]) + "' label=\"%s\">\n" % ngp
             gp = ngp
 
-        s += option(b["BREEDNAME"],
-            str(b["ID"]),
-            int(b["ID"]) == selected)
+        if not includeRetired and b.ISRETIRED: continue
+        s += option(b["BREEDNAME"], str(b["ID"]), int(b["ID"]) == selected)
     return s
 
 def options_coattypes(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    ct = asm3.lookups.get_coattypes(dbo)
-    for c in ct:
-        s += option(c["COATTYPE"],
-            str(c["ID"]),
-            int(c["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_coattypes(dbo), "COATTYPE", includeAll=includeAll, selected=selected)
 
-def options_colours(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    bc = asm3.lookups.get_basecolours(dbo)
-    for c in bc:
-        s += option(c["BASECOLOUR"],
-            str(c["ID"]),
-            int(c["ID"]) == selected)
-    return s
+def options_colours(dbo, includeAll = False, selected = -1, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_basecolours(dbo), "BASECOLOUR", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
-def options_cost_types(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    bc = asm3.lookups.get_costtypes(dbo)
-    for c in bc:
-        s += option(c["COSTTYPENAME"],
-            str(c["ID"]),
-            int(c["ID"]) == selected)
-    return s
+def options_cost_types(dbo, includeAll = False, selected = -1, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_costtypes(dbo), "COSTTYPENAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
-def options_deathreasons(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    dr = asm3.lookups.get_deathreasons(dbo)
-    for d in dr:
-        s += option(d["REASONNAME"],
-            str(d["ID"]),
-            int(d["ID"]) == selected)
-    return s
+def options_deathreasons(dbo, includeAll = False, selected = -1, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_deathreasons(dbo), "REASONNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
-def options_diets(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    di = asm3.lookups.get_diets(dbo)
-    for d in di:
-        s += option(d["DIETNAME"],
-            str(d["ID"]),
-            int(d["ID"]) == selected)
-    return s
+def options_diets(dbo, includeAll = False, selected = -1, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_diets(dbo), "DIETNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
-def options_donation_types(dbo, includeAll = False, includeNone = False, selected = -1, alltext = "*"):
-    l = dbo.locale
-    s = ""
-    if includeAll: 
-        if alltext == "*": s += option(_("(all)", l), "-1", False)
-        else: s += option(alltext, "-1", False)
-    if includeNone:
-        s += option(_("(none)", l), "0", False)
-    dt = asm3.lookups.get_donation_types(dbo)
-    for d in dt:
-        s += option(d["DONATIONNAME"],
-            str(d["ID"]),
-            int(d["ID"]) == selected)
-    return s
+def options_donation_types(dbo, includeAll = False, selected = -1, alltext = "*", includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_donation_types(dbo), "DONATIONNAME", includeAll=includeAll, alltext=alltext, selected=selected, includeRetired=includeRetired)
+
+def options_donation_methods(dbo, includeAll = False, selected = -1, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_payment_methods(dbo), "PAYMENTNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_donation_frequencies(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    df = asm3.lookups.get_donation_frequencies(dbo)
-    for d in df:
-        s += option(d["FREQUENCY"],
-            str(d["ID"]),
-            int(d["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_donation_frequencies(dbo), "FREQUENCY", includeAll=includeAll, selected=selected)
 
-def options_entryreasons(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    er = asm3.lookups.get_entryreasons(dbo)
-    for e in er:
-        s += option(e["REASONNAME"],
-            str(e["ID"]),
-            int(e["ID"]) == selected)
-    return s
+def options_entryreasons(dbo, includeAll = False, selected = -1, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_entryreasons(dbo), "REASONNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
-def options_incident_types(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    er = asm3.lookups.get_incident_types(dbo)
-    for e in er:
-        s += option(e["INCIDENTNAME"],
-            str(e["ID"]),
-            int(e["ID"]) == selected)
-    return s
+def options_incident_types(dbo, includeAll = False, selected = -1, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_incident_types(dbo), "INCIDENTNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
-def options_internal_locations(dbo, includeAll = False, selected = -1, locationfilter = "", siteid = 0):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    lo = asm3.lookups.get_internal_locations(dbo, locationfilter, siteid)
-    for l in lo:
-        s += option(l["LOCATIONNAME"], 
-            str(l["ID"]), 
-            int(l["ID"]) == selected)
-    return s
+def options_internal_locations(dbo, includeAll = False, selected = -1, locationfilter = "", siteid = 0, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_internal_locations(dbo, locationfilter, siteid), "LOCATIONNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_litters(dbo, includeAll = False, selected = "-1"):
     l = dbo.locale
@@ -1167,38 +1125,14 @@ def options_locales():
         s += "<option value=\"" + code + "\">" + label + "</option>"
     return s
 
-def options_log_types(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    lt = asm3.lookups.get_log_types(dbo)
-    for l in lt:
-        s += option(l["LOGTYPENAME"], 
-            str(l["ID"]), 
-            int(l["ID"]) == selected)
-    return s
+def options_log_types(dbo, includeAll = False, selected = -1, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_log_types(dbo), "LOGTYPENAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
-def options_medicalprofiles(dbo, includeNone = False, selected = 0):
-    s = ""
-    if includeNone: s += option("", "0", False)
-    mp = asm3.medical.get_profiles(dbo)
-    for m in mp:
-        s += option(m["PROFILENAME"], 
-            str(m["ID"]), 
-            int(m["ID"]) == selected)
-    return s
+def options_medicalprofiles(dbo, selected = -1):
+    return options(dbo.locale, asm3.medical.get_profiles(dbo), "PROFILENAME", selected=selected)
 
 def options_movement_types(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    mt = asm3.lookups.get_movement_types(dbo)
-    for m in mt:
-        if m["ID"] != 9 and m["ID"] != 10 and m["ID"] != 11:
-            s += option(m["MOVEMENTTYPE"], 
-                str(m["ID"]), 
-                int(m["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_movement_types(dbo), "MOVEMENTTYPE", includeAll=includeAll, selected=selected)
 
 def options_person_flags(dbo):
     s = ""
@@ -1206,134 +1140,51 @@ def options_person_flags(dbo):
     pf = asm3.lookups.get_person_flags(dbo)
     s += option(_("ACO", l), "aco")
     s += option(_("Adopter", l), "adopter")
-    s += option(_("Banned", l), "banned")
     s += option(_("Adoption Coordinator", l), "coordinator")
+    s += option(_("Banned", l), "banned")
+    s += option(_("Dangerous", l), "dangerous")
     s += option(_("Deceased", l), "deceased")
     s += option(_("Donor", l), "donor")
     s += option(_("Driver", l), "driver")
+    s += option(_("Exclude from bulk email", l), "excludefrombulkemail")
     s += option(_("Fosterer", l), "fosterer")
     s += option(_("Homechecked", l), "homechecked")
     s += option(_("Homechecker", l), "homechecker")
     s += option(_("Member", l), "member")
-    s += option(_("Retailer", l), "retailer")
     s += option(_("Other Shelter", l), "shelter")
+    s += option(_("Retailer", l), "retailer")
     s += option(_("Staff", l), "staff")
-    s += option(_("Giftaid", l), "giftaid")
+    if l == "en_GB": s += option(_("UK Giftaid", l), "giftaid")
     s += option(_("Vet", l), "vet")
     s += option(_("Volunteer", l), "volunteer")
+    s += option(_("Sponsor", l), "sponsor")
     for p in pf:
         s += option(p["FLAG"])
     return s
 
 def options_people(dbo, includeAll = False, selected = -1):
-    s = ""
-    l = dbo.locale
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    pp = asm3.person.get_person_name_addresses(dbo)
-    for p in pp:
-        s += option("%s - %s" % ( p["OWNERNAME"], p["OWNERADDRESS"] ), 
-            str(p["ID"]), 
-            int(p["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.person.get_person_name_addresses(dbo), "PERSONNAMEADDRESS", includeAll=includeAll, selected=selected)
 
 def options_people_not_homechecked(dbo, includeAll = False, selected = -1):
-    s = ""
-    l = dbo.locale
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    pp = asm3.person.get_reserves_without_homechecks(dbo)
-    for p in pp:
-        s += option("%s - %s" % ( p["OWNERNAME"], p["OWNERADDRESS"] ), 
-            str(p["ID"]), 
-            int(p["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.person.get_reserves_without_homechecks(dbo), "PERSONNAMEADDRESS", includeAll=includeAll, selected=selected)
 
 def options_posneg(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    pn = asm3.lookups.get_posneg(dbo)
-    for p in pn:
-        s += option(p["NAME"],
-            str(p["ID"]),
-            int(p["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_posneg(dbo), "NAME", includeAll=includeAll, selected=selected)
 
-def options_species(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    sp = asm3.lookups.get_species(dbo)
-    for sx in sp:
-        s += option(sx["SPECIESNAME"], 
-            str(sx["ID"]), 
-            int(sx["ID"]) == selected)
-    return s
+def options_species(dbo, includeAll = False, selected = -1, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_species(dbo), "SPECIESNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_sexes(dbo,  includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    se = asm3.lookups.get_sexes(dbo)
-    for sx in se:
-        s += option(sx["SEX"],
-            str(sx["ID"]),
-            int(sx["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_sexes(dbo), "SEX", includeAll=includeAll, selected=selected)
 
 def options_sizes(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    se = asm3.lookups.get_sizes(dbo)
-    for sz in se:
-        s += option(sz["SIZE"],
-            str(sz["ID"]),
-            int(sz["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_sizes(dbo), "SIZE", includeAll=includeAll, selected=selected)
 
 def options_sites(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    se = asm3.lookups.get_sites(dbo)
-    for i in se:
-        s += option(i["SITENAME"], 
-            str(i["ID"]), 
-            int(i["ID"]) == selected)
-    return s
-
-def options_smarttagtypes(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    st = [{ "ID" : 0, "TYPE" : _("Annual", l)},
-          { "ID" : 1, "TYPE" : _("5 Year", l)},
-          { "ID" : 2, "TYPE" : _("Lifetime", l)}]
-    for t in st:
-        s += option(t["TYPE"],
-            str(t["ID"]),
-            int(t["ID"]) == selected)
-    return s
-
-def options_urgencies(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "all", False)
-    wu = asm3.lookups.get_urgencies(dbo)
-    for u in wu:
-        s += option(u["URGENCY"],
-            str(u["ID"]),
-            int(u["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_sites(dbo), "SITENAME", includeAll=includeAll, selected=selected)
 
 def options_users(dbo, includeAll = False, selected = ""):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "all", selected == "all")
-    su = asm3.users.get_users(dbo)
-    for u in su:
-        s += option(u["USERNAME"], u["USERNAME"], u["USERNAME"] == selected)
-    return s
+    return options(dbo.locale, asm3.users.get_users(dbo), "USERNAME", idfield="USERNAME", includeAll=includeAll, selected=selected)
 
 def options_users_and_roles(dbo, includeAll = False, includeEveryone = False, selected = ""):
     l = dbo.locale
@@ -1345,332 +1196,16 @@ def options_users_and_roles(dbo, includeAll = False, includeEveryone = False, se
         s += option(u["USERNAME"], u["USERNAME"], u["USERNAME"] == selected)
     return s
 
-def options_vaccination_types(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    vt = asm3.lookups.get_vaccination_types(dbo)
-    for v in vt:
-        s += option(v["VACCINATIONTYPE"],
-            str(v["ID"]),
-            int(v["ID"]) == selected)
-    return s
+def options_vaccination_types(dbo, includeAll = False, selected = -1, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_vaccination_types(dbo), "VACCINATIONTYPE", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
-def options_voucher_types(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    vt = asm3.lookups.get_voucher_types(dbo)
-    for v in vt:
-        s += option(v["VOUCHERNAME"],
-            str(v["ID"]),
-            int(v["ID"]) == selected)
-    return s
+def options_voucher_types(dbo, includeAll = False, selected = -1, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_voucher_types(dbo), "VOUCHERNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_yesno(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    yn = asm3.lookups.get_yesno(dbo)
-    for y in yn:
-        s += option(y["NAME"],
-            str(y["ID"]),
-            int(y["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_yesno(dbo), "NAME", includeAll=includeAll, selected=selected)
   
 def options_ynun(dbo, includeAll = False, selected = -1):
-    l = dbo.locale
-    s = ""
-    if includeAll: s += option(_("(all)", l), "-1", False)
-    yn = asm3.lookups.get_ynun(dbo)
-    for y in yn:
-        s += option(y["NAME"],
-            str(y["ID"]),
-            int(y["ID"]) == selected)
-    return s
+    return options(dbo.locale, asm3.lookups.get_ynun(dbo), "NAME", includeAll=includeAll, selected=selected)
 
-def template_selection(templates, url):
-    """
-    templates: A list of templates pathnames
-    url: The initial portion of the url
-    """
-    s = ""
-    lastpath = ""
-    for t in templates:
-        if t["PATH"] != lastpath:
-            s += "<li class=\"asm-menu-category\">%s</li>" % ( t["PATH"] )
-            lastpath = t["PATH"]
-        s += "<li class=\"asm-menu-item\"><a target=\"_blank\" class=\"templatelink\" data=\"%d\" href=\"%s&dtid=%s\">%s</a></li>" % (t["ID"], url, t["ID"], t["NAME"])
-    return s
-
-def timeline_rss(dbo, limit = 500):
-    l = dbo.locale
-    rows = asm3.animal.get_timeline(dbo, limit)
-    h = []
-    for r in rows:
-        h.append( rss_item( r["DESCRIPTION"], "%s/%s?id=%d" % (BASE_URL, r["LINKTARGET"], r["ID"]), "") )
-    return rss("\n".join(h), _("Showing {0} timeline events.", l).format(limit), BASE_URL, "")
-
-def report_criteria(dbo, crit, locationfilter = "", siteid = 0):
-    """
-    Renders report criteria as an HTML form
-    crit: The criteria - a list of tuples containing name, type and a question
-    locationfilter: A comma separated list of location ids for filtering the internal location list
-    """
-    l = dbo.locale
-    s = "<table>"
-    for name, rtype, question in crit:
-        if rtype == "DATE":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <input class="asm-textbox asm-datebox" id="report-%s" data-post="%s" value="%s" />
-            </td>
-            </tr>""" % ( question, name, name, python2display(l, now(dbo.timezone)) )
-        elif rtype == "STRING":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <input class="asm-textbox" id="report-%s" data-post="%s" />
-            </td>
-            </tr>""" % ( question, name, name )
-        elif rtype == "NUMBER":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <input class="asm-textbox asm-numberbox" id="report-%s" data-post="%s" />
-            </td>
-            </tr>""" % ( question, name, name )
-        elif rtype == "ANIMAL" or rtype == "FSANIMAL" or rtype == "ALLANIMAL":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <input class="asm-animalchooser" id="report-%s" data-post="%s" type="hidden" />
-            </td>
-            </tr>""" % ( _("Animal", l), name, name )
-        elif rtype == "ANIMALS":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <input class="asm-animalchoosermulti" id="report-%s" data-post="%s" type="hidden" />
-            </td>
-            </tr>""" % ( _("Animals", l), name, name )
-        elif rtype == "ANIMALFLAG":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Flag", l), name, name, options_animal_flags(dbo))
-        elif rtype == "PERSON":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <input class="asm-personchooser" id="report-%s" data-post="%s" type="hidden" />
-            </td>
-            </tr>""" % ( _("Person", l), name, name )
-        elif rtype == "PERSONFLAG":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Flag", l), name, name, options_person_flags(dbo))
-        elif rtype == "DONATIONTYPE":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Payment Type", l), name, name, options_donation_types(dbo) )
-        elif rtype == "LITTER":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Litter", l), name, name, options_litters(dbo) )
-        elif rtype == "SPECIES":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Species", l), name, name, options_species(dbo) )
-        elif rtype == "LOCATION":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Location", l), name, name, options_internal_locations(dbo, False, -1, locationfilter, siteid) )
-        elif rtype == "LOGTYPE":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Log Type", l), name, name, options_log_types(dbo, False, -1) )
-        elif rtype == "SITE":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Site", l), name, name, options_sites(dbo, False, -1) )
-        elif rtype == "TYPE":
-            s += """
-            <tr>
-            <td>%s</td>
-            <td>
-            <select class="asm-selectbox" id="report-%s" data-post="%s">
-            %s
-            </select>
-            </td>
-            </tr>""" % ( _("Type", l), name, name, options_animal_types(dbo) )
-    s += "<tr><td></td><td><button id=\"submitcriteria\">%s</button></td></tr></table>" % _("Generate", l)
-    return s
-
-def report_criteria_mobile(dbo, crit, locationfilter = "", siteid = 0):
-    """
-    l: The locale
-    crit: The criteria - a list of tuples containing name, type and a question
-    """
-    l = dbo.locale
-    s = ""
-    for name, rtype, question in crit:
-        if rtype == "DATE":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <input type="date" id="report-%s" data-post="%s" value="%s" />
-            </div>
-            """ % (name, question, name, name, format_date(now(dbo.timezone), "%Y-%m-%d"))
-        elif rtype == "STRING":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <input type="text" id="report-%s" data-post="%s" value="" />
-            </div>
-            """ % (name, question, name, name)
-        elif rtype == "NUMBER":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <input type="number" id="report-%s" data-post="%s" value="" />
-            </div>
-            """ % (name, question, name, name)
-        elif rtype == "ANIMAL":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Animal", l), name, name, options_animals_on_shelter(dbo))
-        elif rtype == "FSANIMAL":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Animal", l), name, name, options_animals_on_shelter_foster(dbo))
-        elif rtype == "ALLANIMAL":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Animal", l), name, name, options_animals(dbo))
-        elif rtype == "ANIMALS":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select multiple=\"multiple\" id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Animals", l), name, name, options_animals_on_shelter(dbo))
-        elif rtype == "ANIMALFLAG":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Flag", l), name, name, options_animal_flags(dbo))
-        elif rtype == "PERSON":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Person", l), name, name, options_people(dbo))
-        elif rtype == "PERSONFLAG":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Flag", l), name, name, options_person_flags(dbo))
-        elif rtype == "DONATIONTYPE":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Payment Type", l), name, name, options_donation_types(dbo))
-        elif rtype == "LITTER":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Litter", l), name, name, options_litters(dbo))
-        elif rtype == "SPECIES":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Species", l), name, name, options_species(dbo))
-        elif rtype == "LOCATION":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Location", l), name, name, options_internal_locations(dbo, False, -1, locationfilter, siteid))
-        elif rtype == "LOGTYPE":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Log Type", l), name, name, options_log_types(dbo, False, -1))
-        elif rtype == "SITE":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Site", l), name, name, options_sites(dbo, False, -1))
-        elif rtype == "TYPE":
-            s += """
-            <div data-role=\"fieldcontain\"><label for=\"%s\">%s</label>
-            <select id="report-%s" data-post="%s">%s</select>
-            </div>
-            """ % (name, _("Type", l), name, name, options_animal_types(dbo))
-    s += "<input id=\"submitcriteria\" type=\"submit\" value=\"%s\" />" % _("Generate", l)
-    return s
 

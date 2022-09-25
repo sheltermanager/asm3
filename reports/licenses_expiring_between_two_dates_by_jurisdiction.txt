@@ -2,9 +2,9 @@ Licenses expiring between two dates by jurisdiction
 ###
 Animal Control
 ###
-34016/Any
+34016/Any rev02
 ###
-Licenses that expire between the two dates given by jurisdiction, excludes people with renewed licenses
+Licenses that expire between the two dates given by jurisdiction, excludes people with renewed licenses and deceased animals
 ###
 en
 ###
@@ -21,7 +21,8 @@ LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID
 LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID
 WHERE ol.ExpiryDate >= '$ASK DATE Expiring between $'
 AND ol.ExpiryDate <= '$ASK DATE and $' AND a.DeceasedDate Is Null 
-AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=o.ID AND ExpiryDate > '$CURRENT_DATE$')
+AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID=o.ID AND AnimalID=a.ID AND ExpiryDate > '$CURRENT_DATE$')
+AND (ol.AnimalID = 0 OR a.DeceasedDate Is Null)
 ORDER BY j.JurisdictionName, ol.ExpiryDate
 ###
 $$HEADER

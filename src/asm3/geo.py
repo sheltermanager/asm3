@@ -1,6 +1,7 @@
 
 """
-    Geocoding module. Supports google and nominatim
+    Geocoding module. Functions to look up geocodes from addresses, and addresses from a postcode.
+    Supports google and nominatim
 """
 
 import asm3.al
@@ -8,7 +9,7 @@ import asm3.cachedisk
 import asm3.configuration
 import asm3.i18n
 import asm3.utils
-from asm3.sitedefs import BASE_URL, GEO_PROVIDER, GEO_PROVIDER_KEY, GEO_LOOKUP_TIMEOUT, GEO_SLEEP_AFTER, GEO_SMCOM_URL
+from asm3.sitedefs import BASE_URL, GEO_PROVIDER, GEO_PROVIDER_KEY, GEO_LOOKUP_TIMEOUT, GEO_SLEEP_AFTER, GEO_SMCOM_URL, GEO_SMCOM_ADDRESS_URL
 
 import json
 import threading
@@ -40,11 +41,6 @@ class GeoProvider(object):
         self.country = country
         self.build_url()
 
-    def uri_encode(self, s):
-        """ Converts a parameter to URI encoding """
-        s = asm3.utils.html_to_uri(s) # Convert HTML entities to URI encoded entities &#255; becomes %ff
-        return s.replace("#", "").replace("&", "").replace("=", "").replace("^", "").replace(".", "").replace("\r", "").replace("\n", ",").replace(", ", ",").replace(" ", "+")
-
     def first_line(self, s):
         """ Returns just the first line of a string """
         if s.find("\n") == -1: return s
@@ -59,12 +55,12 @@ class GeoProvider(object):
     
     def build_url(self):
         """ Builds the URL """
-        street = self.uri_encode(self.first_line(self.address))
-        address = self.uri_encode(self.address)
-        town = self.uri_encode(self.town)
-        county = self.uri_encode(self.county)
-        postcode = self.uri_encode(self.postcode)
-        country = self.uri_encode(self.country)
+        street = asm3.utils.encode_uri(self.first_line(self.address))
+        address = asm3.utils.encode_uri(self.address)
+        town = asm3.utils.encode_uri(self.town)
+        county = asm3.utils.encode_uri(self.county)
+        postcode = asm3.utils.encode_uri(self.postcode)
+        country = asm3.utils.encode_uri(self.country)
         self.q = "%s,%s,%s,%s,%s" % (address, town, county, postcode, country)
         self.url = self.url.replace("{q}", self.q)
         self.url = self.url.replace("{street}", street).replace("{address}", address)
@@ -190,7 +186,7 @@ def get_lat_long(dbo, address, town, county, postcode, country = ""):
             return None
 
         # Check the cache in case we already requested this address
-        cachekey = "nom:" + g.q
+        cachekey = "nom:%s" % g.q
         v = asm3.cachedisk.get(cachekey, dbo.database)
         if v is not None:
             asm3.al.debug("cache hit for address: %s = %s" % (cachekey, v), "geo.get_lat_long", dbo)
@@ -214,5 +210,51 @@ def get_lat_long(dbo, address, town, county, postcode, country = ""):
 
     finally:
         lat_long_lock.release()
+
+def get_address(dbo, postcode, country = ""):
+    """
+    Looks up an address from a postcode and country.
+    Currently smcom only as it requires on our postcode lookup service smcom_geo.
+    Returns None if an error occurs during the lookup, otherwise returns a list of dictionaries of addresses for the postcode.
+    """
+    try:
+        if GEO_SMCOM_ADDRESS_URL == "": return None
+
+        # Check the cache in case we already requested this postcode
+        cachekey = "addr:p=%sc=%s" % (postcode, country)
+        v = asm3.cachedisk.get(cachekey, dbo.database)
+        if v is not None:
+            asm3.al.debug("cache hit for postcode/country: %s/%s = %s" % (postcode, country, v), "geo.get_address", dbo)
+            return v
+
+        # Build our postcode lookup url
+        url = GEO_SMCOM_ADDRESS_URL
+        url = url.replace("{postcode}", postcode).replace("{zipcode}", postcode)
+        url = url.replace("{country}", country)
+        url = url.replace("{key}", GEO_PROVIDER_KEY)
+
+        headers = { "Referer": BASE_URL, "User-Agent": "Animal Shelter Manager %s" % asm3.i18n.VERSION }
+        response = asm3.utils.get_url(url, headers=headers, timeout=GEO_LOOKUP_TIMEOUT)["response"]
+        
+        asm3.cachedisk.put(cachekey, dbo.database, v, 86400)
+
+        asm3.al.debug("postcode lookup: %s/%s = %s" % (postcode, country, response), "geo.get_postcode", dbo)
+
+        return response
+
+    except Exception as err:
+        asm3.al.error(str(err), "geo.get_postcode", dbo)
+        return None
+
+def get_postcode_lookup_available(l):
+    """ Returns True if postcode lookup is available. 
+        Only includes countries with postcodes that are specific enough to get a street.
+    """
+    return GEO_SMCOM_ADDRESS_URL != "" and l in ( 
+        "en_CA", "fr_CA",
+        "en_GB", 
+        "en_IE",
+        "nl"
+    )
 
 

@@ -2,7 +2,7 @@ New Donors between two Dates
 ###
 Financial
 ###
-Any
+Any rev02
 ###
 People who donated for the first time between two dates.
 ###
@@ -13,7 +13,7 @@ $VAR to DATE Enter to date$
 
 SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
 Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
-owner.OwnerPostcode 
+owner.OwnerPostcode, owner.EmailAddress
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
@@ -30,6 +30,7 @@ $$HEAD
 <table border=1><tr>
 <td><b>Date</b></td>
 <td><b>Donor</b></td>
+<td><b>Email</b></td>
 <td><b>Amount</b></td>
 </tr>
 $$FOOT
@@ -41,7 +42,10 @@ GROUP$$
 $$BODY
 <tr>
 <td>$date</td>
-<td>$ownername</td>
+<td><b>$ownername</b><br/>
+$owneraddress<br/>$ownertown $ownercounty $ownerpostcode
+</td>
+<td>$emailaddress</td>
 <td>$amt</td>
 </tr>
 BODY$$

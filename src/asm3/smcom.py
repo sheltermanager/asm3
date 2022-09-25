@@ -7,7 +7,12 @@ from asm3.sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
 import datetime
 import re
 import os, sys
-import web
+
+import web062 as web
+
+# The maximum number of emails allowed to be sent in one go through the
+# the sheltermanager.com email server
+MAX_EMAILS = 1500
 
 # Regex to remove invalid chars from an entered database
 INVALID_REMOVE = re.compile(r'[\/\.\*\?\ ]')
@@ -61,9 +66,16 @@ def get_database_info(alias):
         dbo.database = "FAIL"
         return dbo
 
-    dbo.database = str(a["user"])
+    dbo.database = a["user"]
     dbo.username = dbo.database
     dbo.password = dbo.database
+
+    # dbo.alias is used in particular when sending emails to make a friendlier
+    # bounce address. If the account has one, set it here. We used to just set
+    # this on login above, but if they logged in with their account number the 
+    # alias was not set.
+    if a["alias"] != "":
+        dbo.alias = a["alias"]
 
     # Is this sm.com account disabled or removed from the server?
     if a["expired"] or a["archived"]:
@@ -87,6 +99,20 @@ def get_expiry_date(dbo):
         return expiry
     except:
         return None
+
+def get_login_url(dbo):
+    """
+    Returns the login url for this account
+    """
+    return "https://sheltermanager.com/login/%s" % dbo.alias or dbo.database
+
+def get_reports():
+    """
+    Returns the reports.txt file
+    """
+    with open("/root/asmdb/reports.txt", "r", encoding="utf-8") as f:
+        s = f.read()
+    return s
 
 def go_smcom_my(dbo):
     """

@@ -1,6 +1,0 @@
-The following changes were made:
-
-tinymce/js/skins/lightgray/content*.css
-
-1. Any explicit line-height directives were removed.
-2. The default font-size was set to 11px (from 14px) to match the last version we were using (4.1.7)

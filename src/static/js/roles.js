@@ -11,11 +11,6 @@ $(function() {
             const cr = function(token, s) { return "<input id='" + token + "' type='checkbox' class='token' /> <label for='" + token + "'>" + s + "</label><br />"; };
             let h = [
                 '<div id="dialog-add" style="display: none" title="' + html.title(_("Add role")) + '">',
-                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info"></span>',
-                _("Roles need a name."),
-                '</p>',
-                '</div>',
                 '<input type="hidden" id="roleid" />',
                 '<input type="hidden" id="rolemap" />',
                 '<table width="100%">',
@@ -162,6 +157,8 @@ $(function() {
                 cr("vaci", _("View Incidents")),
                 cr("caci", _("Change Incidents")),
                 cr("daci", _("Delete Incidents")),
+                cr("cacd", _("Dispatch Incident")),
+                cr("cacr", _("Respond to Incident")),
                 cl(_("Trap Loans")),
                 cr("aatl", _("Add Trap Loans")),
                 cr("vatl", _("View Trap Loans")),
@@ -203,6 +200,8 @@ $(function() {
                 cr("asm", _("Access Settings Menu")),
                 cr("cso", _("Change System Options")),
                 cr("cpo", _("Change Publishing Options")),
+                cr("eav", _("Export Animals as CSV")),
+                cr("icv", _("Import CSV File")),
                 cr("maf", _("Modify Additional Fields")),
                 cr("mdt", _("Modify Document Templates")),
                 cr("ml", _("Modify Lookups")),
@@ -279,6 +278,8 @@ $(function() {
                     $("#button-clone").button("option", "disabled", true);
                 }
             });
+
+            validate.indicator([ "rolename" ]);
 
             let addbuttons = { };
             addbuttons[_("Create")] = async function() {

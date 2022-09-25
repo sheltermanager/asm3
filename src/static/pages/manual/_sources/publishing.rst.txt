@@ -56,6 +56,12 @@ The All Publishers tab allows you to set options common to all internet publishe
   Animals who are marked as held awaiting reclaim will *not* be registered until
   after the hold is removed.
 
+* Register microchips from: When registering microchips, only consider animals
+  where the event triggering registration (intake, adoption, reclaim, etc)
+  occurred after this date. This is useful when enabling registration for the
+  first time on a database full of a historic data where you do not want to
+  re-register old chips to potentially out of date adopters.
+
 * Update adoption websites every: Some adoption websites will accept updates
   more frequently than the 24 hour default. Setting this option to a value
   smaller than 24 will update those services at the chosen interval. Services
@@ -104,7 +110,7 @@ and age, or arranged numerically with a fixed number of animals per page. In
 addition, a recently adopted page can be generated along with an rss.xml for
 feed readers.
 
-.. warning:: Static HTML publishing is deprecated for sheltermanager.com and will not be available in the future.
+.. warning:: Static HTML publishing is deprecated for sheltermanager.com and is no longer available.
 
 * Generate javascript database: The site search facilities require a Javascript
   database, indexing the available animal records. If you wish to include
@@ -287,9 +293,13 @@ can also integrate with PetFinder.com and upload your animals for adoption
 directly to your account with them.  You will need to go to
 :menuselection:`Publishing --> Set Publishing Options` first and view the
 PetFinder panel. Here, you should enter the shelter Id given to you by
-PetFinder.com and your password. All you need to do then is choose Publish to
-PetFinder.com in place of the normal internet publisher. The options for
-filtering animals are the same (see previous section for reference).
+PetFinder.com and the FTP password they have assigned to you.
+
+You can also opt to have your shelter animals with the "Hold" flag sent with
+the PetFinder H status, and shelter animals who have the word "Stray" in
+their entry category sent with an F status. This will put those animals into
+PetFinder's lost and found database to help with reuniting stray pets with
+their owners.
 
 .. note:: If you have created new Species or Breeds within ASM, you will need to map them to the available publisher options under the Breed and Species sections of :menuselection:`Settings --> Lookup Data`
 
@@ -305,6 +315,29 @@ triggered by setting your second breed to "Crossbreed", "Unknown" or "Mix".
 
 .. warning:: You have to let PetFinder know that you are using ASM to upload your data. Do this by logging into the PetFinder members area, go to the Admin System Help Center, then Contact Us and send PetFinder Tech Support a message that you are using ASM to publish animal data via their FTP server. They should give you the FTP login information and make sure permissions and quotas are correct.
 
+Extra fields
+^^^^^^^^^^^^
+
+PetFinder have a number of extra fields that you can set by creating additional
+animal fields with certain names in your database. The system responds to the
+field names, you can label them anything you want, they must be linked to
+animal records.
+
+* pfprimarycolor, pfsecondarycolor, pftertiarycolor (Text): ASM only uses a
+  single value for animal color, so our color field cannot be mapped to PetFinder. 
+  Instead, you can add the three color fields that PetFinder used and supply 
+  appropriate values. The values they will accept for color depend on the species
+  of your animal and can be found here: https://github.com/bobintetley/asm3/files/3487421/import.breeds.coats.colors.updated.Aug.2019.xlsx
+
+* pfcoatlength (Text): PetFinder can accept a coat length value, which is one of
+  Short, Long, Medium, Wire, Hairless, Curly
+
+* pfadoptionfeewaived (Bool): a 1 or 0 to indicate that there is no adoption fee 
+  for this animal.
+
+* pfspecialneedsnotes (Text): If the animal has special needs, you can add a
+  note about those needs to be output on their PetFinder listing.
+
 petrescue.com.au
 ----------------
 
@@ -319,13 +352,10 @@ Publish to PetRescue.com.au in place of the normal internet publisher. The
 options for filtering animals are the same (see previous section for
 reference).
 
-Options are available to override the desex flag to send all your animals and to 
-indicate which states you will adopt animals to. These are necessary as some
-states have different rules on whether a microchip number or other identifier 
-is needed. The state the animal is currently located in (from the fosterer
-record if available or shelter details) is implicitly added to this set.
+Determing whether an animal is vaccinated
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-ASM will determined if your animals are vaccinated, wormed or heartworm treated
+ASM will determine if your animals are vaccinated, wormed or heartworm treated
 and indicate this to PetRescue via the following rules:
 
 * If the animal has at least 1 previously given vaccination on file and there
@@ -336,6 +366,9 @@ and indicate this to PetRescue via the following rules:
 
 * If the animal has a medical treatment containing the words "heart" and
   "worm" in the last 6 months, the heartworm treated flag is set.
+
+Extra fields
+^^^^^^^^^^^^
 
 PetRescue have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
@@ -399,6 +432,13 @@ password given to you by SavourLife. The options for filtering animals are the
 same as for other publishers, although ASM will only send dogs (Species 1) as
 SavourLife will not accept listings for other species of animals.
 
+Note that regardless of whether you have set the publishing option to
+"Include animals who don't have a picture", SavourLife will not accept listings
+without a photo, so we will not send animals who do not have a photo.
+
+Determing whether an animal is vaccinated
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 ASM will determined if your dogs are vaccinated, wormed or heartworm treated
 and indicate this to SavourLife via the following rules:
 
@@ -411,6 +451,9 @@ and indicate this to SavourLife via the following rules:
 * If the animal has a medical treatment containing the words "heart" and
   "worm" in the last 6 months, the heartworm treated flag is set.
 
+Extra fields
+^^^^^^^^^^^^
+
 SavourLife have extra fields that you can set by creating additional 
 fields with certain names in your database. The system responds to the field
 names, you can label them anything you want, they must be linked to animal
@@ -422,6 +465,9 @@ records.
   SavourLife.
 
 * needsfoster (Yes/No): Indicates that foster care is required for the animal.
+
+* interstateadoptable (Yes/No): Overrides the global interstate adoptable value on
+  the config screen and allows you to apply it on a per-animal basis instead.
 
 .. note:: SavourLife integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the SavourLife breeds, ASM will send it as "Mixed Breed" instead. 
 
@@ -483,6 +529,9 @@ AKC Reunite
 ASM can register microchips with AKC Reunite, part of the American Kennel Club,
 who supply microchips to US organisations and pet owners. AKC microchips are 
 either 15-digits, starting with 956 or 10-digits, starting with 0006 or 0007.
+
+They will optionally accept registration of any microchip, although this has
+to be agreed with them first. 
 
 FoundAnimals
 -------

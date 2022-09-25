@@ -2,7 +2,7 @@ All Fosterers Info
 ###
 Auditing
 ###
-3000/Any
+3000/PostgreSQL rev01
 ###
 All fosterers with contact info and notes
 ###
@@ -14,6 +14,7 @@ OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTeleph
 Comments,
 AdditionalFlags,
 (SELECT COUNT(*) FROM adoption WHERE MovementType = 2 AND OwnerID = owner.ID AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')) AS ActiveFosters,
+(SELECT string_agg(ShelterCode || ' ' || AnimalName, ', ') FROM adoption INNER JOIN animal ON animal.ActiveMovementID = adoption.ID WHERE adoption.OwnerID = owner.ID AND MovementType=2 AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')) AS FosterList,
 FosterCapacity
 FROM owner
 WHERE IsFosterer = 1 
@@ -27,6 +28,7 @@ $$HEADER
 <th>Flags</th>
 <th>Comments</th>
 <th>Fosters</th>
+<th></th>
 </tr>
 HEADER$$
 
@@ -41,6 +43,7 @@ E: $EMAILADDRESS</td>
 <td>$ADDITIONALFLAGS</td>
 <td>$COMMENTS</td>
 <td>$ACTIVEFOSTERS / $FOSTERCAPACITY</td>
+<td>$FOSTERLIST</td>
 </tr>
 BODY$$
 

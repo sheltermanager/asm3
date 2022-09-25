@@ -11,7 +11,6 @@ $(function() {
                 add_title: _("Add log"),
                 edit_title: _("Edit log"),
                 edit_perm: 'cle',
-                helper_text: _("Log entries need a date and text."),
                 close_on_ok: false,
                 columns: 1,
                 width: 500,
@@ -28,6 +27,8 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
+                    if (row.COMMENTS.indexOf("ES0") == 0) { return; } // Do not allow editing electronic signature related logs
+                    if (row.COMMENTS.indexOf("AC0") == 0) { return; } // Do not allow editing adoption checkout related logs
                     tableform.fields_populate_from_json(dialog.fields, row);
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
@@ -41,11 +42,13 @@ $(function() {
                         tableform.dialog_enable_buttons();
                     }
                 },
+                complete: function(row) {
+                    return row.COMMENTS.indexOf("ES0") == 0 || row.COMMENTS.indexOf("AC0") == 0;
+                },
                 columns: [
                     { field: "LOGTYPENAME", display: _("Type") },
                     { field: "LASTCHANGEDBY", display: _("By") },
-                    { field: "DATE", display: _("Date"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
-                    { field: "DATE", display: _("Time"), formatter: tableform.format_time_blank },
+                    { field: "DATE", display: _("Date"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "desc" },
                     { field: "COMMENTS", display: _("Note"), formatter: tableform.format_comments }
                 ]
             };
@@ -56,21 +59,25 @@ $(function() {
                         await tableform.dialog_show_add(dialog, {
                             onload: function() {
                                 $("#type").select("value", config.integer("AFDefaultLogType"));    
-                            }});
-                        try {
-                            let formdata = "mode=create&linktypeid=" + controller.linktypeid + "&linkid=" + controller.linkid;
-                            let response = await tableform.fields_post(dialog.fields, formdata , "log");
-                            let row = {};
-                            row.ID = response;
-                            tableform.fields_update_row(dialog.fields, row);
-                            log.set_extra_fields(row);
-                            controller.rows.push(row);
-                            tableform.table_update(table);
-                            tableform.dialog_close();
-                        }
-                        finally {
-                            tableform.dialog_enable_buttons();   
-                        }
+                                $("#logtime").val(format.time(new Date()));
+                            },
+                            onadd: async function() {
+                                try {
+                                    let formdata = "mode=create&linktypeid=" + controller.linktypeid + "&linkid=" + controller.linkid;
+                                    let response = await tableform.fields_post(dialog.fields, formdata , "log");
+                                    let row = {};
+                                    row.ID = response;
+                                    tableform.fields_update_row(dialog.fields, row);
+                                    log.set_extra_fields(row);
+                                    controller.rows.push(row);
+                                    tableform.table_update(table);
+                                    tableform.dialog_close();
+                                }
+                                finally {
+                                    tableform.dialog_enable_buttons();   
+                                }
+                            }
+                        });
                 }},
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dle",
                     click: async function() { 
@@ -129,6 +136,7 @@ $(function() {
 
         bind: function() {
             $(".asm-tabbar").asmtabs();
+            $("#filter").select("removeRetiredOptions", "all");
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);

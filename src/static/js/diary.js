@@ -22,7 +22,7 @@ $(function() {
                     { json_field: "DIARYDATETIME", post_field: "diarytime", label: _("Time"), type: "time" },
                     { json_field: "DATECOMPLETED", post_field: "completed", label: _("Completed"), type: "date" },
                     { json_field: "SUBJECT", label: _("Subject"), post_field: "subject", validation: "notblank", type: "text" },
-                    { json_field: "NOTE", label: _("Note"), post_field: "note", validation: "notblank", type: "textarea" },
+                    { json_field: "NOTE", label: _("Note"), post_field: "note", type: "textarea" },
                     { json_field: "COMMENTS", label: _("Comments"), post_field: "comments", type: "textarea" }
                 ]
             };
@@ -90,7 +90,7 @@ $(function() {
                             if (row.LINKTYPE == 3) { link = "lostanimal?id=" + row.LINKID; }
                             if (row.LINKTYPE == 4) { link = "foundanimal?id=" + row.LINKID; }
                             if (row.LINKTYPE == 5) { link = "waitinglist?id=" + row.LINKID; }
-                            if (row.LINKTYPE == 6) { link = "incident?id=" + row.LINKID; }
+                            if (row.LINKTYPE == 7) { link = "incident?id=" + row.LINKID; }
                             if (link != "#") { return '<a href="' + link + '">' + row.LINKINFO + '</a>'; }
                             return row.LINKINFO;
                         },

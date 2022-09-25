@@ -1,38 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Appendix: Database Tables/Columns &mdash; ASM 44u documentation</title>
+  <title>Appendix: Database Tables/Columns &mdash; ASM 46u documentation</title>
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Appendix: Entity Relationship Diagrams" href="relationships.html" />
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                44u
+                46u
               </div>
             
           
@@ -77,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -130,6 +131,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -164,18 +166,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Appendix: Database Tables/Columns</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/databasetables.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -194,403 +198,406 @@
 <div class="section" id="adoption">
 <h2>adoption<a class="headerlink" href="#adoption" title="Permalink to this headline">¶</a></h2>
 <p>The adoption table holds a row for each movement attached to an animal or person.</p>
-<dl class="docutils">
-<dt>ID</dt>
-<dd>INTEGER
-A unique, incrementing number that identifies this record</dd>
-<dt>AdoptionNumber</dt>
-<dd>VARCHAR
-A unique string identifying this movement (defaults to adoption.ID)</dd>
-<dt>AnimalID</dt>
-<dd>INTEGER
-Link to the animal table</dd>
-<dt>OwnerID</dt>
-<dd>INTEGER
-Link to the owner table</dd>
-<dt>RetailerID</dt>
-<dd>INTEGER
-Link to the owner table for a retailer (0 for no retailer)</dd>
-<dt>OriginalRetailerMovementID</dt>
-<dd>INTEGER
-Link to another movement in this table for an original movement to retailer that started this adoption</dd>
-<dt>MovementDate</dt>
-<dd>TIMESTAMP
-The date the animal moved</dd>
-<dt>MovementType</dt>
-<dd>INTEGER
-Link to the lksmovementtype table for the type of animal movement (none = reservation, adoption, foster, transfer, escaped, stolen, reclaimed, etc)</dd>
-<dt>ReturnDate</dt>
-<dd>TIMESTAMP
-The date the animal came back to the shelter from this movement (or null for not returned)</dd>
-<dt>ReturnedReasonID</dt>
-<dd>INTEGER
-Link to the entryreason table for reason for return</dd>
-<dt>InsuranceNumber</dt>
-<dd>VARCHAR
-If your shelter does short term insurance when adopting, the policy number</dd>
-<dt>ReasonForReturn</dt>
-<dd>VARCHAR
-Free text, the reason the animal was returned</dd>
-<dt>ReservationDate</dt>
-<dd>TIMESTAMP
-For reservation movements, the reservation date</dd>
-<dt>Donation</dt>
-<dd>FLOAT
-A total of all donations attached to this movement</dd>
-<dt>ReservationCancelledDate</dt>
-<dd>TIMESTAMP
-If this is a reservation and it has been cancelled, the date it was cancelled</dd>
-<dt>IsTrial</dt>
-<dd>INTEGER
-1 if this is a trial adoption movement</dd>
-<dt>TrialEndDate</dt>
-<dd>TIMESTAMP
-The date this trial ends if it is a trial adoption movement</dd>
-<dt>Comments</dt>
-<dd>VARCHAR
-Movement comments</dd>
-<dt>RecordVersion</dt>
-<dd>INTEGER
-Optimistic lock flag</dd>
-<dt>CreatedBy</dt>
-<dd>VARCHAR
-User who created this record</dd>
-<dt>CreatedDate</dt>
-<dd>TIMESTAMP
-Date this record was created</dd>
-<dt>LastChangedBy</dt>
-<dd>VARCHAR
-User who last changed this record</dd>
-<dt>LastChangedDate</dt>
-<dd>TIMESTAMP
-Date this record was last changed</dd>
+<dl class="simple">
+<dt>ID</dt><dd><p>INTEGER
+A unique, incrementing number that identifies this record</p>
+</dd>
+<dt>AdoptionNumber</dt><dd><p>VARCHAR
+A unique string identifying this movement (defaults to adoption.ID)</p>
+</dd>
+<dt>AnimalID</dt><dd><p>INTEGER
+Link to the animal table</p>
+</dd>
+<dt>OwnerID</dt><dd><p>INTEGER
+Link to the owner table</p>
+</dd>
+<dt>RetailerID</dt><dd><p>INTEGER
+Link to the owner table for a retailer (0 for no retailer)</p>
+</dd>
+<dt>OriginalRetailerMovementID</dt><dd><p>INTEGER
+Link to another movement in this table for an original movement to retailer that started this adoption</p>
+</dd>
+<dt>MovementDate</dt><dd><p>TIMESTAMP
+The date the animal moved</p>
+</dd>
+<dt>MovementType</dt><dd><p>INTEGER
+Link to the lksmovementtype table for the type of animal movement (none = reservation, adoption, foster, transfer, escaped, stolen, reclaimed, etc)</p>
+</dd>
+<dt>ReturnDate</dt><dd><p>TIMESTAMP
+The date the animal came back to the shelter from this movement (or null for not returned)</p>
+</dd>
+<dt>ReturnedReasonID</dt><dd><p>INTEGER
+Link to the entryreason table for reason for return</p>
+</dd>
+<dt>InsuranceNumber</dt><dd><p>VARCHAR
+If your shelter does short term insurance when adopting, the policy number</p>
+</dd>
+<dt>ReasonForReturn</dt><dd><p>VARCHAR
+Free text, the reason the animal was returned</p>
+</dd>
+<dt>ReservationDate</dt><dd><p>TIMESTAMP
+For reservation movements, the reservation date</p>
+</dd>
+<dt>Donation</dt><dd><p>FLOAT
+A total of all donations attached to this movement</p>
+</dd>
+<dt>ReservationCancelledDate</dt><dd><p>TIMESTAMP
+If this is a reservation and it has been cancelled, the date it was cancelled</p>
+</dd>
+<dt>IsTrial</dt><dd><p>INTEGER
+1 if this is a trial adoption movement</p>
+</dd>
+<dt>TrialEndDate</dt><dd><p>TIMESTAMP
+The date this trial ends if it is a trial adoption movement</p>
+</dd>
+<dt>Comments</dt><dd><p>VARCHAR
+Movement comments</p>
+</dd>
+<dt>RecordVersion</dt><dd><p>INTEGER
+Optimistic lock flag</p>
+</dd>
+<dt>CreatedBy</dt><dd><p>VARCHAR
+User who created this record</p>
+</dd>
+<dt>CreatedDate</dt><dd><p>TIMESTAMP
+Date this record was created</p>
+</dd>
+<dt>LastChangedBy</dt><dd><p>VARCHAR
+User who last changed this record</p>
+</dd>
+<dt>LastChangedDate</dt><dd><p>TIMESTAMP
+Date this record was last changed</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="animal">
 <h2>animal<a class="headerlink" href="#animal" title="Permalink to this headline">¶</a></h2>
 <p>The animal table holds a row for each animal on the system. Various denormalised fields at the end are used to track the current movement, whether the animal is on shelter, etc. These are useful for writing reports.</p>
-<dl class="docutils">
-<dt>ID</dt>
-<dd>INTEGER
-A unique, incrementing number that identifies this record</dd>
-<dt>AnimalTypeID</dt>
-<dd>INTEGER
-Link to the animaltype table</dd>
-<dt>AnimalName</dt>
-<dd>VARCHAR
-The animal’s name</dd>
-<dt>NonShelterAnimal</dt>
-<dd>INTEGER
-1 if the animal is a non-shelter animal (kept out of figures)</dd>
-<dt>CrueltyCase</dt>
-<dd>INTEGER
-1 if the animal is a cruelty case (all 0/1 fields link to lksyesno table)</dd>
-<dt>BondedAnimalID</dt>
-<dd>INTEGER
-Animal ID of bonded animal 1 (or 0)</dd>
-<dt>BondedAnimal2ID</dt>
-<dd>INTEGER
-Animal ID of bonded animal 2 (or 0)</dd>
-<dt>BaseColourID</dt>
-<dd>INTEGER
-Link to the basecolour table</dd>
-<dt>SpeciesID</dt>
-<dd>INTEGER
-Link to the species table</dd>
-<dt>BreedID</dt>
-<dd>INTEGER
-Primary breed (link to the breed table)</dd>
-<dt>Breed2ID</dt>
-<dd>INTEGER
-Secondary breed (same as primary if not crossbreed)</dd>
-<dt>BreedName</dt>
-<dd>VARCHAR
-Name of breed in form breed1 / breed2 if crossbreed</dd>
-<dt>CrossBreed</dt>
-<dd>INTEGER
-1 if animal is a crossbreed</dd>
-<dt>CoatType</dt>
-<dd>INTEGER
-Link to lkcoattype table</dd>
-<dt>Markings</dt>
-<dd>VARCHAR
-Distinguishing features field</dd>
-<dt>ShelterCode</dt>
-<dd>VARCHAR
-The animal’s shelter code</dd>
-<dt>ShortCode</dt>
-<dd>VARCHAR
-The short version of the shelter code</dd>
-<dt>UniqueCodeID</dt>
-<dd>INTEGER
-The next UUU code can be generated by doing MAX(UniqueCodeID)</dd>
-<dt>YearCodeID</dt>
-<dd>INTEGER
-The next NNN code is MAX(YearCodeID) for matching brought in year and type</dd>
-<dt>AcceptanceNumber</dt>
-<dd>VARCHAR
-The acceptance number/Litter ID</dd>
-<dt>DateOfBirth</dt>
-<dd>TIMESTAMP
-The animal’s date of birth</dd>
-<dt>AgeGroup</dt>
-<dd>VARCHAR
-The animal’s age group based on date of birth at the most recent time it entered the shelter</dd>
-<dt>AgeGroupActiveMovement</dt>
-<dd>VARCHAR
-The animal’s age group based on date of birth at the last time it left the shelter</dd>
-<dt>DeceasedDate</dt>
-<dd>TIMESTAMP
-Date the animal died, if null the animal is still alive</dd>
-<dt>Sex</dt>
-<dd>INTEGER
-Link to the lksex table</dd>
-<dt>Identichipped</dt>
-<dd>INTEGER
-1 if the animal is microchipped</dd>
-<dt>IdentichipNumber</dt>
-<dd>VARCHAR
-The animal’s microchip number</dd>
-<dt>IdentichipDate</dt>
-<dd>TIMESTAMP
-The date the animal was microchipped</dd>
-<dt>Tattoo</dt>
-<dd>INTEGER
-1 if the animal has an ear tattoo</dd>
-<dt>TattooNumber</dt>
-<dd>VARCHAR
-The animal’s tattoo number</dd>
-<dt>TattooDate</dt>
-<dd>TIMESTAMP
-The date the animal was tattooed</dd>
-<dt>Neutered</dt>
-<dd>INTEGER
-1 if the animal has been neutered/spayed</dd>
-<dt>NeuteredDate</dt>
-<dd>TIMESTAMP
-The date the animal was neutered/spayed</dd>
-<dt>Declawed</dt>
-<dd>INTEGER
-1 if the animal has been declawed</dd>
-<dt>HiddenAnimalDetails</dt>
-<dd>VARCHAR
-Hidden animal comments</dd>
-<dt>AnimalComments</dt>
-<dd>VARCHAR
-The animal’s comments</dd>
-<dt>OwnersVetID</dt>
-<dd>INTEGER
-Link to the owner’s vet (owner table, 0 for no value)</dd>
-<dt>CurrentVetID</dt>
-<dd>INTEGER
-Link to the current vet (owner table, 0 for no value)</dd>
-<dt>OriginalOwnerID</dt>
-<dd>INTEGER
-Link to the original owner (owner table)</dd>
-<dt>BroughtInByOwnerID</dt>
-<dd>INTEGER
-Link to the owner who brought the animal in (owner table)</dd>
-<dt>ReasonForEntry</dt>
-<dd>VARCHAR
-Freeform text, reason animal was brought to shelter</dd>
-<dt>ReasonNO</dt>
-<dd>VARCHAR
-Freeform text, reason original owner didn’t bring the animal in</dd>
-<dt>DateBroughtIn</dt>
-<dd>TIMESTAMP
-The date the animal was brought into the shelter</dd>
-<dt>EntryReasonID</dt>
-<dd>INTEGER
-Reason for entry (link to entryreason table)</dd>
-<dt>HealthProblems</dt>
-<dd>VARCHAR
-Health problems box on Vet tab</dd>
-<dt>PutToSleep</dt>
-<dd>INTEGER
-1 if the animal was euthanised</dd>
-<dt>PTSReason</dt>
-<dd>VARCHAR
-Freeform text, reason the animal died</dd>
-<dt>PTSReasonID</dt>
-<dd>INTEGER
-Euthanasia category - link to deathreason table</dd>
-<dt>IsDOA</dt>
-<dd>INTEGER
-1 if the animal was dead on arrival to the shelter</dd>
-<dt>IsTransfer</dt>
-<dd>INTEGER
-1 if the animal was a transfer from another animal shelter</dd>
-<dt>IsGoodWithCats</dt>
-<dd>INTEGER
-Link to the lksynun table for yes/no/unknown</dd>
-<dt>IsGoodWithDogs</dt>
-<dd>INTEGER
-Link to the lksynun table for yes/no/unknown</dd>
-<dt>IsGoodWithChildren</dt>
-<dd>INTEGER
-Link to the lksynun table for yes/no/unknown</dd>
-<dt>IsHouseTrained</dt>
-<dd>INTEGER
-Link to the lksynun table for yes/no/unknown</dd>
-<dt>IsNotAvailableForAdoption</dt>
-<dd>INTEGER
-1 if the animal should not be included for publishing as adoptable</dd>
-<dt>HasSpecialNeeds</dt>
-<dd>INTEGER
-1 if the animal has special needs</dd>
-<dt>ShelterLocation</dt>
-<dd>INTEGER
-Location on shelter (link to internallocation table)</dd>
-<dt>DiedOffShelter</dt>
-<dd>INTEGER
-1 if the animal died off shelter (won’t be included on figures reports)</dd>
-<dt>Size</dt>
-<dd>INTEGER
-animal’s size (link to lksize table)</dd>
-<dt>RabiesTag</dt>
-<dd>VARCHAR
-The rabies tag field</dd>
-<dt>Archived</dt>
-<dd>INTEGER
-1 if the animal is off shelter now</dd>
-<dt>ActiveMovementID</dt>
-<dd>INTEGER
-Link to the adoption table for the latest movement for this animal</dd>
-<dt>ActiveMovementType</dt>
-<dd>INTEGER
-Link to lksmovementtype for the current movement type</dd>
-<dt>ActiveMovementDate</dt>
-<dd>TIMESTAMP
-The current movement date</dd>
-<dt>ActiveMovementReturn</dt>
-<dd>TIMESTAMP
-The current movement’s return date</dd>
-<dt>HasActiveReserve</dt>
-<dd>INTEGER
-1 if the animal has an open reservation</dd>
-<dt>HasTrialAdoption</dt>
-<dd>INTEGER
-1 if the animal is on trial adoption</dd>
-<dt>DisplayLocation</dt>
-<dd>VARCHAR
-Shows a readable version of the animal’s location. If on shelter, the internal location. If off shelter, the movementtype, accompanied by the person name.</dd>
-<dt>MostRecentEntryDate</dt>
-<dd>TIMESTAMP
-The most recent entry date - either DateBroughtIn or ActiveMovementDate</dd>
-<dt>TimeOnShelter</dt>
-<dd>VARCHAR
-Readable time spent on shelter (eg: 1 year, 3 months)</dd>
-<dt>DaysOnShelter</dt>
-<dd>INTEGER
-Number of days spent on shelter</dd>
-<dt>DailyBoardingCost</dt>
-<dd>INTEGER
-The cost of one days board on shelter for this animal</dd>
-<dt>AnimalAge</dt>
-<dd>VARCHAR
-Readable animal age (eg: 1 year, 3 months)</dd>
-<dt>RecordVersion</dt>
-<dd>INTEGER
-For optimistic locking, each save increments this lock value</dd>
-<dt>CreatedBy</dt>
-<dd>VARCHAR
-Name of user that created this record</dd>
-<dt>CreatedDate</dt>
-<dd>TIMESTAMP
-Date this record was created</dd>
-<dt>LastChangedBy</dt>
-<dd>VARCHAR
-Name of user that last changed this record</dd>
-<dt>LastChangedDate</dt>
-<dd>TIMESTAMP
-Date this record was last changed</dd>
+<dl class="simple">
+<dt>ID</dt><dd><p>INTEGER
+A unique, incrementing number that identifies this record</p>
+</dd>
+<dt>AnimalTypeID</dt><dd><p>INTEGER
+Link to the animaltype table</p>
+</dd>
+<dt>AnimalName</dt><dd><p>VARCHAR
+The animal’s name</p>
+</dd>
+<dt>NonShelterAnimal</dt><dd><p>INTEGER
+1 if the animal is a non-shelter animal (kept out of figures)</p>
+</dd>
+<dt>CrueltyCase</dt><dd><p>INTEGER
+1 if the animal is a cruelty case (all 0/1 fields link to lksyesno table)</p>
+</dd>
+<dt>BondedAnimalID</dt><dd><p>INTEGER
+Animal ID of bonded animal 1 (or 0)</p>
+</dd>
+<dt>BondedAnimal2ID</dt><dd><p>INTEGER
+Animal ID of bonded animal 2 (or 0)</p>
+</dd>
+<dt>BaseColourID</dt><dd><p>INTEGER
+Link to the basecolour table</p>
+</dd>
+<dt>SpeciesID</dt><dd><p>INTEGER
+Link to the species table</p>
+</dd>
+<dt>BreedID</dt><dd><p>INTEGER
+Primary breed (link to the breed table)</p>
+</dd>
+<dt>Breed2ID</dt><dd><p>INTEGER
+Secondary breed (same as primary if not crossbreed)</p>
+</dd>
+<dt>BreedName</dt><dd><p>VARCHAR
+Name of breed in form breed1 / breed2 if crossbreed</p>
+</dd>
+<dt>CrossBreed</dt><dd><p>INTEGER
+1 if animal is a crossbreed</p>
+</dd>
+<dt>CoatType</dt><dd><p>INTEGER
+Link to lkcoattype table</p>
+</dd>
+<dt>Markings</dt><dd><p>VARCHAR
+Distinguishing features field</p>
+</dd>
+<dt>ShelterCode</dt><dd><p>VARCHAR
+The animal’s shelter code</p>
+</dd>
+<dt>ShortCode</dt><dd><p>VARCHAR
+The short version of the shelter code</p>
+</dd>
+<dt>UniqueCodeID</dt><dd><p>INTEGER
+The next UUU code can be generated by doing MAX(UniqueCodeID)</p>
+</dd>
+<dt>YearCodeID</dt><dd><p>INTEGER
+The next NNN code is MAX(YearCodeID) for matching brought in year and type</p>
+</dd>
+<dt>AcceptanceNumber</dt><dd><p>VARCHAR
+The acceptance number/Litter ID</p>
+</dd>
+<dt>DateOfBirth</dt><dd><p>TIMESTAMP
+The animal’s date of birth</p>
+</dd>
+<dt>AgeGroup</dt><dd><p>VARCHAR
+The animal’s age group based on date of birth at the most recent time it entered the shelter</p>
+</dd>
+<dt>AgeGroupActiveMovement</dt><dd><p>VARCHAR
+The animal’s age group based on date of birth at the last time it left the shelter</p>
+</dd>
+<dt>DeceasedDate</dt><dd><p>TIMESTAMP
+Date the animal died, if null the animal is still alive</p>
+</dd>
+<dt>Sex</dt><dd><p>INTEGER
+Link to the lksex table</p>
+</dd>
+<dt>Identichipped</dt><dd><p>INTEGER
+1 if the animal is microchipped</p>
+</dd>
+<dt>IdentichipNumber</dt><dd><p>VARCHAR
+The animal’s microchip number</p>
+</dd>
+<dt>IdentichipDate</dt><dd><p>TIMESTAMP
+The date the animal was microchipped</p>
+</dd>
+<dt>Tattoo</dt><dd><p>INTEGER
+1 if the animal has an ear tattoo</p>
+</dd>
+<dt>TattooNumber</dt><dd><p>VARCHAR
+The animal’s tattoo number</p>
+</dd>
+<dt>TattooDate</dt><dd><p>TIMESTAMP
+The date the animal was tattooed</p>
+</dd>
+<dt>Neutered</dt><dd><p>INTEGER
+1 if the animal has been neutered/spayed</p>
+</dd>
+<dt>NeuteredDate</dt><dd><p>TIMESTAMP
+The date the animal was neutered/spayed</p>
+</dd>
+<dt>Declawed</dt><dd><p>INTEGER
+1 if the animal has been declawed</p>
+</dd>
+<dt>HiddenAnimalDetails</dt><dd><p>VARCHAR
+Hidden animal comments</p>
+</dd>
+<dt>AnimalComments</dt><dd><p>VARCHAR
+The animal’s comments</p>
+</dd>
+<dt>OwnersVetID</dt><dd><p>INTEGER
+Link to the owner’s vet (owner table, 0 for no value)</p>
+</dd>
+<dt>CurrentVetID</dt><dd><p>INTEGER
+Link to the current vet (owner table, 0 for no value)</p>
+</dd>
+<dt>OriginalOwnerID</dt><dd><p>INTEGER
+Link to the original owner (owner table)</p>
+</dd>
+<dt>BroughtInByOwnerID</dt><dd><p>INTEGER
+Link to the owner who brought the animal in (owner table)</p>
+</dd>
+<dt>ReasonForEntry</dt><dd><p>VARCHAR
+Freeform text, reason animal was brought to shelter</p>
+</dd>
+<dt>ReasonNO</dt><dd><p>VARCHAR
+Freeform text, reason original owner didn’t bring the animal in</p>
+</dd>
+<dt>DateBroughtIn</dt><dd><p>TIMESTAMP
+The date the animal was brought into the shelter</p>
+</dd>
+<dt>EntryReasonID</dt><dd><p>INTEGER
+Reason for entry (link to entryreason table)</p>
+</dd>
+<dt>HealthProblems</dt><dd><p>VARCHAR
+Health problems box on Vet tab</p>
+</dd>
+<dt>PutToSleep</dt><dd><p>INTEGER
+1 if the animal was euthanised</p>
+</dd>
+<dt>PTSReason</dt><dd><p>VARCHAR
+Freeform text, reason the animal died</p>
+</dd>
+<dt>PTSReasonID</dt><dd><p>INTEGER
+Euthanasia category - link to deathreason table</p>
+</dd>
+<dt>IsDOA</dt><dd><p>INTEGER
+1 if the animal was dead on arrival to the shelter</p>
+</dd>
+<dt>IsTransfer</dt><dd><p>INTEGER
+1 if the animal was a transfer from another animal shelter</p>
+</dd>
+<dt>IsGoodWithCats</dt><dd><p>INTEGER
+Link to the lksynun table for yes/no/unknown</p>
+</dd>
+<dt>IsGoodWithDogs</dt><dd><p>INTEGER
+Link to the lksynun table for yes/no/unknown</p>
+</dd>
+<dt>IsGoodWithChildren</dt><dd><p>INTEGER
+Link to the lksynun table for yes/no/unknown</p>
+</dd>
+<dt>IsHouseTrained</dt><dd><p>INTEGER
+Link to the lksynun table for yes/no/unknown</p>
+</dd>
+<dt>IsNotAvailableForAdoption</dt><dd><p>INTEGER
+1 if the animal should not be included for publishing as adoptable</p>
+</dd>
+<dt>HasSpecialNeeds</dt><dd><p>INTEGER
+1 if the animal has special needs</p>
+</dd>
+<dt>ShelterLocation</dt><dd><p>INTEGER
+Location on shelter (link to internallocation table)</p>
+</dd>
+<dt>DiedOffShelter</dt><dd><p>INTEGER
+1 if the animal died off shelter (won’t be included on figures reports)</p>
+</dd>
+<dt>Size</dt><dd><p>INTEGER
+animal’s size (link to lksize table)</p>
+</dd>
+<dt>RabiesTag</dt><dd><p>VARCHAR
+The rabies tag field</p>
+</dd>
+<dt>Adoptable</dt><dd><p>INTEGER
+1 if the animal is adoptable according to publishing rules</p>
+</dd>
+<dt>Archived</dt><dd><p>INTEGER
+1 if the animal is off shelter now</p>
+</dd>
+<dt>ActiveMovementID</dt><dd><p>INTEGER
+Link to the adoption table for the latest movement for this animal</p>
+</dd>
+<dt>ActiveMovementType</dt><dd><p>INTEGER
+Link to lksmovementtype for the current movement type</p>
+</dd>
+<dt>ActiveMovementDate</dt><dd><p>TIMESTAMP
+The current movement date</p>
+</dd>
+<dt>ActiveMovementReturn</dt><dd><p>TIMESTAMP
+The current movement’s return date</p>
+</dd>
+<dt>HasActiveReserve</dt><dd><p>INTEGER
+1 if the animal has an open reservation</p>
+</dd>
+<dt>HasTrialAdoption</dt><dd><p>INTEGER
+1 if the animal is on trial adoption</p>
+</dd>
+<dt>DisplayLocation</dt><dd><p>VARCHAR
+Shows a readable version of the animal’s location. If on shelter, the internal location. If off shelter, the movementtype, accompanied by the person name.</p>
+</dd>
+<dt>MostRecentEntryDate</dt><dd><p>TIMESTAMP
+The most recent entry date - either DateBroughtIn or ActiveMovementDate</p>
+</dd>
+<dt>TimeOnShelter</dt><dd><p>VARCHAR
+Readable time spent on shelter (eg: 1 year, 3 months)</p>
+</dd>
+<dt>DaysOnShelter</dt><dd><p>INTEGER
+Number of days spent on shelter</p>
+</dd>
+<dt>DailyBoardingCost</dt><dd><p>INTEGER
+The cost of one days board on shelter for this animal</p>
+</dd>
+<dt>AnimalAge</dt><dd><p>VARCHAR
+Readable animal age (eg: 1 year, 3 months)</p>
+</dd>
+<dt>RecordVersion</dt><dd><p>INTEGER
+For optimistic locking, each save increments this lock value</p>
+</dd>
+<dt>CreatedBy</dt><dd><p>VARCHAR
+Name of user that created this record</p>
+</dd>
+<dt>CreatedDate</dt><dd><p>TIMESTAMP
+Date this record was created</p>
+</dd>
+<dt>LastChangedBy</dt><dd><p>VARCHAR
+Name of user that last changed this record</p>
+</dd>
+<dt>LastChangedDate</dt><dd><p>TIMESTAMP
+Date this record was last changed</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="animalcontrol">
 <h2>animalcontrol<a class="headerlink" href="#animalcontrol" title="Permalink to this headline">¶</a></h2>
 <p>The animalcontrol table holds a row for every animal control incident on the system.</p>
-<dl class="docutils">
-<dt>ID</dt>
-<dd>INTEGER
-A unique, incrementing number that identifies this record</dd>
-<dt>IncidentDateTime</dt>
-<dd>TIMESTAMP
-The date and time of the incident</dd>
-<dt>IncidentTypeID</dt>
-<dd>INTEGER
-A link to the incidenttype table for the type of incident</dd>
-<dt>CallDateTime</dt>
-<dd>TIMESTAMP
-The date and time the incident was reported</dd>
-<dt>CallNotes</dt>
-<dd>VARCHAR
-The incident description</dd>
-<dt>CallTaker</dt>
-<dd>VARCHAR
-The username of the system user who took the call</dd>
-<dt>CallerID</dt>
-<dd>INTEGER
-A link to the owner table for the person who called to report the incident</dd>
-<dt>VictimID</dt>
-<dd>INTEGER
-A link to the owner table for the person who was the victim (if any)</dd>
-<dt>DispatchAddress</dt>
-<dd>VARCHAR
-The address the incident occurred at</dd>
-<dt>DispatchTown</dt>
-<dd>VARCHAR
-The incident town/city</dd>
-<dt>DispatchCounty</dt>
-<dd>VARCHAR
-The incident county/state</dd>
-<dt>DispatchPostcode</dt>
-<dd>VARCHAR
-The incident postcode/zipcode</dd>
-<dt>DispatchLatLong</dt>
-<dd>VARCHAR
-A geocode containing the latitude and longitude of the dispatch address</dd>
-<dt>DispatchedACO</dt>
-<dd>VARCHAR
-The username of the system user representing the ACO</dd>
-<dt>PickupLocationID</dt>
-<dd>INTEGER
-A link to the pickuplocation table</dd>
-<dt>DispatchDateTime</dt>
-<dd>TIMESTAMP
-The date and time the ACO was dispatched to the incident</dd>
-<dt>RespondedDateTime</dt>
-<dd>TIMESTAMP
-The date and time the ACO arrived at the incident</dd>
-<dt>FollowupDateTime / FollowupDateTime2 / FollowupDateTime3</dt>
-<dd>TIMESTAMP
-The date and time the ACO should return to the incident to follow up</dd>
-<dt>FollowupComplete / FollowupComplete2 / FollowupComplete3</dt>
-<dd>INTEGER
-1 if the follow up has been done</dd>
-<dt>CompletedDate</dt>
-<dd>TIMESTAMP
-The date the incident was closed and completed</dd>
-<dt>IncidentCompletedID</dt>
-<dd>INTEGER
-A link to the incidentcompleted table</dd>
-<dt>SiteID</dt>
-<dd>INTEGER
-A link to the site table for multi-site setups</dd>
-<dt>OwnerID / Owner2ID / Owner3ID</dt>
-<dd>INTEGER
-A link to the owner table for the suspect</dd>
-<dt>AnimalDescription</dt>
-<dd>VARCHAR
-A description of the animal involved in the incident</dd>
-<dt>SpeciesID</dt>
-<dd>INTEGER
-A link to the species table for the animal involved in the incident</dd>
-<dt>Sex</dt>
-<dd>INTEGER
-A link to the lksex table for the animal involved in the incident</dd>
-<dt>AgeGroup</dt>
-<dd>VARCHAR
-The age group of the animal involved in the incident</dd>
+<dl class="simple">
+<dt>ID</dt><dd><p>INTEGER
+A unique, incrementing number that identifies this record</p>
+</dd>
+<dt>IncidentDateTime</dt><dd><p>TIMESTAMP
+The date and time of the incident</p>
+</dd>
+<dt>IncidentTypeID</dt><dd><p>INTEGER
+A link to the incidenttype table for the type of incident</p>
+</dd>
+<dt>CallDateTime</dt><dd><p>TIMESTAMP
+The date and time the incident was reported</p>
+</dd>
+<dt>CallNotes</dt><dd><p>VARCHAR
+The incident description</p>
+</dd>
+<dt>CallTaker</dt><dd><p>VARCHAR
+The username of the system user who took the call</p>
+</dd>
+<dt>CallerID</dt><dd><p>INTEGER
+A link to the owner table for the person who called to report the incident</p>
+</dd>
+<dt>VictimID</dt><dd><p>INTEGER
+A link to the owner table for the person who was the victim (if any)</p>
+</dd>
+<dt>DispatchAddress</dt><dd><p>VARCHAR
+The address the incident occurred at</p>
+</dd>
+<dt>DispatchTown</dt><dd><p>VARCHAR
+The incident town/city</p>
+</dd>
+<dt>DispatchCounty</dt><dd><p>VARCHAR
+The incident county/state</p>
+</dd>
+<dt>DispatchPostcode</dt><dd><p>VARCHAR
+The incident postcode/zipcode</p>
+</dd>
+<dt>DispatchLatLong</dt><dd><p>VARCHAR
+A geocode containing the latitude and longitude of the dispatch address</p>
+</dd>
+<dt>DispatchedACO</dt><dd><p>VARCHAR
+The username of the system user representing the ACO</p>
+</dd>
+<dt>PickupLocationID</dt><dd><p>INTEGER
+A link to the pickuplocation table</p>
+</dd>
+<dt>DispatchDateTime</dt><dd><p>TIMESTAMP
+The date and time the ACO was dispatched to the incident</p>
+</dd>
+<dt>RespondedDateTime</dt><dd><p>TIMESTAMP
+The date and time the ACO arrived at the incident</p>
+</dd>
+<dt>FollowupDateTime / FollowupDateTime2 / FollowupDateTime3</dt><dd><p>TIMESTAMP
+The date and time the ACO should return to the incident to follow up</p>
+</dd>
+<dt>FollowupComplete / FollowupComplete2 / FollowupComplete3</dt><dd><p>INTEGER
+1 if the follow up has been done</p>
+</dd>
+<dt>CompletedDate</dt><dd><p>TIMESTAMP
+The date the incident was closed and completed</p>
+</dd>
+<dt>IncidentCompletedID</dt><dd><p>INTEGER
+A link to the incidentcompleted table</p>
+</dd>
+<dt>SiteID</dt><dd><p>INTEGER
+A link to the site table for multi-site setups</p>
+</dd>
+<dt>OwnerID / Owner2ID / Owner3ID</dt><dd><p>INTEGER
+A link to the owner table for the suspect</p>
+</dd>
+<dt>AnimalDescription</dt><dd><p>VARCHAR
+A description of the animal involved in the incident</p>
+</dd>
+<dt>SpeciesID</dt><dd><p>INTEGER
+A link to the species table for the animal involved in the incident</p>
+</dd>
+<dt>Sex</dt><dd><p>INTEGER
+A link to the lksex table for the animal involved in the incident</p>
+</dd>
+<dt>AgeGroup</dt><dd><p>VARCHAR
+The age group of the animal involved in the incident</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="dbfs">
@@ -598,211 +605,211 @@ The age group of the animal involved in the incident</dd>
 <p>The dbfs table holds a row for each file stored in ASM’s database. Name and
 Path can be concatenated to form a full path. Eg: path = /templates name =
 cage_card.html</p>
-<dl class="docutils">
-<dt>ID</dt>
-<dd>INTEGER
-A unique, incrementing number that identifies this record</dd>
-<dt>Name</dt>
-<dd>VARCHAR
-The name of the element</dd>
-<dt>Path</dt>
-<dd>VARCHAR
-The path to the element</dd>
-<dt>Content</dt>
-<dd>CLOB
-Base64 encoded content</dd>
+<dl class="simple">
+<dt>ID</dt><dd><p>INTEGER
+A unique, incrementing number that identifies this record</p>
+</dd>
+<dt>Name</dt><dd><p>VARCHAR
+The name of the element</p>
+</dd>
+<dt>Path</dt><dd><p>VARCHAR
+The path to the element</p>
+</dd>
+<dt>Content</dt><dd><p>CLOB
+Base64 encoded content</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="media">
 <h2>media<a class="headerlink" href="#media" title="Permalink to this headline">¶</a></h2>
 <p>The media table holds a row for each piece media attached to an animal, owner,
 etc.</p>
-<dl class="docutils">
-<dt>ID</dt>
-<dd>INTEGER
-A unique, incrementing number that identifies this record</dd>
-<dt>MediaName</dt>
-<dd>VARCHAR
-The name of the file within the dbfs table - always [media.ID].extension</dd>
-<dt>MediaNotes</dt>
-<dd>VARCHAR
-The notes accompanying the media file (used as description when publishing)</dd>
-<dt>WebsitePhoto</dt>
-<dd>INTEGER
-1 if this is the preferred photo of an animal for use on the web</dd>
-<dt>DocPhoto</dt>
-<dd>INTEGER
-1 if this is the preferred photo of an animal for use with generated documents</dd>
-<dt>NewSinceLastPublish</dt>
-<dd>INTEGER
-1 if this media record was created after the last time a publish was done</dd>
-<dt>UpdatedSinceLastPublish</dt>
-<dd>INTEGER
-1 if this media record was updated after the last time a publish was done</dd>
-<dt>LastPublished</dt>
-<dd>TIMESTAMP
-The date this record was last published to the web</dd>
-<dt>LastPublishedPF</dt>
-<dd>TIMESTAMP
-Date this record was last published to PetFinder.com</dd>
-<dt>LastPublishedAP</dt>
-<dd>TIMESTAMP
-Date this record was last published to AdoptAPet.com</dd>
-<dt>LastPublishedP911</dt>
-<dd>TIMESTAMP
-Date this record was last published to Pets911.com</dd>
-<dt>LastPublishedRG</dt>
-<dd>TIMESTAMP
-Date this record was last published to RescueGroups PetAdoptionPortal.org</dd>
-<dt>LinkID</dt>
-<dd>INTEGER
-The ID of the record in the table this media is linked to</dd>
-<dt>LinkTypeID</dt>
-<dd>INTEGER
-Link to lksmedialink table to determine linked table</dd>
-<dt>Date</dt>
-<dd>TIMESTAMP
-Date this record was created</dd>
-<dt>RecordVersion</dt>
-<dd>INTEGER
-Optimistic lock flag</dd>
+<dl class="simple">
+<dt>ID</dt><dd><p>INTEGER
+A unique, incrementing number that identifies this record</p>
+</dd>
+<dt>MediaName</dt><dd><p>VARCHAR
+The name of the file within the dbfs table - always [media.ID].extension</p>
+</dd>
+<dt>MediaNotes</dt><dd><p>VARCHAR
+The notes accompanying the media file (used as description when publishing)</p>
+</dd>
+<dt>WebsitePhoto</dt><dd><p>INTEGER
+1 if this is the preferred photo of an animal for use on the web</p>
+</dd>
+<dt>DocPhoto</dt><dd><p>INTEGER
+1 if this is the preferred photo of an animal for use with generated documents</p>
+</dd>
+<dt>NewSinceLastPublish</dt><dd><p>INTEGER
+1 if this media record was created after the last time a publish was done</p>
+</dd>
+<dt>UpdatedSinceLastPublish</dt><dd><p>INTEGER
+1 if this media record was updated after the last time a publish was done</p>
+</dd>
+<dt>LastPublished</dt><dd><p>TIMESTAMP
+The date this record was last published to the web</p>
+</dd>
+<dt>LastPublishedPF</dt><dd><p>TIMESTAMP
+Date this record was last published to PetFinder.com</p>
+</dd>
+<dt>LastPublishedAP</dt><dd><p>TIMESTAMP
+Date this record was last published to AdoptAPet.com</p>
+</dd>
+<dt>LastPublishedP911</dt><dd><p>TIMESTAMP
+Date this record was last published to Pets911.com</p>
+</dd>
+<dt>LastPublishedRG</dt><dd><p>TIMESTAMP
+Date this record was last published to RescueGroups PetAdoptionPortal.org</p>
+</dd>
+<dt>LinkID</dt><dd><p>INTEGER
+The ID of the record in the table this media is linked to</p>
+</dd>
+<dt>LinkTypeID</dt><dd><p>INTEGER
+Link to lksmedialink table to determine linked table</p>
+</dd>
+<dt>Date</dt><dd><p>TIMESTAMP
+Date this record was created</p>
+</dd>
+<dt>RecordVersion</dt><dd><p>INTEGER
+Optimistic lock flag</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="owner">
 <h2>owner<a class="headerlink" href="#owner" title="Permalink to this headline">¶</a></h2>
 <p>The owner table holds a row for every person stored in ASM’s database.</p>
-<dl class="docutils">
-<dt>ID</dt>
-<dd>INTEGER
-A unique, incrementing number that identifies this record</dd>
-<dt>OwnerTitle</dt>
-<dd>VARCHAR
-The person’s title, eg: Mr</dd>
-<dt>OwnerInitials</dt>
-<dd>VARCHAR
-The person’s initials</dd>
-<dt>OwnerForeNames</dt>
-<dd>VARCHAR
-The person’s first name(s)</dd>
-<dt>OwnerSurname</dt>
-<dd>VARCHAR
-The person’s surname</dd>
-<dt>OwnerName</dt>
-<dd>VARCHAR
-Title, Forenames and Surname concatenated together for display</dd>
-<dt>OwnerAddress</dt>
-<dd>VARCHAR
-The address</dd>
-<dt>OwnerTown</dt>
-<dd>VARCHAR
-The town or city (depending on locale)</dd>
-<dt>OwnerCounty</dt>
-<dd>VARCHAR
-The county or state (depending on locale)</dd>
-<dt>OwnerPostcode</dt>
-<dd>VARCHAR</dd>
-<dt>HomeTelephone</dt>
-<dd>VARCHAR</dd>
-<dt>WorkTelephone</dt>
-<dd>VARCHAR</dd>
-<dt>MobileTelephone</dt>
-<dd>VARCHAR</dd>
-<dt>EmailAddress</dt>
-<dd>VARCHAR</dd>
-<dt>IDCheck</dt>
-<dd>INTEGER
-1 if the person has been homechecked</dd>
-<dt>Comments</dt>
-<dd>VARCHAR</dd>
-<dt>IsBanned</dt>
-<dd>INTEGER
-1 if this person has been banned from adopting animals</dd>
-<dt>IsVolunteer</dt>
-<dd>INTEGER
-1 if this person is a shelter volunteer</dd>
-<dt>IsHomeChecker</dt>
-<dd>INTEGER
-1 if this person homechecks people</dd>
-<dt>IsMember</dt>
-<dd>INTEGER
-1 if this person is a shelter member</dd>
-<dt>MembershipExpiryDate</dt>
-<dd>TIMESTAMP
-The date this person’s membership expires</dd>
-<dt>MembershipNumber</dt>
-<dd>VARCHAR
-The membership number</dd>
-<dt>IsDonor</dt>
-<dd>INTEGER
-1 if this person is a regular donor</dd>
-<dt>IsShelter</dt>
-<dd>INTEGER
-1 if this person is another animal shelter</dd>
-<dt>IsACO</dt>
-<dd>INTEGER
-1 if this person is an animal care officer</dd>
-<dt>IsStaff</dt>
-<dd>INTEGER
-1 if this person is shelter staff (permissions exist to prevent users viewing staff records)</dd>
-<dt>IsFosterer</dt>
-<dd>INTEGER
-1 if this person fosters animals</dd>
-<dt>IsRetailer</dt>
-<dd>INTEGER
-1 if this person is a retailer for animals (eg: Pet shop)</dd>
-<dt>IsVet</dt>
-<dd>INTEGER
-1 if this person is a vet</dd>
-<dt>IsGiftAid</dt>
-<dd>INTEGER
-(UK only) 1 if this person is eligible for gift aid on their donations</dd>
-<dt>AdditionalFlags</dt>
-<dd>VARCHAR
-Comma separated list of all person flags applying to this owner, includes additional person flags created under lookup data as well as the standard ones above.</dd>
-<dt>HomeCheckAreas</dt>
-<dd>VARCHAR
-If this person homechecks other people, the areas they are wiling to check</dd>
-<dt>DateLastHomeChecked</dt>
-<dd>TIMESTAMP
-The date this person was last homechecked</dd>
-<dt>HomeCheckedBy</dt>
-<dd>INTEGER
-ID of the person record who homechecked this person</dd>
-<dt>MatchAdded</dt>
-<dd>TIMESTAMP
-Date any looking for match was added to this person</dd>
-<dt>MatchExpires</dt>
-<dd>TIMESTAMP
-Date this looking for info expires</dd>
-<dt>MatchActive</dt>
-<dd>INTEGER
-1 If we should consider this person’s looking for info when building the looking for report</dd>
-<dt>MatchSex</dt>
-<dd>INTEGER</dd>
-<dt>MatchSize</dt>
-<dd>INTEGER</dd>
-<dt>MatchAgeFrom</dt>
-<dd>FLOAT</dd>
-<dt>MatchAgeTo</dt>
-<dd>FLOAT</dd>
-<dt>MatchAnimalType</dt>
-<dd>INTEGER</dd>
-<dt>MatchSpecies</dt>
-<dd>INTEGER</dd>
-<dt>MatchBreed</dt>
-<dd>INTEGER</dd>
-<dt>MatchBreed2</dt>
-<dd>INTEGER</dd>
-<dt>MatchGoodWithCats</dt>
-<dd>INTEGER</dd>
-<dt>MatchGoodWithDogs</dt>
-<dd>INTEGER</dd>
-<dt>MatchGoodWithChildren</dt>
-<dd>INTEGER</dd>
-<dt>MatchHouseTrained</dt>
-<dd>INTEGER</dd>
-<dt>MatchCommentsContain</dt>
-<dd>VARCHAR</dd>
+<dl class="simple">
+<dt>ID</dt><dd><p>INTEGER
+A unique, incrementing number that identifies this record</p>
+</dd>
+<dt>OwnerTitle</dt><dd><p>VARCHAR
+The person’s title, eg: Mr</p>
+</dd>
+<dt>OwnerInitials</dt><dd><p>VARCHAR
+The person’s initials</p>
+</dd>
+<dt>OwnerForeNames</dt><dd><p>VARCHAR
+The person’s first name(s)</p>
+</dd>
+<dt>OwnerSurname</dt><dd><p>VARCHAR
+The person’s surname</p>
+</dd>
+<dt>OwnerName</dt><dd><p>VARCHAR
+Title, Forenames and Surname concatenated together for display</p>
+</dd>
+<dt>OwnerAddress</dt><dd><p>VARCHAR
+The address</p>
+</dd>
+<dt>OwnerTown</dt><dd><p>VARCHAR
+The town or city (depending on locale)</p>
+</dd>
+<dt>OwnerCounty</dt><dd><p>VARCHAR
+The county or state (depending on locale)</p>
+</dd>
+<dt>OwnerPostcode</dt><dd><p>VARCHAR</p>
+</dd>
+<dt>HomeTelephone</dt><dd><p>VARCHAR</p>
+</dd>
+<dt>WorkTelephone</dt><dd><p>VARCHAR</p>
+</dd>
+<dt>MobileTelephone</dt><dd><p>VARCHAR</p>
+</dd>
+<dt>EmailAddress</dt><dd><p>VARCHAR</p>
+</dd>
+<dt>IDCheck</dt><dd><p>INTEGER
+1 if the person has been homechecked</p>
+</dd>
+<dt>Comments</dt><dd><p>VARCHAR</p>
+</dd>
+<dt>IsBanned</dt><dd><p>INTEGER
+1 if this person has been banned from adopting animals</p>
+</dd>
+<dt>IsVolunteer</dt><dd><p>INTEGER
+1 if this person is a shelter volunteer</p>
+</dd>
+<dt>IsHomeChecker</dt><dd><p>INTEGER
+1 if this person homechecks people</p>
+</dd>
+<dt>IsMember</dt><dd><p>INTEGER
+1 if this person is a shelter member</p>
+</dd>
+<dt>MembershipExpiryDate</dt><dd><p>TIMESTAMP
+The date this person’s membership expires</p>
+</dd>
+<dt>MembershipNumber</dt><dd><p>VARCHAR
+The membership number</p>
+</dd>
+<dt>IsDonor</dt><dd><p>INTEGER
+1 if this person is a regular donor</p>
+</dd>
+<dt>IsShelter</dt><dd><p>INTEGER
+1 if this person is another animal shelter</p>
+</dd>
+<dt>IsACO</dt><dd><p>INTEGER
+1 if this person is an animal care officer</p>
+</dd>
+<dt>IsStaff</dt><dd><p>INTEGER
+1 if this person is shelter staff (permissions exist to prevent users viewing staff records)</p>
+</dd>
+<dt>IsFosterer</dt><dd><p>INTEGER
+1 if this person fosters animals</p>
+</dd>
+<dt>IsRetailer</dt><dd><p>INTEGER
+1 if this person is a retailer for animals (eg: Pet shop)</p>
+</dd>
+<dt>IsVet</dt><dd><p>INTEGER
+1 if this person is a vet</p>
+</dd>
+<dt>IsGiftAid</dt><dd><p>INTEGER
+(UK only) 1 if this person is eligible for gift aid on their donations</p>
+</dd>
+<dt>AdditionalFlags</dt><dd><p>VARCHAR
+Comma separated list of all person flags applying to this owner, includes additional person flags created under lookup data as well as the standard ones above.</p>
+</dd>
+<dt>HomeCheckAreas</dt><dd><p>VARCHAR
+If this person homechecks other people, the areas they are wiling to check</p>
+</dd>
+<dt>DateLastHomeChecked</dt><dd><p>TIMESTAMP
+The date this person was last homechecked</p>
+</dd>
+<dt>HomeCheckedBy</dt><dd><p>INTEGER
+ID of the person record who homechecked this person</p>
+</dd>
+<dt>MatchAdded</dt><dd><p>TIMESTAMP
+Date any looking for match was added to this person</p>
+</dd>
+<dt>MatchExpires</dt><dd><p>TIMESTAMP
+Date this looking for info expires</p>
+</dd>
+<dt>MatchActive</dt><dd><p>INTEGER
+1 If we should consider this person’s looking for info when building the looking for report</p>
+</dd>
+<dt>MatchSex</dt><dd><p>INTEGER</p>
+</dd>
+<dt>MatchSize</dt><dd><p>INTEGER</p>
+</dd>
+<dt>MatchAgeFrom</dt><dd><p>FLOAT</p>
+</dd>
+<dt>MatchAgeTo</dt><dd><p>FLOAT</p>
+</dd>
+<dt>MatchAnimalType</dt><dd><p>INTEGER</p>
+</dd>
+<dt>MatchSpecies</dt><dd><p>INTEGER</p>
+</dd>
+<dt>MatchBreed</dt><dd><p>INTEGER</p>
+</dd>
+<dt>MatchBreed2</dt><dd><p>INTEGER</p>
+</dd>
+<dt>MatchGoodWithCats</dt><dd><p>INTEGER</p>
+</dd>
+<dt>MatchGoodWithDogs</dt><dd><p>INTEGER</p>
+</dd>
+<dt>MatchGoodWithChildren</dt><dd><p>INTEGER</p>
+</dd>
+<dt>MatchHouseTrained</dt><dd><p>INTEGER</p>
+</dd>
+<dt>MatchCommentsContain</dt><dd><p>VARCHAR</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -812,29 +819,29 @@ Date this looking for info expires</dd>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="relationships.html" class="btn btn-neutral float-right" title="Appendix: Entity Relationship Diagrams" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="csvimportfields.html" class="btn btn-neutral float-left" title="Appendix: CSV file import fields" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="relationships.html" class="btn btn-neutral float-right" title="Appendix: Entity Relationship Diagrams" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="csvimportfields.html" class="btn btn-neutral float-left" title="Appendix: CSV file import fields" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Sheltermanager, Ltd
+        &#169; Copyright 2022, Sheltermanager, Ltd.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -842,7 +849,6 @@ Date this looking for info expires</dd>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

@@ -11,23 +11,26 @@ import asm3.utils
 import asm3.wordprocessor
 
 from .base import FTPPublisher, PublishCriteria, get_animal_data, is_animal_adoptable
-from asm3.sitedefs import BASE_URL, MULTIPLE_DATABASES_PUBLISH_FTP, MULTIPLE_DATABASES_PUBLISH_URL, SERVICE_URL
+from asm3.sitedefs import BASE_URL, SERVICE_URL
 
 import math
 import os
 import sys
 
-def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0, locationid=0):
+def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0, locationid=0, underweeks=0, overweeks=0):
     """ Returns a page of adoptable animals.
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
     locationid: 0 for all internal locations or a specific one
+    underweeks: Only return animals aged under this many weeks (0 to ignore)
+    overweeks: Only return animals aged over this many weeks (0 to ignore)
     """
     animals = get_animal_data(dbo, include_additional_fields=True)
-    return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid, locationid=locationid)
+    return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid, locationid=locationid, \
+        underweeks=underweeks, overweeks=overweeks)
 
-def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=0):
+def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=0, orderby="adopted_desc"):
     """ Returns a page of adopted animals.
     daysadopted: The number of days the animals have been adopted
     style: The HTML publishing template to use
@@ -35,14 +38,15 @@ def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=
     animaltypeid: 0 for all animal types or a specific one
     """
     if daysadopted == 0: daysadopted = 30
-    orderby = "a.ActiveMovementDate DESC"
+    if orderby == "": orderby = "adopted_desc"
+    orderby = get_orderby_const(orderby)
     animals = dbo.query(asm3.animal.get_animal_query(dbo) + \
         " WHERE a.IsNotAvailableForAdoption = 0 AND a.ActiveMovementType = 1 AND " \
         "a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
         "ORDER BY %s" % orderby, [ dbo.today(daysadopted * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypeid=0):
+def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypeid=0, orderby="deceased_desc"):
     """ Returns a page of deceased animals.
     daysdeceased: The number of days the animals have been deceased
     style: The HTML publishing template to use
@@ -50,13 +54,14 @@ def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypei
     animaltypeid: 0 for all animal types or a specific one
     """
     if daysdeceased == 0: daysdeceased = 30
-    orderby = "a.DeceasedDate DESC"
+    if orderby == "": orderby = "deceased_desc"
+    orderby = get_orderby_const(orderby)
     animals = dbo.query(asm3.animal.get_animal_query(dbo) + \
         " WHERE a.IsNotAvailableForAdoption = 0 AND a.DeceasedDate Is Not Null AND a.DeceasedDate >= ? AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 "
         "ORDER BY %s" % orderby, [ dbo.today(daysdeceased * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def get_flagged_animals(dbo, style="", speciesid=0, animaltypeid=0, flag="", allanimals=0):
+def get_flagged_animals(dbo, style="", speciesid=0, animaltypeid=0, flag="", allanimals=0, orderby="entered_desc"):
     """ Returns a page of animals with a particular flag.
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
@@ -66,27 +71,66 @@ def get_flagged_animals(dbo, style="", speciesid=0, animaltypeid=0, flag="", all
     """
     afilter = ""
     if allanimals == 0: afilter = "a.Archived = 0 AND "
-    animals = dbo.query(asm3.animal.get_animal_query(dbo) + " WHERE " + afilter + "a.AdditionalFlags LIKE ? ORDER BY a.DateBroughtIn DESC", 
+    if orderby == "": orderby = "entered_desc"
+    orderby = get_orderby_const(orderby)
+    animals = dbo.query(asm3.animal.get_animal_query(dbo) + " WHERE " + afilter + "a.AdditionalFlags LIKE ? ORDER BY " + orderby, 
         ["%%%s|%%" % flag],
         limit = asm3.configuration.record_search_limit(dbo))
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def get_held_animals(dbo, style="", speciesid=0, animaltypeid=0):
+def get_held_animals(dbo, style="", speciesid=0, animaltypeid=0, orderby="entered_desc"):
     """ Returns a page of currently held animals.
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
     """
-    animals = asm3.animal.get_animals_hold(dbo)
+    if orderby == "": orderby = "entered_desc"
+    orderby = get_orderby_const(orderby)
+    animals = dbo.query(asm3.animal.get_animal_query(dbo) + \
+        " WHERE a.Archived = 0 AND a.IsHold = 1 "
+        "ORDER BY %s" % orderby)
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locationid=0):
+def get_orderby_const(c):
+    """
+    Returns an ORDER BY clause for a given constant
+    Used by the methods above that are called by the html_X_animals service methods.
+    """
+    CLAUSES = {
+        "adopted_asc":      "a.ActiveMovementDate",
+        "adopted_desc":     "a.ActiveMovementDate DESC",
+        "code_asc":         "a.ShelterCode",
+        "code_desc":        "a.ShelterCode DESC",
+        "created_asc":      "a.CreatedDate",
+        "created_desc":     "a.CreatedDate DESC",
+        "dateofbirth_asc":  "a.DateOfBirth",
+        "dateofbirth_desc": "a.DateOfBirth DESC",
+        "deceased_asc":     "a.DeceasedDate",
+        "deceased_desc":    "a.DeceasedDate DESC",
+        "entered_asc":      "a.MostRecentEntryDate",
+        "entered_desc":     "a.MostRecentEntryDate DESC",
+        "holduntil_asc":    "a.HoldUntilDate",
+        "holduntil_desc":   "a.HoldUntilDate DESC",
+        "lastchanged_asc":  "a.LastChangedDate", 
+        "lastchanged_desc": "a.LastChangedDate DESC",
+        "litterid_asc":     "a.AcceptanceNumber",
+        "litterid_desc":    "a.AcceptanceNumber DESC",
+        "name_asc":         "a.AnimalName",
+        "name_desc":        "a.AnimalName DESC"
+    }
+    if c in CLAUSES:
+        return CLAUSES[c]
+    return "a.DateBroughtIn"
+
+def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locationid=0, underweeks=0, overweeks=0):
     """ Returns a page of animals.
     animals: A resultset containing animal records
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
     locationid: 0 for all internal locations or a specific one
+    underweeks: Only return animals aged under weeks, 0 = ignore
+    overweeks: Only return animals aged over weeks, 0 = ignore
     """
     # Get the specified template
     head, body, foot = asm3.template.get_html_template(dbo, style)
@@ -102,6 +146,8 @@ def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locatio
         if speciesid > 0 and a.SPECIESID != speciesid: continue
         if animaltypeid > 0 and a.ANIMALTYPEID != animaltypeid: continue
         if locationid > 0 and a.SHELTERLOCATION != locationid: continue
+        if underweeks > 0 and a.DATEOFBIRTH < dbo.today(offset=underweeks * -7): continue
+        if overweeks > 0 and a.DATEOFBIRTH >= dbo.today(offset=overweeks * -7): continue
         # Translate website media name to the service call for images
         if asm3.smcom.active():
             a.WEBSITEMEDIANAME = "%s?account=%s&method=animal_image&animalid=%d" % (SERVICE_URL, dbo.database, a.ID)
@@ -173,6 +219,7 @@ def get_animal_view_adoptable_html(dbo):
     head, body, foot = asm3.template.get_html_template(dbo, "animalviewadoptables")
     if head == "":
         head = "<!DOCTYPE html>\n<html>\n<head>\n<title>Adoptable Animals</title>\n" \
+            "<meta charset='utf-8'>\n" \
             "<style>\n" \
             ".asm3-adoptable-item { max-width: 200px; font-family: sans-serif; }\n" \
             ".asm3-adoptable-link { font-weight: bold; }\n" \
@@ -204,7 +251,7 @@ def get_animal_view_template(dbo):
     """ Returns a tuple of the header, body and footer for the animalview template """
     head, body, foot = asm3.template.get_html_template(dbo, "animalview")
     if head == "":
-        head = "<!DOCTYPE html>\n<html>\n<head>\n<title>$$SHELTERCODE$$ - $$ANIMALNAME$$</title></head>\n<body>"
+        head = "<!DOCTYPE html>\n<html>\n<head>\n<meta charset='utf-8'>\n<title>$$SHELTERCODE$$ - $$ANIMALNAME$$</title></head>\n<body>"
         body = "<h2>$$SHELTERCODE$$ - $$ANIMALNAME$$</h2><p><img src='$$WEBMEDIAFILENAME$$'/></p><p>$$WEBMEDIANOTES$$</p>"
         foot = "</body>\n</html>"
     return ( head, body, foot )
@@ -220,24 +267,9 @@ class HTMLPublisher(FTPPublisher):
 
     def __init__(self, dbo, publishCriteria, user):
         l = dbo.locale
-        # If we have a database override and it's not been ignored, use it
-        if MULTIPLE_DATABASES_PUBLISH_FTP is not None and not asm3.configuration.publisher_ignore_ftp_override(dbo):
-            c = MULTIPLE_DATABASES_PUBLISH_FTP
-            publishCriteria.uploadDirectly = True
-            publishCriteria.clearExisting = True
-            publishCriteria.forceReupload = False
-            publishCriteria.scaleImages = 1
-            FTPPublisher.__init__(self, dbo, publishCriteria,
-                self.replaceMDBTokens(dbo, c["host"]),
-                self.replaceMDBTokens(dbo, c["user"]),
-                self.replaceMDBTokens(dbo, c["pass"]),
-                c["port"], 
-                self.replaceMDBTokens(dbo, c["chdir"]),
-                c["passive"])
-        else:                
-            FTPPublisher.__init__(self, dbo, publishCriteria, 
-                asm3.configuration.ftp_host(dbo), asm3.configuration.ftp_user(dbo), asm3.configuration.ftp_password(dbo),
-                asm3.configuration.ftp_port(dbo), asm3.configuration.ftp_root(dbo), asm3.configuration.ftp_passive(dbo))
+        FTPPublisher.__init__(self, dbo, publishCriteria, 
+            asm3.configuration.ftp_host(dbo), asm3.configuration.ftp_user(dbo), asm3.configuration.ftp_password(dbo),
+            asm3.configuration.ftp_port(dbo), asm3.configuration.ftp_root(dbo), asm3.configuration.ftp_passive(dbo))
         self.user = user
         self.initLog("html", asm3.i18n._("HTML/FTP Publisher", l))
 
@@ -250,8 +282,10 @@ class HTMLPublisher(FTPPublisher):
     def getHeader(self):
         header, body, footer = asm3.template.get_html_template(self.dbo, self.pc.style)
         if header == "":
-            header = """<html>
+            header = """<!DOCTYPE html>
+            <html>
             <head>
+            <meta charset="utf-8">
             <title>Animals Available For Adoption</title>
             </head>
             <body>
@@ -342,6 +376,7 @@ class HTMLPublisher(FTPPublisher):
         if self.isPublisherExecuting(): return
         self.updatePublisherProgress(0)
         self.setStartPublishing()
+        self.log("Outputting generated pages to %s" % self.publishDir)
         self.executePages()
         if self.pc.htmlByChildAdult or self.pc.htmlBySpecies:
             self.executeAgeSpecies(self.user, self.pc.htmlByChildAdult, self.pc.htmlBySpecies)
@@ -799,9 +834,7 @@ class HTMLPublisher(FTPPublisher):
         thisPage = ""
         thisPageName = "rss.xml"
         totalAnimals = 0
-        link = MULTIPLE_DATABASES_PUBLISH_URL
-        link = self.replaceMDBTokens(self.dbo, link)
-        if link == "": link = BASE_URL
+        link = BASE_URL
 
         try:
             animals = self.getMatchingAnimals()

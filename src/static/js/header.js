@@ -80,19 +80,21 @@ const QUICKLINKS_SET = {
  */
 header = {
 
-    show_error: function(text) {
+    show_error: function(text, duration) {
+        if (!duration) { duration = 20000; }
         $("#asm-topline-error-text").html(text);
-        $("#asm-topline-error").fadeIn("slow");
+        // INFO: use of stop() to cancel delay() if show_info/error is called again before delay has finished
+        $("#asm-topline-error").stop().fadeIn("slow").delay(duration).fadeOut("slow");
     },
 
     hide_error: function() {
-        $("#asm-topline-error").hide();
+        $("#asm-topline-error").stop().hide();
     },
 
     show_info: function(text, duration) {
         if (!duration) { duration = 5000; }
         $("#asm-topline-info-text").html(text);
-        $("#asm-topline-info").fadeIn("slow").delay(duration).fadeOut("slow");
+        $("#asm-topline-info").stop().fadeIn("slow").delay(duration).fadeOut("slow");
     },
 
     show_loading: function(text) {
@@ -369,7 +371,12 @@ header = {
                 '<div class="topline-element">',
                     '<span style="white-space: nowrap">',
                     '<input id="topline-q" name="q" type="text" class="asm-textbox" title="' + 
-                        html.title("ALT+SHIFT+S " + _("filters: a:animal, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal keywords: onshelter/os, notforadoption, aco, banned, donors, deceased, vets, retailers, staff, fosterers, volunteers, homecheckers, members, activelost, activefound")) +
+                        html.title("ALT+SHIFT+S " + _("filters") + ": " +
+                            "a:animal, ac:animalcontrol, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal, " + 
+                            "li:licence, lo:logs, vo:voucher " +
+                            _("keywords") + ": " + "onshelter/os, notforadoption, aco, banned, donors, deceased, vets, " + 
+                            "retailers, staff, fosterers, volunteers, homecheckers, members, drivers, overduedonations, " +
+                            "signed, unsigned, activelost, activefound") +
                         '" placeholder="' + html.title(_("Search")) + '" />',
                     '<button id="searchgo" style="display: none">' + _("Search") + '</button>',
                     '</span>',
@@ -445,7 +452,7 @@ header = {
                 '<textarea id="textarea-zoom-area" style="width: 98%; height: 98%;"></textarea>',
             '</div>',
             '<div id="dialog-unsaved" style="display: none" title="' + _("Unsaved Changes") + '">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>',
+                '<p><span class="ui-icon ui-icon-alert"></span>',
                 _("You have unsaved changes, are you sure you want to leave this page?"),
                 '</p>',
             '</div>',
@@ -456,7 +463,7 @@ header = {
                     '<span id="asm-topline-loading-text">' + _("Loading...") + '</span>',
                 '</p>',
             '</div>',
-            '<div id="asm-body-container" />'
+            '<div id="asm-body-container"></div>'
         ];
         return h.join("");
     },
@@ -582,34 +589,39 @@ header = {
 
     bind_search: function() {
 
-        var keywords = [ "activelost", "activefound", "donors", "deceased", "hold", "holdtoday", 
+        const keywords = [ "activelost", "activefound", "donors", "deceased", "hold", "holdtoday", 
             "notforadoption", "onshelter", "quarantine", "forpublish", "reservenohomecheck", "notmicrochipped",
             "aco", "banned", "donors", "drivers", "homechecked", "homecheckers", 
             "fosterers", "homecheckers", "members", "people", "retailers", "shelters", "staff", 
             "vets", "volunteers" ] ;
 
-        var previous = common.local_get("asmsearch").split("|");
-        var searches = keywords.concat(previous);
+        let previous = common.local_get("asmsearch").split("|");
+        let searches = keywords.concat(previous);
 
-        var dosearch = function() {
-            var term = $("#topline-q").val();
-            // If the term is blank, do nothing
+        const dosearch = function(e) {
+            // If the search is blank, do nothing
+            let term = $("#topline-q").val();
             if (!term) { return; }
             // If we haven't seen this search term before, add it to our set
             if ($.inArray(term, previous) == -1) {
                 previous.push(term);
                 common.local_set("asmsearch", previous.join("|"));
             }
+            // Use form dirty handling to make sure we're safe to leave this screen
+            // validate.a_click_handler will handle routing to the URL
+            if (validate.active && (!validate.a_click_handler(e, "search?q=" + encodeURIComponent(term)))) { 
+                return;
+            }
             common.route("search?q=" + encodeURIComponent(term));
         };
 
         // Search autocompletes to keywords and previous searches
-        $("#topline-q").autocomplete({ source: searches });
+        $("#topline-q").autocomplete({ source: searches, minLength: 3 });
 
         // Pressing enter starts the search
         $("#topline-q").keypress(function(e) {
             if (e.which == 13) {
-                dosearch();
+                dosearch(e);
                 return false;
             }
         });

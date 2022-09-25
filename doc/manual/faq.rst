@@ -147,17 +147,39 @@ NEVER do this!
 * They aren't relevant to someone browsing an animal bio online.
   
 * ASM scales down incoming pictures for the web, assuming any pictures you
-  upload are always going to be photos of animals. This means smaller text on
-  documents you scan as JPEG will become unreadable.
+  upload are always going to be photos rather than text. This means smaller 
+  text on documents you scan as JPEG could become unreadable.
 
 Instead, you should always attach your scanned documents as PDF files. ASM
 scales PDFs in a different way so that they don't lose clarity and legibility,
 it will never publish a PDF to any website.
 
-If you're using phones rather than flatbed scanners to scan your documents,
-apps exist for all mobile platforms that allow you to take a photo of a
-document, clean it up and output it as a PDF. Apps such as "CamScanner" for
-Android, or "Scanner App" for iPhone.
+ASM does have a handy function to help if you do upload an image containing
+text, you can select an image on the media tab and choose :menuselection:`Image
+--> Create a PDF file` to create a new PDF file that contains your image. Once
+you're happy with the PDF you can safely delete the image to prevent it going
+anywhere.
+
+Why can't I send certain fields to PetFinder?
+---------------------------------------------
+
+PetFinder's import spec only allows for the following items of information to be
+sent by ASM (or any third party system):
+
+Code, Name, Breed, Mix, Sex, Size, Color 1-3, Age, Bio/Description, Type, Shots, Altered,
+NoDogs, NoCats, NoKids, Housetrained, Declawed, SpecialNeeds, 6 x Photos, Arrival Date,
+Birth Date, Special Needs Notes, Adoption Fee, Display Adoption Fee Y/N
+
+Note that the spec only allows ASM to state whether an animal is bad with other
+animals, but not if it is good with them. It also will not accept video URLs or
+any other field that PetFinder have on their site that is not listed here.
+
+While color is accepted by PetFinder, we do not support sending it. The reason
+is that our color field is a single user customisable dropdown. PetFinder split
+the color into 3 dropdowns of separate colors and have very strict validation
+rules on which combinations are allowed for different species of animals. It is
+therefore impossible to map our color scheme to theirs in a way that
+won't cause many of your animal listings to be rejected.
 
 Why are ASM emails being sent from account@bounce.sheltermanager.com?
 ---------------------------------------------------------------------
@@ -228,20 +250,22 @@ No. You can safely delete user accounts and it will not delete any data.
 Can I undo a CSV import?
 ------------------------
 
-Yes. All CSV imports are tagged with the user "import". You can run the
-following script at :menuselection:`Settings --> SQL Interface` to remove
-everything imported after the 1st January, 2017::
+Yes. All CSV imports are tagged with the user "import/USER" where USER is 
+the user account that ran the import. 
 
-    DELETE FROM animal WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM animalvaccination WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM animalmedical WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM animalmedicaltreatment WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM animaltest WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM owner WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM animalcontrol WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM adoption WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM ownerdonation WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
-    DELETE FROM ownerlicence WHERE CreatedBy = 'import' AND CreatedDate > '2017-01-01';
+You can run the following script at :menuselection:`Settings --> SQL Interface`
+to remove everything imported by anyone after the 1st January, 2017::
+
+    DELETE FROM animal WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM animalvaccination WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM animalmedical WHERE CreatedBy = 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM animalmedicaltreatment WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM animaltest WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM owner WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM animalcontrol WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM adoption WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM ownerdonation WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM ownerlicence WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
 
 How do I export my data to shelteranimalscount.org?
 ---------------------------------------------------
@@ -274,3 +298,13 @@ generate the figures for.
 
 .. note:: The report will only work correctly for one calendar month. Run the report multiple times for multiple months.
 
+.. note:: While this process can still be done manually, it has been superceded by the shelteranimalscount.org publisher, which will automatically update your figures every month without user intervention via their API.
+
+How do I export my data from the system for import somewhere else?
+------------------------------------------------------------------
+
+The "Export" button under :menuselection:`Settings --> SQL Interface` allows
+you to export your data in various formats. You can export a number of CSV
+files from different areas of the system for reading via spreadsheets. You can
+also export a database dump for use with either self-hosted ASM3 or our older
+ASM2 desktop software.

@@ -2,9 +2,9 @@ Fosterers Active between two Dates
 ###
 Movements
 ###
-3000/Any
+3000/Any rev05
 ###
-Fosterers who fostered between two dates with contact info and notes
+Fosterers with active fosters between two dates
 ###
 en
 ###
@@ -16,11 +16,23 @@ OwnerName,
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, EmailAddress, HomeTelephone, MobileTelephone,
 Comments,
 AdditionalFlags,
-(SELECT COUNT(*) FROM adoption WHERE OwnerID = owner.ID AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')) AS ActiveFosters,
+(SELECT COUNT(*) FROM adoption 
+ 	INNER JOIN animal ON animal.ID = adoption.AnimalID 
+ 	WHERE MovementType=2
+ 	AND adoption.OwnerID = owner.ID
+    AND (MovementDate <= '$@to$') 
+    AND (ReturnDate Is Null OR ReturnDate >= '$@to$') 
+    AND (DeceasedDate Is Null OR DeceasedDate >= '$@to$')) AS ActiveFosters,
 FosterCapacity
 FROM owner
 WHERE IsFosterer = 1
-AND EXISTS(SELECT ID FROM adoption WHERE MovementType = 2 AND OwnerID = owner.ID AND (MovementDate <= '$@from$' OR MovementDate <= '$@to$') AND (ReturnDate Is Null OR ReturnDate >= '$@from$' OR ReturnDate >= '$@to$'))
+AND EXISTS(SELECT adoption.ID FROM adoption 
+    INNER JOIN animal ON animal.ID = adoption.AnimalID 
+    WHERE MovementType = 2 
+    AND adoption.OwnerID = owner.ID 
+    AND (MovementDate <= '$@to$') 
+    AND (ReturnDate Is Null OR ReturnDate >= '$@to$') 
+    AND (DeceasedDate Is Null OR DeceasedDate >= '$@to$'))
 ORDER BY OwnerName
 ###
 $$HEADER

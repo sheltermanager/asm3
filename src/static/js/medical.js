@@ -13,7 +13,6 @@ $(function() {
                 add_title: _("Add medical regimen"),
                 edit_title: _("Edit medical regimen"),
                 edit_perm: 'mcam',
-                helper_text: _("Medical regimens need an animal, name, dosage, a start date and frequencies."),
                 close_on_ok: false,
                 hide_read_only: true,
                 columns: 1,
@@ -21,14 +20,18 @@ $(function() {
                 fields: [
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
                     { json_field: "ANIMALS", post_field: "animals", label: _("Animals"), type: "animalmulti" },
-                    { json_field: "MEDICALPROFILEID", post_field: "profileid", label:_("Profile"), type: "select",
+                    { json_field: "MEDICALPROFILEID", post_field: "profileid", label:_("Profile"), type: "select", classes: "asm-doubleselectbox", 
                         options: '<option value="0"></option>' +
                         html.list_to_options(controller.profiles, "ID", "PROFILENAME") },
-                    { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", validation: "notblank" },
-                    { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", validation: "notblank" },
-                    { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", defaultval: "0", hideif: function() { return !config.bool("ShowCostAmount"); } },
+                    { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
+                    { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
+                    { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", defaultval: 0, 
+                        callout: _("The total cost of all treatments."),
+                        hideif: function() { return !config.bool("ShowCostAmount"); } },
+                    { json_field: "COSTPERTREATMENT", post_field: "costpertreatment", label: _("Cost per Treatment"), type: "currency", defaultval: 0, 
+                        callout: _("If this field has a value, the cost field above will be automatically calculated after each treatment is given.") },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
-                    { json_field: "STARTDATE", post_field: "startdate", label: _("Start Date"), type: "date", validation: "notblank" },
+                    { json_field: "STARTDATE", post_field: "startdate", label: _("Start Date"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "STATUS", post_field: "status", label: _("Status"), type: "select",
                         options: '<option value="0">' + _("Active") + '</option><option value="1">' 
                             + _("Held") + '</option><option value="2">' + _("Completed") + '</option>' },
@@ -95,7 +98,7 @@ $(function() {
                     { field: "TREATMENTNAME", display: _("Name") },
                     { field: "IMAGE", display: "", 
                         formatter: function(row) {
-                            return '<a href="animal?id=' + row.ANIMALID + '"><img src=' + html.thumbnail_src(row, "animalthumb") + ' style="margin-right: 8px" class="asm-thumbnail" /></a>';
+                            return html.animal_link_thumb_bare(row);
                         },
                         hideif: function(row) {
                             // Don't show this column if we're in an animal record, or the option is turned off
@@ -150,7 +153,11 @@ $(function() {
                                 _("({0} given, {1} remaining)").replace("{0}", row.TREATMENTSGIVEN).replace("{1}", row.TREATMENTSREMAINING) 
                                 : "");
                     }},
-                    { field: "COST", display: _("Cost"), formatter: tableform.format_currency,
+                    { field: "COST", display: _("Cost"), 
+                        formatter: function(row) {
+                            if (row.COSTPERTREATMENT) { return format.currency(row.COSTPERTREATMENT); }
+                            return format.currency(row.COST);
+                        },
                         hideif: function() { return !config.bool("ShowCostAmount"); }
                     },
                     { field: "COSTPAIDDATE", display: _("Paid"), formatter: tableform.format_date,
@@ -176,7 +183,7 @@ $(function() {
                      click: function() { medical.new_medical(); }},
                 { id: "bulk", text: _("Bulk Regimen"), icon: "new", enabled: "always",
                     hideif: function() { return controller.animal; }, click: function() { medical.new_bulk_medical(); }},
-                { id: "delete-regimens", text: _("Delete Regimen"), icon: "delete", enabled: "multi", 
+                { id: "delete-regimens", text: _("Delete Regimen"), icon: "delete", enabled: "multi", perm: "mdam", 
                     mouseover: function() {
                        medical.highlight_selected_regimens(true);
                     },
@@ -208,7 +215,7 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
-                { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "mcam", 
+                { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "bcam", 
                     tooltip: _("Mark treatments given"),
                     click: function() {
                         let comments = "";
@@ -217,7 +224,7 @@ $(function() {
                                 comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
                             }
                         });
-                        $("#usagecomments").val(comments);
+                        $("#usagecomments").html(comments);
                         $("#newdate").datepicker("setDate", new Date());
                         $("#usagetype").select("firstvalue");
                         $("#usagedate").datepicker("setDate", new Date());
@@ -231,7 +238,7 @@ $(function() {
                        $("#dialog-given").dialog("open");
                     }
                 },
-                { id: "undo", text: _("Undo"), icon: "cross", enabled: "multi", perm: "mcam",
+                { id: "undo", text: _("Undo"), icon: "cross", enabled: "multi", perm: "bcam",
                     tooltip: _("Undo given treatments"),
                     click: async function() {
                         await common.ajax_post("medical", "mode=undo&ids=" + medical.selected_treatment_ids());
@@ -248,7 +255,7 @@ $(function() {
                         }
                     }
                 },
-                { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "mcam", 
+                { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "bcam", 
                     tooltip: _("Change date required on selected treatments"),
                     click: function() {
                        $("#newdater").datepicker("setDate", new Date());
@@ -433,7 +440,6 @@ $(function() {
                         $("#animal").animalchooser("clear");
                     }
                     $("#animals").closest("tr").hide();
-                    $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#profileid").closest("tr").show();
                     $("#profileid").select("value", "");
                     $("#treatmentrulecalc").show();
@@ -462,7 +468,6 @@ $(function() {
                     $("#animal").closest("tr").hide();
                     $("#animals").closest("tr").show();
                     $("#animals").animalchoosermulti("clear");
-                    $("#dialog-tableform .asm-textbox, #dialog-tableform .asm-textarea").val("");
                     $("#profileid").closest("tr").show();
                     $("#treatmentrulecalc").show();
                     $("#status").select("value", "0");
@@ -476,7 +481,7 @@ $(function() {
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="newdate">' + _("Given") + '</label></td>',
-                '<td><input id="newdate" data="newdate" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
+                '<td><input id="newdate" data="newdate" data-nofuture="true" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="givenby">' + _("By") + '</label></td>',
@@ -496,7 +501,12 @@ $(function() {
                 '<td><textarea id="treatmentcomments" data="treatmentcomments" class="asm-textarea asm-field"></textarea>',
                 '</td>',
                 '</tr>',
-                '<tr class="tagstock"><td></td><td>' + html.info(_("These fields allow you to deduct stock for the treatment(s) given. This single deduction should cover the selected treatments being administered.")) + '</td></tr>',
+                '<tr class="tagstock">',
+                '<td class="asm-header" colspan="2">',
+                _("Stock"),
+                '<span id="callout-stock" class="asm-callout">' + _("These fields allow you to deduct stock for the treatment(s) given. This single deduction should cover the selected treatments being administered.") + '</span>',
+                '</td>',
+                '</tr>',
                 '<tr class="tagstock">',
                 '<td><label for="item">' + _("Item") + '</label></td>',
                 '<td><select id="item" data="item" class="asm-selectbox asm-field">',
@@ -674,6 +684,8 @@ $(function() {
             this.bind_givendialog();
             this.bind_requireddialog();
 
+            validate.indicator([ "animal", "animals" ]);
+
             // Remember the currently selected animal when it changes so we can add
             // its name and code to the local set
             $("#animal").bind("animalchooserchange", function(event, rec) { medical.lastanimal = rec; });
@@ -705,6 +717,7 @@ $(function() {
                 $("#treatmentname").val( html.decode(p.TREATMENTNAME));
                 $("#dosage").val( html.decode(p.DOSAGE) );
                 $("#cost").currency("value", p.COST );
+                $("#costpertreatment").currency("value", p.COSTPERTREATMENT );
                 $("#comments").val( html.decode(p.COMMENTS) );
                 $("#totalnumberoftreatments").val( p.TOTALNUMBEROFTREATMENTS );
                 $("#singlemulti").val( p.TOTALNUMBEROFTREATMENTS == 1 ? "0" : "1" );
@@ -740,6 +753,9 @@ $(function() {
         },
 
         set_extra_fields: function(row) {
+            if (row.STATUS == 0) { row.NAMEDSTATUS = _("Active"); }
+            if (row.STATUS == 1) { row.NAMEDSTATUS = _("Held"); }
+            if (row.STATUS == 2) { row.NAMEDSTATUS = _("Completed"); }
             if (controller.animal) {
                 row.LOCATIONUNIT = controller.animal.SHELTERLOCATIONUNIT;
                 row.LOCATIONNAME = controller.animal.SHELTERLOCATIONNAME;
@@ -765,7 +781,7 @@ $(function() {
             common.widget_destroy("#dialog-required");
             common.widget_destroy("#animal");
             common.widget_destroy("#animals");
-            common.widget_destroy("#givenvet");
+            common.widget_destroy("#givenvet", "personchooser");
             tableform.dialog_destroy();
             this.lastanimal = null;
         },

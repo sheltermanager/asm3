@@ -11,12 +11,15 @@ def readfile_print(fname):
     with open(fname, "r") as f:
         print(f.read())
 
-jsfiles = [ "common.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
-    "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "header.js",
+jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js", "common_widgets.js", "common_animalchooser.js",
+    "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_microchip.js", "header.js",
     "header_additional.js", "header_edit_header.js" ]
 
-exclude = [ "animal_view_adoptable.js", "document_edit.js", "mobile.js", "mobile_sign.js", 
-    "onlineform_extra.js", "rollup.js", "rollup_compat.js" ]
+exclude = [ "animal_view_adoptable.js", "document_edit.js", 
+    "mobile.js", "mobile2.js", "mobile_login.js", "mobile_report.js", "mobile_sign.js", 
+    "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
+
+exclude += [ "rollup.js", "rollup_compat.js" ]
 
 # Output extra polyfills first
 os.system("cat node_modules/regenerator-runtime/runtime.js | scripts/jsmin/jsmin > node_modules/regenerator-runtime/runtime.min.js")

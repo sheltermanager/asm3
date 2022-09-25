@@ -189,7 +189,9 @@ The types are outlined below:
 * $ASK DIET$ - requests a diet from the user in the same manner as $ASK
   SPECIES$ 
 
-* $ASK DONATIONTYPE$ - requests a payment/donation type from the user in the
+* $ASK PAYMENTMETHOD$ - requests a payment method. 
+
+* $ASK PAYMENTTYPE$ - requests a payment/donation type from the user in the
   same manner as $ASK SPECIES$
 
 * $ASK LOGTYPE$ - requests a log type from the user in the same manner as $ASK
@@ -197,6 +199,9 @@ The types are outlined below:
 
 * $ASK TYPE$ - requests an animal type from the user in the same manner as $ASK
   SPECIES$ 
+
+* $ASK LOOKUP message|value1,value2,value3$ - requests one from a selection of 
+  fixed lookup values from the user.
 
 * $ASK NUMBER message$ - requests a numeric value from the user. A box is
   popped up containing the message and the user is given a standard text box to
@@ -470,4 +475,20 @@ person on file, with their address when the marker is clicked::
 
     SELECT LatLong, OwnerAddress FROM owner
 
+Automatic updating of repository reports
+----------------------------------------
+
+When you install a report from the repository, some reports have a revision 
+number. This number will be shown in the list on the reports editing screen
+next to the report's title.
+
+If we update the repository with a newer version of that report, it will get a new
+revision number. Each time you visit the home page, the system will automatically 
+check for newer versions of reports. If it finds any, it will update the SQL and HTML 
+of your copy of the report to the latest version. It will only change the SQL/HTML
+and update any subreports, it will not change the description if you updated it.
+
+If you change the title or category on your copy of a report, this will prevent 
+it being updated by the auto updater. You can use this to lock a report to a 
+particular version.
 

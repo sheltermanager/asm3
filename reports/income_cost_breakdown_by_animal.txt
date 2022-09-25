@@ -145,3 +145,150 @@ $$FOOTER
 <p>Total: <b>{SUM.AMT.2}</b></p>
 FOOTER$$
 
+&&&
+Income vs Cost Breakdown for selected animals
+###
+Financial
+###
+33601/Any
+###
+Income and animal costs between two dates, grouped by animal.
+###
+en
+###
+$VAR animals ANIMALS$
+
+SELECT * FROM (
+
+SELECT
+ownerdonation.Date AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+ownerdonation.Donation as amt,
+donationtype.DonationName AS description1,
+ownerdonation.Comments AS description2
+FROM ownerdonation
+INNER JOIN animal ON animal.ID = ownerdonation.AnimalID
+INNER JOIN donationtype ON ownerdonation.DonationTypeID = donationtype.ID
+INNER JOIN species ON species.ID = animal.SpeciesID
+WHERE ownerdonation.AnimalID IN ($@animals$)
+AND ownerdonation.Donation > 0
+
+UNION SELECT 
+animalcost.CostDate AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animalcost.CostAmount * -1 AS amt,
+costtype.CostTypeName AS description1,
+animalcost.Description AS description2
+FROM animal
+INNER JOIN animalcost ON animal.ID = animalcost.AnimalID
+INNER JOIN costtype ON animalcost.CostTypeID = costtype.ID
+INNER JOIN species ON species.ID = animal.SpeciesID
+WHERE animal.ID IN ($@animals$)
+AND animalcost.CostAmount > 0 
+
+UNION SELECT
+animal.DateBroughtIn AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animal.DailyBoardingCost * animal.DaysOnShelter * -1 AS amt,
+'Board and Food *' AS description1, '' AS description2
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+WHERE Archived = 0
+AND DailyBoardingCost > 0
+AND animal.ID IN ($@animals$)
+
+UNION SELECT
+animalvaccination.DateOfVaccination AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animalvaccination.Cost * -1 AS amt,
+vaccinationtype.VaccinationType AS description1,
+animalvaccination.Comments AS description2
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID
+INNER JOIN vaccinationtype ON animalvaccination.VaccinationID = vaccinationtype.ID
+WHERE animal.ID IN ($@animals$)
+AND animalvaccination.Cost > 0 
+
+UNION SELECT
+animaltest.DateOfTest AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animaltest.Cost * -1 AS amt,
+testtype.TestName AS description1,
+animaltest.Comments AS description2
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN animaltest ON animaltest.AnimalID = animal.ID
+INNER JOIN testtype ON animaltest.TestTypeID = testtype.ID
+WHERE animal.ID IN ($@animals$)
+AND animaltest.Cost > 0 
+
+UNION SELECT
+animalmedical.StartDate AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animalmedical.Cost * -1 AS amt,
+animalmedical.TreatmentName AS description1,
+animalmedical.Comments AS description2
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
+WHERE animal.ID IN ($@animals$)
+AND animalmedical.Cost > 0 
+
+UNION SELECT
+animaltransport.PickupDateTime AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animaltransport.Cost * -1 AS amt,
+'Transport to' AS description1,
+owner.OwnerAddress AS description2
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN animaltransport ON animaltransport.AnimalID = animal.ID
+INNER JOIN owner ON animaltransport.DropoffOwnerID = owner.ID 
+WHERE animal.ID IN ($@animals$) 
+AND animaltransport.Cost > 0 
+
+) dummy ORDER BY Name, date DESC
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_Name
+$$HEAD
+<h2>$Name - $Code ($SpeciesName)</h2>
+<table border=1><tr>
+<td><b>Date</b></td>
+<td><b>Amount</b></td>
+<td><b>Description</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $speciesname: <b>{SUM.AMT.2}</b></p>
+GROUP$$
+
+$$BODY<tr>
+<td>$DATE</td>
+<td>$AMT</td>
+<td>$DESCRIPTION1</td>
+<td>$DESCRIPTION2</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<p>Total: <b>{SUM.AMT.2}</b></p>
+FOOTER$$
+

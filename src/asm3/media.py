@@ -6,7 +6,7 @@ import asm3.configuration
 import asm3.dbfs
 import asm3.log
 import asm3.utils
-from asm3.sitedefs import SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, WATERMARK_X_OFFSET, WATERMARK_Y_OFFSET, WATERMARK_FONT_FILE, WATERMARK_FONT_SHADOWCOLOR, WATERMARK_FONT_FILLCOLOR, WATERMARK_FONT_STROKE, WATERMARK_FONT_OFFSET
+from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, WATERMARK_X_OFFSET, WATERMARK_Y_OFFSET, WATERMARK_FONT_FILE, WATERMARK_FONT_SHADOWCOLOR, WATERMARK_FONT_FILLCOLOR, WATERMARK_FONT_STROKE, WATERMARK_FONT_OFFSET
 
 import datetime
 import os
@@ -25,7 +25,7 @@ MEDIATYPE_FILE = 0
 MEDIATYPE_DOCUMENT_LINK = 1
 MEDIATYPE_VIDEO_LINK = 2
 
-DEFAULT_RESIZE_SPEC = "640x640" # If no valid resize spec is configured, the default to use
+DEFAULT_RESIZE_SPEC = "1024x1024" # If no valid resize spec is configured, the default to use
 MAX_PDF_PAGES = 50 # Do not scale PDFs with more than this many pages
 
 def mime_type(filename):
@@ -134,7 +134,7 @@ def get_media_export(dbo):
     """
     Produces a dataset of all media with link info for export
     """
-    return dbo.query("SELECT m.*, " \
+    rows = dbo.query("SELECT m.*, " \
         "CASE " \
         "WHEN m.LinkTypeID = 0 THEN (SELECT %s FROM animal WHERE ID = m.LinkID) " \
         "WHEN m.LinkTypeID = 3 THEN (SELECT OwnerName FROM owner WHERE ID = m.LinkID) " \
@@ -150,6 +150,12 @@ def get_media_export(dbo):
             dbo.sql_concat([ "'Found Animal '", "m.LinkID" ]),
             dbo.sql_concat([ "'Waiting List '", "m.LinkID" ]),
             dbo.sql_concat([ "'Incident '", "m.LinkID" ])  ))
+    for m in rows:
+        m.DBFSNAME = ""
+        if m.MEDIATYPE == MEDIATYPE_FILE:
+            ext = m.MEDIANAME[m.MEDIANAME.rfind("."):]
+            m.DBFSNAME = "%s%s" % (m.DBFSID, ext)
+    return rows
 
 def get_media_file_data(dbo, mid):
     """
@@ -176,11 +182,11 @@ def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
     def nopic():
         NOPIC_DATE = datetime.datetime(2011, 1, 1)
         if justdate: return NOPIC_DATE
-        return (NOPIC_DATE, "NOPIC")
+        return (NOPIC_DATE, b"NOPIC")
     def thumb_nopic():
         NOPIC_DATE = datetime.datetime(2011, 1, 1)
         if justdate: return NOPIC_DATE
-        return (NOPIC_DATE, "NOPIC")
+        return (NOPIC_DATE, b"NOPIC")
     def mrec(mm):
         if mm is None: return nopic()
         if justdate: return mm.DATE
@@ -263,6 +269,21 @@ def get_media(dbo, linktype, linkid):
 def get_media_by_id(dbo, mid):
     return dbo.first_row(dbo.query("SELECT * FROM media WHERE ID = ?", [mid] ))
 
+def get_media_filename(dbo, mid):
+    """ Constructs a filename from media notes.
+        Truncates if notes are too long, removes unsafe punctuation and checks the extension. """
+    return _get_media_filename(get_media_by_id(dbo, mid))
+
+def _get_media_filename(m):
+    """ Constructs a filename from media notes.
+        Truncates if notes are too long, removes unsafe punctuation and checks the extension. """
+    s = m.MEDIANOTES
+    s = s.replace(" ", "_").replace("/", "_").replace("\\", "_").replace(":", "_")
+    s = asm3.utils.truncate(s, 20)
+    ext = m.MEDIANAME[m.MEDIANAME.rfind("."):]
+    if not s.endswith(ext): s += ext
+    return s
+
 def get_image_media(dbo, linktype, linkid, ignoreexcluded = False):
     if not ignoreexcluded:
         return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ? " \
@@ -319,6 +340,8 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
     ispicture = ext == ".jpg" or ext == ".jpeg"
     ispdf = ext == ".pdf"
     excludefrompublish = 0
+    if "excludefrompublish" in post: 
+        excludefrompublish = post.integer("excludefrompublish")
     if asm3.configuration.auto_new_images_not_for_publish(dbo) and ispicture:
         excludefrompublish = 1
 
@@ -337,12 +360,11 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         # Autorotate it to match the EXIF orientation
         filedata = auto_rotate_image(dbo, filedata)
         # Scale it down to the system set size 
-        scalespec = asm3.configuration.incoming_media_scaling(dbo)
-        if scalespec != "None":
-            filedata = scale_image(filedata, scalespec)
-            asm3.al.debug("scaled image to %s (%d bytes)" % (scalespec, len(filedata)), "media.attach_file_from_form", dbo)
+        if RESIZE_IMAGES_DURING_ATTACH:
+            filedata = scale_image(filedata, RESIZE_IMAGES_SPEC)
+            asm3.al.debug("scaled image to %s (%d bytes)" % (RESIZE_IMAGES_SPEC, len(filedata)), "media.attach_file_from_form", dbo)
 
-    # Is it a PDF? If so, compress it if we can and the option is on
+    # Is it a PDF? If so, compress it if we can and the option is on 
     if ispdf and SCALE_PDF_DURING_ATTACH and asm3.configuration.scale_pdfs(dbo):
         orig_len = len(filedata)
         filedata = scale_pdf(filedata)
@@ -361,10 +383,7 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
         comments = asm3.utils.filename_only(filename)
 
     # Calculate the retain until date from retainfor years
-    retainuntil = None
-    retainfor = post.integer("retainfor")
-    if (retainfor > 0):
-        retainuntil = dbo.today( retainfor * 365 )
+    retainuntil = calc_retainuntil_from_retainfor(dbo, post.integer("retainfor"))
     
     # Create the media record
     dbo.insert("media", {
@@ -431,6 +450,15 @@ def attach_link_from_form(dbo, username, linktype, linkid, post):
         "RetainUntil":          None
     }, username, setCreated=False)
 
+
+def calc_retainuntil_from_retainfor(dbo, retainfor):
+    """ Calculates the retain until date from a retain for in years (0 or None = Indefinitely) """
+    retainuntil = None
+    retainfor = asm3.utils.cint(retainfor)
+    if (retainfor > 0):
+        retainuntil = dbo.today( retainfor * 365 )
+    return retainuntil
+
 def check_default_web_doc_pic(dbo, mediaid, linkid, linktype):
     """
     Checks if linkid/type has a default pic for the web or documents. If not,
@@ -480,19 +508,21 @@ def create_blank_document_media(dbo, username, linktype, linkid):
     }, username, setCreated=False, generateID=False)
     return mediaid
 
-def create_document_media(dbo, username, linktype, linkid, template, content):
+def create_document_media(dbo, username, linktype, linkid, template, content, retainfor=0):
     """
     Creates a new media record for a document for the link given.
     linktype: ANIMAL, PERSON, etc
     linkid: ID for the link
     template: The name of the template used to create the document
     content: The document contents (bytes str, will be converted if str given)
+    retainfor: Number of years to retain this document (any non-integer or 0 = Indefinitely)
     """
     mediaid = dbo.get_id("media")
     path = get_dbfs_path(linkid, linktype)
     name = str(mediaid) + ".html"
     content = asm3.utils.str2bytes(content)
     dbfsid = asm3.dbfs.put_string(dbo, name, path, content)
+    retainuntil = calc_retainuntil_from_retainfor(dbo, retainfor)
     dbo.insert("media", {
         "ID":                   mediaid,
         "DBFSID":               dbfsid,
@@ -513,7 +543,7 @@ def create_document_media(dbo, username, linktype, linkid, template, content):
         "LinkTypeID":           linktype,
         "Date":                 dbo.now(),
         "CreatedDate":          dbo.now(),
-        "RetainUntil":          None
+        "RetainUntil":          retainuntil
     }, username, setCreated=False, generateID=False)
     return mediaid
 
@@ -531,10 +561,12 @@ def create_log(dbo, user, mid, logcode = "UK00", message = ""):
     logtypeid = asm3.configuration.generate_document_log_type(dbo)
     asm3.log.add_log(dbo, user, get_log_from_media_type(m.LINKTYPEID), m.LINKID, logtypeid, "%s:%s:%s - %s" % (logcode, m.ID, message, m.MEDIANOTES))
 
-def sign_document(dbo, username, mid, sigurl, signdate):
+def sign_document(dbo, username, mid, sigurl, signdate, signprefix):
     """
     Signs an HTML document.
     sigurl: An HTML5 data: URL containing an image of the signature
+    signdate: A string representing the signing date and time of signing.
+    signprefix: A prefix for the hash, useful for identifying types of signing (eg: forms vs user electronic sig)
     """
     asm3.al.debug("signing document %s for %s" % (mid, username), "media.sign_document", dbo)
     SIG_PLACEHOLDER = "signature:placeholder"
@@ -556,11 +588,11 @@ def sign_document(dbo, username, mid, sigurl, signdate):
         # Create the signature at the foot of the document
         asm3.al.debug("document %s: no placeholder, appending" % mid, "media.sign_document", dbo)
         sig = "<hr />\n"
-        sig += '<p><img src="' + sigurl + '" /></p>\n'
+        if sigurl != "": sig += '<p><img src="' + sigurl + '" /></p>\n'
         sig += "<p>%s</p>\n" % signdate
         content += sig
     # Create a hash of the contents and store it with the media record
-    dbo.update("media", mid, { "SignatureHash": asm3.utils.md5_hash_hex(content) })
+    dbo.update("media", mid, { "SignatureHash": "%s:%s" % (signprefix, asm3.utils.md5_hash_hex(content)) }, username, setLastChanged=False)
     # Update the dbfs contents
     content = asm3.utils.str2bytes(content)
     update_file_content(dbo, username, mid, content)
@@ -590,16 +622,19 @@ def update_media_from_form(dbo, username, post):
         "UpdatedSinceLastPublish": 1
     }, username, setLastChanged=False)
 
+def update_media_link(dbo, username, mediaid, linktypeid, linkid):
+    dbo.update("media", mediaid, {
+        "LinkID":   linkid,
+        "LinkTypeID": linktypeid,
+        "Date":     dbo.now()
+    }, username, setLastChanged=False)
+
 def delete_media(dbo, username, mid):
     """
     Deletes a media record from the system
     """
     mr = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
     if not mr: return
-    try:
-        asm3.dbfs.delete_id(dbo, mr.DBFSID)
-    except Exception as err:
-        asm3.al.error(str(err), "media.delete_media", dbo)
     dbo.delete("media", mid, username)
     # Was it the web or doc preferred? If so, make the first image for the link
     # the web or doc preferred instead
@@ -613,6 +648,48 @@ def delete_media(dbo, username, mid):
             "AND MediaMimeType = 'image/jpeg' AND ExcludeFromPublish = 0 " \
             "ORDER BY ID DESC", (mr.LINKID, mr.LINKTYPEID)))
         if ml: dbo.update("media", ml.ID, { "DocPhoto": 1 })
+
+def convert_media_jpg2pdf(dbo, username, mid):
+    """
+    Converts an image into a new PDF file
+    """
+    mr = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
+    if not mr: raise asm3.utils.ASMError("Record does not exist")
+    # If it's not a jpg image, we can stop right now
+    if mr.MEDIAMIMETYPE != "image/jpeg": raise asm3.utils.ASMError("Image is not a JPEG file, cannot convert to PDF")
+    # Load and convert the image
+    imagedata = asm3.dbfs.get_string_id(dbo, mr.DBFSID)
+    pdfdata = asm3.utils.generate_image_pdf(dbo.locale, imagedata)
+    # Compress the new pdf
+    pdfdata = scale_pdf(pdfdata)
+    # Create a new media record for this pdf
+    mediaid = dbo.get_id("media")
+    path = get_dbfs_path(mr.LINKID, mr.LINKTYPEID)
+    name = str(mediaid) + ".pdf"
+    dbfsid = asm3.dbfs.put_string(dbo, name, path, pdfdata)
+    dbo.insert("media", {
+        "ID":                   mediaid,
+        "DBFSID":               dbfsid,
+        "MediaSize":            len(pdfdata),
+        "MediaName":            name,
+        "MediaMimeType":        "application/pdf",
+        "MediaType":            0,
+        "MediaNotes":           mr.MEDIANOTES,
+        "WebsitePhoto":         0,
+        "WebsiteVideo":         0,
+        "DocPhoto":             0,
+        "ExcludeFromPublish":   0,
+        # ASM2_COMPATIBILITY
+        "NewSinceLastPublish":  0,
+        "UpdatedSinceLastPublish": 0,
+        # ASM2_COMPATIBILITY
+        "LinkID":               mr.LINKID,
+        "LinkTypeID":           mr.LINKTYPEID,
+        "Date":                 dbo.now(),
+        "CreatedDate":          dbo.now(),
+        "RetainUntil":          mr.RETAINUNTIL
+    }, username, setCreated=False, generateID=False)
+    return mediaid
 
 def rotate_media(dbo, username, mid, clockwise = True):
     """
@@ -670,6 +747,7 @@ def scale_image(imagedata, resizespec):
         file_data = asm3.utils.bytesio(imagedata)
         im = Image.open(file_data)
         im.thumbnail(size, Image.ANTIALIAS)
+        if im.mode in ("RGBA", "P"): im = im.convert("RGB") # throw away alpha layer so we can output as JPEG
         # Save the scaled down image data 
         output = asm3.utils.bytesio()
         im.save(output, "JPEG")
@@ -748,11 +826,13 @@ def rotate_image(imagedata, clockwise = True):
 def remove_expired_media(dbo, username = "system"):
     """
     Removes all media where retainuntil < today
-    and document media older than today - remove document media years
+    and document media older than today - remove document media years.
+    No longer physically deletes dbfs rows - that should be done manually
+    via delete_orphaned_media
     """
     rows = dbo.query("SELECT ID, DBFSID FROM media WHERE RetainUntil Is Not Null AND RetainUntil < ?", [ dbo.today() ])
-    for r in rows:
-        asm3.dbfs.delete_id(dbo, r.dbfsid) 
+    #for r in rows:
+    #    asm3.dbfs.delete_id(dbo, r.dbfsid)
     dbo.execute("DELETE FROM media WHERE RetainUntil Is Not Null AND RetainUntil < ?", [ dbo.today() ])
     asm3.al.debug("removed %d expired media items (retain until)" % len(rows), "media.remove_expired_media", dbo)
     if asm3.configuration.auto_remove_document_media(dbo):
@@ -760,8 +840,8 @@ def remove_expired_media(dbo, username = "system"):
         if years > 0:
             cutoff = dbo.today(years * -365)
             rows = dbo.query("SELECT ID, DBFSID FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
-            for r in rows:
-                asm3.dbfs.delete_id(dbo, r.dbfsid) 
+            #for r in rows:
+            #    asm3.dbfs.delete_id(dbo, r.dbfsid) 
             dbo.execute("DELETE FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
             asm3.al.debug("removed %d expired document media items (remove after years)" % len(rows), "media.remove_expired_media", dbo)
 
@@ -868,27 +948,26 @@ def scale_all_animal_images(dbo):
     Goes through all animal images in the database and scales
     them to the current incoming media scaling factor.
     """
-    mp = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'image/jpeg' AND LinkTypeID = 0")
+    mp = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'image/jpeg' AND LinkTypeID = 0 ORDER BY ID")
     for i, m in enumerate(mp):
-        inputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-        outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-        odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
-        inputfile.write(odata)
-        inputfile.flush()
-        inputfile.close()
-        outputfile.close()
-        asm3.al.debug("scaling %s (%d of %d)" % (m.MEDIANAME, i, len(mp)), "media.scale_all_animal_images", dbo)
         try:
-            scale_image_file(inputfile.name, outputfile.name, asm3.configuration.incoming_media_scaling(dbo))
+            inputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+            outputfile = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+            odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
+            inputfile.write(odata)
+            inputfile.flush()
+            inputfile.close()
+            outputfile.close()
+            asm3.al.debug("scaling %s (%d of %d)" % (m.MEDIANAME, i, len(mp)), "media.scale_all_animal_images", dbo)
+            scale_image_file(inputfile.name, outputfile.name, RESIZE_IMAGES_SPEC)
+            data = asm3.utils.read_binary_file(outputfile.name)
+            os.unlink(inputfile.name)
+            os.unlink(outputfile.name)
+            # Update the image file data
+            asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, data)
+            dbo.update("media", m.ID, { "MediaSize": len(data) })
         except Exception as err:
-            asm3.al.error("failed scaling image, doing nothing: %s" % err, "media.scale_all_animal_images", dbo)
-            continue
-        data = asm3.utils.read_binary_file(outputfile.name)
-        os.unlink(inputfile.name)
-        os.unlink(outputfile.name)
-        # Update the image file data
-        asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, data)
-        dbo.update("media", m.ID, { "MediaSize": len(data) })
+            asm3.al.error("failed scaling image (ID=%s, DBFSID=%s): %s" % (m.ID, m.DBFSID, err), "media.scale_all_animal_images", dbo)
     asm3.al.debug("scaled %d images" % len(mp), "media.scale_all_animal_images", dbo)
 
 def scale_all_odt(dbo):
@@ -896,40 +975,42 @@ def scale_all_odt(dbo):
     Goes through all odt files attached to records in the database and 
     scales them down (throws away images and objects so only the text remains to save space)
     """
-    mo = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'application/vnd.oasis.opendocument.text'")
+    mo = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'application/vnd.oasis.opendocument.text' ORDER BY ID")
     total = 0
     for i, m in enumerate(mo):
-        asm3.al.debug("scaling %s (%d of %d)" % (m.MEDIANAME, i, len(mo)), "media.scale_all_odt", dbo)
-        odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
-        if odata == "":
-            asm3.al.error("file %s does not exist" % m.MEDIANAME, "media.scale_all_odt", dbo)
-            continue
-        ndata = scale_odt(odata)
-        if len(ndata) < 512:
-            asm3.al.error("scaled odt %s came back at %d bytes, abandoning" % (m.MEDIANAME, len(ndata)), "scale_all_odt", dbo)
-        else:
-            asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, ndata)
-            dbo.update("media", m.ID, { "MediaSize": len(ndata) }) 
-            total += 1
+        try:
+            asm3.al.debug("scaling %s (%d of %d)" % (m.MEDIANAME, i, len(mo)), "media.scale_all_odt", dbo)
+            odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
+            ndata = scale_odt(odata)
+            if len(ndata) < 512:
+                asm3.al.error("scaled odt %s came back at %d bytes, abandoning" % (m.MEDIANAME, len(ndata)), "scale_all_odt", dbo)
+            else:
+                asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, ndata)
+                dbo.update("media", m.ID, { "MediaSize": len(ndata) }) 
+                total += 1
+        except Exception as err:
+            asm3.al.error("failed scaling ODT (ID=%s, DBFSID=%s): %s" % (m.ID, m.DBFSID, err), "media.scale_all_odt", dbo)
     asm3.al.debug("scaled %d of %d odts" % (total, len(mo)), "media.scale_all_odt", dbo)
 
 def scale_all_pdf(dbo):
     """
     Goes through all PDFs in the database and attempts to scale them down.
     """
-    mp = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' ORDER BY ID DESC")
+    mp = dbo.query("SELECT ID, DBFSID, MediaName FROM media WHERE MediaMimeType = 'application/pdf' ORDER BY ID")
     total = 0
     for i, m in enumerate(mp):
-        odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
-        data = scale_pdf(odata)
-        asm3.al.debug("scaling %s (%d of %d): old size %d, new size %d" % (m.MEDIANAME, i, len(mp), len(odata), len(data)), "check_and_scale_pdfs", dbo)
-        # Store the new compressed PDF file data - if it's smaller
-        if len(data) < len(odata):
-            asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, data)
-            dbo.update("media", m.ID, { "MediaSize": len(data) })
-            total += 1
+        try:
+            odata = asm3.dbfs.get_string_id(dbo, m.DBFSID)
+            data = scale_pdf(odata)
+            asm3.al.debug("scaled %s (DBFSID=%s) (%d of %d): old size %d, new size %d" % (m.MEDIANAME, m.DBFSID, i, len(mp), len(odata), len(data)), "check_and_scale_pdfs", dbo)
+            # Store the new compressed PDF file data - if it's smaller
+            if len(data) < len(odata):
+                asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, data)
+                dbo.update("media", m.ID, { "MediaSize": len(data) })
+                total += 1
+        except Exception as err:
+            asm3.al.error("failed scaling PDF (ID=%s, DBFSID=%s): %s" % (m.ID, m.DBFSID, err), "media.scale_all_pdf", dbo)
     asm3.al.debug("scaled %d of %d pdfs" % (total, len(mp)), "media.scale_all_pdf", dbo)
-
 
 def watermark_with_transparency(dbo, imagedata, animalname):
     """

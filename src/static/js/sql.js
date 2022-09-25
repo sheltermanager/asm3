@@ -55,7 +55,7 @@ $(function() {
                 '<div id="dialog-script" style="display: none" title="' + html.title(_("Execute Script")) + '">',
                 '<form id="sqlfileform" action="sql" method="post" enctype="multipart/form-data">',
                 '<input name="mode" value="execfile" type="hidden" />',
-                '<label for="sqlfile">' + _("Script") + ' <input id="sqlfile" type="file" name="sqlfile" /></label>',
+                '<label for="sqlfile">' + _("Script") + ' <input id="sqlfile" type="file" name="filechooser" /></label>',
                 '</form>',
                 '</div>'
             ].join("\n");
@@ -123,6 +123,7 @@ $(function() {
             $("#button-exec").button().click(async function() {
                 let formdata = "mode=exec&" + $("#sql").toPOST();
                 $("#button-exec").button("disable");
+                header.hide_error();
                 header.show_loading(_("Executing..."));
                 try {
                     let result = await common.ajax_post("sql", formdata);
@@ -130,7 +131,7 @@ $(function() {
                         $("#sql-results").html(result);
                         $("#sql-results").table();
                         $("#sql-results").fadeIn();
-                        let norecs = String($("#sql-results tr").length - 2);
+                        let norecs = String($("#sql-results tbody tr").length);
                         header.show_info(_("{0} results.").replace("{0}", norecs));
                     }
                     else {

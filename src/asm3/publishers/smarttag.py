@@ -73,7 +73,7 @@ class SmartTagPublisher(FTPPublisher):
         folder = "%s_%s" % (shelterid, dateportion)
         outputfile = "%s_%s.csv" % (shelterid, dateportion)
         self.mkdir(folder)
-        self.chdir(folder)
+        self.chdir(folder, folder)
 
         csv = []
 
@@ -81,7 +81,7 @@ class SmartTagPublisher(FTPPublisher):
         for an in animals:
             try:
                 anCount += 1
-                self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                self.log("Processing: %s: %s (%d of %d)" % ( an.SHELTERCODE, an.ANIMALNAME, anCount, len(animals)))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
 
                 # If the user cancelled, stop now
@@ -92,7 +92,7 @@ class SmartTagPublisher(FTPPublisher):
                     return
 
                 # Upload one image for this animal with the name shelterid_animalid-1.jpg
-                self.uploadImage(an, an["WEBSITEMEDIANAME"], "%s_%d-1.jpg" % (shelterid, an["ID"]))
+                self.uploadImage(an, an.WEBSITEMEDIAID, an.WEBSITEMEDIANAME, "%s_%d-1.jpg" % (shelterid, an.ID))
 
                 csv.append( self.processAnimal(an, shelterid) )
 

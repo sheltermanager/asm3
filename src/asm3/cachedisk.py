@@ -11,7 +11,6 @@ import hashlib
 import os
 import pickle
 import re
-import sys
 import threading
 import time
 
@@ -59,8 +58,7 @@ def _getfilename(key, path, mkpath=False):
         pass
     else:
         m = hashlib.md5()
-        if sys.version_info[0] > 2 and isinstance(key, str): # PYTHON3
-            key = key.encode("utf-8")
+        if isinstance(key, str): key = key.encode("utf-8") # turn str keys into bytes
         m.update(key)
         key = m.hexdigest()
     if not os.path.exists(DISK_CACHE):
@@ -149,9 +147,9 @@ def put(key, path, value, ttl):
     except Exception as err:
         asm3.al.error("%s/%s: %s" % (path, key, err), "cachedisk.put")
 
-def touch(key, path, ttlremaining = 0, newttl = 0):
+def touch(key, path, newttl = 0):
     """
-    Retrieves a value from our disk cache and updates its ttl if there is less than ttlremaining until expiry.
+    Retrieves a value from our disk cache and resets its ttl.
     This can be used to make our timed expiry cache into a sort of hybrid with LRU.
     Returns None if the value is not found or has expired.
     """
@@ -162,8 +160,7 @@ def touch(key, path, ttlremaining = 0, newttl = 0):
         if not os.path.exists(fname): return None
 
         # Pull the entry out
-        with open(fname, "rb") as f:
-            o = pickle.load(f)
+        o = _lrunpickle(fname)
 
         # Has the entry expired?
         now = time.time()
@@ -171,16 +168,13 @@ def touch(key, path, ttlremaining = 0, newttl = 0):
             delete(key, path)
             return None
 
-        # Is there less than ttlremaining to expiry? If so update it to newttl
-        if o["expires"] - now < ttlremaining:
-            o["expires"] = now + newttl
-            with open(fname, "wb") as f:
-                pickle.dump(o, f)
+        # Reset the ttl
+        o["expires"] = now + newttl
+        _lwpickle(fname, o)
 
         return o["value"]
     except Exception as err:
         asm3.al.error("%s/%s: %s" % (path, key, err), "cachedisk.touch")
-
 
 def remove_expired(path):
     """
@@ -197,8 +191,7 @@ def remove_expired(path):
             checked += 1
             try:
                 fpath = os.path.join(root, name)
-                with open(fpath, "rb") as f:
-                    o = pickle.load(f)
+                o = _lrunpickle(fpath)
                 if o["expires"] < time.time():
                     os.unlink(fpath)
                     removed += 1

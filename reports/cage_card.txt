@@ -1,8 +1,8 @@
 Cage Card
 ###
-Auditing
+Inventories
 ###
-2732/Any omitcriteria omitheaderfooter
+2732/Any omitcriteria omitheaderfooter rev01
 ###
 An animal cage card with image.
 ###
@@ -21,6 +21,134 @@ animal.animalTypeID,
 animal.Markings,
 lksize.Size,
 animal.AnimalComments,
+animal.datebroughtin,
+animal.dateofbirth,
+animal.id as animalid,
+animal.identichipnumber,
+CASE WHEN animal.heartwormtested = 1 then (SELECT Name FROM lksposneg WHERE ID = animal.heartwormtestresult) ELSE '' END AS heartworm,
+CASE WHEN animal.combitested = 1 then (SELECT Name FROM lksposneg WHERE ID = animal.combitestresult) ELSE '' END AS fivl,
+CASE WHEN animal.flvresult = 1 then (SELECT Name FROM lksposneg WHERE ID = animal.flvresult) ELSE '' END AS flv,
+entryreason.reasonname,
+(SELECT Name FROM lksynun WHERE ID = animal.IsGoodWithDogs) AS WithDogs,
+(SELECT Name FROM lksynun WHERE ID = animal.IsGoodWithCats) AS WithCats,
+(SELECT Name FROM lksynun WHERE ID = animal.IsGoodWithChildren) AS WithChildren,
+(SELECT Name FROM lksynun WHERE ID = animal.IsHouseTrained) AS HouseTrained,
+(SELECT Sex FROM lksex WHERE ID = animal.sex) AS TheSex,
+(SELECT Name FROM lksyesno WHERE ID = animal.neutered) AS altered,
+(SELECT NAME FROM lksyesno WHERE ID = animal.HasActiveReserve) AS reserved,
+animal.breedname,
+species.speciesName,
+basecolour.basecolour,
+internallocation.LocationName,
+animaltype.animalType,
+internallocation.LocationName AS TheLocation,
+internallocation.LocationName AS CurrentLocation,
+animal.TimeOnShelter AS OnShelterTime
+
+FROM animal
+INNER JOIN species ON species.ID=animal.speciesID
+LEFT OUTER JOIN internallocation ON internallocation.id=animal.shelterlocation
+INNER JOIN basecolour ON basecolour.ID=animal.basecolourID
+INNER JOIN animaltype ON animaltype.ID=animal.animalTypeID
+INNER JOIN lksize ON
+lksize.ID=animal.Size
+INNER JOIN entryreason ON
+entryreason.ID=animal.entryreasonid
+
+WHERE animal.ID = $ASK ANIMAL$
+
+ORDER BY animal.AnimalName
+###
+$$HEADER
+<table width="700" border="0">
+<tr>
+<td width="46"></td>
+<td width="654">
+<div align="center">
+<font size="4"><b>$$REGISTEREDTO$$</b></font><br /><br />
+<font size="2">Please ask for assistance.<br />
+Dogs do not display true personality in kennels.<br />
+Do not open cages without permission.</font><br />
+</div>
+</td>
+</tr>
+</table>
+HEADER$$
+
+$$BODY
+<table width="700" border="1">
+
+<tr>
+<td width="350" colspan="2">Name:<br /><font size="10">$animalname</font></td>
+<td width="350" colspan="2"><font size="5">Code: <b>$sheltercode</b></font><br />
+<font size="3">Location: <b>$thelocation</b></font></td>
+</tr>
+
+<tr>
+<td width="175">Admitted:<br /><font size="5">$datebroughtin</font></td>
+<td width="175">Approximate Date of Birth:<br /><font size="5">$dateofbirth</font></td>
+<td width="175">Sex:<br /><font size=5>$thesex</font></td>
+<td width="175">Fixed:<br /><font size=5>$altered</font></td>
+</tr>
+
+<tr>
+<td width="350" colspan="2"><img height="200" src="{IMAGE.$ANIMALID}" /></td>
+<td width="350" colspan="2">
+<font size="3">
+Breed: <b>$BreedName</b><br />
+Color: <b>$BaseColour</b><br />
+Markings: <b>$Markings</b><br />
+Size: <b>$Size</b><br />
+Microchip: <b>$identichipnumber</b><br />
+Heartworm: <b>$heartworm</b><br />
+FIV/L: <b>$fivl</b><br />
+FLV: <b>$flv</b><br />
+Housetrained? <b>$HouseTrained</b><br />
+Good With Dogs? <b>$WithDogs</b><br />
+Good With Cats? <b>$WithCats</b><br />
+Good With Children? <b>$WithChildren</b>
+</font>
+</td>
+</tr>
+
+<tr>
+<td width="700" colspan="4"><font size="5">Comments:</font><br /><font size="3">$AnimalComments</font></td>
+</tr>
+
+<tr>
+<td width="700" colspan="4"><font size="3">Type:<br />$animalType</font></td>
+</tr>
+
+</table>
+<p>&nbsp;</p>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+&&&
+Cage Card (retain bio line breaks)
+###
+Inventories
+###
+2732/PostgreSQL omitcriteria omitheaderfooter rev01
+###
+An animal cage card with image.
+###
+en
+###
+SELECT
+animal.activeMovementType,
+animal.activeMovementID,
+animal.animalname,
+animal.ShelterCode,
+animal.speciesID,
+animal.breedID,
+animal.basecolourID,
+animal.shelterLocation,
+animal.animalTypeID,
+animal.Markings,
+lksize.Size,
+regexp_replace(animal.AnimalComments, '\n', '<br/>', 'g') AS AnimalComments,
 animal.datebroughtin,
 animal.dateofbirth,
 animal.id as animalid,

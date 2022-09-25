@@ -1,10 +1,10 @@
-Unreturned traps due between two dates
+Unreturned equipment due between two dates
 ###
 Animal Control
 ###
 33307/Any
 ###
-Unreturned loaned traps due back between two dates
+Unreturned loaned equipment due back between two dates
 ###
 en
 ###

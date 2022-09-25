@@ -86,6 +86,8 @@ $(function() {
                 return true;
             };
 
+            validate.indicator([ "animal", "person", "retailerdate" ]);
+
             // Callback when animal is changed
             $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
               
@@ -115,7 +117,7 @@ $(function() {
             $("#retailerdate").datepicker("setDate", new Date());
 
             // Remove any retired lookups from the lists
-            $(".asm-selectbox").select("removeRetiredOptions");
+            $(".asm-selectbox").select("removeRetiredOptions", "all");
 
             $("#retailer").button().click(async function() {
                 if (!validation()) { return; }

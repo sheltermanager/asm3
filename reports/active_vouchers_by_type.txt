@@ -2,7 +2,7 @@ Active Vouchers by Type
 ###
 Financial
 ###
-2732/Any
+34304/Any
 ###
 Active vouchers issued on the system.
 ###
@@ -12,7 +12,8 @@ SELECT OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelep
 FROM owner
 INNER JOIN ownervoucher ON ownervoucher.OwnerID = owner.ID
 INNER JOIN voucher ON ownervoucher.VoucherID = voucher.ID
-WHERE DateIssued < '$CURRENT_DATE$' AND DateExpired > '$CURRENT_DATE$'
+WHERE DateIssued < '$CURRENT_DATE$' AND DateExpired > '$CURRENT_DATE$' 
+AND DatePresented Is Null
 ORDER BY VoucherName, DateIssued
 ###
 $$HEADER

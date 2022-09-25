@@ -2,7 +2,7 @@ Non-Neutered/Spayed Adopted Animals Aged Over 6 Months
 ###
 Auditing
 ###
-PostgreSQL
+PostgreSQL rev02
 ###
 Adopted animals aged over 6 months who have not been neutered/spayed.
 ###
@@ -23,6 +23,7 @@ AND a.NonShelterAnimal = 0 AND a.DeceasedDate Is Null
 AND a.ActiveMovementDate >= '$ASK DATE Adopted between$'
 AND a.ActiveMovementDate <= '$ASK DATE and$'
 AND a.Neutered = 0 AND DateOfBirth <= (now() - interval '6 months')
+AND a.SpeciesID IN (1,2)
 ORDER BY o.OwnerName
 ###
 MAIL

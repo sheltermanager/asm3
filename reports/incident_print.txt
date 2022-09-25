@@ -2,7 +2,7 @@ Print Incident Record
 ###
 Animal Control
 ###
-33503/Any
+33503/Any rev02
 ###
 A complete printout of an incident record.
 ###
@@ -131,6 +131,7 @@ FROM ownercitation oc
 INNER JOIN citationtype ct ON ct.ID = oc.CitationTypeID
 INNER JOIN owner o ON o.ID = oc.OwnerID
 WHERE oc.AnimalControlID = $PARENTKEY$
+ORDER BY oc.CitationDate
 +++
 $$HEADER
 <table>
@@ -147,6 +148,7 @@ SUBREPORT_IncidentPrintDiary
 +++
 SELECT d.* FROM diary d
 WHERE d.LinkType = 7 AND d.LinkID = $PARENTKEY$
+ORDER BY d.DiaryDateTime
 +++
 $$HEADER
 <table>
@@ -164,6 +166,7 @@ SUBREPORT_IncidentPrintLog
 SELECT lo.*, lt.LogTypeName FROM log lo
 INNER JOIN logtype lt ON lt.ID = lo.LogTypeID
 WHERE lo.LinkType = 6 AND lo.LinkID = $PARENTKEY$
+ORDER BY lo.Date
 +++
 $$HEADER
 <table>

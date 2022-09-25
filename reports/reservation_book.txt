@@ -2,7 +2,7 @@ Reservation Book
 ###
 Movements
 ###
-33507/Any
+33909/Any rev02
 ###
 Current active reservations with the name/address of the potential owner.
 ###
@@ -16,10 +16,12 @@ animaltype.AnimalType AS theType,
 animal.BreedName,
 no.OwnerName, no.OwnerAddress,
 no.OwnerTown, no.OwnerCounty,
-no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone,
+co.OwnerName AS CoordinatorName
 FROM adoption
 INNER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN owner no ON adoption.OwnerID = no.ID
+LEFT OUTER JOIN owner co ON animal.AdoptionCoordinatorID = co.ID
 INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN reservationstatus ON reservationstatus.ID = adoption.ReservationStatusID
@@ -33,6 +35,7 @@ $$HEADER
 <td><b>Type</b></td>
 <td><b>Breed</b></td>
 <td><b>Entered Shelter</b></td>
+<td><b>Coordinator</b></td>
 <td><b>Reserved On</b></td>
 <td><b>Reserved By</b></td>
 <td><b>Status</b></td>
@@ -46,6 +49,7 @@ $$BODY<tr>
 <td>$theType</td>
 <td>$BreedName</td>
 <td>$DateBroughtIn</td>
+<td>$CoordinatorName</td>
 <td>$RESERVATIONDATE</td>
 <td><i>$OwnerName</i><br/>
 $OwnerAddress<br/>

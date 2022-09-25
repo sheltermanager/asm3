@@ -1,36 +1,23 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 """
 Creates the single "report.txt" file and uploads it to the sheltermanager.com
 server for users of the program to access and get new reports
 """
 
-HOST = "wwwdx.sheltermanager.com"
+import os, sys
 
-import os
+s = []
+for fname in os.listdir("."):
+    if fname.endswith(".txt") and fname != "reports.txt":
+        with open(fname, "r") as f:
+            s.append(f.read())
 
-de = os.listdir(".")
-s = ""
+rcount = "&&&".join(s).count("&&&")
+print(f"Processed {len(s)} files containing {rcount} reports")
 
-for d in de:
-    if d.endswith(".txt"):
-        f = open(d, "r")
-        if s != "": s += "&&&\n"
-        s += f.read()
-        f.close()
+with open("reports.txt", "w") as f:
+    f.write("&&&\n".join(s))
+print("reports.txt written")
 
-print "Found %d reports" % s.count("&&&")
 
-f = open("reports.txt", "w")
-f.write(s)
-f.flush()
-f.close()
-print "reports.txt written"
-
-# Upload to the server
-os.system("scp -C reports.txt root@%s:/var/www/sheltermanager.com/repo/" % HOST)
-print "reports.txt uploaded to root@%s:/var/www/sheltermanager.com/repo/" % HOST
-
-# Remove the temp file
-os.system("rm -f reports.txt")
-print "cleaning up."

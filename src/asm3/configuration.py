@@ -1,4 +1,3 @@
-
 import asm3.al
 import asm3.audit
 import asm3.cachedisk
@@ -96,20 +95,27 @@ DEFAULTS = {
     "AddAnimalsShowMicrochip": "No",
     "AddAnimalsShowNeutered": "No",
     "AddAnimalsShowOriginalOwner": "No",
+    "AddAnimalsShowPickup": "No",
     "AddAnimalsShowSize": "No",
     "AddAnimalsShowTattoo": "No",
     "AddAnimalsShowTimeBroughtIn": "No",
     "AddAnimalsShowWeight": "No",
+    "AdoptionCheckoutDonationMsg": "Our organization depends on the kind donations of individuals to provide animals with medical care, food and shelter.\n<br/><br/><b>We need your help!</b>",
+    "AdoptionCheckoutDonationTiers": "$0=No thanks\n$10=Microchip one pet\n$25=One week of milk for a litter of kittens\n$50=Vaccinate a litter of puppies\n$100=Spay/neuter and vaccinate one pet\n$200=Contribute to surgery for pets in need",
     "AnimalFiguresSplitEntryReason": "No",
     "AnnualFiguresShowBabies": "Yes",
     "AnnualFiguresShowBabiesType": "Yes",
     "AnnualFiguresBabyMonths" : "6",
-    "AnnualFiguresSplitAdoptions": "Yes",
+    "AnnualFiguresSplitAdoptions": "No",
     "AnonymisePersonalData": "No",
     "AnonymiseAfterYears": "0",
+    "AuditOnViewRecord": "Yes",
+    "AuditOnViewReport": "Yes",
+    "AuditOnSendEmail": "Yes",
     "AutoCancelReservesDays": "14",
     "AutoDefaultShelterCode": "Yes",
     "AutoDefaultVaccBatch": "Yes",
+    "AutoHashProcessedForms": "Yes",
     "AutoInsuranceStart": "0",
     "AutoInsuranceEnd": "0",
     "AutoInsuranceNext": "0",
@@ -138,15 +144,20 @@ DEFAULTS = {
     "AFDefaultTestType": "1",
     "AFDefaultVaccinationType": "1",
     "AFNonShelterType": "40",
+    "AKCRegisterAll": "No",
     "AlertSpeciesMicrochip": "1,2",
     "AlertSpeciesNeuter": "1,2",
+    "AlertSpeciesRabies": "1,2",
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
     "AvidOverseasOriginCountry": "",
     "BoardingCostType": "1",
     "CancelReservesOnAdoption": "Yes",
+    "CardcomSuccessURL": "https://secure.cardcom.solutions/DealWasSuccessful.aspx",
+    "CardcomErrorURL": "https://secure.cardcom.solutions/DealWasUnSuccessful.aspx",
+    "CardcomDocumentType": "3",
+    "CardcomMaxInstallments": "6",
     "CloneAnimalIncludeLogs": "Yes",
-    "CollationIDNext": "0",
     "CostSourceAccount": "9",
     "CreateBoardingCostOnAdoption": "Yes",
     "CreateCostTrx": "No",
@@ -154,6 +165,8 @@ DEFAULTS = {
     "CodingFormat": "TYYYYNNN",
     "CurrencyCode": "USD",
     "ShortCodingFormat": "NNT",
+    "DateBroughtInFutureLimit": "30",
+    "DateDiffCutoffs": "7|182|365",
     "DefaultAnimalAge": "1.0", 
     "DefaultDailyBoardingCost": "2000",
     "DefaultDateBroughtIn": "Yes",
@@ -180,8 +193,8 @@ DEFAULTS = {
     "DonationTrxOverride": "No",
     "DonationVATAccount": "22",
     "DonationOnMoveReserve": "Yes",
-    "DontShowCombi": "Yes",
-    "DontShowHeartworm": "Yes",
+    "DontShowRabies": "Yes",
+    "DontShowSize": "No",
     "EmailDiaryNotes": "Yes", 
     "EmailDiaryOnChange": "No",
     "EmailDiaryOnComplete": "No",
@@ -189,8 +202,10 @@ DEFAULTS = {
     "EmailMessages": "Yes", 
     "EmblemAlwaysLocation": "No",
     "EmblemBonded": "Yes",
+    "EmblemCourtesy": "Yes",
     "EmblemCrueltyCase": "Yes",
     "EmblemDeceased": "Yes",
+    "EmblemFutureAdoption": "Yes",
     "EmblemHold": "Yes",
     "EmblemLongTerm": "Yes",
     "EmblemNonShelter": "Yes",
@@ -198,15 +213,24 @@ DEFAULTS = {
     "EmblemNotMicrochipped": "Yes",
     "EmblemPositiveTest": "Yes",
     "EmblemQuarantine": "Yes",
+    "EmblemRabies": "No",
     "EmblemReserved": "Yes",
     "EmblemSpecialNeeds": "Yes",
     "EmblemTrialAdoption": "Yes",
     "EmblemUnneutered": "Yes",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
+    "FlagChangeLog": "Yes",
+    "FlagChangeLogType": "3",
+    "FormatPhoneNumbers": "Yes",
     "FosterOnShelter": "Yes",
     "FostererEmails": "No", 
     "FostererEmailOverdueDays": "-30",
+    "FostererEmailSkipNoMedical": "No",
+    "FoundAnimalSearchColumns": "LostFoundID,Owner,MicrochipNumber,AreaFound,"
+        "AreaPostCode,DateFound,AgeGroup,SexName,SpeciesName,BreedName,"
+        "BaseColourName,DistFeat",
+    "FutureOnShelter": "Yes",
     "ShowGDPRContactOptIn": "No",
     "GDPRContactChangeLog": "No",
     "GDPRContactChangeLogType": "6",
@@ -215,10 +239,15 @@ DEFAULTS = {
     "GenerateDocumentLogType": "5",
     "HideCountry": "Yes",
     "HideHomeCheckedNoFlag": "Yes",
+    "HideLookingFor": "No",
     "HoldChangeLog": "Yes",
     "HoldChangeLogType": "3",
     "IncidentPermissions": "No",
-    "IncomingMediaScaling": "640x640",
+    "IncidentSearchColumns": "IncidentNumber,IncidentType,IncidentDateTime,"
+        "DispatchAddress,DispatchTown,DispatchPostcode,JurisdictionName,"
+        "LocationName,Suspect,DispatchDateTime,RespondedDateTime,"
+        "DispatchedACO,FollowupDateTime,CompletedDate,CompletedName,"
+        "CallNotes",
     "InactivityTimer": "No",
     "InactivityTimeout": "20", 
     "IncludeIncompleteMedicalDoc": "Yes",
@@ -228,7 +257,10 @@ DEFAULTS = {
     "LocationChangeLogType": "3",
     "LocationFiltersEnabled": "No",
     "LongTermMonths": "6",
-    "MailMergeMaxEmails": "2000",
+    "LostAnimalSearchColumns": "LostFoundID,Owner,MicrochipNumber,AreaLost,"
+        "AreaPostCode,DateLost,AgeGroup,SexName,SpeciesName,BreedName,"
+        "BaseColourName,DistFeat",
+    "MailMergeMaxEmails": "3000",
     "MainScreenAnimalLinkMode": "recentlychanged",
     "MainScreenAnimalLinkMax": "9",
     "ManualCodes": "No",
@@ -247,6 +279,7 @@ DEFAULTS = {
     "MaxMediaFileSize": "1000",
     "MediaAllowJPG": "Yes",
     "MediaAllowPDF": "Yes",
+    "MediaTableMode": "No",
     "MedicalItemDisplayLimit": "500",
     "MicrochipRegisterMovements": "1,5",
     "MovementDonationsDefaultDue": "No",
@@ -269,16 +302,16 @@ DEFAULTS = {
     "PetsLocatedAnimalFlag": "",
     "PicturesInBooks": "Yes",
     "PDFInline": "Yes",
+    "PDFZoom": "100",
     "PublisherUseComments": "Yes",
-    "PublisherIgnoreFTPOverride": "No",
     "PublisherPresets": "includefosters excludeunder=12",
     "PublisherSub24Frequency": "0",
     "QuicklinksID": "40,46,25,31,34,19,20",
     "QuicklinksHomeScreen": "Yes",
     "QuicklinksAllScreens": "No",
-    "ReceiptNumberNext": "0",
     "RecordSearchLimit": "1000",
     "ReloadMedical": "Yes",
+    "ReportToolbar": "Yes",
     "ReservesOverdueDays": "7",
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
@@ -310,10 +343,14 @@ DEFAULTS = {
     "ShowWeightInLbs": "Yes",
     "ShowWeightInLbsFraction": "No",
     "ShowWeightUnitsInLog": "Yes",
+    "SMTPOverride": "No",
     "SMTPPort": "25",
     "SoftReleases": "No",
     "SoftReleaseOnShelter": "No",
     "StickyTableHeaders": "Yes",
+    "SACStrayCategory": "7",
+    "SACSurrenderCategory": "17",
+    "SACTNRCategory": "14",
     "TableHeadersVisible": "Yes",
     "TemplatesForNonShelter": "No",
     "ThumbnailSize": "150x150",
@@ -322,8 +359,10 @@ DEFAULTS = {
     "TrialAdoptions": "No",
     "TrialOnShelter": "No",
     "UniqueLicenceNumbers": "Yes",
+    "UpdateAnimalTestFields": "Yes",
     "UseAutoInsurance": "No",
     "UseShortShelterCodes": "Yes", 
+    "USStateCodes": "No",
     "VATEnabled": "Yes",
     "VATExclusive": "No",
     "VATRate": "20",
@@ -342,11 +381,13 @@ DEFAULTS = {
     "WarnNoMicrochip": "Yes",
     "WarnNoPendingVacc": "Yes",
     "WarnNoHomeCheck": "Yes",
+    "WarnBannedAddress": "Yes",
     "WarnBannedOwner": "Yes",
     "WarnOOPostcode": "Yes",
+    "WarnOSMedical": "Yes",
     "WarnSimilarAnimalName": "Yes",
     "WeightChangeLog": "Yes",
-    "WeightChangeLogType": "4"
+    "WeightChangeLogType": "4",
 }
 
 def cstring(dbo, key, default = ""):
@@ -401,7 +442,7 @@ def csave(dbo, username, post):
         """
         Returns True if s has a valid code portion in it
         """
-        VALID_CODES = ("XX", "XXX", "NN", "NNN", "UUUU", "UUUUUUUUUU")
+        VALID_CODES = ("OO", "OOO", "XX", "XXX", "NN", "NNN", "UUUU", "UUUUUUUUUU")
         for v in VALID_CODES:
             if s.find(v) != -1:
                 return True
@@ -416,18 +457,18 @@ def csave(dbo, username, post):
     for k in post.data.keys():
         if k == "mode" or k == "filechooser": continue
         v = post.string(k, False)
-        if k in ("EmailSignature", "FostererEmailsMsg"):
+        if k in ("AdoptionCheckoutDonationMsg", "EmailSignature", "FostererEmailsMsg"):
             # It's HTML - don't XSS escape it
             put(k, v, sanitiseXSS = False)
         elif k == "CodingFormat":
-            # If there's no valid N, X or U tokens in there, it's not valid so reset to
+            # If there's no valid N, X, O or U tokens in there, it's not valid so reset to
             # the default.
             if not valid_code(v):
                 put(k, "TYYYYNNN")
             else:
                 put(k, v)
         elif k == "ShortCodingFormat":
-            # If there's no N, X or U in there, it's not valid so reset to
+            # If there's no N, X, O or U in there, it's not valid so reset to
             # the default.
             if not valid_code(v):
                 put(k, "NNT")
@@ -481,6 +522,27 @@ def adoptapet_user(dbo):
 def adoptapet_password(dbo):
     return cstring(dbo, "SaveAPetFTPPassword")
 
+def adoption_checkout_donation_msg(dbo):
+    return cstring(dbo, "AdoptionCheckoutDonationMsg", DEFAULTS["AdoptionCheckoutDonationMsg"])
+
+def adoption_checkout_donationid(dbo):
+    return cint(dbo, "AdoptionCheckoutDonationID")
+
+def adoption_checkout_donation_tiers(dbo):
+    return cstring(dbo, "AdoptionCheckoutDonationTiers", DEFAULTS["AdoptionCheckoutDonationTiers"])
+
+def adoption_checkout_feeid(dbo):
+    return cint(dbo, "AdoptionCheckoutFeeID")
+
+def adoption_checkout_payment_method(dbo):
+    return cint(dbo, "AdoptionCheckoutPaymentMethod")
+
+def adoption_checkout_processor(dbo):
+    return cstring(dbo, "AdoptionCheckoutProcessor")
+
+def adoption_checkout_templateid(dbo):
+    return cint(dbo, "AdoptionCheckoutTemplateID")
+
 def advanced_find_animal(dbo):
     return cboolean(dbo, "AdvancedFindAnimal")
 
@@ -518,6 +580,9 @@ def age_group_name(dbo, band):
 def akc_enrollmentsourceid(dbo):
     return cstring(dbo, "AKCEnrollmentSourceID")
 
+def akc_register_all(dbo):
+    return cboolean(dbo, "AKCRegisterAll")
+
 def alert_species_microchip(dbo):
     s = cstring(dbo, "AlertSpeciesMicrochip", DEFAULTS["AlertSpeciesMicrochip"])
     if s == "": return "0" # Always return something due to IN clauses of queries
@@ -525,6 +590,11 @@ def alert_species_microchip(dbo):
 
 def alert_species_neuter(dbo):
     s = cstring(dbo, "AlertSpeciesNeuter", DEFAULTS["AlertSpeciesNeuter"])
+    if s == "": return "0" # Always return something due to IN clauses of queries
+    return s
+
+def alert_species_rabies(dbo):
+    s = cstring(dbo, "AlertSpeciesRabies", DEFAULTS["AlertSpeciesRabies"])
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
@@ -567,11 +637,26 @@ def anonymise_personal_data(dbo):
 def anonymise_after_years(dbo):
     return cint(dbo, "AnonymiseAfterYears", DEFAULTS["AnonymiseAfterYears"])
 
+def audit_on_view_record(dbo):
+    return cboolean(dbo, "AuditOnViewRecord", DEFAULTS["AuditOnViewRecord"])
+
+def audit_on_view_report(dbo):
+    return cboolean(dbo, "AuditOnViewReport", DEFAULTS["AuditOnViewReport"])
+
+def audit_on_send_email(dbo):
+    return cboolean(dbo, "AuditOnSendEmail", DEFAULTS["AuditOnSendEmail"])
+
 def auto_cancel_reserves_days(dbo):
     return cint(dbo, "AutoCancelReservesDays", int(DEFAULTS["AutoCancelReservesDays"]))
 
 def auto_cancel_hold_days(dbo):
     return cint(dbo, "AutoCancelHoldDays", int(DEFAULTS["AutoCancelHoldDays"]))
+
+def auto_default_vacc_batch(dbo):
+    return cboolean(dbo, "AutoDefaultVaccBatch", DEFAULTS["AutoDefaultVaccBatch"])
+
+def auto_hash_processed_forms(dbo):
+    return cboolean(dbo, "AutoHashProcessedForms", DEFAULTS["AutoHashProcessedForms"] == "Yes")
 
 def auto_insurance_next(dbo, newins = 0):
     if newins == 0:
@@ -624,6 +709,27 @@ def avid_reregistration(dbo):
 def cancel_reserves_on_adoption(dbo):
     return cboolean(dbo, "CancelReservesOnAdoption", DEFAULTS["CancelReservesOnAdoption"] == "Yes")
 
+def cardcom_terminalnumber(dbo):
+    return cstring(dbo, "CardcomTerminalNumber")
+
+def cardcom_username(dbo):
+    return cstring(dbo, "CardcomUserName")
+
+def cardcom_documenttype(dbo):
+    return cstring(dbo, "CardcomDocumentType")
+
+def cardcom_usetoken(dbo):
+    return cboolean(dbo,"CardcomUseToken", DEFAULTS["CardcomUseToken"] == "Yes")
+
+def cardom_maxinstallments(dbo):
+    return cint(dbo,'CardcomMaxInstallments')
+
+def cardcom_successurl(dbo):
+    return cstring(dbo, "CardcomSuccessURL")
+
+def cardcom_errorurl(dbo):
+    return cstring(dbo, "CardcomErrorURL")
+
 def clone_animal_include_logs(dbo):
     return cboolean(dbo, "CloneAnimalIncludeLogs", DEFAULTS["CloneAnimalIncludeLogs"] == "Yes")
 
@@ -632,14 +738,6 @@ def coding_format(dbo):
 
 def coding_format_short(dbo):
     return cstring(dbo, "ShortCodingFormat", DEFAULTS["ShortCodingFormat"])
-
-def collation_id_next(dbo):
-    """ Returns the CollationIDNext value and increments it """
-    nrn = cint(dbo, "CollationIDNext", 0)
-    if nrn == 0:
-        nrn = 1 + dbo.query_int("SELECT MAX(CollationID) FROM onlineformincoming")
-    cset(dbo, "CollationIDNext", str(nrn + 1))
-    return nrn
 
 def cost_source_account(dbo):
     return cint(dbo, "CostSourceAccount", DEFAULTS["CostSourceAccount"])
@@ -652,6 +750,12 @@ def create_donation_trx(dbo):
 
 def currency_code(dbo):
     return cstring(dbo, "CurrencyCode", DEFAULTS["CurrencyCode"])
+
+def date_brought_in_future_limit(dbo):
+    return cint(dbo, "DateBroughtInFutureLimit", DEFAULTS["DateBroughtInFutureLimit"])
+
+def date_diff_cutoffs(dbo):
+    return cstring(dbo, "DateDiffCutoffs", DEFAULTS["DateDiffCutoffs"])
 
 def dbv(dbo, v = None):
     if v is None:
@@ -709,6 +813,9 @@ def default_entry_reason(dbo):
 
 def default_incident(dbo):
     return cint(dbo, "DefaultIncidentType", 1)
+
+def default_jurisdiction(dbo):
+    return cint(dbo, "DefaultJurisdiction", 1)
 
 def default_location(dbo):
     return cint(dbo, "AFDefaultLocation", 1)
@@ -770,6 +877,9 @@ def donation_trx_override(dbo):
 def donation_vat_account(dbo):
     return cint(dbo, "DonationVATAccount", DEFAULTS["DonationVATAccount"])
 
+def dont_show_size(dbo):
+    return cboolean(dbo, "DontShowSize", DEFAULTS["DontShowSize"] == "Yes")
+
 def email(dbo):
     return cstring(dbo, "EmailAddress")
 
@@ -788,11 +898,20 @@ def email_empty_reports(dbo):
 def email_messages(dbo):
     return cboolean(dbo, "EmailMessages", DEFAULTS["EmailMessages"] == "Yes")
 
+def flag_change_log(dbo):
+    return cboolean(dbo, "FlagChangeLog", DEFAULTS["FlagChangeLog"] == "Yes")
+
+def flag_change_log_type(dbo):
+    return cint(dbo, "FlagChangeLogType", DEFAULTS["FlagChangeLogType"])
+
 def foster_on_shelter(dbo):
     return cboolean(dbo, "FosterOnShelter", DEFAULTS["FosterOnShelter"] == "Yes")
 
 def fosterer_email_overdue_days(dbo):
     return cint(dbo, "FostererEmailOverdueDays", DEFAULTS["FostererEmailOverdueDays"])
+
+def fosterer_email_skip_no_medical(dbo):
+    return cboolean(dbo, "FostererEmailSkipNoMedical", DEFAULTS["FostererEmailSkipNoMedical"] == "Yes")
 
 def fosterer_emails(dbo):
     return cboolean(dbo, "FostererEmails", DEFAULTS["FostererEmails"] == "Yes")
@@ -803,11 +922,20 @@ def fosterer_emails_reply_to(dbo):
 def fosterer_emails_msg(dbo):
     return cstring(dbo, "FostererEmailsMsg")
 
+def foundanimal_search_columns(dbo):
+    return cstring(dbo, "FoundAnimalSearchColumns", DEFAULTS["FoundAnimalSearchColumns"])
+
+def foundanimals_cutoff_days(dbo):
+    return cint(dbo, "FoundAnimalsCutoffDays")
+
 def foundanimals_email(dbo):
     return cstring(dbo, "FoundAnimalsEmail")
 
 def foundanimals_folder(dbo):
     return cstring(dbo, "FoundAnimalsFolder")
+
+def future_on_shelter(dbo):
+    return cboolean(dbo, "FutureOnShelter", DEFAULTS["FutureOnShelter"] == "Yes")
 
 def ftp_host(dbo):
     return cstring(dbo, "FTPURL")
@@ -863,8 +991,8 @@ def include_incomplete_medical_doc(dbo):
 def include_off_shelter_medical(dbo):
     return cboolean(dbo, "IncludeOffShelterMedical", DEFAULTS["IncludeOffShelterMedical"] == "Yes")
 
-def incoming_media_scaling(dbo):
-    return cstring(dbo, "IncomingMediaScaling", DEFAULTS["IncomingMediaScaling"])
+def js_injection(dbo):
+    return cstring(dbo, "JSInjection")
 
 def js_window_print(dbo):
     return cboolean(dbo, "JSWindowPrint", DEFAULTS["JSWindowPrint"] == "Yes")
@@ -889,6 +1017,9 @@ def maddies_fund_username(dbo):
 
 def maddies_fund_password(dbo):
     return cstring(dbo, "MaddiesFundPassword")
+
+def mail_merge_max_emails(dbo):
+    return cint(dbo, "MailMergeMaxEmails", int(DEFAULTS["MailMergeMaxEmails"]))
 
 def main_screen_animal_link_mode(dbo):
     return cstring(dbo, "MainScreenAnimalLinkMode", DEFAULTS["MainScreenAnimalLinkMode"])
@@ -958,6 +1089,9 @@ def medical_item_display_limit(dbo):
 def microchip_register_movements(dbo):
     return cstring(dbo, "MicrochipRegisterMovements", DEFAULTS["MicrochipRegisterMovements"])
 
+def microchip_register_from(dbo):
+    return cstring(dbo, "MicrochipRegisterFrom", "")
+
 def movement_donations_default_due(dbo):
     return cboolean(dbo, "MovementDonationsDefaultDue", DEFAULTS["MovementDonationsDefaultDue"] == "Yes")
 
@@ -994,6 +1128,9 @@ def organisation_country(dbo):
 def organisation_telephone(dbo):
     return cstring(dbo, "OrganisationTelephone", DEFAULTS["OrganisationTelephone"])
 
+def osm_map_tiles_override(dbo):
+    return cstring(dbo, "OSMMapTilesOverride")
+
 def owner_name_format(dbo):
     return cstring(dbo, "OwnerNameFormat", DEFAULTS["OwnerNameFormat"])
 
@@ -1008,6 +1145,9 @@ def petrescue_adoptable_in(dbo):
 
 def petrescue_all_desexed(dbo):
     return cboolean(dbo, "PetRescueAllDesexed")
+
+def petrescue_all_microchips(dbo):
+    return cboolean(dbo, "PetRescueAllMicrochips")
 
 def petrescue_email(dbo):
     return cstring(dbo, "PetRescueEmail")
@@ -1024,8 +1164,17 @@ def petrescue_token(dbo):
 def pdf_inline(dbo):
     return cboolean(dbo, "PDFInline", DEFAULTS["PDFInline"] == "Yes")
 
+def pdf_zoom(dbo):
+    return cint(dbo, "PDFZoom", DEFAULTS["PDFZoom"])
+
 def person_search_columns(dbo):
     return cstring(dbo, "OwnerSearchColumns", DEFAULTS["OwnerSearchColumns"])
+
+def incident_search_columns(dbo):
+    return cstring(dbo, "IncidentSearchColumns", DEFAULTS["IncidentSearchColumns"])
+
+def lostanimal_search_columns(dbo):
+    return cstring(dbo, "LostAnimalSearchColumns", DEFAULTS["LostAnimalSearchColumns"])
 
 def petcademy_token(dbo):
     return cstring(dbo, "PetcademyToken")
@@ -1035,6 +1184,12 @@ def petfinder_age_bands(dbo):
 
 def petfinder_hide_unaltered(dbo):
     return cboolean(dbo, "PetFinderHideUnaltered", False)
+
+def petfinder_send_holds(dbo):
+    return cboolean(dbo, "PetFinderSendHolds", False)
+
+def petfinder_send_strays(dbo):
+    return cboolean(dbo, "PetFinderSendStrays", False)
 
 def petfinder_user(dbo):
     return cstring(dbo, "PetFinderFTPUser")
@@ -1053,6 +1208,9 @@ def helpinglostpets_password(dbo):
 
 def helpinglostpets_postal(dbo):
     return cstring(dbo, "HelpingLostPetsPostal")
+
+def petlink_cutoff_days(dbo):
+    return cint(dbo, "PetLinkCutoffDays")
 
 def petlink_email(dbo):
     return cstring(dbo, "PetLinkEmail")
@@ -1108,9 +1266,6 @@ def smarttag_accountid(dbo):
 def publisher_presets(dbo):
     return cstring(dbo, "PublisherPresets", DEFAULTS["PublisherPresets"])
 
-def publisher_ignore_ftp_override(dbo):
-    return cboolean(dbo, "PublisherIgnoreFTPOverride", DEFAULTS["PublisherIgnoreFTPOverride"] == "Yes")
-
 def publisher_sub24_frequency(dbo):
     return cint(dbo, "PublisherSub24Frequency", DEFAULTS["PublisherSub24Frequency"])
 
@@ -1129,13 +1284,8 @@ def quicklinks_id(dbo, newval = None):
     else:
         cset(dbo, "QuicklinksID", newval)
 
-def receipt_number_next(dbo):
-    """ Returns the ReceiptNumberNext value and increments it """
-    nrn = cint(dbo, "ReceiptNumberNext", 0)
-    if nrn == 0:
-        nrn = 1 + dbo.query_int("SELECT MAX(ID) FROM ownerdonation")
-    cset(dbo, "ReceiptNumberNext", str(nrn + 1))
-    return nrn
+def report_toolbar(dbo):
+    return cboolean(dbo, "ReportToolbar", DEFAULTS["ReportToolbar"] == "Yes")
 
 def rescuegroups_user(dbo):
     return cstring(dbo, "RescueGroupsFTPUser")
@@ -1146,14 +1296,26 @@ def rescuegroups_password(dbo):
 def retailer_on_shelter(dbo):
     return cboolean(dbo, "RetailerOnShelter", DEFAULTS["RetailerOnShelter"] == "Yes")
 
-def savourlife_username(dbo):
-    return cstring(dbo, "SavourLifeUsername")
+def sac_stray_category(dbo):
+    return cstring(dbo, "SACStrayCategory", DEFAULTS["SACStrayCategory"])
 
-def savourlife_password(dbo):
-    return cstring(dbo, "SavourLifePassword")
+def sac_surrender_category(dbo):
+    return cstring(dbo, "SACSurrenderCategory", DEFAULTS["SACSurrenderCategory"])
+
+def sac_tnr_category(dbo):
+    return cstring(dbo, "SACTNRCategory", DEFAULTS["SACTNRCategory"])
+
+def savourlife_token(dbo):
+    return cstring(dbo, "SavourLifeToken")
+
+def savourlife_all_microchips(dbo):
+    return cboolean(dbo, "SavourLifeAllMicrochips")
 
 def savourlife_interstate(dbo):
     return cboolean(dbo, "SavourLifeInterstate")
+
+def savourlife_radius(dbo):
+    return cint(dbo, "SavourLifeRadius")
 
 def scale_pdfs(dbo):
     return cboolean(dbo, "ScalePDFs", DEFAULTS["ScalePDFs"] == "Yes")
@@ -1209,20 +1371,23 @@ def signpad_ids(dbo, user, newval = None):
 def smdb_locked(dbo):
     return cboolean(dbo, "SMDBLocked")
 
+def smtp_override(dbo):
+    return cboolean(dbo, "SMTPOverride", DEFAULTS["SMTPOverride"] == "Yes")
+
 def smtp_server(dbo):
     return cstring(dbo, "SMTPServer")
 
 def smtp_port(dbo):
     return cint(dbo, "SMTPPort", DEFAULTS["SMTPPort"])
 
-def smtp_server_username(dbo):
-    return cstring(dbo, "SMTPServerUsername")
+def smtp_username(dbo):
+    return cstring(dbo, "SMTPUsername")
 
-def smtp_server_password(dbo):
-    return cstring(dbo, "SMTPServerPassword")
+def smtp_password(dbo):
+    return cstring(dbo, "SMTPPassword")
 
-def smtp_server_tls(dbo):
-    return cboolean(dbo, "SMTPServerUseTLS")
+def smtp_use_tls(dbo):
+    return cboolean(dbo, "SMTPUseTLS")
 
 def softrelease_on_shelter(dbo):
     return cboolean(dbo, "SoftReleaseOnShelter", DEFAULTS["SoftReleaseOnShelter"] == "Yes")
@@ -1259,6 +1424,9 @@ def trial_on_shelter(dbo):
 
 def unique_licence_numbers(dbo):
     return cboolean(dbo, "UniqueLicenceNumbers", DEFAULTS["UniqueLicenceNumbers"] == "Yes")
+
+def update_animal_test_fields(dbo):
+    return cboolean(dbo, "UpdateAnimalTestFields", DEFAULTS["UpdateAnimalTestFields"] == "Yes")
 
 def vetenvoy_user_id(dbo):
     return cstring(dbo, "VetEnvoyUserId")
@@ -1298,5 +1466,3 @@ def weight_change_log(dbo):
 
 def weight_change_log_type(dbo):
     return cint(dbo, "WeightChangeLogType", DEFAULTS["WeightChangeLogType"])
-
-

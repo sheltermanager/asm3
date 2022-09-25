@@ -17,7 +17,8 @@ import re
 #   pubspec - has a PetFinderSpecies column (species)
 #   pubbreed - has a PetFinderBreed column (breed)
 #   pubcol - has an AdoptAPetColour column (basecolour)
-#   sched - has a RescheduleDays column (vaccinationtype)
+#   sched - has a RescheduleDays column (testtype, vaccinationtype)
+#   acc - has an AccountID column (costtype, donationtype)
 #   cost - has a DefaultCost column (citationtype, costtype, donationtype, licencetype)
 #   units - has Units column (internallocation)
 #   site - has SiteID column (internallocation)
@@ -31,16 +32,16 @@ LOOKUP_TABLES = {
     "lkcoattype":       (_("Coat Types"), "CoatType", _("Coat Type"), "", "add del", ("animal.CoatType",)),
     "citationtype":     (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", "add del ret cost", ("ownercitation.CitationTypeID",)),
     "lksclinicstatus":  (_("Clinic Statuses"), "Status", _("Status"), "", "", ("clinicappointment.Status",)),
-    "costtype":         (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", "add del ret cost", ("animalcost.CostTypeID",)),
+    "costtype":         (_("Cost Types"), "CostTypeName", _("Cost Type"), "CostTypeDescription", "add del ret cost acc", ("animalcost.CostTypeID",)),
     "deathreason":      (_("Death Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.PTSReasonID",)),
     "diet":             (_("Diets"), "DietName", _("Diet"), "DietDescription", "add del ret", ("animaldiet.DietID",)),
     "donationpayment":  (_("Payment Methods"), "PaymentName", _("Type"), "PaymentDescription", "add del ret", ("ownerdonation.DonationPaymentID",)),
-    "donationtype":     (_("Payment Types"), "DonationName", _("Type"), "DonationDescription", "add del ret cost vat", ("ownerdonation.DonationTypeID", "accounts.DonationTypeID")),
+    "donationtype":     (_("Payment Types"), "DonationName", _("Type"), "DonationDescription", "add del ret cost vat acc", ("ownerdonation.DonationTypeID", "accounts.DonationTypeID")),
     "entryreason":      (_("Entry Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.EntryReasonID", "adoption.ReturnedReasonID") ),
     "incidentcompleted":(_("Incident Completed Types"), "CompletedName", _("Completed Type"), "CompletedDescription", "add del ret", ("animalcontrol.IncidentCompletedID",)),
     "incidenttype":     (_("Incident Types"), "IncidentName", _("Type"), "IncidentDescription", "add del ret", ("animalcontrol.IncidentTypeID",)),
     "internallocation": (_("Internal Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret units site", ("animal.ShelterLocation",)),
-    "jurisdiction":     (_("Jurisdictions"), "JurisdictionName", _("Jurisdiction"), "JurisdictionDescription", "add del ret", ("animalcontrol.JurisdictionID","owner.JurisdictionID")),
+    "jurisdiction":     (_("Jurisdictions"), "JurisdictionName", _("Jurisdiction"), "JurisdictionDescription", "add del ret", ("animal.JurisdictionID", "animalcontrol.JurisdictionID","owner.JurisdictionID")),
     "licencetype":      (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", "add del ret cost", ("ownerlicence.LicenceTypeID",)),
     "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", "add del ret", ("log.LogTypeID",)),
     "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", "", ("adoption.MovementType", "animal.ActiveMovementType",)),
@@ -52,21 +53,21 @@ LOOKUP_TABLES = {
     "lksynun":          (_("Yes/No/Unknown"), "Name", _("Yes/No/Unknown"), "", "", ("animal.IsHouseTrained",)),
     "lksynunk":         (_("Good with kids"), "Name", _("Good with kids"), "", "", ("animal.IsGoodWithChildren",)),
     "lksposneg":        (_("Positive/Negative"), "Name", _("Positive/Negative"), "", "", ("animal.CombiTestResult",)),
-    "pickuplocation":   (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("animal.PickupLocationID",)),
+    "pickuplocation":   (_("Pickup Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("animal.PickupLocationID", "animalcontrol.PickupLocationID")),
     "reservationstatus": (_("Reservation Statuses"), "StatusName", _("Status"), "StatusDescription", "add del ret", ("adoption.ReservationStatusID",)),
     "site":             (_("Sites"), "SiteName", _("Site"), "", "add del", ("users.SiteID","internallocation.SiteID")),
     "species":          (_("Species"), "SpeciesName", _("Species"), "SpeciesDescription", "add del ret pubspec", ("animal.SpeciesID", "onlineformfield.SpeciesID", "animallost.AnimalTypeID", "animalfound.AnimalTypeID")),
     "stocklocation":    (_("Stock Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret", ("stocklevel.StockLocationID",)),
     "stockusagetype":   (_("Stock Usage Type"), "UsageTypeName", _("Usage Type"), "UsageTypeDescription", "add del ret", ("stockusage.StockUsageTypeID",)),
     "lkurgency":        (_("Urgencies"), "Urgency", _("Urgency"), "", "", ("animalwaitinglist.Urgency",)),
-    "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", "add del ret cost", ("animaltest.TestTypeID",)),
+    "testtype":         (_("Test Types"), "TestName", _("Type"), "TestDescription", "add del ret cost sched", ("animaltest.TestTypeID",)),
     "testresult":       (_("Test Results"), "ResultName", _("Result"), "ResultDescription", "add del ret", ("animaltest.TestResultID",)),
     "lkstransportstatus": (_("Transport Statuses"), "Name", _("Status"), "", "", ("animaltransport.Status",)),
     "transporttype":    (_("Transport Types"), "TransportTypeName", _("Type"), "TransportTypeDescription", "add del ret", ("animaltransport.TransportTypeID",)),
-    "traptype":         (_("Trap Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", "add del ret cost", ("ownertraploan.TrapTypeID",)),
+    "traptype":         (_("Equipment Loan Types"), "TrapTypeName", _("Type"), "TrapTypeDescription", "add del ret cost", ("ownertraploan.TrapTypeID",)),
     "vaccinationtype":  (_("Vaccination Types"), "VaccinationType", _("Type"), "VaccinationDescription", "add del ret cost sched", ("animalvaccination.VaccinationID",)),
     "voucher":          (_("Voucher Types"), "VoucherName", _("Type"), "VoucherDescription", "add del ret cost", ("ownervoucher.VoucherID",)),
-    "lkworktype":       (_("Work Types"), "WorkType", _("Type"), "", "add del", ("ownerrota.WorkTypeID",))
+    "lkworktype":       (_("Work Types"), "WorkType", _("Type"), "", "add del ret", ("ownerrota.WorkTypeID",))
 }
 LOOKUP_TABLELABEL = 0
 LOOKUP_NAMEFIELD = 1
@@ -77,6 +78,8 @@ LOOKUP_FOREIGNKEYS = 5
 
 # Database of microchip manufacturer prefixes. locales is a space separated list of
 # locales the pattern is valid for (blank is all locales)
+# This list is evaluated in order, so entries with more specificity (ie. a locale and longer pattern)
+# should be placed first as the first match is returned.
 MICROCHIP_MANUFACTURERS = [
     { "length": 16, "regex": r"^AVID", "name": "AVID", "locales": "" },
     { "length": 14, "regex": r"^TR", "name": "AKC Reunite", "locales": "" },
@@ -84,13 +87,15 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 11, "regex": r"^\d{3}\*\d{3}\*\d{3}", "name": "AVID", "locales": "" },
     { "length": 11, "regex": r"^\d{3}\-\d{3}\-\d{3}", "name": "AVID", "locales": "" },
     { "length": 10, "regex": r"^0A1", "name": "24PetWatch", "locales": "" },
-    { "length": 10, "regex": r"0D", "name": "Banfield", "locales": "" },
     { "length": 10, "regex": r"^0A0", "name": "Microchip ID", "locales": "" },
-    { "length": 10, "regex": r"^0006", "name": "AKC Reunite", "locales": "" },
-    { "length": 10, "regex": r"^0007", "name": "AKC Reunite", "locales": "" },
+    { "length": 10, "regex": r"^0D0D", "name": "Banfield", "locales": "" },
+    { "length": 10, "regex": r"^000", "name": "Trovan", "locales": "en_AU" },
+    { "length": 10, "regex": r"^000", "name": "AKC Reunite", "locales": "en" },
     { "length": 10, "regex": r"^0C0", "name": "M4S ID", "locales": "" },
-    { "length": 10, "regex": r"^1\d+A", "name": "AVID Europe", "locales": "" }, 
+    { "length": 10, "regex": r"^1\d+A", "name": "AVID", "locales": "" }, 
     { "length": 10, "regex": r"^4", "name": "HomeAgain", "locales": "" }, 
+    { "length": 10, "regex": r"^7E1", "name": "Microchip ID", "locales": "" }, 
+    { "length": 10, "regex": r"^9A1", "name": "24PetWatch", "locales": "" }, 
     { "length": 15, "regex": r"^250", "name": "I-CAD", "locales": ""},
     { "length": 15, "regex": r"^360981", "name": "Novartis", "locales": "" },
     { "length": 15, "regex": r"^578098", "name": "Kruuse Norge", "locales": "nb" },
@@ -98,25 +103,29 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^578094", "name": "AVID Friendchip Norway", "locales": "nb" },
     { "length": 15, "regex": r"^578097", "name": "AVID Friendchip Norway", "locales": "nb" },
     { "length": 15, "regex": r"^688", "name": "Serbia", "locales": "" },
-    { "length": 15, "regex": r"^90007400", "name": "SmartTag", "locales": "" },
-    { "length": 15, "regex": r"^90007900", "name": "PetLog", "locales": "en_GB" },
+    { "length": 15, "regex": r"^752", "name": "Trovan Sweden", "locales": "" },
     { "length": 15, "regex": r"^900008", "name": "Orthana Intertrade", "locales": "" },
     { "length": 15, "regex": r"^900023", "name": "Asian Information Technology", "locales": "" },
     { "length": 15, "regex": r"^900026", "name": "DT Japan", "locales": "" },
     { "length": 15, "regex": r"^900042", "name": "Royal Tag", "locales": "" },
+    { "length": 15, "regex": r"^900074", "name": "SmartTag", "locales": "" },
+    { "length": 15, "regex": r"^900079", "name": "PetLog", "locales": "en_GB" },
+    { "length": 15, "regex": r"^900085", "name": "Petstablished", "locales": "" },
     { "length": 15, "regex": r"^900088", "name": "Insprovet", "locales": "" },
-    { "length": 15, "regex": r"^900111000", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^900113000", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^900115000", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^900118000", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^900118", "name": "SmartChip", "locales": "" },
+    { "length": 15, "regex": r"^900108", "name": "Viaguard", "locales": "" },
+    { "length": 15, "regex": r"^900111", "name": "International Pet Registry", "locales": "" },
+    { "length": 15, "regex": r"^900113", "name": "International Pet Registry", "locales": "" },
+    { "length": 15, "regex": r"^900115", "name": "International Pet Registry", "locales": "" },
+    { "length": 15, "regex": r"^900118", "name": "International Pet Registry", "locales": "" },
     { "length": 15, "regex": r"^900128", "name": "Gepe-Geimuplast", "locales": "" },
     { "length": 15, "regex": r"^900138", "name": "ID-Ology", "locales": "" },
     { "length": 15, "regex": r"^900139", "name": "SmartTag", "locales": "" },
     { "length": 15, "regex": r"^900164", "name": "Save This Life", "locales": "" },
     { "length": 15, "regex": r"^900182", "name": "Petlog", "locales": "" },
     { "length": 15, "regex": r"^900141", "name": "SmartTag", "locales": "" },
+    { "length": 15, "regex": r"^90026", "name": "4D Technology/Petsafe", "locales": "" },
     { "length": 15, "regex": r"^900", "name": "BCDS", "locales": "" },
+    { "length": 15, "regex": r"^9010202", "name": "Absonutrix Sale Thailand", "locales": "en_TH th" },
     { "length": 15, "regex": r"^911002", "name": "911PetChip", "locales": "en" },
     { "length": 15, "regex": r"^933", "name": "Buddy ID", "locales": "" },
     { "length": 15, "regex": r"^939", "name": "M4S ID", "locales": "" },
@@ -127,32 +136,47 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^952", "name": "M4S ID", "locales": "" },
     { "length": 15, "regex": r"^953010002", "name": "Back Home", "locales": "en_AU" },
     { "length": 15, "regex": r"^95301", "name": "Australasian Animal Registry", "locales": "en_AU" },
-    { "length": 15, "regex": r"^953", "name": "Virbac/PetLog", "locales": "en_GB" },
+    { "length": 15, "regex": r"^953", "name": "Virbac", "locales": "en_AU en_NZ" },
+    { "length": 15, "regex": r"^953", "name": "PetLog", "locales": "en_GB" },
     { "length": 15, "regex": r"^955", "name": "Biolog-ID", "locales": "" },
-    { "length": 15, "regex": r"^956", "name": "AKC Reunite", "locales": "" },
+    { "length": 15, "regex": r"^956", "name": "AKC Reunite", "locales": "en" },
+    { "length": 15, "regex": r"^956", "name": "Trovan", "locales": "" },
     { "length": 15, "regex": r"^965", "name": "4D Technology/Petsafe", "locales": "" },
     { "length": 15, "regex": r"^960011", "name": "PetProtect", "locales": "" },
+    { "length": 15, "regex": r"^965", "name": "Buddy ID", "locales": "en" },
     { "length": 15, "regex": r"^965", "name": "Microchip ID", "locales": "" },
     { "length": 15, "regex": r"^966", "name": "Petlog", "locales": "" },
+    { "length": 15, "regex": r"^967", "name": "Rfdynamics", "locales": "" },
+    { "length": 15, "regex": r"^968", "name": "BCDS", "locales": "en_AU" },
     { "length": 15, "regex": r"^968", "name": "AKC CAR", "locales": "" },
+    { "length": 15, "regex": r"^972055", "name": "Identibase", "locales": "en_GB" },
     { "length": 15, "regex": r"^972", "name": "Planet ID", "locales": "" },
-    { "length": 15, "regex": r"^977", "name": "AVID Europe", "locales": "" },
+    { "length": 15, "regex": r"^977", "name": "AVID", "locales": "" },
+    { "length": 15, "regex": r"^978", "name": "Virbac/Back Home", "locales": "en_AU" },
+    { "length": 15, "regex": r"^978", "name": "Global-ident Connect", "locales": "en_NZ" },
     { "length": 15, "regex": r"^978", "name": "Chevillot/Back Home", "locales": "" },
     { "length": 15, "regex": r"^980000", "name": "Agrident", "locales": "" },
     { "length": 15, "regex": r"^98101", "name": "DataMARS/Banfield", "locales": "" },
     { "length": 15, "regex": r"^98102", "name": "DataMARS/PetLink", "locales": "" },
+    { "length": 15, "regex": r"^98103", "name": "DataMARS/PetLink", "locales": "" },
+    { "length": 15, "regex": r"^981", "name": "Novartis", "locales": "en_AU" },
     { "length": 15, "regex": r"^981", "name": "DataMARS/Bayer ResQ", "locales": "" },
     { "length": 15, "regex": r"^982009", "name": "Allflex", "locales": "" },
     { "length": 15, "regex": r"^982", "name": "24PetWatch", "locales": "" },
     { "length": 15, "regex": r"^984", "name": "Nedap", "locales": "" },
+    { "length": 15, "regex": r"^985170", "name": "HomeAgain Test Chip", "locales": "en" },
     { "length": 15, "regex": r"^9851", "name": "Anibase/Identichip", "locales": "en_GB" },
+    { "length": 15, "regex": r"^985", "name": "Lifechip", "locales": "en_AU" },
     { "length": 15, "regex": r"^985", "name": "HomeAgain", "locales": "" },
     { "length": 15, "regex": r"^9861", "name": "Anibase/Identichip", "locales": "en_GB" },
     { "length": 15, "regex": r"^987", "name": "SmartTag", "locales": "" },
     { "length": 15, "regex": r"^9900000", "name": "nanoChip", "locales": "" },
+    { "length": 15, "regex": r"^9910030", "name": "Absonutrix Sale Thailand", "locales": "en_TH th" },
     { "length": 15, "regex": r"^9910010", "name": "HomeSafe", "locales": "en_AU" },
     { "length": 15, "regex": r"^991001911", "name": "911PetChip", "locales": "en" },
     { "length": 15, "regex": r"^9910010", "name": "AKC Reunite", "locales": "en" },
+    { "length": 15, "regex": r"^9910030", "name": "PEEVA", "locales": "en" },
+    { "length": 15, "regex": r"^9910030", "name": "Allflex", "locales": "en_AU" },
     { "length": 15, "regex": r"^9910039", "name": "911PetChip", "locales": "en" },
     { "length": 15, "regex": r"^992", "name": "International Pet Registry", "locales": "" },
     { "length": 15, "regex": r"^999", "name": "Transponder Test", "locales": ""}
@@ -185,35 +209,20 @@ CURRENCIES = [
 ]
 
 VISUAL_THEMES = [
-    ( "asm", "ASM" ),
-    ( "base", "Base" ),
-    ( "black-tie", "Black Tie" ),
-    ( "blitzer", "Blitzer" ),
-    ( "cupertino", "Cupertino") ,
-    ( "dark-hive", "Dark Hive"), 
-    ( "dot-luv", "Dot Luv"),
-    ( "eggplant", "Eggplant"),
-    ( "excite-bike", "Excite Bike"),
-    ( "flick", "Flick"),
-    ( "hot-sneaks", "Hot Sneaks"),
-    ( "humanity", "Humanity"),
-    ( "le-frog", "Le Frog"),
-    ( "mint-choc", "Mint Choc"),
-    ( "overcast", "Overcast"),
-    ( "pepper-grinder", "Pepper Grinder"),
-    ( "redmond", "Redmond"),
-    ( "smoothness", "Smoothness"),
-    ( "south-street", "South Street"),
-    ( "start", "Start"),
-    ( "sunny", "Sunny"),
-    ( "swanky-purse", "Swanky Purse"),
-    ( "trontastic", "Trontastic"),
-    ( "ui-darkness", "UI Darkness"),
-    ( "ui-lightness", "UI Lightness"),
-    ( "vader", "Vader")
+    ( "asm", "asm", "#ffffff", _("Light") ),
+    ( "asm-mid", "asm-mid", "#bbbbbb", _("Medium") ),
+    ( "asm-mid-blue", "asm-mid", "#4e7dbf", _("Medium - Blue") ),
+    ( "asm-mid-green", "asm-mid", "#47a56b", _("Medium - Green") ),
+    ( "asm-mid-lilac", "asm-mid", "#914b89", _("Medium - Lilac") ),
+    ( "asm-mid-orange", "asm-mid", "#eaae5b", _("Medium - Orange") ),
+    ( "asm-mid-pink", "asm-mid", "#9b7388", _("Medium - Pink") ),
+    ( "asm-mid-red", "asm-mid", "#ed5557", _("Medium - Red") ),
+    ( "asm-mid-teal", "asm-mid", "#47a59a", _("Medium - Teal") ),
+    ( "asm-dark", "asm-dark", "#000000", _("Dark") )
 ]
 
 PETFINDER_BREEDS = (
+    "**--Dogs",
     "Affenpinscher",
     "Afghan Hound",
     "Airedale Terrier",
@@ -438,6 +447,7 @@ PETFINDER_BREEDS = (
     "Yellow Labrador Retriever",
     "Yorkshire Terrier Yorkie",
     "Xoloitzcuintle/Mexican Hairless",
+    "**--Cats",
     "Abyssinian",
     "American Curl",
     "American Shorthair",
@@ -491,7 +501,7 @@ PETFINDER_BREEDS = (
     "Egyptian Mau",
     "Exotic Shorthair",
     "Extra-Toes Cat (Hemingway Polydactyl)",
-    "Havana",
+    "Havana Brown",
     "Himalayan",
     "Japanese Bobtail",
     "Javanese",
@@ -532,6 +542,7 @@ PETFINDER_BREEDS = (
     "Turkish Angora",
     "Turkish Van",
     "Tuxedo",
+    "**--Rabbits",
     "American",
     "American Fuzzy Lop",
     "American Sable",
@@ -576,6 +587,7 @@ PETFINDER_BREEDS = (
     "Silver Fox",
     "Silver Marten",
     "Tan",
+    "**--Equine",
     "Appaloosa",
     "Arabian",
     "Clydesdale",
@@ -598,6 +610,7 @@ PETFINDER_BREEDS = (
     "Thoroughbred",
     "Tennessee Walker",
     "Warmblood",
+    "**--Small Mammals",
     "Chinchilla",
     "Degu",
     "Ferret",
@@ -612,6 +625,7 @@ PETFINDER_BREEDS = (
     "Sugar Glider",
     "Pot Bellied",
     "Vietnamese Pot Bellied",
+    "**--Snakes and Reptiles",
     "Asian Box",
     "Ball Python",
     "Bearded Dragon",
@@ -657,9 +671,11 @@ PETFINDER_BREEDS = (
     "Turtle",
     "Uromastyx",
     "Yellow-Bellied Slider", 
+    "**--Fish",
     "Fish",
     "Freshwater Fish",
     "Saltwater Fish",
+    "**--Birds",
     "African Grey",
     "Amazon",
     "Brotogeris",
@@ -699,6 +715,7 @@ PETFINDER_BREEDS = (
     "Swan",
     "Toucan",
     "Turkey",
+    "**--Farm Animals",
     "Cow",
     "Goat",
     "Sheep",
@@ -712,7 +729,7 @@ PETFINDER_SPECIES = (
 )
 
 ADOPTAPET_COLOURS = (
-    "-- Dogs --",
+    "**--Dogs",
     "Black",
     "Black - with Tan, Yellow or Fawn",
     "Black - with White",
@@ -742,7 +759,7 @@ ADOPTAPET_COLOURS = (
     "White - with Tan, Yellow or Fawn",
     "White - with Red, Golden, Orange or Chestnut",
     "White - with Gray or Silver",
-    "-- Cats --",
+    "**--Cats",
     "Black (All)",
     "Cream or Ivory",
     "Cream or Ivory (Mostly)",
@@ -766,7 +783,7 @@ ADOPTAPET_COLOURS = (
     "Tortoiseshell",
     "White",
     "White (Mostly)",
-    "-- Horses --",
+    "**--Horses",
     "Palomino",
     "Gray",
     "Dun",
@@ -782,7 +799,7 @@ ADOPTAPET_COLOURS = (
     "Roan",
     "Perlino",
     "Paint",
-    "-- Birds --",
+    "**--Birds",
     "Gray",
     "Green",
     "Olive",
@@ -798,7 +815,7 @@ ADOPTAPET_COLOURS = (
     "Black",
     "Blue",
     "Brown",
-    "-- Rabbits --",
+    "**--Rabbits",
     "Sable",
     "Albino or Red-Eyed White",
     "Blue",
@@ -823,7 +840,7 @@ ADOPTAPET_COLOURS = (
     "Tortoise",
     "Tri-color",
     "White",
-    "-- Small Animals --",
+    "**--Small Animals",
     "Yellow",
     "White",
     "Tortoiseshell",
@@ -1002,12 +1019,19 @@ def get_logtype_name(dbo, tid):
     if tid is None: return ""
     return dbo.query_string("SELECT LogTypeName FROM logtype WHERE ID = ?", [tid])
 
+def get_theme(theme):
+    """ Returns a tuple of values code, jq, bg, name for a theme """
+    for code, jq, bg, name in VISUAL_THEMES:
+        if code == theme:
+            return (code, jq, bg, name)
+    return ("asm", "asm", "#ffffff", "Light")
+
 def get_lookup(dbo, tablename, namefield):
     if tablename == "breed":
         return dbo.query("SELECT b.*, s.SpeciesName FROM breed b LEFT OUTER JOIN species s ON s.ID = b.SpeciesID ORDER BY b.BreedName")
     return dbo.query("SELECT * FROM %s ORDER BY %s" % ( tablename, namefield ))
 
-def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, defaultcost=0, vat=0, retired=0):
+def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, accountid=0, defaultcost=0, vat=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     nid = 0
     if lookup == "basecolour":
@@ -1041,27 +1065,31 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
             "IsRetired":            retired
         }, username, setCreated=False)
     elif lookup == "costtype":
+        # Create a matching account if the option is on and link it
+        if asm3.configuration.create_cost_trx(dbo): 
+            accountid = asm3.financial.insert_account_from_costtype(dbo, name, desc)
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
+            "AccountID":            accountid,
             "IsRetired":            retired
         }, username, setCreated=False)
-        # Create matching cost type account
-        if asm3.configuration.create_cost_trx(dbo): asm3.financial.insert_account_from_costtype(dbo, nid, name, desc)
         return nid
     elif lookup == "donationtype":
+        # Create a matching account if the option is on and link it
+        if asm3.configuration.create_donation_trx(dbo): 
+            accountid = asm3.financial.insert_account_from_donationtype(dbo, name, desc)
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
+            "AccountID":            accountid,
             "IsVAT":                vat,
             "IsRetired":            retired
         }, username, setCreated=False)
-        # Create a matching account if we have a donation type
-        if asm3.configuration.create_donation_trx(dbo): asm3.financial.insert_account_from_donationtype(dbo, nid, name, desc)
         return nid
-    elif lookup == "testtype" or lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
+    elif lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
@@ -1069,7 +1097,7 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
             "IsRetired":            retired
         }, username, setCreated=False)
         return nid
-    elif lookup == "vaccinationtype":
+    elif lookup == "testtype" or lookup == "vaccinationtype":
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
@@ -1097,7 +1125,7 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
         else:
             return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc }, username, setCreated=False)
 
-def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, defaultcost=0, vat=0, retired=0):
+def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, accountid=0, defaultcost=0, vat=0, retired=0):
     t = LOOKUP_TABLES[lookup]
     if lookup == "basecolour":
         dbo.update("basecolour", iid, { 
@@ -1129,23 +1157,31 @@ def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbree
             "PetFinderSpecies":     pfspecies,
             "IsRetired":            retired
         }, username, setLastChanged=False)
+    elif lookup == "costtype":
+        dbo.update(lookup, iid, {
+            t[LOOKUP_NAMEFIELD]:    name,
+            t[LOOKUP_DESCFIELD]:    desc,
+            "DefaultCost":          defaultcost,
+            "AccountID":            accountid,
+            "IsRetired":            retired
+        }, username, setLastChanged=False)
     elif lookup == "donationtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
+            "AccountID":            accountid,
             "IsVAT":                vat,
             "IsRetired":            retired
         }, username, setLastChanged=False)
-    elif lookup == "costtype" or lookup == "testtype" or lookup == "voucher" \
-        or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
+    elif lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
             "IsRetired":            retired
         }, username, setLastChanged=False)
-    elif lookup == "vaccinationtype":
+    elif lookup == "testtype" or lookup == "vaccinationtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
@@ -1215,7 +1251,11 @@ def get_movementtype_name(dbo, mid):
 def get_movement_types(dbo):
     return dbo.query("SELECT * FROM lksmovementtype ORDER BY ID")
 
-def get_payment_types(dbo):
+def get_paymentmethod_name(dbo, pid):
+    if pid is None: return ""
+    return dbo.query_string("SELECT PaymentName FROM donationpayment WHERE ID = ?", [pid])
+
+def get_payment_methods(dbo):
     return dbo.query("SELECT * FROM donationpayment ORDER BY PaymentName")
 
 def get_person_flags(dbo):

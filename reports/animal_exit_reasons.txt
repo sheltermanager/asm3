@@ -2,7 +2,7 @@ Animal Exit Reasons
 ###
 Movement Charts
 ###
-Any
+Any rev02
 ###
 Animals exiting the shelter between two dates, broken down by exit reason.
 ###
@@ -10,12 +10,12 @@ en
 ###
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
-SELECT mt.MovementType, COUNT(a.ID) AS Exited
-FROM animal a
-INNER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType
-WHERE a.ActiveMovementDate >= '$@from$' AND a.ActiveMovementDate <= '$@to$' 
+SELECT mt.MovementType, COUNT(m.ID) AS Exited
+FROM adoption m
+INNER JOIN animal a ON m.AnimalID = a.ID
+INNER JOIN lksmovementtype mt ON mt.ID = m.MovementType
+WHERE m.MovementDate >= '$@from$' AND m.MovementDate <= '$@to$' 
 AND a.NonShelterAnimal = 0
-AND a.Archived = 1
 GROUP BY mt.MovementType
 UNION SELECT 'Died' AS MovementType, COUNT(a.ID) AS Exited
 FROM animal a

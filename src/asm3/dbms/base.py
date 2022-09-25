@@ -10,7 +10,7 @@ import datetime
 import sys
 import time
 
-from asm3.sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_DECODE_HTML_ENTITIES, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES
+from asm3.sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES
 
 class ResultRow(dict):
     """
@@ -215,11 +215,7 @@ class Database(object):
             return s
 
         for k, v in values.copy().items(): # Work from a copy to prevent iterator problems
-            if asm3.utils.is_str(v) or asm3.utils.is_unicode(v):
-                if not DB_DECODE_HTML_ENTITIES:         # Store HTML entities as is
-                    v = asm3.utils.encode_html(v)            # Turn any unicode chars into HTML entities
-                else:
-                    v = asm3.utils.decode_html(v)            # Turn HTML entities into unicode chars
+            if asm3.utils.is_str(v):
                 if k.find("*") != -1:
                     # If there's an asterisk in the name, remove it so that the
                     # value is stored again below, but without XSS escaping
@@ -230,14 +226,13 @@ class Database(object):
                     v = self.escape_xss(v)
                 # Any transformations before storing in the database
                 v = transform(v)
-                values[k] = u"%s" % v
+                values[k] = "%s" % v
         return values
 
     def encode_str_after_read(self, v):
         """
         Encodes any string values returned by a query result.
-        If v is unicode, encodes it as an ascii str with HTML entities
-        If v is already a str, removes any non-ascii chars
+        If v is a str, re-encodes it as an ascii str with HTML entities
         If it is any other type, returns v untouched
         """
         def transform(s):
@@ -250,15 +245,8 @@ class Database(object):
         try:
             if v is None: 
                 return v
-            elif sys.version_info[0] > 2 and asm3.utils.is_str(v): # PYTHON3 - make sure a unicode str is returned
-                v = transform(v)
-                return v.encode("ascii", "xmlcharrefreplace").decode("ascii")
-            elif asm3.utils.is_unicode(v):
-                v = transform(v)
-                return v.encode("ascii", "xmlcharrefreplace")
-            elif asm3.utils.is_str(v):
-                v = transform(v)
-                return v.decode("ascii", "ignore").encode("ascii", "ignore")
+            elif asm3.utils.is_str(v): 
+                return transform(v)
             else:
                 return v
         except Exception as err:
@@ -494,7 +482,7 @@ class Database(object):
         if params:
             for p in params:
                 sql = sql.replace("%s", self.sql_value(p), 1)
-        with open(DB_EXEC_LOG.replace("{database}", self.database), "a") as f:
+        with open(DB_EXEC_LOG.replace("{database}", self.database), "a", encoding="utf-8") as f:
             f.write("-- %s\n%s;\n" % (self.now(), sql))
 
     def now(self, timenow=True, offset=0, settime=""):
@@ -608,7 +596,7 @@ class Database(object):
         If CACHE_COMMON_QUERIES is set to false, just runs the query
         without doing any caching and is equivalent to Database.query()
         """
-        if not CACHE_COMMON_QUERIES: return self.query(sql, params=params, limit=limit)
+        if not CACHE_COMMON_QUERIES or age == 0: return self.query(sql, params=params, limit=limit)
         cache_key = "%s:%s:%s" % (self.database, sql, params)
         results = asm3.cachedisk.get(cache_key, self.database, expectedtype=list)
         if results is not None:
@@ -905,6 +893,27 @@ class Database(object):
         """ Writes greatest for a list of items """
         return "GREATEST(%s)" % ",".join(items)
 
+    def sql_ilike(self, expr1, expr2 = "?"):
+        """ Writes the SQL for an insensitive like comparison, 
+            eg: sql_ilike("field", "?")    ==     LOWER(field) LIKE ? 
+            requires expr2 to be lower case if it is a string literal.
+        """
+        return f"LOWER({expr1}) LIKE {expr2}"
+
+    def sql_in(self, results, columnname = "ID"):
+        """ Writes a SQL IN clause using columnname for each row in the results, return value does not include parentheses, eg: 1,2 """
+        ins = []
+        for r in results:
+            ins.append(str(r[columnname]))
+        if len(ins) == 0: ins.append("-999") # insert a dummy value that will never match anything so the clause is always valid
+        return "%s" % ",".join(ins)
+
+    def sql_interval(self, columnname, number, sign="+", units="months"):
+        """
+        Used to add or a subtract a period to/from a date column 
+        """
+        return f"{columnname} {sign} INTERVAL '{number} {units}'"
+
     def sql_placeholders(self, l):
         """ Writes enough ? placeholders for items in l """
         return ",".join('?'*len(l))
@@ -952,6 +961,20 @@ class Database(object):
         """ Writes a function that zero pads an expression with zeroes to digits """
         return fieldexpr
 
+    def stats(self):
+        return self.first_row(self.query("select " \
+            "(select count(*) from animal where archived=0) as shelteranimals, " \
+            "(select count(*) from animal) as totalanimals, " \
+            "(select min(createddate) from animal) as firstrecord, " \
+            "(select count(*) from owner) as totalpeople, " \
+            "(select count(*) from adoption) as totalmovements, " \
+            "(select count(*) from media) as totalmedia, " \
+            "(select sum(mediasize) / 1024.0 / 1024.0 from media) as mediasize, " \
+            "(select count(*) from media where mediamimetype='image/jpeg') as totaljpg, " \
+            "(select sum(mediasize) / 1024.0 / 1024.0 from media where mediamimetype='image/jpeg') as jpgsize, " \
+            "(select count(*) from media where mediamimetype='application/pdf') as totalpdf, " \
+            "(select sum(mediasize) / 1024.0 / 1024.0 from media where mediamimetype='application/pdf') as pdfsize "))
+
     def switch_param_placeholder(self, sql):
         """ Swaps the ? token in the sql for the usual Python DBAPI placeholder of %s 
             override if your DB driver wants another char.
@@ -968,6 +991,9 @@ class Database(object):
             self.execute("INSERT INTO primarykey (TableName, NextID) VALUES (?, ?)", (table, nextid))
         except:
             pass
+
+    def vacuum(self, tablename = ""):
+        pass # implement in derived classes
 
     def __repr__(self):
         return "Database->locale=%s:dbtype=%s:host=%s:port=%d:db=%s:user=%s:timeout=%s" % ( self.locale, self.dbtype, self.host, self.port, self.database, self.username, self.timeout )

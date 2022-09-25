@@ -1,38 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Online Forms &mdash; ASM 44u documentation</title>
+  <title>Online Forms &mdash; ASM 46u documentation</title>
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Payment Processors" href="paymentprocessors.html" />
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                44u
+                46u
               </div>
             
           
@@ -77,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -107,6 +108,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#incoming-forms">Incoming Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#application-forms">Application Forms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#importing">Importing</a></li>
 </ul>
 </li>
@@ -130,6 +132,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -164,18 +167,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Online Forms</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/onlineform.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -209,23 +214,42 @@ can also choose to attach form submissions to animal and people records.</p>
 form data will automatically have those flags. In addition to that, the
 “checkbox” field type allows you to enter some additional person flags to set
 if that checkbox is checked during submission.</p>
-<p>If you set the “Send confirmation email to form submitter” checkbox for an
-online form, the system will look for a field called “emailaddress” during
-submission. If that field exists and is populated with an email address, a
-confirmation email will be sent to that address. If the confirmation message
-field is set, that will form the body of the email. HTML can be used, but
-it must be a complete HTML document that contains an &lt;html&gt; tag. If the
-confirmation message field is left blank, a copy of the form submission
-itself will be sent.</p>
 <img alt="_images/onlineform_edit.png" src="_images/onlineform_edit.png" />
-<p>As you can see in the screenshot, each form has a “Form URL”. This is the web
-link you can use on your website to link people to the form. You can also click
-it directly there in the UI to test your form.</p>
-<p>You may add extra parameters to the URL if you’d like to set default values
+<p>Each form has a direct link that is accessed via the service API. Click “View
+Form” to follow that link and view the form.  This is the web link you can use
+on your website to link people to the form or put in an iframe.</p>
+<p>The first button to the right of “View Form” will copy the link to the
+clipboard for you, the second button will view the form in
+“development” mode. This is a special mode that bypasses any server side
+caching so that changes you make to the form are visible when you reload the
+page. When editing forms, it is useful to keep the development link open on
+another tab so you can quickly view and test your changes. The development mode
+link only works when you are logged in to SM, do not use it on your website.</p>
+<p>You may add extra parameters to the form URL if you’d like to set default values
 for some of your form fields, by using the format fieldname=value.</p>
+<p>The option “Email adoption coordinator” will send a copy of the submission
+to the person specified as the adoption coordinator for an animal the form
+is about. The form must have an animalname or reserveanimalname field
+for this to work.</p>
+<p>If you set one of the “Send confirmation email to form submitter” options,
+the system will look for a field called “emailaddress” during submission.
+If that field exists and is populated with an email address, a
+confirmation email will be sent to that address. The confirmation message
+field will form the first part of the body of the email. HTML can be used, but
+it must be a complete HTML document that contains an &lt;html&gt; tag.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">sheltermanager.com uses a short term 2 minute cache on forms, so if you make changes to a form you’ve recently viewed, you may have to wait 2 minutes for any changes you make to appear.</p>
+<p class="admonition-title">Warning</p>
+<p>sheltermanager.com uses a 30 minute cache on forms, so if you make changes to a form you’ve recently viewed, you may have to wait 30 minutes for any changes you make to appear. Use the development mode button to see your changes immediately.</p>
+</div>
+<p>If you declare a javascript function in your form’s header or footer named
+asm3_onlineform_submit, it will be called when form validation is successful
+and just before the form is submitted. You can use this if you want to grab the
+form values and send them somewhere else or transform the values before it is
+submitted to ASM:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">function</span> <span class="n">asm3_onlineform_submit</span><span class="p">()</span> <span class="p">{</span>
+   <span class="n">alert</span><span class="p">(</span><span class="s2">&quot;form is about to be submitted&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
 </div>
 <div class="section" id="editing-form-fields">
 <h2>Editing Form Fields<a class="headerlink" href="#editing-form-fields" title="Permalink to this headline">¶</a></h2>
@@ -285,14 +309,39 @@ fieldname&gt;0
 fieldname&lt;20
 </pre></div>
 </div>
+<p>If a value is not supplied, the system will compare against an empty
+string, so you can test that a field is or isn’t empty:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>fieldname=
+fieldname!
+</pre></div>
+</div>
 <p>If fieldname is a checkbox, you can test for the special keyword “on” to
 indicate you want the box checked (or “off” for unchecked):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mycheck</span><span class="o">=</span><span class="n">on</span>
 </pre></div>
 </div>
+<p>If you want to reference a checkbox that is part of a checkbox group, you
+can reference it by the name of the group and item number, starting with 0
+for the first item:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">checkboxgroup0</span><span class="o">=</span><span class="n">on</span>
+<span class="n">checkboxgroup1</span><span class="o">=</span><span class="n">off</span>
+</pre></div>
+</div>
+<p>Multiple conditions can be specified. They can be either ANDed together or ORed
+together, but NOT both at the same time.</p>
+<p>In an AND expression, all conditions have to be true in order for the field to
+be displayed.  Separate your AND conditions with an ampersand &amp;</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mycheck</span><span class="o">=</span><span class="n">on</span> <span class="o">&amp;</span> <span class="n">fieldname</span><span class="o">=</span><span class="n">X</span>
+</pre></div>
+</div>
+<p>In an OR expression, only one of the conditions has to be true in order for the
+field to be displayed. Separate your OR conditions with a pipe |</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hascats</span><span class="o">=</span><span class="n">Yes</span> <span class="o">|</span> <span class="n">hasdogs</span><span class="o">=</span><span class="n">Yes</span>
+</pre></div>
+</div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Only check boxes, radio buttons, text and lookup fields can be used with Show If</p>
+<p class="admonition-title">Note</p>
+<p>Only check boxes, radio buttons, text and lookup fields can be used with Show If</p>
 </div>
 </div>
 </div>
@@ -302,49 +351,70 @@ indicate you want the box checked (or “off” for unchecked):</p>
 <p>Selecting a form allows you to intelligently create or attach records from the
 data, or explicitly attach the form to existing records.</p>
 <ul class="simple">
-<li>Attach Person: Prompts for a single person record and attaches a copy of the
-form to them as media.</li>
-<li>Attach Animal: Prompts for a single animal record and attaches a copy of the
-form to them as media.</li>
-<li>Attach Animal (via animalname): Attaches the form to a single animal
-record based on the animalname field in the form itself.</li>
-<li>Create Animal: Searches for an animal record matching the code field on the
+<li><p>Attach Person: Prompts for a single person record and attaches a copy of the
+form to them as media.</p></li>
+<li><p>Attach Animal: Prompts for a single animal record and attaches a copy of the
+form to them as media.</p></li>
+<li><p>Attach Animal (via animalname): Attaches the form to a single animal
+record based on the animalname field in the form itself.</p></li>
+<li><p>Create Animal: Searches for an animal record matching the code field on the
 form if present. If a match is found, the form is attached to that animal,
 otherwise a new animal record is created. While you can use the Species
 and Breed field types with the breed1/breed2/color fields, you can also
 use your own lookup lists containing subsets of these items for users
 to choose from. When creating animals, the animalname and one of dateofbirth
-or age are mandatory.</li>
-<li>Create Person: Searches for a person record matching either the email address
+or age are mandatory.</p></li>
+<li><p>Create Person: Searches for a person record matching either the email address
 if present, or the firstname, lastname and address fields on the form. If a
 match is found, the form is attached to that person. If no match is found, a
 new person record is created. If a “reserveanimalname” field was found on the
 form as well, a reservation to the matching animal is created to the person
-(these can be all viewed under <span class="menuselection">Move ‣ Reservation Book</span>).</li>
-<li>Create Lost Animal: Runs through the same steps as Person so needs enough
+(these can be all viewed under <span class="menuselection">Move ‣ Reservation Book</span>).</p></li>
+<li><p>Create Lost Animal: Runs through the same steps as Person so needs enough
 information to create/find a person as well. “description” and “arealost”
-fields are the minimum required to create the lost animal record.</li>
-<li>Create Found Animal: Runs through the same steps as Person so needs enough
+fields are the minimum required to create the lost animal record.</p></li>
+<li><p>Create Found Animal: Runs through the same steps as Person so needs enough
 information to create/find a person as well. “description” and “areafound”
-fields are the minimum required to create the found animal record.</li>
-<li>Create Incident: Runs through the same steps as Person so needs enough
+fields are the minimum required to create the found animal record.</p></li>
+<li><p>Create Incident: Runs through the same steps as Person so needs enough
 information to create/find a person as well. That person becomes the
 “caller”.  “callnotes” and “dispatchaddress” fields are the minimum required
-to create the incident record.</li>
-<li>Create Transport: Runs through the same steps as Animal, so needs
-an “animalname” field to figure out who to attach the transport to.</li>
-<li>Create Waiting List: Runs through the same steps as Person so needs enough
+to create the incident record.</p></li>
+<li><p>Create Transport: Runs through the same steps as Animal, so needs
+an “animalname” field to figure out who to attach the transport to.</p></li>
+<li><p>Create Waiting List: Runs through the same steps as Person so needs enough
 information to create/find a person as well. A “description” field is the
-minimum required to create the waiting list record.</li>
+minimum required to create the waiting list record.</p></li>
 </ul>
 <p>When you create a new record or attach the form, the whole form will be
 included in the media tab of any created records (animal, incident, person AND
 lost/found animal or waiting list). The screen will put a link in the Link
 column to give you a clickable link to the newly created record as well so you
-can view it.</p>
+can view it. The system will also show a little warning icon at the side of this
+link if that record already existed and was updated instead of newly created.</p>
 <p>Incoming forms that have been attached to a record will be automatically
 deleted when you leave the screen. The system will also remove incoming forms
-older than 4 weeks by default. Both of these options are configurable.</p>
+older than 4 weeks by default. Both of these options are configurable
+under the Online Forms tab of <span class="menuselection">Settings ‣ Options</span></p>
+</div>
+<div class="section" id="application-forms">
+<h2>Application Forms<a class="headerlink" href="#application-forms" title="Permalink to this headline">¶</a></h2>
+<p>ASM calls an application a “reservation”. If your form has a field named
+“reserveanimalname” of type “Adoptable Animal”, then using “Create Person” on
+an incoming form submission will create a reservation for the new person to
+that animal.</p>
+<p>If you want to allow a person to apply for more than one animal, then you
+can add fields called reserveanimalname2, reserveanimalname3, etc.</p>
+<p>The reservation will link the new person and the animal record. That link can be
+viewed under the movement tab of the person or animal, and you can view all
+current applications under <span class="menuselection">Move ‣ Reservation Book</span>.</p>
+<p>Reservations can have a status (eg: New, Pending home visit, Denied, etc).</p>
+<p>You can configure your own statuses under <span class="menuselection">Settings ‣ Lookup
+Data ‣ Reservation Statuses</span></p>
+<p>Since the system default is to make animals who have a reservation not
+available for adoption, you may want to change this by setting
+<span class="menuselection">Publishing ‣ Set Publishing Options ‣ Animal Selection ‣
+Include Reserved</span> to YES.</p>
 </div>
 <div class="section" id="importing">
 <h2>Importing<a class="headerlink" href="#importing" title="Permalink to this headline">¶</a></h2>
@@ -393,29 +463,29 @@ form you already have ready for editing, eg:</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="paymentprocessors.html" class="btn btn-neutral float-right" title="Payment Processors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="litters.html" class="btn btn-neutral float-left" title="Litters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="paymentprocessors.html" class="btn btn-neutral float-right" title="Payment Processors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="litters.html" class="btn btn-neutral float-left" title="Litters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Sheltermanager, Ltd
+        &#169; Copyright 2022, Sheltermanager, Ltd.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -423,7 +493,6 @@ form you already have ready for editing, eg:</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

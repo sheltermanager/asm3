@@ -67,6 +67,7 @@ def get_foundanimal_query(dbo):
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
         "o.OwnerName, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
         "web.ID AS WebsiteMediaID, " \
+        "web.ID AS DocMediaID, " \
         "web.MediaName AS DocMediaName, " \
         "web.Date AS DocMediaDate, " \
         "web.MediaName AS WebsiteMediaName, " \
@@ -86,6 +87,7 @@ def get_lostanimal_query(dbo):
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
         "o.OwnerName, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
         "web.ID AS WebsiteMediaID, " \
+        "web.ID AS DocMediaID, " \
         "web.MediaName AS DocMediaName, " \
         "web.Date AS DocMediaDate, " \
         "web.MediaName AS WebsiteMediaName, " \
@@ -301,11 +303,12 @@ def send_email_from_form(dbo, username, post):
     emailcc = post["cc"]
     emailbcc = post["bcc"]
     subject = post["subject"]
-    ishtml = post.boolean("html")
     addtolog = post.boolean("addtolog")
     logtype = post.integer("logtype")
     body = post["body"]
-    rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, ishtml == 1 and "html" or "plain")
+    rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
+    if asm3.configuration.audit_on_send_email(dbo): 
+        asm3.audit.email(dbo, username, emailfrom, emailto, emailcc, emailbcc, subject, body)
     if addtolog == 1:
         asm3.log.add_log_email(dbo, username, post["lfmode"] == "lost" and asm3.log.LOSTANIMAL or asm3.log.FOUNDANIMAL, post.integer("lfid"), logtype, emailto, subject, body)
     return rv
@@ -404,6 +407,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                 matchpoints = 0
                 if la["MICROCHIPNUMBER"] != "" and la["MICROCHIPNUMBER"] == fa["MICROCHIPNUMBER"]: matchpoints += matchmicrochip
                 if la["ANIMALTYPEID"] == fa["ANIMALTYPEID"]: matchpoints += matchspecies
+                if la["ANIMALTYPEID"] != fa["ANIMALTYPEID"]: matchpoints -= 9999 # if species is different, force no match
                 if la["BREEDID"] == fa["BREEDID"]: matchpoints += matchbreed
                 if la["AGEGROUP"] == fa["AGEGROUP"]: matchpoints += matchage
                 if la["SEX"] == fa["SEX"]: matchpoints += matchsex
@@ -461,15 +465,29 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
         if includeshelter:
             for a in shelteranimals:
                 matchpoints = 0
+                foundarea = ""
+                foundpostcode = ""
                 if la["MICROCHIPNUMBER"] != "" and la["MICROCHIPNUMBER"] == a["IDENTICHIPNUMBER"]: matchpoints += matchmicrochip
                 if la["ANIMALTYPEID"] == a["SPECIESID"]: matchpoints += matchspecies
+                if la["ANIMALTYPEID"] != a["SPECIESID"]: matchpoints -= 9999 # if species is different, force no match
                 if la["BREEDID"] == a["BREEDID"] or la["BREEDID"] == a["BREED2ID"]: matchpoints += matchbreed
                 if la["BASECOLOURID"] == a["BASECOLOURID"]: matchpoints += matchcolour
                 if la["AGEGROUP"] == a["AGEGROUP"]: matchpoints += matchage
                 if la["SEX"] == a["SEX"]: matchpoints += matchsex
-                matchpoints += words(la["AREALOST"], a["ORIGINALOWNERADDRESS"], matcharealost)
                 matchpoints += words(la["DISTFEAT"], a["MARKINGS"], matchfeatures)
-                if asm3.utils.nulltostr(a["ORIGINALOWNERPOSTCODE"]).find(la["AREAPOSTCODE"]) != -1: matchpoints += matchpostcode
+                if a["ISPICKUP"] == 1:
+                    matchpoints += words(la["AREALOST"], a["PICKUPADDRESS"], matcharealost)
+                    foundarea = a["PICKUPADDRESS"]
+                elif a["BROUGHTINBYOWNERADDRESS"] is not None:
+                    matchpoints += words(la["AREALOST"], a["BROUGHTINBYOWNERADDRESS"], matcharealost)
+                    if asm3.utils.nulltostr(a["BROUGHTINBYOWNERPOSTCODE"]).find(la["AREAPOSTCODE"]) != -1: matchpoints += matchpostcode
+                    foundarea = a["BROUGHTINBYOWNERADDRESS"]
+                    foundpostcode = a["BROUGHTINBYOWNERPOSTCODE"]
+                elif a["ORIGINALOWNERADDRESS"] is not None:
+                    matchpoints += words(la["AREALOST"], a["ORIGINALOWNERADDRESS"], matcharealost)
+                    if asm3.utils.nulltostr(a["ORIGINALOWNERPOSTCODE"]).find(la["AREAPOSTCODE"]) != -1: matchpoints += matchpostcode
+                    foundarea = a["ORIGINALOWNERADDRESS"]
+                    foundpostcode = a["ORIGINALOWNERPOSTCODE"]
                 if date_diff_days(la["DATELOST"], a["DATEBROUGHTIN"]) <= 14: matchpoints += matchdatewithin2weeks
                 if matchpoints > matchmax: matchpoints = matchmax
                 if matchpoints >= matchpointfloor:
@@ -496,8 +514,8 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
                     m.fcontactname = _("Shelter animal {0} '{1}'", l).format(a["CODE"], a["ANIMALNAME"])
                     m.fmicrochip = a["IDENTICHIPNUMBER"]
                     m.fcontactnumber = a["SPECIESNAME"]
-                    m.fareafound = "%s, %s" % (a["ORIGINALOWNERADDRESS"], a["ORIGINALOWNERTOWN"])
-                    m.fareapostcode = a["ORIGINALOWNERPOSTCODE"]
+                    m.fareafound = foundarea
+                    m.fareapostcode = foundpostcode
                     m.fagegroup = a["AGEGROUP"]
                     m.fsexid = a["SEX"]
                     m.fsexname = a["SEXNAME"]
@@ -649,7 +667,8 @@ def update_lostanimal_from_form(dbo, post, username):
         "OwnerID":          post.integer("owner"),
         "Comments":         post["comments"]
     }, username)
-    asm3.additional.save_values_for_link(dbo, post, lfid, "lostanimal")
+    asm3.additional.save_values_for_link(dbo, post, username, lfid, "lostanimal")
+    asm3.diary.update_link_info(dbo, username, asm3.diary.LOSTANIMAL, lfid)
 
 def insert_lostanimal_from_form(dbo, post, username):
     """
@@ -682,7 +701,7 @@ def insert_lostanimal_from_form(dbo, post, username):
     }, username)
 
     # Save any additional field values given
-    asm3.additional.save_values_for_link(dbo, post, nid, "lostanimal", True)
+    asm3.additional.save_values_for_link(dbo, post, username, nid, "lostanimal", True)
 
     return nid
 
@@ -720,7 +739,8 @@ def update_foundanimal_from_form(dbo, post, username):
         "OwnerID":          post.integer("owner"),
         "Comments":         post["comments"]
     }, username)
-    asm3.additional.save_values_for_link(dbo, post, lfid, "foundanimal")
+    asm3.additional.save_values_for_link(dbo, post, username, lfid, "foundanimal")
+    asm3.diary.update_link_info(dbo, username, asm3.diary.FOUNDANIMAL, lfid)
 
 def insert_foundanimal_from_form(dbo, post, username):
     """
@@ -753,7 +773,7 @@ def insert_foundanimal_from_form(dbo, post, username):
     }, username)
 
     # Save any additional field values given
-    asm3.additional.save_values_for_link(dbo, post, nid, "foundanimal", True)
+    asm3.additional.save_values_for_link(dbo, post, username, nid, "foundanimal", True)
 
     return nid
 
@@ -818,7 +838,7 @@ def delete_lostanimal(dbo, username, aid):
     dbo.delete("log", "LinkID=%d AND LinkType=%d" % (aid, asm3.log.LOSTANIMAL), username)
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (aid, asm3.additional.LOSTANIMAL_IN))
     dbo.delete("animallost", aid, username)
-    asm3.dbfs.delete_path(dbo, "/lostanimal/%d" % aid)
+    # asm3.dbfs.delete_path(dbo, "/lostanimal/%d" % aid)  # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
 def delete_foundanimal(dbo, username, aid):
     """
@@ -829,5 +849,5 @@ def delete_foundanimal(dbo, username, aid):
     dbo.delete("log", "LinkID=%d AND LinkType=%d" % (aid, asm3.log.FOUNDANIMAL), username)
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (aid, asm3.additional.FOUNDANIMAL_IN))
     dbo.delete("animalfound", aid, username)
-    asm3.dbfs.delete_path(dbo, "/foundanimal/%d" % aid)
+    # asm3.dbfs.delete_path(dbo, "/foundanimal/%d" % aid)  # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 

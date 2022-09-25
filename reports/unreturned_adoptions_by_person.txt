@@ -2,7 +2,7 @@ Unreturned Adoptions by Person
 ###
 Movements
 ###
-Any
+Any rev02
 ###
 Unreturned adoptions between two dates by adopter with original owner addresses.
 ###
@@ -15,6 +15,7 @@ SELECT ShelterCode, AnimalName, DateBroughtIn, MovementDate,
 species.SpeciesName,
 animaltype.AnimalType AS theType,
 animal.BreedName, animal.IdentichipNumber, 
+CASE WHEN animal.DeceasedDate Is Not Null THEN '<span style="color: red; font-weight: bold">Deceased</span>' ELSE '' END AS DeceasedText,
 oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode, 
 oo.EmailAddress AS OOEmail,
 no.OwnerName, no.OwnerAddress,
@@ -43,6 +44,7 @@ $$HEAD
 <td><b>Breed</b></td>
 <td><b>Microchip</b></td>
 <td><b>Entered Shelter</b></td>
+<td><b>Deceased</b></td>
 <td><b>Came From</b></td>
 <td><b>Adoption Date</b></td>
 </tr>
@@ -58,6 +60,7 @@ $$BODY<tr>
 <td>$BreedName</td>
 <td>$IdentichipNumber</td>
 <td>$DateBroughtIn</td>
+<td>$DeceasedText</td>
 <td><i>$OOName</i><br/>
 $OOAddress<br/>
 $OOTown<br/>

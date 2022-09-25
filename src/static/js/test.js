@@ -14,7 +14,6 @@ $(function() {
                 add_title: _("Add test"),
                 edit_title: _("Edit test"),
                 edit_perm: 'cat',
-                helper_text: _("Tests need an animal and at least a required date."),
                 close_on_ok: false,
                 use_default_values: false,
                 columns: 1,
@@ -74,7 +73,7 @@ $(function() {
                     { field: "TESTNAME", display: _("Type") },
                     { field: "IMAGE", display: "", 
                         formatter: function(row) {
-                            return '<a href="animal?id=' + row.ANIMALID + '"><img src=' + html.thumbnail_src(row, "animalthumb") + ' style="margin-right: 8px" class="asm-thumbnail thumbnailshadow" /></a>';
+                            return html.animal_link_thumb_bare(row);
                         },
                         hideif: function(row) {
                             // Don't show this column if we're in an animal record, or the option is turned off
@@ -162,14 +161,18 @@ $(function() {
                 },
                 { id: "perform", text: _("Perform"), icon: "complete", enabled: "multi", perm: "cat",
                     click: function() {
-                        let comments = "";
+                        let comments = "", testtype = 0;
                         $.each(controller.rows, function(i, v) {
                             if (tableform.table_id_selected(v.ID)) {
                                 comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
+                                testtype = v.TESTTYPEID;
                             }
                         });
-                        $("#usagecomments").val(comments);
+                        $("#usagecomments").html(comments);
                         $("#newdate").datepicker("setDate", new Date());
+                        $("#renewon").val("");
+                        let rd = test.calc_reschedule_date(new Date(), testtype);
+                        if (rd) { $("#renewon").datepicker("setDate", rd); }
                         $("#testresult").select("firstvalue");
                         $("#usagetype").select("firstvalue");
                         $("#usagedate").datepicker("setDate", new Date());
@@ -299,6 +302,10 @@ $(function() {
                 '<td><input id="newdate" data="newdate" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="renewon">' + _("Retest") + '</label></td>',
+                '<td><input id="renewon" data="retest" data-nopast="true" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="testresult">' + _("Result") + '</label></td>',
                 '<td><select id="testresult" data="testresult" class="asm-selectbox asm-field">',
                 html.list_to_options(controller.testresults, "ID", "RESULTNAME"),
@@ -309,7 +316,12 @@ $(function() {
                 '<td><label for="givenvet">' + _("Administering Vet") + '</label></td>',
                 '<td><input id="givenvet" data="givenvet" type="hidden" class="asm-personchooser asm-field" data-filter="vet" /></td>',
                 '</tr>',
-                '<tr class="tagstock"><td></td><td>' + html.info(_("These fields allow you to deduct stock for the test(s) given. This single deduction should cover the selected tests being performed.")) + '</td></tr>',
+                '<tr class="tagstock">',
+                '<td class="asm-header" colspan="2">',
+                _("Stock"),
+                '<span id="callout-stock" class="asm-callout">' + _("These fields allow you to deduct stock for the test(s) given. This single deduction should cover the selected tests being performed.") + '</span>',
+                '</td>',
+                '</tr>',
                 '<tr class="tagstock">',
                 '<td><label for="item">' + _("Item") + '</label></td>',
                 '<td><select id="item" data="item" class="asm-selectbox asm-field">',
@@ -390,6 +402,8 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
             this.bind_givendialog();
 
+            validate.indicator([ "animal", "animals" ]);
+
             // When the test type is changed, use the default cost from the test type
             $("#type").change(test.set_default_cost);
 
@@ -465,11 +479,18 @@ $(function() {
             if (row.ADMINISTERINGVETID && test.lastvet) { row.ADMINISTERINGVETNAME = test.lastvet.OWNERNAME; }
         },
 
+        /** Fetch the appropriate reschedule period for test type and add it to passed date. Return null if rescheduling isn't availble. */
+        calc_reschedule_date: function(date, testtype) {
+            let reschedule = format.to_int(common.get_field(controller.testtypes, testtype, "RESCHEDULEDAYS"));
+            if (!reschedule) { return null; }
+            return common.add_days(date, reschedule);
+        },
+
         destroy: function() {
             common.widget_destroy("#dialog-given");
             common.widget_destroy("#animal");
             common.widget_destroy("#animals");
-            common.widget_destroy("#administeringvet");
+            common.widget_destroy("#administeringvet", "personchooser");
             tableform.dialog_destroy();
             this.lastanimal = null;
             this.lastvet = null;

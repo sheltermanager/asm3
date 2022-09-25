@@ -149,6 +149,8 @@ choose some extra fields for the new animal screen.
 
 * Show the original owner field: Allow original owner to be set
 
+* Show the pickup fields: Allow pickup location/address to be set
+
 * Show the brought in by field: Allow brought in by to be set
 
 * Show the transfer in field: Allow incoming transfers to be set
@@ -279,6 +281,35 @@ of the year.
   Some licensing regions use a tag number that stays with the animal for
   life and need to allow duplicate licenses as a result.
 
+Checkout
+--------
+
+The checkout tab allows you to configure automated checkouts that take payment
+from members of the public (eg: for adoptions and license renewals).
+
+* Payment Processor: The payment processor to use for taking checkout payments.
+
+* Adoption paperwork template: A document template to use for generating
+  adoption paperwork.
+
+* Adoption fee payment type: The payment type to use when creating a payment
+  record for the adoption fee.
+
+* Donation payment type: The payment type to use when creating a payment record
+  for a donation during adoption checkout.
+
+* Payment method: The payment method to assign to the fee/donation payment
+  records.
+
+* Donation message: The message shown at the top of the adoption checkout
+  donate screen. Limited HTML formatting tags can be used here, such as <b>,
+  <u>, <i> and <br/>
+
+* Donation tiers: The available options adopters have for making a donation.
+  They are in the form amount=description. Currency symbols should be included
+  in the amount. You should include a zero/0 donation tier unless you want to
+  force your adopters to leave a donation. 
+
 Costs
 -----
 
@@ -368,6 +399,10 @@ records.
   added is not an image and the notes are blank, use the original filename as
   the notes.
 
+* When I change the flags on an animal/person, make a note of it in the log
+  with this type:  If this option is on a log record is created when you add
+  or remove a person or animal flag. 
+
 * When I mark an animal held, make a note of it in the log: If this option is on,
   a log record is created when you mark an animal held along with the hold
   until date.
@@ -430,9 +465,19 @@ Display
   person's address on the details screen. Also shows a minimap on the dispatch
   slider of incidents.
 
+* When entering addresses, restrict states to valid US 2 letter state codes:
+  When this option is on, the state field will switch to a dropdown that only
+  allows valid US states to be selected. The default state for screens will be
+  auto selected from the state chosen on the shelter details options tab.
+
 * Allow editing of latitude/longitude with minimaps: Allow the latitude/longitude
   geocodes to be hand edited in fields near the minimap and address. Right clicking
   on the minimap will add a new pin and update the fields.
+
+* Default to table mode when viewing media tabs: When accessing the media tab
+  of records, show the media records in a sortable table with metadata
+  information. You can toggle the view mode of media tabs with the button on
+  the right side of the toolbar.
 
 * Show weights as lb and oz: Enter and show weights with separate pounds and
   ounces. eg: 5 lbs and 6 oz
@@ -445,6 +490,9 @@ Display
 * Show complete comments in table views: When viewing comments or log notes in
   tables, show the complete text instead of truncating it to 80 characters and
   fitting the text onto one line.
+
+* Show record views in the audit trail: When viewing the audit trail slider of
+  a record, include audit records that show when users viewed this record.
 
 * Show ID numbers when editing lookup data: When browsing lookup data under
   :menuselection:`Settings --> Lookup Data`, show the internal system ID numbers.
@@ -478,6 +526,10 @@ Display
   anyone to see it. Leaving a user account without a site allows it to see all
   sites.  This allows you to handle multiple sites with one ASM database. A
   number of site-specific reports are available in the repository.
+
+* Format telephone numbers according to my locale: When leaving fields containing
+  phone numbers, if the numeric portion is the correct length, format them
+  according to your locale. Eg: US numbers become (XXX) XXX-XXXX
 
 * When displaying person names in lists, use the format: In movement books,
   donation books, the waiting list, etc. when showing person names, ASM can use
@@ -524,27 +576,29 @@ documents from templates.
 * When I generate a document, make a note of it in the log: If this option is
   on, a log record is created every time you generate a document.
 
-Insurance
----------
+* Default zoom level when converting documents to PDF: This setting controls how
+  the text is scaled when converting a document to PDF. Older versions of the
+  PDF converter used by SM would to scale to the widest element on the page,
+  however newer versions do not do this. To get back the behaviour that older 
+  versions of SM had with wkhtmltopdf <= 0.12.3, set this value to 130.
 
-If you have an agreement with a pet insurer, Animal Shelter Manager can accept
-a range of numbers under this tab and allow you to assign them to adoptions as
-they are made. 
+Email
+-----
 
-Simply fill in the start/end/next values and tick the box to ensure you are
-using automatic numbers. When you next adopt an animal, a button will appear at
-the side of the insurance number on the movement screen, allowing you to assign
-an insurance number to that adoption. 
+Configure the email address used as the FROM address when sending from ASM. You
+can also configure autocomplete items for the from, to and cc address boxes.
 
-Find Animal/Person
-------------------
+(sheltermanager.com only) You can override the use of smtp.sheltermanager.com
+and use your own SMTP server to send email if you wish. This is an advanced
+option for experienced users, if you do not understand what you are doing, do
+not enable the option to use your own SMTP server as you will likely break
+the email sending functionality for your database.
 
-The find animal and person columns boxes allows you to specify which columns
-are used on the find animal screens and in what order they appear. The waiting
-list columns box operates similarly. 
+Find Screens
+------------
 
-A comma separated list of field names should be given here. You can also use
-additional field names for your custom fields. 
+This tab allows you to configure which columns are present on all the find
+screens and in which order they are displayed.
 
 * Default to advanced find animal screen: If ticked, the find animal screen
   will appear in advanced mode by default. 
@@ -590,6 +644,18 @@ for adoption).
   adopted/unneutered animal alerts on the home page and emblems will only be 
   shown for these species of animals (by default, dogs and cats)
 
+Insurance
+---------
+
+If you have an agreement with a pet insurer, Animal Shelter Manager can accept
+a range of numbers under this tab and allow you to assign them to adoptions as
+they are made. 
+
+Simply fill in the start/end/next values and tick the box to ensure you are
+using automatic numbers. When you next adopt an animal, a button will appear at
+the side of the insurance number on the movement screen, allowing you to assign
+an insurance number to that adoption. 
+
 Lost and Found
 --------------
 
@@ -620,8 +686,9 @@ Medical
 
 * Send a weekly email to fosterers with medical information about their
   animals: If set, an email will be sent to all active fosterers containing
-  info of overdue medications and medications that fall due in the coming week.
-  The email is sent as part of the overnight batch, early on Monday mornings.
+  info of overdue medications and medications/clinic appointments that fall due
+  in the coming week.  The email is sent as part of the overnight batch, early
+  on Monday mornings.
 
   An example of the email fosterers will receive looks like this:
 
@@ -641,6 +708,10 @@ Movements
 * Remove holds after: This value is used to set a default in the "Hold until date"
   field of new animals. When the date is reached, the hold flag is automatically
   removed.
+
+* Treat animals with a future intake date as part of the shelter inventory: This
+  option will treat animals who have not arrived yet (Date Brought In > Today)
+  as on shelter so that they are visible in shelter view etc.
 
 * Treat foster animals as part of the shelter inventory: Setting this option
   will make ASM treat fostered animals as if they are on the shelter (with
@@ -705,10 +776,16 @@ Movements
 * Warn when adopting an animal who has not been microchipped: If the animal
   has not been microchipped, show a warning when trying to adopt it.
 
+* Warn when adopting an animal who has outstanding medical treatments: If the
+  animal has ungiven medical treatments, show a warning when trying to adopt it.
+
 * Warn when adopting to a person who has not been homechecked: If the person
   record does not have them down as homechecked, the system can warn you if you
   try to adopt an animal to them. 
-  
+ 
+* Warn when adopting to a person who lives at the same address as a banned person:
+  If the adopter has the same address as someone previously banned, show a warning.
+
 * Warn when adopting to a person who has been banned from adopting animals: The
   system can warn you if you try to adopt an animal to a person who has been
   marked as banned. 
@@ -734,6 +811,12 @@ Online Forms
 * Remove processed forms when I leave the incoming forms screen: When navigating
   away from the incoming forms screen, any forms that have been processed (have
   a link shown in the rightmost column) will be deleted automatically.
+
+* When storing processed forms as media, apply tamper proofing and make them read
+  only: If this option is on, form submissions will be hashed and read only 
+  (in the same way as signed documents) and the user who processed the form
+  recorded. This prevents anyone from editing form submissions after they have been
+  stored.
 
 .. _paymentprocessors:
 

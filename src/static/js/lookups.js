@@ -17,15 +17,24 @@ $(function() {
             { "ID": 14, "NAME": _("{0} weeks").replace("{0}", "2") },
             { "ID": 21, "NAME": _("{0} weeks").replace("{0}", "3") },
             { "ID": 28, "NAME": _("{0} weeks").replace("{0}", "4") },
+            { "ID": 42, "NAME": _("{0} weeks").replace("{0}", "6") },
             { "ID": 56, "NAME": _("{0} weeks").replace("{0}", "8") },
             { "ID": 84, "NAME": _("{0} weeks").replace("{0}", "12") },
             { "ID": 182, "NAME": _("{0} weeks").replace("{0}", "26") },
             { "ID": 365, "NAME": _("1 year") },
             { "ID": 730, "NAME": _("{0} years").replace("{0}", "2") },
+            { "ID": 1095, "NAME": _("{0} years").replace("{0}", "3") },
+            { "ID": 1460, "NAME": _("{0} years").replace("{0}", "4") },
             { "ID": 1825, "NAME": _("{0} years").replace("{0}", "5") }
         ],
 
         model: function() {
+
+            // Add an empty value to the account so it can be unlinked
+            controller.accounts.unshift({ ID: 0, CODE: "" });
+
+            // Add a special value for matching account created
+            controller.accounts.push({ ID: -1, CODE: _("Matching account created") });
 
             // The list of tables has two elements for value/label,
             // flatten it to value|label to work with the dropdownfilter
@@ -66,6 +75,9 @@ $(function() {
                         options: { rows: lookups.reschedule_options, valuefield: "ID", displayfield: "NAME" }},
                     { hideif: function() { return !controller.hasdefaultcost; },
                         json_field: "DEFAULTCOST", post_field: "defaultcost", label: _("Default Cost"), type: "currency" },
+                    { hideif: function() { return !controller.hasaccountid; },
+                        json_field: "ACCOUNTID", post_field: "account", label: _("Account"), type: "select",
+                        options: { rows: controller.accounts, valuefield: "ID", displayfield: "CODE" }},
                     { hideif: function() { return !controller.hassite; },
                         json_field: "SITEID", post_field: "site", label: _("Site"), type: "select", 
                         options: html.list_to_options(controller.sites, "ID", "SITENAME") },
@@ -146,7 +158,15 @@ $(function() {
                         }
                     },
                     { field: "DEFAULTCOST", display: _("Default Cost"), formatter: tableform.format_currency,
-                        hideif: function(row) { return !controller.hasdefaultcost; }}
+                        hideif: function(row) { return !controller.hasdefaultcost; }},
+                    { field: "ACCOUNT", display: _("Account"), 
+                        formatter: function(row) {
+                            return common.get_field(controller.accounts, row.ACCOUNTID, "CODE");
+                        },
+                        hideif: function(row) { 
+                            return !controller.hasaccountid; 
+                        }
+                    }
                 ]
             };
 
@@ -155,6 +175,7 @@ $(function() {
                     click: async function() { 
                         await tableform.dialog_show_add(dialog, {
                             onload: function() {
+                                $("#account").select("value", "0");
                                 // If we don't talk to any third party services in this locale, might as well hide
                                 // the publisher fields to avoid confusion
                                 if ($.inArray(asm.locale, lookups.publisher_locales) == -1) {
@@ -173,8 +194,17 @@ $(function() {
                             row.SPECIESNAME = common.get_field(controller.species, row.SPECIESID, "SPECIESNAME");
                         }
                         controller.rows.push(row);
-                        tableform.table_update(table);
                         tableform.dialog_close();
+                        // costtype/donationtype and the create option is on, reload the screen to show the new account
+                        if (controller.tablename == "costtype" && config.bool("CreateCostTrx")) {
+                            common.route_reload();
+                        }
+                        else if (controller.tablename == "donationtype" && config.bool("CreateDonationTrx")) {
+                            common.route_reload();
+                        }
+                        else {
+                            tableform.table_update(table);
+                        }
                     } 
                 },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", hideif: function() { return !controller.candelete; },

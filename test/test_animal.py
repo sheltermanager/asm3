@@ -95,6 +95,7 @@ class TestAnimal(unittest.TestCase):
         asm3.animal.get_diets(base.get_dbo(), self.nid)
 
     def test_get_links(self):
+        asm3.animal.get_links_adoptable(base.get_dbo())
         asm3.animal.get_links_recently_adopted(base.get_dbo())
         asm3.animal.get_links_recently_fostered(base.get_dbo())
         asm3.animal.get_links_recently_changed(base.get_dbo())
@@ -122,6 +123,12 @@ class TestAnimal(unittest.TestCase):
 
     def test_get_shelterview_animals(self):
         assert len(asm3.animal.get_shelterview_animals(base.get_dbo())) > 0
+
+    def test_get_signed_requests(self):
+        asm3.animal.get_signed_requests(base.get_dbo())
+
+    def test_get_unsigned_requests(self):
+        asm3.animal.get_unsigned_requests(base.get_dbo())
 
     def test_get_timeline(self):
         assert len(asm3.animal.get_timeline(base.get_dbo())) > 0
@@ -183,6 +190,14 @@ class TestAnimal(unittest.TestCase):
         cid = asm3.animal.clone_animal(base.get_dbo(), "test", self.nid)
         assert cid != 0
         asm3.animal.merge_animal(base.get_dbo(), "test", self.nid, cid)
+
+    def test_extra_ids(self):
+        a = asm3.animal.get_animal(base.get_dbo(), self.nid)
+        asm3.animal.set_extra_id(base.get_dbo(), "user", a, "test", "xxx")
+        assert "xxx" == asm3.animal.get_extra_id(base.get_dbo(), a, "test")
+
+    def test_update_current_owner(self):
+        asm3.animal.update_current_owner(base.get_dbo(), "test", self.nid)
 
     def test_update_daily_boarding_cost(self):
         asm3.animal.update_daily_boarding_cost(base.get_dbo(), "test", self.nid, 1500)
@@ -266,6 +281,32 @@ class TestAnimal(unittest.TestCase):
 
     def test_update_animal_check_bonds(self):
         asm3.animal.update_animal_check_bonds(base.get_dbo(), self.nid)
+
+    def test_is_animal_in_location_filter(self):
+        a = asm3.animal.get_animal(base.get_dbo(), self.nid)
+        a.siteid = 2 # site test
+        assert asm3.animal.is_animal_in_location_filter(a, "", 2, "")
+        assert not asm3.animal.is_animal_in_location_filter(a, "", 3, "")
+        a.activemovementtype = None
+        a.shelterlocation = 3 # shelter locations
+        assert asm3.animal.is_animal_in_location_filter(a, "3", 0, "")
+        assert not asm3.animal.is_animal_in_location_filter(a, "4", 0, "")
+        a.activemovementtype = 1 # trials
+        assert asm3.animal.is_animal_in_location_filter(a, "-1", 0, "")
+        assert not asm3.animal.is_animal_in_location_filter(a, "-2", 0, "")
+        a.activemovementtype = 2 # fosters
+        assert asm3.animal.is_animal_in_location_filter(a, "-2", 0, "")
+        assert not asm3.animal.is_animal_in_location_filter(a, "-1", 0, "")
+        a.activemovementtype = 8 # retailers
+        assert asm3.animal.is_animal_in_location_filter(a, "-8", 0, "")
+        assert not asm3.animal.is_animal_in_location_filter(a, "-2", 0, "")
+        a.activemovementtype = None
+        a.nonshelteranimal = 1 # nonshelters
+        assert asm3.animal.is_animal_in_location_filter(a, "-9", 0, "")
+        assert not asm3.animal.is_animal_in_location_filter(a, "-1", 0, "")
+        # visible animals like "my fosters"
+        assert asm3.animal.is_animal_in_location_filter(a, "-12", 0, str(self.nid))
+        assert not asm3.animal.is_animal_in_location_filter(a, "-12", 0, "")
 
     def test_get_number(self):
         assert asm3.animal.get_number_animals_on_shelter(base.get_dbo(), base.today(), 1) > 0

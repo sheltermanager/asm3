@@ -38,7 +38,7 @@ class RescueGroupsPublisher(FTPPublisher):
 
     def rgYesNoBlank(self, v):
         """
-        Returns 0 == Yes, 1 == No, 2 == Empty string
+        Returns 0 == Yes, 1 == No, 2 or 3 == Empty string
         """
         if v == 0: return "Yes"
         elif v == 1: return "No"
@@ -76,15 +76,17 @@ class RescueGroupsPublisher(FTPPublisher):
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
-            if self.logSearch("530 Login") != -1:
-                self.log("Found 530 Login incorrect: disabling RescueGroups publisher.")
-                asm3.configuration.publishers_enabled_disable(self.dbo, "rg")
+            # NOTE: RescueGroups started returning transient 530 errors June 2022
+            #       Disabled this to stop the publisher repeatedly getting disabled
+            #if self.logSearch("530 Login") != -1:
+            #    self.log("Found 530 Login incorrect: disabling RescueGroups publisher.")
+            #    asm3.configuration.publishers_enabled_disable(self.dbo, "rg")
             self.cleanup()
             return
 
         # Do the images first
         self.mkdir("import")
-        self.chdir("import")
+        self.chdir("import", "import")
         self.mkdir("pictures")
         self.chdir("pictures", "import/pictures")
 

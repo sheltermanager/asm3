@@ -28,6 +28,7 @@ def get_animalcontrol_query(dbo):
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes, " \
+        "doc.ID AS DocMediaID, " \
         "doc.MediaName AS DocMediaName, " \
         "doc.Date AS DocMediaDate " \
         "FROM animalcontrol ac " \
@@ -46,16 +47,21 @@ def get_animalcontrol_query(dbo):
         "LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID" % (asm3.media.ANIMALCONTROL, asm3.media.ANIMALCONTROL)
 
 def get_animalcontrol_animals_query(dbo):
-    return "SELECT a.ID, aca.AnimalID, a.ShelterCode, a.ShortCode, a.AgeGroup, a.AnimalName, " \
-        "a.Neutered, a.DateBroughtIn, a.DeceasedDate, a.HasActiveReserve, " \
+    return "SELECT a.ID, aca.AnimalID, a.ShelterCode, a.ShortCode, a.IdentichipNumber, a.AgeGroup, a.AnimalName, " \
+        "a.BreedName, a.Neutered, a.DateBroughtIn, a.DeceasedDate, a.HasActiveReserve, " \
         "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.ActiveMovementType, a.Archived, a.IsNotAvailableForAdoption, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
-        "s.SpeciesName, t.AnimalType AS AnimalTypeName " \
+        "s.SpeciesName, t.AnimalType AS AnimalTypeName, " \
+        "c.BaseColour AS BaseColourName, sx.Sex AS SexName, sz.Size AS SizeName, ct.CoatType As CoatTypeName " \
         "FROM animalcontrolanimal aca " \
         "INNER JOIN animal a ON aca.AnimalID = a.ID " \
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
-        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID "
+        "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
+        "LEFT OUTER JOIN basecolour c ON c.ID = a.BaseColourID " \
+        "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
+        "LEFT OUTER JOIN lksize sz ON sz.ID = a.Size " \
+        "LEFT OUTER JOIN lkcoattype ct ON ct.ID = a.CoatType " \
 
 def get_traploan_query(dbo):
     return "SELECT ot.ID, ot.TrapTypeID, ot.LoanDate, tt.TrapTypeName, ot.TrapNumber, " \
@@ -93,6 +99,13 @@ def get_animalcontrol(dbo, acid):
         ac["EDITROLEIDS"] = "|".join(editroleids)
         ac["EDITROLES"] = "|".join(editrolenames)
         return ac
+
+def get_animalcontrol_numbertype(dbo, acid):
+    """ Return the number and type of an incident (used by diary notes) """
+    ac = dbo.first_row(dbo.query("SELECT ac.ID, tt.IncidentName FROM animalcontrol ac INNER JOIN incidenttype tt ON " \
+        "tt.ID = ac.IncidentTypeID WHERE ac.ID = ?", [acid]))
+    if ac is None: return ""
+    return f"{ac.ID:06} - {ac.INCIDENTNAME}"
 
 def get_animalcontrol_animals(dbo, acid):
     """ Return the list of linked animals for an incident """
@@ -158,7 +171,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0, siteid =
        agegroup - agegroup text to match
        sex - -1 for all or ID
        species - -1 for all or ID
-       filter - unpaid, incomplete, undispatched, requirefollowup
+       filter - incomplete, undispatched, requirefollowup, completed
        incidentfrom - incident date from in current display locale format
        incidentto - incident date to in current display locale format
        dispatchfrom - dispatch date from in current display locale format
@@ -200,6 +213,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0, siteid =
     ss.add_id("sex", "ac.Sex")
     ss.add_id("species", "ac.SpeciesID")
     ss.add_filter("incomplete", "ac.CompletedDate Is Null")
+    ss.add_filter("completed", "ac.CompletedDate Is Not Null")
     ss.add_filter("undispatched", "ac.CompletedDate Is Null AND ac.CallDateTime Is Not Null AND ac.DispatchDateTime Is Null")
     ss.add_filter("requirefollowup", "(" \
         "(ac.FollowupDateTime Is Not Null AND ac.FollowupDateTime <= %(now)s AND NOT ac.FollowupComplete = 1) OR " \
@@ -207,7 +221,7 @@ def get_animalcontrol_find_advanced(dbo, criteria, username, limit = 0, siteid =
         "(ac.FollowupDateTime3 Is Not Null AND ac.FollowupDateTime3 <= %(now)s AND NOT ac.FollowupComplete3 = 1) " \
         ")" % { "now": dbo.sql_date(dbo.now(settime="23:59:59")) } )
 
-    sql = "%s WHERE %s ORDER BY ac.ID" % (get_animalcontrol_query(dbo), " AND ".join(ss.ands))
+    sql = "%s WHERE %s ORDER BY ac.ID DESC" % (get_animalcontrol_query(dbo), " AND ".join(ss.ands))
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
 def reduce_find_results(dbo, username, rows):
@@ -300,6 +314,19 @@ def get_active_traploans(dbo):
     return dbo.query(get_traploan_query(dbo) + \
         "WHERE ot.ReturnDate Is Null OR ot.ReturnDate > ? " \
         "ORDER BY ot.LoanDate DESC", [dbo.today()])
+
+def get_returned_traploans(dbo, offset = "m31"):
+    """
+    Returns returned traploan records
+    ID, TRAPTYPEID, TRAPTYPENAME, LOANDATE, DEPOSITRETURNDATE,
+    TRAPNUMBER, RETURNDUEDATE, RETURNDATE,
+    OWNERNAME
+    """
+    offsetdays = asm3.utils.atoi(offset)
+    return dbo.query(get_traploan_query(dbo) + \
+        "WHERE ot.ReturnDate >= ? " \
+        "AND ot.ReturnDate <= ? " \
+        "ORDER BY ot.LoanDate DESC", [ dbo.today(offset=offsetdays*-1), dbo.today() ])
 
 def get_person_traploans(dbo, oid, sort = ASCENDING):
     """
@@ -435,7 +462,8 @@ def update_animalcontrol_from_form(dbo, post, username, geocode=True):
         "AgeGroup":             post["agegroup"]
     }, username)
 
-    asm3.additional.save_values_for_link(dbo, post, acid, "incident")
+    asm3.additional.save_values_for_link(dbo, post, username, acid, "incident")
+    asm3.diary.update_link_info(dbo, username, asm3.diary.ANIMALCONTROL, acid)
     update_animalcontrol_roles(dbo, acid, post.integer_list("viewroles"), post.integer_list("editroles"))
 
     # Check/update the geocode for the dispatch address
@@ -529,7 +557,7 @@ def insert_animalcontrol_from_form(dbo, post, username, geocode=True):
         "AgeGroup":             post["agegroup"]
     }, username)
 
-    asm3.additional.save_values_for_link(dbo, post, nid, "incident", True)
+    asm3.additional.save_values_for_link(dbo, post, username, nid, "incident", True)
     update_animalcontrol_roles(dbo, nid, post.integer_list("viewroles"), post.integer_list("editroles"))
 
     # Look up a geocode for the dispatch address
@@ -546,7 +574,7 @@ def delete_animalcontrol(dbo, username, acid):
     dbo.delete("log", "LinkID=%d AND LinkType=%d" % (acid, asm3.log.ANIMALCONTROL), username)
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (acid, asm3.additional.INCIDENT_IN))
     dbo.delete("animalcontrol", acid, username)
-    asm3.dbfs.delete_path(dbo, "/animalcontrol/%d" % acid)
+    # asm3.dbfs.delete_path(dbo, "/animalcontrol/%d" % acid) # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
 def insert_animalcontrol(dbo, username):
     """

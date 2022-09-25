@@ -4,7 +4,7 @@ Auditing
 ###
 34404/PostgreSQL
 ###
-[Karen Waldroff] QC report, checks for common keying mistakes like adopting to rescues instead of transfers, bad state codes, capitalisations, etc.
+[Karen Waldroff] QC report, checks for common keying mistakes like adopting to rescues instead of transfers, bad state codes, etc. Customization Required.
 ###
 en
 ###
@@ -63,7 +63,7 @@ UNION SELECT
   animal.animalname AS name,
   animal.sheltercode AS code,
   date(animal.LastChangedDate) AS issuedate,
-    'Animal in Foster Without Note in Comments/Bio for Public' AS issue
+    'Animal in Foster Without Note to the Public in Bio (Notes section > Description).' AS issue
 FROM animal
 INNER JOIN media ON media.LINKID = animal.id
 --INNER JOIN adoption ON animal.ID = adoption.AnimalID
@@ -126,6 +126,75 @@ INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
 WHERE (animal.SpeciesID=1 AND v.id IN (5,8)) OR (animal.SpeciesID=2 AND v.id = 9) -- have to look at vaccination ids
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
+--Days on Shelter should = 0 if DOA checkbox is checked.  Added 8/12/2021
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  date(animal.LastChangedDate) as issuedate,
+    'Death Issue.  Days on Shelter should equal 0 if <i>Dead of arrival</i> Checkbox is selected.' AS issue
+FROM animal
+WHERE DeceasedDate is not null
+AND IsDOA = 1 and DaysOnShelter <> 0
+AND NonShelterAnimal = 0
+AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--Invalid death reason with DOA Issue.  Added 8/12/21
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  date(animal.LastChangedDate) as issuedate,
+    'Death Issue.  DOA Category and DOA Checkbox Should Match' AS issue
+FROM animal
+WHERE DECEASEDDATE is not null
+AND (animal.IsDOA = 1 AND animal.PTSReasonID <> 1 -- REVIEW Death Reasons LOOKUP FIELDS
+  OR animal.IsDOA = 0 AND animal.PTSReasonID = 1)
+
+--Euthanized and DOA should not both be checked.  DOA means dead before
+--animal entered shelter.  Added 8/12/21
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  date(animal.LastChangedDate) as issuedate,
+    'Death Issue.  DOA and Euthanized should not both be checked' AS issue
+FROM animal
+WHERE DECEASEDDATE is not null
+AND (animal.IsDOA = 1 AND animal.Puttosleep = 1
+  OR animal.IsDOA = 1 AND animal.AsilomarOwnerRequestedEuthanasia = 1)
+
+--Euthanasia check box not selected.  Added 8/12/21
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  date(animal.LastChangedDate) as issuedate,
+    'Death Issue.  Euthanasia Checkbox Needs to be Checked' AS issue
+FROM animal
+WHERE PutToSleep = 0
+  AND PTSReasonID in (3,5,6,7,8)  -- REVIEW Death Reasons LOOKUP FIELDS
+  AND DECEASEDDATE is not null
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%') 
+
+--Invalid death reason with euthanasia check box selected. Added 8/12/21
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  date(animal.LastChangedDate) as issuedate,
+    'Death Issue.  Invalid Death Reason for Checked Euthanasia Box' AS issue
+FROM animal
+WHERE animal.PutToSleep = 1 AND animal.PTSReasonID IN (1,2) -- REVIEW Death Reasons LOOKUP FIELDS (**Remove Requested ID if using Asilomar).
+AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%') 
+
+--Alerts when an animal has been marked as either euthanized or DOA, but then the 
+--Death date later removed.  The euthanized or DOA fields need to be cleared out.
+UNION SELECT 
+  animal.animalname AS name,
+  animal.sheltercode AS code,
+  date(animal.LastChangedDate) AS issuedate,
+    'Death Issue. Marked deceased without Deceased Date.  Enter temp Deceased Date to clear deceased reason, then re-Save.' AS issue
+FROM animal
+WHERE (puttosleep = 1 OR diedoffshelter = 1 OR isdoa = 1)
+  AND deceaseddate IS NULL
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
 --Alerts when an litter name was added to an animal, but a litter was not added in Edit Litters
 UNION SELECT 
   animal.animalname AS name,
@@ -136,44 +205,20 @@ FROM animal
 WHERE acceptancenumber <> '' 
 AND NOT EXISTS(select ID FROM animallitter al WHERE al.acceptancenumber = animal.acceptancenumber)
 
---Alerts when an animal has been marked as either euthanized or DOA, but then the 
---Death date later removed.  The euthanized or DOA fields need to be cleared out.
-UNION SELECT 
-  animal.animalname AS name,
-  animal.sheltercode AS code,
-  date(animal.LastChangedDate) AS issuedate,
-    'Marked deceased without Deceased Date.  Enter temp Deceased Date to clear deceased reason, then re-Save.' AS issue
-FROM animal
-WHERE (puttosleep = 1 OR diedoffshelter = 1 OR isdoa = 1)
-  AND deceaseddate IS NULL
-  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
-
---Alerts if marked 'Transfer In'  but the Entry Category not set to Transfer from …
-UNION SELECT 
-  animal.animalname AS name,
-  animal.sheltercode AS code,
-  date(animal.LastChangedDate) AS issuedate,
-  'Marked <i>Transfer In</i>, but <i>Entry Category</i> not set to Transfer from Shelter/Rescue in Entry section.' AS issue 
-FROM animal
-  INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE animal.nonshelteranimal = 0
-  AND animal.istransfer = 1
---AND NOT animal.entryreasonid = 18  -- Check Entry Reason ID
-  AND entryreason.ReasonName NOT LIKE '%Transf%'
-  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
-
---If marked 'Transfer In' , but check to see if there is a person in the 'Transferred From'
---field in the Entry Section.
-UNION SELECT 
-  animal.animalname AS name,
-  animal.sheltercode AS code,
-  date(animal.LastChangedDate) AS issuedate,
-  'Marked <i>Transfer In</i>, but no person in <i>Transferred From</i> field in Entry section.' AS issue 
-FROM animal
-WHERE animal.nonshelteranimal = 0
-  AND animal.broughtinbyownerid = 0
-  AND animal.istransfer = 1
-  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+--Checks for Media with default name of New document.  Added 11/5/2021
+UNION SELECT   
+  'See Code to search' as name,
+  CASE WHEN linktypeid = 0 THEN (SELECT 'Sheltercode ' || sheltercode FROM animal a WHERE linkID = a.id)
+   WHEN linktypeid = 1 THEN (SELECT 'Lost Animal ' || TO_CHAR(ID, '000000') FROM animallost al WHERE linkID = al.id)
+   WHEN linktypeid = 2 THEN (SELECT 'Found Animal ' || TO_CHAR(ID, '000000') FROM animalfound af WHERE linkID = af.id)
+   WHEN linktypeid = 3 THEN (SELECT 'Person Code ' || ownercode FROM owner o WHERE linkID = o.id)
+   WHEN linktypeid = 5 THEN (SELECT 'Waitlist ' || TO_CHAR(ID, '000000') FROM animalwaitinglist aw WHERE linkID = aw.id)
+   WHEN linktypeid = 6 THEN (SELECT 'AC Incident ' || TO_CHAR(ID, '000000') FROM animalcontrol ac WHERE linkID = ac.id)
+   END AS code,
+  date(media.createddate) AS issuedate,
+  'Media Issue.  Rename document or delete blank <i>New document</i>.' AS issue
+FROM media
+WHERE medianotes = 'New document'
 
 --Alerts when adopted and marked microchip, but no microchip number entered.
 UNION SELECT 
@@ -242,16 +287,27 @@ WHERE animal.archived=0
 UNION SELECT 
   animal.animalname AS name,
   animal.sheltercode AS code,
-  date(animal.LastChangedDate) AS issuedate,
+  date(animal.DateBroughtIn) AS issuedate,
   'No Owner in <i>Original Owner</i> field in Entry section on Non-Shelter animal.' AS issue 
 FROM animal
 WHERE  animal.deceaseddate IS NULL
   AND animal.NONSHELTERANIMAL = 1 
-  AND animal.ORIGINALOWNERID = 0 
-  AND datebroughtin > '2019-01-01'
+  AND animal.ORIGINALOWNERID = 0
+  AND NOT animal.animalname LIKE 'Template%'
+  AND datebroughtin > '2010-01-01'
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+  
+--Reports when a Non-Shelter Flag is added to an animal with an active movement. Added 2/9/2022
+UNION SELECT animal.animalname AS name,
+  animal.sheltercode AS code,
+  date(animal.LastChangedDate) AS issuedate,
+  '<font color = "Red"><i>Non-Shelter</i> Flag added to animal with an active movement. Alerts Only Once.</font>' AS issue
+FROM animal
+WHERE date_trunc('day', LastChangedDate) = current_date -1
+  AND nonshelteranimal = 1 
+  AND activemovementtype > 0
 
---Reports animals adopted but not altered.
+--Reports animals adopted but not altered. Can use this or next option if you set a spay/neuter due date in Medical. 
 UNION SELECT
   animal.animalname AS name,
   animal.sheltercode AS code,
@@ -269,6 +325,28 @@ WHERE  animal.deceaseddate IS NULL
   AND EXTRACT(days FROM current_date - animal.dateofbirth) >= 185
   AND animal.speciesid in (1,2)
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+-- Either use code above or this code.  Use this code if you set a spay/neuter due date in Medical. Added 8/12/2021
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  animal.activemovementdate AS issuedate,
+    'Not altered but adopted.  Spay/Neuter due date not entered in Medical or past due.' AS issue
+FROM animal
+  LEFT OUTER JOIN owner cw ON cw.ID = animal.adoptioncoordinatorID
+  INNER JOIN adoption ON adoption.ID = animal.activemovementID
+WHERE animal.deceaseddate is null
+  AND animal.activemovementtype = 1
+  AND animal.activemovementdate > '2010-01-01'
+  AND animal.Neutered = 0
+  AND adoption.ISTRIAL = 0
+  AND EXTRACT(days FROM current_date - animal.dateofbirth) >= 185
+  AND animal.speciesid in (1,2)
+  AND (NOT EXISTS(SELECT animalmedical.ID FROM animalmedical INNER JOIN animalmedicaltreatment amt ON amt.animalmedicalid = animalmedical.ID WHERE animalmedical.AnimalID = animal.ID AND animalmedical.TreatmentName like 'Spay%') -- REVIEW.  Update to match Medical Profile name
+       OR
+    EXISTS(SELECT animalmedical.ID FROM animalmedical INNER JOIN animalmedicaltreatment amt ON amt.animalmedicalid = animalmedical.ID WHERE animalmedical.AnimalID = animal.ID AND animalmedical.TreatmentName like 'Spay%' AND amt.DateRequired < current_date -1))  -- REVIEW.  Update to match Medical Profile name
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%') 
+
 
 --Compares current owner (animal.ownerid with adoption.ownerid) to see if maybe
 --someone changed this field instead of creating a movement.
@@ -336,7 +414,7 @@ UNION SELECT
   animal.animalname AS name,
   animal.sheltercode AS code,
   date(animal.LastChangedDate) AS issuedate,
-  'Published animal without bio in Comments (Notes section).' AS issue
+  'Published animal without bio in Description box (Notes section).' AS issue
 FROM animal
 INNER JOIN media ON media.LINKID = animal.id
 WHERE Archived = 0
@@ -409,6 +487,24 @@ WHERE animal.deceaseddate IS NULL
   AND animal.speciesid = 1
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
+--This checks HW Positive Dogs for a retest date if shelter follows up on HW positive dogs.   Added 8/12/2021
+--Change from 6 month TO 1 year in INTERVAL statements if needed
+UNION SELECT
+animal.animalname as name,
+animal.sheltercode as code,
+date(animal.LastChangedDate) AS issuedate,
+   'Test Issue. Heartworm Positive Dog needs to be re-tested or Heartworm Test Due needs to be added to Test Tab.' AS ISSUE
+FROM animal
+  INNER JOIN species ON species.ID = animal.SpeciesID
+  LEFT OUTER JOIN owner cw ON cw.ID = animal.adoptioncoordinatorID
+--INNER JOIN animaltest ON animaltest.ANIMALID = animal.id
+WHERE (animal.archived=0 OR (animal.activemovementtype IN (1,11) AND animal.ActiveMovementDate > '2020-01-01'))
+  AND animal.HeartwormTestResult = 2
+  AND animal.speciesid = 1
+  AND animal.HeartwormTestDate < CURRENT_DATE - INTERVAL '1 year'
+  AND NOT EXISTS(SELECT animaltest.testtypeid FROM animaltest INNER JOIN testtype ON testtype.ID = animaltest.TESTTYPEID WHERE animaltest.AnimalID = animal.ID AND testtype.TESTNAME like 'Heartworm%' and animaltest.DATEOFTEST is null)     
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%') 
+
 --Two-part check for FIV/FLV Test
 UNION SELECT
   animal.animalname AS name,
@@ -452,6 +548,67 @@ WHERE animal.deceaseddate IS NULL
   AND animal.CombiTested = 0
   AND animal.speciesid = 2
  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--Alerts if marked 'Transfer In'  but the Entry Category not set to Transfer from …
+UNION SELECT 
+  animal.animalname AS name,
+  animal.sheltercode AS code,
+  date(animal.LastChangedDate) AS issuedate,
+  'Transfer In Issue. Marked <i>Transfer In</i>, but <i>Entry Category</i> not set to Transfer from Shelter/Rescue in Entry section.' AS issue 
+FROM animal
+  INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE animal.nonshelteranimal = 0
+  AND animal.istransfer = 1
+--AND NOT animal.entryreasonid = 18  -- Check Entry Reason ID
+  AND entryreason.ReasonName NOT LIKE '%Transf%'
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--Alerts if Entry Category set to Transfer from but 'Transfer In' box not checked. Added 8/12/21
+UNION SELECT 
+animal.animalname as name,
+animal.sheltercode as code,
+date(animal.LastChangedDate) as issuedate,
+'Transfer In Issue. <i>Transfer</i> Entry Category Selected, but <i>Transfer In Checkbox</i> Not Selected in Entry Section.' AS issue 
+FROM animal
+   INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE animal.nonshelteranimal = 0
+  AND animal.datebroughtin > '2020-01-01'
+  AND animal.istransfer = 0
+--AND NOT animal.entryreasonid = 18  -- USE THIS OR NEXT LINE.  Check Entry Reason ID
+  AND entryreason.ReasonName LIKE '%Transf%'
+AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--If marked 'Transfer In' , but check to see if there is a person in the 'Transferred From'
+--field in the Entry Section.
+UNION SELECT 
+  animal.animalname AS name,
+  animal.sheltercode AS code,
+  date(animal.LastChangedDate) AS issuedate,
+  'Transfer In Issue. Marked <i>Transfer In</i>, but no person in <i>Transferred From</i> field in Entry section.' AS issue 
+FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+WHERE animal.datebroughtin > '2000-01-01'
+  AND animal.nonshelteranimal = 0
+  AND animal.broughtinbyownerid = 0
+  AND (animal.istransfer = 1 OR entryreason.ReasonName LIKE '%Transf%')
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--If marked 'Transfer In' ,  check to see if person in the 'Transferred From'
+--field is flagged as a Vet or Other Shelter.  Added 8/12/2021
+UNION SELECT 
+  animal.animalname AS name,
+  animal.sheltercode AS code,
+  date(animal.LastChangedDate) AS issuedate,
+  'Transfer In Issue. Marked <i>Transfer In</i>, but person in from not flagged as <i>Other Shelter or Vet</i>' AS issue 
+FROM animal
+INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
+INNER JOIN owner on owner.id = animal.broughtinbyownerid
+WHERE animal.datebroughtin > '2000-01-01'
+  AND animal.nonshelteranimal = 0
+  AND animal.broughtinbyownerid <> 0
+  AND NOT (owner.AdditionalFlags LIKE 'shelter|%' OR owner.AdditionalFlags  LIKE '%|shelter|%' OR owner.AdditionalFlags LIKE 'vet|%' OR owner.AdditionalFlags LIKE '%|vet|%')
+  AND (animal.istransfer = 1 OR entryreason.ReasonName LIKE '%Transf%')
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --Reports an animal that was transferred to a organization/person that doesn't have
 --the Other Shelter flag.   This flag is needed for the 'Transfer an animal' functionality
@@ -497,7 +654,34 @@ WHERE animal.deceaseddate IS NULL
   AND animal.activemovementtype = 1
   AND adoption.ISTRIAL = 1
   AND adoption.trialenddate < current_date
+  
+--Alerts when first character of Vaccination Manufacturer is a numeric.
+UNION SELECT 
+animal.animalname as name,
+animal.sheltercode as code,
+  animalvaccination.DateOfVaccination AS issuedate,
+'Vaccination Issue. Manufacturer Starts With Numeric' AS ISSUE 
+FROM animal
+INNER JOIN animalvaccination ON animalvaccination.animalid = animal.id
+WHERE substring(animalvaccination.Manufacturer,1,1) in ('0','1','2','3','4','5','6','7','8','9')
 
+--Checks to see if Rabies Tag is missing.  Added 8/12/2021
+UNION SELECT
+  animal.animalname as name,
+  animal.sheltercode as code,
+  animalvaccination.DateOfVaccination AS issuedate,
+  'Vaccination Issue.  Missing Rabies Tag Number in Vaccination Record.'  AS ISSUE 
+FROM animal
+INNER JOIN animalvaccination ON animalvaccination.animalid = animal.id
+WHERE animalvaccination.vaccinationid IN (4) -- REVIEW Rabies ID needed
+  AND animalvaccination.DateofVaccination IS NOT NULL
+  AND animalvaccination.RabiesTag = ''
+  --AND date_trunc('day', animalvaccination.LastChangedDate) = current_date -1
+  AND date_trunc('day', animalvaccination.LastChangedDate) > '2021-01-01'
+  AND animal.nonshelteranimal = 0
+
+
+-----------------------------OWNER SECTION---------------------------------------------------------
 --This alerts when banned people also do not have the Exclude from bulk mailings flag.
 --You want to make sure that you do not email or mail users that have been banned.
 UNION SELECT
@@ -536,6 +720,57 @@ UNION SELECT
 FROM owner
 WHERE ownercode LIKE 'XX%'
 
+--Checks for spaces in first character of name field.  Extra spaces causes missed matches.
+UNION SELECT 
+  owner.ownername AS name,
+  owner.ownercode AS code,
+  date(owner.LastChangedDate) AS issuedate,
+  'Space in first character of name field.' AS issue
+FROM owner
+WHERE (ownerforenames LIKE ' %' OR ownersurname LIKE ' %')
+AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%') 
+
+--Checks for extra spaces in address field.  Extra spaces causes missed matches.
+UNION SELECT 
+  owner.ownername AS name,
+  owner.ownercode AS code,
+  date(owner.LastChangedDate) AS issuedate,
+  'Extra spaces in address field.' AS issue
+FROM owner
+WHERE owneraddress like '%  %'
+AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--Checks for cities entered with a comma.  Added 11/5/2021
+UNION SELECT 
+  owner.ownername AS name,
+  owner.ownercode AS code,
+  current_date -1 AS issuedate,
+  '<font color = "Red">Possible address issue.  Comma in City field. Alerts Only Once.</font>' AS issue
+FROM owner
+WHERE ownertown LIKE '%,%'
+AND date_trunc('day', LastChangedDate) = current_date -1
+
+--This alert shows if North, South, East, West, etc.
+--It is important to stardardized entry of addresses so that this script can detect possible address duplications.    Added 11/18/2021
+UNION SELECT
+o.ownername as name,
+  o.ownercode as code,
+  current_date -1 AS issuedate,
+  '<font color = "Red">Possible address standardization issue (' || o.owneraddress || ').  North, South, First, etc.  Change to N., S., 1st, if needed. Alerts Only Once.</font>' AS issue
+FROM owner o
+where date_trunc('day', LastChangedDate) = current_date -1
+AND (upper(owneraddress) like '% NORTH %'
+     OR upper(owneraddress) like '% SOUTH %'
+     OR upper(owneraddress) like '% EAST %'
+     OR upper(owneraddress) like '% WEST %'
+     OR upper(owneraddress) like '% HIGHWAY %'
+     OR upper(owneraddress) like '% FIRST %'
+     OR upper(owneraddress) like '% SECOND %'
+     OR upper(owneraddress) like '% THIRD %'
+     OR upper(owneraddress) like '% FOURTH %'
+     OR upper(owneraddress) like '% FIFTH %'
+     OR upper(owneraddress) like '% SIXTH %') 
+
 --Checks for cities entered in ALL upper or lower case.  And common misspellings of city 
 --names.
 UNION SELECT 
@@ -560,7 +795,7 @@ UNION SELECT
   'Invalid State abbreviation.' AS issue
 FROM owner
 WHERE owner.OWNERTOWN <> ''
-  AND (owner.OWNERCOUNTRY LIKE 'US%'  OR owner.OWNERCOUNTRY = '')  -- skip check if foreign county
+  AND (owner.OWNERCOUNTRY LIKE 'US%' OR owner.OWNERCOUNTRY LIKE 'United States%' OR owner.OWNERCOUNTRY = '')  -- skip check if foreign county
   AND owner.OWNERCOUNTY NOT IN ('AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'GU', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MP', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UM', 'UT', 'VA', 'VI', 'VT', 'WA', 'WI', 'WV', 'WY')
   AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
@@ -575,7 +810,7 @@ WHERE owner.LASTCHANGEDDATE > '2019-01-01'
   AND NOT owner.OWNERADDRESS = '' 
   AND NOT owner.OWNERTOWN = '' 
   AND NOT owner.OWNERCOUNTY = '' 
-  AND (owner.OWNERCOUNTRY LIKE 'US%'  OR owner.OWNERCOUNTRY = '')  -- skip check if foreign country
+  AND (owner.OWNERCOUNTRY LIKE 'US%' OR owner.OWNERCOUNTRY LIKE 'United States%' OR owner.OWNERCOUNTRY = '')  -- skip check if foreign country
   AND owner.ownerpostcode = ''
   AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
@@ -589,56 +824,90 @@ UNION SELECT
 FROM owner
 WHERE owner.OWNERCOUNTY = 'AR' 
   AND ownerpostcode <>  '' 
-  AND (ownerpostcode NOT LIKE '7%'  OR (ownerpostcode NOT LIKE '722%' AND ownertown = 'Little Rock'))
+  AND (ownerpostcode NOT LIKE '7%' OR (ownerpostcode NOT LIKE '722%' AND ownertown = 'Little Rock'))
 --AND OWNER.LASTCHANGEDDATE > '2020-01-01'
 --AND NOT (ownerpostcode like '46%' or ownerpostcode like '47%')
 
---This strips out all characters and then alerts if phone number is not equal to 10
---characters.  It will ignore this if two phone numbers are in same field but separated
---by a slash (/)
-UNION SELECT
+--Alerts when zipcode length doesn't match 5 or 10.  Added 7/16/2021
+UNION SELECT 
   owner.ownername AS name,
   owner.ownercode AS code,
   date(owner.LastChangedDate) AS issuedate,
- 'Invalid Phone Number Length.' AS issue  
+  'Invalid Zipcode Length.' AS issue
 FROM owner
-WHERE (LENGTH(NULLIF(regexp_replace(hometelephone, '\D','','g'), '')) <> 10 
-OR LENGTH(NULLIF(regexp_replace(mobiletelephone, '\D','','g'), '')) <> 10)
-  AND (hometelephone NOT LIKE '%/%' AND mobiletelephone NOT LIKE '%/%')
-  AND OWNER.LASTCHANGEDDATE > '2020-01-01'
+WHERE ownerpostcode <>  '' 
+  AND LENGTH(ownerpostcode) not in (5,10)
+  AND ownerpostcode < 'a' -- Only look at numbers.
+--AND OWNER.LASTCHANGEDDATE > '2020-01-01'
   AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
---4/20/2020 THIS IS NO LONGER NEEDED since the new search box ignores characters.
---Only looks at phone numbers less than 13 characters to avoid phone numbers
---with additional text entered.  It is looking for periods entered within the number
---to limit what has to be searched on when searching for phone numbers.
---UNION SELECT
---owner.ownername as name,
---  owner.ownercode as code,
---   date(owner.LastChangedDate) as issuedate,
--- 'Invalid Phone Number Format.  Remove any periods or characters.' AS issue  
---FROM owner
---WHERE ((LENGTH(owner.WORKTELEPHONE) < 13 and owner.WORKTELEPHONE like '%.%')
---OR (length(owner.HOMETELEPHONE) < 13 and owner.HOMETELEPHONE like '%.%')
---OR (length(owner.MOBILETELEPHONE) < 13 and owner.MOBILETELEPHONE like '%.%')
---OR owner.hometelephone ~ '^[A-Za-z]'
---OR owner.mobiletelephone ~ '^[A-Za-z]')
---AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
+--Checks for Countries entered in lower case.  And common misspellings of Country names. Added 5/14/2022
+UNION SELECT 
+  owner.ownername as name,
+  owner.ownercode as code,
+  date(owner.LastChangedDate) as issuedate,
+  'Invalid Country or Capitalization.' AS issue
+FROM owner
+WHERE ownercountry <> ''
+ --AND (upper(ownertown) = ownertown
+ AND (lower(ownercountry) = ownercountry
+ OR ownercountry in ('Grand Cayman','The Cayman Islands')) -- Checks for common country misspellings or errors
 
---This alert strips out all characters and compares any records that were modified the day
---before with mobile and home numbers in the database. 
+--This strips out all characters and then alerts if phone number is not equal to 10 or 11 (in case someone enters a 1 in front of area code)
+--characters.  It will ignore this if two phone numbers are in same field but separated
+--by a slash (/)
+UNION SELECT
+owner.ownername as name,
+  owner.ownercode as code,
+  date(owner.LastChangedDate) AS issuedate,
+ 'Invalid Phone Number Length. If combining two, separate with /.' AS issue 
+FROM owner
+WHERE (LENGTH(NULLIF(regexp_replace(hometelephone, '\D','','g'), '')) NOT IN (10,11) 
+OR LENGTH(NULLIF(regexp_replace(mobiletelephone, '\D','','g'), '')) NOT IN (10,11))
+AND (hometelephone NOT LIKE '%/%' AND mobiletelephone NOT LIKE '%/%')
+AND OWNER.LASTCHANGEDDATE > '2020-01-01'
+AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--This strips out all characters and then alerts if phone number is 11 characters and the first character 
+--is not a 1 (in case someone enters a 1 in front of area code). Added 11/10/2021
+UNION SELECT
+owner.ownername as name,
+  owner.ownercode as code,
+  date(owner.LastChangedDate) AS issuedate,
+ 'Invalid Phone Number.  If 11 digits, should begin with <i>1</i>.' AS issue 
+FROM owner
+WHERE (LENGTH(NULLIF(regexp_replace(hometelephone, '\D','','g'), '')) = 11
+   AND SUBSTRING(regexp_replace(hometelephone, '\D','','g'),1,1) <> '1'
+OR
+LENGTH(NULLIF(regexp_replace(mobiletelephone, '\D','','g'), '')) = 11
+   AND SUBSTRING(regexp_replace(mobiletelephone, '\D','','g'),1,1) <> '1')
+   AND OWNER.LASTCHANGEDDATE > '2000-01-01'
+   AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--This alert strips out all characters and compares the last 10 digits of mobile and home phone numbers
+--for records that were modified the day before. 
 UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
   current_date -1 AS issuedate,
-  'Duplicate Phone Number - (' || ow.ownercode || ').   <font color = "Red">Alerts Only Once.</font>' AS issue
+  '<font color = "Red">Duplicate Phone Number - (' || ow.ownercode || ').   Alerts Only Once.</font>' AS issue
 FROM owner o, owner ow
 WHERE date_trunc('day', o.LASTCHANGEDDATE)  = current_date -1
   AND o.id <> ow.id
-  AND ((regexp_replace(o.hometelephone, '\D','','g') <> '' AND regexp_replace(o.hometelephone, '\D','','g') LIKE regexp_replace(ow.hometelephone, '\D','','g') AND ow.hometelephone <> '')
-   OR (regexp_replace(o.hometelephone, '\D','','g') <> '' AND regexp_replace(o.hometelephone, '\D','','g') LIKE regexp_replace(ow.mobiletelephone, '\D','','g') AND ow.mobiletelephone <> '')
-   OR (regexp_replace(o.mobiletelephone, '\D','','g') <> '' AND regexp_replace(o.mobiletelephone, '\D','','g') LIKE regexp_replace(ow.mobiletelephone, '\D','','g') AND ow.mobiletelephone <> '')
-   OR (regexp_replace(o.mobiletelephone, '\D','','g') <> '' AND regexp_replace(o.mobiletelephone, '\D','','g') LIKE regexp_replace(ow.hometelephone, '\D','','g') AND ow.hometelephone <> ''))
+AND ((regexp_replace(o.hometelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.hometelephone, '\D','','g'),10) LIKE RIGHT(regexp_replace(ow.hometelephone, '\D','','g'),10) AND ow.hometelephone <> '')
+   OR (regexp_replace(o.hometelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.hometelephone, '\D','','g'),10) LIKE RIGHT(regexp_replace(ow.mobiletelephone, '\D','','g'),10) AND ow.mobiletelephone <> '')
+   OR (regexp_replace(o.mobiletelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.mobiletelephone, '\D','','g'),10) LIKE RIGHT(regexp_replace(ow.mobiletelephone, '\D','','g'),10) AND ow.mobiletelephone <> '')
+   OR (regexp_replace(o.mobiletelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.mobiletelephone, '\D','','g'),10) LIKE RIGHT(regexp_replace(ow.hometelephone, '\D','','g'),10) AND ow.hometelephone <> ''))
+
+-- Looks for invalid email addresses missing @ or . and looks for emails with space (emails can have a comma and space separating emails IF listing two or more addresses).  Added 10/28/2021
+UNION SELECT 
+  owner.ownername as name,
+  owner.ownercode as code,
+  date(owner.LastChangedDate) as issuedate,
+  'Invalid Email.' AS issue
+FROM owner
+WHERE (owner.EmailAddress NOT LIKE '%@%' OR owner.EmailAddress NOT LIKE '%.%' OR (owner.EmailAddress like '% %' AND owner.EmailAddress NOT LIKE '%, %'))
+  AND owner.EmailAddress <> ''
 
 --This alert compares the email of records that were modified the day before with emails
 --in the database.
@@ -646,7 +915,7 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
    current_date -1 AS issuedate,
- 'Duplicate Email address (' || o.emailaddress || '). Please search on Email.  <font color = "Red">Alerts Only Once.</font>' AS issue
+ '<font color = "Red">Duplicate Email address (' || o.emailaddress || '). Please search on Email.  Alerts Only Once.</font>' AS issue
 FROM owner o
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
 AND o.emailaddress <> '' 
@@ -657,14 +926,26 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
   date(o.LastChangedDate) as issuedate,
- 'Possible Email Address in Wrong Field.  <font color = "Red">Alerts Only Once.</font>' AS issue
+ '<font color = "Red">Possible Email Address in Wrong Field.  Alerts Only Once.</font>' AS issue
 FROM owner o
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
 AND (o.hometelephone LIKE '%@%' 
 OR o.mobiletelephone LIKE '%@%' 
 OR o.mobiletelephone LIKE '%@%')
 
---Alerts when the license expiration date compared to the issue date is less than 335 days.
+--Looks for special characters that will affect searches.  Added 7/16/2021
+UNION SELECT
+  owner.ownername AS name,
+  owner.ownercode AS code,
+  date(owner.LastChangedDate) AS issuedate,
+ 'Invalid Character (such as ‘ or -).  Type over and re-Save.' AS issue  
+FROM owner
+WHERE ownerforenames like '%&#%' OR ownersurname like '%&#%'
+      OR owneraddress like '%&#%' OR ownertown like '%&#%'
+      OR ownercounty like '%&#%'
+
+--Alerts when the license expiration date compared to the issue date is less than 335 days
+--or expiration date is less than issue date.
 UNION SELECT 
   owner.ownername AS name,
   owner.ownercode AS code,
@@ -673,6 +954,7 @@ UNION SELECT
 FROM ownerlicence ol
   INNER JOIN owner ON owner.ID = ol.OwnerID
 WHERE extract(days from ol.ExpiryDate - ol.ISSUEDATE) < 335
+OR ol.ExpiryDate < ol.ISSUEDATE
 
 --This looks at the comments field of citation to see if the different ordinance numbers have
 --been entered.  This allows for reporting of individual ordinance violations if needed.
@@ -701,7 +983,7 @@ UNION SELECT DISTINCT
 o.ownername AS name,
   o.ownercode AS code,
  current_date -1 AS issuedate, 
- 'Online Form Attached to Prior Person Record. Compare the data in the First and Last Name fields with the data on the NEW online form.  When ASM finds an email match, it ONLY updates the address and phone info. <font color = "Red">Alerts Only Once.</font>' AS issue
+ '<font color = "Red">Online Form Attached to existing Person Record. Compare the data in the First and Last Name fields with the data on the NEW online form.  When ASM finds a cell phone or email match, it ONLY updates the address, phone, and email info. Alerts Only Once.</font>' AS issue
 FROM owner o
 INNER JOIN media m ON m.linkid = o.ID
 WHERE  m.medianotes IN ('Cat Adoption Application', 'Dog Adoption Application','Getting Help - Cat', 'Getting Help - Dog','SNIP Application','Foster Application','Volunteer Application')
@@ -715,12 +997,12 @@ UNION SELECT DISTINCT
   o.ownername AS name,
   o.ownercode AS code,
   date(o.LastChangedDate) as issuedate,
-  'Person Record added but NOT LINKED to any records and has no Flags.  <font color = "Red">Alerts Only Once.</font>' AS issue
+  '<font color = "Red">Person Record added but NOT LINKED to any records and has no Flags.  Alerts Only Once.</font>' AS issue
 FROM owner o
 WHERE date_trunc('day', o.createddate) = current_date - 1
-AND o.additionalflags = '|'
+AND (o.additionalflags = '|' OR o.additionalflags = '')
 AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = o.ID OR ReturnedByOwnerID = o.ID)
-AND NOT EXISTS(SELECT ID FROM animal WHERE OriginalOwnerID = o.ID OR BroughtInByOwnerID = o.ID OR CurrentVetID = o.ID OR OwnersVetID = o.ID 
+AND NOT EXISTS(SELECT ID FROM animal WHERE OriginalOwnerID = o.ID OR BroughtInByOwnerID = o.ID OR OwnerID = o.ID OR CurrentVetID = o.ID OR OwnersVetID = o.ID 
     OR AdoptionCoordinatorID = o.ID OR NeuteredByVetID = o.ID)
 AND NOT EXISTS(SELECT ID FROM animalcontrol WHERE VictimID = o.ID OR CallerID = o.ID OR OwnerID = o.ID OR Owner2ID = o.ID OR Owner3ID = o.ID)
 AND NOT EXISTS(SELECT ID FROM animalfound WHERE OwnerID = o.ID)
@@ -732,6 +1014,7 @@ AND NOT EXISTS(SELECT ID FROM animaltest WHERE AdministeringVetID = o.ID)
 AND NOT EXISTS(SELECT ID FROM animalvaccination WHERE AdministeringVetID = o.ID)
 AND NOT EXISTS(SELECT ID FROM clinicappointment WHERE OwnerID = o.ID)
 AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = o.ID AND LinkType = 1)
+AND NOT EXISTS(SELECT ID FROM media WHERE media.LinkID = o.ID AND media.LinkTypeID = 3) 
 AND NOT EXISTS(SELECT ID FROM ownercitation WHERE OwnerID = o.ID)
 AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = o.ID)
 AND NOT EXISTS(SELECT ID FROM ownerinvestigation WHERE OwnerID = o.ID)
@@ -746,12 +1029,12 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
   date(o.LastChangedDate) AS issuedate,
-  'Possible Duplicate Person Record - (' || ow.ownercode || ').  Partial address and last or first name match. <font color = "Red">Alerts Only Once.</font>' AS issue
+  '<font color = "Red">Possible Duplicate Person Record - (' || ow.ownercode || ').  Partial address and last or first name match. Alerts Only Once.</font>' AS issue
 FROM owner o, owner ow
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
   AND LOWER(REGEXP_REPLACE(ow.owneraddress, '[^0-9A-Za-z]', '','g')) LIKE SUBSTR(LOWER(REGEXP_REPLACE(o.owneraddress, '[^0-9A-Za-z]', '','g')),1,8) || '%'
 AND o.owneraddress <> ''
-AND (LOWER(o.ownersurname) = LOWER(ow.ownersurname) OR LOWER(o.ownerforenames) = LOWER(ow.ownerforenames))
+AND (LOWER(o.ownersurname) = LOWER(ow.ownersurname) OR (LOWER(o.ownerforenames) = LOWER(ow.ownerforenames) AND ow.ownerforenames <> ''))
 AND o.id <> ow.id
 
 ) dummy

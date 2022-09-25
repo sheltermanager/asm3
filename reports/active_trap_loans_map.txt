@@ -1,10 +1,10 @@
-Active Trap Loans Map
+Active Equipment Loans Map
 ###
 Maps
 ###
 33402/PostgreSQL
 ###
-Map of people with active trap loans.
+Map of people with active equipment loans.
 ###
 en
 ###

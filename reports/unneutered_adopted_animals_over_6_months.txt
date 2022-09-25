@@ -2,7 +2,7 @@ Non-Neutered/Spayed Adopted Animals aged over 6 months
 ###
 Movements
 ###
-PostgreSQL
+PostgreSQL rev02
 ###
 Adopted animals over the age of 6 months who have not been neutered/spayed.
 ###
@@ -21,6 +21,7 @@ INNER JOIN owner o ON o.ID = ad.OwnerID
 WHERE a.Neutered = 0 AND DeceasedDate Is Null AND ad.MovementType = 1 
 AND DateOfBirth <= (now() - interval '6 months')
 AND ad.MovementDate >= '$ASK DATE Adopted between$' AND ad.MovementDate <= '$ASK DATE and$'
+AND a.SpeciesID IN (1,2)
 ORDER BY ad.MovementDate, t.AnimalType, a.AnimalName
 ###
 $$HEADER

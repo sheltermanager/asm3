@@ -29,26 +29,26 @@ edit_header = {
      *           non-zero, an icon is shown on some tabs.
      */
     animal_edit_header: function(a, selected, counts) {
-        var check_display_icon = function(key, iconname) {
+        let check_display_icon = function(key, iconname) {
             if (key == "animal") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
                 return html.icon(iconname);
             }
             return html.icon("blank");
         };
-        var mediaprompt = "";
+        let mediaprompt = "";
         if (a.WEBSITEMEDIANAME == null) {
             mediaprompt = '<br /><span style="white-space: nowrap"><a href="animal_media?id=' + a.ID + '&newmedia=1">[ ' + _("Add a photo") + ' ]</a></span>';
         }
-        var currentowner = "";
+        let currentowner = "";
         if (a.CURRENTOWNERID) {
             currentowner = " " + html.person_link(a.CURRENTOWNERID, a.CURRENTOWNERNAME);
         }
-        var owner = "";
+        let owner = "";
         if (a.OWNERID) {
             owner = " " + html.person_link(a.OWNERID, a.OWNERNAME);
         }
-        var available = "";
+        let available = "";
         if (a.NONSHELTERANIMAL == 1) {
             // show non-shelter info link
             available = _("Non-Shelter Animal");
@@ -71,7 +71,7 @@ edit_header = {
             available = html.error(_("Not available for adoption") + 
                 "<br/>(" + html.is_animal_adoptable(a)[1] + ")");
         }
-        var banner = [];
+        let banner = [];
         if (common.nulltostr(a.HIDDENANIMALDETAILS) != "") {
             banner.push(a.HIDDENANIMALDETAILS);
         }
@@ -81,7 +81,7 @@ edit_header = {
         if (common.nulltostr(a.ANIMALCOMMENTS) != "") {
             banner.push(a.ANIMALCOMMENTS);
         }
-        var displaylocation = "";
+        let displaylocation = "";
         if (a.DECEASEDDATE != null) {
             var deathreason = a.DISPLAYLOCATIONNAME;
             if (a.DIEDOFFSHELTER == 1) { deathreason = _("Died off shelter"); }
@@ -101,31 +101,35 @@ edit_header = {
                 displaylocation = a.DISPLAYLOCATIONNAME;
             }
         }
-        var animalcontrol = "";
+        let animalcontrol = "";
         if (a.ANIMALCONTROLINCIDENTID) {
             animalcontrol = '<tr><td>' + _("Incident") + ':</td><td><b>' +
                 '<a href="incident?id=' + a.ANIMALCONTROLINCIDENTID + '">' +
                 format.date(a.ANIMALCONTROLINCIDENTDATE) + ' ' + 
                 a.ANIMALCONTROLINCIDENTNAME + '</b></td></tr>';
         }
-        var hold = "";
+        let hold = "";
         if (a.ISHOLD == 1 && a.HOLDUNTILDATE) {
             hold = '<tr><td>' + _("Hold until") + ':</td><td><b>' + format.date(a.HOLDUNTILDATE) + '</b></td></tr>';
         }
-        var coordinator = "";
+        let coordinator = "";
         if (a.ADOPTIONCOORDINATORID) {
             coordinator = '<tr><td>' + _("Adoption Coordinator") + ':</td><td><b>' + html.person_link(a.ADOPTIONCOORDINATORID, a.ADOPTIONCOORDINATORNAME) + '</b></td></tr>';
         }
-        var chipinfo = "";
+        let chipinfo = "";
         if (a.IDENTICHIPPED == 1) {
             chipinfo = '<tr><td>' + _("Microchip") + ':</td><td><b>' + a.IDENTICHIPNUMBER + " " + common.nulltostr(a.IDENTICHIP2NUMBER) + '</b></td></tr>';
         }
-        var leftshelterdate = "";
+        let leftshelterdate = "";
         if (a.ARCHIVED == 1 && a.DECEASEDDATE && a.DIEDOFFSHELTER == 0) { 
             leftshelterdate = format.date(a.DECEASEDDATE); 
         }
         else if (a.ARCHIVED == 1) { 
             leftshelterdate = format.date(a.ACTIVEMOVEMENTDATE); 
+        }
+        let sizeweight = "";
+        if (a.WEIGHT && !config.bool("DontShowSizeWeightHeader")) {
+            sizeweight = a.SIZENAME + " / " + a.WEIGHT + (config.bool("ShowWeightInLbs") || config.bool("ShowWeightInLbsFraction") ? "lb" : "kg");
         }
         var first_column = [
             '<input type="hidden" id="animalid" value="' + a.ID + '" />',
@@ -134,14 +138,17 @@ edit_header = {
                 '<table><tr>',
                 '<td align="center">',
                     '<a target="_blank" href="' + html.img_src(a, "animal") + '">',
-                    '<img onerror="image_error(this)" class="' + html.animal_link_thumb_classes(a) + '" src="' + html.thumbnail_src(a, "animalthumb") + '" />',
+                    '<img class="' + html.animal_link_thumb_classes(a) + '" src="' + html.thumbnail_src(a, "animalthumb") + '" />',
                     '</a>',
                     mediaprompt,
                 '</td>',
                 '<td>',
                 '<h2>' + html.icon("animal", _("Animal")) + a.ANIMALNAME + ' - ' + a.CODE + ' ' + html.animal_emblems(a) + '</h2>',
-                '<p>' + common.substitute(_("{0} {1} aged {2}"), { "0": "<b>" + a.SEXNAME, "1": a.SPECIESNAME + "</b>", "2": "<b>" + a.ANIMALAGE + "</b>" })  + '<br />',
+                '<p>' + common.substitute(_("{0} {1} aged {2}"), { "0": "<b>" + a.SEXNAME, "1": a.SPECIESNAME + "</b>", "2": "<b>" + a.ANIMALAGE + "</b>" }),
+                sizeweight,
+                '<br />',
                 html.truncate(banner.join(". "), 100),
+                '</p>',
                 '</td></tr></table>',
             '</div>'
         ].join("\n");
@@ -427,15 +434,21 @@ edit_header = {
      * selected: The name of the selected tab (person, donations, vouchers, media, diary, movements, links, log)
      */
     person_edit_header: function(p, selected, counts) {
-        var check_display_icon = function(key, iconname) {
+        const check_display_icon = function(key, iconname) {
             if (key == "person") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
                 return html.icon(iconname);
             }
             return html.icon("blank");
         };
-        var flags = this.person_flags(p);
-        var s = [
+        let flags = this.person_flags(p);
+        let latestmove = "";
+        if (p.LATESTMOVEANIMALID) { 
+            latestmove = "<tr><td>" + _("Last Movement") + ":</td>";
+            latestmove += "<td><b>" + p.LATESTMOVETYPENAME + " " + html.icon("right") + " ";
+            latestmove += '<a href="animal?id=' + p.LATESTMOVEANIMALID + '">' + p.LATESTMOVEANIMALNAME + '</a></b></td></tr>';
+        }
+        let s = [
             '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
             '<input type="hidden" id="personid" value="' + p.ID + '" />',
             '<div class="asm-grid">',
@@ -443,7 +456,7 @@ edit_header = {
             '<table><tr>',
             '<td>',
             '<a href="' + html.img_src(p, "person") + '">',
-            '<img onerror="image_error(this)" class="asm-thumbnail thumbnailshadow" src="' + html.thumbnail_src(p, "personthumb") + '" />',
+            '<img class="asm-thumbnail thumbnailshadow" src="' + html.thumbnail_src(p, "personthumb") + '" />',
             '</a>',
             '</td>',
             '<td>',
@@ -455,8 +468,9 @@ edit_header = {
             '</div>',
             '<div class="asm-grid-col-3">',
             '<table>',
+            latestmove,
             '<tr>',
-            '<td>' + p.OWNERADDRESS + '<br />',
+            '<td></td><td>' + p.OWNERADDRESS + '<br />',
             p.OWNERTOWN + ' ' + p.OWNERCOUNTY + ' ' + p.OWNERPOSTCODE + '<br />',
             p.HOMETELEPHONE + ' <br />',
             p.WORKTELEPHONE + ' <br />',
@@ -480,7 +494,7 @@ edit_header = {
             [ "investigation", "person_investigation", _("Investigation"), "investigation", "voi" ],
             [ "citation", "person_citations", _("Citations"), "citation", "vacc" ],
             [ "rota", "person_rota", _("Rota"), "rota", "voro" ],
-            [ "traploan", "person_traploan", _("Trap Loans"), "traploan", "vatl" ],
+            [ "traploan", "person_traploan", _("Equipment Loans"), "traploan", "vatl" ],
             [ "clinic", "person_clinic", _("Clinic"), "health", "vcl" ],
             [ "donations", "person_donations", _("Payments"), "donation", "ovod" ],
             [ "vouchers", "person_vouchers", _("Vouchers"), "donation", "vvov" ],
@@ -565,16 +579,19 @@ edit_header = {
             flags.push(_("ACO"));
         }
         if (p.ISBANNED == 1) {
-            flags.push("<span style=\"color: red\">" + _("Banned") + "</span>");
+            flags.push("<span class=\"asm-flag-banned\">" + _("Banned") + "</span>");
+        }
+        if (p.ISDANGEROUS == 1) {
+            flags.push("<span class=\"asm-flag-dangerous\">" + _("Dangerous") + "</span>");
         }
         if (p.INVESTIGATION > 0) {
-            flags.push("<span style=\"color: red\">" + _("Investigation") + "</span>");
+            flags.push("<span class=\"asm-flag-investigation\">" + _("Investigation") + "</span>");
         }
         if (p.INCIDENT > 0) {
-            flags.push("<span style=\"color: red\">" + _("Incident") + "</span>");
+            flags.push("<span class=\"asm-flag-incident\">" + _("Incident") + "</span>");
         }
         if (p.ISDECEASED == 1) {
-            flags.push("<span style=\"color: red\">" + _("Deceased") + "</span>");
+            flags.push("<span class=\"asm-flag-deceased\">" + _("Deceased") + "</span>");
         }
         if (p.ISADOPTER == 1) {
             flags.push(_("Adopter"));
@@ -618,9 +635,12 @@ edit_header = {
         if (p.EXCLUDEFROMBULKEMAIL == 1) {
             flags.push(_("Exclude from bulk email"));
         }
+        if (p.ISSPONSOR == 1){
+            flags.push(_("Sponsor"));
+        }
         if (p.ADDITIONALFLAGS != null) {
-            var stock = [ "aco", "adopter", "banned", "coordinator", "deceased", "donor", "driver", "excludefrombulkemail",
-                "fosterer", "homechecked", "homechecker", "member", "shelter", "retailer", "staff", "giftaid", 
+            var stock = [ "aco", "adopter", "banned", "dangerous", "coordinator", "deceased", "donor", "driver", "excludefrombulkemail",
+                "fosterer", "homechecked", "homechecker", "member", "shelter", "retailer", "sponsor", "staff", "giftaid",
                 "vet", "volunteer"];
             $.each(p.ADDITIONALFLAGS.split("|"), function(i, v) {
                 if (v != "" && $.inArray(v, stock) == -1) {
@@ -748,9 +768,5 @@ edit_header = {
     }
 
 };
-
-function image_error(image) {
-    image.style.display = "none";
-}
 
 });

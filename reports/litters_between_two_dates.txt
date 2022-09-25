@@ -2,7 +2,7 @@ Litters between two dates
 ###
 Litters
 ###
-34004/Any
+34004/Any rev02
 ###
 Litters entering the shelter between two dates 
 ###
@@ -61,5 +61,5 @@ $$BODY
 BODY$$
 $$FOOTER
 </table>
-<p><b>Total Offspring: {COUNT.NUMBERINLITTER.0}</b></p>
+<p><b>Total Litters: {COUNT.ACCEPTANCENUMBER}, Total Offspring: {COUNT.NUMBERINLITTER.0}</b></p>
 FOOTER$$

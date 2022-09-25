@@ -24,25 +24,46 @@ form data will automatically have those flags. In addition to that, the
 "checkbox" field type allows you to enter some additional person flags to set
 if that checkbox is checked during submission.
 
-If you set the "Send confirmation email to form submitter" checkbox for an
-online form, the system will look for a field called "emailaddress" during
-submission. If that field exists and is populated with an email address, a
-confirmation email will be sent to that address. If the confirmation message
-field is set, that will form the body of the email. HTML can be used, but
-it must be a complete HTML document that contains an <html> tag. If the
-confirmation message field is left blank, a copy of the form submission 
-itself will be sent.
-
 .. image:: images/onlineform_edit.png
 
-As you can see in the screenshot, each form has a “Form URL”. This is the web
-link you can use on your website to link people to the form. You can also click
-it directly there in the UI to test your form. 
+Each form has a direct link that is accessed via the service API. Click "View
+Form" to follow that link and view the form.  This is the web link you can use
+on your website to link people to the form or put in an iframe. 
 
-You may add extra parameters to the URL if you'd like to set default values
+The first button to the right of "View Form" will copy the link to the
+clipboard for you, the second button will view the form in
+"development" mode. This is a special mode that bypasses any server side
+caching so that changes you make to the form are visible when you reload the
+page. When editing forms, it is useful to keep the development link open on
+another tab so you can quickly view and test your changes. The development mode
+link only works when you are logged in to SM, do not use it on your website.
+
+You may add extra parameters to the form URL if you'd like to set default values
 for some of your form fields, by using the format fieldname=value.
 
-.. warning:: sheltermanager.com uses a short term 2 minute cache on forms, so if you make changes to a form you've recently viewed, you may have to wait 2 minutes for any changes you make to appear.
+The option "Email adoption coordinator" will send a copy of the submission
+to the person specified as the adoption coordinator for an animal the form 
+is about. The form must have an animalname or reserveanimalname field 
+for this to work.
+
+If you set one of the "Send confirmation email to form submitter" options, 
+the system will look for a field called "emailaddress" during submission. 
+If that field exists and is populated with an email address, a
+confirmation email will be sent to that address. The confirmation message
+field will form the first part of the body of the email. HTML can be used, but
+it must be a complete HTML document that contains an <html> tag. 
+
+.. warning:: sheltermanager.com uses a 30 minute cache on forms, so if you make changes to a form you've recently viewed, you may have to wait 30 minutes for any changes you make to appear. Use the development mode button to see your changes immediately.
+
+If you declare a javascript function in your form's header or footer named
+asm3_onlineform_submit, it will be called when form validation is successful
+and just before the form is submitted. You can use this if you want to grab the
+form values and send them somewhere else or transform the values before it is
+submitted to ASM::
+
+   function asm3_onlineform_submit() {
+      alert("form is about to be submitted");
+   }
 
 Editing Form Fields
 -------------------
@@ -119,10 +140,36 @@ with a fixed value. Eg::
    fieldname>0
    fieldname<20
 
+If a value is not supplied, the system will compare against an empty
+string, so you can test that a field is or isn't empty::
+
+   fieldname=
+   fieldname!
+
 If fieldname is a checkbox, you can test for the special keyword "on" to
 indicate you want the box checked (or "off" for unchecked)::
 
    mycheck=on
+
+If you want to reference a checkbox that is part of a checkbox group, you
+can reference it by the name of the group and item number, starting with 0
+for the first item::
+
+   checkboxgroup0=on
+   checkboxgroup1=off
+
+Multiple conditions can be specified. They can be either ANDed together or ORed
+together, but NOT both at the same time.
+
+In an AND expression, all conditions have to be true in order for the field to
+be displayed.  Separate your AND conditions with an ampersand & ::
+
+   mycheck=on & fieldname=X
+
+In an OR expression, only one of the conditions has to be true in order for the
+field to be displayed. Separate your OR conditions with a pipe | ::
+
+   hascats=Yes | hasdogs=Yes
 
 .. note:: Only check boxes, radio buttons, text and lookup fields can be used with Show If
 
@@ -132,7 +179,7 @@ Incoming Forms
 .. image:: images/onlineform_incoming.png
 
 Selecting a form allows you to intelligently create or attach records from the
-data, or explicitly attach the form to existing records. 
+data, or explicitly attach the form to existing records.
 
 * Attach Person: Prompts for a single person record and attaches a copy of the
   form to them as media.
@@ -182,11 +229,38 @@ When you create a new record or attach the form, the whole form will be
 included in the media tab of any created records (animal, incident, person AND
 lost/found animal or waiting list). The screen will put a link in the Link
 column to give you a clickable link to the newly created record as well so you
-can view it. 
+can view it. The system will also show a little warning icon at the side of this
+link if that record already existed and was updated instead of newly created.
 
 Incoming forms that have been attached to a record will be automatically
 deleted when you leave the screen. The system will also remove incoming forms
-older than 4 weeks by default. Both of these options are configurable.
+older than 4 weeks by default. Both of these options are configurable
+under the Online Forms tab of :menuselection:`Settings --> Options`
+
+Application Forms
+-----------------
+
+ASM calls an application a "reservation". If your form has a field named
+"reserveanimalname" of type "Adoptable Animal", then using "Create Person" on
+an incoming form submission will create a reservation for the new person to
+that animal.
+
+If you want to allow a person to apply for more than one animal, then you
+can add fields called reserveanimalname2, reserveanimalname3, etc.
+
+The reservation will link the new person and the animal record. That link can be
+viewed under the movement tab of the person or animal, and you can view all
+current applications under :menuselection:`Move --> Reservation Book`.
+
+Reservations can have a status (eg: New, Pending home visit, Denied, etc). 
+
+You can configure your own statuses under :menuselection:`Settings --> Lookup
+Data --> Reservation Statuses`
+
+Since the system default is to make animals who have a reservation not
+available for adoption, you may want to change this by setting
+:menuselection:`Publishing --> Set Publishing Options --> Animal Selection -->
+Include Reserved` to YES.
 
 Importing
 ---------

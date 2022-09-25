@@ -33,7 +33,10 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</div>',
-                '<div id="emailform" />'
+                '<div id="emailform"></div>',
+                '<div id="dialog-popupwarning" style="display: none" title="' + html.title(_("Warning")) + '">',
+                '<p>' + html.error(controller.person.POPUPWARNING) + '</p>',
+                '</div>'
             ].join("\n");
         },
 
@@ -43,8 +46,8 @@ $(function() {
                 '<div>',
                 '<table width="100%">',
                 '<tr>',
-                '<!-- left table -->',
-                '<td width="35%">',
+                // left table
+                '<td width="35%" class="asm-nested-table-td">',
                 '<table class="additionaltarget" data="to7">',
                 '<tr>',
                 '<td><label for="code">' + _("Code") + '</label></td>',
@@ -90,7 +93,9 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="surname" class="tag-individual">' + _("Last name") + '</label>',
-                '<label for="surname" class="tag-organisation">' + _("Organization name") + '</label></td>',
+                '<label for="surname" class="tag-organisation">' + _("Organization name") + '</label>',
+                '<span class="asm-has-validation">*</span>',
+                '</td>',
                 '<td>',
                 '<input type="text" id="surname" data-json="OWNERSURNAME" data-post="surname" maxlength="100" class="asm-textbox" />',
                 '</td>',
@@ -98,19 +103,19 @@ $(function() {
                 '<tr>',
                 '<td><label for="hometelephone">' + _("Home Phone") + '</label></td>',
                 '<td>',
-                '<input type="text" id="hometelephone" data-json="HOMETELEPHONE" data-post="hometelephone" class="asm-textbox" />',
+                '<input type="text" id="hometelephone" data-json="HOMETELEPHONE" data-post="hometelephone" class="asm-textbox asm-phone" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="worktelephone">' + _("Work Phone") + '</label></td>',
                 '<td>',
-                '<input type="text" id="worktelephone" data-json="WORKTELEPHONE" data-post="worktelephone" class="asm-textbox" />',
+                '<input type="text" id="worktelephone" data-json="WORKTELEPHONE" data-post="worktelephone" class="asm-textbox asm-phone" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="mobiletelephone">' + _("Cell Phone") + '</label></td>',
                 '<td>',
-                '<input type="text" id="mobiletelephone" data-json="MOBILETELEPHONE" data-post="mobiletelephone" class="asm-textbox" />',
+                '<input type="text" id="mobiletelephone" data-json="MOBILETELEPHONE" data-post="mobiletelephone" class="asm-textbox asm-phone" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -136,8 +141,8 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '</table>',
-                '<!-- right table -->',
-                '<td width="30%">',
+                // right table 
+                '<td width="30%" class="asm-nested-table-td">',
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="address">' + _("Address") + '</label></td>',
@@ -154,7 +159,11 @@ $(function() {
                 '<tr class="towncounty">',
                 '<td><label for="county">' + _("State") + '</label></td>',
                 '<td>',
-                '<input type="text" id="county" data-json="OWNERCOUNTY" data-post="county" maxlength="100" class="asm-textbox" />',
+                common.iif(config.bool("USStateCodes"),
+                    '<select id="county" data-json="OWNERCOUNTY" data-post="county" class="asm-selectbox">' +
+                    html.states_us_options() + '</select>',
+                    '<input type="text" id="county" data-json="OWNERCOUNTY" data-post="county" maxlength="100" ' + 
+                    'class="asm-textbox" />'),
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -173,13 +182,13 @@ $(function() {
                 '</label></td>',
                 '<td><input type="text" class="asm-latlong" id="latlong" data-json="LATLONG" data-post="latlong" /></td>',
                 '</tr>',
-                '<!-- end right table -->',
+                // end right table
                 '</table>',
-                '<!-- Third column, embedded map placeholder -->',
+                // Third column, embedded map placeholder
                 '</td>',
-                '<td width="35%">',
-                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000" />',
-                '<!-- end outer table -->',
+                '<td width="35%" class="asm-nested-table-td">',
+                '<div id="embeddedmap" style="z-index: 1; width: 100%; height: 300px; color: #000"></div>',
+                // end outer table
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -191,11 +200,11 @@ $(function() {
             return [
                 '<h3><a href="#">' + _("Type") + '</a></h3>',
                 '<div>',
-                '<!-- Outer table -->',
+                // Outer table
                 '<table width="100%">',
                 '<tr>',
-                '<td width="50%">',
-                '<!-- Left table -->',
+                '<td width="50%" class="asm-nested-table-td">',
+                // Left table
                 '<table class="additionaltarget" data="to8">',
                 '<tr>',
                 '<td><label for="flags">' + _("Flags") + '</label></td>',
@@ -228,13 +237,21 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</td>',
-                '<td>',
-                '<!-- Right table -->',
+                '<td class="asm-nested-table-td">',
+                // Right table
                 '<table width="100%">',
                 '<tr>',
-                '<td><label for="comments">' + _("Comments") + '</label</td>',
+                '<td><label for="comments">' + _("Comments") + '</label></td>',
                 '<td>',
-                '<textarea id="comments" title="' + _("Comments") + '" data-json="COMMENTS" data-post="comments" rows="10" class="asm-textarea"></textarea>',
+                '<textarea id="comments" title="' + _("Comments") + '" data-json="COMMENTS" data-post="comments" rows="7" class="asm-textarea"></textarea>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="popupwarning">' + _("Warning") + '</label>',
+                '<span id="callout-popupwarning" class="asm-callout">' + _("Show a warning when viewing this person") + '</span>',
+                '</td>',
+                '<td>',
+                '<textarea id="popupwarning" title="' + _("Warning") + '" data-json="POPUPWARNING" data-post="popupwarning" rows="2" class="asm-textarea"></textarea>',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -250,15 +267,15 @@ $(function() {
             return [
                 '<h3 id="accordion-homechecker"><a href="#">' + _("Homechecker") + '</a></h3>',
                 '<div>',
-                '<!-- outer table -->',
+                // outer table
                 '<table width="100%">',
                 '<tr>',
-                '<td width="50%">',
+                '<td width="50%" class="asm-nested-table-td">',
                 '<p class="asm-header"><label for="areas">' + _("Homecheck Areas") + '</label></p>',
                 '<textarea id="areas" class="asm-textarea" data-json="HOMECHECKAREAS" data-post="areas" rows="8" title="' + html.title(_("A list of areas this person will homecheck - eg: S60 S61")) + '"></textarea>',
                 '</td>',
-                '<td width="50%" valign="top">',
-                '<!-- history table -->',
+                '<td width="50%" valign="top" class="asm-nested-table-td">',
+                // history table
                 '<p class="asm-header"><label>' + _("Homecheck History") + '</label></p>',
                 '<table id="homecheckhistory" width="100%">',
                 '<thead>',
@@ -271,7 +288,7 @@ $(function() {
                 '<tbody>',
                 '</tbody>',
                 '</table>',
-                '<!-- end outer table -->',
+                // end outer table
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -281,12 +298,12 @@ $(function() {
 
         render_lookingfor: function() {
             return [
-                '<h3><a href="#">' + _("Looking for") + ' <span id="tabcriteria" style="display: none" class="asm-icon asm-icon-animal"></span></a></h3><div>',
-                '<!-- Outer table -->',
+                '<h3 id="accordion-lookingfor"><a href="#">' + _("Looking for") + ' <span id="tabcriteria" style="display: none" class="asm-icon asm-icon-animal"></span></a></h3><div>',
+                // Outer table
                 '<table width="100%">',
                 '<tr>',
-                '<td>',
-                '<!-- left table -->',
+                '<td class="asm-nested-table-td">',
+                // left table
                 '<table>',
                 '<tr>',
                 '<td><label for="matchactive">' + _("Status") + '</label></td>',
@@ -321,8 +338,8 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '</td>',
-                '<td>',
-                '<!-- right table -->',
+                '<td class="asm-nested-table-td">',
+                // right table
                 '<table>',
                 '<tr>',
                 '<td><label for="matchsex">' + _("Sex") + '</label></td>',
@@ -375,9 +392,9 @@ $(function() {
                 '</select></td>',
                 '</tr>',
                 '</table>',
-                '<!-- far right table -->',
+                // far right table
                 '</td>',
-                '<td>',
+                '<td class="asm-nested-table-td">',
                 '<table>',
                 '<tr>',
                 '<td><label for="matchgoodwithcats">' + _("Good with cats") + '</label></td>',
@@ -409,7 +426,7 @@ $(function() {
                 '</select></td>',
                 '</tr>',
                 '</table>',
-                '<!-- end outer table -->',
+                // end outer table
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -570,6 +587,11 @@ $(function() {
             $("#jurisdictionrow").toggle( !config.bool("DisableAnimalControl") );
             $("#button-anonymise").toggle( config.bool("AnonymisePersonalData") );
             $("#gdprcontactoptinrow").toggle( config.bool("ShowGDPRContactOptIn") );
+            $("#button-lookingfor").toggle( !config.bool("HideLookingFor") );
+            if (config.bool("HideLookingFor")) {
+                $("#accordion-lookingfor").hide();
+                $("#accordion-lookingfor").next().hide();
+            }
 
             // SECURITY =============================================================
             if (!common.has_permission("co")) { $("#button-save, #button-anonymise").hide(); }
@@ -599,6 +621,8 @@ $(function() {
             // email
             if (common.trim($("#email").val()) != "") {
                 if (!validate.email($("#email").val())) {
+                    header.show_error(_("Invalid email address '{0}'").replace("{0}", $("#email").val()));
+                    validate.highlight("email");
                     return false;
                 }
             }
@@ -631,6 +655,12 @@ $(function() {
             }, 50);
         },
 
+        show_popup_warning: async function() {
+            if (controller.person.POPUPWARNING) {
+                await tableform.show_okcancel_dialog("#dialog-popupwarning", _("Ok"), { hidecancel: true });
+            }
+        },
+
         bind: function() {
 
             // Load the tab strip and accordion
@@ -645,15 +675,13 @@ $(function() {
             // Email dialog for sending emails
             $("#emailform").emailform();
 
-            $("#town").autocomplete({ source: controller.towns.split("|") });
-            $("#county").autocomplete({ source: controller.counties.split("|") });
+            if (!config.bool("USStateCodes")) {
+                $("#county").autocomplete({ source: controller.counties, minLength: 3 });
+            }
+            $("#town").autocomplete({ source: controller.towns, minLength: 4 });
             $("#town").blur(function() {
                 if ($("#county").val() == "") {
-                    let tc = html.decode(controller.towncounties);
-                    let idx = tc.indexOf($("#town").val() + "^");
-                    if (idx != -1) {
-                        $("#county").val(tc.substring(tc.indexOf("^^", idx) + 2, tc.indexOf("|", idx)));
-                    }
+                    $("#county").val(controller.towncounties[$("#town").val()]);
                 }
             });
 
@@ -839,12 +867,17 @@ $(function() {
 
             // Dirty handling
             validate.bind_dirty([ "person_" ]);
+
+            // If a popup warning has been set, display it
+            person.show_popup_warning();
+
         },
 
         destroy: function() {
             validate.unbind_dirty();
             common.widget_destroy("#dialog-dt-date");
             common.widget_destroy("#dialog-merge");
+            common.widget_destroy("#dialog-popupwarning");
             common.widget_destroy("#emailform");
             common.widget_destroy("#mergeperson", "personchooser");
             common.widget_destroy("#homecheckedby", "personchooser");
@@ -863,4 +896,3 @@ $(function() {
     common.module_register(person);
 
 });
-

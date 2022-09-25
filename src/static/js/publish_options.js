@@ -11,7 +11,7 @@ $(function() {
                 '<ul>',
                 '<li><a href="#tab-animalselection">' + _("Animal Selection") + '</a></li>',
                 '<li><a href="#tab-allpublishers">' + _("All Publishers") + '</a></li>',
-                '<li><a href="#tab-htmlftp">' + _("HTML/FTP Publisher") + '</a></li>',
+                '<li class="hashtmlftp"><a href="#tab-htmlftp">' + _("HTML/FTP Publisher") + '</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-adoptapet">AdoptAPet</a></li>',
                 '<li><a href="#tab-helpinglostpets">HelpingLostPets</a></li>',
                 '<li class="english hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund</a></li>',
@@ -21,6 +21,7 @@ $(function() {
                 '<li class="localeau haspetrescue"><a href="#tab-petrescue">PetRescue</a></li>', 
                 '<li class="localeau hassavourlife"><a href="#tab-savourlife">SavourLife</a></li>', 
                 '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups</a></li>',
+                '<li class="localeus hassac"><a href="#tab-sac">ShelterAnimalsCount</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
                 '<li class="localeus hasakcreunite"><a href="#tab-akcreunite">AKC Reunite Microchips</a></li>',
@@ -47,6 +48,13 @@ $(function() {
                 '<tr>',
                 '<td><label for="nonneutered">' + _("Include unaltered animals") + '</label></td>',
                 '<td><select id="nonneutered" class="asm-selectbox pbool preset" data="includenonneutered">',
+                '<option value="0">' + _("No") + '</option>',
+                '<option value="1">' + _("Yes") + '</option>',
+                '</select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="nonmicrochip">' + _("Include non-microchipped animals") + '</label></td>',
+                '<td><select id="nonmicrochip" class="asm-selectbox pbool preset" data="includenonmicrochip">',
                 '<option value="0">' + _("No") + '</option>',
                 '<option value="1">' + _("Yes") + '</option>',
                 '</select></td>',
@@ -120,20 +128,14 @@ $(function() {
                 _("weeks") + '</td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="locations">' + _("Include animals in the following locations") + '</label></td>',
+                '<td><label for="locations">' + _("Include animals in the following locations"),
+                '<span id="callout-locations" class="asm-callout">',
+                _("If you don't select any locations, publishers will include animals in all locations."),
+                '</span>',
+                '</label></td>',
                 '<td><select id="locations" class="asm-bsmselect preset" multiple="multiple" data="includelocations">',
                 html.list_to_options(controller.locations, "ID", "LOCATIONNAME"),
                 '</select></td>',
-                '</tr>',
-                '<tr>',
-                '<td></td>',
-                '<td>',
-                '<div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;">',
-                '<p><span class="ui-icon ui-icon-info"></span>',
-                _("If you don't select any locations, publishers will include animals in all locations."),
-                '</p>',
-                '</div>',
-                '</td>',
                 '</tr>',
                 '</table>',
                 '</div>'
@@ -154,6 +156,12 @@ $(function() {
                 '<option value="5">' + _("Reclaim") + '</option>',
                 '<option value="11">' + _("Trial Adoption") + '</option>',
                 '</select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="regfrom">' + _("Register microchips from") + '</label>',
+                '<span id="callout-regfrom" class="asm-callout">' + _("Only register microchips where the animal moved after this date") + '</span>',
+                '</td>',
+                '<td><input id="regfrom" class="asm-textbox asm-datebox cfg" data="MicrochipRegisterFrom" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="updatefreq">' + _("Update adoption websites every") + '</label></td>',
@@ -480,9 +488,6 @@ $(function() {
                 '<td><label for="publishdir">' + _("Publish to folder") + '</label></td>',
                 '<td><input id="publishdir" type="text" class="asm-textbox preset" data="publishdirectory" /></td>',
                 '</tr>',
-                '<tr id="publishdiroverride" style="display: none">',
-                '<td>' + _("Publish to folder") + '</td>',
-                '<td><a href="#"></a></td>',
                 '</table>',
                 '</td>',
                 '<td>',
@@ -539,6 +544,20 @@ $(function() {
                 '<td><label for="pfftppass">PetFinder FTP password</label></td>',
                 '<td><input id="pfftppass" type="text" class="asm-textbox cfg" data="PetFinderFTPPassword" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="pfsendstrays">"Stray" entry category shelter animals</label></td>',
+                '<td><select id="pfsendstrays" data="PetFinderSendStrays" class="asm-selectbox cfg">',
+                '<option value="No">Do not send</option>',
+                '<option value="Yes">Send with status "F"</option>',
+                '</select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="pfsendholds">Held shelter animals</label></td>',
+                '<td><select id="pfsendholds" data="PetFinderSendHolds" class="asm-selectbox cfg">',
+                '<option value="No">Do not send</option>',
+                '<option value="Yes">Send with status "H"</option>',
+                '</select></td>',
+                '</tr>',
                 '</table>',
                 html.info('Make sure to notify the PetFinder helpdesk that you are using ASM to upload animals so that they can give you your FTP password.<br/>' +
                     'It is <b>not</b> the same as your password for the members area.'),
@@ -565,6 +584,18 @@ $(function() {
                 '<td><select id="prdesex" class="asm-selectbox cfg" data="PetRescueAllDesexed">',
                 '<option>No</option><option>Yes</option></select></td>',
                 '</tr>',
+                /*
+                 * No longer needed - PetRescue have an option to hide the microchip numbers
+                '<tr>',
+                '<td><label for="prmicrochips">Send microchip numbers for all animals</label>',
+                '<span id="callout-prmicrochips" class="asm-callout">',
+                'By default we only send microchip numbers for animals listed in a VIC or NSW postcode. Settings this to "Yes" will send the microchip number for all animals',
+                '</span>',
+                '</td>',
+                '<td><select id="prmicrochips" class="asm-selectbox cfg" data="PetRescueAllMicrochips">',
+                '<option>No</option><option>Yes</option></select></td>',
+                '</tr>',
+                */
                 '<tr>',
                 '<td><label for="pradoptablein">Adoptable in states</label>',
                 '<span id="callout-printerstate" class="asm-callout">',
@@ -607,6 +638,36 @@ $(function() {
             ].join("\n");
         },
 
+        render_sac: function() {
+            return [
+                '<div id="tab-sac">',
+                html.info('Signup at <a href="http://shelteranimalscount.org">shelteranimalscount.org</a><br>' + 
+                    'You will need to give SAC your account number of "' + asm.useraccount + '" in order for them to accept uploads from you.'),
+                '<p><input id="enabledsac" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledsac">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="sacstray">Stray Categories</label></td>',
+                '<td><select id="sacstray" multiple="multiple" class="asm-bsmselect cfg" data="SACStrayCategory">',
+                html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
+                '</select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="sacsurrender">Surrender Categories</label></td>',
+                '<td><select id="sacsurrender" multiple="multiple" class="asm-bsmselect cfg" data="SACSurrenderCategory">',
+                html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
+                '</select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="sactnr">TNR Categories</label></td>',
+                '<td><select id="sactnr" multiple="multiple" class="asm-bsmselect cfg" data="SACTNRCategory">',
+                html.list_to_options(controller.entryreasons, "ID", "REASONNAME"),
+                '</select></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_savourlife: function() {
             return [
                 '<div id="tab-savourlife">',
@@ -614,12 +675,8 @@ $(function() {
                 '<p><input id="enabledsl" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledsl">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
-                '<td><label for="slusername">Username</label></td>',
-                '<td><input id="slusername" type="text" class="asm-textbox cfg" data="SavourLifeUsername" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="slpassword">Password</label></td>',
-                '<td><input id="slpassword" type="text" class="asm-textbox cfg" data="SavourLifePassword" /></td>',
+                '<td><label for="sltoken">Authentication Token</label></td>',
+                '<td><input id="sltoken" type="text" class="asm-textbox cfg" data="SavourLifeToken" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="slinterstate">Mark as interstate</label>',
@@ -628,6 +685,28 @@ $(function() {
                 '</span>',
                 '</td>',
                 '<td><select id="slinterstate" class="asm-selectbox cfg" data="SavourLifeInterstate">',
+                '<option>No</option><option>Yes</option></select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="slradius">Distance restriction</label>',
+                '</td>',
+                '<td><select id="slradius" class="asm-selectbox cfg" data="SavourLifeRadius">',
+                '<option value="0">No restriction</option>',
+                '<option value="20">20 km</option>',
+                '<option value="40">40 km</option>',
+                '<option value="60">60 km</option>',
+                '<option value="100">100 km</option>',
+                '<option value="200">200 km</option>',
+                '<option value="500">500 km</option>',
+                '</select></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="slmicrochips">Send microchip numbers for all animals</label>',
+                '<span id="callout-slmicrochips" class="asm-callout">',
+                'By default we only send microchip numbers for animals listed in a VIC or NSW postcode. Settings this to "Yes" will send the microchip number for all animals',
+                '</span>',
+                '</td>',
+                '<td><select id="slmicrochips" class="asm-selectbox cfg" data="SavourLifeAllMicrochips">',
                 '<option>No</option><option>Yes</option></select></td>',
                 '</tr>',
                 '</table>',
@@ -723,6 +802,14 @@ $(function() {
                 '<tr>',
                 '<td><label for="akenrollmentid">AKC Reunite Enrollment Source ID</label></td>',
                 '<td><input id="akenrollmentid" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="AKCEnrollmentSourceID" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="akregisterall">Register</label></td>',
+                '<td><select id="akregisterall" class="asm-selectbox cfg" disabled="disabled" data="AKCRegisterAll">',
+                '<option value="No">Only AKC Microchips</option>',
+                '<option value="Yes">All Microchips</option>',
+                '</select>',
+                '</td>',
                 '</tr>',
                 '</table>',
                 '</div>'
@@ -958,6 +1045,7 @@ $(function() {
                 this.render_htmlftp(),
                 this.render_petfinder(),
                 this.render_petrescue(), 
+                this.render_sac(), 
                 this.render_savourlife(), 
                 this.render_petslocated(),
                 this.render_rescuegroups(),
@@ -1059,22 +1147,6 @@ $(function() {
             // Disable publisher panels when the checkbox says they're disabled
             $(".enablecheck").change(change_checkbox);
 
-            // Disable publishing to a folder if it was overridden
-            if (controller.publishurl != "") {
-                $("#publishdirrow").hide();
-                $("#publishdiroverride").show();
-                let url = controller.publishurl;
-                url = url.replace("{alias}", asm.useraccountalias);
-                url = url.replace("{database}", asm.useraccount);
-                url = url.replace("{username}", asm.user);
-                $("#publishdiroverride a").attr("href", url).text(url);
-            }
-
-            // Disable ftp upload controls if ftp has been overridden
-            if (controller.hasftpoverride) {
-                $("#ftpuploadtable").hide();
-            }
-
             // Toolbar buttons
             $("#button-save").button().click(async function() {
                 $("#button-save").button("disable");
@@ -1107,12 +1179,14 @@ $(function() {
             // Disable services that require sitedef setup
             if (!controller.hasakcreunite) { $(".hasakcreunite").hide(); }
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
+            if (!controller.hashtmlftp) { $(".hashtmlftp").hide(); }
             if (!controller.hashomeagain) { $(".hashomeagain").hide(); }
             if (!controller.hasmaddiesfund) { $(".hasmaddiesfund").hide(); }
             if (!controller.haspetcademy) { $(".haspetcademy").hide(); }
             if (!controller.haspetlink) { $(".haspetlink").hide(); }
             if (!controller.haspetrescue) { $(".haspetrescue").hide(); }
             if (!controller.haspetslocated) { $(".haspetslocated").hide(); }
+            if (!controller.hassac) { $(".hassac").hide(); }
             if (!controller.hassavourlife) { $(".hassavourlife").hide(); }
             if (!controller.hasvetenvoy) { $(".hasvetenvoy").hide(); }
             if (!controller.hassmarttag) { $(".hassmarttag").hide(); }
@@ -1152,7 +1226,7 @@ $(function() {
             $.each(cl.split(" "), function(i, o) {
                 // Deal with boolean flags in command line
                 $.each( [ "includecase", "includereserved", "includefosters", 
-                    "includewithoutdescription", "includewithoutimage", "includenonneutered", 
+                    "includewithoutdescription", "includewithoutimage", "includenonneutered", "includenonmicrochip", 
                     "includecolours", "includeretailer", "includehold", "includequarantine", "includetrial",
                     "bondedassingle", "clearexisting", "uploadall", "forcereupload", 
                     "generatejavascriptdb","thumbnails", "checksocket", "uploaddirectly", 

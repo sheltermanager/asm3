@@ -38,90 +38,39 @@ $(function() {
                 this.warnbox("quarantine", _("This animal is currently quarantined and should not leave the shelter.")),
                 this.warnbox("unaltered", _("This animal has not been altered.")),
                 this.warnbox("notmicrochipped", _("This animal has not been microchipped.")),
-                '<table class="asm-table-layout">',
-                '<tr>',
-                '<td>',
-                '<label for="animal">' + _("Animal") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="animal" data="animal" class="asm-animalchooser" type="hidden" value="" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="person">' + _("New Owner") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="person" data="person" class="asm-personchooser" type="hidden" value="" />',
-                '</td>',
-                '</tr>',
-                '<tr id="homecheckrow">',
-                '<td>',
-                '</td>',
-                '<td>',
-                '<input id="markhomechecked" data="homechecked" class="asm-checkbox" type="checkbox" />',
-                '<label for="markhomechecked">' + _("Mark this owner homechecked") + '</label>',
-                '</td>',
-                '</tr>',
-                '<tr id="movementnumberrow">',
-                '<td><label for="movementnumber">' + _("Movement Number") + '</label></td>',
-                '<td><input id="movementnumber" data="movementnumber" class="asm-textbox" title=',
-                '"' + html.title(_("A unique number to identify this movement")) + '"',
-                ' /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="movementdate">' + _("Date") + '</label></td>',
-                '<td>',
-                '<input id="movementdate" data="movementdate" class="asm-textbox asm-datebox" title="' + _("The date the animal was adopted") + '" />',
-                '</td>',
-                '</tr>',
-                '<tr id="trialrow1">',
-                '<td></td>',
-                '<td><input id="trial" data="trial" class="asm-checkbox" type="checkbox" title=\'' + _("Is this a trial adoption?") + '\' />',
-                '<label for="trial">' + _("Trial adoption") + '</label>',
-                '</td>',
-                '</tr>',
-                '<tr id="trialrow2">',
-                '<td><label for="trialenddate">' + _("Trial ends on") + '</label></td>',
-                '<td>',
-                '<input id="trialenddate" data="trialenddate" class="asm-textbox asm-datebox" title=\'' + _("The date the trial adoption is over") + '\' />',
-                '</td>',
-                '</tr>',
-                '<tr id="insurancerow">',
-                '<td><label for="insurance">' + _("Insurance") + '</label></td>',
-                '<td>',
-                '<input id="insurance" class="asm-textbox" data="insurance" title="' + html.title(_("If the shelter provides initial insurance cover to new adopters, the policy number")) + '" />',
-                '<button id="button-insurance">' + _("Issue a new insurance number for this animal/adoption") + '</button>',
-                '</td>',
-                '</tr>',
-                '<tr id="commentsrow">',
-                '<td><label for="comments">' + _("Comments") + '</label></td>',
-                '<td>',
-                '<textarea class="asm-textarea" id="comments" data="comments" rows="3"></textarea>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                this.warnbox("outstandingmedical", _("This animal has outstanding medical treatments.")),
+                tableform.fields_render([
+                    { post_field: "animal", label: _("Animal"), type: "animal" },
+                    { post_field: "person", label: _("New Owner"), type: "person" },
+                    { post_field: "homechecked", label: _("Mark this owner homechecked"), type: "check", rowid: "homecheckrow" },
+                    { post_field: "movementnumber", label: _("Movement Number"), type: "text", callout: _("A unique number to identify this movement"), rowid: "movementnumberrow" },
+                    { post_field: "movementdate", label: _("Date"), type: "date" },
+                    { post_field: "trial", label: _("Trial adoption"), type: "check", rowid: "trialrow1" },
+                    { post_field: "trialenddate", label: _("Trial ends on"), type: "date", rowid: "trialrow2" },
+                    { post_field: "insurance", label: _("Insurance"), type: "text", rowid: "insurancerow", xbutton: _("Issue a new insurance number for this animal/adoption") },
+                    { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3, rowid: "commentsrow" }
+                ], 1, { full_width: false }),
                 html.content_footer(),
                 '<div id="payment"></div>',
                 html.content_header(_("Boarding Cost"), true),
-                '<div id="costdisplay" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-info"></span>',
-                '<span id="costdata" class="centered"></span>',
-                '</p>',
-                '</div>',
-                '<table id="costtable" class="asm-table-layout">',
-                '<tr>',
-                '<td><label for="costcreate">' + _("Cost record") + '</label></td>',
-                '<td>',
+                this.infobox("costdisplay", "<span id=\"costdata\"></span>"),
                 '<input id="costamount" data="costamount" type="hidden" />',
                 '<input id="costtype" data="costtype" type="hidden" />',
-                '<select id="costcreate" data="costcreate" class="asm-selectbox">',
-                '<option value="0">' + _("Don't create a cost record") + '</option>',
-                '<option value="1" selected="selected">' + _("Create a cost record") + '</option>',
-                '</select>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "costcreate", label: _("Create a cost record"), type: "check" }
+                ], 1, { full_width: false }),
+                html.content_footer(),
+                html.content_header(_("Adoption Checkout"), true),
+                tableform.fields_render([
+                    { post_field: "checkoutcreate", label: _("Send the checkout email to the adopter"), type: "check" },
+                    { post_field: "templateid", label: _("Adoption paperwork template"), type: "select",
+                        options: edit_header.template_list_options(controller.templates) },
+                    { post_field: "feetypeid", label: _("Adoption fee payment type"), type: "select",
+                        options: { displayfield: "DONATIONNAME", valuefield: "ID", rows: controller.donationtypes } },
+                    { post_field: "emailaddress", label: _("Adopter email address"), type: "text" },
+                    { post_field: "emailtemplateid", label: _("Email template"), type: "select", 
+                        options: edit_header.template_list_options(controller.templatesemail) },
+                ], 1, { full_width: false }),
                 html.content_footer(),
                 html.box(5),
                 '<button id="adopt">' + html.icon("movement") + ' ' + _("Adopt") + '</button>',
@@ -153,14 +102,34 @@ $(function() {
                     validate.highlight("movementdate");
                     return false;
                 }
+                // checkout email
+                if ($("#checkoutcreate").prop("checked") && $("#emailaddress").val() == "") {
+                    validate.highlight("emailaddress");
+                    return false;
+                }
+                // checkout template
+                if ($("#checkoutcreate").prop("checked") && $("#templateid").select("value") == "") {
+                    validate.highlight("templateid");
+                    return false;
+                }
+
+                // checkout email template
+                if ($("#checkoutcreate").prop("checked") && $("#emailtemplateid").select("value") == "") {
+                    validate.highlight("emailtemplateid");
+                    return false;
+                }
+
                 return true;
             };
+
+            validate.indicator([ "animal", "person", "movementdate" ]);
 
             // Callback when animal is changed
             $("#animal").animalchooser().bind("animalchooserchange", async function(event, a) {
                 // Hide things before we start
                 $("#bonddisplay").fadeOut();
                 $("#costdisplay").closest(".ui-widget").fadeOut();
+                $("#checkoutcreate").closest(".ui-widget").fadeOut();
                 $("#fosterinfo").fadeOut();
                 $("#reserveinfo").fadeOut();
                 $("#retailerinfo").fadeOut();
@@ -172,6 +141,7 @@ $(function() {
                 $("#quarantine").fadeOut();
                 $("#unaltered").fadeOut();
                 $("#notmicrochipped").fadeOut();
+                $("#outstandingmedical").fadeOut();
                 $("#adopt").button("enable");
 
                 // If the animal is not on the shelter and not fostered or at a retailer, 
@@ -218,6 +188,11 @@ $(function() {
                     $("#notmicrochipped").fadeIn();
                 }
 
+                // Outstanding medical
+                if (config.bool("WarnOSMedical") && a.HASOUTSTANDINGMEDICAL == 1) {
+                    $("#outstandingmedical").fadeIn();
+                }
+
                 if (a.ACTIVEMOVEMENTTYPE == 2) {
                     $("#fosterinfo").fadeIn();
                 }
@@ -251,6 +226,7 @@ $(function() {
                     let formdata = "mode=cost&id=" + a.ID;
                     let response = await common.ajax_post("move_adopt", formdata);
                     const [costamount, costdata] = response.split("||");
+                    $("#costcreate").select("value", "1");
                     $("#costdata").html(costdata);
                     $("#costamount").val(format.currency_to_int(costamount));
                     $("#costtype").val(config.str("BoardingCostType"));
@@ -276,6 +252,14 @@ $(function() {
                 let response = await edit_header.person_with_adoption_warnings(rec.ID);
                 let p = jQuery.parseJSON(response)[0];
 
+                // Show the checkout section if it's configured
+                if (config.str("AdoptionCheckoutProcessor") != "") {
+                    $("#emailaddress").val(p.EMAILADDRESS);
+                    $("#templateid").select("value", config.str("AdoptionCheckoutTemplateID"));
+                    $("#feetypeid").select("value", config.str("AdoptionCheckoutFeeID"));
+                    $("#checkoutcreate").closest(".ui-widget").show();
+                }
+
                 // Show tickbox if owner not homechecked
                 if (p.IDCHECK == 0) {
                     $("#markhomechecked").attr("checked", false);
@@ -283,12 +267,21 @@ $(function() {
                 }
 
                 // Default giftaid if the person is registered
-                $("#payment").payments("option", "giftaid", p.ISGIFTAID == 1);
-                $("#giftaid1").prop("checked", p.ISGIFTAID == 1);
+                if (common.has_permission("oaod")) {
+                    $("#payment").payments("option", "giftaid", p.ISGIFTAID == 1);
+                    $("#giftaid1").prop("checked", p.ISGIFTAID == 1);
+                }
             
                 // Owner banned?
                 if (p.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
                     $("#warntext").html(_("This person has been banned from adopting animals."));
+                    $("#ownerwarn").fadeIn();
+                    return;
+                }
+
+                // Person at this address previously banned?
+                if (p.BANNEDADDRESS > 0 && config.bool("WarnBannedAddress")) {
+                    $("#warntext").html(_("This person lives at the same address as someone who was previously banned."));
                     $("#ownerwarn").fadeIn();
                     return;
                 }
@@ -321,10 +314,22 @@ $(function() {
                     return;
                 }
 
+                // Does this owner live in the same postcode area as the animal's
+                // original owner?
+                if ( format.postcode_prefix($(".animalchooser-oopostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ||
+                     format.postcode_prefix($(".animalchooser-bipostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ) {
+                    if (config.bool("WarnOOPostcode")) { 
+                        $("#warntext").html(_("This person lives in the same area as the person who brought the animal to the shelter.")); 
+                        $("#ownerwarn").fadeIn();
+                        return;
+                    }
+                }
+
                 $("#ownerwarn").fadeOut();
             });
 
             $("#costdisplay").closest(".ui-widget").hide();
+            $("#checkoutcreate").closest(".ui-widget").hide();
             $("#bonddisplay").hide();
             $("#ownerwarn").hide();
             $("#notonshelter").hide();
@@ -334,6 +339,7 @@ $(function() {
             $("#quarantine").hide();
             $("#unaltered").hide();
             $("#notmicrochipped").hide();
+            $("#outstandingmedical").hide();
             $("#fosterinfo").hide();
             $("#reserveinfo").hide();
             $("#feeinfo").hide();
@@ -352,7 +358,14 @@ $(function() {
             }
 
             // Payments
-            $("#payment").payments({ controller: controller });
+            if (common.has_permission("oaod")) {
+                $("#payment").payments({ controller: controller });
+            }
+
+            // If checkout is turned on, hide the payments section
+            $("#checkoutcreate").change(function() {
+                $("#payment").toggle(!$("#checkoutcreate").prop("checked"));
+            });
 
             // Insurance related stuff
             $("#button-insurance")
@@ -375,7 +388,7 @@ $(function() {
             $("#movementdate").datepicker("setDate", new Date());
 
             // Remove any retired lookups from the lists
-            $(".asm-selectbox").select("removeRetiredOptions");
+            $(".asm-selectbox").select("removeRetiredOptions", "all");
 
             // Show trial fields if option is set
             if (config.bool("TrialAdoptions")) {

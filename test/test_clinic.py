@@ -2,6 +2,8 @@
 import unittest
 import base
 
+import datetime
+
 import asm3.clinic
 import asm3.financial
 import asm3.utils
@@ -32,6 +34,15 @@ class TestClinic(unittest.TestCase):
     def tearDown(self):
         asm3.clinic.delete_invoice(base.get_dbo(), "test", self.inid)
         asm3.clinic.delete_appointment(base.get_dbo(), "test", self.anid)
+
+    def test_get_animal_appointments(self):
+        assert len(asm3.clinic.get_animal_appointments(base.get_dbo(), 1)) > 0
+
+    def test_get_animal_appointments_due(self):
+        asm3.clinic.get_animal_appointments_due(base.get_dbo(), 1, base.today(), base.today() + datetime.timedelta(days=7))
+
+    def test_get_person_appointments(self):
+        assert len(asm3.clinic.get_person_appointments(base.get_dbo(), 1)) > 0
 
     def test_get_appointment(self):
         assert asm3.clinic.get_appointment(base.get_dbo(), self.anid) is not None

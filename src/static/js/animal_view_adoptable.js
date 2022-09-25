@@ -22,6 +22,11 @@
         filters_tokens.push("{" + item + "}");
     });
 
+    var fullsize_images = false;
+    if (typeof asm3_adoptable_fullsize_images !== 'undefined') {
+        fullsize_images = asm3_adoptable_fullsize_images;
+    }
+
     var use_iframe = false;
     if (typeof asm3_adoptable_iframe !== 'undefined') {
         use_iframe = asm3_adoptable_iframe;
@@ -125,7 +130,7 @@
             '<select id="asm3-select-size">{sizeoptions}</select> ',
             '<select id="asm3-select-sex">{sexoptions}</select>',
         '</div>',
-        '<div id="asm3-adoptable-list" class="asm3-adoptable-list" />'
+        '<div id="asm3-adoptable-list" class="asm3-adoptable-list"></div>'
     ].join("");
 
     var overlay_template = [
@@ -142,14 +147,15 @@
             '<a target="_blank" ',
                 'class="asm3-adoptable-link" ',
                 'href="{baseurl}/service?account={account}&method=animal_view&animalid={animalid}">',
-            '<img class="asm3-adoptable-thumbnail" ',
-                'alt="{animalname}" ',
-                'src="{baseurl}/service?account={account}&method=animal_thumbnail&animalid={animalid}&d={mediadate}" />',
-            '<br />',
-            '<span class="asm3-adoptable-name">{animalname}</span>',
+                '<div class="{isreservedclass}">',
+                    '<img class="asm3-adoptable-thumbnail" ',
+                        'alt="{animalname}" ',
+                        'src="{baseurl}/service?account={account}&method={thumbnail_method}&animalid={animalid}&d={mediadate}" />',
+                    '<span></span>',
+                '</div>',
+                '<div class="asm3-adoptable-name">{animalname}</div>',
             '</a>',
-            '<br/>',
-            '<span class="asm3-adoptable-tagline">' + filters_tokens.join(" ") + '</span><br/>',
+            '<div class="asm3-adoptable-tagline">' + filters_tokens.join(" ") + '</div>',
             '{extra}',
         '</div>'
     ].join("");
@@ -194,13 +200,19 @@
                 agegroup: spanwrap("agegroup", translate(item.AGEGROUP)),
                 breed: spanwrap("breed", translate(item.BREEDNAME)),
                 extra: extra,
+                isreservedclass: (item.HASACTIVERESERVE == 1 ? "asm3-adoptable-reserved" : ""),
                 mediadate: item.WEBSITEMEDIADATE,
                 sex: spanwrap("sex", translate(item.SEXNAME)),
                 size: spanwrap("size", translate(item.SIZENAME)),
-                species: spanwrap("species", translate(item.SPECIESNAME))
+                species: spanwrap("species", translate(item.SPECIESNAME)),
+                thumbnail_method: (fullsize_images ? "animal_image" : "animal_thumbnail")
             }));
 
         });
+
+        if (!h.length) {
+            h.push('<p class="asm3-adoptable-no-results">' + translate("No results") + '</p>');
+        }
 
         hostdiv.innerHTML = h.join("\n");
 
@@ -211,11 +223,18 @@
                     document.getElementById("asm3-adoptable-iframe").src = this.href;
                     document.getElementById("asm3-adoptable-iframe-overlay").style.display = "block";
                     if (!iframe_fixed) { window.scrollTo(0, 0); }
+                    window.history.pushState("close", "", "");
                     e.preventDefault();
                 };
             for (i = 0; i < links.length; i++) {
                 links[i].addEventListener("click", handler);
             }
+            window.history.pushState("close", "", ""); // initial page state necessary or popstate does not work the first time
+            window.addEventListener("popstate", function(e) {
+                if (e.state != "close") { return; }
+                document.getElementById("asm3-adoptable-iframe").src = "about:blank";
+                document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
+            });
         }
 
     };
@@ -258,8 +277,9 @@
             overlay.innerHTML = substitute(overlay_template, { "iframe_position": iframe_position, "iframe_height": iframe_height, "iframe_bgcolor": iframe_bgcolor });
             document.body.appendChild(overlay);
             document.getElementById("asm3-adoptable-iframe-close").addEventListener("click", function(e) {
-                document.getElementById("asm3-adoptable-iframe").src = "about:blank";
-                document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
+                window.history.back(); // popstate handler closes the frame
+                //document.getElementById("asm3-adoptable-iframe").src = "about:blank";
+                //document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
                 e.preventDefault();
             });
         }

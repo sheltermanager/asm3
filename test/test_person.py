@@ -56,6 +56,9 @@ class TestPerson(unittest.TestCase):
     def test_get_reserves_without_homechecks(self):
         asm3.person.get_reserves_without_homechecks(base.get_dbo())
 
+    def test_get_open_adoption_checkout(self):
+        asm3.person.get_open_adoption_checkout(base.get_dbo())
+
     def test_get_overdue_donations(self):
         asm3.person.get_overdue_donations(base.get_dbo())
 
@@ -82,6 +85,11 @@ class TestPerson(unittest.TestCase):
 
     def test_get_person_rota(self):
         asm3.person.get_person_rota(base.get_dbo(), self.nid)
+
+    def test_extra_ids(self):
+        p = asm3.person.get_person(base.get_dbo(), self.nid)
+        asm3.person.set_extra_id(base.get_dbo(), "user", p, "test", "xxx")
+        assert "xxx" == asm3.person.get_extra_id(base.get_dbo(), p, "test")
 
     def test_calculate_owner_code(self):
         assert "TE000005" == asm3.person.calculate_owner_code(5, "test")
@@ -162,8 +170,8 @@ class TestPerson(unittest.TestCase):
     def test_update_pass_homecheck(self):
         asm3.person.update_pass_homecheck(base.get_dbo(), "test", self.nid, "")
 
-    def test_update_missing_builtin_flags(self):
-        asm3.person.update_missing_builtin_flags(base.get_dbo())
+    def test_update_check_flags(self):
+        asm3.person.update_check_flags(base.get_dbo())
 
     def test_update_missing_geocodes(self):
         asm3.person.update_missing_geocodes(base.get_dbo())

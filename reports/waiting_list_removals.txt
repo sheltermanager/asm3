@@ -21,7 +21,7 @@ ORDER BY w.DateRemovedFromList DESC
 $$HEADER
 <table border=1><tr>
 <td><b>Date Removed</b></td>
-<td><b>Ugency</b></td>
+<td><b>Urgency</b></td>
 <td><b>Reason</b></td>
 <td><b>Species</b></td>
 <td><b>Description</b></td>

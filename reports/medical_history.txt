@@ -2,7 +2,7 @@ Medical History
 ###
 Medical
 ###
-3309/Any
+3309/Any rev02
 ###
 Medical regimens, vaccinations, tests, neuter/spay and microchip implants for an animal
 ###
@@ -14,7 +14,7 @@ SELECT * FROM
 (
 
 SELECT
-'Regimen' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+'Regimen' AS mtype, a.ShelterCode, a.AnimalName, a.HealthProblems, a.ID AS AID,
 t.AnimalType, sp.SpeciesName, a.DisplayLocation,
 am.TreatmentsGiven, am.TotalNumberOfTreatments, am.Dosage, 
 am.TreatmentName, am.StartDate, am.Comments
@@ -26,7 +26,7 @@ INNER JOIN animalmedical am ON a.ID = am.AnimalID
 WHERE a.ID = $@aid$ AND am.StartDate <= '$CURRENT_DATE$'
 
 UNION SELECT
-'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.HealthProblems, a.ID AS AID, 
 t.AnimalType, sp.SpeciesName, a.DisplayLocation,
 '1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, '' AS Dosage,
 v.VaccinationType AS TreatmentName, av.DateOfVaccination AS StartDate, av.Comments
@@ -39,7 +39,7 @@ INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE a.ID = $@aid$ AND av.DateOfVaccination Is Not Null
 
 UNION SELECT
-'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+'Test' AS mtype, a.ShelterCode, a.AnimalName, a.HealthProblems, a.ID AS AID, 
 t.AnimalType, sp.SpeciesName, a.DisplayLocation,
 '1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, 
 tr.ResultName AS Dosage,
@@ -54,7 +54,7 @@ INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE a.ID = $@aid$ AND at.DateOfTest Is Not Null
 
 UNION SELECT
-'Microchip' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+'Microchip' AS mtype, a.ShelterCode, a.AnimalName, a.HealthProblems, a.ID AS AID,
 t.AnimalType, sp.SpeciesName, a.DisplayLocation,
 '1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, '' AS Dosage,
 'Microchip Implanted' AS TreatmentName, a.IdentichipDate AS StartDate, a.IdentichipNumber AS Comments
@@ -65,7 +65,7 @@ INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE a.ID = $@aid$ AND a.IdentichipDate Is Not Null
 
 UNION SELECT
-'Microchip' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+'Microchip' AS mtype, a.ShelterCode, a.AnimalName, a.HealthProblems, a.ID AS AID,
 t.AnimalType, sp.SpeciesName, a.DisplayLocation,
 '1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, '' AS Dosage,
 'Microchip Implanted' AS TreatmentName, a.Identichip2Date AS StartDate, a.Identichip2Number AS Comments
@@ -76,7 +76,7 @@ INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE a.ID = $@aid$ AND a.Identichip2Date Is Not Null
 
 UNION SELECT
-'Neuter/Spay' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+'Neuter/Spay' AS mtype, a.ShelterCode, a.AnimalName, a.HealthProblems, a.ID AS AID,
 t.AnimalType, sp.SpeciesName, a.DisplayLocation,
 '1' AS TreatmentsGiven, '1' AS TotalNumberOfTreatments, '' AS Dosage,
 'Neutered/Spayed' AS TreatmentName, a.NeuteredDate AS StartDate, '' AS Comments
@@ -96,6 +96,7 @@ HEADER$$
 $$GROUP_AnimalName 
 $$HEAD
 <h2>$AnimalName - $ShelterCode ($AnimalType / $SpeciesName - $DisplayLocation)</h2>
+<p>$HEALTHPROBLEMS</p>
 <table border=1><tr>
 <td><b>Started</b></td>
 <td><b>Therapy</b></td>

@@ -25,7 +25,7 @@ INNER JOIN owner no ON adoption.OwnerID = no.ID
 INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
 INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE MovementType = 0 AND ReservationCancelledDate Is Null
-AND ReservationDate >= '$@from$' AND ReservationDate <= '$@to$' ORDER BY ReservationDate
+AND ReservationDate >= '$@from$' AND ReservationDate <= '$@to$ 23:59:59' ORDER BY ReservationDate
 ###
 $$HEADER
 <table border=1><tr>

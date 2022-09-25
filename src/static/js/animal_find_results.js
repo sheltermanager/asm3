@@ -57,19 +57,16 @@ $(function() {
                     link += html.animal_emblems(row);
                     link += " <a id=\"action-" + row.ID + "\" href=\"animal?id=" + row.ID + "\">";
                     // Show the whole row in red if the animal is deceased
-                    if (row.DECEASEDDATE) {
-                        h.push("<td style=\"color: red\">");
-                    }
-                    else {
-                        h.push("<td>");
-                    }
+                    if (row.DECEASEDDATE) { h.push('<td class="asm-search-deceased">'); } else { h.push("<td>"); }
                     let value = "";
                     if (row.hasOwnProperty(name.toUpperCase())) {
                         value = row[name.toUpperCase()];
                     }
                     let formatted = animal_find_results.format_column(row, name, value, controller.additional);
-                    if (name == "AnimalName") { 
-                        formatted = link + formatted + "</a></span>";
+                    if (name == "AnimalName") {
+                        // Set the sort so only the name is sorted (no emblems or links)
+                        let sorted = '<span data-sort="' + html.title(formatted)  + '"></span>';
+                        formatted = sorted + link + formatted + "</a></span>";
                     }
                     h.push(formatted);
                     h.push("</td>");
@@ -97,6 +94,9 @@ $(function() {
             $.each(config.str("SearchColumns").split(","), function(i, v) {
                 cols.push(common.trim(v));
             });
+            // If AnimalName is not present in the list, insert it as the first column to make
+            // sure there's still a link displayed to the target record
+            if (!common.array_in("AnimalName", cols)) { cols.unshift("AnimalName"); } 
             return cols;
         },
 

@@ -5,35 +5,6 @@ $(function() {
 
     "use strict";
 
-    const BACKGROUND_COLOURS = {
-        "asm":              "#ffffff",
-        "base":             "#ffffff",
-        "black-tie":        "#333333",
-        "blitzer":          "#cc0000",
-        "cupertino":        "#deedf7",
-        "dark-hive":        "#444444",
-        "dot-luv":          "#0b3e6f",
-        "eggplant":         "#30273a",
-        "excite-bike":      "#f9f9f9",
-        "flick":            "#dddddd",
-        "hot-sneaks":       "#35414f",
-        "humanity":         "#cb842e",
-        "le-frog":          "#3a8104",
-        "mint-choc":        "#453326",
-        "overcast":         "#dddddd",
-        "pepper-grinder":   "#ffffff",
-        "redmond":          "#5c9ccc",
-        "smoothness":       "#cccccc",
-        "south-street":     "#ece8da",
-        "start":            "#2191c0",
-        "sunny":            "#817865",
-        "swanky-purse":     "#261803",
-        "trontastic":       "#9fda58",
-        "ui-darkness":      "#333333",
-        "ui-lightness":     "#ffffff",
-        "vader":            "#888888"
-    };
-
     const options = {
 
         /** Where we have a list of pairs, first is value, second is label */
@@ -58,6 +29,7 @@ $(function() {
                 '<li><a href="#tab-agegroups">' + _("Age Groups") + '</a></li>',
                 '<li><a href="#tab-animalcodes">' + _("Animal Codes") + '</a></li>',
                 '<li><a href="#tab-animalemblems">' + _("Animal Emblems") + '</a></li>',
+                '<li><a href="#tab-checkout">' + _("Checkout") + '</a></li>',
                 '<li><a href="#tab-costs">' + _("Costs") + '</a></li>',
                 '<li><a href="#tab-data-protection">' + _("Data Protection") + '</a></li>',
                 '<li><a href="#tab-defaults">' + _("Defaults") + '</a></li>',
@@ -65,7 +37,7 @@ $(function() {
                 '<li><a href="#tab-display">' + _("Display") + '</a></li>',
                 '<li><a href="#tab-documents">' + _("Documents") + '</a></li>',
                 '<li><a href="#tab-email">' + _("Email") + '</a></li>',
-                '<li><a href="#tab-findanimalperson">' + _("Find Animal/Person") + '</a></li>',
+                '<li><a href="#tab-findscreens">' + _("Find Screens") + '</a></li>',
                 '<li><a href="#tab-homepage">' + _("Home page") + '</a></li>',
                 '<li><a href="#tab-insurance">' + _("Insurance") + '</a></li>',
                 '<li><a href="#tab-lostandfound">' + _("Lost and Found") + '</a></li>',
@@ -101,7 +73,13 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="state">' + _("State") + '</label></td>',
-                '<td><input id="state" type="text" class="asm-textbox" data="OrganisationCounty" />',
+                '<td>',
+                common.iif(config.bool("USStateCodes"),
+                    '<select id="state" data="OrganisationCounty" class="asm-selectbox">' +
+                    html.states_us_options() + '</select>',
+                    '<input type="text" id="state" data="OrganisationCounty" maxlength="100" ' + 
+                    'class="asm-textbox" />'),
+                '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="zipcode">' + _("Zipcode") + '</label></td>',
@@ -113,11 +91,11 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="telephone">' + _("Telephone") + '</label></td>',
-                '<td><input id="telephone" type="text" class="asm-textbox" data="OrganisationTelephone" />',
+                '<td><input id="telephone" type="text" class="asm-textbox asm-phone" data="OrganisationTelephone" />',
                 '</tr>',
                 '<tr>',
                 '<td><label for="telephone2">' + _("Telephone") + '</label></td>',
-                '<td><input id="telephone2" type="text" class="asm-textbox" data="OrganisationTelephone2" />',
+                '<td><input id="telephone2" type="text" class="asm-textbox asm-phone" data="OrganisationTelephone2" />',
                 '</tr>',
                 '<tr>',
                 '<td><label for="timezone">' + _("Server clock adjustment") + '</label></td>',
@@ -337,6 +315,7 @@ $(function() {
                 '<p>',
                 '<input data="AddAnimalsShowBreed" id="aashowbreed" class="asm-checkbox" type="checkbox" /> <label for="aashowbreed">' + _("Show the breed fields") + '</label><br />',
                 '<input data="UseSingleBreedField" id="singlebreed" class="asm-checkbox" type="checkbox" /> <label for="singlebreed">' + _("Use a single breed field") + '</label><br />',
+                '<input data="AddAnimalsShowCoatType" id="aashowcoattype" class="asm-checkbox" type="checkbox" /> <label for="aashowcoattype">' + _("Show the coat type field") + '</label><br />',
                 '<input data="AddAnimalsShowColour" id="aashowcolour" class="asm-checkbox" type="checkbox" /> <label for="aashowcolour">' + _("Show the color field") + '</label><br />',
                 '<input data="AddAnimalsShowFee" id="aashowfee" class="asm-checkbox" type="checkbox" /> <label for="aashowfee">' + _("Show the adoption fee field") + '</label><br />',
                 '<input data="AddAnimalsShowLocation" id="aashowlocation" class="asm-checkbox" type="checkbox" /> <label for="aashowlocation">' + _("Show the internal location field") + '</label><br />',
@@ -351,6 +330,7 @@ $(function() {
                 '<input data="AddAnimalsShowTattoo" id="aashowtattoo" class="asm-checkbox" type="checkbox" /> <label for="aashowtattoo">' + _("Show the tattoo fields") + '</label><br />',
                 '<input data="AddAnimalsShowEntryCategory" id="aashowentrycategory" class="asm-checkbox" type="checkbox" /> <label for="aashowentrycategory">' + _("Show the entry category field") + '</label><br />',
                 '<input data="AddAnimalsShowJurisdiction" id="aashowjurisdiction" class="asm-checkbox" type="checkbox" /> <label for="aashowjurisdiction">' + _("Show the jurisdiction field") + '</label><br />',
+                '<input data="AddAnimalsShowPickup" id="aashowpickup" class="asm-checkbox" type="checkbox" /> <label for="aashowpickup">' + _("Show the pickup fields") + '</label><br />',
                 '<input data="AddAnimalsShowDateBroughtIn" id="aashowdatebroughtin" class="asm-checkbox" type="checkbox" /> <label for="aashowdatebroughtin">' + _("Show the date brought in field") + '</label><br />',
                 '<input data="AddAnimalsShowTimeBroughtIn" id="aashowtimebroughtin" class="asm-checkbox" type="checkbox" /> <label for="aashowtimebroughtin">' + _("Show the time brought in field") + '</label><br />',
                 '<input data="AddAnimalsShowOriginalOwner" id="aashoworiginalowner" class="asm-checkbox" type="checkbox" /> <label for="aashoworiginalowner">' + _("Show the original owner field") + '</label><br />',
@@ -429,6 +409,7 @@ $(function() {
                     _("DD = current day") + '<br />' + 
                     _("UUUUUUUUUU or UUUU = unique number") + '<br />' +
                     _("XXX or XX = number unique for this year") + '<br />' +
+                    _("OOO or OO = number unique for this month") + '<br />' +
                     _("NNN or NN = number unique for this type of animal for this year") + '<br />' +
                     _("Defaults formats for code and shortcode are TYYYYNNN and NNT")),
                 '<table>',
@@ -472,6 +453,7 @@ $(function() {
                     8962,  // House
                     9113,  // Print
                     9114,  // Clear screen
+                    9200,  // Alarm clock
                     9728,  // Sun
                     9729,  // Cloud
                     9731,  // Snowman
@@ -492,21 +474,38 @@ $(function() {
                     9875,  // Anchor
                     9877,  // Medical
                     9888,  // Warning
+                    9951,  // Truck
                     9983,  // Striped flag
                     9986,  // Scissors
+                    9989,  // White heavy check mark (green)
                     9990,  // Telephone location
+                    9992,  // Airplane
                     9999,  // Pencil
                     10003, // Tick
                     10004, // Cross
+                    10024, // Sparkles
                     10052, // Snowflake
+                    10062, // White heavy cross
                     10084, // Heavy heart
+                    127798, // Spicy pepper
                     127960, // House - buildings
                     127968, // House - building
                     128008, // Cat
                     128021, // Dog
                     128049, // Cat Face
                     128054, // Dog Face,
-                    128571 // Cat with heart eyes
+                    128137, // Syringe
+                    128138, // Pill
+                    128169, // Poop
+                    128266, // Speaker with high volume
+                    128272, // Lock with key
+                    128571, // Cat with heart eyes
+                    129440, // Microbe
+                    129460, // Bone
+                    129514, // Test tube
+                    129516, // DNA
+                    129713, // Worm
+                    129745  // Bell pepper
                 ],
                 emblemoptions = [],
                 condoptions = '<option></option><option value="has">' + _("if animal has") + 
@@ -529,10 +528,14 @@ $(function() {
                     html.icon("location") + ' <label for="alwaysshowlocation">' + _("Always show an emblem to indicate the current location") + '</label><br />',
                 '<input data="EmblemBonded" type="checkbox" id="showbonded" class="asm-checkbox" type="checkbox" />',
                     html.icon("bonded") + ' <label for="showbonded">' + _("Bonded") + '</label><br />',
+                '<input data="EmblemCourtesy" type="checkbox" id="showcourtesy" class="asm-checkbox" type="checkbox" />',
+                    html.icon("share") + ' <label for="showcourtesy">' + _("Courtesy Listing") + '</label><br />',
                 '<input data="EmblemCrueltyCase" type="checkbox" id="showcrueltycase" class="asm-checkbox" type="checkbox" />',
                     html.icon("case") + ' <label for="showcrueltycase">' + _("Cruelty Case") + '</label><br />',
                 '<input data="EmblemDeceased" type="checkbox" id="showdeceased" class="asm-checkbox" type="checkbox" />',
                     html.icon("death") + ' <label for="showdeceased">' + _("Deceased") + '</label><br />',
+                '<input data="EmblemFutureAdoption" type="checkbox" id="showfutureadoption" class="asm-checkbox" type="checkbox" />',
+                    html.icon("movement") + ' <label for="showfutureadoption">' + _("Future Adoption") + '</label><br />',
                 '<input data="EmblemHold" type="checkbox" id="showhold" class="asm-checkbox" type="checkbox" />',
                     html.icon("hold") + ' <label for="showhold">' + _("Hold") + '</label><br />',
                 '<input data="EmblemLongTerm" type="checkbox" id="longterm" class="asm-checkbox" type="checkbox" />',
@@ -547,6 +550,8 @@ $(function() {
                     html.icon("positivetest") + ' <label for="showpositivetest">' + _("Positive for Heartworm, FIV or FLV") + '</label><br />',
                 '<input data="EmblemQuarantine" type="checkbox" id="showquarantine" class="asm-checkbox" type="checkbox" />',
                     html.icon("quarantine") + ' <label for="showquarantine">' + _("Quarantine") + '</label><br />',
+                '<input data="EmblemRabies" type="checkbox" id="showrabies" class="asm-checkbox" type="checkbox" />',
+                    html.icon("rabies") + ' <label for="showrabies">' + _("Rabies not given") + '</label><br />',
                 '<input data="EmblemReserved" type="checkbox" id="showreserved" class="asm-checkbox" type="checkbox" />',
                     html.icon("reservation") + ' <label for="showreserved">' + _("Reserved") + '</label><br />',
                 '<input data="EmblemSpecialNeeds" type="checkbox" id="showspecialneeds" class="asm-checkbox" type="checkbox" />',
@@ -559,7 +564,79 @@ $(function() {
                 '</td><td>',
                 html.info(_("You can assign a custom emblem to your additional animal flags")),
                 boxes(1), boxes(2), boxes(3), boxes(4), boxes(5), boxes(6), boxes(7), boxes(8), boxes(9), boxes(10),
+                boxes(11), boxes(12), boxes(13), boxes(14), boxes(15), boxes(16), boxes(17), boxes(18), boxes(19), boxes(20),
                 '</td></tr></table>',
+                '</div>'
+            ].join("\n");
+        },
+
+        render_checkout: function() {
+            return [
+                '<div id="tab-checkout">',
+                '<p class="asm-header">' + _("Adoption Checkout"),
+                '<span id="callout-adcheckout" class="asm-callout">' + _("This feature allows you to email an adopter to have them sign their adoption paperwork, pay the adoption fee and make an optional donation.") + '</span>',
+                '</p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="AdoptionCheckoutProcessor">' + _("Payment processor") + '</label></td>',
+                '<td>',
+                '<select id="AdoptionCheckoutProcessor" data="AdoptionCheckoutProcessor" class="asm-selectbox">',
+                '<option value=""></option>',
+                '<option value="paypal">' + _("PayPal") + '</option>',
+                '<option value="stripe">' + _("Stripe") + '</option>',
+                '<option value="cardcom" class="israel">' + _("Cardcom") + '</option>',
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="AdoptionCheckoutTemplateID">' + _("Adoption paperwork template") + '</label></td>',
+                '<td>',
+                '<select id="AdoptionCheckoutTemplateID" data="AdoptionCheckoutTemplateID" class="asm-selectbox">',
+                edit_header.template_list_options(controller.templates),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="AdoptionCheckoutFeeID">' + _("Adoption fee payment type") + '</label></td>',
+                '<td>',
+                '<select id="AdoptionCheckoutFeeID" data="AdoptionCheckoutFeeID" class="asm-selectbox">',
+                html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="AdoptionCheckoutDonationID">' + _("Donation payment type") + '</label></td>',
+                '<td>',
+                '<select id="AdoptionCheckoutDonationID" data="AdoptionCheckoutDonationID" class="asm-selectbox">',
+                html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="AdoptionCheckoutPaymentMethod">' + _("Payment method") + '</label></td>',
+                '<td>',
+                '<select id="AdoptionCheckoutPaymentMethod" data="AdoptionCheckoutPaymentMethod" class="asm-selectbox">',
+                html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
+
+                '</tr>',
+                '<tr>',
+                '<td><label for="AdoptionCheckoutDonationMsg">' + _("Donation message") + '</label>',
+                '<span id="callout-admsg" class="asm-callout">' + _("The text to show adopters when requesting a donation. Simple HTML formatting is allowed.") + '</span>',
+                '</td>',
+                '<td>',
+                '<textarea id="AdoptionCheckoutDonationMsg" data="AdoptionCheckoutDonationMsg" class="asm-textareafixeddouble" rows="3"></textarea>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="AdoptionCheckoutDonationTiers">' + _("Donation tiers") + '</label></td>',
+                '<td>',
+                '<textarea id="AdoptionCheckoutDonationTiers" data="AdoptionCheckoutDonationTiers" class="asm-textareafixeddouble"  rows="5"></textarea>',
+                '</td>',
+                '</tr>',
+                '</table>',
                 '</div>'
             ].join("\n");
         },
@@ -633,7 +710,7 @@ $(function() {
                 ddrop("defaultlocation", _("Default Location"), "AFDefaultLocation", html.list_to_options(controller.locations, "ID", "LOCATIONNAME")),
                 ddrop("defaultlog", _("Default Log Filter"), "AFDefaultLogFilter", '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME")),
                 ddrop("defaultlogtype", _("Default Log Type"), "AFDefaultLogType", html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME")),
-                ddrop("defaultpaymentmethod", _("Default Payment Method"), "AFDefaultPaymentMethod", html.list_to_options(controller.paymenttypes, "ID", "PAYMENTNAME")),
+                ddrop("defaultpaymentmethod", _("Default Payment Method"), "AFDefaultPaymentMethod", html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME")),
                 ddrop("defaultdonation", _("Default Payment Type"), "AFDefaultDonationType", html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME")),
                 ddrop("defaultreservation", _("Default Reservation Status"), "AFDefaultReservationStatus", html.list_to_options(controller.reservationstatuses, "ID", "STATUSNAME")),
                 ddrop("defaultreturn", _("Default Return Reason"), "AFDefaultReturnReason", html.list_to_options(controller.entryreasons, "ID", "REASONNAME")),
@@ -655,6 +732,10 @@ $(function() {
                 '<table>',
                 h.join(""),
                 '<tr>',
+                '<td><label for="DefaultAnimalAge">' + _("Default Age") + '</label></td>',
+                '<td><input id="DefaultAnimalAge" data="DefaultAnimalAge" type="text" class="asm-textbox asm-numberbox" data-min="0" data-max="10" /></td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="DefaultBroughtInBy">' + _("Default Brought In By") + '</label></td>',
                 '<td>',
                 '<input id="DefaultBroughtInBy" data="DefaultBroughtInBy" type="hidden" class="asm-personchooser" value=\'\' />',
@@ -675,6 +756,11 @@ $(function() {
                 '<br />',
                 '<input data="DefaultMediaNotesFromFile" id="medianotesfile" type="checkbox" class="asm-checkbox" /> <label for="medianotesfile">' + _("Prefill new media notes with the filename if left blank") + '</label>',
                 '<br />',
+                '<input data="FlagChangeLog" id="flagchangelog" type="checkbox" class="asm-checkbox" /> <label for="flagchangelog">' + _("When I change the flags on an animal or person, make a note of it in the log with this type") + '</label>',
+                '<select data="FlagChangeLogType" id="flagchangelogtype" class="asm-selectbox">',
+                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
+                '</select>',
+                '</br />',
                 '<input data="HoldChangeLog" id="holdchangelog" type="checkbox" class="asm-checkbox" /> <label for="holdchangelog">' + _("When I mark an animal held, make a note of it in the log with this type") + '</label>',
                 '<select data="HoldChangeLogType" id="holdchangelogtype" class="asm-selectbox">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
@@ -721,16 +807,20 @@ $(function() {
                 '<input data="PicturesInBooks" id="picsinbooks" class="asm-checkbox" type="checkbox" /> <label for="picsinbooks">' + _("Show animal thumbnails in movement and medical books") + '</label><br />',
                 '<input data="ShowSexBorder" id="sexborder" class="asm-checkbox" type="checkbox" /> <label for="sexborder">' + _("Show pink and blue borders around animal thumbnails to indicate sex") + '</label><br />',
                 '<input data="ShowPersonMiniMap" id="minimap" class="asm-checkbox" type="checkbox" /> <label for="minimap">' + _("Show a minimap of the address on person screens") + '</label><br />',
+                common.iif(asm.locale == "en", '<input data="USStateCodes" id="usstatecodes" class="asm-checkbox" type="checkbox" /> <label for="usstatecodes">' + _("When entering addresses, restrict states to valid US 2 letter state codes") + '</label><br />', ""),
                 '<input data="ShowLatLong" id="latlong" class="asm-checkbox" type="checkbox" /> <label for="latlong">' + _("Allow editing of latitude/longitude with minimaps") + '</label><br />',
+                '<input data="MediaTableMode" id="mediatablemode" class="asm-checkbox" type="checkbox" /> <label for="mediatablemode">' + _("Default to table mode when viewing media tabs") + '</label><br />',
                 '<input data="ShowWeightInLbs" id="showlbs" class="asm-checkbox" type="checkbox" /> <label for="showlbs">' + _("Show weights as lb and oz") + '</label><br />',
                 '<input data="ShowWeightInLbsFraction" id="showlbsf" class="asm-checkbox" type="checkbox" /> <label for="showlbsf">' + _("Show weights as decimal lb") + '</label><br />',
                 '<input data="ShowFullCommentsInTables" id="showfullcommentstables" class="asm-checkbox" type="checkbox" /> <label for="showfullcommentstables">' + _("Show complete comments in table views") + '</label><br />',
+                '<input data="ShowViewsInAuditTrail" id="showviewsaudittrail" class="asm-checkbox" type="checkbox" /> <label for="showviewsaudittrail">' + _("Show record views in the audit trail") + '</label><br />',
                 '<input data="ShowLookupDataID" id="showlookupdataid" class="asm-checkbox" type="checkbox" /> <label for="showlookupdataid">' + _("Show ID numbers when editing lookup data") + '</label><br />',
                 '<input data="StickyTableHeaders" id="floatingheaders" class="asm-checkbox" type="checkbox" /> <label for="floatingheaders">' + _("Keep table headers visible when scrolling") + '</label><br />',
                 '<input data="RecordNewBrowserTab" id="recordnewbrowsertab" class="asm-checkbox" type="checkbox" /> <label for="recordnewbrowsertab">' + _("Open records in a new browser tab") + '</label><br />',
                 '<input data="ReportNewBrowserTab" id="reportnewbrowsertab" class="asm-checkbox" type="checkbox" /> <label for="reportnewbrowsertab">' + _("Open reports in a new browser tab") + '</label><br />',
                 '<input data="LocationFiltersEnabled" id="locationfilters" class="asm-checkbox" type="checkbox" /> <label for="locationfilters">' + _("Enable location filters") + '</label><br />',
                 '<input data="MultiSiteEnabled" id="multisite" class="asm-checkbox" type="checkbox" /> <label for="multisite">' + _("Enable multiple sites") + '</label><br />',
+                '<input data="FormatPhoneNumbers" id="formatphonenumbers" class="asm-checkbox" type="checkbox" /> <label for="formatphonenumbers">' + _("Format telephone numbers according to my locale") + '</label><br />',
                 '<input data="InactivityTimer" id="inactivitytimer" class="asm-checkbox" type="checkbox" /> <label for="inactivitytimer">' + _("Auto log users out after this many minutes of inactivity") + '</label>',
                 '<input data="InactivityTimeout" id="inactivitytimeout" data-min="0" data-max="1440" class="asm-textbox asm-numberbox" /><br />',
                 '<label for="ownernameformat" style="margin-left: 24px">' + _("When displaying person names, use the format") + '</label> ',
@@ -763,6 +853,10 @@ $(function() {
                 '<select data="GenerateDocumentLogType" id="generatedocumentlogtype" class="asm-selectbox">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
                 '</select>',
+                '</p>',
+                '<p>',
+                '<label for="pdfzoom">' + _("Default zoom level when converting documents to PDF") + '</label> ',
+                '<input data="PDFZoom" id="pdfzoom" type="text" class="asm-halftextbox asm-numberbox" />%',
                 '<br />',
                 '</p>',
                 '</div>'
@@ -773,28 +867,103 @@ $(function() {
             return [
                 '<div id="tab-email">',
                 '<table>',
+                '<tr><td>',
+                // inner
+                '<table>',
                 '<tr>',
-                '<td><label for="emailaddress">' + _("Email address") + '</label></td>',
+                '<td><label for="emailaddress">' + _("Email address") + '</label>',
+                '<span id="callout-emailaddress" class="asm-callout">' + _("This email address is the default From address when sending emails") + '</span>',
+                '</td>',
                 '<td><input data="EmailAddress" id="emailaddress" type="text" class="asm-doubletextbox" /></td>',
                 '</tr>',
-                '<tr>',
-                '<td><label for="emailsig">' + _("Email signature") + '</label></td>',
+                '</tr>',
+                '<td><label for="emailsig">' + _("Email signature") + '</label>',
+                '<span id="callout-emailsignature" class="asm-callout">' + _("This text will be added to the bottom of all send email dialogs") + '</span>',
+                '</td>',
                 '<td><div data="EmailSignature" id="emailsig" data-margin-top="24px" data-height="200px" data-width="380px" class="asm-richtextarea"></div></td>',
                 '</tr>',
                 '</table>',
+                '</td><td>',
+                // next col
+                '<table>',
+                '<tr>',
+                '<td><label for="emailfromadd">' + _("From address book") + '</label>',
+                '<span id="callout-fromaddresses" class="asm-callout">' + _("Comma separated list of extra addresses that the From email field of send email dialogs will prompt with") + '</span>',
+                '</td>',
+                '<td><textarea id="emailfromadd" rows="6" class="asm-textareafixeddouble" data="EmailFromAddresses" title="' + html.title(_("From address book")) + '"></textarea></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="emailtoadd">' + _("To address book") + '</label>',
+                '<span id="callout-toaddresses" class="asm-callout">' + _("Comma separated list of extra addresses that the To and CC email fields of send email dialogs will prompt with") + '</span>',
+                '</td>',
+                '<td><textarea id="emailtoadd" rows="6" class="asm-textareafixeddouble" data="EmailToAddresses" title="' + html.title(_("To address book")) + '"></textarea></td>',
+                '</tr>',
+                '</table>',
+                // end
+                '</td></tr></table>',
+                '<div class="smcom">',
+                '<p class="centered"><input id="smtpoverride" type="checkbox" class="asm-checkbox" data="SMTPOverride" /> <label for="smtpoverride">' + _("Specify an SMTP server for sending emails") + '</label>',
+                '<span class="asm-callout">' + _("Please do not enable this option if you do not understand what this means.") + '</span></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="smtpserver">' + _("SMTP Server") + '</label></td>',
+                '<td><input id="smtpserver" data="SMTPServer" type="text" class="asm-textbox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="smtpport">' + _("Port") + '</label></td>',
+                '<td><select id="smtpport" data="SMTPPort" class="asm-selectbox"><option>25</option><option>587</option><option>2525</option></select></td>',
+                '</tr>',
+                '<tr>',
+                '<td></td>',
+                '<td><input id="smtptls" type="checkbox" data="SMTPUseTLS" class="asm-checkbox" /> <label for="smtptls">' + _("Use TLS") + '</label></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="smtpuser">' + _("Username") + '</label></td>',
+                '<td><input id="smtpuser" data="SMTPUsername" class="asm-textbox" type="text" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="smtppass">' + _("Password") + '</label></td>',
+                '<td><input id="smtppass" data="SMTPPassword" class="asm-textbox" type="text" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>',
                 '</div>'
             ].join("\n");
         },
 
-        render_findanimalperson: function() {
+        render_findscreens: function() {
             return [
-                '<div id="tab-findanimalperson">',
-                html.info(_("These fields determine which columns are shown on the find animal and find person screens.")),
+                '<div id="tab-findscreens">',
+                html.info(_("These fields determine which columns are shown on the find screens. You can drag and drop to rearrange the order.")),
                 '<table>',
                 '<tr>',
                 '<td><label for="findanimalcols">' + _("Find animal columns") + '</label></td>',
                 '<td><select id="searchcolumns" class="asm-bsmselect" data="SearchColumns" multiple="multiple">',
                 options.two_pair_options(controller.animalfindcolumns),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="findfoundanimalcols">' + _("Find found animal columns") + '</label></td>',
+                '<td>',
+                '<select id="findfoundanimalcols" class="asm-bsmselect" data="FoundAnimalSearchColumns" multiple="multiple">',
+                options.two_pair_options(controller.foundanimalfindcolumns),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="findlostanimalcols">' + _("Find lost animal columns") + '</label></td>',
+                '<td>',
+                '<select id="findlostanimalcols" class="asm-bsmselect" data="LostAnimalSearchColumns" multiple="multiple">',
+                options.two_pair_options(controller.lostanimalfindcolumns),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="findincidentcols">' + _("Find incident columns") + '</label></td>',
+                '<td>',
+                '<select id="findincidentcols" class="asm-bsmselect" data="IncidentSearchColumns" multiple="multiple">',
+                options.two_pair_options(controller.incidentfindcolumns),
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -842,6 +1011,14 @@ $(function() {
                 '<td>' + _("Show an alert when these species of animals are not altered") + '</td>',
                 '<td>',
                 '<select id="alertmicrochip" multiple="multiple" class="asm-bsmselect" data="AlertSpeciesNeuter">',
+                html.list_to_options(controller.species, "ID", "SPECIESNAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td>' + _("Show an alert when these species of animals do not have a rabies vaccination") + '</td>',
+                '<td>',
+                '<select id="alertrabies" multiple="multiple" class="asm-bsmselect" data="AlertSpeciesRabies">',
                 html.list_to_options(controller.species, "ID", "SPECIESNAME"),
                 '</select>',
                 '</td>',
@@ -985,7 +1162,8 @@ $(function() {
                 '<input data="AutoDefaultVaccBatch" id="autodefaultvaccbatch" type="checkbox" class="asm-checkbox" /> <label for="autodefaultvaccbatch">' + _("When entering vaccinations, default the last batch number and manufacturer for that type") + '</label>',
                 '</p>',
                 '<p class="asm-header">' + _("Weekly Fosterer Email") + '</p>',
-                '<input data="FostererEmails" id="fostereremails" type="checkbox" class="asm-checkbox" /> <label for="fostereremails">' + _("Send a weekly email to fosterers with medical information about their animals") + '</label>',
+                '<input data="FostererEmails" id="fostereremails" type="checkbox" class="asm-checkbox" /> <label for="fostereremails">' + _("Send a weekly email to fosterers with medical information about their animals") + '</label><br/>',
+                '<input data="FostererEmailSkipNoMedical" id="fostereremailskipnomedical" type="checkbox" class="asm-checkbox" /> <label for="fostereremailskipnomedical">' + _("Do not send an email if there are no medical items due for animals in the care of this fosterer") + '</label>',
                 '</p>',
                 '<table>',
                 '<tr>',
@@ -1014,6 +1192,7 @@ $(function() {
                 '<p><label for="autoremoveholddays">' + _("Remove holds after") + '</label>',
                 '<span id="callout-autoremoveholddays" class="asm-callout">' + _("Cancel holds on animals this many days after the brought in date, or 0 to never cancel") + '</span>',
                 '<input data="AutoRemoveHoldDays" id="autoremoveholddays" type="text" data-min="0" data-max="365" class="asm-textbox asm-halftextbox asm-numberbox" /> ' + _(" days.") + '</p>',
+                '<input data="FutureOnShelter" id="futureonshelter" class="asm-checkbox" type="checkbox" /> <label for="futureonshelter">' + _("Treat animals with a future intake date as part of the shelter inventory") + '</label><br />',
                 '<input data="FosterOnShelter" id="fosteronshelter" class="asm-checkbox" type="checkbox" /> <label for="fosteronshelter">' + _("Treat foster animals as part of the shelter inventory") + '</label><br />',
                 '<input data="RetailerOnShelter" id="retaileronshelter" class="asm-checkbox" type="checkbox" /> <label for="retaileronshelter">' + _("Treat animals at retailers as part of the shelter inventory") + '</label><br />',
                 '<input data="TrialAdoptions" id="trialadoptions" class="asm-checkbox" type="checkbox" /> <label for="trialadoptions">' + _("Our shelter does trial adoptions, allow us to mark these on movement screens") + '</label><br />',
@@ -1032,7 +1211,9 @@ $(function() {
                 '<p>',
                 '<input data="WarnUnaltered" id="warnunaltered" class="asm-checkbox" type="checkbox" /> <label for="warnunaltered">' + _("Warn when adopting an unaltered animal") + '</label><br />',
                 '<input data="WarnNoMicrochip" id="warnnomicrochip" class="asm-checkbox" type="checkbox" /> <label for="warnnomicrochip">' + _("Warn when adopting an animal who has not been microchipped") + '</label><br />',
+                '<input data="WarnOSMedical" id="warnosmedical" class="asm-checkbox" type="checkbox" /> <label for="warnosmedical">' + _("Warn when adopting an animal who has outstanding medical treatments") + '</label><br />',
                 '<input data="WarnNoHomeCheck" id="warnnohomecheck" class="asm-checkbox" type="checkbox" /> <label for="warnnohomecheck">' + _("Warn when adopting to a person who has not been homechecked") + '</label><br />',
+                '<input data="WarnBannedAddress" id="warnbaddress" class="asm-checkbox" type="checkbox" /> <label for="warnbaddress">' + _("Warn when adopting to a person who lives at the same address as a banned person") + '</label><br />',
                 '<input data="WarnBannedOwner" id="warnbanned" class="asm-checkbox" type="checkbox" /> <label for="warnbanned">' + _("Warn when adopting to a person who has been banned from adopting animals") + '</label><br />',
                 '<input data="WarnOOPostcode" id="warnoopostcode" class="asm-checkbox" type="checkbox" /> <label for="warnoopostcode">' + _("Warn when adopting to a person who lives in the same area as the original owner") + '</label><br />',
                 '<input data="WarnBroughtIn" id="warnbroughtin" class="asm-checkbox" type="checkbox" /> <label for="warnbroughtin">' + _("Warn when adopting to a person who has previously brought an animal to the shelter") + '</label><br />',
@@ -1047,6 +1228,7 @@ $(function() {
                 '<div id="tab-onlineforms">',
                 '<p><label for="autoremoveforms">' + _("Remove incoming forms after") + '</label> <input data="AutoRemoveIncomingFormsDays" id="autoremoveforms" type="text" data-min="7" data-max="56" class="asm-halftextbox asm-textbox asm-numberbox" /> ' + _(" days.") + '<br/>',
                 '<input data="rc:DontRemoveProcessedForms" id="removeprocessedforms" class="asm-checkbox" type="checkbox" /> <label for="removeprocessedforms">' + _("Remove processed forms when I leave the incoming forms screens") + '</label><br/>',
+                '<input data="AutoHashProcessedForms" id="hashprocessedforms" class="asm-checkbox" type="checkbox" /> <label for="hashprocessedforms">' + _("When storing processed forms as media, apply tamper proofing and make them read only") + '</label><br/>',
                 '</p>',
                 '</div>'
             ].join("\n");
@@ -1093,6 +1275,30 @@ $(function() {
                     .replace("{0}", "<br/><b>" + asm.baseurl + "/pp_stripe" + "</b>"),
                 '</p>',
                 '</div>',
+
+                '<div id="cardcom-options" class="israel">',
+                '<hr/>',
+                '<p class="centered strong">' + _("Cardcom Payment Gateway")  + '</p>',
+                '<table>',
+                '<tr><td><label for="CardcomTerminalNumber">' + _("Cardcom Terminal Number") + '</label></td>',
+                '<td><input data="CardcomTerminalNumber" id="CardcomTerminalNumber" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+                '<tr><td><label for="CardcomUserName">' + _("Cardcom User Name") + '</label></td>',
+                '<td><input data="CardcomUserName" id="CardcomUserName" type="text" class="asm-textbox asm-doubletextbox asm-mask" /></td></tr>',
+
+                '<tr><td><label for="CardcomDocumentType">' + _("Cardcom Document Type") + '</label></td>',
+                '<td><input data="CardcomDocumentType" id="CardcomDocumentType" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+
+
+                '<tr><td><label for="CardcomSuccessURL">' + _("Cardcom Success URL") + '</label></td>',
+                '<td><input data="CardcomSuccessURL" id="CardcomSuccessURL" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+
+                '<tr><td><label for="CardcomErrorURL">' + _("Cardcom Error URL") + '</label></td>',
+                '<td><input data="CardcomErrorURL" id="CardcomErrorURL" type="text" class="asm-textbox asm-doubletextbox" /></td></tr>',
+
+                '<tr><td>&nbsp;</td><td><input data="CardcomUseToken" id="cardcomusetoken" class="asm-checkbox" type="checkbox" /> <label for="cardcomusetoken">' + _("Allow use of tokens") + '</label></td></tr>',
+                '</table>',
+                '</div>',
+
 
                 '</div>'
             ].join("\n");
@@ -1154,10 +1360,12 @@ $(function() {
                 '<option value="flags">' + _("Flags") + '</option>',
                 '<option value="fosterer">' + _("Fosterer") + '</option>',
                 '<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>',
+                '<option value="fostererspace">' + _("Fosterer (Space Available)") + '</option>',
                 '<option value="goodwith">' + _("Good with") + '</option>',
                 '<option value="location">' + _("Location") + '</option>',
                 '<option value="locationbreed">' + _("Location and Breed") + '</option>',
                 '<option value="locationspecies">' + _("Location and Species") + '</option>',
+                '<option value="locationspeciesage">' + _("Location and Species (Age)") + '</option>',
                 '<option value="locationtype">' + _("Location and Type") + '</option>',
                 '<option value="locationunit">' + _("Location and Unit") + '</option>',
                 '<option value="locationnv">' + _("Location (No Virtual)") + '</option>',
@@ -1166,6 +1374,7 @@ $(function() {
                 '<option value="retailer">' + _("Retailer") + '</option>',
                 '<option value="sex">' + _("Sex") + '</option>',
                 '<option value="sexspecies">' + _("Sex and Species") + '</option>',
+                '<option value="site">' + _("Site") + '</option>',
                 '<option value="species">' + _("Species") + '</option>',
                 '<option value="speciesbreed">' + _("Species and Breed") + '</option>',
                 '<option value="speciescode">' + _("Species and Code") + '</option>',
@@ -1173,6 +1382,8 @@ $(function() {
                 '<option value="status">' + _("Status") + '</option>',
                 '<option value="statusspecies">' + _("Status and Species") + '</option>',
                 '<option value="type">' + _("Type") + '</option>',
+                '<option value="unit">' + _("Unit") + '</option>',
+                '<option value="unitspecies">' + _("Unit and Species") + '</option>',
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -1198,17 +1409,18 @@ $(function() {
                 '<input data="DisableDocumentRepo" id="disabledocumentrepo" class="asm-checkbox" type="checkbox" /> <label for="disabledocumentrepo">' + _("Remove the document repository functionality from menus") + '</label><br />',
                 '<input data="DisableOnlineForms" id="disableonlineforms" class="asm-checkbox" type="checkbox" /> <label for="disableonlineforms">' + _("Remove the online form functionality from menus") + '</label><br />',
                 '<input data="DisableAnimalControl" id="disableanimalcontrol" class="asm-checkbox" type="checkbox" /> <label for="disableanimalcontrol">' + _("Remove the animal control functionality from menus and screens") + '</label><br />',
+                '<input data="DisableTrapLoan" id="disabletraploan" class="asm-checkbox" type="checkbox" /> <label for="disabletraploan">' + _("Remove the equipment loan functionality from menus and screens") + '</label><br />',
                 '<input data="rc:IncidentPermissions" id="incidentpermissions" class="asm-checkbox" type="checkbox" /> <label for="incidentpermissions">' + _("Remove fine-grained animal control incident permissions") + '</label><br />',
                 '<input data="DisableRota" id="disablerota" class="asm-checkbox" type="checkbox" /> <label for="disablerota">' + _("Remove the rota functionality from menus and screens") + '</label><br />',
                 '<input data="DisableStockControl" id="disablestockcontrol" class="asm-checkbox" type="checkbox" /> <label for="disablestockcontrol">' + _("Remove the stock control functionality from menus and screens") + '</label><br />',
                 '<input data="DisableTransport" id="disabletransport" class="asm-checkbox" type="checkbox" /> <label for="disabletransport">' + _("Remove the transport functionality from menus and screens") + '</label><br />',
-                '<input data="DisableTrapLoan" id="disabletraploan" class="asm-checkbox" type="checkbox" /> <label for="disabletraploan">' + _("Remove the trap loan functionality from menus and screens") + '</label><br />',
                 '<p class="asm-header">' + _("People") + '</p>',
                 '<p>',
                 '<input data="HideTownCounty" id="towncounty" class="asm-checkbox" type="checkbox" /> <label for="towncounty">' + _("Remove the city/state fields from person details") + '</label><br />',
                 '<input data="HideCountry" id="hcountry" class="asm-checkbox" type="checkbox" /> <label for="hcountry">' + _("Remove the country field from person details") + '</label><br />',
                 '<input data="HideHomeCheckedNoFlag" id="hhomechecked" class="asm-checkbox" type="checkbox" /> <label for="hhomechecked">' + _("Remove the homechecked/by fields from person type according to the homechecked flag") + '</label><br />',
                 '<input data="DontShowInsurance" id="insuranceno" class="asm-checkbox" type="checkbox" /> <label for="insuranceno">' + _("Remove the insurance number field from the movement screens") + '</label><br />',
+                '<input data="HideLookingFor" id="lookingforno" class="asm-checkbox" type="checkbox" /> <label for="lookingforno">' + _("Remove the looking for functionality from the person menus and screens") + '</label><br />',
 
                 '</td><td>',
 
@@ -1264,7 +1476,7 @@ $(function() {
                 '<span id="callout-wlupdate" class="asm-callout">' + _("Set to 0 to never update urgencies.") + '</span>',
                 '</td>',
                 '<td>',
-                '<input data="WaitingListUrgencyUpdatePeriod" id="wlupdate" data-min="1" data-max="365" class="asm-textbox asm-numberbox" type="text" title="' + _("The period in days before waiting list urgency is increased") + '" />',
+                '<input data="WaitingListUrgencyUpdatePeriod" id="wlupdate" data-min="0" data-max="365" class="asm-textbox asm-numberbox" type="text" title="' + _("The period in days before waiting list urgency is increased") + '" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -1300,6 +1512,7 @@ $(function() {
                 this.render_agegroups(),
                 this.render_animalcodes(),
                 this.render_animalemblems(),
+                this.render_checkout(),
                 this.render_costs(),
                 this.render_data_protection(),
                 this.render_defaults(),
@@ -1307,7 +1520,7 @@ $(function() {
                 this.render_display(),
                 this.render_documents(),
                 this.render_email(),
-                this.render_findanimalperson(),
+                this.render_findscreens(),
                 this.render_homepage(),
                 this.render_insurance(),
                 this.render_lostandfound(),
@@ -1408,15 +1621,6 @@ $(function() {
                 }
             });
 
-            // When the visual theme is changed, switch the CSS file so the
-            // theme updates immediately.
-            $("#systemtheme").change(function() {
-                let theme = $("#systemtheme").val();
-                let href = asm.jqueryuicss.replace("%(theme)s", theme);
-                $("#jqt").attr("href", href);
-                $("body").css("background-color", BACKGROUND_COLOURS[theme]);
-            });
-
             // Set donation type maps from DonationAccountMappings field
             let donmaps = config.str("DonationAccountMappings");
             if (donmaps != "") {
@@ -1434,10 +1638,16 @@ $(function() {
             if (asm.locale != "en") {
                 $(".us").hide();
             }
+            if (asm.locale != "he" && asm.locale != "en_IL") {
+                $(".israel").hide();
+            }
 
             // Hide other non-relevant options
             if (!controller.haspaypal) {
                 $("#paypal-options").hide();
+            }
+            if (!asm.smcom) {
+                $(".smcom").hide();
             }
 
             validate.bind_dirty();
@@ -1462,4 +1672,3 @@ $(function() {
     common.module_register(options);
 
 });
-

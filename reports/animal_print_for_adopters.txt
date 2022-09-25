@@ -2,7 +2,7 @@ Print Animal Record (for adopters)
 ###
 Auditing
 ###
-34018/Any
+34018/Any rev03
 ###
 A complete printout of an animal record for giving to adopters.
 ###
@@ -26,7 +26,7 @@ ba1.ShelterCode AS Bonded1Code, ba1.AnimalName AS Bonded1Name,
 ba2.ShelterCode AS Bonded2Code, ba2.AnimalName AS Bonded2Name,
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithDogs) AS withdogs,
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithCats) AS withcats,
-(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithChildren) AS withchildren,
+(SELECT Name FROM lksynunk WHERE ID = a.IsGoodWithChildren) AS withchildren,
 (SELECT Name FROM lksynun WHERE ID = a.IsHouseTrained) AS housetrained,
 (SELECT Sex FROM lksex WHERE ID = a.sex) AS thesex,
 (SELECT Name FROM lksyesno WHERE ID = a.neutered) AS altered,
@@ -161,6 +161,8 @@ animalvaccination.Cost,
 animalvaccination.DateRequired,
 animalvaccination.DateOfVaccination,
 animalvaccination.DateExpires,
+animalvaccination.Manufacturer,
+animalvaccination.BatchNumber, 
 animalvaccination.Comments AS VaccComments,
 CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE animalvaccination.GivenBy END AS GivenBy
 FROM animalvaccination
@@ -171,10 +173,10 @@ ORDER BY DateOfVaccination
 +++
 $$HEADER
 <table cellpadding="5">
-<tr><th>Type</th><th>Required</th><th>Cost</th><th>Given</th><th>Expires</th><th>By</th><th>Comments</th></tr>
+<tr><th>Type</th><th>Batch</th><th>Required</th><th>Cost</th><th>Given</th><th>Expires</th><th>By</th><th>Comments</th></tr>
 HEADER$$
 $$BODY
-<tr><td>$VACCINATIONTYPE</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFVACCINATION</td><td>$DATEEXPIRES</td><td>$GIVENBY</td><td>$VACCCOMMENTS</td></tr>
+<tr><td>$VACCINATIONTYPE</td><td>$MANUFACTURER $BATCHNUMBER</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFVACCINATION</td><td>$DATEEXPIRES</td><td>$GIVENBY</td><td>$VACCCOMMENTS</td></tr>
 BODY$$
 $$FOOTER
 </table>
@@ -223,6 +225,49 @@ $$BODY<tr>
 <td>$DATEGIVEN</td>
 <td>$GIVENBY</td>
 <td>$REGIMECOMMENTS</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintMedicalRegimenOnly
++++
+SELECT
+a.ShelterCode, a.AnimalName,
+t.AnimalType, s.SpeciesName,
+il.LocationName, am.TreatmentName, am.StartDate,
+am.Dosage, am.TreatmentsGiven, am.TreatmentsRemaining, am.TotalNumberOfTreatments,
+am.Cost, am.Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+WHERE a.ID = $PARENTKEY$
+ORDER BY am.StartDate
++++
+$$HEADER
+<table cellpadding="5">
+<tr>
+<td><b>Started</b></td>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>Regimen Cost</b></td>
+<td><b>Number</b></td>
+<td><b>Comments</b></td>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$STARTDATE</td>
+<td>$TREATMENTNAME</td>
+<td>$DOSAGE</td>
+<td>$COST</td>
+<td>$TREATMENTSGIVEN / $TOTALNUMBEROFTREATMENTS</td>
 <td>$COMMENTS</td>
 </tr>
 BODY$$

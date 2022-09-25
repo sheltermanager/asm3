@@ -92,6 +92,9 @@ $(function() {
             $.each(config.str("OwnerSearchColumns").split(","), function(i, v) {
                 cols.push(common.trim(v));
             });
+            // If OwnerName is not present in the list, insert it as the first column to make
+            // sure there's still a link displayed to the target record
+            if (!common.array_in("OwnerName", cols)) { cols.unshift("OwnerName"); } 
             return cols;
         },
 
@@ -205,7 +208,7 @@ $(function() {
                 rv = edit_header.person_flags(row);
             }
             else if ( name == "Image" ) {
-                rv = "<img class=\"asm-thumbnail thumbnailshadow\" src=\"" + html.thumbnail_src(row, "animalthumb") + "\" />";
+                rv = "<img class=\"asm-thumbnail thumbnailshadow\" src=\"" + html.thumbnail_src(row, "personthumb") + "\" />";
             }
             else if (add) {
                 $.each(add, function(i, v) {

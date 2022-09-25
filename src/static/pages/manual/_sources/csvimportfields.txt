@@ -19,6 +19,8 @@ ANIMALTYPE
     The animal's type. This should correspond to one of ASM's animal types from your database.
 ANIMALCOLOR
     The animal's color. This should correspond to a color in your database.
+ANIMALCOATTYPE
+    The animal's coat type. This should correspond to a coat type in your database.
 ANIMALBREED1
     The animal's primary breed. It should match a breed in your database.
 ANIMALBREED2
@@ -57,6 +59,14 @@ ANIMALMICROCHIP
     If not blank, ASM will mark the animal microchipped with this as the microchip number.
 ANIMALMICROCHIPDATE
     The date the microchip was implanted
+ANIMALTATTOO
+    If not blank, ASM will mark the animal tattooed with this as the tattoo number.
+ANIMALTATTOODATE
+    The date the tattoo was implanted
+ANIMALDECLAWED
+    Y/N to indicate yes/no
+ANIMALHASSPECIALNEEDS
+    Y/N to indicate yes/no
 ANIMALENTRYDATE
     The date the animal entered the shelter (date brought in). Today's date will be used if this column is not present or the value is blank.
 ANIMALREASONFORENTRY
@@ -204,6 +214,12 @@ PERSONMATCHCOMMENTSCONTAIN
     The animal this person is looking for will have this value in its comments
 PERSONADDITIONAL<fieldname>
     If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH
+PERSONIMAGE
+    A photo for the person, it can either be a fully qualified HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI
+PERSONPDFDATA
+    A PDF file to attach to the person. Like image, it can be a fully qualified URL or a base64 encoded PDF as a data URI
+PERSONPDFNAME
+    The filename associated with the PDF data
 VACCINATIONTYPE
     The type of vaccination on this line 
 VACCINATIONDUEDATE

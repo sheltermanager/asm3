@@ -10,12 +10,12 @@ $(function() {
             const dialog = {
                 add_title: _("Add additional field"),
                 edit_title: _("Edit additional field"),
-                helper_text: _("Additional fields need a name, label and type.") + '<br />' + _("Field names should not contain spaces."),
                 close_on_ok: false,
                 columns: 1,
                 width: 550,
                 fields: [
-                    { json_field: "FIELDNAME", post_field: "name", label: _("Name"), type: "text", validation: "notblank" },
+                    { json_field: "FIELDNAME", post_field: "name", label: _("Name"), type: "text", validation: "notblank",
+                        callout:_("Field names should not contain spaces.") },
                     { json_field: "FIELDLABEL", post_field: "label", label: _("Label"), type: "text", validation: "notblank" },
                     { json_field: "TOOLTIP", post_field: "tooltip", label: _("Tooltip"), type: "text" },
                     { json_field: "FIELDTYPE", post_field: "type", label: _("Type"), type: "select", 

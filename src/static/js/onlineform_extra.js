@@ -72,7 +72,9 @@ $(document).ready(function() {
                 let img = $(this).find("canvas").get(0).toDataURL("image/png");
                 let fieldname = $(this).attr("data-name");
                 $("input[name='" + fieldname + "']").val(img);
-                if ($(this).signature("isEmpty") && $(this).attr("data-required")) {
+                if (!$(this).attr("data-required")) { return; }
+                if (!$(this).parent().is(":visible")) { return; }
+                if ($(this).signature("isEmpty")) {
                     alert("Signature is required.");
                     rv = false;
                     return false;
@@ -88,9 +90,11 @@ $(document).ready(function() {
     const validate_images = function() {
         let rv = true;
         $(".asm-onlineform-image").each(function() {
+            if (!$(this).attr("data-required")) { return; }
+            if (!$(this).parent().is(":visible")) { return; }
             let fieldname = $(this).attr("data-name"),
                 v = $(this).val();
-            if (!v && $(this).attr("data-required")) {
+            if (!v) {
                 alert("You must attach an image");
                 $(this).focus();
                 rv = false;
@@ -108,7 +112,9 @@ $(document).ready(function() {
             let fieldname = $(this).attr("data-name"),
                 v = $(this).val();
             $("input[name='" + fieldname + "']").val(v);
-            if (!v && $(this).attr("data-required")) {
+            if (!$(this).attr("data-required")) { return; }
+            if (!$(this).parent().is(":visible")) { return; }
+            if (!v) {
                 alert("You must choose at least one option");
                 $(this).parent().find(".asmSelect").focus();
                 rv = false;
@@ -129,7 +135,9 @@ $(document).ready(function() {
                 v.push($(this).attr("data"));
             });
             $("input[name='" + fieldname + "']").val(v.join(","));
-            if (v.length == 0 && $(this).attr("data-required")) {
+            if (!$(this).attr("data-required")) { return; }
+            if (!$(this).parent().is(":visible")) { return; }
+            if (v.length == 0) {
                 alert("You must choose at least one option");
                 $(this).find("input[type='checkbox']").focus();
                 rv = false;
@@ -198,7 +206,7 @@ $(document).ready(function() {
     const validate_required = function() {
         let rv = true;
         if (!html5_required) {
-            $(".asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-notes").each(function() {
+            $(".asm-onlineform-adoptableanimal, .asm-onlineform-date, .asm-onlineform-text, .asm-onlineform-lookup, .asm-onlineform-yesno, .asm-onlineform-notes").each(function() {
                 if ($(this).attr("required")) {
                     let v = String($(this).val()).trim(); // Throw away whitespace before checking
                     if (!v) {
@@ -225,45 +233,69 @@ $(document).ready(function() {
         return query;
     };
 
+    // Remove all hidden elements from the DOM. Useful to prevent visibleif 
+    // hidden conditional fields from being posted to the backend.
+    // Remove checkbox inputs from checkbox groups to prevent them posting 
+    // individually (they have a name attribute for showif functionality)
+    const remove_hidden = function() {
+        $("tr:hidden").remove();
+        $(".asm-onlineform-checkgroup input").remove();
+    };
+
     // Find every visibleif rule and show/hide accordingly
     const show_visibleif = function() {
         $("tr").each(function() {
-            let o = $(this);
-            if (!o.attr("data-visibleif")) { return; } // no rule, do nothing
-            // Split rule in to field, cond (=!), value
-            let m = o.attr("data-visibleif").match(new RegExp("(.*)([=!<>])(.*)"));
-            let field = m[1], cond = m[2], value = m[3];
-            // Find the field and apply the condition
-            $("input, select").each(function() {
-                if ($(this).attr("name") && $(this).attr("name").indexOf(field + "_") == 0) {
-                    let v = $(this).val();
-                    // Checkboxes always return on for val(), if it's a checkbox, set on/off from checked
-                    if ($(this).attr("type") && $(this).attr("type") == "checkbox") { v = $(this).is(":checked") ? "on" : "off"; }
-                    // Radio buttons need reading differently to find the selected value
-                    if ($(this).attr("type") && $(this).attr("type") == "radio") { v = $("[name='" + $(this).attr("name") + "']:checked").val(); }
-                    let toshow = false;
-                    if (cond == "=") { toshow = v == value; }
-                    else if (cond == "!") { toshow = v != value; }
-                    else if (cond == ">") { toshow = v > value; }
-                    else if (cond == "<") { toshow = v < value; }
-                    o.toggle(toshow);
-                    if (!toshow) {
-                        // If we just hid a field that had the required attribute, 
-                        // remove it, otherwise the form won't submit
-                        o.find("input, select, textarea").prop("required", false);
+            let o = $(this), expr = o.attr("data-visibleif"), mode = "and";
+            if (!expr) { return; } // no rule, do nothing
+            if (expr.indexOf("|") != -1) { mode = "or"; }
+            let clauses = (mode == "and" ? expr.split("&") : expr.split("|"));
+            let andshow = true, orshow = false; // evaluate all clauses for or/and, only one can be used
+            $.each(clauses, function(ci, cv) {
+                // Separate condition into field, operator (=!<>), value
+                let m = cv.trim().match(new RegExp("(.*)([=!<>])(.*)"));
+                let field = "", cond = "=", value = "";
+                if (!m) { return; } // The condition does not match our regex and is invalid, skip
+                if (m.length >= 2) { field = m[1]; }
+                if (m.length >= 3) { cond = m[2]; }
+                if (m.length >= 4) { value = m[3]; }
+                // Find the field and apply the condition
+                $("input, select").each(function() {
+                    if ($(this).attr("name") && $(this).attr("name").indexOf(field + "_") == 0) {
+                        let v = $(this).val();
+                        // Checkboxes always return on for val(), if it's a checkbox, set on/off from checked
+                        if ($(this).attr("type") && $(this).attr("type") == "checkbox") { v = $(this).is(":checked") ? "on" : "off"; }
+                        // Radio buttons need reading differently to find the selected value
+                        if ($(this).attr("type") && $(this).attr("type") == "radio") { v = $("[name='" + $(this).attr("name") + "']:checked").val(); }
+                        if (cond == "=" && v != value) { andshow = false; }
+                        else if (cond == "!" && v == value) { andshow = false; }
+                        else if (cond == ">" && v <= value) { andshow = false; }
+                        else if (cond == "<" && v >= value) { andshow = false; }
+                        if (cond == "=" && v == value) { orshow = true; }
+                        else if (cond == "!" && v != value) { orshow = true; }
+                        else if (cond == ">" && v >= value) { orshow = true; }
+                        else if (cond == "<" && v <= value) { orshow = true; }
+                        return false; // stop iterating fields, we found it
                     }
-                    else {
-                        // Restore the required attribute to the now visible field 
-                        // if the field had it previously. Deliberately avoid it on multiselects
-                        // so the select dropdown does not become required.
-                        if (o.find(".asm-onlineform-required").length > 0 && 
-                            o.find(".asm-onlineform-lookupmulti").length == 0) {
-                            o.find("input, select, textarea").prop("required", true);
-                        }
-                    }
-                    return false; // stop iterating fields, we found it
-                }
+                });
             });
+            // Show or hide the field based on our final condition
+            if (mode == "and") { o.toggle(andshow); }
+            if (mode == "or") { o.toggle(orshow); }
+            if (!o.is(":visible")) {
+                // If we just hid a field that had the required attribute, 
+                // remove it, otherwise the form won't submit
+                o.find("input, select, textarea").prop("required", false);
+            }
+            else {
+                // Restore the required attribute to the now visible field 
+                // if the field had it previously. 
+                // Deliberately avoid it on multiselect elements so the inner fields do not become required.
+                if (o.find(".asm-onlineform-required").length > 0 && 
+                    o.find(".asm-onlineform-lookupmulti, .asm-onlineform-checkgroup, .asm-onlineform-radiogroup").length == 0) {
+                    o.find("input, select, textarea").prop("required", true);
+                }
+            }
+
         });
     };
 
@@ -382,6 +414,8 @@ $(document).ready(function() {
         }
         else {
             e.preventDefault();
+            remove_hidden(); // strip conditional fields that are not visible so they do not post
+            if (typeof asm3_onlineform_submit !== 'undefined') { asm3_onlineform_submit(); }
             $("form").submit();
         }
     });

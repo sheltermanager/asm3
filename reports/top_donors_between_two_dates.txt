@@ -37,6 +37,7 @@ BODY$$
 
 $$FOOTER
 </table>
+<p>Donor count: {COUNT.OWNERNAME}, Total donations: {SUM.MONEYTOTAL.2}</p>
 FOOTER$$
 &&&
 Top Donors between two dates (for type)
@@ -79,5 +80,6 @@ BODY$$
 
 $$FOOTER
 </table>
+<p>Donor count: {COUNT.OWNERNAME}, Total donations: {SUM.MONEYTOTAL.2}</p>
 FOOTER$$
 

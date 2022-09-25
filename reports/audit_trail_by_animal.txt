@@ -2,7 +2,7 @@ Audit Trail: All Changes to one Animal
 ###
 Auditing
 ###
-2721/Any
+34200/Any rev02
 ###
 All record changes and deletions for a given animal record
 ###
@@ -12,7 +12,9 @@ $VAR aid ALLANIMAL$
 SELECT AuditDate, UserName, TableName, Description
 FROM audittrail
 WHERE
-TableName = 'animal' AND (Description LIKE '%(ID $@aid$)%' OR Description LIKE '%ID_: $@aid$,%')
+TableName = 'animal' 
+AND (LinkID = $@aid$ OR ParentLinks LIKE '%animal=$@aid$%')
+AND Action IN (0,1,2,3)
 ORDER BY UserName, AuditDate
 ###
 $$HEADER

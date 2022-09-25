@@ -4,35 +4,6 @@ $(function() {
 
     "use strict";
 
-    const BACKGROUND_COLOURS = {
-        "asm":              "#ffffff",
-        "base":             "#ffffff",
-        "black-tie":        "#333333",
-        "blitzer":          "#cc0000",
-        "cupertino":        "#deedf7",
-        "dark-hive":        "#444444",
-        "dot-luv":          "#0b3e6f",
-        "eggplant":         "#30273a",
-        "excite-bike":      "#f9f9f9",
-        "flick":            "#dddddd",
-        "hot-sneaks":       "#35414f",
-        "humanity":         "#cb842e",
-        "le-frog":          "#3a8104",
-        "mint-choc":        "#453326",
-        "overcast":         "#dddddd",
-        "pepper-grinder":   "#ffffff",
-        "redmond":          "#5c9ccc",
-        "smoothness":       "#cccccc",
-        "south-street":     "#ece8da",
-        "start":            "#2191c0",
-        "sunny":            "#817865",
-        "swanky-purse":     "#261803",
-        "trontastic":       "#9fda58",
-        "ui-darkness":      "#333333",
-        "ui-lightness":     "#ffffff",
-        "vader":            "#888888"
-    };
-
     const change_user_settings = {
 
         /** Where we have a list of pairs, first is value, second is label */
@@ -44,6 +15,14 @@ $(function() {
                     ds = 'data-style="background-image: url(static/images/flags/' + v[0] + '.png)"';
                 }
                 s.push('<option value="' + v[0] + '" ' + ds + '>' + v[1] + '</option>');
+            });
+            return s.join("\n");
+        },
+
+        theme_list: function() {
+            let s = [];
+            $.each(controller.themes, function(i, v) {
+                s.push('<option value="' + v[0] + '">' + _(v[3]) + '</option>');
             });
             return s.join("\n");
         },
@@ -61,7 +40,7 @@ $(function() {
                     '<label for="realname">' + _("Real name") + '</label>',
                     '</td>',
                     '<td>',
-                    '<input id="realname" data="realname" class="asm-textbox" />',
+                    '<input id="realname" data="realname" class="asm-doubletextbox" />',
                     '</td>',
                 '</tr>',
                 '<tr>',
@@ -69,7 +48,7 @@ $(function() {
                     '<label for="email">' + _("Email Address") + '</label>',
                     '</td>',
                     '<td>',
-                    '<input id="email" data="email" class="asm-textbox" />',
+                    '<input id="email" data="email" class="asm-doubletextbox" />',
                     '</td>',
                 '</tr>',
                 '<tr>',
@@ -78,8 +57,7 @@ $(function() {
                     '</td>',
                     '<td>',
                     '<select id="systemtheme" data="theme" class="asm-selectbox">',
-                    '<option value="">' + _("(use system)") + '</option>',
-                    this.two_pair_options(controller.themes),
+                    this.theme_list(),
                     '</select>',
                     '</td>',
                 '</tr>',
@@ -100,16 +78,36 @@ $(function() {
                     '<button id="button-change" type="button" style="vertical-align: middle">' + _("Clear and sign again") + '</button>',
                     '</td>',
                     '<td>',
-                    '<div id="signature" style="width: 500px; height: 200px; display: none" />',
+                    '<div id="signature" style="width: 500px; height: 200px; display: none"></div>',
                     '<img id="existingsig" style="display: none; border: 0" />',
                     '</td>',
                 '</tr>',
+                '<tr>',
+                    '<td></td>',
+                    '<td>',
+                    '<input id="enabletotp" data="enabletotp" class="asm-checkbox" type="checkbox" />',
+                    '<label for="enabletotp">' + _("Enable two-factor authentication (2FA)") + '</label>',
+                    '</td>',
+                '<tr>',
+                '<tr class="totp">',
+                    '<td></td>',
+                    '<td>' + html.info( _("Scan the QR code below with the Google Authenticator app for your mobile device.") ) + '</td>',
+                '</tr>',
+                '<tr class="totp">',
+                    '<td></td>',
+                    '<td><div id="qr2fa" style="padding: 10px; background: #fff;"></div></td>',
+                '</tr>',
+
                 '</table>',
-                '<div class="centered">',
+                '<p class="centered">',
                     '<button id="save">' + html.icon("save") + ' ' + _("Save") + '</button>',
-                '</div>',
+                '</p>',
                 html.content_footer()
             ].join("\n");
+        },
+
+        totp_change: function() {
+            $(".totp").toggle( $("#enabletotp").prop("checked") );
         },
 
         bind: function() {
@@ -127,6 +125,8 @@ $(function() {
             catch (excanvas) {
                 log.error("failed creating signature canvas");   
             }
+
+            $("#enabletotp").change(change_user_settings.totp_change);
 
             $("#save").button().click(async function() {
                 $(".asm-content button").button("disable");
@@ -149,26 +149,32 @@ $(function() {
                 }
             });
 
-            // When the visual theme is changed, switch the CSS file so the
-            // theme updates immediately.
+            // When the visual theme is changed, switch the CSS file and
+            // the background.
             $("#systemtheme").change(function() {
                 let theme = $("#systemtheme").val();
-                if (theme == "") {
-                    theme = asm.theme;
-                }
-                let href = asm.jqueryuicss.replace("%(theme)s", theme);
-                $("#jqt").attr("href", href);
-                $("body").css("background-color", BACKGROUND_COLOURS[theme]);
+                if (theme == "") { theme = asm.theme; }
+                $.each(controller.themes, function(i, v) {
+                    let [tcode, tjq, tbg, tname] = v;
+                    if (tcode == theme) {
+                        let href = asm.jqueryuicss.replace("%(theme)s", tjq);
+                        $("#jqt").attr("href", href);
+                        $("body").css("background-color", tbg);
+                        return false;
+                    }
+                });
             });
 
         },
 
         sync: function() {
-            let u = controller.user[0];
+            let u = controller.user;
             $("#realname").val(html.decode(u.REALNAME));
             $("#email").val(u.EMAILADDRESS);
             $("#olocale").select("value", u.LOCALEOVERRIDE);
             $("#systemtheme").select("value", u.THEMEOVERRIDE);
+            $("#enabletotp").prop("checked", u.ENABLETOTP == 1);
+            this.totp_change();
             if (controller.sigtype != "touch") { 
                 $("#signature").closest("tr").hide(); 
             }
@@ -180,6 +186,11 @@ $(function() {
                 $("#existingsig").hide();
                 $("#signature").show();
             }
+            let issuer = "ASM";
+            if (controller.smcom) { issuer = "sheltermanager"; }
+            if (controller.smcom && asm.user == asm.useraccount) { $("#enabletotp").closest("tr").hide(); } // disable 2FA for smcom master user for now
+            let tfa_url = "otpauth://totp/" + issuer + ":" + encodeURIComponent(u.USERNAME) + "?secret=" + encodeURIComponent(u.OTPSECRET) + "&issuer=" + encodeURIComponent(issuer);
+            new QRCode(document.getElementById("qr2fa"), tfa_url);
         },
 
         name: "change_user_settings",

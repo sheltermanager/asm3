@@ -22,6 +22,7 @@ def get_waitinglist_query(dbo):
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, " \
         "u.Urgency AS UrgencyName, " \
         "web.ID AS WebsiteMediaID, " \
+        "web.ID AS DocMediaID, " \
         "web.MediaName AS DocMediaName, " \
         "web.Date AS DocMediaDate, " \
         "web.MediaName AS WebsiteMediaName, " \
@@ -46,7 +47,7 @@ def get_waitinglist_by_id(dbo, wid):
         r.RANK = ranks[r.WLID]
     else:
         r.RANK = ""
-    r.TIMEONLIST = date_diff(l, r.DATEPUTONLIST, now(dbo.timezone))
+    r.TIMEONLIST = date_diff(l, r.DATEPUTONLIST, now(dbo.timezone), asm3.configuration.date_diff_cutoffs(dbo))
     return r
 
 def get_person_name(dbo, wid):
@@ -105,9 +106,13 @@ def get_waitinglist(dbo, priorityfloor = 5, species = -1, size = -1, addresscont
     if includeremoved == 0: add("a.DateRemovedFromList Is Null")
     if species != -1: add("a.SpeciesID = ?", species)
     if size != -1: add("a.Size = ?", size)
-    if addresscontains != "": add("UPPER(OwnerAddress) LIKE ?", "%%%s%%" % addresscontains.upper())
-    if namecontains != "": add("UPPER(OwnerName) LIKE ?", "%%%s%%" % namecontains.upper())
-    if descriptioncontains != "": add("UPPER(AnimalDescription) LIKE ?", "%%%s%%" % descriptioncontains.upper())
+    if addresscontains != "":
+        ands.append("(%s OR %s)" % (dbo.sql_ilike("OwnerAddress"), dbo.sql_ilike("OwnerTown")))
+        v = "%%%s%%" % addresscontains.lower()
+        values.append(v)
+        values.append(v)
+    if namecontains != "": add(dbo.sql_ilike("OwnerName"), "%%%s%%" % namecontains.lower())
+    if descriptioncontains != "": add(dbo.sql_ilike("AnimalDescription"), "%%%s%%" % descriptioncontains.lower())
     if siteid != 0: add("(o.SiteID = 0 OR o.SiteID = ?)", siteid)
 
     sql = "%s WHERE %s ORDER BY a.Urgency, a.DatePutOnList" % (get_waitinglist_query(dbo), " AND ".join(ands))
@@ -131,7 +136,7 @@ def get_waitinglist(dbo, priorityfloor = 5, species = -1, size = -1, addresscont
             r.RANK = ranks[r.WLID]
         else:
             r.RANK = ""
-        r.TIMEONLIST = date_diff(l, r.DATEPUTONLIST, now(dbo.timezone))
+        r.TIMEONLIST = date_diff(l, r.DATEPUTONLIST, now(dbo.timezone), asm3.configuration.date_diff_cutoffs(dbo) )
     return rows
 
 def get_waitinglist_find_simple(dbo, query = "", limit = 0, siteid = 0):
@@ -177,7 +182,7 @@ def delete_waitinglist(dbo, username, wid):
     dbo.delete("log", "LinkID=%d AND LinkType=%d" % (wid, asm3.log.WAITINGLIST), username)
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (wid, asm3.additional.WAITINGLIST_IN))
     dbo.delete("animalwaitinglist", wid, username)
-    asm3.dbfs.delete_path(dbo, "/waitinglist/%d" % wid)
+    # asm3.dbfs.delete_path(dbo, "/waitinglist/%d" % wid)  # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
 def send_email_from_form(dbo, username, post):
     """
@@ -189,11 +194,12 @@ def send_email_from_form(dbo, username, post):
     emailcc = post["cc"]
     emailbcc = post["bcc"]
     subject = post["subject"]
-    ishtml = post.boolean("html")
     addtolog = post.boolean("addtolog")
     logtype = post.integer("logtype")
     body = post["body"]
-    rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, ishtml == 1 and "html" or "plain")
+    rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
+    if asm3.configuration.audit_on_send_email(dbo): 
+        asm3.audit.email(dbo, username, emailfrom, emailto, emailcc, emailbcc, subject, body)
     if addtolog == 1:
         asm3.log.add_log_email(dbo, username, asm3.log.WAITINGLIST, post.integer("wlid"), logtype, emailto, subject, body)
     return rv
@@ -310,7 +316,8 @@ def update_waitinglist_from_form(dbo, post, username):
         "Comments":                 post["comments"]
     }, username)
 
-    asm3.additional.save_values_for_link(dbo, post, wlid, "waitinglist")
+    asm3.additional.save_values_for_link(dbo, post, username, wlid, "waitinglist")
+    asm3.diary.update_link_info(dbo, username, asm3.diary.WAITINGLIST, wlid)
 
 def insert_waitinglist_from_form(dbo, post, username):
     """
@@ -344,7 +351,7 @@ def insert_waitinglist_from_form(dbo, post, username):
     }, username)
 
     # Save any additional field values given
-    asm3.additional.save_values_for_link(dbo, post, nwlid, "waitinglist", True)
+    asm3.additional.save_values_for_link(dbo, post, username, nwlid, "waitinglist", True)
 
     return nwlid
 

@@ -31,7 +31,7 @@ $(function() {
                 html.list_to_options(controller.forlist, "USERNAME", "USERNAME"),
                 '</select>',
                 '</p>',
-                '<div id="calendar" style="max-width: 900px; margin-left: auto; margin-right: auto;" />',
+                '<div id="calendar" style="max-width: 900px; margin-left: auto; margin-right: auto;"></div>',
                 html.content_footer()
             ].join("\n");
         },
@@ -43,6 +43,7 @@ $(function() {
                     center: 'title',
                     right: 'month,agendaWeek,agendaDay,listMonth'
                 }, 
+                isRTL: (asm.locale == "ar" || asm.locale == "he"),
                 editable: false,
                 firstDay: config.integer("FirstDayOfWeek"),
                 eventLimit: true,

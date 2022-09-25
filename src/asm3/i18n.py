@@ -6,8 +6,9 @@ import time
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
 
-VERSION = "44u [Mon 31 Aug 14:42:21 BST 2020]"
-BUILD = "08311442"
+
+VERSION = "46u [Thu 22 Sep 08:54:40 BST 2022]"
+BUILD = "09220854"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -86,14 +87,18 @@ locale_maps = {
     "en_KH":    ( "English", "Cambodia", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ".", ",", "" ),
     "en_KW":    ( "English", "Kuwait", DMY, "KD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_KY":    ( "English", "Cayman Islands", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_ID":    ( "English", "Indonesia", DMY, "Rp", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", ".", "" ),
     "en_IE":    ( "English", "Ireland", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
-    "en_IN":    ( "English", "India", DMY, "&#8360;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
+    "en_IN":    ( "English", "India", DMY, "&#8377;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
     "en_IL":    ( "English", "Israel", DMY, "&#x20aa;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
     "en_JP":    ( "English", "Japan", YMD, "&yen;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 0, ".", ",", "" ),
+    "en_KE":    ( "English", "Kenya", DMY, "Ksh", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_LB":    ( "English", "Lebanon", MDY, "L&pound;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
     "en_LU":    ( "English", "Luxembourg", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "en_MU":    ( "English", "Mauritius", DMY, "&#8360;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
     "en_MY":    ( "English", "Malaysia", DMY, "RM", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_MX":    ( "English", "Mexico", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "6-104-L10" ),
+    "en_MZ":    ( "English", "Mozambique", DMY, "MT", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", ".", "" ),
     "en_NA":    ( "English", "Namibia", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", ""),
     "en_PH":    ( "English", "Philippines", MDY, "&#x20b1;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
     "en_QA":    ( "English", "Qatar", DMY, "QR", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
@@ -101,9 +106,11 @@ locale_maps = {
     "en_TH":    ( "English", "Thailand", DMY, "&#x0e3f;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_TW":    ( "English", "Taiwan", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 0, ".", ",", ""),
     "en_TW2":   ( "English", "Taiwan $0.00", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
-    "en_VN":    ( "English", "Vietnam", DMY, "&#8363;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_TZ":    ( "English", "Tanzania", DMY, "Tsh", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_VN":    ( "English", "Vietnam", DMY, "&#8363;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", ".", "" ),
     "en_ZA":    ( "English", "South Africa", YMD, "R", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", ""),
-    "bg":       ( "Bulgarian", "Bulgaria", HYMD, "&#x043b;&#x0432;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " ", DST_UK),
+    "en_ZW":    ( "English", "Zimbabwe", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "bg":       ( "Bulgarian", "Bulgaria", DDMY, "&#x043b;&#x0432;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " ", DST_UK),
     "bs":       ( "Bosnian", "Bosnia", HYMD, "KM", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK),
     "cs":       ( "Czech", "Czech Republic", DYMD, "&#x004b;&#x010d;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "de":       ( "German", "Germany", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
@@ -134,7 +141,8 @@ locale_maps = {
     "nl_BE":    ( "Dutch", "Belgium", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "nl_BQ":    ( "Dutch", "Bonaire", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "pl":       ( "Polish", "Poland", DDMY, "&#x007a;&#x0142;", PLURAL_POLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
-    "pt":       ( "Portugese", "Portugal", HDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "pt":       ( "Portuguese", "Portugal", HDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "pt_MZ":    ( "Portuguese", "Mozambique", DMY, "MT", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", ".", "" ),
     "ru":       ( "Russian", "Russia", DDMY, "&#1056;&#1059;&#1041;.", PLURAL_SLAVIC, CURRENCY_PREFIX, 2, ",", " ", "" ),
     "sk":       ( "Slovakian", "Slovakia", DDMY, EURO, PLURAL_SLAVIC, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "sl":       ( "Slovenian", "Slovenia", DDMY, EURO, PLURAL_SLAVIC, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
@@ -155,8 +163,9 @@ def real_locale(locale = "en"):
     #   en_CA (Canada)
     #   en_GB (UK)
     if locale in ("en_AE", "en_BE", "en_BG", "en_BM", "en_BQ", "en_CH", "en_CN", "en_CY", "en_ES", 
-        "en_HK", "en_IE", "en_IN", "en_JP", "en_KH", "en_LB", "en_LU", "en_MY", "en_NA", "en_PH", 
-        "en_QA", "en_TH", "en_TW", "en_TW2", "en_VN", "en_ZA"):
+        "en_HK", "en_ID", "en_IE", "en_IN", "en_JP", "en_KE", "en_KH", "en_LB", "en_LU", "en_MU", 
+        "en_MY", "en_MZ", "en_NA", "en_PH", "en_QA", "en_TH", "en_TW", "en_TW2", "en_TZ", "en_VN", 
+        "en_ZA", "en_ZW"):
         locale = "en_GB"
     if locale in ("en_AW", "en_BH", "en_CO", "en_CR", "en_KW", "en_KY", "en_IL", "en_LB", 
         "en_MX"):
@@ -175,6 +184,9 @@ def real_locale(locale = "en"):
     # Italian locales
     if locale in ("it_CH",):
         locale = "it"
+    # Portguese locales
+    if locale in ("pt_MZ",):
+        locale = "pt"
     # Spanish locales
     if locale in ("es_CO", "es_CR", "es_EC", "es_MX"):
         locale = "es"
@@ -322,6 +334,12 @@ def get_plural_function(locale):
     """
     return get_locale_map(locale, LM_PLURAL_FUNCTION)
 
+def cint(s):
+    try:
+        return int(s)
+    except:
+        return 0
+
 def format_currency(locale, value, includeSymbol = True):
     """
     Formats a currency value to the correct number of 
@@ -384,12 +402,27 @@ def http_date(dt):
 
 def python2display(locale, d):
     """
-    Formats a python date as a display string. 'd' is
-    a Python date, return value is a display string.
+    Formats a python date as a display string. 
+    'd' is a Python date, return value is a display string.
     """
     if d is None: return ""
     try:
         return time.strftime(get_display_date_format(locale), d.timetuple())
+    except:
+        return ""
+
+def python2displaytime(locale, d):
+    """
+    Formats a python date as a display string with time info (if not midnight).
+    'd' is a Python date, return value is a display string with time info.
+    """
+    if d is None: return ""
+    try:
+        ds = time.strftime(get_display_date_format(locale), d.timetuple())
+        ts = ""
+        if str(d).find("00:00:00") == -1: 
+            return "%s %s" % (ds, format_time(d))
+        return ds
     except:
         return ""
 
@@ -443,11 +476,6 @@ def parse_time(d, t):
     """
     Parses the time t and combines it with python date d
     """
-    def cint(s):
-        try:
-            return int(s)
-        except:
-            return 0
     if d is None: return None
     tbits = t.split(":")
     hour = 0
@@ -459,6 +487,13 @@ def parse_time(d, t):
     t = datetime.time(hour, minute, second)
     d = d.combine(d, t)
     return d
+
+def remove_time(d):
+    """
+    Removes the time component of a date by setting it to midnight
+    """
+    if d is None: return d
+    return d.replace(hour=0, minute=0, second=0, microsecond=0)
 
 def yes_no(l, condition):
     if condition:
@@ -657,7 +692,7 @@ def date_diff_days(date1, date2):
     except:
         return 0
 
-def date_diff(l, date1, date2):
+def date_diff(l, date1, date2, cutoffs = "7|182|365"):
     """
     Returns a string representing the difference between two
     dates. Eg: 6 weeks, 5 months.
@@ -666,26 +701,26 @@ def date_diff(l, date1, date2):
     (datetime) date2
     """
     days = int(date_diff_days(date1, date2))
-    return format_diff(l, days)
+    return format_diff(l, days, cutoffs)
 
-def format_diff(l, days):
+def format_diff(l, days, cutoffs = "7|182|365"):
     """
     Returns a formatted diff from a number of days.
     Eg: 6 weeks, 5 months.
     """
-    if days < 0: days = 0
+    if days is None or days < 0: days = 0
     weeks = int(days / 7)
     months = int(days / 30.5)
     years = int(days / 365)
    
     # If it's less than a week, show as days
-    if days < 7:
+    if days < cint(cutoffs.split("|")[0]):
         return ntranslate(days, [ _("{plural0} day.", l), _("{plural1} days.", l), _("{plural2} days.", l), _("{plural3} days.")], l)
     # If it's 26 weeks or less, show as weeks
-    elif weeks <= 26:
+    elif days < cint(cutoffs.split("|")[1]):
         return ntranslate(weeks, [ _("{plural0} week.", l), _("{plural1} weeks.", l), _("{plural2} weeks.", l), _("{plural3} weeks.")], l)
     # If it's less than a year, show as months
-    elif days < 365:
+    elif days < cint(cutoffs.split("|")[2]):
         return ntranslate(months, [ _("{plural0} month.", l), _("{plural1} months.", l), _("{plural2} months.", l), _("{plural3} months.")], l)
     else:
         # Show as years and months

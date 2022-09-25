@@ -9,11 +9,6 @@ $(function() {
         render: function() {
             return [
                 '<div id="dialog-edit" style="display: none" title="' + html.title(_("Edit transaction")) + '">',
-                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-                '<p><span class="ui-icon ui-icon-info"></span>',
-                _("Transactions need a date and description."),
-                '</p>',
-                '</div>',
                 '<input type="hidden" id="trxid" />',
                 '<table width="100%">',
                 '<tr>',
@@ -46,6 +41,7 @@ $(function() {
                 '<td>',
                 '<a id="personlink" class="asm-embed-name" href="#"></a> ' + html.icon("right"),
                 '<a id="animallink" class="asm-embed-name" href="#"></a>',
+                '[<span id="receiptno"></span>]',
                 '</td>',
                 '</tr>',
                 '<tr id="costrow">',
@@ -113,7 +109,7 @@ $(function() {
                 '</tbody>',
                 '</table>',
                 html.content_footer(),
-                '<div id="spacer" style="height: 100px" />'
+                '<div id="spacer" style="height: 100px"></div>'
             ].join("\n");
         },
 
@@ -143,7 +139,10 @@ $(function() {
                     desc += " " + html.icon("right") + " " + 
                         '<a href="animal?id=' + t.DONATIONANIMALID + '">' +
                         t.DONATIONANIMALCODE + " - " + 
-                        t.DONATIONANIMALNAME;
+                        t.DONATIONANIMALNAME + '</a>';
+                }
+                if (t.DONATIONRECEIPTNUMBER) {
+                    desc += " [" + t.DONATIONRECEIPTNUMBER + "]";
                 }
                 desc = html.truncate(t.DESCRIPTION) + " " + desc;
                 h.push("<tr>");
@@ -204,6 +203,8 @@ $(function() {
                     $(this).closest("tr").find("td").removeClass("highlight");
                 }
             });
+
+            validate.indicator(["trxdate", "otheraccount", "description", "deposit", "withdrawal"]);
 
             let editbuttons = { };
             editbuttons[_("Save")] = async function() {
@@ -286,9 +287,10 @@ $(function() {
                 else {
                     $("#personlink").html(row.PERSONNAME);
                     $("#personlink").prop("href", "person_donations?id=" + row.PERSONID);
-                    $("#paymentrow").show();
                     $("#animallink").html(row.DONATIONANIMALCODE + " " + row.DONATIONANIMALNAME);
                     $("#animallink").prop("href", "animal_donations?id=" + row.DONATIONANIMALID);
+                    $("#receiptno").html(row.DONATIONRECEIPTNUMBER);
+                    $("#paymentrow").show();
                 }
                 if (!row.COSTANIMALNAME) {
                     $("#costrow").hide();

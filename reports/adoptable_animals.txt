@@ -2,7 +2,7 @@ Adoptable Animals
 ###
 Inventories
 ###
-34302/Any
+34501/Any rev02
 ###
 List of adoptable animals with thumbnails.
 ###
@@ -29,8 +29,7 @@ left join lksize  sz on a.Size      = sz.ID
 left join lksex   sx on a.Sex       = sx.ID
 left join species sp on a.SpeciesID = sp.ID
 where Archived = 0
-  and IsNotAvailableForAdoption = 0
-  and HasTrialAdoption = 0
+  and Adoptable=1
 order by SpeciesName, AnimalName
 ###
 $$HEADER

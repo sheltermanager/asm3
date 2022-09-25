@@ -2,7 +2,7 @@ Cost Breakdown by Animal
 ###
 Financial
 ###
-33601/Any
+34601/PostgreSQL rev09
 ###
 Costs between two dates, broken down by animal.
 ###
@@ -19,6 +19,7 @@ animal.AnimalName AS name,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalcost.CostAmount AS amt,
+'' AS costexplain,
 costtype.CostTypeName AS description1,
 animalcost.Description AS description2
 FROM animal
@@ -33,6 +34,7 @@ animal.AnimalName AS name,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animal.DailyBoardingCost * animal.DaysOnShelter AS amt,
+'(' || round(animal.DailyBoardingCost / 100.0, 2)::text || ' &times; ' || animal.DaysOnShelter::text AS costexplain,
 'Board and Food *' AS description1, '' AS description2
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
@@ -46,6 +48,7 @@ animal.AnimalName AS name,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalvaccination.Cost AS amt,
+'' AS costexplain,
 vaccinationtype.VaccinationType AS description1,
 animalvaccination.Comments AS description2
 FROM animal
@@ -60,6 +63,7 @@ animal.AnimalName AS name,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltest.Cost AS amt,
+'' AS costexplain,
 testtype.TestName AS description1,
 animaltest.Comments AS description2
 FROM animal
@@ -74,12 +78,16 @@ animal.AnimalName AS name,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalmedical.Cost AS amt,
+CASE WHEN animalmedical.CostPerTreatment Is Not Null THEN
+    '(' || round(animalmedical.CostPerTreatment / 100.0, 2)::text || ' &times; ' || (SELECT COUNT(*) FROM animalmedicaltreatment WHERE AnimalMedicalID=animalmedical.ID AND DateGiven Is Not Null)::text || ')' 
+    ELSE '' END
+    AS costexplain,
 animalmedical.TreatmentName AS description1,
 animalmedical.Comments AS description2
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
-WHERE StartDate >= '$@from$' AND StartDate <= '$@to$'
+WHERE StartDate >= '$@from$' AND StartDate <= '$@to$' AND TreatmentsGiven > 0
 
 UNION SELECT
 animaltransport.PickupDateTime AS date,
@@ -87,6 +95,7 @@ animal.AnimalName AS name,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltransport.Cost AS amt,
+'' AS costexplain,
 'Transport to' AS description1,
 owner.OwnerAddress AS description2
 FROM animal
@@ -116,7 +125,7 @@ GROUP$$
 
 $$BODY<tr>
 <td>$DATE</td>
-<td>$AMT</td>
+<td>$AMT $COSTEXPLAIN</td>
 <td>$DESCRIPTION1</td>
 <td>$DESCRIPTION2</td>
 </tr>

@@ -2,7 +2,7 @@ Monthly Figures (by species)
 ###
 Figures
 ###
-3123/MySQL
+3123/MySQL rev01
 ###
 Animal movements on and off the shelter over a monthly period.
 ###
@@ -142,7 +142,7 @@ Monthly Figures (by species)
 ###
 Figures
 ###
-3123/PostgreSQL
+3123/PostgreSQL rev01
 ###
 Animal movements on and off the shelter over a monthly period.
 ###
@@ -282,7 +282,7 @@ Monthly Figures (by type)
 ###
 Figures
 ###
-3123/MySQL
+3123/MySQL rev01
 ###
 Animal movements on and off the shelter over a monthly period by type.
 ###
@@ -422,7 +422,7 @@ Monthly Figures (by type)
 ###
 Figures
 ###
-3123/PostgreSQL
+3123/PostgreSQL rev01
 ###
 Animal movements on and off the shelter over a monthly period by type.
 ###

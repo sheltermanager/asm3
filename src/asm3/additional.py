@@ -1,8 +1,9 @@
 
 import asm3.al
+import asm3.audit
 import asm3.utils
 
-from asm3.i18n import _, python2display
+from asm3.i18n import python2display
 
 import sys
 
@@ -13,6 +14,7 @@ ANIMAL_NOTES = 3
 ANIMAL_ENTRY = 4
 ANIMAL_HEALTH = 5
 ANIMAL_DEATH = 6
+EVENT = 21
 INCIDENT_DETAILS = 16
 INCIDENT_DISPATCH = 17
 INCIDENT_OWNER = 18
@@ -31,10 +33,11 @@ WAITINGLIST_REMOVAL = 15
 
 # IN clauses
 ANIMAL_IN = "0, 2, 3, 4, 5, 6"
-PERSON_IN = "1, 7, 8"
+EVENT_IN = "21"
+FOUNDANIMAL_IN = "11, 12"
 INCIDENT_IN = "16, 17, 18, 19, 20"
 LOSTANIMAL_IN = "9, 10"
-FOUNDANIMAL_IN = "11, 12"
+PERSON_IN = "1, 7, 8"
 WAITINGLIST_IN = "13, 14, 15"
 
 # Field types
@@ -48,6 +51,9 @@ LOOKUP = 6
 MULTI_LOOKUP = 7
 ANIMAL_LOOKUP = 8
 PERSON_LOOKUP = 9
+TIME = 10
+SPONSOR = 11
+VET = 12
 
 def clause_for_linktype(linktype):
     """ Returns the appropriate clause for a link type """
@@ -56,6 +62,8 @@ def clause_for_linktype(linktype):
         inclause = PERSON_IN
     elif linktype == "incident":
         inclause = INCIDENT_IN
+    elif linktype == "event":
+        inclause = EVENT_IN
     elif linktype == "lostanimal":
         inclause = LOSTANIMAL_IN
     elif linktype == "foundanimal":
@@ -63,6 +71,16 @@ def clause_for_linktype(linktype):
     elif linktype == "waitinglist":
         inclause = WAITINGLIST_IN
     return inclause
+
+def table_for_linktype(linktype):
+    """ Returns the parent table for an additional link type """
+    if linktype == "incident":
+        return "animalcontrol"
+    elif linktype == "lostanimal":
+        return "animallost"
+    elif linktype == "foundanimal":
+        return "animalfound"
+    return linktype
 
 def get_additional_fields(dbo, linkid, linktype = "animal"):
     """
@@ -75,8 +93,10 @@ def get_additional_fields(dbo, linkid, linktype = "animal"):
     inclause = clause_for_linktype(linktype)
     return dbo.query("SELECT af.*, a.Value, " \
         "CASE WHEN af.FieldType = 8 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT AnimalName FROM animal WHERE %s = a.Value) ELSE '' END AS AnimalName, " \
-        "CASE WHEN af.FieldType = 9 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
-        "FROM additionalfield af LEFT OUTER JOIN additional a ON af.ID = a.AdditionalFieldID " \
+        "CASE WHEN af.FieldType IN (9, 11, 12) AND a.Value <> '' AND a.Value <> '0' " \
+            "THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
+        "FROM additionalfield af " \
+        "LEFT OUTER JOIN additional a ON af.ID = a.AdditionalFieldID " \
         "AND a.LinkID = %d " \
         "WHERE af.LinkType IN (%s) " \
         "ORDER BY af.DisplayIndex" % ( dbo.sql_cast_char("animal.ID"), dbo.sql_cast_char("owner.ID"), linkid, inclause ))
@@ -108,6 +128,17 @@ def get_field_definitions(dbo, linktype = "animal"):
     inclause = clause_for_linktype(linktype)
     return dbo.query("SELECT * FROM additionalfield WHERE LinkType IN (%s) ORDER BY DisplayIndex" % inclause)
 
+def get_ids_for_fieldtype(dbo, fieldtype):
+    """
+    Returns a list of ID numbers for additional field definitions of a particular field type 
+    (used by the update_merge functions below)
+    """
+    rows = dbo.query("SELECT ID FROM additionalfield WHERE FieldType=%s" % fieldtype)
+    out = []
+    for r in rows:
+        out.append(str(r.ID))
+    return out
+
 def get_fields(dbo):
     """
     Returns all additional fields 
@@ -130,11 +161,16 @@ def append_to_results(dbo, rows, linktype = "animal"):
     for r in rows:
         add = get_additional_fields(dbo, r.id, linktype)
         for af in add:
-            if af.fieldname.find("&") != -1:
+            tn = af.fieldname.upper()
+            if tn.find("&") != -1:
                 # We've got unicode chars for the tag name - not allowed
                 r["ADD" + str(af.id)] = af.value
+            elif tn in r:
+                # This key already exists - do not allow a collision. 
+                # This happened where a user named a field ID and it broke animal_view_adoptable_js
+                r["ADD%s" % tn] = af.value
             else:
-                r[af.fieldname.upper()] = af.value
+                r[tn] = af.value
     return rows
 
 def insert_field_from_form(dbo, username, post):
@@ -175,6 +211,24 @@ def update_field_from_form(dbo, username, post):
         "DisplayIndex":     post.integer("displayindex")
     })
 
+def update_merge_animal(dbo, oldanimalid, newanimalid):
+    """
+    When we merge an animal record, we want to update all additional fields that are 
+    of type ANIMAL_LOOKUP and have a value matching oldanimalid to newanimalid.
+    """
+    afs = get_ids_for_fieldtype(dbo, ANIMAL_LOOKUP)
+    if len(afs) == 0: afs = [ "0" ]
+    dbo.execute("UPDATE additional SET Value='%s' WHERE Value='%s' AND AdditionalFieldID IN (%s)" % (newanimalid, oldanimalid, ",".join(afs)))
+
+def update_merge_person(dbo, oldpersonid, newpersonid):
+    """
+    When we merge a person record, we want to update all additional fields that are 
+    of type PERSON_LOOKUP and have a value matching oldpersonid to newpersonid.
+    """
+    afs = get_ids_for_fieldtype(dbo, PERSON_LOOKUP)
+    if len(afs) == 0: afs = [ "0" ]
+    dbo.execute("UPDATE additional SET Value='%s' WHERE Value='%s' AND AdditionalFieldID IN (%s)" % (newpersonid, oldpersonid, ",".join(afs)))
+
 def delete_field(dbo, username, fid):
     """
     Deletes the selected additional field, along with all data held by it.
@@ -195,7 +249,7 @@ def insert_additional(dbo, linktype, linkid, additionalfieldid, value):
     except Exception as err:
         asm3.al.error("Failed saving additional field: %s" % err, "additional.insert_additional", dbo, sys.exc_info())
 
-def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=False):
+def save_values_for_link(dbo, post, username, linkid, linktype = "animal", setdefaults=False):
     """
     Saves incoming additional field values from a record.
     Clears existing additional field values before saving (this is because forms
@@ -207,9 +261,8 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=Fal
     Keys of either a.MANDATORY.ID can be used (ASM internal forms)
         or keys of the form additionalFIELDNAME (ASM online forms)
     """
-    l = dbo.locale
-
     dbo.delete("additional", "LinkType IN (%s) AND LinkID=%s" % (clause_for_linktype(linktype), linkid))
+    audits = []
 
     for f in get_field_definitions(dbo, linktype):
 
@@ -219,6 +272,7 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=Fal
         if key not in post and key2 not in post:
             if setdefaults and f.DEFAULTVALUE and f.DEFAULTVALUE != "": 
                 insert_additional(dbo, f.LINKTYPE, linkid, f.ID, f.DEFAULTVALUE)
+                audits.append("%s='%s'" % (f.FIELDNAME, f.DEFAULTVALUE))
             continue
 
         elif key not in post: key = key2
@@ -229,12 +283,14 @@ def save_values_for_link(dbo, post, linkid, linktype = "animal", setdefaults=Fal
         elif f.fieldtype == MONEY:
             val = str(post.integer(key))
         elif f.fieldtype == DATE:
-            if len(val.strip()) > 0 and post.date(key) is None:
-                raise asm3.utils.ASMValidationError(_("Additional date field '{0}' contains an invalid date.", l).format(f.fieldname))
             val = python2display(dbo.locale, post.date(key))
+        audits.append("%s='%s'" % (f.FIELDNAME, val))
         insert_additional(dbo, f.LINKTYPE, linkid, f.ID, val)
 
-def merge_values_for_link(dbo, post, linkid, linktype = "animal"):
+    if len(audits) > 0:
+        asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (table_for_linktype(linktype), linkid), ", ".join(audits))
+
+def merge_values_for_link(dbo, post, username, linkid, linktype = "animal"):
     """
     Saves incoming additional field values. Only updates the 
     additional fields that are present in the post object and leaves the rest alone. 
@@ -245,6 +301,7 @@ def merge_values_for_link(dbo, post, linkid, linktype = "animal"):
     Keys of either a.MANDATORY.ID can be used (ASM internal forms)
         or keys of the form additionalFIELDNAME (ASM online forms)
     """
+    audits = []
     for f in get_field_definitions(dbo, linktype):
 
         key = "a.%s.%s" % (f.mandatory, f.id)
@@ -262,3 +319,8 @@ def merge_values_for_link(dbo, post, linkid, linktype = "animal"):
                 val = python2display(dbo.locale, post.date(key))
             dbo.delete("additional", "LinkID=%s AND AdditionalFieldID=%s" % (linkid, f.ID))
             insert_additional(dbo, f.LINKTYPE, linkid, f.ID, val)
+            audits.append("%s='%s'" % (f.FIELDNAME, val))
+
+    if len(audits) > 0:
+        asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (table_for_linktype(linktype), linkid), ", ".join(audits))
+

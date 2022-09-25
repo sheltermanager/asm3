@@ -11,15 +11,17 @@ $(function() {
                 add_title: _("Add medical profile"),
                 edit_title: _("Edit medical profile"),
                 edit_perm: 'mcam',
-                helper_text: _("Medical profiles need a profile name, treatment, dosage and frequencies."),
                 close_on_ok: true,
                 columns: 1,
                 width: 800,
                 fields: [
-                    { json_field: "PROFILENAME", post_field: "profilename", label: _("Profile"), type: "text", validation: "notblank" },
-                    { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", validation: "notblank" },
-                    { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", validation: "notblank" },
-                    { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency" },
+                    { json_field: "PROFILENAME", post_field: "profilename", label: _("Profile"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
+                    { json_field: "TREATMENTNAME", post_field: "treatmentname", label: _("Name"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
+                    { json_field: "DOSAGE", post_field: "dosage", label: _("Dosage"), type: "text", classes: "asm-doubletextbox", validation: "notblank" },
+                    { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency",
+                        callout: _("The total cost of all treatments.") },
+                    { json_field: "COSTPERTREATMENT", post_field: "costpertreatment", label: _("Cost per Treatment"), type: "currency",
+                        callout: _("If this field has a value, the cost field above will be automatically calculated after each treatment is given.") },
                     { post_field: "singlemulti", label: _("Frequency"), type: "select",  
                         options: '<option value="0">' + _("Single Treatment") + '</option>' +
                         '<option value="1" selected="selected">' + _("Multiple Treatments") + '</option>' },
@@ -73,10 +75,16 @@ $(function() {
                     }
                 },
                 columns: [
-                    { field: "PROFILENAME", display: _("Name"), initialsort: true },
-                    { field: "TREATMENTNAME", display: _("Treatment") },
+                    { field: "PROFILENAME", display: _("Profile"), initialsort: true },
+                    { field: "TREATMENTNAME", display: _("Name") },
                     { field: "DOSAGE", display: _("Dosage") },
-                    { field: "COST", display: _("Cost"), formatter: tableform.format_currency },
+                    { field: "COST", display: _("Cost"), 
+                        formatter: function(row) {
+                            if (row.COSTPERTREATMENT) { return format.currency(row.COSTPERTREATMENT); }
+                            return format.currency(row.COST);
+                        },
+                        hideif: function() { return !config.bool("ShowCostAmount"); }
+                    },
                     { field: "NAMEDFREQUENCY", display: _("Frequency") },
                     { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]

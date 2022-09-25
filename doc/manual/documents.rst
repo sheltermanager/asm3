@@ -44,6 +44,9 @@ installed.
 
 .. image:: images/html_wp_to_pdf.png
 
+PDF Directives
+--------------
+
 You can embed directives in your document to give some hints to the PDF engine.
 These should take the form of HTML comments, embedded in <!-- and -->, and can
 be inserted by going to Tools->Source Code in the document editor::
@@ -70,9 +73,9 @@ Margins are in the order top, bottom, left then right.
 
 The PDF engine will scale the document to fit the page horizontally based on the
 widest element in it. Use the zoom directive to override this behaviour and
-specify a scaling amount::
+specify a scaling amount (this sets a zoom CSS value on the body element)::
 
-    <!-- pdf zoom 0.5 end -->
+    <!-- pdf zoom 130% end -->
 
 Most of these options are to wkhtmltopdf, a PDF renderer based on webkit (the
 engine used by the Chrome and Safari web browsers). An alternative, simpler PDF
@@ -117,14 +120,15 @@ not need to buy expensive custom hardware.
 
 To control the size and location of the signature:
 
-* insert an image where you'd like the signature to appear 
-* When the insert image dialog requests the image source, instead of a URL,
-  enter "signature:placeholder" without the quotes.
-* Choose a size to constrain the image to - eg: 150 x 75
-* The document signing module will insert the signature inside your image
-  when the document is signed.
+* Add the token <<Signature>> where you'd like the signature to appear. 
+* You can set a pixel width of 100, 150, 200 or 300 (the default is 150) in the
+  token, eg: <<Signature300>>
+* When a document is generated from your template, a placeholder image of the
+  correct size will appear where you inserted the token.
+* The document signing module will replace the placeholder image with the
+  signature after the document is signed.
 
-If your document template does not contain a signature placeholder, the
+If your document template does not contain a signature token, the
 signature will be attached to the document as a footer along with the date and
 time the document was signed.
 
@@ -176,11 +180,8 @@ the top right of the screen).
 .. image:: images/sign_user.png
 
 You can add a placeholder for the current user's signature in your document
-templates with the <<UserSignature>> wordkey. This will insert the signature
-at full size into the document as an image.
+templates with the <<UserSignature>> wordkey. This will insert the signature at
+150px width into the document as an image. You can use the same 100, 150, 200
+or 300 suffix to control the size of the user signature.
 
-If you'd like to control the size and placement of the user's signature in
-a similar manner to normal signatures, you can insert an image and
-when prompted for the image source use "signature:user" without the
-quotes.
 

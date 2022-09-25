@@ -2,37 +2,30 @@ Vaccination Diary (On Shelter by Location)
 ###
 Diary
 ###
-33012/Any
+33012/Any rev03
 ###
 Vaccinations required to date for shelter animals, broken down by location.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName, a.ShelterLocationUnit, 
-v.VaccinationType, av.DateRequired, av.Comments,
-CASE
-WHEN a.ActiveMovementType = 2 THEN (SELECT MovementType FROM lksmovementtype WHERE ID = a.ActiveMovementType)
-ELSE il.LocationName END AS DisplayLocationName
+a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation,
+v.VaccinationType, av.DateRequired, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animalvaccination av ON a.ID = av.AnimalID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
-INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE av.DateOfVaccination Is Null
 AND av.DateRequired <= '$CURRENT_DATE$'
 AND a.Archived = 0
-ORDER BY 
-CASE
-WHEN a.ActiveMovementType = 2 THEN (SELECT MovementType FROM lksmovementtype WHERE ID = a.ActiveMovementType)
-ELSE il.LocationName END, av.DateRequired
+ORDER BY a.DisplayLocation, av.DateRequired
 ###
 $$HEADER
 HEADER$$
 
-$$GROUP_DisplayLocationName
+$$GROUP_DisplayLocation
 $$HEAD
-<h2>$DISPLAYLOCATIONNAME</h2>
+<h2>$DISPLAYLOCATION</h2>
 <table border=1><tr>
 <td><b>Code</b></td>
 <td><b>Name</b></td>
@@ -64,38 +57,31 @@ Vaccination Diary (On Shelter by Location, Date Range)
 ###
 Diary
 ###
-33012/Any
+33012/Any rev02
 ###
 Vaccinations required between two dates for shelter animals, broken down by location.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName, a.ShelterLocationUnit, 
-v.VaccinationType, av.DateRequired, av.Comments,
-CASE
-WHEN a.ActiveMovementType = 2 THEN (SELECT MovementType FROM lksmovementtype WHERE ID = a.ActiveMovementType)
-ELSE il.LocationName END AS DisplayLocationName
+a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation, 
+v.VaccinationType, av.DateRequired, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animalvaccination av ON a.ID = av.AnimalID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
-INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE av.DateOfVaccination Is Null
 AND av.DateRequired >= '$ASK DATE Enter the from date$'
 AND av.DateRequired <= '$ASK DATE Enter the to date$'
 AND (a.Archived = 0 OR a.ActiveMovementType = 2)
-ORDER BY 
-CASE
-WHEN a.ActiveMovementType = 2 THEN (SELECT MovementType FROM lksmovementtype WHERE ID = a.ActiveMovementType)
-ELSE il.LocationName END, av.DateRequired
+ORDER BY a.DisplayLocation, av.DateRequired
 ###
 $$HEADER
 HEADER$$
 
-$$GROUP_DisplayLocationName
+$$GROUP_DisplayLocation
 $$HEAD
-<h2>$DISPLAYLOCATIONNAME</h2>
+<h2>$DISPLAYLOCATION</h2>
 <table border=1><tr>
 <td><b>Code</b></td>
 <td><b>Name</b></td>

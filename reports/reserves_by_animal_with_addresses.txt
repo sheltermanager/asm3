@@ -1,0 +1,62 @@
+Reservations by Animal with Addresses
+###
+Movements
+###
+Any rev01
+###
+Reservations for a particular animal with the name/address of the potential owner.
+###
+en
+###
+SELECT ShelterCode, AnimalName, DateBroughtIn, ReservationDate, 
+adoption.Comments, 
+species.SpeciesName,
+animaltype.AnimalType AS theType,
+animal.BreedName,
+no.OwnerName, no.OwnerAddress,
+no.OwnerTown, no.OwnerCounty,
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
+FROM adoption
+INNER JOIN animal ON adoption.AnimalID = animal.ID
+INNER JOIN owner no ON adoption.OwnerID = no.ID
+INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
+INNER JOIN species ON species.ID = animal.SpeciesID
+WHERE MovementType = 0 AND ReservationCancelledDate Is Null
+AND AnimalID = $ASK ANIMAL$ 
+ORDER BY ReservationDate
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Breed</b></td>
+<td><b>Entered Shelter</b></td>
+<td><b>Reserved On</b></td>
+<td><b>Reserved By</b></td>
+<td><b>Comments</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$theType</td>
+<td>$BreedName</td>
+<td>$DateBroughtIn</td>
+<td>$RESERVATIONDATE</td>
+<td><i>$OwnerName</i><br/>
+$OwnerAddress<br/>
+$OwnerTown<br/>
+$OwnerCounty<br/>
+$OwnerPostcode<br/>
+$EmailAddress<br/>
+H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

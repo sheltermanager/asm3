@@ -261,6 +261,9 @@ Size
 RabiesTag 
     VARCHAR 
     The rabies tag field 
+Adoptable
+    INTEGER
+    1 if the animal is adoptable according to publishing rules
 Archived 
     INTEGER 
     1 if the animal is off shelter now 

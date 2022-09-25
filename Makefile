@@ -93,26 +93,57 @@ compilepy:
 	flake8 --config=scripts/flake8 src/*.py src/asm3/*.py src/asm3/dbms/*.py src/asm3/publishers/*.py src/asm3/paymentprocessor/*.py
 
 smcom-dev: clean version schema
-	@echo "[smcom dev us17] ===================="
+	@echo "[smcom dev eur04b] ===================="
 	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_us17"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev invalidatecache only_eur03b only_eur04b"
 
 smcom-dev-all: clean version schema
 	@echo "[smcom dev all] ======================"
 	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
 	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev"
 
+smcom-dev-aus: clean version schema
+	@echo "[smcom dev AUSTRALIA] ======================"
+	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_aus01b only_aus02b only_aus03c"
+
+smcom-dev-eur: clean version schema
+	@echo "[smcom dev EUROPE] ======================"
+	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_eur01b only_eur02b only_eur03b only_eur04b"
+
 smcom-stable: clean version rollup schema
 	@echo "[smcom stable] ======================="
 	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it on a schedule
 	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
 	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable invalidatecache"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable invalidatecache restartapache"
+
+smcom-stable-asia: clean version rollup schema
+	@echo "[smcom stable ASIA] ======================="
+	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it on a schedule
+	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
+	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable invalidatecache restartapache only_asia01b"
+
+smcom-stable-aus: clean version rollup schema
+	@echo "[smcom stable AUSTRALIA] ======================="
+	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it on a schedule
+	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
+	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable invalidatecache restartapache only_aus01b only_aus02b only_aus03c"
+
+smcom-stable-eur: clean version rollup schema
+	@echo "[smcom stable EUROPE] ======================="
+	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it on a schedule
+	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
+	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable invalidatecache restartapache only_eur01b only_eur02b only_eur03b only_eur04b"
 
 smcom-stable-dumpsessions: clean version rollup schema
 	@echo "[smcom stable dumpsessions] ==================="
 	rsync --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable dumpsessions invalidatecache"
+	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable dumpsessions invalidatecache restartapache"
 
 smcom-stable-tgz: clean version rollup schema
 	@echo "[smcom stable tgz] ======================"
@@ -152,11 +183,10 @@ tests:
 
 deps:
 	@echo "[deps] ========================="
-	apt-get install python3 python3-pip python3-pil python3-mysqldb python3-psycopg2
+	apt-get install python3 python3-pip python3-cheroot python3-pil python3-mysqldb python3-psycopg2
 	apt-get install python3-memcache python3-requests python3-reportlab python3-xhtml2pdf
-	apt-get install python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra
+	apt-get install python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra latexmk
 	apt-get install exuberant-ctags flake8 imagemagick wkhtmltopdf nodejs npm
-	apt-get install python3-webpy # See README for fix
 	npm install
 
 

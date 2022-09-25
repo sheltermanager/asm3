@@ -38,7 +38,6 @@ $(function() {
                 add_title: _("Add form field"),
                 edit_title: _("Edit form field"),
                 edit_perm: 'eof',
-                helper_text: _("Online form fields need a name and label."),
                 close_on_ok: false,
                 columns: 1,
                 width: 550,
@@ -65,7 +64,7 @@ $(function() {
                     try {
                         await tableform.dialog_show_edit(dialog, row, { onload: onlineform.check_controls });
                         tableform.fields_update_row(dialog.fields, row);
-                        await tableform.fields_post(dialog.fields, "mode=update&formfieldid=" + row.ID, "onlineform");
+                        await tableform.fields_post(dialog.fields, "mode=update&formid=" + controller.formid + "&formfieldid=" + row.ID, "onlineform");
                         tableform.table_update(table);
                         tableform.dialog_close();
                     }
@@ -105,6 +104,15 @@ $(function() {
                             tableform.dialog_enable_buttons();
                         }
                     } 
+                },
+                { id: "reindex", text: _("Re-Index"), icon: "refresh", enabled: "always", perm: "eof",
+                    click: async function() {
+                        await tableform.show_okcancel_dialog("#dialog-reindex", _("Re-Index"), { width: 500 });
+                        tableform.buttons_default_state(buttons);
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("onlineform", "mode=reindex&formid=" + controller.formid);
+                        common.route_reload();
+                    }
                 },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "eof", 
                     click: async function() { 
@@ -154,6 +162,10 @@ $(function() {
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += html.content_header(_("Online Form: {0}").replace("{0}", controller.formname));
+            s += '<div id="dialog-reindex" style="display: none" title="' + html.title(_("Re-Index")) + '">' +
+                '<p><span class="ui-icon ui-icon-alert"></span> ' + 
+                _("This will recalculate display indexes in increments of 10 for every field in the form.") +
+                '</p></div>';
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();
@@ -182,6 +194,7 @@ $(function() {
         },
 
         destroy: function() {
+            common.widget_destroy("#dialog-reindex");
             tableform.dialog_destroy();
         },
 

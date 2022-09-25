@@ -2,7 +2,7 @@ Non-Neutered/Spayed Shelter Animals
 ###
 Inventories
 ###
-Any
+Any rev02
 ###
 Shelter animals who have not been neutered/spayed.
 ###
@@ -20,6 +20,7 @@ INNER JOIN lksex s ON s.ID = a.Sex
 LEFT OUTER JOIN adoption ad ON a.ActiveMovementID = ad.ID
 LEFT OUTER JOIN owner o ON o.ID = ad.OwnerID
 WHERE a.Neutered = 0 AND a.Archived = 0 
+AND a.SpeciesID IN (1,2)
 ORDER BY t.AnimalType, a.AnimalName
 ###
 $$HEADER

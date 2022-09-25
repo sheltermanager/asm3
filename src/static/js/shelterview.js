@@ -166,7 +166,7 @@ $(function() {
                         let validunit = false;
                         $.each(l.UNITS.split(","), function(iu, u) {
                             u = common.trim(u);
-                            if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATIONUNIT == u) {
+                            if (u && a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATIONUNIT == u) {
                                 validunit = true;
                                 return false;
                             }
@@ -187,7 +187,7 @@ $(function() {
             // Load the whole thing into the DOM
             $("#viewcontainer").html(h.join("\n"));
 
-            if (config.bool("ShelterViewDragDrop") && !asm.mobileapp) {
+            if (config.bool("ShelterViewDragDrop") && !asm.mobileapp && !common.browser_is.mobile) {
                 $(".animaldragtarget").draggable();
                 $(".unitdroptarget").droppable({
                     over: function(event, ui) {
@@ -225,8 +225,11 @@ $(function() {
         /**
          * Renders a specialised shelter view that shows all fosterers with their
          * capacity and allows dragging/dropping between fosterers.
+         * mode = 0: all fosterers are shown
+         * mode = 1: only fosterers with at least one animal in their care shown
+         * mode = 2: only fosterers with space are shown
          */
-        render_foster_available: function(activeonly) {
+        render_foster_available: function(mode) {
             let h = [];
             $.each(controller.fosterers, function(ip, p) {
                 // Output the fosterers
@@ -240,7 +243,8 @@ $(function() {
                 });
                 if (!capacity) { capacity = 0; }
                 if (nofosters < capacity) { extraclasses = "asm-shelterview-unit-available"; }
-                if (nofosters == 0 && activeonly) { return; }
+                if (nofosters == 0 && mode == 1) { return; }
+                if (nofosters >= capacity && mode == 2) { return; }
                 h.push('<p class="asm-menu-category"><a href="' + loclink + '">' + 
                     p.OWNERNAME + ' (' + nofosters + '/' + capacity + ')</a> ' +
                     '<span class="asm-search-personflags">' + edit_header.person_flags(p) + '</span>' + 
@@ -253,7 +257,7 @@ $(function() {
             // Load the whole thing into the DOM
             $("#viewcontainer").html(h.join("\n"));
 
-            if (config.bool("ShelterViewDragDrop") && !asm.mobileapp) {
+            if (config.bool("ShelterViewDragDrop") && !asm.mobileapp && !common.browser_is.mobile) {
                 $(".animaldragtarget").draggable();
                 $(".persondroptarget").droppable({
                     over: function(event, ui) {
@@ -410,7 +414,7 @@ $(function() {
             $("#viewcontainer").html(h.join("\n"));
 
             // Handle drag and drop if enabled for this view
-            if (dragdrop && config.bool("ShelterViewDragDrop") && !asm.mobileapp) {
+            if (dragdrop && config.bool("ShelterViewDragDrop") && !asm.mobileapp && !common.browser_is.mobile) {
                 $(".animaldragtarget").draggable();
                 $(".locationdroptarget").droppable({
                     over: function(event, ui) {
@@ -482,7 +486,7 @@ $(function() {
                 this.render_view("ADOPTIONCOORDINATORNAME", "", "ADOPTIONCOORDINATORNAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "coordinatorfosterer") {
-                this.render_view("ADOPTIONCOORDINATORNAME", "CURRENTOWNERNAME", "ADOPTIONCOORDINATORNAME,CURRENTOWNERNAME,ANIMALNAME", false, false);
+                this.render_view("ADOPTIONCOORDINATORNAME", "CURRENTOWNERNAME", "ADOPTIONCOORDINATORNAME,CURRENTOWNERNAME,SPECIESNAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "entrycategory") {
                 this.render_view("ENTRYREASONNAME", "", "ENTRYREASONNAME,ANIMALNAME", false, false);
@@ -491,10 +495,13 @@ $(function() {
                 this.render_flags();
             }
             else if (viewmode == "fosterer") {
-                this.render_foster_available();
+                this.render_foster_available(0);
             }
             else if (viewmode == "fostereractive") {
-                this.render_foster_available(true);
+                this.render_foster_available(1);
+            }
+            else if (viewmode == "fostererspace") {
+                this.render_foster_available(2);
             }
             else if (viewmode == "goodwith") {
                 this.render_goodwith();
@@ -510,6 +517,9 @@ $(function() {
             }
             else if (viewmode == "locationspecies") {
                 this.render_view("DISPLAYLOCATIONNAME", "SPECIESNAME", "DISPLAYLOCATIONNAME,SPECIESNAME,ANIMALNAME", true, false);
+            }
+            else if (viewmode == "locationspeciesage") {
+                this.render_view("DISPLAYLOCATIONNAME", "SPECIESNAME", "DISPLAYLOCATIONNAME,SPECIESNAME,-DATEOFBIRTH,ANIMALNAME", true, false);
             }
             else if (viewmode == "locationtype") {
                 this.render_view("DISPLAYLOCATIONNAME", "ANIMALTYPENAME", "DISPLAYLOCATIONNAME,ANIMALTYPENAME,ANIMALNAME", true, false);
@@ -532,6 +542,9 @@ $(function() {
             else if (viewmode == "sexspecies") {
                 this.render_view("SEXNAME", "SPECIESNAME", "SEXNAME,SPECIESNAME,ANIMALNAME", false, false);
             }
+            else if (viewmode == "site") {
+                this.render_view("SITENAME", "DISPLAYLOCATIONNAME", "SITENAME,DISPLAYLOCATIONNAME,ANIMALNAME", false, false);
+            }
             else if (viewmode == "species") {
                 this.render_view("SPECIESNAME", "", "SPECIESNAME,ANIMALNAME", false, false);
             }
@@ -551,8 +564,15 @@ $(function() {
                 this.render_view("ADOPTIONSTATUS", "SPECIESNAME", "ADOPTIONSTATUS,SPECIESNAME,ANIMALNAME", false, true);
             }
             else if (viewmode == "type") {
-                this.render_view("ANIMALTYPENAME", "", "ANIMALTYPENAME,ANIMALNAME", false, true);
+                this.render_view("ANIMALTYPENAME", "", "ANIMALTYPENAME,ANIMALNAME", false, false);
             }
+            else if (viewmode == "unit") {
+                this.render_view("SHELTERLOCATIONUNIT", "", "SHELTERLOCATIONUNIT,ANIMALNAME", false, false, function(a) { return a.SHELTERLOCATIONUNIT != ""; });
+            }
+            else if (viewmode == "unitspecies") {
+                this.render_view("SHELTERLOCATIONUNIT", "SPECIESNAME", "SHELTERLOCATIONUNIT,SPECIESNAME,ANIMALNAME", false, false, function(a) { return a.SHELTERLOCATIONUNIT != ""; });
+            }
+
             // Add target attributes to the rendered animal links if we're opening records in a new tab
             common.inject_target();
         },
@@ -600,10 +620,12 @@ $(function() {
             h.push('<option value="flags">' + _("Flags") + '</option>');
             h.push('<option value="fosterer">' + _("Fosterer") + '</option>');
             h.push('<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>');
+            h.push('<option value="fostererspace">' + _("Fosterer (Space Available)") + '</option>');
             h.push('<option value="goodwith">' + _("Good With") + '</option>');
             h.push('<option value="location">' + _("Location") + '</option>');
             h.push('<option value="locationbreed">' + _("Location and Breed") + '</option>');
             h.push('<option value="locationspecies">' + _("Location and Species") + '</option>');
+            h.push('<option value="locationspeciesage">' + _("Location and Species (Age)") + '</option>');
             h.push('<option value="locationtype">' + _("Location and Type") + '</option>');
             h.push('<option value="locationunit">' + _("Location and Unit") + '</option>');
             h.push('<option value="locationnv">' + _("Location (No Virtual)") + '</option>');
@@ -612,6 +634,7 @@ $(function() {
             h.push('<option value="retailer">' + _("Retailer") + '</option>');
             h.push('<option value="sex">' + _("Sex") + '</option>');
             h.push('<option value="sexspecies">' + _("Sex and Species") + '</option>');
+            if (config.bool("MultiSiteEnabled")) { h.push('<option value="site">' + _("Site") + '</option>'); }
             h.push('<option value="species">' + _("Species") + '</option>');
             h.push('<option value="speciesbreed">' + _("Species and Breed") + '</option>');
             h.push('<option value="speciescode">' + _("Species and Code") + '</option>');
@@ -619,6 +642,8 @@ $(function() {
             h.push('<option value="status">' + _("Status") + '</option>');
             h.push('<option value="statusspecies">' + _("Status and Species") + '</option>');
             h.push('<option value="type">' + _("Type") + '</option>');
+            h.push('<option value="unit">' + _("Unit") + '</option>');
+            h.push('<option value="unitspecies">' + _("Unit and Species") + '</option>');
             h.push('</select>');
             h.push('<p class="asm-menu-category">' + config.str("Organisation") + ' (' + controller.animals.length + ')</p>');
             h.push('<div id="viewcontainer"></div>');

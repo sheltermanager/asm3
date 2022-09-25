@@ -77,8 +77,11 @@ $(function() {
                 return true;
             };
 
+            validate.indicator([ "logdate" ]);
+
             // Set default values
             $("#logdate").datepicker("setDate", new Date());
+            $("#logtime").val(format.time(new Date()));
             $("#type").select("value", config.integer("AFDefaultLogType"));    
 
             // Remove any retired lookups from the lists

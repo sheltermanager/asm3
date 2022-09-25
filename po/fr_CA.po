@@ -5479,7 +5479,7 @@ msgstr "Aller"
 
 #: main.js
 msgid ""
-"Go the lookup data screen and add/remove breeds, species and animal types "
+"Go to the lookup data screen and add/remove breeds, species and animal types "
 "according to the animals your shelter deals with."
 msgstr ""
 "Aller à l'écran de recherche de données et ajouter/supprimer des races, des "
@@ -5488,14 +5488,14 @@ msgstr ""
 
 #: main.js
 msgid ""
-"Go the options screen and set your shelter's contact details and other "
+"Go to the options screen and set your shelter's contact details and other "
 "settings."
 msgstr ""
 "Aller à l'écran des options et définissez les coordonnées de votre refuge et "
 "autres paramètres."
 
 #: main.js
-msgid "Go the system users screen and add user accounts for your staff."
+msgid "Go to the system users screen and add user accounts for your staff."
 msgstr ""
 "Aller à l'écran des utilisateurs du système et ajouter des comptes "
 "utilisateurs pour votre personnel."

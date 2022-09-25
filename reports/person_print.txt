@@ -69,6 +69,9 @@ $$BODY
 <h2>Investigation</h2>
 {SUBREPORT.SUBREPORT_PersonPrintInvestigation.PERSONID}
 
+<h2>Licenses</h2>
+{SUBREPORT.SUBREPORT_PersonPrintLicence.PERSONID}
+
 <h2>Payments</h2>
 {SUBREPORT.SUBREPORT_PersonPrintDonation.PERSONID}
 
@@ -107,6 +110,26 @@ $$FOOTER
 </table>
 FOOTER$$
 +++
+SUBREPORT_PersonPrintLicence
++++
+SELECT ol.*, lt.LicenceTypeName, a.AnimalName, a.ShelterCode
+FROM ownerlicence ol 
+INNER JOIN licencetype lt ON lt.ID=ol.LicenceTypeID
+LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID
+WHERE ol.OwnerID = $PARENTKEY$
+ORDER BY ol.IssueDate
++++
+$$HEADER
+<table>
+<tr><th>Number</th><th>Type</th><th>Animal</th><th>Issued</th><th>Expires</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$LICENCENUMBER</td><td>$LICENCETYPENAME</td><td><b>$ANIMALNAME</b> - $SHELTERCODE</td><td>$ISSUEDATE</td><td>$EXPIRYDATE</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
 SUBREPORT_PersonPrintDonation
 +++
 SELECT a.AnimalName, a.ShelterCode, 
@@ -115,6 +138,7 @@ FROM ownerdonation od
 INNER JOIN donationtype dt ON dt.ID = od.DonationTypeID
 LEFT OUTER JOIN animal a ON od.AnimalID = a.ID
 WHERE od.OwnerID = $PARENTKEY$
+ORDER BY od.Date
 +++
 $$HEADER
 <table>

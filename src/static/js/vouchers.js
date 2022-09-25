@@ -11,7 +11,6 @@ $(function() {
                 add_title: _("Add voucher"),
                 edit_title: _("Edit voucher"),
                 edit_perm: 'vcov',
-                helper_text: _("Vouchers need an issue and expiry date."),
                 close_on_ok: false,
                 columns: 1,
                 width: 550,
@@ -132,8 +131,9 @@ $(function() {
                 { id: "offset", type: "dropdownfilter", 
                     options: [
                         "i31|" + _("Issued in last month"),
-                        "p31|" + _("Presented in last month"),
-                        "e31|" + _("Expiring in next month") 
+                        "e31|" + _("Expiring in next month"),
+                        "p31|" + _("Redeemed in last month"),
+                        "a0|" + _("Unredeemed")
                     ],
                     click: function(selval) {
                         common.route(controller.name + "?offset=" + selval);

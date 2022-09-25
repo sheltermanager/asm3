@@ -1,10 +1,10 @@
-Traps currently on loan
+Equipment currently on loan
 ###
 Animal Control
 ###
 33307/Any
 ###
-Traps that are currently loaned out
+Equipment that is currently loaned out
 ###
 en
 ###

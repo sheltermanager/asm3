@@ -111,6 +111,8 @@ $(function() {
                 return true;
             };
 
+            validate.indicator([ "animal", "person", "reservationdate" ]);
+
             // Callback when animal is changed
             $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
               
@@ -149,8 +151,10 @@ $(function() {
                     rec = jQuery.parseJSON(data)[0];
          
                     // Default giftaid if the person is registered
-                    $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
-                    $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
+                    if (common.has_permission("oaod")) {
+                        $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
+                        $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
+                    }
 
                     // Owner banned?
                     if (rec.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
@@ -187,7 +191,9 @@ $(function() {
             });
 
             // Payments
-            $("#payment").payments({ controller: controller });
+            if (common.has_permission("oaod")) {
+                $("#payment").payments({ controller: controller });
+            }
 
             $("#ownerwarn").hide();
             $("#notonshelter").hide();
@@ -204,7 +210,7 @@ $(function() {
             $("#reservationstatus").select("value", config.str("AFDefaultReservationStatus"));
 
             // Remove any retired lookups from the lists
-            $(".asm-selectbox").select("removeRetiredOptions");
+            $(".asm-selectbox").select("removeRetiredOptions", "all");
 
             // If we aren't taking payments on this screen, disable both
             if (!config.bool("DonationOnMoveReserve")) { 

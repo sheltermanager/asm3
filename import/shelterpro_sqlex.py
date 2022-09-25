@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import asm, datetime, sys, os
 
@@ -11,16 +11,29 @@ of truncated at 8 chars as with the DBF variants
 
 Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available.
 
-6th Oct, 2014 - 19th April, 2017
+6th Oct, 2014 - 11th February, 2022
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/shelterpro_zf1009"
+"""
+unpack.sh - put this in the folder with the MDB file:
+
+#!/bin/sh
+MDB=Database1.mdb
+for t in `mdb-tables $MDB`; do
+    mdb-export $MDB $t > $t.csv
+done
+mdb-export --delimiter=~field~ --row-delimiter=~row~ -Q $MDB image > image.csv
+
+"""
+
+PATH = "/home/robin/tmp/asm3_import_data/shelterpro_sh2771"
 
 START_ID = 100
 
 INCIDENT_IMPORT = True
 LICENCE_IMPORT = True
-PICTURE_IMPORT = False
+IMAGE_FILE_IMPORT = False
+IMAGE_TABLE_IMPORT = True
 VACCINATION_IMPORT = True
 
 IMPORT_ANIMALS_WITH_NO_NAME = True
@@ -31,7 +44,7 @@ def gettype(animaldes):
         "CAT": 11
     }
     species = animaldes.split(" ")[0]
-    if spmap.has_key(species):
+    if species in spmap:
         return spmap[species]
     else:
         return 2
@@ -95,20 +108,20 @@ asm.setid("log", START_ID)
 
 if VACCINATION_IMPORT: asm.setid("animalvaccination", START_ID)
 if LICENCE_IMPORT: asm.setid("ownerlicence", START_ID)
-if PICTURE_IMPORT: asm.setid("media", START_ID)
-if PICTURE_IMPORT: asm.setid("dbfs", START_ID)
+if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: asm.setid("media", START_ID)
+if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: asm.setid("dbfs", START_ID)
 
 # Remove existing
-print "\\set ON_ERROR_STOP\nBEGIN;"
-print "DELETE FROM adoption WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM animal WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM log WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-print "DELETE FROM owner WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-if INCIDENT_IMPORT: print "DELETE FROM animalcontrol WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-if VACCINATION_IMPORT: print "DELETE FROM animalvaccination WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-if LICENCE_IMPORT: print "DELETE FROM ownerlicence WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID
-if PICTURE_IMPORT: print "DELETE FROM media WHERE ID >= %d;" % START_ID
-if PICTURE_IMPORT: print "DELETE FROM dbfs WHERE ID >= %d;" % START_ID
+print("\\set ON_ERROR_STOP\nBEGIN;")
+print("DELETE FROM adoption WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM animal WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM log WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM owner WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+if INCIDENT_IMPORT: print("DELETE FROM animalcontrol WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+if VACCINATION_IMPORT: print("DELETE FROM animalvaccination WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+if LICENCE_IMPORT: print("DELETE FROM ownerlicence WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: print("DELETE FROM media WHERE ID >= %d;" % START_ID)
+if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: print("DELETE FROM dbfs WHERE ID >= %d;" % START_ID)
 
 # Create a transfer owner
 to = asm.Owner()
@@ -141,7 +154,7 @@ for row in canimal:
     ppa[row["ANIMALKEY"]] = a
     a.AnimalTypeID = gettype(row["ANIMLDES"])
     a.SpeciesID = asm.species_id_for_name(row["ANIMLDES"].split(" ")[0])
-    a.AnimalName = asm.strip(row["PETNAME"])
+    a.AnimalName = asm.strip(row["PETNAME"]).title()
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
     age = row["AGE"].split(" ")[0]
@@ -184,7 +197,7 @@ for row in canimal:
         a.DeceasedDate = a.DateBroughtIn
         a.PTSReasonID = 2 # Died
     # Does this animal have an image? If so, add media/dbfs entries for it
-    if PICTURE_IMPORT:
+    if IMAGE_FILE_IMPORT:
         imdata = None
         if os.path.exists(PATH + "/images/%s.jpg" % row["ANIMALKEY"]):
             f = open(PATH + "/images/%s.jpg" % row["ANIMALKEY"], "rb")
@@ -200,7 +213,7 @@ for row in canimal:
 # Vaccinations
 if VACCINATION_IMPORT:
     for row in cvacc:
-        if not ppa.has_key(row["ANIMALKEY"]): continue
+        if row["ANIMALKEY"] not in ppa: continue
         a = ppa[row["ANIMALKEY"]]
         # Each row contains a vaccination
         av = asm.AnimalVaccination()
@@ -238,13 +251,13 @@ for row in cperson:
     o = asm.Owner()
     owners.append(o)
     ppo[row["PERSONKEY"]] = o
-    o.OwnerForeNames = asm.strip(row["FNAME"])
-    o.OwnerSurname = asm.strip(row["LNAME"])
+    o.OwnerForeNames = asm.strip(row["FNAME"]).title()
+    o.OwnerSurname = asm.strip(row["LNAME"]).title()
     o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
     # Find the address
-    if addrlink.has_key(row["PERSONKEY"]):
+    if row["PERSONKEY"] in addrlink:
         addrkey = addrlink[row["PERSONKEY"]]
-        if addresses.has_key(addrkey):
+        if addrkey in addresses:
             add = addresses[addrkey]
             o.OwnerAddress = add["address"]
             o.OwnerTown = add["city"]
@@ -267,7 +280,7 @@ for row in cperson:
 # Run through the shelter file and create any movements/euthanisation info
 for row in cshelter:
     a = None
-    if ppa.has_key(row["ANIMALKEY"]):
+    if row["ANIMALKEY"] in ppa:
         a = ppa[row["ANIMALKEY"]]
         arivdate = getdate(row["ARIVDATE"])
         a.ShortCode = asm.strip(row["ANIMALKEY"])
@@ -284,7 +297,7 @@ for row in cshelter:
         continue
 
     o = None
-    if ppo.has_key(row["OWNERATDISPOSITION"]):
+    if row["OWNERATDISPOSITION"] in ppo:
         o = ppo[row["OWNERATDISPOSITION"]]
 
     # Apply other fields
@@ -378,10 +391,10 @@ for row in cshelter:
 if LICENCE_IMPORT:
     for row in clicense:
         a = None
-        if ppa.has_key(row["ANIMALKEY"]):
+        if row["ANIMALKEY"] in ppa:
             a = ppa[row["ANIMALKEY"]]
         o = None
-        if ppo.has_key(row["LICENSEOWNER"]):
+        if row["LICENSEOWNER"] in ppo:
             o = ppo[row["LICENSEOWNER"]]
         if a is not None and o is not None:
             if getdate(row["LICENSEEFFECTIVEDATE"]) is None:
@@ -398,6 +411,28 @@ if LICENCE_IMPORT:
             if a.Neutered == 1:
                 ol.LicenceTypeID = 1 # Altered dog
 
+# Image table
+if IMAGE_TABLE_IMPORT:
+    # The image.csv file exported from MDB won't have a valid text encoding because the
+    # imagedata column contains raw file data. We will have to read it as a binary
+    # sequence of bytes and handle it manually. 
+    # Look at the unpack.sh script in shelterpro_ka2700 it uses special row and field
+    # delimiters that are multibyte and easy for us to find:
+    # mdb-export --delimiter=~field~ --row-delimiter=~row~ -Q $MDB image > image.csv
+    bs = b""
+    with open("%s/image.csv" % PATH, "rb") as f:
+        bs = f.read()
+    for row in bs.split(b"~row~"):
+        fields = row.split(b"~field~")
+        if len(fields) < 10: continue
+        timestamp = fields[1] # date of upload
+        eventkey = fields[2].decode("utf-8").strip() # really animalkey
+        if eventkey not in ppa: continue
+        a = ppa[eventkey]
+        imagetype = fields[8] # typically starts "jpg"
+        imagedata = fields[9] # raw binary file data
+        asm.animal_image(a.ID, imagedata) # This handles outputting both media and dbfs
+
 # Incidents
 if INCIDENT_IMPORT:
     for row in cincident:
@@ -412,9 +447,9 @@ if INCIDENT_IMPORT:
         ac.DispatchDateTime = calldate
         ac.CompletedDate = getdate(row["DATETIMEOUTCOME"])
         if ac.CompletedDate is None: ac.CompletedDate = calldate
-        if ppo.has_key(row["CITIZENMAKINGREPORT"]):
+        if row["CITIZENMAKINGREPORT"] in ppo:
             ac.CallerID = ppo[row["CITIZENMAKINGREPORT"]].ID
-        if ppo.has_key(row["OWNERATORIGINATION"]):
+        if row["OWNERATORIGINATION"] in ppo:
             ac.OwnerID = ppo[row["OWNERATORIGINATION"]].ID
         ac.IncidentCompletedID = 2
         if row["FINALOUTCOME"] == "ANIMAL PICKED UP":
@@ -478,22 +513,22 @@ for a in animals:
 
 # Now that everything else is done, output stored records
 for a in animals:
-    print a
+    print(a)
 for av in animalvaccinations:
-    print av
+    print(av)
 for o in owners:
-    print o
+    print(o)
 for l in logs:
-    print l
+    print(l)
 for m in movements:
-    print m
+    print(m)
 for ol in ownerlicences:
-    print ol
+    print(ol)
 for ac in animalcontrol:
-    print ac
+    print(ac)
 
 asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements, ownerlicences=ownerlicences, animalcontrol=animalcontrol)
 
-print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
-print "COMMIT;"
+print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
+print("COMMIT;")
 

@@ -5284,15 +5284,15 @@ msgid "Go"
 msgstr "Перейти"
 
 #: main.js
-msgid "Go the lookup data screen and add/remove breeds, species and animal types according to the animals your shelter deals with."
+msgid "Go to the lookup data screen and add/remove breeds, species and animal types according to the animals your shelter deals with."
 msgstr "Откройте выпадающие списки и добавьте или удалите породы, виды и группы животных, чтобы эти списки соответствовали животным, с которыми вы работаете."
 
 #: main.js
-msgid "Go the options screen and set your shelter's contact details and other settings."
+msgid "Go to the options screen and set your shelter's contact details and other settings."
 msgstr "Откройте настройки, введите контактные данные вашего приюта и задайте остальные параметры."
 
 #: main.js
-msgid "Go the system users screen and add user accounts for your staff."
+msgid "Go to the system users screen and add user accounts for your staff."
 msgstr "Откройте список учетных записей и добавьте учетные записи для вашего персонала."
 
 #: dbupdate.py

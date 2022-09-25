@@ -2,7 +2,7 @@ Quickbooks Export (Accounts)
 ###
 Accounts
 ###
-2720/PostgreSQL
+2720/PostgreSQL rev01
 ###
 Financial accounts, exportable to CSV for QuickBooks
 ###
@@ -17,7 +17,6 @@ a.Description AS DESCRIPTION, '' AS BANK_ACCT_NO_CARD_NO_NOTE,
 'No' AS ACCOUNT_IS_INACTIVE
 FROM accounts a
 INNER JOIN lksaccounttype aty ON aty.ID = a.AccountType
-LEFT OUTER JOIN donationtype dt ON dt.ID = a.DonationTypeID
 ORDER BY a.AccountType, a.Code
 ###
 $$HEADER

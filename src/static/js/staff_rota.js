@@ -89,7 +89,7 @@ $(function() {
             staff_rota.days = [];
             for (i = 0; i < 7; i += 1) {
                 css = "";
-                if (format.date(d) == format.date(new Date())) { css = 'asm-staff-rota-today'; }
+                if (format.date(d) == format.date(new Date())) { css = 'asm-staff-rota-today'; } else { css = 'asm-staff-rota-day'; }
                 h.push('<th class="' + css + '">' + format.weekdayname(i) + '. ' + format.monthname(d.getMonth()) + ' ' + d.getDate() + '</th>');
                 staff_rota.days.push(d);
                 d = common.add_days(d, 1);
@@ -182,7 +182,6 @@ $(function() {
                 tableform.dialog_show_edit(dialog, row, { onload: function() { staff_rota.type_change(); }} )
                     .then(function() {
                         tableform.fields_update_row(dialog.fields, row);
-                        row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                         row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
                         row.WORKTYPENAME = common.get_field(controller.worktypes, row.WORKTYPEID, "WORKTYPE");
                         return tableform.fields_post(dialog.fields, "mode=update&rotaid=" + row.ID, controller.name);
@@ -216,7 +215,6 @@ $(function() {
                         let row = {};
                         row.ID = response;
                         tableform.fields_update_row(dialog.fields, row);
-                        row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
                         row.ROTATYPENAME = common.get_field(controller.rotatypes, row.ROTATYPEID, "ROTATYPE");
                         row.WORKTYPENAME = common.get_field(controller.worktypes, row.WORKTYPEID, "WORKTYPE");
                         controller.rows.push(row);

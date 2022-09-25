@@ -34,7 +34,301 @@ The service requires the following parameters:
 * animalid / title: An animal ID or title depending on the service method
   called.
 
-The following method values are supported:
+Animal Datasets
+---------------
+
+Many of the json and xml service calls return a dataset of animals, a sample animal
+JSON result looks like this::
+
+   [
+       {
+           "ACCEPTANCENUMBER": "",
+           "ACTIVEMOVEMENTADOPTIONNUMBER": null,
+           "ACTIVEMOVEMENTCOMMENTS": null,
+           "ACTIVEMOVEMENTCREATEDBY": null,
+           "ACTIVEMOVEMENTCREATEDBYNAME": null,
+           "ACTIVEMOVEMENTCREATEDDATE": null,
+           "ACTIVEMOVEMENTDATE": null,
+           "ACTIVEMOVEMENTDONATION": null,
+           "ACTIVEMOVEMENTID": 0,
+           "ACTIVEMOVEMENTINSURANCENUMBER": null,
+           "ACTIVEMOVEMENTLASTCHANGEDBY": null,
+           "ACTIVEMOVEMENTLASTCHANGEDDATE": null,
+           "ACTIVEMOVEMENTREASONFORRETURN": null,
+           "ACTIVEMOVEMENTRESERVATIONDATE": null,
+           "ACTIVEMOVEMENTRETURN": null,
+           "ACTIVEMOVEMENTRETURNDATE": null,
+           "ACTIVEMOVEMENTTRIALENDDATE": null,
+           "ACTIVEMOVEMENTTYPE": null,
+           "ACTIVEMOVEMENTTYPENAME": null,
+           "ADDITIONALFLAGS": "|",
+           "ADOPTAPETCOLOUR": "Black",
+           "ADOPTIONCOORDINATOREMAILADDRESS": null,
+           "ADOPTIONCOORDINATORHOMETELEPHONE": null,
+           "ADOPTIONCOORDINATORID": 0,
+           "ADOPTIONCOORDINATORMOBILETELEPHONE": null,
+           "ADOPTIONCOORDINATORNAME": null,
+           "ADOPTIONCOORDINATORWORKTELEPHONE": null,
+           "AGEGROUP": "Senior",
+           "AGEGROUPACTIVEMOVEMENT": "Senior",
+           "ANIMALAGE": "12 years 7 months.",
+           "ANIMALCOMMENTS": "Cat that needs a longer bio than 20 chars.",
+           "ANIMALCONTROLINCIDENTDATE": null,
+           "ANIMALCONTROLINCIDENTID": null,
+           "ANIMALCONTROLINCIDENTNAME": null,
+           "ANIMALNAME": "Sarah",
+           "ANIMALTYPEID": 2,
+           "ANIMALTYPENAME": "U (Unwanted Cat)",
+           "ARCHIVED": 0,
+           "ASILOMARINTAKECATEGORY": 0,
+           "ASILOMARISTRANSFEREXTERNAL": 0,
+           "ASILOMAROWNERREQUESTEDEUTHANASIA": 0,
+           "BASECOLOURID": 1,
+           "BASECOLOURNAME": "Black",
+           "BONDEDANIMAL1ARCHIVED": null,
+           "BONDEDANIMAL1CODE": null,
+           "BONDEDANIMAL1NAME": null,
+           "BONDEDANIMAL2ARCHIVED": null,
+           "BONDEDANIMAL2CODE": null,
+           "BONDEDANIMAL2ID": 0,
+           "BONDEDANIMAL2NAME": null,
+           "BONDEDANIMALID": 0,
+           "BREED2ID": 231,
+           "BREEDID": 231,
+           "BREEDNAME": "British Shorthair",
+           "BREEDNAME1": "British Shorthair",
+           "BREEDNAME2": "British Shorthair",
+           "BROUGHTINBYEMAILADDRESS": "",
+           "BROUGHTINBYHOMETELEPHONE": "",
+           "BROUGHTINBYJURISDICTION": "",
+           "BROUGHTINBYMOBILETELEPHONE": "",
+           "BROUGHTINBYOWNERADDRESS": "",
+           "BROUGHTINBYOWNERCOUNTY": "",
+           "BROUGHTINBYOWNERID": "",
+           "BROUGHTINBYOWNERNAME": "",
+           "BROUGHTINBYOWNERPOSTCODE": "",
+           "BROUGHTINBYOWNERTOWN": "",
+           "BROUGHTINBYWORKTELEPHONE": "",
+           "COATTYPE": 4,
+           "COATTYPENAME": "Corded",
+           "CODE": "1D",
+           "COMBITESTDATE": null,
+           "COMBITESTED": 0,
+           "COMBITESTEDNAME": "No",
+           "COMBITESTRESULT": 0,
+           "COMBITESTRESULTNAME": "Unknown",
+           "CREATEDBY": "robin",
+           "CREATEDDATE": "2010-01-18T10:20:50",
+           "CROSSBREED": 0,
+           "CROSSBREEDNAME": "No",
+           "CRUELTYCASE": 0,
+           "CRUELTYCASENAME": "No",
+           "CURRENTOWNERADDRESS": "",
+           "CURRENTOWNERCOUNTRY": "",
+           "CURRENTOWNERCOUNTY": "",
+           "CURRENTOWNEREMAILADDRESS": "",
+           "CURRENTOWNEREXCLUDEEMAIL": "",
+           "CURRENTOWNERFORENAMES": "",
+           "CURRENTOWNERHOMETELEPHONE": "",
+           "CURRENTOWNERID": "",
+           "CURRENTOWNERINITIALS": "",
+           "CURRENTOWNERJURISDICTION": "",
+           "CURRENTOWNERMOBILETELEPHONE": "",
+           "CURRENTOWNERNAME": "",
+           "CURRENTOWNERPOSTCODE": "",
+           "CURRENTOWNERSURNAME": "",
+           "CURRENTOWNERTITLE": "",
+           "CURRENTOWNERTOWN": "",
+           "CURRENTOWNERWORKTELEPHONE": "",
+           "CURRENTVETADDRESS": null,
+           "CURRENTVETCOUNTY": null,
+           "CURRENTVETEMAILADDRESS": null,
+           "CURRENTVETID": 0,
+           "CURRENTVETLICENCENUMBER": null,
+           "CURRENTVETNAME": null,
+           "CURRENTVETPOSTCODE": null,
+           "CURRENTVETTOWN": null,
+           "CURRENTVETWORKTELEPHONE": null,
+           "DAILYBOARDINGCOST": 0,
+           "DATEBROUGHTIN": "2010-01-18T00:00:00",
+           "DATEOFBIRTH": "2008-01-18T00:00:00",
+           "DAYSONSHELTER": 3886,
+           "DECEASEDDATE": null,
+           "DECLAWED": 0,
+           "DECLAWEDNAME": "No",
+           "DIEDOFFSHELTER": 0,
+           "DIEDOFFSHELTERNAME": "No",
+           "DISPLAYLOCATION": "Dog Block::3",
+           "DISPLAYLOCATIONNAME": "Dog Block",
+           "DOCMEDIADATE": "2015-05-11T00:00:00",
+           "DOCMEDIANAME": "198.jpg",
+           "ENTRYREASONID": 7,
+           "ENTRYREASONNAME": "Stray",
+           "ESTIMATEDDOB": 0,
+           "ESTIMATEDDOBNAME": "No",
+           "EXTRAIDS": "",
+           "FEE": 0,
+           "FLVRESULT": 0,
+           "FLVRESULTNAME": "Unknown",
+           "HASACTIVERESERVE": 0,
+           "HASACTIVERESERVENAME": "No",
+           "HASFUTUREADOPTION": 0,
+           "HASPERMANENTFOSTER": 0,
+           "HASSPECIALNEEDS": 0,
+           "HASSPECIALNEEDSNAME": "No",
+           "HASTRIALADOPTION": 0,
+           "HASTRIALADOPTIONNAME": "No",
+           "HEALTHPROBLEMS": "",
+           "HEARTWORMTESTDATE": null,
+           "HEARTWORMTESTED": 0,
+           "HEARTWORMTESTEDNAME": "No",
+           "HEARTWORMTESTRESULT": 0,
+           "HEARTWORMTESTRESULTNAME": "Unknown",
+           "HIDDENANIMALDETAILS": "",
+           "HOLDUNTILDATE": null,
+           "ID": 174,
+           "IDENTICHIP2DATE": null,
+           "IDENTICHIP2NUMBER": "",
+           "IDENTICHIPDATE": null,
+           "IDENTICHIPNUMBER": "",
+           "IDENTICHIPPED": 0,
+           "IDENTICHIPPEDNAME": "No",
+           "ISCOURTESY": 0,
+           "ISDOA": 0,
+           "ISDOANAME": "No",
+           "ISGOODWITHCATS": 0,
+           "ISGOODWITHCATSNAME": "Yes",
+           "ISGOODWITHCHILDREN": 2,
+           "ISGOODWITHCHILDRENNAME": "Unknown",
+           "ISGOODWITHDOGS": 2,
+           "ISGOODWITHDOGSNAME": "Unknown",
+           "ISHOLD": 0,
+           "ISHOUSETRAINED": 2,
+           "ISHOUSETRAINEDNAME": "Unknown",
+           "ISNOTAVAILABLEFORADOPTION": 0,
+           "ISNOTAVAILABLEFORADOPTIONNAME": "No",
+           "ISNOTFORREGISTRATION": 0,
+           "ISNOTFORREGISTRATIONNAME": "No",
+           "ISPICKUP": 0,
+           "ISPICKUPNAME": "No",
+           "ISQUARANTINE": 0,
+           "ISTRANSFER": 0,
+           "ISTRANSFERNAME": "No",
+           "JURISDICTIONID": 0,
+           "JURISDICTIONNAME": null,
+           "LASTCHANGEDBY": "robin",
+           "LASTCHANGEDDATE": "2018-08-27T10:25:07.534155",
+           "LOOKUPDEFAULT": "Item 3",
+           "MARKINGS": "",
+           "MOSTRECENTENTRYDATE": "2010-01-18T00:00:00",
+           "NEUTERED": 1,
+           "NEUTEREDBYVETID": 0,
+           "NEUTEREDDATE": "2009-01-18T00:00:00",
+           "NEUTEREDNAME": "Yes",
+           "NEUTERINGVETADDRESS": null,
+           "NEUTERINGVETCOUNTY": null,
+           "NEUTERINGVETEMAILADDRESS": null,
+           "NEUTERINGVETLICENCENUMBER": null,
+           "NEUTERINGVETNAME": null,
+           "NEUTERINGVETPOSTCODE": null,
+           "NEUTERINGVETTOWN": null,
+           "NEUTERINGVETWORKTELEPHONE": null,
+           "NONSHELTERANIMAL": 0,
+           "NONSHELTERANIMALNAME": "No",
+           "ORIGINALOWNERADDRESS": "",
+           "ORIGINALOWNERCOUNTRY": "",
+           "ORIGINALOWNERCOUNTY": "",
+           "ORIGINALOWNEREMAILADDRESS": "",
+           "ORIGINALOWNERFORENAMES": "",
+           "ORIGINALOWNERHOMETELEPHONE": "",
+           "ORIGINALOWNERID": "",
+           "ORIGINALOWNERINITIALS": "",
+           "ORIGINALOWNERJURISDICTION": "",
+           "ORIGINALOWNERMOBILETELEPHONE": "",
+           "ORIGINALOWNERNAME": "",
+           "ORIGINALOWNERPOSTCODE": "",
+           "ORIGINALOWNERSURNAME": "",
+           "ORIGINALOWNERTITLE": "",
+           "ORIGINALOWNERTOWN": "",
+           "ORIGINALOWNERWORKTELEPHONE": "",
+           "OWNERID": 0,
+           "OWNERNAME": null,
+           "OWNERSVETADDRESS": null,
+           "OWNERSVETCOUNTY": null,
+           "OWNERSVETEMAILADDRESS": null,
+           "OWNERSVETID": 0,
+           "OWNERSVETLICENCENUMBER": null,
+           "OWNERSVETNAME": null,
+           "OWNERSVETPOSTCODE": null,
+           "OWNERSVETTOWN": null,
+           "OWNERSVETWORKTELEPHONE": null,
+           "PETFINDERBREED": "British Shorthair",
+           "PETFINDERBREED2": "British Shorthair",
+           "PETFINDERSPECIES": "Cat",
+           "PICKUPADDRESS": "",
+           "PICKUPLOCATIONID": 0,
+           "PICKUPLOCATIONNAME": null,
+           "PTSREASON": "",
+           "PTSREASONID": 8,
+           "PTSREASONNAME": "Biting",
+           "PUTTOSLEEP": 0,
+           "PUTTOSLEEPNAME": "No",
+           "RABIESTAG": "",
+           "REASONFORENTRY": "",
+           "REASONNO": "",
+           "RECENTLYCHANGEDIMAGES": 0,
+           "RECORDVERSION": 102507,
+           "RESERVATIONDATE": null,
+           "RESERVATIONSTATUSNAME": null,
+           "RESERVEDOWNERADDRESS": "",
+           "RESERVEDOWNERCOUNTY": "",
+           "RESERVEDOWNEREMAILADDRESS": "",
+           "RESERVEDOWNERHOMETELEPHONE": "",
+           "RESERVEDOWNERID": "",
+           "RESERVEDOWNERJURISDICTION": "",
+           "RESERVEDOWNERMOBILETELEPHONE": "",
+           "RESERVEDOWNERNAME": "",
+           "RESERVEDOWNERPOSTCODE": "",
+           "RESERVEDOWNERTOWN": "",
+           "RESERVEDOWNERWORKTELEPHONE": "",
+           "SEX": 0,
+           "SEXNAME": "Female",
+           "SHELTERCODE": "D2010001",
+           "SHELTERLOCATION": 1,
+           "SHELTERLOCATIONDESCRIPTION": "",
+           "SHELTERLOCATIONNAME": "Dog Block",
+           "SHELTERLOCATIONUNIT": "3",
+           "SHORTCODE": "1D",
+           "SITEID": 1,
+           "SITENAME": "main",
+           "SIZE": 1,
+           "SIZENAME": "Large",
+           "SMARTTAG": 0,
+           "SMARTTAGDATE": null,
+           "SMARTTAGNUMBER": "",
+           "SMARTTAGSENTDATE": null,
+           "SMARTTAGTYPE": 0,
+           "SPECIESID": 2,
+           "SPECIESNAME": "Cat",
+           "TATTOO": 0,
+           "TATTOODATE": null,
+           "TATTOONAME": "No",
+           "TATTOONUMBER": "",
+           "TIMEONSHELTER": "10 years 7 months.",
+           "TOTALDAYSONSHELTER": 3162,
+           "TOTALTIMEONSHELTER": "8 years 7 months.",
+           "UNIQUECODEID": 0,
+           "WEBSITEIMAGECOUNT": 2,
+           "WEBSITEMEDIADATE": "2013-05-12T09:13:21",
+           "WEBSITEMEDIAID": 118,
+           "WEBSITEMEDIANAME": "118.jpg",
+           "WEBSITEMEDIANOTES": "Cat that needs a longer bio than 20 chars.",
+           "WEBSITEVIDEONOTES": "",
+           "WEBSITEVIDEOURL": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+           "WEIGHT": 10.0,
+           "YEARCODEID": 1
+       }
+   ]
 
 animal_image
 ------------
@@ -62,12 +356,13 @@ Returns an animal's preferred image as a thumbnail. Send the id of the animal::
     http://localhost:5000/service?method=animal_thumbnail&animalid=520
 
 The thumbnail will be sized to whatever the main application is using
-(typically 150 pixels along the longest side).
+(default is 150 pixels along the longest side). You can choose the thumbnail
+size under :menuselection:`Publishing -> Set Publishing Options -> All Publishers`
 
 animal_view
 -----------
 
-.. rubric:: Cache time: 2 minutes
+.. rubric:: Cache time: 10 minutes
 
 Returns a webpage with information for one adoptable animal, constructed from the
 animalview HTML publishing template (editable at :menuselection:`Publishing ->
@@ -126,6 +421,7 @@ following classes:
 * asm3-adoptable-link : The a tag enclosing the thumbnail and animal name
 * asm3-adoptable-thumbnail : The thumbnail img tag
 * asm3-adoptable-name : The animal's name
+* asm3-adoptable-reserved : The div surrounding the image if the animal is reserved
 * asm3-adoptable-tagline : The brief animal information
 
 and the following elements by their id attribute:
@@ -144,6 +440,58 @@ To increase the size of the close link, add this::
 
     #asm3-adoptable-iframe-close { font-size: 200%; }
 
+Much more advanced and sophisticated styling can be done from these classes and
+selectors. For example, to float a reserved banner over the top right corner of
+animals with reservations, try this::
+
+   .asm3-adoptable-reserved {
+       position: relative;
+       color: #fff;
+       display: inline-block;
+       padding: 5px;
+       overflow: hidden;
+       font-family: Arial, sans-serif;
+       font-size: 8pt;
+       font-weight: bold;
+   }
+   .asm3-adoptable-reserved span:before {
+       content: "\00a0\00a0\00a0\00a0\00a0RESERVED";
+   }
+   .asm3-adoptable-reserved span {
+       position: absolute; 
+       display: inline-block;
+       right: -25px;
+       box-shadow: 0px 0px 10px rgba(0,0,0,0.2), inset 0px 5px 30px rgba(255,255,255,0.2);
+       text-align: center;
+       top: 6px;
+       background: #ff0000;
+       width: 100px;
+       padding: 3px 10px;
+       opacity: 0.9;
+       transform: rotate(45deg);
+   }
+
+Thumbnail Size
+^^^^^^^^^^^^^^
+
+By default, animal thumbnails will be displayed at the default system size
+(150px), which can be set up to a maximum of 300px in the options at 
+:menuselection:`Publishing -> Set Publishing Options -> All Publishers`
+
+If you would like to use larger images than 300px in the thumbnail list, you
+can choose to use the full size images rather than thumbnails, then use CSS to
+constrain them to the size you prefer::
+
+    <script>
+    asm3_adoptable_fullsize_images = true;
+    </script>
+    <style>
+    .asm3-adoptable-thumbnail { max-width: 400px; } 
+    </style>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
+
 Translations
 ^^^^^^^^^^^^
 
@@ -151,13 +499,14 @@ It's possible to translate any of the text output by the adoptable list on the
 fly. By default, it only uses text from your database values so they will match
 the language of your database. 
 
-You can add on-the-fly translation by adding a script tag with a dictionary
+You can add on-the-fly translations by adding a script tag with a dictionary
 called asm3_adoptable_translations above the script that makes the service
 call. Eg to translate some English species to French and to change the default (any
-species) to all as well as the CLOSE link text::
-
+species) to all as well as the no results and CLOSE link text::
+   
     <script>
     asm3_adoptable_translations = {
+        "No results": "We don't have any animals for adoption right now, check back soon!",
         "Dog": "Chien",
         "Cat": "Chat",
         "Pig": "Cochon",
@@ -308,12 +657,12 @@ iframes.
 animal_view_adoptable_html
 --------------------------
 
-.. rubric:: Cache time: 2 minutes
+.. rubric:: Cache time: 10 minutes
 
 Returns a complete HTML document that references animal_view_adoptable_js to
 show a list of adoptable animals. It looks for an HTML template called
 "animalviewadoptables" and falls back to a basic internal template if it does
-not exist.
+not exist::
 
     http://localhost:5000/service?method=&animal_view_adoptable_html
 
@@ -328,6 +677,17 @@ you can pass those too just like with html_report::
 
     http://localhost:5000/service?method=csv_report&username=user&password=letmein&title=Detailed+Shelter+Inventory
 
+json_mail and json_report
+-----------------------
+
+.. rubric:: Cache time: 10 minutes
+
+Returns a dataset containing a mail merge or report. Pass the name of the mail
+merge/report in the title attribute and if the merge requires any parameters,
+you can pass those too just like with html_report::
+
+    http://localhost:5000/service?method=json_report&username=user&password=letmein&title=Detailed+Shelter+Inventory
+
 extra_image
 -----------
 
@@ -341,7 +701,7 @@ Images`).  Pass the name of the image in the title parameter::
 html_adoptable_animals
 ----------------------
 
-.. rubric:: Cache time: 30 minutes
+.. rubric:: Cache time: 10 minutes
 
 Returns a complete HTML document containing an HTML page of adoptable animals.
 
@@ -357,10 +717,14 @@ it off will cause animalview to be used). It is also possible extra parameters:
 * locationid=X - only output animals in this location. Run this query at
   the SQL interface to find out the ID numbers: SELECT * FROM internallocation
 
+* underweeks=X - only output animals aged under X weeks.
+
+* overweeks=X - only output animals aged over X weeks
+
 The rules governing which animals are adoptable are those set under
 :menuselection:`Publishing --> Set Publishing Options --> Animal Selection`.
 You can view the set at :menuselection:`Publishing --> View Animals Matching
-Publishing Options`
+Publishing Options`::
  
     http://localhost:5000/service?method=html_adoptable_animals&template=littlebox&speciesid=1
     http://localhost:5000/service?method=html_adoptable_animals
@@ -378,12 +742,35 @@ it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 
+An "order" parameter can be passed to indicate what order you would like the 
+results to be in. The default is adoption date descending. Options are:
+
+* adopted_asc / adopted_desc - adoption date in ascending or descending order
+
+* code_asc / code_desc - shelter code of the animals
+
+* created_asc / created_desc - creation date of the animal records
+
+* dateofbirth_asc / dateofbirth_desc - the date of birth of the animals
+
+* deceased_asc / deceased_desc - the date the animals died
+
+* entered_asc / entered_desc - the most recent date the animals entered care
+
+* holduntil_asc / holduntil_desc - the date the animal holds end
+
+* lastchanged_asc / lastchanged_desc - the last changed date of the animal records
+
+* litterid_asc / litterid_desc - animal litter ID
+
+* name_asc / name_desc - animal name
+
 You can also pass a "days" parameter to indicate how far you would like to
 go back. If you do not set it, the default is animals adopted in the last 30
-days.
+days::
  
     http://localhost:5000/service?method=html_adopted_animals&template=littlebox&speciesid=1&days=60
-    http://localhost:5000/service?method=html_adopted_animals
+    http://localhost:5000/service?method=html_adopted_animals&order=adopted_asc
 
 html_deceased_animals
 ----------------------
@@ -398,12 +785,15 @@ it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 
+An "order" parameter can be passed to indicate the sort order (see
+html_adopted_animals). The default is deceased date descending.
+
 You can also pass a "days" parameter to indicate how far you would like to
 go back. If you do not set it, the default is animals deceased in the last 30
-days.
+days::
  
     http://localhost:5000/service?method=html_deceased_animals&template=littlebox&speciesid=1&days=60
-    http://localhost:5000/service?method=html_deceased_animals
+    http://localhost:5000/service?method=html_deceased_animals&order=deceased_desc
 
 html_flagged_animals
 ----------------------
@@ -418,14 +808,16 @@ it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
 and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
 
+An "order" parameter can be passed to indicate the sort order (see
+html_adopted_animals). The default is entered date descending.
+
 A "flag" parameter must be passed to specify the flag you want the returned
 animals to have. If no flag is set, an error is returned. An "all=1"
 parameter can optionally be passed if you'd like all animals to be included,
-not just shelter animals.
+not just shelter animals::
 
     http://localhost:5000/service?method=html_flagged_animals&template=littlebox&speciesid=1&all=1&flag=Needs+Foster
-    http://localhost:5000/service?method=html_flagged_animals&flag=At+Risk
-
+    http://localhost:5000/service?method=html_flagged_animals&flag=At+Risk&order=entered_asc
 
 html_held_animals
 ----------------------
@@ -434,14 +826,16 @@ html_held_animals
 
 Returns a complete HTML document containing an HTML page of current held animals.
 
+An "order" parameter can be passed to indicate the sort order (see
+html_adopted_animals). The default is entered date descending.
+
 You can pass an HTML template name in an optional "template" parameter (leaving
 it off will cause animalview to be used). It is also possible to pass
 speciesid=X or animaltypeid=X parameters to only output animals of that species
-and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats.
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats::
 
-    http://localhost:5000/service?method=html_held_animals&template=littlebox&speciesid=1
+    http://localhost:5000/service?method=html_held_animals&template=littlebox&speciesid=1&order=holduntildate_desc
     http://localhost:5000/service?method=html_held_animals
-
 
 html_report
 -----------
@@ -537,6 +931,25 @@ information of fosterers and surrenders) will be stripped from the results. If
 you wish them to be included, pass an extra sensitive=1 parameter::
 
     http://localhost:5000/service?method=xml_shelter_animals&username=user&password=letmein&sensitive=1
+
+media_file
+----------
+
+.. rubric:: Cache time: 1 day
+
+Responds with media file data for the mediaid given. The content type is set to
+the correct MIME type for the data::
+    
+    http://localhost:5000/service?method=media_file&username=user&password=letmein&mediaid=52
+
+online_form_html and online_form_json
+-------------------------------------
+
+.. rubric:: Cache time: 30 minutes
+
+Responds with the online form HTML or JSON for the id given.
+
+    http://localhost:5000/service?method=online_form_html&id=1
 
 rss_timeline
 ------------

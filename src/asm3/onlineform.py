@@ -19,7 +19,7 @@ import asm3.utils
 import asm3.waitinglist
 from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TOUCHPUNCH_JS
 
-import web
+import web062 as web
 
 FIELDTYPE_YESNO = 0
 FIELDTYPE_TEXT = 1
@@ -67,6 +67,17 @@ FIELDTYPE_MAP = {
 
 FIELDTYPE_MAP_REVERSE = {v: k for k, v in FIELDTYPE_MAP.items()}
 
+AP_NO = 0
+AP_ATTACHANIMAL = 1
+AP_CREATEANIMAL = 2
+AP_CREATEPERSON = 3
+AP_CREATELOSTANIMAL = 4
+AP_CREATEFOUNDANIMAL = 5
+AP_CREATEINCIDENT = 6
+AP_CREATETRANSPORT = 7
+AP_CREATEWAITINGLIST = 8
+AP_ATTACHANIMAL_CREATEPERSON = 9 
+
 JSKEY_NAME = 'magicASJSkey'
 JSKEY_VALUE = '918273645'
 
@@ -86,9 +97,28 @@ FORM_FIELDS = [
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
 ]
 
+AUTOCOMPLETE_MAP = {
+    "title":            "honorific",
+    "firstname":        "given-name",
+    "forenames":        "given-name",
+    "lastname":         "family-name",
+    "surname":          "family-name",
+    "address":          "street-address",
+    "city":             "address-level2",
+    "town":             "address-level2",
+    "state":            "address-level3",
+    "county":           "address-level3",
+    "country":          "country-name",
+    "zipcode":          "postal-code",
+    "postcode":         "postal-code",
+    "mobiletelephone":  "tel",
+    "celltelephone":    "tel",
+    "emailaddress":     "email"
+}
+
 def get_collationid(dbo):
     """ Returns the next collation ID value for online forms. """
-    return asm3.configuration.collation_id_next(dbo)
+    return asm3.utils.cache_sequence(dbo, "collation", "SELECT MAX(CollationID) FROM onlineformincoming")
 
 def get_onlineform(dbo, formid):
     """ Returns the online form with ID formid """
@@ -112,7 +142,8 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         df = asm3.i18n.get_display_date_format(l)
         df = df.replace("%Y", "yy").replace("%m", "mm").replace("%d", "dd")
         extra = "<script>\nDATE_FORMAT = '%s';\n</script>\n" % df
-        extra += asm3.html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "smoothness")) + \
+        extra += "<base href=\"%s\" />\n" % BASE_URL
+        extra += asm3.html.css_tag(JQUERY_UI_CSS.replace("%(theme)s", "asm")) + \
             asm3.html.css_tag(ASMSELECT_CSS) + \
             asm3.html.css_tag(TIMEPICKER_CSS) + \
             asm3.html.script_tag(JQUERY_JS) + \
@@ -124,17 +155,18 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             asm3.html.asm_script_tag("onlineform_extra.js") + \
             "</head>"
         header = header.replace("</head>", extra)
-        h.append(header.replace("$$TITLE$$", form["NAME"]))
-        h.append('<h2 class="asm-onlineform-title">%s</h2>' % form["NAME"])
-        if form["DESCRIPTION"] is not None and form["DESCRIPTION"] != "":
-            h.append('<p class="asm-onlineform-description">%s</p>' % form["DESCRIPTION"])
-        h.append(asm3.utils.nulltostr(form["HEADER"]))
+        h.append(header.replace("$$TITLE$$", form.NAME))
+        h.append('<h2 class="asm-onlineform-title">%s</h2>' % form.NAME)
+        if form.DESCRIPTION is not None and form.DESCRIPTION != "":
+            h.append('<p class="asm-onlineform-description">%s</p>' % form.DESCRIPTION)
+        h.append(asm3.utils.nulltostr(form.HEADER))
     h.append('<form action="%s/service" method="post" accept-charset="utf-8">' % BASE_URL)
     h.append('<input type="hidden" name="method" value="online_form_post" />')
     h.append('<input type="hidden" name="account" value="%s" />' % dbo.alias)
-    h.append('<input type="hidden" name="redirect" value="%s" />' % form["REDIRECTURLAFTERPOST"])
-    h.append('<input type="hidden" name="flags" value="%s" />' % form["SETOWNERFLAGS"])
-    h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form["NAME"]))
+    h.append('<input type="hidden" name="redirect" value="%s" />' % form.REDIRECTURLAFTERPOST)
+    h.append('<input type="hidden" name="retainfor" value="%s" />' % form.RETAINFOR)
+    h.append('<input type="hidden" name="flags" value="%s" />' % form.SETOWNERFLAGS)
+    h.append('<input type="hidden" name="formname" value="%s" />' % asm3.html.escape(form.NAME))
     h.append('<table class="asm-onlineform-table">')
     for f in formfields:
         fname = "%s_%s" % (f.FIELDNAME, f.ID)
@@ -148,12 +180,15 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         requiredtext = ""
         requiredspan = '<span class="asm-onlineform-notrequired"></span>'
         requiredspan = ""
+        autocomplete = ""
+        if f.FIELDNAME in AUTOCOMPLETE_MAP:
+            autocomplete = "autocomplete=\"%s\"" % AUTOCOMPLETE_MAP[f.FIELDNAME]
         if f.MANDATORY == 1: 
             required = "required=\"required\""
             requiredtext = "required=\"required\" pattern=\".*\\S+.*\""
             requiredspan = '<span class="asm-onlineform-required" style="color: #ff0000; float: right;">*</span>'
         if f.FIELDTYPE == FIELDTYPE_RAWMARKUP:
-            h.append('<td class="asm-onlineform-td" colspan="2">')
+            h.append('<td class="asm-onlineform-td asm-onlineform-raw" colspan="2">')
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
             h.append('<td class="asm-onlineform-td">%s</td><td class="asm-onlineform-td">' % requiredspan)
         else:
@@ -163,15 +198,17 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('</td>')
             h.append('<td class="asm-onlineform-td">')
         if f.FIELDTYPE == FIELDTYPE_YESNO:
-            h.append('<select class="asm-onlineform-yesno" id="%s" name="%s" title="%s"><option>%s</option><option>%s</option></select>' % \
-                ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), asm3.i18n._("No", l), asm3.i18n._("Yes", l)))
+            h.append('<select class="asm-onlineform-yesno" id="%s" name="%s" %s title="%s">' \
+                '<option value=""></option><option>%s</option><option>%s</option></select>' % \
+                ( fid, cname, asm3.utils.iif(required != "", required, ""), asm3.utils.nulltostr(f.TOOLTIP), asm3.i18n._("No", l), asm3.i18n._("Yes", l)))
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
-            h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> <label for="%s">%s</label>' % \
+            h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' \
+                '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label>' % \
                 (fid, cname, required, fid, f.LABEL))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
-            h.append('<input class="asm-onlineform-text" type="text" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+            h.append('<input class="asm-onlineform-text" type="text" id="%s" name="%s" title="%s" %s %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_EMAIL:
-            h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+            h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" title="%s" %s %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_DATE:
             h.append('<input class="asm-onlineform-date" type="text" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_TIME:
@@ -190,17 +227,20 @@ def get_onlineform_html(dbo, formid, completedocument = True):
                 h.append('<option>%s</option>' % lv)
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_RADIOGROUP:
-            h.append('<div class="asm-onlineform-radiogroup" style="display: inline-block">')
+            h.append('<div id="%s" class="asm-onlineform-radiogroup" style="display: inline-block">' % (fid))
             for i, lv in enumerate(asm3.utils.nulltostr(f.LOOKUPS).split("|")):
                 rid = "%s_%s" % (fid, i)
-                h.append('<input type="radio" class="asm-onlineform-radio" id="%s" name="%s" value="%s" %s /> <label for="%s">%s</label><br />' % (rid, cname, lv, required, rid, lv))
+                h.append('<input type="radio" class="asm-onlineform-radio" id="%s" name="%s" value="%s" %s /> ' \
+                    '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label><br />' % (rid, cname, lv, required, rid, lv))
             h.append('</div>')
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOXGROUP:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
-            h.append('<div class="asm-onlineform-checkgroup" data-name="%s" data-required="%s" style="display: inline-block">' % (cname, asm3.utils.iif(required != "", "required", "")))
+            h.append('<div id="%s" class="asm-onlineform-checkgroup" data-name="%s" data-required="%s" style="display: inline-block">' % (fid, cname, asm3.utils.iif(required != "", "required", "")))
             for i, lv in enumerate(asm3.utils.nulltostr(f.LOOKUPS).split("|")):
                 rid = "%s_%s" % (fid, i)
-                h.append('<input type="checkbox" id="%s" data="%s" /> <label for="%s">%s</label><br />' % (rid, lv, rid, lv))
+                rname = "%s%s_" % (f.FIELDNAME, i)
+                h.append('<input type="checkbox" id="%s" data="%s" name="%s"/> ' \
+                    '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label><br />' % (rid, lv, rname, rid, lv))
             h.append('</div>')
         elif f.FIELDTYPE == FIELDTYPE_SHELTERANIMAL:
             h.append('<select class="asm-onlineform-shelteranimal" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
@@ -267,7 +307,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         h.append('<script>')
         h.append('document.write("<input " + \n"type=" + "\'hidden\'" + \n" name=" + "\'%s\'" + \n" value=" + "\'%s\'" + " />");' % (JSKEY_NAME, JSKEY_VALUE))
         h.append('</script>')
-    h.append('<p style="text-align: center"><input type="submit" value="Submit" /></p>')
+    h.append('<p style="text-align: center"><input type="submit" value="%s" /></p>' % asm3.i18n._("Submit", l))
     h.append('</form>')
     if completedocument:
         h.append(asm3.utils.nulltostr(form.FOOTER))
@@ -364,36 +404,45 @@ def get_onlineform_header(dbo):
         "<title>$$TITLE$$</title>\n" \
         "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n" \
         "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0\">\n" \
+        "<link href='//fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>\n" \
         "<style>\n" \
-        "body { font-family: sans-serif; }\n" \
         "input:focus, textarea:focus, select:focus { box-shadow: 0 0 5px #3a87cd; border: 1px solid #3a87cd; }\n" \
         ".asm-onlineform-title, .asm-onlineform-description { text-align: center; }\n" \
         "input, textarea, select { border: 1px solid #aaa; }\n" \
         "input[type='submit'] { padding: 10px; cursor: pointer; }\n" \
         "/* phones and smaller devices */\n" \
         "@media screen and (max-device-width:480px) {\n" \
+        "    body { font-family: sans-serif; }\n" \
         "    * { font-size: 110%; }\n" \
         "    h2 { font-size: 200%; }\n" \
         "    .asm-onlineform-table td { display: block; width: 100%; margin-bottom: 20px; }\n" \
-        "    label, input, select, textarea { width: 97%; padding: 5px; }\n" \
+        "    label, input[type='file'], input[type='text'], input[type='email'], select, textarea { width: 97%; padding: 5px; }\n" \
         "    label { word-wrap: anywhere; }\n" \
+        "    input[type='checkbox'] { float: left; width: auto; position: relative; top: 10px }\n" \
         "    input[type='submit'] { background-color: #2CBBBB; border: 1px solid #27A0A0; color: #fff; padding: 20px; }\n" \
         "}\n" \
         "/* full size computers and tablets */\n" \
         "@media screen and (min-device-width:481px) {\n" \
+        "	body { background-color: #aaa; font-family: 'Roboto', sans-serif; }\n" \
+        "   #page { width: 70%; margin-left: 15%; " \
+        "       background-color: #fff; box-shadow: 2px 2px 4px #888; " \
+        "       padding-top: 20px; padding-bottom: 20px; }\n" \
         "    .asm-onlineform-td:first-child { max-width: 400px; }\n" \
+        "    .asm-onlineform-checkboxlabel { max-width: 400px; display: inline-block; }\n" \
         "    .asm-onlineform-table { margin-left: auto; margin-right: auto }\n" \
         "    textarea { width: 300px; height: 150px; }\n" \
         "    td, input, textarea, select, label { font-size: 110%; }\n" \
+        "    td { padding-bottom: 10px; }\n" \
         "}\n" \
        "</style>\n" \
        "</head>\n" \
-       "<body>"
+       "<body>\n" \
+       "    <div id=\"page\">"
     return header
 
 def get_onlineform_footer(dbo):
     footer = asm3.template.get_html_template(dbo, "onlineform")[2]
-    if footer == "": footer = "</body>\n</html>"
+    if footer == "": footer = "</div>\n</body>\n</html>"
     return footer
 
 def set_onlineform_headerfooter(dbo, head, foot):
@@ -438,14 +487,15 @@ def get_onlineformincoming_detail(dbo, collationid):
     """ Returns the detail lines for an incoming post """
     return dbo.query("SELECT * FROM onlineformincoming WHERE CollationID = ? ORDER BY DisplayIndex", [collationid])
 
-def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_images=True):
-    """ Returns an HTML fragment of the incoming form data """
+def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_images=True, include_system=True):
+    """ Returns a partial HTML document of the incoming form data fields """
     h = []
     h.append('<table width="100%">')
     for f in get_onlineformincoming_detail(dbo, collationid):
         label = f.LABEL
         if label is None or label == "": label = f.FIELDNAME
         v = f.VALUE
+        if f.FIELDNAME in ( "useragent", "ipaddress", "retainfor", "formreceived" ) and not include_system: continue
         if v.startswith("RAW::") and not include_raw: continue
         if v.startswith("data:") and not include_images: continue
         if v.startswith("RAW::"): 
@@ -456,6 +506,14 @@ def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_imag
             h.append('<tr>')
             h.append('<td>%s</td>' % label )
             h.append('<td><img src="%s" border="0" /></td>' % v)
+            h.append('</tr>')
+        elif f.FIELDNAME == "useragent":
+            # Some user agent strings can be huge and without wrappable characters,
+            # so they throw off the formatting of the rest of the form when viewing
+            # in the dialog or printing.
+            h.append('<tr>')
+            h.append('<td>%s</td>' % label )
+            h.append('<td><div style="word-wrap: anywhere; max-width: 400px">%s</div></td>' % v)
             h.append('</tr>')
         else:
             h.append('<tr>')
@@ -475,13 +533,36 @@ def get_onlineformincoming_plain(dbo, collationid):
         h.append("%s: %s\n" % (label, f.VALUE))
     return "\n".join(h)
 
-def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images=True):
+def get_onlineformincoming_csv(dbo, ids):
+    """
+    Returns all the forms with collationid in ids as CSV data.
+    The form fields are laid out as columns with each form as a row.
+    """
+    rows = []
+    cols = []
+    buildcols = True # build column list from the first collation id
+    for collationid in ids:
+        row = {}
+        for f in get_onlineformincoming_detail(dbo, collationid):
+            if f.VALUE.startswith("RAW::") or f.VALUE.startswith("data:"): continue
+            label = f.LABEL or f.FIELDNAME
+            if buildcols: cols.append(label)
+            row[label] = f.VALUE
+        buildcols = False
+        rows.append(row)
+    return asm3.utils.csv(dbo.locale, rows, cols)
+
+def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images=True, include_system=True, strip_bgimages=True, strip_script=True, strip_style=True):
     """
     Returns a complete printable version of the online form
     (header/footer wrapped around the html call above)
     ids: A list of integer ids
     include_raw: Include fields that are raw markup
     include_images: Include base64 encoded images
+    include_system: Include system generated fields (ipaddress, retainfor, etc)
+    strip_script: Remove any script tags from the form
+    strip_style: Remove any style tags from the form
+    strip_bgimages: Remove any background-image CSS directives from the form
     """
     title = get_onlineformincoming_formname(dbo, ids[0])
     header = get_onlineform_header(dbo)
@@ -497,18 +578,26 @@ def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images
         h.append(headercontent)
         formheader = get_onlineformincoming_formheader(dbo, collationid)
         h.append(formheader)
-        h.append(get_onlineformincoming_html(dbo, asm3.utils.cint(collationid), include_raw=include_raw, include_images=include_images))
+        h.append(get_onlineformincoming_html(dbo, asm3.utils.cint(collationid), include_raw=include_raw, include_images=include_images, include_system=include_system))
         formfooter = get_onlineformincoming_formfooter(dbo, collationid)
         h.append(formfooter)
         h.append(footercontent)
         if i < len(ids)-1:
             h.append('<div style="page-break-before: always;"></div>')
     h.append("</body></html>")
-    return "\n".join(h)
+    s = "\n".join(h)
+    if strip_bgimages: s= asm3.utils.strip_background_images(s)
+    if strip_script: s = asm3.utils.strip_script_tags(s)
+    if strip_style: s = asm3.utils.strip_style_tags(s)
+    return s
 
 def get_onlineformincoming_name(dbo, collationid):
     """ Returns the form name for a collation id """
     return dbo.query_string("SELECT FormName FROM onlineformincoming WHERE CollationID = ? %s" % dbo.sql_limit(1), [collationid])
+
+def get_onlineformincoming_retainfor(dbo, collationid):
+    """ Returns the retain for period for a collation id """
+    return dbo.query_int("SELECT Value FROM onlineformincoming WHERE CollationID = ? AND FieldName = 'retainfor' %s" % dbo.sql_limit(1), [collationid])
 
 def get_animal_id_from_field(dbo, name):
     """ Used for ADOPTABLE/SHELTER animal fields, gets the ID from the value """
@@ -526,8 +615,11 @@ def insert_onlineform_from_form(dbo, username, post):
     return dbo.insert("onlineform", {
         "Name":                 post["name"],
         "RedirectUrlAfterPOST": post["redirect"],
+        "AutoProcess":          post.integer("autoprocess"),
+        "RetainFor":            post.integer("retainfor"),
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
+        "EmailCoordinator":     post.boolean("emailcoordinator"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
@@ -542,8 +634,11 @@ def update_onlineform_from_form(dbo, username, post):
     return dbo.update("onlineform", post.integer("formid"), {
         "Name":                 post["name"],
         "RedirectUrlAfterPOST": post["redirect"],
+        "AutoProcess":          post.integer("autoprocess"),
+        "RetainFor":            post.integer("retainfor"),
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
+        "EmailCoordinator":     post.boolean("emailcoordinator"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
@@ -558,6 +653,16 @@ def delete_onlineform(dbo, username, formid):
     dbo.execute("DELETE FROM onlineformfield WHERE OnlineFormID = ?", [formid])
     dbo.delete("onlineform", formid, username)
 
+def reindex_onlineform(dbo, username, formid):
+    """
+    Resets display indexes to space out by 10 using current order
+    """
+    fields = get_onlineformfields(dbo, formid)
+    
+    for i in range(len(fields)):
+        newindex = (i + 1) * 10
+        dbo.execute("UPDATE onlineformfield SET DISPLAYINDEX = ? WHERE OnlineFormID = ? AND ID = ?", [newindex, formid, fields[i]["ID"]])
+
 def clone_onlineform(dbo, username, formid):
     """
     Clones formid
@@ -569,6 +674,7 @@ def clone_onlineform(dbo, username, formid):
     nfid = dbo.insert("onlineform", {
         "Name":                 asm3.i18n._("Copy of {0}", l).format(f.NAME),
         "RedirectUrlAfterPOST": f.REDIRECTURLAFTERPOST,
+        "AutoProcess":          f.AUTOPROCESS,
         "SetOwnerFlags":        f.SETOWNERFLAGS,
         "EmailAddress":         f.EMAILADDRESS,
         "EmailSubmitter":       f.EMAILSUBMITTER,
@@ -595,6 +701,13 @@ def insert_onlineformfield_from_form(dbo, username, post):
     """
     Create an onlineformfield record from posted data
     """
+    l = dbo.locale
+    samename = dbo.query_int("SELECT COUNT(ID) FROM onlineformfield " \
+        "WHERE OnlineFormID=? AND UPPER(FieldName) LIKE UPPER(?)", \
+        [post.integer("formid"), post["fieldname"]])
+    if samename > 0:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("You have already used field name '{0}' in this form", l).format(post["fieldname"]))
+
     return dbo.insert("onlineformfield", {
         "OnlineFormID":     post.integer("formid"),
         "FieldName":        post["fieldname"],
@@ -612,6 +725,13 @@ def update_onlineformfield_from_form(dbo, username, post):
     """
     Update an onlineformfield record from posted data
     """
+    l = dbo.locale
+    samename = dbo.query_int("SELECT COUNT(ID) FROM onlineformfield " \
+        "WHERE ID<>? AND OnlineFormID=? AND UPPER(FieldName) LIKE UPPER(?)", \
+        [post.integer("formfieldid"), post.integer("formid"), post["fieldname"]])
+    if samename > 0:
+        raise asm3.utils.ASMValidationError(asm3.i18n._("You have already used field name '{0}' in this form", l).format(post["fieldname"]))
+
     dbo.update("onlineformfield", post.integer("formfieldid"), {
         "FieldName":        post["fieldname"],
         "FieldType":        post.integer("fieldtype"),
@@ -630,7 +750,7 @@ def delete_onlineformfield(dbo, username, fieldid):
     """
     dbo.delete("onlineformfield", fieldid, username)
 
-def insert_onlineformincoming_from_form(dbo, post, remoteip):
+def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
     """
     Create onlineformincoming records from posted data. We 
     create a row for every key/value pair in the posted data
@@ -649,16 +769,15 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
     formname = post["formname"]
     posteddate = dbo.now()
     flags = post["flags"]
-    submitteremail = ""
+    emailaddress = ""
     emailsubmissionto = ""
-    firstnamelabel = ""
     firstname = ""
-    lastnamelabel = ""
     lastname = ""
-    animalnamelabel = ""
     animalname = ""
     images = []
     post.data["formreceived"] = "%s %s" % (asm3.i18n.python2display(dbo.locale, posteddate), asm3.i18n.format_time(posteddate))
+    post.data["ipaddress"] = remoteip
+    post.data["useragent"] = useragent
 
     for k, v in post.data.items():
 
@@ -684,18 +803,15 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                         tooltip = fld.TOOLTIP
                         # Store a few known fields for access later
                         if fieldname == "emailaddress": 
-                            submitteremail = v
+                            emailaddress = v
                         if fieldname == "emailsubmissionto":
                             emailsubmissionto = v
-                        if fieldname == "firstname": 
+                        if fieldname == "firstname" or fieldname == "forenames": 
                             firstname = v
-                            firstnamelabel = label
-                        if fieldname == "lastname": 
+                        if fieldname == "lastname" or fieldname == "surname":
                             lastname = v
-                            lastnamelabel = label
                         if fieldname == "animalname" or fieldname == "reserveanimalname":
                             animalname = v
-                            animalnamelabel = asm3.i18n._("Name", l)
                         # If it's a raw markup field, store the markup as the value
                         if fieldtype == FIELDTYPE_RAWMARKUP:
                             v = "RAW::%s" % tooltip
@@ -714,17 +830,21 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
                             images.append( ("%s.jpg" % fieldname, "image/jpeg", asm3.utils.base64decode(v[v.find(",")+1:])) )
 
             # Do the insert
-            dbo.insert("onlineformincoming", {
-                "CollationID":      collationid,
-                "FormName":         formname,
-                "PostedDate":       posteddate,
-                "Flags":            flags,
-                "FieldName":        fieldname,
-                "Label":            label,
-                "DisplayIndex":     displayindex,
-                "Host":             remoteip,
-                asm3.utils.iif(fieldtype == FIELDTYPE_RAWMARKUP, "*Value", "Value"): v # don't XSS escape raw markup by prefixing fieldname with *
-            }, generateID=False, setCreated=False)
+            try:
+                dbo.insert("onlineformincoming", {
+                    "CollationID":      collationid,
+                    "FormName":         formname,
+                    "PostedDate":       posteddate,
+                    "Flags":            flags,
+                    "FieldName":        fieldname,
+                    "Label":            label,
+                    "DisplayIndex":     displayindex,
+                    "Host":             remoteip,
+                    asm3.utils.iif(fieldtype == FIELDTYPE_RAWMARKUP, "*Value", "Value"): v # don't XSS escape raw markup by prefixing fieldname with *
+                }, generateID=False, setCreated=False)
+            except Exception as err:
+                asm3.al.warn("failed creating incoming field, cid=%s, name=%s, value=%s: %s" % (collationid, fieldname, v, err), 
+                    "insert_onlineformincoming_from_form", dbo)
 
     # Sort out the preview of the first few fields
     fieldssofar = 0
@@ -732,19 +852,21 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
 
     # If we have first and last name, include them in the preview
     if firstname != "" and lastname != "":
-        preview.append("%s: %s" % (firstnamelabel, firstname))
-        preview.append("%s: %s" % (lastnamelabel, lastname))
+        preview.append("%s: %s %s" % ( asm3.i18n._("Name"), firstname, lastname ))
         fieldssofar += 2
 
-    # If we have an animal name, include that too
+    # If we have an animal, include that too
     if animalname != "":
-        preview.append("%s: %s" % (animalnamelabel, animalname))
+        preview.append("%s: %s" % ( asm3.i18n._("Animal"), animalname))
         fieldssofar += 1
 
     for fld in get_onlineformincoming_detail(dbo, collationid):
         if fieldssofar < 3:
             # Don't include raw markup or signature/image fields in the preview
             if fld.VALUE.startswith("RAW::") or fld.VALUE.startswith("data:"): continue
+            # Or the system added timestamp field, ip address, user agent or fields we would have already added above
+            if fld.FIELDNAME in ("retainfor", "formreceived", "ipaddress", "useragent", "firstname", "forenames", "lastname", "surname"): continue
+            if fld.FIELDNAME in ("animalname", "reserveanimalname"): continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
     
@@ -752,34 +874,41 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         "Preview": ", ".join(preview) 
     })
 
-    # Do we have a valid emailaddress for the submitter and EmailSubmitter is set? 
-    # If so, send them a confirmation
-    emailsubmitter = dbo.query_int("SELECT o.EmailSubmitter FROM onlineform o " \
+    # Get the onlineform if we have one
+    formdef = dbo.first_row(dbo.query("SELECT * FROM onlineform o " \
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
-        "WHERE oi.CollationID = ?", [collationid])
+        "WHERE oi.CollationID = ?", [collationid]))
 
-    # The submitted form for including in emails (images are attached so not included)
-    formdata = get_onlineformincoming_html_print(dbo, [collationid,], include_images=False)
+    # If there's no linked online form, we can't do any of the functionality that follows
+    # as it requires data from the online form.
+    if not formdef: return collationid
 
-    if submitteremail != "" and submitteremail.find("@") != -1 and emailsubmitter != 0:
+    # A string containing the submitted form for including in emails 
+    # (images are included as attachments so not in the form output)
+    # (we also suppress system generated fields as most do not find them helpful in the email)
+    formdata = get_onlineformincoming_html_print(dbo, [collationid,], include_system=False, include_images=False)
+
+    # Do we have a valid emailaddress field for the form submitter and 
+    # one of the options to email the submitter is set?
+    if emailaddress != "" and emailaddress.find("@") != -1 and formdef.emailsubmitter != 0:
         # Get the confirmation message
-        body = dbo.query_string("SELECT o.EmailMessage FROM onlineform o " \
-            "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
-            "WHERE oi.CollationID = ?", [collationid])
+        body = formdef.emailmessage
         attachments = []
         # Submission option 1 = include a copy of the form submission
-        if emailsubmitter == 1: 
+        if formdef.emailsubmitter == 1: 
             body += "\n" + formdata
             attachments = images
-        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), submitteremail, "", "", asm3.i18n._("Submission received: {0}", l).format(formname), 
+        # Send
+        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emailaddress, "", "", 
+            asm3.i18n._("Submission received: {0}", l).format(formname), 
             body, "html", attachments, exceptions=False)
+
+    # Subject line for email notifications to staff and coordinators (max 70 chars)
+    subject = "%s - %s" % (asm3.utils.truncate(formname, 32), ", ".join(preview))
 
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
-    email = dbo.query_string("SELECT o.EmailAddress FROM onlineform o " \
-        "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
-        "WHERE oi.CollationID = ?", [collationid])
-    if email is not None and email.strip() != "":
+    if formdef.emailaddress is not None and formdef.emailaddress.strip() != "":
         # If a submitter email has been set AND we sent the submitter a copy, 
         # use the submitter email as reply-to so staff and can reply to their
         # copy of the message and email the applicant/submitter.
@@ -788,18 +917,66 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip):
         # and want to use an applicant's details but don't want them to see it or accidentally
         # reply to them about it (prime example, forms related to performing homechecks)
         replyto = ""
-        if emailsubmitter != 0: replyto = submitteremail 
+        if formdef.emailsubmitter != 0: replyto = emailaddress 
         if replyto == "": replyto = asm3.configuration.email(dbo)
-        asm3.utils.send_email(dbo, replyto, email, "", "", "%s - %s" % (formname, ", ".join(preview)), 
-            formdata, "html", images, exceptions=False)
+        asm3.utils.send_email(dbo, replyto, formdef.emailaddress, "", "", 
+            subject, formdata, "html", images, exceptions=False)
+
+    # Was the option set to email the adoption coordinator linked to animalname?
+    if formdef.emailcoordinator == 1 and animalname != "":
+        # If so, find the selected animal from the form
+        animalid = get_animal_id_from_field(dbo, animalname)
+        coordinatoremail = dbo.query_string("SELECT EmailAddress FROM animal " \
+            "INNER JOIN owner ON owner.ID = animal.AdoptionCoordinatorID " \
+            "WHERE animal.ID = ?", [animalid])
+        if coordinatoremail != "":
+            asm3.utils.send_email(dbo, asm3.configuration.email(dbo), coordinatoremail, "", "", 
+                subject, formdata, "html", images, exceptions=False)
 
     # Did the form submission have a value in an "emailsubmissionto" field?
     if emailsubmissionto is not None and emailsubmissionto.strip() != "":
         # If a submitter email is set, use that to reply to instead
-        replyto = submitteremail 
+        replyto = emailaddress 
         if replyto == "": replyto = asm3.configuration.email(dbo)
-        asm3.utils.send_email(dbo, replyto, emailsubmissionto, "", "", "%s - %s" % (formname, ", ".join(preview)), 
-            formdata, "html", images, exceptions=False)
+        # Remove any line breaks from the list of addresses, this has caused malformed headers before
+        emailsubmissionto = emailsubmissionto.replace("\n", "")
+        asm3.utils.send_email(dbo, replyto, emailsubmissionto, "", "", 
+            subject, formdata, "html", images, exceptions=False)
+
+    # Does this form have an option set to autoprocess it? If not, stop now
+    if formdef.autoprocess is None or formdef.autoprocess == AP_NO: return collationid
+
+    try:
+        if formdef.autoprocess == AP_ATTACHANIMAL:
+            attach_animal(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATEANIMAL:
+            create_animal(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATEPERSON:
+            create_person(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_ATTACHANIMAL_CREATEPERSON:
+            try:
+                # If we fail to attach the animal (eg: because one wasn't specified)
+                # we still need to continue and create the person
+                attach_animal(dbo, "autoprocess", collationid)
+            except asm3.utils.ASMValidationError as aterr:
+                asm3.al.error("%s" % aterr.getMsg(), "autoprocess", dbo)
+            create_person(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATELOSTANIMAL:
+            create_lostanimal(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATEFOUNDANIMAL:
+            create_foundanimal(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATEINCIDENT:
+            create_animalcontrol(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATETRANSPORT:
+            create_transport(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATEWAITINGLIST:
+            create_waitinglist(dbo, "autoprocess", collationid)
+        # We only get here if there were no issues processing the form and it's safe to delete it
+        delete_onlineformincoming(dbo, "autoprocess", collationid)
+    except asm3.utils.ASMValidationError as verr:
+        asm3.al.error("%s" % verr.getMsg(), "autoprocess", dbo)
+    except Exception as err:
+        asm3.al.error("%s" % err, "autoprocess", dbo)
 
     return collationid
 
@@ -887,23 +1064,32 @@ def attach_form(dbo, username, linktype, linkid, collationid):
     Attaches the incoming form to the media tab. Finds any images in the form
     and attaches those as images in the media tab of linktype/linkid.
     """
+    l = dbo.locale
     formname = get_onlineformincoming_name(dbo, collationid)
     formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
-    asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml )
+    retainfor = get_onlineformincoming_retainfor(dbo, collationid)
+    mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml, retainfor)
+    if asm3.configuration.auto_hash_processed_forms(dbo):
+        dtstr = "%s %s" % (asm3.i18n.python2display(l, dbo.now()), asm3.i18n.format_time(dbo.now()))
+        asm3.media.sign_document(dbo, username, mid, "", \
+            asm3.i18n._("Processed by {0} on {1}", l).format(username, dtstr), "onlineform")
     fields = get_onlineformincoming_detail(dbo, collationid)
     for f in fields:
         if f.VALUE.startswith("data:image/jpeg"):
             d = {
+                "retainfor":    str(retainfor),
                 "filename":     "image.jpg",
                 "filetype":     "image/jpeg",
-                "filedata":     f.VALUE,
+                "filedata":     f.VALUE
             }
+            if linktype == 0:
+                d["excludefrompublish"] = "1" # auto exclude images for animals to prevent them going to adoption websites
             asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.utils.PostedData(d, dbo.locale))
 
 def attach_animal(dbo, username, collationid):
     """
     Finds the existing shelter animal with "animalname" and
-    attaches the form to it as person asm3.media.
+    attaches the form to it as animal asm3.media.
     Return value is a tuple of collationid, animalid, animal code/name
     """
     l = dbo.locale
@@ -951,6 +1137,7 @@ def create_animal(dbo, username, collationid):
             d["microchipped"] = "1"
             d["microchipnumber"] = f.VALUE
         if f.FIELDNAME == "hiddencomments": d["hiddenanimaldetails"] = f.VALUE
+        if f.FIELDNAME == "reason": d["reasonforentry"] = f.VALUE
         if f.FIELDNAME == "entryreason": d["entryreason"] = str(guess_entryreason(dbo, f.VALUE))
         if f.FIELDNAME == "type": d["animaltype"] = str(guess_animaltype(dbo, f.VALUE))
         if f.FIELDNAME == "species": d["species"] = str(guess_species(dbo, f.VALUE))
@@ -985,7 +1172,7 @@ def create_animal(dbo, username, collationid):
             status = 1 # updated existing record
             animalid = similar.ID
             # Merge additional fields
-            asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), animalid, "animal")
+            asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, animalid, "animal")
             # TODO: what would we merge realistically?
             # asm3.animal.merge_animal_details(dbo, username, animalid, d)
     # Create the animal record if we didn't find one
@@ -1011,6 +1198,7 @@ def create_person(dbo, username, collationid):
     formreceived = asm3.i18n.python2display(l, dbo.now())
     for f in fields:
         if flags is None: flags = f.FLAGS
+        if flags is None: flags = ""
         if f.FIELDNAME == "title": d["title"] = f.VALUE
         if f.FIELDNAME == "initials": d["initials"] = f.VALUE
         if f.FIELDNAME == "forenames": d["forenames"] = f.VALUE
@@ -1030,8 +1218,10 @@ def create_person(dbo, username, collationid):
         if f.FIELDNAME == "mobiletelephone": d["mobiletelephone"] = f.VALUE
         if f.FIELDNAME == "celltelephone": d["mobiletelephone"] = f.VALUE
         if f.FIELDNAME == "emailaddress": d["emailaddress"] = f.VALUE
-        if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != asm3.i18n._("No", l): d["excludefrombulkemail"] = "on"
+        if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != asm3.i18n._("No", l): 
+            flags += ",excludefrombulkemail"
         if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = f.VALUE
+        if f.FIELDNAME == "comments": d["comments"] = f.VALUE
         if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
@@ -1062,7 +1252,7 @@ def create_person(dbo, username, collationid):
             # Merge flags and any extra details
             asm3.person.merge_flags(dbo, username, personid, flags)
             # Merge additional fields
-            asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), personid, "person")
+            asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, personid, "person")
             if "gdprcontactoptin" in d: asm3.person.merge_gdpr_flags(dbo, "import", personid, d["gdprcontactoptin"])
             # Merge person details and force form ones to override existing ones if present
             asm3.person.merge_person_details(dbo, username, personid, d, force=True)
@@ -1097,12 +1287,16 @@ def create_animalcontrol(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
+    has_person = False
+    status = 0 # Will always be a new record for the incident, but person status can override if given
     d["incidentdate"] = asm3.i18n.python2display(l, dbo.now())
     d["incidenttime"] = asm3.i18n.format_time(dbo.now())
     d["calldate"] = d["incidentdate"]
     d["calltime"] = d["incidenttime"]
-    d["incidenttype"] = 1
+    d["incidenttype"] = asm3.configuration.default_incident(dbo)
     for f in fields:
+        if f.FIELDNAME == "lastname" and f.VALUE != "": has_person = True
+        if f.FIELDNAME == "surname" and f.VALUE != "": has_person = True
         if f.FIELDNAME == "callnotes": d["callnotes"] = f.VALUE
         if f.FIELDNAME == "dispatchaddress": d["dispatchaddress"] = f.VALUE
         if f.FIELDNAME == "dispatchcity": d["dispatchtown"] = f.VALUE
@@ -1111,13 +1305,16 @@ def create_animalcontrol(dbo, username, collationid):
     # Have we got enough info to create the animal control record? We need notes and dispatchaddress
     if "callnotes" not in d or "dispatchaddress" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an incident record (need call notes and dispatch address).", l))
-    # We need the person/caller record before we create the incident
-    collationid, personid, personname, status = create_person(dbo, username, collationid)
-    d["caller"] = personid
-    # Create the incident 
+    # If we have person info, create that person as the caller
+    if has_person:
+        collationid, personid, personname, status = create_person(dbo, username, collationid)
+        d["caller"] = personid
+    # Create the incident
     incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+    asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, incidentid, "incident")
     attach_form(dbo, username, asm3.media.ANIMALCONTROL, incidentid, collationid)
-    return (collationid, incidentid, "%s - %s" % (asm3.utils.padleft(incidentid, 6), personname), status)
+    display = "%s - %s" % (asm3.utils.padleft(incidentid, 6), asm3.utils.truncate(d["dispatchaddress"], 20))
+    return (collationid, incidentid, display, status)
 
 def create_lostanimal(dbo, username, collationid):
     """
@@ -1142,6 +1339,7 @@ def create_lostanimal(dbo, username, collationid):
         if f.FIELDNAME == "areapostcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
+        if f.FIELDNAME == "comments": d["comments"] = f.VALUE
     if "datelost" not in d or asm3.i18n.display2python(l, d["datelost"]) is None:
         d["datelost"] = asm3.i18n.python2display(l, dbo.now())
     if "species" not in d: d["species"] = guess_species(dbo, "")
@@ -1157,6 +1355,7 @@ def create_lostanimal(dbo, username, collationid):
     d["owner"] = personid
     # Create the lost animal
     lostanimalid = asm3.lostfound.insert_lostanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+    asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, lostanimalid, "lostanimal")
     attach_form(dbo, username, asm3.media.LOSTANIMAL, lostanimalid, collationid)
     return (collationid, lostanimalid, "%s - %s" % (asm3.utils.padleft(lostanimalid, 6), personname), status)
   
@@ -1183,6 +1382,7 @@ def create_foundanimal(dbo, username, collationid):
         if f.FIELDNAME == "areapostcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
+        if f.FIELDNAME == "comments": d["comments"] = f.VALUE
     if "datefound" not in d or asm3.i18n.display2python(l, d["datefound"]) is None:
         d["datefound"] = asm3.i18n.python2display(l, dbo.now())
     if "species" not in d: d["species"] = guess_species(dbo, "")
@@ -1198,6 +1398,7 @@ def create_foundanimal(dbo, username, collationid):
     d["owner"] = personid
     # Create the found animal
     foundanimalid = asm3.lostfound.insert_foundanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+    asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, foundanimalid, "foundanimal")
     attach_form(dbo, username, asm3.media.FOUNDANIMAL, foundanimalid, collationid)
     return (collationid, foundanimalid, "%s - %s" % (asm3.utils.padleft(foundanimalid, 6), personname), status)
 
@@ -1267,6 +1468,7 @@ def create_waitinglist(dbo, username, collationid):
         if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
         if f.FIELDNAME == "description": d["description"] = f.VALUE
         if f.FIELDNAME == "reason": d["reasonforwantingtopart"] = f.VALUE
+        if f.FIELDNAME == "comments": d["comments"] = f.VALUE
     if "size" not in d: d["size"] = guess_size(dbo, "nomatchesusedefault")
     if "species" not in d: d["species"] = guess_species(dbo, "nomatchesusedefault")
     # Have we got enough info to create the waiting list record? We need a description
@@ -1277,6 +1479,7 @@ def create_waitinglist(dbo, username, collationid):
     d["owner"] = personid
     # Create the waiting list
     wlid = asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
+    asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, wlid, "waitinglist")
     attach_form(dbo, username, asm3.media.WAITINGLIST, wlid, collationid)
     return (collationid, wlid, "%s - %s" % (asm3.utils.padleft(wlid, 6), personname), status)
 
@@ -1289,7 +1492,8 @@ def auto_remove_old_incoming_forms(dbo):
         asm3.al.debug("auto remove incoming forms is off.", "onlineform.auto_remove_old_incoming_forms", dbo)
         return
     removecutoff = dbo.today(offset=removeafter*-1)
-    asm3.al.debug("remove date: incoming forms < %s" % removecutoff, "onlineform.auto_remove_old_incoming_forms", dbo)
-    count = dbo.execute("DELETE FROM onlineformincoming WHERE PostedDate < ?", [removecutoff])
-    asm3.al.debug("removed %s incoming forms older than %s days" % (count, removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
+    rows = dbo.query("SELECT DISTINCT(CollationID) FROM onlineformincoming WHERE PostedDate < %s" % dbo.sql_date(removecutoff))
+    for r in rows:
+        delete_onlineformincoming(dbo, "system", r.COLLATIONID)
+    asm3.al.debug("removed %s incoming forms older than %s days" % (len(rows), removeafter), "onlineform.auto_remove_old_incoming_forms", dbo)
 

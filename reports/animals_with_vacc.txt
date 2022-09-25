@@ -10,8 +10,11 @@ en
 ###
 $VAR vt STRING Vaccination type$
 SELECT a.ShelterCode, a.AnimalName, s.SpeciesName, a.BreedName, a.AnimalAge, a.DisplayLocation, a.MostRecentEntryDate,
-(SELECT DateOfVaccination FROM animalvaccination INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID AND 
-UPPER(vaccinationtype.VaccinationType) LIKE UPPER('%$@vt$%') ORDER BY DateOfVaccination DESC LIMIT 1) AS LastGiven
+(SELECT DateOfVaccination FROM animalvaccination 
+    INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID 
+    AND UPPER(vaccinationtype.VaccinationType) LIKE UPPER('%$@vt$%') 
+    AND animalvaccination.AnimalID = a.ID AND DateOfVaccination Is Not Null 
+    ORDER BY DateOfVaccination DESC LIMIT 1) AS LastGiven
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID

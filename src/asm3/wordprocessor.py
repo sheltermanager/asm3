@@ -4,6 +4,7 @@ import asm3.animal
 import asm3.animalcontrol
 import asm3.clinic
 import asm3.configuration
+import asm3.event
 import asm3.financial
 import asm3.html
 import asm3.log
@@ -18,7 +19,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
-from asm3.i18n import _, format_currency, format_currency_no_symbol, format_time, now, python2display, yes_no
+from asm3.i18n import _, format_currency, format_currency_no_symbol, format_time, now, python2display, python2displaytime, yes_no
 
 import zipfile
 
@@ -58,10 +59,19 @@ def org_tags(dbo, username):
         "ORGANIZATIONTELEPHONE" : orgtel,
         "ORGANIZATIONEMAIL"     : orgemail,
         "DATE"                  : python2display(dbo.locale, now(dbo.timezone)),
+        "SIGNATURE"             : '<img src="signature:placeholder" width="150px" />',
+        "SIGNATURE100"          : '<img src="signature:placeholder" width="100px" />',
+        "SIGNATURE150"          : '<img src="signature:placeholder" width="150px" />',
+        "SIGNATURE200"          : '<img src="signature:placeholder" width="200px" />',
+        "SIGNATURE300"          : '<img src="signature:placeholder" width="300px" />',
         "USERNAME"              : username,
         "USERREALNAME"          : realname,
         "USEREMAILADDRESS"      : email,
-        "USERSIGNATURE"         : "<img src=\"" + sig + "\" >",
+        "USERSIGNATURE"         : '<img src="%s" width="150px" />' % sig,
+        "USERSIGNATURE100"      : '<img src="%s" width="100px" />' % sig,
+        "USERSIGNATURE150"      : '<img src="%s" width="150px" />' % sig,
+        "USERSIGNATURE200"      : '<img src="%s" width="200px" />' % sig,
+        "USERSIGNATURE300"      : '<img src="%s" width="300px" />' % sig,
         "USERSIGNATURESRC"      : sig
     }
     return tags
@@ -109,9 +119,30 @@ def fw(s):
     if s.find(" ") == -1: return s
     return s.split(" ")[0]
 
-def additional_field_tags(dbo, fields, prefix = ""):
-    """ Process additional fields and returns them as tags """
+def separate_results(rows, f):
+    """ Given a list of result rows, looks at field f and produces
+        a list containing a new list of result rows for each
+        unique value of f. 
+    """
+    types = {}
+    result = []
+    for x in rows:
+        if x[f] not in types:
+            types[x[f]] = ""
+    for k in types.keys():
+        orows = []
+        for x in rows:
+            if x[f] == k:
+                orows.append(x)
+        result.append(orows)
+    return result
+
+def additional_field_tags(dbo, fields, prefix="", depth=2):
+    """ Process additional fields and returns them as tags
+        depth - the level of the recursion for resolving additional person links in an additional person
+    """
     l = dbo.locale
+    person_types = [asm3.additional.PERSON_LOOKUP, asm3.additional.VET, asm3.additional.SPONSOR]
     tags = {}
     for af in fields:
         val = af["VALUE"]
@@ -122,9 +153,45 @@ def additional_field_tags(dbo, fields, prefix = ""):
             val = format_currency_no_symbol(l, af["VALUE"])
         if af["FIELDTYPE"] == asm3.additional.ANIMAL_LOOKUP:
             val = af["ANIMALNAME"]
-        if af["FIELDTYPE"] == asm3.additional.PERSON_LOOKUP:
+        if af["FIELDTYPE"] in person_types:
             val = af["OWNERNAME"]
+            p = asm3.person.get_person(dbo, asm3.utils.cint(af["VALUE"]))
+            if p is not None: tags = append_tags(tags, additional_field_person_tags(dbo, p, prefix, af["FIELDNAME"].upper(), depth))
         tags[prefix + af["FIELDNAME"].upper()] = val
+    return tags
+
+def additional_field_person_tags(dbo, p, prefix, fieldname, depth):
+    """
+    Generate a tag dictionary for a person record (person, sponsor, vet)
+    p - person record
+    prefix - the tag prefix to use
+    fieldname - the name of the additional field
+    depth - the recursion level for resolving additional person records in this person
+    """
+    tags = {
+        prefix + fieldname + "NAME":            p["OWNERNAME"],
+        prefix + fieldname + "TITLE":           p["OWNERTITLE"],
+        prefix + fieldname + "FIRSTNAME":       p["OWNERFORENAMES"],
+        prefix + fieldname + "FORENAMES":       p["OWNERFORENAMES"],
+        prefix + fieldname + "LASTNAME":        p["OWNERSURNAME"],
+        prefix + fieldname + "SURNAME":         p["OWNERSURNAME"],
+        prefix + fieldname + "OWNERADDRESS":    p["OWNERADDRESS"],
+        prefix + fieldname + "TOWN":            p["OWNERTOWN"],
+        prefix + fieldname + "COUNTRY":         p["OWNERCOUNTRY"],
+        prefix + fieldname + "POSTCODE":        p["OWNERPOSTCODE"],
+        prefix + fieldname + "ZIPCODE":         p["OWNERPOSTCODE"],
+        prefix + fieldname + "CITY":            p["OWNERTOWN"],
+        prefix + fieldname + "STATE":           p["OWNERCOUNTY"],
+        prefix + fieldname + "HOMEPHONE":       p["HOMETELEPHONE"],
+        prefix + fieldname + "PHONE":           p["HOMETELEPHONE"],
+        prefix + fieldname + "WORKPHONE":       p["WORKTELEPHONE"],
+        prefix + fieldname + "MOBILEPHONE":     p["MOBILETELEPHONE"],
+        prefix + fieldname + "CELLPHONE":       p["MOBILETELEPHONE"],
+        prefix + fieldname + "EMAIL":           p["EMAILADDRESS"],
+        prefix + fieldname + "JURISDICTION":    p["JURISDICTIONNAME"]
+    }
+    if depth > 0:
+        tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "person"), prefix + fieldname, depth - 1))
     return tags
 
 def animal_tags_publisher(dbo, a, includeAdditional=True):
@@ -229,8 +296,22 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "DISPLAYCATSIFBADWITH" : asm3.utils.iif(a["ISGOODWITHCATS"] == 1, _("Cats", l), ""),
         "DISPLAYDOGSIFBADWITH" : asm3.utils.iif(a["ISGOODWITHDOGS"] == 1, _("Dogs", l), ""),
         "DISPLAYCHILDRENIFBADWITH" : asm3.utils.iif(a["ISGOODWITHCHILDREN"] == 1, _("Children", l), ""),
+        "DISPLAYXIFCAT"         : asm3.utils.iif(a["SPECIESID"] == 2, "X", ""),
+        "DISPLAYXIFDOG"         : asm3.utils.iif(a["SPECIESID"] == 1, "X", ""),
+        "DISPLAYXIFRABBIT"      : asm3.utils.iif(a["SPECIESID"] == 7, "X", ""),
+        "DISPLAYXIFMALE"        : asm3.utils.iif(a["SEX"] == 1, "X", ""),
+        "DISPLAYXIFFEMALE"      : asm3.utils.iif(a["SEX"] == 0, "X", ""),
+        "DISPLAYXIFNEUTERED"    : asm3.utils.iif(a["NEUTERED"] == 1, "X", ""),
+        "DISPLAYXIFNOTNEUTERED" : asm3.utils.iif(a["NEUTERED"] == 0, "X", ""),
+        "DISPLAYXIFENTIREMALE"  : asm3.utils.iif(a["SEX"] == 1 and a["NEUTERED"] == 0, "X", ""),
+        "DISPLAYXIFENTIREFEMALE": asm3.utils.iif(a["SEX"] == 0 and a["NEUTERED"] == 0, "X", ""),
+        "DISPLAYXIFFIXEDMALE"   : asm3.utils.iif(a["SEX"] == 1 and a["NEUTERED"] == 1, "X", ""),
+        "DISPLAYXIFFIXEDFEMALE" : asm3.utils.iif(a["SEX"] == 0 and a["NEUTERED"] == 1, "X", ""),
+        "DISPLAYXIFPEDIGREE"    : asm3.utils.iif(a["CROSSBREED"] == 0, "X", ""),
+        "DISPLAYXIFCROSSBREED"  : asm3.utils.iif(a["CROSSBREED"] == 1, "X", ""),
         "PICKUPLOCATIONNAME"    : asm3.utils.iif(a["ISPICKUP"] == 1, asm3.utils.nulltostr(a["PICKUPLOCATIONNAME"]), ""),
         "PICKUPADDRESS"         : asm3.utils.iif(a["ISPICKUP"] == 1, asm3.utils.nulltostr(a["PICKUPADDRESS"]), ""),
+        "ANIMALJURISDICTION"    : a["JURISDICTIONNAME"],
         "NAMEOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERNAME"],
         "ADDRESSOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERADDRESS"],
         "TOWNOFPERSONBROUGHTANIMALIN" : a["BROUGHTINBYOWNERTOWN"],
@@ -285,7 +366,12 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "COORDINATORMOBILEPHONE" : a["ADOPTIONCOORDINATORMOBILETELEPHONE"],
         "COORDINATORCELLPHONE"  : a["ADOPTIONCOORDINATORMOBILETELEPHONE"],
         "COORDINATOREMAIL"      : a["ADOPTIONCOORDINATOREMAILADDRESS"],
+        "ORIGINALOWNERTITLE"    : a["ORIGINALOWNERTITLE"],
         "ORIGINALOWNERNAME"     : a["ORIGINALOWNERNAME"],
+        "ORIGINALOWNERFIRSTNAME": a["ORIGINALOWNERFORENAMES"],
+        "ORIGINALOWNERFORENAMES": a["ORIGINALOWNERFORENAMES"],
+        "ORIGINALOWNERLASTNAME" : a["ORIGINALOWNERSURNAME"],
+        "ORIGINALOWNERSURNAME"  : a["ORIGINALOWNERSURNAME"],
         "ORIGINALOWNERADDRESS"  : a["ORIGINALOWNERADDRESS"],
         "ORIGINALOWNERTOWN"     : a["ORIGINALOWNERTOWN"],
         "ORIGINALOWNERCOUNTY"   : a["ORIGINALOWNERCOUNTY"],
@@ -301,6 +387,11 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "ORIGINALOWNEREMAIL"    : a["ORIGINALOWNEREMAILADDRESS"],
         "ORIGINALOWNERJURISDICTION" : a["ORIGINALOWNERJURISDICTION"],
         "CURRENTOWNERNAME"     : a["CURRENTOWNERNAME"],
+        "CURRENTOWNERTITLE"     : a["CURRENTOWNERTITLE"],
+        "CURRENTOWNERFIRSTNAME": a["CURRENTOWNERFORENAMES"],
+        "CURRENTOWNERFORENAMES": a["CURRENTOWNERFORENAMES"],
+        "CURRENTOWNERLASTNAME" : a["CURRENTOWNERSURNAME"],
+        "CURRENTOWNERSURNAME"  : a["CURRENTOWNERSURNAME"],
         "CURRENTOWNERADDRESS"  : a["CURRENTOWNERADDRESS"],
         "CURRENTOWNERTOWN"     : a["CURRENTOWNERTOWN"],
         "CURRENTOWNERCOUNTY"   : a["CURRENTOWNERCOUNTY"],
@@ -340,6 +431,11 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "OWNERSVETLICENSE"      : a["OWNERSVETLICENCENUMBER"],
         "OWNERSVETLICENCE"      : a["OWNERSVETLICENCENUMBER"],
         "RESERVEDOWNERNAME"     : a["RESERVEDOWNERNAME"],
+        "RESERVEDOWNERTITLE"    : a["RESERVEDOWNERTITLE"],
+        "RESERVEDOWNERFIRSTNAME" : a["RESERVEDOWNERFORENAMES"],
+        "RESERVEDOWNERFORENAMES" : a["RESERVEDOWNERFORENAMES"],
+        "RESERVEDOWNERLASTNAME" : a["RESERVEDOWNERSURNAME"],
+        "RESERVEDOWNERSURNAME"  : a["RESERVEDOWNERSURNAME"],
         "RESERVEDOWNERADDRESS"  : a["RESERVEDOWNERADDRESS"],
         "RESERVEDOWNERTOWN"     : a["RESERVEDOWNERTOWN"],
         "RESERVEDOWNERCOUNTY"   : a["RESERVEDOWNERCOUNTY"],
@@ -395,13 +491,19 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "DOCUMENTIMGLINK500"    : "<img height=\"500\" src=\"" + asm3.html.doc_img_src(dbo, a) + "\" >",
         "DOCUMENTIMGTHUMBSRC"   : asm3.html.thumbnail_img_src(dbo, a, "animalthumb"),
         "DOCUMENTIMGTHUMBLINK"  : "<img src=\"" + asm3.html.thumbnail_img_src(dbo, a, "animalthumb") + "\" />",
-        "DOCUMENTQRLINK"        : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID),
-        "DOCUMENTQRLINK200"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "200x200"),
-        "DOCUMENTQRLINK150"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "150x150"),
-        "DOCUMENTQRLINK100"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "100x100"),
-        "DOCUMENTQRLINK50"      : "<img src=\"%s\" />" % asm3.html.qr_animal_img_src(a.ID, "50x50"),
+        "DOCUMENTQRLINK"        : "<img src=\"%s\" />" % asm3.html.qr_animal_img_record_src(a.ID),
+        "DOCUMENTQRLINK200"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_record_src(a.ID, "200x200"),
+        "DOCUMENTQRLINK150"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_record_src(a.ID, "150x150"),
+        "DOCUMENTQRLINK100"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_record_src(a.ID, "100x100"),
+        "DOCUMENTQRLINK50"      : "<img src=\"%s\" />" % asm3.html.qr_animal_img_record_src(a.ID, "50x50"),
+        "DOCUMENTQRSHARE"       : "<img src=\"%s\" />" % asm3.html.qr_animal_img_share_src(dbo, a.ID),
+        "DOCUMENTQRSHARE200"    : "<img src=\"%s\" />" % asm3.html.qr_animal_img_share_src(dbo, a.ID, "200x200"),
+        "DOCUMENTQRSHARE150"    : "<img src=\"%s\" />" % asm3.html.qr_animal_img_share_src(dbo, a.ID, "150x150"),
+        "DOCUMENTQRSHARE100"    : "<img src=\"%s\" />" % asm3.html.qr_animal_img_share_src(dbo, a.ID, "100x100"),
+        "DOCUMENTQRSHARE50"     : "<img src=\"%s\" />" % asm3.html.qr_animal_img_share_src(dbo, a.ID, "50x50"),
         "ADOPTIONSTATUS"        : asm3.publishers.base.get_adoption_status(dbo, a),
         "ANIMALISADOPTABLE"     : asm3.utils.iif(asm3.publishers.base.is_animal_adoptable(dbo, a), _("Yes", l), _("No", l)),
+        "DATEAVAILABLEFORADOPTION": python2display(l, a["DATEAVAILABLEFORADOPTION"]),
         "ANIMALONSHELTER"       : yes_no(l, a["ARCHIVED"] == 0),
         "ANIMALONFOSTER"        : yes_no(l, a["ACTIVEMOVEMENTTYPE"] == asm3.movement.FOSTER),
         "ANIMALPERMANENTFOSTER" : yes_no(l, a["HASPERMANENTFOSTER"] == 1),
@@ -415,7 +517,13 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
 
     # Set original owner to be current owner on non-shelter animals
     if a["NONSHELTERANIMAL"] == 1 and a["ORIGINALOWNERNAME"] is not None and a["ORIGINALOWNERNAME"] != "":
+        tags["CURRENTOWNERID"] = a["ORIGINALOWNERID"]
         tags["CURRENTOWNERNAME"] = a["ORIGINALOWNERNAME"]
+        tags["CURRENTOWNERTITLE"] = a["ORIGINALOWNERTITLE"]
+        tags["CURRENTOWNERFIRSTNAME"] = a["ORIGINALOWNERFORENAMES"]
+        tags["CURRENTOWNERFORENAMES"] = a["ORIGINALOWNERFORENAMES"]
+        tags["CURRENTOWNERLASTNAME"] = a["ORIGINALOWNERSURNAME"]
+        tags["CURRENTOWNERSURNAME"] = a["ORIGINALOWNERSURNAME"]
         tags["CURRENTOWNERADDRESS"] = a["ORIGINALOWNERADDRESS"]
         tags["CURRENTOWNERTOWN"] = a["ORIGINALOWNERTOWN"]
         tags["CURRENTOWNERCOUNTY"] = a["ORIGINALOWNERCOUNTY"]
@@ -429,6 +537,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         tags["CURRENTOWNERMOBILEPHONE"] = a["ORIGINALOWNERMOBILETELEPHONE"]
         tags["CURRENTOWNERCELLPHONE"] = a["ORIGINALOWNERMOBILETELEPHONE"]
         tags["CURRENTOWNEREMAIL"] = a["ORIGINALOWNEREMAILADDRESS"]
+        tags["CURRENTOWNERJURISDICTION"] = a["ORIGINALOWNERJURISDICTION"]
 
     # If the animal doesn't have a current owner, but does have an open
     # movement with a future date on it, look up the owner and use that 
@@ -484,6 +593,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "VACCINATIONEXPIRES":       "d:DATEEXPIRES",
             "VACCINATIONBATCH":         "BATCHNUMBER",
             "VACCINATIONMANUFACTURER":  "MANUFACTURER",
+            "VACCINATIONRABIESTAG":     "RABIESTAG",
             "VACCINATIONCOST":          "c:COST",
             "VACCINATIONCOMMENTS":      "COMMENTS",
             "VACCINATIONDESCRIPTION":   "VACCINATIONDESCRIPTION",
@@ -505,7 +615,11 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             ( "VACCINATIONTYPE", _("Type", l) ),
             ( "DATEREQUIRED", _("Due", l)),
             ( "DATEOFVACCINATION", _("Given", l)),
+            ( "DATEEXPIRES", _("Expires", l)),
+            ( "ADMINISTERINGVETNAME", _("Vet", l)),
+            ( "RABIESTAG", _("Rabies Tag", l) ),
             ( "MANUFACTURER", _("Manufacturer", l)),
+            ( "BATCHNUMBER", _("Batch", l)),
             ( "COMMENTS", _("Comments", l)) 
         ))
 
@@ -538,6 +652,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             ( "TESTNAME", _("Type", l) ),
             ( "DATEREQUIRED", _("Required", l)),
             ( "DATEOFTEST", _("Performed", l)),
+            ( "ADMINISTERINGVETNAME", _("Vet", l)),
             ( "RESULTNAME", _("Result", l)),
             ( "COMMENTS", _("Comments", l)) 
         ))
@@ -561,9 +676,13 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         medicals = asm3.medical.get_regimens(dbo, a["ID"], not iic)
         tags.update(table_tags(dbo, d, medicals, "TREATMENTNAME", "NEXTTREATMENTDUE", "LASTTREATMENTGIVEN"))
         tags["ANIMALMEDICALS"] = html_table(l, medicals, (
+            ( "STARTDATE", _("Start Date", l) ),
             ( "TREATMENTNAME", _("Treatment", l) ),
             ( "DOSAGE", _("Dosage", l) ),
-            ( "LASTTREATMENTGIVEN", _("Given", l)),
+            ( "NAMEDSTATUS", _("Status", l) ),
+            ( "NAMEDGIVENREMAINING", _("Given", l) ),
+            ( "LASTTREATMENTVETNAME", _("Vet", l) ),
+            ( "LASTTREATMENTGIVEN", _("Date", l)),
             ( "NEXTTREATMENTDUE", _("Due", l)),
             ( "COMMENTS", _("Comments", l)) 
         ))
@@ -614,7 +733,9 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         d = {
             "TRANSPORTTYPE":            "TRANSPORTTYPENAME",
             "TRANSPORTDRIVERNAME":      "DRIVEROWNERNAME", 
-            "TRANSPORTPICKUPDATETIME":  "d:PICKUPDATETIME",
+            "TRANSPORTPICKUPDATETIME":  "dt:PICKUPDATETIME",
+            "TRANSPORTPICKUPDATE":      "d:PICKUPDATETIME",
+            "TRANSPORTPICKUPTIME":      "t:PICKUPDATETIME",
             "TRANSPORTPICKUPNAME":      "PICKUPOWNERNAME", 
             "TRANSPORTPICKUPADDRESS":   "PICKUPADDRESS",
             "TRANSPORTPICKUPTOWN":      "PICKUPTOWN",
@@ -630,7 +751,9 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "TRANSPORTPICKUPMOBILEPHONE": "PICKUPMOBILETELEPHONE",
             "TRANSPORTPICKUPCELLPHONE": "PICKUPMOBILETELEPHONE",
             "TRANSPORTDROPOFFNAME":     "DROPOFFOWNERNAME", 
-            "TRANSPORTDROPOFFDATETIME": "d:DROPOFFDATETIME",
+            "TRANSPORTDROPOFFDATETIME": "dt:DROPOFFDATETIME",
+            "TRANSPORTDROPOFFDATE":     "d:DROPOFFDATETIME",
+            "TRANSPORTDROPOFFTIME":     "t:DROPOFFDATETIME",
             "TRANSPORTDROPOFFADDRESS":  "DROPOFFADDRESS",
             "TRANSPORTDROPOFFTOWN":     "DROPOFFTOWN",
             "TRANSPORTDROPOFFCITY":     "DROPOFFTOWN",
@@ -671,6 +794,9 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         totalcosts = totalvaccinations + totaltransports + totaltests + totalmedicals + totallines
         dailyboardingcost = a["DAILYBOARDINGCOST"] or 0
         daysonshelter = a["DAYSONSHELTER"] or 0
+        currentboardingcost = dailyboardingcost * daysonshelter
+        # Only add the current boarding cost to total if this is a shelter animal
+        if a["ARCHIVED"] == 0: totalcosts += currentboardingcost
         costtags = {
             "TOTALVACCINATIONCOSTS": format_currency_no_symbol(l, totalvaccinations),
             "TOTALTRANSPORTCOSTS": format_currency_no_symbol(l, totaltransports),
@@ -678,15 +804,24 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "TOTALMEDICALCOSTS": format_currency_no_symbol(l, totalmedicals),
             "TOTALLINECOSTS": format_currency_no_symbol(l, totallines),
             "DAILYBOARDINGCOST": format_currency_no_symbol(l, dailyboardingcost),
-            "CURRENTBOARDINGCOST": format_currency_no_symbol(l, dailyboardingcost * daysonshelter),
-            "TOTALCOSTS": format_currency_no_symbol(l, dailyboardingcost * daysonshelter + totalcosts)
+            "CURRENTBOARDINGCOST": format_currency_no_symbol(l, currentboardingcost),
+            "TOTALCOSTS": format_currency_no_symbol(l, totalcosts)
         }
         tags = append_tags(tags, costtags)
 
     if includeLitterMates and a["ACCEPTANCENUMBER"] is not None and len(a["ACCEPTANCENUMBER"]) > 2:
         # Littermates
-        lm = dbo.query("SELECT AnimalName, ShelterCode FROM animal WHERE AcceptanceNumber = ? AND ID <> ?", [ a["ACCEPTANCENUMBER"], a["ID"] ])
+        lm = dbo.query("SELECT AnimalName, ShelterCode FROM animal " \
+            "WHERE AcceptanceNumber = ? AND ID <> ? " \
+            "ORDER BY AnimalName", [ a["ACCEPTANCENUMBER"], a["ID"] ])
         tags["LITTERMATES"] = html_table(l, lm, (
+            ( "SHELTERCODE", _("Code", l)),
+            ( "ANIMALNAME", _("Name", l))
+        ))
+        lma = dbo.query("SELECT AnimalName, ShelterCode FROM animal " \
+            "WHERE AcceptanceNumber = ? AND ID <> ? AND Archived = 0 " \
+            "ORDER BY AnimalName", [ a["ACCEPTANCENUMBER"], a["ID"] ])
+        tags["ACTIVELITTERMATES"] = html_table(l, lma, (
             ( "SHELTERCODE", _("Code", l)),
             ( "ANIMALNAME", _("Name", l))
         ))
@@ -708,6 +843,14 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             ( "CREATEDBY", _("By", l)),
             ( "COMMENTS", _("Comments", l))
         ))
+        # Generate an ANIMALLOGSTYPE for each type represented in the logs
+        for logst in separate_results(logs, "LOGTYPENAME"):
+            tags["ANIMALLOGS%s" % logst[0]["LOGTYPENAME"].replace(" ", "").upper()] = html_table(l, logst, (
+                ( "DATE", _("Date", l)),
+                ( "LOGTYPENAME", _("Type", l)),
+                ( "CREATEDBY", _("By", l)),
+                ( "COMMENTS", _("Comments", l))
+            ))
 
     return tags
 
@@ -725,6 +868,7 @@ def animalcontrol_tags(dbo, ac):
         "CALLDATE":             python2display(l, ac["CALLDATETIME"]),
         "CALLTIME":             format_time(ac["CALLDATETIME"], "%H:%M"),
         "CALLNOTES":            ac["CALLNOTES"],
+        "CALLNOTESBR":          br(ac["CALLNOTES"]),
         "CALLTAKER":            ac["CALLTAKER"],
         "DISPATCHDATE":         python2display(l, ac["DISPATCHDATETIME"]),
         "DISPATCHTIME":         format_time(ac["DISPATCHDATETIME"], "%H:%M"),
@@ -737,6 +881,7 @@ def animalcontrol_tags(dbo, ac):
         "DISPATCHZIPCODE":      ac["DISPATCHPOSTCODE"],
         "DISPATCHEDACO":        ac["DISPATCHEDACO"],
         "PICKUPLOCATIONNAME":   asm3.utils.nulltostr(ac["LOCATIONNAME"]),
+        "INCIDENTJURISDICTION": asm3.utils.nulltostr(ac["JURISDICTIONNAME"]),
         "RESPONDEDDATE":        python2display(l, ac["RESPONDEDDATETIME"]),
         "RESPONDEDTIME":        format_time(ac["RESPONDEDDATETIME"], "%H:%M"),
         "FOLLOWUPDATE":         python2display(l, ac["FOLLOWUPDATETIME"]),
@@ -801,9 +946,16 @@ def animalcontrol_tags(dbo, ac):
         "ANIMALNAME":           "ANIMALNAME",
         "SHELTERCODE":          "SHELTERCODE",
         "SHORTCODE":            "SHORTCODE",
+        "MICROCHIPNUMBER":      "IDENTICHIPNUMBER",
         "AGEGROUP":             "AGEGROUP",
         "ANIMALTYPENAME":       "ANIMALTYPENAME",
         "SPECIESNAME":          "SPECIESNAME",
+        "SEX":                  "SEXNAME",
+        "SIZE":                 "SIZENAME",
+        "BREEDNAME":            "BREEDNAME",
+        "BASECOLORNAME":        "BASECOLOURNAME",
+        "BASECOLOURNAME":       "BASECOLOURNAME",
+        "COATTYPE":             "COATTYPENAME",
         "DATEBROUGHTIN":        "d:DATEBROUGHTIN",
         "DECEASEDDATE":         "d:DECEASEDDATE"
     }
@@ -1057,6 +1209,23 @@ def movement_tags(dbo, m):
         "RETURNDATE":                   python2display(l, m["RETURNDATE"]),
         "RETURNNOTES":                  m["REASONFORRETURN"],
         "RETURNREASON":                 asm3.utils.iif(m["RETURNDATE"] is not None, m["RETURNEDREASONNAME"], ""),
+        "RETURNEDBYNAME":               m["RETURNEDBYOWNERNAME"],
+        "RETURNEDBYFIRSTNAME":          m["RETURNEDBYOWNERFORENAMES"],
+        "RETURNEDBYFORENAMES":          m["RETURNEDBYOWNERFORENAMES"],
+        "RETURNEDBYSURNAME":            m["RETURNEDBYOWNERSURNAME"],
+        "RETURNEDBYLASTNAME":           m["RETURNEDBYOWNERSURNAME"],
+        "RETURNEDBYADDRESS":            m["RETURNEDBYOWNERADDRESS"],
+        "RETURNEDBYTOWN":               m["RETURNEDBYOWNERTOWN"],
+        "RETURNEDBYCITY":               m["RETURNEDBYOWNERTOWN"],
+        "RETURNEDBYCOUNTY":             m["RETURNEDBYOWNERCOUNTY"],
+        "RETURNEDBYSTATE":              m["RETURNEDBYOWNERCOUNTY"],
+        "RETURNEDBYPOSTCODE":           m["RETURNEDBYOWNERPOSTCODE"],
+        "RETURNEDBYZIPCODE":            m["RETURNEDBYOWNERPOSTCODE"],
+        "RETURNEDBYHOMEPHONE":          m["RETURNEDBYHOMETELEPHONE"],
+        "RETURNEDBYWORKPHONE":          m["RETURNEDBYWORKTELEPHONE"],
+        "RETURNEDBYMOBILEPHONE":        m["RETURNEDBYMOBILETELEPHONE"],
+        "RETURNEDBYCELLPHONE":          m["RETURNEDBYMOBILETELEPHONE"],
+        "RETURNEDBYEMAIL":              m["RETURNEDBYEMAILADDRESS"],
         "RESERVATIONDATE":              m["RESERVATIONDATE"],
         "RESERVATIONCANCELLEDDATE":     m["RESERVATIONCANCELLEDDATE"],
         "RESERVATIONSTATUS":            m["RESERVATIONSTATUSNAME"],
@@ -1084,7 +1253,7 @@ def movement_tags(dbo, m):
         ( "PAYMENTNAME", _("Method", l) ),
         ( "DONATION", _("Amount", l) )
     ))
-    return tags    
+    return tags
 
 def clinic_tags(dbo, c):
     """
@@ -1158,12 +1327,17 @@ def person_tags(dbo, p, includeImg=False, includeDonations=False, includeVoucher
         "POSTCODE"              : p["OWNERPOSTCODE"],
         "OWNERZIPCODE"          : p["OWNERPOSTCODE"],
         "ZIPCODE"               : p["OWNERPOSTCODE"],
+        "OWNERCOUNTRY"          : p["OWNERCOUNTRY"],
+        "COUNTRY"               : p["OWNERCOUNTRY"],
         "HOMETELEPHONE"         : p["HOMETELEPHONE"],
         "WORKTELEPHONE"         : p["WORKTELEPHONE"],
         "MOBILETELEPHONE"       : p["MOBILETELEPHONE"],
         "CELLTELEPHONE"         : p["MOBILETELEPHONE"],
         "EMAILADDRESS"          : p["EMAILADDRESS"],
         "JURISDICTION"          : p["JURISDICTIONNAME"],
+        "OWNERJURISDICTION"     : p["JURISDICTIONNAME"],
+        "SITE"                  : asm3.utils.nulltostr(p["SITENAME"]),
+        "OWNERSITE"             : asm3.utils.nulltostr(p["SITENAME"]),
         "OWNERCOMMENTS"         : p["COMMENTS"],
         "OWNERFLAGS"            : asm3.utils.nulltostr(p["ADDITIONALFLAGS"]).replace("|", ", "),
         "OWNERCREATEDBY"        : p["CREATEDBY"],
@@ -1173,6 +1347,7 @@ def person_tags(dbo, p, includeImg=False, includeDonations=False, includeVoucher
         "OWNERLASTCHANGEDBYNAME" : p["LASTCHANGEDBY"],
         "OWNERLASTCHANGEDDATE"  : python2display(l, p["LASTCHANGEDDATE"]),
         "IDCHECK"               : asm3.utils.iif(p["IDCHECK"] == 1, _("Yes", l), _("No", l)),
+        "HOMECHECKEDDATE"       : python2display(l, p["DATELASTHOMECHECKED"]),
         "HOMECHECKEDBYNAME"     : p["HOMECHECKEDBYNAME"],
         "HOMECHECKEDBYEMAIL"    : p["HOMECHECKEDBYEMAIL"],
         "HOMECHECKEDBYHOMETELEPHONE": p["HOMECHECKEDBYHOMETELEPHONE"],
@@ -1271,7 +1446,15 @@ def person_tags(dbo, p, includeImg=False, includeDonations=False, includeVoucher
         "TRAPNUMBER":               "TRAPNUMBER",
         "TRAPRETURNDUEDATE":        "d:RETURNDUEDATE",
         "TRAPRETURNDATE":           "d:RETURNDATE",
-        "TRAPCOMMENTS":             "COMMENTS"
+        "TRAPCOMMENTS":             "COMMENTS",
+        "EQUIPMENTTYPENAME":        "TRAPTYPENAME",
+        "EQUIPMENTLOANDATE":        "d:LOANDATE",
+        "EQUIPMENTDEPOSITAMOUNT":   "c:DEPOSITAMOUNT",
+        "EQUIPMENTDEPOSITRETURNDATE":"d:DEPOSITRETURNDATE",
+        "EQUIPMENTNUMBER":          "TRAPNUMBER",
+        "EQUIPMENTRETURNDUEDATE":   "d:RETURNDUEDATE",
+        "EQUIPMENTRETURNDATE":      "d:RETURNDATE",
+        "EQUIPMENTCOMMENTS":        "COMMENTS"
     }
     tags.update(table_tags(dbo, d, asm3.animalcontrol.get_person_traploans(dbo, p["ID"], asm3.animalcontrol.ASCENDING), "TRAPTYPENAME", "RETURNDUEDATE", "RETURNDATE"))
 
@@ -1292,6 +1475,8 @@ def transport_tags(dbo, transports):
 
             "TRANSPORTPICKUPNAME"+i:      t["PICKUPOWNERNAME"], 
             "TRANSPORTPICKUPDATETIME"+i:  python2display(l, t["PICKUPDATETIME"]),
+            "TRANSPORTPICKUPDATE"+i:      python2display(l, t["PICKUPDATETIME"]),
+            "TRANSPORTPICKUPTIME"+i:      format_time(t["PICKUPDATETIME"], "%H:%M"),
             "TRANSPORTPICKUPADDRESS"+i:   t["PICKUPADDRESS"],
             "TRANSPORTPICKUPTOWN"+i:      t["PICKUPTOWN"],
             "TRANSPORTPICKUPCITY"+i:      t["PICKUPTOWN"],
@@ -1308,6 +1493,8 @@ def transport_tags(dbo, transports):
 
             "TRANSPORTDROPOFFNAME"+i:     t["DROPOFFOWNERNAME"], 
             "TRANSPORTDROPOFFDATETIME"+i: python2display(l, t["DROPOFFDATETIME"]),
+            "TRANSPORTDROPOFFDATE"+i:     python2display(l, t["DROPOFFDATETIME"]),
+            "TRANSPORTDROPOFFTIME"+i:     format_time(t["DROPOFFDATETIME"], "%H:%M"),
             "TRANSPORTDROPOFFADDRESS"+i:  t["DROPOFFADDRESS"],
             "TRANSPORTDROPOFFTOWN"+i:     t["DROPOFFTOWN"],
             "TRANSPORTDROPOFFCITY"+i:     t["DROPOFFTOWN"],
@@ -1400,6 +1587,37 @@ def waitinglist_tags(dbo, a):
     tags.update(table_tags(dbo, d, asm3.log.get_logs(dbo, asm3.log.WAITINGLIST, a["ID"], 0, asm3.log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
     return tags
 
+def event_tags(dbo, e):
+    """
+    Generate a tag dictionary for events
+    e - event object that created from asm3.event.get_event
+    """
+    l = dbo.locale
+    tags = {
+        "EVENTSTARTDATE":        python2display(l, e["STARTDATETIME"]),
+        "EVENTENDDATE":          python2display(l, e["ENDDATETIME"]),
+        "EVENTNAME":            e["EVENTNAME"],
+        "EVENTDESCRIPTION":     e["EVENTDESCRIPTION"],
+        "EVENTRECORDVERSION":   e["RECORDVERSION"],
+        "EVENTCREATEDBY":       e["CREATEDBY"],
+        "EVENTCREATEDDATE":     python2display(l, e["CREATEDDATE"]),
+        "EVENTLASTCHANGEDBY":   e["LASTCHANGEDBY"],
+        "EVENTLASTCHANGEDDATE": python2display(l, e["LASTCHANGEDDATE"]),
+        "EVENTOWNERNAME":       e["EVENTOWNERNAME"],
+        "EVENTADDRESS":         e["EVENTADDRESS"],
+        "EVENTTOWN":            e["EVENTTOWN"],
+        "EVENTCITY":            e["EVENTTOWN"],
+        "EVENTCOUNTY":          e["EVENTCOUNTY"],
+        "EVENTSTATE":           e["EVENTCOUNTY"],
+        "EVENTPOSTCODE":        e["EVENTPOSTCODE"],
+        "EVENTZIPCODE":         e["EVENTPOSTCODE"],
+        "EVENTCOUNTRY":         e["EVENTCOUNTRY"]
+    }
+
+    tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, e["ID"], "event"), "EVENT"))
+
+    return tags
+
 def append_tags(tags1, tags2):
     """
     Adds two dictionaries of tags together and returns
@@ -1426,8 +1644,9 @@ def html_table(l, rows, cols):
     for r in rows:
         h.append("<tr>")
         for colfield, coltext in cols:
-            if asm3.utils.is_date(r[colfield]):
-                h.append("<td>%s</td>" % python2display(l, r[colfield]))
+            v = r[colfield]
+            if asm3.utils.is_date(v):
+                h.append("<td>%s</td>" % python2displaytime(l, r[colfield]))
             elif asm3.utils.is_currency(colfield):
                 h.append("<td>%s</td>" % format_currency(l, r[colfield]))
             elif r[colfield] is None:
@@ -1444,18 +1663,22 @@ def html_table(l, rows, cols):
 def table_get_value(l, row, k):
     """
     Returns row[k], looking for a type prefix in k -
-    c: currency, d: date, t: time, y: yesno, f: float
+    c: currency, d: date, t: time, y: yesno, f: float dt: date and time
     """
-    if k.find("d:") != -1: 
+    if k.startswith("d:"): 
         s = python2display(l, row[k.replace("d:", "")])
-    elif k.find("t:") != -1: 
+    elif k.startswith("t:"): 
         s = format_time(row[k.replace("t:", "")], "%H:%M")
-    elif k.find("c:") != -1:
+    elif k.startswith("dt:"):
+        s = "%s %s" % (python2display(l, row[k.replace("dt:", "")]), format_time(row[k.replace("dt:", "")], "%H:%M"))
+    elif k.startswith("c:"):
         s = format_currency_no_symbol(l, row[k.replace("c:", "")])
-    elif k.find("y:") != -1:
+    elif k.startswith("y:"):
         s = asm3.utils.iif(row[k.replace("y:", "")] == 1, _("Yes", l), _("No", l))
-    elif k.find("f:") != -1:
+    elif k.startswith("f:"):
         s = "%0.2f" % asm3.utils.cfloat(row[k.replace("f:", "")])
+    elif row[k] is None:
+        return ""
     else:
         s = str(row[k])
     return s
@@ -1568,22 +1791,20 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
             matchtag = s[sp + len(opener):ep].upper()
             newval = ""
             if matchtag in tags:
-                newval = tags[matchtag]
-                if newval is not None:
-                    newval = str(newval)
-                    # Escape xml entities unless the replacement tag is an
-                    # image, URL or contains HTML entities
-                    if use_xml_escaping and \
-                        not newval.lower().startswith("<img") and \
-                        not newval.lower().find("&#") != -1 and \
-                        not newval.lower().find("/>") != -1 and \
-                        not newval.lower().startswith("<table") and \
-                        not newval.lower().startswith("http") and \
-                        not newval.lower().startswith("image?"):
-                        newval = newval.replace("&", "&amp;")
-                        newval = newval.replace("<", "&lt;")
-                        newval = newval.replace(">", "&gt;")
-            s = s[0:sp] + str(newval) + s[ep + len(closer):]
+                newval = str(tags[matchtag])
+                # Escape xml entities unless the replacement tag is an
+                # image, URL or contains HTML entities
+                if use_xml_escaping and \
+                    not newval.lower().startswith("<img") and \
+                    not newval.lower().find("&#") != -1 and \
+                    not newval.lower().find("/>") != -1 and \
+                    not newval.lower().startswith("<table") and \
+                    not newval.lower().startswith("http") and \
+                    not newval.lower().startswith("image?"):
+                    newval = newval.replace("&", "&amp;")
+                    newval = newval.replace("<", "&lt;")
+                    newval = newval.replace(">", "&gt;")
+            s = "%s%s%s" % ( s[0:sp], newval, s[ep + len(closer):] )
             sp = s.find(opener, sp)
         else:
             # No end marker for this tag, stop processing
@@ -1638,9 +1859,10 @@ def generate_animal_doc(dbo, templateid, animalid, username):
     a = asm3.animal.get_animal(dbo, animalid)
     im = asm3.media.get_image_file_data(dbo, "animal", animalid)[1]
     if a is None: raise asm3.utils.ASMValidationError("%d is not a valid animal ID" % animalid)
-    # Only include donations if there isn't an active movement as we'll take care
-    # of them below if there is
-    tags = animal_tags(dbo, a, includeDonations=(not a["ACTIVEMOVEMENTID"] or a["ACTIVEMOVEMENTID"] == 0))
+    # We include donations here, so that we have RecentType, DueType, Last1, etc
+    # But the call below to get_movement_donations will add the totals and allow
+    # receipt/invoice type documents to work if there's an active movement
+    tags = animal_tags(dbo, a, includeDonations=True)
     # Use the person info from the latest open movement for the animal
     # This will pick up future dated adoptions instead of fosterers (which are still currentowner)
     # as get_animal_movements returns them in descending order of movement date
@@ -1691,7 +1913,9 @@ def generate_clinic_doc(dbo, templateid, appointmentid, username):
     if a is not None:
         tags = append_tags(tags, animal_tags(dbo, a, includeAdditional=True, includeCosts=False, includeDiet=False, includeDonations=False, \
             includeFutureOwner=False, includeIsVaccinated=False, includeLogs=False, includeMedical=False))
-    tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, c.OWNERID)))
+    p = asm3.person.get_person(dbo, c.OWNERID)
+    if p is not None:
+        tags = append_tags(tags, person_tags(dbo, p))
     return substitute_template(dbo, templateid, tags)
 
 def generate_person_doc(dbo, templateid, personid, username):
@@ -1786,9 +2010,11 @@ def generate_movement_doc(dbo, templateid, movementid, username):
     if m is None:
         raise asm3.utils.ASMValidationError("%d is not a valid movement ID" % movementid)
     if m.ANIMALID is not None and m.ANIMALID != 0:
-        tags = animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID), includeDonations=False)
+        tags = animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID))
     if m.OWNERID is not None and m.OWNERID != 0:
         tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, m.OWNERID)))
+    if m.EVENTID is not None and m.EVENTID != 0:
+        tags = append_tags(tags, event_tags(dbo, asm3.event.get_event(dbo, m.EVENTID)))
     tags = append_tags(tags, movement_tags(dbo, m))
     tags = append_tags(tags, donation_tags(dbo, asm3.financial.get_movement_donations(dbo, movementid)))
     tags = append_tags(tags, org_tags(dbo, username))

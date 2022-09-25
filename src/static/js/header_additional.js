@@ -30,7 +30,8 @@ additional = {
     ANIMAL_LOOKUP: 8,
     PERSON_LOOKUP: 9,
     TIME: 10,
-
+    SPONSOR: 11,
+    VET: 12,
     /**
      * Renders and lays out additional fields from data from the backend 
      * additional.get_additional_fields call as HTML controls. 
@@ -133,11 +134,13 @@ additional = {
             fieldattr = 'id="' + fieldid + '" ',
             fieldval = f.VALUE,
             postattr = "a." + f.MANDATORY + "." + fieldname,
+            mi = "",
             fh = [];
         if (classes === undefined) { classes = "additional"; }
         if (usedefault === undefined) { usedefault = false; }
         if (usedefault) { fieldval = f.DEFAULTVALUE; }
         if (includeids === false) { fieldattr = ""; } // includeids has to be explicitly false to disable id attrs
+        if (f.MANDATORY == 1) { mi = '&nbsp;<span class="asm-has-validation">*</span>'; }
         if (f.FIELDTYPE == additional.YESNO) {
             var checked = "";
             if (fieldval && fieldval !== "0") { checked = 'checked="checked"'; }
@@ -147,32 +150,32 @@ additional = {
             fh.push('<label for="' + fieldid + '" title="' + html.title(f.TOOLTIP) + '">' + f.FIELDLABEL + '</label></td>');
         }
         else if (f.FIELDTYPE == additional.TEXT) {
-            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
             fh.push('<input ' + fieldattr + ' type="textbox" class="asm-textbox ' + classes + '" data-post="' + postattr + '" ');
             fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '"/></td>');
         }
         else if (f.FIELDTYPE == additional.DATE) {
-            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi +'</label></td><td>');
             fh.push('<input ' + fieldattr + ' type="textbox" class="asm-textbox asm-datebox ' + classes + '" data-post="' + postattr + '" ');
             fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '" /></td>');
         }
         else if (f.FIELDTYPE == additional.TIME) {
-            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
             fh.push('<input ' + fieldattr + ' type="textbox" class="asm-textbox asm-timebox ' + classes + '" data-post="' + postattr + '" ');
             fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '" /></td>');
         }
         else if (f.FIELDTYPE == additional.NOTES) {
-            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
             fh.push('<textarea ' + fieldattr + ' data-post="' + postattr + '" class="asm-textareafixed ' + classes + '" ');
             fh.push('title="' + html.title(f.TOOLTIP) + '">' + common.nulltostr(fieldval) + '</textarea>');
         }
         else if (f.FIELDTYPE == additional.NUMBER) {
-            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
             fh.push('<input ' + fieldattr + ' type="textbox" class="asm-textbox asm-numberbox ' + classes + '" data-post="' + postattr + '" ');
             fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + html.title(fieldval) + '"/></td>');
         }
         else if (f.FIELDTYPE == additional.MONEY) {
-            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
             fh.push('<input ' + fieldattr + ' type="textbox" class="asm-textbox asm-currencybox ' + classes + '" data-post="' + postattr + '" ');
             fh.push('title="' + html.title(f.TOOLTIP) + '" value="' + format.currency(fieldval) + '"/></td>');
         }
@@ -187,7 +190,7 @@ additional = {
                     opts.push('<option>' + vo + '</option>');
                 }
             });
-            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
             fh.push('<select ' + fieldattr + ' class="asm-selectbox ' + classes + '" data-post="' + postattr + '" ');
             fh.push('title="' + html.title(f.TOOLTIP) + '">');
             fh.push(opts.join("\n"));
@@ -204,21 +207,31 @@ additional = {
                     mopts.push('<option>' + vo + '</option>');
                 }
             });
-            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
             fh.push('<select ' + fieldattr + ' class="asm-bsmselect ' + classes + '" multiple="multiple" data-post="' + postattr + '" ');
             fh.push('title="' + html.title(f.TOOLTIP) + '">');
             fh.push(mopts.join("\n"));
             fh.push('</select></td>');
         }
         else if (f.FIELDTYPE == additional.ANIMAL_LOOKUP) {
-            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
             fh.push('<input ' + fieldattr + ' type="hidden" class="asm-animalchooser ' + classes + '" data-post="' + postattr + '" ');
             fh.push('value="' + html.title(fieldval) + '"/></td>');
         }
         else if (f.FIELDTYPE == additional.PERSON_LOOKUP) {
-            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + '</label></td><td>');
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
             fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
             fh.push('value="' + html.title(fieldval) + '"/></td>');
+        }
+        else if (f.FIELDTYPE == additional.SPONSOR) {
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
+            fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
+            fh.push('value="' + html.title(fieldval) + '" data-filter="sponsor"/></td>');
+        }
+        else if (f.FIELDTYPE == additional.VET) {
+            fh.push('<td class="to' + f.LINKTYPE + '"><label for="' + fieldid + '">' + f.FIELDLABEL + mi + '</label></td><td>');
+            fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
+            fh.push('value="' + html.title(fieldval) + '" data-filter="vet"/></td>');
         }
         return fh.join("\n");
     },

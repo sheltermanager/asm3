@@ -10,6 +10,10 @@ import sys
 
 UPLOAD_URL = PETLINK_BASE_URL + "api/restapi/signup/mass-import?filename=import.csv&mediumId=sheltermanager"
 
+VALIDATE_YES = 0
+VALIDATE_NO = 1
+VALIDATE_FAIL = 2
+
 class PetLinkPublisher(AbstractPublisher):
     """
     Handles publishing of updated microchip info to PetLink.net
@@ -63,20 +67,23 @@ class PetLinkPublisher(AbstractPublisher):
             self.setLastError("No animals found to publish.")
             return
 
+        cutoffdays = asm3.configuration.petlink_cutoff_days(self.dbo)
+        if cutoffdays == 0: cutoffdays = -1095 # default cutoff is 3 years, note that it's a negative number
+
         anCount = 0
         csv = []
         processed_animals = []
         failed_animals = []
 
         csv.append("Software,TransactionType,MicrochipID,FirstName,LastName,Address,City,State,ZipCode,Country," \
-            "Phone1,Phone2,Phone3,Email,Password,Date_of_Implant,PetName,Species,Breed,Gender," \
+            "Phone1,Phone2,Phone3,Email,Password,Date_of_Implant,submitDate,PetName,Species,Breed,Gender," \
             "Spayed_Neutered,ColorMarkings")
 
         for an in animals:
             try:
                 anCount += 1
                 self.log("Processing: %s: %s (%d of %d) - %s %s" % \
-                    ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals), an["IDENTICHIPNUMBER"], an["CURRENTOWNERNAME"] ))
+                    ( an.SHELTERCODE, an.ANIMALNAME, anCount, len(animals), an.IDENTICHIPNUMBER, an.CURRENTOWNERNAME ))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
 
                 # If the user cancelled, stop now
@@ -85,14 +92,16 @@ class PetLinkPublisher(AbstractPublisher):
                     self.resetPublisherProgress()
                     return
 
-                if not self.validate(an): continue
-                csv.append( self.processAnimal(an) )
-
-                # Remember we included this one
-                processed_animals.append(an)
-
-                # Mark success in the log
-                self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                v = self.validate(an, cutoffdays)
+                if v == VALIDATE_NO: 
+                    continue
+                elif v == VALIDATE_YES:
+                    csv.append( self.processAnimal(an) )
+                    processed_animals.append(an)
+                    self.logSuccess("Processed: %s: %s (%d of %d)" % ( \
+                        an.SHELTERCODE, an.ANIMALNAME, anCount, len(animals)))
+                elif v == VALIDATE_FAIL:
+                    failed_animals.append(an)
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
@@ -164,14 +173,14 @@ class PetLinkPublisher(AbstractPublisher):
                 # that have error emssages.
                 for an in processed_animals[:]:
 
-                    if an["IDENTICHIPNUMBER"] == chip:
+                    if an.IDENTICHIPNUMBER == chip:
                         processed_animals.remove(an)
                         try:
                             self.logError("%s: %s (%s) - Received error message from PetLink: %s" % \
-                                (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"], message))
+                                (an.SHELTERCODE, an.ANIMALNAME, an.IDENTICHIPNUMBER, message))
                         except:
                             self.logError("%s: %s (%s) - Error decoding message from PetLink" % \
-                                (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
+                                (an.SHELTERCODE, an.ANIMALNAME, an.IDENTICHIPNUMBER))
                             continue
 
                         # If the message was that the chip is already registered,
@@ -179,9 +188,9 @@ class PetLinkPublisher(AbstractPublisher):
                         # this will force this publisher to put it through as a transfer
                         # next time since we'll find a previous published record.
                         if message.find("has already been registered") != -1:
-                            self.markAnimalPublished(an["ID"], an["DATEBROUGHTIN"])
+                            self.markAnimalPublished(an.ID, an.DATEBROUGHTIN)
                             self.log("%s: %s (%s) - Already registered, marking as PetLink TRANSFER for next publish" % \
-                                (an["SHELTERCODE"], an["ANIMALNAME"], an["IDENTICHIPNUMBER"]))
+                                (an.SHELTERCODE, an.ANIMALNAME, an.IDENTICHIPNUMBER))
                             continue
 
                         # If the message is one of PetLink's permanent failure conditons, 
@@ -197,7 +206,7 @@ class PetLinkPublisher(AbstractPublisher):
                         ]
                         for m in PERMANENT_FAILURES:
                             if message.find(m) != -1:
-                                an["FAILMESSAGE"] = message
+                                an.FAILMESSAGE = message
                                 failed_animals.append(an)
 
             if len(processed_animals) > 0:
@@ -215,10 +224,12 @@ class PetLinkPublisher(AbstractPublisher):
     def processAnimal(self, an):
         """ Process an animal record and return a CSV line """
         
-        email = asm3.utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
-        homephone = asm3.utils.nulltostr(an["CURRENTOWNERHOMETELEPHONE"]).strip()
-        workphone = asm3.utils.nulltostr(an["CURRENTOWNERWORKTELEPHONE"]).strip()
-        mobilephone = asm3.utils.nulltostr(an["CURRENTOWNERMOBILETELEPHONE"]).strip()
+        email = asm3.utils.nulltostr(an.CURRENTOWNEREMAILADDRESS).strip()
+        homephone = asm3.utils.nulltostr(an.CURRENTOWNERHOMETELEPHONE).strip()
+        workphone = asm3.utils.nulltostr(an.CURRENTOWNERWORKTELEPHONE).strip()
+        mobilephone = asm3.utils.nulltostr(an.CURRENTOWNERMOBILETELEPHONE).strip()
+        address = asm3.utils.nulltostr(an.CURRENTOWNERADDRESS).strip()
+        address = address.replace("\n", " ") # petlink have issues with quoted line breaks in CSV files
 
         # Get the non-blank phone number and strip it of non-numeric data
         phone = homephone or mobilephone or workphone
@@ -232,90 +243,110 @@ class PetLinkPublisher(AbstractPublisher):
         if email.find(",") != -1 and email.count("@") > 1:
             email = email[0:email.find(",")].strip()
 
+        # Date of the event that triggered registration
+        submitdate = an.ACTIVEMOVEMENTDATE or an.MOSTRECENTENTRYDATE
+        if an.NONSHELTERANIMAL == 1: submitdate = an.IDENTICHIPDATE
+
         line = []
         # Software
-        line.append("\"ASM\"")
+        line.append("ASM")
         # TransactionType
-        line.append("\"%s\"" % ( self.getLastPublishedDate(an["ID"]) is None and 'N' or 'T' ))
+        line.append(self.getLastPublishedDate(an.ID) is None and 'N' or 'T' )
         # MicrochipID
-        line.append("\"%s\"" % ( an["IDENTICHIPNUMBER"] ))
+        line.append(an.IDENTICHIPNUMBER)
         # FirstName
-        line.append("\"%s\"" % ( an["CURRENTOWNERFORENAMES"] ))
+        line.append(an.CURRENTOWNERFORENAMES)
         # LastName
-        line.append("\"%s\"" % ( an["CURRENTOWNERSURNAME"] ))
+        line.append(an.CURRENTOWNERSURNAME)
         # Address
-        line.append("\"%s\"" % ( an["CURRENTOWNERADDRESS"] ))
+        line.append(address)
         # City
-        line.append("\"%s\"" % ( an["CURRENTOWNERTOWN"] ))
+        line.append(an.CURRENTOWNERTOWN)
         # State
-        line.append("\"%s\"" % ( an["CURRENTOWNERCOUNTY"] ))
+        line.append(an.CURRENTOWNERCOUNTY)
         # ZipCode
-        line.append("\"%s\"" % ( an["CURRENTOWNERPOSTCODE"] ))
+        line.append(an.CURRENTOWNERPOSTCODE)
         # Country
-        line.append("\"%s\"" % ( self.getLocaleForCountry(an["CURRENTOWNERCOUNTRY"] )))
+        line.append(self.getLocaleForCountry(an.CURRENTOWNERCOUNTRY))
         # Phone1
-        line.append("\"%s\"" % ( an["CURRENTOWNERHOMETELEPHONE"] ))
+        line.append(homephone)
         # Phone2
-        line.append("\"%s\"" % ( an["CURRENTOWNERWORKTELEPHONE"] ))
+        line.append(workphone)
         # Phone3
-        line.append("\"%s\"" % ( an["CURRENTOWNERMOBILETELEPHONE"] ))
+        line.append(mobilephone)
         # Email (mandatory)
-        line.append("\"%s\"" % ( email ))
+        line.append( email )
         # Chip Password (stripped phone number)
-        line.append("\"%s\"" % phone)
-        # Date_of_Implant (yy-mm-dd)
-        line.append("\"%s\"" % asm3.i18n.format_date(an["IDENTICHIPDATE"], "%y-%m-%d"))
+        line.append(phone)
+        # Date_of_Implant (mm/dd/yyyy)
+        line.append(asm3.i18n.format_date(an.IDENTICHIPDATE, "%m/%d/%Y"))
+        # submitDate (mm/dd/yyyy)
+        line.append(asm3.i18n.format_date(submitdate, "%m/%d/%Y"))
         # PetName
-        line.append("\"%s\"" % an["ANIMALNAME"])
+        line.append(an.ANIMALNAME)
         # Species
-        line.append("\"%s\"" % an["SPECIESNAME"])
+        line.append(an.SPECIESNAME)
         # Breed (or "Mixed Breed" for crossbreeds, Other for animals not cats and dogs)
-        line.append("\"%s\"" % self.plBreed(an["BREEDNAME1"], an["SPECIESNAME"], an["CROSSBREED"]))
+        line.append(self.plBreed(an.BREEDNAME1, an.SPECIESNAME, an.CROSSBREED))
         # Gender
-        line.append("\"%s\"" % an["SEXNAME"])
+        line.append(an.SEXNAME)
         # Spayed_Neutered (y or n)
-        line.append("\"%s\"" % self.plYesNo(an["NEUTERED"]))
+        line.append(self.plYesNo(an.NEUTERED))
         # ColorMarkings (our BaseColour field)
-        line.append("\"%s\"" % an["BASECOLOURNAME"])
+        line.append(an.BASECOLOURNAME)
         return self.csvLine(line)
 
-    def validate(self, an):
-        """ Validate an animal record is ok to send """
+    def validate(self, an, cutoffdays):
+        """ Validate an animal record is ok to send.
+            an: The record
+            cutoffdays: Negative number of days to check against service date
+        """
 
         # If the microchip number isn't 15 digits, skip it
-        if len(an["IDENTICHIPNUMBER"].strip()) != 15:
-            self.logError("Chip number failed validation (%s not 15 digits), skipping." % an["IDENTICHIPNUMBER"])
-            return False
+        if len(an.IDENTICHIPNUMBER.strip()) != 15:
+            self.logError("Chip number failed validation (%s not 15 digits), skipping." % an.IDENTICHIPNUMBER)
+            return VALIDATE_NO
 
         # Validate certain items aren't blank so we aren't trying to register
         # things that PetLink will bounce back anyway
-        if asm3.utils.nulltostr(an["CURRENTOWNERTOWN"]).strip() == "":
+        if asm3.utils.nulltostr(an.CURRENTOWNERTOWN).strip() == "":
             self.logError("City for the new owner is blank, cannot process")
-            return False 
+            return VALIDATE_NO 
 
-        if asm3.utils.nulltostr(an["CURRENTOWNERCOUNTY"]).strip() == "":
+        if asm3.utils.nulltostr(an.CURRENTOWNERCOUNTY).strip() == "":
             self.logError("State for the new owner is blank, cannot process")
-            return False 
+            return VALIDATE_NO 
 
-        if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
+        if asm3.utils.nulltostr(an.CURRENTOWNERPOSTCODE).strip() == "":
             self.logError("Zipcode for the new owner is blank, cannot process")
-            return False
+            return VALIDATE_NO
 
         # If there's no email or phone, PetLink won't accept it
-        email = asm3.utils.nulltostr(an["CURRENTOWNEREMAILADDRESS"]).strip()
-        homephone = asm3.utils.nulltostr(an["CURRENTOWNERHOMETELEPHONE"]).strip()
-        workphone = asm3.utils.nulltostr(an["CURRENTOWNERWORKTELEPHONE"]).strip()
-        mobilephone = asm3.utils.nulltostr(an["CURRENTOWNERMOBILETELEPHONE"]).strip()
+        email = asm3.utils.nulltostr(an.CURRENTOWNEREMAILADDRESS).strip()
+        homephone = asm3.utils.nulltostr(an.CURRENTOWNERHOMETELEPHONE).strip()
+        workphone = asm3.utils.nulltostr(an.CURRENTOWNERWORKTELEPHONE).strip()
+        mobilephone = asm3.utils.nulltostr(an.CURRENTOWNERMOBILETELEPHONE).strip()
         if email == "" and homephone == "" and workphone == "" and mobilephone == "":
             self.logError("No email address or phone number for owner, skipping.")
-            return False
+            return VALIDATE_NO
        
         # If there's no phone, we can't set the chip password so skip it
         if homephone == "" and workphone == "" and mobilephone == "":
             self.logError("No phone number for owner, skipping.")
-            return False
+            return VALIDATE_NO
 
-        return True
+        # If the action triggering this registration is older than our cutoff, 
+        # not only fail validation, but return a value of FAIL so that this record
+        # is marked with the error and we won't try again until something changes
+        # (prevents old records continually being checked)
+        servicedate = an.ACTIVEMOVEMENTDATE or an.MOSTRECENTENTRYDATE
+        if an.NONSHELTERANIMAL == 1: servicedate = an.IDENTICHIPDATE
+        if servicedate < self.dbo.today(offset=cutoffdays):
+            an.FAILMESSAGE = "Service date is older than %s days, marking failed" % cutoffdays
+            self.logError(an.FAILMESSAGE)
+            return VALIDATE_FAIL
+
+        return VALIDATE_YES
 
 
 

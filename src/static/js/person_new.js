@@ -9,7 +9,7 @@ $(function() {
         render: function() {
             return [
                 '<div id="dialog-similar" style="display: none" title="' + html.title(_("Similar Person")) + '">',
-                '<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>',
+                '<p><span class="ui-icon ui-icon-alert"></span>',
                 _("This person is very similar to another person on file, carry on creating this record?"),
                 '<br /><br />',
                 '<span class="similar-person"></span>',
@@ -26,20 +26,22 @@ $(function() {
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label for="title">' + _("Title") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="50" id="title" data="title" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="50" id="title" data="title" type="text" /></td>',
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label for="initials">' + _("Initials") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="50" id="initials" data="initials" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="50" id="initials" data="initials" type="text" /></td>',
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label for="forenames">' + _("First name(s)") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="200" id="forenames" data="forenames" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="200" id="forenames" data="forenames" type="text" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="surname" class="tag-individual">' + _("Last name") + '</label>',
-                '<label for="surname" class="tag-organisation">' + _("Organization name") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="100" id="surname" data="surname" type="textbox" /></td>',
+                '<label for="surname" class="tag-organisation">' + _("Organization name") + '</label>',
+                '<span class="asm-has-validation">*</span>',
+                '</td>',
+                '<td><input class="asm-textbox newform" maxlength="100" id="surname" data="surname" type="text" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="address">' + _("Address") + '</label></td>',
@@ -47,31 +49,38 @@ $(function() {
                 '</tr>',
                 '<tr class="towncounty">',
                 '<td><label for="town">' + _("City") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="100" id="town" data="town" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="100" id="town" data="town" type="text" /></td>',
                 '</tr>',
                 '<tr class="towncounty">',
                 '<td><label for="county">' + _("State") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="100" id="county" data="county" type="textbox" /></td>',
+                '<td>',
+                common.iif(config.bool("USStateCodes"),
+                    '<select id="county" data="county" class="asm-selectbox newform">' +
+                    html.states_us_options(config.str("OrganisationCounty")) + '</select>',
+                    '<input type="text" id="county" data="county" maxlength="100" class="asm-textbox newform" />'),
+                '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="postcode">' + _("Zipcode") + '</label></td>',
-                '<td><input class="asm-textbox newform" id="postcode" data="postcode" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" id="postcode" data="postcode" type="text" />',
+                '<button id="button-postcodelookup">' + _("Lookup Address") + '</button>',
+                '</td>',
                 '</tr>',
                 '<tr id="countryrow">',
                 '<td><label for="country">' + _("Country") + '</label></td>',
-                '<td><input class="asm-textbox newform" id="country" data="country" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" id="country" data="country" type="text" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="hometelephone">' + _("Home Phone") + '</label></td>',
-                '<td><input class="asm-textbox newform" id="hometelephone" data="hometelephone" type="textbox" /></td>',
+                '<td><input class="asm-textbox asm-phone newform" id="hometelephone" data="hometelephone" type="text" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="worktelephone">' + _("Work Phone") + '</label></td>',
-                '<td><input class="asm-textbox newform" id="worktelephone" data="worktelephone" type="textbox" /></td>',
+                '<td><input class="asm-textbox asm-phone newform" id="worktelephone" data="worktelephone" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="mobiletelephone">' + _("Cell Phone") + '</label></td>',
-                '<td><input class="asm-textbox newform" id="mobiletelephone" data="mobiletelephone" type="textbox" /></td>',
+                '<td><input class="asm-textbox asm-phone newform" id="mobiletelephone" data="mobiletelephone" type="textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="emailaddress">' + _("Email Address") + '</label></td>',
@@ -233,17 +242,30 @@ $(function() {
                 $("#site").select("value", asm.siteid);
             }
 
-            $("#town").autocomplete({ source: controller.towns.split("|") });
-            $("#county").autocomplete({ source: controller.counties.split("|") });
+            $("#town").autocomplete({ source: controller.towns, minLength: 4 });
             $("#town").blur(function() {
-                if ($("#county").val() == "") {
-                    let tc = html.decode(controller.towncounties);
-                    let idx = tc.indexOf($("#town").val() + "^");
-                    if (idx != -1) {
-                        $("#county").val(tc.substring(tc.indexOf("^^", idx) + 2, tc.indexOf("|", idx)));
-                    }
+                if ($("#county").val() == "" && $("#town").val() != "") {
+                    $("#county").val(controller.towncounties[$("#town").val()]);
                 }
             });
+            if (!config.bool("USStateCodes")) { $("#county").autocomplete({ source: controller.counties, minLength: 3 }); }
+
+            $("#button-postcodelookup")
+                .button({ icons: { primary: "ui-icon-search" }, text: false })
+                .click(async function() {
+                    let country = $("#country").val();
+                    let postcode = $("#postcode").val();
+                    if (!postcode) { return; }
+                    if (!country) { country = config.str("OrganisationCountry"); }
+                    let formdata = "mode=postcodelookup&country=" + country + "&postcode=" + postcode + "&locale=" + asm.locale + "&account=" + asm.useraccount;
+                    const response = await common.ajax_post("person_embed", formdata);
+                    const rows = jQuery.parseJSON(response);
+                    $("#address").val( rows[0].street );
+                    $("#town").val( rows[0].town );
+                    $("#county").val( rows[0].county );
+                });
+
+            $("#button-postcodelookup").toggle( controller.postcodelookup );
 
             $("#add").button().click(function() {
                 person_new.create_and_edit = false;
@@ -269,6 +291,7 @@ $(function() {
 
         reset: function() {
             $(".newform").val("").change();
+            if (config.bool("USStateCodes")) { $("#county").select("value", config.str("OrganisationCounty")); }
             $("#country").val( config.str("OrganisationCountry") );
             $("#jurisdiction").select("value", config.str("DefaultJurisdiction"));
             $(".asm-checkbox").prop("checked", false).change();

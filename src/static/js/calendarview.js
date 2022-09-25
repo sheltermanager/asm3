@@ -46,8 +46,8 @@ $(function() {
                 '<label for="toggle-test">' + _("Test") + '</label>',
                 '</span> ',
                 '<span class="asm-calendar-legend">',
-                html.icon("health") + '<input id="toggle-test" data="c" type="checkbox" class="asm-checkbox" />' + 
-                '<label for="toggle-test">' + _("Clinic") + '</label>',
+                html.icon("health") + '<input id="toggle-clinic" data="c" type="checkbox" class="asm-checkbox" />' + 
+                '<label for="toggle-clinic">' + _("Clinic") + '</label>',
                 '</span> ',
                 '<span class="asm-calendar-legend">',
                 html.icon("donation") + '<input id="toggle-donation" data="p" type="checkbox" class="asm-checkbox" />' + 
@@ -66,7 +66,7 @@ $(function() {
                 '<label for="toggle-traploan">' + _("Trap loan") + '</label>',
                 '</span>',
                 '</p>',
-                '<div id="calendar" style="max-width: 900px; margin-left: auto; margin-right: auto;" />',
+                '<div id="calendar" style="max-width: 900px; margin-left: auto; margin-right: auto;"></div>',
                 html.content_footer()
             ].join("\n");
         },
@@ -78,6 +78,7 @@ $(function() {
                     center: 'title',
                     right: 'month,agendaWeek,agendaDay,listMonth'
                 }, 
+                isRTL: (asm.locale == "ar" || asm.locale == "he"),
                 editable: false,
                 firstDay: config.integer("FirstDayOfWeek"),
                 eventLimit: true,
@@ -90,8 +91,14 @@ $(function() {
                     title.html(event.title);
                     listtitle.html(event.title);
                     // We extend the default event object to support tooltips and icons
-                    if (event.tooltip) { element.prop("title", html.decode(event.tooltip)); }
-                    if (event.link) { title.wrap('<a style="color: #fff" href="' + event.link + '"></a>'); }
+                    if (event.tooltip) { 
+                        element.prop("title", html.decode(event.tooltip)); 
+                    }
+                    if (event.link) { 
+                        title.wrap('<a style="color: #fff" href="' + event.link + '"></a>');
+                        listtitle.prop("href", event.link);
+                        if (event.tooltip) { listtitle.html(event.tooltip); } // Use the more detailed version in the list
+                    }
                     if (event.icon) { 
                         if (time.length > 0) {
                             time.prepend(html.icon(event.icon)); 

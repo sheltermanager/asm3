@@ -2,7 +2,7 @@ Shelter Inventory at Date
 ###
 Inventories
 ###
-Any
+Any rev05
 ###
 Historical animal inventory for any date.
 ###
@@ -89,7 +89,7 @@ Shelter Inventory at Date (Include trial adoptions)
 ###
 Inventories
 ###
-3200/Any
+3200/Any rev05
 ###
 Historical animal inventory for any date. Treats trial adoptions as still on the shelter.
 ###
@@ -155,6 +155,86 @@ GROUP$$
 $$BODY<tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
+<td>$ANIMALTYPE</td>
+<td>$BREEDNAME</td>
+<td>$ANIMALAGE ($AGEGROUP)</td>
+<td>$TIMEONSHELTER</td>
+<td>$LATESTMOVEMENT</td>
+<td>$DATELEFTSHELTER</td>
+<td>$OWNERNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<h2>Total Animals: {COUNT.LocationName}</h2>
+FOOTER$$
+&&&
+Shelter Inventory at Date by Species
+###
+Inventories
+###
+Any rev02
+###
+Historical animal inventory for any date by species
+###
+en
+###
+$VAR thedate DATE Inventory at date$
+SELECT 
+ShelterCode, 
+IdentichipNumber, 
+AnimalName,
+TimeOnShelter,
+animaltype.AnimalType,
+species.SpeciesName,
+BreedName,
+AnimalAge, AgeGroup,
+CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = animal.ID AND MovementType = 2 AND MovementDate <= '$@thedate$' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$'))
+THEN 'Foster' ELSE internallocation.LocationName END AS LocationName,
+lksmovementtype.MovementType AS LatestMovement,
+animal.ActiveMovementDate AS DateLeftShelter,
+owner.OwnerName
+FROM animal 
+LEFT OUTER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
+LEFT OUTER JOIN species ON species.ID = animal.SpeciesID
+LEFT OUTER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
+LEFT OUTER JOIN lksmovementtype ON lksmovementtype.ID = animal.ActiveMovementType
+LEFT OUTER JOIN adoption ON adoption.ID = animal.ActiveMovementID
+LEFT OUTER JOIN owner ON owner.ID = adoption.OwnerID
+WHERE
+NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@thedate$ 23:59:59' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
+AND DateBroughtIn <= '$@thedate$ 23:59:59'
+AND NonShelterAnimal = 0 
+AND (DeceasedDate Is Null OR DeceasedDate > '$@thedate$ 23:59:59') 
+ORDER BY SpeciesName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SPECIESNAME</h2>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Microchip</b></td>
+<td><b>Type</b></td>
+<td><b>Breed</b></td>
+<td><b>Age</b></td>
+<td><b>Time On Shelter</b></td>
+<td><b>Last Movement</b></td>
+<td><b>Left Shelter</b></td>
+<td><b>To</b></td>
+</tr>
+$$FOOT
+</table>
+<h2>Total $SPECIESNAME: {COUNT.SpeciesName}</h2>
+GROUP$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$IDENTICHIPNUMBER</td>
 <td>$ANIMALTYPE</td>
 <td>$BREEDNAME</td>
 <td>$ANIMALAGE ($AGEGROUP)</td>

@@ -2,7 +2,7 @@ Medical treatments between two dates
 ###
 Medical
 ###
-34004/Any
+34004/Any rev02
 ###
 List of medical treatments given between two dates
 ###
@@ -11,7 +11,8 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT a.animalname, a.sheltercode, o.ownername, o.membershipnumber, am.treatmentname, v.dategiven, v.comments, am.cost, a.breedname, a.displaylocation, s.speciesname
+SELECT a.animalname, a.sheltercode, o.ownername, o.membershipnumber, am.treatmentname, v.dategiven, 
+am.comments as regimencomments, v.comments, am.cost, a.breedname, a.displaylocation, s.speciesname
 FROM animalmedicaltreatment v
 INNER JOIN animal a ON a.id=v.animalid
 LEFT JOIN owner o ON o.id=v.administeringvetid
@@ -70,7 +71,7 @@ $$BODY
 <td>$OWNERNAME</td>
 <td>$MEMBERSHIPNUMBER</td>
 <td>$TREATMENTNAME</td>
-<td>$COMMENTS</td>
+<td>$REGIMENCOMMENTS $COMMENTS</td>
 <td>$DATEGIVEN</td>
 <td>$COST</td>
 </tr>

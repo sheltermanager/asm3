@@ -6,7 +6,7 @@ const login = {
     render: function() {
         let h = [
             '<div id="asm-login-window" class="dialogshadow" style="display: none">',
-            '<div id="asm-login-splash" />',
+            '<div id="asm-login-splash"></div>',
             '<table width="auto" style="margin-left: auto; margin-right: auto; text-align: right; padding: 10px">',
             '<tr class="asm-account-row hidden">',
             '<td>',
@@ -21,7 +21,7 @@ const login = {
                 '<label for="username">' + _("Username") + '</label>',
             '</td>',
             '<td>',
-                '<input class="asm-textbox ui-widget" id="username" name="username" type="text" />',
+                '<input class="asm-textbox ui-widget" id="username" name="username" type="text" autocomplete="username" />',
             '</td>',
             '</tr>',
             '<tr>',
@@ -29,7 +29,15 @@ const login = {
                 '<label for="password">' + _("Password") + '</label>',
             '</td>',
             '<td>',
-                '<input class="asm-textbox ui-widget" id="password" name="password" type="password" />',
+                '<input class="asm-textbox ui-widget" id="password" name="password" type="password" autocomplete="current-password" />',
+            '</td>',
+            '</tr>',
+            '<tr class="2fa" style="display: none">',
+            '<td>',
+                '<label for="onetimepass">' + _("2FA Code") + '</label>',
+            '</td>',
+            '<td>',
+                '<input class="asm-textbox ui-widget" id="onetimepass" name="onetimepass" type="text" autocomplete="onetimepass" />',
             '</td>',
             '</tr>',
             '</table>',
@@ -54,6 +62,15 @@ const login = {
                     '</p>',
                 '</div>',
             '</div>',
+            '<div class="centered asm-bad2fa" style="display: none">',
+                '<div class="ui-state-error">',
+                    '<p>',
+                        '<span class="ui-icon ui-icon-alert"></span>',
+                        _("Invalid 2FA Code."),
+                    '</p>',
+                '</div>',
+            '</div>',
+
             '<div class="centered" style="margin-bottom: 5px">',
                 '<span id="resetpassword" style="display: none; margin-top: 5px;"><a href="#">Reset my password</a></span>',
             '</div>',
@@ -160,9 +177,13 @@ const login = {
         let username = $("input#username").val();
         let password = $("input#password").val();
         let database = $("input#database").val();
+        let onetimepass = $("input#onetimepass").val();
+        let remember = $("input#rememberme").prop("checked") ? "on" : "";
         let formdata = { "database": database, 
                             "username" : username, 
                             "password" : password,
+                            "onetimepass": onetimepass,
+                            "rememberme": remember,
                             "nologconnection" : controller.nologconnection };
         $.ajax({
             type: "POST",
@@ -190,21 +211,17 @@ const login = {
                     // server, go back to the main login screen to prompt for an account
                     window.location = controller.smcomloginurl;
                 }
+                else if (String(data).indexOf("ASK2FA") != -1) {
+                    $(".2fa").fadeIn();
+                    $("input#onetimepass").focus();
+                    $("#loginbutton").button("enable");
+                }
+                else if (String(data).indexOf("BAD2FA") != -1) {
+                    $(".asm-bad2fa").fadeIn("slow").delay(3000).fadeOut("slow");
+                    $("input#onetimepass").focus();
+                    $("#loginbutton").button("enable");
+                }
                 else {
-                    // We have a successful login!
-                    // If remember me is ticked, store the login info on 
-                    // the user's machine.
-                    if ($("#rememberme").prop("checked")) {
-                        common.local_set("asmusername", username);
-                        common.local_set("asmpassword", password);
-                        common.local_set("asmaccount", database);
-                    }
-                    else {
-                        // Remember me wasn't ticked, remove any stored login info
-                        common.local_delete("asmusername");
-                        common.local_delete("asmpassword");
-                        common.local_delete("asmaccount");
-                    }
                     $("#asm-login-window").fadeOut("slow", function() {
                         if (!controller.target) { 
                             controller.target = "main"; 
@@ -234,7 +251,7 @@ const login = {
         });
 
         // Set the splash image. If the database has a custom one set, we'll
-        // use that otherwise one of our set.
+        // use that otherwise our default.
         if (controller.customsplash) {
             if (controller.multipledatabases) {
                 $("#asm-login-splash").css({
@@ -248,8 +265,8 @@ const login = {
             }
         }
         else {
-            $("#asm-login-window").css({
-                "background-image": "url(static/images/splash/splash_logo.jpg)"
+            $("#asm-login-splash").css({
+                "background-image": common.is_dark_mode() ? "url(static/images/splash/splash_logo_dark.jpg)" : "url(static/images/splash/splash_logo.jpg)"
             });
         }
         
@@ -284,6 +301,15 @@ const login = {
             $("input#username").focus();
         }
 
+        // If the current URL doesn't match our base URL, redirect to the base.
+        // Useful when you have multiple DNS aliases to a server, but
+        // switching between them loses the session cookie
+        if (common.current_url().indexOf(controller.baseurl) != 0) {
+            let url = controller.baseurl + "/login";
+            if (controller.smaccount) { url += "?smaccount=" + controller.smaccount; }
+            window.location = url;
+        }
+
         // If we were passed a username, stick it in
         if (controller.husername) {
             $("input#username").val(controller.husername);
@@ -300,31 +326,21 @@ const login = {
         // Bind the reset password handerl
         $("#resetpassword").click(self.reset_password);
 
-        // If we weren't passed a username or password, have a look
-        // to see if we remembered one previously
-        if (common.local_get("asmusername")) {
-            $("#rememberme").prop("checked", true);
-            $("input#username").val(common.local_get("asmusername"));
-            $("input#password").val(common.local_get("asmpassword"));
-            $("input#database").val(common.local_get("asmaccount"));
-        }
+        // Make sure there are no stored credentials
+        common.local_delete("asmusername");
+        common.local_delete("asmpassword");
+        common.local_delete("asmaccount");
 
-        // Login when a button is pressed or enter
         // is pressed in any of our fields
         $("#loginbutton").button().click(function() {
             self.login();
         });
 
-        $("input#username").keypress(function(e) {
+        $("input#username, input#password, input#onetimepass, input#database").keypress(function(e) {
             if (e.which == 13) { self.login(); }
         });
 
-        $("input#password").keypress(function(e) {
-            if (e.which == 13) { self.login(); }
-        });
+        if (common.is_dark_mode()) { common.apply_theme("asm-dark", "#000000"); }
 
-        $("input#database").keypress(function(e) {
-            if (e.which == 13) { self.login(); }
-        });
     }
 };

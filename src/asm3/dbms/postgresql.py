@@ -105,6 +105,9 @@ class DatabasePostgreSQL(Database):
         """ Writes a char length """
         return "char_length(%s)" % item
 
+    def sql_ilike(self, expr1, expr2 = "?"):
+        return "%s ILIKE %s" % (expr1, expr2)
+
     def sql_regexp_replace(self, fieldexpr, pattern="?", replacestr="?"):
         """ Writes a regexp replace expression that replaces characters matching pattern with replacestr """
         if pattern != "?": pattern = "'%s'" % pattern
@@ -118,4 +121,7 @@ class DatabasePostgreSQL(Database):
     def sql_zero_pad_left(self, fieldexpr, digits):
         """ Writes a function that zero pads an expression with zeroes to digits """
         return "TO_CHAR(%s, 'FM%s')" % (fieldexpr, "0"*digits)
+
+    def vacuum(self, tablename=""):
+        self.execute("VACUUM %s" % tablename)
 

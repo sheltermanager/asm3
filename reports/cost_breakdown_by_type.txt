@@ -2,7 +2,7 @@ Cost Breakdown by Type
 ###
 Financial
 ###
-33601/Any
+33601/Any rev01
 ###
 Animal costs between two dates, grouped by type.
 ###
@@ -214,7 +214,7 @@ $$HEAD
 <td><b>Species</b></td>
 <td><b>Amount</b></td>
 <td></td>
-</tr>
+/tr>
 $$FOOT
 </table>
 <p>Total $description1: <b>{SUM.AMT.2}</b></p>

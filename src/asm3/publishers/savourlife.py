@@ -6,9 +6,13 @@ import asm3.medical
 import asm3.utils
 
 from .base import AbstractPublisher
-from asm3.sitedefs import SAVOURLIFE_URL, SAVOURLIFE_API_KEY
+from asm3.sitedefs import SAVOURLIFE_URL
+# from asm3.sitedefs import SAVOURLIFE_API_KEY - is this actually needed any more?
 
 import sys
+
+# ID type keys used in the ExtraIDs column
+IDTYPE_SAVOURLIFE = "savourlife"
 
 class SavourLifePublisher(AbstractPublisher):
     """
@@ -18,20 +22,22 @@ class SavourLifePublisher(AbstractPublisher):
     def __init__(self, dbo, publishCriteria):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
+        publishCriteria.bondedAsSingle = True
+        publishCriteria.includeWithoutImage = False # SL do not want listings without images
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("savourlife", "SavourLife Publisher")
 
-    def get_breed_id(self, an):
+    def get_breed_id(self, breedname, crossbreed = False):
         """
-        Returns a savourlife breed for an asm3.animal.
+        Returns a savourlife breed for a given breedname
         """
-        breed = asm3.utils.nulltostr(an.BREEDNAME1)
-        if an.CROSSBREED == 1:
+        breed = asm3.utils.nulltostr(breedname)
+        if crossbreed:
             breed = "%s cross" % breed
         for k, v in DOG_BREEDS.items():
-            if v.lower().find(breed.lower()) != -1:
+            if v.lower() == breed.lower():
                 return int(k)
-        self.log("'%s' is not a valid SavourLife breed, using default 'Cross Breed'" % an.BREEDNAME1)
+        self.log("'%s' is not a valid SavourLife breed, using default 'Cross Breed'" % breedname)
         return 305
 
     def get_state(self, s):
@@ -59,7 +65,7 @@ class SavourLifePublisher(AbstractPublisher):
 
     def good_with(self, x):
         """
-        Translates our good with fields Unknown/No/Yes to SOL's NULL/False/True
+        Translates our good with fields Selective/Unknown/No/Yes to SOL's NULL/False/True
         """
         if x == 0: return True
         elif x == 1: return False
@@ -74,19 +80,16 @@ class SavourLifePublisher(AbstractPublisher):
         self.setLastError("")
         self.setStartPublishing()
 
-        username = asm3.configuration.savourlife_username(self.dbo)
-        password = asm3.configuration.savourlife_password(self.dbo)
+        token = asm3.configuration.savourlife_token(self.dbo)
         interstate = asm3.configuration.savourlife_interstate(self.dbo)
+        all_microchips = asm3.configuration.savourlife_all_microchips(self.dbo)
+        radius = asm3.configuration.savourlife_radius(self.dbo)
         postcode = asm3.configuration.organisation_postcode(self.dbo)
         suburb = asm3.configuration.organisation_town(self.dbo)
         state = asm3.configuration.organisation_county(self.dbo)
 
-        if username == "":
-            self.setLastError("No SavourLife username has been set.")
-            return
-
-        if password == "":
-            self.setLastError("No SavourLife password has been set.")
+        if token == "":
+            self.setLastError("No SavourLife token has been set.")
             return
 
         if postcode == "" or suburb == "" or state == "":
@@ -97,15 +100,19 @@ class SavourLifePublisher(AbstractPublisher):
         animals = [ x for x in preanimals if x.SPECIESID == 1 ] # We only want dogs
         processed = []
 
+        # Log that there were no animals, we still need to check
+        # previously sent listings
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
-            self.cleanup()
-            return
+            self.log("No animals found to publish.")
 
+        # Redundant code, we used to have to pass a username and password to get a token, but as of Feb 2022, the token itself should be configured
+        """
+        username = asm3.configuration.savourlife_username(self.dbo)
+        password = asm3.configuration.savourlife_password(self.dbo)
         # Authenticate first to get our token
         url = SAVOURLIFE_URL + "getToken"
         jsondata = '{ "Username": "%s", "Password": "%s", "Key": "%s" }' % ( username, password, SAVOURLIFE_API_KEY )
-        self.log("Token request to %s: %s" % ( url, jsondata))
+        self.log("Token request to %s: %s" % ( url, jsondata)) 
         try:
             r = asm3.utils.post_json(url, jsondata)
             if r["status"] != 200:
@@ -120,6 +127,7 @@ class SavourLifePublisher(AbstractPublisher):
             self.logError("Failed getting token: %s" % err, sys.exc_info())
             self.cleanup()
             return
+        """
 
         anCount = 0
         for an in animals:
@@ -136,10 +144,10 @@ class SavourLifePublisher(AbstractPublisher):
                     return
 
                 # Do we already have a SavourLife ID for this animal?
-                # This function returns None if no match is found
-                dogid = asm3.animal.get_extra_id(self.dbo, an, asm3.animal.IDTYPE_SAVOURLIFE)
+                # This function returns empty string for no dogid
+                dogid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_SAVOURLIFE)
 
-                data = self.processAnimal(an, dogid, postcode, state, suburb, username, token, interstate)
+                data = self.processAnimal(an, dogid, postcode, state, suburb, token, radius, interstate, all_microchips)
 
                 # SavourLife will insert/update accordingly based on whether DogId is null or not
                 url = SAVOURLIFE_URL + "setDog"
@@ -156,9 +164,9 @@ class SavourLifePublisher(AbstractPublisher):
 
                     # If we didn't have a dogid, extract it from the response and store it
                     # so future postings will update this dog's listing.
-                    if dogid is None:
+                    if dogid == "":
                         dogid = r["response"]
-                        asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, asm3.animal.IDTYPE_SAVOURLIFE, dogid)  
+                        asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, IDTYPE_SAVOURLIFE, dogid)  
 
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
@@ -173,52 +181,72 @@ class SavourLifePublisher(AbstractPublisher):
             animalids_just_sent = set([ x.ID for x in animals ])
             animalids_to_cancel = set([ str(x.ANIMALID) for x in prevsent if x.ANIMALID not in animalids_just_sent])
 
-            # Get the animal records for the ones we need to mark saved
+            # Get the animal records for the ones we need to mark saved or remove
             if len(animalids_to_cancel) > 0:
 
-                animals = self.dbo.query("SELECT ID, ShelterCode, AnimalName, ActiveMovementDate, ActiveMovementType, DeceasedDate, ExtraIDs, " \
-                    "(SELECT Extra FROM animalpublished WHERE AnimalID=a.ID AND PublishedTo='savourlife') AS LastStatus " \
-                    "FROM animal a WHERE ID IN (%s)" % ",".join(animalids_to_cancel))
+                animals = self.dbo.query(asm3.animal.get_animal_query(self.dbo) + "WHERE a.ID IN (%s)" % ",".join(animalids_to_cancel))
 
                 # Append the additional fields so we can get the enquiry number
                 asm3.additional.append_to_results(self.dbo, animals, "animal")
 
-                # Cancel the inactive listings - we can only do this for adoptions, so we're going to 
-                # end up ignoring a lot of listings that will need to be manually removed by
-                # SavourLife - this is what they requested and the way they want it.
+                # Cancel the inactive listings - we can either mark a dog as adopted, held, or we can delete the listing.
+                anCount = 0
                 for an in animals:
+                    anCount += 1
                     try:
+                        status = "removed"
+                        # this will pick up trials as well as full adoptions
+                        if an.ACTIVEMOVEMENTDATE is not None and an.ACTIVEMOVEMENTTYPE == 1:
+                            status = "adopted"
+                        elif an.ARCHIVED == 0: # animal is still in care but not adoptable
+                            status = "held"
 
-                        # The animal is not adopted, don't do anything
-                        if an.ACTIVEMOVEMENTTYPE != 1: continue
-
-                        # If we already sent this update, don't do anything
-                        if an.LASTSTATUS == "adopted": continue
+                        # Get the previous status for this animal from animalpublished.Extra
+                        # Don't send the same update again.
+                        laststatus = self.dbo.query_string("SELECT Extra FROM animalpublished WHERE AnimalID=? AND PublishedTo='savourlife'", [an.ID])
+                        if laststatus == status: continue
 
                         # The savourlife dogid field that they returned when we first sent the record
-                        dogid = asm3.animal.get_extra_id(self.dbo, an, asm3.animal.IDTYPE_SAVOURLIFE)
+                        dogid = asm3.animal.get_extra_id(self.dbo, an, IDTYPE_SAVOURLIFE)
 
                         # If there isn't a dogid, stop now because we can't do anything
-                        if dogid is None: continue
+                        if dogid == "": continue
 
-                        # The enquiry number is given by the savourlife website to the potential adopter,
-                        # they pass it on to the shelter (who should add it to the animal record) so
-                        # that it's set when we mark the animal adopted with savourlife. This gets the
-                        # new adopter free food.
-                        enquirynumber = None
-                        if "ENQUIRYNUMBER" in an and an.ENQUIRYNUMBER != "":
-                            enquirynumber = an.ENQUIRYNUMBER
+                        data = {}
+                        url = ""
+                        if status == "adopted":
+                            # The enquiry number is given by the savourlife website to the potential adopter,
+                            # they pass it on to the shelter (who should add it to the animal record) so
+                            # that it's set when we mark the animal adopted with savourlife. This gets the
+                            # new adopter free food.
+                            enquirynumber = None
+                            if "ENQUIRYNUMBER" in an and an.ENQUIRYNUMBER != "":
+                                enquirynumber = an.ENQUIRYNUMBER
+                            data = {
+                                "Token":        token,
+                                "DogId":        dogid,
+                                "EnquiryNumber": enquirynumber
+                            }
+                            url = SAVOURLIFE_URL + "setDogAdopted"
+                            # Clear the dogId on adoption, so if the animal returns it gets a new listing
+                            asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, IDTYPE_SAVOURLIFE, "")
+                        elif status == "held":
+                            # We're marking the listing as held. We can't just send the held flag, we have to send
+                            # the entire listing again.
+                            data = self.processAnimal(an, dogid, postcode, state, suburb, token, radius, interstate, all_microchips, hold=True)
+                            url = SAVOURLIFE_URL + "setDog"
+                        else:
+                            # We're deleting the listing
+                            data = {
+                                "Token":        token,
+                                "DogId":        dogid
+                            }
+                            url = SAVOURLIFE_URL + "DeleteDog"
+                            # Clear the dogId since the listing has been deleted
+                            asm3.animal.set_extra_id(self.dbo, "pub::savourlife", an, IDTYPE_SAVOURLIFE, "")
 
-                        data = {
-                            "Username":     username,
-                            "Token":        token,
-                            "DogId":        dogid,
-                            "EnquiryNumber": enquirynumber
-                        }
-
-                        url = SAVOURLIFE_URL + "setDogAdopted"
                         jsondata = asm3.utils.json(data)
-                        self.log("Sending POST to %s to mark animal '%s - %s' adopted: %s" % (url, an.SHELTERCODE, an.ANIMALNAME, jsondata))
+                        self.log("Sending POST to %s to mark animal '%s - %s' %s: %s" % (url, an.SHELTERCODE, an.ANIMALNAME, status, jsondata))
                         r = asm3.utils.post_json(url, jsondata)
 
                         if r["status"] != 200:
@@ -229,10 +257,10 @@ class SavourLifePublisher(AbstractPublisher):
 
                             # Update animalpublished for this animal with the status we just sent in the Extra field
                             # so that it can be picked up next time and we won't do this again.
-                            self.markAnimalPublished(an.ID, extra = "adopted")
+                            self.markAnimalPublished(an.ID, extra = status)
 
                     except Exception as err:
-                        self.logError("Failed calling setDogAdopted for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())
+                        self.logError("Failed updating listing for %s - %s: %s" % (an.SHELTERCODE, an.ANIMALNAME, err), sys.exc_info())
 
         except Exception as err:
             self.logError("Failed finding potential dogs to mark adopted: %s" % err, sys.exc_info())
@@ -242,7 +270,7 @@ class SavourLifePublisher(AbstractPublisher):
 
         self.cleanup()
 
-    def processAnimal(self, an, dogid="", postcode="", state="", suburb="", username="", token="", interstate=False):
+    def processAnimal(self, an, dogid="", postcode="", state="", suburb="", token="", radius=0, interstate=False, all_microchips=False, hold=False):
         """ Processes an animal record and returns a data dictionary for upload as JSON """
         # Size is 10 = small, 20 = medium, 30 = large, 40 = x large
         size = ""
@@ -270,6 +298,11 @@ class SavourLifePublisher(AbstractPublisher):
         if "NEEDSFOSTER" in an and an.NEEDSFOSTER != "" and an.NEEDSFOSTER != "0":
             needs_foster = True
 
+        # We have a config option for interstate adoptable. If this DB has an additional
+        # field for interstateadoptable on the animal with a value then we use that instead:
+        if "INTERSTATEADOPTABLE" in an and an.INTERSTATEADOPTABLE != "":
+            interstate = an.INTERSTATEADOPTABLE != "0"
+
         # Check whether we've been vaccinated, wormed and hw treated
         vaccinated = asm3.medical.get_vaccinated(self.dbo, an.ID)
         sixmonths = self.dbo.today(offset=-182)
@@ -282,35 +315,35 @@ class SavourLifePublisher(AbstractPublisher):
         if not hwtreated: hwtreated = None
         if not wormed: wormed = None
 
-        # Use the fosterer's postcode, state and suburb if available
+        # Use the fosterer or retailer postcode, state and suburb if available
         location_postcode = postcode
         location_state_abbr = self.get_state(state)
         location_suburb = suburb
-        if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE == 2:
+        if an.ACTIVEMOVEMENTID and an.ACTIVEMOVEMENTTYPE in (2, 8):
             fr = self.dbo.first_row(self.dbo.query("SELECT OwnerTown, OwnerCounty, OwnerPostcode FROM adoption m " \
                 "INNER JOIN owner o ON m.OwnerID = o.ID WHERE m.ID=?", [ an.ACTIVEMOVEMENTID ]))
             if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
             if fr is not None and fr.OWNERCOUNTY: location_state_abbr = self.get_state(fr.OWNERCOUNTY)
             if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
 
-        # MicrochipDetails should be "No" if we don't have one, the actual number for VIC or NSW (2XXX or 3XXX postcode)
+        # MicrochipDetails should be "No" if we don't have one, 
+        # the actual number if all_microchips is set or we're in VIC or NSW (2XXX or 3XXX postcode)
         # or "Yes" for others.
         microchipdetails = "No"
         if an.IDENTICHIPNUMBER != "":
-            if location_postcode.startswith("2") or location_postcode.startswith("3"):
+            if all_microchips or (location_postcode.startswith("2") or location_postcode.startswith("3")):
                 microchipdetails = an.IDENTICHIPNUMBER
             else:
                 microchipdetails = "Yes"
 
         # Construct a dictionary of info for this animal
-        return {
-            "Username":                 username,
+        d = {
             "Token":                    token,
-            "DogId":                    dogid, # None in here translates to null and creates a new record
+            "DogId":                    asm3.utils.iif(dogid == "", None, dogid), # SL expect a null in this field for no dogid
             "Description":              self.getDescription(an, replaceSmart=True),
             "DogName":                  an.ANIMALNAME.title(),
             "Images":                   self.getPhotoUrls(an.ID),
-            "BreedId":                  self.get_breed_id(an),
+            "BreedId":                  self.get_breed_id(an.BREEDNAME1, an.CROSSBREED == 1),
             "Suburb":                   location_suburb,
             "State":                    location_state_abbr,
             "Postcode":                 location_postcode,
@@ -329,15 +362,45 @@ class SavourLifePublisher(AbstractPublisher):
             "RequirementKidsOver5":     self.good_with(an.ISGOODWITHCHILDREN),
             "RequirementKidsUnder5":    self.good_with(an.ISGOODWITHCHILDREN),
             "SpecialNeeds":             "",
-            "MedicalIssues":            self.replaceSmartHTMLEntities(an.HEALTHPROBLEMS),
-            "InterstateAdoptionAvailable": interstate, 
+            "MedicalIssues":            self.replaceSmartQuotes(an.HEALTHPROBLEMS),
+            "InterstateAdoptionAvaliable": interstate, # NB: This attribute is deliberately spelled wrong due to mispelling at SL side
+            "DistanceRestriction":      asm3.utils.iif(radius == 0, None, radius),
             "FosterCareRequired":       needs_foster,
             "BondedPair":               an.BONDEDANIMALID is not None and an.BONDEDANIMALID > 0,
             "SizeWhenAdult":            size,
             "IsSaved":                  an.ACTIVEMOVEMENTTYPE == 1,
             "MicrochipDetails":         microchipdetails,
-            "IsOnHold":                 an.HASACTIVERESERVE == 1
+            "IsOnHold":                 hold # Typically false, but the change status code will do this
         }
+
+        # If this animal is bonded, override its name back to the original value
+        # and add info for the bonded animal
+        if "BONDEDNAME1" in an:
+            d["DogName"] = an.BONDEDNAME1.title()
+            d["DogName2"] = an.BONDEDNAME2.title()
+            d["IsMale2"] = an.BONDEDSEX == 1
+            d["BreedId2"] = self.get_breed_id(an.BONDEDBREEDNAME, an.CROSSBREED == 1)
+            d["DOB2"] = an.DATEOFBIRTH
+
+            # MicrochipDetails2 should be "No" if we don't have one, 
+            # the actual number if all_microchips is set or we're in VIC or NSW (2XXX or 3XXX postcode)
+            # or "Yes" for others.
+            microchipdetails2 = "No"
+            if an.BONDEDMICROCHIPNUMBER != "":
+                if all_microchips or (location_postcode.startswith("2") or location_postcode.startswith("3")):
+                    microchipdetails2 = an.BONDEDMICROCHIPNUMBER
+                else:
+                    microchipdetails2 = "Yes"
+            d["MicrochipDetails2"] = microchipdetails2
+
+            # Size is 10 = small, 20 = medium, 30 = large, 40 = x large
+            size2 = ""
+            if an.BONDEDSIZE == 2: size2 = 20
+            elif an.BONDEDSIZE < 2: size2 = 30
+            else: size2 = 10
+            d["SizeWhenAdult2"] = size2
+
+        return d
 
 
 

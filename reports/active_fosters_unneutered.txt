@@ -2,7 +2,7 @@ Active Fosters (Unaltered/unneutered)
 ###
 Movements
 ###
-Any
+Any rev01
 ###
 Active fosters who have not been altered/neutered.
 ###
@@ -46,7 +46,7 @@ HEADER$$
 $$GROUP_FosteredTo
 $$HEAD
 <h2>$FOSTEREDTO</h2>
-<p><i>$OWNERADDRESS</i>, E: $EMAILADDRESS, H: $HOMETELEPHONE, C: $MOBILETELEPHONE</p>
+<p><i>$OWNERADDRESS, $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE</i>, E: $EMAILADDRESS, H: $HOMETELEPHONE, C: $MOBILETELEPHONE</p>
 <hr />
 $$FOOT
 <p>Total animals on foster with $FOSTEREDTO: {COUNT.ShelterCode}</p>

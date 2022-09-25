@@ -71,15 +71,17 @@ $(function() {
                 idcolumn: "ID",
                 edit: function(row) {
                     tableform.dialog_show_edit(dialog, row, {
-                        onchange: function() {
+                        onchange: async function() {
                             tableform.fields_update_row(dialog.fields, row);
                             transport.set_extra_fields(row);
-                            tableform.fields_post(dialog.fields, "mode=update&transportid=" + row.ID, "transport", function(response) {
+                            try {
+                                await tableform.fields_post(dialog.fields, "mode=update&transportid=" + row.ID, "transport");
                                 tableform.table_update(table);
                                 tableform.dialog_close();
-                            }, function() { 
+                            }
+                            catch(err) {
                                 tableform.dialog_enable_buttons();
-                            });
+                            }
                         },
                         onload: function() {
                             $("#animal").closest("tr").show();
@@ -100,7 +102,7 @@ $(function() {
                     { field: "IMAGE", display: "", 
                         formatter: function(row) {
                             if (!row.ANIMALID) { return ""; }
-                            return '<a href="animal?id=' + row.ANIMALID + '"><img src=' + html.thumbnail_src(row, "animalthumb") + ' style="margin-right: 8px" class="asm-thumbnail thumbnailshadow" /></a>';
+                            return html.animal_link_thumb_bare(row);
                         },
                         hideif: function(row) {
                             // Don't show this column if we're in the animal's record or the option is turned off
@@ -119,7 +121,7 @@ $(function() {
                         }
                     },
                     { field: "DRIVER", display: _("Driver"), formatter: function(row) {
-                            if (row.DRIVEROWNERID) {
+                            if (row.DRIVEROWNERID && row.DRIVEROWNERNAME && common.has_permission("vo")) {
                                 return html.person_link(row.DRIVEROWNERID, row.DRIVEROWNERNAME) + '<br />' +
                                     row.DRIVEROWNERADDRESS + "<br/>" + row.DRIVEROWNERTOWN + "<br />" + row.DRIVEROWNERCOUNTY + " " + row.DRIVEROWNERPOSTCODE +
                                     (!config.bool("HideCountry") ? "<br/>" + row.DRIVEROWNERCOUNTRY : "");
@@ -128,13 +130,17 @@ $(function() {
                         }
                     },
                     { field: "PICKUP", display: _("Pickup"), formatter: function(row) {
-                            if (row.PICKUPOWNERID && row.PICKUPOWNERID != "0") {
+                            if (row.PICKUPOWNERID && common.has_permission("vo")) {
                                 return html.person_link(row.PICKUPOWNERID, row.PICKUPOWNERNAME) + '<br />' +
-                                    row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br />" + row.PICKUPCOUNTY + " " + row.PICKUPPOSTCODE + 
+                                    row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br />" + row.PICKUPCOUNTY + " " + 
+                                    row.PICKUPPOSTCODE + 
                                     (!config.bool("HideCountry") ? "<br/>" + row.PICKUPCOUNTRY : "");
                             }
-                            return row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br/>" + row.PICKUPCOUNTY + "<br/>" + row.PICKUPPOSTCODE + 
-                                (!config.bool("HideCountry") ? "<br/>" + row.PICKUPCOUNTRY : "");
+                            else {
+                                return row.PICKUPADDRESS + "<br/>" + row.PICKUPTOWN + "<br/>" + row.PICKUPCOUNTY + 
+                                    "<br/>" + row.PICKUPPOSTCODE + 
+                                    (!config.bool("HideCountry") ? "<br/>" + row.PICKUPCOUNTRY : "");
+                            }
                         }
                     },
                     { field: "PICKUPDATETIME", display: _("at"), initialsort: true, initialsortdirection: "desc",
@@ -143,13 +149,17 @@ $(function() {
                         }
                     },
                     { field: "DROPOFF", display: _("Dropoff"), formatter: function(row) {
-                            if (row.DROPOFFOWNERID && row.DROPOFFOWNERID != "0") {
+                            if (row.DROPOFFOWNERID && common.has_permission("vo")) {
                                 return html.person_link(row.DROPOFFOWNERID, row.DROPOFFOWNERNAME) + '<br />' +
-                                    row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + "<br/>" + row.DROPOFFPOSTCODE + 
+                                    row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + 
+                                    "<br/>" + row.DROPOFFPOSTCODE + 
                                     (!config.bool("HideCountry") ? "<br/>" + row.DROPOFFCOUNTRY : "");
                             }
-                            return row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + "<br/>" + row.DROPOFFPOSTCODE + 
-                                (!config.bool("HideCountry") ? "<br/>" + row.DROPOFFCOUNTRY : "");
+                            else {
+                                return row.DROPOFFADDRESS + "<br/>" + row.DROPOFFTOWN + "<br/>" + row.DROPOFFCOUNTY + 
+                                    "<br/>" + row.DROPOFFPOSTCODE + 
+                                    (!config.bool("HideCountry") ? "<br/>" + row.DROPOFFCOUNTRY : "");
+                            }
                         }
                     },
                     { field: "DROPOFFDATETIME", display: _("at"), 
@@ -351,6 +361,8 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+
+            validate.indicator([ "animal", "animals" ]);
             
             // When we pickup and dropoff people, autofill the addresses
             $("#pickup").personchooser().bind("personchooserchange", function(event, rec) { 

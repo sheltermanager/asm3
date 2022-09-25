@@ -3,11 +3,15 @@ import asm3.al
 import asm3.cachedisk
 import asm3.smcom
 import asm3.utils
-from asm3.sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER, DBFS_S3_BUCKET
+
+from asm3.sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER
+from asm3.sitedefs import DBFS_S3_BUCKET, DBFS_S3_ACCESS_KEY_ID, DBFS_S3_SECRET_ACCESS_KEY, DBFS_S3_ENDPOINT_URL
+from asm3.sitedefs import DBFS_S3_MIGRATE_BUCKET, DBFS_S3_MIGRATE_ACCESS_KEY_ID, DBFS_S3_MIGRATE_SECRET_ACCESS_KEY, DBFS_S3_MIGRATE_ENDPOINT_URL
 
 import mimetypes
 import os, sys, threading, time
-import web
+
+import web062 as web
 
 class DBFSStorage(object):
     """ DBFSStorage factory """
@@ -131,9 +135,22 @@ class FileStorage(DBFSStorage):
 class S3Storage(DBFSStorage):
     """ Storage class for putting media in Amazon S3 """
     dbo = None
+    access_key_id = ""
+    secret_access_key = ""
+    endpoint_url = ""
+    bucket = ""
     
-    def __init__(self, dbo):
+    def __init__(self, dbo, access_key_id="", secret_access_key="", endpoint_url="", bucket=""):
         self.dbo = dbo
+        self.access_key_id = DBFS_S3_ACCESS_KEY_ID
+        self.secret_access_key = DBFS_S3_SECRET_ACCESS_KEY
+        self.endpoint_url = DBFS_S3_ENDPOINT_URL
+        self.bucket = DBFS_S3_BUCKET
+        if access_key_id != "": self.access_key_id = access_key_id
+        if secret_access_key != "": self.secret_access_key = secret_access_key
+        if bucket != "": self.bucket = bucket
+        if endpoint_url != "": self.endpoint_url = endpoint_url 
+        if self.endpoint_url == "aws": self.endpoint_url = "" # use "aws" in config files for aws default
 
     def _cache_key(self, url):
         """ Calculates a cache key for url """
@@ -141,41 +158,58 @@ class S3Storage(DBFSStorage):
 
     def _cache_ttl(self, name):
         """ Gets the cache ttl for a file based on its name/extension """
-        name = name.lower()
-        if name.endswith(".jpg") or name.endswith(".jpeg"): return (86400 * 7) # Cache images for a week
-        return (86400 * 2) # Cache everything else for two days
+        #name = name.lower()
+        #if name.endswith(".jpg") or name.endswith(".jpeg"): return (86400 * 7) # Cache images for a week
+        #return (86400 * 2) # Cache everything else for two days
+        return (86400 * 7) # Cache everything for 1 week
 
     def _s3client(self):
         """ Gets an s3 client.
             Creates a new boto3 session each time as the default one is not thread safe
-            This does has a significant performance impact. There's a boto issue to make sessions thread safe in future.
+            This does have a significant performance impact. There's a boto issue to make sessions thread safe in future.
             To use the default session, self.s3client = boto3.client("s3")
             We avoid some of the performance problems by using our disk cache and
-            forcing operations onto a background thread.
+            forcing put/delete operations onto a background thread.
         """
         import boto3
         session = boto3.Session() 
-        return session.client("s3")
+        # Non-AWS S3 provider with an endpoint url
+        if self.endpoint_url != "" and self.access_key_id != "" and self.secret_access_key != "":
+            return session.client("s3", endpoint_url=self.endpoint_url, aws_access_key_id=self.access_key_id, aws_secret_access_key=self.secret_access_key)
+        # AWS S3
+        elif self.access_key_id != "" and self.secret_access_key != "":
+            return session.client("s3", aws_access_key_id=self.access_key_id, aws_secret_access_key=self.secret_access_key)
+        # Use $HOME/.aws/credentials
+        else:
+            return session.client("s3")
 
-    def get(self, dbfsid, url):
+    def get(self, dbfsid, url, migrate=True):
         """ Returns the file data for url, reads through the disk cache """
         cachekey = self._cache_key(url)
         cachettl = self._cache_ttl(url)
-        cachedata = asm3.cachedisk.touch(cachekey, self.dbo.database, ttlremaining=86400, newttl=cachettl) # Use touch to refresh items expiring in less than 24 hours
+        cachedata = asm3.cachedisk.touch(cachekey, self.dbo.database, cachettl) # Use touch so accessed items stay in the cache longer
         if cachedata is not None:
             return cachedata
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
         try:
-            asm3.al.debug("GET: %s" % object_key, "S3Storage.get", self.dbo)
             x = time.time()
-            response = self._s3client().get_object(Bucket=DBFS_S3_BUCKET, Key=object_key)
-            asm3.al.debug("get_object in %0.2fs" % (time.time() - x), "dbfs.S3Storage.get", self.dbo)
+            response = self._s3client().get_object(Bucket=self.bucket, Key=object_key)
             body = response["Body"].read()
+            asm3.al.debug("get_object(s3://%s/%s), %s bytes in %0.2fs" % (self.bucket, object_key, len(body), time.time() - x), "dbfs.S3Storage.get", self.dbo)
             asm3.cachedisk.put(cachekey, self.dbo.database, body, cachettl)
             return body
         except Exception as err:
-            asm3.al.error(str(err), "dbfs.S3Storage.get", self.dbo)
-            raise DBFSError("Failed retrieving from S3: %s" % err)
+            # We couldn't retrieve the object. Retrieve it from S3 migrate credentials if we have them.
+            # On success, copy the migrated object to our current S3 storage on a background thread.
+            if migrate and DBFS_S3_MIGRATE_ACCESS_KEY_ID != "":
+                asm3.al.debug("%s not found in '%s', migrating from '%s'" % (object_key, self.endpoint_url, DBFS_S3_MIGRATE_ENDPOINT_URL), "dbfs.S3Storage.get", self.dbo)
+                migrate = S3Storage(self.dbo, DBFS_S3_MIGRATE_ACCESS_KEY_ID, DBFS_S3_MIGRATE_SECRET_ACCESS_KEY, DBFS_S3_MIGRATE_ENDPOINT_URL, DBFS_S3_MIGRATE_BUCKET)
+                body = migrate.get(dbfsid, url, migrate=False)
+                threading.Thread(target=self._s3_put_object, args=[self.bucket, object_key, body]).start()
+                return body
+            else:
+                asm3.al.error("s3://%s/%s: %s" % (self.bucket, object_key, err), "dbfs.S3Storage.get", self.dbo)
+                raise DBFSError("Failed retrieving %s from S3 (endpoint=%s): %s" % (object_key, self.endpoint_url, err))
 
     def put(self, dbfsid, filename, filedata):
         """ Stores the file data (clearing the Content column) and returns the URL """
@@ -183,32 +217,30 @@ class S3Storage(DBFSStorage):
         object_key = "%s/%s%s" % (self.dbo.database, dbfsid, extension)
         url = "s3:%s%s" % (dbfsid, extension)
         try:
-            asm3.al.debug("PUT: %s" % object_key, "S3Storage.put", self.dbo)
             asm3.cachedisk.put(self._cache_key(url), self.dbo.database, filedata, self._cache_ttl(filename))
             self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
-            threading.Thread(target=self._s3_put_object, args=[DBFS_S3_BUCKET, object_key, filedata]).start()
+            threading.Thread(target=self._s3_put_object, args=[self.bucket, object_key, filedata]).start()
             return url
         except Exception as err:
-            asm3.al.error(str(err), "dbfs.S3Storage.put", self.dbo)
-            raise DBFSError("Failed storing in S3: %s" % err)
+            asm3.al.error("s3://%s/%s: %s" % (self.bucket, object_key, err), "dbfs.S3Storage.put", self.dbo)
+            raise DBFSError("Failed storing %s in S3: %s" % (object_key, err))
 
     def delete(self, url):
         """ Deletes the file data """
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
         try:
-            asm3.al.debug("DELETE: %s" % object_key, "S3Storage.delete", self.dbo)
             asm3.cachedisk.delete(self._cache_key(url), self.dbo.database)
-            threading.Thread(target=self._s3_delete_object, args=[DBFS_S3_BUCKET, object_key]).start()
+            threading.Thread(target=self._s3_delete_object, args=[self.bucket, object_key]).start()
         except Exception as err:
-            asm3.al.error(str(err), "dbfs.S3Storage.delete", self.dbo)
-            raise DBFSError("Failed deleting from S3: %s" % err)
+            asm3.al.error("s3://%s/%s: %s" % (self.bucket, object_key, err), "dbfs.S3Storage.delete", self.dbo)
+            raise DBFSError("Failed deleting %s from S3: %s" % (object_key, err))
 
     def _s3_delete_object(self, bucket, key):
         """ Deletes an object in S3. This should be called on a new thread """
         try:
             x = time.time()
             self._s3client().delete_object(Bucket=bucket, Key=key)
-            asm3.al.debug("delete_object in %0.2fs" % (time.time() - x), "dbfs.S3Storage._s3_delete_object", self.dbo)
+            asm3.al.debug("delete_object(s3://%s/%s) in %0.2fs" % (bucket, key, time.time() - x), "dbfs.S3Storage._s3_delete_object", self.dbo)
         except Exception as err:
             asm3.al.error(str(err), "dbfs.S3Storage._s3_delete_object", self.dbo)
 
@@ -217,16 +249,27 @@ class S3Storage(DBFSStorage):
         try:
             x = time.time()
             self._s3client().put_object(Bucket=bucket, Key=key, Body=body)
-            asm3.al.debug("put_object in %0.2fs" % (time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
+            asm3.al.debug("put_object(s3://%s/%s) %s bytes in %0.2fs" % (bucket, key, len(body), time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
         except Exception as err:
             asm3.al.error(str(err), "dbfs.S3Storage._s3_put_object", self.dbo)
+            try:
+                # The PUT has failed. Wait 10 seconds and try to do it again. 
+                # If that fails, send an error email to the admin as this is a lost file and critical.
+                time.sleep(10)
+                self._s3client().put_object(Bucket=bucket, Key=key, Body=body)
+                asm3.al.debug("put_object(s3://%s/%s) %s bytes in %0.2fs" % (bucket, key, len(body), time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
+            except Exception as err2:
+                asm3.al.error("retry failed (%s): %s" % (key, err2), "dbfs.S3Storage._s3_put_object", self.dbo)
+                asm3.utils.send_error_email()
 
     def url_prefix(self):
         return "s3:"
 
 class DBFSError(web.HTTPError):
     """ Custom error thrown by dbfs modules """
+    msg = ""
     def __init__(self, msg):
+        self.msg = msg
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>DBFS Error</h1><p>%s</p>" % msg
@@ -273,21 +316,18 @@ def get_string(dbo, name, path = ""):
     else:
         r = dbo.query("SELECT ID, URL FROM dbfs WHERE Name=?", [name])
     if len(r) == 0:
-        return "" # compatibility with old behaviour - relied on by publishers
-        #raise DBFSError("No element found for path=%s, name=%s" % (path, name))
+        raise DBFSError("No element found for path=%s, name=%s" % (path, name))
     r = r[0]
     o = DBFSStorage(dbo, r.url)
     return o.get(r.id, r.url)
 
 def get_string_id(dbo, dbfsid):
     """
-    Gets DBFS file contents as a bytes string. Returns
-    an empty string if the file is not found.
+    Gets DBFS file contents as a bytes string.
     """
     r = dbo.query("SELECT URL FROM dbfs WHERE ID=?", [dbfsid])
     if len(r) == 0:
-        return "" # compatibility with old behaviour - relied on by publishers
-        #raise DBFSError("No row found with ID %s" % dbfsid)
+        raise DBFSError("No row found with ID %s" % dbfsid)
     r = r[0]
     o = DBFSStorage(dbo, r.url)
     return o.get(dbfsid, r.url)
@@ -376,6 +416,14 @@ def get_file(dbo, name, path, saveto):
     asm3.utils.write_binary_file(saveto, get_string(dbo, name, path))
     return True
 
+def get_file_id(dbo, dbfsid, saveto):
+    """
+    Gets DBFS file contents and saves them to the
+    filename given. Returns True for success
+    """
+    asm3.utils.write_binary_file(saveto, get_string_id(dbo, dbfsid))
+    return True
+
 def file_exists(dbo, name):
     """
     Return True if a file with name exists in the database.
@@ -399,29 +447,35 @@ def get_files(dbo, name, path, saveto):
         return True
     return False
 
+def _delete(dbo, where):
+    """
+    Deletes rows from the DBFS matching where. 
+    This the only place where "real" deletion from the table is done.
+    """
+    # rows = db.query("SELECT ID, URL FROM dbfs WHERE %s" % where)
+    dbo.delete("dbfs", where, "dbfs") # Audit the delete and remove from the dbfs table
+    # No longer used, for File and S3 storage, this would "really delete" the files.
+    # We do not do this because storage is cheap and people invariably delete
+    # things by accident. This means that a quick restore of the deleted dbfs
+    # item from the deletion table and things are back.
+    #for r in rows:
+    #    o = DBFSStorage(dbo, r.url)
+    #    o.delete(r.url)
+
 def delete_path(dbo, path):
     """
     Deletes all items matching the path given
     """
-    rows = dbo.query("SELECT ID, URL FROM dbfs WHERE Path LIKE ?", [path])
-    dbo.execute("DELETE FROM dbfs WHERE Path LIKE ?", [path])
-    for r in rows:
-        o = DBFSStorage(dbo, r.url)
-        o.delete(r.url)
+    _delete(dbo, "Path LIKE %s" % dbo.sql_value(path))
 
 def delete(dbo, name, path = ""):
     """
     Deletes all items matching the name and path given
     """
     if path != "":
-        rows = dbo.query("SELECT ID, URL FROM dbfs WHERE Name=? AND Path=?", (name, path))
-        dbo.execute("DELETE FROM dbfs WHERE Name=? AND Path=?", (name, path))
+        _delete(dbo, "Name=%s AND Path=%s" % (dbo.sql_value(name), dbo.sql_value(path)))
     else:
-        rows = dbo.query("SELECT ID, URL FROM dbfs WHERE Name=?", [name])
-        dbo.execute("DELETE FROM dbfs WHERE Name=?", [name])
-    for r in rows:
-        o = DBFSStorage(dbo, r.url)
-        o.delete(r.url)
+        _delete(dbo, "Name=%s" % (dbo.sql_value(name)))
 
 def delete_filepath(dbo, filepath):
     """
@@ -435,10 +489,7 @@ def delete_id(dbo, dbfsid):
     """
     Deletes the dbfs entry for the id
     """
-    url = dbo.query_string("SELECT URL FROM dbfs WHERE ID=?", [dbfsid])
-    dbo.execute("DELETE FROM dbfs WHERE ID = ?", [dbfsid])
-    o = DBFSStorage(dbo, url)
-    o.delete(url)
+    _delete(dbo, "ID=%d" % dbfsid)
 
 def list_contents(dbo, path):
     """
@@ -554,6 +605,9 @@ def switch_storage(dbo):
             dbo.execute("UPDATE media SET MediaSize=? WHERE DBFSID=?", ( len(filedata), r.id ))
         except Exception as err:
             asm3.al.error("Error reading, skipping: %s" % str(err), "dbfs.switch_storage", dbo)
+    # reclaim any space from the deletion
+    dbo.vacuum("dbfs")
     # smcom only - perform postgresql full vacuum after switching
     if asm3.smcom.active(): asm3.smcom.vacuum_full(dbo)
+
 

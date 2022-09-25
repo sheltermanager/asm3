@@ -11,14 +11,15 @@ import asm3.lookups
 import asm3.media
 import asm3.medical
 import asm3.person
+import asm3.publishers.base
 import asm3.reports
 import asm3.smcom
 import asm3.stock
 import asm3.users
 import asm3.utils
+
 from asm3.i18n import _, python2display, now, add_days, add_months, add_years, format_currency, format_time
-from asm3.sitedefs import MULTIPLE_DATABASES
-from asm3.sitedefs import ELECTRONIC_SIGNATURES, JQUERY_JS, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_MOBILE_JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS, MOMENT_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import ELECTRONIC_SIGNATURES, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_MOBILE_JQUERY_JS
 
 def header(l):
     return """<!DOCTYPE html>
@@ -84,12 +85,13 @@ def jqm_h3(s):
 def jqm_hidden(name, value):
     return "<input type=\"hidden\" id=\"%(name)s\" name=\"%(name)s\" value=\"%(value)s\" />\n" % { "name": name, "value": value }
 
-def jqm_link(href, text, icon = "", linkclass = "", theme = ""):
+def jqm_link(href, text, icon = "", linkclass = "", theme = "", ajax = ""):
     if linkclass != "": linkclass = "class=\"" + linkclass + "\""
     if icon != "": icon = "data-icon=\"" + icon + "\""
     if theme != "": theme = "data-theme=\"" + theme + "\""
-    return "<a href=\"%(href)s\" %(linkclass)s %(icon)s %(theme)s>%(text)s</a>\n" % {
-        "href": href, "text": text, "icon": icon, "linkclass": linkclass, "theme": theme }
+    if ajax != "": ajax = "data-ajax=\"%s\"" % ajax
+    return "<a href=\"%(href)s\" %(ajax)s %(linkclass)s %(icon)s %(theme)s>%(text)s</a>\n" % {
+        "href": href, "ajax": ajax, "text": text, "icon": icon, "linkclass": linkclass, "theme": theme }
 
 def jqm_list(s, showfilter = False):
     return "<ul data-role=\"listview\" data-filter=\"%s\">\n%s</ul>\n" % (showfilter and "true" or "false", s)
@@ -230,7 +232,7 @@ def page(dbo, session, username):
 
     logoutlink = ""
     if not session.mobileapp: 
-        logoutlink = jqm_link("mobile_logout", _("Logout", l), "delete", "ui-btn-right", "b")
+        logoutlink = jqm_link("mobile_logout", _("Logout", l), "delete", "ui-btn-right", "b", ajax="false")
 
     h.append(jqm_page_header("home", "%s : %s" % (username, _("ASM", l)), logoutlink , False))
     items = []
@@ -241,6 +243,7 @@ def page(dbo, session, username):
         items.append(jqm_listitem_link("#reports", _("Generate Report", l), "report"))
     if pb(asm3.users.CHANGE_MEDIA) and ELECTRONIC_SIGNATURES == "touch":
         items.append(jqm_listitem_link("mobile_sign", _("Signing Pad", l), "signature", -1, "", "false"))
+    items.append(jqm_listitem_link("main", _("Desktop/Tablet UI", l), "logo", -1, "", "false"))
     if pb(asm3.users.ADD_ANIMAL) or pb(asm3.users.VIEW_ANIMAL) or pb(asm3.users.CHANGE_VACCINATION) \
        or pb(asm3.users.CHANGE_TEST) or pb(asm3.users.CHANGE_MEDICAL) or pb(asm3.users.ADD_LOG):
         items.append(jqm_list_divider(_("Animal", l)))
@@ -308,82 +311,6 @@ def page(dbo, session, username):
     h += page_incidents(l, homelink, infp, "infp", _("Incidents Requiring Followup", l))
     h += page_find_person(l, homelink)
 
-    h.append("</body></html>")
-    return "\n".join(h)
-
-def page_sign(dbo, session, username):
-    l = session.locale
-    ids = asm3.configuration.signpad_ids(dbo, username)
-    h = []
-    h.append("""<!DOCTYPE html>
-    <html>
-    <head>
-    <title>
-    %(title)s
-    </title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1"> 
-    %(css)s
-    <script>
-        ids = "%(ids)s";
-    </script>
-    %(scripts)s
-    <style>
-    button { 
-        padding: 10px; 
-        font-size: 100%%; 
-    }
-    #signature { 
-        border: 1px solid #aaa; 
-        height: 250px; 
-        width: 100%%;
-        max-width: 1000px;
-    }
-    </style>
-    </head>
-    <body>
-    """ % {
-        "title":    _("Signing Pad", l),
-        "ids":      ids,
-        "css":      asm3.html.asm_css_tag("asm-icon.css"),
-        "scripts":  asm3.html.script_tag(JQUERY_JS) + \
-            asm3.html.script_tag(JQUERY_UI_JS) + \
-            asm3.html.script_tag(TOUCHPUNCH_JS) + \
-            asm3.html.script_tag(SIGNATURE_JS) + \
-            asm3.html.script_tag(MOMENT_JS) + \
-            asm3.html.asm_script_tag("mobile_sign.js")
-    })
-    if ids.strip() == "":
-        h.append('<p>%s</p>' % _("Waiting for documents...", l))
-        h.append('<p><button id="sig-refresh">' + _("Reload", l) + '</button></p>')
-        #h.append('<p><button id="sig-home">' + _("Home", l) + '</button></p>')
-        if not session.mobileapp:
-            h.append('</p><button id="sig-logout">' + _("Logout", l) + '</button></p>')
-    else:
-        d = []
-        docnotes = []
-        for mid in ids.strip().split(","):
-            if mid.strip() != "": 
-                docnotes.append(asm3.media.get_notes_for_id(dbo, int(mid)))
-                dummy, dummy, dummy, contents = asm3.media.get_media_file_data(dbo, int(mid))
-                d.append(asm3.utils.bytes2str(contents))
-                d.append("<hr />")
-        h.append("<p><b>%s: %s</b></p>" % (_("Signing", l), ", ".join(docnotes)))
-        h.append('<p><a id="reviewlink" href="#">%s</a></p>' % _("View Document", l))
-        h.append('<div id="review" style="display: none">')
-        h.append("\n".join(d))
-        h.append('</div>')
-        h.append('<div id="signature"></div>')
-        h.append('<p>')
-        h.append('<button id="sig-clear" type="button">' + _("Clear", l) + '</button>')
-        h.append('<button id="sig-sign" type="button">' + _("Sign", l) + '</button>')
-        h.append('</p>')
-        h.append('<p>')
-        h.append(_("Please click the Sign button when you are finished.", l))
-        h.append('</p>')
-        h.append('<p>')
-        h.append(_("Once signed, this document cannot be edited or tampered with.", l))
-        h.append('</p>')
     h.append("</body></html>")
     return "\n".join(h)
 
@@ -639,40 +566,6 @@ def page_incidents(l, homelink, inc, pageid = "inmy", pagetitle = ""):
     h.append(jqm_page_footer())
     return h
 
-def page_login(l, post):
-    accountline = ""
-    accounttext = _("Database", l)
-    if asm3.smcom.active(): accounttext = _("SM Account", l)
-    if MULTIPLE_DATABASES:
-        accountline = "<div data-role='fieldcontain'><label for='database'>%s</label><input type='text' id='database' name='database' value='%s'/></div>" % (accounttext, asm3.html.escape(post["smaccount"]))
-    return header(l) + """
-        <div data-role='page' id='login'>
-        <div data-role='header'>
-        <h1>%s</h1>
-        </div>
-        <div data-role='content'>
-        <form id="loginform" action="mobile_login" target="_self" method="post">
-        <h2>%s</h2>
-        %s
-        <div data-role="fieldcontain">
-            <label for="username">%s</label>
-            <input type="text" id="username" name="username" value='%s' />
-        </div>
-        <div data-role="fieldcontain">
-            <label for="password">%s</label>
-            <input type="password" id="password" name="password" value='%s' />
-        </div>
-        <button type="submit">%s</button>
-        </form>
-        </div>
-        </div>
-        </body>
-        </html>
-    """ % ( _("Login", l), _("Login", l), accountline, 
-        _("Username", l), asm3.html.escape(post["username"]), 
-        _("Password", l), asm3.html.escape(post["password"]),
-        _("Login", l) )
-
 def handler(session, post):
     """
     Handles posts from the frontend. Depending on the type we either
@@ -775,7 +668,7 @@ def handler(session, post):
         for a in an:
             alin.append(jqm_listitem_link("mobile_post?posttype=va&id=%d" % a["ID"],
                 "%s - %s (%s %s %s) %s" % (a["CODE"], a["ANIMALNAME"], a["SEXNAME"], a["BREEDNAME"], a["SPECIESNAME"], a["IDENTICHIPNUMBER"]),
-                "animal"))
+                asm3.utils.iif(asm3.publishers.base.is_animal_adoptable(dbo, a), "animal", "notforadoption")))
         h.append(jqm_list("\n".join(alin), True))
         h.append(jqm_page_footer())
         h.append("</body></html>")
@@ -868,13 +761,13 @@ def handler(session, post):
         return "GO mobile_post?posttype=vinc&id=%d" % pid
 
     elif mode == "vincdisp":
+        pc(asm3.users.DISPATCH_INCIDENT)
         # Mark the incident with id dispatched now with the current user as aco
-        pc(asm3.users.CHANGE_INCIDENT)
         asm3.animalcontrol.update_animalcontrol_dispatchnow(dbo, pid, user)
         return "GO mobile_post?posttype=vinc&id=%d" % pid
 
     elif mode == "vincresp":
-        pc(asm3.users.CHANGE_INCIDENT)
+        pc(asm3.users.RESPOND_INCIDENT)
         # Mark the incident with id responded to now
         asm3.animalcontrol.update_animalcontrol_respondnow(dbo, pid, user)
         return "GO mobile_post?posttype=vinc&id=%d" % pid
@@ -910,15 +803,6 @@ def handler(session, post):
         # Update the stock levels from the posted values
         asm3.stock.stock_take_from_mobile_form(dbo, user, post)
         return "GO mobile"
-
-    elif mode == "sign":
-        # We're electronically signing a document
-        for mid in post.integer_list("ids"):
-            try:
-                asm3.media.sign_document(dbo, user, mid, post["sig"], post["signdate"])
-            finally:
-                asm3.configuration.signpad_ids(dbo, user, "")
-        return "ok"
 
 def handler_addanimal(l, homelink, dbo):
     h = []
@@ -1042,6 +926,7 @@ def handler_viewanimal(session, l, dbo, a, af, diet, vacc, test, med, logs, home
                          a["ID"], _("Send", l), uploadstatus))
     h.append(table_end())
     h.append(table())
+    h.append(tr( _("Status", l), asm3.publishers.base.get_adoption_status(dbo, a)))
     h.append(tr( _("Type", l), a["ANIMALTYPENAME"]))
     h.append(tr( _("Location", l), a["DISPLAYLOCATION"]))
     h.append(tr( _("Color", l), a["BASECOLOURNAME"]))
@@ -1180,7 +1065,7 @@ def handler_viewincident(session, l, dbo, a, amls, cit, dia, logs, homelink, pos
     h.append(tr( _("Notes", l), a["CALLNOTES"]))
     h.append(tr( _("Completion Date/Time", l), dt(a["COMPLETEDDATE"])))
     comptp = a["COMPLETEDNAME"]
-    if a["COMPLETEDDATE"] is None:
+    if a["COMPLETEDDATE"] is None and asm3.users.check_permission_bool(session, asm3.users.CHANGE_INCIDENT):
         comptp = jqm_select("comptype", 
             '<option value="-1"></option>' + jqm_options(asm3.lookups.get_incident_completed_types(dbo), "ID", "COMPLETEDNAME"), 
             "completedtype", str(a["ID"]))
@@ -1201,11 +1086,11 @@ def handler_viewincident(session, l, dbo, a, amls, cit, dia, logs, homelink, pos
     h.append(tr( _("Zipcode", l), a["DISPATCHPOSTCODE"]))
     h.append(tr( _("Dispatched ACO", l), a["DISPATCHEDACO"]))
     dispdt = dt(a["DISPATCHDATETIME"])
-    if dispdt == "":
+    if dispdt == "" and asm3.users.check_permission_bool(session, asm3.users.DISPATCH_INCIDENT):
         dispdt = jqm_button("mobile_post?posttype=vincdisp&id=%d" % a["ID"], _("Dispatch", l), "calendar", "false")
     h.append(tr( _("Dispatch Date/Time", l), dispdt))
     respdt = dt(a["RESPONDEDDATETIME"])
-    if respdt == "":
+    if respdt == "" and asm3.users.check_permission_bool(session, asm3.users.RESPOND_INCIDENT):
         respdt = jqm_button("mobile_post?posttype=vincresp&id=%d" % a["ID"], _("Respond", l), "calendar", "false")
     # If it's not dispatched yet, don't allow respond
     if a["DISPATCHDATETIME"] is None: respdt = ""
@@ -1386,16 +1271,6 @@ def handler_stocklocation(l, homelink, locationname, sl, su):
     h.append(jqm_page_footer())
     h.append("</body></html>")
     return "\n".join(h)
-
-def login(post, session, remoteip, useragent, path):
-    """
-    Handles the login post
-    """
-    url = asm3.users.web_login(post, session, remoteip, useragent, path)
-    if url == "FAIL" or url == "DISABLED":
-        return "mobile_login"
-    else:
-        return "mobile"
 
 def report_criteria(dbo, crid, title, crit):
     """

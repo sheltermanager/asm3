@@ -2,7 +2,7 @@ Non-shelter animals euthanised between two dates
 ###
 Statistics
 ###
-Any
+Any rev02
 ###
 All non-shelter animals that were euthanised between two dates, broken down by species
 ###
@@ -11,7 +11,7 @@ en
 SELECT a.DeceasedDate, a.AnimalName, a.ShelterCode, s.SpeciesName, a.PTSReason
 FROM animal a 
 INNER JOIN species s ON a.SpeciesID = s.ID
-WHERE DeceasedDate >= '$ASK DATE Enter date from$' AND DeceasedDate <= '$ASK DATE Enter date to$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND PutToSleep = 1
+WHERE DeceasedDate >= '$ASK DATE Enter date from$' AND DeceasedDate <= '$ASK DATE Enter date to$' AND DiedOffShelter = 0 AND NonShelterAnimal = 1 AND PutToSleep = 1
 ORDER BY s.SpeciesName, a.DeceasedDate
 ###
 $$HEADER

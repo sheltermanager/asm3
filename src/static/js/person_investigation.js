@@ -11,7 +11,6 @@ $(function() {
                 add_title: _("Add investigation"),
                 edit_title: _("Edit investigation"),
                 edit_perm: 'coi',
-                helper_text: _("Date and notes are mandatory."),
                 close_on_ok: false,
                 columns: 1,
                 width: 550,

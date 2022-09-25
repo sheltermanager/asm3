@@ -2,15 +2,15 @@ Microchip Registration
 ###
 Microchip
 ###
-2730/Any
+2730/Any rev02
 ###
 Owner, microchip and animal information for all animals adopted between two dates
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, a.IdentichipNumber, o.OwnerName,
+SELECT a.ID, a.AnimalName, a.ShelterCode, a.IdentichipNumber, m.OwnerID, o.OwnerName,
 o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
-o.HomeTelephone, o.WorkTelephone, a.BreedName, o.EmailAddress, s.SpeciesName, 
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, a.BreedName, o.EmailAddress, s.SpeciesName, 
 (SELECT BaseColour FROM basecolour WHERE ID = a.BaseColourID) AS BaseColourName,
 (SELECT Sex FROM lksex WHERE ID = a.Sex) AS Gender,
 (SELECT Name FROM lksyesno WHERE ID = a.Neutered) AS IsNeutered,
@@ -53,17 +53,16 @@ GROUP$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$ID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$IDENTICHIPNUMBER</td>
-<td><b>$OWNERNAME</b><br/>
+<td><b><a target="_blank" href="person?id=$OWNERID">$OWNERNAME</a></b><br/>
 $OWNERADDRESS<br/>
 $OWNERTOWN<br/>
 $OWNERCOUNTY<br/>
 $OWNERPOSTCODE<br/>
-$HOMETELEPHONE<br/>
-$WORKTELEPHONE<br/>
-$EMAILADDRESS
+<i>$EMAILADDRESS</i><br/>
+H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE
 </td>
 <td>$BREEDNAME</td>
 <td>$SPECIESNAME</td>

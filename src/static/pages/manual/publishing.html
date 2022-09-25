@@ -1,38 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Publishing &mdash; ASM 44u documentation</title>
+  <title>Publishing &mdash; ASM 46u documentation</title>
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Mail Merge Sources" href="mailmerge.html" />
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                44u
+                46u
               </div>
             
           
@@ -77,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -116,10 +117,21 @@
 <li class="toctree-l2"><a class="reference internal" href="#adoptapet-com">adoptapet.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#helpinglostpets-com">helpinglostpets.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#maddiesfund-org-maddie-s-pet-assistant">maddiesfund.org / Maddie’s Pet Assistant</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#petfinder-com">petfinder.com</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#petrescue-com-au">petrescue.com.au</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#petfinder-com">petfinder.com</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#extra-fields">Extra fields</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#petrescue-com-au">petrescue.com.au</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#determing-whether-an-animal-is-vaccinated">Determing whether an animal is vaccinated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Extra fields</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#rescuegroups-org">rescuegroups.org</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#savour-life-com-au">savour-life.com.au</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#savour-life-com-au">savour-life.com.au</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Determing whether an animal is vaccinated</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Extra fields</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#petslocated-com">petslocated.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#avid-pettrac-uk">AVID/PETtrac UK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#identichip-anibase-uk">idENTICHIP/Anibase UK</a></li>
@@ -146,6 +158,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -180,18 +193,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Publishing</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/publishing.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -221,23 +236,23 @@ how the output is generated. Set these options under <span class="menuselection"
 <p>The Animal Selection tab allows you to control which animals are considered
 adoptable by ASM’s internet publishers.</p>
 <ul class="simple">
-<li>Include [category] animals: Select “yes” to include animals fitting the
-category.</li>
-<li>Merge bonded animals into a single record: When outputting bonded animals,
+<li><p>Include [category] animals: Select “yes” to include animals fitting the
+category.</p></li>
+<li><p>Merge bonded animals into a single record: When outputting bonded animals,
 merge them into a single entry. The names will be joined together with
 commas, but other than that all the details will be of the first animal in
 the sort so make sure the bio/notes include information on the bonded animals
-for all of them.</li>
-<li>Exclude animals aged under: This box is to prevent puppies and kittens who
+for all of them.</p></li>
+<li><p>Exclude animals aged under: This box is to prevent puppies and kittens who
 are too young being included in the list of available adoptions. You may
 choose an age limit on animals that appear. By default, the system excludes
-animals less than 1 year old (52 weeks).</li>
-<li>Include animals in the following locations: Select the locations to include
-adoptable animals from. If none are selected, all locations will be used.</li>
+animals less than 1 year old (52 weeks).</p></li>
+<li><p>Include animals in the following locations: Select the locations to include
+adoptable animals from. If none are selected, all locations will be used.</p></li>
 </ul>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">In addition to items you select here, any animal which has the “Courtesy Listing” flag will be automatically included.</p>
+<p class="admonition-title">Note</p>
+<p>In addition to items you select here, any animal which has the “Courtesy Listing” flag will be automatically included.</p>
 </div>
 </div>
 <div class="section" id="all-publishers">
@@ -245,7 +260,7 @@ adoptable animals from. If none are selected, all locations will be used.</li>
 <img alt="_images/all_publishers.png" src="_images/all_publishers.png" />
 <p>The All Publishers tab allows you to set options common to all internet publishers.</p>
 <ul class="simple">
-<li>Register microchips after: If you are registering microchips, ASM will update
+<li><p>Register microchips after: If you are registering microchips, ASM will update
 the owner information with the registry after these types of movements.
 Non-shelter animals will always be registered with their original owner
 information if present, using the microchip date as a trigger.
@@ -253,37 +268,42 @@ A special “Intake” option allows registering of microchips to the shelter’
 contact info for animals currently in the care of the shelter. This includes
 animals brought to the shelter as well as those returned from a previous movement.
 Animals who are marked as held awaiting reclaim will <em>not</em> be registered until
-after the hold is removed.</li>
-<li>Update adoption websites every: Some adoption websites will accept updates
+after the hold is removed.</p></li>
+<li><p>Register microchips from: When registering microchips, only consider animals
+where the event triggering registration (intake, adoption, reclaim, etc)
+occurred after this date. This is useful when enabling registration for the
+first time on a database full of a historic data where you do not want to
+re-register old chips to potentially out of date adopters.</p></li>
+<li><p>Update adoption websites every: Some adoption websites will accept updates
 more frequently than the 24 hour default. Setting this option to a value
 smaller than 24 will update those services at the chosen interval. Services
 affected by this value are PetFinder, AdoptAPet, PetRescue, SavourLife and
-Maddie’s Pet Assistant</li>
-<li>Reupload animal images every time: Ticking this box will tell the publisher
+Maddie’s Pet Assistant</p></li>
+<li><p>Reupload animal images every time: Ticking this box will tell the publisher
 to reupload images for all the animals published. Normally, ASM will not
 upload an image it has previously uploaded to save bandwidth. ASM will detect
 the preferred image changing and force a reupload for that animal without
 the need for this option. This option will be ignored by some publishers
 (notably RescueGroups.org and AdoptAPet.com) as reuploading all images constantly
-is considered abusive behaviour.</li>
-<li>Upload all available images for animals: Ticking this box will have the
+is considered abusive behaviour.</p></li>
+<li><p>Upload all available images for animals: Ticking this box will have the
 publisher upload all the images for each animal where available. They will be
 named sheltercode-X.jpg (X increments for each image). The first image will
-be the image flagged as web preferred.</li>
-<li>Order published animals by: Sorts the list of animals before they are
-published.</li>
-<li>Thumbnail size: Controls the size of thumbnails the system generates for adoptable
+be the image flagged as web preferred.</p></li>
+<li><p>Order published animals by: Sorts the list of animals before they are
+published.</p></li>
+<li><p>Thumbnail size: Controls the size of thumbnails the system generates for adoptable
 animal publishers (in particular the ones used by the javascript include
-method of website integration). The size is for the thumbnail’s longest side.</li>
-<li>Animal descriptions: This determines the source of the main description for
+method of website integration). The size is for the thumbnail’s longest side.</p></li>
+<li><p>Animal descriptions: This determines the source of the main description for
 animals when being published. For the HTML/FTP publisher, this is the source
 of the $$WebMediaNotes$$ token. Set to “Use animal comments” to use the
 comments field from the notes section of the animal’s record. “Use notes from
 preferred photo” will use the notes field on the animal’s web preferred
-photo.</li>
-<li>Add this text to all animal descriptions: Allows you to set a footer on every
+photo.</p></li>
+<li><p>Add this text to all animal descriptions: Allows you to set a footer on every
 animal description before it is published. Note that this does not apply
-to courtesy listings, allowing you to add additional contact info.</li>
+to courtesy listings, allowing you to add additional contact info.</p></li>
 </ul>
 </div>
 <div class="section" id="html-ftp-publishing">
@@ -294,113 +314,113 @@ and age, or arranged numerically with a fixed number of animals per page. In
 addition, a recently adopted page can be generated along with an rss.xml for
 feed readers.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Static HTML publishing is deprecated for sheltermanager.com and will not be available in the future.</p>
+<p class="admonition-title">Warning</p>
+<p>Static HTML publishing is deprecated for sheltermanager.com and is no longer available.</p>
 </div>
 <ul class="simple">
-<li>Generate javascript database: The site search facilities require a Javascript
+<li><p>Generate javascript database: The site search facilities require a Javascript
 database, indexing the available animal records. If you wish to include
-search facilities, make sure this box is ticked.</li>
-<li>Generate thumbnail images: The publisher will create thumbnails of all the
+search facilities, make sure this box is ticked.</p></li>
+<li><p>Generate thumbnail images: The publisher will create thumbnails of all the
 animal images. Thumbnail images have the same name as the animal image, but
 are prefixed with tn and an underscore. You can use tn_$$WebMediaFilename$$
-in a template to get the thumbnail image for the current animal.</li>
-<li>Thumbnail size: The desired length in pixels of the longest side of the
-generated thumbnail.</li>
-<li>Output a separate page for each animal type: Output extra pages of the form
+in a template to get the thumbnail image for the current animal.</p></li>
+<li><p>Thumbnail size: The desired length in pixels of the longest side of the
+generated thumbnail.</p></li>
+<li><p>Output a separate page for each animal type: Output extra pages of the form
 ANIMALTYPE.EXTENSION, eg: Miscellaneous.html. This means you can reference
 the page of miscellaneous animals only from your website. If you have used
 any punctuation or spaces in the animal type, then they will be turned into
 to underscores. For example, a type of “D (Dog)” will create a page called
-D__Dog_.html</li>
-<li>Output a separate page for each species: Output extra pages of the form
+D__Dog_.html</p></li>
+<li><p>Output a separate page for each species: Output extra pages of the form
 SPECIES.EXTENSION, eg: Dog.html. This means you can reference the page of
-adoptable dogs only from your website.</li>
-<li>Split species pages with a baby/adult prefix: If this option is selected, ASM
+adoptable dogs only from your website.</p></li>
+<li><p>Split species pages with a baby/adult prefix: If this option is selected, ASM
 will output species pages in the form baby/adultSPECIES.EXTENSION. Eg:
 babyCat.html and adultCat.html for cats/kittens. This option only works in
-conjunction with the “Output a separate page for each species” option.</li>
-<li>Split baby/adult age at: The split point to determine juvenile animals.</li>
-<li>Output an adopted animals page: If set to yes, a file named adopted.EXTENSION
-will be output that you can use to reference recently adopted animals.</li>
-<li>Output a deceased animals page: If set to yes, a file named deceased.EXTENSION
+conjunction with the “Output a separate page for each species” option.</p></li>
+<li><p>Split baby/adult age at: The split point to determine juvenile animals.</p></li>
+<li><p>Output an adopted animals page: If set to yes, a file named adopted.EXTENSION
+will be output that you can use to reference recently adopted animals.</p></li>
+<li><p>Output a deceased animals page: If set to yes, a file named deceased.EXTENSION
 will be output that you can use to reference recently deceased animals
-as a tribute page.</li>
-<li>Output a page with links to available online forms: If set to yes, a file
+as a tribute page.</p></li>
+<li><p>Output a page with links to available online forms: If set to yes, a file
 named forms.EXTENSION will be output that contains a link to all the online
-forms in the database.</li>
-<li>Output an rss.xml page: If set to yes, a file named rss.xml will be output
+forms in the database.</p></li>
+<li><p>Output an rss.xml page: If set to yes, a file named rss.xml will be output
 for feed readers. It will use the rss template if it is available in your
 database, if it’s not then it will be constructed from a default template
-built into the program.</li>
-<li>Show animals adopted: If outputting an adopted animals page is on, how far
-back the adoptions should be included.</li>
-<li>Page extension: The file EXTENSION to give a page. Eg: html</li>
-<li>Publishing template: The template ASM should use to construct the
+built into the program.</p></li>
+<li><p>Show animals adopted: If outputting an adopted animals page is on, how far
+back the adoptions should be included.</p></li>
+<li><p>Page extension: The file EXTENSION to give a page. Eg: html</p></li>
+<li><p>Publishing template: The template ASM should use to construct the
 header/footer/body elements of the pages. ASM comes with a set of included
-templates, outlined in the next section.</li>
-<li>Animals per page: ASM will always output numbered pages of the form
+templates, outlined in the next section.</p></li>
+<li><p>Animals per page: ASM will always output numbered pages of the form
 1.EXTENSION, 2.EXTENSION, etc. Specify here how many animals you’d like
 before moving on to the next page. By default, the system shows 10 animals
 per page, however the more animals you put on a page, the longer the page
-will take to load.</li>
-<li>Scale published images to: This box allows you to reduce the size of your
+will take to load.</p></li>
+<li><p>Scale published images to: This box allows you to reduce the size of your
 animal images to a particular resolution.  ASM scales down pictures when you
 attach them under the media tab, so unless you want to make them smaller
-still, it’s best to leave this at No Scaling.</li>
-<li>Publish to folder: Choose the folder where output is to be generated.</li>
+still, it’s best to leave this at No Scaling.</p></li>
+<li><p>Publish to folder: Choose the folder where output is to be generated.</p></li>
 </ul>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This folder is on the machine that ASM is installed on, not your local client PC. If this is left blank, a temporary folder will be used.</p>
+<p class="admonition-title">Warning</p>
+<p>This folder is on the machine that ASM is installed on, not your local client PC. If this is left blank, a temporary folder will be used.</p>
 </div>
 <div class="section" id="included-templates">
 <h3>Included templates<a class="headerlink" href="#included-templates" title="Permalink to this headline">¶</a></h3>
 <p>ASM comes with a number of site templates – plain, rss, littlebox and sm.com.</p>
 <ul class="simple">
-<li>plain produces very simple HTML output - just the animal’s picture and a few
-details in a list.</li>
-<li>rss produces XML output for interpreting by an RSS feed reader.</li>
-<li>sm.com uses CSS hover elements and javascript to do image substitution for
-icons and other tricks.</li>
-<li>littlebox is also more advanced, using CSS overlays and popups.</li>
-<li>responsive uses relative sizings to work equally well on mobile devices. It
+<li><p>plain produces very simple HTML output - just the animal’s picture and a few
+details in a list.</p></li>
+<li><p>rss produces XML output for interpreting by an RSS feed reader.</p></li>
+<li><p>sm.com uses CSS hover elements and javascript to do image substitution for
+icons and other tricks.</p></li>
+<li><p>littlebox is also more advanced, using CSS overlays and popups.</p></li>
+<li><p>responsive uses relative sizings to work equally well on mobile devices. It
 is not dissimilar to plain, but also features the ability to click an
-animal’s photo for more information.</li>
+animal’s photo for more information.</p></li>
 </ul>
 <p>You can edit these templates under <span class="menuselection">Publishing ‣ Edit HTML
 Publishing Templates</span> and add your own new ones if desired. Templates are made
 up of three sections.</p>
 <ul class="simple">
-<li>The header block - this is output for each page before any animal records.</li>
-<li>The footer block - this is output for each page after all the animal records.</li>
-<li>The body block - this is output for each animal record and has keys to pull
+<li><p>The header block - this is output for each page before any animal records.</p></li>
+<li><p>The footer block - this is output for each page after all the animal records.</p></li>
+<li><p>The body block - this is output for each animal record and has keys to pull
 data from the database and the animal’s image(s). The keys available are
 those available for animal documents (see wordkeys in the appendix at the end
 of this document) and are enclosed in $$ - eg: $$ShelterCode$$ will output
-the animal’s shelter code.</li>
+the animal’s shelter code.</p></li>
 </ul>
 <p>A number of special keys are allowed in the header and footer blocks that pull
 information from other areas of the system. These are:</p>
 <ul class="simple">
-<li>$$ORGNAME$$ - Becomes your organisation’s name</li>
-<li>$$ORGADDRESS$$ - Your organisation’s address</li>
-<li>$$ORGTEL$$ - Your organisation’s telephone number (all of these org fields
-can be found under <span class="menuselection">System ‣ Options</span>)</li>
-<li>$$ORGEMAIL$$ - Your email address (this is taken from
-<span class="menuselection">Settings ‣ Options ‣ Email</span>)</li>
-<li>$$USER$$ - Substitutes the current system user, including their real name</li>
-<li>$$DATE$$ - The current date</li>
-<li>$$TIME$$ - The current time</li>
-<li>$$DATETIME$$ - The current date and time</li>
-<li>$$VERSION$$ - The ASM version</li>
-<li>$$NAV$$ - If you are using numbered pages, outputs navigation with the
+<li><p>$$ORGNAME$$ - Becomes your organisation’s name</p></li>
+<li><p>$$ORGADDRESS$$ - Your organisation’s address</p></li>
+<li><p>$$ORGTEL$$ - Your organisation’s telephone number (all of these org fields
+can be found under <span class="menuselection">System ‣ Options</span>)</p></li>
+<li><p>$$ORGEMAIL$$ - Your email address (this is taken from
+<span class="menuselection">Settings ‣ Options ‣ Email</span>)</p></li>
+<li><p>$$USER$$ - Substitutes the current system user, including their real name</p></li>
+<li><p>$$DATE$$ - The current date</p></li>
+<li><p>$$TIME$$ - The current time</p></li>
+<li><p>$$DATETIME$$ - The current date and time</p></li>
+<li><p>$$VERSION$$ - The ASM version</p></li>
+<li><p>$$NAV$$ - If you are using numbered pages, outputs navigation with the
 current page disabled and links to the other available pages. Returns
-a blank for recently adopted animal pages.</li>
-<li>$$TITLE$$ - An appropriate title based on the page being published. If
+a blank for recently adopted animal pages.</p></li>
+<li><p>$$TITLE$$ - An appropriate title based on the page being published. If
 it is a recently adopted page, the title will be “Recently adopted” in
-your language. Otherwise, it will be “Available for adoption”.</li>
-<li>$$TOTAL$$ - The number of animals output by the publisher</li>
+your language. Otherwise, it will be “Available for adoption”.</p></li>
+<li><p>$$TOTAL$$ - The number of animals output by the publisher</p></li>
 </ul>
 </div>
 </div>
@@ -441,12 +461,15 @@ can also integrate with PetFinder.com and upload your animals for adoption
 directly to your account with them.  You will need to go to
 <span class="menuselection">Publishing ‣ Set Publishing Options</span> first and view the
 PetFinder panel. Here, you should enter the shelter Id given to you by
-PetFinder.com and your password. All you need to do then is choose Publish to
-PetFinder.com in place of the normal internet publisher. The options for
-filtering animals are the same (see previous section for reference).</p>
+PetFinder.com and the FTP password they have assigned to you.</p>
+<p>You can also opt to have your shelter animals with the “Hold” flag sent with
+the PetFinder H status, and shelter animals who have the word “Stray” in
+their entry category sent with an F status. This will put those animals into
+PetFinder’s lost and found database to help with reuniting stray pets with
+their owners.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If you have created new Species or Breeds within ASM, you will need to map them to the available publisher options under the Breed and Species sections of <span class="menuselection">Settings ‣ Lookup Data</span></p>
+<p class="admonition-title">Note</p>
+<p>If you have created new Species or Breeds within ASM, you will need to map them to the available publisher options under the Breed and Species sections of <span class="menuselection">Settings ‣ Lookup Data</span></p>
 </div>
 <p>If you have some that are not mapped, the publisher will fail with an error
 message.</p>
@@ -457,8 +480,28 @@ second breed the same as the first breed with the crossbreed flag set, ASM will
 send that second breed as a blank to PetFinder. This behaviour can also be
 triggered by setting your second breed to “Crossbreed”, “Unknown” or “Mix”.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">You have to let PetFinder know that you are using ASM to upload your data. Do this by logging into the PetFinder members area, go to the Admin System Help Center, then Contact Us and send PetFinder Tech Support a message that you are using ASM to publish animal data via their FTP server. They should give you the FTP login information and make sure permissions and quotas are correct.</p>
+<p class="admonition-title">Warning</p>
+<p>You have to let PetFinder know that you are using ASM to upload your data. Do this by logging into the PetFinder members area, go to the Admin System Help Center, then Contact Us and send PetFinder Tech Support a message that you are using ASM to publish animal data via their FTP server. They should give you the FTP login information and make sure permissions and quotas are correct.</p>
+</div>
+<div class="section" id="extra-fields">
+<h3>Extra fields<a class="headerlink" href="#extra-fields" title="Permalink to this headline">¶</a></h3>
+<p>PetFinder have a number of extra fields that you can set by creating additional
+animal fields with certain names in your database. The system responds to the
+field names, you can label them anything you want, they must be linked to
+animal records.</p>
+<ul class="simple">
+<li><p>pfprimarycolor, pfsecondarycolor, pftertiarycolor (Text): ASM only uses a
+single value for animal color, so our color field cannot be mapped to PetFinder.
+Instead, you can add the three color fields that PetFinder used and supply
+appropriate values. The values they will accept for color depend on the species
+of your animal and can be found here: <a class="reference external" href="https://github.com/bobintetley/asm3/files/3487421/import.breeds.coats.colors.updated.Aug.2019.xlsx">https://github.com/bobintetley/asm3/files/3487421/import.breeds.coats.colors.updated.Aug.2019.xlsx</a></p></li>
+<li><p>pfcoatlength (Text): PetFinder can accept a coat length value, which is one of
+Short, Long, Medium, Wire, Hairless, Curly</p></li>
+<li><p>pfadoptionfeewaived (Bool): a 1 or 0 to indicate that there is no adoption fee
+for this animal.</p></li>
+<li><p>pfspecialneedsnotes (Text): If the animal has special needs, you can add a
+note about those needs to be output on their PetFinder listing.</p></li>
+</ul>
 </div>
 </div>
 <div class="section" id="petrescue-com-au">
@@ -472,44 +515,45 @@ to you by PetRescue.com.au. All you need to do then is choose
 Publish to PetRescue.com.au in place of the normal internet publisher. The
 options for filtering animals are the same (see previous section for
 reference).</p>
-<p>Options are available to override the desex flag to send all your animals and to
-indicate which states you will adopt animals to. These are necessary as some
-states have different rules on whether a microchip number or other identifier
-is needed. The state the animal is currently located in (from the fosterer
-record if available or shelter details) is implicitly added to this set.</p>
-<p>ASM will determined if your animals are vaccinated, wormed or heartworm treated
+<div class="section" id="determing-whether-an-animal-is-vaccinated">
+<h3>Determing whether an animal is vaccinated<a class="headerlink" href="#determing-whether-an-animal-is-vaccinated" title="Permalink to this headline">¶</a></h3>
+<p>ASM will determine if your animals are vaccinated, wormed or heartworm treated
 and indicate this to PetRescue via the following rules:</p>
 <ul class="simple">
-<li>If the animal has at least 1 previously given vaccination on file and there
-are no vaccinations outstanding, the vaccination flag is set.</li>
-<li>If the animal has a medical treatment containing the word “worm” and not
-the word “heart” in the last 6 months, the wormed flag is set.</li>
-<li>If the animal has a medical treatment containing the words “heart” and
-“worm” in the last 6 months, the heartworm treated flag is set.</li>
+<li><p>If the animal has at least 1 previously given vaccination on file and there
+are no vaccinations outstanding, the vaccination flag is set.</p></li>
+<li><p>If the animal has a medical treatment containing the word “worm” and not
+the word “heart” in the last 6 months, the wormed flag is set.</p></li>
+<li><p>If the animal has a medical treatment containing the words “heart” and
+“worm” in the last 6 months, the heartworm treated flag is set.</p></li>
 </ul>
+</div>
+<div class="section" id="id1">
+<h3>Extra fields<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>PetRescue have a number of extra fields that you can set by creating additional
 animal fields with certain names in your database. The system responds to the
 field names, you can label them anything you want, they must be linked to
 animal records.</p>
 <ul class="simple">
-<li>bestfeature (Text): PetRescue show a tagline at the top of listings.  By default,
+<li><p>bestfeature (Text): PetRescue show a tagline at the top of listings.  By default,
 this value is set to “Looking for love” on all listings. You are allowed 25
-letters and can override the tagline on a per-animal basis.</li>
-<li>needsconstantcare (Yes/No): This can be used to indicate that an adoptable
-cannot be left by itself.</li>
-<li>breederid (Text): Dogs located in QLD with a date of birth after 26th May
-2017 require a breeder number.</li>
-<li>bredincareofgroup (Yes/No): Indicates the animal was bred whilst in the care
+letters and can override the tagline on a per-animal basis.</p></li>
+<li><p>needsconstantcare (Yes/No): This can be used to indicate that an adoptable
+cannot be left by itself.</p></li>
+<li><p>breederid (Text): Dogs located in QLD with a date of birth after 26th May
+2017 require a breeder number.</p></li>
+<li><p>bredincareofgroup (Yes/No): Indicates the animal was bred whilst in the care
 of the group. Setting this to true makes breederid mandatory for all listings
-in South Australia after July 2018.</li>
-<li>needsfoster (Yes/No): Indicates that foster care is required for the animal.</li>
-<li>sourcenumber (Text): Required for all cat and dog listings in Victoria</li>
-<li>rehomingorganisationid (Text): For cats and dogs in NSW, this field OR a
-microchip number OR breederid must be supplied.</li>
+in South Australia after July 2018.</p></li>
+<li><p>needsfoster (Yes/No): Indicates that foster care is required for the animal.</p></li>
+<li><p>sourcenumber (Text): Required for all cat and dog listings in Victoria</p></li>
+<li><p>rehomingorganisationid (Text): For cats and dogs in NSW, this field OR a
+microchip number OR breederid must be supplied.</p></li>
 </ul>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">PetRescue integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the PetRescue breeds, ASM will send it as “Mixed Breed” instead.</p>
+<p class="admonition-title">Note</p>
+<p>PetRescue integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the PetRescue breeds, ASM will send it as “Mixed Breed” instead.</p>
+</div>
 </div>
 </div>
 <div class="section" id="rescuegroups-org">
@@ -527,12 +571,12 @@ account</span> in the RescueGroups management interface).</p>
 item. The options for filtering animals are the same as for the other
 publishers.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">If you are using the “Upload all images” option, ASM will only send the first 4 images (the first is always the preferred) as RescueGroups.org do not support more than 4 images per animal.</p>
+<p class="admonition-title">Warning</p>
+<p>If you are using the “Upload all images” option, ASM will only send the first 4 images (the first is always the preferred) as RescueGroups.org do not support more than 4 images per animal.</p>
 </div>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The RescueGroups.org publisher uses the publisher breeds and species mappings, so you should make sure that you have mappings for all your breeds and species before using the publisher (the publisher will give an error message if any species or breeds do not have mappings).</p>
+<p class="admonition-title">Warning</p>
+<p>The RescueGroups.org publisher uses the publisher breeds and species mappings, so you should make sure that you have mappings for all your breeds and species before using the publisher (the publisher will give an error message if any species or breeds do not have mappings).</p>
 </div>
 </div>
 <div class="section" id="savour-life-com-au">
@@ -544,30 +588,41 @@ first and view the SavourLife panel. Here, you should enter the username and
 password given to you by SavourLife. The options for filtering animals are the
 same as for other publishers, although ASM will only send dogs (Species 1) as
 SavourLife will not accept listings for other species of animals.</p>
+<p>Note that regardless of whether you have set the publishing option to
+“Include animals who don’t have a picture”, SavourLife will not accept listings
+without a photo, so we will not send animals who do not have a photo.</p>
+<div class="section" id="id2">
+<h3>Determing whether an animal is vaccinated<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <p>ASM will determined if your dogs are vaccinated, wormed or heartworm treated
 and indicate this to SavourLife via the following rules:</p>
 <ul class="simple">
-<li>If the animal has at least 1 previously given vaccination on file and there
-are no vaccinations outstanding, the vaccination flag is set.</li>
-<li>If the animal has a medical treatment containing the word “worm” and not
-the word “heart” in the last 6 months, the wormed flag is set.</li>
-<li>If the animal has a medical treatment containing the words “heart” and
-“worm” in the last 6 months, the heartworm treated flag is set.</li>
+<li><p>If the animal has at least 1 previously given vaccination on file and there
+are no vaccinations outstanding, the vaccination flag is set.</p></li>
+<li><p>If the animal has a medical treatment containing the word “worm” and not
+the word “heart” in the last 6 months, the wormed flag is set.</p></li>
+<li><p>If the animal has a medical treatment containing the words “heart” and
+“worm” in the last 6 months, the heartworm treated flag is set.</p></li>
 </ul>
+</div>
+<div class="section" id="id3">
+<h3>Extra fields<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <p>SavourLife have extra fields that you can set by creating additional
 fields with certain names in your database. The system responds to the field
 names, you can label them anything you want, they must be linked to animal
 records.</p>
 <ul class="simple">
-<li>enquirynumber (Text): SavourLife will give potential adopters an enquiry
+<li><p>enquirynumber (Text): SavourLife will give potential adopters an enquiry
 number that can be given to the shelter. This enquiry number is used to link
 adopters with the adopted animal and qualify them for free food from
-SavourLife.</li>
-<li>needsfoster (Yes/No): Indicates that foster care is required for the animal.</li>
+SavourLife.</p></li>
+<li><p>needsfoster (Yes/No): Indicates that foster care is required for the animal.</p></li>
+<li><p>interstateadoptable (Yes/No): Overrides the global interstate adoptable value on
+the config screen and allows you to apply it on a per-animal basis instead.</p></li>
 </ul>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">SavourLife integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the SavourLife breeds, ASM will send it as “Mixed Breed” instead.</p>
+<p class="admonition-title">Note</p>
+<p>SavourLife integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the SavourLife breeds, ASM will send it as “Mixed Breed” instead.</p>
+</div>
 </div>
 </div>
 <div class="section" id="petslocated-com">
@@ -601,8 +656,8 @@ ASM will create a signed PDF disclaimer document to transmit to AVID,
 explaining that the shelter has done all it can to find the previous owner of
 the animal.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">If you have the “Intake” option set of “Register microchips after”, the AVID publisher will ignore it. Instead, AVID have a “selfreg” parameter, which ASM will always set so the shelter is always logged as the secondary contact on a chip.</p>
+<p class="admonition-title">Warning</p>
+<p>If you have the “Intake” option set of “Register microchips after”, the AVID publisher will ignore it. Instead, AVID have a “selfreg” parameter, which ASM will always set so the shelter is always logged as the secondary contact on a chip.</p>
 </div>
 </div>
 <div class="section" id="identichip-anibase-uk">
@@ -620,6 +675,8 @@ adopted again, another update will be done automatically.</p>
 <p>ASM can register microchips with AKC Reunite, part of the American Kennel Club,
 who supply microchips to US organisations and pet owners. AKC microchips are
 either 15-digits, starting with 956 or 10-digits, starting with 0006 or 0007.</p>
+<p>They will optionally accept registration of any microchip, although this has
+to be agreed with them first.</p>
 </div>
 <div class="section" id="foundanimals">
 <h2>FoundAnimals<a class="headerlink" href="#foundanimals" title="Permalink to this headline">¶</a></h2>
@@ -683,29 +740,29 @@ very popular animals and only want to put them on your own website.</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="mailmerge.html" class="btn btn-neutral float-right" title="Mail Merge Sources" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="service.html" class="btn btn-neutral float-left" title="Service API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="mailmerge.html" class="btn btn-neutral float-right" title="Mail Merge Sources" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="service.html" class="btn btn-neutral float-left" title="Service API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Sheltermanager, Ltd
+        &#169; Copyright 2022, Sheltermanager, Ltd.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -713,7 +770,6 @@ very popular animals and only want to put them on your own website.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

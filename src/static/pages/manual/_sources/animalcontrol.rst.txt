@@ -68,13 +68,13 @@ can be useful for route planning, spotting trends, etc.
 
 .. image:: images/incident_map.png
 
-Trap Loans
-----------
+Equipment Loans
+---------------
 
 ASM can keep track of traps or equipment loaned to people along with deposit
 amounts (if your shelter does trap/equipment rental, you can also use the
 payments tab to track rental payments). Active loans can be viewed from
-the menu and a trap loan tab will appear on each person record.
+the menu and an equipment loan tab will appear on each person record.
 
 .. image:: images/trap_loan.png
 

@@ -26,17 +26,19 @@ $(function() {
                 width: 550,
                 fields: [
                     { json_field: "USERNAME", post_field: "username", label: _("Username"), type: "text", validation: "notblank", readonly: true },
-                    { json_field: "PASSWORD", post_field: "password", label: _("Password"), type: "text", readonly: true },
+                    { json_field: "PASSWORD", post_field: "password", label: _("Password"), type: "text", validation: "notblank", readonly: true },
                     { json_field: "REALNAME", post_field: "realname", label: _("Real name"), type: "text" },
+                    { json_field: "", post_field: "emailcred", label: _("Email these credentials to the user"), type: "check", readonly: true },
                     { json_field: "EMAILADDRESS", post_field: "email", label: _("Email"), type: "text" },
-                    { json_field: "SUPERUSER", post_field: "superuser", label: _("Type"),  type: "select", defaultval: "0", options: 
-                        '<option value="0">' + _("Normal user") + '</option>' +
-                        '<option value="1">' + _("Super user") + '</option>'},
                     { json_field: "DISABLELOGIN", post_field: "disablelogin", label: _("Can Login"),  type: "select", defaultval: "0", 
                         callout: _("Set wether or not this user account can log in to the user interface.") + " " +
                                  _("User accounts that will only ever call the Service API should set this to No."),
                         options: '<option value="0">' + _("Yes") + '</option>' +
                         '<option value="1">' + _("No") + '</option>'},
+                    { json_field: "SUPERUSER", post_field: "superuser", label: _("Type"),  type: "select", defaultval: "0", 
+                        callout: _("'Super' users automatically have all permissions granted, where 'Normal' users need one or more roles to grant them permissions"),
+                        options: '<option value="0">' + _("Normal user") + '</option>' +
+                        '<option value="1">' + _("Super user") + '</option>'},
                     { json_field: "ROLEIDS", post_field: "roles", label: _("Roles"), type: "selectmulti", 
                         options: { rows: controller.roles, valuefield: "ID", displayfield: "ROLENAME" }},
                     { json_field: "SITEID", post_field: "site", label: _("Site"), type: "select", 
@@ -100,17 +102,13 @@ $(function() {
                     { field: "ROLES", display: _("Roles"), formatter: function(row) {
                             return common.nulltostr(row.ROLES).replace(/[|]+/g, ", ");
                         }},
-                    { field: "SUPERUSER", display: _("Superuser"), formatter: function(row) {
-                            if (row.SUPERUSER == 1) {
-                                return _("Yes");
-                            }
-                            return _("No");
-                        }},
-                    { field: "DISABLELOGIN", display: _("Can Login"), formatter: function(row) {
-                            if (row.DISABLELOGIN == 1) {
-                                return _("No");
-                            }
-                            return _("Yes");
+                    { field: "SUPERUSER", display: _("Type"), formatter: function(row) {
+                        let tags = [];
+                        if (row.DISABLELOGIN == 1) { tags.push(_("Cannot Login")); }
+                        if (row.SUPERUSER == 1) { tags.push(_("Superuser")); }
+                        if (row.ENABLETOTP == 1) { tags.push(_("2FA Enabled")); }
+                        if (row.LOCALEOVERRIDE && row.LOCALEOVERRIDE != config.str("Locale")) { tags.push(row.LOCALEOVERRIDE); }
+                        return tags.join(", ");
                         }},
                     { field: "SITEID", display: _("Site"), 
                         formatter: function(row) {
@@ -256,6 +254,7 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
             $("#site").closest("tr").toggle( config.bool("MultiSiteEnabled") );
+            validate.indicator([ "newpassword", "confirmpassword" ]);
         },
 
         set_extra_fields: function(row) {

@@ -2,7 +2,7 @@ Asilomar Figures (Live)
 ###
 Figures
 ###
-3220/PostgreSQL
+3220/PostgreSQL rev04
 ###
 Asilomar figures for US shelters
 ###
@@ -243,7 +243,7 @@ CASE WHEN SpeciesID = 1 THEN 1 ELSE 0 END AS Dog,
 CASE WHEN SpeciesID = 2 THEN 1 ELSE 0 END AS Cat,
 CASE WHEN SpeciesID = 1 OR SpeciesID = 2 THEN 1 ELSE 0 END AS Total
 FROM animal
-WHERE NonShelterAnimal = 0 AND DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$'
+WHERE DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$'
 AND AsilomarOwnerRequestedEuthanasia = 1
 ORDER BY Category
 +++
@@ -614,9 +614,9 @@ SUBREPORT_AsilomarUDiedOrLost
 SELECT Cat, Dog, Cat + Dog AS Total FROM (
 (SELECT
 (SELECT COUNT(ID) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$' AND DeceasedDate Is Not Null AND PutToSleep = 0 AND SpeciesID = 1) +
-(SELECT COUNT(adoption.ID) FROM adoption INNER JOIN animal ON adoption.AnimalID = animal.ID WHERE MovementType IN (4,6,7) AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' AND SpeciesID = 1) AS Dog,
+(SELECT COUNT(adoption.ID) FROM adoption INNER JOIN animal ON adoption.AnimalID = animal.ID WHERE MovementType IN (4,6) AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' AND SpeciesID = 1) AS Dog,
 (SELECT COUNT(ID) FROM animal WHERE NonShelterAnimal = 0 AND DiedOffShelter = 0 AND DeceasedDate >= '$PARENTARG1$' AND DeceasedDate <= '$PARENTARG2$' AND DeceasedDate Is Not Null AND PutToSleep = 0 AND SpeciesID = 2) +
-(SELECT COUNT(adoption.ID) FROM adoption INNER JOIN animal ON adoption.AnimalID = animal.ID WHERE MovementType IN (4,6,7) AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' AND SpeciesID = 2) AS Cat
+(SELECT COUNT(adoption.ID) FROM adoption INNER JOIN animal ON adoption.AnimalID = animal.ID WHERE MovementType IN (4,6) AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' AND SpeciesID = 2) AS Cat
 )) dummy
 +++
 $$HEADER

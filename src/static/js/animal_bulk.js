@@ -12,7 +12,11 @@ $(function() {
                 if (v.ID == 8 && !config.bool("DisableRetailer")) {
                     choosetypes.push(v);
                 }
-                else if (v.ID != 0 && v.ID !=8 && v.ID != 9 && v.ID != 10 && v.ID != 11 && v.ID != 12) {
+                else if (v.ID == 0) {
+                    v.MOVEMENTTYPE = _("Reservation");
+                    choosetypes.push(v);
+                }
+                else if (v.ID !=8 && v.ID != 9 && v.ID != 10 && v.ID != 11 && v.ID != 12) {
                     choosetypes.push(v);
                 }
             });
@@ -20,7 +24,7 @@ $(function() {
                 html.content_header(_("Bulk change animals")),
                 '<table width="100%" class="asm-table-layout" style="padding-bottom: 5px;">',
                 '<tr>',
-                '<td>',
+                '<td class="asm-nested-table-td">',
                 
                 // left table
                 '<table width="60%" class="asm-table-layout">',
@@ -36,12 +40,12 @@ $(function() {
                 '<tr id="litteridrow">',
                 '<td>',
                 '<label for="litterid">' + _("Litter") + '</label></td>',
-                '<td><input type="text" id="litterid" data-post="litterid" class="asm-textbox" title="' + html.title(_("The litter this animal belongs to")) + '" />',
+                '<td><input type="text" id="litterid" data-post="litterid" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="animaltype">' + _("Type") + '</label></td>',
-                '<td><select id="animaltype" data-post="animaltype" class="asm-selectbox" title="' + html.title(_("The shelter category for this animal")) + '">',
+                '<td><select id="animaltype" data-post="animaltype" class="asm-selectbox">',
                 '<option value="-1">' + _("(no change)") + '</option>',
                 html.list_to_options(controller.animaltypes, "ID", "ANIMALTYPE"),
                 '</select></td>',
@@ -49,9 +53,15 @@ $(function() {
                 '<tr id="locationrow">',
                 '<td><label for="location">' + _("Location") + '</label></td>',
                 '<td>',
-                '<select id="location" data-post="location" class="asm-selectbox" title="' + html.title(_("Where this animal is located within the shelter")) + '">',
+                '<select id="location" data-post="location" class="asm-selectbox" >',
                 '<option value="-1">' + _("(no change)") + '</option>',
                 html.list_to_options(controller.internallocations, "ID", "LOCATIONNAME"),
+                '</select></td>',
+                '</tr>',
+                '<tr id="unitrow">',
+                '<td><label for="unit">' + _("Unit") + '</label></td>',
+                '<td>',
+                '<select id="unit" data-post="unit" class="asm-selectbox">',
                 '</select></td>',
                 '</tr>',
                 '<tr id="entryreasonrow">',
@@ -82,10 +92,20 @@ $(function() {
                 '<td><input id="boardingcost" data-post="boardingcost" class="asm-currencybox asm-textbox" /></td>',
                 '</tr>',
 
-                '<tr id="animalflagsrow">',
+                '<tr id="addflagrow">',
                 '<td><label for="addflag">' + _("Add Flag") + '</label></td>',
                 '<td>',
                 '<select id="addflag" data-post="addflag" class="asm-selectbox">',
+                '<option value=""></option>',
+                html.list_to_options(controller.flags, "FLAG", "FLAG"),
+                '</select>',
+                '</td>',
+                '</tr>',
+
+                '<tr id="removeflagrow">',
+                '<td><label for="removeflag">' + _("Remove Flag") + '</label></td>',
+                '<td>',
+                '<select id="removeflag" data-post="removeflag" class="asm-selectbox">',
                 '<option value=""></option>',
                 html.list_to_options(controller.flags, "FLAG", "FLAG"),
                 '</select>',
@@ -160,7 +180,7 @@ $(function() {
 
                 // end left table
                 '</td>',
-                '<td>',
+                '<td class="asm-nested-table-td">',
 
                 // right table
                 '<table>',
@@ -270,6 +290,8 @@ $(function() {
             // Litter autocomplete
             $("#litterid").autocomplete({source: html.decode(controller.autolitters)});
 
+            validate.indicator([ "animals" ]);
+
             $("#button-update").button().click(async function() {
                 if (!validate.notblank([ "animals" ])) { return; }
                 $("#button-update").button("disable");
@@ -302,12 +324,32 @@ $(function() {
                 }
             });
 
+            $("#location").change(animal_bulk.update_units);
+            animal_bulk.update_units();
+
             if (!common.has_permission("ca")) { $("#button-update").hide(); }
             if (!common.has_permission("da")) { $("#button-delete").hide(); }
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions");
 
+        },
+
+        // Update the units available for the selected location
+        update_units: async function() {
+            let opts = ['<option value="-1">' + _("(no change)") + '</option>'];
+            if ($("#location").val() != -1) {
+                $("#unit").empty();
+                const response = await common.ajax_post("animal_new", "mode=units&locationid=" + $("#location").val());
+                $.each(html.decode(response).split("&&"), function(i, v) {
+                    let [unit, desc] = v.split("|");
+                    if (!unit) { return false; }
+                    if (!desc) { desc = _("(available)"); }
+                    opts.push('<option value="' + html.title(unit) + '">' + unit +
+                        ' : ' + desc + '</option>');
+                });
+            }
+            $("#unit").html(opts.join("\n")).change();
         },
 
         destroy: function() {

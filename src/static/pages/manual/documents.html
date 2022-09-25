@@ -1,38 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Documents &mdash; ASM 44u documentation</title>
+  <title>Documents &mdash; ASM 46u documentation</title>
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Animal Control" href="animalcontrol.html" />
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                44u
+                46u
               </div>
             
           
@@ -77,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -92,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="people.html">People</a></li>
 <li class="toctree-l1"><a class="reference internal" href="movements.html">Movements</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Documents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pdf-directives">PDF Directives</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#electronic-signatures">Electronic Signatures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mobile-signing">Mobile Signing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#user-signatures">User Signatures</a></li>
@@ -127,6 +129,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -161,18 +164,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Documents</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/documents.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -202,11 +207,11 @@ animal’s name.</p>
 <p>A number of places in the system have toolbars with generate document buttons,
 you can find these:</p>
 <ul class="simple">
-<li>On the animal details screen (creates documents with animal, person and
-movement information, useful for adoption paperwork)</li>
-<li>On the person screen(creates documents with person information)</li>
-<li>On the payments tab (creates documents with person, payment and animal
-information, useful for invoice and receipt templates)</li>
+<li><p>On the animal details screen (creates documents with animal, person and
+movement information, useful for adoption paperwork)</p></li>
+<li><p>On the person screen(creates documents with person information)</p></li>
+<li><p>On the payments tab (creates documents with person, payment and animal
+information, useful for invoice and receipt templates)</p></li>
 </ul>
 <p>However you choose to create the document, the process is the same. You select
 your document template from the dropdown list.</p>
@@ -220,6 +225,8 @@ the document. This is useful as PDFs will be consistent across different
 machines running different operating systems and with different fonts
 installed.</p>
 <img alt="_images/html_wp_to_pdf.png" src="_images/html_wp_to_pdf.png" />
+<div class="section" id="pdf-directives">
+<h2>PDF Directives<a class="headerlink" href="#pdf-directives" title="Permalink to this headline">¶</a></h2>
 <p>You can embed directives in your document to give some hints to the PDF engine.
 These should take the form of HTML comments, embedded in &lt;!– and –&gt;, and can
 be inserted by going to Tools-&gt;Source Code in the document editor:</p>
@@ -244,8 +251,8 @@ explicitly set too.</p>
 <p>Margins are in the order top, bottom, left then right.</p>
 <p>The PDF engine will scale the document to fit the page horizontally based on the
 widest element in it. Use the zoom directive to override this behaviour and
-specify a scaling amount:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf zoom 0.5 end --&gt;
+specify a scaling amount (this sets a zoom CSS value on the body element):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf zoom 130% end --&gt;
 </pre></div>
 </div>
 <p>Most of these options are to wkhtmltopdf, a PDF renderer based on webkit (the
@@ -254,11 +261,12 @@ engine can also be used by specifying:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf renderer pisa --&gt;
 </pre></div>
 </div>
+</div>
 <div class="section" id="electronic-signatures">
 <h2>Electronic Signatures<a class="headerlink" href="#electronic-signatures" title="Permalink to this headline">¶</a></h2>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Electronic signatures are only supported by ASM’s built in HTML-based word processor. They cannot be used with OpenOffice templates.</p>
+<p class="admonition-title">Warning</p>
+<p>Electronic signatures are only supported by ASM’s built in HTML-based word processor. They cannot be used with OpenOffice templates.</p>
 </div>
 <img alt="_images/sign_buttons.png" src="_images/sign_buttons.png" />
 <p>ASM allows you to add electronic signatures to documents. Signed documents are
@@ -266,37 +274,38 @@ read only and cannot be edited. A cryptographic hash for the signed document is
 calculated and stored separately so that any future tampering can be detected.</p>
 <p>There are multiple methods of adding signatures to documents:</p>
 <ul class="simple">
-<li>“Sign on screen” menu item in the media tab (using a touchscreen monitor,
+<li><p>“Sign on screen” menu item in the media tab (using a touchscreen monitor,
 wacom tablet, lightpen, other mouse-like device or if you are using a tablet
-computer)</li>
-<li>“Signing Pad” mode of the mobile interface for any external
-touchscreen device (iPad, iPhone, Android phone/tablet, etc).</li>
-<li>“Request signature by email” menu item in the media tab, which sends an email
+computer)</p></li>
+<li><p>“Signing Pad” mode of the mobile interface for any external
+touchscreen device (iPad, iPhone, Android phone/tablet, etc).</p></li>
+<li><p>“Request signature by email” menu item in the media tab, which sends an email
 to the recipient of your choice (defaults to the current person if this is
 a person’s media tab) with links for them to follow to sign the selected
-documents with their own touchscreen device.</li>
-<li>A signature that has been pre-stored for the currently logged in user
-(necessary for a staff signature in addition to the main signatory).</li>
+documents with their own touchscreen device.</p></li>
+<li><p>A signature that has been pre-stored for the currently logged in user
+(necessary for a staff signature in addition to the main signatory).</p></li>
 </ul>
 <p>To use, select the documents you’d like to sign and click the “Sign” dropdown
 on the toolbar of the media tab. ASM allows you to use any generic mouse
 or touchscreen hardware and mobile touchscreen devices as signing pads - you do
 not need to buy expensive custom hardware.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Once signed, a document cannot be edited. A maximum of two signatures can be recorded in a document - one for the signatory and one for the current system user.</p>
+<p class="admonition-title">Note</p>
+<p>Once signed, a document cannot be edited. A maximum of two signatures can be recorded in a document - one for the signatory and one for the current system user.</p>
 </div>
 <img alt="_images/sign_dialog.png" src="_images/sign_dialog.png" />
 <p>To control the size and location of the signature:</p>
 <ul class="simple">
-<li>insert an image where you’d like the signature to appear</li>
-<li>When the insert image dialog requests the image source, instead of a URL,
-enter “signature:placeholder” without the quotes.</li>
-<li>Choose a size to constrain the image to - eg: 150 x 75</li>
-<li>The document signing module will insert the signature inside your image
-when the document is signed.</li>
+<li><p>Add the token &lt;&lt;Signature&gt;&gt; where you’d like the signature to appear.</p></li>
+<li><p>You can set a pixel width of 100, 150, 200 or 300 (the default is 150) in the
+token, eg: &lt;&lt;Signature300&gt;&gt;</p></li>
+<li><p>When a document is generated from your template, a placeholder image of the
+correct size will appear where you inserted the token.</p></li>
+<li><p>The document signing module will replace the placeholder image with the
+signature after the document is signed.</p></li>
 </ul>
-<p>If your document template does not contain a signature placeholder, the
+<p>If your document template does not contain a signature token, the
 signature will be attached to the document as a footer along with the date and
 time the document was signed.</p>
 <img alt="_images/sign_doc.png" src="_images/sign_doc.png" />
@@ -311,8 +320,8 @@ in the mobile interface.</p>
 <p>If you visit ASM’s mobile interface on any mobile/tablet device, you can use the
 “Signing Pad” link in the mobile interface to go into signing pad mode.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The mobile interface must be logged in with the same user account as the person who clicked the “Signing Pad” button on the media tab. This prevents users signing other’s documents and eliminates confusion in multi-site use.</p>
+<p class="admonition-title">Warning</p>
+<p>The mobile interface must be logged in with the same user account as the person who clicked the “Signing Pad” button on the media tab. This prevents users signing other’s documents and eliminates confusion in multi-site use.</p>
 </div>
 <img alt="_images/sign_mobilepad.png" src="_images/sign_mobilepad.png" />
 <img alt="_images/sign_waiting.png" src="_images/sign_waiting.png" />
@@ -337,12 +346,9 @@ accessed under the user menu (the menu with the logged in user’s name at
 the top right of the screen).</p>
 <img alt="_images/sign_user.png" src="_images/sign_user.png" />
 <p>You can add a placeholder for the current user’s signature in your document
-templates with the &lt;&lt;UserSignature&gt;&gt; wordkey. This will insert the signature
-at full size into the document as an image.</p>
-<p>If you’d like to control the size and placement of the user’s signature in
-a similar manner to normal signatures, you can insert an image and
-when prompted for the image source use “signature:user” without the
-quotes.</p>
+templates with the &lt;&lt;UserSignature&gt;&gt; wordkey. This will insert the signature at
+150px width into the document as an image. You can use the same 100, 150, 200
+or 300 suffix to control the size of the user signature.</p>
 </div>
 </div>
 
@@ -351,29 +357,29 @@ quotes.</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="animalcontrol.html" class="btn btn-neutral float-right" title="Animal Control" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="movements.html" class="btn btn-neutral float-left" title="Movements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="animalcontrol.html" class="btn btn-neutral float-right" title="Animal Control" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="movements.html" class="btn btn-neutral float-left" title="Movements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Sheltermanager, Ltd
+        &#169; Copyright 2022, Sheltermanager, Ltd.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -381,7 +387,6 @@ quotes.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

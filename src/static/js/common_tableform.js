@@ -158,7 +158,7 @@ const tableform = {
 
     /** Formats a value as a date and time */
     format_datetime: function(row, v) {
-        return format.date(v) + " " + format.time(v);
+        return '<span style="white-space: nowrap;">' + format.date(v) + " " + format.time(v) + '</span>';
     },
 
     /** Formats a value as a string */
@@ -210,12 +210,16 @@ const tableform = {
     table_render: function(table, bodyonly) {
         var t = [];
         if (!bodyonly) {
+            t.push('<a id="tableform-select-all" href="#" ');
+            t.push('title="' + html.title(_("Select all")) + '"><span class="ui-icon ui-icon-check"></span></a>');
+            t.push('<a id="tableform-toggle-filter" href="#" ');
+            t.push('title="' + html.title(_("Filter")) + '"><span class="ui-icon ui-icon-search"></span></a>');
             t.push("<table id=\"tableform\" width=\"100%\"><thead><tr>");
             $.each(table.columns, function(i, v) {
                 if (v.hideif && v.hideif()) { return; }
                 t.push("<th>" + v.display + "</th>");
             });
-            t.push("</tr><thead><tbody>");
+            t.push("</tr></thead><tbody>");
         }
         $.each(table.rows, function(ir, vr) {
             if (table.hideif && table.hideif(vr)) { return; }
@@ -241,9 +245,9 @@ const tableform = {
                 if (formatter === tableform.format_currency) {
                     extraclasses += " rightalign";
                 }
-                t.push("<td class=\"ui-widget-content " + extraclasses + "\">");
+                t.push("<td class=\"" + extraclasses + "\">");
                 if (vc.sorttext) {
-                    t.push("<span data-sort=\"" + html.title(html.truncate(vc.sorttext(vr))) + "\" />");
+                    t.push("<span data-sort=\"" + html.title(html.truncate(vc.sorttext(vr))) + "\"></span>");
                 }
                 if (ic == 0 && formatter === undefined) {
                     var linktext = tableform.format_string(vr, vr[vc.field]);
@@ -332,10 +336,10 @@ const tableform = {
                     bn.addClass("ui-state-disabled").addClass("ui-button-disabled");
                 }
             }
-            if (table.change) {
-                table.change(tableform.table_selected_rows(table));
-            }
         });
+        if (table.change) {
+            table.change(tableform.table_selected_rows(table));
+        }
     },
 
     /**
@@ -373,29 +377,68 @@ const tableform = {
             });
         }
 
-        // Allow CTRL+A to select everything in the table
-        Mousetrap.bind("ctrl+a", function() {
-            $("#tableform input[type='checkbox']").prop("checked", true);
-            $("#tableform td").addClass("ui-state-highlight");
+        // selects all the visible rows in the table.
+        // does nothing if the dialog is open.
+        const select_all = function() {
+            if ($("#dialog-tableform").hasClass("ui-dialog-content") && $("#dialog-tableform").dialog("isOpen")) { return false; }
+            $("#tableform input[type='checkbox']").each(function() {
+                if ($(this).is(":visible")) {
+                    $(this).prop("checked", true);
+                    $(this).closest("tr").find("td").addClass("ui-state-highlight");
+                }
+            });
             tableform.table_update_buttons(table, buttons);
+        };
+
+        // unselects all rows in the table
+        const unselect_all = function() {
+            $("#tableform input[type='checkbox']").each(function() {
+                $(this).prop("checked", false);
+                $(this).closest("tr").find("td").removeClass("ui-state-highlight");
+            });
+            tableform.table_update_buttons(table, buttons);
+        };
+
+        // Bind the CTRL+A key
+        Mousetrap.bind("ctrl+a", function() {
+            select_all();
+            return false;
+        });
+
+        // Bind the select all link in the table header
+        // Unlike the CTRL+A sequence, this one will toggle between select/unselect
+        $("#tableform-select-all").click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!table.select_all_toggle) {
+                table.select_all_toggle = true;
+                select_all();
+            }
+            else {
+                table.select_all_toggle = false;
+                unselect_all();
+            }
+            return false;
+        });
+
+        // Bind the toggle search/filter link in the table header
+        $("#tableform-toggle-filter").click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            table.filter_toggle = !table.filter_toggle;
+            $(".tablesorter-filter-row").toggle(table.filter_toggle);
             return false;
         });
 
         // Bind any widgets inside the table
         this.table_bind_widgets(table);
 
-        // Apply tablesorter widget
-        var options = {};
-        // If whether or not to show filters is explicitly set, do that
-        options.filter = false;
-        if (table.hasOwnProperty("showfilter")) { 
-            options.filter = table.showfilter; 
-        }
-        // Otherwise, show the filters if there are 10+ rows in the table
-        else if (table.rows && table.rows.length > 9) { 
-            options.filter = true; 
-        }
-        $("#tableform").table(options);
+        $("#tableform").table({ filter: true });
+        // old behaviour was to show the filter line if there were 10 or more rows
+        // table.filter_toggle = table.rows && table.rows.length >= 10; 
+        table.filter_toggle = false;
+        $(".tablesorter-filter-row").toggle(table.filter_toggle);
+        $(".tablesorter-filter").prop("placeholder", _("Filter"));
 
         // And the default sort
         this.table_apply_sort(table);
@@ -476,7 +519,7 @@ const tableform = {
      * Returns an empty list if nothing is selected.
      */
     table_selected_rows: function(table) {
-        var results = [], selid = $("#tableform input:checked").attr("data-id");
+        var results = [];
         $("#tableform input:checked").each(function() {
             var el = $(this);
             $.each(table.rows, function(i, v) {
@@ -646,7 +689,10 @@ const tableform = {
         // This is necessary in case opening a previous record removed a retired lookup element.
         $.each(dialog.fields, function(i, v) {
             if (v.options && v.options.rows) {
-                $("#" + v.post_field).html( html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield) );
+                let opts = "";
+                if (v.options.prepend) { opts = v.options.prepend; }
+                opts += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
+                $("#" + v.post_field).html(opts);
             }
         });
         
@@ -767,7 +813,10 @@ const tableform = {
         // This is necessary in case opening a previous record removed a retired lookup element.
         $.each(dialog.fields, function(i, v) {
             if (v.options && v.options.rows) {
-                $("#" + v.post_field).html( html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield) );
+                let opts = "";
+                if (v.options.prepend) { opts = v.options.prepend; }
+                opts += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
+                $("#" + v.post_field).html(opts);
             }
         });
 
@@ -860,7 +909,7 @@ const tableform = {
                 if (bp.find("#dialog-tableform-activity").length == 0 && row.CREATEDBY && row.CREATEDDATE && row.LASTCHANGEDBY && row.LASTCHANGEDDATE) {
                     var activity = 
                         _("Added by {0} on {1}").replace("{0}", row.CREATEDBY)
-                            .replace("{1}", format.date(row.CREATEDDATE) + " " + format.time(row.LASTCHANGEDDATE)) + '<br/>' +
+                            .replace("{1}", format.date(row.CREATEDDATE) + " " + format.time(row.CREATEDDATE)) + '<br/>' +
                         _("Last changed by {0} on {1}").replace("{0}", row.LASTCHANGEDBY)
                             .replace("{1}", format.date(row.LASTCHANGEDDATE) + " " + format.time(row.LASTCHANGEDDATE));
                     bp.append('<button id="button-dialog-tableform-activity" title="' + 
@@ -910,6 +959,7 @@ const tableform = {
      *        label: "label", 
      *        labelpos: "left", (or above, only really valid for textareas)
      *        type: "check|text|textarea|richtextarea|date|currency|number|select|animal|person|raw|nextcol", 
+     *        rowid: "thisrow", ( id for the row containing the label/field)
      *        readonly: false, (read only for editing, ok for creating)
      *        halfsize: false, (use the asm-halftextbox class)
      *        justwidget: false, (output tr/td/label)
@@ -918,69 +968,80 @@ const tableform = {
      *        validation: "notblank|notzero|validemail",
      *        maxlength: (omit or number of chars limit for text/textarea),
      *        classes: "extraclass anotherone",
+     *        date_onlydays: "0,1,2,3,4,5,6" (for datepicker fields, only allow days to be selected monday-sunday)
+     *        date_nofuture: true|false, (for datepicker fields)
+     *        date_nopast: true| false, (for datepicker fields)
      *        tooltip: _("Text"), 
      *        callout: _("Text"), mixed markup allowed
      *        hideif: function() { return true; // should hide },
      *        markup: "<input type='text' value='raw' />",
-     *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ] }, (only valid for select type)
-     *        options: "<option>test</option>" also valid
+     *        options: [ "Item 1", "Item 2" ] // options only used by select and selectmulti
+     *        options: "<option>test</option>"
+     *        options: { displayfield: "DISPLAY", valuefield: "VALUE", rows: [ {rows} ], prepend: "<option>extra</option>" }, 
      *        animalfilter: "all",   (only valid for animal and animalmulti types)
      *        personfilter: "all",   (only valid for person type)
      *        personmode: "full",    (only valid for person type)
      *        change: function(changeevent), 
-     *        blur: function(blurevent)
+     *        blur: function(blurevent),
+     *        xbutton: "text" (render an extra button to the right of the item with id button-post_field and inner text)
      *      } ]
      * columns: number of cols to render (1 if undefined)
-     * dontrenderoutertable: don't render the outer table tag (undefined means render it)
+     * options: - if undefined: { render_container: true; full_width: true; }
      */
-    fields_render: function(fields, columns, dontrenderoutertable) {
-        var d = "", callout = "";
+    fields_render: function(fields, columns, coptions) {
+        let d = "", 
+            options = { render_container: true, full_width: true };
         if (columns === undefined) { columns = 1; }
-        if (!dontrenderoutertable) {
-            d = "<table width=\"100%\">";
+        if (coptions !== undefined) { options = common.copy_object(options, coptions); }
+        if (options.render_container) {
+            d = '<table class="asm-table-layout ' + (options.full_width ? "asm-table-fullwidth" : "" ) + '">';
         }
         if (columns > 1) {
             // We have multiple columns, start the first one
-            d += "<tr><td><table>";
+            d += '<tr><td class="asm-nested-table-td"><table>';
         }
         $.each(fields, function(i, v) {
-            callout = "";
+            let labelx = "", tr = "<tr>";
             if (v.hideif && v.hideif()) {
                 return;
             }
-            if (v.callout) {
-                callout = ' <span id="callout-' + v.post_field + '" class="asm-callout">' + v.callout + '</span>';
+            if (v.validation && v.validation.indexOf("not") == 0) {
+                labelx += '&nbsp;<span class="asm-has-validation">*</span>';
             }
+            if (v.callout) {
+                labelx += '&nbsp;<span id="callout-' + v.post_field + '" class="asm-callout">' + v.callout + '</span>';
+            }
+            if (v.rowid) { tr = '<tr id="' + v.rowid + '">'; }
             if (v.type == "check") {
-                if (!v.justwidget) { d += "<tr><td></td><td>"; }
+                if (!v.justwidget) { d += tr + "<td></td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"checkbox\" class=\"asm-checkbox\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += "/>";
-                if (!v.justwidget) { d += "<label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td></tr>"; }
+                if (!v.justwidget) { d += "<label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td></tr>"; }
             }
             else if (v.type == "text") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox " + v.classes;
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
                 if (v.maxlength) { d += "maxlength=" + v.maxlength; }
                 d += "/>";
+                if (v.xbutton) { d += "<button id=\"button-" + v.post_field + "\">" + v.xbutton + "</button>"; }
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "textarea") {
                 if (!v.justwidget) {
                     if (v.labelpos && v.labelpos == "above") {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "<br />";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
                     }
                     else {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
                     }
                 }
                 if (!v.rows) { v.rows = 5; }
@@ -989,6 +1050,7 @@ const tableform = {
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\" "; }
+                if (!v.tooltip) { d += "title=\"" + html.title(v.label) + "\" "; } // use the label if a title wasn't given
                 if (v.maxlength) { d += "maxlength=" + v.maxlength; }
                 d += "></textarea>";
                 if (!v.justwidget) { d += "</td></tr>"; }
@@ -996,10 +1058,10 @@ const tableform = {
             else if (v.type == "richtextarea") {
                 if (!v.justwidget) {
                     if (v.labelpos && v.labelpos == "above") {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "<br />";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
                     }
                     else {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
                     }
                 }
                 if (!v.width) { v.width = "100%"; }
@@ -1015,12 +1077,12 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "htmleditor") {
-                    if (!v.justwidget) {
+                if (!v.justwidget) {
                     if (v.labelpos && v.labelpos == "above") {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "<br />";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
                     }
                     else {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
                     }
                 }
                 if (!v.width) { v.width = "100%"; }
@@ -1035,12 +1097,12 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "sqleditor") {
-                    if (!v.justwidget) {
+                if (!v.justwidget) {
                     if (v.labelpos && v.labelpos == "above") {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "<br />";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "<br />";
                     }
                     else {
-                        d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>";
+                        d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>";
                     }
                 }
                 if (!v.width) { v.width = "100%"; }
@@ -1055,13 +1117,15 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "date") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-datebox";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
+                if (v.date_onlydays) { d += "data-onlydays=\"" + v.onlydays + "\" "; }
+                if (v.date_nofuture) { d+= "data-nofuture=\"true\" "; }
+                if (v.date_nopast) { d+= "data-nopast=\"true\" "; }
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1069,13 +1133,12 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "time") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-timebox ";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1083,11 +1146,10 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "datetime") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<span style=\"white-space: nowrap\">";
                 d += "<input id=\"" + v.post_field + "date\" type=\"text\" class=\"asm-textbox asm-datebox asm-halftextbox\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "date\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1095,7 +1157,6 @@ const tableform = {
                 d += "<input id=\"" + v.post_field + "time\" type=\"text\" class=\"asm-textbox asm-timebox asm-halftextbox";
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "time\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1104,13 +1165,12 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "currency") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-currencybox";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1118,13 +1178,12 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "intnumber") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-intbox ";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1132,13 +1191,12 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "number") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"text\" class=\"asm-textbox asm-numberbox ";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                d += "autocomplete=\"new-password\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
@@ -1146,7 +1204,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "select") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<select id=\"" + v.post_field + "\" class=\"asm-selectbox";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1157,22 +1215,20 @@ const tableform = {
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += ">";
                 if (common.is_array(v.options)) {
-                    $.each(v.options, function(ia, va) {
-                        d += "<option>" + va + "</option>";
-                    });
+                    d += html.list_to_options_array(v.options); 
                 }
                 else if (common.is_string(v.options)) {
                     d += v.options;
                 }
                 else if (v.options && v.options.rows) {
-                    // Assume we have rows, valuefield and displayfield properties
+                    if (v.options.prepend) { d += v.options.prepend; }
                     d += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
                 }
                 d += "</select>";
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "selectmulti") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<select id=\"" + v.post_field + "\" multiple=\"multiple\" class=\"asm-bsmselect";
                 if (v.classes) { d += " " + v.classes; }
                 if (v.halfsize) { d += " asm-halftextbox"; }
@@ -1183,9 +1239,8 @@ const tableform = {
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += ">";
                 if (v.options && v.options.rows) {
-                    $.each(v.options.rows, function(io, vo) {
-                        d += "<option value=\"" + vo[v.options.valuefield] + "\">" + vo[v.options.displayfield] + "</option>";
-                    });
+                    if (v.options.prepend) { d += v.options.prepend; }
+                    d += html.list_to_options(v.options.rows, v.options.valuefield, v.options.displayfield);
                 }
                 else if (v.options) {
                     d += v.options;
@@ -1194,7 +1249,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "person") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-personchooser\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1205,7 +1260,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "animal") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-animalchooser\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1215,7 +1270,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "animalmulti") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" type=\"hidden\" class=\"asm-animalchoosermulti\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1225,7 +1280,7 @@ const tableform = {
                 if (!v.justwidget) { d += "</td></tr>"; }
             }
             else if (v.type == "file") {
-                if (!v.justwidget) { d += "<tr><td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += tr + "<td><label for=\"" + v.post_field + "\">" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += "<input id=\"" + v.post_field + "\" name=\"" + v.post_field + "\" type=\"file\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
                 if (v.readonly) { d += " data-noedit=\"true\" "; }
@@ -1236,20 +1291,20 @@ const tableform = {
             }
             else if (v.type == "raw") {
                 // Special widget that allows custom markup instead
-                if (!v.justwidget) { d += "<tr id=\"" + v.post_field + "\"><td><label>" + v.label + "</label>" + callout + "</td><td>"; }
+                if (!v.justwidget) { d += "<tr id=\"" + v.post_field + "\"><td><label>" + v.label + "</label>" + labelx + "</td><td>"; }
                 d += v.markup;
                 if (!v.justwidget) { d += "</td></tr>"; } 
             }
             else if (v.type == "nextcol") {
                 // Special fake widget that causes rendering to move to the next column
-                d += "</table><td><td><table>";
+                d += '</table><td><td class="asm-nested-table-td"><table>';
             }
         });
         if (columns > 1) {
             // Close out the current column for multi column layouts
             d += "</table></td></tr>";
         }
-        if (!dontrenderoutertable) {
+        if (options.render_container) {
             d += "</table>";
         }
         return d;
@@ -1565,10 +1620,14 @@ const tableform = {
      */
     delete_dialog: function(callback, text) {
         var b = {}, deferred = $.Deferred(); 
-        b[_("Delete")] = function() {
-            $("#dialog-delete").dialog("close");
-            if (callback) { callback(); }
-            deferred.resolve();
+        b[_("Delete")] = {
+            text: _("Delete"),
+            "class": 'asm-redbutton',
+            click: function() {
+                $("#dialog-delete").dialog("close");
+                if (callback) { callback(); }
+                deferred.resolve();
+            }
         };
         b[_("Cancel")] = function() { 
             $(this).dialog("close"); 
@@ -1580,7 +1639,7 @@ const tableform = {
         }
         if ($("#dialog-delete").length == 0) {
             $("body").append('<div id="dialog-delete" style="display: none" title="' +
-                _("Delete") + '"><p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' +
+                _("Delete") + '"><p><span class="ui-icon ui-icon-alert"></span>' +
                 '<span id="dialog-delete-text"></span></p></div>');
         }
         $("#dialog-delete-text").html(mess);
@@ -1615,21 +1674,23 @@ const tableform = {
         b[oktext] = function() {
             // We've been given a list of fields that should not be blank or zero,
             // validate them before doing anything
-            if (o.notblank) {
+            if (o && o.notblank) {
                 if (!validate.notblank(o.notblank)) { return; }
             }
-            if (o.notzero) {
+            if (o && o.notzero) {
                 if (!validate.notzero(o.notzero)) { return; }
             }
             $(selector).dialog("close");
-            if (o.callback) { o.callback(); }
+            if (o && o.callback) { o.callback(); }
             deferred.resolve();
         };
 
-        b[_("Cancel")] = function() { 
-            $(this).dialog("close"); 
-            deferred.reject("dialog cancelled");
-        };
+        if (o && !o.hidecancel) {
+            b[_("Cancel")] = function() { 
+                $(this).dialog("close"); 
+                deferred.reject("dialog cancelled");
+            };
+        }
 
         if (!o) { o = {}; }
         $.extend(o, {

@@ -14,7 +14,6 @@ $(function() {
                 add_title: _("Add vaccination"),
                 edit_title: _("Edit vaccination"),
                 edit_perm: 'cav',
-                helper_text: _("Vaccinations need an animal and at least a required date."),
                 close_on_ok: false,
                 use_default_values: false,
                 columns: 1,
@@ -29,12 +28,13 @@ $(function() {
                     { json_field: "DATEOFVACCINATION", post_field: "given", label: _("Given"), type: "date", 
                         callout: _("The date the vaccination was administered") },
                     { json_field: "GIVENBY", post_field: "by", label: _("By"), type: "select",
-                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users }},
+                        options: { displayfield: "USERNAME", valuefield: "USERNAME", rows: controller.users, prepend: '<option value=""></option>' }},
                     { json_field: "ADMINISTERINGVETID", post_field: "administeringvet", label: _("Administering Vet"), type: "person", personfilter: "vet" },
                     { json_field: "DATEEXPIRES", post_field: "expires", label: _("Expires"), type: "date",
                         callout: _('Optional, the date the vaccination "wears off" and needs to be administered again') },
                     { json_field: "BATCHNUMBER", post_field: "batchnumber", label: _("Batch Number"), type: "text" },
                     { json_field: "MANUFACTURER", post_field: "manufacturer", label: _("Manufacturer"), type: "text" },
+                    { json_field: "RABIESTAG", post_field: "rabiestag", label: _("Rabies Tag"), type: "text" },
                     { json_field: "COST", post_field: "cost", label: _("Cost"), type: "currency", hideif: function() { return !config.bool("ShowCostAmount"); } },
                     { json_field: "COSTPAIDDATE", post_field: "costpaid", label: _("Paid"), type: "date", hideif: function() { return !config.bool("ShowCostPaid"); } },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
@@ -82,7 +82,7 @@ $(function() {
                     { field: "VACCINATIONTYPE", display: _("Type") },
                     { field: "IMAGE", display: "", 
                         formatter: function(row) {
-                            return '<a href="animal?id=' + row.ANIMALID + '"><img src=' + html.thumbnail_src(row, "animalthumb") + ' style="margin-right: 8px" class="asm-thumbnail thumbnailshadow" /></a>';
+                            return html.animal_link_thumb_bare(row);
                         },
                         hideif: function(row) {
                             // Don't show this column if we're in an animal record, or the option is turned off
@@ -138,7 +138,12 @@ $(function() {
                         }
                     },
                     { field: "DATEEXPIRES", display: _("Expires"), formatter: tableform.format_date },
-                    { field: "MANUFACTURER", display: _("Manufacturer") },
+                    { field: "MANUFACTURER", display: _("Manufacturer"), 
+                        formatter: function(row) {
+                            return row.MANUFACTURER + " " + row.BATCHNUMBER; 
+                        }
+                    },
+                    { field: "RABIESTAG", display: _("Rabies Tag") },
                     { field: "COST", display: _("Cost"), formatter: tableform.format_currency,
                         hideif: function() { return !config.bool("ShowCostAmount"); }
                     },
@@ -164,20 +169,18 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
-                { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "cav",
+                { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "bcav",
                      click: function() {
                         let comments = "", vacctype = 0;
-                        $.each(controller.rows, function(i, v) {
-                            if (tableform.table_id_selected(v.ID)) {
-                                comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
-                                vacctype = v.VACCINATIONID;
-                            }
+                        $.each(tableform.table_selected_rows(table), function(i, v) {
+                            comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
+                            vacctype = v.VACCINATIONID;
                         });
-                        $("#usagecomments").val(comments);
+                        $("#usagecomments").html(comments);
+                        $("#givenexpires, #givenbatch, #givenmanufacturer, #givenrabiestag").val("");
                         $("#givennewdate").datepicker("setDate", new Date());
-                        let rd = vaccination.calc_reschedule_date(new Date());
-                        if (rd) { $("#rescheduledate").datepicker("setDate", rd); }
-                        $("#givenexpires, #givenbatch, #givenmanufacturer").val("");
+                        let rd = vaccination.calc_reschedule_date(new Date(), vacctype);
+                        if (rd) { $("#rescheduledate, #givenexpires").datepicker("setDate", rd); }
                         vaccination.set_given_batch(vacctype);
                         $("#usagetype").select("firstvalue");
                         $("#usagedate").datepicker("setDate", new Date());
@@ -191,7 +194,7 @@ $(function() {
                         $("#dialog-given").dialog("open");
                      }
                  },
-                 { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "cav", 
+                 { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "bcav", 
                      click: function() {
                         $("#dialog-required").dialog("open");
                      }
@@ -384,6 +387,10 @@ $(function() {
                 '<td><input id="givenmanufacturer" data="givenmanufacturer" type="text" class="asm-textbox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="givenrabiestag">' + _("Rabies Tag") + '</label></td>',
+                '<td><input id="givenrabiestag" data="givenrabiestag" type="text" class="asm-textbox asm-field" /></td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="givenby">' + _("By") + '</label></td>',
                 '<td>',
                 '<select id="givenby" data="givenby" class="asm-selectbox asm-field">',
@@ -397,23 +404,26 @@ $(function() {
                 '<td><input id="givenvet" data="givenvet" type="hidden" class="asm-personchooser asm-field" data-filter="vet" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td></td>',
-                '<td>',
-                html.info(_("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.")),
+                '<td colspan="2" class="asm-header">',
+                _("Reschedule"),
+                '<span id="callout-rescheduledate" class="asm-callout">' + _("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.") + '</span>',
                 '</td>',
-                '</tr>',
                 '<tr>',
                 '<td><label for="rescheduledate">' + _("Reschedule") + '</label>',
-                //'<span id="callout-rescheduledate" class="asm-callout">' + _("Specifying a reschedule date will make copies of the selected vaccinations and mark them to be given on the reschedule date. Example: If this vaccination needs to be given every year, set the reschedule date to be 1 year from today.") + '</span>',
                 '</td>',
-                '<td><input id="rescheduledate" data="rescheduledate" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
+                '<td><input id="rescheduledate" data="rescheduledate" data-nopast="true" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="reschedulecomments">' + _("Comments") + '</label></td>',
                 '<td><textarea id="reschedulecomments" data="reschedulecomments" class="asm-textarea asm-field"></textarea>',
                 '</td>',
                 '</tr>',
-                '<tr class="tagstock"><td></td><td>' + html.info(_("These fields allow you to deduct stock for the vaccination(s) given. This single deduction should cover the selected vaccinations being administered.")) + '</td></tr>',
+                '<tr class="tagstock">',
+                '<td colspan="2" class="asm-header">',
+                _("Stock"),
+                '<span id="callout-stock" class="asm-callout">' + _("These fields allow you to deduct stock for the vaccination(s) given. This single deduction should cover the selected vaccinations being administered.") + '</span>',
+                '</td>',
+                '<tr>',
                 '<tr class="tagstock">',
                 '<td><label for="item">' + _("Item") + '</label></td>',
                 '<td><select id="item" data="item" class="asm-selectbox asm-field">',
@@ -495,6 +505,8 @@ $(function() {
             this.bind_givendialog();
             this.bind_requireddialog();
 
+            validate.indicator([ "animal", "animals" ]);
+
             // When the vacc type is changed, update the default cost and batch/manufacturer
             $("#type").change(function() {
                 vaccination.set_default_cost();
@@ -534,7 +546,7 @@ $(function() {
                 $(".tagstock").hide();
             }
             // Autocomplete manufacturers
-            $("#manufacturer").autocomplete({ source: html.decode(controller.manufacturers.split("|")) });
+            $("#manufacturer").autocomplete({ source: html.decode(controller.manufacturers.split("|")), minLength: 3 });
             $("#manufacturer").autocomplete("option", "appendTo", "#dialog-tableform");
 
         },
@@ -561,7 +573,7 @@ $(function() {
         set_expiry_date: function() {
             if (!$("#given").val()) { return; }
             let gd = format.date_js(format.date_iso($("#given").val()));
-            let ed = vaccination.calc_reschedule_date(gd);
+            let ed = vaccination.calc_reschedule_date(gd, $("#type").val());
             if (!ed) { $("#expires").val(""); return; }
             $("#expires").datepicker("setDate", ed);
         },
@@ -570,8 +582,8 @@ $(function() {
          * it as a js date.
          * returns a js date or null if there's a problem.
          */
-        calc_reschedule_date: function(date) {
-            let reschedule = format.to_int(common.get_field(controller.vaccinationtypes, $("#type").val(), "RESCHEDULEDAYS"));
+        calc_reschedule_date: function(date, vacctype) {
+            let reschedule = format.to_int(common.get_field(controller.vaccinationtypes, vacctype, "RESCHEDULEDAYS"));
             if (!reschedule) { return null; }
             return common.add_days(date, reschedule);
         },
@@ -640,8 +652,8 @@ $(function() {
             common.widget_destroy("#dialog-given");
             common.widget_destroy("#animal");
             common.widget_destroy("#animals");
-            common.widget_destroy("#administeringvet");
-            common.widget_destroy("#givenvet");
+            common.widget_destroy("#administeringvet", "personchooser");
+            common.widget_destroy("#givenvet", "personchooser");
             tableform.dialog_destroy();
             this.lastanimal = null;
             this.lastvet = null;

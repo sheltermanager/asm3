@@ -36,6 +36,46 @@ def add_log_email(dbo, username, linktype, linkid, logtypeid, to, subject, body)
     add_log(dbo, username, linktype, linkid, logtypeid,
         "[%s] %s ::\n%s" % ( to, subject, body ))
 
+def get_log_find_simple(dbo, q, limit = 0):
+    """
+    Searches log notes for the term q
+    Will return no results if the search term is less than 4 chars 
+    """
+    if len(q) < 4: return []
+    q = "%%%s%%" % q.lower()
+    sep = "' - '"
+    query = "SELECT Comments, LogTypeName, LinkID, LastChangedDate, " \
+        "CASE " \
+        "WHEN LinkType=0 THEN 'animal' " \
+        "WHEN LinkType=1 THEN 'person' " \
+        "WHEN LinkType=2 THEN 'lostanimal' " \
+        "WHEN LinkType=3 THEN 'foundanimal' " \
+        "WHEN LinkType=4 THEN 'waitinglist' " \
+        "WHEN LinkType=6 THEN 'incident' ELSE '' END AS RecordType, " \
+        "CASE " \
+        "WHEN LinkType=0 THEN " \
+        f"(SELECT {dbo.sql_concat(['AnimalName', sep, 'ShelterCode'])} FROM animal WHERE animal.ID=log.LinkID) " \
+        "WHEN LinkType=1 THEN " \
+        f"(SELECT {dbo.sql_concat(['OwnerName', sep,'OwnerCode'])} FROM owner WHERE owner.ID=log.LinkID) " \
+        "WHEN LinkType=2 THEN " \
+        f"(SELECT {dbo.sql_concat(['OwnerName', sep, 'animallost.ID'])} FROM animallost " \
+            "INNER JOIN owner ON owner.ID=animallost.OwnerID WHERE animallost.ID=log.LinkID) " \
+        "WHEN LinkType=3 THEN " \
+        f"(SELECT {dbo.sql_concat(['OwnerName', sep, 'animalfound.ID'])} FROM animalfound " \
+            "INNER JOIN owner ON owner.ID=animalfound.OwnerID WHERE animalfound.ID=log.LinkID) " \
+        "WHEN LinkType=4 THEN " \
+        f"(SELECT {dbo.sql_concat(['OwnerName', sep, 'animalwaitinglist.ID'])} FROM animalwaitinglist " \
+            "INNER JOIN owner ON owner.ID=animalwaitinglist.OwnerID WHERE animalwaitinglist.ID=log.LinkID) " \
+        "WHEN LinkType=6 THEN " \
+        f"(SELECT {dbo.sql_concat(['OwnerName', sep, 'animalcontrol.ID'])} FROM animalcontrol " \
+            "INNER JOIN owner ON owner.ID=animalcontrol.OwnerID WHERE animalcontrol.ID=log.LinkID) " \
+        "ELSE '' END AS RecordDetail " \
+        "from log " \
+        "INNER JOIN logtype ON logtype.ID = log.LogTypeID " \
+        "WHERE LOWER(Comments) LIKE ? " \
+        "ORDER BY LastChangedDate DESC"
+    return dbo.query(query, [q], limit=limit)
+
 def get_logs(dbo, linktypeid, linkid, logtype = 0, sort = DESCENDING):
     """
     Gets a list of logs. <= 0 = all types.

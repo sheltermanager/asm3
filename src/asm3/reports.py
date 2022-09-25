@@ -1,6 +1,9 @@
 
+import asm3.al
 import asm3.animal
+import asm3.cachedisk
 import asm3.configuration
+import asm3.dbms.base
 import asm3.dbupdate
 import asm3.i18n
 import asm3.lookups
@@ -15,16 +18,14 @@ HEADER = 0
 FOOTER = 1
 
 DEFAULT_REPORT_HEADER = """
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>$$TITLE$$</title>
-
 <style>
-* {
-font-family: Verdana,Arial,Helvetica,Sans-Serif;
-}
+body { font-family: Verdana,Arial,Helvetica,Sans-Serif; }
 </style>
 </head>
 
@@ -70,7 +71,7 @@ def get_all_report_titles(dbo):
     include builtin reports since they don't count for ASM3 (and should be
     replaced when viewing available reports)
     """
-    return dbo.query("SELECT Title FROM customreport WHERE %s > 3 ORDER BY Title" % dbo.sql_char_length("HTMLBody"))
+    return dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE SQLCommand NOT LIKE '0%' ORDER BY Title")
 
 def get_available_reports(dbo, include_with_criteria = True):
     """
@@ -186,6 +187,12 @@ def is_mailmerge(dbo, crid):
     """
     return dbo.query_string("SELECT HTMLBody FROM customreport WHERE ID = ?", [crid]).startswith("MAIL")
 
+def get_criteria(dbo, customreportid):
+    """
+    Returns the criteria list for a report as a list of tuples containing name, type and question
+    """
+    return Report(dbo).GetParams(customreportid)
+
 def get_criteria_params(dbo, customreportid, post):
     """
     Creates a list of criteria parameters to pass to a report. The post
@@ -202,6 +209,9 @@ def get_criteria_params(dbo, customreportid, post):
             p.append( ( name , question, dbo.sql_date(asm3.i18n.display2python(l, post[name]), includeTime=False, wrapParens=False), post[name]) )  
         elif rtype == "STRING":
             p.append( ( name, question, post[name], post[name] ) )
+        elif rtype == "LOOKUP":
+            question = question[0:question.find("|")]
+            p.append( ( name, question, post[name], post[name] ) )
         elif rtype == "NUMBER":
             p.append( ( name, question, post[name], post[name] ) )
         elif rtype == "ANIMAL" or rtype == "FSANIMAL" or rtype == "ALLANIMAL":
@@ -213,8 +223,10 @@ def get_criteria_params(dbo, customreportid, post):
             p.append( ( name, asm3.i18n._("Animals", l), post[name], ", ".join(animals) ))
         elif rtype == "ANIMALFLAG":
             p.append( ( name, asm3.i18n._("Flag", l), post[name], post[name] ) )
-        elif rtype == "DONATIONTYPE":
+        elif rtype == "DONATIONTYPE" or rtype == "PAYMENTTYPE":
             p.append( ( name, asm3.i18n._("Payment Type", l), post[name], asm3.lookups.get_donationtype_name(dbo, post.integer(name) )) )
+        elif rtype == "PAYMENTMETHOD":
+            p.append( ( name, asm3.i18n._("Payment Method", l), post[name], asm3.lookups.get_paymentmethod_name(dbo, post.integer(name) )) )
         elif rtype == "PERSON":
             p.append( ( name, asm3.i18n._("Person", l), post[name], asm3.person.get_person_name(dbo, post[name])) )
         elif rtype == "PERSONFLAG":
@@ -293,7 +305,8 @@ def insert_report_from_form(dbo, username, post):
         "DailyEmailFrequency":  post.integer("dailyemailfrequency"),
         "Description":          post["description"],
         "OmitHeaderFooter":     post.boolean("omitheaderfooter"),
-        "OmitCriteria":         post.boolean("omitcriteria")
+        "OmitCriteria":         post.boolean("omitcriteria"),
+        "Revision":             post.integer("revision")
     }, username, setRecordVersion=False)
 
     dbo.delete("customreportrole", "ReportID=%d" % reportid)
@@ -395,7 +408,7 @@ def generate_html(dbo, username, sql):
     rs, cols = dbo.query_tuple_columns(sql)
     h = "$$HEADER\n<table border=\"1\">\n<tr>\n"
     b = "$$BODY\n<tr>\n"
-    f = "$$FOOTER\n</table>\nFOOTER$$\n"
+    f = "$$FOOTER\n</table>\n<p>Total: {COUNT.%s}</p>\nFOOTER$$\n" % cols[0].upper()
     for c in cols:
         h += "<th>%s</th>\n" % c
         b += "<td>$%s</td>\n" % c.upper()
@@ -403,14 +416,57 @@ def generate_html(dbo, username, sql):
     b += "</tr>\nBODY$$\n\n"
     return h + b + f
 
-def get_smcom_reports(dbo):
+def get_smcom_reports_installable(dbo):
     """
-    Returns the full collection of sheltermanager.com reports
+    Returns the collection of sheltermanager.com reports available to install
     as a list of dictionaries. Reports not suitable for this database
     type/version are automatically filtered out.
     [ { TITLE, CATEGORY, DATABASE, DESCRIPTION, LOCALE, SQL, HTML, SUBREPORTS } ]
     """
+    reports = get_smcom_reports(dbo)
+    return [ x for x in reports if x.INSTALLABLE ]
+
+def get_smcom_reports_update(dbo):
+    """
+    Returns the collection of sheltermanager.com reports that require an update
+    as a list of dictionaries. 
+    [ { TITLE, CATEGORY, DATABASE, DESCRIPTION, LOCALE, SQL, HTML, SUBREPORTS } ]
+    """
+    reports = get_smcom_reports(dbo)
+    return [ x for x in reports if x.UPDATE ]
+
+def get_smcom_reports_txt(dbo):
+    """
+    Retrieves the reports.txt file with standard report definitions from sheltermanager.com
+    """
+    try:
+        if asm3.smcom.active():
+            s = asm3.smcom.get_reports()
+        else:
+            REPORTS_CACHE_TTL = 86400
+            s = asm3.cachedisk.get("reports", "reports")
+            if s is None:
+                s = asm3.utils.get_url(URL_REPORTS)["response"]
+                asm3.cachedisk.put("reports", "reports", s, REPORTS_CACHE_TTL)
+        asm3.al.debug("read reports.txt (%s bytes)" % len(s), "reports.get_smcom_reports_txt", dbo)
+        return s
+    except Exception as err:
+        asm3.al.error("Failed reading reports_txt: %s" % err, "reports.get_smcom_reports_txt", dbo)
+
+def get_smcom_reports(dbo):
+    """
+    Returns the full collection of sheltermanager.com reports
+    as a list of dictionaries. 
+    DATABASE string format is "VERSION/DBNAME [omitheader] [omitcriteria] [rev00]"
+    INSTALLABLE will be True if the report can be installed in this database.
+    UPDATE will be True if the report is already installed in this database and is older than the last revision.
+           (NB: the category as well as title has to match, so people can protect their copies by changing category)
+    [ { TITLE, CATEGORY, DATABASE, DESCRIPTION, LOCALE, SQL, HTML, SUBREPORTS, INSTALLABLE, REVISION, UPDATE} ]
+    """
     l = dbo.locale
+    s = get_smcom_reports_txt(dbo)
+    reps = s.split("&&&")
+    reports = []
     loaded = get_all_report_titles(dbo)
     def version_ok(rdb):
         if rdb.find("/") == -1: return True
@@ -428,54 +484,65 @@ def get_smcom_reports(dbo):
         return s.startswith("0")
     def installed(title):
         for lrec in loaded:
-            if lrec["TITLE"] == title: return True
+            if lrec.TITLE == title: return True
         return False
-    s = asm3.utils.get_url(URL_REPORTS)["response"]
-    reps = s.split("&&&")
-    reports = []
-    i = 0
+    def customreportid(title):
+        for lrec in loaded:
+            if lrec.TITLE == title: return lrec.ID
+        return 0
+    def update(title, category, rev):
+        if rev == "": return False
+        for lrec in loaded:
+            if lrec.TITLE == title and lrec.CATEGORY == category and lrec.REVISION != rev: return True
+        return False
     for i, rp in enumerate(reps):
         b = rp.split("###")
-        d = { "TITLE" : b[0].strip(), "CATEGORY" : b[1].strip(), "DATABASE" : b[2].strip(), \
-            "DESCRIPTION" : b[3].strip(), "LOCALE" : b[4].strip(), "SQL" : b[5].strip(), \
-            "HTML" : b[6].strip(), "ID" : i+1, "TYPE": asm3.i18n._("Report", l) }
-        if d["HTML"].startswith("GRAPH"): d["TYPE"] = asm3.i18n._("Chart", l)
-        if d["HTML"].startswith("MAIL"): d["TYPE"] = asm3.i18n._("Mail Merge", l)
-        if d["HTML"].startswith("MAP"): d["TYPE"] = asm3.i18n._("Map", l)
+        if len(b) < 7: continue # Malformed if we have less than 7 elements
+        d = asm3.dbms.base.ResultRow()
+        d.TITLE = b[0].strip()
+        d.CATEGORY = b[1].strip()
+        d.DATABASE = b[2].strip()
+        d.DESCRIPTION = b[3].strip()
+        d.LOCALE = b[4].strip()
+        d.SQL = b[5].strip()
+        d.HTML = b[6].strip()
+        d.ID = i+1
+        d.TYPE = asm3.i18n._("Report", l)
+        if d.HTML.startswith("GRAPH"): d.TYPE = asm3.i18n._("Chart", l)
+        if d.HTML.startswith("MAIL"): d.TYPE = asm3.i18n._("Mail Merge", l)
+        if d.HTML.startswith("MAP"): d.TYPE = asm3.i18n._("Map", l)
+        d.SUBREPORTS = ""
         if len(b) == 8: 
-            d["SUBREPORTS"] = b[7].strip()
-        else:
-            d["SUBREPORTS"] = ""
-        if not builtin(d["SQL"]) and not installed(d["TITLE"]) and database_ok(d["DATABASE"]) and version_ok(d["DATABASE"]):
-            reports.append(d)
+            d.SUBREPORTS = b[7].strip()
+        d.INSTALLABLE = not builtin(d.SQL) and not installed(d.TITLE) \
+            and database_ok(d.DATABASE) and version_ok(d.DATABASE)
+        d.CUSTOMREPORTID = customreportid(d.TITLE)
+        d.REVISION = 0
+        revp = d.DATABASE.find("rev")
+        if revp != -1:
+            d.REVISION = asm3.utils.cint(d.DATABASE[revp+3:revp+5])
+        d.UPDATE = update(d.TITLE, d.CATEGORY, d.REVISION) and database_ok(d.DATABASE) \
+            and version_ok(d.DATABASE) and not builtin(d.SQL)
+        reports.append(d)
     return reports
 
 def install_smcom_report(dbo, user, r):
     """
-    Installs the sheltermanager.com report r (an item from get_smcom_reports)
+    Installs the sheltermanager.com report r (an item from get_smcom_reports).
+    If a report with the same title exists in the database already, deletes it first.
     """
-    data = {"title" : r["TITLE"], 
-        "category" : r["CATEGORY"], 
-        "sql" : r["SQL"],
-        "html": r["HTML"], 
-        "description" : r["DESCRIPTION"],
-        "omitheaderfooter" : r["DATABASE"].find("omitheader") != -1 and "on" or "",
-        "omitcriteria" : r["DATABASE"].find("omitcriteria") != -1 and "on" or ""}
+    xid = get_id(dbo, r.TITLE)
+    if xid > 0: dbo.delete("customreport", xid, user)
+    data = {"title" : r.TITLE, 
+        "category" : r.CATEGORY, 
+        "sql" : r.SQL,
+        "html": r.HTML, 
+        "description" : r.DESCRIPTION,
+        "revision": r.REVISION, 
+        "omitheaderfooter" : r.DATABASE.find("omitheader") != -1 and "on" or "",
+        "omitcriteria" : r.DATABASE.find("omitcriteria") != -1 and "on" or ""}
     insert_report_from_form(dbo, user, asm3.utils.PostedData(data, dbo.locale))
-    # If the report has some subreports, install those too
-    if r["SUBREPORTS"] != "":
-        b = r["SUBREPORTS"].split("+++")
-        while len(b) >= 3:
-            dbo.delete("customreport", "Title LIKE '%s'" % b[0].strip().replace("'", "`"))
-            data["title"] = b[0]
-            data["sql"] = b[1]
-            data["html"] = b[2]
-            insert_report_from_form(dbo, user, asm3.utils.PostedData(data, dbo.locale))
-            # Reduce the list by the 3 elements we just saw
-            if len(b) > 3:
-                b = b[3:]
-            else:
-                break
+    install_smcom_subreports(dbo, user, r)
 
 def install_smcom_reports(dbo, user, ids):
     """
@@ -484,7 +551,29 @@ def install_smcom_reports(dbo, user, ids):
     """
     reports = get_smcom_reports(dbo)
     for r in reports:
-        if r["ID"] in ids: install_smcom_report(dbo, user, r)
+        if r.ID in ids: 
+            install_smcom_report(dbo, user, r)
+
+def install_smcom_subreports(dbo, user, r):
+    """
+    Installs the subreports from smcom report r
+    """
+    if r.SUBREPORTS != "":
+        b = r.SUBREPORTS.split("+++")
+        while len(b) >= 3:
+            dbo.delete("customreport", "Title LIKE '%s'" % b[0].strip().replace("'", "`"))
+            data = { "title": b[0].strip(),
+                "category": r.CATEGORY,
+                "description": r.DESCRIPTION,
+                "revision": r.REVISION,
+                "sql": b[1],
+                "html": b[2] }
+            insert_report_from_form(dbo, user, asm3.utils.PostedData(data, dbo.locale))
+            # Reduce the list by the 3 elements we just saw
+            if len(b) > 3:
+                b = b[3:]
+            else:
+                break
 
 def install_recommended_smcom_reports(dbo, user):
     """
@@ -493,7 +582,8 @@ def install_recommended_smcom_reports(dbo, user):
     """
     reports = get_smcom_reports(dbo)
     for r in reports:
-        if r["TITLE"] in RECOMMENDED_REPORTS: install_smcom_report(dbo, user, r)
+        if r.TITLE in RECOMMENDED_REPORTS: 
+            install_smcom_report(dbo, user, r)
 
 def install_smcom_report_file(dbo, user, filename):
     """
@@ -507,19 +597,46 @@ def install_smcom_report_file(dbo, user, filename):
     reps = s.split("&&&")
     for rp in reps:
         b = rp.split("###")
-        d = { "TITLE" : b[0].strip(), "CATEGORY" : b[1].strip(), "DATABASE" : b[2].strip(), \
-            "DESCRIPTION" : b[3].strip(), "LOCALE" : b[4].strip(), "SQL" : b[5].strip(), \
-            "HTML" : b[6].strip(), "TYPE": asm3.i18n._("Report", l) }
-        if d["HTML"].startswith("GRAPH"): d["TYPE"] = asm3.i18n._("Chart", l)
-        if d["HTML"].startswith("MAIL"): d["TYPE"] = asm3.i18n._("Mail Merge", l)
-        if d["HTML"].startswith("MAP"): d["TYPE"] = asm3.i18n._("Map", l)
+        d = asm3.dbms.base.ResultRow()
+        d.TITLE = b[0].strip()
+        d.CATEGORY = b[1].strip()
+        d.DATABASE = b[2].strip()
+        d.DESCRIPTION = b[3].strip()
+        d.LOCALE = b[4].strip()
+        d.SQL = b[5].strip()
+        d.HTML = b[6].strip()
+        d.TYPE = asm3.i18n._("Report", l)
+        if d.HTML.startswith("GRAPH"): d.TYPE = asm3.i18n._("Chart", l)
+        if d.HTML.startswith("MAIL"): d.TYPE = asm3.i18n._("Mail Merge", l)
+        if d.HTML.startswith("MAP"): d.TYPE = asm3.i18n._("Map", l)
+        d.SUBREPORTS = ""
         if len(b) == 8: 
-            d["SUBREPORTS"] = b[7].strip()
-        else:
-            d["SUBREPORTS"] = ""
-        xid = get_id(dbo, d["TITLE"])
-        if xid > 0: dbo.delete("customreport", xid, user)
+            d.SUBREPORTS = b[7].strip()
+        d.REVISION = 0
+        revp = d.DATABASE.find("rev")
+        if revp != -1:
+            d.REVISION = asm3.utils.cint(d.DATABASE[revp+3:revp+5])
         install_smcom_report(dbo, user, d)
+
+def update_smcom_reports(dbo, user="system"):
+    """
+    Finds all reports with available updates and updates them.
+    Note that only the SQL, HTML and Revision are updated.
+    Any subreports are reinstalled.
+    """
+    reports = get_smcom_reports(dbo)
+    updated = 0
+    for r in reports:
+        if r.UPDATE:
+            dbo.update("customreport", r.CUSTOMREPORTID, {
+                "*SQLCommand":  r.SQL,
+                "*HTMLBody":    r.HTML,
+                "Revision":     r.REVISION
+            }, user, setRecordVersion=False)
+            install_smcom_subreports(dbo, user, r)
+            updated += 1
+    asm3.al.info(f"updated {updated} reports.", "reports.update_smcom_reports", dbo)
+    return updated
 
 def get_reports_menu(dbo, roleids = "", superuser = False):
     """
@@ -534,10 +651,10 @@ def get_reports_menu(dbo, roleids = "", superuser = False):
     rep = get_available_reports(dbo)
     lastcat = ""
     for r in rep:
-        if r.CATEGORY != lastcat:
-            lastcat = r.CATEGORY
-            rv.append( ["", "", "", "--cat", "", lastcat] )
         if superuser or r.VIEWROLEIDS == "" or asm3.utils.list_overlap(r.VIEWROLEIDS.split("|"), roleids.split("|")):
+            if r.CATEGORY != lastcat:
+                lastcat = r.CATEGORY
+                rv.append( ["", "", "", "--cat", "", lastcat] )
             rv.append( [ asm3.users.VIEW_REPORT, "", "", "report?id=%d" % r.ID, "", r.TITLE ] )
     return rv
 
@@ -609,10 +726,12 @@ def email_daily_reports(dbo, now = None):
             continue
         asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emails, "", "", r.TITLE, body, "html", exceptions=False)
 
-def execute_title(dbo, title, username = "system", params = None):
+def execute_title(dbo, title, username = "system", params = None, toolbar = True):
     """
     Executes a custom report by a match on its title. 'params' is a tuple
     of parameters. username is the name of the user running the report.
+    if toolbar is True and it's a report we're running, the toolbar will be injected
+    into the report document.
     See the Report._SubstituteSQLParameters function for more info.
     Return value is a string containing the report as an HTML document.
     """
@@ -620,17 +739,21 @@ def execute_title(dbo, title, username = "system", params = None):
     if crid == 0:
         return "<html><body><h1>404 Not Found</h1><p>The report '%s' does not exist.</p></body></html>" % title
     else:
-        return execute(dbo, crid, username, params)
+        return execute(dbo, crid, username, params, toolbar)
 
-def execute(dbo, customreportid, username = "system", params = None):
+def execute(dbo, customreportid, username = "system", params = None, toolbar = True):
     """
     Executes a custom report by its ID. 'params' is a tuple of 
     parameters. username is the name of the user running the 
     report. See the Report._SubstituteSQLParameters function for
-    more info. Return value is a string containing the report as an
+    more info. 
+    if toolbar is True and it's a report we're running, the toolbar will be injected
+    into the report document.
+    Return value is a string containing the report as an
     HTML document.
     """
     r = Report(dbo)
+    r.toolbar = toolbar
     return r.Execute(customreportid, username, params)
 
 def execute_query(dbo, customreportid, username = "system", params = None):
@@ -688,6 +811,7 @@ class Report:
     omitCriteria = False
     omitHeaderFooter = False
     isSubReport = False
+    toolbar = False
     output = ""
     
     def __init__(self, dbo):
@@ -722,7 +846,13 @@ class Report:
         returns nothing.
         """
         if self.omitHeaderFooter:
-            return "<html><head><title></title></head><body>"
+            return "<!DOCTYPE html>\n" \
+                "<html>\n" \
+                "<head>\n" \
+                "<meta charset=\"utf-8\">\n" \
+                "<title></title>\n" \
+                "</head>\n" \
+                "<body>\n"
         elif self.isSubReport:
             return ""
         else:
@@ -788,12 +918,8 @@ class Report:
         l = self.dbo.locale
         if v is None: return ""
 
-        if asm3.utils.is_date(v) or str(v).find("00:00:00.00") != -1:
-            # If the time is midnight, omit it
-            if str(v).find("00:00:00") != -1:
-                return asm3.i18n.python2display(l, v)
-            else:
-                return "%s %s" % (asm3.i18n.python2display(l, v), asm3.i18n.format_time(v))
+        if asm3.utils.is_date(v):
+            return asm3.i18n.python2displaytime(l, v)
 
         if asm3.utils.is_currency(k):
             return asm3.i18n.format_currency(l, v)
@@ -1224,9 +1350,8 @@ class Report:
         with their types
         'reportId' is the ID of the report to get parameters for.
         Returns a list of parameters, each item is a list containing a
-        variable name (or ASK with a number for a one-shot ask), a type 
-        (DATE, ANIMAL, ANIMALS, ANIMALFLAG, DONATIONTYPE, LITTER, SPECIES, LOCATION, PERSONFLAG,TYPE, NUMBER, STRING)
-        and a question string.
+            variable name (or ASK with a number for a one-shot ask), 
+            a type and a question string.
         """
         self._ReadReport(reportId)
         params = []
@@ -1260,7 +1385,7 @@ class Report:
                 paramtype = token[4:nsp]
 
                 # Does the type need a string?
-                if paramtype == "DATE" or paramtype == "NUMBER" or paramtype == "STRING":
+                if paramtype in ("DATE", "NUMBER", "STRING", "LOOKUP"):
                     question = token[nsp+1:]
 
             # VAR
@@ -1274,7 +1399,7 @@ class Report:
                 paramtype = fields[2]
 
                 # And the string if it needs one
-                if paramtype == "DATE" or paramtype == "NUMBER" or paramtype == "STRING":
+                if paramtype in ("DATE", "NUMBER", "STRING", "LOOKUP"):
                     sp1 = token.find(" ", 5)
                     sp2 = token.find(" ", sp1 + 1)
                     question = token[sp2+1:]
@@ -1304,6 +1429,33 @@ class Report:
             self._p(asm3.i18n._("Criteria:", l))
             self._p(self.criteria)
             self._hr()
+
+    def UpdateTables(self):
+        """
+        Checks the query, and if it finds tables of generated data that the report is 
+        dependent on, runs the necessary processes to update that table.
+        Currently works for monthly and annual figures, but it does slow things down a bit.
+        Decided not to do this for ownerlookingfor or lostfoundmatch as they would be even slower.
+        """
+        # Find year, month or date parameters and extract the year and month for updating
+        year = 0
+        month = 0
+        if self.params is not None:
+            for p in self.params:
+                iv = asm3.utils.cint(p[3])
+                if p[3].find("/") != -1:
+                    seldate = asm3.i18n.display2python(self.dbo.locale, self.params[0][3])
+                    if seldate is not None:
+                        year = seldate.year
+                        month = seldate.month
+                elif iv > 1990:
+                    year = iv
+                elif iv <= 12:
+                    month = iv
+        if self.sql.find("animalfigures") != -1 and year > 0 and month > 0:
+            asm3.animal.update_animal_figures(self.dbo, month, year)
+        if self.sql.find("animalfiguresannual") != -1 and year > 0:
+            asm3.animal.update_animal_figures_annual(self.dbo, year)
 
     def Execute(self, reportId = 0, username = "system", params = None):
         """
@@ -1384,14 +1536,23 @@ class Report:
         """
         
         l = self.dbo.locale
-        self._Append(asm3.html.graph_header(self.title))
+
+        htmlheader = self._ReadHeader()
+        htmlfooter = self._ReadFooter()
+
+        # Inject the script tags needed into the header
+        htmlheader = htmlheader.replace("</head>", asm3.html.graph_js(l) + "\n</head>")
+
+        # Start the graph off with the HTML header
+        self._Append(htmlheader)
+        self._Append('<div id="placeholder" style="display: none; width: 100%; height: 500px;"></div>')
 
         # Run the graph query, bail out if we have an error
         try:
             rs, cols = self.dbo.query_tuple_columns(self.sql)
         except Exception as e:
             self._p(e)
-            self._Append("</body></html>")
+            self._Append(htmlfooter)
             return self.output
 
         # Output any criteria given at the top of the chart
@@ -1401,7 +1562,7 @@ class Report:
         if len(rs) == 0:
             self._Append("<!-- NODATA -->")
             self._p(asm3.i18n._("No data.", l))
-            self._Append("</body></html>")
+            self._Append(htmlfooter)
             return self.output
 
         self._Append("""<script type="text/javascript">
@@ -1492,9 +1653,8 @@ class Report:
         """)
         self._Append("""
             });
-            </script>
-            </body>
-            </html>""")
+            </script>""")
+        self._Append(htmlfooter)
         return self.output
 
     def _GenerateMap(self):
@@ -1505,14 +1665,22 @@ class Report:
         The html should be just the word MAP
         """
         l = self.dbo.locale
-        self._Append(asm3.html.map_header(self.title))
+
+        htmlheader = self._ReadHeader()
+        htmlfooter = self._ReadFooter()
+
+        # Inject the script tags needed into the header and set the title
+        htmlheader = htmlheader.replace("</head>", asm3.html.map_js() + "\n</head>")
+
+        # Start the map off with the HTML header
+        self._Append(htmlheader)
 
         # Run the map query, bail out if we have an error
         try:
             rs, cols = self.dbo.query_tuple_columns(self.sql)
         except Exception as e:
             self._p(e)
-            self._Append("</body></html>")
+            self._Append(htmlfooter)
             return self.output
 
         # Output any criteria given at the top of the chart
@@ -1522,16 +1690,16 @@ class Report:
         if len(rs) == 0:
             self._Append("<!-- NODATA -->")
             self._p(asm3.i18n._("No data.", l))
-            self._Append("</body></html>")
+            self._Append(htmlfooter)
             return self.output
 
         # Check we have two columns
         if len(rs[0]) != 2:
             self._p("Map query should have two columns.")
-            self._Append("</body></html>")
+            self._Append(htmlfooter)
             return self.output
 
-        self._Append('<div id="embeddedmap" style="z-index: 1; width: 100%%; height: 600px; color: #000" />\n')
+        self._Append('<div id="embeddedmap" style="z-index: 1; width: 100%; height: 600px; color: #000"></div>\n')
         self._Append("<script type='text/javascript'>\n" \
             "setTimeout(function() {\n" \
             "var points = \n")
@@ -1543,10 +1711,8 @@ class Report:
         self._Append( asm3.utils.json(p) + ";\n" )
         self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"\", points);\n" )
         self._Append( "}, 50);\n" )
-        self._Append("""
-            </script>
-            </body>
-            </html>""")
+        self._Append("</script>")
+        self._Append(htmlfooter)
         return self.output
 
     def _GenerateReport(self):
@@ -1577,6 +1743,10 @@ class Report:
         htmlheaderend = self.html.find("HTMLHEADER$$")
         if htmlheaderstart != -1 and htmlheaderend != -1:
             htmlheader = self.html[htmlheaderstart+12:htmlheaderend]
+
+        # Inject the script tags needed into the header for showing the print toolbar
+        if self.toolbar and asm3.configuration.report_toolbar(self.dbo) and not self.isSubReport:
+            htmlheader = htmlheader.replace("</head>", asm3.html.report_js(l) + "\n</head>")
 
         htmlfooter = self._ReadFooter()
         htmlfooterstart = self.html.find("$$HTMLFOOTER")
@@ -1675,6 +1845,10 @@ class Report:
         # Output any criteria given at the top of the report
         self.OutputCriteria()
 
+        # If this report relies on tables that are generated by a process (eg: figures reports and animalfigures)
+        # run that process to make sure the data is upto date.
+        self.UpdateTables()
+
         # Run the query
         rs = None
         try:
@@ -1734,6 +1908,7 @@ class Report:
                         self._OutputGroupBlock(gd, FOOTER, rs)
 
             # Do each header in ascending order
+            prevgroup = ""
             for gd in groups:
                 if gd.forceFinish or first_record:
                     # Mark the start position
@@ -1743,16 +1918,22 @@ class Report:
                     if gd.fieldName not in rs[row]:
                         self._p("Cannot construct group, field '%s' does not exist" % gd.fieldName)
                         return
-                    # Find the end position of the group so that
-                    # calculations work in headers
+                    # Find the end position of the group so that calculations work in headers. 
+                    # Also tracks the previous group changing to mark the end if this is a 2nd level group.
                     groupval = rs[row][gd.fieldName]
+                    prevgroupval = ""
+                    if prevgroup != "": prevgroupval = rs[row][prevgroup]
                     for trow in range(row, len(rs)):
+                        if prevgroupval != "" and prevgroupval != rs[trow][prevgroup]:
+                            gd.lastGroupEndPosition = trow-1
+                            break
                         if groupval != rs[trow][gd.fieldName]:
                             gd.lastGroupEndPosition = trow-1
                             break
                     # Output the header, switching field values
                     # and calculating any totals
                     self._OutputGroupBlock(gd, HEADER, rs)
+                prevgroup = gd.fieldName
 
             first_record = False
 

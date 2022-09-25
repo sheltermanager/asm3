@@ -11,7 +11,6 @@ $(function() {
                 add_title: _("Add Invoice Item"),
                 edit_title: _("Edit Invoice Item"),
                 edit_perm: 'ccl',
-                helper_text: _("Invoice items need a description and amount."),
                 close_on_ok: false,
                 fields: [
                     { json_field: "DESCRIPTION", post_field: "description", label: _("Description"), type: "textarea", validation: "notblank" },

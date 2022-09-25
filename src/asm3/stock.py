@@ -15,6 +15,10 @@ def get_stocklevels(dbo, location = 0):
     if location != 0: wc = "AND s.StockLocationID = %d" % location
     return dbo.query("%s WHERE Balance > 0 %s ORDER BY s.StockLocationID, s.Name" % (get_stocklevel_query(dbo), wc))
 
+def get_stocklevels_depleted(dbo):
+    """ Returns a set of depleted stock levels """
+    return dbo.query("%s WHERE Balance <= 0 ORDER BY s.StockLocationID, s.Name" % (get_stocklevel_query(dbo)))
+
 def get_stocklevel(dbo, slid):
     """
     Returns a single stocklevel record
@@ -86,6 +90,8 @@ def update_stocklevel_from_form(dbo, post, username):
         raise asm3.utils.ASMValidationError(_("Stock level must have a name", l))
     if post["unitname"] == "":
         raise asm3.utils.ASMValidationError(_("Stock level must have a unit", l))
+    if post.date("usagedate") is None:
+        raise asm3.utils.ASMValidationError(_("Stock usage must have a date", l))
 
     diff = post.floating("balance") - dbo.query_float("SELECT Balance FROM stocklevel WHERE ID = ?", [slid])
 
@@ -115,6 +121,8 @@ def insert_stocklevel_from_form(dbo, post, username):
         raise asm3.utils.ASMValidationError(_("Stock level must have a name", l))
     if post["unitname"] == "":
         raise asm3.utils.ASMValidationError(_("Stock level must have a unit", l))
+    if post.date("usagedate") is None:
+        raise asm3.utils.ASMValidationError(_("Stock usage must have a date", l))
    
     nid = dbo.insert("stocklevel", {
         "Name":             post["name"],
@@ -168,7 +176,7 @@ def deduct_stocklevel_from_form(dbo, username, post):
     curq = dbo.query_float("SELECT Balance FROM stocklevel WHERE ID = ?", [item])
     newq = curq - quantity
     dbo.update("stocklevel", item, { "Balance": newq })
-    insert_stockusage(dbo, username, item, quantity, usagedate, usagetype, comments)
+    insert_stockusage(dbo, username, item, quantity * -1, usagedate, usagetype, comments)
 
 def stock_take_from_mobile_form(dbo, username, post):
     """

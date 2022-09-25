@@ -1,38 +1,38 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Payment Processors &mdash; ASM 44u documentation</title>
+  <title>Payment Processors &mdash; ASM 46u documentation</title>
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Rota" href="rota.html" />
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                44u
+                46u
               </div>
             
           
@@ -77,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -105,8 +106,13 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Payment Processors</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#requesting-a-payment">Requesting a payment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#requesting-fulfilment-of-multiple-payments">Requesting fulfilment of multiple payments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#adoption-self-checkout">Adoption self-checkout</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#license-self-checkout">License self-checkout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adoption-checkout">Adoption checkout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#initiating">Initiating</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#checkout-link">Checkout Link</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#incomplete-payments">Incomplete payments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#license-checkout">License checkout</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
@@ -128,6 +134,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -162,18 +169,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Payment Processors</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/paymentprocessors.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -190,7 +199,7 @@
   <div class="section" id="payment-processors">
 <h1>Payment Processors<a class="headerlink" href="#payment-processors" title="Permalink to this headline">¶</a></h1>
 <p>ASM can request due payments from customers via a payment processor. Currently,
-support is available for PayPal and Stripe.</p>
+support is available for PayPal, Stripe and Cardcom (Israel only).</p>
 <p>For details on configuring payment processors from the options screen at
 <span class="menuselection">Settings ‣ Options ‣ Payment Processors</span>, see
 <a class="reference internal" href="options.html#paymentprocessors"><span class="std std-ref">Payment Processors</span></a></p>
@@ -211,8 +220,8 @@ dropdown at the bottom of the dialog.</p>
 <p>The payment request link will be appended to the bottom of your message after
 you hit Send.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The subject line of your request email will be used as the description of the item presented to the customer when they pay.</p>
+<p class="admonition-title">Warning</p>
+<p>The subject line of your request email will be used as the description of the item presented to the customer when they pay.</p>
 </div>
 <img alt="_images/processor_3_email.png" src="_images/processor_3_email.png" />
 <p>The resulting email will end up in the customer’s inbox with a clickable
@@ -247,12 +256,94 @@ multiple payments, allow the due and received dates to be set</span></p>
 payments with the same receipt number will also be included and added to the
 payment total requested.</p>
 </div>
-<div class="section" id="adoption-self-checkout">
-<h2>Adoption self-checkout<a class="headerlink" href="#adoption-self-checkout" title="Permalink to this headline">¶</a></h2>
-<p>TBA</p>
+<div class="section" id="adoption-checkout">
+<h2>Adoption checkout<a class="headerlink" href="#adoption-checkout" title="Permalink to this headline">¶</a></h2>
+<p>The adoption checkout feature allows an adopter to complete the adoption process
+on their mobile device. It allows them to view and sign their adoption paperwork,
+make an optional donation and then sends them off to your chosen payment processor
+to pay the adoption fee and donation.</p>
+<p>To enable the feature, it must first be configured under
+<span class="menuselection">Settings ‣ Options ‣ Checkout</span></p>
+<img alt="_images/adoption_checkout_config.png" src="_images/adoption_checkout_config.png" />
+<p>The configuration options allow you to choose the payment processor you want to
+handle the payments, the document template you want to use to create the adoption
+paperwork, the payment method to use when creating payments and the payment types
+to use when recording the adoption fee and donation.</p>
+<div class="section" id="initiating">
+<h3>Initiating<a class="headerlink" href="#initiating" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/adoption_checkout_start.png" src="_images/adoption_checkout_start.png" />
+<p>Checkout is initiated from the movement tab of the person or animal (or the
+reservation or “recently adopted” books). It can be done from either a
+reservation or adoption movement, although if you do use a reservation you will
+need to manually convert it to an adoption afterwards.</p>
+<p>Select the movement and click the “Adopter checkout” button on the toolbar.</p>
+<p>If you have not configured the feature, this button will not appear.</p>
+<img alt="_images/adoption_checkout_sendemail.png" src="_images/adoption_checkout_sendemail.png" />
+<p>The button will prompt you to send an email to the adopter. Relevant information will
+be pre-filled and as with other email dialogs, you can use a document template or
+write ad-hoc content.</p>
+<p>A link will be added below your email message that links to the checkout system.</p>
 </div>
-<div class="section" id="license-self-checkout">
-<h2>License self-checkout<a class="headerlink" href="#license-self-checkout" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="checkout-link">
+<h3>Checkout Link<a class="headerlink" href="#checkout-link" title="Permalink to this headline">¶</a></h3>
+<p>The adopter follows the link in the email on their mobile device (tablets and desktops
+can also be used, it is not limited in any way to just mobiles).</p>
+<p>At this point the system creates the adoption paperwork on the animal and person
+record ready for the adopter to view and sign on their device.</p>
+<img alt="_images/adoption_checkout_1.png" src="_images/adoption_checkout_1.png" />
+<p>The checkout will remind the adopter which animal they are adopting and the adoption
+fee. This value is taken from the adoption fee field on the animal’s record.</p>
+<img alt="_images/adoption_checkout_2.png" src="_images/adoption_checkout_2.png" />
+<p>They will then be prompted to view and sign their adoption paperwork.</p>
+<p>The adopter can also choose at this point to have a PDF of their signed
+adoption paperwork emailed to them.</p>
+<img alt="_images/adoption_checkout_3.png" src="_images/adoption_checkout_3.png" />
+<p>The adopter will be asked if they would like to make a donation. The message
+can be configured, as can all the suggested tiers of donation.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you remove the $0 donation tier from the list, the adopter will only be able to continue if they make a donation as they must choose one option.</p>
+</div>
+<p>When you are configuring the donation tiers, the system will show everything to
+the left of the = sign in bold at the top of the button. This means that you
+should include your currency symbol for readability as shown in the example
+configuration above. You can also optionally include the decimal portion if you
+feel it looks better - eg: $25 vs $25.00</p>
+<p>Once the user has chosen their donation tier, the system will create due payment
+records for the adoption fee and donation against the animal and person. It will
+add their signature to the paperwork at this point and send an email containing
+a PDF of the paperwork to the adopter if they requested it.</p>
+<img alt="_images/adoption_checkout_4.png" src="_images/adoption_checkout_4.png" />
+<p>Finally, the adopter will be redirected to the payment processor you have
+configured to take their payment online.</p>
+<p>Depending on what apps are available on their device (eg: Google or Apple Pay)
+and which payment processor you are using, this can be an extremely trivial
+process that does not necessarily involve hand entering card numbers.</p>
+<p>When payment is complete, the received date will be set on the two payment
+records for the fee and donation and any accounting transactions created. The
+adopter will be redirected to the success URL you configured under the payment
+processor options.</p>
+</div>
+<div class="section" id="incomplete-payments">
+<h3>Incomplete payments<a class="headerlink" href="#incomplete-payments" title="Permalink to this headline">¶</a></h3>
+<p>If the adopter does not complete their payment at this point, the payment records
+are left outstanding in the system.</p>
+<p>If the adopter returns to the checkout by following the link again, or
+navigating back from the payment processor, the paperwork will not be created
+and signed again. The adopter can choose a new donation tier if they wish and
+the system will update the due donation payment record to reflect the new value
+that they’ve chosen. If they choose the 0 tier, the donation payment record
+will be deleted.</p>
+<p>No matter how many times the adopter returns to the checkout, once payment has
+been made, the records will be updated.</p>
+<p>The system will maintain the checkout state for 48 hours before removing it.
+After this period, the adopter will receive an error and will not be able to
+use their checkout link until a member of staff initiates the adoption checkout
+process again from the movement tab/book.</p>
+</div>
+</div>
+<div class="section" id="license-checkout">
+<h2>License checkout<a class="headerlink" href="#license-checkout" title="Permalink to this headline">¶</a></h2>
 <p>TBA</p>
 </div>
 </div>
@@ -262,29 +353,29 @@ payment total requested.</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="rota.html" class="btn btn-neutral float-right" title="Rota" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="onlineform.html" class="btn btn-neutral float-left" title="Online Forms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="rota.html" class="btn btn-neutral float-right" title="Rota" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="onlineform.html" class="btn btn-neutral float-left" title="Online Forms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Sheltermanager, Ltd
+        &#169; Copyright 2022, Sheltermanager, Ltd.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -292,7 +383,6 @@ payment total requested.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

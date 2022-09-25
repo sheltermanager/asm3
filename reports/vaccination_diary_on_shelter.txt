@@ -2,20 +2,19 @@ Vaccination Diary (On Shelter)
 ###
 Diary
 ###
-33012/Any
+33012/Any rev02
 ###
 Vaccinations required to date for shelter animals.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName, a.ShelterLocationUnit, 
+a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation,
 v.VaccinationType, av.DateRequired, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animalvaccination av ON a.ID = av.AnimalID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
-INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE av.DateOfVaccination Is Null
 AND av.DateRequired <= '$CURRENT_DATE$'
 AND a.Archived = 0
@@ -37,7 +36,7 @@ $$BODY<tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
-<td>$LOCATIONNAME $SHELTERLOCATIONUNIT</td>
+<td>$DISPLAYLOCATION</td>
 <td>$VACCINATIONTYPE</td>
 <td>$DATEREQUIRED</td>
 <td>$COMMENTS</td>
@@ -52,20 +51,19 @@ Vaccination Diary (On Shelter, Date Range)
 ###
 Diary
 ###
-Any
+3215/Any rev02
 ###
 Vaccinations required between two dates for shelter animals.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName, a.ShelterLocationUnit, 
+a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation, 
 v.VaccinationType, av.DateRequired, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animalvaccination av ON a.ID = av.AnimalID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
-INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE av.DateOfVaccination Is Null
 AND av.DateRequired >= '$ASK DATE Enter the from date$'
 AND av.DateRequired <= '$ASK DATE Enter the to date$'
@@ -88,7 +86,7 @@ $$BODY<tr>
 <td>$SHELTERCODE</td>
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
-<td>$LOCATIONNAME $SHELTERLOCATIONUNIT</td>
+<td>$DISPLAYLOCATION</td>
 <td>$VACCINATIONTYPE</td>
 <td>$DATEREQUIRED</td>
 <td>$COMMENTS</td>
