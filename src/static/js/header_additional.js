@@ -278,6 +278,22 @@ additional = {
         return valid;
     },
 
+    reset: function(){
+        //animal
+        $(".asm-animalchooser").animalchooser("clear");
+        if ($("#add_9.additional option[selected=selected]")[0])
+        {
+        // lookup
+            $("#add_9.additional").val($("#add_9.additional option[selected=selected]")[0].value);
+        }
+        //money, numbers, text, time
+        $("#add_9.additional").val($("#add_9.additional").attr("value"));
+        //Nots
+        $("#add_9.additional").val($("#add_9.additional")[0].defaultValue);
+        //person, sponsor, vet
+        $(".asm-personchooser").personchooser("clear");
+    },
+
     /**
      * Validates additional fields inside the node given. Returns true 
      * if all is ok, or false if a field fails a check.

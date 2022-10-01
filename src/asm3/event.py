@@ -24,7 +24,7 @@ def insert_event_from_form(dbo, post, username):
     l = dbo.locale
     pid = dbo.get_id("event")
     ownerid = post["ownerid"]
-    if ownerid == "":
+    if ownerid == "" or ownerid == "0":
         ownerid = None
 
     if post["startdate"].strip() == "":

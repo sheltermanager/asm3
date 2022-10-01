@@ -6704,6 +6704,18 @@ class event_new(JSONEndpoint):
         return {
             "additional": asm3.additional.get_additional_fields(dbo, 0, "event")
         }
+    # def controller(self, o):
+    #     dbo = o.dbo
+    #     asm3.al.debug("add event", "code.event_new", dbo)
+    #     return {
+    #         # "towns": asm3.person.get_towns(dbo),
+    #         # "counties": asm3.person.get_counties(dbo),
+    #         # "towncounties": asm3.person.get_town_to_county(dbo),
+    #         # "additional": asm3.additional.get_additional_fields(dbo, 0, "person"),
+    #         # "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
+    #         # "flags": asm3.lookups.get_person_flags(dbo),
+    #         # "sites": asm3.lookups.get_sites(dbo)
+    #     }
 
     def post_all(self, o):
         return str(asm3.event.insert_event_from_form(o.dbo, o.post, o.user))

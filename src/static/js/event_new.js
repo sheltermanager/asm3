@@ -87,10 +87,6 @@ $(function() {
                 $("#asm-content button").button("disable");
                 check_for_similar();
             });
-            // changing the search type to organization
-            $("[data='ownertype']").val(2);
-            $("#ui-id-4").text("Find organization");
-            $("#ui-id-6").text("Add organization");
             //insert values to corresponding fields when a location is selected
             $("#location").personchooser().bind("personchooserchange", function(event, rec){
                 $("#address").val(html.decode(rec.OWNERADDRESS));
@@ -99,9 +95,9 @@ $(function() {
                 $("#postcode").val(html.decode(rec.OWNERPOSTCODE));
                 $("#country").val(html.decode(rec.OWNERCOUNTRY));
             });
+
             //insert value to the same date of the chosen Start date if End date field is empty
             $("#startdate").bind("change", function(){
-                window.alert($("#enddate").val())
                 if($("#enddate").val() == "" && $("#startdate").val() != "")
                     $("#enddate").val($("#startdate").val());
             });
@@ -125,7 +121,6 @@ $(function() {
                 try{
                     let formdata = "ownerid=" + $("#location").personchooser().val() + "&" + $("input, textarea, select, #location").toPOST();
                     let eventid = await common.ajax_post("event_new", formdata);
-                    window.alert(eventid);
                     if(eventid && event_new.create_and_edit)
                         common.route("event?id=" + eventid);
                     else
@@ -163,6 +158,11 @@ $(function() {
         reset: function(){
             $(".asm-textbox").val("").change();
             $("#address").val("").change();
+            $(".asm-personchooser").personchooser("clear");
+
+            //init additional fields
+            additional.reset();
+
         },
 
         name: "event_new",
