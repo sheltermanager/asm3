@@ -231,6 +231,7 @@ def get_animal_view_adoptable_html(dbo):
             "asm3_adoptable_filters = \"sex breed agegroup size species\";\n" \
             "asm3_adoptable_iframe = true;\n" \
             "asm3_adoptable_iframe_fixed = false; // fixed == true does not work with multi-photos/scrolling\n" \
+            "asm3_adoptable_iframe_closeonback = true; // close the popup pane when the user navigates back\n" \
             "</script>\n" \
             "<script src=\"$$ADOPTABLEJSURL$$\"></script>"
         foot = "</body>\n</html>"
