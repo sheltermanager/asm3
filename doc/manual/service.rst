@@ -618,15 +618,17 @@ shelter the longest::
 Popup iFrame
 ^^^^^^^^^^^^
 
-By default, clicking on an animal thumbnail or link will load the target animalview page in a new browser tab. However, the
-system can also load the page in a floating iframe so that viewing adoptable
-animals does not leave your site. You can enable this behaviour by setting
-asm3_adoptable_iframe = true in your script. Eg::
+By default, clicking on an animal thumbnail or link will load the target
+animalview page in a new browser tab. However, the system can also load the
+page in a floating iframe so that viewing adoptable animals does not leave your
+site. You can enable this behaviour by setting asm3_adoptable_iframe = true in
+your script. Eg::
 
     <script>
     asm3_adoptable_filters = "sex breed agegroup size species";
     asm3_adoptable_iframe = true;
     asm3_adoptable_iframe_fixed = true;
+    asm3_adoptable_iframe_closeonback = true;
     </script>
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
@@ -653,6 +655,12 @@ viewing an animal. Setting asm3_adoptable_iframe_fixed will use fixed
 positioning instead, which keeps the position of the parent page when viewing
 animals, but this has been found to be less compatible with some browsers and
 iframes.
+
+Setting asm3_adoptable_iframe_closeonback will close the popup iframe when the
+user hits the back button. Again, this is not completely compatible with all
+browsers, so the option is not enabled by default and the "close" link at the
+top right of the popup should be used.
+
 
 animal_view_adoptable_html
 --------------------------

@@ -32,6 +32,11 @@
         use_iframe = asm3_adoptable_iframe;
     }
 
+    var iframe_back = false;
+    if (typeof asm3_adoptable_iframe_closeonback !== 'undefined') {
+        iframe_back = asm3_adoptable_iframe_closeonback;
+    }
+
     var iframe_fixed = false;
     if (typeof asm3_adoptable_iframe_fixed !== 'undefined') {
         iframe_fixed = asm3_adoptable_iframe_fixed;
@@ -223,18 +228,20 @@
                     document.getElementById("asm3-adoptable-iframe").src = this.href;
                     document.getElementById("asm3-adoptable-iframe-overlay").style.display = "block";
                     if (!iframe_fixed) { window.scrollTo(0, 0); }
-                    window.history.pushState("close", "", "");
+                    if (iframe_back) { window.history.pushState("close", "", ""); }
                     e.preventDefault();
                 };
             for (i = 0; i < links.length; i++) {
                 links[i].addEventListener("click", handler);
             }
-            window.history.pushState("close", "", ""); // initial page state necessary or popstate does not work the first time
-            window.addEventListener("popstate", function(e) {
-                if (e.state != "close") { return; }
-                document.getElementById("asm3-adoptable-iframe").src = "about:blank";
-                document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
-            });
+            if (iframe_back) { 
+                window.history.pushState("close", "", ""); // initial page load state is necessary or popstate does not work the first time
+                window.addEventListener("popstate", function(e) {
+                    if (e.state != "close") { return; }
+                    document.getElementById("asm3-adoptable-iframe").src = "about:blank";
+                    document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
+                });
+            }
         }
 
     };
@@ -277,9 +284,13 @@
             overlay.innerHTML = substitute(overlay_template, { "iframe_position": iframe_position, "iframe_height": iframe_height, "iframe_bgcolor": iframe_bgcolor });
             document.body.appendChild(overlay);
             document.getElementById("asm3-adoptable-iframe-close").addEventListener("click", function(e) {
-                window.history.back(); // popstate handler closes the frame
-                //document.getElementById("asm3-adoptable-iframe").src = "about:blank";
-                //document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
+                if (iframe_back) {
+                    window.history.back(); // popstate handler will close the frame instead of doing it explicitly
+                }
+                else {
+                    document.getElementById("asm3-adoptable-iframe").src = "about:blank";
+                    document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
+                }
                 e.preventDefault();
             });
         }
