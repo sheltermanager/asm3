@@ -32,7 +32,7 @@
         use_iframe = asm3_adoptable_iframe;
     }
 
-    var iframe_back = false;
+    var iframe_back = true;
     if (typeof asm3_adoptable_iframe_closeonback !== 'undefined') {
         iframe_back = asm3_adoptable_iframe_closeonback;
     }
@@ -232,7 +232,6 @@
             document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
             e.preventDefault();
         });
-
         var i, 
             links = document.getElementsByClassName("asm3-adoptable-link"),
             link_handler = function(e) {
@@ -247,13 +246,11 @@
                 document.getElementById("asm3-adoptable-iframe").src = "about:blank";
                 document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
             };
-
         for (i = 0; i < links.length; i++) {
             links[i].addEventListener("click", link_handler);
         }
         if (iframe_back) { 
             window.addEventListener("popstate", popstate_handler);
-            document.getElementById("asm3-adoptable-iframe").addEventListener("popstate", popstate_handler);
         }
     };
 
