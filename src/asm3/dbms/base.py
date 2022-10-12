@@ -194,6 +194,9 @@ class Database(object):
     def ddl_drop_index(self, name, table):
         return "DROP INDEX %s" % name
 
+    def ddl_drop_notnull(self, table, column, existingtype):
+        return "" # Not all providers support this
+
     def ddl_drop_sequence(self, table):
         return "" # Not all RDBMSes support sequences so don't do anything by default
 

@@ -41,6 +41,9 @@ class DatabasePostgreSQL(Database):
     def ddl_drop_column(self, table, column):
         return "ALTER TABLE %s DROP COLUMN %s CASCADE" % (table, column)
 
+    def ddl_drop_notnull(self, table, column, existingtype):
+        return "ALTER TABLE %s ALTER COLUMN %s DROP NOT NULL" % (table, column)
+
     def ddl_drop_sequence(self, table):
         return "DROP SEQUENCE IF EXISTS seq_%s" % table
 
