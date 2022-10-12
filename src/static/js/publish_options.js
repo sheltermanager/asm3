@@ -25,7 +25,7 @@ $(function() {
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
                 '<li class="localeus hasakcreunite"><a href="#tab-akcreunite">AKC Reunite Microchips</a></li>',
-                '<li class="localeus hasfoundanimals"><a href="#tab-foundanimals">FoundAnimals Microchips</a></li>',
+                '<li class="localeus hasfoundanimals"><a href="#tab-foundanimals">FoundAnimals/24Pet Microchips</a></li>',
                 '<li class="localeus hashomeagain"><a href="#tab-homeagain">HomeAgain Microchips</a></li>',
                 '<li class="localeus localeca localemx haspetlink"><a href="#tab-petlink">PetLink Microchips</a></li>',
                 '<li class="localeus hassmarttag"><a href="#tab-smarttag">SmartTag Tags/Microchips</a></li>',
@@ -819,7 +819,7 @@ $(function() {
         render_foundanimals: function() {
             return [
                 '<div id="tab-foundanimals">',
-                html.info('Find out more at <a href="http://www.found.org">www.found.org</a><br/>' +
+                html.info('Find out more at <a href="http://www.my24pet.com">www.my24pet.com</a><br/>' +
                     'Contact clientcare@found.org to get a folder for automatic batch registrations of microchips.'),
                 '<p><input id="enabledfa" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledfa">' + _("Enabled") + '</label></p>',
                 '<table>',
@@ -831,9 +831,10 @@ $(function() {
                 '<td><label for="faemail">Rescue group email</label></td>',
                 '<td><input id="faemail" type="text" class="asm-textbox asm-doubletextbox cfg" data="FoundAnimalsEmail" />',
                 '<span id="callout-faemail" class="asm-callout">',
-                'To stay on record for every pet you register as the permanent rescue contact, enter your group\'s Found Animals Registry ',
-                'account email in this field. If you do not have that type of account set up, visit ',
-                '<a href="http://www.found.org/start">www.found.org/start</a><br/>',
+                'To stay on record for every pet you register as the permanent rescue contact, enter your group\'s registry ',
+                'account email in this field.',
+                //'If you do not have that type of account set up, visit ',
+                //'<a href="http://www.found.org/start">www.found.org/start</a><br/>',
                 '</span>',
                 '</td>',
                 '</tr>',

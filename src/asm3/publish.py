@@ -115,7 +115,7 @@ PUBLISHER_LIST["ptuk"] = {
     "sub24hour": False
 }
 PUBLISHER_LIST["fa"] = {
-    "label":    "Register animal microchips with FoundAnimals.org",
+    "label":    "Register animal microchips with FoundAnimals/24Pet",
     "class":    asm3.publishers.foundanimals.FoundAnimalsPublisher,
     "locales":  "en",
     "sub24hour": False
