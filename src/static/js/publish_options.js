@@ -820,7 +820,7 @@ $(function() {
             return [
                 '<div id="tab-foundanimals">',
                 html.info('Find out more at <a href="http://www.my24pet.com">www.my24pet.com</a><br/>' +
-                    'Contact clientcare@found.org to get a folder for automatic batch registrations of microchips.'),
+                    'Contact clientcare@pethealthinc.com to get a folder for automatic batch registrations of microchips.'),
                 '<p><input id="enabledfa" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledfa">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
