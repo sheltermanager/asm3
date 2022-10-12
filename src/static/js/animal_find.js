@@ -22,7 +22,7 @@ $(function() {
                 '</td>',
                 '<td>',
                 '<input id="mode" data="mode" type="hidden" value="SIMPLE" />',
-                '<input id="q" data="q" class="asm-textbox" />',
+                '<input id="q" data="q" type="search" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
                 '</table>',

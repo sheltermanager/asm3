@@ -370,7 +370,7 @@ header = {
                 ' ',
                 '<div class="topline-element">',
                     '<span style="white-space: nowrap">',
-                    '<input id="topline-q" name="q" type="text" class="asm-textbox" title="' + 
+                    '<input id="topline-q" name="q" type="search" class="asm-textbox" title="' + 
                         html.title("ALT+SHIFT+S " + _("filters") + ": " +
                             "a:animal, ac:animalcontrol, p:person, wl:waitinglist, la:lostanimal, fa:foundanimal, " + 
                             "li:licence, lo:logs, vo:voucher " +

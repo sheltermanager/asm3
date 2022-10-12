@@ -1,6 +1,7 @@
 46
 ================
 
+12/10/22 Use search input type to prevent android keyboard bug with return key
 11/10/22 adoptable_js back button has to be enabled via a variable #1156
 30/09/22 Update signature widget to latest version
 20/09/22 Record changes to person/animal flags in the log #1176
