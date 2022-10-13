@@ -340,10 +340,10 @@ $(function() {
                 totalalerts += alerts.TLOVER;
                 s += '<a href="traploan?filter=active">' + html.icon("traploan") + ' ' + 
                     common.ntranslate(alerts.TLOVER, [
-                        _("{plural0} trap is overdue for return"),
-                        _("{plural1} traps are overdue for return"),
-                        _("{plural2} traps are overdue for return"),
-                        _("{plural3} traps are overdue for return")
+                        _("{plural0} item of equipment is overdue for return"),
+                        _("{plural1} items of equipment are overdue for return"),
+                        _("{plural2} items of equipment are overdue for return"),
+                        _("{plural3} items of equipment are overdue for return")
                     ]) + '</a><br />';
             }
             if (alerts.STEXP > 0 && common.has_permission("vsl")) {
