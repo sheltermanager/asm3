@@ -595,6 +595,21 @@ def get_onlineformincoming_name(dbo, collationid):
     """ Returns the form name for a collation id """
     return dbo.query_string("SELECT FormName FROM onlineformincoming WHERE CollationID = ? %s" % dbo.sql_limit(1), [collationid])
 
+def get_onlineformincoming_animalperson(dbo, collationid):
+    """ Returns the animalname, firstname and lastname fields from the form if they are present. Returned as a tuple. """
+    animalname = ""
+    firstname = ""
+    lastname = ""
+    for r in dbo.query("SELECT FieldName, Value FROM onlineformincoming WHERE CollationID = ?", [collationid]):
+        f = r.FIELDNAME.lower()
+        if f.startswith("firstname"): firstname = r.VALUE
+        if f.startswith("forenames"): firstname = r.VALUE
+        if f.startswith("lastname"): lastname = r.VALUE
+        if f.startswith("surname"): lastname = r.VALUE
+        if f.startswith("animalname"): animalname = r.VALUE
+        if f.startswith("reserveanimalname"): animalname = r.VALUE
+    return (animalname, firstname, lastname)
+
 def get_onlineformincoming_retainfor(dbo, collationid):
     """ Returns the retain for period for a collation id """
     return dbo.query_int("SELECT Value FROM onlineformincoming WHERE CollationID = ? AND FieldName = 'retainfor' %s" % dbo.sql_limit(1), [collationid])
@@ -1066,6 +1081,11 @@ def attach_form(dbo, username, linktype, linkid, collationid):
     """
     l = dbo.locale
     formname = get_onlineformincoming_name(dbo, collationid)
+    animalname, firstname, lastname = get_onlineformincoming_animalperson(dbo, collationid)
+    if linktype == asm3.media.ANIMAL and firstname != "":
+        formname = "%s - %s %s" % (formname, firstname, lastname)
+    elif linktype == asm3.media.PERSON and animalname != "":
+        formname = "%s - %s" % (formname, animalname)
     formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
     retainfor = get_onlineformincoming_retainfor(dbo, collationid)
     mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml, retainfor)
