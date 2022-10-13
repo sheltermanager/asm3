@@ -618,10 +618,11 @@ shelter the longest::
 Popup iFrame
 ^^^^^^^^^^^^
 
-By default, clicking on an animal thumbnail or link will load the target animalview page in a new browser tab. However, the
-system can also load the page in a floating iframe so that viewing adoptable
-animals does not leave your site. You can enable this behaviour by setting
-asm3_adoptable_iframe = true in your script. Eg::
+By default, clicking on an animal thumbnail or link will load the target
+animalview page in a new browser tab. However, the system can also load the
+page in a floating iframe so that viewing adoptable animals does not leave your
+site. You can enable this behaviour by setting asm3_adoptable_iframe = true in
+your script. Eg::
 
     <script>
     asm3_adoptable_filters = "sex breed agegroup size species";

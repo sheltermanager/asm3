@@ -853,6 +853,8 @@ MovementType
     The movement type (eg: Adoption, Foster, Transfer, etc) 
 MovementNumber
     The movement number 
+MovementComments
+    The comments from the movement
 InsuranceNumber
     If your shelter insures animals as they are adopted, the insurance number 
 ReservationDate
