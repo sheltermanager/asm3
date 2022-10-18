@@ -489,6 +489,15 @@ def delete_movement(dbo, username, mid):
         asm3.animal.update_variable_animal_data(dbo, m.ANIMALID)
         asm3.person.update_adopter_flag(dbo, username, m.OWNERID)
 
+def cancel_reservation(dbo, username, movementid):
+    """
+    Cancels the reservation with movementid
+    """
+    m = dbo.first_row(dbo.query("SELECT AnimalID, OwnerID, ReservationDate, ReservationCancelledDate FROM adoption WHERE ID=?", [movementid]))
+    if m.RESERVATIONDATE is not None and m.RESERVATIONCANCELLEDDATE is None:
+        dbo.update("adoption", movementid, { "ReservationCancelledDate": dbo.today() }, username)
+        asm3.animal.update_animal_status(dbo, m.ANIMALID)
+
 def return_movement(dbo, movementid, username, animalid = 0, returndate = None):
     """
     Returns a movement with the date given. If animalid is not supplied, it

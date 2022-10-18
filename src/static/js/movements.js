@@ -117,6 +117,21 @@ $(function() {
                         return true;
                     }
                 },
+                button_click: function() {
+                    if ($(this).attr("data-link")) {
+                        window.open($(this).attr("data-link"));
+                    }
+                    else if ($(this).attr("data-animalid")) {
+                        let animalid = $(this).attr("data-animalid");
+                        $("[data-animalid='" + animalid + "']").each(function() {
+                            if ($(this).is(":visible")) {
+                                $(this).closest("tr").find("input[type='checkbox']").prop("checked", true);
+                                $(this).closest("tr").addClass("ui-state-highlight");
+                            }
+                        });
+                        tableform.table_update_buttons(table, buttons);
+                    }
+                },
                 columns: [
                     { field: "MOVEMENTNAME", display: _("Type") }, 
                     { field: "MOVEMENTDATE", display: _("Date"), 
@@ -215,7 +230,12 @@ $(function() {
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
                             if (!row.ANIMALNAME) { return ""; }
-                            return html.animal_link(row);
+                            let s = html.animal_link(row);
+                            if (controller.name == "move_book_reservation") {
+                                s += '<button data-icon="check" data-text="false" data-animalid="' + row.ANIMALID + '">' +
+                                    _("Select all reservations for this animal") + '</button>';
+                            }
+                            return s;
                         },
                         hideif: function(row) {
                             // Don't show this column for animal_movement
@@ -224,8 +244,14 @@ $(function() {
                     },
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {
-                            if (row.OWNERID) { return html.person_link_address(row); }
-                            return "";
+                            if (!row.OWNERID) { return ""; }
+                            let s = "";
+                            if (controller.name == "move_book_reservation") {
+                                s += '<button style="float: right" data-asmicon="media" data-text="false" data-link="person_media?id=' + row.OWNERID + '">' +
+                                    _("View media for this person") + '</button>';
+                            }
+                            s += html.person_link_address(row);
+                            return s;
                         },
                         hideif: function(row) {
                             return controller.name == "move_book_retailer" || controller.name == "person_movements";
@@ -385,6 +411,18 @@ $(function() {
                                 movements.returndate_change();
                             }
                         });
+                    }
+                },
+                { id: "cancel", text: _("Cancel"), icon: "cross", enabled: "multi", perm: "camv",
+                    tooltip: _("Cancel the selected reservations"),
+                    hideif: function() { return controller.name != "move_book_reservation"; },
+                    click: async function() {
+                        await common.ajax_post("movement", "mode=cancelreserve&ids=" + tableform.table_ids(table));
+                        $.each(tableform.table_selected_rows(table), function(i, v) {
+                            v.RESERVATIONCANCELLEDDATE = format.date_now_iso();
+                        });
+                        tableform.buttons_default_state(buttons);
+                        tableform.table_update(table);
                     }
                 },
                 { id: "return", text: _("Return"), icon: "complete", enabled: "one", perm: "camv",

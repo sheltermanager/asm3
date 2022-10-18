@@ -296,10 +296,17 @@ const tableform = {
      */
     table_bind_widgets: function(table) {
         $("#tableform button").each(function() {
-            $(this).button({ 
-                icons: { primary: "ui-icon-" + $(this).attr("data-icon") }, 
-                text: $(this).attr("data-text") == "true" 
-            });
+            if ($(this).attr("data-asmicon")) {
+                let text = $(this).text();
+                $(this).prop("title", text);
+                $(this).html( html.icon($(this).attr("data-asmicon")) ).button();
+            }
+            else {
+                $(this).button({ 
+                    icons: { primary: "ui-icon-" + $(this).attr("data-icon") }, 
+                    text: $(this).attr("data-text") == "true" 
+                });
+            }
         });
     },
 
@@ -384,7 +391,7 @@ const tableform = {
             $("#tableform input[type='checkbox']").each(function() {
                 if ($(this).is(":visible")) {
                     $(this).prop("checked", true);
-                    $(this).closest("tr").find("td").addClass("ui-state-highlight");
+                    $(this).closest("tr").addClass("ui-state-highlight");
                 }
             });
             tableform.table_update_buttons(table, buttons);
@@ -394,7 +401,7 @@ const tableform = {
         const unselect_all = function() {
             $("#tableform input[type='checkbox']").each(function() {
                 $(this).prop("checked", false);
-                $(this).closest("tr").find("td").removeClass("ui-state-highlight");
+                $(this).closest("tr").removeClass("ui-state-highlight");
             });
             tableform.table_update_buttons(table, buttons);
         };
