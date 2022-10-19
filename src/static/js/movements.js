@@ -473,6 +473,38 @@ $(function() {
                         tableform.table_update(table);
                     }
                 },
+                { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo",
+                    tooltip: _("BCC all the people linked to these movements"),
+                    hideif: function() {
+                        return controller.name != "move_book_reservation";
+                    },
+                    click: function() {
+                        // Find the first animal id and person id for use with templates,
+                        // also build a list of all the personids to send to the back end
+                        // so that logging of the email to their record can be done
+                        let animalid = 0, personid = 0, personids = [], bccemails = [];
+                        $.each(tableform.table_selected_rows(table), function(i, row) {
+                            if (!animalid) { animalid = row.ANIMALID; }
+                            if (!personid) { personid = row.OWNERID; }
+                            personids.push(row.OWNERID);
+                            bccemails.push(row.EMAILADDRESS);
+                        });
+                        $("#emailform").emailform("show", {
+                            title: _("Email people linked to selected movements"),
+                            post: "movement",
+                            formdata: "mode=email&personids=" + personids.join(","),
+                            name: "",
+                            email: config.str("EmailAddress"),
+                            bccemail: bccemails.join(", "),
+                            subject: "",
+                            animalid: animalid,
+                            personid: personid,
+                            templates: controller.templates,
+                            logtypes: controller.logtypes,
+                            message: ""
+                        });
+                    }
+                },
                 { id: "checkout", text: _("Adopter Checkout"), icon: "email", enabled: "one", perm: "emo",
                     tooltip: _("Send a checkout email to the adopter"),
                     hideif: function() {
