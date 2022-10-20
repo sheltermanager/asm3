@@ -1,6 +1,7 @@
 46
 ================
 
+20/10/22 Hide location of non-shelter animals in find animal results
 20/10/22 Fix timezone issue when receiving payments via processors
 19/10/22 Reservation book: Email people linked to selected reserves #1180
 18/10/22 Reservation book: select by animal, view media and cancel button #1180
