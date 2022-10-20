@@ -5227,8 +5227,8 @@ class person_embed(ASMEndpoint):
         self.content_type("application/json")
         q = o.post["q"]
         rows = asm3.person.get_person_find_simple(o.dbo, q, o.user, classfilter=o.post["filter"], \
-            datatype=o.post["type"], includeStaff=self.checkb(asm3.users.VIEW_STAFF), \
-            includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), limit=100, siteid=o.siteid)
+            includeStaff=self.checkb(asm3.users.VIEW_STAFF), \
+            includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), limit=100, siteid=o.siteid, datatype=o.post["type"])
         asm3.al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "code.person_embed", o.dbo)
         return asm3.utils.json(rows)
 

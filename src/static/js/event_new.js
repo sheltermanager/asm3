@@ -49,7 +49,7 @@ $(function() {
                 '<td><label for="town">' + _("City") + '</label></td>',
                 '<td><input class="asm-textbox newform" maxlength="100" id="town" data="town" type="text" /></td>',
                 '</tr>',
-                '<tr>',
+                '<tr id="statecounty">',
                 '<td><label for="county">' + _("State") + '</label></td>',
                 '<td><input class="asm-textbox newform" maxlength="100" id="county" data="county" type="text" /></td>',
                 '</tr>',
@@ -57,7 +57,7 @@ $(function() {
                 '<td><label for="postcode">' + _("Zipcode") + '</label></td>',
                 '<td><input class="asm-textbox newform" id="postcode" data="postcode" type="text" /></td>',
                 '</tr>',
-                '<tr>',
+                '<tr id="countryrow">',
                 '<td><label for="country">' + _("Country") + '</label></td>',
                 '<td><input class="asm-textbox newform" id="country" data="country" type="text" /></td>',
                 '</tr>',
@@ -130,6 +130,12 @@ $(function() {
                     $("#asm-content button").button("enable");
                 }
             };
+
+            // CONFIG
+            $("#countryrow").toggle( !config.bool("HideCountry") );
+            $("#countystate").toggle( !config.bool("HideTownCounty") );
+
+
         },
 
         validation: function(){

@@ -511,7 +511,7 @@ def get_investigation(dbo, personid, sort = ASCENDING):
         sql += "ORDER BY o.Date DESC"
     return dbo.query(sql, [personid])
 
-def get_person_find_simple(dbo, query, username="", classfilter="all", datatype="all", includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
+def get_person_find_simple(dbo, query, username="", classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0, datatype="all"):
     """
     Returns rows for simple person searches.
     query: The search criteria
