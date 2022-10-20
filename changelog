@@ -2,6 +2,7 @@
 ================
 
 20/10/22 Fix timezone issue when receiving payments via processors
+19/10/22 Reservation book: Email people linked to selected reserves #1180
 18/10/22 Reservation book: select by animal, view media and cancel button #1180
 13/10/22 Include animal/person name in online form media name #1181
 12/10/22 Rename foundanimals to FoundAnimals/24Pet #1182

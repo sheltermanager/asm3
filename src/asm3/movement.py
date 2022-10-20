@@ -1031,6 +1031,27 @@ def send_adoption_checkout(dbo, username, post):
     if asm3.configuration.audit_on_send_email(dbo): 
         asm3.audit.email(dbo, username, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body)
 
+def send_movement_emails(dbo, username, post):
+    """
+    Sends an email to multiple people from a movement book screen. 
+    Attaches it as a log entry to the people with IDs listed in personids if specified
+    """
+    emailfrom = post["from"]
+    emailto = post["to"]
+    emailcc = post["cc"]
+    emailbcc = post["bcc"]
+    subject = post["subject"]
+    addtolog = post.boolean("addtolog")
+    logtype = post.integer("logtype")
+    body = post["body"]
+    rv = asm3.utils.send_email(dbo, emailfrom, emailto, emailcc, emailbcc, subject, body, "html")
+    if asm3.configuration.audit_on_send_email(dbo): 
+        asm3.audit.email(dbo, username, emailfrom, emailto, emailcc, emailbcc, subject, body)
+    if addtolog == 1:
+        for pid in post.integer_list("personids"):
+            asm3.log.add_log_email(dbo, username, asm3.log.PERSON, pid, logtype, emailto, subject, body)
+    return rv
+
 def send_fosterer_emails(dbo):
     """
     Finds all people on file with at least 1 active foster, then constructs an email 

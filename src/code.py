@@ -4528,6 +4528,7 @@ class move_book_reservation(JSONEndpoint):
         return {
             "name": "move_book_reservation",
             "rows": movements,
+            "logtypes": asm3.lookups.get_log_types(dbo),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
@@ -4733,6 +4734,10 @@ class movement(JSONEndpoint):
         self.check(asm3.users.DELETE_MOVEMENT)
         for mid in o.post.integer_list("ids"):
             asm3.movement.delete_movement(o.dbo, o.user, mid)
+
+    def post_email(self, o):
+        self.check(asm3.users.EMAIL_PERSON)
+        asm3.movement.send_movement_emails(o.dbo, o.user, o.post)
 
     def post_insurance(self, o):
         return asm3.movement.generate_insurance_number(o.dbo)
