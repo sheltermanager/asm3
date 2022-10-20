@@ -5054,6 +5054,7 @@ class pp_cardcom(ASMEndpoint):
             asm3.al.error("invalid database '%s'" % dbname, "code.pp_cardcom")
             return
         try:
+            dbo.locale = asm3.configuration.locale(dbo)
             p = asm3.paymentprocessor.cardcom.Cardcom(dbo)
             p.receive(querystring)
         except asm3.paymentprocessor.base.ProcessorError:
@@ -5083,6 +5084,7 @@ class pp_paypal(ASMEndpoint):
             asm3.al.error("invalid database '%s'" % dbname, "code.pp_paypal")
             return
         try:
+            dbo.locale = asm3.configuration.locale(dbo)
             p = asm3.paymentprocessor.paypal.PayPal(dbo)
             p.receive(o.data)
         except asm3.paymentprocessor.base.ProcessorError:
@@ -5121,6 +5123,7 @@ class pp_stripe(ASMEndpoint):
             return
 
         try:
+            dbo.locale = asm3.configuration.locale(dbo)
             p = asm3.paymentprocessor.stripeh.Stripe(dbo)
             p.receive(o.data)
         except asm3.paymentprocessor.base.ProcessorError:
