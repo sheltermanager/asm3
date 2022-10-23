@@ -1189,11 +1189,12 @@ def csvimport_stripe(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
     h.append("</table>")
     return "".join(h)
 
-def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
+def csvexport_animals(dbo, dataset, animalids = "", where = "", includephoto = False):
     """
     Export CSV data for a set of animals.
     dataset: The named set of data to use
     animalids: If dataset == selshelter, a comma separated list of animals to export
+    where: If dataset == where, a where clause to the animal table (without the keyword WHERE)
     includephoto: Output a base64 encoded version of the animal's photo if True
     """
     l = dbo.locale
@@ -1204,6 +1205,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
     elif dataset == "shelter": q = "SELECT ID FROM animal WHERE Archived=0 ORDER BY ID"
     elif dataset == "nonshelter": q = "SELECT ID FROM animal WHERE NonShelterAnimal=1 ORDER BY ID"
     elif dataset == "selshelter": q = "SELECT ID FROM animal WHERE ID IN (%s) ORDER BY ID" % animalids
+    elif dataset == "where": q = "SELECT ID FROM animal WHERE %s ORDER BY ID" % where.replace(";", "")
     
     ids = dbo.query(q)
 
