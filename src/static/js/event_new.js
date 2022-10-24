@@ -133,7 +133,7 @@ $(function() {
 
             // CONFIG
             $("#countryrow").toggle( !config.bool("HideCountry") );
-            $("#countystate").toggle( !config.bool("HideTownCounty") );
+            $("#statecounty").toggle( !config.bool("HideTownCounty") );
 
 
         },
