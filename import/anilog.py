@@ -127,8 +127,10 @@ for d in asm.csv_to_list(PATH + "Animals.csv"):
     if d["AnimalId"] == "AnimalId": continue
     # Ignore malformed rows - they only escape fields if they contain a comma, but not carriage returns
     if asm.cint(d["AnimalId"]) == 0: continue
+    # Ignore waiting list animals, not sure what to do with those
+    if d["AnimalRef"].startswith("WL"): continue
     # If this record was previously imported from ASM, record the id mapping and skip creating it
-    if d["AnimalRef"].find("ASM") != -1:
+    if d["AnimalRef"].startswith("ASM"):
         ppaid[d["AnimalId"]] = asm.cint(d["AnimalRef"].replace("ASM", ""))
         continue
     a = asm.Animal()
@@ -216,6 +218,7 @@ for d in asm.csv_to_list(PATH + "Animal_Movements.csv"):
         ppa[d["AnimalId"]].Fee = asm.cint(d["MovementFee"]) * 100
     if d["LocationStatusName"] == "Rehomed":
         if d["LocationId"] not in ppoid: continue # skip missing people
+        if d["AnimalId"] not in ppaid: continue # skip missing animals
         m = asm.Movement()
         m.AnimalID = ppaid[d["AnimalId"]]
         m.OwnerID = ppoid[d["LocationId"]]
@@ -243,6 +246,7 @@ for d in asm.csv_to_list(PATH + "Animal_Movements.csv"):
             od.Donation = asm.get_currency(row["DonationReceived"])
     elif d["LocationStatusName"] == "Fostered":
         if d["LocationId"] not in ppoid: continue # skip missing people
+        if d["AnimalId"] not in ppaid: continue # skip missing animals
         m = asm.Movement()
         m.AnimalID = ppaid[d["AnimalId"]]
         m.OwnerID = ppoid[d["LocationId"]]
@@ -258,6 +262,7 @@ for d in asm.csv_to_list(PATH + "Animal_Movements.csv"):
         movements.append(m)
     elif d["LocationStatusName"] == "External Transfer":
         if d["LocationId"] not in ppoid: continue # skip missing people
+        if d["AnimalId"] not in ppaid: continue # skip missing animals
         m = asm.Movement()
         m.AnimalID = ppaid[d["AnimalId"]]
         m.OwnerID = ppoid[d["LocationId"]]
