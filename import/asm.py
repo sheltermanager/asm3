@@ -108,7 +108,7 @@ def atof(s):
     except:
         return 0
 
-def csv_to_list(fname, strip = False, remove_control = False, remove_non_ascii = False, uppercasekeys = False, unicodehtml = False):
+def csv_to_list(fname, strip = False, remove_bom = True, remove_control = False, remove_non_ascii = False, uppercasekeys = False, unicodehtml = False):
     """
     Reads the csv file fname and returns it as a list of maps 
     with the first row used as the keys.
@@ -127,16 +127,15 @@ def csv_to_list(fname, strip = False, remove_control = False, remove_non_ascii =
     b = StringIO()
     with open(fname, "r") as f:
         for s in f.readlines():
+            if remove_bom:
+                s = s.replace("\ufeff", "")
             if remove_control:
-                b.write(''.join(c for c in s if ord(c) >= 32))
-                b.write("\n")
+                s = ''.join(c for c in s if ord(c) >= 32) + "\n"
             if remove_non_ascii:
-                b.write(''.join(c for c in s if ord(c) >= 32 and ord(c) <= 127))
-                b.write("\n")
-            elif unicodehtml:
-                b.write(s.decode("utf8").encode("ascii", "xmlcharrefreplace"))
-            else:
-                b.write(s)
+                s = ''.join(c for c in s if ord(c) >= 32 and ord(c) <= 127) + "\n"
+            if unicodehtml:
+                s = s.encode("ascii", "xmlcharrefreplace").decode("ascii")
+            b.write(s)
         f.close()
     reader = csv.DictReader(StringIO(b.getvalue()))
     for row in reader:
@@ -238,6 +237,7 @@ def remove_time(s):
     return s.split(" ")[0]
 
 def remove_seconds(s):
+    if s is None: return s
     if s.find(" ") == -1:
         return s
     b = s.split(" ", 1)
@@ -1456,7 +1456,7 @@ def animal_image(animalid, imagedata):
     """ Writes the media and dbfs entries to add an image to an animal """
     media_file(0, animalid, "x.jpg", imagedata)
 
-def media_file(linktypeid, linkid, filename, filedata):
+def media_file(linktypeid, linkid, filename, filedata, medianotes = ""):
     """ Writes the media and dbfs entries to add a piece of media to an animal or person """
     if filedata is None: return
     mediaid = getid("media")
@@ -1465,13 +1465,14 @@ def media_file(linktypeid, linkid, filename, filedata):
     medianame = str(mediaid) + extension
     mimetype = mime_type(filename)
     encoded = base64.b64encode(filedata)
+    if medianotes == "": medianotes = filename
     if sys.version_info[0] > 2: encoded = encoded.decode("ascii") # PYTHON3
     websitephoto = extension == ".jpg" and 1 or 0
     dbfsidpath = "/animal"
     if linktypeid > 0: dbfsidpath = "/owner"
     print(f"UPDATE media SET websitephoto = 0, docphoto = 0 WHERE linkid = {linkid} AND linktypeid = {linktypeid};")
     print(f"INSERT INTO media (id, medianame, medianotes, mediasize, mediamimetype, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
-        f"excludefrompublish, linkid, linktypeid, recordversion, date) VALUES ({mediaid}, '{medianame}', '{filename}', {len(filedata)}, '{mimetype}', {websitephoto}, {websitephoto}, 0, 0, 0, " \
+        f"excludefrompublish, linkid, linktypeid, recordversion, date) VALUES ({mediaid}, '{medianame}', '{medianotes}', {len(filedata)}, '{mimetype}', {websitephoto}, {websitephoto}, 0, 0, 0, " \
         f"{linkid}, {linktypeid}, 0, {dd(datetime.datetime.today())});")
     print(f"INSERT INTO dbfs (id, name, path, content) VALUES ({getid('dbfs')}, '{linkid}', '{dbfsidpath}', '');")
     dbfsid = getid("dbfs")
@@ -1555,7 +1556,7 @@ def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comme
 
 def load_image_from_file(fpath, case_sensitive = True):
     """ Reads image data from a disk file or returns None if the file does not exist """
-    if case_sensitive and not os.path.exists(filename): return None
+    if case_sensitive and not os.path.exists(fpath): return None
     if not case_sensitive:
         # Search the directory for the filename and compare case insensitive, then
         # update fpath if we find the file
