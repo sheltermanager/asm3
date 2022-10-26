@@ -2415,6 +2415,7 @@ class Owner:
     IsGiftAid = 0
     IsDeceased = 0
     ExcludeFromBulkEmail = 0
+    GDPRContactOptIn = ""
     HomeCheckAreas = ""
     DateLastHomeChecked = None
     HomeCheckedBy = 0
@@ -2503,6 +2504,7 @@ class Owner:
             ( "IsGiftAid", di(self.IsGiftAid) ),
             ( "IsDeceased", di(self.IsDeceased) ),
             ( "ExcludeFromBulkEmail", di(self.ExcludeFromBulkEmail) ),
+            ( "GDPRContactOptIn", ds(self.GDPRContactOptIn) ),
             ( "HomeCheckAreas", ds(self.HomeCheckAreas) ),
             ( "DateLastHomeChecked", dd(self.DateLastHomeChecked) ),
             ( "HomeCheckedBy", di(self.HomeCheckedBy) ),

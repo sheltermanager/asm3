@@ -8,9 +8,14 @@ Import script for AniLog databases exported as CSV
 24th October, 2022
 """
 
-# The shelter's petfinder ID for grabbing animal images for adoptable animals
 START_ID = 20000
 PATH = "/home/robin/tmp/asm3_import_data/anilog_rr0147/"
+
+# THIS IS USED IN ONE SPECIAL CASE - ANILOG IMPORTED RAIN RESCUE'S DATA FROM US, THEN
+# RAIN WANTED TO COME BACK, SO THIS CUTOFF IGNORES RECORDS BEFORE THIS DATE SINCE THEY
+# WILL ALREADY EXIST IN THE TARGET DATABASE.
+# Set to None to not use a cutoff.
+CUTOFF_DATE = asm.getdatetime_iso("2022-01-10") # Ignore records that are older than this date
 
 # --- START OF CONVERSION ---
 
@@ -21,7 +26,9 @@ animaltests = []
 animalvaccinations = []
 logs = []
 ppa = {}
+ppaid = {}
 ppo = {}
+ppoid = {}
 
 asm.setid("animal", START_ID)
 asm.setid("animaltest", START_ID)
@@ -38,150 +45,174 @@ print("DELETE FROM log WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM owner WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM adoption WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 
-# Create an unknown owner
-#uo = asm.Owner()
-#owners.append(uo)
-#uo.OwnerSurname = "Unknown Owner"
-#uo.OwnerName = uo.OwnerSurname
+def getdate(d):
+    return asm.getdatetime_iso(d)
 
 for d in asm.csv_to_list(PATH + "Contacts.csv"):
-    # TODO: ContactRef = ASM ID and Origin=ASMimport for ASM records
-    pass
-    """
     # Ignore repeated headers
-    if d["Person ID"] == "Person ID": continue
-    # Each row contains a person
+    if d["ContactID"] == "ContactID": continue
+    # Ignore malformed rows - they only escape fields if they contain a comma, but not carriage returns
+    if asm.cint(d["ContactID"]) == 0: continue
+    # Ignore deleted rows
+    if asm.cint(d["Deleted"]) == 1: continue
+    # If this record was previously imported from ASM, record the id mapping and skip creating it
+    if d["ContactRef"].find("ASM_") != -1:
+        ppoid[d["ContactID"]] = asm.cint(d["ContactRef"].replace("ASM_", ""))
+        continue
     o = asm.Owner()
     owners.append(o)
-    ppo[d["Person ID"]] = o
-    o.OwnerForeNames = d["Name First"]
-    o.OwnerSurname = d["Name Last"]
+    ppo[d["ContactID"]] = o
+    ppoid[d["ContactID"]] = o.ID
+    o.OwnerTitle = d["TitleDescription"]
+    o.OwnerForeNames = d["FirstName"]
+    o.OwnerSurname = d["LastName"]
     o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
-    o.OwnerAddress = d["Street Address"]
-    o.OwnerTown = d["City"]
-    o.OwnerCounty = d["Province"]
-    o.OwnerPostcode = d["Postal Code"]
-    o.EmailAddress = d["Email"]
-    o.HomeTelephone = d["Phone Number"]
-    o.IsBanned = asm.iif(d["Association"] == "Do Not Adopt", 1, 0)
-    o.IsDonor = asm.iif(d["Association"] == "Donor", 1, 0)
-    o.IsMember = asm.iif(d["Association"] == "Mailing List", 1, 0)
-    o.IsFosterer = asm.iif(d["Association"] == "Foster", 1, 0)
-    o.IsStaff = asm.iif(d["Association"] == "Employee", 1, 0)
-    o.IsVet = asm.iif(d["Association"] == "Operation by" or d["Association"] == "Medical Personnel", 1, 0)
-    o.IsVolunteer = asm.iif(d["Association"] == "Volunteer", 1, 0)
-    o.ExcludeFromBulkEmail = asm.iif(d["Contact By Email"] == "Yes", 1, 0)
-    """
+    o.OwnerAddress = d["Address1"] + "\n" + d["Address2"]
+    o.OwnerTown = d["TownCity"]
+    o.OwnerCounty = d["CountyName"]
+    o.OwnerPostcode = d["Postcode"]
+    o.EmailAddress = d["EmailAddress"]
+    o.HomeTelephone = d["HomePhone"]
+    o.WorkTelephone = d["WorkPhone"]
+    o.MobileTelephone = d["MobilePhone"]
+    o.ExcludeFromBulkEmail = asm.cint(d["DoNotContact"])
+    o.IsGiftAid = asm.cint(d["GiftAid"])
+    if d["ContactByPost"] == 1: o.GDPRContactOptIn += ",post"
+    if d["ContactByEmail"] == 1: o.GDPRContactOptIn += ",email"
+    if d["ContactByPhone"] == 1: o.GDPRContactOptIn += ",phone"
+    if d["ContactBySMS"] == 1: o.GDPRContactOptIn += ",sms"
 
+for d in asm.csv_to_list(PATH + "Contact_Notes.csv"):
+    if d["Notes"] == "Record imported from Animal Shelter Manager": continue # Skip junk imported notes
+    # Ignore malformed rows - they only escape fields if they contain a comma, but not carriage returns
+    if asm.cint(d["ContactID"]) == 0: continue
+    # Ignore any records before the cutoff
+    if CUTOFF_DATE and getdate(d["EnteredOn"]) < CUTOFF_DATE: continue
+    if d["ContactId"] in ppoid: # can assign notes even for existing ASM records we aren't creating in this import
+        l = asm.Log()
+        logs.append(l)
+        l.LogTypeID = 3 # History
+        l.LinkID = ppoid[d["ContactId"]]
+        l.LinkType = 1
+        l.Date = getdate(d["EnteredOn"])
+        if l.Date is None:
+            l.Date = asm.now()
+        l.Comments = d["Notes"]
+
+for d in asm.csv_to_list(PATH + "Contact_Types.csv"):
+    if d["contactId"] in ppo: # can only assign for records we created
+        o = ppo[d["contactId"]]
+        if d["Description"] == "Staff Member": o.IsStaff = 1
+        if d["Description"] == "Adopter": o.IsAdopter = 1
+        if d["Description"] == "Home Visitor": o.IsHomeChecker = 1
+        if d["Description"] == "Vet": o.IsVet = 1
+        if d["Description"] == "Fosterer": o.IsFosterer = 1
+        if d["Description"] == "Warden": o.IsACO = 1
+    
 for d in asm.csv_to_list(PATH + "Animals.csv"):
-    #TODO: AnimalRef = ASM[Our ID] for records imported from ASM
-    pass
-    """
-    # If it's a repeat of the header row, skip
-    if d["Animal #"] == "Animal #": continue
-    # If it's a blank row, skip
-    if d["Animal #"] == "": continue
-    # Each row contains an animal, intake and outcome
-    if d["Animal #"] in ppa:
-        a = ppa[d["Animal #"]]
+    # Ignore repeated headers
+    if d["AnimalId"] == "AnimalId": continue
+    # Ignore malformed rows - they only escape fields if they contain a comma, but not carriage returns
+    if asm.cint(d["AnimalId"]) == 0: continue
+    # If this record was previously imported from ASM, record the id mapping and skip creating it
+    if d["AnimalRef"].find("ASM") != -1:
+        ppaid[d["AnimalId"]] = asm.cint(d["AnimalRef"].replace("ASM", ""))
+        continue
+    a = asm.Animal()
+    animals.append(o)
+    ppa[d["AnimalId"]] = o
+    ppaid[d["AnimalId"]] = o.ID
+    if d["AnimalTypeName"] == "Cat":
+        a.AnimalTypeID = 11 # Unwanted Cat
+    elif d["AnimalTypeName"] == "Dog":
+        a.AnimalTypeID = 2 # Unwanted Dog
     else:
-        a = asm.Animal()
-        animals.append(a)
-        ppa[d["Animal #"]] = a
-        if d["Species"] == "Cat":
-            a.AnimalTypeID = 11 # Unwanted Cat
-            if d["Intake Type"] == "Stray":
-                a.AnimalTypeID = 12 # Stray Cat
-        elif d["Species"] == "Dog":
-            a.AnimalTypeID = 2 # Unwanted Dog
-            if d["Intake Type"] == "Stray":
-                a.AnimalTypeID = 10 # Stray Dog
-        else:
-            a.AnimalTypeID = 40 # Misc
-        a.SpeciesID = asm.species_id_for_name(d["Species"])
-        a.AnimalName = d["Animal Name"]
-        if a.AnimalName.strip() == "":
-            a.AnimalName = "(unknown)"
-        a.DateBroughtIn = getdate(d["Intake Date"]) or asm.today()
-        if "Date Of Birth" in d and d["Date Of Birth"].strip() != "":
-            a.DateOfBirth = getdate(d["Date Of Birth"])
-        else:
-            a.DateOfBirth = asm.subtract_days(a.DateBroughtIn, 365)
-        a.CreatedDate = a.DateBroughtIn
-        a.LastChangedDate = a.DateBroughtIn
-        if d["Intake Type"] == "Transfer In":
-            a.IsTransfer = 1
-        a.generateCode()
-        a.ShortCode = d["ARN"]
-        if a.ShortCode.strip() == "": a.ShortCode = d["Animal #"]
-        if "Distinguishing Markings" in d: a.Markings = d["Distinguishing Markings"]
-        a.IsNotAvailableForAdoption = 0
-        a.ShelterLocation = asm.location_id_for_name(d["Location"])
-        a.Sex = asm.getsex_mf(d["Gender"])
-        a.Size = 2
-        a.Neutered = d["Altered"] == "Yes" and 1 or 0
-        a.EntryReasonID = 17 # Surrender
-        if d["Intake Type"] == "Stray": a.EntryReasonID = 7 # Stray
-        if d["Intake Type"] == "Transfer In": a.EntryReasonID = 15 # Transfer from other shelter
-        a.ReasonForEntry = d["Reason"]
-        if "Microchip Issue Date" in d: a.IdentichipDate = getdate(d["Microchip Issue Date"])
-        if "Microchip Number" in d: a.IdentichipNumber = d["Microchip Number"]
-        a.IsGoodWithCats = 2
-        a.IsGoodWithDogs = 2
-        a.IsGoodWithChildren = 2
-        if "Intake Condition" in d: a.AsilomarIntakeCategory = d["Intake Condition"] == "Healthy" and 0 or 1
-        a.HouseTrained = 0
-        if a.IdentichipNumber != "": 
-            a.Identichipped = 1
-        a.Archived = 0
-        comments = "Intake type: " + d["Intake Type"] + " " + d["Intake Subtype"] + ", breed: " + d["Primary Breed"] + "/"
-        if "Secondary Breed" in d: comments += d["Secondary Breed"]
-        comments += ", age: " + d["Age Group"]
-        if "Intake Condition" in d: comments += ", intake condition: " + d["Intake Condition"]
-        comments += ", ID: " + d["Animal #"] + ", ARN: " + d["ARN"]
-        asm.breed_ids(a, d["Primary Breed"], d["Secondary Breed"])
-        a.HiddenAnimalDetails = comments
-        """
+        a.AnimalTypeID = 40 # Misc
+    a.SpeciesID = asm.species_id_for_name(d["AnimalTypeName"])
+    a.AnimalName = d["CurrentName"]
+    if a.AnimalName.strip() == "":
+        a.AnimalName = "(unknown)"
+    a.DateOfBirth = getdate(d["DateOfBirth"])
+    a.ShortCode = d["AnimalRef"]
+    a.Sex = asm.getsex_mf(d["gender"])
+    a.Neutered = d["Neutered"] == "Yes" and 1 or 0
+    asm.breed_ids(a, d["breed"], d["breed2"])
+    a.CrossBreed = d["CrossBreed"] == "1" and 1 or 0
+    a.BaseColourID = asm.colour_id_for_name(d["Colour"])
+    a.Size = asm.size_id_for_name(d["sizeName"])
+    if d["Chip1Number"] != "":
+        a.Identichipped = 1
+        a.IdentichipNumber = d["Chip1Number"]
+        if d["Chip1ImplantDate"] != "NULL": a.IdentichipDate = getdate(d["Chip1ImplantDate"])
+    if d["Chip2number"] != "":
+        a.Identichipped = 1
+        a.Identichip2Number = d["Chip2number"]
+        if d["Chip2ImplantDate"] != "NULL": a.Identichip2Date = getdate(d["Chip2ImplantDate"])
+    a.Archived = 0
+    comments = "breed: " + d["breed"] + "/" + d["breed2"]
+    comments += "\ncolour: " + d["Colour"]
+    comments += "\ntatoo: " + d["TattooNumber"]
+    comments += "\npassport: " + d["PassportNumber"]
+    a.HiddenAnimalDetails = comments
+
+for d in asm.csv_to_list(PATH + "Animal_BehaviourNotes.csv"):
+    # Turn behaviour notes into logs
+    # Ignore malformed rows - they only escape fields if they contain a comma, but not carriage returns
+    if asm.cint(d["AnimalId"]) == 0: continue
+    # Ignore any records before the cutoff
+    if CUTOFF_DATE and getdate(d["EnteredOn"]) < CUTOFF_DATE: continue
+    if d["AnimalId"] in ppaid: 
+        l = asm.Log()
+        logs.append(l)
+        l.LogTypeID = 3 # History
+        l.LinkID = ppaid[d["AnimalId"]]
+        l.LinkType = 0
+        l.Date = getdate(d["EnteredOn"])
+        if l.Date is None:
+            l.Date = asm.now()
+        l.Comments = d["ObservationNotes"]
 
 for d in asm.csv_to_list(PATH + "Animal_Admissions.csv"):
-    pass
-    """
-        if d["Admitter"] != "" and d["Intake Type"] in ("Owner/Guardian Surrender", "Transfer In"):
-            o = findowner(d["Admitter"])
-            if o == None:
-                o = asm.Owner()
-                owners.append(o)
-                o.OwnerName = d["Admitter"]
-                bits = o.OwnerName.split(" ")
-                if len(bits) > 1:
-                    o.OwnerForeNames = bits[0]
-                    o.OwnerSurname = bits[len(bits)-1]
-                else:
-                    o.OwnerSurname = o.OwnerName
-                o.OwnerAddress = d["Street Address"]
-                if o.OwnerAddress == "": o.OwnerAddress = d["Agency Address"]
-                o.OwnerTown = d["City"]
-                o.OwnerCounty = d["Province"]
-                o.OwnerPostcode = d["Postal Code"]
-                o.EmailAddress = d["Admitter's Email"]
-                o.HomeTelephone = d["Admitter's Home Phone"]
-                o.MobileTelephone = d["Admitter's Cell Phone"]
-            a.OriginalOwnerID = o.ID
-            a.BroughtInByOwnerID = o.ID
-
-    if d["Intake Type"] == "Return":
-        # Return the most recent adoption for this animal
-        for m in movements:
-            if m.AnimalID == a.ID and m.ReturnDate is None and m.MovementType == 1:
-                m.ReturnDate = getdate(d["Intake Date"])
-                m.ReturnedReasonID = 17 # Surrender
-                a.Archived = 0 # Return to shelter so another movement takes it away again
-                break
-    """
-
+    # Can only work for records we just created as we won't have an object for previous records
+    if d["AnimalId"] not in ppa: continue
+    # Ignore any records before the cutoff
+    if CUTOFF_DATE and getdate(d["AdmissionDate"]) < CUTOFF_DATE: continue
+    a = ppa[d["AnimalId"]]
+    if a.DateBroughtIn is None: a.DateBroughtIn = getdate(d["AdmissionDate"])
+    a.CreatedDate = a.DateBroughtIn
+    a.LastChangedDate = a.DateBroughtIn
+    if d["AdmissionReason"] == "Transfer":
+        a.IsTransfer = 1
+    if d["AdmissionReason"] == "Stray or Abandoned":
+        a.EntryReasonID = 7 # Stray
+    else:
+        a.EntryReasonID = 17 # Surrender
+    a.generateCode()
+    if ppoid[d["BroughtInByContactId"]] != "NULL":
+        a.BroughtInByOwnerID = ppoid[d["BroughtInByContactId"]]
+    a.HiddenAnimalDetails += "\nadmission reason: " + d["AdmissionReason"] + "\nhand in reason: " + d["HandInReason"]
+    a.ReasonForEntry = d["AdmissionReasonNotes"] + " " + d["AdmissionNotes"]
 
 for d in asm.csv_to_list(PATH + "Animal_Movements.csv"):
-    pass
+    # Ignore any records before the cutoff
+    if CUTOFF_DATE and getdate(d["FromDate"]) < CUTOFF_DATE: continue
+    # TODO: MovementFee and DonationReceived are float amounts, update the adoption fee
+    # and create a payment record 
+    if d["LocationStatusName"] == "Rehomed":
+        pass # handle adoption
+    elif d["LocationStatusName"] == "Fostered":
+        pass # handle foster
+    elif d["LocationStatusName"] == "External Transfer":
+        pass # handle transfer
+    elif d["LocationStatusName"] == "On Site":
+        pass # shelter animal
+    elif d["LocationStatusName"] == "Put to Sleep":
+        pass # shelter animal
+    elif d["LocationStatusName"] == "Deceased":
+        pass # shelter animal
+    elif d["LocationStatusName"] == "Waiting List":
+        pass # TODO: What do we do with these? Make non-shelter? Cr
+
     """
     o = None
     if d["Outcome Person Name"].strip() != "":
@@ -297,26 +328,6 @@ for d in asm.csv_to_list(PATH + "Animal_Movements.csv"):
         a.ActiveMovementType = 8
         a.LastChangedDate = od
         movements.append(m)
-    """
-
-
-# Turn behaviour notes into logs
-for d in asm.csv_to_list(PATH + "Animal_BehaviourNotes.csv"):
-    pass
-    """
-    if datefield not in d: continue # Can't do anything without our field
-    if d[datefield] == datefield: continue # Ignore repeated headers
-    if d[idfield] in ppa:
-        a = ppa[d[idfield]]
-        l = asm.Log()
-        logs.append(l)
-        l.LogTypeID = 3 # History
-        l.LinkID = a.ID
-        l.LinkType = 0
-        l.Date = asm.getdate_mmddyyyy(d["textbox20"])
-        if l.Date is None:
-            l.Date = asm.now()
-        l.Comments = d["Textbox131"]
     """
 
 for d in asm.csv_to_list(PATH + "Animal_Treatments.csv"):
