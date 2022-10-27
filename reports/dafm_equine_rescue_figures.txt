@@ -2,9 +2,9 @@ DAFM Equine Rescue Figures
 ###
 Figures
 ###
-33306/PostgreSQL rev02
+33306/PostgreSQL rev03
 ###
-Equine rescue figures for the Irish DAFM
+Equine rescue figures for the Irish DAFM, selected by intake date
 ###
 en_IE
 ###
@@ -33,6 +33,85 @@ LEFT OUTER JOIN adoption m ON m.ID = a.ActiveMovementID
 LEFT OUTER JOIN owner no ON no.ID = m.OwnerID
 LEFT OUTER JOIN owner bo ON bo.ID = a.BroughtInByOwnerID
 WHERE DateBroughtIn >= '$ASK DATE Animals rescued between$' AND DateBroughtIn <= '$ASK DATE and$'
+ORDER BY SpeciesName, DateBroughtIn
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+<table border="1">
+<tr>
+<th>Microchip</th>
+<th>UELN</th>
+<th>Origin of Equine</th>
+<th>Date Equine Rescued</th>
+<th>Did you pay a fee?</th>
+<th>EPN</th>
+<th>Rehoming Date</th>
+<th>Euthanasia Date</th>
+<th>Knackery</th>
+<th>Animal</th>
+</tr>
+$$FOOT
+</table>
+<p>Total $Speciesname: {COUNT.SpeciesName}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$MICROCHIP</td>
+<td>$UELN</td>
+<td>$ORIGIN</td>
+<td>$DATEREQUINERESCUED</td>
+<td>No</td>
+<td>$EPN</td>
+<td>$REHOMINGDATE</td>
+<td>$DECEASEDDATE</td>
+<td>$KNACKERY</td>
+<td>$ANIMALNAME ($BREEDNAME $SPECIESNAME)</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+&&&
+DAFM Equine Rescue Figures (by rehoming date)
+###
+Figures
+###
+33306/PostgreSQL rev01
+###
+Equine rescue figures for the Irish DAFM, selected by rehoming date
+###
+en_IE
+###
+-- Requires an additional field of type person called "Knackery" for knackery to work
+-- Expects licences with the following IDs to be used for EULN and EPN
+
+$CONST EULN=5$
+$CONST EPN=7$
+
+SELECT
+CASE WHEN a.IsTransfer = 1 THEN 'Transfer from ' || bo.OwnerName ELSE er.ReasonName END AS Origin,
+to_char(a.DateBroughtIn, 'DD/MM/YYYY') AS DateRequineRescued,
+a.IdentichipNumber AS Microchip,
+(SELECT LicenceNumber FROM ownerlicence WHERE AnimalID = a.ID AND LicenceTypeID=$EULN$ ORDER BY IssueDate DESC LIMIT 1) AS UELN,
+CASE WHEN a.ActiveMovementType IN (1,2) THEN (SELECT LicenceNumber FROM ownerlicence WHERE OwnerID = no.ID AND LicenceTypeID=$EPN$ ORDER BY IssueDate DESC LIMIT 1) ELSE il.LocationName END AS EPN,
+CASE WHEN a.ActiveMovementType IN (1,2) THEN a.ActiveMovementDate ELSE NULL END AS RehomingDate,
+a.DeceasedDate,
+(SELECT OwnerName FROM owner INNER JOIN additional af ON asm_to_integer(af.Value) = owner.ID INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID WHERE af.LinkID = a.ID AND aff.FieldName = 'Knackery') AS Knackery,
+a.AnimalName,
+s.SpeciesName, a.BreedName
+FROM animal a
+LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN entryreason er ON er.ID = a.EntryReasonID
+LEFT OUTER JOIN adoption m ON m.ID = a.ActiveMovementID
+LEFT OUTER JOIN owner no ON no.ID = m.OwnerID
+LEFT OUTER JOIN owner bo ON bo.ID = a.BroughtInByOwnerID
+WHERE ActiveMovementType=1 AND ActiveMovementDate >= '$ASK DATE Animals rehomed between$' AND ActiveMovementDate <= '$ASK DATE and$'
 ORDER BY SpeciesName, DateBroughtIn
 ###
 $$HEADER
