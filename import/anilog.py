@@ -20,7 +20,7 @@ EMPTY_DBFS_FILES = False
 # RAIN WANTED TO COME BACK, SO THIS CUTOFF IGNORES RECORDS BEFORE THIS DATE SINCE THEY
 # WILL ALREADY EXIST IN THE TARGET DATABASE.
 # Set to None to not use a cutoff.
-CUTOFF_DATE = asm.getdatetime_iso("2022-01-10 00:00:00") # Ignore records that are older than this date
+CUTOFF_DATE = asm.getdatetime_iso("2022-04-01 00:00:00") # Ignore records that are older than this date
 
 # --- START OF CONVERSION ---
 
