@@ -14,7 +14,7 @@ PATH = "/home/robin/tmp/asm3_import_data/anilog_rr0147/"
 # If True, uses an empty string instead of the DBFS contents for testing so that it
 # is quick to load into a database and see the media entries. 
 # Should be FALSE for a production import.
-EMPTY_DBFS_FILES = True
+EMPTY_DBFS_FILES = False
 
 # THIS IS USED IN ONE SPECIAL CASE - ANILOG IMPORTED RAIN RESCUE'S DATA FROM US, THEN
 # RAIN WANTED TO COME BACK, SO THIS CUTOFF IGNORES RECORDS BEFORE THIS DATE SINCE THEY

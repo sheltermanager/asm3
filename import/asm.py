@@ -90,6 +90,10 @@ pickuplocations = {}
 # Dictionary of custom colours if we're going to supply a new set
 customcolours = {}
 
+# media files written
+mediafilescount = 0
+mediafilesbytes = 0
+
 # See end of file for dictionaries of lookups that require classes
 
 def atoi(s):
@@ -381,6 +385,8 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
     o(ownerlicences, "licences")
     o(ownerdonations, "payments")
     o(animalcontrol, "incidents")
+    if mediafilescount > 0:
+        stderr("%d media files (%d bytes)" % (mediafilescount, mediafilesbytes))
 
 # List of default colours
 colours = (
@@ -1481,6 +1487,10 @@ def media_file(linktypeid, linkid, filename, filedata, medianotes = ""):
     dbfsid = getid("dbfs")
     print(f"INSERT INTO dbfs (id, name, path, url, content) VALUES ({dbfsid}, '{medianame}', '{dbfsidpath + '/' + str(linkid)}', 'base64:', '{encoded}');")
     print(f"UPDATE media SET DBFSID = {dbfsid} WHERE ID = {mediaid};")
+    global mediafilescount
+    global mediafilesbytes
+    mediafilescount += 1
+    mediafilesbytes += len(filedata)
 
 def animal_test(animalid, required, given, typename, resultname, comments = ""):
     """ Returns an animaltest object """
