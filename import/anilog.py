@@ -20,7 +20,7 @@ EMPTY_DBFS_FILES = True
 # RAIN WANTED TO COME BACK, SO THIS CUTOFF IGNORES RECORDS BEFORE THIS DATE SINCE THEY
 # WILL ALREADY EXIST IN THE TARGET DATABASE.
 # Set to None to not use a cutoff.
-CUTOFF_DATE = asm.getdatetime_iso("2022-01-10") # Ignore records that are older than this date
+CUTOFF_DATE = asm.getdatetime_iso("2022-01-10 00:00:00") # Ignore records that are older than this date
 
 # --- START OF CONVERSION ---
 
@@ -148,10 +148,11 @@ for d in asm.csv_to_list(PATH + "Animals.csv"):
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
     a.DateOfBirth = getdate(d["DateOfBirth"])
+    a.ShelterCode = d["AnimalRef"]
     a.ShortCode = d["AnimalRef"]
     a.Sex = asm.getsex_mf(d["gender"])
     a.Neutered = d["Neutered"] == "Yes" and 1 or 0
-    asm.breed_ids(a, d["breed"], d["breed2"])
+    asm.breed_ids(a, d["breed"], d["breed2"], default=442)
     a.CrossBreed = d["CrossBreed"] == "1" and 1 or 0
     a.BaseColourID = asm.colour_id_for_name(d["Colour"])
     a.Size = asm.size_id_for_name(d["sizeName"])
@@ -164,7 +165,7 @@ for d in asm.csv_to_list(PATH + "Animals.csv"):
         a.Identichip2Number = d["Chip2number"]
         a.Identichip2Date = getdate(d["Chip2ImplantDate"])
     a.Archived = 0
-    comments = "breed: " + d["breed"] + "/" + d["breed2"]
+    comments = "breed: " + d["breed"] + "/" + d["breed2"] + " " + d["OtherBreed"]
     comments += "\ncolour: " + d["Colour"]
     if d["TattooNumber"]: comments += "\ntatoo: " + d["TattooNumber"]
     if d["PassportNumber"]: comments += "\npassport: " + d["PassportNumber"]
@@ -193,7 +194,11 @@ for d in asm.csv_to_list(PATH + "Animal_Admissions.csv"):
     # Ignore any records before the cutoff
     if CUTOFF_DATE and getdate(d["AdmissionDate"]) < CUTOFF_DATE: continue
     a = ppa[d["AnimalId"]]
-    if a.DateBroughtIn is None: a.DateBroughtIn = getdate(d["AdmissionDate"])
+    if a.DateBroughtIn == asm.today(): 
+        a.DateBroughtIn = getdate(d["AdmissionDate"])
+    if a.DateOfBirth is None:
+        a.DateOfBirth = a.DateBroughtIn
+        a.EstimatedDOB = 1
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
     if d["AdmissionReason"] == "Transfer":
@@ -202,7 +207,6 @@ for d in asm.csv_to_list(PATH + "Animal_Admissions.csv"):
         a.EntryReasonID = 7 # Stray
     else:
         a.EntryReasonID = 17 # Surrender
-    a.generateCode()
     if d["BroughtInByContactId"] in ppoid:
         a.BroughtInByOwnerID = ppoid[d["BroughtInByContactId"]]
     a.HiddenAnimalDetails += "\nadmission reason: " + d["AdmissionReason"] + "\nhand in reason: " + d["HandInReason"]
@@ -278,25 +282,52 @@ for d in asm.csv_to_list(PATH + "Animal_Movements.csv"):
             a.LastChangedDate = m.MovementDate
         movements.append(m)
     elif d["LocationStatusName"] == "On Site":
-        pass # nothing to do
+        # Just record the location in the comments as it's all we can do
+        if d["AnimalId"] not in ppa: continue
+        a = ppa[d["AnimalId"]]
+        a.HiddenAnimalDetails += "\nlocation: " + d["LocationName"]
     elif d["LocationStatusName"] == "Put to Sleep":
         if d["AnimalId"] in ppa:
             a = ppa[d["AnimalId"]]
             a.DeceasedDate = getdate(d["FromDate"])
             a.PutToSleep = 1
             a.PTSReasonID = 4
+            a.Archived = 1
     elif d["LocationStatusName"] == "Deceased":
         if d["AnimalId"] in ppa:
             a = ppa[d["AnimalId"]]
             a.DeceasedDate = getdate(d["FromDate"])
             a.PutToSleep = 0
+            a.Archived = 1
     elif d["LocationStatusName"] == "Waiting List":
-        pass # What can we do with these? 
+        pass # Not really anything we can do with these, they should be picked up as non-shelter below
+
+# The ownership history duplicates movements/rehoming, but can be used to identify non-shelter
+# animals who never came to the shelter (no admission record)
+for d in asm.csv_to_list(PATH + "Animal_OwnershipHistory.csv"):
+    # Can only work for records we just created as we won't have an object for previous records
+    if d["AnimalId"] not in ppa: continue
+    odate = getdate(d["StartDate"]) or getdate(d["EndDate"])
+    if odate is None: odate = asm.today()
+    # Ignore any records before the cutoff
+    if CUTOFF_DATE and odate < CUTOFF_DATE: continue
+    a = ppa[d["AnimalId"]]
+    # This animal did not have an admission record if DateBroughtIn == today, make it nonshelter to its owner
+    if a.DateBroughtIn == asm.today() and d["OwnerContactId"] in ppoid: 
+        a.NonShelterAnimal = 1
+        a.Archived = 1
+        a.DateBroughtIn = odate
+        a.OriginalOwnerID = ppoid[d["OwnerContactId"]]
+        a.OwnerID = ppoid[d["OwnerContactId"]]
+        if a.DateOfBirth is None:
+            a.DateOfBirth = a.DateBroughtIn
+            a.EstimatedDOB = 1
 
 for d in asm.csv_to_list(PATH + "Animal_Vet_Treatments.csv"):
     # Ignore malformed rows - they only escape fields if they contain a comma, but not carriage returns
     if asm.cint(d["animalid"]) == 0: continue
     tdate = getdate(d["TreatmentDate"])
+    if tdate is None: continue
     if CUTOFF_DATE and tdate < CUTOFF_DATE: continue
     tcat = d["TreatmentCategory"]
     tnotes = d["TreatmentNotes"]

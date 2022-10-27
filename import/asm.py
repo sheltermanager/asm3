@@ -334,6 +334,10 @@ def getsex_mf(s):
 def now():
     return datetime.datetime.today()
 
+def today():
+    """ Returns today as a Python date """
+    return datetime.datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+
 def stderr(s):
     sys.stderr.write("%s\n" % s)
 
@@ -344,6 +348,7 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
     if len(animals) != 0:
         onshelter = 0
         offshelter = 0
+        nonshelter = 0
         dead = 0
         euth = 0
         dupcodes = 0
@@ -356,13 +361,15 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
             codes.add(a.ShelterCode)
             if a.Archived == 0:
                 onshelter += 1
+            elif a.Archived == 1 and a.NonShelterAnimal == 1:
+                nonshelter += 1
             elif a.Archived == 1 and a.DeceasedDate is None:
                 offshelter += 1
             elif a.DeceasedDate is not None and a.PutToSleep == 0:
                 dead += 1
             elif a.DeceasedDate is not None and a.PutToSleep == 1:
                 euth += 1
-        stderr("%d animals (%d on-shelter, %d off-shelter, %d dead, %d euthanised)" % (len(animals), onshelter, offshelter, dead, euth))
+        stderr("%d animals (%d on-shelter, %d off-shelter, %d non-shelter, %d dead, %d euthanised)" % (len(animals), onshelter, offshelter, nonshelter, dead, euth))
         if dupcodes > 0:
             stderr("WARNING: %d duplicate shelter codes (%s .. %s)" % (dupcodes, dups[0], dups[-1]))
     o(animalmedicals, "medicals")
@@ -374,10 +381,6 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
     o(ownerlicences, "licences")
     o(ownerdonations, "payments")
     o(animalcontrol, "incidents")
-
-def today():
-    """ Returns today as a Python date """
-    return datetime.datetime.today()
 
 # List of default colours
 colours = (
@@ -2154,7 +2157,7 @@ class Animal:
         if typename == "": typename = type_name_for_id(self.AnimalTypeID)
         self.YearCodeID = nextyearcode
         self.ShelterCode = "%s%d%03d" % ( typename[0:1], self.DateBroughtIn.year, nextyearcode)
-        self.ShortCode = "%03d%s" % (nextyearcode, typename[0:1])
+        if self.ShortCode == "": self.ShortCode = "%03d%s" % (nextyearcode, typename[0:1]) # check so it can be assigned before generating code
         nextyearcode += 1
     def __str__(self):
         if self.AnimalAge == "" and self.DateOfBirth is not None:
@@ -2283,7 +2286,7 @@ class Animal:
             ( "LastChangedBy", ds(self.LastChangedBy) ),
             ( "LastChangedDate", dd(self.LastChangedDate) )
             )
-        sys.stderr.write("animal: %d %s %s %s, %s %s, arc: %s, intake %s, dob %s\n" % (self.ID, self.AnimalName, self.ShelterCode, self.ShortCode, self.BreedName, species_name_for_id(self.SpeciesID), self.Archived, self.DateBroughtIn, self.DateOfBirth))
+        sys.stderr.write("animal: %d %s %s %s, %s %s, arc: %s, ns: %s, intake %s, dob %s\n" % (self.ID, self.AnimalName, self.ShelterCode, self.ShortCode, self.BreedName, species_name_for_id(self.SpeciesID), self.Archived, self.NonShelterAnimal, self.DateBroughtIn, self.DateOfBirth))
         return makesql("animal", s)
 
 class Log:
