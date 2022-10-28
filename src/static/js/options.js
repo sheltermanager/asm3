@@ -525,7 +525,10 @@ $(function() {
                 '<tr><td>',
                 '<p>',
                 '<input data="EmblemAlwaysLocation" type="checkbox" id="alwaysshowlocation" class="asm-checkbox" type="checkbox" />',
-                    html.icon("location") + ' <label for="alwaysshowlocation">' + _("Always show an emblem to indicate the current location") + '</label><br />',
+                    html.icon("location", "On Shelter") + html.icon("person", "Fostered") + html.icon("movement", "Adopted") + 
+                    ' <label for="alwaysshowlocation">' + _("Location") + '</label><br />',
+                '<input data="EmblemAdoptable" type="checkbox" id="showadoptable" class="asm-checkbox" type="checkbox" />',
+                    html.icon("adoptable") + ' <label for="showadoptable">' + _("Adoptable") + '</label><br />',
                 '<input data="EmblemBonded" type="checkbox" id="showbonded" class="asm-checkbox" type="checkbox" />',
                     html.icon("bonded") + ' <label for="showbonded">' + _("Bonded") + '</label><br />',
                 '<input data="EmblemCourtesy" type="checkbox" id="showcourtesy" class="asm-checkbox" type="checkbox" />',

@@ -180,6 +180,9 @@ const html = {
                 s.push(html.icon("movement", a.DISPLAYLOCATIONNAME + " / " + a.CURRENTOWNERNAME));
             }
         }
+        if (config.bool("EmblemAdoptable") && html.is_animal_adoptable(a)[0]) {
+            s.push(html.icon("adoptable", _("Adoptable")));
+        }
         if (config.bool("EmblemBonded") && (a.BONDEDANIMALID || a.BONDEDANIMAL2ID)) {
             s.push(html.icon("bonded", _("Bonded")));
         }

@@ -200,6 +200,7 @@ DEFAULTS = {
     "EmailDiaryOnComplete": "No",
     "EmailEmptyReports": "Yes",
     "EmailMessages": "Yes", 
+    "EmblemAdoptable": "Yes",
     "EmblemAlwaysLocation": "No",
     "EmblemBonded": "Yes",
     "EmblemCourtesy": "Yes",

@@ -1,6 +1,7 @@
 46
 ================
 
+28/10/22 Add adoptable emblem #1189
 23/10/22 Option to supply a custom WHERE clause when exporting animals
 20/10/22 Hide location of non-shelter animals in find animal results
 20/10/22 Fix timezone issue when receiving payments via processors

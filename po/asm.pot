@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-10-18 14:16+0000\n"
+"POT-Creation-Date: 2022-10-28 11:35+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -748,8 +748,8 @@ msgstr ""
 msgid "Adopt an animal"
 msgstr ""
 
-#: html.py animal_find.js reports.js shelterview.js animal_bulk.js
-#: animal_find_results.js
+#: html.py common_html.js animal_find.js reports.js options.js shelterview.js
+#: animal_bulk.js animal_find_results.js
 msgid "Adoptable"
 msgstr ""
 
@@ -1194,10 +1194,6 @@ msgstr ""
 
 #: person_links.js
 msgid "Altering Vet"
-msgstr ""
-
-#: options.js
-msgid "Always show an emblem to indicate the current location"
 msgstr ""
 
 #: dbupdate.py
@@ -1745,6 +1741,10 @@ msgstr ""
 
 #: common_widgets.js
 msgid "BCC"
+msgstr ""
+
+#: movements.js
+msgid "BCC all the people linked to these movements"
 msgstr ""
 
 #: dbupdate.py
@@ -3322,6 +3322,10 @@ msgstr ""
 msgid "Current Vet"
 msgstr ""
 
+#: csvexport.js
+msgid "Custom WHERE clause"
+msgstr ""
+
 #: dbupdate.py
 msgid "Cymric"
 msgstr ""
@@ -4661,7 +4665,7 @@ msgstr ""
 #: mobile.py onlineform.py html.py common_html.js media.js waitinglist.js
 #: header_edit_header.js animal.js person_find.js onlineform.js options.js
 #: report_toolbar.js lostfound.js waitinglist_results.js person_find_results.js
-#: incident.js users.js document_repository.js person.js
+#: incident.js users.js movements.js document_repository.js person.js
 msgid "Email"
 msgstr ""
 
@@ -4725,6 +4729,10 @@ msgstr ""
 
 #: media.js document_repository.js
 msgid "Email media"
+msgstr ""
+
+#: movements.js
+msgid "Email people linked to selected movements"
 msgstr ""
 
 #: common_widgets.js
@@ -12140,6 +12148,12 @@ msgstr ""
 msgid "Superuser"
 msgstr ""
 
+#: csvexport.js
+msgid ""
+"Supply a WHERE clause to the animal table. Eg: 'Archived=0 AND "
+"ShelterLocation=2'"
+msgstr ""
+
 #: person_find_results.js
 msgid "Surname"
 msgstr ""
@@ -14228,6 +14242,10 @@ msgstr ""
 
 #: movement.py
 msgid "WARNING: This animal is over 6 months old and has not been neutered/spayed"
+msgstr ""
+
+#: csvexport.js
+msgid "WHERE clause"
 msgstr ""
 
 #: dbupdate.py clinic_appointment.js
