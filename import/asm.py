@@ -345,7 +345,7 @@ def today():
 def stderr(s):
     sys.stderr.write("%s\n" % s)
 
-def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animaltests=[], owners=[], ownerlicences=[], ownerdonations=[], animalcontrol=[], movements=[], logs=[]):
+def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animaltests=[], owners=[], ownerlicences=[], ownerdonations=[], animalcontrol=[], movements=[], logs=[], stocklevels=[]):
     def o(l, d):
         if len(l) > 0:
             stderr("%d %s" % (len(l), d))
@@ -385,6 +385,7 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
     o(ownerlicences, "licences")
     o(ownerdonations, "payments")
     o(animalcontrol, "incidents")
+    o(stocklevels, "stocklevels")
     if mediafilescount > 0:
         stderr("%d media files (%d bytes)" % (mediafilescount, mediafilesbytes))
 
@@ -2639,6 +2640,40 @@ class OwnerLicence:
             ( "LastChangedDate", dd(self.LastChangedDate) )
             )
         return makesql("ownerlicence", s)
+
+class StockLevel:
+    ID = 0
+    Name = ""
+    Description = ""
+    StockLocationID = 1
+    UnitName = ""
+    Total = 0
+    Balance = 0
+    Expiry= None
+    BatchNumber = ""
+    Cost = 0
+    UnitPrice = 0
+    CreatedDate = None
+    def __init__(self, ID = 0):
+        self.ID = ID
+        if ID == 0: self.ID = getid("stocklevel")
+    def __str__(self):
+        s = (
+            ( "ID", di(self.ID) ),
+            ( "Name", ds(self.Name) ),
+            ( "Description", ds(self.Description) ),
+            ( "StockLocationID", di(self.StockLocationID) ),
+            ( "UnitName", ds(self.UnitName) ),
+            ( "Total", di(self.Total) ),
+            ( "Balance", di(self.Balance) ),
+            ( "Expiry", dd(self.Expiry) ),
+            ( "BatchNumber", ds(self.BatchNumber) ),
+            ( "Cost", di(self.Cost) ),
+            ( "UnitPrice", di(self.UnitPrice) ),
+            ( "CreatedDate", dd(self.CreatedDate) )
+            )
+        return makesql("stocklevel", s)
+
 
 
 # Dictionary of entry reasons

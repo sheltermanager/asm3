@@ -30,11 +30,13 @@ movements = []
 animals = []
 animalmedicals = []
 logs = []
+stocklevels = []
 ppa = {}
 ppaid = {}
 ppo = {}
 ppoid = {}
 
+asm.setid("adoption", START_ID)
 asm.setid("animal", START_ID)
 asm.setid("animalmedical", START_ID)
 asm.setid("animalmedicaltreatment", START_ID)
@@ -43,7 +45,7 @@ asm.setid("media", START_ID)
 asm.setid("log", START_ID)
 asm.setid("owner", START_ID)
 asm.setid("ownerdonation", START_ID)
-asm.setid("adoption", START_ID)
+asm.setid("stocklevel", START_ID)
 
 print("\\set ON_ERROR_STOP\nBEGIN;")
 print("DELETE FROM animal WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
@@ -56,8 +58,10 @@ print("DELETE FROM owner WHERE ID >= %s AND CreatedBy = 'conversion';" % START_I
 print("DELETE FROM ownerdonation WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM adoption WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 
-def getdate(d):
-    return asm.getdatetime_iso(d)
+def getdate(d, todayIfNull=False):
+    o = asm.getdatetime_iso(d)
+    if o is None: return asm.today()
+    return o
 
 for d in asm.csv_to_list(PATH + "Contacts.csv", unicodehtml=True):
     # Ignore repeated headers
@@ -170,6 +174,9 @@ for d in asm.csv_to_list(PATH + "Animals.csv"):
     if d["TattooNumber"]: comments += "\ntatoo: " + d["TattooNumber"]
     if d["PassportNumber"]: comments += "\npassport: " + d["PassportNumber"]
     a.HiddenAnimalDetails = comments
+    # Admission record will set non-shelter=0/archived=0
+    a.NonShelterAnimal = 1
+    a.Archived = 1
 
 for d in asm.csv_to_list(PATH + "Animal_BehaviourNotes.csv"):
     # Turn behaviour notes into logs
@@ -188,7 +195,7 @@ for d in asm.csv_to_list(PATH + "Animal_BehaviourNotes.csv"):
             l.Date = asm.now()
         l.Comments = d["ObservationNotes"]
 
-for d in asm.csv_to_list(PATH + "Animal_Admissions.csv"):
+for d in sorted(asm.csv_to_list(PATH + "Animal_Admissions.csv"), key=lambda k: getdate(k["AdmissionDate"], True)):
     # Can only work for records we just created as we won't have an object for previous records
     if d["AnimalId"] not in ppa: continue
     # Ignore any records before the cutoff
@@ -196,6 +203,8 @@ for d in asm.csv_to_list(PATH + "Animal_Admissions.csv"):
     a = ppa[d["AnimalId"]]
     if a.DateBroughtIn == asm.today(): 
         a.DateBroughtIn = getdate(d["AdmissionDate"])
+        a.NonShelterAnimal = 0
+        a.Archived = 0
     if a.DateOfBirth is None:
         a.DateOfBirth = a.DateBroughtIn
         a.EstimatedDOB = 1
@@ -212,7 +221,7 @@ for d in asm.csv_to_list(PATH + "Animal_Admissions.csv"):
     a.HiddenAnimalDetails += "\nadmission reason: " + d["AdmissionReason"] + "\nhand in reason: " + d["HandInReason"]
     a.ReasonForEntry = "%s %s" % (d["AdmissionReasonNotes"], d["AdmissionNotes"])
 
-for d in asm.csv_to_list(PATH + "Animal_Movements.csv"):
+for d in sorted(asm.csv_to_list(PATH + "Animal_Movements.csv"), key=lambda k: getdate(k["FromDate"], True)):
     # Ignore malformed rows - they only escape fields if they contain a comma, but not carriage returns
     if asm.cint(d["AnimalId"]) == 0: continue
     # Ignore any records before the cutoff
@@ -300,7 +309,7 @@ for d in asm.csv_to_list(PATH + "Animal_Movements.csv"):
             a.PutToSleep = 0
             a.Archived = 1
     elif d["LocationStatusName"] == "Waiting List":
-        pass # Not really anything we can do with these, they should be picked up as non-shelter below
+        a.HiddenAnimalDetails += "\nanilog waiting list"
 
 # The ownership history duplicates movements/rehoming, but can be used to identify non-shelter
 # animals who never came to the shelter (no admission record)
@@ -367,6 +376,22 @@ for d in asm.csv_to_list(PATH + "Contact_Attachments.csv"):
     if EMPTY_DBFS_FILES: filedata = b"" 
     asm.media_file(3, ppoid[d["ContactId"]], d["AttachmentFileName"], filedata, d["Notes"])
 
+for d in asm.csv_to_list(PATH + "DrugStockReceipts.csv"):
+     # Ignore any records before the cutoff
+    if CUTOFF_DATE and getdate(d["DateReceived"]) < CUTOFF_DATE: continue
+    l = asm.StockLevel()
+    stocklevels.append(l)
+    l.Name = d["DrugName"]
+    l.Description = d["PackDesc"]
+    l.UnitName = d["PackDesc"]
+    Total = asm.cint(d["PackQuantity"]) * asm.cint(d["QuantityReceived"])
+    Balance = Total - asm.cint(d["UnitsUsed"])
+    Expiry= getdate(d["ExpiryDate"])
+    BatchNumber = ""
+    Cost = asm.get_currency(d["PackPrice"])
+    UnitPrice = 0
+    CreatedDate = getdate(d["DateReceived"])
+
 # Run back through the animals, if we have any that are still
 # on shelter after 1 year, add an adoption to an unknown owner
 # asm.adopt_older_than(animals, movements, uo.ID, 365)
@@ -384,8 +409,11 @@ for m in movements:
     print(m)
 for l in logs:
     print(l)
+for l in stocklevels:
+    print(l)
 
-asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, logs=logs, owners=owners, ownerdonations=ownerdonations, movements=movements)
+
+asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, logs=logs, owners=owners, ownerdonations=ownerdonations, movements=movements, stocklevels=stocklevels)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
 print("COMMIT;")
