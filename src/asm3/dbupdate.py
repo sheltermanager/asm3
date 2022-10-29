@@ -2806,9 +2806,9 @@ def dump_merge(dbo, deleteViewSeq = True):
     so that they can be inserted into another database.
     """
     ID_OFFSET = 100000
-    s = []
     def fix_and_dump(table, fields):
         rows = dbo.query("SELECT * FROM %s" % table)
+        s = []
         for r in rows:
             # Add ID_OFFSET to all ID fields in the rows
             for f in fields:
@@ -2816,61 +2816,77 @@ def dump_merge(dbo, deleteViewSeq = True):
                 # Don't add anything to these two, but prefix them so merging is obvious
                 if f == "ADOPTIONNUMBER" or f == "SHELTERCODE":
                     r[f] = "MG" + r[f]
+                # DBFS URLs prefixed with file: or s3:
+                # (note that files will have to be renamed manually)
+                elif f == "URL":
+                    if r[f] and (r[f].startswith("file:") or r[f].startswith("s3:")):
+                        v = r[f]
+                        prefix = "file"
+                        if v.startswith("s3:"): prefix = "s3"
+                        ext = v[v.rfind(".")+1:]
+                        num = asm3.utils.atoi(v) + ID_OFFSET
+                        r[f] = "%s:%s.%s" % ( prefix, num, ext )
                 elif r[f] is not None:
                     r[f] += ID_OFFSET
             # Make any lookup values we copy over inactive
             if "ISRETIRED" in r: 
                 r.ISRETIRED = 1 
             s.append(dbo.row_to_insert_sql(table, r, escapeCR = ""))
+        return "\n".join(s)
 
-    fix_and_dump("additional", [ "AdditionalFieldID", "LinkID" ])
-    fix_and_dump("additionalfield", [ "ID" ])
-    fix_and_dump("adoption", [ "ID", "AnimalID", "AdoptionNumber", "OwnerID", "RetailerID", "OriginalRetailerMovementID" ])
-    fix_and_dump("animal", [ "ID", "AnimalTypeID", "ShelterLocation", "ShelterCode", "BondedAnimalID", "BondedAnimal2ID", "OwnersVetID", "CurrentVetID", "OriginalOwnerID", "BroughtInByOwnerID", "ActiveMovementID" ])
-    fix_and_dump("animalcontrol", [ "ID", "CallerID", "VictimID", "OwnerID", "Owner2ID", "Owner3ID" ])
-    fix_and_dump("animalcontrolanimal", [ "AnimalID", "AnimalControlID" ])
-    fix_and_dump("animalcost", [ "ID", "AnimalID", "CostTypeID" ])
-    fix_and_dump("costtype", [ "ID", ])
-    fix_and_dump("animaldiet", [ "ID", "AnimalID" ])
-    fix_and_dump("animalfound", [ "ID", "OwnerID" ])
-    fix_and_dump("animallitter", [ "ID", "ParentAnimalID" ])
-    fix_and_dump("animallost", [ "ID", "OwnerID" ])
-    fix_and_dump("animalmedical", [ "ID", "AnimalID", "MedicalProfileID" ])
-    fix_and_dump("animalmedicaltreatment", [ "ID", "AnimalID", "AnimalMedicalID" ])
-    fix_and_dump("animalpublished", [ "AnimalID" ])
-    fix_and_dump("animaltest", [ "ID", "AnimalID", "TestTypeID", "TestResultID" ])
-    fix_and_dump("animaltype", [ "ID", ])
-    fix_and_dump("animaltransport", [ "ID", "AnimalID", "DriverOwnerID", "PickupOwnerID", "DropoffOwnerID" ])
-    fix_and_dump("animalvaccination", [ "ID", "AnimalID", "VaccinationID" ])
-    fix_and_dump("animalwaitinglist", [ "ID", "OwnerID" ])
-    fix_and_dump("diary", [ "ID", "LinkID" ])
-    fix_and_dump("internallocation", [ "ID", ])
-    fix_and_dump("lkanimalflags", [ "ID", ])
-    fix_and_dump("lkownerflags", [ "ID", ])
-    fix_and_dump("lkworktype", [ "ID", ])
-    fix_and_dump("log", [ "ID", "LinkID" ])
-    fix_and_dump("medicalprofile", [ "ID" ])
-    fix_and_dump("owner", [ "ID", "HomeCheckedBy" ])
-    fix_and_dump("ownercitation", [ "ID", "OwnerID", "AnimalControlID" ])
-    fix_and_dump("ownerdonation", [ "ID", "AnimalID", "OwnerID", "MovementID", "DonationTypeID" ])
-    fix_and_dump("donationtype", [ "ID", ])
-    fix_and_dump("ownerinvestigation", [ "ID", "OwnerID" ])
-    fix_and_dump("ownerlicence", [ "ID", "OwnerID", "AnimalID", "LicenceTypeID" ])
-    fix_and_dump("licencetype", [ "ID", ])
-    fix_and_dump("ownerrota", [ "ID", "OwnerID" ])
-    fix_and_dump("ownertraploan", [ "ID", "OwnerID" ])
-    fix_and_dump("ownervoucher", [ "ID", "OwnerID", "VoucherID" ])
-    fix_and_dump("stocklevel", [ "ID", "StockLocationID" ])
-    fix_and_dump("stocklocation", [ "ID", ])
-    fix_and_dump("stockusage", [ "ID", "StockLevelID" ])
-    fix_and_dump("templatedocument", [ "ID", ])
-    fix_and_dump("templatehtml", [ "ID", ])
-    fix_and_dump("testtype", [ "ID", ])
-    fix_and_dump("testresult", [ "ID", ])
-    fix_and_dump("vaccinationtype", [ "ID", ])
-    fix_and_dump("voucher", [ "ID", ])
-    if deleteViewSeq: s.append("DELETE FROM configuration WHERE ItemName LIKE 'DBViewSeqVersion';\n")
-    return "".join(s)
+    yield fix_and_dump("additional", [ "AdditionalFieldID", "LinkID" ])
+    yield fix_and_dump("additionalfield", [ "ID" ])
+    yield fix_and_dump("adoption", [ "ID", "AnimalID", "AdoptionNumber", "OwnerID", "RetailerID", "OriginalRetailerMovementID" ])
+    yield fix_and_dump("animal", [ "ID", "AnimalTypeID", "BreedID", "Breed2ID", "SpeciesID", "ShelterLocation", "ShelterCode", "BondedAnimalID", "BondedAnimal2ID", "PickupLocationID", "JurisdictionID", "OwnersVetID", "CurrentVetID", "OriginalOwnerID", "BroughtInByOwnerID", "ActiveMovementID" ])
+    yield fix_and_dump("animalcontrol", [ "ID", "CallerID", "VictimID", "PickupLocationID", "JurisdictionID", "OwnerID", "Owner2ID", "Owner3ID" ])
+    yield fix_and_dump("animalcontrolanimal", [ "AnimalID", "AnimalControlID" ])
+    yield fix_and_dump("animalcost", [ "ID", "AnimalID", "CostTypeID" ])
+    yield fix_and_dump("breed", [ "ID" ])
+    yield fix_and_dump("costtype", [ "ID" ])
+    yield fix_and_dump("animaldiet", [ "ID", "AnimalID" ])
+    yield fix_and_dump("animalfound", [ "ID", "OwnerID", "AnimalTypeID", "BreedID" ])
+    yield fix_and_dump("animallitter", [ "ID", "ParentAnimalID" ])
+    yield fix_and_dump("animallost", [ "ID", "OwnerID", "AnimalTypeID", "BreedID" ])
+    yield fix_and_dump("animalmedical", [ "ID", "AnimalID", "MedicalProfileID" ])
+    yield fix_and_dump("animalmedicaltreatment", [ "ID", "AnimalID", "AnimalMedicalID" ])
+    yield fix_and_dump("animalpublished", [ "AnimalID" ])
+    yield fix_and_dump("animaltest", [ "ID", "AnimalID", "TestTypeID", "TestResultID" ])
+    yield fix_and_dump("animaltype", [ "ID", ])
+    yield fix_and_dump("animaltransport", [ "ID", "AnimalID", "DriverOwnerID", "PickupOwnerID", "DropoffOwnerID" ])
+    yield fix_and_dump("animalvaccination", [ "ID", "AnimalID", "VaccinationID" ])
+    yield fix_and_dump("animalwaitinglist", [ "ID", "OwnerID" ])
+    yield fix_and_dump("diary", [ "ID", "LinkID" ])
+    yield fix_and_dump("internallocation", [ "ID", ])
+    yield fix_and_dump("jurisdiction", [ "ID", ])
+    yield fix_and_dump("lkanimalflags", [ "ID", ])
+    yield fix_and_dump("lkownerflags", [ "ID", ])
+    yield fix_and_dump("lkworktype", [ "ID", ])
+    yield fix_and_dump("log", [ "ID", "LinkID" ])
+    yield fix_and_dump("media", [ "ID", "DBFSID", "LinkID" ])
+    yield fix_and_dump("medicalprofile", [ "ID" ])
+    yield fix_and_dump("owner", [ "ID", "HomeCheckedBy", "JurisdictionID" ])
+    yield fix_and_dump("ownercitation", [ "ID", "OwnerID", "AnimalControlID" ])
+    yield fix_and_dump("ownerdonation", [ "ID", "AnimalID", "OwnerID", "MovementID", "DonationTypeID" ])
+    yield fix_and_dump("donationtype", [ "ID", ])
+    yield fix_and_dump("ownerinvestigation", [ "ID", "OwnerID" ])
+    yield fix_and_dump("ownerlicence", [ "ID", "OwnerID", "AnimalID", "LicenceTypeID" ])
+    yield fix_and_dump("licencetype", [ "ID", ])
+    yield fix_and_dump("ownerrota", [ "ID", "OwnerID" ])
+    yield fix_and_dump("ownertraploan", [ "ID", "OwnerID" ])
+    yield fix_and_dump("ownervoucher", [ "ID", "OwnerID", "VoucherID" ])
+    yield fix_and_dump("pickuplocation", [ "ID" ])
+    yield fix_and_dump("species", [ "ID" ])
+    yield fix_and_dump("stocklevel", [ "ID", "StockLocationID" ])
+    yield fix_and_dump("stocklocation", [ "ID", ])
+    yield fix_and_dump("stockusage", [ "ID", "StockLevelID" ])
+    yield fix_and_dump("templatedocument", [ "ID", ])
+    yield fix_and_dump("templatehtml", [ "ID", ])
+    yield fix_and_dump("testtype", [ "ID", ])
+    yield fix_and_dump("testresult", [ "ID", ])
+    yield fix_and_dump("vaccinationtype", [ "ID", ])
+    yield fix_and_dump("voucher", [ "ID", ])
+    yield fix_and_dump("dbfs", [ "ID", "URL" ])
+    if deleteViewSeq: yield "DELETE FROM configuration WHERE ItemName LIKE 'DBViewSeqVersion';\n"
 
 def diagnostic(dbo):
     """

@@ -214,6 +214,17 @@ $(function() {
                         _("{plural3} document signing requests have been received in the last week")
                     ]) + '</a><br />';
             }
+            if (alerts.OPENCHECKOUT > 0 && common.has_permission("vo")) {
+                totalalerts += alerts.OPENCHECKOUT;
+                s += '<a href="search?q=opencheckout">' + html.icon("movement") + ' ' + 
+                    common.ntranslate(alerts.OPENCHECKOUT, [
+                        _("{plural0} adoption checkout request initiated in the last week is still open"),
+                        _("{plural1} adoption checkout requests initiated in the last week are still open"),
+                        _("{plural2} adoption checkout requests initiated in the last week are still open"),
+                        _("{plural3} adoption checkout requests initiated in the last week are still open")
+                    ]) + '</a><br />';
+            }
+
             if (alerts.NOTADOPT > 0 && common.has_permission("va") && config.bool("EmblemNotForAdoption")) {
                 totalalerts += alerts.NOTADOPT;
                 s += '<a href="search?q=notforadoption">' + html.icon("notforadoption") + ' ' + 
@@ -329,10 +340,10 @@ $(function() {
                 totalalerts += alerts.TLOVER;
                 s += '<a href="traploan?filter=active">' + html.icon("traploan") + ' ' + 
                     common.ntranslate(alerts.TLOVER, [
-                        _("{plural0} trap is overdue for return"),
-                        _("{plural1} traps are overdue for return"),
-                        _("{plural2} traps are overdue for return"),
-                        _("{plural3} traps are overdue for return")
+                        _("{plural0} item of equipment is overdue for return"),
+                        _("{plural1} items of equipment are overdue for return"),
+                        _("{plural2} items of equipment are overdue for return"),
+                        _("{plural3} items of equipment are overdue for return")
                     ]) + '</a><br />';
             }
             if (alerts.STEXP > 0 && common.has_permission("vsl")) {

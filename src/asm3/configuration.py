@@ -200,6 +200,7 @@ DEFAULTS = {
     "EmailDiaryOnComplete": "No",
     "EmailEmptyReports": "Yes",
     "EmailMessages": "Yes", 
+    "EmblemAdoptable": "Yes",
     "EmblemAlwaysLocation": "No",
     "EmblemBonded": "Yes",
     "EmblemCourtesy": "Yes",
@@ -220,6 +221,8 @@ DEFAULTS = {
     "EmblemUnneutered": "Yes",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
+    "FlagChangeLog": "Yes",
+    "FlagChangeLogType": "3",
     "FormatPhoneNumbers": "Yes",
     "FosterOnShelter": "Yes",
     "FostererEmails": "No", 
@@ -258,7 +261,7 @@ DEFAULTS = {
     "LostAnimalSearchColumns": "LostFoundID,Owner,MicrochipNumber,AreaLost,"
         "AreaPostCode,DateLost,AgeGroup,SexName,SpeciesName,BreedName,"
         "BaseColourName,DistFeat",
-    "MailMergeMaxEmails": "2000",
+    "MailMergeMaxEmails": "3000",
     "MainScreenAnimalLinkMode": "recentlychanged",
     "MainScreenAnimalLinkMax": "9",
     "ManualCodes": "No",
@@ -896,6 +899,12 @@ def email_empty_reports(dbo):
 def email_messages(dbo):
     return cboolean(dbo, "EmailMessages", DEFAULTS["EmailMessages"] == "Yes")
 
+def flag_change_log(dbo):
+    return cboolean(dbo, "FlagChangeLog", DEFAULTS["FlagChangeLog"] == "Yes")
+
+def flag_change_log_type(dbo):
+    return cint(dbo, "FlagChangeLogType", DEFAULTS["FlagChangeLogType"])
+
 def foster_on_shelter(dbo):
     return cboolean(dbo, "FosterOnShelter", DEFAULTS["FosterOnShelter"] == "Yes")
 
@@ -1009,6 +1018,9 @@ def maddies_fund_username(dbo):
 
 def maddies_fund_password(dbo):
     return cstring(dbo, "MaddiesFundPassword")
+
+def mail_merge_max_emails(dbo):
+    return cint(dbo, "MailMergeMaxEmails", int(DEFAULTS["MailMergeMaxEmails"]))
 
 def main_screen_animal_link_mode(dbo):
     return cstring(dbo, "MainScreenAnimalLinkMode", DEFAULTS["MainScreenAnimalLinkMode"])
@@ -1286,13 +1298,13 @@ def retailer_on_shelter(dbo):
     return cboolean(dbo, "RetailerOnShelter", DEFAULTS["RetailerOnShelter"] == "Yes")
 
 def sac_stray_category(dbo):
-    return cint(dbo, "SACStrayCategory", DEFAULTS["SACStrayCategory"])
+    return cstring(dbo, "SACStrayCategory", DEFAULTS["SACStrayCategory"])
 
 def sac_surrender_category(dbo):
-    return cint(dbo, "SACSurrenderCategory", DEFAULTS["SACSurrenderCategory"])
+    return cstring(dbo, "SACSurrenderCategory", DEFAULTS["SACSurrenderCategory"])
 
 def sac_tnr_category(dbo):
-    return cint(dbo, "SACTNRCategory", DEFAULTS["SACTNRCategory"])
+    return cstring(dbo, "SACTNRCategory", DEFAULTS["SACTNRCategory"])
 
 def savourlife_token(dbo):
     return cstring(dbo, "SavourLifeToken")

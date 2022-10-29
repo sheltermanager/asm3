@@ -592,7 +592,7 @@ def sign_document(dbo, username, mid, sigurl, signdate, signprefix):
         sig += "<p>%s</p>\n" % signdate
         content += sig
     # Create a hash of the contents and store it with the media record
-    dbo.update("media", mid, { "SignatureHash": "%s:%s" % (signprefix, asm3.utils.md5_hash_hex(content)) })
+    dbo.update("media", mid, { "SignatureHash": "%s:%s" % (signprefix, asm3.utils.md5_hash_hex(content)) }, username, setLastChanged=False)
     # Update the dbfs contents
     content = asm3.utils.str2bytes(content)
     update_file_content(dbo, username, mid, content)

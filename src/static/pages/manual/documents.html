@@ -297,14 +297,15 @@ not need to buy expensive custom hardware.</p>
 <img alt="_images/sign_dialog.png" src="_images/sign_dialog.png" />
 <p>To control the size and location of the signature:</p>
 <ul class="simple">
-<li><p>insert an image where you’d like the signature to appear</p></li>
-<li><p>When the insert image dialog requests the image source, instead of a URL,
-enter “signature:placeholder” without the quotes.</p></li>
-<li><p>Choose a size to constrain the image to - eg: 150 x 75</p></li>
-<li><p>The document signing module will insert the signature inside your image
-when the document is signed.</p></li>
+<li><p>Add the token &lt;&lt;Signature&gt;&gt; where you’d like the signature to appear.</p></li>
+<li><p>You can set a pixel width of 100, 150, 200 or 300 (the default is 150) in the
+token, eg: &lt;&lt;Signature300&gt;&gt;</p></li>
+<li><p>When a document is generated from your template, a placeholder image of the
+correct size will appear where you inserted the token.</p></li>
+<li><p>The document signing module will replace the placeholder image with the
+signature after the document is signed.</p></li>
 </ul>
-<p>If your document template does not contain a signature placeholder, the
+<p>If your document template does not contain a signature token, the
 signature will be attached to the document as a footer along with the date and
 time the document was signed.</p>
 <img alt="_images/sign_doc.png" src="_images/sign_doc.png" />
@@ -345,12 +346,9 @@ accessed under the user menu (the menu with the logged in user’s name at
 the top right of the screen).</p>
 <img alt="_images/sign_user.png" src="_images/sign_user.png" />
 <p>You can add a placeholder for the current user’s signature in your document
-templates with the &lt;&lt;UserSignature&gt;&gt; wordkey. This will insert the signature
-at full size into the document as an image.</p>
-<p>If you’d like to control the size and placement of the user’s signature in
-a similar manner to normal signatures, you can insert an image and
-when prompted for the image source use “signature:user” without the
-quotes.</p>
+templates with the &lt;&lt;UserSignature&gt;&gt; wordkey. This will insert the signature at
+150px width into the document as an image. You can use the same 100, 150, 200
+or 300 suffix to control the size of the user signature.</p>
 </div>
 </div>
 

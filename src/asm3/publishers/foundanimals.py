@@ -14,14 +14,14 @@ VALIDATE_FAIL = 2
 
 class FoundAnimalsPublisher(FTPPublisher):
     """
-    Handles publishing to foundanimals.org
+    Handles publishing to foundanimals (now 24pet/foundanimals)
     """
     def __init__(self, dbo, publishCriteria):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANIMALS_FTP_PASSWORD)
-        self.initLog("foundanimals", "FoundAnimals Publisher")
+        self.initLog("foundanimals", "FoundAnimals/24Pet Publisher")
 
     def run(self):
         
@@ -36,13 +36,13 @@ class FoundAnimalsPublisher(FTPPublisher):
         if cutoffdays == 0: cutoffdays = -1095 # default cutoff is 3 years, note that it's a negative number
 
         if folder == "":
-            self.setLastError("No FoundAnimals folder has been set.")
+            self.setLastError("No FoundAnimals/24Pet folder has been set.")
             self.cleanup()
             return
         
         email = asm3.configuration.foundanimals_email(self.dbo)
         if email == "":
-            self.setLastError("No FoundAnimals group email has been set.")
+            self.setLastError("No FoundAnimals/24Pet group email has been set.")
             self.cleanup()
             return
 

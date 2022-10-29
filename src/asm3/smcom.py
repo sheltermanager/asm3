@@ -10,6 +10,10 @@ import os, sys
 
 import web062 as web
 
+# The maximum number of emails allowed to be sent in one go through the
+# the sheltermanager.com email server
+MAX_EMAILS = 1500
+
 # Regex to remove invalid chars from an entered database
 INVALID_REMOVE = re.compile(r'[\/\.\*\?\ ]')
 

@@ -2,7 +2,7 @@ Cage Card with Vaccination and Medical History
 ###
 Inventories
 ###
-2810/Any omitcriteria omitheaderfooter
+33503/Any omitcriteria omitheaderfooter rev02
 ###
 An animal cage card with image, vaccination and medical history.
 ###
@@ -149,6 +149,7 @@ SUBREPORT_CageCardVaccinationHistory
 SELECT vaccinationtype.VaccinationType,
 animalvaccination.DateRequired,
 animalvaccination.DateOfVaccination,
+animalvaccination.DateExpires,
 animalvaccination.Comments AS VaccComments
 FROM animalvaccination
 INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID
@@ -157,7 +158,7 @@ WHERE animalvaccination.AnimalID = $PARENTKEY$
 $$HEADER
 HEADER$$
 $$BODY
-<b>$VaccinationType</b>: $DateRequired / $DateOfVaccination  $VaccComments<br/>
+<b>$VaccinationType</b>: $DateRequired / $DateOfVaccination / $DateExpires :  $VaccComments<br/>
 BODY$$
 $$FOOTER
 FOOTER$$

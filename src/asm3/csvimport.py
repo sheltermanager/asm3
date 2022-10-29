@@ -1062,11 +1062,139 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
     h.append("</table>")
     return "".join(h)
 
-def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
+def csvimport_stripe(dbo, csvdata, donationtypeid, donationpaymentid, flags, user = "", encoding="utf-8-sig"):
+    """
+    Imports a Stripe CSV file of transactions.
+    """
+    def v(r, n):
+        """ Reads r[n], returning empty string if n does not exist in r """
+        if n in r: return r[n]
+        return ""
+
+    if user == "":
+        user = "import"
+    else:
+        user = "import/%s" % user
+
+    rows = asm3.utils.csv_parse( asm3.utils.bytes2str(csvdata, encoding=encoding) )
+    print(rows[0])
+
+    errors = []
+    rowno = 1
+    asm3.asynctask.set_progress_max(dbo, len(rows))
+
+    if len(rows) == 0:
+        asm3.asynctask.set_last_error(dbo, "CSV file is empty")
+        return
+
+    REQUIRED_FIELDS = [ "id", "Status", "Currency", "Amount", "Fee", "Converted Amount", "Converted Currency", 
+        "Card Name", "Card Last4", "Card Brand", 
+        "Card Address Line1", "Card Address City", "Card Address State", "Card Address Zip", 
+        "Card Address Country", "Customer Email" ]
+
+    for rf in REQUIRED_FIELDS:
+        if rf not in rows[0]:
+            asm3.asynctask.set_last_error(dbo, "This CSV file does not look like a Stripe CSV (missing %s)" % rf)
+            return
+
+    for r in rows:
+
+        # Skip blank rows
+        if len(r) == 0: continue
+
+        # Should we stop?
+        if asm3.asynctask.get_cancel(dbo): break
+
+        asm3.al.debug("import stripe csv: row %d of %d" % (rowno, len(rows)), "csvimport.csvimport_stripe", dbo)
+        asm3.asynctask.increment_progress_value(dbo)
+
+        if r["Status"] != "Paid":
+            asm3.al.debug("skipping: Status='%s' (!= Paid)" % (r["Status"]), "csvimport.csvimport_paypal", dbo)
+            continue
+
+        # Parse name (use all up to last space for first names if only Name exists)
+        firstname = ""
+        lastname = ""
+        name = r["Card Name"]
+        if name != "":
+            if name.find(" ") != -1:
+                firstname =name[0:name.rfind(" ")]
+                lastname =name[name.rfind(" ")+1:]
+            else:
+                lastname = name
+
+        # Person data
+        personid = 0
+        p = {}
+        p["ownertype"] = "1"
+        p["forenames"] = firstname
+        p["surname"] = lastname
+        p["address"] = r["Card Address Line1"]
+        p["town"] = r["Card Address City"]
+        p["county"] = r["Card Address State"]
+        p["postcode"] = r["Card Address Zip"]
+        p["country"] = r["Card Address Country"]
+        p["emailaddress"] = r["Customer Email"]
+        p["flags"] = flags
+        try:
+            dups = asm3.person.get_person_similar(dbo, p["emailaddress"], "", p["surname"], p["forenames"], p["address"])
+            if len(dups) > 0:
+                personid = dups[0]["ID"]
+                # Merge flags and any extra details
+                asm3.person.merge_flags(dbo, user, personid, flags)
+                asm3.person.merge_person_details(dbo, user, personid, p)
+            if personid == 0:
+                personid = asm3.person.insert_person_from_form(dbo, asm3.utils.PostedData(p, dbo.locale), user, geocode=False)
+        except Exception as e:
+            row_error(errors, "person", rowno, r, e, dbo, sys.exc_info())
+
+        # Sort out which payment type is being used. Look for a user-added column called "ASM Payment Type"
+        # if it doesn't exist, is blank or we couldn't find a match in the donation type table 
+        # then we fall back to the one the user chose during import.
+        sdonationtypeid = v(r, "ASM Payment Type")
+        if sdonationtypeid != "":
+            sdonationtypeid = dbo.query_str("SELECT ID FROM donationtype WHERE DonationName=?", [sdonationtypeid])
+        if sdonationtypeid == "":
+            sdonationtypeid = str(donationtypeid)
+        # Donation info
+        gross = asm3.utils.cint(asm3.utils.cfloat(r["Converted Amount"]) * 100)
+        if gross == 0: asm3.utils.cint(asm3.utils.cfloat(r["Amount"]) * 100)
+        fee = asm3.utils.cint(asm3.utils.cfloat(r["Fee"]) * 100)
+        if personid != 0 and gross > 0:
+            pdate = asm3.i18n.parse_date("%Y-%m-%d %H:%M", r["Created (UTC)"])
+            if pdate is None: pdate = dbo.today() # use today if parsing failed
+            d = {}
+            d["person"] = str(personid)
+            d["animal"] = "0"
+            d["movement"] = "0"
+            d["amount"] = str(gross - fee)
+            d["fee"] = str(fee)
+            d["chequenumber"] = str(r["id"])
+            comments = "Stripe ID: %s \nItem: %s \nCurrency: %s \nAmount: %s \nFee: %s \nConverted: %s %s \nCard: %s %s" % \
+                (r["id"], r["Description"], r["Currency"], r["Amount"], r["Fee"], r["Converted Amount"], r["Converted Currency"], r["Card Last4"], r["Card Brand"])
+            d["comments"] = comments
+            d["received"] = asm3.i18n.python2display(dbo.locale, pdate)
+            d["type"] = sdonationtypeid
+            d["payment"] = str(donationpaymentid)
+            try:
+                asm3.financial.insert_donation_from_form(dbo, user, asm3.utils.PostedData(d, dbo.locale))
+            except Exception as e:
+                row_error(errors, "payment", rowno, r, e, dbo, sys.exc_info())
+
+        rowno += 1
+
+    h = [ "<p>%d success, %d errors</p><table>" % (len(rows) - len(errors), len(errors)) ]
+    for rowno, row, err in errors:
+        h.append("<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % (rowno, row, err))
+    h.append("</table>")
+    return "".join(h)
+
+def csvexport_animals(dbo, dataset, animalids = "", where = "", includephoto = False):
     """
     Export CSV data for a set of animals.
     dataset: The named set of data to use
     animalids: If dataset == selshelter, a comma separated list of animals to export
+    where: If dataset == where, a where clause to the animal table (without the keyword WHERE)
     includephoto: Output a base64 encoded version of the animal's photo if True
     """
     l = dbo.locale
@@ -1077,6 +1205,7 @@ def csvexport_animals(dbo, dataset, animalids = "", includephoto = False):
     elif dataset == "shelter": q = "SELECT ID FROM animal WHERE Archived=0 ORDER BY ID"
     elif dataset == "nonshelter": q = "SELECT ID FROM animal WHERE NonShelterAnimal=1 ORDER BY ID"
     elif dataset == "selshelter": q = "SELECT ID FROM animal WHERE ID IN (%s) ORDER BY ID" % animalids
+    elif dataset == "where": q = "SELECT ID FROM animal WHERE %s ORDER BY ID" % where.replace(";", "")
     
     ids = dbo.query(q)
 

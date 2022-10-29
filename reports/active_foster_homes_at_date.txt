@@ -2,19 +2,21 @@ Active Foster Homes at Date by Species
 ###
 Movements
 ###
-Any rev01
+33715/Any rev02
 ###
-The number of active foster homes on a given date by species
+The number of active foster homes on a given date by species, including capacity count
 ###
 en
 ###
 $VAR date DATE Active on$
 SELECT
 SpeciesName,
-COUNT(DISTINCT m.OwnerID) AS TotalHomes
+COUNT(DISTINCT m.OwnerID) AS TotalHomes,
+SUM(o.FosterCapacity) AS TotalCapacity
 FROM adoption m
 INNER JOIN animal a ON a.ID = m.AnimalID
 INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN owner o ON o.ID = m.OwnerID
 WHERE m.MovementType = 2
 AND m.MovementDate <= '$@date$' AND (m.ReturnDate Is NULL or m.ReturnDate > '$@date$')
 AND (a.DeceasedDate Is Null OR a.DeceasedDate > '$@date$')
@@ -25,6 +27,7 @@ $$HEADER
 <tr>
 <th>Species</th>
 <th>Active Foster Homes</th>
+<th>Capacity of Homes</th>
 </tr>
 HEADER$$
 
@@ -32,6 +35,7 @@ $$BODY
 <tr>
 <td>$SpeciesName</td>
 <td>$TotalHomes</td>
+<td>$TotalCapacity</td>
 </tr>
 BODY$$
 

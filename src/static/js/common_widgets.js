@@ -718,9 +718,10 @@ $.widget("asm.emailform", {
      * post:       The ajax post target
      * formdata:   The first portion of the formdata
      * name:       The name to show on the form (optional)
-     * email:      The email to show on the form (optional)
+     * email:      The email(s) to show on the form (optional)
+     * bccemail:   The bcc email(s) to show on the form (optional)
      * subject:    The default subject (optional)
-     * message:    The default message (otpional)
+     * message:    The default message (optional)
      * logtypes:   The logtypes to populate the attach as log box (optional)
      * templates:  The list of email document templates (optional)
      * personid:   A person to substitute tokens in templates for (optional)
@@ -801,6 +802,9 @@ $.widget("asm.emailform", {
         else if (o.email) { 
             // Otherwise, use RFC821
             $("#em-to").val(common.replace_all(html.decode(o.name), ",", "") + " <" + o.email + ">"); 
+        }
+        if (o.bccemail) {
+            $("#em-bcc").val(o.bccemail);
         }
         let msg = config.str("EmailSignature");
         if (o.message) { msg = "<p>" + o.message + "</p>" + msg; }

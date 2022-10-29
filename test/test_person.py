@@ -56,6 +56,9 @@ class TestPerson(unittest.TestCase):
     def test_get_reserves_without_homechecks(self):
         asm3.person.get_reserves_without_homechecks(base.get_dbo())
 
+    def test_get_open_adoption_checkout(self):
+        asm3.person.get_open_adoption_checkout(base.get_dbo())
+
     def test_get_overdue_donations(self):
         asm3.person.get_overdue_donations(base.get_dbo())
 

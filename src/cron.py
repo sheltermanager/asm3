@@ -289,7 +289,8 @@ def maint_db_dump_lookups(dbo):
 
 def maint_db_dump_merge(dbo):
     try:
-        print(dbupdate.dump_merge(dbo))
+        for x in dbupdate.dump_merge(dbo):
+            print(x)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_merge: %s" % em, "cron.maint_db_dump_merge", dbo, sys.exc_info())

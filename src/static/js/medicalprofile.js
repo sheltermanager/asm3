@@ -75,8 +75,8 @@ $(function() {
                     }
                 },
                 columns: [
-                    { field: "PROFILENAME", display: _("Name"), initialsort: true },
-                    { field: "TREATMENTNAME", display: _("Treatment") },
+                    { field: "PROFILENAME", display: _("Profile"), initialsort: true },
+                    { field: "TREATMENTNAME", display: _("Name") },
                     { field: "DOSAGE", display: _("Dosage") },
                     { field: "COST", display: _("Cost"), 
                         formatter: function(row) {

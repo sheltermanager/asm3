@@ -1,6 +1,39 @@
 46
 ================
 
+28/10/22 Add adoptable emblem #1189
+23/10/22 Option to supply a custom WHERE clause when exporting animals
+20/10/22 Hide location of non-shelter animals in find animal results
+20/10/22 Fix timezone issue when receiving payments via processors
+19/10/22 Reservation book: Email people linked to selected reserves #1180
+18/10/22 Reservation book: select by animal, view media and cancel button #1180
+13/10/22 Include animal/person name in online form media name #1181
+12/10/22 Rename foundanimals to FoundAnimals/24Pet #1182
+12/10/22 Use search input type to prevent android keyboard bug with return key
+30/09/22 Update signature widget to latest version
+20/09/22 Record changes to person/animal flags in the log #1176
+20/09/22 Back button now closes iframe on adoptable_js #1156
+19/09/22 Fix codemirror z-index issue with dialogs #1178
+15/09/22 Fix performance issues with searching ES0X/AC0X records
+14/09/22 f### id attributes for online form checkboxgroup/radio buttons
+14/09/22 Visual indicator that system log messages cannot be edited
+14/09/22 System log messages AC01/AC02/AC03 relating to adoption checkout #1177
+12/09/22 Smcom email sending limits now do not apply to self configured smtp
+10/09/22 Separate smcom email sending limit from config limit for open source users
+09/09/22 Stop publisher colour categories being chosen, add breed categories #1175
+06/09/22 Remove users without VIEW_DIARY permission as diary note targets #1174
+04/09/22 Set clinic calendar isRTL as well #1173
+04/09/22 Set calendar isRTL for Hebrew/Arabic #1173
+31/08/22 Support for importing Stripe CSV files #1172
+31/08/22 Allow sort to be set for html_X_animals service methods #720
+29/08/22 Address lookup from postcode for UK/Ireland/Canada/Holland #306
+27/08/22 Make animals and people hyperlinks in looking for report
+25/08/22 Allow multiple entry categories to be set for sac metrics #1153
+24/08/22 Allow upto 20 custom emblems
+23/08/22 Check the home telephone field when finding similar people
+22/08/22 Change medical profile column labels to match dialog (Name->Profile)
+18/08/22 Add locale for Zimbabwe en_ZW
+18/08/22 SAC Metrics publisher now live #1153
 16/08/22 User screen shows login/super/2fa enabled in a single column #1055
 16/08/22 Support for 2FA via Google Authenticator #1055
 16/08/22 Add QRCodeJS lib, backend code for one time passwords #1055

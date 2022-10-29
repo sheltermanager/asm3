@@ -62,7 +62,9 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="postcode">' + _("Zipcode") + '</label></td>',
-                '<td><input class="asm-textbox newform" id="postcode" data="postcode" type="text" /></td>',
+                '<td><input class="asm-textbox newform" id="postcode" data="postcode" type="text" />',
+                '<button id="button-postcodelookup">' + _("Lookup Address") + '</button>',
+                '</td>',
                 '</tr>',
                 '<tr id="countryrow">',
                 '<td><label for="country">' + _("Country") + '</label></td>',
@@ -247,6 +249,23 @@ $(function() {
                 }
             });
             if (!config.bool("USStateCodes")) { $("#county").autocomplete({ source: controller.counties, minLength: 3 }); }
+
+            $("#button-postcodelookup")
+                .button({ icons: { primary: "ui-icon-search" }, text: false })
+                .click(async function() {
+                    let country = $("#country").val();
+                    let postcode = $("#postcode").val();
+                    if (!postcode) { return; }
+                    if (!country) { country = config.str("OrganisationCountry"); }
+                    let formdata = "mode=postcodelookup&country=" + country + "&postcode=" + postcode + "&locale=" + asm.locale + "&account=" + asm.useraccount;
+                    const response = await common.ajax_post("person_embed", formdata);
+                    const rows = jQuery.parseJSON(response);
+                    $("#address").val( rows[0].street );
+                    $("#town").val( rows[0].town );
+                    $("#county").val( rows[0].county );
+                });
+
+            $("#button-postcodelookup").toggle( controller.postcodelookup );
 
             $("#add").button().click(function() {
                 person_new.create_and_edit = false;

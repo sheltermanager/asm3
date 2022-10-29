@@ -208,8 +208,8 @@ class S3Storage(DBFSStorage):
                 threading.Thread(target=self._s3_put_object, args=[self.bucket, object_key, body]).start()
                 return body
             else:
-                asm3.al.error(str(err), "dbfs.S3Storage.get", self.dbo)
-                raise DBFSError("Failed retrieving from S3 (endpoint=%s): %s" % (self.endpoint_url, err))
+                asm3.al.error("s3://%s/%s: %s" % (self.bucket, object_key, err), "dbfs.S3Storage.get", self.dbo)
+                raise DBFSError("Failed retrieving %s from S3 (endpoint=%s): %s" % (object_key, self.endpoint_url, err))
 
     def put(self, dbfsid, filename, filedata):
         """ Stores the file data (clearing the Content column) and returns the URL """
@@ -222,8 +222,8 @@ class S3Storage(DBFSStorage):
             threading.Thread(target=self._s3_put_object, args=[self.bucket, object_key, filedata]).start()
             return url
         except Exception as err:
-            asm3.al.error(str(err), "dbfs.S3Storage.put", self.dbo)
-            raise DBFSError("Failed storing in S3: %s" % err)
+            asm3.al.error("s3://%s/%s: %s" % (self.bucket, object_key, err), "dbfs.S3Storage.put", self.dbo)
+            raise DBFSError("Failed storing %s in S3: %s" % (object_key, err))
 
     def delete(self, url):
         """ Deletes the file data """
@@ -232,8 +232,8 @@ class S3Storage(DBFSStorage):
             asm3.cachedisk.delete(self._cache_key(url), self.dbo.database)
             threading.Thread(target=self._s3_delete_object, args=[self.bucket, object_key]).start()
         except Exception as err:
-            asm3.al.error(str(err), "dbfs.S3Storage.delete", self.dbo)
-            raise DBFSError("Failed deleting from S3: %s" % err)
+            asm3.al.error("s3://%s/%s: %s" % (self.bucket, object_key, err), "dbfs.S3Storage.delete", self.dbo)
+            raise DBFSError("Failed deleting %s from S3: %s" % (object_key, err))
 
     def _s3_delete_object(self, bucket, key):
         """ Deletes an object in S3. This should be called on a new thread """
@@ -267,7 +267,9 @@ class S3Storage(DBFSStorage):
 
 class DBFSError(web.HTTPError):
     """ Custom error thrown by dbfs modules """
+    msg = ""
     def __init__(self, msg):
+        self.msg = msg
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>DBFS Error</h1><p>%s</p>" % msg

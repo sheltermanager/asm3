@@ -1,0 +1,81 @@
+Shelter Inventory by Adoption Coordinator
+###
+Inventories
+###
+Any/33909 rev01
+###
+Detailed current shelter inventory, with breed and microchip details broken down by adoption coordinator and species.
+###
+en
+###
+SELECT a.ShelterCode, 
+a.AnimalName, 
+a.MostRecentEntryDate,
+a.IdentichipNumber,
+a.AnimalAge,
+a.BreedName,
+a.TimeOnShelter,
+sx.Sex,
+t.AnimalType,
+s.SpeciesName,
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' 
+WHEN a.ActiveMovementType = 1 THEN 'Trial Adoption' 
+WHEN a.ActiveMovementType = 8 THEN 'Retailer' 
+ELSE i.LocationName END AS LocationName,
+CoordinatorName AS co.OwnerName
+FROM animal a
+LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
+LEFT OUTER JOIN owner co ON co.ID = a.AdoptionCoordinatorID
+WHERE a.Archived = 0
+ORDER BY CoordinatorName, s.SpeciesName, DateBroughtIn
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_CoordinatorName
+$$HEAD
+<h2>$CoordinatorName</h2>
+$$FOOT
+<h2>Total $CoordinatorName: {COUNT.CoordinatorName}</h2>
+GROUP$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h3>$SpeciesName</h3>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Microchip</b></td>
+<td><b>Type</b></td>
+<td><b>Age</b></td>
+<td><b>Breed</b></td>
+<td><b>Sex</b></td>
+<td><b>Date Entered Shelter</b></td>
+<td><b>Location</b></td>
+<td><b>Time On Shelter</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $CoordinatorName - $SpeciesName: {COUNT.SpeciesName}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$sheltercode</td>
+<td>$animalname</td>
+<td>$identichipnumber</td>
+<td>$animaltype</td>
+<td>$animalage</td>
+<td>$breedname</td>
+<td>$sex</td>
+<td>$mostrecententrydate</td>
+<td>$locationname</td>
+<td>$timeonshelter</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

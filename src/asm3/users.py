@@ -446,13 +446,30 @@ def get_site(dbo, username):
     except:
         return 0
 
+def get_diary_forlist(dbo):
+    """
+    Returns a list of all roles, plus users who are valid targets for diary notes
+    (ie. have the VIEW_DIARY permission)
+    List returned contains USERNAME which is both roles and users
+    """
+    users = get_users_and_roles(dbo)
+    out = []
+    for u in users:
+        # We only need to look up the security flags for non-super users and non-roles
+        securitymap = ""
+        if u.ISROLE == 0 or u.SUPERUSER == 0: 
+            securitymap = get_security_map(dbo, u.USERNAME)
+        if u.ISROLE == 1 or u.SUPERUSER == 1 or has_security_flag(securitymap, VIEW_DIARY):
+            out.append(u)
+    return out
+
 def get_users_and_roles(dbo):
     """
-    Returns a single list of all users and roles together,
-    with one column - USERNAME
+    Returns a single list of all users and roles together, with USERNAME containing the
+    name of both roles and users.
     """
-    return dbo.query("SELECT UserName FROM users " \
-        "UNION SELECT Rolename AS UserName FROM role ORDER BY UserName")
+    return dbo.query("SELECT UserName, 0 AS IsRole, SuperUser FROM users " \
+        "UNION SELECT Rolename AS UserName, 1 AS IsRole, 0 AS SuperUser FROM role ORDER BY UserName")
 
 def get_users(dbo, user='%'):
     """

@@ -59,10 +59,10 @@ CACHE_PROTECT_METHODS = {
     "media_file": [ "mediaid" ],
     "json_adoptable_animal": [ "animalid" ],
     "html_adoptable_animals": [ "speciesid", "animaltypeid", "locationid", "template", "underweeks", "overweeks" ],
-    "html_adopted_animals": [ "days", "template", "speciesid", "animaltypeid" ],
-    "html_deceased_animals": [ "days", "template", "speciesid", "animaltypeid" ],
-    "html_flagged_animals": [ "template", "speciesid", "animaltypeid", "flag", "all" ],
-    "html_held_animals": [ "template", "speciesid", "animaltypeid" ],
+    "html_adopted_animals": [ "days", "template", "speciesid", "animaltypeid", "order" ],
+    "html_deceased_animals": [ "days", "template", "speciesid", "animaltypeid", "order" ],
+    "html_flagged_animals": [ "template", "speciesid", "animaltypeid", "flag", "all", "order" ],
+    "html_held_animals": [ "template", "speciesid", "animaltypeid", "order" ],
     "json_adoptable_animals": [ "sensitive" ],
     "json_adoptable_animals_xp": [],
     "xml_adoptable_animal": [ "animalid" ],
@@ -233,6 +233,10 @@ def checkout_adoption_page(dbo, token):
     co["donationmsg"] = asm3.configuration.adoption_checkout_donation_msg(dbo)
     co["donationtiers"] = asm3.configuration.adoption_checkout_donation_tiers(dbo)
     co["token"] = token
+    # Record that the checkout was accessed in the log
+    logtypeid = asm3.configuration.generate_document_log_type(dbo)
+    logmsg = "AC02:%s:%s(%s)-->%s(%s)" % (co["movementid"], co["animalname"], co["animalid"], co["personname"], co["personid"])
+    asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["personid"], logtypeid, logmsg)
     return asm3.html.js_page(scripts, _("Adoption Checkout", l), co)
 
 def checkout_adoption_post(dbo, post):
@@ -299,6 +303,10 @@ def checkout_adoption_post(dbo, post):
     elif co["paymentdonid"] > 0 and donationamt == 0:
         # The user has changed their voluntary donation amount to 0 - delete it
         dbo.delete("ownerdonation", co["paymentdonid"], "checkout")
+    # Record that the checkout was completed in the log
+    logtypeid = asm3.configuration.generate_document_log_type(dbo)
+    logmsg = "AC03:%s:%s(%s)-->%s(%s):volamt=%s" % (co["movementid"], co["animalname"], co["animalid"], co["personname"], co["personid"], donationamt)
+    asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["personid"], logtypeid, logmsg)
     # Construct the payment checkout URL
     title = _("{0}: Adoption fee", l)
     if co["paymentdonid"] != "0": title = _("{0}: Adoption fee and donation", l)
@@ -523,12 +531,12 @@ def handler(post, path, remoteip, referer, useragent, querystring):
     elif method == "html_adopted_animals":
         return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
             asm3.publishers.html.get_adopted_animals(dbo, daysadopted=post.integer("days"), style=post["template"], \
-                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), orderby=post["order"]))
 
     elif method == "html_deceased_animals":
         return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
             asm3.publishers.html.get_deceased_animals(dbo, daysdeceased=post.integer("days"), style=post["template"], \
-                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), orderby=post["order"]))
 
     elif method == "html_flagged_animals":
         if post["flag"] == "":
@@ -536,12 +544,13 @@ def handler(post, path, remoteip, referer, useragent, querystring):
             return ("text/plain", 0, 0, "ERROR: Invalid flag")
         return set_cached_response(cache_key, account, "text/html", 1800, 1800, \
             asm3.publishers.html.get_flagged_animals(dbo, style=post["template"], \
-                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), flag=post["flag"], allanimals=post.integer("all")))
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), flag=post["flag"], 
+                allanimals=post.integer("all"), orderby=post["orderby"]))
 
     elif method == "html_held_animals":
         return set_cached_response(cache_key, account, "text/html", 1800, 1800, \
             asm3.publishers.html.get_held_animals(dbo, style=post["template"], \
-                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid")))
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), orderby=post["order"]))
 
     elif method == "json_adoptable_animals_xp":
         rs = strip_personal_data(asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True))

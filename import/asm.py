@@ -90,6 +90,10 @@ pickuplocations = {}
 # Dictionary of custom colours if we're going to supply a new set
 customcolours = {}
 
+# media files written
+mediafilescount = 0
+mediafilesbytes = 0
+
 # See end of file for dictionaries of lookups that require classes
 
 def atoi(s):
@@ -108,7 +112,7 @@ def atof(s):
     except:
         return 0
 
-def csv_to_list(fname, strip = False, remove_control = False, remove_non_ascii = False, uppercasekeys = False, unicodehtml = False):
+def csv_to_list(fname, strip = False, remove_bom = True, remove_control = False, remove_non_ascii = False, uppercasekeys = False, unicodehtml = False):
     """
     Reads the csv file fname and returns it as a list of maps 
     with the first row used as the keys.
@@ -127,16 +131,15 @@ def csv_to_list(fname, strip = False, remove_control = False, remove_non_ascii =
     b = StringIO()
     with open(fname, "r") as f:
         for s in f.readlines():
+            if remove_bom:
+                s = s.replace("\ufeff", "")
             if remove_control:
-                b.write(''.join(c for c in s if ord(c) >= 32))
-                b.write("\n")
+                s = ''.join(c for c in s if ord(c) >= 32) + "\n"
             if remove_non_ascii:
-                b.write(''.join(c for c in s if ord(c) >= 32 and ord(c) <= 127))
-                b.write("\n")
-            elif unicodehtml:
-                b.write(s.decode("utf8").encode("ascii", "xmlcharrefreplace"))
-            else:
-                b.write(s)
+                s = ''.join(c for c in s if ord(c) >= 32 and ord(c) <= 127) + "\n"
+            if unicodehtml:
+                s = s.encode("ascii", "xmlcharrefreplace").decode("ascii")
+            b.write(s)
         f.close()
     reader = csv.DictReader(StringIO(b.getvalue()))
     for row in reader:
@@ -238,6 +241,7 @@ def remove_time(s):
     return s.split(" ")[0]
 
 def remove_seconds(s):
+    if s is None: return s
     if s.find(" ") == -1:
         return s
     b = s.split(" ", 1)
@@ -334,6 +338,10 @@ def getsex_mf(s):
 def now():
     return datetime.datetime.today()
 
+def today():
+    """ Returns today as a Python date """
+    return datetime.datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+
 def stderr(s):
     sys.stderr.write("%s\n" % s)
 
@@ -344,6 +352,7 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
     if len(animals) != 0:
         onshelter = 0
         offshelter = 0
+        nonshelter = 0
         dead = 0
         euth = 0
         dupcodes = 0
@@ -356,13 +365,15 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
             codes.add(a.ShelterCode)
             if a.Archived == 0:
                 onshelter += 1
+            elif a.Archived == 1 and a.NonShelterAnimal == 1:
+                nonshelter += 1
             elif a.Archived == 1 and a.DeceasedDate is None:
                 offshelter += 1
             elif a.DeceasedDate is not None and a.PutToSleep == 0:
                 dead += 1
             elif a.DeceasedDate is not None and a.PutToSleep == 1:
                 euth += 1
-        stderr("%d animals (%d on-shelter, %d off-shelter, %d dead, %d euthanised)" % (len(animals), onshelter, offshelter, dead, euth))
+        stderr("%d animals (%d on-shelter, %d off-shelter, %d non-shelter, %d dead, %d euthanised)" % (len(animals), onshelter, offshelter, nonshelter, dead, euth))
         if dupcodes > 0:
             stderr("WARNING: %d duplicate shelter codes (%s .. %s)" % (dupcodes, dups[0], dups[-1]))
     o(animalmedicals, "medicals")
@@ -374,10 +385,8 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
     o(ownerlicences, "licences")
     o(ownerdonations, "payments")
     o(animalcontrol, "incidents")
-
-def today():
-    """ Returns today as a Python date """
-    return datetime.datetime.today()
+    if mediafilescount > 0:
+        stderr("%d media files (%d bytes)" % (mediafilescount, mediafilesbytes))
 
 # List of default colours
 colours = (
@@ -1456,7 +1465,7 @@ def animal_image(animalid, imagedata):
     """ Writes the media and dbfs entries to add an image to an animal """
     media_file(0, animalid, "x.jpg", imagedata)
 
-def media_file(linktypeid, linkid, filename, filedata):
+def media_file(linktypeid, linkid, filename, filedata, medianotes = ""):
     """ Writes the media and dbfs entries to add a piece of media to an animal or person """
     if filedata is None: return
     mediaid = getid("media")
@@ -1465,18 +1474,23 @@ def media_file(linktypeid, linkid, filename, filedata):
     medianame = str(mediaid) + extension
     mimetype = mime_type(filename)
     encoded = base64.b64encode(filedata)
+    if medianotes == "": medianotes = filename
     if sys.version_info[0] > 2: encoded = encoded.decode("ascii") # PYTHON3
     websitephoto = extension == ".jpg" and 1 or 0
     dbfsidpath = "/animal"
     if linktypeid > 0: dbfsidpath = "/owner"
     print(f"UPDATE media SET websitephoto = 0, docphoto = 0 WHERE linkid = {linkid} AND linktypeid = {linktypeid};")
     print(f"INSERT INTO media (id, medianame, medianotes, mediasize, mediamimetype, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
-        f"excludefrompublish, linkid, linktypeid, recordversion, date) VALUES ({mediaid}, '{medianame}', '{filename}', {len(filedata)}, '{mimetype}', {websitephoto}, {websitephoto}, 0, 0, 0, " \
+        f"excludefrompublish, linkid, linktypeid, recordversion, date) VALUES ({mediaid}, '{medianame}', '{medianotes}', {len(filedata)}, '{mimetype}', {websitephoto}, {websitephoto}, 0, 0, 0, " \
         f"{linkid}, {linktypeid}, 0, {dd(datetime.datetime.today())});")
     print(f"INSERT INTO dbfs (id, name, path, content) VALUES ({getid('dbfs')}, '{linkid}', '{dbfsidpath}', '');")
     dbfsid = getid("dbfs")
     print(f"INSERT INTO dbfs (id, name, path, url, content) VALUES ({dbfsid}, '{medianame}', '{dbfsidpath + '/' + str(linkid)}', 'base64:', '{encoded}');")
     print(f"UPDATE media SET DBFSID = {dbfsid} WHERE ID = {mediaid};")
+    global mediafilescount
+    global mediafilesbytes
+    mediafilescount += 1
+    mediafilesbytes += len(filedata)
 
 def animal_test(animalid, required, given, typename, resultname, comments = ""):
     """ Returns an animaltest object """
@@ -1555,7 +1569,7 @@ def animal_regimen_single(animalid, dategiven, treatmentname, dosage = "", comme
 
 def load_image_from_file(fpath, case_sensitive = True):
     """ Reads image data from a disk file or returns None if the file does not exist """
-    if case_sensitive and not os.path.exists(filename): return None
+    if case_sensitive and not os.path.exists(fpath): return None
     if not case_sensitive:
         # Search the directory for the filename and compare case insensitive, then
         # update fpath if we find the file
@@ -2153,7 +2167,7 @@ class Animal:
         if typename == "": typename = type_name_for_id(self.AnimalTypeID)
         self.YearCodeID = nextyearcode
         self.ShelterCode = "%s%d%03d" % ( typename[0:1], self.DateBroughtIn.year, nextyearcode)
-        self.ShortCode = "%03d%s" % (nextyearcode, typename[0:1])
+        if self.ShortCode == "": self.ShortCode = "%03d%s" % (nextyearcode, typename[0:1]) # check so it can be assigned before generating code
         nextyearcode += 1
     def __str__(self):
         if self.AnimalAge == "" and self.DateOfBirth is not None:
@@ -2282,7 +2296,7 @@ class Animal:
             ( "LastChangedBy", ds(self.LastChangedBy) ),
             ( "LastChangedDate", dd(self.LastChangedDate) )
             )
-        sys.stderr.write("animal: %d %s %s %s, %s %s, arc: %s, intake %s, dob %s\n" % (self.ID, self.AnimalName, self.ShelterCode, self.ShortCode, self.BreedName, species_name_for_id(self.SpeciesID), self.Archived, self.DateBroughtIn, self.DateOfBirth))
+        sys.stderr.write("animal: %d %s %s %s, %s %s, arc: %s, ns: %s, intake %s, dob %s\n" % (self.ID, self.AnimalName, self.ShelterCode, self.ShortCode, self.BreedName, species_name_for_id(self.SpeciesID), self.Archived, self.NonShelterAnimal, self.DateBroughtIn, self.DateOfBirth))
         return makesql("animal", s)
 
 class Log:
@@ -2415,6 +2429,7 @@ class Owner:
     IsGiftAid = 0
     IsDeceased = 0
     ExcludeFromBulkEmail = 0
+    GDPRContactOptIn = ""
     HomeCheckAreas = ""
     DateLastHomeChecked = None
     HomeCheckedBy = 0
@@ -2503,6 +2518,7 @@ class Owner:
             ( "IsGiftAid", di(self.IsGiftAid) ),
             ( "IsDeceased", di(self.IsDeceased) ),
             ( "ExcludeFromBulkEmail", di(self.ExcludeFromBulkEmail) ),
+            ( "GDPRContactOptIn", ds(self.GDPRContactOptIn) ),
             ( "HomeCheckAreas", ds(self.HomeCheckAreas) ),
             ( "DateLastHomeChecked", dd(self.DateLastHomeChecked) ),
             ( "HomeCheckedBy", di(self.HomeCheckedBy) ),

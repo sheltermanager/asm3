@@ -180,6 +180,9 @@ const html = {
                 s.push(html.icon("movement", a.DISPLAYLOCATIONNAME + " / " + a.CURRENTOWNERNAME));
             }
         }
+        if (config.bool("EmblemAdoptable") && html.is_animal_adoptable(a)[0]) {
+            s.push(html.icon("adoptable", _("Adoptable")));
+        }
         if (config.bool("EmblemBonded") && (a.BONDEDANIMALID || a.BONDEDANIMAL2ID)) {
             s.push(html.icon("bonded", _("Bonded")));
         }
@@ -249,7 +252,7 @@ const html = {
         if (a.POPUPWARNING) {
             s.push(html.icon("warning", String(a.POPUPWARNING)));
         }
-        $.each([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], function(i, v) {
+        $.each([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20], function(i, v) {
             var cflag = config.str("EmblemsCustomFlag" + v), ccond = config.str("EmblemsCustomCond" + v), cemblem = config.str("EmblemsCustomValue" + v);
             if (cflag && cemblem && (ccond == "has" || !ccond) && html.is_animal_flag(a.ADDITIONALFLAGS, cflag)) {
                 s.push('<span class="custom" title="' + html.title(cflag) + '">' + cemblem + '</span>');
@@ -705,6 +708,42 @@ const html = {
             }
         });
         return h;
+    },
+
+    /**
+     * Reads an array of strings and produces HTML options from it.
+     * Encode values and labels with a pipe |, eg: value|label - no pipe means no value attribute
+     * If the label starts with **, outputs as a group/header instead.
+     */
+    list_to_options_array: function(a) {
+        let d = "", ingroup = false;
+        $.each(a, function(ia, va) {
+            if (va.indexOf("|") != -1) {
+                let [ov, ol] = va.split("|");
+                if (ol.indexOf("**--") == 0) { 
+                    if (ingroup) { d += "</optgroup>"; }
+                    ingroup = true;
+                    d += '<optgroup label="' + ol.replace("**--", "") + '">';
+                }
+                else {
+                    d += '<option value="' + ov + '">' + ol + '</option>';
+                }
+            }
+            else {
+                if (va.indexOf("**--") == 0) { 
+                    if (ingroup) { d += "</optgroup>"; }
+                    ingroup = true;
+                    d += '<optgroup label="' + va.replace("**--", "") + '">';
+                }
+                else {
+                    d += "<option>" + va + "</option>";
+                }
+            }
+        });
+        if (ingroup) {
+            d += "</optgroup>";
+        }
+        return d;
     },
 
     /**

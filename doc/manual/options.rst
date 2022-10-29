@@ -399,6 +399,10 @@ records.
   added is not an image and the notes are blank, use the original filename as
   the notes.
 
+* When I change the flags on an animal/person, make a note of it in the log
+  with this type:  If this option is on a log record is created when you add
+  or remove a person or animal flag. 
+
 * When I mark an animal held, make a note of it in the log: If this option is on,
   a log record is created when you mark an animal held along with the hold
   until date.

@@ -139,16 +139,18 @@ def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "
     surname = surname.replace("'", "`").lower().strip()
     email = email.replace("'", "`").lower().strip()
     eq = []
+    hq = []
     mq = []
     per = []
     if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
         eq = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.EmailAddress) LIKE ?" % siteclause, [email])
     if mobile != "" and asm3.utils.atoi(mobile)> 9999: # at least 5 digits to constitute a valid number
         mq = dbo.query(get_person_query(dbo) + " WHERE %s %s LIKE ?" % (siteclause, dbo.sql_atoi("o.MobileTelephone")) , [asm3.utils.digits_only(mobile)])
+        hq = dbo.query(get_person_query(dbo) + " WHERE %s %s LIKE ?" % (siteclause, dbo.sql_atoi("o.HomeTelephone")) , [asm3.utils.digits_only(mobile)])
     if address != "":
         per = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname) LIKE ? AND " \
          "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames + "%", address + "%"))
-    return eq + mq + per
+    return eq + mq + hq + per
 
 def get_person_name(dbo, personid):
     """
@@ -264,6 +266,18 @@ def get_reserves_without_homechecks(dbo):
     return dbo.query(get_person_query(dbo) + " INNER JOIN adoption a ON a.OwnerID = o.ID " \
         "WHERE a.MovementType = 0 AND a.ReservationDate Is Not Null AND a.ReservationCancelledDate Is Null AND o.IDCheck = 0")
 
+def get_open_adoption_checkout(dbo, cutoff=7):
+    """
+    Returns owners with adoption checkout initiated, but not complete in the last cutoff days
+    """
+    cutoffdate = dbo.today(cutoff * -1)
+    rows = dbo.query("SELECT l.LinkID AS ID FROM log l " \
+        "WHERE l.LinkType=1 AND l.Date >= ? AND l.Comments LIKE 'AC01%%' " \
+        "AND (SELECT COUNT(*) FROM log WHERE LinkID=l.LinkID AND LinkType=1 AND Date >= ? AND Comments LIKE 'AC01%%') " \
+        " > (SELECT COUNT(*) FROM log WHERE LinkID=l.LinkID AND LinkType=1 AND Date >= ? AND Comments LIKE 'AC03%%') ", \
+        [cutoffdate, cutoffdate, cutoffdate], distincton="ID")
+    return dbo.query(get_person_query(dbo) + "WHERE o.ID IN (%s)" % dbo.sql_in(rows))
+
 def get_overdue_donations(dbo):
     """
     Returns owners that have an overdue regular donation
@@ -276,18 +290,21 @@ def get_signed_requests(dbo, cutoff=7):
     Returns owners that have a fulfilled a signing request in the last cutoff days
     """
     cutoffdate = dbo.today(cutoff * -1)
-    return dbo.query(get_person_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=1 " \
-        "AND l.Date >= ? AND l.Comments LIKE 'ES02%%'", [cutoffdate], distincton="ID")
+    rows = dbo.query("SELECT l.LinkID AS ID FROM log l " \
+        "WHERE l.LinkType=1 AND l.Date >= ? AND l.Comments LIKE 'ES02%%'", [cutoffdate], distincton="ID")
+    return dbo.query(get_person_query(dbo) + "WHERE o.ID IN (%s)" % dbo.sql_in(rows))
 
 def get_unsigned_requests(dbo, cutoff=31):
     """
     Returns owners that have more signing requests in the last cutoff days than signed
     """
     cutoffdate = dbo.today(cutoff * -1)
-    return dbo.query(get_person_query(dbo) + "INNER JOIN log l ON o.ID = l.LinkID AND l.LinkType=1 AND l.Date >= ? AND l.Comments LIKE 'ES01%%' " \
-        "WHERE (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=1 AND Date >= ? AND Comments LIKE 'ES01%%') " \
-        " > (SELECT COUNT(*) FROM log WHERE LinkID=o.ID AND LinkType=1 AND Date >= ? AND Comments LIKE 'ES02%%') ", 
+    rows = dbo.query("SELECT l.LinkID AS ID FROM log l " \
+        "WHERE l.LinkType=1 AND l.Date >= ? AND l.Comments LIKE 'ES01%%' " \
+        "AND (SELECT COUNT(*) FROM log WHERE LinkID=l.LinkID AND LinkType=1 AND Date >= ? AND Comments LIKE 'ES01%%') " \
+        " > (SELECT COUNT(*) FROM log WHERE LinkID=l.LinkID AND LinkType=1 AND Date >= ? AND Comments LIKE 'ES02%%') ", \
         [cutoffdate, cutoffdate, cutoffdate], distincton="ID")
+    return dbo.query(get_person_query(dbo) + "WHERE o.ID IN (%s)" % dbo.sql_in(rows))
 
 def get_links(dbo, pid):
     """
@@ -897,7 +914,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
 
     # If we're using GDPR contact options and email is not set, set the exclude from bulk email flag
     if asm3.configuration.show_gdpr_contact_optin(dbo):
-        if post["gdprcontactoptin"].find("email") == -1:
+        if post["gdprcontactoptin"].find("email") == -1 and post["flags"].find("excludefrombulkemail") == -1:
             post["flags"] += ",excludefrombulkemail"
 
     dbo.update("owner", pid, {
@@ -975,6 +992,8 @@ def update_flags(dbo, username, personid, flags):
     def bi(b): 
         return b and 1 or 0
 
+    l = dbo.locale
+
     homechecked = bi("homechecked" in flags)
     banned = bi("banned" in flags)
     dangerous = bi("dangerous" in flags)
@@ -996,6 +1015,13 @@ def update_flags(dbo, username, personid, flags):
     excludefrombulkemail = bi("excludefrombulkemail" in flags)
     sponsor = bi("sponsor" in flags)
     flagstr = "|".join(flags) + "|"
+
+    # If the option is on and the flags have changed, log it
+    if asm3.configuration.flag_change_log(dbo):
+        oldflags = dbo.query_string("SELECT AdditionalFlags FROM owner WHERE ID=?", [personid])
+        if oldflags != flagstr:
+            asm3.log.add_log(dbo, username, asm3.log.PERSON, personid, asm3.configuration.flag_change_log_type(dbo),
+                _("Flags changed from '{0}' to '{1}'", l).format(oldflags, flagstr))
 
     dbo.update("owner", personid, {
         "IDCheck":                  homechecked,
@@ -1550,7 +1576,7 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
         animals = dbo.query(asm3.animal.get_animal_query(dbo) + " WHERE " + " AND ".join(ands) + " ORDER BY a.LastChangedDate DESC", v)
 
         # Output owner info
-        h.append("<h2>%s (%s) %s %s</h2>" % (p.OWNERNAME, p.OWNERADDRESS, p.HOMETELEPHONE, p.MOBILETELEPHONE))
+        h.append("<h2><a target='_blank' href='person?id=%s'>%s</a> (%s) %s %s</h2>" % (p.ID, p.OWNERNAME, p.OWNERADDRESS, p.HOMETELEPHONE, p.MOBILETELEPHONE))
         if p.MATCHADDED is not None or p.MATCHEXPIRES is not None:
             h.append( "<p style='font-size: 8pt'>%s - %s</p>" % (python2display(l, p.MATCHADDED), python2display(l, p.MATCHEXPIRES)) )
         if p.COMMENTS != "" and p.COMMENTS is not None: 
@@ -1568,7 +1594,7 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
                 h.append("".join(ah))
             h.append( "<tr>")
             h.append( td(a.CODE))
-            h.append( td(a.ANIMALNAME))
+            h.append( td("<a target='_blank' href='animal?id=%s'>%s</a>" % (a.ID, a.ANIMALNAME)) )
             h.append( td(a.ANIMALAGE))
             h.append( td(a.SEXNAME))
             h.append( td(a.SIZENAME))

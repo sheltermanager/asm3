@@ -117,6 +117,21 @@ $(function() {
                         return true;
                     }
                 },
+                button_click: function() {
+                    if ($(this).attr("data-link")) {
+                        window.open($(this).attr("data-link"));
+                    }
+                    else if ($(this).attr("data-animalid")) {
+                        let animalid = $(this).attr("data-animalid");
+                        $("[data-animalid='" + animalid + "']").each(function() {
+                            if ($(this).is(":visible")) {
+                                $(this).closest("tr").find("input[type='checkbox']").prop("checked", true);
+                                $(this).closest("tr").addClass("ui-state-highlight");
+                            }
+                        });
+                        tableform.table_update_buttons(table, buttons);
+                    }
+                },
                 columns: [
                     { field: "MOVEMENTNAME", display: _("Type") }, 
                     { field: "MOVEMENTDATE", display: _("Date"), 
@@ -215,7 +230,12 @@ $(function() {
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
                             if (!row.ANIMALNAME) { return ""; }
-                            return html.animal_link(row);
+                            let s = html.animal_link(row);
+                            if (controller.name == "move_book_reservation") {
+                                s += '<button data-icon="check" data-text="false" data-animalid="' + row.ANIMALID + '">' +
+                                    _("Select all reservations for this animal") + '</button>';
+                            }
+                            return s;
                         },
                         hideif: function(row) {
                             // Don't show this column for animal_movement
@@ -224,8 +244,14 @@ $(function() {
                     },
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {
-                            if (row.OWNERID) { return html.person_link_address(row); }
-                            return "";
+                            if (!row.OWNERID) { return ""; }
+                            let s = "";
+                            if (controller.name == "move_book_reservation") {
+                                s += '<button style="float: right" data-asmicon="media" data-text="false" data-link="person_media?id=' + row.OWNERID + '">' +
+                                    _("View media for this person") + '</button>';
+                            }
+                            s += html.person_link_address(row);
+                            return s;
                         },
                         hideif: function(row) {
                             return controller.name == "move_book_retailer" || controller.name == "person_movements";
@@ -387,6 +413,18 @@ $(function() {
                         });
                     }
                 },
+                { id: "cancel", text: _("Cancel"), icon: "cross", enabled: "multi", perm: "camv",
+                    tooltip: _("Cancel the selected reservations"),
+                    hideif: function() { return controller.name != "move_book_reservation"; },
+                    click: async function() {
+                        await common.ajax_post("movement", "mode=cancelreserve&ids=" + tableform.table_ids(table));
+                        $.each(tableform.table_selected_rows(table), function(i, v) {
+                            v.RESERVATIONCANCELLEDDATE = format.date_now_iso();
+                        });
+                        tableform.buttons_default_state(buttons);
+                        tableform.table_update(table);
+                    }
+                },
                 { id: "return", text: _("Return"), icon: "complete", enabled: "one", perm: "camv",
                     tooltip: _("Return this movement and bring the animal back to the shelter"),
                     hideif: function() {
@@ -435,6 +473,38 @@ $(function() {
                         tableform.table_update(table);
                     }
                 },
+                { id: "email", text: _("Email"), icon: "email", enabled: "multi", perm: "emo",
+                    tooltip: _("BCC all the people linked to these movements"),
+                    hideif: function() {
+                        return controller.name != "move_book_reservation";
+                    },
+                    click: function() {
+                        // Find the first animal id and person id for use with templates,
+                        // also build a list of all the personids to send to the back end
+                        // so that logging of the email to their record can be done
+                        let animalid = 0, personid = 0, personids = [], bccemails = [];
+                        $.each(tableform.table_selected_rows(table), function(i, row) {
+                            if (!animalid) { animalid = row.ANIMALID; }
+                            if (!personid) { personid = row.OWNERID; }
+                            personids.push(row.OWNERID);
+                            bccemails.push(row.EMAILADDRESS);
+                        });
+                        $("#emailform").emailform("show", {
+                            title: _("Email people linked to selected movements"),
+                            post: "movement",
+                            formdata: "mode=email&personids=" + personids.join(","),
+                            name: "",
+                            email: config.str("EmailAddress"),
+                            bccemail: bccemails.join(", "),
+                            subject: "",
+                            animalid: animalid,
+                            personid: personid,
+                            templates: controller.templates,
+                            logtypes: controller.logtypes,
+                            message: ""
+                        });
+                    }
+                },
                 { id: "checkout", text: _("Adopter Checkout"), icon: "email", enabled: "one", perm: "emo",
                     tooltip: _("Send a checkout email to the adopter"),
                     hideif: function() {
@@ -446,11 +516,11 @@ $(function() {
                     click: function() {
                         let row = tableform.table_selected_row(table);
                         if (row.MOVEMENTTYPE > 1) { 
-                            header.show_error("Adopter checkout only applies to reservation and adoption movements.");
+                            header.show_error(_("Adopter checkout only applies to reservation and adoption movements."));
                             return;
                         }
                         if (!row.FEE) {
-                            header.show_error("No adoption fee has been set for this animal.");
+                            header.show_error(_("No adoption fee has been set for this animal."));
                             return;
                         }
                         $("#emailform").emailform("show", {

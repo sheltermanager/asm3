@@ -401,6 +401,11 @@ def search(dbo, session, q):
             ar(asm3.person.get_unsigned_requests(dbo, 31), "PERSON", personsort)
             ar(asm3.animal.get_unsigned_requests(dbo, 31), "ANIMAL", animalsort)
 
+    elif q == "opencheckout":
+        explain = _("Adoption checkout requests issued in the last week that are still open", l)
+        if viewperson:
+            ar(asm3.person.get_open_adoption_checkout(dbo, 7), "PERSON", personsort)
+
     elif q == "activelost":
         explain = _("Lost animals reported in the last 30 days.", l)
         if asm3.users.check_permission_bool(session, asm3.users.VIEW_LOST_ANIMAL):

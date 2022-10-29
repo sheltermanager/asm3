@@ -30,7 +30,7 @@ def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0, locationid
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid, locationid=locationid, \
         underweeks=underweeks, overweeks=overweeks)
 
-def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=0):
+def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=0, orderby="adopted_desc"):
     """ Returns a page of adopted animals.
     daysadopted: The number of days the animals have been adopted
     style: The HTML publishing template to use
@@ -38,14 +38,15 @@ def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=
     animaltypeid: 0 for all animal types or a specific one
     """
     if daysadopted == 0: daysadopted = 30
-    orderby = "a.ActiveMovementDate DESC"
+    if orderby == "": orderby = "adopted_desc"
+    orderby = get_orderby_const(orderby)
     animals = dbo.query(asm3.animal.get_animal_query(dbo) + \
         " WHERE a.IsNotAvailableForAdoption = 0 AND a.ActiveMovementType = 1 AND " \
         "a.ActiveMovementDate >= ? AND a.DeceasedDate Is Null AND a.NonShelterAnimal = 0 " \
         "ORDER BY %s" % orderby, [ dbo.today(daysadopted * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypeid=0):
+def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypeid=0, orderby="deceased_desc"):
     """ Returns a page of deceased animals.
     daysdeceased: The number of days the animals have been deceased
     style: The HTML publishing template to use
@@ -53,13 +54,14 @@ def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypei
     animaltypeid: 0 for all animal types or a specific one
     """
     if daysdeceased == 0: daysdeceased = 30
-    orderby = "a.DeceasedDate DESC"
+    if orderby == "": orderby = "deceased_desc"
+    orderby = get_orderby_const(orderby)
     animals = dbo.query(asm3.animal.get_animal_query(dbo) + \
         " WHERE a.IsNotAvailableForAdoption = 0 AND a.DeceasedDate Is Not Null AND a.DeceasedDate >= ? AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 "
         "ORDER BY %s" % orderby, [ dbo.today(daysdeceased * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def get_flagged_animals(dbo, style="", speciesid=0, animaltypeid=0, flag="", allanimals=0):
+def get_flagged_animals(dbo, style="", speciesid=0, animaltypeid=0, flag="", allanimals=0, orderby="entered_desc"):
     """ Returns a page of animals with a particular flag.
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
@@ -69,19 +71,56 @@ def get_flagged_animals(dbo, style="", speciesid=0, animaltypeid=0, flag="", all
     """
     afilter = ""
     if allanimals == 0: afilter = "a.Archived = 0 AND "
-    animals = dbo.query(asm3.animal.get_animal_query(dbo) + " WHERE " + afilter + "a.AdditionalFlags LIKE ? ORDER BY a.DateBroughtIn DESC", 
+    if orderby == "": orderby = "entered_desc"
+    orderby = get_orderby_const(orderby)
+    animals = dbo.query(asm3.animal.get_animal_query(dbo) + " WHERE " + afilter + "a.AdditionalFlags LIKE ? ORDER BY " + orderby, 
         ["%%%s|%%" % flag],
         limit = asm3.configuration.record_search_limit(dbo))
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def get_held_animals(dbo, style="", speciesid=0, animaltypeid=0):
+def get_held_animals(dbo, style="", speciesid=0, animaltypeid=0, orderby="entered_desc"):
     """ Returns a page of currently held animals.
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
     animaltypeid: 0 for all animal types or a specific one
     """
-    animals = asm3.animal.get_animals_hold(dbo)
+    if orderby == "": orderby = "entered_desc"
+    orderby = get_orderby_const(orderby)
+    animals = dbo.query(asm3.animal.get_animal_query(dbo) + \
+        " WHERE a.Archived = 0 AND a.IsHold = 1 "
+        "ORDER BY %s" % orderby)
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
+
+def get_orderby_const(c):
+    """
+    Returns an ORDER BY clause for a given constant
+    Used by the methods above that are called by the html_X_animals service methods.
+    """
+    CLAUSES = {
+        "adopted_asc":      "a.ActiveMovementDate",
+        "adopted_desc":     "a.ActiveMovementDate DESC",
+        "code_asc":         "a.ShelterCode",
+        "code_desc":        "a.ShelterCode DESC",
+        "created_asc":      "a.CreatedDate",
+        "created_desc":     "a.CreatedDate DESC",
+        "dateofbirth_asc":  "a.DateOfBirth",
+        "dateofbirth_desc": "a.DateOfBirth DESC",
+        "deceased_asc":     "a.DeceasedDate",
+        "deceased_desc":    "a.DeceasedDate DESC",
+        "entered_asc":      "a.MostRecentEntryDate",
+        "entered_desc":     "a.MostRecentEntryDate DESC",
+        "holduntil_asc":    "a.HoldUntilDate",
+        "holduntil_desc":   "a.HoldUntilDate DESC",
+        "lastchanged_asc":  "a.LastChangedDate", 
+        "lastchanged_desc": "a.LastChangedDate DESC",
+        "litterid_asc":     "a.AcceptanceNumber",
+        "litterid_desc":    "a.AcceptanceNumber DESC",
+        "name_asc":         "a.AnimalName",
+        "name_desc":        "a.AnimalName DESC"
+    }
+    if c in CLAUSES:
+        return CLAUSES[c]
+    return "a.DateBroughtIn"
 
 def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locationid=0, underweeks=0, overweeks=0):
     """ Returns a page of animals.
@@ -192,6 +231,7 @@ def get_animal_view_adoptable_html(dbo):
             "asm3_adoptable_filters = \"sex breed agegroup size species\";\n" \
             "asm3_adoptable_iframe = true;\n" \
             "asm3_adoptable_iframe_fixed = false; // fixed == true does not work with multi-photos/scrolling\n" \
+            "asm3_adoptable_iframe_closeonback = true; // close the popup pane when the user navigates back\n" \
             "</script>\n" \
             "<script src=\"$$ADOPTABLEJSURL$$\"></script>"
         foot = "</body>\n</html>"

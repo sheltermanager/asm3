@@ -24,6 +24,7 @@ $(function() {
                 '<option value="shelter">' + _("All On-Shelter Animals") + '</option>',
                 '<option value="selshelter">' + _("Selected On-Shelter Animals") + '</option>',
                 '<option value="nonshelter">' + _("Non-Shelter Animals") + '</option>',
+                '<option value="where">' + _("Custom WHERE clause") + '</option>',
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -33,6 +34,15 @@ $(function() {
                 '</td>',
                 '<td>',
                 '<input id="animals" name="animals" type="hidden" class="asm-animalchoosermulti" />',
+                '</td>',
+                '</tr>',
+                '<tr id="whererow">',
+                '<td>',
+                '<label for="where">' + _("WHERE clause") + '</label>',
+                '<span id="callout-where" class="asm-callout">' + _("Supply a WHERE clause to the animal table. Eg: 'Archived=0 AND ShelterLocation=2'") + '</span>',
+                '</td>',
+                '<td>',
+                '<input id="where" name="where" type="text" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -54,13 +64,19 @@ $(function() {
                 $("#csvform").submit();
             });
 
-            $("#animalsrow").hide();
+            $("#animalsrow, #whererow").hide();
             $("#filter").change(function() {
                 if ($("#filter").select("value") == "selshelter") { 
                     $("#animalsrow").fadeIn(); 
                 }
                 else {
                     $("#animalsrow").fadeOut(); 
+                }
+                if ($("#filter").select("value") == "where") { 
+                    $("#whererow").fadeIn(); 
+                }
+                else {
+                    $("#whererow").fadeOut(); 
                 }
             });
         },

@@ -525,7 +525,10 @@ $(function() {
                 '<tr><td>',
                 '<p>',
                 '<input data="EmblemAlwaysLocation" type="checkbox" id="alwaysshowlocation" class="asm-checkbox" type="checkbox" />',
-                    html.icon("location") + ' <label for="alwaysshowlocation">' + _("Always show an emblem to indicate the current location") + '</label><br />',
+                    html.icon("location", "On Shelter") + html.icon("person", "Fostered") + html.icon("movement", "Adopted") + 
+                    ' <label for="alwaysshowlocation">' + _("Location") + '</label><br />',
+                '<input data="EmblemAdoptable" type="checkbox" id="showadoptable" class="asm-checkbox" type="checkbox" />',
+                    html.icon("adoptable") + ' <label for="showadoptable">' + _("Adoptable") + '</label><br />',
                 '<input data="EmblemBonded" type="checkbox" id="showbonded" class="asm-checkbox" type="checkbox" />',
                     html.icon("bonded") + ' <label for="showbonded">' + _("Bonded") + '</label><br />',
                 '<input data="EmblemCourtesy" type="checkbox" id="showcourtesy" class="asm-checkbox" type="checkbox" />',
@@ -564,7 +567,7 @@ $(function() {
                 '</td><td>',
                 html.info(_("You can assign a custom emblem to your additional animal flags")),
                 boxes(1), boxes(2), boxes(3), boxes(4), boxes(5), boxes(6), boxes(7), boxes(8), boxes(9), boxes(10),
-                boxes(11), boxes(12), boxes(13), boxes(14), boxes(15), 
+                boxes(11), boxes(12), boxes(13), boxes(14), boxes(15), boxes(16), boxes(17), boxes(18), boxes(19), boxes(20),
                 '</td></tr></table>',
                 '</div>'
             ].join("\n");
@@ -756,6 +759,11 @@ $(function() {
                 '<br />',
                 '<input data="DefaultMediaNotesFromFile" id="medianotesfile" type="checkbox" class="asm-checkbox" /> <label for="medianotesfile">' + _("Prefill new media notes with the filename if left blank") + '</label>',
                 '<br />',
+                '<input data="FlagChangeLog" id="flagchangelog" type="checkbox" class="asm-checkbox" /> <label for="flagchangelog">' + _("When I change the flags on an animal or person, make a note of it in the log with this type") + '</label>',
+                '<select data="FlagChangeLogType" id="flagchangelogtype" class="asm-selectbox">',
+                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
+                '</select>',
+                '</br />',
                 '<input data="HoldChangeLog" id="holdchangelog" type="checkbox" class="asm-checkbox" /> <label for="holdchangelog">' + _("When I mark an animal held, make a note of it in the log with this type") + '</label>',
                 '<select data="HoldChangeLogType" id="holdchangelogtype" class="asm-selectbox">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),

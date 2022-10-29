@@ -32,6 +32,11 @@
         use_iframe = asm3_adoptable_iframe;
     }
 
+    var iframe_back = true;
+    if (typeof asm3_adoptable_iframe_closeonback !== 'undefined') {
+        iframe_back = asm3_adoptable_iframe_closeonback;
+    }
+
     var iframe_fixed = false;
     if (typeof asm3_adoptable_iframe_fixed !== 'undefined') {
         iframe_fixed = asm3_adoptable_iframe_fixed;
@@ -215,21 +220,38 @@
         }
 
         hostdiv.innerHTML = h.join("\n");
+    };
 
-        if (use_iframe) {
-            var i, 
-                links = document.getElementsByClassName("asm3-adoptable-link"),
-                handler = function(e) {
-                    document.getElementById("asm3-adoptable-iframe").src = this.href;
-                    document.getElementById("asm3-adoptable-iframe-overlay").style.display = "block";
-                    if (!iframe_fixed) { window.scrollTo(0, 0); }
-                    e.preventDefault();
-                };
-            for (i = 0; i < links.length; i++) {
-                links[i].addEventListener("click", handler);
-            }
+    var render_iframe = function() {
+        var overlay = document.createElement('div');
+        overlay.innerHTML = substitute(overlay_template, { "iframe_position": iframe_position, "iframe_height": iframe_height, "iframe_bgcolor": iframe_bgcolor });
+        document.body.appendChild(overlay);
+        document.getElementById("asm3-adoptable-iframe-close").addEventListener("click", function(e) {
+            if (iframe_back) { window.history.back(); }
+            document.getElementById("asm3-adoptable-iframe").src = "about:blank";
+            document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
+            e.preventDefault();
+        });
+        var i, 
+            links = document.getElementsByClassName("asm3-adoptable-link"),
+            link_handler = function(e) {
+                document.getElementById("asm3-adoptable-iframe").src = this.href;
+                document.getElementById("asm3-adoptable-iframe-overlay").style.display = "block";
+                if (!iframe_fixed) { window.scrollTo(0, 0); }
+                if (iframe_back) { window.history.pushState("close", "", ""); }
+                e.preventDefault();
+            },
+            popstate_handler = function(e) {
+                if (e.state != "close") { return; }
+                document.getElementById("asm3-adoptable-iframe").src = "about:blank";
+                document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
+            };
+        for (i = 0; i < links.length; i++) {
+            links[i].addEventListener("click", link_handler);
         }
-
+        if (iframe_back) { 
+            window.addEventListener("popstate", popstate_handler);
+        }
     };
 
     var render = function() {
@@ -265,16 +287,7 @@
             }
         });
 
-        if (use_iframe) {
-            var overlay = document.createElement('div');
-            overlay.innerHTML = substitute(overlay_template, { "iframe_position": iframe_position, "iframe_height": iframe_height, "iframe_bgcolor": iframe_bgcolor });
-            document.body.appendChild(overlay);
-            document.getElementById("asm3-adoptable-iframe-close").addEventListener("click", function(e) {
-                document.getElementById("asm3-adoptable-iframe").src = "about:blank";
-                document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
-                e.preventDefault();
-            });
-        }
+        if (use_iframe) { render_iframe(); }
     };
 
     var onReady = function(event) {

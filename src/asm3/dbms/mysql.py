@@ -37,6 +37,9 @@ class DatabaseMySQL(Database):
     def ddl_drop_index(self, name, table):
         return "DROP INDEX %s ON %s" % (name, table)
 
+    def ddl_drop_notnull(self, table, column, existingtype):
+        return "ALTER TABLE %s MODIFY %s %s NULL" % (table, column, existingtype)
+
     def ddl_modify_column(self, table, column, newtype, using = ""):
         return "ALTER TABLE %s MODIFY %s %s" % (table, column, newtype)
 

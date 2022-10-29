@@ -1,14 +1,14 @@
 Cats Not FIV/L Tested
 ###
-Auditing
+Medical
 ###
-Any
+3215/Any rev01
 ###
 Shelter cats who have not been FIV/L tested.
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, a.AnimalAge, i.LocationName
+SELECT a.AnimalName, a.ShelterCode, a.AnimalAge, a.DisplayLocation, i.LocationName
 FROM animal a
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
 INNER JOIN species s ON s.ID = a.SpeciesID
@@ -30,7 +30,48 @@ $$BODY
 <td>$ANIMALNAME</td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALAGE</td>
-<td>$LOCATIONNAME</td>
+<td>$DISPLAYLOCATION</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+Cats Not FIV/L Tested (over 6 months)
+###
+Medical
+###
+3215/PostgreSQL rev01
+###
+Shelter cats aged over 6 months who have not been FIV/L tested.
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, a.AnimalAge, a.DisplayLocation, i.LocationName
+FROM animal a
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+INNER JOIN species s ON s.ID = a.SpeciesID
+WHERE a.Archived = 0 AND a.CombiTested = 0 AND SpeciesID = 2
+AND DateOfBirth <= (now() - interval '6 months')
+ORDER BY a.DateOfBirth
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Age</th>
+<th>Location</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALAGE</td>
+<td>$DISPLAYLOCATION</td>
 </tr>
 BODY$$
 

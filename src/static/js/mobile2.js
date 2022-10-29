@@ -125,22 +125,22 @@ $(document).ready(function() {
                             '<a class="nav-link" href="#">' + _("Add Call") + '</a>',
                         '</li>',
                         '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link" href="#">' + _("My Incidents"),
+                            '<a class="nav-link internal-link" data-link="myincidents" href="#">' + _("My Incidents"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.incidentsmy.length + '</span>',
                             '</a>',
                         '</li>',
                         '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link" href="#">' + _("My Undispatched Incidents"),
+                            '<a class="nav-link internal-link" data-link="unincidents" href="#">' + _("My Undispatched Incidents"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.incidentsundispatched.length + '</span>',
                             '</a>',
                         '</li>',
                         '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link" href="#">' + _("Open Incidents"),
+                            '<a class="nav-link internal-link" data-link="opincidents" href="#">' + _("Open Incidents"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.incidentsincomplete.length + '</span>',
                             '</a>',
                         '</li>',
                         '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link" href="#">' + _("Incidents Requiring Followup"),
+                            '<a class="nav-link internal-link" data-link="flincidents" href="#">' + _("Incidents Requiring Followup"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.incidentsfollowup.length + '</span>',
                             '</a>',
                         '</li>',
@@ -314,6 +314,50 @@ $(document).ready(function() {
         '</div>',
         '</div>',
 
+        '<div id="content-myincidents" class="container" style="display: none">',
+        '<h2>' + _("My Incidents") + '</h2>',
+        '<div class="mb-3">',
+        '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
+        '</div>',
+        '<div class="list-group">',
+        '</div>',
+        '</div>',
+        '<div id="content-myincidents-view" class="container" style="display: none">',
+        '</div>',
+
+        '<div id="content-unincidents" class="container" style="display: none">',
+        '<h2>' + _("My Undispatched Incidents") + '</h2>',
+        '<div class="mb-3">',
+        '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
+        '</div>',
+        '<div class="list-group">',
+        '</div>',
+        '</div>',
+        '<div id="content-unincidents-view" class="container" style="display: none">',
+        '</div>',
+
+        '<div id="content-opincidents" class="container" style="display: none">',
+        '<h2>' + _("Open Incidents") + '</h2>',
+        '<div class="mb-3">',
+        '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
+        '</div>',
+        '<div class="list-group">',
+        '</div>',
+        '</div>',
+        '<div id="content-opincidents-view" class="container" style="display: none">',
+        '</div>',
+
+        '<div id="content-flincidents" class="container" style="display: none">',
+        '<h2>' + _("Incidents Requiring Followup") + '</h2>',
+        '<div class="mb-3">',
+        '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
+        '</div>',
+        '<div class="list-group">',
+        '</div>',
+        '</div>',
+        '<div id="content-flincidents-view" class="container" style="display: none">',
+        '</div>',
+
         '<div id="content-checklicence" class="container" style="display: none">',
         '<h2>' + _("Check License") + '</h2>',
             '<div class="mb-3">',
@@ -331,16 +375,25 @@ $(document).ready(function() {
     $("body").html(h);
 
     // Returns the HTML for rendering an animal record
-    const render_animal = function(a) {
-        
+    const render_animal = async function(a, selector) {
         const i = function(label, value) {
             if (!value) { value = ""; }
             return '<div class="row align-items-start"><div class="col">' + label + '</div><div class="col">' + value + '</div></div>';
+        };
+        const col3 = function(c1, c2, c3) {
+            if (!c1 && !c2 && !c3) { return ""; }
+            return '<div class="row align-items-start"><div class="col">' + c1 + '</div><div class="col">' + c2 + '</div><div class="col">' + c3 + '</div></div>';
+        };
+        const hd = function(value) {
+            return '<div class="row align-items-start mt-3"><div class="col fw-bold">' + value + '</div></div>';
         };
         const n = function(s) {
             if (!s) { return ""; }
             return s;
         };
+        // Grab the extra data for this incident from the backend
+        let o = await common.ajax_post(post_handler, "mode=loadanimal&id=" + a.ID);
+        o = jQuery.parseJSON(o);
         let [adoptable, adoptreason] = html.is_animal_adoptable(a);
         let h = [
             '<div class="list-group" style="margin-top: 5px">',
@@ -352,10 +405,9 @@ $(document).ready(function() {
             '<h5 class="mb-1">' + a.ANIMALNAME + ' - ' + a.CODE + '</h5>',
             '<small>' + common.substitute(_("{0} {1} {2} aged {3}"), { "0": a.SEXNAME, "1": a.BREEDNAME, "2": a.SPECIESNAME, "3": a.ANIMALAGE }) + '<br/>',
             a.IDENTICHIPNUMBER + '</small><br/>',
-            '<button type="button" id="uploadphoto" class="btn btn-primary">' + _("Upload"),
-            '<i class="bi-cloud-upload-fill"></i>',
+            '<button type="button" class="uploadphoto btn btn-primary"><i class="bi-cloud-upload-fill"></i> ' + _("Upload"),
             '</button>',
-            '<input type="file" accept="image/*" id="uploadphotofile" style="display: none" />',
+            '<input type="file" accept="image/*" class="uploadphotofile" style="display: none" />',
             '</div>',
             '</div>',
 
@@ -397,7 +449,178 @@ $(document).ready(function() {
             i(_("Special Needs"), a.HASSPECIALNEEDSNAME),
             i(_("Current Vet"), n(a.CURRENTVETNAME) + " " + n(a.CURRENTVETWORKTELEPHONE))
         ];
-        return h.join("\n");
+        if (o.additional.length > 0) {
+            $.each(o.additional, function(x, v) {
+                h.push(i(v.NAME, v.VALUE)); 
+            });
+        }
+        if (common.has_permission("dvad") && o.diets.length > 0) {
+            h.push(hd(_("Diet")));
+            $.each(o.diets, function(x, v) {
+                h.push(col3(format.date(v.DATESTARTED), v.DIETNAME, v.COMMENTS));
+            });
+        }
+        if (common.has_permission("vav") && o.vaccinations.length > 0) {
+            h.push(hd(_("Vaccination")));
+            $.each(o.vaccinations, function(x, v) {
+                h.push(col3(format.date(v.DATEREQUIRED), format.date(v.DATEOFVACCINATION), v.VACCINATIONTYPE));
+            });
+        }
+        if (common.has_permission("vat") && o.tests.length > 0) {
+            h.push(hd(_("Test")));
+            $.each(o.tests, function(x, v) {
+                h.push(col3(format.date(v.DATEREQUIRED), format.date(v.DATEOFTEST), v.TESTNAME + " " + (v.DATEOFTEST ? v.RESULTNAME : "")));
+            });
+        }
+        if (common.has_permission("mvam") && o.medicals.length > 0) {
+            h.push(hd(_("Medical")));
+            $.each(o.medicals, function(x, v) {
+                h.push(col3(format.date(v.STARTDATE), v.TREATMENTNAME, v.DOSAGE));
+            });
+        }
+        if (common.has_permission("vdn") && o.diary.length > 0) {
+            h.push(hd(_("Diary")));
+            $.each(o.diary, function(x, v) {
+                h.push(col3(format.date(v.DIARYDATETIME), v.SUBJECT, v.NOTE));
+            });
+        }
+        if (common.has_permission("vle") && o.logs.length > 0) {
+            h.push(hd(_("Log")));
+            $.each(o.logs, function(x, v) {
+                h.push(col3(format.date(v.DATE), v.LOGTYPENAME, v.COMMENTS));
+            });
+        }
+        $(selector).html( h.join("\n") );
+    };
+
+    // Renders an incident record into the selector given
+    const render_incident = async function(ac, selector, backlink) {
+        const i = function(label, value) {
+            if (!value) { value = ""; }
+            return '<div class="row align-items-start"><div class="col">' + label + '</div><div class="col">' + value + '</div></div>';
+        };
+        const col3 = function(c1, c2, c3) {
+            if (!c1 && !c2 && !c3) { return ""; }
+            return '<div class="row align-items-start"><div class="col">' + c1 + '</div><div class="col">' + c2 + '</div><div class="col">' + c3 + '</div></div>';
+        };
+        const hd = function(value) {
+            return '<div class="row align-items-start mt-3"><div class="col fw-bold">' + value + '</div></div>';
+        };
+        const n = function(s) {
+            if (!s) { return ""; }
+            return s;
+        };
+        const dt = function(s) {
+            return format.date(s) + " " + format.time(s);
+        };
+        const tel = function(s) {
+            if (!s) { return ""; }
+            if ((controller.locale == "en" || controller.locale == "en_CA") && s.indexOf("+") != 0) { s = "+1" + s; }
+            if (controller.locale == "en_GB" && s.indexOf("+") != 0) { s = "+44" + s; }
+            if (controller.locale == "en_IE" && s.indexOf("+") != 0) { s = "+353" + s; }
+            return '<a href="tel:' + s + '">' + s + '</a>';
+        };
+        // Inline buttons for completing, dispatching and responding, either the date or a button
+        let comptp = ac.COMPLETEDNAME;
+        // TODO: generate select of completion types
+        //if a["COMPLETEDDATE"] is None and asm3.users.check_permission_bool(session, asm3.users.CHANGE_INCIDENT):
+        //comptp = jqm_select("comptype", 
+        //  '<option value="-1"></option>' + jqm_options(asm3.lookups.get_incident_completed_types(dbo), "ID", "COMPLETEDNAME"), 
+        //  "completedtype", str(a["ID"]))
+        let dispdt = dt(ac.DISPATCHDATETIME);
+        if (!ac.DISPATCHDATETIME && common.has_permission("cacd")) { 
+            dispdt = '<button type="button" class="dispatch btn btn-primary"><i class="bi-calendar"></i> ' + _("Dispatch") + '</button>';
+        }
+        let respdt = dt(ac.RESPONDEDDATETIME);
+        if (ac.DISPATCHDATETIME && !ac.RESPONDEDDATETIME && common.has_permission("cacr")) { 
+            respdt = '<button type="button" class="respond btn btn-primary"><i class="bi-calendar"></i> ' + _("Respond") + '</button>';
+        }
+        // Grab the extra data for this incident from the backend
+        let o = await common.ajax_post(post_handler, "mode=loadincident&id=" + ac.ID);
+        o = jQuery.parseJSON(o);
+        let h = [
+            '<div class="list-group" style="margin-top: 5px">',
+            '<a href="#" data-link="' + backlink + '" class="list-group-item list-group-item-action internal-link">',
+            '&#8592; ' + _("Back"),
+            '</a>',
+            '<div class="list-group-item">',
+            '<h5 class="mb-1">' + ac.INCIDENTNAME + ' - ' + ac.DISPATCHADDRESS + '</h5>',
+            '<small>' + ac.CALLNOTES + '</small>',
+            //'<button type="button" class="uploadphoto btn btn-primary">' + _("Upload"),
+            //'<i class="bi-cloud-upload-fill"></i>',
+            //'</button>',
+            //'<input type="file" accept="image/*" class="uploadphotofile" style="display: none" />',
+            '</div>',
+            '</div>',
+
+            i(_("Number"), format.padleft(ac.ID, 6)),
+            i(_("Type"), ac.INCIDENTNAME),
+            i(_("Incident Date/Time"), dt(ac.INCIDENTDATETIME)),
+            i(_("Notes"), ac.CALLNOTES),
+            i(_("Completion Date/Time"), comptp),
+            i(_("Completion Type"), ac.COMPLETEDNAME),
+            i(_("Call Date/Time"), dt(ac.CALLDATETIME)),
+            i(_("Taken By"), ac.CALLTAKER),
+
+            common.has_permission("vo") ? i(_("Caller"), ac.CALLERNAME) : "",
+            common.has_permission("vo") ? i(_("Phone"), tel(ac.CALLERHOMETELEPHONE) + " " + tel(ac.CALLERWORKTELEPHONE) + " " + tel(ac.CALLERMOBILETELEPHONE)) : "",
+            common.has_permission("vo") ? i(_("Victim"), ac.VICTIMNAME) : "",
+
+            hd(_("Dispatch")),
+            i(_("Address"), ac.DISPATCHADDRESS),
+            i(_("City"), ac.DISPATCHTOWN),
+            i(_("State"), ac.DISPATCHCOUNTY),
+            i(_("Zipcode"), ac.DISPATCHPOSTCODE),
+            i(_("Dispatched ACO"), ac.DISPATCHEDACO),
+            i(_("Dispatch Date/Time"), dispdt),
+            i(_("Responded Date/Time"), respdt),
+            i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME)),
+            i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME2)),
+            i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME3)),
+
+            common.has_permission("vo") ? hd(_("Suspect/Animal")) : "",
+            common.has_permission("vo") ? i(_("Suspect 1"), ac.OWNERNAME1) : "",
+            common.has_permission("vo") ? i(_("Suspect 2"), ac.OWNERNAME2) : "",
+            common.has_permission("vo") ? i(_("Suspect 3"), ac.OWNERNAME3) : ""
+        ];
+        // List linked animals
+        $.each(o.animals, function(x, v) {
+            h.push(i(_("Animal"), v.SHELTERCODE + " - " + v.ANIMALNAME));
+        });
+        h = h.concat([
+            i(_("Species"), ac.SPECIESNAME),
+            i(_("Sex"), ac.SEXNAME),
+            i(_("Age Group"), ac.AGEGROUP),
+            i(_("Description"), ac.ANIMALDESCRIPTION)
+        ]);
+        if (common.has_permission("vacc") && o.citations.length > 0) {
+            h.push(hd(_("Citations")));
+            $.each(o.citations, function(x, v) {
+                h.push(col3(format.date(v.CITATIONDATE), v.CITATIONNAME, v.COMMENTS));
+            });
+        }
+        if (common.has_permission("vdn") && o.diary.length > 0) {
+            h.push(hd(_("Diary")));
+            $.each(o.diary, function(x, v) {
+                h.push(col3(format.date(v.DIARYDATETIME), v.SUBJECT, v.NOTE));
+            });
+        }
+        if (common.has_permission("vle") && o.logs.length > 0) {
+            h.push(hd(_("Log")));
+            $.each(o.logs, function(x, v) {
+                h.push(col3(format.date(v.DATE), v.LOGTYPENAME, v.COMMENTS));
+            });
+        }
+            /* facility to add a log TODO:
+            h.append(jqm_form("aclog", ajax="false"))
+            h.append(jqm_hidden("id", str(a["ID"])))
+            h.append(jqm_hidden("posttype", "vinclog"))
+            h.append(jqm_fieldcontain("logtype", _("Log Type", l), jqm_select("logtype", jqm_options(asm3.lookups.get_log_types(dbo), "ID", "LOGTYPENAME"))))
+            h.append(jqm_fieldcontain("logtext", _("Log Text", l), jqm_text("logtext")))
+            h.append(jqm_submit(_("Add Log", l)))
+            h.append(jqm_form_end())
+            */
+        $(selector).html( h.join("\n") );
     };
 
     // Hide all the elements with hideifzero if they have a badge containing zero
@@ -445,12 +668,12 @@ $(document).ready(function() {
             if (v.ID == animalid) { a = v; return false; }
         });
         if (a) { 
-            $("#content-animal").html( render_animal(a) ); 
+            render_animal(a, "#content-animal");
             $(".container").hide();
             $("#content-animal").show();
             // Handle the uploading of a photo when one is chosen
-            $("#uploadphoto").click(function() { $("#uploadphotofile").click(); });
-            $("#uploadphotofile").change(function() { alert($("#uploadphotofile").val()); });
+            $("#content-animal .uploadphoto").click(function() { $("#content-animal .uploadphotofile").click(); });
+            $("#content-animal .uploadphotofile").change(function() { alert($("#content-animal .uploadphotofile").val()); });
         }
     });
 
@@ -548,6 +771,35 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Incidents
+    const render_incident_list = function(selector, backlink, incidents) {
+        $(selector + " .list-group").empty();
+        $.each(incidents, function(i, v) {
+            let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
+                '<h5 class="mb-1">' + format.date(v.INCIDENTDATETIME) + ': ' + v.INCIDENTNAME + ' - ' + v.DISPATCHADDRESS + '</h5>' +
+                '<small>' + v.CALLNOTES + '</small>' + 
+                '</a>';
+            $(selector + " .list-group").append(h);
+        });
+        // When an incident link is clicked, display the record
+        $(selector).on("click", "a", function() {
+            let incidentid = format.to_int($(this).attr("data-id")), ac = null;
+            $.each(incidents, function(i, v) {
+                if (v.ID == incidentid) { ac = v; return false; }
+            });
+            if (ac) { 
+                render_incident(ac, selector + "-view", backlink);
+                $(".container").hide();
+                $(selector + "-view").show();
+                // TODO: Handle clickable buttons for complete/respond/dispatch, add log
+            }
+        });
+    };
+    render_incident_list("#content-myincidents", "myincidents", controller.incidentsmy);
+    render_incident_list("#content-opincidents", "opincidents", controller.incidentsincomplete);
+    render_incident_list("#content-unincidents", "unincidents", controller.incidentsundispatched);
+    render_incident_list("#content-flincidents", "flincidents", controller.incidentsfollowup);
 
     // Load messages 
     $("#content-messages .list-group").empty();

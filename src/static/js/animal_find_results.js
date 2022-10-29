@@ -245,6 +245,9 @@ $(function() {
                 if (row.SHELTERLOCATIONUNIT && !row.ACTIVEMOVEMENTID) {
                     rv += ' <span class="asm-search-locationunit">' + row.SHELTERLOCATIONUNIT + '</span>';
                 }
+                if (row.NONSHELTERANIMAL == 1) { 
+                    rv = "";
+                }
             }
             else if ( name == "Fosterer" ) {
                 if (row.ACTIVEMOVEMENTTYPE == 2) {

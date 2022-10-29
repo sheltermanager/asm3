@@ -524,7 +524,7 @@ ASM tracks the date Anibase was last updated, so if the animal is returned and
 adopted again, another update will be done automatically.
 
 AKC Reunite
-----------
+-----------
 
 ASM can register microchips with AKC Reunite, part of the American Kennel Club,
 who supply microchips to US organisations and pet owners. AKC microchips are 
@@ -533,11 +533,12 @@ either 15-digits, starting with 956 or 10-digits, starting with 0006 or 0007.
 They will optionally accept registration of any microchip, although this has
 to be agreed with them first. 
 
-FoundAnimals
--------
+FoundAnimals/24Pet
+------------------
 
-ASM can register microchips with microchipregistry.foundanimals.org, a
-non-profit organisation that supplies microchips to US shelters.
+ASM can register microchips with foundanimals.org (now named FoundAnimals/24Pet
+after being acquired by PetHealth), a non-profit organisation that supplies
+microchips to US shelters.
 
 Their microchip registry is completely free and accepts microchips from any
 provider. To signup, just get in touch and request a folder name from them

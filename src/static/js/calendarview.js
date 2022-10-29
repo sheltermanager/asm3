@@ -78,6 +78,7 @@ $(function() {
                     center: 'title',
                     right: 'month,agendaWeek,agendaDay,listMonth'
                 }, 
+                isRTL: (asm.locale == "ar" || asm.locale == "he"),
                 editable: false,
                 firstDay: config.integer("FirstDayOfWeek"),
                 eventLimit: true,

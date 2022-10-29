@@ -26,14 +26,22 @@ if that checkbox is checked during submission.
 
 .. image:: images/onlineform_edit.png
 
-As you can see in the screenshot, each form has a “Form URL”. This is the web
-link you can use on your website to link people to the form. You can also click
-it directly there in the UI to test your form. 
+Each form has a direct link that is accessed via the service API. Click "View
+Form" to follow that link and view the form.  This is the web link you can use
+on your website to link people to the form or put in an iframe. 
 
-You may add extra parameters to the URL if you'd like to set default values
+The first button to the right of "View Form" will copy the link to the
+clipboard for you, the second button will view the form in
+"development" mode. This is a special mode that bypasses any server side
+caching so that changes you make to the form are visible when you reload the
+page. When editing forms, it is useful to keep the development link open on
+another tab so you can quickly view and test your changes. The development mode
+link only works when you are logged in to SM, do not use it on your website.
+
+You may add extra parameters to the form URL if you'd like to set default values
 for some of your form fields, by using the format fieldname=value.
 
-The form option "Email adoption coordinator" will send a copy of the submission
+The option "Email adoption coordinator" will send a copy of the submission
 to the person specified as the adoption coordinator for an animal the form 
 is about. The form must have an animalname or reserveanimalname field 
 for this to work.
@@ -45,7 +53,7 @@ confirmation email will be sent to that address. The confirmation message
 field will form the first part of the body of the email. HTML can be used, but
 it must be a complete HTML document that contains an <html> tag. 
 
-.. warning:: sheltermanager.com uses a short term 10 minute cache on forms, so if you make changes to a form you've recently viewed, you may have to wait 10 minutes for any changes you make to appear.
+.. warning:: sheltermanager.com uses a 30 minute cache on forms, so if you make changes to a form you've recently viewed, you may have to wait 30 minutes for any changes you make to appear. Use the development mode button to see your changes immediately.
 
 If you declare a javascript function in your form's header or footer named
 asm3_onlineform_submit, it will be called when form validation is successful
@@ -171,7 +179,7 @@ Incoming Forms
 .. image:: images/onlineform_incoming.png
 
 Selecting a form allows you to intelligently create or attach records from the
-data, or explicitly attach the form to existing records. 
+data, or explicitly attach the form to existing records.
 
 * Attach Person: Prompts for a single person record and attaches a copy of the
   form to them as media.
