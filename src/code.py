@@ -6114,7 +6114,7 @@ class sql(JSONEndpoint):
                 q = self.substitute_report_tokens(dbo, user, q)
                 ql = q.lower()
                 asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
-                if ql.startswith("select") or ql.startswith("show"):
+                if ql.startswith("select") or ql.startswith("show") or ql.startswith("with"):
                     return asm3.html.table(dbo.query(q))
                 elif ql.startswith("insert"):
                     rowsaffected += dbo.execute(q)
@@ -6136,7 +6136,7 @@ class sql(JSONEndpoint):
                 q = self.substitute_report_tokens(dbo, user, q)
                 ql = q.lower()
                 asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
-                if ql.startswith("select") or ql.startswith("show"):
+                if ql.startswith("select") or ql.startswith("show") or ql.startswith("with"):
                     output.append(str(dbo.query(q)))
                 else:
                     self.check_update_query(ql)

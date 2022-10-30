@@ -1,6 +1,7 @@
 46
 ================
 
+30/10/22 Support CTE/WITH syntax for reports and in SQL Interface
 28/10/22 Add adoptable emblem #1189
 23/10/22 Option to supply a custom WHERE clause when exporting animals
 20/10/22 Hide location of non-shelter animals in find animal results

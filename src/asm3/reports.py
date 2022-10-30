@@ -387,7 +387,7 @@ def is_valid_query(sql):
     Returns true if this is a valid report query.
     """
     sql = strip_sql_comments(sql)
-    return sql.lower().strip().startswith("select")
+    return sql.lower().strip().startswith("select") or sql.lower().strip().startswith("with")
 
 def strip_sql_comments(sql):
     """
