@@ -48,6 +48,7 @@ asm.setid("ownerdonation", START_ID)
 asm.setid("stocklevel", START_ID)
 
 print("\\set ON_ERROR_STOP\nBEGIN;")
+print("DELETE FROM adoption WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM animal WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM animalmedical WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM animalmedicaltreatment WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
@@ -56,12 +57,16 @@ print("DELETE FROM media WHERE ID >= %s;" % START_ID)
 print("DELETE FROM log WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM owner WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM ownerdonation WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
-print("DELETE FROM adoption WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM stocklevel WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 
 def getdate(d, todayIfNull=False):
     o = asm.getdatetime_iso(d)
-    if o is None: return asm.today()
+    if todayIfNull and o is None: return asm.today()
     return o
+
+def nonull(s):
+    if s == "NULL": return ""
+    return s
 
 for d in asm.csv_to_list(PATH + "Contacts.csv", unicodehtml=True):
     # Ignore repeated headers
@@ -86,12 +91,12 @@ for d in asm.csv_to_list(PATH + "Contacts.csv", unicodehtml=True):
     o.OwnerAddress = d["Address1"]
     if d["Address2"] != "" and d["Address2"] != "NULL": o.OwnerAddress += "\n" + d["Address2"]
     o.OwnerTown = d["TownCity"]
-    o.OwnerCounty = d["CountyName"]
-    o.OwnerPostcode = d["Postcode"]
-    o.EmailAddress = d["EmailAddress"]
-    o.HomeTelephone = d["HomePhone"]
-    o.WorkTelephone = d["WorkPhone"]
-    o.MobileTelephone = d["MobilePhone"]
+    o.OwnerCounty = nonull(d["CountyName"])
+    o.OwnerPostcode = nonull(d["Postcode"])
+    o.EmailAddress = nonull(d["EmailAddress"])
+    o.HomeTelephone = nonull(d["HomePhone"])
+    o.WorkTelephone = nonull(d["WorkPhone"])
+    o.MobileTelephone = nonull(d["MobilePhone"])
     o.ExcludeFromBulkEmail = asm.cint(d["DoNotContact"])
     o.IsGiftAid = asm.cint(d["GiftAid"])
     if d["ContactByPost"] == 1: o.GDPRContactOptIn += ",post"
