@@ -1191,7 +1191,7 @@ def strip_unicode(s):
 
 def dd(d):
     if d == None: return "NULL"
-    return "'%d-%02d-%02d'" % ( d.year, d.month, d.day )
+    return "'%d-%02d-%02d 00:00:00'" % ( d.year, d.month, d.day )
 
 def ddt(d):
     if d == None: return "NULL"
@@ -1476,7 +1476,9 @@ def media_file(linktypeid, linkid, filename, filedata, medianotes = ""):
     mimetype = mime_type(filename)
     encoded = base64.b64encode(filedata)
     if medianotes == "": medianotes = filename
-    if sys.version_info[0] > 2: encoded = encoded.decode("ascii") # PYTHON3
+    medianotes = medianotes.replace("'", "''")
+    filename = filename.replace("'", "''")
+    if sys.version_info[0] > 2: encoded = encoded.decode("ascii") # PYTHON3 - turn base64 into str for stdout
     websitephoto = extension == ".jpg" and 1 or 0
     dbfsidpath = "/animal"
     if linktypeid > 0: dbfsidpath = "/owner"
@@ -1484,7 +1486,6 @@ def media_file(linktypeid, linkid, filename, filedata, medianotes = ""):
     print(f"INSERT INTO media (id, medianame, medianotes, mediasize, mediamimetype, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
         f"excludefrompublish, linkid, linktypeid, recordversion, date) VALUES ({mediaid}, '{medianame}', '{medianotes}', {len(filedata)}, '{mimetype}', {websitephoto}, {websitephoto}, 0, 0, 0, " \
         f"{linkid}, {linktypeid}, 0, {dd(datetime.datetime.today())});")
-    print(f"INSERT INTO dbfs (id, name, path, content) VALUES ({getid('dbfs')}, '{linkid}', '{dbfsidpath}', '');")
     dbfsid = getid("dbfs")
     print(f"INSERT INTO dbfs (id, name, path, url, content) VALUES ({dbfsid}, '{medianame}', '{dbfsidpath + '/' + str(linkid)}', 'base64:', '{encoded}');")
     print(f"UPDATE media SET DBFSID = {dbfsid} WHERE ID = {mediaid};")

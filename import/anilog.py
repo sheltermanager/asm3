@@ -8,7 +8,7 @@ Import script for AniLog databases exported as CSV
 24th October, 2022
 """
 
-START_ID = 20000
+START_ID = 50000
 PATH = "/home/robin/tmp/asm3_import_data/anilog_rr0147/"
 
 # If True, uses an empty string instead of the DBFS contents for testing so that it
@@ -160,22 +160,24 @@ for d in asm.csv_to_list(PATH + "Animals.csv"):
     a.CrossBreed = d["CrossBreed"] == "1" and 1 or 0
     a.BaseColourID = asm.colour_id_for_name(d["Colour"])
     a.Size = asm.size_id_for_name(d["sizeName"])
-    if d["Chip1Number"] != "":
+    if d["Chip1Number"] != "" and d["Chip1Number"] != "NULL":
         a.Identichipped = 1
         a.IdentichipNumber = d["Chip1Number"]
         a.IdentichipDate = getdate(d["Chip1ImplantDate"])
-    if d["Chip2number"] != "":
+    if d["Chip2number"] != "" and d["Chip2number"] != "NULL":
         a.Identichipped = 1
         a.Identichip2Number = d["Chip2number"]
         a.Identichip2Date = getdate(d["Chip2ImplantDate"])
     a.Archived = 0
     comments = "breed: " + d["breed"] + "/" + d["breed2"] + " " + d["OtherBreed"]
     comments += "\ncolour: " + d["Colour"]
-    if d["TattooNumber"]: comments += "\ntatoo: " + d["TattooNumber"]
-    if d["PassportNumber"]: comments += "\npassport: " + d["PassportNumber"]
+    if d["TattooNumber"] and d["TattooNumber"] != "NULL": comments += "\ntatoo: " + d["TattooNumber"]
+    if d["PassportNumber"] and d["PassportNumber"] != "NULL": comments += "\npassport: " + d["PassportNumber"]
     a.HiddenAnimalDetails = comments
     # Admission record will set non-shelter=0/archived=0
     a.NonShelterAnimal = 1
+    # Undo default behaviour of not registering chips created from this source
+    a.IsNotForRegistration = 0
     a.Archived = 1
 
 for d in asm.csv_to_list(PATH + "Animal_BehaviourNotes.csv"):
@@ -352,7 +354,9 @@ for d in asm.csv_to_list(PATH + "Animal_Attachments.csv"):
     if d["AnimalId"] not in ppaid: continue
     filedata = asm.load_image_from_file(PATH + "attachments/" + d["AttachmentFileName"])
     if EMPTY_DBFS_FILES: filedata = b"" 
-    asm.media_file(0, ppaid[d["AnimalId"]], d["AttachmentFileName"], filedata, d["Notes"])
+    notes = d["Notes"]
+    if notes == "NULL": notes = ""
+    asm.media_file(0, ppaid[d["AnimalId"]], d["AttachmentFileName"], filedata, notes)
 
 for d in asm.csv_to_list(PATH + "Animal_TreatmentAttachments.csv"):
     # Ignore malformed rows - they only escape fields if they contain a comma, but not carriage returns
@@ -363,7 +367,9 @@ for d in asm.csv_to_list(PATH + "Animal_TreatmentAttachments.csv"):
     if d["AnimalId"] not in ppaid: continue
     filedata = asm.load_image_from_file(PATH + "attachments/" + d["AttachmentFileName"])
     if EMPTY_DBFS_FILES: filedata = b"" 
-    asm.media_file(0, ppaid[d["AnimalId"]], d["AttachmentFileName"], filedata, d["Notes"])
+    notes = d["Notes"]
+    if notes == "NULL": notes = ""
+    asm.media_file(0, ppaid[d["AnimalId"]], d["AttachmentFileName"], filedata, notes)
 
 for d in asm.csv_to_list(PATH + "Contact_Attachments.csv"):
     # Ignore malformed rows - they only escape fields if they contain a comma, but not carriage returns
@@ -374,7 +380,9 @@ for d in asm.csv_to_list(PATH + "Contact_Attachments.csv"):
     if d["ContactId"] not in ppoid: continue
     filedata = asm.load_image_from_file(PATH + "attachments/" + d["AttachmentFileName"])
     if EMPTY_DBFS_FILES: filedata = b"" 
-    asm.media_file(3, ppoid[d["ContactId"]], d["AttachmentFileName"], filedata, d["Notes"])
+    notes = d["Notes"]
+    if notes == "NULL": notes = ""
+    asm.media_file(3, ppoid[d["ContactId"]], d["AttachmentFileName"], filedata, notes)
 
 for d in asm.csv_to_list(PATH + "DrugStockReceipts.csv"):
      # Ignore any records before the cutoff
@@ -384,13 +392,13 @@ for d in asm.csv_to_list(PATH + "DrugStockReceipts.csv"):
     l.Name = d["DrugName"]
     l.Description = d["PackDesc"]
     l.UnitName = d["PackDesc"]
-    Total = asm.cint(d["PackQuantity"]) * asm.cint(d["QuantityReceived"])
-    Balance = Total - asm.cint(d["UnitsUsed"])
-    Expiry= getdate(d["ExpiryDate"])
-    BatchNumber = ""
-    Cost = asm.get_currency(d["PackPrice"])
-    UnitPrice = 0
-    CreatedDate = getdate(d["DateReceived"])
+    l.Total = asm.cint(d["PackQuantity"]) * asm.cint(d["QuantityReceived"])
+    l.Balance = l.Total - asm.cint(d["UnitsUsed"])
+    l.Expiry= getdate(d["ExpiryDate"])
+    l.BatchNumber = ""
+    l.Cost = asm.get_currency(d["PackPrice"])
+    l.UnitPrice = 0
+    l.CreatedDate = getdate(d["DateReceived"], True)
 
 # Run back through the animals, if we have any that are still
 # on shelter after 1 year, add an adoption to an unknown owner
