@@ -345,7 +345,7 @@ def today():
 def stderr(s):
     sys.stderr.write("%s\n" % s)
 
-def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animaltests=[], owners=[], ownerlicences=[], ownerdonations=[], animalcontrol=[], movements=[], logs=[], stocklevels=[]):
+def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animaltests=[], owners=[], ownerlicences=[], ownerdonations=[], animalcontrol=[], movements=[], logs=[], stocklevels=[], waitinglists=[]):
     def o(l, d):
         if len(l) > 0:
             stderr("%d %s" % (len(l), d))
@@ -385,7 +385,8 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
     o(ownerlicences, "licences")
     o(ownerdonations, "payments")
     o(animalcontrol, "incidents")
-    o(stocklevels, "stocklevels")
+    o(stocklevels, "stock levels")
+    o(waitinglists, "waiting list entries")
     if mediafilescount > 0:
         stderr("%d media files (%d bytes)" % (mediafilescount, mediafilesbytes))
 
@@ -2047,6 +2048,57 @@ class AnimalVaccination:
             ( "LastChangedDate", dd(self.LastChangedDate) )
             )
         return makesql("animalvaccination", s)
+
+class AnimalWaitingList:
+    ID = 0
+    SpeciesID = 1
+    Size = 1
+    DatePutOnList = None
+    OwnerID = 0
+    AnimalDescription = ""
+    ReasonForWantingToPart = ""
+    CanAffordDonation = 0
+    Urgency = 5
+    DateRemovedFromList = None
+    AutoRemovePolicy = 1
+    DateOfLastOwnerContact = None
+    ReasonForRemoval = ""
+    Comments = ""
+    UrgencyUpdateDate = None
+    UrgencyLastUpdatedDate = None
+    RecordVersion = 0
+    CreatedBy = "conversion"
+    CreatedDate = today()
+    LastChangedBy = "conversion"
+    LastChangedDate = today()
+    def __init__(self, ID = 0):
+        self.ID = ID
+        if ID == 0: self.ID = getid("animalwaitinglist")
+    def __str__(self):
+        s = (
+            ( "ID", di(self.ID) ),
+            ( "SpeciesID", di(self.SpeciesID) ),
+            ( "Size", di(self.Size) ),
+            ( "DatePutOnList", dd(self.DatePutOnList) ),
+            ( "OwnerID", di(self.OwnerID) ),
+            ( "AnimalDescription", ds(self.AnimalDescription) ),
+            ( "ReasonForWantingToPart", ds(self.ReasonForWantingToPart) ),
+            ( "CanAffordDonation", di(self.CanAffordDonation) ),
+            ( "Urgency", di(self.Urgency) ),
+            ( "DateRemovedFromList", dd(self.DateRemovedFromList) ),
+            ( "AutoRemovePolicy", di(self.AutoRemovePolicy) ),
+            ( "DateOfLastOwnerContact", dd(self.DateOfLastOwnerContact) ),
+            ( "ReasonForRemoval", ds(self.ReasonForRemoval) ),
+            ( "Comments", ds(self.Comments) ),
+            ( "UrgencyUpdateDate", dd(self.UrgencyUpdateDate) ),
+            ( "UrgencyLastUpdatedDate", dd(self.UrgencyLastUpdatedDate) ),
+            ( "RecordVersion", di(self.RecordVersion) ),
+            ( "CreatedBy", ds(self.CreatedBy) ),
+            ( "CreatedDate", dd(self.CreatedDate) ),
+            ( "LastChangedBy", ds(self.LastChangedBy) ),
+            ( "LastChangedDate", dd(self.LastChangedDate) )
+            )
+        return makesql("animalwaitinglist", s)
 
 class Animal:
     ID = 0

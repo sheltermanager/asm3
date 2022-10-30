@@ -31,6 +31,7 @@ animals = []
 animalmedicals = []
 logs = []
 stocklevels = []
+waitinglists = []
 ppa = {}
 ppaid = {}
 ppo = {}
@@ -40,6 +41,7 @@ asm.setid("adoption", START_ID)
 asm.setid("animal", START_ID)
 asm.setid("animalmedical", START_ID)
 asm.setid("animalmedicaltreatment", START_ID)
+asm.setid("animalwaitinglist", START_ID)
 asm.setid("dbfs", START_ID)
 asm.setid("media", START_ID)
 asm.setid("log", START_ID)
@@ -57,7 +59,8 @@ print("DELETE FROM media WHERE ID >= %s;" % START_ID)
 print("DELETE FROM log WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM owner WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM ownerdonation WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
-print("DELETE FROM stocklevel WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM stocklevel WHERE ID >= %s;" % START_ID)
+print("DELETE FROM animalwaitinglist WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 
 def getdate(d, todayIfNull=False):
     o = asm.getdatetime_iso(d)
@@ -184,6 +187,9 @@ for d in asm.csv_to_list(PATH + "Animals.csv"):
     # Undo default behaviour of not registering chips created from this source
     a.IsNotForRegistration = 0
     a.Archived = 1
+    # Some readable fields we can use later when creating waiting lists
+    a.SpeciesName = d["AnimalTypeName"]
+    a.SexName = d["gender"]
 
 for d in asm.csv_to_list(PATH + "Animal_BehaviourNotes.csv"):
     # Turn behaviour notes into logs
@@ -227,6 +233,29 @@ for d in sorted(asm.csv_to_list(PATH + "Animal_Admissions.csv"), key=lambda k: g
         a.BroughtInByOwnerID = ppoid[d["BroughtInByContactId"]]
     a.HiddenAnimalDetails += "\nadmission reason: " + d["AdmissionReason"] + "\nhand in reason: " + d["HandInReason"]
     a.ReasonForEntry = "%s %s" % (d["AdmissionReasonNotes"], d["AdmissionNotes"])
+
+# The ownership history duplicates movements/rehoming, but can be used to identify non-shelter
+# animals who never came to the shelter (no admission record)
+# We deliberately do this before movements because we need to find the owner of these
+# non-shelter animals in order to put their owner on the waiting list when processing movements
+for d in asm.csv_to_list(PATH + "Animal_OwnershipHistory.csv"):
+    # Can only work for records we just created as we won't have an object for previous records
+    if d["AnimalId"] not in ppa: continue
+    odate = getdate(d["StartDate"]) or getdate(d["EndDate"])
+    if odate is None: odate = asm.today()
+    # Ignore any records before the cutoff
+    if CUTOFF_DATE and odate < CUTOFF_DATE: continue
+    a = ppa[d["AnimalId"]]
+    # This animal did not have an admission record if DateBroughtIn == today, make it nonshelter to its owner
+    if a.DateBroughtIn == asm.today() and d["OwnerContactId"] in ppoid: 
+        a.NonShelterAnimal = 1
+        a.Archived = 1
+        a.DateBroughtIn = odate
+        a.OriginalOwnerID = ppoid[d["OwnerContactId"]]
+        a.OwnerID = ppoid[d["OwnerContactId"]]
+        if a.DateOfBirth is None:
+            a.DateOfBirth = a.DateBroughtIn
+            a.EstimatedDOB = 1
 
 for d in sorted(asm.csv_to_list(PATH + "Animal_Movements.csv"), key=lambda k: getdate(k["FromDate"], True)):
     # Ignore malformed rows - they only escape fields if they contain a comma, but not carriage returns
@@ -316,29 +345,22 @@ for d in sorted(asm.csv_to_list(PATH + "Animal_Movements.csv"), key=lambda k: ge
             a.PutToSleep = 0
             a.Archived = 1
     elif d["LocationStatusName"] == "Waiting List":
-        a.HiddenAnimalDetails += "\nanilog waiting list"
-
-# The ownership history duplicates movements/rehoming, but can be used to identify non-shelter
-# animals who never came to the shelter (no admission record)
-for d in asm.csv_to_list(PATH + "Animal_OwnershipHistory.csv"):
-    # Can only work for records we just created as we won't have an object for previous records
-    if d["AnimalId"] not in ppa: continue
-    odate = getdate(d["StartDate"]) or getdate(d["EndDate"])
-    if odate is None: odate = asm.today()
-    # Ignore any records before the cutoff
-    if CUTOFF_DATE and odate < CUTOFF_DATE: continue
-    a = ppa[d["AnimalId"]]
-    # This animal did not have an admission record if DateBroughtIn == today, make it nonshelter to its owner
-    if a.DateBroughtIn == asm.today() and d["OwnerContactId"] in ppoid: 
-        a.NonShelterAnimal = 1
-        a.Archived = 1
-        a.DateBroughtIn = odate
-        a.OriginalOwnerID = ppoid[d["OwnerContactId"]]
-        a.OwnerID = ppoid[d["OwnerContactId"]]
-        if a.DateOfBirth is None:
-            a.DateOfBirth = a.DateBroughtIn
-            a.EstimatedDOB = 1
-
+        if d["AnimalId"] in ppa:
+            a = ppa[d["AnimalId"]]
+            if a.OwnerID is None or a.OwnerID == 0: continue # can't do anything without an owner
+            wl = asm.AnimalWaitingList()
+            waitinglists.append(wl)
+            wl.Size = a.Size
+            wl.SpeciesID = a.SpeciesID
+            wl.OwnerID = a.OwnerID
+            wl.DatePutOnList = getdate(d["FromDate"])
+            wl.DateRemovedFromList = getdate(d["ToDate"])
+            wl.AnimalDescription = "%s - %s (%s %s %s)" % (a.AnimalName, a.ShelterCode, a.SexName, a.BreedName, a.SpeciesName)
+            wl.ReasonForWantingToPart = a.ReasonForEntry
+            wl.Comments = "AniLog waiting list entry: see owner record for non-shelter animal info"
+            wl.CreatedDate = wl.DatePutOnList
+            wl.LastChangedDate = wl.DateRemovedFromList or wl.DatePutOnList
+           
 for d in asm.csv_to_list(PATH + "Animal_Vet_Treatments.csv"):
     # Ignore malformed rows - they only escape fields if they contain a comma, but not carriage returns
     if asm.cint(d["animalid"]) == 0: continue
@@ -424,9 +446,10 @@ for l in logs:
     print(l)
 for l in stocklevels:
     print(l)
+for wl in waitinglists:
+    print(wl)
 
-
-asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, logs=logs, owners=owners, ownerdonations=ownerdonations, movements=movements, stocklevels=stocklevels)
+asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, logs=logs, owners=owners, ownerdonations=ownerdonations, movements=movements, stocklevels=stocklevels, waitinglists=waitinglists)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
 print("COMMIT;")
