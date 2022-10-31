@@ -2,7 +2,7 @@ Payment Breakdown By Date
 ###
 Financial
 ###
-34204/Any
+34204/Any rev01
 ###
 All payments by type for a given date period, with totals.
 ###
@@ -66,7 +66,7 @@ Payment Breakdown By Date (no movements)
 ###
 Financial
 ###
-34204/Any
+34204/Any rev01
 ###
 All payments by type for a given date period that are not linked to a movement, with totals.
 ###
@@ -129,7 +129,7 @@ Payment Breakdown By Date (regular payments only)
 ###
 Financial
 ###
-34204/Any
+34204/Any rev01
 ###
 Regular payments (frequency other than one-off) by type for a given date period, with totals.
 ###
@@ -197,7 +197,7 @@ Payment Breakdown By Method
 ###
 Financial
 ###
-34204/Any
+34204/Any rev01
 ###
 All payments by method for a given date period, with totals.
 ###
@@ -261,7 +261,7 @@ Payment Breakdown By Type and Method
 ###
 Financial
 ###
-34204/Any
+34204/Any rev01
 ###
 All payments by method for a given date period, with totals.
 ###
@@ -334,7 +334,7 @@ Payment Breakdown By Date (Surname)
 ###
 Financial
 ###
-34204/Any
+34204/Any rev01
 ###
 All payments for a given date period, with total, ordered by person surname.
 ###
@@ -393,7 +393,7 @@ Payment Breakdown By Date with Addresses
 ###
 Financial
 ###
-34204/Any
+34204/Any rev02
 ###
 Produces a list of all payments by type for a given date period, with totals and addresses.
 ###
@@ -406,7 +406,8 @@ SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName,
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
-owner.OwnerPostcode, donationpayment.PaymentName, ownerdonation.ReceiptNumber
+owner.OwnerPostcode, owner.HomeTelephone, owner.WorkTelephone, owner.MobileTelephone,
+owner.EmailAddress, donationpayment.PaymentName, ownerdonation.ReceiptNumber
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
@@ -443,7 +444,8 @@ $$BODY
 $owneraddress<br />
 $ownertown<br />
 $ownercounty<br />
-$ownerpostcode</td>
+$ownerpostcode<br />
+H: $hometelephone W: $worktelephone C: $mobiletelephone E: <i>$emailaddress</i></td>
 <td>$paymentname</td>
 <td>$amt</td>
 <td>$vatamount</td>
@@ -461,7 +463,7 @@ Payment Breakdown by Date and User
 ###
 Financial
 ###
-34204/Any
+34204/Any rev02
 ###
 All payments by type for a given date period, with totals, broken down by the entering user.
 ###
@@ -532,7 +534,7 @@ Payment Breakdown By Person
 ###
 Financial
 ###
-34204/Any
+34204/Any rev02
 ###
 All payments by type and person for a given date period, with totals.
 ###
@@ -545,7 +547,8 @@ SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName,
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
-owner.OwnerPostcode, donationpayment.PaymentName, ownerdonation.ReceiptNumber
+owner.OwnerPostcode, owner.HomeTelephone, owner.WorkTelephone, owner.MobileTelephone,
+owner.EmailAddress, donationpayment.PaymentName, ownerdonation.ReceiptNumber
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
@@ -559,6 +562,7 @@ HEADER$$
 $$GROUP_OwnerName
 $$HEAD
 <h2>$OwnerName, $OwnerAddress $OwnerTown $OwnerCounty $OwnerPostcode</h2>
+<p>H: $HomeTelephone, W: $WorkTelephone, C: $MobileTelephone, E: $EmailAddress</p>
 $$FOOT
 <p><b>Gross $OwnerName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$
@@ -603,7 +607,7 @@ Payment Breakdown By Person with Flag
 ###
 Financial
 ###
-34204/Any
+34204/Any rev02
 ###
 All payments by type and person for a given date period, with totals, filtered by person flag.
 ###
@@ -617,7 +621,8 @@ SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName,
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
-owner.OwnerPostcode, donationpayment.PaymentName, ownerdonation.ReceiptNumber
+owner.OwnerPostcode, owner.HomeTelephone, owner.WorkTelephone, owner.MobileTelephone,
+owner.EmailAddress, donationpayment.PaymentName, ownerdonation.ReceiptNumber
 FROM ownerdonation 
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
@@ -631,6 +636,7 @@ HEADER$$
 $$GROUP_OwnerName
 $$HEAD
 <h2>$OwnerName, $OwnerAddress $OwnerTown $OwnerCounty $OwnerPostcode</h2>
+<p>H: $HomeTelephone, W: $WorkTelephone, C: $MobileTelephone, E: $EmailAddress</p>
 $$FOOT
 <p><b>Gross $OwnerName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$
@@ -676,7 +682,7 @@ Payment Breakdown By Person with Addresses
 ###
 Financial
 ###
-33011/Any
+33011/Any rev01
 ###
 Produces a list of all payments, totalled by person for a given date period, with addresses.
 ###
@@ -725,7 +731,7 @@ Payment Breakdown By Date with Addresses and Animal Info
 ###
 Financial
 ###
-34204/Any
+34204/Any rev01
 ###
 Produces a list of all payments for a given date period, with addresses and adopted animal info where applicable
 ###
@@ -739,7 +745,9 @@ ownerdonation.Date,
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, 
-owner.OwnerCounty, owner.OwnerPostcode, owner.EmailAddress, donationtype.DonationName,
+owner.OwnerCounty, owner.OwnerPostcode, owner.EmailAddress, 
+owner.HomeTelephone, owner.WorkTelephone, owner.MobileTelephone, 
+donationtype.DonationName,
 lksex.Sex, species.SpeciesName, animal.AnimalName, animal.AnimalAge,
 animal.ShelterCode, donationpayment.PaymentName, ownerdonation.ReceiptNumber
 FROM ownerdonation
@@ -782,7 +790,7 @@ $$BODY
 $owneraddress<br />
 $ownertown<br />
 $ownercounty $ownerpostcode<br/>
-<i>$emailaddress</i></td>
+H: $hometelephone W: $worktelephone C: $mobiletelephone E: <i>$emailaddress</i></td>
 <td><b>$animalname</b> ($sheltercode)<br />
 $sex $speciesname aged $animalage
 </td>
@@ -803,7 +811,7 @@ Payment Breakdown By Receipt Number
 ###
 Financial
 ###
-34204/PostgreSQL
+34204/PostgreSQL rev01
 ###
 All payments by type for a range of receipt numbers with totals.
 ###
