@@ -71,7 +71,7 @@ def nonull(s):
     if s == "NULL": return ""
     return s
 
-for d in asm.csv_to_list(PATH + "Contacts.csv", unicodehtml=True):
+for d in asm.csv_to_list(PATH + "Contacts.csv"):
     # Ignore repeated headers
     if d["ContactID"] == "ContactID": continue
     # Ignore malformed rows - they only escape fields if they contain a comma, but not carriage returns
@@ -159,7 +159,7 @@ for d in asm.csv_to_list(PATH + "Animals.csv"):
     a.AnimalName = d["CurrentName"]
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
-    a.DateOfBirth = getdate(d["DateOfBirth"])
+    a.DateOfBirth = getdate(d["DateOfBirth"]) or asm.today()
     a.ShelterCode = d["AnimalRef"]
     a.ShortCode = d["AnimalRef"]
     a.Sex = asm.getsex_mf(d["gender"])
@@ -218,7 +218,7 @@ for d in sorted(asm.csv_to_list(PATH + "Animal_Admissions.csv"), key=lambda k: g
         a.DateBroughtIn = getdate(d["AdmissionDate"])
         a.NonShelterAnimal = 0
         a.Archived = 0
-    if a.DateOfBirth is None:
+    if a.DateOfBirth is None or a.DateOfBirth == asm.today():
         a.DateOfBirth = a.DateBroughtIn
         a.EstimatedDOB = 1
     a.CreatedDate = a.DateBroughtIn
@@ -253,7 +253,7 @@ for d in asm.csv_to_list(PATH + "Animal_OwnershipHistory.csv"):
         a.DateBroughtIn = odate
         a.OriginalOwnerID = ppoid[d["OwnerContactId"]]
         a.OwnerID = ppoid[d["OwnerContactId"]]
-        if a.DateOfBirth is None:
+        if a.DateOfBirth is None or a.DateOfBirth == asm.today():
             a.DateOfBirth = a.DateBroughtIn
             a.EstimatedDOB = 1
 
@@ -292,7 +292,7 @@ for d in sorted(asm.csv_to_list(PATH + "Animal_Movements.csv"), key=lambda k: ge
             od.OwnerID = m.OwnerID
             od.AnimalID = m.AnimalID
             od.MovementID = m.ID
-            od.Donation = asm.get_currency(row["DonationReceived"])
+            od.Donation = asm.get_currency(d["DonationReceived"])
     elif d["LocationStatusName"] == "Fostered":
         if d["LocationId"] not in ppoid: continue # skip missing people
         if d["AnimalId"] not in ppaid: continue # skip missing animals
@@ -439,7 +439,7 @@ for am in animalmedicals:
 for o in owners:
     print(o)
 for od in ownerdonations:
-    print(oid)
+    print(od)
 for m in movements:
     print(m)
 for l in logs:
