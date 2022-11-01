@@ -461,10 +461,10 @@ def handler(post, path, remoteip, referer, useragent, querystring):
             asm3.al.error("animal_view failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
-            return set_cached_response(cache_key, account, "text/html", 86400, 600, asm3.publishers.html.get_animal_view(dbo, asm3.utils.cint(animalid)))
+            return set_cached_response(cache_key, account, "text/html", 3600, 600, asm3.publishers.html.get_animal_view(dbo, asm3.utils.cint(animalid)))
 
     elif method == "animal_view_adoptable_js":
-        return set_cached_response(cache_key, account, "application/javascript", 10800, 600, asm3.publishers.html.get_animal_view_adoptable_js(dbo))
+        return set_cached_response(cache_key, account, "application/javascript", 3600, 600, asm3.publishers.html.get_animal_view_adoptable_js(dbo))
 
     elif method == "animal_view_adoptable_html":
         return set_cached_response(cache_key, account, "text/html", 86400, 600, asm3.publishers.html.get_animal_view_adoptable_html(dbo))

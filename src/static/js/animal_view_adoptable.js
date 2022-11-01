@@ -11,7 +11,7 @@
     var adoptables = "{TOKEN_ADOPTABLES}";
     var account = "{TOKEN_ACCOUNT}";
     var baseurl = "{TOKEN_BASE_URL}";
-    var all_filters = "agegroup sex breed size species";
+    var all_filters = "agegroup sex breed size species goodwith where";
 
     var active_filters = "agegroup sex species";
     if (typeof asm3_adoptable_filters !== 'undefined') {
@@ -123,6 +123,14 @@
         return h.join("");
     };
 
+    var list_options = function(l) {
+        var h = [];
+        l.forEach(function(item, index, arr) {
+            h.push('<option value="' + item[0] + '">' + translate(item[1]) + '</option>');
+        });
+        return h.join("");
+    };
+
     var spanwrap = function(cls, content) {
         return '<span class="asm3-adoptable-tag asm3-adoptable-tag-' + cls + '">' + content + '</span>';
     };
@@ -134,6 +142,8 @@
             '<select id="asm3-select-agegroup">{ageoptions}</select> ',
             '<select id="asm3-select-size">{sizeoptions}</select> ',
             '<select id="asm3-select-sex">{sexoptions}</select>',
+            '<select id="asm3-select-goodwith">{goodwithoptions}</select>',
+            '<select id="asm3-select-where">{whereoptions}</select>',
         '</div>',
         '<div id="asm3-adoptable-list" class="asm3-adoptable-list"></div>'
     ].join("");
@@ -175,6 +185,8 @@
             selagegroup = document.getElementById("asm3-select-agegroup").value,
             selsize = document.getElementById("asm3-select-size").value,
             selsex = document.getElementById("asm3-select-sex").value;
+            selgoodwith = document.getElementById("asm3-select-goodwith").value;
+            selwhere = document.getElementById("asm3-select-where").value;
 
         adoptables.forEach(function(item, index, arr) {
 
@@ -183,6 +195,12 @@
             if (selagegroup && decode(item.AGEGROUP) != decode(selagegroup)) { return; }
             if (selsize && item.SIZE != selsize) { return; }
             if (selsex && item.SEX != selsex) {return; }
+            if (selgoodwith && selgoodwith == 1 && item.ISGOODWITHDOGS != 0) { return; }
+            if (selgoodwith && selgoodwith == 2 && item.ISGOODWITHCATS != 0) { return; }
+            if (selgoodwith && selgoodwith == 3 && item.ISGOODWITHCHILDREN != 0) { return; }
+            if (selwhere && selwhere == 1 && item.ARCHIVED != 0) { return; }
+            if (selwhere && selwhere == 2 && item.ACTIVEMOVEMENTTYPE != 2) { return; }
+            if (selwhere && selwhere == 3 && item.ISCOURTESY != 1) { return; }
 
             if (typeof asm3_adoptable_filter !== 'undefined') {
                 if (!asm3_adoptable_filter(item, index, arr)) { return; }
@@ -205,12 +223,14 @@
                 agegroup: spanwrap("agegroup", translate(item.AGEGROUP)),
                 breed: spanwrap("breed", translate(item.BREEDNAME)),
                 extra: extra,
+                goodwith: "",
                 isreservedclass: (item.HASACTIVERESERVE == 1 ? "asm3-adoptable-reserved" : ""),
                 mediadate: item.WEBSITEMEDIADATE,
                 sex: spanwrap("sex", translate(item.SEXNAME)),
                 size: spanwrap("size", translate(item.SIZENAME)),
                 species: spanwrap("species", translate(item.SPECIESNAME)),
-                thumbnail_method: (fullsize_images ? "animal_image" : "animal_thumbnail")
+                thumbnail_method: (fullsize_images ? "animal_image" : "animal_thumbnail"),
+                where: ""
             }));
 
         });
@@ -264,7 +284,9 @@
             breedoptions: construct_options("(any breed)", "BREEDNAME", "BREEDNAME"),
             ageoptions: construct_options("(any age)", "AGEGROUP", "AGEGROUP"),
             sizeoptions: construct_options("(any size)", "SIZE", "SIZENAME"),
-            sexoptions: construct_options("(any sex)", "SEX", "SEXNAME")
+            sexoptions: construct_options("(any sex)", "SEX", "SEXNAME"),
+            goodwithoptions: list_options([ ["0", "(good with)"], ["1", "Good with dogs"], ["2", "Good with cats"], ["3", "Good with children"] ]),
+            whereoptions: list_options([ ["0", "(anywhere)"], ["1", "On shelter"], ["2", "Fostered"], ["3", "Courtesy listing"] ])
         });
 
         if (sort_order == "SHUFFLE") {
@@ -280,6 +302,8 @@
         document.getElementById("asm3-select-agegroup").addEventListener("change", render_adoptables);
         document.getElementById("asm3-select-size").addEventListener("change", render_adoptables);
         document.getElementById("asm3-select-sex").addEventListener("change", render_adoptables);
+        document.getElementById("asm3-select-goodwith").addEventListener("change", render_adoptables);
+        document.getElementById("asm3-select-where").addEventListener("change", render_adoptables);
 
         all_filters.split(" ").forEach(function(item, index, arr) {
             if (active_filters.indexOf(item) == -1) {
