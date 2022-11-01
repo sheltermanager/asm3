@@ -7,8 +7,6 @@ $(function() {
     let is_mobile = navigator.userAgent.match(/Android|iPhone|iPad|Kindle/i);
     let rw_toolbar = "save pdf print | undo redo | fontselect fontsizeselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent pagebreak | link image";
     let ro_toolbar = "pdf print";
-    let rw_context = "link image | cut copy paste";
-    let ro_context = "copy";
 
     // Add the text direction options for RTL languages
     let locale = $("#locale").val();
@@ -33,7 +31,7 @@ $(function() {
             "emoticons template paste textcolor save"
             ],
         toolbar1: readonly ? ro_toolbar : rw_toolbar,
-        contextmenu: readonly ? ro_context : rw_context,
+        contextmenu: "", // allow the browser's default context menu for copy/paste
 
         // Disable some items if we're in read only mode
         menubar: !readonly,

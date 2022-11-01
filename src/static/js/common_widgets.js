@@ -1349,7 +1349,8 @@ $.widget("asm.richtextarea", {
 
             toolbar_items_size: "small",
             toolbar: "undo redo | fontselect fontsizeselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | link image | code",
-            contextmenu: "link image | cut copy paste",
+            //contextmenu: "link image | cut copy paste",
+            contextmenu: "", // allow the browser's default context menu
 
             // enable browser spellchecking
             gecko_spellcheck: true,
