@@ -1,6 +1,7 @@
 46
 ================
 
+01/11/22 Sort person flags column before storing
 30/10/22 Support CTE/WITH syntax for reports and in SQL Interface
 28/10/22 Add adoptable emblem #1189
 23/10/22 Option to supply a custom WHERE clause when exporting animals

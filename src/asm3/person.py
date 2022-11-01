@@ -1014,7 +1014,7 @@ def update_flags(dbo, username, personid, flags):
     giftaid = bi("giftaid" in flags)
     excludefrombulkemail = bi("excludefrombulkemail" in flags)
     sponsor = bi("sponsor" in flags)
-    flagstr = "|".join(flags) + "|"
+    flagstr = "|".join(sorted(flags)) + "|"
 
     # If the option is on and the flags have changed, log it
     if asm3.configuration.flag_change_log(dbo):
