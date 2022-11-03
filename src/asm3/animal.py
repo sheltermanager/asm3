@@ -3452,7 +3452,7 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
     if animalupdatebatch is not None:
         animalupdatebatch.append((
             calc_time_on_shelter(dbo, animalid, a),
-            calc_age_group(dbo, animalid, a, bands, asm3.utils.iif(a.activemovementdate is not None, a.mostrecententrydate, None)),
+            calc_age_group(dbo, animalid, a, bands, asm3.utils.iif(a.archived==1, a.mostrecententrydate, None)),
             calc_age_group(dbo, animalid, a, bands, a.activemovementdate),
             calc_age(dbo, animalid, a),
             calc_days_on_shelter(dbo, animalid, a),
@@ -3461,13 +3461,15 @@ def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = Non
             animalid
         ))
     else:
-        activemovement = dbo.query_date("SELECT ActiveMovementDate FROM animal WHERE ID = ?", [animalid])
-        recententry = dbo.query_date("SELECT MostRecentEntryDate FROM animal WHERE ID = ?", [animalid])
-        agegroupto = asm3.utils.iif(activemovement is not None, recententry, None)
+        a = dbo.first_row(dbo.query("SELECT ID, DateBroughtIn, DeceasedDate, DiedOffShelter, Archived, ActiveMovementDate, " \
+            "MostRecentEntryDate, DateOfBirth FROM animal WHERE ID=?", [animalid]))
+        movements = dbo.query("SELECT AnimalID, MovementDate, ReturnDate FROM adoption " \
+            "WHERE AnimalID = ? AND MovementType NOT IN (2,8) AND MovementDate Is Not Null AND ReturnDate Is Not Null " \
+            "ORDER BY AnimalID", [animalid])
         dbo.update("animal", animalid, {
             "TimeOnShelter":        calc_time_on_shelter(dbo, animalid, a),
-            "AgeGroup":             calc_age_group(dbo, animalid, a, todate = agegroupto),
-            "AgeGroupActiveMovement": calc_age_group(dbo, animalid, a, todate = activemovement),
+            "AgeGroup":             calc_age_group(dbo, animalid, a, todate = asm3.utils.iif(a.archived==1, a.mostrecententrydate, None)),
+            "AgeGroupActiveMovement": calc_age_group(dbo, animalid, a, todate = a.activemovementdate),
             "AnimalAge":            calc_age(dbo, animalid, a),
             "DaysOnShelter":        calc_days_on_shelter(dbo, animalid, a),
             "TotalTimeOnShelter":   calc_total_time_on_shelter(dbo, animalid, a),
@@ -3491,9 +3493,8 @@ def update_all_variable_animal_data(dbo):
         "MostRecentEntryDate, DateOfBirth FROM animal")
 
     # Get a single lookup of movement histories for our animals
-    movements = dbo.query("SELECT ad.AnimalID, ad.MovementDate, ad.ReturnDate " \
-        "FROM adoption ad INNER JOIN animal a ON a.ID = ad.AnimalID " \
-        "WHERE ad.MovementType NOT IN (2,8) AND ad.MovementDate Is Not Null AND ad.ReturnDate Is Not Null " \
+    movements = dbo.query("SELECT AnimalID, MovementDate, ReturnDate FROM adoption " \
+        "WHERE MovementType NOT IN (2,8) AND MovementDate Is Not Null AND ReturnDate Is Not Null " \
         "ORDER BY AnimalID")
 
     asm3.asynctask.set_progress_max(dbo, len(animals))
