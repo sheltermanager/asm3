@@ -2,7 +2,7 @@ Diary (completed between two dates)
 ###
 Diary
 ###
-Any rev01
+Any rev02
 ###
 Shows all completed diary notes between two dates.
 ###
@@ -26,7 +26,7 @@ GROUP$$
 
 $$BODY
 <p>
-<i>$DIARYDATETIME</i> (completed on $DATECOMPLETED)<br />
+<i>$DIARYDATETIME</i> (completed on $DATECOMPLETED by $LASTCHANGEDBY)<br />
 <b>$LINKINFO $SUBJECT</b>
 </p>
 <p>
