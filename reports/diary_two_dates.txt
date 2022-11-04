@@ -1,8 +1,47 @@
+Diary (created between two dates)
+###
+Diary
+###
+Any rev01
+###
+Shows all diary notes created between two dates.
+###
+en
+###
+SELECT *
+FROM diary
+WHERE CreatedDate >= '$ASK DATE Notes between$' AND CreatedDate <= '$ASK DATE and$'
+ORDER BY DiaryForName, CreatedDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_DiaryForName
+$$HEAD
+<h2>$DiaryForName</h2>
+<hr />
+$$FOOT
+GROUP$$
+
+$$BODY
+<p>
+<i>$DIARYDATETIME</i> (completed on $DATECOMPLETED)<br />
+<b>$LINKINFO $SUBJECT</b>
+</p>
+<p>
+$NOTE
+</p>
+<hr />
+BODY$$
+
+$$FOOTER
+FOOTER$$
+&&&
 Diary (outstanding between two dates)
 ###
 Diary
 ###
-Any
+Any rev01
 ###
 Shows all incomplete diary notes between two dates.
 ###

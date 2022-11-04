@@ -2,7 +2,7 @@ Diary (current users)
 ###
 Diary
 ###
-MySQL
+MySQL rev01
 ###
 Generates the diary for the current user today.
 ###
@@ -43,7 +43,7 @@ Diary (current users)
 ###
 Diary
 ###
-PostgreSQL
+PostgreSQL rev01
 ###
 Generates the diary for the current user today.
 ###
