@@ -2,13 +2,13 @@ Cost Breakdown for Animal
 ###
 Financial
 ###
-33601/Any
+33601/Any rev02
 ###
-All costs for a single animal.
+All costs for one or more selected animals.
 ###
 en
 ###
-$VAR an ANIMAL$
+$VAR an ANIMALS$
 
 SELECT * FROM (
 
@@ -24,7 +24,7 @@ FROM animal
 INNER JOIN animalcost ON animal.ID = animalcost.AnimalID
 INNER JOIN costtype ON animalcost.CostTypeID = costtype.ID
 INNER JOIN species ON species.ID = animal.SpeciesID
-WHERE animal.ID = $@an$
+WHERE animal.ID IN ($@an$)
 
 UNION SELECT
 animal.DateBroughtIn AS date,
@@ -35,7 +35,7 @@ animal.DailyBoardingCost * animal.DaysOnShelter AS amt,
 'Board and Food *' AS description1, '' AS description2
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
-WHERE animal.ID = $@an$
+WHERE animal.ID IN ($@an$)
 
 UNION SELECT
 animalvaccination.DateOfVaccination AS date,
@@ -49,7 +49,7 @@ FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID
 INNER JOIN vaccinationtype ON animalvaccination.VaccinationID = vaccinationtype.ID
-WHERE animal.ID = $@an$
+WHERE animal.ID IN ($@an$)
 
 UNION SELECT
 animaltest.DateOfTest AS date,
@@ -63,7 +63,7 @@ FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN animaltest ON animaltest.AnimalID = animal.ID
 INNER JOIN testtype ON animaltest.TestTypeID = testtype.ID
-WHERE animal.ID = $@an$
+WHERE animal.ID IN ($@an$)
 
 UNION SELECT
 animalmedical.StartDate AS date,
@@ -76,7 +76,7 @@ animalmedical.Comments AS description2
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
-WHERE animal.ID = $@an$
+WHERE animal.ID IN ($@an$)
 
 UNION SELECT
 animaltransport.PickupDateTime AS date,
@@ -90,7 +90,7 @@ FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN animaltransport ON animaltransport.AnimalID = animal.ID
 INNER JOIN owner ON animaltransport.DropoffOwnerID = owner.ID 
-WHERE animal.ID = $@an$
+WHERE animal.ID IN ($@an$)
 
 
 ) dummy ORDER BY code, date DESC
