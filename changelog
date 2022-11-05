@@ -1,6 +1,7 @@
 46
 ================
 
+05/11/22 Recalculate age when generating documents from animals
 03/11/22 Fix bug where fostered animals show age group at entry instead of now
 01/11/22 Disable TinyMCE context menu so browser cut/copy/paste can be used
 01/11/22 adoptable_js: filters for goodwith and where #1097

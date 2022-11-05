@@ -7,8 +7,8 @@ import time
 from asm3.locales import *
 
 
-VERSION = "46u [Thu  3 Nov 10:41:17 GMT 2022]"
-BUILD = "11031041"
+VERSION = "46u [Sat  5 Nov 08:25:58 GMT 2022]"
+BUILD = "11050825"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -727,6 +727,29 @@ def format_diff(l, days, cutoffs = "7|182|365"):
         months = int((days % 365) / 30.5)
         return ntranslate(years, [ _("{plural0} year.", l), _("{plural1} years.", l), _("{plural2} years.", l), _("{plural3} years.")], l).replace(".", "") + \
             " " + ntranslate(months, [ _("{plural0} month.", l), _("{plural1} months.", l), _("{plural2} months.", l), _("{plural3} months.")], l)
+
+def format_diff_single(l, days, cutoffs = "7|182|365"):
+    """
+    Returns a formatted diff from a number of days, but only ever a single time unit (ie. weeks, months OR years)
+    Eg: 6 weeks, 5 months.
+    """
+    if days is None or days < 0: days = 0
+    weeks = int(days / 7)
+    months = int(days / 30.5)
+    years = int(days / 365)
+   
+    # If it's less than a week, show as days
+    if days < cint(cutoffs.split("|")[0]):
+        return ntranslate(days, [ _("{plural0} day.", l), _("{plural1} days.", l), _("{plural2} days.", l), _("{plural3} days.")], l)
+    # If it's 26 weeks or less, show as weeks
+    elif days < cint(cutoffs.split("|")[1]):
+        return ntranslate(weeks, [ _("{plural0} week.", l), _("{plural1} weeks.", l), _("{plural2} weeks.", l), _("{plural3} weeks.")], l)
+    # If it's less than a year, show as months
+    elif days < cint(cutoffs.split("|")[2]):
+        return ntranslate(months, [ _("{plural0} month.", l), _("{plural1} months.", l), _("{plural2} months.", l), _("{plural3} months.")], l)
+    else:
+        # Show as years
+        return ntranslate(years, [ _("{plural0} year.", l), _("{plural1} years.", l), _("{plural2} years.", l), _("{plural3} years.")], l)
 
 def parse_dst(c):
     """
