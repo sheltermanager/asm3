@@ -2,7 +2,7 @@ Length of Stay by Jurisdiction
 ###
 Statistics
 ###
-34016/PostgreSQL rev01
+34016/PostgreSQL rev02
 ###
 Shows time on shelter by jurisdiction for animals entering the shelter between two dates
 ###
@@ -19,7 +19,7 @@ INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN entryreason e ON e.ID = a.EntryReasonID
 INNER JOIN jurisdiction j ON j.ID = a.JurisdictionID
 WHERE a.DateBroughtIn >= '$ASK DATE Animals entering the shelter between$' AND a.DateBroughtIn <= '$ASK DATE and$'
-AND IsPickup = 1 AND AND NonShelterAnimal = 0 
+AND IsPickup = 1 AND NonShelterAnimal = 0 
 AND NOT EXISTS(SELECT ID FROM adoption WHERE IsPermanentFoster=1 AND AnimalID=a.ID)
 ORDER BY j.JurisdictionName, a.DateBroughtIn
 ###
