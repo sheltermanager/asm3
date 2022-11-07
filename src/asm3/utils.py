@@ -1638,7 +1638,7 @@ def strip_email_address(s):
     # Just returns the address portion of an email
     return parse_email_address(s)[1]
 
-def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body = "", contenttype = "plain", attachments = [], exceptions = True):
+def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body = "", contenttype = "plain", attachments = [], exceptions = True, bulk = False):
     """
     Sends an email.
     fromadd is a single email address
@@ -1649,6 +1649,8 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     contenttype is either "plain" or "html"
     attachments: A list of tuples in the form (filename, mimetype, data)
     exceptions: If True, throws exceptions due to sending problems
+    bulk: If True, set the Precedence: Bulk header 
+          (indicates message type and attempts to stop backscatter)
 
     returns True on success
 
@@ -1734,6 +1736,7 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     add_header(msg, "Bounces-To", replyadd)
     add_header(msg, "Message-ID", make_msgid())
     add_header(msg, "Date", formatdate())
+    if bulk: add_header(msg, "Precedence", "Bulk")
     add_header(msg, "X-Mailer", "Animal Shelter Manager %s" % asm3.i18n.VERSION)
     add_header(msg, "Subject", subject)
 
@@ -1852,7 +1855,7 @@ def send_bulk_email(dbo, fromadd, subject, body, rows, contenttype):
             toadd = r["EMAILADDRESS"]
             if toadd is None or toadd.strip() == "": continue
             asm3.al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
-            send_email(dbo, fromadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False)
+            send_email(dbo, fromadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
     thread.start_new_thread(do_send, ())
 
 def send_error_email():

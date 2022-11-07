@@ -934,8 +934,10 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
         replyto = ""
         if formdef.emailsubmitter != 0: replyto = emailaddress 
         if replyto == "": replyto = asm3.configuration.email(dbo)
+        # NOTE: We send emails to shelter contacts as bulk=True to try and prevent
+        # backscatter since most shelter emails have some kind of autoresponder
         asm3.utils.send_email(dbo, replyto, formdef.emailaddress, "", "", 
-            subject, formdata, "html", images, exceptions=False)
+            subject, formdata, "html", images, exceptions=False, bulk=True)
 
     # Was the option set to email the adoption coordinator linked to animalname?
     if formdef.emailcoordinator == 1 and animalname != "":
