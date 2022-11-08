@@ -16,10 +16,14 @@ PATH = "/home/robin/tmp/asm3_import_data/ishelters_ec2883/"
 
 # animalpictures.csv for images (seems to be using s3 signed URLs that are active for 5 minutes)
 
-START_ID = 5000
+START_ID = 100
+DEFAULT_BREED = 442 # mixed breed, 261 = dsh
 
 # This is only ever going to be any good if ishelters make their bucket public
 IMAGE_PREFIX = "https://ishelters.s3.us-west-2.amazonaws.com/shelters/384/animals/images/200x200s/"
+
+def getdate(s):
+    return asm.getdate_mmddyyyy(s)
 
 def getentryreason(s):
     er = {
@@ -133,18 +137,17 @@ for row in asm.csv_to_list(PATH + "animals.csv", encoding="cp1252"):
     a.ShortCode = row["code"]
     a.AnimalTypeID = asm.type_id_for_name(row["species"])
     a.SpeciesID = asm.species_id_for_name(row["species"])
-    a.BreedID = asm.breed_id_for_name(row["primary breed"])
-    a.Breed2ID = asm.breed_id_for_name(row["secondary breed"])
+    asm.breed_ids(a, row["primary breed"], row["secondary breed"], DEFAULT_BREED)
     a.CrossBreed = asm.iif(row["secondary breed"] != "", 1, 0)
     a.BreedName = asm.breed_name_for_id(a.BreedID)
     a.BaseColourID = asm.colour_id_for_name(row["primary color"])
     a.Sex = asm.getsex_mf(row["sex"])
-    a.DateBroughtIn = asm.getdate_iso(row["time entered"])
+    a.DateBroughtIn = getdate(row["time entered"])
     if a.DateBroughtIn is None: a.DateBroughtIn = asm.now()
-    a.DateOfBirth = asm.getdate_iso(row["birth date"])
-    if a.DateOfBirth is None: a.DateOfBirth = asm.getdate_iso(row["time entered"])
+    a.DateOfBirth = getdate(row["birth date"])
+    if a.DateOfBirth is None: a.DateOfBirth = getdate(row["time entered"])
     if a.DateOfBirth is None: a.DateOfBirth = a.DateBroughtIn
-    a.NeuteredDate = asm.getdate_iso(row["neutered/spayed date"])
+    a.NeuteredDate = getdate(row["neutered/spayed date"])
     if a.NeuteredDate is not None: a.Neutered = 1
     a.Archived = 0
     a.IdentichipNumber = row["microchip #"]
@@ -153,7 +156,7 @@ for row in asm.csv_to_list(PATH + "animals.csv", encoding="cp1252"):
     a.HiddenAnimalDetails = a.HiddenAnimalDetails.replace("\\", "/")
     a.AnimalComments = ("%s" % row["general comments"]).replace("\\", "/")
     a.Markings = ("%s" % row["distinctive features"]).replace("\\", "/")
-    a.DeceasedDate = asm.getdate_iso(row["date of death"])
+    a.DeceasedDate = getdate(row["date of death"])
     a.PTSReason = row["reason of death"]
     a.RabiesTag = row["tag #"]
     a.IsNotForRegistration = 0
@@ -166,8 +169,8 @@ for row in asm.csv_to_list(PATH + "checkins.csv", encoding="cp1252"):
     if row["Animal Id"] in ppa: a = ppa[row["Animal Id"]]
     if a is None: continue
     if row["Type of Check-In"] is None: continue
-    if asm.getdate_iso(row["Check-In Date"]) is not None: 
-        a.DateBroughtIn = asm.getdate_iso(row["Check-In Date"])
+    if getdate(row["Check-In Date"]) is not None: 
+        a.DateBroughtIn = getdate(row["Check-In Date"])
     if row["Brought In By Id"] in ppo: 
         a.BroughtInByOwnerID = ppo[row["Brought In By Id"]].ID
     if row["Previous Owner Id"] in ppo:
@@ -186,7 +189,7 @@ for row in asm.csv_to_list(PATH + "adoptions.csv", encoding="cp1252"):
     movements.append(m)
     m.OwnerID = o.ID
     m.AnimalID = a.ID
-    m.MovementDate = asm.getdate_iso(row["Adopted On"])
+    m.MovementDate = getdate(row["Adopted On"])
     m.MovementType = 1
     m.Comments = row["Comments"]
     a.Archived = 1
@@ -213,7 +216,7 @@ for row in asm.csv_to_list(PATH + "releases.csv", encoding="cp1252"):
     movements.append(m)
     m.OwnerID = 0
     m.AnimalID = a.ID
-    m.MovementDate = asm.getdate_iso(row["Date Released"])
+    m.MovementDate = getdate(row["Date Released"])
     m.MovementType = 7 # Released to wild
     a.ActiveMovementType = 7
     if row["Type"] == "Transfer":
@@ -240,7 +243,7 @@ for row in asm.csv_to_list(PATH + "movements.csv", encoding="cp1252"):
         movements.append(m)
         m.OwnerID = uo.ID
         m.AnimalID = a.ID
-        m.MovementDate = asm.getdate_iso(row["Moved On"])
+        m.MovementDate = getdate(row["Moved On"])
         m.MovementType = 1
         m.Comments = row["Comments"]
         a.Archived = 1
@@ -249,12 +252,12 @@ for row in asm.csv_to_list(PATH + "movements.csv", encoding="cp1252"):
         a.ActiveMovementID = m.ID
         lastadopted = row["Animal Id"]
     elif row["Location"] == "Foster Care":
-        if a.ActiveMovementDate and a.ActiveMovementDate > asm.getdate_iso(row["Moved On"]): continue # Don't bother if the current active adoption is newer than this one
+        if a.ActiveMovementDate and a.ActiveMovementDate > getdate(row["Moved On"]): continue # Don't bother if the current active adoption is newer than this one
         m = asm.Movement()
         movements.append(m)
         m.OwnerID = fo.ID
         m.AnimalID = a.ID
-        m.MovementDate = asm.getdate_iso(row["Moved On"])
+        m.MovementDate = getdate(row["Moved On"])
         m.MovementType = 2
         m.Comments = row["Comments"]
         a.Archived = 0
@@ -266,7 +269,7 @@ for row in asm.csv_to_list(PATH + "movements.csv", encoding="cp1252"):
         movements.append(m)
         m.OwnerID = to.ID
         m.AnimalID = a.ID
-        m.MovementDate = asm.getdate_iso(row["Moved On"])
+        m.MovementDate = getdate(row["Moved On"])
         m.MovementType = 3
         m.Comments = row["Comments"]
         a.Archived = 1
@@ -292,8 +295,8 @@ if asm.file_exists(PATH + "donations.csv"):
         if pm.find("Credit Card") != -1: od.DonationPaymentID = 3
         if pm.find("Debit Card") != -1: od.DonationPaymentID = 4
         if "Method Details" in row: od.ChequeNumber = row["Method Details"]
-        od.Date = asm.getdate_iso(row["Date Donated"])
-        if od.Date is None: od.Date = asm.getdate_iso(row["Date Pledged"])
+        od.Date = getdate(row["Date Donated"])
+        if od.Date is None: od.Date = getdate(row["Date Pledged"])
         od.OwnerID = o.ID
         od.AnimalID = aid
         od.MovementID = 0
@@ -306,8 +309,8 @@ for row in asm.csv_to_list(PATH + "allmedical.csv", encoding="cp1252"):
     a = None
     if row["Animal Id"] not in ppa: continue
     a = ppa[row["Animal Id"]]
-    dg = asm.getdate_iso(row["Date Given"])
-    dn = asm.getdate_iso(row["Date Needed"])
+    dg = getdate(row["Date Given"])
+    dn = getdate(row["Date Needed"])
 
     if row["Type of Medical Entry"] == "Vaccination":
         if a.ID not in vx: vx[a.ID] = []
@@ -334,7 +337,7 @@ for row in asm.csv_to_list(PATH + "allmedical.csv", encoding="cp1252"):
         animaltests.append( asm.animal_test(a.ID, dg, dg, row["Diagnostic Test Name"], row["Diagnostic Test Result"], "%s %s" % (row["Comments"], row["Hidden comments"])) )
 
     elif row["Type of Medical Entry"] == "Medical Condition":
-        if dg is None: dg = asm.getdate_iso(row["Medical Condition Noticed On"])
+        if dg is None: dg = getdate(row["Medical Condition Noticed On"])
         if dg is None: dg = a.DateBroughtIn
         animalmedicals.append(asm.animal_regimen_single(a.ID, dg, row["Medical Condition Name"], "N/A", "%s %s" % (row["Comments"], row["Hidden comments"])))
 

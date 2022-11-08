@@ -483,7 +483,9 @@ def colour_name_for_id(id, default = "Black"):
 # List of default species
 species = (
 ("1","Dog"),
+("1","Canine"),
 ("2","Cat"),
+("2","Feline"),
 ("3","Bird"),
 ("4","Mouse"),
 ("5","Rat"),
@@ -506,6 +508,7 @@ species = (
 ("22","Hamster"),
 ("23","Camel"),
 ("24","Horse"),
+("24","Equine"),
 ("25","Pony"),
 ("26","Donkey"),
 ("27","Llama"),
