@@ -112,7 +112,7 @@ def atof(s):
     except:
         return 0
 
-def csv_to_list(fname, strip = False, remove_bom = True, remove_control = False, remove_non_ascii = False, uppercasekeys = False, unicodehtml = False):
+def csv_to_list(fname, strip = False, remove_bom = True, remove_control = False, remove_non_ascii = False, uppercasekeys = False, unicodehtml = False, encoding="utf-8"):
     """
     Reads the csv file fname and returns it as a list of maps 
     with the first row used as the keys.
@@ -129,7 +129,7 @@ def csv_to_list(fname, strip = False, remove_bom = True, remove_control = False,
     # Read the file into memory buffer b first
     # any raw transformations can be done on it there
     b = StringIO()
-    with open(fname, "r") as f:
+    with open(fname, "r", encoding=encoding) as f:
         for s in f.readlines():
             if remove_bom:
                 s = s.replace("\ufeff", "")

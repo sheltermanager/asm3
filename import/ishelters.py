@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import asm, os
 
@@ -6,15 +6,20 @@ import asm, os
 Import script for iShelters CSV export.
 It can be accessed by going to adminShelter and then System->Misc->Downloads
 
-7th July, 2015 - 18th May, 2016
+7th July, 2015 - 8th Nov, 2022
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/ishelters_ss2385/"
+PATH = "/home/robin/tmp/asm3_import_data/ishelters_ec2883/"
 
 # Files needed
 # adoptions.csv, animals.csv, checkins.csv, donations.csv, allmedical.csv, movements.csv, people.csv, releases.csv
 
+# animalpictures.csv for images (seems to be using s3 signed URLs that are active for 5 minutes)
+
 START_ID = 5000
+
+# This is only ever going to be any good if ishelters make their bucket public
+IMAGE_PREFIX = "https://ishelters.s3.us-west-2.amazonaws.com/shelters/384/animals/images/200x200s/"
 
 def getentryreason(s):
     er = {
@@ -27,13 +32,13 @@ def getentryreason(s):
         "Animal Control": 7,
         "Born": 13
     }
-    for k, v in er.iteritems():
+    for k, v in er.items():
         if s.find(k) != -1:
             return v
     return 11
 
 # --- START OF CONVERSION ---
-print "\\set ON_ERROR_STOP\nBEGIN;"
+print("\\set ON_ERROR_STOP\nBEGIN;")
 
 animals = []
 animalmedicals = []
@@ -55,17 +60,21 @@ asm.setid("owner", START_ID)
 asm.setid("ownerdonation", START_ID)
 asm.setid("vaccinationtype", 100)
 asm.setid("testtype", 100)
+asm.setid("media", 100)
+asm.setid("dbfs", 100)
 
-print "DELETE FROM adoption WHERE ID >= %s;" % START_ID
-print "DELETE FROM animal WHERE ID >= %s;" % START_ID
-print "DELETE FROM animalmedical WHERE ID >= %s;" % START_ID
-print "DELETE FROM animalmedicaltreatment WHERE ID >= %s;" % START_ID
-print "DELETE FROM animaltest WHERE ID >= %s;" % START_ID
-print "DELETE FROM animalvaccination WHERE ID >= %s;" % START_ID
-print "DELETE FROM owner WHERE ID >= %s;" % START_ID
-print "DELETE FROM ownerdonation WHERE ID >= %s;" % START_ID
-print "DELETE FROM testtype WHERE ID >= 100;"
-print "DELETE FROM vaccinationtype WHERE ID >= 100;"
+print("DELETE FROM adoption WHERE ID >= %s;" % START_ID)
+print("DELETE FROM animal WHERE ID >= %s;" % START_ID)
+print("DELETE FROM animalmedical WHERE ID >= %s;" % START_ID)
+print("DELETE FROM animalmedicaltreatment WHERE ID >= %s;" % START_ID)
+print("DELETE FROM animaltest WHERE ID >= %s;" % START_ID)
+print("DELETE FROM animalvaccination WHERE ID >= %s;" % START_ID)
+print("DELETE FROM owner WHERE ID >= %s;" % START_ID)
+print("DELETE FROM ownerdonation WHERE ID >= %s;" % START_ID)
+print("DELETE FROM testtype WHERE ID >= %s;" % START_ID)
+print("DELETE FROM vaccinationtype WHERE ID >= %s;" % START_ID)
+print("DELETE FROM dbfs WHERE ID >= %s;" % START_ID)
+print("DELETE FROM media WHERE ID >= %s;" % START_ID)
 
 to = asm.Owner()
 to.OwnerSurname = "Unknown Transfer Owner"
@@ -83,9 +92,8 @@ uo = asm.Owner()
 uo.OwnerSurname = "Unknown Adopter"
 owners.append(uo)
 
-
 # people.csv
-for row in asm.csv_to_list(PATH + "people.csv", remove_non_ascii=True):
+for row in asm.csv_to_list(PATH + "people.csv", encoding="cp1252"):
     if row["last name"] is None: continue
     o = asm.Owner()
     ppo[row["id"]] = o
@@ -110,7 +118,7 @@ for row in asm.csv_to_list(PATH + "people.csv", remove_non_ascii=True):
     if types.find("Foster") != -1: o.IsFosterer = 1
 
 # animals.csv
-for row in asm.csv_to_list(PATH + "animals.csv", remove_non_ascii=True):
+for row in asm.csv_to_list(PATH + "animals.csv", encoding="cp1252"):
     if row["name"] is None: continue
     if row["code"] is None or row["code"] == "": continue
     if row["primary breed"] is None or row["primary breed"] == "": continue
@@ -153,26 +161,26 @@ for row in asm.csv_to_list(PATH + "animals.csv", remove_non_ascii=True):
     a.InTheShelter = row["in the shelter"]
 
 # checkins.csv
-for row in asm.csv_to_list(PATH + "checkins.csv", remove_non_ascii=True):
+for row in asm.csv_to_list(PATH + "checkins.csv", encoding="cp1252"):
     a = None
-    if ppa.has_key(row["Animal Id"]): a = ppa[row["Animal Id"]]
+    if row["Animal Id"] in ppa: a = ppa[row["Animal Id"]]
     if a is None: continue
     if row["Type of Check-In"] is None: continue
     if asm.getdate_iso(row["Check-In Date"]) is not None: 
         a.DateBroughtIn = asm.getdate_iso(row["Check-In Date"])
-    if ppo.has_key(row["Brought In By Id"]): 
+    if row["Brought In By Id"] in ppo: 
         a.BroughtInByOwnerID = ppo[row["Brought In By Id"]].ID
-    if ppo.has_key(row["Previous Owner Id"]):
+    if row["Previous Owner Id"] in ppo:
         a.OriginalOwnerID = ppo[row["Previous Owner Id"]].ID
     a.ReasonForEntry = "%s: %s %s %s" % (row["Type of Check-In"], row["Reason for Surrender"], row["General Comments"], row["Hidden Comments"])
     a.EntryReasonID = getentryreason(row["Type of Check-In"])
 
 # adoptions.csv
-for row in asm.csv_to_list(PATH + "adoptions.csv", remove_non_ascii=True):
+for row in asm.csv_to_list(PATH + "adoptions.csv", encoding="cp1252"):
     o = None
-    if ppo.has_key(row["Adopter Id"]): o = ppo[row["Adopter Id"]]
+    if row["Adopter Id"] in ppo: o = ppo[row["Adopter Id"]]
     a = None
-    if ppa.has_key(row["Animal Id"]): a = ppa[row["Animal Id"]]
+    if row["Animal Id"] in ppa: a = ppa[row["Animal Id"]]
     if a is None or o is None: continue
     m = asm.Movement()
     movements.append(m)
@@ -197,9 +205,9 @@ for row in asm.csv_to_list(PATH + "adoptions.csv", remove_non_ascii=True):
         od.Donation = asm.get_currency(row["Fee"])
 
 # releases.csv
-for row in asm.csv_to_list(PATH + "releases.csv", remove_non_ascii=True):
+for row in asm.csv_to_list(PATH + "releases.csv", encoding="cp1252"):
     a = None
-    if ppa.has_key(row["Animal Id"]): a = ppa[row["Animal Id"]]
+    if row["Animal Id"] in ppa: a = ppa[row["Animal Id"]]
     if a is None: continue
     m = asm.Movement()
     movements.append(m)
@@ -222,10 +230,10 @@ for row in asm.csv_to_list(PATH + "releases.csv", remove_non_ascii=True):
     a.ActiveMovementID = m.ID
 
 # movements.csv
-for row in asm.csv_to_list(PATH + "movements.csv", remove_non_ascii=True):
+for row in asm.csv_to_list(PATH + "movements.csv", encoding="cp1252"):
     a = None
     lastadopted = "0"
-    if ppa.has_key(row["Animal Id"]): a = ppa[row["Animal Id"]]
+    if row["Animal Id"] in ppa: a = ppa[row["Animal Id"]]
     if a is None: continue
     if a.ActiveMovementDate is None and row["Location"] == "Adopted" and row["Animal Id"] != lastadopted: # quite a few duplicate rows together
         m = asm.Movement()
@@ -267,35 +275,36 @@ for row in asm.csv_to_list(PATH + "movements.csv", remove_non_ascii=True):
         a.ActiveMovementID = m.ID
 
 # donations.csv
-for row in asm.csv_to_list(PATH + "donations.csv", remove_non_ascii=True):
-    o = None
-    if ppo.has_key(row["Person Id"]): o = ppo[row["Person Id"]]
-    if o is None: continue
-    aid = 0
-    if ppa.has_key(row["Animal Id"]): aid = ppa[row["Animal Id"]].ID
-    od = asm.OwnerDonation()
-    ownerdonations.append(od)
-    od.DonationTypeID = 1
-    pm = ""
-    if "Method" in row: pm = row["Method"]
-    od.DonationPaymentID = 1
-    if pm.find("Check") != -1: od.DonationPaymentID = 2
-    if pm.find("Credit Card") != -1: od.DonationPaymentID = 3
-    if pm.find("Debit Card") != -1: od.DonationPaymentID = 4
-    if "Method Details" in row: od.ChequeNumber = row["Method Details"]
-    od.Date = asm.getdate_iso(row["Date Donated"])
-    if od.Date is None: od.Date = asm.getdate_iso(row["Date Pledged"])
-    od.OwnerID = o.ID
-    od.AnimalID = aid
-    od.MovementID = 0
-    od.Donation = asm.get_currency(row["Amount"])
-    od.Comments = "%s %s" % (row["Type"], row["Comments"])
+if asm.file_exists(PATH + "donations.csv"):
+    for row in asm.csv_to_list(PATH + "donations.csv", encoding="cp1252"):
+        o = None
+        if row["Person Id"] in ppo: o = ppo[row["Person Id"]]
+        if o is None: continue
+        aid = 0
+        if row["Animal Id"] in ppa: aid = ppa[row["Animal Id"]].ID
+        od = asm.OwnerDonation()
+        ownerdonations.append(od)
+        od.DonationTypeID = 1
+        pm = ""
+        if "Method" in row: pm = row["Method"]
+        od.DonationPaymentID = 1
+        if pm.find("Check") != -1: od.DonationPaymentID = 2
+        if pm.find("Credit Card") != -1: od.DonationPaymentID = 3
+        if pm.find("Debit Card") != -1: od.DonationPaymentID = 4
+        if "Method Details" in row: od.ChequeNumber = row["Method Details"]
+        od.Date = asm.getdate_iso(row["Date Donated"])
+        if od.Date is None: od.Date = asm.getdate_iso(row["Date Pledged"])
+        od.OwnerID = o.ID
+        od.AnimalID = aid
+        od.MovementID = 0
+        od.Donation = asm.get_currency(row["Amount"])
+        od.Comments = "%s %s" % (row["Type"], row["Comments"])
 
 # allmedical.csv
 vx = {} # lookup of animal ID to vaccinations for speed
-for row in asm.csv_to_list(PATH + "allmedical.csv", remove_non_ascii=True):
+for row in asm.csv_to_list(PATH + "allmedical.csv", encoding="cp1252"):
     a = None
-    if not ppa.has_key(row["Animal Id"]): continue
+    if row["Animal Id"] not in ppa: continue
     a = ppa[row["Animal Id"]]
     dg = asm.getdate_iso(row["Date Given"])
     dn = asm.getdate_iso(row["Date Needed"])
@@ -337,31 +346,34 @@ for row in asm.csv_to_list(PATH + "allmedical.csv", remove_non_ascii=True):
     elif dg is not None:
         animalmedicals.append(asm.animal_regimen_single(a.ID, dg, "%s %s" % (row["Medical Procedure Type"], row["Medication Name"]), row["Medication Dose"], "%s %s" % (row["Comments"], row["Hidden comments"])))
 
-# Now that everything else is done, output stored records
-print "DELETE FROM primarykey;"
-for a in animals:
-    print a
-for am in animalmedicals:
-    print am
-for at in animaltests:
-    print at
-for av in animalvaccinations:
-    print av
-for o in owners:
-    print o
-for od in ownerdonations:
-    print od
-for m in movements:
-    print m
-for k, v in asm.vaccinationtypes.iteritems():
-    if v.ID >= 100: print v
-for k, v in asm.testtypes.iteritems():
-    if v.ID >= 100: print v
+# images
+if IMAGE_PREFIX != "" and asm.file_exists(PATH + "animalpictures.csv"):
+    for row in asm.csv_to_list(PATH + "animalpictures.csv", remove_non_ascii=True):
+        pass # not sure of extraction method yet
 
+# Now that everything else is done, output stored records
+for a in animals:
+    print(a)
+for am in animalmedicals:
+    print(am)
+for at in animaltests:
+    print(at)
+for av in animalvaccinations:
+    print(av)
+for o in owners:
+    print(o)
+for od in ownerdonations:
+    print(od)
+for m in movements:
+    print(m)
+for k, v in asm.vaccinationtypes.items():
+    if v.ID >= START_ID: print(v)
+for k, v in asm.testtypes.items():
+    if v.ID >= START_ID: print(v)
 
 asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animaltests=animaltests, animalvaccinations=animalvaccinations, owners=owners, movements=movements, ownerdonations=ownerdonations)
 
-print "DELETE FROM configuration WHERE ItemName Like 'VariableAnimalDataUpdated';"
-print "DELETE FROM configuration WHERE ItemName LIKE 'DBView%';"
-print "COMMIT;"
+print("DELETE FROM configuration WHERE ItemName Like 'VariableAnimalDataUpdated';")
+print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
+print("COMMIT;")
 
