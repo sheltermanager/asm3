@@ -1,0 +1,99 @@
+Fosters by Coordinator with Outcomes
+###
+Movements
+###
+PostgreSQL rev01
+###
+Foster animals between two dates with their final outcomes grouped by adoption coordinator
+###
+en
+###
+SELECT
+a.AnimalName, a.ShelterCode, a.DateOfBirth,
+e.ReasonName, o.OwnerName, m.MovementDate, m.ReturnDate, 
+o.OwnerAddress AS FostererAddress, o.MobileTelephone AS FostererPhone, o.EmailAddress AS FostererEmail,
+EXTRACT(DAY FROM m.ReturnDate - m.MovementDate)::integer AS DaysOnFoster,
+age(m.MovementDate, m.ReturnDate)::text AS TimeOnFoster,
+a.NeuteredDate,
+(SELECT OwnerName FROM owner WHERE owner.ID = a.AdoptionCoordinatorID) AS CoordinatorName,
+CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType > 0 THEN mt.MovementType ELSE 'None' END AS OutcomeName,
+CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate,
+no.OwnerName AS OutcomePerson, no.OwnerAddress AS OutcomeAddress, no.OwnerTown AS OutcomeTown, no.OwnerCounty AS OutcomeCounty,
+no.OwnerPostcode AS OutcomePostcode, no.HomeTelephone AS OutcomeHomeTelephone, no.WorkTelephone AS OutcomeWorkTelephone,
+no.MobileTelephone AS OutcomeMobileTelephone, no.EmailAddress AS OutcomeEmail
+FROM animal a
+INNER JOIN adoption m ON m.AnimalID = a.ID
+INNER JOIN owner o ON m.OwnerID = o.ID 
+INNER JOIN entryreason e ON a.EntryReasonID = e.ID 
+LEFT OUTER JOIN lksmovementtype mt ON a.ActiveMovementType = mt.ID
+LEFT OUTER JOIN adoption ma ON ma.ID = a.ActiveMovementID
+LEFT OUTER JOIN owner no ON no.ID = ma.OwnerID
+WHERE m.MovementType = 2 AND m.MovementDate >= '$ASK DATE Fostered between$' AND m.MovementDate <= '$ASK DATE and$' 
+ORDER BY CoordinatorName, m.MovementDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_CoordinatorName
+$$HEAD
+<h2>$CoordinatorName</h2>
+<table border="1">
+<tr>
+<th>Animal</th>
+<th>Code</th>
+<th>DOB</th>
+<th>Entry category</th>
+<th>Fosterer</th>
+<th>Foster Date</th>
+<th>Foster Ended</th>
+<th>Time On Foster</th>
+<th>Neutered/Spayed</th>
+<th>Outcome</th>
+<th>Outcome date</th>
+<th>Outcome person</th>
+</tr>
+$$FOOT
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>Average: {AVG.DaysOnFoster.2} days</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<h3>Total $CoordinatorName: {COUNT.AnimalName}</h3>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$DATEOFBIRTH</td>
+<td>$REASONNAME</td>
+<td><b>$OWNERNAME</b><br/>
+$FostererAddress, $FostererPhone $FostererEmail
+</td>
+<td>$MOVEMENTDATE</td>
+<td>$RETURNDATE</td>
+<td>$TIMEONFOSTER</td>
+<td>$NEUTEREDDATE</td>
+<td>$OUTCOMENAME</td>
+<td>$OUTCOMEDATE</td>
+<td><b>$OUTCOMEPERSON</b><br/>
+$OUTCOMEADDRESS<br/>
+$OUTCOMETOWN $OUTCOMECOUNTY $OUTCOMEPOSTCODE<br/>
+$OUTCOMEHOMETELEPHONE $OUTCOMEWORKTELEPHONE $OUTCOMEMOBILETELEPHONE
+<i>$OUTCOMEEMAIL</i></td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+
