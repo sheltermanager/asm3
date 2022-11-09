@@ -33,7 +33,7 @@ from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVI
 # Service methods that require authentication
 AUTH_METHODS = [
     "csv_mail", "csv_report", "json_report", "jsonp_report", "json_mail", "jsonp_mail",
-    "html_report", "media_file", "rss_timeline", "upload_animal_image", "xml_adoptable_animal", 
+    "html_report", "rss_timeline", "upload_animal_image", "xml_adoptable_animal", 
     "json_adoptable_animal", "xml_adoptable_animals", "json_adoptable_animals", 
     "jsonp_adoptable_animals", "xml_found_animals", "json_found_animals", 
     "jsonp_found_animals", "xml_held_animals", "json_held_animals", 

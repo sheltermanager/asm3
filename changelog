@@ -1,6 +1,9 @@
 46
 ================
 
+09/11/22 follow redirects when retrieving images via http
+09/11/22 csvexport animals: include costs with support for importing #1192
+09/11/22 csvexport animals: embed URLs instead of base64, allow all pdf/images
 07/11/22 Updated Hebrew Translation (Saggi Neuemann)
 07/11/22 Classify bulk emails with Precedence: Bulk to stop backscatter
 05/11/22 Recalculate age when generating documents from animals

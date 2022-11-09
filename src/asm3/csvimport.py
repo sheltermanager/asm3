@@ -18,6 +18,8 @@ import datetime
 import re
 import sys
 
+from asm3.sitedefs import SERVICE_URL
+
 VALID_FIELDS = [
     "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1", 
     "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALJURISDICTION", 
@@ -28,6 +30,7 @@ VALID_FIELDS = [
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALTRANSFER",
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
+    "COSTDATE", "COSTTYPE", "COSTAMOUNT", "COSTDESCRIPTION",
     "VACCINATIONTYPE", "VACCINATIONDUEDATE", "VACCINATIONGIVENDATE", "VACCINATIONEXPIRESDATE", "VACCINATIONRABIESTAG",
     "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
     "TESTTYPE", "TESTDUEDATE", "TESTPERFORMEDDATE", "TESTRESULT", "TESTCOMMENTS",
@@ -264,6 +267,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     haspersonname = False
     haslicence = False
     haslicencenumber = False
+    hascost = False
+    hascostamount = False
     haslog = False
     haslogcomments = False
     hasmovement = False
@@ -288,6 +293,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
         if col.startswith("MEDICAL"): hasmed = True
         if col.startswith("LICENSE"): haslicence = True
         if col == "LICENSENUMBER": haslicencenumber = True
+        if col.startswith("COST"): hascost = True
+        if col == "COSTAMOUNT": hascostamount = True
         if col.startswith("LOG"): haslog = True
         if col == "LOGCOMMENTS": haslogcomments = True
         if col == "ORIGINALOWNERLASTNAME": hasoriginalownerlastname = True
@@ -318,7 +325,6 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     if hascurrentvet and not hascurrentvetlastname:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has current vet fields, but no CURRENTVETLASTNAME column")
         return
-
 
     # If we have any original owner fields, make sure at least ORIGINALOWNERLASTNAME is supplied
     if hasoriginalowner and not hasoriginalownerlastname:
@@ -354,6 +360,14 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     if hastest and not hasanimal:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has test fields, but no animal to apply them to")
         return
+
+    # If we have cost fields, we need an animal
+    if hascost and not hasanimal:
+        asm3.asynctask.set_last_error(dbo, "Your CSV file has cost fields, but no animal to apply them to")
+
+    # If we have cost fields, we need an amount
+    if hascost and not hascostamount:
+        asm3.asynctask.set_last_error(dbo, "Your CSV file has cost fields, but no COSTAMOUNT column")
 
     # If we have any log fields, we need an animal
     if haslog and not hasanimal:
@@ -407,12 +421,13 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 if animalcode in animalcodes:
                     animalcode = animalcodes[animalcode]
                 else:
-                    animalcodes[animalcode] = f"CSV{rowno:04}.{animalcode}"
-                    animalcode = animalcodes[animalcode]
+                    pcode = f"CSV{rowno:04}.{animalcode}"
+                    animalcodes[animalcode] = pcode
+                    animalcode = pcode
             a = {}
             a["animalname"] = gks(row, "ANIMALNAME")
-            a["sheltercode"] = gks(row, "ANIMALCODE")
-            a["shortcode"] = gks(row, "ANIMALCODE")
+            a["sheltercode"] = animalcode
+            a["shortcode"] = animalcode
             if gks(row, "ANIMALSEX") == "": 
                 a["sex"] = "2" # Default unknown if not set
             else:
@@ -525,6 +540,30 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                     pdfdata = ""
                 if pdfdata != "" and pdfname == "":
                     row_error(errors, "animal", rowno, row, "ANIMALPDFNAME must be set for data", dbo, sys.exc_info())
+                    continue
+
+            # media data if any was supplied
+            htmldata = gks(row, "ANIMALHTMLDATA")
+            htmlname = gks(row, "ANIMALHTMLNAME")
+            if htmldata != "":
+                if htmldata.startswith("http"):
+                    # It's a URL, get the PDF from the remote server
+                    r = asm3.utils.get_image_url(htmldata, timeout=5000)
+                    if r["status"] == 200:
+                        asm3.al.debug("retrieved HTML document from %s (%s bytes)" % (htmldata, len(r["response"])), "csvimport.csvimport", dbo)
+                        htmldata = "data:text/html;base64,%s" % asm3.utils.base64encode(r["response"])
+                    else:
+                        row_error(errors, "animal", rowno, row, "error reading html data from '%s': %s" % (htmldata, r), dbo, sys.exc_info())
+                        continue
+                elif htmldata.startswith("data:"):
+                    # It's a base64 encoded data URI - do nothing as attach_file requires it
+                    pass
+                else:
+                    # We don't know what it is, don't try and do anything with it
+                    row_error(errors, "animal", rowno, row, "WARN: unrecognised HTML content, ignoring", dbo, sys.exc_info())
+                    htmldata = ""
+                if htmldata != "" and htmlname == "":
+                    row_error(errors, "animal", rowno, row, "ANIMALHTMLNAME must be set for data", dbo, sys.exc_info())
                     continue
 
             # If an original owner is specified, create a person record
@@ -647,6 +686,11 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 if len(pdfdata) > 0:
                     pdfpost = asm3.utils.PostedData({ "filename": pdfname, "filetype": "application/pdf", "filedata": pdfdata }, dbo.locale)
                     asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, pdfpost)
+                # If we have some HTML data, add that to the animal
+                if len(htmldata) > 0:
+                    htmlpost = asm3.utils.PostedData({ "filename": htmlname, "filetype": "text/html", "filedata": htmldata }, dbo.locale)
+                    asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, htmlpost)
+
             except Exception as e:
                 row_error(errors, "animal", rowno, row, e, dbo, sys.exc_info())
 
@@ -873,6 +917,19 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 asm3.medical.insert_regimen_from_form(dbo, user, asm3.utils.PostedData(m, dbo.locale))
             except Exception as e:
                 row_error(errors, "medical", rowno, row, e, dbo, sys.exc_info())
+
+        # Costs
+        if hascost and animalid != 0 and gks(row, "COSTTYPENAME") != "":
+            c = {}
+            c["animalid"] = str(animalid)
+            c["type"] = gkl(dbo, row, "COSTTYPE", "costtype", "CostTypeName", createmissinglookups)
+            c["costdate"] = gkd(dbo, row, "COSTDATE", True)
+            c["cost"] = str(gkc(dbo, row, "COSTAMOUNT"))
+            c["description"] = gks(row, "COSTDESCRIPTION")
+            try:
+                asm3.animal.insert_cost_from_form(dbo, user, asm3.utils.PostedData(l, dbo.locale))
+            except Exception as e:
+                row_error(errors, "cost", rowno, row, e, dbo, sys.exc_info())
 
         # Logs
         if haslog and animalid != 0 and gks(row, "LOGCOMMENTS") != "":
@@ -1189,13 +1246,14 @@ def csvimport_stripe(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
     h.append("</table>")
     return "".join(h)
 
-def csvexport_animals(dbo, dataset, animalids = "", where = "", includephoto = False):
+def csvexport_animals(dbo, dataset, animalids = "", where = "", includemedia = "photo"):
     """
     Export CSV data for a set of animals.
     dataset: The named set of data to use
     animalids: If dataset == selshelter, a comma separated list of animals to export
     where: If dataset == where, a where clause to the animal table (without the keyword WHERE)
-    includephoto: Output a base64 encoded version of the animal's photo if True
+    includemedia: photo: output base64 encoded version of the primary photo for each animal
+                  all: output base64 encoded version of all media for each animal
     """
     l = dbo.locale
     q = ""
@@ -1209,13 +1267,15 @@ def csvexport_animals(dbo, dataset, animalids = "", where = "", includephoto = F
     
     ids = dbo.query(q)
 
-    keys = [ "ANIMALCODE", "ANIMALNAME", "ANIMALIMAGE", "ANIMALSEX", "ANIMALTYPE", "ANIMALWEIGHT", "ANIMALCOLOR", "ANIMALBREED1",
+    keys = [ "ANIMALCODE", "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALWEIGHT", "ANIMALCOLOR", "ANIMALBREED1",
         "ANIMALBREED2", "ANIMALDOB", "ANIMALLOCATION", "ANIMALUNIT", "ANIMALSPECIES", "ANIMALCOMMENTS",
         "ANIMALHIDDENDETAILS", "ANIMALHEALTHPROBLEMS", "ANIMALMARKINGS", "ANIMALREASONFORENTRY", "ANIMALNEUTERED",
         "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", "ANIMALENTRYDATE", "ANIMALDECEASEDDATE",
         "ANIMALJURISDICTION", "ANIMALPICKUPLOCATION", "ANIMALPICKUPADDRESS", "ANIMALENTRYCATEGORY",
         "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALTRANSFER",
         "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", "ANIMALHOUSETRAINED", 
+        "ANIMALIMAGE", "ANIMALPDFNAME", "ANIMALPDFDATA", "ANIMALHTMLNAME", "ANIMALHTMLDATA", 
+        "COSTDATE", "COSTTYPE", "COSTAMOUNT", "COSTDESCRIPTION",
         "CURRENTVETTITLE", "CURRENTVETINITIALS", "CURRENTVETFIRSTNAME",
         "CURRENTVETLASTNAME", "CURRENTVETADDRESS", "CURRENTVETCITY", "CURRENTVETSTATE", "CURRENTVETZIPCODE",
         "CURRENTVETHOMEPHONE", "CURRENTVETWORKPHONE", "CURRENTVETCELLPHONE", "CURRENTVETEMAIL", 
@@ -1263,9 +1323,6 @@ def csvexport_animals(dbo, dataset, animalids = "", where = "", includephoto = F
 
         row["ANIMALCODE"] = a["SHELTERCODE"]
         row["ANIMALNAME"] = a["ANIMALNAME"]
-        if a["WEBSITEIMAGECOUNT"] > 0 and includephoto:
-            dummy, mdata = asm3.media.get_image_file_data(dbo, "animal", a["ID"])
-            row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % asm3.utils.base64encode(mdata)
         row["ANIMALSEX"] = a["SEXNAME"]
         row["ANIMALTYPE"] = a["ANIMALTYPENAME"]
         row["ANIMALCOLOR"] = a["BASECOLOURNAME"]
@@ -1338,7 +1395,40 @@ def csvexport_animals(dbo, dataset, animalids = "", where = "", includephoto = F
         row["PERSONWORKPHONE"] = nn(a["CURRENTOWNERWORKTELEPHONE"])
         row["PERSONCELLPHONE"] = nn(a["CURRENTOWNERMOBILETELEPHONE"])
         row["PERSONEMAIL"] = nn(a["CURRENTOWNEREMAILADDRESS"])
+        if a["WEBSITEIMAGECOUNT"] > 0 and includemedia == "photo":
+            # dummy, mdata = asm3.media.get_image_file_data(dbo, "animal", a["ID"])
+            # row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % asm3.utils.base64encode(mdata)
+            row["ANIMALIMAGE"] = "%s?account=%s&method=animal_image&animalid=%s" % (SERVICE_URL, dbo.database, a["ID"])
         out.write(tocsv(row))
+
+        if includemedia == "photos":
+            for m in asm3.media.get_media(dbo, asm3.media.ANIMAL, a["ID"]):
+                if m["MEDIANAME"].endswith(".jpg"):
+                    row = {}
+                    row["ANIMALCODE"] = a["SHELTERCODE"]
+                    row["ANIMALNAME"] = a["ANIMALNAME"]
+                    #row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % asm3.utils.base64encode(mdata)
+                    row["ANIMALIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.database, m["ID"])
+                    out.write(tocsv(row))
+
+        if includemedia == "all":
+            for m in asm3.media.get_media(dbo, asm3.media.ANIMAL, a["ID"]):
+                if m["MEDIANAME"].endswith(".jpg") or m["MEDIANAME"].endswith(".pdf") or m["MEDIANAME"].endswith(".html"):
+                    row = {}
+                    row["ANIMALCODE"] = a["SHELTERCODE"]
+                    row["ANIMALNAME"] = a["ANIMALNAME"]
+                    if m["MEDIANAME"].endswith(".jpg"):
+                        #row["ANIMALIMAGE"] = "data:image/jpg;base64,%s" % asm3.utils.base64encode(mdata)
+                        row["ANIMALIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.database, m["ID"])
+                    elif m["MEDIANAME"].endswith(".pdf"):
+                        row["ANIMALPDFNAME"] = m["MEDIANOTES"]
+                        #row["ANIMALPDFDATA"] = "data:application/pdf;base64,%s" % asm3.utils.base64encode(mdata)
+                        row["ANIMALPDFDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.database, m["ID"])
+                    elif m["MEDIANAME"].endswith(".html"):
+                        row["ANIMALHTMLNAME"] = m["MEDIANOTES"]
+                        #row["ANIMALHTMLDATA"] = "data:text/html;base64,%s" % asm3.utils.base64encode(mdata)
+                        row["ANIMALHTMLDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.database, m["ID"])
+                    out.write(tocsv(row))
 
         for v in asm3.medical.get_vaccinations(dbo, a["ID"]):
             row = {}
@@ -1371,6 +1461,16 @@ def csvexport_animals(dbo, dataset, animalids = "", where = "", includephoto = F
             row["MEDICALDOSAGE"] = m["DOSAGE"]
             row["MEDICALGIVENDATE"] = asm3.i18n.python2display(l, m["STARTDATE"])
             row["MEDICALCOMMENTS"] = m["COMMENTS"]
+            row["ANIMALCODE"] = a["SHELTERCODE"]
+            row["ANIMALNAME"] = a["ANIMALNAME"]
+            out.write(tocsv(row))
+
+        for c in asm3.animal.get_costs(dbo, a["ID"]):
+            row = {}
+            row["COSTDATE"] = asm3.i18n.python2display(l, c["COSTDATE"])
+            row["COSTTYPE"] = c["COSTTYPENAME"]
+            row["COSTAMOUNT"] = asm3.utils.cint(c["COSTAMOUNT"]) / 100.0
+            row["COSTDESCRIPTION"] = c["DESCRIPTION"]
             row["ANIMALCODE"] = a["SHELTERCODE"]
             row["ANIMALNAME"] = a["ANIMALNAME"]
             out.write(tocsv(row))

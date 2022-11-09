@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-10-28 11:35+0000\n"
+"POT-Creation-Date: 2022-11-09 11:28+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -4184,6 +4184,10 @@ msgstr ""
 msgid "Do not auto process"
 msgstr ""
 
+#: csvexport.js
+msgid "Do not include media"
+msgstr ""
+
 #: options.js
 msgid ""
 "Do not send an email if there are no medical items due for animals in the "
@@ -6739,6 +6743,14 @@ msgstr ""
 msgid "Include Removed"
 msgstr ""
 
+#: csvexport.js
+msgid "Include all photos"
+msgstr ""
+
+#: csvexport.js
+msgid "Include all photos, documents and PDFs"
+msgstr ""
+
 #: publish_options.js
 msgid "Include animals in the following locations"
 msgstr ""
@@ -6792,7 +6804,7 @@ msgid "Include off-shelter animals in medical calendar and books"
 msgstr ""
 
 #: csvexport.js
-msgid "Include preferred photo"
+msgid "Include primary photo"
 msgstr ""
 
 #: publish_options.js
@@ -7894,7 +7906,7 @@ msgstr ""
 msgid "McNab"
 msgstr ""
 
-#: header_edit_header.js roles.js
+#: header_edit_header.js csvexport.js roles.js
 msgid "Media"
 msgstr ""
 

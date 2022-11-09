@@ -2551,7 +2551,7 @@ class csvexport_animals(ASMEndpoint):
         else:
             l = o.locale
             asm3.asynctask.function_task(o.dbo, _("Export Animals as CSV", l), asm3.csvimport.csvexport_animals, 
-                o.dbo, o.post["filter"], o.post["animals"], o.post["where"], o.post.boolean("includeimage") == 1)
+                o.dbo, o.post["filter"], o.post["animals"], o.post["where"], o.post["media"] )
             self.redirect("task")
 
 class csvimport(JSONEndpoint):

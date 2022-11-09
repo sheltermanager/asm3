@@ -1178,7 +1178,7 @@ def get_image_url(url, headers = {}, cookies = {}, timeout = None):
     """
     # requests timeout is seconds/float, but some may call this with integer ms instead so convert
     if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
-    r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout, stream=True)
+    r = requests.get(url, headers=headers, cookies=cookies, timeout=timeout, allow_redirects=True, stream=True)
     b = bytesio()
     for chunk in r:
         b.write(chunk) # default from requests is 128 byte chunks

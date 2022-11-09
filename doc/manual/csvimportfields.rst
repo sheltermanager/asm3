@@ -108,6 +108,14 @@ ANIMALDECEASEDDATE
     If the animal is deceased, the date it died.
 ANIMALADDITIONAL<fieldname>
     If you have animal additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called Weight, ANIMALADDITIONALWEIGHT
+COSTTYPE
+    The cost type to use (should correspond to a cost type in your database)
+COSTDATE
+    The date of the cost on this line
+COSTAMOUNT
+    The amount of the cost on this line
+COSTDESCRIPTION
+    A description of the cost on this line
 CURRENTVETTITLE
     If we have current vet info for the animal, the vet's title.
 CURRENTVETINITIALS
