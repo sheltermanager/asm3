@@ -919,12 +919,12 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 row_error(errors, "medical", rowno, row, e, dbo, sys.exc_info())
 
         # Costs
-        if hascost and animalid != 0 and gks(row, "COSTTYPENAME") != "":
+        if hascost and animalid != 0 and gkc(row, "COSTAMOUNT") > 0:
             c = {}
             c["animalid"] = str(animalid)
             c["type"] = gkl(dbo, row, "COSTTYPE", "costtype", "CostTypeName", createmissinglookups)
             c["costdate"] = gkd(dbo, row, "COSTDATE", True)
-            c["cost"] = str(gkc(dbo, row, "COSTAMOUNT"))
+            c["cost"] = str(gkc(row, "COSTAMOUNT"))
             c["description"] = gks(row, "COSTDESCRIPTION")
             try:
                 asm3.animal.insert_cost_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
