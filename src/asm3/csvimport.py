@@ -927,7 +927,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             c["cost"] = str(gkc(dbo, row, "COSTAMOUNT"))
             c["description"] = gks(row, "COSTDESCRIPTION")
             try:
-                asm3.animal.insert_cost_from_form(dbo, user, asm3.utils.PostedData(l, dbo.locale))
+                asm3.animal.insert_cost_from_form(dbo, user, asm3.utils.PostedData(c, dbo.locale))
             except Exception as e:
                 row_error(errors, "cost", rowno, row, e, dbo, sys.exc_info())
 
