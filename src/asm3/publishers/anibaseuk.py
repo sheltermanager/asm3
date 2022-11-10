@@ -64,7 +64,7 @@ class AnibaseUKPublisher(AbstractPublisher):
             self.setLastError("Anibase vet code must be set")
             return
 
-        animals = get_microchip_data(self.dbo, ['9851', '9861'], "anibaseuk")
+        animals = get_microchip_data(self.dbo, ['972055', '978102', '9851', '9861'], "anibaseuk")
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return

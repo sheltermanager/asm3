@@ -1,6 +1,7 @@
 46
 ================
 
+10/11/12 Add extra anibase/identichip prefixes: 978102, 972055
 09/11/22 follow redirects when retrieving images via http
 09/11/22 csvexport animals: include costs with support for importing #1192
 09/11/22 csvexport animals: embed URLs instead of base64, allow all pdf/images
