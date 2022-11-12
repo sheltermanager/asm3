@@ -1,8 +1,8 @@
-Hours Worked between Two Dates by Person and Type
+Hours worked between two dates by person and type
 ###
 Rota
 ###
-33609/PostgreSQL
+33609/PostgreSQL rev01
 ###
 All shifts/overtime worked between two dates by person and type
 ###

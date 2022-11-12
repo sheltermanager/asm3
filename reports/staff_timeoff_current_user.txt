@@ -1,10 +1,10 @@
-Rota between two dates by person and type
+Time off between two dates (current user)
 ###
 Rota
 ###
 33609/PostgreSQL rev01
 ###
-All rota items between two dates by person and type
+All time off between two dates by person and type for the current system user
 ###
 en
 ###
@@ -19,6 +19,8 @@ FROM ownerrota ort
 INNER JOIN owner o ON o.ID = ort.OwnerID
 INNER JOIN lksrotatype rt ON rt.ID = ort.RotaTypeID
 WHERE ort.StartDateTime >= '$@from$' AND ort.EndDateTime <= '$@to$'
+AND ort.RotaTypeID >= 10
+AND o.ID = (SELECT OwnerID FROM users WHERE UserName ILIKE '$USER$')
 ORDER BY o.OwnerName, ort.StartDateTime
 ###
 $$HEADER
