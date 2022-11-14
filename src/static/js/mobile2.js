@@ -491,6 +491,12 @@ $(document).ready(function() {
             });
         }
         $(selector).html( h.join("\n") );
+        // Display our animal now it's rendered
+        $(".container").hide();
+        $("#content-animal").show();
+        // Handle the uploading of a photo when one is chosen
+        $("#content-animal .uploadphoto").click(function() { $("#content-animal .uploadphotofile").click(); });
+        $("#content-animal .uploadphotofile").change(function() { alert($("#content-animal .uploadphotofile").val()); });
     };
 
     // Renders an incident record into the selector given
@@ -621,6 +627,10 @@ $(document).ready(function() {
             h.append(jqm_form_end())
             */
         $(selector).html( h.join("\n") );
+        // Display the record
+        $(".container").hide();
+        $(selector).show();
+        // TODO: Handle clickable buttons for complete/respond/dispatch, add log
     };
 
     // Hide all the elements with hideifzero if they have a badge containing zero
@@ -669,11 +679,6 @@ $(document).ready(function() {
         });
         if (a) { 
             render_animal(a, "#content-animal");
-            $(".container").hide();
-            $("#content-animal").show();
-            // Handle the uploading of a photo when one is chosen
-            $("#content-animal .uploadphoto").click(function() { $("#content-animal .uploadphotofile").click(); });
-            $("#content-animal .uploadphotofile").change(function() { alert($("#content-animal .uploadphotofile").val()); });
         }
     });
 
@@ -790,9 +795,6 @@ $(document).ready(function() {
             });
             if (ac) { 
                 render_incident(ac, selector + "-view", backlink);
-                $(".container").hide();
-                $(selector + "-view").show();
-                // TODO: Handle clickable buttons for complete/respond/dispatch, add log
             }
         });
     };
