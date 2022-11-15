@@ -1,8 +1,8 @@
 People with Zipcode (mail)
 ###
-Membership
+People
 ###
-33716/Any
+33716/Any rev01
 ###
 Person info for all people with the selected zip code.
 ###

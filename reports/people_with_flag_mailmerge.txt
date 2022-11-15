@@ -1,8 +1,8 @@
 People with Flag (mail)
 ###
-Membership
+People
 ###
-33716/Any
+33716/Any rev01
 ###
 Person info for all people with the selected person flag.
 ###
@@ -20,9 +20,9 @@ MAIL
 &&&
 People with Flag created after date (mail)
 ###
-Membership
+People
 ###
-33716/Any
+33716/Any rev01
 ###
 Person info for all people with the selected person flag where the person record was created after a date.
 ###
@@ -42,9 +42,9 @@ MAIL
 &&&
 People without Flag (mail)
 ###
-Membership
+People
 ###
-33716/Any
+33716/Any rev01
 ###
 Person info for all people without the selected person flag.
 ###
@@ -62,9 +62,9 @@ MAIL
 &&&
 People with 2 Flags (AND) (mail)
 ###
-Membership
+People
 ###
-33716/Any
+33716/Any rev01
 ###
 Person info for all people with all of the selected two person flags.
 ###
@@ -85,9 +85,9 @@ MAIL
 &&&
 People with 3 Flags (AND) (mail)
 ###
-Membership
+People
 ###
-33716/Any
+33716/Any rev01
 ###
 Person info for all people with all of the selected three person flags.
 ###
@@ -110,9 +110,9 @@ MAIL
 &&&
 People with 2 Flags (OR) (mail)
 ###
-Membership
+People
 ###
-33716/Any
+33716/Any rev01
 ###
 Person info for all people with either of the selected two person flags.
 ###
@@ -133,9 +133,9 @@ MAIL
 &&&
 People with 3 Flags (OR) (mail)
 ###
-Membership
+People
 ###
-33716/Any
+33716/Any rev01
 ###
 Person info for all people with any of the selected three person flags.
 ###
@@ -158,9 +158,9 @@ MAIL
 &&&
 People with 2 Flags (AND NOT) (mail)
 ###
-Membership
+People
 ###
-33716/Any
+33716/Any rev01
 ###
 Person info for all people with the first flag, but not the second flag.
 ###
