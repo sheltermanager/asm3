@@ -702,26 +702,27 @@ $(function() {
                     opts + '</select></td>';
             };
             const items = [
-                ddrop("defaultbreed", _("Default Breed"), "AFDefaultBreed", html.list_to_options(controller.breeds, "ID", "BREEDNAME")),
-                ddrop("defaultcoattype", _("Default Coat Type"), "AFDefaultCoatType", html.list_to_options(controller.coattypes, "ID", "COATTYPE")),
-                ddrop("defaultcolour", _("Default Color"), "AFDefaultColour", html.list_to_options(controller.colours, "ID", "BASECOLOUR")),
-                ddrop("defaultdeath", _("Default Death Reason"), "AFDefaultDeathReason", html.list_to_options(controller.deathreasons, "ID", "REASONNAME")),
-                ddrop("defaultdiary", _("Default Diary Person"), "AFDefaultDiaryPerson", '<option value=""></option>' + html.list_to_options(controller.usersandroles, "USERNAME", "USERNAME")),
-                ddrop("defaultentry", _("Default Entry Reason"), "AFDefaultEntryReason", html.list_to_options(controller.entryreasons, "ID", "REASONNAME")),
-                ddrop("defaultincident", _("Default Incident Type"), "DefaultIncidentType", html.list_to_options(controller.incidenttypes, "ID", "INCIDENTNAME")),
-                ddrop("defaultjurisdiction", _("Default Jurisdiction"), "DefaultJurisdiction", html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME")),
-                ddrop("defaultlocation", _("Default Location"), "AFDefaultLocation", html.list_to_options(controller.locations, "ID", "LOCATIONNAME")),
-                ddrop("defaultlog", _("Default Log Filter"), "AFDefaultLogFilter", '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME")),
-                ddrop("defaultlogtype", _("Default Log Type"), "AFDefaultLogType", html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME")),
-                ddrop("defaultpaymentmethod", _("Default Payment Method"), "AFDefaultPaymentMethod", html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME")),
-                ddrop("defaultdonation", _("Default Payment Type"), "AFDefaultDonationType", html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME")),
-                ddrop("defaultreservation", _("Default Reservation Status"), "AFDefaultReservationStatus", html.list_to_options(controller.reservationstatuses, "ID", "STATUSNAME")),
-                ddrop("defaultreturn", _("Default Return Reason"), "AFDefaultReturnReason", html.list_to_options(controller.entryreasons, "ID", "REASONNAME")),
-                ddrop("defaultsize", _("Default Size"), "AFDefaultSize", html.list_to_options(controller.sizes, "ID", "SIZE")),
-                ddrop("defaultspecies", _("Default Species"), "AFDefaultSpecies", html.list_to_options(controller.species, "ID", "SPECIESNAME")),
-                ddrop("defaulttest", _("Default Test Type"), "AFDefaultTestType", html.list_to_options(controller.testtypes, "ID", "TESTNAME")),
-                ddrop("defaulttype", _("Default Type"), "AFDefaultType", html.list_to_options(controller.types, "ID", "ANIMALTYPE")),
-                ddrop("defaultvaccination", _("Default Vaccination Type"), "AFDefaultVaccinationType", html.list_to_options(controller.vaccinationtypes, "ID", "VACCINATIONTYPE"))
+                ddrop("defaultbreed", _("Breed"), "AFDefaultBreed", html.list_to_options(controller.breeds, "ID", "BREEDNAME")),
+                ddrop("defaultcoattype", _("Coat Type"), "AFDefaultCoatType", html.list_to_options(controller.coattypes, "ID", "COATTYPE")),
+                ddrop("defaultcolour", _("Color"), "AFDefaultColour", html.list_to_options(controller.colours, "ID", "BASECOLOUR")),
+                ddrop("defaultdeath", _("Death Reason"), "AFDefaultDeathReason", html.list_to_options(controller.deathreasons, "ID", "REASONNAME")),
+                ddrop("defaultdiary", _("Diary Person"), "AFDefaultDiaryPerson", '<option value=""></option>' + html.list_to_options(controller.usersandroles, "USERNAME", "USERNAME")),
+                ddrop("defaultentry", _("Entry Reason"), "AFDefaultEntryReason", html.list_to_options(controller.entryreasons, "ID", "REASONNAME")),
+                ddrop("defaultincident", _("Incident Type"), "DefaultIncidentType", html.list_to_options(controller.incidenttypes, "ID", "INCIDENTNAME")),
+                ddrop("defaultjurisdiction", _("Jurisdiction"), "DefaultJurisdiction", html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME")),
+                ddrop("defaultlocation", _("Location"), "AFDefaultLocation", html.list_to_options(controller.locations, "ID", "LOCATIONNAME")),
+                ddrop("defaultlog", _("Log Filter"), "AFDefaultLogFilter", '<option value="-1">' + _("(all)") + '</option>' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME")),
+                ddrop("defaultlogtype", _("Log Type"), "AFDefaultLogType", html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME")),
+                ddrop("systemlogtype", _("System Log Type"), "SystemLogType", html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME")),
+                ddrop("defaultpaymentmethod", _("Payment Method"), "AFDefaultPaymentMethod", html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME")),
+                ddrop("defaultdonation", _("Payment Type"), "AFDefaultDonationType", html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME")),
+                ddrop("defaultreservation", _("Reservation Status"), "AFDefaultReservationStatus", html.list_to_options(controller.reservationstatuses, "ID", "STATUSNAME")),
+                ddrop("defaultreturn", _("Return Reason"), "AFDefaultReturnReason", html.list_to_options(controller.entryreasons, "ID", "REASONNAME")),
+                ddrop("defaultsize", _("Size"), "AFDefaultSize", html.list_to_options(controller.sizes, "ID", "SIZE")),
+                ddrop("defaultspecies", _("Species"), "AFDefaultSpecies", html.list_to_options(controller.species, "ID", "SPECIESNAME")),
+                ddrop("defaulttest", _("Test Type"), "AFDefaultTestType", html.list_to_options(controller.testtypes, "ID", "TESTNAME")),
+                ddrop("defaulttype", _("Type"), "AFDefaultType", html.list_to_options(controller.types, "ID", "ANIMALTYPE")),
+                ddrop("defaultvaccination", _("Vaccination Type"), "AFDefaultVaccinationType", html.list_to_options(controller.vaccinationtypes, "ID", "VACCINATIONTYPE"))
             ];
             let h = [ "<tr>" ];
             $.each(items, function(i, v) {

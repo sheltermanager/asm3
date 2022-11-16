@@ -1,6 +1,7 @@
 46
 ================
 
+16/11/12 System log type option, configurable via defaults #804
 16/11/12 Show column for littermates on the litter editing screen #1195
 16/11/12 Restrict new litters to 20 animals to prevent mistakes #903
 10/11/12 Add extra anibase/identichip prefixes: 978102, 972055

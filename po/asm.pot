@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-11-16 11:48+0000\n"
+"POT-Creation-Date: 2022-11-16 12:18+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -2034,7 +2034,7 @@ msgstr ""
 
 #: mobile.py person.py lookups.py html.py lostfound_find_results.js
 #: animal_find.js common_animalchooser.js animal_new.js animal.js onlineform.js
-#: lostfound_find.js lostfound.js mobile2.js animal_find_results.js
+#: options.js lostfound_find.js lostfound.js mobile2.js animal_find_results.js
 #: lostfound_new.js movements.js person.js
 msgid "Breed"
 msgstr ""
@@ -2787,7 +2787,7 @@ msgstr ""
 msgid "Coat"
 msgstr ""
 
-#: mobile.py lookups.py animal_new.js animal.js mobile2.js
+#: mobile.py lookups.py animal_new.js animal.js options.js mobile2.js
 #: animal_find_results.js
 msgid "Coat Type"
 msgstr ""
@@ -3564,7 +3564,7 @@ msgstr ""
 msgid "Death Comments"
 msgstr ""
 
-#: html.py
+#: html.py options.js
 msgid "Death Reason"
 msgstr ""
 
@@ -3610,19 +3610,7 @@ msgid "Default Age"
 msgstr ""
 
 #: options.js
-msgid "Default Breed"
-msgstr ""
-
-#: options.js
 msgid "Default Brought In By"
-msgstr ""
-
-#: options.js
-msgid "Default Coat Type"
-msgstr ""
-
-#: options.js
-msgid "Default Color"
 msgstr ""
 
 #: lookups.js
@@ -3630,75 +3618,7 @@ msgid "Default Cost"
 msgstr ""
 
 #: options.js
-msgid "Default Death Reason"
-msgstr ""
-
-#: options.js
-msgid "Default Diary Person"
-msgstr ""
-
-#: options.js
-msgid "Default Entry Reason"
-msgstr ""
-
-#: options.js
-msgid "Default Incident Type"
-msgstr ""
-
-#: options.js
-msgid "Default Jurisdiction"
-msgstr ""
-
-#: options.js
-msgid "Default Location"
-msgstr ""
-
-#: options.js
-msgid "Default Log Filter"
-msgstr ""
-
-#: options.js
-msgid "Default Log Type"
-msgstr ""
-
-#: options.js
-msgid "Default Payment Method"
-msgstr ""
-
-#: options.js
-msgid "Default Payment Type"
-msgstr ""
-
-#: options.js
-msgid "Default Reservation Status"
-msgstr ""
-
-#: options.js
-msgid "Default Return Reason"
-msgstr ""
-
-#: options.js
 msgid "Default Rota Shift"
-msgstr ""
-
-#: options.js
-msgid "Default Size"
-msgstr ""
-
-#: options.js
-msgid "Default Species"
-msgstr ""
-
-#: options.js
-msgid "Default Test Type"
-msgstr ""
-
-#: options.js
-msgid "Default Type"
-msgstr ""
-
-#: options.js
-msgid "Default Vaccination Type"
 msgstr ""
 
 #: additional.js
@@ -4006,6 +3926,10 @@ msgstr ""
 #: mobile.py html.py header_edit_header.js options.js calendarview.js roles.js
 #: mobile2.js
 msgid "Diary"
+msgstr ""
+
+#: options.js
+msgid "Diary Person"
 msgstr ""
 
 #: animal.js person.js
@@ -4978,7 +4902,7 @@ msgstr ""
 msgid "Entry Donation"
 msgstr ""
 
-#: mobile.py html.py mobile2.js animal_find_results.js
+#: mobile.py html.py options.js mobile2.js animal_find_results.js
 msgid "Entry Reason"
 msgstr ""
 
@@ -6691,7 +6615,7 @@ msgstr ""
 msgid "Incident Number"
 msgstr ""
 
-#: html.py incident_find_results.js incident_find.js
+#: html.py incident_find_results.js options.js incident_find.js
 msgid "Incident Type"
 msgstr ""
 
@@ -7141,7 +7065,7 @@ msgid "June"
 msgstr ""
 
 #: lookups.py html.py incident_new.js incident_find_results.js animal_new.js
-#: person_new.js animal.js person_find.js incident_find.js
+#: person_new.js animal.js person_find.js options.js incident_find.js
 #: animal_find_results.js person_find_results.js incident.js person.js
 #: common_personchooser.js
 msgid "Jurisdiction"
@@ -7548,11 +7472,16 @@ msgstr ""
 msgid "Log"
 msgstr ""
 
+#: options.js
+msgid "Log Filter"
+msgstr ""
+
 #: mobile.py mobile2.js
 msgid "Log Text"
 msgstr ""
 
-#: mobile.py reports.py mobile_report.js mobile2.js report_criteria.js
+#: mobile.py reports.py mobile_report.js options.js mobile2.js
+#: report_criteria.js
 msgid "Log Type"
 msgstr ""
 
@@ -9274,7 +9203,7 @@ msgstr ""
 msgid "Payment From"
 msgstr ""
 
-#: reports.py mobile_report.js report_criteria.js
+#: reports.py mobile_report.js options.js report_criteria.js
 msgid "Payment Method"
 msgstr ""
 
@@ -9286,7 +9215,7 @@ msgstr ""
 msgid "Payment Processors"
 msgstr ""
 
-#: reports.py mobile_report.js report_criteria.js
+#: reports.py mobile_report.js options.js report_criteria.js
 msgid "Payment Type"
 msgstr ""
 
@@ -10541,7 +10470,7 @@ msgstr ""
 msgid "Reservation For"
 msgstr ""
 
-#: movements.js
+#: options.js movements.js
 msgid "Reservation Status"
 msgstr ""
 
@@ -10692,6 +10621,10 @@ msgstr ""
 
 #: movements.js
 msgid "Return Date"
+msgstr ""
+
+#: options.js
+msgid "Return Reason"
 msgstr ""
 
 #: html.py
@@ -11724,7 +11657,7 @@ msgid "Sites"
 msgstr ""
 
 #: mobile.py person.py lookups.py html.py animal_find.js waitinglist_new.js
-#: media.js waitinglist.js animal_new.js animal.js mobile2.js
+#: media.js waitinglist.js animal_new.js animal.js options.js mobile2.js
 #: animal_find_results.js waitinglist_results.js person.js
 msgid "Size"
 msgstr ""
@@ -12223,6 +12156,10 @@ msgid "System Admin"
 msgstr ""
 
 #: options.js
+msgid "System Log Type"
+msgstr ""
+
+#: options.js
 msgid "System Options"
 msgstr ""
 
@@ -12362,6 +12299,10 @@ msgstr ""
 
 #: lookups.py
 msgid "Test Results"
+msgstr ""
+
+#: options.js
+msgid "Test Type"
 msgstr ""
 
 #: lookups.py
@@ -13932,6 +13873,10 @@ msgstr ""
 
 #: mobile.py
 msgid "Vaccination Given"
+msgstr ""
+
+#: options.js
+msgid "Vaccination Type"
 msgstr ""
 
 #: lookups.py

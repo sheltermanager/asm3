@@ -352,6 +352,7 @@ DEFAULTS = {
     "SACStrayCategory": "7",
     "SACSurrenderCategory": "17",
     "SACTNRCategory": "14",
+    "SystemLogType": "3",
     "TableHeadersVisible": "Yes",
     "TemplatesForNonShelter": "No",
     "ThumbnailSize": "150x150",
@@ -957,10 +958,10 @@ def ftp_root(dbo):
     return cstring(dbo, "FTPRootDirectory")
 
 def generate_document_log(dbo):
-    return cboolean(dbo, "GenerateDocumentLog", False)
+    return cboolean(dbo, "GenerateDocumentLog", DEFAULTS["GenerateDocumentLog"] == "Yes")
 
 def generate_document_log_type(dbo):
-    return cint(dbo, "GenerateDocumentLogType", 0)
+    return cint(dbo, "GenerateDocumentLogType", DEFAULTS["GenerateDocumentLogType"])
 
 def gdpr_contact_change_log(dbo):
     return cboolean(dbo, "GDPRContactChangeLog", DEFAULTS["GDPRContactChangeLog"] == "Yes")
@@ -1398,6 +1399,9 @@ def stripe_key(dbo):
 
 def stripe_secret_key(dbo):
     return cstring(dbo, "StripeSecretKey")
+
+def system_log_type(dbo):
+    return cint(dbo, "SystemLogType", DEFAULTS["SystemLogType"])
 
 def use_short_shelter_codes(dbo):
     return cboolean(dbo, "UseShortShelterCodes")
