@@ -74,6 +74,14 @@ $(function() {
                                 litters.lastanimal = null;
                                 $("#litterref").val(result);
                                 $("#animal").animalchooser("clear");
+                            },
+                            onvalidate: function() {
+                                // Don't allow more than 20 animals in a litter (world records are 24 for dogs, 19 for cats)
+                                if ($("#animals").val().split(",").length > 20) {
+                                    tableform.dialog_error(_("Litter creation is limited to 20 animals"));
+                                    return false;
+                                }
+                                return true;
                             }
                         });
                         let response = await tableform.fields_post(dialog.fields, "mode=create", "litters");
