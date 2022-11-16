@@ -1862,6 +1862,13 @@ def get_litters(dbo, offset="m365"):
         "%s" \
         "ORDER BY l.Date DESC" % where, v)
 
+def get_litter_animals(dbo, litters = []):
+    """ Returns all animals who have a litter ID in set litters """
+    litterids = []
+    for l in litters:
+        litterids.append(dbo.sql_value(l.ACCEPTANCENUMBER))
+    return dbo.query(get_animal_query(dbo) + " WHERE a.AcceptanceNumber IN ( " + ",".join(litterids) + ") ORDER BY a.ID")
+
 def get_satellite_counts(dbo, animalid):
     """
     Returns a resultset containing the number of each type of satellite

@@ -3737,9 +3737,11 @@ class litters(JSONEndpoint):
         offset = o.post["offset"]
         if offset == "": offset = "m365"
         litters = asm3.animal.get_litters(dbo, offset)
+        littermates = asm3.animal.get_litter_animals(dbo, litters)
         asm3.al.debug("got %d litters" % len(litters), "code.litters", dbo)
         return {
             "rows": litters,
+            "littermates": littermates,
             "species": asm3.lookups.get_species(dbo)
         }
 

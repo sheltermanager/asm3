@@ -60,6 +60,15 @@ $(function() {
                     { field: "INVALIDDATE", display: _("Expires"), formatter: tableform.format_date },
                     { field: "NUMBERINLITTER", display: _("Number in litter") },
                     { field: "CACHEDANIMALSLEFT", display: _("Remaining") },
+                    { field: "LITTERMATES", display: _("Littermates"), formatter: function(row) {
+                        let mates = [];
+                        $.each(controller.littermates, function(i, v) {
+                            if (v.ACCEPTANCENUMBER == row.ACCEPTANCENUMBER) {
+                                mates.push( html.animal_link(v) );
+                            }
+                        });
+                        return mates.join("<br/>");
+                    }},
                     { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
@@ -85,6 +94,8 @@ $(function() {
                             }
                         });
                         let response = await tableform.fields_post(dialog.fields, "mode=create", "litters");
+                        common.route_reload(); // Cannot lazy load littermates column so reload screen
+                        /*
                         let row = {};
                         row.ID = response;
                         tableform.fields_update_row(dialog.fields, row);
@@ -92,6 +103,7 @@ $(function() {
                         controller.rows.push(row);
                         tableform.table_update(table);
                         tableform.dialog_close();
+                        */
                     } 
                 },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dll", 
