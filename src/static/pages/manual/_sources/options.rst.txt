@@ -644,6 +644,15 @@ for adoption).
   adopted/unneutered animal alerts on the home page and emblems will only be 
   shown for these species of animals (by default, dogs and cats)
 
+* Show an alert when these species of animals do not have a rabies vaccination:
+  The alert for animals without a rabies vaccination will only be shown for these
+  species (by default dogs)
+
+* Show an alert when these species of animals do not have a vaccination of any
+  type: The alert for animals that have never been vaccinated will only be
+  shown for these species (by default dogs and cats)
+
+
 Insurance
 ---------
 
