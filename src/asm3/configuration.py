@@ -147,6 +147,7 @@ DEFAULTS = {
     "AKCRegisterAll": "No",
     "AlertSpeciesMicrochip": "1,2",
     "AlertSpeciesNeuter": "1,2",
+    "AlertSpeciesNeverVacc": "1,2",
     "AlertSpeciesRabies": "1,2",
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
@@ -209,6 +210,7 @@ DEFAULTS = {
     "EmblemFutureAdoption": "Yes",
     "EmblemHold": "Yes",
     "EmblemLongTerm": "Yes",
+    "EmblemNeverVacc": "Yes",
     "EmblemNonShelter": "Yes",
     "EmblemNotForAdoption": "Yes",
     "EmblemNotMicrochipped": "Yes",
@@ -587,6 +589,11 @@ def akc_register_all(dbo):
 
 def alert_species_microchip(dbo):
     s = cstring(dbo, "AlertSpeciesMicrochip", DEFAULTS["AlertSpeciesMicrochip"])
+    if s == "": return "0" # Always return something due to IN clauses of queries
+    return s
+
+def alert_species_never_vacc(dbo):
+    s = cstring(dbo, "AlertSpeciesNeverVacc", DEFAULTS["AlertSpeciesNeverVacc"])
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 

@@ -207,6 +207,9 @@ const html = {
         if (config.bool("EmblemCrueltyCase") && a.CRUELTYCASE == 1) {
             s.push(html.icon("case", _("Cruelty Case")));
         }
+        if (config.bool("EmblemNeverVacc") && a.VACCGIVENCOUNT == 0) {
+            s.push(html.icon("novaccination", _("Never Vaccinated")));
+        }
         if (config.bool("EmblemNonShelter") && a.NONSHELTERANIMAL == 1) {
             s.push(html.icon("nonshelter", _("Non-Shelter")));
         }

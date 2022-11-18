@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2022-11-16 12:18+0000\n"
+"POT-Creation-Date: 2022-11-18 11:52+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1019,6 +1019,10 @@ msgstr ""
 
 #: search.py
 msgid "All animals who are flagged as not for adoption."
+msgstr ""
+
+#: search.py
+msgid "All animals who do not have a vaccination of any type"
 msgstr ""
 
 #: search.py
@@ -8335,6 +8339,10 @@ msgstr ""
 msgid "Never"
 msgstr ""
 
+#: common_html.js options.js
+msgid "Never Vaccinated"
+msgstr ""
+
 #: dbupdate.py document_templates.js report_images.js rota.js transport.js
 #: lookups.js person_investigation.js document_repository.js
 msgid "New"
@@ -11375,6 +11383,12 @@ msgstr ""
 
 #: options.js
 msgid "Show an alert when these species of animals do not have a rabies vaccination"
+msgstr ""
+
+#: options.js
+msgid ""
+"Show an alert when these species of animals do not have a vaccination of any "
+"type"
 msgstr ""
 
 #: options.js
@@ -15196,6 +15210,10 @@ msgid "{plural0} animal has been on the shelter longer than {0} months"
 msgstr ""
 
 #: main.js
+msgid "{plural0} animal has never had a vaccination of any type"
+msgstr ""
+
+#: main.js
 msgid "{plural0} animal has not had a rabies vaccination"
 msgstr ""
 
@@ -15382,6 +15400,10 @@ msgid "{plural1} animals have holds ending today"
 msgstr ""
 
 #: main.js
+msgid "{plural1} animals have never had a vaccination of any type"
+msgstr ""
+
+#: main.js
 msgid "{plural1} animals have not had a rabies vaccination"
 msgstr ""
 
@@ -15564,6 +15586,10 @@ msgid "{plural2} animals have holds ending today"
 msgstr ""
 
 #: main.js
+msgid "{plural2} animals have never had a vaccination of any type"
+msgstr ""
+
+#: main.js
 msgid "{plural2} animals have not had a rabies vaccination"
 msgstr ""
 
@@ -15743,6 +15769,10 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} animals have holds ending today"
+msgstr ""
+
+#: main.js
+msgid "{plural3} animals have never had a vaccination of any type"
 msgstr ""
 
 #: main.js

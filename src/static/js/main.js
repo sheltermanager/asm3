@@ -83,6 +83,26 @@ $(function() {
                         _("{plural3} vaccinations have expired")
                     ]) + '</a><br />';
             }
+            if (alerts.NOTRAB > 0 && common.has_permission("va") && config.bool("EmblemRabies") ) {
+                totalalerts += alerts.NOTRAB;
+                s += '<a href="search?q=norabies">' + html.icon("rabies") + ' ' + 
+                    common.ntranslate(alerts.NOTRAB, [
+                        _("{plural0} animal has not had a rabies vaccination"),
+                        _("{plural1} animals have not had a rabies vaccination"),
+                        _("{plural2} animals have not had a rabies vaccination"),
+                        _("{plural3} animals have not had a rabies vaccination")
+                    ]) + '</a><br />';
+            }
+            if (alerts.NEVERVACC > 0 && common.has_permission("va") && config.bool("EmblemNeverVacc") ) {
+                totalalerts += alerts.NEVERVACC;
+                s += '<a href="search?q=nevervacc">' + html.icon("novaccination") + ' ' + 
+                    common.ntranslate(alerts.NEVERVACC, [
+                        _("{plural0} animal has never had a vaccination of any type"),
+                        _("{plural1} animals have never had a vaccination of any type"),
+                        _("{plural2} animals have never had a vaccination of any type"),
+                        _("{plural3} animals have never had a vaccination of any type")
+                    ]) + '</a><br />';
+            }
             if (alerts.DUETEST > 0 && common.has_permission("vat")) {
                 totalalerts += alerts.DUETEST;
                 s += '<a href="test">' + html.icon("test") + ' ' + 
@@ -152,16 +172,6 @@ $(function() {
                         _("{plural1} unaltered animals have been adopted in the last month"),
                         _("{plural2} unaltered animals have been adopted in the last month"),
                         _("{plural3} unaltered animals have been adopted in the last month")
-                    ]) + '</a><br />';
-            }
-            if (alerts.NOTRAB > 0 && common.has_permission("va") && config.bool("EmblemRabies") ) {
-                totalalerts += alerts.NOTRAB;
-                s += '<a href="search?q=norabies">' + html.icon("rabies") + ' ' + 
-                    common.ntranslate(alerts.NOTRAB, [
-                        _("{plural0} animal has not had a rabies vaccination"),
-                        _("{plural1} animals have not had a rabies vaccination"),
-                        _("{plural2} animals have not had a rabies vaccination"),
-                        _("{plural3} animals have not had a rabies vaccination")
                     ]) + '</a><br />';
             }
             if (alerts.NOTCHIP > 0 && common.has_permission("va") && config.bool("EmblemNotMicrochipped") ) {

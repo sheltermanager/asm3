@@ -45,7 +45,7 @@ def search(dbo, session, q):
     onshelter/os, notforadoption, hold, holdtoday, quarantine, deceased, 
     forpublish, people, vets, retailers, staff, fosterers, volunteers, 
     shelters, aco, banned, homechecked, homecheckers, members, donors, drivers,
-    reservenohomecheck, norabies, notmicrochipped, unsigned, signed
+    reservenohomecheck, nevervacc, norabies, notmicrochipped, unsigned, signed
 
     returns a tuple of:
     results, timetaken, explain, sortname
@@ -274,6 +274,11 @@ def search(dbo, session, q):
         explain = _("All animals who have been on the shelter longer than {0} months.", l).format(asm3.configuration.long_term_months(dbo))
         if viewanimal:
             ar(asm3.animal.get_animals_long_term(dbo), "ANIMAL", animalsort)
+
+    elif q == "nevervacc":
+        explain = _("All animals who do not have a vaccination of any type", l)
+        if viewanimal:
+            ar(asm3.animal.get_animals_never_vacc(dbo), "ANIMAL", animalsort)
 
     elif q == "notmicrochipped":
         explain = _("All animals who have not been microchipped", l)
