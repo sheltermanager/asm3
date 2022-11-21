@@ -243,11 +243,16 @@ def get_animal_view_adoptable_html(dbo):
 def get_animal_view_adoptable_js(dbo):
     """ Returns js that outputs adoptable animals into a host div """
     js = asm3.utils.read_text_file("%s/static/js/animal_view_adoptable.js" % dbo.installpath)
+    # Retrieve the animals, update bio to convert line breaks to break tags
+    rows = get_animal_data(dbo, pc, include_additional_fields = True, strip_personal_data = True))
+    for r in rows:
+        r.ANIMALCOMMENTS = r.ANIMALCOMMENTS.replace("\n", "<br>")
+        r.WEBSITEMEDIANOTES = r.WEBSITEMEDIANOTES.replace("\n", "<br>")
     # inject adoptable animals, account and base url
     pc = PublishCriteria(asm3.configuration.publisher_presets(dbo))
     js = js.replace("{TOKEN_ACCOUNT}", dbo.database)
     js = js.replace("{TOKEN_BASE_URL}", BASE_URL)
-    js = js.replace("\"{TOKEN_ADOPTABLES}\"", asm3.utils.json(get_animal_data(dbo, pc, include_additional_fields = True, strip_personal_data = True)))
+    js = js.replace("\"{TOKEN_ADOPTABLES}\"", asm3.utils.json(rows))
     return js
 
 def get_animal_view_template(dbo):

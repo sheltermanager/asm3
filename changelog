@@ -1,6 +1,7 @@
 46
 ================
 
+21/11/12 adoptable_js: Subsitute \n for <br> to make life easier for callers
 21/11/12 Truncate all comment length fields in find result screens
 21/11/12 Add extra litter filters for 6 months, 2 years, 3 years
 21/11/12 Fix bug that showed litters as complete if any expiry date set
