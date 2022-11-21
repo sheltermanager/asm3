@@ -300,12 +300,12 @@ $(function() {
          * add: The additional row results
          */
         format_column: function(row, name, value, add) {
-            const DATE_FIELDS = [ "DatePutOnList", "DateRemovedFromList" ],
-                STRING_FIELDS = [ "CreatedBy", "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", 
+            const DATE_FIELDS = [ "DatePutOnList", "DateRemovedFromList" ];
+            const STRING_FIELDS = [ "CreatedBy", "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", 
                     "OwnerPostcode", "HomeTelephone", "WorkTelephone", "MobileTelephone", 
-                    "EmailAddress", "AnimalDescription", "ReasonForWantingToPart", 
-                    "ReasonForRemoval", "Comments", "Rank", "TimeOnList" ],
-                YES_NO_FIELDS = [ "CanAffordDonation" ];
+                    "EmailAddress", "Rank", "TimeOnList" ];
+            const COMMENT_FIELDS = [ "AnimalDescription", "ReasonForWantingToPart", "ReasonForRemoval", "Comments" ];
+            const YES_NO_FIELDS = [ "CanAffordDonation" ];
             let rv = "";
             if (name == "Number") {
                 rv = format.padleft(row.ID, 6);
@@ -324,6 +324,9 @@ $(function() {
             }
             else if ($.inArray(name, STRING_FIELDS) > -1) {
                 rv = value;
+            }
+            else if ($.inArray(name, COMMENT_FIELDS) > -1) {
+                rv = html.truncate(value);
             }
             else if ($.inArray(name, YES_NO_FIELDS) > -1) {
                 if (value == 0) { rv = _("No"); }

@@ -179,12 +179,13 @@ $(function() {
          * add: The additional row results
          */
         format_column: function(row, name, value, add) {
-            const DATE_FIELDS = [ "CreatedDate", "MembershipExpiryDate", "DateLastHomeChecked" ],
-            STRING_FIELDS = [ "CreatedBy", "OwnerTitle", "OwnerInitials", "OwnerForenames", "OwnerSurname",
+            const DATE_FIELDS = [ "CreatedDate", "MembershipExpiryDate", "DateLastHomeChecked" ];
+            const STRING_FIELDS = [ "CreatedBy", "OwnerTitle", "OwnerInitials", "OwnerForenames", "OwnerSurname",
                 "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", "OwnerPostcode",
                 "HomeTelephone", "WorkTelephone", "MobileTelephone", "EmailAddress",
-                "Comments", "MembershipNumber", "HomeCheckAreas", "LookingForSummary" ],
-            YES_NO_FIELDS = [ "IDCheck", "IsBanned", "IsVolunteer", "IsHomeChecker", 
+                "MembershipNumber", "HomeCheckAreas", "LookingForSummary" ];
+            const COMMENT_FIELDS = [ "Comments" ];
+            const YES_NO_FIELDS = [ "IDCheck", "IsBanned", "IsVolunteer", "IsHomeChecker", 
                 "IsMember", "IsDonor", "IsShelter", "IsACO", "IsStaff", "IsFosterer",
                 "IsRetailer", "IsVet", "IsGiftAid" ];
             let rv = "";
@@ -199,6 +200,9 @@ $(function() {
             }
             else if ($.inArray(name, STRING_FIELDS) > -1) {
                 rv = value;
+            }
+            else if ($.inArray(name, COMMENT_FIELDS) > -1) {
+                rv = html.truncate(value);
             }
             else if ($.inArray(name, YES_NO_FIELDS) > -1) {
                 if (value == 0) { rv = _("No"); }
