@@ -3735,8 +3735,11 @@ class litters(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         offset = o.post["offset"]
-        if offset == "": offset = "m365"
-        litters = asm3.animal.get_litters(dbo, offset)
+        if offset == "": offset = "active"
+        if offset == "active":
+            litters = asm3.animal.get_active_litters(dbo)
+        else:
+            litters = asm3.animal.get_litters(dbo, offset)
         littermates = asm3.animal.get_litter_animals(dbo, litters)
         asm3.al.debug("got %d litters" % len(litters), "code.litters", dbo)
         return {

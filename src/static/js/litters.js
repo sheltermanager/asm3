@@ -45,7 +45,7 @@ $(function() {
                     tableform.dialog_close();
                 },
                 complete: function(row) {
-                    return (row.INVALIDDATE && format.date_js(row.INVALIDATE) <= new Date()) || row.CACHEDANIMALSLEFT == 0;
+                    return (row.INVALIDDATE && format.date_js(row.INVALIDDATE) <= new Date()) || row.CACHEDANIMALSLEFT == 0;
                 },
                 columns: [
                     { field: "ACCEPTANCENUMBER", display: _("Litter Ref") },
@@ -123,7 +123,7 @@ $(function() {
                     }
                 },
                 { id: "offset", type: "dropdownfilter", 
-                    options: [ "m365|" + _("In the last year"), "a|" + _("All time") ],
+                    options: [ "active|" + _("Active"), "m182|" + _("In the last 6 months"), "m365|" + _("In the last year"), "730|" + _("In the last 2 years"), "1095|" + _("In the last 3 years"), "a|" + _("All time") ],
                     click: function(selval) {
                         common.route("litters?offset=" + selval);
                     },
