@@ -6,7 +6,7 @@ import asm, os
 Import script for iShelters CSV export.
 It can be accessed by going to adminShelter and then System->Misc->Downloads
 
-7th July, 2015 - 8th Nov, 2022
+7th July, 2015 - 22nd Nov, 2022
 """
 
 PATH = "/home/robin/tmp/asm3_import_data/ishelters_ec2883/"
@@ -16,14 +16,15 @@ PATH = "/home/robin/tmp/asm3_import_data/ishelters_ec2883/"
 
 # animalpictures.csv for images (seems to be using s3 signed URLs that are active for 5 minutes)
 
-START_ID = 100
+START_ID = 500
 DEFAULT_BREED = 442 # mixed breed, 261 = dsh
 
 # This is only ever going to be any good if ishelters make their bucket public
-IMAGE_PREFIX = "https://ishelters.s3.us-west-2.amazonaws.com/shelters/384/animals/images/200x200s/"
+# One user managed to request a zip of images, which is what we use below
+# IMAGE_PREFIX = "https://ishelters.s3.us-west-2.amazonaws.com/shelters/384/animals/images/200x200s/"
 
 def getdate(s):
-    return asm.getdate_mmddyyyy(s)
+    return asm.getdate_iso(s)
 
 def getentryreason(s):
     er = {
@@ -62,10 +63,10 @@ asm.setid("animaltest", START_ID)
 asm.setid("animalvaccination", START_ID)
 asm.setid("owner", START_ID)
 asm.setid("ownerdonation", START_ID)
-asm.setid("vaccinationtype", 100)
-asm.setid("testtype", 100)
-asm.setid("media", 100)
-asm.setid("dbfs", 100)
+asm.setid("vaccinationtype", START_ID)
+asm.setid("testtype", START_ID)
+asm.setid("media", START_ID)
+asm.setid("dbfs", START_ID)
 
 print("DELETE FROM adoption WHERE ID >= %s;" % START_ID)
 print("DELETE FROM animal WHERE ID >= %s;" % START_ID)
@@ -131,7 +132,7 @@ for row in asm.csv_to_list(PATH + "animals.csv", encoding="cp1252"):
     a = asm.Animal()
     animals.append(a)
     ppa[row["id"]] = a
-    a.AnimalName = row["name"]
+    a.AnimalName = row["name"].strip()
     if a.AnimalName.strip() == "":
         a.AnimalName = "(unknown)"
     a.ShortCode = row["code"]
@@ -350,9 +351,15 @@ for row in asm.csv_to_list(PATH + "allmedical.csv", encoding="cp1252"):
         animalmedicals.append(asm.animal_regimen_single(a.ID, dg, "%s %s" % (row["Medical Procedure Type"], row["Medication Name"]), row["Medication Dose"], "%s %s" % (row["Comments"], row["Hidden comments"])))
 
 # images
-if IMAGE_PREFIX != "" and asm.file_exists(PATH + "animalpictures.csv"):
+if asm.file_exists(PATH + "animalpictures.csv"):
     for row in asm.csv_to_list(PATH + "animalpictures.csv", remove_non_ascii=True):
-        pass # not sure of extraction method yet
+        # look for image in PATH/photo/ID.jpg
+        fname = PATH + "photo/" + row["Id"] + ".jpg"
+        imdata = asm.load_image_from_file(fname)
+        aid = 0
+        if row["Animal Id"] in ppa: aid = ppa[row["Animal Id"]].ID
+        if imdata is not None and aid > 0:
+            asm.animal_image(aid, imdata)
 
 # Now that everything else is done, output stored records
 for a in animals:
