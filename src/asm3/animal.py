@@ -1879,6 +1879,7 @@ def get_litter_animals(dbo, litters = []):
     litterids = []
     for l in litters:
         litterids.append(dbo.sql_value(l.ACCEPTANCENUMBER))
+    if len(litterids) == 0: return []
     return dbo.query(get_animal_query(dbo) + " WHERE a.AcceptanceNumber IN ( " + ",".join(litterids) + ") ORDER BY a.ID")
 
 def get_satellite_counts(dbo, animalid):
