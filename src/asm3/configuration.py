@@ -210,7 +210,7 @@ DEFAULTS = {
     "EmblemFutureAdoption": "Yes",
     "EmblemHold": "Yes",
     "EmblemLongTerm": "Yes",
-    "EmblemNeverVacc": "Yes",
+    "EmblemNeverVacc": "No",
     "EmblemNonShelter": "Yes",
     "EmblemNotForAdoption": "Yes",
     "EmblemNotMicrochipped": "Yes",
