@@ -157,6 +157,9 @@ DEFAULTS = {
     "CardcomErrorURL": "https://secure.cardcom.solutions/DealWasUnSuccessful.aspx",
     "CardcomDocumentType": "3",
     "CardcomMaxInstallments": "6",
+    "CardcomPaymentMethodMapping": '{"1":{"action":"receipt","method":"cash"},"2":{"action":"receipt","method":"cheque"},"3":{"action":"cc_charge"},"4":{"action":"cc_charge"},"5":{"action":"receipt","method":"custom","tx_id":32},"7":{"action":"receipt","method":"custom","tx_id":30},"default":{"action":"error"}}',
+    "CardcomPaymentTypeMapping": '{"1":{"InvoiceType":405},"3":{"InvoiceType":405},"4":{"InvoiceType":405},"5":{"InvoiceType":405},"default":{"InvoiceType":3}}',
+    "CardcomHandleNonCCPayments": "No",
     "CloneAnimalIncludeLogs": "Yes",
     "CostSourceAccount": "9",
     "CreateBoardingCostOnAdoption": "Yes",
@@ -730,6 +733,15 @@ def cardcom_successurl(dbo):
 
 def cardcom_errorurl(dbo):
     return cstring(dbo, "CardcomErrorURL")
+
+def cardcom_paymentmethodmapping(dbo):
+    return cstring(dbo, "CardcomPaymentMethodMapping")
+
+def cardcom_paymenttypemapping(dbo):
+    return cstring(dbo, "CardcomPaymentTypeMapping")
+
+def cardcom_handlenonccpayments(dbo):
+    return cboolean(dbo, "CardcomHandleNonCCPayments", DEFAULTS["CardcomHandleNonCCPayments"] == "Yes")
 
 def clone_animal_include_logs(dbo):
     return cboolean(dbo, "CloneAnimalIncludeLogs", DEFAULTS["CloneAnimalIncludeLogs"] == "Yes")

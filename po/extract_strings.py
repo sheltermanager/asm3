@@ -11,7 +11,7 @@ pot/po files for launchpad. Thanks for nothing gettext team!
 
 import os, re, textwrap, datetime
 
-src = [ "src", "src/asm3", "src/static/js" ]
+src = [ "src", "src/asm3", "src/static/js", "src/asm3/paymentprocessor"]
 
 strings = {}
 
