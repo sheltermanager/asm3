@@ -1,16 +1,16 @@
 46
 ================
 
-23/11/12 Never vaccinated defaults to off #944
-21/11/12 adoptable_js: Subsitute \n for <br> to make life easier for callers
-21/11/12 Truncate all comment length fields in find result screens
-21/11/12 Add extra litter filters for 6 months, 2 years, 3 years
-21/11/12 Fix bug that showed litters as complete if any expiry date set
-18/11/12 Never vaccinated alert/emblem #481 #944
-16/11/12 System log type option, configurable via defaults #804
-16/11/12 Show column for littermates on the litter editing screen #1195
-16/11/12 Restrict new litters to 20 animals to prevent mistakes #903
-10/11/12 Add extra anibase/identichip prefixes: 978102, 972055
+23/11/22 Never vaccinated defaults to off #944
+21/11/22 adoptable_js: Subsitute \n for <br> to make life easier for callers
+21/11/22 Truncate all comment length fields in find result screens
+21/11/22 Add extra litter filters for 6 months, 2 years, 3 years
+21/11/22 Fix bug that showed litters as complete if any expiry date set
+18/11/22 Never vaccinated alert/emblem #481 #944
+16/11/22 System log type option, configurable via defaults #804
+16/11/22 Show column for littermates on the litter editing screen #1195
+16/11/22 Restrict new litters to 20 animals to prevent mistakes #903
+10/11/22 Add extra anibase/identichip prefixes: 978102, 972055
 09/11/22 follow redirects when retrieving images via http
 09/11/22 csvexport animals: include costs with support for importing #1192
 09/11/22 csvexport animals: embed URLs instead of base64, allow all pdf/images
