@@ -7,8 +7,6 @@ from .base import PaymentProcessor, ProcessorError, PayRefError, AlreadyReceived
 
 from asm3.sitedefs import BASE_URL
 
-import datetime
-
 class Cardcom(PaymentProcessor):
     """Cardcom provider http://kb.cardcom.co.il/article/AA-00402/0/"""
 
@@ -109,7 +107,7 @@ class Cardcom(PaymentProcessor):
                 "TerminalNumber": asm3.configuration.cardcom_terminalnumber(self.dbo),
                 "UserName": asm3.configuration.cardcom_username(self.dbo),
                 "codepage": "65001", # unicode
-                "TokenToCharge.DocTypeToCreate": receiptinfo["InvoiceType"], #asm3.configuration.cardcom_documenttype(self.dbo), # 3 = nonprofit receipt
+                "TokenToCharge.DocTypeToCreate": receiptinfo["InvoiceType"], # asm3.configuration.cardcom_documenttype(self.dbo), # 3 = nonprofit receipt
                 "TokenToCharge.SumToBill": str(total_charge_sum),
                 "TokenToCharge.CoinID": "1", # TODO: not critical - use ASM currency
                 "TokenToCharge.UniqAsmachta": client_reference_id,
@@ -259,7 +257,7 @@ class Cardcom(PaymentProcessor):
             }
             params.update(receiptinfo["receiptfields"])
             for p in self.getInvoiceItems(payments):
-                    params.update(p)
+                params.update(p)
             asm_debug("params: %s" % params, "cardcom.checkoutUrl", self.dbo)
             r = asm3.utils.post_form(url, params)
             asm_debug("response %s, text: %s" % (r["status"], r["response"]), "cardcom.checkoutUrl", self.dbo)
