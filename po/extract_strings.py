@@ -11,7 +11,7 @@ pot/po files for launchpad. Thanks for nothing gettext team!
 
 import os, re, textwrap, datetime
 
-src = [ "src", "src/asm3", "src/static/js" ]
+src = [ "src", "src/asm3", "src/static/js", "src/asm3/paymentprocessor"]
 
 strings = {}
 
@@ -47,9 +47,9 @@ for folder in src:
 
 pot = """
 # ASM Translation Strings
-# Copyright (C) 2013-2020 Robin Rawson-Tetley
+# Copyright (C) 2013-2022 Robin Rawson-Tetley
 # This file is distributed under the same license as the ASM3 package.
-# Robin Rawson-Tetley <robin@sheltermanager.com>, 2020.
+# Robin Rawson-Tetley <robin@sheltermanager.com>, 2022.
 
 msgid ""
 msgstr ""
