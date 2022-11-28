@@ -1825,14 +1825,14 @@ class animal_embed(ASMEndpoint):
     def post_find(self, o):
         self.content_type("application/json")
         q = o.post["q"]
-        rows = asm3.animal.get_animal_find_simple(o.dbo, q, o.post["filter"], 100, o.locationfilter, o.siteid, o.visibleanimalids)
+        rows = asm3.animal.get_animal_find_simple(o.dbo, q, classfilter=o.post["filter"], limit=100, locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
         asm3.al.debug("got %d results for '%s'" % (len(rows), self.query()), "code.animal_embed", o.dbo)
         return asm3.utils.json(rows)
 
     def post_multiselect(self, o):
         self.content_type("application/json")
         dbo = o.dbo
-        rows = asm3.animal.get_animal_find_simple(dbo, "", "all", asm3.configuration.record_search_limit(dbo), o.locationfilter, o.siteid, o.visibleanimalids)
+        rows = asm3.animal.get_animal_find_simple(dbo, "", classfilter="all", limit=asm3.configuration.record_search_limit(dbo), locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
         locations = asm3.lookups.get_internal_locations(dbo)
         species = asm3.lookups.get_species(dbo)
         litters = asm3.animal.get_litters(dbo)
@@ -1884,9 +1884,9 @@ class animal_find_results(JSONEndpoint):
         q = o.post["q"]
         mode = o.post["mode"]
         if mode == "SIMPLE":
-            results = asm3.animal.get_animal_find_simple(dbo, q, "all", asm3.configuration.record_search_limit(dbo), o.locationfilter, o.siteid, o.visibleanimalids)
+            results = asm3.animal.get_animal_find_simple(dbo, q, classfilter="all", limit=asm3.configuration.record_search_limit(dbo), locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
         else:
-            results = asm3.animal.get_animal_find_advanced(dbo, o.post.data, asm3.configuration.record_search_limit(dbo), o.locationfilter, o.siteid, o.visibleanimalids)
+            results = asm3.animal.get_animal_find_advanced(dbo, o.post.data, limit=asm3.configuration.record_search_limit(dbo), locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
         add = None
         if len(results) > 0: 
             add = asm3.additional.get_additional_fields_ids(dbo, results, "animal")
@@ -5321,7 +5321,7 @@ class person_embed(ASMEndpoint):
         self.check(asm3.users.VIEW_PERSON)
         self.content_type("application/json")
         q = o.post["q"]
-        rows = asm3.person.get_person_find_simple(o.dbo, q, o.user, classfilter=o.post["filter"], \
+        rows = asm3.person.get_person_find_simple(o.dbo, q, classfilter=o.post["filter"], \
             includeStaff=self.checkb(asm3.users.VIEW_STAFF), \
             includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), limit=100, siteid=o.siteid)
         asm3.al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "code.person_embed", o.dbo)
@@ -5408,12 +5408,12 @@ class person_find_results(JSONEndpoint):
         mode = o.post["mode"]
         q = o.post["q"]
         if mode == "SIMPLE":
-            results = asm3.person.get_person_find_simple(dbo, q, o.user, classfilter="all", \
+            results = asm3.person.get_person_find_simple(dbo, q, classfilter="all", \
                 includeStaff=self.checkb(asm3.users.VIEW_STAFF), \
                 includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), \
                 limit=asm3.configuration.record_search_limit(dbo), siteid=o.siteid)
         else:
-            results = asm3.person.get_person_find_advanced(dbo, o.post.data, o.user, \
+            results = asm3.person.get_person_find_advanced(dbo, o.post.data, \
                 includeStaff=self.checkb(asm3.users.VIEW_STAFF), includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), \
                 limit=asm3.configuration.record_search_limit(dbo), siteid=o.siteid)
         add = None
@@ -6234,7 +6234,7 @@ class sql_dump(ASMEndpoint):
         elif mode == "personcsv":
             asm3.al.debug("%s executed CSV person dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"person.csv\"")
-            rows = asm3.person.get_person_find_simple(dbo, "", o.user, includeStaff=True, includeVolunteers=True)
+            rows = asm3.person.get_person_find_simple(dbo, "", includeStaff=True, includeVolunteers=True)
             asm3.additional.append_to_results(dbo, rows, "person")
             return asm3.utils.csv(l, rows)
         elif mode == "incidentcsv":

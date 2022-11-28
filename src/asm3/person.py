@@ -528,7 +528,7 @@ def get_investigation(dbo, personid, sort = ASCENDING):
         sql += "ORDER BY o.Date DESC"
     return dbo.query(sql, [personid])
 
-def get_person_find_simple(dbo, query, username="", classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
+def get_person_find_simple(dbo, query, classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
     """
     Returns rows for simple person searches.
     query: The search criteria
@@ -569,7 +569,7 @@ def get_person_find_simple(dbo, query, username="", classfilter="all", includeSt
     sql = get_person_query(dbo) + " WHERE (" + " OR ".join(ss.ors) + ")" + cf + " ORDER BY o.OwnerName"
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_person_find_advanced(dbo, criteria, username, includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
+def get_person_find_advanced(dbo, criteria, includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
     """
     Returns rows for advanced person searches.
     criteria: A dictionary of criteria
