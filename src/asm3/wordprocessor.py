@@ -1596,18 +1596,18 @@ def event_tags(dbo, e):
     tags = {
         "EVENTSTARTDATE":        python2display(l, e["STARTDATETIME"]),
         "EVENTENDDATE":          python2display(l, e["ENDDATETIME"]),
-        "EVENTNAME":            e["EVENTNAME"],
-        "EVENTDESCRIPTION":     e["EVENTDESCRIPTION"],
-        "EVENTRECORDVERSION":   e["RECORDVERSION"],
-        "EVENTCREATEDBY":       e["CREATEDBY"],
-        "EVENTCREATEDDATE":     python2display(l, e["CREATEDDATE"]),
-        "EVENTLASTCHANGEDBY":   e["LASTCHANGEDBY"],
-        "EVENTLASTCHANGEDDATE": python2display(l, e["LASTCHANGEDDATE"]),
-        "EVENTOWNERNAME":       e["EVENTOWNERNAME"],
-        "EVENTADDRESS":         e["EVENTADDRESS"],
-        "EVENTTOWN":            e["EVENTCOUNTY"],
-        "EVENTPOSTCODE":        e["EVENTPOSTCODE"],
-        "EVENTCOUNTRY":         e["EVENTCOUNTRY"]
+        "EVENTNAME":             e["EVENTNAME"],
+        "EVENTDESCRIPTION":      e["EVENTDESCRIPTION"],
+        "EVENTOWNERNAME":        e["EVENTOWNERNAME"],
+        "EVENTADDRESS":          e["EVENTADDRESS"],
+        "EVENTTOWN":             e["EVENTCOUNTY"],
+        "EVENTPOSTCODE":         e["EVENTPOSTCODE"],
+        "EVENTCOUNTRY":          e["EVENTCOUNTRY"],
+        "EVENTRECORDVERSION":    e["RECORDVERSION"],
+        "EVENTCREATEDBY":        e["CREATEDBY"],
+        "EVENTCREATEDDATE":      python2display(l, e["CREATEDDATE"]),
+        "EVENTLASTCHANGEDBY":    e["LASTCHANGEDBY"],
+        "EVENTLASTCHANGEDDATE":  python2display(l, e["LASTCHANGEDDATE"])
     }
 
     tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, e["ID"], "event"), "EVENT"))

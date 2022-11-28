@@ -511,7 +511,7 @@ def get_investigation(dbo, personid, sort = ASCENDING):
         sql += "ORDER BY o.Date DESC"
     return dbo.query(sql, [personid])
 
-def get_person_find_simple(dbo, query, username="", classfilter="all", includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0, datatype="all"):
+def get_person_find_simple(dbo, query, username="", classfilter="all", typefilter="all", includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
     """
     Returns rows for simple person searches.
     query: The search criteria
@@ -546,14 +546,13 @@ def get_person_find_simple(dbo, query, username="", classfilter="all", includeSt
         "sponsor":          " AND o.IsSponsor = 1"
     }
 
-    datatypes = {
+    typefilters = {
         "all":          "",
         "individual":   " AND o.OwnerType=1",
         "organization": " AND o.OwnerType=2"
     }
-
     cf = classfilters[classfilter]
-    dt = datatypes[datatype]
+    dt = typefilters[typefilter]
     if not includeStaff: cf += " AND o.IsStaff = 0"
     if not includeVolunteers: cf += " AND o.IsVolunteer = 0"
     if siteid != 0: cf += " AND (o.SiteID = 0 OR o.SiteID = %d)" % siteid

@@ -279,19 +279,11 @@ additional = {
     },
 
     reset: function(){
-        //animal
-        $(".asm-animalchooser").animalchooser("clear");
-        if ($("#add_9.additional option[selected=selected]")[0])
-        {
-        // lookup
-            $("#add_9.additional").val($("#add_9.additional option[selected=selected]")[0].value);
-        }
-        //money, numbers, text, time
-        $("#add_9.additional").val($("#add_9.additional").attr("value"));
-        //Nots
-        $("#add_9.additional").val($("#add_9.additional")[0].defaultValue);
-        //person, sponsor, vet
-        $(".asm-personchooser").personchooser("clear");
+            $.each(controller.additional, function(i, v){
+                $("#add_" + v.ID).val(v.DEFAULTVALUE);
+                if(v.FIELDTYPE == additional.MONEY)
+                    $("#add_" + v.ID).val($("#add_" + v.ID).attr("value"));
+            })
     },
 
     /**

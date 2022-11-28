@@ -5,6 +5,7 @@ import asm3.additional
 from asm3.i18n import _
 
 
+
 def get_event_query(dbo):
     return "SELECT ev.*, owner.OwnerName AS EventOwnerName " \
            "FROM event ev " \
@@ -22,25 +23,20 @@ def get_event(dbo, eventid):
 
 def insert_event_from_form(dbo, post, username):
     l = dbo.locale
-    pid = dbo.get_id("event")
     ownerid = post["ownerid"]
     if ownerid == "" or ownerid == "0":
         ownerid = None
 
     if post["startdate"].strip() == "":
         raise asm3.utils.ASMValidationError(_("Event must have a start date.", l))
-
     if post["enddate"].strip() == "":
         raise asm3.utils.ASMValidationError(_("Event must have an end date.", l))
-
     if post["address"].strip() == "":
         raise asm3.utils.ASMValidationError(_("Event must have an address.", l))
-
     if post.date("startdate") > post.date("enddate"):
-        raise asm3.utils.ASMValidationError(_("End date must be equal to or later than start date."))
+        raise asm3.utils.ASMValidationError(_("End date must be equal to or later than start date.", l))
 
-    dbo.insert("event", {
-        "ID": pid,
+    pid = dbo.insert("event", {
         "StartDateTime": post.date("startdate"),
         "EndDateTime": post.date("enddate"),
         "EventName": post["eventname"],
@@ -50,7 +46,7 @@ def insert_event_from_form(dbo, post, username):
         "EventCounty": post["county"],
         "EventPostCode": post["postcode"],
         "EventCountry": post["country"]
-    }, user=username, generateID=False)
+    }, user=username)
 
     # Save any additional field values given
     asm3.additional.save_values_for_link(dbo, post, username, pid, "event", True)
