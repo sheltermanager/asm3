@@ -1,6 +1,7 @@
 46
 ================
 
+27/11/22 Cardcom invoicing for non-cc payments (Saggi Neuemann)
 23/11/22 Never vaccinated defaults to off #944
 21/11/22 adoptable_js: Subsitute \n for <br> to make life easier for callers
 21/11/22 Truncate all comment length fields in find result screens
