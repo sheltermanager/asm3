@@ -40,7 +40,7 @@ VERSIONS = (
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
-    34606, 34607
+    34606, 34607, 34608
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -987,8 +987,13 @@ def sql_structure(dbo):
         fdate("EndDateTime"),
         fstr("EventName"),
         flongstr("EventDescription", True),
+<<<<<<< HEAD
         fint("EventOwnerID"),
         fstr("EventAddress", True),
+=======
+        fint("EventOwnerID", True),
+        flongstr("EventAddress", True),
+>>>>>>> fabca3f90d5092669eb6207fd7ddf1e7031caf9c
         fstr("EventTown", True),
         fstr("EventCounty", True),
         fstr("EventPostCode", True),
@@ -5705,3 +5710,6 @@ def update_34607(dbo):
     add_column(dbo, "users", "OTPSecret", dbo.type_shorttext)
     dbo.execute_dbupdate("UPDATE users SET EnableTOTP=0, OTPSecret=''")
 
+def update_34608(dbo):
+    # change column eventownerid to nullable
+    dbo.execute_dbupdate(dbo.ddl_drop_notnull("event", "EventOwnerID", dbo.type_integer))

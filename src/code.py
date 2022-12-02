@@ -5321,7 +5321,7 @@ class person_embed(ASMEndpoint):
         self.check(asm3.users.VIEW_PERSON)
         self.content_type("application/json")
         q = o.post["q"]
-        rows = asm3.person.get_person_find_simple(o.dbo, q, classfilter=o.post["filter"], \
+        rows = asm3.person.get_person_find_simple(o.dbo, q, classfilter=o.post["filter"], typefilter=o.post["type"], \
             includeStaff=self.checkb(asm3.users.VIEW_STAFF), \
             includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), limit=100, siteid=o.siteid)
         asm3.al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "code.person_embed", o.dbo)
@@ -6796,7 +6796,18 @@ class waitinglist_results(JSONEndpoint):
         for wid in o.post.integer_list("ids"):
             asm3.waitinglist.update_waitinglist_highlight(o.dbo, wid, o.post["himode"])
 
+class event_new(JSONEndpoint):
+    url = "event_new"
+    #TODO: need to add permissions
+    def controller(self, o):
+        dbo = o.dbo
+        asm3.al.debug("add event", "code.event_new", dbo)
+        return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "event")
+        }
 
+    def post_all(self, o):
+        return str(asm3.event.insert_event_from_form(o.dbo, o.post, o.user))
 
 # List of routes constructed from class definitions
 routes = []
