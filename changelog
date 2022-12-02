@@ -1,6 +1,7 @@
 46
 ================
 
+02/12/22 Merged event_new (Roman Safovich) #1186
 27/11/22 Cardcom invoicing for non-cc payments (Saggi Neuemann)
 23/11/22 Never vaccinated defaults to off #944
 21/11/22 adoptable_js: Subsitute \n for <br> to make life easier for callers
