@@ -209,6 +209,14 @@ VIEW_STOCKLEVEL                 = "vsl"
 DELETE_STOCKLEVEL               = "dsl"
 CHANGE_STOCKLEVEL               = "csl"
 
+ADD_EVENT                       = "ae"
+VIEW_EVENT                      = "ve"
+CHANGE_EVENT                    = "ce"
+DELETE_EVENT                    = "de"
+VIEW_EVENT_ANIMALS              = "vea"
+CHANGE_EVENT_ANIMALS            = "cea"
+LINK_EVENT_MOVEMENT             = "lem"
+
 def check_permission(session, flag, message = ""):
     """
     Throws an ASMPermissionError if the flag is not in the map
