@@ -78,8 +78,8 @@ AP_CREATETRANSPORT = 7
 AP_CREATEWAITINGLIST = 8
 AP_ATTACHANIMAL_CREATEPERSON = 9 
 
-JSKEY_NAME = 'magicASJSkey'
-JSKEY_VALUE = '918273645'
+# The name of an extra checkbox inserted to trap spambots
+SPAMBOT_CB = 'termsscb'
 
 # Online field names that we recognise and will attempt to map to
 # known fields when importing from submitted forms
@@ -303,10 +303,10 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         h.append('</td>')
         h.append('</tr>')
     h.append('</table>')
-    if asm3.configuration.online_form_verify_jskey(dbo):
-        h.append('<script>')
-        h.append('document.write("<input " + \n"type=" + "\'hidden\'" + \n" name=" + "\'%s\'" + \n" value=" + "\'%s\'" + " />");' % (JSKEY_NAME, JSKEY_VALUE))
-        h.append('</script>')
+    h.append('<style>')
+    h.append('.scb { display: none; }')
+    h.append('</style>')
+    h.append('<p class="scb"><input name="' + SPAMBOT_CB + '" type="checkbox" /></p>')
     h.append('<p style="text-align: center"><input type="submit" value="%s" /></p>' % asm3.i18n._("Submit", l))
     h.append('</form>')
     if completedocument:
@@ -771,15 +771,13 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
     create a row for every key/value pair in the posted data
     with a unique collation ID.
     """
-    # If we are using a js generated field to protect against
-    # spambots, verify it is there
-    if asm3.configuration.online_form_verify_jskey(dbo):
-        if post[JSKEY_NAME] != JSKEY_VALUE:
-            raise asm3.utils.ASMValidationError("Invalid verification key")
+    # Check our spambot checkbox and do not save the form if it has been set.
+    # We don't throw an error either, so the spambot is still redirected to the thank you page and cannot tell.
+    if post.boolean(SPAMBOT_CB): return
 
     collationid = get_collationid(dbo)
 
-    IGNORE_FIELDS = [ JSKEY_NAME, "formname", "flags", "redirect", "account", "filechooser", "method" ]
+    IGNORE_FIELDS = [ SPAMBOT_CB, "formname", "flags", "redirect", "account", "filechooser", "method" ]
     l = dbo.locale
     formname = post["formname"]
     posteddate = dbo.now()

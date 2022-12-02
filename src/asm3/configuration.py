@@ -293,7 +293,6 @@ DEFAULTS = {
     "MovementPersonOnlyReserves": "Yes",
     "MultiSiteEnabled": "No", 
     "JSWindowPrint": "Yes",
-    "OnlineFormVerifyJSKey": "Yes",
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
     "OrganisationTelephone": "Telephone",
@@ -1124,9 +1123,6 @@ def multi_site_enabled(dbo):
 
 def non_shelter_type(dbo):
     return cint(dbo, "AFNonShelterType", 40)
-
-def online_form_verify_jskey(dbo):
-    return cboolean(dbo, "OnlineFormVerifyJSKey", DEFAULTS["OnlineFormVerifyJSKey"] == "Yes")
 
 def organisation(dbo):
     return cstring(dbo, "Organisation", DEFAULTS["Organisation"])
