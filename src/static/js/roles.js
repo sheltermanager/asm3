@@ -148,7 +148,7 @@ $(function() {
                 cr("cwl", _("Change Waiting List")),
                 cr("dwl", _("Delete Waiting List")),
                 cr("bcwl", _("Bulk Complete Waiting List")),
-                cl(_("Event")),
+                cl(_("Events")),
                 cr("ae", _("Add Event")),
                 cr("ve", _("View Event")),
                 cr("ce", _("Change Event")),
