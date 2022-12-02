@@ -987,13 +987,8 @@ def sql_structure(dbo):
         fdate("EndDateTime"),
         fstr("EventName"),
         flongstr("EventDescription", True),
-<<<<<<< HEAD
-        fint("EventOwnerID"),
-        fstr("EventAddress", True),
-=======
         fint("EventOwnerID", True),
         flongstr("EventAddress", True),
->>>>>>> fabca3f90d5092669eb6207fd7ddf1e7031caf9c
         fstr("EventTown", True),
         fstr("EventCounty", True),
         fstr("EventPostCode", True),
