@@ -5,6 +5,7 @@ build
 node_modules
 tags
 .idea
+.idea/workspace.xml
 .vscode
 doc/manual/_build
 install/deb/sheltermanager3
