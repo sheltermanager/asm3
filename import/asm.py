@@ -112,7 +112,7 @@ def atof(s):
     except:
         return 0
 
-def csv_to_list(fname, strip = False, remove_bom = True, remove_control = False, remove_non_ascii = False, uppercasekeys = False, unicodehtml = False):
+def csv_to_list(fname, strip = False, remove_bom = True, remove_control = False, remove_non_ascii = False, uppercasekeys = False, unicodehtml = False, encoding="utf-8"):
     """
     Reads the csv file fname and returns it as a list of maps 
     with the first row used as the keys.
@@ -129,7 +129,7 @@ def csv_to_list(fname, strip = False, remove_bom = True, remove_control = False,
     # Read the file into memory buffer b first
     # any raw transformations can be done on it there
     b = StringIO()
-    with open(fname, "r") as f:
+    with open(fname, "r", encoding=encoding) as f:
         for s in f.readlines():
             if remove_bom:
                 s = s.replace("\ufeff", "")
@@ -345,7 +345,7 @@ def today():
 def stderr(s):
     sys.stderr.write("%s\n" % s)
 
-def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animaltests=[], owners=[], ownerlicences=[], ownerdonations=[], animalcontrol=[], movements=[], logs=[]):
+def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animaltests=[], owners=[], ownerlicences=[], ownerdonations=[], animalcontrol=[], movements=[], logs=[], stocklevels=[], waitinglists=[]):
     def o(l, d):
         if len(l) > 0:
             stderr("%d %s" % (len(l), d))
@@ -385,6 +385,8 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
     o(ownerlicences, "licences")
     o(ownerdonations, "payments")
     o(animalcontrol, "incidents")
+    o(stocklevels, "stock levels")
+    o(waitinglists, "waiting list entries")
     if mediafilescount > 0:
         stderr("%d media files (%d bytes)" % (mediafilescount, mediafilesbytes))
 
@@ -481,7 +483,9 @@ def colour_name_for_id(id, default = "Black"):
 # List of default species
 species = (
 ("1","Dog"),
+("1","Canine"),
 ("2","Cat"),
+("2","Feline"),
 ("3","Bird"),
 ("4","Mouse"),
 ("5","Rat"),
@@ -504,6 +508,7 @@ species = (
 ("22","Hamster"),
 ("23","Camel"),
 ("24","Horse"),
+("24","Equine"),
 ("25","Pony"),
 ("26","Donkey"),
 ("27","Llama"),
@@ -1190,7 +1195,7 @@ def strip_unicode(s):
 
 def dd(d):
     if d == None: return "NULL"
-    return "'%d-%02d-%02d'" % ( d.year, d.month, d.day )
+    return "'%d-%02d-%02d 00:00:00'" % ( d.year, d.month, d.day )
 
 def ddt(d):
     if d == None: return "NULL"
@@ -1475,7 +1480,9 @@ def media_file(linktypeid, linkid, filename, filedata, medianotes = ""):
     mimetype = mime_type(filename)
     encoded = base64.b64encode(filedata)
     if medianotes == "": medianotes = filename
-    if sys.version_info[0] > 2: encoded = encoded.decode("ascii") # PYTHON3
+    medianotes = medianotes.replace("'", "''")
+    filename = filename.replace("'", "''")
+    if sys.version_info[0] > 2: encoded = encoded.decode("ascii") # PYTHON3 - turn base64 into str for stdout
     websitephoto = extension == ".jpg" and 1 or 0
     dbfsidpath = "/animal"
     if linktypeid > 0: dbfsidpath = "/owner"
@@ -1483,7 +1490,6 @@ def media_file(linktypeid, linkid, filename, filedata, medianotes = ""):
     print(f"INSERT INTO media (id, medianame, medianotes, mediasize, mediamimetype, websitephoto, docphoto, newsincelastpublish, updatedsincelastpublish, " \
         f"excludefrompublish, linkid, linktypeid, recordversion, date) VALUES ({mediaid}, '{medianame}', '{medianotes}', {len(filedata)}, '{mimetype}', {websitephoto}, {websitephoto}, 0, 0, 0, " \
         f"{linkid}, {linktypeid}, 0, {dd(datetime.datetime.today())});")
-    print(f"INSERT INTO dbfs (id, name, path, content) VALUES ({getid('dbfs')}, '{linkid}', '{dbfsidpath}', '');")
     dbfsid = getid("dbfs")
     print(f"INSERT INTO dbfs (id, name, path, url, content) VALUES ({dbfsid}, '{medianame}', '{dbfsidpath + '/' + str(linkid)}', 'base64:', '{encoded}');")
     print(f"UPDATE media SET DBFSID = {dbfsid} WHERE ID = {mediaid};")
@@ -2045,6 +2051,57 @@ class AnimalVaccination:
             ( "LastChangedDate", dd(self.LastChangedDate) )
             )
         return makesql("animalvaccination", s)
+
+class AnimalWaitingList:
+    ID = 0
+    SpeciesID = 1
+    Size = 1
+    DatePutOnList = None
+    OwnerID = 0
+    AnimalDescription = ""
+    ReasonForWantingToPart = ""
+    CanAffordDonation = 0
+    Urgency = 5
+    DateRemovedFromList = None
+    AutoRemovePolicy = 1
+    DateOfLastOwnerContact = None
+    ReasonForRemoval = ""
+    Comments = ""
+    UrgencyUpdateDate = None
+    UrgencyLastUpdatedDate = None
+    RecordVersion = 0
+    CreatedBy = "conversion"
+    CreatedDate = today()
+    LastChangedBy = "conversion"
+    LastChangedDate = today()
+    def __init__(self, ID = 0):
+        self.ID = ID
+        if ID == 0: self.ID = getid("animalwaitinglist")
+    def __str__(self):
+        s = (
+            ( "ID", di(self.ID) ),
+            ( "SpeciesID", di(self.SpeciesID) ),
+            ( "Size", di(self.Size) ),
+            ( "DatePutOnList", dd(self.DatePutOnList) ),
+            ( "OwnerID", di(self.OwnerID) ),
+            ( "AnimalDescription", ds(self.AnimalDescription) ),
+            ( "ReasonForWantingToPart", ds(self.ReasonForWantingToPart) ),
+            ( "CanAffordDonation", di(self.CanAffordDonation) ),
+            ( "Urgency", di(self.Urgency) ),
+            ( "DateRemovedFromList", dd(self.DateRemovedFromList) ),
+            ( "AutoRemovePolicy", di(self.AutoRemovePolicy) ),
+            ( "DateOfLastOwnerContact", dd(self.DateOfLastOwnerContact) ),
+            ( "ReasonForRemoval", ds(self.ReasonForRemoval) ),
+            ( "Comments", ds(self.Comments) ),
+            ( "UrgencyUpdateDate", dd(self.UrgencyUpdateDate) ),
+            ( "UrgencyLastUpdatedDate", dd(self.UrgencyLastUpdatedDate) ),
+            ( "RecordVersion", di(self.RecordVersion) ),
+            ( "CreatedBy", ds(self.CreatedBy) ),
+            ( "CreatedDate", dd(self.CreatedDate) ),
+            ( "LastChangedBy", ds(self.LastChangedBy) ),
+            ( "LastChangedDate", dd(self.LastChangedDate) )
+            )
+        return makesql("animalwaitinglist", s)
 
 class Animal:
     ID = 0
@@ -2639,6 +2696,40 @@ class OwnerLicence:
             ( "LastChangedDate", dd(self.LastChangedDate) )
             )
         return makesql("ownerlicence", s)
+
+class StockLevel:
+    ID = 0
+    Name = ""
+    Description = ""
+    StockLocationID = 1
+    UnitName = ""
+    Total = 0
+    Balance = 0
+    Expiry= None
+    BatchNumber = ""
+    Cost = 0
+    UnitPrice = 0
+    CreatedDate = None
+    def __init__(self, ID = 0):
+        self.ID = ID
+        if ID == 0: self.ID = getid("stocklevel")
+    def __str__(self):
+        s = (
+            ( "ID", di(self.ID) ),
+            ( "Name", ds(self.Name) ),
+            ( "Description", ds(self.Description) ),
+            ( "StockLocationID", di(self.StockLocationID) ),
+            ( "UnitName", ds(self.UnitName) ),
+            ( "Total", di(self.Total) ),
+            ( "Balance", di(self.Balance) ),
+            ( "Expiry", dd(self.Expiry) ),
+            ( "BatchNumber", ds(self.BatchNumber) ),
+            ( "Cost", di(self.Cost) ),
+            ( "UnitPrice", di(self.UnitPrice) ),
+            ( "CreatedDate", dd(self.CreatedDate) )
+            )
+        return makesql("stocklevel", s)
+
 
 
 # Dictionary of entry reasons

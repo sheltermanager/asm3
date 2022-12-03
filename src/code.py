@@ -687,7 +687,7 @@ class csperror(ASMEndpoint):
     def post_all(self, o):
         asm3.al.error(str(self.data), "code.csperror", o.dbo)
         if EMAIL_ERRORS:
-            asm3.utils.send_email(o.dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", "CSP violation", str(self.data), "plain", exceptions=False)
+            asm3.utils.send_email(o.dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", "CSP violation", str(self.data), "plain", exceptions=False, bulk=True)
 
 class jserror(ASMEndpoint):
     """
@@ -706,7 +706,7 @@ class jserror(ASMEndpoint):
         logmess = "%s@%s: %s %s" % (post["user"], post["account"], post["msg"], post["stack"])
         asm3.al.error(logmess, "code.jserror", dbo)
         if EMAIL_ERRORS:
-            asm3.utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", emailsubject, emailbody, "plain", exceptions=False)
+            asm3.utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", emailsubject, emailbody, "plain", exceptions=False, bulk=True)
 
 class media(ASMEndpoint):
     url = "media"
@@ -1825,14 +1825,14 @@ class animal_embed(ASMEndpoint):
     def post_find(self, o):
         self.content_type("application/json")
         q = o.post["q"]
-        rows = asm3.animal.get_animal_find_simple(o.dbo, q, o.post["filter"], 100, o.locationfilter, o.siteid, o.visibleanimalids)
+        rows = asm3.animal.get_animal_find_simple(o.dbo, q, classfilter=o.post["filter"], limit=100, locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
         asm3.al.debug("got %d results for '%s'" % (len(rows), self.query()), "code.animal_embed", o.dbo)
         return asm3.utils.json(rows)
 
     def post_multiselect(self, o):
         self.content_type("application/json")
         dbo = o.dbo
-        rows = asm3.animal.get_animal_find_simple(dbo, "", "all", asm3.configuration.record_search_limit(dbo), o.locationfilter, o.siteid, o.visibleanimalids)
+        rows = asm3.animal.get_animal_find_simple(dbo, "", classfilter="all", limit=asm3.configuration.record_search_limit(dbo), locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
         locations = asm3.lookups.get_internal_locations(dbo)
         species = asm3.lookups.get_species(dbo)
         litters = asm3.animal.get_litters(dbo)
@@ -1884,9 +1884,9 @@ class animal_find_results(JSONEndpoint):
         q = o.post["q"]
         mode = o.post["mode"]
         if mode == "SIMPLE":
-            results = asm3.animal.get_animal_find_simple(dbo, q, "all", asm3.configuration.record_search_limit(dbo), o.locationfilter, o.siteid, o.visibleanimalids)
+            results = asm3.animal.get_animal_find_simple(dbo, q, classfilter="all", limit=asm3.configuration.record_search_limit(dbo), locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
         else:
-            results = asm3.animal.get_animal_find_advanced(dbo, o.post.data, asm3.configuration.record_search_limit(dbo), o.locationfilter, o.siteid, o.visibleanimalids)
+            results = asm3.animal.get_animal_find_advanced(dbo, o.post.data, limit=asm3.configuration.record_search_limit(dbo), locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
         add = None
         if len(results) > 0: 
             add = asm3.additional.get_additional_fields_ids(dbo, results, "animal")
@@ -2551,7 +2551,7 @@ class csvexport_animals(ASMEndpoint):
         else:
             l = o.locale
             asm3.asynctask.function_task(o.dbo, _("Export Animals as CSV", l), asm3.csvimport.csvexport_animals, 
-                o.dbo, o.post["filter"], o.post["animals"], o.post["where"], o.post.boolean("includeimage") == 1)
+                o.dbo, o.post["filter"], o.post["animals"], o.post["where"], o.post["media"] )
             self.redirect("task")
 
 class csvimport(JSONEndpoint):
@@ -3735,11 +3735,16 @@ class litters(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         offset = o.post["offset"]
-        if offset == "": offset = "m365"
-        litters = asm3.animal.get_litters(dbo, offset)
+        if offset == "": offset = "active"
+        if offset == "active":
+            litters = asm3.animal.get_active_litters(dbo)
+        else:
+            litters = asm3.animal.get_litters(dbo, offset)
+        littermates = asm3.animal.get_litter_animals(dbo, litters)
         asm3.al.debug("got %d litters" % len(litters), "code.litters", dbo)
         return {
             "rows": litters,
+            "littermates": littermates,
             "species": asm3.lookups.get_species(dbo)
         }
 
@@ -5316,7 +5321,7 @@ class person_embed(ASMEndpoint):
         self.check(asm3.users.VIEW_PERSON)
         self.content_type("application/json")
         q = o.post["q"]
-        rows = asm3.person.get_person_find_simple(o.dbo, q, o.user, classfilter=o.post["filter"], \
+        rows = asm3.person.get_person_find_simple(o.dbo, q, classfilter=o.post["filter"], typefilter=o.post["type"], \
             includeStaff=self.checkb(asm3.users.VIEW_STAFF), \
             includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), limit=100, siteid=o.siteid)
         asm3.al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "code.person_embed", o.dbo)
@@ -5403,12 +5408,12 @@ class person_find_results(JSONEndpoint):
         mode = o.post["mode"]
         q = o.post["q"]
         if mode == "SIMPLE":
-            results = asm3.person.get_person_find_simple(dbo, q, o.user, classfilter="all", \
+            results = asm3.person.get_person_find_simple(dbo, q, classfilter="all", \
                 includeStaff=self.checkb(asm3.users.VIEW_STAFF), \
                 includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), \
                 limit=asm3.configuration.record_search_limit(dbo), siteid=o.siteid)
         else:
-            results = asm3.person.get_person_find_advanced(dbo, o.post.data, o.user, \
+            results = asm3.person.get_person_find_advanced(dbo, o.post.data, \
                 includeStaff=self.checkb(asm3.users.VIEW_STAFF), includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), \
                 limit=asm3.configuration.record_search_limit(dbo), siteid=o.siteid)
         add = None
@@ -6114,7 +6119,7 @@ class sql(JSONEndpoint):
                 q = self.substitute_report_tokens(dbo, user, q)
                 ql = q.lower()
                 asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
-                if ql.startswith("select") or ql.startswith("show"):
+                if ql.startswith("select") or ql.startswith("show") or ql.startswith("with"):
                     return asm3.html.table(dbo.query(q))
                 elif ql.startswith("insert"):
                     rowsaffected += dbo.execute(q)
@@ -6136,7 +6141,7 @@ class sql(JSONEndpoint):
                 q = self.substitute_report_tokens(dbo, user, q)
                 ql = q.lower()
                 asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
-                if ql.startswith("select") or ql.startswith("show"):
+                if ql.startswith("select") or ql.startswith("show") or ql.startswith("with"):
                     output.append(str(dbo.query(q)))
                 else:
                     self.check_update_query(ql)
@@ -6229,7 +6234,7 @@ class sql_dump(ASMEndpoint):
         elif mode == "personcsv":
             asm3.al.debug("%s executed CSV person dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"person.csv\"")
-            rows = asm3.person.get_person_find_simple(dbo, "", o.user, includeStaff=True, includeVolunteers=True)
+            rows = asm3.person.get_person_find_simple(dbo, "", includeStaff=True, includeVolunteers=True)
             asm3.additional.append_to_results(dbo, rows, "person")
             return asm3.utils.csv(l, rows)
         elif mode == "incidentcsv":
@@ -6791,7 +6796,18 @@ class waitinglist_results(JSONEndpoint):
         for wid in o.post.integer_list("ids"):
             asm3.waitinglist.update_waitinglist_highlight(o.dbo, wid, o.post["himode"])
 
+class event_new(JSONEndpoint):
+    url = "event_new"
+    #TODO: need to add permissions
+    def controller(self, o):
+        dbo = o.dbo
+        asm3.al.debug("add event", "code.event_new", dbo)
+        return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "event")
+        }
 
+    def post_all(self, o):
+        return str(asm3.event.insert_event_from_form(o.dbo, o.post, o.user))
 
 # List of routes constructed from class definitions
 routes = []

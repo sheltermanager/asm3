@@ -33,7 +33,7 @@ from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVI
 # Service methods that require authentication
 AUTH_METHODS = [
     "csv_mail", "csv_report", "json_report", "jsonp_report", "json_mail", "jsonp_mail",
-    "html_report", "media_file", "rss_timeline", "upload_animal_image", "xml_adoptable_animal", 
+    "html_report", "rss_timeline", "upload_animal_image", "xml_adoptable_animal", 
     "json_adoptable_animal", "xml_adoptable_animals", "json_adoptable_animals", 
     "jsonp_adoptable_animals", "xml_found_animals", "json_found_animals", 
     "jsonp_found_animals", "xml_held_animals", "json_held_animals", 
@@ -234,7 +234,7 @@ def checkout_adoption_page(dbo, token):
     co["donationtiers"] = asm3.configuration.adoption_checkout_donation_tiers(dbo)
     co["token"] = token
     # Record that the checkout was accessed in the log
-    logtypeid = asm3.configuration.generate_document_log_type(dbo)
+    logtypeid = asm3.configuration.system_log_type(dbo)
     logmsg = "AC02:%s:%s(%s)-->%s(%s)" % (co["movementid"], co["animalname"], co["animalid"], co["personname"], co["personid"])
     asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["personid"], logtypeid, logmsg)
     return asm3.html.js_page(scripts, _("Adoption Checkout", l), co)
@@ -304,7 +304,7 @@ def checkout_adoption_post(dbo, post):
         # The user has changed their voluntary donation amount to 0 - delete it
         dbo.delete("ownerdonation", co["paymentdonid"], "checkout")
     # Record that the checkout was completed in the log
-    logtypeid = asm3.configuration.generate_document_log_type(dbo)
+    logtypeid = asm3.configuration.system_log_type(dbo)
     logmsg = "AC03:%s:%s(%s)-->%s(%s):volamt=%s" % (co["movementid"], co["animalname"], co["animalid"], co["personname"], co["personid"], donationamt)
     asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["personid"], logtypeid, logmsg)
     # Construct the payment checkout URL
@@ -461,10 +461,10 @@ def handler(post, path, remoteip, referer, useragent, querystring):
             asm3.al.error("animal_view failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
-            return set_cached_response(cache_key, account, "text/html", 86400, 600, asm3.publishers.html.get_animal_view(dbo, asm3.utils.cint(animalid)))
+            return set_cached_response(cache_key, account, "text/html", 3600, 600, asm3.publishers.html.get_animal_view(dbo, asm3.utils.cint(animalid)))
 
     elif method == "animal_view_adoptable_js":
-        return set_cached_response(cache_key, account, "application/javascript", 10800, 600, asm3.publishers.html.get_animal_view_adoptable_js(dbo))
+        return set_cached_response(cache_key, account, "application/javascript", 3600, 600, asm3.publishers.html.get_animal_view_adoptable_js(dbo))
 
     elif method == "animal_view_adoptable_html":
         return set_cached_response(cache_key, account, "text/html", 86400, 600, asm3.publishers.html.get_animal_view_adoptable_html(dbo))

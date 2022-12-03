@@ -180,7 +180,7 @@ const html = {
                 s.push(html.icon("movement", a.DISPLAYLOCATIONNAME + " / " + a.CURRENTOWNERNAME));
             }
         }
-        if (config.bool("EmblemAdoptable") && html.is_animal_adoptable(a)[0]) {
+        if (config.bool("EmblemAdoptable") && a.DATEOFBIRTH && html.is_animal_adoptable(a)[0]) {
             s.push(html.icon("adoptable", _("Adoptable")));
         }
         if (config.bool("EmblemBonded") && (a.BONDEDANIMALID || a.BONDEDANIMAL2ID)) {
@@ -206,6 +206,9 @@ const html = {
         }
         if (config.bool("EmblemCrueltyCase") && a.CRUELTYCASE == 1) {
             s.push(html.icon("case", _("Cruelty Case")));
+        }
+        if (config.bool("EmblemNeverVacc") && a.VACCGIVENCOUNT == 0) {
+            s.push(html.icon("novaccination", _("Never Vaccinated")));
         }
         if (config.bool("EmblemNonShelter") && a.NONSHELTERANIMAL == 1) {
             s.push(html.icon("nonshelter", _("Non-Shelter")));

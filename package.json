@@ -1,6 +1,6 @@
 {
   "name": "asm3",
-  "version": "44.0.0",
+  "version": "46.0.0",
   "description": "Animal Shelter Manager v3 (sheltermanager3)",
   "main": "src/static/js/login.js",
   "directories": {

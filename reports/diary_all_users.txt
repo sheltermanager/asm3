@@ -2,7 +2,7 @@ Diary (all users)
 ###
 Diary
 ###
-MySQL
+MySQL rev01
 ###
 Generates the diary for all users today.
 ###
@@ -42,7 +42,7 @@ Diary (all users)
 ###
 Diary
 ###
-PostgreSQL
+PostgreSQL rev01
 ###
 Generates the diary for all users today.
 ###

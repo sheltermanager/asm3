@@ -34,6 +34,8 @@ emailaddress
     The person's email address
 excludefrombulkemail
     If this field is supplied and not a blank or "No" in your language, the exclude from bulk email flag will be set for the created person
+comments
+    The comments field for the animal (for historical reasons, comments populates the animal's description field), person, lost, found or waiting list animal
 description
     The description for the lost, found or waiting list animal
 reason

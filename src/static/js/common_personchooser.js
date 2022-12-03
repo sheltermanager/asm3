@@ -42,7 +42,9 @@ $.widget("asm.personchooser", {
         personflags: [],
         filter: "all",
         mode: "full",
-        title: _("Find person")
+        type: "all",
+        title: _("Find person"),
+        addtitle: _("Add person")
     },
 
     _create: function() {
@@ -54,6 +56,11 @@ $.widget("asm.personchooser", {
 
         if (this.element.attr("data-mode")) {
             this.options.mode = this.element.attr("data-mode");
+        }
+
+        if(this.element.attr("data-type")){
+            this.set_type(this.element.attr("data-type"));
+//            this.options.type = this.element.attr("data-type");
         }
 
         var h = [
@@ -98,7 +105,7 @@ $.widget("asm.personchooser", {
             '<tbody></tbody>',
             '</table>',
             '</div>',
-            '<div class="personchooser-add" style="display: none" title="' + _("Add person") + '">',
+            '<div class="personchooser-add" style="display: none" title="' + this.options.addtitle + '">',
             '<table width="100%">',
             '<tr>',
             '<td><label>' + _("Class") + '</label></td>',
@@ -273,8 +280,10 @@ $.widget("asm.personchooser", {
                 dialogadd.find(".tag-individual").fadeIn();
             }
         };
+        // change ownertype to organization
+        if(this.element.attr("data-type") == "organization")
+            dialogadd.find("[data='ownertype']").val(2);
         dialogadd.find("[data='ownertype']").change(check_org);
-        
         var pcaddbuttons = {};
         
         pcaddbuttons[_("Create this person")] = function() {
@@ -505,7 +514,8 @@ $.widget("asm.personchooser", {
         dialog.find("button").button("disable");
         var q = encodeURIComponent(dialog.find("input").val());
         var filter = this.options.filter;
-        var formdata = "mode=find&filter=" + filter + "&q=" + q;
+        var type = this.options.type
+        var formdata = "mode=find&filter=" + filter + "&q=" + q + "&type=" + type;
         $.ajax({
             type: "POST",
             url:  "person_embed",
@@ -740,6 +750,23 @@ $.widget("asm.personchooser", {
             this.options.dialog.dialog("option", "title", title);
         }
 
-    }
+    },
 
+    set_type: function(t){
+        var title = "";
+        var addtitle = "";
+
+        if(t == "organization"){
+            title = _("Find organization");
+            addtitle = _("Add organization");
+        }
+        else{
+            title = _("Find person");
+            addtitle = _("Add person");
+        }
+
+        this.options.type = t;
+        this.options.title = title;
+        this.options.addtitle = addtitle;
+    }
 });

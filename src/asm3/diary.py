@@ -58,7 +58,7 @@ def email_uncompleted_upto_today(dbo):
             if totalforuser > 0:
                 asm3.al.debug("got %d notes for user %s" % (totalforuser, u.username), "diary.email_uncompleted_upto_today", dbo)
                 subject = asm3.i18n._("Diary notes for: {0}", l).format(asm3.i18n.python2display(l, dbo.now()))
-                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s, exceptions=False)
+                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s, exceptions=False, bulk=True)
                 if asm3.configuration.audit_on_send_email(dbo): 
                     asm3.audit.email(dbo, "system", asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s)
 
@@ -84,7 +84,7 @@ def email_note_on_change(dbo, n, username):
             or (n.diaryforname in u.roles.split("|")):
                 # Yes, send it to them
                 subject = asm3.i18n._("Diary update: {0}", l).format(n.subject)
-                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s, exceptions=False)
+                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s, exceptions=False, bulk=True)
                 if asm3.configuration.audit_on_send_email(dbo): 
                     asm3.audit.email(dbo, username, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s)
 
@@ -108,7 +108,7 @@ def email_note_on_complete(dbo, n, username):
             if (n.createdby == u.username):
                 # Yes, send it to them
                 subject = asm3.i18n._("Diary complete: {0}", l).format(n.subject)
-                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s, exceptions=False)
+                asm3.utils.send_email(dbo, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s, exceptions=False, bulk=True)
                 if asm3.configuration.audit_on_send_email(dbo): 
                     asm3.audit.email(dbo, username, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s)
 

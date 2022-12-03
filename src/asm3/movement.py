@@ -1021,7 +1021,7 @@ def send_adoption_checkout(dbo, username, post):
     body = asm3.utils.replace_url_token(body, url, asm3.i18n._("Adoption Checkout", l))
     asm3.utils.send_email(dbo, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body, "html")
     # Record that the checkout email was sent in the log
-    logtypeid = asm3.configuration.generate_document_log_type(dbo)
+    logtypeid = asm3.configuration.system_log_type(dbo)
     logmsg = "AC01:%s:%s(%s)-->%s(%s)" % (co["movementid"], co["animalname"], co["animalid"], co["personname"], co["personid"])
     asm3.log.add_log(dbo, username, asm3.log.PERSON, co["personid"], logtypeid, logmsg)
     # (this is if checkout was initiated from the movement tab with a custom email)

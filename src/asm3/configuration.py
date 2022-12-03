@@ -147,6 +147,7 @@ DEFAULTS = {
     "AKCRegisterAll": "No",
     "AlertSpeciesMicrochip": "1,2",
     "AlertSpeciesNeuter": "1,2",
+    "AlertSpeciesNeverVacc": "1,2",
     "AlertSpeciesRabies": "1,2",
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
@@ -157,6 +158,9 @@ DEFAULTS = {
     "CardcomErrorURL": "https://secure.cardcom.solutions/DealWasUnSuccessful.aspx",
     "CardcomDocumentType": "3",
     "CardcomMaxInstallments": "6",
+    "CardcomPaymentMethodMapping": '{"1":{"action":"receipt","method":"cash"},"2":{"action":"receipt","method":"cheque"},"3":{"action":"cc_charge"},"4":{"action":"cc_charge"},"5":{"action":"receipt","method":"custom","tx_id":32},"7":{"action":"receipt","method":"custom","tx_id":30},"default":{"action":"error"}}',
+    "CardcomPaymentTypeMapping": '{"1":{"InvoiceType":405},"3":{"InvoiceType":405},"4":{"InvoiceType":405},"5":{"InvoiceType":405},"default":{"InvoiceType":3}}',
+    "CardcomHandleNonCCPayments": "No",
     "CloneAnimalIncludeLogs": "Yes",
     "CostSourceAccount": "9",
     "CreateBoardingCostOnAdoption": "Yes",
@@ -209,6 +213,7 @@ DEFAULTS = {
     "EmblemFutureAdoption": "Yes",
     "EmblemHold": "Yes",
     "EmblemLongTerm": "Yes",
+    "EmblemNeverVacc": "No",
     "EmblemNonShelter": "Yes",
     "EmblemNotForAdoption": "Yes",
     "EmblemNotMicrochipped": "Yes",
@@ -288,7 +293,6 @@ DEFAULTS = {
     "MovementPersonOnlyReserves": "Yes",
     "MultiSiteEnabled": "No", 
     "JSWindowPrint": "Yes",
-    "OnlineFormVerifyJSKey": "Yes",
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
     "OrganisationTelephone": "Telephone",
@@ -352,6 +356,7 @@ DEFAULTS = {
     "SACStrayCategory": "7",
     "SACSurrenderCategory": "17",
     "SACTNRCategory": "14",
+    "SystemLogType": "3",
     "TableHeadersVisible": "Yes",
     "TemplatesForNonShelter": "No",
     "ThumbnailSize": "150x150",
@@ -589,6 +594,11 @@ def alert_species_microchip(dbo):
     if s == "": return "0" # Always return something due to IN clauses of queries
     return s
 
+def alert_species_never_vacc(dbo):
+    s = cstring(dbo, "AlertSpeciesNeverVacc", DEFAULTS["AlertSpeciesNeverVacc"])
+    if s == "": return "0" # Always return something due to IN clauses of queries
+    return s
+
 def alert_species_neuter(dbo):
     s = cstring(dbo, "AlertSpeciesNeuter", DEFAULTS["AlertSpeciesNeuter"])
     if s == "": return "0" # Always return something due to IN clauses of queries
@@ -730,6 +740,15 @@ def cardcom_successurl(dbo):
 
 def cardcom_errorurl(dbo):
     return cstring(dbo, "CardcomErrorURL")
+
+def cardcom_paymentmethodmapping(dbo):
+    return cstring(dbo, "CardcomPaymentMethodMapping")
+
+def cardcom_paymenttypemapping(dbo):
+    return cstring(dbo, "CardcomPaymentTypeMapping")
+
+def cardcom_handlenonccpayments(dbo):
+    return cboolean(dbo, "CardcomHandleNonCCPayments", DEFAULTS["CardcomHandleNonCCPayments"] == "Yes")
 
 def clone_animal_include_logs(dbo):
     return cboolean(dbo, "CloneAnimalIncludeLogs", DEFAULTS["CloneAnimalIncludeLogs"] == "Yes")
@@ -957,10 +976,10 @@ def ftp_root(dbo):
     return cstring(dbo, "FTPRootDirectory")
 
 def generate_document_log(dbo):
-    return cboolean(dbo, "GenerateDocumentLog", False)
+    return cboolean(dbo, "GenerateDocumentLog", DEFAULTS["GenerateDocumentLog"] == "Yes")
 
 def generate_document_log_type(dbo):
-    return cint(dbo, "GenerateDocumentLogType", 0)
+    return cint(dbo, "GenerateDocumentLogType", DEFAULTS["GenerateDocumentLogType"])
 
 def gdpr_contact_change_log(dbo):
     return cboolean(dbo, "GDPRContactChangeLog", DEFAULTS["GDPRContactChangeLog"] == "Yes")
@@ -1104,9 +1123,6 @@ def multi_site_enabled(dbo):
 
 def non_shelter_type(dbo):
     return cint(dbo, "AFNonShelterType", 40)
-
-def online_form_verify_jskey(dbo):
-    return cboolean(dbo, "OnlineFormVerifyJSKey", DEFAULTS["OnlineFormVerifyJSKey"] == "Yes")
 
 def organisation(dbo):
     return cstring(dbo, "Organisation", DEFAULTS["Organisation"])
@@ -1398,6 +1414,9 @@ def stripe_key(dbo):
 
 def stripe_secret_key(dbo):
     return cstring(dbo, "StripeSecretKey")
+
+def system_log_type(dbo):
+    return cint(dbo, "SystemLogType", DEFAULTS["SystemLogType"])
 
 def use_short_shelter_codes(dbo):
     return cboolean(dbo, "UseShortShelterCodes")

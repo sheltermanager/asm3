@@ -278,6 +278,14 @@ additional = {
         return valid;
     },
 
+    reset: function(){
+            $.each(controller.additional, function(i, v){
+                $("#add_" + v.ID).val(v.DEFAULTVALUE);
+                if(v.FIELDTYPE == additional.MONEY)
+                    $("#add_" + v.ID).val($("#add_" + v.ID).attr("value"));
+            })
+    },
+
     /**
      * Validates additional fields inside the node given. Returns true 
      * if all is ok, or false if a field fails a check.

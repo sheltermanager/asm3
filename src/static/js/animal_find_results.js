@@ -208,16 +208,16 @@ $(function() {
          */
         format_column: function(row, name, value, add) {
             const DATE_FIELDS = [ "DateOfBirth", "DeceasedDate", "IdentichipDate", "TattooDate", 
-                "NeuteredDate", "CombiTestDate", "HeartwormTestDate", "DateBroughtIn", "HoldUntilDate" ],
-            STRING_FIELDS = [ "AnimalName", "BreedName", "CreatedBy", "Markings", "AcceptanceNumber", 
-                "AgeGroup", "IdentichipNumber", "TattooNumber", "HiddenAnimalDetails", 
-                "AnimalComments", "ReasonForEntry", "HealthProblems", "PTSReason", "PickupAddress", 
-                "RabiesTag", "DaysOnShelter", "ShelterLocationUnit" ],
-            YES_NO_UNKNOWN_FIELDS = [ "IsGoodWithCats", "IsGoodWithDogs", "IsGoodWithChildren",
-                "IsHouseTrained" ],
-            YES_NO_FIELDS = [ "Neutered", "CombiTested", "HeartwormTested", "Declawed", 
-                "HasActiveReserve", "HasSpecialNeeds", "IsHold", "IsNotAvailableForAdoption", "IsPickup", "IsQuarantine" ],
-            POS_NEG_UNKNOWN_FIELDS = [ "CombiTestResult", "FLVResult", "HeartwormTestResult" ];
+                "NeuteredDate", "CombiTestDate", "HeartwormTestDate", "DateBroughtIn", "HoldUntilDate" ];
+            const STRING_FIELDS = [ "AnimalName", "BreedName", "CreatedBy", "AcceptanceNumber", 
+                "AgeGroup", "IdentichipNumber", "TattooNumber", "PickupAddress", 
+                "RabiesTag", "DaysOnShelter", "ShelterLocationUnit" ];
+            const COMMENT_FIELDS = [ "AnimalComments", "Markings", "ReasonForEntry", "HiddenAnimalDetails", "HealthProblems", "PTSReason" ];
+            const YES_NO_UNKNOWN_FIELDS = [ "IsGoodWithCats", "IsGoodWithDogs", "IsGoodWithChildren",
+                "IsHouseTrained" ];
+            const YES_NO_FIELDS = [ "Neutered", "CombiTested", "HeartwormTested", "Declawed", 
+                "HasActiveReserve", "HasSpecialNeeds", "IsHold", "IsNotAvailableForAdoption", "IsPickup", "IsQuarantine" ];
+            const POS_NEG_UNKNOWN_FIELDS = [ "CombiTestResult", "FLVResult", "HeartwormTestResult" ];
             let rv = "";
             if (name == "Adoptable") {
                 let isa = html.is_animal_adoptable(row);
@@ -279,6 +279,9 @@ $(function() {
             }
             else if ($.inArray(name, STRING_FIELDS) > -1) {
                 rv = value;
+            }
+            else if ($.inArray(name, COMMENT_FIELDS) > -1) {
+                rv = html.truncate(value);
             }
             else if ($.inArray(name, YES_NO_FIELDS) > -1) {
                 if (value == 0) { rv = _("No"); }

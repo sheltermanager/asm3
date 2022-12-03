@@ -708,7 +708,7 @@ def handler(session, post):
         q = post["q"]
         matches = []
         if q.strip() != "": 
-            matches = asm3.person.get_person_find_simple(dbo, q, user, classfilter="all", \
+            matches = asm3.person.get_person_find_simple(dbo, q, classfilter="all", \
                 includeStaff=asm3.users.check_permission_bool(session, asm3.users.VIEW_STAFF), \
                 includeVolunteers=asm3.users.check_permission_bool(session, asm3.users.VIEW_VOLUNTEER), limit=100, siteid=siteid)
         h = []

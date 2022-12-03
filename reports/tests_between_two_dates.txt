@@ -2,7 +2,7 @@ Tests carried out between two dates
 ###		
 Medical
 ###
-34004/Any
+34004/Any rev02
 ###
 List of all tests carried out between two dates
 ###
@@ -11,8 +11,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-
-SELECT a.animalname, o.ownername, o.membershipnumber, tt.testname, v.cost, a.sheltercode, tr.resultname, s.speciesname, a.breedname, v.comments, v.dateoftest 
+SELECT a.id as aid, a.animalname, a.sheltercode, o.ownername, o.membershipnumber, tt.testname, v.cost, a.sheltercode, tr.resultname, s.speciesname, a.breedname, v.comments, v.dateoftest 
 FROM animaltest v
 INNER JOIN animal a ON a.id=v.animalid
 INNER JOIN species s ON a.speciesid=s.id
@@ -30,7 +29,7 @@ $$HEAD
 <h2>$TestName</h2>
 <table border="1">
 <tr>
-<th>Name</th>
+<th>Animal</th>
 <th>ShelterCode</th>
 <th>Species</th>
 <th>Breed</th>
@@ -60,7 +59,7 @@ GROUP$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$SHELTERCODE - $ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$SPECIESNAME</td>
 <td>$BREEDNAME</td>

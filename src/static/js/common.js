@@ -346,6 +346,7 @@ const common = {
 
     /** Adds days to js date */
     add_days: function(date, days) {
+        if (!date) { return date; } // If date is null, return null
         var d = new Date();
         d.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
         return d;
@@ -353,6 +354,7 @@ const common = {
 
     /** Subtracts days from js date */
     subtract_days: function(date, days) {
+        if (!date) { return date; } // If date is null, return null
         var d = new Date();
         d.setTime(date.getTime() + 60 - (days * 24 * 60 * 60 * 1000));
         return d;

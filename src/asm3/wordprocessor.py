@@ -19,7 +19,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
-from asm3.i18n import _, format_currency, format_currency_no_symbol, format_time, now, python2display, python2displaytime, yes_no
+from asm3.i18n import _, date_diff_days, format_currency, format_currency_no_symbol, format_diff_single, format_time, now, python2display, python2displaytime, yes_no
 
 import zipfile
 
@@ -211,7 +211,8 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
     Generates a list of tags from an animal result (the deep type from calling asm3.animal.get_animal)
     """
     l = dbo.locale
-    animalage = a["ANIMALAGE"]
+    # calculate the age instead of using stored value in case animal is off shelter
+    animalage = format_diff_single(l, date_diff_days(a["DATEOFBIRTH"], dbo.today()))
     if animalage and animalage.endswith("."): 
         animalage = animalage[0:len(animalage)-1]
     timeonshelter = a["TIMEONSHELTER"]

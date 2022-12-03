@@ -37,9 +37,12 @@ class TestAnimal(unittest.TestCase):
 
     def test_get_animals_flag(self):
         asm3.animal.get_animals_long_term(base.get_dbo())
+        asm3.animal.get_animals_never_vacc(base.get_dbo())
+        asm3.animal.get_animals_no_rabies(base.get_dbo())
         asm3.animal.get_animals_not_for_adoption(base.get_dbo())
         asm3.animal.get_animals_not_microchipped(base.get_dbo())
         asm3.animal.get_animals_hold(base.get_dbo())
+        asm3.animal.get_animals_hold_today(base.get_dbo())
         asm3.animal.get_animals_quarantine(base.get_dbo())
         asm3.animal.get_animals_recently_deceased(base.get_dbo())
 

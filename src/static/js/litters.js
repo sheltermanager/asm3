@@ -45,7 +45,7 @@ $(function() {
                     tableform.dialog_close();
                 },
                 complete: function(row) {
-                    return (row.INVALIDDATE && format.date_js(row.INVALIDATE) <= new Date()) || row.CACHEDANIMALSLEFT == 0;
+                    return (row.INVALIDDATE && format.date_js(row.INVALIDDATE) <= new Date()) || row.CACHEDANIMALSLEFT == 0;
                 },
                 columns: [
                     { field: "ACCEPTANCENUMBER", display: _("Litter Ref") },
@@ -60,6 +60,15 @@ $(function() {
                     { field: "INVALIDDATE", display: _("Expires"), formatter: tableform.format_date },
                     { field: "NUMBERINLITTER", display: _("Number in litter") },
                     { field: "CACHEDANIMALSLEFT", display: _("Remaining") },
+                    { field: "LITTERMATES", display: _("Littermates"), formatter: function(row) {
+                        let mates = [];
+                        $.each(controller.littermates, function(i, v) {
+                            if (v.ACCEPTANCENUMBER == row.ACCEPTANCENUMBER) {
+                                mates.push( html.animal_link(v) );
+                            }
+                        });
+                        return mates.join("<br/>");
+                    }},
                     { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
@@ -74,9 +83,19 @@ $(function() {
                                 litters.lastanimal = null;
                                 $("#litterref").val(result);
                                 $("#animal").animalchooser("clear");
+                            },
+                            onvalidate: function() {
+                                // Don't allow more than 20 animals in a litter (world records are 24 for dogs, 19 for cats)
+                                if ($("#animals").val().split(",").length > 20) {
+                                    tableform.dialog_error(_("Litter creation is limited to 20 animals"));
+                                    return false;
+                                }
+                                return true;
                             }
                         });
                         let response = await tableform.fields_post(dialog.fields, "mode=create", "litters");
+                        common.route_reload(); // Cannot lazy load littermates column so reload screen
+                        /*
                         let row = {};
                         row.ID = response;
                         tableform.fields_update_row(dialog.fields, row);
@@ -84,6 +103,7 @@ $(function() {
                         controller.rows.push(row);
                         tableform.table_update(table);
                         tableform.dialog_close();
+                        */
                     } 
                 },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dll", 
@@ -103,7 +123,7 @@ $(function() {
                     }
                 },
                 { id: "offset", type: "dropdownfilter", 
-                    options: [ "m365|" + _("In the last year"), "a|" + _("All time") ],
+                    options: [ "active|" + _("Active"), "m182|" + _("In the last 6 months"), "m365|" + _("In the last year"), "730|" + _("In the last 2 years"), "1095|" + _("In the last 3 years"), "a|" + _("All time") ],
                     click: function(selval) {
                         common.route("litters?offset=" + selval);
                     },

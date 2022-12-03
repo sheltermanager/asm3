@@ -140,6 +140,8 @@ def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locatio
     org_tags = asm3.wordprocessor.org_tags(dbo, "system")
     head = asm3.wordprocessor.substitute_tags(head, org_tags, True, "$$", "$$")
     foot = asm3.wordprocessor.substitute_tags(foot, org_tags, True, "$$", "$$")
+    # Substitute the special ADOPTABLEJSURL token if present so animalviewadoptable can be tested/previewed
+    body = body.replace("$$ADOPTABLEJSURL$$", "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.database))
     # Run through each animal and generate body sections
     bodies = []
     for a in animals:
@@ -216,7 +218,7 @@ def get_animal_view_adoptable_html(dbo):
     """ Returns an HTML wrapper around get_animal_view_adoptable_js - uses
         a template called animalviewadoptable if it exists. 
     """
-    head, body, foot = asm3.template.get_html_template(dbo, "animalviewadoptables")
+    head, body, foot = asm3.template.get_html_template(dbo, "animalviewadoptable")
     if head == "":
         head = "<!DOCTYPE html>\n<html>\n<head>\n<title>Adoptable Animals</title>\n" \
             "<meta charset='utf-8'>\n" \
@@ -228,7 +230,7 @@ def get_animal_view_adoptable_html(dbo):
             "</head>\n<body>\n"
         body = "<div id=\"asm3-adoptables\"></div>\n" \
             "<script>\n" \
-            "asm3_adoptable_filters = \"sex breed agegroup size species\";\n" \
+            "asm3_adoptable_filters = \"sex breed agegroup size species goodwith where\";\n" \
             "asm3_adoptable_iframe = true;\n" \
             "asm3_adoptable_iframe_fixed = false; // fixed == true does not work with multi-photos/scrolling\n" \
             "asm3_adoptable_iframe_closeonback = true; // close the popup pane when the user navigates back\n" \
@@ -241,11 +243,16 @@ def get_animal_view_adoptable_html(dbo):
 def get_animal_view_adoptable_js(dbo):
     """ Returns js that outputs adoptable animals into a host div """
     js = asm3.utils.read_text_file("%s/static/js/animal_view_adoptable.js" % dbo.installpath)
-    # inject adoptable animals, account and base url
+    # Retrieve the animals, update bio to convert line breaks to break tags
     pc = PublishCriteria(asm3.configuration.publisher_presets(dbo))
+    rows = get_animal_data(dbo, pc, include_additional_fields = True, strip_personal_data = True)
+    for r in rows:
+        r.ANIMALCOMMENTS = r.ANIMALCOMMENTS.replace("\n", "<br>")
+        r.WEBSITEMEDIANOTES = r.WEBSITEMEDIANOTES.replace("\n", "<br>")
+    # inject adoptable animals, account and base url
     js = js.replace("{TOKEN_ACCOUNT}", dbo.database)
     js = js.replace("{TOKEN_BASE_URL}", BASE_URL)
-    js = js.replace("\"{TOKEN_ADOPTABLES}\"", asm3.utils.json(get_animal_data(dbo, pc, include_additional_fields = True, strip_personal_data = True)))
+    js = js.replace("\"{TOKEN_ADOPTABLES}\"", asm3.utils.json(rows))
     return js
 
 def get_animal_view_template(dbo):

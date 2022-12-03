@@ -1,0 +1,21 @@
+People with Zipcode (mail)
+###
+People
+###
+33716/Any rev01
+###
+Person info for all people with the selected zip code.
+###
+en
+###
+$VAR zipcode STRING Zipcode $
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate
+FROM owner o
+WHERE o.ExcludeFromBulkEmail = 0 
+AND o.IsDeceased = 0 
+AND o.OwnerPostcode LIKE '$@zipcode$'
+ORDER BY o.OwnerSurname
+###
+MAIL
