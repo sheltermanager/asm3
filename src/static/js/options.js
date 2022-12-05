@@ -1384,6 +1384,7 @@ $(function() {
                 '<option value="locationtype">' + _("Location and Type") + '</option>',
                 '<option value="locationunit">' + _("Location and Unit") + '</option>',
                 '<option value="locationnv">' + _("Location (No Virtual)") + '</option>',
+                '<option value="locationnvs">' + _("Location and Species (No Virtual)") + '</option>',
                 '<option value="name">' + _("Name") + '</option>',
                 '<option value="pickuplocation">' + _("Pickup Location") + '</option>',
                 '<option value="retailer">' + _("Retailer") + '</option>',

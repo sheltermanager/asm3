@@ -512,6 +512,9 @@ $(function() {
             else if (viewmode == "locationnv") {
                 this.render_view("SHELTERLOCATIONNAME", "", "SHELTERLOCATIONNAME,ANIMALNAME", true, false);
             }
+            else if (viewmode == "locationnvs") {
+                this.render_view("SHELTERLOCATIONNAME", "SPECIESNAME", "SHELTERLOCATIONNAME,SPECIESNAME,ANIMALNAME", true, false);
+            }
             else if (viewmode == "locationbreed") {
                 this.render_view("DISPLAYLOCATIONNAME", "BREEDNAME", "DISPLAYLOCATIONNAME,BREEDNAME,ANIMALNAME", true, false);
             }
@@ -629,6 +632,7 @@ $(function() {
             h.push('<option value="locationtype">' + _("Location and Type") + '</option>');
             h.push('<option value="locationunit">' + _("Location and Unit") + '</option>');
             h.push('<option value="locationnv">' + _("Location (No Virtual)") + '</option>');
+            h.push('<option value="locationnvs">' + _("Location and Species (No Virtual)") + '</option>');
             h.push('<option value="name">' + _("Name") + '</option>');
             h.push('<option value="pickuplocation">' + _("Pickup Location") + '</option>');
             h.push('<option value="retailer">' + _("Retailer") + '</option>');
