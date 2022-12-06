@@ -22,8 +22,8 @@
     "babel": "babel --minified -d src/static/js/compat src/static/js/*.js",
     "jshint": "jshint --config scripts/jshint.conf src/static/js/*.js",
     "minify": "jsmin -o src/static/js/bundle/rollup.min.js src/static/js/bundle/rollup.js",
-    "minify_regenrt": "jsmin -o node_modules/regenerator-runtime/runtime.min.js node_modules/regenerator-runtime/runtime.js"
     "minify_compat": "jsmin -o src/static/js/bundle/rollup_compat.min.js src/static/js/bundle/rollup_compat.js",
+    "minify_regenrt": "jsmin -o node_modules/regenerator-runtime/runtime.min.js node_modules/regenerator-runtime/runtime.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
