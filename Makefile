@@ -1,5 +1,3 @@
-DEPLOY_HOST=servicedx.sheltermanager.com
-WWW_HOST=wwwdx.sheltermanager.com
 
 all:	clean compile tags rollup schema
 
@@ -94,64 +92,6 @@ compilepy:
 	@echo "[compile python] ====================="
 	flake8 --config=scripts/flake8 src/*.py src/asm3/*.py src/asm3/dbms/*.py src/asm3/publishers/*.py src/asm3/paymentprocessor/*.py
 
-smcom-dev: clean version schema
-	@echo "[smcom dev eur04b] ===================="
-	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev invalidatecache only_eur04b"
-
-smcom-dev-all: clean version schema
-	@echo "[smcom dev all] ======================"
-	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev"
-
-smcom-dev-aus: clean version schema
-	@echo "[smcom dev AUSTRALIA] ======================"
-	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_aus01b only_aus02b only_aus03c"
-
-smcom-dev-eur: clean version schema
-	@echo "[smcom dev EUROPE] ======================"
-	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_dev.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncdev only_eur01b only_eur02b only_eur03b only_eur04b"
-
-smcom-stable: clean version rollup schema
-	@echo "[smcom stable] ======================="
-	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it on a schedule
-	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
-	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable invalidatecache restartapache"
-
-smcom-stable-asia: clean version rollup schema
-	@echo "[smcom stable ASIA] ======================="
-	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it on a schedule
-	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
-	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable invalidatecache restartapache only_asia01b"
-
-smcom-stable-aus: clean version rollup schema
-	@echo "[smcom stable AUSTRALIA] ======================="
-	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it on a schedule
-	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
-	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable invalidatecache restartapache only_aus01b only_aus02b only_aus03c"
-
-smcom-stable-eur: clean version rollup schema
-	@echo "[smcom stable EUROPE] ======================="
-	@# Having a BREAKING_CHANGES file prevents accidental deploy to stable without dumping sessions or doing it on a schedule
-	@if [ -f BREAKING_CHANGES ]; then echo "Cannot deploy due to breaking DB changes" && exit 1; fi;
-	rsync --progress --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable invalidatecache restartapache only_eur01b only_eur02b only_eur03b only_eur04b"
-
-smcom-stable-dumpsessions: clean version rollup schema
-	@echo "[smcom stable dumpsessions] ==================="
-	rsync --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstable dumpsessions invalidatecache restartapache"
-
-smcom-stable-tgz: clean version rollup schema
-	@echo "[smcom stable tgz] ======================"
-	rsync --exclude '*.pyc' --exclude '__pycache__' --delete -r src/ root@$(DEPLOY_HOST):/usr/local/lib/asm_stable.new
-	ssh root@$(DEPLOY_HOST) "/root/scripts/sheltermanager_sync_asm.py syncstabletgz"
-
 pot:
 	@echo "[template] ========================="
 	po/extract_strings.py > po/asm.pot
@@ -171,8 +111,8 @@ manual:
 	@echo "[manual] =========================="
 	cd doc/manual && $(MAKE) clean html latexpdf
 	cp -rf doc/manual/_build/html/* src/static/pages/manual/
-	scp -C doc/manual/_build/latex/asm3.pdf root@$(WWW_HOST):/var/www/sheltermanager.com/repo/asm3_help.pdf
-	rsync -a doc/manual/_build/html/ root@$(WWW_HOST):/var/www/sheltermanager.com/repo/asm3_help/
+	scp -C doc/manual/_build/latex/asm3.pdf root@wwwdx.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help.pdf
+	rsync -a doc/manual/_build/html/ root@wwwdx.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help/
 
 test: version
 	@echo "[test] ========================="
