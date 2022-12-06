@@ -129,7 +129,7 @@ def get_medicalcombined_query(dbo):
         "" \
         "UNION SELECT " \
         "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
+        "a.DateOfBirth, a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
@@ -152,7 +152,7 @@ def get_medicalcombined_query(dbo):
         "" \
         "UNION SELECT " \
         "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
+        "a.DateOfBirth, a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
