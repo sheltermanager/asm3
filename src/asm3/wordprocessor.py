@@ -477,6 +477,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "MOSTRECENTENTRY"       : python2display(l, a["MOSTRECENTENTRYDATE"]),
         "MOSTRECENTENTRYDATE"   : python2display(l, a["MOSTRECENTENTRYDATE"]),
         "TIMEONSHELTER"         : timeonshelter,
+        "DAYSONSHELTER"         : str(a["DAYSONSHELTER"]),
         "WEBMEDIAFILENAME"      : a["WEBSITEMEDIANAME"],
         "WEBSITEIMAGECOUNT"     : a["WEBSITEIMAGECOUNT"],
         "WEBSITEMEDIANAME"      : a["WEBSITEMEDIANAME"],
