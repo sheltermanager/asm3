@@ -63,6 +63,8 @@ rollup: compat
 	# Generate a rollup file of all javascript files
 	@echo "[rollup] ============================="
 	mkdir -p src/static/js/bundle
+	# minify the regenerator-runtime
+	npm --silent run minify_regenrt
 	scripts/rollup/rollup.py > src/static/js/bundle/rollup.js
 	scripts/rollup/rollup_compat.py > src/static/js/bundle/rollup_compat.js
 	# minify them and remove originals
