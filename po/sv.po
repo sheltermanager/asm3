@@ -300,11 +300,11 @@ msgstr "Lägg till konton"
 
 #: options.js mobile.py
 msgid "Add Animal"
-msgstr "Lägg till katt"
+msgstr "Lägg till djur"
 
 #: roles.js
 msgid "Add Animals"
-msgstr "Lägg till katter"
+msgstr "Lägg till djuren"
 
 #: clinic_appointment.js
 msgid "Add Appointment"
@@ -344,7 +344,7 @@ msgstr "Lägg till flagga"
 
 #: roles.js
 msgid "Add Found Animal"
-msgstr "Lägg till upphittad katt"
+msgstr "Lägg till upphittad djur"
 
 #: roles.js
 msgid "Add Incidents"
@@ -372,11 +372,11 @@ msgstr "Logga"
 
 #: mobile.py
 msgid "Add Log to Animal"
-msgstr "Lägg till logg för katten"
+msgstr "Lägg till logg för djur"
 
 #: roles.js
 msgid "Add Lost Animal"
-msgstr "Lägg till försvunnen katt"
+msgstr "Lägg till försvunnen djur"
 
 #: roles.js
 msgid "Add Media"
@@ -448,7 +448,7 @@ msgstr "Lägg till en dagboksanteckning"
 
 #: header.js html.py configuration.py
 msgid "Add a found animal"
-msgstr "Lägg till en upphittad katt"
+msgstr "Lägg till en upphittad djur"
 
 #: header.js html.py configuration.py
 msgid "Add a log entry"
@@ -456,7 +456,7 @@ msgstr "Lägg till en post i loggen"
 
 #: header.js html.py configuration.py
 msgid "Add a lost animal"
-msgstr "Lägg till en försvunnen katt"
+msgstr "Lägg till en försvunnen djur"
 
 #: header.js html.py configuration.py
 msgid "Add a medical regimen"
@@ -464,7 +464,7 @@ msgstr "Lägg till en medicinsk behandling"
 
 #: header.js animal_new.js html.py configuration.py
 msgid "Add a new animal"
-msgstr "Lägg till ny katt"
+msgstr "Lägg till ny djur"
 
 #: log_new.js
 msgid "Add a new log"
@@ -500,7 +500,7 @@ msgstr "Lägg till ytterligare fält"
 
 #: header.js html.py configuration.py
 msgid "Add an animal to the waiting list"
-msgstr "Lägg till en katt på väntelistan"
+msgstr "Lägg till en djur på väntelistan"
 
 #: citations.js
 msgid "Add citation"
@@ -536,7 +536,7 @@ msgstr "Lägg till ett formulärfält"
 
 #: lostfound_new.js
 msgid "Add found animal"
-msgstr "Lägg till upphittad katt"
+msgstr "Lägg till upphittad djur"
 
 #: person_investigation.js
 msgid "Add investigation"
@@ -556,7 +556,7 @@ msgstr "Lägg till logg"
 
 #: lostfound_new.js
 msgid "Add lost animal"
-msgstr "Lägg till försvunnen katt"
+msgstr "Lägg till försvunnen djur"
 
 #: medicalprofile.js
 msgid "Add medical profile"
@@ -612,7 +612,7 @@ msgstr "Lägg till en test"
 
 #: publish_options.js
 msgid "Add this text to all animal descriptions"
-msgstr "Lägg till denna text i samtliga katters beskrivningar"
+msgstr "Lägg till denna text i samtliga djuren beskrivningar"
 
 #: common_widgets.js
 msgid "Add to log"
@@ -703,7 +703,7 @@ msgstr "Adoptera"
 
 #: header.js move_adopt.js html.py configuration.py
 msgid "Adopt an animal"
-msgstr "Adoptera en katt"
+msgstr "Adoptera en djur"
 
 #: animal_find.js animal_bulk.js shelterview.js
 msgid "Adoptable"
@@ -723,7 +723,7 @@ msgstr "Adopterad"
 
 #: users.js
 msgid "Adopted Animals"
-msgstr "Adopterade katter"
+msgstr "Adopterade djuren"
 
 #: animal.py
 msgid "Adopted Transferred In {0}"
@@ -780,7 +780,7 @@ msgstr "Avancerad"
 
 #: options.js
 msgid "Advanced find animal screen defaults to on shelter"
-msgstr "Avancerad hitta katt skärmen leder tillbaka till djurhemmet"
+msgstr "Avancerad hitta djur skärmen leder tillbaka till djurhemmet"
 
 #: dbupdate.py
 msgid "Affenpinscher"
@@ -853,7 +853,7 @@ msgid ""
 "Age groups are assigned based on the age of an animal. The figure in the "
 "left column is the upper limit in years for that group."
 msgstr ""
-"Åldersgrupperna är baserade på kattenss ålder. Siffran i den vänstra "
+"Åldersgrupperna är baserade på djurens ålder. Siffran i den vänstra "
 "kolumnen är den övre gränsen i år för denna grupp."
 
 #: animal_find.js
@@ -922,7 +922,7 @@ msgstr "Alla djur som matchar gällande publiceringsalternativ."
 
 #: search.py
 msgid "All animals on the shelter."
-msgstr "Alla djur i katthemmet."
+msgstr "Alla djur i djurhem."
 
 #: search.py
 msgid "All animals where the hold ends today."
@@ -938,7 +938,7 @@ msgstr "Alla djur som är för närvarande i karantän."
 
 #: search.py
 msgid "All animals who are flagged as not for adoption."
-msgstr "Alla katter som är inte är bokningsbara."
+msgstr "Alla djuren som är inte är bokningsbara."
 
 #: search.py
 msgid "All animals who have been on the shelter longer than {0} months."
@@ -946,7 +946,7 @@ msgstr "Alla djur som har varit i djurhem längre än  {0} månader."
 
 #: search.py
 msgid "All animals who have not been microchipped"
-msgstr "Alla katter som inte har blivit chippade"
+msgstr "Alla djuren som inte har blivit chippade"
 
 #: search.py
 msgid "All banned owners on file."
@@ -1829,7 +1829,7 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Born in Shelter"
-msgstr "Född på katthem"
+msgstr "Född på djurhem"
 
 #: animal.py
 msgid "Born on Foster {0}"
@@ -4400,7 +4400,7 @@ msgstr ""
 
 #: main.js
 msgid "Entering 'os' in the search box will show you all shelter animals."
-msgstr "Inmatning av 'os' i sökrutan visar alla djur i katthemmet."
+msgstr "Inmatning av 'os' i sökrutan visar alla djur i djurhem."
 
 #: dbupdate.py
 msgid "Entlebucher"
@@ -4838,7 +4838,7 @@ msgstr "Sökakuthem"
 
 #: lostfound_find_results.js
 msgid "Find found animal returned {0} results."
-msgstr "Sök upphittad återlämnad katt {0} result."
+msgstr "Sök upphittad återlämnad djur {0} result."
 
 #: common_personchooser.js
 msgid "Find homechecked"
@@ -4854,7 +4854,7 @@ msgstr "Sök incident"
 
 #: lostfound_find_results.js
 msgid "Find lost animal returned {0} results."
-msgstr "Sök försvunnen katt, åter hos ägaren."
+msgstr "Sök försvunnen djur, åter hos ägaren."
 
 #: common_personchooser.js
 msgid "Find member"
@@ -4874,7 +4874,7 @@ msgstr ""
 
 #: common_personchooser.js
 msgid "Find shelter"
-msgstr "Sök katthem"
+msgstr "Sök djurhem"
 
 #: common_personchooser.js
 msgid "Find staff"
@@ -7341,11 +7341,11 @@ msgstr "Förflyttningar"
 #: movements.js move_transfer.js move_retailer.js move_reserve.js
 #: move_foster.js movement.py
 msgid "Movements require an animal"
-msgstr "Förflyttningar kräver en katt"
+msgstr "Förflyttningar kräver en djur"
 
 #: move_reclaim.js move_adopt.js
 msgid "Movements require an animal."
-msgstr "Förflyttningar kräver en katt."
+msgstr "Förflyttningar kräver en djur."
 
 #: shelterview.js
 msgid "Moving..."
@@ -9230,7 +9230,7 @@ msgstr ""
 
 #: options.js
 msgid "Remove the tattoo fields from animal identification details"
-msgstr "Ta bort tatueringsrutan från kattens identifieringsdetaljer"
+msgstr "Ta bort tatueringsrutan från djurens identifieringsdetaljer"
 
 #: options.js
 msgid "Remove the transport functionality from menus and screens"
@@ -11026,7 +11026,7 @@ msgstr "Djuret födelsedatum"
 
 #: animal.js
 msgid "The date the animal was brought into the shelter"
-msgstr "Datum då katten ankom till katthemmet"
+msgstr "Datum då djur ankom till djurhem"
 
 #: animal.js
 #, fuzzy
@@ -11035,7 +11035,7 @@ msgstr "Datumet djuret kastrerades"
 
 #: animal.js animal_new.js
 msgid "The date the animal was microchipped"
-msgstr "Datum katten blev mikrochipmärkt"
+msgstr "Datum djur blev mikrochipmärkt"
 
 #: move_reclaim.js
 #, fuzzy
@@ -11487,7 +11487,7 @@ msgstr ""
 
 #: animal.js
 msgid "This animal is microchipped"
-msgstr "Den här katten är mikrochipmärkt"
+msgstr "Den här djur är mikrochipmärkt"
 
 #: move_transfer.js move_reclaim.js move_adopt.js move_retailer.js
 #: move_reserve.js move_foster.js
@@ -11500,7 +11500,7 @@ msgstr ""
 
 #: animal.js animal_new.js
 msgid "This animal should be held in case it is reclaimed"
-msgstr "Denna katt hålls kvar för närvarande i fall någon gör anspråk"
+msgstr "Denna djur hålls kvar för närvarande i fall någon gör anspråk"
 
 #: animal_new.js
 msgid ""
@@ -12797,7 +12797,7 @@ msgstr ""
 
 #: movement.py
 msgid "WARNING: This animal has not been microchipped"
-msgstr "Varning: Den här katten är ännu inte chipmärkt"
+msgstr "Varning: Den här djur är ännu inte chipmärkt"
 
 #: movement.py
 msgid ""
@@ -13709,11 +13709,11 @@ msgstr ""
 
 #: main.js
 msgid "{plural0} animal is not available for adoption"
-msgstr "{plural0} katter är inte tillgängliga för adoption"
+msgstr "{plural0} djur är inte tillgängliga för adoption"
 
 #: main.js
 msgid "{plural0} animal was adopted"
-msgstr "{plural0} katter blev adopterade"
+msgstr "{plural0} djur blev adopterade"
 
 #: main.js
 msgid "{plural0} animal was euthanized"
@@ -13781,7 +13781,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural0} shelter animal has not been microchipped"
-msgstr "{plural0} katter på katthemmet som inte har blivit microchippade"
+msgstr "{plural0} djur på djurhem som inte har blivit microchippade"
 
 #: main.js
 msgid "{plural0} shelter animal has people looking for them"
@@ -13841,7 +13841,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} animals are not available for adoption"
-msgstr "{plural1} katter är ej bokningsbara"
+msgstr "{plural1} djur är ej bokningsbara"
 
 #: main.js
 msgid "{plural1} animals died"
@@ -13853,7 +13853,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} animals have been on the shelter longer than {0} months"
-msgstr "{plural1} djur har varit på katthemmet längre än {0} månader"
+msgstr "{plural1} djur har varit på djurhem längre än {0} månader"
 
 #: main.js
 msgid "{plural1} animals have holds ending today"
@@ -13933,7 +13933,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural1} shelter animals have not been microchipped"
-msgstr "{plural1} katter som inte blivit microchippade"
+msgstr "{plural1} djur som inte blivit microchippade"
 
 #: main.js
 msgid "{plural1} shelter animals have people looking for them"
@@ -14001,11 +14001,11 @@ msgstr "{plural2} avlidna djur"
 
 #: main.js
 msgid "{plural2} animals entered the shelter"
-msgstr "{plural2} djur har ankommit till katthemmet"
+msgstr "{plural2} djur har ankommit till djurhem"
 
 #: main.js
 msgid "{plural2} animals have been on the shelter longer than {0} months"
-msgstr "{plural2} djur har varit på katthemmet längre än {0} månader"
+msgstr "{plural2} djur har varit på djurhem längre än {0} månader"
 
 #: main.js
 msgid "{plural2} animals have holds ending today"
@@ -14029,7 +14029,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural2} animals were transferred to other shelters"
-msgstr "{plural2} djur överfördes till att annat katthem"
+msgstr "{plural2} djur överfördes till att annat djurhem"
 
 #: i18n.py
 msgid "{plural2} days."
@@ -14085,7 +14085,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural2} shelter animals have not been microchipped"
-msgstr "{plural2} katter som inte blivit microchippade"
+msgstr "{plural2} djur som inte blivit microchippade"
 
 #: main.js
 msgid "{plural2} shelter animals have people looking for them"
@@ -14153,11 +14153,11 @@ msgstr "{plural3} avlidna djur"
 
 #: main.js
 msgid "{plural3} animals entered the shelter"
-msgstr "{plural3} djur har inkommit till katthemmet"
+msgstr "{plural3} djur har inkommit till djurhem"
 
 #: main.js
 msgid "{plural3} animals have been on the shelter longer than {0} months"
-msgstr "{plural3} djur har varit på katthemmet längre än {0} månader"
+msgstr "{plural3} djur har varit på djurhem längre än {0} månader"
 
 #: main.js
 msgid "{plural3} animals have holds ending today"
@@ -14181,7 +14181,7 @@ msgstr "{plural3} djur har reklamerats av sina ägare"
 
 #: main.js
 msgid "{plural3} animals were transferred to other shelters"
-msgstr "Denna katt överfördes från ett annat katthem"
+msgstr "Denna djur överfördes från ett annat djurhem"
 
 #: i18n.py
 msgid "{plural3} days."
@@ -14237,7 +14237,7 @@ msgstr "{plural3} resultat hittade på {1} sekunder. Order: {2}"
 
 #: main.js
 msgid "{plural3} shelter animals have not been microchipped"
-msgstr "{plural3} katter som inte blivit microchippade"
+msgstr "{plural3} djuren som inte blivit microchippade"
 
 #: main.js
 msgid "{plural3} shelter animals have people looking for them"
@@ -14261,7 +14261,7 @@ msgstr ""
 
 #: main.js
 msgid "{plural3} unaltered animals have been adopted in the last month"
-msgstr "{plural3} okastrerade katter har adopterats under den senaste månaden"
+msgstr "{plural3} okastrerade djuren har adopterats under den senaste månaden"
 
 #: main.js
 msgid "{plural3} undispatched animal control calls"
