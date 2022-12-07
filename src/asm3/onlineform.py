@@ -773,7 +773,9 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
     """
     # Check our spambot checkbox and do not save the form if it has been set.
     # We don't throw an error either, so the spambot is still redirected to the thank you page and cannot tell.
-    if post.boolean(SPAMBOT_CB): return
+    if post.boolean(SPAMBOT_CB): 
+        asm3.al.error("blocked spambot: %s" % post.data, "insert_onlineformincoming_from_form", dbo)
+        return
 
     collationid = get_collationid(dbo)
 
