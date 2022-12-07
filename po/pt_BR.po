@@ -1,7 +1,4 @@
-# Brazilian Portuguese translation for sheltermanager
-# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
-# This file is distributed under the same license as the sheltermanager package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+
 msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
@@ -16,8 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.2.1\n"
-"X-Launchpad-Export-Date: 2015-03-02 05:20+0000\n"
-"X-POOTLE-MTIME: 1431920029.000000\n"
+
 
 #: options.js
 msgid " days."

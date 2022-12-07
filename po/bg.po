@@ -1,11 +1,4 @@
-# Bulgarian translation for sheltermanager
-# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
-# This file is distributed under the same license as the sheltermanager package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
-# Robin Rawson-Tetley <zanata@sheltermanager.com>, 2016. #zanata
-# IvoD <dimov.ivo@gmail.com>, 2017. #zanata
-# IvoD <dimov.ivo@gmail.com>, 2018. #zanata
-# LuckyHunt <info@luckyhunt.org>, 2018. #zanata
+
 msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
@@ -20,8 +13,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.4.2\n"
-"X-Launchpad-Export-Date: 2015-03-02 05:15+0000\n"
-"X-POOTLE-MTIME: 1463072280.000000\n"
 
 #: options.js
 msgid " days."
