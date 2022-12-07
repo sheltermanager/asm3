@@ -279,11 +279,11 @@ additional = {
     },
 
     reset: function(){
-            $.each(controller.additional, function(i, v){
-                $("#add_" + v.ID).val(v.DEFAULTVALUE);
-                if(v.FIELDTYPE == additional.MONEY)
-                    $("#add_" + v.ID).val($("#add_" + v.ID).attr("value"));
-            })
+        $.each(controller.additional, function(i, v){
+            $("#add_" + v.ID).val(v.DEFAULTVALUE);
+            if(v.FIELDTYPE == additional.MONEY)
+                $("#add_" + v.ID).val($("#add_" + v.ID).attr("value"));
+        });
     },
 
     /**
