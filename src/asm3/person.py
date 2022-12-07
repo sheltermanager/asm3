@@ -534,6 +534,7 @@ def get_person_find_simple(dbo, query, classfilter="all", typefilter="all", incl
     query: The search criteria
     classfilter: One of all, vet, retailer, staff, fosterer, volunteer, shelter, 
                  aco, banned, homechecked, homechecker, member, donor, driver, volunteerandstaff
+    typefilter:  all, individual or organization
     """
     ss = asm3.utils.SimpleSearchBuilder(dbo, query)
     ss.add_words("o.OwnerName")
@@ -563,6 +564,7 @@ def get_person_find_simple(dbo, query, classfilter="all", typefilter="all", incl
         "sponsor":          " AND o.IsSponsor = 1"
     }
     typefilters = {
+        "":             "",
         "all":          "",
         "individual":   " AND o.OwnerType=1",
         "organization": " AND o.OwnerType=2"
