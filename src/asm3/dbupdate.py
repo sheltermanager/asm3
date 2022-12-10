@@ -2480,7 +2480,6 @@ def install_db_structure(dbo):
     sql = sql_structure(dbo)
     for s in sql.split(";"):
         if (s.strip() != ""):
-            print(s.strip())
             dbo.execute_dbupdate(s.strip())
 
 def install_db_views(dbo):
@@ -2538,7 +2537,6 @@ def install_default_data(dbo, skip_config = False):
     sql = sql_default_data(dbo, skip_config)
     for s in sql.split("|="):
         if s.strip() != "":
-            print(s.strip())
             dbo.execute_dbupdate(s.strip())
 
 def reinstall_default_data(dbo):
@@ -2548,7 +2546,6 @@ def reinstall_default_data(dbo):
     """
     for table in TABLES:
         if table != "dbfs" and table != "configuration" and table != "users" and table != "role" and table != "userrole":
-            print("DELETE FROM %s" % table)
             dbo.execute_dbupdate("DELETE FROM %s" % table)
     install_default_data(dbo, True)
     install_default_templates(dbo)
