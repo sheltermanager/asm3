@@ -775,33 +775,36 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
     # and the submitter still receives the redirect to the thank you page so they don't know that something is up.
 
     # Check our spambot checkbox/honey trap
-    if post.boolean(SPAMBOT_CB): 
-        asm3.al.error("blocked spambot (honeytrap): %s" % post.data, "insert_onlineformincoming_from_form", dbo)
-        return
+    if asm3.configuration.onlineform_spam_honeytrap(dbo):
+        if post.boolean(SPAMBOT_CB): 
+            asm3.al.error("blocked spambot (honeytrap): %s" % post.data, "insert_onlineformincoming_from_form", dbo)
+            return
 
     # Check that the useragent looks like an actual browser
     # had a few bots that identified as python-requests, etc.
-    if not useragent.strip().startswith("Mozilla"):
-        asm3.al.error("blocked spambot (ua=%s): %s" % (useragent, post.data), "insert_onlineformincoming_from_form", dbo)
-        return
+    if asm3.configuration.onlineform_spam_ua_check(dbo):
+        if not useragent.strip().startswith("Mozilla"):
+            asm3.al.error("blocked spambot (ua=%s): %s" % (useragent, post.data), "insert_onlineformincoming_from_form", dbo)
+            return
 
     # Look for junk in firstname. A lot of bot submitted junk is just random upper and lower case letters. 
     # If we have 3 or more upper and lower case letters in the firstname, it's very likely bot junk.
     # We have javascript that title cases name fields, so a mix of cases also indicates the form has been filled out by
     # an automated process instead of a browser.
     # This test does nothing if there's no firstname field in the form.
-    for k, v in post.data.items():
-        if k.startswith("firstname") or k.startswith("forenames"):
-            lc = 0
-            uc = 0
-            for x in v:
-                if x.isupper():
-                    uc += 1
-                elif x != " ":
-                    lc += 1
-            if lc > 2 and uc > 2:
-                asm3.al.error("blocked spambot (firstname=%s, uc=%s, lc=%s): %s" % (v, uc, lc, post.data), "insert_onlineformincoming_from_form", dbo)
-                return
+    if asm3.configuration.onlineform_spam_firstname_mixcase(dbo):
+        for k, v in post.data.items():
+            if k.startswith("firstname") or k.startswith("forenames"):
+                lc = 0
+                uc = 0
+                for x in v:
+                    if x.isupper():
+                        uc += 1
+                    elif x != " ":
+                        lc += 1
+                if lc > 2 and uc > 2:
+                    asm3.al.error("blocked spambot (firstname=%s, uc=%s, lc=%s): %s" % (v, uc, lc, post.data), "insert_onlineformincoming_from_form", dbo)
+                    return
 
     collationid = get_collationid(dbo)
 

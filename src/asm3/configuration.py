@@ -293,6 +293,9 @@ DEFAULTS = {
     "MovementPersonOnlyReserves": "Yes",
     "MultiSiteEnabled": "No", 
     "JSWindowPrint": "Yes",
+    "OnlineFormSpamHoneyTrap": "Yes",
+    "OnlineFormSpamUACheck": "No",
+    "OnlineFormSpamFirstnameMixCase": "Yes",
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
     "OrganisationTelephone": "Telephone",
@@ -1123,6 +1126,15 @@ def multi_site_enabled(dbo):
 
 def non_shelter_type(dbo):
     return cint(dbo, "AFNonShelterType", 40)
+
+def onlineform_spam_honeytrap(dbo):
+    return cboolean(dbo, "OnlineFormSpamHoneyTrap", DEFAULTS["OnlineFormSpamHoneyTrap"] == "Yes")
+
+def onlineform_spam_ua_check(dbo):
+    return cboolean(dbo, "OnlineFormSpamUACheck", DEFAULTS["OnlineFormSpamUACheck"] == "Yes")
+
+def onlineform_spam_firstname_mixcase(dbo):
+    return cboolean(dbo, "OnlineFormSpamFirstnameMixCase", DEFAULTS["OnlineFormSpamFirstnameMixCase"] == "Yes")
 
 def organisation(dbo):
     return cstring(dbo, "Organisation", DEFAULTS["Organisation"])
