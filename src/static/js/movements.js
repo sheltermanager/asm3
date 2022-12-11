@@ -49,6 +49,8 @@ $(function() {
                     { json_field: "ISTRIAL", post_field: "trial", label: _("Trial Adoption"), tooltip: _("Is this a trial adoption?"), type: "check" },
                     { json_field: "TRIALENDDATE", post_field: "trialenddate", label: _("Trial ends on"), tooltip: _("The date the trial adoption is over"), type: "date" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
+                    { json_field: "EVENTLINK", post_field: "eventlink", label: _("Link to event"), type: "check", hideif: function(){return !common.has_permission("lem");}},
+                    { json_field: "EVENTLINKDATES", post_field: "eventlinkdates", label: _(""), type: "select"},
                     { json_field: "RETURNDATE", post_field: "returndate", label: _("Return Date"), type: "date" },
                     { json_field: "RETURNEDREASONID", post_field: "returncategory", label: _("Return Category"), type: "select", options: { displayfield: "REASONNAME", valuefield: "ID", rows: controller.returncategories}},
                     { json_field: "RETURNEDBYOWNERID", post_field: "returnedby", label: _("Returned By"), type: "person" },
@@ -569,6 +571,36 @@ $(function() {
         },
 
         bind: function() {
+             $("#eventlink").change(function(){
+                // event link needs a movement date
+                if (this.checked && $("#movementdate").val() == ""){
+                    validate.notblank([ "movementdate" ]);
+                    tableform.dialog_error(_("Fill out adoption date before linking to event."));
+                    this.checked = false;
+                }
+                $("#eventlinkdates").empty();
+                if (this.checked){
+                    $("#eventlinkdates").closest("tr").fadeIn();
+                    movements.event_dates();
+                }
+                else
+                    $("#eventlinkdates").closest("tr").fadeOut();
+
+            });
+
+            $("#movementdate").change(function(){
+                $("#eventlinkdates").empty();
+                // event link needs a movement date
+                if ($("#movementdate").val() == ""){
+                    validate.notblank([ "movementdate" ]);
+                    tableform.dialog_error(_("Fill out adoption date before linking to event."));
+                    $("#eventlink")[0].checked = false;
+                }
+                if($("#eventlink")[0].checked){
+                    movements.event_dates();
+                }
+
+            });
 
             if (controller.name == "animal_movements" || controller.name == "person_movements") {
                 $(".asm-tabbar").asmtabs();
@@ -913,6 +945,19 @@ $(function() {
             else {
                 $("#person").closest("tr").fadeIn();
             }
+
+            if (mt == 1){
+                $("#eventlink").closest("tr").fadeIn();
+            }
+            else{
+                $("#eventlink").closest("tr").fadeOut();
+            }
+            if (mt == 1 && $("#eventlink").is(":checked")){
+                $("#eventlinkdates").closest("tr").fadeIn();
+            }
+            else{
+                $("#eventlinkdates").closest("tr").fadeOut();
+            }
             movements.warnings();
         },
 
@@ -932,6 +977,15 @@ $(function() {
             }
         },
 
+        event_dates: async function(){
+            let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val());
+            let dates = jQuery.parseJSON(result);
+            $.each(dates, function(i, v){
+                $("#eventlinkdates").append("<option value='" + v.ID + "'>" + format.date(v.STARTDATETIME) + " - " + format.date(v.ENDDATETIME) +
+                " " + v.EVENTNAME + " " + v.EVENTADDRESS + ", " + v.EVENTTOWN + ", " + v.EVENTCOUNTY + ", " + v.EVENTCOUNTRY + "</option>");
+            });
+        },
+
         destroy: function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#person");
@@ -945,7 +999,7 @@ $(function() {
 
         name: "movements",
         animation: function() { return controller.name.indexOf("move_book") == 0 ? "book" : "formtab"; },
-        title:  function() { 
+        title:  function() {
             let t = "";
             if (controller.name == "animal_movements") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 

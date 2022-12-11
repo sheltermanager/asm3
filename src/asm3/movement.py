@@ -438,13 +438,16 @@ def update_movement_from_form(dbo, username, post):
     validate_movement_form_data(dbo, post)
     movementid = post.integer("movementid")
     oanimalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID=?", [movementid])
-
+    eventID = post.integer("eventlinkdates")
+    if post["eventlinkdates"] == "":
+        eventID = None
     dbo.update("adoption", movementid, {
         "AdoptionNumber":               post["adoptionno"],
         "OwnerID":                      post.integer("person"),
         "RetailerID":                   post.integer("retailer"),
         "AnimalID":                     post.integer("animal"),
         "OriginalRetailerMovementID":   post.integer("originalretailermovement"),
+        "EventID":                      eventID,
         "MovementDate":                 post.date("movementdate"),
         "MovementType":                 post.integer("type"),
         "ReturnDate":                   post.date("returndate"),

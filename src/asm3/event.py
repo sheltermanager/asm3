@@ -49,3 +49,8 @@ def insert_event_from_form(dbo, post, username):
     return pid
 
 
+def get_event_dates(dbo, post):
+    movementdate_format = post.date("movementdate").strftime("%Y%m%d")
+    return dbo.query("SELECT ev.* "
+                     "FROM event ev "
+                     "WHERE ev.StartDateTime <= " + movementdate_format + " AND " + movementdate_format + " <= ev.EndDateTime")
