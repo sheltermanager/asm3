@@ -384,6 +384,9 @@ def insert_movement_from_form(dbo, username, post):
     movementid = dbo.get_id("adoption")
     adoptionno = post["adoptionno"]
     animalid = post.integer("animal")
+    eventID = post.integer("eventlinkdates")
+    if post["eventlinkdates"] == "":
+        eventID = None
 
     if adoptionno == "": 
         # No adoption number was supplied, generate a
@@ -406,6 +409,7 @@ def insert_movement_from_form(dbo, username, post):
         "RetailerID":                   post.integer("retailer"),
         "AnimalID":                     post.integer("animal"),
         "OriginalRetailerMovementID":   post.integer("originalretailermovement"),
+        "EventID":                      eventID,
         "MovementDate":                 post.date("movementdate"),
         "MovementType":                 post.integer("type"),
         "ReturnDate":                   post.date("returndate"),
