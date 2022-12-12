@@ -398,6 +398,7 @@ def insert_movement_from_form(dbo, username, post):
                 idx += 1
 
     validate_movement_form_data(dbo, post)
+
     dbo.insert("adoption", {
         "ID":                           movementid,
         "AdoptionNumber":               adoptionno,
