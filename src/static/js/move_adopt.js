@@ -45,6 +45,8 @@ $(function() {
                     { post_field: "homechecked", label: _("Mark this owner homechecked"), type: "check", rowid: "homecheckrow" },
                     { post_field: "movementnumber", label: _("Movement Number"), type: "text", callout: _("A unique number to identify this movement"), rowid: "movementnumberrow" },
                     { post_field: "movementdate", label: _("Date"), type: "date" },
+                    { post_field: "eventlink", label: _("Link to event"), type: "check", hideif: function(){return !common.has_permission("lem");}},
+                    { post_field: "event", label: _(""), type: "select"},
                     { post_field: "trial", label: _("Trial adoption"), type: "check", rowid: "trialrow1" },
                     { post_field: "trialenddate", label: _("Trial ends on"), type: "date", rowid: "trialrow2" },
                     { post_field: "insurance", label: _("Insurance"), type: "text", rowid: "insurancerow", xbutton: _("Issue a new insurance number for this animal/adoption") },
@@ -80,6 +82,43 @@ $(function() {
         },
 
         bind: function() {
+            if($("#eventlink")[0].checked)
+                $("#event").closest("tr").fadeIn();
+            else
+                $("#event").closest("tr").fadeOut();
+
+            //callback when eventlink changed its status
+             $("#eventlink").change(function(){
+                // event link needs a movement date
+                if (this.checked && $("#movementdate").val() == ""){
+                    validate.notblank([ "movementdate" ]);
+                    tableform.dialog_error(_("Fill out adoption date before linking to event."));
+                    this.checked = false;
+                }
+                $("#event").empty();
+                if (this.checked){
+                    $("#event").closest("tr").fadeIn();
+                    move_adopt.event_dates();
+                }
+                else
+                    $("#event").closest("tr").fadeOut();
+
+            });
+            //callback when movementdate is changed
+            $("#movementdate").change(function(){
+                $("#event").empty();
+                // event link needs a movement date
+                if ($("#movementdate").val() == ""){
+                    validate.notblank([ "movementdate" ]);
+                    tableform.dialog_error(_("Fill out adoption date before linking to event."));
+                    $("#eventlink")[0].checked = false;
+                }
+                if($("#eventlink")[0].checked){
+                    move_adopt.event_dates();
+                }
+
+            });
+
             const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
@@ -396,6 +435,7 @@ $(function() {
                 $("#trialrow2").show();
             }
 
+
             $("#adopt").button().click(async function() {
                 if (!validation()) { return; }
                 $("#adopt").button("disable");
@@ -416,6 +456,15 @@ $(function() {
                     log.error(err, err);
                     $("#adopt").button("enable");
                 }
+            });
+        },
+
+        event_dates: async function(){
+            let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val());
+            let dates = jQuery.parseJSON(result);
+            $.each(dates, function(i, v){
+                $("#event").append("<option value='" + v.ID + "'>" + format.date(v.STARTDATETIME) + " - " + format.date(v.ENDDATETIME) +
+                " " + v.EVENTNAME + " " + v.EVENTADDRESS + ", " + v.EVENTTOWN + ", " + v.EVENTCOUNTY + ", " + v.EVENTCOUNTRY + "</option>");
             });
         },
 

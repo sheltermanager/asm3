@@ -571,7 +571,7 @@ $(function() {
         },
 
         bind: function() {
-        //callback when eventlink changed its status
+             //callback when eventlink changed its status
              $("#eventlink").change(function(){
                 // event link needs a movement date
                 if (this.checked && $("#movementdate").val() == ""){
