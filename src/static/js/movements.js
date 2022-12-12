@@ -953,7 +953,7 @@ $(function() {
             else{
                 $("#eventlink").closest("tr").fadeOut();
             }
-            //show dates selection if eventlink checked
+            //show event selection if eventlink is checked
             if (mt == 1 && $("#eventlink").is(":checked")){
                 $("#event").closest("tr").fadeIn();
             }
