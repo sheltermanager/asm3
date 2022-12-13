@@ -463,13 +463,14 @@ $(function() {
             let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val());
             let dates = jQuery.parseJSON(result);
             let dates_range = "";
+            var location = [];
             $.each(dates, function(i, v){
                 if(format.date(v.STARTDATETIME) == format.date(v.ENDDATETIME))
                     dates_range = format.date(v.STARTDATETIME);
                 else
                     dates_range = format.date(v.STARTDATETIME) + " - " + format.date(v.ENDDATETIME);
-                $("#event").append("<option value='" + v.ID + "'>" + dates_range +
-                " " + v.EVENTNAME + " " + v.EVENTADDRESS + ", " + v.EVENTTOWN + ", " + v.EVENTCOUNTY + ", " + v.EVENTCOUNTRY + "</option>");
+                location = [v.EVENTADDRESS, v.EVENTTOWN, v.EVENTCOUNTY, v.EVENTCOUNTRY].filter(Boolean).join(", ");
+                $("#event").append("<option value='" + v.ID + "'>" + dates_range + " " + v.EVENTNAME + " " + location + "</option>");
             });
         },
 
