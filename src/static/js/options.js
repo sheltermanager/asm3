@@ -1172,6 +1172,8 @@ $(function() {
                 '<p>',
                 '<input data="IncludeOffShelterMedical" id="includeoffsheltermedical" type="checkbox" class="asm-checkbox" /> <label for="includeoffsheltermedical">' + _("Include off-shelter animals in medical calendar and books") + '</label>',
                 '<br />',
+                '<input data="MedicalPrecreateTreatments" id="precreatetreat" type="checkbox" class="asm-checkbox" /> <label for="precreatetreat">' + _("Pre-create all treatments when creating fixed-length medical regimens") + '</label>',
+                '<br />',
                 '<input data="ReloadMedical" id="reloadmedical" type="checkbox" class="asm-checkbox" /> <label for="reloadmedical">' + _("Reload the medical book/tab automatically after adding new medical items") + '</label>',
                 '<br />',
                 '<input data="AutoDefaultVaccBatch" id="autodefaultvaccbatch" type="checkbox" class="asm-checkbox" /> <label for="autodefaultvaccbatch">' + _("When entering vaccinations, default the last batch number and manufacturer for that type") + '</label>',

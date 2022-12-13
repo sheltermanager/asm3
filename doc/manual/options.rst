@@ -680,6 +680,15 @@ Medical
   with outstanding medical/vacc/tests that have left the shelter will be shown
   in medical books and the medical calendar.
 
+* Pre-create all treatments when creating fixed-length medical regimens:
+  Enabling this option will have creation of a new medical regimen create all
+  of its treatments up-front. If the new regimen has a "Completed" status, all
+  the treatments will be marked as given. This can be useful when entering
+  historic records.  The default behaviour without this option is to create
+  treatments incrementally as each previous treatment is given. This is done to
+  prevent staff accidentally overdosing animals or having to "catch up" when a
+  treatment is missed. 
+
 * Reload the medical book/tab automatically after adding new medical items: If
   selected, reloads the screen automatically after adding a new medical
   regimen. If this option is not enabled, a placeholder row will be shown for

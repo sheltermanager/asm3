@@ -287,6 +287,7 @@ DEFAULTS = {
     "MediaAllowPDF": "Yes",
     "MediaTableMode": "No",
     "MedicalItemDisplayLimit": "500",
+    "MedicalPrecreateTreatments": "No",
     "MicrochipRegisterMovements": "1,5",
     "MovementDonationsDefaultDue": "No",
     "MovementNumberOverride": "No",
@@ -1108,6 +1109,9 @@ def media_allow_pdf(dbo):
 
 def medical_item_display_limit(dbo):
     return cint(dbo, "MedicalItemDisplayLimit", DEFAULTS["MedicalItemDisplayLimit"])
+
+def medical_precreate_treatments(dbo):
+    return cboolean(dbo, "MedicalPrecreateTreatments", DEFAULTS["MedicalPrecreateTreatments"] == "Yes")
 
 def microchip_register_movements(dbo):
     return cstring(dbo, "MicrochipRegisterMovements", DEFAULTS["MicrochipRegisterMovements"])
