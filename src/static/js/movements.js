@@ -982,8 +982,13 @@ $(function() {
         event_dates: async function(){
             let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val());
             let dates = jQuery.parseJSON(result);
+            let dates_range = "";
             $.each(dates, function(i, v){
-                $("#event").append("<option value='" + v.ID + "'>" + format.date(v.STARTDATETIME) + " - " + format.date(v.ENDDATETIME) +
+                if(format.date(v.STARTDATETIME) == format.date(v.ENDDATETIME))
+                    dates_range = format.date(v.STARTDATETIME);
+                else
+                    dates_range = format.date(v.STARTDATETIME) + " - " + format.date(v.ENDDATETIME);
+                $("#event").append("<option value='" + v.ID + "'>" + dates_range +
                 " " + v.EVENTNAME + " " + v.EVENTADDRESS + ", " + v.EVENTTOWN + ", " + v.EVENTCOUNTY + ", " + v.EVENTCOUNTRY + "</option>");
             });
         },
