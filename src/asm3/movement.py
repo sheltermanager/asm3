@@ -43,6 +43,7 @@ def get_movement_query(dbo):
         "a.Sex, s.SpeciesName, rr.ReasonName AS ReturnedReasonName, " \
         "CASE WHEN m.MovementType = 0 AND m.MovementDate Is Null THEN " \
         "m.ReservationDate ELSE m.MovementDate END AS ActiveDate, " \
+        "CASE WHEN m.EventID > 0 THEN 1 ELSE 0 END AS IsEventLinked, " \
         "CASE " \
         "WHEN m.MovementType = 7 AND a.SpeciesID = 2 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=13) " \

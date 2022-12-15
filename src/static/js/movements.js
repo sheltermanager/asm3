@@ -49,7 +49,7 @@ $(function() {
                     { json_field: "ISTRIAL", post_field: "trial", label: _("Trial Adoption"), tooltip: _("Is this a trial adoption?"), type: "check" },
                     { json_field: "TRIALENDDATE", post_field: "trialenddate", label: _("Trial ends on"), tooltip: _("The date the trial adoption is over"), type: "date" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
-                    { json_field: "EVENTLINK", post_field: "eventlink", label: _("Link to event"), type: "check", hideif: function(){return !common.has_permission("lem");}},
+                    { json_field: "ISEVENTLINKED", post_field: "eventlink", label: _("Link to event"), type: "check", hideif: function(){return !common.has_permission("lem");}},
                     { json_field: "EVENTID", post_field: "event", label: _(""), type: "select"},
                     { json_field: "RETURNDATE", post_field: "returndate", label: _("Return Date"), type: "date" },
                     { json_field: "RETURNEDREASONID", post_field: "returncategory", label: _("Return Category"), type: "select", options: { displayfield: "REASONNAME", valuefield: "ID", rows: controller.returncategories}},
@@ -80,8 +80,9 @@ $(function() {
                         },
                         onload: function() {
                             tableform.fields_populate_from_json(dialog.fields, row);
-                            movements.type_change(); 
+                            movements.type_change();
                             movements.returndate_change();
+                            movements.event_dates(row);
                         }
                     });
                 },
@@ -579,18 +580,18 @@ $(function() {
                     tableform.dialog_error(_("Fill out adoption date before linking to event."));
                     this.checked = false;
                 }
-                $("#event").empty();
+
                 if (this.checked){
                     $("#event").closest("tr").fadeIn();
                     movements.event_dates();
                 }
-                else
+                else{
+                    $("#event").empty();
                     $("#event").closest("tr").fadeOut();
-
+                }
             });
             //callback when movementdate is changed
             $("#movementdate").change(function(){
-                $("#event").empty();
                 // event link needs a movement date
                 if ($("#movementdate").val() == ""){
                     validate.notblank([ "movementdate" ]);
@@ -606,7 +607,7 @@ $(function() {
             if (controller.name == "animal_movements" || controller.name == "person_movements") {
                 $(".asm-tabbar").asmtabs();
             }
-            
+
             $("#emailform").emailform();
 
             tableform.dialog_bind(this.dialog);
@@ -979,11 +980,12 @@ $(function() {
             }
         },
 
-        event_dates: async function(){
+        event_dates: async function(row=null){
             let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val());
             let dates = jQuery.parseJSON(result);
             let dates_range = "";
             var location = [];
+            $("#event").empty();
             $.each(dates, function(i, v){
                 if(format.date(v.STARTDATETIME) == format.date(v.ENDDATETIME))
                     dates_range = format.date(v.STARTDATETIME);
@@ -992,6 +994,8 @@ $(function() {
                 location = [v.EVENTADDRESS, v.EVENTTOWN, v.EVENTCOUNTY, v.EVENTCOUNTRY].filter(Boolean).join(", ");
                 $("#event").append("<option value='" + v.ID + "'>" + dates_range + " " + v.EVENTNAME + " " + location + "</option>");
             });
+            if(row != null && row.EVENTID > 0)
+                $("#event").val(row.EVENTID);
         },
 
         destroy: function() {
