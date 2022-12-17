@@ -572,7 +572,8 @@ def insert_adoption_from_form(dbo, username, post, creating = [], create_payment
         "returncategory"        : asm3.configuration.default_return_reason(dbo),
         "trial"                 : post["trial"],
         "trialenddate"          : post["trialenddate"],
-        "comments"              : post["comments"]
+        "comments"              : post["comments"],
+        "event"                 : post["event"]
     }
     # Is this animal currently on foster? If so, return the foster
     fm = get_animal_movements(dbo, post.integer("animal"))

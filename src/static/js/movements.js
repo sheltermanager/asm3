@@ -580,7 +580,6 @@ $(function() {
                     tableform.dialog_error(_("Fill out adoption date before linking to event."));
                     this.checked = false;
                 }
-
                 if (this.checked){
                     $("#event").closest("tr").fadeIn();
                     movements.event_dates();
@@ -981,7 +980,11 @@ $(function() {
         },
 
         event_dates: async function(row=null){
-            let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val());
+            if(row != null && row.EVENTID > 0)
+                var eventid = row.EVENTID;
+            else
+                var eventid = "";
+            let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val() + "&eventid=" + eventid);
             let dates = jQuery.parseJSON(result);
             let dates_range = "";
             var location = [];
@@ -994,7 +997,7 @@ $(function() {
                 location = [v.EVENTADDRESS, v.EVENTTOWN, v.EVENTCOUNTY, v.EVENTCOUNTRY].filter(Boolean).join(", ");
                 $("#event").append("<option value='" + v.ID + "'>" + dates_range + " " + v.EVENTNAME + " " + location + "</option>");
             });
-            if(row != null && row.EVENTID > 0)
+            if(eventid != "")
                 $("#event").val(row.EVENTID);
         },
 

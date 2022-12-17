@@ -82,7 +82,7 @@ $(function() {
         },
 
         bind: function() {
-            if($("#eventlink")[0].checked)
+            if($("#eventlink").is(":checked"))
                 $("#event").closest("tr").fadeIn();
             else
                 $("#event").closest("tr").fadeOut();
