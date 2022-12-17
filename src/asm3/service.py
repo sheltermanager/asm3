@@ -27,7 +27,7 @@ import asm3.users
 import asm3.utils
 from asm3.i18n import _, now, add_seconds, format_time, python2display, subtract_seconds
 from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_ICONS_CSS
-from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS
 from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
 
 # Service methods that require authentication
@@ -206,7 +206,6 @@ def checkout_adoption_page(dbo, token):
         asm3.html.script_tag(JQUERY_JS),
         asm3.html.script_tag(JQUERY_UI_JS),
         asm3.html.script_tag(BOOTSTRAP_JS),
-        asm3.html.script_tag(TOUCHPUNCH_JS),
         asm3.html.script_tag(SIGNATURE_JS),
         asm3.html.css_tag(BOOTSTRAP_CSS),
         asm3.html.css_tag(BOOTSTRAP_ICONS_CSS),
@@ -328,7 +327,6 @@ def sign_document_page(dbo, mid, email):
         asm3.html.script_tag(JQUERY_JS),
         asm3.html.script_tag(JQUERY_UI_JS),
         asm3.html.script_tag(BOOTSTRAP_JS),
-        asm3.html.script_tag(TOUCHPUNCH_JS),
         asm3.html.script_tag(SIGNATURE_JS),
         asm3.html.css_tag(BOOTSTRAP_CSS),
         asm3.html.css_tag(BOOTSTRAP_ICONS_CSS),

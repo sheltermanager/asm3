@@ -17,7 +17,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
-from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS
 
 import web062 as web
 
@@ -148,7 +148,6 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             asm3.html.css_tag(TIMEPICKER_CSS) + \
             asm3.html.script_tag(JQUERY_JS) + \
             asm3.html.script_tag(JQUERY_UI_JS) + \
-            asm3.html.script_tag(TOUCHPUNCH_JS) + \
             asm3.html.script_tag(SIGNATURE_JS) + \
             asm3.html.script_tag(ASMSELECT_JS) + \
             asm3.html.script_tag(TIMEPICKER_JS) + \
