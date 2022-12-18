@@ -459,6 +459,9 @@ $(function() {
             });
         },
 
+        /** Fires when the movement date is changed or event link is checked
+            populates the event dropdown with dates within certain range
+            (event start <= movement date <= event end)  */
         event_dates: async function(){
             let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val());
             let dates = jQuery.parseJSON(result);

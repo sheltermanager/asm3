@@ -979,6 +979,9 @@ $(function() {
             }
         },
 
+        /** Fires when the movement date is changed or event link is checked
+            populates the event dropdown with dates within certain range
+            (event start <= movement date <= event end)  */
         event_dates: async function(row=null){
             if(row != null && row.EVENTID > 0)
                 var eventid = row.EVENTID;
