@@ -218,6 +218,9 @@ def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, visualaid
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="shortcut icon" href="static/images/logo/icon-16.png">
+        <link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32">
+        <link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48">
+        <link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128">
         %(jquery)s
         %(css)s
         <script type="text/javascript">
@@ -256,6 +259,9 @@ def tinymce_print_header(title):
         <title>%(title)s</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="shortcut icon" href="static/images/logo/icon-16.png" />
+        <link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32">
+        <link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48">
+        <link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128">
         %(css)s
         </head>
         <body>
@@ -310,6 +316,9 @@ def js_page(include, title = "", controller = [], execline = ""):
         %s
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="shortcut icon" href="static/images/logo/icon-16.png">
+        <link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32">
+        <link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48">
+        <link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128">
         </head>
         <body>
         <noscript>Sorry. ASM will not work without Javascript.</noscript>
