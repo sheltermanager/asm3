@@ -78,7 +78,7 @@ class PetFinderPublisher(FTPPublisher):
             self.cleanup()
             return
         if not self.isChangedSinceLastPublish():
-            self.setLastError("No animal/movement changes made since last publish")
+            self.log("No animal/movement changes made since last publish")
             self.cleanup()
             return
 
