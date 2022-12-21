@@ -193,7 +193,20 @@ $(selector).signature({color: 'blue', guideline: true}) */
             // Listen for pointer or touch events on this.element and dispatch
             // to lineStart, lineDraw and lineStop below.
             var dragging = false, self = this;
-            if ("onpointerdown" in document) {
+            if ("ontouchend" in document) {
+                this.element.on("touchstart", function(e) {
+                    dragging = true;
+                    self._lineStart.call(self, e.changedTouches[0]);
+                });
+                this.element.on("touchend", function(e) {
+                    dragging = false;
+                    self._lineStop.call(self, e.changedTouches[0]);
+                });
+                this.element.on("touchmove", function(e) {
+                    self._lineDraw.call(self, e.changedTouches[0]);
+                });
+            }
+            else if ("onpointerdown" in document) {
                 this.element.on("pointerdown", function(e) {
                     dragging = true;
                     self._lineStart.call(self, e);
@@ -206,20 +219,6 @@ $(selector).signature({color: 'blue', guideline: true}) */
                     self._lineDraw.call(self, e);
                 });
             }
-            else if ("ontouchend" in document) {
-                this.element.on("touchstart", function(e) {
-                    dragging = true;
-                    self._lineStart.call(self, e);
-                });
-                this.element.on("touchend", function(e) {
-                    dragging = false;
-                    self._lineStop.call(self, e);
-                });
-                this.element.on("touchmove", function(e) {
-                    self._lineDraw.call(self, e);
-                });
-
-            };
         },
 
 		/** Determine if dragging can start.
