@@ -315,6 +315,10 @@ class AdoptAPetPublisher(FTPPublisher):
             self.setLastError("Not all colours have been mapped and sending colours is enabled")
             self.cleanup()
             return
+        if not self.isChangedSinceLastPublish():
+            self.setLastError("No animal/movement changes made since last publish")
+            self.cleanup()
+            return
 
         shelterid = asm3.configuration.adoptapet_user(self.dbo)
         if shelterid == "":

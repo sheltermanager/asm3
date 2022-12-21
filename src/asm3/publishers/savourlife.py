@@ -90,10 +90,17 @@ class SavourLifePublisher(AbstractPublisher):
 
         if token == "":
             self.setLastError("No SavourLife token has been set.")
+            self.cleanup()
             return
 
         if postcode == "" or suburb == "" or state == "":
             self.setLastError("You need to set your organisation address and postcode under Settings->Options->Shelter Details")
+            self.cleanup()
+            return
+
+        if not self.isChangedSinceLastPublish():
+            self.setLastError("No animal/movement changes made since last publish")
+            self.cleanup()
             return
 
         preanimals = self.getMatchingAnimals(includeAdditionalFields=True)

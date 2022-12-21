@@ -1,6 +1,7 @@
 46
 ================
 
+21/12/22 Do not run adoptable publishers if there have been no changes
 19/12/22 Show a warning that the app is going to be retired
 19/12/22 Upgrade pdf.js to latest version (attempt to fix iOS app bug)
 13/12/22 Rewrite signature.js to use pointer/touch events without touchpunch #1188

@@ -76,10 +76,17 @@ class PetRescuePublisher(AbstractPublisher):
 
         if token == "":
             self.setLastError("No PetRescue auth token has been set.")
+            self.cleanup()
             return
 
         if postcode == "" or contact_email == "":
             self.setLastError("You need to set your organisation postcode and contact email under Settings->Options->Shelter Details->Email")
+            self.cleanup()
+            return
+
+        if not self.isChangedSinceLastPublish():
+            self.setLastError("No animal/movement changes made since last publish")
+            self.cleanup()
             return
 
         animals = self.getMatchingAnimals(includeAdditionalFields=True)

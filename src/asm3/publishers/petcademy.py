@@ -100,6 +100,12 @@ class PetcademyPublisher(FTPPublisher):
 
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
+            self.cleanup()
+            return
+
+        if not self.isChangedSinceLastPublish():
+            self.setLastError("No animal/movement changes made since last publish")
+            self.cleanup()
             return
 
         if not self.openFTPSocket(ssl=True): 

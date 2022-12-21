@@ -77,15 +77,20 @@ class PetFinderPublisher(FTPPublisher):
             self.setLastError("Not all breeds have been mapped.")
             self.cleanup()
             return
+        if not self.isChangedSinceLastPublish():
+            self.setLastError("No animal/movement changes made since last publish")
+            self.cleanup()
+            return
+
         shelterid = asm3.configuration.petfinder_user(self.dbo)
         if shelterid == "":
             self.setLastError("No PetFinder.com shelter id has been set.")
             self.cleanup()
             return
 
-        # NOTE: We still publish even if there are no animals. This prevents situations
-        # where the last animal can't be removed from PetFinder because the shelter
-        # has no animals to send.
+        # NOTE: We still publish even if there are no adoptable animals. 
+        # This prevents situations where the last animal can't be removed 
+        # from PetFinder because the shelterhas no animals to send.
         animals = self.getMatchingAnimals(includeAdditionalFields=True)
         if len(animals) == 0:
             self.logError("No animals found to publish, sending empty file.")

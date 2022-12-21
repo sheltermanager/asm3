@@ -878,6 +878,18 @@ class AbstractPublisher(threading.Thread):
         """
         return self.dbo.query_date("SELECT SentDate FROM animalpublished WHERE AnimalID = ? AND PublishedTo = ?", (animalid, self.publisherKey))
 
+    def isChangedSinceLastPublish(self):
+        """
+        Returns True if there have been changes to animals or movements 
+        since the last time this publisher ran. 
+        Publishers can use this call to decide to do nothing 
+        if there have been no changes.
+        """
+        lastpublished = self.dbo.query_date("SELECT MAX(SentDate) FROM animalpublished WHERE PublishedTo = ?", [self.publisherKey])
+        if lastpublished is None: return True # publisher has never run
+        changes = self.dbo.query("SELECT ID FROM animal WHERE LastChangedDate > ? UNION SELECT ID FROM adoption WHERE LastChangedDate > ?", (lastpublished, lastpublished))
+        return len(changes) > 0
+
     def markAnimalPublished(self, animalid, datevalue = None, extra = ""):
         """
         Marks an animal published at the current date/time for this publisher

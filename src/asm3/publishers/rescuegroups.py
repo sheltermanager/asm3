@@ -61,6 +61,11 @@ class RescueGroupsPublisher(FTPPublisher):
             self.setLastError("Not all breeds have been mapped.")
             self.cleanup()
             return
+        if not self.isChangedSinceLastPublish():
+            self.setLastError("No animal/movement changes made since last publish")
+            self.cleanup()
+            return
+
         shelterid = asm3.configuration.rescuegroups_user(self.dbo)
         if shelterid == "":
             self.setLastError("No RescueGroups.org shelter id has been set.")
