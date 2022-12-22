@@ -988,7 +988,7 @@ def sql_structure(dbo):
         fstr("EventName"),
         flongstr("EventDescription", True),
         fint("EventOwnerID", True),
-        flongstr("EventAddress", True),
+        fstr("EventAddress", True),
         fstr("EventTown", True),
         fstr("EventCounty", True),
         fstr("EventPostCode", True),
