@@ -128,7 +128,7 @@ class MaddiesFundPublisher(AbstractPublisher):
         animals = self.getData(PERIOD)
 
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
+            self.log("No animals found to publish.")
             self.cleanup()
             return
 

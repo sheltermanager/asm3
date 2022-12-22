@@ -331,7 +331,7 @@ class AdoptAPetPublisher(FTPPublisher):
         # has no animals to send.
         animals = self.getMatchingAnimals()
         if len(animals) == 0:
-            self.logError("No animals found to publish, sending empty file.")
+            self.log("No animals found to publish, sending empty file.")
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
