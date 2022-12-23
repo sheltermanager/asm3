@@ -4213,6 +4213,9 @@ def update_animal_figures(dbo, month = 0, year = 0):
             dk = "D%d" % i
             onfoster[dk] = get_number_animals_on_foster(dbo, d, speciesid)
         add_row(2, "SP_ONFOSTER", 0, speciesid, daysinmonth, _("On Foster (in figures)", l), 0, False, onfoster)
+        # NOTE: On Foster counts are not added to the day counts deliberately.
+        # Start/End of day counts only track on shelter animals.
+        # If fosters were added, then fosters moving in and out of the shelter would be double counted.
         #sheltertotal = add_days((onshelter, onfoster))
         sheltertotal = onshelter
 
