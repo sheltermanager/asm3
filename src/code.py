@@ -6796,6 +6796,16 @@ class waitinglist_results(JSONEndpoint):
         for wid in o.post.integer_list("ids"):
             asm3.waitinglist.update_waitinglist_highlight(o.dbo, wid, o.post["himode"])
 
+class event(JSONEndpoint):
+    url = "event"
+
+    def controller(self, o):
+        dbo = o.dbo
+        asm3.al.debug("opened event %s" % "recname", "code.event", dbo)
+        return{
+            "event": asm3.event.get_event(dbo, o.post.integer("id"))
+        }
+
 class event_new(JSONEndpoint):
     url = "event_new"
     #TODO: need to add permissions

@@ -5,7 +5,8 @@ from asm3.i18n import _
 
 
 def get_event_query(dbo):
-    return "SELECT ev.*, owner.OwnerName AS EventOwnerName " \
+    return "SELECT ev.*, owner.OwnerName AS EventOwnerName, " \
+           "(SELECT COUNT(*) FROM adoption a WHERE a.EventID = ev.ID) AS adoptions " \
            "FROM event ev " \
            "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID "
 
@@ -47,5 +48,4 @@ def insert_event_from_form(dbo, post, username):
     # Save any additional field values given
     asm3.additional.save_values_for_link(dbo, post, username, pid, "event", True)
     return pid
-
 
