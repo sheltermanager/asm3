@@ -896,7 +896,7 @@ class AbstractPublisher(threading.Thread):
         animalid:    The animal id to update
         extra:       The extra text field to set
         """
-        if datevalue is None: datevalue = asm3.i18n.now(self.dbo.timezone)
+        if datevalue is None: datevalue = self.dbo.now()
         self.markAnimalUnpublished(animalid)
         self.dbo.insert("animalpublished", {
             "AnimalID":     animalid,
@@ -917,7 +917,7 @@ class AbstractPublisher(threading.Thread):
             self.dbo.insert("animalpublished", {
                 "AnimalID":     animalid,
                 "PublishedTo":  FIRST_PUBLISHER,
-                "SentDate":     self.dbo.today()
+                "SentDate":     self.dbo.now()
             }, generateID=False)
 
     def markAnimalUnpublished(self, animalid):
@@ -941,7 +941,7 @@ class AbstractPublisher(threading.Thread):
         # build a batch for inserting animalpublished entries into the table
         # and check/mark animals first published
         for i in inclause:
-            batch.append( ( int(i), self.publisherKey, asm3.i18n.now(self.dbo.timezone) ) )
+            batch.append( ( int(i), self.publisherKey, self.dbo.now() ) )
             if first: self.markAnimalFirstPublished(int(i))
         if len(inclause) == 0: return
         self.dbo.execute("DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
@@ -962,7 +962,7 @@ class AbstractPublisher(threading.Thread):
             inclause[str(a["ID"])] = m
         # build a batch for inserting animalpublished entries into the table
         for k, v in inclause.items():
-            batch.append( ( int(k), self.publisherKey, asm3.i18n.now(self.dbo.timezone), v ) )
+            batch.append( ( int(k), self.publisherKey, self.dbo.now(), v ) )
         if len(inclause) == 0: return
         self.dbo.execute("DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
         self.dbo.execute_many("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate, Extra) VALUES (?,?,?,?)", batch)
@@ -983,7 +983,7 @@ class AbstractPublisher(threading.Thread):
         Initialises the log 
         """
         self.publisherKey = publisherKey
-        self.publishDateTime = asm3.i18n.now(self.dbo.timezone)
+        self.publishDateTime = self.dbo.now()
         self.publisherName = publisherName
         self.logBuffer = []
 
