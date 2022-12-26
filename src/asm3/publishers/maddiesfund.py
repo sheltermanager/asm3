@@ -133,7 +133,8 @@ class MaddiesFundPublisher(AbstractPublisher):
             return
 
         if not self.isChangedSinceLastPublish():
-            self.log("No animal/movement changes made since last publish")
+            self.logSuccess("No animal/movement changes have been made since last publish")
+            self.setLastError("No animal/movement changes have been made since last publish", log_error = False)
             self.cleanup()
             return
 

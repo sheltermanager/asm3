@@ -736,13 +736,13 @@ class AbstractPublisher(threading.Thread):
         """
         asm3.asynctask.set_cancel(self.dbo, False)
 
-    def setLastError(self, msg):
+    def setLastError(self, msg, log_error=True):
         """
         Sets the last error message and clears the publisher lock
         """
         asm3.asynctask.set_last_error(self.dbo, msg)
         self.lastError = msg
-        if msg != "": self.logError(self.lastError)
+        if msg != "" and log_error: self.logError(self.lastError)
         self.resetPublisherProgress()
 
     def cleanup(self, save_log=True):
