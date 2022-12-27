@@ -1352,6 +1352,7 @@ def create_animalcontrol(dbo, username, collationid):
         if f.FIELDNAME == "dispatchcity": d["dispatchtown"] = f.VALUE
         if f.FIELDNAME == "dispatchstate": d["dispatchcounty"] = f.VALUE
         if f.FIELDNAME == "dispatchzipcode": d["dispatchpostcode"] = f.VALUE
+        if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     # Have we got enough info to create the animal control record? We need notes and dispatchaddress
     if "callnotes" not in d or "dispatchaddress" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an incident record (need call notes and dispatch address).", l))
@@ -1390,6 +1391,7 @@ def create_lostanimal(dbo, username, collationid):
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
+        if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     if "datelost" not in d or asm3.i18n.display2python(l, d["datelost"]) is None:
         d["datelost"] = asm3.i18n.python2display(l, dbo.now())
     if "species" not in d: d["species"] = guess_species(dbo, "")
@@ -1433,6 +1435,7 @@ def create_foundanimal(dbo, username, collationid):
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
+        if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     if "datefound" not in d or asm3.i18n.display2python(l, d["datefound"]) is None:
         d["datefound"] = asm3.i18n.python2display(l, dbo.now())
     if "species" not in d: d["species"] = guess_species(dbo, "")
@@ -1519,6 +1522,7 @@ def create_waitinglist(dbo, username, collationid):
         if f.FIELDNAME == "description": d["description"] = f.VALUE
         if f.FIELDNAME == "reason": d["reasonforwantingtopart"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
+        if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     if "size" not in d: d["size"] = guess_size(dbo, "nomatchesusedefault")
     if "species" not in d: d["species"] = guess_species(dbo, "nomatchesusedefault")
     # Have we got enough info to create the waiting list record? We need a description
