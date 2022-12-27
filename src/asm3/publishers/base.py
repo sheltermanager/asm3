@@ -887,7 +887,7 @@ class AbstractPublisher(threading.Thread):
         lastpublished = self.dbo.query_date("SELECT MAX(SentDate) FROM animalpublished WHERE PublishedTo = ?", [self.publisherKey])
         if lastpublished is None: return True # publisher has never run
         changes = self.dbo.query("SELECT ID FROM animal WHERE LastChangedDate > ? " \
-            "UNION SELECT ID FROM adoption WHERE LastChangedDate > ?" \
+            "UNION SELECT ID FROM adoption WHERE LastChangedDate > ? " \
             "UNION SELECT ID FROM media WHERE Date > ?", (lastpublished, lastpublished, lastpublished))
         return len(changes) > 0
 
