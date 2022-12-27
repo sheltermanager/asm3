@@ -6801,9 +6801,12 @@ class event(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
+        e = asm3.event.get_event(dbo, o.post.integer("id"))
         asm3.al.debug("opened event %s" % "recname", "code.event", dbo)
         return{
-            "event": asm3.event.get_event(dbo, o.post.integer("id"))
+            "event": e,
+            "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event")
+
         }
 
 class event_new(JSONEndpoint):

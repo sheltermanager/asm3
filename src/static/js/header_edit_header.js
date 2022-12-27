@@ -272,7 +272,7 @@ edit_header = {
      */
     event_edit_header: function(e, selected, counts){
         var check_display_icon = function(key, iconname) {
-            if (key == "details") { return html.icon("blank"); }
+            if (key == "event") { return html.icon("blank"); }
             if (counts[key.toUpperCase()] > 0) {
                 return html.icon(iconname);
             }
@@ -316,7 +316,23 @@ edit_header = {
             _("Last changed by {0} on {1}").replace("{0}", "<b>" + e.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(e.LASTCHANGEDDATE) + "</b>"),
             '</div>',
             '</div></div>',
+            '<div class="asm-tabbar">',
+            '<ul class="asm-tablist">'
         ];
+        var tabs = [[ "event", "event", _("Event"), "", "ve" ]];
+        console.log(tabs);
+        $.each(tabs, function(it, vt) {
+            var key = vt[0], url = vt[1], display = vt[2], iconname = vt[3], perms = vt[4];
+            if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
+            if (key == selected) {
+                h.push("<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + display + " " + check_display_icon(key, iconname) + "</a></li>");
+            }
+            else {
+                h.push("<li><a href=\"" + url + "?id=" + e.ID + "\">" + display + " " + check_display_icon(key, iconname) + "</a></li>");
+            }
+        });
+        h.push('</ul>');
+        h.push('<div id="asm-content">');
         return h.join("\n");
     },
 
