@@ -5,6 +5,7 @@
 
 import web, json
 
+web.config.debug = False
 db = web.database( dbn = "sqlite", db = "scripts/schema/schema.db" )
 
 VIEWS = [ "adoption", "animal", "animalcontrol", "animalfound", "animallost", 
