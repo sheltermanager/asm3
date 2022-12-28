@@ -880,15 +880,19 @@ class AbstractPublisher(threading.Thread):
 
     def isChangedSinceLastPublish(self):
         """
-        Returns True if there have been changes to animals, movements or media since the last time this publisher ran. 
-        Publishers can use this call to decide to do nothing 
-        if there have been no changes.
+        Returns True if there have been relevant changes since the last time this publisher ran. 
+        Publishers can use this call to decide to do nothing if there have been no changes.
+        Relevant changes are: 
+            Changes to an animal, movement or media record.
+            The system configuration has changed.
         """
         lastpublished = self.dbo.query_date("SELECT MAX(SentDate) FROM animalpublished WHERE PublishedTo = ?", [self.publisherKey])
         if lastpublished is None: return True # publisher has never run
-        changes = self.dbo.query("SELECT ID FROM animal WHERE LastChangedDate > ? " \
-            "UNION SELECT ID FROM adoption WHERE LastChangedDate > ? " \
-            "UNION SELECT ID FROM media WHERE Date > ?", (lastpublished, lastpublished, lastpublished))
+        changes = self.dbo.query_named_params("SELECT ID FROM animal WHERE LastChangedDate > :lp " \
+            "UNION SELECT ID FROM adoption WHERE LastChangedDate > :lp " \
+            "UNION SELECT ID FROM media WHERE Date > :lp " \
+            "UNION SELECT LinkID FROM audittrail WHERE TableName='configuration' AND Action=1 AND AuditDate > :lp ", \
+            { "lp": self.dbo.sql_value(lastpublished) })
         return len(changes) > 0
 
     def markAnimalPublished(self, animalid, datevalue = None, extra = ""):
