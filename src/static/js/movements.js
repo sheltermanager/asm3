@@ -49,7 +49,7 @@ $(function() {
                     { json_field: "ISTRIAL", post_field: "trial", label: _("Trial Adoption"), tooltip: _("Is this a trial adoption?"), type: "check" },
                     { json_field: "TRIALENDDATE", post_field: "trialenddate", label: _("Trial ends on"), tooltip: _("The date the trial adoption is over"), type: "date" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
-                    { json_field: "ISEVENTLINKED", post_field: "eventlink", label: _("Link to event"), type: "check", hideif: function(){return !common.has_permission("lem");}},
+                    { json_field: "ISEVENTLINKED", post_field: "eventlink", label: _("Link to event"), type: "check", hideif: function(){return !common.has_permission("lem") || config.bool("DisableEvents");}},
                     { json_field: "EVENTID", post_field: "event", label: _(""), type: "select"},
                     { json_field: "RETURNDATE", post_field: "returndate", label: _("Return Date"), type: "date" },
                     { json_field: "RETURNEDREASONID", post_field: "returncategory", label: _("Return Category"), type: "select", options: { displayfield: "REASONNAME", valuefield: "ID", rows: controller.returncategories}},
@@ -82,7 +82,8 @@ $(function() {
                             tableform.fields_populate_from_json(dialog.fields, row);
                             movements.type_change();
                             movements.returndate_change();
-                            movements.event_dates(row);
+                            if(common.has_permission("lem"))
+                                movements.event_dates(row);
                         }
                     });
                 },

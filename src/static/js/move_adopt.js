@@ -45,7 +45,7 @@ $(function() {
                     { post_field: "homechecked", label: _("Mark this owner homechecked"), type: "check", rowid: "homecheckrow" },
                     { post_field: "movementnumber", label: _("Movement Number"), type: "text", callout: _("A unique number to identify this movement"), rowid: "movementnumberrow" },
                     { post_field: "movementdate", label: _("Date"), type: "date" },
-                    { post_field: "eventlink", label: _("Link to event"), type: "check", hideif: function(){return !common.has_permission("lem");}},
+                    { post_field: "eventlink", label: _("Link to event"), type: "check", hideif: function(){return !common.has_permission("lem") || config.bool("DisableEvents");}},
                     { post_field: "event", label: _(""), type: "select"},
                     { post_field: "trial", label: _("Trial adoption"), type: "check", rowid: "trialrow1" },
                     { post_field: "trialenddate", label: _("Trial ends on"), type: "date", rowid: "trialrow2" },
