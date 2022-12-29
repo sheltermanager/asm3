@@ -116,6 +116,9 @@ DB_EXEC_LOG = get_string("db_exec_log")
 # Produce an EXPLAIN for each query in the log before running it
 DB_EXPLAIN_QUERIES = get_boolean("db_explain_queries", False)
 
+# How many days to keep the audit trail and deletion log for
+DB_RETAIN_AUDIT_DAYS = get_integer("db_retain_audit_days", 182)
+
 # Record the time taken to run each query
 DB_TIME_QUERIES = get_boolean("db_time_queries", False)
 
