@@ -2,7 +2,7 @@ Non-Neutered/Spayed Shelter Animals
 ###
 Inventories
 ###
-Any rev02
+Any rev03
 ###
 Shelter animals who have not been neutered/spayed.
 ###
@@ -13,10 +13,10 @@ o.OwnerName, o.OwnerAddress, O.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
 o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, a.AnimalAge,
 i.LocationName, p.SpeciesName
 FROM animal a
-INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
-INNER JOIN species p ON p.ID = a.SpeciesID
-INNER JOIN internallocation i ON i.ID = a.ShelterLocation
-INNER JOIN lksex s ON s.ID = a.Sex
+LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
+LEFT OUTER JOIN species p ON p.ID = a.SpeciesID
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
+LEFT OUTER JOIN lksex s ON s.ID = a.Sex
 LEFT OUTER JOIN adoption ad ON a.ActiveMovementID = ad.ID
 LEFT OUTER JOIN owner o ON o.ID = ad.OwnerID
 WHERE a.Neutered = 0 AND a.Archived = 0 

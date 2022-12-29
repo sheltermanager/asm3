@@ -2,7 +2,7 @@ Non-Neutered/Spayed Shelter Animals Born After
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Non-neutered/spayed animals born after a certain date
 ###
@@ -12,10 +12,10 @@ SELECT ShelterCode, AnimalName,
 internallocation.LocationName, animaltype.AnimalType,
 species.SpeciesName, AnimalAge, lksex.Sex
 FROM animal
-INNER JOIN internallocation ON animal.ShelterLocation = internallocation.ID
-INNER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
-INNER JOIN species ON animal.SpeciesID = species.ID
-INNER JOIN lksex ON animal.Sex = lksex.ID
+LEFT OUTER JOIN internallocation ON animal.ShelterLocation = internallocation.ID
+LEFT OUTER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
+LEFT OUTER JOIN species ON animal.SpeciesID = species.ID
+LEFT OUTER JOIN lksex ON animal.Sex = lksex.ID
 WHERE Archived = 0 AND Neutered = 0
 AND SpeciesID IN (1,2)
 AND DateOfBirth >= '$ASK DATE Animals born after$'
