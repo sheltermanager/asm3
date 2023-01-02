@@ -1,6 +1,7 @@
 46
 ================
 
+02/03/23 Add Latvian locale
 29/12/22 Audit retention can be controlled via sitedef/config db_retain_audit_days
 28/12/22 Changing configuration counts as a change for publishing purposes
 27/12/22 additional* online fields for lost/found animals, incidents and waiting list
