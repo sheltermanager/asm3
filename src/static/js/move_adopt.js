@@ -397,7 +397,7 @@ $(function() {
                     $("#eventlink").prop("checked", false);
                 }
                 $("#event").empty();
-                if ($("#eventlink").prop("checked") {
+                if ($("#eventlink").prop("checked")) {
                     $("#event").closest("tr").fadeIn();
                     move_adopt.populate_event_dates();
                 }

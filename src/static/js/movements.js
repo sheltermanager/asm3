@@ -976,7 +976,7 @@ $(function() {
         /** Populates the event dropdown with dates within certain range
             (event start <= movement date <= event end)  */
         populate_event_dates: async function(row) {
-            if (!row) { console }
+            if (!row) { log.error("movements.populate_event_dates: row is null"); }
             let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val() + "&eventid=" + row.EVENTID);
             let dates = jQuery.parseJSON(result);
             let dates_range = "";
