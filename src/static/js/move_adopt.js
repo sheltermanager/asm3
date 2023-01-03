@@ -45,6 +45,8 @@ $(function() {
                     { post_field: "homechecked", label: _("Mark this owner homechecked"), type: "check", rowid: "homecheckrow" },
                     { post_field: "movementnumber", label: _("Movement Number"), type: "text", callout: _("A unique number to identify this movement"), rowid: "movementnumberrow" },
                     { post_field: "movementdate", label: _("Date"), type: "date" },
+                    { post_field: "eventlink", label: _("Link to event"), type: "check", hideif: function(){return !common.has_permission("lem") || config.bool("DisableEvents");}},
+                    { post_field: "event", label: _(""), type: "select"},
                     { post_field: "trial", label: _("Trial adoption"), type: "check", rowid: "trialrow1" },
                     { post_field: "trialenddate", label: _("Trial ends on"), type: "date", rowid: "trialrow2" },
                     { post_field: "insurance", label: _("Insurance"), type: "text", rowid: "insurancerow", xbutton: _("Issue a new insurance number for this animal/adoption") },
@@ -80,6 +82,7 @@ $(function() {
         },
 
         bind: function() {
+            
             const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
@@ -378,6 +381,31 @@ $(function() {
             });
             if (!config.bool("UseAutoInsurance")) { $("#button-insurance").button("disable"); }
 
+            // Events related stuff
+            if ($("#eventlink").is(":checked")) {
+                $("#event").closest("tr").fadeIn();
+            }
+            else {
+                $("#event").closest("tr").fadeOut();
+            }
+            $("#eventlink, #movementdate").change(function() {
+                if (config.bool("DisableEvents")) { return; }
+                // event link needs a movement date
+                if ($("#eventlink").prop("checked") && !$("#movementdate").val()) {
+                    validate.notblank([ "movementdate" ]);
+                    header.show_error(_("Complete adoption date before linking to event."));
+                    $("#eventlink").prop("checked", false);
+                }
+                $("#event").empty();
+                if ($("#eventlink").prop("checked") {
+                    $("#event").closest("tr").fadeIn();
+                    move_adopt.populate_event_dates();
+                }
+                else {
+                    $("#event").closest("tr").fadeOut();
+                }
+            });
+
             $("#page1").show();
             $("#page2").hide();
             $("#asm-adopt-accordion").accordion({
@@ -395,6 +423,7 @@ $(function() {
                 $("#trialrow1").show();
                 $("#trialrow2").show();
             }
+
 
             $("#adopt").button().click(async function() {
                 if (!validation()) { return; }
@@ -416,6 +445,26 @@ $(function() {
                     log.error(err, err);
                     $("#adopt").button("enable");
                 }
+            });
+        },
+
+        /** Populates the event dropdown with dates within certain range
+            (event start <= movement date <= event end)  */
+        populate_event_dates: async function() {
+            if (config.bool("DisableEvents")) { return; }
+            let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val());
+            let dates = jQuery.parseJSON(result);
+            let dates_range = "";
+            let loc = [];
+            $.each(dates, function(i, v){
+                if(format.date(v.STARTDATETIME) == format.date(v.ENDDATETIME)) {
+                    dates_range = format.date(v.STARTDATETIME);
+                }
+                else {
+                    dates_range = format.date(v.STARTDATETIME) + " - " + format.date(v.ENDDATETIME);
+                }
+                loc = [v.EVENTADDRESS, v.EVENTTOWN, v.EVENTCOUNTY, v.EVENTCOUNTRY].filter(Boolean).join(", ");
+                $("#event").append("<option value='" + v.ID + "'>" + dates_range + " " + v.EVENTNAME + " " + loc + "</option>");
             });
         },
 

@@ -49,6 +49,8 @@ $(function() {
                     { json_field: "ISTRIAL", post_field: "trial", label: _("Trial Adoption"), tooltip: _("Is this a trial adoption?"), type: "check" },
                     { json_field: "TRIALENDDATE", post_field: "trialenddate", label: _("Trial ends on"), tooltip: _("The date the trial adoption is over"), type: "date" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
+                    { json_field: "ISEVENTLINKED", post_field: "eventlink", label: _("Link to event"), type: "check", hideif: function(){return !common.has_permission("lem") || config.bool("DisableEvents");}},
+                    { json_field: "EVENTID", post_field: "event", label: _(""), type: "select"},
                     { json_field: "RETURNDATE", post_field: "returndate", label: _("Return Date"), type: "date" },
                     { json_field: "RETURNEDREASONID", post_field: "returncategory", label: _("Return Category"), type: "select", options: { displayfield: "REASONNAME", valuefield: "ID", rows: controller.returncategories}},
                     { json_field: "RETURNEDBYOWNERID", post_field: "returnedby", label: _("Returned By"), type: "person" },
@@ -78,8 +80,11 @@ $(function() {
                         },
                         onload: function() {
                             tableform.fields_populate_from_json(dialog.fields, row);
-                            movements.type_change(); 
+                            movements.type_change();
                             movements.returndate_change();
+                            if (!config.bool("DisableEvents") && common.has_permission("lem")) {
+                                movements.populate_event_dates(row);
+                            }
                         }
                     });
                 },
@@ -573,7 +578,7 @@ $(function() {
             if (controller.name == "animal_movements" || controller.name == "person_movements") {
                 $(".asm-tabbar").asmtabs();
             }
-            
+
             $("#emailform").emailform();
 
             tableform.dialog_bind(this.dialog);
@@ -585,6 +590,9 @@ $(function() {
 
             // Watch for return date changing
             $("#returndate").change(movements.returndate_change);
+
+            // Watch for event link toggle
+            $("#movementdate, #eventlink").change(movements.eventlink_change);
 
             // When we choose a person or animal
             $("#person").personchooser().bind("personchooserchange", function(event, rec) { movements.lastperson = rec; movements.warnings(); });
@@ -832,6 +840,25 @@ $(function() {
             if (row.MOVEMENTTYPE == 7 && movements.lastanimal && movements.lastanimal.SPECIESID == 2) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 13, "MOVEMENTTYPE"); }
         },
 
+        /** When the event link checkbox is toggled, load the list of available event dates
+         *  based on the movement date */
+        eventlink_change: function() {
+            if (config.bool("DisableEvents")) { return; } 
+            if ($("#eventlink").prop("checked") && !$("#movementdate").val()){
+                validate.notblank([ "movementdate" ]);
+                tableform.dialog_error(_("Complete adoption date before linking to event."));
+                $("#eventlink").prop("checked", false);
+            }
+            if ($("#eventlink").prop("checked")) {
+                $("#event").closest("tr").fadeIn();
+                movements.populate_event_dates();
+            }
+            else {
+                $("#event").empty();
+                $("#event").closest("tr").fadeOut();
+            }
+        },
+
         /** When the animal changes, set the name of the "Release to Wild" movement 
          *  to "TNR" instead if the species we've been given is a cat.
          */
@@ -913,6 +940,20 @@ $(function() {
             else {
                 $("#person").closest("tr").fadeIn();
             }
+            //show event link only when movement type is adoption
+            if (mt == 1){
+                $("#eventlink").closest("tr").fadeIn();
+            }
+            else{
+                $("#eventlink").closest("tr").fadeOut();
+            }
+            //show event selection if eventlink is checked
+            if (mt == 1 && $("#eventlink").is(":checked")){
+                $("#event").closest("tr").fadeIn();
+            }
+            else{
+                $("#event").closest("tr").fadeOut();
+            }
             movements.warnings();
         },
 
@@ -932,6 +973,28 @@ $(function() {
             }
         },
 
+        /** Populates the event dropdown with dates within certain range
+            (event start <= movement date <= event end)  */
+        populate_event_dates: async function(row) {
+            if (!row) { console }
+            let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val() + "&eventid=" + row.EVENTID);
+            let dates = jQuery.parseJSON(result);
+            let dates_range = "";
+            let loc = [];
+            $("#event").empty();
+            $.each(dates, function(i, v){
+                if (format.date(v.STARTDATETIME) == format.date(v.ENDDATETIME)) {
+                    dates_range = format.date(v.STARTDATETIME);
+                }
+                else {
+                    dates_range = format.date(v.STARTDATETIME) + " - " + format.date(v.ENDDATETIME);
+                }
+                loc = [v.EVENTADDRESS, v.EVENTTOWN, v.EVENTCOUNTY, v.EVENTCOUNTRY].filter(Boolean).join(", ");
+                $("#event").append("<option value='" + v.ID + "'>" + dates_range + " " + v.EVENTNAME + " " + loc + "</option>");
+            });
+            $("#event").val(row.EVENTID);
+        },
+
         destroy: function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#person");
@@ -945,7 +1008,7 @@ $(function() {
 
         name: "movements",
         animation: function() { return controller.name.indexOf("move_book") == 0 ? "book" : "formtab"; },
-        title:  function() { 
+        title:  function() {
             let t = "";
             if (controller.name == "animal_movements") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
