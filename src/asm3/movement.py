@@ -43,6 +43,7 @@ def get_movement_query(dbo):
         "a.Sex, s.SpeciesName, rr.ReasonName AS ReturnedReasonName, " \
         "CASE WHEN m.MovementType = 0 AND m.MovementDate Is Null THEN " \
         "m.ReservationDate ELSE m.MovementDate END AS ActiveDate, " \
+        "CASE WHEN m.EventID > 0 THEN 1 ELSE 0 END AS IsEventLinked, " \
         "CASE " \
         "WHEN m.MovementType = 7 AND a.SpeciesID = 2 THEN " \
         "(SELECT MovementType FROM lksmovementtype WHERE ID=13) " \
@@ -406,6 +407,7 @@ def insert_movement_from_form(dbo, username, post):
         "RetailerID":                   post.integer("retailer"),
         "AnimalID":                     post.integer("animal"),
         "OriginalRetailerMovementID":   post.integer("originalretailermovement"),
+        "EventID":                      post.integer("event"),
         "MovementDate":                 post.date("movementdate"),
         "MovementType":                 post.integer("type"),
         "ReturnDate":                   post.date("returndate"),
@@ -438,13 +440,13 @@ def update_movement_from_form(dbo, username, post):
     validate_movement_form_data(dbo, post)
     movementid = post.integer("movementid")
     oanimalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID=?", [movementid])
-
     dbo.update("adoption", movementid, {
         "AdoptionNumber":               post["adoptionno"],
         "OwnerID":                      post.integer("person"),
         "RetailerID":                   post.integer("retailer"),
         "AnimalID":                     post.integer("animal"),
         "OriginalRetailerMovementID":   post.integer("originalretailermovement"),
+        "EventID":                      post.integer("event"),
         "MovementDate":                 post.date("movementdate"),
         "MovementType":                 post.integer("type"),
         "ReturnDate":                   post.date("returndate"),
@@ -570,7 +572,8 @@ def insert_adoption_from_form(dbo, username, post, creating = [], create_payment
         "returncategory"        : asm3.configuration.default_return_reason(dbo),
         "trial"                 : post["trial"],
         "trialenddate"          : post["trialenddate"],
-        "comments"              : post["comments"]
+        "comments"              : post["comments"],
+        "event"                 : post["event"]
     }
     # Is this animal currently on foster? If so, return the foster
     fm = get_animal_movements(dbo, post.integer("animal"))

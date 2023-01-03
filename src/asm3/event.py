@@ -48,4 +48,8 @@ def insert_event_from_form(dbo, post, username):
     asm3.additional.save_values_for_link(dbo, post, username, pid, "event", True)
     return pid
 
-
+def get_event_dates(dbo, post):
+    return dbo.query("SELECT ev.* "
+                     "FROM event ev "
+                     "WHERE (ev.StartDateTime <= ? AND ? <= ev.EndDateTime) OR ev.ID = ?",
+                     (post.date("movementdate"), post.date("movementdate"), post.integer("eventid")))

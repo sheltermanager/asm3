@@ -4760,6 +4760,11 @@ class movement(JSONEndpoint):
 
     def post_checkout(self, o):
         asm3.movement.send_adoption_checkout(o.dbo, o.user, o.post)
+        
+    def post_eventlink(self, o):
+        self.check(asm3.users.LINK_EVENT_MOVEMENT)
+        e = asm3.event.get_event_dates(o.dbo, o.post)
+        return asm3.utils.json(e);
 
 class onlineform_incoming(JSONEndpoint):
     url = "onlineform_incoming"

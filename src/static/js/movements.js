@@ -49,6 +49,8 @@ $(function() {
                     { json_field: "ISTRIAL", post_field: "trial", label: _("Trial Adoption"), tooltip: _("Is this a trial adoption?"), type: "check" },
                     { json_field: "TRIALENDDATE", post_field: "trialenddate", label: _("Trial ends on"), tooltip: _("The date the trial adoption is over"), type: "date" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
+                    { json_field: "ISEVENTLINKED", post_field: "eventlink", label: _("Link to event"), type: "check", hideif: function(){return !common.has_permission("lem") || config.bool("DisableEvents");}},
+                    { json_field: "EVENTID", post_field: "event", label: _(""), type: "select"},
                     { json_field: "RETURNDATE", post_field: "returndate", label: _("Return Date"), type: "date" },
                     { json_field: "RETURNEDREASONID", post_field: "returncategory", label: _("Return Category"), type: "select", options: { displayfield: "REASONNAME", valuefield: "ID", rows: controller.returncategories}},
                     { json_field: "RETURNEDBYOWNERID", post_field: "returnedby", label: _("Returned By"), type: "person" },
@@ -78,8 +80,10 @@ $(function() {
                         },
                         onload: function() {
                             tableform.fields_populate_from_json(dialog.fields, row);
-                            movements.type_change(); 
+                            movements.type_change();
                             movements.returndate_change();
+                            if(common.has_permission("lem"))
+                                movements.event_dates(row);
                         }
                     });
                 },
@@ -569,11 +573,41 @@ $(function() {
         },
 
         bind: function() {
+             //callback when eventlink changed its status
+             $("#eventlink").change(function(){
+                // event link needs a movement date
+                if (this.checked && $("#movementdate").val() == ""){
+                    validate.notblank([ "movementdate" ]);
+                    tableform.dialog_error(_("Fill out adoption date before linking to event."));
+                    this.checked = false;
+                }
+                if (this.checked){
+                    $("#event").closest("tr").fadeIn();
+                    movements.event_dates();
+                }
+                else{
+                    $("#event").empty();
+                    $("#event").closest("tr").fadeOut();
+                }
+            });
+            //callback when movementdate is changed
+            $("#movementdate").change(function(){
+                // event link needs a movement date
+                if ($("#movementdate").val() == ""){
+                    validate.notblank([ "movementdate" ]);
+                    tableform.dialog_error(_("Fill out adoption date before linking to event."));
+                    $("#eventlink")[0].checked = false;
+                }
+                if($("#eventlink")[0].checked){
+                    movements.event_dates();
+                }
+
+            });
 
             if (controller.name == "animal_movements" || controller.name == "person_movements") {
                 $(".asm-tabbar").asmtabs();
             }
-            
+
             $("#emailform").emailform();
 
             tableform.dialog_bind(this.dialog);
@@ -913,6 +947,20 @@ $(function() {
             else {
                 $("#person").closest("tr").fadeIn();
             }
+            //show event link only when movement type is adoption
+            if (mt == 1){
+                $("#eventlink").closest("tr").fadeIn();
+            }
+            else{
+                $("#eventlink").closest("tr").fadeOut();
+            }
+            //show event selection if eventlink is checked
+            if (mt == 1 && $("#eventlink").is(":checked")){
+                $("#event").closest("tr").fadeIn();
+            }
+            else{
+                $("#event").closest("tr").fadeOut();
+            }
             movements.warnings();
         },
 
@@ -932,6 +980,31 @@ $(function() {
             }
         },
 
+        /** Fires when the movement date is changed or event link is checked
+            populates the event dropdown with dates within certain range
+            (event start <= movement date <= event end)  */
+        event_dates: async function(row=null){
+            if(row != null && row.EVENTID > 0)
+                var eventid = row.EVENTID;
+            else
+                var eventid = "";
+            let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val() + "&eventid=" + eventid);
+            let dates = jQuery.parseJSON(result);
+            let dates_range = "";
+            var location = [];
+            $("#event").empty();
+            $.each(dates, function(i, v){
+                if(format.date(v.STARTDATETIME) == format.date(v.ENDDATETIME))
+                    dates_range = format.date(v.STARTDATETIME);
+                else
+                    dates_range = format.date(v.STARTDATETIME) + " - " + format.date(v.ENDDATETIME);
+                location = [v.EVENTADDRESS, v.EVENTTOWN, v.EVENTCOUNTY, v.EVENTCOUNTRY].filter(Boolean).join(", ");
+                $("#event").append("<option value='" + v.ID + "'>" + dates_range + " " + v.EVENTNAME + " " + location + "</option>");
+            });
+            if(eventid != "")
+                $("#event").val(row.EVENTID);
+        },
+
         destroy: function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#person");
@@ -945,7 +1018,7 @@ $(function() {
 
         name: "movements",
         animation: function() { return controller.name.indexOf("move_book") == 0 ? "book" : "formtab"; },
-        title:  function() { 
+        title:  function() {
             let t = "";
             if (controller.name == "animal_movements") {
                 t = common.substitute(_("{0} - {1} ({2} {3} aged {4})"), { 
