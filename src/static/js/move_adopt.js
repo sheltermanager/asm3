@@ -82,43 +82,7 @@ $(function() {
         },
 
         bind: function() {
-            if($("#eventlink").is(":checked"))
-                $("#event").closest("tr").fadeIn();
-            else
-                $("#event").closest("tr").fadeOut();
-
-            //callback when eventlink changed its status
-             $("#eventlink").change(function(){
-                // event link needs a movement date
-                if (this.checked && $("#movementdate").val() == ""){
-                    validate.notblank([ "movementdate" ]);
-                    tableform.dialog_error(_("Fill out adoption date before linking to event."));
-                    this.checked = false;
-                }
-                $("#event").empty();
-                if (this.checked){
-                    $("#event").closest("tr").fadeIn();
-                    move_adopt.event_dates();
-                }
-                else
-                    $("#event").closest("tr").fadeOut();
-
-            });
-            //callback when movementdate is changed
-            $("#movementdate").change(function(){
-                $("#event").empty();
-                // event link needs a movement date
-                if ($("#movementdate").val() == ""){
-                    validate.notblank([ "movementdate" ]);
-                    tableform.dialog_error(_("Fill out adoption date before linking to event."));
-                    $("#eventlink")[0].checked = false;
-                }
-                if($("#eventlink")[0].checked){
-                    move_adopt.event_dates();
-                }
-
-            });
-
+            
             const validation = function() {
                 // Remove any previous errors
                 header.hide_error();
@@ -417,6 +381,31 @@ $(function() {
             });
             if (!config.bool("UseAutoInsurance")) { $("#button-insurance").button("disable"); }
 
+            // Events related stuff
+            if ($("#eventlink").is(":checked")) {
+                $("#event").closest("tr").fadeIn();
+            }
+            else {
+                $("#event").closest("tr").fadeOut();
+            }
+            $("#eventlink, #movementdate").change(function() {
+                if (config.bool("DisableEvents")) { return; }
+                // event link needs a movement date
+                if ($("#eventlink").prop("checked") && !$("#movementdate").val()) {
+                    validate.notblank([ "movementdate" ]);
+                    header.show_error(_("Complete adoption date before linking to event."));
+                    $("#eventlink").prop("checked", false);
+                }
+                $("#event").empty();
+                if ($("#eventlink").prop("checked") {
+                    $("#event").closest("tr").fadeIn();
+                    move_adopt.populate_event_dates();
+                }
+                else {
+                    $("#event").closest("tr").fadeOut();
+                }
+            });
+
             $("#page1").show();
             $("#page2").hide();
             $("#asm-adopt-accordion").accordion({
@@ -459,21 +448,23 @@ $(function() {
             });
         },
 
-        /** Fires when the movement date is changed or event link is checked
-            populates the event dropdown with dates within certain range
+        /** Populates the event dropdown with dates within certain range
             (event start <= movement date <= event end)  */
-        event_dates: async function(){
+        populate_event_dates: async function() {
+            if (config.bool("DisableEvents")) { return; }
             let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val());
             let dates = jQuery.parseJSON(result);
             let dates_range = "";
-            var location = [];
+            let loc = [];
             $.each(dates, function(i, v){
-                if(format.date(v.STARTDATETIME) == format.date(v.ENDDATETIME))
+                if(format.date(v.STARTDATETIME) == format.date(v.ENDDATETIME)) {
                     dates_range = format.date(v.STARTDATETIME);
-                else
+                }
+                else {
                     dates_range = format.date(v.STARTDATETIME) + " - " + format.date(v.ENDDATETIME);
-                location = [v.EVENTADDRESS, v.EVENTTOWN, v.EVENTCOUNTY, v.EVENTCOUNTRY].filter(Boolean).join(", ");
-                $("#event").append("<option value='" + v.ID + "'>" + dates_range + " " + v.EVENTNAME + " " + location + "</option>");
+                }
+                loc = [v.EVENTADDRESS, v.EVENTTOWN, v.EVENTCOUNTY, v.EVENTCOUNTRY].filter(Boolean).join(", ");
+                $("#event").append("<option value='" + v.ID + "'>" + dates_range + " " + v.EVENTNAME + " " + loc + "</option>");
             });
         },
 

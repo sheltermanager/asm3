@@ -82,8 +82,9 @@ $(function() {
                             tableform.fields_populate_from_json(dialog.fields, row);
                             movements.type_change();
                             movements.returndate_change();
-                            if(common.has_permission("lem"))
-                                movements.event_dates(row);
+                            if (!config.bool("DisableEvents") && common.has_permission("lem")) {
+                                movements.populate_event_dates(row);
+                            }
                         }
                     });
                 },
@@ -573,36 +574,6 @@ $(function() {
         },
 
         bind: function() {
-             //callback when eventlink changed its status
-             $("#eventlink").change(function(){
-                // event link needs a movement date
-                if (this.checked && $("#movementdate").val() == ""){
-                    validate.notblank([ "movementdate" ]);
-                    tableform.dialog_error(_("Fill out adoption date before linking to event."));
-                    this.checked = false;
-                }
-                if (this.checked){
-                    $("#event").closest("tr").fadeIn();
-                    movements.event_dates();
-                }
-                else{
-                    $("#event").empty();
-                    $("#event").closest("tr").fadeOut();
-                }
-            });
-            //callback when movementdate is changed
-            $("#movementdate").change(function(){
-                // event link needs a movement date
-                if ($("#movementdate").val() == ""){
-                    validate.notblank([ "movementdate" ]);
-                    tableform.dialog_error(_("Fill out adoption date before linking to event."));
-                    $("#eventlink")[0].checked = false;
-                }
-                if($("#eventlink")[0].checked){
-                    movements.event_dates();
-                }
-
-            });
 
             if (controller.name == "animal_movements" || controller.name == "person_movements") {
                 $(".asm-tabbar").asmtabs();
@@ -619,6 +590,9 @@ $(function() {
 
             // Watch for return date changing
             $("#returndate").change(movements.returndate_change);
+
+            // Watch for event link toggle
+            $("#movementdate, #eventlink").change(movements.eventlink_change);
 
             // When we choose a person or animal
             $("#person").personchooser().bind("personchooserchange", function(event, rec) { movements.lastperson = rec; movements.warnings(); });
@@ -866,6 +840,25 @@ $(function() {
             if (row.MOVEMENTTYPE == 7 && movements.lastanimal && movements.lastanimal.SPECIESID == 2) { row.MOVEMENTNAME = common.get_field(controller.movementtypes, 13, "MOVEMENTTYPE"); }
         },
 
+        /** When the event link checkbox is toggled, load the list of available event dates
+         *  based on the movement date */
+        eventlink_change: function() {
+            if (config.bool("DisableEvents")) { return; } 
+            if ($("#eventlink").prop("checked") && !$("#movementdate").val()){
+                validate.notblank([ "movementdate" ]);
+                tableform.dialog_error(_("Complete adoption date before linking to event."));
+                $("#eventlink").prop("checked", false);
+            }
+            if ($("#eventlink").prop("checked")) {
+                $("#event").closest("tr").fadeIn();
+                movements.populate_event_dates();
+            }
+            else {
+                $("#event").empty();
+                $("#event").closest("tr").fadeOut();
+            }
+        },
+
         /** When the animal changes, set the name of the "Release to Wild" movement 
          *  to "TNR" instead if the species we've been given is a cat.
          */
@@ -980,29 +973,26 @@ $(function() {
             }
         },
 
-        /** Fires when the movement date is changed or event link is checked
-            populates the event dropdown with dates within certain range
+        /** Populates the event dropdown with dates within certain range
             (event start <= movement date <= event end)  */
-        event_dates: async function(row=null){
-            if(row != null && row.EVENTID > 0)
-                var eventid = row.EVENTID;
-            else
-                var eventid = "";
-            let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val() + "&eventid=" + eventid);
+        populate_event_dates: async function(row) {
+            if (!row) { console }
+            let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val() + "&eventid=" + row.EVENTID);
             let dates = jQuery.parseJSON(result);
             let dates_range = "";
-            var location = [];
+            let loc = [];
             $("#event").empty();
             $.each(dates, function(i, v){
-                if(format.date(v.STARTDATETIME) == format.date(v.ENDDATETIME))
+                if (format.date(v.STARTDATETIME) == format.date(v.ENDDATETIME)) {
                     dates_range = format.date(v.STARTDATETIME);
-                else
+                }
+                else {
                     dates_range = format.date(v.STARTDATETIME) + " - " + format.date(v.ENDDATETIME);
-                location = [v.EVENTADDRESS, v.EVENTTOWN, v.EVENTCOUNTY, v.EVENTCOUNTRY].filter(Boolean).join(", ");
-                $("#event").append("<option value='" + v.ID + "'>" + dates_range + " " + v.EVENTNAME + " " + location + "</option>");
+                }
+                loc = [v.EVENTADDRESS, v.EVENTTOWN, v.EVENTCOUNTY, v.EVENTCOUNTRY].filter(Boolean).join(", ");
+                $("#event").append("<option value='" + v.ID + "'>" + dates_range + " " + v.EVENTNAME + " " + loc + "</option>");
             });
-            if(eventid != "")
-                $("#event").val(row.EVENTID);
+            $("#event").val(row.EVENTID);
         },
 
         destroy: function() {
