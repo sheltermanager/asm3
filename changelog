@@ -1,6 +1,7 @@
 46
 ================
 
+03/03/23 Link adoption to event (Roman+Saggi) #1207
 02/03/23 Add Latvian locale
 29/12/22 Audit retention can be controlled via sitedef/config db_retain_audit_days
 28/12/22 Changing configuration counts as a change for publishing purposes
