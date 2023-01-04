@@ -1,6 +1,7 @@
 46
 ================
 
+04/01/23 Stop pointer events trying to scroll the screen #1188
 04/01/23 Shelter view mode to show fosters separate from sites #1141
 04/01/23 Stock usage dropdown, make location suffix so typing searches names #1208
 03/01/23 Link adoption to event (Roman+Saggi) #1207

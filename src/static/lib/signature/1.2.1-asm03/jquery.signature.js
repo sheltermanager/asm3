@@ -190,35 +190,58 @@ $(selector).signature({color: 'blue', guideline: true}) */
 		},
 
         _bindEvents: function() {
-            // Listen for pointer or touch events on this.element and dispatch
+            // Listen for pointer, touch or mouse events on this.element and dispatch
             // to lineStart, lineDraw and lineStop below.
             var dragging = false, self = this;
             if ("ontouchend" in document) {
                 this.element.on("touchstart", function(e) {
                     dragging = true;
                     self._lineStart.call(self, e.changedTouches[0]);
+                    e.preventDefault();
                 });
                 this.element.on("touchend", function(e) {
                     dragging = false;
                     self._lineStop.call(self, e.changedTouches[0]);
+                    e.preventDefault();
                 });
                 this.element.on("touchmove", function(e) {
                     self._lineDraw.call(self, e.changedTouches[0]);
+                    e.preventDefault();
                 });
             }
             else if ("onpointerdown" in document) {
                 this.element.on("pointerdown", function(e) {
                     dragging = true;
                     self._lineStart.call(self, e);
+                    e.preventDefault();
                 });
-                this.element.on("pointerup pointerout", function(e) {
+                this.element.on("pointerup", function(e) {
                     dragging = false;
                     self._lineStop.call(self, e);
+                    e.preventDefault();
                 });
                 this.element.on("pointermove", function(e) {
                     self._lineDraw.call(self, e);
+                    e.preventDefault();
                 });
             }
+            else {
+                this.element.on("mousedown", function(e) {
+                    dragging = true;
+                    self._lineStart.call(self, e);
+                    e.preventDefault();
+                });
+                this.element.on("mouseup", function(e) {
+                    dragging = false;
+                    self._lineStop.call(self, e);
+                    e.preventDefault();
+                });
+                this.element.on("mousemove", function(e) {
+                    self._lineDraw.call(self, e);
+                    e.preventDefault();
+                });
+            }
+
         },
 
 		/** Determine if dragging can start.
