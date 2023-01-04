@@ -1,7 +1,7 @@
 46
 ================
 
-04/01/23 Stock usage dropdown, make location suffix so typing searches names
+04/01/23 Stock usage dropdown, make location suffix so typing searches names #1208
 03/01/23 Link adoption to event (Roman+Saggi) #1207
 02/01/23 Add Latvian locale
 29/12/22 Audit retention can be controlled via sitedef/config db_retain_audit_days
