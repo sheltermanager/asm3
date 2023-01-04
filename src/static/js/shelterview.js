@@ -617,8 +617,8 @@ $(function() {
         add_site_foster: function() {
             $.each(controller.animals, function(i, a) {
                 a.SITEFOSTER = a.SITENAME;
-                if (a.ARCHIVED == 0 && a.ACTIVEMOVEMENTTYPE == 2) { a.SITEFOSTER = _("Foster"); }
-                if (a.ARCHIVED == 0 && a.ACTIVEMOVEMENTTYPE == 1) { a.SITEFOSTER = _("Trial Adoption"); }
+                // Copy the displaylocationname to use instead of site, eg Foster/Trial Adoption/Retailer/etc
+                if (a.ARCHIVED == 0 && a.ACTIVEMOVEMENTTYPE) { a.SITEFOSTER = a.DISPLAYLOCATIONNAME; }
             });
         },
 
