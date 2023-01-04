@@ -55,8 +55,8 @@ def get_stock_items(dbo):
         "WHERE sv.Balance > 0 " \
         "ORDER BY sv.StockLocationID, sv.Name")
     for r in rows:
-        r.ITEMNAME = "%s - %s %s %s (%g/%g)" % (r.LOCATIONNAME, r.NAME, r.BATCHNUMBER, 
-            python2display(dbo.locale, r.EXPIRY), r.BALANCE, r.TOTAL)
+        r.ITEMNAME = "%s %s %s (%g/%g) [%s]" % (r.NAME, r.BATCHNUMBER, 
+            python2display(dbo.locale, r.EXPIRY), r.BALANCE, r.TOTAL, r.LOCATIONNAME)
     return rows
 
 def get_stock_locations_totals(dbo):

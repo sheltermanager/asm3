@@ -49,7 +49,7 @@ def insert_event_from_form(dbo, post, username):
     return pid
 
 def get_event_dates(dbo, post):
-    return dbo.query("SELECT ev.* "
-                     "FROM event ev "
-                     "WHERE (ev.StartDateTime <= ? AND ? <= ev.EndDateTime) OR ev.ID = ?",
+    return dbo.query("SELECT ev.* FROM event ev " \
+                     "WHERE (ev.StartDateTime <= ? AND ? <= ev.EndDateTime) OR ev.ID = ?", \
                      (post.date("movementdate"), post.date("movementdate"), post.integer("eventid")))
+
