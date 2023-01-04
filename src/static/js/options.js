@@ -1393,6 +1393,7 @@ $(function() {
                 '<option value="sex">' + _("Sex") + '</option>',
                 '<option value="sexspecies">' + _("Sex and Species") + '</option>',
                 '<option value="site">' + _("Site") + '</option>',
+                '<option value="sitefoster">' + _("Site (fosters separate)") + '</option>',
                 '<option value="species">' + _("Species") + '</option>',
                 '<option value="speciesbreed">' + _("Species and Breed") + '</option>',
                 '<option value="speciescode">' + _("Species and Code") + '</option>',

@@ -548,6 +548,9 @@ $(function() {
             else if (viewmode == "site") {
                 this.render_view("SITENAME", "DISPLAYLOCATIONNAME", "SITENAME,DISPLAYLOCATIONNAME,ANIMALNAME", false, false);
             }
+            else if (viewmode == "sitefoster") {
+                this.render_view("SITEFOSTER", "DISPLAYLOCATIONNAME", "SITEFOSTER,DISPLAYLOCATIONNAME,ANIMALNAME", false, false);
+            }
             else if (viewmode == "species") {
                 this.render_view("SPECIESNAME", "", "SPECIESNAME,ANIMALNAME", false, false);
             }
@@ -610,6 +613,14 @@ $(function() {
             });
         },
 
+        /** Adds the SITEFOSTER column */
+        add_site_foster: function() {
+            $.each(controller.animals, function(i, a) {
+                a.SITEFOSTER = a.SITENAME;
+                if (a.ARCHIVED == 0 && a.ACTIVEMOVEMENTTYPE == 2) { a.SITEFOSTER = _("Foster"); }
+            });
+        },
+
         render: function() {
             let h = [];
             h.push('<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">');
@@ -639,6 +650,7 @@ $(function() {
             h.push('<option value="sex">' + _("Sex") + '</option>');
             h.push('<option value="sexspecies">' + _("Sex and Species") + '</option>');
             if (config.bool("MultiSiteEnabled")) { h.push('<option value="site">' + _("Site") + '</option>'); }
+            if (config.bool("MultiSiteEnabled")) { h.push('<option value="sitefoster">' + _("Site (fosters separate)") + '</option>'); }
             h.push('<option value="species">' + _("Species") + '</option>');
             h.push('<option value="speciesbreed">' + _("Species and Breed") + '</option>');
             h.push('<option value="speciescode">' + _("Species and Code") + '</option>');
@@ -666,6 +678,7 @@ $(function() {
             shelterview.add_adoption_status();
             shelterview.add_first_letter();
             shelterview.add_neutered_status();
+            shelterview.add_site_foster();
             // Clean up any null fields that we might want to group on later
             $.each(controller.animals, function(i, v) {
                 if (!v.CURRENTOWNERNAME) {
