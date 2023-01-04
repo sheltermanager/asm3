@@ -36,23 +36,29 @@ $(function() {
                 fields: [
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal" },
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person" },
-                    { json_field: "RETAILERID", post_field: "retailer", label: _("Retailer"), type: "person", personfilter: "retailer", hideif: function() { return config.bool("DisableRetailer"); } },
+                    { json_field: "RETAILERID", post_field: "retailer", label: _("Retailer"), type: "person", personfilter: "retailer", 
+                        hideif: function() { return config.bool("DisableRetailer"); } },
                     { json_field: "ADOPTIONNUMBER", post_field: "adoptionno", label: _("Movement Number"), tooltip: _("A unique number to identify this movement"), type: "text" },
-                    { json_field: "INSURANCENUMBER", post_field: "insurance", label: _("Insurance"), tooltip: _("If the shelter provides initial insurance cover to new adopters, the policy number"), type: "text" },
+                    { json_field: "INSURANCENUMBER", post_field: "insurance", label: _("Insurance"), 
+                        tooltip: _("If the shelter provides initial insurance cover to new adopters, the policy number"), type: "text" },
                     { json_field: "RESERVATIONDATE", post_field: "reservation", label: _("Reservation Date"), tooltip: _("The date this animal was reserved"), type: "datetime" },
-                    { json_field: "RESERVATIONSTATUSID", post_field: "reservationstatus", label: _("Reservation Status"), type: "select", options: { displayfield: "STATUSNAME", valuefield: "ID", rows: controller.reservationstatuses }},
+                    { json_field: "RESERVATIONSTATUSID", post_field: "reservationstatus", label: _("Reservation Status"), type: "select", 
+                        options: { displayfield: "STATUSNAME", valuefield: "ID", rows: controller.reservationstatuses }},
                     { json_field: "RESERVATIONCANCELLEDDATE", post_field: "reservationcancelled", label: _("Reservation Cancelled"), type: "date" },
                     { type: "nextcol" },
-                    { json_field: "MOVEMENTTYPE", post_field: "type", label: _("Movement Type"), type: "select", options: { displayfield: "MOVEMENTTYPE", valuefield: "ID", rows: choosetypes }},
+                    { json_field: "MOVEMENTTYPE", post_field: "type", label: _("Movement Type"), type: "select", 
+                        options: { displayfield: "MOVEMENTTYPE", valuefield: "ID", rows: choosetypes }},
                     { json_field: "MOVEMENTDATE", post_field: "movementdate", label: _("Movement Date"), type: "date" },
                     { json_field: "ISPERMANENTFOSTER", post_field: "permanentfoster", label: _("Permanent Foster"), tooltip: _("Is this a permanent foster?"), type: "check" },
                     { json_field: "ISTRIAL", post_field: "trial", label: _("Trial Adoption"), tooltip: _("Is this a trial adoption?"), type: "check" },
                     { json_field: "TRIALENDDATE", post_field: "trialenddate", label: _("Trial ends on"), tooltip: _("The date the trial adoption is over"), type: "date" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" },
-                    { json_field: "ISEVENTLINKED", post_field: "eventlink", label: _("Link to event"), type: "check", hideif: function(){return !common.has_permission("lem") || config.bool("DisableEvents");}},
+                    { json_field: "ISEVENTLINKED", post_field: "eventlink", label: _("Link to event"), type: "check", 
+                        hideif: function() { return !common.has_permission("lem") || config.bool("DisableEvents"); }},
                     { json_field: "EVENTID", post_field: "event", label: _(""), type: "select"},
                     { json_field: "RETURNDATE", post_field: "returndate", label: _("Return Date"), type: "date" },
-                    { json_field: "RETURNEDREASONID", post_field: "returncategory", label: _("Return Category"), type: "select", options: { displayfield: "REASONNAME", valuefield: "ID", rows: controller.returncategories}},
+                    { json_field: "RETURNEDREASONID", post_field: "returncategory", label: _("Return Category"), type: "select", 
+                        options: { displayfield: "REASONNAME", valuefield: "ID", rows: controller.returncategories }},
                     { json_field: "RETURNEDBYOWNERID", post_field: "returnedby", label: _("Returned By"), type: "person" },
                     { json_field: "REASONFORRETURN", post_field: "reason", label: _("Reason"), type: "textarea" }
                 ]
@@ -940,18 +946,18 @@ $(function() {
             else {
                 $("#person").closest("tr").fadeIn();
             }
-            //show event link only when movement type is adoption
-            if (mt == 1){
+            // show event link only when movement type is adoption
+            if (mt == 1) {
                 $("#eventlink").closest("tr").fadeIn();
             }
-            else{
+            else {
                 $("#eventlink").closest("tr").fadeOut();
             }
-            //show event selection if eventlink is checked
-            if (mt == 1 && $("#eventlink").is(":checked")){
+            // show event selection if eventlink is checked
+            if (mt == 1 && $("#eventlink").is(":checked")) {
                 $("#event").closest("tr").fadeIn();
             }
-            else{
+            else {
                 $("#event").closest("tr").fadeOut();
             }
             movements.warnings();
