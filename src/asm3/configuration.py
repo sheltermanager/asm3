@@ -3,7 +3,7 @@ import asm3.audit
 import asm3.cachedisk
 import asm3.i18n
 
-from asm3.sitedefs import LOCALE, TIMEZONE
+from asm3.sitedefs import LOCALE, TIMEZONE, WATERMARK_X_OFFSET, WATERMARK_Y_OFFSET, WATERMARK_FONT_FILE, WATERMARK_FONT_SHADOWCOLOR, WATERMARK_FONT_FILLCOLOR, WATERMARK_FONT_STROKE, WATERMARK_FONT_OFFSET
 
 QUICKLINKS_SET = {
     1: ("animal_find", "asm-icon-animal-find", asm3.i18n._("Find animal")),
@@ -397,6 +397,14 @@ DEFAULTS = {
     "WarnOOPostcode": "Yes",
     "WarnOSMedical": "Yes",
     "WarnSimilarAnimalName": "Yes",
+    "WatermarkFontFile": WATERMARK_FONT_FILE,
+    "WatermarkFontFillColor": WATERMARK_FONT_FILLCOLOR,
+    "WatermarkFontMaxSize": "180",
+    "WatermarkFontOffset": WATERMARK_FONT_OFFSET,
+    "WatermarkFontShadowColor": WATERMARK_FONT_SHADOWCOLOR,
+    "WatermarkFontStroke": WATERMARK_FONT_STROKE,
+    "WatermarkXOffset": WATERMARK_X_OFFSET,
+    "WatermarkYOffset": WATERMARK_Y_OFFSET,
     "WeightChangeLog": "Yes",
     "WeightChangeLogType": "4",
 }
@@ -1497,6 +1505,30 @@ def waiting_list_urgency_update_period(dbo):
 
 def warn_no_homecheck(dbo):
     return cboolean(dbo, "WarnNoHomeCheck", DEFAULTS["WarnNoHomeCheck"] == "Yes")
+
+def watermark_x_offset(dbo):
+    return cint(dbo, "WatermarkXOffset", DEFAULTS["WatermarkXOffset"])
+
+def watermark_y_offset(dbo):
+    return cint(dbo, "WatermarkYOffset", DEFAULTS["WatermarkYOffset"])
+
+def watermark_font_stroke(dbo):
+    return cint(dbo, "WatermarkFontStroke", DEFAULTS["WatermarkFontStroke"])
+
+def watermark_font_fill_color(dbo):
+    return cstring(dbo, "WatermarkFontFillColor", DEFAULTS["WatermarkFontFillColor"])
+
+def watermark_font_shadow_color(dbo):
+    return cstring(dbo, "WatermarkFontShadowColor", DEFAULTS["WatermarkFontShadowColor"])
+
+def watermark_font_offset(dbo):
+    return cint(dbo, "WatermarkFontOffset", DEFAULTS["WatermarkFontOffset"])
+
+def watermark_font_file(dbo):
+    return cstring(dbo, "WatermarkFontFile", DEFAULTS["WatermarkFontFile"])
+
+def watermark_font_max_size(dbo):
+    return cint(dbo, "WatermarkFontMaxSize", DEFAULTS["WatermarkFontMaxSize"])
 
 def weight_change_log(dbo):
     return cboolean(dbo, "WeightChangeLog", DEFAULTS["WeightChangeLog"] == "Yes")

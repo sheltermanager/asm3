@@ -6,7 +6,7 @@ import asm3.configuration
 import asm3.dbfs
 import asm3.log
 import asm3.utils
-from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, WATERMARK_X_OFFSET, WATERMARK_Y_OFFSET, WATERMARK_FONT_FILE, WATERMARK_FONT_SHADOWCOLOR, WATERMARK_FONT_FILLCOLOR, WATERMARK_FONT_STROKE, WATERMARK_FONT_OFFSET
+from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD
 
 import datetime
 import os
@@ -710,7 +710,7 @@ def watermark_available(dbo):
     """
     Returns true if we can handle watermarking
     """
-    return asm3.dbfs.file_exists(dbo, "watermark.png") and os.path.exists(WATERMARK_FONT_FILE)
+    return asm3.dbfs.file_exists(dbo, "watermark.png") and os.path.exists(asm3.configuration.watermark_font_file(dbo))
 
 def watermark_media(dbo, username, mid):
     """
@@ -1027,29 +1027,31 @@ def watermark_with_transparency(dbo, imagedata, animalname):
        
         width, height = base_image.size
         wm_width, wm_height = watermark.size
-        x_offset = WATERMARK_X_OFFSET
-        y_offset = WATERMARK_Y_OFFSET
+        x_offset = asm3.configuration.watermark_x_offset(dbo)
+        y_offset = asm3.configuration.watermark_y_offset(dbo)
         x_position = width - (wm_width + x_offset)
         y_position = height - (wm_height + y_offset)
         position = (x_position,y_position)
-        shadowcolor = WATERMARK_FONT_SHADOWCOLOR
-        fillcolor = WATERMARK_FONT_FILLCOLOR
-        stroke = WATERMARK_FONT_STROKE
+        shadowcolor = asm3.configuration.watermark_font_shadow_color(dbo)
+        fillcolor = asm3.configuration.watermark_font_fill_color(dbo)
+        stroke = asm3.configuration.watermark_font_stroke(dbo)
         transparent = Image.new('RGB', (width, height), (0,0,0,0))
         transparent.paste(base_image, (0,0))
         transparent.paste(watermark, position, mask=watermark)
         draw = ImageDraw.Draw(transparent)
 
-        font_offset = WATERMARK_FONT_OFFSET
+        font_offset = asm3.configuration.watermark_font_offset(dbo)
+        font_maxsize = asm3.configuration.watermark_font_max_size(dbo)
+        font_file = asm3.configuration.watermark_font_file(dbo)
 
-        for fontsize in range(20, 180, 5):
-            font = ImageFont.truetype(WATERMARK_FONT_FILE, fontsize)
+        for fontsize in range(20, font_maxsize, 5):
+            font = ImageFont.truetype(font_file, fontsize)
             font_dimensions = draw.textsize(animalname,font=font)
             if font_dimensions[0]+font_offset > (width-wm_width-font_offset):
                 fontsize = fontsize - 10
                 break
 
-        font = ImageFont.truetype(WATERMARK_FONT_FILE, fontsize)
+        font = ImageFont.truetype(font_file, fontsize)
         font_position = height - (font_dimensions[1] + y_offset)
 
         draw.text((font_offset-stroke,font_position-stroke), animalname, font=font, fill=shadowcolor)
