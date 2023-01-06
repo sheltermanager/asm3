@@ -475,8 +475,8 @@ def get_users_and_roles(dbo):
     Returns a single list of all users and roles together, with USERNAME containing the
     name of both roles and users.
     """
-    return dbo.query("SELECT UserName, 0 AS IsRole, SuperUser FROM users " \
-        "UNION SELECT Rolename AS UserName, 1 AS IsRole, 0 AS SuperUser FROM role ORDER BY UserName")
+    return dbo.query("SELECT ID, UserName, 0 AS IsRole, SuperUser FROM users " \
+        "UNION SELECT ID, Rolename AS UserName, 1 AS IsRole, 0 AS SuperUser FROM role ORDER BY UserName")
 
 def get_users(dbo, user=""):
     """
