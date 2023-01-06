@@ -6,7 +6,7 @@ import asm3.configuration
 import asm3.dbfs
 import asm3.log
 import asm3.utils
-from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD
+from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, WATERMARK_FONT_BASEDIRECTORY
 
 import datetime
 import os
@@ -710,7 +710,7 @@ def watermark_available(dbo):
     """
     Returns true if we can handle watermarking
     """
-    return asm3.dbfs.file_exists(dbo, "watermark.png") and os.path.exists(asm3.configuration.watermark_font_file(dbo))
+    return asm3.dbfs.file_exists(dbo, "watermark.png") and os.path.exists(os.path.join(WATERMARK_FONT_BASEDIRECTORY, asm3.configuration.watermark_font_file(dbo)))
 
 def watermark_media(dbo, username, mid):
     """
@@ -1041,8 +1041,8 @@ def watermark_with_transparency(dbo, imagedata, animalname):
         draw = ImageDraw.Draw(transparent)
 
         font_offset = asm3.configuration.watermark_font_offset(dbo)
-        font_maxsize = asm3.configuration.watermark_font_max_size(dbo)
-        font_file = asm3.configuration.watermark_font_file(dbo)
+        font_maxsize = asm3.configuration.watermark_font_max_size(dbo)       
+        font_file = os.path.join(WATERMARK_FONT_BASEDIRECTORY, asm3.configuration.watermark_font_file(dbo))
 
         for fontsize in range(20, font_maxsize, 5):
             font = ImageFont.truetype(font_file, fontsize)

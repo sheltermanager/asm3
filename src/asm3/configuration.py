@@ -3,7 +3,9 @@ import asm3.audit
 import asm3.cachedisk
 import asm3.i18n
 
-from asm3.sitedefs import LOCALE, TIMEZONE, WATERMARK_X_OFFSET, WATERMARK_Y_OFFSET, WATERMARK_FONT_FILE, WATERMARK_FONT_SHADOWCOLOR, WATERMARK_FONT_FILLCOLOR, WATERMARK_FONT_STROKE, WATERMARK_FONT_OFFSET
+import os
+
+from asm3.sitedefs import LOCALE, TIMEZONE, WATERMARK_FONT_BASEDIRECTORY
 
 QUICKLINKS_SET = {
     1: ("animal_find", "asm-icon-animal-find", asm3.i18n._("Find animal")),
@@ -397,14 +399,14 @@ DEFAULTS = {
     "WarnOOPostcode": "Yes",
     "WarnOSMedical": "Yes",
     "WarnSimilarAnimalName": "Yes",
-    "WatermarkFontFile": WATERMARK_FONT_FILE,
-    "WatermarkFontFillColor": WATERMARK_FONT_FILLCOLOR,
+    "WatermarkFontFile": "dejavu/DejaVuSans-Bold.ttf",
+    "WatermarkFontFillColor": "white",
     "WatermarkFontMaxSize": "180",
-    "WatermarkFontOffset": WATERMARK_FONT_OFFSET,
-    "WatermarkFontShadowColor": WATERMARK_FONT_SHADOWCOLOR,
-    "WatermarkFontStroke": WATERMARK_FONT_STROKE,
-    "WatermarkXOffset": WATERMARK_X_OFFSET,
-    "WatermarkYOffset": WATERMARK_Y_OFFSET,
+    "WatermarkFontOffset": "20",
+    "WatermarkFontShadowColor": "black",
+    "WatermarkFontStroke": "3",
+    "WatermarkXOffset": "10",
+    "WatermarkYOffset": "10",
     "WeightChangeLog": "Yes",
     "WeightChangeLogType": "4",
 }
@@ -496,6 +498,12 @@ def csave(dbo, username, post):
         elif k == "DefaultDailyBoardingCost":
             # Need to handle currency fields differently
             put(k, str(post.integer(k)))
+        elif k == "WatermarkFontFile":
+            validFiles = watermark_get_valid_font_files()
+            if not v in validFiles:
+                put(k, DEFAULTS[k])
+            else:
+                put(k, v, sanitiseXSS = False)
         elif k.startswith("rc:"):
             # It's a NOT check
             if v == "checked": v = "No"
@@ -1535,3 +1543,12 @@ def weight_change_log(dbo):
 
 def weight_change_log_type(dbo):
     return cint(dbo, "WeightChangeLogType", DEFAULTS["WeightChangeLogType"])
+
+def watermark_get_valid_font_files():
+    basePath = WATERMARK_FONT_BASEDIRECTORY
+    fileList = []
+    for root,_,files in os.walk(basePath):
+        for file in files:
+            if file.endswith('.ttf'):
+                fileList.append(os.path.join(root, file)[len(basePath):])
+    return sorted(fileList)

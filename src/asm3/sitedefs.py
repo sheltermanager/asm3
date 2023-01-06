@@ -370,11 +370,5 @@ TIMEPICKER_CSS = get_string("timepicker_css", 'static/lib/timepicker/0.3.3/jquer
 TIMEPICKER_JS = get_string("timepicker_js", 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.js')
 TINYMCE_5_JS = get_string("tinymce_4_js", 'static/lib/tinymce/5.5.1/tinymce/js/tinymce/tinymce.min.js')
 
-# Watermark Settings for adding an animal's name and shelter logo to an image
-WATERMARK_X_OFFSET = get_string("watermark_x_offset", 10)
-WATERMARK_Y_OFFSET = get_string("watermark_y_offset", 10)
-WATERMARK_FONT_FILE = get_string("watermark_font_file", "/usr/share/fonts/truetype/liberation/LiberationSans-BoldItalic.ttf")
-WATERMARK_FONT_SHADOWCOLOR = get_string("watermark_font_shadowcolor", "black")
-WATERMARK_FONT_FILLCOLOR = get_string("watermark_font_fillcolor", "white")
-WATERMARK_FONT_STROKE = get_string("watermark_font_stroke", 3)
-WATERMARK_FONT_OFFSET = get_string("watermark_font_offset", 20)
+# Directory where font files are located for use with image watermarking
+WATERMARK_FONT_BASEDIRECTORY = get_string("watermark_font_basedirectory", "/usr/share/fonts/truetype/")
