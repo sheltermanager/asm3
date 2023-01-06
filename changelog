@@ -1,6 +1,7 @@
 46
 ================
 
+06/01/23 Use user IDs for resolving security maps (quicker/more secure)
 06/01/23 PetRescue: set incompatible <5 and <12 based on good with children field
 04/01/23 Stop pointer events trying to scroll the screen #1188
 04/01/23 Shelter view mode to show fosters separate from sites #1141

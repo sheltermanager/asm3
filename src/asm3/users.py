@@ -427,16 +427,15 @@ def get_roles_for_user(dbo, user):
         roles.append(r.ROLENAME)
     return roles
 
-def get_security_map(dbo, username):
+def get_security_map(dbo, userid):
     """
-    Returns the security map for a user, which is an aggregate of all
+    Returns the security map for a user by id, which is an aggregate of all
     the roles they have.
     """
     rv = ""
     maps = dbo.query("SELECT role.SecurityMap FROM role " \
         "INNER JOIN userrole ON role.ID = userrole.RoleID " \
-        "INNER JOIN users ON users.ID = userrole.UserID " \
-        "WHERE users.UserName LIKE ?", [username])
+        "WHERE userrole.UserID = ?", [userid])
     for m in maps:
         rv += str(m.SECURITYMAP)
     return rv
@@ -466,7 +465,7 @@ def get_diary_forlist(dbo):
         # We only need to look up the security flags for non-super users and non-roles
         securitymap = ""
         if u.ISROLE == 0 or u.SUPERUSER == 0: 
-            securitymap = get_security_map(dbo, u.USERNAME)
+            securitymap = get_security_map(dbo, u.ID)
         if u.ISROLE == 1 or u.SUPERUSER == 1 or has_security_flag(securitymap, VIEW_DIARY):
             out.append(u)
     return out
@@ -792,6 +791,7 @@ def web_login(post, session, remoteip, useragent, path):
             dbo.locale = session.locale
             session.dbo = dbo
             session.user = user.USERNAME
+            session.userid = user.ID
             session.superuser = user.SUPERUSER
             session.mobileapp = mobileapp
             update_session(session)
@@ -800,7 +800,7 @@ def web_login(post, session, remoteip, useragent, path):
             return "FAIL"
 
         try:
-            session.securitymap = get_security_map(dbo, user.USERNAME)
+            session.securitymap = get_security_map(dbo, user.ID)
         except:
             # This is a pre-3002 login where the securitymap is with 
             # the user (the error occurs because there's no role table)
