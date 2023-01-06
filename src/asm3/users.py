@@ -478,14 +478,15 @@ def get_users_and_roles(dbo):
     return dbo.query("SELECT UserName, 0 AS IsRole, SuperUser FROM users " \
         "UNION SELECT Rolename AS UserName, 1 AS IsRole, 0 AS SuperUser FROM role ORDER BY UserName")
 
-def get_users(dbo, user='%'):
+def get_users(dbo, user=""):
     """
-    Returns a list of all (or selected) system users with a pipe
-    separated list of their roles
+    Returns a list of all (or a list with a single) system users and a pipe separated list of their roles
     """
-    users = dbo.query("SELECT * FROM users WHERE UserName LIKE ? ORDER BY UserName", [user])
+    users = dbo.query("SELECT * FROM users ORDER BY UserName")
     roles = dbo.query("SELECT ur.*, r.RoleName FROM userrole ur INNER JOIN role r ON ur.RoleID = r.ID")
+    out = []
     for u in users:
+        if user != "" and user.upper() != u.USERNAME.upper(): continue
         roleids = []
         rolenames = []
         for r in roles:
@@ -494,16 +495,14 @@ def get_users(dbo, user='%'):
                 rolenames.append(str(r.ROLENAME))
         u.ROLEIDS = "|".join(roleids)
         u.ROLES = "|".join(rolenames)
-    return users
+        out.append(u)
+    return out
 
 def get_user(dbo, user):
     """
     Returns a single user account by name. Returns None if no user account is found.
     """
-    for u in dbo.query("SELECT UserName FROM users"):
-        if u.USERNAME.upper() == user.upper():
-            return dbo.first_row( get_users(dbo, u.USERNAME) )
-    return None
+    return dbo.first_row( get_users(dbo, user) )
 
 def get_active_users(dbo):
     """

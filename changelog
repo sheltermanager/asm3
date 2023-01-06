@@ -1,6 +1,7 @@
 46
 ================
 
+06/01/23 Never use SQL LIKE comparisons for usernames when resolving users
 06/01/23 Use user IDs for resolving security maps (quicker/more secure)
 06/01/23 PetRescue: set incompatible <5 and <12 based on good with children field
 04/01/23 Stop pointer events trying to scroll the screen #1188
