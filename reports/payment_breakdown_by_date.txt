@@ -124,6 +124,7 @@ BODY$$
 $$FOOTER
 <h2>Total Gross: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</h2>
 FOOTER$$
+
 &&&
 Payment Breakdown By Date (regular payments only)
 ###
@@ -329,7 +330,6 @@ $$FOOTER
 FOOTER$$
 
 &&&
-
 Payment Breakdown By Date (Surname)
 ###
 Financial
@@ -603,6 +603,81 @@ $$FOOTER
 FOOTER$$
 
 &&&
+Payment Breakdown for Person
+###
+Financial
+###
+34204/Any rev01
+###
+All payments by type for a single person with totals.
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT ownerdonation.Date, ownerdonation.DateDue, owner.OwnerName, donationtype.DonationName, 
+Donation AS amt, ownerdonation.Fee, 
+Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
+ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
+owner.OwnerPostcode, owner.HomeTelephone, owner.WorkTelephone, owner.MobileTelephone,
+owner.EmailAddress, donationpayment.PaymentName, ownerdonation.ReceiptNumber
+FROM ownerdonation 
+INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
+INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
+INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
+WHERE ownerdonation.OwnerID = $ASK PERSON$
+ORDER BY owner.OwnerName, donationtype.DonationName, ownerdonation.Date
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_OwnerName
+$$HEAD
+<h2>$OwnerName, $OwnerAddress $OwnerTown $OwnerCounty $OwnerPostcode</h2>
+<p>H: $HomeTelephone, W: $WorkTelephone, C: $MobileTelephone, E: $EmailAddress</p>
+$$FOOT
+<p><b>Gross $OwnerName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
+GROUP$$
+
+$$GROUP_DonationName
+$$HEAD
+<h2>$DonationName</h2>
+<table border=1><tr>
+<td><b>Due</b></td>
+<td><b>Received</b></td>
+<td><b>Receipt No</b></td>
+<td><b>Person</b></td>
+<td><b>Method</b></td>
+<td><b>Gross</b></td>
+<td><b>Tax</b></td>
+<td><b>Fee</b></td>
+<td><b>Net</b></td>
+</tr>
+$$FOOT
+</table>
+<p><b>Gross $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
+GROUP$$ 
+
+$$BODY
+<tr>
+<td>$datedue</td>
+<td>$date</td>
+<td>$receiptnumber</td>
+<td>$ownername</td>
+<td>$paymentname</td>
+<td>$amt</td>
+<td>$vatamount</td>
+<td>$fee</td>
+<td>$moneynet</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<h2>Total Gross: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</h2>
+FOOTER$$
+
+&&&
 Payment Breakdown By Person with Flag
 ###
 Financial
@@ -677,7 +752,6 @@ $$FOOTER
 FOOTER$$
 
 &&&
-
 Payment Breakdown By Person with Addresses
 ###
 Financial
