@@ -2218,7 +2218,8 @@ class calendar_events(ASMEndpoint):
                 events.append({ 
                     "title": d["SUBJECT"], 
                     "allDay": allday, 
-                    "start": d["DIARYDATETIME"], 
+                    "start": d.DIARYDATETIME,
+                    "end": add_minutes(d.DIARYDATETIME, 60),
                     "tooltip": "%s %s %s" % (d["SUBJECT"], d["LINKINFO"], d["NOTE"]), 
                     "icon": "diary",
                     "link": "diary_edit_my" })

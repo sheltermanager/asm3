@@ -426,7 +426,7 @@ def handler(post, path, remoteip, referer, useragent, querystring):
         if user is None:
             asm3.al.error("auth failed - %s/%s is not a valid username/password from %s" % (username, password, remoteip), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid username and password")
-        securitymap = asm3.users.get_security_map(dbo, user["USERNAME"])
+        securitymap = asm3.users.get_security_map(dbo, user.ID)
 
     # Get the preferred locale and timezone for the site
     l = asm3.configuration.locale(dbo)
@@ -515,7 +515,7 @@ def handler(post, path, remoteip, referer, useragent, querystring):
             asm3.al.error("json_adoptable_animal failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
-            asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
             rs = asm3.publishers.base.get_animal_data(dbo, None, asm3.utils.cint(animalid), include_additional_fields = True)
             return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
@@ -555,13 +555,13 @@ def handler(post, path, remoteip, referer, useragent, querystring):
         return set_cached_response(cache_key, account, "application/json", 600, 600, asm3.utils.json(rs))
 
     elif method == "json_adoptable_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         if strip_personal: rs = strip_personal_data(rs)
         return set_cached_response(cache_key, account, "application/json", 600, 600, asm3.utils.json(rs))
 
     elif method == "jsonp_adoptable_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         if strip_personal: rs = strip_personal_data(rs)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(rs)))
@@ -571,78 +571,78 @@ def handler(post, path, remoteip, referer, useragent, querystring):
             asm3.al.error("xml_adoptable_animal failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
-            asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
             rs = asm3.publishers.base.get_animal_data(dbo, None, asm3.utils.cint(animalid), include_additional_fields = True)
             return set_cached_response(cache_key, account, "application/xml", 600, 600, asm3.html.xml(rs))
 
     elif method == "xml_adoptable_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True)
         if strip_personal: rs = strip_personal_data(rs)
         return set_cached_response(cache_key, account, "application/xml", 600, 600, asm3.html.xml(rs))
 
     elif method == "json_found_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_FOUND_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_FOUND_ANIMAL)
         rs = asm3.lostfound.get_foundanimal_last_days(dbo)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "jsonp_found_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_FOUND_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_FOUND_ANIMAL)
         rs = asm3.lostfound.get_foundanimal_last_days(dbo)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(rs)))
 
     elif method == "xml_found_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_FOUND_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_FOUND_ANIMAL)
         rs = asm3.lostfound.get_foundanimal_last_days(dbo)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "json_held_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.animal.get_animals_hold(dbo)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "xml_held_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.animal.get_animals_hold(dbo)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "jsonp_held_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.animal.get_animals_hold(dbo)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(rs)))
 
     elif method == "json_lost_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_LOST_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_LOST_ANIMAL)
         rs = asm3.lostfound.get_lostanimal_last_days(dbo)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "jsonp_lost_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_LOST_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_LOST_ANIMAL)
         rs = asm3.lostfound.get_lostanimal_last_days(dbo)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(rs)))
 
     elif method == "xml_lost_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_LOST_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_LOST_ANIMAL)
         rs = asm3.lostfound.get_lostanimal_last_days(dbo)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "json_recent_adoptions":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.movement.get_recent_adoptions(dbo)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
 
     elif method == "jsonp_recent_adoptions":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.movement.get_recent_adoptions(dbo)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(rs)))
 
     elif method == "xml_recent_adoptions":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         rs = asm3.movement.get_recent_adoptions(dbo)
         return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "html_report":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_REPORT)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_REPORT)
         crid = asm3.reports.get_id(dbo, title)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rhtml = asm3.reports.execute(dbo, crid, username, p, toolbar=False)
@@ -650,7 +650,7 @@ def handler(post, path, remoteip, referer, useragent, querystring):
         return set_cached_response(cache_key, account, "text/html", 600, 600, rhtml)
 
     elif method == "csv_mail" or method == "csv_report":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_REPORT)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_REPORT)
         crid = asm3.reports.get_id(dbo, title)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, username, p)
@@ -658,54 +658,54 @@ def handler(post, path, remoteip, referer, useragent, querystring):
         return set_cached_response(cache_key, account, "text/csv", 600, 600, mcsv)
 
     elif method == "json_report" or method == "json_mail":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_REPORT)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_REPORT)
         crid = asm3.reports.get_id(dbo, title)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, username, p)
         return set_cached_response(cache_key, account, "application/json", 600, 600, asm3.utils.json(rows))
 
     elif method == "jsonp_report" or method == "jsonp_mail":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_REPORT)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_REPORT)
         crid = asm3.reports.get_id(dbo, title)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, username, p)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(rows)))
 
     elif method == "jsonp_recent_changes":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         sa = asm3.animal.get_recent_changes(dbo)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(sa)))
 
     elif method == "json_recent_changes":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         sa = asm3.animal.get_recent_changes(dbo)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(sa))
 
     elif method == "xml_recent_changes":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         sa = asm3.animal.get_recent_changes(dbo)
         return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(sa))
 
     elif method == "jsonp_shelter_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         sa = asm3.animal.get_shelter_animals(dbo)
         if strip_personal: sa = strip_personal_data(sa)
         return ("application/javascript", 0, 0, "%s(%s);" % (post["callback"], asm3.utils.json(sa)))
 
     elif method == "json_shelter_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         sa = asm3.animal.get_shelter_animals(dbo)
         if strip_personal: sa = strip_personal_data(sa)
         return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(sa))
 
     elif method == "xml_shelter_animals":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         sa = asm3.animal.get_shelter_animals(dbo)
         if strip_personal: sa = strip_personal_data(sa)
         return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(sa))
 
     elif method == "rss_timeline":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.VIEW_ANIMAL)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
         RSS_LIMIT = 500
         rows = asm3.animal.get_timeline(dbo, RSS_LIMIT)
         h = []
@@ -715,7 +715,7 @@ def handler(post, path, remoteip, referer, useragent, querystring):
         return set_cached_response(cache_key, account, "application/rss+xml", 3600, 3600, rssdocument)
 
     elif method == "upload_animal_image":
-        asm3.users.check_permission_map(l, user["SUPERUSER"], securitymap, asm3.users.ADD_MEDIA)
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.ADD_MEDIA)
         asm3.media.attach_file_from_form(dbo, username, asm3.media.ANIMAL, int(animalid), post)
         return ("text/plain", 0, 0, "OK")
 

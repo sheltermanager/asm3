@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-01-04 13:31+0000\n"
+"POT-Creation-Date: 2023-01-06 14:30+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -8918,7 +8918,7 @@ msgid "Omit header/footer"
 msgstr ""
 
 #: animal.py
-msgid "On Foster (in figures)"
+msgid "On Foster"
 msgstr ""
 
 #: animal.py common_html.js animal_find.js animal_find_results.js

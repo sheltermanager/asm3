@@ -2,7 +2,7 @@ Monthly Figures (by species)
 ###
 Figures
 ###
-3123/MySQL rev01
+3123/MySQL rev02
 ###
 Animal movements on and off the shelter over a monthly period.
 ###
@@ -88,7 +88,8 @@ $(function() {
     if ($MAXDAYSINMONTH < 31) $(".c31").hide();
     if ($MAXDAYSINMONTH < 30) $(".c30").hide();
     if ($MAXDAYSINMONTH < 29) $(".c29").hide();
-    if ($("#tb$SPECIESID .SP_TOTAL .avg").text() == "0.0") {
+    if ($("#tb$SPECIESID .SP_TOTAL .avg").text() == "0.0" &&
+        $("#tb$SPECIESID .SP_ONFOSTER .avg").text() == "0.0") {
         $("#tb$SPECIESID").hide();
         $("#tb$SPECIESID").prev().hide();
     }
@@ -142,7 +143,7 @@ Monthly Figures (by species)
 ###
 Figures
 ###
-3123/PostgreSQL rev01
+3123/PostgreSQL rev02
 ###
 Animal movements on and off the shelter over a monthly period.
 ###
@@ -228,7 +229,8 @@ $(function() {
     if ($MAXDAYSINMONTH < 31) $(".c31").hide();
     if ($MAXDAYSINMONTH < 30) $(".c30").hide();
     if ($MAXDAYSINMONTH < 29) $(".c29").hide();
-    if ($("#tb$SPECIESID .SP_TOTAL .avg").text() == "0.0") {
+    if ($("#tb$SPECIESID .SP_TOTAL .avg").text() == "0.0" &&
+        $("#tb$SPECIESID .SP_ONFOSTER .avg").text() == "0.0") {
         $("#tb$SPECIESID").hide();
         $("#tb$SPECIESID").prev().hide();
     }
@@ -282,7 +284,7 @@ Monthly Figures (by type)
 ###
 Figures
 ###
-3123/MySQL rev01
+3123/MySQL rev02
 ###
 Animal movements on and off the shelter over a monthly period by type.
 ###
@@ -368,7 +370,8 @@ $(function() {
     if ($MAXDAYSINMONTH < 31) $(".c31").hide();
     if ($MAXDAYSINMONTH < 30) $(".c30").hide();
     if ($MAXDAYSINMONTH < 29) $(".c29").hide();
-    if ($("#tb$ANIMALTYPEID .AT_TOTAL .avg").text() == "0.0") {
+    if ($("#tb$ANIMALTYPEID .AT_TOTAL .avg").text() == "0.0" &&
+        $("#tb$ANIMALTYEPID .AT_ONFOSTER .avg").text() == "0.0") {
         $("#tb$ANIMALTYPEID").prev().hide();
         $("#tb$ANIMALTYPEID").hide();
     }
@@ -422,7 +425,7 @@ Monthly Figures (by type)
 ###
 Figures
 ###
-3123/PostgreSQL rev01
+3123/PostgreSQL rev02
 ###
 Animal movements on and off the shelter over a monthly period by type.
 ###
@@ -508,7 +511,8 @@ $(function() {
     if ($MAXDAYSINMONTH < 31) $(".c31").hide();
     if ($MAXDAYSINMONTH < 30) $(".c30").hide();
     if ($MAXDAYSINMONTH < 29) $(".c29").hide();
-    if ($("#tb$ANIMALTYPEID .AT_TOTAL .avg").text() == "0.0") {
+    if ($("#tb$ANIMALTYPEID .AT_TOTAL .avg").text() == "0.0" &&
+        $("#tb$ANIMALTYEPID .AT_ONFOSTER .avg").text() == "0.0") {
         $("#tb$ANIMALTYPEID").prev().hide();
         $("#tb$ANIMALTYPEID").hide();
     }
