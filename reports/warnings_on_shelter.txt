@@ -62,7 +62,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$sheltercode</td>
-<td><a href="animal?id=$aid">$animalname</a></td>
+<td><a target="_blank" href="animal?id=$aid">$animalname</a></td>
 <td>$animaltype</td>
 <td>$identichipnumber</td>
 <td>$animalage</td>
