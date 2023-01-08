@@ -607,7 +607,7 @@ Payment Breakdown for Person
 ###
 Financial
 ###
-34204/Any rev01
+34204/Any rev02
 ###
 All payments by type for a single person with totals.
 ###
