@@ -626,7 +626,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE ownerdonation.OwnerID = $ASK PERSON$
+WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$' AND ownerdonation.OwnerID = $ASK PERSON$
 ORDER BY owner.OwnerName, donationtype.DonationName, ownerdonation.Date
 ###
 $$HEADER
