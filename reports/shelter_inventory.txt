@@ -1,8 +1,8 @@
-Shelter Inventory
+Shelter Inventory Totals
 ###
 Inventories
 ###
-Any rev01
+Any rev02
 ###
 Current shelter inventory totals.
 ###
