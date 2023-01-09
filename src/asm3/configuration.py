@@ -500,7 +500,7 @@ def csave(dbo, username, post):
             put(k, str(post.integer(k)))
         elif k == "WatermarkFontFile":
             validFiles = watermark_get_valid_font_files()
-            if not v in validFiles:
+            if v not in validFiles:
                 put(k, DEFAULTS[k])
             else:
                 put(k, v, sanitiseXSS = False)
@@ -1538,17 +1538,19 @@ def watermark_font_file(dbo):
 def watermark_font_max_size(dbo):
     return cint(dbo, "WatermarkFontMaxSize", DEFAULTS["WatermarkFontMaxSize"])
 
+def watermark_get_valid_font_files():
+    basePath = WATERMARK_FONT_BASEDIRECTORY
+    fileList = []
+    for root,_,files in os.walk(basePath):
+        for f in files:
+            if f.endswith('.ttf'):
+                fileList.append(os.path.join(root, f)[len(basePath):])
+    return sorted(fileList)
+
 def weight_change_log(dbo):
     return cboolean(dbo, "WeightChangeLog", DEFAULTS["WeightChangeLog"] == "Yes")
 
 def weight_change_log_type(dbo):
     return cint(dbo, "WeightChangeLogType", DEFAULTS["WeightChangeLogType"])
 
-def watermark_get_valid_font_files():
-    basePath = WATERMARK_FONT_BASEDIRECTORY
-    fileList = []
-    for root,_,files in os.walk(basePath):
-        for file in files:
-            if file.endswith('.ttf'):
-                fileList.append(os.path.join(root, file)[len(basePath):])
-    return sorted(fileList)
+

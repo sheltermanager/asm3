@@ -1,6 +1,8 @@
 46
 ================
 
+09/01/23 Show homechecker info on reservation book (Mike Forrest) #1212
+09/01/23 Allow access to watermark settings from config (Mike Forrest) #1213
 06/01/23 Make diary notes a default of 1 hour long
 06/01/23 Never use SQL LIKE comparisons for usernames when resolving users
 06/01/23 Use user IDs for resolving security maps (quicker/more secure)
