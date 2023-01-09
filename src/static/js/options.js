@@ -1557,16 +1557,16 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="watermarkfontfillcolor">' + _("Watermark font fill color") + '</label></td>',
-                '<td><select data="WatermarkFontFillColor" id="watermarkfontfillcolor" class="asm-selectbox" onchange="document.getElementById(\'fontfillcolorsample\').style.background=this.value">',
-                html.list_to_options_array(this.watermark_colors),
+                '<td><select data="WatermarkFontFillColor" id="watermarkfontfillcolor" class="asm-selectbox">',
+                html.list_to_options_array(options.watermark_colors),
                 '</select>',
                 '<span id="fontfillcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontFillColor')) + '" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="watermarkfontshadowcolor">' + _("Watermark font outline color") + '</label></td>',
-                '<td><select data="WatermarkFontShadowColor" id="watermarkfontshadowcolor" class="asm-selectbox" onchange="document.getElementById(\'fontshadowcolorsample\').style.background=this.value">',
-                html.list_to_options_array(this.watermark_colors),
+                '<td><select data="WatermarkFontShadowColor" id="watermarkfontshadowcolor" class="asm-selectbox">',
+                html.list_to_options_array(options.watermark_colors),
                 '</select>',
                 '<span id="fontshadowcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontShadowColor')) + '" />',
                 '</td>',
@@ -1748,6 +1748,14 @@ $(function() {
             if (!asm.smcom) {
                 $(".smcom").hide();
             }
+
+            // Show sample colours when selected
+            $("#watermarkfontfillcolor").change(function() {
+                $("#fontfillcolorsample").css("background-color", $("#watermarkfontfillcolor").select("value"));
+            });
+            $("#watermarkfontshadowcolor").change(function() {
+                $("#fontshadowcolorsample").css("background-color", $("#watermarkfontshadowcolor").select("value"));
+            });
 
             validate.bind_dirty();
 

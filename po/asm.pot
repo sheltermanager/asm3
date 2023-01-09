@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-01-06 14:30+0000\n"
+"POT-Creation-Date: 2023-01-09 10:53+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -6369,6 +6369,10 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
+#: movements.js
+msgid "Home Checker"
+msgstr ""
+
 #: mobile.py person_new.js waitinglist_results.js person_find_results.js
 #: person.js common_personchooser.js
 msgid "Home Phone"
@@ -8897,6 +8901,10 @@ msgstr ""
 msgid "Office"
 msgstr ""
 
+#: options.js
+msgid "Offset from left edge of the image"
+msgstr ""
+
 #: animal.js person.js
 msgid "Ok"
 msgstr ""
@@ -10273,6 +10281,10 @@ msgstr ""
 
 #: publish_options.js
 msgid "Register microchips from"
+msgstr ""
+
+#: options.js
+msgid "Relative to bottom right corner of the image"
 msgstr ""
 
 #: dbupdate.py animal.py animal_find.js movements.js
@@ -14507,8 +14519,44 @@ msgstr ""
 msgid "Water Bills"
 msgstr ""
 
+#: options.js
+msgid "Watermark"
+msgstr ""
+
+#: options.js
+msgid "Watermark font"
+msgstr ""
+
+#: options.js
+msgid "Watermark font fill color"
+msgstr ""
+
+#: options.js
+msgid "Watermark font outline color"
+msgstr ""
+
+#: options.js
+msgid "Watermark font outline width"
+msgstr ""
+
 #: media.js
 msgid "Watermark image with name and logo"
+msgstr ""
+
+#: options.js
+msgid "Watermark logo X offset"
+msgstr ""
+
+#: options.js
+msgid "Watermark logo Y offset"
+msgstr ""
+
+#: options.js
+msgid "Watermark name max font size"
+msgstr ""
+
+#: options.js
+msgid "Watermark name offset"
 msgstr ""
 
 #: common.js
