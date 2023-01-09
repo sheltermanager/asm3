@@ -20,6 +20,26 @@ $(function() {
             return s.join("\n");
         },
 
+        watermark_colors: [
+            "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue",
+            "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk",
+            "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgrey", "darkgreen", "darkkhaki",
+            "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen", "darkslateblue",
+            "darkslategray", "darkslategrey", "darkturquoise", "darkviolet", "deeppink", "deepskyblue", "dimgray", "dimgrey",
+            "dodgerblue", "firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod",
+            "gray", "grey", "green", "greenyellow", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender",
+            "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow",
+            "lightgray", "lightgrey", "lightgreen", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray",
+            "lightslategrey", "lightsteelblue", "lightyellow", "lime", "limegreen", "linen", "magenta", "maroon",
+            "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue",
+            "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin",
+            "navajowhite", "navy", "oldlace", "olive", "olivedrab", "orange", "orangered", "orchid", "palegoldenrod",
+            "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue",
+            "purple", "rebeccapurple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen",
+            "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen", "steelblue",
+            "tan", "teal", "thistle", "tomato", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen",
+        ],
+
         render_tabs: function() {
             return [
                 '<ul>',
@@ -51,6 +71,7 @@ $(function() {
                 '<li><a href="#tab-search">' + _("Search") + '</a></li>',
                 '<li><a href="#tab-shelterview">' + _("Shelter view") + '</a></li>',
                 '<li><a href="#tab-waitinglist">' + _("Waiting List") + '</a></li>',
+                '<li><a href="#tab-watermark">' + _("Watermark") + '</a></li>',
                 '</ul>'
             ].join("\n");
         },
@@ -1518,6 +1539,63 @@ $(function() {
             ].join("\n");
         },
 
+        render_watermark: function() {
+            return [
+                '<div id="tab-watermark">',
+                '<table>',
+                '<tr>',
+                '<td><label for="watermarkxoffset">' + _("Watermark logo X offset") + '</label>',
+                '<span id="callout-watermarkxoffset" class="asm-callout">' + _("Relative to bottom right corner of the image") + '</span>',
+                '</td>',
+                '<td><input data="WatermarkXOffset" id="watermarkxoffset" data-min="0" data-max="9999" class="asm-textbox asm-numberbox" type="text" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="watermarkyoffset">' + _("Watermark logo Y offset") + '</label>',
+                '<span id="callout-watermarkyoffset" class="asm-callout">' + _("Relative to bottom right corner of the image") + '</span>',
+                '</td>',
+                '<td><input data="WatermarkYOffset" id="watermarkyoffset" data-min="0" data-max="9999" class="asm-textbox asm-numberbox" type="text" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="watermarkfontfillcolor">' + _("Watermark font fill color") + '</label></td>',
+                '<td><select data="WatermarkFontFillColor" id="watermarkfontfillcolor" class="asm-selectbox" onchange="document.getElementById(\'fontfillcolorsample\').style.background=this.value">',
+                html.list_to_options_array(this.watermark_colors),
+                '</select>',
+                '<span id="fontfillcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontFillColor')) + '" />',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="watermarkfontshadowcolor">' + _("Watermark font outline color") + '</label></td>',
+                '<td><select data="WatermarkFontShadowColor" id="watermarkfontshadowcolor" class="asm-selectbox" onchange="document.getElementById(\'fontshadowcolorsample\').style.background=this.value">',
+                html.list_to_options_array(this.watermark_colors),
+                '</select>',
+                '<span id="fontshadowcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontShadowColor')) + '" />',
+                '</td>',
+                '<tr>',
+                '<td><label for="watermarkfontstroke">' + _("Watermark font outline width") + '</label></td>',
+                '<td><input data="WatermarkFontStroke" id="watermarkfontstroke" data-min="0" data-max="20" class="asm-textbox asm-numberbox" type="text" /></td>',
+                '</tr>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="watermarkfontfile">' + _("Watermark font") + '</label></td>',
+                '<td><select data="WatermarkFontFile" id="watermarkfontfile" class="asm-selectbox asm-doubleselectbox">',
+                html.list_to_options_array(asm.fontfiles),
+                '</select>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="watermarkfontoffset">' + _("Watermark name offset") + '</label>',
+                '<span id="callout-watermarkfontoffset" class="asm-callout">' + _("Offset from left edge of the image") + '</span>',
+                '</td>',
+                '<td><input data="WatermarkFontOffset" id="watermarkfontoffset" data-min="0" data-max="100" class="asm-textbox asm-numberbox" type="text" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="watermarkfontmaxsize">' + _("Watermark name max font size") + '</label></td>',
+                '<td><input data="WatermarkFontMaxSize" id="watermarkfontmaxsize" data-min="0" data-max="999" class="asm-textbox asm-numberbox" type="text" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>',
+            ].join("\n");
+        },
+
         render: function() {
             return [
                 html.content_header(_("System Options")),
@@ -1554,6 +1632,7 @@ $(function() {
                 this.render_unwanted(),
                 this.render_reports(),
                 this.render_waitinglist(),
+                this.render_watermark(),
                 '</div>',
                 html.content_footer()
             ].join("\n");

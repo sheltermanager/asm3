@@ -665,6 +665,7 @@ class configjs(ASMEndpoint):
             "osmmaptiles": osmmaptiles,
             "hascustomlogo": asm3.dbfs.file_exists(dbo, "logo.jpg"),
             "mobileapp": o.session.mobileapp,
+            "fontfiles": asm3.configuration.watermark_get_valid_font_files(),
             "config": asm3.configuration.get_map(dbo),
             "menustructure": asm3.html.menu_structure(o.locale, 
                 asm3.publish.PUBLISHER_LIST,
