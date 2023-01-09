@@ -8,6 +8,32 @@ Auditing
 ###
 en
 ###
+-- 2020-06-09 Added 'First Name should be blank.  Change to Individual, clear First Name field, change back to Organization, and then re-Save.'
+-- 2020-10-16 Added 'Vaccination Manufacturer Starts With Numeric'
+-- 2020-11-30 Added 'Space in first character of name field.'
+-- 2020-11-30 Added 'Extra spaces in address field.'
+-- 2021-07-16 Added 'Zipcode Length Invalid.'
+-- 2021-07-16 Added 'Invalid Character (such as ‘ or -).  Type over and re-Save.'
+-- 2021-08-12 Added 'Death Issue.  Days on Shelter should equal 0 if "Dead of arrival" Checkbox is selected.'
+-- 2021-08-12 Added 'Death Issue.  DOA Category and DOA Checkbox Should Match'
+-- 2021-08-12 Added 'Death Issue.  DOA and Euthanized should not both be checked'
+-- 2021-08-12 Added 'Death Issue.  Euthanasia Checkbox Needs to be Checked'
+-- 2021-08-12 Added 'Death Issue.  Invalid Death Reason for Checked Euthanasia Box'
+-- 2021-08-12 Added 'Not altered but adopted.  Spay/Neuter due date not entered in Medical or past due.'
+-- 2021-08-12 Added 'Test Issue. Heartworm Positive Dog needs to be re-tested or Heartworm Test Due needs to be added to Test Tab.'
+-- 2021-08-12 Added 'Transfer In Issue. Marked "Transfer In", but "Entry Category" not set to Transfer from Shelter/Rescue in Entry section.'
+-- 2021-08-12 Added 'Transfer In Issue. "Transfer" Entry Category Selected, but "Transfer In" Checkbox Not Selected in Entry Section.'
+-- 2021-08-12 Added 'Transfer In Issue. Marked "Transfer In", but no person in "Transferred From" field in Entry section.'
+-- 2021-08-12 Added 'Transfer In Issue. Marked "Transfer In", but person in from not flagged as "Other Shelter" or Vet'
+-- 2021-08-12 Added 'Vaccination Issue.  Missing Rabies Tag Number in Vaccination Record.'
+-- 2021-10-28 Added 'Email Invalid'
+-- 2021-11-10 Added 'Media Issue.  Rename document or delete blank "New document".'
+-- 2021-11-10 Added 'Possible address issue.  Comma in City field.'
+-- 2021-11-18 Added 'Possible address standardization issue (' || o.owneraddress || ').  North, South, First, etc.  Change to N., S., 1st, if needed.
+-- 2022-02-09 Added 'Non-Shelter Flag added to animal with an active movement.
+-- 2022-05-14 Added 'Invalid Country or Capitalization.'
+-- 2023-01-07 Added 'Email Domain Invalid' USA Only.
+
 SELECT * FROM
 (
 
@@ -681,7 +707,7 @@ WHERE animalvaccination.vaccinationid IN (4) -- REVIEW Rabies ID needed
   AND animal.nonshelteranimal = 0
 
 
------------------------------OWNER SECTION---------------------------------------------------------
+---------------------------------------------------OWNER SECTION-------------------------------------------------------------
 --This alerts when banned people also do not have the Exclude from bulk mailings flag.
 --You want to make sure that you do not email or mail users that have been banned.
 UNION SELECT
@@ -716,7 +742,7 @@ UNION SELECT
   owner.ownername AS name,
   owner.ownercode AS code,
   date(owner.LastChangedDate) AS issuedate,
-  'Invalid Last Name or Organization Name.' AS issue
+  'Last Name or Organization Name Invalid.' AS issue
 FROM owner
 WHERE ownercode LIKE 'XX%'
 
@@ -777,7 +803,7 @@ UNION SELECT
   owner.ownername AS name,
   owner.ownercode AS code,
   date(owner.LastChangedDate) AS issuedate,
-  'Invalid City or Capitalization.' AS issue
+  'City or City Capitalization Invalid.' AS issue
 FROM owner
 WHERE ownertown <> ''
  AND (upper(ownertown) = ownertown
@@ -792,7 +818,7 @@ UNION SELECT
   owner.ownername AS name,
   owner.ownercode AS code,
   date(owner.LastChangedDate) AS issuedate,
-  'Invalid State abbreviation.' AS issue
+  'State Abbreviation Invalid.' AS issue
 FROM owner
 WHERE owner.OWNERTOWN <> ''
   AND (owner.OWNERCOUNTRY LIKE 'US%' OR owner.OWNERCOUNTRY LIKE 'United States%' OR owner.OWNERCOUNTRY = '')  -- skip check if foreign county
@@ -804,7 +830,7 @@ UNION SELECT
   owner.ownername AS name,
   owner.ownercode AS code,
   date(owner.LastChangedDate) AS issuedate,
- 'Missing Zipcode.' AS issue
+ 'Zipcode Missing.' AS issue
 FROM owner
 WHERE owner.LASTCHANGEDDATE > '2019-01-01'
   AND NOT owner.OWNERADDRESS = '' 
@@ -820,7 +846,7 @@ UNION SELECT
   owner.ownername AS name,
   owner.ownercode AS code,
   date(owner.LastChangedDate) AS issuedate,
-  'Invalid Zipcode.' AS issue
+  'Zipcode Invalid.' AS issue
 FROM owner
 WHERE owner.OWNERCOUNTY = 'AR' 
   AND ownerpostcode <>  '' 
@@ -833,7 +859,7 @@ UNION SELECT
   owner.ownername AS name,
   owner.ownercode AS code,
   date(owner.LastChangedDate) AS issuedate,
-  'Invalid Zipcode Length.' AS issue
+  'Zipcode Length Invalid.' AS issue
 FROM owner
 WHERE ownerpostcode <>  '' 
   AND LENGTH(ownerpostcode) not in (5,10)
@@ -846,7 +872,7 @@ UNION SELECT
   owner.ownername as name,
   owner.ownercode as code,
   date(owner.LastChangedDate) as issuedate,
-  'Invalid Country or Capitalization.' AS issue
+  'Country or Country Capitalization Invalid.' AS issue
 FROM owner
 WHERE ownercountry <> ''
  --AND (upper(ownertown) = ownertown
@@ -860,7 +886,7 @@ UNION SELECT
 owner.ownername as name,
   owner.ownercode as code,
   date(owner.LastChangedDate) AS issuedate,
- 'Invalid Phone Number Length. If combining two, separate with /.' AS issue 
+ 'Phone Number Length Invalid. If combining two, separate with /.' AS issue 
 FROM owner
 WHERE (LENGTH(NULLIF(regexp_replace(hometelephone, '\D','','g'), '')) NOT IN (10,11) 
 OR LENGTH(NULLIF(regexp_replace(mobiletelephone, '\D','','g'), '')) NOT IN (10,11))
@@ -874,7 +900,7 @@ UNION SELECT
 owner.ownername as name,
   owner.ownercode as code,
   date(owner.LastChangedDate) AS issuedate,
- 'Invalid Phone Number.  If 11 digits, should begin with <i>1</i>.' AS issue 
+ 'Phone Number Invalid.  If 11 digits, should begin with <i>1</i>.' AS issue 
 FROM owner
 WHERE (LENGTH(NULLIF(regexp_replace(hometelephone, '\D','','g'), '')) = 11
    AND SUBSTRING(regexp_replace(hometelephone, '\D','','g'),1,1) <> '1'
@@ -890,7 +916,7 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
   current_date -1 AS issuedate,
-  '<font color = "Red">Duplicate Phone Number - (' || ow.ownercode || ').   Alerts Only Once.</font>' AS issue
+  '<font color = "Red">Phone Number Duplicate - (' || ow.ownercode || ').   Alerts Only Once.</font>' AS issue
 FROM owner o, owner ow
 WHERE date_trunc('day', o.LASTCHANGEDDATE)  = current_date -1
   AND o.id <> ow.id
@@ -904,7 +930,7 @@ UNION SELECT
   owner.ownername as name,
   owner.ownercode as code,
   date(owner.LastChangedDate) as issuedate,
-  'Invalid Email.' AS issue
+  'Email Invalid.' AS issue
 FROM owner
 WHERE (owner.EmailAddress NOT LIKE '%@%' OR owner.EmailAddress NOT LIKE '%.%' OR (owner.EmailAddress like '% %' AND owner.EmailAddress NOT LIKE '%, %'))
   AND owner.EmailAddress <> ''
@@ -915,7 +941,7 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
    current_date -1 AS issuedate,
- '<font color = "Red">Duplicate Email address (' || o.emailaddress || '). Please search on Email.  Alerts Only Once.</font>' AS issue
+ '<font color = "Red">Email Address Duplicate (' || o.emailaddress || '). Please search on Email.  Alerts Only Once.</font>' AS issue
 FROM owner o
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
 AND o.emailaddress <> '' 
@@ -926,12 +952,38 @@ UNION SELECT
   o.ownername AS name,
   o.ownercode AS code,
   date(o.LastChangedDate) as issuedate,
- '<font color = "Red">Possible Email Address in Wrong Field.  Alerts Only Once.</font>' AS issue
+ '<font color = "Red">Email Address in Wrong Field (Possible).  Alerts Only Once.</font>' AS issue
 FROM owner o
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
 AND (o.hometelephone LIKE '%@%' 
 OR o.mobiletelephone LIKE '%@%' 
 OR o.mobiletelephone LIKE '%@%')
+
+-- Looks for invalid email address domains (USA Only).  Added 1/7/2023
+UNION SELECT 
+  owner.ownername as name,
+  owner.ownercode as code,
+  date(owner.LastChangedDate) as issuedate,
+  '<font color = "Red">Email Domain Invalid (' || owner.emailaddress || '). Alerts Only Once.</font>' AS issue
+FROM owner
+WHERE lower(owner.EmailAddress) NOT LIKE '%.au'
+  AND (lower(owner.EmailAddress) NOT LIKE '%.biz'
+  AND lower(owner.EmailAddress) NOT LIKE '%.ca'
+  AND lower(owner.EmailAddress) NOT LIKE '%.com' 
+  AND lower(owner.EmailAddress) NOT LIKE '%.edu' 
+  AND lower(owner.EmailAddress) NOT LIKE '%.gov' 
+  AND lower(owner.EmailAddress) NOT LIKE '%.info'
+  AND lower(owner.EmailAddress) NOT LIKE '%.ky'
+  AND lower(owner.EmailAddress) NOT LIKE '%.md'
+  AND lower(owner.EmailAddress) NOT LIKE '%.me'
+  AND lower(owner.EmailAddress) NOT LIKE '%.mil'
+  AND lower(owner.EmailAddress) NOT LIKE '%.net' 
+  AND lower(owner.EmailAddress) NOT LIKE '%.org'
+  AND lower(owner.EmailAddress) NOT LIKE '%.tv'
+  AND lower(owner.EmailAddress) NOT LIKE '%.uk'
+  AND lower(owner.EmailAddress) NOT LIKE '%.us') 
+AND owner.EmailAddress <> ''
+AND date_trunc('day', owner.LASTCHANGEDDATE) = current_date -1
 
 --Looks for special characters that will affect searches.  Added 7/16/2021
 UNION SELECT
