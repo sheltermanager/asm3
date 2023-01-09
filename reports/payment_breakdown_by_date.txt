@@ -607,7 +607,7 @@ Payment Breakdown for Person
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 All payments by type for a single person with totals.
 ###
@@ -617,7 +617,7 @@ $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
 SELECT ownerdonation.Date, ownerdonation.DateDue, owner.OwnerName, donationtype.DonationName, 
-Donation AS amt, ownerdonation.Fee, 
+Donation AS amt, ownerdonation.Fee, ownerdonation.ChequeNumber, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, owner.HomeTelephone, owner.WorkTelephone, owner.MobileTelephone,
@@ -647,6 +647,7 @@ $$HEAD
 <td><b>Due</b></td>
 <td><b>Received</b></td>
 <td><b>Receipt No</b></td>
+<td><b>Check</b></td>
 <td><b>Person</b></td>
 <td><b>Method</b></td>
 <td><b>Gross</b></td>
@@ -664,6 +665,7 @@ $$BODY
 <td>$datedue</td>
 <td>$date</td>
 <td>$receiptnumber</td>
+<td>$chequenumber</td>
 <td>$ownername</td>
 <td>$paymentname</td>
 <td>$amt</td>
