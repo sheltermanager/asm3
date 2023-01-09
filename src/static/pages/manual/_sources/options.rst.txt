@@ -1059,4 +1059,23 @@ separate rankings for species on the waiting list. This makes sense if your
 shelter takes dogs and cats for example and whether you can take a cat is
 independent of how many dogs are on the shelter. 
 
+Watermark
+---------
+
+Watermarking is a feature available under the media tab of animal records. It
+allows you to embed a logo and the animal's name within a photo.
+
+By default, the watermark image is added to the bottom right corner of the
+photo and the name in the bottom left.
+
+Note that the original image will be changed, so you will need to upload the
+same image twice if you want to retain a copy without the watermark.
+
+The options on this tab allow you to control the placement of the watermark
+image and animal name, along with the colours used for the text of the name. 
+
+For this feature to be available, you need to upload your watermark image,
+named "watermark.png" to :menuselection:`Settings --> Reports --> Extra Images`
+- note that the image must be a PNG file, so that an alpha channel for
+transparency can be included.
 

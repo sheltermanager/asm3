@@ -1542,7 +1542,6 @@ $(function() {
         render_watermark: function() {
             return [
                 '<div id="tab-watermark">',
-                html.info(_("Watermarking allows you to embed a logo and animal's name in a photo. To enable watermarking on the media tab, upload an image named watermark.jpg to the Extra Images screen.")),
                 '<table>',
                 '<tr>',
                 '<td><label for="watermarkxoffset">' + _("Watermark logo X offset") + '</label>',
