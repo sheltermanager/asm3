@@ -75,7 +75,8 @@ def get_movement_query(dbo):
         "rb.OwnerPostcode AS ReturnedByOwnerPostcode, rb.HomeTelephone AS ReturnedByHomeTelephone, " \
         "rb.WorkTelephone AS ReturnedByWorkTelephone, rb.MobileTelephone AS ReturnedByMobileTelephone, " \
         "rb.EmailAddress AS ReturnedByEmailAddress, " \
-        "a.AdoptionCoordinatorID, ac.OwnerName AS AdoptionCoordinatorName " \
+        "a.AdoptionCoordinatorID, ac.OwnerName AS AdoptionCoordinatorName, " \
+        "o.HomeCheckedBy AS HomeCheckedByID, hc.OwnerName AS HomeCheckedByName, o.DateLastHomeChecked " \
         "FROM adoption m " \
         "LEFT OUTER JOIN reservationstatus rs ON rs.ID = m.ReservationStatusID " \
         "LEFT OUTER JOIN lksmovementtype l ON l.ID = m.MovementType " \
@@ -89,6 +90,7 @@ def get_movement_query(dbo):
         "LEFT OUTER JOIN species s ON a.SpeciesID = s.ID " \
         "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
         "LEFT OUTER JOIN owner o ON m.OwnerID = o.ID " \
+        "LEFT OUTER JOIN owner hc ON hc.ID = o.HomeCheckedBy " \
         "LEFT OUTER JOIN owner r ON m.RetailerID = r.ID " \
         "LEFT OUTER JOIN owner rb ON m.ReturnedByOwnerID = rb.ID " % { "now": dbo.sql_now() }
 

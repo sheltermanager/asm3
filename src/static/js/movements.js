@@ -178,6 +178,16 @@ $(function() {
                             return "";
                         }
                     },
+                    { field: "HOMECHECKEDBYNAME", display: _("Home Checker"),
+                        hideif: function(row) {
+                            // Don't show if not on the reservation book
+                            return controller.name != "move_book_reservation";
+                        },
+                        formatter: function(row, v) {
+                            return html.person_link(row.HOMECHECKEDBYID, row.HOMECHECKEDBYNAME) +
+                            '<br/>' + format.date(row.DATELASTHOMECHECKED);
+                        }
+                    },
                     { field: "ADOPTIONCOORDINATORNAME", display: _("Coordinator"),
                         hideif: function(row) {
                             // Don't show if adoption coordinators aren't on
