@@ -63,6 +63,9 @@ $.widget("asm.animalchoosermulti", {
             '<div class="asm-animalchoosermulti-filter">',
              _("Flags") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-flags asm-bsmselect"></select>', 
             '</div>',
+            '<div class="asm-animalchoosermulti-filter">',
+             _("Age Groups") + ': <select multiple="multiple" title="' + _("Filter") + '" class="animalchoosermulti-agegroups asm-bsmselect"></select>', 
+            '</div>',
 
             '</div>',
             '<div class="animalchoosermulti-results">',
@@ -83,6 +86,7 @@ $.widget("asm.animalchoosermulti", {
         this.options.species = node.find(".animalchoosermulti-species");
         this.options.litters = node.find(".animalchoosermulti-litters");
         this.options.flags = node.find(".animalchoosermulti-flags");
+        this.options.agegroups = node.find(".animalchoosermulti-agegroups");
         this.options.results = node.find(".animalchoosermulti-results");
         this.element.parent().append(node);
 
@@ -198,7 +202,7 @@ $.widget("asm.animalchoosermulti", {
      */
     update_filters: function() {
         let results = this.options.results, locations = this.options.locations, 
-            species = this.options.species, litters = this.options.litters, flags = this.options.flags, 
+            species = this.options.species, litters = this.options.litters, flags = this.options.flags, agegroups = this.options.agegroups, 
             dialog = this.options.dialog;
         $.each(this.rows, function(i, a) {
             let show = true;
@@ -215,6 +219,9 @@ $.widget("asm.animalchoosermulti", {
             if ( String(litters.val()).trim() && sellitter.length > 0 && sellitter.indexOf(a.ACCEPTANCENUMBER) == -1) { show = false; }
             let selflag = String(flags.val()).trim().split(",");
             if (String(flags.val()).trim() && selflag.length > 0 && !common.array_overlap(selflag, a.ADDITIONALFLAGS.split("|"))) { show = false; }
+            let selagegroup = String(agegroups.val()).trim().split(",");
+            if (String(agegroups.val()).trim() && selagegroup.length > 0 && selagegroup.indexOf(a.AGEGROUP) == -1) { show = false; }
+
             // Show/hide the result appropriately
             dialog.find(".animalselect[data='" + a.ID + "']").closest(".asm-animalchoosermulti-result").toggle(show);
         });
@@ -252,7 +259,7 @@ $.widget("asm.animalchoosermulti", {
         var self = this;
         var dialog = this.options.dialog, node = this.options.node, results = this.options.results, 
             locations = this.options.locations, species = this.options.species, litters = this.options.litters,
-            flags = this.options.flags;
+            flags = this.options.flags, agegroups = this.options.agegroups;
         dialog.find("img").show();
         var formdata = "mode=multiselect";
         $.ajax({
@@ -302,6 +309,13 @@ $.widget("asm.animalchoosermulti", {
                 //flags.html( html.list_to_options(rv.flags, "FLAG", "FLAG") );
                 flags.change();
                 flags.on("change", function(e) {
+                    self.update_filters();
+                });
+
+                // Age groups list
+                agegroups.html( html.list_to_options(rv.agegroups));
+                agegroups.change();
+                agegroups.on("change", function(e) {
                     self.update_filters();
                 });
 

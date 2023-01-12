@@ -1839,7 +1839,8 @@ class animal_embed(ASMEndpoint):
         species = asm3.lookups.get_species(dbo)
         litters = asm3.animal.get_litters(dbo)
         flags = asm3.lookups.get_animal_flags(dbo)
-        rv = { "rows": rows, "locations": locations, "species": species, "litters": litters, "flags": flags }
+        agegroups = asm3.configuration.age_groups(dbo)
+        rv = { "rows": rows, "locations": locations, "species": species, "litters": litters, "flags": flags, "agegroups": agegroups }
         return asm3.utils.json(rv)
 
     def post_id(self, o):
