@@ -366,7 +366,7 @@ class SavourLifePublisher(AbstractPublisher):
             "RequirementOtherDogs":     self.good_with(an.ISGOODWITHDOGS),
             "RequirementOtherAnimals":  None,
             "RequirementOtherCats":     self.good_with(an.ISGOODWITHCATS),
-            "RequirementKidsOver5":     self.good_with(an.ISGOODWITHCHILDREN),
+            "RequirementKidsOver5":     an.ISGOODWITHCHILDREN == 0 or an.ISGOODWITHCHILDREN == 5,
             "RequirementKidsUnder5":    self.good_with(an.ISGOODWITHCHILDREN),
             "SpecialNeeds":             "",
             "MedicalIssues":            self.replaceSmartQuotes(an.HEALTHPROBLEMS),
