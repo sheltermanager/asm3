@@ -233,6 +233,14 @@ class AdvancedSearchBuilder(object):
             self.values.append(self.post.date(cfieldfrom))
             self.values.append(self.post.datetime(cfieldto, "dayend"))
 
+    def add_daterange(self, cfieldfrom, cfieldto, fieldstart, fieldend): 
+        """ Adds a clause for a posted date range to a date field """
+        if self.post[cfieldfrom] != "" and self.post[cfieldto] != "":
+            self.post.data["dayend"] = "23:59:59"
+            self.ands.append(f"{fieldend} >= ? AND {fieldstart} <= ?")
+            self.values.append(self.post.date(cfieldfrom))
+            self.values.append(self.post.datetime(cfieldto, "dayend"))
+
     def add_date_pair(self, cfieldfrom, cfieldto, field, field2): 
         """ Adds a clause for a posted date range to one of two date fields """
         if self.post[cfieldfrom] != "" and self.post[cfieldto] != "":

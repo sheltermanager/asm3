@@ -5015,6 +5015,7 @@ class options(JSONEndpoint):
             "currencies": asm3.lookups.CURRENCIES,
             "deathreasons": asm3.lookups.get_deathreasons(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "eventfindcolumns": asm3.html.json_eventfindcolumns(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "foundanimalfindcolumns": asm3.html.json_foundanimalfindcolumns(dbo),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
@@ -6816,6 +6817,33 @@ class event_new(JSONEndpoint):
 
     def post_all(self, o):
         return str(asm3.event.insert_event_from_form(o.dbo, o.post, o.user))
+
+
+class event_find(JSONEndpoint):
+    url = "event_find"
+    get_permissions = asm3.users.VIEW_EVENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        return {
+        }
+
+
+class event_find_results(JSONEndpoint):
+    url = "event_find_results"
+    get_permissions = asm3.users.VIEW_EVENT
+
+    def controller(self, o):
+        results = asm3.event.get_event_find_advanced(o.dbo, o.post.data, o.user, asm3.configuration.record_search_limit(o.dbo))
+        add = None
+        if len(results) > 0: 
+            add = asm3.additional.get_additional_fields_ids(o.dbo, results, "event")
+        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "code.event_find_results", o.dbo)
+        return {
+            "additional": add,
+            "rows": results
+        }
+
 
 # List of routes constructed from class definitions
 routes = []

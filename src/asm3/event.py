@@ -53,3 +53,33 @@ def get_event_dates(dbo, post):
                      "WHERE (ev.StartDateTime <= ? AND ? <= ev.EndDateTime) OR ev.ID = ?", \
                      (post.date("movementdate"), post.date("movementdate"), post.integer("eventid")))
 
+def get_event_find_advanced(dbo, criteria, username, limit = 0, siteid = 0):
+    """
+    Returns rows for advanced animal control searches.
+    criteria: A dictionary of criteria
+       name - string partial pattern
+       eventfrom - event start range from in current display locale format
+       eventto - event end range from in current display locale format
+       location - string partial pattern
+       address - string partial pattern
+       town - string partial pattern
+       county - string partial pattern
+       postcode - string partial pattern
+       country - string partial pattern
+    """
+    post = asm3.utils.PostedData(criteria, dbo.locale)
+    ss = asm3.utils.AdvancedSearchBuilder(dbo, post)
+
+    ss.ands.append("ev.ID > 0")
+    ss.add_str("name", "ev.eventname")
+    ss.add_str("location", "owner.OwnerName")
+    ss.add_str("address", "ev.eventaddress")
+    ss.add_str("city", "ev.eventtown")
+    ss.add_str("county", "ev.eventcounty")
+    ss.add_str("postcode", "ev.eventpostcode")
+    ss.add_str("country", "ev.eventcountry")
+    ss.add_daterange("eventfrom", "eventto", "ev.startdatetime", "ev.enddatetime")
+
+    sql = "%s WHERE %s ORDER BY ev.ID DESC" % (get_event_query(dbo), " AND ".join(ss.ands))
+    rows = dbo.query(sql, ss.values, limit=limit, distincton="ID")
+    return rows

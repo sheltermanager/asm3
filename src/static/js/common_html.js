@@ -525,6 +525,21 @@ const html = {
         return h;
     },
 
+/**
+     * Returns a link to an event - but only if the view event permission is set
+     * to hide their detail.
+     * eventid: The event ID
+     * name: The event detail
+     */
+    event_link: function(eventid, name) {
+        var h = "";
+        if (!name) { name = ""; }
+        if (common.has_permission("ve")) {
+            h = '<a href="event?id=' + eventid + '">' + name + '</a>';
+        }
+        return h;
+    },
+
     /**
      * Outputs a div box container with jquery ui style
      */
