@@ -10,7 +10,7 @@ $(function(){
         render: function(){
             return [
 
-                console.log(controller),
+//                console.log(controller),
                 edit_header.event_edit_header(controller.event, "event", []),
                 tableform.buttons_render([
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this event") },
@@ -18,13 +18,7 @@ $(function(){
                 ]),
                 '<div id="asm-details-accordion">',
                 this.render_details(),
-//                '<h3 id="asm-additional-accordion"><a href="#">' + _("Additional") + '</a></h3>',
-//                '<div>',
-//                additional.additional_fields(controller.additional),
-//                '</div>',
-                this.render_notes(),
-                '<h3><a href="#"> dsad</a></h3>',
-                '<div>dsads</div>',
+
                 '</div>',
                 '</div>'
             ].join("\n");
@@ -34,125 +28,54 @@ $(function(){
             return [
                 '<h3><a href="#">' + _("Details") + '</a></h3>',
                 '<div>',
-                '<table width="100%">',
+                '<table align="left" class="additionaltarget" data="to21">',
                 '<tr>',
-                // left column
-                '<td width="35%" class="asm-nested-table-td">',
-                '<table width="100%" class="additionaltarget" data="to16">',
-                '<tr>',
-                '<td>' + _("Number") + '</td>',
-                '<td><span class="asm-waitinglist-number">',
-//                format.padleft(controller.incident.ACID, 6),
-                '</span></td>',
+                '<td width="50%"><label for="eventname">' + _("Event Name") + '</label></td>',
+                '<td><input id="eventname" data-post="eventname" type="text" data-json="EVENTNAME" class="asm-textbox"  /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="startdate">' + _("Start Date") + '</label>',
+                '<span class="asm-has-validation">*</span>',
+                '</td>',
+                '<td><input id="startdate" data-post="startdate" data-json="STARTDATETIME" class="asm-textbox asm-datebox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="enddate">' + _("End Date") + '</label>',
+                '<span class="asm-has-validation">*</span>',
+                '</td>',
+                '<td><input id="enddate" data-post="enddate" data-json="ENDDATETIME" class="asm-textbox asm-datebox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="location">' + _("Location") + '</label>',
+                '</td>',
+                '<td><input type="hidden" id="location" class="asm-personchooser" data-type="organization" data-post="event" data-json="EVENTOWNERID" />',
+                '</td>',
+                '<tr>',
+                '<td><label for="address">' + _("Address") +'</label>',
+                '<span class="asm-has-validation">*</span>',
+                '</td>',
+                '<td><textarea class="asm-textareafixed" id="address" data-post="address" data-json="EVENTADDRESS" rows="3"></textarea></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="town">' + _("City") + '</label></td>',
+                '<td><input class="asm-textbox" maxlength="100" id="town" data-post="town" data-json="EVENTTOWN" type="text" /></td>',
+                '</tr>',
+                '<tr id="statecounty">',
+                '<td><label for="county">' + _("State") + '</label></td>',
+                '<td><input class="asm-textbox" maxlength="100" id="county" data-post="county" data-json="EVENTCOUNTY" type="text" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="postcode">' + _("Zipcode") + '</label></td>',
+                '<td><input class="asm-textbox newform" id="postcode" data-post="postcode" data-json="EVENTPOSTCODE" type="text" /></td>',
+                '</tr>',
+                '<tr id="countryrow">',
+                '<td><label for="country">' + _("Country") + '</label></td>',
+                '<td><input class="asm-textbox" id="country" data-post="country" data-json="EVENTCOUNTRY" type="text" /></td>',
+                '</tr>',
+                additional.additional_fields(controller.additional),
                 '</table>',
                 '</div>'
             ].join("\n")
-        },
-
-        render_notes: function() {
-            return [
-                '<h3><a href="#">' + _("Notes") + '</a></h3>',
-                '<div>',
-                // outer table
-                '<table width="100%">',
-                '<tr>',
-                '<td class="asm-nested-table-td">',
-                // comments table
-                '<table>',
-                '<tr id="markingsrow">',
-                '<td>',
-                '<label for="markings">' + _("Markings") + '</label>',
-                '</td>',
-                '<td width="80%">',
-                '<textarea class="asm-textarea" id="markings" data-json="MARKINGS" data-post="markings" rows="3"></textarea>',
-                '</td>',
-                '</tr>',
-                '<tr id="hiddencommentsrow">',
-                '<td>',
-                '<label for="hiddencomments">' + _("Hidden Comments") + '</label>',
-                '<span id="callout-hiddencomments" class="asm-callout">' + _("Hidden comments are for staff information only and will never be used on any adoption websites") + '</span>',
-                '</td>',
-                '<td>',
-                '<textarea class="asm-textarea" title="' + html.title(_("Hidden Comments")) + '" id="hiddencomments" data-json="HIDDENANIMALDETAILS" data-post="hiddencomments" rows="3"></textarea>',
-                '</td>',
-                '</tr>',
-                '<tr id="commentsrow">',
-                '<td>',
-                '<label for="comments">' + _("Description") + '</label>',
-                '<span id="callout-comments" class="asm-callout">' + _("The description is used for the animal's bio on adoption websites") + '</span>',
-                '<br/><button id="button-commentstomedia">' + _('Copy description to the notes field of the web preferred media for this animal') + '</button>',
-                '</td>',
-                '<td>',
-                '<textarea class="asm-textarea" title="' + html.title(_("Description")) + '" id="comments" data-json="ANIMALCOMMENTS" data-post="comments" rows="3"></textarea>',
-                '</td>',
-                '</tr>',
-                '<tr id="popupwarningrow">',
-                '<td>',
-                '<label for="popupwarning">' + _("Warning") + '</label>',
-                '<span id="callout-popupwarning" class="asm-callout">' + _("Show a warning when viewing this animal") + '</span>',
-                '</td>',
-                '<td>',
-                '<textarea class="asm-textarea" title="' + html.title(_("Warning")) + '" id="popupwarning" data-json="POPUPWARNING" data-post="popupwarning" rows="3"></textarea>',
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</td>',
-                '<td class="asm-nested-table-td">',
-                // good with table
-                '<table class="additionaltarget" data="to3">',
-                '<tr class="goodwith">',
-                '<td>',
-                '<label for="goodwithcats">' + _("Good with cats") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="goodwithcats" data-json="ISGOODWITHCATS" data-post="goodwithcats">',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="goodwith">',
-                '<td>',
-                '<label for="goodwithdogs">' + _("Good with dogs") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="goodwithdogs" data-json="ISGOODWITHDOGS" data-post="goodwithdogs">',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="goodwith">',
-                '<td>',
-                '<label for="goodwithkids">' + _("Good with children") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="goodwithkids" data-json="ISGOODWITHCHILDREN" data-post="goodwithkids">',
-                html.list_to_options(controller.ynunk, "ID", "NAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr class="goodwith">',
-                '<td>',
-                '<label for="housetrained">' + _("Housetrained") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="housetrained" data-json="ISHOUSETRAINED" data-post="housetrained">',
-                html.list_to_options(controller.ynun, "ID", "NAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                // end good with
-                '</table>',
-                // end outer table
-                '</td>',
-                '</tr>',
-                '</table>',
-                '</div>'
-            ].join("\n");
-        },
-
-        validation: function(){
-            return false;
         },
 
         bind: function(){
@@ -163,9 +86,18 @@ $(function(){
             });
 
             validate.save = function(callback) {
-                window.alert("hi");
                 if (!event.validation()) { header.hide_loading(); return; }
                 validate.dirty(false);
+                let formdata = "mode=save" +
+                    "&id=" + $("#eventid").val() +
+                    "&ownerid=" + $("#location").personchooser().val() +
+                    "&recordversion=" + controller.event.RECORDVERSION +
+                    "&" + $("input, select, textarea").not(".chooser").toPOST();
+                common.ajax_post("event", formdata)
+                    .then(callback)
+                    .fail(function() {
+                        validate.dirty(true);
+                    });
             };
 
             // Load the tab strip
@@ -178,8 +110,26 @@ $(function(){
                });
             });
 
-            $("#button-delete").button().click(function(){
+            $("#button-delete").button().click(async function(){
+                await tableform.delete_dialog(null, _("This will permanently remove this event, are you sure?"));
+                let formdata = "mode=delete&eventid=" + $("#eventid").val();
+                await common.ajax_post("event", formdata);
+                common.route("main");
             });
+
+            // If the bonded animals are cleared (or any animalchooser as part
+            // of an additional field for that matter), dirty the form.
+            $(".asm-animalchooser").animalchooser().bind("animalchoosercleared", function(event) {
+                validate.dirty(true);
+            });
+
+            // Same goes for any of our person choosers
+            $(".asm-personchooser").personchooser().bind("personchoosercleared", function(event) {
+                validate.dirty(true);
+            });
+
+            additional.relocate_fields();
+
         },
 
         enable_widgets: function(){
@@ -190,16 +140,56 @@ $(function(){
 
         },
 
+        validation: function(){
+            header.hide_error();
+            validate.reset();
+            if(common.trim($("#startdate").val()) == ""){
+                header.show_error(_("Event must have a start date."));
+                validate.highlight("startdate");
+                validate.dirty(false);
+                return false;
+            }
+            if (common.trim($("#enddate").val()) == ""){
+                header.show_error(_("Event must have an end date."));
+                validate.highlight("enddate");
+                validate.dirty(false);
+                return false;
+            }
+            if (common.trim($("#address").val()) == ""){
+                header.show_error(_("Event must have an address."));
+                validate.highlight("address");
+                validate.dirty(false);
+                return false;
+            }
+            // mandatory additional fields
+            if (!additional.validate_mandatory()) { return false; }
+            return true;
+        },
+
         sync: function(){
 
-        // Update on-screen fields from the data and display the screen
+            // Load the data into the controls for the screen
+            $("#asm-content input, #asm-content select, #asm-content textarea").fromJSON(controller.event);
+
+            // Update on-screen fields from the data and display the screen
             event.enable_widgets()
+
+            // Dirty handling
+            validate.bind_dirty([ "event_" ]);
         },
 
         name: "event",
         animation: "formtab",
         autofocus: "#eventtype",
-        title: function() { return "controller.person.OWNERCODE" + ' - ' + "controller.person.OWNERNAME"; },
+        title: function() {
+            var e = controller.event;
+            var dates_range = "";
+            if(format.date(e.STARTDATETIME) == format.date(e.ENDDATETIME))
+                    dates_range = format.date(e.STARTDATETIME);
+                else
+                    dates_range = format.date(e.STARTDATETIME) + " - " + format.date(e.ENDDATETIME);
+            return dates_range + " " + e.EVENTNAME + " " + [e.EVENTADDRESS, e.EVENTTOWN, e.EVENTCOUNTY, e.EVENTCOUNTRY].filter(Boolean).join(", ");
+        },
         routes: {
             "event": function() { common.module_loadandstart("event", "event?id=" + this.qs.id); }
         }

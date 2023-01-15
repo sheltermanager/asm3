@@ -25,6 +25,7 @@ import asm3.db
 import asm3.dbfs
 import asm3.dbupdate
 import asm3.diary
+import asm3.event
 import asm3.financial
 import asm3.html
 import asm3.log
@@ -6798,6 +6799,7 @@ class waitinglist_results(JSONEndpoint):
 
 class event(JSONEndpoint):
     url = "event"
+    get_permissions = asm3.users.VIEW_EVENT
 
     def controller(self, o):
         dbo = o.dbo
@@ -6806,12 +6808,21 @@ class event(JSONEndpoint):
         return{
             "event": e,
             "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event")
-
         }
+
+    def post_save(self, o):
+        self.check(asm3.users.CHANGE_EVENT)
+        asm3.event.update_event_from_form(o.dbo, o.post, o.user)
+
+    def post_delete(self, o):
+        self.check(asm3.users.DELETE_EVENT)
+        asm3.event.delete_event(o.dbo, o.user, o.post.integer("eventid"))
 
 class event_new(JSONEndpoint):
     url = "event_new"
-    #TODO: need to add permissions
+    get_permissions = asm3.users.ADD_EVENT
+    post_permissions = asm3.users.ADD_EVENT
+
     def controller(self, o):
         dbo = o.dbo
         asm3.al.debug("add event", "code.event_new", dbo)
