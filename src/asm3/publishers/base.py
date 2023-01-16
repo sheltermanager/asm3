@@ -70,7 +70,7 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
     # Strip any personal data if requested
     if strip_personal_data:
         personal = ["ADOPTIONCOORDINATOR", "ORIGINALOWNER", "BROUGHTINBY", 
-            "CURRENTOWNER", "OWNER", "RESERVEDOWNER", 
+            "CURRENTOWNER", "OWNERNAME", "RESERVEDOWNER", 
             "CURRENTVET", "NEUTERINGVET", "OWNERSVET"]
         for r in rows:
             for k in r.keys():
