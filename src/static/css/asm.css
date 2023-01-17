@@ -307,6 +307,9 @@ select:disabled, input:disabled, textarea:disabled {
     display: inline-block;
     vertical-align: top;
 }
+.asm-animalchoosermulti-filter .asmSelect {
+    width: 150px;
+}
 .asm-animalchoosermulti-result {
     display: inline-block;
     text-align: center;

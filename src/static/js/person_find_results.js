@@ -226,7 +226,7 @@ $(function() {
                         else if (v.FIELDTYPE == additional.ANIMAL_LOOKUP) {
                             rv = '<a href="animal?id=' + v.VALUE + '">' + v.ANIMALNAME + '</a>';
                         }
-                        else if (v.FIELDTYPE == additional.PERSON_LOOKUP) {
+                        else if (additional.is_person_type(v.FIELDTYPE)) {
                             rv = '<a href="person?id=' + v.VALUE + '">' + v.OWNERNAME + '</a>';
                         }
                         else {

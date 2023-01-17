@@ -186,7 +186,7 @@ $(function() {
                         else if (v.FIELDTYPE == additional.ANIMAL_LOOKUP) {
                             rv = '<a href="animal?id=' + v.VALUE + '">' + v.ANIMALNAME + '</a>';
                         }
-                        else if ([additional.PERSON_LOOKUP, additional.VET, additional.SPONSOR].includes(v.FIELDTYPE)) {
+                        else if (additional.is_person_type(v.FIELDTYPE)) {
                             rv = html.person_link(v.VALUE, v.OWNERNAME);
                         }
                         else {

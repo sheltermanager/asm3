@@ -52,8 +52,8 @@ MULTI_LOOKUP = 7
 ANIMAL_LOOKUP = 8
 PERSON_LOOKUP = 9
 TIME = 10
-SPONSOR = 11
-VET = 12
+PERSON_SPONSOR = 11
+PERSON_VET = 12
 
 def clause_for_linktype(linktype):
     """ Returns the appropriate clause for a link type """
@@ -81,6 +81,10 @@ def table_for_linktype(linktype):
     elif linktype == "foundanimal":
         return "animalfound"
     return linktype
+
+def is_person_fieldtype(fieldtype):
+    """ Returns true if the field type given is a person """
+    return fieldtype in (PERSON_LOOKUP, PERSON_SPONSOR, PERSON_VET)
 
 def get_additional_fields(dbo, linkid, linktype = "animal"):
     """

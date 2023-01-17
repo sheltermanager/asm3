@@ -142,7 +142,6 @@ def additional_field_tags(dbo, fields, prefix="", depth=2):
         depth - the level of the recursion for resolving additional person links in an additional person
     """
     l = dbo.locale
-    person_types = [asm3.additional.PERSON_LOOKUP, asm3.additional.VET, asm3.additional.SPONSOR]
     tags = {}
     for af in fields:
         val = af["VALUE"]
@@ -153,7 +152,7 @@ def additional_field_tags(dbo, fields, prefix="", depth=2):
             val = format_currency_no_symbol(l, af["VALUE"])
         if af["FIELDTYPE"] == asm3.additional.ANIMAL_LOOKUP:
             val = af["ANIMALNAME"]
-        if af["FIELDTYPE"] in person_types:
+        if asm3.additional.is_person_fieldtype(af["FIELDTYPE"]):
             val = af["OWNERNAME"]
             p = asm3.person.get_person(dbo, asm3.utils.cint(af["VALUE"]))
             if p is not None: tags = append_tags(tags, additional_field_person_tags(dbo, p, prefix, af["FIELDNAME"].upper(), depth))
