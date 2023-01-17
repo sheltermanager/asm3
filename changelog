@@ -1,6 +1,7 @@
 46
 ================
 
+17/01/23 Fix bug with European locales generating monthly figures report
 17/01/23 Event find screens (Saggi Neuemann) #1216
 17/01/23 Add age group filter to animal chooser (Saggi Neuemann) #1215
 16/01/23 publishers only need to strip personal data from OWNERNAME

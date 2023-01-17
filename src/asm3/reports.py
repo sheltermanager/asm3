@@ -1443,11 +1443,10 @@ class Report:
         if self.params is not None:
             for p in self.params:
                 iv = asm3.utils.cint(p[3])
-                if p[3].find("/") != -1:
-                    seldate = asm3.i18n.display2python(self.dbo.locale, self.params[0][3])
-                    if seldate is not None:
-                        year = seldate.year
-                        month = seldate.month
+                dv = asm3.i18n.display2python(self.dbo.locale, p[3])
+                if dv is not None:
+                    year = dv.year
+                    month = dv.month
                 elif iv > 1990:
                     year = iv
                 elif iv <= 12:
