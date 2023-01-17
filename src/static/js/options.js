@@ -521,6 +521,8 @@ $(function() {
                     128266, // Speaker with high volume
                     128272, // Lock with key
                     128571, // Cat with heart eyes
+                    129379, // Bowl and spoon
+                    129387, // Can of food
                     129440, // Microbe
                     129460, // Bone
                     129514, // Test tube
