@@ -260,7 +260,7 @@ def checkout_adoption_post(dbo, post):
             content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
             contentpdf = asm3.utils.html_to_pdf(dbo, content)
             attachments = [( "%s.pdf" % m.ID, "application/pdf", contentpdf )]
-            asm3.utils.send_email(dbo, asm3.configuration.email(dbo), co["email"], "", "", 
+            asm3.utils.send_email(dbo, "", co["email"], "", "", 
                 _("Signed Document", l), m.MEDIANOTES, "plain", attachments)
     # Create the due payment records if they haven't been done already, along with a receipt/payref
     if co["paymentfeeid"] == 0:

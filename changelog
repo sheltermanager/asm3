@@ -1,6 +1,7 @@
 46
 ================
 
+17/01/23 Custom SMTP overrides should only ever use the configured From address
 17/01/23 Fix bug with European locales generating monthly figures report
 17/01/23 Event find screens (Saggi Neuemann) #1216
 17/01/23 Add age group filter to animal chooser (Saggi Neuemann) #1215

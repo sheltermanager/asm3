@@ -942,7 +942,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
             body += "\n" + formdata
             attachments = images
         # Send
-        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emailaddress, "", "", 
+        asm3.utils.send_email(dbo, "", emailaddress, "", "", 
             asm3.i18n._("Submission received: {0}", l).format(formname), 
             body, "html", attachments, exceptions=False)
 
@@ -975,7 +975,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
             "INNER JOIN owner ON owner.ID = animal.AdoptionCoordinatorID " \
             "WHERE animal.ID = ?", [animalid])
         if coordinatoremail != "":
-            asm3.utils.send_email(dbo, asm3.configuration.email(dbo), coordinatoremail, "", "", 
+            asm3.utils.send_email(dbo, "", coordinatoremail, "", "", 
                 subject, formdata, "html", images, exceptions=False)
 
     # Did the form submission have a value in an "emailsubmissionto" field?

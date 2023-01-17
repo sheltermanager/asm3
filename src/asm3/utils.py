@@ -1649,7 +1649,8 @@ def strip_email_address(s):
 def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body = "", contenttype = "plain", attachments = [], exceptions = True, bulk = False):
     """
     Sends an email.
-    fromadd is a single email address
+    replyadd is a single email address and controls the Reply-To header
+        if replyadd is "", the address from the options screen is used
     toadd is a comma/semi-colon separated list of email addresses 
     ccadd is a comma/semi-colon separated list of email addresses
     bccadd is a comma/semi-colon separated list of email addresses
@@ -1664,6 +1665,10 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
 
     For HTML emails, a plaintext part is converted and added. If the HTML
     does not have html/body tags, they are also added.
+
+    Note that the From address is either the one configured by the
+    user under Settings->Options->Email (if they set their own SMTP server), 
+    or the one from smtp_override sitedef/config item.
     """
 
     def add_header(msg, header, value):
@@ -1718,17 +1723,21 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
         body = fix_relative_document_uris(dbo, body)
 
     # Build the from address
-    # If we don't have an SMTPOverride, use the sitedef to construct the from address
-    # Otherwise, use the reply address
-    fromadd = replyadd
-    if not asm3.configuration.smtp_override(dbo):
+    # If we have an SMTPOverride, use the from address the user configured.
+    # Otherwise, use the sitedef to construct the from address
+    fromadd = ""
+    if asm3.configuration.smtp_override(dbo):
+        fromadd = asm3.configuration.email(dbo)
+    else:
         fromadd = FROM_ADDRESS
         fromadd = fromadd.replace("{organisation}", asm3.configuration.organisation(dbo))
         fromadd = fromadd.replace("{alias}", dbo.alias)
         fromadd = fromadd.replace("{database}", dbo.database)
         fromadd = fromadd.replace(",", "") # commas blow up address parsing
 
-    # Check for any problems in the reply address, such as unclosed address
+    # Make sure we have a reply address and check for any problems, such as unclosed address
+    if replyadd is None or replyadd == "":
+        replyadd = asm3.configuration.email(dbo)
     if replyadd.find("<") != -1 and replyadd.find(">") == -1:
         replyadd += ">"
 
@@ -1791,7 +1800,7 @@ def _send_email(msg, fromadd, tolist, dbo=None, exceptions=True):
     """
     Internal function to handle the final transmission of an email message.
     msg: The python message object
-    fromadd: The from address "me@me.com"
+    fromadd: The envelope sender address for the SMTP server (not used by sendmail)
     tolist: A list of recipient addresses [ "add1@test.com", "add2@test.com" ... ]
     dbo can be None, is only used for logging
     exceptions: If True throws exceptions on error, otherwise returns success boolean
@@ -1848,10 +1857,10 @@ def _send_email(msg, fromadd, tolist, dbo=None, exceptions=True):
             if exceptions: raise ASMError(str(err))
             return False
 
-def send_bulk_email(dbo, fromadd, subject, body, rows, contenttype):
+def send_bulk_email(dbo, replyadd, subject, body, rows, contenttype):
     """
     Sends a set of bulk emails asynchronously.
-    fromadd is an RFC821 address
+    replyadd is an RFC821 address and controls the Reply-To header
     subject and body are strings. Either can contain <<TAGS>>
     rows is a list of dictionaries of tag tokens with real values to substitute
     contenttype is either "plain" or "html"
@@ -1863,7 +1872,7 @@ def send_bulk_email(dbo, fromadd, subject, body, rows, contenttype):
             toadd = r["EMAILADDRESS"]
             if toadd is None or toadd.strip() == "": continue
             asm3.al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
-            send_email(dbo, fromadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
+            send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
     thread.start_new_thread(do_send, ())
 
 def send_error_email():
@@ -1895,21 +1904,21 @@ def send_user_email(dbo, sendinguser, user, subject, body):
     DEFAULT_EMAIL = "noreply@sheltermanager.com"
     sendinguser = asm3.users.get_users(dbo, sendinguser)
     if len(sendinguser) == 0:
-        fromadd = DEFAULT_EMAIL
+        replyadd = DEFAULT_EMAIL
     else:
-        fromadd = sendinguser[0]["EMAILADDRESS"]
-        if fromadd is None or fromadd.strip() == "":
-            fromadd = DEFAULT_EMAIL
-    asm3.al.debug("from: %s (%s), to: %s" % (sendinguser, fromadd, user), "utils.send_user_email", dbo)
+        replyadd = sendinguser[0]["EMAILADDRESS"]
+        if replyadd is None or replyadd.strip() == "":
+            replyadd = DEFAULT_EMAIL
+    asm3.al.debug("from: %s (%s), to: %s" % (sendinguser, replyadd, user), "utils.send_user_email", dbo)
     allusers = asm3.users.get_users(dbo)
     for u in allusers:
         # skip if we have no email address - we can't send it.
         if u["EMAILADDRESS"] is None or u["EMAILADDRESS"].strip() == "": continue
         if user == "*":
-            send_email(dbo, fromadd, u["EMAILADDRESS"], "", "", subject, body, exceptions=False)
+            send_email(dbo, replyadd, u["EMAILADDRESS"], "", "", subject, body, exceptions=False)
         elif u["USERNAME"] == user:
-            send_email(dbo, fromadd, u["EMAILADDRESS"], "", "", subject, body, exceptions=False)
+            send_email(dbo, replyadd, u["EMAILADDRESS"], "", "", subject, body, exceptions=False)
         elif nulltostr(u["ROLES"]).find(user) != -1:
-            send_email(dbo, fromadd, u["EMAILADDRESS"], "", "", subject, body, exceptions=False)
+            send_email(dbo, replyadd, u["EMAILADDRESS"], "", "", subject, body, exceptions=False)
 
 
