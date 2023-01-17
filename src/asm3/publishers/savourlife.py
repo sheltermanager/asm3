@@ -71,6 +71,18 @@ class SavourLifePublisher(AbstractPublisher):
         elif x == 1: return False
         else: return None
 
+    def good_with_over5(self, x):
+        """ Calculates good with children over 5 """
+        if x == 0 or x == 5: return True # Yes or Over 5
+        if x == 2: return None # Unknown
+        return False
+
+    def good_with_under5(self, x):
+        """ Calculates good with children under 5 """
+        if x == 0: return True # Yes
+        if x == 2: return None # Unknown
+        return False
+
     def run(self):
         
         self.log("SavourLifePublisher starting...")
@@ -366,8 +378,8 @@ class SavourLifePublisher(AbstractPublisher):
             "RequirementOtherDogs":     self.good_with(an.ISGOODWITHDOGS),
             "RequirementOtherAnimals":  None,
             "RequirementOtherCats":     self.good_with(an.ISGOODWITHCATS),
-            "RequirementKidsOver5":     an.ISGOODWITHCHILDREN == 0 or an.ISGOODWITHCHILDREN == 5,
-            "RequirementKidsUnder5":    self.good_with(an.ISGOODWITHCHILDREN),
+            "RequirementKidsOver5":     self.good_with_over5(an.ISGOODWITHCHILDREN), 
+            "RequirementKidsUnder5":    self.good_with_under5(an.ISGOODWITHCHILDREN),
             "SpecialNeeds":             "",
             "MedicalIssues":            self.replaceSmartQuotes(an.HEALTHPROBLEMS),
             "InterstateAdoptionAvaliable": interstate, # NB: This attribute is deliberately spelled wrong due to mispelling at SL side
