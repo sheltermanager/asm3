@@ -67,9 +67,10 @@ class SavourLifePublisher(AbstractPublisher):
         """
         Translates our good with fields Selective/Unknown/No/Yes to SOL's NULL/False/True
         """
-        if x == 0: return True
-        elif x == 1: return False
-        else: return None
+        if x == 0: return True # yes
+        elif x == 1: return False # no
+        elif x == 3: return True # selective
+        else: return None # unknown or other
 
     def good_with_over5(self, x):
         """ Calculates good with children over 5 """
