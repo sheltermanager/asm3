@@ -227,6 +227,7 @@ DEFAULTS = {
     "EmblemSpecialNeeds": "Yes",
     "EmblemTrialAdoption": "Yes",
     "EmblemUnneutered": "Yes",
+    "EventSearchColumns": "StartDateTime,EndDateTime,EventName,EventOwnerName,EventAddress,EventTown",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
     "FlagChangeLog": "Yes",
@@ -1219,6 +1220,9 @@ def pdf_zoom(dbo):
 
 def person_search_columns(dbo):
     return cstring(dbo, "OwnerSearchColumns", DEFAULTS["OwnerSearchColumns"])
+
+def event_search_columns(dbo):
+    return cstring(dbo, "EventSearchColumns", DEFAULTS["EventSearchColumns"])
 
 def incident_search_columns(dbo):
     return cstring(dbo, "IncidentSearchColumns", DEFAULTS["IncidentSearchColumns"])

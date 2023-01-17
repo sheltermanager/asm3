@@ -807,6 +807,31 @@ def json_personfindcolumns(dbo):
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, asm3.configuration.person_search_columns(dbo))
     return cols
+
+def json_eventfindcolumns(dbo):
+    l = dbo.locale
+    cols = [ 
+        ( "CreatedBy", _("Created By", l) ),
+        ( "CreatedDate", _("Created Date", l) ),
+        ( "LastChangedBy", _("Last Changed By", l) ),
+        ( "LastChangedDate", _("Last Change Date", l) ),
+
+        ( "EventName", _("Event Name", l) ),
+        ( "StartDateTime", _("Start Date", l) ),
+        ( "EndDateTime", _("End Date", l) ),
+        ( "EventOwnerName", _("Location", l) ),
+        ( "EventAddress", _("Address", l) ),
+        ( "EventTown", _("City", l) ),
+        ( "EventCounty", _("State", l) ),
+        ( "EventPostcode", _("Zipcode", l) ),
+        ( "EventCountry", _("Country", l) ),
+        ]
+    fd = asm3.additional.get_field_definitions(dbo, "event")
+    for f in fd:
+        cols.append((f["FIELDNAME"], f["FIELDLABEL"]))
+    cols = findcolumns_sort(cols)
+    findcolumns_selectedtofront(cols, asm3.configuration.event_search_columns(dbo))
+    return cols
     
 def json_incidentfindcolumns(dbo):
     l = dbo.locale
