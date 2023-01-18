@@ -6804,6 +6804,7 @@ class event(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         e = asm3.event.get_event(dbo, o.post.integer("id"))
+        if e is None: self.notfound()
         asm3.al.debug("opened event %s" % "recname", "code.event", dbo)
         return{
             "event": e,
