@@ -28,9 +28,13 @@ $(function(){
             return [
                 '<h3><a href="#">' + _("Details") + '</a></h3>',
                 '<div>',
-                '<table align="left" class="additionaltarget" data="to21">',
+                '<table width="100%">',
                 '<tr>',
-                '<td width="50%"><label for="eventname">' + _("Event Name") + '</label></td>',
+                // left column
+                '<td width="35%" class="asm-nested-table-td">',
+                '<table width="100%" class="additionaltarget" data="to16">',
+                '<tr>',
+                '<td><label for="eventname">' + _("Event Name") + '</label></td>',
                 '<td><input id="eventname" data-post="eventname" type="text" data-json="EVENTNAME" class="asm-textbox"  /></td>',
                 '</tr>',
                 '<tr>',
@@ -73,6 +77,19 @@ $(function(){
                 '<td><input class="asm-textbox" id="country" data-post="country" data-json="EVENTCOUNTRY" type="text" /></td>',
                 '</tr>',
                 additional.additional_fields(controller.additional),
+                '</table>',
+                '</table>',
+                '</td>',
+                // right column
+                '<td width="35%" class="asm-nested-table-td">',
+                '<table width="100%">',
+                '<tr>',
+                '<td>&nbsp;</td>',
+                '<td>&nbsp;</td>',
+                '</tr>',
+                '</table>',
+                '</td>',
+                '</tr>',
                 '</table>',
                 '</div>'
             ].join("\n")
