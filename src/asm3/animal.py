@@ -1684,9 +1684,8 @@ def get_animal_entries(dbo, animalid):
 def insert_animal_entry(dbo, username, animalid):
     """
     Copies the current values from the entry fields in the animal table to the animalentry table.
-    Updates the entry fields to values from the latest returned movement and generates a new shelter code.
+    Updates the entry fields to values from the latest returned movement (if available) and generates a new shelter code.
     The UI should reload after any process that calls this.
-    If the animal's latest movement is not a returned exit movement (ie. non-foster/retailer), then a validation error is thrown.
     """
     a = get_animal(dbo, animalid)
     rxm = get_returned_exit_movements(dbo, animalid)
