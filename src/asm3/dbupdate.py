@@ -40,7 +40,7 @@ VERSIONS = (
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
-    34606, 34607, 34608
+    34606, 34607, 34608, 34609
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -48,7 +48,7 @@ LATEST_VERSION = VERSIONS[-1]
 # All ASM3 tables
 TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
     "adoption", "animal", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost",
-    "animaldiet", "animalfigures", "animalfiguresannual",  
+    "animaldiet", "animalentry", "animalfigures", "animalfiguresannual",  
     "animalfound", "animalcontrolanimal", "animallitter", "animallost", "animallostfoundmatch", 
     "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
     "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
@@ -91,7 +91,7 @@ TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontr
 TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption", 
     "animal", "animalcontrol", "animalcontrolanimal","animalcontrolrole", 
     "animallostfoundmatch", "animalpublished", 
-    "animalcost", "animaldiet", "animalfigures", "animalfiguresannual", 
+    "animalcost", "animaldiet", "animalentry", "animalfigures", "animalfiguresannual", 
     "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
     "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "event", "eventanimal", 
@@ -511,6 +511,28 @@ def sql_structure(dbo):
         flongstr("Comments") ))
     sql += index("animaldiet_AnimalID", "animaldiet", "AnimalID")
     sql += index("animaldiet_DietID", "animaldiet", "DietID")
+
+    sql += table("animalentry", (
+        fid(),
+        fint("AnimalID"),
+        fstr("ShelterCode"),
+        fstr("ShortCode"),
+        fdate("EntryDate"),
+        fint("EntryReasonID"),
+        fint("AdoptionCoordinatorID", True),
+        fint("BroughtInByOwnerID", True),
+        fint("OriginalOwnerID", True),
+        fint("AsilomarIntakeCategory", True),
+        fint("JurisdictionID", True),
+        fint("IsTransfer"),
+        fint("AsilomarIsTransferExternal", True),
+        fdate("HoldUntilDate", True),
+        fint("IsPickup"),
+        fint("PickupLocationID", True),
+        fstr("PickupAddress", True),
+        flongstr("ReasonNO", True),
+        flongstr("ReasonForEntry", True) ))
+    sql += index("animalentry_AnimalID", "animalentry", "AnimalID")
 
     sql += table("animalfigures", (
         fid(),
@@ -5705,3 +5727,36 @@ def update_34607(dbo):
 def update_34608(dbo):
     # change column eventownerid to nullable
     dbo.execute_dbupdate(dbo.ddl_drop_notnull("event", "EventOwnerID", dbo.type_integer))
+
+def update_34609(dbo):
+    # add animalentry table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("AnimalID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("ShelterCode", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("ShortCode", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("EntryDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("EntryReasonID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("AdoptionCoordinatorID", dbo.type_integer, True),
+        dbo.ddl_add_table_column("BroughtInByOwnerID", dbo.type_integer, True),
+        dbo.ddl_add_table_column("OriginalOwnerID", dbo.type_integer, True),
+        dbo.ddl_add_table_column("AsilomarIntakeCategory", dbo.type_integer, True),
+        dbo.ddl_add_table_column("JurisdictionID", dbo.type_integer, True),
+        dbo.ddl_add_table_column("IsTransfer", dbo.type_integer, False),
+        dbo.ddl_add_table_column("AsilomarIsTransferExternal", dbo.type_integer, True),
+        dbo.ddl_add_table_column("HoldUntilDate", dbo.type_datetime, True),
+        dbo.ddl_add_table_column("IsPickup", dbo.type_integer, False),
+        dbo.ddl_add_table_column("PickupLocationID", dbo.type_integer, True),
+        dbo.ddl_add_table_column("PickupAddress", dbo.type_shorttext, True),
+        dbo.ddl_add_table_column("ReasonNO", dbo.type_longtext, True),
+        dbo.ddl_add_table_column("ReasonForEntry", dbo.type_longtext, True),
+        dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, False),
+        dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("animalentry", fields) )
+    dbo.execute_dbupdate( dbo.ddl_add_index("animalentry_AnimalID", "animalentry", "AnimalID") )
+
+
