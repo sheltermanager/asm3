@@ -276,6 +276,7 @@ $(function() {
                 '</td>',
                 '<td>',
                 '<input id="datebroughtin" data-json="DATEBROUGHTIN" data-post="datebroughtin" class="asm-textbox asm-datebox" />',
+                '<input id="mostrecententrydate" class="asm-textbox" style="display: none" />',
                 '</td>',
                 '</tr>',
                 '<tr id="timebroughtinrow">',
@@ -398,6 +399,56 @@ $(function() {
                 '</table>',
                 '</div>'
             ].join("\n");
+        },
+
+        render_entry_history: function() {
+            if (controller.entryhistory.length == 0 || config.bool("DisableEntryHistory")) { return; }
+            const asilomar_categories = {
+                0: "Healthy",
+                1: "Treatable - Rehabilitatable",
+                2: "Treatable - Manageable",
+                3: "Unhealthy and Untreatable"
+            };
+            let h = [
+                '<h3><a href="#">' + _("Entry History") + '</a></h3>',
+                '<div>',
+                '<table class="asm-table">',
+                '<thead>',
+                '<tr>',
+                '<th>' + _("Date") + '</th>',
+                '<th>' + _("Code") + '</th>',
+                '<th>' + _("Category") + '</th>',
+                '<th>' + _("Coordinator") + '</th>',
+                '<th>' + _("By") + '</th>',
+                '<th>' + _("Owner") + '</th>',
+                '<th>' + _("Transfer In") + '</th>',
+                '<th>' + _("Hold") + '</th>',
+                '<th>' + _("Pickup") + '</th>',
+                '<th class="asilomar">' + _("Asilomar") + '</th>',
+                '<th>' + _("Reason") + '</th>',
+                '</tr>',
+                '</thead>',
+                '<tbody>'
+            ];
+            $.each(controller.entryhistory, function(i, v) {
+                h.push('<tr>');
+                h.push('<td><span class="nowrap">');
+                h.push('<button type="button" class="deleteentryhistory" data-id="' + v.ID + '">' + _("Delete") + '</button>');
+                h.push(format.date(v.ENTRYDATE) + '</span></td>');
+                h.push('<td>' + v.SHELTERCODE + '</td>');
+                h.push('<td>' + v.ENTRYREASONNAME + '</td>');
+                h.push('<td>' + html.person_link(v.ADOPTIONCOORDINATORID, v.COORDINATOROWNERNAME) + '</td>');
+                h.push('<td>' + html.person_link(v.BROUGHTINBYOWNERID, v.BROUGHTINBYOWNERNAME) + '</td>');
+                h.push('<td>' + html.person_link(v.ORIGINALOWNERID, v.ORIGINALOWNERNAME) + '</td>');
+                h.push('<td>' + (v.ISTRANSFER == 1 ? _('Yes') : '') + ' ' + (v.ASILOMARISTRANSFEREXTERNAL == 1 ? _('External') : '') + '</td>');
+                h.push('<td>' + format.date(v.HOLDUNTILDATE) + '</td>');
+                h.push('<td>' + (v.ISPICKUP == 1 ? v.PICKUPLOCATIONNAME + ' ' + v.PICKUPADDRESS : '') + '</td>');
+                h.push('<td class="asilomar">' + asilomar_categories[v.ASILOMARINTAKECATEGORY] + '</td>');
+                h.push('<td>' + v.REASONFORENTRY + ' ' + v.REASONNO + '</td>');
+                h.push('</tr>');
+            });
+            h.push('</tbody></table></div>');
+            return h.join("\n");
         },
 
         render_health_and_identification: function() {
@@ -835,6 +886,11 @@ $(function() {
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Send an email relating to this animal") },
                     { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this animal") },
                     { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
+                    { id: "newentry", text: _("New Entry"), icon: "new", tooltip: _("Generate a new code and archive the current entry data"),
+                        hideif: function() { 
+                            return config.bool("DisableEntryHistory") || 
+                                controller.returnedexitmovements.length == 0 ||
+                                controller.returnedexitmovements.length == controller.entryhistory.length; } },
                     { id: "match", text: _("Match"), icon: "match", tooltip: _("Match this animal with the lost and found database") },
                     { id: "littermates", text: _("Littermates"), icon: "litter", tooltip: _("View littermates") },
                     { id: "share", text: _("Share"), type: "buttonmenu", icon: "share" }
@@ -847,6 +903,7 @@ $(function() {
                 additional.additional_fields(controller.additional),
                 '</div>',
                 this.render_entry(),
+                this.render_entry_history(),
                 this.render_health_and_identification(),
                 this.render_death(),
                 this.render_incidents(),
@@ -1070,6 +1127,14 @@ $(function() {
                 $("#ownerrow").hide();
             }
 
+            // If the animal has entry history, hide the datebrought in field and show
+            // a read only copy of the most recent entry date instead.
+            if (controller.entryhistory.length > 0) {
+                $("#datebroughtin").hide();
+                $("#timebroughtin").closest("tr").hide();
+                $("#mostrecententrydate").val(format.date(controller.animal.MOSTRECENTENTRYDATE)).textbox("disable").show();
+            }
+
             // CONFIG ===========================
 
             if (config.bool("DisableShortCodesControl")) {
@@ -1263,7 +1328,7 @@ $(function() {
         /** Generates a new animal code */
         generate_code: async function() {
             validate.dirty(false);
-            let formdata = "mode=gencode&datebroughtin=" + $("#datebroughtin").val() + 
+            let formdata = "mode=gencode&datebroughtin=" + format.date(controller.animal.MOSTRECENTENTRYDATE) + 
                 "&animaltypeid=" + $("#animaltype").val() +
                 "&entryreasonid=" + $("#entryreason").val() +
                 "&speciesid=" + $("#species").val();
@@ -1621,6 +1686,12 @@ $(function() {
                 common.route("lostfound_match?animalid=" + $("#animalid").val());
             });
 
+            $("#button-newentry").button().click(async function() {
+                let formdata = "mode=newentry&animalid=" + controller.animal.ID;
+                let response = await common.ajax_post("animal", formdata);
+                common.route("animal?id=" + controller.animal.ID + "&view=entryhistory", true);
+            });
+
             $("#button-littermates").button().click(function() {
                 common.route("animal_find_results?mode=ADVANCED&q=&filter=includedeceased&litterid=" + encodeURIComponent($("#litterid").val()));
             });
@@ -1665,6 +1736,13 @@ $(function() {
                     await common.ajax_post("animal", "mode=forgetpublish&id=" + controller.animal.ID + "&service=" + service);
                     t.closest("p").fadeOut();
                 });
+            $(".deleteentryhistory").button({ icons: { primary: "ui-icon-trash" }, text: false })
+                .click(async function() {
+                    let t = $(this), aeid = $(this).attr("data-id");
+                    await common.ajax_post("animal", "mode=deleteentryhistory&id=" + aeid);
+                    t.closest("tr").fadeOut();
+                });
+
         },
 
         sync: function() {
@@ -1695,6 +1773,17 @@ $(function() {
             // Dirty handling
             validate.bind_dirty([ "animal_" ]);
             validate.indicator(["animalname", "dateofbirth", "datebroughtin" ]);
+
+            // We can open on a particular slider
+            if (controller.view && controller.view == "notes") {
+                $("#asm-details-accordion").accordion("option", "active", 2);
+            }
+            if (controller.view && controller.view == "entry") {
+                $("#asm-details-accordion").accordion("option", "active", 3);
+            }
+            if (controller.view && controller.view == "entryhistory") {
+                $("#asm-details-accordion").accordion("option", "active", 4);
+            }
 
             // If a popup warning has been set, display it
             animal.show_popup_warning();

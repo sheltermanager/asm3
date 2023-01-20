@@ -1597,12 +1597,14 @@ class animal(JSONEndpoint):
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "publishhistory": asm3.animal.get_publish_history(dbo, a.ID),
             "posneg": asm3.lookups.get_posneg(dbo),
+            "returnedexitmovements": asm3.animal.get_returned_exit_movements(dbo, a.ID),
             "sexes": asm3.lookups.get_sexes(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
             "sharebutton": SHARE_BUTTON,
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a.ID)[0],
             "templates": asm3.template.get_document_templates(dbo, "animal"),
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "view": o.post["view"],
             "ynun": asm3.lookups.get_ynun(dbo),
             "ynunk": asm3.lookups.get_ynunk(dbo)
         }
@@ -1631,6 +1633,14 @@ class animal(JSONEndpoint):
     def post_merge(self, o):
         self.check(asm3.users.MERGE_ANIMAL)
         asm3.animal.merge_animal(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("mergeanimalid"))
+
+    def post_deleteentryhistory(self, o):
+        self.check(asm3.users.CHANGE_ANIMAL)
+        return asm3.animal.delete_animal_entry(o.dbo, o.user, o.post.integer("id"))
+
+    def post_newentry(self, o):
+        self.check(asm3.users.CHANGE_ANIMAL)
+        return asm3.animal.insert_animal_entry(o.dbo, o.user, o.post.integer("animalid"))
 
     def post_randomname(self, o):
         return asm3.animal.get_random_name(o.dbo, o.post.integer("sex"))

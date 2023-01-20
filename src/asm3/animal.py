@@ -1681,6 +1681,10 @@ def get_animal_entries(dbo, animalid):
     """
     return dbo.query( get_animal_entry_query(dbo) + " WHERE ae.AnimalID = ?", [animalid] )
 
+def delete_animal_entry(dbo, username, aeid):
+    """ Deletes the animal entry history item aeid """
+    return dbo.delete("animalentry", aeid, username)
+
 def insert_animal_entry(dbo, username, animalid):
     """
     Copies the current values from the entry fields in the animal table to the animalentry table.
@@ -3322,7 +3326,7 @@ def delete_animal(dbo, username, animalid, ignore_movements=False):
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (animalid, asm3.additional.ANIMAL_IN))
     dbo.execute("DELETE FROM animalcontrolanimal WHERE AnimalID = ?", [animalid])
     dbo.execute("DELETE FROM animalpublished WHERE AnimalID = ?", [animalid])
-    for t in [ "adoption", "animalmedical", "animalmedicaltreatment", "animaltest", "animaltransport", "animalvaccination", "clinicappointment" ]:
+    for t in [ "adoption", "animalentry", "animalmedical", "animalmedicaltreatment", "animaltest", "animaltransport", "animalvaccination", "clinicappointment" ]:
         dbo.delete(t, "AnimalID=%d" % animalid, username)
     dbo.delete("animal", animalid, username)
     # asm3.dbfs.delete_path(dbo, "/animal/%d" % animalid) # Use maint_db_delete_orphaned_media to remove dbfs later if needed

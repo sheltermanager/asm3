@@ -1479,6 +1479,7 @@ $(function() {
                 '<p class="asm-header">' + _("Animals") + '</p>',
                 '<p>',
                 '<input data="DisableAsilomar" id="disableasilomar" class="asm-checkbox us" type="checkbox" /> <label for="disableasilomar" class="us">Remove the asilomar fields from the entry/deceased sections</label><br class="us" />',
+                '<input data="DisableEntryHistory" id="disableentryhistory" class="asm-checkbox" type="checkbox" /> <label for="disableentryhistory">' + _("Remove the entry history section from animal records") + '</label><br />',
                 '<input data="DontShowCoatType" id="coattype" class="asm-checkbox" type="checkbox" /> <label for="coattype">' + _("Remove the coat type field from animal details") + '</label><br />',
                 '<input data="DontShowSize" id="size" class="asm-checkbox" type="checkbox" /> <label for="size">' + _("Remove the size field from animal details") + '</label><br />',
                 '<input data="DontShowWeight" id="weight" class="asm-checkbox" type="checkbox" /> <label for="weight">' + _("Remove the weight field from animal details") + '</label><br />',

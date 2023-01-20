@@ -525,7 +525,7 @@ const html = {
         return h;
     },
 
-/**
+    /**
      * Returns a link to an event - but only if the view event permission is set
      * to hide their detail.
      * eventid: The event ID
