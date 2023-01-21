@@ -28,9 +28,13 @@ $(function(){
             return [
                 '<h3><a href="#">' + _("Details") + '</a></h3>',
                 '<div>',
-                '<table align="left" class="additionaltarget" data="to21">',
+                '<table width="100%">',
                 '<tr>',
-                '<td width="50%"><label for="eventname">' + _("Event Name") + '</label></td>',
+                // left table
+                '<td width="50%" class="asm-nested-table-td">',
+                '<table class="additionaltarget" data="to21">',
+                '<tr>',
+                '<td ><label for="eventname">' + _("Event Name") + '</label></td>',
                 '<td><input id="eventname" data-post="eventname" type="text" data-json="EVENTNAME" class="asm-textbox"  /></td>',
                 '</tr>',
                 '<tr>',
@@ -50,6 +54,7 @@ $(function(){
                 '</td>',
                 '<td><input type="hidden" id="location" class="asm-personchooser" data-type="organization" data-post="event" data-json="EVENTOWNERID" />',
                 '</td>',
+                '</tr>',
                 '<tr>',
                 '<td><label for="address">' + _("Address") +'</label>',
                 '<span class="asm-has-validation">*</span>',
@@ -72,7 +77,14 @@ $(function(){
                 '<td><label for="country">' + _("Country") + '</label></td>',
                 '<td><input class="asm-textbox" id="country" data-post="country" data-json="EVENTCOUNTRY" type="text" /></td>',
                 '</tr>',
+                '</table>',
+                '</td>',
+                // right table
+                '<td width="50%" class="asm-nested-table-td">',
                 additional.additional_fields(controller.additional),
+                '</td>',
+                // end of outer table
+                '</tr>',
                 '</table>',
                 '</div>'
             ].join("\n")
