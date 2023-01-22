@@ -2281,7 +2281,7 @@ def insert_animal_from_form(dbo, post, username):
         if lsite != usite:
             shelterlocation = dbo.query_int("SELECT ID FROM internallocation WHERE SiteID=? ORDER BY ID", [usite])
 
-    # If the option is on, write an intial record for the internal location
+    # If the option is on, write an initial record for the internal location
     if asm3.configuration.location_change_log(dbo):
         newlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [shelterlocation])
         if post["unit"] != "": newlocation += "-" + post["unit"]
@@ -2363,7 +2363,7 @@ def insert_animal_from_form(dbo, post, username):
         "HoldUntilDate":    post.date("holduntil"),
         "IsCourtesy":       0,
         "IsQuarantine":     0,
-        "AdditionalFlags":  "",
+        "AdditionalFlags":  "|",
         "DateBroughtIn":    datebroughtin,
         "AsilomarIntakeCategory": 0,
         "AsilomarIsTransferExternal": 0,

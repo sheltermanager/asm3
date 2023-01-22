@@ -1,6 +1,7 @@
 46
 ================
 
+22/01/23 Remove flag change message when first saving animal with no flags
 20/01/23 entry/intake history UI (defaults to off) #25
 19/01/23 Backend implementation/unit tests for entry history #25
 17/01/23 Custom SMTP overrides should only ever use the configured From address
