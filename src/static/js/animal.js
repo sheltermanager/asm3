@@ -639,7 +639,7 @@ $(function() {
                 h.push('<td>' + v.EVENTNAME + '</td>');
                 h.push('<td>' + v.EVENTADDRESS + ', ' + v.EVENTTOWN + ' ' + v.EVENTCOUNTY + ' ' + v.EVENTPOSTCODE + ' ' + v.EVENTCOUNTRY + '</td>');
                 h.push('<td><b>' + format.date(v.ARRIVALDATE) + '</b></td>');
-                h.push('<td>' + (v.ADOPTED==1 ? "✅" : "&nbsp;")  + '</td>');
+                h.push('<td>' + (v.ADOPTED==1 ? "&#9989;" : "&nbsp;")  + '</td>');
                 h.push('<td>' + v.COMMENTS + '</td>');
                 h.push('</tr>');
             });

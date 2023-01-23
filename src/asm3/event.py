@@ -9,18 +9,31 @@ def get_event_query(dbo):
            "FROM event ev " \
            "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID "
 
+def get_event_animal_query(dbo):
+    return "SELECT ev.*, owner.OwnerName AS EventOwnerName, ea.ArrivalDate, ea.Comments, " \
+           "CASE WHEN ad.id IS NOT NULL THEN 1 ELSE 0 END AS Adopted " \
+           "FROM eventanimal ea " \
+           "INNER JOIN event ev ON ev.id = ea.eventid " \
+           "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID " \
+           "LEFT OUTER JOIN adoption ad ON ad.eventid = ev.id AND ad.movementtype = 1 "
+
 def get_event(dbo, eventid):
     """
     Returns a complete event row by id
-    (int) eventid: The event to get
     """
     return dbo.first_row(dbo.query(get_event_query(dbo) + "WHERE ev.ID = ?", [eventid]))
 
-def get_event_date(dbo, movementdate):
+def get_events_by_animal(dbo, animalid):
     """
-    Returns events that match movementdate
+    Returns all events for animalid
     """
-    return dbo.query(get_event_query(dbo) + "WHERE (ev.StartDateTime <= ? AND ? <= ev.EndDateTime) ORDER BY ev.StartDateTime", [movementdate, movementdate])
+    return dbo.query(get_event_animal_query(dbo) + " WHERE ea.animalid=?", [animalid])
+
+def get_events_by_date(dbo, date):
+    """
+    Returns all events that match date
+    """
+    return dbo.query(get_event_query(dbo) + "WHERE (ev.StartDateTime <= ? AND ? <= ev.EndDateTime) ORDER BY ev.StartDateTime", [date, date])
 
 def insert_event_from_form(dbo, post, username):
     l = dbo.locale
@@ -131,13 +144,5 @@ def get_event_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     sql = "%s WHERE %s ORDER BY ev.ID DESC" % (get_event_query(dbo), " AND ".join(ss.ands))
     rows = dbo.query(sql, ss.values, limit=limit, distincton="ID")
     return rows
-
-def get_events_by_animal(dbo, animalid):
-    sql = "SELECT ev.*, owner.OwnerName AS EventOwnerName, ea.arrivaldate, ea.comments, CASE WHEN ad.id IS NOT NULL THEN 1 ELSE 0 END AS Adopted " \
-            "FROM event ev " \
-            "INNER JOIN eventanimal ea ON ev.id = ea.eventid " \
-            "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID " \
-            "LEFT OUTER JOIN adoption ad ON ad.eventid = ev.id AND ad.animalid = ? AND ad.movementtype = 1 "
-    return dbo.query(sql, [animalid])
 
 

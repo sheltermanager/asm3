@@ -42,8 +42,11 @@ class TestEvent(unittest.TestCase):
     def test_get_event(self):
         assert asm3.event.get_event(base.get_dbo(), self.nid) is not None
 
-    def test_get_event_date(self):
-        assert len(asm3.event.get_event_date(base.get_dbo(), datetime.datetime(2023, 1, 1, 0, 0, 0))) > 0
+    def test_get_events_by_animal(self):
+        asm3.event.get_events_by_animal(base.get_dbo(), 1)
+
+    def test_get_events_by_date(self):
+        assert len(asm3.event.get_events_by_date(base.get_dbo(), datetime.datetime(2023, 1, 1, 0, 0, 0))) > 0
 
     def test_get_event_find_advanced(self):
         assert len(asm3.event.get_event_find_advanced(base.get_dbo(), { "name": "Testio" })) > 0

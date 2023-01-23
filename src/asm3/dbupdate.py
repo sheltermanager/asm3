@@ -1026,8 +1026,7 @@ def sql_structure(dbo):
         fint("EventID"),
         fint("AnimalID"),
         fdate("ArrivalDate", True),
-        flongstr("Comments", True)
-         ))
+        flongstr("Comments", True) ))
     sql += index("eventanimal_EventAnimalID", "eventanimal", "EventID,AnimalID", True)
     sql += index("eventanimal_ArrivalDate", "eventanimal", "ArrivalDate")
 
@@ -5764,9 +5763,8 @@ def update_34609(dbo):
     dbo.execute_dbupdate( dbo.ddl_add_table("animalentry", fields) )
     dbo.execute_dbupdate( dbo.ddl_add_index("animalentry_AnimalID", "animalentry", "AnimalID") )
 
-
 def update_34610(dbo):
-    # add comments in eventanimal
+    # add eventanimal.Comments
     add_column(dbo, "eventanimal", "Comments", dbo.type_longtext, False)
     dbo.execute_dbupdate(dbo.ddl_drop_notnull("eventanimal", "ArrivalDate", dbo.type_datetime))
 
