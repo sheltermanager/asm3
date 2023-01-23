@@ -1590,6 +1590,7 @@ class animal(JSONEndpoint):
             "diarytasks": asm3.diary.get_animal_tasks(dbo),
             "entryhistory": asm3.animal.get_animal_entries(dbo, a.ID),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
+            "events": asm3.event.get_events_by_animal(dbo, a.ID),
             "flags": asm3.lookups.get_animal_flags(dbo),
             "incidents": asm3.animalcontrol.get_animalcontrol_for_animal(dbo, a.ID),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
