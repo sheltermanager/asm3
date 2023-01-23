@@ -9,15 +9,18 @@ def get_event_query(dbo):
            "FROM event ev " \
            "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID "
 
-
 def get_event(dbo, eventid):
     """
     Returns a complete event row by id
     (int) eventid: The event to get
     """
-    e = dbo.first_row(dbo.query(get_event_query(dbo) + " WHERE ev.ID = %d" % eventid))
-    return e
+    return dbo.first_row(dbo.query(get_event_query(dbo) + "WHERE ev.ID = ?", [eventid]))
 
+def get_event_date(dbo, movementdate):
+    """
+    Returns events that match movementdate
+    """
+    return dbo.query(get_event_query(dbo) + "WHERE (ev.StartDateTime <= ? AND ? <= ev.EndDateTime) ORDER BY ev.StartDateTime", [movementdate, movementdate])
 
 def insert_event_from_form(dbo, post, username):
     l = dbo.locale
@@ -44,7 +47,7 @@ def insert_event_from_form(dbo, post, username):
         "EventCounty": post["county"],
         "EventPostCode": post["postcode"],
         "EventCountry": post["country"]
-    }, user=username)
+    }, username)
 
     # Save any additional field values given
     asm3.additional.save_values_for_link(dbo, post, username, eid, "event", True)
@@ -82,7 +85,6 @@ def update_event_from_form(dbo, post, username):
         "EventCountry": post["country"]
     }, username)
 
-
     # Save any asm3.additional.field values given
     asm3.additional.save_values_for_link(dbo, post, username, eid, "event")
 
@@ -97,12 +99,7 @@ def delete_event(dbo, username, eventid):
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (eventid, asm3.additional.EVENT_IN))
     dbo.delete("event", eventid, username)
 
-def get_event_dates(dbo, post):
-    return dbo.query("SELECT ev.* FROM event ev " \
-                     "WHERE (ev.StartDateTime <= ? AND ? <= ev.EndDateTime) OR ev.ID = ?", \
-                     (post.date("movementdate"), post.date("movementdate"), post.integer("eventid")))
-
-def get_event_find_advanced(dbo, criteria, username, limit = 0, siteid = 0):
+def get_event_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     """
     Returns rows for advanced animal control searches.
     criteria: A dictionary of criteria
