@@ -20,26 +20,6 @@ $(function() {
             return s.join("\n");
         },
 
-        watermark_colors: [
-            "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue",
-            "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk",
-            "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgrey", "darkgreen", "darkkhaki",
-            "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen", "darkslateblue",
-            "darkslategray", "darkslategrey", "darkturquoise", "darkviolet", "deeppink", "deepskyblue", "dimgray", "dimgrey",
-            "dodgerblue", "firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod",
-            "gray", "grey", "green", "greenyellow", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender",
-            "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow",
-            "lightgray", "lightgrey", "lightgreen", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray",
-            "lightslategrey", "lightsteelblue", "lightyellow", "lime", "limegreen", "linen", "magenta", "maroon",
-            "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue",
-            "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin",
-            "navajowhite", "navy", "oldlace", "olive", "olivedrab", "orange", "orangered", "orchid", "palegoldenrod",
-            "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue",
-            "purple", "rebeccapurple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen",
-            "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen", "steelblue",
-            "tan", "teal", "thistle", "tomato", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen",
-        ],
-
         render_tabs: function() {
             return [
                 '<ul>',
@@ -71,7 +51,7 @@ $(function() {
                 '<li><a href="#tab-search">' + _("Search") + '</a></li>',
                 '<li><a href="#tab-shelterview">' + _("Shelter view") + '</a></li>',
                 '<li><a href="#tab-waitinglist">' + _("Waiting List") + '</a></li>',
-                '<li><a href="#tab-watermark">' + _("Watermark") + '</a></li>',
+                '<li><a href="#tab-events">' + _("Events") + '</a></li>',
                 '</ul>'
             ].join("\n");
         },
@@ -521,8 +501,6 @@ $(function() {
                     128266, // Speaker with high volume
                     128272, // Lock with key
                     128571, // Cat with heart eyes
-                    129379, // Bowl and spoon
-                    129387, // Can of food
                     129440, // Microbe
                     129460, // Bone
                     129514, // Test tube
@@ -1004,15 +982,6 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
-                '<tr>',
-                '<td><label for="findeventcols">' + _("Find event columns") + '</label></td>',
-                '<td>',
-                '<select id="findeventcols" class="asm-bsmselect" data="EventSearchColumns" multiple="multiple">',
-                options.two_pair_options(controller.eventfindcolumns),
-                '</select>',
-                '</td>',
-                '</tr>',
-
                 '</table>',
                 '<p>',
                 '<input data="AdvancedFindAnimal" id="advancedfindanimal" type="checkbox" class="asm-checkbox" /> <label for="advancedfindanimal">' + _("Default to advanced find animal screen") + '</label>',
@@ -1203,8 +1172,6 @@ $(function() {
                 '<div id="tab-medical">',
                 '<p>',
                 '<input data="IncludeOffShelterMedical" id="includeoffsheltermedical" type="checkbox" class="asm-checkbox" /> <label for="includeoffsheltermedical">' + _("Include off-shelter animals in medical calendar and books") + '</label>',
-                '<br />',
-                '<input data="MedicalPrecreateTreatments" id="precreatetreat" type="checkbox" class="asm-checkbox" /> <label for="precreatetreat">' + _("Pre-create all treatments when creating fixed-length medical regimens") + '</label>',
                 '<br />',
                 '<input data="ReloadMedical" id="reloadmedical" type="checkbox" class="asm-checkbox" /> <label for="reloadmedical">' + _("Reload the medical book/tab automatically after adding new medical items") + '</label>',
                 '<br />',
@@ -1418,14 +1385,12 @@ $(function() {
                 '<option value="locationtype">' + _("Location and Type") + '</option>',
                 '<option value="locationunit">' + _("Location and Unit") + '</option>',
                 '<option value="locationnv">' + _("Location (No Virtual)") + '</option>',
-                '<option value="locationnvs">' + _("Location and Species (No Virtual)") + '</option>',
                 '<option value="name">' + _("Name") + '</option>',
                 '<option value="pickuplocation">' + _("Pickup Location") + '</option>',
                 '<option value="retailer">' + _("Retailer") + '</option>',
                 '<option value="sex">' + _("Sex") + '</option>',
                 '<option value="sexspecies">' + _("Sex and Species") + '</option>',
                 '<option value="site">' + _("Site") + '</option>',
-                '<option value="sitefoster">' + _("Site (fosters separate)") + '</option>',
                 '<option value="species">' + _("Species") + '</option>',
                 '<option value="speciesbreed">' + _("Species and Breed") + '</option>',
                 '<option value="speciescode">' + _("Species and Code") + '</option>',
@@ -1460,7 +1425,6 @@ $(function() {
                 '<input data="DisableDocumentRepo" id="disabledocumentrepo" class="asm-checkbox" type="checkbox" /> <label for="disabledocumentrepo">' + _("Remove the document repository functionality from menus") + '</label><br />',
                 '<input data="DisableOnlineForms" id="disableonlineforms" class="asm-checkbox" type="checkbox" /> <label for="disableonlineforms">' + _("Remove the online form functionality from menus") + '</label><br />',
                 '<input data="DisableAnimalControl" id="disableanimalcontrol" class="asm-checkbox" type="checkbox" /> <label for="disableanimalcontrol">' + _("Remove the animal control functionality from menus and screens") + '</label><br />',
-                //'<input data="DisableEvents" id="disableevents" class="asm-checkbox" type="checkbox" /> <label for="disableevents">' + _("Remove the event management functionality from menus and screens") + '</label><br />',
                 '<input data="DisableTrapLoan" id="disabletraploan" class="asm-checkbox" type="checkbox" /> <label for="disabletraploan">' + _("Remove the equipment loan functionality from menus and screens") + '</label><br />',
                 '<input data="rc:IncidentPermissions" id="incidentpermissions" class="asm-checkbox" type="checkbox" /> <label for="incidentpermissions">' + _("Remove fine-grained animal control incident permissions") + '</label><br />',
                 '<input data="DisableRota" id="disablerota" class="asm-checkbox" type="checkbox" /> <label for="disablerota">' + _("Remove the rota functionality from menus and screens") + '</label><br />',
@@ -1479,7 +1443,6 @@ $(function() {
                 '<p class="asm-header">' + _("Animals") + '</p>',
                 '<p>',
                 '<input data="DisableAsilomar" id="disableasilomar" class="asm-checkbox us" type="checkbox" /> <label for="disableasilomar" class="us">Remove the asilomar fields from the entry/deceased sections</label><br class="us" />',
-                '<input data="DisableEntryHistory" id="disableentryhistory" class="asm-checkbox" type="checkbox" /> <label for="disableentryhistory">' + _("Remove the entry history section from animal records") + '</label><br />',
                 '<input data="DontShowCoatType" id="coattype" class="asm-checkbox" type="checkbox" /> <label for="coattype">' + _("Remove the coat type field from animal details") + '</label><br />',
                 '<input data="DontShowSize" id="size" class="asm-checkbox" type="checkbox" /> <label for="size">' + _("Remove the size field from animal details") + '</label><br />',
                 '<input data="DontShowWeight" id="weight" class="asm-checkbox" type="checkbox" /> <label for="weight">' + _("Remove the weight field from animal details") + '</label><br />',
@@ -1551,60 +1514,27 @@ $(function() {
             ].join("\n");
         },
 
-        render_watermark: function() {
+        render_events: function() {
             return [
-                '<div id="tab-watermark">',
+                '<div id="tab-events">',
                 '<table>',
                 '<tr>',
-                '<td><label for="watermarkxoffset">' + _("Watermark logo X offset") + '</label>',
-                '<span id="callout-watermarkxoffset" class="asm-callout">' + _("Relative to bottom right corner of the image") + '</span>',
-                '</td>',
-                '<td><input data="WatermarkXOffset" id="watermarkxoffset" data-min="0" data-max="9999" class="asm-textbox asm-numberbox" type="text" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="watermarkyoffset">' + _("Watermark logo Y offset") + '</label>',
-                '<span id="callout-watermarkyoffset" class="asm-callout">' + _("Relative to bottom right corner of the image") + '</span>',
-                '</td>',
-                '<td><input data="WatermarkYOffset" id="watermarkyoffset" data-min="0" data-max="9999" class="asm-textbox asm-numberbox" type="text" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="watermarkfontfillcolor">' + _("Watermark font fill color") + '</label></td>',
-                '<td><select data="WatermarkFontFillColor" id="watermarkfontfillcolor" class="asm-selectbox">',
-                html.list_to_options_array(options.watermark_colors),
+                '<td><label for="excludeanimalsbyflags">' + _("Execlude animals by flags") + '</label></td>',
+                '<td><select id="excludeanimalsbyflags" class="asm-bsmselect" data="EventExcludeAnimalsWithFlags" multiple="multiple">',
+                options.two_pair_options(controller.animalflags),
                 '</select>',
-                '<span id="fontfillcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontFillColor')) + '" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="watermarkfontshadowcolor">' + _("Watermark font outline color") + '</label></td>',
-                '<td><select data="WatermarkFontShadowColor" id="watermarkfontshadowcolor" class="asm-selectbox">',
-                html.list_to_options_array(options.watermark_colors),
+                '<td><label for="excludeanimalsbylocations">' + _("Execlude animals by locations") + '</label></td>',
+                '<td>',
+                '<select id="excludeanimalsbylocations" class="asm-bsmselect" data="EventExcludeAnimalsInLocations" multiple="multiple">',
+                options.two_pair_options(controller.locations),
                 '</select>',
-                '<span id="fontshadowcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontShadowColor')) + '" />',
                 '</td>',
-                '<tr>',
-                '<td><label for="watermarkfontstroke">' + _("Watermark font outline width") + '</label></td>',
-                '<td><input data="WatermarkFontStroke" id="watermarkfontstroke" data-min="0" data-max="20" class="asm-textbox asm-numberbox" type="text" /></td>',
-                '</tr>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="watermarkfontfile">' + _("Watermark font") + '</label></td>',
-                '<td><select data="WatermarkFontFile" id="watermarkfontfile" class="asm-selectbox asm-doubleselectbox">',
-                html.list_to_options_array(asm.fontfiles),
-                '</select>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="watermarkfontoffset">' + _("Watermark name offset") + '</label>',
-                '<span id="callout-watermarkfontoffset" class="asm-callout">' + _("Offset from left edge of the image") + '</span>',
-                '</td>',
-                '<td><input data="WatermarkFontOffset" id="watermarkfontoffset" data-min="0" data-max="100" class="asm-textbox asm-numberbox" type="text" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="watermarkfontmaxsize">' + _("Watermark name max font size") + '</label></td>',
-                '<td><input data="WatermarkFontMaxSize" id="watermarkfontmaxsize" data-min="0" data-max="999" class="asm-textbox asm-numberbox" type="text" /></td>',
                 '</tr>',
                 '</table>',
-                '</div>',
+                '</div>'
             ].join("\n");
         },
 
@@ -1644,7 +1574,6 @@ $(function() {
                 this.render_unwanted(),
                 this.render_reports(),
                 this.render_waitinglist(),
-                this.render_watermark(),
                 '</div>',
                 html.content_footer()
             ].join("\n");
@@ -1760,14 +1689,6 @@ $(function() {
             if (!asm.smcom) {
                 $(".smcom").hide();
             }
-
-            // Show sample colours when selected
-            $("#watermarkfontfillcolor").change(function() {
-                $("#fontfillcolorsample").css("background-color", $("#watermarkfontfillcolor").select("value"));
-            });
-            $("#watermarkfontshadowcolor").change(function() {
-                $("#fontshadowcolorsample").css("background-color", $("#watermarkfontshadowcolor").select("value"));
-            });
 
             validate.bind_dirty();
 
