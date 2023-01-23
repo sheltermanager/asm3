@@ -1574,6 +1574,7 @@ $(function() {
                 this.render_unwanted(),
                 this.render_reports(),
                 this.render_waitinglist(),
+                this.render_events()
                 '</div>',
                 html.content_footer()
             ].join("\n");
