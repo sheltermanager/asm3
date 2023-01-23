@@ -3,9 +3,7 @@ import asm3.audit
 import asm3.cachedisk
 import asm3.i18n
 
-import os
-
-from asm3.sitedefs import LOCALE, TIMEZONE, WATERMARK_FONT_BASEDIRECTORY
+from asm3.sitedefs import LOCALE, TIMEZONE
 
 QUICKLINKS_SET = {
     1: ("animal_find", "asm-icon-animal-find", asm3.i18n._("Find animal")),
@@ -183,8 +181,6 @@ DEFAULTS = {
     "DefaultShiftEnd": "17:00",
     "DisableAnimalControl": "No",
     "DisableClinic": "No",
-    "DisableEntryHistory": "Yes",
-    "DisableEvents": "Yes",
     "DisableStockControl": "No",
     "DisableTransport": "No",
     "DisableTrapLoan": "No",
@@ -228,7 +224,8 @@ DEFAULTS = {
     "EmblemSpecialNeeds": "Yes",
     "EmblemTrialAdoption": "Yes",
     "EmblemUnneutered": "Yes",
-    "EventSearchColumns": "StartDateTime,EndDateTime,EventName,EventOwnerName,EventAddress,EventTown",
+    "EventExcludeAnimalsWithFlags": "",
+    "EventExcludeAnimalsInLocations": "",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
     "FlagChangeLog": "Yes",
@@ -292,16 +289,12 @@ DEFAULTS = {
     "MediaAllowPDF": "Yes",
     "MediaTableMode": "No",
     "MedicalItemDisplayLimit": "500",
-    "MedicalPrecreateTreatments": "No",
     "MicrochipRegisterMovements": "1,5",
     "MovementDonationsDefaultDue": "No",
     "MovementNumberOverride": "No",
     "MovementPersonOnlyReserves": "Yes",
     "MultiSiteEnabled": "No", 
     "JSWindowPrint": "Yes",
-    "OnlineFormSpamHoneyTrap": "Yes",
-    "OnlineFormSpamUACheck": "No",
-    "OnlineFormSpamFirstnameMixCase": "Yes",
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
     "OrganisationTelephone": "Telephone",
@@ -401,14 +394,6 @@ DEFAULTS = {
     "WarnOOPostcode": "Yes",
     "WarnOSMedical": "Yes",
     "WarnSimilarAnimalName": "Yes",
-    "WatermarkFontFile": "dejavu/DejaVuSans-Bold.ttf",
-    "WatermarkFontFillColor": "white",
-    "WatermarkFontMaxSize": "180",
-    "WatermarkFontOffset": "20",
-    "WatermarkFontShadowColor": "black",
-    "WatermarkFontStroke": "3",
-    "WatermarkXOffset": "10",
-    "WatermarkYOffset": "10",
     "WeightChangeLog": "Yes",
     "WeightChangeLogType": "4",
 }
@@ -500,12 +485,6 @@ def csave(dbo, username, post):
         elif k == "DefaultDailyBoardingCost":
             # Need to handle currency fields differently
             put(k, str(post.integer(k)))
-        elif k == "WatermarkFontFile":
-            validFiles = watermark_get_valid_font_files()
-            if v not in validFiles:
-                put(k, DEFAULTS[k])
-            else:
-                put(k, v, sanitiseXSS = False)
         elif k.startswith("rc:"):
             # It's a NOT check
             if v == "checked": v = "No"
@@ -941,6 +920,12 @@ def email_empty_reports(dbo):
 def email_messages(dbo):
     return cboolean(dbo, "EmailMessages", DEFAULTS["EmailMessages"] == "Yes")
 
+def event_excludeanimalswithflags(dbo):
+    return cstring(dbo, "EventExcludeAnimalsWithFlags", DEFAULTS["EventExcludeAnimalsWithFlags"])
+
+def event_excludeanimalswithlocations(dbo):
+    return cstring(dbo, "EventExcludeAnimalsInLocations", DEFAULTS["EventExcludeAnimalsInLocations"])
+
 def flag_change_log(dbo):
     return cboolean(dbo, "FlagChangeLog", DEFAULTS["FlagChangeLog"] == "Yes")
 
@@ -1129,9 +1114,6 @@ def media_allow_pdf(dbo):
 def medical_item_display_limit(dbo):
     return cint(dbo, "MedicalItemDisplayLimit", DEFAULTS["MedicalItemDisplayLimit"])
 
-def medical_precreate_treatments(dbo):
-    return cboolean(dbo, "MedicalPrecreateTreatments", DEFAULTS["MedicalPrecreateTreatments"] == "Yes")
-
 def microchip_register_movements(dbo):
     return cstring(dbo, "MicrochipRegisterMovements", DEFAULTS["MicrochipRegisterMovements"])
 
@@ -1149,15 +1131,6 @@ def multi_site_enabled(dbo):
 
 def non_shelter_type(dbo):
     return cint(dbo, "AFNonShelterType", 40)
-
-def onlineform_spam_honeytrap(dbo):
-    return cboolean(dbo, "OnlineFormSpamHoneyTrap", DEFAULTS["OnlineFormSpamHoneyTrap"] == "Yes")
-
-def onlineform_spam_ua_check(dbo):
-    return cboolean(dbo, "OnlineFormSpamUACheck", DEFAULTS["OnlineFormSpamUACheck"] == "Yes")
-
-def onlineform_spam_firstname_mixcase(dbo):
-    return cboolean(dbo, "OnlineFormSpamFirstnameMixCase", DEFAULTS["OnlineFormSpamFirstnameMixCase"] == "Yes")
 
 def organisation(dbo):
     return cstring(dbo, "Organisation", DEFAULTS["Organisation"])
@@ -1221,9 +1194,6 @@ def pdf_zoom(dbo):
 
 def person_search_columns(dbo):
     return cstring(dbo, "OwnerSearchColumns", DEFAULTS["OwnerSearchColumns"])
-
-def event_search_columns(dbo):
-    return cstring(dbo, "EventSearchColumns", DEFAULTS["EventSearchColumns"])
 
 def incident_search_columns(dbo):
     return cstring(dbo, "IncidentSearchColumns", DEFAULTS["IncidentSearchColumns"])
@@ -1519,43 +1489,8 @@ def waiting_list_urgency_update_period(dbo):
 def warn_no_homecheck(dbo):
     return cboolean(dbo, "WarnNoHomeCheck", DEFAULTS["WarnNoHomeCheck"] == "Yes")
 
-def watermark_x_offset(dbo):
-    return cint(dbo, "WatermarkXOffset", DEFAULTS["WatermarkXOffset"])
-
-def watermark_y_offset(dbo):
-    return cint(dbo, "WatermarkYOffset", DEFAULTS["WatermarkYOffset"])
-
-def watermark_font_stroke(dbo):
-    return cint(dbo, "WatermarkFontStroke", DEFAULTS["WatermarkFontStroke"])
-
-def watermark_font_fill_color(dbo):
-    return cstring(dbo, "WatermarkFontFillColor", DEFAULTS["WatermarkFontFillColor"])
-
-def watermark_font_shadow_color(dbo):
-    return cstring(dbo, "WatermarkFontShadowColor", DEFAULTS["WatermarkFontShadowColor"])
-
-def watermark_font_offset(dbo):
-    return cint(dbo, "WatermarkFontOffset", DEFAULTS["WatermarkFontOffset"])
-
-def watermark_font_file(dbo):
-    return cstring(dbo, "WatermarkFontFile", DEFAULTS["WatermarkFontFile"])
-
-def watermark_font_max_size(dbo):
-    return cint(dbo, "WatermarkFontMaxSize", DEFAULTS["WatermarkFontMaxSize"])
-
-def watermark_get_valid_font_files():
-    basePath = WATERMARK_FONT_BASEDIRECTORY
-    fileList = []
-    for root,_,files in os.walk(basePath):
-        for f in files:
-            if f.endswith('.ttf'):
-                fileList.append(os.path.join(root, f)[len(basePath):])
-    return sorted(fileList)
-
 def weight_change_log(dbo):
     return cboolean(dbo, "WeightChangeLog", DEFAULTS["WeightChangeLog"] == "Yes")
 
 def weight_change_log_type(dbo):
     return cint(dbo, "WeightChangeLogType", DEFAULTS["WeightChangeLogType"])
-
-
