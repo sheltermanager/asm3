@@ -25,6 +25,7 @@ import asm3.db
 import asm3.dbfs
 import asm3.dbupdate
 import asm3.diary
+import asm3.event
 import asm3.financial
 import asm3.html
 import asm3.log
@@ -3247,6 +3248,28 @@ class donation_receive(JSONEndpoint):
         self.check(asm3.users.ADD_DONATION)
         return asm3.financial.insert_donations_from_form(o.dbo, o.user, o.post, o.post["received"], True, o.post["person"], o.post["animal"], o.post["movement"], False)
 
+class event(JSONEndpoint):
+    url = "event"
+    get_permissions = asm3.users.VIEW_EVENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        e = asm3.event.get_event(dbo, o.post.integer("id"))
+        if e is None: self.notfound()
+        asm3.al.debug("opened event %s" % "recname", "code.event", dbo)
+        return{
+            "event": e,
+            "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event")
+        }
+
+    def post_save(self, o):
+        self.check(asm3.users.CHANGE_EVENT)
+        asm3.event.update_event_from_form(o.dbo, o.post, o.user)
+
+    def post_delete(self, o):
+        self.check(asm3.users.DELETE_EVENT)
+        asm3.event.delete_event(o.dbo, o.user, o.post.integer("eventid"))
+
 class event_find(JSONEndpoint):
     url = "event_find"
     get_permissions = asm3.users.VIEW_EVENT
@@ -3271,7 +3294,9 @@ class event_find_results(JSONEndpoint):
 
 class event_new(JSONEndpoint):
     url = "event_new"
-    #TODO: need to add permissions
+    get_permissions = asm3.users.ADD_EVENT
+    post_permissions = asm3.users.ADD_EVENT
+
     def controller(self, o):
         dbo = o.dbo
         asm3.al.debug("add event", "code.event_new", dbo)
@@ -6851,8 +6876,6 @@ class waitinglist_results(JSONEndpoint):
         self.check(asm3.users.CHANGE_WAITING_LIST)
         for wid in o.post.integer_list("ids"):
             asm3.waitinglist.update_waitinglist_highlight(o.dbo, wid, o.post["himode"])
-
-
 
 # List of routes constructed from class definitions
 routes = []
