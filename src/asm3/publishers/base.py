@@ -1089,17 +1089,19 @@ class FTPPublisher(AbstractPublisher):
     ftppassword = ""
     ftpport = 21
     ftproot = ""
+    ftptls = False
     currentDir = ""
     passive = True
     existingImageList = None
 
-    def __init__(self, dbo, publishCriteria, ftphost, ftpuser, ftppassword, ftpport = 21, ftproot = "", passive = True):
+    def __init__(self, dbo, publishCriteria, ftphost, ftpuser, ftppassword, ftptls = False, ftpport = 21, ftproot = "", passive = True):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.ftphost = ftphost
         self.ftpuser = ftpuser
         self.ftppassword = self.unxssPass(ftppassword)
         self.ftpport = ftpport
         self.ftproot = ftproot
+        self.ftptls = ftptls
         self.passive = passive
 
     def unxssPass(self, s):
@@ -1115,7 +1117,7 @@ class FTPPublisher(AbstractPublisher):
         s = s.strip()
         return s
 
-    def openFTPSocket(self, ssl = False):
+    def openFTPSocket(self):
         """
         Opens an FTP socket to the server and changes to the
         root FTP directory. Returns True if all was well or
@@ -1127,12 +1129,13 @@ class FTPPublisher(AbstractPublisher):
         
         try:
             # open it and login
-            if ssl:
+            if self.ftptls:
                 self.socket = ftplib.FTP_TLS(host=self.ftphost, timeout=15)
             else:
                 self.socket = ftplib.FTP(host=self.ftphost, timeout=15)
             self.socket.login(self.ftpuser, self.ftppassword)
-            if ssl: self.socket.prot_p()
+            if self.ftptls: 
+                self.socket.prot_p()
             self.socket.set_pasv(self.passive)
 
             if self.ftproot is not None and self.ftproot != "":

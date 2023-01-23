@@ -24,7 +24,7 @@ class RescueGroupsPublisher(FTPPublisher):
         publishCriteria.scaleImages = 1
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             RESCUEGROUPS_FTP_HOST, asm3.configuration.rescuegroups_user(dbo), 
-            asm3.configuration.rescuegroups_password(dbo), 21, "", False)
+            asm3.configuration.rescuegroups_password(dbo), passive=False)
         self.initLog("rescuegroups", "RescueGroups Publisher")
 
     def rgYesNo(self, condition):
