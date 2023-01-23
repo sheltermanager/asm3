@@ -57,7 +57,7 @@ $(function() {
                 '<li><a href="#tab-display">' + _("Display") + '</a></li>',
                 '<li><a href="#tab-documents">' + _("Documents") + '</a></li>',
                 '<li><a href="#tab-email">' + _("Email") + '</a></li>',
-                '<li><a href="#tab-events">' + _("Events") + '</a></li>'
+                '<li><a href="#tab-events">' + _("Events") + '</a></li>',
                 '<li><a href="#tab-findscreens">' + _("Find Screens") + '</a></li>',
                 '<li><a href="#tab-homepage">' + _("Home page") + '</a></li>',
                 '<li><a href="#tab-insurance">' + _("Insurance") + '</a></li>',
