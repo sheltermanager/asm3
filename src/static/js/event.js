@@ -87,7 +87,7 @@ $(function(){
                 '</tr>',
                 '</table>',
                 '</div>'
-            ].join("\n")
+            ].join("\n");
         },
 
         bind: function(){
@@ -184,7 +184,7 @@ $(function(){
             $("#asm-content input, #asm-content select, #asm-content textarea").fromJSON(controller.event);
 
             // Update on-screen fields from the data and display the screen
-            event.enable_widgets()
+            event.enable_widgets();
 
             // Dirty handling
             validate.bind_dirty([ "event_" ]);
@@ -205,7 +205,7 @@ $(function(){
         routes: {
             "event": function() { common.module_loadandstart("event", "event?id=" + this.qs.id); }
         }
-    }
+    };
 
     common.module_register(event);
 
