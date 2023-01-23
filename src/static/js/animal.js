@@ -608,6 +608,46 @@ $(function() {
             ].join("\n");
         },
 
+        render_events: function() {
+            
+            if (controller.events.length == 0 || !common.has_permission("vea") || config.bool("DisableEvents")) {
+                return;
+            }
+
+            let h = [
+                '<h3><a href="#">' + _("Events") + '</a></h3>',
+                '<div>',
+                '<table class="asm-table">',
+                '<thead>',
+                '<tr>',
+                '<th>' + _("Start Date") + '</th>',
+                '<th>' + _("End Date") + '</th>',
+                '<th>' + _("Name") + '</th>',
+                '<th>' + _("Address") + '</th>',
+                '<th>' + _("Arrival") + '</th>',
+                '<th>' + _("Adopted") + '</th>',
+                '<th>' + _("Comments") + '</th>',
+                '</tr>',
+                '</thead>',
+                '<tbody>'
+            ];
+
+            $.each(controller.events, function(i, v) {
+                h.push('<tr>');
+                h.push('<td><b><a href="event?id=' + v.ID + '">' + format.date(v.STARTDATETIME) + '</a></b></td>');
+                h.push('<td>' + format.date(v.ENDDATETIME) + '</td>');
+                h.push('<td>' + v.EVENTNAME + '</td>');
+                h.push('<td>' + v.EVENTADDRESS + ', ' + v.EVENTTOWN + ' ' + v.EVENTCOUNTY + ' ' + v.EVENTPOSTCODE + ' ' + v.EVENTCOUNTRY + '</td>');
+                h.push('<td><b>' + format.date(v.ARRIVALDATE) + '</b></td>');
+                h.push('<td>' + (v.ADOPTED==1 ? "✅" : "&nbsp;")  + '</td>');
+                h.push('<td>' + v.COMMENTS + '</td>');
+                h.push('</tr>');
+            });
+
+            h.push('</table></div>');
+            return h.join("\n");
+        },
+
         render_incidents: function() {
             
             if (controller.incidents.length == 0 || !common.has_permission("vaci")) {
@@ -907,6 +947,7 @@ $(function() {
                 this.render_health_and_identification(),
                 this.render_death(),
                 this.render_incidents(),
+                this.render_events(),
                 this.render_publish_history(),
                 html.audit_trail_accordion(controller),
                 '</div>', // accordion

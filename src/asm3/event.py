@@ -131,3 +131,13 @@ def get_event_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     sql = "%s WHERE %s ORDER BY ev.ID DESC" % (get_event_query(dbo), " AND ".join(ss.ands))
     rows = dbo.query(sql, ss.values, limit=limit, distincton="ID")
     return rows
+
+def get_events_by_animal(dbo, animalid):
+    sql = "SELECT ev.*, owner.OwnerName AS EventOwnerName, ea.arrivaldate, ea.comments, CASE WHEN ad.id IS NOT NULL THEN 1 ELSE 0 END AS Adopted " \
+            "FROM event ev " \
+            "INNER JOIN eventanimal ea ON ev.id = ea.eventid " \
+            "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID " \
+            "LEFT OUTER JOIN adoption ad ON ad.eventid = ev.id AND ad.animalid = ? AND ad.movementtype = 1 "
+    return dbo.query(sql, [animalid])
+
+
