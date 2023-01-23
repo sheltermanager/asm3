@@ -30,14 +30,12 @@ class TestOnlineForm(unittest.TestCase):
         self.nfieldid = asm3.onlineform.insert_onlineformfield_from_form(base.get_dbo(), "test", post)
         data = {
             "formname":     "Test Form",
-            asm3.onlineform.JSKEY_NAME: asm3.onlineform.JSKEY_VALUE,
             "testfield_%s" % self.nfieldid: "Test Value"
         }
         post = asm3.utils.PostedData(data, "en")
         self.collationid = asm3.onlineform.insert_onlineformincoming_from_form(base.get_dbo(), post, "0.0.0.0", "FAKE UA")
         data = {
             "formname":     "Test Form",
-            asm3.onlineform.JSKEY_NAME: asm3.onlineform.JSKEY_VALUE,
             "surname": "Test",
             "animalname": "UnitTestAnimal",
             "callnotes": "Test",

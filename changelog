@@ -1,6 +1,7 @@
 46
 ================
 
+23/01/23 Default payment types to accounts link broken in new databases #1219
 22/01/23 Remove flag change message when first saving animal with no flags
 20/01/23 entry/intake history UI (defaults to off) #25
 19/01/23 Backend implementation/unit tests for entry history #25

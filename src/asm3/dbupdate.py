@@ -1670,6 +1670,9 @@ def sql_default_data(dbo, skip_config = False):
         return "INSERT INTO %s (ID, %s, IsRetired) VALUES (%s, '%s', 0)|=\n" % ( tablename, fieldname, tid, dbo.escape(name) )
     def lookup2money(tablename, fieldname, tid, name, money = 0):
         return "INSERT INTO %s (ID, %s, DefaultCost, IsRetired) VALUES (%s, '%s', %d, 0)|=\n" % ( tablename, fieldname, tid, dbo.escape(name), money)
+    def lookup2moneyaccount(tablename, fieldname, tid, name, accountid = 0, money = 0):
+        return "INSERT INTO %s (ID, %s, AccountID, DefaultCost, IsRetired) VALUES (%s, '%s', %d, %d, 0)|=\n" % \
+            ( tablename, fieldname, tid, dbo.escape(name), accountid, money)
     def account(tid, code, desc, atype, dtype, ctype):
         return "INSERT INTO accounts (ID, Code, Description, Archived, AccountType, CostTypeID, DonationTypeID, RecordVersion, CreatedBy, CreatedDate, LastChangedBy, LastChangedDate) VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( tid, dbo.escape(code), dbo.escape(desc), atype, ctype, dtype, 'default', dbo.sql_now(), 'default', dbo.sql_now() ) 
     def breed(tid, name, petfinder, speciesid):
@@ -2221,12 +2224,12 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2("donationpayment", "PaymentName", 4, _("Debit Card", l))
     sql += lookup2("donationpayment", "PaymentName", 5, _("PayPal", l))
     sql += lookup2("donationpayment", "PaymentName", 6, _("Stripe", l))
-    sql += lookup2money("donationtype", "DonationName", 1, _("Donation", l))
-    sql += lookup2money("donationtype", "DonationName", 2, _("Adoption Fee", l))
-    sql += lookup2money("donationtype", "DonationName", 3, _("Waiting List Donation", l))
-    sql += lookup2money("donationtype", "DonationName", 4, _("Entry Donation", l))
-    sql += lookup2money("donationtype", "DonationName", 5, _("Animal Sponsorship", l))
-    sql += lookup2money("donationtype", "DonationName", 6, _("In-Kind Donation", l))
+    sql += lookup2moneyaccount("donationtype", "DonationName", 1, _("Donation", l), 1)
+    sql += lookup2moneyaccount("donationtype", "DonationName", 2, _("Adoption Fee", l), 2)
+    sql += lookup2moneyaccount("donationtype", "DonationName", 3, _("Waiting List Donation", l), 3)
+    sql += lookup2moneyaccount("donationtype", "DonationName", 4, _("Entry Donation", l), 4)
+    sql += lookup2moneyaccount("donationtype", "DonationName", 5, _("Animal Sponsorship", l), 5)
+    sql += lookup2moneyaccount("donationtype", "DonationName", 6, _("In-Kind Donation", l))
     sql += lookup2("entryreason", "ReasonName", 1, _("Marriage/Relationship split", l))
     sql += lookup2("entryreason", "ReasonName", 2, _("Allergies", l))
     sql += lookup2("entryreason", "ReasonName", 3, _("Biting", l))
