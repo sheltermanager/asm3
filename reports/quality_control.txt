@@ -33,6 +33,9 @@ en
 -- 2022-02-09 Added 'Non-Shelter Flag added to animal with an active movement.
 -- 2022-05-14 Added 'Invalid Country or Capitalization.'
 -- 2023-01-07 Added 'Email Domain Invalid' USA Only.
+-- 2023-01-24 Added 'Drivers License Duplicate.' 
+-- 2023-01-24 Added 'Possible Duplicate Person Record. First and Last Name Match' 
+-- 2023-01-24 Added 'Breed Issue (Possible). Abyssinian or Affenpinscher Selected'
 
 SELECT * FROM
 (
@@ -151,6 +154,16 @@ INNER JOIN animalvaccination av ON animal.ID = av.AnimalID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
 WHERE (animal.SpeciesID=1 AND v.id IN (5,8)) OR (animal.SpeciesID=2 AND v.id = 9) -- have to look at vaccination ids
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--Reports when Abyssinian or Affenpinscher is selected as the Breed to catch animals with wrong breed. Added to 1/24/2023
+UNION SELECT animal.animalname AS name,
+  animal.sheltercode AS code,
+  date(animal.LastChangedDate) AS issuedate,
+  '<font color - "Red">Breed Issue (Possible). Abyssinian or Affenpinscher Selected. Alerts Only Once.</font>' AS issue
+FROM animal
+WHERE date_trunc('day', LastChangedDate) = current_date -1
+AND (BreedName like '%Abyssinian%' OR BreedName like '%Affenpinscher%')
+AND animal.animalname NOT LIKE 'Template%'
 
 --Days on Shelter should = 0 if DOA checkbox is checked.  Added 8/12/2021
 UNION SELECT
@@ -1087,6 +1100,29 @@ WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
   AND LOWER(REGEXP_REPLACE(ow.owneraddress, '[^0-9A-Za-z]', '','g')) LIKE SUBSTR(LOWER(REGEXP_REPLACE(o.owneraddress, '[^0-9A-Za-z]', '','g')),1,8) || '%'
 AND o.owneraddress <> ''
 AND (LOWER(o.ownersurname) = LOWER(ow.ownersurname) OR (LOWER(o.ownerforenames) = LOWER(ow.ownerforenames) AND ow.ownerforenames <> ''))
+AND o.id <> ow.id
+
+-- Checks for Duplicate First and Last Names.  Added 1/24/2023
+UNION SELECT
+  o.ownername AS name,
+  o.ownercode AS code,
+  date(o.LastChangedDate) AS issuedate,
+  '<font color = "Red">Possible Duplicate Person Record - (' || ow.ownercode || ').  First and Last Name Match. Alerts Only Once.</font>' AS issue
+FROM owner o, owner ow
+WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
+  AND LOWER(o.ownersurname) = LOWER(ow.ownersurname) 
+  AND LOWER(o.ownerforenames) = LOWER(ow.ownerforenames)
+  AND o.id <> ow.id
+
+-- Checks for Duplicate Drivers License which is an ADDITIONAL FIELD! Added 1/22/2023
+UNION SELECT
+  o.ownername AS name,
+  o.ownercode AS code,
+  date(o.LastChangedDate) AS issuedate,
+  '<font color = "red">Drivers License Duplicate (' ||  ow.ownercode || ')</font>' as issue
+FROM owner o, owner ow
+where (SELECT value from additional INNER JOIN additionalfield ON additionalfield.id = additionalfieldid where additional.linkid = o.ID AND additionalfield.fieldname = 'DriversLicense')
+= (SELECT value from additional INNER JOIN additionalfield ON additionalfield.id = additionalfieldid where additional.linkid = ow.ID AND additionalfield.fieldname = 'DriversLicense')
 AND o.id <> ow.id
 
 ) dummy
