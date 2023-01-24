@@ -5924,6 +5924,7 @@ class report_export_csv(ASMEndpoint):
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
         titlecaseheader = cols is not None and "TITLECASEHEADER" in cols
+        lowercaseheader = cols is not None and "LOWERCASEHEADER" in cols
         renameheader = ""
         if cols is not None and "RENAMEHEADER" in cols and len(rows) > 0:
             renameheader = rows[0].RENAMEHEADER
@@ -5932,7 +5933,7 @@ class report_export_csv(ASMEndpoint):
         # then look for them and use the report ID if any are found.
         if asm3.utils.encode_html(filename).find("&#") != -1: filename = str(crid) 
         self.header("Content-Disposition", f"attachment; filename=\"{filename}.csv\"")
-        return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, renameheader=renameheader)
+        return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, lowercaseheader=lowercaseheader, renameheader=renameheader)
 
 class report_export_email(ASMEndpoint):
     url = "report_export_email"

@@ -978,7 +978,7 @@ def csv_parse(s):
         if pos[2]: break # EOF
     return rows
 
-def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False, renameheader = ""):
+def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False, lowercaseheader = False, renameheader = ""):
     """
     Creates a CSV file from a set of resultset rows. If cols has been 
     supplied as a list of strings, fields will be output in that
@@ -989,6 +989,7 @@ def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False, ren
     cols: list of column headings, if None uses the result column names
     includeheader: if True writes the header row
     titlecaseheader: if True title cases the header row
+    lowercaseheader: if True lower cases the header row
     renameheader: A comma separated list of find=replace values to rewrite column headers
     """
     if rows is None or len(rows) == 0: return ""
@@ -1007,6 +1008,8 @@ def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False, ren
         outputcols = cols
         if titlecaseheader: 
             outputcols = [ c.title() for c in cols ]
+        if lowercaseheader:
+            outputcols = [ c.lower() for c in cols ]
         if renameheader != "":
             rout = []
             for c in outputcols: # can rewrite cols we just titlecased

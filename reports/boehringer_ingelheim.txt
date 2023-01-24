@@ -2,7 +2,7 @@ Boehringer-Ingelheim Adopter List
 ###
 Figures
 ###
-3000/PostgreSQL rev01
+3000/PostgreSQL rev02
 ###
 BI adopter list for export as CSV
 ###
@@ -28,7 +28,8 @@ TO_CHAR(a.DateOfBirth, 'MM/DD/YYYY') AS pet_birthdate,
 (SELECT BreedName FROM breed WHERE ID=a.BreedID) AS primary_breed,
 (SELECT BreedName FROM breed WHERE ID=a.Breed2ID) AS secondary_breed,
 TO_CHAR(a.ActiveMovementDate, 'MM/DD/YYYY') AS transaction_date,
-'Y' AS opt_in
+'Y' AS opt_in,
+'1' AS lowercaseheader
 FROM animal a
 INNER JOIN adoption m ON m.ID = a.ActiveMovementID
 INNER JOIN owner o ON m.OwnerID = o.ID
