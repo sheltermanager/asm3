@@ -5,7 +5,8 @@ PATH = os.path.dirname(os.path.abspath(__file__)) + os.sep
 sys.path.append(PATH)
 sys.path.append(PATH + "../src")
 
-DB_PATH = "/home/robin/tmp/asmunittest.db"
+HOME = os.environ["HOME"]
+DB_PATH = f"{HOME}/tmp/asmunittest.db"
 
 import asm3.db
 
