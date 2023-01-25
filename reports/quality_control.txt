@@ -159,7 +159,7 @@ WHERE (animal.SpeciesID=1 AND v.id IN (5,8)) OR (animal.SpeciesID=2 AND v.id = 9
 UNION SELECT animal.animalname AS name,
   animal.sheltercode AS code,
   date(animal.LastChangedDate) AS issuedate,
-  '<font color - "Red">Breed Issue (Possible). Abyssinian or Affenpinscher Selected. Alerts Only Once.</font>' AS issue
+  '<font color = "Red">Breed Issue (Possible). Abyssinian or Affenpinscher Selected. Alerts Only Once.</font>' AS issue
 FROM animal
 WHERE date_trunc('day', LastChangedDate) = current_date -1
 AND (BreedName like '%Abyssinian%' OR BreedName like '%Affenpinscher%')
