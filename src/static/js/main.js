@@ -969,16 +969,6 @@ $(function() {
 
         sync: function() {
 
-            // add a class to the html element for desktop or mobile
-            if (typeof asm !== "undefined" && asm.mobileapp) { 
-                $("html").removeClass("desktop");
-                $("html").addClass("mobile"); 
-            }
-            else { 
-                $("html").removeClass("mobile");
-                $("html").addClass("desktop"); 
-            }
-
             // If there's been a new deployment of ASM since we last
             // downloaded it to the browser, reload the page using the
             // new build number to invalidate the cache (passing a b
@@ -1000,6 +990,11 @@ $(function() {
 
             // Set the total alerts
             $("#totalalerts").text( main.total_alerts );
+
+            // Show a warning about retiring of the mobile app
+            if (asm.mobileapp) {
+                header.show_error('<a href="https://sheltermanager.com/site/en_mobileretire.html">The Android/iOS mobile app is being retired. Please click here for more info.</a>');
+            }
 
         },
 

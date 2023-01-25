@@ -512,6 +512,9 @@ $(function() {
             else if (viewmode == "locationnv") {
                 this.render_view("SHELTERLOCATIONNAME", "", "SHELTERLOCATIONNAME,ANIMALNAME", true, false);
             }
+            else if (viewmode == "locationnvs") {
+                this.render_view("SHELTERLOCATIONNAME", "SPECIESNAME", "SHELTERLOCATIONNAME,SPECIESNAME,ANIMALNAME", true, false);
+            }
             else if (viewmode == "locationbreed") {
                 this.render_view("DISPLAYLOCATIONNAME", "BREEDNAME", "DISPLAYLOCATIONNAME,BREEDNAME,ANIMALNAME", true, false);
             }
@@ -544,6 +547,9 @@ $(function() {
             }
             else if (viewmode == "site") {
                 this.render_view("SITENAME", "DISPLAYLOCATIONNAME", "SITENAME,DISPLAYLOCATIONNAME,ANIMALNAME", false, false);
+            }
+            else if (viewmode == "sitefoster") {
+                this.render_view("SITEFOSTER", "DISPLAYLOCATIONNAME", "SITEFOSTER,DISPLAYLOCATIONNAME,ANIMALNAME", false, false);
             }
             else if (viewmode == "species") {
                 this.render_view("SPECIESNAME", "", "SPECIESNAME,ANIMALNAME", false, false);
@@ -607,6 +613,15 @@ $(function() {
             });
         },
 
+        /** Adds the SITEFOSTER column */
+        add_site_foster: function() {
+            $.each(controller.animals, function(i, a) {
+                a.SITEFOSTER = a.SITENAME;
+                // Copy the displaylocationname to use instead of site, eg Foster/Trial Adoption/Retailer/etc
+                if (a.ARCHIVED == 0 && a.ACTIVEMOVEMENTTYPE) { a.SITEFOSTER = a.DISPLAYLOCATIONNAME; }
+            });
+        },
+
         render: function() {
             let h = [];
             h.push('<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">');
@@ -629,12 +644,14 @@ $(function() {
             h.push('<option value="locationtype">' + _("Location and Type") + '</option>');
             h.push('<option value="locationunit">' + _("Location and Unit") + '</option>');
             h.push('<option value="locationnv">' + _("Location (No Virtual)") + '</option>');
+            h.push('<option value="locationnvs">' + _("Location and Species (No Virtual)") + '</option>');
             h.push('<option value="name">' + _("Name") + '</option>');
             h.push('<option value="pickuplocation">' + _("Pickup Location") + '</option>');
             h.push('<option value="retailer">' + _("Retailer") + '</option>');
             h.push('<option value="sex">' + _("Sex") + '</option>');
             h.push('<option value="sexspecies">' + _("Sex and Species") + '</option>');
             if (config.bool("MultiSiteEnabled")) { h.push('<option value="site">' + _("Site") + '</option>'); }
+            if (config.bool("MultiSiteEnabled")) { h.push('<option value="sitefoster">' + _("Site (fosters separate)") + '</option>'); }
             h.push('<option value="species">' + _("Species") + '</option>');
             h.push('<option value="speciesbreed">' + _("Species and Breed") + '</option>');
             h.push('<option value="speciescode">' + _("Species and Code") + '</option>');
@@ -662,6 +679,7 @@ $(function() {
             shelterview.add_adoption_status();
             shelterview.add_first_letter();
             shelterview.add_neutered_status();
+            shelterview.add_site_foster();
             // Clean up any null fields that we might want to group on later
             $.each(controller.animals, function(i, v) {
                 if (!v.CURRENTOWNERNAME) {

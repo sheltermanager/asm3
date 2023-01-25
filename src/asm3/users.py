@@ -427,16 +427,15 @@ def get_roles_for_user(dbo, user):
         roles.append(r.ROLENAME)
     return roles
 
-def get_security_map(dbo, username):
+def get_security_map(dbo, userid):
     """
-    Returns the security map for a user, which is an aggregate of all
+    Returns the security map for a user by id, which is an aggregate of all
     the roles they have.
     """
     rv = ""
     maps = dbo.query("SELECT role.SecurityMap FROM role " \
         "INNER JOIN userrole ON role.ID = userrole.RoleID " \
-        "INNER JOIN users ON users.ID = userrole.UserID " \
-        "WHERE users.UserName LIKE ?", [username])
+        "WHERE userrole.UserID = ?", [userid])
     for m in maps:
         rv += str(m.SECURITYMAP)
     return rv
@@ -466,7 +465,7 @@ def get_diary_forlist(dbo):
         # We only need to look up the security flags for non-super users and non-roles
         securitymap = ""
         if u.ISROLE == 0 or u.SUPERUSER == 0: 
-            securitymap = get_security_map(dbo, u.USERNAME)
+            securitymap = get_security_map(dbo, u.ID)
         if u.ISROLE == 1 or u.SUPERUSER == 1 or has_security_flag(securitymap, VIEW_DIARY):
             out.append(u)
     return out
@@ -476,17 +475,18 @@ def get_users_and_roles(dbo):
     Returns a single list of all users and roles together, with USERNAME containing the
     name of both roles and users.
     """
-    return dbo.query("SELECT UserName, 0 AS IsRole, SuperUser FROM users " \
-        "UNION SELECT Rolename AS UserName, 1 AS IsRole, 0 AS SuperUser FROM role ORDER BY UserName")
+    return dbo.query("SELECT ID, UserName, 0 AS IsRole, SuperUser FROM users " \
+        "UNION SELECT ID, Rolename AS UserName, 1 AS IsRole, 0 AS SuperUser FROM role ORDER BY UserName")
 
-def get_users(dbo, user='%'):
+def get_users(dbo, user=""):
     """
-    Returns a list of all (or selected) system users with a pipe
-    separated list of their roles
+    Returns a list of all (or a list with a single) system users and a pipe separated list of their roles
     """
-    users = dbo.query("SELECT * FROM users WHERE UserName LIKE ? ORDER BY UserName", [user])
+    users = dbo.query("SELECT * FROM users ORDER BY UserName")
     roles = dbo.query("SELECT ur.*, r.RoleName FROM userrole ur INNER JOIN role r ON ur.RoleID = r.ID")
+    out = []
     for u in users:
+        if user != "" and user.upper() != u.USERNAME.upper(): continue
         roleids = []
         rolenames = []
         for r in roles:
@@ -495,16 +495,14 @@ def get_users(dbo, user='%'):
                 rolenames.append(str(r.ROLENAME))
         u.ROLEIDS = "|".join(roleids)
         u.ROLES = "|".join(rolenames)
-    return users
+        out.append(u)
+    return out
 
 def get_user(dbo, user):
     """
     Returns a single user account by name. Returns None if no user account is found.
     """
-    for u in dbo.query("SELECT UserName FROM users"):
-        if u.USERNAME.upper() == user.upper():
-            return dbo.first_row( get_users(dbo, u.USERNAME) )
-    return None
+    return dbo.first_row( get_users(dbo, user) )
 
 def get_active_users(dbo):
     """
@@ -792,6 +790,7 @@ def web_login(post, session, remoteip, useragent, path):
             dbo.locale = session.locale
             session.dbo = dbo
             session.user = user.USERNAME
+            session.userid = user.ID
             session.superuser = user.SUPERUSER
             session.mobileapp = mobileapp
             update_session(session)
@@ -800,7 +799,7 @@ def web_login(post, session, remoteip, useragent, path):
             return "FAIL"
 
         try:
-            session.securitymap = get_security_map(dbo, user.USERNAME)
+            session.securitymap = get_security_map(dbo, user.ID)
         except:
             # This is a pre-3002 login where the securitymap is with 
             # the user (the error occurs because there's no role table)

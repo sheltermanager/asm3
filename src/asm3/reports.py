@@ -724,7 +724,7 @@ def email_daily_reports(dbo, now = None):
         # If we aren't sending empty reports and there's no data, bail
         if body.find("NODATA") != -1 and not asm3.configuration.email_empty_reports(dbo): 
             continue
-        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emails, "", "", r.TITLE, body, "html", exceptions=False)
+        asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False)
 
 def execute_title(dbo, title, username = "system", params = None, toolbar = True):
     """
@@ -1443,11 +1443,10 @@ class Report:
         if self.params is not None:
             for p in self.params:
                 iv = asm3.utils.cint(p[3])
-                if p[3].find("/") != -1:
-                    seldate = asm3.i18n.display2python(self.dbo.locale, self.params[0][3])
-                    if seldate is not None:
-                        year = seldate.year
-                        month = seldate.month
+                dv = asm3.i18n.display2python(self.dbo.locale, p[3])
+                if dv is not None:
+                    year = dv.year
+                    month = dv.month
                 elif iv > 1990:
                     year = iv
                 elif iv <= 12:

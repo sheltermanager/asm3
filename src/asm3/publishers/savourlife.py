@@ -67,9 +67,22 @@ class SavourLifePublisher(AbstractPublisher):
         """
         Translates our good with fields Selective/Unknown/No/Yes to SOL's NULL/False/True
         """
-        if x == 0: return True
-        elif x == 1: return False
-        else: return None
+        if x == 0: return True # yes
+        elif x == 1: return False # no
+        elif x == 3: return True # selective
+        else: return None # unknown or other
+
+    def good_with_over5(self, x):
+        """ Calculates good with children over 5 """
+        if x == 0 or x == 5: return True # Yes or Over 5
+        if x == 2: return None # Unknown
+        return False
+
+    def good_with_under5(self, x):
+        """ Calculates good with children under 5 """
+        if x == 0: return True # Yes
+        if x == 2: return None # Unknown
+        return False
 
     def run(self):
         
@@ -90,10 +103,17 @@ class SavourLifePublisher(AbstractPublisher):
 
         if token == "":
             self.setLastError("No SavourLife token has been set.")
+            self.cleanup()
             return
 
         if postcode == "" or suburb == "" or state == "":
             self.setLastError("You need to set your organisation address and postcode under Settings->Options->Shelter Details")
+            self.cleanup()
+            return
+
+        if not self.isChangedSinceLastPublish():
+            self.logSuccess("No animal/movement changes have been made since last publish")
+            self.setLastError("No animal/movement changes have been made since last publish", log_error = False)
             return
 
         preanimals = self.getMatchingAnimals(includeAdditionalFields=True)
@@ -359,8 +379,8 @@ class SavourLifePublisher(AbstractPublisher):
             "RequirementOtherDogs":     self.good_with(an.ISGOODWITHDOGS),
             "RequirementOtherAnimals":  None,
             "RequirementOtherCats":     self.good_with(an.ISGOODWITHCATS),
-            "RequirementKidsOver5":     self.good_with(an.ISGOODWITHCHILDREN),
-            "RequirementKidsUnder5":    self.good_with(an.ISGOODWITHCHILDREN),
+            "RequirementKidsOver5":     self.good_with_over5(an.ISGOODWITHCHILDREN), 
+            "RequirementKidsUnder5":    self.good_with_under5(an.ISGOODWITHCHILDREN),
             "SpecialNeeds":             "",
             "MedicalIssues":            self.replaceSmartQuotes(an.HEALTHPROBLEMS),
             "InterstateAdoptionAvaliable": interstate, # NB: This attribute is deliberately spelled wrong due to mispelling at SL side

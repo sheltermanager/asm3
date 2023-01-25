@@ -138,7 +138,7 @@ Entry
 
 .. image:: images/animal_entry.png
 
-The Entry panel contains all the information about how the animal originally
+The Entry section contains all the information about how the animal originally
 entered the shelter, including their background history and the names of the
 original owner and person who brought the animal in. 
 
@@ -160,12 +160,48 @@ are a standardised way of calculating euthanasia figures for animal shelters
 across the US. More information on them can be found here:
 http://www.asilomaraccords.org/
 
+Entry History
+^^^^^^^^^^^^^
+
+.. image:: images/animal_entryhistory.png
+
+By default, the Entry section contains the original information of the animal's
+first intake to the shelter and movements/returns are used thereafter to track
+animals returning to the shelter.
+
+For most shelters and rescues, this is fine, but some organisations want to
+enter that data again for repeat visits and generate a new shelter code
+for the animal.
+
+If you have the option unticked for :menuselect:`Settings --> Options -->
+Remove --> Remove the entry history section from animal records` then the
+system will allow you to archive the information on the Entry slider to Entry
+History so that entry information can be entered each time the animal returns to the
+shelter. 
+
+This can be done with the "New Entry" button on the toolbar. 
+
+Clicking the New Entry button does the following:
+
+* Takes a copy of all the information on the Entry slider and adds a row to
+  Entry History (making the section appear if it is the first history record).
+
+* Generates a new shelter code for the animal.
+
+* Copies the returning person, reason and date from the latest returned 
+  exit movement on file to the Entry section ready for updates to be made.
+
+* The "Date brought in" field will become read only and show the last time
+  the animal returned to the shelter. 
+
+.. note:: The "New Entry" button will only appear on the toolbar if the animal has at least one returned exit movement on file and there are fewer entry history records than returned exit movements.
+
 Health and Identification
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. image:: images/animal_health.png
 
-The health and identification tab is used for entering general information
+The health and identification section is used for entering general information
 about the animal's health and veterinary care. The special needs box can be
 used to indicate that the animal has an ongoing or permanent health problem.
 Ticking this box will flag this when publishing to the internet and to services
@@ -176,7 +212,7 @@ Death
 
 .. image:: images/animal_death.png
 
-The death tab is used for capturing information about the animal's death if it
+The death section is used for capturing information about the animal's death if it
 is deceased. The most important field is the deceased date, as a value in this
 field is used by the system to indicate that the animal is dead. 
 

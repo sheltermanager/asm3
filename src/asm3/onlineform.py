@@ -17,7 +17,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
-from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS
 
 import web062 as web
 
@@ -148,7 +148,6 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             asm3.html.css_tag(TIMEPICKER_CSS) + \
             asm3.html.script_tag(JQUERY_JS) + \
             asm3.html.script_tag(JQUERY_UI_JS) + \
-            asm3.html.script_tag(TOUCHPUNCH_JS) + \
             asm3.html.script_tag(SIGNATURE_JS) + \
             asm3.html.script_tag(ASMSELECT_JS) + \
             asm3.html.script_tag(TIMEPICKER_JS) + \
@@ -771,9 +770,40 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
     create a row for every key/value pair in the posted data
     with a unique collation ID.
     """
-    # Check our spambot checkbox and do not save the form if it has been set.
-    # We don't throw an error either, so the spambot is still redirected to the thank you page and cannot tell.
-    if post.boolean(SPAMBOT_CB): return
+    # Do some spam/junk tests before accepting the form. If any of these fail, they are logged silently
+    # and the submitter still receives the redirect to the thank you page so they don't know that something is up.
+
+    # Check our spambot checkbox/honey trap
+    if asm3.configuration.onlineform_spam_honeytrap(dbo):
+        if post.boolean(SPAMBOT_CB): 
+            asm3.al.error("blocked spambot (honeytrap): %s" % post.data, "insert_onlineformincoming_from_form", dbo)
+            return
+
+    # Check that the useragent looks like an actual browser
+    # had a few bots that identified as python-requests, etc.
+    if asm3.configuration.onlineform_spam_ua_check(dbo):
+        if not useragent.strip().startswith("Mozilla"):
+            asm3.al.error("blocked spambot (ua=%s): %s" % (useragent, post.data), "insert_onlineformincoming_from_form", dbo)
+            return
+
+    # Look for junk in firstname. A lot of bot submitted junk is just random upper and lower case letters. 
+    # If we have 3 or more upper and lower case letters in the firstname, it's very likely bot junk.
+    # We have javascript that title cases name fields, so a mix of cases also indicates the form has been filled out by
+    # an automated process instead of a browser.
+    # This test does nothing if there's no firstname field in the form.
+    if asm3.configuration.onlineform_spam_firstname_mixcase(dbo):
+        for k, v in post.data.items():
+            if k.startswith("firstname") or k.startswith("forenames"):
+                lc = 0
+                uc = 0
+                for x in v:
+                    if x.isupper():
+                        uc += 1
+                    elif x != " ":
+                        lc += 1
+                if lc > 2 and uc > 2:
+                    asm3.al.error("blocked spambot (firstname=%s, uc=%s, lc=%s): %s" % (v, uc, lc, post.data), "insert_onlineformincoming_from_form", dbo)
+                    return
 
     collationid = get_collationid(dbo)
 
@@ -912,7 +942,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
             body += "\n" + formdata
             attachments = images
         # Send
-        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), emailaddress, "", "", 
+        asm3.utils.send_email(dbo, "", emailaddress, "", "", 
             asm3.i18n._("Submission received: {0}", l).format(formname), 
             body, "html", attachments, exceptions=False)
 
@@ -945,7 +975,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
             "INNER JOIN owner ON owner.ID = animal.AdoptionCoordinatorID " \
             "WHERE animal.ID = ?", [animalid])
         if coordinatoremail != "":
-            asm3.utils.send_email(dbo, asm3.configuration.email(dbo), coordinatoremail, "", "", 
+            asm3.utils.send_email(dbo, "", coordinatoremail, "", "", 
                 subject, formdata, "html", images, exceptions=False)
 
     # Did the form submission have a value in an "emailsubmissionto" field?
@@ -1322,6 +1352,7 @@ def create_animalcontrol(dbo, username, collationid):
         if f.FIELDNAME == "dispatchcity": d["dispatchtown"] = f.VALUE
         if f.FIELDNAME == "dispatchstate": d["dispatchcounty"] = f.VALUE
         if f.FIELDNAME == "dispatchzipcode": d["dispatchpostcode"] = f.VALUE
+        if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     # Have we got enough info to create the animal control record? We need notes and dispatchaddress
     if "callnotes" not in d or "dispatchaddress" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an incident record (need call notes and dispatch address).", l))
@@ -1360,6 +1391,7 @@ def create_lostanimal(dbo, username, collationid):
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
+        if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     if "datelost" not in d or asm3.i18n.display2python(l, d["datelost"]) is None:
         d["datelost"] = asm3.i18n.python2display(l, dbo.now())
     if "species" not in d: d["species"] = guess_species(dbo, "")
@@ -1403,6 +1435,7 @@ def create_foundanimal(dbo, username, collationid):
         if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
         if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
+        if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     if "datefound" not in d or asm3.i18n.display2python(l, d["datefound"]) is None:
         d["datefound"] = asm3.i18n.python2display(l, dbo.now())
     if "species" not in d: d["species"] = guess_species(dbo, "")
@@ -1489,6 +1522,7 @@ def create_waitinglist(dbo, username, collationid):
         if f.FIELDNAME == "description": d["description"] = f.VALUE
         if f.FIELDNAME == "reason": d["reasonforwantingtopart"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
+        if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     if "size" not in d: d["size"] = guess_size(dbo, "nomatchesusedefault")
     if "species" not in d: d["species"] = guess_species(dbo, "nomatchesusedefault")
     # Have we got enough info to create the waiting list record? We need a description

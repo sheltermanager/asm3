@@ -1,0 +1,95 @@
+Boehringer-Ingelheim Adopter List
+###
+Figures
+###
+3000/PostgreSQL rev02
+###
+BI adopter list for export as CSV
+###
+en
+###
+SELECT
+o.OwnerSurname AS last_name,
+o.OwnerForeNames AS first_name,
+'' AS middle_name,
+o.EmailAddress AS email_address,
+o.MobileTelephone AS phone_number,
+o.OwnerAddress AS address_line_1,
+'' AS address_line_2,
+o.OwnerTown AS city,
+o.OwnerCounty AS state_code,
+o.OwnerPostcode AS zipcode,
+a.AnimalName AS pet_name,
+a.IdentichipNumber AS microchip_ID,
+(SELECT SpeciesName FROM species WHERE ID=a.SpeciesID) AS species,
+CASE WHEN a.Sex=0 THEN 'F' ELSE 'M' END AS pet_sex,
+CASE WHEN a.Neutered=1 THEN 'Y' ELSE 'N' END AS spay_neuter,
+TO_CHAR(a.DateOfBirth, 'MM/DD/YYYY') AS pet_birthdate,
+(SELECT BreedName FROM breed WHERE ID=a.BreedID) AS primary_breed,
+(SELECT BreedName FROM breed WHERE ID=a.Breed2ID) AS secondary_breed,
+TO_CHAR(a.ActiveMovementDate, 'MM/DD/YYYY') AS transaction_date,
+'Y' AS opt_in,
+'1' AS lowercaseheader
+FROM animal a
+INNER JOIN adoption m ON m.ID = a.ActiveMovementID
+INNER JOIN owner o ON m.OwnerID = o.ID
+WHERE a.ActiveMovementDate >= '$ASK DATE Adopted between$'
+AND a.ActiveMovementDate <= '$ASK DATE and$'
+ORDER BY a.ActiveMovementDate
+###
+$$HEADER
+<p>Use the CSV button to generate a file to send to Boehringer-Ingelheim.</p>
+<table border="1">
+<tr>
+<th>LAST_NAME</th>
+<th>FIRST_NAME</th>
+<th>MIDDLE_NAME</th>
+<th>EMAIL_ADDRESS</th>
+<th>PHONE_NUMBER</th>
+<th>ADDRESS_LINE_1</th>
+<th>ADDRESS_LINE_2</th>
+<th>CITY</th>
+<th>STATE_CODE</th>
+<th>ZIPCODE</th>
+<th>PET_NAME</th>
+<th>MICROCHIP_ID</th>
+<th>SPECIES</th>
+<th>PET_SEX</th>
+<th>SPAY_NEUTER</th>
+<th>PET_BIRTHDATE</th>
+<th>PRIMARY_BREED</th>
+<th>SECONDARY_BREED</th>
+<th>TRANSACTION_DATE</th>
+<th>OPT_IN</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$LAST_NAME</td>
+<td>$FIRST_NAME</td>
+<td>$MIDDLE_NAME</td>
+<td>$EMAIL_ADDRESS</td>
+<td>$PHONE_NUMBER</td>
+<td>$ADDRESS_LINE_1</td>
+<td>$ADDRESS_LINE_2</td>
+<td>$CITY</td>
+<td>$STATE_CODE</td>
+<td>$ZIPCODE</td>
+<td>$PET_NAME</td>
+<td>$MICROCHIP_ID</td>
+<td>$SPECIES</td>
+<td>$PET_SEX</td>
+<td>$SPAY_NEUTER</td>
+<td>$PET_BIRTHDATE</td>
+<td>$PRIMARY_BREED</td>
+<td>$SECONDARY_BREED</td>
+<td>$TRANSACTION_DATE</td>
+<td>$OPT_IN</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<p>Total: {COUNT.LAST_NAME}</p>
+FOOTER$$

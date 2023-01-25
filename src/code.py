@@ -25,6 +25,7 @@ import asm3.db
 import asm3.dbfs
 import asm3.dbupdate
 import asm3.diary
+import asm3.event
 import asm3.financial
 import asm3.html
 import asm3.log
@@ -64,7 +65,7 @@ from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format,
 from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, \
     ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
     AKC_REUNITE_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, \
-    LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, \
+    LEAFLET_CSS, LEAFLET_JS, PDFJS_VIEWER, MULTIPLE_DATABASES, \
     ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, HTMLFTP_PUBLISHER_ENABLED, \
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
     MAP_PROVIDER_KEY, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
@@ -665,6 +666,7 @@ class configjs(ASMEndpoint):
             "osmmaptiles": osmmaptiles,
             "hascustomlogo": asm3.dbfs.file_exists(dbo, "logo.jpg"),
             "mobileapp": o.session.mobileapp,
+            "fontfiles": asm3.configuration.watermark_get_valid_font_files(),
             "config": asm3.configuration.get_map(dbo),
             "menustructure": asm3.html.menu_structure(o.locale, 
                 asm3.publish.PUBLISHER_LIST,
@@ -897,7 +899,8 @@ class media_pdfjs(ASMEndpoint):
     url = "media_pdfjs"
 
     def content(self, o):
-        self.redirect(f'static/lib/pdfjs/2.12.313/web/viewer.html?file=/media%3Fid={o.post["id"]}')
+        viewurl = f'{PDFJS_VIEWER}?file=/media%3Fid={o.post["id"]}'
+        self.redirect(viewurl)
 
 class mobile(ASMEndpoint):
     url = "mobile"
@@ -1576,30 +1579,34 @@ class animal(JSONEndpoint):
         return {
             "animal": a,
             "activelitters": asm3.animal.get_active_litters_brief(dbo),
-            "additional": asm3.additional.get_additional_fields(dbo, a["ID"], "animal"),
+            "additional": asm3.additional.get_additional_fields(dbo, a.ID, "animal"),
             "animaltypes": asm3.lookups.get_animal_types(dbo),
-            "audit": self.checkb(asm3.users.VIEW_AUDIT_TRAIL) and asm3.audit.get_audit_for_link(dbo, "animal", a["ID"]) or [],
+            "audit": self.checkb(asm3.users.VIEW_AUDIT_TRAIL) and asm3.audit.get_audit_for_link(dbo, "animal", a.ID) or [],
             "species": asm3.lookups.get_species(dbo),
             "breeds": asm3.lookups.get_breeds_by_species(dbo),
             "coattypes": asm3.lookups.get_coattypes(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
             "deathreasons": asm3.lookups.get_deathreasons(dbo),
             "diarytasks": asm3.diary.get_animal_tasks(dbo),
+            "entryhistory": asm3.animal.get_animal_entries(dbo, a.ID),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
+            "events": asm3.event.get_events_by_animal(dbo, a.ID),
             "flags": asm3.lookups.get_animal_flags(dbo),
-            "incidents": asm3.animalcontrol.get_animalcontrol_for_animal(dbo, o.post.integer("id")),
+            "incidents": asm3.animalcontrol.get_animalcontrol_for_animal(dbo, a.ID),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
-            "publishhistory": asm3.animal.get_publish_history(dbo, a["ID"]),
+            "publishhistory": asm3.animal.get_publish_history(dbo, a.ID),
             "posneg": asm3.lookups.get_posneg(dbo),
+            "returnedexitmovements": asm3.animal.get_returned_exit_movements(dbo, a.ID),
             "sexes": asm3.lookups.get_sexes(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
             "sharebutton": SHARE_BUTTON,
-            "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
+            "tabcounts": asm3.animal.get_satellite_counts(dbo, a.ID)[0],
             "templates": asm3.template.get_document_templates(dbo, "animal"),
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
+            "view": o.post["view"],
             "ynun": asm3.lookups.get_ynun(dbo),
             "ynunk": asm3.lookups.get_ynunk(dbo)
         }
@@ -1628,6 +1635,14 @@ class animal(JSONEndpoint):
     def post_merge(self, o):
         self.check(asm3.users.MERGE_ANIMAL)
         asm3.animal.merge_animal(o.dbo, o.user, o.post.integer("animalid"), o.post.integer("mergeanimalid"))
+
+    def post_deleteentryhistory(self, o):
+        self.check(asm3.users.CHANGE_ANIMAL)
+        return asm3.animal.delete_animal_entry(o.dbo, o.user, o.post.integer("id"))
+
+    def post_newentry(self, o):
+        self.check(asm3.users.CHANGE_ANIMAL)
+        return asm3.animal.insert_animal_entry(o.dbo, o.user, o.post.integer("animalid"))
 
     def post_randomname(self, o):
         return asm3.animal.get_random_name(o.dbo, o.post.integer("sex"))
@@ -1837,7 +1852,8 @@ class animal_embed(ASMEndpoint):
         species = asm3.lookups.get_species(dbo)
         litters = asm3.animal.get_litters(dbo)
         flags = asm3.lookups.get_animal_flags(dbo)
-        rv = { "rows": rows, "locations": locations, "species": species, "litters": litters, "flags": flags }
+        agegroups = asm3.configuration.age_groups(dbo)
+        rv = { "rows": rows, "locations": locations, "species": species, "litters": litters, "flags": flags, "agegroups": agegroups }
         return asm3.utils.json(rv)
 
     def post_id(self, o):
@@ -2217,7 +2233,8 @@ class calendar_events(ASMEndpoint):
                 events.append({ 
                     "title": d["SUBJECT"], 
                     "allDay": allday, 
-                    "start": d["DIARYDATETIME"], 
+                    "start": d.DIARYDATETIME,
+                    "end": add_minutes(d.DIARYDATETIME, 60),
                     "tooltip": "%s %s %s" % (d["SUBJECT"], d["LINKINFO"], d["NOTE"]), 
                     "icon": "diary",
                     "link": "diary_edit_my" })
@@ -3231,6 +3248,65 @@ class donation_receive(JSONEndpoint):
     def post_create(self, o):
         self.check(asm3.users.ADD_DONATION)
         return asm3.financial.insert_donations_from_form(o.dbo, o.user, o.post, o.post["received"], True, o.post["person"], o.post["animal"], o.post["movement"], False)
+
+class event(JSONEndpoint):
+    url = "event"
+    get_permissions = asm3.users.VIEW_EVENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        e = asm3.event.get_event(dbo, o.post.integer("id"))
+        if e is None: self.notfound()
+        asm3.al.debug("opened event %s" % "recname", "code.event", dbo)
+        return{
+            "event": e,
+            "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event")
+        }
+
+    def post_save(self, o):
+        self.check(asm3.users.CHANGE_EVENT)
+        asm3.event.update_event_from_form(o.dbo, o.post, o.user)
+
+    def post_delete(self, o):
+        self.check(asm3.users.DELETE_EVENT)
+        asm3.event.delete_event(o.dbo, o.user, o.post.integer("eventid"))
+
+class event_find(JSONEndpoint):
+    url = "event_find"
+    get_permissions = asm3.users.VIEW_EVENT
+
+    def controller(self, o):
+        return {}
+
+class event_find_results(JSONEndpoint):
+    url = "event_find_results"
+    get_permissions = asm3.users.VIEW_EVENT
+
+    def controller(self, o):
+        results = asm3.event.get_event_find_advanced(o.dbo, o.post.data, asm3.configuration.record_search_limit(o.dbo))
+        add = None
+        if len(results) > 0: 
+            add = asm3.additional.get_additional_fields_ids(o.dbo, results, "event")
+        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "code.event_find_results", o.dbo)
+        return {
+            "additional": add,
+            "rows": results
+        }
+
+class event_new(JSONEndpoint):
+    url = "event_new"
+    get_permissions = asm3.users.ADD_EVENT
+    post_permissions = asm3.users.ADD_EVENT
+
+    def controller(self, o):
+        dbo = o.dbo
+        asm3.al.debug("add event", "code.event_new", dbo)
+        return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "event")
+        }
+
+    def post_all(self, o):
+        return str(asm3.event.insert_event_from_form(o.dbo, o.post, o.user))
 
 class foundanimal(JSONEndpoint):
     url = "foundanimal"
@@ -4759,6 +4835,14 @@ class movement(JSONEndpoint):
 
     def post_checkout(self, o):
         asm3.movement.send_adoption_checkout(o.dbo, o.user, o.post)
+        
+    def post_eventlink(self, o):
+        self.check(asm3.users.LINK_EVENT_MOVEMENT)
+        if o.post.integer("eventid") > 0:
+            e = [ asm3.event.get_event(o.dbo, o.post.integer("eventid")) ]
+        else:
+            e = asm3.event.get_events_by_date(o.dbo, o.post.date("movementdate"))
+        return asm3.utils.json(e)
 
 class onlineform_incoming(JSONEndpoint):
     url = "onlineform_incoming"
@@ -5007,6 +5091,7 @@ class options(JSONEndpoint):
             "currencies": asm3.lookups.CURRENCIES,
             "deathreasons": asm3.lookups.get_deathreasons(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "eventfindcolumns": asm3.html.json_eventfindcolumns(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "foundanimalfindcolumns": asm3.html.json_foundanimalfindcolumns(dbo),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
@@ -5839,6 +5924,7 @@ class report_export_csv(ASMEndpoint):
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
         titlecaseheader = cols is not None and "TITLECASEHEADER" in cols
+        lowercaseheader = cols is not None and "LOWERCASEHEADER" in cols
         renameheader = ""
         if cols is not None and "RENAMEHEADER" in cols and len(rows) > 0:
             renameheader = rows[0].RENAMEHEADER
@@ -5847,7 +5933,7 @@ class report_export_csv(ASMEndpoint):
         # then look for them and use the report ID if any are found.
         if asm3.utils.encode_html(filename).find("&#") != -1: filename = str(crid) 
         self.header("Content-Disposition", f"attachment; filename=\"{filename}.csv\"")
-        return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, renameheader=renameheader)
+        return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, lowercaseheader=lowercaseheader, renameheader=renameheader)
 
 class report_export_email(ASMEndpoint):
     url = "report_export_email"
@@ -6795,19 +6881,6 @@ class waitinglist_results(JSONEndpoint):
         self.check(asm3.users.CHANGE_WAITING_LIST)
         for wid in o.post.integer_list("ids"):
             asm3.waitinglist.update_waitinglist_highlight(o.dbo, wid, o.post["himode"])
-
-class event_new(JSONEndpoint):
-    url = "event_new"
-    #TODO: need to add permissions
-    def controller(self, o):
-        dbo = o.dbo
-        asm3.al.debug("add event", "code.event_new", dbo)
-        return {
-            "additional": asm3.additional.get_additional_fields(dbo, 0, "event")
-        }
-
-    def post_all(self, o):
-        return str(asm3.event.insert_event_from_form(o.dbo, o.post, o.user))
 
 # List of routes constructed from class definitions
 routes = []

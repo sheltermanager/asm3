@@ -1,6 +1,3 @@
-# Robin Rawson-Tetley <zanata@sheltermanager.com>, 2016. #zanata
-# Robin Rawson-Tetley <zanata@sheltermanager.com>, 2017. #zanata
-# Robin Rawson-Tetley <zanata@sheltermanager.com>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
@@ -15,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.2.1\n"
-"X-POOTLE-MTIME: 1456389497.000000\n"
+
 
 #: options.js
 msgid " days."

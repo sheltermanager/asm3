@@ -622,7 +622,7 @@ const common = {
             errhandler("animation", exanim);
         }
         common.module_running = o;
-        if (o.autofocus && !asm.mobileapp) {
+        if (o.autofocus && !common.browser_is.mobile) {
             // Datepickers being the target of autofocus inside a containing widget that is
             // not loaded yet (eg: accordion) can cause issues with them trying to render
             // the calendar dropdown too early and in the wrong place. 
@@ -960,8 +960,8 @@ const common = {
         if (config.has() && config.bool("DisableEffects")) {
             jQuery.fx.off = true;
         }
-        // Disable effects if we're running in the mobile app
-        if (asm.mobileapp) {
+        // Disable effects if we're running on mobile
+        if (common.browser_is.mobile) {
             jQuery.fx.off = true;
         }
         // textarea zoom dialog
@@ -1659,8 +1659,8 @@ const log = {
 
 // add a class to the html element for desktop or mobile
 // this allows asm.css to change some elements if it is running
-// inside the mobile app context
-if (typeof asm !== "undefined" && asm.mobileapp) { 
+// on a mobile device.
+if (common.browser_is.mobile) { 
     $("html").removeClass("desktop").addClass("mobile");
 }
 else { 

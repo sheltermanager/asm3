@@ -40,7 +40,7 @@ VERSIONS = (
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
-    34606, 34607, 34608
+    34606, 34607, 34608, 34609, 34611
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -48,7 +48,7 @@ LATEST_VERSION = VERSIONS[-1]
 # All ASM3 tables
 TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
     "adoption", "animal", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost",
-    "animaldiet", "animalfigures", "animalfiguresannual",  
+    "animaldiet", "animalentry", "animalfigures", "animalfiguresannual",  
     "animalfound", "animalcontrolanimal", "animallitter", "animallost", "animallostfoundmatch", 
     "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
     "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
@@ -91,7 +91,7 @@ TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontr
 TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption", 
     "animal", "animalcontrol", "animalcontrolanimal","animalcontrolrole", 
     "animallostfoundmatch", "animalpublished", 
-    "animalcost", "animaldiet", "animalfigures", "animalfiguresannual", 
+    "animalcost", "animaldiet", "animalentry", "animalfigures", "animalfiguresannual", 
     "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
     "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "clinicappointment", "clinicinvoiceitem", "deletion", "diary", "event", "eventanimal", 
@@ -511,6 +511,28 @@ def sql_structure(dbo):
         flongstr("Comments") ))
     sql += index("animaldiet_AnimalID", "animaldiet", "AnimalID")
     sql += index("animaldiet_DietID", "animaldiet", "DietID")
+
+    sql += table("animalentry", (
+        fid(),
+        fint("AnimalID"),
+        fstr("ShelterCode"),
+        fstr("ShortCode"),
+        fdate("EntryDate"),
+        fint("EntryReasonID"),
+        fint("AdoptionCoordinatorID", True),
+        fint("BroughtInByOwnerID", True),
+        fint("OriginalOwnerID", True),
+        fint("AsilomarIntakeCategory", True),
+        fint("JurisdictionID", True),
+        fint("IsTransfer"),
+        fint("AsilomarIsTransferExternal", True),
+        fdate("HoldUntilDate", True),
+        fint("IsPickup"),
+        fint("PickupLocationID", True),
+        fstr("PickupAddress", True),
+        flongstr("ReasonNO", True),
+        flongstr("ReasonForEntry", True) ))
+    sql += index("animalentry_AnimalID", "animalentry", "AnimalID")
 
     sql += table("animalfigures", (
         fid(),
@@ -988,7 +1010,7 @@ def sql_structure(dbo):
         fstr("EventName"),
         flongstr("EventDescription", True),
         fint("EventOwnerID", True),
-        flongstr("EventAddress", True),
+        fstr("EventAddress", True),
         fstr("EventTown", True),
         fstr("EventCounty", True),
         fstr("EventPostCode", True),
@@ -1003,7 +1025,8 @@ def sql_structure(dbo):
         fid(),
         fint("EventID"),
         fint("AnimalID"),
-        fdate("ArrivalDate") ))
+        fdate("ArrivalDate", True),
+        flongstr("Comments", True) ))
     sql += index("eventanimal_EventAnimalID", "eventanimal", "EventID,AnimalID", True)
     sql += index("eventanimal_ArrivalDate", "eventanimal", "ArrivalDate")
 
@@ -1648,6 +1671,9 @@ def sql_default_data(dbo, skip_config = False):
         return "INSERT INTO %s (ID, %s, IsRetired) VALUES (%s, '%s', 0)|=\n" % ( tablename, fieldname, tid, dbo.escape(name) )
     def lookup2money(tablename, fieldname, tid, name, money = 0):
         return "INSERT INTO %s (ID, %s, DefaultCost, IsRetired) VALUES (%s, '%s', %d, 0)|=\n" % ( tablename, fieldname, tid, dbo.escape(name), money)
+    def lookup2moneyaccount(tablename, fieldname, tid, name, accountid = 0, money = 0):
+        return "INSERT INTO %s (ID, %s, AccountID, DefaultCost, IsRetired) VALUES (%s, '%s', %d, %d, 0)|=\n" % \
+            ( tablename, fieldname, tid, dbo.escape(name), accountid, money)
     def account(tid, code, desc, atype, dtype, ctype):
         return "INSERT INTO accounts (ID, Code, Description, Archived, AccountType, CostTypeID, DonationTypeID, RecordVersion, CreatedBy, CreatedDate, LastChangedBy, LastChangedDate) VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( tid, dbo.escape(code), dbo.escape(desc), atype, ctype, dtype, 'default', dbo.sql_now(), 'default', dbo.sql_now() ) 
     def breed(tid, name, petfinder, speciesid):
@@ -2199,12 +2225,12 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2("donationpayment", "PaymentName", 4, _("Debit Card", l))
     sql += lookup2("donationpayment", "PaymentName", 5, _("PayPal", l))
     sql += lookup2("donationpayment", "PaymentName", 6, _("Stripe", l))
-    sql += lookup2money("donationtype", "DonationName", 1, _("Donation", l))
-    sql += lookup2money("donationtype", "DonationName", 2, _("Adoption Fee", l))
-    sql += lookup2money("donationtype", "DonationName", 3, _("Waiting List Donation", l))
-    sql += lookup2money("donationtype", "DonationName", 4, _("Entry Donation", l))
-    sql += lookup2money("donationtype", "DonationName", 5, _("Animal Sponsorship", l))
-    sql += lookup2money("donationtype", "DonationName", 6, _("In-Kind Donation", l))
+    sql += lookup2moneyaccount("donationtype", "DonationName", 1, _("Donation", l), 1)
+    sql += lookup2moneyaccount("donationtype", "DonationName", 2, _("Adoption Fee", l), 2)
+    sql += lookup2moneyaccount("donationtype", "DonationName", 3, _("Waiting List Donation", l), 3)
+    sql += lookup2moneyaccount("donationtype", "DonationName", 4, _("Entry Donation", l), 4)
+    sql += lookup2moneyaccount("donationtype", "DonationName", 5, _("Animal Sponsorship", l), 5)
+    sql += lookup2moneyaccount("donationtype", "DonationName", 6, _("In-Kind Donation", l))
     sql += lookup2("entryreason", "ReasonName", 1, _("Marriage/Relationship split", l))
     sql += lookup2("entryreason", "ReasonName", 2, _("Allergies", l))
     sql += lookup2("entryreason", "ReasonName", 3, _("Biting", l))
@@ -2480,7 +2506,6 @@ def install_db_structure(dbo):
     sql = sql_structure(dbo)
     for s in sql.split(";"):
         if (s.strip() != ""):
-            print(s.strip())
             dbo.execute_dbupdate(s.strip())
 
 def install_db_views(dbo):
@@ -2538,7 +2563,6 @@ def install_default_data(dbo, skip_config = False):
     sql = sql_default_data(dbo, skip_config)
     for s in sql.split("|="):
         if s.strip() != "":
-            print(s.strip())
             dbo.execute_dbupdate(s.strip())
 
 def reinstall_default_data(dbo):
@@ -2548,7 +2572,6 @@ def reinstall_default_data(dbo):
     """
     for table in TABLES:
         if table != "dbfs" and table != "configuration" and table != "users" and table != "role" and table != "userrole":
-            print("DELETE FROM %s" % table)
             dbo.execute_dbupdate("DELETE FROM %s" % table)
     install_default_data(dbo, True)
     install_default_templates(dbo)
@@ -5708,3 +5731,40 @@ def update_34607(dbo):
 def update_34608(dbo):
     # change column eventownerid to nullable
     dbo.execute_dbupdate(dbo.ddl_drop_notnull("event", "EventOwnerID", dbo.type_integer))
+
+def update_34609(dbo):
+    # add animalentry table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("AnimalID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("ShelterCode", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("ShortCode", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("EntryDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("EntryReasonID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("AdoptionCoordinatorID", dbo.type_integer, True),
+        dbo.ddl_add_table_column("BroughtInByOwnerID", dbo.type_integer, True),
+        dbo.ddl_add_table_column("OriginalOwnerID", dbo.type_integer, True),
+        dbo.ddl_add_table_column("AsilomarIntakeCategory", dbo.type_integer, True),
+        dbo.ddl_add_table_column("JurisdictionID", dbo.type_integer, True),
+        dbo.ddl_add_table_column("IsTransfer", dbo.type_integer, False),
+        dbo.ddl_add_table_column("AsilomarIsTransferExternal", dbo.type_integer, True),
+        dbo.ddl_add_table_column("HoldUntilDate", dbo.type_datetime, True),
+        dbo.ddl_add_table_column("IsPickup", dbo.type_integer, False),
+        dbo.ddl_add_table_column("PickupLocationID", dbo.type_integer, True),
+        dbo.ddl_add_table_column("PickupAddress", dbo.type_shorttext, True),
+        dbo.ddl_add_table_column("ReasonNO", dbo.type_longtext, True),
+        dbo.ddl_add_table_column("ReasonForEntry", dbo.type_longtext, True),
+        dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, False),
+        dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("animalentry", fields) )
+    dbo.execute_dbupdate( dbo.ddl_add_index("animalentry_AnimalID", "animalentry", "AnimalID") )
+
+def update_34611(dbo):
+    # add eventanimal.Comments
+    add_column(dbo, "eventanimal", "Comments", dbo.type_longtext)
+    dbo.execute_dbupdate(dbo.ddl_drop_notnull("eventanimal", "ArrivalDate", dbo.type_datetime))
+

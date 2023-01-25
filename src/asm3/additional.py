@@ -52,8 +52,8 @@ MULTI_LOOKUP = 7
 ANIMAL_LOOKUP = 8
 PERSON_LOOKUP = 9
 TIME = 10
-SPONSOR = 11
-VET = 12
+PERSON_SPONSOR = 11
+PERSON_VET = 12
 
 def clause_for_linktype(linktype):
     """ Returns the appropriate clause for a link type """
@@ -81,6 +81,10 @@ def table_for_linktype(linktype):
     elif linktype == "foundanimal":
         return "animalfound"
     return linktype
+
+def is_person_fieldtype(fieldtype):
+    """ Returns true if the field type given is a person """
+    return fieldtype in (PERSON_LOOKUP, PERSON_SPONSOR, PERSON_VET)
 
 def get_additional_fields(dbo, linkid, linktype = "animal"):
     """
@@ -115,7 +119,7 @@ def get_additional_fields_ids(dbo, rows, linktype = "animal"):
         links.append("0")
     return dbo.query("SELECT af.*, a.LinkID, a.Value, " \
         "CASE WHEN af.FieldType = 8 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT AnimalName FROM animal WHERE %s = a.Value) ELSE '' END AS AnimalName, " \
-        "CASE WHEN af.FieldType = 9 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
+        "CASE WHEN af.FieldType IN (9, 11, 12) AND a.Value <> '' AND a.Value <> '0' THEN (SELECT OwnerName FROM owner WHERE %s = a.Value) ELSE '' END AS OwnerName " \
         "FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
         "WHERE a.LinkType IN (%s) AND a.LinkID IN (%s) " \
         "ORDER BY af.DisplayIndex" % ( dbo.sql_cast_char("animal.ID"), dbo.sql_cast_char("owner.ID"), inclause, ",".join(links)))

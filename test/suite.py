@@ -41,6 +41,10 @@ import test_diary
 suitediary = unittest.makeSuite(test_diary.TestDiary, 'test')
 fullsuite.append(suitediary)
 
+import test_event
+suiteevent = unittest.makeSuite(test_event.TestEvent, 'test')
+fullsuite.append(suiteevent)
+
 import test_financial
 suitefin = unittest.makeSuite(test_financial.TestFinancial, 'test')
 fullsuite.append(suitefin)
@@ -134,7 +138,7 @@ if __name__ == "__main__":
     import asm3.dbupdate
     asm3.dbupdate.install(base.get_dbo())
     s = unittest.TestSuite(fullsuite)
-    #s = unittest.TestSuite([suitepublish]) # How to run a single suite of tests
+    #s = unittest.TestSuite([suiteevent]) # How to run a single suite of tests
     runner = unittest.TextTestRunner()
     runner.run(s)
 

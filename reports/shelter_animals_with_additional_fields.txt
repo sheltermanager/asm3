@@ -2,9 +2,9 @@ Shelter Animals with Additional Fields
 ###
 Inventories
 ###
-34302/Any
+34302/Any rev01
 ###
-List of shelter animals with thumbnails.
+List of shelter animals with additional field values.
 ###
 en
 ###

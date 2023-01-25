@@ -70,7 +70,7 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
     # Strip any personal data if requested
     if strip_personal_data:
         personal = ["ADOPTIONCOORDINATOR", "ORIGINALOWNER", "BROUGHTINBY", 
-            "CURRENTOWNER", "OWNER", "RESERVEDOWNER", 
+            "CURRENTOWNER", "OWNERNAME", "RESERVEDOWNER", 
             "CURRENTVET", "NEUTERINGVET", "OWNERSVET"]
         for r in rows:
             for k in r.keys():
@@ -736,13 +736,13 @@ class AbstractPublisher(threading.Thread):
         """
         asm3.asynctask.set_cancel(self.dbo, False)
 
-    def setLastError(self, msg):
+    def setLastError(self, msg, log_error=True):
         """
         Sets the last error message and clears the publisher lock
         """
         asm3.asynctask.set_last_error(self.dbo, msg)
         self.lastError = msg
-        if msg != "": self.logError(self.lastError)
+        if msg != "" and log_error: self.logError(self.lastError)
         self.resetPublisherProgress()
 
     def cleanup(self, save_log=True):
@@ -878,13 +878,30 @@ class AbstractPublisher(threading.Thread):
         """
         return self.dbo.query_date("SELECT SentDate FROM animalpublished WHERE AnimalID = ? AND PublishedTo = ?", (animalid, self.publisherKey))
 
+    def isChangedSinceLastPublish(self):
+        """
+        Returns True if there have been relevant changes since the last time this publisher ran. 
+        Publishers can use this call to decide to do nothing if there have been no changes.
+        Relevant changes are: 
+            Changes to an animal, movement or media record.
+            The system configuration has changed.
+        """
+        lastpublished = self.dbo.query_date("SELECT MAX(SentDate) FROM animalpublished WHERE PublishedTo = ?", [self.publisherKey])
+        if lastpublished is None: return True # publisher has never run
+        changes = self.dbo.query_named_params("SELECT ID FROM animal WHERE LastChangedDate > :lp " \
+            "UNION SELECT ID FROM adoption WHERE LastChangedDate > :lp " \
+            "UNION SELECT ID FROM media WHERE Date > :lp " \
+            "UNION SELECT LinkID FROM audittrail WHERE TableName='configuration' AND Action=1 AND AuditDate > :lp ", \
+            { "lp": self.dbo.sql_value(lastpublished) })
+        return len(changes) > 0
+
     def markAnimalPublished(self, animalid, datevalue = None, extra = ""):
         """
         Marks an animal published at the current date/time for this publisher
         animalid:    The animal id to update
         extra:       The extra text field to set
         """
-        if datevalue is None: datevalue = asm3.i18n.now(self.dbo.timezone)
+        if datevalue is None: datevalue = self.dbo.now()
         self.markAnimalUnpublished(animalid)
         self.dbo.insert("animalpublished", {
             "AnimalID":     animalid,
@@ -905,7 +922,7 @@ class AbstractPublisher(threading.Thread):
             self.dbo.insert("animalpublished", {
                 "AnimalID":     animalid,
                 "PublishedTo":  FIRST_PUBLISHER,
-                "SentDate":     self.dbo.today()
+                "SentDate":     self.dbo.now()
             }, generateID=False)
 
     def markAnimalUnpublished(self, animalid):
@@ -929,7 +946,7 @@ class AbstractPublisher(threading.Thread):
         # build a batch for inserting animalpublished entries into the table
         # and check/mark animals first published
         for i in inclause:
-            batch.append( ( int(i), self.publisherKey, asm3.i18n.now(self.dbo.timezone) ) )
+            batch.append( ( int(i), self.publisherKey, self.dbo.now() ) )
             if first: self.markAnimalFirstPublished(int(i))
         if len(inclause) == 0: return
         self.dbo.execute("DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
@@ -950,7 +967,7 @@ class AbstractPublisher(threading.Thread):
             inclause[str(a["ID"])] = m
         # build a batch for inserting animalpublished entries into the table
         for k, v in inclause.items():
-            batch.append( ( int(k), self.publisherKey, asm3.i18n.now(self.dbo.timezone), v ) )
+            batch.append( ( int(k), self.publisherKey, self.dbo.now(), v ) )
         if len(inclause) == 0: return
         self.dbo.execute("DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
         self.dbo.execute_many("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate, Extra) VALUES (?,?,?,?)", batch)
@@ -971,7 +988,7 @@ class AbstractPublisher(threading.Thread):
         Initialises the log 
         """
         self.publisherKey = publisherKey
-        self.publishDateTime = asm3.i18n.now(self.dbo.timezone)
+        self.publishDateTime = self.dbo.now()
         self.publisherName = publisherName
         self.logBuffer = []
 
@@ -1072,17 +1089,19 @@ class FTPPublisher(AbstractPublisher):
     ftppassword = ""
     ftpport = 21
     ftproot = ""
+    ftptls = False
     currentDir = ""
     passive = True
     existingImageList = None
 
-    def __init__(self, dbo, publishCriteria, ftphost, ftpuser, ftppassword, ftpport = 21, ftproot = "", passive = True):
+    def __init__(self, dbo, publishCriteria, ftphost, ftpuser, ftppassword, ftptls = False, ftpport = 21, ftproot = "", passive = True):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.ftphost = ftphost
         self.ftpuser = ftpuser
         self.ftppassword = self.unxssPass(ftppassword)
         self.ftpport = ftpport
         self.ftproot = ftproot
+        self.ftptls = ftptls
         self.passive = passive
 
     def unxssPass(self, s):
@@ -1098,7 +1117,7 @@ class FTPPublisher(AbstractPublisher):
         s = s.strip()
         return s
 
-    def openFTPSocket(self, ssl = False):
+    def openFTPSocket(self):
         """
         Opens an FTP socket to the server and changes to the
         root FTP directory. Returns True if all was well or
@@ -1110,12 +1129,13 @@ class FTPPublisher(AbstractPublisher):
         
         try:
             # open it and login
-            if ssl:
+            if self.ftptls:
                 self.socket = ftplib.FTP_TLS(host=self.ftphost, timeout=15)
             else:
                 self.socket = ftplib.FTP(host=self.ftphost, timeout=15)
             self.socket.login(self.ftpuser, self.ftppassword)
-            if ssl: self.socket.prot_p()
+            if self.ftptls: 
+                self.socket.prot_p()
             self.socket.set_pasv(self.passive)
 
             if self.ftproot is not None and self.ftproot != "":

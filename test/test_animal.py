@@ -26,6 +26,12 @@ class TestAnimal(unittest.TestCase):
     def test_get_animal(self):
         assert asm3.animal.get_animal(base.get_dbo(), self.nid) is not None
 
+    def test_get_animal_entries(self):
+        asm3.animal.get_animal_entries(base.get_dbo(), self.nid)
+
+    def test_insert_animal_entry(self):
+        assert 0 != asm3.animal.insert_animal_entry(base.get_dbo(), "system", self.nid)
+
     def test_get_animals_brief(self):
         assert asm3.animal.get_animals_brief([asm3.animal.get_animal(base.get_dbo(), self.nid),])
 

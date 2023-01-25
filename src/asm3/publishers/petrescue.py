@@ -76,10 +76,18 @@ class PetRescuePublisher(AbstractPublisher):
 
         if token == "":
             self.setLastError("No PetRescue auth token has been set.")
+            self.cleanup()
             return
 
         if postcode == "" or contact_email == "":
             self.setLastError("You need to set your organisation postcode and contact email under Settings->Options->Shelter Details->Email")
+            self.cleanup()
+            return
+
+        if not self.isChangedSinceLastPublish():
+            self.logSuccess("No animal/movement changes have been made since last publish")
+            self.setLastError("No animal/movement changes have been made since last publish", log_error = False)
+            self.cleanup()
             return
 
         animals = self.getMatchingAnimals(includeAdditionalFields=True)
@@ -297,8 +305,8 @@ class PetRescuePublisher(AbstractPublisher):
             "intake_origin":            asm3.utils.iif(iscat, origin, ""), # cats only, community_cat | owner_surrender | pound_transfer | shelter_transfer
             "incompatible_with_cats":   an.ISGOODWITHCATS == 1,
             "incompatible_with_dogs":   an.ISGOODWITHDOGS == 1,
-            "incompatible_with_kids_under_5": an.ISGOODWITHCHILDREN == 1,
-            "incompatible_with_kids_6_to_12": an.ISGOODWITHCHILDREN == 1,
+            "incompatible_with_kids_under_5": an.ISGOODWITHCHILDREN == 1 or an.ISGOODWITHCHILDREN >= 5,
+            "incompatible_with_kids_6_to_12": an.ISGOODWITHCHILDREN == 1 or an.ISGOODWITHCHILDREN == 12,
             "needs_constant_care":      needs_constant_care,
             "adoption_process":         "", # 4,000 chars how to adopt
             "contact_details_source":   "self", # self | user | group

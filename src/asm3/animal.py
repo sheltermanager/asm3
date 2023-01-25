@@ -282,6 +282,46 @@ def get_animal_query(dbo):
             "twodaysago":  dbo.sql_date(dbo.today(offset=-2))
         }
 
+def get_animal_entry_query(dbo):
+    return "SELECT ae.*, " \
+        "e.ReasonName AS EntryReasonName, " \
+        "j.JurisdictionName, " \
+        "pl.LocationName AS PickupLocationName, " \
+        "oo.OwnerName AS OriginalOwnerName, " \
+        "oo.OwnerAddress AS OriginalOwnerAddress, " \
+        "oo.OwnerTown AS OriginalOwnerTown, " \
+        "oo.OwnerCounty AS OriginalOwnerCounty, " \
+        "oo.OwnerPostcode AS OriginalOwnerPostcode, " \
+        "oo.EmailAddress AS OriginalOwnerEmail, " \
+        "oo.HomeTelephone AS OriginalOwnerHomePhone, " \
+        "oo.WorkTelephone AS OriginalOwnerWorkPhone, " \
+        "oo.MobileTelephone AS OriginalOwnerMobilePhone, " \
+        "bo.OwnerName AS BroughtInByOwnerName, " \
+        "bo.OwnerAddress AS BroughtInByOwnerAddress, " \
+        "bo.OwnerTown AS BroughtInByOwnerTown, " \
+        "bo.OwnerCounty AS BroughtInByOwnerCounty, " \
+        "bo.OwnerPostcode AS BroughtInByOwnerPostcode, " \
+        "bo.EmailAddress AS BroughtInByOwnerEmail, " \
+        "bo.HomeTelephone AS BroughtInByOwnerHomePhone, " \
+        "bo.WorkTelephone AS BroughtInByOwnerWorkPhone, " \
+        "bo.MobileTelephone AS BroughtInByOwnerMobilePhone, " \
+        "ac.OwnerName AS CoordinatorOwnerName, " \
+        "ac.OwnerAddress AS CoordinatorOwnerAddress, " \
+        "ac.OwnerTown AS CoordinatorOwnerTown, " \
+        "ac.OwnerCounty AS CoordinatorOwnerCounty, " \
+        "ac.OwnerPostcode AS CoordinatorOwnerPostcode, " \
+        "ac.EmailAddress AS CoordinatorOwnerEmail, " \
+        "ac.HomeTelephone AS CoordinatorOwnerHomePhone, " \
+        "ac.WorkTelephone AS CoordinatorOwnerWorkPhone, " \
+        "ac.MobileTelephone AS CoordinatorOwnerMobilePhone " \
+        "FROM animalentry ae " \
+        "LEFT OUTER JOIN entryreason e ON e.ID = ae.EntryReasonID " \
+        "LEFT OUTER JOIN jurisdiction j ON j.ID = ae.JurisdictionID " \
+        "LEFT OUTER JOIN pickuplocation pl ON pl.ID = ae.PickupLocationID " \
+        "LEFT OUTER JOIN owner oo ON oo.ID = ae.OriginalOwnerID " \
+        "LEFT OUTER JOIN owner bo ON bo.ID = ae.BroughtInByOwnerID " \
+        "LEFT OUTER JOIN owner ac ON ac.ID = ae.AdoptionCoordinatorID "
+
 def get_animal_status_query(dbo):
     return "SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName, a.AnimalComments, " \
         "a.DeceasedDate, a.DateOfBirth, a.DiedOffShelter, a.PutToSleep, a.Neutered, a.Identichipped, a.SpeciesID, " \
@@ -1635,6 +1675,82 @@ def get_display_location_noq(dbo, animalid, loc = ""):
         loc = loc[0:loc.find("::")]
     return loc
 
+def get_animal_entries(dbo, animalid):
+    """
+    Returns the list of entry histories for an animal
+    """
+    return dbo.query( get_animal_entry_query(dbo) + " WHERE ae.AnimalID = ?", [animalid] )
+
+def delete_animal_entry(dbo, username, aeid):
+    """ Deletes the animal entry history item aeid """
+    return dbo.delete("animalentry", aeid, username)
+
+def insert_animal_entry(dbo, username, animalid):
+    """
+    Copies the current values from the entry fields in the animal table to the animalentry table.
+    Updates the entry fields to values from the latest returned movement (if available) and generates a new shelter code.
+    The UI should reload after any process that calls this.
+    """
+    a = get_animal(dbo, animalid)
+    rxm = get_returned_exit_movements(dbo, animalid)
+    # The entry date for our new record is going to be first intake or the 2nd most recent return if available
+    entrydate = a.DATEBROUGHTIN
+    if len(rxm) > 1: entrydate = rxm[1].RETURNDATE
+    ae = dbo.insert("animalentry", {
+        "AnimalID":                 animalid,
+        "ShelterCode":              a.SHELTERCODE,
+        "ShortCode":                a.SHORTCODE,
+        "EntryDate":                entrydate,
+        "EntryReasonID":            a.ENTRYREASONID,
+        "AdoptionCoordinatorID":    a.ADOPTIONCOORDINATORID,
+        "BroughtInByOwnerID":       a.BROUGHTINBYOWNERID,
+        "OriginalOwnerID":          a.ORIGINALOWNERID,
+        "AsilomarIntakeCategory":   a.ASILOMARINTAKECATEGORY,
+        "JurisdictionID":           a.JURISDICTIONID,
+        "IsTransfer":               a.ISTRANSFER,
+        "AsilomarIsTransferExternal": a.ASILOMARISTRANSFEREXTERNAL,
+        "HoldUntilDate":            a.HOLDUNTILDATE,
+        "IsPickup":                 a.ISPICKUP,
+        "PickupLocationID":         a.PICKUPLOCATIONID,
+        "PickupAddress":            a.PICKUPADDRESS,
+        "ReasonNO":                 a.REASONNO,
+        "ReasonForEntry":           a.REASONFORENTRY
+    }, username)
+    # Reset the animal entry fields, copying values from the last 
+    # returned exit movement if one is available.
+    entryreasonid = asm3.configuration.default_entry_reason(dbo)
+    broughtinbyownerid = 0
+    originalownerid = 0
+    istransfer = 0
+    ispickup = 0
+    if len(rxm) > 0:
+        entryreasonid = rxm[0].RETURNEDREASONID
+        broughtinbyownerid = rxm[0].RETURNEDBYOWNERID
+        originalownerid = rxm[0].OWNERID
+        istransfer = asm3.utils.iif(rxm[0].MOVEMENTTYPE == 3, 1, 0)
+        ispickup = asm3.utils.iif(rxm[0].MOVEMENTTYPE == 5, 1, 0)
+    # Generate a new code for the animal
+    code, shortcode, unique, year = calc_shelter_code(dbo, a.ANIMALTYPEID, entryreasonid, a.SPECIESID, a.MOSTRECENTENTRYDATE)
+    dbo.update("animal", animalid, {
+        "ShelterCode":          code,
+        "ShortCode":            shortcode,
+        "UniqueCodeID":         unique,
+        "YearCodeID":           year,
+        # NOTE: DateBroughtIn is never touched, 
+        # MostRecentEntryDate is updated by update_animal_status before this code ever runs
+        "EntryReasonID":        entryreasonid,
+        "AdoptionCoordinatorID": 0,
+        "BroughtInByOwnerID":   broughtinbyownerid,
+        "OriginalOwnerID":      originalownerid,
+        "IsTransfer":           istransfer,
+        "HoldUntilDate":        None,
+        "IsPickup":             ispickup,
+        "PickupAddress":        "",
+        "ReasonNO":             "",
+        "ReasonForEntry":       ""
+    }, username)
+    return ae
+
 def get_has_animals(dbo):
     """
     Returns True if there is at least one animal in the database
@@ -1646,6 +1762,28 @@ def get_has_animal_on_shelter(dbo):
     Returns True if there is at least one animal on the shelter
     """
     return dbo.query_int("SELECT COUNT(ID) FROM animal a WHERE a.Archived = 0") > 0
+
+def get_exit_movement_types(dbo):
+    """
+    Returns a string IN clause of the movement types that constitute an exit.
+    Typically all of them but reservations, fostering and retailers.
+    """
+    exit_movements = "1,3,4,5,6,7"
+    if not asm3.configuration.foster_on_shelter(dbo): 
+        exit_movements += ",2"
+    if not asm3.configuration.retailer_on_shelter(dbo):
+        exit_movements += ",8"
+    return exit_movements
+
+def get_returned_exit_movements(dbo, animalid):
+    """
+    Returns a list of returned exit movements for animalid, ordered by movementdate descending
+    """
+    exit_movements = get_exit_movement_types(dbo)
+    return dbo.query("SELECT * FROM adoption WHERE AnimalID=? AND " \
+        f"MovementType IN ({exit_movements}) AND " \
+        "MovementDate Is Not Null AND ReturnDate Is Not Null " \
+        "ORDER BY MovementDate DESC", [animalid])
 
 def get_links_adoptable(dbo, limit=5, locationfilter="", siteid=0, visibleanimalids="", cachetime=120):
     """
@@ -2143,7 +2281,7 @@ def insert_animal_from_form(dbo, post, username):
         if lsite != usite:
             shelterlocation = dbo.query_int("SELECT ID FROM internallocation WHERE SiteID=? ORDER BY ID", [usite])
 
-    # If the option is on, write an intial record for the internal location
+    # If the option is on, write an initial record for the internal location
     if asm3.configuration.location_change_log(dbo):
         newlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [shelterlocation])
         if post["unit"] != "": newlocation += "-" + post["unit"]
@@ -2225,7 +2363,7 @@ def insert_animal_from_form(dbo, post, username):
         "HoldUntilDate":    post.date("holduntil"),
         "IsCourtesy":       0,
         "IsQuarantine":     0,
-        "AdditionalFlags":  "",
+        "AdditionalFlags":  "|",
         "DateBroughtIn":    datebroughtin,
         "AsilomarIntakeCategory": 0,
         "AsilomarIsTransferExternal": 0,
@@ -3188,7 +3326,7 @@ def delete_animal(dbo, username, animalid, ignore_movements=False):
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (animalid, asm3.additional.ANIMAL_IN))
     dbo.execute("DELETE FROM animalcontrolanimal WHERE AnimalID = ?", [animalid])
     dbo.execute("DELETE FROM animalpublished WHERE AnimalID = ?", [animalid])
-    for t in [ "adoption", "animalmedical", "animalmedicaltreatment", "animaltest", "animaltransport", "animalvaccination", "clinicappointment" ]:
+    for t in [ "adoption", "animalentry", "animalmedical", "animalmedicaltreatment", "animaltest", "animaltransport", "animalvaccination", "clinicappointment" ]:
         dbo.delete(t, "AnimalID=%d" % animalid, username)
     dbo.delete("animal", animalid, username)
     # asm3.dbfs.delete_path(dbo, "/animal/%d" % animalid) # Use maint_db_delete_orphaned_media to remove dbfs later if needed
@@ -3267,10 +3405,7 @@ def update_current_owner(dbo, username, animalid):
     """
     Updates the current owner for an animal from the available movements.
     """
-    exit_movements = "1,3,5"
-    # If treat fosters as on shelter is not set, fosters are an exit movement
-    if not asm3.configuration.foster_on_shelter(dbo): 
-        exit_movements = "1,2,3,5" 
+    exit_movements = get_exit_movement_types(dbo)
 
     # The current owner for this animal
     animalownerid = dbo.query_int("SELECT OwnerID FROM animal WHERE ID=?", [animalid])
@@ -4212,7 +4347,10 @@ def update_animal_figures(dbo, month = 0, year = 0):
             d = datetime.datetime(year, month, i)
             dk = "D%d" % i
             onfoster[dk] = get_number_animals_on_foster(dbo, d, speciesid)
-        add_row(2, "SP_ONFOSTER", 0, speciesid, daysinmonth, _("On Foster (in figures)", l), 0, False, onfoster)
+        add_row(2, "SP_ONFOSTER", 0, speciesid, daysinmonth, _("On Foster", l), 0, False, onfoster)
+        # NOTE: On Foster counts are not added to the day counts deliberately.
+        # Start/End of day counts only track on shelter animals.
+        # If fosters were added, then fosters moving in and out of the shelter would be double counted.
         #sheltertotal = add_days((onshelter, onfoster))
         sheltertotal = onshelter
 
@@ -4408,7 +4546,7 @@ def update_animal_figures(dbo, month = 0, year = 0):
             d = datetime.datetime(year, month, i)
             dk = "D%d" % i
             onfoster[dk] = get_number_animals_on_foster(dbo, d, 0, typeid)
-        add_row(2, "AT_ONFOSTER", typeid, 0, daysinmonth, _("On Foster (in figures)", l), 0, False, onfoster)
+        add_row(2, "AT_ONFOSTER", typeid, 0, daysinmonth, _("On Foster", l), 0, False, onfoster)
         #sheltertotal = add_days((onshelter, onfoster))
         sheltertotal = onshelter
 

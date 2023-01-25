@@ -2,7 +2,7 @@ Non-Neutered/Spayed Adopted Animals
 ###
 Movements
 ###
-Any rev02
+Any rev03
 ###
 Adopted animals who have not been neutered/spayed.
 ###
@@ -12,12 +12,12 @@ SELECT a.AnimalName, a.ShelterCode, t.AnimalType, s.Sex, ad.MovementDate,
 o.OwnerName, o.OwnerAddress, O.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
 o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, a.AnimalAge, p.SpeciesName
 FROM animal a
-INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
-INNER JOIN species p ON p.ID = a.SpeciesID
-INNER JOIN internallocation i ON i.ID = a.ShelterLocation
-INNER JOIN lksex s ON s.ID = a.Sex
+LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
+LEFT OUTER JOIN species p ON p.ID = a.SpeciesID
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
+LEFT OUTER JOIN lksex s ON s.ID = a.Sex
 INNER JOIN adoption ad ON a.ActiveMovementID = ad.ID
-INNER JOIN owner o ON o.ID = ad.OwnerID
+LEFT OUTER JOIN owner o ON o.ID = ad.OwnerID
 WHERE a.Neutered = 0 AND DeceasedDate Is Null AND ad.MovementType = 1 
 AND ad.MovementDate >= '$ASK DATE Adopted between$' AND ad.MovementDate <= '$ASK DATE and$'
 AND a.SpeciesID IN (1,2)

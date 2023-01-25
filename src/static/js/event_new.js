@@ -36,7 +36,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="location">' + _("Location") + '</label>',
                 '</td>',
-                '<td><input type="hidden" id="location" class="asm-personchooser" data-type="organization"/>',
+                '<td><input type="hidden" id="location" class="asm-personchooser" data-type="organization" />',
                 '</td>',
                 '</tr>',
                 '<tr>',

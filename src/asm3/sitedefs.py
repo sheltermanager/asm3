@@ -116,6 +116,9 @@ DB_EXEC_LOG = get_string("db_exec_log")
 # Produce an EXPLAIN for each query in the log before running it
 DB_EXPLAIN_QUERIES = get_boolean("db_explain_queries", False)
 
+# How many days to keep the audit trail and deletion log for
+DB_RETAIN_AUDIT_DAYS = get_integer("db_retain_audit_days", 182)
+
 # Record the time taken to run each query
 DB_TIME_QUERIES = get_boolean("db_time_queries", False)
 
@@ -357,21 +360,16 @@ LEAFLET_JS = get_string("leaflet_js", 'static/lib/leaflet/1.3.1/leaflet.js')
 MOMENT_JS = get_string("moment_js", 'static/lib/moment/2.29.1/moment.min.js')
 MOUSETRAP_JS = get_string("mousetrap_js", 'static/lib/mousetrap/1.4.6/mousetrap.min.js')
 PATH_JS = get_string("path_js", 'static/lib/pathjs/0.8.4.smcom/path.min.js')
+PDFJS_VIEWER = get_string("pdfjs_viewer", 'static/lib/pdfjs/3.1.81/web/viewer.html')
 QRCODE_JS = get_string("qrcode_js", 'static/lib/qrcodejs/1.0.0/qrcode.min.js')
-SIGNATURE_JS = get_string("signature_js", 'static/lib/signature/1.2.1/jquery.signature.min.js')
+SIGNATURE_JS = get_string("signature_js", 'static/lib/signature/1.2.1-asm03/jquery.signature.min.js')
 TABLESORTER_CSS = get_string("tablesorter_css", 'static/lib/tablesorter/2.7.12/themes/theme.asm.css')
 TABLESORTER_JS = get_string("tablesorter_js", 'static/lib/tablesorter/2.7.12/jquery.tablesorter.min.js')
 TABLESORTER_WIDGETS_JS = get_string("tablesorter_widgets_js", 'static/lib/tablesorter/2.7.12/jquery.tablesorter.widgets.min.js')
 TIMEPICKER_CSS = get_string("timepicker_css", 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.css')
 TIMEPICKER_JS = get_string("timepicker_js", 'static/lib/timepicker/0.3.3/jquery.ui.timepicker.js')
 TINYMCE_5_JS = get_string("tinymce_4_js", 'static/lib/tinymce/5.5.1/tinymce/js/tinymce/tinymce.min.js')
-TOUCHPUNCH_JS = get_string("touchpunch_js", 'static/lib/touchpunch/0.2.3/jquery.ui.touch-punch.min.js')
 
-# Watermark Settings for adding an animal's name and shelter logo to an image
-WATERMARK_X_OFFSET = get_string("watermark_x_offset", 10)
-WATERMARK_Y_OFFSET = get_string("watermark_y_offset", 10)
-WATERMARK_FONT_FILE = get_string("watermark_font_file", "/usr/share/fonts/truetype/liberation/LiberationSans-BoldItalic.ttf")
-WATERMARK_FONT_SHADOWCOLOR = get_string("watermark_font_shadowcolor", "black")
-WATERMARK_FONT_FILLCOLOR = get_string("watermark_font_fillcolor", "white")
-WATERMARK_FONT_STROKE = get_string("watermark_font_stroke", 3)
-WATERMARK_FONT_OFFSET = get_string("watermark_font_offset", 20)
+# Directory where font files are located for use with image watermarking
+WATERMARK_FONT_BASEDIRECTORY = get_string("watermark_font_basedirectory", "/usr/share/fonts/truetype/")
+

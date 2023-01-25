@@ -20,7 +20,7 @@ class PetcademyPublisher(FTPPublisher):
         publishCriteria.uploadDirectly = True
         FTPPublisher.__init__(self, dbo, publishCriteria,
             PETCADEMY_FTP_HOST, PETCADEMY_FTP_USER, 
-            PETCADEMY_FTP_PASSWORD)
+            PETCADEMY_FTP_PASSWORD, ftptls=True)
         self.initLog("petcademy", "Petcademy Publisher")
 
     def getDate(self, d):
@@ -99,10 +99,17 @@ class PetcademyPublisher(FTPPublisher):
         animals = self.getData(PERIOD)
 
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
+            self.log("No animals found to publish.")
+            self.cleanup()
             return
 
-        if not self.openFTPSocket(ssl=True): 
+        if not self.isChangedSinceLastPublish():
+            self.logSuccess("No animal/movement changes have been made since last publish")
+            self.setLastError("No animal/movement changes have been made since last publish", log_error = False)
+            self.cleanup()
+            return
+
+        if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
             self.cleanup()
             return

@@ -128,7 +128,14 @@ class MaddiesFundPublisher(AbstractPublisher):
         animals = self.getData(PERIOD)
 
         if len(animals) == 0:
-            self.setLastError("No animals found to publish.")
+            self.log("No animals found to publish.")
+            self.cleanup()
+            return
+
+        if not self.isChangedSinceLastPublish():
+            self.logSuccess("No animal/movement changes have been made since last publish")
+            self.setLastError("No animal/movement changes have been made since last publish", log_error = False)
+            self.cleanup()
             return
 
         # Get an authentication token

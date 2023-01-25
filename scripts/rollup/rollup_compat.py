@@ -22,7 +22,6 @@ exclude = [ "animal_view_adoptable.js", "document_edit.js",
 exclude += [ "rollup.js", "rollup_compat.js" ]
 
 # Output extra polyfills first
-os.system("cat node_modules/regenerator-runtime/runtime.js | scripts/jsmin/jsmin > node_modules/regenerator-runtime/runtime.min.js")
 readfile_print("node_modules/regenerator-runtime/runtime.min.js")
 readfile_print("node_modules/promise-polyfill/dist/polyfill.min.js")
 

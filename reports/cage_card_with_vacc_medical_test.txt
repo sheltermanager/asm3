@@ -2,7 +2,7 @@ Cage Card with Vaccination, Medical and Test History
 ###
 Inventories
 ###
-33503/Any omitcriteria omitheaderfooter rev02
+34302/Any omitcriteria omitheaderfooter rev03
 ###
 An animal cage card with image, vaccination, medical and test history.
 ###
@@ -33,7 +33,7 @@ CASE WHEN animal.flvresult = 1 then (SELECT Name FROM lksposneg WHERE ID = anima
 entryreason.reasonname,
 (SELECT Name FROM lksynun WHERE ID = animal.IsGoodWithDogs) AS WithDogs,
 (SELECT Name FROM lksynun WHERE ID = animal.IsGoodWithCats) AS WithCats,
-(SELECT Name FROM lksynun WHERE ID = animal.IsGoodWithChildren) AS WithChildren,
+(SELECT Name FROM lksynunk WHERE ID = animal.IsGoodWithChildren) AS WithChildren,
 (SELECT Name FROM lksynun WHERE ID = animal.IsHouseTrained) AS HouseTrained,
 (SELECT Sex FROM lksex WHERE ID = animal.sex) AS TheSex,
 (SELECT Name FROM lksyesno WHERE ID = animal.neutered) AS altered,

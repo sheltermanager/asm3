@@ -9,10 +9,11 @@
  * a data-filter attribute to only search certain types of person
  * records.
  *     
- *     filter: One of all, vet, retailer, staff, fosterer, volunteer, shelter, 
- *             aco, homechecked, homechecker, member, donor
- *     mode:   One of full or brief (full shows the address and other info, 
- *             brief just shows the name)
+ *     data-filter: all | vet | retailer | staff | fosterer | volunteer | shelter | 
+ *                  aco | homechecked | homechecker | member | donor
+ *     data-type:   all | individual | organization
+ *     data-mode:   full | brief (full shows the address and other info, 
+ *                  brief just shows the name)
  *
  * <input id="person" data-mode="full" data-filter="vet" class="asm-personchooser" data="boundfield" type="hidden" value="initialid" />
  *
@@ -48,7 +49,7 @@ $.widget("asm.personchooser", {
     },
 
     _create: function() {
-        var self = this;
+        let self = this;
 
         if (this.element.attr("data-filter")) { 
             this.set_filter(this.element.attr("data-filter"));
@@ -60,10 +61,9 @@ $.widget("asm.personchooser", {
 
         if(this.element.attr("data-type")){
             this.set_type(this.element.attr("data-type"));
-//            this.options.type = this.element.attr("data-type");
         }
 
-        var h = [
+        let h = [
             '<div class="personchooser">',
             '<input class="personchooser-banned" type="hidden" value="" />',
             '<input class="personchooser-postcode" type="hidden" value = "" />',
@@ -211,11 +211,11 @@ $.widget("asm.personchooser", {
             '</div>'
         ].join("\n");
         
-        var node = $(h);
+        let node = $(h);
         this.options.node = node;
-        var dialog = node.find(".personchooser-find");
-        var dialogadd = node.find(".personchooser-add");
-        var dialogsimilar = node.find(".personchooser-similar");
+        let dialog = node.find(".personchooser-find");
+        let dialogadd = node.find(".personchooser-add");
+        let dialogsimilar = node.find(".personchooser-similar");
         
         this.options.dialog = dialog;
         this.options.dialogadd = dialogadd;
@@ -250,7 +250,7 @@ $.widget("asm.personchooser", {
         }
         
         // Create the find dialog
-        var pcbuttons = {};
+        let pcbuttons = {};
         pcbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
         dialog.dialog({
             autoOpen: false,
@@ -268,7 +268,7 @@ $.widget("asm.personchooser", {
         dialog.find("img").hide();
         
         // Create the add dialog
-        var check_org = function() {
+        let check_org = function() {
             // If it's an organisation, only show the org fields,
             // otherwise show individual
             if (dialogadd.find("[data='ownertype']").val() == 2) {
@@ -284,10 +284,10 @@ $.widget("asm.personchooser", {
         if(this.element.attr("data-type") == "organization")
             dialogadd.find("[data='ownertype']").val(2);
         dialogadd.find("[data='ownertype']").change(check_org);
-        var pcaddbuttons = {};
+        let pcaddbuttons = {};
         
         pcaddbuttons[_("Create this person")] = function() {
-            var valid = true, dialogadd = self.options.dialogadd;
+            let valid = true, dialogadd = self.options.dialogadd;
             // Validate fields that can't be blank
             dialogadd.find("label").removeClass(validate.ERROR_LABEL_CLASS);
             dialogadd.find("input[data='surname']").each(function() {
@@ -385,8 +385,8 @@ $.widget("asm.personchooser", {
             data: { mode: "lookup" },
             dataType: "text",
             success: function(data, textStatus, jqXHR) {
-                var h = "";
-                var d = jQuery.parseJSON(data);
+                let h = "";
+                let d = jQuery.parseJSON(data);
                 self.options.additionalfields = d.additional;
                 self.options.towns = d.towns;
                 self.options.counties = d.counties;
@@ -468,19 +468,19 @@ $.widget("asm.personchooser", {
         if (!personid || personid == "0" || personid == "") { return; }
         this.clear();
         this.element.val(personid);
-        var self = this, node = this.options.node, display = this.options.display, dialog = this.options.dialog;
-        var formdata = "mode=id&id=" + personid;
+        let self = this, node = this.options.node, display = this.options.display, dialog = this.options.dialog;
+        let formdata = "mode=id&id=" + personid;
         $.ajax({
             type: "POST",
             url:  "person_embed",
             data: formdata,
             dataType: "text",
             success: function(data, textStatus, jqXHR) {
-                var h = "";
-                var people = jQuery.parseJSON(data);
-                var rec = people[0];
+                let h = "";
+                let people = jQuery.parseJSON(data);
+                let rec = people[0];
                 self.element.val(rec.ID);
-                var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + 
+                let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + 
                     rec.OWNERNAME + " - " + rec.OWNERCODE + "</a></span>";
                 if (self.options.mode == "full") {
                     disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + 
@@ -508,22 +508,22 @@ $.widget("asm.personchooser", {
      * in the find dialog
      */
     find: function() {
-        var self = this, dialog = this.options.dialog, node = this.options.node, 
+        let self = this, 
+            dialog = this.options.dialog, 
+            node = this.options.node, 
             display = this.options.display;
         dialog.find("img").show();
         dialog.find("button").button("disable");
-        var q = encodeURIComponent(dialog.find("input").val());
-        var filter = this.options.filter;
-        var type = this.options.type
-        var formdata = "mode=find&filter=" + filter + "&q=" + q + "&type=" + type;
+        let q = encodeURIComponent(dialog.find("input").val());
+        let formdata = "mode=find&filter=" + this.options.filter + "&type=" + this.options.type + "&q=" + q;
         $.ajax({
             type: "POST",
             url:  "person_embed",
             data: formdata,
             dataType: "text",
             success: function(data, textStatus, jqXHR) {
-                var h = "";
-                var people = jQuery.parseJSON(data);
+                let h = "";
+                let people = jQuery.parseJSON(data);
                 $.each(people, function(i, p) {
                     h += "<tr>";
                     h += "<td><a href=\"#\" data=\"" + i + "\">" + p.OWNERNAME + "</a></td>";
@@ -541,10 +541,10 @@ $.widget("asm.personchooser", {
                 // Use delegation to bind click events for 
                 // the person once clicked. Triggers the change callback
                 dialog.on("click", "a", function(e) {
-                    var rec = people[$(this).attr("data")];
+                    let rec = people[$(this).attr("data")];
                     self.element.val(rec.ID);
                     self.options.rec = rec;
-                    var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + 
+                    let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + 
                         "\">" + rec.OWNERNAME + " - " + rec.OWNERCODE + "</a></span>";
                     if (self.options.mode == "full") {
                         disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + 
@@ -581,20 +581,20 @@ $.widget("asm.personchooser", {
      * Posts the add dialog to the backend to create the owner
      */
     add_person: function() {
-        var self = this, dialogadd = this.options.dialogadd, dialogsimilar = this.options.dialogsimilar,
+        let self = this, dialogadd = this.options.dialogadd, dialogsimilar = this.options.dialogsimilar,
             display = this.options.display, node = this.options.node;
-        var formdata = "mode=add&" + dialogadd.find("input, textarea, select").toPOST();
+        let formdata = "mode=add&" + dialogadd.find("input, textarea, select").toPOST();
         $.ajax({
             type: "POST",
             url:  "person_embed",
             data: formdata,
             dataType: "text",
             success: function(result) {
-                var people = jQuery.parseJSON(result);
-                var rec = people[0];
+                let people = jQuery.parseJSON(result);
+                let rec = people[0];
                 self.element.val(rec.ID);
                 self.selected = rec;
-                var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
+                let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
                 if (self.options.mode == "full") {
                     disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + 
                         (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") + 
@@ -629,7 +629,7 @@ $.widget("asm.personchooser", {
      * calls add_person to do the adding.
      */
     show_similar: function() {
-        var b = {}, self = this, dialogsimilar = this.options.dialogsimilar, dialogadd = this.options.dialogadd;
+        let b = {}, self = this, dialogsimilar = this.options.dialogsimilar, dialogadd = this.options.dialogadd;
         b[_("Create")] = function() {
             dialogsimilar.disable_dialog_buttons();
             self.add_person();
@@ -660,21 +660,21 @@ $.widget("asm.personchooser", {
      * confirmation dialog
      */
     check_similar: function() {
-        var self = this, dialogadd = this.options.dialogadd, dialogsimilar = this.options.dialogsimilar;
-        var formdata = "mode=similar&" + dialogadd.find("input[data='emailaddress'], input[data='mobiletelephone'], input[data='surname'], input[data='forenames'], textarea[data='address']").toPOST();
+        let self = this, dialogadd = this.options.dialogadd, dialogsimilar = this.options.dialogsimilar;
+        let formdata = "mode=similar&" + dialogadd.find("input[data='emailaddress'], input[data='mobiletelephone'], input[data='surname'], input[data='forenames'], textarea[data='address']").toPOST();
         $.ajax({
             type: "POST",
             url:  "person_embed",
             data: formdata,
             dataType: "text",
             success: function(result) {
-                var people = jQuery.parseJSON(result);
-                var rec = people[0];
+                let people = jQuery.parseJSON(result);
+                let rec = people[0];
                 if (rec === undefined) {
                     self.add_person();
                 }
                 else {
-                    var disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"#\">" + rec.OWNERNAME + "</a></span>";
+                    let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"#\">" + rec.OWNERNAME + "</a></span>";
                     if (self.options.mode == "full") {
                         disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + 
                             (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") + 
@@ -723,7 +723,7 @@ $.widget("asm.personchooser", {
      */
     set_filter: function(f) {
 
-        var title = "";
+        let title = "";
 
         this.options.filter = f;
 
@@ -752,21 +752,18 @@ $.widget("asm.personchooser", {
 
     },
 
+    /**
+     * Sets the owner type to t for find operations and updates the title
+     */
     set_type: function(t){
-        var title = "";
-        var addtitle = "";
-
-        if(t == "organization"){
-            title = _("Find organization");
-            addtitle = _("Add organization");
-        }
-        else{
-            title = _("Find person");
-            addtitle = _("Add person");
-        }
-
         this.options.type = t;
-        this.options.title = title;
-        this.options.addtitle = addtitle;
+        if (t == "organization") {
+            this.options.title = _("Find organization");
+            this.options.addtitle = _("Add organization");
+        }
+        else {
+            this.options.title = _("Find person");
+            this.options.addtitle = _("Add person");
+        }
     }
 });

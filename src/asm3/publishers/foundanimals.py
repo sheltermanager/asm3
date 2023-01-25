@@ -20,7 +20,7 @@ class FoundAnimalsPublisher(FTPPublisher):
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         FTPPublisher.__init__(self, dbo, publishCriteria, 
-            FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANIMALS_FTP_PASSWORD)
+            FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANIMALS_FTP_PASSWORD, ftptls=True)
         self.initLog("foundanimals", "FoundAnimals/24Pet Publisher")
 
     def run(self):

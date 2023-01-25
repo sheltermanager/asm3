@@ -262,6 +262,79 @@ edit_header = {
         ];
     },
 
+    /**
+     * Renders the header for any of the event edit pages, with thumbnail image,
+     * info and tabs. The caller will need to add a div to close out this header.
+     * e: The event row from the json
+     * selected: The name of the selected tab (Details)
+     * counts:   A count of the number of records for each tab (in uppercase). If it's
+     *           non-zero, an icon is shown on some tabs.
+     */
+    event_edit_header: function(e, selected, counts){
+        var check_display_icon = function(key, iconname) {
+            if (key == "event") { return html.icon("blank"); }
+            if (counts[key.toUpperCase()] > 0) {
+                return html.icon(iconname);
+            }
+            return html.icon("blank");
+        };
+        var eventName = "";
+        if (e.EVENTNAME) {eventName = e.EVENTNAME;}
+        else {eventName = "Unnamed event";}
+        var location = [e.EVENTTOWN, e.EVENTCOUNTY, e.EVENTPOSTCODE, e.EVENTCOUNTRY].filter(Boolean).join(", ");
+        var h = [
+            '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
+            '<input type="hidden" id="eventid" value="' + e.ID + '" />',
+            '<div class="asm-grid">',
+            '<div class="asm-grid-col-3">',
+            '<h2>' + html.icon("calendar", _("Event")) + eventName + '</h2>',
+            '</div>',
+            '<div class="asm-grid-col-3">',
+            '<table>',
+            '<td></td>',
+            '<td><b>',
+            format.date(e.STARTDATETIME) + "-" + format.date(e.ENDDATETIME),
+            '</b></td></tr>',
+            '<tr>',
+            '<td></td>',
+            '<td><b>',
+            e.EVENTADDRESS,
+            '</b></td></tr>',
+            '<tr>',
+            '<td>' + _("Address") + ": " + '</td>',
+            '<td><b>',
+            location,
+            '</b></td></tr>',
+            '<td>' + _("Adoptions") + ": " + '</td>',
+            '<td><b>',
+            e.ADOPTIONS,
+            '</b></td></tr>',
+            '</table>',
+            '</div>',
+            '<div class="asm-grid-col-3">',
+            _("Added by {0} on {1}").replace("{0}", "<b>" + e.CREATEDBY + "</b>").replace("{1}", "<b>" + format.date(e.CREATEDDATE) + "</b>") + ' <br/>',
+            _("Last changed by {0} on {1}").replace("{0}", "<b>" + e.LASTCHANGEDBY + "</b>").replace("{1}", "<b>" + format.date(e.LASTCHANGEDDATE) + "</b>"),
+            '</div>',
+            '</div></div>',
+            '<div class="asm-tabbar">',
+            '<ul class="asm-tablist">'
+        ];
+        var tabs = [[ "event", "event", _("Event"), "", "ve" ]];
+        $.each(tabs, function(it, vt) {
+            var key = vt[0], url = vt[1], display = vt[2], iconname = vt[3], perms = vt[4];
+            if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
+            if (key == selected) {
+                h.push("<li class=\"ui-tabs-selected ui-state-active\"><a href=\"#\">" + display + " " + check_display_icon(key, iconname) + "</a></li>");
+            }
+            else {
+                h.push("<li><a href=\"" + url + "?id=" + e.ID + "\">" + display + " " + check_display_icon(key, iconname) + "</a></li>");
+            }
+        });
+        h.push('</ul>');
+        h.push('<div id="asm-content">');
+        return h.join("\n");
+    },
+
     /** 
      * Returns the header for the incident pages, with the banner info and
      * tabs.
@@ -288,7 +361,7 @@ edit_header = {
             '<input type="hidden" id="incidentid" value="' + a.ACID + '" />',
             '<div class="asm-grid">',
             '<div class="asm-grid-col-3">',
-            '<h2>' + html.icon("call", _("Incident")) + a.INCIDENTNAME + 
+            '<h2>' + html.icon("call", _("Incident")) + a.INCIDENTNAME +
                 (a.OWNERNAME1 ? ' - ' + a.OWNERNAME1 : "") + 
                 (a.OWNERNAME2 ? ', ' + a.OWNERNAME2 : "") + 
                 (a.OWNERNAME3 ? ', ' + a.OWNERNAME3 : "") + 

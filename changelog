@@ -1,6 +1,48 @@
 46
 ================
 
+23/01/23 Add animal events slider (Saggi Neuemann) #1221
+23/01/23 FTP TLS support for found/24pet 
+23/01/23 Event configuration options (Roman+Saggi) #1220
+23/01/23 Event page (Roman+Saggi) #1217
+23/01/23 Default payment types to accounts link broken in new databases #1219
+22/01/23 Remove flag change message when first saving animal with no flags
+20/01/23 entry/intake history UI (defaults to off) #25
+19/01/23 Backend implementation/unit tests for entry history #25
+17/01/23 Custom SMTP overrides should only ever use the configured From address
+17/01/23 Fix bug with European locales generating monthly figures report
+17/01/23 Event find screens (Saggi Neuemann) #1216
+17/01/23 Add age group filter to animal chooser (Saggi Neuemann) #1215
+16/01/23 publishers only need to strip personal data from OWNERNAME
+12/01/23 Savourlife: Set under/over 5 based on good with children
+09/01/23 Show homechecker info on reservation book (Mike Forrest) #1212
+09/01/23 Allow access to watermark settings from config (Mike Forrest) #1213
+06/01/23 Make diary notes a default of 1 hour long
+06/01/23 Never use SQL LIKE comparisons for usernames when resolving users
+06/01/23 Use user IDs for resolving security maps (quicker/more secure)
+06/01/23 PetRescue: set incompatible <5 and <12 based on good with children field
+04/01/23 Stop pointer events trying to scroll the screen #1188
+04/01/23 Shelter view mode to show fosters separate from sites #1141
+04/01/23 Stock usage dropdown, make location suffix so typing searches names #1208
+03/01/23 Link adoption to event (Roman+Saggi) #1207
+02/01/23 Add Latvian locale
+29/12/22 Audit retention can be controlled via sitedef/config db_retain_audit_days
+28/12/22 Changing configuration counts as a change for publishing purposes
+27/12/22 additional* online fields for lost/found animals, incidents and waiting list
+26/12/22 Changes to media count as a change for publishing purposes
+26/12/22 Show a message on screen when publishing and there are no changes
+22/12/22 No animals to publish should not qualify as an alert
+21/12/22 Do not run adoptable publishers if there have been no changes
+19/12/22 Show a warning that the app is going to be retired
+19/12/22 Upgrade pdf.js to latest version (attempt to fix iOS app bug)
+13/12/22 Rewrite signature.js to use pointer/touch events without touchpunch #1188
+13/12/22 Option to have treatments for a regimen created up-front #37 #570
+10/12/22 Analyse UA and form fields for bot junk in online forms
+07/12/22 Log when a spambot is blocked 
+07/12/22 Correct where a previous Swedish translator used "cat" instead of "animal"
+06/12/22 Add DaysOnShelter wordkey
+05/12/22 Shelter view: location and species (no virtual) mode #1200
+05/12/22 Update Hebrew translation (Saggi Neuemann) #1204
 02/12/22 Improve form spambot protection
 02/12/22 Merged event_new (Roman Safovich) #1186
 27/11/22 Cardcom invoicing for non-cc payments (Saggi Neuemann)

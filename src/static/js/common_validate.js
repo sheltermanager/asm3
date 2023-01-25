@@ -237,8 +237,8 @@ const validate = {
     dirty: function(isdirty) { 
         if (isdirty) { 
             this.unsaved = true; 
-            $("#button-save").button("enable"); 
-        } 
+            $("#button-save").button("enable");
+        }
         else { 
             this.unsaved = false; 
             $("#button-save").button("disable");

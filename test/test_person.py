@@ -75,10 +75,10 @@ class TestPerson(unittest.TestCase):
         asm3.person.get_investigation(base.get_dbo(), self.nid)
 
     def test_get_person_find_simple(self):
-        assert len(asm3.person.get_person_find_simple(base.get_dbo(), "", "test")) > 0
+        assert len(asm3.person.get_person_find_simple(base.get_dbo(), "")) > 0
 
     def test_get_person_find_advanced(self):
-        assert len(asm3.person.get_person_find_advanced(base.get_dbo(), {}, "test")) >  0
+        assert len(asm3.person.get_person_find_advanced(base.get_dbo(), {})) >  0
 
     def test_get_rota(self):
         asm3.person.get_rota(base.get_dbo(), base.today(), base.today())
@@ -134,12 +134,6 @@ class TestPerson(unittest.TestCase):
     def test_embellish_adoption_warnings(self):
         assert asm3.person.embellish_adoption_warnings(base.get_dbo(), asm3.person.get_person_embedded(base.get_dbo(), self.nid)) is not None
  
-    def test_get_person_find_simple(self):
-        assert len(asm3.person.get_person_find_simple(base.get_dbo(), "Test", "user")) > 0
-
-    def test_get_person_find_advanced(self):
-        assert len(asm3.person.get_person_find_advanced(base.get_dbo(), { "name": "Test" }, "user")) > 0
-
     def test_investigation_crud(self):
         data = {
             "personid": str(self.nid),

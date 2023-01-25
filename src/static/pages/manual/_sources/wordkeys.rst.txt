@@ -427,6 +427,8 @@ MostRecentEntryCategory
 TimeOnShelter
     A readable string showing the time the animal has spent on the shelter
     (from the last time it entered), eg: 4 weeks. 
+DaysOnShelter
+    The number of days the animal has spent on the shelter
 NoTimesReturned
     The number of times the animal has been returned to the shelter 
 AdoptionStatus

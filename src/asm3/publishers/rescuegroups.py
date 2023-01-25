@@ -24,7 +24,7 @@ class RescueGroupsPublisher(FTPPublisher):
         publishCriteria.scaleImages = 1
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             RESCUEGROUPS_FTP_HOST, asm3.configuration.rescuegroups_user(dbo), 
-            asm3.configuration.rescuegroups_password(dbo), 21, "", False)
+            asm3.configuration.rescuegroups_password(dbo), passive=False)
         self.initLog("rescuegroups", "RescueGroups Publisher")
 
     def rgYesNo(self, condition):
@@ -61,6 +61,12 @@ class RescueGroupsPublisher(FTPPublisher):
             self.setLastError("Not all breeds have been mapped.")
             self.cleanup()
             return
+        if not self.isChangedSinceLastPublish():
+            self.logSuccess("No animal/movement changes have been made since last publish")
+            self.setLastError("No animal/movement changes have been made since last publish", log_error = False)
+            self.cleanup()
+            return
+
         shelterid = asm3.configuration.rescuegroups_user(self.dbo)
         if shelterid == "":
             self.setLastError("No RescueGroups.org shelter id has been set.")
@@ -72,7 +78,7 @@ class RescueGroupsPublisher(FTPPublisher):
         # has no animals to send.
         animals = self.getMatchingAnimals()
         if len(animals) == 0:
-            self.logError("No animals found to publish, sending empty file.")
+            self.log("No animals found to publish, sending empty file.")
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")

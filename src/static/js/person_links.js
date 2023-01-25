@@ -26,6 +26,7 @@ $(function() {
                 "BI": [ _("Brought In By"), "animal?id=" ],
                 "RO": [ _("Returned By"), "animal?id=" ],
                 "AO": [ _("Adoption Coordinator"), "animal?id=" ],
+                "AEH": [ _("Animal Entry History"), "animal?id=" ],
                 "OV": [ _("Owner Vet"), "animal?id=" ],
                 "CV": [ _("Current Vet"), "animal?id=" ],
                 "AV": [ _("Altering Vet"), "animal?id=" ],

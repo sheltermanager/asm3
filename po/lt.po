@@ -1,7 +1,4 @@
-# ASM Translation Strings
-# Copyright (C) 2013 Robin Rawson-Tetley
-# This file is distributed under the same license as the ASM3 package.
-# Robin Rawson-Tetley <robin@rawsontetley.org>, 2013.
+
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -17,8 +14,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
 "%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 2.2.1\n"
-"X-Launchpad-Export-Date: 2015-03-02 05:17+0000\n"
-"X-POOTLE-MTIME: 1445022524.000000\n"
+
 
 #: options.js
 msgid " days."

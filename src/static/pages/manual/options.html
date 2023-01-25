@@ -1,71 +1,33 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Options &mdash; ASM 46u documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Appendix: Frequently Asked Questions" href="faq.html" />
     <link rel="prev" title="Configuration" href="configuration.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html" class="icon icon-home"> ASM
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 46u
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -73,18 +35,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="foreword.html">Foreword</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
@@ -146,6 +97,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#reports">Reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#shelter-view">Shelter View</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#waiting-list">Waiting List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#watermark">Watermark</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Appendix: Frequently Asked Questions</a></li>
@@ -157,71 +109,30 @@
 <li class="toctree-l1"><a class="reference internal" href="wordkeys.html">Appendix: Wordkeys</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">ASM</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>Options</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/options.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <div class="section" id="options">
 <h1>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h1>
 <p>The main <span class="menuselection">Settings ‣ Options</span> page allows configuring of the
@@ -783,6 +694,14 @@ included.</p>
 <li><p>Include off-shelter animals in medical calendar and books: If ticked, animals
 with outstanding medical/vacc/tests that have left the shelter will be shown
 in medical books and the medical calendar.</p></li>
+<li><p>Pre-create all treatments when creating fixed-length medical regimens:
+Enabling this option will have creation of a new medical regimen create all
+of its treatments up-front. If the new regimen has a “Completed” status, all
+the treatments will be marked as given. This can be useful when entering
+historic records.  The default behaviour without this option is to create
+treatments incrementally as each previous treatment is given. This is done to
+prevent staff accidentally overdosing animals or having to “catch up” when a
+treatment is missed.</p></li>
 <li><p>Reload the medical book/tab automatically after adding new medical items: If
 selected, reloads the screen automatically after adding a new medical
 regimen. If this option is not enabled, a placeholder row will be shown for
@@ -1099,54 +1018,52 @@ separate rankings for species on the waiting list. This makes sense if your
 shelter takes dogs and cats for example and whether you can take a cat is
 independent of how many dogs are on the shelter.</p>
 </div>
+<div class="section" id="watermark">
+<h2>Watermark<a class="headerlink" href="#watermark" title="Permalink to this headline">¶</a></h2>
+<p>Watermarking is a feature available under the media tab of animal records. It
+allows you to embed a logo and the animal’s name within a photo.</p>
+<p>By default, the watermark image is added to the bottom right corner of the
+photo and the name in the bottom left.</p>
+<p>Note that the original image will be changed, so you will need to upload the
+same image twice if you want to retain a copy without the watermark.</p>
+<p>The options on this tab allow you to control the placement of the watermark
+image and animal name, along with the colours used for the text of the name.</p>
+<p>For this feature to be available, you need to upload your watermark image,
+named “watermark.png” to <span class="menuselection">Settings ‣ Reports ‣ Extra Images</span>
+- note that the image must be a PNG file, so that an alpha channel for
+transparency can be included.</p>
+</div>
 </div>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="faq.html" class="btn btn-neutral float-right" title="Appendix: Frequently Asked Questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="configuration.html" class="btn btn-neutral float-left" title="Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="faq.html" class="btn btn-neutral float-right" title="Appendix: Frequently Asked Questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2022, Sheltermanager, Ltd.
-
-    </p>
+    <p>&#169; Copyright 2022, Sheltermanager, Ltd.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

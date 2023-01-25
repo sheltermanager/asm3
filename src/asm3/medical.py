@@ -129,7 +129,7 @@ def get_medicalcombined_query(dbo):
         "" \
         "UNION SELECT " \
         "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
+        "a.DateOfBirth, a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
@@ -152,7 +152,7 @@ def get_medicalcombined_query(dbo):
         "" \
         "UNION SELECT " \
         "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
-        "a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
+        "a.DateOfBirth, a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.ShelterLocationUnit, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName, " \
@@ -906,6 +906,7 @@ def insert_treatments(dbo, username, amid, requireddate, isstart = True):
     with the required date given. isstart says that the date passed
     is the real start date, so don't look at the timing rule to 
     calculate the next date.
+    Returns the requireddate of the treatment(s) we just created.
     """
     am = dbo.first_row(dbo.query("SELECT * FROM animalmedical WHERE ID = ?", [amid]))
     nofreq = am.TIMINGRULENOFREQUENCIES
@@ -937,6 +938,7 @@ def insert_treatments(dbo, username, amid, requireddate, isstart = True):
 
     # Update the number of treatments given and remaining
     calculate_given_remaining(dbo, amid)
+    return requireddate
 
 def insert_regimen_from_form(dbo, username, post):
     """
@@ -988,7 +990,21 @@ def insert_regimen_from_form(dbo, username, post):
         "Comments":                 post["comments"]
     }, username)
 
-    update_medical_treatments(dbo, username, nregid)
+    # If the option to pre-create all fixed-length treatments up-front is on, do that
+    if asm3.configuration.medical_precreate_treatments(dbo) and treatmentrule == FIXED_LENGTH:
+        if timingrule == ONEOFF:
+            insert_treatments(dbo, username, nregid, post.date("startdate"), isstart = True)
+        else:
+            created = 1
+            reqdate = post.date("startdate")
+            insert_treatments(dbo, username, nregid, reqdate, isstart = True)
+            while created < totalnumberoftreatments:
+                reqdate = insert_treatments(dbo, username, nregid, reqdate, isstart = False)
+                created += 1
+    else:
+        # We aren't pre-creating, or we have an unspecified length regimen,
+        # just create the first treatment(s).
+        update_medical_treatments(dbo, username, nregid)
 
     # If the user chose a completed status, mark the regimen completed
     # and mark any treatments we created as given on the start date

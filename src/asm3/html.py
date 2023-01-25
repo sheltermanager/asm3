@@ -12,7 +12,7 @@ import asm3.utils
 from asm3.i18n import BUILD, _, translate, format_currency, get_locales, now, python2unix, real_locale
 from asm3.sitedefs import QR_IMG_SRC
 from asm3.sitedefs import BASE_URL, LOCALE, ROLLUP_JS, SERVICE_URL
-from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_GRID_CSS, BOOTSTRAP_ICONS_CSS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, HTMLFTP_PUBLISHER_ENABLED, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, QRCODE_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_5_JS, TOUCHPUNCH_JS
+from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_GRID_CSS, BOOTSTRAP_ICONS_CSS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, HTMLFTP_PUBLISHER_ENABLED, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, QRCODE_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_5_JS
 
 import os
 
@@ -174,7 +174,6 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 script_tag("static/lib/modernizr/modernizr.min.js") + 
                 script_tag(JQUERY_JS) +
                 script_tag(JQUERY_UI_JS) +
-                script_tag(TOUCHPUNCH_JS) +
                 script_tag(MOMENT_JS) + 
                 script_tag(MOUSETRAP_JS) + 
                 script_tag(ASMSELECT_JS) + 
@@ -219,6 +218,9 @@ def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, visualaid
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="shortcut icon" href="static/images/logo/icon-16.png">
+        <link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32">
+        <link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48">
+        <link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128">
         %(jquery)s
         %(css)s
         <script type="text/javascript">
@@ -257,6 +259,9 @@ def tinymce_print_header(title):
         <title>%(title)s</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="shortcut icon" href="static/images/logo/icon-16.png" />
+        <link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32">
+        <link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48">
+        <link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128">
         %(css)s
         </head>
         <body>
@@ -311,6 +316,9 @@ def js_page(include, title = "", controller = [], execline = ""):
         %s
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="shortcut icon" href="static/images/logo/icon-16.png">
+        <link rel="icon" href="static/images/logo/icon-32.png" sizes="32x32">
+        <link rel="icon" href="static/images/logo/icon-48.png" sizes="48x48">
+        <link rel="icon" href="static/images/logo/icon-128.png" sizes="128x128">
         </head>
         <body>
         <noscript>Sorry. ASM will not work without Javascript.</noscript>
@@ -336,7 +344,6 @@ def mobile_page(l, title, scripts = [], controller = {}, execline = ""):
         script_tag(BOOTSTRAP_JS),
         script_tag(MOMENT_JS),
         script_tag(MOUSETRAP_JS),
-        script_tag(TOUCHPUNCH_JS),
         script_tag(SIGNATURE_JS),
         css_tag(BOOTSTRAP_CSS),
         css_tag(BOOTSTRAP_ICONS_CSS),
@@ -799,6 +806,31 @@ def json_personfindcolumns(dbo):
         cols.append((f["FIELDNAME"], f["FIELDLABEL"]))
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, asm3.configuration.person_search_columns(dbo))
+    return cols
+
+def json_eventfindcolumns(dbo):
+    l = dbo.locale
+    cols = [ 
+        ( "CreatedBy", _("Created By", l) ),
+        ( "CreatedDate", _("Created Date", l) ),
+        ( "LastChangedBy", _("Last Changed By", l) ),
+        ( "LastChangedDate", _("Last Change Date", l) ),
+
+        ( "EventName", _("Event Name", l) ),
+        ( "StartDateTime", _("Start Date", l) ),
+        ( "EndDateTime", _("End Date", l) ),
+        ( "EventOwnerName", _("Location", l) ),
+        ( "EventAddress", _("Address", l) ),
+        ( "EventTown", _("City", l) ),
+        ( "EventCounty", _("State", l) ),
+        ( "EventPostcode", _("Zipcode", l) ),
+        ( "EventCountry", _("Country", l) ),
+        ]
+    fd = asm3.additional.get_field_definitions(dbo, "event")
+    for f in fd:
+        cols.append((f["FIELDNAME"], f["FIELDLABEL"]))
+    cols = findcolumns_sort(cols)
+    findcolumns_selectedtofront(cols, asm3.configuration.event_search_columns(dbo))
     return cols
     
 def json_incidentfindcolumns(dbo):

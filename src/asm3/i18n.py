@@ -7,8 +7,8 @@ import time
 from asm3.locales import *
 
 
-VERSION = "46u [Sat 21 Jan 2023 16:02:11 IST]"
-BUILD = "01211602"
+VERSION = "46u [Tue 24 Jan 19:10:32 GMT 2023]"
+BUILD = "01241910"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -78,7 +78,7 @@ locale_maps = {
     "en_BH":    ( "English", "Bahrain", MDY, "BD", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "", "" ),
     "en_BQ":    ( "English", "Bonaire", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_CA":    ( "English", "Canada", MDY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_US ),
-    "en_CH":    ( "English", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "en_CH":    ( "English", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", "'", DST_UK ),
     "en_CN":    ( "English", "China", HYMD, YEN, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_CR":    ( "English", "Costa Rica", DMY, "&#8353;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_CY":    ( "English", "Cyprus", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
@@ -93,6 +93,7 @@ locale_maps = {
     "en_IL":    ( "English", "Israel", DMY, "&#x20aa;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
     "en_JP":    ( "English", "Japan", YMD, "&yen;", PLURAL_ENGLISH, CURRENCY_SUFFIX, 0, ".", ",", "" ),
     "en_KE":    ( "English", "Kenya", DMY, "Ksh", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
+    "en_LV":    ( "English", "Latvia", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "en_LB":    ( "English", "Lebanon", MDY, "L&pound;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
     "en_LU":    ( "English", "Luxembourg", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
     "en_MU":    ( "English", "Mauritius", DMY, "&#8360;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
@@ -114,8 +115,8 @@ locale_maps = {
     "bs":       ( "Bosnian", "Bosnia", HYMD, "KM", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK),
     "cs":       ( "Czech", "Czech Republic", DYMD, "&#x004b;&#x010d;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "de":       ( "German", "Germany", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
-    "de_AT":    ( "German", "Austria", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
-    "de_CH":    ( "German", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "de_AT":    ( "German", "Austria", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
+    "de_CH":    ( "German", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", "'", DST_UK ),
     "de_LU":    ( "German", "Luxembourg", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
     "el":       ( "Greek", "Greece", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "es":       ( "Spanish", "Spain", DMY, EURO, PLURAL_ENGLISH, CURRENCY_SUFFIX, 2, ",", " ", DST_UK ),
@@ -129,11 +130,11 @@ locale_maps = {
     "fr_BE":    ( "French", "Belgium", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "fr_LU":    ( "French", "Luxembourg", DDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
     "fr_CA":    ( "French", "Canada", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_US ),
-    "fr_CH":    ( "French", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "fr_CH":    ( "French", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", "'", DST_UK ),
     "he":       ( "Hebrew", "Israel", DMY, "&#x20aa;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
     "hu":       ( "Hungarian", "Hungary", DYMD, "Ft",  PLURAL_HUNGARIAN, CURRENCY_PREFIX, 2, ",", " ", DST_UK), 
     "it":       ( "Italian", "Italy", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
-    "it_CH":    ( "Italian", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", DST_UK ),
+    "it_CH":    ( "Italian", "Switzerland", DDMY, "CHF", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", "'", DST_UK ),
     "lt":       ( "Lithuanian", "Lithuania", DYMD, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "nb":       ( "Norwegian Bokmal", "Norway", DDMY, "kr", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "nl":       ( "Dutch", "Holland", HDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
@@ -163,9 +164,9 @@ def real_locale(locale = "en"):
     #   en_CA (Canada)
     #   en_GB (UK)
     if locale in ("en_AE", "en_BE", "en_BG", "en_BM", "en_BQ", "en_CH", "en_CN", "en_CY", "en_ES", 
-        "en_HK", "en_ID", "en_IE", "en_IN", "en_JP", "en_KE", "en_KH", "en_LB", "en_LU", "en_MU", 
-        "en_MY", "en_MZ", "en_NA", "en_PH", "en_QA", "en_TH", "en_TW", "en_TW2", "en_TZ", "en_VN", 
-        "en_ZA", "en_ZW"):
+        "en_HK", "en_ID", "en_IE", "en_IN", "en_JP", "en_KE", "en_KH", "en_LB", "en_LU", "en_LV",
+        "en_MU", "en_MY", "en_MZ", "en_NA", "en_PH", "en_QA", "en_TH", "en_TW", "en_TW2", "en_TZ", 
+        "en_VN", "en_ZA", "en_ZW"):
         locale = "en_GB"
     if locale in ("en_AW", "en_BH", "en_CO", "en_CR", "en_KW", "en_KY", "en_IL", "en_LB", 
         "en_MX"):

@@ -315,6 +315,11 @@ class AdoptAPetPublisher(FTPPublisher):
             self.setLastError("Not all colours have been mapped and sending colours is enabled")
             self.cleanup()
             return
+        if not self.isChangedSinceLastPublish():
+            self.logSuccess("No animal/movement changes have been made since last publish")
+            self.setLastError("No animal/movement changes have been made since last publish", log_error = False)
+            self.cleanup()
+            return
 
         shelterid = asm3.configuration.adoptapet_user(self.dbo)
         if shelterid == "":
@@ -327,7 +332,7 @@ class AdoptAPetPublisher(FTPPublisher):
         # has no animals to send.
         animals = self.getMatchingAnimals()
         if len(animals) == 0:
-            self.logError("No animals found to publish, sending empty file.")
+            self.log("No animals found to publish, sending empty file.")
 
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
