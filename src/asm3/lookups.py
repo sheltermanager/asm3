@@ -1304,7 +1304,7 @@ def update_species_id(dbo, find, replace):
     cols = [ "animal.SpeciesID", "animalcontrol.SpeciesID", "animalfiguresannual.SpeciesID",
         "animallitter.SpeciesID", "animallostfoundmatch.LostSpeciesID", "animallostfoundmatch.FoundSpeciesID",
         "animalwaitinglist.SpeciesID", "breed.SpeciesID", "onlineformfield.SpeciesID",
-        "animallost.AnimalTypeID", "animalfound.AnimalTypeID" ]
+        "animallost.AnimalTypeID", "animalfound.AnimalTypeID", "species.ID" ]
     affected = 0
     for c in cols:
         table, col = c.split(".")
