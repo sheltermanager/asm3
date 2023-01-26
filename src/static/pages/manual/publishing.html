@@ -83,6 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#id3">Extra fields</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#shelteranimalscount-org">shelteranimalscount.org</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#petslocated-com">petslocated.com</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#avid-pettrac-uk">AVID/PETtrac UK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#identichip-anibase-uk">idENTICHIP/Anibase UK</a></li>
@@ -534,6 +535,31 @@ the config screen and allows you to apply it on a per-animal basis instead.</p><
 <p>SavourLife integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the SavourLife breeds, ASM will send it as “Mixed Breed” instead.</p>
 </div>
 </div>
+</div>
+<div class="section" id="shelteranimalscount-org">
+<h2>shelteranimalscount.org<a class="headerlink" href="#shelteranimalscount-org" title="Permalink to this headline">¶</a></h2>
+<p>ASM can automatically update your statistics with shelteranimalscount.org,
+the US service for aggregating statistics on animal intakes and
+outcomes (this publisher is sheltermanager.com only).</p>
+<p>First, you will need to contact shelteranimalscount and let them know your
+sheltermanager.com account number. This is so they can tie your organisation
+to the incoming data.</p>
+<p>Next, go to <span class="menuselection">Publish ‣ Set Publishing Options ‣
+ShelterAnimalsCount</span> and configure the entry categories in your database that
+represent Stray, Surrender and TNR. It is likely you will only have one for
+Stray and TNR, but may have many entry categories that correspond to a
+surrender. There is no config for transfers as we use the “Transfer In” tickbox
+on the animal’s record to determine that.</p>
+<p>Like the other publishers, shelteranimalscount will run automatically overnight
+to send updates and does not require any interaction.</p>
+<p>When the publisher runs, the first phase is to determine which months of data
+it will send.</p>
+<ul class="simple">
+<li><p>If today is the 1st of the month, last month’s data will be sent.</p></li>
+<li><p>If an animal or movement record with an event date in a previous month has
+been added or changed in the last 24 hours, that month’s data will be sent.
+An event date is one of intake, return, death or movement.</p></li>
+</ul>
 </div>
 <div class="section" id="petslocated-com">
 <h2>petslocated.com<a class="headerlink" href="#petslocated-com" title="Permalink to this headline">¶</a></h2>

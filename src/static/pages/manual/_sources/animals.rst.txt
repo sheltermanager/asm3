@@ -173,7 +173,7 @@ For most shelters and rescues, this is fine, but some organisations want to
 enter that data again for repeat visits and generate a new shelter code
 for the animal.
 
-If you have the option unticked for :menuselect:`Settings --> Options -->
+If you have the option unticked for :menuselection:`Settings --> Options -->
 Remove --> Remove the entry history section from animal records` then the
 system will allow you to archive the information on the Entry slider to Entry
 History so that entry information can be entered each time the animal returns to the

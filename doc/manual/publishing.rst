@@ -471,6 +471,38 @@ records.
 
 .. note:: SavourLife integration relies on you naming your breeds and species with the same values that they do. If a breed does not match one of the SavourLife breeds, ASM will send it as "Mixed Breed" instead. 
 
+shelteranimalscount.org
+-----------------------
+
+ASM can automatically update your statistics with shelteranimalscount.org, 
+the US service for aggregating statistics on animal intakes and
+outcomes (this publisher is sheltermanager.com only).
+
+First, you will need to contact shelteranimalscount and let them know your
+sheltermanager.com account number. This is so they can tie your organisation
+to the incoming data.
+
+Next, go to :menuselection:`Publish --> Set Publishing Options -->
+ShelterAnimalsCount` and configure the entry categories in your database that
+represent Stray, Surrender and TNR. It is likely you will only have one for
+Stray and TNR, but may have many entry categories that correspond to a
+surrender. There is no config for transfers as we use the "Transfer In" tickbox
+on the animal's record to determine that. 
+
+Like the other publishers, shelteranimalscount will run automatically overnight
+to send updates and does not require any interaction.
+
+When the publisher runs, the first phase is to determine which months of data
+it will send. 
+
+* If today is the 1st of the month, last month's data will be sent.
+
+* If an animal or movement record with an event date in a previous month has
+  been added or changed in the last 24 hours, that month's data will be sent.
+  An event date is one of intake, return, death or movement.
+
+.. warn:: Like the SAC reports, this publisher relies on the default species from the default database. If you have deleted the original species and recreated them, you will need to contact sheltermanager.com support for assistance.
+
 petslocated.com
 ---------------
 
