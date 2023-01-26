@@ -2,7 +2,7 @@ Deceased Reasons by Species and Date
 ###
 Statistics
 ###
-Any
+Any rev01
 ###
 Deceased reasons for animals, grouped by species and between two dates.
 ###
@@ -46,7 +46,7 @@ Deceased Reasons by Species, Entry Category and Date
 ###
 Statistics
 ###
-Any
+Any rev01
 ###
 Deceased reasons for animals, grouped by species and entry category between two dates.
 ###
