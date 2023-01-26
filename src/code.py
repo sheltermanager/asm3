@@ -4351,6 +4351,8 @@ class maint_switch_species(ASMEndpoint):
         if find == 0 or replace == 0:
             raise asm3.utils.ASMValidationError("find and replace parameters must be supplied and valid")
         affected = asm3.lookups.update_species_id(o.dbo, find, replace)
+        self.content_type("text/plain")
+        self.cache_control(0)
         return f"{affected} rows affected."
 
 class maint_time(ASMEndpoint):
