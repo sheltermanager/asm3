@@ -13,7 +13,7 @@ distwin32: dist
 tags:
 	@echo "[tags] ============================"
 	rm -f tag
-	ctags -f tags src/*.py src/asm3/*.py src/asm3/publishers/*.py src/asm3/dbms/*.py src/static/js/*.js
+	ctags -f tags src/*.py src/asm3/*.py src/asm3/dbms/*.py src/asm3/paymentprocessor/*.py src/asm3/publishers/*.py
 
 cscope:
 	@echo "[cscope] ==========================="
