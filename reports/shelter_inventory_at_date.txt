@@ -2,7 +2,7 @@ Shelter Inventory at Date
 ###
 Inventories
 ###
-Any rev05
+Any rev06
 ###
 Historical animal inventory for any date.
 ###
@@ -13,6 +13,7 @@ SELECT
 ShelterCode, 
 IdentichipNumber, 
 AnimalName,
+entryreason.ReasonName,
 TimeOnShelter,
 animaltype.AnimalType,
 species.SpeciesName,
@@ -25,6 +26,7 @@ animal.ActiveMovementDate AS DateLeftShelter,
 owner.OwnerName
 FROM animal 
 LEFT OUTER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
+LEFT OUTER JOIN entryreason ON animal.EntryReasonID = entryreason.ID
 LEFT OUTER JOIN species ON species.ID = animal.SpeciesID
 LEFT OUTER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
 LEFT OUTER JOIN lksmovementtype ON lksmovementtype.ID = animal.ActiveMovementType
@@ -57,6 +59,7 @@ $$HEAD
 <td><b>Type</b></td>
 <td><b>Breed</b></td>
 <td><b>Age</b></td>
+<td><b>Entry</b></td>
 <td><b>Time On Shelter</b></td>
 <td><b>Last Movement</b></td>
 <td><b>Left Shelter</b></td>
@@ -74,6 +77,7 @@ $$BODY<tr>
 <td>$ANIMALTYPE</td>
 <td>$BREEDNAME</td>
 <td>$ANIMALAGE ($AGEGROUP)</td>
+<td>$REASONNAME</td>
 <td>$TIMEONSHELTER</td>
 <td>$LATESTMOVEMENT</td>
 <td>$DATELEFTSHELTER</td>
@@ -89,7 +93,7 @@ Shelter Inventory at Date (Include trial adoptions)
 ###
 Inventories
 ###
-3200/Any rev05
+3200/Any rev06
 ###
 Historical animal inventory for any date. Treats trial adoptions as still on the shelter.
 ###
@@ -99,6 +103,7 @@ $VAR thedate DATE Inventory at date$
 SELECT 
 ShelterCode, 
 AnimalName,
+entryreason.ReasonName,
 TimeOnShelter,
 animaltype.AnimalType,
 species.SpeciesName,
@@ -111,6 +116,7 @@ animal.ActiveMovementDate AS DateLeftShelter,
 owner.OwnerName
 FROM animal 
 LEFT OUTER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
+LEFT OUTER JOIN entryreason ON animal.EntryReasonID = entryreason.ID
 LEFT OUTER JOIN species ON species.ID = animal.SpeciesID
 LEFT OUTER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
 LEFT OUTER JOIN lksmovementtype ON lksmovementtype.ID = animal.ActiveMovementType
@@ -142,6 +148,7 @@ $$HEAD
 <td><b>Type</b></td>
 <td><b>Breed</b></td>
 <td><b>Age</b></td>
+<td><b>Entry</b></td>
 <td><b>Time On Shelter</b></td>
 <td><b>Last Movement</b></td>
 <td><b>Left Shelter</b></td>
@@ -157,7 +164,8 @@ $$BODY<tr>
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
 <td>$BREEDNAME</td>
-<td>$ANIMALAGE ($AGEGROUP)</td>
+<td>$ANIMALAGE ($AGEGROUP)</td>a
+<td>$REASONNAME</td>
 <td>$TIMEONSHELTER</td>
 <td>$LATESTMOVEMENT</td>
 <td>$DATELEFTSHELTER</td>
@@ -173,7 +181,7 @@ Shelter Inventory at Date by Species
 ###
 Inventories
 ###
-Any rev02
+Any rev03
 ###
 Historical animal inventory for any date by species
 ###
@@ -184,6 +192,7 @@ SELECT
 ShelterCode, 
 IdentichipNumber, 
 AnimalName,
+entryreason.ReasonName,
 TimeOnShelter,
 animaltype.AnimalType,
 species.SpeciesName,
@@ -196,6 +205,7 @@ animal.ActiveMovementDate AS DateLeftShelter,
 owner.OwnerName
 FROM animal 
 LEFT OUTER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
+LEFT OUTER JOIN entryreason ON animal.EntryReasonID = entryreason.ID
 LEFT OUTER JOIN species ON species.ID = animal.SpeciesID
 LEFT OUTER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
 LEFT OUTER JOIN lksmovementtype ON lksmovementtype.ID = animal.ActiveMovementType
@@ -221,6 +231,7 @@ $$HEAD
 <td><b>Type</b></td>
 <td><b>Breed</b></td>
 <td><b>Age</b></td>
+<td><b>Entry</b></td>
 <td><b>Time On Shelter</b></td>
 <td><b>Last Movement</b></td>
 <td><b>Left Shelter</b></td>
@@ -238,6 +249,7 @@ $$BODY<tr>
 <td>$ANIMALTYPE</td>
 <td>$BREEDNAME</td>
 <td>$ANIMALAGE ($AGEGROUP)</td>
+<td>$REASONNAME</td>
 <td>$TIMEONSHELTER</td>
 <td>$LATESTMOVEMENT</td>
 <td>$DATELEFTSHELTER</td>
