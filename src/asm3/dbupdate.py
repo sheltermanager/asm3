@@ -2953,6 +2953,19 @@ def diagnostic(dbo):
         "duplicate preferred images": mediapref()
     }
 
+def switch_species(dbo, source, target):
+    """ Switches all instances of speciesid source to target. Returns number of affected rows """
+    cols = [ "animal.SpeciesID", "animalcontrol.SpeciesID", "animalfiguresannual.SpeciesID",
+        "animallitter.SpeciesID", "animallostfoundmatch.LostSpeciesID", "animallostfoundmatch.FoundSpeciesID",
+        "animalwaitinglist.SpeciesID", "breed.SpeciesID", "onlineformfield.SpeciesID",
+        "animallost.AnimalTypeID", "animalfound.AnimalTypeID" ]
+    affected = 0
+    for c in cols:
+        table, col = c.split(".")
+        q = f"UPDATE {table} SET {col}={target} WHERE {col}={source}"
+        affected += dbo.execute(q)
+    return affected
+
 def fix_preferred_photos(dbo):
     """
     Resets the web and doc preferred flags on all photos to the latest one for all media records.

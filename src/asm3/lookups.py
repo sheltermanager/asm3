@@ -1299,6 +1299,19 @@ def get_species_name(dbo, sid):
     if id is None: return ""
     return dbo.query_string("SELECT SpeciesName FROM species WHERE ID = ?", [sid])
 
+def update_species_id(dbo, find, replace):
+    """ Changes all instances of speciesid from find to replace """
+    cols = [ "animal.SpeciesID", "animalcontrol.SpeciesID", "animalfiguresannual.SpeciesID",
+        "animallitter.SpeciesID", "animallostfoundmatch.LostSpeciesID", "animallostfoundmatch.FoundSpeciesID",
+        "animalwaitinglist.SpeciesID", "breed.SpeciesID", "onlineformfield.SpeciesID",
+        "animallost.AnimalTypeID", "animalfound.AnimalTypeID" ]
+    affected = 0
+    for c in cols:
+        table, col = c.split(".")
+        q = f"UPDATE {table} SET {col}={replace} WHERE {col}={find}"
+        affected += dbo.execute(q)
+    return affected
+
 def get_sizes(dbo):
     return dbo.query("SELECT * FROM lksize ORDER BY Size")
 

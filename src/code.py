@@ -4341,26 +4341,17 @@ class maint_sac_metrics(ASMEndpoint):
         except Exception as err:
             return str(err)
 
-class maint_species_switch(ASMEndpoint):
-    url = "maint_species_switch"
+class maint_switch_species(ASMEndpoint):
+    url = "maint_switch_species"
 
     def content(self, o):
         """ Swaps species id source to target """
-        source = o.post.integer("source")
-        target = o.post.integer("target")
-        if source == 0 or target == 0:
-            raise asm3.utils.ASMValidationError("source and target parameters must be supplied and valid")
-        cols = [ "animal.SpeciesID", "animalcontrol.SpeciesID", "animalfiguresannual.SpeciesID",
-            "animallitter.SpeciesID", "animallostfoundmatch.LostSpeciesID", "animallostfoundmatch.FoundSpeciesID",
-            "animalwaitinglist.SpeciesID", "breed.SpeciesID", "onlineformfield.SpeciesID",
-            "animallost.AnimalTypeID", "animalfound.AnimalTypeID" ]
-        s = []
-        for c in cols:
-            table, col = c.split(".")
-            q = f"UPDATE {table} SET {col}={target} WHERE {col}={source}"
-            o.dbo.execute(q)
-            s.append(q)
-        return "\n".join(s)
+        find = o.post.integer("find")
+        replace = o.post.integer("replace")
+        if find == 0 or replace == 0:
+            raise asm3.utils.ASMValidationError("find and replace parameters must be supplied and valid")
+        affected = asm3.lookups.update_species_id(o.dbo, find, replace)
+        return f"{affected} rows affected."
 
 class maint_time(ASMEndpoint):
     url = "maint_time"
