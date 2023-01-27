@@ -1,0 +1,49 @@
+Adoption Return Reasons by Species and Date
+###
+Statistics
+###
+Any rev01
+###
+Adoption return reasons for animals, grouped by species and between two dates.
+###
+en
+###
+SELECT ReasonName, SpeciesName, COUNT(ReturnedReasonID) AS Total 
+FROM adoption
+INNER JOIN animal ON animal.ID = adoption.ID
+INNER JOIN entryreason ON entryreason.ID = adoption.ReturnedReasonID 
+INNER JOIN species ON animal.SpeciesID = species.ID
+WHERE ReturnDate Is Not Null 
+AND ReturnDate >= '$ASK DATE Returned between$' AND ReturnDate <= '$ASK DATE and$'
+AND MovementType = 1
+GROUP BY SpeciesName, ReasonName
+ORDER BY SpeciesName, ReasonName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+
+<table border=1><tr>
+<td><b>Reason</b></td>
+<td><b></b></td>
+</tr>
+$$FOOT
+</table>
+
+<p><b>Total for $SpeciesName: {SUM.Total.0}</b></p>
+GROUP$$
+
+$$BODY<tr>
+<td>$ReasonName</td>
+<td>$Total</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+
+
