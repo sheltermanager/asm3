@@ -1767,6 +1767,7 @@ def update_anonymise_personal_data(dbo, overrideretainyears = None):
     anonymised = _("No longer retained", l)
     enabled = asm3.configuration.anonymise_personal_data(dbo)
     retainyears = asm3.configuration.anonymise_after_years(dbo)
+    adopterclause = asm3.utils.iif( asm3.configuration.anonymise_adopters(dbo), '', 'AND IsAdopter=0' )
     if overrideretainyears:
         enabled = True
         retainyears = overrideretainyears
@@ -1780,7 +1781,7 @@ def update_anonymise_personal_data(dbo, overrideretainyears = None):
         "LastChangedDate = ?, LastChangedBy = ? " \
         "WHERE OwnerSurname <> ? AND CreatedDate <= ? " \
         "AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 " \
-        "AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 " \
+        f"AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 {adopterclause} " \
         "AND NOT EXISTS(SELECT ID FROM animal WHERE (OriginalOwnerID = owner.ID OR BroughtInByOwnerID = owner.ID) AND DateBroughtIn > ?) " \
         "AND NOT EXISTS(SELECT ID FROM clinicappointment WHERE OwnerID = owner.ID AND DateTime > ?) " \
         "AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date > ?) " \

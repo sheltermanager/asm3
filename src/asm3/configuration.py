@@ -109,6 +109,7 @@ DEFAULTS = {
     "AnnualFiguresShowBabiesType": "Yes",
     "AnnualFiguresBabyMonths" : "6",
     "AnnualFiguresSplitAdoptions": "No",
+    "AnonymiseAdopters": "Yes",
     "AnonymisePersonalData": "No",
     "AnonymiseAfterYears": "0",
     "AuditOnViewRecord": "Yes",
@@ -667,20 +668,23 @@ def annual_figures_baby_months(dbo):
 def annual_figures_split_adoptions(dbo):
     return cboolean(dbo, "AnnualFiguresSplitAdoptions", DEFAULTS["AnnualFiguresSplitAdoptions"] == "Yes")
 
+def anonymise_adopters(dbo):
+    return cboolean(dbo, "AnonymiseAdopters", DEFAULTS["AnonymiseAdopters"] == "Yes")
+
 def anonymise_personal_data(dbo):
-    return cboolean(dbo, "AnonymisePersonalData", DEFAULTS["AnonymisePersonalData"])
+    return cboolean(dbo, "AnonymisePersonalData", DEFAULTS["AnonymisePersonalData"] == "Yes")
 
 def anonymise_after_years(dbo):
     return cint(dbo, "AnonymiseAfterYears", DEFAULTS["AnonymiseAfterYears"])
 
 def audit_on_view_record(dbo):
-    return cboolean(dbo, "AuditOnViewRecord", DEFAULTS["AuditOnViewRecord"])
+    return cboolean(dbo, "AuditOnViewRecord", DEFAULTS["AuditOnViewRecord"] == "Yes")
 
 def audit_on_view_report(dbo):
-    return cboolean(dbo, "AuditOnViewReport", DEFAULTS["AuditOnViewReport"])
+    return cboolean(dbo, "AuditOnViewReport", DEFAULTS["AuditOnViewReport"] == "Yes")
 
 def audit_on_send_email(dbo):
-    return cboolean(dbo, "AuditOnSendEmail", DEFAULTS["AuditOnSendEmail"])
+    return cboolean(dbo, "AuditOnSendEmail", DEFAULTS["AuditOnSendEmail"] == "Yes")
 
 def auto_cancel_reserves_days(dbo):
     return cint(dbo, "AutoCancelReservesDays", int(DEFAULTS["AutoCancelReservesDays"]))
@@ -689,7 +693,7 @@ def auto_cancel_hold_days(dbo):
     return cint(dbo, "AutoCancelHoldDays", int(DEFAULTS["AutoCancelHoldDays"]))
 
 def auto_default_vacc_batch(dbo):
-    return cboolean(dbo, "AutoDefaultVaccBatch", DEFAULTS["AutoDefaultVaccBatch"])
+    return cboolean(dbo, "AutoDefaultVaccBatch", DEFAULTS["AutoDefaultVaccBatch"] == "Yes")
 
 def auto_hash_processed_forms(dbo):
     return cboolean(dbo, "AutoHashProcessedForms", DEFAULTS["AutoHashProcessedForms"] == "Yes")
