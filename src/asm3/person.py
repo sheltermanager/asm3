@@ -1239,6 +1239,9 @@ def merge_person(dbo, username, personid, mergepersonid):
     # Change any additional field links pointing to the merge person
     asm3.additional.update_merge_person(dbo, mergepersonid, personid)
 
+    # Copy additional field values from mergeperson to person
+    asm3.additional.merge_values(dbo, username, mergepersonid, personid, "person")
+
     # Assign the adopter flag if we brought in new open adoption movements
     update_adopter_flag(dbo, username, personid)
 

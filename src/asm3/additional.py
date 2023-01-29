@@ -328,3 +328,32 @@ def merge_values_for_link(dbo, post, username, linkid, linktype = "animal"):
     if len(audits) > 0:
         asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (table_for_linktype(linktype), linkid), ", ".join(audits))
 
+def merge_values(dbo, username, sourceid, targetid, linktype = "animal"):
+    """
+    Copies all the additional field values from sourceid to targetid. 
+    Only copies a value if it is not present on targetid or is an empty string.
+    """
+    audits = []
+    clause = clause_for_linktype(linktype)
+    sourcevalues = dbo.query("SELECT a.Value, a.AdditionalFieldID, af.FieldName, af.LinkType FROM additional a " \
+        "INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
+        f"WHERE af.LinkType IN ({clause}) AND a.LinkID=?", [sourceid])
+    targetvalues = dbo.query("SELECT a.Value, a.AdditionalFieldID, af.FieldName, af.LinkType FROM additional a " \
+        "INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
+        f"WHERE af.LinkType IN ({clause}) AND a.LinkID=?", [targetid])
+    for sv in sourcevalues:
+        # Check if this field exists in the target and has a value
+        hasvalue = False
+        for tv in targetvalues:
+            if sv.ADDITIONALFIELDID == tv.ADDITIONALFIELDID and tv.VALUE:
+                hasvalue = True
+                break
+        # If it doesn't, we can copy it to the target
+        if not hasvalue:
+            dbo.delete("additional", "LinkID=%s AND AdditionalFieldID=%s" % (targetid, tv.ADDITIONALFIELDID))
+            insert_additional(dbo, tv.LINKTYPE, targetid, tv.ADDITIONALFIELDID, sv.VALUE)
+            audits.append("%s='%s'" % (tv.FIELDNAME, sv.VALUE))
+
+    if len(audits) > 0:
+        asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (table_for_linktype(linktype), targetid), ", ".join(audits))
+
