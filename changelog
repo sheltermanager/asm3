@@ -1,6 +1,7 @@
 46
 ================
 
+30/01/23 onlineform: breed/species/colour lookups should have blank option
 29/01/23 When merging people and animals, copy/merge the additional field values
 28/01/23 Option to never anonymise adopters #1218
 23/01/23 Add animal events slider (Saggi Neuemann) #1221
