@@ -350,9 +350,9 @@ def merge_values(dbo, username, sourceid, targetid, linktype = "animal"):
                 break
         # If it doesn't, we can copy it to the target
         if not hasvalue:
-            dbo.delete("additional", "LinkID=%s AND AdditionalFieldID=%s" % (targetid, tv.ADDITIONALFIELDID))
-            insert_additional(dbo, tv.LINKTYPE, targetid, tv.ADDITIONALFIELDID, sv.VALUE)
-            audits.append("%s='%s'" % (tv.FIELDNAME, sv.VALUE))
+            dbo.delete("additional", "LinkID=%s AND AdditionalFieldID=%s" % (targetid, sv.ADDITIONALFIELDID))
+            insert_additional(dbo, sv.LINKTYPE, targetid, sv.ADDITIONALFIELDID, sv.VALUE)
+            audits.append("%s='%s'" % (sv.FIELDNAME, sv.VALUE))
 
     if len(audits) > 0:
         asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (table_for_linktype(linktype), targetid), ", ".join(audits))
