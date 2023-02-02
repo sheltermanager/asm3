@@ -994,7 +994,7 @@ def breed_name_for_id(id):
     for bid, bname in breeds:
         if int(bid) == id:
             return bname
-    return "Affenpinscher"
+    return "Invalid ID"
 
 def breed_name(id1, id2 = None):
     if id2 is None or id2 == 0:

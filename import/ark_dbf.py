@@ -6,12 +6,12 @@ import asm
 Import script for ARK DBF databases, covers people, animals, payments, events, licences and complaints
 
 21st March, 2015
-Last changed: 12th Mar, 2022
+Last changed: 2nd Feb, 2023
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/ark_tp2734"
-START_ID = 1000
-PICTURE_IMPORT = True
+PATH = "/home/robin/tmp/asm3_import_data/ark_kw2942"
+START_ID = 100
+PICTURE_IMPORT = False
 
 BLANK_DATE = asm.parse_date("2015-01-01", "%Y-%m-%d") # Date used for licenses and incidents when the date was blank in ARK
 
@@ -116,6 +116,8 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
     a.Sex = asm.getsex_mf(d["SEX"])
     a.ShelterLocationUnit = d["LOCATION"]
     a.BreedID = asm.breed_id_for_name(d["BREED"])
+    if a.BreedID == 1 and a.SpeciesID == 1: a.BreedID = 442 # switch to mixed breed for dogs
+    if a.BreedID == 1 and a.SpeciesID == 2: a.BreedID = 261 # or DSH for cats
     a.BaseColourID = asm.colour_id_for_name(d["COLOR"])
     a.BreedName = asm.breed_name_for_id(a.BreedID)
     if d["BREED"].find("MIX") != -1:
@@ -124,7 +126,7 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
         a.BreedName = asm.breed_name_for_id(a.BreedID) + " / " + asm.breed_name_for_id(a.Breed2ID)
     a.DateBroughtIn = asm.todatetime(d["DATE_SURR"])
     if a.DateBroughtIn is None: a.DateBroughtIn = asm.now()
-    a.generateCode()
+    a.ShelterCode = d["ID_NUM"]
     a.ShortCode = d["ID_NUM"]
     a.NeuteredDate = d["NEUTER_DAT"]
     if a.NeuteredDate is not None:
@@ -164,6 +166,9 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
             m.OwnerID = o.ID
             m.MovementType = 1
             m.MovementDate = asm.todatetime(d["DATE_DISPO"])
+            # I've seen it happen where disposition date is years ago, but there was no intake date
+            if m.MovementDate < a.DateBroughtIn:
+                a.DateBroughtIn = m.MovementDate
             if d["RECLAIMED"] == "X": 
                 m.MovementType = 5
             m.LastChangedDate = m.MovementDate
