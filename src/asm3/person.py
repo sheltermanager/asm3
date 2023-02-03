@@ -888,7 +888,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         "IsVet":                    0,
         "IsGiftAid":                0,
         "IsSponsor":                0,
-        "AdditionalFlags":          ""
+        "AdditionalFlags":          "|"
     }, username, generateID=False)
 
     # If we're using GDPR contact options and email is not set, set the exclude from bulk email flag
