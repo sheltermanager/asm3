@@ -3605,13 +3605,22 @@ def update_animal_breeds(dbo, breedid=0):
         where = f"WHERE BreedID={breedid} OR Breed2ID={breedid}"
     batch = []
     animals = dbo.query(f"SELECT ID, BreedID, Breed2ID FROM animal {where}")
+    breeds = dbo.query("SELECT ID, BreedName FROM breed")
+    def bname(bid):
+        for b in breeds:
+            if b.ID == bid: return b.BREEDNAME
+        return "Invalid"
     for a in animals:
-        breedname = get_breedname(dbo, a.BREEDID, a.BREED2ID)
+        if a.BREEDID == a.BREED2ID or a.BREED2ID == 0:
+            breedname = bname(a.BREEDID)
+        else:
+            breedname = "%s / %s" % ( bname(a.BREEDID), bname(a.BREED2ID) )
         batch.append(( breedname, a.ID ))
     dbo.execute_many("UPDATE animal SET " \
         "BreedName = ? " \
         "WHERE ID = ?", batch)
-    asm3.al.info(f"breedid={breedid}: updated {len(batch)} animal records", "update_animal_breeds", dbo)
+    asm3.al.debug(f"breedid={breedid}: updated breeds for {len(batch)} animal records", "update_animal_breeds", dbo)
+    return "OK %d" % len(batch)
 
 def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = None, bands = None, movements = None):
     """
