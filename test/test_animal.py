@@ -288,6 +288,9 @@ class TestAnimal(unittest.TestCase):
     def test_update_on_shelter_animal_statuses(self):
         asm3.animal.update_on_shelter_animal_statuses(base.get_dbo())
 
+    def test_update_animal_breeds(self):
+        asm3.animal.update_animal_breeds(base.get_dbo())
+
     def test_update_animal_check_bonds(self):
         asm3.animal.update_animal_check_bonds(base.get_dbo(), self.nid)
 

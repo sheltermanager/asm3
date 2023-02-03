@@ -3595,6 +3595,24 @@ def update_animal_check_bonds(dbo, animalid):
     if bond1 != 0: addbond(bond1, animalid)
     if bond2 != 0: addbond(bond2, animalid)
 
+def update_animal_breeds(dbo, breedid=0):
+    """
+    Regenerates the breedname field for all animals.
+    breedid: If non zero, only updates animals who have this breed
+    """
+    where = ""
+    if breedid > 0:
+        where = f"WHERE BreedID={breedid} OR Breed2ID={breedid}"
+    batch = []
+    animals = dbo.query(f"SELECT ID, BreedID, Breed2ID FROM animal {where}")
+    for a in animals:
+        breedname = get_breedname(dbo, a.BREEDID, a.BREED2ID)
+        batch.append(( breedname, a.ID ))
+    dbo.execute_many("UPDATE animal SET " \
+        "BreedName = ? " \
+        "WHERE ID = ?", batch)
+    asm3.al.info(f"breedid={breedid}: updated {len(batch)} animal records", "update_animal_breeds", dbo)
+
 def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = None, bands = None, movements = None):
     """
     Updates the variable data animal fields,
