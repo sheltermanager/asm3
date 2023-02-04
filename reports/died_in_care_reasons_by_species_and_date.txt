@@ -1,0 +1,46 @@
+Died in Care Reasons by Species and Date
+###
+Statistics
+###
+Any rev01
+###
+Died in care reasons for animals (not euthanasia), grouped by species and between two dates.
+###
+en
+###
+SELECT ReasonName, SpeciesName, COUNT(PTSReasonID) AS Total FROM animal 
+INNER JOIN deathreason ON deathreason.ID = PTSReasonID
+INNER JOIN species ON animal.SpeciesID = species.ID
+WHERE DeceasedDate >= '$ASK DATE Enter date from$' AND DeceasedDate <= '$ASK DATE Enter date to$'
+AND PutToSleep = 0 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0
+GROUP BY SpeciesName, ReasonName
+ORDER BY SpeciesName, ReasonName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+
+<table border=1><tr>
+<td><b>Reason</b></td>
+<td><b></b></td>
+</tr>
+$$FOOT
+</table>
+
+<p><b>Total for $SpeciesName: {SUM.Total.0}</b></p>
+GROUP$$
+
+$$BODY<tr>
+<td>$ReasonName</td>
+<td>$Total</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+
+

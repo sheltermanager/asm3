@@ -2176,6 +2176,10 @@ class batch(JSONEndpoint):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Recalculate ALL animal ages/times", l), asm3.animal.update_all_variable_animal_data, o.dbo)
 
+    def post_genallbreeds(self, o):
+        l = o.locale
+        asm3.asynctask.function_task(o.dbo, _("Recalculate ALL animal breed names", l), asm3.animal.update_animal_breeds, o.dbo)
+
     def post_gendiarylinkinfo(self, o):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Regenerate diary link info for incomplete notes", l), asm3.diary.update_link_info_incomplete, o.dbo)
@@ -4340,6 +4344,20 @@ class maint_sac_metrics(ASMEndpoint):
             return "\n".join(p.logBuffer)
         except Exception as err:
             return str(err)
+
+class maint_switch_species(ASMEndpoint):
+    url = "maint_switch_species"
+
+    def content(self, o):
+        """ Swaps species id source to target """
+        find = o.post.integer("find")
+        replace = o.post.integer("replace")
+        if find == 0 or replace == 0:
+            raise asm3.utils.ASMValidationError("find and replace parameters must be supplied and valid")
+        affected = asm3.lookups.update_species_id(o.dbo, find, replace)
+        self.content_type("text/plain")
+        self.cache_control(0)
+        return f"{affected} rows affected."
 
 class maint_time(ASMEndpoint):
     url = "maint_time"

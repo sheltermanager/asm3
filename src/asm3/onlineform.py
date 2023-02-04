@@ -177,7 +177,6 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         h.append('<tr class="asm-onlineform-tr" %s>' % visibleif)
         required = ""
         requiredtext = ""
-        requiredspan = '<span class="asm-onlineform-notrequired"></span>'
         requiredspan = ""
         autocomplete = ""
         if f.FIELDNAME in AUTOCOMPLETE_MAP:
@@ -243,7 +242,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('</div>')
         elif f.FIELDTYPE == FIELDTYPE_SHELTERANIMAL:
             h.append('<select class="asm-onlineform-shelteranimal" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
-            h.append('<option></option>')
+            h.append('<option value=""></option>')
             rs = asm3.animal.get_animals_on_shelter_namecode(dbo)
             rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
             for a in rs:
@@ -253,7 +252,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_ADOPTABLEANIMAL:
             h.append('<select class="asm-onlineform-adoptableanimal" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
-            h.append('<option></option>')
+            h.append('<option value=""></option>')
             pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(dbo))
             rs = asm3.publishers.base.get_animal_data(dbo, pc, include_additional_fields = True)
             rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
@@ -273,18 +272,21 @@ def get_onlineform_html(dbo, formid, completedocument = True):
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_COLOUR:
             h.append('<select class="asm-onlineform-colour" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
+            h.append('<option value=""></option>')
             for l in asm3.lookups.get_basecolours(dbo):
                 if l.ISRETIRED != 1:
                     h.append('<option>%s</option>' % l.BASECOLOUR)
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_BREED:
             h.append('<select class="asm-onlineform-breed" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
+            h.append('<option value=""></option>')
             for l in asm3.lookups.get_breeds(dbo):
                 if l.ISRETIRED != 1:
                     h.append('<option>%s</option>' % l.BREEDNAME)
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_SPECIES:
             h.append('<select class="asm-onlineform-species" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
+            h.append('<option value=""></option>')
             for l in asm3.lookups.get_species(dbo):
                 if l.ISRETIRED != 1:
                     h.append('<option>%s</option>' % l.SPECIESNAME)

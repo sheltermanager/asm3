@@ -18,10 +18,6 @@
 
 *. Mark milestone complete in github
 
-*. Update twitter and facebook
-
-*. Update manual with lulu
-
 *. Commit any changes made so far
 
 *. run "git tag -f -a 41" to create a tag for the release number, followed by "git push && git push -f --tags" 

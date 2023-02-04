@@ -2,7 +2,7 @@ Length of Stay by Transferor
 ###
 Statistics
 ###
-33018/PostgreSQL rev01
+33018/PostgreSQL rev02
 ###
 Shows time on shelter by transferor for animals transferred into the shelter between two dates
 ###
@@ -41,7 +41,7 @@ $$HEAD
 </tr>
 $$FOOT
 </table>
-<p>Total $LocationName: {COUNT.LocationName}, Average: {AVG.DaysOnShelter.2} days</p>
+<p>Total $OwnerName: {COUNT.OwnerName}, Average: {AVG.DaysOnShelter.2} days</p>
 GROUP$$
 
 $$BODY

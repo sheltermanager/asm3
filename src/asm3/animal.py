@@ -3393,6 +3393,9 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     # Change any additional field links pointing to the merge animal
     asm3.additional.update_merge_person(dbo, mergeanimalid, animalid)
 
+    # Copy additional field values from mergeperson to person
+    asm3.additional.merge_values(dbo, username, mergeanimalid, animalid, "animal")
+
     # Reparent the audit records for the reparented records in the audit log
     # by switching ParentLinks to the new ID.
     dbo.execute("UPDATE audittrail SET ParentLinks = %s WHERE ParentLinks LIKE '%%animal=%s %%'" % \
@@ -3591,6 +3594,33 @@ def update_animal_check_bonds(dbo, animalid):
     bond2 = bonds.bondedanimal2id
     if bond1 != 0: addbond(bond1, animalid)
     if bond2 != 0: addbond(bond2, animalid)
+
+def update_animal_breeds(dbo, breedid=0):
+    """
+    Regenerates the breedname field for all animals.
+    breedid: If non zero, only updates animals who have this breed
+    """
+    where = ""
+    if breedid > 0:
+        where = f"WHERE BreedID={breedid} OR Breed2ID={breedid}"
+    batch = []
+    animals = dbo.query(f"SELECT ID, BreedID, Breed2ID FROM animal {where}")
+    breeds = dbo.query("SELECT ID, BreedName FROM breed")
+    def bname(bid):
+        for b in breeds:
+            if b.ID == bid: return b.BREEDNAME
+        return "Invalid"
+    for a in animals:
+        if a.BREEDID == a.BREED2ID or a.BREED2ID == 0:
+            breedname = bname(a.BREEDID)
+        else:
+            breedname = "%s / %s" % ( bname(a.BREEDID), bname(a.BREED2ID) )
+        batch.append(( breedname, a.ID ))
+    dbo.execute_many("UPDATE animal SET " \
+        "BreedName = ? " \
+        "WHERE ID = ?", batch)
+    asm3.al.debug(f"breedid={breedid}: updated breeds for {len(batch)} animal records", "update_animal_breeds", dbo)
+    return "OK %d" % len(batch)
 
 def update_variable_animal_data(dbo, animalid, a = None, animalupdatebatch = None, bands = None, movements = None):
     """

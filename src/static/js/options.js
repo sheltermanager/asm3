@@ -706,6 +706,8 @@ $(function() {
                 '<span id="callout-anonymise" class="asm-callout">' + _("This many years after creation of a person record, the name, address and telephone data will be anonymized.") + '</span>',
                 '<input data="AnonymiseAfterYears" type="text" class="asm-textbox asm-intbox" />', 
                 '<br />',
+                '<input data="rc:AnonymiseAdopters" id="anonymiseadopters" type="checkbox" class="asm-checkbox" /> <label for="anonymiseadopters">' + _("Never anonymize people who adopted an animal") + '</label>',
+                '<br />',
                 '<input data="AutoRemoveDocumentMedia" id="autoremovedocumentmedia" type="checkbox" class="asm-checkbox" /> <label for="autoremovedocumentmedia">' + _("Remove HTML and PDF document media after this many years") + '</label>',
                 '<input data="AutoRemoveDMYears" type="text" class="asm-textbox asm-intbox" />', 
                 '<br />',

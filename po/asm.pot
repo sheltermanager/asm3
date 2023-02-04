@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-01-23 11:37+0000\n"
+"POT-Creation-Date: 2023-02-03 10:57+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -774,7 +774,7 @@ msgstr ""
 msgid "Adoptable and published for the first time"
 msgstr ""
 
-#: animal.py animal_find.js reports.js common_html.js
+#: animal.py animal_find.js reports.js animal.js common_html.js
 msgid "Adopted"
 msgstr ""
 
@@ -1588,6 +1588,10 @@ msgstr ""
 
 #: person_find_results.js
 msgid "Areas"
+msgstr ""
+
+#: animal.js
+msgid "Arrival"
 msgstr ""
 
 #: clinic_appointment.js
@@ -2916,9 +2920,10 @@ msgstr ""
 #: move_foster.js waitinglist_results.js person_find_results.js lostfound.js
 #: accounts.js medical.js log.js diary.js rota.js move_transfer.js
 #: move_retailer.js waitinglist_new.js move_reserve.js header_edit_header.js
-#: waitinglist.js transport.js medicalprofile.js litters.js common_widgets.js
-#: vaccination.js move_reclaim.js citations.js person.js move_deceased.js
-#: vouchers.js stocklevel.js animal_diet.js staff_rota.js move_adopt.js
+#: waitinglist.js transport.js medicalprofile.js animal.js litters.js
+#: common_widgets.js vaccination.js move_reclaim.js citations.js person.js
+#: move_deceased.js vouchers.js stocklevel.js animal_diet.js staff_rota.js
+#: move_adopt.js
 msgid "Comments"
 msgstr ""
 
@@ -4812,7 +4817,7 @@ msgstr ""
 msgid "Enabled"
 msgstr ""
 
-#: html.py event_new.js event.js event_find_results.js
+#: html.py event_new.js event.js animal.js event_find_results.js
 msgid "End Date"
 msgstr ""
 
@@ -5073,7 +5078,7 @@ msgstr ""
 msgid "Event successfully created"
 msgstr ""
 
-#: roles.js options.js
+#: animal.js roles.js options.js
 msgid "Events"
 msgstr ""
 
@@ -8520,6 +8525,10 @@ msgstr ""
 msgid "Never Vaccinated"
 msgstr ""
 
+#: options.js
+msgid "Never anonymize people who adopted an animal"
+msgstr ""
+
 #: dbupdate.py lookups.js person_investigation.js rota.js transport.js
 #: document_repository.js document_templates.js report_images.js
 msgid "New"
@@ -10162,6 +10171,10 @@ msgstr ""
 
 #: code.py batch.js
 msgid "Recalculate ALL animal ages/times"
+msgstr ""
+
+#: code.py batch.js
+msgid "Recalculate ALL animal breed names"
 msgstr ""
 
 #: code.py batch.js
@@ -12131,7 +12144,7 @@ msgstr ""
 msgid "Standardbred"
 msgstr ""
 
-#: html.py wordprocessor.py event_new.js medical.js event.js
+#: html.py wordprocessor.py event_new.js medical.js event.js animal.js
 #: event_find_results.js animal_diet.js
 msgid "Start Date"
 msgstr ""

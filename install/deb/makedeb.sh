@@ -79,6 +79,7 @@ python3 cron.py all
 chmod +x sheltermanager3/etc/cron.daily/sheltermanager3
 
 # Build the deb package
-dpkg -b sheltermanager3 sheltermanager3_`cat ../../VERSION`_all.deb
-
+# NOTE: -Zxz is specify xz compression for compatibility with Debian systems, Ubuntu uses zstd compression by default
+PKGNAME=sheltermanager3_`cat ../../VERSION`_all.deb
+dpkg-deb -b -Zxz sheltermanager3 $PKGNAME
 

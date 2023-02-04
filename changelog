@@ -1,6 +1,16 @@
+47
+================
+
+03/02/23 Batch processes to update breed names #1226
+03/02/23 Suppress redundant flag change log when creating new person
+01/02/23 Fix to additional field merge so that target doesn't need to exist first
+
 46
 ================
 
+30/01/23 onlineform: breed/species/colour lookups should have blank option
+29/01/23 When merging people and animals, copy/merge the additional field values
+28/01/23 Option to never anonymise adopters #1218
 23/01/23 Add animal events slider (Saggi Neuemann) #1221
 23/01/23 FTP TLS support for found/24pet 
 23/01/23 Event configuration options (Roman+Saggi) #1220
