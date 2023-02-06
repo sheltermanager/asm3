@@ -864,7 +864,7 @@ $(function() {
                 '</ul>',
                 '</div>',
                 '<div id="dialog-clone-confirm" style="display: none" title="' + html.title(_("Clone")) + '">',
-                '<p><span class="ui-icon ui-icon-alert"></span> Clone this animal?</p>',
+                '<p><span class="ui-icon ui-icon-alert"></span> ' + _("Clone this animal?") + '</p>',
                 '</div>',
                 '<div id="dialog-dt-date" style="display: none" title="' + html.title(_("Select date for diary task")) + '">',
                 '<input type="hidden" id="diarytaskid" />',
