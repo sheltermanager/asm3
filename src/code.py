@@ -3271,6 +3271,54 @@ class event(JSONEndpoint):
         self.check(asm3.users.DELETE_EVENT)
         asm3.event.delete_event(o.dbo, o.user, o.post.integer("eventid"))
 
+class event_animals(JSONEndpoint):
+    url = "event_animals"
+    get_permissions = asm3.users.VIEW_EVENT_ANIMALS
+
+    def controller(self, o):
+        dbo = o.dbo
+        event_id = o.post.integer("id")
+        e = asm3.event.get_event(dbo, o.post.integer("id"))
+        if e is None: self.notfound()
+        ea = asm3.event.get_animals_by_event(dbo, event_id)
+        asm3.al.debug("opened event animals %s" % event_id, "code.event_animals", dbo)
+        return{
+            "rows": ea,
+            "name": "event_animals",
+            "event": e,
+            "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event")
+        }
+
+    def post_create(self, o):
+        self.check(asm3.users.CHANGE_EVENT_ANIMALS)
+        asm3.event.insert_event_animal(o.dbo, o.user, o.post)
+
+    def post_createbulk(self, o):
+        self.check(asm3.users.CHANGE_EVENT_ANIMALS)
+        for animalid in o.post.integer_list("animals"):
+            o.post.data["animalid"] = str(animalid)
+            asm3.event.insert_event_animal(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(asm3.users.CHANGE_EVENT_ANIMALS)
+        asm3.event.update_event_animal(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(asm3.users.CHANGE_EVENT_ANIMALS)
+        for eaid in o.post.integer_list("ids"):
+            asm3.event.delete_event_animal(o.dbo, o.user, eaid)
+
+    def post_arrived(self, o):
+        self.check(asm3.users.CHANGE_EVENT_ANIMALS)
+        for eaid in o.post.integer_list("ids"):
+            asm3.event.update_event_animal_arrived(o.dbo, o.user, eaid)
+
+    def post_endactivefoster(self, o):
+        self.check(asm3.users.CHANGE_EVENT_ANIMALS) # TODO: change permission check
+        for eaid in o.post.integer_list("ids"):
+            asm3.event.end_active_foster(o.dbo, o.user, eaid)
+
+
 class event_find(JSONEndpoint):
     url = "event_find"
     get_permissions = asm3.users.VIEW_EVENT
