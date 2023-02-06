@@ -149,6 +149,17 @@ $(function(){
                             tableform.table_update(table);
                         } 
                     },
+                    { id: "filter", type: "dropdownfilter", 
+                     options: [ "all|" + _("All"), "arrived|" + _("Arrived"), 
+                        "noshow|" + _("No show"), "neednewfoster|" + _("Need new foster"), 
+                        "dontneednewfoster|" + _("Don't need new foster"),
+                        "adopted|" + _("Adopted"), 
+                        "notadopted|" + _("Not adopted") ],
+                     click: function(selval) {
+                        common.route(controller.name + "?id=" + controller.event.ID + "&filter=" + selval);
+                        common.route_reload();
+                     }
+                    }
                 ];
 
             this.dialog = dialog;
@@ -188,41 +199,6 @@ $(function(){
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            //this.bind_givendialog();
-            //this.bind_requireddialog();
-
-            //validate.indicator([ "animal", "animals" ]);
-
-            // When the vacc type is changed, update the default cost and batch/manufacturer
-            /*$("#type").change(function() {
-                vaccination.set_default_cost();
-                vaccination.set_expiry_date();
-                vaccination.set_last_batch();
-            });*/
-
-            // When focus leaves the given date, update the batch/manufacturer
-            //$("#given").blur(vaccination.set_last_batch);
-
-            // When the given date is changed, update the expiry date
-            //$("#given").change(vaccination.set_expiry_date);
-
-            // Remember the currently selected animal when it changes so we can add
-            // its name and code to the local set
-            //$("#animal").bind("animalchooserchange", function(event, rec) { vaccination.lastanimal = rec; });
-            //$("#animal").bind("animalchooserloaded", function(event, rec) { vaccination.lastanimal = rec; });
-
-            // Same for the vet
-            /*$("#administeringvet").bind("personchooserchange", function(event, rec) { vaccination.lastvet = rec; });
-            $("#administeringvet").bind("personchooserloaded", function(event, rec) { vaccination.lastvet = rec; });
-            $("#givenvet").bind("personchooserchange", function(event, rec) { vaccination.lastvet = rec; });
-            $("#givenvet").bind("personchooserloaded", function(event, rec) { vaccination.lastvet = rec; });
-
-
-            if (controller.newvacc == 1) {
-                this.new_vacc();
-            }
-*           */
-
         },
 
         enable_widgets: function(){
@@ -265,7 +241,9 @@ $(function(){
         sync: function(){
 
             // Load the data into the controls for the screen
-            //$("#asm-content input, #asm-content select, #asm-content textarea").fromJSON(controller.event);
+            if (common.querystring_param("filter")) {
+                $("#filter").select("value", common.querystring_param("filter"));
+            }
 
             // Update on-screen fields from the data and display the screen
             event_animals.enable_widgets();
@@ -274,40 +252,9 @@ $(function(){
             validate.bind_dirty([ "eventanimal_" ]);
         },
 
-        set_extra_fields: function(row) {
-            /*
-            if (controller.animal) {
-                row.LOCATIONUNIT = controller.animal.SHELTERLOCATIONUNIT;
-                row.LOCATIONNAME = controller.animal.SHELTERLOCATIONNAME;
-                row.ANIMALNAME = controller.animal.ANIMALNAME;
-                row.SHELTERCODE = controller.animal.SHELTERCODE;
-                row.WEBSITEMEDIANAME = controller.animal.WEBSITEMEDIANAME;
-            }
-            else if (vaccination.lastanimal) {
-                // Only switch the location for new records to prevent
-                // movementtypes being changed to internal locations on existing records
-                if (!row.LOCATIONNAME) {
-                    row.LOCATIONUNIT = vaccination.lastanimal.SHELTERLOCATIONUNIT;
-                    row.LOCATIONNAME = vaccination.lastanimal.SHELTERLOCATIONNAME;
-                }
-                row.ANIMALNAME = vaccination.lastanimal.ANIMALNAME;
-                row.SHELTERCODE = vaccination.lastanimal.SHELTERCODE;
-                row.WEBSITEMEDIANAME = vaccination.lastanimal.WEBSITEMEDIANAME;
-            }
-            row.ADMINISTERINGVETNAME = "";
-            if (row.ADMINISTERINGVETID && vaccination.lastvet) { row.ADMINISTERINGVETNAME = vaccination.lastvet.OWNERNAME; }
-            row.VACCINATIONTYPE = common.get_field(controller.vaccinationtypes, row.VACCINATIONID, "VACCINATIONTYPE");
-            */
-        },
-
         destroy: function() {
             common.widget_destroy("#dialog-arrived");
-            /*common.widget_destroy("#dialog-required");
-            common.widget_destroy("#dialog-arrived");
-            common.widget_destroy("#animal");
-            common.widget_destroy("#animals");
-            common.widget_destroy("#administeringvet", "personchooser");
-            common.widget_destroy("#givenvet", "personchooser");*/
+            common.widget_destroy("#dialog-endactivefoster");
             tableform.dialog_destroy();
         },
 

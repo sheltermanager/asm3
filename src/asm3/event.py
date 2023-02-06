@@ -44,11 +44,22 @@ def get_events_by_animal(dbo, animalid):
     """
     return dbo.query(get_event_animal_query(dbo) + " WHERE ea.animalid = ?", [animalid])
 
-def get_animals_by_event(dbo, eventid):
+def get_animals_by_event(dbo, eventid, queryfilter="all"):
     """
-    Returns all events for animalid
+    Returns all events for animalid.
+    if queryfilter is provided, add conditions
     """
-    return dbo.query(get_event_animal_query(dbo) + " WHERE ev.id=?", [eventid])
+    filters = {
+        "all": "",
+        "arrived": " AND ea.ArrivalDate is not null",
+        "noshow": " AND ea.ArrivalDate is null",
+        "neednewfoster": " AND lastfosterer.returndate IS NOT NULL",
+        "dontneednewfoster": " AND lastfosterer.returndate IS NULL",
+        "adopted": " AND ad.id IS NOT NULL",
+        "notadopted": " AND ad.id IS NULL",
+    }
+    whereclause = " WHERE ev.id=? " + (filters[queryfilter] if queryfilter in filters else "")
+    return dbo.query(get_event_animal_query(dbo) + whereclause, [eventid])
 
 
 def get_events_by_date(dbo, date):
@@ -212,7 +223,6 @@ def end_active_foster(dbo, username, id):
     """
     Set return date for an active foster for animal(s) in event
     """
-    asm3.al.info("in end_active_foster", "event.end_active_foster", dbo)
     sql = """SELECT ev.startdatetime, ea.animalid, m.id as movementid
              FROM event ev 
              INNER JOIN eventanimal ea ON ev.id = ea.eventid
@@ -223,11 +233,9 @@ def end_active_foster(dbo, username, id):
     """
     rows = dbo.query(sql, [id])
     if len(rows) > 0: # there is an active foster movement
-        asm3.al.info(f"keys: {rows[0].keys()}")
         animalid = rows[0]["ANIMALID"]
         eventstartdate = rows[0]["STARTDATETIME"]
         movementid = rows[0]["MOVEMENTID"]
-        asm3.al.info(f"setting return date. animalid = {animalid}, movementid = {movementid}, returndate = {max(eventstartdate, dbo.today())}", "event.end_active_foster", dbo)
         #return from foster at event start or today, whichever is latest
         asm3.movement.return_movement(dbo, movementid, username, animalid, returndate = max(eventstartdate, dbo.today()))
 
