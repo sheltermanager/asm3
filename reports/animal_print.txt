@@ -2,7 +2,7 @@ Print Animal Record
 ###
 Auditing
 ###
-34111/Any rev04
+34111/Any rev05
 ###
 A complete printout of an animal record.
 ###
@@ -47,12 +47,12 @@ ba2.ShelterCode AS Bonded2Code, ba2.AnimalName AS Bonded2Name,
 (SELECT NAME FROM lksyesno WHERE ID = a.IsDOA) AS ydoa,
 (SELECT NAME FROM lksyesno WHERE ID = a.DiedOffShelter) AS ydiedoffshelter
 FROM animal a
-INNER JOIN species ON species.ID = a.speciesID
-INNER JOIN internallocation ON internallocation.id = a.shelterlocation
-INNER JOIN basecolour ON basecolour.ID = a.basecolourID
-INNER JOIN animaltype ON animaltype.ID = a.animalTypeID
-INNER JOIN lksize ON lksize.ID=a.Size
-INNER JOIN entryreason ON entryreason.ID= a.entryreasonid
+LEFT OUTER JOIN species ON species.ID = a.speciesID
+LEFT OUTER JOIN internallocation ON internallocation.id = a.shelterlocation
+LEFT OUTER JOIN basecolour ON basecolour.ID = a.basecolourID
+LEFT OUTER JOIN animaltype ON animaltype.ID = a.animalTypeID
+LEFT OUTER JOIN lksize ON lksize.ID=a.Size
+LEFT OUTER JOIN entryreason ON entryreason.ID= a.entryreasonid
 LEFT OUTER JOIN lkcoattype ON lkcoattype.ID = a.CoatType
 LEFT OUTER JOIN deathreason ON deathreason.ID = a.ptsreasonid
 LEFT OUTER JOIN owner oo ON a.OriginalOwnerID = oo.ID
