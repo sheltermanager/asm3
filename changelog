@@ -1,6 +1,7 @@
 47
 ================
 
+07/02/23 Suggest current vet email address when emailing from media
 07/02/23 Truncate long payment comments when creating transactions
 03/02/23 Batch processes to update breed names #1226
 03/02/23 Suppress redundant flag change log when creating new person
