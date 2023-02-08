@@ -982,6 +982,9 @@ $(function() {
             if (controller.animal && controller.animal.BROUGHTINBYEMAILADDRESS) {
                 toaddresses.push(controller.animal.BROUGHTINBYEMAILADDRESS);
             }
+            if (controller.animal && controller.animal.CURRENTVETEMAILADDRESS) {
+                toaddresses.push(controller.animal.CURRENTVETEMAILADDRESS);
+            }
 
             $("#button-email").button().click(function() {
                 $("#emailform").emailform("show", {
