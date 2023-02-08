@@ -40,7 +40,7 @@ VERSIONS = (
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
-    34606, 34607, 34608, 34609, 34611
+    34606, 34607, 34608, 34609, 34611, 34700
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -58,7 +58,8 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "entryreason", "event", "eventanimal", "incidentcompleted", "incidenttype", "internallocation", 
     "jurisdiction", "licencetype", "lkanimalflags", "lkcoattype",
     "lkownerflags", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksex", 
-    "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", 
+    "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", 
+    "lksoutcome", "lksposneg", "lksrotatype", 
     "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", 
     "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
@@ -1107,6 +1108,9 @@ def sql_structure(dbo):
 
     sql += table("lksloglink", (
         fid(), fstr("LinkType") ), False)
+
+    sql += table("lksoutcome", (
+        fid(), fstr("Outcome") ), False)
 
     sql += table("lksrotatype", (
         fid(), fstr("RotaType"),
@@ -2377,6 +2381,19 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksloglink", "LinkType", 4, _("Waiting List", l))
     sql += lookup1("lksloglink", "LinkType", 5, _("Movement", l))
     sql += lookup1("lksloglink", "LinkType", 6, _("Incident", l))
+    sql += lookup1("lksoutcome", "Outcome", 1, _("On Shelter", l))
+    sql += lookup1("lksoutcome", "Outcome", 2, _("Died", l))
+    sql += lookup1("lksoutcome", "Outcome", 3, _("DOA", l))
+    sql += lookup1("lksoutcome", "Outcome", 4, _("Euthanized", l))
+    sql += lookup1("lksoutcome", "Outcome", 11, _("Adopted", l))
+    sql += lookup1("lksoutcome", "Outcome", 12, _("Fostered", l))
+    sql += lookup1("lksoutcome", "Outcome", 13, _("Transferred", l))
+    sql += lookup1("lksoutcome", "Outcome", 14, _("Escaped", l))
+    sql += lookup1("lksoutcome", "Outcome", 15, _("Reclaimed", l))
+    sql += lookup1("lksoutcome", "Outcome", 16, _("Stolen", l))
+    sql += lookup1("lksoutcome", "Outcome", 17, _("Released to Wild", l))
+    sql += lookup1("lksoutcome", "Outcome", 18, _("Retailer", l))
+    sql += lookup1("lksoutcome", "Outcome", 19, _("TNR", l))
     sql += lookup1("lksyesno", "Name", 0, _("No", l))
     sql += lookup1("lksyesno", "Name", 1, _("Yes", l))
     sql += lookup1("lksynun", "Name", 0, _("Yes", l))
@@ -5767,4 +5784,27 @@ def update_34611(dbo):
     # add eventanimal.Comments
     add_column(dbo, "eventanimal", "Comments", dbo.type_longtext)
     dbo.execute_dbupdate(dbo.ddl_drop_notnull("eventanimal", "ArrivalDate", dbo.type_datetime))
+
+def update_34700(dbo):
+    # add outcome table (mainly for string translations, used by v_animal view)
+    l = dbo.locale
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("Outcome", dbo.type_shorttext, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("lksoutcome", fields) )
+    dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (1, ?)", [ _("On Shelter", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (2, ?)", [ _("Died", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (3, ?)", [ _("DOA", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (4, ?)", [ _("Euthanized", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (11, ?)", [ _("Adopted", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (12, ?)", [ _("Fostered", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (13, ?)", [ _("Transferred", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (14, ?)", [ _("Escaped", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (15, ?)", [ _("Reclaimed", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (16, ?)", [ _("Stolen", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (17, ?)", [ _("Released to Wild", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (18, ?)", [ _("Retailer", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (19, ?)", [ _("TNR", l) ])
+
 

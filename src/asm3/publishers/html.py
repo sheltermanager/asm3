@@ -370,7 +370,7 @@ class HTMLPublisher(FTPPublisher):
             for k in a.keys():
                 if k.startswith("ORIGINALOWNER") or k.startswith("BROUGHTINBY") \
                     or k.startswith("RESERVEDOWNER") or k.startswith("CURRENTOWNER") \
-                    or k == "DISPLAYLOCATION":
+                    or k == "DISPLAYLOCATION" or k == "DISPLAYLOCATIONAME" or k == "OUTCOMEQUALIFIER":
                     a[k] = ""
         self.saveFile(os.path.join(self.publishDir, "db.js"), "publishDate='%s';animals=%s;" % (
             asm3.i18n.python2display(self.locale, asm3.i18n.now(self.dbo.timezone)), asm3.utils.json(animals)))

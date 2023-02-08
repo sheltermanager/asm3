@@ -45,6 +45,7 @@ LOOKUP_TABLES = {
     "licencetype":      (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", "add del ret cost", ("ownerlicence.LicenceTypeID",)),
     "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", "add del ret", ("log.LogTypeID",)),
     "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", "", ("adoption.MovementType", "animal.ActiveMovementType",)),
+    "lksoutcome":       (_("Outcomes"), "Outcome", _("Outcome"), "", "", ""),
     "lkownerflags":     (_("Person Flags"), "Flag", _("Flag"), "", "add del", ""),
     "lksrotatype":      (_("Rota Types"), "RotaType", _("Type"), "", "", ("ownerrota.RotaTypeID",)),
     "lksex":            (_("Sexes"), "Sex", _("Sex"), "", "", ("animal.Sex", "animallost.Sex", "animalfound.Sex")),

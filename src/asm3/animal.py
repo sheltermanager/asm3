@@ -192,6 +192,26 @@ def get_animal_query(dbo):
             "ELSE " \
             "(SELECT LocationName FROM internallocation WHERE ID=a.ShelterLocation) " \
         "END AS DisplayLocationName, " \
+        "CASE WHEN a.DeceasedDate Is Not Null AND a.PutToSleep = 0 AND a.IsDOA = 0 THEN " \
+                "(SELECT Outcome FROM lksoutcome WHERE ID = 2) " \
+            "WHEN a.DeceasedDate Is Not Null AND a.IsDOA = 1 THEN " \
+                "(SELECT Outcome FROM lksoutcome WHERE ID = 3) " \
+            "WHEN a.DeceasedDate Is Not Null AND a.PutToSleep = 1 THEN " \
+                "(SELECT Outcome FROM lksoutcome WHERE ID = 4) " \
+            "WHEN a.ActiveMovementDate Is Not Null THEN " \
+                "(SELECT Outcome FROM lksoutcome WHERE ID = a.ActiveMovementType + 10) " \
+            "ELSE " \
+                "(SELECT Outcome FROM lksoutcome WHERE ID = 1) " \
+        "END AS OutcomeName, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate " \
+            "WHEN a.ActiveMovementDate Is Not Null THEN a.ActiveMovementDate " \
+            "ELSE Null " \
+        "END AS OutcomeDate, " \
+        "CASE WHEN a.DeceasedDate Is Not Null THEN " \
+                "(SELECT ReasonName FROM deathreason WHERE ID = a.PTSReasonID) " \
+            "WHEN a.ActiveMovementDate Is Not Null THEN co.OwnerName " \
+            "ELSE '' " \
+        "END AS OutcomeQualifier, " \
         "web.ID AS WebsiteMediaID, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.Date AS WebsiteMediaDate, " \
