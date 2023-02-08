@@ -1913,7 +1913,7 @@ def generate_clinic_doc(dbo, templateid, appointmentid, username):
     a = asm3.animal.get_animal(dbo, c.ANIMALID)
     if a is not None:
         tags = append_tags(tags, animal_tags(dbo, a, includeAdditional=True, includeCosts=False, includeDiet=False, includeDonations=False, \
-            includeFutureOwner=False, includeIsVaccinated=False, includeLogs=False, includeMedical=False))
+            includeFutureOwner=False, includeIsVaccinated=True, includeLogs=False, includeMedical=True))
     p = asm3.person.get_person(dbo, c.OWNERID)
     if p is not None:
         tags = append_tags(tags, person_tags(dbo, p))

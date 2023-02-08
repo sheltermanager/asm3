@@ -1,6 +1,7 @@
 47
 ================
 
+08/02/23 Include medical info in clinic documents
 07/02/23 Suggest current vet email address when emailing from media
 07/02/23 Truncate long payment comments when creating transactions
 03/02/23 Batch processes to update breed names #1226
