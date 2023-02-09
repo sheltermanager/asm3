@@ -1,6 +1,7 @@
 47
 ================
 
+09/02/23 Retry failed S3 PUT upto 5 times with increasing intervals
 08/02/23 Add lksoutcome for outcome fields in v_animal and report/querybuilder
 08/02/23 Include medical info in clinic documents
 07/02/23 Suggest current vet email address when emailing from media

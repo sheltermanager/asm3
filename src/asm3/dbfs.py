@@ -244,23 +244,19 @@ class S3Storage(DBFSStorage):
         except Exception as err:
             asm3.al.error(str(err), "dbfs.S3Storage._s3_delete_object", self.dbo)
 
-    def _s3_put_object(self, bucket, key, body):
-        """ Puts an object in S3. This should be called on a new thread """
+    def _s3_put_object(self, bucket, key, body, attempts=1):
+        """ Puts an object in S3. This should be called on a new thread. Retries 5 times before sending an email. """
         try:
             x = time.time()
             self._s3client().put_object(Bucket=bucket, Key=key, Body=body)
-            asm3.al.debug("put_object(s3://%s/%s) %s bytes in %0.2fs" % (bucket, key, len(body), time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
+            asm3.al.debug("[%d] put_object(s3://%s/%s) %s bytes in %0.2fs" % (attempts, bucket, key, len(body), time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
         except Exception as err:
-            asm3.al.error(str(err), "dbfs.S3Storage._s3_put_object", self.dbo)
-            try:
-                # The PUT has failed. Wait 10 seconds and try to do it again. 
-                # If that fails, send an error email to the admin as this is a lost file and critical.
-                time.sleep(10)
-                self._s3client().put_object(Bucket=bucket, Key=key, Body=body)
-                asm3.al.debug("put_object(s3://%s/%s) %s bytes in %0.2fs" % (bucket, key, len(body), time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
-            except Exception as err2:
-                asm3.al.error("retry failed (%s): %s" % (key, err2), "dbfs.S3Storage._s3_put_object", self.dbo)
+            asm3.al.error(f"[try {attempts}]: {err}", "dbfs.S3Storage._s3_put_object", self.dbo)
+            if attempts > 5:
                 asm3.utils.send_error_email()
+            else:
+                time.sleep(10 * attempts) # wait an increasingly longer amount of time between retries
+                self._s3_put_object(bucket, key, body, attempts+1)
 
     def url_prefix(self):
         return "s3:"
