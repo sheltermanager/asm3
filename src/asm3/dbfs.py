@@ -251,7 +251,7 @@ class S3Storage(DBFSStorage):
             self._s3client().put_object(Bucket=bucket, Key=key, Body=body)
             asm3.al.debug("[%d] put_object(s3://%s/%s) %s bytes in %0.2fs" % (attempts, bucket, key, len(body), time.time() - x), "dbfs.S3Storage._s3_put_object", self.dbo)
         except Exception as err:
-            asm3.al.error(f"[try {attempts}]: {err}", "dbfs.S3Storage._s3_put_object", self.dbo)
+            asm3.al.error(f"[{attempts}]: {err}", "dbfs.S3Storage._s3_put_object", self.dbo)
             if attempts > 5:
                 asm3.utils.send_error_email()
             else:
