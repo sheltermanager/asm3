@@ -788,6 +788,7 @@ def check_create_next_donation(dbo, username, odid):
             "Quantity":             d.QUANTITY,
             "UnitPrice":            d.UNITPRICE,
             "Donation":             d.DONATION,
+            "Fee":                  d.FEE,
             "IsGiftAid":            d.ISGIFTAID,
             "DonationPaymentID":    d.DONATIONPAYMENTID,
             "Frequency":            d.FREQUENCY,
