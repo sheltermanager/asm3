@@ -185,7 +185,7 @@ def insert_event_animal(dbo, username, post):
     """
     eventid = post.integer("eventid")
     animalid = post.integer("animalid")
-    sql = "SELECT id FROM animalevent WHERE eventid = ? and animalid = ?"
+    sql = "SELECT id FROM eventanimal WHERE eventid = ? and animalid = ?"
     eventanimalid = dbo.query_int(sql, [eventid, animalid])
     if eventanimalid == 0:
         eventanimalid = dbo.insert("eventanimal", {

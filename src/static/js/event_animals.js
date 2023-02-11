@@ -29,7 +29,6 @@ $(function(){
                     tableform.fields_populate_from_json(dialog.fields, row);
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
-                    //event_animals.set_extra_fields(row); TODO: deal with this
                     try {
                         await tableform.fields_post(dialog.fields, "mode=update&eventanimalid=" + row.ID, "event_animals");
                         tableform.table_update(table);
@@ -104,9 +103,23 @@ $(function(){
 
             const buttons = [
                     { id: "addanimal", text: _("Add Animal"), icon: "animal-add", tooltip: _("Add animal to this event"), enabled: "always", perm: "cea",
-                        click: function() { event_animals.add_animal(); }},
+                        click: async function() { 
+                            $("#addanimal").animalchooser("clear");
+                            await tableform.show_okcancel_dialog("#dialog-addanimal", _("Add"), { notzero: [ "addanimal" ] });
+                            let a = $("#addanimal").animalchooser("get_selected");
+                            await common.ajax_post("event_animals", "mode=create&eventid=" + controller.event.ID + "&animalid=" + a.ID);
+                            //TODO: refresh list
+                        }
+                    },
                     { id: "addanimals", text: _("Add from List"), icon: "litter", tooltip: _("Add animals to this event from animal list"), enabled: "always", perm: "cea",
-                        click: function() { event_animals.add_bulk_animal(); }},
+                        click: async function() {
+                            $("#addanimals").animalchoosermulti("clear");
+                            await tableform.show_okcancel_dialog("#dialog-addbulkanimal", _("Add"), { notzero: [ "addanimals" ] });
+                            let animals = $("#addanimals").val();
+                            await common.ajax_post("event_animals", "mode=createbulk&eventid=" + controller.event.ID + "&animals=" + animals);
+                            //TODO: refresh list
+                        }
+                    },
                     { id: "removeanimal", text: _("Remove"), icon: "delete", tooltip: _(""), enabled: "multi", perm: "cea", 
                         click: async function() { 
                             await tableform.delete_dialog();
@@ -134,7 +147,7 @@ $(function(){
                         } 
                     },
                     { id: "animalendactivefoster", text: _("End active foster"), tooltip: _("Set current foster movement return date to event start or current time, whichever is later"), enabled: "multi", perm: "cea",
-                        click: async function() { //TODO: change permission check
+                        click: async function() {
                             await tableform.show_okcancel_dialog("#dialog-endactivefoster", _("Ok"));
                             tableform.buttons_default_state(buttons);
                             let ids = tableform.table_ids(table);
@@ -158,6 +171,7 @@ $(function(){
                      click: function(selval) {
                         common.route(controller.name + "?id=" + controller.event.ID + "&filter=" + selval);
                         common.route_reload();
+                        //TODO: refresh list - get request doesn't get all arguments (filter specifically, until reload)
                      }
                     }
                 ];
@@ -179,13 +193,36 @@ $(function(){
                 '</div>'].join("\n");
         }, 
 
+        render_addanimaldialog: function() {
+            return ['<div id="dialog-addanimal" style="display: none" title="' + html.title(_("Add animal")) + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="addanimal">' + _("Animal") + '</label></td>',
+                '<td><input id="addanimal" data="addanimal" type="hidden" class="asm-animalchooser" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'].join("\n");
+        },
+
+        render_addbulkanimaldialog: function() {
+            return ['<div id="dialog-addbulkanimal" style="display: none" title="' + html.title(_("Add animals")) + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="addanimals">' + _("Animals") + '</label></td>',
+                '<td><input id="addanimals" data="addanimals" type="hidden" class="asm-animalchoosermulti" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'].join("\n");
+        },
+
         render: function() {
             let s = "";
             this.model();
             s += tableform.dialog_render(this.dialog);
             s += event_animals.render_arriveddialog();
             s += event_animals.render_endactivefosterdialog();
-            //TODO: change s += vaccination.render_givendialog();
+            s += event_animals.render_addanimaldialog();
+            s += event_animals.render_addbulkanimaldialog();
             s += edit_header.event_edit_header(controller.event, "event_animals", []);
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
@@ -255,6 +292,8 @@ $(function(){
         destroy: function() {
             common.widget_destroy("#dialog-arrived");
             common.widget_destroy("#dialog-endactivefoster");
+            common.widget_destroy("#dialog-addanimal");
+            common.widget_destroy("#dialog-addanimals");
             tableform.dialog_destroy();
         },
 
