@@ -1,6 +1,8 @@
 47
 ================
 
+10/02/23 Add option for more 4 more payment mappings (and easy way to add more)
+10/02/23 Copy the fee when creating a new due payment
 09/02/23 Retry failed S3 PUT upto 5 times with increasing intervals
 08/02/23 Add lksoutcome for outcome fields in v_animal and report/querybuilder
 08/02/23 Include medical info in clinic documents
