@@ -430,27 +430,25 @@ def execute_diary_task(dbo, username, tasktype, taskid, linkid, selecteddate):
     linkid: The ID of the animal or person to run against
     selecteddate: If the task has any detail records with a pivot of 0, the date to supply (as python date)
     """
-    def fix(s):
-        return s.replace("<", "&lt;").replace(">", "&gt;")
     rollingdate = dbo.today()
     dtd = dbo.query("SELECT * FROM diarytaskdetail WHERE DiaryTaskHeadID = ? ORDER BY OrderIndex", [taskid])
     tags = {}
     linktype = ANIMAL
     if tasktype == "ANIMAL": 
         linktype = ANIMAL
-        tags = asm3.wordprocessor.animal_tags(dbo, asm3.animal.get_animal(dbo, int(linkid)))
+        tags = asm3.wordprocessor.animal_tags(dbo, asm3.animal.get_animal(dbo, linkid))
     elif tasktype == "PERSON": 
         linktype = PERSON
-        tags = asm3.wordprocessor.person_tags(dbo, asm3.person.get_person(dbo, int(linkid)))
+        tags = asm3.wordprocessor.person_tags(dbo, asm3.person.get_person(dbo, linkid))
     for d in dtd:
-        if d["DAYPIVOT"] == 9999: 
+        if d.DAYPIVOT == 9999: 
             rollingdate = selecteddate
         else:
-            rollingdate = asm3.i18n.add_days(rollingdate, int(d["DAYPIVOT"]))
-        insert_diary(dbo, username, linktype, int(linkid), rollingdate, \
-            d["WHOFOR"], \
-            asm3.wordprocessor.substitute_tags(fix(d["SUBJECT"]), tags, True), \
-            asm3.wordprocessor.substitute_tags(fix(d["NOTE"]), tags, True))
+            rollingdate = asm3.i18n.add_days(rollingdate, int(d.DAYPIVOT))
+        insert_diary(dbo, username, linktype, linkid, rollingdate, \
+            d.WHOFOR, \
+            asm3.wordprocessor.substitute_tags(d.SUBJECT, tags), \
+            asm3.wordprocessor.substitute_tags(d.NOTE, tags))
 
 def insert_diarytaskhead_from_form(dbo, username, post):
     """

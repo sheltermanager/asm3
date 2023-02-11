@@ -169,9 +169,9 @@ def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locatio
         # Set the description
         if asm3.configuration.publisher_use_comments(dbo):
             a.WEBSITEMEDIANOTES = a.ANIMALCOMMENTS
-        # Add extra publishing text, preserving the line endings
-        notes = asm3.utils.nulltostr(a.WEBSITEMEDIANOTES).replace("\n", "<br/>")
-        notes += asm3.configuration.third_party_publisher_sig(dbo).replace("\n", "<br/>")
+        # Add extra publishing text
+        notes = asm3.utils.nulltostr(a.WEBSITEMEDIANOTES)
+        notes += asm3.configuration.third_party_publisher_sig(dbo)
         tags["WEBMEDIANOTES"] = notes 
         tags["WEBSITEMEDIANOTES"] = notes # Compatibility, both are valid in asm3.wordprocessor.py
         bodies.append(asm3.wordprocessor.substitute_tags(body, tags, True, "$$", "$$"))
@@ -204,14 +204,12 @@ def get_animal_view(dbo, animalid):
     # Add extra tags for websitemedianame2-10 if they exist
     for x in range(2, 11):
         if a.WEBSITEIMAGECOUNT > x-1: tags["WEBMEDIAFILENAME%d" % x] = "%s&seq=%d" % (a.WEBSITEMEDIANAME, x)
-    # Add extra publishing text, preserving the line endings
+    # Add extra publishing text
     notes = asm3.utils.nulltostr(a.WEBSITEMEDIANOTES)
     notes += asm3.configuration.third_party_publisher_sig(dbo)
-    notes = notes.replace("\n", "**le**")
     tags["WEBMEDIANOTES"] = notes 
     tags["WEBSITEMEDIANOTES"] = notes 
     s = asm3.wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
-    s = s.replace("**le**", "<br />")
     return s
 
 def get_animal_view_adoptable_html(dbo):
@@ -355,12 +353,9 @@ class HTMLPublisher(FTPPublisher):
         notes = asm3.utils.nulltostr(a["WEBSITEMEDIANOTES"])
         # Add any extra text
         notes += asm3.configuration.third_party_publisher_sig(self.dbo)
-        # Preserve line endings in the bio
-        notes = notes.replace("\n", "**le**")
         tags["WEBMEDIANOTES"] = notes 
         tags["WEBSITEMEDIANOTES"] = notes 
         output = asm3.wordprocessor.substitute_tags(searchin, tags, True, "$$", "$$")
-        output = output.replace("**le**", "<br />")
         return output
 
     def writeJavaScript(self, animals):

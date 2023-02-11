@@ -79,7 +79,7 @@ ShortShelterCode
 Age
     The animal's age in readable form (eg: “5 years and 6 months”) 
 Description / AnimalComments
-    The animal description box. Use DescriptionBR or AnimalCommentsBR to retain line breaks.
+    The animal description box. 
 HealthProblems
     The health problems field 
 LitterID / AcceptanceNumber
@@ -1134,7 +1134,7 @@ CallerWorkTelephone
 CallerMobileTelephone / CallerCellTelephone
     The caller's mobile number
 CallNotes
-    Any notes about the call. Use CallNotesBR to retain line breaks.
+    Any notes about the call. 
 CallTaker
     The username of the staff member that took the call
 DispatchDate

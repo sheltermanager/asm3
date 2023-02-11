@@ -1105,14 +1105,14 @@ def generator2file(outfile, fn, *args):
         for x in fn(*args):
             f.write(x)
 
-def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;", closer = "&gt;&gt;"):
+def substitute_tags(searchin, tags, escape_html = True, opener = "&lt;&lt;", closer = "&gt;&gt;", crToBr = True):
     """
-    Substitutes the dictionary of tags in "tags" for any found
-    in "searchin". opener and closer denote the start of a tag,
-    if use_xml_escaping is set to true, then tags are XML escaped when
-    output and opener/closer are escaped.
+    Substitutes the dictionary of tags in "tags" for any found in "searchin". 
+    opener and closer: denote the start/end of a tag,
+    escape_html: if true, then <, > and & are turned into HTML entities
+    crToBr: if true, replace line breaks in values with HTML br tags
     """
-    if not use_xml_escaping:
+    if not escape_html:
         opener = opener.replace("&lt;", "<").replace("&gt;", ">")
         closer = closer.replace("&lt;", "<").replace("&gt;", ">")
 
@@ -1124,14 +1124,23 @@ def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;"
             matchtag = s[sp + len(opener):ep].upper()
             newval = ""
             if matchtag in tags:
-                newval = tags[matchtag]
-                if newval is not None:
-                    newval = str(newval)
-                    if use_xml_escaping and not newval.lower().startswith("<img"):
-                        newval = newval.replace("&", "&amp;")
-                        newval = newval.replace("<", "&lt;")
-                        newval = newval.replace(">", "&gt;")
-            s = s[0:sp] + str(newval) + s[ep + len(closer):]
+                newval = str(tags[matchtag])
+                # Escape <>& unless the replacement value is an
+                # image, URL or already contains HTML entities
+                if escape_html and \
+                    not newval.lower().startswith("<img") and \
+                    not newval.lower().find("&#") != -1 and \
+                    not newval.lower().find("/>") != -1 and \
+                    not newval.lower().startswith("<table") and \
+                    not newval.lower().startswith("http") and \
+                    not newval.lower().startswith("image?"):
+                    newval = newval.replace("&", "&amp;")
+                    newval = newval.replace("<", "&lt;")
+                    newval = newval.replace(">", "&gt;")
+                # Switch linebreaks if requested
+                if crToBr: 
+                    newval = newval.replace("\n", "<br>")
+            s = "%s%s%s" % ( s[0:sp], newval, s[ep + len(closer):] )
             sp = s.find(opener, sp)
         else:
             # No end marker for this tag, stop processing

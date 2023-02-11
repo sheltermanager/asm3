@@ -238,7 +238,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "DISPLAYLOCATION"       : a["DISPLAYLOCATION"],
         "COATTYPE"              : a["COATTYPENAME"],
         "HEALTHPROBLEMS"        : a["HEALTHPROBLEMS"],
-        "HEALTHPROBLEMSBR"      : br(a["HEALTHPROBLEMS"]),
+        "HEALTHPROBLEMSBR"      : a["HEALTHPROBLEMS"],
         "ANIMALCREATEDBY"       : a["CREATEDBY"],
         "ANIMALCREATEDDATE"     : python2display(l, a["CREATEDDATE"]),
         "DATEBROUGHTIN"         : python2display(l, a["DATEBROUGHTIN"]),
@@ -277,13 +277,13 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "HEARTWORMTESTDATE"     : asm3.utils.iif(a["HEARTWORMTESTED"] == 1, python2display(l, a["HEARTWORMTESTDATE"]), ""),
         "HEARTWORMTESTRESULT"   : asm3.utils.iif(a["HEARTWORMTESTED"] == 1, a["HEARTWORMTESTRESULTNAME"], ""),
         "HIDDENCOMMENTS"        : a["HIDDENANIMALDETAILS"],
-        "HIDDENCOMMENTSBR"      : br(a["HIDDENANIMALDETAILS"]),
+        "HIDDENCOMMENTSBR"      : a["HIDDENANIMALDETAILS"],
         "HIDDENANIMALDETAILS"   : a["HIDDENANIMALDETAILS"],
-        "HIDDENANIMALDETAILSBR" : br(a["HIDDENANIMALDETAILS"]),
+        "HIDDENANIMALDETAILSBR" : a["HIDDENANIMALDETAILS"],
         "ANIMALLASTCHANGEDBY"   : a["LASTCHANGEDBY"],
         "ANIMALLASTCHANGEDDATE" : python2display(l, a["LASTCHANGEDDATE"]),
         "MARKINGS"              : a["MARKINGS"],
-        "MARKINGSBR"            : br(a["MARKINGS"]),
+        "MARKINGSBR"            : a["MARKINGS"],
         "DECLAWED"              : a["DECLAWEDNAME"],
         "RABIESTAG"             : a["RABIESTAG"],
         "GOODWITHCATS"          : a["ISGOODWITHCATSNAME"],
@@ -453,7 +453,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "ENTRYCATEGORY"         : a["ENTRYREASONNAME"],
         "MOSTRECENTENTRYCATEGORY" : a["ENTRYREASONNAME"],
         "REASONFORENTRY"        : a["REASONFORENTRY"],
-        "REASONFORENTRYBR"      : br(a["REASONFORENTRY"]),
+        "REASONFORENTRYBR"      : a["REASONFORENTRY"],
         "REASONNOTBROUGHTBYOWNER" : a["REASONNO"],
         "SEX"                   : a["SEXNAME"],
         "SIZE"                  : a["SIZENAME"],
@@ -462,9 +462,9 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "SPECIESNAME"           : a["SPECIESNAME"],
         "ANIMALFLAGS"           : asm3.utils.nulltostr(a["ADDITIONALFLAGS"]).replace("|", ", "),
         "ANIMALCOMMENTS"        : a["ANIMALCOMMENTS"],
-        "ANIMALCOMMENTSBR"      : br(a["ANIMALCOMMENTS"]),
+        "ANIMALCOMMENTSBR"      : a["ANIMALCOMMENTS"],
         "DESCRIPTION"           : a["ANIMALCOMMENTS"],
-        "DESCRIPTIONBR"         : br(a["ANIMALCOMMENTS"]),
+        "DESCRIPTIONBR"         : a["ANIMALCOMMENTS"],
         "SHELTERCODE"           : a["SHELTERCODE"],
         "AGE"                   : animalage,
         "ACCEPTANCENUMBER"      : a["ACCEPTANCENUMBER"],
@@ -869,7 +869,7 @@ def animalcontrol_tags(dbo, ac):
         "CALLDATE":             python2display(l, ac["CALLDATETIME"]),
         "CALLTIME":             format_time(ac["CALLDATETIME"], "%H:%M"),
         "CALLNOTES":            ac["CALLNOTES"],
-        "CALLNOTESBR":          br(ac["CALLNOTES"]),
+        "CALLNOTESBR":          ac["CALLNOTES"],
         "CALLTAKER":            ac["CALLTAKER"],
         "DISPATCHDATE":         python2display(l, ac["DISPATCHDATETIME"]),
         "DISPATCHTIME":         format_time(ac["DISPATCHDATETIME"], "%H:%M"),
@@ -1765,52 +1765,11 @@ def table_tags(dbo, d, rows, typefield = "", recentduefield = "", recentgivenfie
                     tags[k + "RECENT" + t] = table_get_value(l, r, v)
     return tags
 
-def substitute_tags_plain(searchin, tags):
+def substitute_tags(searchin, tags, escape_html = True, opener = "&lt;&lt;", closer = "&gt;&gt;", crToBr = True):
     """
-    Substitutes the dictionary of tags in "tags" for any found in
-    "searchin". This is a convenience method for plain text substitution
-    with << >> opener/closers and no XML escaping.
+    Just to make code more readable as other areas call wordprocessor to build tags and do substitutions
     """
-    return substitute_tags(searchin, tags, False, "<<", ">>")
-
-def substitute_tags(searchin, tags, use_xml_escaping = True, opener = "&lt;&lt;", closer = "&gt;&gt;"):
-    """
-    Substitutes the dictionary of tags in "tags" for any found
-    in "searchin". opener and closer denote the start of a tag,
-    if use_xml_escaping is set to true, then tags are XML escaped when
-    output and opener/closer are escaped.
-    """
-    if not use_xml_escaping:
-        opener = opener.replace("&lt;", "<").replace("&gt;", ">")
-        closer = closer.replace("&lt;", "<").replace("&gt;", ">")
-
-    s = searchin
-    sp = s.find(opener)
-    while sp != -1:
-        ep = s.find(closer, sp + len(opener))
-        if ep != -1:
-            matchtag = s[sp + len(opener):ep].upper()
-            newval = ""
-            if matchtag in tags:
-                newval = str(tags[matchtag])
-                # Escape xml entities unless the replacement tag is an
-                # image, URL or contains HTML entities
-                if use_xml_escaping and \
-                    not newval.lower().startswith("<img") and \
-                    not newval.lower().find("&#") != -1 and \
-                    not newval.lower().find("/>") != -1 and \
-                    not newval.lower().startswith("<table") and \
-                    not newval.lower().startswith("http") and \
-                    not newval.lower().startswith("image?"):
-                    newval = newval.replace("&", "&amp;")
-                    newval = newval.replace("<", "&lt;")
-                    newval = newval.replace(">", "&gt;")
-            s = "%s%s%s" % ( s[0:sp], newval, s[ep + len(closer):] )
-            sp = s.find(opener, sp)
-        else:
-            # No end marker for this tag, stop processing
-            break
-    return s
+    return asm3.utils.substitute_tags(searchin, tags, escape_html, opener, closer, crToBr)
 
 def substitute_template(dbo, templateid, tags, imdata = None):
     """
@@ -1824,14 +1783,14 @@ def substitute_template(dbo, templateid, tags, imdata = None):
     if templatename.endswith(".html"):
         # Translate any user signature placeholder
         templatedata = asm3.utils.bytes2str(templatedata).replace("signature:user", "&lt;&lt;UserSignatureSrc&gt;&gt;")
-        return substitute_tags(templatedata, tags)
+        return asm3.utils.substitute_tags(templatedata, tags)
     elif templatename.endswith(".odt"):
         try:
             odt = asm3.utils.bytesio(templatedata)
             zf = zipfile.ZipFile(odt, "r")
             # Load the content.xml file and substitute the tags
             content = asm3.utils.bytes2str(zf.open("content.xml").read())
-            content = substitute_tags(content, tags)
+            content = substitute_tags(content, tags, crToBr=False)
             # Write the replacement file
             zo = asm3.utils.bytesio()
             zfo = zipfile.ZipFile(zo, "w", zipfile.ZIP_DEFLATED)
