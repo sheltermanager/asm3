@@ -2,7 +2,7 @@ Print Animal Record
 ###
 Auditing
 ###
-34111/Any rev05
+34111/Any rev06
 ###
 A complete printout of an animal record.
 ###
@@ -665,8 +665,7 @@ FOOTER$$
 +++
 SUBREPORT_AnimalPrintMovementNoPerson
 +++
-SELECT ad.*, mt.MovementType,
-o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone, o.EmailAddress
+SELECT ad.*, mt.MovementType
 FROM adoption ad
 INNER JOIN lksmovementtype mt ON mt.ID = ad.MovementType
 LEFT OUTER JOIN owner o ON o.ID = ad.OwnerID
@@ -675,7 +674,7 @@ ORDER BY ad.ReservationDate, ad.MovementDate
 +++
 $$HEADER
 <table cellpadding="5">
-<tr><th>Number</th><th>Owner</th><th>Reservation</th><th>Cancelled</th><th>Movement</th><th>Type</th><th>Returned</th><th>Reason</th><th>Comments</th></tr>
+<tr><th>Number</th><th>Reservation</th><th>Cancelled</th><th>Movement</th><th>Type</th><th>Returned</th><th>Reason</th><th>Comments</th></tr>
 HEADER$$
 $$BODY
 <tr><td>$ADOPTIONNUMBER</td>
