@@ -108,7 +108,7 @@ $(function(){
                             await tableform.show_okcancel_dialog("#dialog-addanimal", _("Add"), { notzero: [ "addanimal" ] });
                             let a = $("#addanimal").animalchooser("get_selected");
                             await common.ajax_post("event_animals", "mode=create&eventid=" + controller.event.ID + "&animalid=" + a.ID);
-                            //TODO: refresh list
+                            common.route_reload();
                         }
                     },
                     { id: "addanimals", text: _("Add from List"), icon: "litter", tooltip: _("Add animals to this event from animal list"), enabled: "always", perm: "cea",
@@ -117,7 +117,7 @@ $(function(){
                             await tableform.show_okcancel_dialog("#dialog-addbulkanimal", _("Add"), { notzero: [ "addanimals" ] });
                             let animals = $("#addanimals").val();
                             await common.ajax_post("event_animals", "mode=createbulk&eventid=" + controller.event.ID + "&animals=" + animals);
-                            //TODO: refresh list
+                            common.route_reload();
                         }
                     },
                     { id: "removeanimal", text: _("Remove"), icon: "delete", tooltip: _(""), enabled: "multi", perm: "cea", 
@@ -170,7 +170,6 @@ $(function(){
                         "notadopted|" + _("Not adopted") ],
                      click: function(selval) {
                         common.route(controller.name + "?id=" + controller.event.ID + "&filter=" + selval);
-                        common.route_reload();
                         //TODO: refresh list - get request doesn't get all arguments (filter specifically, until reload)
                      }
                     }
