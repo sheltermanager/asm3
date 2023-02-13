@@ -1139,6 +1139,7 @@ def substitute_tags(searchin, tags, escape_html = True, opener = "&lt;&lt;", clo
                     newval = newval.replace(">", "&gt;")
                 # Switch linebreaks if requested
                 if crToBr: 
+                    newval = newval.replace("\r\n", "<br>")
                     newval = newval.replace("\n", "<br>")
             s = "%s%s%s" % ( s[0:sp], newval, s[ep + len(closer):] )
             sp = s.find(opener, sp)
@@ -1879,7 +1880,7 @@ def send_bulk_email(dbo, replyadd, subject, body, rows, contenttype):
     """
     def do_send():
         for r in rows:
-            ssubject = substitute_tags(subject, r, False, opener = "<<", closer = ">>")
+            ssubject = substitute_tags(subject, r, False, opener = "<<", closer = ">>", crToBr = False)
             sbody = substitute_tags(body, r)
             toadd = r["EMAILADDRESS"]
             if toadd is None or toadd.strip() == "": continue
