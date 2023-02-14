@@ -1236,11 +1236,14 @@ def merge_person(dbo, username, personid, mergepersonid):
     reparent("diary", "LinkID", "LinkType", asm3.diary.PERSON)
     reparent("log", "LinkID", "LinkType", asm3.log.PERSON, haslastchanged=False)
               
-    # Change any additional field links pointing to the merge person
+    # Change any additional fields of type person on other records that point to the merge person
     asm3.additional.update_merge_person(dbo, mergepersonid, personid)
 
     # Copy additional field values from mergeperson to person
     asm3.additional.merge_values(dbo, username, mergepersonid, personid, "person")
+
+    # Delete the old additional field values from mergeperson
+    dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (mergepersonid, asm3.additional.PERSON_IN))
 
     # Assign the adopter flag if we brought in new open adoption movements
     update_adopter_flag(dbo, username, personid)

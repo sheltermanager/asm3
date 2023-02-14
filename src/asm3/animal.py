@@ -3413,8 +3413,11 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     # Change any additional field links pointing to the merge animal
     asm3.additional.update_merge_person(dbo, mergeanimalid, animalid)
 
-    # Copy additional field values from mergeperson to person
+    # Copy additional field values from mergeanimal to animal
     asm3.additional.merge_values(dbo, username, mergeanimalid, animalid, "animal")
+
+    # Delete the old additional field values from mergeanimal
+    dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (mergeanimalid, asm3.additional.ANIMAL_IN))
 
     # Reparent the audit records for the reparented records in the audit log
     # by switching ParentLinks to the new ID.
