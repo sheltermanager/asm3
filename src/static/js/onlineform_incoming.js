@@ -39,7 +39,7 @@ $(function() {
             };
 
             const buttons = [
-                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 
+                { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "dif", 
                     click: async function() { 
                         await tableform.delete_dialog();
                         tableform.buttons_default_state(buttons);
@@ -49,7 +49,7 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
-                { id: "deleteprocessed", text: _("Delete Processed"), icon: "delete", enabled: "always",
+                { id: "deleteprocessed", text: _("Delete Processed"), icon: "delete", enabled: "always", perm: "dif", 
                     mouseover: function() {
                        onlineform_incoming.highlight_processed(true);
                     },

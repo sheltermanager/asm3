@@ -1,6 +1,7 @@
 47
 ================
 
+15/02/23 Check permissions for delete buttons on incoming forms
 14/02/23 Delete additional field values after merging animal/person
 11/02/23 Substitute line breaks automatically in all word processor tokens
 10/02/23 Add option for more 4 more payment mappings (and easy way to add more)
