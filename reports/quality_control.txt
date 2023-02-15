@@ -937,6 +937,7 @@ AND ((regexp_replace(o.hometelephone, '\D','','g') <> '' AND RIGHT(regexp_replac
    OR (regexp_replace(o.hometelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.hometelephone, '\D','','g'),10) LIKE RIGHT(regexp_replace(ow.mobiletelephone, '\D','','g'),10) AND ow.mobiletelephone <> '')
    OR (regexp_replace(o.mobiletelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.mobiletelephone, '\D','','g'),10) LIKE RIGHT(regexp_replace(ow.mobiletelephone, '\D','','g'),10) AND ow.mobiletelephone <> '')
    OR (regexp_replace(o.mobiletelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.mobiletelephone, '\D','','g'),10) LIKE RIGHT(regexp_replace(ow.hometelephone, '\D','','g'),10) AND ow.hometelephone <> ''))
+   AND NOT ((lower(o.comments) like 'see%' OR lower(o.comments) like '%see%') AND (lower(ow.comments) like 'see%' OR lower(ow.comments) like '%see%'))
 
 -- Looks for invalid email addresses missing @ or . and looks for emails with space (emails can have a comma and space separating emails IF listing two or more addresses).  Added 10/28/2021
 UNION SELECT 
@@ -1113,6 +1114,7 @@ WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
   AND LOWER(o.ownersurname) = LOWER(ow.ownersurname) 
   AND LOWER(o.ownerforenames) = LOWER(ow.ownerforenames)
   AND o.id <> ow.id
+  AND lower(o.ownersurname) NOT IN ('jackson','johnson','jones','smith','white','williams')
 
 -- Checks for Duplicate Drivers License which is an ADDITIONAL FIELD! Added 1/22/2023
 UNION SELECT
@@ -1124,6 +1126,7 @@ FROM owner o, owner ow
 where (SELECT value from additional INNER JOIN additionalfield ON additionalfield.id = additionalfieldid where additional.linkid = o.ID AND additionalfield.fieldname = 'DriversLicense')
 = (SELECT value from additional INNER JOIN additionalfield ON additionalfield.id = additionalfieldid where additional.linkid = ow.ID AND additionalfield.fieldname = 'DriversLicense')
 AND o.id <> ow.id
+AND date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
 
 ) dummy
 ORDER BY 4,3
