@@ -467,8 +467,29 @@ new animal record:
 * Costs
 * Diary notes
 
-In addition, you can further define a template animal for baby animals (puppies
-and kittens). If the animal's age is under the system defined "baby split" of 6
-months by default, the system will first look for templates called
+Baby Animals
+^^^^^^^^^^^^
+
+In addition, you can further define a template animal that will only be applied
+to baby animals. If the animal's age is under the system default defined "baby
+split" of 6 months, the system will first look for template animals named
 TemplateTypeBaby and TemplateSpeciesBaby before falling back to TemplateType
-and TemplateSpecies.
+and TemplateSpecies if they do not exist.
+
+Calculating offsets from Date Of Birth
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The default behaviour is to have the system calculate the date offset based on
+the difference between date brought in and the current item, then add it to the
+date brought in on the new record. 
+
+If you would prefer to calculate the offset based on the date of birth and the
+current item, with it similarly being added to the date of birth on the new
+record, then you can do this by appending DOB to the template animalname, eg:
+TemplateSpeciesBabyDOB to calculate on date of birth for a template that
+applies to baby animals based on species.
+
+This feature is particularly useful for vaccinations and other medical
+treatments (eg: first worm/flea treatment, spay/neuter etc) that are first
+given to juvenile animals at a fixed age rather than based on when they entered
+your care.

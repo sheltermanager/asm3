@@ -2446,7 +2446,7 @@ def insert_animal_from_form(dbo, post, username):
     # Only do it if this animal is a shelter animal or if the override is on to force
     # templates for non-shelter animals.
     if not post.boolean("nonshelter") or asm3.configuration.templates_for_nonshelter(dbo):
-        clone_from_template(dbo, username, nextid, dob, post.integer("animaltype"), post.integer("species"))
+        clone_from_template(dbo, username, nextid, datebroughtin, dob, post.integer("animaltype"), post.integer("species"))
 
     return (nextid, get_code(dbo, nextid))
 
@@ -3175,7 +3175,7 @@ def clone_animal(dbo, username, animalid):
     update_variable_animal_data(dbo, nid)
     return nid
 
-def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
+def clone_from_template(dbo, username, animalid, datebroughtin, dob, animaltypeid, speciesid):
     """
     Tries to locate a non-shelter animal called "TemplateType" with animaltypeid,
     if it doesn't find one, it looks for a non-shelter animal called "TemplateSpecies"
@@ -3185,12 +3185,18 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     Clones appropriate medical, cost and diet info from the template animal.
     """
     babyqueries = [
+        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetypebabydob' AND AnimalTypeID = %d" % animaltypeid,
+        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespeciesbabydob' AND SpeciesID = %d" % speciesid,
         "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetypebaby' AND AnimalTypeID = %d" % animaltypeid,
         "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespeciesbaby' AND SpeciesID = %d" % speciesid,
+        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetypedob' AND AnimalTypeID = %d" % animaltypeid,
+        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespeciesdob' AND SpeciesID = %d" % speciesid,
         "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetype' AND AnimalTypeID = %d" % animaltypeid,
         "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespecies' AND SpeciesID = %d" % speciesid
     ]
     adultqueries = [ 
+        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetypedob' AND AnimalTypeID = %d" % animaltypeid,
+        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespeciesdob' AND SpeciesID = %d" % speciesid,
         "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetype' AND AnimalTypeID = %d" % animaltypeid,
         "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespecies' AND SpeciesID = %d" % speciesid
     ]
@@ -3210,10 +3216,15 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
     if cloneanimalid == 0:
         return
     # Any animal fields that should be copied to the new record
-    copyfrom = dbo.first_row( dbo.query("SELECT IsNotAvailableForAdoption, IsNotForRegistration, IsHold, AdditionalFlags, " \
-        "DateBroughtIn, Fee, CurrentVetID, AnimalComments FROM animal WHERE ID = ?", [cloneanimalid]) )
-    broughtin = copyfrom.datebroughtin
-    newbroughtin = dbo.query_date("SELECT DateBroughtIn FROM animal WHERE ID = ?", [animalid])
+    copyfrom = dbo.first_row( dbo.query("SELECT AnimalName, IsNotAvailableForAdoption, IsNotForRegistration, IsHold, AdditionalFlags, " \
+        "DateBroughtIn, DateOfBirth, Fee, CurrentVetID, AnimalComments FROM animal WHERE ID = ?", [cloneanimalid]) )
+    # Use datebroughtin for calculating date offsets
+    templatedate = copyfrom.DATEBROUGHTIN
+    newrecorddate = datebroughtin
+    # Unless the selected template that we're using specified date of birth
+    if copyfrom.ANIMALNAME.lower().endswith("dob"):
+        templatedate = copyfrom.DATEOFBIRTH
+        newrecorddate = dob
     # Only set flags on the new record if they are set on the template - just copying them
     # meant that we were clearing defaults if they were set for not for adoption etc.
     if copyfrom.isnotavailableforadoption == 1: dbo.update("animal", animalid, { "IsNotAvailableForAdoption": 1 })
@@ -3225,14 +3236,17 @@ def clone_from_template(dbo, username, animalid, dob, animaltypeid, speciesid):
         "CurrentVetID":             copyfrom.currentvetid,
         "AnimalComments":           copyfrom.animalcomments
     }, username)
-    # Helper function to work out the difference between intake and a date and add that
-    # difference to today to get a new date
+    # Helper function to adjust the date on a template record when copying it to a new record.
+    # Does this by working out the offset in days between the dates on the template record and 
+    # applying that offset to the base date on the new record.
+    # Normally the template date and new record date are datebroughtin, but if
+    # this template is set to operate on DOB, then dateofbirth is used instead.
     def adjust_date(d):
-        dayoffset = date_diff_days(broughtin, d)
+        dayoffset = date_diff_days(templatedate, d)
         if dayoffset < 0:
-            adjdate = subtract_days(newbroughtin, dayoffset)
+            adjdate = subtract_days(newrecorddate, dayoffset)
         else:
-            adjdate = add_days(newbroughtin, dayoffset)
+            adjdate = add_days(newrecorddate, dayoffset)
         adjdate = adjdate.replace(hour=0, minute=0, second=0, microsecond=0) # throw away any time info that might have been on the original date
         return dbo.sql_date(adjdate)
     # Additional Fields (don't include newrecord ones or ones with default values as they are already set by the new animal screen)
