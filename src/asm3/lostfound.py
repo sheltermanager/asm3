@@ -556,10 +556,12 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
     h.append(asm3.reports.get_report_header(dbo, title, username))
     if limit > 0:
         h.append("<p>(" + _("Limited to {0} matches", l).format(limit) + ")</p>")
+    def a(uri, s):
+        return f'<a target="_blank" href="{uri}">{s}</a>'
     def p(s): 
-        return "<p>%s</p>" % s
+        return f"<p>{s}</p>"
     def td(s): 
-        return "<td>%s</td>" % s
+        return f"<td>{s}</td>"
     def hr(): 
         return "<hr />"
     lastid = 0
@@ -571,9 +573,14 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
                     h.append("</tr></table>")
                     h.append(hr())
                 h.append(p(_("{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}", l).format( \
-                    m.lid, "%s %s %s" % (m.lagegroup, m.lbasecolourname, m.lsexname), \
+                    a(f"lostanimal?id={m.lid}", "LA" + asm3.utils.padleft(m.lid, 6)), \
+                    "%s %s %s" % (m.lagegroup, m.lbasecolourname, m.lsexname), \
                     "%s/%s %s" % (m.lspeciesname, m.lbreedname, m.lmicrochip), \
-                    m.ldistinguishingfeatures, m.lcontactname, m.lcontactnumber, m.larealost, m.lareapostcode,
+                    m.ldistinguishingfeatures, \
+                    m.lcontactname, \
+                    m.lcontactnumber, \
+                    m.larealost, \
+                    m.lareapostcode, \
                     python2display(l, m.ldatelost))))
                 h.append("<table border=\"1\" width=\"100%\"><tr>")
                 h.append("<th>%s</th>" % _("Reference", l))
@@ -588,7 +595,10 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
                 h.append("</tr>")
                 lastid = m.lid
             h.append("<tr>")
-            h.append(td(str(m.fid)))
+            if m.fid:
+                h.append(td(a(f"foundanimal?id={m.fid}", "FA" + asm3.utils.padleft(m.fid, 6))))
+            else:
+                h.append(td(a(f"animal?id={m.fanimalid}", "A" + asm3.utils.padleft(m.fanimalid, 6))))
             h.append(td("%s %s %s %s %s" % (m.fagegroup, m.fbasecolourname, m.fsexname, m.fspeciesname, m.fbreedname)))
             h.append(td(m.fareafound))
             h.append(td(m.fareapostcode))
