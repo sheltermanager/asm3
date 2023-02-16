@@ -478,6 +478,16 @@ $(function() {
                     128169, // Poop
                     128266, // Speaker with high volume
                     128272, // Lock with key
+                    128308, // Red circle
+                    128309, // Blue circle
+                    128993, // Yellow circle
+                    128994, // Green circle
+                    128995, // Purple circle
+                    128997, // Red square
+                    128998, // Blue square
+                    129000, // Yellow square
+                    129001, // Green square
+                    129002, // Purple square
                     128571, // Cat with heart eyes
                     129379, // Bowl and spoon
                     129387, // Can of food
