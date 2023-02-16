@@ -310,7 +310,7 @@ $(function(){
         },
 
         routes: {
-            "event_animals": function() { common.module_loadandstart("event_animals", "event_animals?id=" + this.qs.id); }
+            "event_animals": function() { common.module_loadandstart("event_animals", "event_animals?" + this.rawqs); }
         }
     };
 
