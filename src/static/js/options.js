@@ -1299,7 +1299,7 @@ $(function() {
                 '</table>',
                 '<p class="centered">',
                     _("In your PayPal account, enable Instant Payment Notifications with a URL of {0}")
-                    .replace("{0}", "<br/><b>" + asm.baseurl + "/pp_paypal" + "</b>"),
+                    .replace("{0}", "<br/><b>" + controller.pp_paypal + "</b>"),
                 '</p>',
                 '</div>',
 
@@ -1314,7 +1314,7 @@ $(function() {
                 '</table>',
                 '<p class="centered">',
                     _("In the Stripe dashboard, create a webhook to send 'checkout.session.completed' events to {0}")
-                    .replace("{0}", "<br/><b>" + asm.baseurl + "/pp_stripe" + "</b>"),
+                    .replace("{0}", "<br/><b>" + controller.pp_stripe + "</b>"),
                 '</p>',
                 '</div>',
 

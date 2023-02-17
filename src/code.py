@@ -5096,6 +5096,11 @@ class options(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
+        pp_paypal = "%s/pp_paypal" % BASE_URL
+        pp_stripe = "%s/pp_stripe" % BASE_URL
+        if asm3.smcom.active():
+            pp_paypal = asm3.smcom.payments_url()
+            pp_stripe = asm3.smcom.payments_url()
         c = {
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "accountsexp": asm3.financial.get_accounts(dbo, onlyexpense=True),
@@ -5122,6 +5127,8 @@ class options(JSONEndpoint):
             "lostanimalfindcolumns": asm3.html.json_lostanimalfindcolumns(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "personfindcolumns": asm3.html.json_personfindcolumns(dbo),
+            "pp_paypal": pp_paypal,
+            "pp_stripe": pp_stripe,
             "quicklinks": asm3.html.json_quicklinks(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),

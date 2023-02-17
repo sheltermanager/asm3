@@ -106,6 +106,12 @@ def get_login_url(dbo):
     """
     return "https://sheltermanager.com/login/%s" % dbo.alias or dbo.database
 
+def get_payments_url(dbo):
+    """
+    Returns the url to use for callbacks from payment processors
+    """
+    return "https://service.sheltermanager.com/asmpayment"
+
 def get_reports():
     """
     Returns the reports.txt file
