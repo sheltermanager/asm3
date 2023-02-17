@@ -106,7 +106,7 @@ def get_login_url(dbo):
     """
     return "https://sheltermanager.com/login/%s" % dbo.alias or dbo.database
 
-def get_payments_url(dbo):
+def get_payments_url():
     """
     Returns the url to use for callbacks from payment processors
     """
