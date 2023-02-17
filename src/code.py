@@ -5099,8 +5099,8 @@ class options(JSONEndpoint):
         pp_paypal = "%s/pp_paypal" % BASE_URL
         pp_stripe = "%s/pp_stripe" % BASE_URL
         if asm3.smcom.active():
-            pp_paypal = asm3.smcom.payments_url()
-            pp_stripe = asm3.smcom.payments_url()
+            pp_paypal = asm3.smcom.get_payments_url()
+            pp_stripe = asm3.smcom.get_payments_url()
         c = {
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "accountsexp": asm3.financial.get_accounts(dbo, onlyexpense=True),
