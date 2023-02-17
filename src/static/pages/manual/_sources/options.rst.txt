@@ -866,8 +866,7 @@ It should not be necessary, but some users have reported problems receiving
 IPN notifications from PayPal. As a "just in case" measure, click on the Settings/Gear
 icon at the top right of your PayPal account, choose "Account Settings", then 
 "Notifications" and the "Update" link next to "Instant Payment Notifications".
-You can now choose a URL and to enable IPN messages. Use the URL shown on screen, 
-typically https://HOST/pp_paypal
+You can now choose a URL and to enable IPN messages. Use the URL shown on screen.
 
 Stripe
 ^^^^^^
@@ -882,7 +881,7 @@ Webhook needs to be created in the Stripe dashboard to receive
 Webhooks`
 
 The Payment Processors option tab in ASM will display the URL you need to
-configure for your webhook below the key fields, typically https://HOST/pp_stripe
+configure for your webhook below the key fields.
 
 Quicklinks
 ----------
