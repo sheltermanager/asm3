@@ -1,6 +1,7 @@
 47
 ================
 
+18/02/23 Bug calculating vaccinated shelter animals by type on annual figures
 17/02/23 Use reverse proxy for payment processor callbacks on sm.com
 16/02/23 Use HTML links on lost/found match report #368
 16/02/23 Add red/yellow/blue/green/purple coloured emblems

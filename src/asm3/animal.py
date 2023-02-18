@@ -5350,7 +5350,7 @@ def update_animal_figures_annual(dbo, year = 0):
     for at in alltypes:
         type_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
-            "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
+            "a.AnimalTypeID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
             "AND EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND DateOfVaccination Is Not Null) " \
             "AND a.NonShelterAnimal = 0 " \
             "GROUP BY a.DateBroughtIn, a.DateOfBirth" % (int(at["ID"]), firstofyear, lastofyear),
