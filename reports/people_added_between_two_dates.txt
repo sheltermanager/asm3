@@ -2,7 +2,7 @@ People added between two dates
 ###
 People
 ###
-Any
+Any rev02
 ###
 People records added to the system between two dates
 ###
@@ -29,9 +29,9 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$CREATEDDATE</td>
+<td>$CREATEDDATE $CREATEDBY</td>
 <td>$OWNERCODE</td>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE</td>
 <td>H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
