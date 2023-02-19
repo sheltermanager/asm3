@@ -109,7 +109,8 @@ $(function() {
                         return false;
                     }
                     else if ($(this).attr("data-link")) {
-                        common.route($(this).attr("data-link"), true);
+                        window.open($(this).attr("data-link"));
+                        //common.route($(this).attr("data-link"), true);
                     }
                 },
                 columns: [

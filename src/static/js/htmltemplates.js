@@ -136,9 +136,8 @@ $(function() {
             previewbuttons[_("Preview")] = function() {
                 validate.reset("dialog-preview");
                 if (!validate.notblank([ "animals" ])) { return; }
-                $("#dialog-preview").disable_dialog_buttons();
                 let ids = tableform.table_ids(table);
-                common.route("htmltemplates_preview?template=" + ids + "&animals=" + $("#animals").val(), true);
+                window.open("htmltemplates_preview?template=" + ids + "&animals=" + $("#animals").val(), true);
             };
             previewbuttons[_("Cancel")] = function() {
                 $("#dialog-preview").dialog("close");
