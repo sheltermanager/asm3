@@ -1,4 +1,5 @@
 import asm3.additional
+import asm3.movement
 
 from asm3.i18n import _
 
@@ -10,12 +11,26 @@ def get_event_query(dbo):
            "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID "
 
 def get_event_animal_query(dbo):
-    return "SELECT ev.*, owner.OwnerName AS EventOwnerName, ea.ArrivalDate, ea.Comments, " \
-           "CASE WHEN ad.id IS NOT NULL THEN 1 ELSE 0 END AS Adopted " \
+    return "SELECT ea.ID, owner.OwnerName AS EventOwnerName, ea.ArrivalDate, ea.Comments, " \
+           "a.id AS AnimalID, a.animalname, a.SHORTCODE, a.SHELTERCODE, a.MOSTRECENTENTRYDATE, a.LASTCHANGEDDATE, a.LASTCHANGEDBY,  a.AcceptanceNumber AS LitterID, a.AnimalAge, " \
+           "a.Sex, s.SpeciesName, " \
+           "bc.BaseColour AS BaseColourName, " \
+           "sx.Sex AS SexName, " \
+           "bd.BreedName AS BreedName, "\
+           "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
+           "CASE WHEN ad.id IS NOT NULL THEN 1 ELSE 0 END AS Adopted, " \
+           "lastfosterer.ownerid as LastFostererID, lastfosterer.ownername AS LastFostererName, lastfosterer.returndate AS LastFostererReturnDate, lastfosterer.mobiletelephone AS LastFostererMobileTelephone, lastfosterer.hometelephone AS LastFostererHomeTelephone, lastfosterer.worktelephone  AS LastFostererWorkTelephone " \
            "FROM eventanimal ea " \
+           "INNER JOIN animal a ON ea.animalid = a.id " \
            "INNER JOIN event ev ON ev.id = ea.eventid " \
+           "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
+           "LEFT OUTER JOIN breed bd ON bd.ID = a.BreedID " \
+           "LEFT OUTER JOIN species s ON a.SpeciesID = s.ID " \
+           "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
            "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID " \
-           "LEFT OUTER JOIN adoption ad ON ad.eventid = ev.id AND ad.movementtype = 1 "
+           "LEFT OUTER JOIN adoption ad ON ad.eventid = ev.id AND ad.movementtype = 1 " \
+           "LEFT OUTER JOIN basecolour bc ON bc.ID = a.BaseColourID " \
+           "LEFT JOIN (SELECT * FROM (SELECT m.ownerid, m.animalid, row_number() OVER (PARTITION BY m.animalid ORDER BY CASE WHEN m.returndate IS NULL THEN 0 ELSE 1 END, m.returndate DESC) AS rn, m.returndate, o.ownername, o.mobiletelephone, o.hometelephone, o.worktelephone FROM adoption m INNER JOIN owner o ON m.ownerid = o.id WHERE m.movementtype=2) t WHERE rn = 1) lastfosterer ON lastfosterer.animalid = ea.animalid"
 
 def get_event(dbo, eventid):
     """
@@ -27,7 +42,25 @@ def get_events_by_animal(dbo, animalid):
     """
     Returns all events for animalid
     """
-    return dbo.query(get_event_animal_query(dbo) + " WHERE ea.animalid=?", [animalid])
+    return dbo.query(get_event_animal_query(dbo) + " WHERE ea.animalid = ?", [animalid])
+
+def get_animals_by_event(dbo, eventid, queryfilter="all"):
+    """
+    Returns all events for animalid.
+    if queryfilter is provided, add conditions
+    """
+    filters = {
+        "all": "",
+        "arrived": " AND ea.ArrivalDate is not null",
+        "noshow": " AND ea.ArrivalDate is null",
+        "neednewfoster": " AND lastfosterer.returndate IS NOT NULL",
+        "dontneednewfoster": " AND lastfosterer.returndate IS NULL",
+        "adopted": " AND ad.id IS NOT NULL",
+        "notadopted": " AND ad.id IS NULL",
+    }
+    whereclause = " WHERE ev.id=? " + (filters[queryfilter] if queryfilter in filters else "")
+    return dbo.query(get_event_animal_query(dbo) + whereclause, [eventid])
+
 
 def get_events_by_date(dbo, date):
     """
@@ -145,4 +178,64 @@ def get_event_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     rows = dbo.query(sql, ss.values, limit=limit, distincton="ID")
     return rows
 
+
+def insert_event_animal(dbo, username, post):
+    """
+    Creates an eventanimal record from posted form data
+    """
+    eventid = post.integer("eventid")
+    animalid = post.integer("animalid")
+    sql = "SELECT id FROM eventanimal WHERE eventid = ? and animalid = ?"
+    eventanimalid = dbo.query_int(sql, [eventid, animalid])
+    if eventanimalid == 0:
+        eventanimalid = dbo.insert("eventanimal", {
+            "EventID":              eventid,
+            "AnimalID":             animalid,
+        }, username)
+    return eventanimalid
+
+def update_event_animal(dbo, username, post):
+    """
+    Updates an eventanimal record from posted form data
+    """
+    eventanimalid = post.integer("eventanimalid")
+
+    kvp = {}
+    if "animal" in post: kvp["AnimalID"] = post.integer("animal"),
+    if "arrivaldate" in post and "arrivaltime" in post: kvp["ArrivalDate"] = post.datetime("arrivaldate", "arrivaltime")
+    if "comments" in post: kvp["Comments"] = post["comments"]
+    dbo.update("eventanimal", eventanimalid, kvp, username)
+
+def update_event_animal_arrived(dbo, username, eaid):
+    sql = "SELECT id FROM eventanimal WHERE id = ? AND ArrivalDate IS NULL"
+    eventanimalid = dbo.query_int(sql, [eaid])
+    if eventanimalid != 0:
+        dbo.update("eventanimal", eventanimalid, {"ArrivalDate": dbo.now()})
+
+
+def delete_event_animal(dbo, username, id):
+    """
+    Deletes an eventanimal record
+    """
+    dbo.delete("animalvaccination", id, username)
+
+def end_active_foster(dbo, username, id):
+    """
+    Set return date for an active foster for animal(s) in event
+    """
+    sql = """SELECT ev.startdatetime, ea.animalid, m.id as movementid
+             FROM event ev 
+             INNER JOIN eventanimal ea ON ev.id = ea.eventid
+             INNER JOIN adoption m ON m.animalid = ea.animalid 
+             WHERE ea.id = ?
+             AND m.movementtype=2
+             AND m.returndate IS NULL;
+    """
+    rows = dbo.query(sql, [id])
+    if len(rows) > 0: # there is an active foster movement
+        animalid = rows[0]["ANIMALID"]
+        eventstartdate = rows[0]["STARTDATETIME"]
+        movementid = rows[0]["MOVEMENTID"]
+        #return from foster at event start or today, whichever is latest
+        asm3.movement.return_movement(dbo, movementid, username, animalid, returndate = max(eventstartdate, dbo.today()))
 

@@ -319,7 +319,9 @@ edit_header = {
             '<div class="asm-tabbar">',
             '<ul class="asm-tablist">'
         ];
-        var tabs = [[ "event", "event", _("Event"), "", "ve" ]];
+        var tabs = [[ "event", "event", _("Event"), "", "ve" ],
+            [ "animals", "event_animals", _("Animals"), "", "vea" ]
+            ];
         $.each(tabs, function(it, vt) {
             var key = vt[0], url = vt[1], display = vt[2], iconname = vt[3], perms = vt[4];
             if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
