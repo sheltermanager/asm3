@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-02-06 10:53+0000\n"
+"POT-Creation-Date: 2023-02-20 14:53+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -774,7 +774,7 @@ msgstr ""
 msgid "Adoptable and published for the first time"
 msgstr ""
 
-#: animal.py animal_find.js reports.js animal.js common_html.js
+#: animal.py dbupdate.py animal_find.js reports.js animal.js common_html.js
 msgid "Adopted"
 msgstr ""
 
@@ -3417,6 +3417,10 @@ msgstr ""
 msgid "DO NOT use this field to store notes about what the person is looking for."
 msgstr ""
 
+#: dbupdate.py
+msgid "DOA"
+msgstr ""
+
 #: animal.py
 msgid "DOA {0}"
 msgstr ""
@@ -5038,7 +5042,8 @@ msgstr ""
 msgid "Estimated age '{0}' is not valid."
 msgstr ""
 
-#: animal.py animal_find_results.js reports.js animal.js move_deceased.js
+#: animal.py dbupdate.py animal_find_results.js reports.js animal.js
+#: move_deceased.js
 msgid "Euthanized"
 msgstr ""
 
@@ -5765,7 +5770,7 @@ msgstr ""
 msgid "Foster successfully created."
 msgstr ""
 
-#: animal_find.js
+#: dbupdate.py animal_find.js
 msgid "Fostered"
 msgstr ""
 
@@ -9021,7 +9026,7 @@ msgstr ""
 msgid "On Foster"
 msgstr ""
 
-#: animal.py animal_find.js animal_find_results.js common_html.js
+#: animal.py dbupdate.py animal_find.js animal_find_results.js common_html.js
 msgid "On Shelter"
 msgstr ""
 
@@ -9227,6 +9232,14 @@ msgstr ""
 
 #: animal.py
 msgid "Out SubTotal"
+msgstr ""
+
+#: lookups.py
+msgid "Outcome"
+msgstr ""
+
+#: lookups.py
+msgid "Outcomes"
 msgstr ""
 
 #: publish_options.js
@@ -10392,7 +10405,7 @@ msgstr ""
 msgid "Released To Wild {0}"
 msgstr ""
 
-#: reports.js
+#: dbupdate.py reports.js
 msgid "Released to Wild"
 msgstr ""
 
@@ -13595,7 +13608,7 @@ msgstr ""
 msgid "Transfer?"
 msgstr ""
 
-#: animal_find.js
+#: dbupdate.py animal_find.js
 msgid "Transferred"
 msgstr ""
 

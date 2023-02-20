@@ -372,7 +372,7 @@ def get_adoption_status(dbo, a):
     if a.ARCHIVED == 0 and a.HASACTIVERESERVE == 1: return asm3.i18n._("Reserved", l)
     if a.ARCHIVED == 0 and a.HASPERMANENTFOSTER == 1: return asm3.i18n._("Permanent Foster", l)
     if is_animal_adoptable(dbo, a): return asm3.i18n._("Adoptable", l)
-    return asm3.i18n._("Not for adoption", l)
+    return asm3.i18n._("Not available for adoption", l)
 
 def is_animal_adoptable(dbo, a):
     """
