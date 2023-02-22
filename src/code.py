@@ -3582,7 +3582,9 @@ class htmltemplates_preview(ASMEndpoint):
 
     def content(self, o):
         template = o.post["template"].replace(",", "")
-        rows = asm3.animal.get_animals_ids(o.dbo, "DateBroughtIn", "SELECT ID FROM animal WHERE ID IN (%s)" % o.post["animals"], limit=10)
+        inclause = o.post["animals"]
+        if inclause == "": inclause = "0"
+        rows = asm3.animal.get_animals_ids(o.dbo, "DateBroughtIn", f"SELECT ID FROM animal WHERE ID IN ({inclause})", limit=10)
         asm3.additional.append_to_results(o.dbo, rows, "animal")
         self.content_type("text/html")
         self.cache_control(0)
