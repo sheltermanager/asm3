@@ -464,6 +464,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "ANIMALCOMMENTS"        : a["ANIMALCOMMENTS"],
         "ANIMALCOMMENTSBR"      : a["ANIMALCOMMENTS"],
         "DESCRIPTION"           : a["ANIMALCOMMENTS"],
+        "DESCRIPTIONATTR"       : asm3.utils.truncate(a["ANIMALCOMMENTS"].replace("\n", " ").replace("\"", "''")),
         "DESCRIPTIONBR"         : a["ANIMALCOMMENTS"],
         "SHELTERCODE"           : a["SHELTERCODE"],
         "AGE"                   : animalage,

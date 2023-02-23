@@ -80,6 +80,9 @@ Age
     The animal's age in readable form (eg: “5 years and 6 months”) 
 Description / AnimalComments
     The animal description box. 
+DescriptionAttr
+    The descriptionfield, but truncated to 100 characters with linebreaks
+    suppressed and double quotes escaped to use in an HTML attribute
 HealthProblems
     The health problems field 
 LitterID / AcceptanceNumber
