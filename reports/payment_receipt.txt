@@ -2,9 +2,9 @@ Payment Receipt
 ###
 Financial
 ###
-33712/Any omitcriteria omitheaderfooter
+33712/Any omitcriteria omitheaderfooter rev02
 ###
-Produce printable receipts for payments received from people between two dates
+Produce printable receipts for payments received from a person between two dates
 ###
 en
 ###
@@ -16,7 +16,7 @@ SELECT o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
 FROM owner o
 INNER JOIN ownerdonation od ON od.OwnerID = o.ID
 INNER JOIN donationtype dt ON dt.ID = od.DonationTypeID 
-WHERE o.OwnerName LIKE '%$ASK STRING Enter a partial person name$%'
+WHERE o.ID = $ASK PERSON$
 AND od.Date >= '$ASK DATE Enter the from date$'
 AND od.Date <= '$ASK DATE Enter the to date $'
 ORDER BY o.OwnerName, od.Date
