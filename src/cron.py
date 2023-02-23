@@ -305,14 +305,14 @@ def maint_db_dump_smcom(dbo):
 
 def maint_db_dump_animalcsv(dbo):
     try:
-        print(utils.csv(dbo.locale, animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "includedeceased": "true", "includenonshelter": "true" })))
+        print(utils.bytes2str(utils.csv(dbo.locale, animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "includedeceased": "true", "includenonshelter": "true" }))))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_animalcsv: %s" % em, "cron.maint_db_dump_animalcsv", dbo, sys.exc_info())
 
 def maint_db_dump_personcsv(dbo):
     try:
-        print(utils.csv(dbo.locale, person.get_person_find_simple(dbo, "", classfilter="all", includeStaff=True, includeVolunteers=True, limit=0)))
+        print(utils.bytes2str(utils.csv(dbo.locale, person.get_person_find_simple(dbo, "", classfilter="all", includeStaff=True, includeVolunteers=True, limit=0))))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_personcsv: %s" % em, "cron.maint_db_dump_personcsv", dbo, sys.exc_info())
