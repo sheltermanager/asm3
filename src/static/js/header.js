@@ -316,6 +316,10 @@ header = {
                 // If nothing is enabled, hide the whole financial menu
                 if (config.bool("DisableStockControl")) { $("#asm-menu-financial").hide(); }
             }
+            // Events
+            if (config.bool("DisableEvents")){
+                $(".tagevent").hide();
+            }
             // Stock Control
             if (config.bool("DisableStockControl")) {
                 $(".tagstock").hide();
@@ -323,12 +327,6 @@ header = {
             // HMRC Gift Aid is en_GB only
             if (asm.locale != "en_GB") {
                 $(".taggb").hide();
-            }
-            if (config.bool("DisableEvents")){
-                $(".event").hide();
-            }
-            if (!common.has_permission("ae") && !common.has_permission("ve")){
-                $(".event").hide();
             }
         }
         catch (nc) {}
