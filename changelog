@@ -1,6 +1,7 @@
 47
 ================
 
+24/02/23 Add Romanian locale
 23/02/23 cron.animalcsv/personcsv should output str instead of bytes to stdout
 23/02/23 Add $$DescriptionAttr$$ for HTML template meta tags (animalview)
 19/02/23 Preview publishing template and online form should open in new tabs
