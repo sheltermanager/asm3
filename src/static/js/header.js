@@ -324,6 +324,12 @@ header = {
             if (asm.locale != "en_GB") {
                 $(".taggb").hide();
             }
+            if (config.bool("DisableEvents")){
+                $(".event").hide();
+            }
+            if (!common.has_permission("ae") && !common.has_permission("ve")){
+                $(".event").hide();
+            }
         }
         catch (nc) {}
         $(".asm-menu-icon").show();
