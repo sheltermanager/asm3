@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
 "POT-Creation-Date: 2023-02-24 12:52+0000\n"
-"PO-Revision-Date: 2023-02-24 13:03+0200\n"
+"PO-Revision-Date: 2023-02-26 13:43+0200\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -1640,7 +1640,7 @@ msgstr "הגעה"
 
 #: clinic_appointment.js event_animals.js
 msgid "Arrived"
-msgstr "הגיע לתור"
+msgstr "הגיע"
 
 #: animal.js
 msgid "Asilomar"
