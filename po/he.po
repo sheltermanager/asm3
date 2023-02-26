@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-02-24 12:52+0000\n"
-"PO-Revision-Date: 2023-02-24 13:03+0200\n"
+"POT-Creation-Date: 2023-02-26 14:10+0000\n"
+"PO-Revision-Date: 2023-02-26 14:11+0200\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -607,6 +607,10 @@ msgstr "הוסף הוראות תזונה"
 msgid "Add equipment loan"
 msgstr "‫הוסף השאלת ציוד"
 
+#: html.py
+msgid "Add event"
+msgstr "הוסף אירוע"
+
 #: reports.js document_templates.js
 msgid "Add extra images for use in reports and documents"
 msgstr "הוסף תמונות נוספות לשימוש בדוחות ומסמכים"
@@ -1025,7 +1029,7 @@ msgstr "התראות"
 
 #: event_animals.js
 msgid "All"
-msgstr ""
+msgstr "הכל"
 
 #: csvexport.js
 msgid "All Animals"
@@ -5148,7 +5152,7 @@ msgstr "יש למלא תאריך סיום לאירוע."
 msgid "Event successfully created"
 msgstr "אירוע נוצר בהצלחה"
 
-#: animal.js options.js roles.js
+#: html.py animal.js options.js roles.js
 msgid "Events"
 msgstr "אירועים"
 
@@ -5574,7 +5578,7 @@ msgstr "חפש תורם"
 msgid "Find driver"
 msgstr "חפש נהג"
 
-#: event_find.js
+#: html.py event_find.js
 msgid "Find event"
 msgstr "חפש אירוע"
 
@@ -7688,7 +7692,7 @@ msgstr "אזור"
 #: header_edit_header.js event.js animal_bulk.js animal_find_results.js
 #: options.js event_find_results.js incident_find_results.js medical.js
 #: mobile_report.js shelterview.js animal_find.js report_criteria.js
-#: event_find.js vaccination.js mobile2.js event_new.js
+#: event_find.js vaccination.js mobile2.js event_animals.js event_new.js
 msgid "Location"
 msgstr "מיקום"
 
