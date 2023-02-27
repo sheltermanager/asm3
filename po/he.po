@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
 "POT-Creation-Date: 2023-02-26 14:10+0000\n"
-"PO-Revision-Date: 2023-02-26 14:11+0200\n"
+"PO-Revision-Date: 2023-02-27 17:41+0200\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -6780,7 +6780,7 @@ msgstr "ב-3 השנים האחרונות"
 
 #: litters.js
 msgid "In the last 6 months"
-msgstr "ב-6 השנים האחרונות"
+msgstr "ב-6 החודשים האחרונים"
 
 #: publish_options.js
 msgid "In the last month"
