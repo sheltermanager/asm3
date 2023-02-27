@@ -13,7 +13,7 @@ def get_event_query(dbo):
 def get_event_animal_query(dbo):
     return "SELECT ea.ID, owner.OwnerName AS EventOwnerName, ea.ArrivalDate, ea.Comments, " \
            "a.id AS AnimalID, a.animalname, a.SHORTCODE, a.SHELTERCODE, a.MOSTRECENTENTRYDATE, a.LASTCHANGEDDATE, a.LASTCHANGEDBY,  a.AcceptanceNumber AS LitterID, a.AnimalAge, " \
-           "a.Sex, s.SpeciesName, " \
+           "a.Sex, s.SpeciesName, a.displaylocation, " \
            "bc.BaseColour AS BaseColourName, " \
            "sx.Sex AS SexName, " \
            "bd.BreedName AS BreedName, "\

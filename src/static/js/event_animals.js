@@ -72,6 +72,8 @@ $(function(){
                             if (controller.animal) { return true; }
                         }
                     },
+                    { field: "DISPLAYLOCATION", display: _("Location")
+                    },
                     { field: "SPECIESNAME", display: _("Species")
                     },
                     { field: "BASECOLOURNAME", display: _("Color")
