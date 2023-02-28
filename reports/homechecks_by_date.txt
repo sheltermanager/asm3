@@ -1,41 +1,49 @@
 Homechecks by Date
 ###
-Auditing
+Movements
 ###
-Any
+Any rev02
 ###
 All people who were homechecked between two dates.
 ###
 en
 ###
-SELECT OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone, EmailAddress, DateLastHomeChecked
-FROM owner
+SELECT o.ID, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.MobileTelephone, o.EmailAddress, o.DateLastHomeChecked,
+ho.OwnerName AS HomecheckerName
+FROM owner o
+LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy
 WHERE IDCheck = 1 AND DateLastHomeChecked >= '$ASK DATE Homechecked between$' AND DateLastHomeChecked <= '$ASK DATE and$' 
-ORDER BY DateLastHomeChecked, OwnerName
+ORDER BY HomecheckerName, o.DateLastHomeChecked, o.OwnerName
 ###
 $$HEADER
+HEADER$$
+
+$$GROUP_HomecheckerName
+$$HEAD
+<h2>$HomecheckerName</h2>
 <table border="1">
 <tr>
 <th>Date</th>
 <th>Person</th>
 </tr>
-HEADER$$
+$$FOOT
+</table>
+<p>Total homechecks carried out by $HomecheckerName: {COUNT.OWNERNAME}</p>
+GROUP$$
 
 $$BODY
 <tr>
 <td>$DATELASTHOMECHECKED</td>
-<td><b>$OWNERNAME</b><br />
+<td><b><a target="_blank" href="person?id=$ID">$OWNERNAME</a></b><br />
 $OWNERADDRESS<br />
 $OWNERTOWN<br />
-$OWNERCOUNTY<br />
-$OWNERPOSTCODE<br />
-$EMAILADDRESS<br />
+$OWNERCOUNTY $OWNERPOSTCODE<br />
+<i>E: $EMAILADDRESS</i>
 H: $HOMETELEPHONE 
 C: $MOBILETELEPHONE</td>
 </tr>
 BODY$$
 
 $$FOOTER
-</table>
-<h2>Total homechecks: {COUNT.OWNERNAME}</h2>
 FOOTER$$
