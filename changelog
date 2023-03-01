@@ -1,6 +1,7 @@
 47
 ================
 
+01/03/23 Add send email retry mechanism for cron tasks (reports/diaries) #1238
 24/02/23 Add event menu items (Roman+Saggi) #1234
 24/02/23 Add Romanian locale
 23/02/23 cron.animalcsv/personcsv should output str instead of bytes to stdout
