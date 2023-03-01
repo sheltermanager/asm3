@@ -2,7 +2,7 @@ Adoptions by Date with Payments
 ###
 Movements
 ###
-Any rev01
+Any rev02
 ###
 Adoptions between two dates with payment info.
 ###
@@ -25,9 +25,9 @@ no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.Mobile
 ownerdonation.Donation, donationtype.DonationName, donationpayment.PaymentName
 FROM adoption
 INNER JOIN animal ON adoption.AnimalID = animal.ID
-INNER JOIN ownerdonation ON ownerdonation.MovementID = adoption.ID
-INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
-INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID
+LEFT OUTER JOIN ownerdonation ON ownerdonation.MovementID = adoption.ID
+LEFT OUTER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
+LEFT OUTER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID
 INNER JOIN owner no ON adoption.OwnerID = no.ID
 INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
 INNER JOIN species ON species.ID = animal.SpeciesID
