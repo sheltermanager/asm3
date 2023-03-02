@@ -13,12 +13,12 @@ def get_event_query(dbo):
 def get_event_animal_query(dbo):
     return "SELECT ea.ID, owner.OwnerName AS EventOwnerName, ea.ArrivalDate, ea.Comments, " \
            "a.id AS AnimalID, a.animalname, a.SHORTCODE, a.SHELTERCODE, a.MOSTRECENTENTRYDATE, a.LASTCHANGEDDATE, a.LASTCHANGEDBY,  a.AcceptanceNumber AS LitterID, a.AnimalAge, " \
-           "a.Sex, s.SpeciesName, " \
+           "a.Sex, s.SpeciesName, a.DisplayLocation, a.AgeGroup, " \
            "bc.BaseColour AS BaseColourName, " \
            "sx.Sex AS SexName, " \
-           "bd.BreedName AS BreedName, "\
+           "bd.BreedName AS BreedName, " \
            "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
-           "CASE WHEN ad.id IS NOT NULL THEN 1 ELSE 0 END AS Adopted, " \
+           "CASE WHEN EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) THEN 1 ELSE 0 END AS Adopted, " \
            "lastfosterer.ownerid as LastFostererID, lastfosterer.ownername AS LastFostererName, lastfosterer.returndate AS LastFostererReturnDate, lastfosterer.mobiletelephone AS LastFostererMobileTelephone, lastfosterer.hometelephone AS LastFostererHomeTelephone, lastfosterer.worktelephone  AS LastFostererWorkTelephone " \
            "FROM eventanimal ea " \
            "INNER JOIN animal a ON ea.animalid = a.id " \
@@ -28,7 +28,6 @@ def get_event_animal_query(dbo):
            "LEFT OUTER JOIN species s ON a.SpeciesID = s.ID " \
            "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
            "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID " \
-           "LEFT OUTER JOIN adoption ad ON ad.eventid = ev.id AND ad.movementtype = 1 " \
            "LEFT OUTER JOIN basecolour bc ON bc.ID = a.BaseColourID " \
            "LEFT JOIN (SELECT * FROM (SELECT m.ownerid, m.animalid, row_number() OVER (PARTITION BY m.animalid ORDER BY CASE WHEN m.returndate IS NULL THEN 0 ELSE 1 END, m.returndate DESC) AS rn, m.returndate, o.ownername, o.mobiletelephone, o.hometelephone, o.worktelephone FROM adoption m INNER JOIN owner o ON m.ownerid = o.id WHERE m.movementtype=2) t WHERE rn = 1) lastfosterer ON lastfosterer.animalid = ea.animalid"
 
