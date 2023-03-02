@@ -19,7 +19,8 @@ def get_event_animal_query(dbo):
            "bd.BreedName AS BreedName, " \
            "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
            "CASE WHEN EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) THEN 1 ELSE 0 END AS Adopted, " \
-           "lastfosterer.ownerid as LastFostererID, lastfosterer.ownername AS LastFostererName, lastfosterer.returndate AS LastFostererReturnDate, lastfosterer.mobiletelephone AS LastFostererMobileTelephone, lastfosterer.hometelephone AS LastFostererHomeTelephone, lastfosterer.worktelephone  AS LastFostererWorkTelephone " \
+           "lastfosterer.ownerid as LastFostererID, lastfosterer.ownername AS LastFostererName, lastfosterer.returndate AS LastFostererReturnDate, lastfosterer.mobiletelephone AS LastFostererMobileTelephone, lastfosterer.hometelephone AS LastFostererHomeTelephone, lastfosterer.worktelephone  AS LastFostererWorkTelephone, " \
+           "ev.STARTDATETIME, ev.ENDDATETIME, ev.EVENTNAME, ev.EVENTADDRESS, ev.EVENTTOWN, ev.EVENTPOSTCODE, ev.EVENTCOUNTRY " \
            "FROM eventanimal ea " \
            "INNER JOIN animal a ON ea.animalid = a.id " \
            "INNER JOIN event ev ON ev.id = ea.eventid " \

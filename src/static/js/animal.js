@@ -636,11 +636,11 @@ $(function() {
                 h.push('<tr>');
                 h.push('<td><b><a href="event?id=' + v.ID + '">' + format.date(v.STARTDATETIME) + '</a></b></td>');
                 h.push('<td>' + format.date(v.ENDDATETIME) + '</td>');
-                h.push('<td>' + v.EVENTNAME + '</td>');
-                h.push('<td>' + v.EVENTADDRESS + ', ' + v.EVENTTOWN + ' ' + v.EVENTCOUNTY + ' ' + v.EVENTPOSTCODE + ' ' + v.EVENTCOUNTRY + '</td>');
+                h.push('<td>' + common.nulltostr(v.EVENTNAME) + '</td>');
+                h.push('<td>' + v.EVENTADDRESS + ', ' + (v.EVENTTOWN != null ? v.EVENTTOWN : '') + ' ' + (v.EVENTCOUNTY != null ? v.EVENTCOUNTY : '') + ' ' + (v.EVENTPOSTCODE != null ? v.EVENTPOSTCODE : '') + ' ' + (v.EVENTCOUNTRY != null ? v.EVENTCOUNTRY : '') + '</td>');
                 h.push('<td><b>' + format.date(v.ARRIVALDATE) + '</b></td>');
                 h.push('<td>' + (v.ADOPTED==1 ? "&#9989;" : "&nbsp;")  + '</td>');
-                h.push('<td>' + v.COMMENTS + '</td>');
+                h.push('<td>' + common.nulltostr(v.COMMENTS) + '</td>');
                 h.push('</tr>');
             });
 
