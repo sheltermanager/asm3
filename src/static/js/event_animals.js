@@ -74,16 +74,14 @@ $(function(){
                     },
                     { field: "DISPLAYLOCATION", display: _("Location")
                     },
+                    { field: "AGEGROUP", display: _("Age Group")
+                    },
                     { field: "SPECIESNAME", display: _("Species")
                     },
                     { field: "BASECOLOURNAME", display: _("Color")
                     },
 
-                    { field: "ACCEPTANCENUMBER", display: _("Litter"),
-                        hideif: function(row) {
-                            if (controller.animal) { return true; }
-                            return config.bool("DontShowLitterID");
-                        }
+                    { field: "LITTERID", display: _("Litter"),
                     },
                     { field: "COMMENTS", display: _("Comments")
                     },
@@ -96,7 +94,7 @@ $(function(){
                         }
                     },
                     { field: "ADOPTED", display: _("Adopted"),
-                        formatter: function(row) {
+                        formatter: function(row) {  
                             return row.ADOPTED == 1 ? "&#9989;" : "&nbsp;";
                         }
                     }
@@ -295,6 +293,8 @@ $(function(){
             common.widget_destroy("#dialog-endactivefoster");
             common.widget_destroy("#dialog-addanimal");
             common.widget_destroy("#dialog-addanimals");
+            common.widget_destroy("#addanimal", "animalchooser");
+            common.widget_destroy("#addanimals", "animalchoosermulti");
             tableform.dialog_destroy();
         },
 
