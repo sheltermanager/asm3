@@ -667,7 +667,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                         if a["pickupaddress"] != "":
                             uq["PickupAddress"] = a["pickupaddress"]
                             uq["IsPickup"] = 1
-                        dbo.update("animal", dup.ID, uq, user)
+                        if len(uq) > 0:
+                            dbo.update("animal", dup.ID, uq, user)
                         # Update flags if present
                         if a["flags"] != "":
                             asm3.animal.update_flags(dbo, user, dup.ID, a["flags"].split(","))
