@@ -1,6 +1,7 @@
 47
 ================
 
+03/03/23 Fix bug where TCP connection errors were not handled during csv import
 01/03/23 Add send email retry mechanism for cron tasks (reports/diaries) #1238
 24/02/23 Add event menu items (Roman+Saggi) #1234
 24/02/23 Add Romanian locale

@@ -504,7 +504,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             if imagedata != "":
                 if imagedata.startswith("http"):
                     # It's a URL, get the image from the remote server
-                    r = asm3.utils.get_image_url(imagedata, timeout=5000)
+                    r = asm3.utils.get_url_bytes(imagedata, timeout=5000, exceptions=False)
                     if r["status"] == 200:
                         asm3.al.debug("retrieved image from %s (%s bytes)" % (imagedata, len(r["response"])), "csvimport.csvimport", dbo)
                         imagedata = "data:image/jpeg;base64,%s" % asm3.utils.base64encode(r["response"])
@@ -524,7 +524,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             if pdfdata != "":
                 if pdfdata.startswith("http"):
                     # It's a URL, get the PDF from the remote server
-                    r = asm3.utils.get_image_url(pdfdata, timeout=5000)
+                    r = asm3.utils.get_url_bytes(pdfdata, timeout=5000, exceptions=False)
                     if r["status"] == 200:
                         asm3.al.debug("retrieved PDF from %s (%s bytes)" % (pdfdata, len(r["response"])), "csvimport.csvimport", dbo)
                         pdfdata = "data:application/pdf;base64,%s" % asm3.utils.base64encode(r["response"])
@@ -548,7 +548,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             if htmldata != "":
                 if htmldata.startswith("http"):
                     # It's a URL, get the PDF from the remote server
-                    r = asm3.utils.get_image_url(htmldata, timeout=5000)
+                    r = asm3.utils.get_url_bytes(htmldata, timeout=5000, exceptions=False)
                     if r["status"] == 200:
                         asm3.al.debug("retrieved HTML document from %s (%s bytes)" % (htmldata, len(r["response"])), "csvimport.csvimport", dbo)
                         htmldata = "data:text/html;base64,%s" % asm3.utils.base64encode(r["response"])
@@ -758,7 +758,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             if imagedata != "":
                 if imagedata.startswith("http"):
                     # It's a URL, get the image from the remote server
-                    r = asm3.utils.get_image_url(imagedata, timeout=5000)
+                    r = asm3.utils.get_url_bytes(imagedata, timeout=5000, exceptions=False)
                     if r["status"] == 200:
                         asm3.al.debug("retrieved image from %s (%s bytes)" % (imagedata, len(r["response"])), "csvimport.csvimport", dbo)
                         imagedata = "data:image/jpeg;base64,%s" % asm3.utils.base64encode(r["response"])
@@ -778,7 +778,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             if pdfdata != "":
                 if pdfdata.startswith("http"):
                     # It's a URL, get the PDF from the remote server
-                    r = asm3.utils.get_image_url(pdfdata, timeout=5000)
+                    r = asm3.utils.get_url_bytes(pdfdata, timeout=5000, exceptions=False)
                     if r["status"] == 200:
                         asm3.al.debug("retrieved PDF from %s (%s bytes)" % (pdfdata, len(r["response"])), "csvimport.csvimport", dbo)
                         pdfdata = "data:application/pdf;base64,%s" % asm3.utils.base64encode(r["response"])

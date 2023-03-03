@@ -1180,26 +1180,36 @@ def get_asm_news(dbo):
     except Exception as err:
         asm3.al.error("Failed reading ASM news: %s" % err, "utils.get_asm_news", dbo)
 
-def get_url(url, headers = {}, cookies = {}, timeout = None, params = None):
+def get_url(url, headers = {}, cookies = {}, timeout = None, params = None, exceptions = True):
     """
-    Retrieves a URL as text
+    Retrieves a URL as text/str
     headers: dict of HTTP headers
     cookies: dict of cookies
     timeout: timeout value in seconds as a float
     params: dict of querystring elements
+    exceptions: If False, returns a fake HTTP status 599 to allow for simpler call handling of non-HTTP exceptions
     """
     # requests timeout is seconds/float, but some may call this with integer ms instead so convert
     if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
-    r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout, params=params)
+    try:
+        r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout, params=params)
+    except Exception as err:
+        if exceptions: raise err
+        return { "status": 599, "response": str(err), "cookies": {}, "headers": {}, "requestheaders": {}, "requestbody": "" }
     return { "cookies": r.cookies, "headers": r.headers, "response": r.text, "status": r.status_code, "requestheaders": r.request.headers, "requestbody": r.request.body }
 
-def get_image_url(url, headers = {}, cookies = {}, timeout = None):
+def get_url_bytes(url, headers = {}, cookies = {}, timeout = None, exceptions = True):
     """
-    Retrives an image from a URL as bytes string in response
+    Retrieves a URL as bytes without decoding to a string
+    exceptions: If False, returns a fake HTTP status 599 to allow for simpler call handling of non-HTTP exceptions
     """
     # requests timeout is seconds/float, but some may call this with integer ms instead so convert
     if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
-    r = requests.get(url, headers=headers, cookies=cookies, timeout=timeout, allow_redirects=True, stream=True)
+    try:
+        r = requests.get(url, headers=headers, cookies=cookies, timeout=timeout, allow_redirects=True, stream=True)
+    except Exception as err:
+        if exceptions: raise err
+        return { "status": 599, "response": str(err), "cookies": {}, "headers": {}, "requestheaders": {}, "requestbody": "" }
     b = bytesio()
     for chunk in r:
         b.write(chunk) # default from requests is 128 byte chunks
