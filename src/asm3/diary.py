@@ -58,7 +58,7 @@ def email_uncompleted_upto_today(dbo):
             if totalforuser > 0:
                 asm3.al.debug("got %d notes for user %s" % (totalforuser, u.username), "diary.email_uncompleted_upto_today", dbo)
                 subject = asm3.i18n._("Diary notes for: {0}", l).format(asm3.i18n.python2display(l, dbo.now()))
-                asm3.utils.send_email(dbo, "", u.emailaddress, "", "", subject, s, exceptions=False, bulk=True)
+                asm3.utils.send_email(dbo, "", u.emailaddress, "", "", subject, s, exceptions=False, bulk=True, retries=3)
                 if asm3.configuration.audit_on_send_email(dbo): 
                     asm3.audit.email(dbo, "system", asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s)
 

@@ -1029,7 +1029,7 @@ msgstr "התראות"
 
 #: event_animals.js
 msgid "All"
-msgstr "כולם"
+msgstr "כולם
 
 #: csvexport.js
 msgid "All Animals"
@@ -5153,7 +5153,7 @@ msgstr "יש למלא תאריך סיום לאירוע."
 msgid "Event successfully created"
 msgstr "אירוע נוצר בהצלחה"
 
-#: html.py animal.js roles.js options.js
+#: html.py animal.js options.js roles.js
 msgid "Events"
 msgstr "אירועים"
 
@@ -6780,7 +6780,7 @@ msgstr "ב-3 השנים האחרונות"
 
 #: litters.js
 msgid "In the last 6 months"
-msgstr "ב-6 השנים האחרונות"
+msgstr "ב-6 החודשים האחרונים"
 
 #: publish_options.js
 msgid "In the last month"

@@ -1659,7 +1659,7 @@ def strip_email_address(s):
     # Just returns the address portion of an email
     return parse_email_address(s)[1]
 
-def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body = "", contenttype = "plain", attachments = [], exceptions = True, bulk = False):
+def send_email(dbo, replyadd, toadd, ccadd="", bccadd="", subject="", body="", contenttype="plain", attachments=[], exceptions=True, bulk=False, retries=1):
     """
     Sends an email.
     replyadd is a single email address and controls the Reply-To header
@@ -1673,6 +1673,8 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     exceptions: If True, throws exceptions due to sending problems
     bulk: If True, set the Precedence: Bulk header 
           (indicates message type and attempts to stop backscatter)
+    retries: If >1, the number of times to wait and retry if an 
+          SMTP error occurs (incompatible with exceptions = True)
 
     returns True on success
 
@@ -1807,9 +1809,9 @@ def send_email(dbo, replyadd, toadd, ccadd = "", bccadd = "", subject = "", body
     asm3.al.debug("from: %s, reply-to: %s, to: %s, subject: %s, body: %s" % \
         (fromadd, replyadd, str(tolist), subject, body), "utils.send_email", dbo)
 
-    _send_email(msg, fromadd, tolist, dbo, exceptions=exceptions)
+    _send_email(msg, fromadd, tolist, dbo, exceptions=exceptions, retries=retries)
 
-def _send_email(msg, fromadd, tolist, dbo=None, exceptions=True):
+def _send_email(msg, fromadd, tolist, dbo=None, exceptions=True, retries=1):
     """
     Internal function to handle the final transmission of an email message.
     msg: The python message object
@@ -1817,8 +1819,12 @@ def _send_email(msg, fromadd, tolist, dbo=None, exceptions=True):
     tolist: A list of recipient addresses [ "add1@test.com", "add2@test.com" ... ]
     dbo can be None, is only used for logging
     exceptions: If True throws exceptions on error, otherwise returns success boolean
+    retries: If >1, waits RETRY_SECS seconds and retries this many times in the 
+             event of an error (SMTP only, exceptions must be False)
+             Since _send_email is synchronous/blocking, never set retries from UI calls
     """
     # Load the server config over default vars
+    RETRY_SECS = 10
     sendmail = True
     host = ""
     port = 25
@@ -1868,7 +1874,10 @@ def _send_email(msg, fromadd, tolist, dbo=None, exceptions=True):
         except Exception as err:
             asm3.al.error("smtp: %s" % str(err), "utils.send_email", dbo)
             if exceptions: raise ASMError(str(err))
-            return False
+            if retries == 1: return False # Last attempt, quit
+            # Wait 10 seconds and try again until retries is exhausted
+            time.sleep(RETRY_SECS)
+            _send_email(msg, fromadd, tolist, dbo=dbo, exceptions=exceptions, retries=retries-1)
 
 def send_bulk_email(dbo, replyadd, subject, body, rows, contenttype):
     """

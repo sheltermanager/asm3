@@ -1012,7 +1012,7 @@ def breed_ids(a, breed1, breed2 = "", default = 1):
             a.Breed2ID = 442
         else:
             a.Breed2ID = breed_id_for_name(breed2, default)
-        if a.Breed2ID == 1: a.Breed2ID = 442
+        if a.Breed2ID == default: a.Breed2ID = 442
         if a.Breed2ID != a.BreedID: 
             a.BreedName = "%s / %s" % ( breed_name_for_id(a.BreedID), breed_name_for_id(a.Breed2ID) )
 

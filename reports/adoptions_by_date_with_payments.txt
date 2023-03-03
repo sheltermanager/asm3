@@ -1,0 +1,103 @@
+Adoptions by Date with Payments
+###
+Movements
+###
+Any rev02
+###
+Adoptions between two dates with payment info.
+###
+en
+###
+$VAR from DATE Adopted between$
+$VAR to DATE and$
+
+SELECT adoption.AnimalID, adoption.OwnerID, 
+ShelterCode, AnimalName, MostRecentEntryDate, MovementDate, 
+species.SpeciesName, animal.TimeOnShelter, animal.DaysOnShelter, animal.IdentichipNumber,
+animaltype.AnimalType AS theType,
+animal.BreedName, 
+animal.OriginalOwnerID, 
+oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode, 
+oo.EmailAddress AS OOEmail,
+no.OwnerName, no.OwnerAddress,
+no.OwnerTown, no.OwnerCounty,
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone,
+ownerdonation.Donation, donationtype.DonationName, donationpayment.PaymentName
+FROM adoption
+INNER JOIN animal ON adoption.AnimalID = animal.ID
+LEFT OUTER JOIN ownerdonation ON ownerdonation.MovementID = adoption.ID
+LEFT OUTER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
+LEFT OUTER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID
+INNER JOIN owner no ON adoption.OwnerID = no.ID
+INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
+INNER JOIN species ON species.ID = animal.SpeciesID
+LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
+WHERE MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' ORDER BY MovementDate
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Breed</b></td>
+<td><b>Microchip</b></td>
+<td><b>Entered Shelter</b></td>
+<td><b>Time On Shelter</b></td>
+<!-- <td><b>Came From</b></td> -->
+<td><b>Adoption Date</b></td>
+<td><b>Adopted To</b></td>
+<td><b>Payment Type</b></td>
+<td><b>Method</b></td>
+<td><b>Amount</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td><a target="_blank" href="animal?id=$ANIMALID">$ANIMALNAME</a></td>
+<td>$theType</td>
+<td>$BreedName</td>
+<td>$IdentichipNumber</td>
+<td>$MostRecentEntryDate</td>
+<td>$TimeOnShelter ($DaysOnShelter days)</td>
+<!--
+<td><a target="_blank" href="person?id=$ORIGINALOWNERID">$OOName</a><br/>
+$OOAddress<br/>
+$OOTown<br/>
+$OOCounty<br/>
+$OOPostcode<br/>
+$OOEmail</td>
+-->
+<td>$MOVEMENTDATE</td>
+<td><a target="_blank" href="person?id=$OWNERID">$OwnerName</a><br/>
+$OwnerAddress<br/>
+$OwnerTown<br/>
+$OwnerCounty<br/>
+$OwnerPostcode<br/>
+$EmailAddress<br/>
+H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
+<td>$DonationName</td>
+<td>$PaymentName</td>
+<td>$Donation</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>Average: {AVG.DaysOnShelter.2} days</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>{SUM.Donation.2}</td>
+</tr>
+</table>
+<h2>Total adoptions: {COUNT.SHELTERCODE}</h2>
+FOOTER$$
+
