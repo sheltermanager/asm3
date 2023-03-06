@@ -333,6 +333,7 @@ DEFAULTS = {
     "RetailerOnShelter": "Yes",
     "ReturnFostersOnAdoption": "Yes",
     "ReturnFostersOnTransfer": "Yes",
+    "ReturnRetailerOnAdoption": "Yes",
     "ScalePDFs": "Yes", 
     "SearchColumns": "AnimalName,Image,ShelterCode,ShelterLocation,SpeciesID,BreedName," \
         "Sex, AnimalAge, Size, BaseColourID, Markings, IdentichipNumber, DateBroughtIn",
@@ -1326,6 +1327,9 @@ def return_fosters_on_adoption(dbo):
 
 def return_fosters_on_transfer(dbo):
     return cboolean(dbo, "ReturnFostersOnTransfer", DEFAULTS["ReturnFostersOnTransfer"] == "Yes")
+
+def return_retailer_on_adoption(dbo):
+    return cboolean(dbo, "ReturnRetailerOnAdoption", DEFAULTS["ReturnRetailerOnAdoption"] == "Yes")
 
 def smarttag_accountid(dbo):
     return cstring(dbo, "SmartTagFTPUser")

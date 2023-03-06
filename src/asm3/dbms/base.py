@@ -452,7 +452,7 @@ class Database(object):
         rows_affected = self.execute(sql, list(values.values()), override_lock=setOverrideDBLock)
         if iid > 0:
             postaudit = self.query_row(table, iid)
-        if user != "" and iid > 0 and writeAudit:
+        if user != "" and iid > 0 and rows_affected > 0 and writeAudit:
             asm3.audit.edit(self, user, table, iid, asm3.audit.get_parent_links(values, table), asm3.audit.map_diff(preaudit, postaudit, asm3.audit.get_readable_fields_for_table(table)))
         return rows_affected
 

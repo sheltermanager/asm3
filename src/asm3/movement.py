@@ -232,7 +232,7 @@ def get_person_movements(dbo, pid):
     """
     return dbo.query(get_movement_query(dbo) + " WHERE m.OwnerID = ? ORDER BY ActiveDate DESC", [pid])
 
-def validate_movement_form_data(dbo, post):
+def validate_movement_form_data(dbo, username, post):
     """
     Verifies that form data is valid for a movement
     """
@@ -319,14 +319,25 @@ def validate_movement_form_data(dbo, post):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Return date cannot be before the movement date.", l))
     # If the option to return fosters on adoption is set, return any outstanding fosters for the animal
     if movementtype == ADOPTION and asm3.configuration.return_fosters_on_adoption(dbo):
-        changed = dbo.execute("UPDATE adoption SET ReturnDate = ? WHERE " \
-            "ReturnDate Is Null AND MovementType = 2 AND AnimalID = ? AND ID <> ?", (movementdate, animalid, movementid))
-        asm3.al.debug("movement is an adoption, returning outstanding fosters (%d)." % changed, "movement.validate_movement_form_data", dbo)
+        fosterid = dbo.query_int("SELECT ID FROM adoption WHERE ReturnDate Is Null AND MovementType=2 AND AnimalID=? AND ID<>?", (animalid, movementid))
+        if fosterid > 0:
+            dbo.update("adoption", fosterid, { "ReturnDate": movementdate }, username)
+            asm3.al.debug(f"movement is an adoption, returning outstanding foster (id={fosterid}).", "movement.validate_movement_form_data", dbo)
     # If the option to return fosters on transfer is set, return any outstanding fosters for the animal
     if movementtype == TRANSFER and asm3.configuration.return_fosters_on_transfer(dbo):
-        changed = dbo.execute("UPDATE adoption SET ReturnDate = ? WHERE " \
-            "ReturnDate Is Null AND MovementType = 2 AND AnimalID = ? AND ID <> ?", (movementdate, animalid, movementid))
-        asm3.al.debug("movement is a transfer, returning outstanding fosters (%d)." % changed, "movement.validate_movement_form_data", dbo)
+        fosterid = dbo.query_int("SELECT ID FROM adoption WHERE ReturnDate Is Null AND MovementType=2 AND AnimalID=? AND ID<>?", (animalid, movementid))
+        if fosterid > 0:
+            dbo.update("adoption", fosterid, { "ReturnDate": movementdate }, username)
+            asm3.al.debug(f"movement is a transfer, returning outstanding foster (id={fosterid}).", "movement.validate_movement_form_data", dbo)
+    # If the option to return retailers on adoption is set, return any outstanding retailer moves for the animal
+    if movementtype == ADOPTION and asm3.configuration.return_retailer_on_adoption(dbo):
+        retailermove = dbo.first_row(dbo.query("SELECT ID, OwnerID FROM adoption WHERE " \
+            "ReturnDate Is Null AND MovementType=8 AND AnimalID=? AND ID<>?", (animalid, movementid)))
+        if retailermove is not None:
+            dbo.update("adoption", retailermove.ID, { "ReturnDate": movementdate }, username)
+            asm3.al.debug(f"movement is an adoption, returning outstanding retailer (id={retailermove.ID}).", "movement.validate_movement_form_data", dbo)
+            post["originalretailermovement"] = str(retailermove.ID)
+            post["retailer"] = str(retailermove.OWNERID)
     # Can't have multiple open movements
     if movementdate is not None and returndate is None:
         existingopen = dbo.query_int("SELECT COUNT(*) FROM adoption WHERE MovementDate Is Not Null AND " \
@@ -371,14 +382,17 @@ def validate_movement_form_data(dbo, post):
         raise asm3.utils.ASMValidationError(asm3.i18n._("The movement number '{0}' is not unique.", l).format(post["adoptionno"]))
     # If this is an adoption and the owner had some criteria, expire them
     if movementtype == ADOPTION and personid > 0:
-        changed = dbo.execute("UPDATE owner SET MatchActive = 0, MatchExpires = ? WHERE ID = ?", (dbo.today(), personid))
-        asm3.al.debug("movement is an adoption, expiring person criteria (%d)." % changed, "movement.validate_movement_form_data", dbo)
+        dbo.update("owner", personid, { "MatchActive": 0, "MatchExpires": dbo.today() }, username)
+        asm3.al.debug(f"movement is an adoption, expiring person criteria (id={personid}).", "movement.validate_movement_form_data", dbo)
     # If the option to cancel reserves on adoption is set, cancel any outstanding reserves for the animal
     if movementtype == ADOPTION and asm3.configuration.cancel_reserves_on_adoption(dbo):
-        changed = dbo.execute("UPDATE adoption SET ReservationCancelledDate = ? " \
-            "WHERE ReservationCancelledDate Is Null AND MovementDate Is Null " \
-            "AND AnimalID = ? AND ID <> ?", (dbo.today(), animalid, movementid))
-        asm3.al.debug("movement is an adoption, cancelling outstanding reserves (%d)." % changed, "movement.validate_movement_form_data", dbo)
+        reserves = dbo.query("SELECT ID FROM adoption WHERE ReservationCancelledDate Is Null AND MovementDate Is Null AND AnimalID=? AND ID<>?", (animalid, movementid))
+        if len(reserves) > 0:
+            cancids = []
+            for r in reserves:
+                cancids.append(str(r.ID))
+                dbo.update("adoption", r.ID, { "ReservationCancelledDate": dbo.today() }, username)
+            asm3.al.debug(f"movement is an adoption, cancelling outstanding reserves (ids={cancids}).", "movement.validate_movement_form_data", dbo)
 
 def insert_movement_from_form(dbo, username, post):
     """
@@ -400,7 +414,7 @@ def insert_movement_from_form(dbo, username, post):
             else:
                 idx += 1
 
-    validate_movement_form_data(dbo, post)
+    validate_movement_form_data(dbo, username, post)
 
     dbo.insert("adoption", {
         "ID":                           movementid,
@@ -439,7 +453,7 @@ def update_movement_from_form(dbo, username, post):
     """
     Updates a movement record from posted form data
     """
-    validate_movement_form_data(dbo, post)
+    validate_movement_form_data(dbo, username, post)
     movementid = post.integer("movementid")
     oanimalid = dbo.query_int("SELECT AnimalID FROM adoption WHERE ID=?", [movementid])
     dbo.update("adoption", movementid, {

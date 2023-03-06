@@ -779,6 +779,12 @@ Movements
   an animal that still has an open foster movement, the foster movement will be
   returned with the adoption date so that the adoption can proceed.
 
+* Automatically return any outstanding retailer movements on an animal when it is
+  adopted: Applies to movement tabs/books. If an adoption record is created for
+  an animal that still has an open retailer movement, the retailer movement will be
+  returned with the adoption date so that the adoption can proceed. The adoption
+  will be linked to the previous retailer and movement for reporting purposes.
+
 * When creating payments from the Move menu screens, mark them due instead of
   received: Creating adoptions and reservations from :menuselection:`Move -->
   Adopt an animal` lets you receive a payment at the same time. If this option
