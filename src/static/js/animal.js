@@ -634,7 +634,7 @@ $(function() {
 
             $.each(controller.events, function(i, v) {
                 h.push('<tr>');
-                h.push('<td><b><a href="event?id=' + v.ID + '">' + format.date(v.STARTDATETIME) + '</a></b></td>');
+                h.push('<td><b><a href="event?id=' + v.EVENTID + '">' + format.date(v.STARTDATETIME) + '</a></b></td>');
                 h.push('<td>' + format.date(v.ENDDATETIME) + '</td>');
                 h.push('<td>' + common.nulltostr(v.EVENTNAME) + '</td>');
                 h.push('<td>' + v.EVENTADDRESS + ', ' + (v.EVENTTOWN != null ? v.EVENTTOWN : '') + ' ' + (v.EVENTCOUNTY != null ? v.EVENTCOUNTY : '') + ' ' + (v.EVENTPOSTCODE != null ? v.EVENTPOSTCODE : '') + ' ' + (v.EVENTCOUNTRY != null ? v.EVENTCOUNTRY : '') + '</td>');

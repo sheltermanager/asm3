@@ -17,7 +17,7 @@ def get_event_animal_query(dbo):
            "a.Sex, s.SpeciesName, a.displaylocation, " \
            "bc.BaseColour AS BaseColourName, " \
            "sx.Sex AS SexName, " \
-           "bd.BreedName AS BreedName, " \
+           "bd.BreedName AS BreedName, ea.EventID" \
            "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
            "CASE WHEN EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) THEN 1 ELSE 0 END AS Adopted, " \
            "lastfosterer.ownerid as LastFostererID, lastfosterer.ownername AS LastFostererName, lastfosterer.returndate AS LastFostererReturnDate, lastfosterer.mobiletelephone AS LastFostererMobileTelephone, lastfosterer.hometelephone AS LastFostererHomeTelephone, lastfosterer.worktelephone  AS LastFostererWorkTelephone, " \
@@ -52,12 +52,12 @@ def get_animals_by_event(dbo, eventid, queryfilter="all"):
     """
     filters = {
         "all": "",
-        "arrived": " AND ea.ArrivalDate is not null",
-        "noshow": " AND ea.ArrivalDate is null",
-        "neednewfoster": " AND lastfosterer.returndate IS NOT NULL",
-        "dontneednewfoster": " AND lastfosterer.returndate IS NULL",
-        "adopted": " AND ad.id IS NOT NULL",
-        "notadopted": " AND ad.id IS NULL",
+        "arrived": " AND ea.ArrivalDate IS NOT NULL ",
+        "noshow": " AND ea.ArrivalDate IS NULL ",
+        "neednewfoster": " AND lastfosterer.returndate IS NOT NULL ",
+        "dontneednewfoster": " AND lastfosterer.returndate IS NULL ",
+        "adopted": " AND EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) ",
+        "notadopted": " AND NOT EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) ",
     }
     whereclause = " WHERE ev.id=? " + (filters[queryfilter] if queryfilter in filters else "")
     return dbo.query(get_event_animal_query(dbo) + whereclause, [eventid])
