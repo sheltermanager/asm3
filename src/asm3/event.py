@@ -47,7 +47,7 @@ def get_events_by_animal(dbo, animalid):
 
 def get_animals_by_event(dbo, eventid, queryfilter="all"):
     """
-    Returns all events for animalid.
+    Returns all animals for animalid.
     if queryfilter is provided, add conditions
     """
     filters = {
@@ -61,7 +61,6 @@ def get_animals_by_event(dbo, eventid, queryfilter="all"):
     }
     whereclause = " WHERE ev.id=? " + (filters[queryfilter] if queryfilter in filters else "")
     return dbo.query(get_event_animal_query(dbo) + whereclause, [eventid])
-
 
 def get_events_by_date(dbo, date):
     """
@@ -200,9 +199,8 @@ def update_event_animal(dbo, username, post):
     Updates an eventanimal record from posted form data
     """
     eventanimalid = post.integer("eventanimalid")
-
     kvp = {}
-    if "animal" in post: kvp["AnimalID"] = post.integer("animal"),
+    if "animal" in post: kvp["AnimalID"] = post.integer("animal")
     if "arrivaldate" in post and "arrivaltime" in post: kvp["ArrivalDate"] = post.datetime("arrivaldate", "arrivaltime")
     if "comments" in post: kvp["Comments"] = post["comments"]
     dbo.update("eventanimal", eventanimalid, kvp, username)
@@ -213,30 +211,25 @@ def update_event_animal_arrived(dbo, username, eaid):
     if eventanimalid != 0:
         dbo.update("eventanimal", eventanimalid, {"ArrivalDate": dbo.now()})
 
-
 def delete_event_animal(dbo, username, id):
     """
     Deletes an eventanimal record
     """
-    dbo.delete("animalvaccination", id, username)
+    dbo.delete("eventanimal", id, username)
 
-def end_active_foster(dbo, username, id):
+def end_active_foster(dbo, username, eventanimalid):
     """
     Set return date for an active foster for animal(s) in event
     """
-    sql = """SELECT ev.startdatetime, ea.animalid, m.id as movementid
-             FROM event ev 
-             INNER JOIN eventanimal ea ON ev.id = ea.eventid
-             INNER JOIN adoption m ON m.animalid = ea.animalid 
-             WHERE ea.id = ?
-             AND m.movementtype=2
-             AND m.returndate IS NULL;
-    """
-    rows = dbo.query(sql, [id])
-    if len(rows) > 0: # there is an active foster movement
-        animalid = rows[0]["ANIMALID"]
-        eventstartdate = rows[0]["STARTDATETIME"]
-        movementid = rows[0]["MOVEMENTID"]
-        #return from foster at event start or today, whichever is latest
-        asm3.movement.return_movement(dbo, movementid, username, animalid, returndate = max(eventstartdate, dbo.today()))
+    sql = "SELECT ev.StartDateTime, ea.AnimalID, m.id as MovementID " \
+        "FROM event ev " \
+        "INNER JOIN eventanimal ea ON ev.id = ea.EventID " \
+        "INNER JOIN adoption m ON m.AnimalID = ea.AnimalID " \
+        "WHERE ea.id = ? " \
+        "AND m.MovementType = 2 " \
+        "AND m.ReturnDate Is Null"
+    row = dbo.first_row(dbo.query(sql, [eventanimalid]))
+    if row is not None: 
+        # return from foster at event start or today, whichever is latest
+        asm3.movement.return_movement(dbo, row.MOVEMENTID, username, row.ANIMALID, returndate = max(row.STARTDATETIME, dbo.today()))
 
