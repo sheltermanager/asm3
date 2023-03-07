@@ -17,7 +17,7 @@ def get_event_animal_query(dbo):
            "a.Sex, s.SpeciesName, a.displaylocation, " \
            "bc.BaseColour AS BaseColourName, " \
            "sx.Sex AS SexName, " \
-           "bd.BreedName AS BreedName, ea.EventID" \
+           "bd.BreedName AS BreedName, ea.EventID, " \
            "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
            "CASE WHEN EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) THEN 1 ELSE 0 END AS Adopted, " \
            "lastfosterer.ownerid as LastFostererID, lastfosterer.ownername AS LastFostererName, lastfosterer.returndate AS LastFostererReturnDate, lastfosterer.mobiletelephone AS LastFostererMobileTelephone, lastfosterer.hometelephone AS LastFostererHomeTelephone, lastfosterer.worktelephone  AS LastFostererWorkTelephone, " \
