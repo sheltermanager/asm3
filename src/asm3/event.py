@@ -174,7 +174,7 @@ def get_event_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     ss.add_str("country", "ev.eventcountry")
     ss.add_daterange("eventfrom", "eventto", "ev.startdatetime", "ev.enddatetime")
 
-    sql = "%s WHERE %s ORDER BY ev.ID DESC" % (get_event_query(dbo), " AND ".join(ss.ands))
+    sql = "%s WHERE %s ORDER BY ev.startdatetime " % (get_event_query(dbo), " AND ".join(ss.ands))
     rows = dbo.query(sql, ss.values, limit=limit, distincton="ID")
     return rows
 
