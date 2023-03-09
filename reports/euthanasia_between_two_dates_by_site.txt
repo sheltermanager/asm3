@@ -1,0 +1,81 @@
+Euthanasia between two dates by site
+###
+Auditing
+###
+33908/Any rev01
+###
+All animals who were put to sleep between two dates with details, broken down by site
+###
+en
+###
+SELECT a.ShelterCode, 
+a.AnimalName, 
+a.MostRecentEntryDate,
+a.DeceasedDate,
+a.IdentichipNumber,
+a.AnimalAge,
+a.BreedName,
+a.TimeOnShelter,
+a.DaysOnShelter,
+sx.Sex,
+t.AnimalType,
+s.SpeciesName,
+r.ReasonName,
+vt.VaccinationType,
+av.Comments AS VaccComments,
+st.SiteName
+FROM animal a
+LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation
+LEFT OUTER JOIN site st ON st.ID = il.SiteID
+LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
+LEFT OUTER JOIN deathreason r ON r.ID = a.PTSReasonID
+LEFT OUTER JOIN animalvaccination av ON av.AnimalID = a.ID AND a.DeceasedDate = av.DateOfVaccination
+LEFT OUTER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID 
+WHERE a.DiedOffShelter = 0 AND a.PutToSleep = 1 AND a.DeceasedDate >= '$ASK DATE Euthanasia between $' AND a.DeceasedDate <= '$ASK DATE and $'
+ORDER BY a.DeceasedDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SiteName
+$$HEAD
+<h2>$SiteName</h2>
+<table border=1>
+<tr>
+<td><b>Date of Death</b></td>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Microchip</b></td>
+<td><b>Type</b></td>
+<td><b>Age</b></td>
+<td><b>Drug</b></td>
+<td><b>Intake Date</b></td>
+<td><b>Days On Shelter</b></td>
+<td><b>Reason</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $SiteName: {COUNT.SHELTERCODE}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$deceaseddate</td>
+<td>$sheltercode</td>
+<td>$animalname</td>
+<td>$identichipnumber</td>
+<td>$animaltype ($sex $breedname $speciesname)</td>
+<td>$animalage</td>
+<td>$vaccinationtype $vacccomments</td>
+<td>$mostrecententrydate</td>
+<td>$daysonshelter</td>
+<td>$reasonname</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<p>Total deaths: {COUNT.ShelterCode}</p>
+FOOTER$$

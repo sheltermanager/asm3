@@ -1,0 +1,222 @@
+Medical, Vaccination and Tests due between two dates by site
+###
+Medical
+###
+33908/Any rev01
+###
+Medical, vaccination and tests due between two dates in one report and broken down by site
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT * FROM
+(
+
+SELECT
+'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+t.AnimalType, s.SpeciesName, a.DisplayLocation,
+am.TreatmentName, am.Dosage, amt.TreatmentNumber, 
+amt.TotalTreatments, amt.DateRequired, am.Comments,
+st.SiteName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN site st ON st.ID = il.SiteID
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
+WHERE amt.DateGiven Is Null 
+AND amt.DateRequired >= '$@from$' AND amt.DateRequired <= '$@to$'
+AND a.Archived = 0 AND a.DeceasedDate Is Null
+
+UNION SELECT
+'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
+v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
+'1' AS TotalTreatments, av.DateRequired, av.Comments,
+st.SiteName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN animalvaccination av ON a.ID = av.AnimalID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN site st ON st.ID = il.SiteID
+WHERE av.DateOfVaccination Is Null
+AND av.DateRequired >= '$@from$' AND av.DateRequired <= '$@to$'
+AND a.Archived = 0 AND a.DeceasedDate Is Null
+
+UNION SELECT
+'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
+tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
+'1' AS TotalTreatments, at.DateRequired, at.Comments,
+st.SiteName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN animaltest at ON a.ID = at.AnimalID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN testtype tt ON at.TestTypeID = tt.ID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN site st ON st.ID = il.SiteID
+WHERE at.DateOfTest Is Null
+AND at.DateRequired >= '$@from$' AND at.DateRequired <= '$@to$'
+AND a.Archived = 0 AND a.DeceasedDate Is Null
+
+) dummy
+ORDER BY SiteName, DateRequired, DisplayLocation
+
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SiteName
+$$HEAD
+<h2>$SiteName</h2>
+<table border=1><tr>
+<td><b>Animal</b></td>
+<td><b>Type</b></td>
+<td><b>Species</b></td>
+<td><b>Internal Loc</b></td>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>Number</b></td>
+<td><b>Date Required</b></td>
+<td><b>Comments</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $SiteName: {COUNT.SHELTERCODE}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="animal?id=$AID">$SHELTERCODE $ANIMALNAME</a></td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
+<td>$DISPLAYLOCATION</td>
+<td><b>$MTYPE: $TREATMENTNAME</b></td>
+<td>$DOSAGE</td>
+<td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
+<td>$DATEREQUIRED</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+&&&
+Medical, Vaccination and Tests given between two dates by site
+###
+Medical
+###
+33908/Any rev01
+###
+Medical, vaccination and tests given to shelter animals between two dates in one report, broken down by site
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT * FROM
+(
+
+SELECT
+'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+t.AnimalType, s.SpeciesName, a.DisplayLocation, 
+am.TreatmentName, am.Dosage, amt.TreatmentNumber, 
+amt.TotalTreatments, amt.DateGiven, amt.GivenBy, am.Comments,
+st.SiteName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN site st ON st.ID = il.SiteID
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
+WHERE amt.DateGiven Is Not Null 
+AND amt.DateGiven >= '$@from$' AND amt.DateGiven <= '$@to$'
+AND a.DeceasedDate Is Null
+
+UNION SELECT
+'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
+v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
+'1' AS TotalTreatments, av.DateOfVaccination AS DateGiven, av.LastChangedBy AS GivenBy, av.Comments,
+st.SiteName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN animalvaccination av ON a.ID = av.AnimalID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN site st ON st.ID = il.SiteID
+INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
+WHERE av.DateOfVaccination Is Not Null
+AND av.DateOfVaccination >= '$@from$' AND av.DateOfVaccination <= '$@to$'
+AND a.DeceasedDate Is Null
+
+UNION SELECT
+'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+t.AnimalType, sp.SpeciesName, a.DisplayLocation,
+tt.TestName AS TreatmentName, tr.ResultName AS Dosage, '1' AS TreatmentNumber,
+'1' AS TotalTreatments, at.DateOfTest AS DateGiven, at.LastChangedBy AS GivenBy, at.Comments,
+st.SiteName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN animaltest at ON a.ID = at.AnimalID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN site st ON st.ID = il.SiteID
+INNER JOIN testtype tt ON at.TestTypeID = tt.ID
+INNER JOIN testresult tr ON tr.ID = at.TestResultID
+WHERE at.DateOfTest Is Not Null
+AND at.DateOfTest >= '$@from$' AND at.DateOfTest <= '$@to$'
+AND a.DeceasedDate Is Null
+
+) dummy
+ORDER BY SiteName, DateGiven
+
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SiteName
+$$HEAD
+<h2>$SiteName</h2>
+<table border=1><tr>
+<td><b>Animal</b></td>
+<td><b>Type</b></td>
+<td><b>Species</b></td>
+<td><b>Location</b></td>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>Number</b></td>
+<td><b>Date Given</b></td>
+<td><b>By</b></td>
+<td><b>Comments</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $SiteName: {COUNT.SHELTERCODE}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="animal?id=$AID">$SHELTERCODE $ANIMALNAME</a></td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
+<td>$DISPLAYLOCATION</td>
+<td><b>$MTYPE: $TREATMENTNAME</b></td>
+<td>$DOSAGE</td>
+<td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
+<td>$DATEGIVEN</td>
+<td>$GIVENBY</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
