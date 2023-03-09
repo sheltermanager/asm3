@@ -1043,7 +1043,7 @@ def delete_onlineformincoming(dbo, username, collationid):
 
 def guess_agegroup(dbo, s):
     """ Guesses an agegroup, returns the third band (adult by default) if no match is found """
-    s = str(s).lower()
+    s = str(s).lower().strip()
     for g in asm3.configuration.age_groups(dbo):
         if g.lower() == s:
             return g
@@ -1051,21 +1051,21 @@ def guess_agegroup(dbo, s):
 
 def guess_animaltype(dbo, s):
     """ Guesses an animal type, returns the default if no match is found """
-    s = str(s).lower()
+    s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM animaltype WHERE LOWER(AnimalType) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess
     return asm3.configuration.default_type(dbo)
 
 def guess_breed(dbo, s):
     """ Guesses a breed, returns the default if no match is found """
-    s = str(s).lower()
+    s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM breed WHERE LOWER(BreedName) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess
     return asm3.configuration.default_breed(dbo)
 
 def guess_colour(dbo, s):
     """ Guesses a colour, returns the default if no match is found """
-    s = str(s).lower()
+    s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE ?", ["%s" % s])
     if guess != 0: return guess
     guess = dbo.query_int("SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE ?", ["%%%s%%" % s])
@@ -1074,7 +1074,7 @@ def guess_colour(dbo, s):
 
 def guess_entryreason(dbo, s):
     """ Guesses an entry reason, returns the default if no match is found """
-    s = str(s).lower()
+    s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM entryreason WHERE LOWER(ReasonName) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess
     return asm3.configuration.default_entry_reason(dbo)
@@ -1087,21 +1087,21 @@ def guess_sex(dummy, s):
 
 def guess_size(dbo, s):
     """ Guesses a size """
-    s = str(s).lower()
+    s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM lksize WHERE LOWER(Size) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess
     return asm3.configuration.default_size(dbo)
 
 def guess_species(dbo, s):
     """ Guesses a species, returns the default if no match is found """
-    s = str(s).lower()
+    s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM species WHERE LOWER(SpeciesName) LIKE ?", [s])
     if guess != 0: return guess
     return asm3.configuration.default_species(dbo)
 
 def guess_transporttype(dbo, s):
     """ Guesses a transporttype """
-    s = str(s).lower()
+    s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM transporttype WHERE LOWER(TransportTypeName) LIKE ?", [s])
     if guess != 0: return guess
     return dbo.query_int("SELECT ID FROM transporttype ORDER BY ID")
