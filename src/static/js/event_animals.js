@@ -114,7 +114,7 @@ $(function(){
                     { id: "addanimals", text: _("Add from List"), icon: "litter", tooltip: _("Add animals to this event from animal list"), enabled: "always", perm: "cea",
                         click: async function() {
                             $("#addanimals").animalchoosermulti("clear");
-                            await tableform.show_okcancel_dialog("#dialog-addbulkanimal", _("Add"), { notzero: [ "addanimals" ] });
+                            await tableform.show_okcancel_dialog("#dialog-addanimals", _("Add"), { notzero: [ "addanimals" ] });
                             let animals = $("#addanimals").val();
                             await common.ajax_post("event_animals", "mode=createbulk&eventid=" + controller.event.ID + "&animals=" + animals);
                             common.route_reload();
@@ -203,8 +203,8 @@ $(function(){
                 '</div>'].join("\n");
         },
 
-        render_addbulkanimaldialog: function() {
-            return ['<div id="dialog-addbulkanimal" style="display: none" title="' + html.title(_("Add animals")) + '">',
+        render_addanimalsdialog: function() {
+            return ['<div id="dialog-addanimals" style="display: none" title="' + html.title(_("Add animals")) + '">',
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="addanimals">' + _("Animals") + '</label></td>',
@@ -221,7 +221,7 @@ $(function(){
             s += event_animals.render_arriveddialog();
             s += event_animals.render_endactivefosterdialog();
             s += event_animals.render_addanimaldialog();
-            s += event_animals.render_addbulkanimaldialog();
+            s += event_animals.render_addanimalsdialog();
             s += edit_header.event_edit_header(controller.event, "event_animals", []);
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
