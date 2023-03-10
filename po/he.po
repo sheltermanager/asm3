@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
 "POT-Creation-Date: 2023-02-24 13:57+0000\n"
-"PO-Revision-Date: 2023-03-02 14:22+0200\n"
+"PO-Revision-Date: 2023-03-08 15:45+0200\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -1029,7 +1029,7 @@ msgstr "התראות"
 
 #: event_animals.js
 msgid "All"
-msgstr "כולם
+msgstr "כולם"
 
 #: csvexport.js
 msgid "All Animals"
@@ -14422,7 +14422,7 @@ msgstr "קורבן"
 
 #: incident_find.js
 msgid "Victim Name"
-msgstr "שם הקרובן"
+msgstr "שם הקורבן"
 
 #: dbupdate.py media.js
 msgid "Video Link"
