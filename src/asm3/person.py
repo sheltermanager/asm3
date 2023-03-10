@@ -1189,6 +1189,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     mp["worktelephone"] = mp.WORKTELEPHONE
     mp["mobiletelephone"] = mp.MOBILETELEPHONE
     mp["emailaddress"] = mp.EMAILADDRESS
+    mp["comments"] = mp.COMMENTS
     merge_person_details(dbo, username, personid, mp)
 
     # Merge any flags from the target
