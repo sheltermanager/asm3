@@ -33,7 +33,7 @@ $(function() {
                     { field: "FORMNAME", display: _("Name") },
                     { field: "POSTEDDATE", display: _("Received"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_datetime },
                     { field: "HOST", display: _("From") },
-                    { field: "PREVIEW", display: _("Preview") },
+                    { field: "PREVIEW", display: _("Preview"), formatter: function(row) { return html.truncate(row.PREVIEW); } },
                     { field: "LINK", display: _("Link") }
                 ]
             };
