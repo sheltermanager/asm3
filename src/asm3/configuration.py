@@ -65,7 +65,9 @@ QUICKLINKS_SET = {
     55: ("move_reclaim", "", asm3.i18n._("Reclaim an animal")),
     56: ("donation", "asm-icon-donation", asm3.i18n._("Payment book")),
     57: ("calendarview?ev=c", "asm-icon-calendar", asm3.i18n._("Clinic Calendar")),
-    58: ("move_book_soft_release", "", asm3.i18n._("Soft release book"))
+    58: ("move_book_soft_release", "", asm3.i18n._("Soft release book")),
+    59: ("event_find", "asm-icon-event-find", asm3.i18n._("Find Event")),
+    60: ("event_new", "asm-icon-event-add", asm3.i18n._("Add a new event"))
 }
 
 # Default configuration values for unset items. This is so they
