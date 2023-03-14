@@ -6,32 +6,35 @@ from asm3.i18n import _
 
 def get_event_query(dbo):
     return "SELECT ev.*, owner.OwnerName AS EventOwnerName, " \
-           "(SELECT COUNT(*) FROM adoption a WHERE a.EventID = ev.ID) AS adoptions " \
-           "FROM event ev " \
-           "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID "
+        "(SELECT COUNT(*) FROM adoption a WHERE a.EventID = ev.ID) AS adoptions " \
+        "FROM event ev " \
+        "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID "
 
 def get_event_animal_query(dbo):
     return "SELECT ea.ID, owner.OwnerName AS EventOwnerName, ea.ArrivalDate, ea.Comments, " \
-           "a.id AS AnimalID, a.animalname, a.SHORTCODE, a.SHELTERCODE, a.MOSTRECENTENTRYDATE, a.LASTCHANGEDDATE, a.LASTCHANGEDBY,  a.AcceptanceNumber AS LitterID, a.AnimalAge, " \
-           "a.Sex, s.SpeciesName, a.DisplayLocation, a.AgeGroup, " \
-           "a.Sex, s.SpeciesName, a.displaylocation, " \
-           "bc.BaseColour AS BaseColourName, " \
-           "sx.Sex AS SexName, " \
-           "bd.BreedName AS BreedName, ea.EventID, " \
-           "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
-           "CASE WHEN EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) THEN 1 ELSE 0 END AS Adopted, " \
-           "lastfosterer.ownerid as LastFostererID, lastfosterer.ownername AS LastFostererName, lastfosterer.returndate AS LastFostererReturnDate, lastfosterer.mobiletelephone AS LastFostererMobileTelephone, lastfosterer.hometelephone AS LastFostererHomeTelephone, lastfosterer.worktelephone  AS LastFostererWorkTelephone, " \
-           "ev.STARTDATETIME, ev.ENDDATETIME, ev.EVENTNAME, ev.EVENTADDRESS, ev.EVENTTOWN, ev.EVENTPOSTCODE, ev.EVENTCOUNTRY " \
-           "FROM eventanimal ea " \
-           "INNER JOIN animal a ON ea.animalid = a.id " \
-           "INNER JOIN event ev ON ev.id = ea.eventid " \
-           "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
-           "LEFT OUTER JOIN breed bd ON bd.ID = a.BreedID " \
-           "LEFT OUTER JOIN species s ON a.SpeciesID = s.ID " \
-           "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
-           "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID " \
-           "LEFT OUTER JOIN basecolour bc ON bc.ID = a.BaseColourID " \
-           "LEFT JOIN (SELECT * FROM (SELECT m.ownerid, m.animalid, row_number() OVER (PARTITION BY m.animalid ORDER BY CASE WHEN m.returndate IS NULL THEN 0 ELSE 1 END, m.returndate DESC) AS rn, m.returndate, o.ownername, o.mobiletelephone, o.hometelephone, o.worktelephone FROM adoption m INNER JOIN owner o ON m.ownerid = o.id WHERE m.movementtype=2) t WHERE rn = 1) lastfosterer ON lastfosterer.animalid = ea.animalid"
+        "a.id AS AnimalID, a.animalname, a.SHORTCODE, a.SHELTERCODE, a.MOSTRECENTENTRYDATE, a.LASTCHANGEDDATE, a.LASTCHANGEDBY,  a.AcceptanceNumber AS LitterID, a.AnimalAge, " \
+        "a.Sex, s.SpeciesName, a.DisplayLocation, a.AgeGroup, " \
+        "a.Sex, s.SpeciesName, a.displaylocation, " \
+        "bc.BaseColour AS BaseColourName, " \
+        "sx.Sex AS SexName, " \
+        "bd.BreedName AS BreedName, ea.EventID, " \
+        "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
+        "CASE WHEN EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) THEN 1 ELSE 0 END AS Adopted, " \
+        "lfo.ID AS LastFostererID, lfo.OwnerName AS LastFostererName, " \
+        "lfo.MobileTelephone AS LastFostererMobileTelephone, lfo.HomeTelephone AS LastFostererHomeTelephone, lfo.Worktelephone AS LastFostererWorkTelephone, " \
+        "lf.ReturnDate AS LastFostererReturnDate, " \
+        "ev.StartDateTime, ev.EndDateTime, ev.EventName, ev.EventAddress, ev.EventTown, ev.EventPostcode, ev.EventCountry " \
+        "FROM eventanimal ea " \
+        "INNER JOIN animal a ON ea.animalid = a.id " \
+        "INNER JOIN event ev ON ev.id = ea.eventid " \
+        "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN breed bd ON bd.ID = a.BreedID " \
+        "LEFT OUTER JOIN species s ON a.SpeciesID = s.ID " \
+        "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
+        "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID " \
+        "LEFT OUTER JOIN basecolour bc ON bc.ID = a.BaseColourID " \
+        "LEFT OUTER JOIN adoption lf ON lf.ID = (SELECT MAX(ID) FROM adoption WHERE AnimalID = ea.AnimalID AND MovementType = 2) " \
+        "LEFT OUTER JOIN owner lfo ON lfo.ID = lf.OwnerID "
 
 def get_event(dbo, eventid):
     """
@@ -54,8 +57,8 @@ def get_animals_by_event(dbo, eventid, queryfilter="all"):
         "all": "",
         "arrived": " AND ea.ArrivalDate IS NOT NULL ",
         "noshow": " AND ea.ArrivalDate IS NULL ",
-        "neednewfoster": " AND lastfosterer.returndate IS NOT NULL ",
-        "dontneednewfoster": " AND lastfosterer.returndate IS NULL ",
+        "neednewfoster": " AND lf.ReturnDate IS NOT NULL ",
+        "dontneednewfoster": " AND lf.ReturnDate IS NULL ",
         "adopted": " AND EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) ",
         "notadopted": " AND NOT EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) ",
     }
