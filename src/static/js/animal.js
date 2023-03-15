@@ -1090,15 +1090,6 @@ $(function() {
                 $("label[for='originalowner']").html(_("Original Owner"));
             }
 
-            // If the user ticked hold, there's no hold until date and
-            // we have an auto remove days period, default the date
-            if ($("#hold").is(":checked") && $("#holduntil").val() == "" && config.integer("AutoRemoveHoldDays") > 0) {
-                let holddate = format.date_js(controller.animal.DATEBROUGHTIN).getTime();
-                holddate += config.integer("AutoRemoveHoldDays") * 86400000;
-                holddate = format.date( new Date(holddate) );
-                $("#holduntil").val(holddate);
-            }
-
             // If the animal doesn't have a litterid, disable the littermates button
             if ($("#litterid").val() == "")  {
                 $("#button-littermates").button("disable");
@@ -1596,6 +1587,18 @@ $(function() {
                 }
             });
 
+            // If the user just ticked hold, there's no hold until date and
+            // we have an auto remove days period, default the date
+            const hold_change = function() {
+                if ($("#hold").is(":checked") && $("#holduntil").val() == "" && config.integer("AutoRemoveHoldDays") > 0) {
+                    let holddate = format.date_js(controller.animal.DATEBROUGHTIN).getTime();
+                    holddate += config.integer("AutoRemoveHoldDays") * 86400000;
+                    holddate = format.date( new Date(holddate) );
+                    $("#holduntil").val(holddate);
+                }
+            };
+            $("#hold").click(hold_change).keyup(hold_change);
+
             // Controls that update the screen when changed
             $("#microchipped").click(animal.enable_widgets).keyup(animal.enable_widgets);
             $("#tattoo").click(animal.enable_widgets).keyup(animal.enable_widgets);
@@ -1603,7 +1606,6 @@ $(function() {
             $("#neutered").click(animal.enable_widgets).keyup(animal.enable_widgets);
             $("#fivltested").click(animal.enable_widgets).keyup(animal.enable_widgets);
             $("#heartwormtested").click(animal.enable_widgets).keyup(animal.enable_widgets);
-            $("#hold").click(animal.enable_widgets).keyup(animal.enable_widgets);
             $("#deceaseddate").change(animal.enable_widgets);
             $("#healthproblems").change(animal.enable_widgets);
             $("#specialneeds").change(animal.enable_widgets);

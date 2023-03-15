@@ -1,6 +1,7 @@
 47
 ================
 
+15/03/23 Fix to only default hold date if the user interacted to tick hold
 11/03/23 Truncate incoming form preview in display table
 10/03/23 Fix to merge person comments when merging people
 06/03/23 Fix to ensure changes made via movement validation are audited #1242
