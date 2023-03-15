@@ -57,7 +57,7 @@ def get_animals_by_event(dbo, eventid, queryfilter="all"):
         "all": "",
         "arrived": " AND ea.ArrivalDate IS NOT NULL ",
         "noshow": " AND ea.ArrivalDate IS NULL ",
-        "neednewfoster": " AND lf.ReturnDate IS NOT NULL ",
+        "neednewfoster": " AND NOT EXISTS (SELECT * FROM adoption ad WHERE ad.movementtype IN (1,2) AND ad.animalid = ea.animalid and ad.Returndate IS NULL) AND ea.ArrivalDate IS NOT NULL ",
         "dontneednewfoster": " AND lf.ReturnDate IS NULL ",
         "adopted": " AND EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) ",
         "notadopted": " AND NOT EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) ",
