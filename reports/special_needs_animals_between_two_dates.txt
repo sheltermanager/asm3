@@ -1,10 +1,10 @@
-Shelter Inventory with Health Problems
+Special needs animals between two dates
 ###
-Inventories
+Auditing
 ###
-Any rev02
+Any rev01
 ###
-Shelter animals, broken down by species/location with health problems.
+Animals with special needs who entered the shelter between two dates.
 ###
 en
 ###
@@ -13,25 +13,21 @@ a.TimeOnShelter,
 y.AnimalType AS theType,
 s.SpeciesName,
 a.BreedName,
-CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END AS LocationName,
+a.AnimalAge,
+x.Sex,
 a.HealthProblems
 FROM animal a
 LEFT OUTER JOIN animaltype y ON y.ID = a.AnimalTypeID
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
-LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
-WHERE a.Archived = 0 
+LEFT OUTER JOIN sex x ON x.ID = a.Sex
+WHERE a.HasSpecialNeeds = 1 AND NonShelterAnimal = 0 
+AND a.DateBroughtIn >= '$ASK DATE Entered care between$'
+AND a.DateBroughtIn <= '$ASK DATE and $'
 ORDER BY 
-CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END, s.SpeciesName, a.DateBroughtIn
+s.SpeciesName, a.DateBroughtIn
 ###
 $$HEADER
 HEADER$$
-
-$$GROUP_LocationName
-$$HEAD
-<h2>$LocationName</h2>
-$$FOOT
-<h3>Total $LocationName: {COUNT.ShelterCode}</h3>
-GROUP$$
 
 $$GROUP_SpeciesName
 $$HEAD
@@ -41,6 +37,8 @@ $$HEAD
 <td><b>Code</b></td>
 <td><b>Name</b></td>
 <td><b>Type</b></td>
+<td><b>Sex</b></td>
+<td><b>Age</b></td>
 <td><b>Breed</b></td>
 <td><b>Brought In</b></td>
 <td><b>Time On Shelter</b></td>
@@ -56,6 +54,8 @@ $$BODY
 <td>$ShelterCode</td>
 <td>$AnimalName</td>
 <td>$theType</td>
+<td>$Sex</td>
+<td>$AnimalAge</td>
 <td>$BreedName</td>
 <td>$DateBroughtIn</td>
 <td>$TimeOnShelter</td>
@@ -65,6 +65,6 @@ BODY$$
 
 $$FOOTER
 </table>
-<h2>Total animals on shelter: {COUNT.ShelterCode}</h2>
+<p>Total: {COUNT.ShelterCode}</p>
 FOOTER$$
 
