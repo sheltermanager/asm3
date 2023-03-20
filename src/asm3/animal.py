@@ -3217,7 +3217,7 @@ def clone_from_template(dbo, username, animalid, datebroughtin, dob, animaltypei
         return
     # Any animal fields that should be copied to the new record
     copyfrom = dbo.first_row( dbo.query("SELECT AnimalName, IsNotAvailableForAdoption, IsNotForRegistration, IsHold, AdditionalFlags, " \
-        "DateBroughtIn, DateOfBirth, Fee, CurrentVetID, AnimalComments FROM animal WHERE ID = ?", [cloneanimalid]) )
+        "DateBroughtIn, DateOfBirth, Fee, HoldUntilDate, CurrentVetID, AnimalComments FROM animal WHERE ID = ?", [cloneanimalid]) )
     # Use datebroughtin for calculating date offsets
     templatedate = copyfrom.DATEBROUGHTIN
     newrecorddate = datebroughtin
@@ -3225,17 +3225,6 @@ def clone_from_template(dbo, username, animalid, datebroughtin, dob, animaltypei
     if copyfrom.ANIMALNAME.lower().endswith("dob"):
         templatedate = copyfrom.DATEOFBIRTH
         newrecorddate = dob
-    # Only set flags on the new record if they are set on the template - just copying them
-    # meant that we were clearing defaults if they were set for not for adoption etc.
-    if copyfrom.isnotavailableforadoption == 1: dbo.update("animal", animalid, { "IsNotAvailableForAdoption": 1 })
-    if copyfrom.isnotforregistration == 1: dbo.update("animal", animalid, { "IsNotForRegistration": 1 })
-    if copyfrom.ishold == 1: dbo.update("animal", animalid, { "IsHold": 1 })
-    if copyfrom.additionalflags and copyfrom.additionalflags != "": dbo.update("animal", animalid, { "AdditionalFlags": copyfrom.additionalflags })
-    dbo.update("animal", animalid, {
-        "Fee":                      copyfrom.fee,
-        "CurrentVetID":             copyfrom.currentvetid,
-        "AnimalComments":           copyfrom.animalcomments
-    }, username)
     # Helper function to adjust the date on a template record when copying it to a new record.
     # Does this by working out the offset in days between the dates on the template record and 
     # applying that offset to the base date on the new record.
@@ -3249,6 +3238,26 @@ def clone_from_template(dbo, username, animalid, datebroughtin, dob, animaltypei
             adjdate = add_days(newrecorddate, dayoffset)
         adjdate = adjdate.replace(hour=0, minute=0, second=0, microsecond=0) # throw away any time info that might have been on the original date
         return dbo.sql_date(adjdate)
+    # Only set flags on the new record if they are set on the template - just copying them
+    # meant that we were clearing defaults if they were set for not for adoption etc.
+    if copyfrom.isnotavailableforadoption == 1: dbo.update("animal", animalid, { "IsNotAvailableForAdoption": 1 })
+    if copyfrom.isnotforregistration == 1: dbo.update("animal", animalid, { "IsNotForRegistration": 1 })
+    # If the animal is held, calculate the hold until date
+    if copyfrom.ishold == 1: 
+        p = { "IsHold": 1 }
+        # If there's a holduntildate on the template, adjust and use that 
+        if copyfrom.holduntildate is not None: 
+            p["HoldUntilDate"] = adjust_date(copyfrom.holduntildate)
+        else:
+            # Use the hold for X days configuration option instead
+            p["HoldUntilDate"] = add_days(templatedate, asm3.configuration.auto_remove_hold_days(dbo))
+        dbo.update("animal", animalid, p)
+    if copyfrom.additionalflags and copyfrom.additionalflags != "": dbo.update("animal", animalid, { "AdditionalFlags": copyfrom.additionalflags })
+    dbo.update("animal", animalid, {
+        "Fee":                      copyfrom.fee,
+        "CurrentVetID":             copyfrom.currentvetid,
+        "AnimalComments":           copyfrom.animalcomments
+    }, username)
     # Additional Fields (don't include newrecord ones or ones with default values as they are already set by the new animal screen)
     for af in dbo.query("SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
         "WHERE af.NewRecord <> 1 AND af.DefaultValue = '' AND a.LinkID = %d AND a.LinkType IN (%s)" % (cloneanimalid, asm3.additional.ANIMAL_IN)):

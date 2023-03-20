@@ -1,6 +1,7 @@
 47
 ================
 
+20/03/23 Set hold until date when cloning from a template
 15/03/23 Fix to only default hold date if the user interacted to tick hold
 11/03/23 Truncate incoming form preview in display table
 10/03/23 Fix to merge person comments when merging people
