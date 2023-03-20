@@ -1,6 +1,6 @@
 Special needs animals between two dates
 ###
-Auditing
+Medical
 ###
 Any rev01
 ###
@@ -19,7 +19,7 @@ a.HealthProblems
 FROM animal a
 LEFT OUTER JOIN animaltype y ON y.ID = a.AnimalTypeID
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
-LEFT OUTER JOIN sex x ON x.ID = a.Sex
+LEFT OUTER JOIN lksex x ON x.ID = a.Sex
 WHERE a.HasSpecialNeeds = 1 AND NonShelterAnimal = 0 
 AND a.DateBroughtIn >= '$ASK DATE Entered care between$'
 AND a.DateBroughtIn <= '$ASK DATE and $'
