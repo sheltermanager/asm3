@@ -3185,20 +3185,20 @@ def clone_from_template(dbo, username, animalid, datebroughtin, dob, animaltypei
     Clones appropriate medical, cost and diet info from the template animal.
     """
     babyqueries = [
-        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetypebabydob' AND AnimalTypeID = %d" % animaltypeid,
-        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespeciesbabydob' AND SpeciesID = %d" % speciesid,
-        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetypebaby' AND AnimalTypeID = %d" % animaltypeid,
-        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespeciesbaby' AND SpeciesID = %d" % speciesid,
-        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetypedob' AND AnimalTypeID = %d" % animaltypeid,
-        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespeciesdob' AND SpeciesID = %d" % speciesid,
-        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetype' AND AnimalTypeID = %d" % animaltypeid,
-        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespecies' AND SpeciesID = %d" % speciesid
+        "SELECT MIN(ID) FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetypebabydob' AND AnimalTypeID = %d" % animaltypeid,
+        "SELECT MIN(ID) FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespeciesbabydob' AND SpeciesID = %d" % speciesid,
+        "SELECT MIN(ID) FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetypebaby' AND AnimalTypeID = %d" % animaltypeid,
+        "SELECT MIN(ID) FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespeciesbaby' AND SpeciesID = %d" % speciesid,
+        "SELECT MIN(ID) FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetypedob' AND AnimalTypeID = %d" % animaltypeid,
+        "SELECT MIN(ID) FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespeciesdob' AND SpeciesID = %d" % speciesid,
+        "SELECT MIN(ID) FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetype' AND AnimalTypeID = %d" % animaltypeid,
+        "SELECT MIN(ID) FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespecies' AND SpeciesID = %d" % speciesid
     ]
     adultqueries = [ 
-        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetypedob' AND AnimalTypeID = %d" % animaltypeid,
-        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespeciesdob' AND SpeciesID = %d" % speciesid,
-        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetype' AND AnimalTypeID = %d" % animaltypeid,
-        "SELECT ID FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespecies' AND SpeciesID = %d" % speciesid
+        "SELECT MIN(ID) FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetypedob' AND AnimalTypeID = %d" % animaltypeid,
+        "SELECT MIN(ID) FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespeciesdob' AND SpeciesID = %d" % speciesid,
+        "SELECT MIN(ID) FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatetype' AND AnimalTypeID = %d" % animaltypeid,
+        "SELECT MIN(ID) FROM animal WHERE NonShelterAnimal = 1 AND LOWER(AnimalName) LIKE 'templatespecies' AND SpeciesID = %d" % speciesid
     ]
     queries = adultqueries
     # If this is a baby animal as defined by its age, use the babyqueries to look for a template

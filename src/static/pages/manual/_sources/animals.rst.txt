@@ -474,7 +474,16 @@ In addition, you can further define a template animal that will only be applied
 to baby animals. If the animal's age is under the system default defined "baby
 split" of 6 months, the system will first look for template animals named
 TemplateTypeBaby and TemplateSpeciesBaby before falling back to TemplateType
-and TemplateSpecies if they do not exist.
+and TemplateSpecies if they do not exist. 
+
+Precedence
+^^^^^^^^^^
+
+If there are TemplateType and TemplateSpecies matches for the new animal,
+TemplateType will be used. If there are multiple templates of either
+TemplateType or TemplateSpecies that match (eg: 2 TemplateSpecies animals on
+file with species=Cat) then the first one to be entered will be used and the
+later on ignored.
 
 Calculating offsets from Date Of Birth
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

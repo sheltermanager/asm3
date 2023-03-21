@@ -63,6 +63,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#template-animals">Template Animals</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#baby-animals">Baby Animals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#precedence">Precedence</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#calculating-offsets-from-date-of-birth">Calculating offsets from Date Of Birth</a></li>
 </ul>
 </li>
@@ -509,6 +510,14 @@ to baby animals. If the animal’s age is under the system default defined “ba
 split” of 6 months, the system will first look for template animals named
 TemplateTypeBaby and TemplateSpeciesBaby before falling back to TemplateType
 and TemplateSpecies if they do not exist.</p>
+</div>
+<div class="section" id="precedence">
+<h3>Precedence<a class="headerlink" href="#precedence" title="Permalink to this headline">¶</a></h3>
+<p>If there are TemplateType and TemplateSpecies matches for the new animal,
+TemplateType will be used. If there are multiple templates of either
+TemplateType or TemplateSpecies that match (eg: 2 TemplateSpecies animals on
+file with species=Cat) then the first one to be entered will be used and the
+later on ignored.</p>
 </div>
 <div class="section" id="calculating-offsets-from-date-of-birth">
 <h3>Calculating offsets from Date Of Birth<a class="headerlink" href="#calculating-offsets-from-date-of-birth" title="Permalink to this headline">¶</a></h3>
