@@ -722,6 +722,9 @@ def auto_remove_document_media(dbo):
 def auto_remove_document_media_years(dbo):
     return cint(dbo, "AutoRemoveDMYears", int(DEFAULTS["AutoRemoveDMYears"]))
 
+def auto_remove_hold_days(dbo):
+    return cint(dbo, "AutoRemoveHoldDays", int(DEFAULTS["AutoRemoveHoldDays"]))
+
 def auto_remove_incoming_forms_days(dbo):
     return cint(dbo, "AutoRemoveIncomingFormsDays", int(DEFAULTS["AutoRemoveIncomingFormsDays"]))
 
