@@ -4390,8 +4390,14 @@ class maint_sac_metrics(ASMEndpoint):
         try:
             pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(o.dbo))
             p = asm3.publishers.sacmetrics.SACMetricsPublisher(o.dbo, pc)
-            data = p.processStats(month, year, species, externalid)
-            p.putData(data)
+            if month == -1:
+                # Do all months of year if -1 was given for month
+                for imonth in range(1,13):
+                    data = p.processStats(imonth, year, species, externalid)
+                    p.putData(data)
+            else:
+                data = p.processStats(month, year, species, externalid)
+                p.putData(data)
             return "\n".join(p.logBuffer)
         except Exception as err:
             return str(err)
