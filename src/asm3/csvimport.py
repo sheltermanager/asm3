@@ -236,12 +236,13 @@ def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
     asm3.al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
     errors.append( (rowno, str(row), errmsg) )
 
-def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False, prefixanimalcodes = False):
+def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False, prefixanimalcodes = False, htmlresults = True):
     """
     Imports csvdata (bytes string, encoded with encoding)
     createmissinglookups: If a lookup value is given that's not in our data, add it
     cleartables: Clear down the animal, owner and adoption tables before import
     prefixanimalcodes: Add a prefix to shelter codes to avoid clashes with the existing records
+    htmlresults: Return the results as an HTML table. If false, returns a JSON document
     """
 
     if user == "":
@@ -309,82 +310,88 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     # Any valid fields?
     if not onevalid:
         asm3.asynctask.set_last_error(dbo, "Your CSV file did not contain any fields that ASM recognises")
-        return
+        return asm3.asynctask.get_last_error(dbo)
 
     # If we have any animal fields, make sure at least ANIMALNAME is supplied
     if hasanimal and not hasanimalname:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has animal fields, but no ANIMALNAME column")
-        return
+        return asm3.asynctask.get_last_error(dbo)
 
     # If we have any person fields, make sure at least PERSONLASTNAME or PERSONNAME is supplied
     if hasperson and not haspersonlastname and not haspersonname:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has person fields, but no PERSONNAME or PERSONLASTNAME column")
-        return
+        return asm3.asynctask.get_last_error(dbo)
 
     # If we have any current vet fields, make sure at least CURRENTVETLASTNAME is supplied
     if hascurrentvet and not hascurrentvetlastname:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has current vet fields, but no CURRENTVETLASTNAME column")
-        return
+        return asm3.asynctask.get_last_error(dbo)
 
     # If we have any original owner fields, make sure at least ORIGINALOWNERLASTNAME is supplied
     if hasoriginalowner and not hasoriginalownerlastname:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has original owner fields, but no ORIGINALOWNERLASTNAME column")
-        return
+        return asm3.asynctask.get_last_error(dbo)
 
     # If we have any movement fields, make sure MOVEMENTDATE is supplied
     if hasmovement and not hasmovementdate:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has movement fields, but no MOVEMENTDATE column")
-        return
+        return asm3.asynctask.get_last_error(dbo)
 
     # If we have any donation fields, we need an amount
     if hasdonation and not hasdonationamount:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has donation fields, but no DONATIONAMOUNT column")
-        return
+        return asm3.asynctask.get_last_error(dbo)
 
     # We also need a valid person
     if hasdonation and not (haspersonlastname or haspersonname):
         asm3.asynctask.set_last_error(dbo, "Your CSV file has donation fields, but no person to apply the donation to")
-        return
+        return asm3.asynctask.get_last_error(dbo)
+
 
     # If we have any med fields, we need an animal
     if hasmed and not hasanimal:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has medical fields, but no animal to apply them to")
-        return
+        return asm3.asynctask.get_last_error(dbo)
 
     # If we have any vacc fields, we need an animal
     if hasvacc and not hasanimal:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has vaccination fields, but no animal to apply them to")
-        return
+        return asm3.asynctask.get_last_error(dbo)
 
     # If we have any test fields, we need an animal
     if hastest and not hasanimal:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has test fields, but no animal to apply them to")
-        return
+        return asm3.asynctask.get_last_error(dbo)
 
     # If we have cost fields, we need an animal
     if hascost and not hasanimal:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has cost fields, but no animal to apply them to")
+        return asm3.asynctask.get_last_error(dbo)
 
     # If we have cost fields, we need an amount
     if hascost and not hascostamount:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has cost fields, but no COSTAMOUNT column")
+        return asm3.asynctask.get_last_error(dbo)
 
     # If we have any log fields, we need an animal
     if haslog and not hasanimal:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has log fields, but no animal to apply them to")
+        return asm3.asynctask.get_last_error(dbo)
 
     # If we have any log fields, we need the entry
     if haslog and not haslogcomments:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has log fields, but no LOGCOMMENTS column")
+        return asm3.asynctask.get_last_error(dbo)
 
     # If we have licence fields, we need a number
     if haslicence and not haslicencenumber:
         asm3.asynctask.set_last_error(dbo, "Your CSV file has license fields, but no LICENSENUMBER column")
-        return
+        return asm3.asynctask.get_last_error(dbo)
 
     # We also need a valid person
     if haslicence and not (haspersonlastname or haspersonname):
         asm3.asynctask.set_last_error(dbo, "Your CSV file has license fields, but no person to apply the license to")
+        return asm3.asynctask.get_last_error(dbo)
 
     asm3.al.debug("reading CSV data, found %d rows" % len(rows), "csvimport.csvimport", dbo)
 
@@ -978,12 +985,15 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 row_error(errors, "license", rowno, row, e, dbo, sys.exc_info())
 
         rowno += 1
-
-    h = [ "<p>%d success, %d errors</p><table>" % (len(rows) - len(errors), len(errors)) ]
-    for rowno, row, err in errors:
-        h.append("<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % (rowno, row, err))
-    h.append("</table>")
-    return "".join(h)
+    
+    if htmlresults:
+        h = [ "<p>%d success, %d errors</p><table>" % (len(rows) - len(errors), len(errors)) ]
+        for rowno, row, err in errors:
+            h.append("<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % (rowno, row, err))
+        h.append("</table>")
+        return "".join(h)
+    else:
+        return asm3.utils.json({ "rows": len(rows), "success": len(rows)-len(errors), "errors": errors })
 
 def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, user = "", encoding="utf-8-sig"):
     """

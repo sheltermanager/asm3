@@ -74,6 +74,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-view-adoptable-html">animal_view_adoptable_html</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#csv-import">csv_import</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#csv-mail-and-csv-report">csv_mail and csv_report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-mail-and-json-report">json_mail and json_report</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#extra-image">extra_image</a></li>
@@ -772,6 +773,33 @@ show a list of adoptable animals. It looks for an HTML template called
 “animalviewadoptables” and falls back to a basic internal template if it does
 not exist:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=&amp;animal_view_adoptable_html
+</pre></div>
+</div>
+</div>
+<div class="section" id="csv-import">
+<h2>csv_import<a class="headerlink" href="#csv-import" title="Permalink to this headline">¶</a></h2>
+<p>The CSV import endpoint can be used to send CSV data to the system. GET or POST
+can be used and it accepts the following parameters:</p>
+<ul class="simple">
+<li><p>data: The base64 encoded CSV data.</p></li>
+<li><p>encoding: The text encoding used for the CSV data (defaults to utf-8 if not supplied)</p></li>
+</ul>
+<p>As this is a synchronous method call, you should not use this method to import large
+amounts of data - that should be done with the asynchronous screen at
+<span class="menuselection">Settings ‣ Import a CSV File</span>. This method call is intended for
+small amounts of data and individual records being sent by other systems for integration
+purposes.</p>
+<p>Unlike the Import a CSV File screen, you cannot set any of the CSV import options. When
+importing via this method, “Merge Duplicates” will be on, but all other options will
+be off.</p>
+<p>The return value is a JSON document containing the success count, the number of rows in
+the CSV data and details of errors from any rows that failed to be imported:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="n">rows</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span>
+  <span class="n">success</span><span class="p">:</span> <span class="mi">51</span><span class="p">,</span>
+  <span class="n">errors</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">[</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;Jeff,2,Dog,928310983219283&quot;</span><span class="p">,</span> <span class="s2">&quot;This microchip number has already been used&quot;</span> <span class="p">]</span>
+  <span class="p">]</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </div>

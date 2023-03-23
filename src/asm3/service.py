@@ -32,7 +32,8 @@ from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVI
 
 # Service methods that require authentication
 AUTH_METHODS = [
-    "csv_mail", "csv_report", "json_report", "jsonp_report", "json_mail", "jsonp_mail",
+    "csv_import", "csv_mail", "csv_report", 
+    "json_report", "jsonp_report", "json_mail", "jsonp_mail",
     "html_report", "rss_timeline", "upload_animal_image", "xml_adoptable_animal", 
     "json_adoptable_animal", "xml_adoptable_animals", "json_adoptable_animals", 
     "jsonp_adoptable_animals", "xml_found_animals", "json_found_animals", 
@@ -52,9 +53,13 @@ CACHE_PROTECT_METHODS = {
     "animal_view_adoptable_js": [], 
     "animal_view_adoptable_html": [],
     "checkout": [ "processor", "payref" ],
+    # "checkout_adoption" - write method
+    # "csv_import" - write method
+    # "csv_mail", "csv_report" - custom params
     "dbfs_image": [ "title" ],
     "document_repository": [ "mediaid" ],
     "extra_image": [ "title" ],
+    # "html_report" - custom params
     "media_image": [ "mediaid" ],
     "media_file": [ "mediaid" ],
     "json_adoptable_animal": [ "animalid" ],
@@ -75,18 +80,16 @@ CACHE_PROTECT_METHODS = {
     "xml_lost_animals": [],
     "json_recent_adoptions": [], 
     "xml_recent_adoptions": [],
-    # "html_report", "csv_mail", "csv_report" not included due to custom params
     "json_recent_changes": [], 
     "xml_recent_changes": [],
     "json_shelter_animals": [ "sensitive" ],
     "xml_shelter_animals": [ "sensitive" ],
     "rss_timeline": [],
-    # "upload_animal_image" is a write method
     "online_form_html": [ "formid" ],
     "online_form_json": [ "formid" ]
-    # "online_form_post" is a write method
-    # "sign_document" is a write method
-    # "checkout_adoption" is a write method
+    # "online_form_post" - write method
+    # "sign_document" - write method
+    # "upload_animal_image" - write method
 }
 
 # Service methods that require flood protection
@@ -483,6 +486,13 @@ def handler(post, path, remoteip, referer, useragent, querystring):
             return set_cached_response(cache_key, account, "text/html", 120, 120, checkout_adoption_page(dbo, post["token"]))
         else:
             return ("text/plain", 0, 0, checkout_adoption_post(dbo, post))
+
+    elif method == "csv_import":
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.IMPORT_CSV_FILE)
+        csvdata = asm3.utils.base64decode(post["data"])
+        encoding = post["encoding"] or "utf-8-sig"
+        jsonresults = asm3.csvimport.csvimport(dbo, csvdata, encoding, user.USERNAME, checkduplicates=True, htmlresults=False)
+        return ("application/json", 0, 0, jsonresults)
 
     elif method =="dbfs_image":
         hotlink_protect("dbfs_image", referer)

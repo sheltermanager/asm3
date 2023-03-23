@@ -673,6 +673,36 @@ not exist::
 
     http://localhost:5000/service?method=&animal_view_adoptable_html
 
+csv_import
+----------
+
+The CSV import endpoint can be used to send CSV data to the system. GET or POST
+can be used and it accepts the following parameters:
+
+* data: The base64 encoded CSV data.
+
+* encoding: The text encoding used for the CSV data (defaults to utf-8 if not supplied)
+
+As this is a synchronous method call, you should not use this method to import large
+amounts of data - that should be done with the asynchronous screen at 
+:menuselection:`Settings --> Import a CSV File`. This method call is intended for
+small amounts of data and individual records being sent by other systems for integration 
+purposes.
+
+Unlike the Import a CSV File screen, you cannot set any of the CSV import options. When
+importing via this method, "Merge Duplicates" will be on, but all other options will
+be off.
+
+The return value is a JSON document containing the success count, the number of rows in
+the CSV data and details of errors from any rows that failed to be imported::
+
+    { rows: 52,
+      success: 51,
+      errors: [
+        [ 5, "Jeff,2,Dog,928310983219283", "This microchip number has already been used" ]
+      ]
+    }
+
 csv_mail and csv_report
 -----------------------
 
