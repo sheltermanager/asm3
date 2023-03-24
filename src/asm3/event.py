@@ -23,7 +23,8 @@ def get_event_animal_query(dbo):
         "lfo.ID AS LastFostererID, lfo.OwnerName AS LastFostererName, " \
         "lfo.MobileTelephone AS LastFostererMobileTelephone, lfo.HomeTelephone AS LastFostererHomeTelephone, lfo.Worktelephone AS LastFostererWorkTelephone, " \
         "lf.ReturnDate AS LastFostererReturnDate, " \
-        "ev.StartDateTime, ev.EndDateTime, ev.EventName, ev.EventAddress, ev.EventTown, ev.EventPostcode, ev.EventCountry " \
+        "ev.StartDateTime, ev.EndDateTime, ev.EventName, ev.EventAddress, ev.EventTown, ev.EventPostcode, ev.EventCountry, " \
+        "ea.createdby, ea.createddate, ea.lastchangedby, ea.lastchangeddate " \
         "FROM eventanimal ea " \
         "INNER JOIN animal a ON ea.animalid = a.id " \
         "INNER JOIN event ev ON ev.id = ea.eventid " \
