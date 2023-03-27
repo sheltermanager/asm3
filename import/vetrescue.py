@@ -179,6 +179,23 @@ for d in asm.csv_to_list(f"{PATH}/AnimalNotes.csv"):
     l.Comments = d["Notes"]
     logs.append(l)
 
+# Clinic history, can't really map it to any of our medical areas as
+# there isn't enough of it. Put the notes in the log instead.
+for d in asm.csv_to_list(f"{PATH}/ClinHist.csv"):
+    if d["PetRef"] not in ppa: continue
+    if d["MedicalNotes"].strip() == "": continue
+    a = ppa[d["PetRef"]]
+    l = asm.Log()
+    l.LogTypeID = 3 # History
+    try:
+        l.Date = getdate(d["ConsultDateID"])
+    except:
+        l.Date = asm.today()
+    l.LinkID = a.ID
+    l.LinkType = 0
+    l.Comments = d["MedicalNotes"]
+    logs.append(l)
+
 """
 # Use rehoming list report to create the adoption movements.
 # deprecated, it was only in the first database got. There's an AniMovement
