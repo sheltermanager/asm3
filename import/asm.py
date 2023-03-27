@@ -112,10 +112,10 @@ def atof(s):
     except:
         return 0
 
-def csv_to_list(fname, strip = False, remove_bom = True, remove_control = False, remove_non_ascii = False, uppercasekeys = False, unicodehtml = False, encoding="utf-8"):
+def csv_to_list(fname, strip = False, remove_bom = True, remove_control = False, remove_non_ascii = False, uppercasekeys = False, unicodehtml = False, encoding="utf-8-sig"):
     """
     Reads the csv file fname and returns it as a list of maps 
-    with the first row used as the keys.
+    with the first row used as the keys. Uses utf-8-sig to ignore any BOM
     strip: If True, removes whitespace from all fields
     remove_control: If True, removes all ascii chars < 32
     remove_non_ascii: If True, removes all ascii chars < 32 or > 127

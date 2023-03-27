@@ -21,8 +21,7 @@ for l in lines:
 """
 
 START_ID = 100
-PATH = "/home/robin/tmp/asm3_import_data/vr_sm2963"
-SHELTER_CUSTCODE = "Southampton" # do not create adoption movements to this person
+PATH = "/home/robin/tmp/asm3_import_data/vr_tc2979"
 
 def findowner(last = "", address = ""):
     """ Looks for an owner with the given name and address in the collection
@@ -45,18 +44,24 @@ def getdate(d, noblanks=False):
 # --- START OF CONVERSION ---
 
 owners = []
+ownerdonations = []
+logs = []
 movements = []
 animals = []
 ppa = {}
 ppo = {}
 
 asm.setid("animal", START_ID)
+asm.setid("log", START_ID)
 asm.setid("owner", START_ID)
+asm.setid("ownerdonation", START_ID)
 asm.setid("adoption", START_ID)
 
 print("\\set ON_ERROR_STOP\nBEGIN;")
 print("DELETE FROM animal WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM log WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM owner WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM ownerdonation WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM adoption WHERE ID >= %s AND CreatedBy = 'conversion';" % START_ID)
 
 # Create an unknown owner
@@ -103,11 +108,11 @@ for d in asm.csv_to_list(f"{PATH}/Keeper.csv"):
     o.MembershipExpiryDate = getdate(d["RenewalDate"])
     o.ExcludeFromBulkEmail = asm.iif(d["Mailshots"] == -1, 1, 0)
     o.IsMember = asm.iif(o.MembershipNumber != "", 1, 0)
-    o.IsStaff = asm.iif(d["Staff"] == "Y", 1, 0)
+    if "Staff" in d: o.IsStaff = asm.iif(d["Staff"] == "Y", 1, 0)
     gdpr = []
     if d["FundPhone"] == "Y": gdpr.append("phone")
     if d["FundSMS"] == "Y": gdpr.append("sms")
-    if d["FundEmail"] == "Y": gdpr.append("email")
+    if "FundEmail" in d and d["FundEmail"] == "Y": gdpr.append("email")
     if d["FundPost"] == "Y": gdpr.append("post")
     o.GDPRContactOptIn = ",".join(gdpr)
 
@@ -163,7 +168,21 @@ for d in asm.csv_to_list(f"{PATH}/Animal.csv"):
     a.ReasonForEntry = d["EntryReason"]
     a.HiddenAnimalDetails = comments
 
-# Use rehoming list to create the adoption movements
+for d in asm.csv_to_list(f"{PATH}/AnimalNotes.csv"):
+    if d["PetRef"] not in ppa: continue
+    a = ppa[d["PetRef"]]
+    l = asm.Log()
+    l.LogTypeID = 3 # History
+    l.Date = getdate(d["Date"])
+    l.LinkID = a.ID
+    l.LinkType = 0
+    l.Comments = d["Notes"]
+    logs.append(l)
+
+"""
+# Use rehoming list report to create the adoption movements.
+# deprecated, it was only in the first database got. There's an AniMovement
+# table that indicates rehomed and is consistently there.
 for d in asm.csv_to_list(f"{PATH}/Rehomed list.csv"):
     # Find the person and animal
     if d["PetRef"] not in ppa: continue
@@ -182,6 +201,27 @@ for d in asm.csv_to_list(f"{PATH}/Rehomed list.csv"):
     a.ActiveMovementType = 1
     a.LastChangedDate = m.MovementDate
     movements.append(m)
+"""
+
+for d in asm.csv_to_list(f"{PATH}/AniMovement.csv"):
+    # Find the person and animal
+    if d["PetRef"] not in ppa: continue
+    a = ppa[d["PetRef"]]
+    if d["CustCode"] not in ppo: continue
+    o = ppo[d["CustCode"]]
+    if a is None or o is None: continue
+    if d["ReHomeDate"] == "": continue
+    m = asm.Movement()
+    m.AnimalID = a.ID
+    m.OwnerID = o.ID
+    m.MovementType = 1
+    m.MovementDate = getdate(d["ReHomeDate"])
+    a.Archived = 1
+    a.ActiveMovementID = m.ID
+    a.ActiveMovementDate = m.MovementDate
+    a.ActiveMovementType = 1
+    a.LastChangedDate = m.MovementDate
+    movements.append(m)
 
 for d in asm.csv_to_list(f"{PATH}/Death.csv"):
     if d["PetRef"] not in ppa: continue
@@ -193,15 +233,33 @@ for d in asm.csv_to_list(f"{PATH}/Death.csv"):
     a.PTSReasonID = asm.iif(a.PutToSleep == 1, 4, 2) # 4 = Sick/Injured, 2 = Died
     a.LastChangedDate = a.DeceasedDate
 
+for d in asm.csv_to_list(f"{PATH}/InvoiceHistory.csv"):
+    if d["CustCode"] not in ppo: continue
+    o = ppo[d["CustCode"]]
+    a = None
+    if d["PetRef"] in ppa: a = ppa[d["PetRef"]]
+    od = asm.OwnerDonation()
+    od.DonationTypeID = 1
+    od.DonationPaymentID = 1
+    od.Date = getdate(d["Date"])
+    od.OwnerID = o.ID
+    if a is not None: od.AnimalID = a.ID
+    od.Donation = asm.get_currency(d["Amount"])
+    ownerdonations.append(od)
+
 # Now that everything else is done, output stored records
 for a in animals:
     print(a)
+for l in logs:
+    print(l)
 for o in owners:
     print(o)
+for od in ownerdonations:
+    print(od)
 for m in movements:
     print(m)
 
-asm.stderr_summary(animals=animals, owners=owners, movements=movements)
+asm.stderr_summary(animals=animals, logs=logs, owners=owners, ownerdonations=ownerdonations, movements=movements)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
 print("COMMIT;")
