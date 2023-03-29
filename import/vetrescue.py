@@ -70,6 +70,8 @@ owners.append(uo)
 uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = uo.OwnerSurname
 
+# Do both Keeper.csv and FClient.csv as FClient seems to have more records, but somehow less data? 
+# This database makes no sense at all.
 for d in asm.csv_to_list(f"{PATH}/Keeper.csv"):
     # Ignore repeated headers
     if d["CustCode"] == "CustCode": continue
@@ -116,6 +118,38 @@ for d in asm.csv_to_list(f"{PATH}/Keeper.csv"):
     if d["FundPost"] == "Y": gdpr.append("post")
     o.GDPRContactOptIn = ",".join(gdpr)
 
+for d in asm.csv_to_list(f"{PATH}/FClient.csv"):
+    # Ignore repeated headers
+    if d["CustCode"] == "CustCode": continue
+    # Each row contains a person, but skip duplicates just in case
+    if d["CustCode"] in ppo: continue
+    o = asm.Owner()
+    owners.append(o)
+    ppo[d["CustCode"]] = o
+    o.ExtraID = d["CustCode"]
+    o.OwnerTitle = d["Title"]
+    o.OwnerInitials = d["Inits"]
+    o.OwnerForeNames = d["First"]
+    o.OwnerSurname = d["Surname"]
+    o.OwnerType = 1
+    o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
+    # Organisations don't have a first name - just like our schema
+    if o.OwnerTitle == "" and o.OwnerForeNames == "":
+        o.OwnerType = 2
+        o.OwnerName = o.OwnerSurname
+    o.OwnerAddress = d["Ad1"] + " " + d["Ad2"]
+    o.OwnerTown = d["Ad3"]
+    o.OwnerCounty = d["Ad4"]
+    if o.OwnerCounty.strip() == "": o.OwnerCounty = d["Ad5"]
+    o.OwnerPostcode = d["PC"]
+    o.EmailAddress = d["Email"]
+    o.HomeTelephone = d["Tel"]
+    o.WorkTelephone = d["Work"]
+    o.MobileTelephone = d["Mobile"]
+    o.CreatedDate = getdatetime(d["LastCheckDate"])
+    if o.CreatedDate is None: o.CreatedDate = asm.now()
+    o.ExcludeFromBulkEmail = asm.iif(d["EMailOk"] == 0, 1, 0)
+
 for d in asm.csv_to_list(f"{PATH}/Animal.csv"):
     # If it's a repeat of the header row, skip
     if d["PetRef"] == "PetRef": continue
@@ -153,6 +187,7 @@ for d in asm.csv_to_list(f"{PATH}/Animal.csv"):
     a.ShortCode = d["PetRef"]
     a.IdentichipNumber = d["IdNum"].strip()
     if a.IdentichipNumber != "": a.Identichipped = 1
+    a.IdentichipDate = getdate(d["MicroDate"])
     asm.breed_ids(a, d["Breed"])
     a.Sex = asm.getsex_mf(d["Sex"])
     a.Neutered = d["Sex"].find("neutered") != -1 and 1 or 0
@@ -240,6 +275,53 @@ for d in asm.csv_to_list(f"{PATH}/AniMovement.csv"):
     a.LastChangedDate = m.MovementDate
     movements.append(m)
 
+# Run another pass through the Keeper file to update who has which animal
+# and pick up anything that wasn't in AniMovement
+for d in asm.csv_to_list(f"{PATH}/Keeper.csv"):
+    # Find the person and animal
+    if d["PetRef"] not in ppa: continue
+    a = ppa[d["PetRef"]]
+    if d["CustCode"] not in ppo: continue
+    o = ppo[d["CustCode"]]
+    if a is None or o is None: continue
+    if d["KeeperDate"] == "": continue
+    if d["KeeperType"] != "New Keeper": continue
+    m = asm.Movement()
+    m.AnimalID = a.ID
+    m.OwnerID = o.ID
+    m.MovementType = 1
+    m.MovementDate = getdate(d["KeeperDate"])
+    a.Archived = 1
+    a.ActiveMovementID = m.ID
+    a.ActiveMovementDate = m.MovementDate
+    a.ActiveMovementType = 1
+    a.LastChangedDate = m.MovementDate
+    movements.append(m)
+
+# Run another pass through the Animal file. If an animal is still on shelter
+# but has AnimalST = Rehome then use CustCode to find the person
+# Man this database is really inconsistent and poor.
+for d in asm.csv_to_list(f"{PATH}/Animal.csv"):
+    # Find the person and animal
+    if d["PetRef"] not in ppa: continue
+    a = ppa[d["PetRef"]]
+    if d["CustCode"] not in ppo: continue
+    o = ppo[d["CustCode"]]
+    if a is None or o is None: continue
+    if a.Archived == 1: continue
+    if d["AnimalST"] != "Rehome": continue
+    m = asm.Movement()
+    m.AnimalID = a.ID
+    m.OwnerID = o.ID
+    m.MovementType = 1
+    m.MovementDate = getdate(d["DateRegistered"])
+    a.Archived = 1
+    a.ActiveMovementID = m.ID
+    a.ActiveMovementDate = m.MovementDate
+    a.ActiveMovementType = 1
+    a.LastChangedDate = m.MovementDate
+    movements.append(m)
+
 for d in asm.csv_to_list(f"{PATH}/Death.csv"):
     if d["PetRef"] not in ppa: continue
     a = ppa[d["PetRef"]]
@@ -277,6 +359,7 @@ for m in movements:
     print(m)
 
 asm.stderr_summary(animals=animals, logs=logs, owners=owners, ownerdonations=ownerdonations, movements=movements)
+asm.stderr_onshelter(animals)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
 print("COMMIT;")

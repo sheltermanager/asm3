@@ -345,6 +345,11 @@ def today():
 def stderr(s):
     sys.stderr.write("%s\n" % s)
 
+def stderr_onshelter(animals=[]):
+    for a in animals:
+        if a.Archived == 0:
+            stderr(a.infoLine())
+
 def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animaltests=[], owners=[], ownerlicences=[], ownerdonations=[], animalcontrol=[], movements=[], logs=[], stocklevels=[], waitinglists=[]):
     def o(l, d):
         if len(l) > 0:
@@ -2226,6 +2231,8 @@ class Animal:
         self.ShelterCode = "%s%d%03d" % ( typename[0:1], self.DateBroughtIn.year, nextyearcode)
         if self.ShortCode == "": self.ShortCode = "%03d%s" % (nextyearcode, typename[0:1]) # check so it can be assigned before generating code
         nextyearcode += 1
+    def infoLine(self):
+        return "animal: %d %s %s %s, %s %s, arc: %s, ns: %s, intake %s, dob %s" % (self.ID, self.AnimalName, self.ShelterCode, self.ShortCode, self.BreedName, species_name_for_id(self.SpeciesID), self.Archived, self.NonShelterAnimal, self.DateBroughtIn, self.DateOfBirth)
     def __str__(self):
         if self.AnimalAge == "" and self.DateOfBirth is not None:
             self.AnimalAge = date_diff(self.DateOfBirth, today())
@@ -2353,7 +2360,7 @@ class Animal:
             ( "LastChangedBy", ds(self.LastChangedBy) ),
             ( "LastChangedDate", dd(self.LastChangedDate) )
             )
-        sys.stderr.write("animal: %d %s %s %s, %s %s, arc: %s, ns: %s, intake %s, dob %s\n" % (self.ID, self.AnimalName, self.ShelterCode, self.ShortCode, self.BreedName, species_name_for_id(self.SpeciesID), self.Archived, self.NonShelterAnimal, self.DateBroughtIn, self.DateOfBirth))
+        stderr(self.infoLine())
         return makesql("animal", s)
 
 class Log:
