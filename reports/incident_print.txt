@@ -2,17 +2,19 @@ Print Incident Record
 ###
 Animal Control
 ###
-33503/Any rev03
+33503/PostgreSQL rev03
 ###
 A complete printout of an incident record.
 ###
 en
 ###
-SELECT 
+SELECT
 ac.ID AS IncidentNumber, ac.IncidentDateTime, ti.IncidentName, co.OwnerName AS CallerName, co.HomeTelephone, co.WorkTelephone, co.MobileTelephone,
-ac.CallTaker, ac.CallDateTime, ac.CallNotes, vo.OwnerName AS VictimName, vo.OwnerAddress AS VictimAddress, 
-o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3, 
-o1.OwnerAddress AS OwnerAddress1, o2.OwnerAddress AS OwnerAddress2, o3.OwnerAddress AS OwnerAddress3, 
+ac.CallTaker, ac.CallDateTime, ac.CallNotes,
+regexp_replace(ac.CallNotes, '\n', '<br/>', 'g') AS CallNotesBR,
+vo.OwnerName AS VictimName, vo.OwnerAddress AS VictimAddress,
+o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3,
+o1.OwnerAddress AS OwnerAddress1, o2.OwnerAddress AS OwnerAddress2, o3.OwnerAddress AS OwnerAddress3,
 ac.DispatchAddress, ac.DispatchTown, ac.DispatchCounty, ac.DispatchPostcode, ac.DispatchedACO,
 ac.DispatchDateTime, ac.CompletedDate, ci.CompletedName,
 ac.RespondedDateTime, ac.FollowupDateTime AS FollowupDateTime1, ac.FollowupDateTime2, ac.FollowupDateTime3,
@@ -27,7 +29,7 @@ LEFT OUTER JOIN owner o3 ON o3.ID = ac.Owner3ID
 LEFT OUTER JOIN owner vo ON vo.ID = ac.VictimID
 LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
 LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID
-WHERE ac.ID = $ASK NUMBER Enter the incident number$ 
+WHERE ac.ID = $ASK NUMBER Enter the incident number$
 ###
 $$HEADER
 HEADER$$
@@ -44,7 +46,7 @@ $$BODY
 </tr><tr>
 <td>Completion Type</td><td>$COMPLETEDNAME</td>
 </tr><tr>
-<td>Notes</td><td>$CALLNOTES</td>
+<td>Notes</td><td>$CALLNOTESBR</td>
 </tr><tr>
 <td>Call Date/Time</td><td>$CALLDATETIME</td>
 </tr><tr>
