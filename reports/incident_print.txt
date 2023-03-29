@@ -2,7 +2,7 @@ Print Incident Record
 ###
 Animal Control
 ###
-33503/Any rev02
+33503/Any rev03
 ###
 A complete printout of an incident record.
 ###
@@ -34,51 +34,71 @@ HEADER$$
 
 $$BODY
 <h2>$INCIDENTNAME - $OWNERNAME1</h2>
-<table>
-</tr>
-<td>Number</td><td><b>$INCIDENTNUMBER</b></td><td>Date/Time</td><td>$INCIDENTDATETIME</td>
+<table border="1">
+<tr>
+<td>Number</td><td><b>$INCIDENTNUMBER</b></td>
 </tr><tr>
-<td>Completed</td><td>$COMPLETEDDATE</td><td>Notes</td><td>$CALLNOTES</td>
+<td>Date/Time</td><td>$INCIDENTDATETIME</td>
 </tr><tr>
-<td>Completion Type</td><td>$COMPLETEDNAME</td><td>Call Date/Time</td><td>$CALLDATETIME</td>
+<td>Completed</td><td>$COMPLETEDDATE</td>
 </tr><tr>
-<td>Taken By</td><td>$CALLTAKER</td><td>Caller</td><td>$CALLERNAME<br/>$HOMETELEPHONE</td>
+<td>Completion Type</td><td>$COMPLETEDNAME</td>
 </tr><tr>
-<td>Victim</td><td>$VICTIMNAME<br/>$VICTIMADDRESS</td><td></td><td></td>
+<td>Notes</td><td>$CALLNOTES</td>
+</tr><tr>
+<td>Call Date/Time</td><td>$CALLDATETIME</td>
+</tr><tr>
+<td>Taken By</td><td>$CALLTAKER</td>
+</tr><tr>
+<td>Caller</td><td>$CALLERNAME<br/>$HOMETELEPHONE</td>
+</tr><tr>
+<td>Victim</td><td>$VICTIMNAME<br/>$VICTIMADDRESS</td>
 </tr>
 </table>
 
 <h2>Dispatch</h2>
 
-<table>
+<table border="1">
 <tr>
-<td>Address</td><td>$DISPATCHADDRESS<br/>$DISPATCHTOWN $DISPATCHCOUNTY $DISPATCHPOSTCODE</td><td>ACO</td><td>$DISPATCHEDACO</td>
+<td>Address</td><td>$DISPATCHADDRESS<br/>$DISPATCHTOWN $DISPATCHCOUNTY $DISPATCHPOSTCODE</td>
 </tr><tr>
-<td>Date/Time</td><td>$DISPATCHDATETIME</td><td>Responded</td><td>$RESPONDEDDATETIME</td>
+<td>ACO</td><td>$DISPATCHEDACO</td>
 </tr><tr>
-<td>Followup</td><td>$FOLLOWUPDATETIME1</td><td>Followup 2</td><td>$FOLLOWUPDATETIME2</td>
+<td>Date/Time</td><td>$DISPATCHDATETIME</td>
 </tr><tr>
-<td>Followup 3</td><td>$FOLLOWUPDATETIME3</td><td></td><td></td>
+<td>Responded</td><td>$RESPONDEDDATETIME</td>
+</tr><tr>
+<td>Followup</td><td>$FOLLOWUPDATETIME1</td>
+</tr><tr>
+<td>Followup 2</td><td>$FOLLOWUPDATETIME2</td>
+</tr><tr>
+<td>Followup 3</td><td>$FOLLOWUPDATETIME3</td>
 </tr>
 </table>
 
 <h2>Suspects</h2>
 
-<table>
+<table border="1">
 <tr>
-<td>Suspect 1</td><td>$OWNERNAME1<br />$OWNERADDRESS1</td><td>Suspect 2</td><td>$OWNERNAME2<br />$OWNERADDRESS2</td>
+<td>Suspect 1</td><td>$OWNERNAME1<br />$OWNERADDRESS1</td>
 </tr><tr>
-<td>Suspect 3</td><td>$OWNERNAME3<br />$OWNERADDRESS3</td><td></td>
+<td>Suspect 2</td><td>$OWNERNAME2<br />$OWNERADDRESS2</td>
+</tr><tr>
+<td>Suspect 3</td><td>$OWNERNAME3<br />$OWNERADDRESS3</td>
 </tr>
 </table>
 
 <h2>Animal</h2>
 
-<table>
+<table border="1">
 <tr>
-<td>Species</td><td>$SPECIESNAME</td><td>Sex</td><td>$SEXNAME</td>
+<td>Species</td><td>$SPECIESNAME</td>
 </tr><tr>
-<td>Age Group</td><td>$AGEGROUP</td><td>Description</td><td>$ANIMALDESCRIPTION</td>
+<td>Sex</td><td>$SEXNAME</td>
+</tr><tr>
+<td>Age Group</td><td>$AGEGROUP</td>
+</tr><tr>
+<td>Description</td><td>$ANIMALDESCRIPTION</td>
 </tr>
 </table>
 
@@ -113,7 +133,7 @@ INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 WHERE aca.AnimalControlID = $PARENTKEY$
 +++
 $$HEADER
-<table>
+<table border="1">
 <tr><th>Name</th><th>Code</th><th>Type</th><th>Species</th><th>Breed</th><th>Age</th></tr>
 HEADER$$
 $$BODY
@@ -134,7 +154,7 @@ WHERE oc.AnimalControlID = $PARENTKEY$
 ORDER BY oc.CitationDate
 +++
 $$HEADER
-<table>
+<table border="1">
 <tr><th>Date</th><th>Type</th><th>Fine</th><th>Paid</th><th>Person</th><th>Comments</th></tr>
 HEADER$$
 $$BODY
@@ -151,7 +171,7 @@ WHERE d.LinkType = 7 AND d.LinkID = $PARENTKEY$
 ORDER BY d.DiaryDateTime
 +++
 $$HEADER
-<table>
+<table border="1">
 <tr><th>By</th><th>For</th><th>Date</th><th>Completed</th><th>Subject</th><th>Note</th></tr>
 HEADER$$
 $$BODY
@@ -169,7 +189,7 @@ WHERE lo.LinkType = 6 AND lo.LinkID = $PARENTKEY$
 ORDER BY lo.Date
 +++
 $$HEADER
-<table>
+<table border="1">
 <tr><th>Date</th><th>Type</th><th>Details</th></tr>
 HEADER$$
 $$BODY
@@ -186,7 +206,7 @@ INNER JOIN additionalfield af ON a.AdditionalFieldID = af.ID
 WHERE a.LinkType IN (16, 17, 18, 19, 20) AND a.LinkID = $PARENTKEY$
 +++
 $$HEADER
-<table>
+<table border="1">
 <tr><th>Field</th><th>Value</th>
 HEADER$$
 $$BODY
