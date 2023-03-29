@@ -1,6 +1,7 @@
 47
 ================
 
+29/03/23 Fix formatting bug where Move->Reclaim an animal would not create costs
 23/03/23 csv_import service method #1230
 21/03/23 Always use oldest template animal when multiple are available
 20/03/23 Set hold until date when cloning from a template

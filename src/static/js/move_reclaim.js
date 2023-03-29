@@ -189,7 +189,7 @@ $(function() {
                     common.ajax_post("move_reclaim", formdata)
                         .then(function(data) {
                             let [costamount, costdata] = data.split("||");
-                            $("#costamount").val(costamount);
+                            $("#costamount").val(format.currency_to_int(costamount));
                             $("#costdata").html(costdata);
                             $("#costtype").val(config.str("BoardingCostType"));
                             $("#costdisplay").closest(".ui-widget").fadeIn();
