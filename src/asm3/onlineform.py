@@ -949,7 +949,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
             body, "html", attachments, exceptions=False)
 
     # Subject line for email notifications to staff and coordinators (max 70 chars)
-    subject = "%s - %s" % (asm3.utils.truncate(formname, 32), ", ".join(preview))
+    subject = "%s - %s" % (asm3.utils.truncs(formname, 32), ", ".join(preview))
 
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
@@ -1106,6 +1106,10 @@ def guess_transporttype(dbo, s):
     if guess != 0: return guess
     return dbo.query_int("SELECT ID FROM transporttype ORDER BY ID")
 
+def truncs(s):
+    """ Truncates a string for inserting to short text columns """
+    return asm3.utils.truncate(s, 1024)
+
 def attach_form(dbo, username, linktype, linkid, collationid):
     """
     Attaches the incoming form to the media tab. Finds any images in the form
@@ -1176,18 +1180,18 @@ def create_animal(dbo, username, collationid):
     # formreceived = asm3.i18n.python2display(l, dbo.now())
     d = { "estimatedage": "", "dateofbirth": "" }
     for f in fields:
-        if f.FIELDNAME == "animalname": d["animalname"] = f.VALUE
+        if f.FIELDNAME == "animalname": d["animalname"] = truncs(f.VALUE)
         if f.FIELDNAME == "code": 
-            d["code"] = f.VALUE
-            d["sheltercode"] = f.VALUE
-            d["shortcode"] = f.VALUE
+            d["code"] = truncs(f.VALUE)
+            d["sheltercode"] = truncs(f.VALUE)
+            d["shortcode"] = truncs(f.VALUE)
         if f.FIELDNAME == "dateofbirth": d["dateofbirth"] = f.VALUE
         if f.FIELDNAME == "age": d["estimatedage"] = f.VALUE
         if f.FIELDNAME == "markings": d["markings"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
         if f.FIELDNAME == "microchip": 
             d["microchipped"] = "1"
-            d["microchipnumber"] = f.VALUE
+            d["microchipnumber"] = truncs(f.VALUE)
         if f.FIELDNAME == "hiddencomments": d["hiddenanimaldetails"] = f.VALUE
         if f.FIELDNAME == "reason": d["reasonforentry"] = f.VALUE
         if f.FIELDNAME == "entryreason": d["entryreason"] = str(guess_entryreason(dbo, f.VALUE))
@@ -1251,30 +1255,30 @@ def create_person(dbo, username, collationid):
     for f in fields:
         if flags is None: flags = f.FLAGS
         if flags is None: flags = ""
-        if f.FIELDNAME == "title": d["title"] = f.VALUE
-        if f.FIELDNAME == "initials": d["initials"] = f.VALUE
-        if f.FIELDNAME == "forenames": d["forenames"] = f.VALUE
-        if f.FIELDNAME == "firstname": d["forenames"] = f.VALUE
-        if f.FIELDNAME == "surname": d["surname"] = f.VALUE
-        if f.FIELDNAME == "lastname": d["surname"] = f.VALUE
-        if f.FIELDNAME == "address": d["address"] = f.VALUE
-        if f.FIELDNAME == "town": d["town"] = f.VALUE
-        if f.FIELDNAME == "city": d["town"] = f.VALUE
-        if f.FIELDNAME == "county": d["county"] = f.VALUE
-        if f.FIELDNAME == "state": d["county"] = f.VALUE
-        if f.FIELDNAME == "postcode": d["postcode"] = f.VALUE
-        if f.FIELDNAME == "zipcode": d["postcode"] = f.VALUE
-        if f.FIELDNAME == "country": d["country"] = f.VALUE
-        if f.FIELDNAME == "hometelephone": d["hometelephone"] = f.VALUE
-        if f.FIELDNAME == "worktelephone": d["worktelephone"] = f.VALUE
-        if f.FIELDNAME == "mobiletelephone": d["mobiletelephone"] = f.VALUE
-        if f.FIELDNAME == "celltelephone": d["mobiletelephone"] = f.VALUE
-        if f.FIELDNAME == "emailaddress": d["emailaddress"] = f.VALUE
+        if f.FIELDNAME == "title": d["title"] = truncs(f.VALUE)
+        if f.FIELDNAME == "initials": d["initials"] = truncs(f.VALUE)
+        if f.FIELDNAME == "forenames": d["forenames"] = truncs(f.VALUE)
+        if f.FIELDNAME == "firstname": d["forenames"] = truncs(f.VALUE)
+        if f.FIELDNAME == "surname": d["surname"] = truncs(f.VALUE)
+        if f.FIELDNAME == "lastname": d["surname"] = truncs(f.VALUE)
+        if f.FIELDNAME == "address": d["address"] = truncs(f.VALUE)
+        if f.FIELDNAME == "town": d["town"] = truncs(f.VALUE)
+        if f.FIELDNAME == "city": d["town"] = truncs(f.VALUE)
+        if f.FIELDNAME == "county": d["county"] = truncs(f.VALUE)
+        if f.FIELDNAME == "state": d["county"] = truncs(f.VALUE)
+        if f.FIELDNAME == "postcode": d["postcode"] = truncs(f.VALUE)
+        if f.FIELDNAME == "zipcode": d["postcode"] = truncs(f.VALUE)
+        if f.FIELDNAME == "country": d["country"] = truncs(f.VALUE)
+        if f.FIELDNAME == "hometelephone": d["hometelephone"] = truncs(f.VALUE)
+        if f.FIELDNAME == "worktelephone": d["worktelephone"] = truncs(f.VALUE)
+        if f.FIELDNAME == "mobiletelephone": d["mobiletelephone"] = truncs(f.VALUE)
+        if f.FIELDNAME == "celltelephone": d["mobiletelephone"] = truncs(f.VALUE)
+        if f.FIELDNAME == "emailaddress": d["emailaddress"] = truncs(f.VALUE)
         if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != asm3.i18n._("No", l): 
             flags += ",excludefrombulkemail"
-        if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = f.VALUE
+        if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = truncs(f.VALUE)
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
-        if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = f.VALUE
+        if f.FIELDNAME.startswith("reserveanimalname"): d[f.FIELDNAME] = truncs(f.VALUE)
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
             recdate, rectime = f.VALUE.split(" ")
@@ -1350,10 +1354,10 @@ def create_animalcontrol(dbo, username, collationid):
         if f.FIELDNAME == "lastname" and f.VALUE != "": has_person = True
         if f.FIELDNAME == "surname" and f.VALUE != "": has_person = True
         if f.FIELDNAME == "callnotes": d["callnotes"] = f.VALUE
-        if f.FIELDNAME == "dispatchaddress": d["dispatchaddress"] = f.VALUE
-        if f.FIELDNAME == "dispatchcity": d["dispatchtown"] = f.VALUE
-        if f.FIELDNAME == "dispatchstate": d["dispatchcounty"] = f.VALUE
-        if f.FIELDNAME == "dispatchzipcode": d["dispatchpostcode"] = f.VALUE
+        if f.FIELDNAME == "dispatchaddress": d["dispatchaddress"] = truncs(f.VALUE)
+        if f.FIELDNAME == "dispatchcity": d["dispatchtown"] = truncs(f.VALUE)
+        if f.FIELDNAME == "dispatchstate": d["dispatchcounty"] = truncs(f.VALUE)
+        if f.FIELDNAME == "dispatchzipcode": d["dispatchpostcode"] = truncs(f.VALUE)
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     # Have we got enough info to create the animal control record? We need notes and dispatchaddress
     if "callnotes" not in d or "dispatchaddress" not in d:
@@ -1366,7 +1370,7 @@ def create_animalcontrol(dbo, username, collationid):
     incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, incidentid, "incident")
     attach_form(dbo, username, asm3.media.ANIMALCONTROL, incidentid, collationid)
-    display = "%s - %s" % (asm3.utils.padleft(incidentid, 6), asm3.utils.truncate(d["dispatchaddress"], 20))
+    display = "%s - %s" % (asm3.utils.padleft(incidentid, 6), asm3.utils.truncs(d["dispatchaddress"], 20))
     return (collationid, incidentid, display, status)
 
 def create_lostanimal(dbo, username, collationid):
@@ -1389,9 +1393,9 @@ def create_lostanimal(dbo, username, collationid):
         if f.FIELDNAME == "description": d["markings"] = f.VALUE
         if f.FIELDNAME == "datelost": d["datelost"] = f.VALUE
         if f.FIELDNAME == "arealost": d["arealost"] = f.VALUE
-        if f.FIELDNAME == "areapostcode": d["areapostcode"] = f.VALUE
-        if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
-        if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
+        if f.FIELDNAME == "areapostcode": d["areapostcode"] = truncs(f.VALUE)
+        if f.FIELDNAME == "areazipcode": d["areapostcode"] = truncs(f.VALUE)
+        if f.FIELDNAME == "microchip": d["microchip"] = truncs(f.VALUE)
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     if "datelost" not in d or asm3.i18n.display2python(l, d["datelost"]) is None:
@@ -1433,9 +1437,9 @@ def create_foundanimal(dbo, username, collationid):
         if f.FIELDNAME == "description": d["markings"] = f.VALUE
         if f.FIELDNAME == "datefound": d["datefound"] = f.VALUE
         if f.FIELDNAME == "areafound": d["areafound"] = f.VALUE
-        if f.FIELDNAME == "areapostcode": d["areapostcode"] = f.VALUE
-        if f.FIELDNAME == "areazipcode": d["areapostcode"] = f.VALUE
-        if f.FIELDNAME == "microchip": d["microchip"] = f.VALUE
+        if f.FIELDNAME == "areapostcode": d["areapostcode"] = truncs(f.VALUE)
+        if f.FIELDNAME == "areazipcode": d["areapostcode"] = truncs(f.VALUE)
+        if f.FIELDNAME == "microchip": d["microchip"] = truncs(f.VALUE)
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
     if "datefound" not in d or asm3.i18n.display2python(l, d["datefound"]) is None:
@@ -1473,24 +1477,24 @@ def create_transport(dbo, username, collationid):
             animalid = get_animal_id_from_field(dbo, animalname)
             d["animal"] = str(animalid)
         if f.FIELDNAME == "description": d["comments"] = f.VALUE
-        if f.FIELDNAME == "pickupaddress": d["pickupaddress"] = f.VALUE
-        if f.FIELDNAME == "pickupcity": d["pickuptown"] = f.VALUE
-        if f.FIELDNAME == "pickuptown": d["pickuptown"] = f.VALUE
-        if f.FIELDNAME == "pickupcounty": d["pickupcounty"] = f.VALUE
-        if f.FIELDNAME == "pickupstate": d["pickupcounty"] = f.VALUE
-        if f.FIELDNAME == "pickuppostcode": d["pickuppostcode"] = f.VALUE
-        if f.FIELDNAME == "pickupzipcode": d["pickuppostcode"] = f.VALUE
-        if f.FIELDNAME == "pickupcountry": d["pickupcountry"] = f.VALUE
+        if f.FIELDNAME == "pickupaddress": d["pickupaddress"] = truncs(f.VALUE)
+        if f.FIELDNAME == "pickupcity": d["pickuptown"] = truncs(f.VALUE)
+        if f.FIELDNAME == "pickuptown": d["pickuptown"] = truncs(f.VALUE)
+        if f.FIELDNAME == "pickupcounty": d["pickupcounty"] = truncs(f.VALUE)
+        if f.FIELDNAME == "pickupstate": d["pickupcounty"] = truncs(f.VALUE)
+        if f.FIELDNAME == "pickuppostcode": d["pickuppostcode"] = truncs(f.VALUE)
+        if f.FIELDNAME == "pickupzipcode": d["pickuppostcode"] = truncs(f.VALUE)
+        if f.FIELDNAME == "pickupcountry": d["pickupcountry"] = truncs(f.VALUE)
         if f.FIELDNAME == "pickupdate": d["pickupdate"] = f.VALUE
         if f.FIELDNAME == "pickuptime": d["pickuptime"] = f.VALUE
-        if f.FIELDNAME == "dropoffaddress": d["dropoffaddress"] = f.VALUE
-        if f.FIELDNAME == "dropoffcity": d["dropofftown"] = f.VALUE
-        if f.FIELDNAME == "dropofftown": d["dropofftown"] = f.VALUE
-        if f.FIELDNAME == "dropoffcounty": d["dropoffcounty"] = f.VALUE
-        if f.FIELDNAME == "dropoffstate": d["dropoffcounty"] = f.VALUE
-        if f.FIELDNAME == "dropoffpostcode": d["dropoffpostcode"] = f.VALUE
-        if f.FIELDNAME == "dropoffzipcode": d["dropoffpostcode"] = f.VALUE
-        if f.FIELDNAME == "dropoffcountry": d["dropoffcountry"] = f.VALUE
+        if f.FIELDNAME == "dropoffaddress": d["dropoffaddress"] = truncs(f.VALUE)
+        if f.FIELDNAME == "dropoffcity": d["dropofftown"] = truncs(f.VALUE)
+        if f.FIELDNAME == "dropofftown": d["dropofftown"] = truncs(f.VALUE)
+        if f.FIELDNAME == "dropoffcounty": d["dropoffcounty"] = truncs(f.VALUE)
+        if f.FIELDNAME == "dropoffstate": d["dropoffcounty"] = truncs(f.VALUE)
+        if f.FIELDNAME == "dropoffpostcode": d["dropoffpostcode"] = truncs(f.VALUE)
+        if f.FIELDNAME == "dropoffzipcode": d["dropoffpostcode"] = truncs(f.VALUE)
+        if f.FIELDNAME == "dropoffcountry": d["dropoffcountry"] = truncs(f.VALUE)
         if f.FIELDNAME == "dropoffdate": d["dropoffdate"] = f.VALUE
         if f.FIELDNAME == "dropofftime": d["dropofftime"] = f.VALUE
         if f.FIELDNAME == "transporttype": d["type"] = guess_transporttype(dbo, f.VALUE)
