@@ -214,7 +214,6 @@ $.widget("asm.table", {
                 $(self.element).find('.tablesorter-filter[data-column="' + column + '"]').each(function() {
                     $(this).val(value);
                     $(this).trigger("keyup");
-                    //this[0].dispatchEvent(new Event("keyup"));
                 });
             });
         }
