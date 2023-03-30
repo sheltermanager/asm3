@@ -949,7 +949,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
             body, "html", attachments, exceptions=False)
 
     # Subject line for email notifications to staff and coordinators (max 70 chars)
-    subject = "%s - %s" % (asm3.utils.truncs(formname, 32), ", ".join(preview))
+    subject = "%s - %s" % (asm3.utils.truncate(formname, 32), ", ".join(preview))
 
     # Did the original form specify some email addresses to send 
     # incoming submissions to?
@@ -1370,7 +1370,7 @@ def create_animalcontrol(dbo, username, collationid):
     incidentid = asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, incidentid, "incident")
     attach_form(dbo, username, asm3.media.ANIMALCONTROL, incidentid, collationid)
-    display = "%s - %s" % (asm3.utils.padleft(incidentid, 6), asm3.utils.truncs(d["dispatchaddress"], 20))
+    display = "%s - %s" % (asm3.utils.padleft(incidentid, 6), asm3.utils.truncate(d["dispatchaddress"], 20))
     return (collationid, incidentid, display, status)
 
 def create_lostanimal(dbo, username, collationid):
