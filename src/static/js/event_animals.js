@@ -164,21 +164,20 @@ $(function(){
                         } 
                     },
                     { id: "filter", type: "dropdownfilter", 
-                     options: [ "all|" + _("All"), "arrived|" + _("Arrived"), 
+                        options: [ "all|" + _("All"), "arrived|" + _("Arrived"), 
                         "noshow|" + _("No show"), "neednewfoster|" + _("Need new foster"), 
                         "dontneednewfoster|" + _("Don't need new foster"),
                         "adopted|" + _("Adopted"), 
                         "notadopted|" + _("Not adopted") ],
-                     click: function(selval) {
-                        common.route(controller.name + "?id=" + controller.event.ID + "&filter=" + selval);
-                     }
+                        click: function(selval) {
+                            common.route(controller.name + "?id=" + controller.event.ID + "&filter=" + selval);
+                        }
                     },
                     { id: "refresh", text: _("Refresh"), icon: "refresh", enabled: "always", perm: "vea", 
                         click: async function() {
-                            $.fn.serializeTableformFilterValues();
+                            event_animals.tablefilters = $("#tableform").table("save_filters");
                             common.route_reload();
                         }
-
                     }
                 ];
 
@@ -294,7 +293,8 @@ $(function(){
             // Dirty handling
             validate.bind_dirty([ "eventanimal_" ]);
 
-            $.fn.deserializeTableformFilterValues(window.sharedSerializedFilters);
+            // Reload filters if they were previously set
+            $("#tableform").table("load_filters", event_animals.tablefilters);
         },
 
         destroy: function() {

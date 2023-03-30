@@ -129,17 +129,18 @@ $.fn.tableCheckedData = function() {
 };
 
 // Styles an HTML table with jquery stuff and adds sorting
-$.fn.table = function(options) {
-    let defaults = {
+$.widget("asm.table", {
+    
+    options: {
         css:        'asm-table',
         filter:     false,
         row_hover:  true,
         row_select: true,
         sticky_header: true
-    };
-    options = $.extend(defaults, options);
-    return this.each(function () {
-        let tbl = $(this);
+    },
+
+    _create: function() {
+        let tbl = this.element, options = this.options;
         tbl.addClass(options.css);
         if (options.row_hover) {
             tbl.on("mouseover", "tbody tr", function() {
@@ -203,8 +204,34 @@ $.fn.table = function(options) {
                 return s;
             }
         });
-    });
-};
+    },
+    
+    /** Loads and sets the table filters in the object filters */
+    load_filters: function(filters) {
+        let self = this;
+        if (filters && Object.keys(filters).length > 0) {
+            $.each(filters, function(column, value) {
+                $(self.element).find('.tablesorter-filter[data-column="' + column + '"]').each(function() {
+                    $(this).val(value);
+                    $(this).trigger("keyup");
+                    //this[0].dispatchEvent(new Event("keyup"));
+                });
+            });
+        }
+    },
+
+    /** Returns an object containing the filter textbox values. Can be passed to load_filters to reload them */
+    save_filters: function() {
+        let filters = {};
+        $(this.element).find('.tablesorter-filter').each(function() {
+            let column = $(this).attr('data-column');
+            let value = $(this).val();
+            filters[column] = value;
+        });
+        return filters;
+    }
+
+});
 
 // Styles a tab strip consisting of a div with an unordered list of tabs
 $.fn.asmtabs = function() {
