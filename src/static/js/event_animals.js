@@ -7,6 +7,7 @@ $(function(){
     const event_animals ={
 
         model: function() {
+
             const dialog = {
                 add_title: _("Add animal to event"),
                 edit_title: _("Edit animal in event"),
@@ -170,8 +171,14 @@ $(function(){
                         "notadopted|" + _("Not adopted") ],
                      click: function(selval) {
                         common.route(controller.name + "?id=" + controller.event.ID + "&filter=" + selval);
-                        //TODO: refresh list - get request doesn't get all arguments (filter specifically, until reload)
                      }
+                    },
+                    { id: "refresh", text: _("Refresh"), icon: "refresh", enabled: "always", perm: "vea", 
+                        click: async function() {
+                            $.fn.serializeTableformFilterValues();
+                            common.route_reload();
+                        }
+
                     }
                 ];
 
@@ -286,6 +293,8 @@ $(function(){
 
             // Dirty handling
             validate.bind_dirty([ "eventanimal_" ]);
+
+            $.fn.deserializeTableformFilterValues(window.sharedSerializedFilters);
         },
 
         destroy: function() {
@@ -301,6 +310,7 @@ $(function(){
         name: "event_animals",
         animation: "formtab",
         autofocus: "#eventtype",
+
         title: function() {
             var e = controller.event;
             var dates_range = "";
