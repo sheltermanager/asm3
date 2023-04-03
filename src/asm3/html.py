@@ -980,14 +980,16 @@ def qr_animal_img_record_src(animalid, size = "150x150"):
     Returns an img src attribute for a QR code to an animal's record.
     size is a sizespec eg: 150x150
     """
-    return QR_IMG_SRC % { "url": f"{BASE_URL}/animal?id={animalid}", "size": size }
+    url = asm3.utils.encode_uri(f"{BASE_URL}/animal?id={animalid}")
+    return QR_IMG_SRC % { "url": url, "size": size }
 
 def qr_animal_img_share_src(dbo, animalid, size = "150x150"):
     """
     Returns an img src attribute for a QR code to the public animalview page for the animal.
     size is a sizespec eg: 150x150
     """
-    return QR_IMG_SRC % { "url": f"{SERVICE_URL}?account={dbo.database}&method=animal_view&animalid={animalid}", "size": size }
+    url = asm3.utils.encode_uri(f"{SERVICE_URL}?account={dbo.database}&method=animal_view&animalid={animalid}")
+    return QR_IMG_SRC % { "url": url, "size": size }
 
 def thumbnail_img_src(dbo, row, mode):
     """
