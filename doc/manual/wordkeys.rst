@@ -67,11 +67,13 @@ DocumentImgThumbSrc
     Just the src attribute value for a thumbnail link to the preferred document image.
 DocumentQRLink
     An <img> tag containing a link to QR code that references a URL to the
-    animal's record within ASM. Supports the pixel height suffix.
+    animal's record within ASM. Supports an optional pixel height suffix with
+    the following values: 50, 100, 150, 200, eg: <<DocumentQRLink100>>
 DocumentQRShare
     An <img> tag containing a link to a QR code that references a URL to the
-    "share a link to this animal" public page for the animal. Supports the pixel height
-    suffix, eg: <<DocumentQRShare500>>
+    "share a link to this animal" public page for the animal. Supports an
+    optional pixel height suffix with the following values: 50, 100, 150, 200,
+    eg: <<DocumentQRShare>>, <<DocumentQRShare200>>
 ShelterCode
     The animal's shelter code 
 ShortShelterCode
