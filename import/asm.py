@@ -1393,6 +1393,12 @@ def additional_field(fieldname, linktypeid, linkid, value):
         "%d, %d, (SELECT ID FROM additionalfield WHERE FieldName LIKE '%s'), %s);" % \
         ( linktypeid, linkid, fieldname, ds(value)))
 
+def additional_field_id(fieldid, linkid, value):
+    """ Writes an additional field entry with a known additionalfieldid """
+    print(f"DELETE FROM additional WHERE AdditionalField={fieldid} AND LinkID={linkid}")
+    print(f"INSERT INTO additional (LinkType, LinkID, AdditionalFieldID, Value) VALUES (" \
+        f"(SELECT LinkType FROM additionalfield WHERE ID={fieldid}), {linkid}, {fieldid}, {ds(value)});")
+
 def age_group(dob):
     """ Returns the age group for a date of birth """
     d = date_diff_days(dob, today())

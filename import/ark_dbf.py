@@ -12,6 +12,12 @@ Last changed: 2nd Feb, 2023
 PATH = "/home/robin/tmp/asm3_import_data/ark_kw2942"
 START_ID = 100
 PICTURE_IMPORT = False
+SKIP_BLANK_NAME_ADDRESS = True # Don't create people if they don't have a lastname and address
+SKIP_BLANK_ANIMAL_NAME = True # Don't create animals if they don't have a name
+
+ADDITIONAL_DRIVERS_LIC = 0 # ID of additional field in the target database to hold drivers licence
+ADDITIONAL_EUTH_BY = 0 # ID of additional field in the target database to hold euth by field
+ADDITIONAL_EUTH_USD = 0 # ID of additional field in the target database to hold euth amount used
 
 BLANK_DATE = asm.parse_date("2015-01-01", "%Y-%m-%d") # Date used for licenses and incidents when the date was blank in ARK
 
@@ -60,6 +66,7 @@ uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = uo.OwnerSurname
 
 for p in asm.read_dbf("%s/NAMES.DBF" % PATH):
+    if SKIP_BLANK_NAME_ADDRESS and (p["L_NAME"] == "" or p["ADR_ST_NAM"] == ""): continue
     o = asm.Owner()
     owners.append(o)
     ppo[p["ID"]] = o
@@ -71,11 +78,14 @@ for p in asm.read_dbf("%s/NAMES.DBF" % PATH):
     o.OwnerPostcode = p["ZIP"]
     o.HomeTelephone = p["H_PHONE"]
     o.WorkTelephone = p["W_PHONE"]
-    comments = "ID: %s" % p["ID"]
+    comments = "ID: %s, DL#: %s" % (p["ID"], p["DRIVERSLIC"])
     comments += "\n%s" % asm.nulltostr(p["NAMES_TXT"])
     o.Comments = comments
+    if p["DRIVERSLIC"] != "" and ADDITIONAL_DRIVERS_LIC != 0:
+        asm.additional_field_id(ADDITIONAL_DRIVERS_LIC, o.ID, p["DRIVERSLIC"])
 
 for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
+    if SKIP_BLANK_ANIMAL_NAME and d["NAME"] == "": continue
     a = asm.Animal()
     animals.append(a)
     ppa[d["ID_NUM"]] = a
@@ -143,14 +153,17 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
         elif d["AGE"].find("M") != -1:
             dob = asm.subtract_days(dob, asm.atoi(d["AGE"]) * 30)
     a.DateOfBirth = dob
+    comments = "Original breed: %s\nColor: %s" % (d["BREED"].strip(), d["COLOR"].strip())
     if d["EUTH_USD"] is not None and d["EUTH_USD"] > 0:
         a.PutToSleep = 1
         a.Archived = 1
         a.DeceasedDate = d["DATE_DISPO"]
+        if ADDITIONAL_EUTH_BY != 0:asm.additional_field_id(ADDITIONAL_EUTH_BY, a.ID, p["EUTH_BY"])
+        if ADDITIONAL_EUTH_USD != 0: asm.additional_field_id(ADDITIONAL_EUTH_USD, a.ID, p["EUTH_USD"])
+        comments += "\nEuth: %s %s" % (p["EUTH_BY"], p["EUTH_USD"])
     if d["CHIP_NUM"] != "":
         a.Identichipped = 1
         a.IdentichipNumber = d["CHIP_NUM"]
-    comments = "Original breed: %s\nColor: %s" % (d["BREED"].strip(), d["COLOR"].strip())
     if asm.nulltostr(d["PU_LOC"]).strip() != "":
         comments += "\nPicked up from: %s" % d["PU_LOC"]
     a.HiddenAnimalDetails = comments
