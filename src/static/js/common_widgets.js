@@ -1758,18 +1758,21 @@ $.fn.serializeTableformFilterValues = function() {
   });
   window.SerializedFilters = filterValues;
   return false;
-}
+};
 
-$.fn.deserializeTableformFilterValues = function(filterValues) {
+$.fn.deserializeTableformFilterValues = function() {
     if(window.SerializedFilters && Object.keys(window.SerializedFilters).length>0) {
         let filterValues = window.SerializedFilters; 
         for (var column in filterValues) {
-            var elements = document.querySelectorAll('.tablesorter-filter[data-column="' + column + '"]');
-            for (var i = 0; i < elements.length; i++) {
-                elements[i].value = filterValues[column];
-                elements[i].dispatchEvent(new Event("keyup"));
+            if(1==1)
+            {
+                var elements = document.querySelectorAll('.tablesorter-filter[data-column="' + column + '"]');
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].value = filterValues[column];
+                    elements[i].dispatchEvent(new Event("keyup"));
+                }
             }
         }
     }
     return false;
-}
+};

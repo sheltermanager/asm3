@@ -20,6 +20,18 @@ INCIDENT_DISPATCH = 17
 INCIDENT_OWNER = 18
 INCIDENT_CITATION = 19
 INCIDENT_ADDITIONAL = 20
+MOVEMENT_ADOPTION = 22
+MOVEMENT_FOSTER = 23
+MOVEMENT_TRANSFER = 24
+MOVEMENT_ESCAPED = 25
+MOVEMENT_RECLAIMED = 26
+MOVEMENT_STOLEN = 27
+MOVEMENT_RELEASED = 28
+MOVEMENT_RETAILER = 29
+MOVEMENT_RESERVATION = 30
+MOVEMENT_CANCELLED_RESERVATION = 31
+MOVEMENT_TRIAL_ADOPTION = 32
+MOVEMENT_PERMANENT_FOSTER = 33
 PERSON = 1
 PERSON_NAME = 7
 PERSON_TYPE = 8
@@ -39,6 +51,7 @@ INCIDENT_IN = "16, 17, 18, 19, 20"
 LOSTANIMAL_IN = "9, 10"
 PERSON_IN = "1, 7, 8"
 WAITINGLIST_IN = "13, 14, 15"
+MOVEMENT_IN = '22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33'
 
 # Field types
 YESNO = 0
@@ -70,6 +83,8 @@ def clause_for_linktype(linktype):
         inclause = FOUNDANIMAL_IN
     elif linktype == "waitinglist":
         inclause = WAITINGLIST_IN
+    elif linktype == "movement":
+        inclause = MOVEMENT_IN
     return inclause
 
 def table_for_linktype(linktype):
@@ -80,6 +95,8 @@ def table_for_linktype(linktype):
         return "animallost"
     elif linktype == "foundanimal":
         return "animalfound"
+    elif linktype == "movement":
+        return "adoption"
     return linktype
 
 def is_person_fieldtype(fieldtype):

@@ -2361,6 +2361,18 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksfieldlink", "LinkType", 19, _("Incident - Citation", l))
     sql += lookup1("lksfieldlink", "LinkType", 20, _("Incident - Additional", l))
     sql += lookup1("lksfieldlink", "LinkType", 21, _("Event - Details", l))
+    sql += lookup1("lksfieldlink", "LinkType", 22, _("Movement - Adoption", l))
+    sql += lookup1("lksfieldlink", "LinkType", 23, _("Movement - Foster", l))
+    sql += lookup1("lksfieldlink", "LinkType", 24, _("Movement - Transfer", l))
+    sql += lookup1("lksfieldlink", "LinkType", 25, _("Movement - Escaped", l))
+    sql += lookup1("lksfieldlink", "LinkType", 26, _("Movement - Reclaimed", l))
+    sql += lookup1("lksfieldlink", "LinkType", 27, _("Movement - Stolen", l))
+    sql += lookup1("lksfieldlink", "LinkType", 28, _("Movement - Released", l))
+    sql += lookup1("lksfieldlink", "LinkType", 29, _("Movement - Retailer", l))
+    sql += lookup1("lksfieldlink", "LinkType", 30, _("Movement - Reservation", l))
+    sql += lookup1("lksfieldlink", "LinkType", 31, _("Movement - Cancelled Reservation", l))
+    sql += lookup1("lksfieldlink", "LinkType", 32, _("Movement - Trial Adoption", l))
+    sql += lookup1("lksfieldlink", "LinkType", 33, _("Movement - Permanent Foster", l))
     sql += lookup1("lksfieldtype", "FieldType", 0, _("Yes/No", l))
     sql += lookup1("lksfieldtype", "FieldType", 1, _("Text", l))
     sql += lookup1("lksfieldtype", "FieldType", 2, _("Notes", l))
@@ -5808,3 +5820,18 @@ def update_34700(dbo):
     dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (19, ?)", [ _("TNR", l) ])
 
 
+def update_34750(dbo):
+    # add movement type to additional fields
+    l = dbo.locale
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (22, '%s')" % _("Movement - Adoption", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (23, '%s')" % _("Movement - Foster", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (24, '%s')" % _("Movement - Transfer", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (25, '%s')" % _("Movement - Escaped", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (26, '%s')" % _("Movement - Reclaimed", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (27, '%s')" % _("Movement - Stolen", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (28, '%s')" % _("Movement - Released", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (29, '%s')" % _("Movement - Retailer", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (30, '%s')" % _("Movement - Reservation", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (31, '%s')" % _("Movement - Cancelled Reservation", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (32, '%s')" % _("Movement - Trial Adoption", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (33, '%s')" % _("Movement - Permanent Foster", l))
