@@ -11,8 +11,18 @@ sure you have populated person data.
 
 When processing animal records that already exist, there are certain key fields
 that will be overwritten on the existing animal from the CSV data. These fields
-are ANIMALNEUTERED[DATE], ANIMALMICROCHIP[DATE] and ANIMALHEALTHPROBLEMS. This
-allows you to use a spreadsheet of data on chipping/neutering days and import
+are:
+
+* ANIMALDOB
+* ANIMALFLAGS
+* ANIMALHEALTHPROBLEMS. 
+* ANIMALLOCATION / ANIMALUNIT
+* ANIMALMICROCHIP / ANIMALMICROCHIPDATE
+* ANIMALNEUTERED / ANIMALNEUTEREDDATE
+* ANIMALPICKUPADDRESS
+* ANIMALPICKUPLOCATION
+
+This allows you to use a spreadsheet of data on chipping/neutering days and import
 that data to your existing animals afterwards.
 
 ANIMALCODE
