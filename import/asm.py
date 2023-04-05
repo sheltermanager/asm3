@@ -1401,7 +1401,7 @@ def additional_field(fieldname, linktypeid, linkid, value):
 
 def additional_field_id(fieldid, linkid, value):
     """ Writes an additional field entry with a known additionalfieldid """
-    print(f"DELETE FROM additional WHERE AdditionalField={fieldid} AND LinkID={linkid}")
+    print(f"DELETE FROM additional WHERE AdditionalFieldID={fieldid} AND LinkID={linkid};")
     print(f"INSERT INTO additional (LinkType, LinkID, AdditionalFieldID, Value) VALUES (" \
         f"(SELECT LinkType FROM additionalfield WHERE ID={fieldid}), {linkid}, {fieldid}, {ds(value)});")
 
@@ -1448,6 +1448,24 @@ def adopt_older_than(animals, movements, ownerid=100, days=365):
 			a.ActiveMovementID = m.ID
 			a.ActiveMovementDate = a.DateBroughtIn
 			a.ActiveMovementType = 1
+			movements.append(m)
+	return movements
+
+def escaped_older_than(animals, movements, days=365):
+	""" Runs through animals and if any are still on shelter after 'days',
+        creates an escaped movement. Returns movements
+	"""
+	for a in animals:
+		if a.Archived == 0 and a.DateBroughtIn < subtract_days(now(), days):
+			m = Movement()
+			m.AnimalID = a.ID
+			m.OwnerID = 0
+			m.MovementType = 4
+			m.MovementDate = a.DateBroughtIn
+			a.Archived = 1
+			a.ActiveMovementID = m.ID
+			a.ActiveMovementDate = a.DateBroughtIn
+			a.ActiveMovementType = 4
 			movements.append(m)
 	return movements
 

@@ -270,6 +270,9 @@ for c in asm.read_dbf("%s/AN_EVNTS.DBF" % PATH):
 # Adopt out any animals still on shelter to an unknown owner
 # asm.adopt_older_than(animals, movements, uo.ID, 0)
 
+# Mark animals remaining on shelter as escaped instead
+asm.escaped_older_than(animals, movements, 0)
+
 for a in animals:
     print(a)
 for o in owners:
