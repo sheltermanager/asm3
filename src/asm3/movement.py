@@ -224,13 +224,13 @@ def get_animal_movements(dbo, aid):
     """
     Gets the list of movements for a particular animal
     """
-    return dbo.query(get_movement_query(dbo) + " WHERE m.AnimalID = ? ORDER BY ActiveDate DESC", [aid])
+    return asm3.additional.append_to_results(dbo, dbo.query(get_movement_query(dbo) + " WHERE m.AnimalID = ? ORDER BY ActiveDate DESC", [aid]), "movement")
 
 def get_person_movements(dbo, pid):
     """
     Gets the list of movements for a particular person
     """
-    return dbo.query(get_movement_query(dbo) + " WHERE m.OwnerID = ? ORDER BY ActiveDate DESC", [pid])
+    return asm3.additional.append_to_results(dbo, dbo.query(get_movement_query(dbo) + " WHERE m.OwnerID = ? ORDER BY ActiveDate DESC", [pid]), "movement")
 
 def validate_movement_form_data(dbo, username, post):
     """
