@@ -251,6 +251,12 @@ def remove_seconds(s):
         t = t[0:5]
     return d + " " + t
 
+def format_date(d, f):
+    try:
+        return d.strftime(f)
+    except:
+        return ""
+
 def parse_date(s, f):
     try:
         return datetime.datetime.strptime(s, f)

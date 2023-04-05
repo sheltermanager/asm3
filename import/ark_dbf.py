@@ -9,17 +9,19 @@ Import script for ARK DBF databases, covers people, animals, payments, events, l
 Last changed: 2nd Feb, 2023
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/ark_kw2942"
+PATH = "/home/robin/tmp/asm3_import_data/ark_mg2903"
 START_ID = 100
 PICTURE_IMPORT = False
 SKIP_BLANK_NAME_ADDRESS = True # Don't create people if they don't have a lastname and address
 SKIP_BLANK_ANIMAL_NAME = True # Don't create animals if they don't have a name
 
-ADDITIONAL_DRIVERS_LIC = 0 # ID of additional field in the target database to hold drivers licence
-ADDITIONAL_EUTH_BY = 0 # ID of additional field in the target database to hold euth by field
-ADDITIONAL_EUTH_USD = 0 # ID of additional field in the target database to hold euth amount used
+# Set these to 0 if the target database does not have them
+ADDITIONAL_PERSON_DOB = 1 # ID of additional field in the target database to hold date of birth
+ADDITIONAL_PERSON_DRIVERS_LIC = 2 # ID of additional field in the target database to hold drivers licence
+ADDITIONAL_ANIMAL_EUTH_BY = 4 # ID of additional field in the target database to hold euth by field
+ADDITIONAL_ANIMAL_EUTH_USD = 3 # ID of additional field in the target database to hold euth amount used
 
-BLANK_DATE = asm.parse_date("2015-01-01", "%Y-%m-%d") # Date used for licenses and incidents when the date was blank in ARK
+BLANK_DATE = asm.parse_date("2015-01-01", "%Y-%m-%d") # Date used for licenses, incidents and dispositions when the date was blank in ARK
 
 owners = []
 ownerdonations = []
@@ -78,11 +80,14 @@ for p in asm.read_dbf("%s/NAMES.DBF" % PATH):
     o.OwnerPostcode = p["ZIP"]
     o.HomeTelephone = p["H_PHONE"]
     o.WorkTelephone = p["W_PHONE"]
-    comments = "ID: %s, DL#: %s" % (p["ID"], p["DRIVERSLIC"])
+    comments = "ID: %s, DL#: %s, DOB: %s" % (p["ID"], p["DRIVERSLIC"], asm.format_date(p["DOB"], "%m/%d/%Y"))
     comments += "\n%s" % asm.nulltostr(p["NAMES_TXT"])
     o.Comments = comments
-    if p["DRIVERSLIC"] != "" and ADDITIONAL_DRIVERS_LIC != 0:
-        asm.additional_field_id(ADDITIONAL_DRIVERS_LIC, o.ID, p["DRIVERSLIC"])
+    if p["DRIVERSLIC"] != "" and ADDITIONAL_PERSON_DRIVERS_LIC != 0:
+        asm.additional_field_id(ADDITIONAL_PERSON_DRIVERS_LIC, o.ID, p["DRIVERSLIC"])
+    if p["DOB"] is not None and ADDITIONAL_PERSON_DOB != 0:
+        #asm.stderr("DOB: %s %s %s %s" % (p["DOB"], type(p["DOB"]), p["DOB"].strftime("%m/%d/%Y"), asm.format_date(p["DOB"], "%m/%d/%Y")))
+        asm.additional_field_id(ADDITIONAL_PERSON_DOB, o.ID, asm.format_date(p["DOB"], "%m/%d/%Y"))
 
 for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
     if SKIP_BLANK_ANIMAL_NAME and d["NAME"] == "": continue
@@ -158,9 +163,9 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
         a.PutToSleep = 1
         a.Archived = 1
         a.DeceasedDate = d["DATE_DISPO"]
-        if ADDITIONAL_EUTH_BY != 0:asm.additional_field_id(ADDITIONAL_EUTH_BY, a.ID, p["EUTH_BY"])
-        if ADDITIONAL_EUTH_USD != 0: asm.additional_field_id(ADDITIONAL_EUTH_USD, a.ID, p["EUTH_USD"])
-        comments += "\nEuth: %s %s" % (p["EUTH_BY"], p["EUTH_USD"])
+        if ADDITIONAL_ANIMAL_EUTH_BY != 0: asm.additional_field_id(ADDITIONAL_ANIMAL_EUTH_BY, a.ID, d["EUTH_BY"])
+        if ADDITIONAL_ANIMAL_EUTH_USD != 0: asm.additional_field_id(ADDITIONAL_ANIMAL_EUTH_USD, a.ID, d["EUTH_USD"])
+        comments += "\nEuth: %s %s" % (d["EUTH_BY"], d["EUTH_USD"])
     if d["CHIP_NUM"] != "":
         a.Identichipped = 1
         a.IdentichipNumber = d["CHIP_NUM"]
@@ -179,6 +184,7 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
             m.OwnerID = o.ID
             m.MovementType = 1
             m.MovementDate = asm.todatetime(d["DATE_DISPO"])
+            if m.MovementDate is None: m.MovementDate = BLANK_DATE
             # I've seen it happen where disposition date is years ago, but there was no intake date
             if m.MovementDate < a.DateBroughtIn:
                 a.DateBroughtIn = m.MovementDate
@@ -262,7 +268,7 @@ for c in asm.read_dbf("%s/AN_EVNTS.DBF" % PATH):
     l.LastChangedDate = c["LAST_TIME"]
 
 # Adopt out any animals still on shelter to an unknown owner
-asm.adopt_older_than(animals, movements, uo.ID, 0)
+# asm.adopt_older_than(animals, movements, uo.ID, 0)
 
 for a in animals:
     print(a)
