@@ -1749,27 +1749,4 @@ $.fn.asmcontent = function(type) {
     });
 };
 
-$.fn.serializeTableformFilterValues = function() {
-  var filterValues = {};
-  $('.tablesorter-filter').each(function() {
-    var column = this.getAttribute('data-column');
-    var value = this.value;
-    filterValues[column] = value;
-  });
-  window.SerializedFilters = filterValues;
-  return false;
-}
 
-$.fn.deserializeTableformFilterValues = function(filterValues) {
-    if(window.SerializedFilters && Object.keys(window.SerializedFilters).length>0) {
-        let filterValues = window.SerializedFilters; 
-        for (var column in filterValues) {
-            var elements = document.querySelectorAll('.tablesorter-filter[data-column="' + column + '"]');
-            for (var i = 0; i < elements.length; i++) {
-                elements[i].value = filterValues[column];
-                elements[i].dispatchEvent(new Event("keyup"));
-            }
-        }
-    }
-    return false;
-}
