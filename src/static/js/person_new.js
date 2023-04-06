@@ -193,15 +193,30 @@ $(function() {
                 let result = await common.ajax_post("person_embed", formdata);
                 let people = jQuery.parseJSON(result);
                 let rec = people[0];
-                if (rec === undefined) {
-                    add_person();
-                }
-                else {
+                if (rec) {
                     let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
                     disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
                     $(".similar-person").html(disp);
                     similar_dialog();
+                    return;
                 }
+                // Do a second check in case the user put a cell phone number in the home number field.
+                // This is quite common in US databases where cell phone numbers have area codes like landlines.
+                if ($("#hometelephone").val()) {
+                    formdata = "mode=similar&mobiletelephone=" + $("#hometelephone").val() + "&" + $("#emailaddress, #surname, #forenames, #address").toPOST();
+                    result = await common.ajax_post("person_embed", formdata);
+                    people = jQuery.parseJSON(result);
+                    rec = people[0];
+                    if (rec) {
+                        let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
+                        disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                        $(".similar-person").html(disp);
+                        similar_dialog();
+                        return;
+                    }
+                }
+                // No similar matches found, fall through to just adding the person
+                add_person();
             };
 
             const check_org = function() {

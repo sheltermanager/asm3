@@ -17,6 +17,13 @@ class DatabaseSQLite3(Database):
     def connect(self):
         return sqlite3.connect(self.database, detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
 
+    def sql_atoi(self, fieldexpr):
+        """ Removes all but the numbers from fieldexpr 
+            SQLite does not have regexp_replace, but since this call is primarily used for phone number
+            comparisons, just strip spaces and remove the following symbols: - ( )
+        """
+        return "REPLACE(REPLACE(REPLACE(REPLACE(%s, '-', ''), '(', ''), ')', ''), ' ', '')" % fieldexpr
+
     def sql_greatest(self, items):
         """ SQLite does not have a GREATEST() function, MAX() should be used instead """
         return "MAX(%s)" % ",".join(items)

@@ -1,6 +1,7 @@
 47
 ================
 
+06/04/23 Add person: similar check in case they put cell phone in home phone #1170
 03/04/23 URI encode links properly for QRLink/QRShare in document templates
 30/03/23 Truncate online form fields headed to short text columns
 29/03/23 Fix formatting bug where Move->Reclaim an animal would not create costs
