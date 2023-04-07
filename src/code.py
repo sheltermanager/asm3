@@ -3623,6 +3623,7 @@ class incident(JSONEndpoint):
             "sites": asm3.lookups.get_sites(dbo),
             "tabcounts": asm3.animalcontrol.get_animalcontrol_satellite_counts(dbo, a["ACID"])[0],
             "templates": asm3.template.get_document_templates(dbo, "incident"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "users": asm3.users.get_users(dbo)
         }
 
