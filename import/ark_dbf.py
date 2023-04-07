@@ -151,7 +151,7 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
             a.EntryReasonID = arksurrcode[d["SURR_CODE"]]
     if d["SURR_ID"] != "":
         if d["SURR_ID"] in ppo:
-            a.OriginalOwnerID = ppo[d["SURR_ID"]].ID
+            a.BroughtInByOwnerID = ppo[d["SURR_ID"]].ID
     a.Sex = asm.getsex_mf(d["SEX"])
     a.ShelterLocationUnit = d["LOCATION"]
     a.BreedID = asm.breed_id_for_name(d["BREED"])
@@ -175,13 +175,20 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
     if "DOB" in d and d["DOB"] is not None:
         dob = d["DOB"]
     elif type(d["AGE"]) == int:
-        dob = asm.subtract_days(dob, d["AGE"] * 365)
+        aut = 365
+        if d["AGEUNITS"].startswith("M"): aut = 30.5
+        elif d["AGEUNITS"].startswith("W"): aut = 7
+        dob = asm.subtract_days(dob, d["AGE"] * aut)
     elif type(d["AGE"]) == str and d["AGE"] != "":
         if d["AGE"].find("YR") != -1:
             dob = asm.subtract_days(dob, asm.atoi(d["AGE"]) * 365)
         elif d["AGE"].find("M") != -1:
             dob = asm.subtract_days(dob, asm.atoi(d["AGE"]) * 30)
     a.DateOfBirth = dob
+    if "WEIGHT" in d and d["WEIGHT"]: a.Weight = d["WEIGHT"]
+    if d["HAIR"]:
+        # S/M/L for short/medium/long
+        if d["HAIR"] == "L": a.CoatType = 1
     a.Fee = asm.get_currency(d["ADOP_FEE"])
     comments = "Original breed: %s\nColor: %s\nIntake: %s" % (d["BREED"], d["COLOR"], d["SURR_CODE"])
     if d["EUTH_USD"] is not None and d["EUTH_USD"] > 0:
