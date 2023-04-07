@@ -2930,6 +2930,8 @@ class document_gen(ASMEndpoint):
             return asm3.wordprocessor.generate_person_doc(o.dbo, o.post.integer("dtid"), o.post.integer("personid"), o.user)
         elif o.post.integer("animalid") != 0:
             return asm3.wordprocessor.generate_animal_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalid"), o.user)
+        elif o.post.integer("animalcontrolid") != 0:
+            return asm3.wordprocessor.generate_animalcontrol_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalcontrolid"), o.user)
         else:
             return asm3.template.get_document_template_content(o.dbo, o.post.integer("dtid"))
 

@@ -512,6 +512,7 @@ $(function() {
                     title: _("Email incident notes to ACO"),
                     post: "incident",
                     formdata: "mode=email",
+                    animalcontrolid: controller.incident.ID,
                     name: common.iif(emailaddress.indexOf(",") == -1, emailname, ""),
                     email: emailaddress,
                     message: "<p>" + common.replace_all(html.decode(msg), "\n", "<br/>") + "</p>",
