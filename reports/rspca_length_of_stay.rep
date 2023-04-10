@@ -2,7 +2,7 @@ RSPCA: Length of stay of animals currently in care
 ###
 Figures
 ###
-2721/PostgreSQL
+33018/PostgreSQL rev02
 ###
 Shows banded time on shelter by species for animals on the shelter at a date. Used for completing the UK RSPCA figures spreadsheet
 ###
@@ -19,6 +19,7 @@ FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 WHERE
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@thedate$' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$') AND MovementType <> 2 AND AnimalID = a.ID)
+AND NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementType = 2 AND IsPermanentFoster = 1 AND AnimalID = a.ID)
 AND MostRecentEntryDate <= '$@thedate$'
 AND NonShelterAnimal = 0 
 AND (DeceasedDate Is Null OR DeceasedDate > '$@thedate$') 
