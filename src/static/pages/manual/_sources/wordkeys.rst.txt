@@ -204,6 +204,8 @@ AnimalLastChangedDate
     The date record was last changed 
 Markings
     The markings box 
+Warning
+    The warning box
 NameOfOwnersVet
     The owner's vet box 
 HasSpecialNeeds
@@ -944,6 +946,8 @@ OwnerFlags
     A list of the flags assigned to a person, separated by commas.
 OwnerComments 
     Any comments on the person
+OwnerWarning
+    The warning box on the person
 OwnerCreatedBy 
     (OwnerCreatedByName) 
 OwnerCreatedDate 
