@@ -85,6 +85,10 @@ $(document).ready(function() {
                     '<a class="nav-link" href="mobile_sign">' + _("Signing Pad"),
                     '</a>',
                 '</li>',
+                '<li class="nav-item">',
+                    '<a class="nav-link" href="mobile_photo_upload">' + _("Photo Uploader"),
+                    '</a>',
+                '</li>',
                 '<li class="nav-item dropdown">',
                     '<a class="nav-link dropdown-toggle" href="#" id="dropdown-animals" role="button" data-bs-toggle="dropdown" aria-expanded="false">',
                     _("Animals") + '</a>',
@@ -396,7 +400,7 @@ $(document).ready(function() {
         o = jQuery.parseJSON(o);
         let [adoptable, adoptreason] = html.is_animal_adoptable(a);
         let h = [
-            '<div class="list-group" style="margin-top: 5px">',
+            '<div class="list-group mt-3">',
             '<a href="#" data-link="shelteranimals" class="list-group-item list-group-item-action internal-link">',
             '&#8592; ' + _("Back"),
             '</a>',

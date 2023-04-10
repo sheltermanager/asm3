@@ -1053,6 +1053,22 @@ class mobile_logout(ASMEndpoint):
         self.set_cookie("asm_remember_me", "", 0) # user explicitly logged out, remove remember me
         self.redirect(url)
 
+class mobile_photo_upload(ASMEndpoint):
+    url = "mobile_photo_upload"
+    login_url = "/mobile_login"
+
+    def content(self, o):
+        dbo = o.dbo
+        l = o.locale
+        self.content_type("text/html")
+        c = {
+            "animals": asm3.animal.get_animals_on_shelter_namecode(dbo)
+        }
+        return asm3.html.mobile_page(l, _("Photo Uploader", l), [ "mobile_photo_uploader.js" ], c)
+
+    def post_all(self, o):
+        pass
+
 class mobile_post(ASMEndpoint):
     url = "mobile_post"
     login_url = "mobile_login"
