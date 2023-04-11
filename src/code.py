@@ -1067,7 +1067,8 @@ class mobile_photo_upload(ASMEndpoint):
         return asm3.html.mobile_page(l, _("Photo Uploader", l), [ "mobile_photo_uploader.js" ], c)
 
     def post_all(self, o):
-        pass
+        asm3.media.attach_file_from_form(o.dbo, o.user, asm3.media.ANIMAL, o.post.integer("animalid"), o.post)
+        return "OK"
 
 class mobile_post(ASMEndpoint):
     url = "mobile_post"

@@ -60,10 +60,11 @@ $(document).ready(function() {
                     '<i class="bi-camera"></i> ' + _("Take Photo") + '</button>',
                 '<button id="button-gallery" class="btn btn-secondary" disabled="disabled" type="button">',
                     '<i class="bi-card-image"></i> ' + _("Select from Gallery") + '</button>',
+                '<div id="spinner" class="spinner-border" role="status" style="display: none"><span class="visually-hidden">Loading...</span></div>',
             '</div>',
             '<div>',
                 '<img id="thumbnail" style="display: none; height: 200px; margin-top: 10px; margin-left: auto; margin-right: auto;" />',
-                '<p id="spinner" style="text-align: center; margin-top: 10px; display: none"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> <span id="spinner-message"></span></p>',
+                '<i id="check" style="display: none" class="bi-check2-circle"></i>',
                 '<input id="take-camera" type="file" capture="environment" accept="image/*" style="display: none" />',
                 '<input id="take-gallery" type="file" accept="image/*" style="display: none" />',
             '</div>',
@@ -79,6 +80,23 @@ $(document).ready(function() {
         reader.addEventListener("load", function() {
             $("#thumbnail").prop("src", reader.result);
             $("#thumbnail").show();
+            $("#check").hide();
+            $("#spinner").show();
+            let formdata = "animalid=" + $("#animal").val() + "&filename=" + file.name + "&filedata=" + reader.result;
+            $.ajax({
+                method: "POST",
+                url: "mobile_photo_upload",
+                data: formdata,
+                dataType: "text/plain",
+                error: function() {
+                    $("#spinner").hide();
+                    $("#check").show();
+                },
+                success: function() {
+                    $("#spinner").hide();
+                    $("#check").show();
+                }
+            });
         }, false);
         reader.readAsDataURL(file);
     };

@@ -257,6 +257,8 @@ def page(dbo, session, username):
         items.append(jqm_listitem_link("#test", _("Test Animal", l), "test", len(test)))
     if len(med) > 0 and pb(asm3.users.CHANGE_MEDICAL):
         items.append(jqm_listitem_link("#med", _("Medicate Animal", l), "medical", len(med)))
+    if pb(asm3.users.ADD_MEDIA):
+        items.append(jqm_listitem_link("mobile_photo_upload", _("Photo Upload", l), "image", -1, "", "false"))
     if osa and pb(asm3.users.ADD_LOG):
         items.append(jqm_listitem_link("#log", _("Add Log to Animal", l), "log", -1, ""))
     if pb(asm3.users.ADD_INCIDENT) or pb(asm3.users.CHANGE_INCIDENT) or pb(asm3.users.VIEW_LICENCE):
