@@ -1,4 +1,4 @@
-/*global $, controller */
+/*global $, controller, history, FileReader */
 
 $(document).ready(function() {
 
@@ -29,7 +29,7 @@ $(document).ready(function() {
         '<div id="upload-container" class="container">',
         '<form class="form-upload">',
             '<div class="list-group mt-3">', 
-                '<a id="back" href="#" class="list-group-item list-group-item-action">',
+                '<a id="link-back" href="#" class="list-group-item list-group-item-action">',
                 '&#8592; ' + _("Back"),
                 '</a>',
             '</div>',
@@ -51,17 +51,21 @@ $(document).ready(function() {
                 '<option value="oink.mp3">Oink!</option>',
                 '<option value="woofwoof.mp3">Woof Woof!</option>',
             '</select>',
-            '<button id="button-sound" class="btn btn-secondary mt-1" type="button">',
+            '<button id="button-sound" class="btn btn-success mt-1" type="button" disabled="disabled">',
                 '<i class="bi-play-circle"></i> ' + _("Play") + '</button>',
             '</div>',
             '<h2 class="mt-3">' + _("3. Capture Photo") + '</h2>',
             '<div>',
-                '<button id="button-take" class="btn btn-primary" type="button">',
+                '<button id="button-take" class="btn btn-primary" disabled="disabled" type="button">',
                     '<i class="bi-camera"></i> ' + _("Take Photo") + '</button>',
-                '<button id="button-gallery" class="btn btn-secondary" type="button">',
+                '<button id="button-gallery" class="btn btn-secondary" disabled="disabled" type="button">',
                     '<i class="bi-card-image"></i> ' + _("Select from Gallery") + '</button>',
+            '</div>',
+            '<div>',
                 '<img id="thumbnail" style="display: none; height: 200px; margin-top: 10px; margin-left: auto; margin-right: auto;" />',
                 '<p id="spinner" style="text-align: center; margin-top: 10px; display: none"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> <span id="spinner-message"></span></p>',
+                '<input id="take-camera" type="file" capture="environment" accept="image/*" style="display: none" />',
+                '<input id="take-gallery" type="file" accept="image/*" style="display: none" />',
             '</div>',
         '</form>',
         '</div>'
@@ -69,8 +73,51 @@ $(document).ready(function() {
 
     $("body").html(h);
 
-    $("#back").click(function() {
-        window.location = "mobile";
+    /** Handles processing the file and uploading to the backend */
+    const upload_image = function(file) {
+        let reader = new FileReader();
+        reader.addEventListener("load", function() {
+            $("#thumbnail").prop("src", reader.result);
+            $("#thumbnail").show();
+        }, false);
+        reader.readAsDataURL(file);
+    };
+
+    $.each(controller.animals, function(i, v) {
+        $("#animal").append('<option value="' + v.ID + '">' + v.SHELTERCODE + ' - ' + v.ANIMALNAME + '</option>');
+    });
+
+    $("#animal").change(function() {
+        $("#button-take, #button-gallery").prop("disabled", $("#animal").val() == "");
+    });
+
+    $("#sound").change(function() {
+        $("#button-sound").prop("disabled", $("#sound").val() == "");
+    });
+
+    $("#button-sound").click(function() {
+        if (!$("#sound").val()) { return; }
+        new Audio("static/audio/" + $("#sound").val()).play();
+    });
+
+    $("#link-back").click(function() {
+        history.go(-1);
+    });
+
+    $("#button-take").click(function() {
+        $("#take-camera").click();
+    });
+
+    $("#button-gallery").click(function() {
+        $("#take-gallery").click();
+    });
+
+    $("#take-camera").change(function() {
+        upload_image($("#take-camera")[0].files[0]);
+    });
+
+    $("#take-gallery").change(function() {
+        upload_image($("#take-gallery")[0].files[0]);
     });
 
 });

@@ -1,6 +1,7 @@
 47
 ================
 
+11/04/23 Re-implementation of mobile photo uploader #1249
 10/04/23 Add Warning/OwnerWarning wordkeys to access warning content
 07/04/23 Fix email templates when emailing ACO from incident
 06/04/23 Add person: similar check in case they put cell phone in home phone #1170
