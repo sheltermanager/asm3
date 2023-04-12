@@ -314,7 +314,7 @@ just about any kind of schedule. You can create medical profiles from
 treatment records. 
 
 Treatment records are automatically created from regimens. You can edit the
-regimen by click on the treatment name.
+regimen by clicking on the treatment name.
 
 As you complete each treatment, ASM will generate the next record in the
 sequence, until there are none left and the medical record is automatically
