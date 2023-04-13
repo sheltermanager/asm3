@@ -2584,12 +2584,10 @@ def install_default_data(dbo, skip_config = False):
 
 def reinstall_default_data(dbo):
     """
-    Reinstalls all default data for the current locale. It wipes the
-    database first, but leaves the configuration and dbfs tables intact.
+    Reinstalls all default data for the current locale.  
     """
-    for table in TABLES:
-        if table != "dbfs" and table != "configuration" and table != "users" and table != "role" and table != "userrole":
-            dbo.execute_dbupdate("DELETE FROM %s" % table)
+    for table in TABLES_LOOKUP:
+        dbo.execute_dbupdate("DELETE FROM %s" % table)
     install_default_data(dbo, True)
     install_default_templates(dbo)
     install_default_onlineforms(dbo)
