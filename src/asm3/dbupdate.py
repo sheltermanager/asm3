@@ -108,7 +108,7 @@ TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "br
     "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", 
     "lksmedialink", "lksmediatype", "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", "lksyesno", 
     "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", "logtype", "medicalprofile", 
-    "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", "species", 
+    "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", "stocklocation", "species", 
     "templatedocument", "templatehtml", "testtype", "testresult", "transporttype", "traptype", 
     "vaccinationtype", "voucher" )
 
