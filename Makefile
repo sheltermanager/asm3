@@ -88,7 +88,7 @@ compilejs:
 	@echo "[compile javascript] ================="
 	npm --silent run jshint
 
-compilepy:
+compilepy: version
 	@echo "[compile python] ====================="
 	flake8 --config=scripts/flake8 src/*.py src/asm3/*.py src/asm3/dbms/*.py src/asm3/publishers/*.py src/asm3/paymentprocessor/*.py
 
@@ -114,7 +114,7 @@ manual:
 	scp -C doc/manual/_build/latex/asm3.pdf root@wwwdx.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help.pdf
 	rsync -a doc/manual/_build/html/ root@wwwdx.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help/
 
-test: version
+test: 
 	@echo "[test] ========================="
 	cd src && python3 code.py 5000
 
