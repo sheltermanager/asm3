@@ -120,8 +120,8 @@ test:
 
 tests:
 	@echo "[tests] ========================"
-	cd test && python3 suite.py
-	rm -f test/*.pyc && rm -rf test/__pycache__
+	cd unittest && python3 suite.py
+	rm -f unittest/*.pyc && rm -rf unittest/__pycache__
 
 deps:
 	@echo "[deps] ========================="
