@@ -1,6 +1,7 @@
 47
 ================
 
+15/04/23 Fix bug where the wrong incident number was shown on citations
 13/04/23 reinstall_default_data only needs to clear lookup tables
 11/04/23 Re-implementation of mobile photo uploader #1249
 10/04/23 Add Warning/OwnerWarning wordkeys to access warning content
