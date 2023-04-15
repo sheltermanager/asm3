@@ -2,7 +2,7 @@ Incidents between two dates by ACO
 ###
 Animal Control
 ###
-33307/Any
+33307/Any rev02
 ###
 Incidents between two dates broken down by ACO
 ###
@@ -25,7 +25,7 @@ LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
 LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID
 WHERE ac.IncidentDateTime >= '$ASK DATE Enter the from date$'
 AND ac.IncidentDateTime <= '$ASK DATE Enter the to date$ 23:59:59'
-ORDER BY ti.DispatchedACO, ac.CallDateTime
+ORDER BY ac.DispatchedACO, ac.CallDateTime
 ###
 $$HEADER
 HEADER$$
