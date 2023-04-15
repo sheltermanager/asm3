@@ -61,7 +61,7 @@ $(function() {
                         formatter: function(row) { 
                             if (row.ANIMALCONTROLID) {
                                 return '<a href="incident?id=' + row.ANIMALCONTROLID + '">' +
-                                    format.padleft(row.ID, 6) + ' - ' + row.INCIDENTNAME + '</a>';
+                                    format.padleft(row.ANIMALCONTROLID, 6) + ' - ' + row.INCIDENTNAME + '</a>';
                             }
                         }, 
                         hideif: function(row) {
