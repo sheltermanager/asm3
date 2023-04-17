@@ -545,6 +545,11 @@ $(document).ready(function() {
         if (ac.DISPATCHDATETIME && !ac.RESPONDEDDATETIME && common.has_permission("cacr")) { 
             respdt = '<button type="button" class="respond btn btn-primary"><i class="bi-calendar"></i> ' + _("Respond") + '</button>';
         }
+        let dispadd = ac.DISPATCHADDRESS;
+        if (dispadd) {
+            let encadd = encodeURIComponent(ac.DISPATCHADDRESS + ',' + ac.DISPATCHTOWN + ',' + ac.DISPATCHCOUNTY + ',' + ac.DISPATCHPOSTCODE);
+            dispadd = '<button type="button" data-address="' + encadd + '" class="showmap btn btn-secondary"><i class="bi-map"></i></button> ' + ac.DISPATCHADDRESS;
+        }
         // Grab the extra data for this incident from the backend
         let o = await common.ajax_post(post_handler, "mode=loadincident&id=" + ac.ID);
         o = jQuery.parseJSON(o);
@@ -577,7 +582,7 @@ $(document).ready(function() {
             common.has_permission("vo") ? i(_("Victim"), ac.VICTIMNAME) : "",
 
             hd(_("Dispatch")),
-            i(_("Address"), ac.DISPATCHADDRESS),
+            i(_("Address"), dispadd),
             i(_("City"), ac.DISPATCHTOWN),
             i(_("State"), ac.DISPATCHCOUNTY),
             i(_("Zipcode"), ac.DISPATCHPOSTCODE),
@@ -634,7 +639,10 @@ $(document).ready(function() {
         // Display the record
         $(".container").hide();
         $(selector).show();
-        // TODO: Handle clickable buttons for complete/respond/dispatch, add log
+        // TODO: Handle clickable buttons for complete/respond/dispatch, add log etc.
+        $(".showmap").click(function() {
+            window.open(controller.maplink.replace("{0}", $(this).attr("data-address")));
+        });
     };
 
     // Hide all the elements with hideifzero if they have a badge containing zero
