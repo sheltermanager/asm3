@@ -531,12 +531,10 @@ $(document).ready(function() {
             return '<a href="tel:' + s + '">' + s + '</a>';
         };
         // Inline buttons for completing, dispatching and responding, either the date or a button
-        let comptp = ac.COMPLETEDNAME;
-        // TODO: generate select of completion types
-        //if a["COMPLETEDDATE"] is None and asm3.users.check_permission_bool(session, asm3.users.CHANGE_INCIDENT):
-        //comptp = jqm_select("comptype", 
-        //  '<option value="-1"></option>' + jqm_options(asm3.lookups.get_incident_completed_types(dbo), "ID", "COMPLETEDNAME"), 
-        //  "completedtype", str(a["ID"]))
+        let comptp = dt(ac.COMPLETEDATE) + ' ' + ac.COMPLETEDNAME;
+        if (!ac.COMPLETEDDATE && common.has_permission("caci")) {
+            comptp = '<select class="form-control complete">' + html.list_to_options(controller.completedtypes, "ID", "COMPLETEDNAME") + '</select>';
+        }
         let dispdt = dt(ac.DISPATCHDATETIME);
         if (!ac.DISPATCHDATETIME && common.has_permission("cacd")) { 
             dispdt = '<button type="button" class="dispatch btn btn-primary"><i class="bi-calendar"></i> ' + _("Dispatch") + '</button>';
@@ -572,8 +570,7 @@ $(document).ready(function() {
             i(_("Type"), ac.INCIDENTNAME),
             i(_("Incident Date/Time"), dt(ac.INCIDENTDATETIME)),
             i(_("Notes"), ac.CALLNOTES),
-            i(_("Completion Date/Time"), comptp),
-            i(_("Completion Type"), ac.COMPLETEDNAME),
+            i(_("Completed"), comptp),
             i(_("Call Date/Time"), dt(ac.CALLDATETIME)),
             i(_("Taken By"), ac.CALLTAKER),
 
@@ -639,7 +636,15 @@ $(document).ready(function() {
         // Display the record
         $(".container").hide();
         $(selector).show();
-        // TODO: Handle clickable buttons for complete/respond/dispatch, add log etc.
+        $(".dispatch").click(function() {
+            // TODO: post/dispatch
+        });
+        $(".respond").click(function() {
+            // TODO: post/respond
+        });
+        $(".complete").click(function() {
+            // TODO: post to the back end and complete the incident
+        });
         $(".showmap").click(function() {
             window.open(controller.maplink.replace("{0}", $(this).attr("data-address")));
         });

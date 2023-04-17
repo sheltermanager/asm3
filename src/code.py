@@ -937,6 +937,8 @@ class mobile2(ASMEndpoint):
             "animaltypes":  asm3.lookups.get_animal_types(dbo),
             "breeds":       asm3.lookups.get_breeds_by_species(dbo),
             "colours":      asm3.lookups.get_basecolours(dbo),
+            "completedtypes": asm3.lookups.get_incident_completed_types(dbo),
+            "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
             "sexes":        asm3.lookups.get_sexes(dbo),
             "sizes":        asm3.lookups.get_sizes(dbo),
