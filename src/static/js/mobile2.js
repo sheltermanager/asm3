@@ -533,7 +533,7 @@ $(document).ready(function() {
         // Inline buttons for completing, dispatching and responding, either the date or a button
         let comptp = dt(ac.COMPLETEDATE) + ' ' + ac.COMPLETEDNAME;
         if (!ac.COMPLETEDDATE && common.has_permission("caci")) {
-            comptp = '<select class="form-control complete">' + html.list_to_options(controller.completedtypes, "ID", "COMPLETEDNAME") + '</select>';
+            comptp = '<select class="form-control complete"><option value=""></option>' + html.list_to_options(controller.completedtypes, "ID", "COMPLETEDNAME") + '</select>';
         }
         let dispdt = dt(ac.DISPATCHDATETIME);
         if (!ac.DISPATCHDATETIME && common.has_permission("cacd")) { 
