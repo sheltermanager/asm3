@@ -26,6 +26,7 @@ RESERVATION = 9
 CANCELLED_RESERVATION = 10
 TRIAL_ADOPTION = 11
 PERMANENT_FOSTER = 12
+TNR = 13
 
 def get_movement_query(dbo):
     return "SELECT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
