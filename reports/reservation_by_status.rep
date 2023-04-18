@@ -2,7 +2,7 @@ Reservations between two dates by status
 ###
 Movements
 ###
-33909/Any rev01
+33909/Any rev02
 ###
 All reservations between two dates.
 ###
@@ -25,7 +25,7 @@ LEFT OUTER JOIN owner co ON animal.AdoptionCoordinatorID = co.ID
 INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN reservationstatus ON reservationstatus.ID = adoption.ReservationStatusID
-WHERE MovementType = 0 AND ReservationCancelledDate Is Null AND DeceasedDate Is Null 
+WHERE MovementType = 0 AND ReservationDate >= '$ASK DATE Reservation between$' AND ReservationDate <= '$ASK DATE and $' 
 ORDER BY StatusName, ReservationDate
 ###
 $$HEADER
