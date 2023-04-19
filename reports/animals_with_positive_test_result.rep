@@ -2,7 +2,7 @@ Shelter animals with positive test result
 ###
 Medical
 ###
-3307/PostgreSQL
+3307/PostgreSQL rev01
 ###
 Shelter animals who have tested positive for something
 ###
@@ -60,7 +60,7 @@ Animals with positive test result
 ###
 Medical
 ###
-3307/PostgreSQL
+3307/PostgreSQL rev01
 ###
 All animals who have tested positive for something
 ###
