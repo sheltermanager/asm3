@@ -2,7 +2,7 @@ Birthday List (On Shelter)
 ###
 Auditing
 ###
-MySQL
+MySQL rev01
 ###
 Shelter animals with birthdays in the selected month.
 ###
@@ -46,7 +46,7 @@ Birthday List (On Shelter)
 ###
 Auditing
 ###
-PostgreSQL
+PostgreSQL rev01
 ###
 Shelter animals with birthdays in the selected month.
 ###

@@ -2,7 +2,7 @@ Birthday List (Adopted)
 ###
 Auditing
 ###
-MySQL
+MySQL rev01
 ###
 Owners who adopted animals with birthdays in the selected month.
 ###
@@ -62,7 +62,7 @@ Birthday List (Adopted)
 ###
 Auditing
 ###
-PostgreSQL
+PostgreSQL rev01
 ###
 Owners who adopted animals with birthdays in the selected month.
 ###
