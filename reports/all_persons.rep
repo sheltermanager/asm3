@@ -2,7 +2,7 @@ All Persons (Individual/Couples)
 ###
 People
 ###
-3000/Any rev02
+3000/Any rev03
 ###
 Basic person info for all persons on file.
 ###
@@ -15,7 +15,7 @@ CASE WHEN EXISTS(SELECT ID FROM adoption WHERE OwnerID=o.ID AND MovementType=1) 
 CASE WHEN EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID=o.ID AND Donation>0) THEN 'Made a donation. ' ELSE '' END AS RelDonation,
 CASE WHEN EXISTS(SELECT ID FROM animal WHERE OriginalOwnerID=o.ID AND NonShelterAnimal=0) THEN 'Surrendered an animal. ' ELSE '' END AS RelSurrender
 FROM owner o
-WHERE o.OwnerType Is Null OR o.OwnerType <= 1
+WHERE o.OwnerType Is Null OR o.OwnerType <> 2
 ORDER BY o.OwnerName
 ###
 $$HEADER
@@ -59,7 +59,7 @@ All Persons (Organizations)
 ###
 People
 ###
-3000/Any
+3000/Any rev01
 ###
 Basic person info for all organizations on file.
 ###
@@ -114,7 +114,7 @@ All Persons (Individual/Couples by Date)
 ###
 People
 ###
-3000/Any rev02
+3000/Any rev03
 ###
 Basic person info for all persons on file who were entered between two dates.
 ###
@@ -127,7 +127,7 @@ CASE WHEN EXISTS(SELECT ID FROM adoption WHERE OwnerID=o.ID AND MovementType=1) 
 CASE WHEN EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID=o.ID AND Donation>0) THEN 'Made a donation. ' ELSE '' END AS RelDonation,
 CASE WHEN EXISTS(SELECT ID FROM animal WHERE OriginalOwnerID=o.ID AND NonShelterAnimal=0) THEN 'Surrendered an animal. ' ELSE '' END AS RelSurrender
 FROM owner o
-WHERE o.OwnerType Is Null OR o.OwnerType <= 1
+WHERE o.OwnerType Is Null OR o.OwnerType <> 2
 AND CreatedDate >= '$ASK DATE Person records entered between $' AND CreatedDate <= '$ASK DATE and $'
 ORDER BY o.OwnerName
 ###
@@ -172,7 +172,7 @@ All Persons (Organizations by Date)
 ###
 People
 ###
-3000/Any
+3000/Any rev01
 ###
 Basic person info for all organizations on file who were entered between two dates.
 ###

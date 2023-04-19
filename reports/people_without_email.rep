@@ -2,7 +2,7 @@ People without email addresses who adopted between two dates
 ###
 Movements
 ###
-33310/Any
+33310/Any rev01
 ###
 Person info for people who adopted an animal between two dates, but did not give an email address
 ###
@@ -12,7 +12,7 @@ SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerP
 o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
-WHERE o.IsDeceased = 0 AND o.OwnerType = 1
+WHERE o.IsDeceased = 0
 AND EXISTS(SELECT ID FROM adoption WHERE ReturnDate Is Null AND MovementType=1 AND MovementDate >= '$ASK DATE Adopted an animal between$' AND MovementDate <= '$ASK DATE and$')
 AND (EmailAddress Is Null OR EmailAddress = '')
 ORDER BY o.OwnerSurname
