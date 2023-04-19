@@ -2,7 +2,7 @@ View forms/documents attached between two dates
 ###
 Maintenance
 ###
-PostgreSQL rev02
+PostgreSQL rev03
 ###
 List all documents and submitted HTML forms added to the system between two dates with links
 ###
@@ -24,7 +24,7 @@ m.MediaNotes
 FROM media m
 WHERE m.MediaName LIKE '%.html'
 AND m.Date >= '$ASK DATE Enter from date$' AND m.Date <= '$ASK DATE Enter to date$'
-AND m.MediaNotes LIKE '%$ASK STRING Partial form name (leave blank for all)$%'
+AND m.MediaNotes ILIKE '%$ASK STRING Partial form name (leave blank for all)$%'
 ORDER BY m.Date
 ###
 $$HEADER

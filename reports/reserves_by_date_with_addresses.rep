@@ -2,7 +2,7 @@ Reservations by Date with Addresses
 ###
 Movements
 ###
-Any
+Any rev02
 ###
 Reservations between two dates with the name/address of the potential owner.
 ###
@@ -20,12 +20,13 @@ no.OwnerName, no.OwnerAddress,
 no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
 FROM adoption
-INNER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN owner no ON adoption.OwnerID = no.ID
-INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
-INNER JOIN species ON species.ID = animal.SpeciesID
+LEFT OUTER JOIN animal ON adoption.AnimalID = animal.ID
+LEFT OUTER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
+LEFT OUTER JOIN species ON species.ID = animal.SpeciesID
 WHERE MovementType = 0 AND ReservationCancelledDate Is Null
-AND ReservationDate >= '$@from$' AND ReservationDate <= '$@to$ 23:59:59' ORDER BY ReservationDate
+AND ReservationDate >= '$@from$' AND ReservationDate <= '$@to$ 23:59:59' 
+ORDER BY ReservationDate
 ###
 $$HEADER
 <table border=1><tr>

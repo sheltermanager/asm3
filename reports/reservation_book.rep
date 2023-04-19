@@ -2,7 +2,7 @@ Reservation Book
 ###
 Movements
 ###
-33909/Any rev02
+33909/Any rev03
 ###
 Current active reservations with the name/address of the potential owner.
 ###
@@ -19,12 +19,12 @@ no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone,
 co.OwnerName AS CoordinatorName
 FROM adoption
-INNER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN owner no ON adoption.OwnerID = no.ID
+LEFT OUTER JOIN animal ON adoption.AnimalID = animal.ID
 LEFT OUTER JOIN owner co ON animal.AdoptionCoordinatorID = co.ID
-INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
-INNER JOIN species ON species.ID = animal.SpeciesID
-INNER JOIN reservationstatus ON reservationstatus.ID = adoption.ReservationStatusID
+LEFT OUTER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
+LEFT OUTER JOIN species ON species.ID = animal.SpeciesID
+LEFT OUTER JOIN reservationstatus ON reservationstatus.ID = adoption.ReservationStatusID
 WHERE MovementType = 0 AND ReservationCancelledDate Is Null AND DeceasedDate Is Null 
 ORDER BY ReservationDate
 ###
