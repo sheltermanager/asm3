@@ -2,7 +2,7 @@ All People
 ###
 Membership
 ###
-33310/Any
+33310/Any rev01
 ###
 Person info for all people.
 ###
@@ -21,7 +21,7 @@ All People (exclude banned)
 ###
 Membership
 ###
-33310/Any
+33310/Any rev01
 ###
 Person info for all people, excluding banned adopters.
 ###
@@ -40,7 +40,7 @@ All Organizations
 ###
 Membership
 ###
-33310/Any
+33310/Any rev01
 ###
 Person info for all organizations.
 ###
@@ -59,7 +59,7 @@ All People (GDPR email only)
 ###
 Membership
 ###
-34104/Any
+34104/Any rev01
 ###
 Person info for all people with the GDPR email contact set.
 ###
