@@ -40,7 +40,7 @@ VERSIONS = (
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
-    34606, 34607, 34608, 34609, 34611, 34700
+    34606, 34607, 34608, 34609, 34611, 34700, 34701
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1280,6 +1280,13 @@ def sql_structure(dbo):
         fstr("WorkTelephone", True),
         fstr("MobileTelephone", True),
         fstr("EmailAddress", True),
+        fstr("OwnerTitle2", True),
+        fstr("OwnerInitials2", True),
+        fstr("OwnerForeNames2", True),
+        fstr("OwnerSurname2", True),
+        fstr("WorkTelephone2", True),
+        fstr("MobileTelephone2", True),
+        fstr("EmailAddress2", True),
         fint("ExcludeFromBulkEmail", True),
         fstr("GDPRContactOptIn", True),
         fint("JurisdictionID", True),
@@ -1349,6 +1356,13 @@ def sql_structure(dbo):
     sql += index("owner_OwnerSurname", "owner", "OwnerSurname")
     sql += index("owner_OwnerTitle", "owner", "OwnerTitle")
     sql += index("owner_OwnerTown", "owner", "OwnerTown")
+    sql += index("owner_OwnerTitle2", "owner", "OwnerTitle2")
+    sql += index("owner_OwnerInitials2", "owner", "OwnerInitials2")
+    sql += index("owner_OwnerForeNames2", "owner", "OwnerForeNames2")
+    sql += index("owner_OwnerSurname2", "owner", "OwnerSurname2")
+    sql += index("owner_MobileTelephone2", "owner", "MobileTelephone2")
+    sql += index("owner_WorkTelephone2", "owner", "WorkTelephone2")
+    sql += index("owner_EmailAddress2", "owner", "EmailAddress2")
     sql += index("owner_SiteID", "owner", "SiteID")
     sql += index("owner_IDCheck", "owner", "IDCheck")
     sql += index("owner_IsACO", "owner", "IsACO")
@@ -5805,4 +5819,21 @@ def update_34700(dbo):
     dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (18, ?)", [ _("Retailer", l) ])
     dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (19, ?)", [ _("TNR", l) ])
 
+def update_34701(dbo):
+    # add second contact fields to owner table
+    add_column(dbo, "owner", "OwnerTitle2", dbo.type_shorttext)
+    add_column(dbo, "owner", "OwnerInitials2", dbo.type_shorttext)
+    add_column(dbo, "owner", "OwnerForeNames2", dbo.type_shorttext)
+    add_column(dbo, "owner", "OwnerSurname2", dbo.type_shorttext)
+    add_column(dbo, "owner", "WorkTelephone2", dbo.type_shorttext)
+    add_column(dbo, "owner", "MobileTelephone2", dbo.type_shorttext)
+    add_column(dbo, "owner", "EmailAddress2", dbo.type_shorttext)
+    add_index(dbo, "owner_OwnerTitle2", "owner", "OwnerTitle2")
+    add_index(dbo, "owner_OwnerInitials2", "owner", "OwnerInitials2")
+    add_index(dbo, "owner_OwnerForeNames2", "owner", "OwnerForeNames2")
+    add_index(dbo, "owner_OwnerSurname2", "owner", "OwnerSurname2")
+    add_index(dbo, "owner_WorkTelephone2", "owner", "WorkTelephone2")
+    add_index(dbo, "owner_MobileTelephone2", "owner", "MobileTelephone2")
+    add_index(dbo, "owner_EmailAddress2", "owner", "EmailAddress2")
+    dbo.execute_dbupdate("UPDATE owner SET OwnerTitle2='', OwnerInitials2='', OwnerForeNames2='', OwnerSurname2='', WorkTelephone2='', MobileTelephone2='', EmailAddress2=''")
 
