@@ -8,7 +8,8 @@ $(function() {
 
         render: function() {
             return [
-                html.content_header(_("Waiting List")),
+
+                html.content_header(_("Waiting List (showing {0} records)").replace("{0}", controller.rows.length)),
                 '<div id="waitinglistcriteria">',
                 '<table class="asm-table-layout">',
                 '<tr>',

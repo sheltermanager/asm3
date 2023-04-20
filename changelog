@@ -1,6 +1,8 @@
 47
 ================
 
+20/04/23 Use configuration item to control name/couple format #741
+20/04/23 Show count of records displayed in waiting list
 20/04/23 Add location filter to photo uploader #1249
 20/04/23 person_similar was checking incoming mobile against home, incorrectly
 19/04/23 Second contact fields for people #741
