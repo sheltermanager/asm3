@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-03-06 11:20+0000\n"
+"POT-Creation-Date: 2023-04-20 15:17+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -117,8 +117,16 @@ msgstr ""
 msgid "1 year"
 msgstr ""
 
+#: mobile_photo_uploader.js
+msgid "1. Choose Animal"
+msgstr ""
+
 #: publish_options.js
 msgid "2 weeks"
+msgstr ""
+
+#: mobile_photo_uploader.js
+msgid "2. Woofsqueak!"
 msgstr ""
 
 #: mobile_login.js
@@ -131,6 +139,10 @@ msgstr ""
 
 #: publish_options.js
 msgid "3 months"
+msgstr ""
+
+#: mobile_photo_uploader.js
+msgid "3. Capture Photo"
 msgstr ""
 
 #: publish_options.js
@@ -510,7 +522,7 @@ msgstr ""
 msgid "Add a new animal"
 msgstr ""
 
-#: event_new.js
+#: configuration.py header.js event_new.js
 msgid "Add a new event"
 msgstr ""
 
@@ -1825,7 +1837,7 @@ msgstr ""
 msgid "Baby"
 msgstr ""
 
-#: mobile_report.js mobile2.js
+#: mobile_photo_uploader.js mobile_report.js mobile2.js
 msgid "Back"
 msgstr ""
 
@@ -2860,9 +2872,10 @@ msgstr ""
 msgid "Cloning..."
 msgstr ""
 
-#: mobile_login.js onlineform_incoming.js service_checkout_adoption.js
-#: mobile_report.js main.js service_sign_document.js animal_new.js
-#: common_widgets.js mobile_sign.js mobile2.js
+#: mobile_login.js mobile_photo_uploader.js onlineform_incoming.js
+#: service_checkout_adoption.js mobile_report.js main.js
+#: service_sign_document.js animal_new.js common_widgets.js mobile_sign.js
+#: mobile2.js
 msgid "Close"
 msgstr ""
 
@@ -3001,7 +3014,7 @@ msgid "Complete adoption date before linking to event."
 msgstr ""
 
 #: medical.py mobile.py dbupdate.py incident_find.js medical.js diary.js
-#: header_edit_header.js reports.js transport.js animal.js
+#: header_edit_header.js reports.js transport.js animal.js mobile2.js
 msgid "Completed"
 msgstr ""
 
@@ -3037,11 +3050,11 @@ msgstr ""
 msgid "Completion Date"
 msgstr ""
 
-#: mobile.py incident.js mobile2.js
+#: mobile.py incident.js
 msgid "Completion Date/Time"
 msgstr ""
 
-#: mobile.py incident.js incident_find_results.js mobile2.js
+#: mobile.py incident.js incident_find_results.js
 msgid "Completion Type"
 msgstr ""
 
@@ -3198,6 +3211,10 @@ msgstr ""
 
 #: event_find_results.js
 msgid "County"
+msgstr ""
+
+#: person_new.js common_personchooser.js person.js
+msgid "Couple"
 msgstr ""
 
 #: html.py header_edit_header.js common_html.js options.js
@@ -5491,6 +5508,10 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
+#: mobile_photo_uploader.js
+msgid "Filter by location"
+msgstr ""
+
 #: html.py mobile.py mobile2.js
 msgid "Financial"
 msgstr ""
@@ -5503,7 +5524,7 @@ msgstr ""
 msgid "Find Animal"
 msgstr ""
 
-#: event_find.js
+#: configuration.py header.js event_find.js
 msgid "Find Event"
 msgstr ""
 
@@ -7074,7 +7095,7 @@ msgid "Index"
 msgstr ""
 
 #: person_new.js common_personchooser.js person.js
-msgid "Individual/Couple"
+msgid "Individual"
 msgstr ""
 
 #: html.py
@@ -9728,6 +9749,14 @@ msgid "Phone contains"
 msgstr ""
 
 #: mobile.py
+msgid "Photo Upload"
+msgstr ""
+
+#: code.py mobile2.js
+msgid "Photo Uploader"
+msgstr ""
+
+#: mobile.py
 msgid "Photo successfully uploaded."
 msgstr ""
 
@@ -9787,6 +9816,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Pixie-Bob"
+msgstr ""
+
+#: mobile_photo_uploader.js
+msgid "Play"
 msgstr ""
 
 #: options.js
@@ -10421,6 +10454,7 @@ msgid "Reference"
 msgstr ""
 
 #: clinic_appointment.js waitinglist_results.js accounts_trx.js
+#: event_animals.js
 msgid "Refresh"
 msgstr ""
 
@@ -11343,7 +11377,7 @@ msgstr ""
 msgid "Select all reservations for this animal"
 msgstr ""
 
-#: onlineform_incoming.js common_animalchooser.js
+#: mobile_photo_uploader.js onlineform_incoming.js common_animalchooser.js
 msgid "Select an animal"
 msgstr ""
 
@@ -11368,6 +11402,10 @@ msgstr ""
 
 #: animal.js person.js
 msgid "Select date for diary task"
+msgstr ""
+
+#: mobile_photo_uploader.js
+msgid "Select from Gallery"
 msgstr ""
 
 #: person.js
@@ -12546,6 +12584,10 @@ msgstr ""
 
 #: common_html.js
 msgid "Table"
+msgstr ""
+
+#: mobile_photo_uploader.js
+msgid "Take Photo"
 msgstr ""
 
 #: common_widgets.js

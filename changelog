@@ -1,6 +1,8 @@
 47
 ================
 
+20/04/23 Add location filter to photo uploader #1249
+20/04/23 person_similar was checking incoming mobile against home, incorrectly
 19/04/23 Second contact fields for people #741
 17/04/23 Use map link for incidents, make sure it opens in app on Android/iOS #101
 15/04/23 Fix bug where the wrong incident number was shown on citations

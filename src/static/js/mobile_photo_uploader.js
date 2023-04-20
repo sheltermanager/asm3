@@ -35,8 +35,11 @@ $(document).ready(function() {
             '</div>',
             '<h2 class="mt-3">' + _("1. Choose Animal") + '</h2>',
             '<div>',
+                '<select id="location" class="form-control">',
+                    '<option value="">' + _("Filter by location") + '</option>',
+                '</select>',
                 '<select id="animal" class="form-control">',
-                    '<option value="">Select an animal</option>',
+                    '<option value="">' + _("Select an animal") + '</option>',
                 '</select>',
             '</div>',
             '<h2 class="mt-3">' + _("2. Woofsqueak!") + '</h2>',
@@ -101,13 +104,31 @@ $(document).ready(function() {
         reader.readAsDataURL(file);
     };
 
+    let distlocs = [];
     $.each(controller.animals, function(i, v) {
-        $("#animal").append('<option value="' + v.ID + '">' + v.SHELTERCODE + ' - ' + v.ANIMALNAME + '</option>');
+        if (distlocs.indexOf(v.DISPLAYLOCATION) == -1) {
+            distlocs.push(v.DISPLAYLOCATION);
+        }
     });
+    $.each(distlocs.sort(), function(i, v) {
+        $("#location").append('<option>' + v + '</option>');
+    });
+
+    const filter_animals_by_location = function() {
+        $("#animal").empty();
+        $.each(controller.animals, function(i, v) {
+            if (!$("#location").val() || v.DISPLAYLOCATION == $("#location").val()) {
+                $("#animal").append('<option value="' + v.ID + '">' + v.SHELTERCODE + ' - ' + v.ANIMALNAME + '</option>');
+            }
+        });
+    };
 
     $("#animal").change(function() {
         $("#button-take, #button-gallery").prop("disabled", $("#animal").val() == "");
     });
+
+    $("#location").change(filter_animals_by_location);
+    filter_animals_by_location();
 
     $("#sound").change(function() {
         $("#button-sound").prop("disabled", $("#sound").val() == "");
