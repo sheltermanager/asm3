@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-04-20 17:48+0000\n"
+"POT-Creation-Date: 2023-04-20 17:50+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -14642,10 +14642,6 @@ msgstr ""
 #: html.py dbupdate.py search.js options.js document_templates.js
 #: header_edit_header.js onlineform_incoming.js roles.js waitinglist_results.js
 msgid "Waiting List"
-msgstr ""
-
-#: waitinglist_results.js
-msgid "Waiting List (showing {0} records)"
 msgstr ""
 
 #: dbupdate.py
