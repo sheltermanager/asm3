@@ -313,6 +313,7 @@ DEFAULTS = {
     "OwnerAddressCheck": "Yes",
     "OwnerNameCheck": "Yes",
     "OwnerNameFormat": "{ownertitle} {ownerforenames} {ownersurname}",
+    "OwnerNameCoupleFormat": "{ownername1} & {ownername2}",
     "OwnerSearchColumns": "OwnerCode,OwnerName,OwnerSurname," \
         "MembershipNumber,AdditionalFlags,OwnerAddress," \
         "OwnerTown,OwnerCounty,OwnerPostcode,HomeTelephone,WorkTelephone," \
@@ -1194,6 +1195,9 @@ def organisation_telephone(dbo):
 
 def osm_map_tiles_override(dbo):
     return cstring(dbo, "OSMMapTilesOverride")
+
+def owner_name_couple_format(dbo):
+    return cstring(dbo, "OwnerNameCoupleFormat", DEFAULTS["OwnerNameCoupleFormat"])
 
 def owner_name_format(dbo):
     return cstring(dbo, "OwnerNameFormat", DEFAULTS["OwnerNameFormat"])

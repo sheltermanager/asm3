@@ -773,14 +773,16 @@ def calculate_owner_code(pid, surname):
         prefix = surname[0:2].upper()
     return "%s%s" % (prefix, asm3.utils.padleft(pid, 6))
 
-def calculate_owner_name(dbo, personclass = 0, title = "", initials = "", first = "", last = "", nameformat = "", title2 = "", initials2 = "", first2 = "", last2 = ""):
+def calculate_owner_name(dbo, personclass = 0, title = "", initials = "", first = "", last = "", nameformat = "", coupleformat = "", title2 = "", initials2 = "", first2 = "", last2 = ""):
     """
     Calculates the owner name field based on the current format.
     """
     if nameformat == "": nameformat = asm3.configuration.owner_name_format(dbo)
+    if coupleformat == "": coupleformat = asm3.configuration.owner_name_couple_format(dbo)
     # If something went wrong and we have a broken format for any reason, substitute our default
     if nameformat is None or nameformat == "" or nameformat == "null": nameformat = "{ownertitle} {ownerforenames} {ownersurname}"
     nameformat = nameformat.replace("{ownername}", "{ownertitle} {ownerforenames} {ownersurname}") # Compatibility with old versions
+    if coupleformat is None or coupleformat == "" or coupleformat == "null": coupleformat = "{ownername1} & {ownername2}"
     if personclass == 2: # Organisation
         return last 
     elif personclass == 3: # Couple
@@ -792,7 +794,7 @@ def calculate_owner_name(dbo, personclass = 0, title = "", initials = "", first 
         person2 = person2.replace("{ownerinitials}", initials2)
         person2 = person2.replace("{ownerforenames}", first2)
         person2 = person2.replace("{ownersurname}", last2)
-        return "%s & %s" % (person1, person2)
+        return coupleformat.replace("{ownername1}", person1).replace("{ownername2}", person2)
     else: # individual
         nameformat = nameformat.replace("{ownertitle}", title)
         nameformat = nameformat.replace("{ownerinitials}", initials)
@@ -807,18 +809,19 @@ def update_owner_names(dbo):
     asm3.al.debug("regenerating owner names and codes...", "person.update_owner_names", dbo)
     own = dbo.query("SELECT ID, OwnerCode, OwnerType, OwnerTitle, OwnerInitials, OwnerForeNames, OwnerSurname, OwnerTitle2, OwnerInitials2, OwnerForenames2, OwnerSurname2 FROM owner")
     nameformat = asm3.configuration.owner_name_format(dbo)
+    coupleformat = asm3.configuration.owner_name_couple_format(dbo)
     asm3.asynctask.set_progress_max(dbo, len(own))
     for o in own:
         if o.ownercode is None or o.ownercode == "":
             dbo.update("owner", o.id, { 
                 "OwnerCode": calculate_owner_code(o.id, o.ownersurname),
                 "OwnerName": calculate_owner_name(dbo, o.ownertype, o.ownertitle, o.ownerinitials, o.ownerforenames, o.ownersurname, \
-                    nameformat, o.ownertitle2, o.ownerinitials2, o.ownerforenames2, o.ownersurname2)
+                    nameformat, coupleformat, o.ownertitle2, o.ownerinitials2, o.ownerforenames2, o.ownersurname2)
             }, setRecordVersion=False, setLastChanged=False, writeAudit=False)
         else:
             dbo.update("owner", o.id, { 
                 "OwnerName": calculate_owner_name(dbo, o.ownertype, o.ownertitle, o.ownerinitials, o.ownerforenames, o.ownersurname, \
-                    nameformat, o.ownertitle2, o.ownerinitials2, o.ownerforenames2, o.ownersurname2)
+                    nameformat, coupleformat, o.ownertitle2, o.ownerinitials2, o.ownerforenames2, o.ownersurname2)
             }, setRecordVersion=False, setLastChanged=False, writeAudit=False)
         asm3.asynctask.increment_progress_value(dbo)
     asm3.al.debug("regenerated %d owner names and codes" % len(own), "person.update_owner_names", dbo)
@@ -838,7 +841,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         "ID":               pid,
         "OwnerType":        post.integer("ownertype"),
         "OwnerCode":        calculate_owner_code(pid, post["surname"]),
-        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"], "", \
+        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"], "", "", \
                                 post["title2"], post["initials2"], post["forenames2"], post["surname2"] ),
         "OwnerTitle":       post["title"],
         "OwnerInitials":    post["initials"],
@@ -965,7 +968,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
     dbo.update("owner", pid, {
         "OwnerType":        post.integer("ownertype"),
         "OwnerCode":        calculate_owner_code(pid, post["surname"]),
-        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"], "", \
+        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"], "", "", \
                                 post["title2"], post["initials2"], post["forenames2"], post["surname2"] ),
         "OwnerTitle":       post["title"],
         "OwnerInitials":    post["initials"],
