@@ -170,7 +170,7 @@ UNION SELECT
   animal.animalname as name,
   animal.sheltercode as code,
   date(animal.LastChangedDate) as issuedate,
-    'Death Issue.  Days on Shelter should equal 0 if <i>Dead of arrival</i> Checkbox is selected.' AS issue
+    'Death Issue.  Days on Shelter should equal 0 if <i>Dead on arrival</i> Checkbox is selected.' AS issue
 FROM animal
 WHERE DeceasedDate is not null
 AND IsDOA = 1 and DaysOnShelter <> 0
