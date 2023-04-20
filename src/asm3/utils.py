@@ -270,6 +270,20 @@ class AdvancedSearchBuilder(object):
             self.values.append(x)
             self.values.append(x)
 
+    def add_phone_quintuplet(self, cfield, field, field2, field3, field4, field5): 
+        """ Adds a clause for a posted value to one of five telephone fields """
+        if self.post[cfield] != "":
+            x = atoi(self.post[cfield])
+            if x < 999: return # 4 digits required or likely to be far too many results
+            x = f"%{x}%"
+            self.ands.append("(%s LIKE ? OR %s LIKE ? OR %s LIKE ? OR %s LIKE ? OR %s LIKE ?)" % (self.dbo.sql_atoi(field), 
+                self.dbo.sql_atoi(field2), self.dbo.sql_atoi(field3), self.dbo.sql_atoi(field4), self.dbo.sql_atoi(field5) ))
+            self.values.append(x)
+            self.values.append(x)
+            self.values.append(x)
+            self.values.append(x)
+            self.values.append(x)
+
     def add_filter(self, f, condition):
         """ Adds a complete clause if posted filter value is present """
         if self.post["filter"].find(f) != -1: self.ands.append(condition)

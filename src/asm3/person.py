@@ -554,7 +554,9 @@ def get_person_find_simple(dbo, query, classfilter="all", typefilter="all", incl
     ss = asm3.utils.SimpleSearchBuilder(dbo, query)
     ss.add_words("o.OwnerName")
     ss.add_fields([ "o.OwnerCode", "o.OwnerAddress", "o.OwnerTown", "o.OwnerCounty", "o.OwnerPostcode",
-        "o.EmailAddress", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone", "o.MembershipNumber" ])
+        "o.EmailAddress", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone", 
+        "o.EmailAddress2", "o.WorkTelephone2", "o.MobileTelephone2", 
+        "o.MembershipNumber" ])
     ss.add_clause("EXISTS(SELECT ad.Value FROM additional ad " \
         "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
         "WHERE ad.LinkID=o.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % asm3.additional.PERSON_IN)
@@ -623,9 +625,9 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, includeVolunte
     ss.add_str("town", "o.OwnerTown")
     ss.add_str("county", "o.OwnerCounty")
     ss.add_str("postcode", "o.OwnerPostcode")
-    ss.add_phone_triplet("phone", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone")
+    ss.add_phone_quintuplet("phone", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone", "o.WorkTelephone2", "o.MobileTelephone2")
     ss.add_id("jurisdiction", "o.JurisdictionID")
-    ss.add_str("email", "o.EmailAddress")
+    ss.add_str_pair("email", "o.EmailAddress", "o.EmailAddress2")
     ss.add_words("homecheck", "o.HomeCheckAreas")
     ss.add_words("comments", "o.Comments")
     ss.add_words("medianotes", "web.MediaNotes")
