@@ -2,7 +2,7 @@ Juveniles Not Part Of A Litter
 ###
 Litters
 ###
-PostgreSQL
+PostgreSQL rev01
 ###
 Animals aged under 6 months who are not part of a litter.
 ###
@@ -43,7 +43,7 @@ Juveniles Not Part Of A Litter
 ###
 Litters
 ###
-MySQL
+MySQL rev01
 ###
 Produces a list of animals aged under 6 months who are not part of a litter.
 ###

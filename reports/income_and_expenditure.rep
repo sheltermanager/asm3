@@ -2,7 +2,7 @@ Income and Expenditure
 ###
 Accounts
 ###
-2720/Any
+2720/Any rev01
 ###
 Income and expenses over a period (profit and loss).
 ###
@@ -51,7 +51,7 @@ Income Breakdown Chart
 ###
 Accounts
 ###
-2870/PostgreSQL
+2870/PostgreSQL rev01
 ###
 A graph of income received between two dates
 ###
@@ -71,7 +71,7 @@ Expense Breakdown Chart
 ###
 Accounts
 ###
-2870/PostgreSQL
+2870/PostgreSQL rev01
 ###
 A graph of expenses paid between two dates
 ###
