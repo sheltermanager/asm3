@@ -2,7 +2,7 @@ Monthly Payments By Species
 ###
 Financial Charts
 ###
-3000/MySQL
+3000/MySQL rev01
 ###
 The total payments per species, per month for a given year.
 ###
@@ -24,7 +24,7 @@ Monthly Payments By Species
 ###
 Financial Charts
 ###
-3000/PostgreSQL
+3000/PostgreSQL rev01
 ###
 The total payments per species, per month for a given year.
 ###

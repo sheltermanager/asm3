@@ -2,7 +2,7 @@ Monthly Adoptions By Species
 ###
 Financial Charts
 ###
-3000/MySQL
+3000/MySQL rev01
 ###
 The number of adoptions per month, broken down by species.
 ###
@@ -25,7 +25,7 @@ Monthly Adoptions By Species
 ###
 Financial Charts
 ###
-3000/PostgreSQL
+3000/PostgreSQL rev01
 ###
 The number of adoptions per month, broken down by species.
 ###
