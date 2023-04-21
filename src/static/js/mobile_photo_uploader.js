@@ -43,7 +43,7 @@ $(document).ready(function() {
                 '</select>',
             '</div>',
             '<h2 class="mt-3">' + _("2. Woofsqueak!") + '</h2>',
-            '<div>',
+            '<div class="d-grid gap-2 d-md-block">',
             '<select id="sound" class="form-control">',
                 '<option value="">Select a sound</option>',
                 '<option value="squeakytoy.mp3">Squeaky Toy</option>',
@@ -54,14 +54,16 @@ $(document).ready(function() {
                 '<option value="oink.mp3">Oink!</option>',
                 '<option value="woofwoof.mp3">Woof Woof!</option>',
             '</select>',
-            '<button id="button-sound" class="btn btn-success mt-1" type="button" disabled="disabled">',
+            '<button id="button-sound" class="btn btn-success btn-xs-block mt-1" type="button" disabled="disabled">',
                 '<i class="bi-play-circle"></i> ' + _("Play") + '</button>',
             '</div>',
             '<h2 class="mt-3">' + _("3. Capture Photo") + '</h2>',
-            '<div>',
-                '<button id="button-take" class="btn btn-primary" disabled="disabled" type="button">',
+            '<div class="d-grid gap-2 d-md-block">',
+                '<button id="button-take" class="btn btn-primary mt-1" disabled="disabled" type="button">',
                     '<i class="bi-camera"></i> ' + _("Take Photo") + '</button>',
-                '<button id="button-gallery" class="btn btn-secondary" disabled="disabled" type="button">',
+                '<button id="button-paperwork" class="btn btn-success mt-1" disabled="disabled" type="button">',
+                    '<i class="bi-file-earmark-richtext"></i> ' + _("Scan Paperwork") + '</button>',
+                '<button id="button-gallery" class="btn btn-secondary mt-1" disabled="disabled" type="button">',
                     '<i class="bi-card-image"></i> ' + _("Select from Gallery") + '</button>',
                 '<div id="spinner" class="spinner-border" role="status" style="display: none"><span class="visually-hidden">Loading...</span></div>',
             '</div>',
@@ -70,6 +72,7 @@ $(document).ready(function() {
                 '<i id="check" style="display: none" class="bi-check2-circle"></i>',
                 '<input id="take-camera" type="file" capture="environment" accept="image/*" style="display: none" />',
                 '<input id="take-gallery" type="file" accept="image/*" style="display: none" />',
+                '<input id="take-paperwork" type="file" capture="environment" accept="image/*" style="display: none" />',
             '</div>',
         '</form>',
         '</div>'
@@ -78,14 +81,14 @@ $(document).ready(function() {
     $("body").html(h);
 
     /** Handles processing the file and uploading to the backend */
-    const upload_image = function(file) {
+    const upload_image = function(file, uploadtype) {
         let reader = new FileReader();
         reader.addEventListener("load", function() {
             $("#thumbnail").prop("src", reader.result);
             $("#thumbnail").show();
             $("#check").hide();
             $("#spinner").show();
-            let formdata = "animalid=" + $("#animal").val() + "&filename=" + file.name + "&filedata=" + reader.result;
+            let formdata = "animalid=" + $("#animal").val() + "&type=" + uploadtype + "&filename=" + file.name + "&filedata=" + reader.result;
             $.ajax({
                 method: "POST",
                 url: "mobile_photo_upload",
@@ -116,15 +119,17 @@ $(document).ready(function() {
 
     const filter_animals_by_location = function() {
         $("#animal").empty();
+        $("#animal").append('<option value="">' + _("Select an animal") + '</option>');
         $.each(controller.animals, function(i, v) {
             if (!$("#location").val() || v.DISPLAYLOCATION == $("#location").val()) {
                 $("#animal").append('<option value="' + v.ID + '">' + v.SHELTERCODE + ' - ' + v.ANIMALNAME + '</option>');
             }
         });
+        $("#animal").change();
     };
 
-    $("#animal").change(function() {
-        $("#button-take, #button-gallery").prop("disabled", $("#animal").val() == "");
+    $("#animal, #location").change(function() {
+        $("#button-take, #button-gallery, #button-paperwork").prop("disabled", $("#animal").val() == "");
     });
 
     $("#location").change(filter_animals_by_location);
@@ -151,12 +156,20 @@ $(document).ready(function() {
         $("#take-gallery").click();
     });
 
+    $("#button-paperwork").click(function() {
+        $("#take-paperwork").click();
+    });
+
     $("#take-camera").change(function() {
-        upload_image($("#take-camera")[0].files[0]);
+        upload_image($("#take-camera")[0].files[0], "camera");
     });
 
     $("#take-gallery").change(function() {
-        upload_image($("#take-gallery")[0].files[0]);
+        upload_image($("#take-gallery")[0].files[0], "gallery");
+    });
+
+    $("#take-paperwork").change(function() {
+        upload_image($("#take-paperwork")[0].files[0], "paperwork");
     });
 
 });

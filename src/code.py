@@ -1070,7 +1070,10 @@ class mobile_photo_upload(ASMEndpoint):
         return asm3.html.mobile_page(l, _("Photo Uploader", l), [ "mobile_photo_uploader.js" ], c)
 
     def post_all(self, o):
-        asm3.media.attach_file_from_form(o.dbo, o.user, asm3.media.ANIMAL, o.post.integer("animalid"), o.post)
+        mid = asm3.media.attach_file_from_form(o.dbo, o.user, asm3.media.ANIMAL, o.post.integer("animalid"), o.post)
+        if o.post["type"] == "paperwork":
+            asm3.media.convert_media_jpg2pdf(o.dbo, o.user, mid)
+            asm3.media.delete_media(o.dbo, o.user, mid)
         return "OK"
 
 class mobile_post(ASMEndpoint):
