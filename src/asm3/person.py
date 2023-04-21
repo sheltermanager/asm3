@@ -124,7 +124,11 @@ def embellish_latest_movement(dbo, p):
 def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "", address = "", siteid = 0):
     """
     Returns people with similar email, mobile, names and addresses to those supplied.
-    If siteid is non-zero, only people with that site will be checked
+    If siteid is non-zero, only people with that site will be checked.
+    NOTE: Only the primary contact is checked for similarity. 
+          The secondary contact email/mobile is not currently checked.
+          We think this is a safer choice as it is not hard to merge if
+          the second half of a couple applies by themselves and gets a new record.
     """
     # Consider the first word rather than first address line - typically house
     # number/name and unlikely to be the same for different people
