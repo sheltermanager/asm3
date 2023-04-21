@@ -2,7 +2,7 @@ RSPCA: Length of stay of animals currently in care (detailed)
 ###
 Figures
 ###
-2721/PostgreSQL
+2721/PostgreSQL rev01
 ###
 Shows banded time on shelter by species for animals on the shelter at a date. Used for completing the UK RSPCA figures spreadsheet
 ###

@@ -2,7 +2,7 @@ Average Time At Retailer Before Adoption
 ###
 Retailers
 ###
-PostgreSQL
+PostgreSQL rev01
 ###
 How long animals wait at each retailer before being adopted.
 ###
@@ -40,7 +40,7 @@ Average Time At Retailer Before Adoption
 ###
 Retailers
 ###
-MySQL
+MySQL rev01
 ###
 Shows how long animals wait at each retailer before being adopted.
 ###
