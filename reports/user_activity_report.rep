@@ -2,7 +2,7 @@ User Activity Report
 ###
 Auditing
 ###
-3309/MySQL
+3309/MySQL rev01
 ###
 Changes/additions made by all system users between two dates.
 ###
@@ -248,7 +248,7 @@ User Activity Report
 ###
 Auditing
 ###
-3309/PostgreSQL
+3309/PostgreSQL rev01
 ###
 Changes/additions made by all system users between two dates.
 ###
