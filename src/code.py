@@ -3287,7 +3287,7 @@ class event(JSONEndpoint):
         e = asm3.event.get_event(dbo, o.post.integer("id"))
         if e is None: self.notfound()
         asm3.al.debug("opened event %s" % "recname", "code.event", dbo)
-        return{
+        return {
             "event": e,
             "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event")
         }
@@ -3312,7 +3312,7 @@ class event_animals(JSONEndpoint):
         queryfilter = o.post["filter"]
         ea = asm3.event.get_animals_by_event(dbo, event_id, queryfilter)
         asm3.al.debug("opened event animals %s" % event_id, "code.event_animals", dbo)
-        return{
+        return {
             "rows": ea,
             "name": "event_animals",
             "event": e,

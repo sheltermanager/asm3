@@ -370,6 +370,7 @@ $(function() {
             this.bind_attach_animal();
             this.bind_attach_person();
             this.bind_buttonmenus();
+            window.onbeforeunload = function() { onlineform_incoming.remove_processed(); };
         },
 
         sync: function() {
