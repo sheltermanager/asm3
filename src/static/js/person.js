@@ -510,7 +510,7 @@ $(function() {
             }
 
             // Individual
-            if ($("#ownertype").val() == 1) {
+            if (!$("#ownertype").val() || $("#ownertype").val() == 1) {
                 $(".tag-organisation").fadeOut();
                 $(".tag-couple").fadeOut();
                 $(".tag-individual").fadeIn();
