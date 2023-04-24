@@ -85,7 +85,8 @@ SPAMBOT_CB = 'termsscb'
 # known fields when importing from submitted forms
 FORM_FIELDS = [
     "emailsubmissionto",
-    "title", "initials", "firstname", "forenames", "surname", "lastname", "address",
+    "title", "initials", "title2", "initials2", 
+    "firstname", "forenames", "surname", "lastname", "address",
     "firstname2", "forenames2", "lastname2", "surname2",
     "town", "city", "county", "state", "postcode", "zipcode", "country", "hometelephone", 
     "worktelephone", "worktelephone2", "mobiletelephone", "mobiletelephone2", "celltelephone", "celltelephone2", 
@@ -1259,7 +1260,9 @@ def create_person(dbo, username, collationid):
         if flags is None: flags = f.FLAGS
         if flags is None: flags = ""
         if f.FIELDNAME == "title": d["title"] = truncs(f.VALUE)
+        if f.FIELDNAME == "title2": d["title2"] = truncs(f.VALUE)
         if f.FIELDNAME == "initials": d["initials"] = truncs(f.VALUE)
+        if f.FIELDNAME == "initials2": d["initials2"] = truncs(f.VALUE)
         if f.FIELDNAME == "forenames" or f.FIELDNAME == "firstname": d["forenames"] = truncs(f.VALUE)
         if f.FIELDNAME == "forenames2" or f.FIELDNAME == "firstname2": d["forenames2"] = truncs(f.VALUE)
         if f.FIELDNAME == "surname" or f.FIELDNAME == "lastname": d["surname"] = truncs(f.VALUE)
