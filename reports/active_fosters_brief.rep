@@ -2,7 +2,7 @@ Active Fosters (Brief)
 ###
 Movements
 ###
-Any rev01
+Any rev02
 ###
 Active fosters, showing one foster per line.
 ###
@@ -10,6 +10,7 @@ en
 ###
 SELECT
 OwnerName AS FosteredTo,
+adoption.OwnerID, adoption.AnimalID, 
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone, EmailAddress,
 ShelterCode, AnimalName,
 (SELECT Sex FROM lksex WHERE ID = animal.Sex) AS Sex,
@@ -38,13 +39,13 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$FOSTEREDTO</td>
+<td><a target="_blank" href="person?id=$OWNERID">$FOSTEREDTO</a></td>
 <td>$OWNERADDRESS, $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>
 E: $EMAILADDRESS<br/>
 H: $HOMETELEPHONE<br/>
 M: $MOBILETELEPHONE</td>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$ANIMALID">$ANIMALNAME</a></td>
 <td>$SEX</td>
 <td>$COLOUR</td>
 <td>$BREEDNAME</td>
@@ -60,7 +61,7 @@ Active Fosters (Brief, by State)
 ###
 Movements
 ###
-Any
+Any rev02
 ###
 Active fosters, showing one foster per line and grouped by state.
 ###
@@ -68,6 +69,7 @@ en
 ###
 SELECT
 OwnerName AS FosteredTo,
+adoption.OwnerID, adoption.AnimalID, 
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone, EmailAddress,
 ShelterCode, AnimalName,
 (SELECT Sex FROM lksex WHERE ID = animal.Sex) AS Sex,
@@ -104,13 +106,13 @@ GROUP$$
 
 $$BODY
 <tr>
-<td>$FOSTEREDTO</td>
+<td><a target="_blank" href="person?id=$OWNERID">$FOSTEREDTO</a></td>
 <td>$OWNERADDRESS, $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>
 E: $EMAILADDRESS<br/>
 H: $HOMETELEPHONE<br/>
 M: $MOBILETELEPHONE</td>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$ANIMALID">$ANIMALNAME</a></td>
 <td>$SEX</td>
 <td>$COLOUR</td>
 <td>$BREEDNAME</td>

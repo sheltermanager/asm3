@@ -2,7 +2,7 @@ Heartworm Positive On Shelter Animals
 ###
 Inventories
 ###
-Any rev01
+Any rev02
 ###
 Detailed current shelter inventory of heartworm positive animals
 ###
@@ -19,7 +19,8 @@ sx.Sex,
 t.AnimalType,
 s.SpeciesName,
 i.LocationName,
-a.HeartwormTestDate
+a.HeartwormTestDate,
+a.ID
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
@@ -62,7 +63,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$sheltercode</td>
-<td>$animalname</td>
+<td><a target="_blank" href="animal?id=$ID">$animalname</a></td>
 <td>$animaltype</td>
 <td>$identichipnumber</td>
 <td>$animalage</td>
