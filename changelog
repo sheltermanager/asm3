@@ -1,6 +1,7 @@
 47
 ================
 
+24/04/23 Check couple fields for similar when adding new people #741
 23/04/23 Translate null ownertypes to individual #741
 22/04/23 Attempt to remove incoming processed forms when browser window closes
 21/04/23 Mobile interface, take photo and convert to PDF #929

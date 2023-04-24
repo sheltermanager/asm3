@@ -694,7 +694,8 @@ $.widget("asm.personchooser", {
                     if (self.options.mode == "full") {
                         disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + 
                             (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") + 
-                            "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                            "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + 
+                            " " + common.nulltostr(rec.MOBILETELEPHONE2) + "<br/>" + rec.EMAILADDRESS + " " + common.nulltostr(rec.EMAILADDRESS2);
                     }
                     dialogsimilar.find(".similar-person").html(disp);
                     // When the user clicks the name of the similar person,

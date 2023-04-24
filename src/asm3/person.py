@@ -121,14 +121,11 @@ def embellish_latest_movement(dbo, p):
         p.LATESTMOVETYPENAME = lm.LATESTMOVETYPENAME
     return p
 
-def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "", address = "", siteid = 0):
+def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "", address = "", siteid = 0, checkcouple = False):
     """
     Returns people with similar email, mobile, names and addresses to those supplied.
     If siteid is non-zero, only people with that site will be checked.
-    NOTE: Only the primary contact is checked for similarity. 
-          The secondary contact email/mobile is not currently checked.
-          We think this is a safer choice as it is not hard to merge if
-          the second half of a couple applies by themselves and gets a new record.
+    If checkcouple is True, the second contact fields will also be checked.
     """
     # Consider the first word rather than first address line - typically house
     # number/name and unlikely to be the same for different people
@@ -144,7 +141,10 @@ def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "
     email = email.replace("'", "`").lower().strip()
     eq = []
     mq = []
+    cmq = []
+    ceq = []
     per = []
+    cper = []
     if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
         eq = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.EmailAddress) LIKE ?" % siteclause, [email])
     if mobile != "" and asm3.utils.atoi(mobile) > 9999: # at least 5 digits to constitute a valid number
@@ -152,7 +152,15 @@ def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "
     if address != "":
         per = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname) LIKE ? AND " \
          "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames + "%", address + "%"))
-    return eq + mq + per
+    if checkcouple:
+        if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
+            ceq = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.EmailAddress2) LIKE ?" % siteclause, [email])
+        if mobile != "" and asm3.utils.atoi(mobile) > 9999: # at least 5 digits to constitute a valid number
+            cmq = dbo.query(get_person_query(dbo) + " WHERE %s %s LIKE ?" % (siteclause, dbo.sql_atoi("o.MobileTelephone2")) , [asm3.utils.digits_only(mobile)])
+        if address != "":
+            cper = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname2) LIKE ? AND " \
+             "LOWER(o.OwnerForeNames2) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames + "%", address + "%"))
+    return eq + mq + ceq + cmq + per + cper
 
 def get_person_name(dbo, personid):
     """
