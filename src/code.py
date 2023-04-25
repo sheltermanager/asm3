@@ -979,7 +979,7 @@ class mobile2(ASMEndpoint):
                 if d["FIELDTYPE"] == asm3.additional.ANIMAL_LOOKUP:
                     afout.append({ "NAME": d["FIELDLABEL"], "VALUE": asm3.animal.get_animal_namecode(dbo, asm3.utils.cint(d["VALUE"]))})
                 elif d["FIELDTYPE"] == asm3.additional.PERSON_LOOKUP:
-                    afout.append({ "NAME": d["FIELDLABEL"], "VALUE": asm3.animal.get_person_namecode(dbo, asm3.utils.cint(d["VALUE"]))})
+                    afout.append({ "NAME": d["FIELDLABEL"], "VALUE": asm3.person.get_person_name_code(dbo, asm3.utils.cint(d["VALUE"]))})
                 elif d["FIELDTYPE"] == asm3.additional.MONEY:
                     afout.append({ "NAME": d["FIELDLABEL"], "VALUE": format_currency(l, d["VALUE"]) })
                 elif d["FIELDTYPE"] == asm3.additional.YESNO:
