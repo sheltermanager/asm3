@@ -2,7 +2,7 @@ Incidents between two dates by ACO
 ###
 Animal Control
 ###
-33307/Any rev02
+33307/Any rev03
 ###
 Incidents between two dates broken down by ACO
 ###
@@ -13,7 +13,7 @@ ac.IncidentDateTime, ti.IncidentName, co.OwnerName AS CallerName, co.HomeTelepho
 ac.CallDateTime, ac.CallNotes, vo.OwnerName AS VictimName, 
 o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3, 
 ac.DispatchAddress, ac.DispatchTown, ac.DispatchCounty, ac.DispatchPostcode, ac.DispatchedACO,
-ac.DispatchDateTime, ac.RespondedDateTime, ac.CompletedDate, ci.CompletedName
+ac.DispatchDateTime, ac.RespondedDateTime, ac.CompletedDate, ci.CompletedName, u.UserName
 FROM animalcontrol ac
 LEFT OUTER JOIN species s ON s.ID = ac.SpeciesID
 LEFT OUTER JOIN owner co ON co.ID = ac.CallerID
@@ -23,16 +23,17 @@ LEFT OUTER JOIN owner o3 ON o3.ID = ac.Owner3ID
 LEFT OUTER JOIN owner vo ON vo.ID = ac.VictimID
 LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
 LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID
+LEFT OUTER JOIN users u ON ac.DispatchedACO LIKE '%' || u.UserName || '%'
 WHERE ac.IncidentDateTime >= '$ASK DATE Enter the from date$'
 AND ac.IncidentDateTime <= '$ASK DATE Enter the to date$ 23:59:59'
-ORDER BY ac.DispatchedACO, ac.CallDateTime
+ORDER BY u.UserName, ac.CallDateTime
 ###
 $$HEADER
 HEADER$$
 
-$$GROUP_DispatchedACO
+$$GROUP_UserName
 $$HEAD
-<h2>$DispatchedACO</h2>
+<h2>$UserName</h2>
 <table border="1">
 <tr>
 <th>Date</th>
@@ -41,13 +42,14 @@ $$HEAD
 <th>Victim</th>
 <th>Suspect</th>
 <th>Dispatch</th>
+<th>ACO</th>
 <th>Dispatched</th>
 <th>Responded</th>
 <th>Completed</th>
 </tr>
 $$FOOT
 </table>
-<h2>Total $DispatchedACO: {COUNT.DISPATCHEDACO}</h2>
+<h2>Total $UserName: {COUNT.USERNAME}</h2>
 GROUP$$
 
 $$BODY
@@ -58,6 +60,7 @@ $$BODY
 <td>$VICTIMNAME</td>
 <td>$OWNERNAME1 $OWNERNAME2 $OWNERNAME3</td>
 <td>$DISPATCHADDRESS<br/>$DISPATCHTOWN<br/>$DISPATCHCOUNTY $DISPATCHPOSTCODE</td>
+<td>$DISPATCHEDACO</td>
 <td>$DISPATCHDATETIME</td>
 <td>$RESPONDEDDATETIME</td>
 <td>$COMPLETEDDATE $COMPLETEDNAME</td>
