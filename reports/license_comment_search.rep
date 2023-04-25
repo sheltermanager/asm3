@@ -2,7 +2,7 @@ License comment search
 ###
 Animal Control
 ###
-33307/PostgreSQL
+33307/Any
 ###
 Search the comments of issued licenses
 ###
@@ -17,7 +17,7 @@ FROM ownerlicence ol
 INNER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID
 INNER JOIN owner o ON o.ID = ol.OwnerID
 LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID 
-WHERE ol.Comments ILIKE '%$ASK STRING Comments contain$%'
+WHERE LOWER(ol.Comments) LIKE LOWER('%$ASK STRING Comments contain$%')
 ORDER BY ol.IssueDate
 ###
 $$HEADER

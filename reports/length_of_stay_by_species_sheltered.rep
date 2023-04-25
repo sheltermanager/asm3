@@ -2,7 +2,7 @@ Length of Stay by Species (Sheltered Only)
 ###
 Statistics
 ###
-2721/PostgreSQL rev01
+2721/Any rev01
 ###
 Shows time on shelter by species for animals entering the shelter between two dates who were sheltered and NOT in a foster home.
 ###

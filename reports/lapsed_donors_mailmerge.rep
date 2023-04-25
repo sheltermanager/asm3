@@ -2,7 +2,7 @@ Lapsed Donors
 ###
 Membership
 ###
-33310/PostgreSQL rev01
+33310/Any rev01
 ###
 Person info for all people flag as donors with no donation in the last 6 months.
 ###
@@ -14,7 +14,7 @@ o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
 WHERE o.IsDonor = 1 AND o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0
 AND EXISTS(SELECT ID FROM ownerdonation WHERE ownerdonation.OwnerID = o.ID)
-AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE ownerdonation.OwnerID = o.ID AND Date >= CURRENT_DATE - INTERVAL '6 months') 
+AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE ownerdonation.OwnerID = o.ID AND Date >= '$CURRENT_DATE-182$')
 ORDER BY o.OwnerSurname
 ###
 MAIL

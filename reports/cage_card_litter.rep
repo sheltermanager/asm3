@@ -2,7 +2,7 @@ Cage Card (litter)
 ###
 Inventories
 ###
-34302/PostgreSQL omitcriteria omitheaderfooter rev01
+34302/Any omitcriteria omitheaderfooter rev01
 ###
 A cage card for all animals in a litter.
 ###
@@ -56,7 +56,7 @@ lksize.ID=animal.Size
 INNER JOIN entryreason ON
 entryreason.ID=animal.entryreasonid
 WHERE Archived = 0
-AND AcceptanceNumber ILIKE '%$ASK STRING Litter ID$%'
+AND LOWER(AcceptanceNumber) LIKE LOWER('%$ASK STRING Litter ID$%')
 ORDER BY AcceptanceNumber, DateOfBirth
 ###
 $$HEADER

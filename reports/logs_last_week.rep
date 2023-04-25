@@ -2,7 +2,7 @@ Logs in the last week
 ###
 Auditing
 ###
-PostgreSQL rev01
+Any rev01
 ###
 All logs added in the last 7 days by type.
 ###
@@ -20,7 +20,7 @@ when l.linktype = 6 then (select o.ownername from owner o inner join animalcontr
 end as link
 FROM log l
 INNER JOIN logtype lt ON lt.ID = l.logtypeid
-WHERE l.date >= '$CURRENT_DATE$'::timestamp - INTERVAL '7 days'
+WHERE l.date >= '$CURRENT_DATE-7$'
 AND l.date <= '$CURRENT_DATE$ 23:59:59'
 ORDER BY lt.logtypename, l.date desc
 ###

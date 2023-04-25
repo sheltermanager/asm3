@@ -42,7 +42,7 @@ Cats Not FIV/L Tested (over 6 months)
 ###
 Medical
 ###
-3215/PostgreSQL rev01
+3215/Any rev01
 ###
 Shelter cats aged over 6 months who have not been FIV/L tested.
 ###
@@ -53,7 +53,7 @@ FROM animal a
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
 INNER JOIN species s ON s.ID = a.SpeciesID
 WHERE a.Archived = 0 AND a.CombiTested = 0 AND SpeciesID = 2
-AND DateOfBirth <= (now() - interval '6 months')
+AND DateOfBirth <= '$CURRENT_DATE-182$'
 ORDER BY a.DateOfBirth
 ###
 $$HEADER

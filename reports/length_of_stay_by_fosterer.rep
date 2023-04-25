@@ -2,7 +2,7 @@ Length of Stay by Fosterer
 ###
 Statistics
 ###
-33018/PostgreSQL rev01
+33018/Any rev01
 ###
 Shows time on shelter by foster home for animals fostered between two dates
 ###
@@ -16,6 +16,7 @@ o.OwnerName, o.OwnerAddress, o.HomeTelephone, o.MobileTelephone, o.EmailAddress,
 CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementType = 2 THEN Null ELSE a.ActiveMovementDate END AS DateExit
 FROM adoption m
 INNER JOIN animal a ON m.AnimalID = a.ID
+INNER JOIN owner o ON m.OwnerID = o.ID
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN entryreason e ON e.ID = a.EntryReasonID
 WHERE m.MovementDate >= '$ASK DATE Animals fostered between $' AND m.MovementDate <= '$ASK DATE and$'

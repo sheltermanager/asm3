@@ -8,8 +8,6 @@ Medical, vaccination and tests due in the next two weeks in one report
 ###
 en
 ###
-$CONST to=current_date + interval '14 days'$
-
 SELECT * FROM
 (
 
@@ -25,7 +23,7 @@ INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 INNER JOIN animalmedical am ON a.ID = am.AnimalID
 INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
 WHERE amt.DateGiven Is Null 
-AND amt.DateRequired <= $to$
+AND amt.DateRequired <= '$CURRENT_DATE+14$'
 AND a.Archived = 0 AND a.DeceasedDate Is Null
 
 UNION SELECT
@@ -40,7 +38,7 @@ INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE av.DateOfVaccination Is Null
-AND av.DateRequired <= $to$
+AND av.DateRequired <= '$CURRENT_DATE+14$'
 AND a.Archived = 0 AND a.DeceasedDate Is Null
 
 UNION SELECT
@@ -55,7 +53,7 @@ INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN testtype tt ON at.TestTypeID = tt.ID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE at.DateOfTest Is Null
-AND at.DateRequired <= $to$
+AND at.DateRequired <= '$CURRENT_DATE+14$'
 AND a.Archived = 0 AND a.DeceasedDate Is Null
 
 ) dummy

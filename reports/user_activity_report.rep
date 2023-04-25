@@ -2,7 +2,7 @@ User Activity Report
 ###
 Auditing
 ###
-3309/MySQL rev01
+3309/Any rev02
 ###
 Changes/additions made by all system users between two dates.
 ###
@@ -19,7 +19,7 @@ ShelterCode AS Item1,
 AnimalName AS Item2,
 '' AS Item3, '' AS Item4, '' AS Item5, '' AS Item6,
 'Created Animal' AS Type FROM animal
-WHERE CreatedDate >= '$@from$' AND DATE(CreatedDate) <= '$@to$'
+WHERE CreatedDate >= '$@from$' AND CreatedDate <= '$@to$'
 
 UNION SELECT 
 LastChangedBy AS TheUser, 
@@ -28,7 +28,7 @@ ShelterCode AS Item1,
 AnimalName AS Item2,
 '' AS Item3, '' AS Item4, '' AS Item5, '' AS Item6,
 'Changed Animal' AS Type FROM animal
-WHERE LastChangedDate >= '$@from$' AND DATE(LastChangedDate) <= '$@to$'
+WHERE LastChangedDate >= '$@from$' AND LastChangedDate <= '$@to$'
 
 UNION SELECT 
 adoption.CreatedBy AS TheUser, 
@@ -43,7 +43,7 @@ OwnerName AS Item6,
 INNER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN owner ON adoption.OwnerID = owner.ID
 INNER JOIN lksmovementtype ON lksmovementtype.ID = adoption.MovementType 
-WHERE adoption.CreatedDate >= '$@from$' AND DATE(adoption.CreatedDate) <= '$@to$'
+WHERE adoption.CreatedDate >= '$@from$' AND adoption.CreatedDate <= '$@to$'
 
 UNION SELECT 
 adoption.LastChangedBy AS TheUser, 
@@ -58,7 +58,7 @@ OwnerName AS Item6,
 INNER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN owner ON adoption.OwnerID = owner.ID
 INNER JOIN lksmovementtype ON lksmovementtype.ID = adoption.MovementType 
-WHERE adoption.LastChangedDate >= '$@from$' AND DATE(adoption.LastChangedDate) <= '$@to$'
+WHERE adoption.LastChangedDate >= '$@from$' AND adoption.LastChangedDate <= '$@to$'
 
 UNION SELECT 
 animalvaccination.CreatedBy AS TheUser, 
@@ -70,7 +70,7 @@ AnimalName AS Item3,
 'Created Vaccination' AS Type FROM animalvaccination
 INNER JOIN animal ON animalvaccination.AnimalID = animal.ID
 INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID 
-WHERE animalvaccination.CreatedDate >= '$@from$' AND DATE(animalvaccination.CreatedDate) <= '$@to$'
+WHERE animalvaccination.CreatedDate >= '$@from$' AND animalvaccination.CreatedDate <= '$@to$'
 
 UNION SELECT 
 animalvaccination.LastChangedBy AS TheUser, 
@@ -82,7 +82,7 @@ AnimalName AS Item3,
 'Changed Vaccination' AS Type FROM animalvaccination
 INNER JOIN animal ON animalvaccination.AnimalID = animal.ID
 INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID 
-WHERE animalvaccination.LastChangedDate >= '$@from$' AND DATE(animalvaccination.LastChangedDate) <= '$@to$'
+WHERE animalvaccination.LastChangedDate >= '$@from$' AND animalvaccination.LastChangedDate <= '$@to$'
 
 UNION SELECT 
 animalmedical.CreatedBy AS TheUser, 
@@ -95,7 +95,7 @@ AnimalName AS Item5,
 '' AS Item6,
 'Created Medical Regimen' AS Type FROM animalmedical
 INNER JOIN animal ON animalmedical.AnimalID = animal.ID
-WHERE animalmedical.CreatedDate >= '$@from$' AND DATE(animalmedical.CreatedDate) <= '$@to$'
+WHERE animalmedical.CreatedDate >= '$@from$' AND animalmedical.CreatedDate <= '$@to$'
 
 UNION SELECT 
 animalmedical.LastChangedBy AS TheUser, 
@@ -108,7 +108,7 @@ AnimalName AS Item5,
 '' AS Item6,
 'Changed Medical Regimen' AS Type FROM animalmedical
 INNER JOIN animal ON animalmedical.AnimalID = animal.ID
-WHERE animalmedical.LastChangedDate >= '$@from$' AND DATE(animalmedical.LastChangedDate) <= '$@to$'
+WHERE animalmedical.LastChangedDate >= '$@from$' AND animalmedical.LastChangedDate <= '$@to$'
 
 UNION SELECT 
 animaltest.CreatedBy AS TheUser, 
@@ -122,7 +122,7 @@ AnimalName AS Item4,
 INNER JOIN animal ON animaltest.AnimalID = animal.ID
 INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID 
 INNER JOIN testresult ON testresult.ID = animaltest.TestResultID 
-WHERE animaltest.CreatedDate >= '$@from$' AND DATE(animaltest.CreatedDate) <= '$@to$'
+WHERE animaltest.CreatedDate >= '$@from$' AND animaltest.CreatedDate <= '$@to$'
 
 UNION SELECT 
 animaltest.LastChangedBy AS TheUser, 
@@ -136,7 +136,7 @@ AnimalName AS Item4,
 INNER JOIN animal ON animaltest.AnimalID = animal.ID
 INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID 
 INNER JOIN testresult ON testresult.ID = animaltest.TestResultID 
-WHERE animaltest.LastChangedDate >= '$@from$' AND DATE(animaltest.LastChangedDate) <= '$@to$'
+WHERE animaltest.LastChangedDate >= '$@from$' AND animaltest.LastChangedDate <= '$@to$'
 
 UNION SELECT 
 CreatedBy AS TheUser, 
@@ -148,7 +148,7 @@ OwnerCounty AS Item4,
 OwnerPostcode AS Item5,
 HomeTelephone AS Item6,
 'Created Person' AS Type FROM owner
-WHERE CreatedDate >= '$@from$' AND DATE(CreatedDate) <= '$@to$'
+WHERE CreatedDate >= '$@from$' AND CreatedDate <= '$@to$'
 
 UNION SELECT 
 LastChangedBy AS TheUser, 
@@ -160,7 +160,7 @@ OwnerCounty AS Item4,
 OwnerPostcode AS Item5,
 HomeTelephone AS Item6,
 'Changed Person' AS Type FROM owner
-WHERE LastChangedDate >= '$@from$' AND DATE(LastChangedDate) <= '$@to$'
+WHERE LastChangedDate >= '$@from$' AND LastChangedDate <= '$@to$'
 
 UNION SELECT 
 CreatedBy AS TheUser, 
@@ -171,7 +171,7 @@ Subject AS Item3,
 Note AS Item4,
 '' AS Item5, '' AS Item6,
 'Created Diary' AS Type FROM diary
-WHERE CreatedDate >= '$@from$' AND DATE(CreatedDate) <= '$@to$'
+WHERE CreatedDate >= '$@from$' AND CreatedDate <= '$@to$'
 
 UNION SELECT 
 LastChangedBy AS TheUser, 
@@ -182,253 +182,7 @@ Subject AS Item3,
 Note AS Item4,
 '' AS Item5, '' AS Item6,
 'Changed Diary' AS Type FROM diary
-WHERE LastChangedDate >= '$@from$' AND DATE(LastChangedDate) <= '$@to$'
-
-UNION SELECT 
-CreatedBy AS TheUser, 
-CreatedDate AS TheDate, 
-logtype.LogTypeName AS Item1,
-CASE WHEN log.LinkType = 0 THEN
-(SELECT CONCAT(ShelterCode, ' - ', AnimalName) FROM animal WHERE ID = log.LinkID)
-WHEN log.LinkType = 1 THEN
-(SELECT OwnerName FROM owner WHERE ID = log.LinkID)
-END AS Item2,
-Comments AS Item3,
-'' AS Item4, '' AS Item5, '' AS Item6,
-'Created Log' AS Type FROM log
-INNER JOIN logtype ON log.LogTypeID = logtype.ID
-WHERE CreatedDate >= '$@from$' AND DATE(CreatedDate) <= '$@to$'
-
-UNION SELECT 
-LastChangedBy AS TheUser, 
-LastChangedDate AS TheDate, 
-logtype.LogTypeName AS Item1,
-CASE WHEN log.LinkType = 0 THEN
-(SELECT CONCAT(ShelterCode, ' - ', AnimalName) FROM animal WHERE ID = log.LinkID)
-WHEN log.LinkType = 1 THEN
-(SELECT OwnerName FROM owner WHERE ID = log.LinkID)
-END AS Item2,
-Comments AS Item3,
-'' AS Item4, '' AS Item5, '' AS Item6,
-'Changed Log' AS Type FROM log
-INNER JOIN logtype ON log.LogTypeID = logtype.ID
-WHERE LastChangedDate >= '$@from$' AND DATE(LastChangedDate) <= '$@to$'
-) dummy ORDER BY TheUser, TheDate DESC
-
-
-###
-$$HEADER
-HEADER$$
-
-$$GROUP_TheUser
-$$HEAD
-<h2>$TheUser</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Item</b></td>
-<td><b>Type</b></td>
-</tr>
-$$FOOT
-</table>
-GROUP$$
-
-$$BODY
-<tr>
-<td>$THEDATE</td>
-<td>$ITEM1 $ITEM2 $ITEM3 $ITEM4 $ITEM5 $ITEM6</td>
-<td>$TYPE</td>
-</tr>
-BODY$$
-
-$$FOOTER
-</table>
-FOOTER$$
-&&&
-User Activity Report
-###
-Auditing
-###
-3309/PostgreSQL rev01
-###
-Changes/additions made by all system users between two dates.
-###
-en
-###
-$VAR from DATE Enter from date$
-$VAR to DATE Enter to date$
-
-SELECT * FROM (
-SELECT 
-CreatedBy AS TheUser, 
-CreatedDate AS TheDate, 
-ShelterCode AS Item1,
-AnimalName AS Item2,
-'' AS Item3, '' AS Item4, '' AS Item5, '' AS Item6,
-'Created Animal' AS Type FROM animal
-WHERE CreatedDate >= '$@from$' AND CreatedDate::date <= '$@to$'
-
-UNION SELECT 
-LastChangedBy AS TheUser, 
-LastChangedDate AS TheDate, 
-ShelterCode AS Item1,
-AnimalName AS Item2,
-'' AS Item3, '' AS Item4, '' AS Item5, '' AS Item6,
-'Changed Animal' AS Type FROM animal
-WHERE LastChangedDate >= '$@from$' AND LastChangedDate::date <= '$@to$'
-
-UNION SELECT 
-adoption.CreatedBy AS TheUser, 
-adoption.CreatedDate AS TheDate, 
-AdoptionNumber AS Item1,
-ShelterCode AS Item2,
-AnimalName AS Item3,
-lksmovementtype.MovementType AS Item4,
-' to ' AS Item5,
-OwnerName AS Item6,
-'Created Movement' AS Type FROM adoption
-INNER JOIN animal ON adoption.AnimalID = animal.ID
-INNER JOIN owner ON adoption.OwnerID = owner.ID
-INNER JOIN lksmovementtype ON lksmovementtype.ID = adoption.MovementType 
-WHERE adoption.CreatedDate >= '$@from$' AND adoption.CreatedDate::date <= '$@to$'
-
-UNION SELECT 
-adoption.LastChangedBy AS TheUser, 
-adoption.LastChangedDate AS TheDate, 
-AdoptionNumber AS Item1,
-ShelterCode AS Item2,
-AnimalName AS Item3,
-lksmovementtype.MovementType AS Item4,
-' to ' AS Item5,
-OwnerName AS Item6,
-'Changed Movement' AS Type FROM adoption
-INNER JOIN animal ON adoption.AnimalID = animal.ID
-INNER JOIN owner ON adoption.OwnerID = owner.ID
-INNER JOIN lksmovementtype ON lksmovementtype.ID = adoption.MovementType 
-WHERE adoption.LastChangedDate >= '$@from$' AND adoption.LastChangedDate::date <= '$@to$'
-
-UNION SELECT 
-animalvaccination.CreatedBy AS TheUser, 
-animalvaccination.CreatedDate AS TheDate, 
-vaccinationtype.VaccinationType AS Item1,
-ShelterCode AS Item2,
-AnimalName AS Item3,
-'' AS Item4, '' AS Item5, '' AS Item6,
-'Created Vaccination' AS Type FROM animalvaccination
-INNER JOIN animal ON animalvaccination.AnimalID = animal.ID
-INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID 
-WHERE animalvaccination.CreatedDate >= '$@from$' AND animalvaccination.CreatedDate::date <= '$@to$'
-
-UNION SELECT 
-animalvaccination.LastChangedBy AS TheUser, 
-animalvaccination.LastChangedDate AS TheDate, 
-vaccinationtype.VaccinationType AS Item1,
-ShelterCode AS Item2,
-AnimalName AS Item3,
-'' AS Item4, '' AS Item5, '' AS Item6,
-'Changed Vaccination' AS Type FROM animalvaccination
-INNER JOIN animal ON animalvaccination.AnimalID = animal.ID
-INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID 
-WHERE animalvaccination.LastChangedDate >= '$@from$' AND animalvaccination.LastChangedDate::date <= '$@to$'
-
-UNION SELECT 
-animalmedical.CreatedBy AS TheUser, 
-animalmedical.CreatedDate AS TheDate, 
-animalmedical.TreatmentName AS Item1,
-animalmedical.Dosage AS Item2,
-animalmedical.Comments AS Item3,
-ShelterCode AS Item4,
-AnimalName AS Item5,
-'' AS Item6,
-'Created Medical Regimen' AS Type FROM animalmedical
-INNER JOIN animal ON animalmedical.AnimalID = animal.ID
-WHERE animalmedical.CreatedDate >= '$@from$' AND animalmedical.CreatedDate::date <= '$@to$'
-
-UNION SELECT 
-animalmedical.LastChangedBy AS TheUser, 
-animalmedical.LastChangedDate AS TheDate, 
-animalmedical.TreatmentName AS Item1,
-animalmedical.Dosage AS Item2,
-animalmedical.Comments AS Item3,
-ShelterCode AS Item4,
-AnimalName AS Item5,
-'' AS Item6,
-'Changed Medical Regimen' AS Type FROM animalmedical
-INNER JOIN animal ON animalmedical.AnimalID = animal.ID
-WHERE animalmedical.LastChangedDate >= '$@from$' AND animalmedical.LastChangedDate::date <= '$@to$'
-
-UNION SELECT 
-animaltest.CreatedBy AS TheUser, 
-animaltest.CreatedDate AS TheDate, 
-testtype.TestName AS Item1,
-testresult.ResultName AS Item2,
-ShelterCode AS Item3,
-AnimalName AS Item4,
-'' AS Item5, '' AS Item6,
-'Created Test' AS Type FROM animaltest
-INNER JOIN animal ON animaltest.AnimalID = animal.ID
-INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID 
-INNER JOIN testresult ON testresult.ID = animaltest.TestResultID 
-WHERE animaltest.CreatedDate >= '$@from$' AND animaltest.CreatedDate::date <= '$@to$'
-
-UNION SELECT 
-animaltest.LastChangedBy AS TheUser, 
-animaltest.LastChangedDate AS TheDate, 
-testtype.TestName AS Item1,
-testresult.ResultName AS Item2,
-ShelterCode AS Item3,
-AnimalName AS Item4,
-'' AS Item5, '' AS Item6,
-'Created Test' AS Type FROM animaltest
-INNER JOIN animal ON animaltest.AnimalID = animal.ID
-INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID 
-INNER JOIN testresult ON testresult.ID = animaltest.TestResultID 
-WHERE animaltest.LastChangedDate >= '$@from$' AND animaltest.LastChangedDate::date <= '$@to$'
-
-UNION SELECT 
-CreatedBy AS TheUser, 
-CreatedDate AS TheDate, 
-OwnerName AS Item1,
-OwnerAddress AS Item2,
-OwnerTown AS Item3,
-OwnerCounty AS Item4,
-OwnerPostcode AS Item5,
-HomeTelephone AS Item6,
-'Created Person' AS Type FROM owner
-WHERE CreatedDate >= '$@from$' AND CreatedDate::date <= '$@to$'
-
-UNION SELECT 
-LastChangedBy AS TheUser, 
-LastChangedDate AS TheDate, 
-OwnerName AS Item1,
-OwnerAddress AS Item2,
-OwnerTown AS Item3,
-OwnerCounty AS Item4,
-OwnerPostcode AS Item5,
-HomeTelephone AS Item6,
-'Changed Person' AS Type FROM owner
-WHERE LastChangedDate >= '$@from$' AND LastChangedDate::date <= '$@to$'
-
-UNION SELECT 
-CreatedBy AS TheUser, 
-CreatedDate AS TheDate, 
-DiaryForName AS Item1,
-LinkInfo AS Item2,
-Subject AS Item3,
-Note AS Item4,
-'' AS Item5, '' AS Item6,
-'Created Diary' AS Type FROM diary
-WHERE CreatedDate >= '$@from$' AND CreatedDate::date <= '$@to$'
-
-UNION SELECT 
-LastChangedBy AS TheUser, 
-LastChangedDate AS TheDate, 
-DiaryForName AS Item1,
-LinkInfo AS Item2,
-Subject AS Item3,
-Note AS Item4,
-'' AS Item5, '' AS Item6,
-'Changed Diary' AS Type FROM diary
-WHERE LastChangedDate >= '$@from$' AND LastChangedDate::date <= '$@to$'
+WHERE LastChangedDate >= '$@from$' AND LastChangedDate <= '$@to$'
 
 UNION SELECT 
 CreatedBy AS TheUser, 
@@ -443,7 +197,7 @@ Comments AS Item3,
 '' AS Item4, '' AS Item5, '' AS Item6,
 'Created Log' AS Type FROM log
 INNER JOIN logtype ON log.LogTypeID = logtype.ID
-WHERE CreatedDate >= '$@from$' AND CreatedDate::date <= '$@to$'
+WHERE CreatedDate >= '$@from$' AND CreatedDate <= '$@to$'
 
 UNION SELECT 
 LastChangedBy AS TheUser, 
@@ -458,7 +212,7 @@ Comments AS Item3,
 '' AS Item4, '' AS Item5, '' AS Item6,
 'Changed Log' AS Type FROM log
 INNER JOIN logtype ON log.LogTypeID = logtype.ID
-WHERE LastChangedDate >= '$@from$' AND LastChangedDate::date <= '$@to$'
+WHERE LastChangedDate >= '$@from$' AND LastChangedDate <= '$@to$'
 ) dummy ORDER BY TheUser, TheDate DESC
 
 
