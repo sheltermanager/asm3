@@ -88,7 +88,7 @@ $(document).ready(function() {
             $("#thumbnail").show();
             $("#check").hide();
             $("#spinner").show();
-            let formdata = "animalid=" + $("#animal").val() + "&type=" + uploadtype + "&filename=" + file.name + "&filedata=" + reader.result;
+            let formdata = "animalid=" + $("#animal").val() + "&type=" + uploadtype + "&filename=" + encodeURIComponent(file.name) + "&filedata=" + encodeURIComponent(reader.result);
             $.ajax({
                 method: "POST",
                 url: "mobile_photo_upload",
