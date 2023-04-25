@@ -29,7 +29,7 @@ INNER JOIN species ON species.ID = animal.SpeciesID
 LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
 WHERE MovementType = 1 AND MovementDate BETWEEN '$@from$' AND '$@to$' 
 AND ReturnDate Is Null 
-ORDER BY OwnerName, MovementDate
+ORDER BY no.OwnerName, MovementDate
 ###
 $$HEADER
 HEADER$$
@@ -79,7 +79,7 @@ Unreturned Multiple Adoptions by Person
 ###
 Movements
 ###
-Any rev01
+Any rev02
 ###
 Unreturned adoptions between two dates by adopter with original owner addresses, where the person adopted more than one animal
 ###
@@ -106,7 +106,7 @@ LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
 WHERE MovementType=1 AND MovementDate BETWEEN '$@from$' AND '$@to$' 
 AND ReturnDate Is Null 
 AND 1 < (SELECT COUNT(*) FROM adoption WHERE OwnerID = no.ID AND MovementType=1 AND MovementDate BETWEEN '$@from$' AND '$@to$' AND ReturnDate Is Null)
-ORDER BY OwnerName, MovementDate
+ORDER BY no.OwnerName, MovementDate
 ###
 $$HEADER
 HEADER$$

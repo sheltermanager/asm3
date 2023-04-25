@@ -2,7 +2,7 @@ Shelter Inventory by Adoption Coordinator
 ###
 Inventories
 ###
-Any/33909 rev01
+Any/33909 rev02
 ###
 Detailed current shelter inventory, with breed and microchip details broken down by adoption coordinator and species.
 ###
@@ -22,7 +22,7 @@ CASE WHEN a.ActiveMovementType = 2 THEN 'Foster'
 WHEN a.ActiveMovementType = 1 THEN 'Trial Adoption' 
 WHEN a.ActiveMovementType = 8 THEN 'Retailer' 
 ELSE i.LocationName END AS LocationName,
-CoordinatorName AS co.OwnerName
+co.OwnerName AS CoordinatorName
 FROM animal a
 LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID

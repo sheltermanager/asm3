@@ -63,7 +63,7 @@ AND at.DateRequired >= '$@from$' AND at.DateRequired <= '$@to$'
 AND a.NonShelterAnimal = 1
 
 ) dummy
-ORDER BY DateGiven
+ORDER BY DateRequired
 
 ###
 $$HEADER

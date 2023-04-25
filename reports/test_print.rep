@@ -2,7 +2,7 @@ Test Print
 ###
 Auditing
 ###
-3309/Any rev01
+3309/Any rev02
 ###
 Tests for a selected shelter animal.
 ###
@@ -10,16 +10,16 @@ en
 ###
 SELECT
 a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
-tt.TestName, at.DateRequired,
-at.DateOfTest, tr.ResultName, at.Comments
+tt.TestName, av.DateRequired,
+av.DateOfTest, tr.ResultName, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
-INNER JOIN animaltest av ON a.ID = at.AnimalID
-INNER JOIN testtype tt ON at.TestTypeID = tt.ID
-INNER JOIN testresult tr ON at.TestResultID = tr.ID
+INNER JOIN animaltest av ON a.ID = av.AnimalID
+INNER JOIN testtype tt ON av.TestTypeID = tt.ID
+INNER JOIN testresult tr ON av.TestResultID = tr.ID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 WHERE a.ID = $ASK ANIMAL$
-ORDER BY av.DateOfVaccination
+ORDER BY av.DateOfTest
 ###
 $$HEADER
 <h2>Tests for $SHELTERCODE - $ANIMALNAME</h2>

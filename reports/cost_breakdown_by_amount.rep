@@ -69,7 +69,7 @@ AND PickupDateTime >= '$@from$' AND PickupDateTime <= '$@to$') AS trans
 
 FROM animal a
 INNER JOIN species ON a.SpeciesID = species.ID
-WHERE (ActiveMovementDate Is Null OR (ActiveMovementDate >= '$@from$' AND ActiveMovementDate <= '$@to$')) 
+WHERE (ActiveMovementDate Is Null OR (ActiveMovementDate >= '$@from$' AND ActiveMovementDate <= '$@to$'))
 
 ) dummy
 WHERE cost > 0 OR med > 0 OR vacc > 0 OR board > 0 OR test > 0 OR trans > 0
@@ -130,7 +130,7 @@ animal.ID = a.ID
 AND CostDate >= '$@from$' AND CostDate <= '$@to$') AS cost,
 
 (SELECT 
-animal.DaysOnShelter * animal.DailyBoardingCost AS board,
+animal.DaysOnShelter * animal.DailyBoardingCost AS board
 FROM animal
 WHERE 
 animal.ID = a.ID
@@ -145,6 +145,14 @@ INNER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID
 WHERE 
 animal.ID = a.ID 
 AND DateOfVaccination >= '$@from$' AND DateOfVaccination <= '$@to$') AS vacc,
+
+(SELECT
+SUM(animaltest.Cost)
+FROM animal
+INNER JOIN animaltest ON animaltest.AnimalID = animal.ID
+WHERE 
+animal.ID = a.ID 
+AND DateOfTest >= '$@from$' AND DateOfTest <= '$@to$') AS test,
 
 (SELECT
 SUM(animalmedical.Cost)

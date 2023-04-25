@@ -2,13 +2,13 @@ All Accounts
 ###
 Accounts
 ###
-Any rev01
+Any rev02
 ###
 All financial accounts on file in a format suitable for export
 ###
 en
 ###
-SELECT a.ID, a.Code, a.Description, aty.AccountType, dt.DonationName AS LinkedPaymentType
+SELECT a.ID, a.Code, a.Description, aty.AccountType
 FROM accounts a
 INNER JOIN lksaccounttype aty ON aty.ID = a.AccountType
 ORDER BY a.AccountType, a.Code

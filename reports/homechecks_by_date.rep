@@ -13,7 +13,7 @@ o.HomeTelephone, o.MobileTelephone, o.EmailAddress, o.DateLastHomeChecked,
 ho.OwnerName AS HomecheckerName
 FROM owner o
 LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy
-WHERE IDCheck = 1 AND DateLastHomeChecked >= '$ASK DATE Homechecked between$' AND DateLastHomeChecked <= '$ASK DATE and$' 
+WHERE o.IDCheck = 1 AND o.DateLastHomeChecked >= '$ASK DATE Homechecked between$' AND o.DateLastHomeChecked <= '$ASK DATE and$' 
 ORDER BY HomecheckerName, o.DateLastHomeChecked, o.OwnerName
 ###
 $$HEADER

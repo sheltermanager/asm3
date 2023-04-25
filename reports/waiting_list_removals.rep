@@ -11,7 +11,7 @@ en
 SELECT u.Urgency, w.DateRemovedFromList,
 w.ReasonForRemoval, s.SpeciesName, w.AnimalDescription,
 o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
-o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress,
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress
 FROM animalwaitinglist w 
 INNER JOIN owner o ON w.OwnerID = o.ID
 INNER JOIN lkurgency u ON u.ID = w.Urgency

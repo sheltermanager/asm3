@@ -69,7 +69,9 @@ def parse_reports(data):
         subreports = ""
         if len(b) > 7: subreports = b[7].strip()
         print(f"----- {category}/{name} [{dbinfo}]")
-        if dbinfo.find("Any") != -1 or dbinfo.find("SQLite") != -1:
+        if len(sql) <= 3:
+            print("[ skip old ASM2 built-in ]")
+        elif dbinfo.find("Any") != -1 or dbinfo.find("SQLite") != -1:
             check(sql)
         else:
             if "SHOWNONEXEC" in os.environ and os.environ["SHOWNONEXEC"]:

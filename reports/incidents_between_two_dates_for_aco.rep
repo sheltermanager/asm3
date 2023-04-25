@@ -25,7 +25,7 @@ LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
 LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID
 WHERE ac.IncidentDateTime >= '$ASK DATE Enter the from date$'
 AND ac.IncidentDateTime <= '$ASK DATE Enter the to date$ 23:59:59'
-AND ti.DispatchedACO LIKE '%$ASK STRING Enter partial ACO user$%' 
+AND ac.DispatchedACO LIKE '%$ASK STRING Enter partial ACO user$%' 
 ORDER BY ac.CallDateTime
 ###
 $$HEADER
