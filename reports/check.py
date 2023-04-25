@@ -68,9 +68,9 @@ def parse_reports(data):
         html = b[6].strip()
         subreports = ""
         if len(b) > 7: subreports = b[7].strip()
-        print(f"----- {category}/{name} [{dbinfo}]")
+        print(f"-------- {category}/{name} [{dbinfo}]")
         if len(sql) <= 3:
-            print("[ skip old ASM2 built-in ]")
+            print("         [ skip old ASM2 built-in ]")
         elif dbinfo.find("Any") != -1 or dbinfo.find("SQLite") != -1:
             check(sql)
         else:
@@ -78,11 +78,11 @@ def parse_reports(data):
                 print(f"Cannot execute query for {dbinfo}, copy and paste query below:\n")
                 check(sql, True) 
             else:
-                print("[ skip non-SQLite query ]")
+                print("         [ skip non-SQLite query ]")
 
 for f in sys.argv:
     if not f.endswith("check.py") and os.path.exists(f):
-        print(f"=============== {f}")
+        print(f"==== {f}")
         with open(f, "r") as h:
             parse_reports(h.read())
 
