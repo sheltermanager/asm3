@@ -4,8 +4,14 @@
     Checks all the queries in a report file.  
     Uses the scheme as the SQL checker in reports.py
 
-    Tests against the SQLite schema database as outlined below, so it will fail with 
-    PostgreSQL or MySQL only functions. 
+    Will only execute queries for reports of db type Any or SQLite and
+    skip MYSQL/PostgreSQL specific queries.
+
+    If you run this command with environment variable SHOWNONEXEC=1 
+    then it will show the queries it can't execute so they can be copied
+    and pasted into a database console or SQL interface.
+
+
 """
 
 import os, sys, re
@@ -14,7 +20,7 @@ import web
 web.config.debug = False
 db = web.database( dbn = "sqlite", db = "../scripts/schema/schema.db" )
 
-def check(sql, run=True):
+def check(sql, showonly=False):
     COMMON_DATE_TOKENS = ( "$CURRENT_DATE", "$@from", "$@to", "$@thedate" )
     # Clean up and substitute some tags
     sql = sql.replace("$USER$", "dummy")
@@ -41,10 +47,9 @@ def check(sql, run=True):
         i = sql.find("$", i+1)
     sql = sql.strip()
     try:
-        if run:
+        if not showonly:
             db.query(sql)
         else:
-            print("\nCANNOT RUN NON-SQLITE QUERY- COPY AND PASTE BELOW INTO DATABASE CONSOLE:\n")
             print(sql)
     except Exception as err:
         print(f"\nQUERY FAILED: {err}\n")
@@ -64,10 +69,14 @@ def parse_reports(data):
         subreports = ""
         if len(b) > 7: subreports = b[7].strip()
         print(f"----- {category}/{name} [{dbinfo}]")
-        if dbinfo.find("MYSQL") != -1 or dbinfo.find("PostgreSQL") != -1:
-            check(sql, False)
-        else:
+        if dbinfo.find("Any") != -1 or dbinfo.find("SQLite") != -1:
             check(sql)
+        else:
+            if "SHOWNONEXEC" in os.environ and os.environ["SHOWNONEXEC"]:
+                print(f"Cannot execute query for {dbinfo}, copy and paste query below:\n")
+                check(sql, True) 
+            else:
+                print("[ skip non-SQLite query ]")
 
 for f in sys.argv:
     if not f.endswith("check.py") and os.path.exists(f):
