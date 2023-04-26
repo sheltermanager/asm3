@@ -520,7 +520,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
-AND DateOfBirth < {movementm5} 
+AND animal.DateOfBirth < {movementm5} 
 AND NonShelterAnimal = 0) AS AdultTransferOutInState,
 
 (SELECT COUNT(*) FROM animal
@@ -530,7 +530,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
-AND DateOfBirth >= {movementm5} 
+AND animal.DateOfBirth >= {movementm5} 
 AND NonShelterAnimal = 0) AS JuniorTransferOutInState,
 
 (SELECT COUNT(*) FROM animal
@@ -540,7 +540,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
-AND DateOfBirth < {movementm5} 
+AND animal.DateOfBirth < {movementm5} 
 AND NonShelterAnimal = 0) AS AdultTransferOutOutState,
 
 (SELECT COUNT(*) FROM animal
@@ -550,7 +550,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
-AND DateOfBirth >= {movementm5} 
+AND animal.DateOfBirth >= {movementm5} 
 AND NonShelterAnimal = 0) AS JuniorTransferOutOutState,
 
 (SELECT COUNT(*) FROM animal
