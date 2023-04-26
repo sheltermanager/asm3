@@ -2,7 +2,7 @@ Print Person Record
 ###
 Auditing
 ###
-3225/Any rev01
+34702/Any rev02
 ###
 A complete printout of a person record.
 ###
@@ -32,11 +32,13 @@ $$BODY
 </tr>
 <td>Address</td><td><b>$OWNERADDRESS</b></td><td>Home</td><td>$HOMETELEPHONE</td>
 </tr><tr>
-<td></td><td>$OWNERTOWN</td><td>Work</td><td>$WORKTELEPHONE</td>
+<td></td><td>$OWNERTOWN</td><td>Work</td><td>$WORKTELEPHONE $WORKTELEPHONE2</td>
 </tr><tr>
-<td></td><td>$OWNERCOUNTY</td><td>Cell</td><td>$MOBILETELEPHONE</td>
+<td></td><td>$OWNERCOUNTY</td><td>Cell</td><td>$MOBILETELEPHONE MOBILETELEPHONE2</td>
 </tr><tr>
-<td></td><td>$OWNERPOSTCODE</td><td>Email</td><td>$EMAILADDRESS</td>
+<td></td><td>$OWNERPOSTCODE</td><td>Email</td><td>$EMAILADDRESS EMAILADDRESS2</td>
+</tr><tr>
+<td>Date Of Birth</td><td>$DATEOFBIRTH $DATEOFBIRTH2</td><td>ID Number</td><td>$IDENTIFICATIONNUMBER $IDENTIFICATIONNUMBER2</td>
 </tr><tr>
 <td>Membership No.</td><td>$MEMBERSHIPNUMBER</td><td>Expires</td><td>$MEMBERSHIPEXPIRYDATE</td>
 </tr><tr>
@@ -59,6 +61,8 @@ $$BODY
 <td>Sex</td><td><b>$MSEX</b></td><td>Size</td><td>$MSIZE</td>
 </tr><tr>
 <td>Breed</td><td><b>$MBREED</b></td><td>or</td><td>$MBREED2</td>
+</tr><tr>
+<td>Flags</td><td><b>$MATCHFLAGS</b></td><td></td><td></td>
 </tr><tr>
 <td>Good with dogs</td><td><b>$MWITHDOGS</b></td><td>Good with cats</td><td>$MWITHCATS</td>
 </tr><tr>
