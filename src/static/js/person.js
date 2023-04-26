@@ -132,6 +132,24 @@ $(function() {
                 '<input type="text" id="email2" data-json="EMAILADDRESS2" data-post="emailaddress2" maxlength="200" class="asm-textbox tag-couple" />',
                 '</td>',
                 '</tr>',
+                '<tr id="dateofbirthrow">',
+                '<td><label for="dateofbirth">' + _("Date Of Birth") + '</label></td>',
+                '<td class="nowrap">',
+                '<input type="text" id="dateofbirth" data-json="DATEOFBIRTH" data-post="dateofbirth" class="asm-textbox asm-datebox" />',
+                '<input type="text" id="dateofbirth2" data-json="DATEOFBIRTH2" data-post="dateofbirth2" class="asm-textbox asm-datebox tag-couple" />',
+                '</td>',
+                '</tr>',
+                '<tr id="idnumberrow">',
+                '<td><label for="idnumber">' + _("ID Number") + '</label>',
+                '<span id="idnumber-callout" class="asm-callout">',
+                _("Driving license, passport or other identification number"),
+                '</span>',
+                '</td>',
+                '<td class="nowrap">',
+                '<input type="text" id="idnumber" data-json="IDENTIFICATIONNUMBER" data-post="idnumber" maxlength="200" class="asm-textbox" />',
+                '<input type="text" id="idnumber2" data-json="IDENTIFICATIONNUMBER2" data-post="idnumber2" maxlength="200" class="asm-textbox tag-couple" />',
+                '</td>',
+                '</tr>',
                 '<tr id="jurisdictionrow">',
                 '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
                 '<td>',
@@ -601,6 +619,8 @@ $(function() {
             $("#latlongrow").toggle( config.bool("ShowLatLong") );
             $("#siterow").toggle( config.bool("MultiSiteEnabled") );
             $("#jurisdictionrow").toggle( !config.bool("DisableAnimalControl") );
+            $("#dateofbirthrow").toggle( !config.bool("HidePersonDateOfBirth") );
+            $("#idnumberrow").toggle( !config.bool("HideIDNumber") );
             $("#button-anonymise").toggle( config.bool("AnonymisePersonalData") );
             $("#gdprcontactoptinrow").toggle( config.bool("ShowGDPRContactOptIn") );
             $("#button-lookingfor").toggle( !config.bool("HideLookingFor") );

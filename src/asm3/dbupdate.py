@@ -40,7 +40,7 @@ VERSIONS = (
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
-    34606, 34607, 34608, 34609, 34611, 34700, 34701
+    34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1280,6 +1280,8 @@ def sql_structure(dbo):
         fstr("WorkTelephone", True),
         fstr("MobileTelephone", True),
         fstr("EmailAddress", True),
+        fdate("DateOfBirth", True),
+        fstr("IdentificationNumber", True),
         fstr("OwnerTitle2", True),
         fstr("OwnerInitials2", True),
         fstr("OwnerForeNames2", True),
@@ -1287,6 +1289,8 @@ def sql_structure(dbo):
         fstr("WorkTelephone2", True),
         fstr("MobileTelephone2", True),
         fstr("EmailAddress2", True),
+        fdate("DateOfBirth2", True),
+        fstr("IdentificationNumber2", True),
         fint("ExcludeFromBulkEmail", True),
         fstr("GDPRContactOptIn", True),
         fint("JurisdictionID", True),
@@ -1335,6 +1339,7 @@ def sql_structure(dbo):
         fint("MatchGoodWithDogs", True),
         fint("MatchGoodWithChildren", True),
         fint("MatchHouseTrained", True),
+        fstr("MatchFlags", True),
         fstr("MatchCommentsContain", True) ))
     sql += index("owner_CreatedBy", "owner", "CreatedBy")
     sql += index("owner_CreatedDate", "owner", "CreatedDate")
@@ -1356,6 +1361,7 @@ def sql_structure(dbo):
     sql += index("owner_OwnerSurname", "owner", "OwnerSurname")
     sql += index("owner_OwnerTitle", "owner", "OwnerTitle")
     sql += index("owner_OwnerTown", "owner", "OwnerTown")
+    sql += index("owner_IdentificationNumber", "owner", "IdentificationNumber")
     sql += index("owner_OwnerTitle2", "owner", "OwnerTitle2")
     sql += index("owner_OwnerInitials2", "owner", "OwnerInitials2")
     sql += index("owner_OwnerForeNames2", "owner", "OwnerForeNames2")
@@ -1363,6 +1369,7 @@ def sql_structure(dbo):
     sql += index("owner_MobileTelephone2", "owner", "MobileTelephone2")
     sql += index("owner_WorkTelephone2", "owner", "WorkTelephone2")
     sql += index("owner_EmailAddress2", "owner", "EmailAddress2")
+    sql += index("owner_IdentificationNumber2", "owner", "IdentificationNumber2")
     sql += index("owner_SiteID", "owner", "SiteID")
     sql += index("owner_IDCheck", "owner", "IDCheck")
     sql += index("owner_IsACO", "owner", "IsACO")
@@ -5836,4 +5843,16 @@ def update_34701(dbo):
     add_index(dbo, "owner_MobileTelephone2", "owner", "MobileTelephone2")
     add_index(dbo, "owner_EmailAddress2", "owner", "EmailAddress2")
     dbo.execute_dbupdate("UPDATE owner SET OwnerTitle2='', OwnerInitials2='', OwnerForeNames2='', OwnerSurname2='', WorkTelephone2='', MobileTelephone2='', EmailAddress2=''")
+
+def update_34702(dbo):
+    add_column(dbo, "owner", "DateOfBirth", dbo.type_datetime)
+    add_column(dbo, "owner", "DateOfBirth2", dbo.type_datetime)
+    add_column(dbo, "owner", "IdentificationNumber", dbo.type_shorttext)
+    add_column(dbo, "owner", "IdentificationNumber2", dbo.type_shorttext)
+    add_column(dbo, "owner", "MatchFlags", dbo.type_shorttext)
+    add_index(dbo, "owner", "owner_IdentificationNumber", "IdentificationNumber")
+    add_index(dbo, "owner", "owner_IdentificationNumber2", "IdentificationNumber2")
+    dbo.execute_update("UPDATE owner SET IdentificationNumber='', IdentificationNumber2='', MatchFlags='' ")
+
+
 

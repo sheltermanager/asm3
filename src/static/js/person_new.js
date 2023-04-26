@@ -96,6 +96,24 @@ $(function() {
                 '<td><input class="asm-textbox newform" maxlength="200" id="emailaddress" data="emailaddress" type="textbox" />',
                 '<input class="asm-textbox newform tag-couple" maxlength="200" id="emailaddress2" data="emailaddress2" type="textbox" /></td>',
                 '</tr>',
+                '<tr id="dateofbirthrow">',
+                '<td><label for="dateofbirth">' + _("Date Of Birth") + '</label></td>',
+                '<td class="nowrap">',
+                '<input type="text" id="dateofbirth" data="dateofbirth" class="asm-textbox asm-datebox newform" />',
+                '<input type="text" id="dateofbirth2" data="dateofbirth2" class="asm-textbox asm-datebox newform tag-couple" />',
+                '</td>',
+                '</tr>',
+                '<tr id="idnumberrow">',
+                '<td><label for="idnumber">' + _("ID Number") + '</label>',
+                '<span id="idnumber-callout" class="asm-callout">',
+                _("Driving license, passport or other identification number"),
+                '</span>',
+                '</td>',
+                '<td class="nowrap">',
+                '<input type="text" id="idnumber" data="idnumber" maxlength="200" class="asm-textbox newform" />',
+                '<input type="text" id="idnumber2" data="idnumber2" maxlength="200" class="asm-textbox newform tag-couple" />',
+                '</td>',
+                '</tr>',
                 '<tr id="jurisdictionrow">',
                 '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
                 '<td>',
@@ -261,6 +279,10 @@ $(function() {
             }
 
             $("#countryrow").toggle( !config.bool("HideCountry") );
+
+            $("#dateofbirthrow").toggle( !config.bool("HidePersonDateOfBirth") );
+
+            $("#idnumberrow").toggle( !config.bool("HideIDNumber") );
 
             $("#gdprcontactoptinrow").toggle( config.bool("ShowGDPRContactOptIn") );
 

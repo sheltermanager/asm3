@@ -184,6 +184,18 @@ $.widget("asm.personchooser", {
             '<td><input class="asm-textbox chooser" maxlength="200" data="emailaddress" type="textbox" />',
             '<input class="asm-textbox chooser tag-couple" maxlength="200" data="emailaddress2" type="textbox" /></td>',
             '</tr>',
+            '<tr class="personchooser-dateofbirthrow">',
+            '<td><label>' + _("Date Of Birth") + '</label></td>',
+            '<td><input type="text" data="dateofbirth" class="asm-textbox asm-datebox chooser" />',
+            '<input type="text" data="dateofbirth2" class="asm-textbox asm-datebox chooser tag-couple" />',
+            '</td>',
+            '</tr>',
+            '<tr class="personchooser-idnumberrow">',
+            '<td><label>' + _("ID Number") + '</label></td>',
+            '<td><input type="text" data="idnumber" class="asm-textbox chooser" />',
+            '<input type="text" data="idnumber2" class="asm-textbox chooser tag-couple" />',
+            '</td>',
+            '</tr>',
             '<tr>',
             '<tr class="personchooser-jurisdictionrow">',
             '<td><label>' + _("Jurisdiction") + '</label></td>',
@@ -245,6 +257,14 @@ $.widget("asm.personchooser", {
         // Hide jurisdictions for no animal control
         if (config.bool("DisableAnimalControl")) {
             dialogadd.find(".personchooser-jurisdictionrow").hide();
+        }
+
+        // Hide dob/id number
+        if (config.bool("HidePersonDateOfBirth")) {
+            dialogadd.find(".personchooser-dateofbirthrow").hide();
+        }
+        if (config.bool("HideIDNumber")) {
+            dialogadd.find(".personchooser-idnumberrow").hide();
         }
 
         // Hide country if option set
