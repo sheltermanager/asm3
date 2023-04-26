@@ -36,7 +36,12 @@ $(function() {
                 '<td>',
                 '<input id="code" data="code" class="asm-textbox" />',
                 '</td>',
-                '<td></td>', // EMPTY
+                '<td>',
+                '<label for="idnumber">' + _("ID contains") + '</label>',
+                '</td>',
+                '<td>',
+                '<input id="idnumber" data="idnumber" class="asm-textbox" />',
+                '</td>',
                 '</tr>',
                 '<tr>',
                 '<td>',

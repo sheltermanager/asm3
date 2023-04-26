@@ -565,7 +565,7 @@ def get_person_find_simple(dbo, query, classfilter="all", typefilter="all", incl
     ss.add_words("o.OwnerName")
     ss.add_fields([ "o.OwnerCode", "o.OwnerAddress", "o.OwnerTown", "o.OwnerCounty", "o.OwnerPostcode",
         "o.EmailAddress", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone", 
-        "o.EmailAddress2", "o.WorkTelephone2", "o.MobileTelephone2", 
+        "o.EmailAddress2", "o.WorkTelephone2", "o.MobileTelephone2", "o.IdentificationNumber", "o.IdentificationNumber2", 
         "o.MembershipNumber" ])
     ss.add_clause("EXISTS(SELECT ad.Value FROM additional ad " \
         "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
@@ -629,6 +629,7 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, includeVolunte
     ss = asm3.utils.AdvancedSearchBuilder(dbo, post)
     ss.add_words("name", "o.OwnerName")
     ss.add_str("code", "o.OwnerCode")
+    ss.add_str_pair("idnumber", "o.IdentificationNumber", "o.IdentificationNumber2")
     ss.add_str("createdby", "o.CreatedBy")
     ss.add_date_since("createdsince", "o.CreatedDate")
     ss.add_str("address", "o.OwnerAddress")
