@@ -2,7 +2,7 @@ shelteranimalscount.org matrix 2021
 ###
 Figures
 ###
-33600/PostgreSQL rev10
+33600/PostgreSQL rev11
 ###
 Information needed to complete the shelteranimalscount.org basic data matrix 2021
 ###
@@ -317,7 +317,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS AdultTransferOutInState,
 
 (SELECT COUNT(*) FROM animal
@@ -327,7 +327,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty = (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS JuniorTransferOutInState,
 
 (SELECT COUNT(*) FROM animal
@@ -337,7 +337,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS AdultTransferOutOutState,
 
 (SELECT COUNT(*) FROM animal
@@ -347,7 +347,7 @@ WHERE MovementType = 3
 AND owner.OwnerCounty <> (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty')
 AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$' 
 AND SpeciesID IN ($PARENTARG3$)
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS JuniorTransferOutOutState,
 
 (SELECT COUNT(*) FROM animal

@@ -2,7 +2,7 @@ Permanent Fosters
 ###
 Auditing
 ###
-33018/Any rev01
+33018/Any rev02
 ###
 Permanent fosters with health/vaccination information
 ###
@@ -15,7 +15,7 @@ ShelterCode, AnimalName,
 (SELECT Sex FROM lksex WHERE ID = animal.Sex) AS Sex,
 (SELECT BaseColour FROM basecolour WHERE ID = animal.BaseColourID) AS Colour,
 BreedName,
-DateOfBirth,
+animal.DateOfBirth,
 (SELECT Name FROM lksyesno WHERE ID = animal.Neutered) AS Altered,
 NeuteredDate AS DateAltered,
 (SELECT Name FROM lksyesno WHERE ID = animal.CombiTested) AS FIVLTested,

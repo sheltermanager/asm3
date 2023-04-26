@@ -19,7 +19,7 @@ oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo
 oo.EmailAddress AS OOEmail,
 no.OwnerName, no.OwnerAddress,
 no.OwnerTown, no.OwnerCounty,
-no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone, DateOfBirth, Fee, AcceptanceNumber
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone, animal.DateOfBirth, Fee, AcceptanceNumber
 FROM adoption
 INNER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN owner no ON adoption.OwnerID = no.ID

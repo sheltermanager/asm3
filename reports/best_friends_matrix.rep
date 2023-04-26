@@ -2,7 +2,7 @@ Best Friends: Data Matrix
 ###
 Figures
 ###
-33600/PostgreSQL rev09
+33600/PostgreSQL rev10
 ###
 Information needed to complete the Best Friends NMHP monthly data matrix.
 ###
@@ -414,7 +414,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND (OwnerName LIKE '%County%' OR OwnerName LIKE '%City%')
 AND NonShelterAnimal = 0) AS AdultDogToMunicipal,
 
@@ -424,7 +424,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND (OwnerName LIKE '%County%' OR OwnerName LIKE '%City%')
 AND NonShelterAnimal = 0) AS JuniorDogToMunicipal,
 
@@ -434,7 +434,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND (OwnerName LIKE '%County%' OR OwnerName LIKE '%City%')
 AND NonShelterAnimal = 0) AS AdultCatToMunicipal,
 
@@ -444,7 +444,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND (OwnerName LIKE '%County%' OR OwnerName LIKE '%City%')
 AND NonShelterAnimal = 0) AS JuniorCatToMunicipal,
 
@@ -456,7 +456,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND OwnerName NOT LIKE '%County%' AND OwnerName NOT LIKE '%City%'
 AND NonShelterAnimal = 0) AS AdultDogToRescue,
 
@@ -466,7 +466,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND OwnerName NOT LIKE '%County%' AND OwnerName NOT LIKE '%City%'
 AND NonShelterAnimal = 0) AS JuniorDogToRescue,
 
@@ -476,7 +476,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND OwnerName NOT LIKE '%County%' AND OwnerName NOT LIKE '%City%'
 AND NonShelterAnimal = 0) AS AdultCatToRescue,
 
@@ -486,7 +486,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND OwnerName NOT LIKE '%County%' AND OwnerName NOT LIKE '%City%'
 AND NonShelterAnimal = 0) AS JuniorCatToRescue,
 
