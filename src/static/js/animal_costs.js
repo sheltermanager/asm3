@@ -75,7 +75,7 @@ $(function() {
                 { type: "raw", markup: [
                     '<span id="onshelterboard" style="float: right">',
                     _("Daily Boarding Cost"),
-                    ' <input id="dailyboardingcost" type="textbox" class="asm-textbox asm-currencybox" />',
+                    ' <input id="dailyboardingcost" type="text" class="asm-textbox asm-currencybox" />',
                     '<button id="button-savecost">' + _("Update the daily boarding cost for this animal") + '</button>',
                     '<span id="costonshelter"></span>',
                     '</span>'

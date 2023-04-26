@@ -90,7 +90,7 @@ $(function() {
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="newname">' + _("New name") + '</label></td>',
-                '<td><input id="newname" data="newname" type="textbox" class="asm-textbox" /></td>',
+                '<td><input id="newname" data="newname" type="text" class="asm-textbox" /></td>',
                 '</tr>',
                 '</table>',
                 '</div>'
