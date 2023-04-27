@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Documents &mdash; ASM 47u documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -10,7 +11,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -23,14 +26,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> ASM
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ASM
           </a>
               <div class="version">
                 47u
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -90,8 +97,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Documents</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Documents</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/documents.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -101,8 +108,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="documents">
-<h1>Documents<a class="headerlink" href="#documents" title="Permalink to this headline">¶</a></h1>
+  <section id="documents">
+<h1>Documents<a class="headerlink" href="#documents" title="Permalink to this heading">¶</a></h1>
 <p>Animal Shelter Manager has extensive document abilities for creating forms and
 letters. The system also includes its own web-based word processor for handling
 this.</p>
@@ -135,8 +142,8 @@ the document. This is useful as PDFs will be consistent across different
 machines running different operating systems and with different fonts
 installed.</p>
 <img alt="_images/html_wp_to_pdf.png" src="_images/html_wp_to_pdf.png" />
-<div class="section" id="pdf-directives">
-<h2>PDF Directives<a class="headerlink" href="#pdf-directives" title="Permalink to this headline">¶</a></h2>
+<section id="pdf-directives">
+<h2>PDF Directives<a class="headerlink" href="#pdf-directives" title="Permalink to this heading">¶</a></h2>
 <p>You can embed directives in your document to give some hints to the PDF engine.
 These should take the form of HTML comments, embedded in &lt;!– and –&gt;, and can
 be inserted by going to Tools-&gt;Source Code in the document editor:</p>
@@ -171,9 +178,9 @@ engine can also be used by specifying:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf renderer pisa --&gt;
 </pre></div>
 </div>
-</div>
-<div class="section" id="electronic-signatures">
-<h2>Electronic Signatures<a class="headerlink" href="#electronic-signatures" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="electronic-signatures">
+<h2>Electronic Signatures<a class="headerlink" href="#electronic-signatures" title="Permalink to this heading">¶</a></h2>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Electronic signatures are only supported by ASM’s built in HTML-based word processor. They cannot be used with OpenOffice templates.</p>
@@ -222,9 +229,9 @@ time the document was signed.</p>
 <p>In addition, an icon will appear next to the document on the media tab to indicate
 that the document has now been signed.</p>
 <img alt="_images/sign_icon.png" src="_images/sign_icon.png" />
-</div>
-<div class="section" id="mobile-signing">
-<h2>Mobile Signing<a class="headerlink" href="#mobile-signing" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="mobile-signing">
+<h2>Mobile Signing<a class="headerlink" href="#mobile-signing" title="Permalink to this heading">¶</a></h2>
 <p>The “Mobile signing pad” menu item allows you to mark the document for signing
 in the mobile interface.</p>
 <p>If you visit ASM’s mobile interface on any mobile/tablet device, you can use the
@@ -242,9 +249,9 @@ other paperwork and allows you to keep contracts in a completely electronic
 manner without the need for paper. You can still print off signed documents or
 email them in PDF form to adopters directly.</p>
 <img alt="_images/sign_mobiledoc.png" src="_images/sign_mobiledoc.png" />
-</div>
-<div class="section" id="user-signatures">
-<h2>User Signatures<a class="headerlink" href="#user-signatures" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="user-signatures">
+<h2>User Signatures<a class="headerlink" href="#user-signatures" title="Permalink to this heading">¶</a></h2>
 <p>It is quite common for documents to require a member of staff signature as well
 as the main signatory (eg: new adopter/volunteer/etc. ). In order to add a
 second signature to a document, the user’s signature must be stored within the
@@ -259,8 +266,8 @@ the top right of the screen).</p>
 templates with the &lt;&lt;UserSignature&gt;&gt; wordkey. This will insert the signature at
 150px width into the document as an image. You can use the same 100, 150, 200
 or 300 suffix to control the size of the user signature.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

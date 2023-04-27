@@ -24,10 +24,10 @@ Edit Person
 
 The person screen is also grouped into separate tabbed sections with an
 information banner. The screen allows you to store contact and classification
-information for an owner, along with payments they make, any useful multimedia,
+information for a person, along with payments they make, any useful multimedia,
 diary notes and animal movements, etc. 
 
-Facilities are also supplied to write documents to an owner, email them from
+Facilities are also supplied to write documents to a person, email them from
 within ASM and find their address on a map.
 
 Person Types
@@ -38,7 +38,7 @@ Person Types
 The Type panel allows you to set various classification flags for the person,
 along with comments and details on membership to your organisation.
 
-.. note:: The gift aid registered flag appears for people in the UK. Setting this will default the gift aid flag when creating payments from this owner for tracking gift aid claims to HMRC. 
+.. note:: The gift aid registered flag appears for people in the UK. Setting this will default the gift aid flag when creating payments from this person for tracking gift aid claims to HMRC. 
 
 Looking For
 ^^^^^^^^^^^
@@ -47,13 +47,13 @@ Looking For
 
 Using the “looking for” panel, you can supply criteria for animals that person
 is interested in adopting - it's a cut down version of the advanced find animal
-screen with just the criteria relevant for a prospective owner.
+screen with just the criteria relevant for a prospective adopter.
 
 Selecting active from the dropdown causes this person's criteria to be included
 in the list of actively searching people. You also need to set a date to make
 the criteria active, and optionally one to make it inactive if you would like
 to give up looking after a period of time. To view matches for currently active
-owners, run the “Person Looking For” report under ASM->Person->Match Looking
+people, run the “Person Looking For” report under ASM->Person->Match Looking
 For. Because it can be quite intensive, the looking for report is run as part
 of the daily tasks by ASM so it may take 24 hours for new people to appear. An
 alert will also appear on the dashboard when matches are found.
@@ -66,7 +66,7 @@ Homechecker
 .. image:: images/person_homechecker.png
 
 Animal Shelter Manager allows you to keep a list of your volunteer homecheckers
-in the owner database. 
+in the person database. 
 
 To use this facility, simply set the “Homechecker” flag on the type panel, and
 add the areas they are willing to check in the Areas box under the Homechecker
@@ -77,7 +77,7 @@ Rotherham S60). You can then use the find person screen to enter the name of an
 area you want to check by postcode or name and you will receive a list of
 homecheckers who cover that area. 
 
-When marking an owner as homechecked, you can link to the person record of the
+When marking a person as homechecked, you can link to the person record of the
 person who did the check, and it will show up in their homecheck history. 
 
 License
@@ -85,7 +85,7 @@ License
 
 .. image:: images/person_license.png
 
-The license tab holds details of animals licensed to this owner. This tab can
+The license tab holds details of animals licensed to this person. This tab can
 be removed with the option “Disable animal control functionality from menus and
 screens” in the remove unwanted functionality section of
 *Settings-Options-Options*.
@@ -105,19 +105,19 @@ Citations
 
 .. image:: images/person_citations.png
 
-The citations tab holds details of citations and fines given to this owner.
+The citations tab holds details of citations and fines given to this person.
 This tab can be removed with the option “Disable animal control functionality
 from menus and screens” in the remove unwanted functionality section of
 :menuselection:`Settings --> Options --> Options`.
 
-Trap Loans
-^^^^^^^^^^
+Equipment Loans
+^^^^^^^^^^^^^^^
 
 .. image:: images/person_traploan.png
 
-The trap loan tab holds details of traps loaned to this owner. This tab can be
-removed with the option “Disable animal control functionality from menus and
-screens” in the remove unwanted functionality section of
+The equipment loan tab holds details of equipment loaned to this person. This
+tab can be removed with the option “Disable animal control functionality from
+menus and screens” in the remove unwanted functionality section of
 :menuselection:`Settings --> Options --> Options`.
 
 Payments
@@ -146,6 +146,9 @@ date, along with a cash sum. You can set up as many different voucher types as
 you like to cover different areas of medical care.  The voucher tab allows you
 to log vouchers given to owners here. 
 
+Some shelters will give out vouchers to have juvenile animals neutered/spayed
+or microchipped by the new owner after the animal has been adopted.
+
 Links
 ^^^^^
 
@@ -155,15 +158,15 @@ person is attached to.
 Merging People
 ^^^^^^^^^^^^^^
 
-The merge button on the owner screen toolbar allows you to choose another
+The merge button on the person screen toolbar allows you to choose another
 person record to merge into this one. 
 
-This is useful, because on occasion, users will key the same owner in twice
+This is useful, because on occasion, users will key the same person in twice
 with a slightly different name and/or address and probably adopt an animal to
 them, etc.
 
 Open the person record that you want to merge into (the one that you want to
-keep). Hit the merge button and choose the duplicate owner record. 
+keep). Hit the merge button and choose the duplicate person record. 
 
 ASM will reparent all of the movements, links, media, etc from the duplicate
 person into the currently open record. When it's finished doing that, the
@@ -172,6 +175,4 @@ duplicate person record will be removed.
 If the target person has any blank contact fields that are present on the
 duplicate person (address, telephone or email fields), they will be copied
 from the duplicate before it is deleted.
-
-.. note:: Person details are never copied during a merge, the merge just moves all the satellite data from the selected person to the open person before deleting the selected one. 
 

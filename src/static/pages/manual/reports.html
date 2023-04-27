@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reports &mdash; ASM 47u documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -10,7 +11,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -23,14 +26,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> ASM
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ASM
           </a>
               <div class="version">
                 47u
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -101,8 +108,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Reports</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Reports</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/reports.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -112,8 +119,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="reports">
-<h1>Reports<a class="headerlink" href="#reports" title="Permalink to this headline">¶</a></h1>
+  <section id="reports">
+<h1>Reports<a class="headerlink" href="#reports" title="Permalink to this heading">¶</a></h1>
 <p>Animal Shelter Manager offers some highly detailed reporting facilities that
 fall broadly into the following categories.</p>
 <p>All reports are accessed from the Reports top level-menu. By default, ASM does
@@ -164,8 +171,8 @@ shelter over the selected year.</p></li>
 <li><p>Animal Return Reasons: Charts the different reasons for animals being
 returned to the shelter over the selected year.</p></li>
 </ul>
-<div class="section" id="customising-reports">
-<h2>Customising Reports<a class="headerlink" href="#customising-reports" title="Permalink to this headline">¶</a></h2>
+<section id="customising-reports">
+<h2>Customising Reports<a class="headerlink" href="#customising-reports" title="Permalink to this heading">¶</a></h2>
 <p>In addition to the stock reports provided by the sheltermanager.com repository,
 it is possible to create your own, using a simple language called “SQL” (short
 for “Structured Query Language”). SQL is a language for retrieving and
@@ -188,8 +195,8 @@ press <kbd class="kbd docutils literal notranslate">F11</kbd>, will allow you to
 <kbd class="kbd compound docutils literal notranslate"><kbd class="kbd docutils literal notranslate">CTRL</kbd>+<kbd class="kbd docutils literal notranslate">SPACE</kbd></kbd> to get context-sensitive help with ASM’s tables and columns.</p>
 <p>For some excellent beginner tutorials on both SQL and HTML, see
 www.w3schools.com</p>
-<div class="section" id="sql-keys">
-<h3>SQL Keys<a class="headerlink" href="#sql-keys" title="Permalink to this headline">¶</a></h3>
+<section id="sql-keys">
+<h3>SQL Keys<a class="headerlink" href="#sql-keys" title="Permalink to this heading">¶</a></h3>
 <p>What happens if you want to create a report that needs to request specific
 information from the user before running - eg: To filter between two dates, or
 only show animals of a particular species, etc?</p>
@@ -221,9 +228,9 @@ display it on the menu.</p></li>
 currency and assume that its value is a whole integer money amount (where 1
 is 1 cent/pence/etc).</p></li>
 </ul>
-</div>
-<div class="section" id="ask">
-<h3>ASK<a class="headerlink" href="#ask" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="ask">
+<h3>ASK<a class="headerlink" href="#ask" title="Permalink to this heading">¶</a></h3>
 <p>Ask is quite a detailed key, which requests information from the user at
 generation time. The basic syntax is this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ASK [TYPE] [Message]$
@@ -281,9 +288,9 @@ given a text box to enter the string in. The value substituted is the string.</p
 <p class="admonition-title">Note</p>
 <p>ANIMAL, FSANIMAL and ALLANIMAL are identical in the desktop interface. They produce different choices in the mobile interface.</p>
 </div>
-</div>
-<div class="section" id="var">
-<h3>VAR<a class="headerlink" href="#var" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="var">
+<h3>VAR<a class="headerlink" href="#var" title="Permalink to this heading">¶</a></h3>
 <p>VAR works just like ASK, the only difference is that instead of substituting
 the value into the SQL, it stores it to a variable name. You can then
 substitute the variable multiple times in your SQL:</p>
@@ -301,9 +308,9 @@ SELECT AnimalName, DateBroughtIn FROM animal
 WHERE SpeciesID=$@species$ AND DateBroughtIn &gt;= &#39;$@broughtinafter$&#39;
 </pre></div>
 </div>
-</div>
-<div class="section" id="const">
-<h3>CONST<a class="headerlink" href="#const" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="const">
+<h3>CONST<a class="headerlink" href="#const" title="Permalink to this heading">¶</a></h3>
 <p>CONST allows you to declare a constant value for later use in your query:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CONST name=value$
 </pre></div>
@@ -317,9 +324,9 @@ movement type 1 to a constant:</p>
 SELECT AnimalName FROM animal WHERE ActiveMovementType = $MOVEADOPT$
 </pre></div>
 </div>
-</div>
-<div class="section" id="report-grouping-and-calculation">
-<h3>Report Grouping and Calculation<a class="headerlink" href="#report-grouping-and-calculation" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="report-grouping-and-calculation">
+<h3>Report Grouping and Calculation<a class="headerlink" href="#report-grouping-and-calculation" title="Permalink to this heading">¶</a></h3>
 <p>In addition, ASM allows you to do a number of transformations to the output
 HTML. You define a number of “blocks” to your reports. Anyone who has used a
 reporting tool (eg: Microsoft Access or Crystal) will recognise these.</p>
@@ -435,15 +442,15 @@ $$FOOTER
 FOOTER$$
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="charts">
-<h2>Charts<a class="headerlink" href="#charts" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="charts">
+<h2>Charts<a class="headerlink" href="#charts" title="Permalink to this heading">¶</a></h2>
 <img alt="_images/reports_chart.png" src="_images/reports_chart.png" />
 <p>Charts work just like the reports. The difference is that instead of generating HTML, you just  choose a chart type from the type dropdown.</p>
 <p>ASM will dissect the results of the query in the following way to generate a graph, depending on whether your query returns two or three columns.</p>
-<div class="section" id="two-column-variant">
-<h3>Two column variant<a class="headerlink" href="#two-column-variant" title="Permalink to this headline">¶</a></h3>
+<section id="two-column-variant">
+<h3>Two column variant<a class="headerlink" href="#two-column-variant" title="Permalink to this heading">¶</a></h3>
 <ol class="arabic simple">
 <li><p>Each row in your result data becomes a point on the X axis</p></li>
 <li><p>The first column in each row is assumed to contain the name used for the
@@ -468,10 +475,6 @@ the X axis:</p>
 </div>
 <p>Would produce data that might look something like:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 27%" />
-<col style="width: 73%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Year</p></th>
 <th class="head"><p>TotalAmount</p></th>
@@ -496,9 +499,9 @@ the X axis:</p>
 <p class="admonition-title">Note</p>
 <p>Graphs use a relative scale, interpreted from the data. If all of your column data is the same value, then the graph will not display because it has no variance.</p>
 </div>
-</div>
-<div class="section" id="three-column-variant">
-<h3>Three column variant<a class="headerlink" href="#three-column-variant" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="three-column-variant">
+<h3>Three column variant<a class="headerlink" href="#three-column-variant" title="Permalink to this heading">¶</a></h3>
 <ol class="arabic simple">
 <li><p>Each row in your result data becomes a point on the X axis</p></li>
 <li><p>The first column in each row is assumed to contain the name used for a
@@ -520,10 +523,10 @@ AND ad.MovementType = 1
 GROUP BY i.LocationName, MONTH(ad.MovementDate)
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="maps">
-<h2>Maps<a class="headerlink" href="#maps" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="maps">
+<h2>Maps<a class="headerlink" href="#maps" title="Permalink to this heading">¶</a></h2>
 <p>Maps are just like the reports. The difference is that instead of generating
 HTML, they will output map markers from a LatLong field.</p>
 <p>ASM expects map queries to return a resultset containing two columns. The first
@@ -534,9 +537,9 @@ person on file, with their address when the marker is clicked:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">LatLong</span><span class="p">,</span> <span class="n">OwnerAddress</span> <span class="n">FROM</span> <span class="n">owner</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="automatic-updating-of-repository-reports">
-<h2>Automatic updating of repository reports<a class="headerlink" href="#automatic-updating-of-repository-reports" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="automatic-updating-of-repository-reports">
+<h2>Automatic updating of repository reports<a class="headerlink" href="#automatic-updating-of-repository-reports" title="Permalink to this heading">¶</a></h2>
 <p>When you install a report from the repository, some reports have a revision
 number. This number will be shown in the list on the reports editing screen
 next to the report’s title.</p>
@@ -548,8 +551,8 @@ and update any subreports, it will not change the description if you updated it.
 <p>If you change the title or category on your copy of a report, this will prevent
 it being updated by the auto updater. You can use this to lock a report to a
 particular version.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

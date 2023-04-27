@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Appendix: Wordkeys &mdash; ASM 47u documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -10,7 +11,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -22,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> ASM
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ASM
           </a>
               <div class="version">
                 47u
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -108,8 +115,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Appendix: Wordkeys</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Appendix: Wordkeys</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/wordkeys.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -119,13 +126,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="appendix-wordkeys">
-<span id="wordkeys"></span><h1>Appendix: Wordkeys<a class="headerlink" href="#appendix-wordkeys" title="Permalink to this headline">¶</a></h1>
+  <section id="appendix-wordkeys">
+<span id="wordkeys"></span><h1>Appendix: Wordkeys<a class="headerlink" href="#appendix-wordkeys" title="Permalink to this heading">¶</a></h1>
 <p>The following wordkeys are available in different areas of the system when
 generating documents from templates. Wordkeys should be placed in your
 templates, wrapped in double angle-brackets. Eg: &lt;&lt;AnimalName&gt;&gt;</p>
-<div class="section" id="organisation-keys">
-<h2>Organisation Keys<a class="headerlink" href="#organisation-keys" title="Permalink to this headline">¶</a></h2>
+<section id="organisation-keys">
+<h2>Organisation Keys<a class="headerlink" href="#organisation-keys" title="Permalink to this heading">¶</a></h2>
 <p>These keys are available in all types of documents.</p>
 <dl class="simple">
 <dt>Organisation / Organization</dt><dd><p>The shelter’s name</p>
@@ -164,9 +171,9 @@ document (default 150px wide)</p>
 image tag (eg: to override size)</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="animal-keys">
-<h2>Animal Keys<a class="headerlink" href="#animal-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="animal-keys">
+<h2>Animal Keys<a class="headerlink" href="#animal-keys" title="Permalink to this heading">¶</a></h2>
 <p>Animal keys are available for documents generated from the animal details and
 movement screens.</p>
 <dl class="simple">
@@ -597,9 +604,9 @@ due before today that have not been given</p>
 if the animal died)</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="vaccination-keys">
-<h2>Vaccination Keys<a class="headerlink" href="#vaccination-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="vaccination-keys">
+<h2>Vaccination Keys<a class="headerlink" href="#vaccination-keys" title="Permalink to this heading">¶</a></h2>
 <p>Vaccination keys let you access the vaccination records for an animal. There
 are multiple ways of accessing the records. You construct a key that contains
 the field name and then an index for it. The field names are:</p>
@@ -660,9 +667,9 @@ date. Eg: VaccinationRequiredDueDHCPP will return the date the most recent
 due DHCPP vaccination. Note that the “Due” keyword will not work if you have
 turned off the option to include incomplete medical items from documents under
 <span class="menuselection">Settings ‣ Options ‣ Documents ‣ Include incomplete medical records when generating document templates</span></p>
-</div>
-<div class="section" id="test-keys">
-<h2>Test Keys<a class="headerlink" href="#test-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="test-keys">
+<h2>Test Keys<a class="headerlink" href="#test-keys" title="Permalink to this heading">¶</a></h2>
 <p>The same rules for vaccinations apply to reading test records.</p>
 <dl class="simple">
 <dt>TestName</dt><dd><p>The name of the test (eg: FIV)</p>
@@ -694,9 +701,9 @@ turned off the option to include incomplete medical items from documents under
 <dt>TestAdministeringVetEmail</dt><dd><p>The email address of the vet who administered the test</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="medical-keys">
-<h2>Medical Keys<a class="headerlink" href="#medical-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="medical-keys">
+<h2>Medical Keys<a class="headerlink" href="#medical-keys" title="Permalink to this heading">¶</a></h2>
 <p>The same rules for vaccinations apply to reading medical records, except the
 MedicalName field can be used for looking up the most recent record of that
 treatment. In addition, the Recent keyword looks for medical regimens that have
@@ -729,9 +736,9 @@ a status of complete, while the Due keyword looks for active medical regimens.</
 <dt>MedicalComments</dt><dd><p>The medical comments</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="payment-keys">
-<h2>Payment Keys<a class="headerlink" href="#payment-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="payment-keys">
+<h2>Payment Keys<a class="headerlink" href="#payment-keys" title="Permalink to this heading">¶</a></h2>
 <p>If you are creating a document from the animal or person records, then the same
 rules apply as for vaccinations and medical records when accessing payments.
 The Recent keyword looks for payments that have been received and Due
@@ -805,9 +812,9 @@ invoice/receipt document:</p>
 <dt>PaymentTotal / PaymentTotalGross</dt><dd><p>The gross total of all received payments</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="transport-keys">
-<h2>Transport Keys<a class="headerlink" href="#transport-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="transport-keys">
+<h2>Transport Keys<a class="headerlink" href="#transport-keys" title="Permalink to this heading">¶</a></h2>
 <p>If you are creating a document from the animal or person records, then the same
 rules apply as for vaccinations and medical records when accessing transports.
 The Recent keyword looks for transports with the most recent drop off date/time
@@ -889,9 +896,9 @@ the transport tab or book:</p>
 <dt>TransportSex</dt><dd><p>The sex of the animal being transported</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="cost-keys">
-<h2>Cost Keys<a class="headerlink" href="#cost-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="cost-keys">
+<h2>Cost Keys<a class="headerlink" href="#cost-keys" title="Permalink to this heading">¶</a></h2>
 <p>The same rules apply as for vaccinations and medical records but for accessing
 costs. The fields are:</p>
 <dl class="simple">
@@ -925,9 +932,9 @@ costs. The fields are:</p>
 <dt>TotalCosts</dt><dd><p>The total of CurrentBoardingCost and all the Total Cost fields.</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="diet-keys">
-<h2>Diet Keys<a class="headerlink" href="#diet-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="diet-keys">
+<h2>Diet Keys<a class="headerlink" href="#diet-keys" title="Permalink to this heading">¶</a></h2>
 <p>The same rules apply as for vaccinations, but for accessing diet records. The fields are:</p>
 <dl class="simple">
 <dt>DietName</dt><dd><p>The name of the diet</p>
@@ -939,9 +946,9 @@ costs. The fields are:</p>
 <dt>DietComments</dt><dd><p>Any comments on the diet</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="log-keys">
-<h2>Log Keys<a class="headerlink" href="#log-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="log-keys">
+<h2>Log Keys<a class="headerlink" href="#log-keys" title="Permalink to this heading">¶</a></h2>
 <p>The same rules apply as for vaccinations, but for accessing log records. The
 fields are:</p>
 <dl class="simple">
@@ -956,9 +963,9 @@ fields are:</p>
 <dt>LogCreatedBy</dt><dd><p>The person who created the log entry</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="movement-keys">
-<h2>Movement Keys<a class="headerlink" href="#movement-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="movement-keys">
+<h2>Movement Keys<a class="headerlink" href="#movement-keys" title="Permalink to this heading">¶</a></h2>
 <p>Movement keys are available for documents generated either from the Move-&gt;Adopt
 screen, or from the animal details screen (in which case the animal’s active
 movement is assumed if it has one) or movement tabs. Since movements tie together
@@ -1032,9 +1039,9 @@ movements.</p>
 <dt>MovementLastChangedDate</dt><dd><p>The date the movement was last changed</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="person-keys">
-<h2>Person Keys<a class="headerlink" href="#person-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="person-keys">
+<h2>Person Keys<a class="headerlink" href="#person-keys" title="Permalink to this heading">¶</a></h2>
 <p>Person keys are available for documents generated from the person and movement
 screens, they are also available for documents generated from the payment
 and licence tabs as well as lost animal, found animal and waiting list.
@@ -1117,9 +1124,9 @@ increments of 100 upto 500px if you would like the image to be larger, eg:
 <dt>DocumentImgSrc</dt><dd><p>Just the src attribute value for an image link to the preferred document image.</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="citation-keys">
-<h2>Citation Keys<a class="headerlink" href="#citation-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="citation-keys">
+<h2>Citation Keys<a class="headerlink" href="#citation-keys" title="Permalink to this heading">¶</a></h2>
 <p>The same rules apply as for vaccinations, but for accessing citations.
 Each citation is indexed with a number for ascending (eg: CitationName1),
 LastX for descending (eg: CitationNameLast1) and with the type name for the
@@ -1140,9 +1147,9 @@ Citation keys can be accessed from a person document or an incident document.</p
 <dt>FinePaidDate</dt><dd><p>The date the fine was paid</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="equipment-loan-keys">
-<h2>Equipment Loan Keys<a class="headerlink" href="#equipment-loan-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="equipment-loan-keys">
+<h2>Equipment Loan Keys<a class="headerlink" href="#equipment-loan-keys" title="Permalink to this heading">¶</a></h2>
 <p>The same rules apply as for vaccinations, but for accessing equipment loans. Each
 loan is indexed with a number for ascending (eg: EquipmentTypeName1), LastX for
 descending (eg: EquipmentTypeNameLast1) and with the type name for the most recent
@@ -1167,9 +1174,9 @@ loan of that type for the person (eg: EquipmentLoanDateCat).</p>
 <dt>EquipmentComments</dt><dd><p>Any comments on the equipment loan</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="licence-keys">
-<h2>Licence Keys<a class="headerlink" href="#licence-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="licence-keys">
+<h2>Licence Keys<a class="headerlink" href="#licence-keys" title="Permalink to this heading">¶</a></h2>
 <p>Licence keys are only available for documents generated for a single licence
 under the licence tab or licencing book. Keys for the person purchasing the
 licence are also present and if the licence is linked to an animal, animal
@@ -1192,9 +1199,9 @@ keys are also present.</p>
 <dt>LicenceComments</dt><dd><p>Any comments from the licence record</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="voucher-keys">
-<h2>Voucher Keys<a class="headerlink" href="#voucher-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="voucher-keys">
+<h2>Voucher Keys<a class="headerlink" href="#voucher-keys" title="Permalink to this heading">¶</a></h2>
 <p>Voucher keys are only available for documents generated for a single voucher
 under the voucher tab or the voucher book. Keys for the person the voucher
 has been issued to are also present and if the licence is linked to an animal,
@@ -1215,9 +1222,9 @@ animal keys are also present.</p>
 <dt>VoucherComments</dt><dd><p>Any comments about the voucher</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="incident-keys">
-<h2>Incident Keys<a class="headerlink" href="#incident-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="incident-keys">
+<h2>Incident Keys<a class="headerlink" href="#incident-keys" title="Permalink to this heading">¶</a></h2>
 <p>Incident keys are only available for documents generated with the document button
 on a single incident. Log keys are available for incidents, but prefixed with
 IncidentLog instead of just Log.</p>
@@ -1344,9 +1351,9 @@ increments of 100 upto 500px if you would like the image to be larger, eg:
 <dt>DocumentImgSrc</dt><dd><p>Just the src attribute value for an image link to the preferred document image.</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="incident-animal-keys">
-<h2>Incident Animal Keys<a class="headerlink" href="#incident-animal-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="incident-animal-keys">
+<h2>Incident Animal Keys<a class="headerlink" href="#incident-animal-keys" title="Permalink to this heading">¶</a></h2>
 <p>Incident animal keys allow accessing of the animals linked to an incident. Each
 animal is indexed with a number for ascending (eg: AnimalName1) or LastX for
 descending (AnimalNameLast1).</p>
@@ -1378,9 +1385,9 @@ descending (AnimalNameLast1).</p>
 <dt>DeceasedDate</dt><dd><p>The date the animal died</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="lost-animal-keys">
-<h2>Lost Animal Keys<a class="headerlink" href="#lost-animal-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="lost-animal-keys">
+<h2>Lost Animal Keys<a class="headerlink" href="#lost-animal-keys" title="Permalink to this heading">¶</a></h2>
 <p>Lost animal keys are only available for documents generated with the document
 button on a single lost animal record. In addition to the tokens listed below,
 the person keys listed above are also valid for the primary contact along with
@@ -1414,9 +1421,9 @@ log keys.</p>
 as with animal images above to control the size of the output.</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="found-animal-keys">
-<h2>Found Animal Keys<a class="headerlink" href="#found-animal-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="found-animal-keys">
+<h2>Found Animal Keys<a class="headerlink" href="#found-animal-keys" title="Permalink to this heading">¶</a></h2>
 <p>Found animal keys are only available for documents generated with the document
 button on a single found animal record. In addition to the tokens listed below,
 the person keys listed above are also valid for the primary contact along with
@@ -1450,9 +1457,9 @@ log keys.</p>
 as with animal images above to control the size of the output.</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="waiting-list-keys">
-<h2>Waiting List Keys<a class="headerlink" href="#waiting-list-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="waiting-list-keys">
+<h2>Waiting List Keys<a class="headerlink" href="#waiting-list-keys" title="Permalink to this heading">¶</a></h2>
 <p>Waiting list keys are only available for documents generated with the document
 button on a single waiting list record. In addition to the tokens listed below,
 the person keys listed above are also valid for the primary contact along with
@@ -1484,9 +1491,9 @@ log keys.</p>
 as with animal images above to control the size of the output.</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="clinic-keys">
-<h2>Clinic Keys<a class="headerlink" href="#clinic-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="clinic-keys">
+<h2>Clinic Keys<a class="headerlink" href="#clinic-keys" title="Permalink to this heading">¶</a></h2>
 <p>Clinic keys are only available for documents generated with the document button
 on a single clinic appointment record (either via the Clinic tab of an animal
 or person, or the “Consulting Room” or “Waiting Room” screens). In addition to
@@ -1526,9 +1533,9 @@ appointments.</p>
 <dt>InvoiceTotal</dt><dd><p>The total of invoice amount and VAT/Tax</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="table-keys">
-<h2>Table Keys<a class="headerlink" href="#table-keys" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="table-keys">
+<h2>Table Keys<a class="headerlink" href="#table-keys" title="Permalink to this heading">¶</a></h2>
 <p>These are special keys that insert a table into your document that contains the
 complete data from a tab.</p>
 <p>These keys do not allow the flexibility of formatting that the other keys
@@ -1557,8 +1564,8 @@ there are.  Records are output in ascending order of date.</p>
 the person, animal or movement the document is being generated for.</p>
 </dd>
 </dl>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

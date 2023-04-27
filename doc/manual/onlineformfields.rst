@@ -8,13 +8,14 @@ online form submissions. These can be used to create person, lost animal, found
 animal, incident and waiting list records as well as attach to existing 
 animal records.
 
-title
+title / title2
     The person's title, eg: Mr
-initials
+    Person fields suffixed with 2 update the second person for couple records
+initials / initials2
     The person's initials
-forenames / firstname
+forenames / firstname / forenames2 / firstname2
     The person's first name
-surname / lastname
+surname / lastname / surname2 / lastname2
     The person's last name
 address
     The person's address
@@ -26,12 +27,16 @@ postcode / zipcode
     The person's postcode or zipcode
 hometelephone
     The person's home phone number
-worktelephone
+worktelephone / worktelephone2
     The person's work phone number
-mobiletelephone / celltelephone
+mobiletelephone / celltelephone / mobiletelephone2 / celltelephone2
     The person's mobile number
-emailaddress
+emailaddress / emailaddress2
     The person's email address
+dateofbirth / dateofbirth2
+    The person's date of birth
+idnumber / idnumber2
+    The person's ID number (passport, driving license, national ID card, etc)
 excludefrombulkemail
     If this field is supplied and not a blank or "No" in your language, the exclude from bulk email flag will be set for the created person
 comments

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Online Forms &mdash; ASM 47u documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -10,7 +11,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -23,14 +26,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> ASM
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ASM
           </a>
               <div class="version">
                 47u
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -93,8 +100,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Online Forms</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Online Forms</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/onlineform.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -104,8 +111,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="online-forms">
-<h1>Online Forms<a class="headerlink" href="#online-forms" title="Permalink to this headline">¶</a></h1>
+  <section id="online-forms">
+<h1>Online Forms<a class="headerlink" href="#online-forms" title="Permalink to this heading">¶</a></h1>
 <p>ASM allows you to setup online forms that you can use to take information from
 members of the public through your website (if your ASM is publically
 accessible, or you are using sheltermanager.com).</p>
@@ -161,8 +168,8 @@ submitted to ASM:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="section" id="editing-form-fields">
-<h2>Editing Form Fields<a class="headerlink" href="#editing-form-fields" title="Permalink to this headline">¶</a></h2>
+<section id="editing-form-fields">
+<h2>Editing Form Fields<a class="headerlink" href="#editing-form-fields" title="Permalink to this heading">¶</a></h2>
 <p>Clicking on the form’s name will allow you to edit the individual fields of
 information the report will take.</p>
 <img alt="_images/onlineform_fields.png" src="_images/onlineform_fields.png" />
@@ -197,8 +204,8 @@ look for an additional field called X and store the submission value in it
 when creating a person record. It will only work for new person records created
 from the form submission and not if the form updates an existing person record
 to prevent overwriting data.</p>
-<div class="section" id="show-if-syntax">
-<h3>Show If syntax<a class="headerlink" href="#show-if-syntax" title="Permalink to this headline">¶</a></h3>
+<section id="show-if-syntax">
+<h3>Show If syntax<a class="headerlink" href="#show-if-syntax" title="Permalink to this heading">¶</a></h3>
 <p>It is possible to have the system only display some of your form fields based
 on a condition being met. There are many situations where you may want to do
 this to remove unnecessary fields based on previous answers (for example, remove
@@ -253,10 +260,10 @@ field to be displayed. Separate your OR conditions with a pipe |</p>
 <p class="admonition-title">Note</p>
 <p>Only check boxes, radio buttons, text and lookup fields can be used with Show If</p>
 </div>
-</div>
-</div>
-<div class="section" id="incoming-forms">
-<h2>Incoming Forms<a class="headerlink" href="#incoming-forms" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="incoming-forms">
+<h2>Incoming Forms<a class="headerlink" href="#incoming-forms" title="Permalink to this heading">¶</a></h2>
 <img alt="_images/onlineform_incoming.png" src="_images/onlineform_incoming.png" />
 <p>Selecting a form allows you to intelligently create or attach records from the
 data, or explicitly attach the form to existing records.</p>
@@ -306,9 +313,9 @@ link if that record already existed and was updated instead of newly created.</p
 deleted when you leave the screen. The system will also remove incoming forms
 older than 4 weeks by default. Both of these options are configurable
 under the Online Forms tab of <span class="menuselection">Settings ‣ Options</span></p>
-</div>
-<div class="section" id="application-forms">
-<h2>Application Forms<a class="headerlink" href="#application-forms" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="application-forms">
+<h2>Application Forms<a class="headerlink" href="#application-forms" title="Permalink to this heading">¶</a></h2>
 <p>ASM calls an application a “reservation”. If your form has a field named
 “reserveanimalname” of type “Adoptable Animal”, then using “Create Person” on
 an incoming form submission will create a reservation for the new person to
@@ -325,9 +332,9 @@ Data ‣ Reservation Statuses</span></p>
 available for adoption, you may want to change this by setting
 <span class="menuselection">Publishing ‣ Set Publishing Options ‣ Animal Selection ‣
 Include Reserved</span> to YES.</p>
-</div>
-<div class="section" id="importing">
-<h2>Importing<a class="headerlink" href="#importing" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="importing">
+<h2>Importing<a class="headerlink" href="#importing" title="Permalink to this heading">¶</a></h2>
 <p>ASM also allows importing of online forms from files.</p>
 <p>Form files can be in a structured JSON format that ASM recognises, eg:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -365,8 +372,8 @@ form you already have ready for editing, eg:</p>
 &lt;/html&gt;
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
