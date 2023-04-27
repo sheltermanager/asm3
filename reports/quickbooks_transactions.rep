@@ -2,7 +2,7 @@ Quickbooks Export (Payments)
 ###
 Accounts
 ###
-2720/PostgreSQL rev01
+2720/Any rev02
 ###
 Incoming financial payments between two dates, exportable to CSV for Quickbooks
 ###
@@ -25,7 +25,7 @@ da.Code AS DEPOSIT_TO__ACCOUNT_,
 0 AS COST,
 '' AS PREFERRED_VENDOR,
 '' AS TAX_AGENCY,
-(a.Amount::real / 100) AS PRICE_AMOUNT_OR__RATE,
+(a.Amount / 100.0) AS PRICE_AMOUNT_OR__RATE,
 'No' AS ITEM_IS_INACTIVE,
 '' AS REORDER_POINT,
 0 AS TOTAL_VALUE,

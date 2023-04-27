@@ -24,16 +24,15 @@ WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
 AND SpeciesID = 2
 AND NonShelterAnimal = 0) AS IntakeCat,
 
-( 
+(100.0 *  
     (SELECT COUNT(*) FROM animal 
     WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
     AND EXISTS(SELECT ID FROM adoption WHERE AnimalID=animal.ID AND MovementType=2 AND MovementDate >= '$@year$-01-01' AND MovementDate <= '$@year$-12-31'))
 /
     (SELECT COUNT(*) FROM animal 
     WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
-    AND NonShelterAnimal = 0)::float 
-) 
-* 100.0 AS PercentageFoster,
+    AND NonShelterAnimal = 0)
+) AS PercentageFoster,
 
 (SELECT COUNT(*) FROM animal
 WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 

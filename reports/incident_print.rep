@@ -2,7 +2,7 @@ Print Incident Record
 ###
 Animal Control
 ###
-33503/PostgreSQL rev03
+33503/Any rev04
 ###
 A complete printout of an incident record.
 ###
@@ -11,7 +11,7 @@ en
 SELECT
 ac.ID AS IncidentNumber, ac.IncidentDateTime, ti.IncidentName, co.OwnerName AS CallerName, co.HomeTelephone, co.WorkTelephone, co.MobileTelephone,
 ac.CallTaker, ac.CallDateTime, ac.CallNotes,
-regexp_replace(ac.CallNotes, '\n', '<br/>', 'g') AS CallNotesBR,
+ac.CallNotes AS CallNotesN2BR,
 vo.OwnerName AS VictimName, vo.OwnerAddress AS VictimAddress,
 o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3,
 o1.OwnerAddress AS OwnerAddress1, o2.OwnerAddress AS OwnerAddress2, o3.OwnerAddress AS OwnerAddress3,

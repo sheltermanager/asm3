@@ -2,7 +2,7 @@ Print Animal Record (for adopters)
 ###
 Auditing
 ###
-34018/Any rev04
+34018/Any rev05
 ###
 A complete printout of an animal record for giving to adopters.
 ###
@@ -410,8 +410,8 @@ FOOTER$$
 SUBREPORT_AnimalPrintAdditional
 +++
 SELECT af.FieldLabel, 
-CASE WHEN af.FieldType = 8 THEN (SELECT AnimalName || ' - ' || ShelterCode FROM animal WHERE ID = a.Value::int) 
-WHEN af.FieldType = 9 THEN (SELECT OwnerName || ', ' || OwnerAddress FROM owner WHERE ID = a.Value::int) 
+CASE WHEN af.FieldType = 8 THEN (SELECT REPLACE(REPLACE('{0} - {1}', '{0}', AnimalName), '{1}', ShelterCode) FROM animal WHERE ID = CAST(a.Value AS INTEGER)) 
+WHEN af.FieldType = 9 THEN (SELECT REPLACE(REPLACE('{0}, {1}', '{0}', OwnerName), '{1}', OwnerAddress) OwnerAddress FROM owner WHERE ID = CAST(a.Value AS INTEGER))
 ELSE a.Value END AS Value
 FROM additional a
 INNER JOIN additionalfield af ON a.AdditionalFieldID = af.ID

@@ -2,7 +2,7 @@ View forms/documents attached between two dates
 ###
 Maintenance
 ###
-PostgreSQL rev03
+Any rev04
 ###
 List all documents and submitted HTML forms added to the system between two dates with links
 ###
@@ -10,11 +10,11 @@ en
 ###
 SELECT
 CASE
-WHEN m.LinkTypeID = 0 THEN 'animal?id=' || m.LinkID::varchar
-WHEN m.LinkTypeID = 3 THEN 'person?id=' || m.LinkID::varchar
+WHEN m.LinkTypeID = 0 THEN REPLACE('animal?id={0}', '{0}', CAST(m.LinkID AS VARCHAR(10)))
+WHEN m.LinkTypeID = 3 THEN REPLACE('person?id={0}', '{0}', CAST(m.LinkID AS VARCHAR(10)))
 ELSE '' END AS LinkTarget,
 CASE 
-WHEN m.LinkTypeID = 0 THEN (SELECT AnimalName || ' - ' || ShelterCode FROM animal WHERE ID = m.LinkID)
+WHEN m.LinkTypeID = 0 THEN (SELECT REPLACE(REPLACE('{0} - {1}', '{0}', AnimalName), '{1}', ShelterCode) FROM animal WHERE ID = m.LinkID)
 WHEN m.LinkTypeID = 3 THEN (SELECT OwnerName FROM owner WHERE ID = m.LinkID)
 ELSE '' END AS LinkDisplay,
 m.ID AS MediaID,
@@ -24,7 +24,7 @@ m.MediaNotes
 FROM media m
 WHERE m.MediaName LIKE '%.html'
 AND m.Date >= '$ASK DATE Enter from date$' AND m.Date <= '$ASK DATE Enter to date$'
-AND m.MediaNotes ILIKE '%$ASK STRING Partial form name (leave blank for all)$%'
+AND LOWER(m.MediaNotes) LIKE LOWER('%$ASK STRING Partial form name (leave blank for all)$%')
 ORDER BY m.Date
 ###
 $$HEADER

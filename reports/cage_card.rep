@@ -130,7 +130,7 @@ Cage Card (retain bio line breaks)
 ###
 Inventories
 ###
-2732/PostgreSQL omitcriteria omitheaderfooter rev01
+2732/Any omitcriteria omitheaderfooter rev02
 ###
 An animal cage card with image.
 ###
@@ -148,7 +148,7 @@ animal.shelterLocation,
 animal.animalTypeID,
 animal.Markings,
 lksize.Size,
-regexp_replace(animal.AnimalComments, '\n', '<br/>', 'g') AS AnimalComments,
+animal.AnimalComments AS AnimalCommentsN2BR,
 animal.datebroughtin,
 animal.dateofbirth,
 animal.id as animalid,

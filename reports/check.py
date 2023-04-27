@@ -7,11 +7,11 @@
     Will only execute queries for reports of db type Any or SQLite and
     skip MYSQL/PostgreSQL specific queries.
 
-    If you run this command with environment variable SHOWNONEXEC=1 
-    then it will show the queries it can't execute so they can be copied
-    and pasted into a database console or SQL interface.
+    environment variables that can be set prior to running:
 
+    SHOWNONEXEC=1 - show non-SQLite queries so they can be copied/pasted
 
+    FORCENONEXEC=1 - force running of non-SQLite queries anyway
 """
 
 import os, sys, re
@@ -19,6 +19,9 @@ import web
 
 web.config.debug = False
 db = web.database( dbn = "sqlite", db = "../scripts/schema/schema.db" )
+
+SHOWNONEXEC = "SHOWNONEXEC" in os.environ and os.environ["SHOWNONEXEC"]
+FORCENONEXEC = "FORCENONEXEC" in os.environ and os.environ["FORCENONEXEC"]
 
 def check(sql, showonly=False):
     COMMON_DATE_TOKENS = ( "$CURRENT_DATE", "$@from", "$@to", "$@thedate" )
@@ -71,14 +74,30 @@ def parse_reports(data):
         print(f"-------- {category}/{name} [{dbinfo}]")
         if len(sql) <= 3:
             print("         [ skip old ASM2 built-in ]")
-        elif dbinfo.find("Any") != -1 or dbinfo.find("SQLite") != -1:
+        elif dbinfo.find("Any") != -1 or dbinfo.find("SQLite") != -1 or FORCENONEXEC:
             check(sql)
+            if subreports:
+                elem=0
+                name = ""
+                sql = ""
+                html = ""
+                for rep in subreports.split("+++"):
+                    if elem == 0: name = rep.strip()
+                    if elem == 1: sql = rep.strip()
+                    if elem == 2: html = rep.strip()
+                    elem += 1
+                    if elem == 3: 
+                        elem = 0
+                        # process subreport
+                        print(f"------------ {name}")
+                        check(sql)
         else:
-            if "SHOWNONEXEC" in os.environ and os.environ["SHOWNONEXEC"]:
+            if SHOWNONEXEC:
                 print(f"Cannot execute query for {dbinfo}, copy and paste query below:\n")
                 check(sql, True) 
             else:
                 print("         [ skip non-SQLite query ]")
+
 
 for f in sys.argv:
     if not f.endswith("check.py") and os.path.exists(f):
