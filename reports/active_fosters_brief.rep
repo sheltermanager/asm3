@@ -2,14 +2,14 @@ Active Fosters (Brief)
 ###
 Movements
 ###
-Any rev03
+Any rev04
 ###
 Active fosters, showing one foster per line.
 ###
 en
 ###
 SELECT
-OwnerName AS FosteredTo,
+OwnerName AS FosteredTo, MovementDate, 
 adoption.OwnerID, adoption.AnimalID, 
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone, EmailAddress,
 ShelterCode, AnimalName,
@@ -34,6 +34,7 @@ $$HEADER
 <th>Colour</th>
 <th>Breed</th>
 <th>Date Of Birth</th>
+<th>Foster Started</th>
 </tr>
 HEADER$$
 
@@ -50,6 +51,7 @@ M: $MOBILETELEPHONE</td>
 <td>$COLOUR</td>
 <td>$BREEDNAME</td>
 <td>$DATEOFBIRTH ($ANIMALAGE)</td>
+<td>$MOVEMENTDATE</td>
 </tr>
 BODY$$
 
@@ -61,14 +63,14 @@ Active Fosters (Brief, by State)
 ###
 Movements
 ###
-Any rev03
+Any rev04
 ###
 Active fosters, showing one foster per line and grouped by state.
 ###
 en
 ###
 SELECT
-OwnerName AS FosteredTo,
+OwnerName AS FosteredTo, MovementDate, 
 adoption.OwnerID, adoption.AnimalID, 
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone, EmailAddress,
 ShelterCode, AnimalName,
@@ -98,6 +100,7 @@ $$HEAD
 <th>Colour</th>
 <th>Breed</th>
 <th>Date Of Birth</th>
+<th>Foster Started</th>
 </tr>
 $$FOOT
 </table>
@@ -117,6 +120,7 @@ M: $MOBILETELEPHONE</td>
 <td>$COLOUR</td>
 <td>$BREEDNAME</td>
 <td>$DATEOFBIRTH ($ANIMALAGE)</td>
+<td>$MOVEMENTDATE</td>
 </tr>
 BODY$$
 

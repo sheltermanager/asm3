@@ -2,14 +2,14 @@ Active Fosters (Altered/neutered)
 ###
 Movements
 ###
-Any rev02
+Any rev03
 ###
 Active fosters who have been altered/neutered.
 ###
 en
 ###
 SELECT
-OwnerName AS FosteredTo,
+OwnerName AS FosteredTo, MovementDate, 
 OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone, EmailAddress,
 ShelterCode, AnimalName,
 (SELECT Sex FROM lksex WHERE ID = animal.Sex) AS Sex,
@@ -93,6 +93,9 @@ $$BODY
 </tr><tr>
 <td><b>Special Needs?</b></td>
 <td>$SPECIALNEEDS</td>
+</tr><tr>
+<td><b>Foster Started:</b></td>
+<td>$MOVEMENTDATE</td>
 </tr><tr>
 <td><b>Next Vaccination:</b></td>
 <td>$NEXTVACCINATION $DATENEXTVACC</td>
