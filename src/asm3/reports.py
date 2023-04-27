@@ -924,7 +924,7 @@ class Report:
         if asm3.utils.is_currency(k):
             return asm3.i18n.format_currency(l, v)
 
-        if k.upper.endswith("N2BR"):
+        if k.upper().endswith("N2BR"):
             return str(v).replace("\n", "<br>")
 
         return str(v)
