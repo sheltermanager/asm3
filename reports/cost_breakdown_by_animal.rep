@@ -2,7 +2,7 @@ Cost Breakdown by Animal
 ###
 Financial
 ###
-34601/PostgreSQL rev09
+34601/Any rev10
 ###
 Costs between two dates, broken down by animal.
 ###
@@ -34,7 +34,7 @@ animal.AnimalName AS name,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animal.DailyBoardingCost * animal.DaysOnShelter AS amt,
-'(' || round(animal.DailyBoardingCost / 100.0, 2)::text || ' &times; ' || animal.DaysOnShelter::text AS costexplain,
+REPLACE(REPLACE('({0} &times; {1})', '{0}', CAST(ROUND(animal.DailyBoardingCost / 100.0, 2) AS VARCHAR(50))), '{1}', CAST(animal.DaysOnShelter AS VARCHAR(50))) AS costexplain,
 'Board and Food *' AS description1, '' AS description2
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
@@ -73,21 +73,19 @@ INNER JOIN testtype ON animaltest.TestTypeID = testtype.ID
 WHERE DateOfTest >= '$@from$' AND DateOfTest <= '$@to$'
 
 UNION SELECT
-animalmedical.StartDate AS date,
+animalmedicaltreatment.DateGiven AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
-animalmedical.Cost AS amt,
-CASE WHEN animalmedical.CostPerTreatment Is Not Null THEN
-    '(' || round(animalmedical.CostPerTreatment / 100.0, 2)::text || ' &times; ' || (SELECT COUNT(*) FROM animalmedicaltreatment WHERE AnimalMedicalID=animalmedical.ID AND DateGiven Is Not Null)::text || ')' 
-    ELSE '' END
-    AS costexplain,
+animalmedical.CostPerTreatment AS amt,
+'' AS costexplain,
 animalmedical.TreatmentName AS description1,
 animalmedical.Comments AS description2
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
-WHERE StartDate >= '$@from$' AND StartDate <= '$@to$' AND TreatmentsGiven > 0
+INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID
+WHERE DateGiven >= '$@from$' AND DateGiven <= '$@to$' 
 
 UNION SELECT
 animaltransport.PickupDateTime AS date,

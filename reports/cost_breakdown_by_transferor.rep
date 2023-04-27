@@ -2,7 +2,7 @@ Cost Breakdown by Transferor
 ###
 Financial
 ###
-33601/Any rev01
+34601/Any rev02
 ###
 Animal costs between two dates, grouped by the transferor (only includes transfers in)
 ###
@@ -89,12 +89,12 @@ WHERE DateOfTest >= '$@from$' AND DateOfTest <= '$@to$'
 AND IsTransfer = 1
 
 UNION SELECT
-animalmedical.StartDate AS date,
+animalmedicaltreatment.DateGiven AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltype.AnimalType AS animaltypename,
-animalmedical.Cost AS amt,
+animalmedical.CostPerTreatment AS amt,
 animalmedical.TreatmentName AS description1,
 animalmedical.Comments AS description2,
 owner.OwnerName
@@ -103,7 +103,8 @@ INNER JOIN owner ON animal.BroughtInByOwnerID = owner.ID
 INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
-WHERE StartDate >= '$@from$' AND StartDate <= '$@to$'
+INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID
+WHERE DateGiven >= '$@from$' AND DateGiven <= '$@to$'
 AND IsTransfer = 1
 
 UNION SELECT

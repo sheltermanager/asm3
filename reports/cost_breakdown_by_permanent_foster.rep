@@ -2,7 +2,7 @@ Cost Breakdown by Permanent Fosters
 ###
 Financial
 ###
-33601/Any rev01
+34601/Any rev02
 ###
 Costs between two dates, broken down by permanent foster animals.
 ###
@@ -73,17 +73,18 @@ WHERE DateOfTest >= '$@from$' AND DateOfTest <= '$@to$'
 AND HasPermanentFoster=1
 
 UNION SELECT
-animalmedical.StartDate AS date,
+animalmedicaltreatment.DateGiven AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
-animalmedical.Cost AS amt,
+animalmedical.CostPerTreatment AS amt,
 animalmedical.TreatmentName AS description1,
 animalmedical.Comments AS description2
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
-WHERE StartDate >= '$@from$' AND StartDate <= '$@to$'
+INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID
+WHERE DateGiven >= '$@from$' AND DateGiven <= '$@to$'
 AND HasPermanentFoster=1
 
 UNION SELECT

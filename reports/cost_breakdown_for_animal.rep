@@ -2,7 +2,7 @@ Cost Breakdown for Animal
 ###
 Financial
 ###
-33601/Any rev02
+34601/Any rev03
 ###
 All costs for one or more selected animals.
 ###
@@ -66,16 +66,17 @@ INNER JOIN testtype ON animaltest.TestTypeID = testtype.ID
 WHERE animal.ID IN ($@an$)
 
 UNION SELECT
-animalmedical.StartDate AS date,
+animalmedicaltreatment.DateGiven AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
-animalmedical.Cost AS amt,
+animalmedical.CostPerTreatment AS amt,
 animalmedical.TreatmentName AS description1,
 animalmedical.Comments AS description2
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
+INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID
 WHERE animal.ID IN ($@an$)
 
 UNION SELECT
