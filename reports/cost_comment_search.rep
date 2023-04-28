@@ -2,7 +2,7 @@ Cost Comment Search
 ###
 Financial
 ###
-33601/Any rev01
+33601/Any rev02
 ###
 Search the comments of costs, medicals and vaccinations
 ###
@@ -27,7 +27,7 @@ INNER JOIN costtype ON animalcost.CostTypeID = costtype.ID
 INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE animalcost.Description LIKE '%$@stext$%'
 
-UNION SELECT
+UNION ALL SELECT
 animalvaccination.DateOfVaccination AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -42,7 +42,7 @@ INNER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID
 INNER JOIN vaccinationtype ON animalvaccination.VaccinationID = vaccinationtype.ID
 WHERE animalvaccination.Comments LIKE '%$@stext$%'
 
-UNION SELECT
+UNION ALL SELECT
 animaltest.DateOfTest AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -57,7 +57,7 @@ INNER JOIN animaltest ON animaltest.AnimalID = animal.ID
 INNER JOIN testtype ON animaltest.TestTypeID = testtype.ID
 WHERE animaltest.Comments LIKE '%$@stext$%'
 
-UNION SELECT
+UNION ALL SELECT
 animalmedical.StartDate AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -71,7 +71,7 @@ INNER JOIN species ON species.ID = animal.SpeciesID
 INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
 WHERE animalmedical.Comments LIKE '%$@stext$%'
 
-UNION SELECT
+UNION ALL SELECT
 animaltransport.PickupDateTime AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,

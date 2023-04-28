@@ -2,7 +2,7 @@ Unpaid Costs by Date
 ###
 Financial
 ###
-33601/Any rev01
+33601/Any rev02
 ###
 Unpaid animal costs between two dates.
 ###
@@ -28,7 +28,7 @@ INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE CostPaidDate Is Null
 AND CostDate >= '$@from$' AND CostDate <= '$@to$'
 
-UNION SELECT
+UNION ALL SELECT
 animalvaccination.DateOfVaccination AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -43,7 +43,7 @@ INNER JOIN vaccinationtype ON animalvaccination.VaccinationID = vaccinationtype.
 WHERE CostPaidDate Is Null 
 AND DateOfVaccination >= '$@from$' AND DateOfVaccination <= '$@to$'
 
-UNION SELECT
+UNION ALL SELECT
 animaltest.DateOfTest AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -58,7 +58,7 @@ INNER JOIN testtype ON animaltest.TestTypeID = testtype.ID
 WHERE CostPaidDate Is Null 
 AND DateOfTest >= '$@from$' AND DateOfTest <= '$@to$'
 
-UNION SELECT
+UNION ALL SELECT
 animalmedical.StartDate AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -72,7 +72,7 @@ INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
 WHERE CostPaidDate Is Null 
 AND StartDate >= '$@from$' AND StartDate <= '$@to$'
 
-UNION SELECT
+UNION ALL SELECT
 animaltransport.PickupDateTime AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,

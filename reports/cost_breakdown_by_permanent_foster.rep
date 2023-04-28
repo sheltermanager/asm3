@@ -2,7 +2,7 @@ Cost Breakdown by Permanent Fosters
 ###
 Financial
 ###
-34601/Any rev02
+34601/Any rev03
 ###
 Costs between two dates, broken down by permanent foster animals.
 ###
@@ -28,7 +28,7 @@ INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE CostDate >= '$@from$' AND CostDate <= '$@to$'
 AND HasPermanentFoster=1
 
-UNION SELECT
+UNION ALL SELECT
 animal.DateBroughtIn AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -42,7 +42,7 @@ AND DailyBoardingCost > 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$'
 AND HasPermanentFoster=1
 
-UNION SELECT
+UNION ALL SELECT
 animalvaccination.DateOfVaccination AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -57,7 +57,7 @@ INNER JOIN vaccinationtype ON animalvaccination.VaccinationID = vaccinationtype.
 WHERE DateOfVaccination >= '$@from$' AND DateOfVaccination <= '$@to$'
 AND HasPermanentFoster=1
 
-UNION SELECT
+UNION ALL SELECT
 animaltest.DateOfTest AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -72,7 +72,7 @@ INNER JOIN testtype ON animaltest.TestTypeID = testtype.ID
 WHERE DateOfTest >= '$@from$' AND DateOfTest <= '$@to$'
 AND HasPermanentFoster=1
 
-UNION SELECT
+UNION ALL SELECT
 animalmedicaltreatment.DateGiven AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -87,7 +87,7 @@ INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalMedicalID = an
 WHERE DateGiven >= '$@from$' AND DateGiven <= '$@to$'
 AND HasPermanentFoster=1
 
-UNION SELECT
+UNION ALL SELECT
 animaltransport.PickupDateTime AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,

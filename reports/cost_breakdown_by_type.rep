@@ -2,7 +2,7 @@ Cost Breakdown by Type
 ###
 Financial
 ###
-34601/Any rev02
+34601/Any rev03
 ###
 Animal costs between two dates, grouped by type.
 ###
@@ -27,7 +27,7 @@ INNER JOIN costtype ON animalcost.CostTypeID = costtype.ID
 INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE CostDate >= '$@from$' AND CostDate <= '$@to$'
 
-UNION SELECT
+UNION ALL SELECT
 animal.DateBroughtIn AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -40,7 +40,7 @@ WHERE Archived = 0
 AND DailyBoardingCost > 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$'
 
-UNION SELECT
+UNION ALL SELECT
 animalvaccination.DateOfVaccination AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -54,7 +54,7 @@ INNER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID
 INNER JOIN vaccinationtype ON animalvaccination.VaccinationID = vaccinationtype.ID
 WHERE DateOfVaccination >= '$@from$' AND DateOfVaccination <= '$@to$'
 
-UNION SELECT
+UNION ALL SELECT
 animaltest.DateOfTest AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -68,7 +68,7 @@ INNER JOIN animaltest ON animaltest.AnimalID = animal.ID
 INNER JOIN testtype ON animaltest.TestTypeID = testtype.ID
 WHERE DateOfTest >= '$@from$' AND DateOfTest <= '$@to$'
 
-UNION SELECT
+UNION ALL SELECT
 animalmedicaltreatment.DateGiven AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -82,7 +82,7 @@ INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
 INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID
 WHERE DateGiven >= '$@from$' AND DateGiven <= '$@to$'
 
-UNION SELECT
+UNION ALL SELECT
 animaltransport.PickupDateTime AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,

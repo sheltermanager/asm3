@@ -2,7 +2,7 @@ Paid Costs by Date
 ###
 Financial
 ###
-33601/Any rev01
+33601/Any rev02
 ###
 Animal costs between two dates that have been paid.
 ###
@@ -29,7 +29,7 @@ INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE CostDate >= '$@from$' AND CostDate <= '$@to$'
 AND CostPaidDate Is Not Null
 
-UNION SELECT
+UNION ALL SELECT
 animal.DateBroughtIn AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -43,7 +43,7 @@ WHERE Archived = 0
 AND DailyBoardingCost > 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$'
 
-UNION SELECT
+UNION ALL SELECT
 animalvaccination.DateOfVaccination AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -59,7 +59,7 @@ INNER JOIN vaccinationtype ON animalvaccination.VaccinationID = vaccinationtype.
 WHERE DateOfVaccination >= '$@from$' AND DateOfVaccination <= '$@to$'
 AND CostPaidDate Is Not Null
 
-UNION SELECT
+UNION ALL SELECT
 animaltest.DateOfTest AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -75,7 +75,7 @@ INNER JOIN testtype ON animaltest.TestTypeID = testtype.ID
 WHERE DateOfTest >= '$@from$' AND DateOfTest <= '$@to$'
 AND CostPaidDate Is Not Null
 
-UNION SELECT
+UNION ALL SELECT
 animalmedical.StartDate AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -90,7 +90,7 @@ INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
 WHERE StartDate >= '$@from$' AND StartDate <= '$@to$'
 AND CostPaidDate Is Not Null
 
-UNION SELECT
+UNION ALL SELECT
 animaltransport.PickupDateTime AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,

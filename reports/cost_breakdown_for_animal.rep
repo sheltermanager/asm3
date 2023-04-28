@@ -2,7 +2,7 @@ Cost Breakdown for Animal
 ###
 Financial
 ###
-34601/Any rev03
+34601/Any rev04
 ###
 All costs for one or more selected animals.
 ###
@@ -26,7 +26,7 @@ INNER JOIN costtype ON animalcost.CostTypeID = costtype.ID
 INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE animal.ID IN ($@an$)
 
-UNION SELECT
+UNION ALL SELECT
 animal.DateBroughtIn AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -37,7 +37,7 @@ FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE animal.ID IN ($@an$)
 
-UNION SELECT
+UNION ALL SELECT
 animalvaccination.DateOfVaccination AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -51,7 +51,7 @@ INNER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID
 INNER JOIN vaccinationtype ON animalvaccination.VaccinationID = vaccinationtype.ID
 WHERE animal.ID IN ($@an$)
 
-UNION SELECT
+UNION ALL SELECT
 animaltest.DateOfTest AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -65,7 +65,7 @@ INNER JOIN animaltest ON animaltest.AnimalID = animal.ID
 INNER JOIN testtype ON animaltest.TestTypeID = testtype.ID
 WHERE animal.ID IN ($@an$)
 
-UNION SELECT
+UNION ALL SELECT
 animalmedicaltreatment.DateGiven AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -79,7 +79,7 @@ INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
 INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID
 WHERE animal.ID IN ($@an$)
 
-UNION SELECT
+UNION ALL SELECT
 animaltransport.PickupDateTime AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,

@@ -2,7 +2,7 @@ Cost Breakdown by Transferor
 ###
 Financial
 ###
-34601/Any rev02
+34601/Any rev03
 ###
 Animal costs between two dates, grouped by the transferor (only includes transfers in)
 ###
@@ -32,7 +32,7 @@ INNER JOIN owner ON animal.BroughtInByOwnerID = owner.ID
 WHERE CostDate >= '$@from$' AND CostDate <= '$@to$'
 AND IsTransfer = 1
 
-UNION SELECT
+UNION ALL SELECT
 animal.DateBroughtIn AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -50,7 +50,7 @@ AND DailyBoardingCost > 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$'
 AND IsTransfer = 1
 
-UNION SELECT
+UNION ALL SELECT
 animalvaccination.DateOfVaccination AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -69,7 +69,7 @@ INNER JOIN vaccinationtype ON animalvaccination.VaccinationID = vaccinationtype.
 WHERE DateOfVaccination >= '$@from$' AND DateOfVaccination <= '$@to$'
 AND IsTransfer = 1
 
-UNION SELECT
+UNION ALL SELECT
 animaltest.DateOfTest AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -88,7 +88,7 @@ INNER JOIN testtype ON animaltest.TestTypeID = testtype.ID
 WHERE DateOfTest >= '$@from$' AND DateOfTest <= '$@to$'
 AND IsTransfer = 1
 
-UNION SELECT
+UNION ALL SELECT
 animalmedicaltreatment.DateGiven AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
@@ -107,7 +107,7 @@ INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalMedicalID = an
 WHERE DateGiven >= '$@from$' AND DateGiven <= '$@to$'
 AND IsTransfer = 1
 
-UNION SELECT
+UNION ALL SELECT
 animaltransport.PickupDateTime AS date,
 animal.AnimalName AS name,
 animal.ShelterCode AS code,
