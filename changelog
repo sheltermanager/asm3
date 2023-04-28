@@ -1,6 +1,7 @@
 47
 ================
 
+28/04/23 Fix bug in report SQL syntax checker when using CURRENT_DATE+/-
 28/04/23 Add new person fields to wordprocessor tokens #1270
 27/04/23 Ability to suffix report columns with N2BR to replace linebreaks
 26/04/23 Person date of birth/id number fields #1257

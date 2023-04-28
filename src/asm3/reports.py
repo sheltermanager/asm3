@@ -349,7 +349,7 @@ def check_sql(dbo, username, sql):
     sanitised and in a ready-to-run state.
     If there is a problem with the query, an ASMValidationError is raised
     """
-    COMMON_DATE_TOKENS = ( "$CURRENT_DATE", "$@from", "$@to", "$@thedate" )
+    COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@thedate" )
     # Clean up and substitute some tags
     sql = sql.replace("$USER$", username)
     # Subtitute CONST tokens
@@ -361,12 +361,12 @@ def check_sql(dbo, username, sql):
         end = sql.find("$", i+1)
         if end == -1:
             raise asm3.utils.ASMValidationError("Unclosed $ token found")
-        token = sql[i:end]
+        token = sql[i+1:end]
         sub = ""
-        if token.startswith("$VAR"):
+        if token.startswith("VAR"):
             # VAR tags don't need a substitution
             sub = ""
-        elif token.startswith("$ASK DATE") or token in COMMON_DATE_TOKENS:
+        elif token.startswith("ASK DATE") or token.startswith("CURRENT_DATE") or token in COMMON_DATE_TOKENS:
             sub = "2001-01-01"
         else:
             sub = "0"

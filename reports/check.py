@@ -24,7 +24,7 @@ SHOWNONEXEC = "SHOWNONEXEC" in os.environ and os.environ["SHOWNONEXEC"]
 FORCENONEXEC = "FORCENONEXEC" in os.environ and os.environ["FORCENONEXEC"]
 
 def check(sql, showonly=False):
-    COMMON_DATE_TOKENS = ( "$CURRENT_DATE", "$@from", "$@to", "$@thedate" )
+    COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@thedate" )
     # Clean up and substitute some tags
     sql = sql.replace("$USER$", "dummy")
     # Subtitute CONST tokens
@@ -37,12 +37,12 @@ def check(sql, showonly=False):
         if end == -1:
             print(f"\nERROR: Unclosed $ token found at position {i}")
             break
-        token = sql[i:end]
+        token = sql[i+1:end]
         sub = ""
-        if token.startswith("$VAR"):
+        if token.startswith("VAR"):
             # VAR tags don't need a substitution
             sub = ""
-        elif token.startswith("$ASK DATE") or token in COMMON_DATE_TOKENS:
+        elif token.startswith("ASK DATE") or token.startswith("CURRENT_DATE") or token in COMMON_DATE_TOKENS:
             sub = "2001-01-01"
         else:
             sub = "0"
