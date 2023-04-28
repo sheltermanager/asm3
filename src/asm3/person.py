@@ -14,7 +14,7 @@ import asm3.media
 import asm3.reports
 import asm3.users
 import asm3.utils
-from asm3.i18n import _, add_days, date_diff_days, format_time, python2display, subtract_years, now
+from asm3.i18n import _, add_days, date_diff_days, format_time, display2python, python2display, subtract_years, now
 from asm3.sitedefs import GEO_BATCH, GEO_LIMIT
 
 import datetime
@@ -1155,7 +1155,9 @@ def merge_person_details(dbo, username, personid, d, force=False):
     if p is None: return
     def merge(dictfield, fieldname):
         if dictfield not in d or d[dictfield] == "": return
-        if p[fieldname] is None or p[fieldname] == "" or force:
+        if dictfield.startswith("date") and (p[fieldname] is None or force):
+            dbo.update("owner", personid, { fieldname: display2python(dbo.locale, d[dictfield]) }, username)
+        elif p[fieldname] is None or p[fieldname] == "" or force:
             dbo.update("owner", personid, { fieldname: d[dictfield] }, username)
     merge("address", "OWNERADDRESS")
     merge("town", "OWNERTOWN")
@@ -1168,6 +1170,10 @@ def merge_person_details(dbo, username, personid, d, force=False):
     merge("mobiletelephone2", "MOBILETELEPHONE2")
     merge("emailaddress", "EMAILADDRESS")
     merge("emailaddress2", "EMAILADDRESS2")
+    merge("idnumber", "IDENTIFICATIONNUMBER")
+    merge("idnumber2", "IDENTIFICATIONNUMBER2")
+    merge("dateofbirth", "DATEOFBIRTH")
+    merge("dateofbirth2", "DATEOFBIRTH2")
     merge("comments", "COMMENTS")
 
 def merge_gdpr_flags(dbo, username, personid, flags):
@@ -1246,7 +1252,13 @@ def merge_person(dbo, username, personid, mergepersonid):
     mp["hometelephone"] = mp.HOMETELEPHONE
     mp["worktelephone"] = mp.WORKTELEPHONE
     mp["mobiletelephone"] = mp.MOBILETELEPHONE
+    mp["mobiletelephone2"] = mp.MOBILETELEPHONE2
     mp["emailaddress"] = mp.EMAILADDRESS
+    mp["emailaddress2"] = mp.EMAILADDRESS2
+    mp["idnumber"] = mp.IDENTIFICATIONNUMBER
+    mp["idnumber2"] = mp.IDENTIFICATIONNUMBER2
+    mp["dateofbirth"] = python2display(l, mp.DATEOFBIRTH)
+    mp["dateofbirth2"] = python2display(l, mp.DATEOFBIRTH2)
     mp["comments"] = mp.COMMENTS
     merge_person_details(dbo, username, personid, mp)
 
