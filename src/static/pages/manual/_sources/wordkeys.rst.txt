@@ -934,14 +934,14 @@ the following order: Latest movement on file, latest reservation on file,
 current owner (if the animal is non-shelter)
 Log keys are available for people, but prefixed with PersonLog instead of just Log.
 
-Title / OwnerTitle
+Title / OwnerTitle / Title2 /
     The person's title
-Initials / OwnerInitials 
+Initials / OwnerInitials / Initials2
     The person's initials
-Forenames / OwnerForenames 
-    (Firstnames / OwnerFirstNames for US users) 
-Surname / OwnerSurname 
-    (Lastname / OwnerLastName for US users) 
+Forenames / OwnerForenames / Forenames2
+    (Firstnames / OwnerFirstNames / Firstnames2 for US users) 
+Surname / OwnerSurname / Surname2
+    (Lastname / OwnerLastName / Lastname2 for US users) 
 OwnerFlags
     A list of the flags assigned to a person, separated by commas.
 OwnerComments 
@@ -990,12 +990,16 @@ OwnerJurisdiction
     The person's jurisdiction
 OwnerSite
     The site this person is linked to
-WorkTelephone 
+WorkTelephone / WorkTelephone2
     The person's work telephone number
-MobileTelephone 
-    (CellTelephone for US users)
-EmailAddress 
+MobileTelephone / MobileTelephone2
+    (CellTelephone / CellTelephone2 for US users)
+EmailAddress / EmailAddress2
     The person's email address
+DateOfBirth / DateOfBirth2
+    The person's date of birth
+IDNumber / IDNumber2
+    The person's identification number (driving licence, passport, national ID card, etc)
 MembershipNumber 
     The person's membership number
 MembershipExpiryDate 
