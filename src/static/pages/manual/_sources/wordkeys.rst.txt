@@ -996,7 +996,7 @@ MobileTelephone / MobileTelephone2
     (CellTelephone / CellTelephone2 for US users)
 EmailAddress / EmailAddress2
     The person's email address
-DateOfBirth / DateOfBirth2
+OwnerDateOfBirth / OwnerDateOfBirth2
     The person's date of birth
 IDNumber / IDNumber2
     The person's identification number (driving licence, passport, national ID card, etc)
