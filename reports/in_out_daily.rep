@@ -2,7 +2,7 @@ In/Out Today
 ###
 Movements
 ###
-3200/Any rev03
+3200/Any rev04
 ###
 All animals entering and leaving the shelter today.
 ###
@@ -326,9 +326,9 @@ WHERE DeceasedDate >= '$CURRENT_DATE$' AND DeceasedDate <= '$CURRENT_DATE$' AND 
 
 UNION ALL SELECT DeceasedDate AS thedate,
 (SELECT ReasonName FROM deathreason WHERE ID = animal.PTSReasonID) AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
-animal.ID AS AID,
 AnimalName,
 (SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
 (SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
