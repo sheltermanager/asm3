@@ -3225,18 +3225,22 @@ def clone_from_template(dbo, username, animalid, datebroughtin, dob, animaltypei
     if copyfrom.ANIMALNAME.lower().endswith("dob"):
         templatedate = copyfrom.DATEOFBIRTH
         newrecorddate = dob
-    # Helper function to adjust the date on a template record when copying it to a new record.
-    # Does this by working out the offset in days between the dates on the template record and 
-    # applying that offset to the base date on the new record.
-    # Normally the template date and new record date are datebroughtin, but if
-    # this template is set to operate on DOB, then dateofbirth is used instead.
     def adjust_date(d):
+        """
+        Helper function to adjust the date on a template record when copying it to a new record.
+        Does this by working out the offset in days between the dates on the template record and 
+        applying that offset to the base date on the new record.
+        Normally the template date and new record date are datebroughtin, but if
+        this template is set to operate on DOB, then dateofbirth is used instead.
+        If the calculated date is before today, today is returned instead.
+        """
         dayoffset = date_diff_days(templatedate, d)
         if dayoffset < 0:
             adjdate = subtract_days(newrecorddate, dayoffset)
         else:
             adjdate = add_days(newrecorddate, dayoffset)
         adjdate = adjdate.replace(hour=0, minute=0, second=0, microsecond=0) # throw away any time info that might have been on the original date
+        if adjdate < dbo.today(): adjdate = dbo.today()
         return dbo.sql_date(adjdate)
     # Only set flags on the new record if they are set on the template - just copying them
     # meant that we were clearing defaults if they were set for not for adoption etc.

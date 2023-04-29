@@ -1,6 +1,7 @@
 47
 ================
 
+29/04/23 clone_from_template: if calculated date < today, use today
 29/04/23 Validation for second email field #741
 28/04/23 Merge new person fields/DOB/ID when merging details #1257
 28/04/23 Fix bug in report SQL syntax checker when using CURRENT_DATE+/-
