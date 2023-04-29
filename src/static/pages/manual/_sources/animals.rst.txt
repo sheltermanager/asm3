@@ -452,6 +452,8 @@ For example:
 * Required date of that vaccination when added to the new animal will 
   be today + 10 days
 
+If the calculated date is in the past, today will be used instead.
+
 When copying from a template animal, ASM will copy the following items to your
 new animal record:
 
