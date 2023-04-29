@@ -663,6 +663,15 @@ $(function() {
                 }
             }
 
+            // email2
+            if (common.trim($("#email2").val()) != "") {
+                if (!validate.email($("#email2").val())) {
+                    header.show_error(_("Invalid email address '{0}'").replace("{0}", $("#email2").val()));
+                    validate.highlight("email");
+                    return false;
+                }
+            }
+
             // any additional fields that are marked mandatory
             if (!additional.validate_mandatory()) {
                 return false;

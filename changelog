@@ -1,7 +1,8 @@
 47
 ================
 
-28/04/23 Merge new person fields/DOB/ID when merging details
+29/04/23 Validation for second email field #741
+28/04/23 Merge new person fields/DOB/ID when merging details #1257
 28/04/23 Fix bug in report SQL syntax checker when using CURRENT_DATE+/-
 28/04/23 Add new person fields to wordprocessor tokens #1270
 27/04/23 Ability to suffix report columns with N2BR to replace linebreaks
