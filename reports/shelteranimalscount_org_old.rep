@@ -2,9 +2,9 @@ shelteranimalscount.org matrix (old pre-2021)
 ###
 Figures
 ###
-33600/DISABLED
+33600/PostgreSQL rev08
 ###
-Information needed to complete the shelteranimalscount.org data matrix
+Information needed to complete the shelteranimalscount.org data matrix (superceded by 2021 version)
 ###
 en
 ###
@@ -420,7 +420,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS AdultDogTransferOut,
 
 (SELECT COUNT(*) FROM animal
@@ -429,7 +429,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS JuniorDogTransferOut,
 
 (SELECT COUNT(*) FROM animal
@@ -438,7 +438,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS AdultCatTransferOut,
 
 (SELECT COUNT(*) FROM animal
@@ -447,7 +447,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS JuniorCatTransferOut,
 
 
@@ -1410,7 +1410,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Transfer To Another Agency Canine Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1419,7 +1419,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 1
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Transfer To Another Agency Canine Up To 5 Months",
 
 0 AS "Transfer To Another Agency Canine Age Unknown", 
@@ -1430,7 +1430,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth < MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth < MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Transfer To Another Agency Feline Adult",
 
 (SELECT COUNT(*) FROM animal
@@ -1439,7 +1439,7 @@ INNER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE MovementType = 3
 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
 AND SpeciesID = 2
-AND DateOfBirth >= MovementDate - INTERVAL '5 months' 
+AND animal.DateOfBirth >= MovementDate - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS "Transfer To Another Agency Feline Up To 5 Months",
 
 0 AS "Transfer To Another Agency Feline Age Unknown", 
