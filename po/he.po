@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-03-06 11:20+0000\n"
-"PO-Revision-Date: 2023-04-04 15:12+0300\n"
+"POT-Creation-Date: 2023-04-21 11:46+0000\n"
+"PO-Revision-Date: 2023-04-30 15:50+0300\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -116,9 +116,17 @@ msgstr "שבוע אחד"
 msgid "1 year"
 msgstr "שנה אחת"
 
+#: mobile_photo_uploader.js
+msgid "1. Choose Animal"
+msgstr "1. בחר חיה"
+
 #: publish_options.js
 msgid "2 weeks"
 msgstr "שבועיים"
+
+#: mobile_photo_uploader.js
+msgid "2. Woofsqueak!"
+msgstr "2. ווף-סקוויק!"
 
 #: mobile_login.js
 msgid "2FA Code"
@@ -131,6 +139,10 @@ msgstr "‫2FA פעיל"
 #: publish_options.js
 msgid "3 months"
 msgstr "3 חודשים"
+
+#: mobile_photo_uploader.js
+msgid "3. Capture Photo"
+msgstr "3. צלם תמונה"
 
 #: publish_options.js
 msgid "4 weeks"
@@ -515,7 +527,7 @@ msgstr "הוסף טיפולים רפואיים"
 msgid "Add a new animal"
 msgstr "הוסף חיה חדשה"
 
-#: event_new.js
+#: configuration.py header.js event_new.js
 msgid "Add a new event"
 msgstr "הוסף אירוע חדש"
 
@@ -1838,7 +1850,7 @@ msgstr "שלח עותק נסתר לכל האנשים הקשורים לתנועו
 msgid "Baby"
 msgstr "גור"
 
-#: mobile_report.js mobile2.js
+#: mobile_photo_uploader.js mobile_report.js mobile2.js
 msgid "Back"
 msgstr "אחורה"
 
@@ -2874,9 +2886,10 @@ msgstr "שכפל חיה זו?"
 msgid "Cloning..."
 msgstr "משכפל..."
 
-#: mobile_login.js onlineform_incoming.js service_checkout_adoption.js
-#: mobile_report.js main.js service_sign_document.js animal_new.js
-#: common_widgets.js mobile_sign.js mobile2.js
+#: mobile_login.js mobile_photo_uploader.js onlineform_incoming.js
+#: service_checkout_adoption.js mobile_report.js main.js
+#: service_sign_document.js animal_new.js common_widgets.js mobile_sign.js
+#: mobile2.js
 msgid "Close"
 msgstr "סגור"
 
@@ -3016,7 +3029,7 @@ msgid "Complete adoption date before linking to event."
 msgstr "מלאו תאריך אימוץ לפני קישור לאירוע."
 
 #: medical.py mobile.py dbupdate.py incident_find.js medical.js diary.js
-#: header_edit_header.js reports.js transport.js animal.js
+#: header_edit_header.js reports.js transport.js animal.js mobile2.js
 msgid "Completed"
 msgstr "הושלמה"
 
@@ -3052,11 +3065,11 @@ msgstr "סוג סיום {0}"
 msgid "Completion Date"
 msgstr "מועד סיום"
 
-#: mobile.py incident.js mobile2.js
+#: mobile.py incident.js
 msgid "Completion Date/Time"
 msgstr "תאריך וזמן סיום"
 
-#: mobile.py incident.js incident_find_results.js mobile2.js
+#: mobile.py incident.js incident_find_results.js
 msgid "Completion Type"
 msgstr "סוג סיום"
 
@@ -3214,6 +3227,10 @@ msgstr "ארץ"
 #: event_find_results.js
 msgid "County"
 msgstr "מחוז"
+
+#: person_new.js common_personchooser.js person.js
+msgid "Couple"
+msgstr "זוג"
 
 #: html.py header_edit_header.js common_html.js options.js
 msgid "Courtesy Listing"
@@ -5509,6 +5526,10 @@ msgstr "קובץ"
 msgid "Filter"
 msgstr "סינון"
 
+#: mobile_photo_uploader.js
+msgid "Filter by location"
+msgstr "סנן לפי מיקום"
+
 #: html.py mobile.py mobile2.js
 msgid "Financial"
 msgstr "כספים"
@@ -5521,7 +5542,7 @@ msgstr "פרוש"
 msgid "Find Animal"
 msgstr "חיפוש חיה"
 
-#: event_find.js
+#: configuration.py header.js event_find.js
 msgid "Find Event"
 msgstr "חפש אירוע"
 
@@ -7100,8 +7121,8 @@ msgid "Index"
 msgstr "אינדקס"
 
 #: person_new.js common_personchooser.js person.js
-msgid "Individual/Couple"
-msgstr "יחיד/זוג"
+msgid "Individual"
+msgstr "יחיד"
 
 #: html.py
 msgid "Induct a new animal"
@@ -9764,6 +9785,14 @@ msgid "Phone contains"
 msgstr "הטלפון מכיל"
 
 #: mobile.py
+msgid "Photo Upload"
+msgstr "העלאת תמונה"
+
+#: code.py mobile2.js
+msgid "Photo Uploader"
+msgstr "מעלה התמונות"
+
+#: mobile.py
 msgid "Photo successfully uploaded."
 msgstr "תמונה הועלתה בהצלחה."
 
@@ -9824,6 +9853,10 @@ msgstr "פיטבול טרייר"
 #: dbupdate.py
 msgid "Pixie-Bob"
 msgstr "פיקסי־בוב"
+
+#: mobile_photo_uploader.js
+msgid "Play"
+msgstr "הפעל"
 
 #: options.js
 msgid ""
@@ -10459,7 +10492,7 @@ msgstr "הפנה לכתובת זו לאחר תשלום"
 msgid "Reference"
 msgstr "מספר מזהה"
 
-#: clinic_appointment.js waitinglist_results.js accounts_trx.js
+#: clinic_appointment.js waitinglist_results.js accounts_trx.js event_animals.js
 msgid "Refresh"
 msgstr "רענון"
 
@@ -11286,6 +11319,10 @@ msgstr "שומר..."
 msgid "Scale published animal images to"
 msgstr "שנה גודל תמונות מפורסמות ל"
 
+#: mobile_photo_uploader.js
+msgid "Scan Paperwork"
+msgstr "סרוק ניירת"
+
 #: change_user_settings.js
 msgid ""
 "Scan the QR code below with the Google Authenticator app for your mobile "
@@ -11387,7 +11424,7 @@ msgstr "בחר הכל"
 msgid "Select all reservations for this animal"
 msgstr "בחר את כל השריונים לחיה זו"
 
-#: onlineform_incoming.js common_animalchooser.js
+#: mobile_photo_uploader.js onlineform_incoming.js common_animalchooser.js
 msgid "Select an animal"
 msgstr "בחירת חיה"
 
@@ -11415,6 +11452,10 @@ msgstr "בחירת חיות"
 #: animal.js person.js
 msgid "Select date for diary task"
 msgstr "בחר תאריך לתבנית משימה"
+
+#: mobile_photo_uploader.js
+msgid "Select from Gallery"
+msgstr "בחר מהגלריה"
 
 #: person.js
 msgid "Select person to merge"
@@ -12606,6 +12647,10 @@ msgstr "טאבי ולבן"
 #: common_html.js
 msgid "Table"
 msgstr "טבלה"
+
+#: mobile_photo_uploader.js
+msgid "Take Photo"
+msgstr "צלם תמונה"
 
 #: common_widgets.js
 msgid "Take another payment"
