@@ -1151,17 +1151,20 @@ def merge_person_details(dbo, username, personid, d, force=False):
     d: The dictionary of values to merge
     force: If True, forces overwrite of the details with values from d if they are present
     """
-    updatevalues = {}
+    uv = {}
     p = get_person(dbo, personid)
     if p is None: return
     def merge(dictfield, fieldname):
         if dictfield not in d or d[dictfield] == "": return
         if dictfield == "surname2" and d[dictfield] != "": 
-            updatevalues["OwnerType"] = 3 # Force person to be a couple if a second surname is supplied
+            uv["OwnerType"] = 3 # Force person to be a couple if a second surname is supplied
+            p.OWNERTYPE = 3
         if dictfield.startswith("date") and (p[fieldname] is None or force):
-            updatevalues[fieldname] = display2python(dbo.locale, d[dictfield])
+            uv[fieldname] = display2python(dbo.locale, d[dictfield])
+            p[fieldname] = uv[fieldname]
         elif p[fieldname] is None or p[fieldname] == "" or force:
-            updatevalues[fieldname] = d[dictfield]
+            uv[fieldname] = d[dictfield]
+            p[fieldname] = uv[fieldname]
     merge("title", "OWNERTITLE")
     merge("initials", "OWNERINITIALS")
     merge("forenames", "OWNERFORENAMES")
@@ -1186,8 +1189,9 @@ def merge_person_details(dbo, username, personid, d, force=False):
     merge("dateofbirth", "DATEOFBIRTH")
     merge("dateofbirth2", "DATEOFBIRTH2")
     merge("comments", "COMMENTS")
-    if len(updatevalues) > 0:
-        dbo.update("owner", personid, updatevalues, username)
+    uv["OwnerName"] = calculate_owner_name(dbo, p.OWNERTYPE, p.OWNERTITLE, p.OWNERINITIALS, p.OWNERFORENAMES, p.OWNERSURNAME, "", "", \
+                        p.OWNERTITLE2, p.OWNERINITIALS2, p.OWNERFORENAMES2, p.OWNERSURNAME2)
+    dbo.update("owner", personid, uv, username)
 
 def merge_gdpr_flags(dbo, username, personid, flags):
     """
@@ -1257,6 +1261,14 @@ def merge_person(dbo, username, personid, mergepersonid):
 
     # Merge any contact info
     mp = get_person(dbo, mergepersonid)
+    mp["title"] = mp.OWNERTITLE
+    mp["initials"] = mp.OWNERINITIALS
+    mp["forenames"] = mp.OWNERFORENAMES
+    mp["surname"] = mp.OWNERSURNAME
+    mp["title2"] = mp.OWNERTITLE2
+    mp["initials2"] = mp.OWNERINITIALS2
+    mp["forenames2"] = mp.OWNERFORENAMES2
+    mp["surname2"] = mp.OWNERSURNAME2
     mp["address"] = mp.OWNERADDRESS
     mp["town"] = mp.OWNERTOWN
     mp["county"] = mp.OWNERCOUNTY
