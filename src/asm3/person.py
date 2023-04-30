@@ -1151,14 +1151,25 @@ def merge_person_details(dbo, username, personid, d, force=False):
     d: The dictionary of values to merge
     force: If True, forces overwrite of the details with values from d if they are present
     """
+    updatevalues = {}
     p = get_person(dbo, personid)
     if p is None: return
     def merge(dictfield, fieldname):
         if dictfield not in d or d[dictfield] == "": return
+        if dictfield == "surname2" and d[dictfield] != "": 
+            updatevalues["OwnerType"] = 3 # Force person to be a couple if a second surname is supplied
         if dictfield.startswith("date") and (p[fieldname] is None or force):
-            dbo.update("owner", personid, { fieldname: display2python(dbo.locale, d[dictfield]) }, username)
+            updatevalues[fieldname] = display2python(dbo.locale, d[dictfield])
         elif p[fieldname] is None or p[fieldname] == "" or force:
-            dbo.update("owner", personid, { fieldname: d[dictfield] }, username)
+            updatevalues[fieldname] = d[dictfield]
+    merge("title", "OWNERTITLE")
+    merge("initials", "OWNERINITIALS")
+    merge("forenames", "OWNERFORENAMES")
+    merge("surname", "OWNERSURNAME")
+    merge("title2", "OWNERTITLE2")
+    merge("initials2", "OWNERINITIALS2")
+    merge("forenames2", "OWNERFORENAMES2")
+    merge("surname2", "OWNERSURNAME2")
     merge("address", "OWNERADDRESS")
     merge("town", "OWNERTOWN")
     merge("county", "OWNERCOUNTY")
@@ -1175,6 +1186,8 @@ def merge_person_details(dbo, username, personid, d, force=False):
     merge("dateofbirth", "DATEOFBIRTH")
     merge("dateofbirth2", "DATEOFBIRTH2")
     merge("comments", "COMMENTS")
+    if len(updatevalues) > 0:
+        dbo.update("owner", personid, updatevalues, username)
 
 def merge_gdpr_flags(dbo, username, personid, flags):
     """
