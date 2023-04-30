@@ -53,7 +53,7 @@ FROM animal a
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
 INNER JOIN species s ON s.ID = a.SpeciesID
 WHERE a.Archived = 0 AND a.CombiTested = 0 AND SpeciesID = 2
-AND DateOfBirth <= '$CURRENT_DATE-182$'
+AND a.DateOfBirth <= '$CURRENT_DATE-182$'
 ORDER BY a.DateOfBirth
 ###
 $$HEADER

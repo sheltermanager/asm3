@@ -18,7 +18,7 @@ LEFT OUTER JOIN species ON animal.SpeciesID = species.ID
 LEFT OUTER JOIN lksex ON animal.Sex = lksex.ID
 WHERE Archived = 0 AND Neutered = 0
 AND SpeciesID IN (1,2)
-AND DateOfBirth <= '$ASK DATE Animals born before$'
+AND animal.DateOfBirth <= '$ASK DATE Animals born before$'
 ###
 $$HEADER
 <table border=1><tr>

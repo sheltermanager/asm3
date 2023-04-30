@@ -12,7 +12,7 @@ SELECT a.AnimalName, a.ShelterCode, t.AnimalType, i.LocationName
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
-WHERE a.Archived = 0 AND a.AcceptanceNumber = '' AND DateOfBirth >= '$CURRENT_DATE-182$'
+WHERE a.Archived = 0 AND a.AcceptanceNumber = '' AND a.DateOfBirth >= '$CURRENT_DATE-182$'
 ORDER BY t.AnimalType, a.AnimalName
 ###
 $$HEADER

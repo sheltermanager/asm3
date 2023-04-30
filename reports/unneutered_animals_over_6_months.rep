@@ -14,7 +14,7 @@ INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species p ON p.ID = a.SpeciesID
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
 INNER JOIN lksex s ON s.ID = a.Sex
-WHERE a.Archived = 0 AND a.Neutered = 0 AND DateOfBirth <= '$CURRENT_DATE-182$'
+WHERE a.Archived = 0 AND a.Neutered = 0 AND a.DateOfBirth <= '$CURRENT_DATE-182$'
 AND a.SpeciesID IN (1,2)
 ORDER BY t.AnimalType, a.AnimalName
 ###
@@ -61,7 +61,7 @@ INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species p ON p.ID = a.SpeciesID
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
 INNER JOIN lksex s ON s.ID = a.Sex
-WHERE a.Neutered = 0 AND DateOfBirth <= '$CURRENT_DATE-182$' AND DeceasedDate Is Null 
+WHERE a.Neutered = 0 AND a.DateOfBirth <= '$CURRENT_DATE-182$' AND DeceasedDate Is Null 
 AND a.SpeciesID IN (1,2)
 ORDER BY t.AnimalType, a.AnimalName
 ###

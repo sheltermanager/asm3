@@ -2,7 +2,7 @@ Adoptions by Date with Addresses and Age
 ###
 Movements
 ###
-2870/PostgreSQL rev01
+2870/PostgreSQL rev02
 ###
 Adoptions between two dates with the names/addresses of original owners and adopters and the age at adoption.
 ###
@@ -19,7 +19,7 @@ oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo
 oo.EmailAddress AS OOEmail,
 no.OwnerName, no.OwnerAddress,
 no.OwnerTown, no.OwnerCounty,
-no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone, DateOfBirth, age(MovementDate,DateOfBirth)::varchar AS AgeAtAdoption
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone, animal.DateOfBirth, age(adoption.MovementDate,animal.DateOfBirth)::varchar AS AgeAtAdoption
 FROM adoption
 INNER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN owner no ON adoption.OwnerID = no.ID

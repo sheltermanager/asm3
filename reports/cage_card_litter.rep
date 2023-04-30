@@ -57,7 +57,7 @@ INNER JOIN entryreason ON
 entryreason.ID=animal.entryreasonid
 WHERE Archived = 0
 AND LOWER(AcceptanceNumber) LIKE LOWER('%$ASK STRING Litter ID$%')
-ORDER BY AcceptanceNumber, DateOfBirth
+ORDER BY AcceptanceNumber, animal.DateOfBirth
 ###
 $$HEADER
 <style>

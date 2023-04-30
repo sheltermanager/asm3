@@ -10,7 +10,7 @@ en
 ###
 SELECT ShelterCode, AnimalName, ay.AnimalType, s.SpeciesName, 
 NeuteredDate, AnimalComments, x.Sex, nv.OwnerName,
-age(NeuteredDate, DateOfBirth)::varchar AS AgeAtNeutering
+age(NeuteredDate, animal.DateOfBirth)::varchar AS AgeAtNeutering
 FROM animal
 INNER JOIN lksex x ON x.ID = animal.Sex 
 INNER JOIN animaltype ay ON ay.ID = animal.AnimalTypeID
