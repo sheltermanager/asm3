@@ -1167,8 +1167,8 @@ def merge_person_details(dbo, username, personid, d, force=False):
             p[fieldname] = uv[fieldname]
     merge("title", "OWNERTITLE")
     merge("initials", "OWNERINITIALS")
-    merge("forenames", "OWNERFORENAMES")
-    merge("surname", "OWNERSURNAME")
+    #merge("forenames", "OWNERFORENAMES") # Never overwrite
+    #merge("surname", "OWNERSURNAME")     # The primary name
     merge("title2", "OWNERTITLE2")
     merge("initials2", "OWNERINITIALS2")
     merge("forenames2", "OWNERFORENAMES2")
