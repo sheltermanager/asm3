@@ -30,9 +30,9 @@ ANIMALCODE
 ANIMALNAME
     The animal's name
 ANIMALIMAGE
-    A photo for the animal, it can either be a fully qualified HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI
+    A photo for the animal, it can either be an absolute HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI
 ANIMALPDFDATA
-    A PDF file to attach to the animal. Like image, it can be a fully qualified URL or a base64 encoded PDF as a data URI
+    A PDF file to attach to the animal. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI
 ANIMALPDFNAME
     The filename associated with the PDF data
 ANIMALNONSHELTER
@@ -311,9 +311,9 @@ PERSONMATCHCOMMENTSCONTAIN
 PERSONADDITIONAL<fieldname>
     If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH
 PERSONIMAGE
-    A photo for the person, it can either be a fully qualified HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI
+    A photo for the person, it can either be an absolute HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI
 PERSONPDFDATA
-    A PDF file to attach to the person. Like image, it can be a fully qualified URL or a base64 encoded PDF as a data URI
+    A PDF file to attach to the person. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI
 PERSONPDFNAME
     The filename associated with the PDF data
 TESTTYPE
