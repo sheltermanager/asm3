@@ -1,6 +1,7 @@
 47
 ================
 
+01/05/23 Include couple email if set when emailing from person #1265
 30/04/23 wordkeys: OriginalOwnerIDNumber/CurrentOwnerIDNumber/ReservedOwnerIDNumber
 30/04/23 merge_person_details, include couple fields, optimise for single query
 29/04/23 clone_from_template: if calculated date < today, use today

@@ -858,11 +858,13 @@ $(function() {
             });
 
             $("#button-email").button().click(function() {
+                let email = $("#email").val(), email2 = $("#email2").val();
+                if (email2) { email += ", " + email2; }
                 $("#emailform").emailform("show", {
                     post: "person",
                     formdata: "mode=email&personid=" + $("#personid").val(),
                     name: $("#forenames").val() + " " + $("#surname").val(),
-                    email: $("#email").val(),
+                    email: email,
                     logtypes: controller.logtypes,
                     personid: controller.person.ID,
                     templates: controller.templates
