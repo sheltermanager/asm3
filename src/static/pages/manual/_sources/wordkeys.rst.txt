@@ -270,6 +270,8 @@ OriginalOwnerMobilePhone
     The original owner's mobile phone number 
 OriginalOwnerEmail
     The original owner's email address 
+OriginalOwnerIDNumber
+    The original owner's identification number (driving licence, passport, etc)
 OriginalOwnerJurisdiction
     The jurisdiction of the original owner
 OriginalOwner Additional Fields
@@ -298,6 +300,8 @@ CurrentOwnerMobilePhone
     Current owner's cell/mobile phone number
 CurrentOwnerEmail 
     Current owner's email address
+CurrentOwnerIDNumber
+    The current owner's identification number (driving licence, passport, etc)
 CurrentOwnerJurisdiction
     The jurisdiction of the current owner
 CurrentOwner Additional Fields
@@ -326,6 +330,8 @@ ReservedOwnerMobilePhone
     Reserved owner's cell/mobile phone number
 ReservedOwnerEmail 
     Reserved owner's email address
+ReservedOwnerIDNumber
+    The reserving owner's identification number (driving licence, passport, etc)
 ReservedOwnerJurisdiction
     The jurisdiction of the reserving owner
 ReservationStatus

@@ -236,7 +236,7 @@ ORIGINALOWNERFLAGS
 ORIGINALOWNERADDITIONAL<fieldname> 
     If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth ORIGINALOWNERADDITIONALDATEOFBIRTH
 PERSONCLASS
-    1 = Individual/Couple, 2 = Organisation
+    1 = Individual, 2 = Organisation
 PERSONTITLE
     The person's title
 PERSONINITIALS
