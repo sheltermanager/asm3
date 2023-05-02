@@ -349,7 +349,7 @@ def check_sql(dbo, username, sql):
     sanitised and in a ready-to-run state.
     If there is a problem with the query, an ASMValidationError is raised
     """
-    COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@thedate" )
+    COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@thedate", "@dt" )
     # Clean up and substitute some tags
     sql = sql.replace("$USER$", username)
     # Subtitute CONST tokens
@@ -366,6 +366,8 @@ def check_sql(dbo, username, sql):
         if token.startswith("VAR"):
             # VAR tags don't need a substitution
             sub = ""
+        elif token == "@year":
+            sub = "2001"
         elif token.startswith("ASK DATE") or token.startswith("CURRENT_DATE") or token in COMMON_DATE_TOKENS:
             sub = "2001-01-01"
         else:

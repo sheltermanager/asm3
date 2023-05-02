@@ -10,8 +10,9 @@
     environment variables that can be set prior to running:
 
     SHOWNONEXEC=1 - show non-SQLite queries so they can be copied/pasted
+    FORCENONEXEC=1 - force running of non-SQLite queries against SQLite anyway
+    EXECPOSTGRES=1 - ssh to our dev db on eur04 to execute PostgreSQL queries
 
-    FORCENONEXEC=1 - force running of non-SQLite queries anyway
 """
 
 import os, sys, re
@@ -22,9 +23,10 @@ db = web.database( dbn = "sqlite", db = "../scripts/schema/schema.db" )
 
 SHOWNONEXEC = "SHOWNONEXEC" in os.environ and os.environ["SHOWNONEXEC"]
 FORCENONEXEC = "FORCENONEXEC" in os.environ and os.environ["FORCENONEXEC"]
+EXECPOSTGRES = "EXECPOSTGRES" in os.environ and os.environ["EXECPOSTGRES"]
 
-def check(sql, showonly=False):
-    COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@thedate" )
+def substitute(sql):
+    COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@dt", "@thedate" )
     # Clean up and substitute some tags
     sql = sql.replace("$USER$", "dummy")
     # Subtitute CONST tokens
@@ -42,21 +44,15 @@ def check(sql, showonly=False):
         if token.startswith("VAR"):
             # VAR tags don't need a substitution
             sub = ""
+        elif token == "@year":
+            sub = "2001"
         elif token.startswith("ASK DATE") or token.startswith("CURRENT_DATE") or token in COMMON_DATE_TOKENS:
             sub = "2001-01-01"
         else:
             sub = "0"
         sql = sql[0:i] + sub + sql[end+1:]
         i = sql.find("$", i+1)
-    sql = sql.strip()
-    try:
-        if not showonly:
-            db.query(sql)
-        else:
-            print(sql)
-    except Exception as err:
-        print(f"\nQUERY FAILED: {err}\n")
-        print(sql)
+    return sql.strip()
 
 def parse_reports(data):
     reports = data.split("&&&")
@@ -75,7 +71,11 @@ def parse_reports(data):
         if len(sql) <= 3:
             print("         [ skip old ASM2 built-in ]")
         elif dbinfo.find("Any") != -1 or dbinfo.find("SQLite") != -1 or FORCENONEXEC:
-            check(sql)
+            try:
+                db.query(substitute(sql))
+            except Exception as err:
+                print(f"\nQUERY FAILED: {err}\n")
+                print(sql)
             if subreports:
                 elem=0
                 name = ""
@@ -90,11 +90,21 @@ def parse_reports(data):
                         elem = 0
                         # process subreport
                         print(f"------------ {name}")
-                        check(sql)
+                        try:
+                            db.query(substitute(sql))
+                        except Exception as err:
+                            print(f"\nQUERY FAILED: {err}\n")
+                            print(sql)
+        elif EXECPOSTGRES and dbinfo.find("PostgreSQL") != -1:
+            with open("zzz_check.sql", "w") as f:
+                f.write(substitute(sql))
+            os.system("scp -q zzz_check.sql root@eur04bdx.sheltermanager.com:/root/")
+            os.system("ssh root@eur04bdx.sheltermanager.com \"psql -q -U robin -f zzz_check.sql > /dev/null && rm -f zzz_check.sql\"")
+            os.system("rm -f zzz_check.sql")
         else:
             if SHOWNONEXEC:
                 print(f"Cannot execute query for {dbinfo}, copy and paste query below:\n")
-                check(sql, True) 
+                print(substitute(sql))
             else:
                 print("         [ skip non-SQLite query ]")
 
