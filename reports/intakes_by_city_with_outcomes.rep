@@ -2,14 +2,14 @@ Intakes by Brought In By City with Outcomes
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Animals entering between two dates that were brought in from a particular city with their final outcomes
 ###
 en
 ###
 SELECT
-a.AnimalName, a.ShelterCode, a.DateOfBirth, s.SpeciesName, atp.AnimalType, 
+a.AnimalName, a.ID AS AID, a.ShelterCode, a.DateOfBirth, s.SpeciesName, atp.AnimalType, 
 a.BreedName, e.ReasonName, o.OwnerName, a.DateBroughtIn, m.MovementDate,
 a.NeuteredDate, a.IdentichipNumber, 
 bo.OwnerName AS BroughtInOwner, bo.OwnerTown AS BroughtInCity, bo.OwnerAddress AS BroughtInAddress, bo.OwnerPostcode AS BroughtInPostcode,
@@ -62,7 +62,7 @@ GROUP$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE / $BREEDNAME / $SPECIESNAME</td>
 <td>$IDENTICHIPNUMBER</td>
@@ -82,14 +82,14 @@ Intakes by Original Owner City with Outcomes
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Animals entering between two dates where the original owner is from a particular city with their final outcomes
 ###
 en
 ###
 SELECT
-a.AnimalName, a.ShelterCode, a.DateOfBirth, s.SpeciesName, atp.AnimalType, 
+a.AnimalName, a.ID AS AID, a.ShelterCode, a.DateOfBirth, s.SpeciesName, atp.AnimalType, 
 a.BreedName, e.ReasonName, o.OwnerName, a.DateBroughtIn, m.MovementDate,
 a.NeuteredDate, a.IdentichipNumber, 
 oo.OwnerName AS OriginalOwnerName, oo.OwnerTown AS OriginalOwnerCity, oo.OwnerAddress AS OriginalOwnerAddress, oo.OwnerPostcode AS OriginalOwnerPostcode,
@@ -142,7 +142,7 @@ GROUP$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE / $BREEDNAME / $SPECIESNAME</td>
 <td>$IDENTICHIPNUMBER</td>
