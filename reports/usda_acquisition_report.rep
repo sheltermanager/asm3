@@ -2,7 +2,7 @@ USDA Acquisition Report
 ###
 Figures
 ###
-Any rev02
+34702/Any rev03
 ###
 Animals entering between two dates with their final outcomes for completing the USDA acquisitions form/APHIS Form 7005, Nov 2020. 
 ###
@@ -14,7 +14,8 @@ a.BreedName, bo.OwnerName, a.DateBroughtIn,
 a.NeuteredDate, a.IdentichipNumber, a.AnimalAge, a.Weight, a.Markings, 
 (SELECT Sex FROM lksex WHERE ID = a.Sex) AS Sex, 
 a.DeceasedDate, a.ActiveMovementDate,
-CASE WHEN a.PutToSleep = 1 THEN 'Euthanized' ELSE '' END AS Euthanized
+CASE WHEN a.PutToSleep = 1 THEN 'Euthanized' ELSE '' END AS Euthanized,
+bo.OwnerAddress, bo.OwnerTown, bo.OwnerCounty, bo.OwnerPostcode, bo.IdentificationNumber
 FROM animal a
 INNER JOIN species s ON a.SpeciesID = s.ID
 LEFT OUTER JOIN owner bo ON a.BroughtInByOwnerID = bo.ID
@@ -47,7 +48,9 @@ $$BODY
 <td>$BREEDNAME</td>
 <td>$MARKINGS</td>
 <td>$DATEBROUGHTIN</td>
-<td>$OWNERNAME</td>
+<td><b>$OWNERNAME</b><br>
+$OWNERTOWN, $OWNERCOUNTY $OWNERPOSTCODE<br>
+$IDENTIFICATIONNUMBER</td>
 <td>$ACTIVEMOVEMENTDATE</td>
 <td>$DECEASEDDATE $EUTHANIZED</td>
 </tr>
