@@ -84,8 +84,8 @@ ANIMALGOODWITHDOGS
     Y/N/U to indicate yes/no/unknown
 ANIMALGOODWITHKIDS
     Y/N/U to indicate yes/no/unknown
-ANIMALCOMMENTS
-    Some comments to put in the animal's comment field.
+ANIMALDESCRIPTION
+    Some comments to put in the animal's description field.
 ANIMALHIDDENDETAILS
     Some comments for the animal's hidden details field.
 ANIMALMARKINGS
