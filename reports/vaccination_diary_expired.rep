@@ -2,7 +2,7 @@ Vaccinations Expiring between two dates
 ###
 Diary
 ###
-33503/Any rev01
+33503/Any rev02
 ###
 Vaccinations expiring between two dates
 ###
@@ -22,6 +22,7 @@ LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID
 LEFT OUTER JOIN owner o ON ad.OwnerID = o.ID
 WHERE av.DateOfVaccination Is Not Null
 AND av.DateExpires >= '$ASK DATE Expiring between$' AND av.DateExpires <= '$ASK DATE and$'
+AND NOT EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND VaccinationID=av.VaccinationID AND DateRequired > av.DateExpires)
 ORDER BY av.DateExpires
 ###
 $$HEADER
@@ -61,7 +62,7 @@ Vaccinations Expiring between two dates (shelter only)
 ###
 Diary
 ###
-33503/Any rev01
+33503/Any rev02
 ###
 Vaccinations expiring between two dates for shelter animals only.
 ###
@@ -76,6 +77,7 @@ INNER JOIN animalvaccination av ON a.ID = av.AnimalID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
 WHERE av.DateOfVaccination Is Not Null
 AND av.DateExpires >= '$ASK DATE Expiring between$' AND av.DateExpires <= '$ASK DATE and$'
+AND NOT EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND VaccinationID=av.VaccinationID AND DateRequired > av.DateExpires)
 AND a.Archived = 0
 ORDER BY av.DateExpires
 ###
