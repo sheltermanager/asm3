@@ -25,6 +25,9 @@ SHOWNONEXEC = "SHOWNONEXEC" in os.environ and os.environ["SHOWNONEXEC"]
 FORCENONEXEC = "FORCENONEXEC" in os.environ and os.environ["FORCENONEXEC"]
 EXECPOSTGRES = "EXECPOSTGRES" in os.environ and os.environ["EXECPOSTGRES"]
 
+checked = 0
+total = 0
+
 def substitute(sql):
     COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@dt", "@thedate" )
     # Clean up and substitute some tags
@@ -55,8 +58,11 @@ def substitute(sql):
     return sql.strip()
 
 def parse_reports(data):
+    global checked
+    global total
     reports = data.split("&&&")
     for rep in reports:
+        total += 1
         b = rep.split("###")
         name = b[0].strip()
         category = b[1].strip()
@@ -72,6 +78,7 @@ def parse_reports(data):
             print("         [ skip old ASM2 built-in ]")
         elif dbinfo.find("Any") != -1 or dbinfo.find("SQLite") != -1 or FORCENONEXEC:
             try:
+                checked += 1
                 db.query(substitute(sql))
             except Exception as err:
                 print(f"\nQUERY FAILED: {err}\n")
@@ -87,10 +94,12 @@ def parse_reports(data):
                     if elem == 2: html = rep.strip()
                     elem += 1
                     if elem == 3: 
+                        total += 1
                         elem = 0
                         # process subreport
                         print(f"------------ {name}")
                         try:
+                            checked += 1
                             db.query(substitute(sql))
                         except Exception as err:
                             print(f"\nQUERY FAILED: {err}\n")
@@ -98,6 +107,7 @@ def parse_reports(data):
         elif EXECPOSTGRES and dbinfo.find("PostgreSQL") != -1:
             with open("zzz_check.sql", "w") as f:
                 f.write(substitute(sql))
+            checked += 1
             os.system("scp -q zzz_check.sql root@eur04bdx.sheltermanager.com:/root/")
             os.system("ssh root@eur04bdx.sheltermanager.com \"psql -q -U robin -f zzz_check.sql > /dev/null && rm -f zzz_check.sql\"")
             os.system("rm -f zzz_check.sql")
@@ -115,4 +125,4 @@ for f in sys.argv:
         with open(f, "r") as h:
             parse_reports(h.read())
 
-
+print(f"\nChecked {checked} / {total} queries.")
