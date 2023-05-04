@@ -2,14 +2,14 @@ Intakes by Type with Outcomes
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Animals entering between two dates by type with their final outcomes
 ###
 en
 ###
 SELECT
-a.AnimalName, a.ShelterCode, a.DateOfBirth, s.SpeciesName, atp.AnimalType, 
+a.AnimalName, a.ID AS AID, a.ShelterCode, a.DateOfBirth, s.SpeciesName, atp.AnimalType, 
 a.BreedName, e.ReasonName, o.OwnerName, a.DateBroughtIn, m.MovementDate,
 a.NeuteredDate, a.IdentichipNumber, oo.OwnerName AS OriginalOwner,
 CASE WHEN a.DeceasedDate Is Not Null AND PutToSleep = 0 AND IsDOA = 0 THEN 'Died' 
@@ -58,7 +58,7 @@ GROUP$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE / $BREEDNAME / $SPECIESNAME</td>
 <td>$IDENTICHIPNUMBER</td>
