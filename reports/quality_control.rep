@@ -1005,10 +1005,12 @@ UNION SELECT
  '<font color = "Red">Email Address in Wrong Field (Possible).  Alerts Only Once.</font>' AS issue
 FROM owner o
 WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
-AND (o.hometelephone LIKE '%@%' 
-OR o.mobiletelephone LIKE '%@%'
-OR o.worktelephone LIKE '%@%' 
-OR o.mobiletelephone2 LIKE '%@%')
+  AND (o.hometelephone LIKE '%@%' 
+  OR o.mobiletelephone LIKE '%@%'
+  OR o.worktelephone LIKE '%@%' 
+  OR o.mobiletelephone2 LIKE '%@%'
+  OR o.IdentificationNumber LIKE '%@%'
+  OR o.IdentificationNumber2 LIKE '%@%')
 
 -- Looks for invalid email address domains.  Modified 4/23/2023 to search on 2nd contact email.
 UNION SELECT 
@@ -1181,10 +1183,10 @@ UNION SELECT
 FROM owner o, owner ow
 WHERE o.id <> ow.id
 AND date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
-AND ((o.identificationnumber <> '' AND regexp_replace(o.IdentificationNumber, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber, '\D','','g'))
-      OR (o.identificationnumber <> '' AND regexp_replace(o.IdentificationNumber, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber2, '\D','','g'))
-      OR (o.identificationnumber2 <> '' AND regexp_replace(o.IdentificationNumber2, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber, '\D','','g'))
-      OR (o.identificationnumber2 <> '' AND regexp_replace(o.IdentificationNumber2, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber2, '\D','','g')))
+AND ((o.identificationnumber <> '' AND regexp_replace(o.IdentificationNumber, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber, '\D','','g') AND ow.IdentificationNumber <> '')
+      OR (o.identificationnumber <> '' AND regexp_replace(o.IdentificationNumber, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber2, '\D','','g') AND ow.IdentificationNumber2 <> '')
+      OR (o.identificationnumber2 <> '' AND regexp_replace(o.IdentificationNumber2, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber, '\D','','g') AND ow.IdentificationNumber <> '')
+      OR (o.identificationnumber2 <> '' AND regexp_replace(o.IdentificationNumber2, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber2, '\D','','g') AND ow.IdentificationNumber2 <> ''))
 
 ) dummy
 ORDER BY 4,3
