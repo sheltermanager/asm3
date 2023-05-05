@@ -2,14 +2,14 @@ Medical Print Summary
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Medical summary for a selected shelter animal.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName,
+a.ID AS AID, a.ShelterCode, a.AnimalName,
 t.AnimalType, s.SpeciesName,
 il.LocationName, am.TreatmentName,
 am.Dosage, am.Comments, am.StartDate,
@@ -23,7 +23,7 @@ WHERE a.ID = $ASK ANIMAL$
 ORDER BY am.StartDate
 ###
 $$HEADER
-<h2>Regimens for $SHELTERCODE - $ANIMALNAME</h2>
+<h2>Regimens for $SHELTERCODE - <a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></h2>
 <table border=1><tr>
 <td><b>Therapy</b></td>
 <td><b>Dosage</b></td>

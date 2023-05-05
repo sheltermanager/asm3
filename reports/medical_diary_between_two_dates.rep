@@ -2,14 +2,14 @@ Medical Diary by Date
 ###
 Diary
 ###
-33012/Any rev02
+33012/Any rev03
 ###
 Generates the medical diary for treatments falling due between two dates.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName,
+a.ID AS AID, a.ShelterCode, a.AnimalName,
 t.AnimalType, s.SpeciesName,
 a.DisplayLocation, am.TreatmentName,
 am.Dosage, amt.TreatmentNumber, amt.TotalTreatments,
@@ -42,7 +42,7 @@ HEADER$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
 <td>$DISPLAYLOCATION</td>

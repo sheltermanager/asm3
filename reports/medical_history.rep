@@ -2,7 +2,7 @@ Medical History
 ###
 Medical
 ###
-3309/Any rev02
+3309/Any rev03
 ###
 Medical regimens, vaccinations, tests, neuter/spay and microchip implants for an animal
 ###
@@ -95,7 +95,7 @@ HEADER$$
 
 $$GROUP_AnimalName 
 $$HEAD
-<h2>$AnimalName - $ShelterCode ($AnimalType / $SpeciesName - $DisplayLocation)</h2>
+<h2><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> - $ShelterCode ($AnimalType / $SpeciesName - $DisplayLocation)</h2>
 <p>$HEALTHPROBLEMS</p>
 <table border=1><tr>
 <td><b>Started</b></td>

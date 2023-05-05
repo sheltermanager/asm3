@@ -2,7 +2,7 @@ Print Medical, Vaccination and Test History
 ###
 Auditing
 ###
-34004/Any rev01
+34004/Any rev02
 ###
 The combined medical, vaccination and test history for an animal
 ###
@@ -56,7 +56,7 @@ WHERE AID = $ASK ANIMAL$
 ORDER BY DateGiven
 ###
 $$HEADER
-<h2>$ANIMALNAME - $SHELTERCODE ($ANIMALTYPE / $SPECIESNAME). Weight: $WEIGHT</h2>
+<h2><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> - $SHELTERCODE ($ANIMALTYPE / $SPECIESNAME). Weight: $WEIGHT</h2>
 <table border=1><tr>
 <td><b>Therapy</b></td>
 <td><b>Dosage</b></td>
