@@ -904,10 +904,10 @@ const common = {
     },
 
     /**
-     * Allows a config option LabelOverride_module to be set that
+     * Allows a config option LabelOverrides_module to be set that
      * contains a list of triplets containing selector, item to 
      * change and new value. A hat ^ is used instead of string delimiters Eg:
-     * label[for=^sheltercode^]|text|New Code
+     * insert into configuration values ('LabelOverrides_animal', 'label[for=^sheltercode^]|text|New Code')
      */
     apply_label_overrides: function(modulename) {
         if (!config.has()) { return; } 
