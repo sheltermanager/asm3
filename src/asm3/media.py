@@ -1019,6 +1019,7 @@ def watermark_font_preview(fontfile):
     i = Image.new(mode = "RGB", size = (200, 40), color = (255, 255, 255))
     d = ImageDraw.Draw(i)
     font_file = os.path.join(WATERMARK_FONT_BASEDIRECTORY, fontfile)
+    if not os.path.exists(font_file) or not fontfile.endswith(".ttf"): raise asm3.utils.ASMError("Invalid font file")
     font_size = 26
     font = ImageFont.truetype(font_file, font_size)
     d.text((5, 5), "Lorem Ipsum", font=font, fill="black")
