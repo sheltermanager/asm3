@@ -1,6 +1,7 @@
 47
 ================
 
+06/05/23 Fix missing indexes for ID Number fields
 03/05/23 Support ANIMALDESCRIPTION when importing CSV #1273
 01/05/23 Include couple email if set when emailing from person #1265
 30/04/23 wordkeys: OriginalOwnerIDNumber/CurrentOwnerIDNumber/ReservedOwnerIDNumber

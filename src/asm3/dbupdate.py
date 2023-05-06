@@ -40,7 +40,7 @@ VERSIONS = (
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
-    34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702
+    34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -5850,9 +5850,14 @@ def update_34702(dbo):
     add_column(dbo, "owner", "IdentificationNumber", dbo.type_shorttext)
     add_column(dbo, "owner", "IdentificationNumber2", dbo.type_shorttext)
     add_column(dbo, "owner", "MatchFlags", dbo.type_shorttext)
-    add_index(dbo, "owner", "owner_IdentificationNumber", "IdentificationNumber")
-    add_index(dbo, "owner", "owner_IdentificationNumber2", "IdentificationNumber2")
-    dbo.execute_update("UPDATE owner SET IdentificationNumber='', IdentificationNumber2='', MatchFlags='' ")
+    add_index(dbo, "owner_IdentificationNumber", "owner", "IdentificationNumber")
+    add_index(dbo, "owner_IdentificationNumber2", "owner", "IdentificationNumber2")
+    dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber='', IdentificationNumber2='', MatchFlags='' ")
 
-
+def update_34703(dbo):
+    add_index(dbo, "owner_IdentificationNumber", "owner", "IdentificationNumber")
+    add_index(dbo, "owner_IdentificationNumber2", "owner", "IdentificationNumber2")
+    dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber='' WHERE IdentificationNumber Is Null") 
+    dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber2='' WHERE IdentificationNumber2 Is Null") 
+    dbo.execute_dbupdate("UPDATE owner SET MatchFlags='' WHERE MatchFlags Is Null") 
 
