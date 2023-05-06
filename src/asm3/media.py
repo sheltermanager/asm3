@@ -1012,6 +1012,22 @@ def scale_all_pdf(dbo):
             asm3.al.error("failed scaling PDF (ID=%s, DBFSID=%s): %s" % (m.ID, m.DBFSID, err), "media.scale_all_pdf", dbo)
     asm3.al.debug("scaled %d of %d pdfs" % (total, len(mp)), "media.scale_all_pdf", dbo)
 
+def watermark_font_preview(fontfile):
+    """
+    Generate image of preview text for fontname
+    """
+    i = Image.new(mode = "RGB", size = (200, 40), color = (255, 255, 255))
+    d = ImageDraw.Draw(i)
+    font_file = os.path.join(WATERMARK_FONT_BASEDIRECTORY, fontfile)
+    font_size = 26
+    font = ImageFont.truetype(font_file, font_size)
+    d.text((5, 5), "Lorem Ipsum", font=font, fill="black")
+    output = asm3.utils.bytesio()
+    i.save(output, "JPEG")
+    imagedata = output.getvalue()
+    output.close()
+    return imagedata
+
 def watermark_with_transparency(dbo, imagedata, animalname):
     """
     Watermark the image with animalname and logo. 

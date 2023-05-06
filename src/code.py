@@ -538,7 +538,7 @@ class faviconico(ASMEndpoint):
 class image(ASMEndpoint):
     url = "image"
     user_activity = False
-    session_cookie = False # Disable sending the cookie with the response to assist with caching
+    session_cookie = False # Disable sending the cookie with the response to assist with CDN caching
 
     def content(self, o):
         try:
@@ -5231,6 +5231,15 @@ class options(JSONEndpoint):
     def post_save(self, o):
         asm3.configuration.csave(o.dbo, o.user, o.post)
         self.reload_config()
+
+class options_font_preview(ASMEndpoint):
+    url = "options_font_preview"
+    user_activity = False
+    session_cookie = False # Disable sending the cookie with the response to assist with CDN caching
+
+    def content(self, o):
+        self.cache_control(CACHE_ONE_YEAR)
+        return asm3.media.watermark_font_preview(o.post["fontfile"])
 
 class pp_cardcom(ASMEndpoint):
     """ 

@@ -1588,6 +1588,7 @@ $(function() {
                 '<td><select data="WatermarkFontFile" id="watermarkfontfile" class="asm-selectbox asm-doubleselectbox">',
                 html.list_to_options_array(asm.fontfiles),
                 '</select>',
+                '<img id="watermarkfontpreview" src="" style="height: 40px; width: 200px; border: 1px solid #000; vertical-align: middle" />',
                 '</tr>',
                 '<tr>',
                 '<td><label for="watermarkfontoffset">' + _("Watermark name offset") + '</label>',
@@ -1758,13 +1759,17 @@ $(function() {
                 $(".smcom").hide();
             }
 
-            // Show sample colours when selected
+            // Show sample colours and fonts when selected
             $("#watermarkfontfillcolor").change(function() {
                 $("#fontfillcolorsample").css("background-color", $("#watermarkfontfillcolor").select("value"));
             });
             $("#watermarkfontshadowcolor").change(function() {
                 $("#fontshadowcolorsample").css("background-color", $("#watermarkfontshadowcolor").select("value"));
             });
+            $("#watermarkfontfile").change(function() {
+                $("#watermarkfontpreview").prop("src", "options_font_preview?fontfile=" + $("#watermarkfontfile").val());
+            });
+            $("#watermarkfontfile").change();
 
             validate.bind_dirty();
 
