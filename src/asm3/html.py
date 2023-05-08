@@ -911,15 +911,6 @@ def json_lostanimalfindcolumns(dbo):
     findcolumns_selectedtofront(cols, asm3.configuration.lostanimal_search_columns(dbo))
     return cols
 
-def json_quicklinks(dbo):
-    l = dbo.locale
-    ql = []
-    for k, v in asm3.configuration.QUICKLINKS_SET.items():
-        ql.append( ( str(k), translate(v[2], l) ) )
-    ql = findcolumns_sort(ql)
-    findcolumns_selectedtofront(ql, asm3.configuration.quicklinks_id(dbo))
-    return ql
-
 def json_waitinglistcolumns(dbo):
     l = dbo.locale
     cols = [ 

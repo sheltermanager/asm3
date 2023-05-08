@@ -2420,9 +2420,15 @@ class change_user_settings(JSONEndpoint):
         realname = post["realname"]
         email = post["email"]
         signature = post["signature"]
+        quicklinks = post["quicklinks"]
         enabletotp = post.boolean("enabletotp")
-        asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, totp=%s" % (o.user, theme, locale, realname, email, enabletotp), "code.change_password", o.dbo)
+        asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, quicklinks=%s, totp=%s" % (o.user, theme, locale, realname, email, quicklinks, enabletotp), "code.change_password", o.dbo)
         asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature, enabletotp)
+        # If the user's quicklinks are the same as the global ones, set to a blank instead
+        if quicklinks == asm3.configuration.quicklinks_id(o.dbo):
+            asm3.configuration.cset(o.dbo, "%s_QuicklinksID" % o.user, "")
+        else:
+            asm3.configuration.cset(o.dbo, "%s_QuicklinksID" % o.user, quicklinks)
         self.reload_config()
 
 class citations(JSONEndpoint):
@@ -5212,7 +5218,6 @@ class options(JSONEndpoint):
             "personfindcolumns": asm3.html.json_personfindcolumns(dbo),
             "pp_paypal": pp_paypal,
             "pp_stripe": pp_stripe,
-            "quicklinks": asm3.html.json_quicklinks(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
             "species": asm3.lookups.get_species(dbo),

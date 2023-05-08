@@ -1,6 +1,7 @@
 47
 ================
 
+08/05/23 Allow users to choose their own quicklinks, inheriting from system #1072
 06/05/23 Font preview on watermark options tab #1276
 06/05/23 Fix missing indexes for ID Number fields
 03/05/23 Support ANIMALDESCRIPTION when importing CSV #1273

@@ -14,73 +14,73 @@ if (common.current_url().indexOf("/login") != -1 ||
     return;
 }
 
-const QUICKLINKS_SET = {
-    1: ["animal_find", "asm-icon-animal-find", _("Find animal")],
-    2: ["animal_new", "asm-icon-animal-add", _("Add a new animal")],
-    3: ["log_new?mode=animal", "asm-icon-log", _("Add a log entry")],
-    4: ["litters", "asm-icon-litter", _("Edit litters")],
-    5: ["person_find", "asm-icon-person-find", _("Find person")],
-    6: ["person_new", "asm-icon-person-add", _("Add a new person")],
-    7: ["lostanimal_find", "asm-icon-animal-lost-find", _("Find a lost animal")],
-    8: ["foundanimal_find", "asm-icon-animal-found-find", _("Find a found animal")],
-    9: ["lostanimal_new", "asm-icon-animal-lost-add", _("Add a lost animal")],
-    10: ["foundanimal_new", "asm-icon-animal-found-add", _("Add a found animal")],
-    11: ["lostfound_match", "asm-icon-match", _("Match lost and found animals")],
-    12: ["diary_edit_my?newnote=1", "asm-icon-diary", _("Add a diary note")],
-    13: ["diary_edit_my", "asm-icon-diary", _("My diary notes")],
-    14: ["diary_edit", "asm-icon-diary", _("All diary notes")],
-    15: ["diarytasks", "asm-icon-diary-task", _("Edit diary tasks")],
-    16: ["waitinglist_new", "asm-icon-waitinglist", _("Add an animal to the waiting list")],
-    17: ["waitinglist_results", "asm-icon-waitinglist", _("Edit the current waiting list")],
-    18: ["move_reserve", "asm-icon-reservation", _("Reserve an animal")],
-    19: ["move_foster", "", _("Foster an animal")],
-    20: ["move_adopt", "asm-icon-person", _("Adopt an animal")],
-    21: ["move_deceased", "asm-icon-death", _("Mark an animal deceased")],
-    22: ["move_book_recent_adoption", "", _("Return an animal from adoption")],
-    23: ["move_book_recent_other", "", _("Return an animal from another movement")],
-    24: ["move_book_reservation", "asm-icon-reservation", _("Reservation book")],
-    25: ["move_book_foster", "asm-icon-book", _("Foster book")],
-    26: ["move_book_retailer", "asm-icon-book", _("Retailer book")],
-    27: ["vaccination?newvacc=1", "", _("Add a vaccination")],
-    28: ["vaccination", "asm-icon-vaccination", _("Vaccination book")],
-    29: ["medical?newmed=1", "", _("Add a medical regimen")],
-    30: ["medical", "asm-icon-medical", _("Medical book")],
-    32: ["publish_options", "asm-icon-settings", _("Set publishing options")],
-    31: ["search?q=forpublish", "asm-icon-animal", _("Up for adoption")],
-    33: ["search?q=deceased", "asm-icon-death", _("Recently deceased")],
-    34: ["search?q=notforadoption", "", _("Not for adoption")],
-    35: ["search?q=onshelter", "asm-icon-animal", _("Shelter animals")],
-    36: ["accounts", "asm-icon-accounts", _("Accounts")],
-    37: ["donation_receive", "asm-icon-donation", _("Receive a payment")],
-    38: ["move_transfer", "", _("Transfer an animal")],
-    39: ["medicalprofile", "", _("Medical profiles")],
-    40: ["shelterview", "asm-icon-location", _("Shelter view")],
-    41: ["move_book_trial_adoption", "asm-icon-trial", _("Trial adoption book")],
-    42: ["incident_new", "asm-icon-call", _("Report a new incident")],
-    43: ["incident_find", "asm-icon-call", _("Find an incident")],
-    44: ["incident_map", "asm-icon-map", _("Map of active incidents")],
-    45: ["traploan?filter=active", "asm-icon-traploan", _("Trap loans")],
-    46: ["calendarview", "asm-icon-calendar", _("Calendar view")],
-    47: ["calendarview?ev=d", "asm-icon-calendar", _("Diary calendar")],
-    48: ["calendarview?ev=vmt", "asm-icon-calendar", _("Medical calendar")],
-    49: ["calendarview?ev=p", "asm-icon-calendar", _("Payment calendar")],
-    50: ["calendarview?ev=ol", "asm-icon-calendar", _("Animal control calendar")],
-    51: ["stocklevel", "asm-icon-stock", _("Stock Levels")],
-    52: ["transport", "asm-icon-transport", _("Transport Book")],
-    53: ["timeline", "asm-icon-calendar", _("Timeline")],
-    54: ["staff_rota", "asm-icon-rota", _("Staff Rota")],
-    55: ["move_reclaim", "", _("Reclaim an animal")],
-    56: ["donation", "asm-icon-donation", _("Payment book")],
-    57: ["calendarview?ev=c", "asm-icon-calendar", _("Clinic Calendar")],
-    58: ["move_book_soft_release", "", _("Soft release book")],
-    59: ["event_find", "asm-icon-event-find", _("Find Event")],
-    60: ["event_new", "asm-icon-event-add", _("Add a new event")]
-};
-
 /** Functions related to rendering and binding to events for the page
  *  header for all screens (menu, search, etc).
  */
 header = {
+
+    QUICKLINKS_SET: {
+        1: ["animal_find", "asm-icon-animal-find", _("Find animal")],
+        2: ["animal_new", "asm-icon-animal-add", _("Add a new animal")],
+        3: ["log_new?mode=animal", "asm-icon-log", _("Add a log entry")],
+        4: ["litters", "asm-icon-litter", _("Edit litters")],
+        5: ["person_find", "asm-icon-person-find", _("Find person")],
+        6: ["person_new", "asm-icon-person-add", _("Add a new person")],
+        7: ["lostanimal_find", "asm-icon-animal-lost-find", _("Find a lost animal")],
+        8: ["foundanimal_find", "asm-icon-animal-found-find", _("Find a found animal")],
+        9: ["lostanimal_new", "asm-icon-animal-lost-add", _("Add a lost animal")],
+        10: ["foundanimal_new", "asm-icon-animal-found-add", _("Add a found animal")],
+        11: ["lostfound_match", "asm-icon-match", _("Match lost and found animals")],
+        12: ["diary_edit_my?newnote=1", "asm-icon-diary", _("Add a diary note")],
+        13: ["diary_edit_my", "asm-icon-diary", _("My diary notes")],
+        14: ["diary_edit", "asm-icon-diary", _("All diary notes")],
+        15: ["diarytasks", "asm-icon-diary-task", _("Edit diary tasks")],
+        16: ["waitinglist_new", "asm-icon-waitinglist", _("Add an animal to the waiting list")],
+        17: ["waitinglist_results", "asm-icon-waitinglist", _("Edit the current waiting list")],
+        18: ["move_reserve", "asm-icon-reservation", _("Reserve an animal")],
+        19: ["move_foster", "", _("Foster an animal")],
+        20: ["move_adopt", "asm-icon-person", _("Adopt an animal")],
+        21: ["move_deceased", "asm-icon-death", _("Mark an animal deceased")],
+        22: ["move_book_recent_adoption", "", _("Return an animal from adoption")],
+        23: ["move_book_recent_other", "", _("Return an animal from another movement")],
+        24: ["move_book_reservation", "asm-icon-reservation", _("Reservation book")],
+        25: ["move_book_foster", "asm-icon-book", _("Foster book")],
+        26: ["move_book_retailer", "asm-icon-book", _("Retailer book")],
+        27: ["vaccination?newvacc=1", "", _("Add a vaccination")],
+        28: ["vaccination", "asm-icon-vaccination", _("Vaccination book")],
+        29: ["medical?newmed=1", "", _("Add a medical regimen")],
+        30: ["medical", "asm-icon-medical", _("Medical book")],
+        32: ["publish_options", "asm-icon-settings", _("Set publishing options")],
+        31: ["search?q=forpublish", "asm-icon-animal", _("Up for adoption")],
+        33: ["search?q=deceased", "asm-icon-death", _("Recently deceased")],
+        34: ["search?q=notforadoption", "", _("Not for adoption")],
+        35: ["search?q=onshelter", "asm-icon-animal", _("Shelter animals")],
+        36: ["accounts", "asm-icon-accounts", _("Accounts")],
+        37: ["donation_receive", "asm-icon-donation", _("Receive a payment")],
+        38: ["move_transfer", "", _("Transfer an animal")],
+        39: ["medicalprofile", "", _("Medical profiles")],
+        40: ["shelterview", "asm-icon-location", _("Shelter view")],
+        41: ["move_book_trial_adoption", "asm-icon-trial", _("Trial adoption book")],
+        42: ["incident_new", "asm-icon-call", _("Report a new incident")],
+        43: ["incident_find", "asm-icon-call", _("Find an incident")],
+        44: ["incident_map", "asm-icon-map", _("Map of active incidents")],
+        45: ["traploan?filter=active", "asm-icon-traploan", _("Trap loans")],
+        46: ["calendarview", "asm-icon-calendar", _("Calendar view")],
+        47: ["calendarview?ev=d", "asm-icon-calendar", _("Diary calendar")],
+        48: ["calendarview?ev=vmt", "asm-icon-calendar", _("Medical calendar")],
+        49: ["calendarview?ev=p", "asm-icon-calendar", _("Payment calendar")],
+        50: ["calendarview?ev=ol", "asm-icon-calendar", _("Animal control calendar")],
+        51: ["stocklevel", "asm-icon-stock", _("Stock Levels")],
+        52: ["transport", "asm-icon-transport", _("Transport Book")],
+        53: ["timeline", "asm-icon-calendar", _("Timeline")],
+        54: ["staff_rota", "asm-icon-rota", _("Staff Rota")],
+        55: ["move_reclaim", "", _("Reclaim an animal")],
+        56: ["donation", "asm-icon-donation", _("Payment book")],
+        57: ["calendarview?ev=c", "asm-icon-calendar", _("Clinic Calendar")],
+        58: ["move_book_soft_release", "", _("Soft release book")],
+        59: ["event_find", "asm-icon-event-find", _("Find Event")],
+        60: ["event_new", "asm-icon-event-add", _("Add a new event")]
+    },
 
     show_error: function(text, duration) {
         if (!duration) { duration = 20000; }
@@ -339,10 +339,12 @@ header = {
      * Renders quicklinks as html
      */
     quicklinks_html:  function() {
-        var qls = config.str("QuicklinksID"), s = "";
+        let s = "";
+        let qls = config.str(asm.user + "_QuicklinksID");
+        if (!qls) { qls = config.str("QuicklinksID"); } 
         if (!qls) { return ""; }
         $.each(qls.split(","), function(i, v) {
-            var b = QUICKLINKS_SET[parseInt(v, 10)];
+            var b = header.QUICKLINKS_SET[parseInt(v, 10)];
             if (!b) { return; }
             var url = b[0], image = b[1], text = b[2];
             s += "<a ";
