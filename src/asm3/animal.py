@@ -3441,7 +3441,7 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     reparent("log", "LinkID", "LinkType", asm3.log.ANIMAL, haslastchanged=False)
 
     # Change any additional field links pointing to the merge animal
-    asm3.additional.update_merge_person(dbo, mergeanimalid, animalid)
+    asm3.additional.update_merge_animal(dbo, mergeanimalid, animalid)
 
     # Copy additional field values from mergeanimal to animal
     asm3.additional.merge_values(dbo, username, mergeanimalid, animalid, "animal")

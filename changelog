@@ -1,6 +1,7 @@
 47
 ================
 
+09/05/23 Merge animal was reparenting additional person links with animal IDs
 08/05/23 Allow users to choose their own quicklinks, inheriting from system #1072
 06/05/23 Font preview on watermark options tab #1276
 06/05/23 Fix missing indexes for ID Number fields
