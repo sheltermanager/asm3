@@ -24,21 +24,27 @@ RetailerID
 OriginalRetailerMovementID 
     INTEGER 
     Link to another movement in this table for an original movement to retailer that started this adoption 
+EventID
+    INTEGER
+    Link to the event table for the adoption event this movement came from
 MovementDate 
     TIMESTAMP 
     The date the animal moved 
 MovementType 
     INTEGER 
     Link to the lksmovementtype table for the type of animal movement (none = reservation, adoption, foster, transfer, escaped, stolen, reclaimed, etc)
+InsuranceNumber 
+    VARCHAR 
+    If your shelter does short term insurance when adopting, the policy number 
 ReturnDate 
     TIMESTAMP 
     The date the animal came back to the shelter from this movement (or null for not returned) 
 ReturnedReasonID 
     INTEGER 
     Link to the entryreason table for reason for return 
-InsuranceNumber 
-    VARCHAR 
-    If your shelter does short term insurance when adopting, the policy number 
+ReturnedByOwnerID
+    INTEGER
+    Link to the owner table for the person who returned the animal
 ReasonForReturn 
     VARCHAR 
     Free text, the reason the animal was returned 
@@ -51,6 +57,9 @@ Donation
 ReservationCancelledDate 
     TIMESTAMP 
     If this is a reservation and it has been cancelled, the date it was cancelled 
+IsPermanentFoster
+    INTEGER
+    1 if this foster movement is permanent
 IsTrial
     INTEGER
     1 if this is a trial adoption movement 
@@ -287,7 +296,9 @@ HasTrialAdoption
     1 if the animal is on trial adoption
 DisplayLocation
     VARCHAR
-    Shows a readable version of the animal's location. If on shelter, the internal location. If off shelter, the movementtype, accompanied by the person name.
+    Shows a readable version of the animal's location. If on shelter, the
+    internal location. If off shelter, the movementtype, accompanied by the
+    person name.
 MostRecentEntryDate 
     TIMESTAMP 
     The most recent entry date - either DateBroughtIn or ActiveMovementDate 
@@ -422,9 +433,15 @@ Name
 Path
     VARCHAR 
     The path to the element
+URL
+    VARCHAR
+    Either file:[filename] or s3:[filename] for binary data stored in the
+    filesystem or remote object storage like Amazon S3, BackBlaze B2 or
+    Cloudflare R2 etc. If the data is in the Content field, the URL will be
+    contain the text base64:
 Content
     CLOB
-    Base64 encoded content
+    Base64 encoded content or null if the data is in a file storage (see URL)
 
 media
 -----
@@ -435,37 +452,58 @@ etc.
 ID 
     INTEGER 
     A unique, incrementing number that identifies this record 
+MediaType
+    INTEGER
+    1 = File, 2 = Link
 MediaName 
     VARCHAR 
-    The name of the file within the dbfs table - always [media.ID].extension 
+    The name of the file within the dbfs table - always [media.ID].extension unless
+    MediaType=2 in which case this will hold the link URL
 MediaNotes 
     VARCHAR 
-    The notes accompanying the media file (used as description when publishing) 
+    The notes accompanying the media file (can optionally be used as
+    description when publishing) 
+DocPhoto
+    INTEGER
+    1 if this is the preferred photo of an animal for use with document
+    templates
 WebsitePhoto 
     INTEGER 
     1 if this is the preferred photo of an animal for use on the web 
+WebsiteVideo
+    INTEGER
+    1 if this is the preferred video link of the animal
 DocPhoto 
     INTEGER 
     1 if this is the preferred photo of an animal for use with generated documents 
-NewSinceLastPublish 
+ExcludeFromPublish
+    INTEGER
+    1 if this photo should be excluded from being used on websites or sent to
+    third parties
+SignatureHash
+    VARCHAR
+    For media containing documents that have been signed, this field will
+    contain a cryptographic hash of the document file data so that it can be
+    checked for tampering
+NewSinceLastPublish (deprecated)
     INTEGER 
     1 if this media record was created after the last time a publish was done 
-UpdatedSinceLastPublish 
+UpdatedSinceLastPublish  (deprecated)
     INTEGER 
     1 if this media record was updated after the last time a publish was done 
-LastPublished 
+LastPublished (deprecated - see animalpublished table)
     TIMESTAMP 
     The date this record was last published to the web 
-LastPublishedPF 
+LastPublishedPF (deprecated)
     TIMESTAMP 
     Date this record was last published to PetFinder.com 
-LastPublishedAP 
+LastPublishedAP (deprecated)
     TIMESTAMP 
     Date this record was last published to AdoptAPet.com 
-LastPublishedP911 
+LastPublishedP911 (deprecated)
     TIMESTAMP 
     Date this record was last published to Pets911.com 
-LastPublishedRG 
+LastPublishedRG (deprecated)
     TIMESTAMP 
     Date this record was last published to RescueGroups PetAdoptionPortal.org 
 LinkID 
@@ -474,9 +512,15 @@ LinkID
 LinkTypeID 
     INTEGER 
     Link to lksmedialink table to determine linked table 
+CreatedDate
+    TIMESTAMP
+    The date this record was created
 Date 
     TIMESTAMP 
-    Date this record was created 
+    Date this record was last updated 
+RetainUntil
+    TIMESTAMP
+    The date to automatically delete this record (or NULL to never delete)
 RecordVersion 
     INTEGER 
     Optimistic lock flag 
@@ -488,17 +532,24 @@ The owner table holds a row for every person stored in ASM's database.
 
 ID 
     INTEGER 
-    A unique, incrementing number that identifies this record 
-OwnerTitle
+    A unique, incrementing number that identifies this record
+OwnerType
+    INTEGER
+    1 = Individual, 2 = Organization, 3 = Couple
+OwnerCode
+    VARCHAR
+    A unique code for this record, generated from first two letters of surname
+    and padded ID
+OwnerTitle / OwnerTitle2
     VARCHAR
     The person's title, eg: Mr
-OwnerInitials
+OwnerInitials / OwnerInitials2
     VARCHAR
     The person's initials
-OwnerForeNames
+OwnerForeNames / OwnerForeNames2
     VARCHAR
     The person's first name(s)
-OwnerSurname
+OwnerSurname / OwnerSurname2
     VARCHAR
     The person's surname
 OwnerName
@@ -515,25 +566,30 @@ OwnerCounty
     The county or state (depending on locale)
 OwnerPostcode
     VARCHAR
-    
 HomeTelephone
     VARCHAR
-    
-WorkTelephone
+WorkTelephone / WorkTelephone2
     VARCHAR
-    
-MobileTelephone
+MobileTelephone / MobileTelephone2
     VARCHAR
-    
-EmailAddress
+EmailAddress / EmailAddress2
     VARCHAR
-    
+DateOfBirth / DateOfBirth2
+    TIMESTAMP
+IdentificationNumber / IdentificationNumber2
+    VARCHAR
+    The government issued identification number (passport, driving license, etc)
+Comments
+    VARCHAR
+GDPRContactOptIn
+    VARCHAR
+    didnotask,declined,email,post,sms,phone
+ExcludeFromBulkEmail
+    INTEGER
+    1 if this person should not receive bulk emails
 IDCheck
     INTEGER
     1 if the person has been homechecked
-Comments
-    VARCHAR
-
 IsBanned
     INTEGER
     1 if this person has been banned from adopting animals
@@ -555,6 +611,9 @@ MembershipNumber
 IsDonor
     INTEGER
     1 if this person is a regular donor
+IsDriver
+    INTEGER
+    1 if this person is a driver for transport
 IsShelter
     INTEGER
     1 if this person is another animal shelter
@@ -599,41 +658,29 @@ MatchActive
     1 If we should consider this person's looking for info when building the looking for report
 MatchSex
     INTEGER
-    
 MatchSize
     INTEGER
-    
 MatchAgeFrom
     FLOAT
-
 MatchAgeTo
     FLOAT
-
 MatchAnimalType
     INTEGER
-
 MatchSpecies
     INTEGER
-
 MatchBreed
     INTEGER
-
 MatchBreed2
     INTEGER
-
 MatchGoodWithCats
     INTEGER
-
 MatchGoodWithDogs
     INTEGER
-
 MatchGoodWithChildren
     INTEGER
-
 MatchHouseTrained
     INTEGER
-
 MatchCommentsContain
     VARCHAR
-
-
+MatchFlags
+    VARCHAR

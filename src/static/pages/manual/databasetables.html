@@ -134,11 +134,17 @@ Link to the owner table for a retailer (0 for no retailer)</p>
 <dt>OriginalRetailerMovementID</dt><dd><p>INTEGER
 Link to another movement in this table for an original movement to retailer that started this adoption</p>
 </dd>
+<dt>EventID</dt><dd><p>INTEGER
+Link to the event table for the adoption event this movement came from</p>
+</dd>
 <dt>MovementDate</dt><dd><p>TIMESTAMP
 The date the animal moved</p>
 </dd>
 <dt>MovementType</dt><dd><p>INTEGER
 Link to the lksmovementtype table for the type of animal movement (none = reservation, adoption, foster, transfer, escaped, stolen, reclaimed, etc)</p>
+</dd>
+<dt>InsuranceNumber</dt><dd><p>VARCHAR
+If your shelter does short term insurance when adopting, the policy number</p>
 </dd>
 <dt>ReturnDate</dt><dd><p>TIMESTAMP
 The date the animal came back to the shelter from this movement (or null for not returned)</p>
@@ -146,8 +152,8 @@ The date the animal came back to the shelter from this movement (or null for not
 <dt>ReturnedReasonID</dt><dd><p>INTEGER
 Link to the entryreason table for reason for return</p>
 </dd>
-<dt>InsuranceNumber</dt><dd><p>VARCHAR
-If your shelter does short term insurance when adopting, the policy number</p>
+<dt>ReturnedByOwnerID</dt><dd><p>INTEGER
+Link to the owner table for the person who returned the animal</p>
 </dd>
 <dt>ReasonForReturn</dt><dd><p>VARCHAR
 Free text, the reason the animal was returned</p>
@@ -160,6 +166,9 @@ A total of all donations attached to this movement</p>
 </dd>
 <dt>ReservationCancelledDate</dt><dd><p>TIMESTAMP
 If this is a reservation and it has been cancelled, the date it was cancelled</p>
+</dd>
+<dt>IsPermanentFoster</dt><dd><p>INTEGER
+1 if this foster movement is permanent</p>
 </dd>
 <dt>IsTrial</dt><dd><p>INTEGER
 1 if this is a trial adoption movement</p>
@@ -396,7 +405,9 @@ The current movement’s return date</p>
 1 if the animal is on trial adoption</p>
 </dd>
 <dt>DisplayLocation</dt><dd><p>VARCHAR
-Shows a readable version of the animal’s location. If on shelter, the internal location. If off shelter, the movementtype, accompanied by the person name.</p>
+Shows a readable version of the animal’s location. If on shelter, the
+internal location. If off shelter, the movementtype, accompanied by the
+person name.</p>
 </dd>
 <dt>MostRecentEntryDate</dt><dd><p>TIMESTAMP
 The most recent entry date - either DateBroughtIn or ActiveMovementDate</p>
@@ -532,8 +543,14 @@ The name of the element</p>
 <dt>Path</dt><dd><p>VARCHAR
 The path to the element</p>
 </dd>
+<dt>URL</dt><dd><p>VARCHAR
+Either <a class="reference external" href="file:[filename">file:[filename</a>] or s3:[filename] for binary data stored in the
+filesystem or remote object storage like Amazon S3, BackBlaze B2 or
+Cloudflare R2 etc. If the data is in the Content field, the URL will be
+contain the text base64:</p>
+</dd>
 <dt>Content</dt><dd><p>CLOB
-Base64 encoded content</p>
+Base64 encoded content or null if the data is in a file storage (see URL)</p>
 </dd>
 </dl>
 </section>
@@ -545,37 +562,58 @@ etc.</p>
 <dt>ID</dt><dd><p>INTEGER
 A unique, incrementing number that identifies this record</p>
 </dd>
+<dt>MediaType</dt><dd><p>INTEGER
+1 = File, 2 = Link</p>
+</dd>
 <dt>MediaName</dt><dd><p>VARCHAR
-The name of the file within the dbfs table - always [media.ID].extension</p>
+The name of the file within the dbfs table - always [media.ID].extension unless
+MediaType=2 in which case this will hold the link URL</p>
 </dd>
 <dt>MediaNotes</dt><dd><p>VARCHAR
-The notes accompanying the media file (used as description when publishing)</p>
+The notes accompanying the media file (can optionally be used as
+description when publishing)</p>
+</dd>
+<dt>DocPhoto</dt><dd><p>INTEGER
+1 if this is the preferred photo of an animal for use with document
+templates</p>
 </dd>
 <dt>WebsitePhoto</dt><dd><p>INTEGER
 1 if this is the preferred photo of an animal for use on the web</p>
 </dd>
+<dt>WebsiteVideo</dt><dd><p>INTEGER
+1 if this is the preferred video link of the animal</p>
+</dd>
 <dt>DocPhoto</dt><dd><p>INTEGER
 1 if this is the preferred photo of an animal for use with generated documents</p>
 </dd>
-<dt>NewSinceLastPublish</dt><dd><p>INTEGER
+<dt>ExcludeFromPublish</dt><dd><p>INTEGER
+1 if this photo should be excluded from being used on websites or sent to
+third parties</p>
+</dd>
+<dt>SignatureHash</dt><dd><p>VARCHAR
+For media containing documents that have been signed, this field will
+contain a cryptographic hash of the document file data so that it can be
+checked for tampering</p>
+</dd>
+<dt>NewSinceLastPublish (deprecated)</dt><dd><p>INTEGER
 1 if this media record was created after the last time a publish was done</p>
 </dd>
-<dt>UpdatedSinceLastPublish</dt><dd><p>INTEGER
+<dt>UpdatedSinceLastPublish  (deprecated)</dt><dd><p>INTEGER
 1 if this media record was updated after the last time a publish was done</p>
 </dd>
-<dt>LastPublished</dt><dd><p>TIMESTAMP
+<dt>LastPublished (deprecated - see animalpublished table)</dt><dd><p>TIMESTAMP
 The date this record was last published to the web</p>
 </dd>
-<dt>LastPublishedPF</dt><dd><p>TIMESTAMP
+<dt>LastPublishedPF (deprecated)</dt><dd><p>TIMESTAMP
 Date this record was last published to PetFinder.com</p>
 </dd>
-<dt>LastPublishedAP</dt><dd><p>TIMESTAMP
+<dt>LastPublishedAP (deprecated)</dt><dd><p>TIMESTAMP
 Date this record was last published to AdoptAPet.com</p>
 </dd>
-<dt>LastPublishedP911</dt><dd><p>TIMESTAMP
+<dt>LastPublishedP911 (deprecated)</dt><dd><p>TIMESTAMP
 Date this record was last published to Pets911.com</p>
 </dd>
-<dt>LastPublishedRG</dt><dd><p>TIMESTAMP
+<dt>LastPublishedRG (deprecated)</dt><dd><p>TIMESTAMP
 Date this record was last published to RescueGroups PetAdoptionPortal.org</p>
 </dd>
 <dt>LinkID</dt><dd><p>INTEGER
@@ -584,8 +622,14 @@ The ID of the record in the table this media is linked to</p>
 <dt>LinkTypeID</dt><dd><p>INTEGER
 Link to lksmedialink table to determine linked table</p>
 </dd>
+<dt>CreatedDate</dt><dd><p>TIMESTAMP
+The date this record was created</p>
+</dd>
 <dt>Date</dt><dd><p>TIMESTAMP
-Date this record was created</p>
+Date this record was last updated</p>
+</dd>
+<dt>RetainUntil</dt><dd><p>TIMESTAMP
+The date to automatically delete this record (or NULL to never delete)</p>
 </dd>
 <dt>RecordVersion</dt><dd><p>INTEGER
 Optimistic lock flag</p>
@@ -599,16 +643,23 @@ Optimistic lock flag</p>
 <dt>ID</dt><dd><p>INTEGER
 A unique, incrementing number that identifies this record</p>
 </dd>
-<dt>OwnerTitle</dt><dd><p>VARCHAR
+<dt>OwnerType</dt><dd><p>INTEGER
+1 = Individual, 2 = Organization, 3 = Couple</p>
+</dd>
+<dt>OwnerCode</dt><dd><p>VARCHAR
+A unique code for this record, generated from first two letters of surname
+and padded ID</p>
+</dd>
+<dt>OwnerTitle / OwnerTitle2</dt><dd><p>VARCHAR
 The person’s title, eg: Mr</p>
 </dd>
-<dt>OwnerInitials</dt><dd><p>VARCHAR
+<dt>OwnerInitials / OwnerInitials2</dt><dd><p>VARCHAR
 The person’s initials</p>
 </dd>
-<dt>OwnerForeNames</dt><dd><p>VARCHAR
+<dt>OwnerForeNames / OwnerForeNames2</dt><dd><p>VARCHAR
 The person’s first name(s)</p>
 </dd>
-<dt>OwnerSurname</dt><dd><p>VARCHAR
+<dt>OwnerSurname / OwnerSurname2</dt><dd><p>VARCHAR
 The person’s surname</p>
 </dd>
 <dt>OwnerName</dt><dd><p>VARCHAR
@@ -627,16 +678,27 @@ The county or state (depending on locale)</p>
 </dd>
 <dt>HomeTelephone</dt><dd><p>VARCHAR</p>
 </dd>
-<dt>WorkTelephone</dt><dd><p>VARCHAR</p>
+<dt>WorkTelephone / WorkTelephone2</dt><dd><p>VARCHAR</p>
 </dd>
-<dt>MobileTelephone</dt><dd><p>VARCHAR</p>
+<dt>MobileTelephone / MobileTelephone2</dt><dd><p>VARCHAR</p>
 </dd>
-<dt>EmailAddress</dt><dd><p>VARCHAR</p>
+<dt>EmailAddress / EmailAddress2</dt><dd><p>VARCHAR</p>
+</dd>
+<dt>DateOfBirth / DateOfBirth2</dt><dd><p>TIMESTAMP</p>
+</dd>
+<dt>IdentificationNumber / IdentificationNumber2</dt><dd><p>VARCHAR
+The government issued identification number (passport, driving license, etc)</p>
+</dd>
+<dt>Comments</dt><dd><p>VARCHAR</p>
+</dd>
+<dt>GDPRContactOptIn</dt><dd><p>VARCHAR
+didnotask,declined,email,post,sms,phone</p>
+</dd>
+<dt>ExcludeFromBulkEmail</dt><dd><p>INTEGER
+1 if this person should not receive bulk emails</p>
 </dd>
 <dt>IDCheck</dt><dd><p>INTEGER
 1 if the person has been homechecked</p>
-</dd>
-<dt>Comments</dt><dd><p>VARCHAR</p>
 </dd>
 <dt>IsBanned</dt><dd><p>INTEGER
 1 if this person has been banned from adopting animals</p>
@@ -658,6 +720,9 @@ The membership number</p>
 </dd>
 <dt>IsDonor</dt><dd><p>INTEGER
 1 if this person is a regular donor</p>
+</dd>
+<dt>IsDriver</dt><dd><p>INTEGER
+1 if this person is a driver for transport</p>
 </dd>
 <dt>IsShelter</dt><dd><p>INTEGER
 1 if this person is another animal shelter</p>
@@ -726,6 +791,8 @@ Date this looking for info expires</p>
 <dt>MatchHouseTrained</dt><dd><p>INTEGER</p>
 </dd>
 <dt>MatchCommentsContain</dt><dd><p>VARCHAR</p>
+</dd>
+<dt>MatchFlags</dt><dd><p>VARCHAR</p>
 </dd>
 </dl>
 </section>
