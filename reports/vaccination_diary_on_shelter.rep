@@ -2,14 +2,14 @@ Vaccination Diary (On Shelter)
 ###
 Diary
 ###
-33012/Any rev02
+33012/Any rev03
 ###
 Vaccinations required to date for shelter animals.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation,
+a.ID AS AID, a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation,
 v.VaccinationType, av.DateRequired, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -34,7 +34,7 @@ HEADER$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$DISPLAYLOCATION</td>
 <td>$VACCINATIONTYPE</td>
@@ -51,14 +51,14 @@ Vaccination Diary (On Shelter, Date Range)
 ###
 Diary
 ###
-3215/Any rev02
+3215/Any rev03
 ###
 Vaccinations required between two dates for shelter animals.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation, 
+a.ID AS AID, a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation, 
 v.VaccinationType, av.DateRequired, av.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -84,7 +84,7 @@ HEADER$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$DISPLAYLOCATION</td>
 <td>$VACCINATIONTYPE</td>

@@ -2,16 +2,16 @@ Vaccinations Expiring between two dates
 ###
 Diary
 ###
-33503/Any rev02
+33503/Any rev03
 ###
 Vaccinations expiring between two dates
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
+a.ID AS AID, a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
 v.VaccinationType, av.DateExpires, av.Comments,
-o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty,
+o.ID AS OID, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty,
 o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone
 FROM animal a
 LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -39,10 +39,10 @@ HEADER$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>
-<b>$OWNERNAME</b><br/>
+<b><a target="_blank" href="person?id=$OID">$OWNERNAME</a><br/>
 $OWNERADDRESS<br/>
 $OWNERTOWN<br/>
 $OWNERCOUNTY $OWNERPOSTCODE<br/>
@@ -62,14 +62,14 @@ Vaccinations Expiring between two dates (shelter only)
 ###
 Diary
 ###
-33503/Any rev02
+33503/Any rev03
 ###
 Vaccinations expiring between two dates for shelter animals only.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation,
+a.ID AS AID, a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation,
 v.VaccinationType, av.DateExpires, av.Comments
 FROM animal a
 LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -95,7 +95,7 @@ HEADER$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$DISPLAYLOCATION</td>
 <td>$VACCINATIONTYPE</td>
