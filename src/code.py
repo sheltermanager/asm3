@@ -4466,6 +4466,11 @@ class maint_undelete(JSONEndpoint):
         asm3.al.debug("got %d deleted top level records" % len(d), "code.undelete", o.dbo)
         return { "rows": d }
 
+    def post_view(self, o):
+        self.check(asm3.users.USE_SQL_INTERFACE)
+        tablename, iid = o.post["key"].split(":")
+        return asm3.audit.get_restoresql(o.dbo, tablename, iid) 
+
     def post_undelete(self, o):
         self.check(asm3.users.USE_SQL_INTERFACE)
         for i in o.post["ids"].split(","):

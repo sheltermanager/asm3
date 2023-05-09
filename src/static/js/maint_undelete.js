@@ -10,9 +10,18 @@ $(function() {
             const table = {
                 rows: controller.rows,
                 idcolumn: "KEY",
-                edit: function(row) {
-                    //common.route("document_repository_file?ajax=false&dbfsid=" + row.ID);
+                edit: async function(row) {
+                    header.show_loading(_("Loading..."));
+                    try {
+                        let result = await common.ajax_post("maint_undelete", "mode=view&key=" + row.KEY);
+                        $("#dialog-viewer-content").html(result); 
+                        $("#dialog-viewer").dialog("open");
+                    }
+                    finally {
+                        header.hide_loading();
+                    }
                 },
+
                 columns: [
                     { field: "KEY", display: _("ID") },
                     { field: "DATE", display: _("Date"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_datetime },
@@ -28,7 +37,8 @@ $(function() {
                      } 
                 },
                 { id: "bulk", type: "dropdownfilter", 
-                    options: [ "(select)", "animal", "customreport", "onlineformincoming" ],
+                    options: [ "(select)", "animal", "animalcontrol", "animallost", "animalfound", "customreport", 
+                        "onlineformincoming", "owner", "templatedocument", "templatehtml", "waitinglist" ],
                     click: function(selval) {
                         $("#tableform input[type='checkbox']").each(function() {
                             if (String($(this).attr("data-id")).indexOf(selval) == 0) { 
@@ -45,10 +55,36 @@ $(function() {
             this.table = table;
         },
 
+        render_viewer: function() {
+            return [
+                '<div id="dialog-viewer" style="display: none" title="' + html.title(_("View")) + '">',
+                '<div id="dialog-viewer-content">',
+                '</div>',
+                '</div>'
+            ].join("\n");
+        },
+
+        bind_viewer: function() {
+            let viewbuttons = {};
+            viewbuttons[_("Close")] = function() { $(this).dialog("close"); };
+            $("#dialog-viewer").dialog({
+                autoOpen: false,
+                resizable: true,
+                height: "auto",
+                width: 1024,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.add_show,
+                hide: dlgfx.add_hide,
+                buttons: viewbuttons
+            });
+        },
+
         render: function() {
             let s = "";
             this.model();
             s += html.content_header(_("Undelete"));
+            s += this.render_viewer();
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();
@@ -56,6 +92,7 @@ $(function() {
         },
 
         bind: function() {
+            this.bind_viewer();
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
         },

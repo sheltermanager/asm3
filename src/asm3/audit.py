@@ -129,11 +129,15 @@ def delete_rows(dbo, username, tablename, condition):
 def get_deletions(dbo):
     """ Returns all available records for undeleting """
     rows = dbo.query("SELECT ID, TableName, DeletedBy, Date, IDList FROM deletion WHERE TableName IN " \
-        "('animal', 'owner', 'animalcontrol', 'customreport', 'dbfs', 'onlineformincoming', 'waitinglist', " \
-        "'animallost', 'animalfound', 'templatedocument', 'templatehtml')")
+        "('animal', 'animalcontrol', 'animalfound', 'animallost', 'customreport', 'onlineformincoming', " \
+        "'owner', 'templatedocument', 'templatehtml', 'waitinglist')")
     for r in rows:
         r["KEY"] = "%s:%s" % (r.TABLENAME, r.ID)
     return rows
+
+def get_restoresql(dbo, tablename, iid):
+    """ Returns the restore SQL for a given table/ID combo """
+    return dbo.query_string("SELECT RestoreSQL FROM deletion WHERE ID=? AND TableName=?", (iid, tablename))
 
 def insert_deletions(dbo, username, tablename, condition):
     rows = dbo.query("SELECT * FROM %s WHERE %s" % (tablename, condition))
