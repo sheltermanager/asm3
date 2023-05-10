@@ -2,7 +2,7 @@ Adopted animals with a vacc, test or medical due between two dates
 ###
 Medical
 ###
-Any rev01
+34701/Any rev02
 ###
 Mailmerge source of owner and animal information for all adoptions where the animal has a vaccination, test or medical item due between two dates
 ###
@@ -13,7 +13,7 @@ $VAR to DATE and$
 
 SELECT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
 animal.AnimalName, 
-owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
+owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname,
 animalvaccination.DateRequired, vaccinationtype.VaccinationType AS MedicalType
 FROM animal
@@ -30,7 +30,7 @@ AND owner.ExcludeFromBulkEmail = 0
 
 UNION SELECT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
 animal.AnimalName, 
-owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
+owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname,
 animaltest.DateRequired, testtype.TestName AS MedicalType
 FROM animal
@@ -47,7 +47,7 @@ AND owner.ExcludeFromBulkEmail = 0
 
 UNION SELECT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
 animal.AnimalName, 
-owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
+owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname,
 animalmedicaltreatment.DateRequired, animalmedical.TreatmentName AS MedicalType
 FROM animal

@@ -2,14 +2,14 @@ Active Members
 ###
 Membership
 ###
-33310/Any rev01
+34701/Any rev02
 ###
 Owner info for all active members
 ###
 en
 ###
 SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
-o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
 WHERE o.IsMember = 1 
@@ -22,14 +22,14 @@ Active Members (GDPR post only)
 ###
 Membership
 ###
-34104/Any rev01
+34701/Any rev02
 ###
 Owner info for all active members where their preferences are for post and not email.
 ###
 en
 ###
 SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
-o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
 WHERE o.IsMember = 1 
@@ -43,14 +43,14 @@ Active Members (GDPR email only)
 ###
 Membership
 ###
-34104/Any
+34701/Any rev02
 ###
 Owner info for all active members where their preferences are for email and not post.
 ###
 en
 ###
 SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
-o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 FROM owner o
 WHERE o.IsMember = 1 

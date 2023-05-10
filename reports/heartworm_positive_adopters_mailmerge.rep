@@ -2,7 +2,7 @@ Heartworm Positive Adopters
 ###
 Movements
 ###
-Any rev01
+34701/Any rev02
 ###
 Adopters of heartworm positive animals between two dates 
 ###
@@ -12,7 +12,7 @@ SELECT DISTINCT a.ShelterCode,
 a.AnimalName, 
 a.IdentichipNumber,
 s.SpeciesName,
-o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.EmailAddress2
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN adoption ad ON ad.ID = a.ActiveMovementID

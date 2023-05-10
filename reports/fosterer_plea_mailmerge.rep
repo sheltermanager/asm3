@@ -2,7 +2,7 @@ Fosterer Plea
 ###
 Movements
 ###
-34302/Any rev02
+34701/Any rev03
 ###
 Contact info for all fosterers, including info for selected animal in need of fostering
 ###
@@ -23,7 +23,7 @@ a.IdentichipNumber, a.IdentichipNumber AS MicrochipNumber,
 (SELECT Name FROM lksynun WHERE ID = a.IsHouseTrained) AS HouseTrained,
 il.LocationName AS InternalLocation, il.LocationName, a.ShelterLocationUnit AS LocationUnit, a.DisplayLocation,
 REPLACE('<img height="200px" src="https://service.sheltermanager.com/asmservice?account=$DATABASENAME$&method=animal_image&animalid={0}" />', '{0}', CAST(a.ID AS VARCHAR(10))) AS DocumentImgLink,
-o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.EmailAddress2,
 o.HomeTelephone, o.WorkTelephone, o.MobileTelephone
 FROM owner o
 CROSS JOIN animal a
