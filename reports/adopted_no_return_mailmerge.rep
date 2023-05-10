@@ -2,14 +2,14 @@ Non-Returned Adoptions
 ###
 Movements
 ###
-33310/Any rev02
+34701/Any rev03
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions between two dates
 ###
 en
 ###
 SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
-animal.AnimalName, owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
+animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM adoption
 INNER JOIN owner ON adoption.OwnerID = owner.ID
@@ -27,14 +27,14 @@ Non-Returned Adoptions (Puppies)
 ###
 Movements
 ###
-33310/PostgreSQL rev02
+34701/PostgreSQL rev03
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions of puppies between two dates
 ###
 en
 ###
 SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
-animal.AnimalName, owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
+animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM adoption
 INNER JOIN owner ON adoption.OwnerID = owner.ID
@@ -53,14 +53,14 @@ Non-Returned Adoptions (Adult Dogs)
 ###
 Movements
 ###
-33310/PostgreSQL rev02
+34701/PostgreSQL rev03
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions of adult dogs between two dates
 ###
 en
 ###
 SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
-animal.AnimalName, owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
+animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM adoption
 INNER JOIN owner ON adoption.OwnerID = owner.ID
@@ -79,14 +79,14 @@ Non-Returned Adoptions (Kittens)
 ###
 Movements
 ###
-33310/PostgreSQL rev02
+34701/PostgreSQL rev03
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions of kittens between two dates
 ###
 en
 ###
 SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
-animal.AnimalName, owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
+animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM adoption
 INNER JOIN owner ON adoption.OwnerID = owner.ID
@@ -105,14 +105,14 @@ Non-Returned Adoptions (Adult Cats)
 ###
 Movements
 ###
-33310/PostgreSQL rev02
+34701/PostgreSQL rev03
 ###
 Mailmerge source of owner and animal information for all non-returned adoptions of adult cats between two dates
 ###
 en
 ###
 SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
-animal.AnimalName, owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
+animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM adoption
 INNER JOIN owner ON adoption.OwnerID = owner.ID
@@ -131,14 +131,14 @@ Fosterers of Non-Returned Adoptions
 ###
 Movements
 ###
-33310/Any rev03
+34701/Any rev04
 ###
 Mailmerge source of fosterer contact info and animal information for non-returned adoptions between two dates
 ###
 en
 ###
 SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
-animal.AnimalName, owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
+animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM animal
 INNER JOIN owner ON adoption.OwnerID = owner.ID AND owner.IsFosterer=1

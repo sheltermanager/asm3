@@ -2,7 +2,7 @@ Active Reservations
 ###
 Movements
 ###
-33507/Any rev01
+34701/Any rev02
 ###
 Contact info and animal details for active reservations
 ###
@@ -15,7 +15,7 @@ animaltype.AnimalType AS theType,
 animal.BreedName,
 no.OwnerName, no.OwnerAddress,
 no.OwnerTown, no.OwnerCounty,
-no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
+no.OwnerPostcode, no.EmailAddress, no.EmailAddress2, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
 FROM adoption
 INNER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN owner no ON adoption.OwnerID = no.ID

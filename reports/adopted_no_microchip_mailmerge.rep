@@ -2,14 +2,14 @@ Adopted animals without microchips
 ###
 Movements
 ###
-33310/Any rev01
+34701/Any rev02
 ###
 Mailmerge source of owner and animal information for all adoptions where the animal is not microchipped between two dates
 ###
 en
 ###
 SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
-animal.AnimalName, owner.EmailAddress, owner.OwnerTown, owner.OwnerCounty, 
+animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
 FROM adoption
 INNER JOIN owner ON adoption.OwnerID = owner.ID
