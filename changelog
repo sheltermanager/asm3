@@ -1,6 +1,7 @@
 47
 ================
 
+10/05/23 Refactor CSV import rules, add ones for test/vacc/med
 10/05/23 Mail merges will now count/send to EmailAddress2 if present #1266
 09/05/23 Merge animal was reparenting additional person links with animal IDs
 08/05/23 Allow users to choose their own quicklinks, inheriting from system #1072

@@ -261,8 +261,12 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     hasanimal = False
     hasanimalname = False
     hasmed = False
+    hasmedicalname = False
+    hasmedicalgivendate = False
     hastest = False
+    hastestduedate = False
     hasvacc = False
+    hasvaccduedate = False
     hasperson = False
     haspersonlastname = False
     haspersonname = False
@@ -290,8 +294,12 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
         if col.startswith("CURRENTVET"): hascurrentvet = True
         if col.startswith("CURRENTVETLASTNAME"): hascurrentvetlastname = True
         if col.startswith("VACCINATION"): hasvacc = True
+        if col == "VACCINATIONDUEDATE": hasvaccduedate = True
         if col.startswith("TEST"): hastest = True
+        if col == "TESTDUEDATE": hastestduedate = True
         if col.startswith("MEDICAL"): hasmed = True
+        if col == "MEDICALGIVENDATE": hasmedicalgivendate = True
+        if col == "MEDICALNAME": hasmedicalname = True
         if col.startswith("LICENSE"): haslicence = True
         if col == "LICENSENUMBER": haslicencenumber = True
         if col.startswith("COST"): hascost = True
@@ -307,91 +315,32 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
         if col.startswith("DONATION"): hasdonation = True
         if col == "DONATIONAMOUNT": hasdonationamount = True
 
-    # Any valid fields?
-    if not onevalid:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file did not contain any fields that ASM recognises")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # If we have any animal fields, make sure at least ANIMALNAME is supplied
-    if hasanimal and not hasanimalname:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has animal fields, but no ANIMALNAME column")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # If we have any person fields, make sure at least PERSONLASTNAME or PERSONNAME is supplied
-    if hasperson and not haspersonlastname and not haspersonname:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has person fields, but no PERSONNAME or PERSONLASTNAME column")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # If we have any current vet fields, make sure at least CURRENTVETLASTNAME is supplied
-    if hascurrentvet and not hascurrentvetlastname:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has current vet fields, but no CURRENTVETLASTNAME column")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # If we have any original owner fields, make sure at least ORIGINALOWNERLASTNAME is supplied
-    if hasoriginalowner and not hasoriginalownerlastname:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has original owner fields, but no ORIGINALOWNERLASTNAME column")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # If we have any movement fields, make sure MOVEMENTDATE is supplied
-    if hasmovement and not hasmovementdate:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has movement fields, but no MOVEMENTDATE column")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # If we have any donation fields, we need an amount
-    if hasdonation and not hasdonationamount:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has donation fields, but no DONATIONAMOUNT column")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # We also need a valid person
-    if hasdonation and not (haspersonlastname or haspersonname):
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has donation fields, but no person to apply the donation to")
-        return asm3.asynctask.get_last_error(dbo)
-
-
-    # If we have any med fields, we need an animal
-    if hasmed and not hasanimal:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has medical fields, but no animal to apply them to")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # If we have any vacc fields, we need an animal
-    if hasvacc and not hasanimal:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has vaccination fields, but no animal to apply them to")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # If we have any test fields, we need an animal
-    if hastest and not hasanimal:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has test fields, but no animal to apply them to")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # If we have cost fields, we need an animal
-    if hascost and not hasanimal:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has cost fields, but no animal to apply them to")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # If we have cost fields, we need an amount
-    if hascost and not hascostamount:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has cost fields, but no COSTAMOUNT column")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # If we have any log fields, we need an animal
-    if haslog and not hasanimal:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has log fields, but no animal to apply them to")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # If we have any log fields, we need the entry
-    if haslog and not haslogcomments:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has log fields, but no LOGCOMMENTS column")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # If we have licence fields, we need a number
-    if haslicence and not haslicencenumber:
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has license fields, but no LICENSENUMBER column")
-        return asm3.asynctask.get_last_error(dbo)
-
-    # We also need a valid person
-    if haslicence and not (haspersonlastname or haspersonname):
-        asm3.asynctask.set_last_error(dbo, "Your CSV file has license fields, but no person to apply the license to")
-        return asm3.asynctask.get_last_error(dbo)
+    rules = [
+        ( not onevalid, "Your CSV file did not contain any fields that ASM recognises" ),
+        ( hasanimal and not hasanimalname, "Your CSV file has animal fields, but no ANIMALNAME column" ),
+        ( hasperson and not haspersonlastname and not haspersonname, "Your CSV file has person fields, but no PERSONNAME or PERSONLASTNAME column" ),
+        ( hascurrentvet and not hascurrentvetlastname, "Your CSV file has current vet fields, but no CURRENTVETLASTNAME column" ),
+        ( hasoriginalowner and not hasoriginalownerlastname, "Your CSV file has original owner fields, but no ORIGINALOWNERLASTNAME column" ),
+        ( hasmovement and not hasmovementdate, "Your CSV file has movement fields, but no MOVEMENTDATE column" ),
+        ( hasdonation and not hasdonationamount, "Your CSV file has donation fields, but no DONATIONAMOUNT column" ),
+        ( hasdonation and not (haspersonlastname or haspersonname), "Your CSV file has donation fields, but no person to apply the donation to" ),
+        ( hasmed and not (hasmedicalname or hasmedicalgivendate), "Your CSV file has medical fields, but no MEDICALNAME or MEDICALGIVENDATE columns" ),
+        ( hasmed and not hasanimal, "Your CSV file has medical fields, but no animal to apply them to" ),
+        ( hasvacc and not hasvaccduedate, "Your CSV file has vaccination fields, but no VACCINATIONDUEDATE column" ),
+        ( hasvacc and not hasanimal, "Your CSV file has vaccination fields, but no animal to apply them to" ),
+        ( hastest and not hastestduedate, "Your CSV file has test fields, but no TESTDUEDATE column" ),
+        ( hastest and not hasanimal, "Your CSV file has test fields, but no animal to apply them to" ),
+        ( hascost and not hasanimal, "Your CSV file has cost fields, but no animal to apply them to" ),
+        ( hascost and not hascostamount, "Your CSV file has cost fields, but no COSTAMOUNT column" ),
+        ( haslog and not hasanimal, "Your CSV file has log fields, but no animal to apply them to" ),
+        ( haslog and not haslogcomments, "Your CSV file has log fields, but no LOGCOMMENTS column" ),
+        ( haslicence and not haslicencenumber, "Your CSV file has license fields, but no LICENSENUMBER column" ),
+        ( haslicence and not (haspersonlastname or haspersonname), "Your CSV file has license fields, but no person to apply the license to" )
+    ]
+    for cond, msg in rules:
+        if cond:
+            asm3.asynctask.set_last_error(dbo, msg)
+            return asm3.asynctask.get_last_error(dbo)
 
     asm3.al.debug("reading CSV data, found %d rows" % len(rows), "csvimport.csvimport", dbo)
 
