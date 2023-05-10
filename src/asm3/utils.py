@@ -1919,6 +1919,11 @@ def send_bulk_email(dbo, replyadd, subject, body, rows, contenttype):
             if toadd is None or toadd.strip() == "": continue
             asm3.al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
             send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
+            if "EMAILADDRESS2" in r: 
+                toadd = r["EMAILADDRESS2"]
+                if toadd is None or toadd.strip() == "": continue
+                asm3.al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
+                send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
     thread.start_new_thread(do_send, ())
 
 def send_error_email():

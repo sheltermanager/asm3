@@ -4222,6 +4222,13 @@ class mailmerge(JSONEndpoint):
     get_permissions = asm3.users.MAIL_MERGE
     post_permissions = asm3.users.MAIL_MERGE
 
+    def recipients(self, rows):
+        """ Returns a list of all recipients for rows """
+        emails = [r.EMAILADDRESS for r in rows if r.EMAILADDRESS]
+        if len(rows) > 0 and "EMAILADDRESS2" in rows[0]:
+            emails += [r.EMAILADDRESS2 for r in rows if r.EMAILADDRESS2]
+        return emails
+
     def controller(self, o):
         l = o.locale
         dbo = o.dbo
@@ -4235,7 +4242,8 @@ class mailmerge(JSONEndpoint):
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
         if rows is None: rows = []
-        asm3.al.debug("got merge rows (%d items)" % len(rows), "code.mailmerge", dbo)
+        numemails = len(self.recipients(rows))
+        asm3.al.debug("got merge rows (%d items, %d email addresses)" % (len(rows), numemails), "code.mailmerge", dbo)
         # construct a list of field tokens for the email helper
         fields = []
         if len(rows) > 0:
@@ -4251,6 +4259,7 @@ class mailmerge(JSONEndpoint):
             "mergeparams": asm3.utils.json(p),
             "mergereport": crid,
             "mergetitle": title.replace(" ", "_").replace("\"", "").replace("'", "").lower(),
+            "numemails": numemails,
             "numrows": len(rows),
             "hasemail": "EMAILADDRESS" in fields,
             "hasaddress": "OWNERNAME" in fields and "OWNERADDRESS" in fields and "OWNERTOWN" in fields and "OWNERCOUNTY" in fields and "OWNERPOSTCODE" in fields,
@@ -4271,8 +4280,8 @@ class mailmerge(JSONEndpoint):
         subject = post["subject"]
         body = post["body"]
         if asm3.configuration.audit_on_send_email(dbo):
-            addresses = [r["EMAILADDRESS"] for r in rows]
-            asm3.audit.email(dbo, o.user, fromadd, addresses, "", "", subject, body)
+            emails = self.recipients(rows)
+            asm3.audit.email(dbo, o.user, fromadd, ",".join(emails), "", "", subject, body)
         asm3.utils.send_bulk_email(dbo, fromadd, subject, body, rows, "html")
 
     def post_document(self, o):
@@ -4339,8 +4348,7 @@ class mailmerge(JSONEndpoint):
         mergeparams = ""
         if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
-        emails = [ x.EMAILADDRESS for x in rows if x and x.EMAILADDRESS is not None and x.EMAILADDRESS != "" ]
-        return ", ".join(emails)
+        return ", ".join(self.recipients(rows))
 
 class maint_db_stats(ASMEndpoint):
     url = "maint_db_stats"
