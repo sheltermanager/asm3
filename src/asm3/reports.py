@@ -1697,9 +1697,9 @@ class Report:
             self._Append(htmlfooter)
             return self.output
 
-        # Check we have two columns
-        if len(rs[0]) != 2:
-            self._p("Map query should have two columns.")
+        # Check we have at least two columns
+        if len(rs[0]) < 2:
+            self._p("Map query should have at least two columns.")
             self._Append(htmlfooter)
             return self.output
 
@@ -1709,8 +1709,15 @@ class Report:
             "var points = \n")
 
         p = []
-        for g in rs:
-            p.append({ "latlong": g[0], "popuptext": g[1] })
+        for values in rs:
+            concat = []
+            for i, s in enumerate(values):
+                if i == 0: continue # skip lat/long
+                if asm3.utils.is_date(s): 
+                    concat.append(asm3.i18n.python2display(l, s))
+                else:
+                    concat.append(str(s))
+            p.append({ "latlong": values[0], "popuptext": "".join(concat) })
 
         self._Append( asm3.utils.json(p) + ";\n" )
         self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"\", points);\n" )

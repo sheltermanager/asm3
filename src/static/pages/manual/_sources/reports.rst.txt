@@ -466,7 +466,7 @@ Maps
 Maps are just like the reports. The difference is that instead of generating
 HTML, they will output map markers from a LatLong field.
 
-ASM expects map queries to return a resultset containing two columns. The first
+ASM expects map queries to return a resultset containing at least two columns. The first
 is the LatLong marker for the map, and the second is the text to display in the
 popup when the marker is clicked.
 
@@ -474,6 +474,18 @@ For example, this SQL will produce a map that shows the location of every
 person on file, with their address when the marker is clicked::
 
     SELECT LatLong, OwnerAddress FROM owner
+
+If there are more than two columns in the query results, the report engine will
+concatenate together the values of each subsequent column. 
+
+This SQL will produce a map with every person on file, but includes a clickable
+link to the person record when the marker is clicked::
+
+    SELECT LatLong,
+        REPLACE('<a target="blank" href="person?id={0}">', '{0}', ID),
+        OwnerName,
+        '</a>'
+    FROM owner ORDER BY ownername
 
 Automatic updating of repository reports
 ----------------------------------------

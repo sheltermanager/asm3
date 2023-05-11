@@ -529,12 +529,23 @@ GROUP BY i.LocationName, MONTH(ad.MovementDate)
 <h2>Maps<a class="headerlink" href="#maps" title="Permalink to this heading">¶</a></h2>
 <p>Maps are just like the reports. The difference is that instead of generating
 HTML, they will output map markers from a LatLong field.</p>
-<p>ASM expects map queries to return a resultset containing two columns. The first
+<p>ASM expects map queries to return a resultset containing at least two columns. The first
 is the LatLong marker for the map, and the second is the text to display in the
 popup when the marker is clicked.</p>
 <p>For example, this SQL will produce a map that shows the location of every
 person on file, with their address when the marker is clicked:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">LatLong</span><span class="p">,</span> <span class="n">OwnerAddress</span> <span class="n">FROM</span> <span class="n">owner</span>
+</pre></div>
+</div>
+<p>If there are more than two columns in the query results, the report engine will
+concatenate together the values of each subsequent column.</p>
+<p>This SQL will produce a map with every person on file, but includes a clickable
+link to the person record when the marker is clicked:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">LatLong</span><span class="p">,</span>
+    <span class="n">REPLACE</span><span class="p">(</span><span class="s1">&#39;&lt;a target=&quot;blank&quot; href=&quot;person?id=</span><span class="si">{0}</span><span class="s1">&quot;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ID</span><span class="p">),</span>
+    <span class="n">OwnerName</span><span class="p">,</span>
+    <span class="s1">&#39;&lt;/a&gt;&#39;</span>
+<span class="n">FROM</span> <span class="n">owner</span> <span class="n">ORDER</span> <span class="n">BY</span> <span class="n">ownername</span>
 </pre></div>
 </div>
 </section>
