@@ -4224,7 +4224,9 @@ class mailmerge(JSONEndpoint):
 
     def recipients(self, rows):
         """ Returns a list of all recipients for rows """
-        emails = [r.EMAILADDRESS for r in rows if r.EMAILADDRESS]
+        emails = []
+        if len(rows) > 0 and "EMAILADDRESS" in rows[0]:
+            emails += [r.EMAILADDRESS for r in rows if r.EMAILADDRESS]
         if len(rows) > 0 and "EMAILADDRESS2" in rows[0]:
             emails += [r.EMAILADDRESS2 for r in rows if r.EMAILADDRESS2]
         return emails
