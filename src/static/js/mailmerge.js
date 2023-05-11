@@ -104,7 +104,7 @@ $(function() {
                 '</form>',
                 '</div>',
 
-                '<h3 id="sendemailtab"><a href="#">' + _("Send emails") + '</a></h3>',
+                '<h3 id="sendemailtab"><a href="#">' + _("Send emails") + '</a> (' + controller.numemails + ')</h3>',
                 '<div id="sendemail">',
                 hf.replace("{mode}", "email"),
                 '<table width="100%">',
@@ -155,7 +155,7 @@ $(function() {
                 hf.replace("{mode}", "preview"),
                 '</div>',
 
-                '<h3 id="recipientstab"><a href="#">' + _("View email recipient list") + '</a></h3>',
+                '<h3 id="recipientstab"><a href="#">' + _("View email recipient list") + '</a> (' + controller.numemails + ')</h3>',
                 '<div id="recipients">',
                 hf.replace("{mode}", "recipients"),
                 '<button id="button-copyrecipients">' + _("Copy recipient list to the clipboard") + '</button>',
