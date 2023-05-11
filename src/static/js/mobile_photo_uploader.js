@@ -62,7 +62,7 @@ $(document).ready(function() {
                 '<button id="button-take" class="btn btn-primary mt-1" disabled="disabled" type="button">',
                     '<i class="bi-camera"></i> ' + _("Take Photo") + '</button>',
                 '<button id="button-paperwork" class="btn btn-success mt-1" disabled="disabled" type="button">',
-                    '<i class="bi-file-earmark-richtext"></i> ' + _("Scan Paperwork") + '</button>',
+                    '<i class="bi-file-earmark-richtext"></i> ' + _("Scan Paperwork as PDF") + '</button>',
                 '<button id="button-gallery" class="btn btn-secondary mt-1" disabled="disabled" type="button">',
                     '<i class="bi-card-image"></i> ' + _("Select from Gallery") + '</button>',
                 '<div id="spinner" class="spinner-border" role="status" style="display: none"><span class="visually-hidden">Loading...</span></div>',

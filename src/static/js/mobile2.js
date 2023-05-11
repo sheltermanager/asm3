@@ -116,9 +116,6 @@ $(document).ready(function() {
                                 '<span class="badge bg-primary rounded-pill">' + controller.medicals.length + '</span>',
                             '</a>',
                         '</li>',
-                        '<li class="dropdown-item">',
-                            '<a class="nav-link" href="#">' + _("Add Log to Animal") + '</a>',
-                        '</li>',
                     '</ul>',
                 '</li>',
                 '<li class="nav-item dropdown">',
@@ -395,10 +392,28 @@ $(document).ready(function() {
             if (!s) { return ""; }
             return s;
         };
-        // Grab the extra data for this incident from the backend
+        const fgs = function(s) {
+            let o = [];
+            $.each(s.split("|"), function(i, v) {
+                if (v.trim()) { o.push(v.trim()); }
+            });
+            return o.join(", ");
+        };
+        const aci = function(id, headerhtml, bodyhtml, show) {
+            if (!show) { show=""; }
+            return '<div class="accordion-item">' +
+                '<h2 class="accordion-header" id="heading-' + id + '">' +
+                '<button class="accordion-button ' + ( show ? "" : "collapsed") + '" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-' + id + 
+                    '" aria-expanded="false" aria-controls="collapse-' + id + '">' + headerhtml + '</button></h2>' + 
+                '<div id="collapse-' + id + '" class="accordion-collapse collapse ' + show + '" aria-labelledby="heading-' + id + '" data-bs-parent="#accordion-animal">' + 
+                '<div class="accordion-body">' + bodyhtml + '</div>' +
+                '</div></div>';
+        };
+        // Grab the extra data for this animal from the backend
         let o = await common.ajax_post(post_handler, "mode=loadanimal&id=" + a.ID);
         o = jQuery.parseJSON(o);
         let [adoptable, adoptreason] = html.is_animal_adoptable(a);
+        let x = [];
         let h = [
             '<div class="list-group mt-3">',
             '<a href="#" data-link="shelteranimals" class="list-group-item list-group-item-action internal-link">',
@@ -408,92 +423,111 @@ $(document).ready(function() {
             '<img style="float: right" src="' + html.thumbnail_src(a, "animalthumb") + '">',
             '<h5 class="mb-1">' + a.ANIMALNAME + ' - ' + a.CODE + '</h5>',
             '<small>' + common.substitute(_("{0} {1} {2} aged {3}"), { "0": a.SEXNAME, "1": a.BREEDNAME, "2": a.SPECIESNAME, "3": a.ANIMALAGE }) + '<br/>',
-            a.IDENTICHIPNUMBER + '</small><br/>',
-            '<button type="button" class="uploadphoto btn btn-primary"><i class="bi-cloud-upload-fill"></i> ' + _("Upload"),
-            '</button>',
-            '<input type="file" accept="image/*" class="uploadphotofile" style="display: none" />',
+            a.IDENTICHIPNUMBER + '</small>',
+            '<br/><small class="fst-italic">' + fgs(a.ADDITIONALFLAGS) + '</small>',
+            //'<br/>',
+            //'<button type="button" class="uploadphoto btn btn-primary"><i class="bi-cloud-upload-fill"></i> ' + _("Upload"),
+            //'</button>',
+            //'<input type="file" accept="image/*" class="uploadphotofile" style="display: none" />',
             '</div>',
             '</div>',
 
-            i(_("Status"), adoptable ? '<span class="text-success">' + _("Available for adoption") + '</span>' : 
-                '<span class="text-danger">' + _("Not available for adoption") + " (" + adoptreason + ")</span>"),
-            i(_("Type"), a.ANIMALTYPENAME),
-            i(_("Location"), a.DISPLAYLOCATION),
-            i(_("Color"), a.BASECOLOURNAME),
-            i(_("Coat Type"), a.COATTYPENAME),
-            i(_("Size"), a.SIZENAME),
-            i(_("DOB"), format.date(a.DATEOFBIRTH) + " (" + a.ANIMALAGE + ")"),
-            
-            i(_("Markings"), a.MARKINGS),
-            i(_("Hidden Comments"), a.HIDDENANIMALDETAILS),
-            i(_("Description"), a.ANIMALCOMMENTS),
-            
-            i(_("Cats"), a.ISGOODWITHCATSNAME),
-            i(_("Dogs"), a.ISGOODWITHDOGSNAME),
-            i(_("Children"), a.ISGOODWITHCHILDRENNAME),
-            i(_("Housetrained"), a.ISHOUSETRAINEDNAME),
-            
-            common.has_permission("vo") ? i(_("Original Owner"), a.ORIGINALOWNERNAME) : "",
-            common.has_permission("vo") ? i(_("Brought In By"), a.BROUGHTINBYOWNERNAME) : "",
+            '<div class="accordion" id="accordion-animal">',
 
-            i(_("Date Brought In"), format.date(a.DATEBROUGHTIN)),
-            i(_("Bonded With"), n(a.BONDEDANIMAL1CODE) + " " + n(a.BONDEDANIMAL1NAME) + " " + n(a.BONDEDANIMAL2CODE) + " " + n(a.BONDEDANIMAL2NAME)),
-            i(_("Transfer"), a.ISTRANSFERNAME),
-            i(_("Entry Category"), a.ENTRYREASONNAME),
-            i(_("Entry Reason"), a.REASONFORENTRY),
+            aci("details", _("Animal"), [
+                i(_("Status"), adoptable ? '<span class="text-success">' + _("Available for adoption") + '</span>' : 
+                    '<span class="text-danger">' + _("Not available for adoption") + " (" + adoptreason + ")</span>"),
+                i(_("Type"), a.ANIMALTYPENAME),
+                i(_("Location"), a.DISPLAYLOCATION),
+                i(_("Color"), a.BASECOLOURNAME),
+                i(_("Coat Type"), a.COATTYPENAME),
+                i(_("Size"), a.SIZENAME),
+                i(_("DOB"), format.date(a.DATEOFBIRTH) + " (" + a.ANIMALAGE + ")"),
+                
+                i(_("Markings"), a.MARKINGS),
+                i(_("Hidden Comments"), a.HIDDENANIMALDETAILS),
+                i(_("Description"), a.ANIMALCOMMENTS),
+                
+                i(_("Cats"), a.ISGOODWITHCATSNAME),
+                i(_("Dogs"), a.ISGOODWITHDOGSNAME),
+                i(_("Children"), a.ISGOODWITHCHILDRENNAME),
+                i(_("Housetrained"), a.ISHOUSETRAINEDNAME)
+            ].join("\n"), "show"),
+           
+            aci("entry", _("Entry"), [
+                i(_("Date Brought In"), format.date(a.DATEBROUGHTIN)),
+                i(_("Transfer"), a.ISTRANSFERNAME),
+                i(_("Entry Category"), a.ENTRYREASONNAME),
+                i(_("Entry Reason"), a.REASONFORENTRY),
+                common.has_permission("vo") ? i(_("Original Owner"), a.ORIGINALOWNERNAME) : "",
+                common.has_permission("vo") ? i(_("Brought In By"), a.BROUGHTINBYOWNERNAME) : "",
+                i(_("Bonded With"), n(a.BONDEDANIMAL1CODE) + " " + n(a.BONDEDANIMAL1NAME) + " " + n(a.BONDEDANIMAL2CODE) + " " + n(a.BONDEDANIMAL2NAME))
+            ].join("\n")),
 
-            i(_("Microchipped"), format.date(a.IDENTICHIPDATE) + " " + a.IDENTICHIPPED==1 ? a.IDENTICHIPNUMBER : ""),
-            i(_("Tattoo"), format.date(a.TATTOODATE) + " " + a.TATTOO==1 ? a.TATTOONUMBER : ""),
-            i(_("Neutered"), a.NEUTEREDNAME + " " + format.date(a.NEUTEREDDATE)),
-            i(_("Declawed"), a.DECLAWEDNAME),
-            i(_("Heartworm Tested"), format.date(a.HEARTWORMTESTDATE) + " " + a.HEARTWORMTESTED==1 ? a.HEARTWORMTESTRESULTNAME : ""),
-            i(_("FIV/L Tested"), format.date(a.COMBITESTDATE) + " " + a.COMBITESTED==1 ? a.COMBITESTRESULTNAME + " " + a.FLVRESULTNAME : ""),
-            i(_("Health Problems"), a.HEALTHPROBLEMS),
-            i(_("Rabies Tag"), a.RABIESTAG),
-            i(_("Special Needs"), a.HASSPECIALNEEDSNAME),
-            i(_("Current Vet"), n(a.CURRENTVETNAME) + " " + n(a.CURRENTVETWORKTELEPHONE))
+            aci("health", _("Health and Identification"), [
+                i(_("Microchipped"), format.date(a.IDENTICHIPDATE) + " " + a.IDENTICHIPPED==1 ? a.IDENTICHIPNUMBER : ""),
+                i(_("Tattoo"), format.date(a.TATTOODATE) + " " + a.TATTOO==1 ? a.TATTOONUMBER : ""),
+                i(_("Neutered"), a.NEUTEREDNAME + " " + format.date(a.NEUTEREDDATE)),
+                i(_("Declawed"), a.DECLAWEDNAME),
+                i(_("Heartworm Tested"), format.date(a.HEARTWORMTESTDATE) + " " + a.HEARTWORMTESTED==1 ? a.HEARTWORMTESTRESULTNAME : ""),
+                i(_("FIV/L Tested"), format.date(a.COMBITESTDATE) + " " + a.COMBITESTED==1 ? a.COMBITESTRESULTNAME + " " + a.FLVRESULTNAME : ""),
+                i(_("Health Problems"), a.HEALTHPROBLEMS),
+                i(_("Rabies Tag"), a.RABIESTAG),
+                i(_("Special Needs"), a.HASSPECIALNEEDSNAME),
+                i(_("Current Vet"), n(a.CURRENTVETNAME) + " " + n(a.CURRENTVETWORKTELEPHONE))
+            ].join("\n"))
         ];
         if (o.additional.length > 0) {
-            $.each(o.additional, function(x, v) {
-                h.push(i(v.NAME, v.VALUE)); 
+            x = [];
+            $.each(o.additional, function(d, v) {
+                x.push(i(v.NAME, v.VALUE)); 
             });
+            h.push(aci("additional", _("Additional"), x.join("\n")));
         }
         if (common.has_permission("dvad") && o.diets.length > 0) {
-            h.push(hd(_("Diet")));
-            $.each(o.diets, function(x, v) {
-                h.push(col3(format.date(v.DATESTARTED), v.DIETNAME, v.COMMENTS));
+            x = [];
+            $.each(o.diets, function(d, v) {
+                x.push(col3(format.date(v.DATESTARTED), v.DIETNAME, v.COMMENTS));
             });
+            h.push(aci("diet", _("Diet"), x.join("\n")));
         }
         if (common.has_permission("vav") && o.vaccinations.length > 0) {
-            h.push(hd(_("Vaccination")));
-            $.each(o.vaccinations, function(x, v) {
-                h.push(col3(format.date(v.DATEREQUIRED), format.date(v.DATEOFVACCINATION), v.VACCINATIONTYPE));
+            x = [];
+            $.each(o.vaccinations, function(d, v) {
+                x.push(col3(format.date(v.DATEREQUIRED), format.date(v.DATEOFVACCINATION), v.VACCINATIONTYPE));
             });
+            h.push(aci("vacc", _("Vaccination"), x.join("\n")));
         }
         if (common.has_permission("vat") && o.tests.length > 0) {
-            h.push(hd(_("Test")));
-            $.each(o.tests, function(x, v) {
-                h.push(col3(format.date(v.DATEREQUIRED), format.date(v.DATEOFTEST), v.TESTNAME + " " + (v.DATEOFTEST ? v.RESULTNAME : "")));
+            x = [];
+            $.each(o.tests, function(d, v) {
+                x.push(col3(format.date(v.DATEREQUIRED), format.date(v.DATEOFTEST), v.TESTNAME + " " + (v.DATEOFTEST ? v.RESULTNAME : "")));
             });
+            h.push(aci("test", _("Test"), x.join("\n")));
         }
         if (common.has_permission("mvam") && o.medicals.length > 0) {
-            h.push(hd(_("Medical")));
-            $.each(o.medicals, function(x, v) {
-                h.push(col3(format.date(v.STARTDATE), v.TREATMENTNAME, v.DOSAGE));
+            x = [];
+            $.each(o.medicals, function(d, v) {
+                x.push(col3(format.date(v.STARTDATE), v.TREATMENTNAME, v.DOSAGE));
             });
+            h.push(aci("medical", _("Medical"), x.join("\n")));
         }
         if (common.has_permission("vdn") && o.diary.length > 0) {
-            h.push(hd(_("Diary")));
-            $.each(o.diary, function(x, v) {
-                h.push(col3(format.date(v.DIARYDATETIME), v.SUBJECT, v.NOTE));
+            x = [];
+            $.each(o.diary, function(d, v) {
+                x.push(col3(format.date(v.DIARYDATETIME), v.SUBJECT, v.NOTE));
             });
+            h.push(aci("diary", _("Diary"), x.join("\n")));
         }
         if (common.has_permission("vle") && o.logs.length > 0) {
-            h.push(hd(_("Log")));
-            $.each(o.logs, function(x, v) {
-                h.push(col3(format.date(v.DATE), v.LOGTYPENAME, v.COMMENTS));
+            x = [];
+            // TODO: section to add a new log message to the animal
+            $.each(o.logs, function(d, v) {
+                x.push(col3(format.date(v.DATE), v.LOGTYPENAME, v.COMMENTS));
             });
+            h.push(aci("log", _("Log"), x.join("\n")));
         }
+        h.push('</div>'); // close accordion
         $(selector).html( h.join("\n") );
         // Display our animal now it's rendered
         $(".container").hide();
@@ -530,6 +564,16 @@ $(document).ready(function() {
             if (controller.locale == "en_IE" && s.indexOf("+") != 0) { s = "+353" + s; }
             return '<a href="tel:' + s + '">' + s + '</a>';
         };
+        const aci = function(id, headerhtml, bodyhtml, show) {
+            if (!show) { show=""; }
+            return '<div class="accordion-item">' +
+                '<h2 class="accordion-header" id="heading-' + id + '">' +
+                '<button class="accordion-button ' + ( show ? "" : "collapsed") + '" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-' + id + 
+                    '" aria-expanded="false" aria-controls="collapse-' + id + '">' + headerhtml + '</button></h2>' + 
+                '<div id="collapse-' + id + '" class="accordion-collapse collapse ' + show + '" aria-labelledby="heading-' + id + '" data-bs-parent="#accordion-incident">' + 
+                '<div class="accordion-body">' + bodyhtml + '</div>' +
+                '</div></div>';
+        };
         // Inline buttons for completing, dispatching and responding, either the date or a button
         let comptp = dt(ac.COMPLETEDATE) + ' ' + ac.COMPLETEDNAME;
         if (!ac.COMPLETEDDATE && common.has_permission("caci")) {
@@ -551,6 +595,7 @@ $(document).ready(function() {
         // Grab the extra data for this incident from the backend
         let o = await common.ajax_post(post_handler, "mode=loadincident&id=" + ac.ID);
         o = jQuery.parseJSON(o);
+        let x= [];
         let h = [
             '<div class="list-group" style="margin-top: 5px">',
             '<a href="#" data-link="' + backlink + '" class="list-group-item list-group-item-action internal-link">',
@@ -566,62 +611,73 @@ $(document).ready(function() {
             '</div>',
             '</div>',
 
-            i(_("Number"), format.padleft(ac.ID, 6)),
-            i(_("Type"), ac.INCIDENTNAME),
-            i(_("Incident Date/Time"), dt(ac.INCIDENTDATETIME)),
-            i(_("Notes"), ac.CALLNOTES),
-            i(_("Completed"), comptp),
-            i(_("Call Date/Time"), dt(ac.CALLDATETIME)),
-            i(_("Taken By"), ac.CALLTAKER),
+            '<div class="accordion" id="accordion-incident">',
 
-            common.has_permission("vo") ? i(_("Caller"), ac.CALLERNAME) : "",
-            common.has_permission("vo") ? i(_("Phone"), tel(ac.CALLERHOMETELEPHONE) + " " + tel(ac.CALLERWORKTELEPHONE) + " " + tel(ac.CALLERMOBILETELEPHONE)) : "",
-            common.has_permission("vo") ? i(_("Victim"), ac.VICTIMNAME) : "",
+            aci("details", _("Incident"), [
 
-            hd(_("Dispatch")),
-            i(_("Address"), dispadd),
-            i(_("City"), ac.DISPATCHTOWN),
-            i(_("State"), ac.DISPATCHCOUNTY),
-            i(_("Zipcode"), ac.DISPATCHPOSTCODE),
-            i(_("Dispatched ACO"), ac.DISPATCHEDACO),
-            i(_("Dispatch Date/Time"), dispdt),
-            i(_("Responded Date/Time"), respdt),
-            i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME)),
-            i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME2)),
-            i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME3)),
+                i(_("Number"), format.padleft(ac.ID, 6)),
+                i(_("Type"), ac.INCIDENTNAME),
+                i(_("Incident Date/Time"), dt(ac.INCIDENTDATETIME)),
+                i(_("Notes"), ac.CALLNOTES),
+                i(_("Completed"), comptp),
+                i(_("Call Date/Time"), dt(ac.CALLDATETIME)),
+                i(_("Taken By"), ac.CALLTAKER),
 
-            common.has_permission("vo") ? hd(_("Suspect/Animal")) : "",
+                common.has_permission("vo") ? i(_("Caller"), ac.CALLERNAME) : "",
+                common.has_permission("vo") ? i(_("Phone"), tel(ac.CALLERHOMETELEPHONE) + " " + tel(ac.CALLERWORKTELEPHONE) + " " + tel(ac.CALLERMOBILETELEPHONE)) : "",
+                common.has_permission("vo") ? i(_("Victim"), ac.VICTIMNAME) : ""
+            ].join("\n"), "show"),
+
+            aci("dispatch", _("Dispatch"), [
+                i(_("Address"), dispadd),
+                i(_("City"), ac.DISPATCHTOWN),
+                i(_("State"), ac.DISPATCHCOUNTY),
+                i(_("Zipcode"), ac.DISPATCHPOSTCODE),
+                i(_("Dispatched ACO"), ac.DISPATCHEDACO),
+                i(_("Dispatch Date/Time"), dispdt),
+                i(_("Responded Date/Time"), respdt),
+                i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME)),
+                i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME2)),
+                i(_("Followup Date/Time"), dt(ac.FOLLOWUPDATETIME3))
+            ].join("\n"))
+        ];
+
+        x = [
             common.has_permission("vo") ? i(_("Suspect 1"), ac.OWNERNAME1) : "",
             common.has_permission("vo") ? i(_("Suspect 2"), ac.OWNERNAME2) : "",
             common.has_permission("vo") ? i(_("Suspect 3"), ac.OWNERNAME3) : ""
         ];
         // List linked animals
         $.each(o.animals, function(x, v) {
-            h.push(i(_("Animal"), v.SHELTERCODE + " - " + v.ANIMALNAME));
+            x.push(i(_("Animal"), v.SHELTERCODE + " - " + v.ANIMALNAME));
         });
-        h = h.concat([
+        x = x.concat([
             i(_("Species"), ac.SPECIESNAME),
             i(_("Sex"), ac.SEXNAME),
             i(_("Age Group"), ac.AGEGROUP),
             i(_("Description"), ac.ANIMALDESCRIPTION)
         ]);
+        h.push(aci("suspect", _("Suspect/Animal"), x.join("\n")));
         if (common.has_permission("vacc") && o.citations.length > 0) {
-            h.push(hd(_("Citations")));
-            $.each(o.citations, function(x, v) {
-                h.push(col3(format.date(v.CITATIONDATE), v.CITATIONNAME, v.COMMENTS));
+            x = [];
+            $.each(o.citations, function(d, v) {
+                x.push(col3(format.date(v.CITATIONDATE), v.CITATIONNAME, v.COMMENTS));
             });
+            aci("citations", _("Citations"), x.join("\n"));
         }
         if (common.has_permission("vdn") && o.diary.length > 0) {
-            h.push(hd(_("Diary")));
-            $.each(o.diary, function(x, v) {
-                h.push(col3(format.date(v.DIARYDATETIME), v.SUBJECT, v.NOTE));
+            x = [];
+            $.each(o.diary, function(d, v) {
+                x.push(col3(format.date(v.DIARYDATETIME), v.SUBJECT, v.NOTE));
             });
+            aci("diary", _("Diary"), x.join("\n"));
         }
         if (common.has_permission("vle") && o.logs.length > 0) {
-            h.push(hd(_("Log")));
-            $.each(o.logs, function(x, v) {
-                h.push(col3(format.date(v.DATE), v.LOGTYPENAME, v.COMMENTS));
+            x = [];
+            $.each(o.logs, function(d, v) {
+                x.push(col3(format.date(v.DATE), v.LOGTYPENAME, v.COMMENTS));
             });
+            aci("log", _("Log"), x.join("\n"));
         }
             /* facility to add a log TODO:
             h.append(jqm_form("aclog", ajax="false"))
@@ -632,6 +688,7 @@ $(document).ready(function() {
             h.append(jqm_submit(_("Add Log", l)))
             h.append(jqm_form_end())
             */
+        h.push("</div>"); // close accordion
         $(selector).html( h.join("\n") );
         // Display the record
         $(".container").hide();
