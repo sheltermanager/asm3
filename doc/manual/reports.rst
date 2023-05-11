@@ -482,7 +482,7 @@ This SQL will produce a map with every person on file, but includes a clickable
 link to the person record when the marker is clicked::
 
     SELECT LatLong,
-        REPLACE('<a target="blank" href="person?id={0}">', '{0}', ID),
+        '<a target="blank" href="person?id=', ID, '">',
         OwnerName,
         '</a>'
     FROM owner ORDER BY ownername

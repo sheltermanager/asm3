@@ -542,7 +542,7 @@ concatenate together the values of each subsequent column.</p>
 <p>This SQL will produce a map with every person on file, but includes a clickable
 link to the person record when the marker is clicked:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SELECT</span> <span class="n">LatLong</span><span class="p">,</span>
-    <span class="n">REPLACE</span><span class="p">(</span><span class="s1">&#39;&lt;a target=&quot;blank&quot; href=&quot;person?id=</span><span class="si">{0}</span><span class="s1">&quot;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ID</span><span class="p">),</span>
+    <span class="s1">&#39;&lt;a target=&quot;blank&quot; href=&quot;person?id=&#39;</span><span class="p">,</span> <span class="n">ID</span><span class="p">,</span> <span class="s1">&#39;&quot;&gt;&#39;</span><span class="p">,</span>
     <span class="n">OwnerName</span><span class="p">,</span>
     <span class="s1">&#39;&lt;/a&gt;&#39;</span>
 <span class="n">FROM</span> <span class="n">owner</span> <span class="n">ORDER</span> <span class="n">BY</span> <span class="n">ownername</span>
