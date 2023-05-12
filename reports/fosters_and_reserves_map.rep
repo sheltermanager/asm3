@@ -10,7 +10,9 @@ en
 ###
 SELECT 
 o.LatLong,
-'<a target="blank" href="person?id=' || CAST(o.ID AS VARCHAR(20)) || '">' || o.OwnerName || '</a><br>' || o.OwnerAddress || '<br>' || a.AnimalName || ' - ' || a.ShelterCode || ' (' || lksmovementtype.MovementType || ')'
+'<a target="blank" href="person?id=', '">', o.OwnerName, '</a><br>',
+o.OwnerAddress, '<br>', 
+'<a href="animal?id=', a.AnimalName,' - ', a.ShelterCode, '</a>', ' (', lksmovementtype.MovementType ')'
 FROM adoption ad
 INNER JOIN animal a ON ad.AnimalID = a.ID
 INNER JOIN owner o ON ad.OwnerID = o.ID

@@ -2,13 +2,14 @@ Active Equipment Loans Map
 ###
 Maps
 ###
-33402/Any rev01
+34703/Any rev02
 ###
 Map of people with active equipment loans.
 ###
 en
 ###
-SELECT latlong, ownername || '<br>' || owneraddress
+SELECT latlong,
+'<a href="person?id=', ownername, ',<a/><br />', owneraddress
 FROM ownertraploan
 INNER JOIN owner ON ownertraploan.OwnerID = owner.ID
 WHERE latlong is not null AND latlong <> '' AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')
