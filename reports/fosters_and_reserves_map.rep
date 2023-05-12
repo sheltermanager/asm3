@@ -1,0 +1,25 @@
+Fosters and Reserves Map
+###
+Maps
+###
+34703/Any rev01
+###
+Map of locations displaying reserves and active fosters.
+###
+en
+###
+SELECT 
+o.LatLong,
+'<a target="blank" href="person?id=' || CAST(o.ID AS VARCHAR(20)) || '">' || o.OwnerName || '</a><br>' || o.OwnerAddress || '<br>' || a.AnimalName || ' - ' || a.ShelterCode || ' (' || lksmovementtype.MovementType || ')'
+FROM adoption ad
+INNER JOIN animal a ON ad.AnimalID = a.ID
+INNER JOIN owner o ON ad.OwnerID = o.ID
+INNER JOIN lksmovementtype ON lksmovementtype.ID = ad.MovementType
+WHERE ad.ReservationDate Is Not Null 
+AND ad.ReservationCancelledDate Is Null
+AND ad.MovementType = 0
+OR ad.MovementType = 2 AND DeceasedDate Is Null AND ReturnDate Is Null 
+AND o.LatLong is not null AND o.LatLong <> ''
+ORDER BY OwnerName
+###
+MAP
