@@ -55,7 +55,7 @@ Expired licenses in the last year by animal
 ###
 Animal Control
 ###
-33307/PostgreSQL
+33307/Any rev02
 ###
 Animals on file where their latest license has expired in the last year
 ###
@@ -70,7 +70,7 @@ FROM animal a
 INNER JOIN ownerlicence ol ON ol.AnimalID = a.ID AND ol.ID = (SELECT ID FROM ownerlicence WHERE AnimalID = a.ID ORDER BY ExpiryDate DESC LIMIT 1)
 INNER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID
 INNER JOIN owner o ON o.ID = ol.OwnerID
-WHERE ol.ExpiryDate <= CURRENT_DATE AND ol.ExpiryDate > CURRENT_DATE - INTERVAL '365 days'
+WHERE ol.ExpiryDate <= '$CURRENT_DATE$' AND ol.ExpiryDate > '$CURRENT_DATE-365$'
 AND a.DeceasedDate Is Null 
 ORDER BY a.AnimalName, ol.ExpiryDate
 ###

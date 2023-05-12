@@ -2,7 +2,7 @@ Animals On Shelter
 ###
 Animals
 ###
-34302/PostgreSQL rev01
+34302/Any rev02
 ###
 Mail merge of all animals on shelter for generating multiple documents, etc.
 ###
@@ -10,7 +10,7 @@ en
 ###
 SELECT
 a.ID AS AnimalID, a.ShelterCode, a.ShortCode,
-a.AnimalName, a.AnimalComments, a.HealthProblems, a,Markings, a.Fee, a.HoldUntilDate, 
+a.AnimalName, a.AnimalComments, a.HealthProblems, a.Markings, a.Fee, a.HoldUntilDate, 
 a.AnimalAge AS Age, a.MostRecentEntryDate as MostRecentEntry, a.Weight, a.DateOfBirth, a.DateBroughtIn, 
 a.BreedName, s.SpeciesName, c.BaseColour AS BaseColourName,
 a.IdentichipNumber, a.IdentichipNumber AS MicrochipNumber,
@@ -22,7 +22,7 @@ a.IdentichipNumber, a.IdentichipNumber AS MicrochipNumber,
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithDogs) AS GoodWithDogs,
 (SELECT Name FROM lksynun WHERE ID = a.IsHouseTrained) AS HouseTrained,
 il.LocationName AS InternalLocation, il.LocationName, a.ShelterLocationUnit AS LocationUnit, a.DisplayLocation,
-'<img height="200px" src="https://service.sheltermanager.com/asmservice?account=$DATABASENAME$&method=animal_image&animalid=' || a.ID::text || '" />' AS DocumentImgLink
+REPLACE('<img height="200px" src="https://service.sheltermanager.com/asmservice?account=$DATABASENAME$&method=animal_image&animalid={0}" />', '{0}', CAST(a.ID AS VARCHAR(20))) AS DocumentImgLink
 FROM animal a
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
 LEFT OUTER JOIN basecolour c ON c.ID = a.BaseColourID
