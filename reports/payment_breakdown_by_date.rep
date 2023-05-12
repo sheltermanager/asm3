@@ -887,7 +887,7 @@ Payment Breakdown By Receipt Number
 ###
 Financial
 ###
-34204/PostgreSQL rev01
+34204/Any rev01
 ###
 All payments by type for a range of receipt numbers with totals.
 ###
@@ -906,7 +906,7 @@ FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
 INNER JOIN donationpayment ON donationpayment.ID = ownerdonation.DonationPaymentID
 INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID 
-WHERE asm_to_integer(ownerdonation.ReceiptNumber) >= $@from$ AND asm_to_integer(ownerdonation.ReceiptNumber) <= $@to$
+WHERE CAST(ownerdonation.ReceiptNumber AS INTEGER) >= $@from$ AND CAST(ownerdonation.ReceiptNumber AS INTEGER) <= $@to$
 ORDER BY ownerdonation.ID
 ###
 $$HEADER

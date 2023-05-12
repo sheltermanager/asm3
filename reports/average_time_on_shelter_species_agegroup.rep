@@ -2,7 +2,7 @@ Average Time On Shelter By Species and Age Group
 ###
 Statistics
 ###
-33018/PostgreSQL rev01
+33018/Any rev01
 ###
 Average time spent on shelter for all animals by species and age group.
 ###
@@ -18,7 +18,7 @@ WHERE DaysOnShelter > 0
 AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
 AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
 GROUP BY SpeciesName, AgeGroup
-ORDER BY CAST(AVG(DaysOnShelter) AS INTEGER) DESC
+ORDER BY avtimeonshelter DESC
 ###
 $$HEADER
 <table border="1">

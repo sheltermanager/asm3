@@ -2,7 +2,7 @@ Adoptable Animals
 ###
 Animals
 ###
-34501/PostgreSQL rev02
+34501/Any rev03
 ###
 Mail merge of all adoptable animals for generating multiple documents, etc.
 ###
@@ -13,7 +13,7 @@ AnimalName, AnimalComments, AnimalAge AS Age, MostRecentEntryDate as MostRecentE
 BreedName, SpeciesName, BaseColour AS BaseColourName, Markings, 
 (SELECT Name FROM lksyesno WHERE ID = a.Neutered) AS Neutered,
 (SELECT Sex FROM lksex WHERE ID = a.Sex) AS Sex,
-'<img height="200px" src="image?db=$DATABASENAME$&mode=animal&id=' || a.ID::text || '" />' AS DocumentImgLink
+REPLACE('<img height="200px" src="image?db=$DATABASENAME$&mode=animal&id={0}" />', '{0}', CAST(a.ID AS VARCHAR(20))) AS DocumentImgLink
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN basecolour c ON c.ID = a.BaseColourID

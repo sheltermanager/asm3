@@ -2,7 +2,7 @@ Average Time On Shelter By Date and Location
 ###
 Statistics
 ###
-33018/PostgreSQL rev01
+33018/Any rev01
 ###
 Average time spent on shelter for all animals by location and date.
 ###
@@ -17,47 +17,7 @@ WHERE DaysOnShelter > 0
 AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
 AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
 GROUP BY LocationName
-ORDER BY CAST(AVG(DaysOnShelter) AS INTEGER) DESC
-###
-$$HEADER
-<table border="1">
-<tr>
-<th>Location</th>
-<th>Average Days On Shelter</th>
-</tr>
-HEADER$$
-
-$$BODY
-<tr>
-<td>$LOCATIONNAME</td>
-<td>$AVTIMEONSHELTER</td>
-</tr>
-BODY$$
-
-$$FOOTER
-</table>
-FOOTER$$
-&&&
-Average Time On Shelter By Date and Location
-###
-Statistics
-###
-33018/MySQL rev01
-###
-Average time spent on shelter for all animals by location and date.
-###
-en
-###
-SELECT
-LocationName,
-AVG(DaysOnShelter) AS avtimeonshelter
-FROM animal
-INNER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
-WHERE DaysOnShelter > 0 
-AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
-AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
-GROUP BY LocationName
-ORDER BY AVG(DaysOnShelter) DESC
+ORDER BY avtimeonshelter DESC
 ###
 $$HEADER
 <table border="1">

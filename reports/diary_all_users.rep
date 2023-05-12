@@ -2,13 +2,13 @@ Diary (all users)
 ###
 Diary
 ###
-MySQL rev01
+Any rev02
 ###
 Generates the diary for all users today.
 ###
 en
 ###
-SELECT *, TIME(DiaryDateTime) AS TheTime
+SELECT *
 FROM diary
 WHERE DateCompleted Is Null
 AND DiaryDateTime <= '$CURRENT_DATE$'
@@ -26,47 +26,7 @@ GROUP$$
 
 $$BODY
 <p>
-<i>$DIARYDATETIME $THETIME</i><br />
-<b>$LINKINFO $SUBJECT</b>
-</p>
-<p>
-$NOTE
-</p>
-<hr />
-BODY$$
-
-$$FOOTER
-FOOTER$$
-&&&
-Diary (all users)
-###
-Diary
-###
-PostgreSQL rev01
-###
-Generates the diary for all users today.
-###
-en
-###
-SELECT *, to_char(DiaryDateTime, 'HH:MI') AS TheTime
-FROM diary
-WHERE DateCompleted Is Null
-AND DiaryDateTime <= '$CURRENT_DATE$'
-ORDER BY DiaryForName, DiaryDateTime
-###
-$$HEADER
-HEADER$$
-
-$$GROUP_DiaryForName
-$$HEAD
-<h2>$DiaryForName</h2>
-<hr />
-$$FOOT
-GROUP$$
-
-$$BODY
-<p>
-<i>$DIARYDATETIME $THETIME</i><br />
+<i>$DIARYDATETIME</i><br />
 <b>$LINKINFO $SUBJECT</b>
 </p>
 <p>

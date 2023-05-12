@@ -2,7 +2,7 @@ ADCH Annual Survey
 ###
 Figures
 ###
-33600/PostgreSQL rev01
+33600/Any rev01
 ###
 Figures needed to complete the annual ADCH member questionnaire.
 ###
@@ -18,7 +18,7 @@ SELECT
  INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
  WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
  AND SpeciesID = 1 
- AND NonShelterAnimal = 0 AND OriginalOwnerID = 0 AND ReasonName ILIKE '%Stray%') AS DogsIntakeStrayPublic,
+ AND NonShelterAnimal = 0 AND OriginalOwnerID = 0 AND ReasonName LIKE '%Stray%') AS DogsIntakeStrayPublic,
 
 (SELECT COUNT(*) FROM animal
  WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
@@ -30,7 +30,7 @@ SELECT
  WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
  AND SpeciesID = 1 
  AND NonShelterAnimal = 0 AND OriginalOwnerID = 0 
- AND ReasonName NOT ILIKE '%Stray%') AS DogsIntakeOther,
+ AND ReasonName NOT LIKE '%Stray%') AS DogsIntakeOther,
 
 (SELECT COUNT(*) FROM animal
  WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
@@ -41,7 +41,7 @@ SELECT
  INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
  WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
  AND SpeciesID = 2 
- AND NonShelterAnimal = 0 AND OriginalOwnerID = 0 AND ReasonName ILIKE '%Stray%') AS CatsIntakeStrayPublic,
+ AND NonShelterAnimal = 0 AND OriginalOwnerID = 0 AND ReasonName LIKE '%Stray%') AS CatsIntakeStrayPublic,
 
 (SELECT COUNT(*) FROM animal
  WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
@@ -53,7 +53,7 @@ SELECT
  WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
  AND SpeciesID = 2 
  AND NonShelterAnimal = 0 AND OriginalOwnerID = 0 
- AND ReasonName NOT ILIKE '%Stray%') AS CatsIntakeOther,
+ AND ReasonName NOT LIKE '%Stray%') AS CatsIntakeOther,
 
 (SELECT COUNT(*) FROM animal
  WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31'
@@ -138,27 +138,27 @@ SELECT
 (SELECT COUNT(*) FROM animal 
  INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID 
  WHERE DeceasedDate >= '$@year$-01-01' AND DeceasedDate <= '$@year$-12-31' AND PutToSleep = 1
- AND SpeciesID = 1 AND ReasonName ILIKE '%Breed%' 
+ AND SpeciesID = 1 AND ReasonName LIKE '%Breed%' 
  AND NonShelterAnimal = 0) AS DogsPTSBanned,
 
 (SELECT COUNT(*) FROM animal 
  INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID 
  WHERE DeceasedDate >= '$@year$-01-01' AND DeceasedDate <= '$@year$-12-31' AND PutToSleep = 1
- AND SpeciesID = 1 AND (ReasonName ILIKE '%Sick%' OR ReasonName ILIKE '%Injured%' OR ReasonName ILIKE '%Medical%')
+ AND SpeciesID = 1 AND (ReasonName LIKE '%Sick%' OR ReasonName LIKE '%Injured%' OR ReasonName LIKE '%Medical%')
  AND NonShelterAnimal = 0) AS DogsPTSMedical,
 
 (SELECT COUNT(*) FROM animal 
  INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID 
  WHERE DeceasedDate >= '$@year$-01-01' AND DeceasedDate <= '$@year$-12-31' AND PutToSleep = 1
- AND SpeciesID = 1 AND (ReasonName ILIKE '%Aggression%' OR ReasonName ILIKE '%Bit%' OR ReasonName ILIKE '%Behaviour%')
+ AND SpeciesID = 1 AND (ReasonName LIKE '%Aggression%' OR ReasonName LIKE '%Bit%' OR ReasonName LIKE '%Behaviour%')
  AND NonShelterAnimal = 0) AS DogsPTSBehaviour,
 
 (SELECT COUNT(*) FROM animal 
  INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID 
  WHERE DeceasedDate >= '$@year$-01-01' AND DeceasedDate <= '$@year$-12-31' AND PutToSleep = 1
- AND SpeciesID = 1 AND (ReasonName NOT ILIKE '%Aggression%' AND ReasonName NOT ILIKE '%Bit%' AND ReasonName NOT ILIKE '%Behaviour%' 
-                        AND ReasonName NOT ILIKE '%Medical%' AND ReasonName NOT ILIKE '%Injured%' AND ReasonName NOT ILIKE '%Sick%' 
-                        AND ReasonName NOT ILIKE '%Breed%')
+ AND SpeciesID = 1 AND (ReasonName NOT LIKE '%Aggression%' AND ReasonName NOT LIKE '%Bit%' AND ReasonName NOT LIKE '%Behaviour%' 
+                        AND ReasonName NOT LIKE '%Medical%' AND ReasonName NOT LIKE '%Injured%' AND ReasonName NOT LIKE '%Sick%' 
+                        AND ReasonName NOT LIKE '%Breed%')
  AND NonShelterAnimal = 0) AS DogsPTSOther,
 
 (SELECT COUNT(*) FROM animal 
@@ -170,21 +170,21 @@ SELECT
 (SELECT COUNT(*) FROM animal 
  INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID 
  WHERE DeceasedDate >= '$@year$-01-01' AND DeceasedDate <= '$@year$-12-31' AND PutToSleep = 1
- AND SpeciesID = 2 AND (ReasonName ILIKE '%Sick%' OR ReasonName ILIKE '%Injured%' OR ReasonName ILIKE '%Medical%')
+ AND SpeciesID = 2 AND (ReasonName LIKE '%Sick%' OR ReasonName LIKE '%Injured%' OR ReasonName LIKE '%Medical%')
  AND NonShelterAnimal = 0) AS CatsPTSMedical,
 
 (SELECT COUNT(*) FROM animal 
  INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID 
  WHERE DeceasedDate >= '$@year$-01-01' AND DeceasedDate <= '$@year$-12-31' AND PutToSleep = 1
- AND SpeciesID = 2 AND (ReasonName ILIKE '%Aggression%' OR ReasonName ILIKE '%Bit%' OR ReasonName ILIKE '%Behaviour%')
+ AND SpeciesID = 2 AND (ReasonName LIKE '%Aggression%' OR ReasonName LIKE '%Bit%' OR ReasonName LIKE '%Behaviour%')
  AND NonShelterAnimal = 0) AS CatsPTSBehaviour,
 
 (SELECT COUNT(*) FROM animal 
  INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID 
  WHERE DeceasedDate >= '$@year$-01-01' AND DeceasedDate <= '$@year$-12-31' AND PutToSleep = 1
- AND SpeciesID = 2 AND (ReasonName NOT ILIKE '%Aggression%' AND ReasonName NOT ILIKE '%Bit%' AND ReasonName NOT ILIKE '%Behaviour%' 
-                        AND ReasonName NOT ILIKE '%Medical%' AND ReasonName NOT ILIKE '%Injured%' AND ReasonName NOT ILIKE '%Sick%' 
-                        AND ReasonName NOT ILIKE '%Breed%')
+ AND SpeciesID = 2 AND (ReasonName NOT LIKE '%Aggression%' AND ReasonName NOT LIKE '%Bit%' AND ReasonName NOT LIKE '%Behaviour%' 
+                        AND ReasonName NOT LIKE '%Medical%' AND ReasonName NOT LIKE '%Injured%' AND ReasonName NOT LIKE '%Sick%' 
+                        AND ReasonName NOT LIKE '%Breed%')
  AND NonShelterAnimal = 0) AS CatsPTSOther,
 
 (SELECT COUNT(*) FROM animal 

@@ -2,7 +2,7 @@ Average Time On Shelter By Date and Age Group
 ###
 Statistics
 ###
-33018/PostgreSQL rev01
+33018/Any rev01
 ###
 Average time spent on shelter for all animals by age group and date.
 ###
@@ -16,7 +16,7 @@ WHERE DaysOnShelter > 0
 AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
 AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
 GROUP BY AgeGroup
-ORDER BY CAST(AVG(DaysOnShelter) AS INTEGER) DESC
+ORDER BY avtimeonshelter DESC
 ###
 $$HEADER
 <table border="1">
@@ -29,45 +29,6 @@ HEADER$$
 $$BODY
 <tr>
 <td>$AGEGROUP</td>
-<td>$AVTIMEONSHELTER</td>
-</tr>
-BODY$$
-
-$$FOOTER
-</table>
-FOOTER$$
-&&&
-Average Time On Shelter By Date and Age Group
-###
-Statistics
-###
-33018/MySQL rev01
-###
-Average time spent on shelter for all animals by age group and date.
-###
-en
-###
-SELECT
-AgeGroup,
-AVG(DaysOnShelter) AS avtimeonshelter
-FROM animal
-WHERE DaysOnShelter > 0 
-AND DateBroughtIn > '$ASK DATE Enter the from date$' AND DateBroughtIn < '$ASK DATE Enter the to date$'
-AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
-GROUP BY AgeGroup
-ORDER BY AVG(DaysOnShelter) DESC
-###
-$$HEADER
-<table border="1">
-<tr>
-<th>Age Group</th>
-<th>Average Days On Shelter</th>
-</tr>
-HEADER$$
-
-$$BODY
-<tr>
-<td>$AgeGroup</td>
 <td>$AVTIMEONSHELTER</td>
 </tr>
 BODY$$

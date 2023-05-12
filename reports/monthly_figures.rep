@@ -2,7 +2,7 @@ Monthly Figures (by species)
 ###
 Figures
 ###
-3123/MySQL rev02
+3123/Any rev03
 ###
 Animal movements on and off the shelter over a monthly period.
 ###
@@ -13,149 +13,8 @@ SELECT af.*, s.SpeciesName
 FROM animalfigures af
 INNER JOIN species s ON s.ID = af.SpeciesID
 WHERE 
-af.Month = MONTH('$@dt$') AND 
-af.Year = YEAR('$@dt$')
-ORDER BY s.SpeciesName, af.OrderIndex
-###
-$$HTMLHEADER
-<html>
-<head>
-<title>Monthly Figures (by species)</title>
-<style>
-td {font-family: Verdana,Arial,Helvetica,Sans-Serif; font-size: 8pt; }
-p { font-family: Verdana,Arial,Helvetica,Sans-Serif; font-size: 10pt; }
-h2 { font-family: Verdana,Arial,Helvetica,Sans-Serif; font-size: 14pt; }
-h3 { font-family: Verdana,Arial,Helvetica,Sans-Serif; font-size: 12pt; }
-tr:nth-child(even) { background: #ddd; }
-tr:nth-child(odd) { background: #fff; }
-.total { font-weight: bold; }
-.BOLD1 { font-weight: bold; }
-</style>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-</head>
-<body>
-<h2>Monthly Figures (by species)</h2>
-<hr />
-HTMLHEADER$$
-
-$$HEADER
-HEADER$$
-
-$$GROUP_SpeciesName
-$$HEAD
-<h2>$SPECIESNAME</h2>
-<table border="1" id="tb$SPECIESID">
-<tr>
-<th></th>
-<th>1</th>
-<th>2</th>
-<th>3</th>
-<th>4</th>
-<th>5</th>
-<th>6</th>
-<th>7</th>
-<th>8</th>
-<th>9</th>
-<th>10</th>
-<th>11</th>
-<th>12</th>
-<th>13</th>
-<th>14</th>
-<th>15</th>
-<th>16</th>
-<th>17</th>
-<th>18</th>
-<th>19</th>
-<th>20</th>
-<th>21</th>
-<th>22</th>
-<th>23</th>
-<th>24</th>
-<th>25</th>
-<th>26</th>
-<th>27</th>
-<th>28</th>
-<th class="c29">29</th>
-<th class="c30">30</th>
-<th class="c31">31</th>
-<th>Total</th>
-<th>AVG</th>
-</tr>
-$$FOOT
-</table>
-<script type="text/javascript">
-$(function() {
-    if ($MAXDAYSINMONTH < 31) $(".c31").hide();
-    if ($MAXDAYSINMONTH < 30) $(".c30").hide();
-    if ($MAXDAYSINMONTH < 29) $(".c29").hide();
-    if ($("#tb$SPECIESID .SP_TOTAL .avg").text() == "0.0" &&
-        $("#tb$SPECIESID .SP_ONFOSTER .avg").text() == "0.0") {
-        $("#tb$SPECIESID").hide();
-        $("#tb$SPECIESID").prev().hide();
-    }
-});
-</script>
-GROUP$$
-
-$$BODY
-<tr class="BOLD$BOLD $CODE">
-<td>$HEADING</td>
-<td>$D1</td>
-<td>$D2</td>
-<td>$D3</td>
-<td>$D4</td>
-<td>$D5</td>
-<td>$D6</td>
-<td>$D7</td>
-<td>$D8</td>
-<td>$D9</td>
-<td>$D10</td>
-<td>$D11</td>
-<td>$D12</td>
-<td>$D13</td>
-<td>$D14</td>
-<td>$D15</td>
-<td>$D16</td>
-<td>$D17</td>
-<td>$D18</td>
-<td>$D19</td>
-<td>$D20</td>
-<td>$D21</td>
-<td>$D22</td>
-<td>$D23</td>
-<td>$D24</td>
-<td>$D25</td>
-<td>$D26</td>
-<td>$D27</td>
-<td>$D28</td>
-<td class="c29">$D29</td>
-<td class="c30">$D30</td>
-<td class="c31">$D31</td>
-<td class="total">$TOTAL</td>
-<td class="avg">$AVERAGE</td>
-</tr>
-BODY$$
-
-$$FOOTER
-FOOTER$$
-&&&
-Monthly Figures (by species)
-###
-Figures
-###
-3123/PostgreSQL rev02
-###
-Animal movements on and off the shelter over a monthly period.
-###
-en
-###
-$VAR dt DATE Select which month/year to produce figures for$
-SELECT af.*, s.SpeciesName
-FROM animalfigures af
-INNER JOIN species s ON s.ID = af.SpeciesID
-WHERE 
-af.Month = CAST(EXTRACT(MONTH FROM DATE('$@dt$')) AS INTEGER) AND 
-af.Year = CAST(EXTRACT(YEAR FROM DATE('$@dt$')) AS INTEGER)
+af.Month = '$ASK NUMBER Month (1-12)$'
+AND af.Year = '$ASK NUMBER Year$'
 ORDER BY s.SpeciesName, af.OrderIndex
 ###
 $$HTMLHEADER
@@ -284,160 +143,18 @@ Monthly Figures (by type)
 ###
 Figures
 ###
-3123/MySQL rev02
+3123/Any rev03
 ###
 Animal movements on and off the shelter over a monthly period by type.
 ###
 en
 ###
-$VAR dt DATE Select which month/year to produce figures for$
 SELECT af.*, t.AnimalType
 FROM animalfigures af
 INNER JOIN animaltype t ON t.ID = af.AnimalTypeID
 WHERE 
-af.Month = MONTH('$@dt$') AND 
-af.Year = YEAR('$@dt$')
-ORDER BY t.AnimalType, af.OrderIndex
-###
-$$HTMLHEADER
-<html>
-<head>
-<title>Monthly Figures (by type)</title>
-<style>
-td {font-family: Verdana,Arial,Helvetica,Sans-Serif; font-size: 8pt; }
-p { font-family: Verdana,Arial,Helvetica,Sans-Serif; font-size: 10pt; }
-h2 { font-family: Verdana,Arial,Helvetica,Sans-Serif; font-size: 14pt; }
-h3 { font-family: Verdana,Arial,Helvetica,Sans-Serif; font-size: 12pt; }
-tr:nth-child(even) { background: #ddd; }
-tr:nth-child(odd) { background: #fff; }
-.total { font-weight: bold; }
-.BOLD1 { font-weight: bold; }
-</style>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-</head>
-<body>
-<h2>Monthly Figures (by type)</h2>
-<hr />
-HTMLHEADER$$
-
-$$HEADER
-HEADER$$
-
-$$GROUP_AnimalType
-$$HEAD
-<h2>$ANIMALTYPE</h2>
-<table border="1" id="tb$ANIMALTYPEID">
-<tr>
-<th></th>
-<th>1</th>
-<th>2</th>
-<th>3</th>
-<th>4</th>
-<th>5</th>
-<th>6</th>
-<th>7</th>
-<th>8</th>
-<th>9</th>
-<th>10</th>
-<th>11</th>
-<th>12</th>
-<th>13</th>
-<th>14</th>
-<th>15</th>
-<th>16</th>
-<th>17</th>
-<th>18</th>
-<th>19</th>
-<th>20</th>
-<th>21</th>
-<th>22</th>
-<th>23</th>
-<th>24</th>
-<th>25</th>
-<th>26</th>
-<th>27</th>
-<th>28</th>
-<th class="c29">29</th>
-<th class="c30">30</th>
-<th class="c31">31</th>
-<th>Total</th>
-<th>AVG</th>
-</tr>
-$$FOOT
-</table>
-<script type="text/javascript">
-$(function() {
-    if ($MAXDAYSINMONTH < 31) $(".c31").hide();
-    if ($MAXDAYSINMONTH < 30) $(".c30").hide();
-    if ($MAXDAYSINMONTH < 29) $(".c29").hide();
-    if ($("#tb$ANIMALTYPEID .AT_TOTAL .avg").text() == "0.0" &&
-        $("#tb$ANIMALTYEPID .AT_ONFOSTER .avg").text() == "0.0") {
-        $("#tb$ANIMALTYPEID").prev().hide();
-        $("#tb$ANIMALTYPEID").hide();
-    }
-});
-</script>
-GROUP$$
-
-$$BODY
-<tr class="BOLD$BOLD $CODE">
-<td>$HEADING</td>
-<td>$D1</td>
-<td>$D2</td>
-<td>$D3</td>
-<td>$D4</td>
-<td>$D5</td>
-<td>$D6</td>
-<td>$D7</td>
-<td>$D8</td>
-<td>$D9</td>
-<td>$D10</td>
-<td>$D11</td>
-<td>$D12</td>
-<td>$D13</td>
-<td>$D14</td>
-<td>$D15</td>
-<td>$D16</td>
-<td>$D17</td>
-<td>$D18</td>
-<td>$D19</td>
-<td>$D20</td>
-<td>$D21</td>
-<td>$D22</td>
-<td>$D23</td>
-<td>$D24</td>
-<td>$D25</td>
-<td>$D26</td>
-<td>$D27</td>
-<td>$D28</td>
-<td class="c29">$D29</td>
-<td class="c30">$D30</td>
-<td class="c31">$D31</td>
-<td class="total">$TOTAL</td>
-<td class="avg">$AVERAGE</td>
-</tr>
-BODY$$
-
-$$FOOTER
-FOOTER$$
-&&&
-Monthly Figures (by type)
-###
-Figures
-###
-3123/PostgreSQL rev02
-###
-Animal movements on and off the shelter over a monthly period by type.
-###
-en
-###
-$VAR dt DATE Select which month/year to produce figures for$
-SELECT af.*, t.AnimalType
-FROM animalfigures af
-INNER JOIN animaltype t ON t.ID = af.AnimalTypeID
-WHERE 
-af.Month = CAST(EXTRACT(MONTH FROM DATE('$@dt$')) AS INTEGER) AND 
-af.Year = CAST(EXTRACT(YEAR FROM DATE('$@dt$')) AS INTEGER)
+af.Month = '$ASK NUMBER Month (1-12)$'
+AND af.Year = '$ASK NUMBER Year$'
 ORDER BY t.AnimalType, af.OrderIndex
 ###
 $$HTMLHEADER
