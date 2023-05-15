@@ -25,7 +25,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: function(row) {
-                    common.route("document_repository_file?ajax=false&dbfsid=" + row.ID);
+                    common.route("document_repository_file?ajax=false&dbfsid=" + encodeURIComponent(row.ID));
                 },
                 button_click: function() {
                     common.copy_to_clipboard($(this).attr("data"));
@@ -63,7 +63,7 @@ $(function() {
                         await tableform.delete_dialog();
                         tableform.buttons_default_state(buttons);
                         let ids = tableform.table_ids(table);
-                        await common.ajax_post("document_repository", "mode=delete&ids=" + ids);
+                        await common.ajax_post("document_repository", "mode=delete&ids=" + encodeURIComponent(ids));
                         tableform.table_remove_selected_from_json(table, controller.rows);
                         tableform.table_update(table);
                     } 

@@ -24,7 +24,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "NAME",
                 edit: function(row) {
-                    common.route("image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + row.NAME);
+                    common.route("image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/" + encodeURIComponent(row.NAME));
                 },
                 button_click: function() {
                     common.copy_to_clipboard($(this).attr("data"));
@@ -67,7 +67,7 @@ $(function() {
                         await tableform.delete_dialog();
                         tableform.buttons_default_state(buttons);
                         let ids = tableform.table_ids(table);
-                        await common.ajax_post("report_images", "mode=delete&ids=" + ids);
+                        await common.ajax_post("report_images", "mode=delete&ids=" + encodeURIComponent(ids));
                         common.route_reload();
                     } 
                 },
