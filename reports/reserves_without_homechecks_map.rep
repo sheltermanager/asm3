@@ -2,7 +2,7 @@ Reserves without Homechecks Map
 ###
 Maps
 ###
-33402/Any rev01
+34703/Any rev02
 ###
 Map of owners with active reservations on animals who have not been homechecked.
 ###
@@ -10,7 +10,7 @@ en
 ###
 SELECT 
 o.LatLong,
-o.OwnerName || '<br>' || o.OwnerAddress || '<br>' || a.AnimalName || ' - ' || a.ShelterCode
+o.OwnerName, '<br>', o.OwnerAddress, '<br>', a.AnimalName, ' - ', a.ShelterCode
 FROM adoption ad
 INNER JOIN animal a ON ad.AnimalID = a.ID
 INNER JOIN owner o ON ad.OwnerID = o.ID

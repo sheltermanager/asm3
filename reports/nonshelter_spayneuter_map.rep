@@ -2,7 +2,7 @@ Non-shelter animals spay/neutered map
 ###
 Maps
 ###
-33404/PostgreSQL rev01
+34703/Any rev02
 ###
 Non-shelter animals spayed/neutered between two dates with owner pinned on the map
 ###
@@ -12,10 +12,10 @@ $VAR from DATE Spay/neutered between$
 $VAR to DATE and$
 
 SELECT o.LatLong, 
-'<a href="animal?id=' || a.ID::varchar || '">' || a.AnimalName || ' - ' || a.ShelterCode || '</a>' ||
-'<br>Brought in on ' || TO_CHAR(a.DateBroughtIn, 'YYYY-MM-DD') || '<br>' || 
-'<b><a href="person?id=' || o.ID::varchar || '">' || o.OwnerName || '</a><br />' ||
-o.OwnerAddress || '<br />' || o.OwnerTown || ' ' || o.OwnerCounty || ' ' || o.OwnerPostcode 
+'<a href="animal?id=', a.ID, '">', a.AnimalName, a.ShelterCode,'</a>',
+'<br>Brought in on ', a.DateBroughtIn, '<br>', 
+'<b><a href="person?id=', o.ID, '">', o.OwnerName, '</a><br />',
+o.OwnerAddress, '<br />', o.OwnerTown, ' ', o.OwnerCounty, ' ', o.OwnerPostcode 
 FROM animal a
 INNER JOIN owner o ON a.OriginalOwnerID = o.ID
 WHERE a.NonShelterAnimal = 1
@@ -30,7 +30,7 @@ Non-shelter animals spay/neutered map with animal flag
 ###
 Maps
 ###
-33404/PostgreSQL rev01
+34703/Any rev02
 ###
 Non-shelter animals spayed/neutered between two dates with owner pinned on the map
 ###
@@ -40,10 +40,10 @@ $VAR from DATE Spay/neutered between$
 $VAR to DATE and$
 
 SELECT o.LatLong, 
-'<a href="animal?id=' || a.ID::varchar || '">' || a.AnimalName || ' - ' || a.ShelterCode || '</a>' ||
-'<br>Brought in on ' || TO_CHAR(a.DateBroughtIn, 'YYYY-MM-DD') || '<br>' || 
-'<b><a href="person?id=' || o.ID::varchar || '">' || o.OwnerName || '</a><br />' ||
-o.OwnerAddress || '<br />' || o.OwnerTown || ' ' || o.OwnerCounty || ' ' || o.OwnerPostcode 
+'<a href="animal?id=', a.ID, '">', a.AnimalName, ' - ', a.ShelterCode, '</a>',
+'<br>Brought in on ', a.DateBroughtIn, '<br>', 
+'<b><a href="person?id=', o.ID, '">', o.OwnerName, '</a><br />',
+o.OwnerAddress, '<br />', o.OwnerTown, ' ', o.OwnerCounty, ' ', o.OwnerPostcode 
 FROM animal a
 INNER JOIN owner o ON a.OriginalOwnerID = o.ID
 WHERE a.NonShelterAnimal = 1
@@ -59,7 +59,7 @@ Non-shelter animals spay/neutered map with person flag
 ###
 Maps
 ###
-33404/PostgreSQL rev01
+34703/Any rev02
 ###
 Non-shelter animals spayed/neutered between two dates with owner pinned on the map
 ###
@@ -69,10 +69,10 @@ $VAR from DATE Spay/neutered between$
 $VAR to DATE and$
 
 SELECT o.LatLong, 
-'<a href="animal?id=' || a.ID::varchar || '">' || a.AnimalName || ' - ' || a.ShelterCode || '</a>' ||
-'<br>Brought in on ' || TO_CHAR(a.DateBroughtIn, 'YYYY-MM-DD') || '<br>' || 
-'<b><a href="person?id=' || o.ID::varchar || '">' || o.OwnerName || '</a><br />' ||
-o.OwnerAddress || '<br />' || o.OwnerTown || ' ' || o.OwnerCounty || ' ' || o.OwnerPostcode 
+'<a href="animal?id=', a.ID, '">', a.AnimalName, ' - ', a.ShelterCode, '</a>',
+'<br>Brought in on ', a.DateBroughtIn, '<br>', 
+'<b><a href="person?id=', o.ID, '">', o.OwnerName, '</a><br />',
+o.OwnerAddress, '<br />', o.OwnerTown, ' ', o.OwnerCounty, ' ', o.OwnerPostcode 
 FROM animal a
 INNER JOIN owner o ON a.OriginalOwnerID = o.ID
 WHERE a.NonShelterAnimal = 1
