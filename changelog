@@ -1,6 +1,7 @@
 47
 ================
 
+15/05/23 Fix bug viewing/deleting document repo/report images with & in name
 11/05/23 Map reports will now concatenate multiple columns to make easier SQL
 11/05/23 Include email counts for send email/recipient list on mail merges #1266
 10/05/23 Refactor CSV import rules, add ones for test/vacc/med
