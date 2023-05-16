@@ -13,6 +13,7 @@ import asm3.utils
 
 from asm3.sitedefs import SERVICE_URL
 
+# Valid values for MovementType (0-8 only)
 NO_MOVEMENT = 0
 ADOPTION = 1
 FOSTER = 2
@@ -22,11 +23,13 @@ RECLAIMED = 5
 STOLEN = 6
 RELEASED = 7
 RETAILER = 8
-RESERVATION = 9
-CANCELLED_RESERVATION = 10
-TRIAL_ADOPTION = 11
-PERMANENT_FOSTER = 12
-TNR = 13
+# The values below only exist in lksmovementtype so that reports and queries can 
+# retrieve the translated text for valid movements that have modifiers.
+RESERVATION_TEXT = 9            # NO_MOVEMENT + ReservationDate set
+CANCELLED_RESERVATION_TEXT = 10 # NO_MOVEMENT + ReservationCancelledDate set
+TRIAL_ADOPTION_TEXT = 11        # ADOPTION + IsTrial=1
+PERMANENT_FOSTER_TEXT = 12      # FOSTER + IsPermanentFoster=1
+TNR_TEXT = 13                   # RELEASED + animal.SpeciesID=2 (Cat)
 
 def get_movement_query(dbo):
     return "SELECT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
