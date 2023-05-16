@@ -1,6 +1,7 @@
 47
 ================
 
+16/05/23 Stop select/filter buttons occluding first table header
 16/05/23 Configurable FTP connection timeout, default=60s due to PetFinder #1280
 15/05/23 Fix bug viewing/deleting document repo/report images with & in name
 11/05/23 Map reports will now concatenate multiple columns to make easier SQL

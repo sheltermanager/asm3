@@ -209,15 +209,22 @@ const tableform = {
      */
     table_render: function(table, bodyonly) {
         var t = [];
+        t.push("<table id=\"tableform\" width=\"100%\"><thead><tr>");
         if (!bodyonly) {
-            t.push('<a id="tableform-select-all" href="#" ');
-            t.push('title="' + html.title(_("Select all")) + '"><span class="ui-icon ui-icon-check"></span></a>');
-            t.push('<a id="tableform-toggle-filter" href="#" ');
-            t.push('title="' + html.title(_("Filter")) + '"><span class="ui-icon ui-icon-search"></span></a>');
-            t.push("<table id=\"tableform\" width=\"100%\"><thead><tr>");
             $.each(table.columns, function(i, v) {
                 if (v.hideif && v.hideif()) { return; }
-                t.push("<th>" + v.display + "</th>");
+                if (i == 0) {
+                    // Prepend select/filter buttons to the first column heading
+                    t.push('<th>');
+                    t.push('<a id="tableform-select-all" href="#" ');
+                    t.push('title="' + html.title(_("Select all")) + '"><span class="ui-icon ui-icon-check"></span></a>');
+                    t.push('<a id="tableform-toggle-filter" href="#" ');
+                    t.push('title="' + html.title(_("Filter")) + '"><span class="ui-icon ui-icon-search"></span></a>');
+                    t.push(' ' + v.display + '</th>');
+                }
+                else {
+                    t.push("<th>" + v.display + "</th>");
+                }
             });
             t.push("</tr></thead><tbody>");
         }

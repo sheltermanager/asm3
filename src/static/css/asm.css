@@ -518,8 +518,7 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-completerow { opacity: 0.5; zoom: 1;}
 .asm-overduerow { font-style: italic; color: #ff0000; }
 .asm-warningrow { color: #ff0000; }
-#tableform-select-all { position: absolute; margin-top: 8px; margin-inline-start: 5px; z-index: 1; }
-#tableform-toggle-filter { position: absolute; margin-top: 8px; margin-inline-start: 20px; z-index: 1; }
+#tableform-select-all, #tableform-toggle-filter { float: left; }
 #tableform-select-all:hover, #tableform-toggle-filter:hover { opacity: 0.7; }
 
 /** WAITING LIST ==================== */
