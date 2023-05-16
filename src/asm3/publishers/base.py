@@ -10,7 +10,7 @@ import asm3.media
 import asm3.movement
 import asm3.utils
 import asm3.wordprocessor
-from asm3.sitedefs import SERVICE_URL
+from asm3.sitedefs import SERVICE_URL, FTP_CONNECTION_TIMEOUT
 
 import ftplib
 import glob
@@ -1130,9 +1130,9 @@ class FTPPublisher(AbstractPublisher):
         try:
             # open it and login
             if self.ftptls:
-                self.socket = ftplib.FTP_TLS(host=self.ftphost, timeout=15)
+                self.socket = ftplib.FTP_TLS(host=self.ftphost, timeout=FTP_CONNECTION_TIMEOUT)
             else:
-                self.socket = ftplib.FTP(host=self.ftphost, timeout=15)
+                self.socket = ftplib.FTP(host=self.ftphost, timeout=FTP_CONNECTION_TIMEOUT)
             self.socket.login(self.ftpuser, self.ftppassword)
             if self.ftptls: 
                 self.socket.prot_p()

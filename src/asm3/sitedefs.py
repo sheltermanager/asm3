@@ -256,6 +256,9 @@ MULTIPLE_DATABASES_MAP = get_dict("multiple_databases_map")
 # Whether the old HTML/FTP publisher of static files is enabled
 HTMLFTP_PUBLISHER_ENABLED = get_boolean("htmlftp_publisher_enabled", True)
 
+# FTP connection timeout value in seconds
+FTP_CONNECTION_TIMEOUT = get_integer("ftp_connection_timeout", 60)
+
 # FTP hosts and URLs for third party publishing services
 ADOPTAPET_FTP_HOST = get_string("adoptapet_ftp_host", "autoupload.adoptapet.com")
 AKC_REUNITE_BASE_URL = get_string("akc_reunite_base_url", "")
