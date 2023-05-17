@@ -216,10 +216,8 @@ const tableform = {
                 if (i == 0) {
                     // Prepend select/filter buttons to the first column heading
                     t.push('<th>');
-                    t.push('<a id="tableform-select-all" href="#" ');
-                    t.push('title="' + html.title(_("Select all")) + '"><span class="ui-icon ui-icon-check"></span></a>');
-                    t.push('<a id="tableform-toggle-filter" href="#" ');
-                    t.push('title="' + html.title(_("Filter")) + '"><span class="ui-icon ui-icon-search"></span></a>');
+                    t.push('<button id="tableform-select-all">' + _("Select all") + '</button>');
+                    t.push('<button id="tableform-toggle-filter">' + _("Filter") + '</button>');
                     t.push(' ' + v.display + '</th>');
                 }
                 else {
@@ -302,7 +300,7 @@ const tableform = {
      * (typically buttons).
      */
     table_bind_widgets: function(table) {
-        $("#tableform button").each(function() {
+        $("#tableform tbody button").each(function() {
             if ($(this).attr("data-asmicon")) {
                 let text = $(this).text();
                 $(this).prop("title", text);
@@ -421,28 +419,41 @@ const tableform = {
 
         // Bind the select all link in the table header
         // Unlike the CTRL+A sequence, this one will toggle between select/unselect
-        $("#tableform-select-all").click(function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (!table.select_all_toggle) {
-                table.select_all_toggle = true;
-                select_all();
-            }
-            else {
-                table.select_all_toggle = false;
-                unselect_all();
-            }
-            return false;
+        $("#tableform-select-all").button({
+            icons: { primary: "ui-icon-check" },
+            text:  false
         });
-
         // Bind the toggle search/filter link in the table header
-        $("#tableform-toggle-filter").click(function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            table.filter_toggle = !table.filter_toggle;
-            $(".tablesorter-filter-row").toggle(table.filter_toggle);
-            return false;
+        $("#tableform-toggle-filter").button({
+            icons: { primary: "ui-icon-search" },
+            text:  false
         });
+        // The tablesorter code that attaches events into the header seems to be
+        // removing our filter/select button events if we add them at this stage.
+        // TODO: This is a hack, push adding events to those buttons to the end
+        // of the thread so that tablesorter can't mess with them.
+        setTimeout(function() {
+            $("#tableform-select-all").click(function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!table.select_all_toggle) {
+                    table.select_all_toggle = true;
+                    select_all();
+                }
+                else {
+                    table.select_all_toggle = false;
+                    unselect_all();
+                }
+                return false;
+            });
+            $("#tableform-toggle-filter").click(function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                table.filter_toggle = !table.filter_toggle;
+                $(".tablesorter-filter-row").toggle(table.filter_toggle);
+                return false;
+            });
+        }, 500);
 
         // Bind any widgets inside the table
         this.table_bind_widgets(table);
