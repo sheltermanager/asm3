@@ -453,6 +453,12 @@ const tableform = {
                 $(".tablesorter-filter-row").toggle(table.filter_toggle);
                 return false;
             });
+            // Consume mousedown/mouseup events so that tablesorter doesn't receive them
+            $("#tableform-toggle-filter, #tableform-select-all").mouseup(function() {
+                return false;
+            }).mousedown(function() {
+                return false; 
+            });
         }, 500);
 
         // Bind any widgets inside the table
