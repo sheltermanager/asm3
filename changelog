@@ -1,6 +1,7 @@
 47
 ================
 
+17/05/23 Update to JQuery 3.7.0 and JQueryUI 1.13.2
 16/05/23 Stop select/filter buttons occluding first table header
 16/05/23 Configurable FTP connection timeout, default=60s due to PetFinder #1280
 15/05/23 Fix bug viewing/deleting document repo/report images with & in name
