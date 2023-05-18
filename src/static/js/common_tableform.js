@@ -422,6 +422,7 @@ const tableform = {
 
         // Create the table widget
         $("#tableform").table({ filter: true });
+
         // old behaviour was to show the filter line if there were 10 or more rows
         // table.filter_toggle = table.rows && table.rows.length >= 10; 
         table.filter_toggle = false;
