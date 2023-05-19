@@ -943,9 +943,9 @@ class mobile2(ASMEndpoint):
         self.content_type("text/html")
         return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile2.js" ], c)
 
-    def post_addanimal(self, o):
-        self.check(asm3.users.ADD_ANIMAL)
-        pass # TODO
+    #def post_addanimal(self, o):
+    #    self.check(asm3.users.ADD_ANIMAL)
+    #    pass # TODO
 
     def post_medical(self, o):
         self.check(asm3.users.CHANGE_MEDICAL)
