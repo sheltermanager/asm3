@@ -164,16 +164,20 @@ $.widget("asm.table", {
         let tablewidgets = [];
         if (options.filter) { tablewidgets.push("filter"); }
         if (options.sticky_header && config.bool("StickyTableHeaders")) { 
-            //tablewidgets.push("stickyHeaders"); Use native browser support via position: sticky instead
+            //tablewidgets.push("stickyHeaders"); //Use native browser support via position: sticky instead
             tbl.find("th").addClass("asm-table-sticky-header");
         }
         tbl.tablesorter({
             sortColumn: options.sortColumn,
             sortList: options.sortList,
             widgets: tablewidgets,
-            filter_columnFilters: options.filter,
-            filter_cssFilter: "tablesorter-filter",
-            filter_ignoreCase: true,
+            widgetOptions: {
+                filter_childRows: false,
+                filter_columnFilters: options.filter,
+                filter_cssFilter: "tablesorter-filter",
+                filter_ignoreCase: true,
+                filter_searchDelay: 500
+            },
             textExtraction: function(node, table, cellIndex) {
                 // this function controls how text is extracted from cells for
                 // sorting purposes.

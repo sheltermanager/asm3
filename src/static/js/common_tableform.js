@@ -417,59 +417,58 @@ const tableform = {
             return false;
         });
 
+        // Bind any widgets inside the table
+        this.table_bind_widgets(table);
+
+        // Create the table widget
+        $("#tableform").table({ filter: true });
+
+        // old behaviour was to show the filter line if there were 10 or more rows
+        // table.filter_toggle = table.rows && table.rows.length >= 10; 
+        table.filter_toggle = false;
+        $(".tablesorter-filter-row").toggle(table.filter_toggle);
+        $(".tablesorter-filter").prop("placeholder", _("Filter"));
+
         // Bind the select all link in the table header
         // Unlike the CTRL+A sequence, this one will toggle between select/unselect
         $("#tableform-select-all").button({
             icons: { primary: "ui-icon-check" },
             text:  false
         });
+        $("#tableform-select-all").click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!table.select_all_toggle) {
+                table.select_all_toggle = true;
+                select_all();
+            }
+            else {
+                table.select_all_toggle = false;
+                unselect_all();
+            }
+            return false;
+        });
+
         // Bind the toggle search/filter link in the table header
         $("#tableform-toggle-filter").button({
             icons: { primary: "ui-icon-search" },
             text:  false
         });
-        // The tablesorter code that attaches events into the header seems to be
-        // removing our filter/select button events if we add them at this stage.
-        // TODO: This is a hack, push adding events to those buttons to the end
-        // of the thread so that tablesorter can't mess with them.
-        setTimeout(function() {
-            $("#tableform-select-all").click(function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (!table.select_all_toggle) {
-                    table.select_all_toggle = true;
-                    select_all();
-                }
-                else {
-                    table.select_all_toggle = false;
-                    unselect_all();
-                }
-                return false;
-            });
-            $("#tableform-toggle-filter").click(function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                table.filter_toggle = !table.filter_toggle;
-                $(".tablesorter-filter-row").toggle(table.filter_toggle);
-                return false;
-            });
-            // Consume mousedown/mouseup events so that tablesorter doesn't receive them
-            $("#tableform-toggle-filter, #tableform-select-all").mouseup(function() {
-                return false;
-            }).mousedown(function() {
-                return false; 
-            });
-        }, 500);
+        $("#tableform-toggle-filter").click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            table.filter_toggle = !table.filter_toggle;
+            $(".tablesorter-filter-row").toggle(table.filter_toggle);
+            return false;
+        });
 
-        // Bind any widgets inside the table
-        this.table_bind_widgets(table);
-
-        $("#tableform").table({ filter: true });
-        // old behaviour was to show the filter line if there were 10 or more rows
-        // table.filter_toggle = table.rows && table.rows.length >= 10; 
-        table.filter_toggle = false;
-        $(".tablesorter-filter-row").toggle(table.filter_toggle);
-        $(".tablesorter-filter").prop("placeholder", _("Filter"));
+        // Consume mousedown/mouseup events for both buttons so that tablesorter 
+        // doesn't receive them
+        $("#tableform-toggle-filter, #tableform-select-all").mouseup(function() {
+            return false;
+        }).mousedown(function() {
+            return false; 
+        });
 
         // And the default sort
         this.table_apply_sort(table);

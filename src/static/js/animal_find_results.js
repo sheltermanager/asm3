@@ -265,6 +265,9 @@ $(function() {
                         oz = (kg - lb) * 16.0;
                     rv = lb + " lb, " + oz + " oz";
                 }
+                else if (config.bool("ShowWeightInLbsFraction")) {
+                    rv = row.WEIGHT + " lb";
+                }
                 else {
                     rv = row.WEIGHT + " kg";
                 }

@@ -155,7 +155,7 @@ $(function() {
                 { id: "move", text: _("Move"), type: "buttonmenu", icon: "copy" },
                 { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
                 { type: "raw", markup: '<div class="asm-mediadroptarget mode-table"><p>' + _("Drop files here...") + '</p></div>',
-                    hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || asm.mobileapp; }},
+                    hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || common.browser_is.mobile || asm.mobileapp; }},
                 { id: "viewmode", text: "", icon: "batch", enabled: "always", tooltip: _("Toggle table/icon view") }
             ];
 
@@ -361,7 +361,7 @@ $(function() {
                 h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/document-media.png" /></a>');
             }
             else if (m.MEDIAMIMETYPE == "application/pdf") {
-                h.push('<a href="' + ( asm.mobileapp ? 'media_pdfjs' : 'media' ) + '?id=' + m.ID + '">');
+                h.push('<a href="media?id=' + m.ID + '">');
                 h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/pdf-media.png" /></a>');
             }
             else {

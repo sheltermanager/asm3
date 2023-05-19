@@ -65,7 +65,7 @@ from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format,
 from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, \
     ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
     AKC_REUNITE_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, \
-    LEAFLET_CSS, LEAFLET_JS, PDFJS_VIEWER, MULTIPLE_DATABASES, \
+    LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, \
     ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, HTMLFTP_PUBLISHER_ENABLED, \
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
     MAP_PROVIDER_KEY, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
@@ -895,13 +895,6 @@ class media(ASMEndpoint):
         for mid in o.post.integer_list("ids"):
             asm3.media.set_excluded(o.dbo, o.user, mid, 1)
 
-class media_pdfjs(ASMEndpoint):
-    url = "media_pdfjs"
-
-    def content(self, o):
-        viewurl = f'{PDFJS_VIEWER}?file=/media%3Fid={o.post["id"]}'
-        self.redirect(viewurl)
-
 class mobile(ASMEndpoint):
     url = "mobile"
     login_url = "mobile_login"
@@ -950,9 +943,9 @@ class mobile2(ASMEndpoint):
         self.content_type("text/html")
         return asm3.html.mobile_page(o.locale, "", [ "common.js", "common_html.js", "mobile2.js" ], c)
 
-    def post_addanimal(self, o):
-        self.check(asm3.users.ADD_ANIMAL)
-        pass # TODO
+    #def post_addanimal(self, o):
+    #    self.check(asm3.users.ADD_ANIMAL)
+    #    pass # TODO
 
     def post_medical(self, o):
         self.check(asm3.users.CHANGE_MEDICAL)

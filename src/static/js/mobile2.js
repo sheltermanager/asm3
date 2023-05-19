@@ -85,16 +85,16 @@ $(document).ready(function() {
                     '<a class="nav-link" href="mobile_sign">' + _("Signing Pad"),
                     '</a>',
                 '</li>',
-                '<li class="nav-item">',
-                    '<a class="nav-link" href="mobile_photo_upload">' + _("Photo Uploader"),
-                    '</a>',
-                '</li>',
                 '<li class="nav-item dropdown">',
                     '<a class="nav-link dropdown-toggle" href="#" id="dropdown-animals" role="button" data-bs-toggle="dropdown" aria-expanded="false">',
                     _("Animals") + '</a>',
                     '<ul class="dropdown-menu" aria-labelledby="dropdown-animals">',
-                        '<li class="dropdown-item">',
+                        /*'<li class="dropdown-item">',
                             '<a class="nav-link internal-link" data-link="addanimal" href="#">' + _("Add Animal") + '</a>',
+                        '</li>',*/
+                        '<li class="dropdown-item">',
+                            '<a class="nav-link" href="mobile_photo_upload">' + _("Photo Uploader"),
+                            '</a>',
                         '</li>',
                         '<li class="dropdown-item hideifzero">',
                             '<a class="nav-link internal-link" data-link="shelteranimals" href="#">' + _("Shelter Animals"),
@@ -122,9 +122,9 @@ $(document).ready(function() {
                     '<a class="nav-link dropdown-toggle" href="#" id="dropdown-incidents" role="button" data-bs-toggle="dropdown" aria-expanded="false">',
                     _("Animal Control") + '</a>',
                     '<ul class="dropdown-menu" aria-labelledby="dropdown-incidents">',
-                        '<li class="dropdown-item">',
+                        /*'<li class="dropdown-item">',
                             '<a class="nav-link" href="#">' + _("Add Call") + '</a>',
-                        '</li>',
+                        '</li>',*/
                         '<li class="dropdown-item hideifzero">',
                             '<a class="nav-link internal-link" data-link="myincidents" href="#">' + _("My Incidents"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.incidentsmy.length + '</span>',
@@ -210,6 +210,7 @@ $(document).ready(function() {
         '</div>',
         '</div>',
 
+        /*
         '<div id="content-addanimal" class="container" style="display: none">',
         '<h2>' + _("Add Animal") + '</h2>',
         '<form method="post" action="' + post_handler + '">',
@@ -276,6 +277,7 @@ $(document).ready(function() {
         '<div class="spinner-border spinner-border-sm" style="display: none"></div></div>',
         '</form>',
         '</div>',
+        */
 
         '<div id="content-shelteranimals" class="container" style="display: none">',
         '<h2>' + _("Shelter Animals") + '</h2>',
@@ -888,15 +890,26 @@ $(document).ready(function() {
 
     // Load reports
     $("#content-reports .list-group").empty();
-    let cgroup = "";
+    let cgroup = "", id = "";
+    let reps = [ '<div class="accordion" id="accordion-reports">' ];
     $.each(controller.reports, function(i, v) {
         if (cgroup != v.CATEGORY) {
+            if (cgroup != "") { reps.push("</div></div></div></div>"); } // list-group, accordion-body, collapse, accordion-item
             cgroup = v.CATEGORY;
-            $("#content-reports .list-group").append('<div class="list-group-item bg-secondary text-white fw-bold">' + v.CATEGORY + '</div>');
+            id = common.replace_all(cgroup, " ", "");
+            reps.push('<div class="accordion-item">');
+            reps.push('<h2 class="accordion-header" id="heading-' + id + '">');
+            reps.push('<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-' + id + 
+                    '" aria-expanded="false" aria-controls="collapse-' + id + '">' + v.CATEGORY + '</button></h2>');
+            reps.push('<div id="collapse-' + id + '" class="accordion-collapse collapse" aria-labelledby="heading-' + id + '" data-bs-parent="#accordion-reports">');
+            reps.push('<div class="accordion-body">');
+            reps.push('<div class="list-group">');
+            //$("#content-reports .list-group").append('<div class="list-group-item bg-secondary text-white fw-bold">' + v.CATEGORY + '</div>');
         }
-        let h = '<a class="list-group-item list-group-item-action" href="mobile_report?id=' + v.ID + '">' + v.TITLE + '</a>';
-        $("#content-reports .list-group").append(h);
+        reps.push('<a class="list-group-item list-group-item-action" href="mobile_report?id=' + v.ID + '">' + v.TITLE + '</a>');
     });
+    reps.push("</div></div></div></div>"); // close final list-group, accordion-body, collapse, accordion-item
+    $("#content-reports").html(reps.join("\n"));
 
     document.title = controller.user + ": " + _("ASM");
 

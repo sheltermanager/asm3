@@ -1,6 +1,10 @@
 47
 ================
 
+19/05/23 Minor mobile layout fixes, remove pdfjs dependency for deprecated app
+19/05/23 Show fractional lb on find results
+18/05/23 Fix filter breakage caused by tablesorter upgrade
+18/05/23 Update tablesorter to 2.31.3
 17/05/23 Update to JQuery 3.7.0 and JQueryUI 1.13.2
 16/05/23 Stop select/filter buttons occluding first table header
 16/05/23 Configurable FTP connection timeout, default=60s due to PetFinder #1280
