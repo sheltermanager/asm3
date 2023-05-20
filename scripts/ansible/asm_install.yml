@@ -68,29 +68,54 @@
 
     - name: "Update apache configuration"
       template:
-        src: "apache.conf"
+        src: "{{ lookup('first_found', paths ) }}"
         dest: "/etc/apache2/sites-enabled/conf.d/asm.conf"
+      vars:
+        paths:
+          - "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}/templates/asm/apache.conf"
+          - "{{ inventory_dir }}/group_vars/asm/templates/apache.conf"
+          - "{{  playbook_dir }}/templates/apache.conf"
       notify: "apache_restart"
 
     - name: "Update sitedefs"
       template:
-        src: "asm3.conf"
+        src: "{{ lookup('first_found', paths ) }}"
         dest: "{{ asm_data }}/asm3.conf"
+      vars:
+        paths:
+          - "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}/templates/asm/asm3.conf"
+          - "{{ inventory_dir }}/group_vars/asm/templates/asm3.conf"
+          - "{{  playbook_dir }}/templates/asm3.conf"
 
     - name: "Install WSGI script"
       template:
-        src: "asm3.wsgi"
+        src: "{{ lookup('first_found', paths ) }}"
         dest: "{{ asm_data }}/wsgi/asm3.wsgi"
+      vars:
+        paths:
+          - "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}/templates/asm/asm3.wsgi"
+          - "{{ inventory_dir }}/group_vars/asm/templates/asm3.wsgi"
+          - "{{  playbook_dir }}/templates/asm3.wsgi"
 
     - name: "Install CRON"
       template:
-        src: "cron.sh"
+        src: "{{ lookup('first_found', paths ) }}"
         dest: "/etc/cron.daily/asm"
         mode: "0755"
+      vars:
+        paths:
+          - "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}/templates/asm/cron.sh"
+          - "{{ inventory_dir }}/group_vars/asm/templates/cron.sh"
+          - "{{  playbook_dir }}/templates/cron.sh"
 
     - name: "Configure backup credentials"
       template:
-        src: "backup.cnf"
+        src: "{{ lookup('first_found', paths ) }}"
         dest: "/etc/cron.daily/backup.d/asm.cnf"
         mode: "0600"
+      vars:
+        paths:
+          - "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}/templates/asm/backup.cnf"
+          - "{{ inventory_dir }}/group_vars/asm/templates/backup.cnf"
+          - "{{  playbook_dir }}/templates/backup.cnf"
 ...

@@ -1,5 +1,5 @@
 ---
-asm_version: "41u"
+asm_version: "46"
 asm_archive:
   name: "asm3-{{ asm_version }}"
   ext: ".tar.gz"
@@ -12,8 +12,8 @@ asm_base_uri: /
 asm_base_url: https://{{ ansible_host }}{{ asm_base_uri }}
 
 asm_db:
-  type: "MYSQL"
-  port: 3306
+  type: "POSTGRES"
+  port: 5432
   host: "localhost"
   name: "asm"
   user: "asm"

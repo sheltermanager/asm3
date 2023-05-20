@@ -23,7 +23,7 @@ Currently, this playbook relies on roles from City of Bloomington, that only sup
 
 https://github.com/City-of-Bloomington/ansible-role-linux
 https://github.com/City-of-Bloomington/ansible-role-apache
-https://github.com/City-of-Bloomington/ansible-role-mysql
+https://github.com/City-of-Bloomington/ansible-role-postgresql
 
 
 ## Ansible Configuration
