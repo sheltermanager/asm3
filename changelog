@@ -1,6 +1,7 @@
 47
 ================
 
+21/05/23 Highlight in person banner if their last adoption is deceased
 19/05/23 Minor mobile layout fixes, remove pdfjs dependency for deprecated app
 19/05/23 Show fractional lb on find results
 18/05/23 Fix filter breakage caused by tablesorter upgrade

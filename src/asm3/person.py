@@ -39,7 +39,7 @@ def get_person_query(dbo):
         "ho.MobileTelephone AS HomeCheckedByMobileTelephone, ho.EmailAddress AS HomeCheckedByEmail, " \
         "lfa.ID AS LatestFosterID, lfa.AnimalName AS LatestFosterName, lfa.ShelterCode AS LatestFosterShelterCode, " \
         "lma.ID AS LatestMoveAnimalID, lma.AnimalName AS LatestMoveAnimalName, lma.ShelterCode AS LatestMoveShelterCode, " \
-        "lmat.MovementType AS LatestMoveTypeName, " \
+        "lmat.MovementType AS LatestMoveTypeName, lma.DeceasedDate AS LatestMoveDeceasedDate, " \
         "j.JurisdictionName, si.SiteName, " \
         "web.ID AS WebsiteMediaID, " \
         "web.MediaName AS WebsiteMediaName, " \

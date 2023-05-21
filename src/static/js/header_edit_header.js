@@ -517,11 +517,12 @@ edit_header = {
             return html.icon("blank");
         };
         let flags = this.person_flags(p);
-        let latestmove = "";
+        let latestmove = "", latestmovedeceased = "";
         if (p.LATESTMOVEANIMALID) { 
+            if (p.LATESTMOVEDECEASEDDATE) { latestmovedeceased = html.icon("death"); }
             latestmove = "<tr><td>" + _("Last Movement") + ":</td>";
             latestmove += "<td><b>" + p.LATESTMOVETYPENAME + " " + html.icon("right") + " ";
-            latestmove += '<a href="animal?id=' + p.LATESTMOVEANIMALID + '">' + p.LATESTMOVEANIMALNAME + '</a></b></td></tr>';
+            latestmove += '<a href="animal?id=' + p.LATESTMOVEANIMALID + '">' + p.LATESTMOVEANIMALNAME + '</a></b> ' + latestmovedeceased + '</td></tr>';
         }
         let s = [
             '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
