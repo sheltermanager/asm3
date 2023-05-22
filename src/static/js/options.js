@@ -87,6 +87,7 @@ $(function() {
                 '<li><a href="#tab-animalemblems">' + _("Animal Emblems") + '</a></li>',
                 '<li><a href="#tab-checkout">' + _("Checkout") + '</a></li>',
                 '<li><a href="#tab-costs">' + _("Costs") + '</a></li>',
+                '<li><a href="#tab-daily-observations">' + _("Daily Observations") + '</a></li>',
                 '<li><a href="#tab-data-protection">' + _("Data Protection") + '</a></li>',
                 '<li><a href="#tab-defaults">' + _("Defaults") + '</a></li>',
                 '<li><a href="#tab-diaryandmessages">' + _("Diary and Messages") + '</a></li>',
@@ -696,6 +697,31 @@ $(function() {
                 '<input data="ShowCostPaid" id="showcostpaid" type="checkbox" class="asm-checkbox" /> <label for="showcostpaid">' + _("Show a separate paid date field with costs") + '</label>',
                 '</td>',
                 '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
+        render_daily_observations: function() {
+            const obsrow = function(i) {
+                return '<tr><td><input type="text" class="asm-textbox" data="Behave' + i + 'Name" /></td>' +
+                    '<td><input type="text" class="asm-textbox asm-doubletextbox" data="Behave' + i + 'Values" /></td></tr>';
+            };
+            return [
+                '<div id="tab-daily-observations">',
+                html.info(_("These are the values that can be recorded for animals on the daily observations screen")),
+                '<table>',
+                '<tr><th>' + _("Name") + '</th><th>' + _("Values") + '</th></tr>',
+                obsrow(1),
+                obsrow(2),
+                obsrow(3),
+                obsrow(4),
+                obsrow(5),
+                obsrow(6),
+                obsrow(7),
+                obsrow(8),
+                obsrow(9),
+                obsrow(10),
                 '</table>',
                 '</div>'
             ].join("\n");
@@ -1657,6 +1683,7 @@ $(function() {
                 this.render_animalemblems(),
                 this.render_checkout(),
                 this.render_costs(),
+                this.render_daily_observations(),
                 this.render_data_protection(),
                 this.render_defaults(),
                 this.render_diaryandmessages(),

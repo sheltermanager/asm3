@@ -11,6 +11,7 @@ $(function() {
             let h = [
                 html.content_header(_("Daily Observations")),
                 tableform.buttons_render([
+                    { type: "raw", markup: '<button id="button-selectall">' + _("Select all") + '</button>' },
                     { id: "save", icon: "save", tooltip: _("Write observation logs for all selected rows") },
                     { type: "raw", markup: '<select id="logtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' },
                     { id: "location", type: "dropdownfilter", options: html.list_to_options(controller.internallocations, "ID", "LOCATIONNAME") }
@@ -26,7 +27,7 @@ $(function() {
                 if (name) { 
                     colnames.push(name);
                     if (value) {
-                        colwidgets.push('<select class="asm-selectbox widget" data-name="' + html.title(name) + '">' +
+                        colwidgets.push('<select class="asm-selectbox asm-halfselectbox widget" data-name="' + html.title(name) + '">' +
                             '<option value=""></option>' + html.list_to_options(value.split("|")) + '</select>');
                     }
                     else {
@@ -52,7 +53,7 @@ $(function() {
                 h.push(html.animal_link(a));
                 h.push('</td>');
                 $.each(colnames, function(i, c) {
-                    h.push('<td>' + colwidgets[i] + '</td>');
+                    h.push('<td class="centered">' + colwidgets[i] + '</td>');
                 });
                 h.push('</tr>');
             });
@@ -70,6 +71,14 @@ $(function() {
         bind: function() {
 
             $(".asm-daily-observations").table();
+            
+            $("#button-selectall").button({
+                icons: { primary: "ui-icon-check" },
+                text:  false
+            }).click(function() {
+                $(".asm-daily-observations .selector:visible").prop("checked", true);
+                $(".asm-daily-observations tbody tr:visible").addClass("ui-state-highlight");
+            });
 
             $("#button-save").button().click(async function() {
                 // Send the logs to the backend in the format:
