@@ -2092,6 +2092,29 @@ class animal_new(JSONEndpoint):
     def post_units(self, o):
         return "&&".join(asm3.animal.get_units_with_availability(o.dbo, o.post.integer("locationid")))
 
+class animal_observations(JSONEndpoint):
+    url = "animal_observations"
+    get_permissions = asm3.users.ADD_LOG
+
+    def controller(self, o):
+        dbo = o.dbo
+        animals = asm3.animal.get_shelterview_animals(dbo, o.locationfilter, o.siteid, o.visibleanimalids)
+        asm3.al.debug("got %d shelter animals" % len(animals), "code.animal_observations", dbo)
+        return { 
+            "animals": animals,
+            "logtypes": asm3.lookups.get_log_types(dbo), 
+            "internallocations": asm3.lookups.get_internal_locations(dbo)
+        }
+
+    def post_save(self, o):
+        self.check(asm3.users.ADD_LOG)
+        nocreated = 0
+        for row in o.post["logs"].split("||"):
+            animalid, msg = row.split("==")
+            asm3.log.add_log(o.dbo, o.user, asm3.log.ANIMAL, int(animalid), o.post.integer("logtype"), msg)
+            nocreated += 1
+        return str(nocreated)
+
 class animal_test(JSONEndpoint):
     url = "animal_test"
     js_module = "test"
