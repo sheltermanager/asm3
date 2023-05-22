@@ -363,7 +363,8 @@ edit_header = {
             '<input type="hidden" id="incidentid" value="' + a.ACID + '" />',
             '<div class="asm-grid">',
             '<div class="asm-grid-col-3">',
-            '<h2>' + html.icon("call", _("Incident")) + a.INCIDENTNAME +
+            '<h2>' + html.icon("call", _("Incident")) + ' ' +
+                format.padleft(controller.incident.ACID, 6) + ' ' + a.INCIDENTNAME +
                 (a.OWNERNAME1 ? ' - ' + a.OWNERNAME1 : "") + 
                 (a.OWNERNAME2 ? ', ' + a.OWNERNAME2 : "") + 
                 (a.OWNERNAME3 ? ', ' + a.OWNERNAME3 : "") + 
