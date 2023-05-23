@@ -6479,7 +6479,7 @@ class sql_dump(ASMEndpoint):
         elif mode == "incidentcsv":
             asm3.al.debug("%s executed CSV incident dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"incident.csv\"")
-            rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, 0)
+            rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, o.user)
             asm3.additional.append_to_results(dbo, rows, "incident")
             return asm3.utils.csv(l, rows)
         elif mode == "licencecsv":

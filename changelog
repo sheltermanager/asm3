@@ -1,6 +1,7 @@
 47
 ================
 
+23/05/23 Fix bug when exporting incident CSV from SQL interface->Export
 22/05/23 Daily observations feature/screen #489
 21/05/23 Highlight in person banner if their last adoption is deceased
 19/05/23 Minor mobile layout fixes, remove pdfjs dependency for deprecated app
