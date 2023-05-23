@@ -94,6 +94,7 @@ DEFAULTS = {
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
     "AvidOverseasOriginCountry": "",
+    "BehaveLogType": "3",
     "Behave1Name": "Eaten",
     "Behave1Values": "None|Minimal|Half|Majority|All",
     "Behave2Name": "Drunk",

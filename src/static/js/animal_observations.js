@@ -13,7 +13,6 @@ $(function() {
                 tableform.buttons_render([
                     { type: "raw", markup: '<button id="button-selectall">' + _("Select all") + '</button>' },
                     { id: "save", icon: "save", tooltip: _("Write observation logs for all selected rows") },
-                    { type: "raw", markup: '<select id="logtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' },
                     { id: "location", type: "dropdownfilter", options: html.list_to_options(controller.internallocations, "ID", "LOCATIONNAME") }
                 ]),
                 '<table class="asm-daily-observations">',
@@ -87,7 +86,7 @@ $(function() {
                 //    52==Wet food=Mostly, Pen state=Dirty
                 // means the backend can split by || to get animals, then by == to get 
                 // animalid and value string for the log.
-                let formdata = { "mode": "save", "logtype": $("#logtype").val() }, logs = [];
+                let formdata = { "mode": "save", "logtype": config.str("BehaveLogType") }, logs = [];
                 $(".asm-daily-observations tbody tr").each(function() {
                     if (! $(this).find(".selector").is(":checked")) { return; } // skip unselected rows
                     let animalid = $(this).attr("data-animalid"), avs = [];

@@ -2462,6 +2462,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2("logtype", "LogTypeName", 4, _("Weight", l))
     sql += lookup2("logtype", "LogTypeName", 5, _("Document", l))
     sql += lookup2("logtype", "LogTypeName", 6, _("GDPR Contact Opt-In", l))
+    sql += lookup2("logtype", "LogTypeName", 7, _("Daily Observations", l))
     sql += lookup2("pickuplocation", "LocationName", 1, _("Shelter", l))
     sql += lookup2("reservationstatus", "StatusName", 1, _("More Info Needed", l))
     sql += lookup2("reservationstatus", "StatusName", 2, _("Pending Vet Check", l))

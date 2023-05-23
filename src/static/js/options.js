@@ -710,6 +710,10 @@ $(function() {
             return [
                 '<div id="tab-daily-observations">',
                 html.info(_("These are the values that can be recorded for animals on the daily observations screen")),
+                '<p class="centered"><label for="behavelogtype">' + _("Log Type") + '</label> ',
+                '<select data="BehaveLogType" id="behavelogtype" class="asm-selectbox">',
+                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
+                '</select></p>',
                 '<table>',
                 '<tr><th>' + _("Name") + '</th><th>' + _("Values") + '</th></tr>',
                 obsrow(1),

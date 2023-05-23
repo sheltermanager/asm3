@@ -539,8 +539,7 @@ location.
 Tick the checkbox against each animal that you wish to write an observation
 for, then update the text/dropdown fields with your observations. When you are
 done, the save button on the toolbar will record a log message containing the
-values for all selected animals. You can choose the log type the message will
-receive with the dropdown to the right of the save button.
+values for all selected animals. 
 
 .. image:: images/animal_obs_log.png
 

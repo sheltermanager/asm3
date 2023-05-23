@@ -332,7 +332,8 @@ Daily Observations
 ------------------
 
 This tab allows you to configure the values that are requested on the
-:ref:`dailyobservations` screen.
+:ref:`dailyobservations` screen, along with the log type used for the 
+records written.
 
 The left column contains the name of the value, and the right the available
 values. If the right column is empty, the user will be given a free text box to
