@@ -328,6 +328,17 @@ animals (this value can be modified on the animal's cost tab).
   date a cost was paid separately from the date a cost was incurred, tick this
   box.
 
+Daily Observations
+------------------
+
+This tab allows you to configure the values that are requested on the
+:ref:`dailyobservations` screen.
+
+The left column contains the name of the value, and the right the available
+values. If the right column is empty, the user will be given a free text box to
+enter a value. Otherwise, the right column should contain a pipe-separated list
+of the values available to show in a dropdown. 
+
 Data Protection
 ---------------
 
