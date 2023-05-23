@@ -504,3 +504,83 @@ This feature is particularly useful for vaccinations and other medical
 treatments (eg: first worm/flea treatment, spay/neuter etc) that are first
 given to juvenile animals at a fixed age rather than based on when they entered
 your care.
+
+Bulk Change Animals
+-------------------
+
+.. image:: images/animal_bulkchange.png
+
+The bulk change screen allows you to select one or more shelter animals and
+set one or more fields to the same value. This is very useful for making
+a group of animals not for adoption in one go, applying a flag, or 
+moving them all to a different location. 
+
+This screen also allows you to create a new log message to be applied to all
+the selected animals, or to create a new movement for all animals (eg: a fake
+adoption to get the selected animals off shelter, or if a group are all being
+transferred to another organisation).
+
+Finally, the delete button on this screen allows you to bulk delete all of
+the selected animals. Use this option with caution. 
+
+.. _dailyobservations:
+
+Daily Observations
+------------------
+
+.. image:: images/animal_observations.png
+
+The daily observations screen offers a quick way of writing structured log
+messages to animal records. 
+
+Use the dropdown at the top right to filter shelter animals by their current
+location.
+
+Tick the checkbox against each animal that you wish to write an observation
+for, then update the text/dropdown fields with your observations. When you are
+done, the save button on the toolbar will record a log message containing the
+values for all selected animals. You can choose the log type the message will
+receive with the dropdown to the right of the save button.
+
+.. image:: images/animal_obs_log.png
+
+Litters
+-------
+
+Animal Shelter Manager allows you to track litters as they are born (or come
+into) the shelter. These facilities are used particularly for generating animal
+figures. 
+
+Mechanism
+^^^^^^^^^
+
+.. image:: images/litters.png
+
+The main screen is accessible from :menuselection:`ASM --> Edit Litters`. It
+shows you a list of all currently active litters on the shelter. A litter is
+deemed active whilst any of the animals who were part of it are still on the
+shelter or if it has an expiry date later than today.
+
+If an animal is returned from adoption who was part of an expired litter, the
+litter will not be resurrected. 
+
+The litter holds information about how many animals collectively made it up,
+who the mother was (if known), what species of animal the litter is and any
+comments.
+
+.. image:: images/litter_add.png
+
+Litter Completion
+^^^^^^^^^^^^^^^^^
+
+The system will check all the animals in the litter daily and the moment the
+last one has left the shelter through any means other than fostering (if the
+“Foster animals are shelter inventory” option is on), the litter will be
+cancelled. It will also be treated as cancelled if the expiry date is set and
+passed.
+
+From the Edit Litters screen, you can highlight a litter and call up all
+the animals in that litter. The screen will also show you
+how many of the litter animals are currently left on the shelter. 
+
+

@@ -15,7 +15,6 @@ $(function() {
                     { id: "save", icon: "save", tooltip: _("Write observation logs for all selected rows") },
                     { type: "raw", markup: '<select id="logtype" class="asm-selectbox">' + html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + '</select>' },
                     { id: "location", type: "dropdownfilter", options: html.list_to_options(controller.internallocations, "ID", "LOCATIONNAME") }
-                    //{ id: "logtype", type: "dropdownfilter", options: html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") }
                 ]),
                 '<table class="asm-daily-observations">',
             ];
@@ -48,7 +47,7 @@ $(function() {
             $.each(controller.animals, function(i, a) {
                 // omit animals who aren't on shelter
                 if (a.ACTIVEMOVEMENTTYPE) { return; }
-                h.push('<tr class="animal-row" data-animalid="' + a.ID + '" data-locationid="' + a.SHELTERLOCATION + '" style="display: none">');
+                h.push('<tr data-animalid="' + a.ID + '" data-locationid="' + a.SHELTERLOCATION + '" style="display: none">');
                 h.push('<td><input type="checkbox" class="asm-checkbox selector" /> ');
                 h.push(html.animal_link(a));
                 h.push('</td>');
@@ -78,6 +77,8 @@ $(function() {
             }).click(function() {
                 $(".asm-daily-observations .selector:visible").prop("checked", true);
                 $(".asm-daily-observations tbody tr:visible").addClass("ui-state-highlight");
+                $(".asm-daily-observations tbody tr:visible").removeClass("asm-completerow");
+                $(".asm-daily-observations .widget:visible").prop("disabled", false);
             });
 
             $("#button-save").button().click(async function() {
@@ -104,9 +105,25 @@ $(function() {
                 header.show_info(_("{0} observation logs successfully written.").replace("{0}", response));
                 // Unselect the previously selected values
                 $(".asm-daily-observations .selector").prop("checked", false);
-                $(".asm-daily-observations .widget").val("");
+                $(".asm-daily-observations .widget").val("").prop("disabled", true);
                 $(".asm-daily-observations tr").removeClass("ui-state-highlight");
+                $(".asm-daily-observations tbody tr").addClass("asm-completerow");
             });
+
+            $(".asm-daily-observations").on("click", ".selector", function() {
+                if ($(this).is(":checked")) {
+                    $(this).closest("tr").removeClass("asm-completerow");
+                    $(this).closest("tr").find(".widget").prop("disabled", false);
+                }
+                else {
+                    $(this).closest("tr").addClass("asm-completerow");
+                    $(this).closest("tr").find(".widget").prop("disabled", true);
+                }
+            });
+
+            // Everything is disabled by default
+            $(".asm-daily-observations tbody tr").addClass("asm-completerow");
+            $(".asm-daily-observations .widget").prop("disabled", true);
 
             $("#location").change(this.change_location);
 
