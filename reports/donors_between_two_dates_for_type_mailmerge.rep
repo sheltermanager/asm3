@@ -1,0 +1,22 @@
+Donors between two dates for type
+###
+Financial
+###
+34703 Any rev01
+###
+Donors between two dates for payment types
+###
+en
+###
+SELECT DISTINCT owner.OwnerName, owner.OwnerForeNames, owner.OwnerSurname, owner.OwnerAddress, 
+owner.OwnerTown, owner.OwnerCounty, owner.OwnerPostcode, owner.EmailAddress, animal.AnimalName, 
+animal.ShelterCode, animal.BreedName 
+FROM owner
+INNER JOIN ownerdonation ON owner.ID = ownerdonation.ownerID
+INNER JOIN animal ON ownerdonation.animalID = animal.ID
+WHERE ownerdonation.donationtypeid = $ASK PAYMENTTYPE$ 
+AND ownerdonation.date >= '$ASK DATE Payments received between$'
+AND ownerdonation.date <= '$ASK DATE and$'  
+ORDER BY ownername
+###
+MAIL 
