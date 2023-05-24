@@ -91,6 +91,38 @@ additional = {
     },
 
     /**
+     * Renders and lays out additional fields for the advanced search screens.
+     * This call expects the backend to have already filtered and returned the
+     * appropriate class (animal, etc).
+     * columns: number of columns per row, 2 if not supplied
+     */
+    additional_search_fields: function(fields, columns) {
+        if (fields.length == 0) { return; }
+        if (!columns) { columns = 2; }
+        let col = 0, h = [ '<tr class="asm3-search-additional-row">' ];
+        $.each(fields, function(i, f) {
+            if (!f.SEARCHABLE) { return; }
+            // Text/Notes/Number fields
+            if (f.FIELDTYPE == 1 || f.FIELDTYPE == 2 || f.FIELDTYPE == 3) {
+                h.push('<td><label for="af_' + f.ID + '">' + f.FIELDLABEL + '</label></td>');
+                h.push('<td><input type="text" id="af_' + f.ID + '" data="af_' + f.ID + '" class="asm-textbox" /></td>');
+            }
+            // Lookup/Multilookup fields
+            if (f.FIELDTYPE == 6 || f.FIELDTYPE == 7) {
+                h.push('<td><label for="af_' + f.ID + '">' + f.FIELDLABEL + '</label></td>');
+                h.push('<td><select id="af_' + f.ID + '" data="af_' + f.ID + '" class="asm-selectbox">');
+                h.push('<option value="">' + _("(all)") + '</option>');
+                h.push( html.list_to_options(f.LOOKUPVALUES.split("|")) );
+                h.push('</select></td>');
+            }
+            // Drop a row at each column boundary
+            if (col == columns) { h.push('</tr><tr class="asm3-search-additional-row">'); col += 1; }
+        });
+        h.push("</tr>");
+        return h.join("\n");
+    },
+
+    /**
      * Returns true if the additional field type t is a person ID
      */
     is_person_type: function(t) {

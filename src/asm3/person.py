@@ -685,6 +685,13 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, includeVolunte
         ss.ands.append("(o.SiteID = 0 OR o.SiteID = ?)")
         ss.values.append(siteid)
 
+    for k, v in post.data.items():
+        if k.startswith("af_") and v != "":
+            afid = asm3.utils.atoi(k)
+            ilike = dbo.sql_ilike("Value", "?")
+            ss.ands.append(f"EXISTS (SELECT Value FROM additional WHERE LinkID=o.ID AND AdditionalFieldID={afid} AND {ilike})")
+            ss.values.append( "%%%s%%" % v.lower() )
+
     if len(ss.ands) == 0:
         sql = get_person_query(dbo) + " ORDER BY o.OwnerName"
     else:

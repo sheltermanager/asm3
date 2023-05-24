@@ -596,6 +596,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             notforadoption
             notforregistration
             quarantine
+        af_X - additional field with ID X
     locationfilter: IN clause of locations to search
     """
     post = asm3.utils.PostedData(criteria, dbo.locale)
@@ -686,6 +687,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     ss.add_comp("logicallocation", "reclaimed", "a.ActiveMovementType = %d" % asm3.movement.RECLAIMED)
     ss.add_comp("logicallocation", "retailer", "a.ActiveMovementType = %d" % asm3.movement.RETAILER)
     ss.add_comp("logicallocation", "deceased", "a.DeceasedDate Is Not Null")
+
     if post["flags"] != "":
         for flag in post["flags"].split(","):
             if flag == "courtesy": ss.ands.append("a.IsCourtesy=1")
@@ -697,6 +699,13 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             else: 
                 ss.ands.append("LOWER(a.AdditionalFlags) LIKE ?")
                 ss.values.append("%%%s|%%" % flag.lower())
+
+    for k, v in post.data.items():
+        if k.startswith("af_") and v != "":
+            afid = asm3.utils.atoi(k)
+            ilike = dbo.sql_ilike("Value", "?")
+            ss.ands.append(f"EXISTS (SELECT Value FROM additional WHERE LinkID=a.ID AND AdditionalFieldID={afid} AND {ilike})")
+            ss.values.append( "%%%s%%" % v.lower() )
 
     where = ""
     if len(ss.ands) > 0: where = "WHERE " + " AND ".join(ss.ands)

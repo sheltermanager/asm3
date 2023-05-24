@@ -344,6 +344,7 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
+                additional.additional_search_fields(controller.additionalfields, 3),
                 '</table>',
                 '</div>',
                 '<p class="centered">',

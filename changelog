@@ -1,6 +1,7 @@
 47
 ================
 
+24/05/23 Searchable additional fields on advanced find screens #74
 24/05/23 SACmetrics: omit months with dates in the future
 23/05/23 Fix bug when exporting incident CSV from SQL interface->Export
 22/05/23 Daily observations feature/screen #489

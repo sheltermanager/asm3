@@ -195,6 +195,7 @@ $(function() {
                 '<td><input id="completedto" data="completedto" class="asm-textbox asm-datebox" /></td>',
                 '</tr>',
 
+                additional.additional_search_fields(controller.additionalfields, 3),
                 '</table>',
                 '<p class="centered">',
                 '<button type="submit" id="searchbutton">' + _("Search") + '</button>',

@@ -206,7 +206,12 @@ def get_lostanimal_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     ss.add_date("completefrom", "completeto", "a.DateFound")
     if post["excludecomplete"] == "1":
         ss.ands.append("a.DateFound Is Null")
-
+    for k, v in post.data.items():
+        if k.startswith("af_") and v != "":
+            afid = asm3.utils.atoi(k)
+            ilike = dbo.sql_ilike("Value", "?")
+            ss.ands.append(f"EXISTS (SELECT Value FROM additional WHERE LinkID=a.ID AND AdditionalFieldID={afid} AND {ilike})")
+            ss.values.append( "%%%s%%" % v.lower() )
     sql = "%s WHERE %s ORDER BY a.ID" % (get_lostanimal_query(dbo), " AND ".join(ss.ands))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
@@ -251,7 +256,12 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     ss.add_date("completefrom", "completeto", "a.ReturnToOwnerDate")
     if post["excludecomplete"] == "1":
         ss.ands.append("a.ReturnToOwnerDate Is Null")
-
+    for k, v in post.data.items():
+        if k.startswith("af_") and v != "":
+            afid = asm3.utils.atoi(k)
+            ilike = dbo.sql_ilike("Value", "?")
+            ss.ands.append(f"EXISTS (SELECT Value FROM additional WHERE LinkID=a.ID AND AdditionalFieldID={afid} AND {ilike})")
+            ss.values.append( "%%%s%%" % v.lower() )
     sql = "%s WHERE %s ORDER BY a.ID" % (get_foundanimal_query(dbo), " AND ".join(ss.ands))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 

@@ -1891,6 +1891,7 @@ class animal_find(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         c = {
+            "additionalfields": asm3.additional.get_additional_fields(dbo, 0, "animal"),
             "agegroups": asm3.configuration.age_groups(dbo),
             "animaltypes": asm3.lookups.get_animal_types(dbo),
             "species": asm3.lookups.get_species(dbo),
@@ -3485,6 +3486,7 @@ class foundanimal_find(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "additionalfields": asm3.additional.get_additional_fields(dbo, 0, "foundanimal"),
             "agegroups": asm3.configuration.age_groups(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
             "name": "foundanimal_find",
@@ -3724,6 +3726,7 @@ class incident_find(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "additionalfields": asm3.additional.get_additional_fields(dbo, 0, "incident"),
             "agegroups": asm3.configuration.age_groups(dbo),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "completedtypes": asm3.lookups.get_incident_completed_types(dbo),
@@ -4116,6 +4119,7 @@ class lostanimal_find(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "additionalfields": asm3.additional.get_additional_fields(dbo, 0, "lostanimal"),
             "agegroups": asm3.configuration.age_groups(dbo),
             "name": "lostanimal_find",
             "colours": asm3.lookups.get_basecolours(dbo),
@@ -5632,6 +5636,7 @@ class person_find(JSONEndpoint):
         flags = asm3.lookups.get_person_flags(dbo)
         asm3.al.debug("lookups loaded", "code.person_find", dbo)
         return {
+            "additionalfields": asm3.additional.get_additional_fields(dbo, 0, "person"),
             "flags": flags,
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "users": asm3.users.get_users(dbo)
