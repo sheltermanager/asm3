@@ -1094,7 +1094,7 @@ $(function() {
             $(".mode-icon").show();
             $("#tableform thead").hide();
             $("#tableform").css({ "text-align": "center" });
-            $("#tableform tr").css({ "display": "inline-block", "vertical-align": "bottom", "border": "1px none transparent" });
+            $("#tableform tbody tr").css({ "display": "inline-block", "vertical-align": "bottom", "border": "1px none transparent" });
             $(".asm-media-thumb img").css({
                 "min-width": "85px",
                 "min-height": "85px",
@@ -1104,7 +1104,8 @@ $(function() {
             });
             // Add the drop icon if it is not present in the table
             if ($("#tableform .asm-mediadroptarget").length == 0) {
-                $("#tableform tbody").prepend('<div class="asm-mediadroptarget mode-icon" style="height: 150px"><p>' + _("Drop files here...") + '</p></div>');
+                $("#tableform tbody").prepend('<tr style="display: inline-block"><td class="mode-icon">' +
+                    '<div class="asm-mediadroptarget mode-icon" style="height: 150px"><p>' + _("Drop files here...") + '</p></div></td></tr>');
                 media.bind_droptarget("#tableform .asm-mediadroptarget");
             }
             media.icon_mode_active = true;
@@ -1116,7 +1117,7 @@ $(function() {
             $(".mode-table").show();
             $("#tableform thead").show();
             $("#tableform").css({ "text-align": "left" });
-            $("#tableform tr").css({ "display": "table-row", "vertical-align": "middle" });
+            $("#tableform tbody tr").css({ "display": "table-row", "vertical-align": "middle" });
             // Resize the thumbnails based on the number of media records
             // to fit more rows on screen
             let thumbnail_size = 85;
