@@ -229,7 +229,8 @@ def get_animal_query(dbo):
         "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
         "(SELECT COUNT(*) FROM media WHERE MediaMimeType = 'image/jpeg' AND Date >= %(twodaysago)s AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages, " \
         "CASE WHEN EXISTS(SELECT amt.DateRequired FROM animalmedicaltreatment amt INNER JOIN animalmedical am ON am.ID=amt.AnimalMedicalID WHERE amt.AnimalID=a.ID AND amt.DateRequired <= %(today)s AND amt.DateGiven Is Null AND am.Status=0) THEN 1 ELSE 0 END AS HasOutstandingMedical, " \
-        "(SELECT COUNT(*) FROM animalvaccination av WHERE av.AnimalID = a.ID AND DateOfVaccination Is Not Null) AS VaccGivenCount, " \
+        "(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Not Null) AS VaccGivenCount, " \
+        "(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Null AND DateRequired < %(today)s) AS VaccOutstandingCount, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.NonShelterAnimal) AS NonShelterAnimalName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrueltyCase) AS CrueltyCaseName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrossBreed) AS CrossBreedName, " \
