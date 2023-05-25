@@ -421,6 +421,7 @@ def sql_structure(dbo):
     sql += table("animalboarding", (
         fid(),
         fint("AnimalID"),
+        fint("OwnerID", True),
         fdate("InDateTime"),
         fdate("OutDateTime"),
         fint("Days", True),
@@ -429,6 +430,7 @@ def sql_structure(dbo):
         fstr("ShelterLocationUnit"),
         flongstr("Comments", True) ))
     sql += index("animalboarding_AnimalID", "animalboarding", "AnimalID")
+    sql += index("animalboarding_OwnerID", "animalboarding", "OwnerID")
     sql += index("animalboarding_InDateTime", "animalboarding", "InDateTime")
     sql += index("animalboarding_OutDateTime", "animalboarding", "OutDateTime")
 
@@ -5880,6 +5882,7 @@ def update_34704(dbo):
     fields = ",".join([
         dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
         dbo.ddl_add_table_column("AnimalID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("OwnerID", dbo.type_integer, True),
         dbo.ddl_add_table_column("InDateTime", dbo.type_datetime, False),
         dbo.ddl_add_table_column("OutDateTime", dbo.type_datetime, False),
         dbo.ddl_add_table_column("Days", dbo.type_integer, True),
@@ -5895,6 +5898,7 @@ def update_34704(dbo):
     ])
     dbo.execute_dbupdate( dbo.ddl_add_table("animalboarding", fields) )
     dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_AnimalID", "animalboarding", "AnimalID") )
+    dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_OwnerID", "animalboarding", "OwnerID") )
     dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_InDateTime", "animalboarding", "InDateTime") )
     dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_OutDateTime", "animalboarding", "OutDateTime") )
 
