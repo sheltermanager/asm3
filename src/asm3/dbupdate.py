@@ -40,14 +40,14 @@ VERSIONS = (
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
-    34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703
+    34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704
 )
 
 LATEST_VERSION = VERSIONS[-1]
 
 # All ASM3 tables
 TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
-    "adoption", "animal", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost",
+    "adoption", "animal", "animalboarding", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost",
     "animaldiet", "animalentry", "animalfigures", "animalfiguresannual",  
     "animalfound", "animalcontrolanimal", "animallitter", "animallost", "animallostfoundmatch", 
     "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
@@ -90,7 +90,7 @@ TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontr
 # Tables that contain data rather than lookups - used by reset_db
 # to determine which tables to delete data from
 TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption", 
-    "animal", "animalcontrol", "animalcontrolanimal","animalcontrolrole", 
+    "animal", "animalboarding", "animalcontrol", "animalcontrolanimal","animalcontrolrole", 
     "animallostfoundmatch", "animalpublished", 
     "animalcost", "animaldiet", "animalentry", "animalfigures", "animalfiguresannual", 
     "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
@@ -417,6 +417,20 @@ def sql_structure(dbo):
     sql += index("animal_UniqueCodeID", "animal", "UniqueCodeID")
     sql += index("animal_Weight", "animal", "Weight")
     sql += index("animal_YearCodeID", "animal", "YearCodeID")
+
+    sql += table("animalboarding", (
+        fid(),
+        fint("AnimalID"),
+        fdate("InDateTime"),
+        fdate("OutDateTime"),
+        fint("Days", True),
+        fint("DailyFee", True),
+        fint("ShelterLocation"),
+        fstr("ShelterLocationUnit"),
+        flongstr("Comments", True) ))
+    sql += index("animalboarding_AnimalID", "animalboarding", "AnimalID")
+    sql += index("animalboarding_InDateTime", "animalboarding", "InDateTime")
+    sql += index("animalboarding_OutDateTime", "animalboarding", "OutDateTime")
 
     sql += table("animalcontrol", (
         fid(),
@@ -5861,4 +5875,26 @@ def update_34703(dbo):
     dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber='' WHERE IdentificationNumber Is Null") 
     dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber2='' WHERE IdentificationNumber2 Is Null") 
     dbo.execute_dbupdate("UPDATE owner SET MatchFlags='' WHERE MatchFlags Is Null") 
+
+def update_34704(dbo):
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("AnimalID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("InDateTime", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("OutDateTime", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("Days", dbo.type_integer, True),
+        dbo.ddl_add_table_column("DailyFee", dbo.type_integer, True),
+        dbo.ddl_add_table_column("ShelterLocation", dbo.type_integer, False),
+        dbo.ddl_add_table_column("ShelterLocationUnit", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Comments", dbo.type_longtext, True),
+        dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, False),
+        dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("animalboarding", fields) )
+    dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_AnimalID", "animalboarding", "AnimalID") )
+    dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_InDateTime", "animalboarding", "InDateTime") )
+    dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_OutDateTime", "animalboarding", "OutDateTime") )
 
