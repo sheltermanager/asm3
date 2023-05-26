@@ -532,6 +532,7 @@ $(function() {
                         return controller.name.indexOf("move_book_foster") != -1 ||
                             controller.name.indexOf("move_book_soft_release") != -1 ||
                             controller.name.indexOf("move_book_recent_other") != -1 ||
+                            controller.name.indexOf("move_book_recent_transfer") != -1 ||
                             config.str("AdoptionCheckoutProcessor") == "";
                     },
                     click: function() {
