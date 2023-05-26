@@ -1,6 +1,7 @@
 47
 ================
 
+26/05/23 Add rename facility to document repository #389
 24/05/23 Fix bug when filtering media after tablesorter upgrade
 24/05/23 Add VaccOutstandingCount to animal query for views/service calls
 24/05/23 Searchable additional fields on advanced find screens #74

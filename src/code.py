@@ -3128,6 +3128,9 @@ class document_repository(JSONEndpoint):
             asm3.audit.email(dbo, o.user, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], post["body"])
         return post["to"]
 
+    def post_rename(self, o):
+        asm3.dbfs.rename_file(o.dbo, o.post["path"], o.post["oldname"], o.post["newname"])
+
 class document_repository_file(ASMEndpoint):
     url = "document_repository_file"
     get_permissions = asm3.users.VIEW_REPO_DOCUMENT
