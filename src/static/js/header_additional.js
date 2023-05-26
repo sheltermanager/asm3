@@ -116,12 +116,10 @@ additional = {
                 h.push('</select></td>');
             }
             // Drop a row at each column boundary
+            col += 1;
             if (col == columns) { 
                 h.push('</tr><tr class="asm3-search-additional-row">'); 
                 col = 0; 
-            }
-            else {
-                col += 1;
             }
         });
         h.push("</tr>");
