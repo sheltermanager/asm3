@@ -41,6 +41,20 @@ ANNUALLY = 6
 ASCENDING = 0
 DESCENDING = 1
 
+def get_boarding_query(dbo):
+    return "SELECT ab.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
+        "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
+        "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, " \
+        "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, " \
+        "a.AnimalName, a.BreedName, s.SpeciesName, a.Neutered, a.DeceasedDate, " \
+        "a.IsQuarantine, a.NonShelterAnimal, a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
+        "il.LocationName AS ShelterLocationName " \
+        "FROM animalboarding ab " \
+        "INNER JOIN animal a ON a.ID = ab.AnimalID " \
+        "INNER JOIN owner o ON o.ID = ab.OwnerID " \
+        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = ab.ShelterLocation "
+
 def get_citation_query(dbo):
     return "SELECT oc.ID, oc.CitationTypeID, oc.CitationDate, oc.Comments, ct.CitationName, " \
         "oc.FineAmount, oc.FineDueDate, oc.FinePaidDate, oc.AnimalControlID, " \
@@ -450,6 +464,22 @@ def get_person_donations(dbo, oid, sort = ASCENDING):
     return dbo.query(get_donation_query(dbo) + \
         "WHERE od.OwnerID = ? " \
         "ORDER BY %s" % order, [oid])
+
+def get_animal_boarding(dbo, aid):
+    """
+    Returns the boarding history for an animal
+    """
+    return dbo.query(get_boarding_query(dbo) + \
+        "WHERE ab.AnimalID = ? " \
+        "ORDER BY InDateTime", [aid])
+
+def get_person_boarding(dbo, oid):
+    """
+    Returns the boarding history for a person
+    """
+    return dbo.query(get_boarding_query(dbo) + \
+        "WHERE ab.OwnerID = ? " \
+        "ORDER BY InDateTime", [oid])
 
 def get_incident_citations(dbo, iid, sort = ASCENDING):
     """
@@ -1241,6 +1271,52 @@ def delete_voucher(dbo, username, vid):
     Deletes a voucher record
     """
     dbo.delete("ownervoucher", vid, username)
+
+def insert_boarding_from_form(dbo, username, post):
+    """
+    Creates a boarding record from posted data 
+    """
+    l = dbo.locale
+
+    if None is post.date("indate") or None is post.date("outdate"):
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Boarding records must have valid check in and out dates.", l))
+    if post.date("indate") > post.date("outdate"):
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Check out date cannot be later than check in date.", l))
+
+    return dbo.insert("animalboarding", {
+        "AnimalID":         post.integer("animal"),
+        "OwnerID":          post.integer("person"),
+        "InDateTime":       post.datetime("indate", "intime"),
+        "OutDateTime":      post.datetime("outdate", "outtime"),
+        "Days":             asm3.utils.i18n.date_diff_days(post.date("indate"), post.date("outdate")),
+        "DailyFee":         post.integer("dailyfee"),
+        "ShelterLocation":  post.integer("location"),
+        "ShelterLocationUnit": post["unit"],
+        "Comments":         post["comments"]
+    }, username)
+
+def update_boarding_from_form(dbo, username, post):
+    """
+    Updates a boarding record from posted data 
+    """
+    l = dbo.locale
+
+    if None is post.date("indate") or None is post.date("outdate"):
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Boarding records must have valid check in and out dates.", l))
+    if post.date("indate") > post.date("outdate"):
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Check out date cannot be later than check in date.", l))
+
+    dbo.update("animalboarding", post.integer("boardingid"), {
+        "AnimalID":         post.integer("animal"),
+        "OwnerID":          post.integer("person"),
+        "InDateTime":       post.datetime("indate", "intime"),
+        "OutDateTime":      post.datetime("outdate", "outtime"),
+        "Days":             asm3.utils.i18n.date_diff_days(post.date("indate"), post.date("outdate")),
+        "DailyFee":         post.integer("dailyfee"),
+        "ShelterLocation":  post.integer("location"),
+        "ShelterLocationUnit": post["unit"],
+        "Comments":         post["comments"]
+    }, username)
 
 def insert_citation_from_form(dbo, username, post):
     """
