@@ -1,6 +1,7 @@
 47
 ================
 
+27/05/23 Do not create ES01/02 log messages if they already exist #1286
 26/05/23 Add rename facility to document repository #389
 24/05/23 Fix bug when filtering media after tablesorter upgrade
 24/05/23 Add VaccOutstandingCount to animal query for views/service calls

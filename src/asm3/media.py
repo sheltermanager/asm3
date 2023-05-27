@@ -559,7 +559,11 @@ def create_log(dbo, user, mid, logcode = "UK00", message = ""):
     m = get_media_by_id(dbo, mid)
     if m is None: return
     logtypeid = asm3.configuration.system_log_type(dbo)
-    asm3.log.add_log(dbo, user, get_log_from_media_type(m.LINKTYPEID), m.LINKID, logtypeid, "%s:%s:%s - %s" % (logcode, m.ID, message, m.MEDIANOTES))
+    linktypeid = get_log_from_media_type(m.LINKTYPEID)
+    # Only create the log message if it doesn't exist already. This prevents
+    # multiple signing requests causing extra alerts after a doc has been signed.
+    if 0 == dbo.query_int("SELECT COUNT(*) FROM log WHERE LinkID=? AND LinkType=? AND Comments LIKE ?", [ m.LINKID, linktypeid, f"{logcode}:{m.ID}:%"] ):
+        asm3.log.add_log(dbo, user, linktypeid, m.LINKID, logtypeid, f"{logcode}:{m.ID}:{message} - {m.MEDIANOTES}")
 
 def sign_document(dbo, username, mid, sigurl, signdate, signprefix):
     """
