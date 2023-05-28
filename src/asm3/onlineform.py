@@ -1267,8 +1267,8 @@ def create_person(dbo, username, collationid):
         if f.FIELDNAME == "forenames2" or f.FIELDNAME == "firstname2": d["forenames2"] = truncs(f.VALUE)
         if f.FIELDNAME == "surname" or f.FIELDNAME == "lastname": d["surname"] = truncs(f.VALUE)
         if f.FIELDNAME == "lastname2" or f.FIELDNAME == "surname2":
-            d["ownertype"] = "3" # Couple
             d["surname2"] = truncs(f.VALUE)
+            if d["surname2"] != "": d["ownertype"] = "3" # Couple
         if f.FIELDNAME == "address": d["address"] = truncs(f.VALUE)
         if f.FIELDNAME == "town": d["town"] = truncs(f.VALUE)
         if f.FIELDNAME == "city": d["town"] = truncs(f.VALUE)
