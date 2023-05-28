@@ -1,4 +1,4 @@
-/*global $, console, performance, jQuery, FileReader, Modernizr, Mousetrap, Path */
+/*global $, console, performance, jQuery, FileReader, Mousetrap, Path */
 /*global alert, asm, schema, atob, btoa, header, _, escape, unescape, navigator */
 /*global common, config, dlgfx, format */
 /*global html: true */
@@ -862,8 +862,9 @@ const html = {
      *  If the web browser oriented the image before rendering to the canvas, does nothing.
      **/
     rotate_canvas_to_exif: function(canvas, ctx, orientation) {
-        // This web browser already rotated the image when it was loaded, do nothing
-        if (Modernizr.exiforientation) { return; }
+        // This function is no longer needed as all browsers do this when loading the image now
+        // if (Modernizr.exiforientation) { return; }
+        return;
         var width = canvas.width,
             height = canvas.height;
         if (4 < orientation && orientation < 9) {

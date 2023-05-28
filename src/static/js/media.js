@@ -1,6 +1,6 @@
 /*jslint browser: true, forin: true, eqeq: true, white: true, sloppy: true, vars: true, nomen: true */
 /*global $, jQuery, _, asm, common, config, controller, dlgfx, edit_header, format, header, html, log, tableform, validate */
-/*global escape, FileReader, Modernizr */
+/*global escape, FileReader */
 
 $(function() {
 
@@ -155,7 +155,9 @@ $(function() {
                 { id: "move", text: _("Move"), type: "buttonmenu", icon: "copy" },
                 { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
                 { type: "raw", markup: '<div class="asm-mediadroptarget mode-table"><p>' + _("Drop files here...") + '</p></div>',
-                    hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || common.browser_is.mobile || asm.mobileapp; }},
+                    hideif: function() { 
+                        return common.browser_is.mobile || asm.mobileapp; 
+                    }},
                 { id: "viewmode", text: "", icon: "batch", enabled: "always", tooltip: _("Toggle table/icon view") }
             ];
 
@@ -430,7 +432,6 @@ $(function() {
          */
         attach_files: function(files) {
             let i = 0, promises = [];
-            if (!Modernizr.filereader || !Modernizr.canvas || !Modernizr.todataurljpeg) { return; }
             header.show_loading(_("Uploading..."));
             for (i = 0; i < files.length; i += 1) {
                 promises.push(media.attach_file(files[i])); 
@@ -622,13 +623,6 @@ $(function() {
                 return;
             }
 
-            // We need the right APIs to scale an image, if we don't
-            // have them just send the file to the backend
-            if (!Modernizr.filereader || !Modernizr.canvas || !Modernizr.todataurljpeg) { 
-                $("#addform").submit();
-                return;
-            }
-
             // Attach the file with the HTML5 APIs
             header.show_loading(_("Uploading..."));
             media.attach_file(selectedfile, $("#retainfor").val(), $("#addcomments").val())
@@ -710,10 +704,7 @@ $(function() {
 
             $(".asm-tabbar").asmtabs();
             $("#emailform").emailform();
-
-            if (Modernizr.canvas) {
-                $("#signature").signature({ guideline: true });
-            }
+            $("#signature").signature({ guideline: true });
 
             this.bind_droptarget(".asm-mediadroptarget");
 
@@ -905,11 +896,6 @@ $(function() {
             if (controller.name != "animal_media") {
                 $("#button-include").hide();
                 $("#button-exclude").hide();
-            }
-
-            // If this browser doesn't support canvas, hide the sign on screen link
-            if (!Modernizr.canvas) {
-                $("#button-signscreen").hide();
             }
 
             $("#button-web").click(function() {

@@ -171,7 +171,6 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 css_tag(BOOTSTRAP_GRID_CSS) +
                 asm_css_tag("asm-icon.css") +
                 asm_css_tag("asm.css") + 
-                script_tag("static/lib/modernizr/modernizr.min.js") + 
                 script_tag(JQUERY_JS) +
                 script_tag(JQUERY_UI_JS) +
                 script_tag(MOMENT_JS) + 

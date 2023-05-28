@@ -826,29 +826,6 @@ select:disabled, input:disabled, textarea:disabled {
     border: 1px solid #555;
     padding: 5px;
     margin: 5px;
-    max-width: 85px;
-    max-height: 85px;
-    background-color: #fff;
-    border-radius: 2px;
-}
-
-.asm-thumbnail-small {
-    vertical-align: middle;
-    border: 1px solid #555;
-    padding: 3px;
-    margin: 5px;
-    max-width: 42px;
-    max-height: 42px;
-    background-color: #fff;
-    border-radius: 2px;
-}
-
-/* objectfit is a class applied to the <html> tag by modernizr that we can use to detect browser support */
-.objectfit .asm-thumbnail {
-    vertical-align: middle;
-    border: 1px solid #555;
-    padding: 5px;
-    margin: 5px;
     width: 85px;
     height: 85px;
     object-fit: contain;
@@ -856,7 +833,7 @@ select:disabled, input:disabled, textarea:disabled {
     border-radius: 2px;
 }
 
-.objectfit .asm-thumbnail-small {
+.asm-thumbnail-small {
     vertical-align: middle;
     border: 1px solid #555;
     padding: 3px;
@@ -868,11 +845,11 @@ select:disabled, input:disabled, textarea:disabled {
     border-radius: 2px;
 }
 
-.objectfit .asm-thumbnail-male, .asm-thumbnail-male {
+.asm-thumbnail-male, .asm-thumbnail-male {
     background-color: #99c2ff;
 }
 
-.objectfit .asm-thumbnail-female, .asm-thumbnail-female {
+.asm-thumbnail-female, .asm-thumbnail-female {
     background-color: #ffb3ff;
 }
 
@@ -938,7 +915,6 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-link-disabled:hover {
     text-decoration: none;
 }
-
 
 /** Tweaks for when displaying on portrait mobile devices */
 @media screen and (max-device-width:480px) {

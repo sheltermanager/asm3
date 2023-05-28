@@ -1,4 +1,4 @@
-/*global $, console, performance, jQuery, FileReader, Modernizr, Mousetrap, Path */
+/*global $, console, performance, jQuery, FileReader, Mousetrap, Path */
 /*global alert, atob, btoa, header, _, escape, unescape, navigator */
 /*global asm, schema, validate */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, log: true */
@@ -478,7 +478,8 @@ const common = {
 
         // If the browser doesn't support the history api, reload the page
         // as Path.reload does not work with hash changes.
-        if (!Modernizr.history) { window.location.reload(); return; }
+        // NO LONGER NEEDED, can't run ASM on anything that doesn't support history api
+        // if (!Modernizr.history) { window.location.reload(); return; }
 
         // Reload the current route on the client
         Path.reload();

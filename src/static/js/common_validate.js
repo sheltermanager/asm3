@@ -1,4 +1,4 @@
-/*global $, console, performance, jQuery, FileReader, Modernizr, Mousetrap, Path */
+/*global $, console, performance, jQuery, FileReader, Mousetrap, Path */
 /*global alert, asm, common, dlgfx, schema, atob, btoa, header, _, escape, unescape, navigator */
 /*global validate: true */
 

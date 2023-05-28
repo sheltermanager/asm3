@@ -1,4 +1,4 @@
-/*global $, jQuery, FileReader, Modernizr, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
+/*global $, jQuery, FileReader, _, asm, common, config, controller, dlgfx, format, header, html, tableform, validate */
 
 $(function() {
 
@@ -87,7 +87,9 @@ $(function() {
                     }
                 },
                 { type: "raw", markup: '<div class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>',
-                    hideif: function() { return !Modernizr.filereader || !Modernizr.todataurljpeg || common.browser_is.mobile || asm.mobileapp; }},
+                    hideif: function() { 
+                        return common.browser_is.mobile || asm.mobileapp;
+                    }},
             ];
             this.dialog = dialog;
             this.buttons = buttons;
@@ -96,7 +98,6 @@ $(function() {
 
         attach_files: function(files) {
             let i = 0, promises = [];
-            if (!Modernizr.filereader || !Modernizr.todataurljpeg) { return; }
             header.show_loading(_("Uploading..."));
             for (i = 0; i < files.length; i += 1) {
                 promises.push(document_repository.attach_file(files[i])); 
