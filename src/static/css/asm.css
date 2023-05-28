@@ -832,6 +832,18 @@ select:disabled, input:disabled, textarea:disabled {
     border-radius: 2px;
 }
 
+.asm-thumbnail-small {
+    vertical-align: middle;
+    border: 1px solid #555;
+    padding: 3px;
+    margin: 5px;
+    max-width: 42px;
+    max-height: 42px;
+    background-color: #fff;
+    border-radius: 2px;
+}
+
+/* objectfit is a class applied to the <html> tag by modernizr that we can use to detect browser support */
 .objectfit .asm-thumbnail {
     vertical-align: middle;
     border: 1px solid #555;
@@ -839,6 +851,18 @@ select:disabled, input:disabled, textarea:disabled {
     margin: 5px;
     width: 85px;
     height: 85px;
+    object-fit: contain;
+    background-color: #fff;
+    border-radius: 2px;
+}
+
+.objectfit .asm-thumbnail-small {
+    vertical-align: middle;
+    border: 1px solid #555;
+    padding: 3px;
+    margin: 5px;
+    width: 35px;
+    height: 35px;
     object-fit: contain;
     background-color: #fff;
     border-radius: 2px;

@@ -109,7 +109,7 @@ $(function() {
                     },
                     { field: "PREVIEW", classes: "mode-table", display: "", formatter: function(m) {
                         let h = [];
-                        h.push(media.render_preview_thumbnail(m));
+                        h.push(media.render_preview_thumbnail(m, false, true));
                         h.push(media.render_mods(m, true));
                         return h.join("");
                     }},
@@ -129,7 +129,7 @@ $(function() {
                     { field: "PREVIEWICON", classes: "mode-icon", display: "", formatter: function(m) {
                         let h = [];
                         h.push("<div class=\"centered\">");
-                        h.push(media.render_preview_thumbnail(m, true));
+                        h.push(media.render_preview_thumbnail(m, true, false));
                         h.push("<br/>");
                         if (m.MEDIAMIMETYPE != "image/jpeg") { h.push("<span>" + html.truncate(m.MEDIANOTES, 30) + "</span><br/>" ); }
                         h.push("<span style=\"white-space: nowrap\">");
@@ -332,10 +332,17 @@ $(function() {
             return h.join("\n");
         },
 
-        render_preview_thumbnail: function(m, notestooltip) {
+        /**
+         * output a thumbnail
+         * m: record from media results
+         * notestooltip: true if the title attribute should contain the media notes
+         * smallthumbnail: true if asm-thumbnail-small should be used
+         */
+        render_preview_thumbnail: function(m, notestooltip, smallthumbnail) {
             let h = [ '<div class="asm-media-thumb">' ];
-            let tt = "";
+            let tt = "", tc = "asm-thumbnail thumbnailshadow";
             if (notestooltip) { tt = 'title="' + html.title(html.truncate(html.decode(m.MEDIANOTES), 70)) + '"'; }
+            if (smallthumbnail) { tc = "asm-thumbnail-small thumbnailshadow"; }
             if (m.MEDIATYPE == 1 || m.MEDIATYPE == 2) {
                 h.push('<a href="' + m.MEDIANAME + '">');
                 let linkimage = "static/images/ui/file-video.png";
@@ -350,23 +357,23 @@ $(function() {
                         }
                     }
                 }
-                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="' + linkimage + '" /></a>');
+                h.push('<img class="' + tc + '" ' + tt + ' src="' + linkimage + '" /></a>');
             }
             else if (m.MEDIAMIMETYPE == "image/jpeg") {
                 h.push('<a href="image?db=' + asm.useraccount + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '">');
-                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="image?db=' + asm.useraccount + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" /></a>');
+                h.push('<img class="' + tc + '" ' + tt + ' src="image?db=' + asm.useraccount + '&mode=media&id=' + m.ID + '&date=' + encodeURIComponent(m.DATE) + '" /></a>');
             }
             else if (m.MEDIAMIMETYPE == "text/html") {
                 h.push('<a href="document_media_edit?id=' + m.ID + '&redirecturl=' + controller.name + '?id=' + m.LINKID + '"> ');
-                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/document-media.png" /></a>');
+                h.push('<img class="' + tc + '" ' + tt + ' src="static/images/ui/document-media.png" /></a>');
             }
             else if (m.MEDIAMIMETYPE == "application/pdf") {
                 h.push('<a href="media?id=' + m.ID + '">');
-                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/pdf-media.png" /></a>');
+                h.push('<img class="' + tc + '" ' + tt + ' src="static/images/ui/pdf-media.png" /></a>');
             }
             else {
                 h.push('<a href="media?id=' + m.ID + '">');
-                h.push('<img class="asm-thumbnail thumbnailshadow" ' + tt + ' src="static/images/ui/file-media.png" /></a>');
+                h.push('<img class="' + tc + '" ' + tt + ' src="static/images/ui/file-media.png" /></a>');
             }
             h.push('</div>');
             return h.join("");
@@ -1095,13 +1102,6 @@ $(function() {
             $("#tableform thead").hide();
             $("#tableform").css({ "text-align": "center" });
             $("#tableform tbody tr").css({ "display": "inline-block", "vertical-align": "bottom", "border": "1px none transparent" });
-            $(".asm-media-thumb img").css({
-                "min-width": "85px",
-                "min-height": "85px",
-                "width": "85px",
-                "height": "85px",
-                "object-fit": "contain"
-            });
             // Add the drop icon if it is not present in the table
             if ($("#tableform .asm-mediadroptarget").length == 0) {
                 $("#tableform tbody").prepend('<tr style="display: inline-block"><td class="mode-icon">' +
@@ -1118,21 +1118,6 @@ $(function() {
             $("#tableform thead").show();
             $("#tableform").css({ "text-align": "left" });
             $("#tableform tbody tr").css({ "display": "table-row", "vertical-align": "middle" });
-            // Resize the thumbnails based on the number of media records
-            // to fit more rows on screen
-            let thumbnail_size = 85;
-            if (controller.media.length >= 0) { thumbnail_size = 85; }
-            if (controller.media.length > 10) { thumbnail_size = 70; }
-            if (controller.media.length > 20) { thumbnail_size = 55; }
-            if (controller.media.length > 30) { thumbnail_size = 30; }
-            thumbnail_size += "px";
-            $(".asm-media-thumb img").css({
-                "min-width": thumbnail_size,
-                "min-height": thumbnail_size,
-                "width": thumbnail_size,
-                "height": thumbnail_size,
-                "object-fit": "contain"
-            });
             media.icon_mode_active = false;
         },
 
