@@ -79,7 +79,8 @@ header = {
         57: ["calendarview?ev=c", "asm-icon-calendar", _("Clinic Calendar")],
         58: ["move_book_soft_release", "", _("Soft release book")],
         59: ["event_find", "asm-icon-event-find", _("Find Event")],
-        60: ["event_new", "asm-icon-event-add", _("Add a new event")]
+        60: ["event_new", "asm-icon-event-add", _("Add a new event")],
+        61: ["animal_observations", "", _("Daily Observations")]
     },
 
     show_error: function(text, duration) {
