@@ -139,6 +139,10 @@ information, or information requested from the user at report generation time.
   currency and assume that its value is a whole integer money amount (where 1
   is 1 cent/pence/etc).
 
+* AS [fieldname]n2br - If you alias an output field so that it has a suffix
+  of "n2br" as its name, the report engine will translate line breaks in the
+  column data to HTML <br> tags so that they show on the report.
+
 ASK
 ^^^
 
