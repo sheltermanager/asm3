@@ -75,6 +75,7 @@ $(function() {
                 '<textarea class="asm-textarea" id="comments" data="comments" rows="3"></textarea>',
                 '</td>',
                 '</tr>',
+                additional.additional_new_fields(controller.additional),
                 '</table>',
                 html.content_footer(),
                 '<div id="payment"></div>',
@@ -108,6 +109,9 @@ $(function() {
                     validate.highlight("reservationdate");
                     return false;
                 }
+                // mandatory additional fields
+                if (!additional.validate_mandatory()) { return false; }                
+
                 return true;
             };
 

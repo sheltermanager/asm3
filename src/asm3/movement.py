@@ -126,11 +126,11 @@ def get_movements(dbo, movementtype):
     Gets the list of movements of a particular type 
     (unreturned or returned after today and for animals who aren't deceased)
     """
-    return dbo.query(get_movement_query(dbo) + \
+    return asm3.additional.append_to_results(dbo, dbo.query(get_movement_query(dbo) + \
         "WHERE m.MovementType = ? AND " \
         "(m.ReturnDate Is Null OR m.ReturnDate > ?) " \
         "AND a.DeceasedDate Is Null " \
-        "ORDER BY m.MovementDate DESC", (movementtype, dbo.today()))
+        "ORDER BY m.MovementDate DESC", (movementtype, dbo.today())), "movement")
 
 def get_movement(dbo, movementid):
     """
@@ -440,6 +440,8 @@ def insert_movement_from_form(dbo, username, post):
         "TrialEndDate":                 post.date("trialenddate"),
         "Comments":                     post["comments"]
     }, username, generateID=False)
+    asm3.al.debug(f"saving additional fields {post}")
+    asm3.additional.save_values_for_link(dbo, post, username, movementid, "movement")
 
     if animalid > 0:
         asm3.animal.update_current_owner(dbo, username, animalid)
@@ -479,6 +481,8 @@ def update_movement_from_form(dbo, username, post):
         "TrialEndDate":                 post.date("trialenddate"),
         "Comments":                     post["comments"]
     }, username)
+
+    asm3.additional.save_values_for_link(dbo, post, username, movementid, "movement")
 
     # If the animal ID has been changed, update the previous animal to prevent
     # its active movement being left pointing at this movement
@@ -591,6 +595,7 @@ def insert_adoption_from_form(dbo, username, post, creating = [], create_payment
         "comments"              : post["comments"],
         "event"                 : post["event"]
     }
+    move_dict.update(asm3.additional.get_additional_fields_dict(dbo, post, 'movement'))
     # Is this animal currently on foster? If so, return the foster
     fm = get_animal_movements(dbo, post.integer("animal"))
     for m in fm:
@@ -681,6 +686,7 @@ def insert_foster_from_form(dbo, username, post):
         "returncategory"        : asm3.configuration.default_return_reason(dbo),
         "comments"              : post["comments"]
     }
+    move_dict.update(asm3.additional.get_additional_fields_dict(dbo, post, 'movement'))
     movementid = insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
     return movementid
 
@@ -709,6 +715,7 @@ def insert_reclaim_from_form(dbo, username, post):
         "returncategory"        : asm3.configuration.default_return_reason(dbo),
         "comments"              : post["comments"]
     }
+    move_dict.update(asm3.additional.get_additional_fields_dict(dbo, post, 'movement'))
     # Is this animal currently on foster? If so, return the foster
     fm = get_animal_movements(dbo, post.integer("animal"))
     for m in fm:
@@ -772,6 +779,7 @@ def insert_transfer_from_form(dbo, username, post):
         "returncategory"        : asm3.configuration.default_return_reason(dbo),
         "comments"              : post["comments"]
     }
+    move_dict.update(asm3.additional.get_additional_fields_dict(dbo, post, 'movement'))
     movementid = insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
     return movementid
 
@@ -828,6 +836,7 @@ def insert_reserve_from_form(dbo, username, post):
         "returncategory"        : asm3.configuration.default_return_reason(dbo),
         "comments"              : post["comments"]
     }
+    move_dict.update(asm3.additional.get_additional_fields_dict(dbo, post, 'movement'))
     movementid = insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
     # Create any payments
     asm3.financial.insert_donations_from_form(dbo, username, post, post["reservationdate"], False, post["person"], post["animal"], movementid) 
@@ -859,6 +868,7 @@ def insert_retailer_from_form(dbo, username, post):
         "returncategory"        : asm3.configuration.default_return_reason(dbo),
         "comments"              : post["comments"]
     }
+    move_dict.update(asm3.additional.get_additional_fields_dict(dbo, post, 'movement'))
     movementid = insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
     return movementid
 

@@ -70,6 +70,90 @@ additional = {
         return add.join("\n") + other.join("\n");
     },
 
+    tableform_additional_fields: function(fields, additionalfieldtype, includeids, classes) {
+        if (fields.length == 0) { return; }
+        if (additionalfieldtype === undefined) { additionalfieldtype = -1; }
+        var add = [], other = [], addidx = 0;
+        //add.push('<table class="asm-additional-fields-container" width=\"100%\">\n<tr>\n');
+        add.push('<tr>');
+        $.each(fields, function(i, f) {
+            if (f.FIELDTYPE == additionalfieldtype || additionalfieldtype == -1)
+            {
+                add.push(additional.render_field(f, includeids, classes));
+                addidx += 1;
+//                // Every 3rd column, drop a row
+//                if (addidx == 3) {
+                    add.push("</tr><tr>");
+                    addidx = 0;
+//                }
+            }
+        });
+        add.push("</tr>");
+        //add.push("</tr></table>");
+        return add.join("\n");
+    },
+
+    /**
+     *  Sets on screen additional fields (in dialog) to their default values
+     **/
+    additional_fields_populate_from_json: function(fields) {
+        fields.forEach(function(f) {
+            var id = f.ID;
+            var fieldid = "add_" + id;
+            var fieldval = f.VALUE;
+            var element = $("#" + fieldid); //document.getElementById(fieldid);
+            if (element) {
+                if (f.FIELDTYPE == additional.YESNO) {
+                    element.prop("checked", (fieldval && fieldval == "1"));
+                }
+                else if (f.FIELDTYPE == additional.TEXT ||  f.FIELDTYPE == additional.NUMBER) {
+                    element.val(html.decode(fieldval));
+                }
+                else if (f.FIELDTYPE == additional.NOTES) {
+                    var s = fieldval;
+                    if (!s) { s = ""; }
+                    s = s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    element.val(html.decode(s));
+                }
+                else if (f.FIELDTYPE == additional.DATE) {
+                    element.val(fieldval);
+                    //element.val(format.date(fieldval));
+                }
+                else if (f.FIELDTYPE == additional.TIME) {
+                    element.val(fieldval);
+                    //element.val(format.time(fieldval));
+                }
+                else if (f.FIELDTYPE == additional.MONEY) {
+                    element.currency("value", fieldval);
+                }
+                else if (f.FIELDTYPE == additional.LOOKUP) {
+                    element.select("value", html.decode(fieldval)); 
+                }
+                else if (f.FIELDTYPE == additional.MULTI_LOOKUP) {
+                    element.children().prop("selected", false);
+                    var mcv = common.trim(common.nulltostr(fieldval)).split(",");
+                    $.each(String(mcv).split(/[|,]+/), function(mi, mv) {
+                        element.find("option").each(function() {
+                            var ot = $(this), ov = $(this).prop("value");
+                            if (html.decode(mv) == html.decode(ov)) {
+                                ot.prop("selected", true);
+                            }
+                        });
+                    });
+                    element.change();
+                }
+                else if (f.FIELDTYPE == additional.ANIMAL_LOOKUP) {
+                    element.animalchooser("clear", false);
+                    element.animalchooser("loadbyid", fieldval);
+                }
+                else if (f.FIELDTYPE == additional.PERSON_LOOKUP || f.FIELDTYPE == additional.PERSON_SPONSOR || f.FIELDTYPE == additional.PERSON_VET) {
+                    element.personchooser("clear", false);
+                    element.personchooser("loadbyid", fieldval);
+                }
+            }
+        });
+    },
+
     /**
      * Renders and lays out additional fields from the
      * additional.get_additional_fields call as HTML controls for 
@@ -124,6 +208,141 @@ additional = {
         });
     },
 
+    /**
+     * Merges meta data about additional fields (returned by asm3.additional.get_additional_fields_metadata in backend)
+     * and values from a row (array of simple key/values) to use additional fields in add/edit dialogs used with tables
+     * where additional fields are available
+     **/
+    merge_metadata_and_values: function (additional, row) {
+      return additional.map((item) => ({ ...item, VALUE: (row.hasOwnProperty(item.FIELDNAME.toUpperCase()) ? row[item.FIELDNAME.toUpperCase()] : "") }));
+    },
+
+    /**
+     * Toggles visibility of elements by their linktype data attribute
+     **/
+    toggle_elements_by_linktype: function(classname, linktype) {
+        var elements = $('.' + classname);
+        elements.each(function() {
+            if ($(this).data('linktype') === linktype) {
+                $(this).closest('tr').show();
+            } else {
+                $(this).closest('tr').hide();
+            }
+        });        
+    },
+
+    additional_fields_update_row: function(fields, linktype, row) {
+        fields.forEach(function(f) {
+            var id = f.ID;
+            var fieldid = "add_" + id;
+            if (f.LINKTYPE==linktype)
+            {
+                var element = $("#" + fieldid); //document.getElementById(fieldid);
+                if (element) {
+                    var fid = element.attr('data-post');
+                    if (f.FIELDTYPE == additional.YESNO) {
+                        row[f.FIELDNAME.toUpperCase()] = (element.is(":checked") ? "1" : "");
+                    }
+                    else if (f.FIELDTYPE == additional.TEXT || f.FIELDTYPE == additional.NOTES || f.FIELDTYPE == additional.NUMBER) {
+                        row[f.FIELDNAME.toUpperCase()] = element.val();
+                    }
+                    else if (f.FIELDTYPE == additional.DATE) {
+                        row[f.FIELDNAME.toUpperCase()] = element.val();
+                    }
+                    else if (f.FIELDTYPE == additional.TIME) {
+                        var ts = element.val();
+                        if (!ts) { ts = "00:00:00"; }
+                        row[f.FIELDNAME.toUpperCase()] = ts; //format.date_iso_settime(row[f.FIELDNAME.toUpperCase()], ts);
+                    }
+                    else if (f.FIELDTYPE == additional.MONEY) {
+                        row[f.FIELDNAME.toUpperCase()] = element.currency("value");
+                    }
+                    else if (f.FIELDTYPE == additional.LOOKUP) {
+                        row[f.FIELDNAME.toUpperCase()] = element.val();
+                    }
+                    else if (f.FIELDTYPE == additional.MULTI_LOOKUP) {
+                        var selected_items = "";
+                        if (!element.val()) { 
+                            selected_items = ""; 
+                        }
+                        else if ($.isArray(element.val())) {
+                            selected_items = element.val().join("|");
+                        }
+                        else {
+                            selected_items = element.val();
+                        }
+                        row[f.FIELDNAME.toUpperCase()] = selected_items;
+                    }
+                    else if (f.FIELDTYPE == additional.ANIMAL_LOOKUP) {
+                        row[f.FIELDNAME.toUpperCase()] = element.val();
+                    }
+                    else if (f.FIELDTYPE == additional.PERSON_LOOKUP) {
+                        row[f.FIELDNAME.toUpperCase()] = element.val();
+                    }
+                    else if (f.FIELDTYPE == additional.PERSON_SPONSOR) {
+                        row[f.FIELDNAME.toUpperCase()] = element.val();
+                    }
+                    else if (f.FIELDTYPE == additional.PERSON_VET) {
+                        row[f.FIELDNAME.toUpperCase()] = element.val();
+                    }
+                }
+            }
+        });
+    },
+
+    /**
+     * Returns a string with additional field keys and values to post in update requests
+     * Only returns the ones relevant to the linktype so that others will be reset by backend
+     * 
+     * 
+     **/
+    additional_fields_post: function(fields, linktype) {
+        var return_string="";
+        fields.forEach(function(f) {
+            var id = f.ID;
+            var fieldid = "add_" + id;
+            if (f.LINKTYPE==linktype)
+            {
+                var element = $("#" + fieldid); //document.getElementById(fieldid);
+                if (element) {
+                    var fid = element.attr('data-post');
+                    if (f.FIELDTYPE == additional.YESNO) {
+                        return_string += "&" + fid + "=" + (element.is(":checked") ? "on" : "");
+                    }
+                    else if (f.FIELDTYPE == additional.TEXT || f.FIELDTYPE == additional.DATE || f.FIELDTYPE == additional.TIME || f.FIELDTYPE == additional.NOTES || f.FIELDTYPE == additional.NUMBER) {
+                        return_string += "&" + fid + "=" + element.val();
+                    }
+                    else if (f.FIELDTYPE == additional.MONEY) {
+                        return_string += "&" + fid + "=" + element.currency("value");
+                    }                    
+                    else if (f.FIELDTYPE == additional.LOOKUP || f.FIELDTYPE == additional.MULTI_LOOKUP) {
+                        return_string += "&" + fid + "=" + element.val();
+                        // for (var i = 0; i < element.options.length; i++) {
+                        //     if (element.options[i].selected) {
+                        //         return_string += element.options[i].value + ',';
+                        //     }
+                        // }
+                    }
+                    else if (f.FIELDTYPE == additional.ANIMAL_LOOKUP) {
+                        return_string += "&" + fid + '=' + element.val();
+                    }
+                    else if (f.FIELDTYPE == additional.PERSON_LOOKUP) {
+                        return_string += "&" + fid + '=' + element.val();
+                    }
+                    else if (f.FIELDTYPE == additional.PERSON_SPONSOR) {
+                        return_string += "&" + fid + '=' + element.val();
+                    }
+                    else if (f.FIELDTYPE == additional.PERSON_VET) {
+                        return_string += "&" + fid + '=' + element.val();
+                    }
+                }
+            }
+        });
+        return return_string;
+    },
+
+
+
 
     /**
      * Renders a field. Fields are always output as a pair of
@@ -139,7 +358,7 @@ additional = {
     render_field: function(f, includeids, classes, usedefault) {
         var fieldname = f.ID,
             fieldid = "add_" + fieldname,
-            fieldattr = 'id="' + fieldid + '" ',
+            fieldattr = 'id="' + fieldid + '" ' + 'data-linktype="' + f.LINKTYPE + '" ',
             fieldval = f.VALUE,
             postattr = "a." + f.MANDATORY + "." + fieldname,
             mi = "",
@@ -244,6 +463,45 @@ additional = {
         return fh.join("\n");
     },
 
+    /**
+     * Validates all additional fields in the dialog and checks to
+     * see if they are mandatory and if so whether or not they
+     * are blank. Returns true if all is ok, or false if a field
+     * fails a check.
+     *
+     * Deliberately ignores fields with the chooser class as this 
+     * function is aimed at additional fields in bottom level forms
+     * like animal, waiting list, etc.
+     *
+     * If a field fails the manadatory check:
+     * 1. Its label is highlighted
+     * 2. An error message is displayed
+     */
+    validate_mandatory_dialog: function(additional_field_class, linktype) {
+        var valid = true, message="";
+        $("." + additional_field_class).not(".chooser").each(function() {
+            // only validate visible additional fields
+            if ($(this).data('linktype') === linktype) {
+                var t = $(this), 
+                    label = $("label[for='" + t.attr("id") + "']");
+                // ignore checkboxes
+                if (t.attr("type") != "checkbox") {
+                    var d = String(t.attr("data-post"));
+                    // mandatory additional fields have a post attribute prefixed with a.1
+                    if (d.indexOf("a.1") != -1) {
+                        if (common.trim(t.val()) == "") {
+                            label.addClass(validate.ERROR_LABEL_CLASS);
+                            t.focus();
+                            valid = false;
+                            message = _("{0} cannot be blank").replace("{0}", label.html());
+                            return false;
+                        }
+                    }
+                }
+            }
+        });
+        return {"valid": valid, "message": message};
+    },
 
     /**
      * Validates all additional fields in the DOM and checks to

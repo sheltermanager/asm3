@@ -52,6 +52,9 @@ $(function() {
                     { post_field: "insurance", label: _("Insurance"), type: "text", rowid: "insurancerow", xbutton: _("Issue a new insurance number for this animal/adoption") },
                     { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3, rowid: "commentsrow" }
                 ], 1, { full_width: false }),
+                '<table class="asm-table-layout">',
+                additional.additional_new_fields(controller.additional),
+                '</table>',
                 html.content_footer(),
                 '<div id="payment"></div>',
                 html.content_header(_("Boarding Cost"), true),
@@ -121,6 +124,8 @@ $(function() {
                     validate.highlight("emailtemplateid");
                     return false;
                 }
+                // mandatory additional fields
+                if (!additional.validate_mandatory()) { return false; }                
 
                 return true;
             };

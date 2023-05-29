@@ -590,8 +590,9 @@ const tableform = {
      *      html_form_enctype: enctype
      *      fields: (see fields_render)
      *  }
+     *  additionalfields = string containing rendered additionalfields
      */
-    dialog_render: function(dialog) {
+    dialog_render: function(dialog, additionalfields) {
         var d =[];
         d.push("<div id=\"dialog-tableform\" style=\"display: none\">");
         if (dialog.helper_text) {
@@ -611,7 +612,7 @@ const tableform = {
         if (dialog.focusfirst === false) {
             d.push(html.capture_autofocus());
         }
-        d.push(this.fields_render(dialog.fields, dialog.columns));
+        d.push(this.fields_render(dialog.fields, dialog.columns, undefined, additionalfields));
         if (dialog.html_form_action) {
             d.push("</form>");
         }
@@ -995,17 +996,18 @@ const tableform = {
      * columns: number of cols to render (1 if undefined)
      * options: - if undefined: { render_container: true; full_width: true; }
      */
-    fields_render: function(fields, columns, coptions) {
+    fields_render: function(fields, columns, coptions, additionalfields) {
         let d = "", 
             options = { render_container: true, full_width: true };
+        let additional_fields_placeholder = '<div id="additionalfieldsplaceholder"></div>';
         if (columns === undefined) { columns = 1; }
         if (coptions !== undefined) { options = common.copy_object(options, coptions); }
         if (options.render_container) {
-            d = '<table class="asm-table-layout ' + (options.full_width ? "asm-table-fullwidth" : "" ) + '">';
+            d = '<table class="asm-table-layout' + (options.full_width ? " asm-table-fullwidth" : "" ) + (columns == 1 ? " asm-dialog-fields-container" : "" ) +  '">';
         }
         if (columns > 1) {
             // We have multiple columns, start the first one
-            d += '<tr><td class="asm-nested-table-td"><table>';
+            d += '<tr><td class="asm-nested-table-td' + (columns > 1 ? " asm-dialog-fields-container" : "" ) + '"><table>';
         }
         $.each(fields, function(i, v) {
             let labelx = "", tr = "<tr>";
@@ -1306,6 +1308,10 @@ const tableform = {
                 // Special fake widget that causes rendering to move to the next column
                 d += '</table><td><td class="asm-nested-table-td"><table>';
             }
+            else if (v.type == "additional_fields") {
+                // Special fake widget that causes rendering to move to the next column
+                d += additional_fields_placeholder;
+            }
         });
         if (columns > 1) {
             // Close out the current column for multi column layouts
@@ -1313,6 +1319,9 @@ const tableform = {
         }
         if (options.render_container) {
             d += "</table>";
+        }
+        if (additionalfields !== undefined) {
+            d = d.replace(additional_fields_placeholder, additionalfields);
         }
         return d;
     },
