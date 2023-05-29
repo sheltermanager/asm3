@@ -48,7 +48,7 @@ $(function() {
                 if (a.ACTIVEMOVEMENTTYPE) { return; }
                 h.push('<tr data-animalid="' + a.ID + '" data-locationid="' + a.SHELTERLOCATION + '" style="display: none">');
                 h.push('<td><input type="checkbox" class="asm-checkbox selector" /> ');
-                h.push(html.animal_link(a));
+                h.push(html.animal_link(a, { showunit: true, emblemsright: true }));
                 h.push('</td>');
                 $.each(colnames, function(i, c) {
                     h.push('<td class="centered">' + colwidgets[i] + '</td>');
