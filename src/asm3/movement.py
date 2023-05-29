@@ -37,10 +37,10 @@ def get_movement_query(dbo):
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, " \
         "rs.StatusName AS ReservationStatusName, " \
         "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, a.Fee, " \
-        "a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
+        "a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.SpeciesID, a.HasActiveReserve, " \
         "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
-        "a.ActiveMovementType, a.Archived, a.IsNotAvailableForAdoption, " \
-        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
+        "a.ActiveMovementType, a.Archived, a.DaysOnShelter, a.IsNotAvailableForAdoption, " \
+        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, a.Identichipped, a.IdentichipNumber, " \
         "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
         "r.OwnerName AS RetailerName, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
