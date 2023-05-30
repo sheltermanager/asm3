@@ -140,16 +140,29 @@
 <section id="shelter-view">
 <h2>Shelter View<a class="headerlink" href="#shelter-view" title="Permalink to this heading">¶</a></h2>
 <p>The shelter view screen (available from the default quicklinks or under
-<span class="menuselection">ASM ‣ Shelter View</span>) gives you an overview of all the animals
-currently on your shelter, broken down by their internal location.</p>
+<span class="menuselection">ASM ‣ Animals ‣ Shelter View</span>) gives you an overview of all
+the animals currently on your shelter, broken down by their internal location.</p>
 <p>You can use this screen to jump straight to an animal’s record. You can also
 drag and drop animals to move them between locations quickly. If you have
 assigned units to the animal (for cage/pen numbers, etc) they will appear next
-to their name. A dropdown in the upper right corner allows different groupings
-to be applied.</p>
-<p>The “Location and Unit” grouping will show a box for every cage/pen with the
+to their name.</p>
+<p>A dropdown in the upper right corner allows one of many different modes to be
+applied.</p>
+<p>The “Location and Unit” mode will show a box for every cage/pen with the
 animals occupying them. If they are unoccupied, they’ll be displayed with a
 green highlight. You can drag and drop animals between units in this view.</p>
+<p>There are also special modes to show animals in foster homes, either all
+available homes with those with space highlighted (identified by the capacity
+field), or all active foster homes only.</p>
+<p>The “Location” modes mostly put animals who are fostered into a special virtual
+location called “Foster” so that they are separated from your internal locations.
+There is a mode named “Location (No Virtual)” that does not have this behaviour and
+shows animals as in the location that they left from if they are on foster, trial
+adoption or at a retailer.</p>
+<p>A special “status” mode separates animals who are adoptable from those who are
+marked not for adoption, those that are reserved and those that are
+quarantined, held, cruelty cases or other indicators that they cannot leave the
+shelter.</p>
 <img alt="_images/shelterview.png" src="_images/shelterview.png" />
 </section>
 <section id="find-animal">
@@ -573,6 +586,8 @@ location.</p>
 for, then update the text/dropdown fields with your observations. When you are
 done, the save button on the toolbar will record a log message containing the
 values for all selected animals.</p>
+<p>You can edit the observation values that are requested under
+<span class="menuselection">Settings ‣ Options ‣ Daily Observations</span></p>
 <img alt="_images/animal_obs_log.png" src="_images/animal_obs_log.png" />
 </section>
 <section id="litters">
@@ -582,9 +597,10 @@ into) the shelter. These facilities are used in particular for generating the
 monthly animal figures report, where the number of litters on shelter for each
 day of the month is tracked.</p>
 <img alt="_images/litters.png" src="_images/litters.png" />
-<p>The main screen is accessible from <span class="menuselection">ASM ‣ Edit Litters</span>. It
-shows you a list of all currently active litters on the shelter. A litter is
-deemed active whilst it has no expiry date, or an expiry date later than today.</p>
+<p>The main screen is accessible from <span class="menuselection">ASM ‣ Animals ‣ Edit
+Litters</span>. It shows you a list of all currently active litters on the shelter. A
+litter is deemed active whilst it has no expiry date, or an expiry date later
+than today.</p>
 <p>If an animal is returned from adoption who was part of an expired litter, the
 litter will not be resurrected and it will remain expired unless you manually
 remove the expiry date.</p>
