@@ -3604,7 +3604,9 @@ def insert_litter_from_form(dbo, username, post):
     for i in post.integer_list("animals"):
         dbo.update("animal", i, { "AcceptanceNumber": post["litterref"] })
 
-    update_active_litters(dbo)
+    # Only done as part of the overnight batch now as it generated too many
+    # support calls from people that like to enter the litter before the animals.
+    # update_active_litters(dbo)
 
     return nid
 
@@ -3624,7 +3626,9 @@ def update_litter_from_form(dbo, username, post):
         "RecordVersion":    dbo.get_recordversion()
     }, username, setLastChanged = False)
 
-    update_active_litters(dbo)
+    # Only done as part of the overnight batch now as it generated too many
+    # support calls from people that like to enter the litter before the animals.
+    # update_active_litters(dbo) 
 
 def delete_litter(dbo, username, lid):
     """
