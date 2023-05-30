@@ -547,21 +547,19 @@ Litters
 -------
 
 Animal Shelter Manager allows you to track litters as they are born (or come
-into) the shelter. These facilities are used particularly for generating animal
-figures. 
-
-Mechanism
-^^^^^^^^^
+into) the shelter. These facilities are used in particular for generating the
+monthly animal figures report, where the number of litters on shelter for each
+day of the month is tracked.
 
 .. image:: images/litters.png
 
 The main screen is accessible from :menuselection:`ASM --> Edit Litters`. It
 shows you a list of all currently active litters on the shelter. A litter is
-deemed active whilst any of the animals who were part of it are still on the
-shelter or if it has an expiry date later than today.
+deemed active whilst it has no expiry date, or an expiry date later than today.
 
 If an animal is returned from adoption who was part of an expired litter, the
-litter will not be resurrected. 
+litter will not be resurrected and it will remain expired unless you manually
+remove the expiry date.
 
 The litter holds information about how many animals collectively made it up,
 who the mother was (if known), what species of animal the litter is and any
@@ -569,17 +567,14 @@ comments.
 
 .. image:: images/litter_add.png
 
-Litter Completion
-^^^^^^^^^^^^^^^^^
+Auto Expiry
+^^^^^^^^^^^
 
-The system will check all the animals in the litter daily and the moment the
-last one has left the shelter through any means other than fostering (if the
-“Foster animals are shelter inventory” option is on), the litter will be
-cancelled. It will also be treated as cancelled if the expiry date is set and
-passed.
+The system will check all the animals in the litter as part of the overnight
+batch, and the litter will be automatically given an expiry date in the
+following scenarios:
 
-From the Edit Litters screen, you can highlight a litter and call up all
-the animals in that litter. The screen will also show you
-how many of the litter animals are currently left on the shelter. 
+* There are no animals who make up the litter left in the care of the shelter
 
+* The animals in the litter are older than 6 months
 

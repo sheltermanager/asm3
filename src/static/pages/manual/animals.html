@@ -77,8 +77,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#bulk-change-animals">Bulk Change Animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#daily-observations">Daily Observations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#litters">Litters</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#mechanism">Mechanism</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#litter-completion">Litter Completion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#auto-expiry">Auto Expiry</a></li>
 </ul>
 </li>
 </ul>
@@ -579,32 +578,29 @@ values for all selected animals.</p>
 <section id="litters">
 <h2>Litters<a class="headerlink" href="#litters" title="Permalink to this heading">¶</a></h2>
 <p>Animal Shelter Manager allows you to track litters as they are born (or come
-into) the shelter. These facilities are used particularly for generating animal
-figures.</p>
-<section id="mechanism">
-<h3>Mechanism<a class="headerlink" href="#mechanism" title="Permalink to this heading">¶</a></h3>
+into) the shelter. These facilities are used in particular for generating the
+monthly animal figures report, where the number of litters on shelter for each
+day of the month is tracked.</p>
 <img alt="_images/litters.png" src="_images/litters.png" />
 <p>The main screen is accessible from <span class="menuselection">ASM ‣ Edit Litters</span>. It
 shows you a list of all currently active litters on the shelter. A litter is
-deemed active whilst any of the animals who were part of it are still on the
-shelter or if it has an expiry date later than today.</p>
+deemed active whilst it has no expiry date, or an expiry date later than today.</p>
 <p>If an animal is returned from adoption who was part of an expired litter, the
-litter will not be resurrected.</p>
+litter will not be resurrected and it will remain expired unless you manually
+remove the expiry date.</p>
 <p>The litter holds information about how many animals collectively made it up,
 who the mother was (if known), what species of animal the litter is and any
 comments.</p>
 <img alt="_images/litter_add.png" src="_images/litter_add.png" />
-</section>
-<section id="litter-completion">
-<h3>Litter Completion<a class="headerlink" href="#litter-completion" title="Permalink to this heading">¶</a></h3>
-<p>The system will check all the animals in the litter daily and the moment the
-last one has left the shelter through any means other than fostering (if the
-“Foster animals are shelter inventory” option is on), the litter will be
-cancelled. It will also be treated as cancelled if the expiry date is set and
-passed.</p>
-<p>From the Edit Litters screen, you can highlight a litter and call up all
-the animals in that litter. The screen will also show you
-how many of the litter animals are currently left on the shelter.</p>
+<section id="auto-expiry">
+<h3>Auto Expiry<a class="headerlink" href="#auto-expiry" title="Permalink to this heading">¶</a></h3>
+<p>The system will check all the animals in the litter as part of the overnight
+batch, and the litter will be automatically given an expiry date in the
+following scenarios:</p>
+<ul class="simple">
+<li><p>There are no animals who make up the litter left in the care of the shelter</p></li>
+<li><p>The animals in the litter are older than 6 months</p></li>
+</ul>
 </section>
 </section>
 </section>
