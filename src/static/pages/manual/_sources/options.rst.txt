@@ -439,6 +439,10 @@ Diary and Messages
 * Show the full diary (instead of just my notes) on the home page: If this option
   is on, all users will see the full list of outstanding diary notes on their home page.
 
+* Auto complete diary notes linked to animals when they are marked deceased: If
+  this option is enabled, diary notes linked to animals are completed when the
+  animal is given a deceased date.
+
 * Email users their outstanding diary notes once per day: This option will cause
   the system to send users an email containing their outstanding diary notes. 
   The system will send it as part of the overnight batch, which depending on

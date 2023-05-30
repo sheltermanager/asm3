@@ -2537,7 +2537,7 @@ def update_animal_from_form(dbo, post, username):
                 "%s%s" % (weight, units))
 
     # If the animal is newly deceased, mark any diary notes completed
-    if post.date("deceaseddate") is not None:
+    if post.date("deceaseddate") is not None and asm3.configuration.diary_complete_on_death(dbo):
         if prerow.DECEASEDDATE != post.date("deceaseddate"):
             asm3.diary.complete_diary_notes_for_animal(dbo, username, aid)
 

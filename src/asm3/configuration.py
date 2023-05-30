@@ -132,6 +132,7 @@ DEFAULTS = {
     "DefaultMediaNotesFromFile": "Yes",
     "DefaultShiftStart": "09:00",
     "DefaultShiftEnd": "17:00",
+    "DiaryCompleteOnDeath": "Yes",
     "DisableAnimalControl": "No",
     "DisableClinic": "No",
     "DisableEntryHistory": "Yes",
@@ -850,6 +851,9 @@ def default_type(dbo):
 
 def default_vaccination_type(dbo):
     return cint(dbo, "AFDefaultVaccinationType", 1)
+
+def diary_complete_on_death(dbo):
+    return cboolean(dbo, "DiaryCompleteOnDeath", DEFAULTS["DiaryCompleteOnDeath"] == "Yes")
 
 def disable_asilomar(dbo):
     return cboolean(dbo, "DisableAsilomar", DEFAULTS["DisableAsilomar"] == "Yes")

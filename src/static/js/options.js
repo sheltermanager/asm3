@@ -851,6 +851,7 @@ $(function() {
                 '<p class="asm-header">' + _("Diary") + '</p>',
                 '<p>',
                 '<input data="AllDiaryHomePage" id="alldiaryhomepage" class="asm-checkbox" type="checkbox" /> <label for="alldiaryhomepage">' + _("Show the full diary (instead of just my notes) on the home page") + '</label><br />',
+                '<input data="DiaryCompleteOnDeath" id="diarycompleteondeath" class="asm-checkbox" type="checkbox" /> <label for="diarycompleteondeath">' + _("Auto complete diary notes linked to animals when they are marked deceased") + '</label><br />',
                 '<input data="EmailDiaryNotes" id="emaildiarynotes" class="asm-checkbox" type="checkbox" /> <label for="emaildiarynotes">' + _("Email users their outstanding diary notes once per day") + '</label><br />',
                 '<input data="EmailDiaryOnChange" id="emaildiaryonchange" class="asm-checkbox" type="checkbox" /> <label for="emaildiaryonchange">' + _("Email users immediately when a diary note assigned to them is created or updated") + '</label><br />',
                 '<input data="EmailDiaryOnComplete" id="emaildiaryoncomplete" class="asm-checkbox" type="checkbox" /> <label for="emaildiaryoncomplete">' + _("Email diary note creators when a diary note is marked complete") + '</label>',
