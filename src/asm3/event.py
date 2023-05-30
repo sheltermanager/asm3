@@ -15,6 +15,7 @@ def get_event_animal_query(dbo):
         "a.id AS AnimalID, a.animalname, a.SHORTCODE, a.SHELTERCODE, a.MOSTRECENTENTRYDATE, a.LASTCHANGEDDATE, a.LASTCHANGEDBY,  a.AcceptanceNumber AS LitterID, a.AnimalAge, " \
         "a.Sex, s.SpeciesName, a.DisplayLocation, a.AgeGroup, " \
         "a.Sex, s.SpeciesName, a.displaylocation, " \
+        "a.Identichipnumber, a.DateOfBirth, " \
         "bc.BaseColour AS BaseColourName, " \
         "sx.Sex AS SexName, " \
         "bd.BreedName AS BreedName, ea.EventID, " \
@@ -47,7 +48,9 @@ def get_events_by_animal(dbo, animalid):
     """
     Returns all events for animalid
     """
-    return dbo.query(get_event_animal_query(dbo) + " WHERE ea.animalid = ?", [animalid])
+    rows = dbo.query(get_event_animal_query(dbo) + " WHERE ea.animalid = ?", [animalid])
+    asm3.animal.calc_age_group_rows(dbo, rows)
+    return rows
 
 def get_animals_by_event(dbo, eventid, queryfilter="all"):
     """
