@@ -229,6 +229,7 @@ def get_animal_query(dbo):
         "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
         "(SELECT COUNT(*) FROM media WHERE MediaMimeType = 'image/jpeg' AND Date >= %(twodaysago)s AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages, " \
         "CASE WHEN EXISTS(SELECT amt.DateRequired FROM animalmedicaltreatment amt INNER JOIN animalmedical am ON am.ID=amt.AnimalMedicalID WHERE amt.AnimalID=a.ID AND amt.DateRequired <= %(today)s AND amt.DateGiven Is Null AND am.Status=0) THEN 1 ELSE 0 END AS HasOutstandingMedical, " \
+        "CASE WHEN EXISTS(SELECT ID FROM animalboarding WHERE AnimalID = a.ID AND InDateTime >= %(today)s AND OutDateTime <= %(today)s) THEN 1 ELSE 0 END AS HasActiveBoarding, " \
         "(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Not Null) AS VaccGivenCount, " \
         "(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Null AND DateRequired < %(today)s) AS VaccOutstandingCount, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.NonShelterAnimal) AS NonShelterAnimalName, " \
@@ -358,6 +359,7 @@ def get_animal_status_query(dbo):
         "a.ActiveMovementID, a.ActiveMovementDate, a.ActiveMovementType, a.ActiveMovementReturn, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.HasPermanentFoster, a.MostRecentEntryDate, a.DisplayLocation, " \
         "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
+        "CASE WHEN EXISTS(SELECT ID FROM animalboarding WHERE AnimalID = a.ID AND InDateTime >= %(today)s AND OutDateTime <= %(today)s) THEN 1 ELSE 0 END AS HasActiveBoarding, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.MediaNotes AS WebsiteMediaNotes " \
         "FROM animal a " \
@@ -4091,9 +4093,13 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     if onshelter:
         ownerid = 0
 
-    # non-shelter owner should always match original owner since the user can only change original owner
+    # Non-shelter owner should always match original owner since the user can only change original owner
     if a.nonshelteranimal == 1:
         ownerid = a.originalownerid
+
+    # Override the onshelter flag if the animal is actively boarding right now
+    if a.hasactiveboarding == 1:
+        onshelter = True
 
     # Calculate location and qualified display location
     loc = ""

@@ -1141,6 +1141,13 @@ $(function() {
                 $(".asilomar").hide();
             }
 
+            // If the animal is actively boarding right now, show the location fields
+            if (controller.animal.HASACTIVEBOARDING) {
+                $("#lastlocation").hide();
+                $("#locationrow").show();
+                $("#locationunitrow").show();
+            }
+
             // Still show the owner requested euth field for non-shelter animals
             if (asm.locale == "en" && !config.bool("DisableAsilomar") &&
                 ($("#species").select("value") == 1 || $("#species").select("value") == 2) &&
