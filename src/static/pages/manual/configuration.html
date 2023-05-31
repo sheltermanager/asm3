@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configuration &mdash; ASM 47u documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -10,7 +11,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -23,14 +26,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> ASM
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ASM
           </a>
               <div class="version">
                 47u
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -52,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
@@ -104,8 +110,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Configuration</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Configuration</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/configuration.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -115,11 +121,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="configuration">
-<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+  <section id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading">¶</a></h1>
 <p>To configure all areas of the system, you need to look under the top-level Settings menu.</p>
-<div class="section" id="additional-fields">
-<h2>Additional Fields<a class="headerlink" href="#additional-fields" title="Permalink to this headline">¶</a></h2>
+<section id="additional-fields">
+<h2>Additional Fields<a class="headerlink" href="#additional-fields" title="Permalink to this heading">¶</a></h2>
 <img alt="_images/additional_fields.png" src="_images/additional_fields.png" />
 <p>This screen allows you to declare additional fields that will appear on the
 animal, person, lost animal, found animal and waiting list screens.</p>
@@ -176,9 +182,9 @@ defined:</p>
 <span class="n">FROM</span> <span class="n">animal</span> <span class="n">a</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="lookup-data">
-<h2>Lookup Data<a class="headerlink" href="#lookup-data" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="lookup-data">
+<h2>Lookup Data<a class="headerlink" href="#lookup-data" title="Permalink to this heading">¶</a></h2>
 <img alt="_images/lookup_data.png" src="_images/lookup_data.png" />
 <p>The lookup data screen allows editing of lookups. These are small, standard
 tables of information used throughout the system for values such as breeds,
@@ -190,24 +196,24 @@ compatibility with existing records.</p>
 <p>Some lookups, such as breed, species and color allow you to choose a matching
 “Publisher” item. These are the items that will be sent to AdoptAPet, PetFinder
 and other third party adoption sites when transmitting adoptable animal data.</p>
-</div>
-<div class="section" id="document-templates">
-<h2>Document templates<a class="headerlink" href="#document-templates" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="document-templates">
+<h2>Document templates<a class="headerlink" href="#document-templates" title="Permalink to this heading">¶</a></h2>
 <img alt="_images/document_templates.png" src="_images/document_templates.png" />
 <p>Here, you can edit the available document templates on the system. For a
 comprehensive list of tokens for use in templates, see the appendix on
 wordkeys.</p>
-</div>
-<div class="section" id="reports">
-<h2>Reports<a class="headerlink" href="#reports" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="reports">
+<h2>Reports<a class="headerlink" href="#reports" title="Permalink to this heading">¶</a></h2>
 <img alt="_images/reports_edit.png" src="_images/reports_edit.png" />
 <p>Here, you can create and edit all the available reports on the system. The
 “Browse sheltermanager.com” button allows you to browse reports from the online
 repository and choose reports, graphs and mail merges to install.</p>
 <p>The “Edit Header/Footer” button allows you to modify the HTML header that is
 prepended and footer that is appended to reports when they’re run.</p>
-<div class="section" id="extra-images">
-<h3>Extra Images<a class="headerlink" href="#extra-images" title="Permalink to this headline">¶</a></h3>
+<section id="extra-images">
+<h3>Extra Images<a class="headerlink" href="#extra-images" title="Permalink to this heading">¶</a></h3>
 <p>The “Extra Images” button allows you to upload additional images for use in
 reports and document templates. The screen will give you a URL for each image
 so you can reference them in reports and document templates.</p>
@@ -232,10 +238,10 @@ lower left. Note that the original image will be changed, so you should
 upload images multiple times if you want to retain a copy without the
 watermark.</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="system-user-accounts">
-<h2>System user accounts<a class="headerlink" href="#system-user-accounts" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="system-user-accounts">
+<h2>System user accounts<a class="headerlink" href="#system-user-accounts" title="Permalink to this heading">¶</a></h2>
 <p>You may create, edit and delete system users from here. It is recommended that
 every person who uses Animal Shelter Manager have their own login and user name
 (when a user is finished, they should navigate to <span class="menuselection">User ‣
@@ -260,8 +266,8 @@ or IPv6 prefixes. Eg:</p>
 <blockquote>
 <div><p>192.168.1.0/24 172.16.31.34 2001:db8:abcd:0012</p>
 </div></blockquote>
-<div class="section" id="site-and-location-filters">
-<h3>Site and Location Filters<a class="headerlink" href="#site-and-location-filters" title="Permalink to this headline">¶</a></h3>
+<section id="site-and-location-filters">
+<h3>Site and Location Filters<a class="headerlink" href="#site-and-location-filters" title="Permalink to this heading">¶</a></h3>
 <p>Setting a location filter (a group of internal locations) for a user account
 will prevent that account from seeing or opening animals who are not in those
 locations when:</p>
@@ -291,9 +297,9 @@ users see:</p>
 <li><p>My Fosters: Allows the user to see animals that are fostered to the person
 record linked to their user account.</p></li>
 </ul>
-</div>
-<div class="section" id="two-factor-authentication-2fa">
-<h3>Two-Factor Authentication (2FA)<a class="headerlink" href="#two-factor-authentication-2fa" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="two-factor-authentication-2fa">
+<h3>Two-Factor Authentication (2FA)<a class="headerlink" href="#two-factor-authentication-2fa" title="Permalink to this heading">¶</a></h3>
 <p>ASM supports two-factor authentication for user accounts with the Google
 Authenticator app for mobile devices.</p>
 <img alt="_images/changeusersettings_2fa.png" src="_images/changeusersettings_2fa.png" />
@@ -312,17 +318,17 @@ in future, you will be challenged for this 2FA code from your mobile device.</p>
 <p>If you are ever locked out of your account because your mobile device is no
 longer available, you can disable 2FA by resetting your password from either
 the login screen, or via <span class="menuselection">Settings ‣ System user accounts</span></p>
-</div>
-</div>
-<div class="section" id="user-roles">
-<h2>User roles<a class="headerlink" href="#user-roles" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="user-roles">
+<h2>User roles<a class="headerlink" href="#user-roles" title="Permalink to this heading">¶</a></h2>
 <img alt="_images/role_edit.png" src="_images/role_edit.png" />
 <p>Roles can be assigned to individual users and represent sets of permissions.
 When you edit a role, ASM will show you a huge number of tickboxes to determine
 what any user with that role is allowed to do within the system.</p>
-</div>
-<div class="section" id="export-animals-as-csv">
-<h2>Export Animals as CSV<a class="headerlink" href="#export-animals-as-csv" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="export-animals-as-csv">
+<h2>Export Animals as CSV<a class="headerlink" href="#export-animals-as-csv" title="Permalink to this heading">¶</a></h2>
 <p>ASM can export your animal data to a CSV file. This format of CSV file is the one
 used by the “Import a CSV file” screen. You can use this function to export data
 to a file that you can give to other ASM users to import into their database.</p>
@@ -333,9 +339,9 @@ history.</p>
 <p>A number of pre-set filters are available. You can choose to export all animals
 in your database, just those who are currently on the shelter or a selection
 of the current on shelter animals.</p>
-</div>
-<div class="section" id="import-a-csv-file">
-<h2>Import a CSV file<a class="headerlink" href="#import-a-csv-file" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="import-a-csv-file">
+<h2>Import a CSV file<a class="headerlink" href="#import-a-csv-file" title="Permalink to this heading">¶</a></h2>
 <p>ASM can import data from a CSV file.</p>
 <p>Microsoft Excel, OpenOffice Calc, Gnumeric, Google Docs and many other
 spreadsheet products can all export individual sheets in CSV format.</p>
@@ -376,9 +382,9 @@ the person database for anyone with the same name and address. If the person
 already exists, it will not be created again. Similarly, if ANIMALCODE has been
 specified and an animal record with that code already exists in the database,
 it will not be created again.</p>
-</div>
-<div class="section" id="import-a-paypal-csv-file">
-<h2>Import a PayPal CSV file<a class="headerlink" href="#import-a-paypal-csv-file" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="import-a-paypal-csv-file">
+<h2>Import a PayPal CSV file<a class="headerlink" href="#import-a-paypal-csv-file" title="Permalink to this heading">¶</a></h2>
 <p>ASM can import data from CSV files produced by PayPal’s activity reporting.</p>
 <p>The import process allows you to choose a payment type and method for the
 imported transactions and any flags you’d like to assign to people records
@@ -394,16 +400,16 @@ can then assign values from your payment types lookup in this column. Note that
 they must match exactly (same case) the payment type name from your lookup. If
 the column does not exist, contains a blank or the system could not find a match
 then the payment type from the import screen will be used.</p>
-</div>
-<div class="section" id="import-a-stripe-csv-file">
-<h2>Import a Stripe CSV file<a class="headerlink" href="#import-a-stripe-csv-file" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="import-a-stripe-csv-file">
+<h2>Import a Stripe CSV file<a class="headerlink" href="#import-a-stripe-csv-file" title="Permalink to this heading">¶</a></h2>
 <p>Similar to PayPal, ASM can import data from CSV files exported with the Export
 button on Stripe’s payments screen.</p>
 <p>The Stripe fee will be recorded with the payment and the payment amount will
 have the fee deducted.</p>
-</div>
-<div class="section" id="trigger-batch-processes">
-<h2>Trigger Batch Processes<a class="headerlink" href="#trigger-batch-processes" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="trigger-batch-processes">
+<h2>Trigger Batch Processes<a class="headerlink" href="#trigger-batch-processes" title="Permalink to this heading">¶</a></h2>
 <p>ASM runs various tasks overnight to keep animal records upto date and generate
 cached versions of complex reports and figures.</p>
 <p>Ordinarily, users should have no need to trigger these batch processes
@@ -412,8 +418,8 @@ queries, animal locations, person flags and historic figures data can get out
 of sync and need to be recalculated/regenerated.</p>
 <p>Some of these processes can take many minutes to run and may block use of the
 database for other users. They should be used sparingly.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

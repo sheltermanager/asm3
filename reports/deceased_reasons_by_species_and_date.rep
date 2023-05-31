@@ -1,0 +1,96 @@
+Deceased Reasons by Species and Date
+###
+Statistics
+###
+Any rev01
+###
+Deceased reasons for shelter animals, grouped by species and between two dates.
+###
+en
+###
+SELECT ReasonName, SpeciesName, COUNT(PTSReasonID) AS Total FROM animal 
+INNER JOIN deathreason ON deathreason.ID = PTSReasonID
+INNER JOIN species ON animal.SpeciesID = species.ID
+WHERE DeceasedDate BETWEEN '$ASK DATE Enter date from$' AND '$ASK DATE Enter date to$' AND DiedOffShelter = 0
+GROUP BY SpeciesName, ReasonName
+ORDER BY SpeciesName, ReasonName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+
+<table border=1><tr>
+<td><b>Reason</b></td>
+<td><b></b></td>
+</tr>
+$$FOOT
+</table>
+
+<p><b>Total for $SpeciesName: {SUM.Total.0}</b></p>
+GROUP$$
+
+$$BODY<tr>
+<td>$ReasonName</td>
+<td>$Total</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+Deceased Reasons by Species, Entry Category and Date
+###
+Statistics
+###
+Any rev01
+###
+Deceased reasons for shelter animals, grouped by species and entry category between two dates.
+###
+en
+###
+SELECT e.ReasonName AS EntryCategory, d.ReasonName, SpeciesName, COUNT(PTSReasonID) AS Total FROM animal 
+INNER JOIN entryreason e ON e.ID = EntryReasonID
+INNER JOIN deathreason d ON d.ID = PTSReasonID
+INNER JOIN species ON animal.SpeciesID = species.ID
+WHERE DeceasedDate BETWEEN '$ASK DATE Enter date from$' AND '$ASK DATE Enter date to$' AND DiedOffShelter = 0
+GROUP BY SpeciesName, e.ReasonName, d.ReasonName
+ORDER BY SpeciesName, e.ReasonName, d.ReasonName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+$$FOOT
+<p><b>Total for $SpeciesName: {SUM.Total.0}</b></p>
+GROUP$$
+
+$$GROUP_EntryCategory
+$$HEAD
+<h3>$EntryCategory</h3>
+<table border=1><tr>
+<td><b>Reason</b></td>
+<td><b></b></td>
+</tr>
+$$FOOT
+</table>
+<p><b>Total for $SpeciesName $EntryCategory: {SUM.Total.0}</b></p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$ReasonName</td>
+<td>$Total</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+
+

@@ -8,9 +8,6 @@ ASM_DATA={{ asm_data }}
 BACKUP_CNF=/etc/cron.daily/backup.d/asm.cnf
 BACKUP_DIR=/srv/backups/asm
 
-CKAN_URL={{ asm_ckan.url }}
-API_KEY={{ asm_ckan.api_key }}
-
 DB_HOST={{ asm_db.host }}
 DB_PORT={{ asm_db.port }}
 DB_NAME={{ asm_db.name }}
@@ -52,24 +49,4 @@ do
 	then
 		rm $file
 	fi
-done
-
-
-#----------------------------------------------------------
-# CKAN data upload
-#----------------------------------------------------------
-if [ ! -d $ASM_DATA/ckan/csv ]
-	then mkdir -p $ASM_DATA/ckan/csv
-fi
-
-for file in `ls $ASM_DATA/ckan/sql`; do
-    f=$(basename $file)
-    resource_id=${f%.*}
-{% if   asm_db.type == 'POSTGRESQL' %}
-    PGPASSFILE=$BACKUP_CNF psql -w -U $DB_USER -h $DB_HOST -d $DB_NAME -p $DB_PORT < $ASM_DATA/ckan/sql/$file > $ASM_DATA/ckan/csv/$resource_id.csv
-{% elif asm_db.type == 'MYSQL' %}
-    # @todo Add MySQL support
-    # No mysql support tested yet
-{% endif %}
-    curl -F "id=$resource_id" -F "upload=@$ASM_DATA/ckan/csv/$resource_id.csv;type=text/csv" -H "Authorization: $API_KEY" $CKAN_URL/api/3/action/resource_update
 done

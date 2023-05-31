@@ -1,0 +1,29 @@
+Microchip Cancellations
+###
+Microchip
+###
+34701/Any rev02
+###
+Owner, microchip and animal information for all animals returned from adoption between two dates
+###
+en
+###
+SELECT DISTINCT a.AnimalName, a.ShelterCode, a.IdentichipNumber, o.OwnerName,
+o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, a.BreedName, o.EmailAddress, o.EmailAddress2,
+(SELECT SpeciesName FROM species WHERE ID = a.SpeciesID) AS SpeciesName,
+(SELECT BaseColour FROM basecolour WHERE ID = a.BaseColourID) AS BaseColourName,
+(SELECT Sex FROM lksex WHERE ID = a.Sex) AS Gender,
+(SELECT Name FROM lksyesno WHERE ID = a.Neutered) AS IsNeutered,
+a.DateOfBirth, a.AnimalAge, m.MovementDate, 
+a.Markings, m.ReturnDate
+FROM adoption m 
+INNER JOIN animal a ON a.ID = m.AnimalID
+INNER JOIN owner o ON o.ID = m.OwnerID
+WHERE m.ReturnDate >= '$ASK DATE Enter the earliest return date$'
+AND m.ReturnDate <= '$ASK DATE Enter the latest return date$'
+AND m.MovementType = 1 
+AND m.MovementDate Is Not Null
+AND o.ExcludeFromBulkEmail = 0
+###
+MAIL

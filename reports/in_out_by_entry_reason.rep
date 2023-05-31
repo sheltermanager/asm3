@@ -1,0 +1,422 @@
+In/Out by Entry Category
+###
+Movements
+###
+3200/Any rev03
+###
+The In/Out report, but broken down by entry category with totals.
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT * FROM
+(
+
+SELECT DateBroughtIn AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = animal.BroughtInByOwnerID) AS OwnerName,
+'Animals Brought In' AS CategoryName,
+'Animals In' AS OutOrIn
+FROM animal
+WHERE IsTransfer = 0 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$ 23:59:59' AND NonShelterAnimal = 0
+
+UNION ALL SELECT DateBroughtIn AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = animal.BroughtInByOwnerID) AS OwnerName,
+'Animals Transferred In' AS CategoryName,
+'Animals In' AS OutOrIn
+FROM animal
+WHERE IsTransfer = 1 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$ 23:59:59' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.ReturnDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
+'Animals Returned From Adoption' AS CategoryName,
+'Animals In' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 1 AND adoption.MovementDate Is Not Null AND adoption.IsTrial = 0 AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.ReturnDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
+'Animals Returned From Trial Adoption' AS CategoryName,
+'Animals In' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 1 AND adoption.MovementDate Is Not Null AND adoption.IsTrial = 1 AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.ReturnDate AS thedate,
+CASE WHEN DeceasedDate Is Null OR DeceasedDate >= adoption.ReturnDate THEN 'Foster Return' ELSE 'Died On Foster' END AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
+'Animals Returned From Fostering' AS CategoryName,
+'Animals In' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 2 AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.ReturnDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
+'Animals Returned From Transfer' AS CategoryName,
+'Animals In' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 3 AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.ReturnDate AS thedate,
+'' AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
+'Animals Returned From Other' AS CategoryName,
+'Animals In' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType NOT IN (1, 2, 3) AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.MovementDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
+'Animals Adopted' AS CategoryName,
+'Animals Out' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 1 AND adoption.IsTrial = 0 AND 
+adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.MovementDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
+'Animals Trial Adopted' AS CategoryName,
+'Animals Out' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 1 AND adoption.IsTrial = 1 AND 
+adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.MovementDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
+'Animals Fostered' AS CategoryName,
+'Animals Out' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 2 AND
+adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.MovementDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
+'Animals Transferred Out' AS CategoryName,
+'Animals Out' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 3 AND
+adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.MovementDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+'' AS OwnerName,
+'Animals Escaped' AS CategoryName,
+'Animals Out' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 4 AND
+adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.MovementDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
+'Animals Reclaimed' AS CategoryName,
+'Animals Out' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 5 AND
+adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
+
+
+UNION ALL SELECT adoption.MovementDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+'' AS OwnerName,
+'Animals Stolen' AS CategoryName,
+'Animals Out' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 6 AND
+adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.MovementDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+'' AS OwnerName,
+'Animals Released To Wild' AS CategoryName,
+'Animals Out' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 7 AND SpeciesID <> 2 AND 
+adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.MovementDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+'' AS OwnerName,
+'Animals Returned To Field/TNR' AS CategoryName,
+'Animals Out' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 7 AND SpeciesID = 2 AND 
+adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT DeceasedDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = animal.BroughtInByOwnerID) AS OwnerName,
+'Animals Died On Shelter' AS CategoryName,
+'Animals Out' AS OutOrIn
+FROM animal
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND PutToSleep = 0 AND IsDOA = 0
+
+UNION ALL SELECT DeceasedDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = animal.BroughtInByOwnerID) AS OwnerName,
+'Animals Euthanised' AS CategoryName,
+'Animals Out' AS OutOrIn
+FROM animal
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND PutToSleep = 1 AND IsDOA = 0
+
+UNION ALL SELECT DeceasedDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = animal.BroughtInByOwnerID) AS OwnerName,
+'Animals Dead On Arrival' AS CategoryName,
+'Animals Out' AS OutOrIn
+FROM animal
+WHERE DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND IsDOA = 1
+
+) dummy
+WHERE thedate >= '$@from$' AND thedate <= '$@to$ 23:59:59'
+ORDER BY OutOrIn, CategoryName, Reason, thedate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_OutOrIn
+$$HEAD
+<h1>$OutOrIn</h1>
+$$FOOT
+<h1>Total $OutOrIn: {COUNT.thedate}</h1>
+GROUP$$
+
+$$GROUP_CategoryName
+$$HEAD
+<h2>$CategoryName</h2>
+$$FOOT
+<h2>Total $CategoryName: {COUNT.thedate}</h2>
+GROUP$$
+
+$$GROUP_Reason
+$$HEAD
+<h2>$Reason</h2>
+<table border=1><tr>
+<td><b>Date</b></td>
+<td><b>Species</b></td>
+<td><b>Code</b></td>
+<td><b>Microchip</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Species</b></td>
+<td><b>Age</b></td>
+<td><b>Sex</b></td>
+<td><b>Location</b></td>
+<td><b>Owner</b></td>
+</tr>
+$$FOOT
+</table>
+<h2>Total $Reason: {COUNT.thedate}</h2>
+GROUP$$
+
+$$BODY<tr>
+<td>$THEDATE</td>
+<td>$SPECIESNAME</td>
+<td>$SHELTERCODE</td>
+<td>$IDENTICHIPNUMBER</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
+<td>$ANIMALTYPENAME</td>
+<td>$SPECIESNAME</td>
+<td>$ANIMALAGE</td>
+<td>$SEXNAME</td>
+<td>$LOCATION</td>
+<td>$OWNERNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

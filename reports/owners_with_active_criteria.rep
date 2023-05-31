@@ -1,0 +1,81 @@
+Owners with Active Criteria
+###
+Owners
+###
+Any rev01
+###
+All owners on file with completed "Looking For" information
+###
+en
+###
+SELECT OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, 
+EmailAddress, HomeTelephone, MobileTelephone, 
+(SELECT Name FROM lksyesno WHERE ID = MatchActive) AS Active, 
+MatchAdded, 
+MatchExpires, 
+(SELECT Sex FROM lksex WHERE ID = MatchSex) AS Sex, 
+(SELECT Size FROM lksize WHERE ID = MatchSize) AS Size, 
+MatchAgeFrom, 
+MatchAgeTo, 
+(SELECT AnimalType FROM animaltype WHERE ID = MatchAnimalType) AS AnimalType,
+(SELECT SpeciesName FROM species WHERE ID =MatchSpecies) AS Species, 
+(SELECT BreedName FROM breed WHERE ID = MatchBreed) AS Breed, 
+(SELECT BreedName FROM breed WHERE ID = MatchBreed2) AS OrBreed, 
+(SELECT Name FROM lksynun WHERE ID = MatchGoodWithCats) AS GoodWithCats, 
+(SELECT Name FROM lksynun WHERE ID = MatchGoodWithDogs) AS GoodWithDogs, 
+(SELECT Name FROM lksynunk WHERE ID = MatchGoodWithChildren) AS GoodWithChildren, 
+(SELECT Name FROM lksynun WHERE ID = MatchHouseTrained) AS HouseTrained,
+MatchCommentsContain
+FROM owner
+WHERE MatchActive = 1
+ORDER BY OwnerName
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Owner</b></td>
+<td><b>Added</b></td>
+<td><b>Expires</b></td>
+<td><b>Sex</b></td>
+<td><b>Size</b></td>
+<td><b>Aged From</b></td>
+<td><b>To</b></td>
+<td><b>Type</b></td>
+<td><b>Species</b></td>
+<td><b>Breed</b></td>
+<td><b>or</b></td>
+<td><b>Good with cats</b></td>
+<td><b>Good with dogs</b></td>
+<td><b>Good with children</b></td>
+<td><b>Housetrained</b></td>
+<td><b>Comments contain</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td><b>$OWNERNAME</b><br/>
+$OWNERADDRESS 
+$OWNERTOWN 
+$OWNERCOUNTY 
+$OWNERPOSTCODE<br/>
+$EMAILADDRESS $HOMETELEPHONE $MOBILETELEPHONE</td>
+<td>$MATCHADDED</td>
+<td>$MATCHEXPIRES</td>
+<td>$SEX</td>
+<td>$SIZE</td>
+<td>$MATCHAGEFROM</td>
+<td>$MATCHAGETO</td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIES</td>
+<td>$BREED</td>
+<td>$ORBREED</td>
+<td>$GOODWITHCATS</td>
+<td>$GOODWITHDOGS</td>
+<td>$GOODWITHCHILDREN</td>
+<td>$HOUSETRAINED</td>
+<td>$MATCHCOMMENTSCONTAIN</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

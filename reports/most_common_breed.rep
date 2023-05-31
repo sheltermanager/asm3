@@ -1,0 +1,36 @@
+Most Common Breeds
+###
+Statistics
+###
+Any rev01
+###
+The most common animal breeds.
+###
+en
+###
+SELECT BreedName, COUNT(BreedName) AS Total 
+FROM animal 
+WHERE DateBroughtIn >= '$ASK DATE Enter from date$' AND DateBroughtIn <= '$ASK DATE Enter to date$'
+GROUP BY BreedName
+HAVING COUNT(BreedName) > 1
+ORDER BY COUNT(BreedName)
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Breed</th>
+<th>Occurrences</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$BREEDNAME</td>
+<td>$TOTAL</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

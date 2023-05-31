@@ -161,6 +161,8 @@ $(function() {
                 '<td>',
                 '</td>',
                 '</tr>',
+                '<tr><td colspan="4"><hr></td></tr>',
+                additional.additional_search_fields(controller.additionalfields, 2),
                 '</table>',
                 '<p class="centered">',
                 '<button type="submit" id="searchbutton">' + _("Search") + '</button>',

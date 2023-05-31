@@ -1,0 +1,39 @@
+Medical treatment summary between two dates
+###
+Medical
+###
+34004/Any rev01
+###
+A summary of medical treatments given between two dates
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT a.animalname, a.sheltercode, o.ownername, o.membershipnumber, am.treatmentname, v.dategiven, v.comments, am.cost, a.breedname, a.displaylocation, s.speciesname
+FROM animalmedicaltreatment v
+INNER JOIN animal a ON a.id=v.animalid
+LEFT JOIN owner o ON o.id=v.administeringvetid
+INNER JOIN species s ON a.speciesid=s. id
+INNER JOIN animalmedical am ON am.id= v.animalmedicalid
+WHERE dategiven >= '$@from$' AND dategiven <= '$@to$'
+ORDER BY treatmentname, dategiven
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_TreatmentName
+$$HEAD
+$$FOOT
+<p>Total $TreatmentName: <b>{COUNT.TreatmentName}</b>, Cost: <b>{SUM.Cost}<b/></p>
+GROUP$$
+HEADER$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+<h2>Total treatments: <b>{COUNT.TreatmentName}</b>, Cost: <b>{SUM.Cost}<b/></h2>
+FOOTER$$
+

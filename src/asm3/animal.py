@@ -89,6 +89,7 @@ def get_animal_query(dbo):
         "oo.WorkTelephone AS OriginalOwnerWorkTelephone, " \
         "oo.MobileTelephone AS OriginalOwnerMobileTelephone, " \
         "oo.EmailAddress AS OriginalOwnerEmailAddress, " \
+        "oo.IdentificationNumber AS OriginalOwnerIDNumber, " \
         "oo.LatLong AS OriginalOwnerLatLong, " \
         "oj.JurisdictionName AS OriginalOwnerJurisdiction, " \
         "co.ID AS CurrentOwnerID, " \
@@ -106,6 +107,7 @@ def get_animal_query(dbo):
         "co.WorkTelephone AS CurrentOwnerWorkTelephone, " \
         "co.MobileTelephone AS CurrentOwnerMobileTelephone, " \
         "co.EmailAddress AS CurrentOwnerEmailAddress, " \
+        "co.IdentificationNumber AS CurrentOwnerIDNumber, " \
         "co.ExcludeFromBulkEmail AS CurrentOwnerExcludeEmail, " \
         "co.LatLong AS CurrentOwnerLatLong, " \
         "cj.JurisdictionName AS CurrentOwnerJurisdiction, " \
@@ -134,6 +136,7 @@ def get_animal_query(dbo):
         "ro.WorkTelephone AS ReservedOwnerWorkTelephone, " \
         "ro.MobileTelephone AS ReservedOwnerMobileTelephone, " \
         "ro.EmailAddress AS ReservedOwnerEmailAddress, " \
+        "ro.IdentificationNumber AS ReservedOwnerIDNumber, " \
         "ro.LatLong AS ReservedOwnerLatLong, " \
         "rj.JurisdictionName AS ReservedOwnerJurisdiction, " \
         "ar.ReservationDate AS ReservationDate, " \
@@ -226,7 +229,8 @@ def get_animal_query(dbo):
         "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
         "(SELECT COUNT(*) FROM media WHERE MediaMimeType = 'image/jpeg' AND Date >= %(twodaysago)s AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages, " \
         "CASE WHEN EXISTS(SELECT amt.DateRequired FROM animalmedicaltreatment amt INNER JOIN animalmedical am ON am.ID=amt.AnimalMedicalID WHERE amt.AnimalID=a.ID AND amt.DateRequired <= %(today)s AND amt.DateGiven Is Null AND am.Status=0) THEN 1 ELSE 0 END AS HasOutstandingMedical, " \
-        "(SELECT COUNT(*) FROM animalvaccination av WHERE av.AnimalID = a.ID AND DateOfVaccination Is Not Null) AS VaccGivenCount, " \
+        "(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Not Null) AS VaccGivenCount, " \
+        "(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Null AND DateRequired < %(today)s) AS VaccOutstandingCount, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.NonShelterAnimal) AS NonShelterAnimalName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrueltyCase) AS CrueltyCaseName, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.CrossBreed) AS CrossBreedName, " \
@@ -593,6 +597,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             notforadoption
             notforregistration
             quarantine
+        af_X - additional field with ID X
     locationfilter: IN clause of locations to search
     """
     post = asm3.utils.PostedData(criteria, dbo.locale)
@@ -683,6 +688,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     ss.add_comp("logicallocation", "reclaimed", "a.ActiveMovementType = %d" % asm3.movement.RECLAIMED)
     ss.add_comp("logicallocation", "retailer", "a.ActiveMovementType = %d" % asm3.movement.RETAILER)
     ss.add_comp("logicallocation", "deceased", "a.DeceasedDate Is Not Null")
+
     if post["flags"] != "":
         for flag in post["flags"].split(","):
             if flag == "courtesy": ss.ands.append("a.IsCourtesy=1")
@@ -694,6 +700,13 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
             else: 
                 ss.ands.append("LOWER(a.AdditionalFlags) LIKE ?")
                 ss.values.append("%%%s|%%" % flag.lower())
+
+    for k, v in post.data.items():
+        if k.startswith("af_") and v != "":
+            afid = asm3.utils.atoi(k)
+            ilike = dbo.sql_ilike("Value", "?")
+            ss.ands.append(f"EXISTS (SELECT Value FROM additional WHERE LinkID=a.ID AND AdditionalFieldID={afid} AND {ilike})")
+            ss.values.append( "%%%s%%" % v.lower() )
 
     where = ""
     if len(ss.ands) > 0: where = "WHERE " + " AND ".join(ss.ands)
@@ -1602,7 +1615,7 @@ def get_animals_on_shelter_namecode(dbo):
     Returns a resultset containing the ID, name and code
     of all on shelter animals.
     """
-    return dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesID, SpeciesName, " \
+    return dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesID, SpeciesName, DisplayLocation, " \
         "CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN ShortCode ELSE ShelterCode END AS Code " \
         "FROM animal " \
@@ -1614,7 +1627,7 @@ def get_animals_on_shelter_foster_namecode(dbo):
     Returns a resultset containing the ID, name and code
     of all on shelter and foster animals.
     """
-    return dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesName, " \
+    return dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesName, DisplayLocation, " \
         "CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN ShortCode ELSE ShelterCode END AS Code " \
         "FROM animal " \
@@ -2524,7 +2537,7 @@ def update_animal_from_form(dbo, post, username):
                 "%s%s" % (weight, units))
 
     # If the animal is newly deceased, mark any diary notes completed
-    if post.date("deceaseddate") is not None:
+    if post.date("deceaseddate") is not None and asm3.configuration.diary_complete_on_death(dbo):
         if prerow.DECEASEDDATE != post.date("deceaseddate"):
             asm3.diary.complete_diary_notes_for_animal(dbo, username, aid)
 
@@ -3225,18 +3238,22 @@ def clone_from_template(dbo, username, animalid, datebroughtin, dob, animaltypei
     if copyfrom.ANIMALNAME.lower().endswith("dob"):
         templatedate = copyfrom.DATEOFBIRTH
         newrecorddate = dob
-    # Helper function to adjust the date on a template record when copying it to a new record.
-    # Does this by working out the offset in days between the dates on the template record and 
-    # applying that offset to the base date on the new record.
-    # Normally the template date and new record date are datebroughtin, but if
-    # this template is set to operate on DOB, then dateofbirth is used instead.
     def adjust_date(d):
+        """
+        Helper function to adjust the date on a template record when copying it to a new record.
+        Does this by working out the offset in days between the dates on the template record and 
+        applying that offset to the base date on the new record.
+        Normally the template date and new record date are datebroughtin, but if
+        this template is set to operate on DOB, then dateofbirth is used instead.
+        If the calculated date is before today, today is returned instead.
+        """
         dayoffset = date_diff_days(templatedate, d)
         if dayoffset < 0:
             adjdate = subtract_days(newrecorddate, dayoffset)
         else:
             adjdate = add_days(newrecorddate, dayoffset)
         adjdate = adjdate.replace(hour=0, minute=0, second=0, microsecond=0) # throw away any time info that might have been on the original date
+        if adjdate < dbo.today(): adjdate = dbo.today()
         return dbo.sql_date(adjdate)
     # Only set flags on the new record if they are set on the template - just copying them
     # meant that we were clearing defaults if they were set for not for adoption etc.
@@ -3434,7 +3451,7 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     reparent("log", "LinkID", "LinkType", asm3.log.ANIMAL, haslastchanged=False)
 
     # Change any additional field links pointing to the merge animal
-    asm3.additional.update_merge_person(dbo, mergeanimalid, animalid)
+    asm3.additional.update_merge_animal(dbo, mergeanimalid, animalid)
 
     # Copy additional field values from mergeanimal to animal
     asm3.additional.merge_values(dbo, username, mergeanimalid, animalid, "animal")
@@ -3587,7 +3604,9 @@ def insert_litter_from_form(dbo, username, post):
     for i in post.integer_list("animals"):
         dbo.update("animal", i, { "AcceptanceNumber": post["litterref"] })
 
-    update_active_litters(dbo)
+    # Only done as part of the overnight batch now as it generated too many
+    # support calls from people that like to enter the litter before the animals.
+    # update_active_litters(dbo)
 
     return nid
 
@@ -3607,7 +3626,9 @@ def update_litter_from_form(dbo, username, post):
         "RecordVersion":    dbo.get_recordversion()
     }, username, setLastChanged = False)
 
-    update_active_litters(dbo)
+    # Only done as part of the overnight batch now as it generated too many
+    # support calls from people that like to enter the litter before the animals.
+    # update_active_litters(dbo) 
 
 def delete_litter(dbo, username, lid):
     """

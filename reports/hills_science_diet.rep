@@ -1,0 +1,136 @@
+Hills Science Diet Adopter List
+###
+Figures
+###
+3000/Any rev03
+###
+The Hills Science Diet adopter list for exporting as a CSV file.
+###
+en
+###
+SELECT
+'' AS SAP,
+m.MovementDate AS AdoptionDate,
+o.OwnerTitle AS Prefix,
+replace(o.OwnerForeNames, '&', 'and') AS FirstName,
+replace(o.OwnerSurname, '&', 'and') AS LastName,
+o.OwnerAddress AS Address,
+o.OwnerTown AS City,
+o.OwnerCounty AS State,
+o.OwnerPostcode AS Zip,
+o.HomeTelephone AS Phone,
+o.EmailAddress AS Email,
+CASE WHEN o.ExcludeFromBulkEmail = 1 THEN 'N' ELSE 'Y' END AS EmailOptin,
+s.SpeciesName AS Species,
+a.DateOfBirth AS PetBirthDate,
+replace(replace(a.AnimalName, '(', ''), ')', '') AS PetName,
+o.OwnerTown AS AdoptionLocation,
+r.OwnerName AS RetailPartner
+FROM adoption m
+INNER JOIN animal a ON m.AnimalID = a.ID
+INNER JOIN owner o ON m.OwnerID = o.ID
+LEFT OUTER JOIN owner r ON r.ID = m.RetailerID
+INNER JOIN species s ON a.SpeciesID = s.ID
+WHERE m.MovementType = 1 AND
+m.MovementDate >= '$ASK DATE Enter from date$' 
+AND m.MovementDate <= '$ASK DATE Enter to date$'
+ORDER BY m.MovementDate
+###
+$$HEADER
+<p>Use <a href="report_export">Settings-&gt;Export Reports as CSV</a> to save this data to a file for sending to Hills.</p>
+<table border="1">
+<tr>
+<th>SAP</th>
+<th>ADOPTIONDATE</th>
+<th>PREFIX</th>
+<th>FIRSTNAME</th>
+<th>LASTNAME</th>
+<th>ADDRESS</th>
+<th>CITY</th>
+<th>STATE</th>
+<th>ZIP</th>
+<th>PHONE</th>
+<th>EMAIL</th>
+<th>EMAILOPTIN</th>
+<th>SPECIES</th>
+<th>PETBIRTHDATE</th>
+<th>PETNAME</th>
+<th>ADOPTIONLOCATION</th>
+<th>RETAILPARTNER</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$SAP</td>
+<td>$ADOPTIONDATE</td>
+<td>$PREFIX</td>
+<td>$FIRSTNAME</td>
+<td>$LASTNAME</td>
+<td>$ADDRESS</td>
+<td>$CITY</td>
+<td>$STATE</td>
+<td>$ZIP</td>
+<td>$PHONE</td>
+<td>$EMAIL</td>
+<td>$EMAILOPTIN</td>
+<td>$SPECIES</td>
+<td>$PETBIRTHDATE</td>
+<td>$PETNAME</td>
+<td>$ADOPTIONLOCATION</td>
+<td>$RETAILPARTNER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+Hills Science Diet Adoption Summary
+###
+Figures
+###
+3000/PostgreSQL rev01
+###
+The Hills Science Diet adoption figures 
+###
+en
+###
+$VAR from DATE Adopted between$
+$VAR to DATE and$
+
+SELECT 
+CASE 
+WHEN a.SpeciesID = 1 AND a.DateOfBirth < m.MovementDate - INTERVAL '1 year' THEN 'Adult Dogs (Adult & Senior)'
+WHEN a.SpeciesID = 1 THEN 'Puppies (under 1 year)'
+WHEN a.SpeciesID = 2 AND a.DateOfBirth < m.MovementDate - INTERVAL '1 year' THEN 'Adult Cats (Adult & Senior)'
+WHEN a.SpeciesID = 2 THEN 'Kittens (under 1 year)'
+ELSE '' END AS AgeGroup,
+1 AS Adopted
+FROM adoption m
+INNER JOIN animal a ON a.ID = m.AnimalID
+WHERE m.MovementDate >= '$@from$' AND m.MovementDate <= '$@to$' AND m.MovementType = 1
+AND NonShelterAnimal = 0
+AND SpeciesID IN (1, 2)
+ORDER BY AgeGroup
+###
+$$HEADER
+<table>
+HEADER$$
+
+$$GROUP_AgeGroup
+$$HEAD
+$$FOOT
+<tr>
+<td>$AGEGROUP</td>
+<td><b>{SUM.Adopted.0}</b></td>
+</tr>
+GROUP$$
+
+$$BODY
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

@@ -1,6 +1,67 @@
 47
 ================
 
+30/05/23 Only check/expire inactive litters as part of the batch
+30/05/23 Option to auto complete diary notes when animals are deceased
+29/05/23 Include units in emblems on daily observations #489
+28/05/23 Daily observations quicklink #489
+28/05/23 Remove modernizr - no longer needed #1287
+28/05/23 Use smaller thumbnails for media table view
+28/05/23 Set couple from online form if surname2 is present and has value #1264
+27/05/23 Fix bug where additional field changes were not being audited
+27/05/23 Do not create ES01/02 log messages if they already exist #1286
+26/05/23 Add rename facility to document repository #389
+24/05/23 Fix bug when filtering media after tablesorter upgrade
+24/05/23 Add VaccOutstandingCount to animal query for views/service calls
+24/05/23 Searchable additional fields on advanced find screens #74
+24/05/23 SACmetrics: omit months with dates in the future
+23/05/23 Fix bug when exporting incident CSV from SQL interface->Export
+22/05/23 Daily observations feature/screen #489
+21/05/23 Highlight in person banner if their last adoption is deceased
+19/05/23 Minor mobile layout fixes, remove pdfjs dependency for deprecated app
+19/05/23 Show fractional lb on find results
+18/05/23 Fix filter breakage caused by tablesorter upgrade
+18/05/23 Update tablesorter to 2.31.3
+17/05/23 Update to JQuery 3.7.0 and JQueryUI 1.13.2
+16/05/23 Stop select/filter buttons occluding first table header
+16/05/23 Configurable FTP connection timeout, default=60s due to PetFinder #1280
+15/05/23 Fix bug viewing/deleting document repo/report images with & in name
+11/05/23 Map reports will now concatenate multiple columns to make easier SQL
+11/05/23 Include email counts for send email/recipient list on mail merges #1266
+10/05/23 Refactor CSV import rules, add ones for test/vacc/med
+10/05/23 Mail merges will now count/send to EmailAddress2 if present #1266
+09/05/23 Merge animal was reparenting additional person links with animal IDs
+08/05/23 Allow users to choose their own quicklinks, inheriting from system #1072
+06/05/23 Font preview on watermark options tab #1276
+06/05/23 Fix missing indexes for ID Number fields
+03/05/23 Support ANIMALDESCRIPTION when importing CSV #1273
+01/05/23 Include couple email if set when emailing from person #1265
+30/04/23 wordkeys: OriginalOwnerIDNumber/CurrentOwnerIDNumber/ReservedOwnerIDNumber
+30/04/23 merge_person_details, include couple fields, optimise for single query
+29/04/23 clone_from_template: if calculated date < today, use today
+29/04/23 Validation for second email field #741
+28/04/23 Merge new person fields/DOB/ID when merging details #1257
+28/04/23 Fix bug in report SQL syntax checker when using CURRENT_DATE+/-
+28/04/23 Add new person fields to wordprocessor tokens #1270
+27/04/23 Ability to suffix report columns with N2BR to replace linebreaks
+26/04/23 Person date of birth/id number fields #1257
+24/04/23 Option to populate couple fields from online forms #1264
+24/04/23 Check couple fields for similar when adding new people #741
+23/04/23 Translate null ownertypes to individual #741
+22/04/23 Attempt to remove incoming processed forms when browser window closes
+21/04/23 Mobile interface, take photo and convert to PDF #929
+20/04/23 Use configuration item to control name/couple format #741
+20/04/23 Show count of records displayed in waiting list
+20/04/23 Add location filter to photo uploader #1249
+20/04/23 person_similar was checking incoming mobile against home, incorrectly
+19/04/23 Second contact fields for people #741
+17/04/23 Use map link for incidents, make sure it opens in app on Android/iOS #101
+15/04/23 Fix bug where the wrong incident number was shown on citations
+13/04/23 reinstall_default_data only needs to clear lookup tables
+11/04/23 Re-implementation of mobile photo uploader #1249
+10/04/23 Add Warning/OwnerWarning wordkeys to access warning content
+07/04/23 Fix email templates when emailing ACO from incident
+06/04/23 Add person: similar check in case they put cell phone in home phone #1170
 03/04/23 URI encode links properly for QRLink/QRShare in document templates
 30/03/23 Truncate online form fields headed to short text columns
 29/03/23 Fix formatting bug where Move->Reclaim an animal would not create costs

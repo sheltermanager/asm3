@@ -548,8 +548,11 @@ $(function() {
                     tooltip: _("Send a checkout email to the adopter"),
                     hideif: function() {
                         return controller.name.indexOf("move_book_foster") != -1 ||
+                            controller.name.indexOf("move_book_retailer") != -1 ||
                             controller.name.indexOf("move_book_soft_release") != -1 ||
+                            controller.name.indexOf("move_book_recent_adoption") != -1 ||
                             controller.name.indexOf("move_book_recent_other") != -1 ||
+                            controller.name.indexOf("move_book_recent_transfer") != -1 ||
                             config.str("AdoptionCheckoutProcessor") == "";
                     },
                     click: function() {

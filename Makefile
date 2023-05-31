@@ -88,7 +88,7 @@ compilejs:
 	@echo "[compile javascript] ================="
 	npm --silent run jshint
 
-compilepy:
+compilepy: version
 	@echo "[compile python] ====================="
 	flake8 --config=scripts/flake8 src/*.py src/asm3/*.py src/asm3/dbms/*.py src/asm3/publishers/*.py src/asm3/paymentprocessor/*.py
 
@@ -114,21 +114,21 @@ manual:
 	scp -C doc/manual/_build/latex/asm3.pdf root@wwwdx.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help.pdf
 	rsync -a doc/manual/_build/html/ root@wwwdx.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help/
 
-test: version
+test: 
 	@echo "[test] ========================="
 	cd src && python3 code.py 5000
 
 tests:
 	@echo "[tests] ========================"
-	cd test && python3 suite.py
-	rm -f test/*.pyc && rm -rf test/__pycache__
+	cd unittest && python3 suite.py
+	rm -f unittest/*.pyc && rm -rf unittest/__pycache__
 
 deps:
 	@echo "[deps] ========================="
 	apt-get install python3 python3-pip python3-cheroot python3-pil python3-mysqldb python3-psycopg2
 	apt-get install python3-memcache python3-requests python3-reportlab python3-xhtml2pdf
 	apt-get install python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra latexmk
-	apt-get install exuberant-ctags flake8 imagemagick wkhtmltopdf nodejs npm
+	apt-get install exuberant-ctags flake8 imagemagick wkhtmltopdf nodejs npm memcached
 	npm install
 
 

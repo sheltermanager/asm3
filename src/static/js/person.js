@@ -68,27 +68,31 @@ $(function() {
                 '<td><label for="ownertype">' + _("Class") + '</label></td>',
                 '<td>',
                 '<select id="ownertype" data-json="OWNERTYPE" data-post="ownertype" class="asm-selectbox">',
-                '<option value="1">' + _("Individual/Couple") + '</option>',
+                '<option value="1">' + _("Individual") + '</option>',
+                '<option value="3">' + _("Couple") + '</option>',
                 '<option value="2">' + _("Organization") + '</option>',
                 '</select>',
                 '</td>',
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label for="title">' + _("Title") + '</label></td>',
-                '<td>',
+                '<td class="nowrap">',
                 '<input type="text" id="title" data-json="OWNERTITLE" data-post="title" maxlength="50" class="asm-textbox" />',
+                '<input type="text" id="title2" data-json="OWNERTITLE2" data-post="title2" maxlength="50" class="asm-textbox tag-couple" />',
                 '</td>',
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label for="initials">' + _("Initials") + '</label></td>',
-                '<td>',
+                '<td class="nowrap">',
                 '<input type="text" id="initials" data-json="OWNERINITIALS" data-post="initials" maxlength="50" class="asm-textbox" />',
+                '<input type="text" id="initials" data-json="OWNERINITIALS2" data-post="initials2" maxlength="50" class="asm-textbox tag-couple" />',
                 '</td>',
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label for="forenames">' + _("First name(s)") + '</label></td>',
-                '<td>',
+                '<td class="nowrap">',
                 '<input type="text" id="forenames" data-json="OWNERFORENAMES" data-post="forenames" maxlength="200" class="asm-textbox" />',
+                '<input type="text" id="forenames2" data-json="OWNERFORENAMES2" data-post="forenames2" maxlength="200" class="asm-textbox tag-couple" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -96,8 +100,9 @@ $(function() {
                 '<label for="surname" class="tag-organisation">' + _("Organization name") + '</label>',
                 '<span class="asm-has-validation">*</span>',
                 '</td>',
-                '<td>',
+                '<td class="nowrap">',
                 '<input type="text" id="surname" data-json="OWNERSURNAME" data-post="surname" maxlength="100" class="asm-textbox" />',
+                '<input type="text" id="surname2" data-json="OWNERSURNAME2" data-post="surname2" maxlength="100" class="asm-textbox tag-couple" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
@@ -108,20 +113,41 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="worktelephone">' + _("Work Phone") + '</label></td>',
-                '<td>',
+                '<td class="nowrap">',
                 '<input type="text" id="worktelephone" data-json="WORKTELEPHONE" data-post="worktelephone" class="asm-textbox asm-phone" />',
+                '<input type="text" id="worktelephone2" data-json="WORKTELEPHONE2" data-post="worktelephone2" class="asm-textbox asm-phone tag-couple" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="mobiletelephone">' + _("Cell Phone") + '</label></td>',
-                '<td>',
+                '<td class="nowrap">',
                 '<input type="text" id="mobiletelephone" data-json="MOBILETELEPHONE" data-post="mobiletelephone" class="asm-textbox asm-phone" />',
+                '<input type="text" id="mobiletelephone2" data-json="MOBILETELEPHONE2" data-post="mobiletelephone2" class="asm-textbox asm-phone tag-couple" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="email">' + _("Email") + '</label></td>',
-                '<td>',
+                '<td class="nowrap">',
                 '<input type="text" id="email" data-json="EMAILADDRESS" data-post="emailaddress" maxlength="200" class="asm-textbox" />',
+                '<input type="text" id="email2" data-json="EMAILADDRESS2" data-post="emailaddress2" maxlength="200" class="asm-textbox tag-couple" />',
+                '</td>',
+                '</tr>',
+                '<tr id="dateofbirthrow">',
+                '<td><label for="dateofbirth">' + _("Date Of Birth") + '</label></td>',
+                '<td class="nowrap">',
+                '<input type="text" id="dateofbirth" data-json="DATEOFBIRTH" data-post="dateofbirth" class="asm-textbox asm-datebox" />',
+                '<input type="text" id="dateofbirth2" data-json="DATEOFBIRTH2" data-post="dateofbirth2" class="asm-textbox asm-datebox tag-couple" />',
+                '</td>',
+                '</tr>',
+                '<tr id="idnumberrow">',
+                '<td><label for="idnumber">' + _("ID Number") + '</label>',
+                '<span id="idnumber-callout" class="asm-callout">',
+                _("Driving license, passport or other identification number"),
+                '</span>',
+                '</td>',
+                '<td class="nowrap">',
+                '<input type="text" id="idnumber" data-json="IDENTIFICATIONNUMBER" data-post="idnumber" maxlength="200" class="asm-textbox" />',
+                '<input type="text" id="idnumber2" data-json="IDENTIFICATIONNUMBER2" data-post="idnumber2" maxlength="200" class="asm-textbox tag-couple" />',
                 '</td>',
                 '</tr>',
                 '<tr id="jurisdictionrow">',
@@ -174,7 +200,7 @@ $(function() {
                 '</tr>',
                 '<tr id="countryrow">',
                 '<td><label for="country">' + _("Country") + '</label></td>',
-                '<td><input class="asm-textbox newform" id="country" data-json="OWNERCOUNTRY" data-post="country" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" id="country" data-json="OWNERCOUNTRY" data-post="country" type="text" /></td>',
                 '</tr>',
                 '<tr id="latlongrow">',
                 '<td><label for="latlong">' + _("Latitude/Longitude"),
@@ -221,19 +247,19 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="homechecked">' + _("on") + '</label></td>',
-                '<td><input type="textbox" id="homechecked" data-json="DATELASTHOMECHECKED" data-post="homechecked" title="' + html.title(_("The date this person was homechecked.")) + '" class="asm-textbox asm-datebox" /></td>',
+                '<td><input type="text" id="homechecked" data-json="DATELASTHOMECHECKED" data-post="homechecked" title="' + html.title(_("The date this person was homechecked.")) + '" class="asm-textbox asm-datebox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="membershipnumber">' + _("Membership Number") + '</label></td>',
-                '<td><input type="textbox" id="membershipnumber" data-json="MEMBERSHIPNUMBER" data-post="membershipnumber" title="' + html.title(_("If this person is a member, their membership number.")) + '" class="asm-textbox" /></td>',
+                '<td><input type="text" id="membershipnumber" data-json="MEMBERSHIPNUMBER" data-post="membershipnumber" title="' + html.title(_("If this person is a member, their membership number.")) + '" class="asm-textbox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="membershipexpires">' + _("Membership Expiry") + '</label></td>',
-                '<td><input type="textbox" id="membershipexpires" data-json="MEMBERSHIPEXPIRYDATE" data-post="membershipexpires" title="' + html.title(_("If this person is a member, the date that membership expires.")) + '" class="asm-textbox asm-datebox" /></td>',
+                '<td><input type="text" id="membershipexpires" data-json="MEMBERSHIPEXPIRYDATE" data-post="membershipexpires" title="' + html.title(_("If this person is a member, the date that membership expires.")) + '" class="asm-textbox asm-datebox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="fostercapacity">' + _("Foster Capacity") + '</label></td>',
-                '<td><input type="textbox" id="fostercapacity" data-json="FOSTERCAPACITY" data-post="fostercapacity" title="' + html.title(_("If this person is a fosterer, the maximum number of animals they can care for.")) + '" class="asm-textbox asm-numberbox" /></td>',
+                '<td><input type="text" id="fostercapacity" data-json="FOSTERCAPACITY" data-post="fostercapacity" title="' + html.title(_("If this person is a fosterer, the maximum number of animals they can care for.")) + '" class="asm-textbox asm-numberbox" /></td>',
                 '</tr>',
                 '</table>',
                 '</td>',
@@ -501,15 +527,23 @@ $(function() {
                 $("#button-lookingfor").button("option", "disabled", false);
             }
 
-            // If it's an organisation, only show the org fields,
-            // otherwise show individual
-            if ($("#ownertype").val() == 2) {
-                $(".tag-organisation").fadeIn();
-                $(".tag-individual").fadeOut();
+            // Individual
+            if (!$("#ownertype").val() || $("#ownertype").val() == 1) {
+                $(".tag-organisation").fadeOut();
+                $(".tag-couple").fadeOut();
+                $(".tag-individual").fadeIn();
             }
-            else {
+            // Organisation
+            else if ($("#ownertype").val() == 2) {
+                $(".tag-couple").fadeOut();
+                $(".tag-individual").fadeOut();
+                $(".tag-organisation").fadeIn();
+            }
+            // Couple
+            else if ($("#ownertype").val() == 3) {
                 $(".tag-organisation").fadeOut();
                 $(".tag-individual").fadeIn();
+                $(".tag-couple").fadeIn();
             }
 
             // if the member flag is selected and membership number is blank,
@@ -585,6 +619,8 @@ $(function() {
             $("#latlongrow").toggle( config.bool("ShowLatLong") );
             $("#siterow").toggle( config.bool("MultiSiteEnabled") );
             $("#jurisdictionrow").toggle( !config.bool("DisableAnimalControl") );
+            $("#dateofbirthrow").toggle( !config.bool("HidePersonDateOfBirth") );
+            $("#idnumberrow").toggle( !config.bool("HideIDNumber") );
             $("#button-anonymise").toggle( config.bool("AnonymisePersonalData") );
             $("#gdprcontactoptinrow").toggle( config.bool("ShowGDPRContactOptIn") );
             $("#button-lookingfor").toggle( !config.bool("HideLookingFor") );
@@ -622,6 +658,15 @@ $(function() {
             if (common.trim($("#email").val()) != "") {
                 if (!validate.email($("#email").val())) {
                     header.show_error(_("Invalid email address '{0}'").replace("{0}", $("#email").val()));
+                    validate.highlight("email");
+                    return false;
+                }
+            }
+
+            // email2
+            if (common.trim($("#email2").val()) != "") {
+                if (!validate.email($("#email2").val())) {
+                    header.show_error(_("Invalid email address '{0}'").replace("{0}", $("#email2").val()));
                     validate.highlight("email");
                     return false;
                 }
@@ -813,11 +858,13 @@ $(function() {
             });
 
             $("#button-email").button().click(function() {
+                let email = $("#email").val(), email2 = $("#email2").val();
+                if (email2) { email += ", " + email2; }
                 $("#emailform").emailform("show", {
                     post: "person",
                     formdata: "mode=email&personid=" + $("#personid").val(),
                     name: $("#forenames").val() + " " + $("#surname").val(),
-                    email: $("#email").val(),
+                    email: email,
                     logtypes: controller.logtypes,
                     personid: controller.person.ID,
                     templates: controller.templates

@@ -118,11 +118,19 @@ msgstr ""
 msgid "1 year"
 msgstr ""
 
+#: mobile_photo_uploader.js
+msgid "1. Choose Animal"
+msgstr ""
+
 #: publish_options.js
 msgid "2 weeks"
 msgstr ""
 
-#: login.js mobile_login.js
+#: mobile_photo_uploader.js
+msgid "2. Woofsqueak!"
+msgstr ""
+
+#: mobile_login.js
 msgid "2FA Code"
 msgstr ""
 
@@ -132,6 +140,10 @@ msgstr ""
 
 #: publish_options.js
 msgid "3 months"
+msgstr ""
+
+#: mobile_photo_uploader.js
+msgid "3. Capture Photo"
 msgstr ""
 
 #: publish_options.js
@@ -1826,7 +1838,7 @@ msgstr ""
 msgid "Baby"
 msgstr ""
 
-#: mobile_report.js mobile2.js
+#: mobile_photo_uploader.js mobile_report.js mobile2.js
 msgid "Back"
 msgstr ""
 
@@ -2862,9 +2874,10 @@ msgstr ""
 msgid "Cloning..."
 msgstr ""
 
-#: animal_new.js mobile_sign.js service_sign_document.js main.js
-#: mobile_report.js onlineform_incoming.js common_widgets.js mobile_login.js
-#: service_checkout_adoption.js mobile2.js
+#: mobile_login.js mobile_photo_uploader.js onlineform_incoming.js
+#: service_checkout_adoption.js mobile_report.js main.js
+#: service_sign_document.js animal_new.js common_widgets.js mobile_sign.js
+#: mobile2.js
 msgid "Close"
 msgstr ""
 
@@ -3002,8 +3015,8 @@ msgstr ""
 msgid "Complete adoption date before linking to event."
 msgstr ""
 
-#: dbupdate.py mobile.py medical.py diary.js animal.js header_edit_header.js
-#: transport.js medical.js incident_find.js reports.js
+#: medical.py mobile.py dbupdate.py incident_find.js medical.js diary.js
+#: header_edit_header.js reports.js transport.js animal.js mobile2.js
 msgid "Completed"
 msgstr ""
 
@@ -3039,11 +3052,11 @@ msgstr ""
 msgid "Completion Date"
 msgstr ""
 
-#: mobile.py incident.js mobile2.js
+#: mobile.py incident.js
 msgid "Completion Date/Time"
 msgstr ""
 
-#: mobile.py incident.js incident_find_results.js mobile2.js
+#: mobile.py incident.js incident_find_results.js
 msgid "Completion Type"
 msgstr ""
 
@@ -3200,6 +3213,10 @@ msgstr ""
 
 #: event_find_results.js
 msgid "County"
+msgstr ""
+
+#: person_new.js common_personchooser.js person.js
+msgid "Couple"
 msgstr ""
 
 #: html.py header_edit_header.js common_html.js options.js
@@ -5492,6 +5509,10 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
+#: mobile_photo_uploader.js
+msgid "Filter by location"
+msgstr ""
+
 #: html.py mobile.py mobile2.js
 msgid "Financial"
 msgstr ""
@@ -7075,8 +7096,8 @@ msgstr ""
 msgid "Index"
 msgstr ""
 
-#: person_new.js person.js common_personchooser.js
-msgid "Individual/Couple"
+#: person_new.js common_personchooser.js person.js
+msgid "Individual"
 msgstr ""
 
 #: html.py
@@ -9775,6 +9796,14 @@ msgid "Phone contains"
 msgstr ""
 
 #: mobile.py
+msgid "Photo Upload"
+msgstr ""
+
+#: code.py mobile2.js
+msgid "Photo Uploader"
+msgstr ""
+
+#: mobile.py
 msgid "Photo successfully uploaded."
 msgstr ""
 
@@ -9834,6 +9863,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Pixie-Bob"
+msgstr ""
+
+#: mobile_photo_uploader.js
+msgid "Play"
 msgstr ""
 
 #: options.js
@@ -10467,7 +10500,7 @@ msgstr ""
 msgid "Reference"
 msgstr ""
 
-#: waitinglist_results.js accounts_trx.js clinic_appointment.js
+#: clinic_appointment.js waitinglist_results.js accounts_trx.js
 #: event_animals.js
 msgid "Refresh"
 msgstr ""
@@ -11294,6 +11327,10 @@ msgstr ""
 msgid "Scale published animal images to"
 msgstr ""
 
+#: mobile_photo_uploader.js
+msgid "Scan Paperwork"
+msgstr ""
+
 #: change_user_settings.js
 msgid ""
 "Scan the QR code below with the Google Authenticator app for your mobile "
@@ -11392,7 +11429,7 @@ msgstr ""
 msgid "Select all reservations for this animal"
 msgstr ""
 
-#: onlineform_incoming.js common_animalchooser.js
+#: mobile_photo_uploader.js onlineform_incoming.js common_animalchooser.js
 msgid "Select an animal"
 msgstr ""
 
@@ -11417,6 +11454,10 @@ msgstr ""
 
 #: animal.js person.js
 msgid "Select date for diary task"
+msgstr ""
+
+#: mobile_photo_uploader.js
+msgid "Select from Gallery"
 msgstr ""
 
 #: person.js
@@ -12595,6 +12636,10 @@ msgstr ""
 
 #: common_html.js
 msgid "Table"
+msgstr ""
+
+#: mobile_photo_uploader.js
+msgid "Take Photo"
 msgstr ""
 
 #: common_widgets.js

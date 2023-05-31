@@ -85,9 +85,13 @@ SPAMBOT_CB = 'termsscb'
 # known fields when importing from submitted forms
 FORM_FIELDS = [
     "emailsubmissionto",
-    "title", "initials", "firstname", "forenames", "surname", "lastname", "address",
+    "title", "initials", "title2", "initials2", 
+    "firstname", "forenames", "surname", "lastname", "address",
+    "firstname2", "forenames2", "lastname2", "surname2",
     "town", "city", "county", "state", "postcode", "zipcode", "country", "hometelephone", 
-    "worktelephone", "mobiletelephone", "celltelephone", "emailaddress", "excludefrombulkemail", "gdprcontactoptin",
+    "worktelephone", "worktelephone2", "mobiletelephone", "mobiletelephone2", "celltelephone", "celltelephone2", 
+    "emailaddress", "emailaddress2", "idnumber", "idnumber2", "dateofbirth", "dateofbirth2",
+    "excludefrombulkemail", "gdprcontactoptin",
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
     "animalname", "reserveanimalname",
@@ -1249,18 +1253,22 @@ def create_person(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     d = {}
-    d["ownertype"] = "1" # Person class of individual/couple
+    d["ownertype"] = "1" # Individual
     flags = None
     formreceived = asm3.i18n.python2display(l, dbo.now())
     for f in fields:
         if flags is None: flags = f.FLAGS
         if flags is None: flags = ""
         if f.FIELDNAME == "title": d["title"] = truncs(f.VALUE)
+        if f.FIELDNAME == "title2": d["title2"] = truncs(f.VALUE)
         if f.FIELDNAME == "initials": d["initials"] = truncs(f.VALUE)
-        if f.FIELDNAME == "forenames": d["forenames"] = truncs(f.VALUE)
-        if f.FIELDNAME == "firstname": d["forenames"] = truncs(f.VALUE)
-        if f.FIELDNAME == "surname": d["surname"] = truncs(f.VALUE)
-        if f.FIELDNAME == "lastname": d["surname"] = truncs(f.VALUE)
+        if f.FIELDNAME == "initials2": d["initials2"] = truncs(f.VALUE)
+        if f.FIELDNAME == "forenames" or f.FIELDNAME == "firstname": d["forenames"] = truncs(f.VALUE)
+        if f.FIELDNAME == "forenames2" or f.FIELDNAME == "firstname2": d["forenames2"] = truncs(f.VALUE)
+        if f.FIELDNAME == "surname" or f.FIELDNAME == "lastname": d["surname"] = truncs(f.VALUE)
+        if f.FIELDNAME == "lastname2" or f.FIELDNAME == "surname2":
+            d["surname2"] = truncs(f.VALUE)
+            if d["surname2"] != "": d["ownertype"] = "3" # Couple
         if f.FIELDNAME == "address": d["address"] = truncs(f.VALUE)
         if f.FIELDNAME == "town": d["town"] = truncs(f.VALUE)
         if f.FIELDNAME == "city": d["town"] = truncs(f.VALUE)
@@ -1271,9 +1279,15 @@ def create_person(dbo, username, collationid):
         if f.FIELDNAME == "country": d["country"] = truncs(f.VALUE)
         if f.FIELDNAME == "hometelephone": d["hometelephone"] = truncs(f.VALUE)
         if f.FIELDNAME == "worktelephone": d["worktelephone"] = truncs(f.VALUE)
-        if f.FIELDNAME == "mobiletelephone": d["mobiletelephone"] = truncs(f.VALUE)
-        if f.FIELDNAME == "celltelephone": d["mobiletelephone"] = truncs(f.VALUE)
+        if f.FIELDNAME == "worktelephone2": d["worktelephone2"] = truncs(f.VALUE)
+        if f.FIELDNAME == "mobiletelephone" or f.FIELDNAME == "celltelephone": d["mobiletelephone"] = truncs(f.VALUE)
+        if f.FIELDNAME == "mobiletelephone2" or f.FIELDNAME == "celltelephone2": d["mobiletelephone2"] = truncs(f.VALUE)
         if f.FIELDNAME == "emailaddress": d["emailaddress"] = truncs(f.VALUE)
+        if f.FIELDNAME == "emailaddress2": d["emailaddress2"] = truncs(f.VALUE)
+        if f.FIELDNAME == "idnumber": d["idnumber"] = truncs(f.VALUE)
+        if f.FIELDNAME == "idnumber2": d["idnumber2"] = truncs(f.VALUE)
+        if f.FIELDNAME == "dateofbirth": d["dateofbirth"] = f.VALUE
+        if f.FIELDNAME == "dateofbirth2": d["dateofbirth2"] = f.VALUE
         if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != asm3.i18n._("No", l): 
             flags += ",excludefrombulkemail"
         if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = truncs(f.VALUE)

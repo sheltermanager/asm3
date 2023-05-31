@@ -1,0 +1,48 @@
+Equipment currently on loan
+###
+Animal Control
+###
+33307/Any rev01
+###
+Equipment that is currently loaned out
+###
+en
+###
+SELECT
+ot.LoanDate, tt.TrapTypeName, ot.TrapNumber, o.OwnerName, ot.DepositAmount, 
+ot.ReturnDueDate, ot.Comments
+FROM ownertraploan ot
+INNER JOIN traptype tt ON tt.ID = ot.TrapTypeID
+INNER JOIN owner o ON o.ID = ot.OwnerID
+WHERE ot.ReturnDate Is Null
+ORDER BY ot.LoanDate, tt.TrapTypeName, ot.TrapNumber
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Loaned</th>
+<th>Type</th>
+<th>Number</th>
+<th>Person</th>
+<th>Deposit</th>
+<th>Due Back</th>
+<th>Comments</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$LOANDATE</td>
+<td>$TRAPTYPENAME</td>
+<td>$TRAPNUMBER</td>
+<td>$OWNERNAME</td>
+<td>$DEPOSITAMOUNT</td>
+<td>$RETURNDUEDATE</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

@@ -1,0 +1,51 @@
+Deaths Between two Dates by Category
+###
+Statistics
+###
+Any rev01
+###
+All shelter animal deaths between two dates, broken down by category
+###
+en
+###
+SELECT a.DeceasedDate, a.AnimalName, a.ShelterCode, dr.ReasonName, s.SpeciesName, a.PTSReason
+FROM animal a 
+INNER JOIN deathreason dr ON dr.ID = a.PTSReasonID
+INNER JOIN species s ON a.SpeciesID = s.ID
+WHERE DeceasedDate >= '$ASK DATE Enter date from$' AND DeceasedDate <= '$ASK DATE Enter date to$' AND DiedOffShelter = 0 AND NonShelterAnimal = 0
+ORDER BY dr.ReasonName, s.SpeciesName, a.AnimalName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_ReasonName
+$$HEAD
+<h2>$ReasonName</h2>
+
+<table border=1><tr>
+<td><b>Date</b></td>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Species</b></td>
+<td><b>Notes</b></td>
+</tr>
+$$FOOT
+</table>
+
+<p><b>Total for $ReasonName: {COUNT.AnimalName}</b></p>
+GROUP$$
+
+$$BODY<tr>
+<td>$DeceasedDate</td>
+<td>$ShelterCode</td>
+<td>$AnimalName</td>
+<td>$SpeciesName</td>
+<td>$PTSReason</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+
+

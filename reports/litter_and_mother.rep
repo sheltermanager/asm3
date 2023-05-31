@@ -1,0 +1,33 @@
+Litters and Mothers
+###
+Litters
+###
+2732/Any rev01
+###
+Litters entering the shelter between two dates with mother information.
+###
+en
+###
+SELECT a.ShelterCode, a.AnimalName, l.Date,
+t.AnimalType, s.SpeciesName, a.BreedName,
+l.AcceptanceNumber, l.NumberInLitter, l.Comments
+FROM animallitter l 
+INNER JOIN animal a ON a.ID = l.ParentAnimalID
+INNER JOIN species s ON a.SpeciesID = s.ID
+INNER JOIN animaltype t ON a.AnimalTypeID = t.ID
+WHERE l.Date >= '$ASK DATE Enter the from date$' AND
+l.Date <= '$ASK DATE Enter the to date$' 
+ORDER BY l.Date
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<h2>$ANIMALNAME - $SHELTERCODE, $BREEDNAME $SPECIESNAME</h2>
+<p>$ACCEPTANCENUMBER, $DATE, Offspring: $NUMBERINLITTER, $COMMENTS</p>
+<hr />
+BODY$$
+
+$$FOOTER
+<p>Total litters: <b>{COUNT.SHELTERCODE}</b>, total offspring: <b>{SUM.NUMBERINLITTER.0}</b></p>
+FOOTER$$

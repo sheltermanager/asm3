@@ -1,0 +1,37 @@
+Duplicate People
+###
+Statistics
+###
+Any rev01
+###
+People in the system with the same name and address
+###
+en
+###
+SELECT OwnerName, OwnerAddress, COUNT(OwnerName) AS Total 
+FROM owner 
+GROUP BY OwnerName, OwnerAddress
+HAVING COUNT(OwnerName) > 1
+ORDER BY COUNT(OwnerName)
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Addresses</th>
+<th>Occurrences</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$OWNERNAME</td>
+<td>$OWNERADDRESS</td>
+<td>$TOTAL</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

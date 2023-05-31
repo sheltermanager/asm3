@@ -48,7 +48,7 @@ def asm_script_tag(filename):
     get it from the compat folder instead so it's still cross-browser compliant and minified.
     """
     standalone = [ "animal_view_adoptable.js", "document_edit.js", 
-        "mobile.js", "mobile2.js", "mobile_login.js", "mobile_report.js", "mobile_sign.js", 
+        "mobile.js", "mobile2.js", "mobile_login.js", "mobile_photo_uploader.js", "mobile_report.js", "mobile_sign.js", 
         "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
     if ROLLUP_JS and filename in standalone and filename.find("/") == -1: filename = f"compat/{filename}"
     return script_tag(f"static/js/{filename}", addbuild=True)
@@ -61,7 +61,7 @@ def asm_script_tags(path):
         "common_animalchoosermulti.js", "common_personchooser.js", "common_tableform.js", "common_microchip.js", "header.js",
         "header_additional.js", "header_edit_header.js" ]
     standalone = [ "animal_view_adoptable.js", "document_edit.js", 
-        "mobile.js", "mobile2.js", "mobile_login.js", "mobile_report.js", "mobile_sign.js", 
+        "mobile.js", "mobile2.js", "mobile_login.js", "mobile_photo_uploader.js", "mobile_report.js", "mobile_sign.js", 
         "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)
@@ -171,7 +171,6 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 css_tag(BOOTSTRAP_GRID_CSS) +
                 asm_css_tag("asm-icon.css") +
                 asm_css_tag("asm.css") + 
-                script_tag("static/lib/modernizr/modernizr.min.js") + 
                 script_tag(JQUERY_JS) +
                 script_tag(JQUERY_UI_JS) +
                 script_tag(MOMENT_JS) + 
@@ -544,7 +543,8 @@ def menu_structure(l, publisherlist, reports, mailmerges):
             ( asm3.users.VIEW_ANIMAL, "alt+shift+f", "", "animal_find", "asm-icon-animal-find", _("Find animal", l) ),
             ( asm3.users.ADD_ANIMAL, "alt+shift+n", "", "animal_new", "asm-icon-animal-add", _("Add a new animal", l) ),
             ( asm3.users.ADD_LOG, "alt+shift+l", "", "log_new?mode=animal", "asm-icon-log", _("Add a log entry", l) ),
-            ( asm3.users.CHANGE_ANIMAL, "", "", "animal_bulk", "asm-icon-litter", _("Bulk change animals", l) ),
+            ( asm3.users.CHANGE_ANIMAL, "", "", "animal_bulk", "asm-icon-blank", _("Bulk change animals", l) ),
+            ( asm3.users.ADD_LOG, "", "taganimalobservations", "animal_observations", "asm-icon-blank", _("Daily observations", l) ),
             ( asm3.users.ADD_LITTER, "", "", "litters", "asm-icon-litter", _("Edit litters", l) ),
             ( asm3.users.VIEW_ANIMAL, "alt+shift+t", "", "timeline", "asm-icon-calendar", _("Timeline", l) ),
             ( "", "", "taglostfound", "--cat", "asm-icon-animal-lost", _("Lost/Found", l) ),
@@ -910,15 +910,6 @@ def json_lostanimalfindcolumns(dbo):
     cols = findcolumns_sort(cols)
     findcolumns_selectedtofront(cols, asm3.configuration.lostanimal_search_columns(dbo))
     return cols
-
-def json_quicklinks(dbo):
-    l = dbo.locale
-    ql = []
-    for k, v in asm3.configuration.QUICKLINKS_SET.items():
-        ql.append( ( str(k), translate(v[2], l) ) )
-    ql = findcolumns_sort(ql)
-    findcolumns_selectedtofront(ql, asm3.configuration.quicklinks_id(dbo))
-    return ql
 
 def json_waitinglistcolumns(dbo):
     l = dbo.locale

@@ -1,0 +1,46 @@
+Monthly Adoptions By Location
+###
+Movement Charts
+###
+3000/MySQL rev01
+###
+The number of adoptions per month, broken down by location.
+###
+en
+###
+SELECT
+i.LocationName, 
+MONTH(ad.MovementDate) AS bimonth,
+COUNT(ad.ID) AS total
+FROM adoption ad
+INNER JOIN animal a ON ad.AnimalID = a.ID
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+WHERE YEAR(ad.MovementDate) = $ASK STRING Which year to display for?$
+AND ad.MovementType = 1
+GROUP BY i.LocationName, MONTH(ad.MovementDate)
+###
+GRAPH BARS
+&&&
+Monthly Adoptions By Location
+###
+Movement Charts
+###
+3000/PostgreSQL rev01
+###
+The number of adoptions per month, broken down by location.
+###
+en
+###
+
+SELECT
+i.LocationName, 
+CAST(EXTRACT(MONTH FROM ad.MovementDate) AS INTEGER) AS bimonth,
+COUNT(ad.ID) AS total
+FROM adoption ad
+INNER JOIN animal a ON ad.AnimalID = a.ID
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+WHERE CAST(EXTRACT(YEAR FROM ad.MovementDate) AS INTEGER) = $ASK STRING Which year to display for?$
+AND ad.MovementType = 1
+GROUP BY i.LocationName, EXTRACT(MONTH FROM ad.MovementDate)
+###
+GRAPH BARS

@@ -1,0 +1,23 @@
+Donors by Date Map
+###
+Maps
+###
+34703/Any rev02
+###
+Donations between two dates with the donors plotted on a map.
+###
+en
+###
+$VAR from DATE Donated between$
+$VAR to DATE and$
+
+SELECT DISTINCT o.LatLong, 
+'<a href="person?id=', o.ID, '">', o.OwnerName, '</a><br />',
+o.OwnerAddress, '<br />', o.OwnerTown, ' ', o.OwnerCounty, ' ', o.OwnerPostcode 
+FROM ownerdonation d
+INNER JOIN owner o ON d.OwnerID = o.ID
+WHERE d.Date >= '$@from$' AND d.Date <= '$@to$'
+AND o.LatLong <> '' 
+ORDER BY o.LatLong
+###
+MAP

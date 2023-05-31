@@ -1,0 +1,99 @@
+Maddies Fund: Shelter and Organization Rescue Program Survey 2023
+###
+Figures
+###
+33600/PostgreSQL rev01
+###
+Information needed to complete the Maddies Fund survey
+###
+en
+###
+$VAR year NUMBER Enter year$
+
+SELECT 
+
+'$@year$' AS TheYear, 
+
+(SELECT COUNT(*) FROM animal
+WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
+AND SpeciesID = 1
+AND NonShelterAnimal = 0) AS IntakeDog,
+
+(SELECT COUNT(*) FROM animal
+WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
+AND SpeciesID = 2
+AND NonShelterAnimal = 0) AS IntakeCat,
+
+(100.0 *  
+    (SELECT COUNT(*) FROM animal 
+    WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
+    AND EXISTS(SELECT ID FROM adoption WHERE AnimalID=animal.ID AND MovementType=2 AND MovementDate >= '$@year$-01-01' AND MovementDate <= '$@year$-12-31'))
+/
+    (SELECT COUNT(*) FROM animal 
+    WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
+    AND NonShelterAnimal = 0)
+) AS PercentageFoster,
+
+(SELECT COUNT(*) FROM animal
+WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
+AND EXISTS(SELECT ID FROM adoption WHERE AnimalID=animal.ID AND MovementType=2 AND MovementDate >= '$@year$-01-01' AND MovementDate <= '$@year$-12-31')
+AND SpeciesID = 1
+AND DateOfBirth < DateBroughtIn - INTERVAL '8 weeks' 
+AND NonShelterAnimal = 0) AS DogsSentToFoster,
+
+(SELECT COUNT(*) FROM animal
+WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
+AND EXISTS(SELECT ID FROM adoption WHERE AnimalID=animal.ID AND MovementType=2 AND MovementDate >= '$@year$-01-01' AND MovementDate <= '$@year$-12-31')
+AND SpeciesID = 1
+AND DateOfBirth >= DateBroughtIn - INTERVAL '8 weeks' 
+AND NonShelterAnimal = 0) AS PuppiesSentToFoster,
+
+(SELECT COUNT(*) FROM animal
+WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
+AND EXISTS(SELECT ID FROM adoption WHERE AnimalID=animal.ID AND MovementType=2 AND MovementDate >= '$@year$-01-01' AND MovementDate <= '$@year$-12-31')
+AND SpeciesID = 2
+AND DateOfBirth < DateBroughtIn - INTERVAL '8 weeks' 
+AND NonShelterAnimal = 0) AS CatsSentToFoster,
+
+(SELECT COUNT(*) FROM animal
+WHERE DateBroughtIn >= '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31' 
+AND EXISTS(SELECT ID FROM adoption WHERE AnimalID=animal.ID AND MovementType=2 AND MovementDate >= '$@year$-01-01' AND MovementDate <= '$@year$-12-31')
+AND SpeciesID = 2
+AND DateOfBirth >= DateBroughtIn - INTERVAL '8 weeks' 
+AND NonShelterAnimal = 0) AS KittensSentToFoster,
+
+(SELECT Average FROM animalfigures 
+WHERE Year=$@year$ AND Month=7 AND SpeciesID=1 AND Code='SP_ONSHELTER') AS SummerDogsInShelter,
+
+(SELECT Average FROM animalfigures 
+WHERE Year=$@year$ AND Month=7 AND SpeciesID=1 AND Code='SP_ONFOSTER') AS SummerDogsInFoster,
+
+(SELECT Average FROM animalfigures 
+WHERE Year=$@year$ AND Month=7 AND SpeciesID=2 AND Code='SP_ONSHELTER') AS SummerCatsInShelter,
+
+(SELECT Average FROM animalfigures 
+WHERE Year=$@year$ AND Month=7 AND SpeciesID=2 AND Code='SP_ONFOSTER') AS SummerCatsInFoster
+
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<p>5. In $theyear approximately how many dogs did you take in?  <b> $IntakeDog </b> </p>
+<p>6. In $theyear approximately how many cats did you take in?  <b> $IntakeCat </b> </p>
+<p>8. What percentage of the dogs and/or cats admitted to your organization for adoption were housed (for a day or more) in foster care during $theyear ?  <b> $PercentageFoster </b> </p>
+<p>10. How many pets were sent to foster care during 2022 (include all types of fostering except day outings)?</p>
+<p>Number of adult dogs? <b> $DogsSentToFoster </b> <br>
+   Number of puppies (less than 8 weeks) ? <b> $PuppiesSentToFoster </b> <br>
+   Number of adult cats? <b> $CatsSentToFoster </b> <br>
+   Number of kittens (less than 8 weeks) ? <b> $KittensSentToFoster </b></p>
+<p>11. During the summer of 2022, on average how many pets were in the following locations per month? Please include all types of fostering except day outings. </p>
+<p>Number of dogs/puppies in your shelter? <b> $SummerDogsInShelter </b> <br>
+   Number of dogs/puppies in foster care? <b> $SummerDogsInFoster </b> <br>
+   Number of cats/kittens in your shelter? <b> $SummerCatsInShelter </b> <br>
+   Number of cats/kittens in foster care? <b> $SummerCatsInFoster </b></p>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+

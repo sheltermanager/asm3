@@ -116,21 +116,33 @@ msgstr "שבוע אחד"
 msgid "1 year"
 msgstr "שנה אחת"
 
+#: mobile_photo_uploader.js
+msgid "1. Choose Animal"
+msgstr "1. בחר חיה"
+
 #: publish_options.js
 msgid "2 weeks"
 msgstr "שבועיים"
 
-#: login.js mobile_login.js
+#: mobile_photo_uploader.js
+msgid "2. Woofsqueak!"
+msgstr "2. ווף-סקוויק!"
+
+#: mobile_login.js
 msgid "2FA Code"
 msgstr "קוד 2FA"
 
 #: users.js
 msgid "2FA Enabled"
-msgstr "‫2FA פעיל"
+msgstr "2FA פעיל"
 
 #: publish_options.js
 msgid "3 months"
 msgstr "3 חודשים"
+
+#: mobile_photo_uploader.js
+msgid "3. Capture Photo"
+msgstr "3. צלם תמונה"
 
 #: publish_options.js
 msgid "4 weeks"
@@ -154,7 +166,7 @@ msgstr "9 חודשים"
 
 #: dbupdate.py
 msgid "A (Stray Dog)"
-msgstr "‫A (כלב משוטט)"
+msgstr "A (כלב משוטט)"
 
 #: waitinglist_new.js waitinglist.js
 msgid "A description or other information about the animal"
@@ -212,11 +224,11 @@ msgstr "קצין טיפול בבע״ח"
 
 #: common_widgets.js
 msgid "AM"
-msgstr "‫AM"
+msgstr "AM"
 
 #: html.py mobile.py main.js mobile2.js
 msgid "ASM"
-msgstr "‫ASM"
+msgstr "ASM"
 
 #: main.js
 msgid "ASM 3 is compatible with your iPad and other tablets."
@@ -230,7 +242,7 @@ msgstr "חדשות ASM"
 msgid ""
 "ASM can talk to payment processors and request payment from your customers "
 "and donors."
-msgstr "‫המערכת יכולה לתקשר עם מערכות סליקה ולדרוש תשלום מלקוחות ותורמים."
+msgstr "המערכת יכולה לתקשר עם מערכות סליקה ולדרוש תשלום מלקוחות ותורמים."
 
 #: main.js
 msgid ""
@@ -275,7 +287,7 @@ msgstr "חתול אבסיני (חבשי)"
 
 #: roles.js
 msgid "Access Settings Menu"
-msgstr "תפריט ‫גישה למערכת"
+msgstr "תפריט גישה למערכת"
 
 #: lookups.js accounts_trx.js
 msgid "Account"
@@ -605,7 +617,7 @@ msgstr "הוסף הוראות תזונה"
 
 #: traploan.js
 msgid "Add equipment loan"
-msgstr "‫הוסף השאלת ציוד"
+msgstr "הוסף השאלת ציוד"
 
 #: html.py
 msgid "Add event"
@@ -713,7 +725,7 @@ msgstr "הוסף להערה"
 
 #: transport.js
 msgid "Add transport"
-msgstr "‫הוסף הסעה"
+msgstr "הוסף הסעה"
 
 #: users.js
 msgid "Add user"
@@ -1219,7 +1231,7 @@ msgstr "סדר אלפביתי עולה"
 
 #: search.py options.js
 msgid "Alphabetically Z-A"
-msgstr "‫סדר אלפביתי יורד"
+msgstr "סדר אלפביתי יורד"
 
 #: service_sign_document.js
 msgid "Already Signed"
@@ -1684,7 +1696,7 @@ msgstr "בקש מהמשתמש מספר קבלה"
 
 #: reports.js
 msgid "Ask the user for a species"
-msgstr "‫תן למשתמש לבחור על זן החיה"
+msgstr "תן למשתמש לבחור על זן החיה"
 
 #: reports.js
 msgid "Ask the user for a treatment"
@@ -1824,7 +1836,7 @@ msgstr "דוחות זמינים"
 
 #: dbupdate.py
 msgid "B (Boarding Animal)"
-msgstr "‫B (חיה בפנסיון)"
+msgstr "B (חיה בפנסיון)"
 
 #: common_widgets.js
 msgid "BCC"
@@ -1838,7 +1850,7 @@ msgstr "שלח עותק נסתר לכל האנשים הקשורים לתנועו
 msgid "Baby"
 msgstr "גור"
 
-#: mobile_report.js mobile2.js
+#: mobile_photo_uploader.js mobile_report.js mobile2.js
 msgid "Back"
 msgstr "אחורה"
 
@@ -2272,7 +2284,7 @@ msgstr "העתק"
 
 #: onlineform_incoming.js
 msgid "CSV"
-msgstr "‫CSV"
+msgstr "CSV"
 
 #: sql.js
 msgid "CSV of animal/adopter data"
@@ -2437,7 +2449,7 @@ msgstr "סוג מסמך בקארדקום"
 
 #: options.js
 msgid "Cardcom Error URL"
-msgstr "‫Cardcom Error URL"
+msgstr "Cardcom Error URL"
 
 #: options.js
 msgid "Cardcom Payment Gateway"
@@ -2445,7 +2457,7 @@ msgstr "סליקה על ידי קארדקום"
 
 #: options.js
 msgid "Cardcom Success URL"
-msgstr "‫Cardcom Success URL"
+msgstr "Cardcom Success URL"
 
 #: options.js
 msgid "Cardcom Terminal Number"
@@ -2562,11 +2574,11 @@ msgstr "שינוי תקריות"
 
 #: roles.js
 msgid "Change Investigation"
-msgstr "‫שינוי חקירות"
+msgstr "שינוי חקירות"
 
 #: roles.js
 msgid "Change Licenses"
-msgstr "‫שינוי רשיונות"
+msgstr "שינוי רשיונות"
 
 #: roles.js
 msgid "Change Litter"
@@ -2602,7 +2614,7 @@ msgstr "החלף סיסמא"
 
 #: roles.js
 msgid "Change Payments"
-msgstr "‫שינוי תשלומים"
+msgstr "שינוי תשלומים"
 
 #: roles.js
 msgid "Change Person"
@@ -2874,9 +2886,10 @@ msgstr "שכפל חיה זו?"
 msgid "Cloning..."
 msgstr "משכפל..."
 
-#: animal_new.js mobile_sign.js service_sign_document.js main.js
-#: mobile_report.js onlineform_incoming.js common_widgets.js mobile_login.js
-#: service_checkout_adoption.js mobile2.js
+#: mobile_login.js mobile_photo_uploader.js onlineform_incoming.js
+#: service_checkout_adoption.js mobile_report.js main.js
+#: service_sign_document.js animal_new.js common_widgets.js mobile_sign.js
+#: mobile2.js
 msgid "Close"
 msgstr "סגור"
 
@@ -2968,7 +2981,7 @@ msgstr "רשימה מופרדת בפסיקים של כתובות נוספות ל
 msgid ""
 "Comma separated list of extra addresses that the To and CC email fields of "
 "send email dialogs will prompt with"
-msgstr "‫רשימה מופרדת בפסיקים של כתובות נוספות לבחירה עבור שדה עותק בטפסי אימיי"
+msgstr "רשימה מופרדת בפסיקים של כתובות נוספות לבחירה עבור שדה עותק בטפסי אימיי"
 
 #: lookups.js
 msgid ""
@@ -3015,8 +3028,8 @@ msgstr "סיים משימות"
 msgid "Complete adoption date before linking to event."
 msgstr "מלאו תאריך אימוץ לפני קישור לאירוע."
 
-#: dbupdate.py mobile.py medical.py diary.js animal.js header_edit_header.js
-#: transport.js medical.js incident_find.js reports.js
+#: medical.py mobile.py dbupdate.py incident_find.js medical.js diary.js
+#: header_edit_header.js reports.js transport.js animal.js mobile2.js
 msgid "Completed"
 msgstr "הושלמה"
 
@@ -3052,11 +3065,11 @@ msgstr "סוג סיום {0}"
 msgid "Completion Date"
 msgstr "מועד סיום"
 
-#: mobile.py incident.js mobile2.js
+#: mobile.py incident.js
 msgid "Completion Date/Time"
 msgstr "תאריך וזמן סיום"
 
-#: mobile.py incident.js incident_find_results.js mobile2.js
+#: mobile.py incident.js incident_find_results.js
 msgid "Completion Type"
 msgstr "סוג סיום"
 
@@ -3214,6 +3227,10 @@ msgstr "ארץ"
 #: event_find_results.js
 msgid "County"
 msgstr "מחוז"
+
+#: person_new.js common_personchooser.js person.js
+msgid "Couple"
+msgstr "זוג"
 
 #: html.py header_edit_header.js common_html.js options.js
 msgid "Courtesy Listing"
@@ -3439,7 +3456,7 @@ msgstr "וטרינר נוכחי"
 
 #: csvexport.js
 msgid "Custom WHERE clause"
-msgstr "‫Custom WHERE clause"
+msgstr "Custom WHERE clause"
 
 #: dbupdate.py
 msgid "Cymric"
@@ -3451,19 +3468,19 @@ msgstr "D (כלב)"
 
 #: options.js
 msgid "DD = current day"
-msgstr "‫DD = היום"
+msgstr "DD = היום"
 
 #: sql.js
 msgid "DDL dump (DB2)"
-msgstr "‫DDL dump (DB2)"
+msgstr "DDL dump (DB2)"
 
 #: sql.js
 msgid "DDL dump (MySQL)"
-msgstr "‫DDL dump (MySQL)"
+msgstr "DDL dump (MySQL)"
 
 #: sql.js
 msgid "DDL dump (PostgreSQL)"
-msgstr "‫DDL dump (PostgreSQL)"
+msgstr "DDL dump (PostgreSQL)"
 
 #: dbupdate.py
 msgid "DHLPP"
@@ -3569,11 +3586,11 @@ msgstr "מועד קבלה בין תאריכים"
 
 #: animal.py animal.js
 msgid "Date brought in cannot be blank"
-msgstr "יש למלא ‫תאריך קליטה למקלט"
+msgstr "יש למלא תאריך קליטה למקלט"
 
 #: animal.py
 msgid "Date brought in cannot be in the future."
-msgstr "‫תאריך הכנסה לא יכול להיות בעתיד."
+msgstr "תאריך הכנסה לא יכול להיות בעתיד."
 
 #: animal.py
 msgid "Date brought in is not valid"
@@ -5356,11 +5373,11 @@ msgstr "פולידקטיל אמריקאי"
 
 #: dbupdate.py
 msgid "F (Feral Cat)"
-msgstr "‫F (חתול רחוב לא מורגל לבני אדם)"
+msgstr "F (חתול רחוב לא מורגל לבני אדם)"
 
 #: dbupdate.py
 msgid "FECV/FeCoV"
-msgstr "חיסון ‫FECV/FeCoV"
+msgstr "חיסון FECV/FeCoV"
 
 #: dbupdate.py
 msgid "FIPV"
@@ -5384,7 +5401,7 @@ msgstr "FIV+"
 
 #: reports.js
 msgid "FIV-"
-msgstr "‫FIV-"
+msgstr "FIV-"
 
 #: html.py
 msgid "FIV/L Test Date"
@@ -5408,7 +5425,7 @@ msgstr "FLV+"
 
 #: reports.js
 msgid "FLV-"
-msgstr "‫FLV-"
+msgstr "FLV-"
 
 #: publish_options.js
 msgid "FTP hostname"
@@ -5507,6 +5524,10 @@ msgstr "קובץ"
 #: common_tableform.js
 msgid "Filter"
 msgstr "סינון"
+
+#: mobile_photo_uploader.js
+msgid "Filter by location"
+msgstr "סנן לפי מיקום"
 
 #: html.py mobile.py mobile2.js
 msgid "Financial"
@@ -6189,7 +6210,7 @@ msgstr "ניתנו בחודש האחרון"
 
 #: test.js medical.js vaccination.js
 msgid "Given in last week"
-msgstr "‫ניתנו בשבוע האחרון"
+msgstr "ניתנו בשבוע האחרון"
 
 #: test.js medical.js vaccination.js
 msgid "Given today"
@@ -6281,11 +6302,11 @@ msgstr "ידידותי לילדים"
 
 #: shelterview.js
 msgid "Good with children over 12"
-msgstr "‫ידידותי לילדים מעל גיל 12"
+msgstr "ידידותי לילדים מעל גיל 12"
 
 #: shelterview.js
 msgid "Good with children over 5"
-msgstr "‫‫ידידותי לילדים מעל גיל 5"
+msgstr "ידידותי לילדים מעל גיל 5"
 
 #: person.py animal.js animal_bulk.js person.js shelterview.js animal_find.js
 #: reports.js
@@ -6913,7 +6934,7 @@ msgstr "הוסף שורת כותרת ל-CSV"
 
 #: waitinglist_results.js
 msgid "Include Removed"
-msgstr "‫‫לכלול את אלה שהוסרו"
+msgstr "לכלול את אלה שהוסרו"
 
 #: csvexport.js
 msgid "Include all photos"
@@ -6929,7 +6950,7 @@ msgstr "לכלול חיות במיקומים הבאים"
 
 #: publish_options.js
 msgid "Include animals on trial adoption"
-msgstr "‫לכלול חיות באימוץ ניסיון"
+msgstr "לכלול חיות באימוץ ניסיון"
 
 #: publish_options.js
 msgid "Include animals who don't have a description"
@@ -7099,9 +7120,9 @@ msgstr "ללא הגבלת זמן"
 msgid "Index"
 msgstr "אינדקס"
 
-#: person_new.js person.js common_personchooser.js
-msgid "Individual/Couple"
-msgstr "יחיד/זוג"
+#: person_new.js common_personchooser.js person.js
+msgid "Individual"
+msgstr "יחיד"
 
 #: html.py
 msgid "Induct a new animal"
@@ -8544,7 +8565,7 @@ msgstr "יש לבחור חיה"
 
 #: move_adopt.js move_reclaim.js
 msgid "Movements require an animal."
-msgstr "‫יש לבחור חיה."
+msgstr "יש לבחור חיה."
 
 #: shelterview.js
 msgid "Moving..."
@@ -8596,7 +8617,7 @@ msgstr "מיינה"
 
 #: dbupdate.py
 msgid "N (Non-Shelter Animal)"
-msgstr "‫N (חיה לא במקלט)"
+msgstr "N (חיה לא במקלט)"
 
 #: options.js
 msgid "NNN or NN = number unique for this type of animal for this year"
@@ -9129,7 +9150,7 @@ msgstr "מספר חיות מחמד"
 
 #: options.js
 msgid "OOO or OO = number unique for this month"
-msgstr "‫OOO או OO = מספר ייחודי לחודש זה"
+msgstr "OOO או OO = מספר ייחודי לחודש זה"
 
 #: dbupdate.py
 msgid "Ocicat"
@@ -9461,7 +9482,7 @@ msgstr "וטרינר של הבעלים"
 
 #: report_toolbar.js
 msgid "PDF"
-msgstr "‫PDF"
+msgstr "PDF"
 
 #: common_widgets.js
 msgid "PM"
@@ -9810,6 +9831,14 @@ msgid "Phone contains"
 msgstr "הטלפון מכיל"
 
 #: mobile.py
+msgid "Photo Upload"
+msgstr "העלאת תמונה"
+
+#: code.py mobile2.js
+msgid "Photo Uploader"
+msgstr "מעלה התמונות"
+
+#: mobile.py
 msgid "Photo successfully uploaded."
 msgstr "תמונה הועלתה בהצלחה."
 
@@ -9870,6 +9899,10 @@ msgstr "פיטבול טרייר"
 #: dbupdate.py
 msgid "Pixie-Bob"
 msgstr "פיקסי־בוב"
+
+#: mobile_photo_uploader.js
+msgid "Play"
+msgstr "הפעל"
 
 #: options.js
 msgid ""
@@ -10505,7 +10538,7 @@ msgstr "הפנה לכתובת זו לאחר תשלום"
 msgid "Reference"
 msgstr "מספר מזהה"
 
-#: waitinglist_results.js accounts_trx.js clinic_appointment.js event_animals.js
+#: clinic_appointment.js waitinglist_results.js accounts_trx.js event_animals.js
 msgid "Refresh"
 msgstr "רענון"
 
@@ -10659,11 +10692,11 @@ msgstr "הסר שדה בדיקת FIV/L מפרטי הבריאות של החיות
 
 #: options.js
 msgid "Remove the Litter ID field from animal details"
-msgstr "‫הסר מזהה השגר (גורים) מפרטי החיה"
+msgstr "הסר מזהה השגר (גורים) מפרטי החיה"
 
 #: options.js
 msgid "Remove the Rabies Tag field from animal health details"
-msgstr "‫הסר שדה מספר כלבת מפרטי הבריאות של החיות"
+msgstr "הסר שדה מספר כלבת מפרטי הבריאות של החיות"
 
 #: options.js
 msgid "Remove the adoption coordinator field from animal entry details"
@@ -11202,7 +11235,7 @@ msgstr "S (חתול רחוב)"
 
 #: options.js
 msgid "S = first letter of animal species"
-msgstr "‫S = אות ראשונה של זן החיה"
+msgstr "S = אות ראשונה של זן החיה"
 
 #: login.js mobile_login.js
 msgid "SM Account"
@@ -11250,7 +11283,7 @@ msgstr "השאילתה תקינה."
 
 #: options.js
 msgid "SS = first and second letter of animal species"
-msgstr "‫SS = אות ראשונה ושניה של זן החיה"
+msgstr "SS = אות ראשונה ושניה של זן החיה"
 
 #: common.js
 msgid "Sa"
@@ -11332,6 +11365,10 @@ msgstr "שומר..."
 #: publish_options.js
 msgid "Scale published animal images to"
 msgstr "שנה גודל תמונות מפורסמות ל"
+
+#: mobile_photo_uploader.js
+msgid "Scan Paperwork"
+msgstr "סרוק ניירת"
 
 #: change_user_settings.js
 msgid ""
@@ -11434,7 +11471,7 @@ msgstr "בחר הכל"
 msgid "Select all reservations for this animal"
 msgstr "בחר את כל השריונים לחיה זו"
 
-#: onlineform_incoming.js common_animalchooser.js
+#: mobile_photo_uploader.js onlineform_incoming.js common_animalchooser.js
 msgid "Select an animal"
 msgstr "בחירת חיה"
 
@@ -11462,6 +11499,10 @@ msgstr "בחירת חיות"
 #: animal.js person.js
 msgid "Select date for diary task"
 msgstr "בחר תאריך לתבנית משימה"
+
+#: mobile_photo_uploader.js
+msgid "Select from Gallery"
+msgstr "בחר מהגלריה"
 
 #: person.js
 msgid "Select person to merge"
@@ -11855,7 +11896,7 @@ msgstr "הצג קישורים מהירים במסך הבית"
 
 #: options.js
 msgid "Show record views in the audit trail"
-msgstr "הצג צפיות ברשומה ב‫היסטוריית שינויים"
+msgstr "הצג צפיות ברשומה בהיסטוריית שינויים"
 
 #: options.js
 msgid "Show report menu items in collapsed categories"
@@ -12560,7 +12601,7 @@ msgid ""
 "Supply a WHERE clause to the animal table. Eg: 'Archived=0 AND "
 "ShelterLocation=2'"
 msgstr ""
-"‫Supply a WHERE clause to the animal table. Eg: ‘Archived=0 AND "
+"Supply a WHERE clause to the animal table. Eg: ‘Archived=0 AND "
 "ShelterLocation=2’"
 
 #: person_find_results.js
@@ -12654,6 +12695,10 @@ msgstr "טאבי ולבן"
 #: common_html.js
 msgid "Table"
 msgstr "טבלה"
+
+#: mobile_photo_uploader.js
+msgid "Take Photo"
+msgstr "צלם תמונה"
 
 #: common_widgets.js
 msgid "Take another payment"
@@ -14740,7 +14785,7 @@ msgstr "אזהרה: חיה זו מבוגרת מ-6 חודשים וטרם עוקר
 
 #: csvexport.js
 msgid "WHERE clause"
-msgstr "‫WHERE clause"
+msgstr "WHERE clause"
 
 #: dbupdate.py clinic_appointment.js
 msgid "Waiting"
@@ -15767,12 +15812,12 @@ msgstr "{2}: אבד ב {1}: {0}"
 
 #: main.js
 msgid "{browser} version {version}, running on {os}."
-msgstr "‫{browser} גרסה {version}, על מערכת הפעלה {os}."
+msgstr "{browser} גרסה {version}, על מערכת הפעלה {os}."
 
 #: main.js
 msgid ""
 "{plural0} adoption checkout request initiated in the last week is still open"
-msgstr "‫{plural0} בקשות אימוץ עצמי שהותחלו בשבוע האחרון ועדיין פתוחות"
+msgstr "{plural0} בקשות אימוץ עצמי שהותחלו בשבוע האחרון ועדיין פתוחות"
 
 #: main.js
 msgid "{plural0} animal control call due for followup today"
@@ -15828,7 +15873,7 @@ msgstr "חיה {plural0} נדרשה ע״י בעליה"
 
 #: main.js
 msgid "{plural0} animal was released to wild"
-msgstr "‫{plural0} חיה שוחררה לטבע"
+msgstr "{plural0} חיה שוחררה לטבע"
 
 #: main.js
 msgid "{plural0} animal was transferred to another shelter"
@@ -15836,7 +15881,7 @@ msgstr "{plural0} חיה הועברה למקלט אחר"
 
 #: main.js
 msgid "{plural0} clinic appointment today"
-msgstr "‫{plural0} תור במרפאה היום"
+msgstr "{plural0} תור במרפאה היום"
 
 #: i18n.py
 msgid "{plural0} day."
@@ -15856,7 +15901,7 @@ msgstr "שיחת פיקוח על בע״ח {plural0} לא טופלה"
 
 #: main.js
 msgid "{plural0} item of equipment is overdue for return"
-msgstr "‫{plural0} פריטי ציוד שטרם הוחזרו"
+msgstr "{plural0} פריטי ציוד שטרם הוחזרו"
 
 #: main.js
 msgid "{plural0} item of stock expires in the next month"
@@ -15957,11 +16002,11 @@ msgstr "שנה {plural0}."
 #: main.js
 msgid ""
 "{plural1} adoption checkout requests initiated in the last week are still open"
-msgstr "‫{plural1} בקשות אימוץ עצמי שהותחלו בשבוע האחרון ועדיין פתוחות"
+msgstr "{plural1} בקשות אימוץ עצמי שהותחלו בשבוע האחרון ועדיין פתוחות"
 
 #: main.js
 msgid "{plural1} animal control calls due for followup today"
-msgstr "‫{plural1} תקריות להמשך מעקב היום"
+msgstr "{plural1} תקריות להמשך מעקב היום"
 
 #: main.js
 msgid "{plural1} animals are not available for adoption"
@@ -15985,11 +16030,11 @@ msgstr "{plural1} חיות בהמתנה שמסתיימת היום"
 
 #: main.js
 msgid "{plural1} animals have never had a vaccination of any type"
-msgstr "‫{plural1} חיות ללא חיסון מכל סוג שהוא"
+msgstr "{plural1} חיות ללא חיסון מכל סוג שהוא"
 
 #: main.js
 msgid "{plural1} animals have not had a rabies vaccination"
-msgstr "‫{plural1} חיות ללא חיסון כלבת"
+msgstr "{plural1} חיות ללא חיסון כלבת"
 
 #: main.js
 msgid "{plural1} animals were TNR"
@@ -16013,7 +16058,7 @@ msgstr "{plural1} חיות נדרשו ע״י הבעלים שלהם"
 
 #: main.js
 msgid "{plural1} animals were released to wild"
-msgstr "‫{plural1} חיות ששוחררו לטבע"
+msgstr "{plural1} חיות ששוחררו לטבע"
 
 #: main.js
 msgid "{plural1} animals were transferred to other shelters"
@@ -16021,7 +16066,7 @@ msgstr "{plural1} חיות הועברו למקלטים אחרים"
 
 #: main.js
 msgid "{plural1} clinic appointments today"
-msgstr "‫{plural1} פגישות במרפאה היום"
+msgstr "{plural1} פגישות במרפאה היום"
 
 #: i18n.py
 msgid "{plural1} days."
@@ -16038,11 +16083,11 @@ msgstr "{plural1} בקשות לחתימה על מסמכים מהחודש האח�
 
 #: main.js
 msgid "{plural1} incomplete animal control calls"
-msgstr "‫{plural1} תקריות שלא טופלו"
+msgstr "{plural1} תקריות שלא טופלו"
 
 #: main.js
 msgid "{plural1} items of equipment are overdue for return"
-msgstr "‫{plural1} פריטי ציוד שטרם הוחזרו"
+msgstr "{plural1} פריטי ציוד שטרם הוחזרו"
 
 #: main.js
 msgid "{plural1} items of stock expire in the next month"
@@ -16114,7 +16159,7 @@ msgstr "{plural1} חיות לא מעוקרות/מסורסות אומצו בחו�
 
 #: main.js
 msgid "{plural1} undispatched animal control calls"
-msgstr "‫{plural1} תקריות ללא בדיקה בשטח"
+msgstr "{plural1} תקריות ללא בדיקה בשטח"
 
 #: main.js
 msgid "{plural1} unpaid fines"
@@ -16126,7 +16171,7 @@ msgstr "{plural1} רשומות דחופות ברשימת ההמתנה"
 
 #: main.js
 msgid "{plural1} vaccinations have expired"
-msgstr "‫{plural1} חיסונים לחידוש"
+msgstr "{plural1} חיסונים לחידוש"
 
 #: main.js
 msgid "{plural1} vaccinations need to be administered today"
@@ -16143,11 +16188,11 @@ msgstr "{plural1} שנים."
 #: main.js
 msgid ""
 "{plural2} adoption checkout requests initiated in the last week are still open"
-msgstr "‫{plural2} בקשות אימוץ עצמי שהותחלו בשבוע האחרון ועדיין פתוחות"
+msgstr "{plural2} בקשות אימוץ עצמי שהותחלו בשבוע האחרון ועדיין פתוחות"
 
 #: main.js
 msgid "{plural2} animal control calls due for followup today"
-msgstr "‫{plural2} תקריות להמשך מעקב היום"
+msgstr "{plural2} תקריות להמשך מעקב היום"
 
 #: main.js
 msgid "{plural2} animals are not available for adoption"
@@ -16171,11 +16216,11 @@ msgstr "{plural2} חיות בהמתנה שמסתיימת היום"
 
 #: main.js
 msgid "{plural2} animals have never had a vaccination of any type"
-msgstr "‫{plural2} חיות ללא חיסון  מכל סוג שהוא"
+msgstr "{plural2} חיות ללא חיסון  מכל סוג שהוא"
 
 #: main.js
 msgid "{plural2} animals have not had a rabies vaccination"
-msgstr "‫{plural2} חיות ללא חיסון כלבת"
+msgstr "{plural2} חיות ללא חיסון כלבת"
 
 #: main.js
 msgid "{plural2} animals were TNR"
@@ -16199,7 +16244,7 @@ msgstr "{plural2} חיות נדרשו ע״י הבעלים שלהם"
 
 #: main.js
 msgid "{plural2} animals were released to wild"
-msgstr "‫{plural2} חיות ששוחררו לטבע"
+msgstr "{plural2} חיות ששוחררו לטבע"
 
 #: main.js
 msgid "{plural2} animals were transferred to other shelters"
@@ -16207,7 +16252,7 @@ msgstr "{plural2} חיות הועברו למקלטים אחרים"
 
 #: main.js
 msgid "{plural2} clinic appointments today"
-msgstr "‫{plural2} פגישות במרפאה היום"
+msgstr "{plural2} פגישות במרפאה היום"
 
 #: i18n.py
 msgid "{plural2} days."
@@ -16224,11 +16269,11 @@ msgstr "{plural2} בקשות לחתימה על מסמכים מהחודש האח�
 
 #: main.js
 msgid "{plural2} incomplete animal control calls"
-msgstr "‫{plural2} תקריות שלא טופלו"
+msgstr "{plural2} תקריות שלא טופלו"
 
 #: main.js
 msgid "{plural2} items of equipment are overdue for return"
-msgstr "‫{plural2} פריטי ציוד שטרם הוחזרו"
+msgstr "{plural2} פריטי ציוד שטרם הוחזרו"
 
 #: main.js
 msgid "{plural2} items of stock expire in the next month"
@@ -16300,7 +16345,7 @@ msgstr "{plural2} חיות לא מעוקרות/מסורסות אומצו בחו�
 
 #: main.js
 msgid "{plural2} undispatched animal control calls"
-msgstr "‫{plural2} תקריות ללא בדיקה בשטח"
+msgstr "{plural2} תקריות ללא בדיקה בשטח"
 
 #: main.js
 msgid "{plural2} unpaid fines"
@@ -16312,7 +16357,7 @@ msgstr "{plural2} רשומות דחופות ברשימת ההמתנה"
 
 #: main.js
 msgid "{plural2} vaccinations have expired"
-msgstr "‫{plural2} חיסונים לחידוש"
+msgstr "{plural2} חיסונים לחידוש"
 
 #: main.js
 msgid "{plural2} vaccinations need to be administered today"
@@ -16329,11 +16374,11 @@ msgstr "{plural2} שנים."
 #: main.js
 msgid ""
 "{plural3} adoption checkout requests initiated in the last week are still open"
-msgstr "‫{plural3} בקשות אימוץ עצמי שהותחלו בשבוע האחרון ועדיין פתוחות"
+msgstr "{plural3} בקשות אימוץ עצמי שהותחלו בשבוע האחרון ועדיין פתוחות"
 
 #: main.js
 msgid "{plural3} animal control calls due for followup today"
-msgstr "‫{plural3} תקריות להמשך מעקב היום"
+msgstr "{plural3} תקריות להמשך מעקב היום"
 
 #: main.js
 msgid "{plural3} animals are not available for adoption"
@@ -16357,11 +16402,11 @@ msgstr "{plural3} חיות בהמתנה שמסתיימת היום"
 
 #: main.js
 msgid "{plural3} animals have never had a vaccination of any type"
-msgstr "‫{plural3} חיות ללא חיסון  מכל סוג שהוא"
+msgstr "{plural3} חיות ללא חיסון  מכל סוג שהוא"
 
 #: main.js
 msgid "{plural3} animals have not had a rabies vaccination"
-msgstr "‫{plural3} חיות ללא חיסון כלבת"
+msgstr "{plural3} חיות ללא חיסון כלבת"
 
 #: main.js
 msgid "{plural3} animals were TNR"
@@ -16385,7 +16430,7 @@ msgstr "{plural3} חיות נדרשו ע״י הבעלים שלהם"
 
 #: main.js
 msgid "{plural3} animals were released to wild"
-msgstr "‫{plural3} חיות ששוחררו לטבע"
+msgstr "{plural3} חיות ששוחררו לטבע"
 
 #: main.js
 msgid "{plural3} animals were transferred to other shelters"
@@ -16393,7 +16438,7 @@ msgstr "{plural3} חיות הועברו למקלטים אחרים"
 
 #: main.js
 msgid "{plural3} clinic appointments today"
-msgstr "‫{plural3} פגישות במרפאה היום"
+msgstr "{plural3} פגישות במרפאה היום"
 
 #: i18n.py
 msgid "{plural3} days."
@@ -16410,11 +16455,11 @@ msgstr "{plural3} בקשות לחתימה על מסמכים מהחודש האח�
 
 #: main.js
 msgid "{plural3} incomplete animal control calls"
-msgstr "‫{plural3} תקריות שלא טופלו"
+msgstr "{plural3} תקריות שלא טופלו"
 
 #: main.js
 msgid "{plural3} items of equipment are overdue for return"
-msgstr "‫{plural3} פריטי ציוד שטרם הוחזרו"
+msgstr "{plural3} פריטי ציוד שטרם הוחזרו"
 
 #: main.js
 msgid "{plural3} items of stock expire in the next month"
@@ -16486,7 +16531,7 @@ msgstr "{plural3} חיות לא מעוקרות/מסורסות אומצו בחו�
 
 #: main.js
 msgid "{plural3} undispatched animal control calls"
-msgstr "‫{plural3} תקריות ללא בדיקה בשטח"
+msgstr "{plural3} תקריות ללא בדיקה בשטח"
 
 #: main.js
 msgid "{plural3} unpaid fines"
@@ -16498,7 +16543,7 @@ msgstr "{plural3} פניות דחופות ברשימת ההמתנה"
 
 #: main.js
 msgid "{plural3} vaccinations have expired"
-msgstr "‫{plural3} חיסונים לחידוש"
+msgstr "{plural3} חיסונים לחידוש"
 
 #: main.js
 msgid "{plural3} vaccinations need to be administered today"

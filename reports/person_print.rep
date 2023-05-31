@@ -1,0 +1,246 @@
+Print Person Record
+###
+Auditing
+###
+34702/Any rev02
+###
+A complete printout of a person record.
+###
+en
+###
+SELECT o.ID AS PersonID, o.*, ho.OwnerName as honame,
+(SELECT Name FROM lksynun WHERE ID = o.MatchGoodWithDogs) AS mwithdogs,
+(SELECT Name FROM lksynun WHERE ID = o.MatchGoodWithCats) AS mwithcats,
+(SELECT Name FROM lksynun WHERE ID = o.MatchGoodWithChildren) AS mwithchildren,
+(SELECT Name FROM lksynun WHERE ID = o.MatchHouseTrained) AS mhousetrained,
+(SELECT Sex FROM lksex WHERE ID = o.MatchSex) AS msex,
+(SELECT Size FROM lksize WHERE ID = o.MatchSize) AS msize,
+(SELECT AnimalType FROM animaltype WHERE ID = o.MatchAnimalType) AS mtype,
+(SELECT SpeciesName FROM species WHERE ID = o.MatchSpecies) AS mspecies,
+(SELECT BreedName FROM breed WHERE ID = o.MatchBreed) AS mbreed,
+(SELECT BreedName FROM breed WHERE ID = o.MatchBreed2) AS mbreed2
+FROM owner o
+LEFT OUTER JOIN owner ho ON o.HomeCheckedBy = ho.ID
+WHERE o.ID = $ASK PERSON$
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<h2>$OWNERNAME</h2>
+<table>
+</tr>
+<td>Address</td><td><b>$OWNERADDRESS</b></td><td>Home</td><td>$HOMETELEPHONE</td>
+</tr><tr>
+<td></td><td>$OWNERTOWN</td><td>Work</td><td>$WORKTELEPHONE $WORKTELEPHONE2</td>
+</tr><tr>
+<td></td><td>$OWNERCOUNTY</td><td>Cell</td><td>$MOBILETELEPHONE MOBILETELEPHONE2</td>
+</tr><tr>
+<td></td><td>$OWNERPOSTCODE</td><td>Email</td><td>$EMAILADDRESS EMAILADDRESS2</td>
+</tr><tr>
+<td>Date Of Birth</td><td>$DATEOFBIRTH $DATEOFBIRTH2</td><td>ID Number</td><td>$IDENTIFICATIONNUMBER $IDENTIFICATIONNUMBER2</td>
+</tr><tr>
+<td>Membership No.</td><td>$MEMBERSHIPNUMBER</td><td>Expires</td><td>$MEMBERSHIPEXPIRYDATE</td>
+</tr><tr>
+<td>Homechecked By</td><td>$HONAME</td><td>on</td><td>$DATELASTHOMECHECKED</td>
+</tr><tr>
+<td>Flags</td><td><b>$ADDITIONALFLAGS</b></td><td>Comments</td><td>$COMMENTS</td>
+</tr>
+</table>
+
+<h2>Looking For</h2>
+
+<table>
+</tr>
+<td>Added</td><td><b>$MATCHADDED</b></td><td>Expires</td><td>$MATCHEXPIRES</td>
+</tr><tr>
+<td>Aged between</td><td><b>$MATCHAGEFROM</b></td><td>and</td><td>$MATCHAGETO</td>
+</tr><tr>
+<td>Type</td><td><b>$MTYPE</b></td><td>Species</td><td>$MSPECIES</td>
+</tr><tr>
+<td>Sex</td><td><b>$MSEX</b></td><td>Size</td><td>$MSIZE</td>
+</tr><tr>
+<td>Breed</td><td><b>$MBREED</b></td><td>or</td><td>$MBREED2</td>
+</tr><tr>
+<td>Flags</td><td><b>$MATCHFLAGS</b></td><td></td><td></td>
+</tr><tr>
+<td>Good with dogs</td><td><b>$MWITHDOGS</b></td><td>Good with cats</td><td>$MWITHCATS</td>
+</tr><tr>
+<td>Good with children</td><td><b>$MWITHCHILDREN</b></td><td>Housetrained</td><td>$MHOUSETRAINED</td>
+</tr>
+</table>
+
+<h2>Investigation</h2>
+{SUBREPORT.SUBREPORT_PersonPrintInvestigation.PERSONID}
+
+<h2>Licenses</h2>
+{SUBREPORT.SUBREPORT_PersonPrintLicence.PERSONID}
+
+<h2>Payments</h2>
+{SUBREPORT.SUBREPORT_PersonPrintDonation.PERSONID}
+
+<h2>Vouchers</h2>
+{SUBREPORT.SUBREPORT_PersonPrintVoucher.PERSONID}
+
+<h2>Diary</h2>
+{SUBREPORT.SUBREPORT_PersonPrintDiary.PERSONID}
+
+<h2>Movements</h2>
+{SUBREPORT.SUBREPORT_PersonPrintMovement.PERSONID}
+
+<h2>Log</h2>
+{SUBREPORT.SUBREPORT_PersonPrintLog.PERSONID}
+
+<h2>Additional</h2>
+{SUBREPORT.SUBREPORT_PersonPrintAdditional.PERSONID}
+
+BODY$$
+
+$$FOOTER
+FOOTER$$
+###
+SUBREPORT_PersonPrintInvestigation
++++
+SELECT i.Date, i.Notes FROM ownerinvestigation i WHERE i.OwnerID = $PARENTKEY$
++++
+$$HEADER
+<table>
+<tr><th>Date</th><th>Notes</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$DATE</td><td>$NOTES</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_PersonPrintLicence
++++
+SELECT ol.*, lt.LicenceTypeName, a.AnimalName, a.ShelterCode
+FROM ownerlicence ol 
+INNER JOIN licencetype lt ON lt.ID=ol.LicenceTypeID
+LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID
+WHERE ol.OwnerID = $PARENTKEY$
+ORDER BY ol.IssueDate
++++
+$$HEADER
+<table>
+<tr><th>Number</th><th>Type</th><th>Animal</th><th>Issued</th><th>Expires</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$LICENCENUMBER</td><td>$LICENCETYPENAME</td><td><b>$ANIMALNAME</b> - $SHELTERCODE</td><td>$ISSUEDATE</td><td>$EXPIRYDATE</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_PersonPrintDonation
++++
+SELECT a.AnimalName, a.ShelterCode, 
+od.*, od.ID AS odid, dt.DonationName AS DName, od.DateDue AS DueDate 
+FROM ownerdonation od
+INNER JOIN donationtype dt ON dt.ID = od.DonationTypeID
+LEFT OUTER JOIN animal a ON od.AnimalID = a.ID
+WHERE od.OwnerID = $PARENTKEY$
+ORDER BY od.Date
++++
+$$HEADER
+<table>
+<tr><th>Due</th><th>Received</th><th>Animal</th><th>Receipt</th><th>Amount</th><th>Type</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$DUEDATE</td><td>$DATE</td><td><b>$ANIMALNAME</b> - $SHELTERCODE</td>
+<td>$ODID</td><td>$DONATION</td><td>$DNAME</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_PersonPrintVoucher
++++
+SELECT vt.VoucherName, v.*
+FROM ownervoucher v 
+INNER JOIN voucher vt ON vt.ID = v.VoucherID
+WHERE v.OwnerID = $PARENTKEY$
++++
+$$HEADER
+<table>
+<tr><th>Type</th><th>Issued</th><th>Expired</th><th>Value</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$VOUCHERNAME</td><td>$DATEISSUED</td><td>$DATEEXPIRED</td><td>$VALUE</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_PersonPrintDiary
++++
+SELECT d.* FROM diary d
+WHERE d.LinkType = 2 AND d.LinkID = $PARENTKEY$
++++
+$$HEADER
+<table>
+<tr><th>By</th><th>For</th><th>Date</th><th>Completed</th><th>Subject</th><th>Note</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$CREATEDBY</td><td>$DIARYFORNAME</td><td>$DIARYDATETIME</td><td>$DATECOMPLETED</td><td>$SUBJECT</td><td>$NOTE</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_PersonPrintMovement
++++
+SELECT ad.*, mt.MovementType,
+a.AnimalName, a.ShelterCode
+FROM adoption ad
+INNER JOIN lksmovementtype mt ON mt.ID = ad.MovementType
+LEFT OUTER JOIN animal a ON a.ID = ad.AnimalID
+WHERE ad.OwnerID = $PARENTKEY$
++++
+$$HEADER
+<table>
+<tr><th>Number</th><th>Animal</th><th>Reservation</th><th>Cancelled</th><th>Movement</th><th>Type</th><th>Returned</th><th>Reason</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$ADOPTIONNUMBER</td><td><b>$ANIMALNAME</b> - $SHELTERCODE</td>
+<td>$RESERVATIONDATE</td><td>$RESERVATIONCANCELLEDDATE</td><td>$MOVEMENTDATE</td><td>$MOVEMENTTYPE</td><td>$RETURNDATE</td><td>$REASONFORRETURN</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_PersonPrintLog
++++
+SELECT lo.*, lt.LogTypeName FROM log lo
+INNER JOIN logtype lt ON lt.ID = lo.LogTypeID
+WHERE lo.LinkType = 1 AND lo.LinkID = $PARENTKEY$
++++
+$$HEADER
+<table>
+<tr><th>Date</th><th>Type</th><th>Details</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$DATE</td><td>$LOGTYPENAME</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_PersonPrintAdditional
++++
+SELECT af.FieldLabel, a.Value FROM additional a
+INNER JOIN additionalfield af ON a.AdditionalFieldID = af.ID
+WHERE a.LinkType IN (1, 7, 8) AND a.LinkID = $PARENTKEY$
++++
+$$HEADER
+<table>
+<tr><th>Field</th><th>Value</th>
+HEADER$$
+$$BODY
+<tr><td>$FIELDLABEL</td><td>$VALUE</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$

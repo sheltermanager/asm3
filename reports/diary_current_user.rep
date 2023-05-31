@@ -1,0 +1,40 @@
+Diary (current users)
+###
+Diary
+###
+Any rev02
+###
+Generates the diary for the current user today.
+###
+en
+###
+SELECT *
+FROM diary
+WHERE DateCompleted Is Null
+AND DiaryDateTime <= '$CURRENT_DATE$'
+AND DiaryForName LIKE '$USER$'
+ORDER BY DiaryForName, DiaryDateTime
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_DiaryForName
+$$HEAD
+<h2>$DiaryForName</h2>
+<hr />
+$$FOOT
+GROUP$$
+
+$$BODY
+<p>
+<i>$DIARYDATETIME</i><br />
+<b>$LINKINFO $SUBJECT</b>
+</p>
+<p>
+$NOTE
+</p>
+<hr />
+BODY$$
+
+$$FOOTER
+FOOTER$$

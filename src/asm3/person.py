@@ -14,7 +14,7 @@ import asm3.media
 import asm3.reports
 import asm3.users
 import asm3.utils
-from asm3.i18n import _, add_days, date_diff_days, format_time, python2display, subtract_years, now
+from asm3.i18n import _, add_days, date_diff_days, format_time, display2python, python2display, subtract_years, now
 from asm3.sitedefs import GEO_BATCH, GEO_LIMIT
 
 import datetime
@@ -39,7 +39,7 @@ def get_person_query(dbo):
         "ho.MobileTelephone AS HomeCheckedByMobileTelephone, ho.EmailAddress AS HomeCheckedByEmail, " \
         "lfa.ID AS LatestFosterID, lfa.AnimalName AS LatestFosterName, lfa.ShelterCode AS LatestFosterShelterCode, " \
         "lma.ID AS LatestMoveAnimalID, lma.AnimalName AS LatestMoveAnimalName, lma.ShelterCode AS LatestMoveShelterCode, " \
-        "lmat.MovementType AS LatestMoveTypeName, " \
+        "lmat.MovementType AS LatestMoveTypeName, lma.DeceasedDate AS LatestMoveDeceasedDate, " \
         "j.JurisdictionName, si.SiteName, " \
         "web.ID AS WebsiteMediaID, " \
         "web.MediaName AS WebsiteMediaName, " \
@@ -121,10 +121,11 @@ def embellish_latest_movement(dbo, p):
         p.LATESTMOVETYPENAME = lm.LATESTMOVETYPENAME
     return p
 
-def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "", address = "", siteid = 0):
+def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "", address = "", siteid = 0, checkcouple = False):
     """
     Returns people with similar email, mobile, names and addresses to those supplied.
-    If siteid is non-zero, only people with that site will be checked
+    If siteid is non-zero, only people with that site will be checked.
+    If checkcouple is True, the second contact fields will also be checked.
     """
     # Consider the first word rather than first address line - typically house
     # number/name and unlikely to be the same for different people
@@ -139,18 +140,27 @@ def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "
     surname = surname.replace("'", "`").lower().strip()
     email = email.replace("'", "`").lower().strip()
     eq = []
-    hq = []
     mq = []
+    cmq = []
+    ceq = []
     per = []
+    cper = []
     if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
         eq = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.EmailAddress) LIKE ?" % siteclause, [email])
-    if mobile != "" and asm3.utils.atoi(mobile)> 9999: # at least 5 digits to constitute a valid number
+    if mobile != "" and asm3.utils.atoi(mobile) > 9999: # at least 5 digits to constitute a valid number
         mq = dbo.query(get_person_query(dbo) + " WHERE %s %s LIKE ?" % (siteclause, dbo.sql_atoi("o.MobileTelephone")) , [asm3.utils.digits_only(mobile)])
-        hq = dbo.query(get_person_query(dbo) + " WHERE %s %s LIKE ?" % (siteclause, dbo.sql_atoi("o.HomeTelephone")) , [asm3.utils.digits_only(mobile)])
     if address != "":
         per = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname) LIKE ? AND " \
          "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames + "%", address + "%"))
-    return eq + mq + hq + per
+    if checkcouple:
+        if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
+            ceq = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.EmailAddress2) LIKE ?" % siteclause, [email])
+        if mobile != "" and asm3.utils.atoi(mobile) > 9999: # at least 5 digits to constitute a valid number
+            cmq = dbo.query(get_person_query(dbo) + " WHERE %s %s LIKE ?" % (siteclause, dbo.sql_atoi("o.MobileTelephone2")) , [asm3.utils.digits_only(mobile)])
+        if address != "":
+            cper = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname2) LIKE ? AND " \
+             "LOWER(o.OwnerForeNames2) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames + "%", address + "%"))
+    return eq + mq + ceq + cmq + per + cper
 
 def get_person_name(dbo, personid):
     """
@@ -554,7 +564,9 @@ def get_person_find_simple(dbo, query, classfilter="all", typefilter="all", incl
     ss = asm3.utils.SimpleSearchBuilder(dbo, query)
     ss.add_words("o.OwnerName")
     ss.add_fields([ "o.OwnerCode", "o.OwnerAddress", "o.OwnerTown", "o.OwnerCounty", "o.OwnerPostcode",
-        "o.EmailAddress", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone", "o.MembershipNumber" ])
+        "o.EmailAddress", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone", 
+        "o.EmailAddress2", "o.WorkTelephone2", "o.MobileTelephone2", "o.IdentificationNumber", "o.IdentificationNumber2", 
+        "o.MembershipNumber" ])
     ss.add_clause("EXISTS(SELECT ad.Value FROM additional ad " \
         "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
         "WHERE ad.LinkID=o.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % asm3.additional.PERSON_IN)
@@ -617,15 +629,16 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, includeVolunte
     ss = asm3.utils.AdvancedSearchBuilder(dbo, post)
     ss.add_words("name", "o.OwnerName")
     ss.add_str("code", "o.OwnerCode")
+    ss.add_str_pair("idnumber", "o.IdentificationNumber", "o.IdentificationNumber2")
     ss.add_str("createdby", "o.CreatedBy")
     ss.add_date_since("createdsince", "o.CreatedDate")
     ss.add_str("address", "o.OwnerAddress")
     ss.add_str("town", "o.OwnerTown")
     ss.add_str("county", "o.OwnerCounty")
     ss.add_str("postcode", "o.OwnerPostcode")
-    ss.add_phone_triplet("phone", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone")
+    ss.add_phone_quintuplet("phone", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone", "o.WorkTelephone2", "o.MobileTelephone2")
     ss.add_id("jurisdiction", "o.JurisdictionID")
-    ss.add_str("email", "o.EmailAddress")
+    ss.add_str_pair("email", "o.EmailAddress", "o.EmailAddress2")
     ss.add_words("homecheck", "o.HomeCheckAreas")
     ss.add_words("comments", "o.Comments")
     ss.add_words("medianotes", "web.MediaNotes")
@@ -671,6 +684,13 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, includeVolunte
     if siteid != 0:
         ss.ands.append("(o.SiteID = 0 OR o.SiteID = ?)")
         ss.values.append(siteid)
+
+    for k, v in post.data.items():
+        if k.startswith("af_") and v != "":
+            afid = asm3.utils.atoi(k)
+            ilike = dbo.sql_ilike("Value", "?")
+            ss.ands.append(f"EXISTS (SELECT Value FROM additional WHERE LinkID=o.ID AND AdditionalFieldID={afid} AND {ilike})")
+            ss.values.append( "%%%s%%" % v.lower() )
 
     if len(ss.ands) == 0:
         sql = get_person_query(dbo) + " ORDER BY o.OwnerName"
@@ -773,38 +793,55 @@ def calculate_owner_code(pid, surname):
         prefix = surname[0:2].upper()
     return "%s%s" % (prefix, asm3.utils.padleft(pid, 6))
 
-def calculate_owner_name(dbo, personclass= 0, title = "", initials = "", first = "", last = "", nameformat = ""):
+def calculate_owner_name(dbo, personclass = 0, title = "", initials = "", first = "", last = "", nameformat = "", coupleformat = "", title2 = "", initials2 = "", first2 = "", last2 = ""):
     """
     Calculates the owner name field based on the current format.
     """
-    if personclass == 2: return last # for organisations, just return the org name
     if nameformat == "": nameformat = asm3.configuration.owner_name_format(dbo)
+    if coupleformat == "": coupleformat = asm3.configuration.owner_name_couple_format(dbo)
     # If something went wrong and we have a broken format for any reason, substitute our default
     if nameformat is None or nameformat == "" or nameformat == "null": nameformat = "{ownertitle} {ownerforenames} {ownersurname}"
     nameformat = nameformat.replace("{ownername}", "{ownertitle} {ownerforenames} {ownersurname}") # Compatibility with old versions
-    nameformat = nameformat.replace("{ownertitle}", title)
-    nameformat = nameformat.replace("{ownerinitials}", initials)
-    nameformat = nameformat.replace("{ownerforenames}", first)
-    nameformat = nameformat.replace("{ownersurname}", last)
-    return nameformat.strip()
+    if coupleformat is None or coupleformat == "" or coupleformat == "null": coupleformat = "{ownername1} & {ownername2}"
+    if personclass == 2: # Organisation
+        return last 
+    elif personclass == 3: # Couple
+        person1 = nameformat.replace("{ownertitle}", title)
+        person1 = person1.replace("{ownerinitials}", initials)
+        person1 = person1.replace("{ownerforenames}", first)
+        person1 = person1.replace("{ownersurname}", last)
+        person2 = nameformat.replace("{ownertitle}", title2)
+        person2 = person2.replace("{ownerinitials}", initials2)
+        person2 = person2.replace("{ownerforenames}", first2)
+        person2 = person2.replace("{ownersurname}", last2)
+        return coupleformat.replace("{ownername1}", person1).replace("{ownername2}", person2)
+    else: # individual
+        nameformat = nameformat.replace("{ownertitle}", title)
+        nameformat = nameformat.replace("{ownerinitials}", initials)
+        nameformat = nameformat.replace("{ownerforenames}", first)
+        nameformat = nameformat.replace("{ownersurname}", last)
+        return nameformat.strip()
 
 def update_owner_names(dbo):
     """
     Regenerates all owner code and name fields based on the current values.
     """
     asm3.al.debug("regenerating owner names and codes...", "person.update_owner_names", dbo)
-    own = dbo.query("SELECT ID, OwnerCode, OwnerType, OwnerTitle, OwnerInitials, OwnerForeNames, OwnerSurname FROM owner")
+    own = dbo.query("SELECT ID, OwnerCode, OwnerType, OwnerTitle, OwnerInitials, OwnerForeNames, OwnerSurname, OwnerTitle2, OwnerInitials2, OwnerForenames2, OwnerSurname2 FROM owner")
     nameformat = asm3.configuration.owner_name_format(dbo)
+    coupleformat = asm3.configuration.owner_name_couple_format(dbo)
     asm3.asynctask.set_progress_max(dbo, len(own))
     for o in own:
         if o.ownercode is None or o.ownercode == "":
             dbo.update("owner", o.id, { 
                 "OwnerCode": calculate_owner_code(o.id, o.ownersurname),
-                "OwnerName": calculate_owner_name(dbo, o.ownertype, o.ownertitle, o.ownerinitials, o.ownerforenames, o.ownersurname, nameformat)
+                "OwnerName": calculate_owner_name(dbo, o.ownertype, o.ownertitle, o.ownerinitials, o.ownerforenames, o.ownersurname, \
+                    nameformat, coupleformat, o.ownertitle2, o.ownerinitials2, o.ownerforenames2, o.ownersurname2)
             }, setRecordVersion=False, setLastChanged=False, writeAudit=False)
         else:
             dbo.update("owner", o.id, { 
-                "OwnerName": calculate_owner_name(dbo, o.ownertype, o.ownertitle, o.ownerinitials, o.ownerforenames, o.ownersurname, nameformat)
+                "OwnerName": calculate_owner_name(dbo, o.ownertype, o.ownertitle, o.ownerinitials, o.ownerforenames, o.ownersurname, \
+                    nameformat, coupleformat, o.ownertitle2, o.ownerinitials2, o.ownerforenames2, o.ownersurname2)
             }, setRecordVersion=False, setLastChanged=False, writeAudit=False)
         asm3.asynctask.increment_progress_value(dbo)
     asm3.al.debug("regenerated %d owner names and codes" % len(own), "person.update_owner_names", dbo)
@@ -824,7 +861,8 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         "ID":               pid,
         "OwnerType":        post.integer("ownertype"),
         "OwnerCode":        calculate_owner_code(pid, post["surname"]),
-        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"] ),
+        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"], "", "", \
+                                post["title2"], post["initials2"], post["forenames2"], post["surname2"] ),
         "OwnerTitle":       post["title"],
         "OwnerInitials":    post["initials"],
         "OwnerForenames":   post["forenames"],
@@ -839,6 +877,17 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         "WorkTelephone":    post["worktelephone"],
         "MobileTelephone":  post["mobiletelephone"],
         "EmailAddress":     post["emailaddress"],
+        "DateOfBirth":      post.date("dateofbirth"),
+        "IdentificationNumber": post["idnumber"],
+        "OwnerTitle2":      post["title2"],
+        "OwnerInitials2":   post["initials2"],
+        "OwnerForenames2":  post["forenames2"],
+        "OwnerSurname2":    post["surname2"],
+        "WorkTelephone2":   post["worktelephone2"],
+        "MobileTelephone2": post["mobiletelephone2"],
+        "EmailAddress2":    post["emailaddress2"],
+        "DateOfBirth2":     post.date("dateofbirth2"),
+        "IdentificationNumber2": post["idnumber2"],
         "GDPRContactOptIn": post["gdprcontactoptin"],
         "JurisdictionID":   post.integer("jurisdiction"),
         "Comments":         post["comments"],
@@ -862,6 +911,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         "MatchSpecies":     post.integer("matchspecies", -1),
         "MatchBreed":       post.integer("matchbreed1", -1),
         "MatchBreed2":      post.integer("matchbreed2", -1),
+        "MatchFlags" :      post["matchflags"],
         "MatchGoodWithCats": post.integer("matchgoodwithcats", -1),
         "MatchGoodWithDogs": post.integer("matchgoodwithdogs", -1),
         "MatchGoodWithChildren": post.integer("matchgoodwithchildren", -1),
@@ -943,7 +993,8 @@ def update_person_from_form(dbo, post, username, geocode=True):
     dbo.update("owner", pid, {
         "OwnerType":        post.integer("ownertype"),
         "OwnerCode":        calculate_owner_code(pid, post["surname"]),
-        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"] ),
+        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"], "", "", \
+                                post["title2"], post["initials2"], post["forenames2"], post["surname2"] ),
         "OwnerTitle":       post["title"],
         "OwnerInitials":    post["initials"],
         "OwnerForenames":   post["forenames"],
@@ -958,6 +1009,17 @@ def update_person_from_form(dbo, post, username, geocode=True):
         "WorkTelephone":    post["worktelephone"],
         "MobileTelephone":  post["mobiletelephone"],
         "EmailAddress":     post["emailaddress"],
+        "DateOfBirth":      post.date("dateofbirth"),
+        "IdentificationNumber": post["idnumber"],
+        "OwnerTitle2":      post["title2"],
+        "OwnerInitials2":   post["initials2"],
+        "OwnerForenames2":  post["forenames2"],
+        "OwnerSurname2":    post["surname2"],
+        "WorkTelephone2":   post["worktelephone2"],
+        "MobileTelephone2": post["mobiletelephone2"],
+        "EmailAddress2":    post["emailaddress2"],
+        "DateOfBirth2":     post.date("dateofbirth2"),
+        "IdentificationNumber2": post["idnumber2"],
         "GDPRContactOptIn": post["gdprcontactoptin"],
         "JurisdictionID":   post.integer("jurisdiction"),
         "Comments":         post["comments"],
@@ -981,6 +1043,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
         "MatchSpecies":     post.integer("matchspecies"),
         "MatchBreed":       post.integer("matchbreed1"),
         "MatchBreed2":      post.integer("matchbreed2"),
+        "MatchFlags":       post["matchflags"],
         "MatchGoodWithCats": post.integer("matchgoodwithcats"),
         "MatchGoodWithDogs": post.integer("matchgoodwithdogs"),
         "MatchGoodWithChildren": post.integer("matchgoodwithchildren"),
@@ -1095,12 +1158,28 @@ def merge_person_details(dbo, username, personid, d, force=False):
     d: The dictionary of values to merge
     force: If True, forces overwrite of the details with values from d if they are present
     """
+    uv = {}
     p = get_person(dbo, personid)
     if p is None: return
     def merge(dictfield, fieldname):
         if dictfield not in d or d[dictfield] == "": return
-        if p[fieldname] is None or p[fieldname] == "" or force:
-            dbo.update("owner", personid, { fieldname: d[dictfield] }, username)
+        if dictfield == "surname2" and d[dictfield] != "": 
+            uv["OwnerType"] = 3 # Force person to be a couple if a second surname is supplied
+            p.OWNERTYPE = 3
+        if dictfield.startswith("date") and (p[fieldname] is None or force):
+            uv[fieldname] = display2python(dbo.locale, d[dictfield])
+            p[fieldname] = uv[fieldname]
+        elif p[fieldname] is None or p[fieldname] == "" or force:
+            uv[fieldname] = d[dictfield]
+            p[fieldname] = uv[fieldname]
+    merge("title", "OWNERTITLE")
+    merge("initials", "OWNERINITIALS")
+    #merge("forenames", "OWNERFORENAMES") # Never overwrite
+    #merge("surname", "OWNERSURNAME")     # The primary name
+    merge("title2", "OWNERTITLE2")
+    merge("initials2", "OWNERINITIALS2")
+    merge("forenames2", "OWNERFORENAMES2")
+    merge("surname2", "OWNERSURNAME2")
     merge("address", "OWNERADDRESS")
     merge("town", "OWNERTOWN")
     merge("county", "OWNERCOUNTY")
@@ -1109,8 +1188,17 @@ def merge_person_details(dbo, username, personid, d, force=False):
     merge("hometelephone", "HOMETELEPHONE")
     merge("worktelephone", "WORKTELEPHONE")
     merge("mobiletelephone", "MOBILETELEPHONE")
+    merge("mobiletelephone2", "MOBILETELEPHONE2")
     merge("emailaddress", "EMAILADDRESS")
+    merge("emailaddress2", "EMAILADDRESS2")
+    merge("idnumber", "IDENTIFICATIONNUMBER")
+    merge("idnumber2", "IDENTIFICATIONNUMBER2")
+    merge("dateofbirth", "DATEOFBIRTH")
+    merge("dateofbirth2", "DATEOFBIRTH2")
     merge("comments", "COMMENTS")
+    uv["OwnerName"] = calculate_owner_name(dbo, p.OWNERTYPE, p.OWNERTITLE, p.OWNERINITIALS, p.OWNERFORENAMES, p.OWNERSURNAME, "", "", \
+                        p.OWNERTITLE2, p.OWNERINITIALS2, p.OWNERFORENAMES2, p.OWNERSURNAME2)
+    dbo.update("owner", personid, uv, username)
 
 def merge_gdpr_flags(dbo, username, personid, flags):
     """
@@ -1180,6 +1268,14 @@ def merge_person(dbo, username, personid, mergepersonid):
 
     # Merge any contact info
     mp = get_person(dbo, mergepersonid)
+    mp["title"] = mp.OWNERTITLE
+    mp["initials"] = mp.OWNERINITIALS
+    mp["forenames"] = mp.OWNERFORENAMES
+    mp["surname"] = mp.OWNERSURNAME
+    mp["title2"] = mp.OWNERTITLE2
+    mp["initials2"] = mp.OWNERINITIALS2
+    mp["forenames2"] = mp.OWNERFORENAMES2
+    mp["surname2"] = mp.OWNERSURNAME2
     mp["address"] = mp.OWNERADDRESS
     mp["town"] = mp.OWNERTOWN
     mp["county"] = mp.OWNERCOUNTY
@@ -1188,7 +1284,13 @@ def merge_person(dbo, username, personid, mergepersonid):
     mp["hometelephone"] = mp.HOMETELEPHONE
     mp["worktelephone"] = mp.WORKTELEPHONE
     mp["mobiletelephone"] = mp.MOBILETELEPHONE
+    mp["mobiletelephone2"] = mp.MOBILETELEPHONE2
     mp["emailaddress"] = mp.EMAILADDRESS
+    mp["emailaddress2"] = mp.EMAILADDRESS2
+    mp["idnumber"] = mp.IDENTIFICATIONNUMBER
+    mp["idnumber2"] = mp.IDENTIFICATIONNUMBER2
+    mp["dateofbirth"] = python2display(l, mp.DATEOFBIRTH)
+    mp["dateofbirth2"] = python2display(l, mp.DATEOFBIRTH2)
     mp["comments"] = mp.COMMENTS
     merge_person_details(dbo, username, personid, mp)
 

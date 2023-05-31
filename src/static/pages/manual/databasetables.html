@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Appendix: Database Tables/Columns &mdash; ASM 47u documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -10,7 +11,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -23,14 +26,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> ASM
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ASM
           </a>
               <div class="version">
                 47u
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -52,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
@@ -92,8 +98,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Appendix: Database Tables/Columns</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Appendix: Database Tables/Columns</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/databasetables.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -103,10 +109,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="appendix-database-tables-columns">
-<h1>Appendix: Database Tables/Columns<a class="headerlink" href="#appendix-database-tables-columns" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="adoption">
-<h2>adoption<a class="headerlink" href="#adoption" title="Permalink to this headline">¶</a></h2>
+  <section id="appendix-database-tables-columns">
+<h1>Appendix: Database Tables/Columns<a class="headerlink" href="#appendix-database-tables-columns" title="Permalink to this heading">¶</a></h1>
+<section id="adoption">
+<h2>adoption<a class="headerlink" href="#adoption" title="Permalink to this heading">¶</a></h2>
 <p>The adoption table holds a row for each movement attached to an animal or person.</p>
 <dl class="simple">
 <dt>ID</dt><dd><p>INTEGER
@@ -127,11 +133,17 @@ Link to the owner table for a retailer (0 for no retailer)</p>
 <dt>OriginalRetailerMovementID</dt><dd><p>INTEGER
 Link to another movement in this table for an original movement to retailer that started this adoption</p>
 </dd>
+<dt>EventID</dt><dd><p>INTEGER
+Link to the event table for the adoption event this movement came from</p>
+</dd>
 <dt>MovementDate</dt><dd><p>TIMESTAMP
 The date the animal moved</p>
 </dd>
 <dt>MovementType</dt><dd><p>INTEGER
 Link to the lksmovementtype table for the type of animal movement (none = reservation, adoption, foster, transfer, escaped, stolen, reclaimed, etc)</p>
+</dd>
+<dt>InsuranceNumber</dt><dd><p>VARCHAR
+If your shelter does short term insurance when adopting, the policy number</p>
 </dd>
 <dt>ReturnDate</dt><dd><p>TIMESTAMP
 The date the animal came back to the shelter from this movement (or null for not returned)</p>
@@ -139,8 +151,8 @@ The date the animal came back to the shelter from this movement (or null for not
 <dt>ReturnedReasonID</dt><dd><p>INTEGER
 Link to the entryreason table for reason for return</p>
 </dd>
-<dt>InsuranceNumber</dt><dd><p>VARCHAR
-If your shelter does short term insurance when adopting, the policy number</p>
+<dt>ReturnedByOwnerID</dt><dd><p>INTEGER
+Link to the owner table for the person who returned the animal</p>
 </dd>
 <dt>ReasonForReturn</dt><dd><p>VARCHAR
 Free text, the reason the animal was returned</p>
@@ -153,6 +165,9 @@ A total of all donations attached to this movement</p>
 </dd>
 <dt>ReservationCancelledDate</dt><dd><p>TIMESTAMP
 If this is a reservation and it has been cancelled, the date it was cancelled</p>
+</dd>
+<dt>IsPermanentFoster</dt><dd><p>INTEGER
+1 if this foster movement is permanent</p>
 </dd>
 <dt>IsTrial</dt><dd><p>INTEGER
 1 if this is a trial adoption movement</p>
@@ -179,9 +194,9 @@ User who last changed this record</p>
 Date this record was last changed</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="animal">
-<h2>animal<a class="headerlink" href="#animal" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="animal">
+<h2>animal<a class="headerlink" href="#animal" title="Permalink to this heading">¶</a></h2>
 <p>The animal table holds a row for each animal on the system. Various denormalised fields at the end are used to track the current movement, whether the animal is on shelter, etc. These are useful for writing reports.</p>
 <dl class="simple">
 <dt>ID</dt><dd><p>INTEGER
@@ -389,7 +404,9 @@ The current movement’s return date</p>
 1 if the animal is on trial adoption</p>
 </dd>
 <dt>DisplayLocation</dt><dd><p>VARCHAR
-Shows a readable version of the animal’s location. If on shelter, the internal location. If off shelter, the movementtype, accompanied by the person name.</p>
+Shows a readable version of the animal’s location. If on shelter, the
+internal location. If off shelter, the movementtype, accompanied by the
+person name.</p>
 </dd>
 <dt>MostRecentEntryDate</dt><dd><p>TIMESTAMP
 The most recent entry date - either DateBroughtIn or ActiveMovementDate</p>
@@ -422,9 +439,9 @@ Name of user that last changed this record</p>
 Date this record was last changed</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="animalcontrol">
-<h2>animalcontrol<a class="headerlink" href="#animalcontrol" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="animalcontrol">
+<h2>animalcontrol<a class="headerlink" href="#animalcontrol" title="Permalink to this heading">¶</a></h2>
 <p>The animalcontrol table holds a row for every animal control incident on the system.</p>
 <dl class="simple">
 <dt>ID</dt><dd><p>INTEGER
@@ -509,9 +526,9 @@ A link to the lksex table for the animal involved in the incident</p>
 The age group of the animal involved in the incident</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="dbfs">
-<h2>dbfs<a class="headerlink" href="#dbfs" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="dbfs">
+<h2>dbfs<a class="headerlink" href="#dbfs" title="Permalink to this heading">¶</a></h2>
 <p>The dbfs table holds a row for each file stored in ASM’s database. Name and
 Path can be concatenated to form a full path. Eg: path = /templates name =
 cage_card.html</p>
@@ -525,50 +542,77 @@ The name of the element</p>
 <dt>Path</dt><dd><p>VARCHAR
 The path to the element</p>
 </dd>
+<dt>URL</dt><dd><p>VARCHAR
+Either <a class="reference external" href="file:[filename">file:[filename</a>] or s3:[filename] for binary data stored in the
+filesystem or remote object storage like Amazon S3, BackBlaze B2 or
+Cloudflare R2 etc. If the data is in the Content field, the URL will be
+contain the text base64:</p>
+</dd>
 <dt>Content</dt><dd><p>CLOB
-Base64 encoded content</p>
+Base64 encoded content or null if the data is in a file storage (see URL)</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="media">
-<h2>media<a class="headerlink" href="#media" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="media">
+<h2>media<a class="headerlink" href="#media" title="Permalink to this heading">¶</a></h2>
 <p>The media table holds a row for each piece media attached to an animal, owner,
 etc.</p>
 <dl class="simple">
 <dt>ID</dt><dd><p>INTEGER
 A unique, incrementing number that identifies this record</p>
 </dd>
+<dt>MediaType</dt><dd><p>INTEGER
+1 = File, 2 = Link</p>
+</dd>
 <dt>MediaName</dt><dd><p>VARCHAR
-The name of the file within the dbfs table - always [media.ID].extension</p>
+The name of the file within the dbfs table - always [media.ID].extension unless
+MediaType=2 in which case this will hold the link URL</p>
 </dd>
 <dt>MediaNotes</dt><dd><p>VARCHAR
-The notes accompanying the media file (used as description when publishing)</p>
+The notes accompanying the media file (can optionally be used as
+description when publishing)</p>
+</dd>
+<dt>DocPhoto</dt><dd><p>INTEGER
+1 if this is the preferred photo of an animal for use with document
+templates</p>
 </dd>
 <dt>WebsitePhoto</dt><dd><p>INTEGER
 1 if this is the preferred photo of an animal for use on the web</p>
 </dd>
+<dt>WebsiteVideo</dt><dd><p>INTEGER
+1 if this is the preferred video link of the animal</p>
+</dd>
 <dt>DocPhoto</dt><dd><p>INTEGER
 1 if this is the preferred photo of an animal for use with generated documents</p>
 </dd>
-<dt>NewSinceLastPublish</dt><dd><p>INTEGER
+<dt>ExcludeFromPublish</dt><dd><p>INTEGER
+1 if this photo should be excluded from being used on websites or sent to
+third parties</p>
+</dd>
+<dt>SignatureHash</dt><dd><p>VARCHAR
+For media containing documents that have been signed, this field will
+contain a cryptographic hash of the document file data so that it can be
+checked for tampering</p>
+</dd>
+<dt>NewSinceLastPublish (deprecated)</dt><dd><p>INTEGER
 1 if this media record was created after the last time a publish was done</p>
 </dd>
-<dt>UpdatedSinceLastPublish</dt><dd><p>INTEGER
+<dt>UpdatedSinceLastPublish  (deprecated)</dt><dd><p>INTEGER
 1 if this media record was updated after the last time a publish was done</p>
 </dd>
-<dt>LastPublished</dt><dd><p>TIMESTAMP
+<dt>LastPublished (deprecated - see animalpublished table)</dt><dd><p>TIMESTAMP
 The date this record was last published to the web</p>
 </dd>
-<dt>LastPublishedPF</dt><dd><p>TIMESTAMP
+<dt>LastPublishedPF (deprecated)</dt><dd><p>TIMESTAMP
 Date this record was last published to PetFinder.com</p>
 </dd>
-<dt>LastPublishedAP</dt><dd><p>TIMESTAMP
+<dt>LastPublishedAP (deprecated)</dt><dd><p>TIMESTAMP
 Date this record was last published to AdoptAPet.com</p>
 </dd>
-<dt>LastPublishedP911</dt><dd><p>TIMESTAMP
+<dt>LastPublishedP911 (deprecated)</dt><dd><p>TIMESTAMP
 Date this record was last published to Pets911.com</p>
 </dd>
-<dt>LastPublishedRG</dt><dd><p>TIMESTAMP
+<dt>LastPublishedRG (deprecated)</dt><dd><p>TIMESTAMP
 Date this record was last published to RescueGroups PetAdoptionPortal.org</p>
 </dd>
 <dt>LinkID</dt><dd><p>INTEGER
@@ -577,31 +621,44 @@ The ID of the record in the table this media is linked to</p>
 <dt>LinkTypeID</dt><dd><p>INTEGER
 Link to lksmedialink table to determine linked table</p>
 </dd>
+<dt>CreatedDate</dt><dd><p>TIMESTAMP
+The date this record was created</p>
+</dd>
 <dt>Date</dt><dd><p>TIMESTAMP
-Date this record was created</p>
+Date this record was last updated</p>
+</dd>
+<dt>RetainUntil</dt><dd><p>TIMESTAMP
+The date to automatically delete this record (or NULL to never delete)</p>
 </dd>
 <dt>RecordVersion</dt><dd><p>INTEGER
 Optimistic lock flag</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="owner">
-<h2>owner<a class="headerlink" href="#owner" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="owner">
+<h2>owner<a class="headerlink" href="#owner" title="Permalink to this heading">¶</a></h2>
 <p>The owner table holds a row for every person stored in ASM’s database.</p>
 <dl class="simple">
 <dt>ID</dt><dd><p>INTEGER
 A unique, incrementing number that identifies this record</p>
 </dd>
-<dt>OwnerTitle</dt><dd><p>VARCHAR
+<dt>OwnerType</dt><dd><p>INTEGER
+1 = Individual, 2 = Organization, 3 = Couple</p>
+</dd>
+<dt>OwnerCode</dt><dd><p>VARCHAR
+A unique code for this record, generated from first two letters of surname
+and padded ID</p>
+</dd>
+<dt>OwnerTitle / OwnerTitle2</dt><dd><p>VARCHAR
 The person’s title, eg: Mr</p>
 </dd>
-<dt>OwnerInitials</dt><dd><p>VARCHAR
+<dt>OwnerInitials / OwnerInitials2</dt><dd><p>VARCHAR
 The person’s initials</p>
 </dd>
-<dt>OwnerForeNames</dt><dd><p>VARCHAR
+<dt>OwnerForeNames / OwnerForeNames2</dt><dd><p>VARCHAR
 The person’s first name(s)</p>
 </dd>
-<dt>OwnerSurname</dt><dd><p>VARCHAR
+<dt>OwnerSurname / OwnerSurname2</dt><dd><p>VARCHAR
 The person’s surname</p>
 </dd>
 <dt>OwnerName</dt><dd><p>VARCHAR
@@ -620,16 +677,27 @@ The county or state (depending on locale)</p>
 </dd>
 <dt>HomeTelephone</dt><dd><p>VARCHAR</p>
 </dd>
-<dt>WorkTelephone</dt><dd><p>VARCHAR</p>
+<dt>WorkTelephone / WorkTelephone2</dt><dd><p>VARCHAR</p>
 </dd>
-<dt>MobileTelephone</dt><dd><p>VARCHAR</p>
+<dt>MobileTelephone / MobileTelephone2</dt><dd><p>VARCHAR</p>
 </dd>
-<dt>EmailAddress</dt><dd><p>VARCHAR</p>
+<dt>EmailAddress / EmailAddress2</dt><dd><p>VARCHAR</p>
+</dd>
+<dt>DateOfBirth / DateOfBirth2</dt><dd><p>TIMESTAMP</p>
+</dd>
+<dt>IdentificationNumber / IdentificationNumber2</dt><dd><p>VARCHAR
+The government issued identification number (passport, driving license, etc)</p>
+</dd>
+<dt>Comments</dt><dd><p>VARCHAR</p>
+</dd>
+<dt>GDPRContactOptIn</dt><dd><p>VARCHAR
+didnotask,declined,email,post,sms,phone</p>
+</dd>
+<dt>ExcludeFromBulkEmail</dt><dd><p>INTEGER
+1 if this person should not receive bulk emails</p>
 </dd>
 <dt>IDCheck</dt><dd><p>INTEGER
 1 if the person has been homechecked</p>
-</dd>
-<dt>Comments</dt><dd><p>VARCHAR</p>
 </dd>
 <dt>IsBanned</dt><dd><p>INTEGER
 1 if this person has been banned from adopting animals</p>
@@ -651,6 +719,9 @@ The membership number</p>
 </dd>
 <dt>IsDonor</dt><dd><p>INTEGER
 1 if this person is a regular donor</p>
+</dd>
+<dt>IsDriver</dt><dd><p>INTEGER
+1 if this person is a driver for transport</p>
 </dd>
 <dt>IsShelter</dt><dd><p>INTEGER
 1 if this person is another animal shelter</p>
@@ -720,9 +791,11 @@ Date this looking for info expires</p>
 </dd>
 <dt>MatchCommentsContain</dt><dd><p>VARCHAR</p>
 </dd>
+<dt>MatchFlags</dt><dd><p>VARCHAR</p>
+</dd>
 </dl>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

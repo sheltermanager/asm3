@@ -20,28 +20,35 @@ $(function() {
                 '<tr>',
                 '<td><label for="ownertype">' + _("Class") + '</label></td>',
                 '<td><select id="ownertype" data="ownertype" class="asm-selectbox">',
-                '<option value="1">' + _("Individual/Couple") + '</option>',
+                '<option value="1">' + _("Individual") + '</option>',
+                '<option value="3">' + _("Couple") + '</option>',
                 '<option value="2">' + _("Organization") + '</option>',
                 '</select></td>',
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label for="title">' + _("Title") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="50" id="title" data="title" type="text" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="50" id="title" data="title" type="text" />',
+                '<input class="asm-textbox newform tag-couple" maxlength="50" id="title2" data="title2" type="text" />',
+                '</td>',
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label for="initials">' + _("Initials") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="50" id="initials" data="initials" type="text" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="50" id="initials" data="initials" type="text" />',
+                '<input class="asm-textbox newform tag-couple" maxlength="50" id="initials2" data="initials2" type="text" />',
+                '</td>',
                 '</tr>',
                 '<tr class="tag-individual">',
                 '<td><label for="forenames">' + _("First name(s)") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="200" id="forenames" data="forenames" type="text" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="200" id="forenames" data="forenames" type="text" />',
+                '<input class="asm-textbox newform tag-couple" maxlength="200" id="forenames2" data="forenames2" type="text" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="surname" class="tag-individual">' + _("Last name") + '</label>',
                 '<label for="surname" class="tag-organisation">' + _("Organization name") + '</label>',
                 '<span class="asm-has-validation">*</span>',
                 '</td>',
-                '<td><input class="asm-textbox newform" maxlength="100" id="surname" data="surname" type="text" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="100" id="surname" data="surname" type="text" />',
+                '<input class="asm-textbox newform tag-couple" maxlength="100" id="surname2" data="surname2" type="text" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="address">' + _("Address") + '</label></td>',
@@ -76,15 +83,36 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="worktelephone">' + _("Work Phone") + '</label></td>',
-                '<td><input class="asm-textbox asm-phone newform" id="worktelephone" data="worktelephone" type="textbox" /></td>',
+                '<td><input class="asm-textbox asm-phone newform" id="worktelephone" data="worktelephone" type="text" />',
+                '<input class="asm-textbox asm-phone newform tag-couple" id="worktelephone2" data="worktelephone2" type="text" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="mobiletelephone">' + _("Cell Phone") + '</label></td>',
-                '<td><input class="asm-textbox asm-phone newform" id="mobiletelephone" data="mobiletelephone" type="textbox" /></td>',
+                '<td><input class="asm-textbox asm-phone newform" id="mobiletelephone" data="mobiletelephone" type="text" />',
+                '<input class="asm-textbox asm-phone newform tag-couple" id="mobiletelephone2" data="mobiletelephone2" type="text" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="emailaddress">' + _("Email Address") + '</label></td>',
-                '<td><input class="asm-textbox newform" maxlength="200" id="emailaddress" data="emailaddress" type="textbox" /></td>',
+                '<td><input class="asm-textbox newform" maxlength="200" id="emailaddress" data="emailaddress" type="text" />',
+                '<input class="asm-textbox newform tag-couple" maxlength="200" id="emailaddress2" data="emailaddress2" type="text" /></td>',
+                '</tr>',
+                '<tr id="dateofbirthrow">',
+                '<td><label for="dateofbirth">' + _("Date Of Birth") + '</label></td>',
+                '<td class="nowrap">',
+                '<input type="text" id="dateofbirth" data="dateofbirth" class="asm-textbox asm-datebox newform" />',
+                '<input type="text" id="dateofbirth2" data="dateofbirth2" class="asm-textbox asm-datebox newform tag-couple" />',
+                '</td>',
+                '</tr>',
+                '<tr id="idnumberrow">',
+                '<td><label for="idnumber">' + _("ID Number") + '</label>',
+                '<span id="idnumber-callout" class="asm-callout">',
+                _("Driving license, passport or other identification number"),
+                '</span>',
+                '</td>',
+                '<td class="nowrap">',
+                '<input type="text" id="idnumber" data="idnumber" maxlength="200" class="asm-textbox newform" />',
+                '<input type="text" id="idnumber2" data="idnumber2" maxlength="200" class="asm-textbox newform tag-couple" />',
+                '</td>',
                 '</tr>',
                 '<tr id="jurisdictionrow">',
                 '<td><label for="jurisdiction">' + _("Jurisdiction") + '</label></td>',
@@ -193,27 +221,50 @@ $(function() {
                 let result = await common.ajax_post("person_embed", formdata);
                 let people = jQuery.parseJSON(result);
                 let rec = people[0];
-                if (rec === undefined) {
-                    add_person();
-                }
-                else {
+                if (rec) {
                     let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
-                    disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                    disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + " " + common.nulltostr(rec.MOBILETELEPHONE2) + "<br/>" + rec.EMAILADDRESS + " " + common.nulltostr(rec.EMAILADDRESS2);
                     $(".similar-person").html(disp);
                     similar_dialog();
+                    return;
                 }
+                // Do a second check in case the user put a cell phone number in the home number field.
+                // This is quite common in US databases where cell phone numbers have area codes like landlines.
+                if ($("#hometelephone").val()) {
+                    formdata = "mode=similar&mobiletelephone=" + $("#hometelephone").val() + "&" + $("#emailaddress, #surname, #forenames, #address").toPOST();
+                    result = await common.ajax_post("person_embed", formdata);
+                    people = jQuery.parseJSON(result);
+                    rec = people[0];
+                    if (rec) {
+                        let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + rec.OWNERNAME + "</a></span>";
+                        disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                        $(".similar-person").html(disp);
+                        similar_dialog();
+                        return;
+                    }
+                }
+                // No similar matches found, fall through to just adding the person
+                add_person();
             };
 
             const check_org = function() {
-                // If it's an organisation, only show the org fields,
-                // otherwise show individual
-                if ($("#ownertype").val() == 2) {
-                    $(".tag-organisation").fadeIn();
-                    $(".tag-individual").fadeOut();
+                // Individual
+                if ($("#ownertype").val() == 1) {
+                    $(".tag-organisation").fadeOut();
+                    $(".tag-couple").fadeOut();
+                    $(".tag-individual").fadeIn();
                 }
-                else {
+                // Organisation
+                else if ($("#ownertype").val() == 2) {
+                    $(".tag-couple").fadeOut();
+                    $(".tag-individual").fadeOut();
+                    $(".tag-organisation").fadeIn();
+                }
+                // Couple
+                else if ($("#ownertype").val() == 3) {
                     $(".tag-organisation").fadeOut();
                     $(".tag-individual").fadeIn();
+                    $(".tag-couple").fadeIn();
                 }
             };
 
@@ -228,6 +279,10 @@ $(function() {
             }
 
             $("#countryrow").toggle( !config.bool("HideCountry") );
+
+            $("#dateofbirthrow").toggle( !config.bool("HidePersonDateOfBirth") );
+
+            $("#idnumberrow").toggle( !config.bool("HideIDNumber") );
 
             $("#gdprcontactoptinrow").toggle( config.bool("ShowGDPRContactOptIn") );
 

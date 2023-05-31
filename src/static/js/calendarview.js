@@ -63,7 +63,7 @@ $(function() {
                 '</span>',
                 '<span class="asm-calendar-legend">',
                 html.icon("traploan") + '<input id="toggle-traploan" data="l" type="checkbox" class="asm-checkbox" />' + 
-                '<label for="toggle-traploan">' + _("Trap loan") + '</label>',
+                '<label for="toggle-traploan">' + _("Equipment loan") + '</label>',
                 '</span>',
                 '</p>',
                 '<div id="calendar" style="max-width: 900px; margin-left: auto; margin-right: auto;"></div>',

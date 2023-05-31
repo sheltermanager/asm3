@@ -1,0 +1,78 @@
+Retailer Movements by Date
+###
+Retailers
+###
+PostgreSQL rev01
+###
+Retailer movements between two dates with average time at retailer
+###
+en
+###
+$VAR from DATE Out between$
+$VAR to DATE and$
+
+SELECT ShelterCode, AnimalName, MostRecentEntryDate, MovementDate, ReturnDate, 
+species.SpeciesName, animal.DaysOnShelter, animal.IdentichipNumber,
+animaltype.AnimalType AS theType,
+animal.BreedName,
+age(ReturnDate, MovementDate) AS TimeAtRetailer,
+extract(day from ReturnDate - MovementDate)::integer AS DaysAtRetailer,
+no.OwnerName, no.OwnerAddress,
+no.OwnerTown, no.OwnerCounty,
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
+FROM adoption
+INNER JOIN animal ON adoption.AnimalID = animal.ID
+INNER JOIN owner no ON adoption.OwnerID = no.ID
+INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
+INNER JOIN species ON species.ID = animal.SpeciesID
+WHERE MovementType = 8 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' 
+ORDER BY OwnerName, MovementDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_OwnerName
+$$HEAD
+<h2>$OwnerName</h2>
+<p>$OwnerAddress, $OwnerTown $OwnerCounty $OwnerPostcode: <i>$HomeTelephone $WorkTelephone $MobileTelephone $EmailAddress</i></p>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Breed</b></td>
+<td><b>Microchip</b></td>
+<td><b>Sent to Retailer</b></td>
+<td><b>Returned from Retailer</b></td>
+<td><b>Time at Retailer</b></td>
+</tr>
+$$FOOT
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>Average: {AVG.DaysAtRetailer.2} days</td>
+</tr>
+</table>
+<h2>Total $OwnerName: {COUNT.SHELTERCODE}</h2>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$theType</td>
+<td>$BreedName</td>
+<td>$IdentichipNumber</td>
+<td>$MovementDate</td>
+<td>$ReturnDate</td>
+<td>$TimeAtRetailer ($DaysAtRetailer days)</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+

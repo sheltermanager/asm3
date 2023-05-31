@@ -1,0 +1,67 @@
+Returned Animals
+###
+Returns
+###
+Any rev02
+###
+Animals returned within a date range.
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, t.AnimalType, s.SpeciesName, i.LocationName, a.DisplayLocation, 
+ad.MovementDate, ad.ReturnDate, ad.ReasonForReturn, rr.ReasonName,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone, o.EmailAddress,
+ad.AnimalID, ad.OwnerID 
+FROM adoption ad
+INNER JOIN animal a ON a.ID = ad.AnimalID
+LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN owner o ON ad.OwnerID = o.ID
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
+LEFT OUTER JOIN entryreason rr ON rr.ID = ad.ReturnedReasonID
+WHERE ad.MovementType = 1
+AND ad.ReturnDate >= '$ASK DATE Animals returned between$' 
+AND ad.ReturnDate <= '$ASK DATE and$'
+ORDER BY ad.ReturnDate, a.AnimalName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Species</th>
+<th>Last Loc</th>
+<th>Current Loc</th>
+<th>Adopter</th>
+<th>Adopted</th>
+<th>Returned</th>
+<th>Reason</th>
+<th>Category</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="animal?id=$animalid">$ANIMALNAME</a></td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
+<td>$LOCATIONNAME</td>
+<td>$DISPLAYLOCATION</td>
+<td><b><a target="_blank" href="person?id=$ownerid">$OWNERNAME</a></b><br/>
+$OWNERADDRESS<br/>
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>
+$HOMETELEPHONE $MOBILETELEPHONE <i>$EMAILADDRESS</i></td>
+<td>$MOVEMENTDATE</td>
+<td>$RETURNDATE</td>
+<td>$REASONFORRETURN</td>
+<td>$REASONNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total returns: {COUNT.ANIMALNAME}</h2>
+FOOTER$$
+

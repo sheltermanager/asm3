@@ -1,0 +1,753 @@
+Print Animal Record
+###
+Auditing
+###
+34111/Any rev07
+###
+A complete printout of an animal record.
+###
+en
+###
+SELECT a.ID AS AnimalID, a.*,
+oo.OwnerName AS ooname, oo.OwnerAddress AS ooaddress, oo.OwnerPostcode AS oopostcode, oo.HomeTelephone AS ootel, oo.EmailAddress AS ooemail,
+bi.OwnerName AS biname, bi.OwnerAddress AS biaddress, bi.OwnerPostcode AS bipostcode, bi.HomeTelephone AS bitel, bi.EmailAddress AS biemail,
+cv.OwnerName AS cvname, cv.OwnerAddress AS cvaddress, cv.OwnerPostcode AS cvpostcode, cv.HomeTelephone AS cvtel, cv.EmailAddress AS cvemail,
+av.OwnerName AS avname,
+lksize.size,
+entryreason.reasonname AS entryreasonname,
+deathreason.reasonname AS ptsreasonname,
+a.breedname,
+species.speciesname,
+basecolour.basecolour,
+animaltype.animaltype,
+internallocation.LocationName AS CurrentLocation,
+lkcoattype.CoatType,
+ba1.ShelterCode AS Bonded1Code, ba1.AnimalName AS Bonded1Name,
+ba2.ShelterCode AS Bonded2Code, ba2.AnimalName AS Bonded2Name,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithDogs) AS withdogs,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithCats) AS withcats,
+(SELECT Name FROM lksynunk WHERE ID = a.IsGoodWithChildren) AS withchildren,
+(SELECT Name FROM lksynun WHERE ID = a.IsHouseTrained) AS housetrained,
+(SELECT Sex FROM lksex WHERE ID = a.sex) AS thesex,
+(SELECT Name FROM lksyesno WHERE ID = a.neutered) AS altered,
+(SELECT Name FROM lksyesno WHERE ID = a.identichipped) AS yidentichipped,
+(SELECT Name FROM lksyesno WHERE ID = a.tattoo) AS ytattoo,
+(SELECT Name FROM lksyesno WHERE ID = a.declawed) AS ydeclawed,
+(SELECT Name FROM lksyesno WHERE ID = a.heartwormtested) AS yheartwormtested,
+(SELECT Name FROM lksyesno WHERE ID = a.combitested) AS ycombitested,
+(SELECT Name FROM lksposneg WHERE ID = a.heartwormtestresult) AS pheartwormtestresult,
+(SELECT Name FROM lksposneg WHERE ID = a.combitestresult) AS pfivresult,
+(SELECT Name FROM lksposneg WHERE ID = a.flvresult) AS pflvresult,
+(SELECT NAME FROM lksyesno WHERE ID = a.HasActiveReserve) AS reserved,
+(SELECT NAME FROM lksyesno WHERE ID = a.NonShelterAnimal) AS nonshelter,
+(SELECT NAME FROM lksyesno WHERE ID = a.IsNotAvailableForAdoption) AS notadoption,
+(SELECT NAME FROM lksyesno WHERE ID = a.IsTransfer) AS ytransferin,
+(SELECT NAME FROM lksyesno WHERE ID = a.HasSpecialNeeds) AS yspecialneeds,
+(SELECT NAME FROM lksyesno WHERE ID = a.PutToSleep) AS yputtosleep,
+(SELECT NAME FROM lksyesno WHERE ID = a.IsDOA) AS ydoa,
+(SELECT NAME FROM lksyesno WHERE ID = a.DiedOffShelter) AS ydiedoffshelter
+FROM animal a
+LEFT OUTER JOIN species ON species.ID = a.speciesID
+LEFT OUTER JOIN internallocation ON internallocation.id = a.shelterlocation
+LEFT OUTER JOIN basecolour ON basecolour.ID = a.basecolourID
+LEFT OUTER JOIN animaltype ON animaltype.ID = a.animalTypeID
+LEFT OUTER JOIN lksize ON lksize.ID=a.Size
+LEFT OUTER JOIN entryreason ON entryreason.ID= a.entryreasonid
+LEFT OUTER JOIN lkcoattype ON lkcoattype.ID = a.CoatType
+LEFT OUTER JOIN deathreason ON deathreason.ID = a.ptsreasonid
+LEFT OUTER JOIN owner oo ON a.OriginalOwnerID = oo.ID
+LEFT OUTER JOIN owner bi ON a.BroughtInByOwnerID = bi.ID
+LEFT OUTER JOIN owner cv ON a.CurrentVetID = cv.ID
+LEFT OUTER JOIN owner av ON a.NeuteredByVetID = av.ID
+LEFT OUTER JOIN animal ba1 ON a.BondedAnimalID = ba1.ID
+LEFT OUTER JOIN animal ba2 ON a.BondedAnimal2ID = ba2.ID
+WHERE a.ID = $ASK ANIMAL$
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<h2>$ANIMALNAME</h2>
+<table cellpadding="5">
+<tr>
+<td><img height="150px" src="{IMAGE.$ANIMALID}" /></td><td><img src="{QR.$ANIMALID}" /></td>
+</tr>
+</table>
+
+<table cellpadding="5">
+</tr>
+<td>Code</td><td><b>$SHELTERCODE</b></td><td></td><td><b>On shelter for $TIMEONSHELTER</b></td>
+</tr><tr>
+<td>Size</td><td>$SIZE</td><td>Litter ID</td><td>$ACCEPTANCENUMBER</td>
+</tr><tr>
+<td>Non-Shelter</td><td>$NONSHELTER</td><td>Not For Adoption</td><td>$NOTADOPTION</td>
+</tr><tr>
+<td>Sex</td><td>$THESEX</td><td>Type</td><td>$ANIMALTYPE</td>
+</tr><tr>
+<td>Color</td><td>$BASECOLOUR</td><td>Coat Type</td><td>$COATTYPE</td>
+</tr><tr>
+<td>Species</td><td>$SPECIESNAME</td><td>Breed</td><td>$BREEDNAME</td>
+</tr><tr>
+<td>Location</td><td>$CURRENTLOCATION</td><td>Date Of Birth</td><td>$DATEOFBIRTH ($ANIMALAGE)</td>
+</tr><tr>
+<td>Comments</td><td>$ANIMALCOMMENTS</td><td>Features</td><td>$MARKINGS</td>
+</tr><tr>
+<td>Good With Cats</td><td>$WITHCATS</td><td>Good With Dogs</td><td>$WITHDOGS</td>
+</tr><tr>
+<td>Good With Kids</td><td>$WITHCHILDREN</td><td>Housetrained</td><td>$HOUSETRAINED</td>
+</tr><tr>
+<td>Microchipped</td><td>$YIDENTICHIPPED $IDENTICHIPDATE $IDENTICHIPNUMBER $IDENTICHIP2DATE $IDENTICHIP2NUMBER</td><td>Tattoo</td><td>$YTATTOO $TATTOODATE $TATTOONUMBER</td>
+</tr><tr>
+<td>Altered</td><td>$ALTERED $NEUTEREDDATE $AVNAME</td><td>Declawed</td><td>$YDECLAWED</td>
+</tr><tr>
+<td>Heartworm Tested</td><td>$YHEARTWORMTESTED $HEARTWORMTESTDATE $PHEARTWORMTESTRESULT</td>
+</tr><tr>
+<td>FIV/L Tested</td><td>$YCOMBITESTED $COMBITESTDATE FIV: $PFIVRESULT, FLV: $PFLVRESULT</td>
+</tr>
+</table>
+
+<h2>Entry Details</h2>
+
+<table cellpadding="5">
+<tr>
+<td>Original Owner</td><td>$OONAME<br />$OOADDRESS<br />$OOPOSTCODE<br />$OOTEL<br />$OOEMAIL</td>
+<td>Brought In By</td><td>$BINAME<br />$BIADDRESS<br />$BIPOSTCODE<br />$BITEL<br />$BIEMAIL</td>
+</tr><tr>
+<td>Reason not by owner</td><td>$REASONNO</td><td>Entry Reason</td><td>$REASONFORENTRY</td>
+</tr><tr>
+<td>Transfer In</td><td>$YTRANSFERIN</td><td>Date Brought In</td><td>$DATEBROUGHTIN</td>
+</tr><tr>
+<td>Entry Category</td><td>$ENTRYREASONNAME</td><td>Bonded</td><td>$BONDED1CODE $BONDED1NAME $BONDED2CODE $BONDED2NAME</td>
+</tr>
+</table>
+
+<h2>Vet</h2>
+
+<table cellpadding="5">
+<tr>
+<td>Special Needs</td><td>$YSPECIALNEEDS</td><td>Health Problems</td><td>$HEALTHPROBLEMS</td>
+</tr><tr>
+<td>Rabies Tag</td><td>$RABIESTAG</td><td>Vet</td><td>$CVNAME<br />$CVADDRESS<br />$CVPOSTCODE<br />$CVTEL<br />$CVEMAIL</td>
+</tr>
+</table>
+
+<h2>Death</h2>
+
+<table cellpadding="5">
+<tr>
+<td>Deceased</td><td><b>$DECEASEDDATE</b></td><td>Euthanized</td><td>$YPUTTOSLEEP</td>
+</tr><tr>
+<td>Dead On Arrival</td><td>$YDOA</td><td>Died Off Shelter</td><td>$YDIEDOFFSHELTER</td>
+</tr><tr>
+<td>Death Category</td><td>$PTSREASONNAME</td><td>Comments</td><td>$PTSREASON</td>
+</tr>
+</table>
+
+<h2>Vaccinations</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintVaccination.ANIMALID}
+
+<h2>Tests</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintTest.ANIMALID}
+
+<h2>Medical</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintMedical.ANIMALID}
+
+<h2>Clinic</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintClinic.ANIMALID}
+
+<h2>Diet</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintDiet.ANIMALID}
+
+<h2>Costs</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintCost.ANIMALID}
+
+<h2>Licenses</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintLicence.ANIMALID}
+
+<h2>Payments</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintDonation.ANIMALID}
+
+<h2>Diary</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintDiary.ANIMALID}
+
+<h2>Transport</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintTransport.ANIMALID}
+
+<h2>Movements</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintMovement.ANIMALID}
+
+<h2>Log</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintLog.ANIMALID}
+
+<h2>Media</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintMedia.ANIMALID}
+
+<h2>Additional</h2>
+{SUBREPORT.SUBREPORT_AnimalPrintAdditional.ANIMALID}
+
+BODY$$
+
+$$FOOTER
+FOOTER$$
+###
+SUBREPORT_AnimalPrintVaccination
++++
+SELECT vaccinationtype.VaccinationType,
+animalvaccination.Cost,
+animalvaccination.DateRequired,
+animalvaccination.DateOfVaccination,
+animalvaccination.DateExpires,
+animalvaccination.Manufacturer,
+animalvaccination.BatchNumber, 
+animalvaccination.Comments AS VaccComments,
+CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE animalvaccination.GivenBy END AS GivenBy
+FROM animalvaccination
+INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID
+LEFT OUTER JOIN owner vo ON vo.ID = animalvaccination.AdministeringVetID
+WHERE animalvaccination.AnimalID = $PARENTKEY$
+ORDER BY DateOfVaccination
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>Type</th><th>Batch</th><th>Required</th><th>Cost</th><th>Given</th><th>Expires</th><th>By</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$VACCINATIONTYPE</td><td>$MANUFACTURER $BATCHNUMBER</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFVACCINATION</td><td>$DATEEXPIRES</td><td>$GIVENBY</td><td>$VACCCOMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintVaccinationTwoRow
++++
+SELECT vaccinationtype.VaccinationType,
+animalvaccination.Cost,
+animalvaccination.DateRequired,
+animalvaccination.DateOfVaccination,
+animalvaccination.DateExpires,
+animalvaccination.Manufacturer,
+animalvaccination.BatchNumber, 
+animalvaccination.Comments AS VaccComments,
+CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE animalvaccination.GivenBy END AS GivenBy
+FROM animalvaccination
+INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID
+LEFT OUTER JOIN owner vo ON vo.ID = animalvaccination.AdministeringVetID
+WHERE animalvaccination.AnimalID = $PARENTKEY$
+ORDER BY DateOfVaccination
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>Type</th><th>Batch</th><th>Required</th><th>Cost</th><th>Given</th><th>Expires</th><th>By</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$VACCINATIONTYPE</td><td>$MANUFACTURER $BATCHNUMBER</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFVACCINATION</td><td>$DATEEXPIRES</td><td>$GIVENBY</td></tr>
+<tr><td style="border-bottom: 1px solid #aaa" colspan="7">$VACCCOMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintMedical
++++
+SELECT
+a.ShelterCode, a.AnimalName,
+t.AnimalType, s.SpeciesName,
+il.LocationName, am.TreatmentName,
+am.Dosage, amt.TreatmentNumber, amt.TotalTreatments,
+am.Cost, amt.DateRequired, amt.DateGiven, am.Comments AS RegimeComments, amt.Comments,
+CASE WHEN mo.OwnerName Is Not Null THEN mo.OwnerName ELSE amt.GivenBy END AS GivenBy
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
+LEFT OUTER JOIN owner mo ON mo.ID = amt.AdministeringVetID
+WHERE a.ID = $PARENTKEY$
+ORDER BY amt.DateRequired
++++
+$$HEADER
+<table cellpadding="5">
+<tr>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>Regimen Cost</b></td>
+<td><b>Number</b></td>
+<td><b>Required</b></td>
+<td><b>Given</b></td>
+<td><b>By</b></td>
+<td><b>Regimen Comments</b></td>
+<td><b>Comments</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$TREATMENTNAME</td>
+<td>$DOSAGE</td>
+<td>$COST</td>
+<td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
+<td>$DATEREQUIRED</td>
+<td>$DATEGIVEN</td>
+<td>$GIVENBY</td>
+<td>$REGIMECOMMENTS</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintMedicalTwoRow
++++
+SELECT
+a.ShelterCode, a.AnimalName,
+t.AnimalType, s.SpeciesName,
+il.LocationName, am.TreatmentName,
+am.Dosage, amt.TreatmentNumber, amt.TotalTreatments,
+am.Cost, amt.DateRequired, amt.DateGiven, am.Comments AS RegimeComments, amt.Comments,
+CASE WHEN mo.OwnerName Is Not Null THEN mo.OwnerName ELSE amt.GivenBy END AS GivenBy
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
+LEFT OUTER JOIN owner mo ON mo.ID = amt.AdministeringVetID
+WHERE a.ID = $PARENTKEY$
+ORDER BY amt.DateRequired
++++
+$$HEADER
+<table cellpadding="5">
+<tr>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>Regimen Cost</b></td>
+<td><b>Number</b></td>
+<td><b>Required</b></td>
+<td><b>Given</b></td>
+<td><b>By</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$TREATMENTNAME</td>
+<td>$DOSAGE</td>
+<td>$COST</td>
+<td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
+<td>$DATEREQUIRED</td>
+<td>$DATEGIVEN</td>
+<td>$GIVENBY</td>
+</tr>
+<tr>
+<td style="border-bottom: 1px solid #aaa" colspan="7">$REGIMECOMMENTS $COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintMedicalRegimenOnly
++++
+SELECT
+a.ShelterCode, a.AnimalName,
+t.AnimalType, s.SpeciesName,
+il.LocationName, am.TreatmentName, am.StartDate,
+am.Dosage, am.TreatmentsGiven, am.TreatmentsRemaining, am.TotalNumberOfTreatments,
+am.Cost, am.Comments
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+WHERE a.ID = $PARENTKEY$
+ORDER BY am.StartDate
++++
+$$HEADER
+<table cellpadding="5">
+<tr>
+<td><b>Started</b></td>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>Regimen Cost</b></td>
+<td><b>Number</b></td>
+<td><b>Comments</b></td>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$STARTDATE</td>
+<td>$TREATMENTNAME</td>
+<td>$DOSAGE</td>
+<td>$COST</td>
+<td>$TREATMENTSGIVEN / $TOTALNUMBEROFTREATMENTS</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintTest
++++
+SELECT testtype.TestName,
+testresult.ResultName,
+animaltest.Cost,
+animaltest.DateRequired,
+animaltest.DateOfTest,
+animaltest.Comments AS TestComments,
+CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE animaltest.LastChangedBy END AS GivenBy
+FROM animaltest
+INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID
+INNER JOIN testresult ON testresult.ID = animaltest.TestResultID
+LEFT OUTER JOIN owner vo ON vo.ID = animaltest.AdministeringVetID
+WHERE animaltest.AnimalID = $PARENTKEY$
+ORDER BY DateOfTest
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>Type</th><th>Required</th><th>Cost</th><th>Administered</th><th>By</th><th>Result</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$TESTNAME</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFTEST</td><td>$GIVENBY</td><td>$RESULTNAME</td><td>$TESTCOMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintTestTwoRow
++++
+SELECT testtype.TestName,
+testresult.ResultName,
+animaltest.Cost,
+animaltest.DateRequired,
+animaltest.DateOfTest,
+animaltest.Comments AS TestComments,
+CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE animaltest.LastChangedBy END AS GivenBy
+FROM animaltest
+INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID
+INNER JOIN testresult ON testresult.ID = animaltest.TestResultID
+LEFT OUTER JOIN owner vo ON vo.ID = animaltest.AdministeringVetID
+WHERE animaltest.AnimalID = $PARENTKEY$
+ORDER BY DateOfTest
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>Type</th><th>Required</th><th>Cost</th><th>Administered</th><th>By</th><th>Result</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$TESTNAME</td><td>$DATEREQUIRED</td><td>$COST</td><td>$DATEOFTEST</td><td>$GIVENBY</td><td>$RESULTNAME</td></tr>
+<tr><td style="border-bottom: 1px solid #aaa" colspan="6">$TESTCOMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintClinic
++++
+SELECT c.*, 
+o.OwnerName, o.OwnerAddress, o.ownerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone,
+a.AnimalName, a.BreedName, s.SpeciesName, a.AnimalAge, st.Status AS StatusName
+FROM clinicappointment c
+INNER JOIN lksclinicstatus st ON st.ID = c.Status
+LEFT OUTER JOIN animal a ON a.ID = c.AnimalID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN owner o ON o.ID = c.OwnerID
+WHERE a.ID = $PARENTKEY$
+ORDER BY c.DateTime
++++
+$$HEADER
+<table cellpadding="5">
+<tr>
+<th>Appointment</th>
+<th>With</th>
+<!--<th>Animal</th>-->
+<th>Person</th>
+<th>Status</th>
+<th>Reason</th>
+<th>Comments</th>
+</tr>
+HEADER$$
+$$BODY
+<tr>
+  <td>$DATETIME</td>
+  <td>$APPTFOR</td>
+  <!--<td>$ANIMALNAME ($BREEDNAME $SPECIESNAME aged $ANIMALAGE)</td>-->
+  <td>$OWNERNAME<br/>
+    $OWNERADDRESS $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE $HOMETELEPHONE $MOBILETELEPHONE</td>
+  <td>$STATUSNAME</td>
+  <td>$REASONFORAPPOINTMENT</td>
+  <td>$COMMENTS</td>
+</tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintDiet
++++
+SELECT ad.*, d.DietName FROM animaldiet ad
+INNER JOIN diet d ON d.ID = ad.DietID
+WHERE ad.AnimalID = $PARENTKEY$
+ORDER BY ad.DateStarted
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>Started</th><th>Type</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$DATESTARTED</td><td>$DIETNAME</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintCost
++++
+SELECT * FROM
+(
+SELECT ac.CostDate, ct.CostTypeName, ac.CostAmount, ac.Description
+FROM animalcost ac
+INNER JOIN costtype ct ON ct.ID = ac.CostTypeID
+WHERE ac.AnimalID = $PARENTKEY$
+
+UNION SELECT am.StartDate AS CostDate, 'Medical' AS CostTypeName,
+am.Cost AS CostAmount, am.TreatmentName as Description
+FROM animalmedical am
+WHERE am.AnimalID = $PARENTKEY$ AND am.Cost > 0
+
+UNION SELECT av.DateOfVaccination AS CostDate, 'Vaccination' AS CostTypeName,
+av.Cost AS CostAmount, vt.VaccinationType AS Description
+FROM animalvaccination av
+INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
+WHERE av.AnimalID = $PARENTKEY$ AND av.Cost > 0
+
+UNION SELECT att.DateOfTest AS CostDate, 'Test' AS CostTypeName,
+att.Cost AS CostAmount, tt.TestName AS Description
+FROM animaltest att
+INNER JOIN testtype tt ON tt.ID = att.TestTypeID
+WHERE att.AnimalID = $PARENTKEY$ AND att.Cost > 0
+
+UNION SELECT atr.PickupDateTime AS CostDate, 'Transport' AS CostTypeName,
+atr.Cost AS CostAmount, o.OwnerAddress AS Description
+FROM animaltransport atr
+INNER JOIN owner o ON o.ID = atr.PickupOwnerID 
+WHERE atr.AnimalID = $PARENTKEY$ AND atr.Cost > 0
+
+) dummy
+ORDER BY CostDate
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>Date</th><th>Type</th><th>Amount</th><th>Description</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$COSTDATE</td><td>$COSTTYPENAME</td><td>$COSTAMOUNT</td><td>$DESCRIPTION</td></tr>
+BODY$$
+$$FOOTER
+</table>
+<h3>Total costs: <b>{SUM.COSTAMOUNT.2}</b></h3>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintLicence
++++
+SELECT ol.*, lt.LicenceTypeName, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode
+FROM ownerlicence ol 
+INNER JOIN licencetype lt ON lt.ID=ol.LicenceTypeID
+LEFT OUTER JOIN owner o ON o.ID = ol.OwnerID
+WHERE ol.AnimalID = $PARENTKEY$
+ORDER BY ol.IssueDate
++++
+$$HEADER
+<table>
+<tr><th>Number</th><th>Type</th><th>Person</th><th>Issued</th><th>Expires</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$LICENCENUMBER</td><td>$LICENCETYPENAME</td><td><b>$OWNERNAME</b> - $OWNERADDRESS $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE</td><td>$ISSUEDATE</td><td>$EXPIRYDATE</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintDonation
++++
+SELECT o.OwnerName, o.OwnerAddress, o.OwnerPostcode, o.HomeTelephone, o.EmailAddress,
+od.*, od.ID AS odid, dt.DonationName AS DName, od.DateDue AS DueDate FROM ownerdonation od
+INNER JOIN donationtype dt ON dt.ID = od.DonationTypeID
+INNER JOIN owner o ON o.ID = od.OwnerID
+WHERE od.AnimalID = $PARENTKEY$
+ORDER BY od.Date
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>Due</th><th>Received</th><th>Name</th><th>Receipt</th><th>Amount</th><th>Type</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$DUEDATE</td><td>$DATE</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS</br />$OWNERPOSTCODE<br />$HOMETELEPHONE<br />$EMAILADDRESS</td>
+<td>$ODID</td><td>$DONATION</td><td>$DNAME</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintDiary
++++
+SELECT d.* FROM diary d
+WHERE d.LinkType = 1 AND d.LinkID = $PARENTKEY$
+ORDER BY d.DiaryDateTime
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>By</th><th>For</th><th>Date</th><th>Completed</th><th>Subject</th><th>Note</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$CREATEDBY</td><td>$DIARYFORNAME</td><td>$DIARYDATETIME</td><td>$DATECOMPLETED</td><td>$SUBJECT</td><td>$NOTE</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintTransport
++++
+SELECT t.*, 
+d.OwnerName AS DriverName, d.OwnerAddress AS DriverAddress, d.OwnerPostcode AS DriverPostcode, d.HomeTelephone AS DriverTelephone, 
+p.OwnerName AS PickupName, p.OwnerAddress AS PickupAddress, p.OwnerPostcode AS PickupPostcode,
+dr.OwnerName AS DropoffName, dr.OwnerAddress AS DropoffAddress, dr.OwnerPostcode AS DropoffPostcode
+FROM animaltransport t
+LEFT OUTER JOIN owner d ON d.ID = t.DriverOwnerID
+LEFT OUTER JOIN owner p ON p.ID = t.PickupOwnerID
+LEFT OUTER JOIN owner dr ON dr.ID = t.DropoffOwnerID
+WHERE t.AnimalID = $PARENTKEY$
+ORDER BY t.PickupDateTime
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>Driver</th><th>Pickup</th><th>Dropoff</th><th>Miles</th><th>Cost</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$DRIVERNAME<br/>$DRIVERADDRESS<br/>$DRIVERPOSTCODE</td>
+<td>$PICKUPDATETIME<br/>$PICKUPNAME<br/>$PICKUPADDRESS<br/>$PICKUPPOSTCODE</td>
+<td>$DROPOFFDATETIME<br/>$DROPOFFNAME<br/>$DROPOFFADDRESS<br/>$DROPOFFPOSTCODE</td>
+<td>$MILES</td><td>$COST</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintMovement
++++
+SELECT ad.*, mt.MovementType,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone, o.EmailAddress,
+rb.OwnerName AS ReturnedBy, 
+CASE WHEN ad.ReturnDate Is Not Null AND ad.MovementType IN (1,5) THEN er.ReasonName ELSE '' END AS ReturnedReasonName 
+FROM adoption ad
+INNER JOIN lksmovementtype mt ON mt.ID = ad.MovementType
+LEFT OUTER JOIN entryreason er ON er.ID = ad.ReturnedReasonID
+LEFT OUTER JOIN owner o ON o.ID = ad.OwnerID
+LEFT OUTER JOIN owner rb ON rb.ID = ad.ReturnedByOwnerID 
+WHERE ad.AnimalID = $PARENTKEY$
+ORDER BY ad.ReservationDate, ad.MovementDate
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>Number</th><th>Owner</th><th>Reservation</th><th>Cancelled</th><th>Movement</th><th>Type</th><th>Returned</th><th>Reason</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$ADOPTIONNUMBER</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS</br />$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br />H: $HOMETELEPHONE<br />M: $MOBILETELEPHONE<br />$EMAILADDRESS</td>
+<td>$RESERVATIONDATE</td><td>$RESERVATIONCANCELLEDDATE</td><td>$MOVEMENTDATE</td><td>$MOVEMENTTYPE</td><td>$RETURNDATE $RETURNEDBY</td><td>$RETURNEDREASONNAME $REASONFORRETURN</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintMovementNoPerson
++++
+SELECT ad.*, mt.MovementType
+FROM adoption ad
+INNER JOIN lksmovementtype mt ON mt.ID = ad.MovementType
+LEFT OUTER JOIN owner o ON o.ID = ad.OwnerID
+WHERE ad.AnimalID = $PARENTKEY$
+ORDER BY ad.ReservationDate, ad.MovementDate
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>Number</th><th>Reservation</th><th>Cancelled</th><th>Movement</th><th>Type</th><th>Returned</th><th>Reason</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$ADOPTIONNUMBER</td>
+<td>$RESERVATIONDATE</td><td>$RESERVATIONCANCELLEDDATE</td><td>$MOVEMENTDATE</td><td>$MOVEMENTTYPE</td><td>$RETURNDATE</td><td>$REASONFORRETURN</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintLog
++++
+SELECT lo.*, lt.LogTypeName FROM log lo
+INNER JOIN logtype lt ON lt.ID = lo.LogTypeID
+WHERE lo.LinkType = 0 AND lo.LinkID = $PARENTKEY$
+ORDER BY lo.Date
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>Date</th><th>Type</th><th>Details</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$DATE</td><td>$LOGTYPENAME</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintMedia
++++
+SELECT
+m.LinkID AS RecordID, 
+m.ID AS MediaID,
+m.Date,
+m.MediaName,
+m.MediaNotes
+FROM media m
+WHERE m.LinkID = $PARENTKEY$ AND m.LinkTypeID = 0
+ORDER BY m.Date
++++
+$$HEADER
+<table border="1">
+<tr>
+<th>Date</th>
+<th>Link</th>
+</tr>
+HEADER$$
+$$BODY
+<tr>
+<td>$DATE</td>
+<td><a target="_blank" href="media?id=$MEDIAID">$MEDIANOTES</a></td>
+</tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_AnimalPrintAdditional
++++
+SELECT af.FieldLabel, 
+CASE WHEN af.FieldType = 8 THEN (SELECT REPLACE(REPLACE('{0} - {1}', '{0}', AnimalName), '{1}', ShelterCode) FROM animal WHERE ID = CAST(a.Value AS INTEGER)) 
+WHEN af.FieldType = 9 THEN (SELECT REPLACE(REPLACE('{0}, {1}', '{0}', OwnerName), '{1}', OwnerAddress) OwnerAddress FROM owner WHERE ID = CAST(a.Value AS INTEGER))
+ELSE a.Value END AS Value
+FROM additional a
+INNER JOIN additionalfield af ON a.AdditionalFieldID = af.ID
+WHERE a.LinkType IN (0, 2, 3, 4, 5, 6) AND a.LinkID = $PARENTKEY$
++++
+$$HEADER
+<table cellpadding="5">
+<tr><th>Field</th><th>Value</th>
+HEADER$$
+$$BODY
+<tr><td>$FIELDLABEL</td><td>$VALUE</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$

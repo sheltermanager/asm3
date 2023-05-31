@@ -1,0 +1,203 @@
+Non-shelter animal medical treatments due between two dates
+###
+Medical
+###
+33503/Any rev01
+###
+Non-shelter animal vaccinations, treatments and tests administered between two dates
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT * FROM
+(
+
+SELECT
+'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+a.BreedName, s.SpeciesName, il.LocationName, 
+am.TreatmentName, am.Dosage, amt.TreatmentNumber, 
+amt.TotalTreatments, amt.DateRequired, am.Comments,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
+LEFT OUTER JOIN owner o ON a.OriginalOwnerID = o.ID
+WHERE amt.DateGiven Is Null 
+AND amt.DateRequired >= '$@from$' AND amt.DateRequired <= '$@to$'
+AND a.NonShelterAnimal = 1
+
+UNION SELECT
+'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+a.BreedName, sp.SpeciesName, il.LocationName,
+v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
+'1' AS TotalTreatments, av.DateRequired, av.Comments,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
+FROM animal a
+INNER JOIN animalvaccination av ON a.ID = av.AnimalID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+LEFT OUTER JOIN owner o ON a.OriginalOwnerID = o.ID
+WHERE av.DateOfVaccination Is Null
+AND av.DateRequired >= '$@from$' AND av.DateRequired <= '$@to$'
+AND a.NonShelterAnimal = 1
+
+UNION SELECT
+'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+a.BreedName, sp.SpeciesName, il.LocationName,
+tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
+'1' AS TotalTreatments, at.DateRequired, at.Comments,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
+FROM animal a
+INNER JOIN animaltest at ON a.ID = at.AnimalID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN testtype tt ON at.TestTypeID = tt.ID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+LEFT OUTER JOIN owner o ON a.OriginalOwnerID = o.ID
+WHERE at.DateOfTest Is Null
+AND at.DateRequired >= '$@from$' AND at.DateRequired <= '$@to$'
+AND a.NonShelterAnimal = 1
+
+) dummy
+ORDER BY DateRequired
+
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Date</b></td>
+<td><b>Animal</b></td>
+<td><b>Species</b></td>
+<td><b>Breed</b></td>
+<td><b>Owner</b></td>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>Number</b></td>
+<td><b>Comments</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$DATEREQUIRED</td>
+<td><a target="_blank" href="animal?id=$AID">$SHELTERCODE $ANIMALNAME</a></td>
+<td>$SPECIESNAME</td>
+<td>$BREEDNAME</td>
+<td><b>$OWNERNAME</b><br/>
+$OWNERADDRESS<br />
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br />
+$HOMETELEPHONE</td>
+<td><b>$MTYPE: $TREATMENTNAME</b></td>
+<td>$DOSAGE</td>
+<td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+Non-shelter animal medical treatments given between two dates
+###
+Medical
+###
+33503/Any
+###
+Non-shelter animal vaccinations, treatments and tests administered between two dates
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT * FROM
+(
+
+SELECT
+'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID,
+a.BreedName, s.SpeciesName, il.LocationName, 
+am.TreatmentName, am.Dosage, amt.TreatmentNumber, 
+amt.TotalTreatments, amt.DateGiven, am.Comments,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
+LEFT OUTER JOIN owner o ON a.OriginalOwnerID = o.ID
+WHERE amt.DateGiven Is Not Null 
+AND amt.DateGiven >= '$@from$' AND amt.DateGiven <= '$@to$'
+AND a.NonShelterAnimal = 1
+
+UNION SELECT
+'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+a.BreedName, sp.SpeciesName, il.LocationName,
+v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
+'1' AS TotalTreatments, av.DateOfVaccination AS DateGiven, av.Comments,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
+FROM animal a
+INNER JOIN animalvaccination av ON a.ID = av.AnimalID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+LEFT OUTER JOIN owner o ON a.OriginalOwnerID = o.ID
+WHERE av.DateOfVaccination Is Not Null
+AND av.DateOfVaccination >= '$@from$' AND av.DateOfVaccination <= '$@to$'
+AND a.NonShelterAnimal = 1
+
+UNION SELECT
+'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
+a.BreedName, sp.SpeciesName, il.LocationName,
+tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber,
+'1' AS TotalTreatments, at.DateOfTest AS DateGiven, at.Comments,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
+FROM animal a
+INNER JOIN animaltest at ON a.ID = at.AnimalID
+INNER JOIN species sp ON sp.ID = a.SpeciesID
+INNER JOIN testtype tt ON at.TestTypeID = tt.ID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+LEFT OUTER JOIN owner o ON a.OriginalOwnerID = o.ID
+WHERE at.DateOfTest Is Not Null
+AND at.DateOfTest >= '$@from$' AND at.DateOfTest <= '$@to$'
+AND a.NonShelterAnimal = 1
+
+) dummy
+ORDER BY DateGiven
+
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Date</b></td>
+<td><b>Animal</b></td>
+<td><b>Species</b></td>
+<td><b>Breed</b></td>
+<td><b>Owner</b></td>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>Number</b></td>
+<td><b>Comments</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$DATEGIVEN</td>
+<td><a target="_blank" href="animal?id=$AID">$SHELTERCODE $ANIMALNAME</a></td>
+<td>$SPECIESNAME</td>
+<td>$BREEDNAME</td>
+<td><b>$OWNERNAME</b><br/>
+$OWNERADDRESS<br />
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br />
+$HOMETELEPHONE</td>
+<td><b>$MTYPE: $TREATMENTNAME</b></td>
+<td>$DOSAGE</td>
+<td>$TREATMENTNUMBER / $TOTALTREATMENTS</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

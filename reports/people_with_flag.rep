@@ -1,0 +1,396 @@
+People with Flag
+###
+People
+###
+33716/Any rev01
+###
+Person info for all people with the selected person flag.
+###
+en
+###
+$VAR flag PERSONFLAG$
+SELECT ID, OwnerName, OwnerCode,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
+HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
+FROM owner o
+WHERE (o.AdditionalFlags LIKE '$@flag$|%' OR o.AdditionalFlags LIKE '%|$@flag$|%')
+ORDER BY o.OwnerSurname
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Address</th>
+<th>Flags</th>
+<th>Phone</th>
+<th>Email</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
+<td>$OWNERCODE</td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN<br/>
+$OWNERCOUNTY $OWNERPOSTCODE</td>
+<td>$ADDITIONALFLAGS</td>
+<td>H: $HOMETELEPHONE W: $WORKTELEPHONE C: $MOBILETELEPHONE</td>
+<td>$EMAILADDRESS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+People with Flag (created after date)
+###
+People
+###
+33716/Any rev01
+###
+Person info for all people with the selected person flag where the record was added after a selected date
+###
+en
+###
+$VAR flag PERSONFLAG$
+$VAR after DATE People added after$
+SELECT ID, OwnerName, OwnerCode,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
+HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
+FROM owner o
+WHERE (o.AdditionalFlags LIKE '$@flag$|%' OR o.AdditionalFlags LIKE '%|$@flag$|%')
+AND o.CreatedDate >= '$@after$'
+ORDER BY o.OwnerSurname
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Address</th>
+<th>Flags</th>
+<th>Phone</th>
+<th>Email</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
+<td>$OWNERCODE</td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN<br/>
+$OWNERCOUNTY $OWNERPOSTCODE</td>
+<td>$ADDITIONALFLAGS</td>
+<td>H: $HOMETELEPHONE W: $WORKTELEPHONE C: $MOBILETELEPHONE</td>
+<td>$EMAILADDRESS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+People without Flag
+###
+People
+###
+33716/Any rev01
+###
+Person info for all people without the selected person flag.
+###
+en
+###
+$VAR flag PERSONFLAG$
+SELECT ID, OwnerName, OwnerCode,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
+HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
+FROM owner o
+WHERE (o.AdditionalFlags NOT LIKE '$@flag$|%' AND o.AdditionalFlags NOT LIKE '%|$@flag$|%')
+ORDER BY o.OwnerSurname
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Address</th>
+<th>Flags</th>
+<th>Phone</th>
+<th>Email</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
+<td>$OWNERCODE</td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN<br/>
+$OWNERCOUNTY $OWNERPOSTCODE</td>
+<td>$ADDITIONALFLAGS</td>
+<td>H: $HOMETELEPHONE W: $WORKTELEPHONE C: $MOBILETELEPHONE</td>
+<td>$EMAILADDRESS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+People with 2 Flags (AND)
+###
+People
+###
+33716/Any rev01
+###
+Person info for all people with all of the selected two person flags.
+###
+en
+###
+$VAR flag1 PERSONFLAG$
+$VAR flag2 PERSONFLAG$
+SELECT ID, OwnerName, OwnerCode,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
+HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
+FROM owner o
+WHERE 
+(o.AdditionalFlags LIKE '$@flag1$|%' OR o.AdditionalFlags LIKE '%|$@flag1$|%')
+AND (o.AdditionalFlags LIKE '$@flag2$|%' OR o.AdditionalFlags LIKE '%|$@flag2$|%')
+ORDER BY o.OwnerSurname
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Address</th>
+<th>Flags</th>
+<th>Phone</th>
+<th>Email</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
+<td>$OWNERCODE</td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN<br/>
+$OWNERCOUNTY $OWNERPOSTCODE</td>
+<td>$ADDITIONALFLAGS</td>
+<td>H: $HOMETELEPHONE W: $WORKTELEPHONE C: $MOBILETELEPHONE</td>
+<td>$EMAILADDRESS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+People with 3 Flags (AND)
+###
+People
+###
+33716/Any rev01
+###
+Person info for all people with all of the selected three person flags.
+###
+en
+###
+$VAR flag1 PERSONFLAG$
+$VAR flag2 PERSONFLAG$
+$VAR flag3 PERSONFLAG$
+SELECT ID, OwnerName, OwnerCode,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
+HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
+FROM owner o
+WHERE 
+(o.AdditionalFlags LIKE '$@flag1$|%' OR o.AdditionalFlags LIKE '%|$@flag1$|%')
+AND (o.AdditionalFlags LIKE '$@flag2$|%' OR o.AdditionalFlags LIKE '%|$@flag2$|%')
+AND (o.AdditionalFlags LIKE '$@flag3$|%' OR o.AdditionalFlags LIKE '%|$@flag3$|%')
+ORDER BY o.OwnerSurname
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Address</th>
+<th>Flags</th>
+<th>Phone</th>
+<th>Email</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
+<td>$OWNERCODE</td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN<br/>
+$OWNERCOUNTY $OWNERPOSTCODE</td>
+<td>$ADDITIONALFLAGS</td>
+<td>H: $HOMETELEPHONE W: $WORKTELEPHONE C: $MOBILETELEPHONE</td>
+<td>$EMAILADDRESS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+People with 2 Flags (OR)
+###
+People
+###
+33716/Any rev01
+###
+Person info for all people with either of the selected two person flags.
+###
+en
+###
+$VAR flag1 PERSONFLAG$
+$VAR flag2 PERSONFLAG$
+SELECT ID, OwnerName, OwnerCode,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
+HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
+FROM owner o
+WHERE 
+((o.AdditionalFlags LIKE '$@flag1$|%' OR o.AdditionalFlags LIKE '%|$@flag1$|%')
+OR (o.AdditionalFlags LIKE '$@flag2$|%' OR o.AdditionalFlags LIKE '%|$@flag2$|%'))
+ORDER BY o.OwnerSurname
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Address</th>
+<th>Flags</th>
+<th>Phone</th>
+<th>Email</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
+<td>$OWNERCODE</td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN<br/>
+$OWNERCOUNTY $OWNERPOSTCODE</td>
+<td>$ADDITIONALFLAGS</td>
+<td>H: $HOMETELEPHONE W: $WORKTELEPHONE C: $MOBILETELEPHONE</td>
+<td>$EMAILADDRESS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+People with 3 Flags (OR)
+###
+People
+###
+33716/Any rev01
+###
+Person info for all people with any of the selected three person flags.
+###
+en
+###
+$VAR flag1 PERSONFLAG$
+$VAR flag2 PERSONFLAG$
+$VAR flag3 PERSONFLAG$
+SELECT ID, OwnerName, OwnerCode,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
+HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
+FROM owner o
+WHERE 
+((o.AdditionalFlags LIKE '$@flag1$|%' OR o.AdditionalFlags LIKE '%|$@flag1$|%')
+OR (o.AdditionalFlags LIKE '$@flag2$|%' OR o.AdditionalFlags LIKE '%|$@flag2$|%')
+OR (o.AdditionalFlags LIKE '$@flag3$|%' OR o.AdditionalFlags LIKE '%|$@flag3$|%'))
+ORDER BY o.OwnerSurname
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Address</th>
+<th>Flags</th>
+<th>Phone</th>
+<th>Email</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
+<td>$OWNERCODE</td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN<br/>
+$OWNERCOUNTY $OWNERPOSTCODE</td>
+<td>$ADDITIONALFLAGS</td>
+<td>H: $HOMETELEPHONE W: $WORKTELEPHONE C: $MOBILETELEPHONE</td>
+<td>$EMAILADDRESS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+People with 2 Flags (AND NOT)
+###
+People
+###
+33716/Any rev01
+###
+Person info for all people with the first flag, but not the second flag.
+###
+en
+###
+$VAR flag1 PERSONFLAG$
+$VAR flag2 PERSONFLAG$
+SELECT ID, OwnerName, OwnerCode,
+OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, AdditionalFlags,
+HomeTelephone, WorkTelephone, MobileTelephone, EmailAddress
+FROM owner o
+WHERE
+(o.AdditionalFlags LIKE '$@flag1$|%' OR o.AdditionalFlags LIKE '%|$@flag1$|%')
+AND NOT (o.AdditionalFlags LIKE '$@flag2$|%' OR o.AdditionalFlags LIKE '%|$@flag2$|%')
+ORDER BY o.OwnerSurname
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Address</th>
+<th>Flags</th>
+<th>Phone</th>
+<th>Email</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
+<td>$OWNERCODE</td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN<br/>
+$OWNERCOUNTY $OWNERPOSTCODE</td>
+<td>$ADDITIONALFLAGS</td>
+<td>H: $HOMETELEPHONE W: $WORKTELEPHONE C: $MOBILETELEPHONE</td>
+<td>$EMAILADDRESS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

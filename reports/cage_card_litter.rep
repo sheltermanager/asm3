@@ -1,0 +1,105 @@
+Cage Card (litter)
+###
+Inventories
+###
+34302/Any omitcriteria omitheaderfooter rev01
+###
+A cage card for all animals in a litter.
+###
+en
+###
+SELECT
+animal.activeMovementType,
+animal.activeMovementID,
+animal.animalname,
+animal.ShelterCode,
+animal.AcceptanceNumber,
+animal.speciesID,
+animal.breedID,
+animal.basecolourID,
+animal.shelterLocation,
+animal.animalTypeID,
+animal.Markings,
+animal.Fee,
+lksize.Size,
+animal.AnimalComments,
+animal.datebroughtin,
+animal.dateofbirth,
+animal.id AS animalid,
+animal.identichipnumber,
+CASE WHEN animal.heartwormtested = 1 then (SELECT Name FROM lksposneg WHERE ID = animal.heartwormtestresult) ELSE '' END AS heartworm,
+CASE WHEN animal.combitested = 1 then (SELECT Name FROM lksposneg WHERE ID = animal.combitestresult) ELSE '' END AS fivl,
+CASE WHEN animal.flvresult = 1 then (SELECT Name FROM lksposneg WHERE ID = animal.flvresult) ELSE '' END AS flv,
+entryreason.reasonname,
+(SELECT Name FROM lksynun WHERE ID = animal.IsGoodWithDogs) AS WithDogs,
+(SELECT Name FROM lksynun WHERE ID = animal.IsGoodWithCats) AS WithCats,
+(SELECT Name FROM lksynunk WHERE ID = animal.IsGoodWithChildren) AS WithChildren,
+(SELECT Name FROM lksynun WHERE ID = animal.IsHouseTrained) AS HouseTrained,
+(SELECT Sex FROM lksex WHERE ID = animal.sex) AS TheSex,
+(SELECT Name FROM lksyesno WHERE ID = animal.neutered) AS altered,
+(SELECT NAME FROM lksyesno WHERE ID = animal.HasActiveReserve) AS reserved,
+animal.breedname,
+species.speciesName,
+basecolour.basecolour,
+internallocation.LocationName,
+animaltype.animalType,
+internallocation.LocationName AS TheLocation,
+internallocation.LocationName AS CurrentLocation,
+animal.TimeOnShelter AS OnShelterTime
+FROM animal
+INNER JOIN species ON species.ID=animal.speciesID
+LEFT OUTER JOIN internallocation ON internallocation.id=animal.shelterlocation
+INNER JOIN basecolour ON basecolour.ID=animal.basecolourID
+INNER JOIN animaltype ON animaltype.ID=animal.animalTypeID
+INNER JOIN lksize ON
+lksize.ID=animal.Size
+INNER JOIN entryreason ON
+entryreason.ID=animal.entryreasonid
+WHERE Archived = 0
+AND LOWER(AcceptanceNumber) LIKE LOWER('%$ASK STRING Litter ID$%')
+ORDER BY AcceptanceNumber, animal.DateOfBirth
+###
+$$HEADER
+<style>
+.card { 
+   border: 1px solid #000; 
+   display: inline-block; 
+   width: 16%;
+   text-align: center;
+   vertical-align: top;
+   margin: 2px; 
+}
+</style>
+<div style="vertical-align: top">
+HEADER$$
+
+$$GROUP_AcceptanceNumber
+$$HEAD
+<div class="card" style="text-align: left; font-size: 130%">
+<h2>$ACCEPTANCENUMBER</h2>
+<p>
+BREED:<br>
+<b>$breedname</b><br>
+DOB: <br>
+<b>$dateofbirth</b><br>
+ADOPTION FEE:<br>
+<b>$fee</b>
+</p>
+</div>
+$$FOOT
+GROUP$$
+
+$$BODY
+<div class="card">
+<img height="200" src="{IMAGE.$ANIMALID}" /> <br>
+  NAME: $animalname <br>
+  MICROCHIP: <b>$identichipnumber</b> <br>
+  SEX: $thesex <br>
+  MARKINGS: $markings
+</div>
+BODY$$
+
+$$FOOTER
+</div>
+FOOTER$$
+

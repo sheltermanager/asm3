@@ -1,0 +1,76 @@
+Site Detailed Shelter Inventory
+###
+Site
+###
+33908/Any rev01
+###
+Detailed current shelter inventory, with breed and microchip details for the current site (requires multi-site capability).
+###
+en
+###
+SELECT a.ShelterCode, 
+a.AnimalName, 
+a.MostRecentEntryDate,
+a.IdentichipNumber,
+a.AnimalAge,
+a.BreedName,
+a.TimeOnShelter,
+sx.Sex,
+t.AnimalType,
+s.SpeciesName,
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END AS LocationName
+FROM animal a
+LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
+WHERE a.Archived = 0
+AND $SITE$ = i.SiteID
+ORDER BY
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END, s.SpeciesName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_LocationName
+$$HEAD
+<h2>$LocationName</h2>
+$$FOOT
+<p><b>Total $LocationName: {COUNT.LocationName}</b></p>
+GROUP$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h3>$SpeciesName</h3>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Microchip</b></td>
+<td><b>Age</b></td>
+<td><b>Breed</b></td>
+<td><b>Sex</b></td>
+<td><b>Date Entered Shelter</b></td>
+<td><b>Time On Shelter</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $SpeciesName: {COUNT.SpeciesName}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$sheltercode</td>
+<td>$animalname</td>
+<td>$animaltype</td>
+<td>$identichipnumber</td>
+<td>$animalage</td>
+<td>$breedname</td>
+<td>$sex</td>
+<td>$mostrecententrydate</td>
+<td>$timeonshelter</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

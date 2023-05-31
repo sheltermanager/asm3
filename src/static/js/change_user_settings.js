@@ -19,6 +19,44 @@ $(function() {
             return s.join("\n");
         },
 
+        /** Sorts a list of pairs by the second element in each list */
+        pair_sort_second: function(l) {
+            return l.sort(function(a, b) {
+                if (a[1] < b[1]) return -1;
+                if (a[1] > b[1]) return 1;
+                return 0;
+            });
+        },
+
+        /** Reorders the list l and moves the selected items in configitem to the front */
+        pair_selected_to_front: function(l, configitem) {
+            let ci = configitem.split(",").reverse();
+            $.each(ci, function(i, v) {
+                v = String(v).trim();
+                $.each(l, function(iv, vl) {
+                    if (vl[0] == v) {
+                        l.splice(iv, 1); // Remove matching element from the list
+                        l.splice(0, 0, [ vl[0], vl[1] ]); // Reinsert it at the front
+                        return false; // Break the loop
+                    }
+                });
+            });
+            return l;
+        },
+
+        /** Renders the list of quicklink options */
+        quicklink_options: function() {
+            let ql = [];
+            $.each(header.QUICKLINKS_SET, function(k, v) {
+                ql.push([ k, v[2] ]);
+            });
+            ql = this.pair_sort_second(ql);
+            let userql = config.str(asm.user + "_QuicklinksID");
+            if (userql == "") { userql = config.str("QuicklinksID"); }
+            ql = this.pair_selected_to_front(ql, userql);
+            return this.two_pair_options(ql);
+        },
+
         theme_list: function() {
             let s = [];
             $.each(controller.themes, function(i, v) {
@@ -69,6 +107,16 @@ $(function() {
                     '<select id="olocale" data="locale" class="asm-doubleselectbox asm-iconselectmenu">',
                     '<option value="" data-style="background-image: url(static/images/flags/' + config.str("Locale") + '.png)">' + _("(use system)") + '</option>',
                     this.two_pair_options(controller.locales, true),
+                    '</select>',
+                    '</td>',
+                '</tr>',
+                '<tr>',
+                    '<td>',
+                    '<label for="quicklinksid">' + _("Quicklinks") + '</label>',
+                    '</td>',
+                    '<td>',
+                    '<select id="quicklinksid" multiple="multiple" class="asm-bsmselect" data="quicklinks">',
+                        this.quicklink_options(),
                     '</select>',
                     '</td>',
                 '</tr>',
@@ -174,6 +222,13 @@ $(function() {
             $("#olocale").select("value", u.LOCALEOVERRIDE);
             $("#systemtheme").select("value", u.THEMEOVERRIDE);
             $("#enabletotp").prop("checked", u.ENABLETOTP == 1);
+            let userql = config.str(asm.user + "_QuicklinksID");
+            if (userql == "") { userql = config.str("QuicklinksID"); }
+            let ql = userql.split(",");
+            $.each(ql, function(i, v) {
+                $("#quicklinksid").find("option[value='" + common.trim(v + "']")).attr("selected", "selected");
+            });
+            $("#quicklinksid").change();
             this.totp_change();
             if (controller.sigtype != "touch") { 
                 $("#signature").closest("tr").hide(); 

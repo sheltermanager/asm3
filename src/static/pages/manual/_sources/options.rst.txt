@@ -328,6 +328,18 @@ animals (this value can be modified on the animal's cost tab).
   date a cost was paid separately from the date a cost was incurred, tick this
   box.
 
+Daily Observations
+------------------
+
+This tab allows you to configure the values that are requested on the
+:ref:`dailyobservations` screen, along with the log type used for the 
+records written.
+
+The left column contains the name of the value, and the right the available
+values. If the right column is empty, the user will be given a free text box to
+enter a value. Otherwise, the right column should contain a pipe-separated list
+of the values available to show in a dropdown. 
+
 Data Protection
 ---------------
 
@@ -426,6 +438,10 @@ Diary and Messages
 
 * Show the full diary (instead of just my notes) on the home page: If this option
   is on, all users will see the full list of outstanding diary notes on their home page.
+
+* Auto complete diary notes linked to animals when they are marked deceased: If
+  this option is enabled, diary notes linked to animals are completed when the
+  animal is given a deceased date.
 
 * Email users their outstanding diary notes once per day: This option will cause
   the system to send users an email containing their outstanding diary notes. 

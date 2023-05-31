@@ -9,11 +9,19 @@ Import script for ARK DBF databases, covers people, animals, payments, events, l
 Last changed: 2nd Feb, 2023
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/ark_kw2942"
+PATH = "/home/robin/tmp/asm3_import_data/ark_mg2903"
 START_ID = 100
 PICTURE_IMPORT = False
+SKIP_BLANK_NAME_ADDRESS = True # Don't create people if they don't have a lastname and address
+SKIP_BLANK_ANIMAL_NAME = True # Don't create animals if they don't have a name
 
-BLANK_DATE = asm.parse_date("2015-01-01", "%Y-%m-%d") # Date used for licenses and incidents when the date was blank in ARK
+# Set these to 0 if the target database does not have them
+ADDITIONAL_PERSON_DOB = 1 # ID of additional field in the target database to hold date of birth
+ADDITIONAL_PERSON_DRIVERS_LIC = 2 # ID of additional field in the target database to hold drivers licence
+ADDITIONAL_ANIMAL_EUTH_BY = 4 # ID of additional field in the target database to hold euth by field
+ADDITIONAL_ANIMAL_EUTH_USD = 3 # ID of additional field in the target database to hold euth amount used
+
+BLANK_DATE = asm.parse_date("2015-01-01", "%Y-%m-%d") # Date used for licenses, incidents and dispositions when the date was blank in ARK
 
 owners = []
 ownerdonations = []
@@ -30,6 +38,29 @@ arkspecies = {
     "F": 2, # Cat
     "E": 24,# Horse
     "R": 7  # Rabbit
+}
+
+# entry reasons
+arksurrcode = {
+    "ABN":  11, # Abandoned
+    "ALP":  2,  # Allergies
+    "BAS":  13, # Born in Shelter
+    "BIT":  3,  # Biting
+    "MOV":  5,  # Moving
+    "NOT":  4,  # No Time
+    "RAB":  8,  # Rabies Observation
+    "STR":  7,  # Stray
+    "SUR":  17, # Surrender
+    "SZR":  10, # Seized
+    "TMA":  18, # Too many animals
+    "TR":   14  # Trapped
+}
+
+# death reasons
+arkasiout = {
+    6:      3, # Healthy
+    9:      4, # Sick/Injured
+    11:     2  # Died
 }
 
 asm.setid("animal", START_ID)
@@ -60,6 +91,7 @@ uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = uo.OwnerSurname
 
 for p in asm.read_dbf("%s/NAMES.DBF" % PATH):
+    if SKIP_BLANK_NAME_ADDRESS and (p["L_NAME"] == "" or p["ADR_ST_NAM"] == ""): continue
     o = asm.Owner()
     owners.append(o)
     ppo[p["ID"]] = o
@@ -69,13 +101,21 @@ for p in asm.read_dbf("%s/NAMES.DBF" % PATH):
     o.OwnerTown = p["CITY"].title()
     o.OwnerCounty = p["STATE"]
     o.OwnerPostcode = p["ZIP"]
+    o.EmailAddress = ["EMAIL"]
     o.HomeTelephone = p["H_PHONE"]
+    o.MobileTelephone = p["C_PHONE"]
     o.WorkTelephone = p["W_PHONE"]
-    comments = "ID: %s" % p["ID"]
+    comments = "ID: %s, DL#: %s, DOB: %s" % (p["ID"], p["DRIVERSLIC"], asm.format_date(p["DOB"], "%m/%d/%Y"))
     comments += "\n%s" % asm.nulltostr(p["NAMES_TXT"])
     o.Comments = comments
+    if p["DRIVERSLIC"] != "" and ADDITIONAL_PERSON_DRIVERS_LIC != 0:
+        asm.additional_field_id(ADDITIONAL_PERSON_DRIVERS_LIC, o.ID, p["DRIVERSLIC"])
+    if p["DOB"] is not None and ADDITIONAL_PERSON_DOB != 0:
+        #asm.stderr("DOB: %s %s %s %s" % (p["DOB"], type(p["DOB"]), p["DOB"].strftime("%m/%d/%Y"), asm.format_date(p["DOB"], "%m/%d/%Y")))
+        asm.additional_field_id(ADDITIONAL_PERSON_DOB, o.ID, asm.format_date(p["DOB"], "%m/%d/%Y"))
 
 for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
+    if SKIP_BLANK_ANIMAL_NAME and d["NAME"] == "": continue
     a = asm.Animal()
     animals.append(a)
     ppa[d["ID_NUM"]] = a
@@ -88,14 +128,12 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
         a.SpeciesID = 1
         if d["SURR_CODE"] == "STR":
             a.AnimalTypeID = 10
-            a.EntryReasonID = 11
         else:
             a.AnimalTypeID = 2
     elif d["SPECIES"] == "F":
         # Feline
         a.SpeciesID = 2
         if d["SURR_CODE"] == "STR":
-            a.EntryReasonID = 11
             a.AnimalTypeID = 12
         else:
             a.AnimalTypeID = 11
@@ -103,16 +141,17 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
         # Rabbit
         a.SpeciesID = 7
         a.AnimalTypeID = 13
-        if d["SURR_CODE"] == "STR":
-            a.EntryReasonID = 11
     else:
         # SPECIES == "O" for other, BREED contains species instead
         a.SpeciesID = asm.species_id_for_name(d["BREED"])
         a.AnimalTypeID = 13 # Miscellaneous
-        a.EntryReasonID = 11
+    a.EntryReasonID = 7 # Default to stray
+    if d["SURR_CODE"] != "":
+        if d["SURR_CODE"] in arksurrcode:
+            a.EntryReasonID = arksurrcode[d["SURR_CODE"]]
     if d["SURR_ID"] != "":
         if d["SURR_ID"] in ppo:
-            a.OriginalOwnerID = ppo[d["SURR_ID"]].ID
+            a.BroughtInByOwnerID = ppo[d["SURR_ID"]].ID
     a.Sex = asm.getsex_mf(d["SEX"])
     a.ShelterLocationUnit = d["LOCATION"]
     a.BreedID = asm.breed_id_for_name(d["BREED"])
@@ -136,21 +175,33 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
     if "DOB" in d and d["DOB"] is not None:
         dob = d["DOB"]
     elif type(d["AGE"]) == int:
-        dob = asm.subtract_days(dob, d["AGE"] * 365)
+        aut = 365
+        if d["AGEUNITS"].startswith("M"): aut = 30.5
+        elif d["AGEUNITS"].startswith("W"): aut = 7
+        dob = asm.subtract_days(dob, d["AGE"] * aut)
     elif type(d["AGE"]) == str and d["AGE"] != "":
         if d["AGE"].find("YR") != -1:
             dob = asm.subtract_days(dob, asm.atoi(d["AGE"]) * 365)
         elif d["AGE"].find("M") != -1:
             dob = asm.subtract_days(dob, asm.atoi(d["AGE"]) * 30)
     a.DateOfBirth = dob
+    if "WEIGHT" in d and d["WEIGHT"]: a.Weight = d["WEIGHT"]
+    if d["HAIR"]:
+        # S/M/L for short/medium/long
+        if d["HAIR"] == "L": a.CoatType = 1
+    a.Fee = asm.get_currency(d["ADOP_FEE"])
+    comments = "Original breed: %s\nColor: %s\nIntake: %s" % (d["BREED"], d["COLOR"], d["SURR_CODE"])
     if d["EUTH_USD"] is not None and d["EUTH_USD"] > 0:
         a.PutToSleep = 1
         a.Archived = 1
         a.DeceasedDate = d["DATE_DISPO"]
+        if d["ASIOUT"] in arkasiout: a.PTSReasonID = arkasiout[d["ASIOUT"]]
+        if ADDITIONAL_ANIMAL_EUTH_BY != 0: asm.additional_field_id(ADDITIONAL_ANIMAL_EUTH_BY, a.ID, d["EUTH_BY"])
+        if ADDITIONAL_ANIMAL_EUTH_USD != 0: asm.additional_field_id(ADDITIONAL_ANIMAL_EUTH_USD, a.ID, d["EUTH_USD"])
+        comments += "\nEuth: %s %s" % (d["EUTH_BY"], d["EUTH_USD"])
     if d["CHIP_NUM"] != "":
         a.Identichipped = 1
         a.IdentichipNumber = d["CHIP_NUM"]
-    comments = "Original breed: %s\nColor: %s" % (d["BREED"].strip(), d["COLOR"].strip())
     if asm.nulltostr(d["PU_LOC"]).strip() != "":
         comments += "\nPicked up from: %s" % d["PU_LOC"]
     a.HiddenAnimalDetails = comments
@@ -166,10 +217,11 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
             m.OwnerID = o.ID
             m.MovementType = 1
             m.MovementDate = asm.todatetime(d["DATE_DISPO"])
+            if m.MovementDate is None: m.MovementDate = BLANK_DATE
             # I've seen it happen where disposition date is years ago, but there was no intake date
             if m.MovementDate < a.DateBroughtIn:
                 a.DateBroughtIn = m.MovementDate
-            if d["RECLAIMED"] == "X": 
+            if d["RECLAIMED"] or d["ASIOUT"] == 5: 
                 m.MovementType = 5
             m.LastChangedDate = m.MovementDate
             a.Archived = 1
@@ -249,7 +301,10 @@ for c in asm.read_dbf("%s/AN_EVNTS.DBF" % PATH):
     l.LastChangedDate = c["LAST_TIME"]
 
 # Adopt out any animals still on shelter to an unknown owner
-asm.adopt_older_than(animals, movements, uo.ID, 0)
+# asm.adopt_older_than(animals, movements, uo.ID, 0)
+
+# Mark animals remaining on shelter as escaped instead
+asm.escaped_older_than(animals, movements, 0)
 
 for a in animals:
     print(a)

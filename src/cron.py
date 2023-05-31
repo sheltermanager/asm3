@@ -592,7 +592,7 @@ def print_usage():
     print("       maint_db_dump_smcom - produce an SQL dump for import into sheltermanager.com")
     print("       maint_db_fix_preferred_photos - fix/reset preferred flags for all photo media to latest")
     print("       maint_db_install - install structure/data into a new empty database")
-    print("       maint_db_reinstall - wipe the db and reinstall all default data and templates")
+    print("       maint_db_reinstall - reinstall default lookup data and templates to current locale")
     print("       maint_db_reinstall_default_onlineforms - reloads default online forms")
     print("       maint_db_reinstall_default_templates - reloads default document/publishing templates")
     print("       maint_db_replace_html_entities - substitutes html entities for unicode in all text fields")

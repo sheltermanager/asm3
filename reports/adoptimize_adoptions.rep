@@ -1,0 +1,63 @@
+Adoptimize Adoptions List
+###
+Figures
+###
+3000/Any rev01
+###
+Adoptions between two dates in the format required by Adoptimize.
+###
+en
+###
+SELECT
+m.MovementDate,
+a.AnimalName,
+s.SpeciesName,
+a.BreedName,
+x.Sex,
+o.OwnerForeNames,
+o.OwnerSurname,
+o.EmailAddress,
+o.MobileTelephone
+FROM adoption m
+INNER JOIN animal a ON m.AnimalID = a.ID
+INNER JOIN species s ON a.SpeciesID = s.ID
+INNER JOIN lksex x ON a.Sex = x.ID
+INNER JOIN owner o ON m.OwnerID = o.ID
+WHERE m.MovementDate >= '$ASK DATE Adopted between$' 
+AND m.MovementDate <= '$ASK DATE and$'
+AND m.MovementType = 1
+ORDER BY m.MovementDate
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Date of Adoption</th>
+<th>Pet Name</th>
+<th>Pet Type</th>
+<th>Breed</th>
+<th>Sex</th>
+<th>Adopter First Name</th>
+<th>Adopter Last Name</th>
+<th>Adopter Email</th>
+<th>Adopter Phone</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$MOVEMENTDATE</td>
+<td>$ANIMALNAME</td>
+<td>$SPECIESNAME</td>
+<td>$BREEDNAME</td>
+<td>$SEX</td>
+<td>$OWNERFORENAMES</td>
+<td>$OWNERSURNAME</td>
+<td>$EMAILADDRESS</td>
+<td>$MOBILETELEPHONE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

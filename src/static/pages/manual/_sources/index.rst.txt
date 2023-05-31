@@ -21,7 +21,6 @@ Contents:
    accounts
    stockcontrol
    reports
-   litters
    onlineform
    paymentprocessors
    rota

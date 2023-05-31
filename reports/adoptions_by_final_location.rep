@@ -1,0 +1,78 @@
+Adoptions by Final Location
+###
+Movements
+###
+Any rev01
+###
+Adoptions between two dates with the names/addresses of adopters, broken down by final location (retailer, foster or internal) before adoption.
+###
+en
+###
+$VAR from DATE Adoption between$
+$VAR to DATE and$
+
+SELECT ShelterCode, AnimalName, MostRecentEntryDate, MovementDate, 
+species.SpeciesName, animal.TimeOnShelter, animal.DaysOnShelter, animal.IdentichipNumber,
+animaltype.AnimalType AS theType,
+animal.BreedName,
+no.OwnerName, no.OwnerAddress,
+no.OwnerTown, no.OwnerCounty,
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone,
+CASE 
+WHEN EXISTS(SELECT ID FROM adoption ad WHERE ad.AnimalID = adoption.AnimalID AND ad.MovementDate < adoption.MovementDate AND ad.ReturnDate = adoption.MovementDate AND ad.MovementType = 8) THEN 'Retailer - ' || (SELECT ro.OwnerName FROM owner ro INNER JOIN adoption ad ON ad.OwnerID = ro.ID WHERE ad.MovementDate < adoption.MovementDate AND ad.ReturnDate = adoption.MovementDate AND ad.MovementType = 8 AND ad.AnimalID = adoption.AnimalID LIMIT 1)
+WHEN EXISTS(SELECT ID FROM adoption ad WHERE ad.AnimalID = adoption.AnimalID AND ad.MovementDate < adoption.MovementDate AND ad.ReturnDate = adoption.MovementDate AND ad.MovementType = 2) THEN 'Foster - ' || (SELECT fo.OwnerName FROM owner fo INNER JOIN adoption ad ON ad.OwnerID = fo.ID WHERE ad.MovementDate < adoption.MovementDate AND ad.ReturnDate = adoption.MovementDate AND ad.MovementType = 2 AND ad.AnimalID = adoption.AnimalID LIMIT 1)
+ELSE (SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) 
+END AS LastLocation
+FROM adoption
+INNER JOIN animal ON adoption.AnimalID = animal.ID
+INNER JOIN owner no ON adoption.OwnerID = no.ID
+INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
+INNER JOIN species ON species.ID = animal.SpeciesID
+WHERE MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$'
+ORDER BY LastLocation, MovementDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_LastLocation
+$$HEAD
+<h2>$LastLocation</h2>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Breed</b></td>
+<td><b>Microchip</b></td>
+<td><b>Entered Shelter</b></td>
+<td><b>Time On Shelter</b></td>
+<td><b>Adoption Date</b></td>
+<td><b>Adopted To</b></td>
+</tr>
+$$FOOT
+</table>
+<h2>Total adoptions from $LastLocation: {COUNT.LastLocation}</h2>
+GROUP$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$theType</td>
+<td>$BreedName</td>
+<td>$IdentichipNumber</td>
+<td>$MostRecentEntryDate</td>
+<td>$TimeOnShelter ($DaysOnShelter days)</td>
+<td>$MOVEMENTDATE</td>
+<td><i>$OwnerName</i><br/>
+$OwnerAddress<br/>
+$OwnerTown<br/>
+$OwnerCounty<br/>
+$OwnerPostcode<br/>
+$EmailAddress<br/>
+H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<h1>Total adoptions: {COUNT.SHELTERCODE}</h1>
+FOOTER$$
+

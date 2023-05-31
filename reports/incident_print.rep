@@ -1,0 +1,241 @@
+Print Incident Record
+###
+Animal Control
+###
+34021/Any rev06
+###
+A complete printout of an incident record.
+###
+en
+###
+SELECT
+ac.ID AS IncidentNumber, ac.IncidentDateTime, ti.IncidentName, co.OwnerName AS CallerName, co.HomeTelephone, co.WorkTelephone, co.MobileTelephone,
+ac.CallTaker, ac.CallDateTime, ac.CallNotes,
+ac.CallNotes AS CallNotesN2BR,
+vo.OwnerName AS VictimName, vo.OwnerAddress AS VictimAddress,
+o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3,
+o1.OwnerAddress AS OwnerAddress1, o2.OwnerAddress AS OwnerAddress2, o3.OwnerAddress AS OwnerAddress3,
+ac.DispatchAddress, ac.DispatchTown, ac.DispatchCounty, ac.DispatchPostcode, ac.DispatchedACO,
+ac.DispatchDateTime, ac.CompletedDate, ci.CompletedName,
+ac.RespondedDateTime, ac.FollowupDateTime AS FollowupDateTime1, ac.FollowupDateTime2, ac.FollowupDateTime3,
+s.SpeciesName, sx.Sex AS SexName, ac.AgeGroup, ac.AnimalDescription
+FROM animalcontrol ac
+LEFT OUTER JOIN species s ON s.ID = ac.SpeciesID
+LEFT OUTER JOIN lksex sx ON sx.ID = ac.Sex
+LEFT OUTER JOIN owner co ON co.ID = ac.CallerID
+LEFT OUTER JOIN owner o1 ON o1.ID = ac.OwnerID
+LEFT OUTER JOIN owner o2 ON o2.ID = ac.Owner2ID
+LEFT OUTER JOIN owner o3 ON o3.ID = ac.Owner3ID
+LEFT OUTER JOIN owner vo ON vo.ID = ac.VictimID
+LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
+LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID
+WHERE ac.ID = $ASK NUMBER Enter the incident number$
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<h2>$INCIDENTNAME - $OWNERNAME1</h2>
+<table border="1">
+<tr>
+<td>Number</td><td><b>$INCIDENTNUMBER</b></td>
+</tr><tr>
+<td>Date/Time</td><td>$INCIDENTDATETIME</td>
+</tr><tr>
+<td>Completed</td><td>$COMPLETEDDATE</td>
+</tr><tr>
+<td>Completion Type</td><td>$COMPLETEDNAME</td>
+</tr><tr>
+<td>Notes</td><td>$CALLNOTESN2BR</td>
+</tr><tr>
+<td>Call Date/Time</td><td>$CALLDATETIME</td>
+</tr><tr>
+<td>Taken By</td><td>$CALLTAKER</td>
+</tr><tr>
+<td>Caller</td><td>$CALLERNAME<br/>$HOMETELEPHONE</td>
+</tr><tr>
+<td>Victim</td><td>$VICTIMNAME<br/>$VICTIMADDRESS</td>
+</tr>
+</table>
+
+<h2>Dispatch</h2>
+
+<table border="1">
+<tr>
+<td>Address</td><td>$DISPATCHADDRESS<br/>$DISPATCHTOWN $DISPATCHCOUNTY $DISPATCHPOSTCODE</td>
+</tr><tr>
+<td>ACO</td><td>$DISPATCHEDACO</td>
+</tr><tr>
+<td>Date/Time</td><td>$DISPATCHDATETIME</td>
+</tr><tr>
+<td>Responded</td><td>$RESPONDEDDATETIME</td>
+</tr><tr>
+<td>Followup</td><td>$FOLLOWUPDATETIME1</td>
+</tr><tr>
+<td>Followup 2</td><td>$FOLLOWUPDATETIME2</td>
+</tr><tr>
+<td>Followup 3</td><td>$FOLLOWUPDATETIME3</td>
+</tr>
+</table>
+
+<h2>Suspects</h2>
+
+<table border="1">
+<tr>
+<td>Suspect 1</td><td>$OWNERNAME1<br />$OWNERADDRESS1</td>
+</tr><tr>
+<td>Suspect 2</td><td>$OWNERNAME2<br />$OWNERADDRESS2</td>
+</tr><tr>
+<td>Suspect 3</td><td>$OWNERNAME3<br />$OWNERADDRESS3</td>
+</tr>
+</table>
+
+<h2>Animal</h2>
+
+<table border="1">
+<tr>
+<td>Species</td><td>$SPECIESNAME</td>
+</tr><tr>
+<td>Sex</td><td>$SEXNAME</td>
+</tr><tr>
+<td>Age Group</td><td>$AGEGROUP</td>
+</tr><tr>
+<td>Description</td><td>$ANIMALDESCRIPTION</td>
+</tr>
+</table>
+
+<h2>Linked Animals</h2>
+{SUBREPORT.SUBREPORT_IncidentPrintLinkedAnimals.INCIDENTNUMBER}
+
+<h2>Citations</h2>
+{SUBREPORT.SUBREPORT_IncidentPrintCitation.INCIDENTNUMBER}
+
+<h2>Diary</h2>
+{SUBREPORT.SUBREPORT_IncidentPrintDiary.INCIDENTNUMBER}
+
+<h2>Log</h2>
+{SUBREPORT.SUBREPORT_IncidentPrintLog.INCIDENTNUMBER}
+
+<h2>Additional</h2>
+{SUBREPORT.SUBREPORT_IncidentPrintAdditional.INCIDENTNUMBER}
+
+<h2>Media</h2>
+{SUBREPORT.SUBREPORT_IncidentPrintMedia.INCIDENTNUMBER}
+
+BODY$$
+
+$$FOOTER
+FOOTER$$
+###
+SUBREPORT_IncidentPrintLinkedAnimals
++++
+SELECT a.AnimalName, a.ShelterCode, a.ShortCode,
+s.SpeciesName, t.AnimalType, a.BreedName, a.AnimalAge
+FROM animal a
+INNER JOIN animalcontrolanimal aca ON aca.AnimalID = a.ID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+WHERE aca.AnimalControlID = $PARENTKEY$
++++
+$$HEADER
+<table border="1">
+<tr><th>Name</th><th>Code</th><th>Type</th><th>Species</th><th>Breed</th><th>Age</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$ANIMALNAME</td><td>$SHELTERCODE</td><td>$ANIMALTYPE</td><td>$SPECIESNAME</td><td>$BREEDNAME</td><td>$ANIMALAGE</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_IncidentPrintCitation
++++
+SELECT o.OwnerName, o.OwnerAddress, o.OwnerPostcode, o.HomeTelephone, o.EmailAddress,
+oc.*, oc.ID AS ocid, ct.CitationName
+FROM ownercitation oc
+INNER JOIN citationtype ct ON ct.ID = oc.CitationTypeID
+INNER JOIN owner o ON o.ID = oc.OwnerID
+WHERE oc.AnimalControlID = $PARENTKEY$
+ORDER BY oc.CitationDate
++++
+$$HEADER
+<table border="1">
+<tr><th>Date</th><th>Type</th><th>Fine</th><th>Paid</th><th>Person</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$CITATIONDATE</td><td>$CITATIONNAME</td><td>$FINEAMOUNT $FINEDUEDATE</td><td>$FINEPAIDDATE</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS</br />$OWNERPOSTCODE<br />$HOMETELEPHONE<br />$EMAILADDRESS</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_IncidentPrintDiary
++++
+SELECT d.* FROM diary d
+WHERE d.LinkType = 7 AND d.LinkID = $PARENTKEY$
+ORDER BY d.DiaryDateTime
++++
+$$HEADER
+<table border="1">
+<tr><th>By</th><th>For</th><th>Date</th><th>Completed</th><th>Subject</th><th>Note</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$CREATEDBY</td><td>$DIARYFORNAME</td><td>$DIARYDATETIME</td><td>$DATECOMPLETED</td><td>$SUBJECT</td><td>$NOTE</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_IncidentPrintLog
++++
+SELECT lo.*, lt.LogTypeName FROM log lo
+INNER JOIN logtype lt ON lt.ID = lo.LogTypeID
+WHERE lo.LinkType = 6 AND lo.LinkID = $PARENTKEY$
+ORDER BY lo.Date
++++
+$$HEADER
+<table border="1">
+<tr><th>Date</th><th>Type</th><th>Details</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$DATE</td><td>$LOGTYPENAME</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_IncidentPrintAdditional
++++
+SELECT af.FieldLabel, a.Value FROM additional a
+INNER JOIN additionalfield af ON a.AdditionalFieldID = af.ID
+WHERE a.LinkType IN (16, 17, 18, 19, 20) AND a.LinkID = $PARENTKEY$
++++
+$$HEADER
+<table border="1">
+<tr><th>Field</th><th>Value</th>
+HEADER$$
+$$BODY
+<tr><td>$FIELDLABEL</td><td>$VALUE</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
++++
+SUBREPORT_IncidentPrintMedia
++++
+SELECT Date, MediaName, MediaNotes, MediaMimeType, MediaSize, RetainUntil,
+REPLACE('https://service.sheltermanager.com/asmservice?account=$DATABASENAME$&method=media_file&mediaid={0}', '{0}', CAST(ID AS VARCHAR(20))) AS Link
+FROM media 
+WHERE LinkID=$PARENTKEY$ AND LinkTypeID=6 ORDER BY Date
++++
+$$HEADER
+<table border="1">
+<tr><th>Date</th><th>Type</th><th>Size</th><th>Name/Notes</th><th>Retain Until</th><th>Link</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$DATE</td><td>$MEDIAMIMETYPE</td><td>$MEDIASIZE</td><td>$MEDIANOTES</td><td>$RETAINUNTIL</td><td><a target="_blank" href="$LINK">$MEDIANAME</a></td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
+

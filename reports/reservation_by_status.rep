@@ -1,0 +1,76 @@
+Reservations between two dates by status
+###
+Movements
+###
+33909/Any rev03
+###
+All reservations between two dates.
+###
+en
+###
+SELECT ShelterCode, AnimalName, DateBroughtIn, ReservationDate, ReservationCancelledDate, 
+adoption.Comments, 
+species.SpeciesName,
+reservationstatus.StatusName,
+animaltype.AnimalType AS theType,
+animal.BreedName,
+no.OwnerName, no.OwnerAddress,
+no.OwnerTown, no.OwnerCounty,
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone,
+co.OwnerName AS CoordinatorName
+FROM adoption
+INNER JOIN owner no ON adoption.OwnerID = no.ID
+LEFT OUTER JOIN animal ON adoption.AnimalID = animal.ID
+LEFT OUTER JOIN owner co ON animal.AdoptionCoordinatorID = co.ID
+LEFT OUTER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
+LEFT OUTER JOIN species ON species.ID = animal.SpeciesID
+LEFT OUTER JOIN reservationstatus ON reservationstatus.ID = adoption.ReservationStatusID
+WHERE MovementType = 0 AND ReservationDate >= '$ASK DATE Reservation between$' AND ReservationDate <= '$ASK DATE and $' 
+ORDER BY StatusName, ReservationDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_StatusName
+$$HEAD
+<h2>$StatusName</h2>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Breed</b></td>
+<td><b>Entered Shelter</b></td>
+<td><b>Coordinator</b></td>
+<td><b>Reserved On</b></td>
+<td><b>Cancelled</b></td>
+<td><b>Reserved By</b></td>
+<td><b>Comments</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $StatusName: {COUNT.StatusName}</p>
+GROUP$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$theType</td>
+<td>$BreedName</td>
+<td>$DateBroughtIn</td>
+<td>$CoordinatorName</td>
+<td>$RESERVATIONDATE</td>
+<td>$RESERVATIONCANCELLEDDATE</td>
+<td><i>$OwnerName</i><br/>
+$OwnerAddress<br/>
+$OwnerTown<br/>
+$OwnerCounty<br/>
+$OwnerPostcode<br/>
+$EmailAddress<br/>
+H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+

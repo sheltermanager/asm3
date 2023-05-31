@@ -1,0 +1,78 @@
+People Looking For
+###
+Owners
+###
+33904/Any rev01
+###
+All person looking for matches.
+###
+en
+###
+SELECT 
+o.OwnerName, o.OwnerAddress, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.MatchAdded, 
+ol.MatchSummary,
+a.ShelterCode, a.AnimalName, a.AnimalAge, 
+(SELECT Sex FROM lksex WHERE ID = a.Sex) AS Sex,
+(SELECT Size FROM lksize WHERE ID = a.Size) AS Size,
+(SELECT BaseColour FROM basecolour WHERE ID = a.BaseColourID) AS Color,
+s.SpeciesName,
+a.BreedName,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithCats) AS GoodWithCats,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithDogs) AS GoodWithDogs,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithChildren) AS GoodWithChildren,
+(SELECT Name FROM lksynun WHERE ID = a.IsHousetrained) AS Housetrained,
+a.AnimalComments
+FROM ownerlookingfor ol
+INNER JOIN owner o ON o.ID = ol.OwnerID
+INNER JOIN animal a ON a.ID = ol.AnimalID
+INNER JOIN species s ON a.SpeciesID = s.ID
+ORDER BY o.OwnerName, o.MatchAdded
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_OwnerName
+$$HEAD
+<h1>$OwnerName ($OwnerAddress) $HomeTelephone $WorkTelephone $MobileTelephone</h1>
+<p>(Since $MatchAdded, looking for: $MatchSummary)</p>
+<hr/>
+<table border="1">
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>Age</th>
+<th>Sex</th>
+<th>Size</th>
+<th>Color</th>
+<th>Species</th>
+<th>Breed</th>
+<th>Good with cats</th>
+<th>Good with dogs</th>
+<th>Good with children</th>
+<th>Housetrained</th>
+<th>Comments</th>
+</tr>
+$$FOOT
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$ANIMALAGE</td>
+<td>$SEX</td>
+<td>$SIZE</td>
+<td>$COLOR</td>
+<td>$SPECIESNAME</td>
+<td>$BREEDNAME</td>
+<td>$GOODWITHCATS</td>
+<td>$GOODWITHDOGS</td>
+<td>$GOODWITHCHILDREN</td>
+<td>$HOUSETRAINED</td>
+<td>$ANIMALCOMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

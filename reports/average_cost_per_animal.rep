@@ -1,0 +1,42 @@
+Average Cost Per Animal
+###
+Financial
+###
+2707/Any rev01
+###
+Average cost per animal considering medical, vaccination and costs. Only considers adopted/cost complete animals.
+###
+en
+###
+SELECT
+(SELECT COUNT(*) FROM animal WHERE ActiveMovementType = 1) AS TotalAnimals,
+COALESCE((SELECT SUM(CostAmount) FROM animalcost INNER JOIN animal ON animal.ID = animalcost.AnimalID WHERE ActiveMovementType = 1), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE ActiveMovementType = 1), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE ActiveMovementType = 1), 0) AS Cost,
+(COALESCE((SELECT SUM(CostAmount) FROM animalcost INNER JOIN animal ON animal.ID = animalcost.AnimalID WHERE ActiveMovementType = 1), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE ActiveMovementType = 1), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE ActiveMovementType = 1), 0)) / (SELECT COUNT(*) FROM animal WHERE ActiveMovementType = 1) AS Amount
+FROM animal LIMIT 1
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<table>
+<tr>
+<td>Number of adopted animals:</td>
+<td>$TOTALANIMALS</td>
+</tr>
+<tr>
+<td>Total costs of all adopted animals:</td>
+<td>$COST</td>
+</tr>
+<tr>
+<td>Average cost per animal:</td>
+<td>$AMOUNT</td>
+</tr>
+</table>
+BODY$$
+
+$$FOOTER
+FOOTER$$

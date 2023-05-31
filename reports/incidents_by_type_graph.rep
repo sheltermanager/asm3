@@ -1,0 +1,20 @@
+Incidents by type
+###
+Animal Control Charts
+###
+33307/Any rev01
+###
+Chart of incidents between two dates by type
+###
+en
+###
+SELECT
+ti.IncidentName, COUNT(ti.IncidentName)
+FROM animalcontrol ac
+INNER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
+WHERE ac.IncidentDateTime >= '$ASK DATE Enter the from date$'
+AND ac.IncidentDateTime <= '$ASK DATE Enter the to date$ 23:59:59'
+GROUP BY ti.IncidentName
+ORDER BY ti.IncidentName
+###
+GRAPH PIE

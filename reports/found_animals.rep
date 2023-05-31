@@ -1,0 +1,64 @@
+Found Animals (all)
+###
+Lost and Found
+###
+Any rev01
+###
+All found animals on file.
+###
+en
+###
+SELECT at.SpeciesName, s.Sex, b.BreedName, 
+c.BaseColour, o.OwnerName, o.OwnerAddress, o.HomeTelephone, o.WorkTelephone, 
+o.MobileTelephone, a.DateReported, a.DateFound,
+a.AgeGroup, a.DistFeat, a.AreaFound, a.AreaPostcode, a.Comments
+FROM animalfound a
+INNER JOIN species at ON at.ID = a.AnimalTypeID
+INNER JOIN lksex s ON s.ID = a.Sex
+LEFT OUTER JOIN breed b ON b.ID = a.BreedID
+INNER JOIN basecolour c ON c.ID = a.BaseColourID
+INNER JOIN owner o ON o.ID = a.OwnerID
+WHERE a.ReturnToOwnerDate Is Null
+ORDER BY DateFound
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Species</b></td>
+<td><b>Sex</b></td>
+<td><b>Breed</b></td>
+<td><b>Colour</b></td>
+<td><b>Owner</b></td>
+<td><b>Reported</b></td>
+<td><b>Found</b></td>
+<td><b>Age</b></td>
+<td><b>Markings</b></td>
+<td><b>Area</b></td>
+<td><b>Postcode</b></td>
+<td><b>Comments</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$SpeciesName</td>
+<td>$Sex</td>
+<td>$BreedName</td>
+<td>$BaseColour</td>
+<td><b>$OwnerName</b><br />
+$OwnerAddress<br />
+$HomeTelephone<br />
+$WorkTelephone<br />
+$MobileTelephone</td>
+<td>$DateReported</td>
+<td>$DateFound</td>
+<td>$AgeGroup</td>
+<td>$DistFeat</td>
+<td>$AreaFound</td>
+<td>$AreaPostcode</td>
+<td>$Comments</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

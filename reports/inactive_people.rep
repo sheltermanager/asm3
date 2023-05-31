@@ -1,0 +1,61 @@
+Inactive People
+###
+Auditing
+###
+33712/Any rev01
+###
+People who have not had any kind of interaction with the shelter since a set date.
+###
+en
+###
+$VAR to DATE Show people with no activity after$
+
+SELECT o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.LastChangedDate,
+(SELECT Date FROM ownerdonation WHERE OwnerID = o.ID ORDER BY Date DESC LIMIT 1) AS LastPayment,
+(SELECT MovementDate FROM adoption WHERE OwnerID = o.ID ORDER BY MovementDate DESC LIMIT 1) AS LastMovement,
+(SELECT DateBroughtIn FROM animal WHERE OriginalOwnerID = o.ID ORDER BY DateBroughtIn DESC LIMIT 1) AS LastSurrender,
+(SELECT IncidentDateTime FROM animalcontrol WHERE OwnerID = o.ID ORDER BY IncidentDateTime DESC LIMIT 1) AS LastSuspect,
+(SELECT IncidentDateTime FROM animalcontrol WHERE CallerID = o.ID ORDER BY IncidentDateTime DESC LIMIT 1) AS LastCaller,
+(SELECT IncidentDateTime FROM animalcontrol WHERE VictimID = o.ID ORDER BY IncidentDateTime DESC LIMIT 1) AS LastVictim,
+(SELECT CitationDate FROM ownercitation WHERE OwnerID = o.ID ORDER BY CitationDate DESC LIMIT 1) AS LastCitation,
+(SELECT IssueDate FROM ownerlicence WHERE OwnerID = o.ID ORDER BY IssueDate DESC LIMIT 1) AS LastLicense
+FROM owner o
+WHERE 
+NOT EXISTS (SELECT Date FROM ownerdonation WHERE OwnerID = o.ID AND Date > '$@to$')
+AND NOT EXISTS (SELECT MovementDate FROM adoption WHERE OwnerID = o.ID AND MovementDate > '$@to$')
+AND NOT EXISTS (SELECT DateBroughtIn FROM animal WHERE OriginalOwnerID = o.ID AND DateBroughtIn > '$@to$')
+AND NOT EXISTS (SELECT IncidentDateTime FROM animalcontrol WHERE (OwnerID = o.ID OR CallerID = o.ID OR VictimID = o.ID) AND IncidentDateTime > '$@to$')
+AND NOT EXISTS (SELECT CitationDate FROM ownercitation WHERE OwnerID = o.ID AND CitationDate > '$@to$')
+AND NOT EXISTS (SELECT IssueDate FROM ownerlicence WHERE OwnerID = o.ID AND IssueDate > '$@to$')
+ORDER BY o.OwnerName
+###
+$$HEADER
+<table>
+HEADER$$
+
+$$BODY
+<tr>
+<td><b>$OWNERNAME</b></br>
+$OWNERADDRESS<br/>
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br/>
+$HOMETELEPHONE $WORKTELEPHONE $MOBILETELEPHONE<br/>
+<i>$EMAILADDRESS</i></td>
+<td style="border-bottom: 1px solid #000">
+Payment: <b>$LASTPAYMENT</b><br/>
+Movement: <b>$LASTMOVEMENT</b><br/>
+Surrender: <b>$LASTSURRENDER</b><br/>
+Suspect: <b>$LASTSUSPECT</b><br/>
+Called: <b>$LASTCALLER</b><br/>
+Victim: <b>$LASTVICTIM</b><br/>
+Citation: <b>$LASTCITATION</b><br/>
+License issued: <b>$LASTLICENSE</b>
+</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total: {COUNT.OWNERNAME}</h2>
+FOOTER$$
+

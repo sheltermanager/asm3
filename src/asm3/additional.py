@@ -246,7 +246,7 @@ def insert_field_from_form(dbo, username, post):
         "FieldType":        post.integer("type"),
         "LinkType":         post.integer("link"),
         "DisplayIndex":     post.integer("displayindex")
-    })
+    }, username, setRecordVersion=False, setCreated=False)
 
 def update_field_from_form(dbo, username, post):
     """
@@ -266,7 +266,7 @@ def update_field_from_form(dbo, username, post):
         "FieldType":        post.integer("type"),
         "LinkType":         post.integer("link"),
         "DisplayIndex":     post.integer("displayindex")
-    })
+    }, username, setRecordVersion=False, setLastChanged=False)
 
 def update_merge_animal(dbo, oldanimalid, newanimalid):
     """

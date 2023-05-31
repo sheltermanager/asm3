@@ -164,16 +164,20 @@ $.widget("asm.table", {
         let tablewidgets = [];
         if (options.filter) { tablewidgets.push("filter"); }
         if (options.sticky_header && config.bool("StickyTableHeaders")) { 
-            //tablewidgets.push("stickyHeaders"); Use native browser support via position: sticky instead
+            //tablewidgets.push("stickyHeaders"); //Use native browser support via position: sticky instead
             tbl.find("th").addClass("asm-table-sticky-header");
         }
         tbl.tablesorter({
             sortColumn: options.sortColumn,
             sortList: options.sortList,
             widgets: tablewidgets,
-            filter_columnFilters: options.filter,
-            filter_cssFilter: "tablesorter-filter",
-            filter_ignoreCase: true,
+            widgetOptions: {
+                filter_childRows: false,
+                filter_columnFilters: options.filter,
+                filter_cssFilter: "tablesorter-filter",
+                filter_ignoreCase: true,
+                filter_searchDelay: 500
+            },
             textExtraction: function(node, table, cellIndex) {
                 // this function controls how text is extracted from cells for
                 // sorting purposes.
@@ -722,6 +726,7 @@ $.widget("asm.emailform", {
         $("#em-template").change(function() {
             let o = self.options.o;
             let formdata = "mode=emailtemplate&dtid=" + $("#em-template").val();
+            if (o.animalcontrolid) { formdata += "&animalcontrolid=" + o.animalcontrolid; }
             if (o.donationids) { formdata += "&donationids=" + o.donationids; }
             if (o.personid) { formdata += "&personid=" + o.personid; }
             if (o.animalid) { formdata += "&animalid=" + o.animalid; }
@@ -1747,32 +1752,4 @@ $.fn.asmcontent = function(type) {
         // default
         $(this).show("slide", {direction: 'left'}, common.fx_speed);
     });
-};
-
-$.fn.serializeTableformFilterValues = function() {
-  var filterValues = {};
-  $('.tablesorter-filter').each(function() {
-    var column = this.getAttribute('data-column');
-    var value = this.value;
-    filterValues[column] = value;
-  });
-  window.SerializedFilters = filterValues;
-  return false;
-};
-
-$.fn.deserializeTableformFilterValues = function() {
-    if(window.SerializedFilters && Object.keys(window.SerializedFilters).length>0) {
-        let filterValues = window.SerializedFilters; 
-        for (var column in filterValues) {
-            if(1==1)
-            {
-                var elements = document.querySelectorAll('.tablesorter-filter[data-column="' + column + '"]');
-                for (var i = 0; i < elements.length; i++) {
-                    elements[i].value = filterValues[column];
-                    elements[i].dispatchEvent(new Event("keyup"));
-                }
-            }
-        }
-    }
-    return false;
 };

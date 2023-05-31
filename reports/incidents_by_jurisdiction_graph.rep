@@ -1,0 +1,20 @@
+Incidents by jurisdiction
+###
+Animal Control Charts
+###
+34016/Any rev01
+###
+Chart of incidents between two dates by jurisdiction
+###
+en
+###
+SELECT
+j.JurisdictionName, COUNT(j.JurisdictionName)
+FROM animalcontrol ac
+INNER JOIN jurisdiction j ON j.ID = ac.JurisdictionID
+WHERE ac.IncidentDateTime >= '$ASK DATE Enter the from date$'
+AND ac.IncidentDateTime <= '$ASK DATE Enter the to date$ 23:59:59'
+GROUP BY j.JurisdictionName
+ORDER BY j.JurisdictionName
+###
+GRAPH PIE

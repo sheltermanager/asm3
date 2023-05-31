@@ -1,0 +1,85 @@
+Average Monthly Animals In Care by Species
+###
+Statistics
+###
+3000/Any rev01
+###
+The average number of animals in care for each historical month by species.
+###
+en
+###
+SELECT Month, Year, Average, SpeciesName
+FROM animalfigures
+INNER JOIN species ON species.ID = animalfigures.SpeciesID
+WHERE Code = 'SP_ONSHELTER'
+ORDER BY SpeciesName, Year, Month
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+<table border="1">
+<tr>
+<th>Year</th>
+<th>Month</th>
+<th>Average</th>
+</tr>
+$$FOOT
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$Year</td>
+<td>$Month</td>
+<td>$Average</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+&&&
+Average Annual Animals In Care by Species
+###
+Statistics
+###
+3000/Any rev01
+###
+The average number of animals in care for each historical year by species.
+###
+en
+###
+SELECT Year, AVG(Average) AS AnnualAverage, SpeciesName
+FROM animalfigures
+INNER JOIN species ON species.ID = animalfigures.SpeciesID
+WHERE Code = 'SP_ONSHELTER'
+GROUP BY SpeciesName, Year
+ORDER BY SpeciesName, Year
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+<table border="1">
+<tr>
+<th>Year</th>
+<th>Average</th>
+</tr>
+$$FOOT
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$Year</td>
+<td>$AnnualAverage</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+

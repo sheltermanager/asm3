@@ -1,0 +1,128 @@
+Cost Comment Search
+###
+Financial
+###
+33601/Any rev02
+###
+Search the comments of costs, medicals and vaccinations
+###
+en
+###
+$VAR stext STRING Enter the text to search for$
+
+SELECT * FROM (
+
+SELECT 
+animalcost.CostDate AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animalcost.CostAmount AS amt,
+costtype.CostTypeName AS description,
+animalcost.Description AS comments,
+'Cost' AS ctype
+FROM animal
+INNER JOIN animalcost ON animal.ID = animalcost.AnimalID
+INNER JOIN costtype ON animalcost.CostTypeID = costtype.ID
+INNER JOIN species ON species.ID = animal.SpeciesID
+WHERE animalcost.Description LIKE '%$@stext$%'
+
+UNION ALL SELECT
+animalvaccination.DateOfVaccination AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animalvaccination.Cost AS amt,
+vaccinationtype.VaccinationType AS description,
+animalvaccination.Comments AS comments,
+'Vaccination' AS ctype
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID
+INNER JOIN vaccinationtype ON animalvaccination.VaccinationID = vaccinationtype.ID
+WHERE animalvaccination.Comments LIKE '%$@stext$%'
+
+UNION ALL SELECT
+animaltest.DateOfTest AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animaltest.Cost AS amt,
+testtype.TestName AS description,
+animaltest.Comments AS comments,
+'Test' AS ctype
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN animaltest ON animaltest.AnimalID = animal.ID
+INNER JOIN testtype ON animaltest.TestTypeID = testtype.ID
+WHERE animaltest.Comments LIKE '%$@stext$%'
+
+UNION ALL SELECT
+animalmedical.StartDate AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animalmedical.Cost AS amt,
+animalmedical.TreatmentName AS description,
+animalmedical.Comments AS comments,
+'Medical' AS ctype
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
+WHERE animalmedical.Comments LIKE '%$@stext$%'
+
+UNION ALL SELECT
+animaltransport.PickupDateTime AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animaltransport.Cost AS amt,
+'Transport' AS description,
+animaltransport.Comments AS comments,
+'Transport' AS ctype
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN animaltransport ON animaltransport.AnimalID = animal.ID
+WHERE animaltransport.Comments LIKE '%$@stext$%'
+
+) dummy ORDER BY date DESC
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Type</b></td>
+<td><b>Date</b></td>
+<td><b>Name</b></td>
+<td><b>Code</b></td>
+<td><b>Species</b></td>
+<td><b>Amount</b></td>
+<td><b>Description</b></td>
+<td></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$CTYPE</td>
+<td>$DATE</td>
+<td>$NAME</td>
+<td>$CODE</td>
+<td>$SPECIESNAME</td>
+<td>$AMT</td>
+<td>$DESCRIPTION</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><b>{SUM.AMT.2}</b></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+FOOTER$$
+

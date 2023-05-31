@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Appendix: CSV file import fields &mdash; ASM 47u documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -10,7 +11,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -23,14 +26,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> ASM
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ASM
           </a>
               <div class="version">
                 47u
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -52,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
@@ -84,8 +90,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Appendix: CSV file import fields</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Appendix: CSV file import fields</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/csvimportfields.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -95,8 +101,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="appendix-csv-file-import-fields">
-<span id="csvimportfields"></span><h1>Appendix: CSV file import fields<a class="headerlink" href="#appendix-csv-file-import-fields" title="Permalink to this headline">¶</a></h1>
+  <section id="appendix-csv-file-import-fields">
+<span id="csvimportfields"></span><h1>Appendix: CSV file import fields<a class="headerlink" href="#appendix-csv-file-import-fields" title="Permalink to this heading">¶</a></h1>
 <p>ASM will recognise columns with the following names when importing CSV files.
 Where you wish to supply multiple rows for the same animal (such as for
 vaccinations or regimens), make sure you have a populated ANIMALCODE column,
@@ -104,17 +110,27 @@ similarly for multiple rows to people (such as movements, licenses, etc) make
 sure you have populated person data.</p>
 <p>When processing animal records that already exist, there are certain key fields
 that will be overwritten on the existing animal from the CSV data. These fields
-are ANIMALNEUTERED[DATE], ANIMALMICROCHIP[DATE] and ANIMALHEALTHPROBLEMS. This
-allows you to use a spreadsheet of data on chipping/neutering days and import
+are:</p>
+<ul class="simple">
+<li><p>ANIMALDOB</p></li>
+<li><p>ANIMALFLAGS</p></li>
+<li><p>ANIMALHEALTHPROBLEMS.</p></li>
+<li><p>ANIMALLOCATION / ANIMALUNIT</p></li>
+<li><p>ANIMALMICROCHIP / ANIMALMICROCHIPDATE</p></li>
+<li><p>ANIMALNEUTERED / ANIMALNEUTEREDDATE</p></li>
+<li><p>ANIMALPICKUPADDRESS</p></li>
+<li><p>ANIMALPICKUPLOCATION</p></li>
+</ul>
+<p>This allows you to use a spreadsheet of data on chipping/neutering days and import
 that data to your existing animals afterwards.</p>
 <dl class="simple">
 <dt>ANIMALCODE</dt><dd><p>A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.</p>
 </dd>
 <dt>ANIMALNAME</dt><dd><p>The animal’s name</p>
 </dd>
-<dt>ANIMALIMAGE</dt><dd><p>A photo for the animal, it can either be a fully qualified HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI</p>
+<dt>ANIMALIMAGE</dt><dd><p>A photo for the animal, it can either be an absolute HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI</p>
 </dd>
-<dt>ANIMALPDFDATA</dt><dd><p>A PDF file to attach to the animal. Like image, it can be a fully qualified URL or a base64 encoded PDF as a data URI</p>
+<dt>ANIMALPDFDATA</dt><dd><p>A PDF file to attach to the animal. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI</p>
 </dd>
 <dt>ANIMALPDFNAME</dt><dd><p>The filename associated with the PDF data</p>
 </dd>
@@ -167,7 +183,7 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
 </dd>
 <dt>ANIMALGOODWITHKIDS</dt><dd><p>Y/N/U to indicate yes/no/unknown</p>
 </dd>
-<dt>ANIMALCOMMENTS</dt><dd><p>Some comments to put in the animal’s comment field.</p>
+<dt>ANIMALDESCRIPTION</dt><dd><p>Some comments to put in the animal’s description field.</p>
 </dd>
 <dt>ANIMALHIDDENDETAILS</dt><dd><p>Some comments for the animal’s hidden details field.</p>
 </dd>
@@ -318,7 +334,7 @@ Additional flags that you have added to the system should exactly match their fl
 </dd>
 <dt>ORIGINALOWNERADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth ORIGINALOWNERADDITIONALDATEOFBIRTH</p>
 </dd>
-<dt>PERSONCLASS</dt><dd><p>1 = Individual/Couple, 2 = Organisation</p>
+<dt>PERSONCLASS</dt><dd><p>1 = Individual, 2 = Organisation</p>
 </dd>
 <dt>PERSONTITLE</dt><dd><p>The person’s title</p>
 </dd>
@@ -393,9 +409,9 @@ Additional flags that you have added to the system should exactly match their fl
 </dd>
 <dt>PERSONADDITIONAL&lt;fieldname&gt;</dt><dd><p>If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH</p>
 </dd>
-<dt>PERSONIMAGE</dt><dd><p>A photo for the person, it can either be a fully qualified HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI</p>
+<dt>PERSONIMAGE</dt><dd><p>A photo for the person, it can either be an absolute HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI</p>
 </dd>
-<dt>PERSONPDFDATA</dt><dd><p>A PDF file to attach to the person. Like image, it can be a fully qualified URL or a base64 encoded PDF as a data URI</p>
+<dt>PERSONPDFDATA</dt><dd><p>A PDF file to attach to the person. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI</p>
 </dd>
 <dt>PERSONPDFNAME</dt><dd><p>The filename associated with the PDF data</p>
 </dd>
@@ -426,7 +442,7 @@ Additional flags that you have added to the system should exactly match their fl
 <dt>VACCINATIONCOMMENTS</dt><dd><p>Comments on the vaccine</p>
 </dd>
 </dl>
-</div>
+</section>
 
 
            </div>

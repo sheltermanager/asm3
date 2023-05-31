@@ -1,0 +1,107 @@
+Average Time On Shelter By Year
+###
+Statistics
+###
+2721/HSQLDB rev01
+###
+Average time spent on shelter for all animals by year.
+###
+en
+###
+SELECT
+YEAR(DateBroughtIn) AS biyear,
+AVG(DaysOnShelter) AS avtimeonshelter
+FROM animal
+WHERE DaysOnShelter > 0
+AND NonShelterAnimal = 0
+GROUP BY YEAR(DateBroughtIn)
+ORDER BY AVG(DaysOnShelter) DESC
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Year</b></td>
+<td><b>AverageTime On Shelter (days)</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$BIYEAR</td>
+<td>$AVTIMEONSHELTER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+Average Time On Shelter By Year
+###
+Statistics
+###
+33018/MySQL rev01
+###
+Average time spent on shelter for all animals by year.
+###
+en
+###
+SELECT
+YEAR(DateBroughtIn) AS biyear,
+AVG(DaysOnShelter) AS avtimeonshelter
+FROM animal
+WHERE DaysOnShelter > 0
+AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
+GROUP BY YEAR(DateBroughtIn)
+ORDER BY AVG(DaysOnShelter) DESC
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Year</b></td>
+<td><b>AverageTime On Shelter (days)</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$BIYEAR</td>
+<td>$AVTIMEONSHELTER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+Average Time On Shelter By Year
+###
+Statistics
+###
+33018/PostgreSQL rev01
+###
+Average time spent on shelter for all animals by year.
+###
+en
+###
+SELECT
+CAST(EXTRACT(YEAR FROM DateBroughtIn) AS INTEGER) AS biyear,
+CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
+FROM animal
+WHERE DaysOnShelter > 0
+AND NonShelterAnimal = 0 AND HasPermanentFoster = 0
+GROUP BY EXTRACT(YEAR FROM DateBroughtIn)
+ORDER BY CAST(AVG(DaysOnShelter) AS INTEGER) DESC
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Year</b></td>
+<td><b>AverageTime On Shelter (days)</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$BIYEAR</td>
+<td>$AVTIMEONSHELTER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

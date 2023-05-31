@@ -1,0 +1,59 @@
+Health problems search
+###
+Medical
+###
+Any rev01
+###
+Animals entering between two dates where the health problems field contains a string
+###
+en
+###
+SELECT ID, DateBroughtIn, ShelterCode, AnimalName, 
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName, 
+BreedName, IdentichipNumber, HealthProblems, 
+(SELECT Sex FROM lksex WHERE ID = animal.Sex),
+AnimalAge, DisplayLocation
+FROM animal
+WHERE 
+DateBroughtIn >= '$ASK DATE Entered between $' AND
+DateBroughtIn <= '$ASK DATE and $' AND 
+LOWER(HealthProblems) LIKE LOWER('%$ASK STRING Health problems contains$%')
+ORDER BY DateBroughtIn
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Intake</th>
+<th>Code</th>
+<th>Name</th>
+<th>Type</th>
+<th>Breed</th>
+<th>Microchip</th>
+<th>Sex</th>
+<th>Age</th>
+<!--<th>Health</th>-->
+<th>Location</th>
+<th>Photo</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$DATEBROUGHTIN</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$ANIMALTYPENAME</td>
+<td>$BREEDNAME</td>
+<td>$IDENTICHIPNUMBER</td>
+<td>$SEX</td>
+<td>$ANIMALAGE</td>
+<!--<td>$HEALTHPROBLEMS</td>-->
+<td>$DISPLAYLOCATION</td>
+<td><img height="70px" src="{IMAGE.$ID}" /></td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total animals: {COUNT.ID}</h2>
+FOOTER$$

@@ -1,0 +1,131 @@
+Neutering by Date
+###
+Medical
+###
+34019/PostgreSQL rev02
+###
+All animals neutered/spayed between two dates.
+###
+en
+###
+SELECT ShelterCode, AnimalName, ay.AnimalType, s.SpeciesName, 
+NeuteredDate, AnimalComments, x.Sex, nv.OwnerName,
+age(NeuteredDate, animal.DateOfBirth)::varchar AS AgeAtNeutering
+FROM animal
+INNER JOIN lksex x ON x.ID = animal.Sex 
+INNER JOIN animaltype ay ON ay.ID = animal.AnimalTypeID
+INNER JOIN species s ON s.ID = animal.SpeciesID
+LEFT OUTER JOIN owner nv ON nv.ID = animal.NeuteredByVetID
+WHERE Neutered = 1 AND 
+NeuteredDate BETWEEN '$ASK DATE Enter from date$' AND '$ASK DATE Enter to date$'
+ORDER BY s.SpeciesName, x.Sex, NeuteredDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+$$FOOT
+<h2>Total $SpeciesName: {COUNT.ShelterCode}</h2>
+GROUP$$
+
+$$GROUP_Sex
+$$HEAD
+<h3>$Sex</h3>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Species</b></td>
+<td><b>At Age</b></td>
+<td><b>Date</b></td>
+<td><b>By</b></td>
+<td><b>Comments</b></td>
+</tr>
+$$FOOT
+</table>
+<h3>Total $Sex $SpeciesName: {COUNT.ShelterCode}</h3>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
+<td>$AGEATNEUTERING</td>
+<td>$NEUTEREDDATE</td>
+<td>$OWNERNAME</td>
+<td>$ANIMALCOMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<h1>Total: {COUNT.ShelterCode}</h1>
+FOOTER$$
+&&&
+Neutering by Date
+###
+Medical
+###
+34019/MySQL/SQLite rev01
+###
+All animals neutered/spayed between two dates.
+###
+en
+###
+SELECT ShelterCode, AnimalName, ay.AnimalType, s.SpeciesName, 
+NeuteredDate, AnimalComments, x.Sex, nv.OwnerName
+FROM animal
+INNER JOIN lksex x ON x.ID = animal.Sex 
+INNER JOIN animaltype ay ON ay.ID = animal.AnimalTypeID
+INNER JOIN species s ON s.ID = animal.SpeciesID
+LEFT OUTER JOIN owner nv ON nv.ID = animal.NeuteredByVetID
+WHERE Neutered = 1 AND 
+NeuteredDate BETWEEN '$ASK DATE Enter from date$' AND '$ASK DATE Enter to date$'
+ORDER BY s.SpeciesName, x.Sex, NeuteredDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+$$FOOT
+<h2>Total $SpeciesName: {COUNT.ShelterCode}</h2>
+GROUP$$
+
+$$GROUP_Sex
+$$HEAD
+<h3>$Sex</h3>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Species</b></td>
+<td><b>Date</b></td>
+<td><b>By</b></td>
+<td><b>Comments</b></td>
+</tr>
+$$FOOT
+</table>
+<h3>Total $Sex $SpeciesName: {COUNT.ShelterCode}</h3>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
+<td>$NEUTEREDDATE</td>
+<td>$OWNERNAME</td>
+<td>$ANIMALCOMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<h1>Total: {COUNT.ShelterCode}</h1>
+FOOTER$$
+

@@ -1,0 +1,72 @@
+Incidents in need of followup today
+###
+Animal Control
+###
+33307/Any rev01
+###
+Incidents that require following up today
+###
+en
+###
+SELECT 
+ac.IncidentDateTime, ti.IncidentName, co.OwnerName AS CallerName, co.HomeTelephone, co.WorkTelephone, co.MobileTelephone,
+ac.FollowupDateTime AS FD1, ac.FollowupDateTime2 AS FD2, ac.FollowupDateTime3 AS FD3, 
+ac.CallDateTime, ac.CallNotes, vo.OwnerName AS VictimName, 
+o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3, 
+ac.DispatchAddress, ac.DispatchTown, ac.DispatchCounty, ac.DispatchPostcode, ac.DispatchedACO,
+ac.DispatchDateTime, ac.RespondedDateTime, ac.CompletedDate, ci.CompletedName
+FROM animalcontrol ac
+LEFT OUTER JOIN species s ON s.ID = ac.SpeciesID
+LEFT OUTER JOIN owner co ON co.ID = ac.CallerID
+LEFT OUTER JOIN owner o1 ON o1.ID = ac.OwnerID
+LEFT OUTER JOIN owner o2 ON o2.ID = ac.Owner2ID
+LEFT OUTER JOIN owner o3 ON o3.ID = ac.Owner3ID
+LEFT OUTER JOIN owner vo ON vo.ID = ac.VictimID
+LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
+LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID
+WHERE (ac.FollowupDateTime <= '$CURRENT_DATE$ 23:59:59' AND ac.FollowupComplete=0)
+OR (ac.FollowupDateTime2 <= '$CURRENT_DATE$ 23:59:59' AND ac.FollowupComplete2=0)
+OR (ac.FollowupDateTime3 <= '$CURRENT_DATE$ 23:59:59' AND ac.FollowupComplete3=0)
+ORDER BY ti.IncidentName, ac.FollowupDateTime
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_IncidentName
+$$HEAD
+<h2>$INCIDENTNAME</h2>
+<table border="1">
+<tr>
+<th>Date</th>
+<th>Followup</th>
+<th>Caller</th>
+<th>Notes</th>
+<th>Victim</th>
+<th>Suspect</th>
+<th>Dispatch</th>
+<th>Dispatched</th>
+<th>Responded</th>
+<th>Completed</th>
+</tr>
+$$FOOT
+</table>
+<h2>Total $INCIDENTNAME: {COUNT.INCIDENTNAME}</h2>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$INCIDENTDATETIME</td>
+<td>$FD1 $FD2 $FD3</td>
+<td>$CALLERNAME<br/>H:$HOMETELEPHONE W:$WORKTELEPHONE C:$MOBILETELEPHONE</td>
+<td>$CALLNOTES</td>
+<td>$VICTIMNAME</td>
+<td>$OWNERNAME1 $OWNERNAME2 $OWNERNAME3</td>
+<td>$DISPATCHADDRESS<br/>$DISPATCHTOWN<br/>$DISPATCHCOUNTY $DISPATCHPOSTCODE</td>
+<td>$DISPATCHDATETIME $DISPATCHEDACO</td>
+<td>$RESPONDEDDATETIME</td>
+<td>$COMPLETEDDATE $COMPLETEDNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

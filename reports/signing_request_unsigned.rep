@@ -1,0 +1,54 @@
+Documents issued for signing, but not yet received
+###
+Auditing
+###
+33702/Any rev01
+###
+All emailed electronic document signing requests between two dates that have not yet been signed
+###
+en
+###
+SELECT l.date, lt.logtypename, l.comments, l.createdby, 
+case 
+when l.linktype = 0 then (select a.sheltercode || ' - ' || a.animalname from animal a where a.id = l.linkid)
+when l.linktype = 1 then (select o.ownername from owner o where o.id = l.linkid)
+when l.linktype = 2 then (select o.ownername from owner o inner join animalfound af on af.ownerid = o.id where af.id = l.linkid)
+when l.linktype = 3 then (select o.ownername from owner o inner join animallost al on al.ownerid = o.id where al.id = l.linkid)
+when l.linktype = 4 then (select o.ownername from owner o inner join animalwaitinglist aw on aw.ownerid = o.id where aw.id = l.linkid)
+when l.linktype = 5 then (select a.sheltercode || ' - ' || a.animalname from animal a inner join adoption m on m.animalid = a.id where m.id = l.linkid) 
+end as link
+FROM log l
+INNER JOIN logtype lt ON lt.ID = l.logtypeid
+WHERE l.date >= '$ASK DATE Enter the from date$'
+AND l.date <= '$ASK DATE Enter the to date$ 23:59:59'
+AND l.comments LIKE 'ES01%' AND NOT EXISTS(SELECT ID FROM log WHERE LinkType = l.linktype AND LinkID = l.linkid AND Comments LIKE 'ES02%' AND Date >= l.date)
+ORDER BY lt.logtypename, l.date desc
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_LOGTYPENAME
+$$HEAD
+<h2>$LOGTYPENAME</h2>
+<table border="1">
+<tr>
+<th>Date</th>
+<th>By</th>
+<th>Link</th>
+<th></th>
+</tr>
+$$FOOT
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$DATE</td>
+<td>$CREATEDBY</td>
+<td>$LINK</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

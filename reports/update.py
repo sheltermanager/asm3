@@ -9,7 +9,7 @@ import os, sys
 
 s = []
 for fname in os.listdir("."):
-    if fname.endswith(".txt") and fname != "reports.txt":
+    if fname.endswith(".rep") and fname != "reports.txt":
         with open(fname, "r") as f:
             s.append(f.read())
 

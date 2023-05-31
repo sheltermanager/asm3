@@ -1,0 +1,226 @@
+All Persons (Individual/Couples)
+###
+People
+###
+3000/Any rev03
+###
+Basic person info for all persons on file.
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate, o.AdditionalFlags,
+CASE WHEN EXISTS(SELECT ID FROM adoption WHERE OwnerID=o.ID AND MovementType=1) THEN 'Adopted an animal. ' ELSE '' END AS RelAdoption,
+CASE WHEN EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID=o.ID AND Donation>0) THEN 'Made a donation. ' ELSE '' END AS RelDonation,
+CASE WHEN EXISTS(SELECT ID FROM animal WHERE OriginalOwnerID=o.ID AND NonShelterAnimal=0) THEN 'Surrendered an animal. ' ELSE '' END AS RelSurrender
+FROM owner o
+WHERE o.OwnerType Is Null OR o.OwnerType <> 2
+ORDER BY o.OwnerName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Address</th>
+<th>City</th>
+<th>State</th>
+<th>Zip</th>
+<th>Home Phone</th>
+<th>Work Phone</th>
+<th>Cell Phone</th>
+<th>Email</th>
+<th>Flags</th>
+<th>Relationship</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$OWNERNAME</td>
+<td>$OWNERADDRESS</td>
+<td>$OWNERTOWN</td>
+<td>$OWNERCOUNTY</td>
+<td>$OWNERPOSTCODE</td>
+<td>$HOMETELEPHONE</td>
+<td>$WORKTELEPHONE</td>
+<td>$MOBILETELEPHONE</td>
+<td>$EMAILADDRESS</td>
+<td>$ADDITIONALFLAGS</td>
+<td>$RELADOPTION $RELDONATION $RELSURRENDER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+All Persons (Organizations)
+###
+People
+###
+3000/Any rev01
+###
+Basic person info for all organizations on file.
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate, o.AdditionalFlags,
+CASE WHEN EXISTS(SELECT ID FROM adoption WHERE OwnerID=o.ID AND MovementType=1) THEN 'Adopted an animal. ' ELSE '' END AS RelAdoption,
+CASE WHEN EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID=o.ID AND Donation>0) THEN 'Made a donation. ' ELSE '' END AS RelDonation,
+CASE WHEN EXISTS(SELECT ID FROM animal WHERE OriginalOwnerID=o.ID AND NonShelterAnimal=0) THEN 'Surrendered an animal. ' ELSE '' END AS RelSurrender
+FROM owner o
+WHERE o.OwnerType = 2
+ORDER BY o.OwnerName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Address</th>
+<th>City</th>
+<th>State</th>
+<th>Zip</th>
+<th>Home Phone</th>
+<th>Work Phone</th>
+<th>Email</th>
+<th>Flags</th>
+<th>Relationship</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$OWNERNAME</td>
+<td>$OWNERADDRESS</td>
+<td>$OWNERTOWN</td>
+<td>$OWNERCOUNTY</td>
+<td>$OWNERPOSTCODE</td>
+<td>$HOMETELEPHONE</td>
+<td>$WORKTELEPHONE</td>
+<td>$EMAILADDRESS</td>
+<td>$ADDITIONALFLAGS</td>
+<td>$RELADOPTION $RELDONATION $RELSURRENDER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+All Persons (Individual/Couples by Date)
+###
+People
+###
+3000/Any rev03
+###
+Basic person info for all persons on file who were entered between two dates.
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate, o.AdditionalFlags,
+CASE WHEN EXISTS(SELECT ID FROM adoption WHERE OwnerID=o.ID AND MovementType=1) THEN 'Adopted an animal. ' ELSE '' END AS RelAdoption,
+CASE WHEN EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID=o.ID AND Donation>0) THEN 'Made a donation. ' ELSE '' END AS RelDonation,
+CASE WHEN EXISTS(SELECT ID FROM animal WHERE OriginalOwnerID=o.ID AND NonShelterAnimal=0) THEN 'Surrendered an animal. ' ELSE '' END AS RelSurrender
+FROM owner o
+WHERE o.OwnerType Is Null OR o.OwnerType <> 2
+AND CreatedDate >= '$ASK DATE Person records entered between $' AND CreatedDate <= '$ASK DATE and $'
+ORDER BY o.OwnerName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Address</th>
+<th>City</th>
+<th>State</th>
+<th>Zip</th>
+<th>Home Phone</th>
+<th>Work Phone</th>
+<th>Cell Phone</th>
+<th>Email</th>
+<th>Flags</th>
+<th>Relationship</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$OWNERNAME</td>
+<td>$OWNERADDRESS</td>
+<td>$OWNERTOWN</td>
+<td>$OWNERCOUNTY</td>
+<td>$OWNERPOSTCODE</td>
+<td>$HOMETELEPHONE</td>
+<td>$WORKTELEPHONE</td>
+<td>$MOBILETELEPHONE</td>
+<td>$EMAILADDRESS</td>
+<td>$ADDITIONALFLAGS</td>
+<td>$RELADOPTION $RELDONATION $RELSURRENDER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+&&&
+All Persons (Organizations by Date)
+###
+People
+###
+3000/Any rev01
+###
+Basic person info for all organizations on file who were entered between two dates.
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate, o.AdditionalFlags,
+CASE WHEN EXISTS(SELECT ID FROM adoption WHERE OwnerID=o.ID AND MovementType=1) THEN 'Adopted an animal. ' ELSE '' END AS RelAdoption,
+CASE WHEN EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID=o.ID AND Donation>0) THEN 'Made a donation. ' ELSE '' END AS RelDonation,
+CASE WHEN EXISTS(SELECT ID FROM animal WHERE OriginalOwnerID=o.ID AND NonShelterAnimal=0) THEN 'Surrendered an animal. ' ELSE '' END AS RelSurrender
+FROM owner o
+WHERE o.OwnerType = 2
+AND CreatedDate >= '$ASK DATE Person records entered between $' AND CreatedDate <= '$ASK DATE and $'
+ORDER BY o.OwnerName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Address</th>
+<th>City</th>
+<th>State</th>
+<th>Zip</th>
+<th>Home Phone</th>
+<th>Work Phone</th>
+<th>Email</th>
+<th>Flags</th>
+<th>Relationship</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$OWNERNAME</td>
+<td>$OWNERADDRESS</td>
+<td>$OWNERTOWN</td>
+<td>$OWNERCOUNTY</td>
+<td>$OWNERPOSTCODE</td>
+<td>$HOMETELEPHONE</td>
+<td>$WORKTELEPHONE</td>
+<td>$EMAILADDRESS</td>
+<td>$ADDITIONALFLAGS</td>
+<td>$RELADOPTION $RELDONATION $RELSURRENDER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

@@ -1,0 +1,53 @@
+Off-Shelter Non-Microchipped Animals
+###
+Movements
+###
+Any rev01
+###
+Off-shelter animals without microchip information.
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, t.AnimalType, mt.MovementType,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
+o.HomeTelephone, o.MobileTelephone, a.ActiveMovementDate
+FROM animal a
+INNER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+INNER JOIN adoption ad ON ad.ID = a.ActiveMovementID
+INNER JOIN owner o ON ad.OwnerID = o.ID
+WHERE a.Identichipped = 0
+ORDER BY a.ActiveMovementDate
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Date</th>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Movement</th>
+<th>Person</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ACTIVEMOVEMENTDATE</td>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td>$MOVEMENTTYPE</td>
+<td><b>$OWNERNAME</b><br/>
+$OWNERADDRESS<br/>
+$OWNERTOWN<br/>
+$OWNERCOUNTY $OWNERPOSTCODE<br/>
+H: $HOMETELEPHONE, C: $MOBILETELEPHONE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

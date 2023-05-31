@@ -5,18 +5,35 @@ Shelter View
 ------------
 
 The shelter view screen (available from the default quicklinks or under
-:menuselection:`ASM --> Shelter View`) gives you an overview of all the animals
-currently on your shelter, broken down by their internal location. 
+:menuselection:`ASM --> Animals --> Shelter View`) gives you an overview of all
+the animals currently on your shelter, broken down by their internal location. 
 
 You can use this screen to jump straight to an animal's record. You can also
 drag and drop animals to move them between locations quickly. If you have
 assigned units to the animal (for cage/pen numbers, etc) they will appear next
-to their name. A dropdown in the upper right corner allows different groupings
-to be applied.
+to their name. 
 
-The "Location and Unit" grouping will show a box for every cage/pen with the
+A dropdown in the upper right corner allows one of many different modes to be
+applied.
+
+The "Location and Unit" mode will show a box for every cage/pen with the
 animals occupying them. If they are unoccupied, they'll be displayed with a
 green highlight. You can drag and drop animals between units in this view.
+
+There are also special modes to show animals in foster homes, either all
+available homes with those with space highlighted (identified by the capacity
+field), or all active foster homes only.
+
+The "Location" modes mostly put animals who are fostered into a special virtual
+location called "Foster" so that they are separated from your internal locations.
+There is a mode named "Location (No Virtual)" that does not have this behaviour and
+shows animals as in the location that they left from if they are on foster, trial
+adoption or at a retailer.
+
+A special "status" mode separates animals who are adoptable from those who are
+marked not for adoption, those that are reserved and those that are
+quarantined, held, cruelty cases or other indicators that they cannot leave the
+shelter.
 
 .. image:: images/shelterview.png
 
@@ -314,7 +331,7 @@ just about any kind of schedule. You can create medical profiles from
 treatment records. 
 
 Treatment records are automatically created from regimens. You can edit the
-regimen by click on the treatment name.
+regimen by clicking on the treatment name.
 
 As you complete each treatment, ASM will generate the next record in the
 sequence, until there are none left and the medical record is automatically
@@ -452,6 +469,8 @@ For example:
 * Required date of that vaccination when added to the new animal will 
   be today + 10 days
 
+If the calculated date is in the past, today will be used instead.
+
 When copying from a template animal, ASM will copy the following items to your
 new animal record:
 
@@ -502,3 +521,81 @@ This feature is particularly useful for vaccinations and other medical
 treatments (eg: first worm/flea treatment, spay/neuter etc) that are first
 given to juvenile animals at a fixed age rather than based on when they entered
 your care.
+
+Bulk Change Animals
+-------------------
+
+.. image:: images/animal_bulkchange.png
+
+The bulk change screen allows you to select one or more shelter animals and
+set one or more fields to the same value. This is very useful for making
+a group of animals not for adoption in one go, applying a flag, or 
+moving them all to a different location. 
+
+This screen also allows you to create a new log message to be applied to all
+the selected animals, or to create a new movement for all animals (eg: a fake
+adoption to get the selected animals off shelter, or if a group are all being
+transferred to another organisation).
+
+Finally, the delete button on this screen allows you to bulk delete all of
+the selected animals. Use this option with caution. 
+
+.. _dailyobservations:
+
+Daily Observations
+------------------
+
+.. image:: images/animal_observations.png
+
+The daily observations screen offers a quick way of writing structured log
+messages to animal records. 
+
+Use the dropdown at the top right to filter shelter animals by their current
+location.
+
+Tick the checkbox against each animal that you wish to write an observation
+for, then update the text/dropdown fields with your observations. When you are
+done, the save button on the toolbar will record a log message containing the
+values for all selected animals. 
+
+You can edit the observation values that are requested under
+:menuselection:`Settings --> Options --> Daily Observations`
+
+.. image:: images/animal_obs_log.png
+
+Litters
+-------
+
+Animal Shelter Manager allows you to track litters as they are born (or come
+into) the shelter. These facilities are used in particular for generating the
+monthly animal figures report, where the number of litters on shelter for each
+day of the month is tracked.
+
+.. image:: images/litters.png
+
+The main screen is accessible from :menuselection:`ASM --> Animals --> Edit
+Litters`. It shows you a list of all currently active litters on the shelter. A
+litter is deemed active whilst it has no expiry date, or an expiry date later
+than today.
+
+If an animal is returned from adoption who was part of an expired litter, the
+litter will not be resurrected and it will remain expired unless you manually
+remove the expiry date.
+
+The litter holds information about how many animals collectively made it up,
+who the mother was (if known), what species of animal the litter is and any
+comments.
+
+.. image:: images/litter_add.png
+
+Auto Expiry
+^^^^^^^^^^^
+
+The system will check all the animals in the litter as part of the overnight
+batch, and the litter will be automatically given an expiry date in the
+following scenarios:
+
+* There are no animals who make up the litter left in the care of the shelter
+
+* The animals in the litter are older than 6 months
+

@@ -1,0 +1,65 @@
+Balance Sheet
+###
+Accounts
+###
+2720/Any rev01
+###
+Balance sheet of assets/liabilities for a given date period based on reconciled accounts entries.
+###
+en
+###
+$VAR to DATE Balance sheet at date$
+
+SELECT * FROM (
+
+SELECT 
+a.Code,
+COALESCE((SELECT SUM(Amount) FROM accountstrx
+WHERE accountstrx.DestinationAccountID = a.ID AND accountstrx.TrxDate <= '$@to$' AND accountstrx.Reconciled=1), 0) - COALESCE((SELECT SUM(Amount) FROM accountstrx WHERE accountstrx.SourceAccountID = a.ID AND accountstrx.TrxDate <= '$@to$' AND accountstrx.Reconciled=1), 0) AS amt,
+a.AccountType AS atype,
+'Assets' AS type
+FROM accounts a
+INNER JOIN lksaccounttype l ON l.ID = a.AccountType
+WHERE a.AccountType IN (1, 7, 8, 6) 
+
+UNION SELECT 
+a.Code,
+ABS(COALESCE((SELECT SUM(Amount) FROM accountstrx
+WHERE accountstrx.DestinationAccountID = a.ID AND accountstrx.TrxDate <= '$@to$' AND accountstrx.Reconciled=1), 0) - COALESCE((SELECT SUM(Amount) FROM accountstrx WHERE accountstrx.SourceAccountID = a.ID AND accountstrx.TrxDate <= '$@to$' AND accountstrx.Reconciled=1), 0)) AS amt,
+a.AccountType AS atype,
+'Liabilities' AS type
+FROM accounts a
+INNER JOIN lksaccounttype l ON l.ID = a.AccountType
+WHERE a.AccountType IN (3, 2, 9) 
+
+) dummy
+ORDER BY type, atype
+###
+$$HEADER
+<table>
+<tr>
+HEADER$$
+
+$$GROUP_TYPE
+$$HEAD
+<td valign="top">
+<h2>$TYPE</h2>
+<table>
+$$FOOT
+<td></td>
+<td align="right"><b>{SUM.AMT.2}</b></td>
+</table>
+</td>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$CODE</td>
+<td align="right">$AMT</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</tr>
+</table>
+FOOTER$$

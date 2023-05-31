@@ -1,0 +1,39 @@
+Donors who have not donated since date
+###
+Financial
+###
+Any rev01
+###
+People who haven't made a donation since a date
+###
+en
+###
+SELECT owner.ID, owner.OwnerName, 
+owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, owner.OwnerPostcode, owner.EmailAddress,
+(SELECT MAX(Date) FROM ownerdonation WHERE OwnerID = owner.ID) AS LastDonated
+FROM owner
+WHERE (SELECT MAX(Date) FROM ownerdonation WHERE OwnerID = owner.ID) < '$ASK DATE Enter cutoff date$'
+ORDER BY owner.OwnerName
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Name</b></td>
+<td><b>Address</b></td>
+<td><b>Last Donation</b></td>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a href="person?id=$ID">$OWNERNAME</a></td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br />
+$EMAILADDRESS</td>
+<td>$LASTDONATED</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

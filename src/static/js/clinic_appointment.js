@@ -351,11 +351,11 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td><label for="due">' + _("Due") + '</label></td>',
-                '<td><input id="due" data="due" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
+                '<td><input id="due" data="due" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="received">' + _("Received") + '</label></td>',
-                '<td><input id="received" data="received" type="textbox" class="asm-textbox asm-datebox asm-field" /></td>',
+                '<td><input id="received" data="received" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
                 '</table>',
                 '</div>'

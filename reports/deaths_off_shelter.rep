@@ -1,0 +1,58 @@
+Deaths Off Shelter
+###
+Statistics
+###
+34404/Any rev02
+###
+All animal animals that died off the shelter between two dates, broken down by species
+###
+en
+###
+SELECT a.DeceasedDate, a.AnimalName, a.ShelterCode, s.SpeciesName, a.PTSReason,
+a.ID, a.OwnerID, 
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress
+FROM animal a 
+INNER JOIN species s ON a.SpeciesID = s.ID
+LEFT OUTER JOIN owner o ON o.ID = a.OwnerID
+WHERE DeceasedDate >= '$ASK DATE Enter date from$' AND DeceasedDate <= '$ASK DATE Enter date to$' 
+AND DiedOffShelter = 1 AND NonShelterAnimal = 0
+ORDER BY s.SpeciesName, a.DeceasedDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+<table border=1><tr>
+<td><b>Date</b></td>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Owner</b></td>
+<td><b>Notes</b></td>
+</tr>
+$$FOOT
+</table>
+
+<p><b>Total for $SpeciesName: {COUNT.AnimalName}</b></p>
+GROUP$$
+
+$$BODY<tr>
+<td>$DeceasedDate</td>
+<td>$ShelterCode</td>
+<td><a target="_blank" href="animal?id=$id">$AnimalName</a></td>
+<td><a target="_blank" href="person?id=$ownerid">$OwnerName</a><br>
+$OwnerAddress<br>
+$OwnerTown $OwnerCounty $OwnerPostcode<br>
+H: $HomeTelephone, W: $WorkTelephone, C: $MobileTelephone<br>
+<i>$EmailAddress</i></td>
+<td>$PTSReason</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+
+

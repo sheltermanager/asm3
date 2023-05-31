@@ -1,0 +1,25 @@
+Adopted animals without microchips
+###
+Movements
+###
+34701/Any rev02
+###
+Mailmerge source of owner and animal information for all adoptions where the animal is not microchipped between two dates
+###
+en
+###
+SELECT DISTINCT owner.ID, owner.OwnerName, owner.OwnerAddress, owner.OwnerPostcode,
+animal.AnimalName, owner.EmailAddress, owner.EmailAddress2, owner.OwnerTown, owner.OwnerCounty, 
+owner.OwnerTitle, owner.OwnerInitials, owner.OwnerForenames, owner.OwnerSurname
+FROM adoption
+INNER JOIN owner ON adoption.OwnerID = owner.ID
+INNER JOIN animal ON adoption.AnimalID = animal.ID
+WHERE adoption.ReturnDate Is Null AND adoption.MovementDate >= '$ASK DATE Enter from date$'
+AND adoption.MovementDate <= '$ASK DATE Enter to date$' 
+AND adoption.MovementType = 1
+AND animal.DeceasedDate Is Null
+AND animal.Identichipped = 0
+AND owner.ExcludeFromBulkEmail = 0
+ORDER BY owner.OwnerSurname
+###
+MAIL

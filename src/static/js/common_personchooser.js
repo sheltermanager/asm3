@@ -110,28 +110,33 @@ $.widget("asm.personchooser", {
             '<tr>',
             '<td><label>' + _("Class") + '</label></td>',
             '<td><select data="ownertype" class="asm-selectbox chooser">',
-            '<option value="1">' + _("Individual/Couple") + '</option>',
+            '<option value="1">' + _("Individual") + '</option>',
+            '<option value="3">' + _("Couple") + '</option>',
             '<option value="2">' + _("Organization") + '</option>',
             '</select></td>',
             '</tr>',
             '<tr class="tag-individual">',
             '<td><label>' + _("Title") + '</label></td>',
-            '<td><input class="asm-textbox chooser" data="title" type="textbox" /></td>',
+            '<td><input class="asm-textbox chooser" data="title" type="text" />',
+            '<input class="asm-textbox chooser tag-couple" data="title2" type="text" /></td>',
             '</tr>',
             '<tr class="tag-individual">',
             '<td><label>' + _("Initials") + '</label></td>',
-            '<td><input class="asm-textbox chooser" maxlength="50" data="initials" type="textbox" /></td>',
+            '<td><input class="asm-textbox chooser" maxlength="50" data="initials" type="text" />',
+            '<input class="asm-textbox chooser tag-couple" maxlength="50" data="initials2" type="text" /></td>',
             '</tr>',
             '<tr class="tag-individual">',
             '<td><label>' + _("First name(s)") + '</label></td>',
-            '<td><input class="asm-textbox chooser" maxlength="200" data="forenames" type="textbox" /></td>',
+            '<td><input class="asm-textbox chooser" maxlength="200" data="forenames" type="text" />',
+            '<input class="asm-textbox chooser tag-couple" maxlength="200" data="forenames2" type="text" /></td>',
             '</tr>',
             '<tr>',
             '<td><label class="tag-individual">' + _("Last name") + '</label>',
             '<label class="tag-organisation">' + _("Organization name") + '</label>',
             '<span class="asm-has-validation">*</span>',
             '</td>',
-            '<td><input class="asm-textbox chooser" maxlength="100" data="surname" type="textbox" /></td>',
+            '<td><input class="asm-textbox chooser" maxlength="100" data="surname" type="text" />',
+            '<input class="asm-textbox chooser tag-couple" maxlength="100" data="surname2" type="text" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Address") + '</label></td>',
@@ -139,7 +144,7 @@ $.widget("asm.personchooser", {
             '</tr>',
             '<tr>',
             '<td><label>' + _("City") + '</label></td>',
-            '<td><input class="asm-textbox chooser personchooser-town" maxlength="100" data="town" type="textbox" /></td>',
+            '<td><input class="asm-textbox chooser personchooser-town" maxlength="100" data="town" type="text" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("State") + '</label></td>',
@@ -152,29 +157,44 @@ $.widget("asm.personchooser", {
             '</tr>',
             '<tr>',
             '<td><label>' + _("Zipcode") + '</label></td>',
-            '<td><input class="asm-textbox chooser personchooser-postcode" data="postcode" type="textbox" />',
+            '<td><input class="asm-textbox chooser personchooser-postcode" data="postcode" type="text" />',
             '<button class="personchooser-postcodelookup">' + _("Lookup Address") + '</button>',
             '</td>',
             '</tr>',
             '<tr class="personchooser-countryrow">',
             '<td><label>' + _("Country") + '</label></td>',
-            '<td><input class="asm-textbox chooser personchooser-country" data="country" type="textbox" /></td>',
+            '<td><input class="asm-textbox chooser personchooser-country" data="country" type="text" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Home Phone") + '</label></td>',
-            '<td><input class="asm-textbox asm-phone chooser" data="hometelephone" type="textbox" /></td>',
+            '<td><input class="asm-textbox asm-phone chooser" data="hometelephone" type="text" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Work Phone") + '</label></td>',
-            '<td><input class="asm-textbox asm-phone chooser" data="worktelephone" type="textbox" /></td>',
+            '<td><input class="asm-textbox asm-phone chooser" data="worktelephone" type="text" />',
+            '<input class="asm-textbox asm-phone chooser tag-couple" data="worktelephone2" type="text" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Cell Phone") + '</label></td>',
-            '<td><input class="asm-textbox asm-phone chooser" data="mobiletelephone" type="textbox" /></td>',
+            '<td><input class="asm-textbox asm-phone chooser" data="mobiletelephone" type="text" />',
+            '<input class="asm-textbox asm-phone chooser tag-couple" data="mobiletelephone2" type="text" /></td>',
             '</tr>',
             '<tr>',
             '<td><label>' + _("Email Address") + '</label></td>',
-            '<td><input class="asm-textbox chooser" maxlength="200" data="emailaddress" type="textbox" /></td>',
+            '<td><input class="asm-textbox chooser" maxlength="200" data="emailaddress" type="text" />',
+            '<input class="asm-textbox chooser tag-couple" maxlength="200" data="emailaddress2" type="text" /></td>',
+            '</tr>',
+            '<tr class="personchooser-dateofbirthrow">',
+            '<td><label>' + _("Date Of Birth") + '</label></td>',
+            '<td><input type="text" data="dateofbirth" class="asm-textbox asm-datebox chooser" />',
+            '<input type="text" data="dateofbirth2" class="asm-textbox asm-datebox chooser tag-couple" />',
+            '</td>',
+            '</tr>',
+            '<tr class="personchooser-idnumberrow">',
+            '<td><label>' + _("ID Number") + '</label></td>',
+            '<td><input type="text" data="idnumber" class="asm-textbox chooser" />',
+            '<input type="text" data="idnumber2" class="asm-textbox chooser tag-couple" />',
+            '</td>',
             '</tr>',
             '<tr>',
             '<tr class="personchooser-jurisdictionrow">',
@@ -239,6 +259,14 @@ $.widget("asm.personchooser", {
             dialogadd.find(".personchooser-jurisdictionrow").hide();
         }
 
+        // Hide dob/id number
+        if (config.bool("HidePersonDateOfBirth")) {
+            dialogadd.find(".personchooser-dateofbirthrow").hide();
+        }
+        if (config.bool("HideIDNumber")) {
+            dialogadd.find(".personchooser-idnumberrow").hide();
+        }
+
         // Hide country if option set
         if (config.bool("HideCountry")) {
             dialogadd.find(".personchooser-countryrow").hide();
@@ -269,15 +297,23 @@ $.widget("asm.personchooser", {
         
         // Create the add dialog
         let check_org = function() {
-            // If it's an organisation, only show the org fields,
-            // otherwise show individual
-            if (dialogadd.find("[data='ownertype']").val() == 2) {
-                dialogadd.find(".tag-organisation").fadeIn();
-                dialogadd.find(".tag-individual").fadeOut();
+            // Individual
+            if (dialogadd.find("[data='ownertype']").val() == 1) {
+                dialogadd.find(".tag-organisation").fadeOut();
+                dialogadd.find(".tag-couple").fadeOut();
+                dialogadd.find(".tag-individual").fadeIn();
             }
-            else {
+            // Organisation
+            else if (dialogadd.find("[data='ownertype']").val() == 2) {
+                dialogadd.find(".tag-couple").fadeOut();
+                dialogadd.find(".tag-individual").fadeOut();
+                dialogadd.find(".tag-organisation").fadeIn();
+            }
+            // Couple
+            else if (dialogadd.find("[data='ownertype']").val() == 3) {
                 dialogadd.find(".tag-organisation").fadeOut();
                 dialogadd.find(".tag-individual").fadeIn();
+                dialogadd.find(".tag-couple").fadeIn();
             }
         };
         // change ownertype to organization
@@ -311,7 +347,7 @@ $.widget("asm.personchooser", {
 
         dialogadd.dialog({
             autoOpen: false,
-            width: 500,
+            width: 600,
             modal: true,
             dialogClass: "dialogshadow",
             show: dlgfx.add_show,
@@ -678,7 +714,8 @@ $.widget("asm.personchooser", {
                     if (self.options.mode == "full") {
                         disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + 
                             (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") + 
-                            "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+                            "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + 
+                            " " + common.nulltostr(rec.MOBILETELEPHONE2) + "<br/>" + rec.EMAILADDRESS + " " + common.nulltostr(rec.EMAILADDRESS2);
                     }
                     dialogsimilar.find(".similar-person").html(disp);
                     // When the user clicks the name of the similar person,

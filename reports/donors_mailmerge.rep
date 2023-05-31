@@ -1,0 +1,98 @@
+Active Donors
+###
+Donors
+###
+34701/Any rev02
+###
+Person info for all people flagged donors.
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate
+FROM owner o
+WHERE o.IsDonor = 1 AND o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0
+ORDER BY o.OwnerSurname
+###
+MAIL
+&&&
+Donors who donated over an amount between two dates
+###
+Donors
+###
+34701/Any rev02
+###
+Person info for all people who donated over a certain amount between two dates
+###
+en
+###
+SELECT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate, SUM(od.Donation) / 100.0 AS TotalDonated
+FROM owner o
+INNER JOIN ownerdonation od ON od.OwnerID = o.ID
+WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 
+AND od.Date >= '$ASK DATE Donated between$'
+AND od.Date <= '$ASK DATE and$'
+GROUP BY o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate
+HAVING SUM(od.Donation) > 100 * $ASK NUMBER Donation threshold$
+ORDER BY o.OwnerSurname
+###
+MAIL
+&&&
+Donors of type who donated over an amount between two dates
+###
+Donors
+###
+34701/Any rev02
+###
+Person info for all people who donated of a payment type over a certain amount between two dates
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate, SUM(od.Donation) / 100.0 AS TotalDonated
+FROM owner o
+INNER JOIN ownerdonation od ON od.OwnerID = o.ID
+WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 
+AND od.Date >= '$ASK DATE Donated between$'
+AND od.Date <= '$ASK DATE and$'
+AND od.DonationTypeID = $ASK DONATIONTYPE$
+GROUP BY o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate
+HAVING SUM(od.Donation) > 100 * $ASK NUMBER Donation threshold$
+ORDER BY o.OwnerSurname
+###
+MAIL
+&&&
+Donors of type with payments due but not received between two dates
+###
+Donors
+###
+34701/Any rev02
+###
+Person info for all people who are due to give a donation of a payment type between two dates
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate, SUM(od.Donation) / 100.0 AS TotalDonated
+FROM owner o
+INNER JOIN ownerdonation od ON od.OwnerID = o.ID
+WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 
+AND od.DateDue >= '$ASK DATE Donated between$'
+AND od.DateDue <= '$ASK DATE and$'
+AND od.Date Is Null 
+AND od.DonationTypeID = $ASK DONATIONTYPE$
+GROUP BY o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate
+ORDER BY o.OwnerSurname
+###
+MAIL

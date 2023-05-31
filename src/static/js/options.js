@@ -20,6 +20,42 @@ $(function() {
             return s.join("\n");
         },
 
+        /** Sorts a list of pairs by the second element in each list */
+        pair_sort_second: function(l) {
+            return l.sort(function(a, b) {
+                if (a[1] < b[1]) return -1;
+                if (a[1] > b[1]) return 1;
+                return 0;
+            });
+        },
+
+        /** Reorders the list l and moves the selected items in configitem to the front */
+        pair_selected_to_front: function(l, configitem) {
+            let ci = configitem.split(",").reverse();
+            $.each(ci, function(i, v) {
+                v = String(v).trim();
+                $.each(l, function(iv, vl) {
+                    if (vl[0] == v) {
+                        l.splice(iv, 1); // Remove matching element from the list
+                        l.splice(0, 0, [ vl[0], vl[1] ]); // Reinsert it at the front
+                        return false; // Break the loop
+                    }
+                });
+            });
+            return l;
+        },
+
+        /** Renders the list of quicklink options */
+        quicklink_options: function() {
+            let ql = [];
+            $.each(header.QUICKLINKS_SET, function(k, v) {
+                ql.push([ k, v[2] ]);
+            });
+            ql = this.pair_sort_second(ql);
+            ql = this.pair_selected_to_front(ql, config.str("QuicklinksID"));
+            return this.two_pair_options(ql);
+        },
+
         watermark_colors: [
             "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue",
             "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk",
@@ -51,6 +87,7 @@ $(function() {
                 '<li><a href="#tab-animalemblems">' + _("Animal Emblems") + '</a></li>',
                 '<li><a href="#tab-checkout">' + _("Checkout") + '</a></li>',
                 '<li><a href="#tab-costs">' + _("Costs") + '</a></li>',
+                '<li><a href="#tab-daily-observations">' + _("Daily Observations") + '</a></li>',
                 '<li><a href="#tab-data-protection">' + _("Data Protection") + '</a></li>',
                 '<li><a href="#tab-defaults">' + _("Defaults") + '</a></li>',
                 '<li><a href="#tab-diaryandmessages">' + _("Diary and Messages") + '</a></li>',
@@ -173,7 +210,7 @@ $(function() {
                 '<span id="callout-olocale" class="asm-callout">' + _("The locale determines the language ASM will use when displaying text, dates and currencies.") + '</span>',
                 '</td>',
                 '<td><select id="olocale" type="text" class="asm-doubleselectbox asm-iconselectmenu" data="Locale">',
-                options.two_pair_options(controller.locales, true),
+                this.two_pair_options(controller.locales, true),
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -665,6 +702,35 @@ $(function() {
             ].join("\n");
         },
 
+        render_daily_observations: function() {
+            const obsrow = function(i) {
+                return '<tr><td><input type="text" class="asm-textbox" data="Behave' + i + 'Name" /></td>' +
+                    '<td><input type="text" class="asm-textbox asm-doubletextbox" data="Behave' + i + 'Values" /></td></tr>';
+            };
+            return [
+                '<div id="tab-daily-observations">',
+                html.info(_("These are the values that can be recorded for animals on the daily observations screen")),
+                '<p class="centered"><label for="behavelogtype">' + _("Log Type") + '</label> ',
+                '<select data="BehaveLogType" id="behavelogtype" class="asm-selectbox">',
+                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
+                '</select></p>',
+                '<table>',
+                '<tr><th>' + _("Name") + '</th><th>' + _("Values") + '</th></tr>',
+                obsrow(1),
+                obsrow(2),
+                obsrow(3),
+                obsrow(4),
+                obsrow(5),
+                obsrow(6),
+                obsrow(7),
+                obsrow(8),
+                obsrow(9),
+                obsrow(10),
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_data_protection: function() {
             return [
                 '<div id="tab-data-protection">',
@@ -785,6 +851,7 @@ $(function() {
                 '<p class="asm-header">' + _("Diary") + '</p>',
                 '<p>',
                 '<input data="AllDiaryHomePage" id="alldiaryhomepage" class="asm-checkbox" type="checkbox" /> <label for="alldiaryhomepage">' + _("Show the full diary (instead of just my notes) on the home page") + '</label><br />',
+                '<input data="DiaryCompleteOnDeath" id="diarycompleteondeath" class="asm-checkbox" type="checkbox" /> <label for="diarycompleteondeath">' + _("Auto complete diary notes linked to animals when they are marked deceased") + '</label><br />',
                 '<input data="EmailDiaryNotes" id="emaildiarynotes" class="asm-checkbox" type="checkbox" /> <label for="emaildiarynotes">' + _("Email users their outstanding diary notes once per day") + '</label><br />',
                 '<input data="EmailDiaryOnChange" id="emaildiaryonchange" class="asm-checkbox" type="checkbox" /> <label for="emaildiaryonchange">' + _("Email users immediately when a diary note assigned to them is created or updated") + '</label><br />',
                 '<input data="EmailDiaryOnComplete" id="emaildiaryoncomplete" class="asm-checkbox" type="checkbox" /> <label for="emaildiaryoncomplete">' + _("Email diary note creators when a diary note is marked complete") + '</label>',
@@ -961,7 +1028,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="findanimalcols">' + _("Find animal columns") + '</label></td>',
                 '<td><select id="searchcolumns" class="asm-bsmselect" data="SearchColumns" multiple="multiple">',
-                options.two_pair_options(controller.animalfindcolumns),
+                this.two_pair_options(controller.animalfindcolumns),
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -969,7 +1036,7 @@ $(function() {
                 '<td><label for="findfoundanimalcols">' + _("Find found animal columns") + '</label></td>',
                 '<td>',
                 '<select id="findfoundanimalcols" class="asm-bsmselect" data="FoundAnimalSearchColumns" multiple="multiple">',
-                options.two_pair_options(controller.foundanimalfindcolumns),
+                this.two_pair_options(controller.foundanimalfindcolumns),
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -977,7 +1044,7 @@ $(function() {
                 '<td><label for="findlostanimalcols">' + _("Find lost animal columns") + '</label></td>',
                 '<td>',
                 '<select id="findlostanimalcols" class="asm-bsmselect" data="LostAnimalSearchColumns" multiple="multiple">',
-                options.two_pair_options(controller.lostanimalfindcolumns),
+                this.two_pair_options(controller.lostanimalfindcolumns),
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -985,7 +1052,7 @@ $(function() {
                 '<td><label for="findincidentcols">' + _("Find incident columns") + '</label></td>',
                 '<td>',
                 '<select id="findincidentcols" class="asm-bsmselect" data="IncidentSearchColumns" multiple="multiple">',
-                options.two_pair_options(controller.incidentfindcolumns),
+                this.two_pair_options(controller.incidentfindcolumns),
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -993,7 +1060,7 @@ $(function() {
                 '<td><label for="findpersoncols">' + _("Find person columns") + '</label></td>',
                 '<td>',
                 '<select id="findpersoncols" class="asm-bsmselect" data="OwnerSearchColumns" multiple="multiple">',
-                options.two_pair_options(controller.personfindcolumns),
+                this.two_pair_options(controller.personfindcolumns),
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -1001,7 +1068,7 @@ $(function() {
                 '<td><label for="findeventcols">' + _("Find event columns") + '</label></td>',
                 '<td>',
                 '<select id="findeventcols" class="asm-bsmselect" data="EventSearchColumns" multiple="multiple">',
-                options.two_pair_options(controller.eventfindcolumns),
+                this.two_pair_options(controller.eventfindcolumns),
                 '</select>',
                 '</td>',
                 '</tr>',
@@ -1351,13 +1418,13 @@ $(function() {
             return [
                 '<div id="tab-quicklinks">',
                 '<p>',
-                '<input data="QuicklinksHomeScreen" id="disablequicklinks" class="asm-checkbox" type="checkbox" /> <label for="disablequicklinks">' + _("Show quick links on the home page") + '</label><br />',
-                '<input data="QuicklinksAllScreens" id="disablequicklinks" class="asm-checkbox" type="checkbox" /> <label for="disablequicklinks">' + _("Show quick links on all pages") + '</label>',
+                '<input data="QuicklinksHomeScreen" id="disablequicklinkshome" class="asm-checkbox" type="checkbox" /> <label for="disablequicklinkshome">' + _("Show quick links on the home page") + '</label><br />',
+                '<input data="QuicklinksAllScreens" id="disablequicklinksall" class="asm-checkbox" type="checkbox" /> <label for="disablequicklinksall">' + _("Show quick links on all pages") + '</label>',
                 '<p>',
                 html.info(_("Quicklinks are shown on the home page and allow quick access to areas of the system.")),
                 '<p style="padding-bottom: 40px">',
                 '<select id="quicklinksid" multiple="multiple" class="asm-bsmselect" data="QuicklinksID">',
-                options.two_pair_options(controller.quicklinks),
+                this.quicklink_options(),
                 '</select>',
                 '</p>',
                 '</div>'
@@ -1464,7 +1531,9 @@ $(function() {
                 '<p>',
                 '<input data="HideTownCounty" id="towncounty" class="asm-checkbox" type="checkbox" /> <label for="towncounty">' + _("Remove the city/state fields from person details") + '</label><br />',
                 '<input data="HideCountry" id="hcountry" class="asm-checkbox" type="checkbox" /> <label for="hcountry">' + _("Remove the country field from person details") + '</label><br />',
+                '<input data="HidePersonDateOfBirth" id="hpdob" class="asm-checkbox" type="checkbox" /> <label for="hpdob">' + _("Remove the date of birth field from person details") + '</label><br />',
                 '<input data="HideHomeCheckedNoFlag" id="hhomechecked" class="asm-checkbox" type="checkbox" /> <label for="hhomechecked">' + _("Remove the homechecked/by fields from person type according to the homechecked flag") + '</label><br />',
+                '<input data="HideIDNumber" id="hidnumber" class="asm-checkbox" type="checkbox" /> <label for="hidnumber">' + _("Remove the identification number field from person details") + '</label><br />',
                 '<input data="DontShowInsurance" id="insuranceno" class="asm-checkbox" type="checkbox" /> <label for="insuranceno">' + _("Remove the insurance number field from the movement screens") + '</label><br />',
                 '<input data="HideLookingFor" id="lookingforno" class="asm-checkbox" type="checkbox" /> <label for="lookingforno">' + _("Remove the looking for functionality from the person menus and screens") + '</label><br />',
 
@@ -1537,7 +1606,7 @@ $(function() {
                 '<td><label for="wlcolumns">' + _("Columns displayed") + '</label></td>',
                 '<td>',
                 '<select id="wlcolumns" class="asm-bsmselect" data="WaitingListViewColumns" multiple="multiple">',
-                options.two_pair_options(controller.waitinglistcolumns),
+                this.two_pair_options(controller.waitinglistcolumns),
                 '</select>',
                 '</tr>',
                 '</table>',
@@ -1564,7 +1633,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="watermarkfontfillcolor">' + _("Watermark font fill color") + '</label></td>',
                 '<td><select data="WatermarkFontFillColor" id="watermarkfontfillcolor" class="asm-selectbox">',
-                html.list_to_options_array(options.watermark_colors),
+                html.list_to_options_array(this.watermark_colors),
                 '</select>',
                 '<span id="fontfillcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontFillColor')) + '" />',
                 '</td>',
@@ -1572,7 +1641,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="watermarkfontshadowcolor">' + _("Watermark font outline color") + '</label></td>',
                 '<td><select data="WatermarkFontShadowColor" id="watermarkfontshadowcolor" class="asm-selectbox">',
-                html.list_to_options_array(options.watermark_colors),
+                html.list_to_options_array(this.watermark_colors),
                 '</select>',
                 '<span id="fontshadowcolorsample" style="border: 1px solid black; margin-left: 25px; padding: 0 20px; background: ' + html.decode(config.str('WatermarkFontShadowColor')) + '" />',
                 '</td>',
@@ -1586,6 +1655,7 @@ $(function() {
                 '<td><select data="WatermarkFontFile" id="watermarkfontfile" class="asm-selectbox asm-doubleselectbox">',
                 html.list_to_options_array(asm.fontfiles),
                 '</select>',
+                '<img id="watermarkfontpreview" src="" style="height: 40px; width: 200px; border: 1px solid #000; vertical-align: middle" />',
                 '</tr>',
                 '<tr>',
                 '<td><label for="watermarkfontoffset">' + _("Watermark name offset") + '</label>',
@@ -1618,6 +1688,7 @@ $(function() {
                 this.render_animalemblems(),
                 this.render_checkout(),
                 this.render_costs(),
+                this.render_daily_observations(),
                 this.render_data_protection(),
                 this.render_defaults(),
                 this.render_diaryandmessages(),
@@ -1756,13 +1827,17 @@ $(function() {
                 $(".smcom").hide();
             }
 
-            // Show sample colours when selected
+            // Show sample colours and fonts when selected
             $("#watermarkfontfillcolor").change(function() {
                 $("#fontfillcolorsample").css("background-color", $("#watermarkfontfillcolor").select("value"));
             });
             $("#watermarkfontshadowcolor").change(function() {
                 $("#fontshadowcolorsample").css("background-color", $("#watermarkfontshadowcolor").select("value"));
             });
+            $("#watermarkfontfile").change(function() {
+                $("#watermarkfontpreview").prop("src", "options_font_preview?fontfile=" + $("#watermarkfontfile").val());
+            });
+            $("#watermarkfontfile").change();
 
             validate.bind_dirty();
 

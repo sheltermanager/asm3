@@ -1,0 +1,278 @@
+Brought In Figures
+###
+Figures
+###
+Any rev01
+###
+Induction, movement and euthanasia states broken down by brought in by owner.
+###
+en
+###
+
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+$VAR patt STRING Enter a pattern to match the source brought in by name or blank for all$
+
+SELECT * FROM (
+
+SELECT council.OwnerName AS coun,
+'Intake: ' || er.ReasonName AS heading,
+CAST('Cats' AS varchar) AS species,
+1 AS theorder,
+COUNT(DISTINCT animal.id) AS val
+FROM animal
+INNER JOIN entryreason er ON animal.EntryReasonID = er.ID
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 2
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$'
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun, heading
+
+UNION SELECT council.OwnerName AS coun,
+'Intake: ' || er.ReasonName AS heading,
+CAST('Dogs' AS varchar) AS species,
+1 AS theorder,
+COUNT(DISTINCT animal.id) AS val
+FROM animal
+INNER JOIN entryreason er ON animal.EntryReasonID = er.ID
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 1
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$'
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun, heading
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Reclaimed' AS varchar) AS heading, 
+CAST('Cats' AS varchar) AS species,
+1 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 2 AND movementtype = 5 
+AND movementdate >= '$@from$' AND movementdate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Reclaimed' AS varchar) AS heading, 
+CAST('Dogs' AS varchar) AS species,
+1 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 1 AND movementtype = 5 
+AND movementdate >= '$@from$' AND movementdate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Adopted' AS varchar) AS heading, 
+CAST('Cats' AS varchar) AS species,
+2 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 2 AND movementtype = 1 
+AND movementdate >= '$@from$' AND movementdate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Adopted' AS varchar) AS heading, 
+CAST('Dogs' AS varchar) AS species,
+2 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 1 AND movementtype = 1 
+AND movementdate >= '$@from$' AND movementdate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Transferred' AS varchar) AS heading, 
+CAST('Cats' AS varchar) AS species,
+3 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 2 AND movementtype = 3 
+AND movementdate >= '$@from$' AND movementdate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Transferred' AS varchar) AS heading, 
+CAST('Dogs' AS varchar) AS species,
+3 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 1 AND movementtype = 3 
+AND movementdate >= '$@from$' AND movementdate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Stolen' AS varchar) AS heading, 
+CAST('Cats' AS varchar) AS species,
+4 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 2 AND movementtype = 6 
+AND movementdate >= '$@from$' AND movementdate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Stolen' AS varchar) AS heading, 
+CAST('Dogs' AS varchar) AS species,
+4 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 1 AND movementtype = 6 
+AND movementdate >= '$@from$' AND movementdate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Escaped' AS varchar) AS heading, 
+CAST('Cats' AS varchar) AS species,
+5 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 2 AND movementtype = 4 
+AND movementdate >= '$@from$' AND movementdate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Escaped' AS varchar) AS heading, 
+CAST('Dogs' AS varchar) AS species,
+5 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 1 AND movementtype = 4 
+AND movementdate >= '$@from$' AND movementdate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Total Euthanised' AS varchar) AS heading, 
+CAST('Cats' AS varchar) AS species,
+6 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 2 AND DiedOffShelter = 0 AND IsDOA = 0
+AND deceaseddate >= '$@from$' AND deceaseddate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Total Euthanised' AS varchar) AS heading, 
+CAST('Dogs' AS varchar) AS species,
+6 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 1 AND DiedOffShelter = 0 AND IsDOA = 0
+AND deceaseddate >= '$@from$' AND deceaseddate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Total DOA' AS varchar) AS heading, 
+CAST('Cats' AS varchar) AS species,
+7 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 2 AND DiedOffShelter = 0 AND IsDOA = 1
+AND deceaseddate >= '$@from$' AND deceaseddate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+CAST('Total DOA' AS varchar) AS heading, 
+CAST('Dogs' AS varchar) AS species,
+7 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+WHERE SpeciesID = 1 AND DiedOffShelter = 0 AND IsDOA = 1
+AND deceaseddate >= '$@from$' AND deceaseddate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun
+
+UNION SELECT council.OwnerName AS coun, 
+'Euthanasia: ' || deathreason.ReasonName AS heading, 
+CAST('Cats' AS varchar) AS species,
+8 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID
+WHERE SpeciesID = 2 AND DiedOffShelter = 0 AND IsDOA = 0
+AND deceaseddate >= '$@from$' AND deceaseddate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun, heading
+
+UNION SELECT council.OwnerName AS coun, 
+'Euthanasia: ' || deathreason.ReasonName AS heading, 
+CAST('Dogs' AS varchar) AS species,
+8 AS theorder,
+COUNT(DISTINCT animal.id) AS val 
+FROM animal 
+INNER JOIN owner council ON animal.BroughtInByOwnerID = council.ID
+INNER JOIN deathreason ON animal.PTSReasonID = deathreason.ID
+WHERE SpeciesID = 1 AND DiedOffShelter = 0 AND IsDOA = 0
+AND deceaseddate >= '$@from$' AND deceaseddate <= '$@to$' 
+AND UPPER(council.ownername) LIKE '%$@patt$%'
+GROUP BY coun, heading
+
+) dummy
+ORDER BY coun, species, theorder
+
+###
+
+$$HEADER
+HEADER$$
+
+$$GROUP_coun
+$$HEAD
+<h2>$coun</h2>
+$$FOOT
+GROUP$$
+
+$$GROUP_species
+$$HEAD
+<p><b>$species</b></p>
+<table>
+$$FOOT
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$heading</td>
+<td>$val</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

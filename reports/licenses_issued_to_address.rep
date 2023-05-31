@@ -1,0 +1,61 @@
+Licenses issued to an address between two dates
+###
+Animal Control
+###
+33307/Any rev01
+###
+Licenses that were issued to an address between the two dates given
+###
+en
+###
+SELECT
+ol.LicenceNumber,
+lt.LicenceTypeName,
+ol.OwnerID, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress,
+a.AnimalName,
+ol.IssueDate, ol.ExpiryDate, ol.Comments
+FROM ownerlicence ol
+INNER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID
+INNER JOIN owner o ON o.ID = ol.OwnerID
+LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID 
+WHERE ol.IssueDate >= '$ASK DATE Enter the from date$'
+AND ol.IssueDate <= '$ASK DATE Enter the to date$'
+AND o.OwnerAddress LIKE '%$ASK STRING Enter partial address$%'
+ORDER BY ol.IssueDate
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Number</th>
+<th>Type</th>
+<th>Person</th>
+<th>Animal</th>
+<th>Issued</th>
+<th>Expires</th>
+<th>Comments</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$LICENCENUMBER</td>
+<td>$LICENCETYPENAME</td>
+<td><a target="_blank" href="person?id=$OWNERID">$OwnerName</a><br/>
+$OwnerAddress<br/>
+$OwnerTown<br/>
+$OwnerCounty<br/>
+$OwnerPostcode<br/>
+$EmailAddress<br/>
+H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
+<td>$ANIMALNAME</td>
+<td>$ISSUEDATE</td>
+<td>$EXPIRYDATE</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

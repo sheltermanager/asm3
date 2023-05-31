@@ -1,0 +1,23 @@
+Adoptable Animals
+###
+Animals
+###
+34501/Any rev03
+###
+Mail merge of all adoptable animals for generating multiple documents, etc.
+###
+en
+###
+SELECT
+AnimalName, AnimalComments, AnimalAge AS Age, MostRecentEntryDate as MostRecentEntry,
+BreedName, SpeciesName, BaseColour AS BaseColourName, Markings, 
+(SELECT Name FROM lksyesno WHERE ID = a.Neutered) AS Neutered,
+(SELECT Sex FROM lksex WHERE ID = a.Sex) AS Sex,
+REPLACE('<img height="200px" src="image?db=$DATABASENAME$&mode=animal&id={0}" />', '{0}', CAST(a.ID AS VARCHAR(20))) AS DocumentImgLink
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN basecolour c ON c.ID = a.BaseColourID
+WHERE Archived=0 AND Adoptable=1
+ORDER BY a.AnimalName
+###
+MAIL

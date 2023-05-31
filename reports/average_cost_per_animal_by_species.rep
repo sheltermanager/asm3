@@ -1,0 +1,71 @@
+Average Cost Per Animal by Date and Species
+###
+Financial
+###
+2707/Any rev01
+###
+Average cost per animal considering medical, vaccination and costs. Only considers adopted/cost complete animals between two dates.
+###
+en
+###
+$VAR fromdate DATE Consider animals adopted between$
+$VAR todate DATE and$
+
+SELECT
+(SELECT COUNT(*) FROM animal WHERE SpeciesID = 1 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$') AS TotalDogs,
+
+(SELECT COUNT(*) FROM animal WHERE SpeciesID = 2 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$') AS TotalCats,
+
+COALESCE((SELECT SUM(CostAmount) FROM animalcost INNER JOIN animal ON animal.ID = animalcost.AnimalID WHERE SpeciesID = 1 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE SpeciesID = 1 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE SpeciesID = 1 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) AS MoneyCostDogs,
+
+COALESCE((SELECT SUM(CostAmount) FROM animalcost INNER JOIN animal ON animal.ID = animalcost.AnimalID WHERE SpeciesID = 2 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE SpeciesID = 2 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE SpeciesID = 2 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) AS MoneyCostCats,
+
+
+(COALESCE((SELECT SUM(CostAmount) FROM animalcost INNER JOIN animal ON animal.ID = animalcost.AnimalID WHERE SpeciesID = 1 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE SpeciesID = 1 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE SpeciesID = 1 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0)) / (SELECT COUNT(*) FROM animal WHERE SpeciesID = 1 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$') AS MoneyAmountDogs, 
+
+(COALESCE((SELECT SUM(CostAmount) FROM animalcost INNER JOIN animal ON animal.ID = animalcost.AnimalID WHERE SpeciesID = 2 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalvaccination INNER JOIN animal ON animal.ID = animalvaccination.AnimalID WHERE SpeciesID = 2 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0) +
+COALESCE((SELECT SUM(Cost) FROM animalmedical INNER JOIN animal ON animal.ID = animalmedical.AnimalID WHERE SpeciesID = 2 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$'), 0)) / (SELECT COUNT(*) FROM animal WHERE SpeciesID = 2 AND ActiveMovementType = 1 AND ActiveMovementDate >= '$@fromdate$' AND ActiveMovementDate <= '$@todate$') AS MoneyAmountCats
+
+FROM animal LIMIT 1
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<table>
+<tr>
+<td>Number of adopted dogs:</td>
+<td>$TOTALDOGS</td>
+</tr>
+<tr>
+<td>Total costs of all adopted dogs:</td>
+<td>$MONEYCOSTDOGS</td>
+</tr>
+<tr>
+<td>Average cost per dog:</td>
+<td>$MONEYAMOUNTDOGS</td>
+</tr>
+<tr>
+<td>Number of adopted cats:</td>
+<td>$TOTALCATS</td>
+</tr>
+<tr>
+<td>Total costs of all adopted cats:</td>
+<td>$MONEYCOSTCATS</td>
+</tr>
+<tr>
+<td>Average cost per cat:</td>
+<td>$MONEYAMOUNTCATS</td>
+</tr>
+</table>
+BODY$$
+
+$$FOOTER
+FOOTER$$

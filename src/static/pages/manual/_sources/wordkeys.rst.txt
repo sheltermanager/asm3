@@ -204,6 +204,8 @@ AnimalLastChangedDate
     The date record was last changed 
 Markings
     The markings box 
+Warning
+    The warning box
 NameOfOwnersVet
     The owner's vet box 
 HasSpecialNeeds
@@ -268,6 +270,8 @@ OriginalOwnerMobilePhone
     The original owner's mobile phone number 
 OriginalOwnerEmail
     The original owner's email address 
+OriginalOwnerIDNumber
+    The original owner's identification number (driving licence, passport, etc)
 OriginalOwnerJurisdiction
     The jurisdiction of the original owner
 OriginalOwner Additional Fields
@@ -296,6 +300,8 @@ CurrentOwnerMobilePhone
     Current owner's cell/mobile phone number
 CurrentOwnerEmail 
     Current owner's email address
+CurrentOwnerIDNumber
+    The current owner's identification number (driving licence, passport, etc)
 CurrentOwnerJurisdiction
     The jurisdiction of the current owner
 CurrentOwner Additional Fields
@@ -324,6 +330,8 @@ ReservedOwnerMobilePhone
     Reserved owner's cell/mobile phone number
 ReservedOwnerEmail 
     Reserved owner's email address
+ReservedOwnerIDNumber
+    The reserving owner's identification number (driving licence, passport, etc)
 ReservedOwnerJurisdiction
     The jurisdiction of the reserving owner
 ReservationStatus
@@ -932,18 +940,20 @@ the following order: Latest movement on file, latest reservation on file,
 current owner (if the animal is non-shelter)
 Log keys are available for people, but prefixed with PersonLog instead of just Log.
 
-Title / OwnerTitle
+Title / OwnerTitle / Title2 /
     The person's title
-Initials / OwnerInitials 
+Initials / OwnerInitials / Initials2
     The person's initials
-Forenames / OwnerForenames 
-    (Firstnames / OwnerFirstNames for US users) 
-Surname / OwnerSurname 
-    (Lastname / OwnerLastName for US users) 
+Forenames / OwnerForenames / Forenames2
+    (Firstnames / OwnerFirstNames / Firstnames2 for US users) 
+Surname / OwnerSurname / Surname2
+    (Lastname / OwnerLastName / Lastname2 for US users) 
 OwnerFlags
     A list of the flags assigned to a person, separated by commas.
 OwnerComments 
     Any comments on the person
+OwnerWarning
+    The warning box on the person
 OwnerCreatedBy 
     (OwnerCreatedByName) 
 OwnerCreatedDate 
@@ -986,12 +996,16 @@ OwnerJurisdiction
     The person's jurisdiction
 OwnerSite
     The site this person is linked to
-WorkTelephone 
+WorkTelephone / WorkTelephone2
     The person's work telephone number
-MobileTelephone 
-    (CellTelephone for US users)
-EmailAddress 
+MobileTelephone / MobileTelephone2
+    (CellTelephone / CellTelephone2 for US users)
+EmailAddress / EmailAddress2
     The person's email address
+OwnerDateOfBirth / OwnerDateOfBirth2
+    The person's date of birth
+IDNumber / IDNumber2
+    The person's identification number (driving licence, passport, national ID card, etc)
 MembershipNumber 
     The person's membership number
 MembershipExpiryDate 

@@ -1,0 +1,62 @@
+Print Account
+###
+Accounts
+###
+2720/Any rev01
+###
+Prints all transactions between two dates for an account (balance calculates from 0 = from)
+###
+en
+###
+$VAR account STRING Print account code$
+$VAR from DATE Transactions between$
+$VAR to DATE and$
+
+SELECT *, 
+SUM(BalanceModifier) OVER (ORDER BY TrxDate, ID) AS MoneyBalance FROM 
+(
+SELECT TrxDate, accountstrx.ID, accountstrx.Description, owner.OwnerName, 
+CASE WHEN Reconciled = 1 THEN 'R' ELSE '' END AS Reconciled,
+CASE WHEN source.Code LIKE '%$@account$%' THEN Amount ELSE 0 END AS MoneyDebit,
+CASE WHEN dest.Code LIKE '%$@account$%' THEN Amount ELSE 0 END AS MoneyCredit,
+CASE WHEN source.Code LIKE '%$@account$%' AND dest.Code LIKE '%$@account$%' THEN '&lt;--&gt;' WHEN source.Code LIKE '%$@account$%' THEN dest.Code WHEN dest.Code LIKE '%$@account$%' THEN source.Code ELSE '' END AS OtherAccount,
+CASE WHEN source.Code LIKE '%$@account$%' THEN Amount * -1 WHEN dest.Code LIKE '%$@account$%' THEN Amount ELSE 0 END AS BalanceModifier
+FROM accountstrx
+INNER JOIN accounts source ON accountstrx.SourceAccountID = source.ID
+INNER JOIN accounts dest ON accountstrx.DestinationAccountID = dest.ID
+LEFT OUTER JOIN ownerdonation ON ownerdonation.ID = accountstrx.OwnerDonationID
+LEFT OUTER JOIN owner ON owner.ID = ownerdonation.OwnerID
+WHERE TrxDate >= '$@from$' AND TrxDate <= '$@to$' 
+AND (source.Code LIKE '%$@account$%' OR dest.Code LIKE '%$@account$%')
+) dummy 
+
+ORDER BY TrxDate
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Date</th>
+<th>R</th>
+<th>Description</th>
+<th>Other Account</th>
+<th>Debit</th>
+<th>Credit</th>
+<th>Balance</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$TRXDATE</td>
+<td>$RECONCILED</td>
+<td>$DESCRIPTION $OWNERNAME</td>
+<td>$OTHERACCOUNT</td>
+<td align="right">$MONEYDEBIT</td>
+<td align="right">$MONEYCREDIT</td>
+<td align="right">$MONEYBALANCE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

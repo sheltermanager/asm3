@@ -11,8 +11,18 @@ sure you have populated person data.
 
 When processing animal records that already exist, there are certain key fields
 that will be overwritten on the existing animal from the CSV data. These fields
-are ANIMALNEUTERED[DATE], ANIMALMICROCHIP[DATE] and ANIMALHEALTHPROBLEMS. This
-allows you to use a spreadsheet of data on chipping/neutering days and import
+are:
+
+* ANIMALDOB
+* ANIMALFLAGS
+* ANIMALHEALTHPROBLEMS. 
+* ANIMALLOCATION / ANIMALUNIT
+* ANIMALMICROCHIP / ANIMALMICROCHIPDATE
+* ANIMALNEUTERED / ANIMALNEUTEREDDATE
+* ANIMALPICKUPADDRESS
+* ANIMALPICKUPLOCATION
+
+This allows you to use a spreadsheet of data on chipping/neutering days and import
 that data to your existing animals afterwards.
 
 ANIMALCODE
@@ -20,9 +30,9 @@ ANIMALCODE
 ANIMALNAME
     The animal's name
 ANIMALIMAGE
-    A photo for the animal, it can either be a fully qualified HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI
+    A photo for the animal, it can either be an absolute HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI
 ANIMALPDFDATA
-    A PDF file to attach to the animal. Like image, it can be a fully qualified URL or a base64 encoded PDF as a data URI
+    A PDF file to attach to the animal. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI
 ANIMALPDFNAME
     The filename associated with the PDF data
 ANIMALNONSHELTER
@@ -74,8 +84,8 @@ ANIMALGOODWITHDOGS
     Y/N/U to indicate yes/no/unknown
 ANIMALGOODWITHKIDS
     Y/N/U to indicate yes/no/unknown
-ANIMALCOMMENTS
-    Some comments to put in the animal's comment field.
+ANIMALDESCRIPTION
+    Some comments to put in the animal's description field.
 ANIMALHIDDENDETAILS
     Some comments for the animal's hidden details field.
 ANIMALMARKINGS
@@ -226,7 +236,7 @@ ORIGINALOWNERFLAGS
 ORIGINALOWNERADDITIONAL<fieldname> 
     If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth ORIGINALOWNERADDITIONALDATEOFBIRTH
 PERSONCLASS
-    1 = Individual/Couple, 2 = Organisation
+    1 = Individual, 2 = Organisation
 PERSONTITLE
     The person's title
 PERSONINITIALS
@@ -301,9 +311,9 @@ PERSONMATCHCOMMENTSCONTAIN
 PERSONADDITIONAL<fieldname>
     If you have person additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called DateOfBirth PERSONADDITIONALDATEOFBIRTH
 PERSONIMAGE
-    A photo for the person, it can either be a fully qualified HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI
+    A photo for the person, it can either be an absolute HTTP URL to a JPG image OR a base64 encoded JPG expressed as a data URI
 PERSONPDFDATA
-    A PDF file to attach to the person. Like image, it can be a fully qualified URL or a base64 encoded PDF as a data URI
+    A PDF file to attach to the person. Like image, it can be an absolute URL or a base64 encoded PDF as a data URI
 PERSONPDFNAME
     The filename associated with the PDF data
 TESTTYPE

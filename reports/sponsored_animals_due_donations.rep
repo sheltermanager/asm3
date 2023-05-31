@@ -1,0 +1,68 @@
+Sponsored Animals with Due Donations
+###
+Financial
+###
+Any rev01
+###
+All sponsored animals with their active sponsors and due donations
+###
+en
+###
+SELECT 
+ShelterCode, 
+AnimalName,
+TimeOnShelter,
+animaltype.AnimalType,
+species.SpeciesName,
+BreedName,
+AnimalAge,
+owner.OwnerName,
+owner.OwnerAddress,
+owner.HomeTelephone,
+ownerdonation.Donation,
+ownerdonation.DateDue
+FROM animal 
+INNER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN ownerdonation ON ownerdonation.AnimalID = animal.ID
+INNER JOIN owner ON owner.ID = ownerdonation.OwnerID
+INNER JOIN donationtype ON donationtype.ID = ownerdonation.DonationTypeID
+WHERE
+ownerdonation.DateDue Is Not Null 
+AND ownerdonation.Date Is Null
+AND donationtype.DonationName LIKE '%Sponsorship%'
+ORDER BY AnimalName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_AnimalName
+$$HEAD
+<h2>$ANIMALNAME - $SHELTERCODE</h2>
+<p>$ANIMALTYPE / $SPECIESNAME / $BREEDNAME aged $ANIMALAGE on shelter for $TIMEONSHELTER</p>
+<table border=1><tr>
+<th>Name</th>
+<th>Address</th>
+<th>Telephone</th>
+<th>Donation</th>
+<th>Due</th>
+</tr>
+$$FOOT
+</table>
+<p>Total $ANIMALNAME: {SUM.Donation.2}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$OWNERNAME</td>
+<td>$OWNERADDRESS</td>
+<td>$HOMETELEPHONE</td>
+<td>$DONATION</td>
+<td>$DATEDUE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<h2>Total Due: {SUM.Donation.2}</h2>
+FOOTER$$
+

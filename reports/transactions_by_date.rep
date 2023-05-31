@@ -1,0 +1,56 @@
+Transactions by Date
+###
+Accounts
+###
+2720/Any rev01
+###
+All financial transactions on file between two dates in a format suitable for export
+###
+en
+###
+SELECT a.ID, a.TrxDate, a.Description, a.Reconciled, a.Amount, 
+sa.Code AS Source, da.Code AS Destination, 
+o.OwnerName AS LinkedOwnerName,
+an.ShelterCode AS LinkedAnimalCode, an.AnimalName AS LinkedAnimalName
+FROM accountstrx a
+INNER JOIN accounts sa ON sa.ID = a.SourceAccountID
+INNER JOIN accounts da ON da.ID = a.DestinationAccountID
+LEFT OUTER JOIN ownerdonation od ON od.ID = a.OwnerDonationID
+LEFT OUTER JOIN owner o ON o.ID = od.OwnerID
+LEFT OUTER JOIN animal an ON an.ID = od.AnimalID
+WHERE a.TrxDate >= '$ASK DATE Enter from date$'
+AND a.TrxDate <= '$ASK DATE Enter to date$'
+ORDER BY a.TrxDate
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>ID</th>
+<th>Date</th>
+<th>Description</th>
+<th>Reconciled</th>
+<th>Amount</th>
+<th>Source</th>
+<th>Destination</th>
+<th>Linked Owner</th>
+<th>Linked Animal</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ID</td>
+<td>$TRXDATE</td>
+<td>$DESCRIPTION</td>
+<td>$RECONCILED</td>
+<td>$AMOUNT</td>
+<td>$SOURCE</td>
+<td>$DESTINATION</td>
+<td>$LINKEDOWNERNAME</td>
+<td>$LINKEDANIMALCODE - $LINKEDANIMALNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

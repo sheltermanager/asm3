@@ -1,0 +1,135 @@
+Cost Breakdown by Permanent Fosters
+###
+Financial
+###
+34601/Any rev03
+###
+Costs between two dates, broken down by permanent foster animals.
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT * FROM (
+
+SELECT 
+animalcost.CostDate AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animalcost.CostAmount AS amt,
+costtype.CostTypeName AS description1,
+animalcost.Description AS description2
+FROM animal
+INNER JOIN animalcost ON animal.ID = animalcost.AnimalID
+INNER JOIN costtype ON animalcost.CostTypeID = costtype.ID
+INNER JOIN species ON species.ID = animal.SpeciesID
+WHERE CostDate >= '$@from$' AND CostDate <= '$@to$'
+AND HasPermanentFoster=1
+
+UNION ALL SELECT
+animal.DateBroughtIn AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animal.DailyBoardingCost * animal.DaysOnShelter AS amt,
+'Board and Food *' AS description1, '' AS description2
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+WHERE Archived = 0
+AND DailyBoardingCost > 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$'
+AND HasPermanentFoster=1
+
+UNION ALL SELECT
+animalvaccination.DateOfVaccination AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animalvaccination.Cost AS amt,
+vaccinationtype.VaccinationType AS description1,
+animalvaccination.Comments AS description2
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID
+INNER JOIN vaccinationtype ON animalvaccination.VaccinationID = vaccinationtype.ID
+WHERE DateOfVaccination >= '$@from$' AND DateOfVaccination <= '$@to$'
+AND HasPermanentFoster=1
+
+UNION ALL SELECT
+animaltest.DateOfTest AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animaltest.Cost AS amt,
+testtype.TestName AS description1,
+animaltest.Comments AS description2
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN animaltest ON animaltest.AnimalID = animal.ID
+INNER JOIN testtype ON animaltest.TestTypeID = testtype.ID
+WHERE DateOfTest >= '$@from$' AND DateOfTest <= '$@to$'
+AND HasPermanentFoster=1
+
+UNION ALL SELECT
+animalmedicaltreatment.DateGiven AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animalmedical.CostPerTreatment AS amt,
+animalmedical.TreatmentName AS description1,
+animalmedical.Comments AS description2
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
+INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID
+WHERE DateGiven >= '$@from$' AND DateGiven <= '$@to$'
+AND HasPermanentFoster=1
+
+UNION ALL SELECT
+animaltransport.PickupDateTime AS date,
+animal.AnimalName AS name,
+animal.ShelterCode AS code,
+species.SpeciesName AS speciesname,
+animaltransport.Cost AS amt,
+'Transport to' AS description1,
+owner.OwnerAddress AS description2
+FROM animal
+INNER JOIN species ON species.ID = animal.SpeciesID
+INNER JOIN animaltransport ON animaltransport.AnimalID = animal.ID
+INNER JOIN owner ON animaltransport.DropoffOwnerID = owner.ID 
+WHERE PickupDateTime >= '$@from$' AND PickupDateTime <= '$@to$'
+AND HasPermanentFoster=1
+
+
+) dummy ORDER BY code, date DESC
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_code
+$$HEAD
+<h2>$code - $name ($speciesname)</h2>
+<table border=1><tr>
+<td><b>Date</b></td>
+<td><b>Amount</b></td>
+<td><b>Description</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $code - $name <b>{SUM.AMT.2}</b></p>
+GROUP$$
+
+$$BODY<tr>
+<td>$DATE</td>
+<td>$AMT</td>
+<td>$DESCRIPTION1</td>
+<td>$DESCRIPTION2</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<p>Total: <b>{SUM.AMT.2}</b></p>
+FOOTER$$
+

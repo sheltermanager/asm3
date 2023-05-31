@@ -1,0 +1,41 @@
+Animals Never Vaccinated
+###
+Auditing
+###
+Any rev01
+###
+Shelter animals who have never been vaccinated.
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, t.AnimalType, i.LocationName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+WHERE a.Archived = 0 AND 
+0 = (SELECT COUNT(ID) FROM animalvaccination av WHERE av.AnimalID = a.ID AND DateOfVaccination Is Not Null)
+ORDER BY t.AnimalType, a.AnimalName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Location</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td>$LOCATIONNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

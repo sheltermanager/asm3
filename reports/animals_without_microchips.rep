@@ -1,0 +1,40 @@
+Non-Microchipped Animals
+###
+Auditing
+###
+Any rev01
+###
+Shelter animals without microchip information.
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, t.AnimalType, i.LocationName
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN internallocation i ON i.ID = a.ShelterLocation
+WHERE a.Archived = 0 AND a.Identichipped = 0
+ORDER BY t.AnimalType, a.AnimalName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Location</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td>$LOCATIONNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

@@ -1,0 +1,70 @@
+Approved Reservations by City
+###
+Movements
+###
+33507/Any rev02
+###
+Active reservations the name/address of the potential owner, grouped by city
+###
+en
+###
+SELECT ShelterCode, AnimalName, DateBroughtIn, ReservationDate, 
+adoption.Comments, 
+species.SpeciesName,
+animaltype.AnimalType AS theType,
+animal.BreedName,
+no.OwnerName, no.OwnerAddress,
+no.OwnerTown, no.OwnerCounty,
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
+FROM adoption
+INNER JOIN owner no ON adoption.OwnerID = no.ID
+LEFT OUTER JOIN animal ON adoption.AnimalID = animal.ID
+LEFT OUTER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
+LEFT OUTER JOIN species ON species.ID = animal.SpeciesID
+LEFT OUTER JOIN reservationstatus ON reservationstatus.ID = adoption.ReservationStatusID
+WHERE MovementType = 0 AND ReservationCancelledDate Is Null AND MovementDate Is Null
+AND reservationstatus.StatusName LIKE 'Approved'
+ORDER BY no.OwnerTown, ReservationDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_OwnerTown
+$$HEAD
+<h2>$OWNERTOWN</h2>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Breed</b></td>
+<td><b>Entered Shelter</b></td>
+<td><b>Reservation Date</b></td>
+<td><b>Reserved By</b></td>
+<td><b>Comments</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $OwnerTown: {COUNT.OwnerTown}</p>
+GROUP$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$theType</td>
+<td>$BreedName</td>
+<td>$DateBroughtIn</td>
+<td>$RESERVATIONDATE</td>
+<td><i>$OwnerName</i><br/>
+$OwnerAddress<br/>
+$OwnerTown<br/>
+$OwnerCounty<br/>
+$OwnerPostcode<br/>
+$EmailAddress<br/>
+H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+

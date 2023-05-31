@@ -1,0 +1,199 @@
+Cost Breakdown by Amount
+###
+Financial
+###
+34601/Any rev02
+###
+Animals costs between two dates in descending order of size.
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT *, COALESCE(med, null, 0, med) + COALESCE(vacc, null, 0, vacc) + COALESCE(test, null, 0, test) + COALESCE(board, null, 0, board) + COALESCE(cost, null, 0, cost) + COALESCE(trans, null, 0, trans) AS amount FROM (
+
+SELECT 
+ShelterCode,
+AnimalName,
+SpeciesName,
+
+(SELECT 
+SUM(animalcost.CostAmount)
+FROM animal
+INNER JOIN animalcost ON animal.ID = animalcost.AnimalID
+WHERE 
+animal.ID = a.ID
+AND CostDate >= '$@from$' AND CostDate <= '$@to$') AS cost,
+
+(SELECT 
+animal.DaysOnShelter * animal.DailyBoardingCost AS board
+FROM animal
+WHERE 
+animal.ID = a.ID
+AND Archived = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$'
+AND DailyBoardingCost > 0) AS board,
+
+(SELECT
+SUM(animalvaccination.Cost)
+FROM animal
+INNER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID
+WHERE 
+animal.ID = a.ID 
+AND DateOfVaccination >= '$@from$' AND DateOfVaccination <= '$@to$') AS vacc,
+
+(SELECT
+SUM(animaltest.Cost)
+FROM animal
+INNER JOIN animaltest ON animaltest.AnimalID = animal.ID
+WHERE 
+animal.ID = a.ID 
+AND DateOfTest >= '$@from$' AND DateOfTest <= '$@to$') AS test,
+
+(SELECT
+SUM(animalmedical.Cost)
+FROM animal
+INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
+INNER JOIN animalmedicaltreatment ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID
+WHERE 
+animal.ID = a.ID
+AND DateGiven >= '$@from$' AND DateGiven <= '$@to$') AS med,
+
+(SELECT
+SUM(animaltransport.Cost)
+FROM animal
+INNER JOIN animaltransport ON animaltransport.AnimalID = animal.ID
+WHERE 
+animal.ID = a.ID
+AND PickupDateTime >= '$@from$' AND PickupDateTime <= '$@to$') AS trans
+
+FROM animal a
+INNER JOIN species ON a.SpeciesID = species.ID
+WHERE (ActiveMovementDate Is Null OR (ActiveMovementDate >= '$@from$' AND ActiveMovementDate <= '$@to$'))
+
+) dummy
+WHERE cost > 0 OR med > 0 OR vacc > 0 OR board > 0 OR test > 0 OR trans > 0
+ORDER BY amount DESC
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Animal</b></td>
+<td><b>Species</b></td>
+<td><b>Cost</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$SPECIESNAME</td>
+<td>$AMOUNT</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>{SUM.AMOUNT.2}</td>
+</table>
+FOOTER$$
+&&&
+Cost Breakdown by Amount
+###
+Financial
+###
+2870/Any ASM2
+###
+Animals costs between two dates in descending order of size.
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT *, COALESCE(med, null, 0, med) + COALESCE(vacc, null, 0, vacc) + COALESCE(board, null, 0, board) + COALESCE(cost, null, 0, cost) AS amount FROM (
+
+SELECT 
+ShelterCode,
+AnimalName,
+SpeciesName,
+
+(SELECT 
+SUM(animalcost.CostAmount)
+FROM animal
+INNER JOIN animalcost ON animal.ID = animalcost.AnimalID
+WHERE 
+animal.ID = a.ID
+AND CostDate >= '$@from$' AND CostDate <= '$@to$') AS cost,
+
+(SELECT 
+animal.DaysOnShelter * animal.DailyBoardingCost AS board
+FROM animal
+WHERE 
+animal.ID = a.ID
+AND Archived = 0
+AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$'
+AND DailyBoardingCost > 0) AS board,
+
+(SELECT
+SUM(animalvaccination.Cost)
+FROM animal
+INNER JOIN animalvaccination ON animalvaccination.AnimalID = animal.ID
+WHERE 
+animal.ID = a.ID 
+AND DateOfVaccination >= '$@from$' AND DateOfVaccination <= '$@to$') AS vacc,
+
+(SELECT
+SUM(animaltest.Cost)
+FROM animal
+INNER JOIN animaltest ON animaltest.AnimalID = animal.ID
+WHERE 
+animal.ID = a.ID 
+AND DateOfTest >= '$@from$' AND DateOfTest <= '$@to$') AS test,
+
+(SELECT
+SUM(animalmedical.Cost)
+FROM animal
+INNER JOIN animalmedical ON animalmedical.AnimalID = animal.ID
+WHERE 
+animal.ID = a.ID
+AND StartDate >= '$@from$' AND StartDate <= '$@to$') AS med
+
+FROM animal a
+INNER JOIN species ON a.SpeciesID = species.ID
+WHERE (ActiveMovementDate Is Null OR (ActiveMovementDate >= '$@from$' AND ActiveMovementDate <= '$@to$')) 
+
+) dummy
+WHERE cost > 0 OR med > 0 OR vacc > 0 OR board > 0
+ORDER BY amount DESC
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Animal</b></td>
+<td><b>Species</b></td>
+<td><b>Cost</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$SPECIESNAME</td>
+<td>$AMOUNT</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>{SUM.AMOUNT.2}</td>
+</table>
+FOOTER$$
+

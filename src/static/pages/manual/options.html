@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Options &mdash; ASM 47u documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -10,7 +11,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -23,14 +26,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> ASM
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ASM
           </a>
               <div class="version">
                 47u
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -52,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
@@ -69,6 +75,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#animal-codes">Animal Codes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#checkout">Checkout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#costs">Costs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#daily-observations">Daily Observations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-protection">Data Protection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#defaults">Defaults</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#diary-and-messages">Diary and Messages</a></li>
@@ -122,8 +129,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Options</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Options</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/options.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -133,12 +140,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="options">
-<h1>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h1>
+  <section id="options">
+<h1>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h1>
 <p>The main <span class="menuselection">Settings ‣ Options</span> page allows configuring of the
 general preferences within Animal Shelter Manager.</p>
-<div class="section" id="shelter-details">
-<h2>Shelter Details<a class="headerlink" href="#shelter-details" title="Permalink to this headline">¶</a></h2>
+<section id="shelter-details">
+<h2>Shelter Details<a class="headerlink" href="#shelter-details" title="Permalink to this heading">¶</a></h2>
 <p>The shelter details tab allows you to enter contact information for your
 shelter. This is used with reporting and internet publishing.</p>
 <p>The “Server Adjustment” box allows you to set a time offset in hours from the
@@ -146,9 +153,9 @@ server clock. This is only necessary if your client is in a different timezone
 from the server. For example, the main sheltermanager.com servers are in the
 UK. East coast Americans will want to adjust the time by -5 hours to make sure
 alerts appear at the correct time and reports are shown correctly.</p>
-</div>
-<div class="section" id="accounts">
-<h2>Accounts<a class="headerlink" href="#accounts" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="accounts">
+<h2>Accounts<a class="headerlink" href="#accounts" title="Permalink to this heading">¶</a></h2>
 <p>ASM contains a full double entry accounting package. The options here are:</p>
 <ul class="simple">
 <li><p>Enable Accounts Functionality: Unticking this box will cause ASM to remove
@@ -219,9 +226,9 @@ destination account, you can specify optional mappings, so that when ASM
 receives a payment of a particular type, it uses the specified destination
 account for it when creating the matching accounting transaction.</p></li>
 </ul>
-</div>
-<div class="section" id="add-animal">
-<h2>Add Animal<a class="headerlink" href="#add-animal" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="add-animal">
+<h2>Add Animal<a class="headerlink" href="#add-animal" title="Permalink to this heading">¶</a></h2>
 <p>ASM allows you to bulk add more than one animal at a time by just hitting the
 “Create” button on the new animal screen instead of “Create and Edit” - this is
 useful if booking in a litter of kittens and puppies for example. Here, you can
@@ -257,9 +264,9 @@ coordinator</p></li>
 dialog if the animal’s name is the same as one entered recently to help
 prevent possible duplicates.</p></li>
 </ul>
-</div>
-<div class="section" id="age-groups">
-<h2>Age Groups<a class="headerlink" href="#age-groups" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="age-groups">
+<h2>Age Groups<a class="headerlink" href="#age-groups" title="Permalink to this heading">¶</a></h2>
 <p>It is possible to categorise your animals by their age in ASM. This is useful
 when generating adoption paperwork and you don’t have an exact date of birth
 for the animal. Instead, ASM can specify one if its groups, using the AgeGroup
@@ -268,9 +275,9 @@ wordkey (or animal.AgeGroup field in custom reports).</p>
 grouping name. By default, anything under 6 months (0.5 years) is classed as a
 Baby, anything under 2 years is Young Adult, under 7 years is Adult and over
 that is Senior.</p>
-</div>
-<div class="section" id="animal-codes">
-<h2>Animal Codes<a class="headerlink" href="#animal-codes" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="animal-codes">
+<h2>Animal Codes<a class="headerlink" href="#animal-codes" title="Permalink to this heading">¶</a></h2>
 <p>ASM allows you to choose the format that animal codes will be automatically
 generated in. ASM internally stores two codes for each animal, the “normal”
 code, unique among all animals and the “short” code. The short code does not
@@ -350,9 +357,9 @@ entering or saving licenses with a number that has already been used.
 Some licensing regions use a tag number that stays with the animal for
 life and need to allow duplicate licenses as a result.</p></li>
 </ul>
-</div>
-<div class="section" id="checkout">
-<h2>Checkout<a class="headerlink" href="#checkout" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="checkout">
+<h2>Checkout<a class="headerlink" href="#checkout" title="Permalink to this heading">¶</a></h2>
 <p>The checkout tab allows you to configure automated checkouts that take payment
 from members of the public (eg: for adoptions and license renewals).</p>
 <ul class="simple">
@@ -373,9 +380,9 @@ They are in the form amount=description. Currency symbols should be included
 in the amount. You should include a zero/0 donation tier unless you want to
 force your adopters to leave a donation.</p></li>
 </ul>
-</div>
-<div class="section" id="costs">
-<h2>Costs<a class="headerlink" href="#costs" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="costs">
+<h2>Costs<a class="headerlink" href="#costs" title="Permalink to this heading">¶</a></h2>
 <p>The costs tab allows you to specify a default daily boarding cost for new
 animals (this value can be modified on the animal’s cost tab).</p>
 <ul class="simple">
@@ -389,9 +396,19 @@ of treatments the animal received (this can then be reported on).</p></li>
 date a cost was paid separately from the date a cost was incurred, tick this
 box.</p></li>
 </ul>
-</div>
-<div class="section" id="data-protection">
-<h2>Data Protection<a class="headerlink" href="#data-protection" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="daily-observations">
+<h2>Daily Observations<a class="headerlink" href="#daily-observations" title="Permalink to this heading">¶</a></h2>
+<p>This tab allows you to configure the values that are requested on the
+<a class="reference internal" href="animals.html#dailyobservations"><span class="std std-ref">Daily Observations</span></a> screen, along with the log type used for the
+records written.</p>
+<p>The left column contains the name of the value, and the right the available
+values. If the right column is empty, the user will be given a free text box to
+enter a value. Otherwise, the right column should contain a pipe-separated list
+of the values available to show in a dropdown.</p>
+</section>
+<section id="data-protection">
+<h2>Data Protection<a class="headerlink" href="#data-protection" title="Permalink to this heading">¶</a></h2>
 <p>This tab allows configuration of how long ASM should keep certain types of data
 before removing them. These settings can be used to enforce data retention
 policies instigated as part of data protection compliance.</p>
@@ -441,9 +458,9 @@ with this type: This option will automatically log any changes to the contact
 opt-in field so that the person who changed it along with the date and time
 are recorded in the log.</p></li>
 </ul>
-</div>
-<div class="section" id="defaults">
-<h2>Defaults<a class="headerlink" href="#defaults" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="defaults">
+<h2>Defaults<a class="headerlink" href="#defaults" title="Permalink to this heading">¶</a></h2>
 <p>This screen allows configuration of the system defaults. These defaults are
 used to select starting values when finding and creating animals and other
 records.</p>
@@ -480,12 +497,15 @@ this option is on, a log record is created every time you change an animal’s
 weight so you can track the history of an animal’s wieght with reports and
 graphs.</p></li>
 </ul>
-</div>
-<div class="section" id="diary-and-messages">
-<h2>Diary and Messages<a class="headerlink" href="#diary-and-messages" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="diary-and-messages">
+<h2>Diary and Messages<a class="headerlink" href="#diary-and-messages" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Show the full diary (instead of just my notes) on the home page: If this option
 is on, all users will see the full list of outstanding diary notes on their home page.</p></li>
+<li><p>Auto complete diary notes linked to animals when they are marked deceased: If
+this option is enabled, diary notes linked to animals are completed when the
+animal is given a deceased date.</p></li>
 <li><p>Email users their outstanding diary notes once per day: This option will cause
 the system to send users an email containing their outstanding diary notes.
 The system will send it as part of the overnight batch, which depending on
@@ -502,9 +522,9 @@ that it is marked complete by a user.</p></li>
 showing messages on the home page for a user, send it via email. The message
 is sent immediately as soon as the message is created.</p></li>
 </ul>
-</div>
-<div class="section" id="display">
-<h2>Display<a class="headerlink" href="#display" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="display">
+<h2>Display<a class="headerlink" href="#display" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Enable Visual Effects: Enables visual sliding effects. Turn this off to speed
 up the UI.</p></li>
@@ -579,9 +599,9 @@ and calendar view, select which day the week should start on. For the US
 and some Jewish cultures, it’s generally Sunday, for the rest of the world,
 Monday.</p></li>
 </ul>
-</div>
-<div class="section" id="documents">
-<h2>Documents<a class="headerlink" href="#documents" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="documents">
+<h2>Documents<a class="headerlink" href="#documents" title="Permalink to this heading">¶</a></h2>
 <p>The documents tab allows you to change various settings related to generating
 documents from templates.</p>
 <ul class="simple">
@@ -615,9 +635,9 @@ PDF converter used by SM would to scale to the widest element on the page,
 however newer versions do not do this. To get back the behaviour that older
 versions of SM had with wkhtmltopdf &lt;= 0.12.3, set this value to 130.</p></li>
 </ul>
-</div>
-<div class="section" id="email">
-<h2>Email<a class="headerlink" href="#email" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="email">
+<h2>Email<a class="headerlink" href="#email" title="Permalink to this heading">¶</a></h2>
 <p>Configure the email address used as the FROM address when sending from ASM. You
 can also configure autocomplete items for the from, to and cc address boxes.</p>
 <p>(sheltermanager.com only) You can override the use of smtp.sheltermanager.com
@@ -625,9 +645,9 @@ and use your own SMTP server to send email if you wish. This is an advanced
 option for experienced users, if you do not understand what you are doing, do
 not enable the option to use your own SMTP server as you will likely break
 the email sending functionality for your database.</p>
-</div>
-<div class="section" id="find-screens">
-<h2>Find Screens<a class="headerlink" href="#find-screens" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="find-screens">
+<h2>Find Screens<a class="headerlink" href="#find-screens" title="Permalink to this heading">¶</a></h2>
 <p>This tab allows you to configure which columns are present on all the find
 screens and in which order they are displayed.</p>
 <ul class="simple">
@@ -639,9 +659,9 @@ location when the screen is opened.</p></li>
 <li><p>Default to advanced find person screen: If ticked, the find person screen
 will appear in advanced mode by default.</p></li>
 </ul>
-</div>
-<div class="section" id="home-page">
-<h2>Home page<a class="headerlink" href="#home-page" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="home-page">
+<h2>Home page<a class="headerlink" href="#home-page" title="Permalink to this heading">¶</a></h2>
 <p>The home page tab allows configuration of the home page. If selected, some
 shelter stats can be displayed for the current period on the home page as
 well as links to a chosen set of animals (eg: Recently changed or Up
@@ -673,9 +693,9 @@ species (by default dogs)</p></li>
 type: The alert for animals that have never been vaccinated will only be
 shown for these species (by default dogs and cats)</p></li>
 </ul>
-</div>
-<div class="section" id="insurance">
-<h2>Insurance<a class="headerlink" href="#insurance" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="insurance">
+<h2>Insurance<a class="headerlink" href="#insurance" title="Permalink to this heading">¶</a></h2>
 <p>If you have an agreement with a pet insurer, Animal Shelter Manager can accept
 a range of numbers under this tab and allow you to assign them to adoptions as
 they are made.</p>
@@ -683,16 +703,16 @@ they are made.</p>
 using automatic numbers. When you next adopt an animal, a button will appear at
 the side of the insurance number on the movement screen, allowing you to assign
 an insurance number to that adoption.</p>
-</div>
-<div class="section" id="lost-and-found">
-<h2>Lost and Found<a class="headerlink" href="#lost-and-found" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="lost-and-found">
+<h2>Lost and Found<a class="headerlink" href="#lost-and-found" title="Permalink to this heading">¶</a></h2>
 <p>The lost and found tab allows you to assign your own point weightings to the
 different kinds of matches used when generating the lost and found match
 report, as well as determine how many points are need for a match to be
 included.</p>
-</div>
-<div class="section" id="medical">
-<h2>Medical<a class="headerlink" href="#medical" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="medical">
+<h2>Medical<a class="headerlink" href="#medical" title="Permalink to this heading">¶</a></h2>
 <ul>
 <li><p>Include off-shelter animals in medical calendar and books: If ticked, animals
 with outstanding medical/vacc/tests that have left the shelter will be shown
@@ -725,9 +745,9 @@ on Monday mornings.</p>
 </li>
 </ul>
 <img alt="_images/fosterer_email.png" src="_images/fosterer_email.png" />
-</div>
-<div class="section" id="movements">
-<h2>Movements<a class="headerlink" href="#movements" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="movements">
+<h2>Movements<a class="headerlink" href="#movements" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Cancel unadopted reservations after: If an animal is reserved for this period
 of time and it does not result in an adoption (or any kind of movement), ASM
@@ -819,9 +839,9 @@ shelter: The system can check and warn you if you attempt to adopt an animal
 to an owner who looks like an owner who brought an animal in. This is a loose
 check based on name and address.</p></li>
 </ul>
-</div>
-<div class="section" id="online-forms">
-<h2>Online Forms<a class="headerlink" href="#online-forms" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="online-forms">
+<h2>Online Forms<a class="headerlink" href="#online-forms" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Remove incoming forms after: Automatically remove forms from the incoming queue
 after this many days.</p></li>
@@ -834,9 +854,9 @@ only: If this option is on, form submissions will be hashed and read only
 recorded. This prevents anyone from editing form submissions after they have been
 stored.</p></li>
 </ul>
-</div>
-<div class="section" id="payment-processors">
-<span id="paymentprocessors"></span><h2>Payment Processors<a class="headerlink" href="#payment-processors" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="payment-processors">
+<span id="paymentprocessors"></span><h2>Payment Processors<a class="headerlink" href="#payment-processors" title="Permalink to this heading">¶</a></h2>
 <p>ASM can be configured to request due payments from your customers via payment
 processors.</p>
 <ul class="simple">
@@ -847,8 +867,8 @@ any kind of currency exchange calculations.</p></li>
 completes a payment, this is the page they will be redirected to. If you do not
 set a page, the payment processor will show their own payment successful page.</p></li>
 </ul>
-<div class="section" id="paypal">
-<h3>PayPal<a class="headerlink" href="#paypal" title="Permalink to this headline">¶</a></h3>
+<section id="paypal">
+<h3>PayPal<a class="headerlink" href="#paypal" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>PayPal Business Email: The address for your PayPal account where payments will
 be sent to.</p></li>
@@ -858,9 +878,9 @@ IPN notifications from PayPal. As a “just in case” measure, click on the Set
 icon at the top right of your PayPal account, choose “Account Settings”, then
 “Notifications” and the “Update” link next to “Instant Payment Notifications”.
 You can now choose a URL and to enable IPN messages. Use the URL shown on screen.</p>
-</div>
-<div class="section" id="stripe">
-<h3>Stripe<a class="headerlink" href="#stripe" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="stripe">
+<h3>Stripe<a class="headerlink" href="#stripe" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Stripe Key: Your stripe key. This is usually prefixed with pk</p></li>
 <li><p>Stripe Secret Key: Your stripe secret key, usually prefixed with sk</p></li>
@@ -871,18 +891,18 @@ Webhook needs to be created in the Stripe dashboard to receive
 Webhooks</span></p>
 <p>The Payment Processors option tab in ASM will display the URL you need to
 configure for your webhook below the key fields.</p>
-</div>
-</div>
-<div class="section" id="quicklinks">
-<h2>Quicklinks<a class="headerlink" href="#quicklinks" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="quicklinks">
+<h2>Quicklinks<a class="headerlink" href="#quicklinks" title="Permalink to this heading">¶</a></h2>
 <p>Quicklinks can be configured here and shown on the home page and optionally
 all screens (at the cost of some vertical space). Quicklinks allow you to
 quickly get to some of ASM’s screens without having to open the menus.</p>
-</div>
-<div class="section" id="remove">
-<h2>Remove<a class="headerlink" href="#remove" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="system">
-<h3>System<a class="headerlink" href="#system" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="remove">
+<h2>Remove<a class="headerlink" href="#remove" title="Permalink to this heading">¶</a></h2>
+<section id="system">
+<h3>System<a class="headerlink" href="#system" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Remove clinic functionality from screens and menus: If your shelter does
 not run a clinic, this option will disable the system’s clinic appointment
@@ -913,9 +933,9 @@ the transport book from the menu and the tab from animal records.</p></li>
 <li><p>Remove the trap loan functionality from menus: Setting this option removes
 the trap loan link from the menu and the trap loan tab on the person screen.</p></li>
 </ul>
-</div>
-<div class="section" id="people">
-<h3>People<a class="headerlink" href="#people" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="people">
+<h3>People<a class="headerlink" href="#people" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Remove the city/state fields from person details: Setting this option will
 prevent ASM from presenting the user with additional fields to store the city
@@ -934,9 +954,9 @@ homecheck before the flag to confirm the person is homechecked.</p></li>
 option hides the insurance number field and button from <span class="menuselection">Move
 ‣ Adopt an animal</span> and all movement tabs/books.</p></li>
 </ul>
-</div>
-<div class="section" id="animals">
-<h3>Animals<a class="headerlink" href="#animals" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="animals">
+<h3>Animals<a class="headerlink" href="#animals" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Remove the asilomar fields from the entry/deceased section: (US locales only)
 This option hides the asimilor intake and death category fields from the
@@ -991,10 +1011,10 @@ won’t display the fields that allow an animal to be marked as picked up in a
 particular location or by an ACO (useful for shelters who do not have staff
 picking up animals).</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="reports">
-<h2>Reports<a class="headerlink" href="#reports" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="reports">
+<h2>Reports<a class="headerlink" href="#reports" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Email scheduled reports with no data: If you have set reports to be
 automatically emailed at a time of day, empty reports with “No data to show”
@@ -1003,9 +1023,9 @@ will be emailed if this box is ticked.</p></li>
 installed, this option allows you to just show the categories in the reports
 menu. Clicking a category expands it.</p></li>
 </ul>
-</div>
-<div class="section" id="shelter-view">
-<h2>Shelter View<a class="headerlink" href="#shelter-view" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="shelter-view">
+<h2>Shelter View<a class="headerlink" href="#shelter-view" title="Permalink to this heading">¶</a></h2>
 <p>The shelter view tab allows the default grouping to be set.</p>
 <ul class="simple">
 <li><p>Allow drag and drop to move animals between locations: If set, you can drag animal
@@ -1013,9 +1033,9 @@ thumbnails between locations in shelter view to move them.</p></li>
 <li><p>Show empty locations: If set, headings for all internal locations will be shown,
 even if there are no animals in them.</p></li>
 </ul>
-</div>
-<div class="section" id="waiting-list">
-<h2>Waiting List<a class="headerlink" href="#waiting-list" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="waiting-list">
+<h2>Waiting List<a class="headerlink" href="#waiting-list" title="Permalink to this heading">¶</a></h2>
 <p>The waiting list tab allows an update period to be configured here. Simply
 specify in days the interval between updates (how often a waiting list entry is
 bumped up the urgency ratings until it reaches “High”). Another option is
@@ -1024,9 +1044,9 @@ start value given to new waiting list entries. You can also choose hold
 separate rankings for species on the waiting list. This makes sense if your
 shelter takes dogs and cats for example and whether you can take a cat is
 independent of how many dogs are on the shelter.</p>
-</div>
-<div class="section" id="watermark">
-<h2>Watermark<a class="headerlink" href="#watermark" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="watermark">
+<h2>Watermark<a class="headerlink" href="#watermark" title="Permalink to this heading">¶</a></h2>
 <p>Watermarking is a feature available under the media tab of animal records. It
 allows you to embed a logo and the animal’s name within a photo.</p>
 <p>By default, the watermark image is added to the bottom right corner of the
@@ -1039,8 +1059,8 @@ image and animal name, along with the colours used for the text of the name.</p>
 named “watermark.png” to <span class="menuselection">Settings ‣ Reports ‣ Extra Images</span>
 - note that the image must be a PNG file, so that an alpha channel for
 transparency can be included.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

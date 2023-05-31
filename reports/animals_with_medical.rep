@@ -1,0 +1,52 @@
+Animals with a medical treatment
+###
+Auditing
+###
+Any rev01
+###
+Shelter animals who have a medical regimen with a particular name
+###
+en
+###
+SELECT a.ShelterCode, a.AnimalName,
+s.SpeciesName, a.BreedName, a.AnimalAge,
+CASE WHEN a.ActiveMovementID > 0 THEN fo.OwnerName ELSE il.LocationName END AS Location,
+a.DateBroughtIn
+FROM animal a
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType
+LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID
+LEFT OUTER JOIN owner fo ON ad.OwnerID = fo.ID
+WHERE a.Archived = 0
+AND EXISTS(SELECT am.ID FROM animalmedical am WHERE am.AnimalID = a.ID AND UPPER(am.TreatmentName) LIKE UPPER('%$ASK STRING Medical name$%'))
+ORDER BY a.AnimalName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>Species</th>
+<th>Breed</th>
+<th>Age</th>
+<th>Location</th>
+<th>Entered Shelter</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$SPECIESNAME</td>
+<td>$BREEDNAME</td>
+<td>$ANIMALAGE</td>
+<td>$LOCATION</td>
+<td>$DATEBROUGHTIN</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

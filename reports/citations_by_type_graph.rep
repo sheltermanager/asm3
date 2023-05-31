@@ -1,0 +1,20 @@
+Citations issued by type
+###
+Animal Control Charts
+###
+33307/Any rev01
+###
+Chart of citations issued between two dates by type
+###
+en
+###
+SELECT
+ct.CitationName, COUNT(ct.CitationName)
+FROM ownercitation oc
+INNER JOIN citationtype ct ON ct.ID = oc.CitationTypeID
+WHERE oc.CitationDate >= '$ASK DATE Enter the from date$'
+AND oc.CitationDate <= '$ASK DATE Enter the to date$'
+GROUP BY ct.CitationName
+ORDER BY ct.CitationName
+###
+GRAPH PIE

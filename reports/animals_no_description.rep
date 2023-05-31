@@ -1,0 +1,38 @@
+Animals without a description
+###
+Auditing
+###
+Any rev01
+###
+Shelter animals who do not have a description
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, a.AnimalAge, a.DisplayLocation
+FROM animal a
+WHERE a.Archived = 0 AND (a.AnimalComments Is Null OR a.AnimalComments = '') 
+ORDER BY a.AnimalName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Age</th>
+<th>Location</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALAGE</td>
+<td>$DISPLAYLOCATION</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

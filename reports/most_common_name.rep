@@ -1,0 +1,36 @@
+Most Common Name
+###
+Statistics
+###
+Any rev01
+###
+The most common animal names.
+###
+en
+###
+SELECT AnimalName, COUNT(AnimalName) AS Total 
+FROM animal 
+WHERE DateBroughtIn >= '$ASK DATE Enter from date$' AND DateBroughtIn <= '$ASK DATE Enter to date$'
+GROUP BY AnimalName
+HAVING COUNT(AnimalName) > 1
+ORDER BY COUNT(AnimalName)
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Occurrences</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$TOTAL</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+

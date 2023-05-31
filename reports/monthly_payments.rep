@@ -1,0 +1,41 @@
+Monthly Payments By Type
+###
+Financial Charts
+###
+3000/MySQL rev01
+###
+The total payments per type, per month for a given year.
+###
+en
+###
+SELECT
+dt.DonationName, 
+MONTH(od.Date) AS bimonth,
+SUM(od.Donation) AS total
+FROM ownerdonation od
+INNER JOIN donationtype dt ON dt.ID = od.DonationTypeID
+WHERE YEAR(od.Date) = $ASK STRING Which year to display for?$
+GROUP BY dt.DonationName, MONTH(od.Date)
+###
+GRAPH LINES
+&&&
+Monthly Payments By Type
+###
+Financial Charts
+###
+3000/PostgreSQL rev01
+###
+The total payments per type, per month for a given year.
+###
+en
+###
+SELECT
+dt.DonationName, 
+CAST(EXTRACT(MONTH FROM od.Date) AS INTEGER) AS bimonth,
+SUM(od.Donation) AS total
+FROM ownerdonation od
+INNER JOIN donationtype dt ON dt.ID = od.DonationTypeID
+WHERE CAST(EXTRACT(YEAR FROM od.Date) AS INTEGER) = $ASK STRING Which year to display for?$
+GROUP BY dt.DonationName, EXTRACT(MONTH FROM od.Date)
+###
+GRAPH LINES

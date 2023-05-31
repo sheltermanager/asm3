@@ -1,0 +1,55 @@
+Animals without a test of type
+###
+Auditing
+###
+Any rev01
+###
+Shelter animals who don't have a test of a particular type
+###
+en
+###
+SELECT a.ShelterCode, a.AnimalName,
+s.SpeciesName, a.BreedName, a.AnimalAge,
+CASE WHEN a.ActiveMovementID > 0 THEN fo.OwnerName ELSE il.LocationName END AS Location,
+a.DateBroughtIn
+FROM animal a
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType
+LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID
+LEFT OUTER JOIN owner fo ON ad.OwnerID = fo.ID
+WHERE a.Archived = 0
+AND NOT EXISTS(SELECT att.ID FROM animaltest att
+INNER JOIN testtype tt ON att.TestTypeID = tt.ID
+WHERE att.AnimalID = a.ID 
+AND UPPER(tt.TestName) LIKE UPPER('%$ASK STRING Missing test type$%'))
+ORDER BY a.AnimalName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>Species</th>
+<th>Breed</th>
+<th>Age</th>
+<th>Location</th>
+<th>Entered Shelter</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$SPECIESNAME</td>
+<td>$BREEDNAME</td>
+<td>$ANIMALAGE</td>
+<td>$LOCATION</td>
+<td>$DATEBROUGHTIN</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

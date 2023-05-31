@@ -1,0 +1,25 @@
+Original Owner Map
+###
+Maps
+###
+34703/Any rev02
+###
+Animals between two dates with original owner pinned on the map
+###
+en
+###
+$VAR from DATE Brought in between$
+$VAR to DATE and$
+
+SELECT o.LatLong, 
+'<a href="animal?id=', a.ID, '">', a.AnimalName, ' - ', a.ShelterCode, '</a>',
+'<br>Brought in on ', a.DateBroughtIn, '<br>', 
+'<b><a href="person?id=', o.ID, '">', o.OwnerName, '</a><br />',
+o.OwnerAddress, '<br />', o.OwnerTown, ' ', o.OwnerCounty, ' ', o.OwnerPostcode 
+FROM animal a
+INNER JOIN owner o ON a.OriginalOwnerID = o.ID
+WHERE a.DateBroughtIn >= '$@from$' AND a.DateBroughtIn <= '$@to$' 
+AND o.LatLong <> '' 
+ORDER BY a.DateBroughtIn
+###
+MAP

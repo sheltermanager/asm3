@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stock Control &mdash; ASM 47u documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -10,7 +11,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -23,14 +26,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> ASM
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ASM
           </a>
               <div class="version">
                 47u
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -58,7 +65,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
@@ -90,8 +96,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Stock Control</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Stock Control</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/stockcontrol.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -101,8 +107,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="stock-control">
-<h1>Stock Control<a class="headerlink" href="#stock-control" title="Permalink to this headline">¶</a></h1>
+  <section id="stock-control">
+<h1>Stock Control<a class="headerlink" href="#stock-control" title="Permalink to this heading">¶</a></h1>
 <p>Animal Shelter Manager includes a stock control system for managing stores of
 drugs, food and other items.</p>
 <p>Before using the module, you should set up locations for your stock under
@@ -125,8 +131,8 @@ and there are no items left.</p>
 electronic version of that system. With stock cards, each container gets a card
 (a stock record in ASM) that tracks how many items started and remain in that
 container, along with a note each time the stock was used.</p>
-<div class="section" id="adding-new-stock">
-<h2>Adding new stock<a class="headerlink" href="#adding-new-stock" title="Permalink to this headline">¶</a></h2>
+<section id="adding-new-stock">
+<h2>Adding new stock<a class="headerlink" href="#adding-new-stock" title="Permalink to this heading">¶</a></h2>
 <img alt="_images/stock_add.png" src="_images/stock_add.png" />
 <p>Use the “New Stock” button to add a new stocked item. Each stocked item is
 assumed to be a container of  “total” items as described by the “units” field.
@@ -151,9 +157,9 @@ stock has changed with a stock usage type/category. You can also add some
 comments.</p>
 <p>The system will remember items you have previously entered and the name and
 unit fields will autocomplete suggested values for you as you type.</p>
-</div>
-<div class="section" id="using-stock-manually">
-<h2>Using stock (manually)<a class="headerlink" href="#using-stock-manually" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="using-stock-manually">
+<h2>Using stock (manually)<a class="headerlink" href="#using-stock-manually" title="Permalink to this heading">¶</a></h2>
 <p>To use stock, you can simply open up the stock record by clicking its name in
 the list of current stocked items and adjusting the balance. When you change
 the balance of an existing record, the usage fields will appear to prompt you
@@ -162,9 +168,9 @@ to create a usage record to explain why this stock record has changed.</p>
 use the “wastage” usage type so that reports can calculate how much stock has
 been wasted. When loading stock screens and items for selection, any stocked
 items with zero balances will be hidden from view.</p>
-</div>
-<div class="section" id="using-stock-medical-tests-and-vaccinations">
-<h2>Using stock (medical, tests and vaccinations)<a class="headerlink" href="#using-stock-medical-tests-and-vaccinations" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="using-stock-medical-tests-and-vaccinations">
+<h2>Using stock (medical, tests and vaccinations)<a class="headerlink" href="#using-stock-medical-tests-and-vaccinations" title="Permalink to this heading">¶</a></h2>
 <p>As a shortcut, when you are performing tests or administering vaccinations and
 medical items through the tabs on the animal record or via
 <span class="menuselection">Medical ‣ Test Book</span>, <span class="menuselection">Medical ‣ Vaccination
@@ -178,14 +184,14 @@ appropriate stocked item.</p>
 <p>However many treatments/vaccinations/tests were selected to be marked given or
 performed, only one stock deduction will be made so you should make sure the
 deduction covers all the selected items.</p>
-</div>
-<div class="section" id="stock-alerts">
-<h2>Stock alerts<a class="headerlink" href="#stock-alerts" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="stock-alerts">
+<h2>Stock alerts<a class="headerlink" href="#stock-alerts" title="Permalink to this heading">¶</a></h2>
 <p>The system will produce alerts on the front screen when you have stocked items
 that have either expired or are due to expire in the next month.</p>
 <img alt="_images/stock_alerts.png" src="_images/stock_alerts.png" />
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

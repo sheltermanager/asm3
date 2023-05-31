@@ -1,0 +1,39 @@
+Open Investigations
+###
+Animal Control
+###
+3222/Any rev01
+###
+Shows all open investigations (no note that starts "Closed")
+###
+en
+###
+SELECT o.*, oi.Date, oi.Notes
+FROM owner o
+INNER JOIN ownerinvestigation oi ON oi.OwnerID = o.ID
+WHERE
+NOT EXISTS (SELECT Notes FROM ownerinvestigation WHERE OwnerID = o.ID AND LOWER(Notes) LIKE 'closed%')
+ORDER BY o.OwnerName, oi.Date DESC
+###
+$$GROUP_OwnerName
+$$HEAD
+<h2>$OWNERNAME</h2>
+<p>$OWNERADDRESS $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE. $COMMENTS</p>
+<table border="1">
+$$FOOT
+</table>
+GROUP$$
+
+$$HEADER
+HEADER$$
+
+$$BODY
+<tr>
+<td>$DATE</td>
+<td>$NOTES</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+

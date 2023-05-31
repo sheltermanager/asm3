@@ -1,0 +1,76 @@
+Incidents between two dates by pickup location
+###
+Animal Control
+###
+33608/Any rev01
+###
+Incidents between two dates broken down by pickup location and type
+###
+en
+###
+SELECT 
+ac.IncidentDateTime, ti.IncidentName, co.OwnerName AS CallerName, co.HomeTelephone, co.WorkTelephone, co.MobileTelephone,
+ac.CallDateTime, ac.CallNotes, vo.OwnerName AS VictimName, s.SpeciesName, pl.LocationName, 
+o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3, 
+ac.DispatchAddress, ac.DispatchTown, ac.DispatchCounty, ac.DispatchPostcode, ac.DispatchedACO,
+ac.DispatchDateTime, ac.RespondedDateTime, ac.CompletedDate, ci.CompletedName
+FROM animalcontrol ac
+LEFT OUTER JOIN pickuplocation pl ON pl.ID = ac.PickupLocationID
+LEFT OUTER JOIN species s ON s.ID = ac.SpeciesID
+LEFT OUTER JOIN owner co ON co.ID = ac.CallerID
+LEFT OUTER JOIN owner o1 ON o1.ID = ac.OwnerID
+LEFT OUTER JOIN owner o2 ON o2.ID = ac.Owner2ID
+LEFT OUTER JOIN owner o3 ON o3.ID = ac.Owner3ID
+LEFT OUTER JOIN owner vo ON vo.ID = ac.VictimID
+LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
+LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID
+WHERE ac.IncidentDateTime >= '$ASK DATE Enter the from date$'
+AND ac.IncidentDateTime <= '$ASK DATE Enter the to date$ 23:59:59'
+ORDER BY pl.LocationName, ti.IncidentName, ac.CallDateTime
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_LocationName
+$$HEAD
+<h2>$LOCATIONNAME</h2>
+$$FOOT
+<h2>Total $LOCATIONNAME: {COUNT.LOCATIONNAME}</h2>
+GROUP$$
+
+$$GROUP_IncidentName
+$$HEAD
+<h3>$INCIDENTNAME</h3>
+<table border="1">
+<tr>
+<th>Date</th>
+<th>Caller</th>
+<th>Notes</th>
+<th>Victim</th>
+<th>Suspect</th>
+<th>Dispatch</th>
+<th>Dispatched</th>
+<th>Responded</th>
+<th>Completed</th>
+</tr>
+$$FOOT
+</table>
+<h3>Total $INCIDENTNAME: {COUNT.INCIDENTNAME}</h3>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$INCIDENTDATETIME</td>
+<td>$CALLERNAME<br/>H:$HOMETELEPHONE W:$WORKTELEPHONE C:$MOBILETELEPHONE</td>
+<td>$CALLNOTES</td>
+<td>$VICTIMNAME</td>
+<td>$OWNERNAME1 $OWNERNAME2 $OWNERNAME3</td>
+<td>$DISPATCHADDRESS<br/>$DISPATCHTOWN<br/>$DISPATCHCOUNTY $DISPATCHPOSTCODE</td>
+<td>$DISPATCHDATETIME $DISPATCHEDACO</td>
+<td>$RESPONDEDDATETIME</td>
+<td>$COMPLETEDDATE $COMPLETEDNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

@@ -1,0 +1,53 @@
+Active Litters
+###
+Litters
+###
+2732/Any rev01
+###
+All active litters.
+###
+en
+###
+SELECT a.ShelterCode, a.AnimalName,
+t.AnimalType, s.SpeciesName, a.BreedName,
+l.AcceptanceNumber, l.NumberInLitter, l.CachedAnimalsLeft, l.Comments
+FROM animallitter l 
+INNER JOIN animal a ON a.AcceptanceNumber = l.AcceptanceNumber
+INNER JOIN species s ON a.SpeciesID = s.ID
+INNER JOIN animaltype t ON a.AnimalTypeID = t.ID
+WHERE (l.InvalidDate Is Null OR l.InvalidDate <= '$CURRENT_DATE$') 
+AND CachedAnimalsLeft > 0
+ORDER BY a.AcceptanceNumber, a.AnimalName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_AcceptanceNumber
+$$HEAD
+<h2>$ACCEPTANCENUMBER</h2>
+<p>$COMMENTS</p>
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Species</b></td>
+<td><b>Breed</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total remaining in litter: $CACHEDANIMALSLEFT of $NUMBERINLITTER</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$ANIMALTYPE</td>
+<td>$SPECIESNAME</td>
+<td>$BREEDNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

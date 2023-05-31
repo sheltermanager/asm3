@@ -1,0 +1,96 @@
+Common Animal Adoption Areas
+###
+Statistics
+###
+MySQL rev01
+###
+The most common areas which animals are adopted to.
+###
+en
+###
+SELECT DISTINCT
+CASE WHEN LOCATE(' ', o.OwnerPostcode) > 1 
+THEN LEFT(o.OwnerPostcode, LOCATE(' ', o.OwnerPostcode))
+ELSE o.OwnerPostcode END AS Postcode,
+COUNT(CASE WHEN LOCATE(' ', o.OwnerPostcode) > 1 
+THEN LEFT(o.OwnerPostcode, LOCATE(' ', o.OwnerPostcode))
+ELSE o.OwnerPostcode END) AS Total
+FROM animal a
+INNER JOIN adoption ad ON ad.AnimalID = a.ID
+INNER JOIN owner o ON o.ID = ad.OwnerID
+WHERE ad.MovementType = 1 AND NonShelterAnimal = 0
+GROUP BY 
+CASE WHEN LOCATE(' ', o.OwnerPostcode) > 1 
+THEN LEFT(o.OwnerPostcode, LOCATE(' ', o.OwnerPostcode))
+ELSE o.OwnerPostcode END
+HAVING Total > 1
+ORDER BY Total DESC
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Area</th>
+<th>Total</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$POSTCODE</td>
+<td>$TOTAL</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
+
+&&&
+Common Animal Adoption Areas
+###
+Statistics
+###
+PostgreSQL
+###
+The most common areas which animals are adopted to.
+###
+en
+###
+SELECT DISTINCT
+CASE WHEN position(' ' in o.OwnerPostcode) > 1 
+THEN substring(o.OwnerPostcode from 0 for position(' ' in o.OwnerPostcode))
+ELSE o.OwnerPostcode END AS Postcode,
+COUNT(CASE WHEN position(' ' in o.OwnerPostcode) > 1 
+THEN substring(o.OwnerPostcode from 0 for position(' ' in o.OwnerPostcode))
+ELSE o.OwnerPostcode END) AS Total
+FROM animal a
+INNER JOIN adoption ad ON ad.AnimalID = a.ID
+INNER JOIN owner o ON o.ID = ad.OwnerID
+WHERE ad.MovementType = 1
+GROUP BY 
+CASE WHEN position(' ' in o.OwnerPostcode) > 1 
+THEN substring(o.OwnerPostcode from 0 for position(' ' in o.OwnerPostcode))
+ELSE o.OwnerPostcode END
+HAVING COUNT(CASE WHEN position(' ' in o.OwnerPostcode) > 1 
+THEN substring(o.OwnerPostcode from 0 for position(' ' in o.OwnerPostcode))
+ELSE o.OwnerPostcode END) > 1
+ORDER BY Total DESC
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Area</th>
+<th>Total</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$POSTCODE</td>
+<td>$TOTAL</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

@@ -1,0 +1,78 @@
+Insurance Cover Notes between two dates
+###	
+Movements
+###
+34004/Any rev01
+###
+Insurance cover notes issued between two dates
+###
+en
+###
+$VAR from DATE Adopted between$
+$VAR to DATE and$
+
+SELECT ShelterCode, AnimalName, MostRecentEntryDate, MovementDate, InsuranceNumber,
+species.SpeciesName, animal.TimeOnShelter, animal.DaysOnShelter, animal.IdentichipNumber,
+animaltype.AnimalType AS theType,
+animal.BreedName,
+oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode, 
+oo.EmailAddress AS OOEmail,
+no.OwnerName, no.OwnerAddress,
+no.OwnerTown, no.OwnerCounty,
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
+FROM adoption
+INNER JOIN animal ON adoption.AnimalID = animal.ID
+INNER JOIN owner no ON adoption.OwnerID = no.ID
+INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
+INNER JOIN species ON species.ID = animal.SpeciesID
+LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
+WHERE InsuranceNumber <> ''AND MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' ORDER BY MovementDate
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Name</b></td>
+<td><b>Code</b></td>  
+<td><b>Type</b></td>
+<td><b>Breed</b></td>
+<td><b>Microchip</b></td>
+<td><b>Entered Shelter</b></td>
+<td><b>Time On Shelter</b></td>
+<td><b>Came From</b></td>
+<td><b>Adoption Date</b></td>
+<td><b>Adopted To</b></td>
+<td><b>Policy Number<b></td>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$theType</td>
+<td>$BreedName</td>
+<td>$IdentichipNumber</td>
+<td>$MostRecentEntryDate</td>
+<td>$TimeOnShelter ($DaysOnShelter days)</td>
+<td><i>$OOName</i><br/>
+$OOAddress<br/>
+$OOTown<br/>
+$OOCounty<br/>
+$OOPostcode<br/>
+$OOEmail</td>
+<td>$MOVEMENTDATE</td>
+<td><i>$OwnerName</i><br/>
+$OwnerAddress<br/>
+$OwnerTown<br/>
+$OwnerCounty<br/>
+$OwnerPostcode<br/>
+$EmailAddress<br/>
+H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
+<td>$INSURANCENUMBER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+
+</table>
+<h2>Total Insurance Cover Notes: {COUNT.SHELTERCODE}</h2>
+FOOTER$$

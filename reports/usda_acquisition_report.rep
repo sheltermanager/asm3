@@ -1,0 +1,62 @@
+USDA Acquisition Report
+###
+Figures
+###
+34702/Any rev03
+###
+Animals entering between two dates with their final outcomes for completing the USDA acquisitions form/APHIS Form 7005, Nov 2020. 
+###
+en
+###
+SELECT
+a.AnimalName, a.ShelterCode, a.DateOfBirth, s.SpeciesName, 
+a.BreedName, bo.OwnerName, a.DateBroughtIn, 
+a.NeuteredDate, a.IdentichipNumber, a.AnimalAge, a.Weight, a.Markings, 
+(SELECT Sex FROM lksex WHERE ID = a.Sex) AS Sex, 
+a.DeceasedDate, a.ActiveMovementDate,
+CASE WHEN a.PutToSleep = 1 THEN 'Euthanized' ELSE '' END AS Euthanized,
+bo.OwnerAddress, bo.OwnerTown, bo.OwnerCounty, bo.OwnerPostcode, bo.IdentificationNumber
+FROM animal a
+INNER JOIN species s ON a.SpeciesID = s.ID
+LEFT OUTER JOIN owner bo ON a.BroughtInByOwnerID = bo.ID
+WHERE a.DateBroughtIn >= '$ASK DATE Enter from date$' AND a.DateBroughtIn <= '$ASK DATE Enter to date$ 23:59:59' 
+AND NonShelterAnimal = 0 AND SpeciesID IN (1,2) 
+ORDER BY a.DateBroughtIn
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Tattoo or USDA Tag Number<sup>A</sup></th>
+<th>Species<sup>B/C</sup></th>
+<th>Age<sup>D</sup></th>
+<th>Weight<sup>E</sup></th>
+<th>Breed<sup>F</sup></th>
+<th>Description<sup>G</sup></th>
+<th>Date Acquired<sup>H</sup></th>
+<th>Acquired From<sup>I</sup></th>
+<th>Date Removed/Sold<sup>J</sup></th>
+<th>Date Died or Euthanized<sup>K</sup></th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$IDENTICHIPNUMBER</td>
+<td>$SEX $SPECIESNAME</td>
+<td>$ANIMALAGE</td>
+<td>$WEIGHT lb</td>
+<td>$BREEDNAME</td>
+<td>$MARKINGS</td>
+<td>$DATEBROUGHTIN</td>
+<td><b>$OWNERNAME</b><br>
+$OWNERTOWN, $OWNERCOUNTY $OWNERPOSTCODE<br>
+$IDENTIFICATIONNUMBER</td>
+<td>$ACTIVEMOVEMENTDATE</td>
+<td>$DECEASEDDATE $EUTHANIZED</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<p>Total: {COUNT.ANIMALNAME}</p>
+FOOTER$$

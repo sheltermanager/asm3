@@ -1,0 +1,46 @@
+Days in care by species
+###
+Statistics
+###
+2870/Any rev01
+###
+Total days on shelter for all species/animals arriving after a date
+###
+en
+###
+SELECT s.SpeciesName, COUNT(a.ID) AS NumberOfAnimals, SUM(DaysOnShelter) AS DaysInCare, ROUND(AVG(DaysOnShelter)) AS AvgDaysInCare
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID 
+WHERE a.NonShelterAnimal = 0 AND a.MostRecentEntryDate >= '$ASK DATE Animals arriving between$' AND a.MostRecentEntryDate <= '$ASK DATE and$'
+GROUP BY s.SpeciesName
+ORDER BY s.SpeciesName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Species</th>
+<th>Total Animals</th>
+<th>Average Days in Care</th>
+<th>Total Days in Care</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$SPECIESNAME</td>
+<td>$NUMBEROFANIMALS</td>
+<td>$AVGDAYSINCARE</td>
+<td>$DAYSINCARE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<tr>
+<td></td>
+<td><b>{SUM.NUMBEROFANIMALS.0}</b></td>
+<td></td>
+<td><b>{SUM.DAYSINCARE.0}</b></td>
+</tr>
+</table>
+FOOTER$$
+

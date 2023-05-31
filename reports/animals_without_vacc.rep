@@ -1,0 +1,51 @@
+Animals without a vaccination of type
+###
+Medical
+###
+Any/3215 rev01
+###
+Shelter animals who don't have a vaccination of a particular type
+###
+en
+###
+SELECT a.ShelterCode, a.AnimalName, s.SpeciesName, a.BreedName, a.AnimalAge, a.DisplayLocation, a.MostRecentEntryDate
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType
+LEFT OUTER JOIN adoption ad ON ad.ID = a.ActiveMovementID
+LEFT OUTER JOIN owner fo ON ad.OwnerID = fo.ID
+WHERE a.Archived = 0
+AND NOT EXISTS(SELECT av.ID FROM animalvaccination av
+INNER JOIN vaccinationtype vt ON av.VaccinationID = vt.ID
+WHERE av.AnimalID = a.ID 
+AND UPPER(vt.VaccinationType) LIKE UPPER('%$ASK STRING Missing vaccination type$%'))
+ORDER BY a.AnimalName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>Species</th>
+<th>Breed</th>
+<th>Age</th>
+<th>Location</th>
+<th>Entered Shelter</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$SPECIESNAME</td>
+<td>$BREEDNAME</td>
+<td>$ANIMALAGE</td>
+<td>$DISPLAYLOCATION</td>
+<td>$DATEBROUGHTIN</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

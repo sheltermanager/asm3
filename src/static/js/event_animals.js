@@ -66,7 +66,7 @@ $(function(){
                     },
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
-                            return html.animal_link(row, { noemblems: controller.name == "event_animals" });
+                            return html.animal_link(row, { noemblems: controller.name == "event_animals" }) + "<br/>" + row.IDENTICHIPNUMBER;
                         },
                         hideif: function(row) {
                             // Don't show for animal records
@@ -84,7 +84,7 @@ $(function(){
 
                     { field: "LITTERID", display: _("Litter"),
                     },
-                    { field: "COMMENTS", display: _("Comments")
+                    { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments
                     },
                     { field: "LASTFOSTERER", display: _("Last Fosterer"),
                         formatter: function(row) {

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Appendix: Integrating with Your Website &mdash; ASM 47u documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -10,7 +11,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -23,14 +26,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> ASM
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ASM
           </a>
               <div class="version">
                 47u
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -52,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
@@ -94,8 +100,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Appendix: Integrating with Your Website</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Appendix: Integrating with Your Website</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/website.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -105,12 +111,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="appendix-integrating-with-your-website">
-<span id="websiteintegration"></span><h1>Appendix: Integrating with Your Website<a class="headerlink" href="#appendix-integrating-with-your-website" title="Permalink to this headline">¶</a></h1>
+  <section id="appendix-integrating-with-your-website">
+<span id="websiteintegration"></span><h1>Appendix: Integrating with Your Website<a class="headerlink" href="#appendix-integrating-with-your-website" title="Permalink to this heading">¶</a></h1>
 <p>ASM offers a number of methods of integrating your adoptable animal data with
 your website.</p>
-<div class="section" id="javascript-include">
-<h2>Javascript Include<a class="headerlink" href="#javascript-include" title="Permalink to this headline">¶</a></h2>
+<section id="javascript-include">
+<h2>Javascript Include<a class="headerlink" href="#javascript-include" title="Permalink to this heading">¶</a></h2>
 <p>The animal_view_adoptable_js method of ASM’s <a class="reference internal" href="service.html#serviceapi"><span class="std std-ref">Service API</span></a>
 can generate a list of adoptable animal thumbnails for embedding straight into
 a div container on a page of your website.</p>
@@ -127,16 +133,16 @@ website looks like this:</p>
 <p>This example is for sheltermanager.com, substitute your own URL in the script
 src if you are hosting ASM yourself. Also, if you are using sheltermanager.com,
 change ACCOUNT in the src for your sheltermanager.com account.</p>
-<div class="section" id="wordpress">
-<h3>Wordpress<a class="headerlink" href="#wordpress" title="Permalink to this headline">¶</a></h3>
+<section id="wordpress">
+<h3>Wordpress<a class="headerlink" href="#wordpress" title="Permalink to this heading">¶</a></h3>
 <p>To embed your adoptable animals in a Wordpress page, edit the page and add the
 javascript include snippet shown above where you’d like your adoptable animals
 to appear on the page:</p>
 <img alt="_images/wordpress_1.png" src="_images/wordpress_1.png" />
 <img alt="_images/wordpress_2.png" src="_images/wordpress_2.png" />
-</div>
-<div class="section" id="facebook">
-<h3>Facebook<a class="headerlink" href="#facebook" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="facebook">
+<h3>Facebook<a class="headerlink" href="#facebook" title="Permalink to this heading">¶</a></h3>
 <p>The “Share” button on animal records is great for highlighting an animal so that
 all your followers see it in their timeline, but you can also add your complete
 adoptable animal list as a tab to your Facebook page too.</p>
@@ -149,10 +155,10 @@ number):</p>
 <blockquote>
 <div><p>&lt;frame src=”<a class="reference external" href="https://service.sheltermanager.com/asmservice?method=animal_view_adoptable_html&amp;account=YOURACCOUNT">https://service.sheltermanager.com/asmservice?method=animal_view_adoptable_html&amp;account=YOURACCOUNT</a>” width=”100%” height=”600px”&gt;&lt;/iframe&gt;</p>
 </div></blockquote>
-</div>
-</div>
-<div class="section" id="dynamic-html-page">
-<h2>Dynamic HTML Page<a class="headerlink" href="#dynamic-html-page" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="dynamic-html-page">
+<h2>Dynamic HTML Page<a class="headerlink" href="#dynamic-html-page" title="Permalink to this heading">¶</a></h2>
 <p>ASM can generate dynamic pages of your adoptable animals on demand with the
 service API. The HTML templates are those used by the regular HTML publisher.</p>
 <p>For example, to embed a dynamic page of adoptable animals in an iframe on your
@@ -160,9 +166,9 @@ website for a sheltermanager.com account:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">iframe</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;https://service.sheltermanager.com/asmservice?account=ACCOUNT&amp;method=html_adoptable_animals&quot;</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;100%&quot;</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;600px&quot;</span><span class="o">&gt;&lt;/</span><span class="n">iframe</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="static-html-pages-publisher">
-<h2>Static HTML Pages (Publisher)<a class="headerlink" href="#static-html-pages-publisher" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="static-html-pages-publisher">
+<h2>Static HTML Pages (Publisher)<a class="headerlink" href="#static-html-pages-publisher" title="Permalink to this heading">¶</a></h2>
 <p>ASM can generate a set of static pages from your data with its
 <a class="reference internal" href="publishing.html#htmlftppublisher"><span class="std std-ref">HTML/FTP Publishing</span></a>. You can configure it under
 <span class="menuselection">Publishing ‣ Set Publishing Options ‣ HTML/FTP Publisher</span>.</p>
@@ -176,15 +182,15 @@ on your website with an iframe tag.</p>
 <p class="admonition-title">Warning</p>
 <p>The HTML publisher is no longer available for sheltermanager.com users, use the dynamic HTML page service call outlined above instead.</p>
 </div>
-</div>
-<div class="section" id="service-api-data-calls">
-<h2>Service API Data Calls<a class="headerlink" href="#service-api-data-calls" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="service-api-data-calls">
+<h2>Service API Data Calls<a class="headerlink" href="#service-api-data-calls" title="Permalink to this heading">¶</a></h2>
 <p>Finally, you can use ASM’s Service API to retrieve the adoptable animal
 information and images programatically yourself and use that information to
 construct a site in any way you wish.</p>
 <p>More information can be found in the section on the <a class="reference internal" href="service.html#serviceapi"><span class="std std-ref">Service API</span></a></p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

@@ -1,0 +1,37 @@
+Fosterer Plea
+###
+Movements
+###
+34701/Any rev03
+###
+Contact info for all fosterers, including info for selected animal in need of fostering
+###
+en
+###
+SELECT
+a.ID AS AnimalID, a.ShelterCode, a.ShortCode,
+a.AnimalName, a.AnimalComments, a.HealthProblems, a.Markings, a.Fee, a.HoldUntilDate,
+a.AnimalAge AS Age, a.MostRecentEntryDate as MostRecentEntry, a.Weight, a.DateOfBirth, a.DateBroughtIn,
+a.BreedName, s.SpeciesName, c.BaseColour AS BaseColourName,
+a.IdentichipNumber, a.IdentichipNumber AS MicrochipNumber,
+(SELECT Name FROM lksyesno WHERE ID = a.Neutered) AS Neutered,
+(SELECT Sex FROM lksex WHERE ID = a.Sex) AS Sex,
+(SELECT Size FROM lksize WHERE ID = a.Size) AS Size,
+(SELECT Name FROM lksynunk WHERE ID = a.IsGoodWithChildren) AS GoodWithChildren,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithCats) AS GoodWithCats,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithDogs) AS GoodWithDogs,
+(SELECT Name FROM lksynun WHERE ID = a.IsHouseTrained) AS HouseTrained,
+il.LocationName AS InternalLocation, il.LocationName, a.ShelterLocationUnit AS LocationUnit, a.DisplayLocation,
+REPLACE('<img height="200px" src="https://service.sheltermanager.com/asmservice?account=$DATABASENAME$&method=animal_image&animalid={0}" />', '{0}', CAST(a.ID AS VARCHAR(10))) AS DocumentImgLink,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.EmailAddress2,
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone
+FROM owner o
+CROSS JOIN animal a
+INNER JOIN basecolour c ON c.ID = a.BaseColourID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+WHERE o.IsFosterer = 1 AND o.IsDeceased = 0 AND a.ID = $ASK ANIMAL$
+ORDER BY o.OwnerName
+###
+MAIL
+

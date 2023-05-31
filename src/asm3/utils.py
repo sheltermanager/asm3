@@ -270,6 +270,20 @@ class AdvancedSearchBuilder(object):
             self.values.append(x)
             self.values.append(x)
 
+    def add_phone_quintuplet(self, cfield, field, field2, field3, field4, field5): 
+        """ Adds a clause for a posted value to one of five telephone fields """
+        if self.post[cfield] != "":
+            x = atoi(self.post[cfield])
+            if x < 999: return # 4 digits required or likely to be far too many results
+            x = f"%{x}%"
+            self.ands.append("(%s LIKE ? OR %s LIKE ? OR %s LIKE ? OR %s LIKE ? OR %s LIKE ?)" % (self.dbo.sql_atoi(field), 
+                self.dbo.sql_atoi(field2), self.dbo.sql_atoi(field3), self.dbo.sql_atoi(field4), self.dbo.sql_atoi(field5) ))
+            self.values.append(x)
+            self.values.append(x)
+            self.values.append(x)
+            self.values.append(x)
+            self.values.append(x)
+
     def add_filter(self, f, condition):
         """ Adds a complete clause if posted filter value is present """
         if self.post["filter"].find(f) != -1: self.ands.append(condition)
@@ -444,7 +458,7 @@ def is_bytes(f):
 
 def is_currency(f):
     """ Returns true if the field with name f is a currency field """
-    CURRENCY_FIELDS = "AMT AMOUNT DONATION DAILYBOARDINGCOST COSTAMOUNT COST FEE LICENCEFEE DEPOSITAMOUNT FINEAMOUNT UNITPRICE VATAMOUNT"
+    CURRENCY_FIELDS = "AMT AMOUNT DONATION DAILYBOARDINGCOST COSTAMOUNT COST DAILYFEE FEE LICENCEFEE DEPOSITAMOUNT FINEAMOUNT UNITPRICE VATAMOUNT"
     return f.upper().startswith("MONEY") or CURRENCY_FIELDS.find(f.upper()) != -1
 
 def is_date(d):
@@ -761,13 +775,13 @@ def strip_script_tags(s):
     """
     Removes all script tags from a string
     """
-    return re.sub(r'<(script).*?</\1>(?s)', '', s)
+    return re.sub(r'(?s)<(script).*?</\1>', '', s)
 
 def strip_style_tags(s):
     """
     Removes all style tags from a string
     """
-    return re.sub(r'<(style).*?</\1>(?s)', '', s)
+    return re.sub(r'(?s)<(style).*?</\1>', '', s)
 
 def strip_non_ascii(s):
     """
@@ -1905,6 +1919,11 @@ def send_bulk_email(dbo, replyadd, subject, body, rows, contenttype):
             if toadd is None or toadd.strip() == "": continue
             asm3.al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
             send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
+            if "EMAILADDRESS2" in r: 
+                toadd = r["EMAILADDRESS2"]
+                if toadd is None or toadd.strip() == "": continue
+                asm3.al.debug("sending bulk email: to=%s, subject=%s" % (toadd, ssubject), "utils.send_bulk_email", dbo)
+                send_email(dbo, replyadd, toadd, "", "", ssubject, sbody, contenttype, exceptions=False, bulk=True)
     thread.start_new_thread(do_send, ())
 
 def send_error_email():

@@ -1,0 +1,87 @@
+Adoptions by Date with Litter Reference
+###
+Movements
+###
+33201/Any rev01
+###
+Adoptions between two dates with the names/addresses of original owners and adopters and the litter reference
+###
+en
+###
+$VAR from DATE Adopted between$
+$VAR to DATE and$
+
+SELECT ShelterCode, AnimalName, MostRecentEntryDate, MovementDate, 
+species.SpeciesName, animal.TimeOnShelter, animal.DaysOnShelter,
+animaltype.AnimalType AS theType,
+animal.BreedName,
+oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode, 
+oo.EmailAddress AS OOEmail,
+no.OwnerName, no.OwnerAddress,
+no.OwnerTown, no.OwnerCounty,
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone, animal.DateOfBirth, Fee, AcceptanceNumber
+FROM adoption
+INNER JOIN animal ON adoption.AnimalID = animal.ID
+INNER JOIN owner no ON adoption.OwnerID = no.ID
+INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
+INNER JOIN species ON species.ID = animal.SpeciesID
+LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
+WHERE MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' AND AcceptanceNumber <> ''
+ORDER BY AcceptanceNumber, MovementDate
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Breed</b></td>
+<td><b>Entered Shelter</b></td>
+<td><b>Time On Shelter</b></td>
+<td><b>Came From</b></td>
+<td><b>Litter Ref</b></td>
+<td><b>Adoption Date</b></td>
+<td><b>Adopted To</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$theType</td>
+<td>$BreedName</td>
+<td>$MostRecentEntryDate</td>
+<td>$TimeOnShelter ($DaysOnShelter days)</td>
+<td><i>$OOName</i><br/>
+$OOAddress<br/>
+$OOTown<br/>
+$OOCounty<br/>
+$OOPostcode<br/>
+$OOEmail</td>
+<td>$ACCEPTANCENUMBER</td>
+<td>$MOVEMENTDATE</td>
+<td><i>$OwnerName</i><br/>
+$OwnerAddress<br/>
+$OwnerTown<br/>
+$OwnerCounty<br/>
+$OwnerPostcode<br/>
+$EmailAddress<br/>
+H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>Average: {AVG.DaysOnShelter.2} days</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<h2>Total adoptions: {COUNT.SHELTERCODE}</h2>
+FOOTER$$
+

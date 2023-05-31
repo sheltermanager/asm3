@@ -1,0 +1,64 @@
+Stock Usage by Name and Date
+###
+Stock Control
+###
+33402/Any rev01
+###
+Stock usage between two dates broken down by name
+###
+en
+###
+SELECT 
+s.Name, s.Description, sl.LocationName, s.UnitName,
+s.BatchNumber, s.Expiry, su.UsageDate, su.Quantity, 
+su.Comments, u.UsageTypeName,
+s.UnitPrice, s.UnitPrice * su.Quantity AS MoneyUsageCost
+FROM stocklevel s
+INNER JOIN stocklocation sl ON s.StockLocationID = sl.ID
+INNER JOIN stockusage su ON su.StockLevelID = s.ID
+INNER JOIN stockusagetype u ON su.StockUsageTypeID = u.ID
+WHERE su.UsageDate >= '$ASK DATE Enter the from date$'
+AND su.UsageDate <= '$ASK DATE Enter the to date$'
+ORDER BY s.Name, su.UsageDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_Name
+$$HEAD
+<h2>$NAME</h2>
+<table border="1">
+<tr>
+<th>Date</th>
+<th>Type</th>
+<th>Location</th>
+<th>Description</th>
+<th>Batch</th>
+<th>Expiry</th>
+<th>Quantity</th>
+<th>Units</th>
+<th>Value</th>
+<th>Comments</th>
+$$FOOT
+</table>
+<h3>Total $NAME: {SUM.QUANTITY} (Value {SUM.MONEYUSAGECOST})</h3>
+
+GROUP$$
+
+$$BODY
+<tr>
+<td>$USAGEDATE</td>
+<td>$USAGETYPENAME</td>
+<td>$LOCATIONNAME</td>
+<td>$DESCRIPTION</td>
+<td>$BATCHNUMBER</td>
+<td>$EXPIRY</td>
+<td>$QUANTITY</td>
+<td>$UNITNAME ($UNITPRICE)</td>
+<td>$MONEYUSAGECOST</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

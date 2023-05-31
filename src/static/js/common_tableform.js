@@ -209,15 +209,20 @@ const tableform = {
      */
     table_render: function(table, bodyonly) {
         var t = [];
+        t.push("<table id=\"tableform\" width=\"100%\"><thead><tr>");
         if (!bodyonly) {
-            t.push('<a id="tableform-select-all" href="#" ');
-            t.push('title="' + html.title(_("Select all")) + '"><span class="ui-icon ui-icon-check"></span></a>');
-            t.push('<a id="tableform-toggle-filter" href="#" ');
-            t.push('title="' + html.title(_("Filter")) + '"><span class="ui-icon ui-icon-search"></span></a>');
-            t.push("<table id=\"tableform\" width=\"100%\"><thead><tr>");
             $.each(table.columns, function(i, v) {
                 if (v.hideif && v.hideif()) { return; }
-                t.push("<th>" + v.display + "</th>");
+                if (i == 0) {
+                    // Prepend select/filter buttons to the first column heading
+                    t.push('<th>');
+                    t.push('<button id="tableform-select-all">' + _("Select all") + '</button>');
+                    t.push('<button id="tableform-toggle-filter">' + _("Filter") + '</button>');
+                    t.push(' ' + v.display + '</th>');
+                }
+                else {
+                    t.push("<th>" + v.display + "</th>");
+                }
             });
             t.push("</tr></thead><tbody>");
         }
@@ -295,7 +300,7 @@ const tableform = {
      * (typically buttons).
      */
     table_bind_widgets: function(table) {
-        $("#tableform button").each(function() {
+        $("#tableform tbody button").each(function() {
             if ($(this).attr("data-asmicon")) {
                 let text = $(this).text();
                 $(this).prop("title", text);
@@ -412,8 +417,24 @@ const tableform = {
             return false;
         });
 
+        // Bind any widgets inside the table
+        this.table_bind_widgets(table);
+
+        // Create the table widget
+        $("#tableform").table({ filter: true });
+
+        // old behaviour was to show the filter line if there were 10 or more rows
+        // table.filter_toggle = table.rows && table.rows.length >= 10; 
+        table.filter_toggle = false;
+        $(".tablesorter-filter-row").toggle(table.filter_toggle);
+        $(".tablesorter-filter").prop("placeholder", _("Filter"));
+
         // Bind the select all link in the table header
         // Unlike the CTRL+A sequence, this one will toggle between select/unselect
+        $("#tableform-select-all").button({
+            icons: { primary: "ui-icon-check" },
+            text:  false
+        });
         $("#tableform-select-all").click(function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -429,6 +450,10 @@ const tableform = {
         });
 
         // Bind the toggle search/filter link in the table header
+        $("#tableform-toggle-filter").button({
+            icons: { primary: "ui-icon-search" },
+            text:  false
+        });
         $("#tableform-toggle-filter").click(function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -437,15 +462,13 @@ const tableform = {
             return false;
         });
 
-        // Bind any widgets inside the table
-        this.table_bind_widgets(table);
-
-        $("#tableform").table({ filter: true });
-        // old behaviour was to show the filter line if there were 10 or more rows
-        // table.filter_toggle = table.rows && table.rows.length >= 10; 
-        table.filter_toggle = false;
-        $(".tablesorter-filter-row").toggle(table.filter_toggle);
-        $(".tablesorter-filter").prop("placeholder", _("Filter"));
+        // Consume mousedown/mouseup events for both buttons so that tablesorter 
+        // doesn't receive them
+        $("#tableform-toggle-filter, #tableform-select-all").mouseup(function() {
+            return false;
+        }).mousedown(function() {
+            return false; 
+        });
 
         // And the default sort
         this.table_apply_sort(table);

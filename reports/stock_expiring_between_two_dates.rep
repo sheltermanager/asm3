@@ -1,0 +1,53 @@
+Unused Stock expiring between two dates
+###
+Stock Control
+###
+33402/Any rev01 
+###
+All stocks expiring between two dates, broken down by location
+###
+en
+###
+SELECT 
+s.Name, s.Description, sl.LocationName, s.UnitName,
+s.BatchNumber, s.Expiry, s.Balance, s.Total
+FROM stocklevel s
+INNER JOIN stocklocation sl ON s.StockLocationID = sl.ID
+WHERE s.Balance > 0 AND s.Expiry >= '$ASK DATE Enter the from date$'
+AND s.Expiry <= '$ASK DATE Enter the to date$'
+ORDER BY sl.LocationName, s.Expiry
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_LocationName
+$$HEAD
+<h2>$LOCATIONNAME</h2>
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Batch</th>
+<th>Expiry</th>
+<th>Total</th>
+<th>Balance</th>
+<th>Units</th>
+$$FOOT
+</table>
+<h3>Total $LOCATIONNAME: {COUNT.QUANTITY}</h3>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$NAME</td>
+<td>$DESCRIPTION</td>
+<td>$BATCHNUMBER</td>
+<td>$EXPIRY</td>
+<td>$TOTAL</td>
+<td>$BALANCE</td>
+<td>$UNITNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

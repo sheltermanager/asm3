@@ -1,0 +1,18 @@
+Gender Ratio
+###
+Stat Charts
+###
+Any rev01
+###
+The gender ratio of animals entering the shelter between two dates
+###
+en
+###
+SELECT s.Sex, COUNT(a.ID) AS Gender
+FROM animal a
+INNER JOIN lksex s ON s.ID = a.Sex
+WHERE a.DateBroughtIn >= '$ASK DATE Enter the from date$' AND a.DateBroughtIn <= '$ASK DATE Enter the to date$' AND NonShelterAnimal = 0
+GROUP BY s.Sex
+ORDER BY s.Sex
+###
+GRAPH PIE

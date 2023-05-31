@@ -1,0 +1,76 @@
+All People
+###
+Membership
+###
+34701/Any rev02
+###
+Person info for all individuals/couples.
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate
+FROM owner o
+WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 AND o.OwnerType <> 2
+ORDER BY o.OwnerSurname
+###
+MAIL
+&&&
+All People (exclude banned)
+###
+Membership
+###
+34701/Any rev02
+###
+Person info for all people, excluding banned adopters.
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate
+FROM owner o
+WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 AND o.OwnerType <> 2 AND o.IsBanned = 0
+ORDER BY o.OwnerSurname
+###
+MAIL
+&&&
+All Organizations
+###
+Membership
+###
+34701/Any rev02
+###
+Person info for all organizations.
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate
+FROM owner o
+WHERE o.ExcludeFromBulkEmail = 0 AND o.IsDeceased = 0 AND o.OwnerType = 2
+ORDER BY o.OwnerSurname
+###
+MAIL
+&&&
+All People (GDPR email only)
+###
+Membership
+###
+34701/Any rev02
+###
+Person info for all people with the GDPR email contact set.
+###
+en
+###
+SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
+o.OwnerSurname, o.MembershipExpiryDate
+FROM owner o
+WHERE o.GDPRContactOptIn LIKE '%email%' AND o.IsDeceased = 0 AND o.OwnerType <> 2
+ORDER BY o.OwnerSurname
+###
+MAIL
+

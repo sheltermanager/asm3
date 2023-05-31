@@ -7,69 +7,6 @@ import os
 
 from asm3.sitedefs import LOCALE, TIMEZONE, WATERMARK_FONT_BASEDIRECTORY
 
-QUICKLINKS_SET = {
-    1: ("animal_find", "asm-icon-animal-find", asm3.i18n._("Find animal")),
-    2: ("animal_new", "asm-icon-animal-add", asm3.i18n._("Add a new animal")),
-    3: ("log_new?mode=animal", "asm-icon-log", asm3.i18n._("Add a log entry")),
-    4: ("litters", "asm-icon-litter", asm3.i18n._("Edit litters")),
-    5: ("person_find", "asm-icon-person-find", asm3.i18n._("Find person")),
-    6: ("person_new", "asm-icon-person-add", asm3.i18n._("Add a new person")),
-    7: ("lostanimal_find", "asm-icon-animal-lost-find", asm3.i18n._("Find a lost animal")),
-    8: ("foundanimal_find", "asm-icon-animal-found-find", asm3.i18n._("Find a found animal")),
-    9: ("lostanimal_new", "asm-icon-animal-lost-add", asm3.i18n._("Add a lost animal")),
-    10: ("foundanimal_new", "asm-icon-animal-found-add", asm3.i18n._("Add a found animal")),
-    11: ("lostfound_match", "asm-icon-match", asm3.i18n._("Match lost and found animals")),
-    12: ("diary_edit_my?newnote=1", "asm-icon-diary", asm3.i18n._("Add a diary note")),
-    13: ("diary_edit_my", "asm-icon-diary", asm3.i18n._("My diary notes")),
-    14: ("diary_edit", "asm-icon-diary", asm3.i18n._("All diary notes")),
-    15: ("diarytasks", "asm-icon-diary-task", asm3.i18n._("Edit diary tasks")),
-    16: ("waitinglist_new", "asm-icon-waitinglist", asm3.i18n._("Add an animal to the waiting list")),
-    17: ("waitinglist_results", "asm-icon-waitinglist", asm3.i18n._("Edit the current waiting list")),
-    18: ("move_reserve", "asm-icon-reservation", asm3.i18n._("Reserve an animal")),
-    19: ("move_foster", "", asm3.i18n._("Foster an animal")),
-    20: ("move_adopt", "asm-icon-person", asm3.i18n._("Adopt an animal")),
-    21: ("move_deceased", "asm-icon-death", asm3.i18n._("Mark an animal deceased")),
-    22: ("move_book_recent_adoption", "", asm3.i18n._("Return an animal from adoption")),
-    23: ("move_book_recent_other", "", asm3.i18n._("Return an animal from another movement")),
-    24: ("move_book_reservation", "asm-icon-reservation", asm3.i18n._("Reservation book")),
-    25: ("move_book_foster", "asm-icon-book", asm3.i18n._("Foster book")),
-    26: ("move_book_retailer", "asm-icon-book", asm3.i18n._("Retailer book")),
-    27: ("vaccination?newvacc=1", "", asm3.i18n._("Add a vaccination")),
-    28: ("vaccination", "asm-icon-vaccination", asm3.i18n._("Vaccination book")),
-    29: ("medical?newmed=1", "", asm3.i18n._("Add a medical regimen")),
-    30: ("medical", "asm-icon-medical", asm3.i18n._("Medical book")),
-    32: ("publish_options", "asm-icon-settings", asm3.i18n._("Set publishing options")),
-    31: ("search?q=forpublish", "asm-icon-animal", asm3.i18n._("Up for adoption")),
-    33: ("search?q=deceased", "asm-icon-death", asm3.i18n._("Recently deceased")),
-    34: ("search?q=notforadoption", "", asm3.i18n._("Not for adoption")),
-    35: ("search?q=onshelter", "asm-icon-animal", asm3.i18n._("Shelter animals")),
-    36: ("accounts", "asm-icon-accounts", asm3.i18n._("Accounts")),
-    37: ("donation_receive", "asm-icon-donation", asm3.i18n._("Receive a payment")),
-    38: ("move_transfer", "", asm3.i18n._("Transfer an animal")),
-    39: ("medicalprofile", "", asm3.i18n._("Medical profiles")),
-    40: ("shelterview", "asm-icon-location", asm3.i18n._("Shelter view")),
-    41: ("move_book_trial_adoption", "asm-icon-trial", asm3.i18n._("Trial adoption book")),
-    42: ("incident_new", "asm-icon-call", asm3.i18n._("Report a new incident")),
-    43: ("incident_find", "asm-icon-call", asm3.i18n._("Find an incident")),
-    44: ("incident_map", "asm-icon-map", asm3.i18n._("Map of active incidents")),
-    45: ("traploan?filter=active", "asm-icon-traploan", asm3.i18n._("Trap loans")),
-    46: ("calendarview", "asm-icon-calendar", asm3.i18n._("Calendar view")),
-    47: ("calendarview?ev=d", "asm-icon-calendar", asm3.i18n._("Diary calendar")),
-    48: ("calendarview?ev=vmt", "asm-icon-calendar", asm3.i18n._("Medical calendar")),
-    49: ("calendarview?ev=p", "asm-icon-calendar", asm3.i18n._("Payment calendar")),
-    50: ("calendarview?ev=ol", "asm-icon-calendar", asm3.i18n._("Animal control calendar")),
-    51: ("stocklevel", "asm-icon-stock", asm3.i18n._("Stock Levels")),
-    52: ("transport", "asm-icon-transport", asm3.i18n._("Transport Book")),
-    53: ("timeline", "asm-icon-calendar", asm3.i18n._("Timeline")),
-    54: ("staff_rota", "asm-icon-rota", asm3.i18n._("Staff Rota")),
-    55: ("move_reclaim", "", asm3.i18n._("Reclaim an animal")),
-    56: ("donation", "asm-icon-donation", asm3.i18n._("Payment book")),
-    57: ("calendarview?ev=c", "asm-icon-calendar", asm3.i18n._("Clinic Calendar")),
-    58: ("move_book_soft_release", "", asm3.i18n._("Soft release book")),
-    59: ("event_find", "asm-icon-event-find", asm3.i18n._("Find Event")),
-    60: ("event_new", "asm-icon-event-add", asm3.i18n._("Add a new event"))
-}
-
 # Default configuration values for unset items. This is so they
 # still get shown correctly in the options screens.
 DEFAULTS = {
@@ -157,6 +94,17 @@ DEFAULTS = {
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
     "AvidOverseasOriginCountry": "",
+    "BehaveLogType": "3",
+    "Behave1Name": "Eaten",
+    "Behave1Values": "None|Minimal|Half|Majority|All",
+    "Behave2Name": "Drunk",
+    "Behave2Values": "None|Minimal|Half|Majority|All",
+    "Behave3Name": "Toilet",
+    "Behave3Values": "Urine|Faeces|Urine + Faeces|None",
+    "Behave4Name": "Exercise/Contact",
+    "Behave4Values": "",
+    "Behave5Name": "Unusual Symptoms",
+    "Behave5Values": "",
     "BoardingCostType": "1",
     "CancelReservesOnAdoption": "Yes",
     "CardcomSuccessURL": "https://secure.cardcom.solutions/DealWasSuccessful.aspx",
@@ -184,6 +132,7 @@ DEFAULTS = {
     "DefaultMediaNotesFromFile": "Yes",
     "DefaultShiftStart": "09:00",
     "DefaultShiftEnd": "17:00",
+    "DiaryCompleteOnDeath": "Yes",
     "DisableAnimalControl": "No",
     "DisableClinic": "No",
     "DisableEntryHistory": "Yes",
@@ -313,6 +262,7 @@ DEFAULTS = {
     "OwnerAddressCheck": "Yes",
     "OwnerNameCheck": "Yes",
     "OwnerNameFormat": "{ownertitle} {ownerforenames} {ownersurname}",
+    "OwnerNameCoupleFormat": "{ownername1} & {ownername2}",
     "OwnerSearchColumns": "OwnerCode,OwnerName,OwnerSurname," \
         "MembershipNumber,AdditionalFlags,OwnerAddress," \
         "OwnerTown,OwnerCounty,OwnerPostcode,HomeTelephone,WorkTelephone," \
@@ -902,6 +852,9 @@ def default_type(dbo):
 def default_vaccination_type(dbo):
     return cint(dbo, "AFDefaultVaccinationType", 1)
 
+def diary_complete_on_death(dbo):
+    return cboolean(dbo, "DiaryCompleteOnDeath", DEFAULTS["DiaryCompleteOnDeath"] == "Yes")
+
 def disable_asilomar(dbo):
     return cboolean(dbo, "DisableAsilomar", DEFAULTS["DisableAsilomar"] == "Yes")
 
@@ -1194,6 +1147,9 @@ def organisation_telephone(dbo):
 
 def osm_map_tiles_override(dbo):
     return cstring(dbo, "OSMMapTilesOverride")
+
+def owner_name_couple_format(dbo):
+    return cstring(dbo, "OwnerNameCoupleFormat", DEFAULTS["OwnerNameCoupleFormat"])
 
 def owner_name_format(dbo):
     return cstring(dbo, "OwnerNameFormat", DEFAULTS["OwnerNameFormat"])

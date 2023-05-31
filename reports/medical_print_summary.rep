@@ -1,0 +1,49 @@
+Medical Print Summary
+###
+Auditing
+###
+Any rev02
+###
+Medical summary for a selected shelter animal.
+###
+en
+###
+SELECT
+a.ID AS AID, a.ShelterCode, a.AnimalName,
+t.AnimalType, s.SpeciesName,
+il.LocationName, am.TreatmentName,
+am.Dosage, am.Comments, am.StartDate,
+am.TotalNumberOfTreatments, am.TreatmentsGiven
+FROM animal a
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN animalmedical am ON a.ID = am.AnimalID
+WHERE a.ID = $ASK ANIMAL$
+ORDER BY am.StartDate
+###
+$$HEADER
+<h2>Regimens for $SHELTERCODE - <a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></h2>
+<table border=1><tr>
+<td><b>Therapy</b></td>
+<td><b>Dosage</b></td>
+<td><b>Started</b></td>
+<td><b>Treatments</b></td>
+<td><b>Given</b></td>
+<td><b>Comments</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$TREATMENTNAME</td>
+<td>$DOSAGE</td>
+<td>$STARTDATE</td>
+<td>$TOTALNUMBEROFTREATMENTS</td>
+<td>$TREATMENTSGIVEN</td>
+<td>$COMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

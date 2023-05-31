@@ -1,0 +1,62 @@
+Vaccination History for all Shelter Animals
+###
+Medical
+###
+33503/Any rev01
+###
+List of all vaccinations administered to current shelter animals by species and animal
+###
+en
+###
+SELECT animal.animalname || ' - ' || animal.sheltercode as namecode, species.speciesname,
+vaccinationtype.vaccinationtype, animalvaccination.daterequired, animalvaccination.dateofvaccination, 
+animalvaccination.dateexpires, animalvaccination.batchnumber, animalvaccination.manufacturer, animalvaccination.cost, 
+animal.breedname, animal.displaylocation, animal.animalage
+FROM animalvaccination
+INNER JOIN animal ON animalvaccination.animalid = animal.id
+INNER JOIN species ON species.id = animal.speciesid
+INNER JOIN vaccinationtype ON animalvaccination.vaccinationid=vaccinationtype.id
+WHERE animal.archived = 0
+ORDER BY species.speciesname, animal.animalname || ' - ' || animal.sheltercode, animalvaccination.dateofvaccination
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+$$FOOT
+GROUP$$
+
+$$GROUP_NameCode
+$$HEAD
+<p><b>$NameCode</b> $breedname $speciesname aged $animalage $displaylocation</p>
+<table border="1">
+<tr>
+<th>Type</th>
+<th>Due</th>
+<th>Date</th>
+<th>Expires</th>
+<th>Batch</th>
+<th>Manufacturer</th>
+<th>Cost</th>
+</tr>
+$$FOOT
+</table>
+GROUP$$
+HEADER$$
+
+$$BODY
+<tr>
+<td>$VACCINATIONTYPE</td>
+<td>$DATEREQUIRED</td>
+<td>$DATEOFVACCINATION</td>
+<td>$DATEEXPIRES</td>
+<td>$BATCHNUMBER</td>
+<td>$MANUFACTURER</td>
+<td>$COST</td>
+<tr/>
+BODY$$
+
+$$FOOTER
+FOOTER$$

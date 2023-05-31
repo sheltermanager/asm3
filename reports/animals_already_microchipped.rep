@@ -1,0 +1,44 @@
+Animals already microchipped on arrival
+###
+Auditing
+###
+Any rev01
+###
+Animals who came to the shelter already microchipped.
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, t.AnimalType, 
+a.DateBroughtIn, a.IdentichipNumber
+FROM animal a
+LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
+WHERE a.Identichipped = 1 AND a.IdentichipDate Is NULL AND a.IdentichipNumber <> '' 
+AND a.DateBroughtIn >= '$ASK DATE Intake date between$' AND a.DateBroughtIn <= '$ASK DATE and$' 
+ORDER BY a.DateBroughtIn
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Intake Date</th>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Microchip</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$DATEBROUGHTIN</td>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td>$IDENTICHIPNUMBER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total already microchipped: {COUNT.AnimalName}</h2>
+FOOTER$$
+

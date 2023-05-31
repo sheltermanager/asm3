@@ -40,14 +40,14 @@ VERSIONS = (
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
-    34606, 34607, 34608, 34609, 34611, 34700, 34750
+    34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34750
 )
 
 LATEST_VERSION = VERSIONS[-1]
 
 # All ASM3 tables
 TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
-    "adoption", "animal", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost",
+    "adoption", "animal", "animalboarding", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost",
     "animaldiet", "animalentry", "animalfigures", "animalfiguresannual",  
     "animalfound", "animalcontrolanimal", "animallitter", "animallost", "animallostfoundmatch", 
     "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
@@ -90,7 +90,7 @@ TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontr
 # Tables that contain data rather than lookups - used by reset_db
 # to determine which tables to delete data from
 TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption", 
-    "animal", "animalcontrol", "animalcontrolanimal","animalcontrolrole", 
+    "animal", "animalboarding", "animalcontrol", "animalcontrolanimal","animalcontrolrole", 
     "animallostfoundmatch", "animalpublished", 
     "animalcost", "animaldiet", "animalentry", "animalfigures", "animalfiguresannual", 
     "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
@@ -106,11 +106,11 @@ TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "br
     "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
     "licencetype", "lkanimalflags", "lkcoattype", "lkownerflags", "lksaccounttype", "lksclinicstatus", 
     "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", 
-    "lksmedialink", "lksmediatype", "lksmovementtype", "lksposneg", "lksrotatype", "lksyesno", "lksynun", 
-    "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", "logtype", "medicalprofile", 
-    "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", "species", 
-    "templatedocument", "templatehtml", "testtype", "testresult", "transporttype", "traptype", 
-    "vaccinationtype", "voucher" )
+    "lksmedialink", "lksmediatype", "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", "lksyesno", 
+    "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", "logtype", "medicalprofile", 
+    "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", "stocklocation", 
+    "stockusagetype", "species", "templatedocument", "templatehtml", "testtype", "testresult", 
+    "transporttype", "traptype", "vaccinationtype", "voucher" )
 
 VIEWS = ( "v_adoption", "v_animal", "v_animalcontrol", "v_animalfound", "v_animallost", 
     "v_animalmedicalcombined", "v_animalmedicaltreatment", "v_animaltest", "v_animalvaccination", 
@@ -417,6 +417,22 @@ def sql_structure(dbo):
     sql += index("animal_UniqueCodeID", "animal", "UniqueCodeID")
     sql += index("animal_Weight", "animal", "Weight")
     sql += index("animal_YearCodeID", "animal", "YearCodeID")
+
+    sql += table("animalboarding", (
+        fid(),
+        fint("AnimalID"),
+        fint("OwnerID", True),
+        fdate("InDateTime"),
+        fdate("OutDateTime"),
+        fint("Days", True),
+        fint("DailyFee", True),
+        fint("ShelterLocation"),
+        fstr("ShelterLocationUnit"),
+        flongstr("Comments", True) ))
+    sql += index("animalboarding_AnimalID", "animalboarding", "AnimalID")
+    sql += index("animalboarding_OwnerID", "animalboarding", "OwnerID")
+    sql += index("animalboarding_InDateTime", "animalboarding", "InDateTime")
+    sql += index("animalboarding_OutDateTime", "animalboarding", "OutDateTime")
 
     sql += table("animalcontrol", (
         fid(),
@@ -1280,6 +1296,17 @@ def sql_structure(dbo):
         fstr("WorkTelephone", True),
         fstr("MobileTelephone", True),
         fstr("EmailAddress", True),
+        fdate("DateOfBirth", True),
+        fstr("IdentificationNumber", True),
+        fstr("OwnerTitle2", True),
+        fstr("OwnerInitials2", True),
+        fstr("OwnerForeNames2", True),
+        fstr("OwnerSurname2", True),
+        fstr("WorkTelephone2", True),
+        fstr("MobileTelephone2", True),
+        fstr("EmailAddress2", True),
+        fdate("DateOfBirth2", True),
+        fstr("IdentificationNumber2", True),
         fint("ExcludeFromBulkEmail", True),
         fstr("GDPRContactOptIn", True),
         fint("JurisdictionID", True),
@@ -1328,6 +1355,7 @@ def sql_structure(dbo):
         fint("MatchGoodWithDogs", True),
         fint("MatchGoodWithChildren", True),
         fint("MatchHouseTrained", True),
+        fstr("MatchFlags", True),
         fstr("MatchCommentsContain", True) ))
     sql += index("owner_CreatedBy", "owner", "CreatedBy")
     sql += index("owner_CreatedDate", "owner", "CreatedDate")
@@ -1349,6 +1377,15 @@ def sql_structure(dbo):
     sql += index("owner_OwnerSurname", "owner", "OwnerSurname")
     sql += index("owner_OwnerTitle", "owner", "OwnerTitle")
     sql += index("owner_OwnerTown", "owner", "OwnerTown")
+    sql += index("owner_IdentificationNumber", "owner", "IdentificationNumber")
+    sql += index("owner_OwnerTitle2", "owner", "OwnerTitle2")
+    sql += index("owner_OwnerInitials2", "owner", "OwnerInitials2")
+    sql += index("owner_OwnerForeNames2", "owner", "OwnerForeNames2")
+    sql += index("owner_OwnerSurname2", "owner", "OwnerSurname2")
+    sql += index("owner_MobileTelephone2", "owner", "MobileTelephone2")
+    sql += index("owner_WorkTelephone2", "owner", "WorkTelephone2")
+    sql += index("owner_EmailAddress2", "owner", "EmailAddress2")
+    sql += index("owner_IdentificationNumber2", "owner", "IdentificationNumber2")
     sql += index("owner_SiteID", "owner", "SiteID")
     sql += index("owner_IDCheck", "owner", "IDCheck")
     sql += index("owner_IsACO", "owner", "IsACO")
@@ -2453,6 +2490,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2("logtype", "LogTypeName", 4, _("Weight", l))
     sql += lookup2("logtype", "LogTypeName", 5, _("Document", l))
     sql += lookup2("logtype", "LogTypeName", 6, _("GDPR Contact Opt-In", l))
+    sql += lookup2("logtype", "LogTypeName", 7, _("Daily Observations", l))
     sql += lookup2("pickuplocation", "LocationName", 1, _("Shelter", l))
     sql += lookup2("reservationstatus", "StatusName", 1, _("More Info Needed", l))
     sql += lookup2("reservationstatus", "StatusName", 2, _("Pending Vet Check", l))
@@ -2596,12 +2634,10 @@ def install_default_data(dbo, skip_config = False):
 
 def reinstall_default_data(dbo):
     """
-    Reinstalls all default data for the current locale. It wipes the
-    database first, but leaves the configuration and dbfs tables intact.
+    Reinstalls all default data for the current locale.  
     """
-    for table in TABLES:
-        if table != "dbfs" and table != "configuration" and table != "users" and table != "role" and table != "userrole":
-            dbo.execute_dbupdate("DELETE FROM %s" % table)
+    for table in TABLES_LOOKUP:
+        dbo.execute_dbupdate("DELETE FROM %s" % table)
     install_default_data(dbo, True)
     install_default_templates(dbo)
     install_default_onlineforms(dbo)
@@ -5819,6 +5855,64 @@ def update_34700(dbo):
     dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (18, ?)", [ _("Retailer", l) ])
     dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (19, ?)", [ _("TNR", l) ])
 
+def update_34701(dbo):
+    # add second contact fields to owner table
+    add_column(dbo, "owner", "OwnerTitle2", dbo.type_shorttext)
+    add_column(dbo, "owner", "OwnerInitials2", dbo.type_shorttext)
+    add_column(dbo, "owner", "OwnerForeNames2", dbo.type_shorttext)
+    add_column(dbo, "owner", "OwnerSurname2", dbo.type_shorttext)
+    add_column(dbo, "owner", "WorkTelephone2", dbo.type_shorttext)
+    add_column(dbo, "owner", "MobileTelephone2", dbo.type_shorttext)
+    add_column(dbo, "owner", "EmailAddress2", dbo.type_shorttext)
+    add_index(dbo, "owner_OwnerTitle2", "owner", "OwnerTitle2")
+    add_index(dbo, "owner_OwnerInitials2", "owner", "OwnerInitials2")
+    add_index(dbo, "owner_OwnerForeNames2", "owner", "OwnerForeNames2")
+    add_index(dbo, "owner_OwnerSurname2", "owner", "OwnerSurname2")
+    add_index(dbo, "owner_WorkTelephone2", "owner", "WorkTelephone2")
+    add_index(dbo, "owner_MobileTelephone2", "owner", "MobileTelephone2")
+    add_index(dbo, "owner_EmailAddress2", "owner", "EmailAddress2")
+    dbo.execute_dbupdate("UPDATE owner SET OwnerTitle2='', OwnerInitials2='', OwnerForeNames2='', OwnerSurname2='', WorkTelephone2='', MobileTelephone2='', EmailAddress2=''")
+
+def update_34702(dbo):
+    add_column(dbo, "owner", "DateOfBirth", dbo.type_datetime)
+    add_column(dbo, "owner", "DateOfBirth2", dbo.type_datetime)
+    add_column(dbo, "owner", "IdentificationNumber", dbo.type_shorttext)
+    add_column(dbo, "owner", "IdentificationNumber2", dbo.type_shorttext)
+    add_column(dbo, "owner", "MatchFlags", dbo.type_shorttext)
+    add_index(dbo, "owner_IdentificationNumber", "owner", "IdentificationNumber")
+    add_index(dbo, "owner_IdentificationNumber2", "owner", "IdentificationNumber2")
+    dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber='', IdentificationNumber2='', MatchFlags='' ")
+
+def update_34703(dbo):
+    add_index(dbo, "owner_IdentificationNumber", "owner", "IdentificationNumber")
+    add_index(dbo, "owner_IdentificationNumber2", "owner", "IdentificationNumber2")
+    dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber='' WHERE IdentificationNumber Is Null") 
+    dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber2='' WHERE IdentificationNumber2 Is Null") 
+    dbo.execute_dbupdate("UPDATE owner SET MatchFlags='' WHERE MatchFlags Is Null") 
+
+def update_34704(dbo):
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("AnimalID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("OwnerID", dbo.type_integer, True),
+        dbo.ddl_add_table_column("InDateTime", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("OutDateTime", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("Days", dbo.type_integer, True),
+        dbo.ddl_add_table_column("DailyFee", dbo.type_integer, True),
+        dbo.ddl_add_table_column("ShelterLocation", dbo.type_integer, False),
+        dbo.ddl_add_table_column("ShelterLocationUnit", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Comments", dbo.type_longtext, True),
+        dbo.ddl_add_table_column("RecordVersion", dbo.type_integer, False),
+        dbo.ddl_add_table_column("CreatedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("CreatedDate", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("LastChangedBy", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("LastChangedDate", dbo.type_datetime, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("animalboarding", fields) )
+    dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_AnimalID", "animalboarding", "AnimalID") )
+    dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_OwnerID", "animalboarding", "OwnerID") )
+    dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_InDateTime", "animalboarding", "InDateTime") )
+    dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_OutDateTime", "animalboarding", "OutDateTime") )
 
 def update_34750(dbo):
     # add movement type to additional fields

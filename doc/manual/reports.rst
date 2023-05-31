@@ -139,6 +139,10 @@ information, or information requested from the user at report generation time.
   currency and assume that its value is a whole integer money amount (where 1
   is 1 cent/pence/etc).
 
+* AS [fieldname]n2br - If you alias an output field so that it has a suffix
+  of "n2br" as its name, the report engine will translate line breaks in the
+  column data to HTML <br> tags so that they show on the report.
+
 ASK
 ^^^
 
@@ -466,7 +470,7 @@ Maps
 Maps are just like the reports. The difference is that instead of generating
 HTML, they will output map markers from a LatLong field.
 
-ASM expects map queries to return a resultset containing two columns. The first
+ASM expects map queries to return a resultset containing at least two columns. The first
 is the LatLong marker for the map, and the second is the text to display in the
 popup when the marker is clicked.
 
@@ -474,6 +478,18 @@ For example, this SQL will produce a map that shows the location of every
 person on file, with their address when the marker is clicked::
 
     SELECT LatLong, OwnerAddress FROM owner
+
+If there are more than two columns in the query results, the report engine will
+concatenate together the values of each subsequent column. 
+
+This SQL will produce a map with every person on file, but includes a clickable
+link to the person record when the marker is clicked::
+
+    SELECT LatLong,
+        '<a target="blank" href="person?id=', ID, '">',
+        OwnerName,
+        '</a>'
+    FROM owner ORDER BY ownername
 
 Automatic updating of repository reports
 ----------------------------------------

@@ -349,7 +349,7 @@ def check_sql(dbo, username, sql):
     sanitised and in a ready-to-run state.
     If there is a problem with the query, an ASMValidationError is raised
     """
-    COMMON_DATE_TOKENS = ( "$CURRENT_DATE", "$@from", "$@to", "$@thedate" )
+    COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@thedate", "@dt" )
     # Clean up and substitute some tags
     sql = sql.replace("$USER$", username)
     # Subtitute CONST tokens
@@ -361,12 +361,14 @@ def check_sql(dbo, username, sql):
         end = sql.find("$", i+1)
         if end == -1:
             raise asm3.utils.ASMValidationError("Unclosed $ token found")
-        token = sql[i:end]
+        token = sql[i+1:end]
         sub = ""
-        if token.startswith("$VAR"):
+        if token.startswith("VAR"):
             # VAR tags don't need a substitution
             sub = ""
-        elif token.startswith("$ASK DATE") or token in COMMON_DATE_TOKENS:
+        elif token == "@year":
+            sub = "2001"
+        elif token.startswith("ASK DATE") or token.startswith("CURRENT_DATE") or token in COMMON_DATE_TOKENS:
             sub = "2001-01-01"
         else:
             sub = "0"
@@ -923,6 +925,9 @@ class Report:
 
         if asm3.utils.is_currency(k):
             return asm3.i18n.format_currency(l, v)
+
+        if k.upper().endswith("N2BR"):
+            return str(v).replace("\n", "<br>")
 
         return str(v)
     
@@ -1692,9 +1697,9 @@ class Report:
             self._Append(htmlfooter)
             return self.output
 
-        # Check we have two columns
-        if len(rs[0]) != 2:
-            self._p("Map query should have two columns.")
+        # Check we have at least two columns
+        if len(rs[0]) < 2:
+            self._p("Map query should have at least two columns.")
             self._Append(htmlfooter)
             return self.output
 
@@ -1704,8 +1709,15 @@ class Report:
             "var points = \n")
 
         p = []
-        for g in rs:
-            p.append({ "latlong": g[0], "popuptext": g[1] })
+        for values in rs:
+            concat = []
+            for i, s in enumerate(values):
+                if i == 0: continue # skip lat/long
+                if asm3.utils.is_date(s): 
+                    concat.append(asm3.i18n.python2display(l, s))
+                else:
+                    concat.append(str(s))
+            p.append({ "latlong": values[0], "popuptext": "".join(concat) })
 
         self._Append( asm3.utils.json(p) + ";\n" )
         self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"\", points);\n" )
