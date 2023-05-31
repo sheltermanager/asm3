@@ -1612,17 +1612,38 @@ def get_animals_namecode(dbo):
     return dbo.query("SELECT ID, AnimalName, ShelterCode, ShortCode " \
         "FROM animal ORDER BY AnimalName, ShelterCode")
 
-def get_animals_on_shelter_namecode(dbo):
+def get_animals_on_shelter_namecode(dbo, remove_units = False, remove_fosterer = False):
     """
-    Returns a resultset containing the ID, name and code
-    of all on shelter animals.
+    Returns a resultset containing the ID, Name, Code and DisplayLocation of all shelter animals.
+    remove_units: Strip location units from DisplayLocation
+    remove_fosterer: Strip fosterer from DisplayLocation
     """
-    return dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesID, SpeciesName, DisplayLocation, " \
+    rows = dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesID, SpeciesName, ActiveMovementType, DisplayLocation, " \
         "CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN ShortCode ELSE ShelterCode END AS Code " \
         "FROM animal " \
         "LEFT OUTER JOIN species ON species.ID = animal.SpeciesID " \
         "WHERE Archived = 0 ORDER BY AnimalName, ShelterCode")
+    for r in rows:
+        if remove_units and r.ACTIVEMOVEMENTTYPE != 2 and r.DISPLAYLOCATION.find("::") != -1: r.DISPLAYLOCATION = r.DISPLAYLOCATION[:r.DISPLAYLOCATION.find("::")]
+        if remove_fosterer and r.ACTIVEMOVEMENTTYPE == 2 and r.DISPLAYLOCATION.find("::") != -1: r.DISPLAYLOCATION = r.DISPLAYLOCATION[:r.DISPLAYLOCATION.find("::")]
+    return rows
+
+def get_animals_adopted_namecode(dbo, days = 30, remove_adopter = False):
+    """
+    Returns a resultset containing the ID, Name, Code and DisplayLocation of all animals who were recently adopted.
+    remove_adopter: Strip adopter's name from DisplayLocation
+    """
+    cutoffdate = dbo.today(offset=days*-1)
+    rows = dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesID, SpeciesName, ActiveMovementType, DisplayLocation, " \
+        "CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
+        "THEN ShortCode ELSE ShelterCode END AS Code " \
+        "FROM animal " \
+        "LEFT OUTER JOIN species ON species.ID = animal.SpeciesID " \
+        "WHERE ActiveMovementType=1 AND ActiveMovementDate > ? AND DeceasedDate Is Null ORDER BY AnimalName, ShelterCode", [cutoffdate])
+    for r in rows:
+        if remove_adopter and r.ACTIVEMOVEMENTTYPE != 2 and r.DISPLAYLOCATION.find("::") != -1: r.DISPLAYLOCATION = r.DISPLAYLOCATION[:r.DISPLAYLOCATION.find("::")]
+    return rows
 
 def get_animals_on_shelter_foster_namecode(dbo):
     """

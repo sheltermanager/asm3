@@ -1058,7 +1058,7 @@ class mobile_photo_upload(ASMEndpoint):
         l = o.locale
         self.content_type("text/html")
         c = {
-            "animals": asm3.animal.get_animals_on_shelter_namecode(dbo)
+            "animals": asm3.animal.get_animals_on_shelter_namecode(dbo, remove_units=True) + asm3.animal.get_animals_adopted_namecode(dbo, remove_adopter=True)
         }
         return asm3.html.mobile_page(l, _("Photo Uploader", l), [ "mobile_photo_uploader.js" ], c)
 
