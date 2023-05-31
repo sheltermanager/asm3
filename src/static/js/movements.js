@@ -363,10 +363,12 @@ $(function() {
                                 if (controller.name == "move_book_soft_release") { 
                                     $("#type").select("value", "7"); 
                                     $("#trial").prop("checked", true);
+                                    movements.trial_change();
                                 }
                                 if (controller.name == "move_book_trial_adoption") { 
                                     $("#type").select("value", "1"); 
                                     $("#trial").prop("checked", true);
+                                    movements.trial_change();
                                 }
                                 // If we're in a book other than the reservation book, set the movement date to today
                                 if (controller.name.indexOf("move_book") == 0 && controller.name != "move_book_reservation") {
@@ -606,6 +608,9 @@ $(function() {
 
             // Watch for movement type changing
             $("#type").change(movements.type_change);
+
+            // Watch for trial being ticked/unticked
+            $("#trial").click(movements.trial_change).keyup(movements.trial_change);
 
             // Watch for return date changing
             $("#returndate").change(movements.returndate_change);
@@ -887,6 +892,16 @@ $(function() {
             }
             else {
                 $("#type option[value='7']").html(_("Released To Wild"));
+            }
+        },
+
+        trial_change: function() {
+            if ($("#trial").prop("checked")) {
+                // If there's no trial end date, and we have a default trial length, set the date
+                if (!$("#trialenddate").val() && config.integer("DefaultTrialLength")) {
+                    let enddate = common.add_days(new Date(), config.integer("DefaultTrialLength"));
+                    $("#trialenddate").datepicker("setDate", enddate);
+                }
             }
         },
 

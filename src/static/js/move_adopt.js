@@ -424,6 +424,16 @@ $(function() {
                 $("#trialrow2").show();
             }
 
+            const trial_change = function() {
+                if ($("#trial").prop("checked")) {
+                    // If there's no trial end date, and we have a default trial length, set the date
+                    if (!$("#trialenddate").val() && config.integer("DefaultTrialLength")) {
+                        let enddate = common.add_days(new Date(), config.integer("DefaultTrialLength"));
+                        $("#trialenddate").datepicker("setDate", enddate);
+                    }
+                }
+            };
+            $("#trial").click(trial_change).keyup(trial_change);
 
             $("#adopt").button().click(async function() {
                 if (!validation()) { return; }

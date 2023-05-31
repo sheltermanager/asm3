@@ -132,6 +132,7 @@ DEFAULTS = {
     "DefaultMediaNotesFromFile": "Yes",
     "DefaultShiftStart": "09:00",
     "DefaultShiftEnd": "17:00",
+    "DefaultTrialLength": "30",
     "DiaryCompleteOnDeath": "Yes",
     "DisableAnimalControl": "No",
     "DisableClinic": "No",

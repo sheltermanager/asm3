@@ -747,6 +747,9 @@ Movements
   field of new animals. When the date is reached, the hold flag is automatically
   removed.
 
+* Trial adoptions last for: This value is used to set the default "trial end date"
+  field when marking adoptions as a trial.
+
 * Treat animals with a future intake date as part of the shelter inventory: This
   option will treat animals who have not arrived yet (Date Brought In > Today)
   as on shelter so that they are visible in shelter view etc.
