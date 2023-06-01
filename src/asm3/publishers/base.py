@@ -1266,14 +1266,14 @@ class FTPPublisher(AbstractPublisher):
         """ given a set of animals, removes images from the current FTP folder that do not
             start with a sheltercode that is in the list of animals """
         sheltercodes = [x.SHELTERCODE for x in animals]
-        self.log("removing unused images (valid prefixes = %s)" % sheltercodes)
+        # self.log("removing unused images (valid prefixes = %s)" % sheltercodes)
         try:
             nlst = self.socket.nlst("*.jpg")
-            self.log("NLST: %s" % nlst)
+            # self.log("NLST: %s" % nlst)
             for f in nlst:
                 c = f[:f.find("-")]
                 if c not in sheltercodes: 
-                    self.log("delete unreferenced old image: %s" % f)
+                    self.log("delete unreferenced image: %s" % f)
                     self.socket.delete(f)
         except Exception as err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
