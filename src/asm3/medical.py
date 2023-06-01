@@ -372,7 +372,7 @@ def get_medical_export(dbo):
         "'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, " \
         "t.AnimalType, s.SpeciesName, a.DisplayLocation, " \
         "am.TreatmentName, am.Dosage, amt.TreatmentNumber, " \
-        "amt.TotalTreatments, amt.DateRequired, am.Comments " \
+        "amt.TotalTreatments, amt.DateRequired, amt.DateGiven, am.Comments " \
         "FROM animal a " \
         "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
@@ -382,7 +382,7 @@ def get_medical_export(dbo):
         "'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, " \
         "t.AnimalType, sp.SpeciesName, a.DisplayLocation, " \
         "v.VaccinationType AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber, " \
-        "'1' AS TotalTreatments, av.DateRequired, av.Comments " \
+        "'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.Comments " \
         "FROM animal a " \
         "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
         "INNER JOIN animalvaccination av ON a.ID = av.AnimalID " \
@@ -392,7 +392,7 @@ def get_medical_export(dbo):
         "'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, " \
         "t.AnimalType, sp.SpeciesName, a.DisplayLocation, " \
         "tt.TestName AS TreatmentName, '1' AS Dosage, '1' AS TreatmentNumber, " \
-        "'1' AS TotalTreatments, at.DateRequired, at.Comments " \
+        "'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, at.Comments " \
         "FROM animal a " \
         "INNER JOIN animaltype t ON t.ID = a.AnimalTypeID " \
         "INNER JOIN animaltest at ON a.ID = at.AnimalID " \
