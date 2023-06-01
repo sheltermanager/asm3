@@ -45,6 +45,7 @@ $(function() {
                     { json_field: "RESERVATIONSTATUSID", post_field: "reservationstatus", label: _("Reservation Status"), type: "select", 
                         options: { displayfield: "STATUSNAME", valuefield: "ID", rows: controller.reservationstatuses }},
                     { json_field: "RESERVATIONCANCELLEDDATE", post_field: "reservationcancelled", label: _("Reservation Cancelled"), type: "date" },
+                    { type: "additional_fields" },
                     { type: "nextcol" },
                     { json_field: "MOVEMENTTYPE", post_field: "type", label: _("Movement Type"), type: "select", 
                         options: { displayfield: "MOVEMENTTYPE", valuefield: "ID", rows: choosetypes }},
@@ -75,7 +76,9 @@ $(function() {
                         onchange: function() {
                             tableform.fields_update_row(dialog.fields, row);
                             movements.set_extra_fields(row);
-                            tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, "movement")
+                            additional.additional_fields_update_row(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE] , row);
+                            var additionalfields_update = additional.additional_fields_post(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
+                            tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID + additionalfields_update, "movement")
                                 .then(function(response) {
                                     tableform.table_update(table);
                                     tableform.dialog_close();
@@ -83,8 +86,12 @@ $(function() {
                                 .fail(function() {
                                     tableform.dialog_enable_buttons();
                                 });
+                            //TODO: update additional fields
                         },
                         onload: function() {
+                            additional.additional_fields_populate_from_json(additional.merge_metadata_and_values(controller.additional, row));
+                            additional.toggle_elements_by_linktype('additionaldialog', controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
+
                             tableform.fields_populate_from_json(dialog.fields, row);
                             movements.type_change();
                             movements.returndate_change();
@@ -328,8 +335,11 @@ $(function() {
                                         row.ID = response;
                                         tableform.fields_update_row(dialog.fields, row);
                                         movements.set_extra_fields(row);
+                                        additional.additional_fields_update_row(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE], row);
                                         row.ADOPTIONNUMBER = format.padleft(response, 6);
                                         controller.rows.push(row);
+                                        var additionalfields_update = additional.additional_fields_post(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
+                                        tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID + additionalfields_update, "movement");
                                         tableform.table_update(table);
                                         tableform.dialog_close();
                                     })
@@ -338,6 +348,8 @@ $(function() {
                                     });
                             },
                             onload: function() {
+                                additional.additional_fields_populate_from_json(additional.merge_metadata_and_values(controller.additional, {}));
+
                                 // Setup the dialog for a new record
                                 $("#animal").animalchooser("clear");
                                 $("#person").personchooser("clear");
@@ -409,6 +421,7 @@ $(function() {
                     click: function() { 
                         let row = tableform.table_selected_row(table);
                         tableform.fields_populate_from_json(dialog.fields, row);
+                        additional.additional_fields_populate_from_json(additional.merge_metadata_and_values(controller.additional, row));
                         movements.type_change(); 
                         movements.returndate_change();
                         tableform.dialog_show_edit(dialog, row, {
@@ -418,7 +431,9 @@ $(function() {
                             onchange: function() {
                                 tableform.fields_update_row(dialog.fields, row);
                                 movements.set_extra_fields(row);
-                                tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, "movement", function(response) {
+                                additional.additional_fields_update_row(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE], row);
+                                var additionalfields_update = additional.additional_fields_post(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
+                                tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID + additionalfields_update, "movement", function(response) {
                                     tableform.table_update(table);
                                     tableform.dialog_close();
                                 },
@@ -456,6 +471,7 @@ $(function() {
                     click: function() {
                         let row = tableform.table_selected_row(table);
                         tableform.fields_populate_from_json(dialog.fields, row);
+                        additional.additional_fields_populate_from_json(additional.merge_metadata_and_values(controller.additional, row));
                         movements.type_change(); 
                         movements.returndate_change();
                         tableform.dialog_show_edit(dialog, row, { 
@@ -465,7 +481,9 @@ $(function() {
                             onchange: function() {
                                 tableform.fields_update_row(dialog.fields, row);
                                 movements.set_extra_fields(row);
-                                tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID, "movement")
+                                additional.additional_fields_update_row(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE], row);
+                                var additionalfields_update = additional.additional_fields_post(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
+                                tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID + additionalfields_update, "movement")
                                     .then(function(response) {
                                         tableform.table_update(table);
                                         tableform.dialog_close();
@@ -572,8 +590,9 @@ $(function() {
 
         render: function() {
             let s = "";
-            this.model();
-            s += tableform.dialog_render(this.dialog);
+            this.model();   
+            var additionalfields = additional.tableform_additional_fields(additional.merge_metadata_and_values(controller.additional, {}),  -1, true, "additionaldialog");
+            s += tableform.dialog_render(this.dialog, additionalfields);
             s += '<div id="button-document-body" class="asm-menu-body">' +
                 '<ul class="asm-menu-list">' +
                 edit_header.template_list(controller.templates, "MOVEMENT", 0) +
@@ -819,6 +838,13 @@ $(function() {
                     return false;
                 }
             }
+            // mandatory additional fields
+            let additional_validation = additional.validate_mandatory_dialog("additionaldialog", controller.movementtypes_additionalfieldtypes[mt]);
+            if (!additional_validation.valid)
+            {
+                tableform.dialog_error(additional_validation.message);
+                return false;
+            }
 
             return true;
         },
@@ -988,6 +1014,8 @@ $(function() {
             else {
                 $("#event").closest("tr").fadeOut();
             }
+            additional.toggle_elements_by_linktype('additionaldialog', controller.movementtypes_additionalfieldtypes[mt]);
+
             movements.warnings();
         },
 

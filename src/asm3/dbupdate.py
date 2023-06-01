@@ -40,7 +40,7 @@ VERSIONS = (
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
-    34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704
+    34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -2398,6 +2398,15 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksfieldlink", "LinkType", 19, _("Incident - Citation", l))
     sql += lookup1("lksfieldlink", "LinkType", 20, _("Incident - Additional", l))
     sql += lookup1("lksfieldlink", "LinkType", 21, _("Event - Details", l))
+    sql += lookup1("lksfieldlink", "LinkType", 22, _("Movement - Adoption", l))
+    sql += lookup1("lksfieldlink", "LinkType", 23, _("Movement - Foster", l))
+    sql += lookup1("lksfieldlink", "LinkType", 24, _("Movement - Transfer", l))
+    sql += lookup1("lksfieldlink", "LinkType", 25, _("Movement - Escaped", l))
+    sql += lookup1("lksfieldlink", "LinkType", 26, _("Movement - Reclaimed", l))
+    sql += lookup1("lksfieldlink", "LinkType", 27, _("Movement - Stolen", l))
+    sql += lookup1("lksfieldlink", "LinkType", 28, _("Movement - Released", l))
+    sql += lookup1("lksfieldlink", "LinkType", 29, _("Movement - Retailer", l))
+    sql += lookup1("lksfieldlink", "LinkType", 30, _("Movement - Reservation", l))
     sql += lookup1("lksfieldtype", "FieldType", 0, _("Yes/No", l))
     sql += lookup1("lksfieldtype", "FieldType", 1, _("Text", l))
     sql += lookup1("lksfieldtype", "FieldType", 2, _("Notes", l))
@@ -5901,4 +5910,17 @@ def update_34704(dbo):
     dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_OwnerID", "animalboarding", "OwnerID") )
     dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_InDateTime", "animalboarding", "InDateTime") )
     dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_OutDateTime", "animalboarding", "OutDateTime") )
+
+def update_34705(dbo):
+    # add movement type to additional fields
+    l = dbo.locale
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (22, '%s')" % _("Movement - Adoption", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (23, '%s')" % _("Movement - Foster", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (24, '%s')" % _("Movement - Transfer", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (25, '%s')" % _("Movement - Escaped", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (26, '%s')" % _("Movement - Reclaimed", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (27, '%s')" % _("Movement - Stolen", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (28, '%s')" % _("Movement - Released", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (29, '%s')" % _("Movement - Retailer", l))
+    dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (30, '%s')" % _("Movement - Reservation", l))
 

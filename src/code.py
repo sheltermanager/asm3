@@ -2048,6 +2048,8 @@ class animal_movements(JSONEndpoint):
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_additional_fields_metadata(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement"),
@@ -4622,6 +4624,7 @@ class move_adopt(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
@@ -4682,6 +4685,8 @@ class move_book_foster(JSONEndpoint):
             "name": "move_book_foster",
             "rows": movements,
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_additional_fields_metadata(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -4701,6 +4706,8 @@ class move_book_recent_adoption(JSONEndpoint):
             "rows": movements,
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_additional_fields_metadata(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -4719,6 +4726,8 @@ class move_book_recent_other(JSONEndpoint):
             "name": "move_book_recent_other",
             "rows": movements,
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_additional_fields_metadata(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -4737,6 +4746,8 @@ class move_book_recent_transfer(JSONEndpoint):
             "name": "move_book_recent_transfer",
             "rows": movements,
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_additional_fields_metadata(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -4756,6 +4767,8 @@ class move_book_reservation(JSONEndpoint):
             "rows": movements,
             "logtypes": asm3.lookups.get_log_types(dbo),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_additional_fields_metadata(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -4775,6 +4788,8 @@ class move_book_retailer(JSONEndpoint):
             "rows": movements,
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_additional_fields_metadata(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -4859,7 +4874,10 @@ class move_foster(JSONEndpoint):
     post_permissions = asm3.users.ADD_MOVEMENT
 
     def controller(self, o):
-        return {}
+        dbo = o.dbo
+        return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_FOSTER)
+        }
 
     def post_create(self, o):
         return str(asm3.movement.insert_foster_from_form(o.dbo, o.user, o.post))
@@ -4883,6 +4901,7 @@ class move_reclaim(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RECLAIMED),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo)
@@ -4914,6 +4933,7 @@ class move_reserve(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RESERVATION),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
@@ -4929,7 +4949,10 @@ class move_retailer(JSONEndpoint):
     post_permissions = asm3.users.ADD_MOVEMENT
 
     def controller(self, o):
-        return {}
+        dbo = o.dbo
+        return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RETAILER)
+        }
 
     def post_create(self, o):
         return str(asm3.movement.insert_retailer_from_form(o.dbo, o.user, o.post))
@@ -4940,7 +4963,10 @@ class move_transfer(JSONEndpoint):
     post_permissions = asm3.users.ADD_MOVEMENT
 
     def controller(self, o):
-        return {}
+        dbo = o.dbo
+        return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_TRANSFER),
+        }
 
     def post_create(self, o):
         return str(asm3.movement.insert_transfer_from_form(o.dbo, o.user, o.post))
@@ -5814,6 +5840,8 @@ class person_movements(JSONEndpoint):
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_additional_fields_metadata(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
