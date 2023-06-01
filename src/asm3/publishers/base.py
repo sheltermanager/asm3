@@ -1262,6 +1262,20 @@ class FTPPublisher(AbstractPublisher):
         except Exception as err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
 
+    def clearUnusedFTPImages(self, animals):
+        """ given a set of animals, removes images from the current FTP folder that do not
+            start with a sheltercode that is in the list of animals """
+        if not self.pc.uploadDirectly: return
+        sheltercodes = [x.SHELTERCODE for x in animals]
+        try:
+            for f in self.socket.nlst("*.jpg"):
+                c = f[:f.find("-")]
+                if c not in sheltercodes: 
+                    self.log("delete unreferenced old image: %s" % f)
+                    self.socket.delete(f)
+        except Exception as err:
+            self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
+
     def cleanup(self, save_log=True):
         """
         Call when the publisher has completed to tidy up.
