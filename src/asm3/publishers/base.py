@@ -1268,7 +1268,9 @@ class FTPPublisher(AbstractPublisher):
         sheltercodes = [x.SHELTERCODE for x in animals]
         self.log("removing unused images (valid prefixes = %s)" % sheltercodes)
         try:
-            for f in self.socket.nlst("*.jpg"):
+            nlst = self.socket.nlst("*.jpg")
+            self.log("NLST: %s" % nlst)
+            for f in nlst:
                 c = f[:f.find("-")]
                 if c not in sheltercodes: 
                     self.log("delete unreferenced old image: %s" % f)
