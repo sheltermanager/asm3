@@ -1265,8 +1265,8 @@ class FTPPublisher(AbstractPublisher):
     def clearUnusedFTPImages(self, animals):
         """ given a set of animals, removes images from the current FTP folder that do not
             start with a sheltercode that is in the list of animals """
-        if not self.pc.uploadDirectly: return
         sheltercodes = [x.SHELTERCODE for x in animals]
+        self.log("removing unused images (valid prefixes = %s)" % sheltercodes)
         try:
             for f in self.socket.nlst("*.jpg"):
                 c = f[:f.find("-")]
