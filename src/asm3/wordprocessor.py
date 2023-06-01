@@ -1276,6 +1276,9 @@ def movement_tags(dbo, m):
     ))
     if m.EVENTID is not None and m.EVENTID != 0:
         tags = append_tags(tags, event_tags(dbo, asm3.event.get_event(dbo, m.EVENTID)))
+    # movement additional fields
+    tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, m["ID"], "movement"), "MOVEMENT"))
+
     return tags
 
 def clinic_tags(dbo, c):

@@ -1753,5 +1753,3 @@ $.fn.asmcontent = function(type) {
         $(this).show("slide", {direction: 'left'}, common.fx_speed);
     });
 };
-
-
