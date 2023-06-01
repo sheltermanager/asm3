@@ -2072,7 +2072,7 @@ def get_litter_animals(dbo, litters = []):
     """ Returns all animals who have a litter ID in set litters """
     litterids = []
     for l in litters:
-        litterids.append(dbo.sql_value(l.ACCEPTANCENUMBER))
+        litterids.append(dbo.sql_value(l.ACCEPTANCENUMBER.replace("'", "`")))
     if len(litterids) == 0: return []
     return dbo.query(get_animal_query(dbo) + " WHERE a.AcceptanceNumber IN ( " + ",".join(litterids) + ") ORDER BY a.ID")
 
