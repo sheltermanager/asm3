@@ -76,8 +76,8 @@ $(function() {
                         onchange: function() {
                             tableform.fields_update_row(dialog.fields, row);
                             movements.set_extra_fields(row);
-                            additional.additional_fields_update_row(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE] , row);
-                            var additionalfields_update = additional.additional_fields_post(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
+                            additional.additional_fields_update_row(additional.merge_definitions_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE] , row);
+                            let additionalfields_update = additional.additional_fields_post(additional.merge_definitions_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
                             tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID + additionalfields_update, "movement")
                                 .then(function(response) {
                                     tableform.table_update(table);
@@ -89,7 +89,7 @@ $(function() {
                             //TODO: update additional fields
                         },
                         onload: function() {
-                            additional.additional_fields_populate_from_json(additional.merge_metadata_and_values(controller.additional, row));
+                            additional.additional_fields_populate_from_json(additional.merge_definitions_and_values(controller.additional, row));
                             additional.toggle_elements_by_linktype('additionaldialog', controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
 
                             tableform.fields_populate_from_json(dialog.fields, row);
@@ -335,10 +335,10 @@ $(function() {
                                         row.ID = response;
                                         tableform.fields_update_row(dialog.fields, row);
                                         movements.set_extra_fields(row);
-                                        additional.additional_fields_update_row(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE], row);
+                                        additional.additional_fields_update_row(additional.merge_definitions_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE], row);
                                         row.ADOPTIONNUMBER = format.padleft(response, 6);
                                         controller.rows.push(row);
-                                        var additionalfields_update = additional.additional_fields_post(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
+                                        let additionalfields_update = additional.additional_fields_post(additional.merge_definitions_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
                                         tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID + additionalfields_update, "movement");
                                         tableform.table_update(table);
                                         tableform.dialog_close();
@@ -348,7 +348,7 @@ $(function() {
                                     });
                             },
                             onload: function() {
-                                additional.additional_fields_populate_from_json(additional.merge_metadata_and_values(controller.additional, {}));
+                                additional.additional_fields_populate_from_json(additional.merge_definitions_and_values(controller.additional, {}));
 
                                 // Setup the dialog for a new record
                                 $("#animal").animalchooser("clear");
@@ -421,7 +421,7 @@ $(function() {
                     click: function() { 
                         let row = tableform.table_selected_row(table);
                         tableform.fields_populate_from_json(dialog.fields, row);
-                        additional.additional_fields_populate_from_json(additional.merge_metadata_and_values(controller.additional, row));
+                        additional.additional_fields_populate_from_json(additional.merge_definitions_and_values(controller.additional, row));
                         movements.type_change(); 
                         movements.returndate_change();
                         tableform.dialog_show_edit(dialog, row, {
@@ -431,8 +431,8 @@ $(function() {
                             onchange: function() {
                                 tableform.fields_update_row(dialog.fields, row);
                                 movements.set_extra_fields(row);
-                                additional.additional_fields_update_row(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE], row);
-                                var additionalfields_update = additional.additional_fields_post(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
+                                additional.additional_fields_update_row(additional.merge_definitions_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE], row);
+                                let additionalfields_update = additional.additional_fields_post(additional.merge_definitions_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
                                 tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID + additionalfields_update, "movement", function(response) {
                                     tableform.table_update(table);
                                     tableform.dialog_close();
@@ -471,7 +471,7 @@ $(function() {
                     click: function() {
                         let row = tableform.table_selected_row(table);
                         tableform.fields_populate_from_json(dialog.fields, row);
-                        additional.additional_fields_populate_from_json(additional.merge_metadata_and_values(controller.additional, row));
+                        additional.additional_fields_populate_from_json(additional.merge_definitions_and_values(controller.additional, row));
                         movements.type_change(); 
                         movements.returndate_change();
                         tableform.dialog_show_edit(dialog, row, { 
@@ -481,8 +481,8 @@ $(function() {
                             onchange: function() {
                                 tableform.fields_update_row(dialog.fields, row);
                                 movements.set_extra_fields(row);
-                                additional.additional_fields_update_row(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE], row);
-                                var additionalfields_update = additional.additional_fields_post(additional.merge_metadata_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
+                                additional.additional_fields_update_row(additional.merge_definitions_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE], row);
+                                let additionalfields_update = additional.additional_fields_post(additional.merge_definitions_and_values(controller.additional, row), controller.movementtypes_additionalfieldtypes[row.MOVEMENTTYPE]);
                                 tableform.fields_post(dialog.fields, "mode=update&movementid=" + row.ID + additionalfields_update, "movement")
                                     .then(function(response) {
                                         tableform.table_update(table);
@@ -591,7 +591,7 @@ $(function() {
         render: function() {
             let s = "";
             this.model();   
-            var additionalfields = additional.tableform_additional_fields(additional.merge_metadata_and_values(controller.additional, {}),  -1, true, "additionaldialog");
+            let additionalfields = additional.tableform_additional_fields(additional.merge_definitions_and_values(controller.additional, {}),  -1, true, "additionaldialog");
             s += tableform.dialog_render(this.dialog, additionalfields);
             s += '<div id="button-document-body" class="asm-menu-body">' +
                 '<ul class="asm-menu-list">' +

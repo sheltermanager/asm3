@@ -70,6 +70,9 @@ additional = {
         return add.join("\n") + other.join("\n");
     },
 
+    /**
+     * Renders additional fields in tableform dialogs (see tableform.fields_render)
+     */
     tableform_additional_fields: function(fields, additionalfieldtype, includeids, classes) {
         if (fields.length == 0) { return; }
         if (additionalfieldtype === undefined) { additionalfieldtype = -1; }
@@ -81,11 +84,11 @@ additional = {
             {
                 add.push(additional.render_field(f, includeids, classes));
                 addidx += 1;
-//                // Every 3rd column, drop a row
-//                if (addidx == 3) {
+                // Every 3rd column, drop a row
+                // if (addidx == 3) {
                     add.push("</tr><tr>");
                     addidx = 0;
-//                }
+                // }
             }
         });
         add.push("</tr>");
@@ -245,12 +248,20 @@ additional = {
     },
 
     /**
-     * Merges meta data about additional fields (returned by asm3.additional.get_additional_fields_metadata in backend)
+     * Merges additional field definitions (returned by asm3.additional.get_field_definitions in backend)
      * and values from a row (array of simple key/values) to use additional fields in add/edit dialogs used with tables
-     * where additional fields are available
+     * where additional fields are available.
      **/
-    merge_metadata_and_values: function (additional, row) {
-      return additional.map((item) => ({ ...item, VALUE: (row.hasOwnProperty(item.FIELDNAME.toUpperCase()) ? row[item.FIELDNAME.toUpperCase()] : "") }));
+    merge_definitions_and_values: function (additional, row) {
+        // return additional.map((item) => ({ ...item, VALUE: (row.hasOwnProperty(item.FIELDNAME.toUpperCase()) ? row[item.FIELDNAME.toUpperCase()] : "") }));
+        $.each(additional, function(i, a) {
+            let fieldname = a.FIELDNAME.toUpperCase();
+            a.VALUE = "";
+            if (row.hasOwnProperty(fieldname)) { 
+                a.VALUE = row[fieldname];
+            }
+        });
+        return additional;
     },
 
     /**
@@ -267,6 +278,10 @@ additional = {
         });        
     },
 
+    /**
+     * Updates a result row containing additional fields from the on-screen fields
+     * - equivalent to tableform.fields_update_row
+     */
     additional_fields_update_row: function(fields, linktype, row) {
         fields.forEach(function(f) {
             var id = f.ID;
@@ -327,21 +342,19 @@ additional = {
     },
 
     /**
-     * Returns a string with additional field keys and values to post in update requests
-     * Only returns the ones relevant to the linktype so that others will be reset by backend
-     * 
-     * 
+     * Returns a URI encoded string with additional field keys and values to post.
+     * Only returns the ones relevant to the linktype so that others will be reset by backend.
+     * fields is the list of results from the additionalfield table.
      **/
     additional_fields_post: function(fields, linktype) {
-        var return_string="";
-        fields.forEach(function(f) {
-            var id = f.ID;
-            var fieldid = "add_" + id;
-            if (f.LINKTYPE==linktype)
-            {
-                var element = $("#" + fieldid); //document.getElementById(fieldid);
+        let return_string = "";
+        $.each(fields, function(i, f) {
+            let id = f.ID;
+            let fieldid = "add_" + id;
+            if (f.LINKTYPE==linktype) {
+                let element = $("#" + fieldid); //document.getElementById(fieldid);
                 if (element) {
-                    var fid = element.attr('data-post');
+                    let fid = element.attr('data-post');
                     if (f.FIELDTYPE == additional.YESNO) {
                         return_string += "&" + fid + "=" + (element.is(":checked") ? "on" : "");
                     }
@@ -376,9 +389,6 @@ additional = {
         });
         return return_string;
     },
-
-
-
 
     /**
      * Renders a field. Fields are always output as a pair of
@@ -500,18 +510,19 @@ additional = {
     },
 
     /**
-     * Validates all additional fields in the dialog and checks to
+     * Validates all additional fields in a dialog and checks to
      * see if they are mandatory and if so whether or not they
      * are blank. Returns true if all is ok, or false if a field
      * fails a check.
      *
      * Deliberately ignores fields with the chooser class as this 
-     * function is aimed at additional fields in bottom level forms
-     * like animal, waiting list, etc.
+     * function is aimed at additional fields only.
      *
-     * If a field fails the manadatory check:
-     * 1. Its label is highlighted
-     * 2. An error message is displayed
+     * additional_field_class: class that all additional fields should have ("additional" by default)
+     * linktype: named additional field link type constant, eg: animal, movement, etc.
+     *
+     * If a field fails the manadatory check its label is highlighted and an error is 
+     * returned. { valid: false, message: "X cannot be blank" }
      */
     validate_mandatory_dialog: function(additional_field_class, linktype) {
         var valid = true, message="";

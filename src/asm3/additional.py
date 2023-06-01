@@ -114,22 +114,6 @@ def is_person_fieldtype(fieldtype):
     """ Returns true if the field type given is a person """
     return fieldtype in (PERSON_LOOKUP, PERSON_SPONSOR, PERSON_VET)
 
-
-def get_additional_fields_metadata(dbo, linktype = "animal"):
-    """
-    Returns a list of additional fields for the link
-    the list contains all the fields from additionalfield and additional,
-    including VALUE, FIELDNAME, FIELDLABEL, LOOKUPVALUES, FIELDTYPE and
-    TOOLTIP.  If there isn't an appropriate additional row for the animal, null
-    values will be returned for all fields.
-    """
-    inclause = clause_for_linktype(linktype)
-    return dbo.query("SELECT af.* " \
-        "FROM additionalfield af " \
-        "WHERE af.LinkType IN (%s) " \
-        "ORDER BY af.DisplayIndex" % ( inclause ))
-
-
 def get_additional_fields(dbo, linkid, linktype = "animal", linktypeid=-1):
     """
     Returns a list of additional fields for the link
@@ -170,6 +154,20 @@ def get_additional_fields_ids(dbo, rows, linktype = "animal"):
         "FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
         "WHERE a.LinkType IN (%s) AND a.LinkID IN (%s) " \
         "ORDER BY af.DisplayIndex" % ( dbo.sql_cast_char("animal.ID"), dbo.sql_cast_char("owner.ID"), inclause, ",".join(links)))
+
+def get_additional_fields_dict(dbo, post, linktype):
+    """
+        Returns a dictionary with keys from input post that match additional field key patterns 
+    """
+    ret = {}
+    for f in get_field_definitions(dbo, linktype):
+        key = "a.%s.%s" % (f.mandatory, f.id)
+        key2 = "additional%s" % f.fieldname
+        if key in post:
+            ret[key] = post[key]
+        elif key2 in post:
+            ret[key] = post[key]
+    return ret
 
 def get_field_definitions(dbo, linktype = "animal"):
     """
@@ -299,21 +297,6 @@ def insert_additional(dbo, linktype, linkid, additionalfieldid, value):
         }, generateID=False, writeAudit=False)
     except Exception as err:
         asm3.al.error("Failed saving additional field: %s" % err, "additional.insert_additional", dbo, sys.exc_info())
-
-def get_additional_fields_dict(dbo, post, linktype):
-    """
-        Returns a dictionary with kvps from input post that match additional field key patterns 
-    """
-    ret = {}
-    for f in get_field_definitions(dbo, linktype):
-        key = "a.%s.%s" % (f.mandatory, f.id)
-        key2 = "additional%s" % f.fieldname
-        if key in post:
-            ret[key] = post[key]
-        elif key2 in post:
-            ret[key] = post[key]
-    return ret
-
 
 def save_values_for_link(dbo, post, username, linkid, linktype = "animal", setdefaults=False):
     """

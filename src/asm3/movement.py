@@ -130,11 +130,12 @@ def get_movements(dbo, movementtype):
     Gets the list of movements of a particular type 
     (unreturned or returned after today and for animals who aren't deceased)
     """
-    return asm3.additional.append_to_results(dbo, dbo.query(get_movement_query(dbo) + \
+    rows = dbo.query(get_movement_query(dbo) + \
         "WHERE m.MovementType = ? AND " \
         "(m.ReturnDate Is Null OR m.ReturnDate > ?) " \
         "AND a.DeceasedDate Is Null " \
-        "ORDER BY m.MovementDate DESC", (movementtype, dbo.today())), "movement")
+        "ORDER BY m.MovementDate DESC", (movementtype, dbo.today()))
+    return asm3.additional.append_to_results(dbo, rows , "movement")
 
 def get_movement(dbo, movementid):
     """
@@ -228,13 +229,15 @@ def get_animal_movements(dbo, aid):
     """
     Gets the list of movements for a particular animal
     """
-    return asm3.additional.append_to_results(dbo, dbo.query(get_movement_query(dbo) + " WHERE m.AnimalID = ? ORDER BY ActiveDate DESC", [aid]), "movement")
+    rows = dbo.query(get_movement_query(dbo) + " WHERE m.AnimalID = ? ORDER BY ActiveDate DESC", [aid])
+    return asm3.additional.append_to_results(dbo, rows, "movement")
 
 def get_person_movements(dbo, pid):
     """
     Gets the list of movements for a particular person
     """
-    return asm3.additional.append_to_results(dbo, dbo.query(get_movement_query(dbo) + " WHERE m.OwnerID = ? ORDER BY ActiveDate DESC", [pid]), "movement")
+    rows = dbo.query(get_movement_query(dbo) + " WHERE m.OwnerID = ? ORDER BY ActiveDate DESC", [pid])
+    return asm3.additional.append_to_results(dbo, rows, "movement")
 
 def validate_movement_form_data(dbo, username, post):
     """
