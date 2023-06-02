@@ -4807,6 +4807,7 @@ class move_book_soft_release(JSONEndpoint):
         return {
             "name": "move_book_soft_release",
             "rows": movements,
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
@@ -4826,6 +4827,7 @@ class move_book_trial_adoption(JSONEndpoint):
             "name": "move_book_trial_adoption",
             "rows": movements,
             "logtypes": asm3.lookups.get_log_types(dbo), 
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
@@ -4845,6 +4847,7 @@ class move_book_unneutered(JSONEndpoint):
             "name": "move_book_unneutered",
             "rows": movements,
             "logtypes": asm3.lookups.get_log_types(dbo), 
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),

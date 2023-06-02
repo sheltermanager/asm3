@@ -74,7 +74,7 @@ additional = {
      * Renders additional fields in tableform dialogs (see tableform.fields_render)
      */
     tableform_additional_fields: function(fields, additionalfieldtype, includeids, classes) {
-        if (fields.length == 0) { return; }
+        if (!fields || fields.length == 0) { return; }
         if (additionalfieldtype === undefined) { additionalfieldtype = -1; }
         var add = [], other = [], addidx = 0;
         //add.push('<table class="asm-additional-fields-container" width=\"100%\">\n<tr>\n');
