@@ -32,14 +32,14 @@ change the View to Export and then hit Export as CSV.
 
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/rg_hb2428"
+PATH = "/home/robin/tmp/asm3_import_data/rg_eb3027"
 
 DEFAULT_BREED = 261 # default to dsh
 PETFINDER_ID = "" # Shouldn't be needed if Picture 1 is present
-IMPORT_PICTURES = True 
-DATE_FORMAT = "DMY" # Normally MDY
+IMPORT_PICTURES = False 
 
-RG_AWS_PREFIX = "https://s3.amazonaws.com/filestore.rescuegroups.org" # To resolve URLs from the "Picture 1" field of imports
+#RG_AWS_PREFIX = "https://s3.amazonaws.com/filestore.rescuegroups.org" # To resolve URLs from the "Picture 1" field of imports
+RG_AWS_PREFIX = "https://cdn.rescuegroups.org" # To resolve URLs from the "Picture 1" field of imports
 
 animals = []
 owners = []
@@ -58,10 +58,7 @@ if IMPORT_PICTURES:
     asm.setid("dbfs", 300)
 
 def getdate(s):
-    if DATE_FORMAT == "DMY":
-        return asm.getdate_ddmmyyyy(s)
-    else:
-        return asm.getdate_mmddyyyy(s)
+    return asm.getdate_mmddyyyy(s)
 
 def size_id_for_name(name):
     return {
@@ -92,6 +89,7 @@ if PETFINDER_ID != "":
 
 for d in asm.csv_to_list("%s/Animals.csv" % PATH):
     if d["Status"] == "Deleted": continue
+    if d["Animal ID"] == "Animal ID": continue # skip repeated headers
     a = asm.Animal()
     animals.append(a)
     if d["Species"] == "Cat":
@@ -110,28 +108,30 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
         a.generateCode()
     a.AnimalName = d["Name"]
 
-    broughtin = asm.today()
-    if "Created" in d and d["Created"] != "":
-        broughtin = getdate(d["Created"])
+    broughtin = None
     if "Received Date" in d and d["Received Date"] != "":
         broughtin = getdate(d["Received Date"])
-    a.DateBroughtIn = broughtin
+    if broughtin is None and "Created" in d and d["Created"] != "":
+        broughtin = getdate(d["Created"])
+    if broughtin is None and "Last Updated" in d and d["Last Updated"] != "":
+        broughtin = getdate(d["Last Updated"])
+    a.DateBroughtIn = broughtin or asm.today()
 
-    dob = broughtin
+    dob = None
     a.EstimatedDOB = 1
-    if "General Age" in d:
-        if d["General Age"].find("Baby") != -1:
-            dob = asm.subtract_days(asm.today(), 91)
-        elif d["General Age"].find("Young") != -1:
-            dob = asm.subtract_days(asm.today(), 182)
-        elif d["General Age"].find("Adult") != -1:
-            dob = asm.subtract_days(asm.today(), 730)
-        elif d["General Age"].find("Senior") != -1:
-            dob = asm.subtract_days(asm.today(), 2555)
     if "Birthdate" in d and d["Birthdate"] != "":
         dob = getdate(d["Birthdate"])
         a.EstimatedDOB = 0
-    a.DateOfBirth = dob
+    if dob is None and "General Age" in d:
+        if d["General Age"].find("Baby") != -1:
+            dob = asm.subtract_days(a.DateBroughtIn, 91)
+        elif d["General Age"].find("Young") != -1:
+            dob = asm.subtract_days(a.DateBroughtIn, 182)
+        elif d["General Age"].find("Adult") != -1:
+            dob = asm.subtract_days(a.DateBroughtIn, 730)
+        elif d["General Age"].find("Senior") != -1:
+            dob = asm.subtract_days(a.DateBroughtIn, 2555)
+    a.DateOfBirth = dob or a.DateBroughtIn
     a.Sex = 1
     if d["Sex"].startswith("F"):
         a.Sex = 0
@@ -162,7 +162,9 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
             a.Breed2ID = asm.breed_id_for_name(breed2, DEFAULT_BREED)
         a.BreedName = asm.breed_name_for_id(a.BreedID) + " / " + asm.breed_name_for_id(a.Breed2ID)
         a.CrossBreed = 1
-    a.BaseColourID = asm.colour_id_for_name(d["Color (General)"])
+    color = ""
+    if "Color (General)" in d: color = d["Color (General)"]
+    a.BaseColourID = asm.colour_id_for_name(color)
     a.ShelterLocation = 1
     if "Size Potential (General)" in d: a.Size = size_id_for_name(d["Size Potential (General)"])
     if "Declawed" in d: a.Declawed = d["Declawed"] == "Yes" and 1 or 0
@@ -173,21 +175,23 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
     if "OK with Dogs" in d and d["OK with Dogs"] == "Yes": a.IsGoodWithDogs = 0
     if "OK with Kids" in d and d["OK with Kids"] == "Yes": a.IsGoodWithChildren = 0
     if "OK with Cats" in d and d["OK with Cats"] == "Yes": a.IsGoodWithCats = 0
-    if "Microchip Number" in d: a.IdentichipNumber = d["Microchip Number"]
+    if "Microchip Number" in d: a.IdentichipNumber = d["Microchip Number"].replace(" ", "")
     if a.IdentichipNumber != "": a.Identichipped = 1
     if "Description" in d: a.AnimalComments = d["Description"]
     if "Description (no html)" in d: a.AnimalComments = d["Description (no html)"]
+    status = ""
     summary = ""
     origin = ""
+    if "Status" in d: status = d["Status"]
     if "Summary" in d: summary = d["Summary"]
     if "Origin" in d: origin = d["Origin"]
-    a.HiddenAnimalDetails = summary + ", original breed: " + breed1 + " " + breed2 + ", color: " + \
-        d["Color (General)"] + ", status: " + d["Status"] + ", origin: " + origin
+    if "Notes" in d: notes = d["Notes"]
+    a.HiddenAnimalDetails = f"{summary}, breed: {breed1} {breed2}, color: {color}, status: {status}, origin: {origin}, notes: {notes}"
     if "Internal ID" in d and "Location" in d: a.HiddenAnimalDetails += ", internal: " + d["Internal ID"] + ", location: " + d["Location"]
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
     # If the animal is adopted and we don't have an adoptions file, mark it to an unknown owner
-    if d["Status"] == "Adopted" and not os.path.exists("%s/Adoptions.csv" % PATH):
+    if status == "Adopted" and not os.path.exists("%s/Adoptions.csv" % PATH):
         m = asm.Movement()
         movements.append(m)
         m.OwnerID = uo.ID
@@ -199,7 +203,7 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
         a.ActiveMovementID = m.ID
         a.Archived = 1
     # Mark the animal removed for other statuses 
-    elif d["Status"] in ("Transferred", "Escaped", "Stolen"):
+    elif status in ("Transferred", "Escaped", "Stolen"):
         mt = { "Adopted": 1, "Transferred": 3, "Escaped": 4, "Stolen": 6 }[d["Status"]]
         m = asm.Movement()
         movements.append(m)
@@ -211,12 +215,12 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
         a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementID = m.ID
         a.Archived = 1
-    elif d["Status"] == "Passed Away":
+    elif status == "Passed Away":
         a.DeceasedDate = broughtin
         a.PutToSleep = 0
         a.PTSReasonID = 2 # Died
         a.Archived = 1
-    elif d["Status"] == "Euthanized":
+    elif status == "Euthanized":
         a.DeceasedDate = broughtin
         a.PutToSleep = 1
         a.PTSReasonID = 4 # Sick
@@ -250,10 +254,12 @@ if os.path.exists("%s/Contacts.csv" % PATH):
         o.OwnerAddress = d["Address"]
         o.OwnerTown = d["City"]
         o.OwnerCounty = d["State"]
-        o.OwnerPostcode = d["Zipcode"]
+        if "Zipcode" in d: o.OwnerPostcode = d["Zipcode"]
+        if "Zip/Postal Code" in d: o.OwnerPostcode = d["Zip/Postal Code"]
         o.EmailAddress = d["Email"]
-        o.HomeTelephone = d["Home Phone"]
-        o.MobileTelephone = d["Cell Phone"]
+        o.HomeTelephone = d["Phone (Home)"]
+        o.WorkTelephone = d["Phone (Home)"]
+        o.MobileTelephone = d["Phone (Cell)"]
         o.Comments = d["Comment"]
         if "Groups" in d:
             if d["Groups"].find("Do Not Adopt") != -1: o.IsBanned = 1
@@ -265,7 +271,11 @@ if os.path.exists("%s/Contacts.csv" % PATH):
 
 if os.path.exists("%s/Adoptions.csv" % PATH):
     for d in asm.csv_to_list("%s/Adoptions.csv" % PATH):
-        oname = d["First Name"].strip() + " " + d["Last Name"].strip()
+        if "First Name" in d: 
+            oname = d["First Name"].strip() + " " + d["Last Name"].strip()
+        elif "Adopter" in d:
+            b = d["Adopter"].split("  ", 1) # They separate the names with 2 spaces and put last before first
+            oname = b[1] + " " + b[0]
         o = None
         if oname in ppo: o = ppo[oname]
         a = None
@@ -275,14 +285,14 @@ if os.path.exists("%s/Adoptions.csv" % PATH):
             m.AnimalID = a.ID
             m.OwnerID = o.ID
             m.MovementType = 1
-            m.MovementDate = getdate(d["Date"])
+            m.MovementDate = getdate(d["Adopted Date"])
             a.Archived = 1
             a.ActiveMovementID = m.ID
             a.ActiveMovementDate = m.MovementDate
             a.ActiveMovementType = 1
             a.LastChangedDate = m.MovementDate
             movements.append(m)
-            fee = asm.get_currency(d["Fee Paid"])
+            fee = asm.get_currency(d["Adoption Fee"])
             if fee > 0:
                 od = asm.OwnerDonation()
                 od.DonationTypeID = 1
