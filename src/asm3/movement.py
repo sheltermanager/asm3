@@ -447,7 +447,6 @@ def insert_movement_from_form(dbo, username, post):
         "TrialEndDate":                 post.date("trialenddate"),
         "Comments":                     post["comments"]
     }, username, generateID=False)
-    asm3.al.debug(f"saving additional fields {post}")
     asm3.additional.save_values_for_link(dbo, post, username, movementid, "movement")
 
     if animalid > 0:
