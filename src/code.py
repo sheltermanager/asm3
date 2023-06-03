@@ -4871,6 +4871,31 @@ class move_deceased(JSONEndpoint):
         if o.post.integer("item") != -1:
             asm3.stock.deduct_stocklevel_from_form(o.dbo, o.user, o.post)
 
+class move_donations(JSONEndpoint):
+    url = "move_donations"
+    get_permissions = asm3.users.VIEW_DONATION
+
+    def controller(self, o):
+        dbo = o.dbo
+        donations = asm3.financial.get_movement_donations(dbo, o.post["id"])
+        asm3.al.debug("got %d donations for movement %s" % (len(donations), o.post["id"]), "code.move_donations", dbo)
+        return {
+            "message": o.post["message"],
+            "id": o.post["id"],
+            "animalid": o.post["animalid"],
+            "ownerid": o.post["ownerid"],
+            "linktype": o.post["linktype"],
+            "rows": donations,
+            "name": "move_donations",
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "logtypes": asm3.lookups.get_log_types(dbo), 
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "frequencies": asm3.lookups.get_donation_frequencies(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "payment")
+        }
+
+
 class move_foster(JSONEndpoint):
     url = "move_foster"
     get_permissions = asm3.users.ADD_MOVEMENT
