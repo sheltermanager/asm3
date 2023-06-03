@@ -138,7 +138,7 @@ $(function() {
 
             const buttons = [
                 { id: "new", text: _("New Payment"), icon: "new", enabled: "always", perm: "oaod",
-                     click: function() { 
+                    click: function() { 
                         tableform.dialog_show_add(dialog, {
                             onvalidate: function() {
                                 return donations.validation();
@@ -170,6 +170,11 @@ $(function() {
                                 if (controller.person) {
                                     $("#person").personchooser("loadbyid", controller.person.ID);
                                     donations.update_movements(controller.person.ID);
+                                }
+                                if (controller.name == "move_donations") {
+                                    $("#animal").animalchooser("loadbyid", controller.animalid);
+                                    $("#person").personchooser("loadbyid", controller.ownerid);
+                                    donations.update_movements(controller.ownerid);
                                 }
                                 $("#quantity").val("1");
                                 $("#type").select("value", config.str("AFDefaultDonationType"));
@@ -228,7 +233,7 @@ $(function() {
                     },
                     hideif: function(row) {
                         // Don't show for animal or person records
-                        if (controller.animal || controller.person) {
+                        if (controller.animal || controller.person || controller.name == 'move_donations') {
                             return true;
                         }
                     }
@@ -373,6 +378,14 @@ $(function() {
             else if (controller.name == "person_donations") {
                 s += edit_header.person_edit_header(controller.person, "donations", controller.tabcounts);
             }
+            else if (controller.name == 'move_donations') {
+                s +=  [html.content_header(_("Settle Payments")),
+                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
+                '<p class="centered"><span class="ui-icon ui-icon-info"></span>',
+                common.base64_decode(controller.message),
+                '</p>',
+                '</div>'].join("\n");              
+            }
             else {
                 s += html.content_header(this.title());
             }
@@ -389,6 +402,13 @@ $(function() {
             s += '<span id="tnet">' + _("Net") + ': <span class="strong" id="nettotal"></span></span> ';
             s += '</p></div>';
             s += html.content_footer();
+
+            if (controller.name == "move_donations") {
+                s += html.box(5) + 
+                     '<button id="next">' + html.icon("movement") + ' ' + _("Next") + '</button>' +
+                     '</div>';
+            }
+
             return s;
         },
 
@@ -408,6 +428,22 @@ $(function() {
             }
             if (asm.locale != "en_GB") {
                 $("#giftaid").closest("tr").hide();
+            }
+
+            if (controller.name == "move_donations") {
+                $("#next").button().click(async function() {
+                    $("#next").button("disable");
+                    try {
+                        let u = "move_gendoc?" +
+                            "linktype=MOVEMENT&id=" + controller.id +
+                            "&message=" + encodeURIComponent(controller.message);
+                        common.route(u);
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        $("#next").button("enable");
+                    }
+                });                
             }
 
             $("#movement").closest("tr").hide();
@@ -651,6 +687,7 @@ $(function() {
         routes: {
             "animal_donations": function() { common.module_loadandstart("donations", "animal_donations?id=" + this.qs.id); },
             "person_donations": function() { common.module_loadandstart("donations", "person_donations?id=" + this.qs.id); },
+            "move_donations": function() { common.module_loadandstart("donations", "move_donations?" + this.rawqs); },
             "donation": function() { common.module_loadandstart("donations", "donation?" + this.rawqs); }
         }
 

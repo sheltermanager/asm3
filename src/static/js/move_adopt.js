@@ -449,11 +449,18 @@ $(function() {
                     let response = await common.ajax_post("move_adopt", formdata);
                     $("#movementid").val(response);
                     header.hide_loading();
-                    let u = "move_gendoc?" +
+                    let u = "move_gendoc";
+                    if (config.bool("MoveAdoptDonationsEnabled"))
+                    {
+                        u = "move_donations";
+                    }
+                    u += "?" +
                         "linktype=MOVEMENT&id=" + response +
                         "&message=" + encodeURIComponent(common.base64_encode(_("Adoption successfully created.") + " " + 
                             $(".animalchooser-display").html() + " " + html.icon("right") + " " +
-                            $(".personchooser-display .justlink").html() ));
+                            $(".personchooser-display .justlink").html() )) + 
+                            "&animalid=" + $("#animal").val() + 
+                            "&ownerid=" + $("#person").val();
                     common.route(u);
                 }
                 catch(err) {
