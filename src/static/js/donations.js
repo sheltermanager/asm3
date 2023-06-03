@@ -401,14 +401,10 @@ $(function() {
             s += '<span id="tfee">' + _("Fees") + ': <span class="strong" id="feetotal"></span></span> ';
             s += '<span id="tnet">' + _("Net") + ': <span class="strong" id="nettotal"></span></span> ';
             s += '</p></div>';
-            s += html.content_footer();
-
             if (controller.name == "move_donations") {
-                s += html.box(5) + 
-                     '<button id="next">' + html.icon("movement") + ' ' + _("Next") + '</button>' +
-                     '</div>';
+                s += '<div class="centered" style="padding: 5px"><button id="button-next">' + html.icon("movement") + ' ' + _("Next") + '</button></div>';
             }
-
+            s += html.content_footer();
             return s;
         },
 
@@ -431,8 +427,8 @@ $(function() {
             }
 
             if (controller.name == "move_donations") {
-                $("#next").button().click(async function() {
-                    $("#next").button("disable");
+                $("#button-next").button().click(async function() {
+                    $("#button-next").button("disable");
                     try {
                         let u = "move_gendoc?" +
                             "linktype=MOVEMENT&id=" + controller.id +
@@ -441,7 +437,7 @@ $(function() {
                     }
                     catch(err) {
                         log.error(err, err);
-                        $("#next").button("enable");
+                        $("#button-next").button("enable");
                     }
                 });                
             }

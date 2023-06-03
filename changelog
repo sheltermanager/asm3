@@ -1,6 +1,7 @@
 47
 ================
 
+03/06/23 Option to edit/request payments from Move->Adopt an animal (Saggi) #1294
 01/06/23 Remove unused images from RescueGroups/AdoptAPet before publish #1291
 01/06/23 Add given dates to medical CSV export under SQL Interface
 01/06/23 Fix bug where litter IDs containing apostrophes didn't show littermates

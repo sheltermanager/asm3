@@ -450,8 +450,10 @@ $(function() {
                     $("#movementid").val(response);
                     header.hide_loading();
                     let u = "move_gendoc";
-                    if (config.bool("MoveAdoptDonationsEnabled"))
-                    {
+                    // If the option to allow editing payments after creating the adoption is set, take
+                    // the user to a payment screen that allows them to see the movement payments in order
+                    // to take payment, request payment by email, generate an invoice/receipt, etc.
+                    if (config.bool("MoveAdoptDonationsEnabled") && !$("#checkoutcreate").prop("checked")) {
                         u = "move_donations";
                     }
                     u += "?" +

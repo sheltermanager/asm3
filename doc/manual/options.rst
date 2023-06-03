@@ -813,6 +813,11 @@ Movements
 * Allow creation of payments on the Move-Reserve screen: Allow payments to be
   taken on the :menuselection:`Move --> Reserve an animal` screen.
 
+* Allow editing of payments after creating an adoption on the Move-Adopt an
+  animal screen: After the adopt button is clicked, take the user to a screen
+  that allows editing of the payments that were just created. This allows the
+  user to generate an invoice/receipt or request payment by email, etc.
+
 * Allow overriding of the movement number on the Move menu screens: If turned
   on, the movement number field will be visible on all Move menu screens for
   the user to override.

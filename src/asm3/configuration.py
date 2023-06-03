@@ -1105,9 +1105,6 @@ def microchip_register_movements(dbo):
 def microchip_register_from(dbo):
     return cstring(dbo, "MicrochipRegisterFrom", "")
 
-def move_adopt_donations_enabled(dbo):
-    return cboolean(dbo, "MoveAdoptDonationsEnabled", DEFAULTS["MoveAdoptDonationsEnabled"] == "Yes")
-
 def movement_donations_default_due(dbo):
     return cboolean(dbo, "MovementDonationsDefaultDue", DEFAULTS["MovementDonationsDefaultDue"] == "Yes")
 
