@@ -49,7 +49,6 @@ def get_events_by_animal(dbo, animalid):
     Returns all events for animalid
     """
     rows = dbo.query(get_event_animal_query(dbo) + " WHERE ea.animalid = ?", [animalid])
-    asm3.animal.calc_age_group_rows(dbo, rows)
     return rows
 
 def get_animals_by_event(dbo, eventid, queryfilter="all"):
@@ -67,7 +66,10 @@ def get_animals_by_event(dbo, eventid, queryfilter="all"):
         "notadopted": " AND NOT EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) ",
     }
     whereclause = " WHERE ev.id=? " + (filters[queryfilter] if queryfilter in filters else "")
-    return dbo.query(get_event_animal_query(dbo) + whereclause, [eventid])
+    rows = dbo.query(get_event_animal_query(dbo) + whereclause, [eventid])
+    for ae in rows:
+        ae["AGEGROUP"] = asm3.animal.calc_age_group(dbo, ae["ANIMALID"])
+    return rows
 
 def get_events_by_date(dbo, date):
     """
