@@ -1603,7 +1603,6 @@ class animal(JSONEndpoint):
             "coattypes": asm3.lookups.get_coattypes(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
             "deathreasons": asm3.lookups.get_deathreasons(dbo),
-            "diarytasks": asm3.diary.get_animal_tasks(dbo),
             "entryhistory": asm3.animal.get_animal_entries(dbo, a.ID),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "events": asm3.event.get_events_by_animal(dbo, a.ID),
@@ -1787,6 +1786,7 @@ class animal_diary(JSONEndpoint):
             "name": "animal_diary",
             "linkid": animalid,
             "linktypeid": asm3.diary.ANIMAL,
+            "diarytasks": asm3.diary.get_animal_tasks(dbo),
             "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
@@ -5471,7 +5471,6 @@ class person(JSONEndpoint):
             "species": asm3.lookups.get_species(dbo),
             "breeds": asm3.lookups.get_breeds_by_species(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
-            "diarytasks": asm3.diary.get_person_tasks(dbo),
             "flags": asm3.lookups.get_person_flags(dbo),
             "ynun": asm3.lookups.get_ynun(dbo),
             "ynunk": asm3.lookups.get_ynunk(dbo),
@@ -5570,6 +5569,7 @@ class person_diary(JSONEndpoint):
             "name": "person_diary",
             "linkid": p["ID"],
             "linktypeid": asm3.diary.PERSON,
+            "diarytasks": asm3.diary.get_person_tasks(dbo),
             "forlist": asm3.users.get_diary_forlist(dbo)
         }
 

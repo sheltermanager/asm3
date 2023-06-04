@@ -858,22 +858,8 @@ $(function() {
                 edit_header.template_list(controller.templates, "ANIMAL", controller.animal.ID),
                 '</ul>',
                 '</div>',
-                '<div id="button-diarytask-body" class="asm-menu-body">',
-                '<ul class="asm-menu-list">',
-                edit_header.diary_task_list(controller.diarytasks, "ANIMAL"),
-                '</ul>',
-                '</div>',
                 '<div id="dialog-clone-confirm" style="display: none" title="' + html.title(_("Clone")) + '">',
                 '<p><span class="ui-icon ui-icon-alert"></span> ' + _("Clone this animal?") + '</p>',
-                '</div>',
-                '<div id="dialog-dt-date" style="display: none" title="' + html.title(_("Select date for diary task")) + '">',
-                '<input type="hidden" id="diarytaskid" />',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="seldate">' + _("Date") + '</label></td>',
-                '<td><input id="seldate" type="text" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '</table>',
                 '</div>',
                 '<div id="emailform"></div>',
                 '<div id="dialog-popupwarning" style="display: none" title="' + html.title(_("Warning")) + '">',
@@ -925,7 +911,6 @@ $(function() {
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this animal") },
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Send an email relating to this animal") },
                     { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this animal") },
-                    { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
                     { id: "newentry", text: _("New Entry"), icon: "new", tooltip: _("Generate a new code and archive the current entry data"),
                         hideif: function() { 
                             return config.bool("DisableEntryHistory") || 
@@ -1276,7 +1261,6 @@ $(function() {
             if (!common.has_permission("da")) { $("#button-delete").hide(); }
             if (!common.has_permission("emo")) { $("#button-email").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
-            if (!common.has_permission("adn")) { $("#button-diarytask").hide(); }
             if (!common.has_permission("vo")) { $("#button-currentowner").hide(); }
             if (!common.has_permission("mlaf")) { $("#button-match").hide(); }
             if (!common.has_permission("vll")) { $("#button-littermates").hide(); }
@@ -1457,8 +1441,8 @@ $(function() {
          */
         bind: function() {
 
-            // Setup the document/diary task/social menu buttons
-            $("#button-diarytask, #button-document, #button-share").asmmenu();
+            // Setup the document/social menu buttons
+            $("#button-document, #button-share").asmmenu();
 
             $("#emailform").emailform();
 

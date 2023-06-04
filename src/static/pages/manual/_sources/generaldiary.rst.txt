@@ -16,7 +16,7 @@ Add a new diary note
 
 .. image:: images/diary_add.png
 
-To add a new diary note to the system, navigate to :menuselection:`ASM --> Add
+To add a new diary note to the system, navigate to :menuselection:`ASM --> Diary --> Add
 Diary Note`.
 
 You will be presented with the diary note screen. The first thing to fill in is
@@ -38,7 +38,7 @@ Viewing my diary notes
 ^^^^^^^^^^^^^^^^^^^^^^
 
 To view all the diary notes for the current user, or created by the current
-user, go to the home screen or navigate to :menuselection:`ASM --> View My
+user, go to the home screen or navigate to :menuselection:`ASM --> Diary --> View My
 Diary Notes`.
 
 You will be given a list of all your diary notes. You may edit them to mark
@@ -129,14 +129,11 @@ Create a new diary task
 
 .. image:: images/diarytask_new.png
 
-Diary tasks can be edited under :menuselection:`ASM --> Edit Diary Tasks` and
-attached to both animals and owners from the toolbar buttons on their detail
-tabs.
+Diary tasks can be edited under :menuselection:`ASM --> Diary --> Edit Diary Tasks` and
+attached to animals or people from the diary tab on their records.
  
 To add a new task, click on the new button. A screen asking for the name of the
 diary task will appear, along with a list of task items below it and another
 toolbar. Use the task items toolbar to add, edit and delete task items.
 Optionally, you can specify whether you want this diary task to be applicable
-to animals or owners. 
-
-
+to animals or people. 

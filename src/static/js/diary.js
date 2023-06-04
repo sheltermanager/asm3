@@ -108,6 +108,11 @@ $(function() {
                 { id: "new", text: _("New Diary"), icon: "new", enabled: "always", perm: "adn", click: function() { 
                     diary.new_note();
                 }},
+                { id: "diarytask", text: _("Diary Task"), icon: "diary-task", enabled: "always", perm: "adn", type: "buttonmenu", 
+                    tooltip: _("Create diary notes from a task"),
+                    hideif: function() {
+                        return controller.name != "animal_diary" && controller.name != "person_diary";
+                    }},
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", perm: "ddn", 
                     click: async function() { 
                         await tableform.delete_dialog();
@@ -158,9 +163,37 @@ $(function() {
             this.model();
             h.push(tableform.dialog_render(this.dialog));
             if (controller.name == "animal_diary") {
+                h.push('<div id="button-diarytask-body" class="asm-menu-body">');
+                h.push('<ul class="asm-menu-list">');
+                h.push(edit_header.diary_task_list(controller.diarytasks, "ANIMAL"));
+                h.push('</ul>');
+                h.push('</div>');
+                h.push('<div id="dialog-dt-date" style="display: none" title="' + html.title(_("Select date for diary task")) + '">');
+                h.push('<input type="hidden" id="diarytaskid" />');
+                h.push('<table width="100%">');
+                h.push('<tr>');
+                h.push('<td><label for="seldate">' + _("Date") + '</label></td>');
+                h.push('<td><input id="seldate" type="text" class="asm-textbox asm-datebox" /></td>');
+                h.push('</tr>');
+                h.push('</table>');
+                h.push('</div>');
                 h.push(edit_header.animal_edit_header(controller.animal, "diary", controller.tabcounts));
             }
             else if (controller.name == "person_diary") {
+                h.push('<div id="button-diarytask-body" class="asm-menu-body">');
+                h.push('<ul class="asm-menu-list">');
+                h.push(edit_header.diary_task_list(controller.diarytasks, "PERSON"));
+                h.push('</ul>');
+                h.push('</div>');
+                h.push('<div id="dialog-dt-date" style="display: none" title="' + html.title(_("Select date for diary task")) + '">');
+                h.push('<input type="hidden" id="diarytaskid" />');
+                h.push('<table width="100%">');
+                h.push('<tr>');
+                h.push('<td><label for="seldate">' + _("Date") + '</label></td>');
+                h.push('<td><input id="seldate" type="text" class="asm-textbox asm-datebox" /></td>');
+                h.push('</tr>');
+                h.push('</table>');
+                h.push('</div>');
                 h.push(edit_header.person_edit_header(controller.person, "diary", controller.tabcounts));
             }
             else if (controller.name == "waitinglist_diary") {
@@ -189,9 +222,65 @@ $(function() {
 
         bind: function() {
             $(".asm-tabbar").asmtabs();
+            $("#button-diarytask").asmmenu();
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
+ 
+            // Diary task create ajax call
+            const create_task = async function(taskid) {
+                let formdata = "";
+                if (controller.name == "animal_diary") {
+                    formdata = "mode=exec&id=" + controller.animal.ID + "&tasktype=ANIMAL&taskid=" + taskid + "&seldate=" + $("#seldate").val();
+                }
+                else if (controller.name == "person_diary") {
+                    formdata = "mode=exec&id=" + controller.person.ID + "&tasktype=PERSON&taskid=" + taskid + "&seldate=" + $("#seldate").val();
+                }
+                await common.ajax_post("diarytask", formdata);
+                common.route_reload();
+            };
+
+            // Diary task select date dialog
+            let addbuttons = { };
+            addbuttons[_("Select")] = function() {
+                validate.reset();
+                if (validate.notblank([ "seldate" ])) {
+                    create_task($("#diarytaskid").val()); 
+                }
+            };
+            addbuttons[_("Cancel")] = function() {
+                $("#dialog-dt-date").dialog("close");
+            };
+            $("#dialog-dt-date").dialog({
+                autoOpen: false,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.add_show,
+                hide: dlgfx.add_hide,
+                buttons: addbuttons
+            });
+
+            // Attach handlers for diary tasks
+            $(".diarytask").each(function() {
+                let a = $(this);
+                let task = a.attr("data").split(" ");
+                let taskmode = task[0];
+                let taskid = task[1];
+                let taskneeddate = task[2];
+                $(this).click(function() {
+                    $("#seldate").val("");
+                    // If the task needs a date, prompt for it
+                    if (taskneeddate == "1") {
+                        $("#diarytaskid").val(taskid);
+                        $("#dialog-dt-date").dialog("open");
+                    }
+                    else {
+                        // No need for anything else, go create the task
+                        create_task(taskid);
+                    }
+                    return false;
+                });
+            });
         },
 
         sync: function() {
@@ -241,6 +330,7 @@ $(function() {
 
         destroy: function() {
             tableform.dialog_destroy();
+            common.widget_destroy("#dialog-dt-date");
         },
 
         name: "diary",
