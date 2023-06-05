@@ -1523,41 +1523,6 @@ $(function() {
             // Litter autocomplete
             $("#litterid").autocomplete({source: html.decode(controller.activelitters)});
 
-            // Diary task create ajax call
-            const create_task = async function(taskid) {
-                let formdata = "mode=exec&id=" + controller.animal.ID + "&tasktype=ANIMAL&taskid=" + taskid + "&seldate=" + $("#seldate").val();
-                await common.ajax_post("diarytask", formdata);
-                // Attempt to save any changes before viewing the diary tab
-                if (validate.unsaved) {
-                    validate.save(function() {
-                        common.route("animal_diary?id=" + controller.animal.ID);
-                    });
-                }
-                else {
-                    common.route("animal_diary?id=" + controller.animal.ID);
-                }
-            };
-
-            // Attach handlers for diary tasks
-            $(".diarytask").each(function() {
-                let a = $(this);
-                const [taskmode, taskid, taskneeddate] = a.attr("data").split(" ");
-                $(this).click(async function() {
-                    $("#seldate").val("");
-                    // If the task needs a date, prompt for it
-                    if (taskneeddate == "1") {
-                        $("#diarytaskid").val(taskid);
-                        await tableform.show_okcancel_dialog("#dialog-dt-date", _("Select"), { notblank: [ "seldate" ]});
-                        create_task($("#diarytaskid").val());
-                    }
-                    else {
-                        // No need for anything else, go create the task
-                        create_task(taskid);
-                    }
-                    return false;
-                });
-            });
-
             // If the bonded animals are cleared (or any animalchooser as part
             // of an additional field for that matter), dirty the form.
             $(".asm-animalchooser").animalchooser().bind("animalchoosercleared", function(event) {
@@ -1826,7 +1791,6 @@ $(function() {
 
         destroy: function() {
             validate.unbind_dirty();
-            common.widget_destroy("#dialog-dt-date");
             common.widget_destroy("#dialog-merge");
             common.widget_destroy("#dialog-clone-confirm");
             common.widget_destroy("#dialog-popupwarning");
