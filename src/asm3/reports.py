@@ -319,7 +319,8 @@ def update_report_from_form(dbo, username, post):
     Updates a report record from posted form data
     """
     reportid = post.integer("reportid")
-    dbo.update("customreport", reportid, {
+    prev = dbo.first_row(dbo.query("SELECT Title, Category FROM customreport WHERE ID=?", [reportid]))
+    values = {
         "Title":                post["title"],
         "Category":             post["category"],
         "*SQLCommand":          post["sql"],
@@ -330,7 +331,10 @@ def update_report_from_form(dbo, username, post):
         "Description":          post["description"],
         "OmitHeaderFooter":     post.boolean("omitheaderfooter"),
         "OmitCriteria":         post.boolean("omitcriteria")
-    }, username, setRecordVersion=False)
+    }
+    # If the name or category was changed, clear any revision number
+    if prev.TITLE != post["title"] or prev.CATEGORY != post["category"]: values["Revision"] = 0
+    dbo.update("customreport", reportid, values, username, setRecordVersion=False)
 
     dbo.delete("customreportrole", "ReportID=%d" % reportid)
     for rid in post.integer_list("viewroles"):
