@@ -22,6 +22,12 @@ $(function() {
                 '<td><input class="asm-textbox newform" maxlength="50" id="eventname" data="eventname" type="text" /></td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="description">' + _("Description") + '</label></td>',
+                '<td>',
+                '<div id="description" data="description" data-height="100px" data-margin-top="0px" class="asm-richtextarea"></div>',
+                '</td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="startdate">' + _("Start Date") + '</label>',
                 '<span class="asm-has-validation">*</span>',
                 '</td>',
@@ -107,7 +113,7 @@ $(function() {
                     $("#asm-content button").button("enable");
                     return;
                 }
-//                let formdata = "mode=similar&" + $("#emailaddress, #mobiletelephone, #surname, #forenames, #address").toPOST();
+                // let formdata = "mode=similar&" + $("#emailaddress, #mobiletelephone, #surname, #forenames, #address").toPOST();
                 add_event();
             };
 
@@ -119,7 +125,7 @@ $(function() {
                 }
                 header.show_loading(_("Creating..."));
                 try{
-                    let formdata = "ownerid=" + $("#location").personchooser().val() + "&" + $("input, textarea, select, #location").toPOST();
+                    let formdata = "ownerid=" + $("#location").personchooser().val() + "&" + $("input, textarea, select, #description, #location").toPOST();
                     let eventid = await common.ajax_post("event_new", formdata);
                     if(eventid && event_new.create_and_edit)
                         common.route("event?id=" + eventid);
@@ -173,7 +179,7 @@ $(function() {
 
         name: "event_new",
         animation: "newdata",
-        autofocus: "#eventtype",
+        autofocus: "#eventname",
         title: function() { return _("Add a new event"); },
         routes: {
             "event_new": function() { common.module_loadandstart("event_new", "event_new"); }

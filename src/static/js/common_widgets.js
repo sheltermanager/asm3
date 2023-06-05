@@ -58,6 +58,9 @@ $.fn.fromJSON = function(row) {
         else if (n.hasClass("asm-timebox")) {
             n.val(format.time(row[f]));
         }
+        else if (n.hasClass("asm-richtextarea")) {
+            n.richtextarea("value", row[f]);
+        }
         else if (n.is("textarea")) {
             n.html(row[f]);
         }
