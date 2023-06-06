@@ -506,6 +506,9 @@ $(function() {
             else if (viewmode == "goodwith") {
                 this.render_goodwith();
             }
+            else if (viewmode == "litter") {
+                this.render_view("ACCEPTANCENUMBER", "", "ACCEPTANCENUMBER,SPECIESNAME,ANIMALNAME", false, false, function(a) { return a.ACCEPTANCENUMBER && a.ACCEPTANCENUMBER != ""; });
+            }
             else if (viewmode == "location") {
                 this.render_view("DISPLAYLOCATIONNAME", "", "DISPLAYLOCATIONNAME,ANIMALNAME", true, false);
             }
@@ -637,6 +640,7 @@ $(function() {
             h.push('<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>');
             h.push('<option value="fostererspace">' + _("Fosterer (Space Available)") + '</option>');
             h.push('<option value="goodwith">' + _("Good With") + '</option>');
+            h.push('<option value="litter">' + _("Litter") + '</option>');
             h.push('<option value="location">' + _("Location") + '</option>');
             h.push('<option value="locationbreed">' + _("Location and Breed") + '</option>');
             h.push('<option value="locationspecies">' + _("Location and Species") + '</option>');

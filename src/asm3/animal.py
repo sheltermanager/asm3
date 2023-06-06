@@ -421,6 +421,7 @@ def get_animals_brief(animals):
     r = []
     for a in animals:
         r.append({ 
+            "ACCEPTANCENUMBER": a["ACCEPTANCENUMBER"],
             "ACTIVEMOVEMENTID": a["ACTIVEMOVEMENTID"],
             "ACTIVEMOVEMENTTYPE": a["ACTIVEMOVEMENTTYPE"],
             "ADDITIONALFLAGS": a["ADDITIONALFLAGS"],
