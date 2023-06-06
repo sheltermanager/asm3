@@ -2954,8 +2954,12 @@ class document_gen(ASMEndpoint):
             animalid = l["ANIMALID"]
             ownerid = l["OWNERID"]
             tempname += " - " + asm3.person.get_person_name(dbo, ownerid)
-            if animalid: asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
-            if ownerid: asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            if animalid and ownerid: 
+                asm3.media.create_document_animalperson(dbo, o.user, animalid, ownerid, tempname, post["document"])
+            elif ownerid: 
+                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            elif animalid: 
+                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "MOVEMENT":
             m = asm3.movement.get_movement(dbo, recid)
@@ -2964,8 +2968,12 @@ class document_gen(ASMEndpoint):
             animalid = m["ANIMALID"]
             ownerid = m["OWNERID"]
             tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, animalid), asm3.person.get_person_name(dbo, ownerid))
-            if ownerid: asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
-            if animalid: asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+            if animalid and ownerid: 
+                asm3.media.create_document_animalperson(dbo, o.user, animalid, ownerid, tempname, post["document"])
+            elif ownerid: 
+                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            elif animalid: 
+                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         else:
             raise asm3.utils.ASMValidationError("Linktype '%s' is invalid, cannot save" % linktype)

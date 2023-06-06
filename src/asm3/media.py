@@ -508,6 +508,71 @@ def create_blank_document_media(dbo, username, linktype, linkid):
     }, username, setCreated=False, generateID=False)
     return mediaid
 
+def create_document_animalperson(dbo, username, animalid, personid, template, content, retainfor=0):
+    """
+    Creates media records for an animal and a person sharing a document (same DBFS entry).
+    The document itself will be stored on the person's path in the DBFS. The name given will
+    be all created media IDs for it, eg: 123.456.html
+    In the case of signing, the signing function is clever enough to update the hash on all 
+    media records sharing the same DBFSID.
+    template: The name of the template used to create the document
+    content: The document contents (bytes str, will be converted if str given)
+    retainfor: Number of years to retain this document (any non-integer or 0 = Indefinitely)
+    """
+    path = get_dbfs_path(personid, PERSON)
+    name = f"{animalid}.{personid}.html"
+    content = asm3.utils.str2bytes(content)
+    dbfsid = asm3.dbfs.put_string(dbo, name, path, content)
+    retainuntil = calc_retainuntil_from_retainfor(dbo, retainfor)
+    mediaida = dbo.get_id("media")
+    dbo.insert("media", {
+        "ID":                   mediaida,
+        "DBFSID":               dbfsid,
+        "MediaSize":            len(content),
+        "MediaName":            "%d.html" % mediaida,
+        "MediaMimeType":        "text/html",
+        "MediaType":            0,
+        "MediaNotes":           template,
+        "WebsitePhoto":         0,
+        "WebsiteVideo":         0,
+        "DocPhoto":             0,
+        "ExcludeFromPublish":   0,
+        # ASM2_COMPATIBILITY
+        "NewSinceLastPublish":  1,
+        "UpdatedSinceLastPublish": 0,
+        # ASM2_COMPATIBILITY
+        "LinkID":               animalid,
+        "LinkTypeID":           ANIMAL,
+        "Date":                 dbo.now(),
+        "CreatedDate":          dbo.now(),
+        "RetainUntil":          retainuntil
+    }, username, setCreated=False, generateID=False)
+    mediaidp = dbo.get_id("media")
+    dbo.insert("media", {
+        "ID":                   mediaidp,
+        "DBFSID":               dbfsid,
+        "MediaSize":            len(content),
+        "MediaName":            "%d.html" % mediaidp,
+        "MediaMimeType":        "text/html",
+        "MediaType":            0,
+        "MediaNotes":           template,
+        "WebsitePhoto":         0,
+        "WebsiteVideo":         0,
+        "DocPhoto":             0,
+        "ExcludeFromPublish":   0,
+        # ASM2_COMPATIBILITY
+        "NewSinceLastPublish":  1,
+        "UpdatedSinceLastPublish": 0,
+        # ASM2_COMPATIBILITY
+        "LinkID":               personid,
+        "LinkTypeID":           PERSON,
+        "Date":                 dbo.now(),
+        "CreatedDate":          dbo.now(),
+        "RetainUntil":          retainuntil
+    }, username, setCreated=False, generateID=False)
+    asm3.dbfs.rename_file_id(dbo, dbfsid, f"{mediaida}.{mediaidp}.html")
+    return (mediaida, mediaidp)
+
 def create_document_media(dbo, username, linktype, linkid, template, content, retainfor=0):
     """
     Creates a new media record for a document for the link given.
@@ -519,7 +584,7 @@ def create_document_media(dbo, username, linktype, linkid, template, content, re
     """
     mediaid = dbo.get_id("media")
     path = get_dbfs_path(linkid, linktype)
-    name = str(mediaid) + ".html"
+    name = f"{mediaid}.html"
     content = asm3.utils.str2bytes(content)
     dbfsid = asm3.dbfs.put_string(dbo, name, path, content)
     retainuntil = calc_retainuntil_from_retainfor(dbo, retainfor)
@@ -574,17 +639,17 @@ def sign_document(dbo, username, mid, sigurl, signdate, signprefix):
     """
     asm3.al.debug("signing document %s for %s" % (mid, username), "media.sign_document", dbo)
     SIG_PLACEHOLDER = "signature:placeholder"
-    date, medianame, mimetype, content = get_media_file_data(dbo, mid)
+    m = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
     # Is this an HTML document?
-    if mimetype != "text/html":
+    if m.MEDIAMIMETYPE != "text/html":
         asm3.al.error("document %s is not HTML" % mid, "media.sign_document", dbo)
         raise asm3.utils.ASMValidationError("Cannot sign a non-HTML document")
     # Has this document already been signed? 
-    if 0 != dbo.query_int("SELECT COUNT(*) FROM media WHERE ID = ? AND SignatureHash Is Not Null AND SignatureHash <> ''", [mid]):
+    if m.SIGNATUREHASH:
         asm3.al.error("document %s has already been signed" % mid, "media.sign_document", dbo)
         raise asm3.utils.ASMValidationError("Document is already signed")
     # Does the document have a signing placeholder image? If so, replace it
-    content = asm3.utils.bytes2str(content)
+    content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
     if content.find(SIG_PLACEHOLDER) != -1:
         asm3.al.debug("document %s: found signature placeholder" % mid, "media.sign_document", dbo)
         content = content.replace(SIG_PLACEHOLDER, sigurl)
@@ -595,8 +660,12 @@ def sign_document(dbo, username, mid, sigurl, signdate, signprefix):
         if sigurl != "": sig += '<p><img src="' + sigurl + '" /></p>\n'
         sig += "<p>%s</p>\n" % signdate
         content += sig
-    # Create a hash of the contents and store it with the media record
-    dbo.update("media", mid, { "SignatureHash": "%s:%s" % (signprefix, asm3.utils.md5_hash_hex(content)) }, username, setLastChanged=False)
+    # Create a hash of the contents and set it with all media records pointing to this DBFSID
+    # (this gracefully handles animal/person media doc entries that point to the same DBFS file)
+    dbo.update("media", f"DBFSID={m.DBFSID}", { 
+        "SignatureHash": "%s:%s" % (signprefix, asm3.utils.md5_hash_hex(content)), 
+        "Date": dbo.now() 
+    }, username, setLastChanged=False)
     # Update the dbfs contents
     content = asm3.utils.str2bytes(content)
     update_file_content(dbo, username, mid, content)
@@ -608,13 +677,14 @@ def has_signature(dbo, mid):
 def update_file_content(dbo, username, mid, content):
     """
     Updates the dbfs content for the file pointed to by media record mid
-    content should be a bytes string
+    content should be a bytes string.
+    This function will update multiple media records if they point to the same DBFSID.
     """
     m = dbo.first_row(dbo.query("SELECT DBFSID, MediaName FROM media WHERE ID=?", [mid]))
     if m is None: raise IOError("media id %s does not exist" % mid)
     if m.DBFSID == 0: raise IOError("cannot update contents of DBFSID 0")
     asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, content)
-    dbo.update("media", mid, { "Date": dbo.now(), "MediaSize": len(content) }, username, setLastChanged=False)
+    dbo.update("media", f"DBFSID={m.DBFSID}", { "Date": dbo.now(), "MediaSize": len(content) }, username, setLastChanged=False)
 
 def update_media_from_form(dbo, username, post):
     mediaid = post.integer("mediaid")
@@ -635,7 +705,7 @@ def update_media_link(dbo, username, mediaid, linktypeid, linkid):
 
 def delete_media(dbo, username, mid):
     """
-    Deletes a media record from the system
+    Deletes a media record from the system.
     """
     mr = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
     if not mr: return

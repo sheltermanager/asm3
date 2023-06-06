@@ -77,20 +77,18 @@ $(function() {
                         },
                         hideif: function(row) {
                             // Don't show this column if we're in the animal's record or the option is turned off
-                            if (controller.name.indexOf("animal_") == 0 || !config.bool("PicturesInBooks")) {
+                            if (controller.name == "animal_licence" || !config.bool("PicturesInBooks")) {
                                 return true;
                             }
                         }
                     },
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
-                            if (!row.ANIMALID) { return ""; }
-                            let s = "";
-                            if (controller.name != "animal_licence") { s = html.animal_emblems(row) + " "; }
-                            return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
+                            if (!row.ANIMALNAME) { return ""; }
+                            return html.animal_link(row);
                         },
                         hideif: function(row) {
-                            return controller.name.indexOf("animal_") != -1;
+                            return controller.name == "animal_licence";
                         }
                     },
                     { field: "LICENCENUMBER", display: _("License Number") },
