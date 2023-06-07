@@ -343,8 +343,12 @@ select:disabled, input:disabled, textarea:disabled {
     margin-left: 1px;
     cursor: default;
 	border-radius: 3px;
+    /*
     color: #fff;
     background-color: #cc00ff;
+    */
+    color: #000;
+    background-color: #fbebff;
     border: 1px solid black;
     padding: 2px;
     white-space: nowrap;
