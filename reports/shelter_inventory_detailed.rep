@@ -2,7 +2,7 @@ Detailed Shelter Inventory
 ###
 Inventories
 ###
-Any rev02
+34501/Any rev03
 ###
 Detailed current shelter inventory, with breed and microchip details.
 ###
@@ -21,7 +21,8 @@ s.SpeciesName,
 CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' 
 WHEN a.ActiveMovementType = 1 THEN 'Trial Adoption' 
 WHEN a.ActiveMovementType = 8 THEN 'Retailer' 
-ELSE i.LocationName END AS LocationName
+ELSE i.LocationName END AS LocationName,
+CASE WHEN a.Adoptable=1 THEN 'Yes' ELSE 'No' END AS Adoptable
 FROM animal a
 LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
@@ -53,6 +54,7 @@ $$HEAD
 <td><b>Sex</b></td>
 <td><b>Date Entered Shelter</b></td>
 <td><b>Time On Shelter</b></td>
+<td><b>Adoptable</b></td>
 </tr>
 $$FOOT
 </table>
@@ -70,6 +72,7 @@ $$BODY
 <td>$sex</td>
 <td>$mostrecententrydate</td>
 <td>$timeonshelter</td>
+<td>$adoptable</td>
 </tr>
 BODY$$
 
