@@ -521,6 +521,9 @@ $(function() {
             else if (viewmode == "locationbreed") {
                 this.render_view("DISPLAYLOCATIONNAME", "BREEDNAME", "DISPLAYLOCATIONNAME,BREEDNAME,ANIMALNAME", true, false);
             }
+            else if (viewmode == "locationlitter") {
+                this.render_view("DISPLAYLOCATIONNAME", "ACCEPTANCENUMBER", "DISPLAYLOCATIONNAME,ACCEPTANCENUMBER,ANIMALNAME", true, false);
+            }
             else if (viewmode == "locationspecies") {
                 this.render_view("DISPLAYLOCATIONNAME", "SPECIESNAME", "DISPLAYLOCATIONNAME,SPECIESNAME,ANIMALNAME", true, false);
             }
@@ -568,6 +571,9 @@ $(function() {
             }
             else if (viewmode == "status") {
                 this.render_view("ADOPTIONSTATUS", "", "ADOPTIONSTATUS,ANIMALNAME", false, true);
+            }
+            else if (viewmode == "statuslocation") {
+                this.render_view("ADOPTIONSTATUS", "DISPLAYLOCATIONNAME", "ADOPTIONSTATUS,DISPLAYLOCATIONNAME,ANIMALNAME", false, true);
             }
             else if (viewmode == "statusspecies") {
                 this.render_view("ADOPTIONSTATUS", "SPECIESNAME", "ADOPTIONSTATUS,SPECIESNAME,ANIMALNAME", false, true);
@@ -643,6 +649,7 @@ $(function() {
             h.push('<option value="litter">' + _("Litter") + '</option>');
             h.push('<option value="location">' + _("Location") + '</option>');
             h.push('<option value="locationbreed">' + _("Location and Breed") + '</option>');
+            h.push('<option value="locationlitter">' + _("Location and Litter") + '</option>');
             h.push('<option value="locationspecies">' + _("Location and Species") + '</option>');
             h.push('<option value="locationspeciesage">' + _("Location and Species (Age)") + '</option>');
             h.push('<option value="locationtype">' + _("Location and Type") + '</option>');
@@ -661,6 +668,7 @@ $(function() {
             h.push('<option value="speciescode">' + _("Species and Code") + '</option>');
             h.push('<option value="speciescolor">' + _("Species and Color") + '</option>');
             h.push('<option value="status">' + _("Status") + '</option>');
+            h.push('<option value="statuslocation">' + _("Status and Location") + '</option>');
             h.push('<option value="statusspecies">' + _("Status and Species") + '</option>');
             h.push('<option value="type">' + _("Type") + '</option>');
             h.push('<option value="unit">' + _("Unit") + '</option>');

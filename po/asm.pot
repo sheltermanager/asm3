@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-06-06 18:32+0000\n"
+"POT-Creation-Date: 2023-06-07 09:01+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -7755,6 +7755,10 @@ msgid "Location and Breed"
 msgstr ""
 
 #: options.js shelterview.js
+msgid "Location and Litter"
+msgstr ""
+
+#: options.js shelterview.js
 msgid "Location and Species"
 msgstr ""
 
@@ -12440,6 +12444,10 @@ msgstr ""
 #: move_reserve.js clinic_appointment.js medical.js shelterview.js mobile2.js
 #: movements.js
 msgid "Status"
+msgstr ""
+
+#: options.js shelterview.js
+msgid "Status and Location"
 msgstr ""
 
 #: options.js shelterview.js
