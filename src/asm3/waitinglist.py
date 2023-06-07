@@ -427,7 +427,7 @@ def create_animal(dbo, username, wlid):
 
         # Now clone the dbfs item pointed to by this media item if it's a file
         if me.mediatype == asm3.media.MEDIATYPE_FILE:
-            filedata = asm3.dbfs.get_string(dbo, me.medianame)
+            filedata = asm3.dbfs.get_string_id(dbo, me.dbfsid)
             dbfsid = asm3.dbfs.put_string(dbo, medianame, "/animal/%d" % nextid, filedata)
             dbo.execute("UPDATE media SET DBFSID = ?, MediaSize = ? WHERE ID = ?", ( dbfsid, len(filedata), mediaid ))
 

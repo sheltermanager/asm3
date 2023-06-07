@@ -260,7 +260,7 @@ def checkout_adoption_post(dbo, post):
         if post.boolean("sendsigned"):
             m = asm3.media.get_media_by_id(dbo, mediaid)
             if m is None: raise asm3.utils.ASMError("cannot find %s" % mediaid)
-            content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
+            content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
             contentpdf = asm3.utils.html_to_pdf(dbo, content)
             attachments = [( "%s.pdf" % m.ID, "application/pdf", contentpdf )]
             asm3.utils.send_email(dbo, "", co["email"], "", "", 
@@ -762,7 +762,7 @@ def handler(post, path, remoteip, referer, useragent, querystring):
             if post.boolean("sendsigned"):
                 m = asm3.media.get_media_by_id(dbo, formid)
                 if m is None: raise asm3.utils.ASMError("cannot find %s" % formid)
-                content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
+                content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
                 contentpdf = asm3.utils.html_to_pdf(dbo, content)
                 attachments = [( "%s.pdf" % m.ID, "application/pdf", contentpdf )]
                 fromaddr = asm3.configuration.email(dbo)

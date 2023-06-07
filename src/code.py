@@ -766,7 +766,7 @@ class media(ASMEndpoint):
             if m is None: self.notfound()
             linktypeid = m.LINKTYPEID
             linkid = m.LINKID
-            content = asm3.dbfs.get_string(dbo, m.MEDIANAME)
+            content = asm3.dbfs.get_string_id(dbo, m.DBFSID)
             if m.MEDIAMIMETYPE == "text/html":
                 content = asm3.utils.bytes2str(content)
                 content = asm3.utils.fix_relative_document_uris(dbo, content)
@@ -796,7 +796,7 @@ class media(ASMEndpoint):
             if m.MEDIAMIMETYPE != "text/html": continue
             linktypeid = m.LINKTYPEID
             linkid = m.LINKID
-            content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
+            content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
             contentpdf = asm3.utils.html_to_pdf(dbo, content)
             filename = asm3.media._get_media_filename(m).replace(".html", ".pdf")
             attachments.append(( filename, "application/pdf", contentpdf ))
