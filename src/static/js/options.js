@@ -1469,6 +1469,7 @@ $(function() {
                 '<option value="coordinator">' + _("Adoption Coordinator") + '</option>',
                 '<option value="coordinatorfosterer">' + _("Adoption Coordinator and Fosterer") + '</option>',
                 '<option value="agegroup">' + _("Age Group") + '</option>',
+                '<option value="agegrouplitter">' + _("Age Group and Litter") + '</option>',
                 '<option value="color">' + _("Color") + '</option>',
                 '<option value="entrycategory">' + _("Entry Category") + '</option>',
                 '<option value="flags">' + _("Flags") + '</option>',

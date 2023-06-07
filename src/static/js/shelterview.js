@@ -479,6 +479,9 @@ $(function() {
             else if (viewmode == "agegroup") {
                 this.render_view("AGEGROUP", "", "AGEGROUP,ANIMALNAME", false, false);
             }
+            else if (viewmode == "agegrouplitter") {
+                this.render_view("AGEGROUP", "ACCEPTANCENUMBER", "AGEGROUP,ACCEPTANCENUMBER,ANIMALNAME", false, false);
+            }
             else if (viewmode == "color") {
                 this.render_view("BASECOLOURNAME", "", "BASECOLOURNAME,ANIMALNAME", false, false);
             }
@@ -639,6 +642,7 @@ $(function() {
             h.push('<option value="coordinator">' + _("Adoption Coordinator") + '</option>');
             h.push('<option value="coordinatorfosterer">' + _("Adoption Coordinator and Fosterer") + '</option>');
             h.push('<option value="agegroup">' + _("Age Group") + '</option>');
+            h.push('<option value="agegrouplitter">' + _("Age Group and Litter") + '</option>');
             h.push('<option value="color">' + _("Color") + '</option>');
             h.push('<option value="entrycategory">' + _("Entry Category") + '</option>');
             h.push('<option value="flags">' + _("Flags") + '</option>');
