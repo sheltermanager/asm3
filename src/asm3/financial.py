@@ -469,6 +469,23 @@ def get_person_donations(dbo, oid, sort = ASCENDING):
         "WHERE od.OwnerID = ? " \
         "ORDER BY %s" % order, [oid])
 
+def get_boarding(dbo, flt = "active", sort = ASCENDING):
+    """
+    Returns boarding records
+    """
+    order = "InDateTime DESC"
+    if sort == ASCENDING:
+        order = "InDateTime"
+    where = "InDateTime >= %s AND OutDateTime <= %s" % ( dbo.sql_today(), dbo.sql_today() )
+    if flt.startswith("m"):
+        cutoff = dbo.today(offset = -1 * asm3.utils.atoi(flt))
+        where = "InDateTime >= %s AND InDateTime <= %s" % ( dbo.sql_date(cutoff), dbo.sql_today() )
+    if flt.startswith("p"):
+        cutoff = dbo.today(offset = asm3.utils.atoi(flt))
+        where = "InDateTime > %s AND InDateTime <= %s" % ( dbo.sql_today(), dbo.sql_date(cutoff) )
+    return dbo.query(get_boarding_query(dbo) + \
+        "WHERE %s ORDER BY %s" % ( where, order))
+
 def get_animal_boarding(dbo, aid):
     """
     Returns the boarding history for an animal

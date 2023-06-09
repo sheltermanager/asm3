@@ -31,6 +31,11 @@ ADD_REPO_DOCUMENT               = "ard"
 DELETE_REPO_DOCUMENT            = "drd"
 VIEW_REPO_DOCUMENT              = "vrd"
 
+ADD_BOARDING                    = "abi"
+VIEW_BOARDING                   = "vbi"
+CHANGE_BOARDING                 = "cbi"
+DELETE_BOARDING                 = "dbi"
+
 ADD_CLINIC                      = "acl"
 VIEW_CLINIC                     = "vcl"
 CHANGE_CLINIC                   = "ccl"

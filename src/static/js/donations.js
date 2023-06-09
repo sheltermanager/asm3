@@ -124,9 +124,8 @@ $(function() {
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
                             if (!row.ANIMALID || row.ANIMALID == 0) { return ""; }
-                            let s = "";
-                            if (controller.name.indexOf("animal_") == -1) { s = html.animal_emblems(row) + " "; }
-                            return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
+                            let s = html.animal_link(row);
+                            return s;
                         },
                         hideif: function(row) {
                             return controller.name.indexOf("animal_") != -1;

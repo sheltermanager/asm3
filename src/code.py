@@ -2246,6 +2246,34 @@ class batch(JSONEndpoint):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Reset NNN animal code counts for this year", l), asm3.animal.maintenance_reset_nnn_codes, o.dbo)
 
+class boarding(JSONEndpoint):
+    url = "boarding"
+    js_module = "boarding"
+    get_permissions = asm3.users.VIEW_BOARDING
+
+    def controller(self, o):
+        dbo = o.dbo
+        boarding = asm3.financial.get_boarding(dbo, o.post["filter"])
+        asm3.al.debug("got %d boarding records" % (len(boarding)), "code.boarding", dbo)
+        return {
+            "name": "boarding",
+            "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "rows": boarding
+        }
+
+    def post_create(self, o):
+        self.check(asm3.users.ADD_BOARDING)
+        return asm3.financial.insert_boarding_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(asm3.users.CHANGE_BOARDING)
+        asm3.financial.update_boarding_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(asm3.users.DELETE_BOARDING)
+        for did in o.post.integer_list("ids"):
+            asm3.financial.delete_boarding(o.dbo, o.user, did)
+
 class calendarview(JSONEndpoint):
     url = "calendarview"
     get_permissions = asm3.users.VIEW_ANIMAL
