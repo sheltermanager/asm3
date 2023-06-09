@@ -47,7 +47,8 @@ $(function() {
                             }
                         },
                         onload: function(row) {
-                            // TODO: trigger loading of units from available locations
+                            boarding.location_change(); // load units for the selected location
+                            $("#unit").val( row.SHELTERLOCATIONUNIT );
                         }
                     });
                 },
@@ -123,6 +124,13 @@ $(function() {
             this.table = table;
         },
 
+        location_change: function() {
+            let units = common.get_field(controller.internallocations, $("#location").val(), "UNITS");
+            if (units && units.indexOf(",") != -1) {
+                $("#unit").html( html.list_to_options(units.split(",")) );
+            }
+        },
+
         set_extra_fields: function(row) {
             // TODO: set SHELTERLOCATIONNAME
         },
@@ -151,7 +159,7 @@ $(function() {
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
-            // TODO: deal with changing location to show units
+            $("#location").change(this.location_change);
         },
 
         sync: function() {
@@ -179,7 +187,8 @@ $(function() {
                     tableform.dialog_close();
                 },
                 onload: function() {
-                    tableform.dialog_enable_buttons(); 
+                    tableform.dialog_enable_buttons();
+                    boarding.location_change();
                 }
             });
         },
