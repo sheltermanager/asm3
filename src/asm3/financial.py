@@ -1309,7 +1309,7 @@ def insert_boarding_from_form(dbo, username, post):
         "OwnerID":          post.integer("person"),
         "InDateTime":       post.datetime("indate", "intime"),
         "OutDateTime":      post.datetime("outdate", "outtime"),
-        "Days":             asm3.utils.i18n.date_diff_days(post.date("indate"), post.date("outdate")),
+        "Days":             asm3.i18n.date_diff_days(post.date("indate"), post.date("outdate")),
         "DailyFee":         post.integer("dailyfee"),
         "ShelterLocation":  post.integer("location"),
         "ShelterLocationUnit": post["unit"],
@@ -1332,12 +1332,18 @@ def update_boarding_from_form(dbo, username, post):
         "OwnerID":          post.integer("person"),
         "InDateTime":       post.datetime("indate", "intime"),
         "OutDateTime":      post.datetime("outdate", "outtime"),
-        "Days":             asm3.utils.i18n.date_diff_days(post.date("indate"), post.date("outdate")),
+        "Days":             asm3.i18n.date_diff_days(post.date("indate"), post.date("outdate")),
         "DailyFee":         post.integer("dailyfee"),
         "ShelterLocation":  post.integer("location"),
         "ShelterLocationUnit": post["unit"],
         "Comments":         post["comments"]
     }, username)
+
+def delete_boarding(dbo, username, cid):
+    """
+    Deletes a boarding record
+    """
+    dbo.delete("animalboarding", cid, username)
 
 def insert_citation_from_form(dbo, username, post):
     """

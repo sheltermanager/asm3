@@ -17,8 +17,8 @@ $(function() {
                 fields: [
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal", validation: "notzero" },
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
-                    { json_field: "INDATETIME", post_field: "indatetime", label: _("In Date"), type: "datetime", validation: "notblank", defaultval: new Date() },
-                    { json_field: "OUTDATETIME", post_field: "outdatetime", label: _("Out Date"), type: "datetime", validation: "notblank", defaultval: new Date() },
+                    { json_field: "INDATETIME", post_field: "in", label: _("In Date"), type: "datetime", validation: "notblank", defaultval: new Date() },
+                    { json_field: "OUTDATETIME", post_field: "out", label: _("Out Date"), type: "datetime", validation: "notblank", defaultval: new Date() },
                     { json_field: "DAILYFEE", post_field: "dailyfee", label: _("Daily Fee"), type: "currency" },
                     { json_field: "SHELTERLOCATION", post_field: "location", label: _("Location"), type: "select", 
                         options: { displayfield: "LOCATIONNAME", valuefield: "ID", rows: controller.internallocations }},
