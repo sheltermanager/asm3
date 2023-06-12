@@ -442,6 +442,12 @@ $(function() {
                 html.list_to_options(controller.ynun, "ID", "NAME"),
                 '</select></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="matchflags">' + _("Flags") + '</label></td>',
+                '<td><select id="matchflags" data-json="MATCHFLAGS" data-post="matchflags" class="lfs asm-bsmselect" multiple="multiple">',
+                html.list_to_options(controller.animalflags, "FLAG", "FLAG"),
+                '</select></td>',
+                '</tr>',
                 '</table>',
                 // end outer table
                 '</td>',

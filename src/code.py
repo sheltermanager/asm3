@@ -5502,6 +5502,7 @@ class person(JSONEndpoint):
         asm3.al.debug("opened person '%s'" % p.OWNERNAME, "code.person", dbo)
         return {
             "additional": asm3.additional.get_additional_fields(dbo, p.id, "person"),
+            "animalflags": asm3.lookups.get_animal_flags(dbo),
             "animaltypes": asm3.lookups.get_animal_types(dbo),
             "audit": self.checkb(asm3.users.VIEW_AUDIT_TRAIL) and asm3.audit.get_audit_for_link(dbo, "owner", p.id) or [],
             "species": asm3.lookups.get_species(dbo),

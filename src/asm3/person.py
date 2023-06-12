@@ -1608,6 +1608,8 @@ def lookingfor_summary(dbo, personid, p = None):
         c.append(_("Age", l) + (" %0.2f - %0.2f" % (p.MATCHAGEFROM, p.MATCHAGETO)))
     if p.MATCHCOMMENTSCONTAIN is not None and p.MATCHCOMMENTSCONTAIN != "":
         c.append(_("Comments Contain", l) + ": " + p.MATCHCOMMENTSCONTAIN)
+    if p.MATCHFLAGS is not None and p.MATCHFLAGS.replace(",", "") != "":
+        c.append(_("Flags", l) + ": " + p.MATCHFLAGS.replace(",", ", "))
     summary = ""
     if len(c) > 0:
         summary = ", ".join(x for x in c if x is not None)
@@ -1704,6 +1706,11 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
                 ands.append("(a.AnimalComments LIKE ? OR a.HiddenAnimalDetails LIKE ?)")
                 v.append("%%%s%%" % w)
                 v.append("%%%s%%" % w)
+        if p.MATCHFLAGS is not None and p.MATCHFLAGS.replace(",", "") != "":
+            for w in p.MATCHFLAGS.split(","):
+                if w.strip() != "":
+                    ands.append("a.AdditionalFlags LIKE ?")
+                    v.append("%%%s%%" % w)
 
         animals = dbo.query(asm3.animal.get_animal_query(dbo) + " WHERE " + " AND ".join(ands) + " ORDER BY a.LastChangedDate DESC", v)
 
