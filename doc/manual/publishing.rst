@@ -565,6 +565,19 @@ either 15-digits, starting with 956 or 10-digits, starting with 0006 or 0007.
 They will optionally accept registration of any microchip, although this has
 to be agreed with them first. 
 
+BuddyID
+-------
+
+ASM can register microchips with BuddyID, who supply microchips to US 
+organisations and pet owners. Their registry is free to use and will accept
+registration of microchips from any manufacturer. To signup, you will need
+to get in touch with them and have them issue you with a "provider code"
+to configure in ASM.
+
+ASM will attempt to register all microchips with BuddyID and as with
+the other chip registration publishers, will track when it last updated a
+chip with them in case of subsequent adoption or reclaim.
+
 FoundAnimals/24Pet
 ------------------
 

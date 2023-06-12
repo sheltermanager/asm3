@@ -814,6 +814,7 @@ $(function() {
                 else if (p == "anibaseuk") { t = html.icon("microchip") + " Microchip registered with idENTICHIP/Anibase UK"; }
                 else if (p == "smarttag") { t = html.icon("microchip") + " Microchip/Tag registered with SmartTag"; }
                 else if (p == "akcreunite") { t = html.icon("microchip") + " Microchip registered with AKC Reunite"; }
+                else if (p == "buddyid") { t = html.icon("microchip") + " Microchip registered with BuddyID"; }
                 else if (p == "homeagain") { t = html.icon("microchip") + " Microchip registered with HomeAgain"; }
                 else if (p == "foundanimals") { t = html.icon("microchip") + " Microchip registered with FoundAnimals"; }
 

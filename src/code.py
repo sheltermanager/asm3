@@ -64,7 +64,7 @@ from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format,
 
 from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, \
     ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
-    AKC_REUNITE_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, \
+    AKC_REUNITE_BASE_URL, BUDDYID_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, \
     LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, \
     ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, HTMLFTP_PUBLISHER_ENABLED, \
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
@@ -6063,6 +6063,7 @@ class publish_options(JSONEndpoint):
             "locations": asm3.lookups.get_internal_locations(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),
             "hasakcreunite": AKC_REUNITE_BASE_URL != "",
+            "hasbuddyid": BUDDYID_BASE_URL != "",
             "hasfoundanimals": FOUNDANIMALS_FTP_USER != "",
             "hashomeagain": HOMEAGAIN_BASE_URL != "",
             "hashtmlftp": HTMLFTP_PUBLISHER_ENABLED,

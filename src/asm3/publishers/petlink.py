@@ -218,8 +218,7 @@ class PetLinkPublisher(AbstractPublisher):
         except Exception as err:
             self.logError("Failed uploading data file: %s" % err)
 
-        self.saveLog()
-        self.setPublisherComplete()
+        self.cleanup()
 
     def processAnimal(self, an):
         """ Process an animal record and return a CSV line """

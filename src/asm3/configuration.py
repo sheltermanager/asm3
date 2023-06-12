@@ -704,6 +704,9 @@ def avid_overseas_origin_country(dbo):
 def avid_reregistration(dbo):
     return cboolean(dbo, "AvidReRegistration", DEFAULTS["AvidReRegistration"] == "Yes")
 
+def buddyid_provider_code(dbo):
+    return cstring(dbo, "BuddyIDProviderCode")
+
 def cancel_reserves_on_adoption(dbo):
     return cboolean(dbo, "CancelReservesOnAdoption", DEFAULTS["CancelReservesOnAdoption"] == "Yes")
 

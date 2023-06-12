@@ -9,6 +9,7 @@ import asm3.configuration
 import asm3.publishers.adoptapet
 import asm3.publishers.akcreunite
 import asm3.publishers.anibaseuk
+import asm3.publishers.buddyid
 import asm3.publishers.foundanimals
 import asm3.publishers.homeagain
 import asm3.publishers.helpinglostpets
@@ -99,6 +100,12 @@ PUBLISHER_LIST["rg"] = {
 PUBLISHER_LIST["ak"] = {
     "label":    "Register animals with AKC Reunite Microchips",
     "class":    asm3.publishers.akcreunite.AKCReunitePublisher,
+    "locales":  "en",
+    "sub24hour": False
+}
+PUBLISHER_LIST["bd"] = {
+    "label":    "Register animal microchips with BuddyID",
+    "class":    asm3.publishers.buddyid.BuddyIDPublisher,
     "locales":  "en",
     "sub24hour": False
 }

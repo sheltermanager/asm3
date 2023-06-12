@@ -79,6 +79,13 @@ class TestPublish(unittest.TestCase):
         assert asm3.publishers.anibaseuk.AnibaseUKPublisher(base.get_dbo(), pc).processAnimal(a) is not None
         asm3.publishers.anibaseuk.AnibaseUKPublisher(base.get_dbo(), pc).validate(a)
 
+    # buddyid
+    def test_buddyid(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        assert asm3.publishers.buddyid.BuddyIDPublisher(base.get_dbo(), pc).processAnimal(a, "C00000") is not None
+        asm3.publishers.buddyid.BuddyIDPublisher(base.get_dbo(), pc).validate(a)
+
     # foundanimals
     def test_foundanimals(self):
         pc = asm3.publishers.base.PublishCriteria()
