@@ -602,6 +602,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                         uq = {}
                         if a["healthproblems"] != "":
                             uq["HealthProblems"] = a["healthproblems"]
+                        if a["comments"] != "":
+                            uq["AnimalComments"] = a["description"]
                         if a["microchipnumber"] != "":
                             uq["Identichipped"] = 1
                             uq["IdentichipNumber"] = a["microchipnumber"]
