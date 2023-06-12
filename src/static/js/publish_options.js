@@ -821,8 +821,8 @@ $(function() {
             return [
                 '<div id="tab-buddyid">',
                 html.info('Find out more at ' + 
-                    '<a target="_blank" href="https://buddyid.com/pet-microchips-and-registration/">https://buddyid.com/pet-microchips-and-registration/.<br/>' +
-                '<p><input id="enabledbd" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledbd">' + _("Enabled") + '</label></p>'),
+                    '<a target="_blank" href="https://buddyid.com/pet-microchips-and-registration/">https://buddyid.com/pet-microchips-and-registration/'),
+                '<p><input id="enabledbd" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledbd">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
                 '<td><label for="bdprovidercode">BuddyID Provider Code</label></td>',
