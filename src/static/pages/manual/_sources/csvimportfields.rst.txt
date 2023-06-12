@@ -10,9 +10,12 @@ similarly for multiple rows to people (such as movements, licenses, etc) make
 sure you have populated person data.
 
 When processing animal records that already exist, there are certain key fields
-that will be overwritten on the existing animal from the CSV data. These fields
-are:
+that will be overwritten on the existing animal from the CSV data if those columns
+exist in the CSV data and have a value for that row. 
 
+These fields are:
+
+* ANIMALCOMMENTS / ANIMALDESCRIPTION
 * ANIMALDOB
 * ANIMALFLAGS
 * ANIMALHEALTHPROBLEMS. 
@@ -22,8 +25,8 @@ are:
 * ANIMALPICKUPADDRESS
 * ANIMALPICKUPLOCATION
 
-This allows you to use a spreadsheet of data on chipping/neutering days and import
-that data to your existing animals afterwards.
+This allows you to use a spreadsheet of data to update many animals on chipping/neutering
+days (for example), or update many animal bios in one go.
 
 ANIMALCODE
     A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.
