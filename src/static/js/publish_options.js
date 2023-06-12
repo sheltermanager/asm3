@@ -1069,6 +1069,7 @@ $(function() {
                 this.render_rescuegroups(),
                 this.render_adoptapet(),
                 this.render_akcreunite(),
+                this.render_buddyid(),
                 this.render_foundanimals(),
                 this.render_homeagain(),
                 this.render_maddiesfund(),
