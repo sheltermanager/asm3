@@ -7,8 +7,8 @@ import time
 from asm3.locales import *
 
 
-VERSION = "47u [Mon 12 Jun 13:40:46 BST 2023]"
-BUILD = "06121340"
+VERSION = "47u [Tue 13 Jun 18:17:16 BST 2023]"
+BUILD = "06131817"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
