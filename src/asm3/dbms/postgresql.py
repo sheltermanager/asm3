@@ -18,15 +18,9 @@ class DatabasePostgreSQL(Database):
     type_float = "REAL"
     
     def connect(self):
-        c = psycopg2.connect(host=self.host, port=self.port, user=self.username, password=self.password, database=self.database)
+        c = psycopg2.connect(f"dbname={self.database} host={self.host} port={self.port} user={self.username} password={self.password} options='-c statement_timeout={self.timeout}'")
         c.set_client_encoding("UTF8")
         return c
-
-    def cursor_open(self):
-        """ Overridden to apply timeout """
-        c, s = Database.cursor_open(self)
-        s.execute("SET statement_timeout=%d" % self.timeout)
-        return c, s
 
     def ddl_add_index(self, name, table, column, unique = False, partial = False):
         u = ""

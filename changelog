@@ -1,6 +1,7 @@
 47
 ================
 
+13/06/23 postgresql: Set timeout correctly when a connection is opened
 12/06/23 Looking for can now match on animal flags #640
 12/06/23 Automatic BuddyID microchip registration (any chip, US only)
 12/06/23 Update description of existing animals via aimal CSV import
