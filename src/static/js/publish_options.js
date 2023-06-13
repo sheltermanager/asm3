@@ -1197,6 +1197,7 @@ $(function() {
 
             // Disable services that require sitedef setup
             if (!controller.hasakcreunite) { $(".hasakcreunite").hide(); }
+            if (!controller.hasbuddyid) { $(".hasbuddyid").hide(); }
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
             if (!controller.hashtmlftp) { $(".hashtmlftp").hide(); }
             if (!controller.hashomeagain) { $(".hashomeagain").hide(); }
