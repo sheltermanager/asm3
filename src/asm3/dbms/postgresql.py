@@ -25,8 +25,7 @@ class DatabasePostgreSQL(Database):
     def cursor_open(self):
         """ Overridden to apply timeout """
         c, s = Database.cursor_open(self)
-        if self.timeout > 0:
-            s.execute("SET statement_timeout=%d" % self.timeout)
+        s.execute("SET statement_timeout=%d" % self.timeout)
         return c, s
 
     def ddl_add_index(self, name, table, column, unique = False, partial = False):
