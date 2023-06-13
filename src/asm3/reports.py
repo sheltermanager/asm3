@@ -726,9 +726,11 @@ def email_daily_reports(dbo, now = None):
         if freq == 10 and day != 1 and month != 1: continue # Freq is beginning of year and its not 1st Jan
         if freq == 11 and day != 31 and month != 12: continue # Freq is end of year and its not 31st Dec
         # If we get here, we're good to send
+        asm3.al.debug("executing scheduled report '%s' (hour=%s, freq=%s)" % (r.TITLE, r.DAILYEMAILHOUR, r.DAILYEMAILFREQUENCY), "reports.email_daily_reports", dbo)
         body = execute(dbo, r.ID, "dailyemail")
         # If we aren't sending empty reports and there's no data, bail
         if body.find("NODATA") != -1 and not asm3.configuration.email_empty_reports(dbo): 
+            asm3.al.debug("report '%s' contained no data and option is on to skip sending empty reports" % (r.TITLE), "reports.email_daily_reports", dbo)
             continue
         asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3)
 
