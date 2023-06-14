@@ -1,6 +1,7 @@
 47
 ================
 
+14/06/23 Location filters for internal locs should only apply to in care
 14/06/23 PetFinder: Allow adopted animals to be sent with status X
 12/06/23 Looking for can now match on animal flags #640
 12/06/23 Automatic BuddyID microchip registration (any chip, US only)

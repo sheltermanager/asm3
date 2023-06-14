@@ -1926,7 +1926,7 @@ def get_location_filter_clause(locationfilter="", tablequalifier="", siteid=0, v
         if "-2" in locs: mtfilter += ",2"
         if "-8" in locs: mtfilter += ",8"
         if "-9" in locs: nsfilter = f" OR {tablequalifier}.NonShelterAnimal=1"
-        clauses.append(f"({tablequalifier}.ShelterLocation IN ({locationfilter}) OR {tablequalifier}.ActiveMovementType IN ({mtfilter}) {nsfilter})")
+        clauses.append(f"(({tablequalifier}.Archived=0 AND {tablequalifier}.ShelterLocation IN ({locationfilter})) OR {tablequalifier}.ActiveMovementType IN ({mtfilter}) {nsfilter})")
     if siteid != 0:
         clauses.append("il.SiteID = %s" % siteid)
     if visibleanimalids != "":
@@ -1960,7 +1960,7 @@ def is_animal_in_location_filter(a, locationfilter, siteid=0, visibleanimalids="
         if a.activemovementtype == 2 and "-2" in locs: return True
         if a.activemovementtype == 8 and "-8" in locs: return True
         if a.nonshelteranimal == 1 and "-9" in locs: return True
-        if str(a.shelterlocation) in locs: return True
+        if a.archived == 0 and str(a.shelterlocation) in locs: return True
     if visibleanimalids != "":
         if str(a.ID) in visibleanimalids.split(","): return True
     return False
