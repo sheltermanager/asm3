@@ -55,7 +55,7 @@ class BuddyIDPublisher(AbstractPublisher):
                 self.cleanup()
                 return
             self.log("Response: %s" % r["response"])
-            token = asm3.utils.json(r["response"])["access_token"]
+            token = asm3.utils.json_parse(r["response"])["access_token"]
             # Create the HTTP headers we're going to send with each request
             authheaders = {
                 "Authorization": f"Bearer {token}",
