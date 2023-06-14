@@ -159,6 +159,7 @@ class BuddyIDPublisher(AbstractPublisher):
             "name": an.ANIMALNAME,
             "species": an.SPECIESNAME,
             "breed": an.BREEDNAME,
+            "gender": an.SEXNAME,
             "birthDate": asm3.i18n.python2display(self.dbo.locale, an.DATEOFBIRTH),
             "colorMarkings": an.BASECOLOURNAME
         }
