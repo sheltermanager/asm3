@@ -301,6 +301,11 @@ their entry category sent with an F status. This will put those animals into
 PetFinder's lost and found database to help with reuniting stray pets with
 their owners.
 
+Finally, you can choose to send previously adopted animals with
+status X. This helps PetFinder keep track of your adopted animals and can be
+useful for grants. If you have many thousands of previously adopted animals,
+this can have an effect on performance.
+
 .. note:: If you have created new Species or Breeds within ASM, you will need to map them to the available publisher options under the Breed and Species sections of :menuselection:`Settings --> Lookup Data`
 
 If you have some that are not mapped, the publisher will fail with an error

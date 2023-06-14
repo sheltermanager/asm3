@@ -25,6 +25,17 @@ class PetFinderPublisher(FTPPublisher):
             asm3.configuration.petfinder_password(dbo))
         self.initLog("petfinder", "PetFinder Publisher")
 
+    def pfAnimalQuery(self):
+        return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.BreedID, a.Breed2ID, a.CrossBreed, a.Sex, a.Size, a.DateOfBirth, a.MostRecentEntryDate, a.Fee, " \
+            "b1.BreedName AS BreedName1, b2.BreedName AS BreedName2, " \
+            "b1.PetFinderBreed, b2.PetFinderBreed AS PetFinderBreed2, s.PetFinderSpecies, " \
+            "a.AnimalComments, a.AnimalComments AS WebsiteMediaNotes, " \
+            "a.Neutered, a.IsGoodWithDogs, a.IsGoodWithCats, a.IsGoodWithChildren, a.IsHouseTrained, a.IsCourtesy, a.Declawed, a.CrueltyCase, a.HasSpecialNeeds " \
+            "FROM animal a " \
+            "INNER JOIN breed b1 ON a.BreedID = b1.ID " \
+            "INNER JOIN breed b2 ON a.Breed2ID = b2.ID " \
+            "INNER JOIN species s ON a.SpeciesID = s.ID "
+
     def pfDate(self, d):
         """ Returns a CSV entry for a date in YYYY-MM-DD """
         return "\"%s\"" % asm3.i18n.format_date(d, "%Y-%m-%d")
@@ -172,18 +183,24 @@ class PetFinderPublisher(FTPPublisher):
 
         # Is the option to send strays on?
         if asm3.configuration.petfinder_send_strays(self.dbo):
-            rows = self.dbo.query("%s WHERE a.Archived=0 AND a.HasPermanentFoster=0 AND a.HasTrialAdoption=0 AND er.ReasonName LIKE '%%Stray%%'" % asm3.animal.get_animal_query(self.dbo))
+            rows = self.dbo.query("%s WHERE a.Archived=0 AND a.HasPermanentFoster=0 AND a.HasTrialAdoption=0 AND er.ReasonName LIKE '%%Stray%%'" % self.pfAnimalQuery())
             for an in rows:
                 if is_animal_adoptable(self.dbo, an): continue # do not re-send adoptable animals
                 csv.append( self.processAnimal(an, agebands, status = "F", hide_size = hide_size) )
 
         # Is the option to send holds on?
         if asm3.configuration.petfinder_send_holds(self.dbo):
-            rows = self.dbo.query("%s WHERE a.Archived=0 AND a.IsHold=1" % asm3.animal.get_animal_query(self.dbo))
+            rows = self.dbo.query("%s WHERE a.Archived=0 AND a.IsHold=1" % self.pfAnimalQuery())
             for an in rows:
                 if is_animal_adoptable(self.dbo, an): continue # do not re-send adoptable animals
                 if an.ENTRYREASONNAME.find("Stray") != -1: continue # we already sent this animal as a stray above
                 csv.append( self.processAnimal(an, agebands, status = "H", hide_size = hide_size ) )
+
+        # Is the option to send previous adoptions on?
+        if asm3.configuration.petfinder_send_adopted(self.dbo):
+            rows = self.dbo.query("%s WHERE a.Archived=1 AND a.ActiveMovementType=1" % self.pfAnimalQuery())
+            for an in rows:
+                csv.append( self.processAnimal(an, agebands, status = "X", hide_size = hide_size ) )
 
         # Mark published
         self.markAnimalsPublished(animals, first=True)
@@ -251,7 +268,12 @@ class PetFinderPublisher(FTPPublisher):
         # Status
         line.append(status)
         # Shots
-        line.append(self.pfYesNo(asm3.medical.get_vaccinated(self.dbo, int(an.ID))))
+        if status != "X":
+            # Only look up this value and send it for non-adopted animals (status==X is adopted)
+            # so that the quickest possible query hitting the fewest tables can be run to get that data
+            line.append(self.pfYesNo(asm3.medical.get_vaccinated(self.dbo, int(an.ID))))
+        else:
+            line.append("")
         # Altered
         line.append(self.pfYesNo(an.NEUTERED == 1))
         # No Dogs
@@ -274,7 +296,7 @@ class PetFinderPublisher(FTPPublisher):
         # Mix
         line.append(self.pfYesNo(an.CROSSBREED == 1))
         # photo1-6
-        if PETFINDER_SEND_PHOTOS_BY_FTP:
+        if PETFINDER_SEND_PHOTOS_BY_FTP or status == "X":
             # Send blanks for the 6 images if we already sent them by FTP
             line.append("")
             line.append("")

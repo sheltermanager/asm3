@@ -559,6 +559,13 @@ $(function() {
                 '<option value="Yes">Send with status "H"</option>',
                 '</select></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="pfsendadopted">Previously adopted animals</label></td>',
+                '<td><select id="pfsendadopted" data="PetFinderSendAdopted" class="asm-selectbox cfg">',
+                '<option value="No">Do not send</option>',
+                '<option value="Yes">Send with status "X"</option>',
+                '</select></td>',
+                '</tr>',
                 '</table>',
                 html.info('Make sure to notify the PetFinder helpdesk that you are using ASM to upload animals so that they can give you your FTP password.<br/>' +
                     'It is <b>not</b> the same as your password for the members area.'),
