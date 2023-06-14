@@ -45,10 +45,10 @@ class BuddyIDPublisher(AbstractPublisher):
 
         # Authenticate to get our bearer token
         url = f"{BUDDYID_BASE_URL}/login"
-        jsondata = '{ "email": "%s", "password": "%s" }' % ( BUDDYID_EMAIL, BUDDYID_PASSWORD)
-        self.log("Token request to %s: %s" % ( url, jsondata)) 
+        data = { "email": BUDDYID_EMAIL, "password": BUDDYID_PASSWORD }
+        self.log("Token request to %s: %s" % ( url, data)) 
         try:
-            r = asm3.utils.post_json(url, jsondata)
+            r = asm3.utils.post_form(url, data)
             if r["status"] != 200:
                 self.setLastError("Authentication failed.")
                 self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
