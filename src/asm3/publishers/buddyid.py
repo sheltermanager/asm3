@@ -103,11 +103,20 @@ class BuddyIDPublisher(AbstractPublisher):
                     self.log("Sending PUT to %s to update listing: %s" % (url, jsondata))
                     r = asm3.utils.put_json(url, jsondata, authheaders)
 
-                # They seem to return a 201 for success rather than 200
-                if r["status"] > 299:
+                # Check for responses that are returned with a success code, but are really failures
+                already_registered = r["response"].find("Microchip Already Registered") != -1
+
+                # They return the following codes:
+                # 200 Successful PUT (update)
+                # 201 Successful POST (new)
+                # 422 Validation failed
+                if r["status"] >= 400 or already_registered:
                     self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
-                    # TODO: What errors are permanent? Anything permanent should add the animal to failed_animals so that
-                    # it is marked on file and we don't try again.
+                    # Already registered is a permanent failure
+                    if already_registered:
+                        self.log("Microchip already registered: permanent failure")
+                        an.FAILMESSAGE = "Microchip already registered"
+                        failed_animals.append(an)
                 else:
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
@@ -170,20 +179,20 @@ class BuddyIDPublisher(AbstractPublisher):
     def validate(self, an):
         """ Validates an animal record is ok to send """
         # Validate certain items aren't blank so we aren't registering bogus data
-        if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
+        if asm3.utils.nulltostr(an.CURRENTOWNERADDRESS).strip() == "":
             self.logError("Address for the new owner is blank, cannot process")
             return False 
 
-        if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
+        if asm3.utils.nulltostr(an.CURRENTOWNERPOSTCODE).strip() == "":
             self.logError("Postal code for the new owner is blank, cannot process")
             return False
 
-        if an["IDENTICHIPDATE"] is None:
+        if an.IDENTICHIPDATE is None:
             self.logError("Microchip date cannot be blank, cannot process")
             return False
 
         # Make sure the length is actually suitable
-        if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
+        if not len(an.IDENTICHIPNUMBER) in (9, 10, 15):
             self.logError("Microchip length is not 9, 10 or 15, cannot process")
             return False
 

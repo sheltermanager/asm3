@@ -63,7 +63,7 @@ class AKCReunitePublisher(AbstractPublisher):
         for an in animals:
             try:
                 anCount += 1
-                self.log("Processing: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                self.log("Processing: %s: %s (%d of %d)" % ( an.SHELTERCODE, an.ANIMALNAME, anCount, len(animals)))
                 self.updatePublisherProgress(self.getProgress(anCount, len(animals)))
 
                 # If the user cancelled, stop now
@@ -101,7 +101,7 @@ class AKCReunitePublisher(AbstractPublisher):
                         self.log("successful %s response found, marking processed" % jr["responseCode"])
                         processed_animals.append(an)
                         # Mark success in the log
-                        self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
+                        self.logSuccess("Processed: %s: %s (%d of %d)" % ( an.SHELTERCODE, an.ANIMALNAME, anCount, len(animals)))
                         wassuccess = True
 
                     # If we got a sender not recognised message, there's no point sending 
@@ -119,7 +119,7 @@ class AKCReunitePublisher(AbstractPublisher):
                     
                     if not wassuccess:
                         self.logError("no successful 54000, 54100, 54108 response received")
-                        an["FAILMESSAGE"] = "%s" % jr["responseMessage"]
+                        an.FAILMESSAGE = "%s" % jr["responseMessage"]
                         failed_animals.append(an)
 
                 except Exception as err:
@@ -128,7 +128,7 @@ class AKCReunitePublisher(AbstractPublisher):
                     continue
 
             except Exception as err:
-                self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
+                self.logError("Failed processing animal: %s, %s" % (str(an.SHELTERCODE), err), sys.exc_info())
 
         # Mark success/failures
         if len(processed_animals) > 0:
@@ -203,20 +203,20 @@ class AKCReunitePublisher(AbstractPublisher):
     def validate(self, an):
         """ Validates an animal record is ok to send """
         # Validate certain items aren't blank so we aren't registering bogus data
-        if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
+        if asm3.utils.nulltostr(an.CURRENTOWNERADDRESS).strip() == "":
             self.logError("Address for the new owner is blank, cannot process")
             return False 
 
-        if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
+        if asm3.utils.nulltostr(an.CURRENTOWNERPOSTCODE).strip() == "":
             self.logError("Postal code for the new owner is blank, cannot process")
             return False
 
-        if an["IDENTICHIPDATE"] is None:
+        if an.IDENTICHIPDATE is None:
             self.logError("Microchip date cannot be blank, cannot process")
             return False
 
         # Make sure the length is actually suitable
-        if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
+        if not len(an.IDENTICHIPNUMBER) in (9, 10, 15):
             self.logError("Microchip length is not 9, 10 or 15, cannot process")
             return False
 
