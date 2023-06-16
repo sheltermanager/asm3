@@ -33,12 +33,12 @@ def active():
 def get_account(alias):
     """
     Returns the smcom account object for alias/db
-    Uses a read through 48 hour cache to save unnecessary calls
+    Uses a read through 24 hour cache to save unnecessary calls
     """
     # Attackers have tried to overflow alias in the past, we'll never use more than 20 chars
     # fail fast and save us a load of processing.
     if len(alias) > 20: return None     
-    TTL = 86400 * 2
+    TTL = 86400
     cachekey = "smcom_dbinfo_%s" % alias
     a = asm3.cachedisk.get(cachekey, "smcom")
     if a is None:
