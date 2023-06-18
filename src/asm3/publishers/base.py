@@ -396,7 +396,7 @@ def is_animal_adoptable(dbo, a):
     if a.ACTIVEMOVEMENTTYPE == 1 and a.HASTRIALADOPTION == 1 and not p.includeTrial: return False
     if a.ACTIVEMOVEMENTTYPE == 1 and a.HASTRIALADOPTION == 0: return False
     if a.ACTIVEMOVEMENTTYPE and a.ACTIVEMOVEMENTTYPE >= 3 and a.ACTIVEMOVEMENTTYPE <= 7: return False
-    if not p.includeWithoutImage and a.WEBSITEMEDIANAME == "": return False
+    if not p.includeWithoutImage and a.WEBSITEMEDIANAME is None: return False
     if not p.includeWithoutDescription and asm3.configuration.publisher_use_comments(dbo) and a.ANIMALCOMMENTS == "": return False
     if not p.includeWithoutDescription and not asm3.configuration.publisher_use_comments(dbo) and a.WEBSITEMEDIANOTES == "": return False
     if p.excludeUnderWeeks > 0 and asm3.i18n.add_days(a.DATEOFBIRTH, 7 * p.excludeUnderWeeks) > dbo.today(): return False
