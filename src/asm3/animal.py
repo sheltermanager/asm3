@@ -229,7 +229,9 @@ def get_animal_query(dbo):
         "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
         "(SELECT COUNT(*) FROM media WHERE MediaMimeType = 'image/jpeg' AND Date >= %(twodaysago)s AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages, " \
         "CASE WHEN EXISTS(SELECT amt.DateRequired FROM animalmedicaltreatment amt INNER JOIN animalmedical am ON am.ID=amt.AnimalMedicalID WHERE amt.AnimalID=a.ID AND amt.DateRequired <= %(today)s AND amt.DateGiven Is Null AND am.Status=0) THEN 1 ELSE 0 END AS HasOutstandingMedical, " \
-        "CASE WHEN EXISTS(SELECT ID FROM animalboarding WHERE AnimalID = a.ID AND InDateTime >= %(today)s AND OutDateTime <= %(today)s) THEN 1 ELSE 0 END AS HasActiveBoarding, " \
+        "CASE WHEN ab.ID Is Not Null THEN 1 ELSE 0 END AS HasActiveBoarding, " \
+        "ab.InDateTime AS ActiveBoardingInDate, " \
+        "ab.OutDateTime AS ActiveBoardingOutDate, " \
         "(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Not Null) AS VaccGivenCount, " \
         "(SELECT COUNT(*) FROM animalvaccination WHERE AnimalID = a.ID AND DateOfVaccination Is Null AND DateRequired < %(today)s) AS VaccOutstandingCount, " \
         "(SELECT Name FROM lksyesno l WHERE l.ID = a.NonShelterAnimal) AS NonShelterAnimalName, " \
@@ -294,6 +296,7 @@ def get_animal_query(dbo):
         "LEFT OUTER JOIN users au ON au.UserName = am.CreatedBy " \
         "LEFT OUTER JOIN owner co ON co.ID = am.OwnerID " \
         "LEFT OUTER JOIN jurisdiction cj ON cj.ID = co.JurisdictionID " \
+        "LEFT OUTER JOIN animalboarding ab ON ab.ID = (SELECT MAX(ID) FROM animalboarding abi WHERE abi.AnimalID = a.ID AND InDateTime <= %(today)s AND OutDateTime >= %(today)s) " \
         "LEFT OUTER JOIN animaldiet adi ON adi.ID = (SELECT MAX(ID) FROM animaldiet sadi WHERE sadi.AnimalID = a.ID) " \
         "LEFT OUTER JOIN diet ON diet.ID = adi.DietID " \
         "LEFT OUTER JOIN animalcontrolanimal aca ON a.ID=aca.AnimalID and aca.AnimalControlID = (SELECT MAX(saca.AnimalControlID) FROM animalcontrolanimal saca WHERE saca.AnimalID = a.ID) " \
@@ -449,6 +452,7 @@ def get_animals_brief(animals):
             "DISPLAYLOCATIONNAME": a["DISPLAYLOCATIONNAME"],
             "ENTRYREASONNAME": a["ENTRYREASONNAME"],
             "FLVRESULT": a["FLVRESULT"],
+            "HASACTIVEBOARDING": a["HASACTIVEBOARDING"],
             "HASACTIVERESERVE": a["HASACTIVERESERVE"],
             "HASFUTUREADOPTION": a["HASFUTUREADOPTION"],
             "HASSPECIALNEEDS": a["HASSPECIALNEEDS"],

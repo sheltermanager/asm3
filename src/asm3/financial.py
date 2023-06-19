@@ -1312,7 +1312,7 @@ def insert_boarding_from_form(dbo, username, post):
     if post.date("indate") > post.date("outdate"):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Check out date cannot be later than check in date.", l))
 
-    return dbo.insert("animalboarding", {
+    boardingid = dbo.insert("animalboarding", {
         "AnimalID":         post.integer("animal"),
         "OwnerID":          post.integer("person"),
         "InDateTime":       post.datetime("indate", "intime"),
@@ -1325,6 +1325,7 @@ def insert_boarding_from_form(dbo, username, post):
     }, username)
 
     asm3.animal.update_animal_status(dbo, post.integer("animal"))
+    return boardingid
 
 def update_boarding_from_form(dbo, username, post):
     """

@@ -557,6 +557,8 @@ $(function() {
                     ' <label for="alwaysshowlocation">' + _("Location") + '</label><br />',
                 '<input data="EmblemAdoptable" type="checkbox" id="showadoptable" class="asm-checkbox" type="checkbox" />',
                     html.icon("adoptable") + ' <label for="showadoptable">' + _("Adoptable") + '</label><br />',
+                '<input data="EmblemBoarding" type="checkbox" id="showboarding" class="asm-checkbox" type="checkbox" />',
+                    html.icon("boarding") + ' <label for="showboarding">' + _("Boarding") + '</label><br />',
                 '<input data="EmblemBonded" type="checkbox" id="showbonded" class="asm-checkbox" type="checkbox" />',
                     html.icon("bonded") + ' <label for="showbonded">' + _("Bonded") + '</label><br />',
                 '<input data="EmblemCourtesy" type="checkbox" id="showcourtesy" class="asm-checkbox" type="checkbox" />',

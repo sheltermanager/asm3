@@ -49,7 +49,16 @@ edit_header = {
             owner = " " + html.person_link(a.OWNERID, a.OWNERNAME);
         }
         let available = "";
-        if (a.NONSHELTERANIMAL == 1) {
+        if (a.ARCHIVED == 0 && a.HASACTIVEBOARDING == 1) {
+            // currently boarding at the shelter
+            available = _("Boarding Animal");
+            if (a.OWNERID && a.OWNERID > 0) {
+                available += " " + html.icon("right") + " ";
+                available += html.person_link(a.OWNERID, a.OWNERNAME);
+            }
+            available = html.info(available);
+        }
+        else if (a.NONSHELTERANIMAL == 1) {
             // show non-shelter info link
             available = _("Non-Shelter Animal");
             if (a.ORIGINALOWNERID && a.ORIGINALOWNERID > 0) {
@@ -91,7 +100,7 @@ edit_header = {
             if (owner != "" && a.CURRENTOWNERID != a.OWNERID) {
                 displaylocation = _("Owner") + " " + html.icon("right") + " " + owner;
             }
-            else if (currentowner != "") {
+            else if (currentowner != "" && !a.HASACTIVEBOARDING) {
                 displaylocation = a.DISPLAYLOCATIONNAME + " " + html.icon("right") + " " + currentowner;
             }
             else if (a.SHELTERLOCATIONUNIT && !a.ACTIVEMOVEMENTDATE) {
@@ -120,8 +129,23 @@ edit_header = {
         if (a.IDENTICHIPPED == 1) {
             chipinfo = '<tr><td>' + _("Microchip") + ':</td><td><b>' + a.IDENTICHIPNUMBER + " " + common.nulltostr(a.IDENTICHIP2NUMBER) + '</b></td></tr>';
         }
+        let timeonshelter = a.TIMEONSHELTER + ' (' + a.DAYSONSHELTER + ' ' + _("days") + ')';
+        let entershelterdate = "";
+        if (a.ARCHIVED == 0 && a.HASACTIVEBOARDING == 1) {
+            entershelterdate = format.date(a.ACTIVEBOARDINGINDATE) + " " + format.time(a.ACTIVEBOARDINGINDATE);
+        }
+        else {
+            entershelterdate = format.date(a.MOSTRECENTENTRYDATE) + " ";
+            if (format.time(a.MOSTRECENTENTRYDATE) != "00:00:00") { 
+                entershelterdate += format.time(a.MOSTRECENTENTRYDATE); 
+            }
+        }
         let leftshelterdate = "";
-        if (a.ARCHIVED == 1 && a.DECEASEDDATE && a.DIEDOFFSHELTER == 0) { 
+        if (a.ARCHIVED == 0 && a.HASACTIVEBOARDING == 1) {
+            leftshelterdate = format.date(a.ACTIVEBOARDINGOUTDATE) + " " + format.time(a.ACTIVEBOARDINGOUTDATE);
+            timeonshelter = "";
+        }
+        else if (a.ARCHIVED == 1 && a.DECEASEDDATE && a.DIEDOFFSHELTER == 0) { 
             leftshelterdate = format.date(a.DECEASEDDATE); 
         }
         else if (a.ARCHIVED == 1) { 
@@ -162,17 +186,13 @@ edit_header = {
             animalcontrol,
             chipinfo,
             '<tr>',
-            '<td id="hentshel">' + _("Entered shelter") + ':</td><td><b>' + format.date(a.MOSTRECENTENTRYDATE),
-            format.time(a.MOSTRECENTENTRYDATE) != "00:00:00" ? ' ' + format.time(a.MOSTRECENTENTRYDATE) : '',
-            '</b></td>',
+            '<td id="hentshel">' + _("Entered shelter") + ':</td><td><b>' + entershelterdate + '</b></td>',
             '</tr>',
             hold,
             '<tr>',
             '<td id="hleftshel">' + _("Left shelter") + ':</td><td><b>' + leftshelterdate + '</b></td>',
             '</tr>',
-            '<tr>',
-            '<td id="htimeonshel">' + _("Time on shelter") + ':</td><td><b>' + a.TIMEONSHELTER + ' (' + a.DAYSONSHELTER + ' ' + _("days") + ')</b></td>',
-            '</tr>',
+            timeonshelter != "" ? '<tr><td id="htimeonshel">' + _("Time on shelter") + ':</td><td><b>' + timeonshelter + '</b></td></tr>' : '',
             '</table>',
             '</div>'
         ].join("\n");
@@ -223,6 +243,7 @@ edit_header = {
             var key = vt[0], url = vt[1], display = vt[2], iconname = vt[3], perms = vt[4];
             if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
             if ((key == "boarding") && config.bool("DisableBoarding")) { return; }
+            if ((key == "boarding") && a.HASACTIVEBOARDING == 0 && a.ARCHIVED == 0) { return; } // don't show boarding tab for non-owned shelter animals
             if ((key == "clinic") && config.bool("DisableClinic")) { return; }
             if ((key == "licence") && config.bool("DisableAnimalControl")) { return; }
             if ((key == "movements") && config.bool("DisableMovements")) { return; }

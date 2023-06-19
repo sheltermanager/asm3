@@ -186,6 +186,9 @@ const html = {
         if (config.bool("EmblemBonded") && (a.BONDEDANIMALID || a.BONDEDANIMAL2ID)) {
             s.push(html.icon("bonded", _("Bonded")));
         }
+        if (config.bool("EmblemBoarding") && (a.HASACTIVEBOARDING == 1)) {
+            s.push(html.icon("boarding", _("Boarding")));
+        }
         if (config.bool("EmblemLongTerm") && a.ARCHIVED == 0 && (a.DAYSONSHELTER > config.integer("LongTermMonths") * 30))  {
             s.push(html.icon("calendar", _("Long term")));
         }

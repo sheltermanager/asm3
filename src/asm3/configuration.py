@@ -164,6 +164,7 @@ DEFAULTS = {
     "EmailMessages": "Yes", 
     "EmblemAdoptable": "Yes",
     "EmblemAlwaysLocation": "No",
+    "EmblemBoarding": "Yes",
     "EmblemBonded": "Yes",
     "EmblemCourtesy": "Yes",
     "EmblemCrueltyCase": "Yes",
