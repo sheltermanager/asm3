@@ -281,14 +281,17 @@ $(function() {
             if (controller.animal) {
                 row.ANIMALNAME = controller.animal.ANIMALNAME;
                 row.SHELTERCODE = controller.animal.SHELTERCODE;
+                row.SHORTCODE = controller.animal.SHORTCODE;
             }
             else if (donations.lastanimal) {
                 row.ANIMALNAME = donations.lastanimal.ANIMALNAME;
                 row.SHELTERCODE = donations.lastanimal.SHELTERCODE;
+                row.SHORTCODE = donations.lastanimal.SHORTCODE;
             }
             else {
                 row.ANIMALNAME = "";
                 row.SHELTERCODE = "";
+                row.SHORTCODE = "";
             }
             if (controller.person) {
                 row.OWNERCODE = controller.person.OWNERCODE;

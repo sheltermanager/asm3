@@ -208,6 +208,7 @@ edit_header = {
             [ "vaccination", "animal_vaccination", _("Vaccination"), "vaccination", "vav" ],
             [ "test", "animal_test", _("Test"), "test", "vat" ],
             [ "medical", "animal_medical", _("Medical"), "medical", "mvam" ],
+            [ "boarding", "animal_boarding", _("Boarding"), "boarding", "vbi" ],
             [ "clinic", "animal_clinic", _("Clinic"), "health", "vcl" ],
             [ "licence", "animal_licence", _("License"), "licence", "vapl" ],
             [ "diet", "animal_diet", _("Diet"), "diet", "dvad" ],
@@ -221,6 +222,7 @@ edit_header = {
         $.each(tabs, function(it, vt) {
             var key = vt[0], url = vt[1], display = vt[2], iconname = vt[3], perms = vt[4];
             if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
+            if ((key == "boarding") && config.bool("DisableBoarding")) { return; }
             if ((key == "clinic") && config.bool("DisableClinic")) { return; }
             if ((key == "licence") && config.bool("DisableAnimalControl")) { return; }
             if ((key == "movements") && config.bool("DisableMovements")) { return; }
@@ -573,6 +575,7 @@ edit_header = {
             [ "citation", "person_citations", _("Citations"), "citation", "vacc" ],
             [ "rota", "person_rota", _("Rota"), "rota", "voro" ],
             [ "traploan", "person_traploan", _("Equipment Loans"), "traploan", "vatl" ],
+            [ "boarding", "person_boarding", _("Boarding"), "boarding", "vbi" ],
             [ "clinic", "person_clinic", _("Clinic"), "health", "vcl" ],
             [ "donations", "person_donations", _("Payments"), "donation", "ovod" ],
             [ "vouchers", "person_vouchers", _("Vouchers"), "donation", "vvov" ],
@@ -584,6 +587,7 @@ edit_header = {
         $.each(tabs, function(it, vt) {
             var key = vt[0], url = vt[1], display = vt[2], iconname = vt[3], perms = vt[4];
             if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
+            if ((key == "boarding") && config.bool("DisableBoarding")) { return; }
             if ((key == "citation" || key == "licence" || key == "investigation") && config.bool("DisableAnimalControl")) { return; }
             if ((key == "clinic") && config.bool("DisableClinic")) { return; }
             if ((key == "traploan") && config.bool("DisableTrapLoan")) { return; }

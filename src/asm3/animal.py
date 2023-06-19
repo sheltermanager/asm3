@@ -2087,6 +2087,7 @@ def get_satellite_counts(dbo, animalid):
         "(SELECT COUNT(*) FROM animalvaccination av WHERE av.AnimalID = a.ID) AS vaccination, " \
         "(SELECT COUNT(*) FROM animaltest at WHERE at.AnimalID = a.ID) AS test, " \
         "(SELECT COUNT(*) FROM animalmedical am WHERE am.AnimalID = a.ID) AS medical, " \
+        "(SELECT COUNT(*) FROM animalboarding ab WHERE ab.AnimalID = a.ID) AS boarding, " \
         "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.AnimalID = a.ID) AS clinic, " \
         "(SELECT COUNT(*) FROM animaldiet ad WHERE ad.AnimalID = a.ID) AS diet, " \
         "(SELECT COUNT(*) FROM animaltransport tr WHERE tr.AnimalID = a.ID) AS transport, " \

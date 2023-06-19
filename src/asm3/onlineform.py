@@ -137,7 +137,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
     h = []
     l = dbo.locale
     form = get_onlineform(dbo, formid)
-    if form is None: raise asm3.utils.ASMValidationError("Online form %d does not exist")
+    if form is None: raise asm3.utils.ASMValidationError("Online form %s does not exist" % formid)
     formfields = get_onlineformfields(dbo, formid)
     if completedocument:
         header = get_onlineform_header(dbo)

@@ -45,7 +45,11 @@ $(function() {
                 html.icon("test") + '<input id="toggle-test" data="t" type="checkbox" class="asm-checkbox" />' + 
                 '<label for="toggle-test">' + _("Test") + '</label>',
                 '</span> ',
-                '<span class="asm-calendar-legend">',
+                '<span class="asm-calendar-legend tagboarding">',
+                html.icon("boarding") + '<input id="toggle-boarding" data="b" type="checkbox" class="asm-checkbox" />' + 
+                '<label for="toggle-boarding">' + _("Boarding") + '</label>',
+                '</span> ',
+                '<span class="asm-calendar-legend tagclinic">',
                 html.icon("health") + '<input id="toggle-clinic" data="c" type="checkbox" class="asm-checkbox" />' + 
                 '<label for="toggle-clinic">' + _("Clinic") + '</label>',
                 '</span> ',
@@ -53,15 +57,15 @@ $(function() {
                 html.icon("donation") + '<input id="toggle-donation" data="p" type="checkbox" class="asm-checkbox" />' + 
                 '<label for="toggle-donation">' + _("Payment") + '</label>',
                 '</span> ',
-                '<span class="asm-calendar-legend">',
+                '<span class="asm-calendar-legend taganimalcontrol">',
                 html.icon("call") + '<input id="toggle-incident" data="o" type="checkbox" class="asm-checkbox" />' + 
                 '<label for="toggle-incident">' + _("Incident followup") + '</label>',
                 '</span> ',
-                '<span class="asm-calendar-legend">',
+                '<span class="asm-calendar-legend tagtransport">',
                 html.icon("transport") + '<input id="toggle-transport" data="r" type="checkbox" class="asm-checkbox" />' + 
                 '<label for="toggle-transport">' + _("Transport") + '</label>',
                 '</span>',
-                '<span class="asm-calendar-legend">',
+                '<span class="asm-calendar-legend tagtraploan">',
                 html.icon("traploan") + '<input id="toggle-traploan" data="l" type="checkbox" class="asm-checkbox" />' + 
                 '<label for="toggle-traploan">' + _("Equipment loan") + '</label>',
                 '</span>',
@@ -125,7 +129,7 @@ $(function() {
 
             // If there's an ev parameter, sync our checkboxes
             let ev = common.querystring_param("ev");
-            if (!ev) { ev = "dvmtcrolp"; }
+            if (!ev) { ev = "dvmtbcrolp"; }
             $("#toggles input").each(function() {
                 if (ev.indexOf( $(this).attr("data") ) != -1) {
                     $(this).prop("checked", true);
@@ -134,6 +138,12 @@ $(function() {
                     $(this).prop("checked", false);
                 }
             });
+
+            if (config.bool("DisableAnimalControl")) { $(".taganimalcontrol").hide(); }
+            if (config.bool("DisableBoarding")) { $(".tagboarding").hide(); }
+            if (config.bool("DisableClinic")) { $(".tagclinic").hide(); }
+            if (config.bool("DisableTransport")) { $(".tagtransport").hide(); }
+            if (config.bool("DisableTrapLoan")) { $(".tagtraploan").hide(); }
 
             setTimeout(function() {
                 $("#calendar").fullCalendar("today");

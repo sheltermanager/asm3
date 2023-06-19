@@ -282,11 +282,13 @@ $(function() {
             if (!$("#animal").animalchooser("is_empty")) {
                 row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
                 row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
+                row.SHORTCODE = $("#animal").animalchooser("get_selected").SHORTCODE;
             }
             else {
                 row.ANIMALID = $("#personanimal").val();
                 row.ANIMALNAME = common.get_field(clinic_appointment.personanimals, $("#personanimal").val(), "ANIMALNAME");
                 row.SHELTERCODE = common.get_field(clinic_appointment.personanimals, $("#personanimal").val(), "SHELTERCODE");
+                row.SHORTCODE = common.get_field(clinic_appointment.personanimals, $("#personanimal").val(), "SHORTCODE");
             }
             if (controller.person) {
                 row.OWNERNAME = controller.person.OWNERNAME;

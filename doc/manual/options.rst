@@ -926,6 +926,10 @@ Remove
 System
 ^^^^^^
 
+* Remove boarding functionality from screens and menus: If your shelter does
+  not board animals for the public, this option will disable the system's boarding
+  functionality from the financial menu and animal/person screens.
+
 * Remove clinic functionality from screens and menus: If your shelter does
   not run a clinic, this option will disable the system's clinic appointment
   and invoicing functionality from the medical menu and animal/person screens.

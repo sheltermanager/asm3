@@ -2325,10 +2325,10 @@ class calendar_events(ASMEndpoint):
             for d in asm3.diary.get_between_two_dates(dbo, user, start, end):
                 allday = False
                 # If the diary time is midnight, assume all day instead
-                if d["DIARYDATETIME"].hour == 0 and d["DIARYDATETIME"].minute == 0:
+                if d.DIARYDATETIME.hour == 0 and d.DIARYDATETIME.minute == 0:
                     allday = True
                 events.append({ 
-                    "title": d["SUBJECT"], 
+                    "title": d.SUBJECT, 
                     "allDay": allday, 
                     "start": d.DIARYDATETIME,
                     "end": add_minutes(d.DIARYDATETIME, 60),
@@ -2337,47 +2337,59 @@ class calendar_events(ASMEndpoint):
                     "link": "diary_edit_my" })
         if "v" in ev and self.checkb(asm3.users.VIEW_VACCINATION):
             for v in asm3.medical.get_vaccinations_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
-                sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
-                tit = "%s - %s %s (%s) %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["DISPLAYLOCATIONNAME"], v["COMMENTS"])
+                sub = "%s - %s" % (v.VACCINATIONTYPE, v.ANIMALNAME)
+                tit = "%s - %s %s (%s) %s" % (v.VACCINATIONTYPE, v.SHELTERCODE, v.ANIMALNAME, v.DISPLAYLOCATIONNAME, v.COMMENTS)
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
-                    "start": v["DATEREQUIRED"], 
+                    "start": v.DATEREQUIRED, 
                     "tooltip": tit, 
                     "icon": "vaccination",
-                    "link": "animal_vaccination?id=%s" % v["ANIMALID"] })
+                    "link": "animal_vaccination?id=%s" % v.ANIMALID })
             for v in asm3.medical.get_vaccinations_expiring_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
-                sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
-                tit = "%s - %s %s (%s) %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["DISPLAYLOCATIONNAME"], v["COMMENTS"])
+                sub = "%s - %s" % (v.VACCINATIONTYPE, v.ANIMALNAME)
+                tit = "%s - %s %s (%s) %s" % (v.VACCINATIONTYPE, v.SHELTERCODE, v.ANIMALNAME, v.DISPLAYLOCATIONNAME, v.COMMENTS)
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
-                    "start": v["DATEEXPIRES"], 
+                    "start": v.DATEEXPIRES, 
                     "tooltip": tit, 
                     "icon": "vaccination",
-                    "link": "animal_vaccination?id=%s" % v["ANIMALID"] })
+                    "link": "animal_vaccination?id=%s" % v.ANIMALID })
         if "m" in ev and self.checkb(asm3.users.VIEW_MEDICAL):
             for m in asm3.medical.get_treatments_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
-                sub = "%s - %s" % (m["TREATMENTNAME"], m["ANIMALNAME"])
-                tit = "%s - %s %s (%s) %s %s" % (m["TREATMENTNAME"], m["SHELTERCODE"], m["ANIMALNAME"], m["DISPLAYLOCATIONNAME"], m["DOSAGE"], m["COMMENTS"])
+                sub = "%s - %s" % (m.TREATMENTNAME, m.ANIMALNAME)
+                tit = "%s - %s %s (%s) %s %s" % (m.TREATMENTNAME, m.SHELTERCODE, m.ANIMALNAME, m.DISPLAYLOCATIONNAME, m.DOSAGE, m.COMMENTS)
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
-                    "start": m["DATEREQUIRED"], 
+                    "start": m.DATEREQUIRED, 
                     "tooltip": tit, 
                     "icon": "medical",
-                    "link": "animal_medical?id=%s" % m["ANIMALID"] })
+                    "link": "animal_medical?id=%s" % m.ANIMALID })
         if "t" in ev and self.checkb(asm3.users.VIEW_TEST):
             for t in asm3.medical.get_tests_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
-                sub = "%s - %s" % (t["TESTNAME"], t["ANIMALNAME"])
-                tit = "%s - %s %s (%s) %s" % (t["TESTNAME"], t["SHELTERCODE"], t["ANIMALNAME"], t["DISPLAYLOCATIONNAME"], t["COMMENTS"])
+                sub = "%s - %s" % (t.TESTNAME, t.ANIMALNAME)
+                tit = "%s - %s %s (%s) %s" % (t.TESTNAME, t.SHELTERCODE, t.ANIMALNAME, t.DISPLAYLOCATIONNAME, t.COMMENTS)
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
-                    "start": t["DATEREQUIRED"], 
+                    "start": t.DATEREQUIRED, 
                     "tooltip": tit, 
                     "icon": "test",
-                    "link": "animal_test?id=%s" % t["ANIMALID"] })
+                    "link": "animal_test?id=%s" % t.ANIMALID })
+        if "b" in ev and self.checkb(asm3.users.VIEW_BOARDING):
+            for b in asm3.financial.get_boarding_due_two_dates(dbo, start, end):
+                sub = "%s:%s - %s" % (b.SHELTERLOCATIONNAME, b.SHELTERLOCATIONUNIT, b.ANIMALNAME)
+                tit = "%s:%s - %s, %s" % (b.SHELTERLOCATIONNAME, b.SHELTERLOCATIONUNIT, b.ANIMALNAME, b.OWNERNAME)
+                events.append({ 
+                    "title": sub, 
+                    "allDay": False, 
+                    "start": b.INDATETIME, 
+                    "end": b.OUTDATETIME,
+                    "tooltip": tit, 
+                    "icon": "boarding",
+                    "link": "animal_boarding?id=%s" % b.ANIMALID })
         if "c" in ev and self.checkb(asm3.users.VIEW_CLINIC):
             for c in asm3.clinic.get_appointments_two_dates(dbo, start, end, o.post["apptfor"], o.siteid):
                 if c.OWNERNAME is not None:
@@ -2398,52 +2410,52 @@ class calendar_events(ASMEndpoint):
                     "link": link })
         if "p" in ev and self.checkb(asm3.users.VIEW_DONATION):
             for p in asm3.financial.get_donations_due_two_dates(dbo, start, end):
-                sub = "%s - %s" % (p["DONATIONNAME"], p["OWNERNAME"])
-                tit = "%s - %s %s %s" % (p["DONATIONNAME"], p["OWNERNAME"], asm3.html.format_currency(l, p["DONATION"]), p["COMMENTS"])
+                sub = "%s - %s" % (p.DONATIONNAME, p.OWNERNAME)
+                tit = "%s - %s %s %s" % (p.DONATIONNAME, p.OWNERNAME, asm3.html.format_currency(l, p.DONATION), p.COMMENTS)
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
-                    "start": p["DATEDUE"], 
+                    "start": p.DATEDUE, 
                     "tooltip": tit, 
                     "icon": "donation",
-                    "link": "person_donations?id=%s" % p["OWNERID"] })
+                    "link": "person_donations?id=%s" % p.OWNERID })
         if "o" in ev and self.checkb(asm3.users.VIEW_INCIDENT):
             for o in asm3.animalcontrol.get_followup_two_dates(dbo, start, end):
-                sub = "%s - %s" % (o["INCIDENTNAME"], o["OWNERNAME"])
-                tit = "%s - %s %s, %s" % (o["INCIDENTNAME"], o["OWNERNAME"], o["DISPATCHADDRESS"], o["CALLNOTES"])
+                sub = "%s - %s" % (o.INCIDENTNAME, o.OWNERNAME)
+                tit = "%s - %s %s, %s" % (o.INCIDENTNAME, o.OWNERNAME, o.DISPATCHADDRESS, o.CALLNOTES)
                 events.append({ 
                     "title": sub, 
                     "allDay": False, 
-                    "start": o["FOLLOWUPDATETIME"], 
+                    "start": o.FOLLOWUPDATETIME, 
                     "tooltip": tit, 
                     "icon": "call",
-                    "link": "incident?id=%s" % o["ACID"] })
+                    "link": "incident?id=%s" % o.ACID })
         if "r" in ev and self.checkb(asm3.users.VIEW_TRANSPORT):
             for r in asm3.movement.get_transport_two_dates(dbo, start, end):
-                sub = "%s - %s" % (r["ANIMALNAME"], r["SHELTERCODE"])
-                tit = "%s %s, %s - %s :: %s, %s" % (r["ANIMALNAME"], r["SHELTERCODE"], r["DRIVEROWNERNAME"], r["PICKUPOWNERADDRESS"], r["DROPOFFOWNERADDRESS"], r["COMMENTS"])
+                sub = "%s - %s" % (r.ANIMALNAME, r.SHELTERCODE)
+                tit = "%s %s, %s - %s :: %s, %s" % (r.ANIMALNAME, r.SHELTERCODE, r.DRIVEROWNERNAME, r.PICKUPOWNERADDRESS, r.DROPOFFOWNERADDRESS, r.COMMENTS)
                 allday = False
-                if r["PICKUPDATETIME"].hour == 0 and r["PICKUPDATETIME"].minute == 0:
+                if r.PICKUPDATETIME.hour == 0 and r.PICKUPDATETIME.minute == 0:
                     allday = True
                 events.append({ 
                     "title": sub, 
                     "allDay": allday, 
-                    "start": r["PICKUPDATETIME"], 
-                    "end": r["DROPOFFDATETIME"],
+                    "start": r.PICKUPDATETIME, 
+                    "end": r.DROPOFFDATETIME,
                     "tooltip": tit, 
                     "icon": "transport",
-                    "link": "animal_transport?id=%s" % r["ANIMALID"]})
+                    "link": "animal_transport?id=%s" % r.ANIMALID})
         if "l" in ev and self.checkb(asm3.users.VIEW_TRAPLOAN):
             for l in asm3.animalcontrol.get_traploan_two_dates(dbo, start, end):
-                sub = "%s - %s" % (l["TRAPTYPENAME"], l["OWNERNAME"])
-                tit = "%s - %s %s, %s" % (l["TRAPTYPENAME"], l["OWNERNAME"], l["TRAPNUMBER"], l["COMMENTS"])
+                sub = "%s - %s" % (l.TRAPTYPENAME, l.OWNERNAME)
+                tit = "%s - %s %s, %s" % (l.TRAPTYPENAME, l.OWNERNAME, l.TRAPNUMBER, l.COMMENTS)
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
-                    "start": l["RETURNDUEDATE"], 
+                    "start": l.RETURNDUEDATE, 
                     "tooltip": tit, 
                     "icon": "traploan",
-                    "link": "person_traploan?id=%s" % l["OWNERID"]})
+                    "link": "person_traploan?id=%s" % l.OWNERID})
         asm3.al.debug("calendarview found %d events (%s->%s)" % (len(events), start, end), "code.calendarview", dbo)
         self.content_type("application/json")
         return asm3.utils.json(events)

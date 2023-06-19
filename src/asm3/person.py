@@ -246,6 +246,7 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM media me WHERE me.LinkID = o.ID AND me.LinkTypeID = ?) AS media, " \
         "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = o.ID AND di.LinkType = ?) AS diary, " \
         "(SELECT COUNT(*) FROM adoption ad WHERE ad.OwnerID = o.ID) AS movements, " \
+        "(SELECT COUNT(*) FROM animalboarding ab WHERE ab.OwnerID = o.ID) AS boarding, " \
         "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.OwnerID = o.ID) AS clinic, " \
         "(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = ?) AS logs, " \
         "(SELECT COUNT(*) FROM ownerdonation od WHERE od.OwnerID = o.ID) AS donations, " \

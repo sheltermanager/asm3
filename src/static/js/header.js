@@ -80,7 +80,8 @@ header = {
         58: ["move_book_soft_release", "", _("Soft release book")],
         59: ["event_find", "asm-icon-event-find", _("Find Event")],
         60: ["event_new", "asm-icon-event-add", _("Add a new event")],
-        61: ["animal_observations", "", _("Daily Observations")]
+        61: ["animal_observations", "", _("Daily Observations")],
+        62: ["boarding", "", _("Boarding book")]
     },
 
     show_error: function(text, duration) {
@@ -264,6 +265,10 @@ header = {
             // If lost and found is disabled, hide menu entries for it
             if (config.bool("DisableLostAndFound")) {
                 $(".taglostfound").hide();  
+            }
+            // If boarding is disabled, hide menu entries for it
+            if (config.bool("DisableBoarding")) {
+                $(".tagboarding").hide();
             }
             // If clinic is disabled, hide menu entries for it
             if (config.bool("DisableClinic")) {

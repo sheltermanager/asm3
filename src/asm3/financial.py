@@ -476,7 +476,7 @@ def get_boarding(dbo, flt = "active", sort = ASCENDING):
     order = "InDateTime DESC"
     if sort == ASCENDING:
         order = "InDateTime"
-    where = "InDateTime >= %s AND OutDateTime <= %s" % ( dbo.sql_today(), dbo.sql_today() )
+    where = "InDateTime <= %s AND OutDateTime >= %s" % ( dbo.sql_today(), dbo.sql_today() )
     if flt.startswith("m"):
         cutoff = dbo.today(offset = -1 * asm3.utils.atoi(flt))
         where = "InDateTime >= %s AND InDateTime <= %s" % ( dbo.sql_date(cutoff), dbo.sql_today() )
@@ -485,6 +485,14 @@ def get_boarding(dbo, flt = "active", sort = ASCENDING):
         where = "InDateTime > %s AND InDateTime <= %s" % ( dbo.sql_today(), dbo.sql_date(cutoff) )
     return dbo.query(get_boarding_query(dbo) + \
         "WHERE %s ORDER BY %s" % ( where, order))
+
+def get_boarding_due_two_dates(dbo, start, end):
+    """
+    Returns a recordset of boarding records that are active between two dates
+    """
+    return dbo.query(get_boarding_query(dbo) + \
+        "WHERE ab.InDateTime >= ? AND ab.InDateTime <= ? " \
+        "ORDER BY ab.InDateTime DESC", (start, end))
 
 def get_animal_boarding(dbo, aid):
     """
@@ -1316,6 +1324,8 @@ def insert_boarding_from_form(dbo, username, post):
         "Comments":         post["comments"]
     }, username)
 
+    asm3.animal.update_animal_status(dbo, post.integer("animal"))
+
 def update_boarding_from_form(dbo, username, post):
     """
     Updates a boarding record from posted data 
@@ -1339,11 +1349,15 @@ def update_boarding_from_form(dbo, username, post):
         "Comments":         post["comments"]
     }, username)
 
-def delete_boarding(dbo, username, cid):
+    asm3.animal.update_animal_status(dbo, post.integer("animal"))
+
+def delete_boarding(dbo, username, bid):
     """
     Deletes a boarding record
     """
-    dbo.delete("animalboarding", cid, username)
+    animalid = dbo.query("SELECT AnimalID FROM animalboarding WHERE ID=?", [bid])
+    dbo.delete("animalboarding", bid, username)
+    asm3.animal.update_animal_status(dbo, animalid)
 
 def insert_citation_from_form(dbo, username, post):
     """

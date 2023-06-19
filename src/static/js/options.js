@@ -1523,6 +1523,7 @@ $(function() {
                 '<tr><td>',
                 '<p class="asm-header">' + _("System") + '</p>',
                 '<p>',
+                //'<input data="DisableBoarding" id="disableboarding" class="asm-checkbox" type="checkbox" /> <label for="disableboarding">' + _("Remove boarding functionality from screens and menus") + '</label><br />',
                 '<input data="DisableClinic" id="disableclinic" class="asm-checkbox" type="checkbox" /> <label for="disableclinic">' + _("Remove clinic functionality from screens and menus") + '</label><br />',
                 '<input data="DisableMovements" id="disablemovements" class="asm-checkbox" type="checkbox" /> <label for="disablemovements">' + _("Remove move menu and the movements tab from animal and person screens") + '</label><br />',
                 '<input data="DisableRetailer" id="disableretailer" class="asm-checkbox" type="checkbox" /> <label for="disableretailer">' + _("Remove retailer functionality from the movement screens and menus") + '</label><br />',

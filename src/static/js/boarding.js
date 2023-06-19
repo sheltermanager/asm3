@@ -6,6 +6,9 @@ $(function() {
 
     const boarding = {
 
+        lastanimal: null,
+        lastperson: null,
+
         model: function() {
             const dialog = {
                 add_title: _("Add Boarding"),
@@ -43,7 +46,6 @@ $(function() {
                             }
                             catch(err) {
                                 log.error(err, err);
-                                tableform.dialog_error(response);
                                 tableform.dialog_enable_buttons();
                             }
                         },
@@ -61,7 +63,12 @@ $(function() {
                     //return !row.DATECOMPLETED && format.date_js(row.DIARYDATETIME) < common.today_no_time();
                 },
                 columns: [
-                    { field: "ID", display: _("Number") },
+                    { field: "ID", display: _("Number"), formatter: function (row) { 
+                        return "<span style=\"white-space: nowrap\">" +
+                            "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
+                            "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">" + format.padleft(row.ID, 6) + "</a>" +
+                            "</span>";
+                    }},
                     { field: "INDATETIME", display: _("Check In"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "desc" },
                     { field: "OUTDATETIME", display: _("Check Out"), formatter: tableform.format_datetime },
                     { field: "PERSON", display: _("Person"),
@@ -108,9 +115,9 @@ $(function() {
                     } 
                 },
                 { id: "filter", type: "dropdownfilter", 
-                    options: [ "active|" + _("Active boarders"),
-                        "m90|" + _("Recent boarders"),
-                        "p90|" + _("Future boarders")
+                    options: [ "active|" + _("Active"),
+                        "m90|" + _("Last 3 months"),
+                        "p90|" + _("Next 3 months")
                         ],
                     hideif: function() {
                         return controller.name == "animal_boarding" || controller.name == "person_boarding";
@@ -136,12 +143,32 @@ $(function() {
             if (controller.animal) {
                 row.ANIMALNAME = controller.animal.ANIMALNAME;
                 row.SHELTERCODE = controller.animal.SHELTERCODE;
+                row.SHORTCODE = controller.animal.SHORTCODE;
                 row.WEBSITEMEDIANAME = controller.animal.WEBSITEMEDIANAME;
             }
             else if (boarding.lastanimal) {
                 row.ANIMALNAME = boarding.lastanimal.ANIMALNAME;
                 row.SHELTERCODE = boarding.lastanimal.SHELTERCODE;
+                row.SHORTCODE = boarding.lastanimal.SHORTCODE;
                 row.WEBSITEMEDIANAME = boarding.lastanimal.WEBSITEMEDIANAME;
+            }
+            if (controller.person) {
+                row.OWNERCODE = controller.person.OWNERCODE;
+                row.OWNERNAME = controller.person.OWNERNAME;
+                row.OWNERADDRESS = controller.person.OWNERADDRESS;
+                row.EMAILADDRESS = controller.person.EMAILADDRESS;
+                row.HOMETELEPHONE = controller.person.HOMETELEPHONE;
+                row.WORKTELEPHONE = controller.person.WORKTELEPHONE;
+                row.MOBILETELEPHONE = controller.person.MOBILETELEPHONE;
+            }
+            else if (boarding.lastperson) {
+                row.OWNERCODE = boarding.lastperson.OWNERCODE;
+                row.OWNERNAME = boarding.lastperson.OWNERNAME;
+                row.OWNERADDRESS = boarding.lastperson.OWNERADDRESS;
+                row.EMAILADDRESS = boarding.lastperson.EMAILADDRESS;
+                row.HOMETELEPHONE = boarding.lastperson.HOMETELEPHONE;
+                row.WORKTELEPHONE = boarding.lastperson.WORKTELEPHONE;
+                row.MOBILETELEPHONE = boarding.lastperson.MOBILETELEPHONE;
             }
             row.SHELTERLOCATIONNAME = common.get_field(controller.internallocations, row.SHELTERLOCATION, "LOCATIONNAME");
         },
@@ -171,6 +198,33 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
             $("#location").change(this.location_change);
+
+            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
+                boarding.lastanimal = rec;
+                // if person is not set, load from the current owner if animal has one
+                if ($("#person").val() == "0" && rec.OWNERID) {
+                    $("#person").val(rec.OWNERID);
+                    $("#person").personchooser("loadbyid", rec.OWNERID);
+                }
+            });
+
+            $("#animal").animalchooser().bind("animalchooserloaded", function(event, rec) {
+                boarding.lastanimal = rec;
+                // if person is not set, load from the current owner if animal has one
+                if ($("#person").val() == "0" && rec.OWNERID) {
+                    $("#person").val(rec.OWNERID);
+                    $("#person").personchooser("loadbyid", rec.OWNERID);
+                }
+            });
+
+            $("#person").personchooser().bind("personchooserchange", function(event, rec) {
+                boarding.lastperson = rec;
+            });
+
+            $("#person").personchooser().bind("personchooserloaded", function(event, rec) {
+                boarding.lastperson = rec;
+            });
+
         },
 
         sync: function() {
@@ -188,17 +242,35 @@ $(function() {
         new_boarding: function() {
             tableform.dialog_show_add(boarding.dialog, {
                 onadd: async function() {
-                    let response = await tableform.fields_post(boarding.dialog.fields, "mode=create", "boarding");
-                    let row = {};
-                    row.ID = response;
-                    tableform.fields_update_row(boarding.dialog.fields, row);
-                    boarding.set_extra_fields(row);
-                    controller.rows.push(row);
-                    tableform.table_update(boarding.table);
-                    tableform.dialog_close();
+                    try {
+                        let response = await tableform.fields_post(boarding.dialog.fields, "mode=create", "boarding");
+                        let row = {};
+                        row.ID = response;
+                        tableform.fields_update_row(boarding.dialog.fields, row);
+                        boarding.set_extra_fields(row);
+                        controller.rows.push(row);
+                        tableform.table_update(boarding.table);
+                        tableform.dialog_close();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();
+                    }
                 },
                 onload: function() {
                     tableform.dialog_enable_buttons();
+                    $("#animal").animalchooser("clear");
+                    $("#person").personchooser("clear");
+                    if (controller.animal) {
+                        $("#animal").animalchooser("loadbyid", controller.animal.ID);
+                    }
+                    if (controller.person) {
+                        $("#person").personchooser("loadbyid", controller.person.ID);
+                    }
+                    $("#indate").datepicker("setDate", new Date());
+                    $("#outdate").datepicker("setDate", new Date());
+                    $("#intime").val("00:00");
+                    $("#outtime").val("00:00");
                     boarding.location_change();
                 }
             });
@@ -208,6 +280,8 @@ $(function() {
             tableform.dialog_destroy();
             common.widget_destroy("#animal");
             common.widget_destroy("#person");
+            boarding.lastanimal = null;
+            boarding.lastperson = null;
         },
 
         name: "boarding",
