@@ -333,7 +333,7 @@ def update_report_from_form(dbo, username, post):
         "OmitCriteria":         post.boolean("omitcriteria")
     }
     # If the name or category was changed, clear any revision number
-    if prev.TITLE != post["title"] or prev.CATEGORY != post["category"]: values["Revision"] = 0
+    if prev is not None and (prev.TITLE != post["title"] or prev.CATEGORY != post["category"]): values["Revision"] = 0
     dbo.update("customreport", reportid, values, username, setRecordVersion=False)
 
     dbo.delete("customreportrole", "ReportID=%d" % reportid)
