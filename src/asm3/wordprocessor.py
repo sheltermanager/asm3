@@ -220,7 +220,7 @@ def animal_tags_publisher(dbo, a, includeAdditional=True):
 
 def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=True, includeDonations=True, \
         includeFutureOwner=True, includeIsVaccinated=True, includeLitterMates=True, includeLogs=True, \
-        includeMedical=True, includeTransport=True):
+        includeLicence=True, includeMedical=True, includeTransport=True):
     """
     Generates a list of tags from an animal result (the deep type from calling asm3.animal.get_animal)
     """
@@ -603,6 +603,13 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
     # Is vaccinated indicator
     if includeIsVaccinated:    
         tags["ANIMALISVACCINATED"] = asm3.utils.iif(asm3.medical.get_vaccinated(dbo, a["ID"]), _("Yes", l), _("No", l))
+
+    # Last licence number
+    if includeLicence:
+        licences = asm3.financial.get_animal_licences(dbo, a["ID"], asm3.financial.DESCENDING)
+        if len(licences) > 0:
+            tags["LICENCENUMBER"] = licences[0]["LICENCENUMBER"]
+            tags["LICENSENUMBER"] = licences[0]["LICENCENUMBER"]
 
     if includeMedical:
         iic = asm3.configuration.include_incomplete_medical_doc(dbo)
@@ -1994,7 +2001,7 @@ def generate_licence_doc(dbo, templateid, licenceid, username):
         raise asm3.utils.ASMValidationError("%d is not a valid licence ID" % licenceid)
     tags = person_tags(dbo, asm3.person.get_person(dbo, l.OWNERID))
     if l.ANIMALID is not None and l.ANIMALID != 0:
-        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, l.ANIMALID)))
+        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, l.ANIMALID), includeLicence=False))
     tags = append_tags(tags, licence_tags(dbo, l))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)

@@ -162,6 +162,8 @@ BondedAnimal2Code
     The code of the second animal this animal is bonded to
 Fee
     The animal's adoption fee if you are using per-animal adoption fees
+LicenceNumber / LicenseNumber
+    The latest licence number on file for this animal from the licence tab
 Microchipped
     "Yes" if the animal has been microchipped 
 MicrochipNumber
