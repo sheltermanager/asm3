@@ -36,6 +36,7 @@ $(function() {
                         onchange: async function() {
                             try {
                                 tableform.fields_update_row(dialog.fields, row);
+                                boarding.set_extra_fields(row);
                                 await tableform.fields_post(dialog.fields, "mode=update&boardingid=" + row.ID, "boarding");
                                 tableform.table_update(table);
                                 tableform.dialog_close();
@@ -132,7 +133,17 @@ $(function() {
         },
 
         set_extra_fields: function(row) {
-            // TODO: set SHELTERLOCATIONNAME
+            if (controller.animal) {
+                row.ANIMALNAME = controller.animal.ANIMALNAME;
+                row.SHELTERCODE = controller.animal.SHELTERCODE;
+                row.WEBSITEMEDIANAME = controller.animal.WEBSITEMEDIANAME;
+            }
+            else if (boarding.lastanimal) {
+                row.ANIMALNAME = boarding.lastanimal.ANIMALNAME;
+                row.SHELTERCODE = boarding.lastanimal.SHELTERCODE;
+                row.WEBSITEMEDIANAME = boarding.lastanimal.WEBSITEMEDIANAME;
+            }
+            row.SHELTERLOCATIONNAME = common.get_field(controller.internallocations, row.SHELTERLOCATION, "LOCATIONNAME");
         },
 
         render: function() {

@@ -135,6 +135,7 @@ DEFAULTS = {
     "DefaultTrialLength": "30",
     "DiaryCompleteOnDeath": "Yes",
     "DisableAnimalControl": "No",
+    "DisableBoarding": "Yes",
     "DisableClinic": "No",
     "DisableEntryHistory": "Yes",
     "DisableEvents": "Yes",

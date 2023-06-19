@@ -1677,6 +1677,28 @@ class animal(JSONEndpoint):
         self.check(asm3.users.CHANGE_MEDIA)
         asm3.animal.update_preferred_web_media_notes(o.dbo, o.user, o.post.integer("id"), o.post["comments"])
 
+class animal_boarding(JSONEndpoint):
+    url = "animal_boarding"
+    js_module = "boarding"
+    get_permissions = asm3.users.VIEW_BOARDING
+
+    def controller(self, o):
+        dbo = o.dbo
+        animalid = o.post.integer("id")
+        a = asm3.animal.get_animal(dbo, animalid)
+        if a is None: self.notfound()
+        self.check_animal(a)
+        rows = asm3.financial.get_animal_boarding(dbo, animalid)
+        asm3.al.debug("got %d animal boarding records" % (len(rows)), "code.animal_boarding", dbo)
+        return {
+            "name": "animal_boarding",
+            "animal": a,
+            "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "rows": rows,
+            "templates": asm3.template.get_document_templates(dbo, "boarding"),
+            "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0]
+        }
+
 class animal_bulk(JSONEndpoint):
     url = "animal_bulk"
     get_permissions = asm3.users.CHANGE_ANIMAL
@@ -2253,12 +2275,13 @@ class boarding(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        boarding = asm3.financial.get_boarding(dbo, o.post["filter"])
-        asm3.al.debug("got %d boarding records" % (len(boarding)), "code.boarding", dbo)
+        rows = asm3.financial.get_boarding(dbo, o.post["filter"])
+        asm3.al.debug("got %d boarding records" % (len(rows)), "code.boarding", dbo)
         return {
             "name": "boarding",
             "internallocations": asm3.lookups.get_internal_locations(dbo),
-            "rows": boarding
+            "rows": rows,
+            "templates": asm3.template.get_document_templates(dbo, "boarding")
         }
 
     def post_create(self, o):
@@ -5545,6 +5568,26 @@ class person(JSONEndpoint):
         self.check(asm3.users.MERGE_PERSON)
         asm3.person.merge_person(o.dbo, o.user, o.post.integer("personid"), o.post.integer("mergepersonid"))
 
+class person_boarding(JSONEndpoint):
+    url = "person_boarding"
+    js_module = "boarding"
+    get_permissions = asm3.users.VIEW_BOARDING
+
+    def controller(self, o):
+        dbo = o.dbo
+        p = asm3.person.get_person(dbo, o.post.integer("id"))
+        if p is None: self.notfound()
+        rows = asm3.financial.get_person_boarding(dbo, p.ID)
+        asm3.al.debug("got %d person boarding records" % (len(rows)), "code.person_boarding", dbo)
+        return {
+            "name": "person_boarding",
+            "person": p,
+            "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "rows": rows,
+            "templates": asm3.template.get_document_templates(dbo, "boarding"),
+            "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0]
+        }
+
 class person_citations(JSONEndpoint):
     url = "person_citations"
     js_module = "citations"
@@ -5560,7 +5603,7 @@ class person_citations(JSONEndpoint):
             "name": "person_citations",
             "rows": citations,
             "person": p,
-            "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
+            "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0],
             "citationtypes": asm3.lookups.get_citation_types(dbo)
         }
 
@@ -6506,6 +6549,10 @@ class sql(JSONEndpoint):
             q = q.replace("$CURRENT_DATE+%s$" % day, dbo.sql_date(d, includeTime=False, wrapParens=False))
         # straight tokens
         q = q.replace("$CURRENT_DATE$", dbo.sql_date(dbo.now(), includeTime=False, wrapParens=False))
+        q = q.replace("$CURRENT_DATE_FDM$", dbo.sql_date(asm3.i18n.first_of_month(dbo.now()), includeTime=False, wrapParens=False))
+        q = q.replace("$CURRENT_DATE_LDM$", dbo.sql_date(asm3.i18n.last_of_month(dbo.now()), includeTime=False, wrapParens=False))
+        q = q.replace("$CURRENT_DATE_FDY$", dbo.sql_date(asm3.i18n.first_of_year(dbo.now()), includeTime=False, wrapParens=False))
+        q = q.replace("$CURRENT_DATE_LDY$", dbo.sql_date(asm3.i18n.last_of_year(dbo.now()), includeTime=False, wrapParens=False))
         q = q.replace("$USER$", user)
         q = q.replace("$DATABASENAME$", dbo.database)
         return q
