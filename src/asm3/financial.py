@@ -1355,7 +1355,7 @@ def delete_boarding(dbo, username, bid):
     """
     Deletes a boarding record
     """
-    animalid = dbo.query("SELECT AnimalID FROM animalboarding WHERE ID=?", [bid])
+    animalid = dbo.query_int("SELECT AnimalID FROM animalboarding WHERE ID=?", [bid])
     dbo.delete("animalboarding", bid, username)
     asm3.animal.update_animal_status(dbo, animalid)
 
