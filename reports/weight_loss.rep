@@ -2,7 +2,7 @@ Weight Loss (shelter animals, last 3)
 ###
 Statistics
 ###
-PostgreSQL/3215 rev01
+PostgreSQL/3215 rev02
 ###
 All shelter animals where the current weight is lower than the last 3 readings.
 ###
@@ -11,7 +11,7 @@ en
 SELECT
 a.ShelterCode, a.AnimalName, a.AnimalAge, 
 t.AnimalType, s.SpeciesName, a.BreedName, sx.Sex, a.DisplayLocation, a.Weight, 
-(SELECT string_agg(Comments, ', ') FROM (SELECT Comments FROM log WHERE LogTypeID=4 AND LinkID=a.ID AND LinkType=0 ORDER BY Date DESC LIMIT 3) dummy) AS Last3
+(SELECT string_agg(TO_CHAR(Date, 'MM/DD/YYYY') || ' ' || Comments, ', ') FROM (SELECT Date, Comments FROM log WHERE LogTypeID=4 AND LinkID=a.ID AND LinkType=0 ORDER BY Date DESC LIMIT 3) dummy) AS Last3
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
