@@ -1,4 +1,4 @@
-Shelter animals who have lost weight (last 3)
+Weight Loss (shelter animals, last 3)
 ###
 Statistics
 ###
@@ -18,7 +18,7 @@ INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN lksex sx ON sx.ID = a.Sex
 WHERE a.Archived = 0 
 AND a.Weight * 3.0 < (SELECT SUM(Weights) FROM (SELECT COALESCE(substring(Comments, '\d+\.?\d*'), '0.0')::numeric AS Weights FROM log WHERE LogTypeID=4 AND LinkID=a.ID AND LinkType=0 ORDER BY Date DESC LIMIT 3) dummy)
-ORDER BY a.AnimalName
+ORDER BY s.SpeciesName, a.DisplayLocation, a.AnimalName
 ###
 $$HEADER
 <table border="1">
