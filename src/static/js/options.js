@@ -1343,6 +1343,7 @@ $(function() {
             return [
                 '<div id="tab-onlineforms">',
                 '<p><label for="autoremoveforms">' + _("Remove incoming forms after") + '</label> <input data="AutoRemoveIncomingFormsDays" id="autoremoveforms" type="text" data-min="7" data-max="56" class="asm-halftextbox asm-textbox asm-numberbox" /> ' + _(" days.") + '<br/>',
+                '<input data="OnlineFormDeleteOnProcess" id="deleteonprocess" class="asm-checkbox" type="checkbox" /> <label for="deleteonprocess">' + _("Remove forms immediately when I process them") + '</label><br/>',
                 '<input data="rc:DontRemoveProcessedForms" id="removeprocessedforms" class="asm-checkbox" type="checkbox" /> <label for="removeprocessedforms">' + _("Remove processed forms when I leave the incoming forms screens") + '</label><br/>',
                 '<input data="AutoHashProcessedForms" id="hashprocessedforms" class="asm-checkbox" type="checkbox" /> <label for="hashprocessedforms">' + _("When storing processed forms as media, apply tamper proofing and make them read only") + '</label><br/>',
                 '</p>',

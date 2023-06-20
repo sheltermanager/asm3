@@ -260,6 +260,7 @@ DEFAULTS = {
     "OnlineFormSpamHoneyTrap": "Yes",
     "OnlineFormSpamUACheck": "No",
     "OnlineFormSpamFirstnameMixCase": "Yes",
+    "OnlineFormDeleteOnProcess": "Yes",
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
     "OrganisationTelephone": "Telephone",
@@ -1121,6 +1122,9 @@ def multi_site_enabled(dbo):
 
 def non_shelter_type(dbo):
     return cint(dbo, "AFNonShelterType", 40)
+
+def onlineform_delete_on_process(dbo):
+    return cboolean(dbo, "OnlineFormDeleteOnProcess", DEFAULTS["OnlineFormDeleteOnProcess"] == "Yes")
 
 def onlineform_spam_honeytrap(dbo):
     return cboolean(dbo, "OnlineFormSpamHoneyTrap", DEFAULTS["OnlineFormSpamHoneyTrap"] == "Yes")
