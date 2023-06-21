@@ -34,7 +34,8 @@ class PetFinderPublisher(FTPPublisher):
             "FROM animal a " \
             "INNER JOIN breed b1 ON a.BreedID = b1.ID " \
             "INNER JOIN breed b2 ON a.Breed2ID = b2.ID " \
-            "INNER JOIN species s ON a.SpeciesID = s.ID "
+            "INNER JOIN species s ON a.SpeciesID = s.ID " \
+            "INNER JOIN entryreason er ON a.EntryReasonID = er.ID "
 
     def pfDate(self, d):
         """ Returns a CSV entry for a date in YYYY-MM-DD """
