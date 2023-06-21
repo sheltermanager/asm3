@@ -3,7 +3,7 @@ import asm3.configuration
 import asm3.i18n
 import asm3.medical
 
-from .base import FTPPublisher, is_animal_adoptable
+from .base import FTPPublisher
 from asm3.sitedefs import PETFINDER_FTP_HOST, PETFINDER_SEND_PHOTOS_BY_FTP
 
 import os
