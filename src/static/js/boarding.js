@@ -16,7 +16,7 @@ $(function() {
                 helper_text: "",
                 close_on_ok: false,
                 columns: 1,
-                width: 500,
+                width: 550,
                 fields: [
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal", validation: "notzero" },
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
@@ -96,6 +96,12 @@ $(function() {
                         formatter: function(row) {
                             return row.SHELTERLOCATIONNAME + ' <span class="asm-search-locationunit">' + row.SHELTERLOCATIONUNIT + '</span>';
                         }},
+                    { field: "DAILYFEE", display: _("Fee"),
+                        formatter: function(row) {
+                            return _("{2} ({0} days at {1})").replace("{0}", row.DAYS)
+                                .replace("{1}", format.currency(row.DAILYFEE))
+                                .replace("{2}", format.currency(row.DAILYFEE * row.DAYS));
+                        }},
                     { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]
             };
@@ -113,6 +119,13 @@ $(function() {
                         tableform.table_remove_selected_from_json(table, controller.rows);
                         tableform.table_update(table);
                     } 
+                },
+                { id: "payment", text: _("Create Payment"), icon: "donation", enabled: "one", perm: "oaod", 
+                    click: async function() {
+                        let row = tableform.table_selected_row(table);
+                        await common.ajax_post("boarding", "mode=payment&id=" + row.ID);
+                        common.route("person_donations?id=" + row.OWNERID);
+                    }
                 },
                 { id: "filter", type: "dropdownfilter", 
                     options: [ "active|" + _("Active"),
@@ -271,6 +284,7 @@ $(function() {
                     $("#outdate").datepicker("setDate", new Date());
                     $("#intime").val("00:00");
                     $("#outtime").val("00:00");
+                    $("#dailyfee").currency("value", config.integer("BoardingDailyFee"));
                     boarding.location_change();
                 }
             });

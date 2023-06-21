@@ -85,6 +85,7 @@ $(function() {
                 '<li><a href="#tab-agegroups">' + _("Age Groups") + '</a></li>',
                 '<li><a href="#tab-animalcodes">' + _("Animal Codes") + '</a></li>',
                 '<li><a href="#tab-animalemblems">' + _("Animal Emblems") + '</a></li>',
+                '<li><a href="#tab-boarding">' + _("Boarding") + '</a></li>',
                 '<li><a href="#tab-checkout">' + _("Checkout") + '</a></li>',
                 '<li><a href="#tab-costs">' + _("Costs") + '</a></li>',
                 '<li><a href="#tab-daily-observations">' + _("Daily Observations") + '</a></li>',
@@ -605,6 +606,29 @@ $(function() {
             ].join("\n");
         },
 
+        render_boarding: function() {
+            return [
+                '<div id="tab-boarding">',
+                '<table>',
+                '<tr>',
+                '<td><label for="boardingdailyfee">' + _("Default daily boarding fee") + '</label>',
+                '</td>',
+                '<td><input data="BoardingDailyFee" id="boardingdailyfee" class="asm-currencybox asm-textbox" type="text" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="boardingpaytype">' + _("Boarding payment type") + '</label>',
+                '<span id="callout-boardingpaytype" class="asm-callout">' + _("The payment type used when creating payments from boarding records") + '</span>',
+                '</td>',
+                '<td><select data="BoardingPaymentType" id="boardingpaytype" class="asm-selectbox">',
+                html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_checkout: function() {
             return [
                 '<div id="tab-checkout">',
@@ -681,11 +705,15 @@ $(function() {
                 '<div id="tab-costs">',
                 '<table>',
                 '<tr>',
-                '<td><label for="dailyboardingcost">' + _("Default daily boarding cost") + '</label></td>',
+                '<td><label for="dailyboardingcost">' + _("Default daily boarding cost") + '</label>',
+                '<span id="callout-dbc" class="asm-callout">' + _("The daily cost for every day a shelter animal is in care") + '</span>',
+                '</td>',
                 '<td><input data="DefaultDailyBoardingCost" id="dailyboardingcost" class="asm-currencybox asm-textbox" type="text" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="costtype">' + _("Boarding cost type") + '</label></td>',
+                '<td><label for="costtype">' + _("Boarding cost type") + '</label>',
+                '<span id="callout-bcosttype" class="asm-callout">' + _("The cost type used when creating a cost record of the total daily boarding cost for adopted animals") + '</span>',
+                '</td>',
                 '<td><select data="BoardingCostType" id="costtype" class="asm-selectbox">',
                 html.list_to_options(controller.costtypes, "ID", "COSTTYPENAME"),
                 '</select>',
@@ -1526,7 +1554,7 @@ $(function() {
                 '<tr><td>',
                 '<p class="asm-header">' + _("System") + '</p>',
                 '<p>',
-                //'<input data="DisableBoarding" id="disableboarding" class="asm-checkbox" type="checkbox" /> <label for="disableboarding">' + _("Remove boarding functionality from screens and menus") + '</label><br />',
+                '<input data="DisableBoarding" id="disableboarding" class="asm-checkbox" type="checkbox" /> <label for="disableboarding">' + _("Remove boarding functionality from screens and menus") + '</label><br />',
                 '<input data="DisableClinic" id="disableclinic" class="asm-checkbox" type="checkbox" /> <label for="disableclinic">' + _("Remove clinic functionality from screens and menus") + '</label><br />',
                 '<input data="DisableMovements" id="disablemovements" class="asm-checkbox" type="checkbox" /> <label for="disablemovements">' + _("Remove move menu and the movements tab from animal and person screens") + '</label><br />',
                 '<input data="DisableRetailer" id="disableretailer" class="asm-checkbox" type="checkbox" /> <label for="disableretailer">' + _("Remove retailer functionality from the movement screens and menus") + '</label><br />',
@@ -1698,6 +1726,7 @@ $(function() {
                 this.render_agegroups(),
                 this.render_animalcodes(),
                 this.render_animalemblems(),
+                this.render_boarding(),
                 this.render_checkout(),
                 this.render_costs(),
                 this.render_daily_observations(),

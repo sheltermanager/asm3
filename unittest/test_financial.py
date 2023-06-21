@@ -110,6 +110,19 @@ class TestFinancial(unittest.TestCase):
         aid = asm3.financial.insert_account_from_donationtype(base.get_dbo(), "Test", "Test")
         asm3.financial.delete_account(base.get_dbo(), "test", aid)
 
+    def test_insert_donation_from_boarding(self):
+        data = {
+            "person": "1",
+            "animal": "1",
+            "indate": base.today_display(),
+            "outdate": base.today_display(),
+            "dailyfee": "1000"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        bid = asm3.financial.insert_boarding_from_form(base.get_dbo(), "test", post)
+        asm3.financial.insert_donation_from_boarding(base.get_dbo(), "test", bid)
+        asm3.financial.delete_boarding(base.get_dbo(), "test", bid)
+
     def test_account_crud(self):
         base.execute("DELETE FROM accounts WHERE Code LIKE 'Test%'")
         data = {
@@ -160,9 +173,9 @@ class TestFinancial(unittest.TestCase):
             "dailyfee": "1000"
         }
         post = asm3.utils.PostedData(data, "en")
-        cid = asm3.financial.insert_boarding_from_form(base.get_dbo(), "test", post)
+        bid = asm3.financial.insert_boarding_from_form(base.get_dbo(), "test", post)
         asm3.financial.update_boarding_from_form(base.get_dbo(), "test", post)
-        asm3.financial.delete_boarding(base.get_dbo(), "test", cid)
+        asm3.financial.delete_boarding(base.get_dbo(), "test", bid)
 
     def test_citation_crud(self):
         data = {

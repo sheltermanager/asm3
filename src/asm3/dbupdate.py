@@ -2272,6 +2272,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2moneyaccount("donationtype", "DonationName", 4, _("Entry Donation", l), 4)
     sql += lookup2moneyaccount("donationtype", "DonationName", 5, _("Animal Sponsorship", l), 5)
     sql += lookup2moneyaccount("donationtype", "DonationName", 6, _("In-Kind Donation", l))
+    sql += lookup2moneyaccount("donationtype", "DonationName", 7, _("Boarding Fee", l))
     sql += lookup2("entryreason", "ReasonName", 1, _("Marriage/Relationship split", l))
     sql += lookup2("entryreason", "ReasonName", 2, _("Allergies", l))
     sql += lookup2("entryreason", "ReasonName", 3, _("Biting", l))

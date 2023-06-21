@@ -106,6 +106,8 @@ DEFAULTS = {
     "Behave5Name": "Unusual Symptoms",
     "Behave5Values": "",
     "BoardingCostType": "1",
+    "BoardingDailyFee": "0",
+    "BoardingPaymentType": "7",
     "CancelReservesOnAdoption": "Yes",
     "CardcomSuccessURL": "https://secure.cardcom.solutions/DealWasSuccessful.aspx",
     "CardcomErrorURL": "https://secure.cardcom.solutions/DealWasUnSuccessful.aspx",
@@ -707,6 +709,9 @@ def avid_overseas_origin_country(dbo):
 def avid_reregistration(dbo):
     return cboolean(dbo, "AvidReRegistration", DEFAULTS["AvidReRegistration"] == "Yes")
 
+def boarding_payment_type(dbo):
+    return cint(dbo, "BoardingPaymentType", int(DEFAULTS["BoardingPaymentType"]))
+
 def buddyid_provider_code(dbo):
     return cstring(dbo, "BuddyIDProviderCode")
 
@@ -841,6 +846,9 @@ def default_media_notes_from_file(dbo):
 
 def default_nonsheltertype(dbo):
     return cint(dbo, "AFNonShelterType", 40)
+
+def default_payment_method(dbo):
+    return cint(dbo, "AFDefaultPaymentMethod", int(DEFAULTS["AFDefaultPaymentMethod"]))
 
 def default_reservation_status(dbo):
     return cint(dbo, "AFDefaultReservationStatus", 1)

@@ -50,9 +50,9 @@ def get_boarding_query(dbo):
         "a.IsQuarantine, a.NonShelterAnimal, a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
         "il.LocationName AS ShelterLocationName " \
         "FROM animalboarding ab " \
-        "INNER JOIN animal a ON a.ID = ab.AnimalID " \
-        "INNER JOIN owner o ON o.ID = ab.OwnerID " \
-        "INNER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN animal a ON a.ID = ab.AnimalID " \
+        "LEFT OUTER JOIN owner o ON o.ID = ab.OwnerID " \
+        "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = ab.ShelterLocation "
 
 def get_citation_query(dbo):
@@ -62,8 +62,8 @@ def get_citation_query(dbo):
         "oc.CreatedBy, oc.CreatedDate, oc.LastChangedBy, oc.LastChangedDate, " \
         "o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName " \
         "FROM ownercitation oc " \
-        "INNER JOIN citationtype ct ON ct.ID = oc.CitationTypeID " \
-        "INNER JOIN owner o ON o.ID = oc.OwnerID " \
+        "LEFT OUTER JOIN citationtype ct ON ct.ID = oc.CitationTypeID " \
+        "LEFT OUTER JOIN owner o ON o.ID = oc.OwnerID " \
         "LEFT OUTER JOIN animalcontrol ac ON ac.ID = oc.AnimalControlID " \
         "LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID " 
 
@@ -126,8 +126,8 @@ def get_licence_query(dbo):
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone " \
         "FROM ownerlicence ol " \
-        "INNER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID " \
-        "INNER JOIN owner o ON o.ID = ol.OwnerID " \
+        "LEFT OUTER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID " \
+        "LEFT OUTER JOIN owner o ON o.ID = ol.OwnerID " \
         "LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID "
 
 def get_voucher_query(dbo):
@@ -136,8 +136,8 @@ def get_voucher_query(dbo):
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.AdditionalFlags, " \
         "a.AnimalName, a.ShelterCode, a.ShortCode " \
         "FROM ownervoucher ov " \
-        "INNER JOIN voucher v ON v.ID = ov.VoucherID " \
-        "INNER JOIN owner o ON o.ID = ov.OwnerID " \
+        "LEFT OUTER JOIN voucher v ON v.ID = ov.VoucherID " \
+        "LEFT OUTER JOIN owner o ON o.ID = ov.OwnerID " \
         "LEFT OUTER JOIN animal a ON ov.AnimalID = a.ID "
 
 def get_account_code(dbo, accountid):
@@ -493,6 +493,12 @@ def get_boarding_due_two_dates(dbo, start, end):
     return dbo.query(get_boarding_query(dbo) + \
         "WHERE ab.InDateTime >= ? AND ab.InDateTime <= ? " \
         "ORDER BY ab.InDateTime DESC", (start, end))
+
+def get_boarding_id(dbo, bid):
+    """
+    Return the boarding record with ID=bid
+    """
+    return dbo.first_row(dbo.query(get_boarding_query(dbo) + " WHERE ab.ID = ?", [bid]))
 
 def get_animal_boarding(dbo, aid):
     """
@@ -859,6 +865,32 @@ def check_create_next_donation(dbo, username, odid):
             "VATAmount":            d.VATAMOUNT,
             "Comments":             d.COMMENTS
         }, username)
+
+def insert_donation_from_boarding(dbo, username, boardingid):
+    """
+    Creates a due payment record from a boarding record
+    """
+    b = get_boarding_id(dbo, boardingid)
+    
+    if b is None:
+        raise asm3.utils.ASMValidationError("Boarding record '%s' not found" % boardingid)
+
+    ptype = asm3.configuration.boarding_payment_type(dbo)
+    if 0 == dbo.query_string("SELECT DonationName FROM donationtype WHERE ID=?", [ptype]):
+        raise asm3.utils.ASMValidationError("Payment type '%s' does not exist" % ptype)
+
+    d = {
+        "person":   str(b.OWNERID),
+        "animal":   str(b.ANIMALID),
+        "type":     str(ptype),
+        "payment":  str(asm3.configuration.default_payment_method(dbo)),
+        "quantity": str(b.DAYS),
+        "unitprice": str(b.DAILYFEE),
+        "amount":   str(b.DAYS * b.DAILYFEE),
+        "due":      asm3.i18n.python2display(dbo.locale, dbo.today())
+    }
+    post = asm3.utils.PostedData(d, dbo.locale)
+    return insert_donation_from_form(dbo, username, post)
 
 def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0):
     """

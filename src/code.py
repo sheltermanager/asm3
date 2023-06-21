@@ -2297,6 +2297,10 @@ class boarding(JSONEndpoint):
         for did in o.post.integer_list("ids"):
             asm3.financial.delete_boarding(o.dbo, o.user, did)
 
+    def post_payment(self, o):
+        self.check(asm3.users.ADD_DONATION)
+        return asm3.financial.insert_donation_from_boarding(o.dbo, o.user, o.post.integer("id"))
+
 class calendarview(JSONEndpoint):
     url = "calendarview"
     get_permissions = asm3.users.VIEW_ANIMAL

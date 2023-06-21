@@ -25,6 +25,9 @@ def get_dbo():
 def execute(sql):
     get_dbo().execute(sql)
 
+def query(sql):
+    return get_dbo().query(sql)
+
 def today():
     return datetime.datetime.today()
 
