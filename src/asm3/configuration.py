@@ -262,7 +262,7 @@ DEFAULTS = {
     "OnlineFormSpamHoneyTrap": "Yes",
     "OnlineFormSpamUACheck": "No",
     "OnlineFormSpamFirstnameMixCase": "Yes",
-    "OnlineFormDeleteOnProcess": "Yes",
+    "OnlineFormDeleteOnProcess": "No",
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
     "OrganisationTelephone": "Telephone",
