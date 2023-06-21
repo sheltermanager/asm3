@@ -28,8 +28,8 @@ class PetFinderPublisher(FTPPublisher):
     def pfAnimalQuery(self):
         return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.BreedID, a.Breed2ID, a.CrossBreed, a.Sex, a.Size, a.DateOfBirth, a.MostRecentEntryDate, a.Fee, " \
             "b1.BreedName AS BreedName1, b2.BreedName AS BreedName2, " \
-            "b1.PetFinderBreed, b2.PetFinderBreed AS PetFinderBreed2, s.PetFinderSpecies, " \
-            "a.AnimalComments, a.AnimalComments AS WebsiteMediaNotes, " \
+            "b1.PetFinderBreed, b2.PetFinderBreed AS PetFinderBreed2, s.PetFinderSpecies, er.EntryReasonName, " \
+            "a.AnimalComments, a.AnimalComments AS WebsiteMediaNotes, a.IsNotAvailableForAdoption, " \
             "a.Neutered, a.IsGoodWithDogs, a.IsGoodWithCats, a.IsGoodWithChildren, a.IsHouseTrained, a.IsCourtesy, a.Declawed, a.CrueltyCase, a.HasSpecialNeeds " \
             "FROM animal a " \
             "INNER JOIN breed b1 ON a.BreedID = b1.ID " \
@@ -71,6 +71,15 @@ class PetFinderPublisher(FTPPublisher):
             return urls[index]
         except IndexError:
             return ""
+
+    def pfRecordIn(self, animals, aid):
+        """
+        Returns true if aid exists in the ID field of all the rows in animals.
+        """
+        for a in animals:
+            if a.ID == aid:
+                return True
+        return False
 
     def run(self):
 
@@ -182,18 +191,21 @@ class PetFinderPublisher(FTPPublisher):
             except Exception as err:
                 self.logError("Failed processing animal: %s, %s" % (str(an["SHELTERCODE"]), err), sys.exc_info())
 
+        # Mark published
+        self.markAnimalsPublished(animals, first=True)
+
         # Is the option to send strays on?
         if asm3.configuration.petfinder_send_strays(self.dbo):
             rows = self.dbo.query("%s WHERE a.Archived=0 AND a.HasPermanentFoster=0 AND a.HasTrialAdoption=0 AND er.ReasonName LIKE '%%Stray%%'" % self.pfAnimalQuery())
             for an in rows:
-                if is_animal_adoptable(self.dbo, an): continue # do not re-send adoptable animals
+                if self.pfRecordIn(animals, an.ID): continue # do not re-send adoptable animals
                 csv.append( self.processAnimal(an, agebands, status = "F", hide_size = hide_size) )
 
         # Is the option to send holds on?
         if asm3.configuration.petfinder_send_holds(self.dbo):
             rows = self.dbo.query("%s WHERE a.Archived=0 AND a.IsHold=1" % self.pfAnimalQuery())
             for an in rows:
-                if is_animal_adoptable(self.dbo, an): continue # do not re-send adoptable animals
+                if self.pfRecordIn(animals, an.ID): continue # do not re-send adoptable animals
                 if an.ENTRYREASONNAME.find("Stray") != -1: continue # we already sent this animal as a stray above
                 csv.append( self.processAnimal(an, agebands, status = "H", hide_size = hide_size ) )
 
@@ -202,9 +214,6 @@ class PetFinderPublisher(FTPPublisher):
             rows = self.dbo.query("%s WHERE a.Archived=1 AND a.ActiveMovementType=1" % self.pfAnimalQuery())
             for an in rows:
                 csv.append( self.processAnimal(an, agebands, status = "X", hide_size = hide_size ) )
-
-        # Mark published
-        self.markAnimalsPublished(animals, first=True)
 
         # Upload the datafile
         self.chdir("..", "import")
