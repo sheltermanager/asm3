@@ -379,6 +379,12 @@ If the animal is no longer adoptable, an error page will be displayed. If you pr
 can create an HTML publishing template called "animalviewnotadoptable" that will display
 instead for animals that can no longer be adopted.
 
+You can also optionally specify a style parameter to choose a template to use other
+than animalview::
+
+    http://localhost:5000/service?method=animal_view&animalid=520&style=animalviewcarousel
+
+
 animal_view_adoptable_js
 ------------------------
 
@@ -583,6 +589,20 @@ adoptable animals to be output in a random order::
     </script>
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
+Style
+^^^^^
+
+You can choose the template that will be passed to the animal_view call when an animal's
+adoptable profile is viewed. By default, this value is "animalview" to use the template
+with that name, but it can be overridden::
+
+    <script>
+    asm3_adoptable_style = "animalviewcarousel";
+    </script>
+    <div id="asm3-adoptables" />
+    <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
+
 
 Extra Content
 ^^^^^^^^^^^^^

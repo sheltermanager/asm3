@@ -860,6 +860,10 @@ Online Forms
 * Remove incoming forms after: Automatically remove forms from the incoming queue
   after this many days.
 
+* Remove forms immediately when I process them: When creating or attaching forms
+  to records in the incoming forms list, delete the form as soon as it is 
+  successfully processed.
+
 * Remove processed forms when I leave the incoming forms screen: When navigating
   away from the incoming forms screen, any forms that have been processed (have
   a link shown in the rightmost column) will be deleted automatically.

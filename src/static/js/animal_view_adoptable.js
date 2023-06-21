@@ -1,6 +1,6 @@
 /*global alert */
 /*global asm3_adoptable_filters, asm3_adoptable_iframe, asm3_adoptable_iframe_height, asm3_adoptable_iframe_bgcolor, asm3_adoptable_iframe_fixed */
-/*global asm3_adoptable_translations, asm3_adoptable_extra, asm3_adoptable_filter, asm3_adoptable_limit, asm3_adoptable_sort */
+/*global asm3_adoptable_translations, asm3_adoptable_extra, asm3_adoptable_filter, asm3_adoptable_limit, asm3_adoptable_sort, asm3_adoptable_style */
 
 // NOTE: This file stands alone and should try for compatibility 
 //       with as many browsers as possible. It also does not use jQuery.
@@ -61,6 +61,11 @@
     var limit = 0;
     if (typeof asm3_adoptable_limit !== 'undefined') {
         limit = asm3_adoptable_limit;
+    }
+
+    var style = "animalview";
+    if (typeof asm3_adoptable_style !== 'undefined') {
+        style = asm3_adoptable_style;
     }
 
     var translate = function(s) {
@@ -161,7 +166,7 @@
         '<div class="asm3-adoptable-item" style="display: inline-block; text-align: center; padding: 5px">',
             '<a target="_blank" ',
                 'class="asm3-adoptable-link" ',
-                'href="{baseurl}/service?account={account}&method=animal_view&animalid={animalid}">',
+                'href="{baseurl}/service?account={account}&method=animal_view&animalid={animalid}&template={style}">',
                 '<div class="{isreservedclass}">',
                     '<img class="asm3-adoptable-thumbnail" ',
                         'alt="{animalname}" ',
@@ -229,6 +234,7 @@
                 sex: spanwrap("sex", translate(item.SEXNAME)),
                 size: spanwrap("size", translate(item.SIZENAME)),
                 species: spanwrap("species", translate(item.SPECIESNAME)),
+                style: style,
                 thumbnail_method: (fullsize_images ? "animal_image" : "animal_thumbnail"),
                 where: ""
             }));
