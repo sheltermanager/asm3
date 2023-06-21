@@ -28,7 +28,7 @@ class PetFinderPublisher(FTPPublisher):
     def pfAnimalQuery(self):
         return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.BreedID, a.Breed2ID, a.CrossBreed, a.Sex, a.Size, a.DateOfBirth, a.MostRecentEntryDate, a.Fee, " \
             "b1.BreedName AS BreedName1, b2.BreedName AS BreedName2, " \
-            "b1.PetFinderBreed, b2.PetFinderBreed AS PetFinderBreed2, s.PetFinderSpecies, er.EntryReasonName, " \
+            "b1.PetFinderBreed, b2.PetFinderBreed AS PetFinderBreed2, s.PetFinderSpecies, er.ReasonName AS EntryReasonName, " \
             "a.AnimalComments, a.AnimalComments AS WebsiteMediaNotes, a.IsNotAvailableForAdoption, " \
             "a.Neutered, a.IsGoodWithDogs, a.IsGoodWithCats, a.IsGoodWithChildren, a.IsHouseTrained, a.IsCourtesy, a.Declawed, a.CrueltyCase, a.HasSpecialNeeds " \
             "FROM animal a " \
