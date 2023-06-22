@@ -1023,10 +1023,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
         elif formdef.autoprocess == AP_CREATEWAITINGLIST:
             create_waitinglist(dbo, "autoprocess", collationid)
         # We only get here if there were no issues processing the form and it's safe to delete it
-        # Only try and delete it if the delete on process option is not on, because if it is
-        # create_XXX will have already deleted the form.
-        if not asm3.configuration.onlineform_delete_on_process(dbo): 
-            delete_onlineformincoming(dbo, "autoprocess", collationid)
+        delete_onlineformincoming(dbo, "autoprocess", collationid)
     except asm3.utils.ASMValidationError as verr:
         asm3.al.error("%s" % verr.getMsg(), "autoprocess", dbo)
     except Exception as err:
@@ -1171,8 +1168,6 @@ def attach_animalbyname(dbo, username, collationid):
     if animalid == 0:
         raise asm3.utils.ASMValidationError(asm3.i18n._("Could not find animal with name '{0}'", l).format(animalname))
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
-    if asm3.configuration.onlineform_delete_on_process(dbo): 
-        delete_onlineformincoming(dbo, username, collationid)
     return (collationid, animalid, asm3.animal.get_animal_namecode(dbo, animalid))
 
 def attach_animal(dbo, username, animalid, collationid):
@@ -1180,16 +1175,12 @@ def attach_animal(dbo, username, animalid, collationid):
     Attaches the form to a specific animal
     """
     asm3.onlineform.attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
-    if asm3.configuration.onlineform_delete_on_process(dbo): 
-        delete_onlineformincoming(dbo, username, collationid)
 
 def attach_person(dbo, username, personid, collationid):
     """
     Attaches the form to a specific person
     """
     asm3.onlineform.attach_form(dbo, username, asm3.media.PERSON, personid, collationid)
-    if asm3.configuration.onlineform_delete_on_process(dbo): 
-        delete_onlineformincoming(dbo, username, collationid)
 
 def create_animal(dbo, username, collationid):
     """
@@ -1262,8 +1253,6 @@ def create_animal(dbo, username, collationid):
         d["internallocation"] = asm3.configuration.default_location(dbo)
         animalid, sheltercode = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
-    if asm3.configuration.onlineform_delete_on_process(dbo): 
-        delete_onlineformincoming(dbo, username, collationid)
     return (collationid, animalid, "%s - %s" % (sheltercode, d["animalname"]), status)
 
 def create_person(dbo, username, collationid):
@@ -1369,8 +1358,6 @@ def create_person(dbo, username, collationid):
             except Exception as err:
                 asm3.al.warn("could not create reservation for %d on %s (%s)" % (personid, v, err), "create_person", dbo)
                 web.ctx.status = "200 OK" # ASMValidationError sets status to 500
-    if asm3.configuration.onlineform_delete_on_process(dbo): 
-        delete_onlineformincoming(dbo, username, collationid)
     return (collationid, personid, personname, status)
 
 def create_animalcontrol(dbo, username, collationid):
@@ -1410,8 +1397,6 @@ def create_animalcontrol(dbo, username, collationid):
     asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, incidentid, "incident")
     attach_form(dbo, username, asm3.media.ANIMALCONTROL, incidentid, collationid)
     display = "%s - %s" % (asm3.utils.padleft(incidentid, 6), asm3.utils.truncate(d["dispatchaddress"], 20))
-    if asm3.configuration.onlineform_delete_on_process(dbo): 
-        delete_onlineformincoming(dbo, username, collationid)
     return (collationid, incidentid, display, status)
 
 def create_lostanimal(dbo, username, collationid):
@@ -1456,8 +1441,6 @@ def create_lostanimal(dbo, username, collationid):
     lostanimalid = asm3.lostfound.insert_lostanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, lostanimalid, "lostanimal")
     attach_form(dbo, username, asm3.media.LOSTANIMAL, lostanimalid, collationid)
-    if asm3.configuration.onlineform_delete_on_process(dbo): 
-        delete_onlineformincoming(dbo, username, collationid)
     return (collationid, lostanimalid, "%s - %s" % (asm3.utils.padleft(lostanimalid, 6), personname), status)
   
 def create_foundanimal(dbo, username, collationid):
@@ -1502,8 +1485,6 @@ def create_foundanimal(dbo, username, collationid):
     foundanimalid = asm3.lostfound.insert_foundanimal_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, foundanimalid, "foundanimal")
     attach_form(dbo, username, asm3.media.FOUNDANIMAL, foundanimalid, collationid)
-    if asm3.configuration.onlineform_delete_on_process(dbo): 
-        delete_onlineformincoming(dbo, username, collationid)
     return (collationid, foundanimalid, "%s - %s" % (asm3.utils.padleft(foundanimalid, 6), personname), status)
 
 def create_transport(dbo, username, collationid):
@@ -1555,8 +1536,6 @@ def create_transport(dbo, username, collationid):
     # Create the transport
     asm3.movement.insert_transport_from_form(dbo, username, asm3.utils.PostedData(d, dbo.locale))
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
-    if asm3.configuration.onlineform_delete_on_process(dbo): 
-        delete_onlineformincoming(dbo, username, collationid)
     return (collationid, animalid, asm3.animal.get_animal_namecode(dbo, animalid))
 
 def create_waitinglist(dbo, username, collationid):
@@ -1588,8 +1567,6 @@ def create_waitinglist(dbo, username, collationid):
     wlid = asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
     asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, wlid, "waitinglist")
     attach_form(dbo, username, asm3.media.WAITINGLIST, wlid, collationid)
-    if asm3.configuration.onlineform_delete_on_process(dbo): 
-        delete_onlineformincoming(dbo, username, collationid)
     return (collationid, wlid, "%s - %s" % (asm3.utils.padleft(wlid, 6), personname), status)
 
 def auto_remove_old_incoming_forms(dbo):
