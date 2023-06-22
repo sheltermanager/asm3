@@ -41,7 +41,7 @@ VERSIONS = (
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
-    34706
+    34706, 34707
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -5952,4 +5952,27 @@ def update_34706(dbo):
     ])
     dbo.execute_dbupdate( dbo.ddl_add_table("lkboardingtype", fields) )
     dbo.execute_dbupdate("INSERT INTO lkboardingtype VALUES (1, ?, '', 0, 0)", [ _("Boarding", l) ])
+
+def update_34707(dbo):
+    # Add the new animalviewcarousel and slideshow HTML templates
+    head = asm3.utils.read_text_file(dbo.installpath + "media/internet/animalviewcarousel/head.html")
+    foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/animalviewcarousel/foot.html")
+    body = asm3.utils.read_text_file(dbo.installpath + "media/internet/animalviewcarousel/body.html")
+    dbo.insert("templatehtml", {
+        "Name":     "animalviewcarousel",
+        "*Header":  head,
+        "*Body":    body,
+        "*Footer":  foot,
+        "IsBuiltIn": 0
+    })
+    head = asm3.utils.read_text_file(dbo.installpath + "media/internet/slideshow/head.html")
+    foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/slideshow/foot.html")
+    body = asm3.utils.read_text_file(dbo.installpath + "media/internet/slideshow/body.html")
+    dbo.insert("templatehtml", {
+        "Name":     "slideshow",
+        "*Header":  head,
+        "*Body":    body,
+        "*Footer":  foot,
+        "IsBuiltIn": 0
+    })
 
