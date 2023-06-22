@@ -281,6 +281,15 @@ of the year.
   Some licensing regions use a tag number that stays with the animal for
   life and need to allow duplicate licenses as a result.
 
+Boarding
+--------
+
+The boarding tab allows configuration of the boarding tab that appears on
+person records, and animals who are not in care.
+
+* Boarding payment type: The payment type to use when creating due payments
+  from a boarding record with the "Create Payment" toolbar button.
+
 Checkout
 --------
 

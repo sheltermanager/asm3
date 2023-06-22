@@ -1,6 +1,7 @@
 
 import asm3.al
 import asm3.audit
+import asm3.animal
 import asm3.configuration
 import asm3.i18n
 import asm3.movement
@@ -48,8 +49,9 @@ def get_boarding_query(dbo):
         "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, " \
         "a.AnimalName, a.BreedName, s.SpeciesName, a.Neutered, a.DeceasedDate, " \
         "a.IsQuarantine, a.NonShelterAnimal, a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
-        "il.LocationName AS ShelterLocationName " \
+        "il.LocationName AS ShelterLocationName, bt.BoardingName AS BoardingTypeName " \
         "FROM animalboarding ab " \
+        "LEFT OUTER JOIN lkboardingtype bt ON bt.ID = ab.BoardingTypeID " \
         "LEFT OUTER JOIN animal a ON a.ID = ab.AnimalID " \
         "LEFT OUTER JOIN owner o ON o.ID = ab.OwnerID " \
         "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
@@ -1347,6 +1349,7 @@ def insert_boarding_from_form(dbo, username, post):
     boardingid = dbo.insert("animalboarding", {
         "AnimalID":         post.integer("animal"),
         "OwnerID":          post.integer("person"),
+        "BoardingTypeID":   post.integer("type"),
         "InDateTime":       post.datetime("indate", "intime"),
         "OutDateTime":      post.datetime("outdate", "outtime"),
         "Days":             asm3.i18n.date_diff_days(post.date("indate"), post.date("outdate")),
@@ -1373,6 +1376,7 @@ def update_boarding_from_form(dbo, username, post):
     dbo.update("animalboarding", post.integer("boardingid"), {
         "AnimalID":         post.integer("animal"),
         "OwnerID":          post.integer("person"),
+        "BoardingTypeID":   post.integer("type"),
         "InDateTime":       post.datetime("indate", "intime"),
         "OutDateTime":      post.datetime("outdate", "outtime"),
         "Days":             asm3.i18n.date_diff_days(post.date("indate"), post.date("outdate")),
@@ -1382,6 +1386,11 @@ def update_boarding_from_form(dbo, username, post):
         "Comments":         post["comments"]
     }, username)
 
+    # If this boarding record is active right now, update the location of the animal
+    if post.date("indate") <= dbo.today() and post.date("outdate") >= dbo.today():
+        asm3.animal.update_location_unit(dbo, username, post.integer("animal"), post.integer("location"), post["unit"])
+
+    # Update animal status to bring the animal to the shelter if it is boarding
     asm3.animal.update_animal_status(dbo, post.integer("animal"))
 
 def delete_boarding(dbo, username, bid):
@@ -1391,6 +1400,16 @@ def delete_boarding(dbo, username, bid):
     animalid = dbo.query_int("SELECT AnimalID FROM animalboarding WHERE ID=?", [bid])
     dbo.delete("animalboarding", bid, username)
     asm3.animal.update_animal_status(dbo, animalid)
+
+def update_location_boarding_today(dbo):
+    """
+    Checks all boarding records and those that start today to update the location on their animals.
+    """
+    rows = dbo.query("SELECT AnimalID, ShelterLocation, ShelterLocationUnit FROM animalboarding " \
+        "WHERE InDateTime >= ? AND OutDateTime < ?", [ dbo.today(), dbo.today(offset=1) ])
+    asm3.al.debug("%s boarding records start today" % len(rows), "financial.update_location_boarding_today", dbo)
+    for r in rows:
+        asm3.animal.update_location_unit(dbo, "system", r.ANIMALID, r.SHELTERLOCATION, r.SHELTERLOCATIONUNIT)
 
 def insert_citation_from_form(dbo, username, post):
     """

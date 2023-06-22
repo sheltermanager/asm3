@@ -20,6 +20,8 @@ $(function() {
                 fields: [
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal"), type: "animal", validation: "notzero" },
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
+                    { json_field: "BOARDINGTYPEID", post_field: "type", label: _("Type"), type: "select", 
+                        options: { displayfield: "BOARDINGNAME", valuefield: "ID", rows: controller.boardingtypes }},
                     { json_field: "INDATETIME", post_field: "in", label: _("In Date"), type: "datetime", validation: "notblank", defaultval: new Date() },
                     { json_field: "OUTDATETIME", post_field: "out", label: _("Out Date"), type: "datetime", validation: "notblank", defaultval: new Date() },
                     { json_field: "DAILYFEE", post_field: "dailyfee", label: _("Daily Fee"), type: "currency" },
@@ -63,12 +65,15 @@ $(function() {
                     //return !row.DATECOMPLETED && format.date_js(row.DIARYDATETIME) < common.today_no_time();
                 },
                 columns: [
+                    /*
                     { field: "ID", display: _("Number"), formatter: function (row) { 
                         return "<span style=\"white-space: nowrap\">" +
                             "<input type=\"checkbox\" data-id=\"" + row.ID + "\" title=\"" + html.title(_("Select")) + "\" />" +
                             "<a href=\"#\" class=\"link-edit\" data-id=\"" + row.ID + "\">" + format.padleft(row.ID, 6) + "</a>" +
                             "</span>";
                     }},
+                    */
+                    { field: "BOARDINGTYPENAME", display: _("Type") },
                     { field: "INDATETIME", display: _("Check In"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "desc" },
                     { field: "OUTDATETIME", display: _("Check Out"), formatter: tableform.format_datetime },
                     { field: "PERSON", display: _("Person"),
@@ -145,6 +150,11 @@ $(function() {
             this.table = table;
         },
 
+        type_change: function() {
+            let dc = common.get_field(controller.boardingtypes, $("#type").select("value"), "DEFAULTCOST");
+            $("#dailyfee").currency("value", dc);
+        },
+
         location_change: function() {
             let units = common.get_field(controller.internallocations, $("#location").val(), "UNITS");
             if (units && units.indexOf(",") != -1) {
@@ -183,7 +193,9 @@ $(function() {
                 row.WORKTELEPHONE = boarding.lastperson.WORKTELEPHONE;
                 row.MOBILETELEPHONE = boarding.lastperson.MOBILETELEPHONE;
             }
+            row.BOARDINGTYPENAME = common.get_field(controller.boardingtypes, row.BOARDINGTYPEID, "BOARDINGNAME");
             row.SHELTERLOCATIONNAME = common.get_field(controller.internallocations, row.SHELTERLOCATION, "LOCATIONNAME");
+            row.DAYS = format.date_diff_days( $("#indate").datepicker("getDate"), $("#outdate").datepicker("getDate") ); 
         },
 
         render: function() {
@@ -211,6 +223,7 @@ $(function() {
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
             $("#location").change(this.location_change);
+            $("#type").change(this.type_change);
 
             $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
                 boarding.lastanimal = rec;
@@ -284,8 +297,8 @@ $(function() {
                     $("#outdate").datepicker("setDate", new Date());
                     $("#intime").val("00:00");
                     $("#outtime").val("00:00");
-                    $("#dailyfee").currency("value", config.integer("BoardingDailyFee"));
                     boarding.location_change();
+                    boarding.type_change();
                 }
             });
         },

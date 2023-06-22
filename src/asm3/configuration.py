@@ -106,7 +106,6 @@ DEFAULTS = {
     "Behave5Name": "Unusual Symptoms",
     "Behave5Values": "",
     "BoardingCostType": "1",
-    "BoardingDailyFee": "0",
     "BoardingPaymentType": "7",
     "CancelReservesOnAdoption": "Yes",
     "CardcomSuccessURL": "https://secure.cardcom.solutions/DealWasSuccessful.aspx",

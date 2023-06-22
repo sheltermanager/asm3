@@ -1,6 +1,9 @@
 47
 ================
 
+22/06/23 Assign shelter location/unit when boarding is active #623
+22/06/23 Adding boarding permissions to roles screen #623
+22/06/23 Adding boarding type with default cost #623
 21/06/23 Add slideshow HTML template #905
 21/06/23 Add animalviewcarousel template 
 21/06/23 Option to specify the animalview template in adoptable_js

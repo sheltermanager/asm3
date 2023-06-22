@@ -40,7 +40,8 @@ VERSIONS = (
     34305, 34306, 34400, 34401, 34402, 34403, 34404, 34405, 34406, 34407, 34408,
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
-    34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705
+    34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
+    34706
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -104,7 +105,7 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
 TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
     "costtype", "deathreason", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", 
     "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
-    "licencetype", "lkanimalflags", "lkcoattype", "lkownerflags", "lksaccounttype", "lksclinicstatus", 
+    "licencetype", "lkanimalflags", "lkboardingtype", "lkcoattype", "lkownerflags", "lksaccounttype", "lksclinicstatus", 
     "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", 
     "lksmedialink", "lksmediatype", "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", "lksyesno", 
     "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", "logtype", "medicalprofile", 
@@ -422,6 +423,7 @@ def sql_structure(dbo):
         fid(),
         fint("AnimalID"),
         fint("OwnerID", True),
+        fint("BoardingTypeID"),
         fdate("InDateTime"),
         fdate("OutDateTime"),
         fint("Days", True),
@@ -431,6 +433,7 @@ def sql_structure(dbo):
         flongstr("Comments", True) ))
     sql += index("animalboarding_AnimalID", "animalboarding", "AnimalID")
     sql += index("animalboarding_OwnerID", "animalboarding", "OwnerID")
+    sql += index("animalboarding_BoardingTypeID", "animalboarding", "BoardingTypeID")
     sql += index("animalboarding_InDateTime", "animalboarding", "InDateTime")
     sql += index("animalboarding_OutDateTime", "animalboarding", "OutDateTime")
 
@@ -1088,6 +1091,13 @@ def sql_structure(dbo):
 
     sql += table("lkownerflags", (
         fid(), fstr("Flag") ), False)
+
+    sql += table("lkboardingtype", (
+        fid(),
+        fstr("BoardingName"),
+        fstr("BoardingDescription", True),
+        fint("DefaultCost", True),
+        fint("IsRetired", True) ), False)
 
     sql += table("lksclinicstatus", (
         fid(), fstr("Status") ), False)
@@ -2317,6 +2327,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup1("lksize", "Size", 1, _("Large", l))
     sql += lookup1("lksize", "Size", 2, _("Medium", l))
     sql += lookup1("lksize", "Size", 3, _("Small", l))
+    sql += lookup2money("lkboardingtype", "BoardingName", 1, _("Boarding", l))
     sql += lookup1("lkcoattype", "CoatType", 0, _("Short", l))
     sql += lookup1("lkcoattype", "CoatType", 1, _("Long", l))
     sql += lookup1("lkcoattype", "CoatType", 2, _("Rough", l))
@@ -5926,4 +5937,19 @@ def update_34705(dbo):
     dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (28, '%s')" % _("Movement - Released", l))
     dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (29, '%s')" % _("Movement - Retailer", l))
     dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (30, '%s')" % _("Movement - Reservation", l))
+
+def update_34706(dbo):
+    # Add animalboarding.BoardingTypeID and table
+    l = dbo.locale
+    add_column(dbo, "animalboarding", "BoardingTypeID", dbo.type_integer)
+    add_index(dbo, "animalboarding_BoardingTypeID", "animalboarding", "BoardingTypeID")
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("BoardingName", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("BoardingDescription", dbo.type_shorttext, True),
+        dbo.ddl_add_table_column("DefaultCost", dbo.type_integer, True),
+        dbo.ddl_add_table_column("IsRetired", dbo.type_integer, True)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("lkboardingtype", fields) )
+    dbo.execute_dbupdate("INSERT INTO lkboardingtype VALUES (1, ?, '', 0, 0)", [ _("Boarding", l) ])
 

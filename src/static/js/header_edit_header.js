@@ -196,7 +196,7 @@ edit_header = {
             '</table>',
             '</div>'
         ].join("\n");
-        if (a.NONSHELTERANIMAL == 1) {
+        if (a.NONSHELTERANIMAL == 1 && !(a.HASACTIVEBOARDING == 1 && a.ARCHIVED == 0)) {
             second_column = [ 
                 '<div class="asm-grid-col-3">',
                 '<table>',

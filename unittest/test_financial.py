@@ -114,6 +114,7 @@ class TestFinancial(unittest.TestCase):
         data = {
             "person": "1",
             "animal": "1",
+            "type": "1",
             "indate": base.today_display(),
             "outdate": base.today_display(),
             "dailyfee": "1000"
@@ -168,6 +169,7 @@ class TestFinancial(unittest.TestCase):
         data = {
             "person": "1",
             "animal": "1",
+            "type": "1",
             "indate": base.today_display(),
             "outdate": base.today_display(),
             "dailyfee": "1000"
@@ -211,4 +213,5 @@ class TestFinancial(unittest.TestCase):
     def test_giftaid_spreadsheet(self):
         asm3.financial.giftaid_spreadsheet(base.get_dbo(), "%s/../src/" % base.PATH, base.today(), base.today())
 
-
+    def test_update_location_boarding_today(self):
+        asm3.financial.update_location_boarding_today(base.get_dbo())

@@ -1386,6 +1386,16 @@ const format = {
     },
 
     /**
+     * Returns the difference in days between date1 and date2 (both js Date())
+     * Uses abs around the subtraction so it does not matter if date1 > date2
+     */
+    date_diff_days: function(date1, date2) {
+        const dt = Math.abs(date2 - date1);
+        const dd = Math.ceil(dt / (1000 * 60 * 60 * 24)); 
+        return dd;
+    },
+
+    /**
      * Checks if d is in between start and end
      * d: js or iso date 
      * start: js or iso date

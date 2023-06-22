@@ -1693,6 +1693,7 @@ class animal_boarding(JSONEndpoint):
         return {
             "name": "animal_boarding",
             "animal": a,
+            "boardingtypes": asm3.lookups.get_boarding_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding"),
@@ -2279,6 +2280,7 @@ class boarding(JSONEndpoint):
         asm3.al.debug("got %d boarding records" % (len(rows)), "code.boarding", dbo)
         return {
             "name": "boarding",
+            "boardingtypes": asm3.lookups.get_boarding_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding")
@@ -5598,6 +5600,7 @@ class person_boarding(JSONEndpoint):
         return {
             "name": "person_boarding",
             "person": p,
+            "boardingtypes": asm3.lookups.get_boarding_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding"),

@@ -28,6 +28,7 @@ LOOKUP_TABLES = {
     "lkanimalflags":    (_("Animal Flags"), "Flag", _("Flag"), "", "add del", ""),
     "animaltype":       (_("Animal Types"), "AnimalType", _("Type"), "AnimalDescription", "add del ret", ("animal.AnimalTypeID",)),
     "basecolour":       (_("Colors"), "BaseColour", _("Color"), "BaseColourDescription", "add del ret pubcol", ("animal.BaseColourID", "animallost.BaseColourID", "animalfound.BaseColourID")),
+    "lkboardingtype":   (_("Boarding Types"), "BoardingName", _("Boarding Type"), "BoardingDescription", "add del ret cost", ("animalboarding.BoardingTypeID",)),
     "breed":            (_("Breeds"), "BreedName", _("Breed"), "BreedDescription", "add del ret species pubbreed", ("animal.BreedID", "animal.Breed2ID", "animallost.BreedID", "animalfound.BreedID")),
     "lkcoattype":       (_("Coat Types"), "CoatType", _("Coat Type"), "", "add del", ("animal.CoatType",)),
     "citationtype":     (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", "add del ret cost", ("ownercitation.CitationTypeID",)),
@@ -911,6 +912,9 @@ def get_basecolour_name(dbo, cid):
     if id is None: return ""
     return dbo.query_string("SELECT BaseColour FROM basecolour WHERE ID = ?", [cid])
 
+def get_boarding_types(dbo):
+    return dbo.query("SELECT * FROM lkboardingtype ORDER BY BoardingName")
+
 def get_breeds(dbo):
     return dbo.query("SELECT * FROM breed ORDER BY BreedName")
 
@@ -1093,7 +1097,7 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
             "IsRetired":            retired
         }, username, setCreated=False)
         return nid
-    elif lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
+    elif lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype" or lookup == "lkboardingtype":
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
@@ -1178,7 +1182,7 @@ def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbree
             "IsVAT":                vat,
             "IsRetired":            retired
         }, username, setLastChanged=False)
-    elif lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype":
+    elif lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype" or lookup == "lkboardingtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
