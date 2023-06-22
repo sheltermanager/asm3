@@ -1359,6 +1359,10 @@ def insert_boarding_from_form(dbo, username, post):
         "Comments":         post["comments"]
     }, username)
 
+    # If this boarding record is active right now, update the location of the animal
+    if post.date("indate") <= dbo.today() and post.date("outdate") >= dbo.today():
+        asm3.animal.update_location_unit(dbo, username, post.integer("animal"), post.integer("location"), post["unit"])
+
     asm3.animal.update_animal_status(dbo, post.integer("animal"))
     return boardingid
 
