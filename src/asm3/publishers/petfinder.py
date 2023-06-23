@@ -341,7 +341,7 @@ class PetFinderPublisher(FTPPublisher):
         else:
             line.append("") # send 0 fees as a blank as PF seem to ignore their own display adoption fee flag below
         # Display adoption fee?
-        line.append(self.pfYesNo(an.FEE > 0))
+        line.append(self.pfYesNo(an.FEE is not None and an.FEE > 0))
         # Adoption fee waived
         line.append(adoption_fee_waived)
         # Special Needs Notes 
