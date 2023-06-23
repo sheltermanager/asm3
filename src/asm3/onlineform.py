@@ -95,7 +95,7 @@ FORM_FIELDS = [
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
     "animalname", "reserveanimalname",
-    "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", "type", "breed1", "breed2", "color", "sex", 
+    "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", "type", "breed1", "breed2", "color", "sex", "neutered", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
@@ -1189,7 +1189,7 @@ def create_animal(dbo, username, collationid):
     The return value is a tuple of collationid, animalid, sheltercode - animalname, status
     status is 0 for created, 1 for updated existing
     "animalname", "code", "microchip", "age", "dateofbirth", "entryreason", "markings", 
-    "comments", "hiddencomments", "type", "species", "breed1", "breed2", "color", "sex"
+    "comments", "hiddencomments", "type", "species", "breed1", "breed2", "color", "sex", "neutered"
     """
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
@@ -1219,6 +1219,7 @@ def create_animal(dbo, username, collationid):
         if f.FIELDNAME == "colour": d["basecolour"] = str(guess_colour(dbo, f.VALUE))
         if f.FIELDNAME == "sex": d["sex"] = str(guess_sex(dbo, f.VALUE))
         if f.FIELDNAME == "size": d["size"] = str(guess_size(dbo, f.VALUE))
+        if f.FIELDNAME == "neutered" and (f.VALUE == "Yes" or f.VALUE == "on"): d["neutered"] = "on"
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         #if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
         #    recdate, rectime = f.VALUE.split(" ")

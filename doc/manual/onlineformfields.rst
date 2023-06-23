@@ -49,12 +49,16 @@ type
    The animal type for the animal. ASM will try and guess based on the text which one is meant. Use a lookup field to limit the choices to known items.
 species
     The species of the animal. ASM will try and guess based on the text which one is meant. Use a lookup field to limit the choices to known items (or use the Species field type)
-breed
+breed1 / breed2
     The breed of the animal. ASM will try and guess one of it's lookup values (or use the Breed field type to limit to them)
 agegroup
     The age group of the animal. Again, ASM will try and guess one if it's internal values.
 color / colour
     The colour of the animal. ASM will try and guess a match (or use the Color field type to limit to them)
+sex
+    The sex of the animal. ASM will look at the first letter of the value for an M or F
+neutered
+    Whether the animal is neutered/spayed. Should be a checkbox or Yes/No field and should contain a value that translates to Yes or on.
 datelost
    The date the animal was lost (lost animals only)
 datefound
