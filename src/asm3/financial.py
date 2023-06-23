@@ -1361,7 +1361,7 @@ def insert_boarding_from_form(dbo, username, post):
 
     # If this boarding record is active right now, update the location of the animal
     if post.date("indate") <= dbo.today() and post.date("outdate") >= dbo.today():
-        asm3.animal.update_location_unit(dbo, username, post.integer("animal"), post.integer("location"), post["unit"])
+        asm3.animal.update_location_unit(dbo, username, post.integer("animal"), post.integer("location"), post["unit"], returnactivemovement=False)
 
     asm3.animal.update_animal_status(dbo, post.integer("animal"))
     return boardingid
@@ -1392,7 +1392,7 @@ def update_boarding_from_form(dbo, username, post):
 
     # If this boarding record is active right now, update the location of the animal
     if post.date("indate") <= dbo.today() and post.date("outdate") >= dbo.today():
-        asm3.animal.update_location_unit(dbo, username, post.integer("animal"), post.integer("location"), post["unit"])
+        asm3.animal.update_location_unit(dbo, username, post.integer("animal"), post.integer("location"), post["unit"], returnactivemovement=False)
 
     # Update animal status to bring the animal to the shelter if it is boarding
     asm3.animal.update_animal_status(dbo, post.integer("animal"))
@@ -1413,7 +1413,7 @@ def update_location_boarding_today(dbo):
         "WHERE InDateTime >= ? AND OutDateTime < ?", [ dbo.today(), dbo.today(offset=1) ])
     asm3.al.debug("%s boarding records start today" % len(rows), "financial.update_location_boarding_today", dbo)
     for r in rows:
-        asm3.animal.update_location_unit(dbo, "system", r.ANIMALID, r.SHELTERLOCATION, r.SHELTERLOCATIONUNIT)
+        asm3.animal.update_location_unit(dbo, "system", r.ANIMALID, r.SHELTERLOCATION, r.SHELTERLOCATIONUNIT, returnactivemovement=False)
 
 def insert_citation_from_form(dbo, username, post):
     """

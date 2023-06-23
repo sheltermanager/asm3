@@ -2898,7 +2898,7 @@ def update_diary_linkinfo(dbo, animalid, a = None, diaryupdatebatch = None):
     else:
         dbo.execute("UPDATE diary SET LinkInfo = ? WHERE LinkType = ? AND LinkID = ?", (diaryloc, asm3.diary.ANIMAL, animalid))
 
-def update_location_unit(dbo, username, animalid, newlocationid, newunit = ""):
+def update_location_unit(dbo, username, animalid, newlocationid, newunit = "", returnactivemovement=True):
     """
     Updates the shelterlocation and shelterlocationunit fields of the animal given.
     This is typically called in response to drag and drop events on shelterview and
@@ -2925,9 +2925,10 @@ def update_location_unit(dbo, username, animalid, newlocationid, newunit = ""):
                     _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, animalname, oldlocation, newlocation))
     # If this animal has an active movement at today's date or older, return it first
     # (the date check is to make sure we don't accidentally return future adoptions)
-    activemovementid = dbo.query_int("SELECT ActiveMovementID FROM animal WHERE ID = ? AND ActiveMovementID > 0 AND ActiveMovementDate <= ?", (animalid, dbo.today()))
-    if activemovementid > 0:
-        asm3.movement.return_movement(dbo, activemovementid, username, animalid)
+    if returnactivemovement:
+        activemovementid = dbo.query_int("SELECT ActiveMovementID FROM animal WHERE ID = ? AND ActiveMovementID > 0 AND ActiveMovementDate <= ?", (animalid, dbo.today()))
+        if activemovementid > 0:
+            asm3.movement.return_movement(dbo, activemovementid, username, animalid)
     # Change the location
     dbo.execute("UPDATE animal SET ShelterLocation = ?, ShelterLocationUnit = ? WHERE ID = ?", (newlocationid, newunit, animalid))
     asm3.audit.edit(dbo, username, "animal", animalid, "", "%s: moved to location: %s, unit: %s" % ( animalid, newlocationid, newunit ))
