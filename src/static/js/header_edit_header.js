@@ -96,19 +96,23 @@ edit_header = {
             if (a.DIEDOFFSHELTER == 1) { deathreason = _("Died off shelter"); }
             displaylocation = "<span style=\"color: red\">" + _("Deceased") + " " + html.icon("right") + " " + deathreason + "</span> " + format.date(a.DECEASEDDATE);
         }
+        else if (a.HASACTIVEBOARDING && a.SHELTERLOCATIONUNIT) {
+            displaylocation = a.SHELTERLOCATIONNAME + ' <span class="asm-search-locationunit" title="' + html.title(_("Unit")) + '">' + a.SHELTERLOCATIONUNIT + '</span>';
+        }
+        else if (a.HASACTIVEBOARDING) {
+            displaylocation = a.SHELTERLOCATIONNAME;
+        }
+        else if (owner != "" && a.CURRENTOWNERID != a.OWNERID) {
+            displaylocation = _("Owner") + " " + html.icon("right") + " " + owner;
+        }
+        else if (currentowner != "") {
+            displaylocation = a.DISPLAYLOCATIONNAME + " " + html.icon("right") + " " + currentowner;
+        }
+        else if (a.SHELTERLOCATIONUNIT && !a.ACTIVEMOVEMENTDATE) {
+            displaylocation = a.DISPLAYLOCATIONNAME + ' <span class="asm-search-locationunit" title="' + html.title(_("Unit")) + '">' + a.SHELTERLOCATIONUNIT + '</span>';
+        }
         else {
-            if (owner != "" && a.CURRENTOWNERID != a.OWNERID) {
-                displaylocation = _("Owner") + " " + html.icon("right") + " " + owner;
-            }
-            else if (currentowner != "" && !a.HASACTIVEBOARDING) {
-                displaylocation = a.DISPLAYLOCATIONNAME + " " + html.icon("right") + " " + currentowner;
-            }
-            else if (a.SHELTERLOCATIONUNIT && !a.ACTIVEMOVEMENTDATE) {
-                displaylocation = a.DISPLAYLOCATIONNAME + ' <span class="asm-search-locationunit" title="' + html.title(_("Unit")) + '">' + a.SHELTERLOCATIONUNIT + '</span>';
-            }
-            else {
-                displaylocation = a.DISPLAYLOCATIONNAME;
-            }
+            displaylocation = a.DISPLAYLOCATIONNAME;
         }
         let animalcontrol = "";
         if (a.ANIMALCONTROLINCIDENTID) {
