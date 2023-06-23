@@ -41,7 +41,7 @@ VERSIONS = (
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
-    34706, 34707
+    34706, 34707, 34708
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1252,6 +1252,7 @@ def sql_structure(dbo):
         fint("RetainFor", True),
         fint("EmailSubmitter", True),
         fint("EmailCoordinator", True),
+        fint("EmailFosterer", True),
         flongstr("EmailAddress", True),
         flongstr("EmailMessage", True),
         flongstr("Header", True),
@@ -5975,4 +5976,9 @@ def update_34707(dbo):
         "*Footer":  foot,
         "IsBuiltIn": 0
     })
+
+def update_34708(dbo):
+    # Add onlineform.EmailFosterer
+    add_column(dbo, "onlineform", "EmailFosterer", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE onlineform SET EmailFosterer = 0")
 

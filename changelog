@@ -1,6 +1,7 @@
 47
 ================
 
+23/06/23 Option to send form submissions to the fosterer #1183
 23/06/23 Stop active movements being returned when boarding #623
 23/06/23 Add "neutered" as form field for animals
 22/06/23 Delete on process should run from code.py for multistep autoprocess #1297

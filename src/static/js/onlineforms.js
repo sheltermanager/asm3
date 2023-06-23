@@ -71,6 +71,11 @@ $(function() {
                         type: "check",
                         callout: _("If this form has an animalname field, email this submission to the adoption coordinator for the selected animal")
                     },
+                    { json_field: "EMAILFOSTERER", post_field: "emailfosterer", 
+                        label: _("Email fosterer"), 
+                        type: "check",
+                        callout: _("If this form has an animalname field, email this submission to the fosterer for the selected animal")
+                    },
                     { json_field: "EMAILSUBMITTER", post_field: "emailsubmitter", label: _("Send confirmation email to form submitter"), 
                         type: "select", classes: "asm-doubleselectbox",
                         callout: _("If this form has a populated emailaddress field during submission, send a confirmation email to it"),

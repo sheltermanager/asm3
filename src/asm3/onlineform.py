@@ -640,6 +640,7 @@ def insert_onlineform_from_form(dbo, username, post):
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
+        "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
@@ -659,6 +660,7 @@ def update_onlineform_from_form(dbo, username, post):
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
+        "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
@@ -982,6 +984,18 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
             "WHERE animal.ID = ?", [animalid])
         if coordinatoremail != "":
             asm3.utils.send_email(dbo, "", coordinatoremail, "", "", 
+                subject, formdata, "html", images, exceptions=False)
+
+    # Was the option set to email the fosterer linked to animalname?
+    if formdef.emailfosterer == 1 and animalname != "":
+        # If so, find the selected animal from the form
+        animalid = get_animal_id_from_field(dbo, animalname)
+        fostereremail = dbo.query_string("SELECT EmailAddress FROM animal " \
+            "INNER JOIN adoption ON adoption.ID = animal.ActiveMovementID AND adoption.MovementType = 2 " \
+            "INNER JOIN owner ON owner.ID = adoption.OwnerID " \
+            "WHERE animal.ID = ?", [animalid])
+        if fostereremail != "":
+            asm3.utils.send_email(dbo, "", fostereremail, "", "", 
                 subject, formdata, "html", images, exceptions=False)
 
     # Did the form submission have a value in an "emailsubmissionto" field?
