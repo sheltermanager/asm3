@@ -134,8 +134,10 @@ $(function() {
                 },
                 { id: "filter", type: "dropdownfilter", 
                     options: [ "active|" + _("Active"),
-                        "m90|" + _("Last 3 months"),
-                        "p90|" + _("Next 3 months")
+                        "st|" + _("Starting today"),
+                        "p90|" + _("Starts in next 3 months"),
+                        "et|" + _("Ending today"),
+                        "m90|" + _("Ended in last 3 months")
                         ],
                     hideif: function() {
                         return controller.name == "animal_boarding" || controller.name == "person_boarding";

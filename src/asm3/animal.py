@@ -833,7 +833,9 @@ def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age 
             "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE " \
             "DateGiven Is Null AND DeceasedDate Is Null %(shelterfilter)s AND " \
             "Status = 0 AND DateRequired  >= %(oneyear)s AND DateRequired <= %(today)s %(locfilter)s) AS duemed," \
-        "(SELECT COUNT(*) FROM clinicappointment WHERE DateTime >= %(today)s AND DateTime <= %(tomorrow)s) AS dueclinic," \
+        "(SELECT COUNT(*) FROM animalboarding WHERE InDateTime >= %(today)s AND InDateTime < %(tomorrow)s) AS boardintoday, " \
+        "(SELECT COUNT(*) FROM animalboarding WHERE OutDateTime >= %(today)s AND OutDateTime < %(tomorrow)s) AS boardouttoday, " \
+        "(SELECT COUNT(*) FROM clinicappointment WHERE DateTime >= %(today)s AND DateTime < %(tomorrow)s) AS dueclinic," \
         "(SELECT COUNT(*) FROM animalwaitinglist INNER JOIN owner ON owner.ID = animalwaitinglist.OwnerID " \
             "WHERE Urgency = 1 AND DateRemovedFromList Is Null) AS urgentwl," \
         "(SELECT COUNT(*) FROM adoption INNER JOIN owner ON owner.ID = adoption.OwnerID WHERE " \

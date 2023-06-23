@@ -478,11 +478,16 @@ def get_boarding(dbo, flt = "active", sort = ASCENDING):
     order = "InDateTime DESC"
     if sort == ASCENDING:
         order = "InDateTime"
-    where = "InDateTime <= %s AND OutDateTime >= %s" % ( dbo.sql_today(), dbo.sql_today() )
-    if flt.startswith("m"):
+    if flt == "" or flt == "active":
+        where = "InDateTime <= %s AND OutDateTime >= %s" % ( dbo.sql_today(), dbo.sql_today() )
+    elif flt == "st":
+        where = "InDateTime >= %s AND InDateTime < %s" % (dbo.sql_today(), dbo.sql_date(dbo.today(offset=1)))
+    elif flt == "et":
+        where = "OutDateTime >= %s AND OutDateTime < %s" % (dbo.sql_today(), dbo.sql_date(dbo.today(offset=1)))
+    elif flt.startswith("m"):
         cutoff = dbo.today(offset = -1 * asm3.utils.atoi(flt))
-        where = "InDateTime >= %s AND InDateTime <= %s" % ( dbo.sql_date(cutoff), dbo.sql_today() )
-    if flt.startswith("p"):
+        where = "OutDateTime >= %s AND OutDateTime < %s" % ( dbo.sql_date(cutoff), dbo.sql_today() )
+    elif flt.startswith("p"):
         cutoff = dbo.today(offset = asm3.utils.atoi(flt))
         where = "InDateTime > %s AND InDateTime <= %s" % ( dbo.sql_today(), dbo.sql_date(cutoff) )
     return dbo.query(get_boarding_query(dbo) + \

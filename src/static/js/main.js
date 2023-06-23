@@ -123,6 +123,26 @@ $(function() {
                         _("{plural3} medical treatments need to be administered today")
                     ]) + '</a><br />';
             }
+            if (alerts.BOARDINTODAY > 0 && common.has_permission("vbi")) {
+                totalalerts += alerts.BOARDINTODAY;
+                s += '<a href="boarding?filter=st">' + html.icon("boarding") + ' ' + 
+                    common.ntranslate(alerts.BOARDINTODAY, [
+                        _("{plural0} boarding animal entering today"),
+                        _("{plural1} boarding animals entering today"),
+                        _("{plural2} boarding animals entering today"),
+                        _("{plural3} boarding animals entering today")
+                    ]) + '</a><br />';
+            }
+            if (alerts.BOARDOUTTODAY > 0 && common.has_permission("vbi")) {
+                totalalerts += alerts.BOARDOUTTODAY;
+                s += '<a href="boarding?filter=et">' + html.icon("boarding") + ' ' + 
+                    common.ntranslate(alerts.BOARDOUTTODAY, [
+                        _("{plural0} boarding animal leaving today"),
+                        _("{plural1} boarding animals leaving today"),
+                        _("{plural2} boarding animals leaving today"),
+                        _("{plural3} boarding animals leaving today")
+                    ]) + '</a><br />';
+            }
             if (alerts.DUECLINIC > 0 && common.has_permission("vcl")) {
                 totalalerts += alerts.DUECLINIC;
                 s += '<a href="clinic_waitingroom">' + html.icon("health") + ' ' + 
