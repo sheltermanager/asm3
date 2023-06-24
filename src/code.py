@@ -291,6 +291,18 @@ class ASMEndpoint(object):
             # update the last user activity if logged in
             asm3.users.update_user_activity(session.dbo, session.user)
 
+    def check_mode(self, mode):
+        """
+        Verify that the value given for mode is valid. Valid mode
+        values are between 3 and 30 chars in length and contain only
+        lowercase ASCII letters [a-z] (no punctuation or spaces).
+        """
+        if len(mode) < 3 or len(mode) > 30: return False
+        for c in mode:
+            if ord(c) < 97 or ord(c) > 122:
+                return False
+        return True
+
     def content(self, o):
         """ Virtual function: override to get the content """
         return ""
@@ -394,8 +406,10 @@ class ASMEndpoint(object):
         mode = o.post["mode"]
         if mode == "": 
             return self.post_all(o)
+        elif not self.check_mode(mode):
+            raise asm3.utils.ASMError("invalid mode")
         else:
-            # Mode has been supplied, call post_mode
+            # valid mode value has been supplied, call post_mode
             return getattr(self.__class__, "post_%s" % mode)(self, o)
 
 class GeneratorEndpoint(ASMEndpoint):
