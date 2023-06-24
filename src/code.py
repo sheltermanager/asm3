@@ -4648,17 +4648,17 @@ class medical(JSONEndpoint):
         self.check(asm3.users.CHANGE_MEDICAL)
         asm3.medical.update_regimen_from_form(o.dbo, o.user, o.post)
 
-    def post_delete_regimen(self, o):
+    def post_deleteregimen(self, o):
         self.check(asm3.users.DELETE_MEDICAL)
         for mid in o.post.integer_list("ids"):
             asm3.medical.delete_regimen(o.dbo, o.user, mid)
 
-    def post_delete_treatment(self, o):
+    def post_deletetreatment(self, o):
         self.check(asm3.users.DELETE_MEDICAL)
         for mid in o.post.integer_list("ids"):
             asm3.medical.delete_treatment(o.dbo, o.user, mid)
 
-    def post_get_profile(self, o):
+    def post_getprofile(self, o):
         return asm3.utils.json([asm3.medical.get_profile(o.dbo, o.post.integer("profileid"))])
 
     def post_given(self, o):
