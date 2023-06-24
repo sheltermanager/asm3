@@ -362,7 +362,7 @@ def get_animal_status_query(dbo):
         "a.ActiveMovementID, a.ActiveMovementDate, a.ActiveMovementType, a.ActiveMovementReturn, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.HasPermanentFoster, a.MostRecentEntryDate, a.DisplayLocation, " \
         "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
-        "CASE WHEN EXISTS(SELECT ID FROM animalboarding WHERE AnimalID = a.ID AND InDateTime >= %(today)s AND OutDateTime <= %(today)s) THEN 1 ELSE 0 END AS HasActiveBoarding, " \
+        "CASE WHEN EXISTS(SELECT ID FROM animalboarding WHERE AnimalID = a.ID AND InDateTime <= %(today)s AND OutDateTime >= %(today)s) THEN 1 ELSE 0 END AS HasActiveBoarding, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.MediaNotes AS WebsiteMediaNotes " \
         "FROM animal a " \
@@ -3913,6 +3913,40 @@ def update_all_animal_statuses(dbo):
         "WHERE ID = ?", animalupdatebatch)
     dbo.execute_many("UPDATE diary SET LinkInfo = ? WHERE LinkType = ? AND LinkID = ?", diaryupdatebatch)
     asm3.al.debug("updated %d animal statuses (%d)" % (aff, len(animals)), "animal.update_all_animal_statuses", dbo)
+    return "OK %d" % len(animals)
+
+def update_boarding_animal_statuses(dbo):
+    """
+    Updates statuses for all animals who are actively boarding. 
+    """
+    animals = dbo.query(get_animal_status_query(dbo) + \
+        " WHERE a.ID IN (SELECT AnimalID FROM animalboarding WHERE InDateTime <= ? AND OutDateTime >= ?)", ( dbo.today(), dbo.today() ))
+    movements = dbo.query(get_animal_movement_status_query(dbo) + " WHERE m.AnimalID IN " \
+        "(SELECT AnimalID FROM animalboarding WHERE InDateTime <= ? AND OutDateTime >= ?) ORDER BY MovementDate DESC", ( dbo.today(), dbo.today() ))
+    animalupdatebatch = []
+    diaryupdatebatch = []
+    asm3.asynctask.set_progress_max(dbo, len(animals))
+    for a in animals:
+        update_animal_status(dbo, a.id, a, movements, animalupdatebatch, diaryupdatebatch)
+        asm3.asynctask.increment_progress_value(dbo)
+
+    aff = dbo.execute_many("UPDATE animal SET " \
+        "Archived = ?, " \
+        "Adoptable = ?, " \
+        "OwnerID = ?, " \
+        "ActiveMovementID = ?, " \
+        "ActiveMovementDate = ?, " \
+        "ActiveMovementType = ?, " \
+        "ActiveMovementReturn = ?, " \
+        "DiedOffShelter = ?, " \
+        "DisplayLocation = ?, " \
+        "HasActiveReserve = ?, " \
+        "HasTrialAdoption = ?, " \
+        "HasPermanentFoster = ?, " \
+        "MostRecentEntryDate = ? " \
+        "WHERE ID = ?", animalupdatebatch)
+    dbo.execute_many("UPDATE diary SET LinkInfo = ? WHERE LinkType = ? AND LinkID = ?", diaryupdatebatch)
+    asm3.al.debug("updated %d on shelter animal statuses (%d)" % (aff, len(animals)), "animal.update_on_shelter_animal_statuses", dbo)
     return "OK %d" % len(animals)
 
 def update_foster_animal_statuses(dbo):

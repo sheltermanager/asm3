@@ -68,6 +68,7 @@ def daily(dbo):
         # Update on shelter and foster animal location fields
         ttask(animal.update_on_shelter_animal_statuses, dbo)
         ttask(animal.update_foster_animal_statuses, dbo)
+        ttask(animal.update_boarding_animal_statuses, dbo)
 
         # Update on shelter animal variable data (age, time on shelter, etc)
         ttask(animal.update_on_shelter_variable_animal_data, dbo)
