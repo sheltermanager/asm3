@@ -1,11 +1,12 @@
 47
 ================
 
+25/06/23 Add "weight" online form field for animals
 24/06/23 Security fix to detect and drop invalid mode parameters to POST
 23/06/23 Alerts for boarding animals entering/leaving today #623
 23/06/23 Option to send form submissions to the fosterer #1183
 23/06/23 Stop active movements being returned when boarding #623
-23/06/23 Add "neutered" as form field for animals
+23/06/23 Add "neutered" as online form field for animals
 22/06/23 Delete on process should run from code.py for multistep autoprocess #1297
 22/06/23 Assign shelter location/unit when boarding is active #623
 22/06/23 Adding boarding permissions to roles screen #623

@@ -59,6 +59,8 @@ sex
     The sex of the animal. ASM will look at the first letter of the value for an M or F
 neutered
     Whether the animal is neutered/spayed. Should be a checkbox or Yes/No field and should contain a value that translates to Yes or on.
+weight
+    The weight of the animal in system units (lb or kg). Should not contain anything but numbers and optionally a decimal mark.
 datelost
    The date the animal was lost (lost animals only)
 datefound
