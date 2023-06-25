@@ -16,7 +16,7 @@ import asm3.publishers.base
 import asm3.users
 import asm3.utils
 
-from asm3.i18n import _, date_diff, date_diff_days, format_diff, python2display, remove_time, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
+from asm3.i18n import _, date_diff, date_diff_days, format_diff, display2python, python2display, remove_time, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
 
 import datetime
 from random import choice
@@ -3483,6 +3483,22 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     reparent("diary", "LinkID", "LinkType", asm3.diary.ANIMAL)
     reparent("log", "LinkID", "LinkType", asm3.log.ANIMAL, haslastchanged=False)
 
+    # Merge fields
+    ma = get_animal(dbo, mergeanimalid)
+    d = {}
+    d["comments"] = ma.ANIMALCOMMENTS
+    d["healthproblems"] = ma.HEALTHPROBLEMS
+    d["microchipnumber"] = ma.IDENTICHIPNUMBER
+    d["microchipdate"] = python2display(dbo.locale, ma.IDENTICHIPDATE)
+    d["neutered"] = ma.NEUTERED == 1 and "on" or ""
+    d["neutereddate"] = python2display(dbo.locale, ma.NEUTEREDDATE)
+    d["weight"] = str(ma.WEIGHT)
+    d["internallocation"] = str(ma.SHELTERLOCATION)
+    d["unit"] = str(ma.SHELTERLOCATIONUNIT)
+    d["pickuplocation"] = str(ma.PICKUPLOCATIONID)
+    d["pickupaddress"] = ma.PICKUPADDRESS
+    merge_animal_details(dbo, username, animalid, d)
+
     # Change any additional field links pointing to the merge animal
     asm3.additional.update_merge_animal(dbo, mergeanimalid, animalid)
 
@@ -3499,6 +3515,56 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
 
     dbo.delete("animal", mergeanimalid, username)
     asm3.audit.move(dbo, username, "animal", animalid, "", "Merged animal %d -> %d" % (mergeanimalid, animalid))
+
+def merge_animal_details(dbo, username, animalid, d, force=False):
+    """
+    Merges animal details in data dictionary d (the same dictionary that
+    would be fed to insert_animal_from_form and update_person_from_form)
+    to animal with animalid.
+    If any of the fields on the animal record are blank and available
+    in the dictionary, the ones from the dictionary are used instead and updated on the record.
+    animalid: The animal we're merging details into
+    d: The dictionary of values to merge
+    force: If True, forces overwrite of the details with values from d if they are present
+    """
+    uv = {}
+    a = get_animal(dbo, animalid)
+    if a is None: return
+    def merge(dictfield, fieldname):
+        if dictfield not in d or d[dictfield] == "": return
+        if a[fieldname] is None or a[fieldname] == "" or force:
+            uv[fieldname] = d[dictfield]
+            a[fieldname] = uv[fieldname]
+    def merge_date(dictfield, fieldname):
+        if dictfield not in d or display2python(dbo.locale, d[dictfield]) is None: return
+        if a[fieldname] is None or force:
+            uv[fieldname] = display2python(dbo.locale, d[dictfield])
+            a[fieldname] = uv[fieldname]
+    def merge_float(dictfield, fieldname):
+        if dictfield not in d or asm3.utils.cfloat(d[dictfield]) == 0: return
+        if a[fieldname] is None or a[fieldname] == 0 or force:
+            uv[fieldname] = asm3.utils.cfloat(d[dictfield])
+            a[fieldname] = uv[fieldname]
+    def merge_int(dictfield, fieldname):
+        if dictfield not in d or asm3.utils.cint(d[dictfield]) == 0: return
+        if a[fieldname] is None or a[fieldname] == 0 or force:
+            uv[fieldname] = asm3.utils.cint(d[dictfield])
+            a[fieldname] = uv[fieldname]
+    merge("comments", "ANIMALCOMMENTS")
+    merge("healthproblems", "HEALTHPROBLEMS")
+    merge("microchipnumber", "IdentichipNumber")
+    merge_date("microchipdate", "IdentichipDate")
+    if "microchipnumber" in d and "IdentichipNumber" in uv and d["microchipnumber"] == uv["IdentichipNumber"]: uv["Identichipped"] = 1
+    if "neutered" in d and d["neutered"] == "on" and a.NEUTERED == 0: uv["Neutered"] = 1
+    merge_date("neutereddate", "NeuteredDate")
+    merge_date("dateofbirth", "DateOfBirth")
+    merge_float("weight", "Weight")
+    merge_int("internallocation", "ShelterLocation")
+    merge("unit", "ShelterLocationUnit")
+    merge_int("pickuplocation", "PickupLocationID")
+    merge("pickupaddress", "PickupAddress")
+    if len(uv) > 0:
+        dbo.update("animal", animalid, uv, user)
 
 def update_current_owner(dbo, username, animalid):
     """

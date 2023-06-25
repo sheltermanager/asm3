@@ -1263,8 +1263,8 @@ def create_animal(dbo, username, collationid):
             animalid = similar.ID
             # Merge additional fields
             asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, animalid, "animal")
-            # TODO: what would we merge realistically?
-            # asm3.animal.merge_animal_details(dbo, username, animalid, d)
+            # Overwrite fields that are present and have a value
+            asm3.animal.merge_animal_details(dbo, username, animalid, d, force=True)
     # Create the animal record if we didn't find one
     if animalid == 0:
         # Set some default values that the form couldn't set

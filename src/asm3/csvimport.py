@@ -598,35 +598,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                     dup = asm3.animal.get_animal_sheltercode(dbo, a["sheltercode"])
                     if dup is not None:
                         animalid = dup.ID
-                        # The animal is a duplicate. Update certain key changeable fields if they are present
-                        uq = {}
-                        if a["healthproblems"] != "":
-                            uq["HealthProblems"] = a["healthproblems"]
-                        if a["comments"] != "":
-                            uq["AnimalComments"] = a["description"]
-                        if a["microchipnumber"] != "":
-                            uq["Identichipped"] = 1
-                            uq["IdentichipNumber"] = a["microchipnumber"]
-                            uq["IdentichipDate"] = asm3.i18n.display2python(dbo.locale, a["microchipdate"])
-                        if a["neutered"] == "on":
-                            uq["Neutered"] = 1
-                            uq["NeuteredDate"] = asm3.i18n.display2python(dbo.locale, a["neutereddate"])
-                        if gks(row, "ANIMALDOB") != "": # dateofbirth always gets set even if its blank
-                            uq["DateOfBirth"] = asm3.i18n.display2python(dbo.locale, a["dateofbirth"])
-                        if a["weight"] != "":
-                            uq["Weight"] = asm3.utils.cfloat(a["weight"])
-                        if gks(row, "ANIMALLOCATION") != "":
-                            uq["ShelterLocation"] = asm3.utils.cint(a["internallocation"])
-                        if a["unit"] != "":
-                            uq["ShelterLocationUnit"] = a["unit"]
-                        if a["pickuplocation"] != "0":
-                            uq["PickupLocationID"] = asm3.utils.cint(a["pickuplocation"])
-                            uq["IsPickup"] = 1
-                        if a["pickupaddress"] != "":
-                            uq["PickupAddress"] = a["pickupaddress"]
-                            uq["IsPickup"] = 1
-                        if len(uq) > 0:
-                            dbo.update("animal", dup.ID, uq, user)
+                        # The animal is a duplicate. Overwrite fields if they are present and have a value
+                        asm3.animal.merge_animal_details(dbo, user, dup.ID, force=True)
                         # Update flags if present
                         if a["flags"] != "":
                             asm3.animal.update_flags(dbo, user, dup.ID, a["flags"].split(","))
