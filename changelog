@@ -1,6 +1,7 @@
 47
 ================
 
+25/06/23 Boarding animals should never be adoptable #623
 25/06/23 Merge animal copies key fields now, same code for csv and forms #698
 25/06/23 Add "weight" online form field for animals
 24/06/23 Security fix to detect and drop invalid mode parameters to POST

@@ -3564,7 +3564,7 @@ def merge_animal_details(dbo, username, animalid, d, force=False):
     merge_int("pickuplocation", "PickupLocationID")
     merge("pickupaddress", "PickupAddress")
     if len(uv) > 0:
-        dbo.update("animal", animalid, uv, user)
+        dbo.update("animal", animalid, uv, username)
 
 def update_current_owner(dbo, username, animalid):
     """

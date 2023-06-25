@@ -183,6 +183,8 @@ def get_animal_data_query(dbo, pc, animalid=0, publisher_key=""):
     sql += " AND a.HasPermanentFoster = 0"
     # Filter out animals with a future adoption
     sql += " AND NOT EXISTS(SELECT ID FROM adoption WHERE MovementType = 1 AND AnimalID = a.ID AND MovementDate > %s)" % dbo.sql_value(dbo.today())
+    # Filter out active boarders
+    sql += " AND ab.ID IS NULL"
     # Build a set of OR clauses based on any movements/locations
     moveor = []
     if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null" and "".join(pc.internalLocations) != "":
@@ -384,6 +386,7 @@ def is_animal_adoptable(dbo, a):
     if a.NONSHELTERANIMAL == 1: return False
     if a.DECEASEDDATE is not None: return False
     if a.HASFUTUREADOPTION == 1: return False
+    if a.HASACTIVEBOARDING == 1: return False
     if a.HASPERMANENTFOSTER == 1: return False
     if a.CRUELTYCASE == 1 and not p.includeCaseAnimals: return False
     if a.NEUTERED == 0 and not p.includeNonNeutered and str(a.SPECIESID) in asm3.configuration.alert_species_neuter(dbo).split(","): return False
