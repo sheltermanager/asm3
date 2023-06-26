@@ -788,7 +788,7 @@ def get_animals_recently_deceased(dbo):
     """
     return dbo.query(get_animal_query(dbo) + " " \
         "WHERE a.DeceasedDate Is Not Null " \
-        "AND NonShelterAnimal = 0 " \
+        "AND a.NonShelterAnimal = 0 " \
         "AND (a.ActiveMovementType Is Null OR a.ActiveMovementType = 0 OR a.ActiveMovementType = 2) " \
         "AND a.DeceasedDate > ?", [dbo.today(offset=-30)])
 
