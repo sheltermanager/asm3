@@ -171,14 +171,18 @@ const login = {
 
     login: function() {
 
-        $("#loginbutton").button("disable");
-        $("#loginspinner").fadeIn();
-
         let username = $("input#username").val();
         let password = $("input#password").val();
         let database = $("input#database").val();
         let onetimepass = $("input#onetimepass").val();
         let remember = $("input#rememberme").prop("checked") ? "on" : "";
+
+        if (!username || !password) { return; }
+        if (controller.multipledatabases && !database) { return; }
+
+        $("#loginbutton").button("disable");
+        $("#loginspinner").fadeIn();
+
         let formdata = { "database": database, 
                             "username" : username, 
                             "password" : password,
@@ -195,6 +199,7 @@ const login = {
                     $(".asm-login-fail").fadeIn("slow").delay(3000).fadeOut("slow");
                     $("input#username").focus();
                     $("#loginbutton").button("enable");
+                    $("input#password").val(""); 
                     // Show the reset password link if we have a username or username/database pair
                     if ((controller.multipledatabases && $("#username").val() != "" && $("#database").val() != "") 
                         || (!controller.multipledatabases && $("#username").val() != "")) { 
@@ -204,6 +209,7 @@ const login = {
                 else if (String(data).indexOf("DISABLED") != -1) {
                     $(".asm-login-disabled").fadeIn("slow").delay(3000).fadeOut("slow");
                     $("input#username").focus();
+                    $("input#password").val(""); 
                     $("#loginbutton").button("enable");
                 }
                 else if (String(data).indexOf("WRONGSERVER") != -1) {
