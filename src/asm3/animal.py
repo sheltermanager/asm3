@@ -3551,17 +3551,17 @@ def merge_animal_details(dbo, username, animalid, d, force=False):
             a[fieldname] = uv[fieldname]
     merge("comments", "ANIMALCOMMENTS")
     merge("healthproblems", "HEALTHPROBLEMS")
-    merge("microchipnumber", "IdentichipNumber")
-    merge_date("microchipdate", "IdentichipDate")
-    if "microchipnumber" in d and "IdentichipNumber" in uv and d["microchipnumber"] == uv["IdentichipNumber"]: uv["Identichipped"] = 1
-    if "neutered" in d and d["neutered"] == "on" and a.NEUTERED == 0: uv["Neutered"] = 1
-    merge_date("neutereddate", "NeuteredDate")
-    merge_date("dateofbirth", "DateOfBirth")
-    merge_float("weight", "Weight")
-    merge_int("internallocation", "ShelterLocation")
-    merge("unit", "ShelterLocationUnit")
-    merge_int("pickuplocation", "PickupLocationID")
-    merge("pickupaddress", "PickupAddress")
+    merge("microchipnumber", "IDENTICHIPNUMBER")
+    merge_date("microchipdate", "IDENTICHIPDATE")
+    if "microchipnumber" in d and "IDENTICHIPNUMBER" in uv and d["microchipnumber"] == uv["IDENTICHIPNUMBER"]: uv["IDENTICHIPPED"] = 1
+    if "neutered" in d and d["neutered"] == "on" and a.NEUTERED == 0: uv["NEUTERED"] = 1
+    merge_date("neutereddate", "NEUTEREDDATE")
+    merge_date("dateofbirth", "DATEOFBIRTH")
+    merge_float("weight", "WEIGHT")
+    merge_int("internallocation", "SHELTERLOCATION")
+    merge("unit", "SHELTERLOCATIONUNIT")
+    merge_int("pickuplocation", "PICKUPLOCATIONID")
+    merge("pickupaddress", "PICKUPADDRESS")
     if len(uv) > 0:
         dbo.update("animal", animalid, uv, username)
 
