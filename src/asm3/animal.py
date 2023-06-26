@@ -788,8 +788,7 @@ def get_animals_recently_deceased(dbo):
     """
     return dbo.query(get_animal_query(dbo) + " " \
         "WHERE a.DeceasedDate Is Not Null " \
-        "AND a.NonShelterAnimal = 0 " \
-        "AND (a.ActiveMovementType Is Null OR a.ActiveMovementType = 0 OR a.ActiveMovementType = 2) " \
+        "AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 " \
         "AND a.DeceasedDate > ?", [dbo.today(offset=-30)])
 
 def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age = 120):
@@ -4227,6 +4226,10 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     # Non-shelter owner should always match original owner since the user can only change original owner
     if a.nonshelteranimal == 1:
         ownerid = a.originalownerid
+
+    # Non-shelter animals who are deceased have by definition died off the shelter
+    if a.nonshelteranimal == 1 and a.deceaseddate:
+        diedoffshelter = True
 
     # Override the onshelter flag if the animal is actively boarding right now
     if a.hasactiveboarding == 1:
