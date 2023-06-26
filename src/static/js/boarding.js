@@ -99,7 +99,7 @@ $(function() {
                     },
                     { field: "SHELTERLOCATION", display: _("Location"), 
                         formatter: function(row) {
-                            return row.SHELTERLOCATIONNAME + ' <span class="asm-search-locationunit">' + row.SHELTERLOCATIONUNIT + '</span>';
+                            return row.SHELTERLOCATIONNAME + (row.SHELTERLOCATIONUNIT ? ' <span class="asm-search-locationunit">' + row.SHELTERLOCATIONUNIT + '</span>' : '');
                         }},
                     { field: "DAILYFEE", display: _("Fee"),
                         formatter: function(row) {
@@ -161,6 +161,9 @@ $(function() {
             let units = common.get_field(controller.internallocations, $("#location").val(), "UNITS");
             if (units && units.indexOf(",") != -1) {
                 $("#unit").html( html.list_to_options(units.split(",")) );
+            }
+            else {
+                $("#unit").html("");
             }
         },
 
