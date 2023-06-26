@@ -7,8 +7,8 @@ import time
 from asm3.locales import *
 
 
-VERSION = "47u [Mon 26 Jun 10:05:52 BST 2023]"
-BUILD = "06261005"
+VERSION = "47u [Mon 26 Jun 11:39:29 BST 2023]"
+BUILD = "06261139"
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
 HDMY = ( "%d-%m-%Y", "%d-%m-%y" )
@@ -104,6 +104,7 @@ locale_maps = {
     "en_PH":    ( "English", "Philippines", MDY, "&#x20b1;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
     "en_QA":    ( "English", "Qatar", DMY, "QR", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
     "en_RO":    ( "English", "Romania", DMY, "lei", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", ".", DST_UK ),
+    "en_RO2":    ( "English", f"Romania {EURO}0.00", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", ".", DST_UK ),
     "en_NZ":    ( "English", "New Zealand", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "6-L09-104" ),
     "en_TH":    ( "English", "Thailand", DMY, "&#x0e3f;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "" ),
     "en_TW":    ( "English", "Taiwan", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 0, ".", ",", ""),
@@ -166,8 +167,8 @@ def real_locale(locale = "en"):
     #   en_GB (UK)
     if locale in ("en_AE", "en_BE", "en_BG", "en_BM", "en_BQ", "en_CH", "en_CN", "en_CY", "en_ES", 
         "en_HK", "en_ID", "en_IE", "en_IN", "en_JP", "en_KE", "en_KH", "en_LB", "en_LU", "en_LV",
-        "en_MU", "en_MY", "en_MZ", "en_NA", "en_PH", "en_QA", "en_RO", "en_TH", "en_TW", "en_TW2", 
-        "en_TZ", "en_VN", "en_ZA", "en_ZW"):
+        "en_MU", "en_MY", "en_MZ", "en_NA", "en_PH", "en_QA", "en_RO", "en_RO2", "en_TH", 
+        "en_TW", "en_TW2", "en_TZ", "en_VN", "en_ZA", "en_ZW"):
         locale = "en_GB"
     if locale in ("en_AW", "en_BH", "en_CO", "en_CR", "en_KW", "en_KY", "en_IL", "en_LB", 
         "en_MX"):

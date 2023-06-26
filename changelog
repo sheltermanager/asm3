@@ -1,6 +1,7 @@
 47
 ================
 
+26/06/23 Add alternative Romanian locale to use Euro instead of Lei
 26/06/23 Boarding screen: Handle locations with no units #623
 26/06/23 Security fix: login screen could cause a flood by leaning on enter
 25/06/23 Boarding animals should never be adoptable #623
