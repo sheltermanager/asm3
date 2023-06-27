@@ -844,9 +844,6 @@ def update_medical_treatments(dbo, username, amid):
     3. If the record has no treatments, generate one from the master
     4. If the record has no outstanding treatment records, generate
        one from the last administered record
-    5. If we generated a record, increment the tally of given and
-       reduce the tally of remaining. If TreatmentRule is unspecified,
-       ignore this step
     """
     am = dbo.first_row(dbo.query("SELECT * FROM animalmedical WHERE ID = ?", [amid]))
     amt = dbo.query("SELECT * FROM animalmedicaltreatment " \
@@ -889,6 +886,7 @@ def update_medical_treatments(dbo, username, amid):
     else:
         # We've still got some outstanding treatments. Bail out
         if ost > 0: return
+
         # Otherwise, create new treatments, using the latest available date given for this medical
         ldg = dbo.query_date("SELECT DateGiven FROM animalmedicaltreatment WHERE AnimalMedicalID=? ORDER BY DateGiven DESC", [amid])
         insert_treatments(dbo, username, amid, ldg, False)
