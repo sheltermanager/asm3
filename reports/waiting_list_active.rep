@@ -47,3 +47,56 @@ $$FOOTER
 </table>
 <h2>Total: {COUNT.OWNERNAME}</h2>
 FOOTER$$
+&&&
+Waiting List (with photo)
+###
+Waiting List
+###
+34103/Any rev01
+###
+Animals who are active on the waiting list with a photo.
+###
+en
+###
+SELECT u.Urgency, w.DatePutOnList, s.SpeciesName, w.AnimalDescription,
+o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
+o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress,
+w.DateOfLastOwnerContact,
+(SELECT ID FROM media WHERE LinkID=w.ID AND LinkTypeID=5 AND WebsitePhoto=1) AS MediaID
+FROM animalwaitinglist w 
+INNER JOIN owner o ON w.OwnerID = o.ID
+INNER JOIN lkurgency u ON u.ID = w.Urgency
+INNER JOIN species s ON w.SpeciesID = s.ID
+WHERE w.DatePutOnList <= '$CURRENT_DATE$' AND (w.DateRemovedFromList Is Null OR w.DateRemovedFromList > '$CURRENT_DATE$')
+ORDER BY u.Urgency, w.DatePutOnList DESC
+###
+$$HEADER
+<table border=1><tr>
+<td><b>Urgency</b></td>
+<td><b>Date Added</b></td>
+<td><b>Species</b></td>
+<td><b>Description</b></td>
+<td><b>Photo</b></td>
+<td><b>Contact</b></td>
+<td><b>Date of last contact</b></td>
+</tr>
+HEADER$$
+
+$$BODY<tr>
+<td>$URGENCY</td>
+<td>$DATEPUTONLIST</td>
+<td>$SPECIESNAME</td>
+<td>$ANIMALDESCRIPTION</td>
+<td><img src="image?mode=media&id=$MediaID" width="70px" /></td>
+<td><b>$OWNERNAME</b><br>
+$OWNERADDRESS<br>
+$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br>
+<i>H: $HOMETELEPHONE W: $WORKTELEPHONE C: $MOBILETELEPHONE E: $EMAILADDRESS</i></td>
+<td>$DATEOFLASTOWNERCONTACT</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total: {COUNT.OWNERNAME}</h2>
+FOOTER$$
