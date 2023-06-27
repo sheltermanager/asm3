@@ -171,7 +171,6 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 css_tag(BOOTSTRAP_GRID_CSS) +
                 asm_css_tag("asm-icon.css") +
                 asm_css_tag("asm.css") + 
-                script_tag("static/lib/modernizr/modernizr.min.js") + 
                 script_tag(JQUERY_JS) +
                 script_tag(JQUERY_UI_JS) +
                 script_tag(MOMENT_JS) + 
@@ -544,7 +543,8 @@ def menu_structure(l, publisherlist, reports, mailmerges):
             ( asm3.users.VIEW_ANIMAL, "alt+shift+f", "", "animal_find", "asm-icon-animal-find", _("Find animal", l) ),
             ( asm3.users.ADD_ANIMAL, "alt+shift+n", "", "animal_new", "asm-icon-animal-add", _("Add a new animal", l) ),
             ( asm3.users.ADD_LOG, "alt+shift+l", "", "log_new?mode=animal", "asm-icon-log", _("Add a log entry", l) ),
-            ( asm3.users.CHANGE_ANIMAL, "", "", "animal_bulk", "asm-icon-litter", _("Bulk change animals", l) ),
+            ( asm3.users.CHANGE_ANIMAL, "", "", "animal_bulk", "asm-icon-blank", _("Bulk change animals", l) ),
+            ( asm3.users.ADD_LOG, "", "taganimalobservations", "animal_observations", "asm-icon-blank", _("Daily observations", l) ),
             ( asm3.users.ADD_LITTER, "", "", "litters", "asm-icon-litter", _("Edit litters", l) ),
             ( asm3.users.VIEW_ANIMAL, "alt+shift+t", "", "timeline", "asm-icon-calendar", _("Timeline", l) ),
             ( "", "", "taglostfound", "--cat", "asm-icon-animal-lost", _("Lost/Found", l) ),
@@ -631,7 +631,10 @@ def menu_structure(l, publisherlist, reports, mailmerges):
             ( asm3.users.VIEW_ACCOUNT, "alt+shift+x", "tagaccounts", "accounts", "asm-icon-accounts", _("Accounts", l) ),
             ( asm3.users.VIEW_STOCKLEVEL, "", "tagstock", "stocklevel", "asm-icon-stock", _("Stock", l) ),
             ( asm3.users.VIEW_VOUCHER, "", "", "voucher", "asm-icon-blank", _("Voucher book", l) ),
-            ( asm3.users.VIEW_DONATION, "", "", "--cat", "", "Payments" ),
+            ( asm3.users.VIEW_BOARDING, "", "tagboarding", "--cat", "", _("Boarding", l) ),
+            ( asm3.users.VIEW_BOARDING, "", "tagboarding", "boarding", "asm-icon-boarding", _("Boarding book", l) ),
+            ( asm3.users.VIEW_BOARDING, "", "tagboarding", "calendarview?ev=b", "asm-icon-calendar", _("Boarding calendar", l) ),
+            ( asm3.users.VIEW_DONATION, "", "", "--cat", "", _("Payments", l) ),
             ( asm3.users.VIEW_DONATION, "alt+shift+d", "", "donation", "asm-icon-donation", _("Payment book", l) ),
             ( asm3.users.VIEW_DONATION, "", "", "calendarview?ev=p", "asm-icon-calendar", _("Payment calendar", l) ),
             ( asm3.users.ADD_DONATION, "", "", "donation_receive", "asm-icon-blank", _("Receive a payment", l) ),

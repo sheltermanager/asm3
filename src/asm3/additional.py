@@ -1,7 +1,7 @@
-
 import asm3.al
 import asm3.audit
 import asm3.utils
+import asm3.movement
 
 from asm3.i18n import python2display
 
@@ -20,6 +20,15 @@ INCIDENT_DISPATCH = 17
 INCIDENT_OWNER = 18
 INCIDENT_CITATION = 19
 INCIDENT_ADDITIONAL = 20
+MOVEMENT_ADOPTION = 22
+MOVEMENT_FOSTER = 23
+MOVEMENT_TRANSFER = 24
+MOVEMENT_ESCAPED = 25
+MOVEMENT_RECLAIMED = 26
+MOVEMENT_STOLEN = 27
+MOVEMENT_RELEASED = 28
+MOVEMENT_RETAILER = 29
+MOVEMENT_RESERVATION = 30
 PERSON = 1
 PERSON_NAME = 7
 PERSON_TYPE = 8
@@ -39,6 +48,21 @@ INCIDENT_IN = "16, 17, 18, 19, 20"
 LOSTANIMAL_IN = "9, 10"
 PERSON_IN = "1, 7, 8"
 WAITINGLIST_IN = "13, 14, 15"
+MOVEMENT_IN = '22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33'
+
+# Movement mapping 
+
+MOVEMENT_MAPPING = {
+    asm3.movement.ADOPTION: MOVEMENT_ADOPTION,
+    asm3.movement.FOSTER: MOVEMENT_FOSTER,
+    asm3.movement.TRANSFER: MOVEMENT_TRANSFER,
+    asm3.movement.ESCAPED: MOVEMENT_ESCAPED,
+    asm3.movement.RECLAIMED: MOVEMENT_RECLAIMED,
+    asm3.movement.STOLEN: MOVEMENT_STOLEN,
+    asm3.movement.RELEASED: MOVEMENT_RELEASED,
+    asm3.movement.RETAILER: MOVEMENT_RETAILER,
+    0: MOVEMENT_RESERVATION
+}
 
 # Field types
 YESNO = 0
@@ -70,6 +94,8 @@ def clause_for_linktype(linktype):
         inclause = FOUNDANIMAL_IN
     elif linktype == "waitinglist":
         inclause = WAITINGLIST_IN
+    elif linktype == "movement":
+        inclause = MOVEMENT_IN
     return inclause
 
 def table_for_linktype(linktype):
@@ -80,13 +106,15 @@ def table_for_linktype(linktype):
         return "animallost"
     elif linktype == "foundanimal":
         return "animalfound"
+    elif linktype == "movement":
+        return "adoption"
     return linktype
 
 def is_person_fieldtype(fieldtype):
     """ Returns true if the field type given is a person """
     return fieldtype in (PERSON_LOOKUP, PERSON_SPONSOR, PERSON_VET)
 
-def get_additional_fields(dbo, linkid, linktype = "animal"):
+def get_additional_fields(dbo, linkid, linktype = "animal", linktypeid=-1):
     """
     Returns a list of additional fields for the link
     the list contains all the fields from additionalfield and additional,
@@ -94,7 +122,10 @@ def get_additional_fields(dbo, linkid, linktype = "animal"):
     TOOLTIP.  If there isn't an appropriate additional row for the animal, null
     values will be returned for all fields.
     """
-    inclause = clause_for_linktype(linktype)
+    if linktypeid != -1:
+        inclause = f"({linktypeid})"
+    else:
+        inclause = clause_for_linktype(linktype)
     return dbo.query("SELECT af.*, a.Value, " \
         "CASE WHEN af.FieldType = 8 AND a.Value <> '' AND a.Value <> '0' THEN (SELECT AnimalName FROM animal WHERE %s = a.Value) ELSE '' END AS AnimalName, " \
         "CASE WHEN af.FieldType IN (9, 11, 12) AND a.Value <> '' AND a.Value <> '0' " \
@@ -123,6 +154,20 @@ def get_additional_fields_ids(dbo, rows, linktype = "animal"):
         "FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
         "WHERE a.LinkType IN (%s) AND a.LinkID IN (%s) " \
         "ORDER BY af.DisplayIndex" % ( dbo.sql_cast_char("animal.ID"), dbo.sql_cast_char("owner.ID"), inclause, ",".join(links)))
+
+def get_additional_fields_dict(dbo, post, linktype):
+    """
+        Returns a dictionary with keys from input post that match additional field key patterns 
+    """
+    ret = {}
+    for f in get_field_definitions(dbo, linktype):
+        key = "a.%s.%s" % (f.mandatory, f.id)
+        key2 = "additional%s" % f.fieldname
+        if key in post:
+            ret[key] = post[key]
+        elif key2 in post:
+            ret[key] = post[key]
+    return ret
 
 def get_field_definitions(dbo, linktype = "animal"):
     """
@@ -193,7 +238,7 @@ def insert_field_from_form(dbo, username, post):
         "FieldType":        post.integer("type"),
         "LinkType":         post.integer("link"),
         "DisplayIndex":     post.integer("displayindex")
-    })
+    }, username, setRecordVersion=False, setCreated=False)
 
 def update_field_from_form(dbo, username, post):
     """
@@ -213,7 +258,7 @@ def update_field_from_form(dbo, username, post):
         "FieldType":        post.integer("type"),
         "LinkType":         post.integer("link"),
         "DisplayIndex":     post.integer("displayindex")
-    })
+    }, username, setRecordVersion=False, setLastChanged=False)
 
 def update_merge_animal(dbo, oldanimalid, newanimalid):
     """

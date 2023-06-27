@@ -220,18 +220,23 @@ def animal_tags_publisher(dbo, a, includeAdditional=True):
 
 def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=True, includeDonations=True, \
         includeFutureOwner=True, includeIsVaccinated=True, includeLitterMates=True, includeLogs=True, \
-        includeMedical=True, includeTransport=True):
+        includeLicence=True, includeMedical=True, includeTransport=True):
     """
     Generates a list of tags from an animal result (the deep type from calling asm3.animal.get_animal)
     """
     l = dbo.locale
+    
     # calculate the age instead of using stored value in case animal is off shelter
     animalage = format_diff_single(l, date_diff_days(a["DATEOFBIRTH"], dbo.today()))
     if animalage and animalage.endswith("."): 
         animalage = animalage[0:len(animalage)-1]
+   
+    # strip full stop from the end of time on shelter
     timeonshelter = a["TIMEONSHELTER"]
     if timeonshelter and timeonshelter.endswith("."): 
         timeonshelter = timeonshelter[0:len(timeonshelter)-1]
+
+    # calculate displaydob/age based on whether age is an estimate
     displaydob = python2display(l, a["DATEOFBIRTH"])
     displayage = animalage
     estimate = ""
@@ -240,8 +245,14 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         displayage = a["AGEGROUP"]
         estimate = _("estimate", l)
 
+    # make a list of names for the BONDEDNAMES token
+    bondednames = [ a["ANIMALNAME"] ]
+    if a["BONDEDANIMAL1NAME"]: bondednames.append(a["BONDEDANIMAL1NAME"])
+    if a["BONDEDANIMAL2NAME"]: bondednames.append(a["BONDEDANIMAL2NAME"])
+
     tags = { 
         "ANIMALNAME"            : a["ANIMALNAME"],
+        "BONDEDNAMES"           : " / ".join(bondednames),
         "ANIMALTYPENAME"        : a["ANIMALTYPENAME"],
         "BASECOLOURNAME"        : a["BASECOLOURNAME"],
         "BASECOLORNAME"         : a["BASECOLOURNAME"],
@@ -603,6 +614,13 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
     # Is vaccinated indicator
     if includeIsVaccinated:    
         tags["ANIMALISVACCINATED"] = asm3.utils.iif(asm3.medical.get_vaccinated(dbo, a["ID"]), _("Yes", l), _("No", l))
+
+    # Last licence number
+    if includeLicence:
+        licences = asm3.financial.get_animal_licences(dbo, a["ID"], asm3.financial.DESCENDING)
+        if len(licences) > 0:
+            tags["LICENCENUMBER"] = licences[0]["LICENCENUMBER"]
+            tags["LICENSENUMBER"] = licences[0]["LICENCENUMBER"]
 
     if includeMedical:
         iic = asm3.configuration.include_incomplete_medical_doc(dbo)
@@ -1276,6 +1294,9 @@ def movement_tags(dbo, m):
     ))
     if m.EVENTID is not None and m.EVENTID != 0:
         tags = append_tags(tags, event_tags(dbo, asm3.event.get_event(dbo, m.EVENTID)))
+    # movement additional fields
+    tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, m["ID"], "movement"), "MOVEMENT"))
+
     return tags
 
 def clinic_tags(dbo, c):
@@ -1991,7 +2012,7 @@ def generate_licence_doc(dbo, templateid, licenceid, username):
         raise asm3.utils.ASMValidationError("%d is not a valid licence ID" % licenceid)
     tags = person_tags(dbo, asm3.person.get_person(dbo, l.OWNERID))
     if l.ANIMALID is not None and l.ANIMALID != 0:
-        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, l.ANIMALID)))
+        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, l.ANIMALID), includeLicence=False))
     tags = append_tags(tags, licence_tags(dbo, l))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)

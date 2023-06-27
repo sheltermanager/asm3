@@ -49,7 +49,7 @@ AUTH_METHODS = [
 CACHE_PROTECT_METHODS = {
     "animal_image": [ "animalid", "seq" ],
     "animal_thumbnail": [ "animalid", "seq", "d" ],
-    "animal_view": [ "animalid" ],
+    "animal_view": [ "animalid", "template" ],
     "animal_view_adoptable_js": [], 
     "animal_view_adoptable_html": [],
     "checkout": [ "processor", "payref" ],
@@ -260,7 +260,7 @@ def checkout_adoption_post(dbo, post):
         if post.boolean("sendsigned"):
             m = asm3.media.get_media_by_id(dbo, mediaid)
             if m is None: raise asm3.utils.ASMError("cannot find %s" % mediaid)
-            content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
+            content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
             contentpdf = asm3.utils.html_to_pdf(dbo, content)
             attachments = [( "%s.pdf" % m.ID, "application/pdf", contentpdf )]
             asm3.utils.send_email(dbo, "", co["email"], "", "", 
@@ -462,7 +462,7 @@ def handler(post, path, remoteip, referer, useragent, querystring):
             asm3.al.error("animal_view failed, %s is not an animalid" % str(animalid), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid animalid")
         else:
-            return set_cached_response(cache_key, account, "text/html", 3600, 600, asm3.publishers.html.get_animal_view(dbo, asm3.utils.cint(animalid)))
+            return set_cached_response(cache_key, account, "text/html", 3600, 600, asm3.publishers.html.get_animal_view(dbo, asm3.utils.cint(animalid), style=post["template"]))
 
     elif method == "animal_view_adoptable_js":
         return set_cached_response(cache_key, account, "application/javascript", 3600, 600, asm3.publishers.html.get_animal_view_adoptable_js(dbo))
@@ -762,7 +762,7 @@ def handler(post, path, remoteip, referer, useragent, querystring):
             if post.boolean("sendsigned"):
                 m = asm3.media.get_media_by_id(dbo, formid)
                 if m is None: raise asm3.utils.ASMError("cannot find %s" % formid)
-                content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
+                content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
                 contentpdf = asm3.utils.html_to_pdf(dbo, content)
                 attachments = [( "%s.pdf" % m.ID, "application/pdf", contentpdf )]
                 fromaddr = asm3.configuration.email(dbo)

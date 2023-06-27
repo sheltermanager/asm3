@@ -281,6 +281,15 @@ of the year.
   Some licensing regions use a tag number that stays with the animal for
   life and need to allow duplicate licenses as a result.
 
+Boarding
+--------
+
+The boarding tab allows configuration of the boarding tab that appears on
+person records, and animals who are not in care.
+
+* Boarding payment type: The payment type to use when creating due payments
+  from a boarding record with the "Create Payment" toolbar button.
+
 Checkout
 --------
 
@@ -327,6 +336,18 @@ animals (this value can be modified on the animal's cost tab).
 * Show a separate paid date field with costs: If you would like to track the
   date a cost was paid separately from the date a cost was incurred, tick this
   box.
+
+Daily Observations
+------------------
+
+This tab allows you to configure the values that are requested on the
+:ref:`dailyobservations` screen, along with the log type used for the 
+records written.
+
+The left column contains the name of the value, and the right the available
+values. If the right column is empty, the user will be given a free text box to
+enter a value. Otherwise, the right column should contain a pipe-separated list
+of the values available to show in a dropdown. 
 
 Data Protection
 ---------------
@@ -426,6 +447,10 @@ Diary and Messages
 
 * Show the full diary (instead of just my notes) on the home page: If this option
   is on, all users will see the full list of outstanding diary notes on their home page.
+
+* Auto complete diary notes linked to animals when they are marked deceased: If
+  this option is enabled, diary notes linked to animals are completed when the
+  animal is given a deceased date.
 
 * Email users their outstanding diary notes once per day: This option will cause
   the system to send users an email containing their outstanding diary notes. 
@@ -731,6 +756,9 @@ Movements
   field of new animals. When the date is reached, the hold flag is automatically
   removed.
 
+* Trial adoptions last for: This value is used to set the default "trial end date"
+  field when marking adoptions as a trial.
+
 * Treat animals with a future intake date as part of the shelter inventory: This
   option will treat animals who have not arrived yet (Date Brought In > Today)
   as on shelter so that they are visible in shelter view etc.
@@ -794,6 +822,11 @@ Movements
 * Allow creation of payments on the Move-Reserve screen: Allow payments to be
   taken on the :menuselection:`Move --> Reserve an animal` screen.
 
+* Allow editing of payments after creating an adoption on the Move-Adopt an
+  animal screen: After the adopt button is clicked, take the user to a screen
+  that allows editing of the payments that were just created. This allows the
+  user to generate an invoice/receipt or request payment by email, etc.
+
 * Allow overriding of the movement number on the Move menu screens: If turned
   on, the movement number field will be visible on all Move menu screens for
   the user to override.
@@ -835,6 +868,10 @@ Online Forms
 
 * Remove incoming forms after: Automatically remove forms from the incoming queue
   after this many days.
+
+* Remove forms immediately when I process them: When creating or attaching forms
+  to records in the incoming forms list, delete the form as soon as it is 
+  successfully processed.
 
 * Remove processed forms when I leave the incoming forms screen: When navigating
   away from the incoming forms screen, any forms that have been processed (have
@@ -901,6 +938,10 @@ Remove
 
 System
 ^^^^^^
+
+* Remove boarding functionality from screens and menus: If your shelter does
+  not board animals for the public, this option will disable the system's boarding
+  functionality from the financial menu and animal/person screens.
 
 * Remove clinic functionality from screens and menus: If your shelter does
   not run a clinic, this option will disable the system's clinic appointment

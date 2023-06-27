@@ -94,7 +94,19 @@ DEFAULTS = {
     "AvidReRegistration": "No", 
     "AvidRegisterOverseas": "No",
     "AvidOverseasOriginCountry": "",
+    "BehaveLogType": "3",
+    "Behave1Name": "Eaten",
+    "Behave1Values": "None|Minimal|Half|Majority|All",
+    "Behave2Name": "Drunk",
+    "Behave2Values": "None|Minimal|Half|Majority|All",
+    "Behave3Name": "Toilet",
+    "Behave3Values": "Urine|Faeces|Urine + Faeces|None",
+    "Behave4Name": "Exercise/Contact",
+    "Behave4Values": "",
+    "Behave5Name": "Unusual Symptoms",
+    "Behave5Values": "",
     "BoardingCostType": "1",
+    "BoardingPaymentType": "7",
     "CancelReservesOnAdoption": "Yes",
     "CardcomSuccessURL": "https://secure.cardcom.solutions/DealWasSuccessful.aspx",
     "CardcomErrorURL": "https://secure.cardcom.solutions/DealWasUnSuccessful.aspx",
@@ -121,7 +133,10 @@ DEFAULTS = {
     "DefaultMediaNotesFromFile": "Yes",
     "DefaultShiftStart": "09:00",
     "DefaultShiftEnd": "17:00",
+    "DefaultTrialLength": "30",
+    "DiaryCompleteOnDeath": "Yes",
     "DisableAnimalControl": "No",
+    "DisableBoarding": "Yes",
     "DisableClinic": "No",
     "DisableEntryHistory": "Yes",
     "DisableEvents": "Yes",
@@ -150,6 +165,7 @@ DEFAULTS = {
     "EmailMessages": "Yes", 
     "EmblemAdoptable": "Yes",
     "EmblemAlwaysLocation": "No",
+    "EmblemBoarding": "Yes",
     "EmblemBonded": "Yes",
     "EmblemCourtesy": "Yes",
     "EmblemCrueltyCase": "Yes",
@@ -240,10 +256,12 @@ DEFAULTS = {
     "MovementNumberOverride": "No",
     "MovementPersonOnlyReserves": "Yes",
     "MultiSiteEnabled": "No", 
+    "MoveAdoptDonationsEnabled": "No",
     "JSWindowPrint": "Yes",
     "OnlineFormSpamHoneyTrap": "Yes",
     "OnlineFormSpamUACheck": "No",
     "OnlineFormSpamFirstnameMixCase": "Yes",
+    "OnlineFormDeleteOnProcess": "No",
     "Organisation": "Organisation",
     "OrganisationAddress": "Address",
     "OrganisationTelephone": "Telephone",
@@ -690,6 +708,9 @@ def avid_overseas_origin_country(dbo):
 def avid_reregistration(dbo):
     return cboolean(dbo, "AvidReRegistration", DEFAULTS["AvidReRegistration"] == "Yes")
 
+def buddyid_provider_code(dbo):
+    return cstring(dbo, "BuddyIDProviderCode")
+
 def cancel_reserves_on_adoption(dbo):
     return cboolean(dbo, "CancelReservesOnAdoption", DEFAULTS["CancelReservesOnAdoption"] == "Yes")
 
@@ -822,6 +843,9 @@ def default_media_notes_from_file(dbo):
 def default_nonsheltertype(dbo):
     return cint(dbo, "AFNonShelterType", 40)
 
+def default_payment_method(dbo):
+    return cint(dbo, "AFDefaultPaymentMethod", int(DEFAULTS["AFDefaultPaymentMethod"]))
+
 def default_reservation_status(dbo):
     return cint(dbo, "AFDefaultReservationStatus", 1)
 
@@ -839,6 +863,9 @@ def default_type(dbo):
 
 def default_vaccination_type(dbo):
     return cint(dbo, "AFDefaultVaccinationType", 1)
+
+def diary_complete_on_death(dbo):
+    return cboolean(dbo, "DiaryCompleteOnDeath", DEFAULTS["DiaryCompleteOnDeath"] == "Yes")
 
 def disable_asilomar(dbo):
     return cboolean(dbo, "DisableAsilomar", DEFAULTS["DisableAsilomar"] == "Yes")
@@ -1100,6 +1127,9 @@ def multi_site_enabled(dbo):
 def non_shelter_type(dbo):
     return cint(dbo, "AFNonShelterType", 40)
 
+def onlineform_delete_on_process(dbo):
+    return cboolean(dbo, "OnlineFormDeleteOnProcess", DEFAULTS["OnlineFormDeleteOnProcess"] == "Yes")
+
 def onlineform_spam_honeytrap(dbo):
     return cboolean(dbo, "OnlineFormSpamHoneyTrap", DEFAULTS["OnlineFormSpamHoneyTrap"] == "Yes")
 
@@ -1198,6 +1228,9 @@ def petfinder_age_bands(dbo):
 
 def petfinder_hide_unaltered(dbo):
     return cboolean(dbo, "PetFinderHideUnaltered", False)
+
+def petfinder_send_adopted(dbo):
+    return cboolean(dbo, "PetFinderSendAdopted", False)
 
 def petfinder_send_holds(dbo):
     return cboolean(dbo, "PetFinderSendHolds", False)

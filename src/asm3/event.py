@@ -15,6 +15,7 @@ def get_event_animal_query(dbo):
         "a.id AS AnimalID, a.animalname, a.SHORTCODE, a.SHELTERCODE, a.MOSTRECENTENTRYDATE, a.LASTCHANGEDDATE, a.LASTCHANGEDBY,  a.AcceptanceNumber AS LitterID, a.AnimalAge, " \
         "a.Sex, s.SpeciesName, a.DisplayLocation, a.AgeGroup, " \
         "a.Sex, s.SpeciesName, a.displaylocation, " \
+        "a.Identichipnumber, a.DateOfBirth, " \
         "bc.BaseColour AS BaseColourName, " \
         "sx.Sex AS SexName, " \
         "bd.BreedName AS BreedName, ea.EventID, " \
@@ -47,7 +48,8 @@ def get_events_by_animal(dbo, animalid):
     """
     Returns all events for animalid
     """
-    return dbo.query(get_event_animal_query(dbo) + " WHERE ea.animalid = ?", [animalid])
+    rows = dbo.query(get_event_animal_query(dbo) + " WHERE ea.animalid = ?", [animalid])
+    return rows
 
 def get_animals_by_event(dbo, eventid, queryfilter="all"):
     """
@@ -64,7 +66,10 @@ def get_animals_by_event(dbo, eventid, queryfilter="all"):
         "notadopted": " AND NOT EXISTS (SELECT * FROM adoption ad WHERE ad.eventid = ea.eventid AND ad.movementtype = 1 AND ad.animalid = ea.animalid) ",
     }
     whereclause = " WHERE ev.id=? " + (filters[queryfilter] if queryfilter in filters else "")
-    return dbo.query(get_event_animal_query(dbo) + whereclause, [eventid])
+    rows = dbo.query(get_event_animal_query(dbo) + whereclause, [eventid])
+    for ae in rows:
+        ae["AGEGROUP"] = asm3.animal.calc_age_group(dbo, ae["ANIMALID"])
+    return rows
 
 def get_events_by_date(dbo, date):
     """
@@ -91,7 +96,7 @@ def insert_event_from_form(dbo, post, username):
         "StartDateTime": post.date("startdate"),
         "EndDateTime": post.date("enddate"),
         "EventName": post["eventname"],
-        "EventDescription": post["description"],
+        "*EventDescription": post["description"],
         "EventOwnerID": ownerid,
         "EventAddress": post["address"],
         "EventTown": post["town"],
@@ -128,7 +133,7 @@ def update_event_from_form(dbo, post, username):
         "StartDateTime": post.date("startdate"),
         "EndDateTime": post.date("enddate"),
         "EventName": post["eventname"],
-        "EventDescription": post["description"],
+        "*EventDescription": post["description"],
         "EventOwnerID": post.integer("ownerid"),
         "EventAddress": post["address"],
         "EventTown": post["town"],

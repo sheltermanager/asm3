@@ -1,4 +1,4 @@
-/*global $, console, performance, jQuery, FileReader, Modernizr, Mousetrap, Path */
+/*global $, console, performance, jQuery, FileReader, Mousetrap, Path */
 /*global alert, asm, schema, atob, btoa, header, _, escape, unescape, navigator */
 /*global common, config, dlgfx, format */
 /*global html: true */
@@ -35,6 +35,7 @@ const html = {
             return [ false, _("Hold until {0}").replace("{0}", format.date(a.HOLDUNTILDATE)) ]; 
         }
         if (a.HASFUTUREADOPTION == 1) { return [ false, _("Adopted") ]; }
+        if (a.HASACTIVEBOARDING == 1) { return [ false, _("Boarding") ]; }
         if (a.ISHOLD == 1 && p.indexOf("includehold") == -1) { return [ false, _("Hold") ]; }
         if (a.ISQUARANTINE == 1 && p.indexOf("includequarantine") == -1) { return [ false, _("Quarantine") ]; }
         if (a.DECEASEDDATE) { return [ false, _("Deceased") ]; }
@@ -185,6 +186,9 @@ const html = {
         }
         if (config.bool("EmblemBonded") && (a.BONDEDANIMALID || a.BONDEDANIMAL2ID)) {
             s.push(html.icon("bonded", _("Bonded")));
+        }
+        if (config.bool("EmblemBoarding") && (a.HASACTIVEBOARDING == 1)) {
+            s.push(html.icon("boarding", _("Boarding")));
         }
         if (config.bool("EmblemLongTerm") && a.ARCHIVED == 0 && (a.DAYSONSHELTER > config.integer("LongTermMonths") * 30))  {
             s.push(html.icon("calendar", _("Long term")));
@@ -862,8 +866,9 @@ const html = {
      *  If the web browser oriented the image before rendering to the canvas, does nothing.
      **/
     rotate_canvas_to_exif: function(canvas, ctx, orientation) {
-        // This web browser already rotated the image when it was loaded, do nothing
-        if (Modernizr.exiforientation) { return; }
+        // This function is no longer needed as all browsers do this when loading the image now
+        // if (Modernizr.exiforientation) { return; }
+        if (true) { return; }
         var width = canvas.width,
             height = canvas.height;
         if (4 < orientation && orientation < 9) {

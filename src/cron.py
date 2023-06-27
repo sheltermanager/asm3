@@ -15,6 +15,7 @@ from asm3 import db
 from asm3 import dbfs
 from asm3 import dbupdate
 from asm3 import diary
+from asm3 import financial
 from asm3 import lostfound
 from asm3 import media
 from asm3 import movement
@@ -67,12 +68,16 @@ def daily(dbo):
         # Update on shelter and foster animal location fields
         ttask(animal.update_on_shelter_animal_statuses, dbo)
         ttask(animal.update_foster_animal_statuses, dbo)
+        ttask(animal.update_boarding_animal_statuses, dbo)
 
         # Update on shelter animal variable data (age, time on shelter, etc)
         ttask(animal.update_on_shelter_variable_animal_data, dbo)
 
         # Update variable data for young offshelter animals
         ttask(animal.update_offshelter_young_variable_animal_data, dbo)
+
+        # Update locations of arriving boarders
+        ttask(financial.update_location_boarding_today, dbo)
 
         # Update animal figures for reports
         ttask(animal.update_animal_figures, dbo)

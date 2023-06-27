@@ -59,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
@@ -95,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#avid-pettrac-uk">AVID/PETtrac UK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#identichip-anibase-uk">idENTICHIP/Anibase UK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#akc-reunite">AKC Reunite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#buddyid">BuddyID</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#foundanimals-24pet">FoundAnimals/24Pet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#homeagain">HomeAgain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#petlink">PetLink</a></li>
@@ -385,6 +385,10 @@ the PetFinder H status, and shelter animals who have the word “Stray” in
 their entry category sent with an F status. This will put those animals into
 PetFinder’s lost and found database to help with reuniting stray pets with
 their owners.</p>
+<p>Finally, you can choose to send previously adopted animals with
+status X. This helps PetFinder keep track of your adopted animals and can be
+useful for grants. If you have many thousands of previously adopted animals,
+this can have an effect on performance.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you have created new Species or Breeds within ASM, you will need to map them to the available publisher options under the Breed and Species sections of <span class="menuselection">Settings ‣ Lookup Data</span></p>
@@ -620,6 +624,17 @@ who supply microchips to US organisations and pet owners. AKC microchips are
 either 15-digits, starting with 956 or 10-digits, starting with 0006 or 0007.</p>
 <p>They will optionally accept registration of any microchip, although this has
 to be agreed with them first.</p>
+</section>
+<section id="buddyid">
+<h2>BuddyID<a class="headerlink" href="#buddyid" title="Permalink to this heading">¶</a></h2>
+<p>ASM can register microchips with BuddyID, who supply microchips to US
+organisations and pet owners. Their registry is free to use and will accept
+registration of microchips from any manufacturer. To signup, you will need
+to get in touch with them and have them issue you with a “provider code”
+to configure in ASM.</p>
+<p>ASM will attempt to register all microchips with BuddyID and as with
+the other chip registration publishers, will track when it last updated a
+chip with them in case of subsequent adoption or reclaim.</p>
 </section>
 <section id="foundanimals-24pet">
 <h2>FoundAnimals/24Pet<a class="headerlink" href="#foundanimals-24pet" title="Permalink to this heading">¶</a></h2>

@@ -38,27 +38,27 @@ header = {
         16: ["waitinglist_new", "asm-icon-waitinglist", _("Add an animal to the waiting list")],
         17: ["waitinglist_results", "asm-icon-waitinglist", _("Edit the current waiting list")],
         18: ["move_reserve", "asm-icon-reservation", _("Reserve an animal")],
-        19: ["move_foster", "", _("Foster an animal")],
+        19: ["move_foster", "asm-icon-movement", _("Foster an animal")],
         20: ["move_adopt", "asm-icon-person", _("Adopt an animal")],
         21: ["move_deceased", "asm-icon-death", _("Mark an animal deceased")],
-        22: ["move_book_recent_adoption", "", _("Return an animal from adoption")],
-        23: ["move_book_recent_other", "", _("Return an animal from another movement")],
+        22: ["move_book_recent_adoption", "asm-icon-movement", _("Return an animal from adoption")],
+        23: ["move_book_recent_other", "asm-icon-movement", _("Return an animal from another movement")],
         24: ["move_book_reservation", "asm-icon-reservation", _("Reservation book")],
         25: ["move_book_foster", "asm-icon-book", _("Foster book")],
         26: ["move_book_retailer", "asm-icon-book", _("Retailer book")],
-        27: ["vaccination?newvacc=1", "", _("Add a vaccination")],
+        27: ["vaccination?newvacc=1", "asm-icon-vaccination", _("Add a vaccination")],
         28: ["vaccination", "asm-icon-vaccination", _("Vaccination book")],
-        29: ["medical?newmed=1", "", _("Add a medical regimen")],
+        29: ["medical?newmed=1", "asm-icon-medical", _("Add a medical regimen")],
         30: ["medical", "asm-icon-medical", _("Medical book")],
         32: ["publish_options", "asm-icon-settings", _("Set publishing options")],
         31: ["search?q=forpublish", "asm-icon-animal", _("Up for adoption")],
         33: ["search?q=deceased", "asm-icon-death", _("Recently deceased")],
-        34: ["search?q=notforadoption", "", _("Not for adoption")],
+        34: ["search?q=notforadoption", "asm-icon-notforadoption", _("Not for adoption")],
         35: ["search?q=onshelter", "asm-icon-animal", _("Shelter animals")],
         36: ["accounts", "asm-icon-accounts", _("Accounts")],
         37: ["donation_receive", "asm-icon-donation", _("Receive a payment")],
-        38: ["move_transfer", "", _("Transfer an animal")],
-        39: ["medicalprofile", "", _("Medical profiles")],
+        38: ["move_transfer", "asm-icon-movement", _("Transfer an animal")],
+        39: ["medicalprofile", "asm-icon-medical", _("Medical profiles")],
         40: ["shelterview", "asm-icon-location", _("Shelter view")],
         41: ["move_book_trial_adoption", "asm-icon-trial", _("Trial adoption book")],
         42: ["incident_new", "asm-icon-call", _("Report a new incident")],
@@ -74,12 +74,15 @@ header = {
         52: ["transport", "asm-icon-transport", _("Transport Book")],
         53: ["timeline", "asm-icon-calendar", _("Timeline")],
         54: ["staff_rota", "asm-icon-rota", _("Staff Rota")],
-        55: ["move_reclaim", "", _("Reclaim an animal")],
+        55: ["move_reclaim", "asm-icon-movement", _("Reclaim an animal")],
         56: ["donation", "asm-icon-donation", _("Payment book")],
         57: ["calendarview?ev=c", "asm-icon-calendar", _("Clinic Calendar")],
-        58: ["move_book_soft_release", "", _("Soft release book")],
+        58: ["move_book_soft_release", "asm-icon-movement", _("Soft release book")],
         59: ["event_find", "asm-icon-event-find", _("Find Event")],
-        60: ["event_new", "asm-icon-event-add", _("Add a new event")]
+        60: ["event_new", "asm-icon-event-add", _("Add a new event")],
+        61: ["animal_observations", "asm-icon-animal", _("Daily Observations")],
+        62: ["boarding", "asm-icon-boarding", _("Boarding book")],
+        63: ["calendarview?ev=b", "asm-icon-calendar", _("Boarding calendar")]
     },
 
     show_error: function(text, duration) {
@@ -264,6 +267,10 @@ header = {
             if (config.bool("DisableLostAndFound")) {
                 $(".taglostfound").hide();  
             }
+            // If boarding is disabled, hide menu entries for it
+            if (config.bool("DisableBoarding")) {
+                $(".tagboarding").hide();
+            }
             // If clinic is disabled, hide menu entries for it
             if (config.bool("DisableClinic")) {
                 $(".tagclinic").hide();
@@ -351,6 +358,9 @@ header = {
             s += "href='" + url + "'>";
             if (image != "") {
                 s += "<span class='asm-icon " + image + "'></span> ";
+            }
+            else {
+                s += "<span class='asm-icon-blank'></span> ";
             }
             s += text + "</a>";
         });

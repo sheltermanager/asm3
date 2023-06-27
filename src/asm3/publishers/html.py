@@ -177,12 +177,14 @@ def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locatio
         bodies.append(asm3.wordprocessor.substitute_tags(body, tags, True, "$$", "$$"))
     return "%s\n%s\n%s" % (head,"\n".join(bodies), foot)
     
-def get_animal_view(dbo, animalid):
-    """ Constructs the animal view page to the asm3.template. """
+def get_animal_view(dbo, animalid, style="animalview"):
+    """ Constructs the animal view page to the animalview (or another specified) style/template. """
     a = dbo.first_row(get_animal_data(dbo, animalid=animalid, include_additional_fields=True, strip_personal_data=False))
-    # The animal is adoptable, use the normal animalview template
+    # The animal is adoptable, use the specified template
     if a is not None and is_animal_adoptable(dbo, a):
-        head, body, foot = get_animal_view_template(dbo)
+        head, body, foot = asm3.template.get_html_template(dbo, style)
+        if head == "":
+            head, body, foot = get_animal_view_template(dbo)
     else:
         # The animal is not adoptable. 
         # If there is no animalviewnotadoptable template, produce an error

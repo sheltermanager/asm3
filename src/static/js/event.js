@@ -9,8 +9,7 @@ $(function(){
 
         render: function(){
             return [
-
-//                console.log(controller),
+                // console.log(controller),
                 edit_header.event_edit_header(controller.event, "event", []),
                 tableform.buttons_render([
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this event") },
@@ -18,7 +17,6 @@ $(function(){
                 ]),
                 '<div id="asm-details-accordion">',
                 this.render_details(),
-
                 '</div>',
                 '</div>'
             ].join("\n");
@@ -81,6 +79,11 @@ $(function(){
                 '</td>',
                 // right table
                 '<td width="50%" class="asm-nested-table-td">',
+                '<div>',
+                '<p><label for="description">' + _("Description") + '</label></p>',
+                '<div id="description" data-post="description" data-height="200px" data-margin-top="0px" data-json="EVENTDESCRIPTION" class="asm-richtextarea"></div>',
+                '</div>',
+                '</table>',
                 additional.additional_fields(controller.additional),
                 '</td>',
                 // end of outer table
@@ -104,7 +107,7 @@ $(function(){
                     "&id=" + $("#eventid").val() +
                     "&ownerid=" + $("#location").personchooser().val() +
                     "&recordversion=" + controller.event.RECORDVERSION +
-                    "&" + $("input, select, textarea").not(".chooser").toPOST();
+                    "&" + $("input, select, textarea, .asm-richtextarea").not(".chooser").toPOST();
                 common.ajax_post("event", formdata)
                     .then(callback)
                     .fail(function() {
@@ -181,13 +184,17 @@ $(function(){
         sync: function(){
 
             // Load the data into the controls for the screen
-            $("#asm-content input, #asm-content select, #asm-content textarea").fromJSON(controller.event);
+            $("input, select, textarea, .asm-richtextarea").fromJSON(controller.event);
 
             // Update on-screen fields from the data and display the screen
             event.enable_widgets();
 
             // Dirty handling
             validate.bind_dirty([ "event_" ]);
+        },
+
+        destroy: function() {
+            common.widget_destroy("#description", "richtextarea");
         },
 
         name: "event",

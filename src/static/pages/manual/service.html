@@ -59,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
@@ -75,6 +74,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#translations">Translations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#filters">Filters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sort">Sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#style">Style</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#extra-content">Extra Content</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#limit">Limit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#popup-iframe">Popup iFrame</a></li>
@@ -448,6 +448,8 @@ JSON result looks like this:</p>
         <span class="s2">&quot;TOTALDAYSONSHELTER&quot;</span><span class="p">:</span> <span class="mi">3162</span><span class="p">,</span>
         <span class="s2">&quot;TOTALTIMEONSHELTER&quot;</span><span class="p">:</span> <span class="s2">&quot;8 years 7 months.&quot;</span><span class="p">,</span>
         <span class="s2">&quot;UNIQUECODEID&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;VACCGIVENCOUNT&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;VACCOUTSTANDINGCOUNT&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
         <span class="s2">&quot;WEBSITEIMAGECOUNT&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
         <span class="s2">&quot;WEBSITEMEDIADATE&quot;</span><span class="p">:</span> <span class="s2">&quot;2013-05-12T09:13:21&quot;</span><span class="p">,</span>
         <span class="s2">&quot;WEBSITEMEDIAID&quot;</span><span class="p">:</span> <span class="mi">118</span><span class="p">,</span>
@@ -501,6 +503,11 @@ it is this service call that the system redirects you to.</p>
 <p>If the animal is no longer adoptable, an error page will be displayed. If you prefer, you
 can create an HTML publishing template called “animalviewnotadoptable” that will display
 instead for animals that can no longer be adopted.</p>
+<p>You can also optionally specify a style parameter to choose a template to use other
+than animalview:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_view&amp;animalid=520&amp;style=animalviewcarousel
+</pre></div>
+</div>
 </section>
 <section id="animal-view-adoptable-js">
 <h2>animal_view_adoptable_js<a class="headerlink" href="#animal-view-adoptable-js" title="Permalink to this heading">¶</a></h2>
@@ -690,6 +697,19 @@ an at symbol &#64; to do a numeric sort rather than a string/alphanumeric sort:<
 adoptable animals to be output in a random order:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="n">asm3_adoptable_sort</span> <span class="o">=</span> <span class="s2">&quot;SHUFFLE&quot;</span><span class="p">;</span>
+<span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
+<span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="style">
+<h3>Style<a class="headerlink" href="#style" title="Permalink to this heading">¶</a></h3>
+<p>You can choose the template that will be passed to the animal_view call when an animal’s
+adoptable profile is viewed. By default, this value is “animalview” to use the template
+with that name, but it can be overridden:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
+<span class="n">asm3_adoptable_style</span> <span class="o">=</span> <span class="s2">&quot;animalviewcarousel&quot;</span><span class="p">;</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>

@@ -242,27 +242,6 @@ def delete_invoice(dbo, username, itemid):
     dbo.delete("clinicinvoiceitem", itemid, username)
     update_appointment_total(dbo, appointmentid)
 
-def insert_payment_from_appointment(dbo, username, appointmentid, post):
-    """
-    Creates a payment record from an appointment via the create payment dialog.
-    """
-    l = dbo.locale
-    c = get_appointment(dbo, appointmentid)
-    d = {
-        "person":   str(c.OwnerID),
-        "animal":   str(c.AnimalID),
-        "type":     post["paymenttype"],
-        "payment":  post["paymentmethod"],
-        "amount":   str(c.Amount),
-        "due":      post["due"],
-        "received": post["received"],
-        "vat":      asm3.utils.iif(c.IsVAT == 1, "on", ""),
-        "vatrate":  str(c.VATRate),
-        "vatamount": str(c.VATAmount),
-        "comments": asm3.i18n._("Appointment {0}. {1} on {2} for {3}").format( asm3.utils.padleft(c.ID, 6), c.OWNERNAME, asm3.i18n.python2display(l, c.DATETIME), c.ANIMALNAME )
-    }
-    return asm3.financial.insert_donation_from_form(dbo, username, asm3.utils.PostedData(d, l))
-
 def auto_update_statuses(dbo):
     """
     Moves on waiting list statuses where appropriate.

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>$$ANIMALNAME$$</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link type="text/css" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<style>
+	body { 
+   	    font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif; 
+	    text-align: center;
+	}
+    .carousel-details {
+        margin-top: 10px;
+        text-align: left;
+        padding-left: 20px;
+    }
+    .adopt-button {
+        display: inline-block;
+        padding: 12px 20px;
+        background-color: #57C9E7;
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+    .adopt-button:hover {
+      background-color: #FDCC76;
+    }
+
+@media (max-width: 767px) {
+  body {
+    font-size: 2rem;
+  }
+}
+</style>
+<meta property="og:title" content="$$ANIMALNAME$$" />
+<meta property="og:description" content="$$DESCRIPTIONATTR$$" />
+<meta property="og:image" content="$$WEBMEDIAFILENAME$$" />
+<meta charset="utf-8" />
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+    const carouselContainer = document.querySelector(".carousel");
+});
+function blankImage(imgid) {
+    var img = document.getElementById(imgid);
+    img.style.display = "none";
+}
+</script>
+</head>
+<body>

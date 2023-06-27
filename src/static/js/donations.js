@@ -124,9 +124,8 @@ $(function() {
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
                             if (!row.ANIMALID || row.ANIMALID == 0) { return ""; }
-                            let s = "";
-                            if (controller.name.indexOf("animal_") == -1) { s = html.animal_emblems(row) + " "; }
-                            return s + '<a href="animal?id=' + row.ANIMALID + '">' + row.ANIMALNAME + ' - ' + row.SHELTERCODE + '</a>';
+                            let s = html.animal_link(row);
+                            return s;
                         },
                         hideif: function(row) {
                             return controller.name.indexOf("animal_") != -1;
@@ -138,7 +137,7 @@ $(function() {
 
             const buttons = [
                 { id: "new", text: _("New Payment"), icon: "new", enabled: "always", perm: "oaod",
-                     click: function() { 
+                    click: function() { 
                         tableform.dialog_show_add(dialog, {
                             onvalidate: function() {
                                 return donations.validation();
@@ -170,6 +169,11 @@ $(function() {
                                 if (controller.person) {
                                     $("#person").personchooser("loadbyid", controller.person.ID);
                                     donations.update_movements(controller.person.ID);
+                                }
+                                if (controller.name == "move_donations") {
+                                    $("#animal").animalchooser("loadbyid", controller.animalid);
+                                    $("#person").personchooser("loadbyid", controller.ownerid);
+                                    donations.update_movements(controller.ownerid);
                                 }
                                 $("#quantity").val("1");
                                 $("#type").select("value", config.str("AFDefaultDonationType"));
@@ -228,7 +232,7 @@ $(function() {
                     },
                     hideif: function(row) {
                         // Don't show for animal or person records
-                        if (controller.animal || controller.person) {
+                        if (controller.animal || controller.person || controller.name == 'move_donations') {
                             return true;
                         }
                     }
@@ -277,14 +281,17 @@ $(function() {
             if (controller.animal) {
                 row.ANIMALNAME = controller.animal.ANIMALNAME;
                 row.SHELTERCODE = controller.animal.SHELTERCODE;
+                row.SHORTCODE = controller.animal.SHORTCODE;
             }
             else if (donations.lastanimal) {
                 row.ANIMALNAME = donations.lastanimal.ANIMALNAME;
                 row.SHELTERCODE = donations.lastanimal.SHELTERCODE;
+                row.SHORTCODE = donations.lastanimal.SHORTCODE;
             }
             else {
                 row.ANIMALNAME = "";
                 row.SHELTERCODE = "";
+                row.SHORTCODE = "";
             }
             if (controller.person) {
                 row.OWNERCODE = controller.person.OWNERCODE;
@@ -373,6 +380,14 @@ $(function() {
             else if (controller.name == "person_donations") {
                 s += edit_header.person_edit_header(controller.person, "donations", controller.tabcounts);
             }
+            else if (controller.name == 'move_donations') {
+                s +=  [html.content_header(_("Settle Payments")),
+                '<div class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em;">',
+                '<p class="centered"><span class="ui-icon ui-icon-info"></span>',
+                common.base64_decode(controller.message),
+                '</p>',
+                '</div>'].join("\n");              
+            }
             else {
                 s += html.content_header(this.title());
             }
@@ -388,6 +403,9 @@ $(function() {
             s += '<span id="tfee">' + _("Fees") + ': <span class="strong" id="feetotal"></span></span> ';
             s += '<span id="tnet">' + _("Net") + ': <span class="strong" id="nettotal"></span></span> ';
             s += '</p></div>';
+            if (controller.name == "move_donations") {
+                s += '<div class="centered" style="padding: 5px"><button id="button-next">' + html.icon("movement") + ' ' + _("Next") + '</button></div>';
+            }
             s += html.content_footer();
             return s;
         },
@@ -408,6 +426,22 @@ $(function() {
             }
             if (asm.locale != "en_GB") {
                 $("#giftaid").closest("tr").hide();
+            }
+
+            if (controller.name == "move_donations") {
+                $("#button-next").button().click(async function() {
+                    $("#button-next").button("disable");
+                    try {
+                        let u = "move_gendoc?" +
+                            "linktype=MOVEMENT&id=" + controller.id +
+                            "&message=" + encodeURIComponent(controller.message);
+                        common.route(u);
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        $("#button-next").button("enable");
+                    }
+                });                
             }
 
             $("#movement").closest("tr").hide();
@@ -651,6 +685,7 @@ $(function() {
         routes: {
             "animal_donations": function() { common.module_loadandstart("donations", "animal_donations?id=" + this.qs.id); },
             "person_donations": function() { common.module_loadandstart("donations", "person_donations?id=" + this.qs.id); },
+            "move_donations": function() { common.module_loadandstart("donations", "move_donations?" + this.rawqs); },
             "donation": function() { common.module_loadandstart("donations", "donation?" + this.rawqs); }
         }
 

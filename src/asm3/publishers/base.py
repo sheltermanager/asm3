@@ -183,6 +183,8 @@ def get_animal_data_query(dbo, pc, animalid=0, publisher_key=""):
     sql += " AND a.HasPermanentFoster = 0"
     # Filter out animals with a future adoption
     sql += " AND NOT EXISTS(SELECT ID FROM adoption WHERE MovementType = 1 AND AnimalID = a.ID AND MovementDate > %s)" % dbo.sql_value(dbo.today())
+    # Filter out active boarders
+    sql += " AND ab.ID IS NULL"
     # Build a set of OR clauses based on any movements/locations
     moveor = []
     if len(pc.internalLocations) > 0 and pc.internalLocations[0].strip() != "null" and "".join(pc.internalLocations) != "":
@@ -268,7 +270,7 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True, organis
             r.CURRENTOWNERNAME = organisation
             r.CURRENTOWNERTITLE = ""
             r.CURRENTOWNERINITIALS = ""
-            r.CURRENTOWNERFORENAMES = ""
+            r.CURRENTOWNERFORENAMES = "org." # Some providers validate against empty first names
             r.CURRENTOWNERSURNAME = organisation
             r.CURRENTOWNERADDRESS = orgaddress
             r.CURRENTOWNERTOWN = orgtown
@@ -384,6 +386,7 @@ def is_animal_adoptable(dbo, a):
     if a.NONSHELTERANIMAL == 1: return False
     if a.DECEASEDDATE is not None: return False
     if a.HASFUTUREADOPTION == 1: return False
+    if a.HASACTIVEBOARDING == 1: return False
     if a.HASPERMANENTFOSTER == 1: return False
     if a.CRUELTYCASE == 1 and not p.includeCaseAnimals: return False
     if a.NEUTERED == 0 and not p.includeNonNeutered and str(a.SPECIESID) in asm3.configuration.alert_species_neuter(dbo).split(","): return False
@@ -396,7 +399,7 @@ def is_animal_adoptable(dbo, a):
     if a.ACTIVEMOVEMENTTYPE == 1 and a.HASTRIALADOPTION == 1 and not p.includeTrial: return False
     if a.ACTIVEMOVEMENTTYPE == 1 and a.HASTRIALADOPTION == 0: return False
     if a.ACTIVEMOVEMENTTYPE and a.ACTIVEMOVEMENTTYPE >= 3 and a.ACTIVEMOVEMENTTYPE <= 7: return False
-    if not p.includeWithoutImage and a.WEBSITEMEDIANAME == "": return False
+    if not p.includeWithoutImage and a.WEBSITEMEDIANAME is None: return False
     if not p.includeWithoutDescription and asm3.configuration.publisher_use_comments(dbo) and a.ANIMALCOMMENTS == "": return False
     if not p.includeWithoutDescription and not asm3.configuration.publisher_use_comments(dbo) and a.WEBSITEMEDIANOTES == "": return False
     if p.excludeUnderWeeks > 0 and asm3.i18n.add_days(a.DATEOFBIRTH, 7 * p.excludeUnderWeeks) > dbo.today(): return False
@@ -1259,6 +1262,22 @@ class FTPPublisher(AbstractPublisher):
         try:
             for f in self.socket.nlst("*.jpg"):
                 self.socket.delete(f)
+        except Exception as err:
+            self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
+
+    def clearUnusedFTPImages(self, animals):
+        """ given a set of animals, removes images from the current FTP folder that do not
+            start with a sheltercode that is in the list of animals """
+        sheltercodes = [x.SHELTERCODE for x in animals]
+        # self.log("removing unused images (valid prefixes = %s)" % sheltercodes)
+        try:
+            nlst = self.socket.nlst("*.jpg")
+            # self.log("NLST: %s" % nlst)
+            for f in nlst:
+                c = f[:f.find("-")]
+                if c not in sheltercodes: 
+                    self.log("delete unreferenced image: %s" % f)
+                    self.socket.delete(f)
         except Exception as err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
 

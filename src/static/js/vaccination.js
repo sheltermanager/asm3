@@ -178,12 +178,12 @@ $(function() {
                         });
                         $("#usagecomments").html(comments);
                         $("#givenexpires, #givenbatch, #givenmanufacturer, #givenrabiestag").val("");
-                        $("#givennewdate").datepicker("setDate", new Date());
+                        $("#givennewdate").date("today");
                         let rd = vaccination.calc_reschedule_date(new Date(), vacctype);
-                        if (rd) { $("#rescheduledate, #givenexpires").datepicker("setDate", rd); }
+                        if (rd) { $("#rescheduledate, #givenexpires").date("setDate", rd); }
                         vaccination.set_given_batch(vacctype);
                         $("#usagetype").select("firstvalue");
-                        $("#usagedate").datepicker("setDate", new Date());
+                        $("#usagedate").date("today");
                         $("#usagedate").closest("tr").hide();
                         $("#quantity").val("0");
                         $("#givenby").select("value", asm.user);
@@ -575,7 +575,7 @@ $(function() {
             let gd = format.date_js(format.date_iso($("#given").val()));
             let ed = vaccination.calc_reschedule_date(gd, $("#type").val());
             if (!ed) { $("#expires").val(""); return; }
-            $("#expires").datepicker("setDate", ed);
+            $("#expires").date("setDate", ed);
         },
 
         /** Calculates the reschedule date from date and returns

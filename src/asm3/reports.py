@@ -319,7 +319,8 @@ def update_report_from_form(dbo, username, post):
     Updates a report record from posted form data
     """
     reportid = post.integer("reportid")
-    dbo.update("customreport", reportid, {
+    prev = dbo.first_row(dbo.query("SELECT Title, Category FROM customreport WHERE ID=?", [reportid]))
+    values = {
         "Title":                post["title"],
         "Category":             post["category"],
         "*SQLCommand":          post["sql"],
@@ -330,7 +331,10 @@ def update_report_from_form(dbo, username, post):
         "Description":          post["description"],
         "OmitHeaderFooter":     post.boolean("omitheaderfooter"),
         "OmitCriteria":         post.boolean("omitcriteria")
-    }, username, setRecordVersion=False)
+    }
+    # If the name or category was changed, clear any revision number
+    if prev is not None and (prev.TITLE != post["title"] or prev.CATEGORY != post["category"]): values["Revision"] = 0
+    dbo.update("customreport", reportid, values, username, setRecordVersion=False)
 
     dbo.delete("customreportrole", "ReportID=%d" % reportid)
     for rid in post.integer_list("viewroles"):
@@ -722,9 +726,11 @@ def email_daily_reports(dbo, now = None):
         if freq == 10 and day != 1 and month != 1: continue # Freq is beginning of year and its not 1st Jan
         if freq == 11 and day != 31 and month != 12: continue # Freq is end of year and its not 31st Dec
         # If we get here, we're good to send
+        asm3.al.debug("executing scheduled report '%s' (hour=%s, freq=%s)" % (r.TITLE, r.DAILYEMAILHOUR, r.DAILYEMAILFREQUENCY), "reports.email_daily_reports", dbo)
         body = execute(dbo, r.ID, "dailyemail")
         # If we aren't sending empty reports and there's no data, bail
         if body.find("NODATA") != -1 and not asm3.configuration.email_empty_reports(dbo): 
+            asm3.al.debug("report '%s' contained no data and option is on to skip sending empty reports" % (r.TITLE), "reports.email_daily_reports", dbo)
             continue
         asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3)
 
@@ -1281,6 +1287,10 @@ class Report:
             s = s.replace("$CURRENT_DATE+%s$" % day, self.dbo.sql_date(d, includeTime=False, wrapParens=False))
         # straight tokens
         s = s.replace("$CURRENT_DATE$", self.dbo.sql_date(self.dbo.now(), includeTime=False, wrapParens=False))
+        s = s.replace("$CURRENT_DATE_FDM$", self.dbo.sql_date(asm3.i18n.first_of_month(self.dbo.now()), includeTime=False, wrapParens=False))
+        s = s.replace("$CURRENT_DATE_LDM$", self.dbo.sql_date(asm3.i18n.last_of_month(self.dbo.now()), includeTime=False, wrapParens=False))
+        s = s.replace("$CURRENT_DATE_FDY$", self.dbo.sql_date(asm3.i18n.first_of_year(self.dbo.now()), includeTime=False, wrapParens=False))
+        s = s.replace("$CURRENT_DATE_LDY$", self.dbo.sql_date(asm3.i18n.last_of_year(self.dbo.now()), includeTime=False, wrapParens=False))
         s = s.replace("$USER$", self.user)
         s = s.replace("$DATABASENAME$", self.dbo.database)
         # Substitute the location filter, but only if the report actually

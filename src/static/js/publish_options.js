@@ -25,6 +25,7 @@ $(function() {
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
                 '<li class="localeus hasakcreunite"><a href="#tab-akcreunite">AKC Reunite Microchips</a></li>',
+                '<li class="localeus hasbuddyid"><a href="#tab-buddyid">BuddyID Microchips</a></li>',
                 '<li class="localeus hasfoundanimals"><a href="#tab-foundanimals">FoundAnimals/24Pet Microchips</a></li>',
                 '<li class="localeus hashomeagain"><a href="#tab-homeagain">HomeAgain Microchips</a></li>',
                 '<li class="localeus localeca localemx haspetlink"><a href="#tab-petlink">PetLink Microchips</a></li>',
@@ -558,6 +559,13 @@ $(function() {
                 '<option value="Yes">Send with status "H"</option>',
                 '</select></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="pfsendadopted">Previously adopted animals</label></td>',
+                '<td><select id="pfsendadopted" data="PetFinderSendAdopted" class="asm-selectbox cfg">',
+                '<option value="No">Do not send</option>',
+                '<option value="Yes">Send with status "X"</option>',
+                '</select></td>',
+                '</tr>',
                 '</table>',
                 html.info('Make sure to notify the PetFinder helpdesk that you are using ASM to upload animals so that they can give you your FTP password.<br/>' +
                     'It is <b>not</b> the same as your password for the members area.'),
@@ -816,6 +824,22 @@ $(function() {
             ].join("\n");
         },
 
+        render_buddyid: function() {
+            return [
+                '<div id="tab-buddyid">',
+                html.info('Find out more at ' + 
+                    '<a target="_blank" href="https://buddyid.com/pet-microchips-and-registration/">https://buddyid.com/pet-microchips-and-registration/</a>'),
+                '<p><input id="enabledbd" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledbd">' + _("Enabled") + '</label></p>',
+                '<table>',
+                '<tr>',
+                '<td><label for="bdprovidercode">BuddyID Provider Code</label></td>',
+                '<td><input id="bdprovidercode" type="text" class="asm-doubletextbox cfg" disabled="disabled" data="BuddyIDProviderCode" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
         render_foundanimals: function() {
             return [
                 '<div id="tab-foundanimals">',
@@ -1052,6 +1076,7 @@ $(function() {
                 this.render_rescuegroups(),
                 this.render_adoptapet(),
                 this.render_akcreunite(),
+                this.render_buddyid(),
                 this.render_foundanimals(),
                 this.render_homeagain(),
                 this.render_maddiesfund(),
@@ -1179,6 +1204,7 @@ $(function() {
 
             // Disable services that require sitedef setup
             if (!controller.hasakcreunite) { $(".hasakcreunite").hide(); }
+            if (!controller.hasbuddyid) { $(".hasbuddyid").hide(); }
             if (!controller.hasfoundanimals) { $(".hasfoundanimals").hide(); }
             if (!controller.hashtmlftp) { $(".hashtmlftp").hide(); }
             if (!controller.hashomeagain) { $(".hashomeagain").hide(); }

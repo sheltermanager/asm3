@@ -59,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
@@ -150,11 +149,17 @@ Person fields suffixed with 2 update the second person for couple records</p>
 </dd>
 <dt>species</dt><dd><p>The species of the animal. ASM will try and guess based on the text which one is meant. Use a lookup field to limit the choices to known items (or use the Species field type)</p>
 </dd>
-<dt>breed</dt><dd><p>The breed of the animal. ASM will try and guess one of it’s lookup values (or use the Breed field type to limit to them)</p>
+<dt>breed1 / breed2</dt><dd><p>The breed of the animal. ASM will try and guess one of it’s lookup values (or use the Breed field type to limit to them)</p>
 </dd>
 <dt>agegroup</dt><dd><p>The age group of the animal. Again, ASM will try and guess one if it’s internal values.</p>
 </dd>
 <dt>color / colour</dt><dd><p>The colour of the animal. ASM will try and guess a match (or use the Color field type to limit to them)</p>
+</dd>
+<dt>sex</dt><dd><p>The sex of the animal. ASM will look at the first letter of the value for an M or F</p>
+</dd>
+<dt>neutered</dt><dd><p>Whether the animal is neutered/spayed. Should be a checkbox or Yes/No field and should contain a value that translates to Yes or on.</p>
+</dd>
+<dt>weight</dt><dd><p>The weight of the animal in system units (lb or kg). Should not contain anything but numbers and optionally a decimal mark.</p>
 </dd>
 <dt>datelost</dt><dd><p>The date the animal was lost (lost animals only)</p>
 </dd>

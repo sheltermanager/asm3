@@ -46,7 +46,7 @@ The "Share" button on animal records is great for highlighting an animal so that
 all your followers see it in their timeline, but you can also add your complete
 adoptable animal list as a tab to your Facebook page too.
 
-Follow this guide: http://www.jotform.com/help/82-Adding-Form-to-Facebook-Custom-iFrame-App-
+Follow this guide: https://www.jotform.com/help/82-adding-a-form-to-facebook-using-custom-iframe-app/
 to add a new iframe tab to your page. You can use a service call to ASM as the iframe target
 to get a list of your adoptable animals.
 

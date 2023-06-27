@@ -50,17 +50,17 @@ class SACMetricsPublisher(AbstractPublisher):
         animals = dbo.query("SELECT ID, ShelterCode, MostRecentEntryDate, DeceasedDate FROM animal WHERE LastChangedDate >= ?", [ dbo.now(offset=-1) ])
         movements = dbo.query("SELECT AnimalID, MovementDate, ReturnDate FROM adoption WHERE LastChangedDate >= ?", [ dbo.now(offset=-1) ])
         for a in animals:
-            if a.MOSTRECENTENTRYDATE: 
+            if a.MOSTRECENTENTRYDATE and a.MOSTRECENTENTRYDATE < dbo.today(): 
                 monthset.add( d2m(a.MOSTRECENTENTRYDATE) )
                 self.log("Add month %s (intake), triggered by changes to animal %s (%s)" % (d2m(a.MOSTRECENTENTRYDATE), a.ID, a.SHELTERCODE))
-            if a.DECEASEDDATE: 
+            if a.DECEASEDDATE and a.DECEASEDDATE < dbo.today(): 
                 monthset.add( d2m(a.DECEASEDDATE) )
                 self.log("Add month %s (deceased), triggered by changes to animal %s (%s)" % (d2m(a.DECEASEDDATE), a.ID, a.SHELTERCODE))
         for m in movements:
-            if m.MOVEMENTDATE: 
+            if m.MOVEMENTDATE and m.MOVEMENTDATE < dbo.today(): 
                 monthset.add( d2m(m.MOVEMENTDATE) )
                 self.log("Add month %s (movement), triggered by changes to animal %s" % (d2m(m.MOVEMENTDATE), a.ID))
-            if m.RETURNDATE: 
+            if m.RETURNDATE and m.RETURNDATE < dbo.today(): 
                 monthset.add( d2m(m.RETURNDATE) )
                 self.log("Add month %s (return), triggered by changes to animal %s" % (d2m(m.RETURNDATE), a.ID))
 

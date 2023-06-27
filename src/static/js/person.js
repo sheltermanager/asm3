@@ -8,15 +8,6 @@ $(function() {
 
         render_dialogs: function() {
             return [
-                '<div id="dialog-dt-date" style="display: none" title="' + html.title(_("Select date for diary task")) + '">',
-                '<input type="hidden" id="diarytaskid" />',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="seldate">' + _("Date") + '</label></td>',
-                '<td><input id="seldate" type="text" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '</table>',
-                '</div>',
                 '<div id="dialog-merge" style="display: none" title="' + html.title(_("Select person to merge")) + '">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
                 '<p><span class="ui-icon ui-icon-info"></span>',
@@ -451,6 +442,12 @@ $(function() {
                 html.list_to_options(controller.ynun, "ID", "NAME"),
                 '</select></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="matchflags">' + _("Flags") + '</label></td>',
+                '<td><select id="matchflags" data-json="MATCHFLAGS" data-post="matchflags" class="lfs asm-bsmselect" multiple="multiple">',
+                html.list_to_options(controller.animalflags, "FLAG", "FLAG"),
+                '</select></td>',
+                '</tr>',
                 '</table>',
                 // end outer table
                 '</td>',
@@ -467,7 +464,6 @@ $(function() {
                 { id: "anonymise", text: _("Anonymize"), icon: "delete", tooltip: _("Remove personally identifiable data") },
                 { id: "merge", text: _("Merge"), icon: "copy", tooltip: _("Merge another person into this one") },
                 { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this person") },
-                { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
                 { id: "lookingfor", text: _("Looking For"), icon: "animal-find", tooltip: _("Find animals matching the looking for criteria of this person") },
                 { id: "map", text: _("Map"), icon: "map", tooltip: _("Find this address on a map") },
                 { id: "email", text: _("Email"), icon: "email", tooltip: _("Email this person") }
@@ -481,11 +477,6 @@ $(function() {
                 edit_header.template_list(controller.templates, "PERSON", controller.person.ID),
                 '</ul>',
                 '</div>',
-                '<div id="button-diarytask-body" class="asm-menu-body">',
-                '<ul class="asm-menu-list">',
-                edit_header.diary_task_list(controller.diarytasks, "PERSON"),
-                '</ul>',
-                '</div>'
             ].join("\n");
         },
 
@@ -633,7 +624,6 @@ $(function() {
             if (!common.has_permission("co")) { $("#button-save, #button-anonymise").hide(); }
             if (!common.has_permission("do")) { $("#button-delete, #button-anonymise").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
-            if (!common.has_permission("adn")) { $("#button-diarytask").hide(); }
             if (!common.has_permission("mo")) { $("#button-merge").hide(); }
 
             // ACCORDION ICONS =======================================================
@@ -714,8 +704,8 @@ $(function() {
                 heightStyle: "content"
             }); 
 
-            // Setup the document/diary task menu buttons
-            $("#button-diarytask, #button-document").asmmenu();
+            // Setup the document menu button
+            $("#button-document").asmmenu();
             
             // Email dialog for sending emails
             $("#emailform").emailform();
@@ -731,63 +721,6 @@ $(function() {
             });
 
             additional.relocate_fields();
-
-            // Diary task create ajax call
-            const create_task = async function(taskid) {
-                let formdata = "mode=exec&id=" + $("#personid").val() + "&tasktype=PERSON&taskid=" + taskid + "&seldate=" + $("#seldate").val();
-                await common.ajax_post("diarytask", formdata);
-                if (validate.unsaved) {
-                    validate.save(function() {
-                        common.route("person_diary?id=" + controller.person.ID);
-                    });
-                }
-                else {
-                    common.route("person_diary?id=" + controller.person.ID);
-                }
-            };
-
-            // Diary task select date dialog
-            let addbuttons = { };
-            addbuttons[_("Select")] = function() {
-                validate.reset();
-                if (validate.notblank([ "seldate" ])) {
-                    create_task($("#diarytaskid").val()); 
-                }
-            };
-            addbuttons[_("Cancel")] = function() {
-                $("#dialog-dt-date").dialog("close");
-            };
-
-            $("#dialog-dt-date").dialog({
-                autoOpen: false,
-                modal: true,
-                dialogClass: "dialogshadow",
-                show: dlgfx.add_show,
-                hide: dlgfx.add_hide,
-                buttons: addbuttons
-            });
-
-            // Attach handlers for diary tasks
-            $(".diarytask").each(function() {
-                let a = $(this);
-                let task = a.attr("data").split(" ");
-                let taskmode = task[0];
-                let taskid = task[1];
-                let taskneeddate = task[2];
-                $(this).click(function() {
-                    $("#seldate").val("");
-                    // If the task needs a date, prompt for it
-                    if (taskneeddate == "1") {
-                        $("#diarytaskid").val(taskid);
-                        $("#dialog-dt-date").dialog("open");
-                    }
-                    else {
-                        // No need for anything else, go create the task
-                        create_task(taskid);
-                    }
-                    return false;
-                });
-            });
 
             // Controls that update the screen when changed
             $("#ownertype").change(person.enable_widgets);
@@ -922,7 +855,6 @@ $(function() {
 
         destroy: function() {
             validate.unbind_dirty();
-            common.widget_destroy("#dialog-dt-date");
             common.widget_destroy("#dialog-merge");
             common.widget_destroy("#dialog-popupwarning");
             common.widget_destroy("#emailform");

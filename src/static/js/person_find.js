@@ -158,6 +158,8 @@ $(function() {
                 '</select>',
                 '</td>',
                 '</tr>',
+                '<tr><td colspan="4"><hr></td></tr>',
+                additional.additional_search_fields(controller.additionalfields, 2),
                 '</table>',
                 '</div>',
                 '<p class="centered">',

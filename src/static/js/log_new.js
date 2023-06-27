@@ -80,7 +80,7 @@ $(function() {
             validate.indicator([ "logdate" ]);
 
             // Set default values
-            $("#logdate").datepicker("setDate", new Date());
+            $("#logdate").date("today");
             $("#logtime").val(format.time(new Date()));
             $("#type").select("value", config.integer("AFDefaultLogType"));    
 
@@ -95,7 +95,7 @@ $(function() {
                     let formdata = $("input, select, textarea").toPOST() + "&mode=" + controller.mode;
                     await common.ajax_post("log_new", formdata);
                     header.show_info(_("Log successfully added."));
-                    $("#logdate").datepicker("setDate", new Date());
+                    $("#logdate").date("today");
                     $("#entry").val("");
                 }
                 finally {

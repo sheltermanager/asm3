@@ -1,6 +1,76 @@
 47
 ================
 
+27/06/23 Fix bug where giving a treatment before it is required broke things
+27/06/23 Consistent create payment widget for appointments and boarding #623
+27/06/23 Add wordkey for BondedNames (name / bond1 / bond2)
+26/06/23 Recently deceased search was including non-shelter
+26/06/23 Add alternative Romanian locale to use Euro instead of Lei
+26/06/23 Boarding screen: Handle locations with no units #623
+26/06/23 Security fix: login screen could cause a flood by leaning on enter
+25/06/23 Boarding animals should never be adoptable #623
+25/06/23 Merge animal copies key fields now, same code for csv and forms #698
+25/06/23 Add "weight" online form field for animals
+24/06/23 Security fix to detect and drop invalid mode parameters to POST
+23/06/23 Alerts for boarding animals entering/leaving today #623
+23/06/23 Option to send form submissions to the fosterer #1183
+23/06/23 Stop active movements being returned when boarding #623
+23/06/23 Add "neutered" as online form field for animals
+22/06/23 Delete on process should run from code.py for multistep autoprocess #1297
+22/06/23 Assign shelter location/unit when boarding is active #623
+22/06/23 Adding boarding permissions to roles screen #623
+22/06/23 Adding boarding type with default cost #623
+21/06/23 Add slideshow HTML template #905
+21/06/23 Add animalviewcarousel template 
+21/06/23 Option to specify the animalview template in adoptable_js
+21/06/23 PetFinder: Fix new publishing issues with strays
+21/06/23 Boarding: show fee column, create payment button #623
+20/06/23 New (default) option to delete online forms on process #1297
+19/06/23 Boarding: show relevant info in the animal banner #623
+19/06/23 LicenceNumber wordkey for animal documents 
+19/06/23 Boarding tabs, options and calendar view #623
+19/06/23 Add CURRENT_DATE_FDM/LDM/FDY/LDY SQL tokens
+18/06/23 animal.Adoptable checking for animal photos incorrectly
+14/06/23 Location filters for internal locs should only apply to in care
+14/06/23 PetFinder: Allow adopted animals to be sent with status X
+12/06/23 Looking for can now match on animal flags #640
+12/06/23 Automatic BuddyID microchip registration (any chip, US only)
+12/06/23 Update description of existing animals via aimal CSV import
+07/06/23 Use a lighter background for custom emblems
+07/06/23 Fix other areas (email/pdf) to handle linked documents #1261
+07/06/23 Shelter view group: Age Group and Litter
+07/06/23 Shelter view groups: Location and Litter, Status and Location
+07/06/23 Filter deceased animals out of trial adoption ending alerts
+06/06/23 Shelter view grouping for litters
+06/06/23 Tidy up license screen code, show animal emblems
+06/06/23 Link movement/licence documents to animals+people instead of copying #1261
+05/06/23 Clear revision number when changing a report name/category
+04/06/23 Move diary task execute button to animal/person diary tabs #1292
+03/06/23 Option to edit/request payments from Move->Adopt an animal (Saggi) #1294
+01/06/23 Remove unused images from RescueGroups/AdoptAPet before publish #1291
+01/06/23 Add given dates to medical CSV export under SQL Interface
+01/06/23 Fix bug where litter IDs containing apostrophes didn't show littermates
+01/06/23 Support for additional fields on movements (Saggi Neuemann) #55
+31/05/23 Mobile photo uploader: option to upload to recently adopted animals
+31/05/23 Option to set trial adoption default length #750
+31/05/23 Bring active boarders onto the shelter and show location fields #623
+30/05/23 Only check/expire inactive litters as part of the batch
+30/05/23 Option to auto complete diary notes when animals are deceased
+29/05/23 Include units in emblems on daily observations #489
+28/05/23 Daily observations quicklink #489
+28/05/23 Remove modernizr - no longer needed #1287
+28/05/23 Use smaller thumbnails for media table view
+28/05/23 Set couple from online form if surname2 is present and has value #1264
+27/05/23 Fix bug where additional field changes were not being audited
+27/05/23 Do not create ES01/02 log messages if they already exist #1286
+26/05/23 Add rename facility to document repository #389
+24/05/23 Fix bug when filtering media after tablesorter upgrade
+24/05/23 Add VaccOutstandingCount to animal query for views/service calls
+24/05/23 Searchable additional fields on advanced find screens #74
+24/05/23 SACmetrics: omit months with dates in the future
+23/05/23 Fix bug when exporting incident CSV from SQL interface->Export
+22/05/23 Daily observations feature/screen #489
+21/05/23 Highlight in person banner if their last adoption is deceased
 19/05/23 Minor mobile layout fixes, remove pdfjs dependency for deprecated app
 19/05/23 Show fractional lb on find results
 18/05/23 Fix filter breakage caused by tablesorter upgrade

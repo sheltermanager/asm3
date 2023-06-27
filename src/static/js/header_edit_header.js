@@ -49,7 +49,16 @@ edit_header = {
             owner = " " + html.person_link(a.OWNERID, a.OWNERNAME);
         }
         let available = "";
-        if (a.NONSHELTERANIMAL == 1) {
+        if (a.ARCHIVED == 0 && a.HASACTIVEBOARDING == 1) {
+            // currently boarding at the shelter
+            available = _("Boarding Animal");
+            if (a.OWNERID && a.OWNERID > 0) {
+                available += " " + html.icon("right") + " ";
+                available += html.person_link(a.OWNERID, a.OWNERNAME);
+            }
+            available = html.info(available);
+        }
+        else if (a.NONSHELTERANIMAL == 1) {
             // show non-shelter info link
             available = _("Non-Shelter Animal");
             if (a.ORIGINALOWNERID && a.ORIGINALOWNERID > 0) {
@@ -87,19 +96,23 @@ edit_header = {
             if (a.DIEDOFFSHELTER == 1) { deathreason = _("Died off shelter"); }
             displaylocation = "<span style=\"color: red\">" + _("Deceased") + " " + html.icon("right") + " " + deathreason + "</span> " + format.date(a.DECEASEDDATE);
         }
+        else if (a.HASACTIVEBOARDING && a.SHELTERLOCATIONUNIT) {
+            displaylocation = a.SHELTERLOCATIONNAME + ' <span class="asm-search-locationunit" title="' + html.title(_("Unit")) + '">' + a.SHELTERLOCATIONUNIT + '</span>';
+        }
+        else if (a.HASACTIVEBOARDING) {
+            displaylocation = a.SHELTERLOCATIONNAME;
+        }
+        else if (owner != "" && a.CURRENTOWNERID != a.OWNERID) {
+            displaylocation = _("Owner") + " " + html.icon("right") + " " + owner;
+        }
+        else if (currentowner != "") {
+            displaylocation = a.DISPLAYLOCATIONNAME + " " + html.icon("right") + " " + currentowner;
+        }
+        else if (a.SHELTERLOCATIONUNIT && !a.ACTIVEMOVEMENTDATE) {
+            displaylocation = a.DISPLAYLOCATIONNAME + ' <span class="asm-search-locationunit" title="' + html.title(_("Unit")) + '">' + a.SHELTERLOCATIONUNIT + '</span>';
+        }
         else {
-            if (owner != "" && a.CURRENTOWNERID != a.OWNERID) {
-                displaylocation = _("Owner") + " " + html.icon("right") + " " + owner;
-            }
-            else if (currentowner != "") {
-                displaylocation = a.DISPLAYLOCATIONNAME + " " + html.icon("right") + " " + currentowner;
-            }
-            else if (a.SHELTERLOCATIONUNIT && !a.ACTIVEMOVEMENTDATE) {
-                displaylocation = a.DISPLAYLOCATIONNAME + ' <span class="asm-search-locationunit" title="' + html.title(_("Unit")) + '">' + a.SHELTERLOCATIONUNIT + '</span>';
-            }
-            else {
-                displaylocation = a.DISPLAYLOCATIONNAME;
-            }
+            displaylocation = a.DISPLAYLOCATIONNAME;
         }
         let animalcontrol = "";
         if (a.ANIMALCONTROLINCIDENTID) {
@@ -120,8 +133,23 @@ edit_header = {
         if (a.IDENTICHIPPED == 1) {
             chipinfo = '<tr><td>' + _("Microchip") + ':</td><td><b>' + a.IDENTICHIPNUMBER + " " + common.nulltostr(a.IDENTICHIP2NUMBER) + '</b></td></tr>';
         }
+        let timeonshelter = a.TIMEONSHELTER + ' (' + a.DAYSONSHELTER + ' ' + _("days") + ')';
+        let entershelterdate = "";
+        if (a.ARCHIVED == 0 && a.HASACTIVEBOARDING == 1) {
+            entershelterdate = format.date(a.ACTIVEBOARDINGINDATE) + " " + format.time(a.ACTIVEBOARDINGINDATE);
+        }
+        else {
+            entershelterdate = format.date(a.MOSTRECENTENTRYDATE) + " ";
+            if (format.time(a.MOSTRECENTENTRYDATE) != "00:00:00") { 
+                entershelterdate += format.time(a.MOSTRECENTENTRYDATE); 
+            }
+        }
         let leftshelterdate = "";
-        if (a.ARCHIVED == 1 && a.DECEASEDDATE && a.DIEDOFFSHELTER == 0) { 
+        if (a.ARCHIVED == 0 && a.HASACTIVEBOARDING == 1) {
+            leftshelterdate = format.date(a.ACTIVEBOARDINGOUTDATE) + " " + format.time(a.ACTIVEBOARDINGOUTDATE);
+            timeonshelter = "";
+        }
+        else if (a.ARCHIVED == 1 && a.DECEASEDDATE && a.DIEDOFFSHELTER == 0) { 
             leftshelterdate = format.date(a.DECEASEDDATE); 
         }
         else if (a.ARCHIVED == 1) { 
@@ -162,21 +190,17 @@ edit_header = {
             animalcontrol,
             chipinfo,
             '<tr>',
-            '<td id="hentshel">' + _("Entered shelter") + ':</td><td><b>' + format.date(a.MOSTRECENTENTRYDATE),
-            format.time(a.MOSTRECENTENTRYDATE) != "00:00:00" ? ' ' + format.time(a.MOSTRECENTENTRYDATE) : '',
-            '</b></td>',
+            '<td id="hentshel">' + _("Entered shelter") + ':</td><td><b>' + entershelterdate + '</b></td>',
             '</tr>',
             hold,
             '<tr>',
             '<td id="hleftshel">' + _("Left shelter") + ':</td><td><b>' + leftshelterdate + '</b></td>',
             '</tr>',
-            '<tr>',
-            '<td id="htimeonshel">' + _("Time on shelter") + ':</td><td><b>' + a.TIMEONSHELTER + ' (' + a.DAYSONSHELTER + ' ' + _("days") + ')</b></td>',
-            '</tr>',
+            timeonshelter != "" ? '<tr><td id="htimeonshel">' + _("Time on shelter") + ':</td><td><b>' + timeonshelter + '</b></td></tr>' : '',
             '</table>',
             '</div>'
         ].join("\n");
-        if (a.NONSHELTERANIMAL == 1) {
+        if (a.NONSHELTERANIMAL == 1 && !(a.HASACTIVEBOARDING == 1 && a.ARCHIVED == 0)) {
             second_column = [ 
                 '<div class="asm-grid-col-3">',
                 '<table>',
@@ -208,6 +232,7 @@ edit_header = {
             [ "vaccination", "animal_vaccination", _("Vaccination"), "vaccination", "vav" ],
             [ "test", "animal_test", _("Test"), "test", "vat" ],
             [ "medical", "animal_medical", _("Medical"), "medical", "mvam" ],
+            [ "boarding", "animal_boarding", _("Boarding"), "boarding", "vbi" ],
             [ "clinic", "animal_clinic", _("Clinic"), "health", "vcl" ],
             [ "licence", "animal_licence", _("License"), "licence", "vapl" ],
             [ "diet", "animal_diet", _("Diet"), "diet", "dvad" ],
@@ -221,6 +246,8 @@ edit_header = {
         $.each(tabs, function(it, vt) {
             var key = vt[0], url = vt[1], display = vt[2], iconname = vt[3], perms = vt[4];
             if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
+            if ((key == "boarding") && config.bool("DisableBoarding")) { return; }
+            if ((key == "boarding") && a.HASACTIVEBOARDING == 0 && a.ARCHIVED == 0) { return; } // don't show boarding tab for non-owned shelter animals
             if ((key == "clinic") && config.bool("DisableClinic")) { return; }
             if ((key == "licence") && config.bool("DisableAnimalControl")) { return; }
             if ((key == "movements") && config.bool("DisableMovements")) { return; }
@@ -287,7 +314,8 @@ edit_header = {
             '<input type="hidden" id="eventid" value="' + e.ID + '" />',
             '<div class="asm-grid">',
             '<div class="asm-grid-col-3">',
-            '<h2>' + html.icon("calendar", _("Event")) + eventName + '</h2>',
+            '<h2>' + html.icon("event", _("Event")) + ' ' + eventName + '</h2>',
+            '<p>' + html.truncate(e.EVENTDESCRIPTION, 100) + '</p>', 
             '</div>',
             '<div class="asm-grid-col-3">',
             '<table>',
@@ -363,7 +391,8 @@ edit_header = {
             '<input type="hidden" id="incidentid" value="' + a.ACID + '" />',
             '<div class="asm-grid">',
             '<div class="asm-grid-col-3">',
-            '<h2>' + html.icon("call", _("Incident")) + a.INCIDENTNAME +
+            '<h2>' + html.icon("call", _("Incident")) + ' ' +
+                format.padleft(controller.incident.ACID, 6) + ' ' + a.INCIDENTNAME +
                 (a.OWNERNAME1 ? ' - ' + a.OWNERNAME1 : "") + 
                 (a.OWNERNAME2 ? ', ' + a.OWNERNAME2 : "") + 
                 (a.OWNERNAME3 ? ', ' + a.OWNERNAME3 : "") + 
@@ -517,11 +546,12 @@ edit_header = {
             return html.icon("blank");
         };
         let flags = this.person_flags(p);
-        let latestmove = "";
+        let latestmove = "", latestmovedeceased = "";
         if (p.LATESTMOVEANIMALID) { 
+            if (p.LATESTMOVEDECEASEDDATE) { latestmovedeceased = html.icon("death"); }
             latestmove = "<tr><td>" + _("Last Movement") + ":</td>";
             latestmove += "<td><b>" + p.LATESTMOVETYPENAME + " " + html.icon("right") + " ";
-            latestmove += '<a href="animal?id=' + p.LATESTMOVEANIMALID + '">' + p.LATESTMOVEANIMALNAME + '</a></b></td></tr>';
+            latestmove += '<a href="animal?id=' + p.LATESTMOVEANIMALID + '">' + p.LATESTMOVEANIMALNAME + '</a></b> ' + latestmovedeceased + '</td></tr>';
         }
         let s = [
             '<div class="asm-banner ui-helper-reset ui-widget-content ui-corner-all">',
@@ -570,6 +600,7 @@ edit_header = {
             [ "citation", "person_citations", _("Citations"), "citation", "vacc" ],
             [ "rota", "person_rota", _("Rota"), "rota", "voro" ],
             [ "traploan", "person_traploan", _("Equipment Loans"), "traploan", "vatl" ],
+            [ "boarding", "person_boarding", _("Boarding"), "boarding", "vbi" ],
             [ "clinic", "person_clinic", _("Clinic"), "health", "vcl" ],
             [ "donations", "person_donations", _("Payments"), "donation", "ovod" ],
             [ "vouchers", "person_vouchers", _("Vouchers"), "donation", "vvov" ],
@@ -581,6 +612,7 @@ edit_header = {
         $.each(tabs, function(it, vt) {
             var key = vt[0], url = vt[1], display = vt[2], iconname = vt[3], perms = vt[4];
             if (perms && !common.has_permission(perms)) { return; } // don't show if no permission
+            if ((key == "boarding") && config.bool("DisableBoarding")) { return; }
             if ((key == "citation" || key == "licence" || key == "investigation") && config.bool("DisableAnimalControl")) { return; }
             if ((key == "clinic") && config.bool("DisableClinic")) { return; }
             if ((key == "traploan") && config.bool("DisableTrapLoan")) { return; }

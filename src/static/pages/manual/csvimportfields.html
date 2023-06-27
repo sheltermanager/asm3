@@ -59,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
@@ -110,9 +109,11 @@ vaccinations or regimens), make sure you have a populated ANIMALCODE column,
 similarly for multiple rows to people (such as movements, licenses, etc) make
 sure you have populated person data.</p>
 <p>When processing animal records that already exist, there are certain key fields
-that will be overwritten on the existing animal from the CSV data. These fields
-are:</p>
+that will be overwritten on the existing animal from the CSV data if those columns
+exist in the CSV data and have a value for that row.</p>
+<p>These fields are:</p>
 <ul class="simple">
+<li><p>ANIMALCOMMENTS / ANIMALDESCRIPTION</p></li>
 <li><p>ANIMALDOB</p></li>
 <li><p>ANIMALFLAGS</p></li>
 <li><p>ANIMALHEALTHPROBLEMS.</p></li>
@@ -122,8 +123,8 @@ are:</p>
 <li><p>ANIMALPICKUPADDRESS</p></li>
 <li><p>ANIMALPICKUPLOCATION</p></li>
 </ul>
-<p>This allows you to use a spreadsheet of data on chipping/neutering days and import
-that data to your existing animals afterwards.</p>
+<p>This allows you to use a spreadsheet of data to update many animals on chipping/neutering
+days (for example), or update many animal bios in one go.</p>
 <dl class="simple">
 <dt>ANIMALCODE</dt><dd><p>A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.</p>
 </dd>

@@ -2,7 +2,7 @@ Print Incident Record
 ###
 Animal Control
 ###
-33503/Any rev04
+34021/Any rev06
 ###
 A complete printout of an incident record.
 ###
@@ -46,7 +46,7 @@ $$BODY
 </tr><tr>
 <td>Completion Type</td><td>$COMPLETEDNAME</td>
 </tr><tr>
-<td>Notes</td><td>$CALLNOTESBR</td>
+<td>Notes</td><td>$CALLNOTESN2BR</td>
 </tr><tr>
 <td>Call Date/Time</td><td>$CALLDATETIME</td>
 </tr><tr>
@@ -118,6 +118,9 @@ $$BODY
 
 <h2>Additional</h2>
 {SUBREPORT.SUBREPORT_IncidentPrintAdditional.INCIDENTNUMBER}
+
+<h2>Media</h2>
+{SUBREPORT.SUBREPORT_IncidentPrintMedia.INCIDENTNUMBER}
 
 BODY$$
 
@@ -217,3 +220,22 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
++++
+SUBREPORT_IncidentPrintMedia
++++
+SELECT Date, MediaName, MediaNotes, MediaMimeType, MediaSize, RetainUntil,
+REPLACE('https://service.sheltermanager.com/asmservice?account=$DATABASENAME$&method=media_file&mediaid={0}', '{0}', CAST(ID AS VARCHAR(20))) AS Link
+FROM media 
+WHERE LinkID=$PARENTKEY$ AND LinkTypeID=6 ORDER BY Date
++++
+$$HEADER
+<table border="1">
+<tr><th>Date</th><th>Type</th><th>Size</th><th>Name/Notes</th><th>Retain Until</th><th>Link</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$DATE</td><td>$MEDIAMIMETYPE</td><td>$MEDIASIZE</td><td>$MEDIANOTES</td><td>$RETAINUNTIL</td><td><a target="_blank" href="$LINK">$MEDIANAME</a></td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$
+

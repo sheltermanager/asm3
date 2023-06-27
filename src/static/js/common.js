@@ -1,4 +1,4 @@
-/*global $, console, performance, jQuery, FileReader, Modernizr, Mousetrap, Path */
+/*global $, console, performance, jQuery, FileReader, Mousetrap, Path */
 /*global alert, atob, btoa, header, _, escape, unescape, navigator */
 /*global asm, schema, validate */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, log: true */
@@ -20,11 +20,20 @@ const common = {
         return str.split(find).length - 1;
     },
 
+    /** Substitutes {token} in str for token key in sub dict */
     substitute: function(str, sub) {
         /*jslint regexp: true */
         return str.replace(/\{(.+?)\}/g, function($0, $1) {
             return sub.hasOwnProperty($1) ? sub[$1] : $0;
         });
+    },
+
+    /** Looks for {0}, {1}, {2} etc and replaces them with that element of array arr */
+    sub_arr: function(str, arr) {
+        $.each(arr, function(i, l) {
+            str = str.replace("{" + i + "}", l);
+        });
+        return str;
     },
 
     iif: function(cond, yes, no) {
@@ -478,7 +487,8 @@ const common = {
 
         // If the browser doesn't support the history api, reload the page
         // as Path.reload does not work with hash changes.
-        if (!Modernizr.history) { window.location.reload(); return; }
+        // NO LONGER NEEDED, can't run ASM on anything that doesn't support history api
+        // if (!Modernizr.history) { window.location.reload(); return; }
 
         // Reload the current route on the client
         Path.reload();
@@ -1167,6 +1177,7 @@ const common = {
             "#owner": "personchooser",
             "#person": "personchooser",
             "#retailer": "personchooser",
+            "#createpayment": "createpayment",
             "#dialog-": "dialog",
             "#emailform": "emailform",
             "#sql": "sqleditor",
@@ -1184,14 +1195,17 @@ const common = {
             else if (type == "animalchoosermulti") {
                 $(selector).animalchoosermulti("destroy").remove();
             }
-            else if (type == "personchooser") {
-                $(selector).personchooser("destroy").remove();
+            else if (type == "createpayment") { 
+                $(selector).createpayment("destroy").remove();
             }
             else if (type == "emailform") {
                 $(selector).emailform("destroy").remove();
             }
             else if (type == "htmleditor") {
                 $(selector).htmleditor("destroy").remove();
+            }
+            else if (type == "personchooser") {
+                $(selector).personchooser("destroy").remove();
             }
             else if (type == "richtextarea") {
                 $(selector).richtextarea("destroy").remove();
@@ -1382,6 +1396,16 @@ const format = {
         f = f.replace("%M", this.padleft(d.getMinutes(), 2));
         f = f.replace("%S", this.padleft(d.getSeconds(), 2));
         return f;
+    },
+
+    /**
+     * Returns the difference in days between date1 and date2 (both js Date())
+     * Uses abs around the subtraction so it does not matter if date1 > date2
+     */
+    date_diff_days: function(date1, date2) {
+        const dt = Math.abs(date2 - date1);
+        const dd = Math.ceil(dt / (1000 * 60 * 60 * 24)); 
+        return dd;
     },
 
     /**

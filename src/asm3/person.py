@@ -39,7 +39,7 @@ def get_person_query(dbo):
         "ho.MobileTelephone AS HomeCheckedByMobileTelephone, ho.EmailAddress AS HomeCheckedByEmail, " \
         "lfa.ID AS LatestFosterID, lfa.AnimalName AS LatestFosterName, lfa.ShelterCode AS LatestFosterShelterCode, " \
         "lma.ID AS LatestMoveAnimalID, lma.AnimalName AS LatestMoveAnimalName, lma.ShelterCode AS LatestMoveShelterCode, " \
-        "lmat.MovementType AS LatestMoveTypeName, " \
+        "lmat.MovementType AS LatestMoveTypeName, lma.DeceasedDate AS LatestMoveDeceasedDate, " \
         "j.JurisdictionName, si.SiteName, " \
         "web.ID AS WebsiteMediaID, " \
         "web.MediaName AS WebsiteMediaName, " \
@@ -246,6 +246,7 @@ def get_satellite_counts(dbo, personid):
         "(SELECT COUNT(*) FROM media me WHERE me.LinkID = o.ID AND me.LinkTypeID = ?) AS media, " \
         "(SELECT COUNT(*) FROM diary di WHERE di.LinkID = o.ID AND di.LinkType = ?) AS diary, " \
         "(SELECT COUNT(*) FROM adoption ad WHERE ad.OwnerID = o.ID) AS movements, " \
+        "(SELECT COUNT(*) FROM animalboarding ab WHERE ab.OwnerID = o.ID) AS boarding, " \
         "(SELECT COUNT(*) FROM clinicappointment ca WHERE ca.OwnerID = o.ID) AS clinic, " \
         "(SELECT COUNT(*) FROM log WHERE log.LinkID = o.ID AND log.LinkType = ?) AS logs, " \
         "(SELECT COUNT(*) FROM ownerdonation od WHERE od.OwnerID = o.ID) AS donations, " \
@@ -684,6 +685,13 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, includeVolunte
     if siteid != 0:
         ss.ands.append("(o.SiteID = 0 OR o.SiteID = ?)")
         ss.values.append(siteid)
+
+    for k, v in post.data.items():
+        if k.startswith("af_") and v != "":
+            afid = asm3.utils.atoi(k)
+            ilike = dbo.sql_ilike("Value", "?")
+            ss.ands.append(f"EXISTS (SELECT Value FROM additional WHERE LinkID=o.ID AND AdditionalFieldID={afid} AND {ilike})")
+            ss.values.append( "%%%s%%" % v.lower() )
 
     if len(ss.ands) == 0:
         sql = get_person_query(dbo) + " ORDER BY o.OwnerName"
@@ -1261,31 +1269,32 @@ def merge_person(dbo, username, personid, mergepersonid):
 
     # Merge any contact info
     mp = get_person(dbo, mergepersonid)
-    mp["title"] = mp.OWNERTITLE
-    mp["initials"] = mp.OWNERINITIALS
-    mp["forenames"] = mp.OWNERFORENAMES
-    mp["surname"] = mp.OWNERSURNAME
-    mp["title2"] = mp.OWNERTITLE2
-    mp["initials2"] = mp.OWNERINITIALS2
-    mp["forenames2"] = mp.OWNERFORENAMES2
-    mp["surname2"] = mp.OWNERSURNAME2
-    mp["address"] = mp.OWNERADDRESS
-    mp["town"] = mp.OWNERTOWN
-    mp["county"] = mp.OWNERCOUNTY
-    mp["postcode"] = mp.OWNERPOSTCODE
-    mp["country"] = mp.OWNERCOUNTRY
-    mp["hometelephone"] = mp.HOMETELEPHONE
-    mp["worktelephone"] = mp.WORKTELEPHONE
-    mp["mobiletelephone"] = mp.MOBILETELEPHONE
-    mp["mobiletelephone2"] = mp.MOBILETELEPHONE2
-    mp["emailaddress"] = mp.EMAILADDRESS
-    mp["emailaddress2"] = mp.EMAILADDRESS2
-    mp["idnumber"] = mp.IDENTIFICATIONNUMBER
-    mp["idnumber2"] = mp.IDENTIFICATIONNUMBER2
-    mp["dateofbirth"] = python2display(l, mp.DATEOFBIRTH)
-    mp["dateofbirth2"] = python2display(l, mp.DATEOFBIRTH2)
-    mp["comments"] = mp.COMMENTS
-    merge_person_details(dbo, username, personid, mp)
+    d = {}
+    d["title"] = mp.OWNERTITLE
+    d["initials"] = mp.OWNERINITIALS
+    d["forenames"] = mp.OWNERFORENAMES
+    d["surname"] = mp.OWNERSURNAME
+    d["title2"] = mp.OWNERTITLE2
+    d["initials2"] = mp.OWNERINITIALS2
+    d["forenames2"] = mp.OWNERFORENAMES2
+    d["surname2"] = mp.OWNERSURNAME2
+    d["address"] = mp.OWNERADDRESS
+    d["town"] = mp.OWNERTOWN
+    d["county"] = mp.OWNERCOUNTY
+    d["postcode"] = mp.OWNERPOSTCODE
+    d["country"] = mp.OWNERCOUNTRY
+    d["hometelephone"] = mp.HOMETELEPHONE
+    d["worktelephone"] = mp.WORKTELEPHONE
+    d["mobiletelephone"] = mp.MOBILETELEPHONE
+    d["mobiletelephone2"] = mp.MOBILETELEPHONE2
+    d["emailaddress"] = mp.EMAILADDRESS
+    d["emailaddress2"] = mp.EMAILADDRESS2
+    d["idnumber"] = mp.IDENTIFICATIONNUMBER
+    d["idnumber2"] = mp.IDENTIFICATIONNUMBER2
+    d["dateofbirth"] = python2display(l, mp.DATEOFBIRTH)
+    d["dateofbirth2"] = python2display(l, mp.DATEOFBIRTH2)
+    d["comments"] = mp.COMMENTS
+    merge_person_details(dbo, username, personid, d)
 
     # Merge any flags from the target
     merge_flags(dbo, username, personid, mp.ADDITIONALFLAGS)
@@ -1601,6 +1610,8 @@ def lookingfor_summary(dbo, personid, p = None):
         c.append(_("Age", l) + (" %0.2f - %0.2f" % (p.MATCHAGEFROM, p.MATCHAGETO)))
     if p.MATCHCOMMENTSCONTAIN is not None and p.MATCHCOMMENTSCONTAIN != "":
         c.append(_("Comments Contain", l) + ": " + p.MATCHCOMMENTSCONTAIN)
+    if p.MATCHFLAGS is not None and p.MATCHFLAGS.replace(",", "") != "":
+        c.append(_("Flags", l) + ": " + p.MATCHFLAGS.replace(",", ", "))
     summary = ""
     if len(c) > 0:
         summary = ", ".join(x for x in c if x is not None)
@@ -1697,6 +1708,11 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
                 ands.append("(a.AnimalComments LIKE ? OR a.HiddenAnimalDetails LIKE ?)")
                 v.append("%%%s%%" % w)
                 v.append("%%%s%%" % w)
+        if p.MATCHFLAGS is not None and p.MATCHFLAGS.replace(",", "") != "":
+            for w in p.MATCHFLAGS.split(","):
+                if w.strip() != "":
+                    ands.append("a.AdditionalFlags LIKE ?")
+                    v.append("%%%s%%" % w)
 
         animals = dbo.query(asm3.animal.get_animal_query(dbo) + " WHERE " + " AND ".join(ands) + " ORDER BY a.LastChangedDate DESC", v)
 

@@ -15,6 +15,8 @@ class TestPublish(unittest.TestCase):
             "estimatedage": "1",
             "animaltype": "1",
             "entryreason": "1",
+            "breed1": "1",
+            "breed2": "1", 
             "species": "1",
             "comments": "bio"
         }
@@ -79,6 +81,13 @@ class TestPublish(unittest.TestCase):
         assert asm3.publishers.anibaseuk.AnibaseUKPublisher(base.get_dbo(), pc).processAnimal(a) is not None
         asm3.publishers.anibaseuk.AnibaseUKPublisher(base.get_dbo(), pc).validate(a)
 
+    # buddyid
+    def test_buddyid(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        assert asm3.publishers.buddyid.BuddyIDPublisher(base.get_dbo(), pc).processAnimal(a, "C00000") is not None
+        asm3.publishers.buddyid.BuddyIDPublisher(base.get_dbo(), pc).validate(a)
+
     # foundanimals
     def test_foundanimals(self):
         pc = asm3.publishers.base.PublishCriteria()
@@ -117,7 +126,10 @@ class TestPublish(unittest.TestCase):
     def test_petfinder(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.petfinder.PetFinderPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        pf = asm3.publishers.petfinder.PetFinderPublisher(base.get_dbo(), pc)
+        assert pf.processAnimal(a) is not None
+        b = base.get_dbo().query(pf.pfAnimalQuery())[0]
+        assert pf.processAnimal(b, status="X") is not None
 
     # petlink
     def test_petlink(self):

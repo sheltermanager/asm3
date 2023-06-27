@@ -119,9 +119,9 @@ $(function() {
             });
 
             // Set default values
-            $("#deceaseddate").datepicker("setDate", new Date());
+            $("#deceaseddate").date("today");
             $("#deathcategory").select("value", config.str("AFDefaultDeathReason"));
-            $("#usagedate").datepicker("setDate", new Date());
+            $("#usagedate").date("today");
 
             // Hide stock deductions if stock control is disabled
             if (config.bool("DisableStockControl")) {
@@ -140,7 +140,7 @@ $(function() {
                     let formdata = "mode=create&" + $("input, select, textarea").toPOST();
                     await common.ajax_post("move_deceased", formdata);
                     header.show_info(_("Animal '{0}' successfully marked deceased.").replace("{0}", $(".animalchooser-display .asm-embed-name").html()));
-                    $("#deceaseddate").datepicker("setDate", new Date());
+                    $("#deceaseddate").date("today");
                     $("#animal").animalchooser("clear");
                     $("#ptsreason").val("");
                     $("#puttosleep").attr("checked", false);

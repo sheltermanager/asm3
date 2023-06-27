@@ -282,6 +282,9 @@ class TestAnimal(unittest.TestCase):
     def test_update_all_animal_statuses(self):
         asm3.animal.update_all_animal_statuses(base.get_dbo())
 
+    def test_update_boarding_animal_statuses(self):
+        asm3.animal.update_boarding_animal_statuses(base.get_dbo())
+
     def test_update_foster_animal_statuses(self):
         asm3.animal.update_foster_animal_statuses(base.get_dbo())
 

@@ -64,7 +64,7 @@ from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format,
 
 from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYMENT_TYPE, \
     ELECTRONIC_SIGNATURES, EMERGENCY_NOTICE, \
-    AKC_REUNITE_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, \
+    AKC_REUNITE_BASE_URL, BUDDYID_BASE_URL, HOMEAGAIN_BASE_URL, LARGE_FILES_CHUNKED, LOCALE, JQUERY_UI_CSS, \
     LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, \
     ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, HTMLFTP_PUBLISHER_ENABLED, \
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
@@ -291,6 +291,18 @@ class ASMEndpoint(object):
             # update the last user activity if logged in
             asm3.users.update_user_activity(session.dbo, session.user)
 
+    def check_mode(self, mode):
+        """
+        Verify that the value given for mode is valid. Valid mode
+        values are between 2 and 30 chars in length and contain only
+        lowercase ASCII letters [a-z] (no punctuation or spaces).
+        """
+        if len(mode) < 2 or len(mode) > 30: return False
+        for c in mode:
+            if ord(c) < 97 or ord(c) > 122:
+                return False
+        return True
+
     def content(self, o):
         """ Virtual function: override to get the content """
         return ""
@@ -394,8 +406,10 @@ class ASMEndpoint(object):
         mode = o.post["mode"]
         if mode == "": 
             return self.post_all(o)
+        elif not self.check_mode(mode):
+            raise asm3.utils.ASMError("invalid mode")
         else:
-            # Mode has been supplied, call post_mode
+            # valid mode value has been supplied, call post_mode
             return getattr(self.__class__, "post_%s" % mode)(self, o)
 
 class GeneratorEndpoint(ASMEndpoint):
@@ -766,7 +780,7 @@ class media(ASMEndpoint):
             if m is None: self.notfound()
             linktypeid = m.LINKTYPEID
             linkid = m.LINKID
-            content = asm3.dbfs.get_string(dbo, m.MEDIANAME)
+            content = asm3.dbfs.get_string_id(dbo, m.DBFSID)
             if m.MEDIAMIMETYPE == "text/html":
                 content = asm3.utils.bytes2str(content)
                 content = asm3.utils.fix_relative_document_uris(dbo, content)
@@ -796,7 +810,7 @@ class media(ASMEndpoint):
             if m.MEDIAMIMETYPE != "text/html": continue
             linktypeid = m.LINKTYPEID
             linkid = m.LINKID
-            content = asm3.utils.bytes2str(asm3.dbfs.get_string(dbo, m.MEDIANAME))
+            content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
             contentpdf = asm3.utils.html_to_pdf(dbo, content)
             filename = asm3.media._get_media_filename(m).replace(".html", ".pdf")
             attachments.append(( filename, "application/pdf", contentpdf ))
@@ -1058,7 +1072,7 @@ class mobile_photo_upload(ASMEndpoint):
         l = o.locale
         self.content_type("text/html")
         c = {
-            "animals": asm3.animal.get_animals_on_shelter_namecode(dbo)
+            "animals": asm3.animal.get_animals_on_shelter_namecode(dbo, remove_units=True) + asm3.animal.get_animals_adopted_namecode(dbo, remove_adopter=True)
         }
         return asm3.html.mobile_page(l, _("Photo Uploader", l), [ "mobile_photo_uploader.js" ], c)
 
@@ -1603,7 +1617,6 @@ class animal(JSONEndpoint):
             "coattypes": asm3.lookups.get_coattypes(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
             "deathreasons": asm3.lookups.get_deathreasons(dbo),
-            "diarytasks": asm3.diary.get_animal_tasks(dbo),
             "entryhistory": asm3.animal.get_animal_entries(dbo, a.ID),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "events": asm3.event.get_events_by_animal(dbo, a.ID),
@@ -1677,6 +1690,31 @@ class animal(JSONEndpoint):
     def post_webnotes(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
         asm3.animal.update_preferred_web_media_notes(o.dbo, o.user, o.post.integer("id"), o.post["comments"])
+
+class animal_boarding(JSONEndpoint):
+    url = "animal_boarding"
+    js_module = "boarding"
+    get_permissions = asm3.users.VIEW_BOARDING
+
+    def controller(self, o):
+        dbo = o.dbo
+        animalid = o.post.integer("id")
+        a = asm3.animal.get_animal(dbo, animalid)
+        if a is None: self.notfound()
+        self.check_animal(a)
+        rows = asm3.financial.get_animal_boarding(dbo, animalid)
+        asm3.al.debug("got %d animal boarding records" % (len(rows)), "code.animal_boarding", dbo)
+        return {
+            "name": "animal_boarding",
+            "animal": a,
+            "boardingtypes": asm3.lookups.get_boarding_types(dbo),
+            "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "rows": rows,
+            "templates": asm3.template.get_document_templates(dbo, "boarding"),
+            "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0]
+        }
 
 class animal_bulk(JSONEndpoint):
     url = "animal_bulk"
@@ -1787,6 +1825,7 @@ class animal_diary(JSONEndpoint):
             "name": "animal_diary",
             "linkid": animalid,
             "linktypeid": asm3.diary.ANIMAL,
+            "diarytasks": asm3.diary.get_animal_tasks(dbo),
             "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
@@ -1891,6 +1930,7 @@ class animal_find(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         c = {
+            "additionalfields": asm3.additional.get_additional_fields(dbo, 0, "animal"),
             "agegroups": asm3.configuration.age_groups(dbo),
             "animaltypes": asm3.lookups.get_animal_types(dbo),
             "species": asm3.lookups.get_species(dbo),
@@ -2047,6 +2087,8 @@ class animal_movements(JSONEndpoint):
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement"),
@@ -2091,6 +2133,29 @@ class animal_new(JSONEndpoint):
 
     def post_units(self, o):
         return "&&".join(asm3.animal.get_units_with_availability(o.dbo, o.post.integer("locationid")))
+
+class animal_observations(JSONEndpoint):
+    url = "animal_observations"
+    get_permissions = asm3.users.ADD_LOG
+
+    def controller(self, o):
+        dbo = o.dbo
+        animals = asm3.animal.get_shelterview_animals(dbo, o.locationfilter, o.siteid, o.visibleanimalids)
+        asm3.al.debug("got %d shelter animals" % len(animals), "code.animal_observations", dbo)
+        return { 
+            "animals": animals,
+            "logtypes": asm3.lookups.get_log_types(dbo), 
+            "internallocations": asm3.lookups.get_internal_locations(dbo)
+        }
+
+    def post_save(self, o):
+        self.check(asm3.users.ADD_LOG)
+        nocreated = 0
+        for row in o.post["logs"].split("||"):
+            animalid, msg = row.split("==")
+            asm3.log.add_log(o.dbo, o.user, asm3.log.ANIMAL, int(animalid), o.post.integer("logtype"), msg)
+            nocreated += 1
+        return str(nocreated)
 
 class animal_test(JSONEndpoint):
     url = "animal_test"
@@ -2220,6 +2285,38 @@ class batch(JSONEndpoint):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Reset NNN animal code counts for this year", l), asm3.animal.maintenance_reset_nnn_codes, o.dbo)
 
+class boarding(JSONEndpoint):
+    url = "boarding"
+    js_module = "boarding"
+    get_permissions = asm3.users.VIEW_BOARDING
+
+    def controller(self, o):
+        dbo = o.dbo
+        rows = asm3.financial.get_boarding(dbo, o.post["filter"])
+        asm3.al.debug("got %d boarding records" % (len(rows)), "code.boarding", dbo)
+        return {
+            "name": "boarding",
+            "boardingtypes": asm3.lookups.get_boarding_types(dbo),
+            "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "rows": rows,
+            "templates": asm3.template.get_document_templates(dbo, "boarding")
+        }
+
+    def post_create(self, o):
+        self.check(asm3.users.ADD_BOARDING)
+        return asm3.financial.insert_boarding_from_form(o.dbo, o.user, o.post)
+
+    def post_update(self, o):
+        self.check(asm3.users.CHANGE_BOARDING)
+        asm3.financial.update_boarding_from_form(o.dbo, o.user, o.post)
+
+    def post_delete(self, o):
+        self.check(asm3.users.DELETE_BOARDING)
+        for did in o.post.integer_list("ids"):
+            asm3.financial.delete_boarding(o.dbo, o.user, did)
+
 class calendarview(JSONEndpoint):
     url = "calendarview"
     get_permissions = asm3.users.VIEW_ANIMAL
@@ -2248,10 +2345,10 @@ class calendar_events(ASMEndpoint):
             for d in asm3.diary.get_between_two_dates(dbo, user, start, end):
                 allday = False
                 # If the diary time is midnight, assume all day instead
-                if d["DIARYDATETIME"].hour == 0 and d["DIARYDATETIME"].minute == 0:
+                if d.DIARYDATETIME.hour == 0 and d.DIARYDATETIME.minute == 0:
                     allday = True
                 events.append({ 
-                    "title": d["SUBJECT"], 
+                    "title": d.SUBJECT, 
                     "allDay": allday, 
                     "start": d.DIARYDATETIME,
                     "end": add_minutes(d.DIARYDATETIME, 60),
@@ -2260,47 +2357,59 @@ class calendar_events(ASMEndpoint):
                     "link": "diary_edit_my" })
         if "v" in ev and self.checkb(asm3.users.VIEW_VACCINATION):
             for v in asm3.medical.get_vaccinations_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
-                sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
-                tit = "%s - %s %s (%s) %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["DISPLAYLOCATIONNAME"], v["COMMENTS"])
+                sub = "%s - %s" % (v.VACCINATIONTYPE, v.ANIMALNAME)
+                tit = "%s - %s %s (%s) %s" % (v.VACCINATIONTYPE, v.SHELTERCODE, v.ANIMALNAME, v.DISPLAYLOCATIONNAME, v.COMMENTS)
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
-                    "start": v["DATEREQUIRED"], 
+                    "start": v.DATEREQUIRED, 
                     "tooltip": tit, 
                     "icon": "vaccination",
-                    "link": "animal_vaccination?id=%s" % v["ANIMALID"] })
+                    "link": "animal_vaccination?id=%s" % v.ANIMALID })
             for v in asm3.medical.get_vaccinations_expiring_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
-                sub = "%s - %s" % (v["VACCINATIONTYPE"], v["ANIMALNAME"])
-                tit = "%s - %s %s (%s) %s" % (v["VACCINATIONTYPE"], v["SHELTERCODE"], v["ANIMALNAME"], v["DISPLAYLOCATIONNAME"], v["COMMENTS"])
+                sub = "%s - %s" % (v.VACCINATIONTYPE, v.ANIMALNAME)
+                tit = "%s - %s %s (%s) %s" % (v.VACCINATIONTYPE, v.SHELTERCODE, v.ANIMALNAME, v.DISPLAYLOCATIONNAME, v.COMMENTS)
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
-                    "start": v["DATEEXPIRES"], 
+                    "start": v.DATEEXPIRES, 
                     "tooltip": tit, 
                     "icon": "vaccination",
-                    "link": "animal_vaccination?id=%s" % v["ANIMALID"] })
+                    "link": "animal_vaccination?id=%s" % v.ANIMALID })
         if "m" in ev and self.checkb(asm3.users.VIEW_MEDICAL):
             for m in asm3.medical.get_treatments_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
-                sub = "%s - %s" % (m["TREATMENTNAME"], m["ANIMALNAME"])
-                tit = "%s - %s %s (%s) %s %s" % (m["TREATMENTNAME"], m["SHELTERCODE"], m["ANIMALNAME"], m["DISPLAYLOCATIONNAME"], m["DOSAGE"], m["COMMENTS"])
+                sub = "%s - %s" % (m.TREATMENTNAME, m.ANIMALNAME)
+                tit = "%s - %s %s (%s) %s %s" % (m.TREATMENTNAME, m.SHELTERCODE, m.ANIMALNAME, m.DISPLAYLOCATIONNAME, m.DOSAGE, m.COMMENTS)
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
-                    "start": m["DATEREQUIRED"], 
+                    "start": m.DATEREQUIRED, 
                     "tooltip": tit, 
                     "icon": "medical",
-                    "link": "animal_medical?id=%s" % m["ANIMALID"] })
+                    "link": "animal_medical?id=%s" % m.ANIMALID })
         if "t" in ev and self.checkb(asm3.users.VIEW_TEST):
             for t in asm3.medical.get_tests_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
-                sub = "%s - %s" % (t["TESTNAME"], t["ANIMALNAME"])
-                tit = "%s - %s %s (%s) %s" % (t["TESTNAME"], t["SHELTERCODE"], t["ANIMALNAME"], t["DISPLAYLOCATIONNAME"], t["COMMENTS"])
+                sub = "%s - %s" % (t.TESTNAME, t.ANIMALNAME)
+                tit = "%s - %s %s (%s) %s" % (t.TESTNAME, t.SHELTERCODE, t.ANIMALNAME, t.DISPLAYLOCATIONNAME, t.COMMENTS)
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
-                    "start": t["DATEREQUIRED"], 
+                    "start": t.DATEREQUIRED, 
                     "tooltip": tit, 
                     "icon": "test",
-                    "link": "animal_test?id=%s" % t["ANIMALID"] })
+                    "link": "animal_test?id=%s" % t.ANIMALID })
+        if "b" in ev and self.checkb(asm3.users.VIEW_BOARDING):
+            for b in asm3.financial.get_boarding_due_two_dates(dbo, start, end):
+                sub = "%s:%s - %s" % (b.SHELTERLOCATIONNAME, b.SHELTERLOCATIONUNIT, b.ANIMALNAME)
+                tit = "%s:%s - %s, %s" % (b.SHELTERLOCATIONNAME, b.SHELTERLOCATIONUNIT, b.ANIMALNAME, b.OWNERNAME)
+                events.append({ 
+                    "title": sub, 
+                    "allDay": False, 
+                    "start": b.INDATETIME, 
+                    "end": b.OUTDATETIME,
+                    "tooltip": tit, 
+                    "icon": "boarding",
+                    "link": "animal_boarding?id=%s" % b.ANIMALID })
         if "c" in ev and self.checkb(asm3.users.VIEW_CLINIC):
             for c in asm3.clinic.get_appointments_two_dates(dbo, start, end, o.post["apptfor"], o.siteid):
                 if c.OWNERNAME is not None:
@@ -2321,52 +2430,52 @@ class calendar_events(ASMEndpoint):
                     "link": link })
         if "p" in ev and self.checkb(asm3.users.VIEW_DONATION):
             for p in asm3.financial.get_donations_due_two_dates(dbo, start, end):
-                sub = "%s - %s" % (p["DONATIONNAME"], p["OWNERNAME"])
-                tit = "%s - %s %s %s" % (p["DONATIONNAME"], p["OWNERNAME"], asm3.html.format_currency(l, p["DONATION"]), p["COMMENTS"])
+                sub = "%s - %s" % (p.DONATIONNAME, p.OWNERNAME)
+                tit = "%s - %s %s %s" % (p.DONATIONNAME, p.OWNERNAME, asm3.html.format_currency(l, p.DONATION), p.COMMENTS)
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
-                    "start": p["DATEDUE"], 
+                    "start": p.DATEDUE, 
                     "tooltip": tit, 
                     "icon": "donation",
-                    "link": "person_donations?id=%s" % p["OWNERID"] })
+                    "link": "person_donations?id=%s" % p.OWNERID })
         if "o" in ev and self.checkb(asm3.users.VIEW_INCIDENT):
             for o in asm3.animalcontrol.get_followup_two_dates(dbo, start, end):
-                sub = "%s - %s" % (o["INCIDENTNAME"], o["OWNERNAME"])
-                tit = "%s - %s %s, %s" % (o["INCIDENTNAME"], o["OWNERNAME"], o["DISPATCHADDRESS"], o["CALLNOTES"])
+                sub = "%s - %s" % (o.INCIDENTNAME, o.OWNERNAME)
+                tit = "%s - %s %s, %s" % (o.INCIDENTNAME, o.OWNERNAME, o.DISPATCHADDRESS, o.CALLNOTES)
                 events.append({ 
                     "title": sub, 
                     "allDay": False, 
-                    "start": o["FOLLOWUPDATETIME"], 
+                    "start": o.FOLLOWUPDATETIME, 
                     "tooltip": tit, 
                     "icon": "call",
-                    "link": "incident?id=%s" % o["ACID"] })
+                    "link": "incident?id=%s" % o.ACID })
         if "r" in ev and self.checkb(asm3.users.VIEW_TRANSPORT):
             for r in asm3.movement.get_transport_two_dates(dbo, start, end):
-                sub = "%s - %s" % (r["ANIMALNAME"], r["SHELTERCODE"])
-                tit = "%s %s, %s - %s :: %s, %s" % (r["ANIMALNAME"], r["SHELTERCODE"], r["DRIVEROWNERNAME"], r["PICKUPOWNERADDRESS"], r["DROPOFFOWNERADDRESS"], r["COMMENTS"])
+                sub = "%s - %s" % (r.ANIMALNAME, r.SHELTERCODE)
+                tit = "%s %s, %s - %s :: %s, %s" % (r.ANIMALNAME, r.SHELTERCODE, r.DRIVEROWNERNAME, r.PICKUPOWNERADDRESS, r.DROPOFFOWNERADDRESS, r.COMMENTS)
                 allday = False
-                if r["PICKUPDATETIME"].hour == 0 and r["PICKUPDATETIME"].minute == 0:
+                if r.PICKUPDATETIME.hour == 0 and r.PICKUPDATETIME.minute == 0:
                     allday = True
                 events.append({ 
                     "title": sub, 
                     "allDay": allday, 
-                    "start": r["PICKUPDATETIME"], 
-                    "end": r["DROPOFFDATETIME"],
+                    "start": r.PICKUPDATETIME, 
+                    "end": r.DROPOFFDATETIME,
                     "tooltip": tit, 
                     "icon": "transport",
-                    "link": "animal_transport?id=%s" % r["ANIMALID"]})
+                    "link": "animal_transport?id=%s" % r.ANIMALID})
         if "l" in ev and self.checkb(asm3.users.VIEW_TRAPLOAN):
             for l in asm3.animalcontrol.get_traploan_two_dates(dbo, start, end):
-                sub = "%s - %s" % (l["TRAPTYPENAME"], l["OWNERNAME"])
-                tit = "%s - %s %s, %s" % (l["TRAPTYPENAME"], l["OWNERNAME"], l["TRAPNUMBER"], l["COMMENTS"])
+                sub = "%s - %s" % (l.TRAPTYPENAME, l.OWNERNAME)
+                tit = "%s - %s %s, %s" % (l.TRAPTYPENAME, l.OWNERNAME, l.TRAPNUMBER, l.COMMENTS)
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
-                    "start": l["RETURNDUEDATE"], 
+                    "start": l.RETURNDUEDATE, 
                     "tooltip": tit, 
                     "icon": "traploan",
-                    "link": "person_traploan?id=%s" % l["OWNERID"]})
+                    "link": "person_traploan?id=%s" % l.OWNERID})
         asm3.al.debug("calendarview found %d events (%s->%s)" % (len(events), start, end), "code.calendarview", dbo)
         self.content_type("application/json")
         return asm3.utils.json(events)
@@ -2467,11 +2576,6 @@ class clinic_appointment(ASMEndpoint):
         self.check(asm3.users.DELETE_CLINIC)
         for cid in o.post.integer_list("ids"):
             asm3.clinic.delete_appointment(o.dbo, o.user, cid)
-
-    def post_payment(self, o):
-        self.check(asm3.users.ADD_DONATION)
-        for cid in o.post.integer_list("ids"):
-            asm3.clinic.insert_payment_from_appointment(o.dbo, o.user, cid, o.post)
 
     def post_personanimals(self, o):
         self.check(asm3.users.VIEW_ANIMAL)
@@ -2928,8 +3032,12 @@ class document_gen(ASMEndpoint):
             animalid = l["ANIMALID"]
             ownerid = l["OWNERID"]
             tempname += " - " + asm3.person.get_person_name(dbo, ownerid)
-            if animalid: asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
-            if ownerid: asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            if animalid and ownerid: 
+                asm3.media.create_document_animalperson(dbo, o.user, animalid, ownerid, tempname, post["document"])
+            elif ownerid: 
+                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            elif animalid: 
+                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         elif linktype == "MOVEMENT":
             m = asm3.movement.get_movement(dbo, recid)
@@ -2938,8 +3046,12 @@ class document_gen(ASMEndpoint):
             animalid = m["ANIMALID"]
             ownerid = m["OWNERID"]
             tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, animalid), asm3.person.get_person_name(dbo, ownerid))
-            if ownerid: asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
-            if animalid: asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
+            if animalid and ownerid: 
+                asm3.media.create_document_animalperson(dbo, o.user, animalid, ownerid, tempname, post["document"])
+            elif ownerid: 
+                asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
+            elif animalid: 
+                asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
         else:
             raise asm3.utils.ASMValidationError("Linktype '%s' is invalid, cannot save" % linktype)
@@ -3103,6 +3215,9 @@ class document_repository(JSONEndpoint):
         if asm3.configuration.audit_on_send_email(dbo): 
             asm3.audit.email(dbo, o.user, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], post["body"])
         return post["to"]
+
+    def post_rename(self, o):
+        asm3.dbfs.rename_file(o.dbo, o.post["path"], o.post["oldname"], o.post["newname"])
 
 class document_repository_file(ASMEndpoint):
     url = "document_repository_file"
@@ -3462,6 +3577,7 @@ class foundanimal_find(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "additionalfields": asm3.additional.get_additional_fields(dbo, 0, "foundanimal"),
             "agegroups": asm3.configuration.age_groups(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
             "name": "foundanimal_find",
@@ -3701,6 +3817,7 @@ class incident_find(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "additionalfields": asm3.additional.get_additional_fields(dbo, 0, "incident"),
             "agegroups": asm3.configuration.age_groups(dbo),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "completedtypes": asm3.lookups.get_incident_completed_types(dbo),
@@ -4093,6 +4210,7 @@ class lostanimal_find(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "additionalfields": asm3.additional.get_additional_fields(dbo, 0, "lostanimal"),
             "agegroups": asm3.configuration.age_groups(dbo),
             "name": "lostanimal_find",
             "colours": asm3.lookups.get_basecolours(dbo),
@@ -4525,17 +4643,17 @@ class medical(JSONEndpoint):
         self.check(asm3.users.CHANGE_MEDICAL)
         asm3.medical.update_regimen_from_form(o.dbo, o.user, o.post)
 
-    def post_delete_regimen(self, o):
+    def post_deleteregimen(self, o):
         self.check(asm3.users.DELETE_MEDICAL)
         for mid in o.post.integer_list("ids"):
             asm3.medical.delete_regimen(o.dbo, o.user, mid)
 
-    def post_delete_treatment(self, o):
+    def post_deletetreatment(self, o):
         self.check(asm3.users.DELETE_MEDICAL)
         for mid in o.post.integer_list("ids"):
             asm3.medical.delete_treatment(o.dbo, o.user, mid)
 
-    def post_get_profile(self, o):
+    def post_getprofile(self, o):
         return asm3.utils.json([asm3.medical.get_profile(o.dbo, o.post.integer("profileid"))])
 
     def post_given(self, o):
@@ -4592,6 +4710,7 @@ class move_adopt(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_ADOPTION),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
@@ -4652,6 +4771,8 @@ class move_book_foster(JSONEndpoint):
             "name": "move_book_foster",
             "rows": movements,
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -4671,6 +4792,8 @@ class move_book_recent_adoption(JSONEndpoint):
             "rows": movements,
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -4689,6 +4812,8 @@ class move_book_recent_other(JSONEndpoint):
             "name": "move_book_recent_other",
             "rows": movements,
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -4707,6 +4832,8 @@ class move_book_recent_transfer(JSONEndpoint):
             "name": "move_book_recent_transfer",
             "rows": movements,
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -4726,6 +4853,8 @@ class move_book_reservation(JSONEndpoint):
             "rows": movements,
             "logtypes": asm3.lookups.get_log_types(dbo),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -4745,6 +4874,8 @@ class move_book_retailer(JSONEndpoint):
             "rows": movements,
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -4762,6 +4893,7 @@ class move_book_soft_release(JSONEndpoint):
         return {
             "name": "move_book_soft_release",
             "rows": movements,
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
@@ -4781,6 +4913,7 @@ class move_book_trial_adoption(JSONEndpoint):
             "name": "move_book_trial_adoption",
             "rows": movements,
             "logtypes": asm3.lookups.get_log_types(dbo), 
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
@@ -4800,6 +4933,7 @@ class move_book_unneutered(JSONEndpoint):
             "name": "move_book_unneutered",
             "rows": movements,
             "logtypes": asm3.lookups.get_log_types(dbo), 
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
             "movementtypes": asm3.lookups.get_movement_types(dbo),
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
@@ -4823,13 +4957,41 @@ class move_deceased(JSONEndpoint):
         if o.post.integer("item") != -1:
             asm3.stock.deduct_stocklevel_from_form(o.dbo, o.user, o.post)
 
+class move_donations(JSONEndpoint):
+    url = "move_donations"
+    get_permissions = asm3.users.VIEW_DONATION
+
+    def controller(self, o):
+        dbo = o.dbo
+        donations = asm3.financial.get_movement_donations(dbo, o.post["id"])
+        asm3.al.debug("got %d donations for movement %s" % (len(donations), o.post["id"]), "code.move_donations", dbo)
+        return {
+            "message": o.post["message"],
+            "id": o.post["id"],
+            "animalid": o.post["animalid"],
+            "ownerid": o.post["ownerid"],
+            "linktype": o.post["linktype"],
+            "rows": donations,
+            "name": "move_donations",
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
+            "logtypes": asm3.lookups.get_log_types(dbo), 
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "frequencies": asm3.lookups.get_donation_frequencies(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "payment")
+        }
+
+
 class move_foster(JSONEndpoint):
     url = "move_foster"
     get_permissions = asm3.users.ADD_MOVEMENT
     post_permissions = asm3.users.ADD_MOVEMENT
 
     def controller(self, o):
-        return {}
+        dbo = o.dbo
+        return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_FOSTER)
+        }
 
     def post_create(self, o):
         return str(asm3.movement.insert_foster_from_form(o.dbo, o.user, o.post))
@@ -4853,6 +5015,7 @@ class move_reclaim(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RECLAIMED),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo)
@@ -4884,6 +5047,7 @@ class move_reserve(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RESERVATION),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "accounts": asm3.financial.get_accounts(dbo, onlybank=True),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
@@ -4899,7 +5063,10 @@ class move_retailer(JSONEndpoint):
     post_permissions = asm3.users.ADD_MOVEMENT
 
     def controller(self, o):
-        return {}
+        dbo = o.dbo
+        return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_RETAILER)
+        }
 
     def post_create(self, o):
         return str(asm3.movement.insert_retailer_from_form(o.dbo, o.user, o.post))
@@ -4910,7 +5077,10 @@ class move_transfer(JSONEndpoint):
     post_permissions = asm3.users.ADD_MOVEMENT
 
     def controller(self, o):
-        return {}
+        dbo = o.dbo
+        return {
+            "additional": asm3.additional.get_additional_fields(dbo, 0, "movement", asm3.additional.MOVEMENT_TRANSFER),
+        }
 
     def post_create(self, o):
         return str(asm3.movement.insert_transfer_from_form(o.dbo, o.user, o.post))
@@ -4983,22 +5153,25 @@ class onlineform_incoming(JSONEndpoint):
         dbo = o.dbo
         collationid = o.post.integer("collationid")
         animalid = o.post.integer("animalid")
-        asm3.onlineform.attach_form(dbo, o.user, asm3.media.ANIMAL, animalid, collationid)
+        asm3.onlineform.attach_animal(dbo, o.user, animalid, collationid)
+        if asm3.configuration.onlineform_delete_on_process(dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, o.user, collationid)
         return animalid
 
     def post_attachanimalbyname(self, o):
         self.check(asm3.users.ADD_MEDIA)
         rv = []
         for pid in o.post.integer_list("ids"):
-            collationid, animalid, animalname = asm3.onlineform.attach_animal(o.dbo, o.user, pid)
+            collationid, animalid, animalname = asm3.onlineform.attach_animalbyname(o.dbo, o.user, pid)
             rv.append("%d|%d|%s" % (collationid, animalid, animalname))
+        if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, o.user, collationid)
         return "^$".join(rv)
 
     def post_attachperson(self, o):
         dbo = o.dbo
         collationid = o.post.integer("collationid")
         personid = o.post.integer("personid")
-        asm3.onlineform.attach_form(dbo, o.user, asm3.media.PERSON, personid, collationid)
+        asm3.onlineform.attach_person(dbo, o.user, personid, collationid)
+        if asm3.configuration.onlineform_delete_on_process(dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, o.user, collationid)
         return personid 
 
     def post_animal(self, o):
@@ -5008,6 +5181,7 @@ class onlineform_incoming(JSONEndpoint):
         for pid in o.post.integer_list("ids"):
             collationid, animalid, animalname, status = asm3.onlineform.create_animal(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, animalid, animalname, status))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
 
     def post_person(self, o):
@@ -5017,6 +5191,7 @@ class onlineform_incoming(JSONEndpoint):
         for pid in o.post.integer_list("ids"):
             collationid, personid, personname, status = asm3.onlineform.create_person(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, personid, personname, status))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
 
     def post_lostanimal(self, o):
@@ -5026,6 +5201,7 @@ class onlineform_incoming(JSONEndpoint):
         for pid in o.post.integer_list("ids"):
             collationid, lostanimalid, personname, status = asm3.onlineform.create_lostanimal(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, lostanimalid, personname, status))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
 
     def post_foundanimal(self, o):
@@ -5035,6 +5211,7 @@ class onlineform_incoming(JSONEndpoint):
         for pid in o.post.integer_list("ids"):
             collationid, foundanimalid, personname, status = asm3.onlineform.create_foundanimal(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, foundanimalid, personname, status))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
 
     def post_incident(self, o):
@@ -5044,6 +5221,7 @@ class onlineform_incoming(JSONEndpoint):
         for pid in o.post.integer_list("ids"):
             collationid, incidentid, personname, status = asm3.onlineform.create_animalcontrol(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, incidentid, personname, status))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
 
     def post_transport(self, o):
@@ -5053,6 +5231,7 @@ class onlineform_incoming(JSONEndpoint):
         for pid in o.post.integer_list("ids"):
             collationid, animalid, animalname = asm3.onlineform.create_transport(o.dbo, user, pid)
             rv.append("%d|%d|%s|0" % (collationid, animalid, animalname))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
 
     def post_waitinglist(self, o):
@@ -5062,6 +5241,7 @@ class onlineform_incoming(JSONEndpoint):
         for pid in o.post.integer_list("ids"):
             collationid, wlid, personname, status = asm3.onlineform.create_waitinglist(o.dbo, user, pid)
             rv.append("%d|%d|%s|%s" % (collationid, wlid, personname, status))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
 
 class onlineform_incoming_csv(ASMEndpoint):
@@ -5382,12 +5562,12 @@ class person(JSONEndpoint):
         asm3.al.debug("opened person '%s'" % p.OWNERNAME, "code.person", dbo)
         return {
             "additional": asm3.additional.get_additional_fields(dbo, p.id, "person"),
+            "animalflags": asm3.lookups.get_animal_flags(dbo),
             "animaltypes": asm3.lookups.get_animal_types(dbo),
             "audit": self.checkb(asm3.users.VIEW_AUDIT_TRAIL) and asm3.audit.get_audit_for_link(dbo, "owner", p.id) or [],
             "species": asm3.lookups.get_species(dbo),
             "breeds": asm3.lookups.get_breeds_by_species(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
-            "diarytasks": asm3.diary.get_person_tasks(dbo),
             "flags": asm3.lookups.get_person_flags(dbo),
             "ynun": asm3.lookups.get_ynun(dbo),
             "ynunk": asm3.lookups.get_ynunk(dbo),
@@ -5425,6 +5605,29 @@ class person(JSONEndpoint):
         self.check(asm3.users.MERGE_PERSON)
         asm3.person.merge_person(o.dbo, o.user, o.post.integer("personid"), o.post.integer("mergepersonid"))
 
+class person_boarding(JSONEndpoint):
+    url = "person_boarding"
+    js_module = "boarding"
+    get_permissions = asm3.users.VIEW_BOARDING
+
+    def controller(self, o):
+        dbo = o.dbo
+        p = asm3.person.get_person(dbo, o.post.integer("id"))
+        if p is None: self.notfound()
+        rows = asm3.financial.get_person_boarding(dbo, p.ID)
+        asm3.al.debug("got %d person boarding records" % (len(rows)), "code.person_boarding", dbo)
+        return {
+            "name": "person_boarding",
+            "person": p,
+            "boardingtypes": asm3.lookups.get_boarding_types(dbo),
+            "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
+            "rows": rows,
+            "templates": asm3.template.get_document_templates(dbo, "boarding"),
+            "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0]
+        }
+
 class person_citations(JSONEndpoint):
     url = "person_citations"
     js_module = "citations"
@@ -5440,7 +5643,7 @@ class person_citations(JSONEndpoint):
             "name": "person_citations",
             "rows": citations,
             "person": p,
-            "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
+            "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0],
             "citationtypes": asm3.lookups.get_citation_types(dbo)
         }
 
@@ -5486,6 +5689,7 @@ class person_diary(JSONEndpoint):
             "name": "person_diary",
             "linkid": p["ID"],
             "linktypeid": asm3.diary.PERSON,
+            "diarytasks": asm3.diary.get_person_tasks(dbo),
             "forlist": asm3.users.get_diary_forlist(dbo)
         }
 
@@ -5609,6 +5813,7 @@ class person_find(JSONEndpoint):
         flags = asm3.lookups.get_person_flags(dbo)
         asm3.al.debug("lookups loaded", "code.person_find", dbo)
         return {
+            "additionalfields": asm3.additional.get_additional_fields(dbo, 0, "person"),
             "flags": flags,
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "users": asm3.users.get_users(dbo)
@@ -5783,6 +5988,8 @@ class person_movements(JSONEndpoint):
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
             "logtypes": asm3.lookups.get_log_types(dbo), 
             "movementtypes": asm3.lookups.get_movement_types(dbo),
+            "additional": asm3.additional.get_field_definitions(dbo, "movement"),
+            "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement")
@@ -5940,6 +6147,7 @@ class publish_options(JSONEndpoint):
             "locations": asm3.lookups.get_internal_locations(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),
             "hasakcreunite": AKC_REUNITE_BASE_URL != "",
+            "hasbuddyid": BUDDYID_BASE_URL != "",
             "hasfoundanimals": FOUNDANIMALS_FTP_USER != "",
             "hashomeagain": HOMEAGAIN_BASE_URL != "",
             "hashtmlftp": HTMLFTP_PUBLISHER_ENABLED,
@@ -6381,6 +6589,10 @@ class sql(JSONEndpoint):
             q = q.replace("$CURRENT_DATE+%s$" % day, dbo.sql_date(d, includeTime=False, wrapParens=False))
         # straight tokens
         q = q.replace("$CURRENT_DATE$", dbo.sql_date(dbo.now(), includeTime=False, wrapParens=False))
+        q = q.replace("$CURRENT_DATE_FDM$", dbo.sql_date(asm3.i18n.first_of_month(dbo.now()), includeTime=False, wrapParens=False))
+        q = q.replace("$CURRENT_DATE_LDM$", dbo.sql_date(asm3.i18n.last_of_month(dbo.now()), includeTime=False, wrapParens=False))
+        q = q.replace("$CURRENT_DATE_FDY$", dbo.sql_date(asm3.i18n.first_of_year(dbo.now()), includeTime=False, wrapParens=False))
+        q = q.replace("$CURRENT_DATE_LDY$", dbo.sql_date(asm3.i18n.last_of_year(dbo.now()), includeTime=False, wrapParens=False))
         q = q.replace("$USER$", user)
         q = q.replace("$DATABASENAME$", dbo.database)
         return q
@@ -6456,7 +6668,7 @@ class sql_dump(ASMEndpoint):
         elif mode == "incidentcsv":
             asm3.al.debug("%s executed CSV incident dump" % o.user, "code.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"incident.csv\"")
-            rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, 0)
+            rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, o.user)
             asm3.additional.append_to_results(dbo, rows, "incident")
             return asm3.utils.csv(l, rows)
         elif mode == "licencecsv":

@@ -356,7 +356,10 @@ $(function() {
             s += html.info(_("Incoming forms are online forms that have been completed and submitted by people on the web.") + 
                 "<br />" + _("You can use incoming forms to create new records or attach them to existing records.") +
                 "<br />" + _("Incoming forms will be automatically removed after {0} days.").replace("{0}", config.str("AutoRemoveIncomingFormsDays")) + 
-                "<br />" + (config.bool("DontRemoveProcessedForms") ? "" : _("Incoming forms that have been used to create records will be automatically removed when you leave this screen.")) );
+                (config.bool("DontRemoveProcessedForms") || config.bool("OnlineFormDeleteOnProcess") ? "" : 
+                    "<br />" + _("Incoming forms that have been used to create records will be automatically removed when you leave this screen.")) + 
+                (config.bool("OnlineFormDeleteOnProcess") ? "<br/>" + _("Incoming forms will be deleted immediately when you process them.") : "") 
+            );
             s += tableform.buttons_render(this.buttons);
             s += tableform.table_render(this.table);
             s += html.content_footer();

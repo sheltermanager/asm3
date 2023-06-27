@@ -2,19 +2,18 @@ Monthly Figures (by species)
 ###
 Figures
 ###
-3123/Any rev03
+3123/Any rev04
 ###
 Animal movements on and off the shelter over a monthly period.
 ###
 en
 ###
-$VAR dt DATE Select which month/year to produce figures for$
 SELECT af.*, s.SpeciesName
 FROM animalfigures af
 INNER JOIN species s ON s.ID = af.SpeciesID
 WHERE 
 af.Month = '$ASK NUMBER Month (1-12)$'
-AND af.Year = '$ASK NUMBER Year$'
+AND af.Year = '$ASK NUMBER Year (eg: 2023)$'
 ORDER BY s.SpeciesName, af.OrderIndex
 ###
 $$HTMLHEADER
@@ -143,7 +142,7 @@ Monthly Figures (by type)
 ###
 Figures
 ###
-3123/Any rev03
+3123/Any rev04
 ###
 Animal movements on and off the shelter over a monthly period by type.
 ###
@@ -154,7 +153,7 @@ FROM animalfigures af
 INNER JOIN animaltype t ON t.ID = af.AnimalTypeID
 WHERE 
 af.Month = '$ASK NUMBER Month (1-12)$'
-AND af.Year = '$ASK NUMBER Year$'
+AND af.Year = '$ASK NUMBER Year (eg: 2023)$'
 ORDER BY t.AnimalType, af.OrderIndex
 ###
 $$HTMLHEADER

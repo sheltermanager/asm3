@@ -39,6 +39,11 @@ class TestFinancial(unittest.TestCase):
     def test_get_movement_donation(self):
         assert asm3.financial.get_movement_donation(base.get_dbo(), 1) is None
 
+    def test_get_boarding(self):
+        asm3.financial.get_boarding(base.get_dbo(), "active")
+        asm3.financial.get_boarding(base.get_dbo(), "m90")
+        asm3.financial.get_boarding(base.get_dbo(), "p90")
+
     def test_get_donations(self):
         asm3.financial.get_donations(base.get_dbo())
 
@@ -146,6 +151,20 @@ class TestFinancial(unittest.TestCase):
         asm3.financial.update_voucher_from_form(base.get_dbo(), "test", post)
         asm3.financial.delete_voucher(base.get_dbo(), "test", vid)
 
+    def test_boarding_crud(self):
+        data = {
+            "person": "1",
+            "animal": "1",
+            "type": "1",
+            "indate": base.today_display(),
+            "outdate": base.today_display(),
+            "dailyfee": "1000"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        bid = asm3.financial.insert_boarding_from_form(base.get_dbo(), "test", post)
+        asm3.financial.update_boarding_from_form(base.get_dbo(), "test", post)
+        asm3.financial.delete_boarding(base.get_dbo(), "test", bid)
+
     def test_citation_crud(self):
         data = {
             "person": "1",
@@ -180,4 +199,5 @@ class TestFinancial(unittest.TestCase):
     def test_giftaid_spreadsheet(self):
         asm3.financial.giftaid_spreadsheet(base.get_dbo(), "%s/../src/" % base.PATH, base.today(), base.today())
 
-
+    def test_update_location_boarding_today(self):
+        asm3.financial.update_location_boarding_today(base.get_dbo())

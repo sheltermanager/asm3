@@ -95,7 +95,8 @@ FORM_FIELDS = [
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
     "animalname", "reserveanimalname",
-    "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", "type", "breed1", "breed2", "color", "sex", 
+    "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", 
+    "type", "breed1", "breed2", "color", "sex", "neutered", "weight", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
@@ -137,7 +138,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
     h = []
     l = dbo.locale
     form = get_onlineform(dbo, formid)
-    if form is None: raise asm3.utils.ASMValidationError("Online form %d does not exist")
+    if form is None: raise asm3.utils.ASMValidationError("Online form %s does not exist" % formid)
     formfields = get_onlineformfields(dbo, formid)
     if completedocument:
         header = get_onlineform_header(dbo)
@@ -640,6 +641,7 @@ def insert_onlineform_from_form(dbo, username, post):
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
+        "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
@@ -659,6 +661,7 @@ def update_onlineform_from_form(dbo, username, post):
         "SetOwnerFlags":        post["flags"],
         "EmailAddress":         post["email"],
         "EmailCoordinator":     post.boolean("emailcoordinator"),
+        "EmailFosterer":        post.boolean("emailfosterer"),
         "EmailSubmitter":       post.integer("emailsubmitter"),
         "*EmailMessage":        post["emailmessage"],
         "*Header":              post["header"],
@@ -984,6 +987,18 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
             asm3.utils.send_email(dbo, "", coordinatoremail, "", "", 
                 subject, formdata, "html", images, exceptions=False)
 
+    # Was the option set to email the fosterer linked to animalname?
+    if formdef.emailfosterer == 1 and animalname != "":
+        # If so, find the selected animal from the form
+        animalid = get_animal_id_from_field(dbo, animalname)
+        fostereremail = dbo.query_string("SELECT EmailAddress FROM animal " \
+            "INNER JOIN adoption ON adoption.ID = animal.ActiveMovementID AND adoption.MovementType = 2 " \
+            "INNER JOIN owner ON owner.ID = adoption.OwnerID " \
+            "WHERE animal.ID = ?", [animalid])
+        if fostereremail != "":
+            asm3.utils.send_email(dbo, "", fostereremail, "", "", 
+                subject, formdata, "html", images, exceptions=False)
+
     # Did the form submission have a value in an "emailsubmissionto" field?
     if emailsubmissionto is not None and emailsubmissionto.strip() != "":
         # If a submitter email is set, use that to reply to instead
@@ -999,7 +1014,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
 
     try:
         if formdef.autoprocess == AP_ATTACHANIMAL:
-            attach_animal(dbo, "autoprocess", collationid)
+            attach_animalbyname(dbo, "autoprocess", collationid)
         elif formdef.autoprocess == AP_CREATEANIMAL:
             create_animal(dbo, "autoprocess", collationid)
         elif formdef.autoprocess == AP_CREATEPERSON:
@@ -1008,7 +1023,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
             try:
                 # If we fail to attach the animal (eg: because one wasn't specified)
                 # we still need to continue and create the person
-                attach_animal(dbo, "autoprocess", collationid)
+                attach_animalbyname(dbo, "autoprocess", collationid)
             except asm3.utils.ASMValidationError as aterr:
                 asm3.al.error("%s" % aterr.getMsg(), "autoprocess", dbo)
             create_person(dbo, "autoprocess", collationid)
@@ -1146,7 +1161,7 @@ def attach_form(dbo, username, linktype, linkid, collationid):
                 d["excludefrompublish"] = "1" # auto exclude images for animals to prevent them going to adoption websites
             asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.utils.PostedData(d, dbo.locale))
 
-def attach_animal(dbo, username, collationid):
+def attach_animalbyname(dbo, username, collationid):
     """
     Finds the existing shelter animal with "animalname" and
     attaches the form to it as animal asm3.media.
@@ -1170,6 +1185,18 @@ def attach_animal(dbo, username, collationid):
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
     return (collationid, animalid, asm3.animal.get_animal_namecode(dbo, animalid))
 
+def attach_animal(dbo, username, animalid, collationid):
+    """
+    Attaches the form to a specific animal
+    """
+    asm3.onlineform.attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
+
+def attach_person(dbo, username, personid, collationid):
+    """
+    Attaches the form to a specific person
+    """
+    asm3.onlineform.attach_form(dbo, username, asm3.media.PERSON, personid, collationid)
+
 def create_animal(dbo, username, collationid):
     """
     Creates an animal record from the incoming form data with collationid.
@@ -1177,7 +1204,8 @@ def create_animal(dbo, username, collationid):
     The return value is a tuple of collationid, animalid, sheltercode - animalname, status
     status is 0 for created, 1 for updated existing
     "animalname", "code", "microchip", "age", "dateofbirth", "entryreason", "markings", 
-    "comments", "hiddencomments", "type", "species", "breed1", "breed2", "color", "sex"
+    "comments", "hiddencomments", "type", "species", "breed1", "breed2", "color", "sex", 
+    "neutered", "weight"
     """
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
@@ -1207,6 +1235,8 @@ def create_animal(dbo, username, collationid):
         if f.FIELDNAME == "colour": d["basecolour"] = str(guess_colour(dbo, f.VALUE))
         if f.FIELDNAME == "sex": d["sex"] = str(guess_sex(dbo, f.VALUE))
         if f.FIELDNAME == "size": d["size"] = str(guess_size(dbo, f.VALUE))
+        if f.FIELDNAME == "neutered" and (f.VALUE == "Yes" or f.VALUE == "on"): d["neutered"] = "on"
+        if f.FIELDNAME == "weight" and asm3.utils.is_numeric(f.VALUE): d["weight"] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         #if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
         #    recdate, rectime = f.VALUE.split(" ")
@@ -1233,8 +1263,8 @@ def create_animal(dbo, username, collationid):
             animalid = similar.ID
             # Merge additional fields
             asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, animalid, "animal")
-            # TODO: what would we merge realistically?
-            # asm3.animal.merge_animal_details(dbo, username, animalid, d)
+            # Overwrite fields that are present and have a value
+            asm3.animal.merge_animal_details(dbo, username, animalid, d, force=True)
     # Create the animal record if we didn't find one
     if animalid == 0:
         # Set some default values that the form couldn't set
@@ -1267,8 +1297,8 @@ def create_person(dbo, username, collationid):
         if f.FIELDNAME == "forenames2" or f.FIELDNAME == "firstname2": d["forenames2"] = truncs(f.VALUE)
         if f.FIELDNAME == "surname" or f.FIELDNAME == "lastname": d["surname"] = truncs(f.VALUE)
         if f.FIELDNAME == "lastname2" or f.FIELDNAME == "surname2":
-            d["ownertype"] = "3" # Couple
             d["surname2"] = truncs(f.VALUE)
+            if d["surname2"] != "": d["ownertype"] = "3" # Couple
         if f.FIELDNAME == "address": d["address"] = truncs(f.VALUE)
         if f.FIELDNAME == "town": d["town"] = truncs(f.VALUE)
         if f.FIELDNAME == "city": d["town"] = truncs(f.VALUE)

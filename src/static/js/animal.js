@@ -814,6 +814,7 @@ $(function() {
                 else if (p == "anibaseuk") { t = html.icon("microchip") + " Microchip registered with idENTICHIP/Anibase UK"; }
                 else if (p == "smarttag") { t = html.icon("microchip") + " Microchip/Tag registered with SmartTag"; }
                 else if (p == "akcreunite") { t = html.icon("microchip") + " Microchip registered with AKC Reunite"; }
+                else if (p == "buddyid") { t = html.icon("microchip") + " Microchip registered with BuddyID"; }
                 else if (p == "homeagain") { t = html.icon("microchip") + " Microchip registered with HomeAgain"; }
                 else if (p == "foundanimals") { t = html.icon("microchip") + " Microchip registered with FoundAnimals"; }
 
@@ -858,22 +859,8 @@ $(function() {
                 edit_header.template_list(controller.templates, "ANIMAL", controller.animal.ID),
                 '</ul>',
                 '</div>',
-                '<div id="button-diarytask-body" class="asm-menu-body">',
-                '<ul class="asm-menu-list">',
-                edit_header.diary_task_list(controller.diarytasks, "ANIMAL"),
-                '</ul>',
-                '</div>',
                 '<div id="dialog-clone-confirm" style="display: none" title="' + html.title(_("Clone")) + '">',
                 '<p><span class="ui-icon ui-icon-alert"></span> ' + _("Clone this animal?") + '</p>',
-                '</div>',
-                '<div id="dialog-dt-date" style="display: none" title="' + html.title(_("Select date for diary task")) + '">',
-                '<input type="hidden" id="diarytaskid" />',
-                '<table width="100%">',
-                '<tr>',
-                '<td><label for="seldate">' + _("Date") + '</label></td>',
-                '<td><input id="seldate" type="text" class="asm-textbox asm-datebox" /></td>',
-                '</tr>',
-                '</table>',
                 '</div>',
                 '<div id="emailform"></div>',
                 '<div id="dialog-popupwarning" style="display: none" title="' + html.title(_("Warning")) + '">',
@@ -925,7 +912,6 @@ $(function() {
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this animal") },
                     { id: "email", text: _("Email"), icon: "email", tooltip: _("Send an email relating to this animal") },
                     { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this animal") },
-                    { id: "diarytask", text: _("Diary Task"), type: "buttonmenu", icon: "diary-task", tooltip: _("Create diary notes from a task") },
                     { id: "newentry", text: _("New Entry"), icon: "new", tooltip: _("Generate a new code and archive the current entry data"),
                         hideif: function() { 
                             return config.bool("DisableEntryHistory") || 
@@ -1141,6 +1127,13 @@ $(function() {
                 $(".asilomar").hide();
             }
 
+            // If the animal is actively boarding right now, show the location fields
+            if (controller.animal.HASACTIVEBOARDING) {
+                $("#lastlocation").hide();
+                $("#locationrow").show();
+                $("#locationunitrow").show();
+            }
+
             // Still show the owner requested euth field for non-shelter animals
             if (asm.locale == "en" && !config.bool("DisableAsilomar") &&
                 ($("#species").select("value") == 1 || $("#species").select("value") == 2) &&
@@ -1269,7 +1262,6 @@ $(function() {
             if (!common.has_permission("da")) { $("#button-delete").hide(); }
             if (!common.has_permission("emo")) { $("#button-email").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
-            if (!common.has_permission("adn")) { $("#button-diarytask").hide(); }
             if (!common.has_permission("vo")) { $("#button-currentowner").hide(); }
             if (!common.has_permission("mlaf")) { $("#button-match").hide(); }
             if (!common.has_permission("vll")) { $("#button-littermates").hide(); }
@@ -1450,8 +1442,8 @@ $(function() {
          */
         bind: function() {
 
-            // Setup the document/diary task/social menu buttons
-            $("#button-diarytask, #button-document, #button-share").asmmenu();
+            // Setup the document/social menu buttons
+            $("#button-document, #button-share").asmmenu();
 
             $("#emailform").emailform();
 
@@ -1531,41 +1523,6 @@ $(function() {
 
             // Litter autocomplete
             $("#litterid").autocomplete({source: html.decode(controller.activelitters)});
-
-            // Diary task create ajax call
-            const create_task = async function(taskid) {
-                let formdata = "mode=exec&id=" + controller.animal.ID + "&tasktype=ANIMAL&taskid=" + taskid + "&seldate=" + $("#seldate").val();
-                await common.ajax_post("diarytask", formdata);
-                // Attempt to save any changes before viewing the diary tab
-                if (validate.unsaved) {
-                    validate.save(function() {
-                        common.route("animal_diary?id=" + controller.animal.ID);
-                    });
-                }
-                else {
-                    common.route("animal_diary?id=" + controller.animal.ID);
-                }
-            };
-
-            // Attach handlers for diary tasks
-            $(".diarytask").each(function() {
-                let a = $(this);
-                const [taskmode, taskid, taskneeddate] = a.attr("data").split(" ");
-                $(this).click(async function() {
-                    $("#seldate").val("");
-                    // If the task needs a date, prompt for it
-                    if (taskneeddate == "1") {
-                        $("#diarytaskid").val(taskid);
-                        await tableform.show_okcancel_dialog("#dialog-dt-date", _("Select"), { notblank: [ "seldate" ]});
-                        create_task($("#diarytaskid").val());
-                    }
-                    else {
-                        // No need for anything else, go create the task
-                        create_task(taskid);
-                    }
-                    return false;
-                });
-            });
 
             // If the bonded animals are cleared (or any animalchooser as part
             // of an additional field for that matter), dirty the form.
@@ -1835,7 +1792,6 @@ $(function() {
 
         destroy: function() {
             validate.unbind_dirty();
-            common.widget_destroy("#dialog-dt-date");
             common.widget_destroy("#dialog-merge");
             common.widget_destroy("#dialog-clone-confirm");
             common.widget_destroy("#dialog-popupwarning");

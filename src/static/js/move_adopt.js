@@ -52,6 +52,9 @@ $(function() {
                     { post_field: "insurance", label: _("Insurance"), type: "text", rowid: "insurancerow", xbutton: _("Issue a new insurance number for this animal/adoption") },
                     { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3, rowid: "commentsrow" }
                 ], 1, { full_width: false }),
+                '<table class="asm-table-layout">',
+                additional.additional_new_fields(controller.additional),
+                '</table>',
                 html.content_footer(),
                 '<div id="payment"></div>',
                 html.content_header(_("Boarding Cost"), true),
@@ -121,6 +124,8 @@ $(function() {
                     validate.highlight("emailtemplateid");
                     return false;
                 }
+                // mandatory additional fields
+                if (!additional.validate_mandatory()) { return false; }                
 
                 return true;
             };
@@ -413,7 +418,7 @@ $(function() {
             });
 
             // Set default values
-            $("#movementdate").datepicker("setDate", new Date());
+            $("#movementdate").date("today");
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");
@@ -424,6 +429,16 @@ $(function() {
                 $("#trialrow2").show();
             }
 
+            const trial_change = function() {
+                if ($("#trial").prop("checked")) {
+                    // If there's no trial end date, and we have a default trial length, set the date
+                    if (!$("#trialenddate").val() && config.integer("DefaultTrialLength")) {
+                        let enddate = common.add_days(new Date(), config.integer("DefaultTrialLength"));
+                        $("#trialenddate").date("setDate", enddate);
+                    }
+                }
+            };
+            $("#trial").click(trial_change).keyup(trial_change);
 
             $("#adopt").button().click(async function() {
                 if (!validation()) { return; }
@@ -434,11 +449,20 @@ $(function() {
                     let response = await common.ajax_post("move_adopt", formdata);
                     $("#movementid").val(response);
                     header.hide_loading();
-                    let u = "move_gendoc?" +
+                    let u = "move_gendoc";
+                    // If the option to allow editing payments after creating the adoption is set, take
+                    // the user to a payment screen that allows them to see the movement payments in order
+                    // to take payment, request payment by email, generate an invoice/receipt, etc.
+                    if (config.bool("MoveAdoptDonationsEnabled") && !$("#checkoutcreate").prop("checked")) {
+                        u = "move_donations";
+                    }
+                    u += "?" +
                         "linktype=MOVEMENT&id=" + response +
                         "&message=" + encodeURIComponent(common.base64_encode(_("Adoption successfully created.") + " " + 
                             $(".animalchooser-display").html() + " " + html.icon("right") + " " +
-                            $(".personchooser-display .justlink").html() ));
+                            $(".personchooser-display .justlink").html() )) + 
+                            "&animalid=" + $("#animal").val() + 
+                            "&ownerid=" + $("#person").val();
                     common.route(u);
                 }
                 catch(err) {

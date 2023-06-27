@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Slideshow</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link type="text/css" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet">
+<link type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<style>
+body { 
+    font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif; 
+    text-align: center;
+    background: #000;
+}    
+@media (max-width: 767px) {
+  body {
+    font-size: 2rem;
+  }
+}
+</style>
+<meta charset="utf-8" />
+<script>
+function blankImage(imgid) {
+    var img = document.getElementById(imgid);
+    img.style.display = "none";
+}
+</script>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get the carousel container and the carousel images
+        const carouselContainer = document.querySelector(".carousel");
+      	const carouselItems = carouselContainer.querySelectorAll(".carousel-item");
+      
+      	// Set the first carousel item as active
+      	carouselItems[0].classList.add("active");
+      
+      	// Add indicators
+        var indicators = "";
+        carouselItems.forEach((itm, i) => {
+        	indicators += '<li data-target="#myCarousel" data-slide-to="' + i + '" ' + (i==0 ? 'class="active"' : '') + '</li>';
+        });
+        document.querySelectorAll(".carousel-indicators")[0].innerHTML = indicators;
+    });
+</script>
+</head>
+<body>
+  <div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+    </ol>
+    <div class="carousel-inner">

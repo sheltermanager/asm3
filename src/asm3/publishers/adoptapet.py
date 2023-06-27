@@ -346,6 +346,9 @@ class AdoptAPetPublisher(FTPPublisher):
         self.mkdir("photos")
         self.chdir("photos", "photos")
 
+        # Remove old unreferenced images before we start
+        self.clearUnusedFTPImages(animals)
+
         csv = []
 
         anCount = 0

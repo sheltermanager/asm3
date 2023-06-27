@@ -2,14 +2,14 @@ Annual Figures (by species)
 ###
 Figures
 ###
-3093/Any rev01
+3093/Any rev02
 ###
 Animal movements on and off the shelter over an annual period.
 ###
 en
 ###
 SELECT af.* FROM animalfiguresannual af
-WHERE af.Year = $ASK NUMBER Enter year to produce figures for$
+WHERE af.Year = $ASK NUMBER Year to produce figures for (eg: 2023)$
 AND af.SpeciesID <> 0
 ORDER BY af.OrderIndex, GroupHeading, Heading
 ###
@@ -82,14 +82,14 @@ Annual Figures (by type)
 ###
 Figures
 ###
-3093/Any rev01
+3093/Any rev02
 ###
 Animal movements on and off the shelter over an annual period by type.
 ###
 en
 ###
 SELECT af.* FROM animalfiguresannual af
-WHERE af.Year = $ASK NUMBER Enter year to produce figures for$
+WHERE af.Year = $ASK NUMBER Year to produce figures for (eg: 2023)$
 AND af.AnimalTypeID <> 0
 ORDER BY af.OrderIndex, GroupHeading, Heading
 ###
@@ -162,14 +162,14 @@ Annual Figures (by entry category)
 ###
 Figures
 ###
-33602/Any rev01
+33602/Any rev02
 ###
 Animal movements on and off the shelter over an annual period by entry category.
 ###
 en
 ###
 SELECT af.* FROM animalfiguresannual af
-WHERE af.Year = $ASK NUMBER Enter year to produce figures for$
+WHERE af.Year = $ASK NUMBER Year to produce figures for (eg: 2023)$
 AND af.EntryReasonID <> 0
 ORDER BY af.OrderIndex, GroupHeading, Heading
 ###

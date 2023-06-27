@@ -369,6 +369,7 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
         dupcodes = 0
         codes = set()
         dups = []
+        errors = []
         for a in animals:
             if a.ShelterCode in codes: 
                 dupcodes += 1
@@ -384,9 +385,16 @@ def stderr_summary(animals=[], animalmedicals=[], animalvaccinations=[], animalt
                 dead += 1
             elif a.DeceasedDate is not None and a.PutToSleep == 1:
                 euth += 1
+            if a.DateBroughtIn is None:
+                errors.append("ERROR: %s %s - DateBroughtIn is None" % (a.AnimalName, a.ShelterCode))
+            if a.DateOfBirth is None:
+                errors.append("ERROR: %s %s - DateOfBirth is None" % (a.AnimalName, a.ShelterCode))
         stderr("%d animals (%d on-shelter, %d off-shelter, %d non-shelter, %d dead, %d euthanised)" % (len(animals), onshelter, offshelter, nonshelter, dead, euth))
         if dupcodes > 0:
             stderr("WARNING: %d duplicate shelter codes (%s .. %s)" % (dupcodes, dups[0], dups[-1]))
+        if len(errors) > 0:
+            stderr("\n".join(errors))
+            stderr("\n%s errors found." % len(errors))
     o(animalmedicals, "medicals")
     o(animalvaccinations, "vaccinations")
     o(animaltests, "tests")
@@ -2495,6 +2503,10 @@ class Owner:
     OwnerInitials = ""
     OwnerForeNames = ""
     OwnerSurname = ""
+    OwnerTitle2 = ""
+    OwnerInitials2 = ""
+    OwnerForeNames2 = ""
+    OwnerSurname2 = ""
     OwnerName = ""
     OwnerAddress = ""
     OwnerTown = ""
@@ -2504,6 +2516,11 @@ class Owner:
     WorkTelephone = ""
     MobileTelephone = ""
     EmailAddress = ""
+    WorkTelephone2 = ""
+    MobileTelephone2 = ""
+    EmailAddress2 = ""
+    IdentificationNumber = ""
+    IdentificationNumber2 = ""
     LatLong = ""
     IDCheck = 0
     Comments = ""
@@ -2570,7 +2587,15 @@ class Owner:
             self.OwnerSurname = name[lastspace+1:]
     def __str__(self):
         if self.OwnerName.strip() == "":
-            self.OwnerName = "%s %s" % (self.OwnerForeNames, self.OwnerSurname)
+            if self.OwnerForenames.strip() != "" and self.OwnerSurname2.strip() == "":
+                self.OwnerType = 1  # Individual
+                self.OwnerName = "%s %s" % (self.OwnerForeNames, self.OwnerSurname)
+            elif self.OwnerSurname2.strip() != "":
+                self.OwnerName = "%s %s & %s %s" % (self.OwnerForeNames, self.OwnerSurname, self.OwnerForeNames2, self.OwnerSurname2)
+                self.OwnerType = 3 # Couple
+            else:
+                self.OwnerName = self.OwnerSurname
+                self.OwnerType = 2 # Organisation
         if self.OwnerCode.strip() == "":
             prefix = "XX"
             if self.OwnerSurname and len(self.OwnerSurname) >= 2 and not self.OwnerSurname.startswith("&"):
@@ -2584,6 +2609,10 @@ class Owner:
             ( "OwnerInitials", ds(self.OwnerInitials) ),
             ( "OwnerForeNames", ds(self.OwnerForeNames) ),
             ( "OwnerSurname", ds(self.OwnerSurname) ),
+            ( "OwnerTitle2", ds(self.OwnerTitle2) ),
+            ( "OwnerInitials2", ds(self.OwnerInitials2) ),
+            ( "OwnerForeNames2", ds(self.OwnerForeNames2) ),
+            ( "OwnerSurname2", ds(self.OwnerSurname2) ),
             ( "OwnerName", ds(self.OwnerName) ),
             ( "OwnerAddress", ds(self.OwnerAddress) ),
             ( "OwnerTown", ds(self.OwnerTown) ),
@@ -2593,6 +2622,11 @@ class Owner:
             ( "WorkTelephone", ds(self.WorkTelephone) ),
             ( "MobileTelephone", ds(self.MobileTelephone) ),
             ( "EmailAddress", ds(self.EmailAddress) ),
+            ( "WorkTelephone2", ds(self.WorkTelephone2) ),
+            ( "MobileTelephone2", ds(self.MobileTelephone2) ),
+            ( "EmailAddress2", ds(self.EmailAddress2) ),
+            ( "IdentificationNumber", ds(self.IdentificationNumber) ),
+            ( "IdentificationNumber2", ds(self.IdentificationNumber2) ),
             ( "LatLong", ds(self.LatLong) ),
             ( "IDCheck", di(self.IDCheck) ),
             ( "Comments", ds(self.Comments) ),

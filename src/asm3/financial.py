@@ -1,6 +1,7 @@
 
 import asm3.al
 import asm3.audit
+import asm3.animal
 import asm3.configuration
 import asm3.i18n
 import asm3.movement
@@ -41,6 +42,21 @@ ANNUALLY = 6
 ASCENDING = 0
 DESCENDING = 1
 
+def get_boarding_query(dbo):
+    return "SELECT ab.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
+        "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
+        "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, " \
+        "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, " \
+        "a.AnimalName, a.BreedName, s.SpeciesName, a.Neutered, a.DeceasedDate, " \
+        "a.IsQuarantine, a.NonShelterAnimal, a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, " \
+        "il.LocationName AS ShelterLocationName, bt.BoardingName AS BoardingTypeName " \
+        "FROM animalboarding ab " \
+        "LEFT OUTER JOIN lkboardingtype bt ON bt.ID = ab.BoardingTypeID " \
+        "LEFT OUTER JOIN animal a ON a.ID = ab.AnimalID " \
+        "LEFT OUTER JOIN owner o ON o.ID = ab.OwnerID " \
+        "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = ab.ShelterLocation "
+
 def get_citation_query(dbo):
     return "SELECT oc.ID, oc.CitationTypeID, oc.CitationDate, oc.Comments, ct.CitationName, " \
         "oc.FineAmount, oc.FineDueDate, oc.FinePaidDate, oc.AnimalControlID, " \
@@ -48,8 +64,8 @@ def get_citation_query(dbo):
         "oc.CreatedBy, oc.CreatedDate, oc.LastChangedBy, oc.LastChangedDate, " \
         "o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName " \
         "FROM ownercitation oc " \
-        "INNER JOIN citationtype ct ON ct.ID = oc.CitationTypeID " \
-        "INNER JOIN owner o ON o.ID = oc.OwnerID " \
+        "LEFT OUTER JOIN citationtype ct ON ct.ID = oc.CitationTypeID " \
+        "LEFT OUTER JOIN owner o ON o.ID = oc.OwnerID " \
         "LEFT OUTER JOIN animalcontrol ac ON ac.ID = oc.AnimalControlID " \
         "LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID " 
 
@@ -103,13 +119,17 @@ def get_licence_query(dbo):
     return "SELECT ol.ID, ol.LicenceTypeID, ol.IssueDate, ol.ExpiryDate, lt.LicenceTypeName, " \
         "ol.LicenceNumber, ol.LicenceFee, ol.Comments, ol.OwnerID, ol.AnimalID, " \
         "ol.CreatedBy, ol.CreatedDate, ol.LastChangedBy, ol.LastChangedDate, " \
-        "a.AnimalName, a.ShelterCode, a.ShortCode, a.Sex, " \
+        "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, a.Fee, " \
+        "a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.SpeciesID, a.HasActiveReserve, " \
+        "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
+        "a.ActiveMovementType, a.Archived, a.DaysOnShelter, a.IsNotAvailableForAdoption, " \
+        "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, a.Identichipped, a.IdentichipNumber, " \
         "o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone " \
         "FROM ownerlicence ol " \
-        "INNER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID " \
-        "INNER JOIN owner o ON o.ID = ol.OwnerID " \
+        "LEFT OUTER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID " \
+        "LEFT OUTER JOIN owner o ON o.ID = ol.OwnerID " \
         "LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID "
 
 def get_voucher_query(dbo):
@@ -118,8 +138,8 @@ def get_voucher_query(dbo):
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.AdditionalFlags, " \
         "a.AnimalName, a.ShelterCode, a.ShortCode " \
         "FROM ownervoucher ov " \
-        "INNER JOIN voucher v ON v.ID = ov.VoucherID " \
-        "INNER JOIN owner o ON o.ID = ov.OwnerID " \
+        "LEFT OUTER JOIN voucher v ON v.ID = ov.VoucherID " \
+        "LEFT OUTER JOIN owner o ON o.ID = ov.OwnerID " \
         "LEFT OUTER JOIN animal a ON ov.AnimalID = a.ID "
 
 def get_account_code(dbo, accountid):
@@ -450,6 +470,58 @@ def get_person_donations(dbo, oid, sort = ASCENDING):
     return dbo.query(get_donation_query(dbo) + \
         "WHERE od.OwnerID = ? " \
         "ORDER BY %s" % order, [oid])
+
+def get_boarding(dbo, flt = "active", sort = ASCENDING):
+    """
+    Returns boarding records
+    """
+    order = "InDateTime DESC"
+    if sort == ASCENDING:
+        order = "InDateTime"
+    if flt == "" or flt == "active":
+        where = "InDateTime <= %s AND OutDateTime >= %s" % ( dbo.sql_today(), dbo.sql_today() )
+    elif flt == "st":
+        where = "InDateTime >= %s AND InDateTime < %s" % (dbo.sql_today(), dbo.sql_date(dbo.today(offset=1)))
+    elif flt == "et":
+        where = "OutDateTime >= %s AND OutDateTime < %s" % (dbo.sql_today(), dbo.sql_date(dbo.today(offset=1)))
+    elif flt.startswith("m"):
+        cutoff = dbo.today(offset = -1 * asm3.utils.atoi(flt))
+        where = "OutDateTime >= %s AND OutDateTime < %s" % ( dbo.sql_date(cutoff), dbo.sql_today() )
+    elif flt.startswith("p"):
+        cutoff = dbo.today(offset = asm3.utils.atoi(flt))
+        where = "InDateTime > %s AND InDateTime <= %s" % ( dbo.sql_today(), dbo.sql_date(cutoff) )
+    return dbo.query(get_boarding_query(dbo) + \
+        "WHERE %s ORDER BY %s" % ( where, order))
+
+def get_boarding_due_two_dates(dbo, start, end):
+    """
+    Returns a recordset of boarding records that are active between two dates
+    """
+    return dbo.query(get_boarding_query(dbo) + \
+        "WHERE ab.InDateTime >= ? AND ab.InDateTime <= ? " \
+        "ORDER BY ab.InDateTime DESC", (start, end))
+
+def get_boarding_id(dbo, bid):
+    """
+    Return the boarding record with ID=bid
+    """
+    return dbo.first_row(dbo.query(get_boarding_query(dbo) + " WHERE ab.ID = ?", [bid]))
+
+def get_animal_boarding(dbo, aid):
+    """
+    Returns the boarding history for an animal
+    """
+    return dbo.query(get_boarding_query(dbo) + \
+        "WHERE ab.AnimalID = ? " \
+        "ORDER BY InDateTime", [aid])
+
+def get_person_boarding(dbo, oid):
+    """
+    Returns the boarding history for a person
+    """
+    return dbo.query(get_boarding_query(dbo) + \
+        "WHERE ab.OwnerID = ? " \
+        "ORDER BY InDateTime", [oid])
 
 def get_incident_citations(dbo, iid, sort = ASCENDING):
     """
@@ -1241,6 +1313,86 @@ def delete_voucher(dbo, username, vid):
     Deletes a voucher record
     """
     dbo.delete("ownervoucher", vid, username)
+
+def insert_boarding_from_form(dbo, username, post):
+    """
+    Creates a boarding record from posted data 
+    """
+    l = dbo.locale
+
+    if None is post.date("indate") or None is post.date("outdate"):
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Boarding records must have valid check in and out dates.", l))
+    if post.date("indate") > post.date("outdate"):
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Check out date cannot be later than check in date.", l))
+
+    boardingid = dbo.insert("animalboarding", {
+        "AnimalID":         post.integer("animal"),
+        "OwnerID":          post.integer("person"),
+        "BoardingTypeID":   post.integer("type"),
+        "InDateTime":       post.datetime("indate", "intime"),
+        "OutDateTime":      post.datetime("outdate", "outtime"),
+        "Days":             asm3.i18n.date_diff_days(post.date("indate"), post.date("outdate")),
+        "DailyFee":         post.integer("dailyfee"),
+        "ShelterLocation":  post.integer("location"),
+        "ShelterLocationUnit": post["unit"],
+        "Comments":         post["comments"]
+    }, username)
+
+    # If this boarding record is active right now, update the location of the animal
+    if post.date("indate") <= dbo.today() and post.date("outdate") >= dbo.today():
+        asm3.animal.update_location_unit(dbo, username, post.integer("animal"), post.integer("location"), post["unit"], returnactivemovement=False)
+
+    asm3.animal.update_animal_status(dbo, post.integer("animal"))
+    return boardingid
+
+def update_boarding_from_form(dbo, username, post):
+    """
+    Updates a boarding record from posted data 
+    """
+    l = dbo.locale
+
+    if None is post.date("indate") or None is post.date("outdate"):
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Boarding records must have valid check in and out dates.", l))
+    if post.date("indate") > post.date("outdate"):
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Check out date cannot be later than check in date.", l))
+
+    dbo.update("animalboarding", post.integer("boardingid"), {
+        "AnimalID":         post.integer("animal"),
+        "OwnerID":          post.integer("person"),
+        "BoardingTypeID":   post.integer("type"),
+        "InDateTime":       post.datetime("indate", "intime"),
+        "OutDateTime":      post.datetime("outdate", "outtime"),
+        "Days":             asm3.i18n.date_diff_days(post.date("indate"), post.date("outdate")),
+        "DailyFee":         post.integer("dailyfee"),
+        "ShelterLocation":  post.integer("location"),
+        "ShelterLocationUnit": post["unit"],
+        "Comments":         post["comments"]
+    }, username)
+
+    # If this boarding record is active right now, update the location of the animal
+    if post.date("indate") <= dbo.today() and post.date("outdate") >= dbo.today():
+        asm3.animal.update_location_unit(dbo, username, post.integer("animal"), post.integer("location"), post["unit"], returnactivemovement=False)
+
+    # Update animal status to bring the animal to the shelter if it is boarding
+    asm3.animal.update_animal_status(dbo, post.integer("animal"))
+
+def delete_boarding(dbo, username, bid):
+    """
+    Deletes a boarding record
+    """
+    animalid = dbo.query_int("SELECT AnimalID FROM animalboarding WHERE ID=?", [bid])
+    dbo.delete("animalboarding", bid, username)
+    asm3.animal.update_animal_status(dbo, animalid)
+
+def update_location_boarding_today(dbo):
+    """
+    Checks all boarding records and those that start today to update the location on their animals.
+    """
+    rows = dbo.query("SELECT AnimalID, ShelterLocation, ShelterLocationUnit FROM animalboarding " \
+        "WHERE InDateTime >= ? AND OutDateTime < ?", [ dbo.today(), dbo.today(offset=1) ])
+    asm3.al.debug("%s boarding records start today" % len(rows), "financial.update_location_boarding_today", dbo)
+    for r in rows:
+        asm3.animal.update_location_unit(dbo, "system", r.ANIMALID, r.SHELTERLOCATION, r.SHELTERLOCATIONUNIT, returnactivemovement=False)
 
 def insert_citation_from_form(dbo, username, post):
     """

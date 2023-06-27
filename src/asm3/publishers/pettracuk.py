@@ -225,16 +225,16 @@ class PETtracUKPublisher(AbstractPublisher):
     def validate(self, an):
         """ Validate an animal record is ok to send """
         # Validate certain items aren't blank so we aren't registering bogus data
-        if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
+        if asm3.utils.nulltostr(an.CURRENTOWNERADDRESS).strip() == "":
             self.logError("Address for the new owner is blank, cannot process")
             return False 
 
-        if asm3.utils.nulltostr(an["CURRENTOWNERPOSTCODE"]).strip() == "":
+        if asm3.utils.nulltostr(an.CURRENTOWNERPOSTCODE).strip() == "":
             self.logError("Postal code for the new owner is blank, cannot process")
             return False
 
         # Make sure the length is actually suitable
-        if not len(an["IDENTICHIPNUMBER"]) in (9, 10, 15):
+        if not len(an.IDENTICHIPNUMBER) in (9, 10, 15):
             self.logError("Microchip length is not 9, 10 or 15, cannot process")
             return False
     

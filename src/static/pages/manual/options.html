@@ -59,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stockcontrol.html">Stock Control</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reports.html">Reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
@@ -74,8 +73,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#add-animal">Add Animal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#age-groups">Age Groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-codes">Animal Codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#boarding">Boarding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#checkout">Checkout</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#costs">Costs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#daily-observations">Daily Observations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-protection">Data Protection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#defaults">Defaults</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#diary-and-messages">Diary and Messages</a></li>
@@ -358,6 +359,15 @@ Some licensing regions use a tag number that stays with the animal for
 life and need to allow duplicate licenses as a result.</p></li>
 </ul>
 </section>
+<section id="boarding">
+<h2>Boarding<a class="headerlink" href="#boarding" title="Permalink to this heading">¶</a></h2>
+<p>The boarding tab allows configuration of the boarding tab that appears on
+person records, and animals who are not in care.</p>
+<ul class="simple">
+<li><p>Boarding payment type: The payment type to use when creating due payments
+from a boarding record with the “Create Payment” toolbar button.</p></li>
+</ul>
+</section>
 <section id="checkout">
 <h2>Checkout<a class="headerlink" href="#checkout" title="Permalink to this heading">¶</a></h2>
 <p>The checkout tab allows you to configure automated checkouts that take payment
@@ -396,6 +406,16 @@ of treatments the animal received (this can then be reported on).</p></li>
 date a cost was paid separately from the date a cost was incurred, tick this
 box.</p></li>
 </ul>
+</section>
+<section id="daily-observations">
+<h2>Daily Observations<a class="headerlink" href="#daily-observations" title="Permalink to this heading">¶</a></h2>
+<p>This tab allows you to configure the values that are requested on the
+<a class="reference internal" href="animals.html#dailyobservations"><span class="std std-ref">Daily Observations</span></a> screen, along with the log type used for the
+records written.</p>
+<p>The left column contains the name of the value, and the right the available
+values. If the right column is empty, the user will be given a free text box to
+enter a value. Otherwise, the right column should contain a pipe-separated list
+of the values available to show in a dropdown.</p>
 </section>
 <section id="data-protection">
 <h2>Data Protection<a class="headerlink" href="#data-protection" title="Permalink to this heading">¶</a></h2>
@@ -493,6 +513,9 @@ graphs.</p></li>
 <ul class="simple">
 <li><p>Show the full diary (instead of just my notes) on the home page: If this option
 is on, all users will see the full list of outstanding diary notes on their home page.</p></li>
+<li><p>Auto complete diary notes linked to animals when they are marked deceased: If
+this option is enabled, diary notes linked to animals are completed when the
+animal is given a deceased date.</p></li>
 <li><p>Email users their outstanding diary notes once per day: This option will cause
 the system to send users an email containing their outstanding diary notes.
 The system will send it as part of the overnight batch, which depending on
@@ -745,6 +768,8 @@ on screen (typically in red italics).</p></li>
 <li><p>Remove holds after: This value is used to set a default in the “Hold until date”
 field of new animals. When the date is reached, the hold flag is automatically
 removed.</p></li>
+<li><p>Trial adoptions last for: This value is used to set the default “trial end date”
+field when marking adoptions as a trial.</p></li>
 <li><p>Treat animals with a future intake date as part of the shelter inventory: This
 option will treat animals who have not arrived yet (Date Brought In &gt; Today)
 as on shelter so that they are visible in shelter view etc.</p></li>
@@ -799,6 +824,10 @@ is ticked, the payment will be marked as due to be paid, but not actually
 received.</p></li>
 <li><p>Allow creation of payments on the Move-Reserve screen: Allow payments to be
 taken on the <span class="menuselection">Move ‣ Reserve an animal</span> screen.</p></li>
+<li><p>Allow editing of payments after creating an adoption on the Move-Adopt an
+animal screen: After the adopt button is clicked, take the user to a screen
+that allows editing of the payments that were just created. This allows the
+user to generate an invoice/receipt or request payment by email, etc.</p></li>
 <li><p>Allow overriding of the movement number on the Move menu screens: If turned
 on, the movement number field will be visible on all Move menu screens for
 the user to override.</p></li>
@@ -832,6 +861,9 @@ check based on name and address.</p></li>
 <ul class="simple">
 <li><p>Remove incoming forms after: Automatically remove forms from the incoming queue
 after this many days.</p></li>
+<li><p>Remove forms immediately when I process them: When creating or attaching forms
+to records in the incoming forms list, delete the form as soon as it is
+successfully processed.</p></li>
 <li><p>Remove processed forms when I leave the incoming forms screen: When navigating
 away from the incoming forms screen, any forms that have been processed (have
 a link shown in the rightmost column) will be deleted automatically.</p></li>
@@ -891,6 +923,9 @@ quickly get to some of ASM’s screens without having to open the menus.</p>
 <section id="system">
 <h3>System<a class="headerlink" href="#system" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
+<li><p>Remove boarding functionality from screens and menus: If your shelter does
+not board animals for the public, this option will disable the system’s boarding
+functionality from the financial menu and animal/person screens.</p></li>
 <li><p>Remove clinic functionality from screens and menus: If your shelter does
 not run a clinic, this option will disable the system’s clinic appointment
 and invoicing functionality from the medical menu and animal/person screens.</p></li>

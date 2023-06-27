@@ -96,6 +96,9 @@ class RescueGroupsPublisher(FTPPublisher):
         self.mkdir("pictures")
         self.chdir("pictures", "import/pictures")
 
+        # Remove old unreferenced images before we start
+        self.clearUnusedFTPImages(animals)
+
         csv = []
 
         anCount = 0

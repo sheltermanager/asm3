@@ -17,7 +17,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Litters" href="litters.html" />
+    <link rel="next" title="Online Forms" href="onlineform.html" />
     <link rel="prev" title="Stock Control" href="stockcontrol.html" /> 
 </head>
 
@@ -76,7 +76,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#automatic-updating-of-repository-reports">Automatic updating of repository reports</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="litters.html">Litters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onlineform.html">Online Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paymentprocessors.html">Payment Processors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rota.html">Rota</a></li>
@@ -213,6 +212,10 @@ for the current database. This saves you having to use NOW() or
 CURRENT_DATE() or various other SQL functions specific to one database.</p></li>
 <li><p>$CURRENT_DATE-X$ - The same as CURRENT_DATE, but subtracts X days.</p></li>
 <li><p>$CURRENT_DATE+X$ - The same as CURRENT_DATE, but adds X days.</p></li>
+<li><p>$CURRENT_DATE_FDM$ - Returns the first day of the current month.</p></li>
+<li><p>$CURRENT_DATE_LDM$ - Returns the last day of the current month.</p></li>
+<li><p>$CURRENT_DATE_FDY$ - Returns the first day of the current year.</p></li>
+<li><p>$CURRENT_DATE_LDY$ - Returns the last day of the current year.</p></li>
 <li><p>$PARENTKEY$ - Substitutes the field value named in the report calling this
 subreport. For example, a report could pass an Animal ID as the parent key to
 a subreport for filtering data correctly. When you use this key in your
@@ -227,6 +230,9 @@ display it on the menu.</p></li>
 “money” as its name, the report engine will make sure it’s formatted as a
 currency and assume that its value is a whole integer money amount (where 1
 is 1 cent/pence/etc).</p></li>
+<li><p>AS [fieldname]n2br - If you alias an output field so that it has a suffix
+of “n2br” as its name, the report engine will translate line breaks in the
+column data to HTML &lt;br&gt; tags so that they show on the report.</p></li>
 </ul>
 </section>
 <section id="ask">
@@ -570,7 +576,7 @@ particular version.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="stockcontrol.html" class="btn btn-neutral float-left" title="Stock Control" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="litters.html" class="btn btn-neutral float-right" title="Litters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="onlineform.html" class="btn btn-neutral float-right" title="Online Forms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -51,6 +51,7 @@ $(function() {
                 '<textarea class="asm-textarea" id="comments" data="comments" rows="3"></textarea>',
                 '</td>',
                 '</tr>',
+                additional.additional_new_fields(controller.additional),
                 '</table>',
                 html.content_footer(),
                 html.box(5),
@@ -83,6 +84,9 @@ $(function() {
                     validate.highlight("retailerdate");
                     return false;
                 }
+                // mandatory additional fields
+                if (!additional.validate_mandatory()) { return false; }
+
                 return true;
             };
 
@@ -114,7 +118,7 @@ $(function() {
             }
 
             // Set default values
-            $("#retailerdate").datepicker("setDate", new Date());
+            $("#retailerdate").date("today");
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");

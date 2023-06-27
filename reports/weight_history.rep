@@ -2,7 +2,7 @@ Weight History
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Weight history for the selected animal.
 ###
@@ -17,9 +17,8 @@ INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 INNER JOIN log l ON l.LinkID = a.ID AND l.LinkType = 0
-INNER JOIN logtype lt ON lt.ID = l.LogTypeID 
 INNER JOIN lksex sx ON sx.ID = a.Sex
-WHERE a.ID = $ASK ANIMAL$ AND lt.LogTypeName LIKE 'Weight'
+WHERE a.ID = $ASK ANIMAL$ AND l.LogTypeID = 4
 ORDER BY l.Date DESC
 ###
 $$HEADER
@@ -44,7 +43,7 @@ Weight History (Shelter Animals)
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Weight history for all shelter animals.
 ###
@@ -59,9 +58,8 @@ INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN internallocation il ON il.ID = a.ShelterLocation
 INNER JOIN log l ON l.LinkID = a.ID AND l.LinkType = 0
-INNER JOIN logtype lt ON lt.ID = l.LogTypeID 
 INNER JOIN lksex sx ON sx.ID = a.Sex
-WHERE a.Archived = 0 AND lt.LogTypeName LIKE 'Weight'
+WHERE a.Archived = 0 AND l.LogTypeID = 4
 ORDER BY a.AnimalName, l.Date DESC
 ###
 $$HEADER
@@ -91,17 +89,16 @@ Weight Chart
 ###
 Auditing
 ###
-PostgreSQL rev02
+PostgreSQL rev03
 ###
 Weight chart for the selected animal
 ###
 en
 ###
 SELECT to_char(l.Date, 'YYYY-MM-DD') AS WeightDate,
-NULLIF(regexp_replace(l.Comments, '\D','','g'), '')::numeric AS Weight
+COALESCE(substring(l.Comments, '\d+\.?\d*'), '0.0')::numeric AS Weight
 FROM log l
-INNER JOIN logtype lt on lt.ID = l.LogTypeID
-WHERE l.LinkType = 0 AND l.LinkID = $ASK ANIMAL$ AND lt.LogTypeName LIKE 'Weight'
+WHERE l.LinkType = 0 AND l.LinkID = $ASK ANIMAL$ AND l.LogTypeID = 4
 ORDER BY l.Date
 ###
 GRAPH LINES

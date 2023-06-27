@@ -122,6 +122,14 @@ information, or information requested from the user at report generation time.
 
 * $CURRENT_DATE+X$ - The same as CURRENT_DATE, but adds X days.
 
+* $CURRENT_DATE_FDM$ - Returns the first day of the current month.
+
+* $CURRENT_DATE_LDM$ - Returns the last day of the current month.
+
+* $CURRENT_DATE_FDY$ - Returns the first day of the current year.
+
+* $CURRENT_DATE_LDY$ - Returns the last day of the current year.
+
 * $PARENTKEY$ - Substitutes the field value named in the report calling this
   subreport. For example, a report could pass an Animal ID as the parent key to
   a subreport for filtering data correctly. When you use this key in your
@@ -138,6 +146,10 @@ information, or information requested from the user at report generation time.
   “money” as its name, the report engine will make sure it's formatted as a
   currency and assume that its value is a whole integer money amount (where 1
   is 1 cent/pence/etc).
+
+* AS [fieldname]n2br - If you alias an output field so that it has a suffix
+  of "n2br" as its name, the report engine will translate line breaks in the
+  column data to HTML <br> tags so that they show on the report.
 
 ASK
 ^^^

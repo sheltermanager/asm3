@@ -343,8 +343,12 @@ select:disabled, input:disabled, textarea:disabled {
     margin-left: 1px;
     cursor: default;
 	border-radius: 3px;
+    /*
     color: #fff;
     background-color: #cc00ff;
+    */
+    color: #000;
+    background-color: #fbebff;
     border: 1px solid black;
     padding: 2px;
     white-space: nowrap;
@@ -519,6 +523,7 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-overduerow { font-style: italic; color: #ff0000; }
 .asm-warningrow { color: #ff0000; }
 #tableform-select-all, #tableform-toggle-filter { float: left; margin-top: -4px; }
+#tableform .filtered { display: none !important; } /* also applied by .tablesorter .filtered css but without !important does not work for elements that have changed display */
 
 /** WAITING LIST ==================== */
 .asm-wl-highlight { color: #000; background-color: #fff284; }
@@ -825,17 +830,6 @@ select:disabled, input:disabled, textarea:disabled {
     border: 1px solid #555;
     padding: 5px;
     margin: 5px;
-    max-width: 85px;
-    max-height: 85px;
-    background-color: #fff;
-    border-radius: 2px;
-}
-
-.objectfit .asm-thumbnail {
-    vertical-align: middle;
-    border: 1px solid #555;
-    padding: 5px;
-    margin: 5px;
     width: 85px;
     height: 85px;
     object-fit: contain;
@@ -843,11 +837,23 @@ select:disabled, input:disabled, textarea:disabled {
     border-radius: 2px;
 }
 
-.objectfit .asm-thumbnail-male, .asm-thumbnail-male {
+.asm-thumbnail-small {
+    vertical-align: middle;
+    border: 1px solid #555;
+    padding: 3px;
+    margin: 5px;
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+    background-color: #fff;
+    border-radius: 2px;
+}
+
+.asm-thumbnail-male, .asm-thumbnail-male {
     background-color: #99c2ff;
 }
 
-.objectfit .asm-thumbnail-female, .asm-thumbnail-female {
+.asm-thumbnail-female, .asm-thumbnail-female {
     background-color: #ffb3ff;
 }
 
@@ -913,7 +919,6 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-link-disabled:hover {
     text-decoration: none;
 }
-
 
 /** Tweaks for when displaying on portrait mobile devices */
 @media screen and (max-device-width:480px) {
