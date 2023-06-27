@@ -148,7 +148,7 @@ $(function() {
         },
 
         sync: function() {
-            $("#issuedate").datepicker("setDate", new Date());
+            $("#issuedate").date("today");
             licence_renewal.type_change();
 
             // Remove any retired lookups from the lists

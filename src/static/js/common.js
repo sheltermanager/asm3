@@ -1195,14 +1195,17 @@ const common = {
             else if (type == "animalchoosermulti") {
                 $(selector).animalchoosermulti("destroy").remove();
             }
-            else if (type == "personchooser") {
-                $(selector).personchooser("destroy").remove();
+            else if (type == "createpayment") { 
+                $(selector).createpayment("destroy").remove();
             }
             else if (type == "emailform") {
                 $(selector).emailform("destroy").remove();
             }
             else if (type == "htmleditor") {
                 $(selector).htmleditor("destroy").remove();
+            }
+            else if (type == "personchooser") {
+                $(selector).personchooser("destroy").remove();
             }
             else if (type == "richtextarea") {
                 $(selector).richtextarea("destroy").remove();

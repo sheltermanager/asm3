@@ -169,13 +169,13 @@ $(function() {
                             }
                         });
                         $("#usagecomments").html(comments);
-                        $("#newdate").datepicker("setDate", new Date());
+                        $("#newdate").date("today");
                         $("#renewon").val("");
                         let rd = test.calc_reschedule_date(new Date(), testtype);
-                        if (rd) { $("#renewon").datepicker("setDate", rd); }
+                        if (rd) { $("#renewon").date("setDate", rd); }
                         $("#testresult").select("firstvalue");
                         $("#usagetype").select("firstvalue");
-                        $("#usagedate").datepicker("setDate", new Date());
+                        $("#usagedate").date("today");
                         $("#usagedate").closest("tr").hide();
                         $("#quantity").val("0");
                         // Default animal's current vet if set and this is an animal test tab

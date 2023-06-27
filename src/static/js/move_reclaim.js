@@ -231,7 +231,7 @@ $(function() {
             }
 
             // Set default values
-            $("#movementdate").datepicker("setDate", new Date());
+            $("#movementdate").date("today");
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");

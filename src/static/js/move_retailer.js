@@ -118,7 +118,7 @@ $(function() {
             }
 
             // Set default values
-            $("#retailerdate").datepicker("setDate", new Date());
+            $("#retailerdate").date("today");
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");

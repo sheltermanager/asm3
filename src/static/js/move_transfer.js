@@ -118,7 +118,7 @@ $(function() {
             }
 
             // Set default values
-            $("#transferdate").datepicker("setDate", new Date());
+            $("#transferdate").date("today");
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");

@@ -381,7 +381,7 @@ $.fn.phone = function() {
     });
 };
 
-$.fn.date = function(method) {
+$.fn.date = function(method, newval) {
     if (!method || method == "create") {
         this.each(function() {
             disable_autocomplete($(this));
@@ -467,6 +467,19 @@ $.fn.date = function(method) {
     else if (method == "today") {
         this.each(function() {
             $(this).datepicker("setDate", new Date());
+        });
+    }
+    else if (method == "getDate") {
+        let rv = null;
+        this.each(function() {
+            rv = $(this).datepicker("getDate");
+        });
+        return rv;
+    }
+    else if (method == "setDate") {
+        // Expects newval to contain a javascript Date object
+        this.each(function() {
+            $(this).datepicker("setDate", newval);
         });
     }
 };
@@ -742,10 +755,20 @@ $.widget("asm.createpayment", {
                 buttons: b
         });
         $("#pm-vat").change(function() {
-            if ($("#pm-vat").is(":checked")) {
+            if ($(this).is(":checked")) {
+                $("#pm-vatrate").val(config.number("VATRate"));
+                if (!config.bool("VATExclusive")) {
+                    $("#pm-vatamount").currency("value", common.tax_from_inclusive($("#pm-amount").currency("value"), config.number("VATRate")));
+                }
+                else {
+                    $("#pm-vatamount").currency("value", common.tax_from_exclusive($("#pm-amount").currency("value"), config.number("VATRate")));
+                    $("#pm-amount").currency("value", $("#pm-amount").currency("value") + $("#pm-vatamount").currency("value"));
+                }
                 $("#dialog-payment .paymentsalestax").fadeIn();
             }
             else {
+                $("#pm-vatamount").currency("value", "0");
+                $("#pm-vatrate").val("0"); 
                 $("#dialog-payment .paymentsalestax").fadeOut();
             }
         });

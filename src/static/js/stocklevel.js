@@ -64,7 +64,7 @@ $(function() {
                                 });
                         },
                         onload: function() {
-                            $("#usagedate").datepicker("setDate", new Date());
+                            $("#usagedate").date("today");
                             $("#usagetype").select("firstvalue");
                             $("#quantity").val("1"); // Ignored during edit but validated
                             stocklevel.hide_usage_fields();
@@ -198,7 +198,7 @@ $(function() {
                     $("#name").val(_("Copy of {0}").replace("{0}", $("#name").val()));
                     stocklevel.show_usage_fields();
                     $("#usagetype").select("firstvalue");
-                    $("#usagedate").datepicker("setDate", new Date());
+                    $("#usagedate").date("today");
                     $("#quantity").val("1"); 
                 }
             });

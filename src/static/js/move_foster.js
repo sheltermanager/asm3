@@ -129,7 +129,7 @@ $(function() {
             }
 
             // Set default values
-            $("#fosterdate").datepicker("setDate", new Date());
+            $("#fosterdate").date("today");
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");

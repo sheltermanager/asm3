@@ -531,7 +531,7 @@ $(function() {
 
             $("#button-dispatch").button().click(function() {
                 if (!$("#dispatchtime").val()) {
-                    $("#dispatchdate").datepicker("setDate", new Date());
+                    $("#dispatchdate").date("today");
                     $("#dispatchtime").val(format.time(new Date()));
                     $("#asm-details-accordion").accordion("option", "active", 2);
                     $("#button-dispatch").button("disable");
@@ -547,7 +547,7 @@ $(function() {
 
             $("#button-respond").button().click(function() {
                 if (!$("#respondedtime").val()) {
-                    $("#respondeddate").datepicker("setDate", new Date());
+                    $("#respondeddate").date("today");
                     $("#respondedtime").val(format.time(new Date()));
                     $("#asm-details-accordion").accordion("option", "active", 2);
                     $("#button-respond").button("disable");

@@ -418,7 +418,7 @@ $(function() {
             });
 
             // Set default values
-            $("#movementdate").datepicker("setDate", new Date());
+            $("#movementdate").date("today");
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");
@@ -434,7 +434,7 @@ $(function() {
                     // If there's no trial end date, and we have a default trial length, set the date
                     if (!$("#trialenddate").val() && config.integer("DefaultTrialLength")) {
                         let enddate = common.add_days(new Date(), config.integer("DefaultTrialLength"));
-                        $("#trialenddate").datepicker("setDate", enddate);
+                        $("#trialenddate").date("setDate", enddate);
                     }
                 }
             };

@@ -308,8 +308,8 @@ $(function() {
                     if (controller.person) {
                         $("#person").personchooser("loadbyid", controller.person.ID);
                     }
-                    $("#indate").datepicker("setDate", new Date());
-                    $("#outdate").datepicker("setDate", new Date());
+                    $("#indate").date("today");
+                    $("#outdate").date("today");
                     $("#intime").val("00:00");
                     $("#outtime").val("00:00");
                     boarding.location_change();

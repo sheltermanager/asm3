@@ -91,7 +91,7 @@ $(function() {
             $("#payment").payments({ controller: controller });
 
             // Set default values
-            $("#received").datepicker("setDate", new Date());
+            $("#received").date("today");
 
             /* NOT NECESSARY, BACKEND WILL SUPPLY
             common.ajax_post("donation", "mode=nextreceipt")

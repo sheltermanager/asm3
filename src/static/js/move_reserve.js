@@ -210,7 +210,7 @@ $(function() {
             }
 
             // Set default values
-            $("#reservationdate").datepicker("setDate", new Date());
+            $("#reservationdate").date("today");
             $("#reservationstatus").select("value", config.str("AFDefaultReservationStatus"));
 
             // Remove any retired lookups from the lists
