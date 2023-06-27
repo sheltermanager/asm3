@@ -160,6 +160,8 @@ BondedAnimal2Name
     The name of the second animal this animal is bonded to
 BondedAnimal2Code
     The code of the second animal this animal is bonded to
+BondedNames
+    returns the full name with bonds eg: AnimalName / BondedAnimal1Name / BondedAnimal2Name
 Fee
     The animal's adoption fee if you are using per-animal adoption fees
 LicenceNumber / LicenseNumber

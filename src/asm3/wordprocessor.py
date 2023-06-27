@@ -225,13 +225,18 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
     Generates a list of tags from an animal result (the deep type from calling asm3.animal.get_animal)
     """
     l = dbo.locale
+    
     # calculate the age instead of using stored value in case animal is off shelter
     animalage = format_diff_single(l, date_diff_days(a["DATEOFBIRTH"], dbo.today()))
     if animalage and animalage.endswith("."): 
         animalage = animalage[0:len(animalage)-1]
+   
+    # strip full stop from the end of time on shelter
     timeonshelter = a["TIMEONSHELTER"]
     if timeonshelter and timeonshelter.endswith("."): 
         timeonshelter = timeonshelter[0:len(timeonshelter)-1]
+
+    # calculate displaydob/age based on whether age is an estimate
     displaydob = python2display(l, a["DATEOFBIRTH"])
     displayage = animalage
     estimate = ""
@@ -240,8 +245,14 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         displayage = a["AGEGROUP"]
         estimate = _("estimate", l)
 
+    # make a list of names for the BONDEDNAMES token
+    bondednames = [ a["ANIMALNAME"] ]
+    if a["BONDEDANIMAL1NAME"]: bondednames.append(a["BONDEDANIMAL1NAME"])
+    if a["BONDEDANIMAL2NAME"]: bondednames.append(a["BONDEDANIMAL2NAME"])
+
     tags = { 
         "ANIMALNAME"            : a["ANIMALNAME"],
+        "BONDEDNAMES"           : " / ".join(bondednames),
         "ANIMALTYPENAME"        : a["ANIMALTYPENAME"],
         "BASECOLOURNAME"        : a["BASECOLOURNAME"],
         "BASECOLORNAME"         : a["BASECOLOURNAME"],
