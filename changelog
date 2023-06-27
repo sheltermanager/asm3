@@ -1,6 +1,7 @@
 47
 ================
 
+27/06/23 Consistent create payment widget for appointments and boarding #623
 27/06/23 Add wordkey for BondedNames (name / bond1 / bond2)
 26/06/23 Recently deceased search was including non-shelter
 26/06/23 Add alternative Romanian locale to use Euro instead of Lei

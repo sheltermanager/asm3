@@ -20,11 +20,20 @@ const common = {
         return str.split(find).length - 1;
     },
 
+    /** Substitutes {token} in str for token key in sub dict */
     substitute: function(str, sub) {
         /*jslint regexp: true */
         return str.replace(/\{(.+?)\}/g, function($0, $1) {
             return sub.hasOwnProperty($1) ? sub[$1] : $0;
         });
+    },
+
+    /** Looks for {0}, {1}, {2} etc and replaces them with that element of array arr */
+    sub_arr: function(str, arr) {
+        $.each(arr, function(i, l) {
+            str = str.replace("{" + i + "}", l);
+        });
+        return str;
     },
 
     iif: function(cond, yes, no) {
@@ -1168,6 +1177,7 @@ const common = {
             "#owner": "personchooser",
             "#person": "personchooser",
             "#retailer": "personchooser",
+            "#createpayment": "createpayment",
             "#dialog-": "dialog",
             "#emailform": "emailform",
             "#sql": "sqleditor",

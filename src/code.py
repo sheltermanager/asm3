@@ -1709,6 +1709,8 @@ class animal_boarding(JSONEndpoint):
             "animal": a,
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding"),
             "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0]
@@ -2296,6 +2298,8 @@ class boarding(JSONEndpoint):
             "name": "boarding",
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding")
         }
@@ -2312,10 +2316,6 @@ class boarding(JSONEndpoint):
         self.check(asm3.users.DELETE_BOARDING)
         for did in o.post.integer_list("ids"):
             asm3.financial.delete_boarding(o.dbo, o.user, did)
-
-    def post_payment(self, o):
-        self.check(asm3.users.ADD_DONATION)
-        return asm3.financial.insert_donation_from_boarding(o.dbo, o.user, o.post.integer("id"))
 
 class calendarview(JSONEndpoint):
     url = "calendarview"
@@ -2576,11 +2576,6 @@ class clinic_appointment(ASMEndpoint):
         self.check(asm3.users.DELETE_CLINIC)
         for cid in o.post.integer_list("ids"):
             asm3.clinic.delete_appointment(o.dbo, o.user, cid)
-
-    def post_payment(self, o):
-        self.check(asm3.users.ADD_DONATION)
-        for cid in o.post.integer_list("ids"):
-            asm3.clinic.insert_payment_from_appointment(o.dbo, o.user, cid, o.post)
 
     def post_personanimals(self, o):
         self.check(asm3.users.VIEW_ANIMAL)
@@ -5626,6 +5621,8 @@ class person_boarding(JSONEndpoint):
             "person": p,
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding"),
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0]

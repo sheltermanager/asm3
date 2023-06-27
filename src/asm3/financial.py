@@ -873,32 +873,6 @@ def check_create_next_donation(dbo, username, odid):
             "Comments":             d.COMMENTS
         }, username)
 
-def insert_donation_from_boarding(dbo, username, boardingid):
-    """
-    Creates a due payment record from a boarding record
-    """
-    b = get_boarding_id(dbo, boardingid)
-    
-    if b is None:
-        raise asm3.utils.ASMValidationError("Boarding record '%s' not found" % boardingid)
-
-    ptype = asm3.configuration.boarding_payment_type(dbo)
-    if 0 == dbo.query_string("SELECT DonationName FROM donationtype WHERE ID=?", [ptype]):
-        raise asm3.utils.ASMValidationError("Payment type '%s' does not exist" % ptype)
-
-    d = {
-        "person":   str(b.OWNERID),
-        "animal":   str(b.ANIMALID),
-        "type":     str(ptype),
-        "payment":  str(asm3.configuration.default_payment_method(dbo)),
-        "quantity": str(b.DAYS),
-        "unitprice": str(b.DAILYFEE),
-        "amount":   str(b.DAYS * b.DAILYFEE),
-        "due":      asm3.i18n.python2display(dbo.locale, dbo.today())
-    }
-    post = asm3.utils.PostedData(d, dbo.locale)
-    return insert_donation_from_form(dbo, username, post)
-
 def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0):
     """
     Creates a matching account transaction for a cost or updates

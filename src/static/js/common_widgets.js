@@ -381,87 +381,94 @@ $.fn.phone = function() {
     });
 };
 
-$.fn.date = function() {
-    this.each(function() {
-        disable_autocomplete($(this));
-        let dayfilter = $(this).attr("data-onlydays");
-        let nopast = $(this).attr("data-nopast");
-        let nofuture = $(this).attr("data-nofuture");
-        if (dayfilter || nopast || nofuture) {
-            $(this).datepicker({ 
-                changeMonth: true, 
-                changeYear: true,
-                firstDay: config.integer("FirstDayOfWeek"),
-                yearRange: "-30:+10",
-                beforeShowDay: function(a) {
-                    let day = a.getDay();
-                    let rv = false;
-                    if (dayfilter) {
-                        $.each(dayfilter.split(","), function(i, v) {
-                            if (v == String(day)) {
-                                rv = true;
-                            }
-                            return false;
-                        });
+$.fn.date = function(method) {
+    if (!method || method == "create") {
+        this.each(function() {
+            disable_autocomplete($(this));
+            let dayfilter = $(this).attr("data-onlydays");
+            let nopast = $(this).attr("data-nopast");
+            let nofuture = $(this).attr("data-nofuture");
+            if (dayfilter || nopast || nofuture) {
+                $(this).datepicker({ 
+                    changeMonth: true, 
+                    changeYear: true,
+                    firstDay: config.integer("FirstDayOfWeek"),
+                    yearRange: "-30:+10",
+                    beforeShowDay: function(a) {
+                        let day = a.getDay();
+                        let rv = false;
+                        if (dayfilter) {
+                            $.each(dayfilter.split(","), function(i, v) {
+                                if (v == String(day)) {
+                                    rv = true;
+                                }
+                                return false;
+                            });
+                        }
+                        else {
+                            rv = true;
+                        }
+                        if (nopast && a < new Date()) { rv = false; }
+                        if (nofuture && a > new Date()) { rv = false; }
+                        return [rv, ""];
+                    }
+                });
+            }
+            else {
+                $(this).datepicker({ 
+                    changeMonth: true, 
+                    changeYear: true,
+                    yearRange: "-30:+10",
+                    firstDay: config.integer("FirstDayOfWeek")
+                });
+            }
+            $(this).keydown(function(e) {
+                let d = $(this);
+                let adjust = function(v) {
+                    if (v == "t") {
+                        d.datepicker("setDate", new Date());
                     }
                     else {
-                        rv = true;
+                        d.datepicker("setDate", v); 
+                        d.change();
                     }
-                    if (nopast && a < new Date()) { rv = false; }
-                    if (nofuture && a > new Date()) { rv = false; }
-                    return [rv, ""];
-                }
-            });
-        }
-        else {
-            $(this).datepicker({ 
-                changeMonth: true, 
-                changeYear: true,
-                yearRange: "-30:+10",
-                firstDay: config.integer("FirstDayOfWeek")
-            });
-        }
-        $(this).keydown(function(e) {
-            let d = $(this);
-            let adjust = function(v) {
-                if (v == "t") {
-                    d.datepicker("setDate", new Date());
-                }
-                else {
-                    d.datepicker("setDate", v); 
                     d.change();
+                };
+                if (e.keyCode == 84) { // t - today
+                    adjust("t");
                 }
-                d.change();
-            };
-            if (e.keyCode == 84) { // t - today
-                adjust("t");
-            }
-            if (e.keyCode == 68 && e.shiftKey == false) { // d, add a day
-                adjust("c+1d");
-            }
-            if (e.keyCode == 68 && e.shiftKey == true) { // shift+d, remove a day
-                adjust("c-1d");
-            }
-            if (e.keyCode == 87 && e.shiftKey == false) { // w, add a week
-                adjust("c+1w");
-            }
-            if (e.keyCode == 87 && e.shiftKey == true) { // shift+w, remove a week
-                adjust("c-1w");
-            }
-            if (e.keyCode == 77 && e.shiftKey == false) { // m, add a month
-                adjust("c+1m");
-            }
-            if (e.keyCode == 77 && e.shiftKey == true) { // shift+w, remove a month
-                adjust("c-1m");
-            }
-            if (e.keyCode == 89 && e.shiftKey == false) { // y, add a year
-                adjust("c+1y");
-            }
-            if (e.keyCode == 89 && e.shiftKey == true) { // shift+y, remove a year
-                adjust("c-1y");
-            }
+                if (e.keyCode == 68 && e.shiftKey == false) { // d, add a day
+                    adjust("c+1d");
+                }
+                if (e.keyCode == 68 && e.shiftKey == true) { // shift+d, remove a day
+                    adjust("c-1d");
+                }
+                if (e.keyCode == 87 && e.shiftKey == false) { // w, add a week
+                    adjust("c+1w");
+                }
+                if (e.keyCode == 87 && e.shiftKey == true) { // shift+w, remove a week
+                    adjust("c-1w");
+                }
+                if (e.keyCode == 77 && e.shiftKey == false) { // m, add a month
+                    adjust("c+1m");
+                }
+                if (e.keyCode == 77 && e.shiftKey == true) { // shift+w, remove a month
+                    adjust("c-1m");
+                }
+                if (e.keyCode == 89 && e.shiftKey == false) { // y, add a year
+                    adjust("c+1y");
+                }
+                if (e.keyCode == 89 && e.shiftKey == true) { // shift+y, remove a year
+                    adjust("c-1y");
+                }
+            });
         });
-    });
+    }
+    else if (method == "today") {
+        this.each(function() {
+            $(this).datepicker("setDate", new Date());
+        });
+    }
 };
 
 // Textbox that should only contain a time (numbers and colon)
@@ -631,6 +638,159 @@ $.widget( "asm.iconselectmenu", $.ui.selectmenu, {
             "class": "ui-icon " + item.element.attr( "data-class" )
         }).appendTo( wrapper );
         return li.append( wrapper ).appendTo( ul );
+    }
+});
+
+/**
+ * Widget to create a payment dialog.
+ * Target should be a div to contain the hidden dialog.
+ */
+$.widget("asm.createpayment", {
+    options: {
+        dialog: null
+    },
+
+    _create: function() {
+        let dialog = this.element, self = this;
+        this.options.dialog = dialog;
+        this.element.append([
+            '<div id="dialog-payment" style="display: none" title="' + html.title(_("Create Payment")) + '">',
+            '<div>',
+            '<input type="hidden" id="pm-animal" data="animal" class="asm-field" value="" />',
+            '<input type="hidden" id="pm-person" data="person" class="asm-field" value="" />',
+            '</div>',
+            '<table width="100%">',
+            '<tr>',
+            '<td>', // LEFT TABLE
+            '<table>',
+            '<tr>',
+            '<td><label for="pm-type">' + _("Type") + '</label></td>',
+            '<td><select id="pm-type" data="type" class="asm-selectbox asm-field">',
+            '</select></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label for="pm-method">' + _("Method") + '</label></td>',
+            '<td><select id="pm-method" data="payment" class="asm-selectbox asm-field">',
+            '</select></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label for="pm-due">' + _("Due") + '</label></td>',
+            '<td><input id="pm-due" data="due" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label for="pm-received">' + _("Received") + '</label></td>',
+            '<td><input id="pm-received" data="received" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
+            '</tr>',
+            '<tr>',
+            '<td><label for="pm-amount">' + _("Amount") + '</label></td>',
+            '<td><input id="pm-amount" data="amount" type="text" class="asm-textbox asm-currencybox asm-field" /></td>',
+            '</tr>',
+            '<tr>',
+            '<td></td>',
+            '<td><input id="pm-vat" data="vat" type="checkbox" class="asm-checkbox asm-field" /> <label for="pm-vat">' + _("Sales Tax") + '</label></td>',
+            '</tr>',
+            '<tr class="paymentsalestax">',
+            '<td><label for="pm-vatrate">' + _("Tax Rate %") + '</label></td>',
+            '<td><input id="pm-vatrate" data="vatrate" type="text" class="asm-numberbox asm-field" /></td>',
+            '</tr>',
+            '<tr class="paymentsalestax">',
+            '<td><label for="pm-vatamount">' + _("Tax Amount") + '</label></td>',
+            '<td><input id="pm-vatamount" data="vatamount" type="text" class="asm-currencybox asm-field" /></td>',
+            '</tr>',
+            '</table>',
+            '</td>',
+            '<td>', // RIGHT TABLE
+            '<table>',
+            '<tr>',
+            '<td><label for="pm-comments">' + _("Comments") + ' </label></td>',
+            '<td><textarea id="pm-comments" data="comments" class="asm-textarea asm-field" rows="5"></textarea></td>',
+            '</table>',
+            '</td>',
+            '</tr>',
+            '</table>',
+            '</div>'
+        ].join("\n"));
+        $("#pm-due, #pm-received").date();
+        $("#pm-amount, #pm-vatamount").currency();
+        let b = {}; 
+        b[_("Create Payment")] = {
+            text: _("Create Payment"),
+            "class": "asm-dialog-actionbutton",
+            click: function() {
+                validate.reset("dialog-payment");
+                if (!validate.notblank(["paymentdue"])) { return; }
+                let o = self.options.o;
+                let formdata = "mode=create&";
+                formdata += $("#dialog-payment .asm-field").toPOST();
+                header.show_loading(_("Creating..."));
+                common.ajax_post("donation", formdata, function(receipt) {
+                    header.show_info( common.sub_arr(_("Payment {0} created for {1}"), 
+                        [ receipt.split("|")[1], '<a href="person_donations?id=' + o.personid + '">' + o.personname + '</a>' ]) );
+                    $("#dialog-payment").dialog("close");
+                });
+            }
+        };
+        b[_("Cancel")] = function() { $(this).dialog("close"); };
+        $("#dialog-payment").dialog({
+                autoOpen: false,
+                resizable: false,
+                modal: true,
+                dialogClass: "dialogshadow",
+                width: 650,
+                show: dlgfx.add_show,
+                hide: dlgfx.add_hide,
+                buttons: b
+        });
+        $("#pm-vat").change(function() {
+            if ($("#pm-vat").is(":checked")) {
+                $("#dialog-payment .paymentsalestax").fadeIn();
+            }
+            else {
+                $("#dialog-payment .paymentsalestax").fadeOut();
+            }
+        });
+    },
+
+    destroy: function() {
+        common.widget_destroy("#dialog-payment", "dialog"); 
+    },
+    
+    /**
+     * Shows the create payment dialog.
+     * title:      The dialog title (optional: Create Payment)
+     * animalid:   Animal ID
+     * personid:   Person ID
+     * personname: Person name
+     * donationtypes: The donationtypes lookup
+     * paymentmethods: The paymentmethods lookup
+     * chosentype: The default payment type to choose (optional, AFDefaultDonationType if not given)
+     * chosenmethod: The default payment method to choose (optional, AFDefaultPaymentMethod if not given)
+     * amount:     The amount of the payment (integer money expected)
+     * vat:        (bool) whether we should have vat on or not
+     * vatrate:    The vat rate (optional, configured amount used if not set)
+     * vatamount:  The vat amount
+     * comments:   Any comments for the payment
+     *    Eg: show({ amount: 5000, vat: false })
+     */
+    show: function(o) {
+        this.options.o = o;
+        $("#dialog-payment").dialog("option", "title", o.title || _("Create Payment"));
+        $("#pm-animal").val(o.animalid);
+        $("#pm-person").val(o.personid);
+        $("#pm-type").html( html.list_to_options(o.donationtypes, "ID", "DONATIONNAME") );
+        $("#pm-type").select("removeRetiredOptions", "all");
+        $("#pm-type").select("value", o.chosentype || config.integer("AFDefaultDonationType")); 
+        $("#pm-method").html( html.list_to_options(o.paymentmethods, "ID", "PAYMENTNAME") );
+        $("#pm-method").select("removeRetiredOptions", "all");
+        $("#pm-method").select("value", o.chosenmethod || config.integer("AFDefaultPaymentMethod")); 
+        $("#pm-amount").currency("value", o.amount || 0);
+        $("#pm-vat").prop("checked", o.vat);
+        $("#pm-vatrate").val( o.vatrate || config.number("VATRate") );
+        $("#pm-vatamount").currency("value", o.vatamount || 0);
+        $("#pm-comments").html( o.comments );
+        $("#pm-due").date("today");
+        $("#dialog-payment .paymentsalestax").toggle(o.vat);
+        $("#dialog-payment").dialog("open");
     }
 });
 

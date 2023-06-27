@@ -708,9 +708,6 @@ def avid_overseas_origin_country(dbo):
 def avid_reregistration(dbo):
     return cboolean(dbo, "AvidReRegistration", DEFAULTS["AvidReRegistration"] == "Yes")
 
-def boarding_payment_type(dbo):
-    return cint(dbo, "BoardingPaymentType", int(DEFAULTS["BoardingPaymentType"]))
-
 def buddyid_provider_code(dbo):
     return cstring(dbo, "BuddyIDProviderCode")
 
