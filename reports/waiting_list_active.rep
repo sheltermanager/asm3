@@ -1,10 +1,10 @@
-Waiting List Additions
+Waiting List 
 ###
 Waiting List
 ###
-2732/Any rev03
+2732/Any rev01
 ###
-Animals added to the waiting list between two dates.
+Animals who are active on the waiting list.
 ###
 en
 ###
@@ -16,7 +16,7 @@ FROM animalwaitinglist w
 INNER JOIN owner o ON w.OwnerID = o.ID
 INNER JOIN lkurgency u ON u.ID = w.Urgency
 INNER JOIN species s ON w.SpeciesID = s.ID
-WHERE w.DatePutOnList BETWEEN '$ASK DATE Added to the waiting list between$' AND '$ASK DATE and$'
+WHERE w.DatePutOnList <= '$CURRENT_DATE$' AND (w.DateRemovedFromList Is Null OR w.DateRemovedFromList > '$CURRENT_DATE$')
 ORDER BY u.Urgency, w.DatePutOnList DESC
 ###
 $$HEADER
