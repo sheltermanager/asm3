@@ -81,7 +81,8 @@ header = {
         59: ["event_find", "asm-icon-event-find", _("Find Event")],
         60: ["event_new", "asm-icon-event-add", _("Add a new event")],
         61: ["animal_observations", "", _("Daily Observations")],
-        62: ["boarding", "", _("Boarding book")]
+        62: ["boarding", "", _("Boarding book")],
+        63: ["calendarview?ev=b", "", _("Boarding calendar")]
     },
 
     show_error: function(text, duration) {
