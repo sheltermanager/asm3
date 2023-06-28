@@ -291,7 +291,7 @@ $(function() {
                         + ' href="#">' + html.icon("web") + ' ' + _("Make this the default image for the record") + '</a></li>',
                     '<li id="button-doc" class="asm-menu-item"><a '
                         + ' href="#">' + html.icon("document") + ' ' + _("Make this the default image when creating documents") + '</a></li>',
-                    '<li id="button-jpg2pdf" class="asm-menu-item"><a '
+                    '<li id="button-jpgpdf" class="asm-menu-item"><a '
                         + ' href="#">' + html.icon("pdf") + ' ' + _("Create a PDF of this image") + '</a></li>',
 
                 '</ul>',
@@ -924,8 +924,8 @@ $(function() {
                 media.ajax(formdata);
             });
 
-            $("#button-jpg2pdf").click(function() {
-                let formdata = "mode=jpg2pdf&ids=" + tableform.table_ids(media.table);
+            $("#button-jpgpdf").click(function() {
+                let formdata = "mode=jpgpdf&ids=" + tableform.table_ids(media.table);
                 media.ajax(formdata);
             });
 

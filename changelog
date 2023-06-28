@@ -1,6 +1,8 @@
 47
 ================
 
+28/06/23 Show document templates that will not appear anywhere as disabled in list
+28/06/23 mode security fix broke converting jpg2pdf
 27/06/23 Fix bug where giving a treatment before it is required broke things
 27/06/23 Consistent create payment widget for appointments and boarding #623
 27/06/23 Add wordkey for BondedNames (name / bond1 / bond2)
