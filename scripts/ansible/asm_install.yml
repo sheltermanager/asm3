@@ -27,7 +27,6 @@
           - "python3-requests"
           - "memcached"
           - "python3-memcache"
-          - "postfix"
           - "curl"
 
     - name: "Activate Apache WSGI Module"
