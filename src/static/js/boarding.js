@@ -136,7 +136,7 @@ $(function() {
                             paymentmethods: controller.paymentmethods,
                             chosentype: config.integer("BoardingPaymentType"),
                             amount: row.DAILYFEE * row.DAYS,
-                            comments: common.sub_arr(_("Boarding for {0} ({1} days at {2})"), [ row.ANIMALNAME, row.DAYS, format.currency(row.DAILYFEE) ])
+                            comments: common.sub_arr(_("{0} - {1} ({2} days at {3})"), [ row.BOARDINGTYPENAME, row.ANIMALNAME, row.DAYS, format.currency(row.DAILYFEE) ])
                         });
                     }
                 },
