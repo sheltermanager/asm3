@@ -11,74 +11,21 @@ $(function() {
                 '<div id="asm-content">',
                 '<input id="movementid" type="hidden" />',
                 html.content_header(_("Reclaim an animal"), true),
-                '<div id="fosterinfo" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered">',
-                '<span class="ui-icon ui-icon-info"></span>',
-                _("This animal is currently fostered, it will be automatically returned first."),
-                '</p>',
-                '</div>',
-                '<div id="retailerinfo" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered">',
-                '<span class="ui-icon ui-icon-info"></span>',
-                _("This animal is currently at a retailer, it will be automatically returned first."),
-                '</p>',
-                '</div>',
-                '<div id="reserveinfo" class="ui-state-highlight ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered">',
-                '<span class="ui-icon ui-icon-info"></span>',
-                _("This animal has active reservations, they will be cancelled."),
-                '</p>',
-                '</div>',
-                '<div id="notonshelter" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert"></span>',
-                '<span class="centered">' + _("This animal is not on the shelter.") + '</span>',
-                '</p>',
-                '</div>',
-                '<div id="crueltycase" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert"></span>',
-                '<span class="centered">' + _("This animal is part of a cruelty case and should not leave the shelter.") + '</span>',
-                '</p>',
-                '</div>',
-                '<div id="quarantine" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert"></span>',
-                '<span class="centered">' + _("This animal is currently quarantined and should not leave the shelter.") + '</span>',
-                '</p>',
-                '</div>',
+                html.textbar(_("This animal is currently fostered, it will be automatically returned first."), { id: "fosterinfo", maxwidth: "600px" }),
+                html.textbar(_("This animal is currently at a retailer, it will be automatically returned first."), { id: "retailerinfo", maxwidth: "600px" }),
+                html.textbar(_("This animal has active reservations, they will be cancelled."), { id: "reserveinfo", maxwidth: "600px" }),
+                html.textbar(_("This animal is not on the shelter."), { id: "notonshelter", state: "error", icon: "alert", maxwidth: "600px" }),
+                html.textbar(_("This animal is part of a cruelty case and should not leave the shelter."), { id: "crueltycase", state: "error", icon: "alert", maxwidth: "600px" }),
+                html.textbar(_("This animal is currently quarantined and should not leave the shelter."), { id: "quarantine", state: "error", icon: "alert", maxwidth: "600px" }),
+                tableform.fields_render([
+                    { post_field: "animal", label: _("Animal"), type: "animal" },
+                    { post_field: "person", label: _("Owner"), type: "person" },
+                    { post_field: "movementnumber", label: _("Movement Number"), type: "text", rowid: "movementnumberrow", 
+                        callout: _("A unique number to identify this movement") },
+                    { post_field: "movementdate", label: _("Date"), type: "date" },
+                    { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 }
+                ], 1, { full_width: false }),
                 '<table class="asm-table-layout">',
-                '<tr>',
-                '<td>',
-                '<label for="animal">' + _("Animal") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="animal" data="animal" class="asm-animalchooser" type="hidden" value="" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="person">' + _("Owner") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="person" data="person" class="asm-personchooser" type="hidden" value="" />',
-                '</td>',
-                '</tr>',
-                '<tr id="movementnumberrow">',
-                '<td><label for="movementnumber">' + _("Movement Number") + '</label></td>',
-                '<td><input id="movementnumber" data="movementnumber" class="asm-textbox" title=',
-                '"' + html.title(_("A unique number to identify this movement")) + '"',
-                ' /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="movementdate">' + _("Date") + '</label></td>',
-                '<td>',
-                '<input id="movementdate" data="movementdate" class="asm-textbox asm-datebox" title="' + _("The date the animal was reclaimed") + '" />',
-                '</td>',
-                '</tr>',
-                '<tr id="commentsrow">',
-                '<td><label for="comments">' + _("Comments") + '</label></td>',
-                '<td>',
-                '<textarea class="asm-textarea" id="comments" data="comments" rows="3"></textarea>',
-                '</td>',
-                '</tr>',
                 additional.additional_new_fields(controller.additional),
                 '</table>',
                 html.content_footer(),
@@ -116,24 +63,8 @@ $(function() {
                 // Remove any previous errors
                 header.hide_error();
                 validate.reset();
-                // animal
-                if ($("#animal").val() == "") {
-                    header.show_error(_("Movements require an animal."));
-                    validate.highlight("animal");
-                    return false;
-                }
-                // person
-                if ($("#person").val() == "") {
-                    header.show_error(_("This type of movement requires a person."));
-                    validate.highlight("person");
-                    return false;
-                }
-                // date
-                if (common.trim($("#movementdate").val()) == "") {
-                    header.show_error(_("This type of movement requires a date."));
-                    validate.highlight("movementdate");
-                    return false;
-                }
+                if (!validate.notzero([ "animal", "person" ])) { return false; }
+                if (!validate.notblank([ "movementdate" ])) { return false; }
                 // mandatory additional fields
                 if (!additional.validate_mandatory()) { return false; }
                 return true;

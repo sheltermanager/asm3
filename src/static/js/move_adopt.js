@@ -91,15 +91,13 @@ $(function() {
                 header.hide_error();
                 validate.reset();
                 // animal
-                if ($("#animal").val() == "") {
+                if (!validate.notzero([ "animal" ])) {
                     header.show_error(_("Movements require an animal."));
-                    validate.highlight("animal");
                     return false;
                 }
                 // person
-                if ($("#person").val() == "") {
+                if (!validate.notzero([ "person" ])) {
                     header.show_error(_("This type of movement requires a person."));
-                    validate.highlight("person");
                     return false;
                 }
                 // date

@@ -653,7 +653,7 @@ const html = {
      * margintop: (default not set)
      */
     textbar: function(s, o) {
-        let containerid = "", display = "", state = "highlight", icon = "info", padding = "", margintop = "";
+        let containerid = "", display = "", state = "highlight", icon = "info", padding = "", margintop = "", maxwidth = "";
         if (!o) { o = {}; }
         if (!o.padding) { o.padding = "5px"; }
         if (o.id) { containerid = 'id="' + o.id + '"'; }
@@ -662,8 +662,9 @@ const html = {
         if (o.icon) { icon = o.icon; }
         if (o.padding) { padding = "padding: " + o.padding + ";"; }
         if (o.margintop) { margintop = "margin-top: " + o.margintop + ";"; }
+        if (o.maxwidth) { maxwidth = "max-width: " + o.maxwidth + ";"; }
         return [
-            "<div class=\"ui-widget\" " + containerid + " style=\"" + margintop + display + "\">",
+            "<div class=\"ui-widget\" " + containerid + " style=\"margin-left: auto; margin-right: auto; " + margintop + display + maxwidth + "\">",
             "<div class=\"ui-state-" + state + " ui-corner-all\" style=\"" + padding + "\"><p>",
             "<span class=\"ui-icon ui-icon-" + icon + "\"></span>",
             s,

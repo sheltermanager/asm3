@@ -10,82 +10,27 @@ $(function() {
             return [
                 '<div id="asm-content">',
                 html.content_header(_("Mark an animal deceased"), true),
-                '<table class="asm-table-layout">',
-                '<tr>',
-                '<td>',
-                '<label for="animal">' + _("Animal") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="animal" data="animal" type="hidden" class="asm-animalchooser" value=\'\' />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="deceaseddate">' + _("Deceased Date") + '</label>',
-                '</td>',
-                '<td>',
-                '<input class="asm-textbox asm-datebox" id="deceaseddate" data="deceaseddate" title=\'' + _("The date the animal died") + '\' />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="deathcategory">' + _("Category") + '</label>',
-                '</td>',
-                '<td>',
-                '<select class="asm-selectbox" id="deathcategory" data="deathcategory">',
-                html.list_to_options(controller.deathreasons, "ID", "REASONNAME"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td></td>',
-                '<td><input class="asm-checkbox" type="checkbox" id="puttosleep" data="puttosleep" title="' + html.title(_("This animal was euthanized")) + '" />',
-                '<label for="puttosleep">' + _("Euthanized") + '</label>',
-                '</td></tr>',
-                '<tr>',
-                '<td></td>',
-                '<td><input class="asm-checkbox" type="checkbox" id="deadonarrival" data="deadonarrival" title="' + html.title(_("This animal was dead on arrival to the shelter")) + '" />',
-                '<label for="deadonarrival">' + _("Dead on arrival") + '</label>',
-                '</td></tr>',
-                '<tr>',
-                '<td><label for="ptsreason">' + _("Notes") + '</label>',
-                '<td>',
-                '<textarea class="asm-textarea" id="ptsreason" data="ptsreason" rows="8"></textarea>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                tableform.fields_render([
+                    { post_field: "animal", label: _("Animal"), type: "animal" },
+                    { post_field: "deceaseddate", label: _("Deceased Date"), type: "date" },
+                    { post_field: "deathcategory", label: _("Category"), type: "select", 
+                        options: { displayfield: "REASONNAME", valuefield: "ID", rows: controller.deathreasons }},
+                    { post_field: "puttosleep", label: _("Euthanized"), type: "check" },
+                    { post_field: "deadonarrival", label: _("Dead on arrival"), type: "check" },
+                    { post_field: "ptsreason", label: _("Notes"), type: "textarea", rows: 8 },
+                ], 1, { full_width: false }),
                 html.content_footer(),
                 html.content_header(_("Stock"), true),
-                '<table id="stocktable" class="asm-table-layout tagstock">',
-                '<tr class="tagstock"><td></td><td>' + html.info(_("These fields allow you to deduct stock for any euthanasia administered.")) + '</td></tr>',
-                '<tr class="tagstock">',
-                '<td><label for="item">' + _("Item") + '</label></td>',
-                '<td><select id="item" data="item" class="asm-selectbox asm-field">',
-                '<option value="-1">' + _("(no deduction)") + '</option>',
-                html.list_to_options(controller.stockitems, "ID", "ITEMNAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="quantity">' + _("Quantity") + '</label></td>',
-                '<td><input id="quantity" data="quantity" type="text" class="asm-textbox asm-numberbox asm-field" /></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="usagetype">' + _("Usage Type") + '</label></td>',
-                '<td><select id="usagetype" data="usagetype" class="asm-selectbox asm-field">',
-                html.list_to_options(controller.stockusagetypes, "ID", "USAGETYPENAME"),
-                '</select></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="usagedate">' + _("Usage Date") + '</label></td>',
-                '<td><input id="usagedate" data="usagedate" class="asm-textbox asm-datebox asm-field" />',
-                '</select></td>',
-                '</tr>',
-                '<tr class="tagstock">',
-                '<td><label for="usagecomments">' + _("Comments") + '</label></td>',
-                '<td><textarea id="usagecomments" data="usagecomments" class="asm-textarea asm-field"></textarea>',
-                '</td>',
-                '</tr>',
-                '</table>',
+                html.textbar(_("These fields allow you to deduct stock for any euthanasia administered."), { maxwidth: "600px" }),
+                tableform.fields_render([
+                    { post_field: "item", label: _("Item"), type: "select", 
+                        options: { displayfield: "ITEMNAME", valuefield: "ID", rows: controller.stockitems }},
+                    { post_field: "quantity", label: _("Quantity"), type: "number" },
+                    { post_field: "usagetype", label: _("Usage Type"), type: "select",
+                        options: { displayfield: "USAGETYPENAME", valuefield: "ID", rows: controller.stockusagetypes }},
+                    { post_field: "usagedate", label: _("Usage Date"), type: "date" },
+                    { post_field: "usagecomments", label: _("Comments"), type: "textarea" }
+                ], 1, { full_width: false, id: "stocktable" }),
                 html.content_footer(),
                 html.box(5),
                 '<button id="deceased">' + html.icon("death") + ' ' + _("Mark Deceased") + '</button>',
@@ -99,7 +44,9 @@ $(function() {
             const validation = function() {
                 header.hide_error();
                 validate.reset();
-                return validate.notblank([ "animal", "deceaseddate" ]);
+                if (!validate.notzero([ "animal" ])) { return false; }
+                if (!validate.notblank([ "deceaseddate" ])) { return false; }
+                return true;
             };
 
             validate.indicator([ "animal", "deceaseddate" ]);
@@ -123,10 +70,13 @@ $(function() {
             $("#deathcategory").select("value", config.str("AFDefaultDeathReason"));
             $("#usagedate").date("today");
 
+            // Add no deduction to list
+            $("#item").prepend('<option value="-1">' + _("(no deduction)") + '</option>');
+            $("#item").val("-1");
+
             // Hide stock deductions if stock control is disabled
             if (config.bool("DisableStockControl")) {
-                $(".tagstock").hide();
-                $("#stocktable").parent().hide();
+                $("#stocktable").parent().parent().hide();
             }
 
             // Remove any retired lookups from the lists
