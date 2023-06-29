@@ -2,7 +2,7 @@ Boarding
 ========
 
 The boarding interface is used to administrate the boarding of animals, 
-create payments and produe invoices for customers. 
+create payments and produce invoices for customers. 
 
 Animals with a boarding reservation will automatically move into the 
 pre-selected shelter location on the check-in date and out again when the 
@@ -31,8 +31,6 @@ Boarding Calendar
 .. image:: images/boarding_calendar.png
 
 The boarding calendar is a full calendar view, showing day, week and month 
-breakdowns of animals boarding at the shelter. 
-
-Clicking on the animals name in the boarding calendar will take you to the 
-boarding tab of that animals record.
+breakdowns of animals boarding at the shelter.Clicking on the animals name in 
+the boarding calendar will take you to the boarding tab of that animals record.
 
