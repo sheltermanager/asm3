@@ -327,7 +327,7 @@ $(function() {
             $("#todate").val(controller.todate);
 
             // Default values for the new row
-            $("#newtrxdate").datepicker("setDate", new Date());
+            $("#newtrxdate").date("today");
             $("#newacc").autocomplete({ source: html.decode(controller.codes).split("|") });
             $("#otheraccount").autocomplete({ source: html.decode(controller.codes).split("|") });
 

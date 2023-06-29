@@ -2,7 +2,7 @@ Waiting List Additions
 ###
 Waiting List
 ###
-2732/Any rev02
+2732/Any rev03
 ###
 Animals added to the waiting list between two dates.
 ###
@@ -21,7 +21,7 @@ ORDER BY u.Urgency, w.DatePutOnList DESC
 ###
 $$HEADER
 <table border=1><tr>
-<td><b>Ugency</b></td>
+<td><b>Urgency</b></td>
 <td><b>Date Added</b></td>
 <td><b>Species</b></td>
 <td><b>Description</b></td>

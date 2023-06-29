@@ -1269,31 +1269,32 @@ def merge_person(dbo, username, personid, mergepersonid):
 
     # Merge any contact info
     mp = get_person(dbo, mergepersonid)
-    mp["title"] = mp.OWNERTITLE
-    mp["initials"] = mp.OWNERINITIALS
-    mp["forenames"] = mp.OWNERFORENAMES
-    mp["surname"] = mp.OWNERSURNAME
-    mp["title2"] = mp.OWNERTITLE2
-    mp["initials2"] = mp.OWNERINITIALS2
-    mp["forenames2"] = mp.OWNERFORENAMES2
-    mp["surname2"] = mp.OWNERSURNAME2
-    mp["address"] = mp.OWNERADDRESS
-    mp["town"] = mp.OWNERTOWN
-    mp["county"] = mp.OWNERCOUNTY
-    mp["postcode"] = mp.OWNERPOSTCODE
-    mp["country"] = mp.OWNERCOUNTRY
-    mp["hometelephone"] = mp.HOMETELEPHONE
-    mp["worktelephone"] = mp.WORKTELEPHONE
-    mp["mobiletelephone"] = mp.MOBILETELEPHONE
-    mp["mobiletelephone2"] = mp.MOBILETELEPHONE2
-    mp["emailaddress"] = mp.EMAILADDRESS
-    mp["emailaddress2"] = mp.EMAILADDRESS2
-    mp["idnumber"] = mp.IDENTIFICATIONNUMBER
-    mp["idnumber2"] = mp.IDENTIFICATIONNUMBER2
-    mp["dateofbirth"] = python2display(l, mp.DATEOFBIRTH)
-    mp["dateofbirth2"] = python2display(l, mp.DATEOFBIRTH2)
-    mp["comments"] = mp.COMMENTS
-    merge_person_details(dbo, username, personid, mp)
+    d = {}
+    d["title"] = mp.OWNERTITLE
+    d["initials"] = mp.OWNERINITIALS
+    d["forenames"] = mp.OWNERFORENAMES
+    d["surname"] = mp.OWNERSURNAME
+    d["title2"] = mp.OWNERTITLE2
+    d["initials2"] = mp.OWNERINITIALS2
+    d["forenames2"] = mp.OWNERFORENAMES2
+    d["surname2"] = mp.OWNERSURNAME2
+    d["address"] = mp.OWNERADDRESS
+    d["town"] = mp.OWNERTOWN
+    d["county"] = mp.OWNERCOUNTY
+    d["postcode"] = mp.OWNERPOSTCODE
+    d["country"] = mp.OWNERCOUNTRY
+    d["hometelephone"] = mp.HOMETELEPHONE
+    d["worktelephone"] = mp.WORKTELEPHONE
+    d["mobiletelephone"] = mp.MOBILETELEPHONE
+    d["mobiletelephone2"] = mp.MOBILETELEPHONE2
+    d["emailaddress"] = mp.EMAILADDRESS
+    d["emailaddress2"] = mp.EMAILADDRESS2
+    d["idnumber"] = mp.IDENTIFICATIONNUMBER
+    d["idnumber2"] = mp.IDENTIFICATIONNUMBER2
+    d["dateofbirth"] = python2display(l, mp.DATEOFBIRTH)
+    d["dateofbirth2"] = python2display(l, mp.DATEOFBIRTH2)
+    d["comments"] = mp.COMMENTS
+    merge_person_details(dbo, username, personid, d)
 
     # Merge any flags from the target
     merge_flags(dbo, username, personid, mp.ADDITIONALFLAGS)

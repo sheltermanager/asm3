@@ -291,6 +291,18 @@ class ASMEndpoint(object):
             # update the last user activity if logged in
             asm3.users.update_user_activity(session.dbo, session.user)
 
+    def check_mode(self, mode):
+        """
+        Verify that the value given for mode is valid. Valid mode
+        values are between 2 and 30 chars in length and contain only
+        lowercase ASCII letters [a-z] (no punctuation or spaces).
+        """
+        if len(mode) < 2 or len(mode) > 30: return False
+        for c in mode:
+            if ord(c) < 97 or ord(c) > 122:
+                return False
+        return True
+
     def content(self, o):
         """ Virtual function: override to get the content """
         return ""
@@ -394,8 +406,10 @@ class ASMEndpoint(object):
         mode = o.post["mode"]
         if mode == "": 
             return self.post_all(o)
+        elif not self.check_mode(mode):
+            raise asm3.utils.ASMError("invalid mode")
         else:
-            # Mode has been supplied, call post_mode
+            # valid mode value has been supplied, call post_mode
             return getattr(self.__class__, "post_%s" % mode)(self, o)
 
 class GeneratorEndpoint(ASMEndpoint):
@@ -832,7 +846,7 @@ class media(ASMEndpoint):
                 asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body)
         return emailadd
 
-    def post_jpg2pdf(self, o):
+    def post_jpgpdf(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
         for mid in o.post.integer_list("ids"):
             asm3.media.convert_media_jpg2pdf(o.dbo, o.user, mid)
@@ -1695,6 +1709,8 @@ class animal_boarding(JSONEndpoint):
             "animal": a,
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding"),
             "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0]
@@ -2282,6 +2298,8 @@ class boarding(JSONEndpoint):
             "name": "boarding",
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding")
         }
@@ -2298,10 +2316,6 @@ class boarding(JSONEndpoint):
         self.check(asm3.users.DELETE_BOARDING)
         for did in o.post.integer_list("ids"):
             asm3.financial.delete_boarding(o.dbo, o.user, did)
-
-    def post_payment(self, o):
-        self.check(asm3.users.ADD_DONATION)
-        return asm3.financial.insert_donation_from_boarding(o.dbo, o.user, o.post.integer("id"))
 
 class calendarview(JSONEndpoint):
     url = "calendarview"
@@ -2562,11 +2576,6 @@ class clinic_appointment(ASMEndpoint):
         self.check(asm3.users.DELETE_CLINIC)
         for cid in o.post.integer_list("ids"):
             asm3.clinic.delete_appointment(o.dbo, o.user, cid)
-
-    def post_payment(self, o):
-        self.check(asm3.users.ADD_DONATION)
-        for cid in o.post.integer_list("ids"):
-            asm3.clinic.insert_payment_from_appointment(o.dbo, o.user, cid, o.post)
 
     def post_personanimals(self, o):
         self.check(asm3.users.VIEW_ANIMAL)
@@ -4634,17 +4643,17 @@ class medical(JSONEndpoint):
         self.check(asm3.users.CHANGE_MEDICAL)
         asm3.medical.update_regimen_from_form(o.dbo, o.user, o.post)
 
-    def post_delete_regimen(self, o):
+    def post_deleteregimen(self, o):
         self.check(asm3.users.DELETE_MEDICAL)
         for mid in o.post.integer_list("ids"):
             asm3.medical.delete_regimen(o.dbo, o.user, mid)
 
-    def post_delete_treatment(self, o):
+    def post_deletetreatment(self, o):
         self.check(asm3.users.DELETE_MEDICAL)
         for mid in o.post.integer_list("ids"):
             asm3.medical.delete_treatment(o.dbo, o.user, mid)
 
-    def post_get_profile(self, o):
+    def post_getprofile(self, o):
         return asm3.utils.json([asm3.medical.get_profile(o.dbo, o.post.integer("profileid"))])
 
     def post_given(self, o):
@@ -5612,6 +5621,8 @@ class person_boarding(JSONEndpoint):
             "person": p,
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "donationtypes": asm3.lookups.get_donation_types(dbo),
+            "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "boarding"),
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.ID)[0]

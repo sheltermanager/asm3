@@ -95,7 +95,8 @@ FORM_FIELDS = [
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
     "animalname", "reserveanimalname",
-    "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", "type", "breed1", "breed2", "color", "sex", "neutered", 
+    "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", 
+    "type", "breed1", "breed2", "color", "sex", "neutered", "weight", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
     "dropoffaddress", "dropofftown", "dropoffcity", "dropoffcounty", "dropoffstate", "dropoffpostcode", "dropoffzipcode", "dropoffcountry", "dropoffdate", "dropofftime"
@@ -1203,7 +1204,8 @@ def create_animal(dbo, username, collationid):
     The return value is a tuple of collationid, animalid, sheltercode - animalname, status
     status is 0 for created, 1 for updated existing
     "animalname", "code", "microchip", "age", "dateofbirth", "entryreason", "markings", 
-    "comments", "hiddencomments", "type", "species", "breed1", "breed2", "color", "sex", "neutered"
+    "comments", "hiddencomments", "type", "species", "breed1", "breed2", "color", "sex", 
+    "neutered", "weight"
     """
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
@@ -1234,6 +1236,7 @@ def create_animal(dbo, username, collationid):
         if f.FIELDNAME == "sex": d["sex"] = str(guess_sex(dbo, f.VALUE))
         if f.FIELDNAME == "size": d["size"] = str(guess_size(dbo, f.VALUE))
         if f.FIELDNAME == "neutered" and (f.VALUE == "Yes" or f.VALUE == "on"): d["neutered"] = "on"
+        if f.FIELDNAME == "weight" and asm3.utils.is_numeric(f.VALUE): d["weight"] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
         #if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
         #    recdate, rectime = f.VALUE.split(" ")
@@ -1260,8 +1263,8 @@ def create_animal(dbo, username, collationid):
             animalid = similar.ID
             # Merge additional fields
             asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, animalid, "animal")
-            # TODO: what would we merge realistically?
-            # asm3.animal.merge_animal_details(dbo, username, animalid, d)
+            # Overwrite fields that are present and have a value
+            asm3.animal.merge_animal_details(dbo, username, animalid, d, force=True)
     # Create the animal record if we didn't find one
     if animalid == 0:
         # Set some default values that the form couldn't set

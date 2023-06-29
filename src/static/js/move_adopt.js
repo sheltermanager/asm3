@@ -91,15 +91,13 @@ $(function() {
                 header.hide_error();
                 validate.reset();
                 // animal
-                if ($("#animal").val() == "") {
+                if (!validate.notzero([ "animal" ])) {
                     header.show_error(_("Movements require an animal."));
-                    validate.highlight("animal");
                     return false;
                 }
                 // person
-                if ($("#person").val() == "") {
+                if (!validate.notzero([ "person" ])) {
                     header.show_error(_("This type of movement requires a person."));
-                    validate.highlight("person");
                     return false;
                 }
                 // date
@@ -418,7 +416,7 @@ $(function() {
             });
 
             // Set default values
-            $("#movementdate").datepicker("setDate", new Date());
+            $("#movementdate").date("today");
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");
@@ -434,7 +432,7 @@ $(function() {
                     // If there's no trial end date, and we have a default trial length, set the date
                     if (!$("#trialenddate").val() && config.integer("DefaultTrialLength")) {
                         let enddate = common.add_days(new Date(), config.integer("DefaultTrialLength"));
-                        $("#trialenddate").datepicker("setDate", enddate);
+                        $("#trialenddate").date("setDate", enddate);
                     }
                 }
             };

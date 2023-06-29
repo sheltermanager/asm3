@@ -11,58 +11,19 @@ $(function() {
                 '<div id="asm-content">',
                 '<input id="movementid" type="hidden" />',
                 html.content_header(_("Foster an animal"), true),
-                '<div id="notonshelter" class="ui-state-error ui-corner-all" style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">',
-                '<p class="centered"><span class="ui-icon ui-icon-alert"></span>',
-                '<span class="centered">' + _("This animal is not on the shelter.") + '</span>',
-                '</p>',
-                '</div>',
+                html.textbar(_("This animal is not on the shelter."), { id: "notonshelter", state: "error", icon: "alert", maxwidth: "600px" }),
+                tableform.fields_render([
+                    { post_field: "animal", label: _("Animal"), type: "animal" },
+                    { post_field: "person", label: _("New Fosterer"), type: "person", personfilter: "fosterer" },
+                    { post_field: "movementnumber", label: _("Movement Number"), type: "text", rowid: "movementnumberrow", 
+                        callout: _("A unique number to identify this movement") },
+                    { post_field: "fosterdate", label: _("Date"), type: "date" },
+                    { post_field: "permanentfoster", label: _("Permanent Foster"), type: "check" },
+                    { post_field: "returndate", label: _("Returning"), type: "date", 
+                        callout: _("The date the foster animal will be returned if known") },
+                    { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 }
+                ], 1, { full_width: false }),
                 '<table class="asm-table-layout">',
-                '<tr>',
-                '<td>',
-                '<label for="animal">' + _("Animal") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="animal" data="animal" class="asm-animalchooser" type="hidden" value="" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td>',
-                '<label for="person">' + _("New Fosterer") + '</label>',
-                '</td>',
-                '<td>',
-                '<input id="person" data="person" data-filter="fosterer" class="asm-personchooser" type="hidden" value="" />',
-                '</td>',
-                '</tr>',
-                '<tr id="movementnumberrow">',
-                '<td><label for="movementnumber">' + _("Movement Number") + '</label></td>',
-                '<td><input id="movementnumber" data="movementnumber" class="asm-textbox" title=',
-                '"' + html.title(_("A unique number to identify this movement")) + '"',
-                ' /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="fosterdate">' + _("Date") + '</label></td>',
-                '<td>',
-                '<input id="fosterdate" data="fosterdate" class="asm-textbox asm-datebox" title="' + html.title(_("The date the foster is effective from")) + '" />',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td></td>',
-                '<td><input type="checkbox" class="asm-checkbox" title="' + html.title(_("Is this a permanent foster?")) + '" data="permanentfoster" /> ',
-                '<label for="permanentfoster">' + _("Permanent Foster") + '</label></td>',
-                '<td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="returndate">' + _("Returning") + '</label></td>',
-                '<td>',
-                '<input id="returndate" data="returndate" class="asm-textbox asm-datebox" title="' + html.title(_("The date the foster animal will be returned if known")) + '" />',
-                '</td>',
-                '</tr>',
-                '<tr id="commentsrow">',
-                '<td><label for="comments">' + _("Comments") + '</label></td>',
-                '<td>',
-                '<textarea class="asm-textarea" id="comments" data="comments" rows="3"></textarea>',
-                '</td>',
-                '</tr>',
                 additional.additional_new_fields(controller.additional),
                 '</table>',
                 html.content_footer(),
@@ -78,24 +39,8 @@ $(function() {
                 // Remove any previous errors
                 header.hide_error();
                 validate.reset();
-                // animal
-                if ($("#animal").val() == "") {
-                    header.show_error(_("Movements require an animal"));
-                    validate.highlight("animal");
-                    return false;
-                }
-                // person
-                if ($("#person").val() == "") {
-                    header.show_error(_("This type of movement requires a person."));
-                    validate.highlight("person");
-                    return false;
-                }
-                // date
-                if (common.trim($("#fosterdate").val()) == "") {
-                    header.show_error(_("This type of movement requires a date."));
-                    validate.highlight("fosterdate");
-                    return false;
-                }
+                if (!validate.notzero([ "animal", "person" ])) { return false; }
+                if (!validate.notblank([ "fosterdate" ])) { return false; }
                 // mandatory additional fields
                 if (!additional.validate_mandatory()) { return false; }
                 return true;
@@ -129,7 +74,7 @@ $(function() {
             }
 
             // Set default values
-            $("#fosterdate").datepicker("setDate", new Date());
+            $("#fosterdate").date("today");
 
             // Remove any retired lookups from the lists
             $(".asm-selectbox").select("removeRetiredOptions", "all");

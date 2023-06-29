@@ -143,7 +143,7 @@ const validate = {
     },
 
     /* Accepts an array of ids to test whether they're blank or not
-        if they are, their label is highlighted and false is returned */
+       if they are, their label is highlighted and false is returned */
     notblank: function(fields) {
         var rv = true;
         $.each(fields, function(i, f) {
@@ -183,7 +183,7 @@ const validate = {
         $.each(fields, function(i, f) {
             var v = $("#" + f).val();
             v = common.trim(v);
-            if (v == "0") {
+            if (v == "0" || v == "") {
                 validate.highlight(f);
                 rv = false;
                 return false;

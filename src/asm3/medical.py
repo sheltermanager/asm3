@@ -844,15 +844,12 @@ def update_medical_treatments(dbo, username, amid):
     3. If the record has no treatments, generate one from the master
     4. If the record has no outstanding treatment records, generate
        one from the last administered record
-    5. If we generated a record, increment the tally of given and
-       reduce the tally of remaining. If TreatmentRule is unspecified,
-       ignore this step
     """
     am = dbo.first_row(dbo.query("SELECT * FROM animalmedical WHERE ID = ?", [amid]))
-    if am is None: return
     amt = dbo.query("SELECT * FROM animalmedicaltreatment " \
         "WHERE AnimalMedicalID = ? ORDER BY DateRequired DESC", [amid])
-    amtf = dbo.first_row(amt)
+    ost = dbo.query_int("SELECT COUNT(ID) FROM animalmedicaltreatment " \
+        "WHERE AnimalMedicalID = ? AND DateGiven Is Null", [amid])
 
     # Drop out if it's inactive
     if am.STATUS != ACTIVE:
@@ -860,10 +857,9 @@ def update_medical_treatments(dbo, username, amid):
 
     # If it's a one-off treatment and we've given it, mark complete
     if am.TIMINGRULE == ONEOFF:
-        if len(amt) > 0:
-            if amtf.DATEGIVEN is not None:
-                dbo.execute("UPDATE animalmedical SET Status = ? WHERE ID = ?", ( COMPLETED, amid ))
-                return
+        if len(amt) > 0 and ost == 0:
+            dbo.execute("UPDATE animalmedical SET Status = ? WHERE ID = ?", ( COMPLETED, amid ))
+            return
 
     # If it's a fixed length treatment, check to see if it's 
     # complete
@@ -871,10 +867,7 @@ def update_medical_treatments(dbo, username, amid):
         
         # Do we have any outstanding treatments? 
         # Drop out if we do
-        ost = dbo.query_int("SELECT COUNT(ID) FROM animalmedicaltreatment " \
-            "WHERE AnimalMedicalID = ? AND DateGiven Is Null", [amid])
-        if ost > 0:
-            return
+        if ost > 0: return
 
         # Does the number of treatments given match the total? 
         # Mark the record complete if so and we're done
@@ -887,18 +880,16 @@ def update_medical_treatments(dbo, username, amid):
                 dbo.execute("UPDATE animalmedical SET Status = ? WHERE ID = ?", ( COMPLETED, amid ))
                 return
 
-    # If there aren't any treatment records at all, create
-    # one now
+    # If there aren't any treatment records at all, create one now
     if len(amt) == 0:
         insert_treatments(dbo, username, amid, am.STARTDATE, True)
     else:
-        # We've got some treatments, use the latest given
-        # date (desc order). If it doesn't have a given date then there's
-        # still an outstanding treatment and we can bail
-        if amtf.DATEGIVEN is None:
-            return
+        # We've still got some outstanding treatments. Bail out
+        if ost > 0: return
 
-        insert_treatments(dbo, username, amid, amtf.DATEGIVEN, False)
+        # Otherwise, create new treatments, using the latest available date given for this medical
+        ldg = dbo.query_date("SELECT DateGiven FROM animalmedicaltreatment WHERE AnimalMedicalID=? ORDER BY DateGiven DESC", [amid])
+        insert_treatments(dbo, username, amid, ldg, False)
 
 def insert_treatments(dbo, username, amid, requireddate, isstart = True):
     """

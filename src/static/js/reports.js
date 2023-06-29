@@ -259,7 +259,10 @@ $(function() {
                         '<option value="GRAPH POINTS">' + _("Chart (Point)") + '</option>',
                         '<option value="GRAPH STEPS">' + _("Chart (Steps)") + '</option>',
                         '<option value="MAIL">' + _("Mail Merge") + '</option>',
-                        '<option value="MAP">' + _("Map") + '</option>' ].join("\n") },
+                        '<option value="MAP">' + _("Map") + '</option>',
+                        '<option value="MAP USER">' + _("Map (Center current loc)") + '</option>',
+                        '<option value="MAP FIRST">' + _("Map (Center first valid)") + '</option>' ].join("\n") },
+
                     { json_field: "CATEGORY", post_field: "category", classes: "asm-doubletextbox", label: _("Category"), type: "text", validation: "notblank" },
                     { json_field: "TITLE", post_field: "title", classes: "asm-doubletextbox", label: _("Report Title"), type: "text", validation: "notblank" },
                     { json_field: "DESCRIPTION", post_field: "description", classes: "asm-doubletextbox", label: _("Description"), type: "text" },

@@ -35,6 +35,7 @@ const html = {
             return [ false, _("Hold until {0}").replace("{0}", format.date(a.HOLDUNTILDATE)) ]; 
         }
         if (a.HASFUTUREADOPTION == 1) { return [ false, _("Adopted") ]; }
+        if (a.HASACTIVEBOARDING == 1) { return [ false, _("Boarding") ]; }
         if (a.ISHOLD == 1 && p.indexOf("includehold") == -1) { return [ false, _("Hold") ]; }
         if (a.ISQUARANTINE == 1 && p.indexOf("includequarantine") == -1) { return [ false, _("Quarantine") ]; }
         if (a.DECEASEDDATE) { return [ false, _("Deceased") ]; }
@@ -652,7 +653,7 @@ const html = {
      * margintop: (default not set)
      */
     textbar: function(s, o) {
-        let containerid = "", display = "", state = "highlight", icon = "info", padding = "", margintop = "";
+        let containerid = "", display = "", state = "highlight", icon = "info", padding = "", margintop = "", maxwidth = "";
         if (!o) { o = {}; }
         if (!o.padding) { o.padding = "5px"; }
         if (o.id) { containerid = 'id="' + o.id + '"'; }
@@ -661,8 +662,9 @@ const html = {
         if (o.icon) { icon = o.icon; }
         if (o.padding) { padding = "padding: " + o.padding + ";"; }
         if (o.margintop) { margintop = "margin-top: " + o.margintop + ";"; }
+        if (o.maxwidth) { maxwidth = "max-width: " + o.maxwidth + ";"; }
         return [
-            "<div class=\"ui-widget\" " + containerid + " style=\"" + margintop + display + "\">",
+            "<div class=\"ui-widget\" " + containerid + " style=\"margin-left: auto; margin-right: auto; " + margintop + display + maxwidth + "\">",
             "<div class=\"ui-state-" + state + " ui-corner-all\" style=\"" + padding + "\"><p>",
             "<span class=\"ui-icon ui-icon-" + icon + "\"></span>",
             s,

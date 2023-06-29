@@ -1017,7 +1017,7 @@ const tableform = {
      *        xbutton: "text" (render an extra button to the right of the item with id button-post_field and inner text)
      *      } ]
      * columns: number of cols to render (1 if undefined)
-     * options: - if undefined: { render_container: true; full_width: true; }
+     * options: - if undefined: { render_container: true; full_width: true; id="" }
      */
     fields_render: function(fields, columns, coptions, additionalfields) {
         let d = "", 
@@ -1026,7 +1026,8 @@ const tableform = {
         if (columns === undefined) { columns = 1; }
         if (coptions !== undefined) { options = common.copy_object(options, coptions); }
         if (options.render_container) {
-            d = '<table class="asm-table-layout' + (options.full_width ? " asm-table-fullwidth" : "" ) + (columns == 1 ? " asm-dialog-fields-container" : "" ) +  '">';
+            if (options.id === undefined) { options.id = ""; }
+            d = '<table id="' + options.id + '" class="asm-table-layout' + (options.full_width ? " asm-table-fullwidth" : "" ) + (columns == 1 ? " asm-dialog-fields-container" : "" ) +  '">';
         }
         if (columns > 1) {
             // We have multiple columns, start the first one

@@ -44,6 +44,9 @@ $(function() {
                 edit: function(row) {
                     common.route("document_template_edit?dtid=" + row.ID);
                 },
+                complete: function(row) {
+                   return !row.SHOWAT || row.SHOWAT == "" || row.SHOWAT == "nowhere";
+                },
                 columns: [
                     { field: "NAME", display: _("Template") },
                     { field: "SHOWAT", display: _("Show"), formatter: function(row) {

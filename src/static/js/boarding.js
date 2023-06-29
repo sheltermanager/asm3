@@ -99,7 +99,7 @@ $(function() {
                     },
                     { field: "SHELTERLOCATION", display: _("Location"), 
                         formatter: function(row) {
-                            return row.SHELTERLOCATIONNAME + ' <span class="asm-search-locationunit">' + row.SHELTERLOCATIONUNIT + '</span>';
+                            return row.SHELTERLOCATIONNAME + (row.SHELTERLOCATIONUNIT ? ' <span class="asm-search-locationunit">' + row.SHELTERLOCATIONUNIT + '</span>' : '');
                         }},
                     { field: "DAILYFEE", display: _("Fee"),
                         formatter: function(row) {
@@ -128,8 +128,16 @@ $(function() {
                 { id: "payment", text: _("Create Payment"), icon: "donation", enabled: "one", perm: "oaod", 
                     click: async function() {
                         let row = tableform.table_selected_row(table);
-                        await common.ajax_post("boarding", "mode=payment&id=" + row.ID);
-                        common.route("person_donations?id=" + row.OWNERID);
+                        $("#createpayment").createpayment("show", {
+                            animalid: row.ANIMALID,
+                            personid: row.OWNERID,
+                            personname: row.OWNERNAME,
+                            donationtypes: controller.donationtypes,
+                            paymentmethods: controller.paymentmethods,
+                            chosentype: config.integer("BoardingPaymentType"),
+                            amount: row.DAILYFEE * row.DAYS,
+                            comments: common.sub_arr(_("{0} - {1} ({2} days at {3})"), [ row.BOARDINGTYPENAME, row.ANIMALNAME, row.DAYS, format.currency(row.DAILYFEE) ])
+                        });
                     }
                 },
                 { id: "filter", type: "dropdownfilter", 
@@ -161,6 +169,9 @@ $(function() {
             let units = common.get_field(controller.internallocations, $("#location").val(), "UNITS");
             if (units && units.indexOf(",") != -1) {
                 $("#unit").html( html.list_to_options(units.split(",")) );
+            }
+            else {
+                $("#unit").html("");
             }
         },
 
@@ -204,6 +215,7 @@ $(function() {
             let h = [];
             this.model();
             h.push(tableform.dialog_render(this.dialog));
+            h.push('<div id="createpayment"></div>');
             if (controller.name == "animal_boarding") {
                 h.push(edit_header.animal_edit_header(controller.animal, "boarding", controller.tabcounts));
             }
@@ -221,6 +233,7 @@ $(function() {
 
         bind: function() {
             $(".asm-tabbar").asmtabs();
+            $("#createpayment").createpayment();
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
             tableform.table_bind(this.table, this.buttons);
@@ -295,8 +308,8 @@ $(function() {
                     if (controller.person) {
                         $("#person").personchooser("loadbyid", controller.person.ID);
                     }
-                    $("#indate").datepicker("setDate", new Date());
-                    $("#outdate").datepicker("setDate", new Date());
+                    $("#indate").date("today");
+                    $("#outdate").date("today");
                     $("#intime").val("00:00");
                     $("#outtime").val("00:00");
                     boarding.location_change();
@@ -309,6 +322,7 @@ $(function() {
             tableform.dialog_destroy();
             common.widget_destroy("#animal");
             common.widget_destroy("#person");
+            common.widget_destroy("#createpayment");
             boarding.lastanimal = null;
             boarding.lastperson = null;
         },

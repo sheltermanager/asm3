@@ -16,7 +16,7 @@ import asm3.publishers.base
 import asm3.users
 import asm3.utils
 
-from asm3.i18n import _, date_diff, date_diff_days, format_diff, python2display, remove_time, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
+from asm3.i18n import _, date_diff, date_diff_days, format_diff, display2python, python2display, remove_time, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
 
 import datetime
 from random import choice
@@ -362,7 +362,7 @@ def get_animal_status_query(dbo):
         "a.ActiveMovementID, a.ActiveMovementDate, a.ActiveMovementType, a.ActiveMovementReturn, " \
         "a.HasActiveReserve, a.HasTrialAdoption, a.HasPermanentFoster, a.MostRecentEntryDate, a.DisplayLocation, " \
         "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
-        "CASE WHEN EXISTS(SELECT ID FROM animalboarding WHERE AnimalID = a.ID AND InDateTime >= %(today)s AND OutDateTime <= %(today)s) THEN 1 ELSE 0 END AS HasActiveBoarding, " \
+        "CASE WHEN EXISTS(SELECT ID FROM animalboarding WHERE AnimalID = a.ID AND InDateTime <= %(today)s AND OutDateTime >= %(today)s) THEN 1 ELSE 0 END AS HasActiveBoarding, " \
         "web.MediaName AS WebsiteMediaName, " \
         "web.MediaNotes AS WebsiteMediaNotes " \
         "FROM animal a " \
@@ -788,8 +788,7 @@ def get_animals_recently_deceased(dbo):
     """
     return dbo.query(get_animal_query(dbo) + " " \
         "WHERE a.DeceasedDate Is Not Null " \
-        "AND (a.ActiveMovementType Is Null OR a.ActiveMovementType = 0 " \
-        "OR a.ActiveMovementType = 2) " \
+        "AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 " \
         "AND a.DeceasedDate > ?", [dbo.today(offset=-30)])
 
 def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age = 120):
@@ -947,6 +946,8 @@ def embellish_timeline(l, rows):
           "HOLD": ( _("{0} {1}: held", l), "hold" ),
           "NOTADOPT": ( _("{0} {1}: not available for adoption", l), "notforadoption" ),
           "AVAILABLE": ( _("{0} {1}: available for adoption", l), "notforadoption" ),
+          "BOARDIN": ( _("{0} {1}: boarding started ({2})", l), "boarding" ),
+          "BOARDOUT": ( _("{0} {1}: boarding ended ({2})", l), "boarding" ),
           "VACC": ( _("{0} {1}: received {2}", l), "vaccination" ),
           "TEST": ( _("{0} {1}: received {2}", l), "test" ),
           "MEDICAL": ( _("{0} {1}: received {2}", l), "medical" ),
@@ -1111,6 +1112,16 @@ def get_timeline(dbo, limit = 500, age = 120):
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "WHERE NonShelterAnimal = 0 AND DateGiven Is Not Null " \
             "ORDER BY DateGiven DESC, animal.ID",
+        "SELECT 'animal_boarding' AS LinkTarget, 'BOARDIN' AS Category, InDateTime AS EventDate, animal.ID, " \
+            "ShelterCode AS Text1, AnimalName AS Text2, BoardingName AS Text3, animalboarding.LastChangedBy FROM animalboarding " \
+            "INNER JOIN lkboardingtype ON lkboardingtype.ID = animalboarding.BoardingTypeID " \
+            "INNER JOIN animal ON animalboarding.AnimalID = animal.ID " \
+            "ORDER BY InDateTime DESC, animal.ID",
+        "SELECT 'animal_boarding' AS LinkTarget, 'BOARDOUT' AS Category, OutDateTime AS EventDate, animal.ID, " \
+            "ShelterCode AS Text1, AnimalName AS Text2, BoardingName AS Text3, animalboarding.LastChangedBy FROM animalboarding " \
+            "INNER JOIN lkboardingtype ON lkboardingtype.ID = animalboarding.BoardingTypeID " \
+            "INNER JOIN animal ON animalboarding.AnimalID = animal.ID " \
+            "ORDER BY OutDateTime DESC, animal.ID",
         "SELECT 'incident' AS LinkTarget, 'INCIDENTOPEN' AS Category, IncidentDateTime AS EventDate, animalcontrol.ID, " \
             "IncidentName AS Text1, DispatchAddress AS Text2, '' AS Text3, LastChangedBy FROM animalcontrol " \
             "INNER JOIN incidenttype ON incidenttype.ID = animalcontrol.IncidentTypeID " \
@@ -3483,6 +3494,22 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
     reparent("diary", "LinkID", "LinkType", asm3.diary.ANIMAL)
     reparent("log", "LinkID", "LinkType", asm3.log.ANIMAL, haslastchanged=False)
 
+    # Merge fields
+    ma = get_animal(dbo, mergeanimalid)
+    d = {}
+    d["comments"] = ma.ANIMALCOMMENTS
+    d["healthproblems"] = ma.HEALTHPROBLEMS
+    d["microchipnumber"] = ma.IDENTICHIPNUMBER
+    d["microchipdate"] = python2display(dbo.locale, ma.IDENTICHIPDATE)
+    d["neutered"] = ma.NEUTERED == 1 and "on" or ""
+    d["neutereddate"] = python2display(dbo.locale, ma.NEUTEREDDATE)
+    d["weight"] = str(ma.WEIGHT)
+    d["internallocation"] = str(ma.SHELTERLOCATION)
+    d["unit"] = str(ma.SHELTERLOCATIONUNIT)
+    d["pickuplocation"] = str(ma.PICKUPLOCATIONID)
+    d["pickupaddress"] = ma.PICKUPADDRESS
+    merge_animal_details(dbo, username, animalid, d)
+
     # Change any additional field links pointing to the merge animal
     asm3.additional.update_merge_animal(dbo, mergeanimalid, animalid)
 
@@ -3499,6 +3526,56 @@ def merge_animal(dbo, username, animalid, mergeanimalid):
 
     dbo.delete("animal", mergeanimalid, username)
     asm3.audit.move(dbo, username, "animal", animalid, "", "Merged animal %d -> %d" % (mergeanimalid, animalid))
+
+def merge_animal_details(dbo, username, animalid, d, force=False):
+    """
+    Merges animal details in data dictionary d (the same dictionary that
+    would be fed to insert_animal_from_form and update_person_from_form)
+    to animal with animalid.
+    If any of the fields on the animal record are blank and available
+    in the dictionary, the ones from the dictionary are used instead and updated on the record.
+    animalid: The animal we're merging details into
+    d: The dictionary of values to merge
+    force: If True, forces overwrite of the details with values from d if they are present
+    """
+    uv = {}
+    a = get_animal(dbo, animalid)
+    if a is None: return
+    def merge(dictfield, fieldname):
+        if dictfield not in d or d[dictfield] == "": return
+        if a[fieldname] is None or a[fieldname] == "" or force:
+            uv[fieldname] = d[dictfield]
+            a[fieldname] = uv[fieldname]
+    def merge_date(dictfield, fieldname):
+        if dictfield not in d or display2python(dbo.locale, d[dictfield]) is None: return
+        if a[fieldname] is None or force:
+            uv[fieldname] = display2python(dbo.locale, d[dictfield])
+            a[fieldname] = uv[fieldname]
+    def merge_float(dictfield, fieldname):
+        if dictfield not in d or asm3.utils.cfloat(d[dictfield]) == 0: return
+        if a[fieldname] is None or a[fieldname] == 0 or force:
+            uv[fieldname] = asm3.utils.cfloat(d[dictfield])
+            a[fieldname] = uv[fieldname]
+    def merge_int(dictfield, fieldname):
+        if dictfield not in d or asm3.utils.cint(d[dictfield]) == 0: return
+        if a[fieldname] is None or a[fieldname] == 0 or force:
+            uv[fieldname] = asm3.utils.cint(d[dictfield])
+            a[fieldname] = uv[fieldname]
+    merge("comments", "ANIMALCOMMENTS")
+    merge("healthproblems", "HEALTHPROBLEMS")
+    merge("microchipnumber", "IDENTICHIPNUMBER")
+    merge_date("microchipdate", "IDENTICHIPDATE")
+    if "microchipnumber" in d and "IDENTICHIPNUMBER" in uv and d["microchipnumber"] == uv["IDENTICHIPNUMBER"]: uv["IDENTICHIPPED"] = 1
+    if "neutered" in d and d["neutered"] == "on" and a.NEUTERED == 0: uv["NEUTERED"] = 1
+    merge_date("neutereddate", "NEUTEREDDATE")
+    merge_date("dateofbirth", "DATEOFBIRTH")
+    merge_float("weight", "WEIGHT")
+    merge_int("internallocation", "SHELTERLOCATION")
+    merge("unit", "SHELTERLOCATIONUNIT")
+    merge_int("pickuplocation", "PICKUPLOCATIONID")
+    merge("pickupaddress", "PICKUPADDRESS")
+    if len(uv) > 0:
+        dbo.update("animal", animalid, uv, username)
 
 def update_current_owner(dbo, username, animalid):
     """
@@ -3915,6 +3992,40 @@ def update_all_animal_statuses(dbo):
     asm3.al.debug("updated %d animal statuses (%d)" % (aff, len(animals)), "animal.update_all_animal_statuses", dbo)
     return "OK %d" % len(animals)
 
+def update_boarding_animal_statuses(dbo):
+    """
+    Updates statuses for all animals who are actively boarding. 
+    """
+    animals = dbo.query(get_animal_status_query(dbo) + \
+        " WHERE a.ID IN (SELECT AnimalID FROM animalboarding WHERE InDateTime <= ? AND OutDateTime >= ?)", ( dbo.today(), dbo.today() ))
+    movements = dbo.query(get_animal_movement_status_query(dbo) + " WHERE m.AnimalID IN " \
+        "(SELECT AnimalID FROM animalboarding WHERE InDateTime <= ? AND OutDateTime >= ?) ORDER BY MovementDate DESC", ( dbo.today(), dbo.today() ))
+    animalupdatebatch = []
+    diaryupdatebatch = []
+    asm3.asynctask.set_progress_max(dbo, len(animals))
+    for a in animals:
+        update_animal_status(dbo, a.id, a, movements, animalupdatebatch, diaryupdatebatch)
+        asm3.asynctask.increment_progress_value(dbo)
+
+    aff = dbo.execute_many("UPDATE animal SET " \
+        "Archived = ?, " \
+        "Adoptable = ?, " \
+        "OwnerID = ?, " \
+        "ActiveMovementID = ?, " \
+        "ActiveMovementDate = ?, " \
+        "ActiveMovementType = ?, " \
+        "ActiveMovementReturn = ?, " \
+        "DiedOffShelter = ?, " \
+        "DisplayLocation = ?, " \
+        "HasActiveReserve = ?, " \
+        "HasTrialAdoption = ?, " \
+        "HasPermanentFoster = ?, " \
+        "MostRecentEntryDate = ? " \
+        "WHERE ID = ?", animalupdatebatch)
+    dbo.execute_many("UPDATE diary SET LinkInfo = ? WHERE LinkType = ? AND LinkID = ?", diaryupdatebatch)
+    asm3.al.debug("updated %d on shelter animal statuses (%d)" % (aff, len(animals)), "animal.update_on_shelter_animal_statuses", dbo)
+    return "OK %d" % len(animals)
+
 def update_foster_animal_statuses(dbo):
     """
     Updates statuses for all animals on foster. 
@@ -4127,6 +4238,10 @@ def update_animal_status(dbo, animalid, a = None, movements = None, animalupdate
     # Non-shelter owner should always match original owner since the user can only change original owner
     if a.nonshelteranimal == 1:
         ownerid = a.originalownerid
+
+    # Non-shelter animals who are deceased have by definition died off the shelter
+    if a.nonshelteranimal == 1 and a.deceaseddate:
+        diedoffshelter = True
 
     # Override the onshelter flag if the animal is actively boarding right now
     if a.hasactiveboarding == 1:

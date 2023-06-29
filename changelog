@@ -1,10 +1,26 @@
 47
 ================
 
+29/06/23 Show boarding events on the timeline #623
+29/06/23 Two alternate map types where center location can be chosen
+28/06/23 Fix animal/person validation on move_ screens and refactor
+28/06/23 Show document templates that will not appear anywhere as disabled in list
+28/06/23 mode security fix broke converting jpg2pdf
+27/06/23 Fix bug where giving a treatment before it is required broke things
+27/06/23 Consistent create payment widget for appointments and boarding #623
+27/06/23 Add wordkey for BondedNames (name / bond1 / bond2)
+26/06/23 Recently deceased search was including non-shelter
+26/06/23 Add alternative Romanian locale to use Euro instead of Lei
+26/06/23 Boarding screen: Handle locations with no units #623
+26/06/23 Security fix: login screen could cause a flood by leaning on enter
+25/06/23 Boarding animals should never be adoptable #623
+25/06/23 Merge animal copies key fields now, same code for csv and forms #698
+25/06/23 Add "weight" online form field for animals
+24/06/23 Security fix to detect and drop invalid mode parameters to POST
 23/06/23 Alerts for boarding animals entering/leaving today #623
 23/06/23 Option to send form submissions to the fosterer #1183
 23/06/23 Stop active movements being returned when boarding #623
-23/06/23 Add "neutered" as form field for animals
+23/06/23 Add "neutered" as online form field for animals
 22/06/23 Delete on process should run from code.py for multistep autoprocess #1297
 22/06/23 Assign shelter location/unit when boarding is active #623
 22/06/23 Adding boarding permissions to roles screen #623

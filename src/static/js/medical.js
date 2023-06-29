@@ -194,7 +194,7 @@ $(function() {
                         await tableform.delete_dialog();
                         tableform.buttons_default_state(buttons);
                         let ids = medical.selected_regimen_ids();
-                        await common.ajax_post("medical", "mode=delete_regimen&ids=" + ids);
+                        await common.ajax_post("medical", "mode=deleteregimen&ids=" + ids);
                         medical.remove_selected_regimens();
                         tableform.table_update(table);
                     } 
@@ -210,7 +210,7 @@ $(function() {
                         await tableform.delete_dialog();
                         tableform.buttons_default_state(buttons);
                         let ids = medical.selected_treatment_ids();
-                        await common.ajax_post("medical", "mode=delete_treatment&ids=" + ids);
+                        await common.ajax_post("medical", "mode=deletetreatment&ids=" + ids);
                         medical.remove_selected_treatments();
                         tableform.table_update(table);
                     } 
@@ -225,9 +225,9 @@ $(function() {
                             }
                         });
                         $("#usagecomments").html(comments);
-                        $("#newdate").datepicker("setDate", new Date());
+                        $("#newdate").date("today");
                         $("#usagetype").select("firstvalue");
-                        $("#usagedate").datepicker("setDate", new Date());
+                        $("#usagedate").date("today");
                         $("#usagedate").closest("tr").hide();
                         $("#quantity").val("0");
                         $("#givenby").select("value", asm.user);
@@ -258,7 +258,7 @@ $(function() {
                 { id: "required", text: _("Change Date Required"), icon: "calendar", enabled: "multi", perm: "bcam", 
                     tooltip: _("Change date required on selected treatments"),
                     click: function() {
-                       $("#newdater").datepicker("setDate", new Date());
+                       $("#newdater").date("today");
                        $("#dialog-required").dialog("open");
                     }
                 },
@@ -711,7 +711,7 @@ $(function() {
 
             $("#profileid").change(async function() {
                 if ($("#profileid").val() == "0") { return; }
-                let formdata = "mode=get_profile&profileid=" + $("#profileid").val();
+                let formdata = "mode=getprofile&profileid=" + $("#profileid").val();
                 let result = await common.ajax_post("medical", formdata);
                 let p = jQuery.parseJSON(result)[0];
                 $("#treatmentname").val( html.decode(p.TREATMENTNAME));
