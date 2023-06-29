@@ -1676,7 +1676,11 @@ class Report:
         Does the work of generating a map. Map queries have to return rows that
         have two columns:
         ( LATLONG, POPUP )
-        The html should be just the word MAP
+        The html can just be the word MAP.
+        Optionally, you can include where you would like the map centering,
+        FIRST for the first value in the dataset, USER for the user's current location
+        or an actual latlong separated by a comma
+        Eg: MAP FIRST, MAP USER, MAP 51.2,54.5
         """
         l = self.dbo.locale
 
@@ -1713,6 +1717,21 @@ class Report:
             self._Append(htmlfooter)
             return self.output
 
+        # Choose the center location for the map 
+        mapcenter = ""
+        if self.html.find("FIRST") != -1 or self.html == "MAP":
+            # First valid geocode in the dataset
+            for r in rs:
+                if r[0] != "" and not r[0].startswith("0,0"):
+                    mapcenter = r[0]
+                    break
+        elif self.html.find("USER") != -1: 
+            # User's location
+            mapcenter = "" 
+        elif len(self.html) > 3 and self.html[3] == " " and self.html.find(",") != -1:
+            # Actual latlong specified
+            mapcenter = self.html[self.html.find(" ")+1:] 
+
         self._Append('<div id="embeddedmap" style="z-index: 1; width: 100%; height: 600px; color: #000"></div>\n')
         self._Append("<script type='text/javascript'>\n" \
             "setTimeout(function() {\n" \
@@ -1730,7 +1749,7 @@ class Report:
             p.append({ "latlong": values[0], "popuptext": "".join(concat) })
 
         self._Append( asm3.utils.json(p) + ";\n" )
-        self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"\", points);\n" )
+        self._Append( "mapping.draw_map(\"embeddedmap\", 10, \"%s\", points);\n" % mapcenter )
         self._Append( "}, 50);\n" )
         self._Append("</script>")
         self._Append(htmlfooter)

@@ -1,6 +1,7 @@
 47
 ================
 
+29/06/23 Two alternate map types where center location can be chosen
 28/06/23 Fix animal/person validation on move_ screens and refactor
 28/06/23 Show document templates that will not appear anywhere as disabled in list
 28/06/23 mode security fix broke converting jpg2pdf
