@@ -946,6 +946,8 @@ def embellish_timeline(l, rows):
           "HOLD": ( _("{0} {1}: held", l), "hold" ),
           "NOTADOPT": ( _("{0} {1}: not available for adoption", l), "notforadoption" ),
           "AVAILABLE": ( _("{0} {1}: available for adoption", l), "notforadoption" ),
+          "BOARDIN": ( _("{0} {1}: boarding started ({2})", l), "boarding" ),
+          "BOARDOUT": ( _("{0} {1}: boarding ended ({2})", l), "boarding" ),
           "VACC": ( _("{0} {1}: received {2}", l), "vaccination" ),
           "TEST": ( _("{0} {1}: received {2}", l), "test" ),
           "MEDICAL": ( _("{0} {1}: received {2}", l), "medical" ),
@@ -1110,6 +1112,16 @@ def get_timeline(dbo, limit = 500, age = 120):
             "INNER JOIN animalmedical ON animalmedicaltreatment.AnimalMedicalID = animalmedical.ID " \
             "WHERE NonShelterAnimal = 0 AND DateGiven Is Not Null " \
             "ORDER BY DateGiven DESC, animal.ID",
+        "SELECT 'animal_boarding' AS LinkTarget, 'BOARDIN' AS Category, InDateTime AS EventDate, animal.ID, " \
+            "ShelterCode AS Text1, AnimalName AS Text2, BoardingName AS Text3, animalboarding.LastChangedBy FROM animalboarding " \
+            "INNER JOIN lkboardingtype ON lkboardingtype.ID = animalboarding.BoardingTypeID " \
+            "INNER JOIN animal ON animalboarding.AnimalID = animal.ID " \
+            "ORDER BY InDateTime DESC, animal.ID",
+        "SELECT 'animal_boarding' AS LinkTarget, 'BOARDOUT' AS Category, OutDateTime AS EventDate, animal.ID, " \
+            "ShelterCode AS Text1, AnimalName AS Text2, BoardingName AS Text3, animalboarding.LastChangedBy FROM animalboarding " \
+            "INNER JOIN lkboardingtype ON lkboardingtype.ID = animalboarding.BoardingTypeID " \
+            "INNER JOIN animal ON animalboarding.AnimalID = animal.ID " \
+            "ORDER BY OutDateTime DESC, animal.ID",
         "SELECT 'incident' AS LinkTarget, 'INCIDENTOPEN' AS Category, IncidentDateTime AS EventDate, animalcontrol.ID, " \
             "IncidentName AS Text1, DispatchAddress AS Text2, '' AS Text3, LastChangedBy FROM animalcontrol " \
             "INNER JOIN incidenttype ON incidenttype.ID = animalcontrol.IncidentTypeID " \
