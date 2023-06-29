@@ -1,0 +1,32 @@
+Boarding
+========
+
+The boarding interface is used to administrate the boarding of animals, 
+create payments and produe invoices for customers.
+
+.. image:: images/boarding_tab.png
+
+Boarding Book
+-------------
+
+The boarding book located in the financial tab allows you to conveniently 
+view boarding animals by selected periods and status.
+
+.. image:: images/boarding_book.png
+
+Selecting an entry and create payment allows you to take payment and create 
+invoices for the service.
+
+.. image:: images/boarding_payment.png
+
+Boarding Calendar
+-----------------
+
+.. image:: images/boarding_calendar.png
+
+The boarding calendar is a full calendar view, showing day, week and month 
+breakdowns of animals boarding at the shelter. 
+
+Clicking on the animals name in the boarding calendar will take you to the 
+boarding tab of that animals record.
+
