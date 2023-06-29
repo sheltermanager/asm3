@@ -31,6 +31,6 @@ Boarding Calendar
 .. image:: images/boarding_calendar.png
 
 The boarding calendar is a full calendar view, showing day, week and month 
-breakdowns of animals boarding at the shelter.Clicking on the animals name in 
+breakdowns of animals boarding at the shelter. Clicking on the animals name in 
 the boarding calendar will take you to the boarding tab of that animals record.
 
