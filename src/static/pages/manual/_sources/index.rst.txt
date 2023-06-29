@@ -14,6 +14,7 @@ Contents:
    movements
    documents
    animalcontrol
+   boarding
    clinic
    lostandfound
    waitinglist
