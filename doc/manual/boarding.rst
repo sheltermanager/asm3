@@ -2,7 +2,11 @@ Boarding
 ========
 
 The boarding interface is used to administrate the boarding of animals, 
-create payments and produe invoices for customers.
+create payments and produe invoices for customers. 
+
+Animals with a boarding reservation will automatically move into the 
+pre-selected shelter location on the check-in date and out again when the 
+check-out date is reached.
 
 .. image:: images/boarding_tab.png
 
@@ -10,7 +14,9 @@ Boarding Book
 -------------
 
 The boarding book located in the financial tab allows you to conveniently 
-view boarding animals by selected periods and status.
+view boarding animals by selected periods and status. Animals with a boarding 
+reservation will automatically move into the pre-selected shelter location 
+on the check-in date and out again when the check-out date is reached.
 
 .. image:: images/boarding_book.png
 
