@@ -8,20 +8,23 @@ Animals with an active boarding record will automatically move into the
 pre-selected shelter location on the check-in date and out again when the 
 check-out date is reached.
 
+Boarded animals will appear in shelter view with a boarding emblem next
+to their name.
+
 .. image:: images/boarding_tab.png
 
 Boarding Book
 -------------
 
-The boarding book located in the financial tab allows you to conveniently 
+The boarding book located under the financial menu allows you to conveniently 
 view boarding animals by selected periods and status. 
 
 .. image:: images/boarding_book.png
 
 Selecting an entry and clicking the create payment button allows you to create
 a due payment based on the daily boarding fee and number of days boarded. You
-can then use the payment screen to request payment from the customer or produce
-an invoice.
+can then use the payment screen to request electronic payment from the customer
+or produce an invoice.
 
 .. image:: images/boarding_payment.png
 
