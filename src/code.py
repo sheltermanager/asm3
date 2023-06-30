@@ -5150,6 +5150,7 @@ class onlineform_incoming(JSONEndpoint):
             asm3.onlineform.delete_onlineformincoming(o.dbo, o.user, did)
 
     def post_attachanimal(self, o):
+        self.check(asm3.users.ADD_MEDIA)
         dbo = o.dbo
         collationid = o.post.integer("collationid")
         animalid = o.post.integer("animalid")
@@ -5167,6 +5168,7 @@ class onlineform_incoming(JSONEndpoint):
         return "^$".join(rv)
 
     def post_attachperson(self, o):
+        self.check(asm3.users.ADD_MEDIA)
         dbo = o.dbo
         collationid = o.post.integer("collationid")
         personid = o.post.integer("personid")
@@ -5175,11 +5177,23 @@ class onlineform_incoming(JSONEndpoint):
         return personid 
 
     def post_animal(self, o):
-        self.check(asm3.users.ADD_MEDIA)
+        self.check(asm3.users.ADD_ANIMAL)
         user = "form/%s" % o.user
         rv = []
         for pid in o.post.integer_list("ids"):
             collationid, animalid, animalname, status = asm3.onlineform.create_animal(o.dbo, user, pid)
+            rv.append("%d|%d|%s|%s" % (collationid, animalid, animalname, status))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
+        return "^$".join(rv)
+
+    def post_animalbroughtin(self, o):
+        self.check(asm3.users.ADD_ANIMAL)
+        self.check(asm3.users.ADD_PERSON)
+        user = "form/%s" % o.user
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, personid, personname, status = asm3.onlineform.create_person(o.dbo, user, pid)
+            collationid, animalid, animalname, status = asm3.onlineform.create_animal(o.dbo, user, pid, broughtinby=personid)
             rv.append("%d|%d|%s|%s" % (collationid, animalid, animalname, status))
             if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
