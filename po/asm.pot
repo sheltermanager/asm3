@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-06-30 14:39+0000\n"
+"POT-Creation-Date: 2023-07-01 09:20+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -5219,6 +5219,10 @@ msgstr ""
 
 #: animal.py dbupdate.py reports.js animal_find.js
 msgid "Escaped"
+msgstr ""
+
+#: users.js
+msgid "Escaped Animals"
 msgstr ""
 
 #: animal.py
@@ -10616,6 +10620,10 @@ msgstr ""
 msgid "Reclaimed"
 msgstr ""
 
+#: users.js
+msgid "Reclaimed Animals"
+msgstr ""
+
 #: accounts_trx.js
 msgid "Reconcile"
 msgstr ""
@@ -12641,6 +12649,10 @@ msgstr ""
 msgid "Stolen"
 msgstr ""
 
+#: users.js
+msgid "Stolen Animals"
+msgstr ""
+
 #: animal.py
 msgid "Stolen {0}"
 msgstr ""
@@ -12809,6 +12821,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "TNR - Trap/Neuter/Release"
+msgstr ""
+
+#: users.js
+msgid "TNR/Released Animals"
 msgstr ""
 
 #: options.js
@@ -13964,6 +13980,10 @@ msgstr ""
 
 #: dbupdate.py animal_find.js
 msgid "Transferred"
+msgstr ""
+
+#: users.js
+msgid "Transferred Animals"
 msgstr ""
 
 #: animal_new.js animal.js
