@@ -219,7 +219,8 @@ Two-Factor Authentication (2FA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ASM supports two-factor authentication for user accounts with the Google
-Authenticator app for mobile devices. 
+Authenticator app (or any time-based one time password generator) 
+for mobile devices. 
 
 .. image:: images/changeusersettings_2fa.png
 
@@ -227,10 +228,10 @@ To enable it, log in with your user account, then choose "Change User Settings"
 from the user menu at the top right of the screen (the button with your
 username on it).
 
-Install the Google Authenticator app on your mobile device from the Play or
-iTunes store. Tick the box to enable 2FA and the screen will show you a
-QR code. In the Google Authenticator app, click the add button and choose "QR
-Code", then scan the on screen code with your camera. 
+Install the Google Authenticator (or other TOTP) app on your mobile device from
+the Play or iTunes store. Tick the box to enable 2FA and the screen will show
+you a QR code. In the Google Authenticator app, click the add button and choose
+"QR Code", then scan the on screen code with your camera. 
 
 An entry will appear in Google Authenticator for ASM (if you are self hosted)
 or sheltermanager (for sheltermanager.com customers) with your username and a
