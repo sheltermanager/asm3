@@ -852,7 +852,7 @@ def update_medical_treatments(dbo, username, amid):
         "WHERE AnimalMedicalID = ? AND DateGiven Is Null", [amid])
 
     # Drop out if it's inactive
-    if am.STATUS != ACTIVE:
+    if am is None or am.STATUS != ACTIVE:
         return
 
     # If it's a one-off treatment and we've given it, mark complete

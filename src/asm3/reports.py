@@ -1722,7 +1722,7 @@ class Report:
         if self.html.find("FIRST") != -1 or self.html == "MAP":
             # First valid geocode in the dataset
             for r in rs:
-                if r[0] != "" and not r[0].startswith("0,0"):
+                if r[0] is not None and r[0] != "" and not r[0].startswith("0,0"):
                     mapcenter = r[0]
                     break
         elif self.html.find("USER") != -1: 
