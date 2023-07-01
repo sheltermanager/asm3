@@ -1920,6 +1920,11 @@ def get_location_filter_clause(locationfilter="", tablequalifier="", siteid=0, v
     locationfilter: comma separated list of internallocation IDs and special values
         -1: animals on a trial/full adoption
         -2: animals in a foster home
+        -3: animals transferred away
+        -4: animals escaped
+        -5: animals reclaimed
+        -6: animals stolen
+        -7: animals released to wild/tnr
         -8: animals in a retailer
         -9: non-shelter animals (excluded from this functionality)
         -12: has set visibleanimalids for "My fosters"
@@ -1980,6 +1985,11 @@ def is_animal_in_location_filter(a, locationfilter, siteid=0, visibleanimalids="
         locs = locationfilter.split(",")
         if a.activemovementtype == 1 and "-1" in locs: return True 
         if a.activemovementtype == 2 and "-2" in locs: return True
+        if a.activemovementtype == 3 and "-3" in locs: return True
+        if a.activemovementtype == 4 and "-4" in locs: return True
+        if a.activemovementtype == 5 and "-5" in locs: return True
+        if a.activemovementtype == 6 and "-6" in locs: return True
+        if a.activemovementtype == 7 and "-7" in locs: return True
         if a.activemovementtype == 8 and "-8" in locs: return True
         if a.nonshelteranimal == 1 and "-9" in locs: return True
         if a.archived == 0 and str(a.shelterlocation) in locs: return True
