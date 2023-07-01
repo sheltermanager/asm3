@@ -1941,6 +1941,11 @@ def get_location_filter_clause(locationfilter="", tablequalifier="", siteid=0, v
         nsfilter = ""
         if "-1" in locs: mtfilter += ",1"
         if "-2" in locs: mtfilter += ",2"
+        if "-3" in locs: mtfilter += ",3"
+        if "-4" in locs: mtfilter += ",4"
+        if "-5" in locs: mtfilter += ",5"
+        if "-6" in locs: mtfilter += ",6"
+        if "-7" in locs: mtfilter += ",7"
         if "-8" in locs: mtfilter += ",8"
         if "-9" in locs: nsfilter = f" OR {tablequalifier}.NonShelterAnimal=1"
         clauses.append(f"(({tablequalifier}.Archived=0 AND {tablequalifier}.ShelterLocation IN ({locationfilter})) OR {tablequalifier}.ActiveMovementType IN ({mtfilter}) {nsfilter})")

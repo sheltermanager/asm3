@@ -10,10 +10,15 @@ $(function() {
             // Add extra location filter options
             controller.internallocations.push(
                 { ID: -1, LOCATIONNAME: _("Adopted Animals")},
+                { ID: -4, LOCATIONNAME: _("Escaped Animals")},
                 { ID: -2, LOCATIONNAME: _("Fostered Animals")},
+                { ID: -5, LOCATIONNAME: _("Reclaimed Animals")},
                 { ID: -12, LOCATIONNAME: _("My Fosters")},
                 { ID: -9, LOCATIONNAME: _("Non-shelter Animals")},
-                { ID: -8, LOCATIONNAME: _("Retailer Animals")}
+                { ID: -8, LOCATIONNAME: _("Retailer Animals")},
+                { ID: -6, LOCATIONNAME: _("Stolen Animals")},
+                { ID: -3, LOCATIONNAME: _("Transferred Animals")},
+                { ID: -7, LOCATIONNAME: _("TNR/Released Animals")}
             );
 
             const dialog = {
