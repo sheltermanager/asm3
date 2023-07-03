@@ -350,9 +350,17 @@ class ASMEndpoint(object):
 
     def is_loggedin(self, session):
         """
-        Returns true if the user is logged in
+        Returns true if the user is logged in and the user is valid (ie. has not been deleted)
         """
-        return "user" in session and session.user is not None
+        if "user" not in session: return False
+        if session.user is None: return False
+        if "dbo" not in session: return False
+        if session.dbo is None: return False
+        users = session.dbo.query_cache("SELECT UserName FROM users", age=300)
+        for u in users:
+            if u.USERNAME == session.user:
+                return True
+        return False
 
     def notfound(self):
         """ Returns a 404 """
