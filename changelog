@@ -1,6 +1,7 @@
 47
 ================
 
+03/07/23 Check user can still login as well as exists #1307
 03/07/23 Check user still exists as well as logged in at endpoints #1307
 01/07/23 Add all movement types as available location filters
 30/06/23 Online form: create animal and person (link via brought in) #1305
