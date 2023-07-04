@@ -9,7 +9,7 @@ A map of all people with the selected person flag.
 en
 ###
 SELECT latlong,
-'<a href="person?id=', ID, '">', OwnerName, '</a><br />',
+'<a target="_blank" href="person?id=', ID, '">', OwnerName, '</a><br />',
 OwnerAddress, '<br />', OwnerTown, ' ', OwnerCounty,' ', OwnerPostcode, '<br>', 
 emailaddress, '<br>', hometelephone
 FROM owner o
