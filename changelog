@@ -1,6 +1,7 @@
 47
 ================
 
+04/07/23 If onlineform has breed1, but no species, use species from breed
 04/07/23 Add different types of death as available location filters
 03/07/23 Check user can still login as well as exists #1307
 03/07/23 Check user still exists as well as logged in at endpoints #1307

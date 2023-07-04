@@ -1243,10 +1243,10 @@ def create_animal(dbo, username, collationid, broughtinby=0):
         if f.FIELDNAME == "neutered" and (f.VALUE == "Yes" or f.VALUE == "on"): d["neutered"] = "on"
         if f.FIELDNAME == "weight" and asm3.utils.is_numeric(f.VALUE): d["weight"] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
-        #if f.FIELDNAME == "formreceived" and f.VALUE.find(" ") != -1: 
-        #    recdate, rectime = f.VALUE.split(" ")
-        #    formreceived = asm3.i18n.parse_time( asm3.i18n.display2python(l, recdate), rectime )
-        #    TODO: May be useful in future if we need to create other records from this form
+        # If the form has a breed, but no species, use the species from that breed
+        # For wildlife rescues, breed might be the thing people recognise over species (eg: corvid vs crow, magpie)
+        if "species" not in d and "breed1" in d:
+            d["species"] = str(asm3.lookups.get_species_for_breed(dbo, asm3.utils.cint(d["breed1"])))
     # Have we got enough info to create the animal record? We need a name at a minimum
     if "animalname" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an animal record (need animalname).", l))

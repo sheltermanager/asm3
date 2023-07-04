@@ -923,6 +923,9 @@ def get_breeds_by_species(dbo):
         "LEFT OUTER JOIN species ON breed.SpeciesID = species.ID " \
         "ORDER BY species.SpeciesName, breed.BreedName")
 
+def get_species_for_breed(dbo, bid):
+    return dbo.query_int("SELECT SpeciesID FROM breed WHERE ID=?", [bid])
+
 def get_breed_name(dbo, bid):
     if id is None: return ""
     return dbo.query_string("SELECT BreedName FROM breed WHERE ID = ?", [bid])

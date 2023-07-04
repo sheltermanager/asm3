@@ -50,7 +50,7 @@ type
 species
     The species of the animal. ASM will try and guess based on the text which one is meant. Use a lookup field to limit the choices to known items (or use the Species field type)
 breed1 / breed2
-    The breed of the animal. ASM will try and guess one of it's lookup values (or use the Breed field type to limit to them)
+    The breed of the animal. ASM will try and guess one of it's lookup values (or use the Breed field type to limit to them). If this form has no species field and you are creating an animal from it, the form engine will use the species linked to breed1.
 agegroup
     The age group of the animal. Again, ASM will try and guess one if it's internal values.
 color / colour
