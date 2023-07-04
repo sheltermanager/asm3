@@ -203,23 +203,18 @@ that site. It is an easy way of preventing a user from seeing animals who are
 not at that site without having to configure individual location filters.
 
 There are a number of "special" location filters, which correspond to
-animals outside the shelter with particular movements that you may wish to let your
-users see:
+animals outside the shelter that you may wish to let your users see.
 
-* Adopted Animals: Allows the user to see previously adopted animals
-
-* Fostered Animals: Allows the user to see animals currently on foster
-
-* Retailer Animals: Allows the user to see animals currently with retailers
-
-* My Fosters: Allows the user to see animals that are fostered to the person
-  record linked to their user account.
+They all appear at the bottom of the list and allow you to choose from animals
+who have a particular exit movement type, those who are marked non-shelter,
+those who the active user is fostering right now and deceased animals.
 
 Two-Factor Authentication (2FA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ASM supports two-factor authentication for user accounts with the Google
-Authenticator app for mobile devices. 
+Authenticator app (or any time-based one time password generator) 
+for mobile devices. 
 
 .. image:: images/changeusersettings_2fa.png
 
@@ -227,10 +222,10 @@ To enable it, log in with your user account, then choose "Change User Settings"
 from the user menu at the top right of the screen (the button with your
 username on it).
 
-Install the Google Authenticator app on your mobile device from the Play or
-iTunes store. Tick the box to enable 2FA and the screen will show you a
-QR code. In the Google Authenticator app, click the add button and choose "QR
-Code", then scan the on screen code with your camera. 
+Install the Google Authenticator (or other TOTP) app on your mobile device from
+the Play or iTunes store. Tick the box to enable 2FA and the screen will show
+you a QR code. In the Google Authenticator app, click the add button and choose
+"QR Code", then scan the on screen code with your camera. 
 
 An entry will appear in Google Authenticator for ASM (if you are self hosted)
 or sheltermanager (for sheltermanager.com customers) with your username and a

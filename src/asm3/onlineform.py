@@ -77,6 +77,7 @@ AP_CREATEINCIDENT = 6
 AP_CREATETRANSPORT = 7
 AP_CREATEWAITINGLIST = 8
 AP_ATTACHANIMAL_CREATEPERSON = 9 
+AP_CREATEANIMAL_BROUGHTIN = 10
 
 # The name of an extra checkbox inserted to trap spambots
 SPAMBOT_CB = 'termsscb'
@@ -1027,6 +1028,9 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
             except asm3.utils.ASMValidationError as aterr:
                 asm3.al.error("%s" % aterr.getMsg(), "autoprocess", dbo)
             create_person(dbo, "autoprocess", collationid)
+        elif formdef.autoprocess == AP_CREATEANIMAL_BROUGHTIN:
+            collationid, personid, personname, status = create_person(dbo, "autoprocess", collationid)
+            create_animal(dbo, "autoprocess", collationid, broughtinby=personid)
         elif formdef.autoprocess == AP_CREATELOSTANIMAL:
             create_lostanimal(dbo, "autoprocess", collationid)
         elif formdef.autoprocess == AP_CREATEFOUNDANIMAL:
@@ -1197,9 +1201,10 @@ def attach_person(dbo, username, personid, collationid):
     """
     asm3.onlineform.attach_form(dbo, username, asm3.media.PERSON, personid, collationid)
 
-def create_animal(dbo, username, collationid):
+def create_animal(dbo, username, collationid, broughtinby=0):
     """
     Creates an animal record from the incoming form data with collationid.
+    If broughtinby is specified, sets this as the broughtinbyownerid on the animal record.
     Also, attaches the form to the animal as media.
     The return value is a tuple of collationid, animalid, sheltercode - animalname, status
     status is 0 for created, 1 for updated existing
@@ -1210,7 +1215,7 @@ def create_animal(dbo, username, collationid):
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
     # formreceived = asm3.i18n.python2display(l, dbo.now())
-    d = { "estimatedage": "", "dateofbirth": "" }
+    d = { "estimatedage": "", "dateofbirth": "", "broughtinby": str(broughtinby) }
     for f in fields:
         if f.FIELDNAME == "animalname": d["animalname"] = truncs(f.VALUE)
         if f.FIELDNAME == "code": 
