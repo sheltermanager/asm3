@@ -357,7 +357,7 @@ class ASMEndpoint(object):
         if session.user is None: return False
         if "dbo" not in session: return False
         if session.dbo is None: return False
-        users = session.dbo.query_cache("SELECT UserName FROM users WHERE DisableLogin=0", age=300)
+        users = session.dbo.query_cache("SELECT UserName FROM users WHERE (DisableLogin Is Null OR DisableLogin=0)", age=300)
         for u in users:
             if u.USERNAME == session.user:
                 return True
