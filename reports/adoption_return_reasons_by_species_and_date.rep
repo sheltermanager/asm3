@@ -10,7 +10,7 @@ en
 ###
 SELECT ReasonName, SpeciesName, COUNT(ReturnedReasonID) AS Total 
 FROM adoption
-INNER JOIN animal ON animal.ID = adoption.ID
+INNER JOIN animal ON animal.ID = adoption.AnimalID
 INNER JOIN entryreason ON entryreason.ID = adoption.ReturnedReasonID 
 INNER JOIN species ON animal.SpeciesID = species.ID
 WHERE ReturnDate Is Not Null 
