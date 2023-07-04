@@ -10,6 +10,10 @@ $(function() {
             // Add extra location filter options
             controller.internallocations.push(
                 { ID: -1, LOCATIONNAME: _("Adopted Animals")},
+                { ID: -21, LOCATIONNAME: _("Died (On Shelter)")},
+                { ID: -22, LOCATIONNAME: _("Died (DOA)")},
+                { ID: -23, LOCATIONNAME: _("Died (Euthanized)")},
+                { ID: -24, LOCATIONNAME: _("Died (Off Shelter)")},
                 { ID: -4, LOCATIONNAME: _("Escaped Animals")},
                 { ID: -2, LOCATIONNAME: _("Fostered Animals")},
                 { ID: -5, LOCATIONNAME: _("Reclaimed Animals")},

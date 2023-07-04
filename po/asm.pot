@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-07-01 09:20+0000\n"
+"POT-Creation-Date: 2023-07-04 08:33+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -4248,6 +4248,22 @@ msgstr ""
 
 #: html.py animal.py dbupdate.py animal_find_results.js
 msgid "Died"
+msgstr ""
+
+#: users.js
+msgid "Died (DOA)"
+msgstr ""
+
+#: users.js
+msgid "Died (Euthanized)"
+msgstr ""
+
+#: users.js
+msgid "Died (Off Shelter)"
+msgstr ""
+
+#: users.js
+msgid "Died (On Shelter)"
 msgstr ""
 
 #: reports.js

@@ -203,17 +203,11 @@ that site. It is an easy way of preventing a user from seeing animals who are
 not at that site without having to configure individual location filters.
 
 There are a number of "special" location filters, which correspond to
-animals outside the shelter with particular movements that you may wish to let your
-users see:
+animals outside the shelter that you may wish to let your users see.
 
-* Adopted Animals: Allows the user to see previously adopted animals
-
-* Fostered Animals: Allows the user to see animals currently on foster
-
-* Retailer Animals: Allows the user to see animals currently with retailers
-
-* My Fosters: Allows the user to see animals that are fostered to the person
-  record linked to their user account.
+They all appear at the bottom of the list and allow you to choose from animals
+who have a particular exit movement type, those who are marked non-shelter,
+those who the active user is fostering right now and deceased animals.
 
 Two-Factor Authentication (2FA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

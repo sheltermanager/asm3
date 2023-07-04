@@ -1928,41 +1928,55 @@ def get_location_filter_clause(locationfilter="", tablequalifier="", siteid=0, v
         -8: animals in a retailer
         -9: non-shelter animals (excluded from this functionality)
         -12: has set visibleanimalids for "My fosters"
+        -21: died on shelter
+        -22: doa
+        -23: euthanised
+        -24: died off shelter
     tablequalifier: The animal table name
     siteid: The animal's site, as linked to internallocation
-    andprefix: If true, add a prefix of " AND " to any filter
+    visibleanimalids: comma separated list of animal ids this user is allowed to view (-12 must be present in filter)
     """
     # Don't do anything if there's no filter
     if locationfilter == "" and siteid == 0 and visibleanimalids == "": return ""
     if tablequalifier == "": tablequalifier = "animal"
     clauses = []
-    hasvisibleidsfilter = locationfilter.find("-12") != -1
-    # Strip anything that has set visibleanimalids as they are not locations or movement types
-    locationfilter = ",".join([ l for l in locationfilter.split(",") if l not in ("-12",) ])
     if locationfilter != "":
-        # If movement types are included in the filter, build another in clause
+        internallocs = []
+        movetypes = []
         locs = locationfilter.split(",")
-        mtfilter = "0"
-        nsfilter = ""
-        if "-1" in locs: mtfilter += ",1"
-        if "-2" in locs: mtfilter += ",2"
-        if "-3" in locs: mtfilter += ",3"
-        if "-4" in locs: mtfilter += ",4"
-        if "-5" in locs: mtfilter += ",5"
-        if "-6" in locs: mtfilter += ",6"
-        if "-7" in locs: mtfilter += ",7"
-        if "-8" in locs: mtfilter += ",8"
-        if "-9" in locs: nsfilter = f" OR {tablequalifier}.NonShelterAnimal=1"
-        clauses.append(f"(({tablequalifier}.Archived=0 AND {tablequalifier}.ShelterLocation IN ({locationfilter})) OR {tablequalifier}.ActiveMovementType IN ({mtfilter}) {nsfilter})")
+        # Extract movement types and internal locations from the filter first
+        for l in locs:
+            if l in ( "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8"):
+                movetypes.append(l.replace("-", ""))
+            elif l.find("-") == -1:
+                internallocs.append(l)
+        # Internal locations
+        if len(internallocs) > 0:
+            clauses.append(f'({tablequalifier}.Archived=0 AND {tablequalifier}.ShelterLocation IN ({",".join(internallocs)}))') 
+        # Active movement types
+        if len(movetypes) > 0:
+            clauses.append(f'{tablequalifier}.ActiveMovementType IN ({",".join(movetypes)})')
+        # Non-shelter
+        if "-9" in locs:
+            clauses.append(f"{tablequalifier}.NonShelterAnimal=1")
+        # My Fosters
+        if "-12" in locs:
+            if visibleanimalids == "": visibleanimalids = "0"
+            clauses.append(f"{tablequalifier}.ID IN ({visibleanimalids})")
+        # Died on shelter
+        if "-21" in locs:
+            clauses.append(f"({tablequalifier}.DeceasedDate Is Not Null AND {tablequalifier}.PutToSleep=0 AND {tablequalifier}.IsDOA=0 AND {tablequalifier}.DiedOffShelter=0)")
+        # DOA
+        if "-22" in locs:
+            clauses.append(f"({tablequalifier}.DeceasedDate Is Not Null AND {tablequalifier}.PutToSleep=0 AND {tablequalifier}.IsDOA=1 AND {tablequalifier}.DiedOffShelter=0)")
+        # Euthanised
+        if "-23" in locs:
+            clauses.append(f"({tablequalifier}.DeceasedDate Is Not Null AND {tablequalifier}.PutToSleep=1 AND {tablequalifier}.IsDOA=0 AND {tablequalifier}.DiedOffShelter=0)")
+        # Died Off Shelter
+        if "-24" in locs:
+            clauses.append(f"({tablequalifier}.DeceasedDate Is Not Null AND {tablequalifier}.DiedOffShelter=1)")
     if siteid != 0:
         clauses.append("il.SiteID = %s" % siteid)
-    if visibleanimalids != "":
-        clauses.append(f"{tablequalifier}.ID IN ({visibleanimalids})")
-    # Special case - the only location filter the user has is one of the visible ids
-    # filters like "My Fosters" - but they don't have any IDs listed.
-    # if we don't restrict them now, they'll see everything since we'll be left with no clauses
-    if visibleanimalids == "" and hasvisibleidsfilter and locationfilter == "":
-        clauses.append(f"{tablequalifier}.ID IN (0)")
     c = "(" + " OR ".join(clauses) + ")"
     # If we've got nothing left by this point, don't add a prefix/suffix/where
     if c == "": return ""
@@ -1972,6 +1986,7 @@ def get_location_filter_clause(locationfilter="", tablequalifier="", siteid=0, v
         c = "%s AND " % c
     if whereprefix:
         c = " WHERE %s" % c
+    print(c)
     return c
 
 def is_animal_in_location_filter(a, locationfilter, siteid=0, visibleanimalids=""):
@@ -1992,6 +2007,10 @@ def is_animal_in_location_filter(a, locationfilter, siteid=0, visibleanimalids="
         if a.activemovementtype == 7 and "-7" in locs: return True
         if a.activemovementtype == 8 and "-8" in locs: return True
         if a.nonshelteranimal == 1 and "-9" in locs: return True
+        if a.deceaseddate and a.isdoa == 0 and a.puttosleep == 0 and a.diedoffshelter == 0 and "-21" in locs: return True
+        if a.deceaseddate and a.isdoa == 1 and a.puttosleep == 0 and a.diedoffshelter == 0 and "-22" in locs: return True
+        if a.deceaseddate and a.isdoa == 0 and a.puttosleep == 1 and a.diedoffshelter == 0 and "-23" in locs: return True
+        if a.deceaseddate and a.diedoffshelter == 1 and "-24" in locs: return True
         if a.archived == 0 and str(a.shelterlocation) in locs: return True
     if visibleanimalids != "":
         if str(a.ID) in visibleanimalids.split(","): return True
