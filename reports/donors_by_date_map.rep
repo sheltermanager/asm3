@@ -2,7 +2,7 @@ Donors by Date Map
 ###
 Maps
 ###
-34703/Any rev02
+34703/Any rev03
 ###
 Donations between two dates with the donors plotted on a map.
 ###
@@ -12,7 +12,7 @@ $VAR from DATE Donated between$
 $VAR to DATE and$
 
 SELECT DISTINCT o.LatLong, 
-'<a href="person?id=', o.ID, '">', o.OwnerName, '</a><br />',
+'<a target="_blank" href="person?id=', o.ID, '">', o.OwnerName, '</a><br />',
 o.OwnerAddress, '<br />', o.OwnerTown, ' ', o.OwnerCounty, ' ', o.OwnerPostcode 
 FROM ownerdonation d
 INNER JOIN owner o ON d.OwnerID = o.ID

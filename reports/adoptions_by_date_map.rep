@@ -2,7 +2,7 @@ Adoptions by Date Map
 ###
 Maps
 ###
-34703/Any rev02
+34703/Any rev03
 ###
 Adoptions between two dates with the adopters plotted on a map.
 ###
@@ -12,7 +12,7 @@ $VAR from DATE Adopted between$
 $VAR to DATE and$
 
 SELECT o.LatLong, 
-'<a href="animal?id=', a.ID, '">', a.AnimalName, ' - ', a.ShelterCode, '</a>',
+'<a target="_blank" href="animal?id=', a.ID, '">', a.AnimalName, ' - ', a.ShelterCode, '</a>',
 '<br>Adopted on ',m.MovementDate, '<br>', 
 '<b><a href="person?id=', o.ID, '">', o.OwnerName, '</a><br />',
 o.OwnerAddress, '<br />', 
