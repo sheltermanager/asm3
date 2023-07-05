@@ -602,15 +602,15 @@ $(document).ready(function() {
         let comptp = dt(ac.COMPLETEDATE) + ' ' + ac.COMPLETEDNAME;
         if (!ac.COMPLETEDDATE && common.has_permission("caci")) {
             comptp = '<select class="form-control complete"><option value=""></option>' + html.list_to_options(controller.completedtypes, "ID", "COMPLETEDNAME") + '</select>';
-            comptp += '<button type="button" class="complete btn btn-primary"><i class="bi-calendar"></i> ' + _("Complete") + '</button>';
+            comptp += '<button type="button" class="complete btn btn-primary"><i class="bi-calendar-check"></i> ' + _("Complete") + '</button>';
         }
         let dispdt = dt(ac.DISPATCHDATETIME);
         if (!ac.DISPATCHDATETIME && common.has_permission("cacd")) { 
-            dispdt = '<button type="button" class="dispatch btn btn-primary"><i class="bi-calendar"></i> ' + _("Dispatch") + '</button>';
+            dispdt = '<button type="button" class="dispatch btn btn-primary"><i class="bi-calendar-plus"></i> ' + _("Dispatch") + '</button>';
         }
         let respdt = dt(ac.RESPONDEDDATETIME);
         if (ac.DISPATCHDATETIME && !ac.RESPONDEDDATETIME && common.has_permission("cacr")) { 
-            respdt = '<button type="button" class="respond btn btn-primary"><i class="bi-calendar"></i> ' + _("Respond") + '</button>';
+            respdt = '<button type="button" class="respond btn btn-primary"><i class="bi-calendar-range"></i> ' + _("Respond") + '</button>';
         }
         let dispadd = ac.DISPATCHADDRESS;
         if (dispadd) {
