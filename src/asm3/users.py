@@ -811,17 +811,22 @@ def web_login(post, session, remoteip, useragent, path):
 
     # Connect to the database and authenticate the username and password
     user = authenticate(dbo, username, password)
-    if user is not None and not authenticate_ip(user, remoteip):
+
+    if user is None:
+        asm3.al.error("database:%s username:%s password:%s failed authentication from %s [%s]" % (database, username, password, remoteip, useragent), "users.web_login", dbo)
+        return "FAIL"
+
+    if not authenticate_ip(user, remoteip):
         asm3.al.error("user %s from %s [%s] failed ip restriction check '%s'" % (username, remoteip, useragent, user.IPRESTRICTION), "users.web_login", dbo)
         return "FAIL"
-    
+
     # Check if this user has been disabled from logging in
-    if user is not None and "DISABLELOGIN" in user and user.DISABLELOGIN == 1:
+    if "DISABLELOGIN" in user and user.DISABLELOGIN == 1:
         asm3.al.error("user %s from %s [%s] failed as account has logins disabled" % (username, remoteip, useragent), "users.web_login", dbo)
         return "FAIL"
 
     # If the user has 2FA enabled, check it
-    if user is not None and "ENABLETOTP" in user and "OTPSECRET" in user and user.ENABLETOTP == 1:
+    if "ENABLETOTP" in user and "OTPSECRET" in user and user.ENABLETOTP == 1:
         if onetimepass == "":
             asm3.al.debug("user %s has 2FA enabled and no code has been given" % username, "users.web_login", dbo)
             return "ASK2FA"
@@ -829,45 +834,39 @@ def web_login(post, session, remoteip, useragent, path):
             asm3.al.error("user %s failed OTP check" % username, "users.web_login", dbo)
             return "BAD2FA"
 
-    if user is not None:
-        asm3.al.info("%s successfully authenticated from %s [%s]" % (username, remoteip, useragent), "users.web_login", dbo)
+    asm3.al.info("%s successfully authenticated from %s [%s]" % (username, remoteip, useragent), "users.web_login", dbo)
 
-        try:
-            dbo.locked = asm3.configuration.smdb_locked(dbo)
-            dbo.timezone = asm3.configuration.timezone(dbo)
-            dbo.timezone_dst = asm3.configuration.timezone_dst(dbo)
-            dbo.installpath = path
-            dbo.locale = asm3.configuration.locale(dbo)
-            session.nologconnection = nologconnection
-            session.mobileapp = mobileapp 
-            update_session(dbo, session, user.USERNAME)
-        except:
-            asm3.al.error("failed setting up session: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
-            return "FAIL"
-
-        try:
-            # Mark the user logged in
-            if not nologconnection: 
-                asm3.audit.login(dbo, username, remoteip, useragent)
-            asm3.al.info("%s logged in" % user.USERNAME, "users.login", dbo)
-            update_user_activity(dbo, user.USERNAME)
-        except:
-            asm3.al.error("failed updating user activity: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
-            return "FAIL"
-
-        try:
-            # Did the user request "remember me"? If so, generate a token
-            # for them and remember the user for 2 weeks
-            if rememberme:
-                token = asm3.utils.uuid_str()
-                asm3.cachemem.put(token, "%s|%s|%s" % (database, username, password), 86400*14)
-                return "%s|%s" % (user.USERNAME, token)
-        except:
-            asm3.al.error("failed getting remember me: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
-
-    else:
-        asm3.al.error("database:%s username:%s password:%s failed authentication from %s [%s]" % (database, username, password, remoteip, useragent), "users.web_login", dbo)
+    try:
+        dbo.locked = asm3.configuration.smdb_locked(dbo)
+        dbo.timezone = asm3.configuration.timezone(dbo)
+        dbo.timezone_dst = asm3.configuration.timezone_dst(dbo)
+        dbo.installpath = path
+        dbo.locale = asm3.configuration.locale(dbo)
+        session.nologconnection = nologconnection
+        session.mobileapp = mobileapp 
+        update_session(dbo, session, user.USERNAME)
+    except:
+        asm3.al.error("failed setting up session: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
         return "FAIL"
+
+    try:
+        # Mark the user logged in
+        if not nologconnection: 
+            asm3.audit.login(dbo, username, remoteip, useragent)
+        asm3.al.info("%s logged in" % user.USERNAME, "users.login", dbo)
+        update_user_activity(dbo, user.USERNAME)
+    except:
+        asm3.al.error("failed updating user activity: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
+
+    try:
+        # Did the user request "remember me"? If so, generate a token
+        # for them and remember the user for 2 weeks
+        if rememberme:
+            token = asm3.utils.uuid_str()
+            asm3.cachemem.put(token, "%s|%s|%s" % (database, username, password), 86400*14)
+            return "%s|%s" % (user.USERNAME, token)
+    except:
+        asm3.al.error("failed getting remember me: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
 
     return user.USERNAME
 
