@@ -1282,7 +1282,7 @@ def csvexport_animals(dbo, dataset, animalids = "", where = "", includemedia = "
         row["ANIMALREASONFORENTRY"] = a["REASONFORENTRY"]
         row["ANIMALENTRYCATEGORY"] = a["ENTRYREASONNAME"]
         row["ANIMALJURISDICTION"] = a["JURISDICTIONNAME"]
-        row["ANIMALPICKUPLOCATION"] = a["PICKUPLOCATIONNAME"]
+        row["ANIMALPICKUPLOCATION"] = asm3.utils.iif(a["ISPICKUP"] == 1, a["PICKUPLOCATIONNAME"], "")
         row["ANIMALPICKUPADDRESS"] = a["PICKUPADDRESS"]
         row["ANIMALNEUTERED"] = a["NEUTERED"]
         row["ANIMALNEUTEREDDATE"] = asm3.i18n.python2display(l, a["NEUTEREDDATE"])
@@ -1290,7 +1290,7 @@ def csvexport_animals(dbo, dataset, animalids = "", where = "", includemedia = "
         row["ANIMALMICROCHIPDATE"] = asm3.i18n.python2display(l, a["IDENTICHIPDATE"])
         row["ANIMALENTRYDATE"] = asm3.i18n.python2display(l, a["DATEBROUGHTIN"])
         row["ANIMALDECEASEDDATE"] = asm3.i18n.python2display(l, a["DECEASEDDATE"])
-        row["ANIMALDECEASEDREASON"] = a["PTSREASONNAME"]
+        row["ANIMALDECEASEDREASON"] = asm3.utils.iif(a["DECEASEDDATE"] is not None, a["PTSREASONNAME"], "")
         row["ANIMALDECEASEDNOTES"] = a["PTSREASON"]
         row["ANIMALEUTHANIZED"] = a["PUTTOSLEEP"]
         row["ANIMALNOTFORADOPTION"] = a["ISNOTAVAILABLEFORADOPTION"]
@@ -1334,7 +1334,7 @@ def csvexport_animals(dbo, dataset, animalids = "", where = "", includemedia = "
         row["PERSONCITY"] = nn(a["CURRENTOWNERTOWN"])
         row["PERSONSTATE"] = nn(a["CURRENTOWNERCOUNTY"])
         row["PERSONZIPCODE"] = nn(a["CURRENTOWNERPOSTCODE"])
-        row["PERSONFOSTERER"] = a["ACTIVEMOVEMENTTYPE"] == 2 and 1 or 0
+        row["PERSONFOSTERER"] = asm3.utils.iif(a["ACTIVEMOVEMENTTYPE"] == 2, "1", "0")
         row["PERSONHOMEPHONE"] = nn(a["CURRENTOWNERHOMETELEPHONE"])
         row["PERSONWORKPHONE"] = nn(a["CURRENTOWNERWORKTELEPHONE"])
         row["PERSONCELLPHONE"] = nn(a["CURRENTOWNERMOBILETELEPHONE"])
