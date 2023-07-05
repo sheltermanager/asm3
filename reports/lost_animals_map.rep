@@ -2,14 +2,14 @@ Lost Animals Map
 ###
 Maps
 ###
-34703/Any rev02
+34703/Any rev03
 ###
 Map of locations where animals have been reported lost and so far not be reunited with their owner.
 ###
 en
 ###
 SELECT latlong, 
-'<a href="person?id=', '">',ownername, '<a/><br />',
+'<a target="_blank" href="person?id=', '">',ownername, '<a/><br />',
 owneraddress , '<br>', 
 emailaddress, ' ', mobiletelephone
 FROM animallost

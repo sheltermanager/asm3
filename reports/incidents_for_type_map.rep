@@ -2,7 +2,7 @@ Incidents for Type
 ###
 Maps
 ###
-34703/Any rev02
+34703/Any rev03
 ###
 Incidents between two dates for a particular type plotted on a map
 ###
@@ -13,7 +13,7 @@ $VAR to DATE Enter to date$
 $VAR type STRING Enter the partial incident type$
 
 SELECT ac.DispatchLatLong, 
-'<a href="incident?id=', ac.ID, '">', ac.DispatchAddress, '</a>'
+'<a target="_blank" href="incident?id=', ac.ID, '">', ac.DispatchAddress, '</a>'
 FROM animalcontrol ac
 INNER JOIN incidenttype t ON t.ID = ac.IncidentTypeID
 WHERE IncidentDateTime >= '$@from$' AND IncidentDateTime <= '$@to$'
@@ -27,7 +27,7 @@ Incomplete Incidents for Type
 ###
 Maps
 ###
-34703/Any rev02
+34703/Any rev03
 ###
 Incomplete Incidents between two dates for a particular type plotted on a map
 ###
@@ -38,7 +38,7 @@ $VAR to DATE Enter to date$
 $VAR type STRING Enter the partial incident type$
 
 SELECT ac.DispatchLatLong, 
-'<a href="incident?id=', ac.ID, '">', ac.DispatchAddress, '</a>'
+'<a target="_blank" href="incident?id=', ac.ID, '">', ac.DispatchAddress, '</a>'
 FROM animalcontrol ac
 INNER JOIN incidenttype t ON t.ID = ac.IncidentTypeID
 WHERE IncidentDateTime >= '$@from$' AND IncidentDateTime <= '$@to$'
@@ -53,7 +53,7 @@ Completed Incidents for Type
 ###
 Maps
 ###
-34703/Any rev02
+34703/Any rev03
 ###
 Incomplete Incidents between two dates for a particular type plotted on a map
 ###
@@ -64,7 +64,7 @@ $VAR to DATE Enter to date$
 $VAR type STRING Enter the partial incident type$
 
 SELECT ac.DispatchLatLong, 
-'<a href="incident?id=', ac.ID, '">', ac.DispatchAddress, '</a>'
+'<a target="_blank" href="incident?id=', ac.ID, '">', ac.DispatchAddress, '</a>'
 FROM animalcontrol ac
 INNER JOIN incidenttype t ON t.ID = ac.IncidentTypeID
 WHERE IncidentDateTime >= '$@from$' AND IncidentDateTime <= '$@to$'

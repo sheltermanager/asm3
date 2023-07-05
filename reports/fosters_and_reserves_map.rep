@@ -2,7 +2,7 @@ Fosters and Reserves Map
 ###
 Maps
 ###
-34703/Any rev01
+34703/Any rev02
 ###
 Map of locations displaying reserves and active fosters.
 ###
@@ -12,7 +12,7 @@ SELECT
 o.LatLong,
 '<a target="blank" href="person?id=', '">', o.OwnerName, '</a><br>',
 o.OwnerAddress, '<br>', 
-'<a href="animal?id=', a.AnimalName,' - ', a.ShelterCode, '</a>', ' (', lksmovementtype.MovementType ')'
+'<a target="_blank" href="animal?id=', a.AnimalName,' - ', a.ShelterCode, '</a>', ' (', lksmovementtype.MovementType ')'
 FROM adoption ad
 INNER JOIN animal a ON ad.AnimalID = a.ID
 INNER JOIN owner o ON ad.OwnerID = o.ID

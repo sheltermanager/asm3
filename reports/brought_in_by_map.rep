@@ -2,7 +2,7 @@ Brought In By Map
 ###
 Maps
 ###
-34703/Any rev02
+34703/Any rev03
 ###
 Animals between two dates with brought in by owner pinned on the map
 ###
@@ -12,7 +12,7 @@ $VAR from DATE Brought in between$
 $VAR to DATE and$
 
 SELECT o.LatLong, 
-'<a href="animal?id=', a.ID, '">', a.AnimalName, ' - ', a.ShelterCode, '</a>',
+'<a target="_blank" href="animal?id=', a.ID, '">', a.AnimalName, ' - ', a.ShelterCode, '</a>',
 '<br>Brought in on ', a.DateBroughtIn,
 '<br><b><a href="person?id=', o.ID, '">', o.OwnerName, '</a><br />',
 o.OwnerAddress, '<br />',

@@ -2,14 +2,14 @@ Banned Owners Map
 ###
 Maps
 ###
-34703/Any rev02
+34703/Any rev03
 ###
 Map of owners banned from adopting animals.
 ###
 en
 ###
 SELECT latlong, 
-'<a href="person?id=' , ownername,'/a<>br />' , owneraddress
+'<a target="_blank" href="person?id=' , ownername,'/a<>br />' , owneraddress
 FROM owner 
 WHERE isbanned = 1 AND latlong is not null AND latlong <> ''
 ORDER BY ownername
