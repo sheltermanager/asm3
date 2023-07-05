@@ -180,6 +180,7 @@ $(function() {
                 "AdditionalFlags": _("Flags"),
                 "ShelterLocation":  _("Location"),
                 "ShelterLocationUnit":  _("Unit"),
+                "AdoptionCoordinatorID": _("Coordinator"),
                 "Fosterer": _("Fosterer"),
                 "OwnerID": _("Owner"),
                 "Size":  _("Size"),
@@ -225,6 +226,7 @@ $(function() {
                     isa[1] + '</span>';
             }
             else if (name == "OwnerID") { rv = html.person_link(row.OWNERID, row.OWNERNAME); }
+            else if (name == "AdoptionCoordinatorID") { rv = html.person_link(row.ADOPTIONCOORDINATORID, row.ADOPTIONCOORDINATORNAME); }
             else if (name == "AnimalTypeID") { rv = row.ANIMALTYPENAME; }
             else if ( name == "BaseColourID") { rv = row.BASECOLOURNAME; }
             else if ( name == "SpeciesID") { rv = row.SPECIESNAME; }

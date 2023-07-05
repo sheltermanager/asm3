@@ -733,6 +733,7 @@ def json_animalfindcolumns(dbo):
         ( "AdditionalFlags", _("Flags", l) ),
         ( "ShelterLocation", _("Location", l) ),
         ( "ShelterLocationUnit", _("Unit", l) ),
+        ( "AdoptionCoordinatorID", _("Coordinator", l) ),
         ( "Fosterer", _("Fosterer", l) ),
         ( "OwnerID", _("Owner", l) ),
         ( "Size", _("Size", l) ),
