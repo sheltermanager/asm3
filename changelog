@@ -1,6 +1,7 @@
 47
 ================
 
+05/07/23 CSV import fields: ANIMALDECEASEDREASON/NOTES, ANIMALEUTHANIZED
 05/07/23 Add Adoption Coordinator to find animal result columns
 05/07/23 Set stripe API version it was written for in codebase
 04/07/23 If onlineform has breed1, but no species, use species from breed
