@@ -8,6 +8,8 @@ from .base import PaymentProcessor, ProcessorError, PayRefError, AlreadyReceived
 
 from asm3.sitedefs import BASE_URL
 
+STRIPE_API_VERSION = "2018-08-23"
+
 class IncorrectEventError(ProcessorError):
     pass
 
@@ -53,6 +55,7 @@ class Stripe(PaymentProcessor):
             item_description, totalamount + totalvat, currency), "stripe.checkoutPage", self.dbo)
 
         import stripe # we want this to throw a non-ProcessorError if module is unavailable
+        stripe.api_version = STRIPE_API_VERSION
 
         # Create the stripe checkout session
         session = stripe.checkout.Session.create(
@@ -115,6 +118,7 @@ class Stripe(PaymentProcessor):
             raise AlreadyReceivedError("payref '%s' has already been processed." % payref)
 
         import stripe # we want this to throw a non-ProcessorError if module is unavailable
+        stripe.api_version = STRIPE_API_VERSION
 
         # Load the Stripe Charge and BalanceTransaction records (needed to get the fee
         # and charge_id is the transaction id stamped on the record)
