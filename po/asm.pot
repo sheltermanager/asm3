@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-07-05 10:40+0000\n"
+"POT-Creation-Date: 2023-07-05 13:41+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3081,7 +3081,7 @@ msgstr ""
 msgid "Complaint"
 msgstr ""
 
-#: mobile.py dbupdate.py clinic_appointment.js incident.js diary.js
+#: mobile.py dbupdate.py clinic_appointment.js incident.js diary.js mobile2.js
 msgid "Complete"
 msgstr ""
 

@@ -274,7 +274,7 @@ $(document).ready(function() {
             '<input type="text" class="form-control" id="unit" name="unit">',
         '</div>',
         '<div class="d-flex justify-content-center pb-2"><button id="btn-addanimal-submit" type="submit" class="btn btn-primary">' + _("Create") + 
-        '<div class="spinner-border spinner-border-sm" style="display: none"></div></div>',
+        '<div class="spinner-border spinner-border-sm" style="display: none"></div></button></div>',
         '</form>',
         '</div>',
         */
@@ -325,7 +325,7 @@ $(document).ready(function() {
         '<div class="list-group">',
         '</div>',
         '</div>',
-        '<div id="content-myincidents-view" class="container" style="display: none">',
+        '<div id="content-myincidents-view" class="incident-view container" style="display: none">',
         '</div>',
 
         '<div id="content-unincidents" class="container" style="display: none">',
@@ -336,7 +336,7 @@ $(document).ready(function() {
         '<div class="list-group">',
         '</div>',
         '</div>',
-        '<div id="content-unincidents-view" class="container" style="display: none">',
+        '<div id="content-unincidents-view" class="incident-view container" style="display: none">',
         '</div>',
 
         '<div id="content-opincidents" class="container" style="display: none">',
@@ -347,7 +347,7 @@ $(document).ready(function() {
         '<div class="list-group">',
         '</div>',
         '</div>',
-        '<div id="content-opincidents-view" class="container" style="display: none">',
+        '<div id="content-opincidents-view" class="incident-view container" style="display: none">',
         '</div>',
 
         '<div id="content-flincidents" class="container" style="display: none">',
@@ -358,7 +358,7 @@ $(document).ready(function() {
         '<div class="list-group">',
         '</div>',
         '</div>',
-        '<div id="content-flincidents-view" class="container" style="display: none">',
+        '<div id="content-flincidents-view" class="incident-view container" style="display: none">',
         '</div>',
 
         '<div id="content-checklicence" class="container" style="display: none">',
@@ -529,6 +529,28 @@ $(document).ready(function() {
             });
             h.push(aci("log", _("Log"), x.join("\n")));
         }
+        if (common.has_permission("ale")) {
+            x = [
+                '<form method="post" action="' + post_handler + '">',
+                '<input type="hidden" name="mode" value="addlog">',
+                '<input type="hidden" name="linkid" value="' + a.ID + '">',
+                '<input type="hidden" name="linktypeid" value="0">',
+                '<div class="mb-3">',
+                    '<label for="logtype" class="form-label">' + _("Log Type") + '</label>',
+                    '<select class="form-control" id="logtype" name="logtypeid">',
+                    html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
+                    '</select>',
+                '</div>',
+                '<div class="mb-3">',
+                    '<label for="comments" class="form-label">' + _("Log Text") + '</label>',
+                    '<input type="text" class="form-control" id="comments" name="comments">',
+                '</div>',
+                '<div class="d-flex justify-content-center pb-2"><button id="btn-addlog-submit" type="submit" class="btn btn-primary">' + _("Create"),
+                '<div class="spinner-border spinner-border-sm" style="display: none"></div></button></div>',
+                '</form>'
+            ];
+            h.push(aci("addlog", _("Add Log"), x.join("\n")));
+        }
         h.push('</div>'); // close accordion
         $(selector).html( h.join("\n") );
         // Display our animal now it's rendered
@@ -580,6 +602,7 @@ $(document).ready(function() {
         let comptp = dt(ac.COMPLETEDATE) + ' ' + ac.COMPLETEDNAME;
         if (!ac.COMPLETEDDATE && common.has_permission("caci")) {
             comptp = '<select class="form-control complete"><option value=""></option>' + html.list_to_options(controller.completedtypes, "ID", "COMPLETEDNAME") + '</select>';
+            comptp += '<button type="button" class="complete btn btn-primary"><i class="bi-calendar"></i> ' + _("Complete") + '</button>';
         }
         let dispdt = dt(ac.DISPATCHDATETIME);
         if (!ac.DISPATCHDATETIME && common.has_permission("cacd")) { 
@@ -681,15 +704,28 @@ $(document).ready(function() {
             });
             aci("log", _("Log"), x.join("\n"));
         }
-            /* facility to add a log TODO:
-            h.append(jqm_form("aclog", ajax="false"))
-            h.append(jqm_hidden("id", str(a["ID"])))
-            h.append(jqm_hidden("posttype", "vinclog"))
-            h.append(jqm_fieldcontain("logtype", _("Log Type", l), jqm_select("logtype", jqm_options(asm3.lookups.get_log_types(dbo), "ID", "LOGTYPENAME"))))
-            h.append(jqm_fieldcontain("logtext", _("Log Text", l), jqm_text("logtext")))
-            h.append(jqm_submit(_("Add Log", l)))
-            h.append(jqm_form_end())
-            */
+        if (common.has_permission("ale")) {
+            x = [
+                '<form method="post" action="' + post_handler + '">',
+                '<input type="hidden" name="mode" value="addlog">',
+                '<input type="hidden" name="linkid" value="' + ac.ID + '">',
+                '<input type="hidden" name="linktypeid" value="6">',
+                '<div class="mb-3">',
+                    '<label for="logtype" class="form-label">' + _("Log Type") + '</label>',
+                    '<select class="form-control" id="logtype" name="logtypeid">',
+                    html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
+                    '</select>',
+                '</div>',
+                '<div class="mb-3">',
+                    '<label for="comments" class="form-label">' + _("Log Text") + '</label>',
+                    '<input type="text" class="form-control" id="comments" name="comments">',
+                '</div>',
+                '<div class="d-flex justify-content-center pb-2"><button id="btn-addlog-submit" type="submit" class="btn btn-primary">' + _("Create"),
+                '<div class="spinner-border spinner-border-sm" style="display: none"></div></button></div>',
+                '</form>'
+            ];
+            h.push(aci("addlog", _("Add Log"), x.join("\n")));
+        }
         h.push("</div>"); // close accordion
         $(selector).html( h.join("\n") );
         // Display the record
@@ -701,7 +737,7 @@ $(document).ready(function() {
         $(".respond").click(function() {
             // TODO: post/respond
         });
-        $(".complete").click(function() {
+        $(".btn .complete").click(function() {
             // TODO: post to the back end and complete the incident
         });
         $(".showmap").click(function() {
@@ -869,6 +905,8 @@ $(document).ready(function() {
             $.each(incidents, function(i, v) {
                 if (v.ID == incidentid) { ac = v; return false; }
             });
+            // Incidents rely on IDs to make accordions work - remove contents of all incident views before loading one
+            $(".incident-view").empty();
             if (ac) { 
                 render_incident(ac, selector + "-view", backlink);
             }

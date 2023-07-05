@@ -956,6 +956,7 @@ class mobile2(ASMEndpoint):
             "completedtypes": asm3.lookups.get_incident_completed_types(dbo),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "logtypes":     asm3.lookups.get_log_types(dbo),
             "sexes":        asm3.lookups.get_sexes(dbo),
             "sizes":        asm3.lookups.get_sizes(dbo),
             "smdblocked":   asm3.configuration.smdb_locked(dbo),
@@ -969,6 +970,10 @@ class mobile2(ASMEndpoint):
     #def post_addanimal(self, o):
     #    self.check(asm3.users.ADD_ANIMAL)
     #    pass # TODO
+
+    #def post addlog(self, o):
+    #    self.check(asm3.users.ADD_LOG)
+    #    pass
 
     def post_medical(self, o):
         self.check(asm3.users.CHANGE_MEDICAL)
