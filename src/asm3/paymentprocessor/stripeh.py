@@ -74,6 +74,21 @@ class Stripe(PaymentProcessor):
             cancel_url=cancel_url
         )
 
+        """
+        # This is how line items should look for the 2022-11-15 stripe API (untested)
+        line_items=[{
+            'quantity': 1,
+            'price_data': {
+                'unit_amount': int(amount * 100),
+                'product_data': {
+                    'name': description,
+                    'description': description,
+                    'currency': currency
+                }
+            }
+        }],
+        """
+
         # Construct the page that will redirect us to the real checkout
         s = """<DOCTYPE html>
         <html>
