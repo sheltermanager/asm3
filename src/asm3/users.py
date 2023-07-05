@@ -511,10 +511,26 @@ def get_user(dbo, user):
 
 def get_active_users(dbo):
     """
-    Returns a list of active users on the system
+    Returns a string containing the active/logged in users on the system
     USERNAME, SINCE, MESSAGES
     """
     return asm3.utils.nulltostr(asm3.cachemem.get("activity_%s" % dbo.database))
+
+def is_user_valid(dbo, user):
+    """
+    Returns True if user both exists in the database and does not have DisableLogin set.
+    This function is called by ASMEndpoint.is_loggedin for nearly every request
+    so it uses a 24 hour memory cache to keep the list rather than going to the database.
+    The functions in here that add, change or delete users will invalidate that cache.
+    """
+    users = asm3.cachemem.get("usernames_%s" % dbo.database)
+    if users is None:
+        ul = dbo.query("SELECT UserName FROM users WHERE (DisableLogin Is Null OR DisableLogin=0)")
+        users = []
+        for u in ul:
+            users.append(u.USERNAME)
+        asm3.cachemem.put("usernames_%s" % dbo.database, users, 86400)
+    return user in users
 
 def logout(session, remoteip = "", useragent = ""):
     """
@@ -607,6 +623,9 @@ def insert_user_from_form(dbo, username, post):
             if rid.strip() != "":
                 dbo.insert("userrole", { "UserID": nuserid, "RoleID": rid }, generateID=False)
 
+    # Invalidate the cache of usernames
+    asm3.cachemem.delete("usernames_%s" % dbo.database)
+
     # If the option was set, email these new credentials to the user
     # Note: we do not audit the actual email content to prevent plaintext passwords appearing in the audit log
     if post.boolean("emailcred") and post["email"] != "":
@@ -672,12 +691,17 @@ def update_user_from_form(dbo, username, post):
             if rid.strip() != "":
                 dbo.insert("userrole", { "UserID": userid, "RoleID": rid }, generateID=False)
 
+    # Invalidate the cache of usernames
+    asm3.cachemem.delete("usernames_%s" % dbo.database)
+
 def delete_user(dbo, username, uid):
     """
     Deletes the selected user
     """
     dbo.delete("userrole", "UserID=%d" % uid)
     dbo.delete("users", uid, username)
+    # Invalidate the cache of usernames
+    asm3.cachemem.delete("usernames_%s" % dbo.database)
 
 def insert_role_from_form(dbo, username, post):
     """
@@ -717,27 +741,49 @@ def reset_password(dbo, userid, password):
     """
     dbo.update("users", userid, { "Password": hash_password(password), "EnableTOTP": 0 })
 
-def update_session(session):
+def update_session(dbo, session, username):
     """
-    Updates and reloads stored session data, triggers reloading of config.js by changing config_ts
+    Loads the session data for the username given.
+    Triggers reloading of config.js by changing config_ts
     """
-    dbo = session.dbo
+    user = get_user(dbo, username)
+    session.dbo = dbo
+    session.user = user.USERNAME
+    session.userid = user.ID
+    session.superuser = user.SUPERUSER
     locale = asm3.configuration.locale(dbo)
-    theme = "asm"
     loverride = get_locale_override(dbo, session.user)
     if loverride != "": 
         asm3.al.debug("user %s has locale override of %s set, switching." % (session.user, loverride), "users.update_session", dbo)
         locale = loverride
+    session.locale = locale
+    dbo.locale = session.locale
+    theme = "asm"
     toverride = get_theme_override(dbo, session.user)
     if toverride != "":
         asm3.al.debug("user %s has theme override of %s set, switching." % (session.user, toverride), "users.update_session", dbo)
         theme = toverride
-    dbo.locale = locale
+    session.theme = theme
     if not dbo.is_large_db:
         dbo.is_large_db = dbo.query_int("SELECT COUNT(*) FROM owner") > 4000 or \
             dbo.query_int("SELECT COUNT(*) FROM animal") > 2000
-    session.locale = locale
-    session.theme = theme
+    session.securitymap = get_security_map(dbo, user.ID)
+    session.roles = user.ROLES
+    session.roleids = user.ROLEIDS
+    session.siteid = asm3.utils.cint(user.SITEID)
+    session.locationfilter = asm3.utils.nulltostr(user.LOCATIONFILTER)
+    session.staffid = user.OWNERID
+    session.visibleanimalids = ""
+    # If there's a -12 in location filter, the user can only see their current fosters
+    # Set visibleanimalids to those on foster
+    if asm3.utils.nulltostr(user.LOCATIONFILTER).find("-12") != -1:
+        va = []
+        af = dbo.query("SELECT AnimalID FROM adoption WHERE MovementType=2 AND OwnerID=? AND MovementDate<=? AND (ReturnDate Is Null OR ReturnDate>?)", \
+            ( user.OWNERID, dbo.today(), dbo.today() ))
+        va.append("0")
+        for r in af:
+            va.append(str(r.ANIMALID))
+        session.visibleanimalids = ",".join(va)
     session.config_ts = asm3.i18n.format_date(asm3.i18n.now(), "%Y%m%d%H%M%S")
 
 def web_login(post, session, remoteip, useragent, path):
@@ -791,76 +837,18 @@ def web_login(post, session, remoteip, useragent, path):
             dbo.timezone = asm3.configuration.timezone(dbo)
             dbo.timezone_dst = asm3.configuration.timezone_dst(dbo)
             dbo.installpath = path
-            session.locale = asm3.configuration.locale(dbo)
-            dbo.locale = session.locale
-            session.dbo = dbo
-            session.user = user.USERNAME
-            session.userid = user.ID
-            session.superuser = user.SUPERUSER
-            session.mobileapp = mobileapp
-            update_session(session)
+            dbo.locale = asm3.configuration.locale(dbo)
+            session.nologconnection = nologconnection
+            session.mobileapp = mobileapp 
+            update_session(dbo, session, user.USERNAME)
         except:
             asm3.al.error("failed setting up session: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
             return "FAIL"
 
         try:
-            session.securitymap = get_security_map(dbo, user.ID)
-        except:
-            # This is a pre-3002 login where the securitymap is with 
-            # the user (the error occurs because there's no role table)
-            asm3.al.debug("role table does not exist, using securitymap from user", "users.web_login", dbo)
-            session.securitymap = user.SECURITYMAP
-
-        try:
-            ur = get_users(dbo, user.USERNAME)[0]
-            session.roles = ur.ROLES
-            session.roleids = ur.ROLEIDS
-            session.siteid = asm3.utils.cint(user.SITEID)
-            session.locationfilter = asm3.utils.nulltostr(user.LOCATIONFILTER)
-            session.staffid = user.OWNERID
-            session.visibleanimalids = ""
-            # If there's a -12 in location filter, the user can only see their current fosters
-            # Set visibleanimalids to those on foster
-            if asm3.utils.nulltostr(user.LOCATIONFILTER).find("-12") != -1:
-                va = []
-                af = dbo.query("SELECT AnimalID FROM adoption WHERE MovementType=2 AND OwnerID=? AND MovementDate<=? AND (ReturnDate Is Null OR ReturnDate>?)", \
-                    ( user.OWNERID, dbo.today(), dbo.today() ))
-                va.append("0")
-                for r in af:
-                    va.append(str(r.ANIMALID))
-                session.visibleanimalids = ",".join(va)
-        except:
-            # Users coming from v2 won't have the
-            # IPRestriction or EmailAddress fields necessary for get_users - we can't
-            # help them right now so just give them an empty set of
-            # roles and locationfilter until they login again after the db update
-            session.roles = ""
-            session.roleids = ""
-            session.locationfilter = ""
-            session.siteid = 0
-            session.staffid = 0
-            session.visibleanimalids = ""
-
-        try:
             # Mark the user logged in
             if not nologconnection: 
                 asm3.audit.login(dbo, username, remoteip, useragent)
-
-            # Check to see if any updates need performing on this database
-            if asm3.dbupdate.check_for_updates(dbo):
-                asm3.dbupdate.perform_updates(dbo)
-                # We did some updates, better reload just in case config/reports/etc changed
-                update_session(session)
-
-            # Check to see if our views and sequences are out of date and need reloading
-            if asm3.dbupdate.check_for_view_seq_changes(dbo):
-                asm3.dbupdate.install_db_views(dbo)
-                asm3.dbupdate.install_db_sequences(dbo)
-
-        except:
-            asm3.al.error("failed updating database: %s" % str(sys.exc_info()[0]), "users.web_login", dbo, sys.exc_info())
-
-        try:
             asm3.al.info("%s logged in" % user.USERNAME, "users.login", dbo)
             update_user_activity(dbo, user.USERNAME)
         except:

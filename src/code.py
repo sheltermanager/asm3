@@ -357,11 +357,7 @@ class ASMEndpoint(object):
         if session.user is None: return False
         if "dbo" not in session: return False
         if session.dbo is None: return False
-        users = session.dbo.query_cache("SELECT UserName FROM users WHERE (DisableLogin Is Null OR DisableLogin=0)", age=300)
-        for u in users:
-            if u.USERNAME == session.user:
-                return True
-        return False
+        return asm3.users.is_user_valid(session.dbo, session.user)
 
     def notfound(self):
         """ Returns a 404 """
@@ -387,7 +383,7 @@ class ASMEndpoint(object):
 
     def reload_config(self):
         """ Reloads items in the session based on database values, invalidates config.js so client reloads it """
-        asm3.users.update_session(session)
+        asm3.users.update_session(session.dbo, session, session.user)
 
     def remote_ip(self):
         """ Gets the IP address of the requester, taking account of reverse proxies """
@@ -4476,6 +4472,14 @@ class mailmerge(JSONEndpoint):
         if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
         return ", ".join(self.recipients(rows))
+
+class maint_be_user(ASMEndpoint):
+    url = "maint_be_user"
+
+    def content(self, o):
+        if not session.nologconnection: raise asm3.utils.ASMError("Forbidden")
+        asm3.users.update_session(o.dbo, o.session, o.post["user"])
+        self.redirect("main")
 
 class maint_db_stats(ASMEndpoint):
     url = "maint_db_stats"
