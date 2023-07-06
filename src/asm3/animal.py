@@ -3603,6 +3603,10 @@ def merge_animal_details(dbo, username, animalid, d, force=False):
     if "neutered" in d and d["neutered"] == "on" and a.NEUTERED == 0: uv["NEUTERED"] = 1
     merge_date("neutereddate", "NEUTEREDDATE")
     merge_date("dateofbirth", "DATEOFBIRTH")
+    merge_date("deceaseddate", "ANIMALDECEASEDDATE")
+    merge_int("puttosleep", "PUTTOSLEEP")
+    merge_int("deathcategory", "PTSREASONID")
+    merge("ptsreason", "PTSREASON")
     merge_float("weight", "WEIGHT")
     merge_int("internallocation", "SHELTERLOCATION")
     merge("unit", "SHELTERLOCATIONUNIT")
