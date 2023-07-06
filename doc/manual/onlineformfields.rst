@@ -43,8 +43,10 @@ comments
     The comments field for the animal (for historical reasons, comments populates the animal's description field), person, lost, found or waiting list animal
 description
     The description for the lost, found or waiting list animal
+entryreason
+    The entry category for an animal. ASM will try and guess this from the entry reasons lookup values in the database.
 reason
-    The reason the person is putting their animal on the waiting list (or reason for entry if creating an animal)
+    The reason the person is putting their animal on the waiting list (or reason for entry notes if creating an animal)
 type
    The animal type for the animal. ASM will try and guess based on the text which one is meant. Use a lookup field to limit the choices to known items.
 species
