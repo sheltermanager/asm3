@@ -734,13 +734,13 @@ def update_session(dbo, session, username):
     session.userid = user.ID
     session.superuser = user.SUPERUSER
     locale = asm3.configuration.locale(dbo)
-    if user.LOCALEOVERRIDE and user.LOCALEOVERRIDE != "": 
+    if "LOCALEOVERRIDE" in user and user.LOCALEOVERRIDE and user.LOCALEOVERRIDE != "": 
         asm3.al.debug("%s: locale override of %s" % (session.user, user.LOCALEOVERRIDE), "users.update_session", dbo)
         locale = user.LOCALEOVERRIDE
     session.locale = locale
     dbo.locale = session.locale
     theme = "asm"
-    if user.THEMEOVERRIDE and user.THEMEOVERRIDE != "":
+    if "THEMEOVERRIDE" in user and user.THEMEOVERRIDE and user.THEMEOVERRIDE != "":
         asm3.al.debug("%s:theme override of %s" % (session.user, user.THEMEOVERRIDE), "users.update_session", dbo)
         theme = user.THEMEOVERRIDE
     session.theme = theme
@@ -748,15 +748,19 @@ def update_session(dbo, session, username):
         dbo.is_large_db = dbo.query_int("SELECT COUNT(*) FROM owner") > 4000 or \
             dbo.query_int("SELECT COUNT(*) FROM animal") > 2000
     session.securitymap = get_security_map(dbo, user.ID)
-    session.roles = user.ROLES
-    session.roleids = user.ROLEIDS
-    session.siteid = asm3.utils.cint(user.SITEID)
-    session.locationfilter = asm3.utils.nulltostr(user.LOCATIONFILTER)
-    session.staffid = user.OWNERID
+    session.roles = ""
+    session.roleids = ""
+    session.siteid = 0
+    session.locationfilter = ""
     session.visibleanimalids = ""
+    if "ROLES" in user: session.roles = user.ROLES
+    if "ROLEIDS" in user: session.roleids = user.ROLEIDS
+    if "SITEID" in user: session.siteid = asm3.utils.cint(user.SITEID)
+    if "LOCATIONFILTER" in user: session.locationfilter = asm3.utils.nulltostr(user.LOCATIONFILTER)
+    if "OWNERID" in user: session.staffid = user.OWNERID
     # If there's a -12 in location filter, the user can only see their current fosters
     # Set visibleanimalids to those on foster
-    if asm3.utils.nulltostr(user.LOCATIONFILTER).find("-12") != -1:
+    if "LOCATIONFILTER" in user and asm3.utils.nulltostr(user.LOCATIONFILTER).find("-12") != -1:
         va = []
         af = dbo.query("SELECT AnimalID FROM adoption WHERE MovementType=2 AND OwnerID=? AND MovementDate<=? AND (ReturnDate Is Null OR ReturnDate>?)", \
             ( user.OWNERID, dbo.today(), dbo.today() ))
