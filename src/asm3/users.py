@@ -773,10 +773,15 @@ def update_session(dbo, session, username):
 def web_login(post, session, remoteip, useragent, path):
     """
     Performs a login and sets up the user's session.
+    NOTE: ASM3 will no longer allow login on ASM2 databases due to update_session above calling
+          get_user (which relies on the role tables existing). You should run cron.maint_db_update
+          to update the database before attempting to login.
     Returns the username on successful login, or:
         FAIL        - problem with user/pass/account/ip
         DISABLED    - The database is disabled
         WRONGSERVER - The database is not on this server
+        ASK2FA      - User has 2FA enabled, challenge for code
+        BAD2FA      - 2FA enabled and OTP does not match
     """
     database = post["database"]
     username = post["username"]
