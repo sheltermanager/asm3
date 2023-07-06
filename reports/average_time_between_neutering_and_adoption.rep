@@ -1,0 +1,51 @@
+Average Time between Neutering and Adoption
+###
+Statistics
+###
+3000/PostgreSQL rev01
+###
+Animals adopted between two dates with average number of days since neutering
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT animal.animalname, lksex.sex, animal.animalage, animal.neutereddate, 
+animal.activemovementdate, entryreason.reasonname,
+EXTRACT(DAY FROM ActiveMovementDate - NeuteredDate)::integer  AS days
+FROM entryreason 
+INNER JOIN animal ON entryreason.ID = animal.entryreasonid
+INNER JOIN lksex ON animal.sex = lksex.ID
+WHERE ActiveMovementType = 1 AND Neutered = 1 AND NeuteredDate IS NOT NULL AND ActiveMovementDate >= '$@from$' AND ActiveMovementDate <= '$@to$' 
+ORDER BY ActiveMovementDate
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Sex</th>
+<th>Age</th>
+<th>Neutered Date</th>
+<th>Adoption Date</th>
+<th>Days</th>  
+<th>Entry Reason</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SEX</td>
+<td>$ANIMALAGE</td>
+<td>$NEUTEREDDATE</td>
+<td>$ACTIVEMOVEMENTDATE</td>
+<td>$DAYS</td>
+<td>$REASONNAME</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<p>Average Days: {AVG.Days}</p>
+FOOTER$$
