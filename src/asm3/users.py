@@ -378,24 +378,6 @@ def change_password(dbo, username, oldpassword, newpassword):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Password is incorrect.", l))
     dbo.execute("UPDATE users SET Password = ? WHERE UserName LIKE ?", (hash_password(newpassword), username))
 
-def get_locale_override(dbo, username):
-    """
-    Returns a user's locale override, or empty string if it doesn't have one
-    """
-    try:
-        return dbo.query_string("SELECT LocaleOverride FROM users WHERE UserName LIKE ?", [username])
-    except:
-        return ""
-
-def get_theme_override(dbo, username):
-    """
-    Returns a user's theme override, or empty string if it doesn't have one
-    """
-    try:
-        return dbo.query_string("SELECT ThemeOverride FROM users WHERE UserName LIKE ?", [username])
-    except:
-        return ""
-
 def get_real_name(dbo, username):
     """
     Returns a user's real name
@@ -752,17 +734,15 @@ def update_session(dbo, session, username):
     session.userid = user.ID
     session.superuser = user.SUPERUSER
     locale = asm3.configuration.locale(dbo)
-    loverride = get_locale_override(dbo, session.user)
-    if loverride != "": 
-        asm3.al.debug("user %s has locale override of %s set, switching." % (session.user, loverride), "users.update_session", dbo)
-        locale = loverride
+    if user.LOCALEOVERRIDE and user.LOCALEOVERRIDE != "": 
+        asm3.al.debug("%s: locale override of %s" % (session.user, user.LOCALEOVERRIDE), "users.update_session", dbo)
+        locale = user.LOCALEOVERRIDE
     session.locale = locale
     dbo.locale = session.locale
     theme = "asm"
-    toverride = get_theme_override(dbo, session.user)
-    if toverride != "":
-        asm3.al.debug("user %s has theme override of %s set, switching." % (session.user, toverride), "users.update_session", dbo)
-        theme = toverride
+    if user.THEMEOVERRIDE and user.THEMEOVERRIDE != "":
+        asm3.al.debug("%s:theme override of %s" % (session.user, user.THEMEOVERRIDE), "users.update_session", dbo)
+        theme = user.THEMEOVERRIDE
     session.theme = theme
     if not dbo.is_large_db:
         dbo.is_large_db = dbo.query_int("SELECT COUNT(*) FROM owner") > 4000 or \
