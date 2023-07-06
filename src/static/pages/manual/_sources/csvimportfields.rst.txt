@@ -119,6 +119,12 @@ ANIMALREASONFORENTRY
     Free text, notes on the reason the animal entered the shelter.
 ANIMALDECEASEDDATE
     If the animal is deceased, the date it died.
+ANIMALDECEASEDREASON
+    The death category for the animal, which should correspond to one in your database.
+ANIMALDECEASEDNOTES
+    The notes about the animal's death
+ANIMALEUTHANIZED
+    Y/N to indicate whether the animal was euthanized
 ANIMALADDITIONAL<fieldname>
     If you have animal additional fields defined, you can put the uppercased version of their name as a suffix to this. Eg, for an additional field called Weight, ANIMALADDITIONALWEIGHT
 COSTTYPE
