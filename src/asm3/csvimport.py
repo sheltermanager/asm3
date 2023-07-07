@@ -443,7 +443,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             a["datebroughtin"] = gkd(dbo, row, "ANIMALENTRYDATE", True)
             a["deceaseddate"] = gkd(dbo, row, "ANIMALDECEASEDDATE")
             a["ptsreason"] = gks(row, "ANIMALDECEASEDNOTES")
-            a["puttosleep"] = gkbi(row, "ANIMALEUTHANIZED")
+            a["puttosleep"] = gkbc(row, "ANIMALEUTHANIZED")
             a["deathcategory"] = gkl(dbo, row, "ANIMALDECEASEDREASON", "deathreason", "ReasonName", createmissinglookups)
             if a["deathcategory"] == "0":
                 a["deathcategory"] = str(asm3.configuration.default_death_reason(dbo))
@@ -604,7 +604,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                     if dup is not None:
                         animalid = dup.ID
                         # The animal is a duplicate. Overwrite fields if they are present and have a value
-                        asm3.animal.merge_animal_details(dbo, user, dup.ID, force=True)
+                        asm3.animal.merge_animal_details(dbo, user, dup.ID, a, force=True)
                         # Update flags if present
                         if a["flags"] != "":
                             asm3.animal.update_flags(dbo, user, dup.ID, a["flags"].split(","))
@@ -627,7 +627,6 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
                 if len(htmldata) > 0:
                     htmlpost = asm3.utils.PostedData({ "filename": htmlname, "filetype": "text/html", "filedata": htmldata }, dbo.locale)
                     asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, htmlpost)
-
             except Exception as e:
                 row_error(errors, "animal", rowno, row, e, dbo, sys.exc_info())
 

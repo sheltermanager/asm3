@@ -2484,11 +2484,11 @@ def insert_animal_from_form(dbo, post, username):
         "CurrentVetID":     post.integer("currentvet",0),
         "OwnersVetID":      0,
         "DeceasedDate":     post.date("deceaseddate"),
-        "PTSReasonID":      asm3.configuration.default_death_reason(dbo),
-        "PutToSleep":       0,
-        "IsDOA":            0,
+        "PTSReasonID":      post.integer("deathcategory"),
+        "PutToSleep":       post.boolean("puttosleep"),
+        "IsDOA":            post.boolean("deadonarrival"),
         "DiedOffShelter":   0,
-        "PTSReason":        "",
+        "PTSReason":        post["ptsreason"],
         "IsNotAvailableForAdoption": notforadoption,
         "IsNotForRegistration": notforregistration,
         "Size":             post.integer("size"),
@@ -3595,6 +3595,12 @@ def merge_animal_details(dbo, username, animalid, d, force=False):
         if a[fieldname] is None or a[fieldname] == 0 or force:
             uv[fieldname] = asm3.utils.cint(d[dictfield])
             a[fieldname] = uv[fieldname]
+    def merge_bool(dictfield, fieldname):
+        if dictfield not in d or d[dictfield] == "": return
+        if a[fieldname] is None or a[fieldname] == 0 or force:
+            if d[dictfield] == "on": 
+                uv[fieldname] = 1
+                a[fieldname] = 1
     merge("comments", "ANIMALCOMMENTS")
     merge("healthproblems", "HEALTHPROBLEMS")
     merge("microchipnumber", "IDENTICHIPNUMBER")
@@ -3603,8 +3609,8 @@ def merge_animal_details(dbo, username, animalid, d, force=False):
     if "neutered" in d and d["neutered"] == "on" and a.NEUTERED == 0: uv["NEUTERED"] = 1
     merge_date("neutereddate", "NEUTEREDDATE")
     merge_date("dateofbirth", "DATEOFBIRTH")
-    merge_date("deceaseddate", "ANIMALDECEASEDDATE")
-    merge_int("puttosleep", "PUTTOSLEEP")
+    merge_date("deceaseddate", "DECEASEDDATE")
+    merge_bool("puttosleep", "PUTTOSLEEP")
     merge_int("deathcategory", "PTSREASONID")
     merge("ptsreason", "PTSREASON")
     merge_float("weight", "WEIGHT")
