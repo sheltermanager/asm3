@@ -487,12 +487,70 @@ OutcomeType
     How the animal left the shelter (can be a movement type or deceased reason
     if the animal died)
 
+Qualifiers
+----------
+
+For situations where a record can be linked to many records, such as an animal with
+many vaccination or medical records, or a person with many payments, then you
+must qualify the tokens with a suffix to indicate which of those records you want
+to access.
+
+n (index)
+^^^^^^^^^
+
+Suffix a token with a number to get the nth record when counting from oldest to
+newest. Eg::
+
+    <<VaccinationName1>> - name of oldest vaccination
+    <<TestGiven3>> - given date of 3rd test
+
+Last(n)
+^^^^^^^
+
+Suffix a token with Last[number] to get the nth record counting from newest to
+oldest. Eg::
+
+    <<VaccinationGivenLast1>> - date given of newest vaccination
+    <<MedicalDateStartedLast2>> - start date of second newest medical regimen
+
+(name)
+^^^^^^
+
+Suffix a token with the name of a type to get the oldest given record with that
+type. Eg::
+
+    <<VaccinationGivenRabies>> - first date given of type "Rabies"
+    <<DietDateStartedStandard>> - date first diet on file was started of type "Standard"
+
+Recent(name)
+^^^^^^^^^^^^
+
+Suffix a token with Recent and the name of the type to get the most recently
+given record of that type. Eg::
+
+    <<VaccinationGivenRecentRabies>> - date of most recently given vaccination of type "Rabies"
+    <<LogCommentsRecentWeight>> - log message of the most recently recorded log of type "Weight"
+
+.. note:: When constructing names, the tokens will suppress any spaces, so "Rabies 3 Yr" would become "Rabies3Yr"
+
+Due(name)
+^^^^^^^^^
+
+Suffix a token with Due and the name of the type to get the newest ungiven record
+of that type. Eg::
+
+    <<VaccinationRequiredDueRabies>> - required date for the newest ungiven vaccination of type "Rabies"
+    <<PaymentAmountDueRegular>> - amount for the newest unreceived payment of type "Regular"
+
+Note that the "Due" keyword will not work for medical, vaccination or tests if
+you have turned off the option to include incomplete medical items from
+documents under :menuselection:`Settings --> Options --> Documents --> Include
+incomplete medical records when generating document templates`
+
 Vaccination Keys
 ----------------
 
-Vaccination keys let you access the vaccination records for an animal. There
-are multiple ways of accessing the records. You construct a key that contains
-the field name and then an index for it. The field names are:
+You must use a qualifier suffix to access these records.
 
 VaccinationName
     The name of the vaccination (eg: Booster) 
@@ -529,36 +587,10 @@ VaccinationAdministeringVetPostcode / VaccinationAdministeringVetZipcode
 VaccinationAdministeringVetEmail
     The email address of the vet who administered the vaccination
 
-Just putting a number on the end of the fieldname returns that field for the
-records, counting from oldest to newest. For example, VaccinationName1 returns
-the name of the first vaccination on file for the animal.
-
-You can use the suffix Lastn, where n is a number to count from the newest to
-the oldest instead. For example, VaccinationGivenLast1 returns the given date
-of the most recent vaccination record.
-
-You can also use the vaccination type itself as an index, for example
-VaccinationRequiredDHCPP will return the latest vaccination record of type
-DHCPP. If your vaccination type has spaces in its name, then remove them when
-constructing the key. Eg: A type of “DHCPP Vacc” would bcome
-<<VaccinationRequiredDHCPPVacc>> when accessing it via a wordkey.
-
-The “Recent” keyword operates with the vaccination type and allows you to
-select the most recent vaccination of that type that has a non-blank given
-date. Eg: VaccinationCommentsRecentDHCPP will return the comments of the last
-given DHCPP vaccination.
-
-The "Due" keyword operates with the vaccination type and allows you to
-select the most recent vaccination of that type that has a blank given given 
-date. Eg: VaccinationRequiredDueDHCPP will return the date the most recent
-due DHCPP vaccination. Note that the "Due" keyword will not work if you have 
-turned off the option to include incomplete medical items from documents under
-:menuselection:`Settings --> Options --> Documents --> Include incomplete medical records when generating document templates`
-
 Test Keys
 ----------
 
-The same rules for vaccinations apply to reading test records.
+You must use a qualifier suffix to access these records.
 
 TestName
     The name of the test (eg: FIV) 
@@ -593,10 +625,9 @@ TestAdministeringVetEmail
 Medical Keys
 ------------
 
-The same rules for vaccinations apply to reading medical records, except the
-MedicalName field can be used for looking up the most recent record of that
-treatment. In addition, the Recent keyword looks for medical regimens that have
-a status of complete, while the Due keyword looks for active medical regimens.
+You must use a qualifier suffix to access these records.
+
+.. note:: For medical regimens, the Recent keyword only looks for those with a status of Completed, while the Due keyword only looks for those with a status of Active.
 
 MedicalName
     The name of the medical treatment 
@@ -629,10 +660,9 @@ MedicalComments
 Payment Keys
 ------------
 
-If you are creating a document from the animal or person records, then the same
-rules apply as for vaccinations and medical records when accessing payments.
-The Recent keyword looks for payments that have been received and Due 
-for non-received payments.
+If you are creating a document from the animal or person records, then you must
+use a qualifier suffix to access these records. The Recent keyword looks for
+payments that have been received and Due for non-received payments.
 
 However, if you create an invoice/receipt document from the payment tab of a
 person or animal record (or the payment book), you can select multiple payments
@@ -793,8 +823,7 @@ TransportSex
 Cost Keys
 ---------
 
-The same rules apply as for vaccinations and medical records but for accessing
-costs. The fields are:
+You must use a qualifier suffix to access these records.
 
 CostType
     The cost type
@@ -829,7 +858,7 @@ TotalCosts
 Diet Keys
 ---------
 
-The same rules apply as for vaccinations, but for accessing diet records. The fields are:
+You must use a qualifier suffix to access these records.
 
 DietName
     The name of the diet 
@@ -843,8 +872,7 @@ DietComments
 Log Keys
 --------
 
-The same rules apply as for vaccinations, but for accessing log records. The
-fields are:
+You must use a qualifier suffix to access these records.
 
 LogName
     The type of log 
@@ -1025,13 +1053,9 @@ DocumentImgSrc
 Citation Keys
 -------------
 
-The same rules apply as for vaccinations, but for accessing citations.
-Each citation is indexed with a number for ascending (eg: CitationName1),
-LastX for descending (eg: CitationNameLast1) and with the type name for the
-most recent citation of that type for the person (eg: FineAmountFirstOffence).
-Citation keys can be accessed from a person document or an incident document.
+You must use a qualifier suffix to access these records.
 
-The Recent keyword returns citations where the fine is paid where Due returns unpaid.
+.. note:: The Recent keyword returns citations where the fine is paid where Due returns unpaid.
 
 CitationName
     The type of citation being issued
@@ -1049,14 +1073,9 @@ FinePaidDate
 Equipment Loan Keys
 -------------------
 
-The same rules apply as for vaccinations, but for accessing equipment loans. Each
-loan is indexed with a number for ascending (eg: EquipmentTypeName1), LastX for
-descending (eg: EquipmentTypeNameLast1) and with the type name for the most recent
-loan of that type for the person (eg: EquipmentLoanDateCat). 
+You must use a qualifier suffix to access these records.
 
-The Recent keyword returns returned trap loan records where Due is unreturned.
-
-The fields are:
+.. note:: The Recent keyword returns returned trap loan records where Due is unreturned.
 
 EquipmentTypeName
     The type of equipment being loaned

@@ -77,6 +77,14 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Appendix: Wordkeys</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#organisation-keys">Organisation Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#animal-keys">Animal Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qualifiers">Qualifiers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#n-index">n (index)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#last-n">Last(n)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#name">(name)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#recent-name">Recent(name)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#due-name">Due(name)</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#vaccination-keys">Vaccination Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#test-keys">Test Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#medical-keys">Medical Keys</a></li>
@@ -615,11 +623,69 @@ if the animal died)</p>
 </dd>
 </dl>
 </section>
+<section id="qualifiers">
+<h2>Qualifiers<a class="headerlink" href="#qualifiers" title="Permalink to this heading">¶</a></h2>
+<p>For situations where a record can be linked to many records, such as an animal with
+many vaccination or medical records, or a person with many payments, then you
+must qualify the tokens with a suffix to indicate which of those records you want
+to access.</p>
+<section id="n-index">
+<h3>n (index)<a class="headerlink" href="#n-index" title="Permalink to this heading">¶</a></h3>
+<p>Suffix a token with a number to get the nth record when counting from oldest to
+newest. Eg:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;&lt;</span><span class="n">VaccinationName1</span><span class="o">&gt;&gt;</span> <span class="o">-</span> <span class="n">name</span> <span class="n">of</span> <span class="n">oldest</span> <span class="n">vaccination</span>
+<span class="o">&lt;&lt;</span><span class="n">TestGiven3</span><span class="o">&gt;&gt;</span> <span class="o">-</span> <span class="n">given</span> <span class="n">date</span> <span class="n">of</span> <span class="mi">3</span><span class="n">rd</span> <span class="n">test</span>
+</pre></div>
+</div>
+</section>
+<section id="last-n">
+<h3>Last(n)<a class="headerlink" href="#last-n" title="Permalink to this heading">¶</a></h3>
+<p>Suffix a token with Last[number] to get the nth record counting from newest to
+oldest. Eg:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;&lt;</span><span class="n">VaccinationGivenLast1</span><span class="o">&gt;&gt;</span> <span class="o">-</span> <span class="n">date</span> <span class="n">given</span> <span class="n">of</span> <span class="n">newest</span> <span class="n">vaccination</span>
+<span class="o">&lt;&lt;</span><span class="n">MedicalDateStartedLast2</span><span class="o">&gt;&gt;</span> <span class="o">-</span> <span class="n">start</span> <span class="n">date</span> <span class="n">of</span> <span class="n">second</span> <span class="n">newest</span> <span class="n">medical</span> <span class="n">regimen</span>
+</pre></div>
+</div>
+</section>
+<section id="name">
+<h3>(name)<a class="headerlink" href="#name" title="Permalink to this heading">¶</a></h3>
+<p>Suffix a token with the name of a type to get the oldest given record with that
+type. Eg:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;&lt;</span><span class="n">VaccinationGivenRabies</span><span class="o">&gt;&gt;</span> <span class="o">-</span> <span class="n">first</span> <span class="n">date</span> <span class="n">given</span> <span class="n">of</span> <span class="nb">type</span> <span class="s2">&quot;Rabies&quot;</span>
+<span class="o">&lt;&lt;</span><span class="n">DietDateStartedStandard</span><span class="o">&gt;&gt;</span> <span class="o">-</span> <span class="n">date</span> <span class="n">first</span> <span class="n">diet</span> <span class="n">on</span> <span class="n">file</span> <span class="n">was</span> <span class="n">started</span> <span class="n">of</span> <span class="nb">type</span> <span class="s2">&quot;Standard&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="recent-name">
+<h3>Recent(name)<a class="headerlink" href="#recent-name" title="Permalink to this heading">¶</a></h3>
+<p>Suffix a token with Recent and the name of the type to get the most recently
+given record of that type. Eg:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;&lt;</span><span class="n">VaccinationGivenRecentRabies</span><span class="o">&gt;&gt;</span> <span class="o">-</span> <span class="n">date</span> <span class="n">of</span> <span class="n">most</span> <span class="n">recently</span> <span class="n">given</span> <span class="n">vaccination</span> <span class="n">of</span> <span class="nb">type</span> <span class="s2">&quot;Rabies&quot;</span>
+<span class="o">&lt;&lt;</span><span class="n">LogCommentsRecentWeight</span><span class="o">&gt;&gt;</span> <span class="o">-</span> <span class="n">log</span> <span class="n">message</span> <span class="n">of</span> <span class="n">the</span> <span class="n">most</span> <span class="n">recently</span> <span class="n">recorded</span> <span class="n">log</span> <span class="n">of</span> <span class="nb">type</span> <span class="s2">&quot;Weight&quot;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When constructing names, the tokens will suppress any spaces, so “Rabies 3 Yr” would become “Rabies3Yr”</p>
+</div>
+</section>
+<section id="due-name">
+<h3>Due(name)<a class="headerlink" href="#due-name" title="Permalink to this heading">¶</a></h3>
+<p>Suffix a token with Due and the name of the type to get the newest ungiven record
+of that type. Eg:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;&lt;</span><span class="n">VaccinationRequiredDueRabies</span><span class="o">&gt;&gt;</span> <span class="o">-</span> <span class="n">required</span> <span class="n">date</span> <span class="k">for</span> <span class="n">the</span> <span class="n">newest</span> <span class="n">ungiven</span> <span class="n">vaccination</span> <span class="n">of</span> <span class="nb">type</span> <span class="s2">&quot;Rabies&quot;</span>
+<span class="o">&lt;&lt;</span><span class="n">PaymentAmountDueRegular</span><span class="o">&gt;&gt;</span> <span class="o">-</span> <span class="n">amount</span> <span class="k">for</span> <span class="n">the</span> <span class="n">newest</span> <span class="n">unreceived</span> <span class="n">payment</span> <span class="n">of</span> <span class="nb">type</span> <span class="s2">&quot;Regular&quot;</span>
+</pre></div>
+</div>
+<p>Note that the “Due” keyword will not work for medical, vaccination or tests if
+you have turned off the option to include incomplete medical items from
+documents under <span class="menuselection">Settings ‣ Options ‣ Documents ‣ Include
+incomplete medical records when generating document templates</span></p>
+</section>
+</section>
 <section id="vaccination-keys">
 <h2>Vaccination Keys<a class="headerlink" href="#vaccination-keys" title="Permalink to this heading">¶</a></h2>
-<p>Vaccination keys let you access the vaccination records for an animal. There
-are multiple ways of accessing the records. You construct a key that contains
-the field name and then an index for it. The field names are:</p>
+<p>You must use a qualifier suffix to access these records.</p>
 <dl class="simple">
 <dt>VaccinationName</dt><dd><p>The name of the vaccination (eg: Booster)</p>
 </dd>
@@ -656,31 +722,10 @@ the field name and then an index for it. The field names are:</p>
 <dt>VaccinationAdministeringVetEmail</dt><dd><p>The email address of the vet who administered the vaccination</p>
 </dd>
 </dl>
-<p>Just putting a number on the end of the fieldname returns that field for the
-records, counting from oldest to newest. For example, VaccinationName1 returns
-the name of the first vaccination on file for the animal.</p>
-<p>You can use the suffix Lastn, where n is a number to count from the newest to
-the oldest instead. For example, VaccinationGivenLast1 returns the given date
-of the most recent vaccination record.</p>
-<p>You can also use the vaccination type itself as an index, for example
-VaccinationRequiredDHCPP will return the latest vaccination record of type
-DHCPP. If your vaccination type has spaces in its name, then remove them when
-constructing the key. Eg: A type of “DHCPP Vacc” would bcome
-&lt;&lt;VaccinationRequiredDHCPPVacc&gt;&gt; when accessing it via a wordkey.</p>
-<p>The “Recent” keyword operates with the vaccination type and allows you to
-select the most recent vaccination of that type that has a non-blank given
-date. Eg: VaccinationCommentsRecentDHCPP will return the comments of the last
-given DHCPP vaccination.</p>
-<p>The “Due” keyword operates with the vaccination type and allows you to
-select the most recent vaccination of that type that has a blank given given
-date. Eg: VaccinationRequiredDueDHCPP will return the date the most recent
-due DHCPP vaccination. Note that the “Due” keyword will not work if you have
-turned off the option to include incomplete medical items from documents under
-<span class="menuselection">Settings ‣ Options ‣ Documents ‣ Include incomplete medical records when generating document templates</span></p>
 </section>
 <section id="test-keys">
 <h2>Test Keys<a class="headerlink" href="#test-keys" title="Permalink to this heading">¶</a></h2>
-<p>The same rules for vaccinations apply to reading test records.</p>
+<p>You must use a qualifier suffix to access these records.</p>
 <dl class="simple">
 <dt>TestName</dt><dd><p>The name of the test (eg: FIV)</p>
 </dd>
@@ -714,10 +759,11 @@ turned off the option to include incomplete medical items from documents under
 </section>
 <section id="medical-keys">
 <h2>Medical Keys<a class="headerlink" href="#medical-keys" title="Permalink to this heading">¶</a></h2>
-<p>The same rules for vaccinations apply to reading medical records, except the
-MedicalName field can be used for looking up the most recent record of that
-treatment. In addition, the Recent keyword looks for medical regimens that have
-a status of complete, while the Due keyword looks for active medical regimens.</p>
+<p>You must use a qualifier suffix to access these records.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For medical regimens, the Recent keyword only looks for those with a status of Completed, while the Due keyword only looks for those with a status of Active.</p>
+</div>
 <dl class="simple">
 <dt>MedicalName</dt><dd><p>The name of the medical treatment</p>
 </dd>
@@ -749,10 +795,9 @@ a status of complete, while the Due keyword looks for active medical regimens.</
 </section>
 <section id="payment-keys">
 <h2>Payment Keys<a class="headerlink" href="#payment-keys" title="Permalink to this heading">¶</a></h2>
-<p>If you are creating a document from the animal or person records, then the same
-rules apply as for vaccinations and medical records when accessing payments.
-The Recent keyword looks for payments that have been received and Due
-for non-received payments.</p>
+<p>If you are creating a document from the animal or person records, then you must
+use a qualifier suffix to access these records. The Recent keyword looks for
+payments that have been received and Due for non-received payments.</p>
 <p>However, if you create an invoice/receipt document from the payment tab of a
 person or animal record (or the payment book), you can select multiple payments
 before creating the document and access the information by suffixing a number
@@ -909,8 +954,7 @@ the transport tab or book:</p>
 </section>
 <section id="cost-keys">
 <h2>Cost Keys<a class="headerlink" href="#cost-keys" title="Permalink to this heading">¶</a></h2>
-<p>The same rules apply as for vaccinations and medical records but for accessing
-costs. The fields are:</p>
+<p>You must use a qualifier suffix to access these records.</p>
 <dl class="simple">
 <dt>CostType</dt><dd><p>The cost type</p>
 </dd>
@@ -945,7 +989,7 @@ costs. The fields are:</p>
 </section>
 <section id="diet-keys">
 <h2>Diet Keys<a class="headerlink" href="#diet-keys" title="Permalink to this heading">¶</a></h2>
-<p>The same rules apply as for vaccinations, but for accessing diet records. The fields are:</p>
+<p>You must use a qualifier suffix to access these records.</p>
 <dl class="simple">
 <dt>DietName</dt><dd><p>The name of the diet</p>
 </dd>
@@ -959,8 +1003,7 @@ costs. The fields are:</p>
 </section>
 <section id="log-keys">
 <h2>Log Keys<a class="headerlink" href="#log-keys" title="Permalink to this heading">¶</a></h2>
-<p>The same rules apply as for vaccinations, but for accessing log records. The
-fields are:</p>
+<p>You must use a qualifier suffix to access these records.</p>
 <dl class="simple">
 <dt>LogName</dt><dd><p>The type of log</p>
 </dd>
@@ -1141,12 +1184,11 @@ increments of 100 upto 500px if you would like the image to be larger, eg:
 </section>
 <section id="citation-keys">
 <h2>Citation Keys<a class="headerlink" href="#citation-keys" title="Permalink to this heading">¶</a></h2>
-<p>The same rules apply as for vaccinations, but for accessing citations.
-Each citation is indexed with a number for ascending (eg: CitationName1),
-LastX for descending (eg: CitationNameLast1) and with the type name for the
-most recent citation of that type for the person (eg: FineAmountFirstOffence).
-Citation keys can be accessed from a person document or an incident document.</p>
+<p>You must use a qualifier suffix to access these records.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>The Recent keyword returns citations where the fine is paid where Due returns unpaid.</p>
+</div>
 <dl class="simple">
 <dt>CitationName</dt><dd><p>The type of citation being issued</p>
 </dd>
@@ -1164,12 +1206,11 @@ Citation keys can be accessed from a person document or an incident document.</p
 </section>
 <section id="equipment-loan-keys">
 <h2>Equipment Loan Keys<a class="headerlink" href="#equipment-loan-keys" title="Permalink to this heading">¶</a></h2>
-<p>The same rules apply as for vaccinations, but for accessing equipment loans. Each
-loan is indexed with a number for ascending (eg: EquipmentTypeName1), LastX for
-descending (eg: EquipmentTypeNameLast1) and with the type name for the most recent
-loan of that type for the person (eg: EquipmentLoanDateCat).</p>
+<p>You must use a qualifier suffix to access these records.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>The Recent keyword returns returned trap loan records where Due is unreturned.</p>
-<p>The fields are:</p>
+</div>
 <dl class="simple">
 <dt>EquipmentTypeName</dt><dd><p>The type of equipment being loaned</p>
 </dd>
