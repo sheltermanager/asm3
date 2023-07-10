@@ -17,7 +17,7 @@ $(function() {
                     { post_field: "person", label: _("Retailer"), type: "person", personfilter: "retailer" },
                     { post_field: "movementnumber", label: _("Movement Number"), type: "text", rowid: "movementnumberrow", 
                         callout: _("A unique number to identify this movement") },
-                    { post_field: "transferdate", label: _("Date"), type: "date", callout: _("The date the retailer movement is effective from") },
+                    { post_field: "retailerdate", label: _("Date"), type: "date", callout: _("The date the retailer movement is effective from") },
                     { post_field: "comments", label: _("Comments"), type: "textarea", rows: 3 }
                 ], 1, { full_width: false }),
                 '<table class="asm-table-layout">',
