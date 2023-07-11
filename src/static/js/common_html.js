@@ -418,6 +418,21 @@ const html = {
     },
 
     /**
+     * Returns a link to an event - but only if the view event permission is set
+     * to hide their detail.
+     * eventid: The event ID
+     * name: The event detail
+     */
+    event_link: function(eventid, name) {
+        var h = "";
+        if (!name) { name = ""; }
+        if (common.has_permission("ve")) {
+            h = '<a href="event?id=' + eventid + '">' + name + '</a>';
+        }
+        return h;
+    },
+
+    /**
      * Renders a list of <option> tags for person flags.
      * It mixes in any additional person flags to the regular
      * set, sorts them all alphabetically and applies them
@@ -530,18 +545,50 @@ const html = {
     },
 
     /**
-     * Returns a link to an event - but only if the view event permission is set
-     * to hide their detail.
-     * eventid: The event ID
-     * name: The event detail
+     * Returns the different shelter view modes as a string of HTML options.
      */
-    event_link: function(eventid, name) {
-        var h = "";
-        if (!name) { name = ""; }
-        if (common.has_permission("ve")) {
-            h = '<a href="event?id=' + eventid + '">' + name + '</a>';
-        }
-        return h;
+    shelter_view_options: function() {
+        return [
+            '<option value="altered">' + _("Altered") + '</option>',
+            '<option value="coordinator">' + _("Adoption Coordinator") + '</option>',
+            '<option value="coordinatorfosterer">' + _("Adoption Coordinator and Fosterer") + '</option>',
+            '<option value="agegroup">' + _("Age Group") + '</option>',
+            '<option value="agegrouplitter">' + _("Age Group and Litter") + '</option>',
+            '<option value="color">' + _("Color") + '</option>',
+            '<option value="entrycategory">' + _("Entry Category") + '</option>',
+            '<option value="flags">' + _("Flags") + '</option>',
+            '<option value="fosterer">' + _("Fosterer") + '</option>',
+            '<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>',
+            '<option value="fostererspace">' + _("Fosterer (Space Available)") + '</option>',
+            '<option value="goodwith">' + _("Good with") + '</option>',
+            '<option value="litter">' + _("Litter") + '</option>',
+            '<option value="location">' + _("Location") + '</option>',
+            '<option value="locationbreed">' + _("Location and Breed") + '</option>',
+            '<option value="locationlitter">' + _("Location and Litter") + '</option>',
+            '<option value="locationspecies">' + _("Location and Species") + '</option>',
+            '<option value="locationspeciesage">' + _("Location and Species (Age)") + '</option>',
+            '<option value="locationtype">' + _("Location and Type") + '</option>',
+            '<option value="locationunit">' + _("Location and Unit") + '</option>',
+            '<option value="locationnv">' + _("Location (No Virtual)") + '</option>',
+            '<option value="locationnvs">' + _("Location and Species (No Virtual)") + '</option>',
+            '<option value="name">' + _("Name") + '</option>',
+            '<option value="pickuplocation">' + _("Pickup Location") + '</option>',
+            '<option value="retailer">' + _("Retailer") + '</option>',
+            '<option value="sex">' + _("Sex") + '</option>',
+            '<option value="sexspecies">' + _("Sex and Species") + '</option>',
+            '<option value="site">' + _("Site") + '</option>',
+            '<option value="sitefoster">' + _("Site (fosters separate)") + '</option>',
+            '<option value="species">' + _("Species") + '</option>',
+            '<option value="speciesbreed">' + _("Species and Breed") + '</option>',
+            '<option value="speciescode">' + _("Species and Code") + '</option>',
+            '<option value="speciescolor">' + _("Species and Color") + '</option>',
+            '<option value="status">' + _("Status") + '</option>',
+            '<option value="statuslocation">' + _("Status and Location") + '</option>',
+            '<option value="statusspecies">' + _("Status and Species") + '</option>',
+            '<option value="type">' + _("Type") + '</option>',
+            '<option value="unit">' + _("Unit") + '</option>',
+            '<option value="unitspecies">' + _("Unit and Species") + '</option>'
+        ].join("\n");
     },
 
     /**

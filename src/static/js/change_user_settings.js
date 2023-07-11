@@ -122,6 +122,18 @@ $(function() {
                 '</tr>',
                 '<tr>',
                     '<td>',
+                    '<label for="shelterview">' + _("Shelter view") + '</label>',
+                    '</td>',
+                    '<td>',
+                    '<select id="shelterview" class="asm-selectbox" data="shelterview">',
+                        '<option value="">' + _("(use system)") + '</option>',
+                        html.shelter_view_options(),
+                    '</select>',
+                    '</td>',
+                '</tr>',
+
+                '<tr>',
+                    '<td>',
                     '<label for="signature">' + _("Signature") + '</label>',
                     '<button id="button-change" type="button" style="vertical-align: middle">' + _("Clear and sign again") + '</button>',
                     '</td>',
@@ -229,6 +241,8 @@ $(function() {
                 $("#quicklinksid").find("option[value='" + common.trim(v + "']")).attr("selected", "selected");
             });
             $("#quicklinksid").change();
+            let usersv = config.str(asm.user + "_ShelterView");
+            $("#shelterview").select("value", usersv);
             this.totp_change();
             if (controller.sigtype != "touch") { 
                 $("#signature").closest("tr").hide(); 

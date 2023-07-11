@@ -638,45 +638,7 @@ $(function() {
             let h = [];
             h.push('<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">');
             h.push('<select id="viewmode" style="float: right;" class="asm-selectbox">');
-            h.push('<option value="altered">' + _("Altered") + '</option>');
-            h.push('<option value="coordinator">' + _("Adoption Coordinator") + '</option>');
-            h.push('<option value="coordinatorfosterer">' + _("Adoption Coordinator and Fosterer") + '</option>');
-            h.push('<option value="agegroup">' + _("Age Group") + '</option>');
-            h.push('<option value="agegrouplitter">' + _("Age Group and Litter") + '</option>');
-            h.push('<option value="color">' + _("Color") + '</option>');
-            h.push('<option value="entrycategory">' + _("Entry Category") + '</option>');
-            h.push('<option value="flags">' + _("Flags") + '</option>');
-            h.push('<option value="fosterer">' + _("Fosterer") + '</option>');
-            h.push('<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>');
-            h.push('<option value="fostererspace">' + _("Fosterer (Space Available)") + '</option>');
-            h.push('<option value="goodwith">' + _("Good With") + '</option>');
-            h.push('<option value="litter">' + _("Litter") + '</option>');
-            h.push('<option value="location">' + _("Location") + '</option>');
-            h.push('<option value="locationbreed">' + _("Location and Breed") + '</option>');
-            h.push('<option value="locationlitter">' + _("Location and Litter") + '</option>');
-            h.push('<option value="locationspecies">' + _("Location and Species") + '</option>');
-            h.push('<option value="locationspeciesage">' + _("Location and Species (Age)") + '</option>');
-            h.push('<option value="locationtype">' + _("Location and Type") + '</option>');
-            h.push('<option value="locationunit">' + _("Location and Unit") + '</option>');
-            h.push('<option value="locationnv">' + _("Location (No Virtual)") + '</option>');
-            h.push('<option value="locationnvs">' + _("Location and Species (No Virtual)") + '</option>');
-            h.push('<option value="name">' + _("Name") + '</option>');
-            h.push('<option value="pickuplocation">' + _("Pickup Location") + '</option>');
-            h.push('<option value="retailer">' + _("Retailer") + '</option>');
-            h.push('<option value="sex">' + _("Sex") + '</option>');
-            h.push('<option value="sexspecies">' + _("Sex and Species") + '</option>');
-            if (config.bool("MultiSiteEnabled")) { h.push('<option value="site">' + _("Site") + '</option>'); }
-            if (config.bool("MultiSiteEnabled")) { h.push('<option value="sitefoster">' + _("Site (fosters separate)") + '</option>'); }
-            h.push('<option value="species">' + _("Species") + '</option>');
-            h.push('<option value="speciesbreed">' + _("Species and Breed") + '</option>');
-            h.push('<option value="speciescode">' + _("Species and Code") + '</option>');
-            h.push('<option value="speciescolor">' + _("Species and Color") + '</option>');
-            h.push('<option value="status">' + _("Status") + '</option>');
-            h.push('<option value="statuslocation">' + _("Status and Location") + '</option>');
-            h.push('<option value="statusspecies">' + _("Status and Species") + '</option>');
-            h.push('<option value="type">' + _("Type") + '</option>');
-            h.push('<option value="unit">' + _("Unit") + '</option>');
-            h.push('<option value="unitspecies">' + _("Unit and Species") + '</option>');
+            h.push(html.shelter_view_options()); 
             h.push('</select>');
             h.push('<p class="asm-menu-category">' + config.str("Organisation") + ' (' + controller.animals.length + ')</p>');
             h.push('<div id="viewcontainer"></div>');
@@ -702,8 +664,14 @@ $(function() {
                     v.CURRENTOWNERNAME = _("(none)");
                 }
             });
+            // Hide site modes if sites are off
+            if (!config.bool("MultiSiteEnabled")) { 
+                $("option[value='site'], option[value='sitefoster']").hide();
+            }
             // Switch to the default view
-            $("#viewmode").select("value", config.str("ShelterViewDefault"));
+            let dview = config.str(asm.user + "_ShelterView");
+            if (!dview) { dview = config.str("ShelterViewDefault"); }
+            $("#viewmode").select("value", dview);
             $("#viewmode").change();
         },
 
