@@ -5308,15 +5308,20 @@ class onlineform(JSONEndpoint):
         # Escape any angle brackets in raw markup output. This is needed
         # to target tooltip as a textarea
         for r in fields:
-            if r["FIELDTYPE"] == asm3.onlineform.FIELDTYPE_RAWMARKUP:
-                r["TOOLTIP"] = asm3.html.escape_angle(r["TOOLTIP"]) 
+            if r.FIELDTYPE == asm3.onlineform.FIELDTYPE_RAWMARKUP:
+                r.TOOLTIP = asm3.html.escape_angle(r.TOOLTIP) 
+        # Make a list of all additional fields, prefixed with the "additional" to
+        # add to the autocomplete field names.
+        addf = []
+        for r in asm3.additional.get_fields(dbo):
+            addf.append(f"additional{r.FIELDNAME}")
         title = _("Online Form: {0}", l).format(formname)
         asm3.al.debug("got %d online form fields" % len(fields), "code.onlineform", dbo)
         return {
             "rows": fields,
             "formid": formid,
             "formname": formname,
-            "formfields": asm3.utils.deduplicate_list(asm3.onlineform.FORM_FIELDS),
+            "formfields": asm3.utils.deduplicate_list(asm3.onlineform.FORM_FIELDS + addf),
             "species": asm3.lookups.get_species(dbo),
             "title": title
         }
