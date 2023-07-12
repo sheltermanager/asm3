@@ -712,9 +712,22 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             "MEDICALLASTTREATMENTCOMMENTS": "LASTTREATMENTCOMMENTS",
             "MEDICALCOST":              "c:COST"
         }
-        medicals = asm3.medical.get_regimens(dbo, a["ID"], not iic)
+        medicals = asm3.medical.get_regimens(dbo, a["ID"], onlycomplete=not iic)
         tags.update(table_tags(dbo, d, medicals, "TREATMENTNAME", "NEXTTREATMENTDUE", "LASTTREATMENTGIVEN"))
         tags["ANIMALMEDICALS"] = html_table(l, medicals, (
+            ( "STARTDATE", _("Start Date", l) ),
+            ( "TREATMENTNAME", _("Treatment", l) ),
+            ( "DOSAGE", _("Dosage", l) ),
+            ( "NAMEDSTATUS", _("Status", l) ),
+            ( "NAMEDGIVENREMAINING", _("Given", l) ),
+            ( "LASTTREATMENTVETNAME", _("Vet", l) ),
+            ( "LASTTREATMENTGIVEN", _("Date", l)),
+            ( "NEXTTREATMENTDUE", _("Due", l)),
+            ( "COMMENTS", _("Comments", l)) 
+        ))
+
+        activemedicals = asm3.medical.get_regimens(dbo, a["ID"], onlyactive=True)
+        tags["ACTIVEANIMALMEDICALS"] = html_table(l, activemedicals, (
             ( "STARTDATE", _("Start Date", l) ),
             ( "TREATMENTNAME", _("Treatment", l) ),
             ( "DOSAGE", _("Dosage", l) ),

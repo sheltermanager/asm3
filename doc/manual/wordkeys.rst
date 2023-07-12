@@ -1467,9 +1467,11 @@ there are.  Records are output in ascending order of date.
 AnimalVaccinations
    Inserts a table containing all the animal's vaccinations into the document
 AnimalTests
-   Inserts a table containing all of the animal's recorded tests into the document
+   Inserts a table containing all of the animal's tests into the document
 AnimalMedicals
-   Inserts a table containing all of the animal's medical treatments
+   Inserts a table containing all of the animal's medical regimens
+ActiveAnimalMedicals
+   Inserts a table containing all of the animal's medical regimens where the status is active
 AnimalLogs
    Inserts a table containing all of the animal's log entries
 AnimalLogsTYPE
