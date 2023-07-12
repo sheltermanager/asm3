@@ -113,6 +113,14 @@ $(function() {
                 $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
             });
 
+            // Generate code button
+            $("#number").after('<button id="button-number">' + _("Generate a unique license number") + '</button>');
+            $("#button-number")
+                .button({ icons: { primary: "ui-icon-refresh" }, text: false })
+                .click(function() {
+                    $("#number").val(format.padleft(common.generate_random_code(10, true), 10));
+                });
+
             // Payments
             $("#payment").payments({ controller: controller });
 

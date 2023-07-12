@@ -95,10 +95,11 @@ const common = {
     /**
      * Generates a random code of length chars 
      */
-    generate_random_code: function(length) {
+    generate_random_code: function(length, onlynumbers) {
         var result = "";
         var i = 0;
         var c = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        if (onlynumbers) { c = "0123456789"; }
         var cl = c.length;
         for ( i = 0; i < length; i++ ) {
             result += c.charAt(Math.floor(Math.random() * cl));

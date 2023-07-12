@@ -37,6 +37,7 @@ $(function() {
                     if (row.ANIMALID && row.ANIMALID != "0") {
                         row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
                         row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
+                        row.SHORTCODE = $("#animal").animalchooser("get_selected").SHORTCODE;
                     }
                     else {
                         row.ANIMALID = 0;
@@ -122,6 +123,7 @@ $(function() {
                                     if (row.ANIMALID && row.ANIMALID != "0") {
                                         row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
                                         row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
+                                        row.SHORTCODE = $("#animal").animalchooser("get_selected").SHORTCODE;
                                     }
                                     else {
                                         row.ANIMALID = 0;
@@ -243,6 +245,14 @@ $(function() {
                 let template_name = $(this).attr("data");
                 $(this).prop("href", "document_gen?linktype=LICENCE&id=" + tableform.table_selected_row(licence.table).ID + "&dtid=" + template_name);
             });
+
+            // Generate code button
+            $("#number").after('<button id="button-number">' + _("Generate a unique license number") + '</button>');
+            $("#button-number")
+                .button({ icons: { primary: "ui-icon-refresh" }, text: false })
+                .click(function() {
+                    $("#number").val(format.padleft(common.generate_random_code(10, true), 10));
+                });
 
             tableform.dialog_bind(this.dialog);
             tableform.buttons_bind(this.buttons);
