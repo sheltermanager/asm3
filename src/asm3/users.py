@@ -759,7 +759,7 @@ def update_session(dbo, session, username):
     if "LOCATIONFILTER" in user: session.locationfilter = asm3.utils.nulltostr(user.LOCATIONFILTER)
     if "OWNERID" in user: session.staffid = user.OWNERID
     # If the user has a location filter that involves a filtered list of animals linked to them, load them now.
-    if "LOCATIONFILTER" in user and user.LOCATIONFILTER != "":
+    if "LOCATIONFILTER" in user and user.LOCATIONFILTER is not None and user.LOCATIONFILTER != "":
         af = []
         # My Fosters
         if user.LOCATIONFILTER.find("-12") != -1:
