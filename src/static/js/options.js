@@ -1491,7 +1491,7 @@ $(function() {
                 '<td><label for="shelterviewdefault">' + _("Default view") + '</label></td>',
                 '<td>',
                 '<select id="shelterviewdefault" class="asm-selectbox" data="ShelterViewDefault">',
-                html.shelter_view_options();
+                html.shelter_view_options(),
                 '</select>',
                 '</td>',
                 '</tr>',

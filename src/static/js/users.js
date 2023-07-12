@@ -17,6 +17,7 @@ $(function() {
                 { ID: -4, LOCATIONNAME: _("Escaped Animals")},
                 { ID: -2, LOCATIONNAME: _("Fostered Animals")},
                 { ID: -5, LOCATIONNAME: _("Reclaimed Animals")},
+                { ID: -13, LOCATIONNAME: _("My Coordinated Animals")},
                 { ID: -12, LOCATIONNAME: _("My Fosters")},
                 { ID: -9, LOCATIONNAME: _("Non-shelter Animals")},
                 { ID: -8, LOCATIONNAME: _("Retailer Animals")},

@@ -758,13 +758,17 @@ def update_session(dbo, session, username):
     if "SITEID" in user: session.siteid = asm3.utils.cint(user.SITEID)
     if "LOCATIONFILTER" in user: session.locationfilter = asm3.utils.nulltostr(user.LOCATIONFILTER)
     if "OWNERID" in user: session.staffid = user.OWNERID
-    # If there's a -12 in location filter, the user can only see their current fosters
-    # Set visibleanimalids to those on foster
-    if "LOCATIONFILTER" in user and asm3.utils.nulltostr(user.LOCATIONFILTER).find("-12") != -1:
+    # If the user has a location filter that involves a filtered list of animals linked to them, load them now.
+    if "LOCATIONFILTER" in user and user.LOCATIONFILTER != "":
+        af = []
+        # My Fosters
+        if user.LOCATIONFILTER.find("-12") != -1:
+            af += dbo.query("SELECT AnimalID FROM adoption WHERE MovementType=2 AND OwnerID=? AND MovementDate<=? AND (ReturnDate Is Null OR ReturnDate>?)", \
+                ( user.OWNERID, dbo.today(), dbo.today() ))
+        # My Coordinated Animals
+        if user.LOCATIONFILTER.find("-13") != -1:
+            af += dbo.query("SELECT ID AS AnimalID FROM animal WHERE Archived=0 AND AdoptionCoordinatorID=?", [user.OWNERID])
         va = []
-        af = dbo.query("SELECT AnimalID FROM adoption WHERE MovementType=2 AND OwnerID=? AND MovementDate<=? AND (ReturnDate Is Null OR ReturnDate>?)", \
-            ( user.OWNERID, dbo.today(), dbo.today() ))
-        va.append("0")
         for r in af:
             va.append(str(r.ANIMALID))
         session.visibleanimalids = ",".join(va)
