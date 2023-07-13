@@ -437,7 +437,7 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             a["goodwithkids"] = gkynu(row, "ANIMALGOODWITHKIDS")
             a["reasonforentry"] = gks(row, "ANIMALREASONFORENTRY")
             a["estimatedage"] = gks(row, "ANIMALAGE")
-            a["dateofbirth"] = gkd(dbo, row, "ANIMALDOB", True)
+            a["dateofbirth"] = gkd(dbo, row, "ANIMALDOB")
             if gks(row, "ANIMALDOB") == "" and a["estimatedage"] != "":
                 a["dateofbirth"] = "" # if we had an age and dob was blank, prefer the age
             a["datebroughtin"] = gkd(dbo, row, "ANIMALENTRYDATE", True)
