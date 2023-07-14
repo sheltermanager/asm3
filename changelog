@@ -1,6 +1,7 @@
 47
 ================
 
+14/07/23 Fix bug where 0.0 weight logs appear after a cloned animal is edited
 13/07/23 Fixed bug that could cause DOB to be reset to today during CSV import
 12/07/23 Add <<ActiveAnimalMedicals>> wordkey
 12/07/23 Ability to generate random licence numbers, fix bug in licence display

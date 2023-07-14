@@ -3071,6 +3071,7 @@ def clone_animal(dbo, username, animalid):
         "ShelterLocation":  a.shelterlocation,
         "ShelterLocationUnit": a.shelterlocationunit,
         "Size":             a.size,
+        "Weight":           0,
         "RabiesTag":        a.rabiestag,
         "BondedAnimalID":   0,
         "BondedAnimal2ID":  0,
