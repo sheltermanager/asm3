@@ -12,6 +12,7 @@ import asm3.waitinglist
 import asm3.configuration
 import asm3.db
 import asm3.dbfs
+import asm3.reports
 import asm3.smcom
 import asm3.utils
 from asm3.i18n import _
@@ -2642,6 +2643,13 @@ def install_default_data(dbo, skip_config = False):
         if s.strip() != "":
             dbo.execute_dbupdate(s.strip())
 
+def install_default_reports(dbo):
+    """
+    Installs the recommended/default reports
+    """
+    asm3.al.info("installing recommended reports", "dbupdate.install_default_reports", dbo)
+    asm3.reports.install_recommended_smcom_reports(dbo, "install")
+
 def reinstall_default_data(dbo):
     """
     Reinstalls all default data for the current locale.  
@@ -2651,6 +2659,7 @@ def reinstall_default_data(dbo):
     install_default_data(dbo, True)
     install_default_templates(dbo)
     install_default_onlineforms(dbo)
+    install_default_reports(dbo)
 
 def install_default_onlineforms(dbo, removeFirst = False):
     """
@@ -2750,6 +2759,7 @@ def install(dbo):
     install_db_stored_procedures(dbo)
     install_default_templates(dbo)
     install_default_onlineforms(dbo)
+    install_default_reports(dbo)
 
 def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = True, \
         includeData = True, includeNonASM2 = True, includeUsers = True, includeLKS = True, \

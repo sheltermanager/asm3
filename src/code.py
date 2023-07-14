@@ -1227,8 +1227,6 @@ class main(JSONEndpoint):
         showwelcome = False
         if asm3.configuration.show_first_time_screen(dbo) and o.session.superuser == 1:
             showwelcome = True
-            # If we're showing the first time screen, install recommended reports if there aren't any installed
-            if len(asm3.reports.get_all_report_titles(dbo)) == 0: asm3.reports.install_recommended_smcom_reports(dbo, o.user)
         # News (text file on disk that is retrieved as part of the batch)
         news = asm3.utils.get_asm_news(dbo)
         # Use a 5 minute cache, with a longer cache time of 15 minutes for big databases
