@@ -1,6 +1,7 @@
 47
 ================
 
+14/07/23 Separate help menu for clarity
 14/07/23 Install recommended reports during database creation instead of /main
 14/07/23 Fix bug where 0.0 weight logs appear after a cloned animal is edited
 13/07/23 Fixed bug that could cause DOB to be reset to today during CSV import
