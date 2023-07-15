@@ -412,8 +412,8 @@ header = {
                 '<ul class="asm-menu-list">',
                     '<li class="asm-menu-category">' + (asm.userreal ? asm.userreal : asm.user) + '</li>',
                     '<li id="asm-mysmcom" class="asm-menu-item"><a href="smcom_my" target="_blank"><nobr><span class="asm-icon asm-icon-logo"></span> ' + _("My sheltermanager.com account") + '</nobr></a></li>',
-                    '<li class="asm-menu-item"><a href="change_password"><nobr><span class="asm-icon asm-icon-auth"></span> ' + _("Change Password") + '</nobr></a></li>',
-                    '<li class="asm-menu-item"><a href="change_user_settings"><nobr><span class="asm-icon asm-icon-settings"></span> ' + _("Change User Settings") + '</nobr></a></li>',
+                    '<li id="asm-chpassword" class="asm-menu-item"><a href="change_password"><nobr><span class="asm-icon asm-icon-auth"></span> ' + _("Change Password") + '</nobr></a></li>',
+                    '<li id="asm-chusersettings" class="asm-menu-item"><a href="change_user_settings"><nobr><span class="asm-icon asm-icon-settings"></span> ' + _("Change User Settings") + '</nobr></a></li>',
                     '<li id="asm-logout" class="asm-menu-item"><a href="logout"><nobr><span class="asm-icon asm-icon-logout"></span> ' + _("Logout") + '</nobr></a></li>',
                 '</ul>',
             '</div>',
@@ -590,6 +590,11 @@ header = {
         // user isn't the master user (same username as the database)
         if (!asm.smcom || asm.user != asm.useraccount) {
             $("#asm-mysmcom").hide();
+        }
+
+        // Hide the change user settings/password options for smcom demo database
+        if (asm.smcom && asm.useraccount == "demo") {
+            $("#asm-chusersettings, #asm-chpassword").hide();
         }
 
         // Hide the logout link if we're in the mobile app
