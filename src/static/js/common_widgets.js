@@ -393,7 +393,7 @@ $.fn.date = function(method, newval) {
                     changeMonth: true, 
                     changeYear: true,
                     firstDay: config.integer("FirstDayOfWeek"),
-                    yearRange: "-30:+10",
+                    yearRange: "-70:+10",
                     beforeShowDay: function(a) {
                         let day = a.getDay();
                         let rv = false;
@@ -418,7 +418,7 @@ $.fn.date = function(method, newval) {
                 $(this).datepicker({ 
                     changeMonth: true, 
                     changeYear: true,
-                    yearRange: "-30:+10",
+                    yearRange: "-70:+10",
                     firstDay: config.integer("FirstDayOfWeek")
                 });
             }
