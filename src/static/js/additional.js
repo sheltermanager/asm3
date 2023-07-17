@@ -36,12 +36,18 @@ $(function() {
                 idcolumn: "ID",
                 edit: async function(row) {
                     await tableform.dialog_show_edit(dialog, row, { onload: additional.check_type });
-                    tableform.fields_update_row(dialog.fields, row);
-                    row.FIELDTYPENAME = common.get_field(controller.fieldtypes, row.FIELDTYPE, "FIELDTYPE");
-                    row.LINKTYPENAME = common.get_field(controller.linktypes, row.LINKTYPE, "LINKTYPE");
-                    await tableform.fields_post(dialog.fields, "mode=update&id=" + row.ID, "additional");
-                    tableform.table_update(table);
-                    tableform.dialog_close();
+                    try {
+                        await tableform.fields_post(dialog.fields, "mode=update&id=" + row.ID, "additional");
+                        tableform.fields_update_row(dialog.fields, row);
+                        row.FIELDTYPENAME = common.get_field(controller.fieldtypes, row.FIELDTYPE, "FIELDTYPE");
+                        row.LINKTYPENAME = common.get_field(controller.linktypes, row.LINKTYPE, "LINKTYPE");
+                        tableform.table_update(table);
+                        tableform.dialog_close();
+                    }
+                    catch(err) {
+                        log.error(err, err);
+                        tableform.dialog_enable_buttons();
+                    }
                 },
                 columns: [
                     { field: "FIELDNAME", display: _("Name"), initialsort: true },
@@ -62,15 +68,21 @@ $(function() {
                 { id: "new", text: _("New Field"), icon: "new", enabled: "always", 
                     click: async function() { 
                         await tableform.dialog_show_add(dialog, { onload: additional.check_type });
-                        let response = await tableform.fields_post(dialog.fields, "mode=create", "additional");
-                        let row = {};
-                        row.ID = response;
-                        tableform.fields_update_row(dialog.fields, row);
-                        row.FIELDTYPENAME = common.get_field(controller.fieldtypes, row.FIELDTYPE, "FIELDTYPE");
-                        row.LINKTYPENAME = common.get_field(controller.linktypes, row.LINKTYPE, "LINKTYPE");
-                        controller.rows.push(row);
-                        tableform.table_update(table);
-                        tableform.dialog_close();  
+                        try {
+                            let response = await tableform.fields_post(dialog.fields, "mode=create", "additional");
+                            let row = {};
+                            row.ID = response;
+                            tableform.fields_update_row(dialog.fields, row);
+                            row.FIELDTYPENAME = common.get_field(controller.fieldtypes, row.FIELDTYPE, "FIELDTYPE");
+                            row.LINKTYPENAME = common.get_field(controller.linktypes, row.LINKTYPE, "LINKTYPE");
+                            controller.rows.push(row);
+                            tableform.table_update(table);
+                            tableform.dialog_close();  
+                        }
+                        catch(err) {
+                            log.error(err, err);
+                            tableform.dialog_enable_buttons();
+                        }
                     } 
                 },
                 { id: "delete", text: _("Delete"), icon: "delete", enabled: "multi", 

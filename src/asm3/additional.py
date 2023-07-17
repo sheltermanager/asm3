@@ -3,7 +3,7 @@ import asm3.audit
 import asm3.utils
 import asm3.movement
 
-from asm3.i18n import python2display
+from asm3.i18n import _, python2display
 
 import sys
 
@@ -226,6 +226,7 @@ def insert_field_from_form(dbo, username, post):
     """
     Creates an additional field
     """
+    validate_field(dbo, post)
     return dbo.insert("additionalfield", {
         "FieldName":        post["name"],
         "FieldLabel":       post["label"],
@@ -246,6 +247,7 @@ def update_field_from_form(dbo, username, post):
     field can be changed after creation since only the ID ties things 
     together.
     """
+    validate_field(dbo, post)
     dbo.update("additionalfield", post.integer("id"), {
         "FieldName":        post["name"],
         "FieldLabel":       post["label"],
@@ -259,6 +261,24 @@ def update_field_from_form(dbo, username, post):
         "LinkType":         post.integer("link"),
         "DisplayIndex":     post.integer("displayindex")
     }, username, setRecordVersion=False, setLastChanged=False)
+
+def validate_field(dbo, post):
+    """
+    Checks that an additional field is valid/correct. An exception is raised for validation failures.
+    """
+    l = dbo.locale
+    # Make sure that we don't have another field with the same name (id will resolve to 0 for insert, so still works)
+    if 0 != dbo.query_int("SELECT COUNT(ID) FROM additionalfield WHERE ID <> ? AND LOWER(FieldName) = ?", ( post.integer("id"), post["name"].lower() )):
+        raise asm3.utils.ASMValidationError(_("Additional fields must have unique names", l))
+    # Make sure there are no spaces or punctuation in the name
+    name = post["name"]
+    if asm3.utils.strip_punctuation(name.replace(" ", "")) != name:
+        raise asm3.utils.ASMValidationError(_("Additional field names cannot contain spaces or punctuation", l))
+    # Make sure the name is not one of our reserved words that can break document or web templates
+    # by masking critical built-in fields
+    RESERVED = [ "id", "animalid", "personid" ]
+    if name.lower() in RESERVED:
+        raise asm3.utils.ASMValidationError(_("'{0}' is a reserved name and cannot be used for an additional field", l).format(name))
 
 def update_merge_animal(dbo, oldanimalid, newanimalid):
     """

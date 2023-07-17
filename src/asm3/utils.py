@@ -20,6 +20,7 @@ import random
 import re
 import requests
 import smtplib
+import string
 import struct
 import subprocess
 import sys
@@ -779,15 +780,21 @@ def strip_script_tags(s):
 
 def strip_style_tags(s):
     """
-    Removes all style tags from a string
+    Removes all style tags from s
     """
     return re.sub(r'(?s)<(style).*?</\1>', '', s)
 
 def strip_non_ascii(s):
     """
-    Remove any non-ascii characters from a string str
+    Remove any non-ascii characters from s
     """
     return "".join(i for i in s if ord(i)<128)
+
+def strip_punctuation(s):
+    """
+    Remove any punctuation from s
+    """
+    return ''.join(ch for ch in s if ch not in string.punctuation)
 
 def decode_html(s):
     """
