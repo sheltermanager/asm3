@@ -516,10 +516,10 @@ def doc_img_src(dbo, row):
     doesn't have doc preferred media, the nopic src is returned instead.
     row: A query containing DOCMEDIAID
     """
-    if row["DOCMEDIAID"] is None or row["DOCMEDIAID"] == "":
+    if row.DOCMEDIAID is None or row.DOCMEDIAID == "":
         return "image?db=%s&mode=nopic" % dbo.database
     else:
-        return "image?db=%s&mode=media&id=%s&date=%s" % (dbo.database, row["DOCMEDIAID"], row["DOCMEDIADATE"].isoformat())
+        return "image?db=%s&mode=media&id=%s&date=%s" % (dbo.database, row.DOCMEDIAID, row.DOCMEDIADATE.isoformat())
 
 def menu_structure(l, publisherlist, reports, mailmerges):
     """
@@ -996,25 +996,25 @@ def thumbnail_img_src(dbo, row, mode):
     row: An animal_query or person_query row containing ID, ANIMALID or PERSONID and WEBSITEMEDIANAME/DATE
     mode: The mode - animalthumb or personthumb
     """
-    if row["WEBSITEMEDIANAME"] is None or row["WEBSITEMEDIANAME"] == "":
+    if row.WEBSITEMEDIANAME is None or row.WEBSITEMEDIANAME == "":
         return "image?db=%s&mode=dbfs&id=/reports/nopic.jpg" % dbo.database
     else:
         idval = 0
         if mode == "animalthumb":
             if "ANIMALID" in row:
-                idval = int(row["ANIMALID"])
+                idval = asm3.utils.cint(row.ANIMALID)
             elif "ID" in row:
-                idval = int(row["ID"])
+                idval = asm3.utils.cint(row.ID)
         elif mode == "personthumb":
             if "PERSONID" in row:
-                idval = int(row["PERSONID"])
+                idval = asm3.utils.cint(row.PERSONID)
             elif "ID" in row:
-                idval = int(row["ID"])
+                idval = asm3.utils.cint(row.ID)
         else:
-            idval = int(row["ID"])
-        uri = "image?db=" + dbo.database + "&mode=" + mode + "&id=" + str(idval)
-        if "WEBSITEMEDIADATE" in row and row["WEBSITEMEDIADATE"] is not None:
-            uri += "&date=" + str(row["WEBSITEMEDIADATE"].isoformat())
+            idval = asm3.utils.cint(row.ID)
+        uri = f"image?db={dbo.database}&mode={mode}&id={str(idval)}"
+        if "WEBSITEMEDIADATE" in row and row.WEBSITEMEDIADATE is not None:
+            uri += "&date=%s" % row.WEBSITEMEDIADATE.isoformat()
         return uri
 
 def option(name, value = None, selected = False):

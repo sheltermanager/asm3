@@ -168,13 +168,13 @@ def get_media_file_data(dbo, mid):
     if mm is None: return (None, "", "", "")
     return mm.DATE, mm.MEDIANAME, mm.MEDIAMIMETYPE, asm3.dbfs.get_string_id(dbo, mm.DBFSID)
 
-def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
+def get_image_file_data(dbo, mode, iid = "", seq = 0, justdate = False):
     """
     Gets an image
     mode: animal | media | animalthumb | person | personthumb | dbfs
-    iid: The id of the animal for animal/thumb mode or the media record
+    iid: (str) The id of the animal for animal/thumb mode or the media record
         or a template path for dbfs mode
-    seq: If the mode is animal or person, returns image X for that person/animal
+    seq: (int) If the mode is animal or person, returns image X for that person/animal
          The first image is always the preferred photo and seq is 1-based.
     if justdate is True, returns the last modified date
     if justdate is False, returns a tuple containing the last modified date and image data
@@ -196,37 +196,40 @@ def get_image_file_data(dbo, mode, iid, seq = 0, justdate = False):
         if justdate: return mm.DATE
         return (mm.DATE, scale_image(asm3.dbfs.get_string_id(dbo, mm.DBFSID), asm3.configuration.thumbnail_size(dbo)))
 
+    sid = str(iid)
+    iid = asm3.utils.cint(iid)
+
     if mode == "animal":
         if seq == 0:
-            return mrec( get_web_preferred(dbo, ANIMAL, int(iid)) )
+            return mrec( get_web_preferred(dbo, ANIMAL, iid) )
         else:
-            return mrec( get_media_by_seq(dbo, ANIMAL, int(iid), seq) )
+            return mrec( get_media_by_seq(dbo, ANIMAL, iid, seq) )
 
     elif mode == "person":
         if seq == 0:
-            return mrec( get_web_preferred(dbo, PERSON, int(iid)) )
+            return mrec( get_web_preferred(dbo, PERSON, iid) )
         else:
-            return mrec( get_media_by_seq(dbo, PERSON, int(iid), seq) )
+            return mrec( get_media_by_seq(dbo, PERSON, iid, seq) )
 
     elif mode == "animalthumb":
-        return thumb_mrec( get_web_preferred(dbo, ANIMAL, int(iid)) )
+        return thumb_mrec( get_web_preferred(dbo, ANIMAL, iid) )
 
     elif mode == "personthumb":
-        return thumb_mrec( get_web_preferred(dbo, PERSON, int(iid)) )
+        return thumb_mrec( get_web_preferred(dbo, PERSON, iid) )
 
     elif mode == "media":
-        return mrec( get_media_by_id(dbo, int(iid)) )
+        return mrec( get_media_by_id(dbo, iid) )
 
     elif mode == "dbfs":
         if justdate:
             return dbo.now()
         else:
-            if str(iid).startswith("/"):
+            if sid.startswith("/"):
                 # Complete path was given
-                return (dbo.now(), asm3.dbfs.get_string_filepath(dbo, str(iid)))
+                return (dbo.now(), asm3.dbfs.get_string_filepath(dbo, sid))
             else:
                 # Only name was given
-                return (dbo.now(), asm3.dbfs.get_string(dbo, str(iid)))
+                return (dbo.now(), asm3.dbfs.get_string(dbo, sid))
 
     elif mode == "nopic":
         if asm3.dbfs.file_exists(dbo, "nopic.jpg"):
