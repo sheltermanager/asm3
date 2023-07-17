@@ -1,6 +1,7 @@
 47
 ================
 
+17/07/23 Refactor message board add dialog to match newer screens
 17/07/23 Defensively handle bad image id inputs when loading images
 14/07/23 Separate help menu for clarity
 14/07/23 Install recommended reports during database creation instead of /main

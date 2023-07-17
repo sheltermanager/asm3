@@ -701,11 +701,6 @@ $(function() {
             '</div>',
 
             '<div id="dialog-addmessage" style="display: none" title="' + _("Add message") + '">',
-            '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
-            '<p><span class="ui-icon ui-icon-info"></span>',
-            _("All fields should be completed."),
-            '</p>',
-            '</div>',
             '<table width="100%">',
             '<tr>',
             '<td><label for="forname">' + _("For") + '</label></td>',
@@ -722,12 +717,14 @@ $(function() {
             '</select></td>',
             '</tr>',
             '<tr>',
-            '<td><label for="expires">' + _("Expires") + '</label></td>',
-            '<td><input id="expires" class="asm-textbox asm-datebox" data="expires" type="text" title="' + _("When ASM should stop showing this message") + '" /></td>',
+            '<td><label for="expires">' + _("Expires") + '</label> ',
+            '<span id="callout-expires" class="asm-callout">' + _("When ASM should stop showing this message") + '</span>',
+            '</td>',
+            '<td><input id="expires" class="asm-textbox asm-datebox" data="expires" type="text" /></td>',
             '</tr>',
             '<tr>',
             '<td></td>',
-            '<td><input id="email" class="asm-checkbox" data="email" type="checkbox" title="' + _("Email this message to all matching users") + '" /><label for="email">' + _("Send via email") + '</label></td>',
+            '<td><input id="email" class="asm-checkbox" data="email" type="checkbox" /><label for="email">' + _("Send via email") + '</label></td>',
             '</tr>',
             '<tr>',
             '<td><label for="message">' + _("Message") + '</label></td>',
@@ -785,37 +782,41 @@ $(function() {
             if (!common.has_permission("vdn")) { $("#asm-main-diary").hide(); }
 
             let message_buttons = {}; 
-            message_buttons[_("Create this message")] = async function() { 
-                if (!validate.notblank(["expires", "message"])) { return; }
-                $("#dialog-addmessage").disable_dialog_buttons();
-                let formdata = "mode=addmessage&" + $("#dialog-addmessage .asm-textbox, #dialog-addmessage textarea, #dialog-addmessage select, #dialog-addmessage .asm-checkbox").toPOST();
-                try {
-                    await common.ajax_post("main", formdata);
-                    let h = "<tr>\n";
-                    h += "<td>\n";
-                    h += "<span style=\"white-space: nowrap; padding-right: 5px;\">" + asm.user + "</span>\n";
-                    h += "</td><td>";
-                    h += "<span style=\"white-space: nowrap; padding-right: 5px;\">";
-                    if ($("#priority").val() == 1) {
-                        h += '<span class="ui-icon ui-icon-alert"></span>\n';
+            message_buttons[_("Create this message")] = {
+                text: _("Create this message"),
+                "class": 'asm-dialog-actionbutton',
+                click: async function() {
+                    if (!validate.notblank(["expires", "message"])) { return; }
+                    $("#dialog-addmessage").disable_dialog_buttons();
+                    let formdata = "mode=addmessage&" + $("#dialog-addmessage .asm-textbox, #dialog-addmessage textarea, #dialog-addmessage select, #dialog-addmessage .asm-checkbox").toPOST();
+                    try {
+                        await common.ajax_post("main", formdata);
+                        let h = "<tr>\n";
+                        h += "<td>\n";
+                        h += "<span style=\"white-space: nowrap; padding-right: 5px;\">" + asm.user + "</span>\n";
+                        h += "</td><td>";
+                        h += "<span style=\"white-space: nowrap; padding-right: 5px;\">";
+                        if ($("#priority").val() == 1) {
+                            h += '<span class="ui-icon ui-icon-alert"></span>\n';
+                        }
+                        else {
+                            h += '<span class="ui-icon ui-icon-info"></span>\n';
+                        }
+                        h += $("#expires").val();
+                        h += "</span></td>";
+                        if ($("#priority").val() == 1) {
+                            h += '<td><span class="mtext" style="font-weight: bold !important">' + $("#message").val() + '</span></td>\n';
+                        }
+                        else {
+                            h += '<td><span class="mtext">' + $("#message").val() + '</span></td>\n';
+                        }
+                        h += "</tr>";
+                        $("#asm-messageboard > tbody:first").prepend(h);
                     }
-                    else {
-                        h += '<span class="ui-icon ui-icon-info"></span>\n';
+                    finally {
+                        $("#dialog-addmessage").enable_dialog_buttons();
+                        $("#dialog-addmessage").dialog("close");
                     }
-                    h += $("#expires").val();
-                    h += "</span></td>";
-                    if ($("#priority").val() == 1) {
-                        h += '<td><span class="mtext" style="font-weight: bold !important">' + $("#message").val() + '</span></td>\n';
-                    }
-                    else {
-                        h += '<td><span class="mtext">' + $("#message").val() + '</span></td>\n';
-                    }
-                    h += "</tr>";
-                    $("#asm-messageboard > tbody:first").prepend(h);
-                }
-                finally {
-                    $("#dialog-addmessage").enable_dialog_buttons();
-                    $("#dialog-addmessage").dialog("close");
                 }
             };
             message_buttons[_("Cancel")] = function() { $(this).dialog("close"); };
@@ -833,6 +834,8 @@ $(function() {
                     validate.reset("dialog-addmessage");
                 }
             });
+
+            validate.indicator([ "forname", "priority", "expires", "message" ]);
 
             let welcome_buttons = {};
             welcome_buttons[_("I've finished, Don't show me this popup again.")] = {
