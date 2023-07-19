@@ -14,9 +14,8 @@ $(function() {
                 html.textbar(_("This animal is currently fostered, it will be automatically returned first."), { id: "fosterinfo", maxwidth: "600px" }),
                 html.textbar(_("This animal is currently at a retailer, it will be automatically returned first."), { id: "retailerinfo", maxwidth: "600px" }),
                 html.textbar(_("This animal has active reservations, they will be cancelled."), { id: "reserveinfo", maxwidth: "600px" }),
-                html.textbar(_("This animal is not on the shelter."), { id: "notonshelter", state: "error", icon: "alert", maxwidth: "600px" }),
-                html.textbar(_("This animal is part of a cruelty case and should not leave the shelter."), { id: "crueltycase", state: "error", icon: "alert", maxwidth: "600px" }),
-                html.textbar(_("This animal is currently quarantined and should not leave the shelter."), { id: "quarantine", state: "error", icon: "alert", maxwidth: "600px" }),
+                html.textbar('<span id="awarntext"></span>', { id: "animalwarn", state: "error", icon: "alert", maxwidth: "600px" }),
+                html.textbar('<span id="warntext"></span>', { id: "ownerwarn", state: "error", icon: "alert", maxwidth: "600px" }),
                 tableform.fields_render([
                     { post_field: "animal", label: _("Animal"), type: "animal" },
                     { post_field: "person", label: _("Owner"), type: "person" },
@@ -73,53 +72,37 @@ $(function() {
             validate.indicator([ "animal", "person", "movementdate" ]);
 
             // Callback when animal is changed
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
+            $("#animal").animalchooser().bind("animalchooserchange", function(event, a) {
                 
                 // Hide things before we start
                 $("#costdisplay").closest(".ui-widget").fadeOut();
                 $("#fosterinfo").fadeOut();
                 $("#reserveinfo").fadeOut();
                 $("#retailerinfo").fadeOut();
-                $("#notonshelter").fadeOut();
-                $("#crueltycase").fadeOut();
-                $("#quarantine").fadeOut();
+                $("#animalwarn").fadeOut();
                 $("#reclaim").button("enable");
 
                 // If the animal is not on the shelter and not fostered or at a retailer, 
                 // bail out now because we shouldn't be able to move the animal.
-                if (rec.ARCHIVED == 1 && rec.ACTIVEMOVEMENTTYPE != 2 && rec.ACTIVEMOVEMENTTYPE != 8) {
-                    $("#notonshelter").fadeIn();
-                    $("#reclaim").button("disable");
-                    return;
-                }
-
-                // If the animal is a cruelty case, we should not allow reclaim
-                if (rec.CRUELTYCASE == 1) {
-                    $("#crueltycase").fadeIn();
+                if (a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.ACTIVEMOVEMENTTYPE != 8) {
                     $("#reclaim").button("disable");
                 }
 
-                // If the animal is quarantined, we shouldn't allow reclaim either
-                if (rec.ISQUARANTINE == 1) {
-                    $("#quarantine").fadeIn();
-                    $("#reclaim").button("disable");
-                }
-
-                if (rec.ACTIVEMOVEMENTTYPE == "2") {
+                if (a.ACTIVEMOVEMENTTYPE == "2") {
                     $("#fosterinfo").fadeIn();
                 }
 
-                if (rec.ACTIVEMOVEMENTTYPE == "8") {
+                if (a.ACTIVEMOVEMENTTYPE == "8") {
                     $("#retailerinfo").fadeIn();
                 }
 
-                if (rec.HASACTIVERESERVE == "1" && config.bool("CancelReservesOnAdoption")) {
+                if (a.HASACTIVERESERVE == "1" && config.bool("CancelReservesOnAdoption")) {
                     $("#reserveinfo").fadeIn();
                 }
 
                 // Grab cost information if option is on
                 if (config.bool("CreateBoardingCostOnAdoption")) {
-                    let formdata = "mode=cost&id=" + rec.ID;
+                    let formdata = "mode=cost&id=" + a.ID;
                     common.ajax_post("move_reclaim", formdata)
                         .then(function(data) {
                             let [costamount, costdata] = data.split("||");
@@ -130,17 +113,28 @@ $(function() {
                         });
                 }
 
+                let warn = html.animal_movement_warnings(a);
+                if (warn.length > 0) {
+                    $("#awarntext").html(warn.join("<br>"));
+                    $("#animalwarn").fadeIn();
+                }
+
             });
 
             // Callback when person is changed
-            $("#person").personchooser().bind("personchooserchange", function(event, rec) {
+            $("#person").personchooser().bind("personchooserchange", function(event, p) {
 
                 // Default giftaid if the person is registered
                 if (common.has_permission("oaod")) {
-                    $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
-                    $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
+                    $("#payment").payments("option", "giftaid", p.ISGIFTAID == 1);
+                    $("#giftaid1").prop("checked", p.ISGIFTAID == 1);
                 }
 
+                let warn = html.person_movement_warnings(p);
+                if (warn.length > 0) {
+                    $("#warntext").html(warn.join("<br>"));
+                    $("#ownerwarn").fadeIn();
+                }
             });
 
             // Payments
@@ -150,6 +144,8 @@ $(function() {
 
             $("#costdisplay").closest(".ui-widget").hide();
             $("#notonshelter").hide();
+            $("#animalwarn").hide();
+            $("#ownerwarn").hide();
             $("#crueltycase").hide();
             $("#quarantine").hide();
             $("#fosterinfo").hide();

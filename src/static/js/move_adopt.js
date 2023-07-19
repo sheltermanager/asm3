@@ -30,15 +30,8 @@ $(function() {
                 this.infobox("retailerinfo", _("This animal is currently at a retailer, it will be automatically returned first.")),
                 this.infobox("reserveinfo", _("This animal has active reservations, they will be cancelled.")),
                 this.infobox("feeinfo", '<span class="subtext"></span>'),
+                this.warnbox("animalwarn", '<span id="awarntext"></span>'),
                 this.warnbox("ownerwarn", '<span id="warntext"></span>'),
-                this.warnbox("notonshelter", _("This animal is not on the shelter.")),
-                this.warnbox("onhold", _("This animal is currently held and cannot be adopted.")),
-                this.warnbox("notavailable", _("This animal is marked not for adoption.")),
-                this.warnbox("crueltycase", _("This animal is part of a cruelty case and should not leave the shelter.")),
-                this.warnbox("quarantine", _("This animal is currently quarantined and should not leave the shelter.")),
-                this.warnbox("unaltered", _("This animal has not been altered.")),
-                this.warnbox("notmicrochipped", _("This animal has not been microchipped.")),
-                this.warnbox("outstandingmedical", _("This animal has outstanding medical treatments.")),
                 tableform.fields_render([
                     { post_field: "animal", label: _("Animal"), type: "animal" },
                     { post_field: "person", label: _("New Owner"), type: "person" },
@@ -140,63 +133,14 @@ $(function() {
                 $("#reserveinfo").fadeOut();
                 $("#retailerinfo").fadeOut();
                 $("#feeinfo").fadeOut();
-                $("#notonshelter").fadeOut();
-                $("#onhold").fadeOut();
-                $("#notavailable").fadeOut();
-                $("#crueltycase").fadeOut();
-                $("#quarantine").fadeOut();
-                $("#unaltered").fadeOut();
-                $("#notmicrochipped").fadeOut();
-                $("#outstandingmedical").fadeOut();
+                $("#animalwarn").fadeOut();
                 $("#adopt").button("enable");
 
-                // If the animal is not on the shelter and not fostered or at a retailer, 
-                // bail out now because we shouldn't be able to move the animal.
-                if (a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.ACTIVEMOVEMENTTYPE != 8) {
-                    $("#notonshelter").fadeIn();
+                // Disable the adoption button if the animal cannot be adopted because it isn't
+                // on the shelter or is held, a cruelty case or quarantined
+                if ((a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.ACTIVEMOVEMENTTYPE != 8) ||
+                    a.ISHOLD == 1 || a.CRUELTYCASE == 1 || a.ISQUARANTINE == 1) {
                     $("#adopt").button("disable");
-                    return;
-                }
-
-                // If the animal is held, we shouldn't be allowed to adopt it
-                if (a.ISHOLD == 1) {
-                    $("#onhold").fadeIn();
-                    $("#adopt").button("disable");
-                    return;
-                }
-
-                // If the animal is a cruelty case, we should prevent adoption
-                if (a.CRUELTYCASE == 1) {
-                    $("#crueltycase").fadeIn();
-                    $("#adopt").button("disable");
-                    return;
-                }
-
-                // If the animal is quarantined, we shouldn't allow adoption
-                if (a.ISQUARANTINE == 1) {
-                    $("#quarantine").fadeIn();
-                    $("#adopt").button("disable");
-                    return;
-                }
-
-                // Not available for adoption (warning only)
-                if (a.ISNOTAVAILABLEFORADOPTION == 1) {
-                    $("#notavailable").fadeIn();
-                }
-
-                // Unaltered
-                if (config.bool("WarnUnaltered") && a.NEUTERED == 0) {
-                    $("#unaltered").fadeIn();
-                }
-
-                // Not microchipped
-                if (config.bool("WarnNoMicrochip") && a.IDENTICHIPPED == 0) {
-                    $("#notmicrochipped").fadeIn();
-                }
-
-                // Outstanding medical
-                if (config.bool("WarnOSMedical") && a.HASOUTSTANDINGMEDICAL == 1) {
-                    $("#outstandingmedical").fadeIn();
                 }
 
                 if (a.ACTIVEMOVEMENTTYPE == 2) {
@@ -211,7 +155,7 @@ $(function() {
                     $("#reserveinfo").fadeIn();
                 }
 
-                // Check for bonded animals and warn
+                // Show bonded animal info
                 if (a.BONDEDANIMALID || a.BONDEDANIMAL2ID) {
                     let bw = "";
                     if (a.BONDEDANIMAL1ARCHIVED == 0 && a.BONDEDANIMAL1NAME) {
@@ -251,12 +195,20 @@ $(function() {
                     $("#feeinfo").fadeIn();
                 }
 
+                let warn = html.animal_movement_warnings(a, true);
+                if (warn.length > 0) {
+                    $("#awarntext").html(warn.join("<br>"));
+                    $("#animalwarn").fadeIn();
+                }
+
             });
 
             // Callback when person is changed
             $("#person").personchooser().bind("personchooserchange", async function(event, rec) {
                 let response = await edit_header.person_with_adoption_warnings(rec.ID);
                 let p = jQuery.parseJSON(response)[0];
+
+                $("#ownerwarn").fadeOut();
 
                 // Show the checkout section if it's configured
                 if (config.str("AdoptionCheckoutProcessor") != "") {
@@ -277,66 +229,21 @@ $(function() {
                     $("#payment").payments("option", "giftaid", p.ISGIFTAID == 1);
                     $("#giftaid1").prop("checked", p.ISGIFTAID == 1);
                 }
-            
-                // Owner banned?
-                if (p.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
-                    $("#warntext").html(_("This person has been banned from adopting animals."));
+
+                let oopostcode = $(".animalchooser-oopostcode").val();
+                let bipostcode = $(".animalchooser-bipostcode").val(); 
+                let warn = html.person_movement_warnings(p, oopostcode, bipostcode);
+                if (warn.length > 0) {
+                    $("#warntext").html(warn.join("<br>"));
                     $("#ownerwarn").fadeIn();
-                    return;
                 }
 
-                // Person at this address previously banned?
-                if (p.BANNEDADDRESS > 0 && config.bool("WarnBannedAddress")) {
-                    $("#warntext").html(_("This person lives at the same address as someone who was previously banned."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
-
-                // Owner previously under investigation
-                if (p.INVESTIGATION > 0) {
-                    $("#warntext").html(_("This person has been under investigation."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
-
-                // Owner part of animal control incident
-                if (p.INCIDENT > 0) {
-                    $("#warntext").html(_("This person has an animal control incident against them."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
-
-                // Owner previously surrendered?
-                if (p.SURRENDER > 0 && config.bool("WarnBroughtIn")) {
-                    $("#warntext").html(_("This person has previously surrendered an animal."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
-
-                // Owner not homechecked?
-                if (p.IDCHECK == 0 && config.bool("WarnNoHomeCheck")) {
-                    $("#warntext").html(_("This person has not passed a homecheck."));
-                    $("#ownerwarn").fadeIn();
-                    return;
-                }
-
-                // Does this owner live in the same postcode area as the animal's
-                // original owner?
-                if ( format.postcode_prefix($(".animalchooser-oopostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ||
-                     format.postcode_prefix($(".animalchooser-bipostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ) {
-                    if (config.bool("WarnOOPostcode")) { 
-                        $("#warntext").html(_("This person lives in the same area as the person who brought the animal to the shelter.")); 
-                        $("#ownerwarn").fadeIn();
-                        return;
-                    }
-                }
-
-                $("#ownerwarn").fadeOut();
             });
 
             $("#costdisplay").closest(".ui-widget").hide();
             $("#checkoutcreate").closest(".ui-widget").hide();
             $("#bonddisplay").hide();
+            $("#animalwarn").hide();
             $("#ownerwarn").hide();
             $("#notonshelter").hide();
             $("#onhold").hide();

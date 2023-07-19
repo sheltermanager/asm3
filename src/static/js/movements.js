@@ -683,62 +683,12 @@ $(function() {
             let p = movements.lastperson, a = movements.lastanimal, warn = [];
             tableform.dialog_error("");
 
-            // None of these warnings are valid if this isn't a reservation, adoption or a reclaim
+            // None of the warnings are valid if this isn't a reservation, adoption or a reclaim
             if ($("#type").val() != 0 && $("#type").val() != 1 && $("#type").val() != 5) { return; }
 
             // Animal warnings
             if (a) {
-
-                // If the animal is marked not for adoption
-                if (a.ISNOTAVAILABLEFORADOPTION == 1) {
-                    warn.push(_("This animal is marked not for adoption."));
-                }
-
-                // If the animal is held, we shouldn't be allowed to adopt it
-                if (a.ISHOLD == 1) {
-                    warn.push(_("This animal is currently held and cannot be adopted."));
-                }
-
-                // Cruelty case
-                if (a.CRUELTYCASE == 1) {
-                    warn.push(_("This animal is part of a cruelty case and should not leave the shelter."));
-                }
-
-                // Outstanding medical
-                if (config.bool("WarnOSMedical") && a.HASOUTSTANDINGMEDICAL == 1) {
-                    warn.push(_("This animal has outstanding medical treatments."));
-                }
-
-                // Quarantined
-                if (a.ISQUARANTINE == 1) {
-                    warn.push(_("This animal is currently quarantined and should not leave the shelter."));
-                }
-
-                // Unaltered
-                if (config.bool("WarnUnaltered") && a.NEUTERED == 0) {
-                    warn.push(_("This animal has not been altered."));
-                }
-
-                // Not microchipped
-                if (config.bool("WarnNoMicrochip") && a.IDENTICHIPPED == 0) {
-                    warn.push(_("This animal has not been microchipped."));
-                }
-
-                // Check for bonded animals and warn
-                if (a.BONDEDANIMALID || a.BONDEDANIMAL2ID) {
-                    let bw = "";
-                    if (a.BONDEDANIMAL1NAME) {
-                        bw += a.BONDEDANIMAL1CODE + " - " + a.BONDEDANIMAL1NAME;
-                    }
-                    if (a.BONDEDANIMAL2NAME) {
-                        if (bw != "") { bw += ", "; }
-                        bw += a.BONDEDANIMAL2CODE + " - " + a.BONDEDANIMAL2NAME;
-                    }
-                    if (bw != "") {
-                        warn.push(_("This animal is bonded with {0}").replace("{0}", bw));
-                    }
-                }
-
+                warn = warn.concat(html.animal_movement_warnings(a, $("#type").val() == 0 || $("#type").val() == 1));
             }
 
             // If we don't have a person yet, just show any animal warnings and finish
@@ -752,46 +702,10 @@ $(function() {
             edit_header.person_with_adoption_warnings(p.ID).then(function(data) {
                 p = jQuery.parseJSON(data)[0];
 
-                // Is this owner banned?
-                if (p.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
-                    warn.push(_("This person has been banned from adopting animals.")); 
-                }
+                let oopostcode = $(".animalchooser-oopostcode").val();
+                let bipostcode = $(".animalchooser-bipostcode").val(); 
 
-                // Owner previously under investigation
-                if (p.INVESTIGATION > 0) {
-                    warn.push(_("This person has been under investigation."));
-                }
-
-                // Owner part of animal control incident
-                if (p.INCIDENT > 0) {
-                    warn.push(_("This person has an animal control incident against them."));
-                }
-
-                // Owner previously surrendered?
-                if (p.SURRENDER > 0 && config.bool("WarnBroughtIn")) {
-                    warn.push(_("This person has previously surrendered an animal."));
-                }
-
-                // Person at this address previously banned?
-                if (p.BANNEDADDRESS > 0 && config.bool("WarnBannedAddress")) {
-                    warn.push(_("This person lives at the same address as someone who was previously banned."));
-                }
-
-                // Does this owner live in the same postcode area as the animal's
-                // original owner?
-                if ( format.postcode_prefix($(".animalchooser-oopostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ||
-                     format.postcode_prefix($(".animalchooser-bipostcode").val()) == format.postcode_prefix(p.OWNERPOSTCODE) ) {
-                    if (config.bool("WarnOOPostcode")) { 
-                        warn.push(_("This person lives in the same area as the person who brought the animal to the shelter.")); 
-                    }
-                }
-
-                // Is this owner not homechecked?
-                if (p.IDCHECK == 0) {
-                    if (config.bool("WarnNoHomeCheck")) { 
-                        warn.push(_("This person has not passed a homecheck."));
-                    }
-                }
+                warn = warn.concat(html.person_movement_warnings(p, oopostcode, bipostcode ));
 
                 if (warn.length > 0) {
                     tableform.dialog_error(warn.join("<br/>"));

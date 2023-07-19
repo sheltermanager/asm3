@@ -1,6 +1,8 @@
 47
 ================
 
+19/07/23 Refactor animal/person warning code, consistent for transfer/reclaim
+19/07/23 Show animal and person warnings when creating movements/reservations
 19/07/23 Add $CURRENT_DATE_TIME$ token
 17/07/23 Extend datepicker to -70 years
 17/07/23 Validate additional fields for punctuation and unique/reserved names #1310

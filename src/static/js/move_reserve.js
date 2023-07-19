@@ -12,6 +12,7 @@ $(function() {
                 '<input id="movementid" type="hidden" />',
                 html.content_header(_("Reserve an animal"), true),
                 html.textbar('<span class="subtext"></span>', { id: "feeinfo", maxwidth: "600px" }),
+                html.textbar('<span id="awarntext"></span>', { id: "animalwarn", state: "error", icon: "alert", maxwidth: "600px" }),
                 html.textbar('<span id="warntext"></span>', { id: "ownerwarn", state: "error", icon: "alert", maxwidth: "600px" }),
                 html.textbar(_("This animal already has an active reservation."), { id: "multiplereserve", state: "error", icon: "alert", maxwidth: "600px" }),
                 html.textbar(_("This animal is not on the shelter."), { id: "notonshelter", state: "error", icon: "alert", maxwidth: "600px" }),
@@ -52,80 +53,55 @@ $(function() {
             validate.indicator([ "animal", "person", "reservationdate" ]);
 
             // Callback when animal is changed
-            $("#animal").animalchooser().bind("animalchooserchange", function(event, rec) {
+            $("#animal").animalchooser().bind("animalchooserchange", function(event, a) {
               
                 // Hide things before we start
                 $("#notonshelter").fadeOut();
+                $("#animalwarn").fadeOut();
                 $("#feeinfo").fadeOut();
                 $("#reserve").button("enable");
 
                 // If the animal is not on the shelter and not fostered or at a retailer, show that warning
-                // and stop everything else
-                if (rec.ARCHIVED == 1 && rec.ACTIVEMOVEMENTTYPE != 2 && rec.ACTIVEMOVEMENTTYPE != 8) {
-                    $("#notonshelter").fadeIn();
+                // and prevent the reserve
+                if (a.ARCHIVED == 1 && a.ACTIVEMOVEMENTTYPE != 2 && a.ACTIVEMOVEMENTTYPE != 8) {
                     $("#reserve").button("disable");
-                    return;
-                }
-
-                // If the animal has an active reserve, show the warning, but
-                // things can still continue
-                if (rec.HASACTIVERESERVE == 1) {
-                    $("#multiplereserve").fadeIn();
                 }
 
                 // If we have an adoption fee, show it in the info bar
-                if (!config.bool("DontShowAdoptionFee") && rec.FEE) {
-                    // $("#amount").currency("value", rec.FEE); #122 disabled due to less relevant for reserves
-                    $("#feeinfo .subtext").html( _("This animal has an adoption fee of {0}").replace("{0}", format.currency(rec.FEE)));
+                if (!config.bool("DontShowAdoptionFee") && a.FEE) {
+                    // $("#amount").currency("value", a.FEE); #122 disabled due to less relevant for reserves
+                    $("#feeinfo .subtext").html( _("This animal has an adoption fee of {0}").replace("{0}", format.currency(a.FEE)));
                     $("#feeinfo").fadeIn();
+                }
+
+                let warn = html.animal_movement_warnings(a, true);
+                if (warn.length > 0) {
+                    $("#awarntext").html(warn.join("<br>"));
+                    $("#animalwarn").fadeIn();
                 }
 
             });
 
             // Callback when person is changed
-            $("#person").personchooser().bind("personchooserchange", function(event, rec) {
+            $("#person").personchooser().bind("personchooserchange", async function(event, rec) {
+                let response = await edit_header.person_with_adoption_warnings(rec.ID);
+                let p = jQuery.parseJSON(response)[0];
 
-                edit_header.person_with_adoption_warnings(rec.ID).then(function(data) {
-                    rec = jQuery.parseJSON(data)[0];
+                $("#ownerwarn").fadeOut();
          
-                    // Default giftaid if the person is registered
-                    if (common.has_permission("oaod")) {
-                        $("#payment").payments("option", "giftaid", rec.ISGIFTAID == 1);
-                        $("#giftaid1").prop("checked", rec.ISGIFTAID == 1);
-                    }
+                // Default giftaid if the person is registered
+                if (common.has_permission("oaod")) {
+                    $("#payment").payments("option", "giftaid", p.ISGIFTAID == 1);
+                    $("#giftaid1").prop("checked", p.ISGIFTAID == 1);
+                }
 
-                    // Owner banned?
-                    if (rec.ISBANNED == 1 && config.bool("WarnBannedOwner")) {
-                        $("#warntext").text(_("This person has been banned from adopting animals."));
-                        $("#ownerwarn").fadeIn();
-                        return;
-                    }
-
-                    // Owner previously under investigation
-                    if (rec.INVESTIGATION > 0) {
-                        $("#warntext").html(_("This person has been under investigation."));
-                        $("#ownerwarn").fadeIn();
-                        return;
-                    }
-
-                    // Owner part of animal control incident
-                    if (rec.INCIDENT > 0) {
-                        $("#warntext").html(_("This person has an animal control incident against them."));
-                        $("#ownerwarn").fadeIn();
-                        return;
-                    }
-
-                    // Owner not homechecked?
-                    if (rec.IDCHECK == 0 && config.bool("WarnNoHomeCheck")) {
-                        $("#warntext").text(_("This person has not passed a homecheck."));
-                        $("#ownerwarn").fadeIn();
-                        return;
-                    }
-
-                    $("#ownerwarn").fadeOut();
-
-                });
-
+                let oopostcode = $(".animalchooser-oopostcode").val();
+                let bipostcode = $(".animalchooser-bipostcode").val(); 
+                let warn = html.person_movement_warnings(p, oopostcode, bipostcode);
+                if (warn.length > 0) {
+                    $("#warntext").html(warn.join("<br>"));
+                    $("#ownerwarn").fadeIn();
+                }
             });
 
             // Payments
@@ -133,6 +109,7 @@ $(function() {
                 $("#payment").payments({ controller: controller });
             }
 
+            $("#animalwarn").hide();
             $("#ownerwarn").hide();
             $("#notonshelter").hide();
             $("#feeinfo").hide();
