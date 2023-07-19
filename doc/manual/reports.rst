@@ -117,6 +117,11 @@ information, or information requested from the user at report generation time.
 * $CURRENT_DATE$ - Substitutes today's date in an appropriate string SQL format
   for the current database. This saves you having to use NOW() or
   CURRENT_DATE() or various other SQL functions specific to one database.
+  Note that the user's timezone is applied to the date/time.
+
+* $CURRENT_DATE_TIME$ - Substitutes the date and time now in an appropriate
+  string SQL format for the current datbase. Note that the user's timezone
+  is applied to the date/time.
 
 * $CURRENT_DATE-X$ - The same as CURRENT_DATE, but subtracts X days.
 

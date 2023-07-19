@@ -1287,6 +1287,7 @@ class Report:
             s = s.replace("$CURRENT_DATE+%s$" % day, self.dbo.sql_date(d, includeTime=False, wrapParens=False))
         # straight tokens
         s = s.replace("$CURRENT_DATE$", self.dbo.sql_date(self.dbo.now(), includeTime=False, wrapParens=False))
+        s = s.replace("$CURRENT_DATE_TIME$", self.dbo.sql_date(self.dbo.now(), includeTime=True, wrapParens=False))
         s = s.replace("$CURRENT_DATE_FDM$", self.dbo.sql_date(asm3.i18n.first_of_month(self.dbo.now()), includeTime=False, wrapParens=False))
         s = s.replace("$CURRENT_DATE_LDM$", self.dbo.sql_date(asm3.i18n.last_of_month(self.dbo.now()), includeTime=False, wrapParens=False))
         s = s.replace("$CURRENT_DATE_FDY$", self.dbo.sql_date(asm3.i18n.first_of_year(self.dbo.now()), includeTime=False, wrapParens=False))
