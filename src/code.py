@@ -6625,6 +6625,7 @@ class sql(JSONEndpoint):
             q = q.replace("$CURRENT_DATE+%s$" % day, dbo.sql_date(d, includeTime=False, wrapParens=False))
         # straight tokens
         q = q.replace("$CURRENT_DATE$", dbo.sql_date(dbo.now(), includeTime=False, wrapParens=False))
+        q = q.replace("$CURRENT_DATE_TIME$", dbo.sql_date(dbo.now(), includeTime=True, wrapParens=False))
         q = q.replace("$CURRENT_DATE_FDM$", dbo.sql_date(asm3.i18n.first_of_month(dbo.now()), includeTime=False, wrapParens=False))
         q = q.replace("$CURRENT_DATE_LDM$", dbo.sql_date(asm3.i18n.last_of_month(dbo.now()), includeTime=False, wrapParens=False))
         q = q.replace("$CURRENT_DATE_FDY$", dbo.sql_date(asm3.i18n.first_of_year(dbo.now()), includeTime=False, wrapParens=False))
