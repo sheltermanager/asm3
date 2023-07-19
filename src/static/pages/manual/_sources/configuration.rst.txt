@@ -207,7 +207,8 @@ animals outside the shelter that you may wish to let your users see.
 
 They all appear at the bottom of the list and allow you to choose from animals
 who have a particular exit movement type, those who are marked non-shelter,
-those who the active user is fostering right now and deceased animals.
+those who the active user is fostering or coordinating adoptions for right 
+now and deceased animals.
 
 Two-Factor Authentication (2FA)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

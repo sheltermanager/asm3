@@ -210,7 +210,11 @@ IDs if the user does not have a location filter.</p></li>
 <li><p>$SITE$ - Substitutes the current user’s site ID (multi-site only).</p></li>
 <li><p>$CURRENT_DATE$ - Substitutes today’s date in an appropriate string SQL format
 for the current database. This saves you having to use NOW() or
-CURRENT_DATE() or various other SQL functions specific to one database.</p></li>
+CURRENT_DATE() or various other SQL functions specific to one database.
+Note that the user’s timezone is applied to the date/time.</p></li>
+<li><p>$CURRENT_DATE_TIME$ - Substitutes the date and time now in an appropriate
+string SQL format for the current datbase. Note that the user’s timezone
+is applied to the date/time.</p></li>
 <li><p>$CURRENT_DATE-X$ - The same as CURRENT_DATE, but subtracts X days.</p></li>
 <li><p>$CURRENT_DATE+X$ - The same as CURRENT_DATE, but adds X days.</p></li>
 <li><p>$CURRENT_DATE_FDM$ - Returns the first day of the current month.</p></li>
