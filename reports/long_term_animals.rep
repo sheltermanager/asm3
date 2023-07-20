@@ -2,9 +2,9 @@ Long Term Animals
 ###
 Figures
 ###
-3215/Any rev01
+3215/Any rev02
 ###
-Animals who have been on the shelter longer than 3 months.
+Animals who have been on the shelter longer than 6 months.
 ###
 en
 ###
@@ -13,7 +13,7 @@ s.SpeciesName, a.MostRecentEntryDate, a.AnimalAge, a.BreedName, a.TimeOnShelter
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
-WHERE a.Archived = 0 AND DaysOnShelter > 92
+WHERE a.Archived = 0 AND DaysOnShelter > 182
 ORDER BY a.MostRecentEntryDate
 ###
 $$HEADER
