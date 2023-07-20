@@ -804,6 +804,7 @@ def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age 
     endoftoday = dbo.sql_date(dbo.today(settime="23:59:59"))
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
     shelterfilter = ""
+    longterm = asm3.configuration.long_term_months(dbo) * 30
     alertchip = asm3.configuration.alert_species_microchip(dbo)
     alertneuter = asm3.configuration.alert_species_neuter(dbo)
     alertnevervacc = asm3.configuration.alert_species_never_vacc(dbo)
@@ -873,13 +874,14 @@ def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age 
         "(SELECT COUNT(*) FROM stocklevel WHERE Balance > 0 AND Expiry Is Not Null AND Expiry <= %(today)s) AS stexp, " \
         "(SELECT COUNT(*) FROM animaltransport WHERE (DriverOwnerID = 0 OR DriverOwnerID Is Null) AND Status < 10) AS trnodrv, " \
         "(SELECT COUNT(*) FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
-            "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > 182 %(locfilter)s) AS lngterm, " \
+            "WHERE Archived = 0 AND HasPermanentFoster = 0 AND DaysOnShelter > %(longterm)s %(locfilter)s) AS lngterm, " \
         "(SELECT COUNT(*) FROM publishlog WHERE Alerts > 0 AND PublishDateTime >= %(today)s) AS publish " \
         "FROM lksmovementtype WHERE ID=1" \
             % { "today": today, "endoftoday": endoftoday, "tomorrow": tomorrow, 
                 "oneweek": oneweek, "oneyear": oneyear, "onemonth": onemonth, 
                 "futuremonth": futuremonth, "locfilter": locationfilter, "shelterfilter": shelterfilter, 
-                "alertchip": alertchip, "alertneuter": alertneuter, "alertnevervacc": alertnevervacc, "alertrabies": alertrabies }
+                "alertchip": alertchip, "longterm": longterm, "alertneuter": alertneuter, 
+                "alertnevervacc": alertnevervacc, "alertrabies": alertrabies }
     return dbo.query_cache(sql, age=age)
 
 def get_stats(dbo, age=120):
