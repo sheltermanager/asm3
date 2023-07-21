@@ -1,6 +1,7 @@
 47
 ================
 
+21/07/23 Use days for long term instead of months and make it configurable
 20/07/23 Long term alert should use long term months config switch
 19/07/23 Refactor animal/person warning code, consistent for transfer/reclaim
 19/07/23 Show animal and person warnings when creating movements/reservations

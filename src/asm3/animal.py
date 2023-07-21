@@ -763,7 +763,7 @@ def get_animals_long_term(dbo):
     """
     Returns all shelter animals who have been on the shelter for 6 months or more
     """
-    return dbo.query("%s WHERE a.DaysOnShelter > ? AND a.Archived = 0" % get_animal_query(dbo), [asm3.configuration.long_term_months(dbo) * 30])
+    return dbo.query("%s WHERE a.DaysOnShelter > ? AND a.Archived = 0" % get_animal_query(dbo), [asm3.configuration.long_term_days(dbo)])
 
 def get_animals_owned_by(dbo, personid):
     """
@@ -804,7 +804,7 @@ def get_alerts(dbo, locationfilter = "", siteid = 0, visibleanimalids = "", age 
     endoftoday = dbo.sql_date(dbo.today(settime="23:59:59"))
     locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
     shelterfilter = ""
-    longterm = asm3.configuration.long_term_months(dbo) * 30
+    longterm = asm3.configuration.long_term_days(dbo)
     alertchip = asm3.configuration.alert_species_microchip(dbo)
     alertneuter = asm3.configuration.alert_species_neuter(dbo)
     alertnevervacc = asm3.configuration.alert_species_never_vacc(dbo)

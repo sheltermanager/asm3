@@ -190,7 +190,7 @@ const html = {
         if (config.bool("EmblemBoarding") && (a.HASACTIVEBOARDING == 1)) {
             s.push(html.icon("boarding", _("Boarding")));
         }
-        if (config.bool("EmblemLongTerm") && a.ARCHIVED == 0 && (a.DAYSONSHELTER > config.integer("LongTermMonths") * 30))  {
+        if (config.bool("EmblemLongTerm") && a.ARCHIVED == 0 && (a.DAYSONSHELTER > config.integer("LongTermDays"))) {
             s.push(html.icon("calendar", _("Long term")));
         }
         if (config.bool("EmblemCourtesy") && a.ISCOURTESY == 1) {

@@ -225,7 +225,7 @@ DEFAULTS = {
     "LocationChangeLog": "Yes",
     "LocationChangeLogType": "3",
     "LocationFiltersEnabled": "No",
-    "LongTermMonths": "6",
+    "LongTermDays": "182",
     "LostAnimalSearchColumns": "LostFoundID,Owner,MicrochipNumber,AreaLost,"
         "AreaPostCode,DateLost,AgeGroup,SexName,SpeciesName,BreedName,"
         "BaseColourName,DistFeat",
@@ -1029,8 +1029,8 @@ def location_change_log_type(dbo):
 def location_filters_enabled(dbo):
     return cboolean(dbo, "LocationFiltersEnabled", DEFAULTS["LocationFiltersEnabled"])
 
-def long_term_months(dbo):
-    return cint(dbo, "LongTermMonths", DEFAULTS["LongTermMonths"])
+def long_term_days(dbo):
+    return cint(dbo, "LongTermDays", DEFAULTS["LongTermDays"])
 
 def maddies_fund_username(dbo):
     return cstring(dbo, "MaddiesFundUsername")

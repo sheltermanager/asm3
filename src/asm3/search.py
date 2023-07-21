@@ -271,7 +271,7 @@ def search(dbo, session, q):
             ar(asm3.animal.get_animals_not_for_adoption(dbo), "ANIMAL", animalsort)
 
     elif q == "longterm":
-        explain = _("All animals who have been on the shelter longer than {0} months.", l).format(asm3.configuration.long_term_months(dbo))
+        explain = _("All animals who have been on the shelter longer than {0} months.", l).format(asm3.configuration.long_term_days(dbo) / 30)
         if viewanimal:
             ar(asm3.animal.get_animals_long_term(dbo), "ANIMAL", animalsort)
 
