@@ -267,7 +267,7 @@ $(function() {
                     { json_field: "TITLE", post_field: "title", classes: "asm-doubletextbox", label: _("Report Title"), type: "text", validation: "notblank" },
                     { json_field: "DESCRIPTION", post_field: "description", classes: "asm-doubletextbox", label: _("Description"), type: "text" },
                     { json_field: "DAILYEMAIL", post_field: "dailyemail", classes: "asm-doubletextbox", label: _("Email To"), type: "text", validation: "validemail", 
-                        tooltip: _("An optional comma separated list of email addresses to send the output of this report to")},
+                        callout: _("An optional comma separated list of email addresses to send the output of this report to")},
                     { json_field: "DAILYEMAILFREQUENCY", post_field: "dailyemailfrequency", label: _("When"), type: "select", options: html.list_to_options(emailfreq, "ID", "DISPLAY") },
                     { json_field: "DAILYEMAILHOUR", post_field: "dailyemailhour", label: _("at"), type: "select",
                         options: { displayfield: "display", valuefield: "value", rows: emailhours }},
