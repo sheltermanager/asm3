@@ -267,12 +267,13 @@ $(function() {
             }
             if (alerts.LNGTERM > 0 && common.has_permission("va") && config.bool("EmblemLongTerm")) {
                 totalalerts += alerts.LNGTERM;
+                let ltm = Math.round(config.integer("LongTermDays") / 30);
                 s += '<a href="search?q=longterm">' + html.icon("calendar") + ' ' + 
                     common.ntranslate(alerts.LNGTERM, [
-                        _("{plural0} animal has been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths")),
-                        _("{plural1} animals have been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths")),
-                        _("{plural2} animals have been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths")),
-                        _("{plural3} animals have been on the shelter longer than {0} months").replace("{0}", config.integer("LongTermMonths"))
+                        _("{plural0} animal has been on the shelter longer than {0} months").replace("{0}", ltm);
+                        _("{plural1} animals have been on the shelter longer than {0} months").replace("{0}", ltm),
+                        _("{plural2} animals have been on the shelter longer than {0} months").replace("{0}", ltm),
+                        _("{plural3} animals have been on the shelter longer than {0} months").replace("{0}", ltm)
                     ]) + '</a><br />';
             }
 
