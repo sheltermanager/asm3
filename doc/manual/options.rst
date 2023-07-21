@@ -759,6 +759,9 @@ Movements
 * Trial adoptions last for: This value is used to set the default "trial end date"
   field when marking adoptions as a trial.
 
+* Animals are long term after: This value controls the long term alert, search
+  and emblem. The default is 182 days (6 months). 
+
 * Treat animals with a future intake date as part of the shelter inventory: This
   option will treat animals who have not arrived yet (Date Brought In > Today)
   as on shelter so that they are visible in shelter view etc.
