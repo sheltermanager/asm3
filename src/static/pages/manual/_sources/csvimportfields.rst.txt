@@ -32,6 +32,9 @@ These fields are:
 This allows you to use a spreadsheet of data to update many animals on chipping/neutering
 days (for example), or update many animal bios in one go.
 
+When importing incident data from CSV files, the person fields supplied will be used as
+the caller.
+
 ANIMALCODE
     A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.
 ANIMALNAME
@@ -183,6 +186,24 @@ DONATIONTYPE
     The payment type to use (should correspond to a payment type in your database).
 DONATIONGIFTAID
     Y / N if the payment should have the giftaid flag set
+INCIDENTDATE
+    The date of the incident and call
+INCIDENTTYPE
+    The type for the incident (should correspond to an incident type in your database).
+INCIDENTNOTES
+    The call notes for the incident
+DISPATCHADDRESS
+    The dispatch address for the incident
+DISPATCHCITY
+    The dispatch city
+DISPATCHSTATE
+    The dispatch state
+DISPATCHZIPCODE
+    The dispatch zipcode
+INCIDENTANIMALSPECIES
+    The species of animal involved in the incident
+INCIDENTANIMALSEX
+    The sex of the animal involved in the incident
 LICENSETYPE
     The license type to use (licenses need at least person info)
 LICENSENUMBER

@@ -40,6 +40,8 @@ VALID_FIELDS = [
     "ORIGINALOWNERSTATE", "ORIGINALOWNERZIPCODE", "ORIGINALOWNERJURISDICTION", "ORIGINALOWNERHOMEPHONE",
     "ORIGINALOWNERWORKPHONE", "ORIGINALOWNERCELLPHONE", "ORIGINALOWNEREMAIL",
     "DONATIONDATE", "DONATIONAMOUNT", "DONATIONFEE", "DONATIONCHECKNUMBER", "DONATIONCOMMENTS", "DONATIONTYPE", "DONATIONPAYMENT", "DONATIONGIFTAID",
+    "INCIDENTDATE", "INCIDENTTYPE", "INCIDENTNOTES", "DISPATCHADDRESS", "DISPATCHCITY", "DISPATCHSTATE", "DISPATCHZIPCODE",
+    "INCIDENTANIMALSPECIES", "INCIDENTANIMALDESCRIPTION", "INCIDENTANIMALSEX",
     "LICENSETYPE", "LICENSENUMBER", "LICENSEFEE", "LICENSEISSUEDATE", "LICENSEEXPIRESDATE", "LICENSECOMMENTS",
     "LOGDATE", "LOGTYPE", "LOGCOMMENTS",
     "PERSONTITLE", "PERSONINITIALS", "PERSONFIRSTNAME", "PERSONLASTNAME", "PERSONNAME",
@@ -267,6 +269,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     hastestduedate = False
     hasvacc = False
     hasvaccduedate = False
+    hasincident = False
+    hasincidentdate = False
     hasperson = False
     haspersonlastname = False
     haspersonname = False
@@ -300,6 +304,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
         if col.startswith("MEDICAL"): hasmed = True
         if col == "MEDICALGIVENDATE": hasmedicalgivendate = True
         if col == "MEDICALNAME": hasmedicalname = True
+        if col.startswith("INCIDENT"): hasincident = True
+        if col == "INCIDENTDATE": hasincidentdate = True
         if col.startswith("LICENSE"): haslicence = True
         if col == "LICENSENUMBER": haslicencenumber = True
         if col.startswith("COST"): hascost = True
@@ -334,6 +340,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
         ( hascost and not hascostamount, "Your CSV file has cost fields, but no COSTAMOUNT column" ),
         ( haslog and not hasanimal, "Your CSV file has log fields, but no animal to apply them to" ),
         ( haslog and not haslogcomments, "Your CSV file has log fields, but no LOGCOMMENTS column" ),
+        ( hasincident and not hasincidentdate, "Your CSV file has incident fields, but no INCIDENTDATE column" ),
+        ( hasincident and not hasperson, "Your CSV file has incident fields, but no person to set as the caller" ),
         ( haslicence and not haslicencenumber, "Your CSV file has license fields, but no LICENSENUMBER column" ),
         ( haslicence and not (haspersonlastname or haspersonname), "Your CSV file has license fields, but no person to apply the license to" )
     ]
@@ -805,6 +813,25 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             except Exception as e:
                 row_error(errors, "payment", rowno, row, e, dbo, sys.exc_info())
             if movementid != 0: asm3.movement.update_movement_donation(dbo, movementid)
+
+        # Incident?
+        if hasincident and personid != 0 and gks(row, "INCIDENTDATE") != "":
+            d = {}
+            d["incidentdate"] = gkd(dbo, row, "INCIDENTDATE", True)
+            d["incidenttype"] = gkl(dbo, row, "INCIDENTTYPE", "incidenttype", "IncidentName", createmissinglookups)
+            d["calldate"] = d["incidentdate"]
+            d["callnotes"] = gks(row, "INCIDENTNOTES")
+            d["caller"] = str(personid)
+            d["dispatchaddress"] = gks(row, "DISPATCHADDRESS")
+            d["dispatchtown"] = gks(row, "DISPATCHCITY")
+            d["dispatchcounty"] = gks(row, "DISPATCHSTATE")
+            d["dispatchpostcode"] = gks(row, "DISPATCHZIPCODE")
+            d["species"] = gkl(dbo, row, "INCIDENTANIMALSPECIES", "species", "SpeciesName", createmissinglookups)
+            d["sex"] = gksx(row, "INCIDENTANIMALSEX")
+            try:
+                asm3.animalcontrol.insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), user, geocode=False)
+            except Exception as e:
+                row_error(errors, "incident", rowno, row, e, dbo, sys.exc_info())
 
         # Vaccination
         if hasvacc and animalid != 0 and gks(row, "VACCINATIONDUEDATE") != "":

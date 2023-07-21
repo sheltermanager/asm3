@@ -130,6 +130,8 @@ exist in the CSV data and have a value for that row.</p>
 </ul>
 <p>This allows you to use a spreadsheet of data to update many animals on chipping/neutering
 days (for example), or update many animal bios in one go.</p>
+<p>When importing incident data from CSV files, the person fields supplied will be used as
+the caller.</p>
 <dl class="simple">
 <dt>ANIMALCODE</dt><dd><p>A code for the animal. If supplied, it will set the sheltercode and short sheltercode fields. If not supplied, the system will generate a code for the animal to the appropriate scheme. If you have manual codes turned on and no animal code is supplied, an error message will be displayed and the import abandoned.</p>
 </dd>
@@ -281,6 +283,24 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
 <dt>DONATIONTYPE</dt><dd><p>The payment type to use (should correspond to a payment type in your database).</p>
 </dd>
 <dt>DONATIONGIFTAID</dt><dd><p>Y / N if the payment should have the giftaid flag set</p>
+</dd>
+<dt>INCIDENTDATE</dt><dd><p>The date of the incident and call</p>
+</dd>
+<dt>INCIDENTTYPE</dt><dd><p>The type for the incident (should correspond to an incident type in your database).</p>
+</dd>
+<dt>INCIDENTNOTES</dt><dd><p>The call notes for the incident</p>
+</dd>
+<dt>DISPATCHADDRESS</dt><dd><p>The dispatch address for the incident</p>
+</dd>
+<dt>DISPATCHCITY</dt><dd><p>The dispatch city</p>
+</dd>
+<dt>DISPATCHSTATE</dt><dd><p>The dispatch state</p>
+</dd>
+<dt>DISPATCHZIPCODE</dt><dd><p>The dispatch zipcode</p>
+</dd>
+<dt>INCIDENTANIMALSPECIES</dt><dd><p>The species of animal involved in the incident</p>
+</dd>
+<dt>INCIDENTANIMALSEX</dt><dd><p>The sex of the animal involved in the incident</p>
 </dd>
 <dt>LICENSETYPE</dt><dd><p>The license type to use (licenses need at least person info)</p>
 </dd>
