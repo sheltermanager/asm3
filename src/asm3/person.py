@@ -99,6 +99,10 @@ def embellish_adoption_warnings(dbo, p):
         p.SURRENDER = warn.SURRENDER
         p.INCIDENT = warn.INCIDENT
         p.BANNEDADDRESS = warn.BANNEDADDRESS
+    reserves = []
+    for r in dbo.query("SELECT AnimalID FROM adoption WHERE OwnerID=? AND MovementType=0 AND ReservationCancelledDate Is Null", [p.ID]):
+        reserves.append(str(r.ANIMALID))
+    p.RESERVEDANIMALIDS = ",".join(reserves)
     return p
 
 def embellish_latest_movement(dbo, p):

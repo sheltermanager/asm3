@@ -123,8 +123,11 @@ $(function() {
 
             validate.indicator([ "animal", "person", "movementdate" ]);
 
+            let lastanimal, lastperson;
+
             // Callback when animal is changed
             $("#animal").animalchooser().bind("animalchooserchange", async function(event, a) {
+                lastanimal = a;
                 // Hide things before we start
                 $("#bonddisplay").fadeOut();
                 $("#costdisplay").closest(".ui-widget").fadeOut();
@@ -207,6 +210,7 @@ $(function() {
             $("#person").personchooser().bind("personchooserchange", async function(event, rec) {
                 let response = await edit_header.person_with_adoption_warnings(rec.ID);
                 let p = jQuery.parseJSON(response)[0];
+                lastperson = p;
 
                 $("#ownerwarn").fadeOut();
 
@@ -233,6 +237,15 @@ $(function() {
                 let oopostcode = $(".animalchooser-oopostcode").val();
                 let bipostcode = $(".animalchooser-bipostcode").val(); 
                 let warn = html.person_movement_warnings(p, oopostcode, bipostcode);
+
+                // Check whether the animal has reservations. 
+                // If it does, show a warning if this person does not have one on the animal.
+                if (config.bool("WarnNoReserve") && lastanimal && lastanimal.HASACTIVERESERVE == 1) {
+                    if (!common.array_in(String(lastanimal.ID), p.RESERVEDANIMALIDS.split(","))) {
+                        warn.push(_("This person does not have a reservation on this animal."));
+                    }
+                }
+
                 if (warn.length > 0) {
                     $("#warntext").html(warn.join("<br>"));
                     $("#ownerwarn").fadeIn();

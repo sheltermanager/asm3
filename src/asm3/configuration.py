@@ -358,6 +358,7 @@ DEFAULTS = {
     "WarnNoMicrochip": "Yes",
     "WarnNoPendingVacc": "Yes",
     "WarnNoHomeCheck": "Yes",
+    "WarnNoReserve": "Yes",
     "WarnBannedAddress": "Yes",
     "WarnBannedOwner": "Yes",
     "WarnOOPostcode": "Yes",

@@ -857,6 +857,9 @@ Movements
 * Warn when adopting to an owner in the same postcode as the original owner:
   Self explanatory. 
 
+* Warn when adopting an animal with reservations and this person is not one of
+  them: Self explanatory.
+
 * Warn when creating multiple reservations on the same animal: If set, the
   system will warn you if you attempt to reserve the same animal to different
   people.  

@@ -1,6 +1,7 @@
 47
 ================
 
+24/07/23 Warn when adopting animal with reservations to person without reserve #1278
 24/07/23 Add extra emblems (orange/brown square/circle, soccer ball, lightning)
 21/07/23 Allow import of incident data via CSV #1232
 21/07/23 Use days for long term instead of months and make it configurable

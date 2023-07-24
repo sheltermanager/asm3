@@ -707,6 +707,14 @@ $(function() {
 
                 warn = warn.concat(html.person_movement_warnings(p, oopostcode, bipostcode ));
 
+                // If this is an adoption, check whether the animal has reservations 
+                // If it does, show a warning if this person does not have one on the animal.
+                if (config.bool("WarnNoReserve") && $("#type").val() == 1 && a && a.HASACTIVERESERVE == 1) {
+                    if (!common.array_in(String(a.ID), p.RESERVEDANIMALIDS.split(","))) {
+                        warn.push(_("This person does not have a reservation on this animal."));
+                    }
+                }
+
                 if (warn.length > 0) {
                     tableform.dialog_error(warn.join("<br/>"));
                 }

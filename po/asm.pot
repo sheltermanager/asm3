@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-07-21 09:04+0000\n"
+"POT-Creation-Date: 2023-07-24 10:20+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -13573,6 +13573,10 @@ msgstr ""
 msgid "This payment has already been received"
 msgstr ""
 
+#: movements.js move_adopt.js
+msgid "This person does not have a reservation on this animal."
+msgstr ""
+
 #: common_html.js
 msgid "This person has an animal control incident against them."
 msgstr ""
@@ -15019,6 +15023,12 @@ msgstr ""
 
 #: options.js
 msgid "Warn when adopting an animal who has outstanding medical treatments"
+msgstr ""
+
+#: options.js
+msgid ""
+"Warn when adopting an animal with reservations and this person is not one of "
+"them"
 msgstr ""
 
 #: options.js
