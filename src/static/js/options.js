@@ -490,7 +490,10 @@ $(function() {
                     9873,  // Black flag
                     9875,  // Anchor
                     9877,  // Medical
+                    9878,  // Scales
                     9888,  // Warning
+                    9889,  // High Voltage
+                    9917,  // Soccer ball
                     9951,  // Truck
                     9983,  // Striped flag
                     9986,  // Scissors
@@ -518,14 +521,18 @@ $(function() {
                     128272, // Lock with key
                     128308, // Red circle
                     128309, // Blue circle
+                    128992, // Orange circle
                     128993, // Yellow circle
                     128994, // Green circle
                     128995, // Purple circle
+                    128996, // Brown circle
                     128997, // Red square
                     128998, // Blue square
+                    128999, // Orange square
                     129000, // Yellow square
                     129001, // Green square
                     129002, // Purple square
+                    129003, // Brown square
                     128571, // Cat with heart eyes
                     129379, // Bowl and spoon
                     129387, // Can of food
