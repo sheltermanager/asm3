@@ -1422,11 +1422,12 @@ def update_geocode(dbo, personid, latlon="", address="", town="", county="", pos
     # If an address hasn't been specified, look it up from the personid given
     if address == "":
         row = dbo.first_row(dbo.query("SELECT OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, OwnerCountry FROM owner WHERE ID=?", [personid]))
-        address = row.OWNERADDRESS
-        town = row.OWNERTOWN
-        county = row.OWNERCOUNTY
-        postcode = row.OWNERPOSTCODE
-        country = row.OWNERCOUNTRY
+        if row is not None:
+            address = row.OWNERADDRESS
+            town = row.OWNERTOWN
+            county = row.OWNERCOUNTY
+            postcode = row.OWNERPOSTCODE
+            country = row.OWNERCOUNTRY
     # If we're allowing manual entry of latlon values and we have a non-empty
     # value, do nothing so that changes to address don't overwrite it
     # If someone has deleted the values, a latlon of ,,HASH is returned so
