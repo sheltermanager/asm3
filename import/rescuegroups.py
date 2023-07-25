@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import asm, os
 
@@ -32,7 +32,7 @@ change the View to Export and then hit Export as CSV.
 
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/rg_eb3027"
+PATH = "/home/robin/tmp/asm3_import_data/rg_bs3053"
 
 DEFAULT_BREED = 261 # default to dsh
 PETFINDER_ID = "" # Shouldn't be needed if Picture 1 is present
