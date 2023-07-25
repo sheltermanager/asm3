@@ -162,6 +162,7 @@ $(function() {
                 "DateBroughtIn":  _("Brought In"),
                 "EntryReasonID":  _("Entry Reason"),
                 "HealthProblems":  _("Health Problems"),
+                "ActiveDietName": _("Diet"),
                 "PTSReason":  _("Euthanized"),
                 "PTSReasonID":  _("Euthanized"),
                 "IsGoodWithCats":  _("Good with Cats"),
@@ -211,7 +212,7 @@ $(function() {
             const DATE_FIELDS = [ "DateOfBirth", "DeceasedDate", "IdentichipDate", "TattooDate", 
                 "NeuteredDate", "CombiTestDate", "HeartwormTestDate", "DateBroughtIn", "HoldUntilDate" ];
             const STRING_FIELDS = [ "AnimalName", "BreedName", "CreatedBy", "AcceptanceNumber", 
-                "AgeGroup", "IdentichipNumber", "TattooNumber", "PickupAddress", 
+                "ActiveDietName", "AgeGroup", "IdentichipNumber", "TattooNumber", "PickupAddress", 
                 "RabiesTag", "DaysOnShelter", "ShelterLocationUnit" ];
             const COMMENT_FIELDS = [ "AnimalComments", "Markings", "ReasonForEntry", "HiddenAnimalDetails", "HealthProblems", "PTSReason" ];
             const YES_NO_UNKNOWN_FIELDS = [ "IsGoodWithCats", "IsGoodWithDogs", "IsGoodWithChildren",

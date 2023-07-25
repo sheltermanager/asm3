@@ -715,6 +715,7 @@ def json_animalfindcolumns(dbo):
         ( "DateBroughtIn", _("Date Brought In", l) ),
         ( "EntryReasonID", _("Entry Reason Category", l) ),
         ( "HealthProblems", _("Health Problems", l) ),
+        ( "ActiveDietName", _("Diet", l) ),
         ( "PTSReason", _("Death Comments", l) ),
         ( "PTSReasonID", _("Death Reason", l) ),
         ( "IsGoodWithCats", _("Good With Cats", l) ),
