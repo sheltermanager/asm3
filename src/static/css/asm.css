@@ -504,6 +504,14 @@ select:disabled, input:disabled, textarea:disabled {
     vertical-align: middle;
 }
 
+.ui-draggable .asm-thumbnail {
+    cursor: grab;
+}
+
+.ui-draggable-dragging .asm-thumbnail {
+    cursor: grabbing;
+}
+
 /** TIMELINE ==================== */
 .asm-timeline-time { font-size: 80%; font-style: italic; opacity: 0.5; }
 .asm-timeline-small-date { text-decoration: none; opacity: 0.5; }
