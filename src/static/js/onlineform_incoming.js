@@ -109,6 +109,8 @@ $(function() {
                         + '" href="#">' + html.icon("animal-add") + ' ' + _("Animal (with brought in person)") + '</a></li>',
                     '<li id="button-person" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("person-add") + ' ' + _("Person") + '</a></li>',
+                    '<li id="button-person-nm" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("person-add") + ' ' + _("Person (do not merge existing)") + '</a></li>',
                     '<li id="button-lostanimal" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("animal-lost-add") + ' ' + _("Lost Animal") + '</a></li>',
                     '<li id="button-foundanimal" class="asm-menu-item"><a '
@@ -144,6 +146,9 @@ $(function() {
             });
             $("#button-person").click(function() {
                 onlineform_incoming.create_record("person", "person");
+            });
+            $("#button-person-nm").click(function() {
+                onlineform_incoming.create_record("personnomerge", "person");
             });
             $("#button-lostanimal").click(function() {
                 onlineform_incoming.create_record("lostanimal", "lostanimal");

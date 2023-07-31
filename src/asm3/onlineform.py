@@ -82,6 +82,9 @@ AP_CREATEANIMAL_BROUGHTIN = 10
 # The name of an extra checkbox inserted to trap spambots
 SPAMBOT_CB = 'termsscb'
 
+# Fields that are added to forms by the system and are not user enterable
+SYSTEM_FIELDS = [ "useragent", "ipaddress", "retainfor", "formreceived", "mergeperson" ]
+
 # Online field names that we recognise and will attempt to map to
 # known fields when importing from submitted forms
 FORM_FIELDS = [
@@ -502,7 +505,7 @@ def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_imag
         label = f.LABEL
         if label is None or label == "": label = f.FIELDNAME
         v = f.VALUE
-        if f.FIELDNAME in ( "useragent", "ipaddress", "retainfor", "formreceived" ) and not include_system: continue
+        if f.FIELDNAME in SYSTEM_FIELDS and not include_system: continue
         if v.startswith("RAW::") and not include_raw: continue
         if v.startswith("data:") and not include_images: continue
         if v.startswith("RAW::"): 
@@ -822,8 +825,10 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
     formname = post["formname"]
     posteddate = dbo.now()
     flags = post["flags"]
+    address = ""
     emailaddress = ""
     emailsubmissionto = ""
+    mobile = ""
     firstname = ""
     lastname = ""
     animalname = ""
@@ -855,6 +860,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
                         fieldtype = fld.FIELDTYPE
                         tooltip = fld.TOOLTIP
                         # Store a few known fields for access later
+                        if fieldname == "address":
+                            address = v
                         if fieldname == "emailaddress": 
                             emailaddress = v
                         if fieldname == "emailsubmissionto":
@@ -863,6 +870,8 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
                             firstname = v
                         if fieldname == "lastname" or fieldname == "surname":
                             lastname = v
+                        if fieldname == "mobiletelephone" or fieldname == "celltelephone":
+                            mobile = v
                         if fieldname == "animalname" or fieldname == "reserveanimalname":
                             animalname = v
                         # If it's a raw markup field, store the markup as the value
@@ -898,6 +907,32 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
             except Exception as err:
                 asm3.al.warn("failed creating incoming field, cid=%s, name=%s, value=%s: %s" % (collationid, fieldname, v, err), 
                     "insert_onlineformincoming_from_form", dbo)
+   
+    # If there are person fields in this form, find and create a field
+    # containing the person that they would merge with after processing with 
+    # "Create Person" so that the user will know ahead of time. 
+    # This helps with issues such as people signing up with each other's email address.
+    if firstname != "" and lastname != "":
+        rows = asm3.person.get_person_similar(dbo, email=emailaddress, mobile=mobile, surname=lastname, forenames=firstname, address=address)
+        if len(rows) > 0:
+            sp = rows[0]
+            mergeperson = "%s: %s" % (sp.ID, sp.OWNERNAME)
+            # Do the insert
+            try:
+                dbo.insert("onlineformincoming", {
+                    "CollationID":      collationid,
+                    "FormName":         formname,
+                    "PostedDate":       posteddate,
+                    "Flags":            flags,
+                    "FieldName":        "mergeperson",
+                    "Label":            "",
+                    "DisplayIndex":     0,
+                    "Host":             remoteip,
+                    "Value":            mergeperson
+                }, generateID=False, setCreated=False)
+            except Exception as err:
+                asm3.al.warn("failed creating merge person field, cid=%s, value=%s: %s" % (collationid, mergeperson, err), 
+                    "insert_onlineformincoming_from_form", dbo)
 
     # Sort out the preview of the first few fields
     fieldssofar = 0
@@ -917,16 +952,18 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
         if fieldssofar < 3:
             # Don't include raw markup or signature/image fields in the preview
             if fld.VALUE.startswith("RAW::") or fld.VALUE.startswith("data:"): continue
-            # Or the system added timestamp field, ip address, user agent or fields we would have already added above
-            if fld.FIELDNAME in ("retainfor", "formreceived", "ipaddress", "useragent", "firstname", "forenames", "lastname", "surname"): continue
+            # Or the system fields, or fields we would have already added above
+            if fld.FIELDNAME in SYSTEM_FIELDS: continue
+            if fld.FIELDNAME in ("firstname", "forenames", "lastname", "surname"): continue
             if fld.FIELDNAME in ("animalname", "reserveanimalname"): continue
             fieldssofar += 1
             preview.append( "%s: %s" % (fld.LABEL, fld.VALUE ))
-    
+
+    # Add the preview to the form
     dbo.update("onlineformincoming", "CollationID=%s" % collationid, { 
         "Preview": ", ".join(preview) 
     })
-
+        
     # Get the onlineform if we have one
     formdef = dbo.first_row(dbo.query("SELECT * FROM onlineform o " \
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
@@ -1278,9 +1315,10 @@ def create_animal(dbo, username, collationid, broughtinby=0):
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
     return (collationid, animalid, "%s - %s" % (sheltercode, d["animalname"]), status)
 
-def create_person(dbo, username, collationid):
+def create_person(dbo, username, collationid, merge=True):
     """
     Creates a person record from the incoming form data with collationid.
+    if merge is True, will update, find and attach to an existing person instead of creating if one exists.
     Also, attaches the form to the person as media.
     The return value is tuple of collationid, personid, personname, status
     status is 0 for created, 1 for updated existing, 2 for existing and banned
@@ -1350,7 +1388,7 @@ def create_person(dbo, username, collationid):
         if "mobiletelephone" in d: dmobile = d["mobiletelephone"]
         if "address" in d: daddress = d["address"]
         similar = asm3.person.get_person_similar(dbo, demail, dmobile, d["surname"], d["forenames"], daddress, siteid)
-        if len(similar) > 0:
+        if merge and len(similar) > 0:
             personid = similar[0].ID
             status = 1 # updated existing record
             if similar[0].ISBANNED == 1: status = 2 # existing record and person banned

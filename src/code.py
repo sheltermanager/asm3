@@ -5225,6 +5225,16 @@ class onlineform_incoming(JSONEndpoint):
             if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
 
+    def post_personnomerge(self, o):
+        self.check(asm3.users.ADD_PERSON)
+        user = "form/%s" % o.user
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, personid, personname, status = asm3.onlineform.create_person(o.dbo, user, pid, merge=False)
+            rv.append("%d|%d|%s|%s" % (collationid, personid, personname, status))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
+        return "^$".join(rv)
+
     def post_lostanimal(self, o):
         self.check(asm3.users.ADD_LOST_ANIMAL)
         user = "form/%s" % o.user
