@@ -645,7 +645,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="usecoord">Use adoption coordinator as contact</label>',
                 '<span id="callout-usecoord" class="asm-callout">',
-                'Use the adoption coordinator\'s contact information instead of the shelter if the animal has an adoption coordinator assigned.',
+                'Use the adoption coordinator\'s contact information instead of the options above if the animal has an adoption coordinator assigned.',
                 '</span>',
                 '</td>',
                 '<td><select id="usecoord" class="asm-selectbox cfg" data="PetRescueUseCoordinator">',
