@@ -1197,6 +1197,9 @@ def petrescue_phone_type(dbo):
 def petrescue_token(dbo):
     return cstring(dbo, "PetRescueToken")
 
+def petrescue_use_coordinator(dbo):
+    return cboolean(dbo, "PetRescueUseCoordinator")
+
 def pdf_inline(dbo):
     return cboolean(dbo, "PDFInline", DEFAULTS["PDFInline"] == "Yes")
 

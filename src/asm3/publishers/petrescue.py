@@ -69,6 +69,7 @@ class PetRescuePublisher(AbstractPublisher):
         contact_name = asm3.configuration.organisation(self.dbo)
         contact_email = asm3.configuration.petrescue_email(self.dbo)
         if contact_email == "": contact_email = asm3.configuration.email(self.dbo)
+        use_coordinator = asm3.configuration.petrescue_use_coordinator(self.dbo)
         phone_type = asm3.configuration.petrescue_phone_type(self.dbo)
         contact_number = asm3.configuration.petrescue_phone_number(self.dbo)
         if phone_type == "" or phone_type == "org": contact_number = asm3.configuration.organisation_telephone(self.dbo)
@@ -114,7 +115,7 @@ class PetRescuePublisher(AbstractPublisher):
                     self.cleanup()
                     return
       
-                data = self.processAnimal(an, all_desexed, adoptable_in, suburb, state, postcode, contact_name, contact_number, contact_email, all_microchips)
+                data = self.processAnimal(an, all_desexed, adoptable_in, suburb, state, postcode, contact_name, contact_number, contact_email, all_microchips, use_coordinator)
 
                 # PetRescue will insert/update accordingly based on whether remote_id/remote_source exists
                 url = PETRESCUE_URL + "listings"
@@ -189,7 +190,7 @@ class PetRescuePublisher(AbstractPublisher):
 
         self.cleanup()
 
-    def processAnimal(self, an, all_desexed=False, adoptable_in="", suburb="", state="", postcode="", contact_name="", contact_number="", contact_email="", all_microchips=False):
+    def processAnimal(self, an, all_desexed=False, adoptable_in="", suburb="", state="", postcode="", contact_name="", contact_number="", contact_email="", all_microchips=False, use_coordinator=True):
         """ Processes an animal record and returns a data dictionary to upload as JSON """
         isdog = an.SPECIESID == 1
         iscat = an.SPECIESID == 2
@@ -262,6 +263,13 @@ class PetRescuePublisher(AbstractPublisher):
             if fr is not None and fr.OWNERPOSTCODE: location_postcode = fr.OWNERPOSTCODE
             if fr is not None and fr.OWNERCOUNTY: location_state_abbr = fr.OWNERCOUNTY
             if fr is not None and fr.OWNERTOWN: location_suburb = fr.OWNERTOWN
+
+        # If the option is on to use the adoption coordinator contact info, and this animal
+        # has an adoption coordinator, set them
+        if use_coordinator and an.ADOPTIONCOORDINATORNAME and an.ADOPTIONCOORDINATOREMAILADDRESS:
+            contact_name = an.ADOPTIONCOORDINATORNAME
+            contact_email = an.ADOPTIONCOORDINATOREMAILADDRESS
+            contact_number = an.ADOPTIONCOORDINATORWORKTELEPHONE or an.ADOPTIONCOORDINATORMOBILETELEPHONE
 
         # Only send microchip_number if all_microchips is turned on, or for animals listed in or 
         # located in Victoria or New South Wales.

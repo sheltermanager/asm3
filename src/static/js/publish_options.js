@@ -641,6 +641,16 @@ $(function() {
                 '<option value="none">Do not send a number</option>',
                 '</select> ',
                 '<input type="text" class="asm-textbox cfg" title="The phone number to use" data="PetRescuePhoneNumber" />',
+                '</td></tr>',
+                '<tr>',
+                '<td><label for="usecoord">Use adoption coordinator as contact</label>',
+                '<span id="callout-usecoord" class="asm-callout">',
+                'Use the adoption coordinator\'s contact information instead of the shelter if the animal has an adoption coordinator assigned.',
+                '</span>',
+                '</td>',
+                '<td><select id="usecoord" class="asm-selectbox cfg" data="PetRescueUseCoordinator">',
+                '<option>No</option><option>Yes</option></select></td>',
+                '</tr>',
                 '</table>',
                 '</div>'
             ].join("\n");
