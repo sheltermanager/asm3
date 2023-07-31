@@ -27,5 +27,8 @@ class TestMedia(unittest.TestCase):
     def test_remove_expired_media(self):
         asm3.media.remove_expired_media(base.get_dbo())
 
+    def test_remove_media_after_exit(self):
+        asm3.media.remove_media_after_exit(base.get_dbo())
+
     def test_get_media_export(self):
         asm3.media.get_media_export(base.get_dbo())
