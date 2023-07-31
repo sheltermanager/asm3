@@ -43,8 +43,8 @@ class TestAdditional(unittest.TestCase):
 
     def test_insert_field_from_form(self):
         data = {
-            "name":   "addname",
-            "label":  "addlabel",
+            "name":   "addname2",
+            "label":  "addlabel2",
             "tooltip": "addtooltip",
             "lookupvalues": "",
             "mandatory": "off",
