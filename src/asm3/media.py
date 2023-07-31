@@ -921,6 +921,24 @@ def remove_expired_media(dbo, username = "system"):
             #    asm3.dbfs.delete_id(dbo, r.dbfsid) 
             dbo.execute("DELETE FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
             asm3.al.debug("removed %d expired document media items (remove after years)" % len(rows), "media.remove_expired_media", dbo)
+            return "OK %s" % len(rows)
+
+def remove_media_after_exit(dbo, username = "system"):
+    """
+    Removes media where the animal left the shelter or died more than X years ago.
+    No longer physically deletes dbfs rows - that should be done manually
+    via delete_orphaned_media
+    """
+    if not asm3.configuration.auto_remove_animal_media_exit(dbo): 
+        return "OK 0"
+    years = asm3.configuration.auto_remove_animal_media_exit_years(dbo)
+    if years == 0:
+        return "OK 0"
+    cutoff = dbo.today(offset=years*-365)
+    animals = dbo.query_list("SELECT ID FROM animal WHERE Archived=1 AND (ActiveMovementDate < ? OR DeceasedDate < ?)", (cutoff, cutoff))
+    affected = dbo.delete("media", "LinkType=0 AND LinkID IN (%s)" % ",".join(animals), username) 
+    asm3.al.debug("removed %d expired animal media items (remove %s years after exit)" % (affected, years), "media.remove_expired_media", dbo)
+    return "OK %s" % affected
 
 def scale_image_file(inimage, outimage, resizespec):
     """

@@ -374,15 +374,21 @@ policies instigated as part of data protection compliance.
 
 .. warning:: Once anonymized, personal data is gone forever and cannot be recovered.
 
+* Never anonymize people who adopted an animal: If this option is set, people
+  with the adopter flag are included in the list of people who will never be
+  anonymized.
+
 * Remove HTML and PDF document media after this many years: If this option is
   on, the system will automatically delete HTML and PDF document media this
   many years after its creation.
 
 .. warning:: Once deleted, documents are gone forever and cannot be recovered.
 
-* Never anonymize people who adopted an animal: If this option is set, people
-  with the adopter flag are included in the list of people who won't be
-  anonymized.
+* Remove animal media this many years after the animal dies or leaves the shelter:
+  If this option is on, the system will automatically animal media a set number
+  years after the animal dies or leaves the shelter. 
+
+.. warning:: Once deleted, media is gone forever and cannot be recovered.
 
 * Show GDPR Contact Opt-In field on person screens: If this option is on, the
   system will show a contact opt-in field on person records. You can use it to

@@ -776,6 +776,10 @@ $(function() {
                 '<input data="AutoRemoveDocumentMedia" id="autoremovedocumentmedia" type="checkbox" class="asm-checkbox" /> <label for="autoremovedocumentmedia">' + _("Remove HTML and PDF document media after this many years") + '</label>',
                 '<input data="AutoRemoveDMYears" type="text" class="asm-textbox asm-intbox" />', 
                 '<br />',
+                '<input data="AutoRemoveAnimalMediaExit" id="autoremoveanimalmediaexit" type="checkbox" class="asm-checkbox" /> <label for="autoremoveanimalmediaexit">' + _("Remove animal media this many years after the animal dies or leaves the shelter") + '</label>',
+                '<input data="AutoRemoveAMExitYears" type="text" class="asm-textbox asm-intbox" />', 
+                '<br />',
+
                 '<input data="ShowGDPRContactOptIn" id="showgdprcontact" type="checkbox" class="asm-checkbox" /> <label for="showgdprcontact">' + _("Show GDPR Contact Opt-In field on person screens") + '</label>',
                 '<br />',
                 '<input data="GDPRContactChangeLog" id="gdprcontactchangelog" type="checkbox" class="asm-checkbox" /> <label for="gdprcontactchangelog">' + _("When I set a new GDPR Opt-In contact option, make a note of it in the log with this type") + '</label>',

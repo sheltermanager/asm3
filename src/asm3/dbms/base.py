@@ -808,6 +808,14 @@ class Database(object):
         except:
             return float(0)
 
+    def query_list(self, sql, params=None):
+        """ Runs a query and returns the first column of all rows as a list """
+        rows = self.query_tuple(sql, params=params)
+        l = []
+        for r in rows:
+            l.append(r[0])
+        return l
+
     def query_string(self, sql, params=None):
         """ Runs a query and returns the first item from the first column as a string """
         r = self.query_tuple(sql, params=params)

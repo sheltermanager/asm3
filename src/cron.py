@@ -116,6 +116,7 @@ def daily(dbo):
 
         # auto remove expired media items
         ttask(media.remove_expired_media, dbo)
+        ttask(media.remove_media_after_exit, dbo)
 
         # auto update clinic statuses
         ttask(clinic.auto_update_statuses, dbo)
