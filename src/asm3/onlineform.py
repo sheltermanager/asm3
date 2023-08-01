@@ -490,8 +490,11 @@ def get_onlineformincoming_formfooter(dbo, collationid):
 
 def get_onlineformincoming_headers(dbo):
     """ Returns all incoming form posts """
-    return dbo.query("SELECT DISTINCT f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview " \
-        "FROM onlineformincoming f ORDER BY f.PostedDate")
+    return dbo.query("SELECT f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview, " \
+        "(SELECT Value FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='mergeperson') AS MergePerson " \
+        "FROM onlineformincoming f " \
+        "GROUP BY f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview " \
+        "ORDER BY f.PostedDate")
 
 def get_onlineformincoming_detail(dbo, collationid):
     """ Returns the detail lines for an incoming post """

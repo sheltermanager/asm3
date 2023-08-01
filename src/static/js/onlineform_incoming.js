@@ -33,7 +33,15 @@ $(function() {
                     { field: "FORMNAME", display: _("Name") },
                     { field: "POSTEDDATE", display: _("Received"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_datetime },
                     { field: "HOST", display: _("From") },
-                    { field: "PREVIEW", display: _("Preview"), formatter: function(row) { return html.truncate(row.PREVIEW); } },
+                    { field: "PREVIEW", display: _("Preview"), formatter: function(row) {
+                        let s = "";
+                        if (row.MERGEPERSON) {
+                            let mp = row.MERGEPERSON.split(":");
+                            s += html.icon("copy", _("This form will merge with person '{0}'").replace("{0}", mp[1])) + " "; 
+                        }
+                        s += html.truncate(row.PREVIEW); 
+                        return s;
+                    }},
                     { field: "LINK", display: _("Link") }
                 ]
             };

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-07-31 15:17+0000\n"
+"POT-Creation-Date: 2023-08-01 13:04+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -13548,6 +13548,10 @@ msgstr ""
 msgid ""
 "This feature allows you to email an adopter to have them sign their adoption "
 "paperwork, pay the adoption fee and make an optional donation."
+msgstr ""
+
+#: onlineform_incoming.js
+msgid "This form will merge with person '{0}'"
 msgstr ""
 
 #: donations.js
