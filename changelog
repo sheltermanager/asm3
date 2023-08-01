@@ -1,6 +1,7 @@
 47
 ================
 
+01/08/23 Remove people with only a cancelled reserve after X years #1239
 01/08/23 Show an icon to indicate a form is for an existing person #1308
 01/08/23 Fix client side validation of boarding dates/times
 31/07/23 Remove animal media X years after animal leaves/dies #1254

@@ -25,10 +25,10 @@ class TestMedia(unittest.TestCase):
         asm3.animal.delete_animal(base.get_dbo(), "test", nid)
  
     def test_remove_expired_media(self):
-        asm3.media.remove_expired_media(base.get_dbo())
+        asm3.media.remove_expired_media(base.get_dbo(), years=1)
 
     def test_remove_media_after_exit(self):
-        asm3.media.remove_media_after_exit(base.get_dbo())
+        asm3.media.remove_media_after_exit(base.get_dbo(), years=1)
 
     def test_get_media_export(self):
         asm3.media.get_media_export(base.get_dbo())

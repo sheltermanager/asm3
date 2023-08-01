@@ -1874,15 +1874,50 @@ def update_lookingfor_report(dbo):
     asm3.cachedisk.put("lookingfor_lastmatchcount", dbo.database, count, 86400)
     return "OK %d" % count
 
-def update_anonymise_personal_data(dbo, overrideretainyears = None):
+def remove_people_only_cancelled_reserve(dbo, years = None, username = "system"):
+    """
+    Removes people who only have a cancelled reservation that is older than X years.
+    The same rules as anonymising apply in that the person can only exist for the purpose
+    of that reservation and not have any flags or other dealings with the shelter.
+    If years is passed, this overrides the config options (useful for unit testing)
+    """
+    enabled = asm3.configuration.auto_remove_people_canc_resv(dbo)
+    retainyears = asm3.configuration.auto_remove_people_canc_resv_years(dbo)
+    if years:
+        enabled = True
+        retainyears = years
+    if not enabled or retainyears == 0:
+        asm3.al.debug("set to never remove people with only a cancelled reservation, abandoning.", "person.remove_people_only_cancelled_reserve", dbo)
+        return
+    cutoff = dbo.today(offset=-365 * retainyears)
+    people = dbo.query("SELECT ID FROM owner WHERE  "
+        "IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 " \
+        "AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 AND IsAdopter=0 " \
+        "AND EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementType = 0) " \
+        "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementType > 0) " \
+        "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementType = 0 AND ReservationDate > ?) " \
+        "AND NOT EXISTS(SELECT ID FROM animal WHERE (OriginalOwnerID = owner.ID OR BroughtInByOwnerID = owner.ID)) " \
+        "AND NOT EXISTS(SELECT ID FROM animalboarding WHERE OwnerID = owner.ID) " \
+        "AND NOT EXISTS(SELECT ID FROM animalcontrol WHERE CallerID = owner.ID OR VictimID = owner.ID OR OwnerID = owner.ID OR Owner2ID = owner.ID OR Owner3ID = owner.ID) " \
+        "AND NOT EXISTS(SELECT ID FROM clinicappointment WHERE OwnerID = owner.ID) " \
+        "AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID) " \
+        "AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID = owner.ID) " \
+        "AND NOT EXISTS(SELECT ID FROM ownervoucher WHERE OwnerID = owner.ID) " \
+        "AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = owner.ID AND LogTypeID = 1) ", [cutoff])
+    for p in people:
+        delete_person(dbo, username, p.ID)
+    asm3.al.debug("removed %d people with only cancelled reservations (remove %s years after)" % (len(people), years), "people.remove_people_only_cancelled_reserve", dbo)
+    return "OK %s" % len(people)
+
+def update_anonymise_personal_data(dbo, years = None, username = "system"):
     """
     Anonymises personal data once the retention period in years is up.
     A cutoff date is calculated from today - retentionyears. If the person was
-    created before this date and has no movements, payments or logs more recent than that date, 
+    created before this date and has no licence, vouchers, movements, payments or logs more recent than that date, 
     they are considered expired.
     The name, address, email and phone fields are blanked, the surname is set to a fixed string
     and the town/county/postcode fields are left alone for statistics and reporting purposes.
-    Setting overrideretainyears allows the caller to set the retention period (None uses the config values)
+    Setting years allows the caller to set the retention period (None uses the config values)
     People with the following flags are NOT anonymised due to a presumed ongoing relationship -  
         aco, adoptioncoordinator, retailer, homechecker, member, shelter, foster, staff, vet, volunteer
     """
@@ -1891,9 +1926,9 @@ def update_anonymise_personal_data(dbo, overrideretainyears = None):
     enabled = asm3.configuration.anonymise_personal_data(dbo)
     retainyears = asm3.configuration.anonymise_after_years(dbo)
     adopterclause = asm3.utils.iif( asm3.configuration.anonymise_adopters(dbo), '', 'AND IsAdopter=0' )
-    if overrideretainyears:
+    if years:
         enabled = True
-        retainyears = overrideretainyears
+        retainyears = years
     if not enabled or retainyears == 0:
         asm3.al.debug("set to retain personal data indefinitely, abandoning.", "person.update_anonymise_personal_data", dbo)
         return
@@ -1906,11 +1941,15 @@ def update_anonymise_personal_data(dbo, overrideretainyears = None):
         "AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 " \
         f"AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 {adopterclause} " \
         "AND NOT EXISTS(SELECT ID FROM animal WHERE (OriginalOwnerID = owner.ID OR BroughtInByOwnerID = owner.ID) AND DateBroughtIn > ?) " \
+        "AND NOT EXISTS(SELECT ID FROM animalboarding WHERE OwnerID = owner.ID AND OutDateTime > ?) " \
+        "AND NOT EXISTS(SELECT ID FROM animalcontrol WHERE (CallerID = owner.ID OR VictimID = owner.ID OR OwnerID = owner.ID OR Owner2ID = owner.ID OR Owner3ID = owner.ID) AND IncidentDateTime > ?) " \
         "AND NOT EXISTS(SELECT ID FROM clinicappointment WHERE OwnerID = owner.ID AND DateTime > ?) " \
         "AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date > ?) " \
+        "AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID = owner.ID AND IssueDate > ?) " \
+        "AND NOT EXISTS(SELECT ID FROM ownervoucher WHERE OwnerID = owner.ID AND DateIssued > ?) " \
         "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementDate > ?) " \
         "AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = owner.ID AND LogTypeID = 1 AND Date > ?) ", 
-        ( anonymised, anonymised, dbo.now(), "system", anonymised, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff ))
+        ( anonymised, anonymised, dbo.now(), username, anonymised, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff ))
     asm3.al.debug("anonymised %s expired person records outside of retention period (%s years)." % (affected, retainyears), "person.update_anonymise_personal_data", dbo)
     return "OK %d" % affected
 

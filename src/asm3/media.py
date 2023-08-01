@@ -900,45 +900,50 @@ def rotate_image(imagedata, clockwise = True):
         asm3.al.error("failed rotating image: %s" % str(err), "media.rotate_image")
         return imagedata
 
-def remove_expired_media(dbo, username = "system"):
+def remove_expired_media(dbo, years = None, username = "system"):
     """
     Removes all media where retainuntil < today
     and document media older than today - remove document media years.
-    No longer physically deletes dbfs rows - that should be done manually
-    via delete_orphaned_media
+    No longer physically deletes dbfs rows - that should be done manually via delete_orphaned_media
+    If years is set, overrides the config options. Useful for unit testing.
     """
     rows = dbo.query("SELECT ID, DBFSID FROM media WHERE RetainUntil Is Not Null AND RetainUntil < ?", [ dbo.today() ])
     #for r in rows:
     #    asm3.dbfs.delete_id(dbo, r.dbfsid)
     dbo.execute("DELETE FROM media WHERE RetainUntil Is Not Null AND RetainUntil < ?", [ dbo.today() ])
     asm3.al.debug("removed %d expired media items (retain until)" % len(rows), "media.remove_expired_media", dbo)
-    if asm3.configuration.auto_remove_document_media(dbo):
-        years = asm3.configuration.auto_remove_document_media_years(dbo)
-        if years > 0:
-            cutoff = dbo.today(years * -365)
-            rows = dbo.query("SELECT ID, DBFSID FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
-            #for r in rows:
-            #    asm3.dbfs.delete_id(dbo, r.dbfsid) 
-            dbo.execute("DELETE FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
-            asm3.al.debug("removed %d expired document media items (remove after years)" % len(rows), "media.remove_expired_media", dbo)
-            return "OK %s" % len(rows)
+    enabled = asm3.configuration.auto_remove_document_media(dbo)
+    retainyears = asm3.configuration.auto_remove_document_media_years(dbo)
+    if years:
+        enabled = True
+        retainyears = years
+    if enabled and retainyears > 0:
+        cutoff = dbo.today(offset = retainyears * -365)
+        rows = dbo.query("SELECT ID, DBFSID FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
+        #for r in rows:
+        #    asm3.dbfs.delete_id(dbo, r.dbfsid) 
+        dbo.execute("DELETE FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
+        asm3.al.debug("removed %d expired document media items (remove after years)" % len(rows), "media.remove_expired_media", dbo)
+        return "OK %s" % len(rows)
 
-def remove_media_after_exit(dbo, username = "system"):
+def remove_media_after_exit(dbo, years = None, username = "system"):
     """
     Removes media where the animal left the shelter or died more than X years ago.
     No longer physically deletes dbfs rows - that should be done manually
     via delete_orphaned_media
+    If years is set, overrides the config options. Useful for unit testing.
     """
-    if not asm3.configuration.auto_remove_animal_media_exit(dbo): 
-        return "OK 0"
-    years = asm3.configuration.auto_remove_animal_media_exit_years(dbo)
-    if years == 0:
-        return "OK 0"
-    cutoff = dbo.today(offset=years*-365)
-    animals = dbo.query_list("SELECT ID FROM animal WHERE Archived=1 AND (ActiveMovementDate < ? OR DeceasedDate < ?)", (cutoff, cutoff))
-    affected = dbo.delete("media", "LinkType=0 AND LinkID IN (%s)" % ",".join(animals), username) 
-    asm3.al.debug("removed %d expired animal media items (remove %s years after exit)" % (affected, years), "media.remove_media_after_exit", dbo)
-    return "OK %s" % affected
+    enabled = asm3.configuration.auto_remove_animal_media_exit(dbo)
+    exityears = asm3.configuration.auto_remove_animal_media_exit_years(dbo)
+    if years:
+        enabled = True
+        exityears = years
+    if enabled and exityears > 0:
+        cutoff = dbo.today(offset = exityears * -365)
+        animals = dbo.query_list("SELECT ID FROM animal WHERE Archived=1 AND (ActiveMovementDate < ? OR DeceasedDate < ?)", (cutoff, cutoff))
+        affected = dbo.delete("media", "LinkType=0 AND LinkID IN (%s)" % ",".join(animals), username) 
+        asm3.al.debug("removed %d expired animal media items (remove %s years after exit)" % (affected, years), "media.remove_media_after_exit", dbo)
+        return "OK %s" % affected
 
 def scale_image_file(inimage, outimage, resizespec):
     """

@@ -173,6 +173,9 @@ class TestPerson(unittest.TestCase):
     def test_update_lookingfor_report(self):
         asm3.person.update_lookingfor_report(base.get_dbo())
 
+    def test_remove_people_only_cancelled_reserve(self):
+        asm3.person.remove_people_only_cancelled_reserve(base.get_dbo(), years=1)
+
     def test_update_anonymise_personal_data(self):
-        asm3.person.update_anonymise_personal_data(base.get_dbo(), 1)
+        asm3.person.update_anonymise_personal_data(base.get_dbo(), years=1)
 

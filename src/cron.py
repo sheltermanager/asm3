@@ -114,6 +114,9 @@ def daily(dbo):
         # auto anonymise expired personal data
         ttask(person.update_anonymise_personal_data, dbo)
 
+        # auto remove people who only have a cancelled reserve
+        ttask(person.remove_people_only_cancelled_reserve, dbo)
+
         # auto remove expired media items
         ttask(media.remove_expired_media, dbo)
         ttask(media.remove_media_after_exit, dbo)

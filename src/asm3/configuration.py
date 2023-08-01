@@ -69,6 +69,8 @@ DEFAULTS = {
     "AutoRemoveDMYears": "0",
     "AutoRemoveHoldDays": "0",
     "AutoRemoveIncomingFormsDays": "28",
+    "AutoRemovePeopleCancResv": "No",
+    "AutoRemovePeopleCRYears": "0",
     "AFDefaultBreed": "221",
     "AFDefaultCoatType": "0",
     "AFDefaultColour": "1",
@@ -686,6 +688,12 @@ def auto_remove_document_media(dbo):
 
 def auto_remove_document_media_years(dbo):
     return cint(dbo, "AutoRemoveDMYears", int(DEFAULTS["AutoRemoveDMYears"]))
+
+def auto_remove_people_canc_resv(dbo):
+    return cboolean(dbo, "AutoRemovePeopleCancResv", DEFAULTS["AutoRemovePeopleCancResv"] == "Yes")
+
+def auto_remove_people_canc_resv_years(dbo):
+    return cint(dbo, "AutoRemovePeopleCRYears", int(DEFAULTS["AutoRemovePeopleCRYears"]))
 
 def auto_remove_hold_days(dbo):
     return cint(dbo, "AutoRemoveHoldDays", int(DEFAULTS["AutoRemoveHoldDays"]))
