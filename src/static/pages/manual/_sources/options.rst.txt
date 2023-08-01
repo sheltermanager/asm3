@@ -385,10 +385,16 @@ policies instigated as part of data protection compliance.
 .. warning:: Once deleted, documents are gone forever and cannot be recovered.
 
 * Remove animal media this many years after the animal dies or leaves the shelter:
-  If this option is on, the system will automatically animal media a set number
-  years after the animal dies or leaves the shelter. 
+  If this option is on, the system will automatically remove animal media a 
+  set number years after the animal dies or leaves the shelter. 
 
 .. warning:: Once deleted, media is gone forever and cannot be recovered.
+
+* Remove people with a cancelled reservation who have not had any other contact
+  after this many years: Shelters receive many applications to adopt animals,
+  many of which can be unsuccessful. This option will remove (not anonymise)
+  people records where their only contact with the shelter is a cancelled
+  reservation that is X years old.
 
 * Show GDPR Contact Opt-In field on person screens: If this option is on, the
   system will show a contact opt-in field on person records. You can use it to

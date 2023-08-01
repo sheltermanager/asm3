@@ -1906,7 +1906,7 @@ def remove_people_only_cancelled_reserve(dbo, years = None, username = "system")
         "AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = owner.ID AND LogTypeID = 1) ", [cutoff])
     for p in people:
         delete_person(dbo, username, p.ID)
-    asm3.al.debug("removed %d people with only cancelled reservations (remove %s years after)" % (len(people), years), "people.remove_people_only_cancelled_reserve", dbo)
+    asm3.al.debug("removed %d people with only cancelled reservations (remove after %s years)" % (len(people), years), "people.remove_people_only_cancelled_reserve", dbo)
     return "OK %s" % len(people)
 
 def update_anonymise_personal_data(dbo, years = None, username = "system"):

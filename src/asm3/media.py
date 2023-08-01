@@ -923,7 +923,7 @@ def remove_expired_media(dbo, years = None, username = "system"):
         #for r in rows:
         #    asm3.dbfs.delete_id(dbo, r.dbfsid) 
         dbo.execute("DELETE FROM media WHERE MediaType = ? AND MediaMimeType <> 'image/jpeg' AND Date < ?", ( MEDIATYPE_FILE, cutoff ))
-        asm3.al.debug("removed %d expired document media items (remove after years)" % len(rows), "media.remove_expired_media", dbo)
+        asm3.al.debug("removed %d expired document media items (remove after %s years)" % (len(rows), retainyears), "media.remove_expired_media", dbo)
         return "OK %s" % len(rows)
 
 def remove_media_after_exit(dbo, years = None, username = "system"):
