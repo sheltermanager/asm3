@@ -1557,6 +1557,9 @@ const tableform = {
             $("label[for='" + v.post_field + "']").removeClass(validate.ERROR_LABEL_CLASS);
             if (v.validation == "notblank") {
                 nbids.push(v.post_field);
+                if (v.type == "datetime") { 
+                    nbids.push(v.post_field + "date"); nbids.push(v.post_field + "time"); 
+                }
             }
             if (v.validation == "notzero") {
                 nzids.push(v.post_field);
