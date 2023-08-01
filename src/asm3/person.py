@@ -1891,7 +1891,7 @@ def remove_people_only_cancelled_reserve(dbo, years = None, username = "system")
         return
     cutoff = dbo.today(offset=-365 * retainyears)
     people = dbo.query("SELECT ID FROM owner WHERE  "
-        "IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 " \
+        "IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 AND IsDriver=0 " \
         "AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 AND IsAdopter=0 " \
         "AND EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementType = 0) " \
         "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementType > 0) " \
@@ -1938,7 +1938,7 @@ def update_anonymise_personal_data(dbo, years = None, username = "system"):
         "HomeTelephone = '', WorkTelephone = '', MobileTelephone = '', " \
         "LastChangedDate = ?, LastChangedBy = ? " \
         "WHERE OwnerSurname <> ? AND CreatedDate <= ? " \
-        "AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 " \
+        "AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 AND IsDriver=0 " \
         f"AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 {adopterclause} " \
         "AND NOT EXISTS(SELECT ID FROM animal WHERE (OriginalOwnerID = owner.ID OR BroughtInByOwnerID = owner.ID) AND DateBroughtIn > ?) " \
         "AND NOT EXISTS(SELECT ID FROM animalboarding WHERE OwnerID = owner.ID AND OutDateTime > ?) " \

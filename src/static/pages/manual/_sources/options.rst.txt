@@ -365,12 +365,12 @@ policies instigated as part of data protection compliance.
   data retention policies and the GDPR by removing identifiable personal data.
 
   To be anonymized, a record needs to be older than the retention period, and
-  all payments, clinic appointments, movements or log entries attached to the
-  person must be older than the retention period.  The person record cannot
-  have any flag that indicates an ongoing relationship with the shelter. These
-  flags are: 
+  all payments, clinic appointments, boarding records, vouchers, licenses,
+  movements or log entries attached to the person must be older than the
+  retention period.  The person record cannot have any flag that indicates an
+  ongoing relationship with the shelter. These flags are: 
 
-   aco, adoptioncoordinator, retailer, homechecker, member, shelter, foster, staff, vet, volunteer
+   aco, adoptioncoordinator, driver, retailer, homechecker, member, shelter, foster, staff, vet, volunteer
 
 .. warning:: Once anonymized, personal data is gone forever and cannot be recovered.
 
@@ -392,9 +392,11 @@ policies instigated as part of data protection compliance.
 
 * Remove people with a cancelled reservation who have not had any other contact
   after this many years: Shelters receive many applications to adopt animals,
-  many of which can be unsuccessful. This option will remove (not anonymise)
-  people records where their only contact with the shelter is a cancelled
-  reservation that is X years old.
+  many of which can be unsuccessful. This option will completely delete (not
+  anonymise) people records where their only contact with the shelter is a
+  cancelled reservation that is X years old. The same rules as above for
+  anonymization apply in that anyone with an ongoing relationship with the
+  shelter or a previous adoption will be excluded. 
 
 * Show GDPR Contact Opt-In field on person screens: If this option is on, the
   system will show a contact opt-in field on person records. You can use it to

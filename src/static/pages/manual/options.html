@@ -432,12 +432,12 @@ will be retained along with the rest of the person data for statistics
 and reporting. This option helps organisations in the EU to comply with
 data retention policies and the GDPR by removing identifiable personal data.</p>
 <p>To be anonymized, a record needs to be older than the retention period, and
-all payments, clinic appointments, movements or log entries attached to the
-person must be older than the retention period.  The person record cannot
-have any flag that indicates an ongoing relationship with the shelter. These
-flags are:</p>
+all payments, clinic appointments, boarding records, vouchers, licenses,
+movements or log entries attached to the person must be older than the
+retention period.  The person record cannot have any flag that indicates an
+ongoing relationship with the shelter. These flags are:</p>
 <blockquote>
-<div><p>aco, adoptioncoordinator, retailer, homechecker, member, shelter, foster, staff, vet, volunteer</p>
+<div><p>aco, adoptioncoordinator, driver, retailer, homechecker, member, shelter, foster, staff, vet, volunteer</p>
 </div></blockquote>
 </li>
 </ul>
@@ -469,9 +469,11 @@ set number years after the animal dies or leaves the shelter.</p></li>
 <ul class="simple">
 <li><p>Remove people with a cancelled reservation who have not had any other contact
 after this many years: Shelters receive many applications to adopt animals,
-many of which can be unsuccessful. This option will remove (not anonymise)
-people records where their only contact with the shelter is a cancelled
-reservation that is X years old.</p></li>
+many of which can be unsuccessful. This option will completely delete (not
+anonymise) people records where their only contact with the shelter is a
+cancelled reservation that is X years old. The same rules as above for
+anonymization apply in that anyone with an ongoing relationship with the
+shelter or a previous adoption will be excluded.</p></li>
 <li><p>Show GDPR Contact Opt-In field on person screens: If this option is on, the
 system will show a contact opt-in field on person records. You can use it to
 specify which forms of communication a person prefers. When saving the
