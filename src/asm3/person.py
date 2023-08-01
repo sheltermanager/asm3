@@ -1890,9 +1890,9 @@ def remove_people_only_cancelled_reserve(dbo, years = None, username = "system")
         asm3.al.debug("set to never remove people with only a cancelled reservation, abandoning.", "person.remove_people_only_cancelled_reserve", dbo)
         return
     cutoff = dbo.today(offset=-365 * retainyears)
-    people = dbo.query("SELECT ID FROM owner WHERE  "
-        "IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 AND IsDriver=0 " \
-        "AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 AND IsAdopter=0 " \
+    people = dbo.query("SELECT ID FROM owner WHERE "
+        "MatchActive=0 AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 AND IsDriver=0 " \
+        "AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 AND IsAdopter=0 AND IsBanned=0 " \
         "AND EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementType = 0) " \
         "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementType > 0) " \
         "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementType = 0 AND ReservationDate > ?) " \
@@ -1902,8 +1902,7 @@ def remove_people_only_cancelled_reserve(dbo, years = None, username = "system")
         "AND NOT EXISTS(SELECT ID FROM clinicappointment WHERE OwnerID = owner.ID) " \
         "AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID) " \
         "AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID = owner.ID) " \
-        "AND NOT EXISTS(SELECT ID FROM ownervoucher WHERE OwnerID = owner.ID) " \
-        "AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = owner.ID AND LogTypeID = 1) ", [cutoff])
+        "AND NOT EXISTS(SELECT ID FROM ownervoucher WHERE OwnerID = owner.ID) ", [cutoff])
     for p in people:
         delete_person(dbo, username, p.ID)
     asm3.al.debug("removed %d people with only cancelled reservations (remove after %s years)" % (len(people), years), "people.remove_people_only_cancelled_reserve", dbo)
@@ -1948,7 +1947,7 @@ def update_anonymise_personal_data(dbo, years = None, username = "system"):
         "AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID = owner.ID AND IssueDate > ?) " \
         "AND NOT EXISTS(SELECT ID FROM ownervoucher WHERE OwnerID = owner.ID AND DateIssued > ?) " \
         "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementDate > ?) " \
-        "AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = owner.ID AND LogTypeID = 1 AND Date > ?) ", 
+        "AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = owner.ID AND LinkType = 1 AND Date > ?) ", 
         ( anonymised, anonymised, dbo.now(), username, anonymised, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff ))
     asm3.al.debug("anonymised %s expired person records outside of retention period (%s years)." % (affected, retainyears), "person.update_anonymise_personal_data", dbo)
     return "OK %d" % affected
