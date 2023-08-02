@@ -926,9 +926,12 @@ $(document).ready(function() {
         },
             comments = $(this).parent().prev().find(".form-control");
 
+        let spinner = $(this).find(".spinner-border");
+        spinner.show();
         ajax_post(formdata, function() {
             show_info(_("Log message added"), comments.val());
             comments.val("");
+            spinner.hide();
         });
     });
 
