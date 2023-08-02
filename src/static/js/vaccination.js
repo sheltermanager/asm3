@@ -369,7 +369,7 @@ $(function() {
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="givennewdate">' + _("Given") + '</label></td>',
-                '<td><input id="givennewdate" data="newdate" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
+                '<td><input id="givennewdate" data="newdate" data-nofuture="true" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="givenexpires">' + _("Expires") + '</label>',

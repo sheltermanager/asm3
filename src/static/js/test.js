@@ -299,7 +299,7 @@ $(function() {
                 '<table width="100%">',
                 '<tr>',
                 '<td><label for="newdate">' + _("Performed") + '</label></td>',
-                '<td><input id="newdate" data="newdate" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
+                '<td><input id="newdate" data="newdate" data-nofuture="true" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="renewon">' + _("Retest") + '</label></td>',
