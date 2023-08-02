@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-08-01 14:46+0000\n"
+"POT-Creation-Date: 2023-08-02 11:53+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -4150,7 +4150,7 @@ msgstr ""
 msgid "Deselect"
 msgstr ""
 
-#: mobile.py
+#: mobile.py mobile2.js
 msgid "Desktop/Tablet UI"
 msgstr ""
 
@@ -7947,6 +7947,10 @@ msgstr ""
 
 #: log.py
 msgid "Log date must be a valid date"
+msgstr ""
+
+#: mobile2.js
+msgid "Log message added"
 msgstr ""
 
 #: log_new.js

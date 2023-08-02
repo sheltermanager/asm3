@@ -6,6 +6,12 @@ $(document).ready(function() {
 
     const post_handler = "mobile2";
 
+    const show_info = function(title, body) {
+        $("#infotitle").html(title);
+        $("#infotext").html(body);
+        $("#infodlg").modal("show");
+    };
+
     const show_error = function(title, body) {
         $("#errortitle").html(title);
         $("#errortext").html(body);
@@ -42,6 +48,21 @@ $(document).ready(function() {
                         '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>',
                     '</div>',
                     '<div id="errortext" class="modal-body">',
+                    '</div>',
+                    '<div class="modal-footer">',
+                        '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' + _("Close") + '</button>',
+                    '</div>',
+                '</div>',
+            '</div>',
+        '</div>',
+        '<div class="modal fade" id="infodlg" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="infotitle" aria-hidden="true">',
+            '<div class="modal-dialog">',
+                '<div class="modal-content">',
+                    '<div class="modal-header">',
+                        '<h5 class="modal-title" id="infotitle">Info</h5>',
+                        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>',
+                    '</div>',
+                    '<div id="infotext" class="modal-body">',
                     '</div>',
                     '<div class="modal-footer">',
                         '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' + _("Close") + '</button>',
@@ -189,6 +210,10 @@ $(document).ready(function() {
                             '</a>',
                         '</li>',
                     '</ul>',
+                '</li>',
+                '<li class="nav-item">',
+                    '<a class="nav-link" href="main">' + _("Desktop/Tablet UI"),
+                    '</a>',
                 '</li>',
                 '<li class="nav-item">',
                     '<a class="nav-link" href="mobile_logout">' + _("Logout"),
@@ -377,6 +402,26 @@ $(document).ready(function() {
 
     $("body").html(h);
 
+    // Returns the HTML for an add log slider
+    const render_addlog = function(linkid, linktypeid) {
+        return [
+            '<div class="mb-3">',
+                '<label for="logtype" class="form-label">' + _("Log Type") + '</label>',
+                '<select class="form-control" id="logtype" name="logtypeid">',
+                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
+                '</select>',
+            '</div>',
+            '<div class="mb-3">',
+                '<label for="comments" class="form-label">' + _("Log Text") + '</label>',
+                '<input type="text" class="form-control" id="comments" name="comments">',
+            '</div>',
+            '<div class="d-flex justify-content-center pb-2">',
+            '<button data-linkid="' + linkid + '" data-linktypeid="' + linktypeid + '" type="button" class="btn btn-primary addlog">' + _("Create"),
+            '<div class="spinner-border spinner-border-sm" style="display: none"></div></button>',
+            '</div>'
+        ].join("\n");
+    };
+
     // Returns the HTML for rendering an animal record
     const render_animal = async function(a, selector) {
         const i = function(label, value) {
@@ -530,26 +575,7 @@ $(document).ready(function() {
             h.push(aci("log", _("Log"), x.join("\n")));
         }
         if (common.has_permission("ale")) {
-            x = [
-                '<form method="post" action="' + post_handler + '">',
-                '<input type="hidden" name="mode" value="addlog">',
-                '<input type="hidden" name="linkid" value="' + a.ID + '">',
-                '<input type="hidden" name="linktypeid" value="0">',
-                '<div class="mb-3">',
-                    '<label for="logtype" class="form-label">' + _("Log Type") + '</label>',
-                    '<select class="form-control" id="logtype" name="logtypeid">',
-                    html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
-                    '</select>',
-                '</div>',
-                '<div class="mb-3">',
-                    '<label for="comments" class="form-label">' + _("Log Text") + '</label>',
-                    '<input type="text" class="form-control" id="comments" name="comments">',
-                '</div>',
-                '<div class="d-flex justify-content-center pb-2"><button id="btn-addlog-submit" type="submit" class="btn btn-primary">' + _("Create"),
-                '<div class="spinner-border spinner-border-sm" style="display: none"></div></button></div>',
-                '</form>'
-            ];
-            h.push(aci("addlog", _("Add Log"), x.join("\n")));
+            h.push(aci("addlog", _("Add Log"), render_addlog(a.ID, 0)));
         }
         h.push('</div>'); // close accordion
         $(selector).html( h.join("\n") );
@@ -602,15 +628,18 @@ $(document).ready(function() {
         let comptp = dt(ac.COMPLETEDATE) + ' ' + ac.COMPLETEDNAME;
         if (!ac.COMPLETEDDATE && common.has_permission("caci")) {
             comptp = '<select class="form-control complete"><option value=""></option>' + html.list_to_options(controller.completedtypes, "ID", "COMPLETEDNAME") + '</select>';
-            comptp += '<button type="button" class="complete btn btn-primary"><i class="bi-calendar-check"></i> ' + _("Complete") + '</button>';
+            comptp += '<button type="button" data-id="' + ac.ID + '" disabled="disabled" class="complete btn btn-primary"><i class="bi-calendar-check"></i> ' + _("Complete");
+            comptp += ' <div class="spinner-border spinner-border-sm" style="display: none"></div></button>';
         }
         let dispdt = dt(ac.DISPATCHDATETIME);
         if (!ac.DISPATCHDATETIME && common.has_permission("cacd")) { 
-            dispdt = '<button type="button" class="dispatch btn btn-primary"><i class="bi-calendar-plus"></i> ' + _("Dispatch") + '</button>';
+            dispdt = '<button type="button" data-id="' + ac.ID + '" class="dispatch btn btn-primary"><i class="bi-calendar-plus"></i> ' + _("Dispatch");
+            dispdt += ' <div class="spinner-border spinner-border-sm" style="display: none"></div></button>';
         }
         let respdt = dt(ac.RESPONDEDDATETIME);
         if (ac.DISPATCHDATETIME && !ac.RESPONDEDDATETIME && common.has_permission("cacr")) { 
-            respdt = '<button type="button" class="respond btn btn-primary"><i class="bi-calendar-range"></i> ' + _("Respond") + '</button>';
+            respdt = '<button type="button" data-id="' + ac.ID + '" class="respond btn btn-primary"><i class="bi-calendar-range"></i> ' + _("Respond");
+            respdt += ' <div class="spinner-border spinner-border-sm" style="display: none"></div></button>';
         }
         let dispadd = ac.DISPATCHADDRESS;
         if (dispadd) {
@@ -705,40 +734,37 @@ $(document).ready(function() {
             aci("log", _("Log"), x.join("\n"));
         }
         if (common.has_permission("ale")) {
-            x = [
-                '<form method="post" action="' + post_handler + '">',
-                '<input type="hidden" name="mode" value="addlog">',
-                '<input type="hidden" name="linkid" value="' + ac.ID + '">',
-                '<input type="hidden" name="linktypeid" value="6">',
-                '<div class="mb-3">',
-                    '<label for="logtype" class="form-label">' + _("Log Type") + '</label>',
-                    '<select class="form-control" id="logtype" name="logtypeid">',
-                    html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
-                    '</select>',
-                '</div>',
-                '<div class="mb-3">',
-                    '<label for="comments" class="form-label">' + _("Log Text") + '</label>',
-                    '<input type="text" class="form-control" id="comments" name="comments">',
-                '</div>',
-                '<div class="d-flex justify-content-center pb-2"><button id="btn-addlog-submit" type="submit" class="btn btn-primary">' + _("Create"),
-                '<div class="spinner-border spinner-border-sm" style="display: none"></div></button></div>',
-                '</form>'
-            ];
-            h.push(aci("addlog", _("Add Log"), x.join("\n")));
+            h.push(aci("addlog", _("Add Log"), render_addlog(ac.ID, 6)));
         }
         h.push("</div>"); // close accordion
         $(selector).html( h.join("\n") );
         // Display the record
         $(".container").hide();
         $(selector).show();
-        $(".dispatch").click(function() {
-            // TODO: post/dispatch
+        $(".btn.dispatch").click(function() {
+            $(".btn.dispatch .spinner-border").show();
+            ajax_post("mode=incdispatch&id=" + $(this).attr("data-id"), function() {
+                $(".btn.dispatch").hide();
+                $(".btn.dispatch").parent().append( format.datetime_now() );
+            });
         });
-        $(".respond").click(function() {
-            // TODO: post/respond
+        $(".btn.respond").click(function() {
+            $(".btn.respond .spinner-border").show();
+            ajax_post("mode=increspond&id=" + $(this).attr("data-id"), function() {
+                $(".btn.respond").hide();
+                $(".btn.respond").parent().append( format.datetime_now() );
+            });
         });
-        $(".btn .complete").click(function() {
-            // TODO: post to the back end and complete the incident
+        $(".form-control.complete").change(function() {
+            $(".btn.complete").prop("disabled", $(".form-control.complete").val() == "");
+        });
+        $(".btn.complete").click(function() {
+            $(".btn.complete .spinner-border").show();
+            ajax_post("mode=inccomplete&ctype=" + $(".form-control.complete").val() + "&id=" + $(this).attr("data-id"), function() {
+                $(".btn.complete, .form-control.complete").hide();
+                $(".btn.complete").parent().append( $(".form-control.complete option:selected").text() + "<br>" );
+                $(".btn.complete").parent().append( format.datetime_now() );
+            });
         });
         $(".showmap").click(function() {
             window.open(controller.maplink.replace("{0}", $(this).attr("data-address")));
@@ -886,6 +912,23 @@ $(document).ready(function() {
                 $("#administertext").html(format.date(v.DATEREQUIRED) + ": " + v.ANIMALNAME + ' - ' + v.SHELTERCODE + ': ' + v.VACCINATIONTYPE);
                 $("#administerdlg").modal("show");
             }
+        });
+    });
+
+    // Handle clicking on the addlog sliders
+    $("body").on("click", ".btn.addlog", function() {
+        let formdata = {
+            "mode": "addlog",
+            "linkid": $(this).attr("data-linkid"),
+            "linktypeid": $(this).attr("data-linktypeid"),
+            "type": $(this).parent().prev().prev().find("select").val(),
+            "comments": $(this).parent().prev().find(".form-control").val()
+        },
+            comments = $(this).parent().prev().find(".form-control");
+
+        ajax_post(formdata, function() {
+            show_info(_("Log message added"), comments.val());
+            comments.val("");
         });
     });
 

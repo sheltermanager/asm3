@@ -1,6 +1,8 @@
 47
 ================
 
+02/08/23 Add warning of app retirement to smartphone UI as well #1096
+02/08/23 Implement incident and log functions in new mobile interface #1096
 02/08/23 Limit datepicker to today when giving tests/vaccinations
 01/08/23 Remove people with only a cancelled reserve after X years #1239
 01/08/23 Show an icon to indicate a form is for an existing person #1308

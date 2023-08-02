@@ -967,21 +967,33 @@ class mobile2(ASMEndpoint):
     #    self.check(asm3.users.ADD_ANIMAL)
     #    pass # TODO
 
-    #def post addlog(self, o):
-    #    self.check(asm3.users.ADD_LOG)
-    #    pass
+    def post_addlog(self, o):
+        self.check(asm3.users.ADD_LOG)
+        asm3.log.add_log(o.dbo, o.user, o.post.integer("linktypeid"), o.post.integer("linkid"), o.post.integer("type"), o.post["comments"])
+
+    def post_inccomplete(self, o):
+        self.check(asm3.users.CHANGE_INCIDENT)
+        asm3.animalcontrol.update_animalcontrol_completenow(o.dbo, o.post.integer("id"), o.user, o.post.integer("ctype"))
+
+    def post_incdispatch(self, o):
+        self.check(asm3.users.CHANGE_INCIDENT)
+        asm3.animalcontrol.update_animalcontrol_dispatchnow(o.dbo, o.post.integer("id"), o.user)
+
+    def post_increspond(self, o):
+        self.check(asm3.users.CHANGE_INCIDENT)
+        asm3.animalcontrol.update_animalcontrol_respondnow(o.dbo, o.post.integer("id"), o.user)
 
     def post_medical(self, o):
         self.check(asm3.users.CHANGE_MEDICAL)
-        #asm3.medical.update_treatment_today(o.dbo, o.user, o.post.integer("id"))
+        asm3.medical.update_treatment_today(o.dbo, o.user, o.post.integer("id"))
 
     def post_test(self, o):
         self.check(asm3.users.CHANGE_TEST)
-        #asm3.medical.update_test_today(o.dbo, o.user, post.integer("id"))
+        asm3.medical.update_test_today(o.dbo, o.user, o.post.integer("id"))
 
     def post_vaccinate(self, o):
         self.check(asm3.users.CHANGE_VACCINATION)
-        #asm3.medical.update_vaccination_today(o.dbo, o.user, o.post.integer("id"))
+        asm3.medical.update_vaccination_today(o.dbo, o.user, o.post.integer("id"))
 
     def post_loadanimal(self, o):
         self.check(asm3.users.VIEW_INCIDENT)

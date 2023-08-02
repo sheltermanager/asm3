@@ -758,7 +758,11 @@ const common = {
                 }
                 catch (ex) {}
                 var errmessage = common.get_error_response(jqxhr, textstatus, response);
-                header.show_error(errmessage);
+                try {
+                    // This can cause an error if header is not loaded
+                    header.show_error(errmessage);
+                }
+                catch (ex) {}
                 if (errorfunc) {
                     errorfunc(errmessage);
                 }
@@ -1400,6 +1404,20 @@ const format = {
     },
 
     /**
+     * Returns now as a display date
+     */
+    date_now: function() {
+        return format.date(new Date());
+    },
+
+    /**
+     * Returns now as a display date and time
+     */
+    datetime_now: function() {
+        return format.date_now() + " " + format.time_now();
+    },
+
+    /**
      * Returns the difference in days between date1 and date2 (both js Date())
      * Uses abs around the subtraction so it does not matter if date1 > date2
      */
@@ -1588,6 +1606,13 @@ const format = {
         f = f.replace("%M", this.padleft(d.getMinutes(), 2));
         f = f.replace("%S", this.padleft(d.getSeconds(), 2));
         return f;
+    },
+
+    /**
+     * Returns the time now for display
+     */
+    time_now: function() {
+        return format.time(new Date());
     },
 
     numbers_only: function(s) {
