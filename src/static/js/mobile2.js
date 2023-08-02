@@ -717,21 +717,21 @@ $(document).ready(function() {
             $.each(o.citations, function(d, v) {
                 x.push(col3(format.date(v.CITATIONDATE), v.CITATIONNAME, v.COMMENTS));
             });
-            aci("citations", _("Citations"), x.join("\n"));
+            h.push(aci("citations", _("Citations"), x.join("\n")));
         }
         if (common.has_permission("vdn") && o.diary.length > 0) {
             x = [];
             $.each(o.diary, function(d, v) {
                 x.push(col3(format.date(v.DIARYDATETIME), v.SUBJECT, v.NOTE));
             });
-            aci("diary", _("Diary"), x.join("\n"));
+            h.push(aci("diary", _("Diary"), x.join("\n")));
         }
         if (common.has_permission("vle") && o.logs.length > 0) {
             x = [];
             $.each(o.logs, function(d, v) {
                 x.push(col3(format.date(v.DATE), v.LOGTYPENAME, v.COMMENTS));
             });
-            aci("log", _("Log"), x.join("\n"));
+            h.push(aci("log", _("Log"), x.join("\n")));
         }
         if (common.has_permission("ale")) {
             h.push(aci("addlog", _("Add Log"), render_addlog(ac.ID, 6)));
