@@ -1,6 +1,7 @@
 47
 ================
 
+02/08/23 Fix error generating animal docs with a broken preferred image
 02/08/23 Add warning of app retirement to smartphone UI as well #1096
 02/08/23 Implement incident and log functions in new mobile interface #1096
 02/08/23 Limit datepicker to today when giving tests/vaccinations

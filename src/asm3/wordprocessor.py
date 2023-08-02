@@ -1,5 +1,6 @@
 
 import asm3.additional
+import asm3.al
 import asm3.animal
 import asm3.animalcontrol
 import asm3.clinic
@@ -1888,8 +1889,13 @@ def generate_animal_doc(dbo, templateid, animalid, username):
     animalid: The animal to generate for
     """
     a = asm3.animal.get_animal(dbo, animalid)
-    im = asm3.media.get_image_file_data(dbo, "animal", animalid)[1]
-    if a is None: raise asm3.utils.ASMValidationError("%d is not a valid animal ID" % animalid)
+    if a is None: 
+        raise asm3.utils.ASMValidationError("%d is not a valid animal ID" % animalid)
+    imdata = None
+    try:
+        imdata = asm3.media.get_image_file_data(dbo, "animal", animalid)[1]
+    except Exception as err:
+        asm3.al.warn("could not load preferred image for animal %s: %s" % (animalid, err), "wordprocessor.generate_animal_doc", dbo)
     # We include donations here, so that we have RecentType, DueType, Last1, etc
     # But the call below to get_movement_donations will add the totals and allow
     # receipt/invoice type documents to work if there's an active movement
@@ -1916,7 +1922,7 @@ def generate_animal_doc(dbo, templateid, animalid, username):
         tags = append_tags(tags, person_tags(dbo, asm3.person.get_person(dbo, a["ORIGINALOWNERID"])))
         has_person_tags = True
     tags = append_tags(tags, org_tags(dbo, username))
-    return substitute_template(dbo, templateid, tags, im)
+    return substitute_template(dbo, templateid, tags, imdata)
 
 def generate_animalcontrol_doc(dbo, templateid, acid, username):
     """
