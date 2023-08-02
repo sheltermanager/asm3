@@ -4560,25 +4560,27 @@ class maint_sac_metrics(ASMEndpoint):
     url = "maint_sac_metrics"
 
     def content(self, o):
-        """ Forces an upload of a particular month, year and species to SAC """
+        """ Forces an upload of a particular month and year to SAC """
         self.content_type("text/plain")
         self.cache_control(0)
         year = o.post.integer("year")
         month = o.post.integer("month")
-        species = o.post["species"]
         externalid = o.post["externalid"]
-        if year == 0 or month == 0 or species == "": 
-            raise asm3.utils.ASMValidationError("Endpoint requires parameters for year (int), month (int) and species (str, from SAC_SPECIES - eg: canine, feline)")
+        species = asm3.publishers.sacmetrics.SAC_SPECIES.keys()
+        if year == 0 or month < 0 or month > 12:
+            raise asm3.utils.ASMValidationError("Endpoint requires parameters for year (int) and optionally month (int). If no month is set, all months are sent.")
         try:
             pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(o.dbo))
             p = asm3.publishers.sacmetrics.SACMetricsPublisher(o.dbo, pc)
-            if month == -1:
-                # Do all months of year if -1 was given for month
-                for imonth in range(1,13):
-                    data = p.processStats(imonth, year, species, externalid)
-                    p.putData(data)
+            if month == 0:
+                # Do all months of year if no month was given
+                for m in range(1,13):
+                    for s in species:
+                        data = p.processStats(m, year, s, externalid)
+                        p.putData(data)
             else:
-                data = p.processStats(month, year, species, externalid)
+                for s in species:
+                    data = p.processStats(month, year, s, externalid)
                 p.putData(data)
             return "\n".join(p.logBuffer)
         except Exception as err:
