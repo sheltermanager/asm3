@@ -58,6 +58,16 @@ $(function() {
                     { post_field: "costcreate", label: _("Create a cost record"), type: "check" }
                 ], 1, { full_width: false }),
                 html.content_footer(),
+                html.content_header(_("Signed Adoption Paperwork"), true),
+                tableform.fields_render([
+                    { post_field: "sigpaperwork", label: _("Request signed paperwork from the adopter by email"), type: "check" },
+                    { post_field: "sigtemplateid", label: _("Adoption paperwork template"), type: "select",
+                        options: edit_header.template_list_options(controller.templates) },
+                    { post_field: "sigemailaddress", label: _("Adopter email address"), type: "text" },
+                    { post_field: "sigemailtemplateid", label: _("Email template"), type: "select", 
+                        options: edit_header.template_list_options(controller.templatesemail) },
+                ], 1, { full_width: false }),
+                html.content_footer(),
                 html.content_header(_("Adoption Checkout"), true),
                 tableform.fields_render([
                     { post_field: "checkoutcreate", label: _("Send the checkout email to the adopter"), type: "check" },
@@ -109,12 +119,27 @@ $(function() {
                     validate.highlight("templateid");
                     return false;
                 }
-
                 // checkout email template
                 if ($("#checkoutcreate").prop("checked") && $("#emailtemplateid").select("value") == "") {
                     validate.highlight("emailtemplateid");
                     return false;
                 }
+                // signed email
+                if ($("#sigpaperwork").prop("checked") && $("#sigemailaddress").val() == "") {
+                    validate.highlight("sigemailaddress");
+                    return false;
+                }
+                // signed contract template
+                if ($("#sigpaperwork").prop("checked") && $("#sigtemplateid").select("value") == "") {
+                    validate.highlight("sigtemplateid");
+                    return false;
+                }
+                // signed contract email template
+                if ($("#sigpaperwork").prop("checked") && $("#sigemailtemplateid").select("value") == "") {
+                    validate.highlight("sigemailtemplateid");
+                    return false;
+                }
+
                 // mandatory additional fields
                 if (!additional.validate_mandatory()) { return false; }                
 
@@ -132,6 +157,7 @@ $(function() {
                 $("#bonddisplay").fadeOut();
                 $("#costdisplay").closest(".ui-widget").fadeOut();
                 $("#checkoutcreate").closest(".ui-widget").fadeOut();
+                $("#sigpaperwork").closest(".ui-widget").fadeOut();
                 $("#fosterinfo").fadeOut();
                 $("#reserveinfo").fadeOut();
                 $("#retailerinfo").fadeOut();
@@ -221,6 +247,12 @@ $(function() {
                     $("#feetypeid").select("value", config.str("AdoptionCheckoutFeeID"));
                     $("#checkoutcreate").closest(".ui-widget").show();
                 }
+                // If it isnt, show the request signed contract section
+                else {
+                    $("#sigemailaddress").val(p.EMAILADDRESS);
+                    $("#sigtemplateid").select("value", config.str("AdoptionCheckoutTemplateID"));
+                    $("#sigpaperwork").closest(".ui-widget").show();
+                }
 
                 // Show tickbox if owner not homechecked
                 if (p.IDCHECK == 0) {
@@ -255,6 +287,7 @@ $(function() {
 
             $("#costdisplay").closest(".ui-widget").hide();
             $("#checkoutcreate").closest(".ui-widget").hide();
+            $("#sigpaperwork").closest(".ui-widget").hide();
             $("#bonddisplay").hide();
             $("#animalwarn").hide();
             $("#ownerwarn").hide();

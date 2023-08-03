@@ -830,26 +830,9 @@ class media(ASMEndpoint):
 
     def post_emailsign(self, o):
         self.check(asm3.users.EMAIL_PERSON)
-        dbo = o.dbo
-        post = o.post
-        l = o.locale
-        emailadd = post["to"]
-        body = post["body"]
-        for mid in post.integer_list("ids"):
-            m = asm3.media.get_media_by_id(dbo, mid)
-            if m is None: raise web.notfound()
-            if m.MEDIAMIMETYPE != "text/html": continue
-            token = asm3.utils.md5_hash_hex("%s%s" % (m.ID, m.LINKID))
-            url = "%s?account=%s&method=sign_document&email=%s&formid=%d&token=%s" % (SERVICE_URL, dbo.database, asm3.utils.strip_email_address(emailadd).replace("@", "%40"), mid, token)
-            body = asm3.utils.replace_url_token(body, url, m.MEDIANOTES)
-            if post.boolean("addtolog"):
-                asm3.log.add_log_email(dbo, o.user, asm3.media.get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
-                    emailadd, _("Document signing request", l), body)
-            asm3.media.create_log(dbo, o.user, mid, "ES01", _("Document signing request", l))
-            asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body, "html")
-            if asm3.configuration.audit_on_send_email(dbo): 
-                asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body)
-        return emailadd
+        for mid in o.post.integer_list("ids"):
+            asm3.media.send_signature_request(o.dbo, o.user, mid, o.post)
+        return o.post["to"]
 
     def post_jpgpdf(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
@@ -4751,23 +4734,46 @@ class move_adopt(JSONEndpoint):
 
     def post_create(self, o):
         self.check(asm3.users.ADD_MOVEMENT)
+        dbo = o.dbo
+        post = o.post
+        l = dbo.locale
         checkout = o.post.boolean("checkoutcreate")
-        movementid = str(asm3.movement.insert_adoption_from_form(o.dbo, o.user, o.post, create_payments = not checkout))
+        paperwork = o.post.boolean("sigpaperwork")
+        movementid = asm3.movement.insert_adoption_from_form(dbo, o.user, post, create_payments = not checkout)
         if checkout:
             l = o.dbo.locale
-            body = asm3.wordprocessor.generate_movement_doc(o.dbo, o.post.integer("emailtemplateid"), asm3.utils.cint(movementid), o.user)
+            body = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("emailtemplateid"), movementid, o.user)
             d = {
-                "id":       movementid,
-                "animalid": o.post["animal"],
-                "personid": o.post["person"],
-                "templateid": o.post["templateid"],
-                "feetypeid": o.post["feetypeid"],
-                "from":     asm3.configuration.email(o.dbo),
-                "to":       o.post["emailaddress"],
-                "subject":  _("Adoption Checkout", l),
-                "body":     body
+                "id":           str(movementid),
+                "animalid":     post["animal"],
+                "personid":     post["person"],
+                "templateid":   post["templateid"],
+                "feetypeid":    post["feetypeid"],
+                "from":         asm3.configuration.email(dbo),
+                "to":           post["emailaddress"],
+                "subject":      _("Adoption Checkout", l),
+                "body":         body
             }
-            asm3.movement.send_adoption_checkout(o.dbo, o.user, asm3.utils.PostedData(d, o.dbo.locale))
+            asm3.movement.send_adoption_checkout(dbo, o.user, asm3.utils.PostedData(d, dbo.locale))
+        elif paperwork:
+            # Generate the adoption paperwork and save it to the animal/person
+            dtid = o.post.integer("sigtemplateid")
+            content = asm3.wordprocessor.generate_movement_doc(dbo, dtid, movementid, o.user)
+            tempname = asm3.template.get_document_template_name(dbo, dtid)
+            tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, o.post.integer("animal")), 
+                asm3.person.get_person_name(dbo, o.post.integer("person")))
+            amid, pmid = asm3.media.create_document_animalperson(dbo, o.user, post.integer("animal"), post.integer("person"), tempname, content)
+            # Generate the email body from the email template
+            sigbody = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("sigemailtemplateid"), movementid, o.user)
+            d = {
+                "addtolog": "on",
+                "logtype":  str(asm3.configuration.system_log_type(dbo)),
+                "from":     asm3.configuration.email(dbo),
+                "to":       post["sigemailaddress"],
+                "subject":  _("Document signing request", l),
+                "body":     sigbody
+            }
+            asm3.media.send_signature_request(dbo, o.user, pmid, asm3.utils.PostedData(d, dbo.locale))
         return movementid
 
     def post_cost(self, o):

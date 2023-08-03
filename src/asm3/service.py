@@ -226,8 +226,8 @@ def checkout_adoption_page(dbo, token):
         tempname = asm3.template.get_document_template_name(dbo, dtid)
         tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, co["animalid"]), 
             asm3.person.get_person_name(dbo, co["personid"]))
-        asm3.media.create_document_media(dbo, "checkout", asm3.media.ANIMAL, co["animalid"], tempname, content)
-        co["mediaid"] = asm3.media.create_document_media(dbo, "checkout", asm3.media.PERSON, co["personid"], tempname, content)
+        amid, pmid = asm3.media.create_document_animalperson(dbo, "checkout", co["animalid"], co["personid"], tempname, content)
+        co["mediaid"] = pmid
         content = asm3.utils.fix_relative_document_uris(dbo, asm3.utils.bytes2str(content))
         co["mediacontent"] = content
         asm3.cachedisk.put(token, dbo.database, co, 86400 * 2)

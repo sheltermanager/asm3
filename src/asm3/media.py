@@ -6,7 +6,8 @@ import asm3.configuration
 import asm3.dbfs
 import asm3.log
 import asm3.utils
-from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, WATERMARK_FONT_BASEDIRECTORY
+from asm3.i18n import _
+from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, SERVICE_URL, WATERMARK_FONT_BASEDIRECTORY
 
 import datetime
 import os
@@ -632,6 +633,30 @@ def create_log(dbo, user, mid, logcode = "UK00", message = ""):
     # multiple signing requests causing extra alerts after a doc has been signed.
     if 0 == dbo.query_int("SELECT COUNT(*) FROM log WHERE LinkID=? AND LinkType=? AND Comments LIKE ?", [ m.LINKID, linktypeid, f"{logcode}:{m.ID}:%"] ):
         asm3.log.add_log(dbo, user, linktypeid, m.LINKID, logtypeid, f"{logcode}:{m.ID}:{message} - {m.MEDIANOTES}")
+
+def send_signature_request(dbo, username, mid, post):
+    """
+    Sends a request for a document to be signed by email. 
+    mid: The media id of the document we are requesting a signature for.
+    The following parameters are expected in post:
+    from, to, cc, bcc, subject, body, logtype, addtolog
+    """
+    l = dbo.locale
+    emailadd = post["to"]
+    body = post["body"]
+    m = get_media_by_id(dbo, mid)
+    if m is None: raise asm3.utils.ASMValidationError("cannot find media with ID %s" % mid)
+    if m.MEDIAMIMETYPE != "text/html": raise asm3.utils.ASMError("invalid mime type for document signing %s" % m.MEDIAMIMETYPE)
+    token = asm3.utils.md5_hash_hex("%s%s" % (m.ID, m.LINKID))
+    url = "%s?account=%s&method=sign_document&email=%s&formid=%d&token=%s" % (SERVICE_URL, dbo.database, asm3.utils.strip_email_address(emailadd).replace("@", "%40"), mid, token)
+    body = asm3.utils.replace_url_token(body, url, m.MEDIANOTES)
+    if post.boolean("addtolog"):
+        asm3.log.add_log_email(dbo, username, get_log_from_media_type(m.LINKTYPEID), m.LINKID, post.integer("logtype"), 
+            emailadd, _("Document signing request", l), body)
+    create_log(dbo, username, mid, "ES01", _("Document signing request", l))
+    asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body, "html")
+    if asm3.configuration.audit_on_send_email(dbo): 
+        asm3.audit.email(dbo, username, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body)
 
 def sign_document(dbo, username, mid, sigurl, signdate, signprefix):
     """
