@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-08-03 18:02+0000\n"
+"POT-Creation-Date: 2023-08-04 08:02+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1537,6 +1537,12 @@ msgstr ""
 msgid ""
 "Animal records in the file will have a prefix added to their ANIMALCODE "
 "column to prevent clashes with existing animals in your database."
+msgstr ""
+
+#: csvimport.js
+msgid ""
+"Animal records in the file will have their ANIMALENTRYDATE overridden to "
+"today. Useful if the animals are being transferred into your shelter."
 msgstr ""
 
 #: options.js
@@ -11814,6 +11820,10 @@ msgstr ""
 msgid ""
 "Set current foster movement return date to event start or current time, "
 "whichever is later"
+msgstr ""
+
+#: csvimport.js
+msgid "Set entry date to today"
 msgstr ""
 
 #: html.py header.js

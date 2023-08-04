@@ -238,12 +238,13 @@ def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
     asm3.al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
     errors.append( (rowno, str(row), errmsg) )
 
-def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False, prefixanimalcodes = False, htmlresults = True):
+def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False, prefixanimalcodes = False, entrytoday = False, htmlresults = True):
     """
     Imports csvdata (bytes string, encoded with encoding)
     createmissinglookups: If a lookup value is given that's not in our data, add it
     cleartables: Clear down the animal, owner and adoption tables before import
     prefixanimalcodes: Add a prefix to shelter codes to avoid clashes with the existing records
+    entrytoday: Set ANIMALENTRYDATE to today - useful for importing animals being transferred in
     htmlresults: Return the results as an HTML table. If false, returns a JSON document
     """
 
@@ -449,6 +450,8 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
             if gks(row, "ANIMALDOB") == "" and a["estimatedage"] != "":
                 a["dateofbirth"] = "" # if we had an age and dob was blank, prefer the age
             a["datebroughtin"] = gkd(dbo, row, "ANIMALENTRYDATE", True)
+            if entrytoday: 
+                a["datebroughtin"] = asm3.i18n.python2display(dbo.locale, dbo.today())
             a["deceaseddate"] = gkd(dbo, row, "ANIMALDECEASEDDATE")
             a["ptsreason"] = gks(row, "ANIMALDECEASEDNOTES")
             a["puttosleep"] = gkbc(row, "ANIMALEUTHANIZED")
