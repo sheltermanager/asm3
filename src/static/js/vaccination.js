@@ -172,12 +172,16 @@ $(function() {
                 { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "bcav",
                      click: function() {
                         let comments = "", vacctype = 0;
+                        let row = tableform.table_selected_row(table);
                         $.each(tableform.table_selected_rows(table), function(i, v) {
                             comments += "[" + v.SHELTERCODE + " - " + v.ANIMALNAME + "] ";
                             vacctype = v.VACCINATIONID;
                         });
                         $("#usagecomments").html(comments);
                         $("#givenexpires, #givenbatch, #givenmanufacturer, #givenrabiestag").val("");
+                        $("#givencost").currency("value", row.COST);
+                        $("#givenmanufacturer").val(row.MANUFACTURER);
+                        $("#givenbatch").val(row.BATCHNUMBER);
                         $("#givennewdate").date("today");
                         let rd = vaccination.calc_reschedule_date(new Date(), vacctype);
                         if (rd) { $("#rescheduledate, #givenexpires").date("setDate", rd); }
@@ -387,6 +391,11 @@ $(function() {
                 '<td><input id="givenmanufacturer" data="givenmanufacturer" type="text" class="asm-textbox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
+                '<tr>',
+                '<td><label for="givencost">' + _("Cost") + '</label></td>',
+                '<td><input id="givencost" data="givencost" type="text" class="asm-textbox asm-currencybox asm-field" /></td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="givenrabiestag">' + _("Rabies Tag") + '</label></td>',
                 '<td><input id="givenrabiestag" data="givenrabiestag" type="text" class="asm-textbox asm-field" /></td>',
                 '</tr>',
@@ -458,6 +467,11 @@ $(function() {
 
         bind_givendialog: function() {
             let givenbuttons = { }, table = vaccination.table;
+            $("#item").change(function() {
+                let si = common.get_row(controller.stockitems, $("#item").val(), "ID");
+                $("#givenbatch").val( si.BATCHNUMBER );
+                $("#givencost").currency("value", si.UNITPRICE);
+            });
             givenbuttons[_("Save")] = async function() {
                 validate.reset("dialog-given");
                 if (!validate.notblank([ "givennewdate" ])) { return; }
