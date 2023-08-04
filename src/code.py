@@ -3119,7 +3119,7 @@ class document_template_edit(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         dtid = post.integer("dtid")
-        asm3.template.update_document_template_content(dbo, dtid, post["document"])
+        asm3.template.update_document_template_content(dbo, o.user, dtid, post["document"])
         self.redirect("document_templates")
 
     def post_pdf(self, o):
