@@ -256,6 +256,8 @@ def validate_movement_form_data(dbo, username, post):
     personid = post.integer("person")
     animalid = post.integer("animal")
     retailerid = post.integer("retailer")
+    datebroughtin = dbo.query_date("SELECT DateBroughtIn FROM animal WHERE ID = ?", [animalid])
+    if datebroughtin is not None: datebroughtin = datebroughtin.replace(hour=0, minute=0, second=0, microsecond=0)
     asm3.al.debug("validating saved movement %d for animal %d" % (movementid, animalid), "movement.validate_movement_form_data", dbo)
     # If we have a date but no type, get rid of it
     if movementdate is not None and movementtype == 0:
@@ -313,7 +315,7 @@ def validate_movement_form_data(dbo, username, post):
             asm3.al.debug("movement has a retailerid set but has never been to a retailer.", "movement.validate_movement_form_data", dbo)
             raise asm3.utils.ASMValidationError(asm3.i18n._("This movement cannot be from a retailer when the animal has no prior retailer movements.", l))
     # Movement date cannot be before brought in date
-    if movementdate is not None and movementdate < dbo.query_date("SELECT DateBroughtIn FROM animal WHERE ID = ?", [animalid]).replace(hour=0, minute=0, second=0, microsecond=0):
+    if movementdate is not None and datebroughtin is not None and movementdate < datebroughtin:
         asm3.al.debug("movement date is before date brought in", "movement.validate_movement_form_data", dbo)
         raise asm3.utils.ASMValidationError(asm3.i18n._("Movement date cannot be before brought in date.", l))
     # You can't have a return without a movement

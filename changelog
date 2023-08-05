@@ -1,6 +1,7 @@
 47
 ================
 
+05/08/23 Fix bug where reserves with move date but no animal could NPE during validation
 04/08/23 CSV import option to override animal entry date to today
 03/08/23 New Move->Adopt option to generate and request signed paperwork #1231
 03/08/23 Adoption contracts via checkout should use new link to animal/person
