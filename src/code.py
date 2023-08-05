@@ -3119,7 +3119,7 @@ class document_template_edit(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         dtid = post.integer("dtid")
-        asm3.template.update_document_template_content(dbo, dtid, post["document"])
+        asm3.template.update_document_template_content(dbo, o.user, dtid, post["document"])
         self.redirect("document_templates")
 
     def post_pdf(self, o):
@@ -6925,10 +6925,11 @@ class test(JSONEndpoint):
         newdate = o.post.date("newdate")
         retestdate = o.post.date("retest")
         reschedulecomments = o.post["usagecomments"]
+        cost = o.post.integer("givencost")
         vet = o.post.integer("givenvet")
         testresult = o.post.integer("testresult")
         for vid in o.post.integer_list("ids"):
-            asm3.medical.complete_test(o.dbo, o.user, vid, newdate, testresult, vet)
+            asm3.medical.complete_test(o.dbo, o.user, vid, newdate, testresult, vet, cost)
             if retestdate is not None:
                 asm3.medical.reschedule_test(o.dbo, o.user, vid, retestdate, reschedulecomments)
         if o.post.integer("item") != -1:
@@ -7067,16 +7068,15 @@ class vaccination(JSONEndpoint):
         reschedulecomments = post["reschedulecomments"]
         givenexpires = post.date("givenexpires")
         givenbatch = post["givenbatch"]
+        givencost = post.integer("givencost")
         givenmanufacturer = post["givenmanufacturer"]
         givenby = post["givenby"]
         givenrabiestag = post["givenrabiestag"]
         vet = post.integer("givenvet")
         for vid in post.integer_list("ids"):
-            asm3.medical.complete_vaccination(o.dbo, o.user, vid, newdate, givenby, vet, givenexpires, givenbatch, givenmanufacturer, givenrabiestag)
+            asm3.medical.complete_vaccination(o.dbo, o.user, vid, newdate, givenby, vet, givenexpires, givenbatch, givenmanufacturer, givencost, givenrabiestag)
             if rescheduledate is not None:
                 asm3.medical.reschedule_vaccination(o.dbo, o.user, vid, rescheduledate, reschedulecomments)
-            if post.integer("item") != -1:
-                asm3.medical.update_vaccination_batch_stock(o.dbo, o.user, vid, post.integer("item"))
         if post.integer("item") != -1:
             asm3.stock.deduct_stocklevel_from_form(o.dbo, o.user, post)
 

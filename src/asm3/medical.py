@@ -766,7 +766,7 @@ def calculate_given_remaining(dbo, amid):
     if cpt > 0 and given > 0:
         dbo.execute("UPDATE animalmedical SET Cost = ? WHERE ID = ?", [ cpt * given, amid ])
 
-def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", vetid = 0, dateexpires = None, batchnumber = "", manufacturer = "", rabiestag = ""):
+def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", vetid = 0, dateexpires = None, batchnumber = "", manufacturer = "", cost = 0, rabiestag = ""):
     """
     Marks a vaccination given/completed on newdate
     """
@@ -777,13 +777,14 @@ def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", ve
         "DateExpires":          dateexpires,
         "GivenBy":              asm3.utils.iif(givenby == "", username, givenby),
         "AdministeringVetID":   vetid,
+        "Cost":                 cost,
         "BatchNumber":          batchnumber,
         "Manufacturer":         manufacturer,
         "RabiesTag":            rabiestag
     }, username)
     update_rabies_tag(dbo, username, animalid)
 
-def complete_test(dbo, username, testid, newdate, testresult, vetid = 0):
+def complete_test(dbo, username, testid, newdate, testresult, vetid = 0, cost = 0):
     """
     Marks a test performed on newdate with testresult
     """
@@ -791,6 +792,7 @@ def complete_test(dbo, username, testid, newdate, testresult, vetid = 0):
     dbo.update("animaltest", testid, {
         "AnimalID":             animalid,
         "DateOfTest":           newdate,
+        "Cost":                 cost,
         "TestResultID":         testresult,
         "AdministeringVetID":   vetid
     }, username)
@@ -1104,21 +1106,6 @@ def update_rabies_tag(dbo, username, animalid):
         "WHERE AnimalID=? AND DateOfVaccination Is Not Null AND RabiesTag Is Not Null " \
         "AND RabiesTag <> '' ORDER BY DateOfVaccination DESC", [animalid])
     if rabiestag != "": dbo.update("animal", animalid, { "RabiesTag": rabiestag }, username)
-
-def update_vaccination_batch_stock(dbo, username, vid, slid):
-    """
-    Updates the batch number on a vaccination record if 
-    it isn't already set from a stock level record.
-    """
-    sl = dbo.first_row(dbo.query("SELECT * FROM stocklevel WHERE ID = ?", [slid]))
-    if sl is None:
-        asm3.al.error("stocklevel %d does not exist" % slid, "medical.update_vaccination_batch_stock", dbo)
-        return
-    batch = sl.BATCHNUMBER
-    stockname = sl.NAME
-    asm3.al.debug("updating vacc %d with batch '%s'" % (vid, batch), "medical.update_vaccination_batch_stock", dbo)
-    dbo.execute("UPDATE animalvaccination SET BatchNumber = ? WHERE ID = ? AND (BatchNumber Is Null OR BatchNumber = '')", (batch, vid))
-    dbo.execute("UPDATE animalvaccination SET Comments = ? WHERE ID = ? AND (Comments Is Null OR Comments = '')", (stockname, vid))
 
 def insert_test_from_form(dbo, username, post):
     """

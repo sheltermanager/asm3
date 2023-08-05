@@ -173,6 +173,7 @@ $(function() {
                         $("#renewon").val("");
                         let rd = test.calc_reschedule_date(new Date(), testtype);
                         if (rd) { $("#renewon").date("setDate", rd); }
+                        $("#givencost").currency("value", tableform.table_selected_row(table).COST);
                         $("#testresult").select("firstvalue");
                         $("#usagetype").select("firstvalue");
                         $("#usagedate").date("today");
@@ -302,15 +303,19 @@ $(function() {
                 '<td><input id="newdate" data="newdate" data-nofuture="true" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="renewon">' + _("Retest") + '</label></td>',
-                '<td><input id="renewon" data="retest" data-nopast="true" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
-                '</tr>',
-                '<tr>',
                 '<td><label for="testresult">' + _("Result") + '</label></td>',
                 '<td><select id="testresult" data="testresult" class="asm-selectbox asm-field">',
                 html.list_to_options(controller.testresults, "ID", "RESULTNAME"),
                 '</select>',
                 '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="renewon">' + _("Retest") + '</label></td>',
+                '<td><input id="renewon" data="retest" data-nopast="true" type="text" class="asm-textbox asm-datebox asm-field" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="givencost">' + _("Cost") + '</label></td>',
+                '<td><input id="givencost" data="givencost" type="text" class="asm-textbox asm-currencybox asm-field" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="givenvet">' + _("Administering Vet") + '</label></td>',
@@ -357,6 +362,10 @@ $(function() {
         bind_givendialog: function() {
             let givenbuttons = { };
             let dialog = test.dialog, table = test.table;
+            $("#item").change(function() {
+                let si = common.get_row(controller.stockitems, $("#item").val(), "ID");
+                $("#givencost").currency("value", si.UNITPRICE);
+            });
             givenbuttons[_("Save")] = async function() {
                 validate.reset("dialog-given");
                 if (!validate.notblank([ "newdate" ])) { return; }

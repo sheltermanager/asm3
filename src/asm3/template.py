@@ -124,14 +124,17 @@ def rename_document_template(dbo, username, dtid, newname):
     if not name.endswith(".html") and not name.endswith(".odt"): name += ".html"
     d = { "Name": name }
     if path != "": d["Path"] = path
+    oldname = get_document_template_name(dbo, dtid)
     dbo.update("templatedocument", dtid, d)
-    asm3.audit.edit(dbo, username, "templatedocument", dtid, "", "rename %d to %s" % (dtid, newname))
+    asm3.audit.edit(dbo, username, "templatedocument", dtid, "", "rename %d, %s ==> %s" % (dtid, oldname, newname))
 
-def update_document_template_content(dbo, dtid, content):
+def update_document_template_content(dbo, username, dtid, content):
     """ Changes the content of a template """
     dbo.update("templatedocument", dtid, {
         "Content":  asm3.utils.bytes2str(asm3.utils.base64encode(content))
     })
+    name = get_document_template_name(dbo, dtid)
+    asm3.audit.edit(dbo, username, "templatedocument", dtid, "", "changed content of template %s (%s)" % (dtid, name))
 
 def update_document_template_show(dbo, username, dtid, newshow):
     """
@@ -140,7 +143,8 @@ def update_document_template_show(dbo, username, dtid, newshow):
     dbo.update("templatedocument", dtid, {
         "ShowAt": newshow
     })
-    asm3.audit.edit(dbo, username, "templatedocument", dtid, "", "update show value of %d to %s" % (dtid, newshow))
+    name = get_document_template_name(dbo, dtid)
+    asm3.audit.edit(dbo, username, "templatedocument", dtid, "", "update show value of %d (%s) to %s" % (dtid, name, newshow))
 
 def sanitise_path(path):
     """ Strips disallowed chars from new paths """
