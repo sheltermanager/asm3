@@ -2711,7 +2711,7 @@ class csvimport(JSONEndpoint):
     post_permissions = asm3.users.IMPORT_CSV_FILE
 
     def controller(self, o):
-        return {}
+        return { "islargedb": o.dbo.is_large_db }
 
     def post_all(self, o):
         l = o.locale

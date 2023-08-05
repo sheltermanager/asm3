@@ -17,6 +17,7 @@ $(function() {
                 '<tr>',
                 '<td></td>',
                 '<td>',
+                '<p id="cleartablesp">',
                 '<input id="cleartables" name="cleartables" type="checkbox" data-x="cleartablesexplain" /> ',
                 '<label for="cleartables">' + _("Delete database before importing") + '</label>',
                 '</p>',
@@ -96,6 +97,8 @@ $(function() {
                     $("#" + $(this).attr("data-x")).fadeOut();
                 }
             });
+            // Do not show the clear down option for large databases
+            $("#cleartablesp").toggle(!controller.islargedb);
         },
 
         name: "csvimport",
