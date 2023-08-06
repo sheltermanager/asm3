@@ -55,7 +55,7 @@ class TestTemplate(unittest.TestCase):
 
     def test_update_document_template_content(self):
         nid = asm3.template.create_document_template(base.get_dbo(), "test", "testdoc8")
-        asm3.template.update_document_template_content(base.get_dbo(), nid, b"<xx>")
+        asm3.template.update_document_template_content(base.get_dbo(), "test", nid, b"<xx>")
         rv = asm3.template.get_document_template_content(base.get_dbo(), nid)
         assert rv == b"<xx>"
 

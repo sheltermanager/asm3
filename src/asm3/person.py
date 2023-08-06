@@ -139,8 +139,10 @@ def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "
     if address.find("\n") != -1: address = address[0:address.find("\n")]
     if address.find(",") != -1: address = address[0:address.find(",")]
     address = address.replace("'", "`").lower().strip()
+    address += "%"
     forenames = forenames.replace("'", "`").lower().strip()
     if forenames.find(" ") != -1: forenames = forenames[0:forenames.find(" ")]
+    forenames += "%"
     surname = surname.replace("'", "`").lower().strip()
     email = email.replace("'", "`").lower().strip()
     eq = []
@@ -149,21 +151,23 @@ def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "
     ceq = []
     per = []
     cper = []
-    if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
-        eq = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.EmailAddress) LIKE ?" % siteclause, [email])
-    if mobile != "" and asm3.utils.atoi(mobile) > 9999: # at least 5 digits to constitute a valid number
-        mq = dbo.query(get_person_query(dbo) + " WHERE %s %s LIKE ?" % (siteclause, dbo.sql_atoi("o.MobileTelephone")) , [asm3.utils.digits_only(mobile)])
-    if address != "":
-        per = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname) LIKE ? AND " \
-         "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames + "%", address + "%"))
+    if forenames != "%" and email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
+        eq = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} LOWER(o.EmailAddress) LIKE ? AND LOWER(o.OwnerForeNames) LIKE ?", [email, forenames])
+    if forenames != "%" and mobile != "" and asm3.utils.atoi(mobile) > 9999: # at least 5 digits to constitute a valid number
+        atoimp = dbo.sql_atoi("o.MobileTelephone")
+        mq = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} {atoimp} LIKE ? AND LOWER(o.OwnerForeNames) LIKE ?", [asm3.utils.digits_only(mobile), forenames])
+    if forenames != "%" and surname != "" and address != "%":
+        per = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} LOWER(o.OwnerSurname) LIKE ? AND " \
+         "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?", (surname, forenames, address))
     if checkcouple:
-        if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
-            ceq = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.EmailAddress2) LIKE ?" % siteclause, [email])
-        if mobile != "" and asm3.utils.atoi(mobile) > 9999: # at least 5 digits to constitute a valid number
-            cmq = dbo.query(get_person_query(dbo) + " WHERE %s %s LIKE ?" % (siteclause, dbo.sql_atoi("o.MobileTelephone2")) , [asm3.utils.digits_only(mobile)])
-        if address != "":
+        if forenames != "%" and email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
+            ceq = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} LOWER(o.EmailAddress2) LIKE ? AND LOWER(o.OwnerForeNames2) LIKE ?", [email, forenames])
+        if forenames != "%" and mobile != "" and asm3.utils.atoi(mobile) > 9999: # at least 5 digits to constitute a valid number
+            atoimp2 = dbo.sql_atoi("o.MobileTelephone2")
+            cmq = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} {atoimp2} LIKE ? AND LOWER(o.OwnerForeNames2) LIKE ?", [asm3.utils.digits_only(mobile), forenames])
+        if forenames != "%" and surname != "" and address != "%":
             cper = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname2) LIKE ? AND " \
-             "LOWER(o.OwnerForeNames2) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames + "%", address + "%"))
+             "LOWER(o.OwnerForeNames2) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames, address))
     return eq + mq + ceq + cmq + per + cper
 
 def get_person_name(dbo, personid):
