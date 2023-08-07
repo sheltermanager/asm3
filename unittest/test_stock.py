@@ -38,6 +38,9 @@ class TestStock(unittest.TestCase):
     def test_get_stocklevels_depleted(self):
         asm3.stock.get_stocklevels_depleted(base.get_dbo())
 
+    def test_get_stocklevels_lowbalance(self):
+        asm3.stock.get_stocklevels_lowbalance(base.get_dbo())
+
     def test_update_stocklevel_from_form(self):
         data = {
             "stocklevelid": str(self.nid),
