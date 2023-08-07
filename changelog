@@ -1,6 +1,8 @@
 47
 ================
 
+07/08/23 Allow additional fields to be hidden #598
+07/08/23 Low stock level alerts #954
 06/08/23 Merge person on email/cell checks first name field to avoid false positives
 05/08/23 Hide the CSV import delete database option for large databases
 05/08/23 Fix bug where reserves with move date but no animal could NPE during validation

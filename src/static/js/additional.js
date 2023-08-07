@@ -25,6 +25,7 @@ $(function() {
                     { json_field: "NEWRECORD", post_field: "newrecord", label: _("Show on new record screens"), type: "check" },
                     { json_field: "MANDATORY", post_field: "mandatory", label: _("Mandatory"), type: "check" },
                     { json_field: "SEARCHABLE", post_field: "searchable", label: _("Searchable"), type: "check" },
+                    { json_field: "HIDDEN", post_field: "hidden", label: _("Hidden"), type: "check" },
                     { json_field: "DISPLAYINDEX", post_field: "displayindex", label: _("Display Index"), type: "number", defaultval: "0" },
                     { json_field: "DEFAULTVALUE", post_field: "defaultvalue", label: _("Default Value"), type: "text" },
                     { json_field: "LOOKUPVALUES", post_field: "lookupvalues", label: _("Lookup Values"), type: "textarea" }
@@ -48,6 +49,9 @@ $(function() {
                         log.error(err, err);
                         tableform.dialog_enable_buttons();
                     }
+                },
+                complete: function(row) {
+                    return row.HIDDEN;
                 },
                 columns: [
                     { field: "FIELDNAME", display: _("Name"), initialsort: true },

@@ -19,6 +19,10 @@ def get_stocklevels_depleted(dbo):
     """ Returns a set of depleted stock levels """
     return dbo.query("%s WHERE Balance <= 0 ORDER BY s.StockLocationID, s.Name" % (get_stocklevel_query(dbo)))
 
+def get_stocklevels_lowbalance(dbo):
+    """ Returns a set of low balance stock levels """
+    return dbo.query("%s WHERE Balance < Low ORDER BY s.StockLocationID, s.Name" % (get_stocklevel_query(dbo)))
+
 def get_stocklevel(dbo, slid):
     """
     Returns a single stocklevel record
@@ -102,6 +106,7 @@ def update_stocklevel_from_form(dbo, post, username):
         "UnitName":         post["unitname"],
         "Total":            post.floating("total"),
         "Balance":          post.floating("balance"),
+        "Low":              post.floating("low"),
         "Expiry":           post.date("expiry"),
         "BatchNumber":      post["batchnumber"],
         "Cost":             post.integer("cost"),
@@ -131,6 +136,7 @@ def insert_stocklevel_from_form(dbo, post, username):
         "UnitName":         post["unitname"],
         "Total":            post.floating("total"),
         "Balance":          post.floating("balance"),
+        "Low":              post.floating("low"),
         "Expiry":           post.date("expiry"),
         "BatchNumber":      post["batchnumber"],
         "Cost":             post.integer("cost"),

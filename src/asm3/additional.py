@@ -236,6 +236,7 @@ def insert_field_from_form(dbo, username, post):
         "Mandatory":        post.boolean("mandatory"),
         "NewRecord":        post.boolean("newrecord"),
         "Searchable":       post.boolean("searchable"),
+        "Hidden":           post.boolean("hidden"),
         "FieldType":        post.integer("type"),
         "LinkType":         post.integer("link"),
         "DisplayIndex":     post.integer("displayindex")
@@ -257,6 +258,7 @@ def update_field_from_form(dbo, username, post):
         "Mandatory":        post.boolean("mandatory"),
         "NewRecord":        post.boolean("newrecord"),
         "Searchable":       post.boolean("searchable"),
+        "Hidden":           post.boolean("hidden"),
         "FieldType":        post.integer("type"),
         "LinkType":         post.integer("link"),
         "DisplayIndex":     post.integer("displayindex")

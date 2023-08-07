@@ -397,6 +397,16 @@ $(function() {
                         _("{plural3} items of stock expire in the next month")
                     ]) + '</a><br />';
             }
+            if (alerts.STLOWBAL > 0 && common.has_permission("vsl")) {
+                totalalerts += alerts.STLOWBAL;
+                 s += '<a href="stocklevel?viewlocation=-2">' + html.icon("stock") + ' ' + 
+                    common.ntranslate(alerts.STLOWBAL, [
+                        _("{plural0} item of stock has a low balance"),
+                        _("{plural1} items of stock have a low balance"),
+                        _("{plural2} items of stock have a low balance"),
+                        _("{plural3} items of stock have a low balance")
+                    ]) + '</a><br />';
+            }
             if (alerts.TRNODRV > 0 && common.has_permission("vtr")) {
                 totalalerts += alerts.TRNODRV;
                 s += '<a href="transport">' + html.icon("transport") + ' ' + 

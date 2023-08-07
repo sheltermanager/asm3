@@ -6803,6 +6803,8 @@ class stocklevel(JSONEndpoint):
         dbo = o.dbo
         if o.post.integer("viewlocation") == -1:
             levels = asm3.stock.get_stocklevels_depleted(dbo)
+        elif o.post.integer("viewlocation") == -2:
+            levels = asm3.stock.get_stocklevels_lowbalance(dbo)
         else:
             levels = asm3.stock.get_stocklevels(dbo, o.post.integer("viewlocation"))
         asm3.al.debug("got %d stock levels" % len(levels), "code.stocklevel", dbo)

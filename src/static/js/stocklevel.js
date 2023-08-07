@@ -28,6 +28,8 @@ $(function() {
                         callout: _("Total number of units in the container") },
                     { json_field: "BALANCE", post_field: "balance", label: _("Balance"), type: "number", validation: "notblank",
                         callout: _("The remaining units in the container") },
+                    { json_field: "LOW", post_field: "low", label: _("Low"), type: "number", validation: "notblank",
+                        callout: _("Show an alert if the balance falls below this amount") },
                     { json_field: "BATCHNUMBER", post_field: "batchnumber", label: _("Batch"), type: "text", 
                         callout: _("If this stock record is for a drug, the batch number from the container") },
                     { json_field: "EXPIRY", post_field: "expiry", label: _("Expiry"), type: "date",
@@ -76,14 +78,17 @@ $(function() {
                     return false;
                 },
                 overdue: function(row) {
-                    return row.EXPIRY && format.date_js(row.EXPIRY) <= common.today_no_time();
+                    return ( (row.EXPIRY && format.date_js(row.EXPIRY) <= common.today_no_time()) ||
+                             (row.LOW && row.BALANCE < row.LOW) );
                 },
                 columns: [
                     { field: "NAME", display: _("Name"), initialsort: controller.sortexp != 1 },
                     { field: "STOCKLOCATIONNAME", display: _("Location") },
                     { field: "UNITNAME", display: _("Unit") },
                     { field: "BALANCE", display: _("Balance"), formatter: function(row) {
-                        return row.BALANCE + " / " + row.TOTAL;
+                        let s = row.BALANCE + " / " + row.TOTAL;
+                        if (row.LOW) { s += " " + _("(low at {0})").replace("{0}", row.LOW); }
+                        return s;
                     }},
                     { field: "COST", display: _("Cost"), formatter: tableform.format_currency },
                     { field: "UNITPRICE", display: _("Unit Price"), formatter: tableform.format_currency },
@@ -111,6 +116,7 @@ $(function() {
                 { id: "viewlocation", type: "dropdownfilter", 
                     options: '<option value="0">' + _("(all)") + '</option>' + 
                         '<option value="-1">' + _("(depleted)") + '</option>' + 
+                        '<option value="-2">' + _("(low balance)") + '</option>' + 
                         html.list_to_options(controller.stocklocations, "ID", "LOCATIONNAME"),
                     click: function(selval) {
                         common.route("stocklevel?viewlocation=" + selval);

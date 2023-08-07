@@ -42,7 +42,7 @@ VERSIONS = (
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
-    34706, 34707, 34708
+    34706, 34707, 34708, 34709
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -198,7 +198,8 @@ def sql_structure(dbo):
         fint("DisplayIndex"),
         fint("Mandatory"),
         fint("NewRecord"),
-        fint("Searchable", True) ), False)
+        fint("Searchable", True),
+        fint("Hidden", True) ), False)
     sql += index("additionalfield_LinkType", "additionalfield", "LinkType")
 
     sql += table("additional", (
@@ -1589,6 +1590,7 @@ def sql_structure(dbo):
         fstr("UnitName"),
         ffloat("Total", True),
         ffloat("Balance"),
+        ffloat("Low", True),
         fdate("Expiry", True),
         fstr("BatchNumber", True),
         fint("Cost", True),
@@ -5991,4 +5993,13 @@ def update_34708(dbo):
     # Add onlineform.EmailFosterer
     add_column(dbo, "onlineform", "EmailFosterer", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineform SET EmailFosterer = 0")
+
+def update_34709(dbo):
+    # Add stocklevel.Low
+    add_column(dbo, "stocklevel", "Low", dbo.type_float)
+    dbo.execute_dbupdate("UPDATE stocklevel SET Low=0")
+    # Add additionalfield.Hidden
+    add_column(dbo, "additionalfield", "Hidden", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE additionalfield SET Hidden=0")
+
 
