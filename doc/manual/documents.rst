@@ -83,6 +83,23 @@ engine can also be used by specifying::
 
    <!-- pdf renderer pisa -->
 
+Email Tokens in Document Templates
+----------------------------------
+
+When creating email document templates it is possible to include an email subject
+by using the {{SUBJECT}} token with custom text or a word key, see :ref:`wordkeys` ::
+
+{{SUBJECT This is about <<AnimalName>>}}
+
+The following tokens can also be used to add email addresses to the template::
+
+  {{FROM example@email.com}}
+  {{CC example@email.com}}
+  {{BCC example@email.com}}
+
+More than one email address can be included by adding the address seperated by a comma::
+
+  {{BCC example@email.com, example2@email.com}}
 
 Electronic Signatures
 ---------------------
