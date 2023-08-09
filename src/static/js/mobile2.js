@@ -703,7 +703,7 @@ $(document).ready(function() {
             common.has_permission("vo") ? i(_("Suspect 3"), ac.OWNERNAME3) : ""
         ];
         // List linked animals
-        $.each(o.animals, function(x, v) {
+        $.each(o.animals, function(ai, v) {
             x.push(i(_("Animal"), v.SHELTERCODE + " - " + v.ANIMALNAME));
         });
         x = x.concat([
