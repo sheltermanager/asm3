@@ -910,6 +910,7 @@ $(function() {
                 '<input data="rc:DisableEffects" id="disableeffects" class="asm-checkbox" type="checkbox" /> <label for="disableeffects">' + _("Enable visual effects") + '</label><br />',
                 '<!-- <input data="FancyTooltips" id="fancytooltips" class="asm-checkbox" type="checkbox" /> <label for="fancytooltips">' + _("Use fancy tooltips") + '</label><br /> -->',
                 '<input data="rc:DontUseHTML5Scaling" id="disablehtml5scaling" class="asm-checkbox" type="checkbox" /> <label for="disablehtml5scaling">' + _("Use HTML5 client side image scaling where available to speed up image uploads") + '</label><br />',
+                '<input data="PicturesInBooksClinic" id="picsinbooksclinic" class="asm-checkbox" type="checkbox" /> <label for="picsinbooksclinic">' + _("Show animal thumbnails in clinic books") + '</label><br />',
                 '<input data="PicturesInBooks" id="picsinbooks" class="asm-checkbox" type="checkbox" /> <label for="picsinbooks">' + _("Show animal thumbnails in movement and medical books") + '</label><br />',
                 '<input data="ShowSexBorder" id="sexborder" class="asm-checkbox" type="checkbox" /> <label for="sexborder">' + _("Show pink and blue borders around animal thumbnails to indicate sex") + '</label><br />',
                 '<input data="ShowPersonMiniMap" id="minimap" class="asm-checkbox" type="checkbox" /> <label for="minimap">' + _("Show a minimap of the address on person screens") + '</label><br />',

@@ -497,6 +497,10 @@ Display
 * Use HTML5 client side image scaling: If your browser supports it, media will
   be scaled on your PC before being uploaded to the server to save time.
 
+* Show animal thumbnails in clinic books: Show animal pictures in the rows of
+  the clinic waiting and consulting room screens. This option is off by default
+  to save screen space and because clinics are normally person-focused.
+
 * Show animal thumbnails in movement and medical books: Show animal pictures in
   the rows of the movement and medical books (foster book, reservation book,
   vaccination book, etc.)

@@ -281,6 +281,7 @@ DEFAULTS = {
     "PetsLocatedIncludeShelter": "No",
     "PetsLocatedAnimalFlag": "",
     "PicturesInBooks": "Yes",
+    "PicturesInBooksClinic": "No",
     "PDFInline": "Yes",
     "PDFZoom": "100",
     "PublisherUseComments": "Yes",

@@ -107,6 +107,17 @@ $(function() {
                             return controller.name.indexOf("person_") != -1;
                         }
                     },
+                    { field: "IMAGE", display: "", 
+                        formatter: function(row) {
+                            return html.animal_link_thumb_bare(row);
+                        },
+                        hideif: function(row) {
+                            // Don't show this column if we're in an animal record, or the option is turned off
+                            if (controller.animal || !config.bool("PicturesInBooksClinic")) {
+                                return true;
+                            }
+                        }
+                    },
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
                             if (!row.ANIMALID || row.ANIMALID == 0) { return ""; }

@@ -497,6 +497,10 @@ Display
 * Use HTML5 client side image scaling: If your browser supports it, media will
   be scaled on your PC before being uploaded to the server to save time.
 
+* Show animal thumbnails in clinic books: Show animal pictures in the rows of
+  the clinic waiting and consulting room screens. This option is off by default
+  to save screen space and because clinics are normally person-focused.
+
 * Show animal thumbnails in movement and medical books: Show animal pictures in
   the rows of the movement and medical books (foster book, reservation book,
   vaccination book, etc.)
@@ -843,6 +847,12 @@ Movements
   animal screen: After the adopt button is clicked, take the user to a screen
   that allows editing of the payments that were just created. This allows the
   user to generate an invoice/receipt or request payment by email, etc.
+
+* Allow requesting of signed paperwork when creating an adoption on the
+  Move-Adopt an animal screen: If this option is enabled, a section will appear
+  on the adopt an animal screen (after choosing a person) to allow a document
+  template to be chosen and an email address. After the adopt button is
+  clicked, the document will be generated and sent to that email for signature.
 
 * Allow overriding of the movement number on the Move menu screens: If turned
   on, the movement number field will be visible on all Move menu screens for
