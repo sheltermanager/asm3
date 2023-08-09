@@ -1,6 +1,7 @@
 47
 ================
 
+09/08/23 Allow paperwork generation to be disabled #1316
 07/08/23 Allow additional fields to be hidden #598
 07/08/23 Low stock level alerts #954
 06/08/23 Merge person on email/cell checks first name field to avoid false positives

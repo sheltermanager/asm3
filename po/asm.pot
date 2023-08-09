@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-08-07 11:12+0000\n"
+"POT-Creation-Date: 2023-08-09 10:33+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1234,6 +1234,12 @@ msgstr ""
 
 #: options.js
 msgid "Allow overriding of the movement number on the Move menu screens"
+msgstr ""
+
+#: options.js
+msgid ""
+"Allow requesting signed paperwork when creating an adoption on the "
+"Move{0}Adopt an animal screen"
 msgstr ""
 
 #: options.js

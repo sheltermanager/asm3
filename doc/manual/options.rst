@@ -844,6 +844,12 @@ Movements
   that allows editing of the payments that were just created. This allows the
   user to generate an invoice/receipt or request payment by email, etc.
 
+* Allow requesting of signed paperwork when creating an adoption on the
+  Move-Adopt an animal screen: If this option is enabled, a section will appear
+  on the adopt an animal screen (after choosing a person) to allow a document
+  template to be chosen and an email address. After the adopt button is
+  clicked, the document will be generated and sent to that email for signature.
+
 * Allow overriding of the movement number on the Move menu screens: If turned
   on, the movement number field will be visible on all Move menu screens for
   the user to override.

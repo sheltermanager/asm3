@@ -1364,6 +1364,7 @@ $(function() {
                 '<input data="MovementDonationsDefaultDue" id="donationsdue" class="asm-checkbox" type="checkbox" /> <label for="donationsdue">' + _("When creating payments from the Move menu screens, mark them due instead of received") + '</label><br />',
                 '<input data="DonationOnMoveReserve" id="donationmovereserve" class="asm-checkbox" type="checkbox" /> <label for="donationmovereserve">' + _("Allow creation of payments on the Move{0}Reserve screen").replace("{0}", html.icon("right")) + '</label><br />',
                 '<input data="MoveAdoptDonationsEnabled" id="moveadoptdonationsenabled" class="asm-checkbox" type="checkbox" /> <label for="moveadoptdonationsenabled">' + _("Allow editing of payments after creating an adoption on the Move{0}Adopt an animal screen").replace("{0}", html.icon("right")) + '</label><br />',
+                '<input data="MoveAdoptGeneratePaperwork" id="moveadoptgeneratepaperwork" class="asm-checkbox" type="checkbox" /> <label for="moveadoptgeneratepaperwork">' + _("Allow requesting signed paperwork when creating an adoption on the Move{0}Adopt an animal screen").replace("{0}", html.icon("right")) + '</label><br />',
                 '<input data="MovementNumberOverride" id="movementoverride" class="asm-checkbox" type="checkbox" /> <label for="movementoverride">' + _("Allow overriding of the movement number on the Move menu screens") + '</label><br />',
                 '</p>',
                 '<p class="asm-header">' + _("Warnings") + '</p>',

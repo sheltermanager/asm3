@@ -247,8 +247,8 @@ $(function() {
                     $("#feetypeid").select("value", config.str("AdoptionCheckoutFeeID"));
                     $("#checkoutcreate").closest(".ui-widget").show();
                 }
-                // If it isnt, show the request signed contract section
-                else {
+                // If it isnt, show the request signed contract section if that is configured
+                else if (config.str("MoveAdoptGeneratePaperwork")) {
                     $("#sigemailaddress").val(p.EMAILADDRESS);
                     $("#sigtemplateid").select("value", config.str("AdoptionCheckoutTemplateID"));
                     $("#sigpaperwork").closest(".ui-widget").show();

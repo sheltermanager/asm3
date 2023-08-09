@@ -260,6 +260,7 @@ DEFAULTS = {
     "MovementNumberOverride": "No",
     "MovementPersonOnlyReserves": "Yes",
     "MultiSiteEnabled": "No", 
+    "MoveAdoptGeneratePaperwork": "Yes",
     "MoveAdoptDonationsEnabled": "No",
     "JSWindowPrint": "Yes",
     "OnlineFormSpamHoneyTrap": "Yes",
