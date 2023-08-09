@@ -441,6 +441,7 @@ $(document).ready(function() {
         };
         const fgs = function(s) {
             let o = [];
+            if (!s) { return ""; }
             $.each(s.split("|"), function(i, v) {
                 if (v.trim()) { o.push(v.trim()); }
             });
