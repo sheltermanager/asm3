@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-08-09 10:33+0000\n"
+"POT-Creation-Date: 2023-08-09 10:47+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -4324,8 +4324,8 @@ msgstr ""
 msgid "Died {0}"
 msgstr ""
 
-#: html.py mobile.py lookups.py animal_find_results.js header_edit_header.js
-#: mobile2.js
+#: html.py mobile.py lookups.py animal_find.js animal_find_results.js
+#: header_edit_header.js mobile2.js
 msgid "Diet"
 msgstr ""
 
@@ -7509,9 +7509,9 @@ msgid "June"
 msgstr ""
 
 #: html.py lookups.py incident_new.js incident_find.js person_find_results.js
-#: person_find.js incident.js animal_find_results.js person_new.js
-#: incident_find_results.js common_personchooser.js animal.js animal_new.js
-#: person.js options.js
+#: animal_find.js person_find.js incident.js animal_find_results.js
+#: person_new.js incident_find_results.js common_personchooser.js animal.js
+#: animal_new.js person.js options.js
 msgid "Jurisdiction"
 msgstr ""
 

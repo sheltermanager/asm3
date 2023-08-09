@@ -552,6 +552,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
        litterid - string partial pattern
        animaltypeid - -1 for all or ID
        breedid - -1 for all or ID
+       diet - -1 for all or diet ID
        speciesid - -1 for all or ID
        shelterlocation - -1 for all internal locations or ID
        size - -1 for all sizes or ID
@@ -577,6 +578,7 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
        rabiestag - string partial pattern
        pickuplocation - -1 for all pickup locations or ID
        pickupaddress - string partial pattern
+       jurisdiction - -1 for all jurisdictions or ID
        hiddencomments - partial word/string pattern
        reasonforentry - partial word/string pattern
        originalowner - string partial pattern
@@ -624,8 +626,10 @@ def get_animal_find_advanced(dbo, criteria, limit = 0, locationfilter = "", site
     ss.add_id("sex", "a.Sex")
     ss.add_id("size", "a.Size")
     ss.add_id("colour", "a.BaseColourID")
+    ss.add_id("diet", "adi.DietID")
     ss.add_id("entryreason", "a.EntryReasonID")
     ss.add_id("pickuplocation", "a.PickupLocationID")
+    ss.add_id("jurisdiction", "a.JurisdictionID")
     ss.add_str("sheltercode", "a.ShelterCode")
     ss.add_str("litterid", "a.AcceptanceNumber")
     ss.add_date_pair("inbetweenfrom", "inbetweento", "a.DateBroughtIn", "a.MostRecentEntryDate")
