@@ -1890,7 +1890,7 @@ def extract_mail_tokens(s):
     Returns a dictionary containing any found tokens and the body with the tokens removed.
     """
     results = asm3.utils.regex_multi(r"\{\{(.+?) (.+?)\}\}",  s)
-    d = { "FROM": None, "SUBJECT": None, "BODY": None }
+    d = { "FROM": None, "CC": None, "BCC": None, "SUBJECT": None, "BODY": None }
     for k, v in results:
         d[k] = v
     s = asm3.utils.regex_delete(r"\{\{(.+?)\}\}", s)

@@ -921,6 +921,8 @@ $.widget("asm.emailform", {
                 let j = jQuery.parseJSON(response);
                 if (j.SUBJECT) { $("#em-subject").val(j.SUBJECT); }
                 if (j.FROM) { $("#em-from").val(j.FROM); }
+                if (j.CC) { $("#em-cc").val(j.CC); }
+                if (j.BCC) { $("#em-bcc").val(j.BCC); }
                 $("#em-body").html(j.BODY); 
             });
         });

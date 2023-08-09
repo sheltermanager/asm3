@@ -1,6 +1,7 @@
 47
 ================
 
+09/08/23 Add {{CC}} and {{BCC}} email tokens #1088
 09/08/23 {{SUBJECT}} and {{FROM}} email tokens in template support #1088
 09/08/23 Option to enable thumbnails in clinic screens #1259
 09/08/23 Advanced find animal: Seach on diet #1313
