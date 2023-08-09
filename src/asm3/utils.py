@@ -877,6 +877,9 @@ def totp(secret):
     h = (struct.unpack(">I", h[o:o+4])[0] & 0x7fffffff) % 1000000
     return h
 
+def regex_delete(pattern, findin):
+    return re.sub(pattern, '', findin, flags=re.I)
+
 def regex_multi(pattern, findin):
     """
     Returns all matches for pattern in findin

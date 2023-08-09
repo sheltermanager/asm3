@@ -1881,6 +1881,22 @@ def substitute_template(dbo, templateid, tags, imdata = None):
         except Exception as zderr:
             raise asm3.utils.ASMError("Failed generating odt document: %s" % str(zderr))
 
+def extract_mail_tokens(s):
+    """
+    Extracts tokens for mail from document content s.
+    Mail tokens are {{FROM x}}, {{SUBJECT x}}
+    This process should be run on the output after generating a document so that all
+    wordkeys in the mail tokens have been substituted.
+    Returns a dictionary containing any found tokens and the body with the tokens removed.
+    """
+    results = asm3.utils.regex_multi(r"\{\{(.+?) (.+?)\}\}",  s)
+    d = { "FROM": None, "SUBJECT": None, "BODY": None }
+    for k, v in results:
+        d[k] = v
+    s = asm3.utils.regex_delete(r"\{\{(.+?)\}\}", s)
+    d["BODY"] = s
+    return d
+
 def generate_animal_doc(dbo, templateid, animalid, username):
     """
     Generates an animal document from a template using animal keys and

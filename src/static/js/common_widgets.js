@@ -917,8 +917,11 @@ $.widget("asm.emailform", {
             if (o.personid) { formdata += "&personid=" + o.personid; }
             if (o.animalid) { formdata += "&animalid=" + o.animalid; }
             header.show_loading(_("Loading..."));
-            common.ajax_post("document_gen", formdata, function(result) {
-                $("#em-body").html(result); 
+            common.ajax_post("document_gen", formdata, function(response) {
+                let j = jQuery.parseJSON(response);
+                if (j.SUBJECT) { $("#em-subject").val(j.SUBJECT); }
+                if (j.FROM) { $("#em-from").val(j.FROM); }
+                $("#em-body").html(j.BODY); 
             });
         });
 

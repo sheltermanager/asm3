@@ -540,7 +540,7 @@ $(function() {
                             subject: "",
                             animalid: animalid,
                             personid: personid,
-                            templates: controller.templates,
+                            templates: controller.templatesemail,
                             logtypes: controller.logtypes,
                             message: ""
                         });
@@ -576,7 +576,7 @@ $(function() {
                             subject: _("Adoption checkout for {0}").replace("{0}", row.ANIMALNAME),
                             animalid: row.ANIMALID,
                             personid: row.OWNERID,
-                            templates: controller.templates,
+                            templates: controller.templatesemail,
                             logtypes: controller.logtypes,
                             message: _("Please use the link below to sign adoption paperwork and pay the adoption fee.")
                         });

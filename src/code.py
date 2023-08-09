@@ -2097,6 +2097,7 @@ class animal_movements(JSONEndpoint):
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
             "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "name": self.url
         }
 
@@ -3065,16 +3066,19 @@ class document_gen(ASMEndpoint):
 
     def post_emailtemplate(self, o):
         self.content_type("text/html")
+        content = ""
         if o.post["donationids"] != "":
-            return asm3.wordprocessor.generate_donation_doc(o.dbo, o.post.integer("dtid"), o.post.integer_list("donationids"), o.user)
+            content = asm3.wordprocessor.generate_donation_doc(o.dbo, o.post.integer("dtid"), o.post.integer_list("donationids"), o.user)
         elif o.post.integer("personid") != 0:
-            return asm3.wordprocessor.generate_person_doc(o.dbo, o.post.integer("dtid"), o.post.integer("personid"), o.user)
+            content = asm3.wordprocessor.generate_person_doc(o.dbo, o.post.integer("dtid"), o.post.integer("personid"), o.user)
         elif o.post.integer("animalid") != 0:
-            return asm3.wordprocessor.generate_animal_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalid"), o.user)
+            content = asm3.wordprocessor.generate_animal_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalid"), o.user)
         elif o.post.integer("animalcontrolid") != 0:
-            return asm3.wordprocessor.generate_animalcontrol_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalcontrolid"), o.user)
+            content = asm3.wordprocessor.generate_animalcontrol_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalcontrolid"), o.user)
         else:
-            return asm3.template.get_document_template_content(o.dbo, o.post.integer("dtid"))
+            content = asm3.template.get_document_template_content(o.dbo, o.post.integer("dtid"))
+        tokens = asm3.wordprocessor.extract_mail_tokens(content)
+        return asm3.utils.json(tokens)
 
     def post_pdf(self, o):
         self.check(asm3.users.VIEW_MEDIA)
@@ -4746,16 +4750,17 @@ class move_adopt(JSONEndpoint):
         if checkout:
             l = o.dbo.locale
             body = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("emailtemplateid"), movementid, o.user)
+            tokens = asm3.wordprocessor.extract_mail_tokens(body)
             d = {
                 "id":           str(movementid),
                 "animalid":     post["animal"],
                 "personid":     post["person"],
                 "templateid":   post["templateid"],
                 "feetypeid":    post["feetypeid"],
-                "from":         asm3.configuration.email(dbo),
+                "from":         tokens["FROM"] or asm3.configuration.email(dbo),
                 "to":           post["emailaddress"],
-                "subject":      _("Adoption Checkout", l),
-                "body":         body
+                "subject":      tokens["SUBJECT"] or _("Adoption Checkout", l),
+                "body":         tokens["BODY"]
             }
             asm3.movement.send_adoption_checkout(dbo, o.user, asm3.utils.PostedData(d, dbo.locale))
         elif paperwork:
@@ -4768,13 +4773,14 @@ class move_adopt(JSONEndpoint):
             amid, pmid = asm3.media.create_document_animalperson(dbo, o.user, post.integer("animal"), post.integer("person"), tempname, content)
             # Generate the email body from the email template
             sigbody = asm3.wordprocessor.generate_movement_doc(dbo, post.integer("sigemailtemplateid"), movementid, o.user)
+            tokens = asm3.wordprocessor.extract_mail_tokens(sigbody)
             d = {
                 "addtolog": "on",
                 "logtype":  str(asm3.configuration.system_log_type(dbo)),
-                "from":     asm3.configuration.email(dbo),
+                "from":     tokens["FROM"] or asm3.configuration.email(dbo),
                 "to":       post["sigemailaddress"],
-                "subject":  _("Document signing request", l),
-                "body":     sigbody
+                "subject":  tokens["SUBJECT"] or _("Document signing request", l),
+                "body":     tokens["BODY"]
             }
             asm3.media.send_signature_request(dbo, o.user, pmid, asm3.utils.PostedData(d, dbo.locale))
         return movementid
@@ -6061,7 +6067,8 @@ class person_movements(JSONEndpoint):
             "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo, "movement")
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email")
         }
 
 class person_new(JSONEndpoint):
