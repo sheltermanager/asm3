@@ -95,7 +95,7 @@ PUBLISHER_LIST["rg"] = {
     "label":    "Publish to RescueGroups.org",
     "class":    asm3.publishers.rescuegroups.RescueGroupsPublisher,
     "locales":  "en",
-    "sub24hour": False
+    "sub24hour": True
 }
 PUBLISHER_LIST["ak"] = {
     "label":    "Register animals with AKC Reunite Microchips",
