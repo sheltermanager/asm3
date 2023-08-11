@@ -2,6 +2,7 @@
 ================
 
 11/08/23 Fix bug where saving an appointment reset the amount to $0
+10/08/23 Do not show checkout under Move->Adopt for animals with no fee
 10/08/23 Allow RescueGroups to be published to more frequently than 24 hours
 09/08/23 Add {{CC}} and {{BCC}} email tokens #1088
 09/08/23 {{SUBJECT}} and {{FROM}} email tokens in template support #1088
