@@ -982,6 +982,11 @@ class mobile2(ASMEndpoint):
         self.check(asm3.users.ADD_LOG)
         asm3.log.add_log(o.dbo, o.user, o.post.integer("linktypeid"), o.post.integer("linkid"), o.post.integer("type"), o.post["comments"])
 
+    def post_findperson(self, o):
+        self.check(asm3.users.VIEW_PERSON)
+        rows = asm3.person.get_person_find_simple(o.dbo, o.post["q"], limit=100, siteid=o.siteid)
+        return asm3.utils.json(rows)
+
     def post_inccomplete(self, o):
         self.check(asm3.users.CHANGE_INCIDENT)
         asm3.animalcontrol.update_animalcontrol_completenow(o.dbo, o.post.integer("id"), o.user, o.post.integer("ctype"))
@@ -1007,7 +1012,7 @@ class mobile2(ASMEndpoint):
         asm3.medical.update_vaccination_today(o.dbo, o.user, o.post.integer("id"))
 
     def post_loadanimal(self, o):
-        self.check(asm3.users.VIEW_INCIDENT)
+        self.check(asm3.users.VIEW_ANIMAL)
         l = o.locale
         dbo = o.dbo
         pid = o.post.integer("id")
@@ -1046,6 +1051,36 @@ class mobile2(ASMEndpoint):
             "citations": asm3.financial.get_incident_citations(dbo, pid),
             "diary": asm3.diary.get_diaries(dbo, asm3.diary.ANIMALCONTROL, pid),
             "logs": asm3.log.get_logs(dbo, asm3.log.ANIMALCONTROL, pid)
+        })
+
+    def post_loadperson(self, o):
+        self.check(asm3.users.VIEW_PERSON)
+        l = o.locale
+        dbo = o.dbo
+        pid = o.post.integer("id")
+        self.content_type("application/json")
+        af = asm3.additional.get_additional_fields(dbo, pid, "person")
+        afout = []
+        if len(af) > 0:
+            for d in af:
+                if d["FIELDTYPE"] == asm3.additional.ANIMAL_LOOKUP:
+                    afout.append({ "NAME": d["FIELDLABEL"], "VALUE": asm3.animal.get_animal_namecode(dbo, asm3.utils.cint(d["VALUE"]))})
+                elif d["FIELDTYPE"] == asm3.additional.PERSON_LOOKUP:
+                    afout.append({ "NAME": d["FIELDLABEL"], "VALUE": asm3.person.get_person_name_code(dbo, asm3.utils.cint(d["VALUE"]))})
+                elif d["FIELDTYPE"] == asm3.additional.MONEY:
+                    afout.append({ "NAME": d["FIELDLABEL"], "VALUE": format_currency(l, d["VALUE"]) })
+                elif d["FIELDTYPE"] == asm3.additional.YESNO:
+                    afout.append({ "NAME": d["FIELDLABEL"], "VALUE": d["VALUE"] == "1" and _("Yes", l) or _("No", l) })
+                else:
+                    afout.append({ "NAME": d["FIELDLABEL"], "VALUE": d["VALUE"] })
+        return asm3.utils.json({
+            "additional": afout,
+            "citations": asm3.financial.get_person_citations(dbo, pid),
+            "diary": asm3.diary.get_diaries(dbo, asm3.diary.PERSON, pid),
+            # TODO: licenses
+            # TODO: links
+            "logs": asm3.log.get_logs(dbo, asm3.log.PERSON, pid)
+            # TODO: movements ?
         })
 
 class mobile_login(ASMEndpoint):

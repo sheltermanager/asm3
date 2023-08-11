@@ -201,7 +201,7 @@ $(document).ready(function() {
                     _("Person") + '</a>',
                     '<ul class="dropdown-menu" aria-labelledby="dropdown-person">',
                         '<li class="dropdown-item">',
-                            '<a class="nav-link" href="#">' + _("Find Person"),
+                            '<a class="nav-link internal-link" data-link="findperson" href="#">' + _("Find Person"),
                             '</a>',
                         '</li>',
                         '<li class="dropdown-item hideifzero">',
@@ -392,10 +392,35 @@ $(document).ready(function() {
                 '<label for="licencenumber" class="form-label">' + _("License Number") + '</label>',
                 '<input type="text" class="form-control" id="licencenumber">',
             '</div>',
-            '<button id="btn-check-licence" type="button" class="btn btn-primary">Check',
+            '<button id="btn-check-licence" type="button" class="btn btn-primary">' + _("Check"),
             '<div class="spinner-border spinner-border-sm" style="display: none"></div>',
             '</button>',
             '</div>',
+        '</div>',
+
+        '<div id="content-findperson" class="container" style="display: none">',
+        '<h2>' + _("Find Person") + '</h2>',
+            '<div class="mb-3">',
+                '<label for="personq" class="form-label">' + _("Search") + '</label>',
+                '<input type="text" class="form-control" id="personq">',
+            '</div>',
+            '<button id="btn-find-person" type="button" class="btn btn-primary">' + _("Search"),
+            '<div class="spinner-border spinner-border-sm" style="display: none"></div>',
+            '</button>',
+            '</div>',
+        '</div>',
+
+        '<div id="content-personresults" class="container" style="display: none">',
+        '<h2>' + _("Find Person") + '</h2>',
+        '<div class="mb-3">',
+        '<a href="#" data-link="findperson" class="list-group-item list-group-item-action internal-link">',
+        '&#8592; ' + _("Back") + '</a>',
+        '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
+        '</div>',
+        '<div class="list-group">',
+        '</div>',
+        '</div>',
+        '<div id="content-person" class="container" style="display: none">',
         '</div>'
 
     ].join("\n");
@@ -468,7 +493,7 @@ $(document).ready(function() {
             '&#8592; ' + _("Back"),
             '</a>',
             '<div class="list-group-item">',
-            '<img style="float: right" src="' + html.thumbnail_src(a, "animalthumb") + '">',
+            '<img style="float: right" height="75px" src="' + html.thumbnail_src(a, "animalthumb") + '">',
             '<h5 class="mb-1">' + a.ANIMALNAME + ' - ' + a.CODE + '</h5>',
             '<small>' + common.substitute(_("{0} {1} {2} aged {3}"), { "0": a.SEXNAME, "1": a.BREEDNAME, "2": a.SPECIESNAME, "3": a.ANIMALAGE }) + '<br/>',
             a.IDENTICHIPNUMBER + '</small>',
@@ -569,7 +594,6 @@ $(document).ready(function() {
         }
         if (common.has_permission("vle") && o.logs.length > 0) {
             x = [];
-            // TODO: section to add a new log message to the animal
             $.each(o.logs, function(d, v) {
                 x.push(col3(format.date(v.DATE), v.LOGTYPENAME, v.COMMENTS));
             });
@@ -772,6 +796,126 @@ $(document).ready(function() {
         });
     };
 
+    // Returns the HTML for rendering a person record
+    const render_person = async function(p, selector) {
+        const i = function(label, value) {
+            if (!value) { value = ""; }
+            return '<div class="row align-items-start"><div class="col">' + label + '</div><div class="col">' + value + '</div></div>';
+        };
+        const ph = function(label, value) {
+            if (value) { value = '<a href="tel:+1' + value + '">' + value + '</a>'; }
+            return i(label, value);
+        };
+        const em = function(label, value) {
+            if (value) { value = '<a href="mailto:' + value + '">' + value + '</a>'; }
+            return i(label, value);
+        };
+        const col3 = function(c1, c2, c3) {
+            if (!c1 && !c2 && !c3) { return ""; }
+            return '<div class="row align-items-start"><div class="col">' + c1 + '</div><div class="col">' + c2 + '</div><div class="col">' + c3 + '</div></div>';
+        };
+        const hd = function(value) {
+            return '<div class="row align-items-start mt-3"><div class="col fw-bold">' + value + '</div></div>';
+        };
+        const n = function(s) {
+            if (!s) { return ""; }
+            return s;
+        };
+        const fgs = function(s) {
+            let o = [];
+            if (!s) { return ""; }
+            $.each(s.split("|"), function(i, v) {
+                if (v.trim()) { o.push(v.trim()); }
+            });
+            return o.join(", ");
+        };
+        const aci = function(id, headerhtml, bodyhtml, show) {
+            if (!show) { show=""; }
+            return '<div class="accordion-item">' +
+                '<h2 class="accordion-header" id="heading-' + id + '">' +
+                '<button class="accordion-button ' + ( show ? "" : "collapsed") + '" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-' + id + 
+                    '" aria-expanded="false" aria-controls="collapse-' + id + '">' + headerhtml + '</button></h2>' + 
+                '<div id="collapse-' + id + '" class="accordion-collapse collapse ' + show + '" aria-labelledby="heading-' + id + '" data-bs-parent="#accordion-animal">' + 
+                '<div class="accordion-body">' + bodyhtml + '</div>' +
+                '</div></div>';
+        };
+        // Grab the extra data for this person from the backend
+        let o = await common.ajax_post(post_handler, "mode=loadperson&id=" + p.ID);
+        o = jQuery.parseJSON(o);
+        let x = [];
+        let h = [
+            '<div class="list-group mt-3">',
+            '<a href="#" data-link="personresults" class="list-group-item list-group-item-action internal-link">',
+            '&#8592; ' + _("Back"),
+            '</a>',
+            '<div class="list-group-item">',
+            '<img style="float: right" height="75px" src="' + html.thumbnail_src(p, "personthumb") + '">',
+            '<h5 class="mb-1">' + p.OWNERNAME + ' - ' + p.OWNERCODE + '</h5>',
+            '<small>' + p.OWNERADDRESS + ', ' + p.OWNERTOWN + ' ' + p.OWNERCOUNTY + ' ' + p.OWNERPOSTCODE + '</small>',
+            '<br/><small class="fst-italic">' + fgs(p.ADDITIONALFLAGS) + '</small>',
+            '</div>',
+            '</div>',
+
+            '<div class="accordion" id="accordion-person">',
+
+            aci("details", _("Person"), [
+                i(_("Title"), p.OWNERTITLE),
+                i(_("Initials"), p.OWNERINITIALS),
+                i(_("First name(s)"), p.OWNERFORENAMES),
+                i(_("Last name"), p.OWNERSURNAME),
+                ph(_("Home Phone"), p.HOMETELEPHONE),
+                ph(_("Work Phone"), p.WORKTELEPHONE),
+                ph(_("Cell Phone"), p.MOBILETELEPHONE),
+                em(_("Email"), p.EMAILADDRESS),
+                i(_("DOB"), format.date(p.DATEOFBIRTH)),
+                i(_("ID Number"), p.IDENTIFICATIONNUMBER),
+                i(_("Jurisdiction"), p.JURISDICTIONNAME),
+                
+                i(_("Address"), p.OWNERADDRESS),
+                i(_("City"), p.OWNERTOWN),
+                i(_("State"), p.OWNERCOUNTY),
+                i(_("Zipcode"), p.OWNERPOSTCODE),
+            ].join("\n"), "show"),
+           
+            aci("type", _("Type"), [
+                i(_("Comments"), p.COMMENTS),
+                i(_("Warning"), p.POPUPWARNING),
+                i(_("Foster Capacity"), p.FOSTERCAPACITY),
+                i(_("Membership Number"), p.MEMBERSHIPNUMBER),
+                i(_("Membership Expiry"), format.date(p.MEMBERSHIPEXPIRY))
+            ].join("\n"))
+        ];
+        if (o.additional.length > 0) {
+            x = [];
+            $.each(o.additional, function(d, v) {
+                x.push(i(v.NAME, v.VALUE)); 
+            });
+            h.push(aci("additional", _("Additional"), x.join("\n")));
+        }
+        if (common.has_permission("vdn") && o.diary.length > 0) {
+            x = [];
+            $.each(o.diary, function(d, v) {
+                x.push(col3(format.date(v.DIARYDATETIME), v.SUBJECT, v.NOTE));
+            });
+            h.push(aci("diary", _("Diary"), x.join("\n")));
+        }
+        if (common.has_permission("vle") && o.logs.length > 0) {
+            x = [];
+            $.each(o.logs, function(d, v) {
+                x.push(col3(format.date(v.DATE), v.LOGTYPENAME, v.COMMENTS));
+            });
+            h.push(aci("log", _("Log"), x.join("\n")));
+        }
+        if (common.has_permission("ale")) {
+            h.push(aci("addlog", _("Add Log"), render_addlog(p.ID, 1)));
+        }
+        h.push('</div>'); // close accordion
+        $(selector).html( h.join("\n") );
+        // Display our person now it's rendered
+        $(".container").hide();
+        $("#content-person").show();
+    };
+
     // Hide all the elements with hideifzero if they have a badge containing zero
     $(".hideifzero").each(function() {
         $(this).toggle( $(this).find("span.badge").text() != "0" );
@@ -934,6 +1078,43 @@ $(document).ready(function() {
             comments.val("");
             spinner.hide();
         });
+    });
+
+    // Handle clicking on find person button
+    $("#btn-find-person").click(function() {
+        let spinner = $(this).find(".spinner-border");
+        spinner.show();
+        // Retrieve results
+        let formdata = {
+            "mode": "findperson",
+            "q": $("#personq").val()
+        };
+        ajax_post(formdata, function(response) {
+            spinner.hide();
+            controller.personresults = jQuery.parseJSON(response);
+            // Display person list
+            $("#content-personresults .list-group").empty();
+            $.each(controller.personresults, function(i, v) {
+                let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
+                    '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "personthumb") + '">' + 
+                    '<h5 class="mb-1">' + v.OWNERNAME + ' - ' + v.OWNERCODE + '</h5>' +
+                    '<small>(' + v.OWNERADDRESS + ', ' + v.OWNERTOWN + ' ' + v.OWNERCOUNTY + ' ' + v.OWNERPOSTCODE + ')</small>' +
+                    '</a>';
+                $("#content-personresults .list-group").append(h);
+            });
+            $(".container").hide();
+            $("#content-personresults").show();
+        });
+    });
+    // When a person result is clicked, display the record
+    $("#content-personresults").on("click", "a", function() {
+        let personid = format.to_int($(this).attr("data-id")), p = null;
+        $.each(controller.personresults, function(i, v) {
+            if (v.ID == personid) { p = v; return false; }
+        });
+        if (p) { 
+            render_person(p, "#content-person");
+        }
     });
 
     // Incidents
