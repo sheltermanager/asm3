@@ -906,7 +906,20 @@ $(document).ready(function() {
             });
             h.push(aci("diary", _("Diary"), x.join("\n")));
         }
-        // TODO: licences, links, movements
+        if (o.links.length > 0) {
+            x = [];
+            $.each(o.links, function(d, v) {
+                x.push(col3(v.TYPE, v.LINKDISPLAY, v.FIELD2));
+            });
+            h.push(aci("links", _("Links"), x.join("\n")));
+        }
+        if (common.has_permission("") && o.licences.length > 0) {
+            x = [];
+            $.each(o.licences, function(d, v) {
+                x.push(col3(v.LICENCENUMBER, format.date(v.ISSUEDATE), format.date(v.EXPIRYDATE)));
+            });
+            h.push(aci("licences", _("License"), x.join("\n")));
+        }
         if (common.has_permission("vle") && o.logs.length > 0) {
             x = [];
             $.each(o.logs, function(d, v) {

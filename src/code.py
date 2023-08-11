@@ -1077,10 +1077,10 @@ class mobile2(ASMEndpoint):
             "additional": afout,
             "citations": asm3.financial.get_person_citations(dbo, pid),
             "diary": asm3.diary.get_diaries(dbo, asm3.diary.PERSON, pid),
-            # TODO: licenses
-            # TODO: links
+            "licences": asm3.financial.get_person_licences(dbo, pid),
+            "links": asm3.person.get_links(dbo, pid),
             "logs": asm3.log.get_logs(dbo, asm3.log.PERSON, pid)
-            # TODO: movements ?
+            #"movements": asm3.movement.get_person_movements(dbo, pid)
         })
 
 class mobile_login(ASMEndpoint):
