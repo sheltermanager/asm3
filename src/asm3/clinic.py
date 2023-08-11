@@ -137,7 +137,8 @@ def insert_appointment_from_form(dbo, username, post):
 
 def update_appointment_from_form(dbo, username, post):
     """
-    Updates an appointment from form data
+    Updates an appointment from form data.
+    NOTE: Amount and VATAmount are not set because they are calculated after invoice item crud.
     """
     l = dbo.locale
     if post.datetime("apptdate", "appttime") is None:
@@ -154,10 +155,8 @@ def update_appointment_from_form(dbo, username, post):
         "CompletedDateTime":    post.datetime("completedate", "completetime"),
         "ReasonForAppointment": post["reason"],
         "Comments":             post["comments"],
-        "Amount":               post.integer("amount"),
         "IsVAT":                post.boolean("vat"),
-        "VATRate":              post.floating("vatrate"),
-        "VATAmount":            post.integer("vatamount")
+        "VATRate":              post.floating("vatrate")
     }, username)
 
 def delete_appointment(dbo, username, appointmentid):
