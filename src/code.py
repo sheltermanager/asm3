@@ -735,7 +735,7 @@ class custom_logo(ASMEndpoint):
 
     def content(self, o):
         try:
-            dbo = asm3.db.get_database(o.post["smaccount"])
+            dbo = o.dbo
             self.content_type("image/jpeg")
             self.cache_control(CACHE_ONE_DAY, 120)
             return asm3.dbfs.get_string_filepath(dbo, "/reports/logo.jpg")
