@@ -411,6 +411,7 @@ header = {
             '<div id="asm-topline-user-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                     '<li class="asm-menu-category">' + (asm.userreal ? asm.userreal : asm.user) + '</li>',
+                    '<li id="asm-mobile" class="asm-menu-item"><a href="mobile"><nobr><span class="asm-icon asm-icon-mobile"></span> ' + _("Switch to Smartphone UI") + '</nobr></a></li>',
                     '<li id="asm-mysmcom" class="asm-menu-item"><a href="smcom_my" target="_blank"><nobr><span class="asm-icon asm-icon-logo"></span> ' + _("My sheltermanager.com account") + '</nobr></a></li>',
                     '<li id="asm-chpassword" class="asm-menu-item"><a href="change_password"><nobr><span class="asm-icon asm-icon-auth"></span> ' + _("Change Password") + '</nobr></a></li>',
                     '<li id="asm-chusersettings" class="asm-menu-item"><a href="change_user_settings"><nobr><span class="asm-icon asm-icon-settings"></span> ' + _("Change User Settings") + '</nobr></a></li>',
