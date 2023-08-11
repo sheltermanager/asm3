@@ -376,7 +376,7 @@ header = {
             menubuttons = mh[0],
             menubodies = mh[1];
         if (asm.hascustomlogo) {
-            homeicon = "image?db=" + asm.useraccount + "&mode=dbfs&id=/reports/logo.jpg";
+            homeicon = "custom_logo?smaccount=" + asm.useraccount;
         }
         var h = [
             '<div id="asm-topline" class="no-print" style="display: none">',

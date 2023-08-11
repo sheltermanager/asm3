@@ -729,6 +729,34 @@ class jserror(ASMEndpoint):
         if EMAIL_ERRORS:
             asm3.utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", emailsubject, emailbody, "plain", exceptions=False, bulk=True)
 
+class custom_logo(ASMEndpoint):
+    url = "custom_logo"
+    check_logged_in = False
+
+    def content(self, o):
+        try:
+            dbo = asm3.db.get_database(o.post["smaccount"])
+            self.content_type("image/jpeg")
+            self.cache_control(CACHE_ONE_DAY, 120)
+            return asm3.dbfs.get_string_filepath(dbo, "/reports/logo.jpg")
+        except Exception as err:
+            asm3.al.error("%s" % str(err), "code.custom_logo", dbo)
+            return ""
+
+class custom_splash(ASMEndpoint):
+    url = "custom_splash"
+    check_logged_in = False
+
+    def content(self, o):
+        try:
+            dbo = asm3.db.get_database(o.post["smaccount"])
+            self.content_type("image/jpeg")
+            self.cache_control(CACHE_ONE_DAY, 120)
+            return asm3.dbfs.get_string_filepath(dbo, "/reports/splash.jpg")
+        except Exception as err:
+            asm3.al.error("%s" % str(err), "code.custom_splash", dbo)
+            return ""
+
 class media(ASMEndpoint):
     url = "media"
 
@@ -1424,20 +1452,6 @@ class login_jsonp(ASMEndpoint):
     def content(self, o):
         self.content_type("text/javascript")
         return "%s({ response: '%s' })" % (o.post["callback"], asm3.users.web_login(o.post, o.session, self.remote_ip(), self.user_agent(), PATH))
-
-class login_splash(ASMEndpoint):
-    url = "login_splash"
-    check_logged_in = False
-
-    def content(self, o):
-        try:
-            dbo = asm3.db.get_database(o.post["smaccount"])
-            self.content_type("image/jpeg")
-            self.cache_control(CACHE_ONE_DAY, 120)
-            return asm3.dbfs.get_string_filepath(dbo, "/reports/splash.jpg")
-        except Exception as err:
-            asm3.al.error("%s" % str(err), "code.login_splash", dbo)
-            return ""
 
 class logout(ASMEndpoint):
     url = "logout"

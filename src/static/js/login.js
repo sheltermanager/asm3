@@ -261,12 +261,12 @@ const login = {
         if (controller.customsplash) {
             if (controller.multipledatabases) {
                 $("#asm-login-splash").css({
-                    "background-image": "url(login_splash?smaccount=" + controller.smaccount + ")"
+                    "background-image": "url(custom_splash?smaccount=" + controller.smaccount + ")"
                 });
             }
             else {
                 $("#asm-login-splash").css({
-                    "background-image": "url(login_splash)"
+                    "background-image": "url(custom_splash)"
                 });
             }
         }

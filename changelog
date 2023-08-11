@@ -1,6 +1,7 @@
 47
 ================
 
+11/08/23 Use same scheme with 2m cache for splash/logo.jpg
 11/08/23 Fix bug where saving an appointment reset the amount to $0
 10/08/23 Do not show checkout under Move->Adopt for animals with no fee
 10/08/23 Allow RescueGroups to be published to more frequently than 24 hours
