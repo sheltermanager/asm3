@@ -835,7 +835,7 @@ $(document).ready(function() {
                 '<h2 class="accordion-header" id="heading-' + id + '">' +
                 '<button class="accordion-button ' + ( show ? "" : "collapsed") + '" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-' + id + 
                     '" aria-expanded="false" aria-controls="collapse-' + id + '">' + headerhtml + '</button></h2>' + 
-                '<div id="collapse-' + id + '" class="accordion-collapse collapse ' + show + '" aria-labelledby="heading-' + id + '" data-bs-parent="#accordion-animal">' + 
+                '<div id="collapse-' + id + '" class="accordion-collapse collapse ' + show + '" aria-labelledby="heading-' + id + '" data-bs-parent="#accordion-person">' + 
                 '<div class="accordion-body">' + bodyhtml + '</div>' +
                 '</div></div>';
         };
@@ -892,6 +892,13 @@ $(document).ready(function() {
             });
             h.push(aci("additional", _("Additional"), x.join("\n")));
         }
+        if (common.has_permission("vacc") && o.citations.length > 0) {
+            x = [];
+            $.each(o.citations, function(d, v) {
+                x.push(col3(format.date(v.CITATIONDATE), v.CITATIONNAME, v.COMMENTS));
+            });
+            h.push(aci("citations", _("Citations"), x.join("\n")));
+        }
         if (common.has_permission("vdn") && o.diary.length > 0) {
             x = [];
             $.each(o.diary, function(d, v) {
@@ -899,6 +906,7 @@ $(document).ready(function() {
             });
             h.push(aci("diary", _("Diary"), x.join("\n")));
         }
+        // TODO: licences, links, movements
         if (common.has_permission("vle") && o.logs.length > 0) {
             x = [];
             $.each(o.logs, function(d, v) {
