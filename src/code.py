@@ -4795,6 +4795,14 @@ class move_adopt(JSONEndpoint):
         l = dbo.locale
         checkout = o.post.boolean("checkoutcreate")
         paperwork = o.post.boolean("sigpaperwork")
+        if checkout and post.integer("templateid") == 0:
+            raise asm3.utils.ValidationError("No template given for checkout")
+        if checkout and post.integer("emailtemplateid") == 0:
+            raise asm3.utils.ValidationError("No email template given for checkout email")
+        if paperwork and post.integer("sigtemplateid")== 0:
+            raise asm3.utils.ValidationError("No template given for paperwork")
+        if paperwork and post.integer("sigemailtemplateid") == 0:
+            raise asm3.utils.ValidationError("No email template given for request signature email")
         movementid = asm3.movement.insert_adoption_from_form(dbo, o.user, post, create_payments = not checkout)
         if checkout:
             l = o.dbo.locale
@@ -4814,7 +4822,7 @@ class move_adopt(JSONEndpoint):
             asm3.movement.send_adoption_checkout(dbo, o.user, asm3.utils.PostedData(d, dbo.locale))
         elif paperwork:
             # Generate the adoption paperwork and save it to the animal/person
-            dtid = o.post.integer("sigtemplateid")
+            dtid = post.integer("sigtemplateid")
             content = asm3.wordprocessor.generate_movement_doc(dbo, dtid, movementid, o.user)
             tempname = asm3.template.get_document_template_name(dbo, dtid)
             tempname = "%s - %s::%s" % (tempname, asm3.animal.get_animal_namecode(dbo, o.post.integer("animal")), 
