@@ -1,6 +1,7 @@
 47
 ================
 
+13/08/23 Fix bug with extract_email_tokens being fed bytes
 12/08/23 move_adopt: validate checkout/paperwork values at server side
 11/08/23 Add log support to people in new mobile interface #950
 11/08/23 Use same scheme with 2m cache for splash/logo.jpg
