@@ -108,7 +108,7 @@ $(document).ready(function() {
                 '</button>',
                 '<div class="collapse navbar-collapse" id="navbar-content">',
                 '<ul class="navbar-nav me-auto mb-2 mb-lg-0">',
-                '<li class="nav-item">',
+                '<li id="messages-nav" class="nav-item">',
                     '<a class="nav-link internal-link" data-link="messages" href="#">' + _("Messages"),
                         '<span class="badge bg-primary rounded-pill">' + controller.messages.length + '</span>',
                     '</a>',
@@ -230,6 +230,10 @@ $(document).ready(function() {
                     '<a class="nav-link" href="main">' + _("Desktop/Tablet UI"),
                     '</a>',
                 '</li>',
+                '<li class="nav-item">',
+                    '<a class="nav-link" href="mobile">Old Smartphone UI</a>',
+                '</li>',
+
                 '<li class="nav-item">',
                     '<a class="nav-link" href="mobile_logout">' + _("Logout"),
                     '</a>',
@@ -1383,6 +1387,8 @@ $(document).ready(function() {
             '<small>' + v.MESSAGE + '</small>';
         $("#content-messages .list-group").append(h);
     });
+    // Hide messages menu item if there are no messages
+    $("#messages-nav").toggle( controller.messages.length > 0 );
 
     // Load reports
     $("#content-reports .list-group").empty();
