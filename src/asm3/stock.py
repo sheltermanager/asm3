@@ -68,7 +68,7 @@ def get_stock_locations_totals(dbo):
     Returns a list of all stock locations with the total number of stocked
     items in each.
     """
-    return dbo.query("SELECT sl.ID, sl.LocationName, COUNT(s.ID) AS Total FROM stocklevel s INNER JOIN stocklocation sl ON sl.ID = s.StockLocationID WHERE s.Balance > 0 GROUP BY sl.ID, sl.LocationName ORDER BY sl.LocationName")
+    return dbo.query("SELECT sl.ID, sl.LocationName, sl.LocationDescription, COUNT(s.ID) AS Total FROM stocklevel s INNER JOIN stocklocation sl ON sl.ID = s.StockLocationID WHERE s.Balance > 0 GROUP BY sl.ID, sl.LocationName ORDER BY sl.LocationName")
 
 def get_stock_units(dbo):
     """

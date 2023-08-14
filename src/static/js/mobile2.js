@@ -205,7 +205,7 @@ $(document).ready(function() {
                     _("Financial") + '</a>',
                     '<ul class="dropdown-menu" aria-labelledby="dropdown-financial">',
                         '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link" href="#">' + _("Stock Take"),
+                            '<a class="nav-link internal-link" data-link="stocklocations" href="#">' + _("Stock Take"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.stocklocations.length + '</span>',
                             '</a>',
                         '</li>',
@@ -465,6 +465,22 @@ $(document).ready(function() {
         '</div>',
         '<div class="list-group">',
         '</div>',
+        '</div>',
+
+        '<div id="content-stocklocations" class="container" style="display: none">',
+        '<h2>' + _("Stock Locations") + '</h2>',
+        '<div class="mb-3">',
+        '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
+        '</div>',
+        '<div class="list-group">',
+        '</div>',
+        '</div>',
+        '<div id="content-stocktake" class="container" style="display: none">',
+        '<div class="list-group">',
+        '</div>',
+        '<button id="btn-submit-stocktake" type="button" class="btn btn-primary">' + _("Update"),
+        '<div class="spinner-border spinner-border-sm" style="display: none"></div>',
+        '</button>',
         '</div>'
 
     ].join("\n");
@@ -1128,6 +1144,34 @@ $(document).ready(function() {
         });
     });
 
+    // Incidents
+    const render_incident_list = function(selector, backlink, incidents) {
+        $(selector + " .list-group").empty();
+        $.each(incidents, function(i, v) {
+            let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
+                '<h5 class="mb-1">' + format.date(v.INCIDENTDATETIME) + ': ' + v.INCIDENTNAME + ' - ' + v.DISPATCHADDRESS + '</h5>' +
+                '<small>' + v.CALLNOTES + '</small>' + 
+                '</a>';
+            $(selector + " .list-group").append(h);
+        });
+        // When an incident link is clicked, display the record
+        $(selector).on("click", "a", function() {
+            let incidentid = format.to_int($(this).attr("data-id")), ac = null;
+            $.each(incidents, function(i, v) {
+                if (v.ID == incidentid) { ac = v; return false; }
+            });
+            // Incidents rely on IDs to make accordions work - remove contents of all incident views before loading one
+            $(".incident-view").empty();
+            if (ac) { 
+                render_incident(ac, selector + "-view", backlink);
+            }
+        });
+    };
+    render_incident_list("#content-myincidents", "myincidents", controller.incidentsmy);
+    render_incident_list("#content-opincidents", "opincidents", controller.incidentsincomplete);
+    render_incident_list("#content-unincidents", "unincidents", controller.incidentsundispatched);
+    render_incident_list("#content-flincidents", "flincidents", controller.incidentsfollowup);
+
     // Handle clicking on the addlog sliders
     $("body").on("click", ".btn.addlog", function() {
         let formdata = {
@@ -1277,33 +1321,59 @@ $(document).ready(function() {
         });
     });
 
-    // Incidents
-    const render_incident_list = function(selector, backlink, incidents) {
-        $(selector + " .list-group").empty();
-        $.each(incidents, function(i, v) {
-            let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
-                '<h5 class="mb-1">' + format.date(v.INCIDENTDATETIME) + ': ' + v.INCIDENTNAME + ' - ' + v.DISPATCHADDRESS + '</h5>' +
-                '<small>' + v.CALLNOTES + '</small>' + 
-                '</a>';
-            $(selector + " .list-group").append(h);
-        });
-        // When an incident link is clicked, display the record
-        $(selector).on("click", "a", function() {
-            let incidentid = format.to_int($(this).attr("data-id")), ac = null;
-            $.each(incidents, function(i, v) {
-                if (v.ID == incidentid) { ac = v; return false; }
+    // Load stock locations list
+    $("#content-stocklocations .list-group").empty();
+    $.each(controller.stocklocations, function(i, v) {
+        let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
+            '<h5 class="mb-1"><span class="stock-locationname">' + v.LOCATIONNAME + '</span> ' + 
+            '<span class="badge bg-primary rounded-pill">' + v.TOTAL + '</span>' + '</h5>' +
+            '<small>' + v.LOCATIONDESCRIPTION + '</small>' + 
+            '</a>';
+        $("#content-stocklocations .list-group").append(h);
+    });
+    // Create the stock take screen for this location
+    let active_stocklocation = "";
+    $("#content-stocklocations").on("click", "a", function() {
+        let pid = $(this).attr("data-id");
+        active_stocklocation = $(this).find(".stock-locationname").text();
+        ajax_post("mode=getstocklevel&id=" + pid, function(response) {
+            let j = jQuery.parseJSON(response);
+            let usage = '<div class="mb-3">' +
+                '<label for="usagetype" class="form-label">' + _("Usage Type") + '</label>' +
+                '<select class="form-control" id="usagetype" name="usage">' +
+                html.list_to_options(j.usagetypes, "ID", "USAGETYPENAME") +
+                '</select>' +
+                '</div>';
+            $("#content-stocktake .list-group").empty();
+            $("#content-stocktake .list-group").prepend(usage);
+            $.each(j.levels, function(i, v) {
+                let h = '<div class="list-group-item list-group-item-action">' +
+                    '<div class="mb-3">' +
+                    '<label class="form-label">' + v.NAME + ' (' + v.BALANCE + '/' + v.TOTAL + ')</label>' + 
+                    '<input type="text" class="form-control stockbalance" data-id="' + v.ID + '" value="' + v.BALANCE + '">' +
+                    '</div>' +
+                    '</div>';
+                $("#content-stocktake .list-group").append(h);
             });
-            // Incidents rely on IDs to make accordions work - remove contents of all incident views before loading one
-            $(".incident-view").empty();
-            if (ac) { 
-                render_incident(ac, selector + "-view", backlink);
-            }
+            $("#btn-submit-stocktake").toggle( j.levels.length > 0 );
+            $(".container").hide();
+            $("#content-stocktake").show();
         });
-    };
-    render_incident_list("#content-myincidents", "myincidents", controller.incidentsmy);
-    render_incident_list("#content-opincidents", "opincidents", controller.incidentsincomplete);
-    render_incident_list("#content-unincidents", "unincidents", controller.incidentsundispatched);
-    render_incident_list("#content-flincidents", "flincidents", controller.incidentsfollowup);
+    });
+    // Handle submitting the stock take
+    $("#btn-submit-stocktake").click(function() {
+        let x = [];
+        $("#content-stocktake .stockbalance").each(function() {
+            x.push("sl" + $(this).attr("data-id") + "=" + $(this).val());
+        });
+        $("#btn-submit-stocktake .spinner-border").show();
+        ajax_post("mode=stocktake&usagetype=" + $("#usagetype").val() + "&" + x.join("&"), function() {
+            $("#btn-submit-stocktake .spinner-border").hide();
+            show_info(_("Stock Take"), _("Stock levels for location '{0}' updated.").replace("{0}", active_stocklocation));
+            $(".container").hide();
+            $("#content-stocklocations").show();
+        });
+    });
 
     // Load messages 
     $("#content-messages .list-group").empty();

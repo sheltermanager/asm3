@@ -996,6 +996,12 @@ class mobile2(ASMEndpoint):
         rows = asm3.person.get_person_find_simple(o.dbo, o.post["q"], limit=100, siteid=o.siteid)
         return asm3.utils.json(rows)
 
+    def post_getstocklevel(self, o):
+        self.check(asm3.users.VIEW_STOCKLEVEL)
+        return asm3.utils.json( 
+            { "levels": asm3.stock.get_stocklevels(o.dbo, o.post.integer("id")), 
+              "usagetypes": asm3.lookups.get_stock_usage_types(o.dbo) })
+
     def post_homecheck(self, o):
         self.check(asm3.users.CHANGE_PERSON)
         asm3.person.update_pass_homecheck(o.dbo, o.user, o.post["id"], "")
@@ -1015,6 +1021,10 @@ class mobile2(ASMEndpoint):
     def post_medical(self, o):
         self.check(asm3.users.CHANGE_MEDICAL)
         asm3.medical.update_treatment_today(o.dbo, o.user, o.post.integer("id"))
+
+    def post_stocktake(self, o):
+        self.check(asm3.users.CHANGE_STOCKLEVEL)
+        asm3.stock.stock_take_from_mobile_form(o.dbo, o.user, o.post)
 
     def post_test(self, o):
         self.check(asm3.users.CHANGE_TEST)
