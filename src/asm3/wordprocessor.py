@@ -1889,6 +1889,7 @@ def extract_mail_tokens(s):
     wordkeys in the mail tokens have been substituted.
     Returns a dictionary containing any found tokens and the body with the tokens removed.
     """
+    if s is None: s = ""
     if asm3.utils.is_bytes(s): s = asm3.utils.bytes2str(s)
     results = asm3.utils.regex_multi(r"\{\{(.+?) (.+?)\}\}",  s)
     d = { "FROM": None, "CC": None, "BCC": None, "SUBJECT": None, "BODY": None }
