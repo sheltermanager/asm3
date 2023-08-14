@@ -124,13 +124,16 @@ def get_licence_query(dbo):
         "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.ActiveMovementType, a.Archived, a.DaysOnShelter, a.IsNotAvailableForAdoption, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, a.Identichipped, a.IdentichipNumber, " \
-        "o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
+        "x.Sex, s.SpeciesName, " \
+        "o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, o.OwnerCode, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone " \
         "FROM ownerlicence ol " \
         "LEFT OUTER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID " \
         "LEFT OUTER JOIN owner o ON o.ID = ol.OwnerID " \
-        "LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID "
+        "LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID " \
+        "LEFT OUTER JOIN lksex x ON x.ID = a.Sex " \
+        "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID "
 
 def get_voucher_query(dbo):
     return "SELECT ov.*, v.VoucherName, o.OwnerName, " \

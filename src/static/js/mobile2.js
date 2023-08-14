@@ -85,6 +85,21 @@ $(document).ready(function() {
                 '</div>',
             '</div>',
         '</div>',
+        '<div class="modal fade" id="taskdlg" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="tasktitle" aria-hidden="true">',
+            '<div class="modal-dialog">',
+                '<div class="modal-content">',
+                    '<div class="modal-header">',
+                        '<h5 class="modal-title" id="tasktitle">' + _("Complete") + '</h5>',
+                    '</div>',
+                    '<div id="tasktext" class="modal-body">',
+                    '</div>',
+                    '<div class="modal-footer">',
+                        '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' + _("Cancel") + '</button>',
+                        '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">' + _("Complete") + '</button>',
+                    '</div>',
+                '</div>',
+            '</div>',
+        '</div>',
         '<nav class="navbar navbar-expand-lg navbar-light bg-light">',
             '<div class="container-fluid">',
                 '<a class="navbar-brand" href="#">' + controller.user + ': ' + _("ASM") + '</a>',
@@ -179,7 +194,7 @@ $(document).ready(function() {
                             '<a class="nav-link" href="#">' + _("New Task") + '</a>',
                         '</li>',
                         '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link" href="#">' + _("Complete Tasks"),
+                            '<a class="nav-link internal-link" data-link="completediary" href="#">' + _("Complete Tasks"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.diaries.length + '</span>',
                             '</a>',
                         '</li>',
@@ -396,6 +411,26 @@ $(document).ready(function() {
             '<div class="spinner-border spinner-border-sm" style="display: none"></div>',
             '</button>',
             '</div>',
+        '</div>',
+
+        '<div id="content-licenceresults" class="container" style="display: none">',
+        '<h2>' + _("Check License") + '</h2>',
+        '<div class="mb-3">',
+        '<a href="#" data-link="checklicence" class="list-group-item list-group-item-action internal-link">',
+        '&#8592; ' + _("Back") + '</a>',
+        '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
+        '</div>',
+        '<div class="list-group">',
+        '</div>',
+        '</div>',
+
+        '<div id="content-completediary" class="container" style="display: none">',
+        '<h2>' + _("Complete Tasks") + '</h2>',
+        '<div class="mb-3">',
+        '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
+        '</div>',
+        '<div class="list-group">',
+        '</div>',
         '</div>',
 
         '<div id="content-findperson" class="container" style="display: none">',
@@ -1101,6 +1136,38 @@ $(document).ready(function() {
         });
     });
 
+    // Handle clicking on check licence button
+    $("#btn-check-licence").click(function() {
+        let spinner = $(this).find(".spinner-border");
+        spinner.show();
+        // Retrieve results
+        let formdata = {
+            "mode": "checklicence",
+            "licencenumber": $("#licencenumber").val()
+        };
+        ajax_post(formdata, function(response) {
+            spinner.hide();
+            controller.licenceresults = jQuery.parseJSON(response);
+            // Display licence list
+            $("#content-licenceresults .list-group").empty();
+            $.each(controller.licenceresults, function(i, v) {
+                let a = '"' + v.ANIMALNAME + '": ' + common.substitute(_("{0} {1} aged {2}"), { "0": v.SEX, "1": v.SPECIESNAME, "2": v.ANIMALAGE }) + '<br>';
+                if (!v.ANIMALNAME) { a = ""; }
+                let h = '<div data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
+                    '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
+                    '<h5 class="mb-1">' + v.OWNERNAME + ' - ' + v.OWNERCODE + '</h5>' +
+                    '<small>' + v.OWNERADDRESS + ', ' + v.OWNERTOWN + ' ' + v.OWNERCOUNTY + ' ' + v.OWNERPOSTCODE + '<br>' +
+                    v.LICENCETYPENAME + ', ' + format.date(v.ISSUEDATE) + ' - ' + format.date(v.EXPIRYDATE) + 
+                    a +
+                    '</small>' +
+                    '</div>';
+                $("#content-licenceresults .list-group").append(h);
+            });
+            $(".container").hide();
+            $("#content-licenceresults").show();
+        });
+    });
+
     // Handle clicking on find person button
     $("#btn-find-person").click(function() {
         let spinner = $(this).find(".spinner-border");
@@ -1136,6 +1203,35 @@ $(document).ready(function() {
         if (p) { 
             render_person(p, "#content-person");
         }
+    });
+
+    // Load list of diary notes to complete
+    $("#content-completediary .list-group").empty();
+    $.each(controller.diaries, function(i, v) {
+        let linkinfo = "";
+        if (v.LINKINFO) { linkinfo = " (" + v.LINKINFO + ")"; }
+        let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
+            '<h5 class="mb-1">' + v.SUBJECT + linkinfo + '</h5>' + 
+            '<small>' + format.date(v.DIARYDATETIME) + ' ' + format.time(v.DIARYDATETIME) + ': ' + v.DIARYFORNAME + '<br>' +
+            v.NOTE + '</small>' +
+            '</a>';
+        $("#content-completediary .list-group").append(h);
+    });
+    // Handle clicking a task to complete and showing a popup dialog to confirm
+    $("#content-completediary").on("click", "a", function() {
+        let diaryid = $(this).attr("data-id");
+        $.each(controller.diaries, function(i, v) {
+            if (v.ID == diaryid) {
+                $("#taskdlg .btn-primary").unbind("click");
+                $("#taskdlg .btn-primary").click(function() {
+                    ajax_post("mode=diarycomplete&id=" + diaryid, function() {
+                        $("#content-completediary [data-id='" + diaryid + "']").remove(); // remove the item from the list on success
+                    });
+                });
+                $("#tasktext").html(format.date(v.DIARYDATETIME) + ": " + v.SUBJECT + ': ' + v.NOTE);
+                $("#taskdlg").modal("show");
+            }
+        });
     });
 
     // Incidents

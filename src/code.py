@@ -982,6 +982,15 @@ class mobile2(ASMEndpoint):
         self.check(asm3.users.ADD_LOG)
         asm3.log.add_log(o.dbo, o.user, o.post.integer("linktypeid"), o.post.integer("linkid"), o.post.integer("type"), o.post["comments"])
 
+    def post_checklicence(self, o):
+        self.check(asm3.users.VIEW_LICENCE)
+        rows = asm3.financial.get_licence_find_simple(o.dbo, o.post["licencenumber"])
+        return asm3.utils.json(rows)
+
+    def post_diarycomplete(self, o):
+        self.check(asm3.users.EDIT_MY_DIARY_NOTES)
+        asm3.diary.complete_diary_note(o.dbo, o.user, o.post.integer("id"))
+
     def post_findperson(self, o):
         self.check(asm3.users.VIEW_PERSON)
         rows = asm3.person.get_person_find_simple(o.dbo, o.post["q"], limit=100, siteid=o.siteid)

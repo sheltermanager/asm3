@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-08-11 13:28+0000\n"
+"POT-Creation-Date: 2023-08-14 11:13+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -15865,7 +15865,7 @@ msgstr ""
 msgid "{0} {1} ({2} treatments)"
 msgstr ""
 
-#: header_edit_header.js
+#: header_edit_header.js mobile2.js
 msgid "{0} {1} aged {2}"
 msgstr ""
 
