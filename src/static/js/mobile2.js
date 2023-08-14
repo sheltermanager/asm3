@@ -190,9 +190,9 @@ $(document).ready(function() {
                     '<a class="nav-link dropdown-toggle" href="#" id="dropdown-diary" role="button" data-bs-toggle="dropdown" aria-expanded="false">',
                     _("Diary") + '</a>',
                     '<ul class="dropdown-menu" aria-labelledby="dropdown-diary">',
-                        '<li class="dropdown-item">',
-                            '<a class="nav-link" href="#">' + _("New Task") + '</a>',
-                        '</li>',
+                        //'<li class="dropdown-item">',
+                        //    '<a class="nav-link" href="#">' + _("New Task") + '</a>',
+                        //'</li>',
                         '<li class="dropdown-item hideifzero">',
                             '<a class="nav-link internal-link" data-link="completediary" href="#">' + _("Complete Tasks"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.diaries.length + '</span>',
@@ -220,7 +220,7 @@ $(document).ready(function() {
                             '</a>',
                         '</li>',
                         '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link" href="#">' + _("Perform Homecheck"),
+                            '<a class="nav-link internal-link" data-link="performhomecheck" href="#">' + _("Perform Homecheck"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.rsvhomecheck.length + '</span>',
                             '</a>',
                         '</li>',
@@ -456,6 +456,15 @@ $(document).ready(function() {
         '</div>',
         '</div>',
         '<div id="content-person" class="container" style="display: none">',
+        '</div>',
+
+        '<div id="content-performhomecheck" class="container" style="display: none">',
+        '<h2>' + _("Perform Homecheck") + '</h2>',
+        '<div class="mb-3">',
+        '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
+        '</div>',
+        '<div class="list-group">',
+        '</div>',
         '</div>'
 
     ].join("\n");
@@ -1048,6 +1057,7 @@ $(document).ready(function() {
         $.each(controller.medicals, function(i, v) {
             if (v.TREATMENTID == treatmentid) {
                 $("#administerdlg .btn-primary").unbind("click");
+                $("#administerdlg .btn-primary").html(_("Give"));
                 $("#administerdlg .btn-primary").click(function() {
                     ajax_post("mode=medical&id=" + treatmentid, function() {
                         $("#content-medicate [data-id='" + treatmentid + "']").remove(); // remove the item from the list on success
@@ -1076,6 +1086,7 @@ $(document).ready(function() {
         $.each(controller.tests, function(i, v) {
             if (v.ID == testid) {
                 $("#administerdlg .btn-primary").unbind("click");
+                $("#administerdlg .btn-primary").html(_("Give"));
                 $("#administerdlg .btn-primary").click(function() {
                     ajax_post("mode=test&id=" + testid, function() {
                         $("#content-test [data-id='" + testid + "']").remove(); // remove the item from the list on success
@@ -1104,6 +1115,7 @@ $(document).ready(function() {
         $.each(controller.vaccinations, function(i, v) {
             if (v.ID == vaccid) {
                 $("#administerdlg .btn-primary").unbind("click");
+                $("#administerdlg .btn-primary").html(_("Give"));
                 $("#administerdlg .btn-primary").click(function() {
                     ajax_post("mode=vaccinate&id=" + vaccid, function() {
                         $("#content-vaccinate [data-id='" + vaccid + "']").remove(); // remove the item from the list on success
@@ -1222,14 +1234,45 @@ $(document).ready(function() {
         let diaryid = $(this).attr("data-id");
         $.each(controller.diaries, function(i, v) {
             if (v.ID == diaryid) {
-                $("#taskdlg .btn-primary").unbind("click");
-                $("#taskdlg .btn-primary").click(function() {
+                $("#administerdlg .btn-primary").unbind("click");
+                $("#administerdlg .btn-primary").html(_("Complete"));
+                $("#administerdlg .btn-primary").click(function() {
                     ajax_post("mode=diarycomplete&id=" + diaryid, function() {
                         $("#content-completediary [data-id='" + diaryid + "']").remove(); // remove the item from the list on success
                     });
                 });
-                $("#tasktext").html(format.date(v.DIARYDATETIME) + ": " + v.SUBJECT + ': ' + v.NOTE);
-                $("#taskdlg").modal("show");
+                $("#administertitle").html(_("Complete"));
+                $("#administertext").html(format.date(v.DIARYDATETIME) + ": " + v.SUBJECT + ': ' + v.NOTE);
+                $("#administerdlg").modal("show");
+            }
+        });
+    });
+
+    // Load list of homechecks to perform
+    $("#content-performhomecheck .list-group").empty();
+    $.each(controller.rsvhomecheck, function(i, v) {
+            let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
+                '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "personthumb") + '">' + 
+                '<h5 class="mb-1">' + v.OWNERNAME + ' - ' + v.OWNERCODE + '</h5>' +
+                '<small>(' + v.OWNERADDRESS + ', ' + v.OWNERTOWN + ' ' + v.OWNERCOUNTY + ' ' + v.OWNERPOSTCODE + ')</small>' +
+                '</a>';
+        $("#content-performhomecheck .list-group").append(h);
+    });
+    // Handle clicking a person to mark homechecked
+    $("#content-performhomecheck").on("click", "a", function() {
+        let pid = $(this).attr("data-id");
+        $.each(controller.rsvhomecheck, function(i, v) {
+            if (v.ID == pid) {
+                $("#administerdlg .btn-primary").unbind("click");
+                $("#administerdlg .btn-primary").html(_("Homechecked"));
+                $("#administerdlg .btn-primary").click(function() {
+                    ajax_post("mode=homecheck&id=" + pid, function() {
+                        $("#content-performhomecheck [data-id='" + pid + "']").remove(); // remove the item from the list on success
+                    });
+                });
+                $("#administertitle").html(_("Perform Homecheck"));
+                $("#administertext").html(v.OWNERNAME + ' - ' + v.OWNERCODE + '<br>' + v.COMMENTS);
+                $("#administerdlg").modal("show");
             }
         });
     });

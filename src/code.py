@@ -996,6 +996,10 @@ class mobile2(ASMEndpoint):
         rows = asm3.person.get_person_find_simple(o.dbo, o.post["q"], limit=100, siteid=o.siteid)
         return asm3.utils.json(rows)
 
+    def post_homecheck(self, o):
+        self.check(asm3.users.CHANGE_PERSON)
+        asm3.person.update_pass_homecheck(o.dbo, o.user, o.post["id"], "")
+
     def post_inccomplete(self, o):
         self.check(asm3.users.CHANGE_INCIDENT)
         asm3.animalcontrol.update_animalcontrol_completenow(o.dbo, o.post.integer("id"), o.user, o.post.integer("ctype"))

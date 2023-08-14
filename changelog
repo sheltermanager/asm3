@@ -1,6 +1,7 @@
 47
 ================
 
+14/08/23 Perform homecheck in new smartphone UI #1096
 14/08/23 Check license and complete diary support for new smartphone UI #1096
 13/08/23 Fix bug with extract_email_tokens being fed bytes
 12/08/23 move_adopt: validate checkout/paperwork values at server side
