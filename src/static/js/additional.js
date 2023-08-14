@@ -61,10 +61,15 @@ $(function() {
                     }},
                     { field: "FIELDTYPENAME", display: _("Type") },
                     { field: "LINKTYPENAME", display: _("Link") },
-                    { field: "NEWRECORD", display: _("New Record"), formatter: function(row) { if (row.NEWRECORD == 1) { return _("Yes"); } return _("No"); }},
-                    { field: "MANDATORY", display: _("Mandatory"), formatter: function(row) { if (row.MANDATORY == 1) { return _("Yes"); } return _("No"); }},
-                    { field: "SEARCHABLE", display: _("Searchable"), formatter: function(row) { if (row.SEARCHABLE == 1) { return _("Yes"); } return _("No"); }},
-                    { field: "DISPLAYINDEX", display: _("Index") }
+                    { field: "DISPLAYINDEX", display: _("Index") },
+                    { field: "NEWRECORD", display: _("Options"), formatter: function(row) {
+                        let o = [];
+                        if (row.NEWRECORD == 1) { o.push(_("New Record")); }
+                        if (row.MANDATORY == 1) { o.push(_("Mandatory")); }
+                        if (row.SEARCHABLE == 1) { o.push(_("Searchable")); }
+                        if (row.HIDDEN == 1) { o.push(_("Hidden")); }
+                        return o.join(", ");
+                    }}
                 ]
             };
 
