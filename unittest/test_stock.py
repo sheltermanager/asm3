@@ -41,6 +41,21 @@ class TestStock(unittest.TestCase):
     def test_get_stocklevels_lowbalance(self):
         asm3.stock.get_stocklevels_lowbalance(base.get_dbo())
 
+    def test_get_stock_names(self):
+        assert len(asm3.stock.get_stock_names(base.get_dbo())) > 0
+
+    def test_get_last_stock_with_name(self):
+        asm3.stock.get_last_stock_with_name(base.get_dbo(), "")
+
+    def test_get_stock_items(self):
+        assert len(asm3.stock.get_stock_items(base.get_dbo())) > 0
+
+    def test_get_stock_locations_totals(self):
+        assert len(asm3.stock.get_stock_locations_totals(base.get_dbo())) > 0
+
+    def test_get_stock_units(self):
+        assert len(asm3.stock.get_stock_units(base.get_dbo())) > 0
+
     def test_update_stocklevel_from_form(self):
         data = {
             "stocklevelid": str(self.nid),
