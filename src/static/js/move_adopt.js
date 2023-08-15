@@ -156,8 +156,6 @@ $(function() {
                 // Hide things before we start
                 $("#bonddisplay").fadeOut();
                 $("#costdisplay").closest(".ui-widget").fadeOut();
-                $("#checkoutcreate").closest(".ui-widget").fadeOut();
-                $("#sigpaperwork").closest(".ui-widget").fadeOut();
                 $("#fosterinfo").fadeOut();
                 $("#reserveinfo").fadeOut();
                 $("#retailerinfo").fadeOut();
@@ -239,6 +237,8 @@ $(function() {
                 lastperson = p;
 
                 $("#ownerwarn").fadeOut();
+                $("#checkoutcreate").closest(".ui-widget").fadeOut();
+                $("#sigpaperwork").closest(".ui-widget").fadeOut();
 
                 // Show the checkout section if it's configured and there's an animal with 
                 // a non-zero adoption fee

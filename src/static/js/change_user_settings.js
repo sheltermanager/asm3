@@ -155,7 +155,7 @@ $(function() {
                 '</tr>',
                 '<tr class="totp">',
                     '<td></td>',
-                    '<td><div id="qr2fa" style="padding: 10px; background: #fff;"></div></td>',
+                    '<td><div id="qr2fa" style="padding: 10px; background: #fff; display: inline-block"></div></td>',
                 '</tr>',
 
                 '</table>',
