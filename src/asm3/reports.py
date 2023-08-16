@@ -1393,32 +1393,17 @@ class Report:
             # ASK
             if token.startswith("ASK"):                
                 asks += 1
-                varname = "ASK" + str(asks)
-
-                # Get the type
-                nsp = token.find(" ", 5)
-                if nsp == -1: nsp = len(token)
-                paramtype = token[4:nsp]
-
-                # Does the type need a string?
-                if paramtype in ("DATE", "NUMBER", "STRING", "LOOKUP"):
-                    question = token[nsp+1:]
+                varname = "ASK%s" % asks
+                fields = token.split(" ", 2)
+                if len(fields) > 1: paramtype = fields[1]
+                if len(fields) > 2: question = fields[2]
 
             # VAR
             if token.startswith("VAR"):
-                fields = token.split(" ")
-                
-                # Get the name
-                varname = fields[1]
-
-                # The type
-                paramtype = fields[2]
-
-                # And the string if it needs one
-                if paramtype in ("DATE", "NUMBER", "STRING", "LOOKUP"):
-                    sp1 = token.find(" ", 5)
-                    sp2 = token.find(" ", sp1 + 1)
-                    question = token[sp2+1:]
+                fields = token.split(" ", 3)
+                if len(fields) > 1: varname = fields[1]
+                if len(fields) > 2: paramtype = fields[2]
+                if len(fields) > 3: question = fields[3]
 
             # Bundle them up
             params.append((varname, paramtype, question))
