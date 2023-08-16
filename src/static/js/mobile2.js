@@ -1021,6 +1021,11 @@ $(document).ready(function() {
         }
     });
 
+    // Hide everything when user clicked
+    $(".navbar-brand").click(function() {
+        $(".container").hide();
+    });
+
     // Delegate handler for filtering list groups with search inputs
     $("body").on("keyup", ".search", function() {
         let v = $(this).val().toLowerCase(),
