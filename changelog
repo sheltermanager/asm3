@@ -1,6 +1,7 @@
 47
 ================
 
+16/08/23 Do not send password reset emails for disabled user accounts
 16/08/23 Fix report param extraction so it doesn't fail with incomplete tokens
 16/08/23 Fix Mailmerge->Send Email to respond to email tokens #1088
 15/08/23 Fix move_adopt so animal or person can be chosen in any order

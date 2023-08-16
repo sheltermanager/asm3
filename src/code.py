@@ -1484,20 +1484,19 @@ class login(ASMEndpoint):
             asm3.al.error("failed password reset: master user %s cannot be reset here" % o.post["username"], "code.login", dbo)
             return "MASTER"
         # Find the user id and email address for the username given
-        userid = dbo.query_int("SELECT ID FROM users WHERE LOWER(UserName) LIKE ?", [o.post["username"].lower()])
-        email = dbo.query_string("SELECT EmailAddress FROM users WHERE ID=?", [userid])
-        if email == "": 
-            asm3.al.error("failed password reset: user %s does not exist or have an email address" % o.post["username"], "code.login", dbo)
+        user = dbo.first_row(dbo.query("SELECT ID, EmailAddress, DisableLogin FROM users WHERE LOWER(UserName) LIKE ?", [o.post["username"].lower()]))
+        if not user or not user.EMAILADDRESS or user.DISABLELOGIN == 1: 
+            asm3.al.error("failed password reset: user %s is disabled, does not exist or have an email address" % o.post["username"], "code.login", dbo)
             return "NOEMAIL"
         # Generate a random cache key for this reset
         cache_key = asm3.utils.uuid_str()
         # Store info about this reset in the cache for 10 minutes
-        asm3.cachedisk.put(cache_key, "", { "username": o.post["username"], "userid": userid,
-            "database": o.post["database"], "email": email }, 600)
+        asm3.cachedisk.put(cache_key, "", { "username": o.post["username"], "userid": user.ID,
+            "database": o.post["database"], "email": user.EMAILADDRESS }, 600)
         # Construct the reset link
         resetlink = "%s/reset_password?token=%s" % (BASE_URL, cache_key)
         # Send the email
-        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), email, "", "",
+        asm3.utils.send_email(dbo, asm3.configuration.email(dbo), user.EMAILADDRESS, "", "",
             _("Reset password request", l),
             _("To reset your ASM password, please follow this link:", l) + "\n\n" + resetlink + "\n\n" +
             _("This link will remain active for 10 minutes.", l))
