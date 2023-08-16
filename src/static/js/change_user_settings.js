@@ -143,19 +143,38 @@ $(function() {
                     '</td>',
                 '</tr>',
                 '<tr>',
-                    '<td></td>',
                     '<td>',
-                    '<input id="enabletotp" data="enabletotp" class="asm-checkbox" type="checkbox" />',
-                    '<label for="enabletotp">' + _("Enable two-factor authentication (2FA)") + '</label>',
+                    '<label>' + _("Two factor authentication (2FA)") + '</label>',
+                    '</td>',
+                    '<td>',
+                    '<input id="enabletotp" data="enabletotp" type="hidden" val="0" />',
+                    '<button id="button-enable2fa">' + _("Enable 2FA") + '</button>',
+                    '<button id="button-disable2fa" class="asm-redbutton">' + _("Disable 2FA") + '</button>',
                     '</td>',
                 '<tr>',
-                '<tr class="totp">',
+                '<tr class="enable2fa">',
                     '<td></td>',
                     '<td>' + html.info( _("Scan the QR code below with the Google Authenticator app for your mobile device.") ) + '</td>',
                 '</tr>',
-                '<tr class="totp">',
+                '<tr class="enable2fa">',
                     '<td></td>',
                     '<td><div id="qr2fa" style="padding: 10px; background: #fff; display: inline-block"></div></td>',
+                '</tr>',
+                '<tr class="enable2fa">',
+                    '<td>',
+                    '<label for="twofavalidcode">' + _("Enter the code from your app") + '</label>', 
+                    '</td>',
+                    '<td>',
+                    '<input id="twofavalidcode" type="text" data="twofavalidcode" class="asm-textbox" />',
+                    '</td>',
+                '</tr>',
+                '<tr class="disable2fa">',
+                    '<td>',
+                    '<label for="twofavalidpassword">' + _("Confirm Password") + '</label>',
+                    '</td>',
+                    '<td>',
+                    '<input id="twofavalidpassword" type="password" data="twofavalidpassword" class="asm-textbox" />',
+                    '</td>',
                 '</tr>',
 
                 '</table>',
@@ -164,10 +183,6 @@ $(function() {
                 '</p>',
                 html.content_footer()
             ].join("\n");
-        },
-
-        totp_change: function() {
-            $(".totp").toggle( $("#enabletotp").prop("checked") );
         },
 
         bind: function() {
@@ -185,8 +200,6 @@ $(function() {
             catch (excanvas) {
                 log.error("failed creating signature canvas");   
             }
-
-            $("#enabletotp").change(change_user_settings.totp_change);
 
             $("#save").button().click(async function() {
                 $(".asm-content button").button("disable");
@@ -207,6 +220,14 @@ $(function() {
                     log.error(err, err);
                     $(".asm-content button").button("enable");
                 }
+            });
+
+            $("#button-enable2fa").button().click(function() {
+                $(".enable2fa").show();
+            });
+
+            $("#button-disable2fa").button().click(function() {
+                $(".disable2fa").show();
             });
 
             // When the visual theme is changed, switch the CSS file and
@@ -233,7 +254,10 @@ $(function() {
             $("#email").val(u.EMAILADDRESS);
             $("#olocale").select("value", u.LOCALEOVERRIDE);
             $("#systemtheme").select("value", u.THEMEOVERRIDE);
-            $("#enabletotp").prop("checked", u.ENABLETOTP == 1);
+            $("#enabletotp").val(u.ENABLETOTP);
+            $(".enable2fa, .disable2fa").hide();
+            $("#button-enable2fa").toggle(u.ENABLETOTP == 0);
+            $("#button-disable2fa").toggle(u.ENABLETOTP == 1);
             let userql = config.str(asm.user + "_QuicklinksID");
             if (userql == "") { userql = config.str("QuicklinksID"); }
             let ql = userql.split(",");
@@ -243,7 +267,6 @@ $(function() {
             $("#quicklinksid").change();
             let usersv = config.str(asm.user + "_ShelterView");
             $("#shelterview").select("value", usersv);
-            this.totp_change();
             if (controller.sigtype != "touch") { 
                 $("#signature").closest("tr").hide(); 
             }

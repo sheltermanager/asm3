@@ -627,17 +627,26 @@ def insert_user_from_form(dbo, username, post):
 
     return nuserid
 
-def update_user_settings(dbo, username, email = "", realname = "", locale = "", theme = "", signature = "", enable_totp = 0):
+def update_user_settings(dbo, username, email = "", realname = "", locale = "", theme = "", signature = "", twofavalidcode = "", twofavalidpassword= ""):
     """
-    Updates the user account settings for email, name, locale, theme and signature
+    Updates the user account settings for email, name, locale, theme and signature.
+    if twofavalidcode is set and valid, EnableTOTP is set to 1
+    if twofavalidpassword is set and valid, EnableTOTP is set to 0
     """
-    userid = dbo.query_int("SELECT ID FROM users WHERE Username = ?", [username])
-    dbo.update("users", userid, {
+    user = dbo.first_row(dbo.query("SELECT ID, Password, OTPSecret, EnableTOTP FROM users WHERE Username = ?", [username]))
+    enabletotp = user.ENABLETOTP
+    if twofavalidcode != "" and twofavalidcode == str(asm3.utils.totp(user.OTPSECRET)):
+        asm3.al.debug("%s: valid 2fa code given, enabling 2FA/TOTP" % user, "users.update_user_settings", dbo)
+        enabletotp = 1
+    elif twofavalidpassword != "" and verify_password(twofavalidpassword, user.PASSWORD):
+        asm3.al.debug("%s: valid password given, disabling 2FA/TOTP" % user, "users.update_user_settings", dbo)
+        enabletotp = 0
+    dbo.update("users", user.ID, {
         "RealName":         realname,
         "EmailAddress":     email,
         "ThemeOverride":    theme,
         "LocaleOverride":   locale,
-        "EnableTOTP":       enable_totp,
+        "EnableTOTP":       enabletotp,
         "Signature":        signature
     }, username, setLastChanged=False)
 
@@ -657,7 +666,6 @@ def update_user_from_form(dbo, username, post):
     dbo.update("users", userid, {
         "RealName":         post["realname"],
         "EmailAddress":     post["email"],
-        "EnableTOTP":       post.boolean("enabletotp"),
         "SuperUser":        post.integer("superuser"),
         "DisableLogin":     post.integer("disablelogin"),
         "OwnerID":          post.integer("person"),
@@ -718,7 +726,7 @@ def delete_role(dbo, username, rid):
 
 def reset_password(dbo, userid, password):
     """
-    Resets the password for the given user to "password".
+    Resets the password for the given user to password.
     Also, clears 2FA from the account.
     """
     dbo.update("users", userid, { "Password": hash_password(password), "EnableTOTP": 0 })

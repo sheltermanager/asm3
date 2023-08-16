@@ -2600,9 +2600,10 @@ class change_user_settings(JSONEndpoint):
         email = post["email"]
         signature = post["signature"]
         quicklinks = post["quicklinks"]
-        enabletotp = post.boolean("enabletotp")
-        asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, quicklinks=%s, totp=%s" % (o.user, theme, locale, realname, email, quicklinks, enabletotp), "code.change_password", o.dbo)
-        asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature, enabletotp)
+        twofavalidcode = post["twofavalidcode"]
+        twofavalidpassword = post["twofavalidpassword"]
+        asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, quicklinks=%s, twofacode=%s, twofapass=%s" % (o.user, theme, locale, realname, email, quicklinks, twofavalidcode, twofavalidpassword), "code.change_password", o.dbo)
+        asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature, twofavalidcode, twofavalidpassword)
         # If the user's quicklinks are the same as the global ones, set to a blank instead
         if quicklinks == asm3.configuration.quicklinks_id(o.dbo):
             asm3.configuration.cset(o.dbo, "%s_QuicklinksID" % o.user, "")
