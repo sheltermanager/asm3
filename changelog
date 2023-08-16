@@ -1,6 +1,7 @@
 47
 ================
 
+16/08/23 Fix Mailmerge->Send Email to respond to email tokens #1088
 15/08/23 Fix move_adopt so animal or person can be chosen in any order
 14/08/23 Stock take ported to new smartphone UI #1096
 14/08/23 Additional fields: Merge separate columns into a single options column
