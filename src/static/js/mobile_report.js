@@ -28,7 +28,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content" class="container">',
-        '<h2>' + controller.title + '</h2>',
+        '<h2 class="mt-3">' + controller.title + '</h2>',
         '<form action="mobile_report" method="get">',
         '<input name="id" type="hidden" value="' + controller.crid + '" >',
         '<input name="hascriteria" type="hidden" value="true" >'

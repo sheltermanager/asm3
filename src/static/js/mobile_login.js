@@ -114,7 +114,7 @@ $(document).ready(function() {
                         window.location = controller.target;
                     }
                     else {
-                        window.location = "mobile";
+                        window.location = "mobile2";
                     }
                 }
             },

@@ -154,7 +154,7 @@ $(document).ready(function() {
                         '</li>',
                     '</ul>',
                 '</li>',
-                '<li class="nav-item dropdown">',
+                '<li class="nav-item dropdown animalcontrol">',
                     '<a class="nav-link dropdown-toggle" href="#" id="dropdown-incidents" role="button" data-bs-toggle="dropdown" aria-expanded="false">',
                     _("Animal Control") + '</a>',
                     '<ul class="dropdown-menu" aria-labelledby="dropdown-incidents">',
@@ -205,7 +205,7 @@ $(document).ready(function() {
                     _("Financial") + '</a>',
                     '<ul class="dropdown-menu" aria-labelledby="dropdown-financial">',
                         '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link internal-link" data-link="stocklocations" href="#">' + _("Stock Take"),
+                            '<a id="stocktake-nav" class="nav-link internal-link" data-link="stocklocations" href="#">' + _("Stock Take"),
                                 '<span class="badge bg-primary rounded-pill">' + controller.stocklocations.length + '</span>',
                             '</a>',
                         '</li>',
@@ -231,7 +231,7 @@ $(document).ready(function() {
                     '</a>',
                 '</li>',
                 '<li class="nav-item">',
-                    '<a class="nav-link" href="mobile">Old Smartphone UI</a>',
+                    '<a class="nav-link text-danger" href="mobile">Old Smartphone UI</a>',
                 '</li>',
 
                 '<li class="nav-item">',
@@ -243,20 +243,20 @@ $(document).ready(function() {
         '</nav>',
 
         '<div id="content-messages" class="container" style="display: none">',
-        '<h2>' + _("Messages") + '</h2>',
+        '<h2 class="mt-3">' + _("Messages") + '</h2>',
         '<div class="list-group">',
         '</div>',
         '</div>',
 
         '<div id="content-reports" class="container" style="display: none">',
-        '<h2>' + _("Reports") + '</h2>',
+        '<h2 class="mt-3">' + _("Reports") + '</h2>',
         '<div class="list-group">',
         '</div>',
         '</div>',
 
         /*
         '<div id="content-addanimal" class="container" style="display: none">',
-        '<h2>' + _("Add Animal") + '</h2>',
+        '<h2 class="mt-3">' + _("Add Animal") + '</h2>',
         '<form method="post" action="' + post_handler + '">',
         '<input type="hidden" name="mode" value="addanimal">',
         '<div class="mb-3">',
@@ -324,7 +324,7 @@ $(document).ready(function() {
         */
 
         '<div id="content-shelteranimals" class="container" style="display: none">',
-        '<h2>' + _("Shelter Animals") + '</h2>',
+        '<h2 class="mt-3">' + _("Shelter Animals") + '</h2>',
         '<div class="mb-3">',
         '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
         '</div>',
@@ -335,7 +335,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content-medicate" class="container" style="display: none">',
-        '<h2>' + _("Medicate Animal") + '</h2>',
+        '<h2 class="mt-3">' + _("Medicate Animal") + '</h2>',
         '<div class="mb-3">',
         '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
         '</div>',
@@ -344,7 +344,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content-vaccinate" class="container" style="display: none">',
-        '<h2>' + _("Vaccinate Animal") + '</h2>',
+        '<h2 class="mt-3">' + _("Vaccinate Animal") + '</h2>',
         '<div class="mb-3">',
         '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
         '</div>',
@@ -353,7 +353,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content-test" class="container" style="display: none">',
-        '<h2>' + _("Test Animal") + '</h2>',
+        '<h2 class="mt-3">' + _("Test Animal") + '</h2>',
         '<div class="mb-3">',
         '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
         '</div>',
@@ -362,7 +362,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content-myincidents" class="container" style="display: none">',
-        '<h2>' + _("My Incidents") + '</h2>',
+        '<h2 class="mt-3">' + _("My Incidents") + '</h2>',
         '<div class="mb-3">',
         '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
         '</div>',
@@ -373,7 +373,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content-unincidents" class="container" style="display: none">',
-        '<h2>' + _("My Undispatched Incidents") + '</h2>',
+        '<h2 class="mt-3">' + _("My Undispatched Incidents") + '</h2>',
         '<div class="mb-3">',
         '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
         '</div>',
@@ -384,7 +384,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content-opincidents" class="container" style="display: none">',
-        '<h2>' + _("Open Incidents") + '</h2>',
+        '<h2 class="mt-3">' + _("Open Incidents") + '</h2>',
         '<div class="mb-3">',
         '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
         '</div>',
@@ -395,7 +395,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content-flincidents" class="container" style="display: none">',
-        '<h2>' + _("Incidents Requiring Followup") + '</h2>',
+        '<h2 class="mt-3">' + _("Incidents Requiring Followup") + '</h2>',
         '<div class="mb-3">',
         '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
         '</div>',
@@ -406,7 +406,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content-checklicence" class="container" style="display: none">',
-        '<h2>' + _("Check License") + '</h2>',
+        '<h2 class="mt-3">' + _("Check License") + '</h2>',
             '<div class="mb-3">',
                 '<label for="licencenumber" class="form-label">' + _("License Number") + '</label>',
                 '<input type="text" class="form-control" id="licencenumber">',
@@ -418,7 +418,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content-licenceresults" class="container" style="display: none">',
-        '<h2>' + _("Check License") + '</h2>',
+        '<h2 class="mt-3">' + _("Check License") + '</h2>',
         '<div class="mb-3">',
         '<a href="#" data-link="checklicence" class="list-group-item list-group-item-action internal-link">',
         '&#8592; ' + _("Back") + '</a>',
@@ -429,7 +429,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content-completediary" class="container" style="display: none">',
-        '<h2>' + _("Complete Tasks") + '</h2>',
+        '<h2 class="mt-3">' + _("Complete Tasks") + '</h2>',
         '<div class="mb-3">',
         '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
         '</div>',
@@ -438,7 +438,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content-findperson" class="container" style="display: none">',
-        '<h2>' + _("Find Person") + '</h2>',
+        '<h2 class="mt-3">' + _("Find Person") + '</h2>',
             '<div class="mb-3">',
                 '<label for="personq" class="form-label">' + _("Search") + '</label>',
                 '<input type="text" class="form-control" id="personq">',
@@ -450,20 +450,20 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content-personresults" class="container" style="display: none">',
-        '<h2>' + _("Find Person") + '</h2>',
-        '<div class="mb-3">',
+        '<h2 class="mt-3">' + _("Find Person") + '</h2>',
+        '<div class="mb-3 list-group">',
         '<a href="#" data-link="findperson" class="list-group-item list-group-item-action internal-link">',
         '&#8592; ' + _("Back") + '</a>',
         '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
         '</div>',
-        '<div class="list-group">',
+        '<div class="list-group results">',
         '</div>',
         '</div>',
         '<div id="content-person" class="container" style="display: none">',
         '</div>',
 
         '<div id="content-performhomecheck" class="container" style="display: none">',
-        '<h2>' + _("Perform Homecheck") + '</h2>',
+        '<h2 class="mt-3">' + _("Perform Homecheck") + '</h2>',
         '<div class="mb-3">',
         '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
         '</div>',
@@ -472,19 +472,25 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="content-stocklocations" class="container" style="display: none">',
-        '<h2>' + _("Stock Locations") + '</h2>',
+        '<h2 class="mt-3">' + _("Stock Locations") + '</h2>',
         '<div class="mb-3">',
         '<input class="form-control search" type="text" placeholder="' + _("Search") + '">',
         '</div>',
         '<div class="list-group">',
         '</div>',
         '</div>',
+
         '<div id="content-stocktake" class="container" style="display: none">',
-        '<div class="list-group">',
+        '<div class="mt-3 mb-3 list-group">',
+        '<a href="#" data-link="stocklocations" class="list-group-item list-group-item-action internal-link">&#8592; ' + _("Back") + '</a>',
         '</div>',
+        '<div class="list-group locations">',
+        '</div>',
+        '<div class="d-grid gap-2 d-md-block mt-3">',
         '<button id="btn-submit-stocktake" type="button" class="btn btn-primary">' + _("Update"),
-        '<div class="spinner-border spinner-border-sm" style="display: none"></div>',
+        '<div class="spinner-border spinner-border-sm" style="display: none"></div> ',
         '</button>',
+        '</div>',
         '</div>'
 
     ].join("\n");
@@ -740,7 +746,7 @@ $(document).ready(function() {
         o = jQuery.parseJSON(o);
         let x= [];
         let h = [
-            '<div class="list-group" style="margin-top: 5px">',
+            '<div class="list-group mt-3" style="margin-top: 5px">',
             '<a href="#" data-link="' + backlink + '" class="list-group-item list-group-item-action internal-link">',
             '&#8592; ' + _("Back"),
             '</a>',
@@ -1241,14 +1247,14 @@ $(document).ready(function() {
             spinner.hide();
             controller.personresults = jQuery.parseJSON(response);
             // Display person list
-            $("#content-personresults .list-group").empty();
+            $("#content-personresults .results").empty();
             $.each(controller.personresults, function(i, v) {
                 let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
                     '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "personthumb") + '">' + 
                     '<h5 class="mb-1">' + v.OWNERNAME + ' - ' + v.OWNERCODE + '</h5>' +
                     '<small>(' + v.OWNERADDRESS + ', ' + v.OWNERTOWN + ' ' + v.OWNERCOUNTY + ' ' + v.OWNERPOSTCODE + ')</small>' +
                     '</a>';
-                $("#content-personresults .list-group").append(h);
+                $("#content-personresults .results").append(h);
             });
             $(".container").hide();
             $("#content-personresults").show();
@@ -1348,8 +1354,8 @@ $(document).ready(function() {
                 html.list_to_options(j.usagetypes, "ID", "USAGETYPENAME") +
                 '</select>' +
                 '</div>';
-            $("#content-stocktake .list-group").empty();
-            $("#content-stocktake .list-group").prepend(usage);
+            $("#content-stocktake .locations").empty();
+            $("#content-stocktake .locations").prepend(usage);
             $.each(j.levels, function(i, v) {
                 let h = '<div class="list-group-item list-group-item-action">' +
                     '<div class="mb-3">' +
@@ -1357,7 +1363,7 @@ $(document).ready(function() {
                     '<input type="text" class="form-control stockbalance" data-id="' + v.ID + '" value="' + v.BALANCE + '">' +
                     '</div>' +
                     '</div>';
-                $("#content-stocktake .list-group").append(h);
+                $("#content-stocktake .locations").append(h);
             });
             $("#btn-submit-stocktake").toggle( j.levels.length > 0 );
             $(".container").hide();
@@ -1387,8 +1393,17 @@ $(document).ready(function() {
             '<small>' + v.MESSAGE + '</small>';
         $("#content-messages .list-group").append(h);
     });
+
     // Hide messages menu item if there are no messages
     $("#messages-nav").toggle( controller.messages.length > 0 );
+
+    // Hide animal control menu if the functionality is disabled
+    $(".animalcontrol").toggle( !config.bool("DisableAnimalControl") );
+
+    // Hide stock take menu item if stock control is disabled 
+    if (config.bool("DisableStockControl")) {
+        $("#stocktake-nav").hide();
+    }
 
     // Load reports
     $("#content-reports .list-group").empty();
@@ -1411,7 +1426,7 @@ $(document).ready(function() {
         reps.push('<a class="list-group-item list-group-item-action" href="mobile_report?id=' + v.ID + '">' + v.TITLE + '</a>');
     });
     reps.push("</div></div></div></div>"); // close final list-group, accordion-body, collapse, accordion-item
-    $("#content-reports").html(reps.join("\n"));
+    $("#content-reports .list-group").html(reps.join("\n"));
 
     document.title = controller.user + ": " + _("ASM");
 
