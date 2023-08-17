@@ -806,6 +806,8 @@ def calculate_owner_name(dbo, personclass = 0, title = "", initials = "", first 
     """
     Calculates the owner name field based on the current format.
     """
+    def rp(s, f, r):
+        return s.replace(f, r or "")
     if nameformat == "": nameformat = asm3.configuration.owner_name_format(dbo)
     if coupleformat == "": coupleformat = asm3.configuration.owner_name_couple_format(dbo)
     # If something went wrong and we have a broken format for any reason, substitute our default
@@ -815,21 +817,21 @@ def calculate_owner_name(dbo, personclass = 0, title = "", initials = "", first 
     if personclass == 2: # Organisation
         return last 
     elif personclass == 3: # Couple
-        person1 = nameformat.replace("{ownertitle}", title)
-        person1 = person1.replace("{ownerinitials}", initials)
-        person1 = person1.replace("{ownerforenames}", first)
-        person1 = person1.replace("{ownersurname}", last)
-        person2 = nameformat.replace("{ownertitle}", title2)
-        person2 = person2.replace("{ownerinitials}", initials2)
-        person2 = person2.replace("{ownerforenames}", first2)
-        person2 = person2.replace("{ownersurname}", last2)
+        person1 = rp(nameformat, "{ownertitle}", title)
+        person1 = rp(person1, "{ownerinitials}", initials)
+        person1 = rp(person1, "{ownerforenames}", first)
+        person1 = rp(person1, "{ownersurname}", last)
+        person2 = rp(nameformat, "{ownertitle}", title2)
+        person2 = rp(person2, "{ownerinitials}", initials2)
+        person2 = rp(person2, "{ownerforenames}", first2)
+        person2 = rp(person2, "{ownersurname}", last2)
         return coupleformat.replace("{ownername1}", person1).replace("{ownername2}", person2)
     else: # individual
-        nameformat = nameformat.replace("{ownertitle}", title)
-        nameformat = nameformat.replace("{ownerinitials}", initials)
-        nameformat = nameformat.replace("{ownerforenames}", first)
-        nameformat = nameformat.replace("{ownersurname}", last)
-        return nameformat.strip()
+        person1 = rp(nameformat, "{ownertitle}", title)
+        person1 = rp(person1, "{ownerinitials}", initials)
+        person1 = rp(person1, "{ownerforenames}", first)
+        person1 = rp(person1, "{ownersurname}", last)
+        return person1.strip()
 
 def update_owner_names(dbo):
     """
