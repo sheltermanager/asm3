@@ -2,7 +2,7 @@
 ================
 
 17/08/23 Handle nulls in name fields when constructing OwnerName
-16/08/23 Make new smartphone UI the default, final tweaks #1096
+16/08/23 Smartphone UI tweaks #1096
 16/08/23 Use 2FA buttons and validate user has set up TOTP before enabling #1318
 16/08/23 Do not send password reset emails for disabled user accounts
 16/08/23 Fix report param extraction so it doesn't fail with incomplete tokens
