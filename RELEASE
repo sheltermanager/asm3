@@ -6,8 +6,8 @@
 
 *. Verify installation works with an empty MySQL database
 
-*. Copy build/sheltermanager* to public.sheltermanager.com:/var/www/public/deb
-   run /var/www/public/deb/makerepo.sh on public to rebuild Debian repository.
+*. Copy build/sheltermanager* to www.sheltermanager.com:/var/www/deb
+   run /var/www/deb/makerepo.sh on public to rebuild Debian repository.
 
 *. Write release note and update smcom_www and "make site":
         site/en_news.m 

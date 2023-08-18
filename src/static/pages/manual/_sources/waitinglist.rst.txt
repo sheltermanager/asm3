@@ -32,9 +32,10 @@ whether you can take a dog isn't affected by how many cats you have waiting for
 example. With this option on, the rankings are calculated separately for each
 species.
 
-To add a new entry to the waiting list, click the new button. You will be
-presented with a waiting list entry form to complete. As with other screens,
-press the Save button at the top to save your new record.
+To add a new entry to the waiting list, click the new waiting list button if
+you are currently viewing the waiting list or select add an animal to the
+waiting list from the ASM menu. You will be presented with a waiting list entry form 
+to complete.
 
 .. image:: images/waitinglist_details.png
 

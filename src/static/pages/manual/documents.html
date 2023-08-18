@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Documents &mdash; ASM 47u documentation</title>
+  <title>Documents &mdash; ASM 47 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   
@@ -33,7 +33,7 @@
             ASM
           </a>
               <div class="version">
-                47u
+                47
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -52,6 +52,7 @@
 <li class="toctree-l1"><a class="reference internal" href="movements.html">Movements</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Documents</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#pdf-directives">PDF Directives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#email-tokens-in-document-templates">Email Tokens in Document Templates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#electronic-signatures">Electronic Signatures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mobile-signing">Mobile Signing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#user-signatures">User Signatures</a></li>
@@ -179,6 +180,24 @@ engine can also be used by specifying:</p>
 </pre></div>
 </div>
 </section>
+<section id="email-tokens-in-document-templates">
+<h2>Email Tokens in Document Templates<a class="headerlink" href="#email-tokens-in-document-templates" title="Permalink to this heading">¶</a></h2>
+<p>When creating email document templates it is possible to include an email subject
+by using the {{SUBJECT}} token with custom text or a word key, see <a class="reference internal" href="wordkeys.html#wordkeys"><span class="std std-ref">Appendix: Wordkeys</span></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{{</span><span class="n">SUBJECT</span> <span class="n">This</span> <span class="ow">is</span> <span class="n">about</span> <span class="o">&lt;&lt;</span><span class="n">AnimalName</span><span class="o">&gt;&gt;</span><span class="p">}}</span>
+</pre></div>
+</div>
+<p>The following tokens can also be used to add email addresses to the template:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{{</span><span class="n">FROM</span> <span class="n">example</span><span class="nd">@email</span><span class="o">.</span><span class="n">com</span><span class="p">}}</span>
+<span class="p">{{</span><span class="n">CC</span> <span class="n">example</span><span class="nd">@email</span><span class="o">.</span><span class="n">com</span><span class="p">}}</span>
+<span class="p">{{</span><span class="n">BCC</span> <span class="n">example</span><span class="nd">@email</span><span class="o">.</span><span class="n">com</span><span class="p">}}</span>
+</pre></div>
+</div>
+<p>More than one email address can be included by adding the address seperated by a comma:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{{</span><span class="n">BCC</span> <span class="n">example</span><span class="nd">@email</span><span class="o">.</span><span class="n">com</span><span class="p">,</span> <span class="n">example2</span><span class="nd">@email</span><span class="o">.</span><span class="n">com</span><span class="p">}}</span>
+</pre></div>
+</div>
+</section>
 <section id="electronic-signatures">
 <h2>Electronic Signatures<a class="headerlink" href="#electronic-signatures" title="Permalink to this heading">¶</a></h2>
 <div class="admonition warning">
@@ -280,7 +299,7 @@ or 300 suffix to control the size of the user signature.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Sheltermanager, Ltd.</p>
+    <p>&#169; Copyright 2023, Sheltermanager, Ltd.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

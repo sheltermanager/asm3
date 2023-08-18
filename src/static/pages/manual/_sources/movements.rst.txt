@@ -131,6 +131,6 @@ the animal or people records or return the animal from the movement back to the
 shelter. To do that, simply open the movement and set a return date (or use the
 Return button).
 
-.. image:: images/move_trial_book.png
+.. image:: images/move_return_animal.png
 
 

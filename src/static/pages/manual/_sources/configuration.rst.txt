@@ -11,7 +11,8 @@ Additional Fields
 This screen allows you to declare additional fields that will appear on the
 animal, person, lost animal, found animal and waiting list screens.
 
-Fields have a name, a label, a tooltip, a location and a display index. 
+Fields have a name, a label, a tooltip, a location, a display index and a default
+value.
 
 The name cannot contain spaces and is used for referencing the data in document
 generation - you can use a <<FIELDNAME>> tag to add these additional values to
@@ -19,7 +20,8 @@ your documents. The label is what will appear on the screen at the side of the
 field, the tooltip text will appear when you hover your mouse over the control
 on screen. The display index determines the order your fields are output to the
 tab and which field the cursor moves to when you press the TAB key on the
-screen.
+screen. The default value will populate the field automatically until it is
+updated.
 
 If you selected a field type of “lookup” or “multi-lookup”, then the use the
 “Lookup Items” field to supply some values for the dropdown list. These should
@@ -29,6 +31,11 @@ If you selected a field type of “Yes/No” then “Lookup Items” can optiona
 hold a pair of values that ASM will use. You can use this to supply your own
 text for Yes/No fields in the web publisher and document templates. The default
 if you don't supply a Lookup Items for a Yes/No field is 0=Yes|1=No 
+
+The "show on new record screens" checkbox makes the field available on the new 
+record entry screen the field is linked to. For example a field created which 
+is linked to Animal-Entry will appear in the entry section when adding a new 
+animal if the checkbox is enabled.
 
 The mandatory checkbox allows you to mark a field as mandatory (ie. Will not
 let a user save until they have supplied a value). Mandatory additional fields
@@ -41,6 +48,11 @@ slow things down. It's best generally to only make an additional field searchabl
 if that field contains a unique string to identify the record (for example,
 Driving Licence ID).
 
+The hidden checkbox will hide the field from users so it can no longer used. This 
+is usefull when you no longer want a field to be used but don't wish to delete the 
+field from the system, as deleting an additional field from the system also deletes
+all the data it held. 
+
 Here's a worked example: To add a new field to the animal screen to say whether
 the animal has been tested for kennel cough, create a new additional field and
 enter the following values::
@@ -48,8 +60,10 @@ enter the following values::
     Name: KennelCough 
     Label: Kennel Cough Tested? 
     Tooltip: Tick this box if the animal has been tested for kennel cough 
+    Show on new records screen: No
     Mandatory: No
     Searchable: No
+    Hidden: No
     Type: Yes/No 
     Link: Animal - Additional
     DisplayIndex: 0 
