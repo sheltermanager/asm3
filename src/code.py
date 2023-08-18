@@ -968,6 +968,7 @@ class mobile2(ASMEndpoint):
             "sizes":        asm3.lookups.get_sizes(dbo),
             "smdblocked":   asm3.configuration.smdb_locked(dbo),
             "species":      asm3.lookups.get_species(dbo),
+            "timeline":     asm3.animal.get_timeline(dbo, 30, age=300),
             "user":         o.user,
             "locale":       o.locale
         }

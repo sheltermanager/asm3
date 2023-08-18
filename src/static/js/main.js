@@ -644,7 +644,7 @@ $(function() {
             $.each(controller.recent, function(i, v) {
                 // Skip this entry if it's for a deceased animal and we aren't showing them
                 if (!config.bool("ShowDeceasedHomePage") && (v.CATEGORY == "DIED" || v.CATEGORY == "EUTHANISED")) { return; }
-                h.push(html.event_text(v, { includedate: true }) + '<br/>');
+                h.push(html.event_text(v) + '<br/>');
             });
             return h.join("\n");
         },

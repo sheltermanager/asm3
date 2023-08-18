@@ -334,7 +334,7 @@ const html = {
     },
 
     /** 
-     * Renders a shelter event described in e. Events should have
+     * Renders a shelter timeline event described in e. Events should have
      * the following attributes:
      * LINKTARGET, CATEGORY, EVENTDATE, ID, TEXT1, TEXT2, TEXT3, LASTCHANGEDBY,
      * ICON, DESCRIPTION
@@ -348,14 +348,22 @@ const html = {
             "LOST": true, "FOUND": true, "WAITINGLIST": true };
         if (PEOPLE_EVENTS[e.CATEGORY] && !common.has_permission("vo")) { return ""; }
         var h = "";
-        if (o && o.includedate) {
+        if (!o) {
+            o = { includedate: true, includetime: false, includelink: true, includeicon: true };
+        }
+        if (o.includedate) {
             h += '<span class="asm-timeline-small-date">' + format.date(e.EVENTDATE) + '</span> ';
         }
-        if (o && o.includetime) {
+        if (o.includetime) {
             h += '<span class="asm-timeline-time">' + format.time(e.EVENTDATE) + '</span>' ;
         }
-        h += ' <a href="' + e.LINKTARGET + '?id=' + e.ID + '">';
-        h += html.icon(e.ICON) + ' ' + e.DESCRIPTION;
+        if (o.includelink) {
+            h += ' <a href="' + e.LINKTARGET + '?id=' + e.ID + '">';
+        }
+        if (o.includeicon) {
+            h += html.icon(e.ICON) + ' ';
+        }
+        h += e.DESCRIPTION;
         h += '</a> <span class="asm-timeline-by">(' + e.LASTCHANGEDBY + ')</span>';
         return h;
     },

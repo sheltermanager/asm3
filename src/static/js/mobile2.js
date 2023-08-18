@@ -242,6 +242,9 @@ $(document).ready(function() {
             '</div>',
         '</nav>',
 
+        '<div id="content-home" class="container" style="display: none">',
+        '</div>',
+
         '<div id="content-messages" class="container" style="display: none">',
         '<h2 class="mt-3">' + _("Messages") + '</h2>',
         '<div class="list-group">',
@@ -1021,9 +1024,10 @@ $(document).ready(function() {
         }
     });
 
-    // Hide everything when user clicked
+    // Go home when user name clicked
     $(".navbar-brand").click(function() {
         $(".container").hide();
+        $("#content-home").show();
     });
 
     // Delegate handler for filtering list groups with search inputs
@@ -1409,6 +1413,18 @@ $(document).ready(function() {
     if (config.bool("DisableStockControl")) {
         $("#stocktake-nav").hide();
     }
+
+    // Home page
+    let tl = [
+        '<h2 class="mt-3">' + _("Timeline ({0})").replace("{0}", controller.timeline.length) + '</h2>'
+    ];
+    $.each(controller.timeline, function(i, v) {
+        // Skip this entry if it's for a deceased animal and we aren't showing them
+        if (!config.bool("ShowDeceasedHomePage") && (v.CATEGORY == "DIED" || v.CATEGORY == "EUTHANISED")) { return; }
+        tl.push(html.event_text(v, { includedate: true }) + '<br/>');
+    });
+    $("#content-home").html(tl.join("\n"));
+    $("#content-home").show();
 
     // Load reports
     $("#content-reports .list-group").empty();

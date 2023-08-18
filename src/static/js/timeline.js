@@ -28,7 +28,7 @@ $(function() {
                     }
                     h.push('<p class="asm-timeline-large-date">' + lastdate + ' ' + modifier + '</p>');
                 }
-                h.push('<p class="asm-timeline-item">' + html.event_text(e) + '</p>');
+                h.push('<p class="asm-timeline-item">' + html.event_text(e, { includeicon: true, includelink: true }) + '</p>');
             });
             h.push("</div>");
             return h.join("\n");
