@@ -3,6 +3,9 @@ import asm3.audit
 import asm3.utils
 import asm3.movement
 
+from asm3.dbms.base import Database, ResultRow
+from asm3.utils import PostedData
+
 from asm3.i18n import _, python2display
 
 import sys
@@ -79,7 +82,7 @@ TIME = 10
 PERSON_SPONSOR = 11
 PERSON_VET = 12
 
-def clause_for_linktype(linktype):
+def clause_for_linktype(linktype: str) -> str:
     """ Returns the appropriate clause for a link type """
     inclause = ANIMAL_IN
     if linktype == "person":
@@ -98,7 +101,7 @@ def clause_for_linktype(linktype):
         inclause = MOVEMENT_IN
     return inclause
 
-def table_for_linktype(linktype):
+def table_for_linktype(linktype: str) -> str:
     """ Returns the parent table for an additional link type """
     if linktype == "incident":
         return "animalcontrol"
@@ -110,11 +113,11 @@ def table_for_linktype(linktype):
         return "adoption"
     return linktype
 
-def is_person_fieldtype(fieldtype):
+def is_person_fieldtype(fieldtype: int) -> bool:
     """ Returns true if the field type given is a person """
     return fieldtype in (PERSON_LOOKUP, PERSON_SPONSOR, PERSON_VET)
 
-def get_additional_fields(dbo, linkid, linktype = "animal", linktypeid=-1):
+def get_additional_fields(dbo: Database, linkid: int, linktype: str = "animal", linktypeid: int = -1):
     """
     Returns a list of additional fields for the link
     the list contains all the fields from additionalfield and additional,
@@ -136,7 +139,7 @@ def get_additional_fields(dbo, linkid, linktype = "animal", linktypeid=-1):
         "WHERE af.LinkType IN (%s) " \
         "ORDER BY af.DisplayIndex" % ( dbo.sql_cast_char("animal.ID"), dbo.sql_cast_char("owner.ID"), linkid, inclause ))
 
-def get_additional_fields_ids(dbo, rows, linktype = "animal"):
+def get_additional_fields_ids(dbo: Database, rows: list[ResultRow], linktype: str = "animal") -> list[ResultRow]:
     """
     Returns a list of additional fields for the linktype and for
     every single ID field in rows. Useful for getting additional
@@ -155,7 +158,7 @@ def get_additional_fields_ids(dbo, rows, linktype = "animal"):
         "WHERE a.LinkType IN (%s) AND a.LinkID IN (%s) " \
         "ORDER BY af.DisplayIndex" % ( dbo.sql_cast_char("animal.ID"), dbo.sql_cast_char("owner.ID"), inclause, ",".join(links)))
 
-def get_additional_fields_dict(dbo, post, linktype):
+def get_additional_fields_dict(dbo: Database, post: PostedData, linktype: str) -> dict:
     """
         Returns a dictionary with keys from input post that match additional field key patterns 
     """
@@ -169,7 +172,7 @@ def get_additional_fields_dict(dbo, post, linktype):
             ret[key] = post[key]
     return ret
 
-def get_field_definitions(dbo, linktype = "animal"):
+def get_field_definitions(dbo: Database, linktype: str = "animal") -> list[ResultRow]:
     """
     Returns the field definition info for the linktype given,
     FIELDNAME, FIELDLABEL, LOOKUPVALUES, FIELDTYPE, TOOLTIP, SEARCHABLE, MANDATORY
@@ -177,7 +180,7 @@ def get_field_definitions(dbo, linktype = "animal"):
     inclause = clause_for_linktype(linktype)
     return dbo.query("SELECT * FROM additionalfield WHERE LinkType IN (%s) ORDER BY DisplayIndex" % inclause)
 
-def get_ids_for_fieldtype(dbo, fieldtype):
+def get_ids_for_fieldtype(dbo: Database, fieldtype: int) -> list:
     """
     Returns a list of ID numbers for additional field definitions of a particular field type 
     (used by the update_merge functions below)
@@ -188,7 +191,7 @@ def get_ids_for_fieldtype(dbo, fieldtype):
         out.append(str(r.ID))
     return out
 
-def get_fields(dbo):
+def get_fields(dbo: Database) -> list[ResultRow]:
     """
     Returns all additional fields 
     """
@@ -202,7 +205,7 @@ def get_fields(dbo):
         "INNER JOIN lksyesno n ON n.ID = a.NewRecord " \
         "ORDER BY a.LinkType, a.DisplayIndex")
 
-def append_to_results(dbo, rows, linktype = "animal"):
+def append_to_results(dbo: Database, rows: list[ResultRow], linktype: str = "animal") -> list[ResultRow]:
     """
     Goes through each row in rows and adds any additional fields to the resultset.
     Requires an ID column in the rows.
@@ -222,7 +225,7 @@ def append_to_results(dbo, rows, linktype = "animal"):
                 r[tn] = af.value
     return rows
 
-def insert_field_from_form(dbo, username, post):
+def insert_field_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates an additional field
     """
@@ -242,7 +245,7 @@ def insert_field_from_form(dbo, username, post):
         "DisplayIndex":     post.integer("displayindex")
     }, username, setRecordVersion=False, setCreated=False)
 
-def update_field_from_form(dbo, username, post):
+def update_field_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates an additional field record. All aspects of an additional
     field can be changed after creation since only the ID ties things 
@@ -264,7 +267,7 @@ def update_field_from_form(dbo, username, post):
         "DisplayIndex":     post.integer("displayindex")
     }, username, setRecordVersion=False, setLastChanged=False)
 
-def validate_field(dbo, post):
+def validate_field(dbo: Database, post: PostedData) -> None:
     """
     Checks that an additional field is valid/correct. An exception is raised for validation failures.
     """
@@ -282,7 +285,7 @@ def validate_field(dbo, post):
     if name.lower() in RESERVED:
         raise asm3.utils.ASMValidationError(_("'{0}' is a reserved name and cannot be used for an additional field", l).format(name))
 
-def update_merge_animal(dbo, oldanimalid, newanimalid):
+def update_merge_animal(dbo: Database, oldanimalid: int, newanimalid: int) -> None:
     """
     When we merge an animal record, we want to update all additional fields that are 
     of type ANIMAL_LOOKUP and have a value matching oldanimalid to newanimalid.
@@ -291,7 +294,7 @@ def update_merge_animal(dbo, oldanimalid, newanimalid):
     if len(afs) == 0: afs = [ "0" ]
     dbo.execute("UPDATE additional SET Value='%s' WHERE Value='%s' AND AdditionalFieldID IN (%s)" % (newanimalid, oldanimalid, ",".join(afs)))
 
-def update_merge_person(dbo, oldpersonid, newpersonid):
+def update_merge_person(dbo: Database, oldpersonid: int, newpersonid: int) -> None:
     """
     When we merge a person record, we want to update all additional fields that are 
     of type PERSON_LOOKUP and have a value matching oldpersonid to newpersonid.
@@ -300,18 +303,18 @@ def update_merge_person(dbo, oldpersonid, newpersonid):
     if len(afs) == 0: afs = [ "0" ]
     dbo.execute("UPDATE additional SET Value='%s' WHERE Value='%s' AND AdditionalFieldID IN (%s)" % (newpersonid, oldpersonid, ",".join(afs)))
 
-def delete_field(dbo, username, fid):
+def delete_field(dbo: Database, username: str, fid: int) -> None:
     """
     Deletes the selected additional field, along with all data held by it.
     """
     dbo.delete("additionalfield", fid, username)
     dbo.delete("additional", "AdditionalFieldID=%d" % fid)
 
-def insert_additional(dbo, linktype, linkid, additionalfieldid, value):
+def insert_additional(dbo: Database, linktype: int, linkid: int, additionalfieldid: int, value: str) -> int:
     """ Inserts an additional field record """
     try:
         dbo.delete("additional", "LinkType=%s AND LinkID=%s AND AdditionalFieldID=%s" % (linktype, linkid, additionalfieldid))
-        dbo.insert("additional", {
+        return dbo.insert("additional", {
             "LinkType":             linktype,
             "LinkID":               linkid,
             "AdditionalFieldID":    additionalfieldid,
@@ -320,7 +323,7 @@ def insert_additional(dbo, linktype, linkid, additionalfieldid, value):
     except Exception as err:
         asm3.al.error("Failed saving additional field: %s" % err, "additional.insert_additional", dbo, sys.exc_info())
 
-def save_values_for_link(dbo, post, username, linkid, linktype = "animal", setdefaults=False):
+def save_values_for_link(dbo: Database, post: PostedData, username: str, linkid: int, linktype: str = "animal", setdefaults: bool = False) -> None:
     """
     Saves incoming additional field values from a record.
     Clears existing additional field values before saving (this is because forms
@@ -361,7 +364,7 @@ def save_values_for_link(dbo, post, username, linkid, linktype = "animal", setde
     if len(audits) > 0:
         asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (table_for_linktype(linktype), linkid), ", ".join(audits))
 
-def merge_values_for_link(dbo, post, username, linkid, linktype = "animal"):
+def merge_values_for_link(dbo: Database, post: PostedData, username: str, linkid: int, linktype: str = "animal") -> None:
     """
     Saves incoming additional field values. Only updates the 
     additional fields that are present in the post object and leaves the rest alone. 
@@ -395,7 +398,7 @@ def merge_values_for_link(dbo, post, username, linkid, linktype = "animal"):
     if len(audits) > 0:
         asm3.audit.edit(dbo, username, "additional", 0, "%s=%s " % (table_for_linktype(linktype), linkid), ", ".join(audits))
 
-def merge_values(dbo, username, sourceid, targetid, linktype = "animal"):
+def merge_values(dbo: Database, username: str, sourceid: int, targetid: int, linktype: str = "animal") -> None:
     """
     Copies all the additional field values from sourceid to targetid. 
     Only copies a value if it is not present on targetid or is an empty string.

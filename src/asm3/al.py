@@ -27,7 +27,7 @@ else:
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-def fixed_chars(s, chars=10):
+def fixed_chars(s: str, chars: int = 10):
     # Forces a string to be chars in length by padding or truncating
     if len(s) > chars:
         s = s[0:chars]
@@ -35,17 +35,17 @@ def fixed_chars(s, chars=10):
         s = s + " " * (chars-len(s))
     return s
 
-def debug(msg, location = "[]", dbo = None):
+def debug(msg: str, location: str = "[]", dbo = None):
     if LOG_DEBUG:
         logmsg(0, msg, location, dbo)
 
-def info(msg, location = "[]", dbo = None):
+def info(msg: str, location: str = "[]", dbo = None):
     logmsg(1, msg, location, dbo)
 
-def warn(msg, location = "[]", dbo = None):
+def warn(msg: str, location: str = "[]", dbo = None):
     logmsg(2, msg, location, dbo)
 
-def error(msg, location = "[]", dbo = None, ei=None):
+def error(msg: str, location: str = "[]", dbo = None, ei=None):
     """
     Log an error
     ei: Exception info from sys.exc_info() for stacktrace
@@ -57,7 +57,7 @@ def error(msg, location = "[]", dbo = None, ei=None):
         msg += " " + " ".join(x.strip() for x in lines)
     logmsg(3, msg, location, dbo)
 
-def logmsg(mtype, msg, location, dbo):
+def logmsg(mtype: str, msg: str, location: str, dbo):
     # Prepend location
     msg = "%s %s" % (fixed_chars(location, 30), msg)
     # If we have a dbo, prepend the database name to the message
