@@ -1029,7 +1029,7 @@ class mobile2(ASMEndpoint):
 
     def post_test(self, o):
         self.check(asm3.users.CHANGE_TEST)
-        asm3.medical.update_test_today(o.dbo, o.user, o.post.integer("id"))
+        asm3.medical.update_test_today(o.dbo, o.user, o.post.integer("id"), o.post.integer("resultid"))
 
     def post_vaccinate(self, o):
         self.check(asm3.users.CHANGE_VACCINATION)
@@ -1056,6 +1056,7 @@ class mobile2(ASMEndpoint):
                 else:
                     afout.append({ "NAME": d["FIELDLABEL"], "VALUE": d["VALUE"] })
         return asm3.utils.json({
+            "animal": asm3.animal.get_animal(dbo, pid),
             "additional": afout,
             "diary": asm3.diary.get_diaries(dbo, asm3.diary.ANIMAL, pid),
             "diets": asm3.animal.get_diets(dbo, pid),
@@ -1071,6 +1072,7 @@ class mobile2(ASMEndpoint):
         pid = o.post.integer("id")
         self.content_type("application/json")
         return asm3.utils.json({
+            "animalcontrol": asm3.animalcontrol.get_animalcontrol(dbo, pid),
             "animals": asm3.animalcontrol.get_animalcontrol_animals(dbo, pid),
             "citations": asm3.financial.get_incident_citations(dbo, pid),
             "diary": asm3.diary.get_diaries(dbo, asm3.diary.ANIMALCONTROL, pid),
@@ -1103,7 +1105,8 @@ class mobile2(ASMEndpoint):
             "diary": asm3.diary.get_diaries(dbo, asm3.diary.PERSON, pid),
             "licences": asm3.financial.get_person_licences(dbo, pid),
             "links": asm3.person.get_links(dbo, pid),
-            "logs": asm3.log.get_logs(dbo, asm3.log.PERSON, pid)
+            "logs": asm3.log.get_logs(dbo, asm3.log.PERSON, pid),
+            "person": asm3.utils.get_person(dbo, pid)
             #"movements": asm3.movement.get_person_movements(dbo, pid)
         })
 

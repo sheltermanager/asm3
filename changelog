@@ -1,6 +1,9 @@
 48
 ================
 
+21/08/23 Make new mobile UI the default #1096
+21/08/23 Fix bug in new mobile UI with recording test results #1096
+21/08/23 Reload base record when viewing people/animals/incidents #1096
 18/08/23 Show timeline on mobile UI home screen #1096
 
 47

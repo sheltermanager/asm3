@@ -76,7 +76,9 @@ $(document).ready(function() {
                     '<div class="modal-header">',
                         '<h5 class="modal-title" id="administertitle">' + _("Give") + '</h5>',
                     '</div>',
-                    '<div id="administertext" class="modal-body">',
+                    '<div class="modal-body">',
+                        '<span id="administertext"></span>',
+                        '<select id="administerresult" class="form-control">' + html.list_to_options(controller.testresults, "ID", "RESULTNAME") + '</select>',
                     '</div>',
                     '<div class="modal-footer">',
                         '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' + _("Cancel") + '</button>',
@@ -558,6 +560,7 @@ $(document).ready(function() {
         // Grab the extra data for this animal from the backend
         let o = await common.ajax_post(post_handler, "mode=loadanimal&id=" + a.ID);
         o = jQuery.parseJSON(o);
+        a = o.animal;
         let [adoptable, adoptreason] = html.is_animal_adoptable(a);
         let x = [];
         let h = [
@@ -722,6 +725,10 @@ $(document).ready(function() {
                 '<div class="accordion-body">' + bodyhtml + '</div>' +
                 '</div></div>';
         };
+        // Grab the extra data for this incident from the backend
+        let o = await common.ajax_post(post_handler, "mode=loadincident&id=" + ac.ID);
+        o = jQuery.parseJSON(o);
+        ac = o.animalcontrol;
         // Inline buttons for completing, dispatching and responding, either the date or a button
         let comptp = dt(ac.COMPLETEDATE) + ' ' + ac.COMPLETEDNAME;
         if (!ac.COMPLETEDDATE && common.has_permission("caci")) {
@@ -744,9 +751,6 @@ $(document).ready(function() {
             let encadd = encodeURIComponent(ac.DISPATCHADDRESS + ',' + ac.DISPATCHTOWN + ',' + ac.DISPATCHCOUNTY + ',' + ac.DISPATCHPOSTCODE);
             dispadd = '<button type="button" data-address="' + encadd + '" class="showmap btn btn-secondary"><i class="bi-map"></i></button> ' + ac.DISPATCHADDRESS;
         }
-        // Grab the extra data for this incident from the backend
-        let o = await common.ajax_post(post_handler, "mode=loadincident&id=" + ac.ID);
-        o = jQuery.parseJSON(o);
         let x= [];
         let h = [
             '<div class="list-group mt-3" style="margin-top: 5px">',
@@ -915,6 +919,7 @@ $(document).ready(function() {
         // Grab the extra data for this person from the backend
         let o = await common.ajax_post(post_handler, "mode=loadperson&id=" + p.ID);
         o = jQuery.parseJSON(o);
+        p = o.person;
         let x = [];
         let h = [
             '<div class="list-group mt-3">',
@@ -1099,6 +1104,7 @@ $(document).ready(function() {
                     });
                 });
                 $("#administertitle").html(_("Give Treatments"));
+                $("#administerresult").hide();
                 $("#administertext").html(format.date(v.DATEREQUIRED) + ": " + v.ANIMALNAME + ' - ' + v.SHELTERCODE + ': ' + v.TREATMENTNAME);
                 $("#administerdlg").modal("show");
             }
@@ -1121,13 +1127,14 @@ $(document).ready(function() {
         $.each(controller.tests, function(i, v) {
             if (v.ID == testid) {
                 $("#administerdlg .btn-primary").unbind("click");
-                $("#administerdlg .btn-primary").html(_("Give"));
+                $("#administerdlg .btn-primary").html(_("Perform"));
                 $("#administerdlg .btn-primary").click(function() {
-                    ajax_post("mode=test&id=" + testid, function() {
+                    ajax_post("mode=test&id=" + testid + "&resultid=" + $("#administerresult").val(), function() {
                         $("#content-test [data-id='" + testid + "']").remove(); // remove the item from the list on success
                     });
                 });
                 $("#administertitle").html(_("Perform Test"));
+                $("#administerresult").show();
                 $("#administertext").html(format.date(v.DATEREQUIRED) + ": " + v.ANIMALNAME + ' - ' + v.SHELTERCODE + ': ' + v.TESTNAME);
                 $("#administerdlg").modal("show");
             }
@@ -1157,6 +1164,7 @@ $(document).ready(function() {
                     });
                 });
                 $("#administertitle").html(_("Give Vaccination"));
+                $("#administerresult").hide();
                 $("#administertext").html(format.date(v.DATEREQUIRED) + ": " + v.ANIMALNAME + ' - ' + v.SHELTERCODE + ': ' + v.VACCINATIONTYPE);
                 $("#administerdlg").modal("show");
             }
@@ -1305,6 +1313,7 @@ $(document).ready(function() {
                     });
                 });
                 $("#administertitle").html(_("Complete"));
+                $("#administerresult").hide();
                 $("#administertext").html(format.date(v.DIARYDATETIME) + ": " + v.SUBJECT + ': ' + v.NOTE);
                 $("#administerdlg").modal("show");
             }
@@ -1334,6 +1343,7 @@ $(document).ready(function() {
                     });
                 });
                 $("#administertitle").html(_("Perform Homecheck"));
+                $("#administerresult").hide();
                 $("#administertext").html(v.OWNERNAME + ' - ' + v.OWNERCODE + '<br>' + v.COMMENTS);
                 $("#administerdlg").modal("show");
             }
