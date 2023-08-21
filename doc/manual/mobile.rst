@@ -4,11 +4,11 @@ Mobile Interface
 In addition to the web interface, ASM has a special user interface for mobile
 devices, such as your iPhone or Android handset.
 
-To access this interface, follow the "Smartphone UI" link under the user menu.
+To access this interface, follow the "Mobile Interface" link under the user menu.
 
 .. image:: images/mobile_usermenu.png
 
-The Smartphone UI is task focused and allows you to perform the following tasks:
+The Mobile interface is task focused and allows you to perform the following tasks:
 
 * Read system messages.
 * Quickly find and view the records of animals in care.

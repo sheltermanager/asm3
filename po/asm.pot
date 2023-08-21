@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-08-16 10:51+0000\n"
+"POT-Creation-Date: 2023-08-21 15:22+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -9928,7 +9928,7 @@ msgstr ""
 msgid "Percheron"
 msgstr ""
 
-#: test.js
+#: test.js mobile2.js
 msgid "Perform"
 msgstr ""
 
@@ -12898,7 +12898,7 @@ msgid "Swedish Vallhund"
 msgstr ""
 
 #: header.js
-msgid "Switch to Smartphone UI"
+msgid "Switch to Mobile Interface"
 msgstr ""
 
 #: reports.js
@@ -13928,7 +13928,7 @@ msgstr ""
 msgid "Timeline"
 msgstr ""
 
-#: main.js
+#: main.js mobile2.js
 msgid "Timeline ({0})"
 msgstr ""
 

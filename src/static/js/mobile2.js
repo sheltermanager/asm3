@@ -233,7 +233,7 @@ $(document).ready(function() {
                     '</a>',
                 '</li>',
                 '<li class="nav-item">',
-                    '<a class="nav-link text-danger" href="mobile">Old Smartphone UI</a>',
+                    '<a class="nav-link text-danger" href="mobile">Old Mobile UI</a>',
                 '</li>',
 
                 '<li class="nav-item">',
