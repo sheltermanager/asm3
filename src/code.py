@@ -1106,7 +1106,7 @@ class mobile2(ASMEndpoint):
             "licences": asm3.financial.get_person_licences(dbo, pid),
             "links": asm3.person.get_links(dbo, pid),
             "logs": asm3.log.get_logs(dbo, asm3.log.PERSON, pid),
-            "person": asm3.utils.get_person(dbo, pid)
+            "person": asm3.person.get_person(dbo, pid)
             #"movements": asm3.movement.get_person_movements(dbo, pid)
         })
 
