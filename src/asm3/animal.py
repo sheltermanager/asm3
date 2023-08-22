@@ -18,8 +18,9 @@ import asm3.publishers.base
 import asm3.utils
 import asm3.users
 
-from typing import List
-from asm3.dbms.base import Database, ResultRow
+from typing import List, TYPE_CHECKING
+if TYPE_CHECKING: 
+    from asm3.dbms.base import Database, ResultRow
 
 from asm3.i18n import _, date_diff, date_diff_days, format_diff, display2python, python2display, remove_time, subtract_years, subtract_months, add_days, subtract_days, monday_of_week, first_of_month, last_of_month, first_of_year
 

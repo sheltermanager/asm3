@@ -1,11 +1,15 @@
+
+from __future__ import annotations 
+
 import asm3.al
 import asm3.audit
 import asm3.utils
 import asm3.movement
 
-from typing import List
-from asm3.dbms.base import Database, ResultRow
-from asm3.utils import PostedData
+from typing import List, TYPE_CHECKING
+if TYPE_CHECKING:
+    from asm3.dbms.base import Database, ResultRow
+    from asm3.utils import PostedData
 
 from asm3.i18n import _, python2display
 

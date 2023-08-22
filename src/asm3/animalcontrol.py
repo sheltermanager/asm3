@@ -14,9 +14,10 @@ import asm3.utils
 
 from asm3.i18n import _, python2display, format_time_now
 
-from typing import Any, List
-from asm3.dbms.base import Database, ResultRow
-from datetime import datetime
+from typing import Any, List, TYPE_CHECKING
+if TYPE_CHECKING:
+    from asm3.dbms.base import Database, ResultRow
+    from datetime import datetime
 
 ASCENDING = 0
 DESCENDING = 1

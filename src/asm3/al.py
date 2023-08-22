@@ -45,7 +45,7 @@ def info(msg: str, location: str = "[]", dbo = None):
 def warn(msg: str, location: str = "[]", dbo = None):
     logmsg(2, msg, location, dbo)
 
-def error(msg: str, location: str = "[]", dbo = None, ei=None):
+def error(msg: str, location: str = "[]", dbo = None, ei = None):
     """
     Log an error
     ei: Exception info from sys.exc_info() for stacktrace

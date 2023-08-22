@@ -8,12 +8,16 @@ an argument to function_task, and having the function code call
 async.set_progress_value(>100) or async.increment_progress_value()
 """
 
+from __future__ import annotations 
+
 import asm3.cachedisk
 
 import threading
 
-from typing import Any, Callable
-from asm3.dbms.base import Database
+from typing import Any, Callable, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from asm3.dbms.base import Database
 
 lc = {}
 
