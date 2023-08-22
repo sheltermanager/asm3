@@ -14,8 +14,8 @@ import asm3.utils
 
 from asm3.i18n import _, python2display, format_time_now
 
+from typing import Any, List
 from asm3.dbms.base import Database, ResultRow
-from typing import Any
 from datetime import datetime
 
 ASCENDING = 0
@@ -114,15 +114,15 @@ def get_animalcontrol_numbertype(dbo: Database, acid: int) -> str:
     if ac is None: return ""
     return f"{ac.ID:06} - {ac.INCIDENTNAME}"
 
-def get_animalcontrol_animals(dbo: Database, acid: int) -> list[ResultRow]:
+def get_animalcontrol_animals(dbo: Database, acid: int) -> List[ResultRow]:
     """ Return the list of linked animals for an incident """
     return dbo.query(get_animalcontrol_animals_query(dbo) + " WHERE aca.AnimalControlID = ?", [acid])
 
-def get_animalcontrol_for_animal(dbo: Database, aid: int) -> list[ResultRow]:
+def get_animalcontrol_for_animal(dbo: Database, aid: int) -> List[ResultRow]:
     """ Return the list of linked incidents for an animal """
     return dbo.query(get_animalcontrol_query(dbo) + " INNER JOIN animalcontrolanimal aca ON aca.AnimalControlID = ac.ID WHERE aca.AnimalID = ? ORDER BY IncidentDateTime DESC", [aid])
 
-def get_followup_two_dates(dbo: Database, start: datetime, end: datetime) -> list[ResultRow]:
+def get_followup_two_dates(dbo: Database, start: datetime, end: datetime) -> List[ResultRow]:
     """
     Returns incidents for followup between the two dates specified
     """
@@ -131,7 +131,7 @@ def get_followup_two_dates(dbo: Database, start: datetime, end: datetime) -> lis
         "(ac.FollowupDateTime2 >= ? AND ac.FollowupDateTime2 <= ? AND NOT ac.FollowupComplete2 = 1) OR " \
         "(ac.FollowupDateTime3 >= ? AND ac.FollowupDateTime3 <= ? AND NOT ac.FollowupComplete3 = 1)", (start, end, start, end, start, end))
 
-def get_animalcontrol_find_simple(dbo: Database, query: str = "", username: str = "", limit: int = 0, siteid: int = 0) -> list[ResultRow]:
+def get_animalcontrol_find_simple(dbo: Database, query: str = "", username: str = "", limit: int = 0, siteid: int = 0) -> List[ResultRow]:
     """
     Returns rows for simple animal control searches.
     query: The search criteria
@@ -157,7 +157,7 @@ def get_animalcontrol_find_simple(dbo: Database, query: str = "", username: str 
     sql = "%s WHERE ac.ID > 0 %s AND (%s) ORDER BY ac.ID" % ( get_animalcontrol_query(dbo), sitefilter, " OR ".join(ss.ors))
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
-def get_animalcontrol_find_advanced(dbo: Database, criteria: dict, username: str, limit: int = 0, siteid: int = 0) -> list[ResultRow]:
+def get_animalcontrol_find_advanced(dbo: Database, criteria: dict, username: str, limit: int = 0, siteid: int = 0) -> List[ResultRow]:
     """
     Returns rows for advanced animal control searches.
     criteria: A dictionary of criteria
@@ -237,7 +237,7 @@ def get_animalcontrol_find_advanced(dbo: Database, criteria: dict, username: str
     sql = "%s WHERE %s ORDER BY ac.ID DESC" % (get_animalcontrol_query(dbo), " AND ".join(ss.ands))
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
-def reduce_find_results(dbo: Database, username: str, rows: list[ResultRow]) -> list[ResultRow]:
+def reduce_find_results(dbo: Database, username: str, rows: List[ResultRow]) -> List[ResultRow]:
     """
     Given the results of a find operation, goes through the results and removes 
     any results which the user does not have permission to view.
@@ -305,7 +305,7 @@ def check_view_permission(dbo: Database, username: str, session: Any, acid: int)
         return True
     raise asm3.utils.ASMPermissionError("User does not have required role to view this incident")
 
-def get_animalcontrol_satellite_counts(dbo: Database, acid: int) -> list[ResultRow]:
+def get_animalcontrol_satellite_counts(dbo: Database, acid: int) -> List[ResultRow]:
     """
     Returns a resultset containing the number of each type of satellite
     record that an animal control entry has.
@@ -317,7 +317,7 @@ def get_animalcontrol_satellite_counts(dbo: Database, acid: int) -> list[ResultR
         "(SELECT COUNT(*) FROM log WHERE log.LinkID = a.ID AND log.LinkType = ?) AS logs " \
         "FROM animalcontrol a WHERE a.ID = ?", (asm3.media.ANIMALCONTROL, asm3.diary.ANIMALCONTROL, asm3.log.ANIMALCONTROL, acid))
 
-def get_active_traploans(dbo: Database) -> list[ResultRow]:
+def get_active_traploans(dbo: Database) -> List[ResultRow]:
     """
     Returns all active traploan records
     ID, TRAPTYPEID, TRAPTYPENAME, LOANDATE, DEPOSITRETURNDATE,
@@ -328,7 +328,7 @@ def get_active_traploans(dbo: Database) -> list[ResultRow]:
         "WHERE ot.ReturnDate Is Null OR ot.ReturnDate > ? " \
         "ORDER BY ot.LoanDate DESC", [dbo.today()])
 
-def get_returned_traploans(dbo: Database, offset: str = "m31") -> list[ResultRow]:
+def get_returned_traploans(dbo: Database, offset: str = "m31") -> List[ResultRow]:
     """
     Returns returned traploan records
     ID, TRAPTYPEID, TRAPTYPENAME, LOANDATE, DEPOSITRETURNDATE,
@@ -341,7 +341,7 @@ def get_returned_traploans(dbo: Database, offset: str = "m31") -> list[ResultRow
         "AND ot.ReturnDate <= ? " \
         "ORDER BY ot.LoanDate DESC", [ dbo.today(offset=offsetdays*-1), dbo.today() ])
 
-def get_person_traploans(dbo: Database, oid: int, sort: int = ASCENDING) -> list[ResultRow]:
+def get_person_traploans(dbo: Database, oid: int, sort: int = ASCENDING) -> List[ResultRow]:
     """
     Returns all of the traploan records for a person, along with
     some owner info.
@@ -356,7 +356,7 @@ def get_person_traploans(dbo: Database, oid: int, sort: int = ASCENDING) -> list
         "WHERE ot.OwnerID = ? " \
         "ORDER BY %s" % order, [oid])
 
-def get_traploan_two_dates(dbo: Database, start: datetime, end: datetime) -> list[ResultRow]:
+def get_traploan_two_dates(dbo: Database, start: datetime, end: datetime) -> List[ResultRow]:
     """
     Returns unreturned trap loans with a due date between the two dates
     """
@@ -482,7 +482,7 @@ def update_animalcontrol_from_form(dbo: Database, post: asm3.utils.PostedData, u
     # Check/update the geocode for the dispatch address
     if geocode: update_dispatch_geocode(dbo, acid, post["dispatchlatlong"], post["dispatchaddress"], post["dispatchtown"], post["dispatchcounty"], post["dispatchpostcode"])
 
-def update_animalcontrol_roles(dbo: Database, acid: int, viewroles: list[int], editroles: list[int]) -> None:
+def update_animalcontrol_roles(dbo: Database, acid: int, viewroles: List[int], editroles: List[int]) -> None:
     """
     Updates the view and edit roles for an incident
     acid:       The incident ID

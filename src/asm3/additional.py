@@ -3,6 +3,7 @@ import asm3.audit
 import asm3.utils
 import asm3.movement
 
+from typing import List
 from asm3.dbms.base import Database, ResultRow
 from asm3.utils import PostedData
 
@@ -139,7 +140,7 @@ def get_additional_fields(dbo: Database, linkid: int, linktype: str = "animal", 
         "WHERE af.LinkType IN (%s) " \
         "ORDER BY af.DisplayIndex" % ( dbo.sql_cast_char("animal.ID"), dbo.sql_cast_char("owner.ID"), linkid, inclause ))
 
-def get_additional_fields_ids(dbo: Database, rows: list[ResultRow], linktype: str = "animal") -> list[ResultRow]:
+def get_additional_fields_ids(dbo: Database, rows: List[ResultRow], linktype: str = "animal") -> List[ResultRow]:
     """
     Returns a list of additional fields for the linktype and for
     every single ID field in rows. Useful for getting additional
@@ -172,7 +173,7 @@ def get_additional_fields_dict(dbo: Database, post: PostedData, linktype: str) -
             ret[key] = post[key]
     return ret
 
-def get_field_definitions(dbo: Database, linktype: str = "animal") -> list[ResultRow]:
+def get_field_definitions(dbo: Database, linktype: str = "animal") -> List[ResultRow]:
     """
     Returns the field definition info for the linktype given,
     FIELDNAME, FIELDLABEL, LOOKUPVALUES, FIELDTYPE, TOOLTIP, SEARCHABLE, MANDATORY
@@ -191,7 +192,7 @@ def get_ids_for_fieldtype(dbo: Database, fieldtype: int) -> list:
         out.append(str(r.ID))
     return out
 
-def get_fields(dbo: Database) -> list[ResultRow]:
+def get_fields(dbo: Database) -> List[ResultRow]:
     """
     Returns all additional fields 
     """
@@ -205,7 +206,7 @@ def get_fields(dbo: Database) -> list[ResultRow]:
         "INNER JOIN lksyesno n ON n.ID = a.NewRecord " \
         "ORDER BY a.LinkType, a.DisplayIndex")
 
-def append_to_results(dbo: Database, rows: list[ResultRow], linktype: str = "animal") -> list[ResultRow]:
+def append_to_results(dbo: Database, rows: List[ResultRow], linktype: str = "animal") -> List[ResultRow]:
     """
     Goes through each row in rows and adds any additional fields to the resultset.
     Requires an ID column in the rows.
