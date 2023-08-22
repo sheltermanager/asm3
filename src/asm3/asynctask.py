@@ -8,16 +8,11 @@ an argument to function_task, and having the function code call
 async.set_progress_value(>100) or async.increment_progress_value()
 """
 
-from __future__ import annotations 
-
 import asm3.cachedisk
 
+from asm3.typehints import Any, Callable, Database
+
 import threading
-
-from typing import Any, Callable, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from asm3.dbms.base import Database
 
 lc = {}
 
@@ -55,7 +50,7 @@ def get_task_name(dbo: Database) -> str:
         return "NONE"
     return v
 
-def set_task_name(dbo, v: str) -> None:
+def set_task_name(dbo: Database, v: str) -> None:
     """ Set the task name """
     put(dbo, "taskname", v)
 

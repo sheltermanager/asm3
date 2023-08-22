@@ -1,5 +1,6 @@
 
 from asm3.sitedefs import LOG_LOCATION, LOG_DEBUG
+from asm3.typehints import Any, Database
 
 import logging
 import logging.handlers
@@ -35,17 +36,17 @@ def fixed_chars(s: str, chars: int = 10):
         s = s + " " * (chars-len(s))
     return s
 
-def debug(msg: str, location: str = "[]", dbo = None):
+def debug(msg: str, location: str = "[]", dbo: Database = None):
     if LOG_DEBUG:
         logmsg(0, msg, location, dbo)
 
-def info(msg: str, location: str = "[]", dbo = None):
+def info(msg: str, location: str = "[]", dbo: Database = None):
     logmsg(1, msg, location, dbo)
 
-def warn(msg: str, location: str = "[]", dbo = None):
+def warn(msg: str, location: str = "[]", dbo: Database = None):
     logmsg(2, msg, location, dbo)
 
-def error(msg: str, location: str = "[]", dbo = None, ei = None):
+def error(msg: str, location: str = "[]", dbo: Database = None, ei: Any = None):
     """
     Log an error
     ei: Exception info from sys.exc_info() for stacktrace
@@ -57,7 +58,7 @@ def error(msg: str, location: str = "[]", dbo = None, ei = None):
         msg += " " + " ".join(x.strip() for x in lines)
     logmsg(3, msg, location, dbo)
 
-def logmsg(mtype: str, msg: str, location: str, dbo):
+def logmsg(mtype: str, msg: str, location: str, dbo: Any):
     # Prepend location
     msg = "%s %s" % (fixed_chars(location, 30), msg)
     # If we have a dbo, prepend the database name to the message

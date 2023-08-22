@@ -1,17 +1,11 @@
 
-from __future__ import annotations 
-
 import asm3.al
 import asm3.audit
 import asm3.utils
 import asm3.movement
 
-from typing import List, TYPE_CHECKING
-if TYPE_CHECKING:
-    from asm3.dbms.base import Database, ResultRow
-    from asm3.utils import PostedData
-
 from asm3.i18n import _, python2display
+from asm3.typehints import Database, PostedData, Results
 
 import sys
 
@@ -144,7 +138,7 @@ def get_additional_fields(dbo: Database, linkid: int, linktype: str = "animal", 
         "WHERE af.LinkType IN (%s) " \
         "ORDER BY af.DisplayIndex" % ( dbo.sql_cast_char("animal.ID"), dbo.sql_cast_char("owner.ID"), linkid, inclause ))
 
-def get_additional_fields_ids(dbo: Database, rows: List[ResultRow], linktype: str = "animal") -> List[ResultRow]:
+def get_additional_fields_ids(dbo: Database, rows: Results, linktype: str = "animal") -> Results:
     """
     Returns a list of additional fields for the linktype and for
     every single ID field in rows. Useful for getting additional
@@ -177,7 +171,7 @@ def get_additional_fields_dict(dbo: Database, post: PostedData, linktype: str) -
             ret[key] = post[key]
     return ret
 
-def get_field_definitions(dbo: Database, linktype: str = "animal") -> List[ResultRow]:
+def get_field_definitions(dbo: Database, linktype: str = "animal") -> Results:
     """
     Returns the field definition info for the linktype given,
     FIELDNAME, FIELDLABEL, LOOKUPVALUES, FIELDTYPE, TOOLTIP, SEARCHABLE, MANDATORY
@@ -196,7 +190,7 @@ def get_ids_for_fieldtype(dbo: Database, fieldtype: int) -> list:
         out.append(str(r.ID))
     return out
 
-def get_fields(dbo: Database) -> List[ResultRow]:
+def get_fields(dbo: Database) -> Results:
     """
     Returns all additional fields 
     """
@@ -210,7 +204,7 @@ def get_fields(dbo: Database) -> List[ResultRow]:
         "INNER JOIN lksyesno n ON n.ID = a.NewRecord " \
         "ORDER BY a.LinkType, a.DisplayIndex")
 
-def append_to_results(dbo: Database, rows: List[ResultRow], linktype: str = "animal") -> List[ResultRow]:
+def append_to_results(dbo: Database, rows: Results, linktype: str = "animal") -> Results:
     """
     Goes through each row in rows and adds any additional fields to the resultset.
     Requires an ID column in the rows.

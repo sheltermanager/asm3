@@ -1,6 +1,4 @@
 
-from __future__ import annotations 
-
 import asm3.additional
 import asm3.audit
 import asm3.configuration
@@ -13,11 +11,9 @@ import asm3.users
 import asm3.utils
 
 from asm3.i18n import _, python2display, format_time_now
+from asm3.typehints import Database, List, PostedData, ResultRow, Results, Session
 
-from typing import Any, List, TYPE_CHECKING
-if TYPE_CHECKING:
-    from asm3.dbms.base import Database, ResultRow
-    from datetime import datetime
+from datetime import datetime
 
 ASCENDING = 0
 DESCENDING = 1
@@ -115,15 +111,15 @@ def get_animalcontrol_numbertype(dbo: Database, acid: int) -> str:
     if ac is None: return ""
     return f"{ac.ID:06} - {ac.INCIDENTNAME}"
 
-def get_animalcontrol_animals(dbo: Database, acid: int) -> List[ResultRow]:
+def get_animalcontrol_animals(dbo: Database, acid: int) -> Results:
     """ Return the list of linked animals for an incident """
     return dbo.query(get_animalcontrol_animals_query(dbo) + " WHERE aca.AnimalControlID = ?", [acid])
 
-def get_animalcontrol_for_animal(dbo: Database, aid: int) -> List[ResultRow]:
+def get_animalcontrol_for_animal(dbo: Database, aid: int) -> Results:
     """ Return the list of linked incidents for an animal """
     return dbo.query(get_animalcontrol_query(dbo) + " INNER JOIN animalcontrolanimal aca ON aca.AnimalControlID = ac.ID WHERE aca.AnimalID = ? ORDER BY IncidentDateTime DESC", [aid])
 
-def get_followup_two_dates(dbo: Database, start: datetime, end: datetime) -> List[ResultRow]:
+def get_followup_two_dates(dbo: Database, start: datetime, end: datetime) -> Results:
     """
     Returns incidents for followup between the two dates specified
     """
@@ -132,7 +128,7 @@ def get_followup_two_dates(dbo: Database, start: datetime, end: datetime) -> Lis
         "(ac.FollowupDateTime2 >= ? AND ac.FollowupDateTime2 <= ? AND NOT ac.FollowupComplete2 = 1) OR " \
         "(ac.FollowupDateTime3 >= ? AND ac.FollowupDateTime3 <= ? AND NOT ac.FollowupComplete3 = 1)", (start, end, start, end, start, end))
 
-def get_animalcontrol_find_simple(dbo: Database, query: str = "", username: str = "", limit: int = 0, siteid: int = 0) -> List[ResultRow]:
+def get_animalcontrol_find_simple(dbo: Database, query: str = "", username: str = "", limit: int = 0, siteid: int = 0) -> Results:
     """
     Returns rows for simple animal control searches.
     query: The search criteria
@@ -158,7 +154,7 @@ def get_animalcontrol_find_simple(dbo: Database, query: str = "", username: str 
     sql = "%s WHERE ac.ID > 0 %s AND (%s) ORDER BY ac.ID" % ( get_animalcontrol_query(dbo), sitefilter, " OR ".join(ss.ors))
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
-def get_animalcontrol_find_advanced(dbo: Database, criteria: dict, username: str, limit: int = 0, siteid: int = 0) -> List[ResultRow]:
+def get_animalcontrol_find_advanced(dbo: Database, criteria: dict, username: str, limit: int = 0, siteid: int = 0) -> Results:
     """
     Returns rows for advanced animal control searches.
     criteria: A dictionary of criteria
@@ -238,7 +234,7 @@ def get_animalcontrol_find_advanced(dbo: Database, criteria: dict, username: str
     sql = "%s WHERE %s ORDER BY ac.ID DESC" % (get_animalcontrol_query(dbo), " AND ".join(ss.ands))
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))
 
-def reduce_find_results(dbo: Database, username: str, rows: List[ResultRow]) -> List[ResultRow]:
+def reduce_find_results(dbo: Database, username: str, rows: Results) -> Results:
     """
     Given the results of a find operation, goes through the results and removes 
     any results which the user does not have permission to view.
@@ -280,7 +276,7 @@ def reduce_find_results(dbo: Database, username: str, rows: List[ResultRow]) -> 
             results.append(r)
     return results
 
-def check_view_permission(dbo: Database, username: str, session: Any, acid: int) -> bool:
+def check_view_permission(dbo: Database, username: str, session: Session, acid: int) -> bool:
     """
     Checks that the currently logged in user has permission to
     view the incident with acid.
@@ -306,7 +302,7 @@ def check_view_permission(dbo: Database, username: str, session: Any, acid: int)
         return True
     raise asm3.utils.ASMPermissionError("User does not have required role to view this incident")
 
-def get_animalcontrol_satellite_counts(dbo: Database, acid: int) -> List[ResultRow]:
+def get_animalcontrol_satellite_counts(dbo: Database, acid: int) -> Results:
     """
     Returns a resultset containing the number of each type of satellite
     record that an animal control entry has.
@@ -318,7 +314,7 @@ def get_animalcontrol_satellite_counts(dbo: Database, acid: int) -> List[ResultR
         "(SELECT COUNT(*) FROM log WHERE log.LinkID = a.ID AND log.LinkType = ?) AS logs " \
         "FROM animalcontrol a WHERE a.ID = ?", (asm3.media.ANIMALCONTROL, asm3.diary.ANIMALCONTROL, asm3.log.ANIMALCONTROL, acid))
 
-def get_active_traploans(dbo: Database) -> List[ResultRow]:
+def get_active_traploans(dbo: Database) -> Results:
     """
     Returns all active traploan records
     ID, TRAPTYPEID, TRAPTYPENAME, LOANDATE, DEPOSITRETURNDATE,
@@ -329,7 +325,7 @@ def get_active_traploans(dbo: Database) -> List[ResultRow]:
         "WHERE ot.ReturnDate Is Null OR ot.ReturnDate > ? " \
         "ORDER BY ot.LoanDate DESC", [dbo.today()])
 
-def get_returned_traploans(dbo: Database, offset: str = "m31") -> List[ResultRow]:
+def get_returned_traploans(dbo: Database, offset: str = "m31") -> Results:
     """
     Returns returned traploan records
     ID, TRAPTYPEID, TRAPTYPENAME, LOANDATE, DEPOSITRETURNDATE,
@@ -342,7 +338,7 @@ def get_returned_traploans(dbo: Database, offset: str = "m31") -> List[ResultRow
         "AND ot.ReturnDate <= ? " \
         "ORDER BY ot.LoanDate DESC", [ dbo.today(offset=offsetdays*-1), dbo.today() ])
 
-def get_person_traploans(dbo: Database, oid: int, sort: int = ASCENDING) -> List[ResultRow]:
+def get_person_traploans(dbo: Database, oid: int, sort: int = ASCENDING) -> Results:
     """
     Returns all of the traploan records for a person, along with
     some owner info.
@@ -357,7 +353,7 @@ def get_person_traploans(dbo: Database, oid: int, sort: int = ASCENDING) -> List
         "WHERE ot.OwnerID = ? " \
         "ORDER BY %s" % order, [oid])
 
-def get_traploan_two_dates(dbo: Database, start: datetime, end: datetime) -> List[ResultRow]:
+def get_traploan_two_dates(dbo: Database, start: datetime, end: datetime) -> Results:
     """
     Returns unreturned trap loans with a due date between the two dates
     """
@@ -426,7 +422,7 @@ def update_animalcontrol_respondnow(dbo: Database, acid: int, username: str) -> 
         "RespondedDateTime":    dbo.now()
     }, username)
 
-def update_animalcontrol_from_form(dbo: Database, post: asm3.utils.PostedData, username: str, geocode: bool = True) -> None:
+def update_animalcontrol_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> None:
     """
     Updates an animal control incident record from the screen
     data: The webpy data object containing form parameters
@@ -526,7 +522,7 @@ def update_animalcontrol_removelink(dbo: Database, username: str, acid: int, ani
     dbo.execute("DELETE FROM animalcontrolanimal WHERE AnimalControlID = ? AND AnimalID = ?", (acid, animalid))
     asm3.audit.delete(dbo, username, "animalcontrolanimal", acid, "", "incident %d no longer linked to animal %d" % (acid, animalid))
 
-def insert_animalcontrol_from_form(dbo: Database, post: asm3.utils.PostedData, username: str, geocode: bool = True) -> int:
+def insert_animalcontrol_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> int:
     """
     Inserts a new animal control incident record from the screen
     data: The webpy data object containing form parameters
@@ -605,7 +601,7 @@ def insert_animalcontrol(dbo: Database, username: str) -> int:
     }
     return insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
 
-def insert_traploan_from_form(dbo: Database, username: str, post: asm3.utils.PostedData) -> int:
+def insert_traploan_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a traploan record from posted form data 
     """
@@ -621,7 +617,7 @@ def insert_traploan_from_form(dbo: Database, username: str, post: asm3.utils.Pos
         "Comments":         post["comments"]
     }, username)
 
-def update_traploan_from_form(dbo: Database, username: str, post: asm3.utils.PostedData) -> None:
+def update_traploan_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a traploan record from posted form data
     """
