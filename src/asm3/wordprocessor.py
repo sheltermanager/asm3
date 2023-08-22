@@ -611,6 +611,8 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
             tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, a["BROUGHTINBYOWNERID"], "person"), "BROUGHTINBY"))
         if a["CURRENTOWNERID"] and a["CURRENTOWNERID"] > 0:
             tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, a["CURRENTOWNERID"], "person"), "CURRENTOWNER"))
+        if a["CURRENTVETID"] and a["CURRENTVETID"] > 0:
+            tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, a["CURRENTVETID"], "person"), "CURRENTVET"))
 
     # Is vaccinated indicator
     if includeIsVaccinated:    

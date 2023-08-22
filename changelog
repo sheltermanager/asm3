@@ -1,6 +1,7 @@
 48
 ================
 
+22/08/23 Additional wordkeys for CurrentVet 
 22/08/23 Abstracted Python3 type hint framework, added to "a" modules #1320
 21/08/23 Make new mobile UI the default #1096
 21/08/23 Fix bug in new mobile UI with recording test results #1096
