@@ -1262,7 +1262,7 @@ def calc_total_days_on_shelter(dbo: Database, animalid: int, a: ResultRow = None
 
     return daysonshelter
 
-def calc_age_group(dbo: Database, animalid: int, a: ResultRow = None, bands: list = None, todate: datetime = None) -> str:
+def calc_age_group(dbo: Database, animalid: int, a: ResultRow = None, bands: List[Tuple[str, float]] = None, todate: datetime = None) -> str:
     """
     Returns the age group the animal fits into based on its
     date of birth.
@@ -1653,6 +1653,7 @@ def get_animals_on_shelter_namecode(dbo: Database, remove_units: bool = False, r
         "LEFT OUTER JOIN species ON species.ID = animal.SpeciesID " \
         "WHERE Archived = 0 ORDER BY AnimalName, ShelterCode")
     for r in rows:
+        if r.DISPLAYLOCATION is None: r.DISPLAYLOCATION = ""
         if remove_units and r.ACTIVEMOVEMENTTYPE != 2 and r.DISPLAYLOCATION.find("::") != -1: r.DISPLAYLOCATION = r.DISPLAYLOCATION[:r.DISPLAYLOCATION.find("::")]
         if remove_fosterer and r.ACTIVEMOVEMENTTYPE == 2 and r.DISPLAYLOCATION.find("::") != -1: r.DISPLAYLOCATION = r.DISPLAYLOCATION[:r.DISPLAYLOCATION.find("::")]
     return rows
@@ -1670,6 +1671,7 @@ def get_animals_adopted_namecode(dbo: Database, days: int = 30, remove_adopter: 
         "LEFT OUTER JOIN species ON species.ID = animal.SpeciesID " \
         "WHERE ActiveMovementType=1 AND ActiveMovementDate > ? AND DeceasedDate Is Null ORDER BY AnimalName, ShelterCode", [cutoffdate])
     for r in rows:
+        if r.DISPLAYLOCATION is None: r.DISPLAYLOCATION = ""
         if remove_adopter and r.ACTIVEMOVEMENTTYPE != 2 and r.DISPLAYLOCATION.find("::") != -1: r.DISPLAYLOCATION = r.DISPLAYLOCATION[:r.DISPLAYLOCATION.find("::")]
     return rows
 
@@ -2941,7 +2943,7 @@ def send_email_from_form(dbo: Database, username: str, post: PostedData) -> bool
         asm3.log.add_log_email(dbo, username, asm3.log.ANIMAL, post.integer("animalid"), logtype, emailto, subject, body)
     return rv
 
-def update_diary_linkinfo(dbo: Database, animalid: int, a: ResultRow = None, diaryupdatebatch: List[tuple] = None) -> None:
+def update_diary_linkinfo(dbo: Database, animalid: int, a: ResultRow = None, diaryupdatebatch: List[Tuple] = None) -> None:
     """
     Updates the linkinfo on diary notes for an animal.
     animalid: The animal's ID
@@ -3859,7 +3861,7 @@ def update_animal_breeds(dbo: Database, breedid: int = 0) -> str:
     asm3.al.debug(f"breedid={breedid}: updated breeds for {len(batch)} animal records", "update_animal_breeds", dbo)
     return "OK %d" % len(batch)
 
-def update_variable_animal_data(dbo: Database, animalid: int, a: ResultRow = None, animalupdatebatch: List[tuple] = None, bands: List[tuple] = None, movements: Results = None) -> None:
+def update_variable_animal_data(dbo: Database, animalid: int, a: ResultRow = None, animalupdatebatch: List[Tuple] = None, bands: List[Tuple[str, float]] = None, movements: Results = None) -> None:
     """
     Updates the variable data animal fields,
     MostRecentEntryDate, TimeOnShelter, DaysOnShelter, AgeGroup, AnimalAge,
@@ -4156,7 +4158,7 @@ def update_on_shelter_animal_statuses(dbo: Database) -> str:
     asm3.al.debug("updated %d on shelter animal statuses (%d)" % (aff, len(animals)), "animal.update_on_shelter_animal_statuses", dbo)
     return "OK %d" % len(animals)
 
-def update_animal_status(dbo: Database, animalid: int, a: ResultRow = None, movements: Results = None, animalupdatebatch: List[tuple] = None, diaryupdatebatch: List[tuple] = None) -> None:
+def update_animal_status(dbo: Database, animalid: int, a: ResultRow = None, movements: Results = None, animalupdatebatch: List[Tuple] = None, diaryupdatebatch: List[Tuple] = None) -> None:
     """
     Updates the movement status fields on an animal record: 
         ActiveMovement*, HasActiveReserve, HasTrialAdoption, MostRecentEntryDate, 
@@ -5063,7 +5065,7 @@ def update_animal_figures_annual(dbo: Database, year: int = 0) -> str:
             months[12]
         ))
 
-    def sql_months(sql: str, babysplit: bool = False, babymonths: int = 4) -> tuple:
+    def sql_months(sql: str, babysplit: bool = False, babymonths: int = 4) -> Tuple[List[int], List[int]]:
         """ 
             Executes a query and returns two sets of months based on the
             results. 

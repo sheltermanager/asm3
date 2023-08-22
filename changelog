@@ -1,6 +1,7 @@
 48
 ================
 
+22/08/23 Fix for NPE in DISPLAYLOCATION when using mobile_photo_upload
 22/08/23 Additional wordkeys for CurrentVet 
 22/08/23 Abstracted Python3 type hint framework, added to "a" modules #1320
 21/08/23 Make new mobile UI the default #1096
