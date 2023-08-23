@@ -247,8 +247,8 @@ def get_animal_view_adoptable_js(dbo):
     pc = PublishCriteria(asm3.configuration.publisher_presets(dbo))
     rows = get_animal_data(dbo, pc, include_additional_fields = True, strip_personal_data = True)
     for r in rows:
-        r.ANIMALCOMMENTS = r.ANIMALCOMMENTS.replace("\n", "<br>")
-        r.WEBSITEMEDIANOTES = r.WEBSITEMEDIANOTES.replace("\n", "<br>")
+        if r.ANIMALCOMMENTS is not None: r.ANIMALCOMMENTS = r.ANIMALCOMMENTS.replace("\n", "<br>")
+        if r.WEBSITEMEDIANOTES is not None: r.WEBSITEMEDIANOTES = r.WEBSITEMEDIANOTES.replace("\n", "<br>")
     # inject adoptable animals, account and base url
     js = js.replace("{TOKEN_ACCOUNT}", dbo.database)
     js = js.replace("{TOKEN_BASE_URL}", BASE_URL)
