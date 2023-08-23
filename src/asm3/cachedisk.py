@@ -15,15 +15,16 @@ import threading
 import time
 
 from asm3.sitedefs import DISK_CACHE
+from asm3.typehints import Any
 
-def _sanitise_path(path):
+def _sanitise_path(path: str) -> str:
     """
     Make sure the path we've been given is safe to use, it should only
     contain letters and numbers
     """
     return re.sub(r'[\W_]+', '', path)
 
-def _is_hex(s):
+def _is_hex(s: str) -> bool:
     try:
         int(s, 16)
         return True
@@ -32,21 +33,21 @@ def _is_hex(s):
 
 threadlock = threading.Lock()
 
-def _lrunpickle(fname):
+def _lrunpickle(fname: str) -> None:
     """ Reads a file and returns the unpickled contents, using flock to lock the file """
     with threadlock:
         with open(fname, "rb") as fd:
             fcntl.flock(fd, fcntl.LOCK_EX)
             return pickle.load(fd)
 
-def _lwpickle(fname, o):
+def _lwpickle(fname: str, o: Any) -> None:
     """ Pickles and writes o to fname, using flock to lock the file """
     with threadlock:
         with open(fname, "wb") as fd:
             fcntl.flock(fd, fcntl.LOCK_EX)
             pickle.dump(o, fd)
 
-def _getfilename(key, path, mkpath=False):
+def _getfilename(key: str, path: str, mkpath: bool = False) -> str:
     """
     Calculates the filename from the key
     (md5 hash)
@@ -73,7 +74,7 @@ def _getfilename(key, path, mkpath=False):
     fname = os.path.join(path, key)
     return fname
 
-def delete(key, path):
+def delete(key: str, path: str) -> None:
     """
     Removes a value from our disk cache.
     """
@@ -83,14 +84,14 @@ def delete(key, path):
     except Exception as err:
         asm3.al.error(str(err), "cachedisk.delete")
 
-def exists(key, path):
+def exists(key: str, path: str) -> bool:
     """
-    Returns true if a key exists in the cache (does not unpack and check expiry)
+    Returns True if a key exists in the cache (does not unpack and check expiry)
     """
     fname = _getfilename(key, path)
     return os.path.exists(fname)
 
-def increment(key, path, ttl):
+def increment(key: str, path: str, ttl: int) -> int:
     """
     Retrieves a value from our disk cache, increments it and returns the value
     """
@@ -99,7 +100,7 @@ def increment(key, path, ttl):
     put(key, path, v, ttl)
     return v
 
-def get(key, path, expectedtype=None):
+def get(key: str, path: str, expectedtype: Any = None) -> Any:
     """
     Retrieves a value from our disk cache. Returns None if the
     value is not found or has expired.
@@ -129,7 +130,7 @@ def get(key, path, expectedtype=None):
     except Exception as err:
         asm3.al.error("%s/%s: %s" % (path, key, err), "cachedisk.get")
 
-def put(key, path, value, ttl):
+def put(key: str, path: str, value: Any, ttl: int) -> None:
     """
     Stores a value in our disk cache with a time to live of ttl. The value
     will be removed if it is accessed past the ttl.
@@ -147,7 +148,7 @@ def put(key, path, value, ttl):
     except Exception as err:
         asm3.al.error("%s/%s: %s" % (path, key, err), "cachedisk.put")
 
-def touch(key, path, newttl = 0):
+def touch(key: str, path: str, newttl: int = 0) -> None:
     """
     Retrieves a value from our disk cache and resets its ttl.
     This can be used to make our timed expiry cache into a sort of hybrid with LRU.
@@ -176,7 +177,7 @@ def touch(key, path, newttl = 0):
     except Exception as err:
         asm3.al.error("%s/%s: %s" % (path, key, err), "cachedisk.touch")
 
-def remove_expired(path):
+def remove_expired(path: str) -> None:
     """
     Runs through the cache and deletes any files that have expired
     for cache/path

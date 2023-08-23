@@ -4,6 +4,10 @@ import asm3.financial
 import asm3.i18n
 import asm3.utils
 
+from asm3.typehints import Database, PostedData, ResultRow, Results
+
+from datetime import datetime
+
 SCHEDULED = 0
 INVOICE_ONLY = 1
 NOT_ARRIVED = 2
@@ -15,7 +19,7 @@ CANCELLED = 6
 ASCENDING = 0
 DESCENDING = 1
 
-def get_clinic_appointment_query(dbo):
+def get_clinic_appointment_query(dbo: Database) -> str:
     return "SELECT ca.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
         "cs.Status AS ClinicStatusName, " \
@@ -34,11 +38,11 @@ def get_clinic_appointment_query(dbo):
         "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
         "LEFT OUTER JOIN owner o ON ca.OwnerID = o.ID "
 
-def get_clinic_invoice_query(dbo):
+def get_clinic_invoice_query(dbo: Database) -> str:
     return "SELECT ci.* " \
         "FROM clinicinvoiceitem ci "
 
-def get_site_filter(siteid = 0):
+def get_site_filter(siteid: int = 0) -> str:
     """ 
     Returns a site filter for use with appointment queries.
     Filters on people, so if the user has a non-zero siteid, only people with the matching site id are shown
@@ -46,32 +50,32 @@ def get_site_filter(siteid = 0):
     if siteid == 0: return ""
     return " AND o.SiteID = %d" % siteid
 
-def get_appointment(dbo, appointmentid):
+def get_appointment(dbo: Database, appointmentid: int) -> ResultRow:
     """
     Returns an appointment by ID
     """
     return dbo.first_row(dbo.query("%s WHERE ca.ID = ?" % get_clinic_appointment_query(dbo), [appointmentid]))
 
-def get_animal_appointments(dbo, animalid):
+def get_animal_appointments(dbo: Database, animalid: int) -> Results:
     """
     Returns all appointments for an animal
     """
     return dbo.query("%s WHERE ca.AnimalID = ?" % get_clinic_appointment_query(dbo), [animalid])
 
-def get_animal_appointments_due(dbo, animalid, start, end):
+def get_animal_appointments_due(dbo: Database, animalid: int, start: datetime, end: datetime) -> Results:
     """
     Returns all appointments for an animal between start and end (dates)
     """
     return dbo.query("%s WHERE ca.Status = 0 AND ca.AnimalID = ? AND ca.DateTime >= ? AND ca.DateTime <= ? ORDER BY ca.DateTime" % \
         get_clinic_appointment_query(dbo), [animalid, start, end])
 
-def get_person_appointments(dbo, personid):
+def get_person_appointments(dbo: Database, personid: int) -> Results:
     """
     Returns all appointments for a person
     """
     return dbo.query("%s WHERE ca.OwnerID = ?" % get_clinic_appointment_query(dbo), [personid])
 
-def get_appointments_today(dbo, sort=DESCENDING, statusfilter=-1, userfilter="", siteid=0):
+def get_appointments_today(dbo: Database, sort: int = DESCENDING, statusfilter: int = -1, userfilter: str = "", siteid: int = 0) -> Results:
     """
     Gets all appointments that are due today
     """
@@ -86,7 +90,7 @@ def get_appointments_today(dbo, sort=DESCENDING, statusfilter=-1, userfilter="",
     sql = "%s WHERE ca.DateTime >= ? AND ca.DateTime <= ? %s %s %s ORDER BY %s" % (get_clinic_appointment_query(dbo), sf, uf, tf, order)
     return dbo.query(sql, [ dbo.today(), dbo.today(settime="23:59:59") ])
 
-def get_appointments_two_dates(dbo, start, end, apptfor = "", siteid = 0):
+def get_appointments_two_dates(dbo: Database, start: datetime, end: datetime, apptfor: str = "", siteid: int = 0) -> Results:
     """
     Returns appointments due between two dates:
     start, end: dates 
@@ -104,13 +108,13 @@ def get_appointments_two_dates(dbo, start, end, apptfor = "", siteid = 0):
             "AND ca.DateTime >= ? AND ca.DateTime <= ? %s " \
             "ORDER BY ca.DateTime" % (get_site_filter(siteid)), (COMPLETE, CANCELLED, start, end))
 
-def get_invoice_items(dbo, appointmentid):
+def get_invoice_items(dbo: Database, appointmentid: int) -> Results:
     """
     Gets all invoice items for an appointment
     """
     return dbo.query(get_clinic_invoice_query(dbo) + " WHERE ClinicAppointmentID = ? ORDER BY ID", [appointmentid])
 
-def insert_appointment_from_form(dbo, username, post):
+def insert_appointment_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a clinic appointment from posted form data
     """
@@ -135,7 +139,7 @@ def insert_appointment_from_form(dbo, username, post):
         "VATAmount":            post.integer("vatamount")
     }, username)
 
-def update_appointment_from_form(dbo, username, post):
+def update_appointment_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates an appointment from form data.
     NOTE: Amount and VATAmount are not set because they are calculated after invoice item crud.
@@ -159,44 +163,44 @@ def update_appointment_from_form(dbo, username, post):
         "VATRate":              post.floating("vatrate")
     }, username)
 
-def delete_appointment(dbo, username, appointmentid):
+def delete_appointment(dbo: Database, username: str, appointmentid: int) -> None:
     """
     Deletes an appointment
     """
     dbo.delete("clinicinvoiceitem", "ClinicAppointmentID=%d" % appointmentid, username)
     dbo.delete("clinicappointment", appointmentid, username)
 
-def update_appointment_to_waiting(dbo, username, appointmentid, datetime=None):
+def update_appointment_to_waiting(dbo: Database, username: str, appointmentid: int, arrivaltime: datetime = None) -> None:
     """
     Moves an appointment to the waiting status
     """
-    if datetime is None: datetime = dbo.now()
+    if arrivaltime is None: arrivaltime = dbo.now()
     dbo.update("clinicappointment", appointmentid, {
         "Status":           WAITING,
-        "ArrivedDateTime":  datetime
+        "ArrivedDateTime":  arrivaltime
     }, username)
 
-def update_appointment_to_with_vet(dbo, username, appointmentid, datetime=None):
+def update_appointment_to_with_vet(dbo: Database, username: str, appointmentid: int, withvettime: datetime = None) -> None:
     """
     Moves an appointment to the with vet status
     """
-    if datetime is None: datetime = dbo.now()
+    if withvettime is None: withvettime = dbo.now()
     dbo.update("clinicappointment", appointmentid, {
         "Status":           WITH_VET,
-        "WithVetDateTime":  datetime
+        "WithVetDateTime":  withvettime
     }, username)
 
-def update_appointment_to_complete(dbo, username, appointmentid, datetime=None):
+def update_appointment_to_complete(dbo: Database, username: str, appointmentid: int, completetime: datetime = None) -> None:
     """
     Moves an appointment to the complete status
     """
-    if datetime is None: datetime = dbo.now()
+    if completetime is None: completetime = dbo.now()
     dbo.update("clinicappointment", appointmentid, {
         "Status":             COMPLETE,
-        "CompletedDateTime":  datetime
+        "CompletedDateTime":  completetime
     }, username)
 
-def update_appointment_total(dbo, appointmentid):
+def update_appointment_total(dbo: Database, appointmentid: int) -> None:
     """
     Calculates the amount and VAT on an appointment/invoice
     """
@@ -210,7 +214,7 @@ def update_appointment_total(dbo, appointmentid):
         "VATAmount":    vatamount
     })
 
-def insert_invoice_from_form(dbo, username, post):
+def insert_invoice_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates an invoice item from posted form data
     """
@@ -222,7 +226,7 @@ def insert_invoice_from_form(dbo, username, post):
     update_appointment_total(dbo, post.integer("appointmentid"))
     return nid
 
-def update_invoice_from_form(dbo, username, post):
+def update_invoice_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Creates an invoice item from posted form data
     """
@@ -233,7 +237,7 @@ def update_invoice_from_form(dbo, username, post):
     }, username)
     update_appointment_total(dbo, post.integer("appointmentid"))
 
-def delete_invoice(dbo, username, itemid):
+def delete_invoice(dbo: Database, username: str, itemid: int) -> None:
     """
     Deletes an invoice item
     """
@@ -241,7 +245,7 @@ def delete_invoice(dbo, username, itemid):
     dbo.delete("clinicinvoiceitem", itemid, username)
     update_appointment_total(dbo, appointmentid)
 
-def auto_update_statuses(dbo):
+def auto_update_statuses(dbo: Database) -> str:
     """
     Moves on waiting list statuses where appropriate.
     1. For appointments due in the next 20 hours with a status of scheduled, moves them on to "Not Arrived"

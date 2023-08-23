@@ -35,8 +35,9 @@ Dict = typing.Dict
 Tuple = typing.Tuple
 
 Database = "asm3.dbms.base.Database"
-Session = "web.session.Session"
 ResultRow = "asm3.dbms.base.ResultRow"
 Results = "List[asm3.dbms.base.ResultRow]"
 PostedData = "asm3.utils.PostedData"
 
+MemcacheClient = "memcache.Client"
+Session = "web.session.Session"

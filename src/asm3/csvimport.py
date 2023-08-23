@@ -14,11 +14,12 @@ import asm3.movement
 import asm3.person
 import asm3.utils
 
-import datetime
+from asm3.sitedefs import SERVICE_URL
+from asm3.typehints import Any, Database, Dict, List
+
+from datetime import datetime
 import re
 import sys
-
-from asm3.sitedefs import SERVICE_URL
 
 VALID_FIELDS = [
     "ANIMALCODE", "ANIMALNAME", "ANIMALSEX", "ANIMALTYPE", "ANIMALCOLOR", "ANIMALBREED1", "ANIMALBREED2", "ANIMALDOB", 
@@ -57,7 +58,7 @@ VALID_FIELDS = [
     "PERSONMATCHCOMMENTSCONTAIN" 
 ]
 
-def gkc(m, f):
+def gkc(m: Dict, f: str) -> int:
     """ reads field f from map m, assuming a currency amount and returning 
         an integer """
     if f not in m: return 0
@@ -70,13 +71,13 @@ def gkc(m, f):
     except:
         return 0
 
-def gks(m, f):
+def gks(m: Dict, f: str) -> str:
     """ reads field f from map m, returning a string. 
         string is empty if key not present """
     if f not in m: return ""
     return str(asm3.utils.strip_non_ascii(m[f]))
 
-def gkd(dbo, m, f, usetoday = False):
+def gkd(dbo: Database, m: Dict, f: str, usetoday: bool = False) -> datetime:
     """ reads field f from map m, returning a display date. 
         string is empty if key not present or date is invalid.
         If usetoday is set to True, then today's date is returned
@@ -103,13 +104,13 @@ def gkd(dbo, m, f, usetoday = False):
             # Which of our 3 bits is the year?
             if asm3.utils.cint(b[0]) > 1900:
                 # it's Y/M/D
-                d = datetime.datetime(asm3.utils.cint(b[0]), asm3.utils.cint(b[1]), asm3.utils.cint(b[2]))
+                d = datetime(asm3.utils.cint(b[0]), asm3.utils.cint(b[1]), asm3.utils.cint(b[2]))
             elif dbo.locale == "en" or dbo.locale == "en_CA":
                 # Assume it's M/D/Y for US and Canada
-                d = datetime.datetime(asm3.utils.cint(b[2]), asm3.utils.cint(b[0]), asm3.utils.cint(b[1]))
+                d = datetime(asm3.utils.cint(b[2]), asm3.utils.cint(b[0]), asm3.utils.cint(b[1]))
             else:
                 # Assume it's D/M/Y
-                d = datetime.datetime(asm3.utils.cint(b[2]), asm3.utils.cint(b[1]), asm3.utils.cint(b[0]))
+                d = datetime(asm3.utils.cint(b[2]), asm3.utils.cint(b[1]), asm3.utils.cint(b[0]))
             return asm3.i18n.python2display(dbo.locale, d)
         except:
             # We've got an invalid date - return today
@@ -118,7 +119,7 @@ def gkd(dbo, m, f, usetoday = False):
             else:
                 return ""
 
-def gkb(m, f):
+def gkb(m: Dict, f: str) -> bool:
     """ reads field f from map m, returning a boolean. 
         boolean is false if key not present. Interprets
         anything but blank, 0 or N as yes """
@@ -126,14 +127,14 @@ def gkb(m, f):
     if m[f] == "" or m[f] == "0" or m[f].upper().startswith("N"): return False
     return True
 
-def gkbi(m, f):
+def gkbi(m: Dict, f: str) -> str:
     """ reads boolean field f from map m, returning 1 for yes or 0 for no """
     if gkb(m,f):
         return "1"
     else:
         return "0"
 
-def gkbc(m, f):
+def gkbc(m: Dict, f: str) -> str:
     """ reads boolean field f from map m, returning a fake checkbox 
         field of blank for no, "on" for yes """
     if gkb(m,f):
@@ -141,7 +142,7 @@ def gkbc(m, f):
     else:
         return ""
 
-def gkynu(m, f):
+def gkynu(m: Dict, f: str) -> str:
     """ reads field f from map m, returning a tri-state
         switch. Returns 2 (unknown) for a blank field
         Input should start with Y/N/U or 0/1/2 """
@@ -153,7 +154,7 @@ def gkynu(m, f):
     if m[f].find("12") !=-1: return "12" # Good with kids over 12
     return "2"
 
-def gkbr(dbo, m, f, speciesid, create):
+def gkbr(dbo: Database, m: Dict, f: str, speciesid: int, create: bool) -> str:
     """ reads lookup field f from map m, returning a str(int) that
         corresponds to a lookup match for BreedName in breed.
         if create is True, adds a row to the table if it doesn't
@@ -170,7 +171,7 @@ def gkbr(dbo, m, f, speciesid, create):
         return str(nextid)
     return str(matchid)
 
-def gkl(dbo, m, f, table, namefield, create):
+def gkl(dbo: Database, m: Dict, f: str, table: str, namefield: str, create: bool) -> str:
     """ reads lookup field f from map m, returning a str(int) that
         corresponds to a lookup match for namefield in table.
         if create is True, adds a row to the table if it doesn't
@@ -188,7 +189,7 @@ def gkl(dbo, m, f, table, namefield, create):
         return str(nextid)
     return str(matchid)
 
-def gksx(m, f):
+def gksx(m: Dict, f: str) -> str:
     """ 
     Reads a value for Sex from field f in map m
     """
@@ -200,7 +201,7 @@ def gksx(m, f):
     elif x.startswith("a"): return "-1"
     else: return ""
 
-def create_additional_fields(dbo, row, errors, rowno, csvkey = "ANIMALADDITIONAL", linktype = "animal", linkid = 0):
+def create_additional_fields(dbo: Database, row: Dict, errors: List, rowno: int, csvkey: str = "ANIMALADDITIONAL", linktype: str = "animal", linkid: int = 0) -> None:
     """ Identifies and create any additional fields that may have been specified in
         the csv file with csvkey<fieldname> 
         This is used during merge duplicates too as it only sets additional fields if a value
@@ -220,7 +221,7 @@ def create_additional_fields(dbo, row, errors, rowno, csvkey = "ANIMALADDITIONAL
             except Exception as e:
                 errors.append( (rowno, str(row), str(e)) )
 
-def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
+def row_error(errors: List, rowtype: str, rowno: int, row: Dict, e: Any, dbo: Database, exinfo: Any):
     """ 
     Handles error messages during import 
     errors: List of errors to append to
@@ -238,7 +239,10 @@ def row_error(errors, rowtype, rowno, row, e, dbo, exinfo):
     asm3.al.error("row %d %s: (%s): %s" % (rowno, rowtype, str(row), errmsg), "csvimport.row_error", dbo, exinfo)
     errors.append( (rowno, str(row), errmsg) )
 
-def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglookups = False, cleartables = False, checkduplicates = False, prefixanimalcodes = False, entrytoday = False, htmlresults = True):
+def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: str = "", 
+              createmissinglookups: bool = False, cleartables: bool = False, 
+              checkduplicates: bool = False, prefixanimalcodes: bool = False, 
+              entrytoday: bool = False, htmlresults: bool = True) -> str:
     """
     Imports csvdata (bytes string, encoded with encoding)
     createmissinglookups: If a lookup value is given that's not in our data, add it
@@ -953,9 +957,11 @@ def csvimport(dbo, csvdata, encoding = "utf-8-sig", user = "", createmissinglook
     else:
         return asm3.utils.json({ "rows": len(rows), "success": len(rows)-len(errors), "errors": errors })
 
-def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, user = "", encoding="utf-8-sig"):
+def csvimport_paypal(dbo: Database, csvdata: bytes, donationtypeid: int, donationpaymentid: int, flags: str, 
+                     user: str = "", encoding: str = "utf-8-sig") -> str:
     """
     Imports a PayPal CSV file of transactions.
+    Returns an HTML error report.
     """
     def v(r, n, n2 = "", n3 = "", n4 = "", n5 = ""):
         """ Read values n(x) from a dictionary r depending on which is present, 
@@ -1088,11 +1094,13 @@ def csvimport_paypal(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
     h.append("</table>")
     return "".join(h)
 
-def csvimport_stripe(dbo, csvdata, donationtypeid, donationpaymentid, flags, user = "", encoding="utf-8-sig"):
+def csvimport_stripe(dbo: Database, csvdata: bytes, donationtypeid: int, donationpaymentid: int, flags: str, 
+                     user: str = "", encoding: str = "utf-8-sig") -> str:
     """
     Imports a Stripe CSV file of transactions.
+    Returns an HTML error report.
     """
-    def v(r, n):
+    def v(r: Dict, n: str) -> str:
         """ Reads r[n], returning empty string if n does not exist in r """
         if n in r: return r[n]
         return ""
@@ -1215,7 +1223,7 @@ def csvimport_stripe(dbo, csvdata, donationtypeid, donationpaymentid, flags, use
     h.append("</table>")
     return "".join(h)
 
-def csvexport_animals(dbo, dataset, animalids = "", where = "", includemedia = "photo"):
+def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: str = "", includemedia: str = "photo") -> str:
     """
     Export CSV data for a set of animals.
     dataset: The named set of data to use
@@ -1223,6 +1231,7 @@ def csvexport_animals(dbo, dataset, animalids = "", where = "", includemedia = "
     where: If dataset == where, a where clause to the animal table (without the keyword WHERE)
     includemedia: photo: output base64 encoded version of the primary photo for each animal
                   all: output base64 encoded version of all media for each animal
+    Returns an html link to the exported file to download.
     """
     l = dbo.locale
     q = ""
@@ -1261,7 +1270,7 @@ def csvexport_animals(dbo, dataset, animalids = "", where = "", includemedia = "
         "VACCINATIONMANUFACTURER", "VACCINATIONBATCHNUMBER", "VACCINATIONCOMMENTS", 
         "MEDICALNAME", "MEDICALDOSAGE", "MEDICALGIVENDATE", "MEDICALCOMMENTS" ]
     
-    def tocsv(row):
+    def tocsv(row: Dict) -> str:
         r = []
         for k in keys:
             if k in row: 
@@ -1270,7 +1279,7 @@ def csvexport_animals(dbo, dataset, animalids = "", where = "", includemedia = "
                 r.append("\"\"")
         return ",".join(r) + "\n"
 
-    def nn(s):
+    def nn(s: str) -> str:
         if s is None: return ""
         return s
 
