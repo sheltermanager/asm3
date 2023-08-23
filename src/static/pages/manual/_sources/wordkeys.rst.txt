@@ -356,6 +356,8 @@ CurrentVetEmail
     The email address of the animal's current vet
 CurrentVetLicence / CurrentVetLicense
     The veterinary licence number
+CurrentVet Additional Fields
+    Additional fields on the current vet person can be accessed via CurrentVetFIELDNAME
 NeuteringVetName
     The name of the vet that neutered/spayed the animal
 NeuteringVetAddress
@@ -377,9 +379,9 @@ OwnersVetName
 OwnersVetAddress
     The address of the owner's vet
 OwnersVetTown 
-    (CurrentVetCity for US users)
+    (OwnersVetCity for US users)
 OwnersVetCounty 
-    (CurrentVetState for US users)
+    (OwnersVetState for US users)
 OwnersVetPostcode
     The postal code of the owner's vet
 OwnersVetPhone
