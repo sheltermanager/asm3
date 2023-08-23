@@ -4,9 +4,7 @@ import asm3.financial
 import asm3.i18n
 import asm3.utils
 
-from asm3.typehints import Database, PostedData, ResultRow, Results
-
-from datetime import datetime
+from asm3.typehints import datetime, Database, PostedData, ResultRow, Results
 
 SCHEDULED = 0
 INVOICE_ONLY = 1

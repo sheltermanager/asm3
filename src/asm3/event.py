@@ -2,15 +2,15 @@ import asm3.additional
 import asm3.movement
 
 from asm3.i18n import _
+from asm3.typehints import datetime, Database, PostedData, ResultRow, Results
 
-
-def get_event_query(dbo):
+def get_event_query(dbo: Database) -> str:
     return "SELECT ev.*, owner.OwnerName AS EventOwnerName, " \
         "(SELECT COUNT(*) FROM adoption a WHERE a.EventID = ev.ID) AS adoptions " \
         "FROM event ev " \
         "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID "
 
-def get_event_animal_query(dbo):
+def get_event_animal_query(dbo: Database) -> str:
     return "SELECT ea.ID, owner.OwnerName AS EventOwnerName, ea.ArrivalDate, ea.Comments, " \
         "a.id AS AnimalID, a.animalname, a.SHORTCODE, a.SHELTERCODE, a.MOSTRECENTENTRYDATE, a.LASTCHANGEDDATE, a.LASTCHANGEDBY,  a.AcceptanceNumber AS LitterID, a.AnimalAge, " \
         "a.Sex, s.SpeciesName, a.DisplayLocation, a.AgeGroup, " \
@@ -38,20 +38,20 @@ def get_event_animal_query(dbo):
         "LEFT OUTER JOIN adoption lf ON lf.ID = (SELECT MAX(ID) FROM adoption WHERE AnimalID = ea.AnimalID AND MovementType = 2) " \
         "LEFT OUTER JOIN owner lfo ON lfo.ID = lf.OwnerID "
 
-def get_event(dbo, eventid):
+def get_event(dbo: Database, eventid: int) -> ResultRow:
     """
     Returns a complete event row by id
     """
     return dbo.first_row(dbo.query(get_event_query(dbo) + "WHERE ev.ID = ?", [eventid]))
 
-def get_events_by_animal(dbo, animalid):
+def get_events_by_animal(dbo: Database, animalid: int) -> Results:
     """
     Returns all events for animalid
     """
     rows = dbo.query(get_event_animal_query(dbo) + " WHERE ea.animalid = ?", [animalid])
     return rows
 
-def get_animals_by_event(dbo, eventid, queryfilter="all"):
+def get_animals_by_event(dbo: Database, eventid: int, queryfilter: str = "all") -> Results:
     """
     Returns all animals for animalid.
     if queryfilter is provided, add conditions
@@ -71,13 +71,13 @@ def get_animals_by_event(dbo, eventid, queryfilter="all"):
         ae["AGEGROUP"] = asm3.animal.calc_age_group(dbo, ae["ANIMALID"])
     return rows
 
-def get_events_by_date(dbo, date):
+def get_events_by_date(dbo: Database, date: datetime) -> Results:
     """
     Returns all events that match date
     """
     return dbo.query(get_event_query(dbo) + "WHERE (ev.StartDateTime <= ? AND ? <= ev.EndDateTime) ORDER BY ev.StartDateTime", [date, date])
 
-def insert_event_from_form(dbo, post, username):
+def insert_event_from_form(dbo: Database, post: PostedData, username: str) -> int:
     l = dbo.locale
     ownerid = post["ownerid"]
     if ownerid == "" or ownerid == "0":
@@ -109,7 +109,7 @@ def insert_event_from_form(dbo, post, username):
     asm3.additional.save_values_for_link(dbo, post, username, eid, "event", True)
     return eid
 
-def update_event_from_form(dbo, post, username):
+def update_event_from_form(dbo: Database, post: PostedData, username: str) -> None:
     """
     Updates an existing event record from incoming form data
     """
@@ -145,7 +145,7 @@ def update_event_from_form(dbo, post, username):
     # Save any asm3.additional.field values given
     asm3.additional.save_values_for_link(dbo, post, username, eid, "event")
 
-def delete_event(dbo, username, eventid):
+def delete_event(dbo: Database, username: str, eventid: int) -> None:
     """
     Deletes a person and all its satellite records.
     """
@@ -156,7 +156,7 @@ def delete_event(dbo, username, eventid):
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (eventid, asm3.additional.EVENT_IN))
     dbo.delete("event", eventid, username)
 
-def get_event_find_advanced(dbo, criteria, limit = 0, siteid = 0):
+def get_event_find_advanced(dbo: Database, criteria: str, limit: int = 0, siteid:  int = 0) -> Results:
     """
     Returns rows for advanced animal control searches.
     criteria: A dictionary of criteria
@@ -187,8 +187,7 @@ def get_event_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     rows = dbo.query(sql, ss.values, limit=limit, distincton="ID")
     return rows
 
-
-def insert_event_animal(dbo, username, post):
+def insert_event_animal(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates an eventanimal record from posted form data
     """
@@ -203,7 +202,7 @@ def insert_event_animal(dbo, username, post):
         }, username)
     return eventanimalid
 
-def update_event_animal(dbo, username, post):
+def update_event_animal(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates an eventanimal record from posted form data
     """
@@ -214,19 +213,19 @@ def update_event_animal(dbo, username, post):
     if "comments" in post: kvp["Comments"] = post["comments"]
     dbo.update("eventanimal", eventanimalid, kvp, username)
 
-def update_event_animal_arrived(dbo, username, eaid):
+def update_event_animal_arrived(dbo: Database, username: str, eaid: int) -> None:
     sql = "SELECT id FROM eventanimal WHERE id = ? AND ArrivalDate IS NULL"
     eventanimalid = dbo.query_int(sql, [eaid])
     if eventanimalid != 0:
         dbo.update("eventanimal", eventanimalid, {"ArrivalDate": dbo.now()})
 
-def delete_event_animal(dbo, username, id):
+def delete_event_animal(dbo: Database, username: str, id: int) -> None:
     """
     Deletes an eventanimal record
     """
     dbo.delete("eventanimal", id, username)
 
-def end_active_foster(dbo, username, eventanimalid):
+def end_active_foster(dbo: Database, username: str, eventanimalid: int) -> None:
     """
     Set return date for an active foster for animal(s) in event
     """

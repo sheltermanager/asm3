@@ -11,6 +11,8 @@ import asm3.utils
 import asm3.waitinglist
 import asm3.wordprocessor
 
+from asm3.typehints import datetime, Database, PostedData, ResultRow, Results
+
 # Diary Links
 NO_LINK = 0
 ANIMAL = 1
@@ -24,7 +26,7 @@ ANIMALCONTROL = 7
 ANIMAL_TASK = 0
 PERSON_TASK = 1
 
-def email_uncompleted_upto_today(dbo):
+def email_uncompleted_upto_today(dbo: Database) -> None:
     """
     Goes through all system users and emails them their diary for the
     day - unless the option is turned off.
@@ -62,7 +64,7 @@ def email_uncompleted_upto_today(dbo):
                 if asm3.configuration.audit_on_send_email(dbo): 
                     asm3.audit.email(dbo, "system", asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s)
 
-def email_note_on_change(dbo, n, username):
+def email_note_on_change(dbo: Database, n: ResultRow, username: str) -> None:
     """
     Emails the recipients of a diary note n with the note content
     username the user triggering the send by adding/updating a diary
@@ -88,7 +90,7 @@ def email_note_on_change(dbo, n, username):
                 if asm3.configuration.audit_on_send_email(dbo): 
                     asm3.audit.email(dbo, username, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s)
 
-def email_note_on_complete(dbo, n, username):
+def email_note_on_complete(dbo: Database, n: ResultRow, username: str) -> None:
     """
     Emails the creator of a diary note n with the note's content 
     username the user triggering the send by completing a diary
@@ -112,12 +114,12 @@ def email_note_on_complete(dbo, n, username):
                 if asm3.configuration.audit_on_send_email(dbo): 
                     asm3.audit.email(dbo, username, asm3.configuration.email(dbo), u.emailaddress, "", "", subject, s)
 
-def user_role_where_clause(dbo, user = "", includecreatedby = True):
+def user_role_where_clause(dbo: Database, user: str = "", includecreatedby: bool = True) -> str:
     """
     Returns a suitable where clause for filtering diary notes
     to the given user or any roles the user is in. If user is
     blank, the where clause return is empty.
-    includecreatedby: If true includes diary notes this user created as well as those for them.
+    includecreatedby: If True includes diary notes this user created as well as those for them.
     """
     if user == "": return "1=1"
     roles = asm3.users.get_roles_for_user(dbo, user)
@@ -129,7 +131,7 @@ def user_role_where_clause(dbo, user = "", includecreatedby = True):
         sroles.append(dbo.sql_value(r))
     return "(DiaryForName = %s %s OR DiaryForName IN (%s))" % (dbo.sql_value(user), createdby, ",".join(sroles))
 
-def get_between_two_dates(dbo, user, start, end):
+def get_between_two_dates(dbo: Database, user: str, start: datetime, end: datetime):
     """
     Gets a list of incomplete diary notes between two dates for the user supplied
     LINKID, LINKTYPE, DIARYDATETIME, DIARYFORNAME, SUBJECT, NOTE, LINKINFO
@@ -141,7 +143,7 @@ def get_between_two_dates(dbo, user, start, end):
         "AND DateCompleted Is Null AND DiaryDateTime >= ? AND DiaryDateTime <= ? " \
         "ORDER BY DiaryDateTime DESC" % user_role_where_clause(dbo, user), (start, end))
 
-def get_uncompleted_upto_today(dbo, user = "", includecreatedby = True, offset=-99999):
+def get_uncompleted_upto_today(dbo: Database, user: str = "", includecreatedby: bool = True, offset: int = -99999) -> Results:
     """
     Gets a list of uncompleted diary notes upto and including
     today for the user supplied (or all users if no user passed)
@@ -155,7 +157,7 @@ def get_uncompleted_upto_today(dbo, user = "", includecreatedby = True, offset=-
         "AND d.DateCompleted Is Null AND d.DiaryDateTime <= ? AND d.DiaryDateTime >= ? " \
         "ORDER BY d.DiaryDateTime DESC" % user_role_where_clause(dbo, user, includecreatedby), ( alltoday, cutoff ))
 
-def get_completed_upto_today(dbo, user = ""):
+def get_completed_upto_today(dbo: Database, user: str = "") -> Results:
     """
     Gets a list of completed diary notes upto and including
     today for the user supplied (or all users if no user passed)
@@ -167,8 +169,8 @@ def get_completed_upto_today(dbo, user = ""):
         "AND d.DateCompleted Is Not Null AND d.DiaryDateTime <= ? AND d.DiaryDateTime >= ? " \
         "ORDER BY d.DiaryDateTime DESC" % user_role_where_clause(dbo, user), ( dbo.now(), cutoff ))
 
-def get_all_upto_today(dbo, user = ""):
-    """f
+def get_all_upto_today(dbo: Database, user: str = "") -> Results:
+    """
     Gets a list of all diary notes upto and including
     today for the user supplied (or all users if no user passed)
     LINKID, LINKTYPE, DIARYDATETIME, DIARYFORNAME, SUBJECT, NOTE, LINKINFO
@@ -179,7 +181,7 @@ def get_all_upto_today(dbo, user = ""):
         "AND d.DiaryDateTime <= ? AND d.DiaryDateTime >= ? " \
         "ORDER BY d.DiaryDateTime DESC" % user_role_where_clause(dbo, user), ( dbo.now(), cutoff ))
 
-def get_future(dbo, user = ""):
+def get_future(dbo: Database, user: str = "") -> Results:
     """
     Gets a list of future diary notes
     for the user supplied (or all users if no user passed)
@@ -190,7 +192,7 @@ def get_future(dbo, user = ""):
         "AND d.DiaryDateTime > ? " \
         "ORDER BY d.DiaryDateTime" % user_role_where_clause(dbo, user), [ dbo.now() ])
 
-def complete_diary_note(dbo, username, diaryid):
+def complete_diary_note(dbo: Database, username: str, diaryid: int) -> None:
     """
     Marks a diary note completed as of right now
     """
@@ -199,7 +201,7 @@ def complete_diary_note(dbo, username, diaryid):
     }, username)
     email_note_on_complete(dbo, get_diary(dbo, diaryid), username)
 
-def complete_diary_notes_for_animal(dbo, username, animalid):
+def complete_diary_notes_for_animal(dbo: Database, username: str, animalid: int) -> None:
     """
     Marks all diary notes for an animal complete.
     """
@@ -209,7 +211,7 @@ def complete_diary_notes_for_animal(dbo, username, animalid):
     for n in dbo.query("SELECT ID FROM diary WHERE LinkType=%d AND LinkID=%d" % (ANIMAL, animalid)):
         email_note_on_complete(dbo, get_diary(dbo, n.id), username)
 
-def rediarise_diary_note(dbo, username, diaryid, newdate):
+def rediarise_diary_note(dbo: Database, username: str, diaryid: int, newdate: datetime) -> None:
     """
     Moves a diary note on to the date supplied (newdate is a python date)
     """
@@ -218,7 +220,7 @@ def rediarise_diary_note(dbo, username, diaryid, newdate):
     }, username)
     email_note_on_change(dbo, get_diary(dbo, diaryid), username)
 
-def get_animal_tasks(dbo):
+def get_animal_tasks(dbo: Database) -> Results:
     """
     Lists all diary tasks for animals
     """
@@ -228,7 +230,7 @@ def get_animal_tasks(dbo):
         "ELSE 0 END AS NEEDSDATE " \
         "FROM diarytaskhead dth WHERE dth.RecordType = %d" % ANIMAL_TASK)
 
-def get_person_tasks(dbo):
+def get_person_tasks(dbo: Database) -> Results:
     """
     Lists all diary tasks for people
     """
@@ -238,7 +240,7 @@ def get_person_tasks(dbo):
         "ELSE 0 END AS NEEDSDATE " \
         "FROM diarytaskhead dth WHERE dth.RecordType = %d" % PERSON_TASK)
 
-def get_diarytasks(dbo):
+def get_diarytasks(dbo: Database) -> Results:
     """
     Returns all diary tasks headers with a NUMBEROFTASKS value.
     """
@@ -247,13 +249,13 @@ def get_diarytasks(dbo):
         "FROM diarytaskhead dth " \
         "ORDER BY dth.Name")
 
-def get_diarytask_name(dbo, taskid):
+def get_diarytask_name(dbo: Database, taskid: int) -> str:
     """
     Returns the name for a diarytask
     """
     return dbo.query_string("SELECT Name FROM diarytaskhead WHERE ID = ?", [taskid])
 
-def get_diarytask_details(dbo, headid):
+def get_diarytask_details(dbo: Database, headid: int) -> Results:
     """
     Returns the detail rows for a diary task
     """
@@ -263,19 +265,19 @@ def get_diarytask_details(dbo, headid):
         r["NOTE"] = r["NOTE"]
     return rows
 
-def get_diary(dbo, diaryid):
+def get_diary(dbo: Database, diaryid: int) -> ResultRow:
     """
     Returns a diary record
     """
     return dbo.first_row(dbo.query("SELECT * FROM diary WHERE ID = ?", [diaryid]))
 
-def delete_diary(dbo, username, diaryid):
+def delete_diary(dbo: Database, username: str, diaryid: int) -> None:
     """
     Deletes a diary record
     """
     dbo.delete("diary", diaryid, username)
 
-def get_diaries(dbo, linktypeid, linkid):
+def get_diaries(dbo: Database, linktypeid: int, linkid: int) -> Results:
     """
     Returns all diary notes for a particular link
     """
@@ -283,7 +285,7 @@ def get_diaries(dbo, linktypeid, linkid):
         "FROM diary d WHERE d.LinkType= ? AND d.LinkID= ? " \
         "ORDER BY d.DiaryDateTime", (linktypeid, linkid) )
 
-def get_link_info(dbo, linktypeid, linkid):
+def get_link_info(dbo: Database, linktypeid: int, linkid: int) -> str:
     """
     Returns the linkinfo string for the id/type
     """
@@ -306,7 +308,7 @@ def get_link_info(dbo, linktypeid, linkid):
     elif linktypeid == WAITINGLIST:
         return asm3.i18n._("Waiting List: {0}", l).format(asm3.waitinglist.get_person_name(dbo, linkid))
 
-def update_link_info(dbo, username, linktypeid, linkid):
+def update_link_info(dbo: Database, username: str, linktypeid: int, linkid: int) -> None:
     """
     Updates all diary notes of linktypeid/linkid
     """
@@ -314,7 +316,7 @@ def update_link_info(dbo, username, linktypeid, linkid):
         "LinkInfo":     get_link_info(dbo, linktypeid, linkid)
     }, username)
 
-def update_link_info_incomplete(dbo):
+def update_link_info_incomplete(dbo: Database) -> None:
     """
     Updates the link info of all incomplete diary notes
     """
@@ -325,7 +327,7 @@ def update_link_info_incomplete(dbo):
         asm3.asynctask.increment_progress_value(dbo)
     asm3.al.info(f"updated {len(rows)} diary link info elements", "diary.update_link_info_incomplete", dbo)
 
-def insert_diary_from_form(dbo, username, linktypeid, linkid, post):
+def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid: int, post: PostedData) -> int:
     """
     Creates a diary note from the form data
     username: User creating the diary
@@ -363,7 +365,7 @@ def insert_diary_from_form(dbo, username, linktypeid, linkid, post):
     email_note_on_change(dbo, get_diary(dbo, diaryid), username)
     return diaryid
 
-def insert_diary(dbo, username, linktypeid, linkid, diarydate, diaryfor, subject, note):
+def insert_diary(dbo: Database, username: str, linktypeid: int, linkid: int, diarydate: datetime, diaryfor: str, subject: str, note: str) -> int:
     """
     Creates a diary note from the form data
     username: User creating the diary
@@ -389,7 +391,7 @@ def insert_diary(dbo, username, linktypeid, linkid, diarydate, diaryfor, subject
     email_note_on_change(dbo, get_diary(dbo, diaryid), username)
     return diaryid
 
-def update_diary_from_form(dbo, username, post):
+def update_diary_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a diary note from form data
     """
@@ -422,7 +424,7 @@ def update_diary_from_form(dbo, username, post):
     else:
         email_note_on_complete(dbo, get_diary(dbo, diaryid), username)
 
-def execute_diary_task(dbo, username, tasktype, taskid, linkid, selecteddate):
+def execute_diary_task(dbo: Database, username: str, tasktype: int, taskid: int, linkid: int, selecteddate: datetime) -> None:
     """
     Runs a diary task
     tasktype: ANIMAL or PERSON
@@ -450,7 +452,7 @@ def execute_diary_task(dbo, username, tasktype, taskid, linkid, selecteddate):
             asm3.wordprocessor.substitute_tags(d.SUBJECT, tags), \
             asm3.wordprocessor.substitute_tags(d.NOTE, tags))
 
-def insert_diarytaskhead_from_form(dbo, username, post):
+def insert_diarytaskhead_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a diary task header from form data
     """
@@ -460,7 +462,7 @@ def insert_diarytaskhead_from_form(dbo, username, post):
         "RecordVersion":    0
     }, username, setCreated=False)
 
-def update_diarytaskhead_from_form(dbo, username, post):
+def update_diarytaskhead_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a diary task header from form data
     """
@@ -469,14 +471,14 @@ def update_diarytaskhead_from_form(dbo, username, post):
         "RecordType":       post.integer("type")
     }, username, setLastChanged=False)
 
-def delete_diarytask(dbo, username, taskid):
+def delete_diarytask(dbo: Database, username: str, taskid: int) -> None:
     """
     Deletes a diary task
     """
     dbo.delete("diarytaskdetail", "DiaryTaskHeadID=%d" % taskid, username)
     dbo.delete("diarytaskhead", taskid, username)
 
-def insert_diarytaskdetail_from_form(dbo, username, post):
+def insert_diarytaskdetail_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a diary task detail from form data
     """
@@ -490,7 +492,7 @@ def insert_diarytaskdetail_from_form(dbo, username, post):
         "RecordVersion":        0
     }, username, setCreated=False)
 
-def update_diarytaskdetail_from_form(dbo, username, post):
+def update_diarytaskdetail_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a diary task detail from form data
     """
@@ -502,10 +504,9 @@ def update_diarytaskdetail_from_form(dbo, username, post):
         "Note":                 post["note"]
     }, username, setLastChanged=False)
 
-def delete_diarytaskdetail(dbo, username, did):
+def delete_diarytaskdetail(dbo: Database, username: str, did: int) -> None:
     """
     Deletes a diary task detail record
     """
     dbo.delete("diarytaskdetail", did, username)
-
 
