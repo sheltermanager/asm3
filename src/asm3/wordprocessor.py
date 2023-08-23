@@ -20,7 +20,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
-from asm3.i18n import _, date_diff_days, format_currency, format_currency_no_symbol, format_diff_single, format_time, now, python2display, python2displaytime, yes_no
+from asm3.i18n import _, date_diff_days, format_currency, format_currency_no_symbol, format_diff, format_diff_single, format_time, now, python2display, python2displaytime, yes_no
 
 import zipfile
 
