@@ -2,7 +2,7 @@ Cage Cards (all animals in location)
 ###
 Inventories
 ###
-34302/Any omitcriteria omitheaderfooter rev02
+34302/Any omitcriteria omitheaderfooter rev03
 ###
 Animal cage cards with images for all on animals in a location.
 ###
@@ -20,6 +20,7 @@ animal.shelterLocation,
 animal.animalTypeID,
 animal.Markings,
 lksize.Size,
+animal.weight,
 animal.AnimalComments,
 animal.datebroughtin,
 animal.dateofbirth,
@@ -98,6 +99,7 @@ Breed: <b>$BreedName</b><br />
 Color: <b>$BaseColour</b><br />
 Markings: <b>$Markings</b><br />
 Size: <b>$Size</b><br />
+Weight: <b>$Weight</b><br />
 Microchip: <b>$identichipnumber</b><br />
 Heartworm: <b>$heartworm</b><br />
 FIV/L: <b>$fivl</b><br />
