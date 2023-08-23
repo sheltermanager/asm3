@@ -79,7 +79,9 @@ ShelterCode
 ShortShelterCode
     The shortened version of the shelter code 
 Age
-    The animal's age in readable form (eg: “5 years and 6 months”) 
+    The animal's age in readable form (eg: "6 weeks", “5 years”) 
+AgeYM
+    The animal's age in years and months (eg: “5 years and 6 months”) 
 Description / AnimalComments
     The animal description box. 
 DescriptionAttr

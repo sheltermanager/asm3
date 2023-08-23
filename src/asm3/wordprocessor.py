@@ -231,6 +231,11 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
     animalage = format_diff_single(l, date_diff_days(a["DATEOFBIRTH"], dbo.today()))
     if animalage and animalage.endswith("."): 
         animalage = animalage[0:len(animalage)-1]
+
+    # animal age but with the years and months
+    animalageym = format_diff(l, date_diff_days(a["DATEOFBIRTH"], dbo.today()))
+    if animalageym and animalageym.endswith("."): 
+        animalageym = animalageym[0:len(animalageym)-1]
    
     # strip full stop from the end of time on shelter
     timeonshelter = a["TIMEONSHELTER"]
@@ -499,6 +504,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
         "DESCRIPTIONBR"         : a["ANIMALCOMMENTS"],
         "SHELTERCODE"           : a["SHELTERCODE"],
         "AGE"                   : animalage,
+        "AGEYM"                 : animalageym,
         "ACCEPTANCENUMBER"      : a["ACCEPTANCENUMBER"],
         "LITTERID"              : a["ACCEPTANCENUMBER"],
         "DECEASEDDATE"          : python2display(l, a["DECEASEDDATE"]),
