@@ -35,7 +35,7 @@ $(function() {
             }
 
             // Output the column headings in the table
-            h.push('<thead><tr><th>' + _("Animal") + '</th>');
+            h.push('<thead><tr><th>' + _("Animal") + '</th><th>' + _("Unit") + '</th>');
             $.each(colnames, function(i, v) {
                 h.push('<th>' + v + '</th>');
             });
@@ -48,8 +48,9 @@ $(function() {
                 if (a.ACTIVEMOVEMENTTYPE) { return; }
                 h.push('<tr data-animalid="' + a.ID + '" data-locationid="' + a.SHELTERLOCATION + '" style="display: none">');
                 h.push('<td><input type="checkbox" class="asm-checkbox selector" /> ');
-                h.push(html.animal_link(a, { showunit: true, emblemsright: true }));
+                h.push(html.animal_link(a, { emblemsright: true }));
                 h.push('</td>');
+                h.push('<td>' + common.nulltostr(a.SHELTERLOCATIONUNIT) + '</td>');
                 $.each(colnames, function(i, c) {
                     h.push('<td class="centered">' + colwidgets[i] + '</td>');
                 });
@@ -69,6 +70,7 @@ $(function() {
         bind: function() {
 
             $(".asm-daily-observations").table();
+            $(".asm-daily-observations").trigger("sorton", [[[1,0]]]); // sort on unit ascending
             
             $("#button-selectall").button({
                 icons: { primary: "ui-icon-check" },
