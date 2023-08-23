@@ -3,10 +3,11 @@ import asm3.dbms.hsqldb, asm3.dbms.mysql, asm3.dbms.postgresql, asm3.dbms.sqlite
 import asm3.smcom 
 
 from asm3.sitedefs import DB_TYPE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_MAP, MULTIPLE_DATABASES_TYPE
+from asm3.typehints import Database
 
 ERROR_VALUES = ( "FAIL", "DISABLED", "WRONGSERVER" )
 
-def get_dbo(t = None):
+def get_dbo(t: str = None) -> Database:
     """ Returns a dbo object for the current database backend, or type t if supplied """
     m = {
         "HSQLDB":       asm3.dbms.hsqldb.DatabaseHSQLDB,
@@ -20,7 +21,7 @@ def get_dbo(t = None):
     x.dbtype = t
     return x
 
-def get_database(alias = ""):
+def get_database(alias: str = "") -> Database:
     """ Gets the current database connection. Requires an alias/db for multiple/smcom """
     if MULTIPLE_DATABASES:
         if MULTIPLE_DATABASES_TYPE == "smcom":
@@ -34,7 +35,7 @@ def get_database(alias = ""):
         dbo = get_dbo()
     return dbo
 
-def _get_multiple_database_info(alias):
+def _get_multiple_database_info(alias: str) -> Database:
     """ Gets the Database object for the alias in our map MULTIPLE_DATABASES_MAP. """
     if alias not in MULTIPLE_DATABASES_MAP:
         dbo = get_database()

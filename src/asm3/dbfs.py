@@ -7,6 +7,7 @@ import asm3.utils
 from asm3.sitedefs import DBFS_STORE, DBFS_FILESTORAGE_FOLDER
 from asm3.sitedefs import DBFS_S3_BUCKET, DBFS_S3_ACCESS_KEY_ID, DBFS_S3_SECRET_ACCESS_KEY, DBFS_S3_ENDPOINT_URL
 from asm3.sitedefs import DBFS_S3_MIGRATE_BUCKET, DBFS_S3_MIGRATE_ACCESS_KEY_ID, DBFS_S3_MIGRATE_SECRET_ACCESS_KEY, DBFS_S3_MIGRATE_ENDPOINT_URL
+from asm3.typehints import Any, Database, List, Results, S3Client
 
 import mimetypes
 import os, sys, threading, time
@@ -16,14 +17,14 @@ import web062 as web
 class DBFSStorage(object):
     """ DBFSStorage factory """
     o = None
-    def __init__(self, dbo, url = "default" ):
+    def __init__(self, dbo: Database, url: str = "default" ) -> None:
         """ Creates the correct storage object from mode or url """
         if url == "default":
             self._storage_from_mode(dbo)
         else:
             self._storage_from_url(dbo, url)
 
-    def _storage_from_url(self, dbo, url):
+    def _storage_from_url(self, dbo: Database, url: str) -> None:
         """ Creates an appropriate storage object for the url given. """
         if url is None or url == "" or url.startswith("base64:"):
             self.o = B64DBStorage(dbo)
@@ -34,7 +35,7 @@ class DBFSStorage(object):
         else:
             raise DBFSError("Invalid storage URL: %s" % url)
 
-    def _storage_from_mode(self, dbo):
+    def _storage_from_mode(self, dbo: Database) -> None:
         """ Creates an appropriate storage object for the mode given """
         if DBFS_STORE == "database":
             self.o = B64DBStorage(dbo)
@@ -45,20 +46,20 @@ class DBFSStorage(object):
         else:
             raise DBFSError("Invalid storage mode: %s" % DBFS_STORE)
 
-    def _extension_from_filename(self, filename):
+    def _extension_from_filename(self, filename: str) -> str:
         if filename is None or filename.find(".") == -1: return ""
         return filename[filename.rfind("."):]
 
-    def get(self, dbfsid, url):
+    def get(self, dbfsid: int, url: str) -> bytes:
         """ Get file data for dbfsid/url """
         return self.o.get(dbfsid, url)
-    def put(self, dbfsid, filename, filedata):
+    def put(self, dbfsid: int, filename: str, filedata: bytes) -> str:
         """ Store filedata for dbfsid, returning a url """
         return self.o.put(dbfsid, filename, filedata)
-    def delete(self, url):
+    def delete(self, url: str) -> None:
         """ Delete filedata for url """
         return self.o.delete(url)
-    def url_prefix(self):
+    def url_prefix(self) -> str:
         return self.o.url_prefix()
 
 class B64DBStorage(DBFSStorage):
@@ -66,10 +67,10 @@ class B64DBStorage(DBFSStorage):
         in the database """
     dbo = None
     
-    def __init__(self, dbo):
+    def __init__(self, dbo: Database) -> None:
         self.dbo = dbo
     
-    def get(self, dbfsid, dummy):
+    def get(self, dbfsid: int, dummy: str) -> bytes:
         """ Returns the file data for dbfsid or blank if not found/error """
         r = self.dbo.query_tuple("SELECT Content FROM dbfs WHERE ID = ?", [dbfsid])
         if len(r) == 0:
@@ -80,33 +81,33 @@ class B64DBStorage(DBFSStorage):
             em = str(sys.exc_info()[0])
             raise DBFSError("Failed unpacking base64 content with ID %s: %s" % (dbfsid, em))
 
-    def put(self, dbfsid, filename, filedata):
+    def put(self, dbfsid: int, filename: str, filedata: bytes) -> str:
         """ Stores the file data and returns a URL """
         url = "base64:"
         s = asm3.utils.base64encode(filedata)
         self.dbo.execute("UPDATE dbfs SET URL = ?, Content = ? WHERE ID = ?", (url, s, dbfsid))
         return url
 
-    def delete(self, url):
+    def delete(self, url: str) -> None:
         """ Do nothing - removing the database row takes care of it """
         pass
 
-    def url_prefix(self):
+    def url_prefix(self) -> str:
         return "base64:"
 
 class FileStorage(DBFSStorage):
     """ Storage class for putting media on disk """
     dbo = None
     
-    def __init__(self, dbo):
+    def __init__(self, dbo: Database):
         self.dbo = dbo
 
-    def get(self, dbfsid, url):
+    def get(self, dbfsid: int, url: str) -> bytes:
         """ Returns the file data for url """
         filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, url.replace("file:", ""))
         return asm3.utils.read_binary_file(filepath)
 
-    def put(self, dbfsid, filename, filedata):
+    def put(self, dbfsid: int, filename: str, filedata: bytes) -> str:
         """ Stores the file data (clearing the Content column) and returns the URL """
         try:
             path = "%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database)
@@ -121,7 +122,7 @@ class FileStorage(DBFSStorage):
         self.dbo.execute("UPDATE dbfs SET URL = ?, Content = '' WHERE ID = ?", (url, dbfsid))
         return url
 
-    def delete(self, url):
+    def delete(self, url: str) -> None:
         """ Deletes the file data """
         filepath = "%s/%s/%s" % (DBFS_FILESTORAGE_FOLDER, self.dbo.database, url.replace("file:", ""))
         try:
@@ -129,7 +130,7 @@ class FileStorage(DBFSStorage):
         except Exception as err:
             asm3.al.error("Failed deleting '%s': %s" % (url, err), "FileStorage.delete", self.dbo)
 
-    def url_prefix(self):
+    def url_prefix(self) -> str:
         return "file:"
 
 class S3Storage(DBFSStorage):
@@ -140,7 +141,7 @@ class S3Storage(DBFSStorage):
     endpoint_url = ""
     bucket = ""
     
-    def __init__(self, dbo, access_key_id="", secret_access_key="", endpoint_url="", bucket=""):
+    def __init__(self, dbo: Database, access_key_id: str = "", secret_access_key: str = "", endpoint_url: str = "", bucket: str = "") -> None:
         self.dbo = dbo
         self.access_key_id = DBFS_S3_ACCESS_KEY_ID
         self.secret_access_key = DBFS_S3_SECRET_ACCESS_KEY
@@ -152,18 +153,18 @@ class S3Storage(DBFSStorage):
         if endpoint_url != "": self.endpoint_url = endpoint_url 
         if self.endpoint_url == "aws": self.endpoint_url = "" # use "aws" in config files for aws default
 
-    def _cache_key(self, url):
+    def _cache_key(self, url: str) -> str:
         """ Calculates a cache key for url """
         return "%s:%s" % (self.dbo.database, url)
 
-    def _cache_ttl(self, name):
+    def _cache_ttl(self, name: str) -> int:
         """ Gets the cache ttl for a file based on its name/extension """
         #name = name.lower()
         #if name.endswith(".jpg") or name.endswith(".jpeg"): return (86400 * 7) # Cache images for a week
         #return (86400 * 2) # Cache everything else for two days
         return (86400 * 7) # Cache everything for 1 week
 
-    def _s3client(self):
+    def _s3client(self) -> S3Client:
         """ Gets an s3 client.
             Creates a new boto3 session each time as the default one is not thread safe
             This does have a significant performance impact. There's a boto issue to make sessions thread safe in future.
@@ -183,7 +184,7 @@ class S3Storage(DBFSStorage):
         else:
             return session.client("s3")
 
-    def get(self, dbfsid, url, migrate=True):
+    def get(self, dbfsid: int, url: str, migrate: bool = True) -> bytes:
         """ Returns the file data for url, reads through the disk cache """
         cachekey = self._cache_key(url)
         cachettl = self._cache_ttl(url)
@@ -211,7 +212,7 @@ class S3Storage(DBFSStorage):
                 asm3.al.error("s3://%s/%s: %s" % (self.bucket, object_key, err), "dbfs.S3Storage.get", self.dbo)
                 raise DBFSError("Failed retrieving %s from S3 (endpoint=%s): %s" % (object_key, self.endpoint_url, err))
 
-    def put(self, dbfsid, filename, filedata):
+    def put(self, dbfsid: int, filename: str, filedata: bytes) -> str:
         """ Stores the file data (clearing the Content column) and returns the URL """
         extension = self._extension_from_filename(filename)
         object_key = "%s/%s%s" % (self.dbo.database, dbfsid, extension)
@@ -225,7 +226,7 @@ class S3Storage(DBFSStorage):
             asm3.al.error("s3://%s/%s: %s" % (self.bucket, object_key, err), "dbfs.S3Storage.put", self.dbo)
             raise DBFSError("Failed storing %s in S3: %s" % (object_key, err))
 
-    def delete(self, url):
+    def delete(self, url: str) -> None:
         """ Deletes the file data """
         object_key = "%s/%s" % (self.dbo.database, url.replace("s3:", ""))
         try:
@@ -235,7 +236,7 @@ class S3Storage(DBFSStorage):
             asm3.al.error("s3://%s/%s: %s" % (self.bucket, object_key, err), "dbfs.S3Storage.delete", self.dbo)
             raise DBFSError("Failed deleting %s from S3: %s" % (object_key, err))
 
-    def _s3_delete_object(self, bucket, key):
+    def _s3_delete_object(self, bucket: str, key: str) -> None:
         """ Deletes an object in S3. This should be called on a new thread """
         try:
             x = time.time()
@@ -244,7 +245,7 @@ class S3Storage(DBFSStorage):
         except Exception as err:
             asm3.al.error(str(err), "dbfs.S3Storage._s3_delete_object", self.dbo)
 
-    def _s3_put_object(self, bucket, key, body, attempts=1):
+    def _s3_put_object(self, bucket: str, key: str, body: bytes, attempts: int = 1) -> None:
         """ Puts an object in S3. This should be called on a new thread. Retries 5 times before sending an email. """
         try:
             x = time.time()
@@ -258,27 +259,31 @@ class S3Storage(DBFSStorage):
                 time.sleep(10 * attempts) # wait an increasingly longer amount of time between retries
                 self._s3_put_object(bucket, key, body, attempts+1)
 
-    def url_prefix(self):
+    def url_prefix(self) -> str:
         return "s3:"
 
 class DBFSError(web.HTTPError):
-    """ Custom error thrown by dbfs modules """
+    """ 
+    Custom error thrown by dbfs modules 
+    """
     msg = ""
-    def __init__(self, msg):
+    def __init__(self, msg: str) -> None:
         self.msg = msg
         status = '500 Internal Server Error'
         headers = { 'Content-Type': "text/html" }
         data = "<h1>DBFS Error</h1><p>%s</p>" % msg
         web.HTTPError.__init__(self, status, headers, data)
 
-def create_path(dbo, path, name):
-    """ Creates a new DBFS folder """
+def create_path(dbo: Database, path: str, name: str) -> int:
+    """ 
+    Creates a new DBFS folder. Returns the ID of the new folder in the DBFS table.  
+    """
     return dbo.insert("dbfs", {
         "Name": name,
         "Path": path
     })
 
-def check_create_path(dbo, path):
+def check_create_path(dbo: Database, path: str) -> None:
     """ Verifies that portions of a path exist and creates them if not
     only goes to two levels deep as we never need more than that
     for anything within ASM.
@@ -291,7 +296,7 @@ def check_create_path(dbo, path):
     if len(pat) > 1:
         check(pat[1], "/" + pat[0])
 
-def get_string_filepath(dbo, filepath):
+def get_string_filepath(dbo: Database, filepath: str) -> bytes:
     """
     Gets DBFS file contents as a bytes string. Returns
     an empty string if the file is not found. Splits
@@ -301,7 +306,7 @@ def get_string_filepath(dbo, filepath):
     path = filepath[0:filepath.rfind("/")]
     return get_string(dbo, name, path)
 
-def get_string(dbo, name, path = ""):
+def get_string(dbo: Database, name: str, path: str = "") -> bytes:
     """
     Gets DBFS file contents as a bytes string.
     If no path is supplied, just finds the first file with that name
@@ -317,7 +322,7 @@ def get_string(dbo, name, path = ""):
     o = DBFSStorage(dbo, r.url)
     return o.get(r.id, r.url)
 
-def get_string_id(dbo, dbfsid):
+def get_string_id(dbo: Database, dbfsid: int) -> bytes:
     """
     Gets DBFS file contents as a bytes string.
     """
@@ -328,21 +333,21 @@ def get_string_id(dbo, dbfsid):
     o = DBFSStorage(dbo, r.url)
     return o.get(dbfsid, r.url)
 
-def rename_file(dbo, path, oldname, newname):
+def rename_file(dbo: Database, path: str, oldname: str, newname: str) -> None:
     """
     Renames a file in the dbfs.
     """
     dbo.execute("UPDATE dbfs SET Name = ? WHERE Name = ? AND Path = ?", (newname, oldname, path))
 
-def rename_file_id(dbo, dbfsid, newname):
+def rename_file_id(dbo: Database, dbfsid: int, newname: str) -> None:
     """
     Renames a file in the dbfs.
     """
     dbo.execute("UPDATE dbfs SET Name = ? WHERE ID = ?", (newname, dbfsid))
 
-def put_file(dbo, name, path, filepath):
+def put_file(dbo: Database, name: str, path: str, filepath: str) -> int:
     """
-    Reads the the file from filepath and stores it with name/path
+    Reads the the file from filepath and stores it with name/path. Returns the DBFSID of the new file.
     """
     check_create_path(dbo, path)
     s = asm3.utils.read_binary_file(filepath)
@@ -354,9 +359,10 @@ def put_file(dbo, name, path, filepath):
     o.put(dbfsid, name, s)
     return dbfsid
 
-def put_string(dbo, name, path, contents):
+def put_string(dbo: Database, name: str, path: str, contents: bytes) -> int:
     """
     Stores the file contents (as a bytes string) at the name and path. If the file exists, overwrites it.
+    Returns the DBFSID of the new file.
     """
     check_create_path(dbo, path)
     name = name.replace("'", "")
@@ -371,7 +377,7 @@ def put_string(dbo, name, path, contents):
     o.put(dbfsid, name, contents)
     return dbfsid
 
-def put_string_id(dbo, dbfsid, name, contents):
+def put_string_id(dbo: Database, dbfsid: int, name: str, contents: bytes) -> int:
     """
     Stores the file contents (bytes string) at the id given.
     """
@@ -379,15 +385,15 @@ def put_string_id(dbo, dbfsid, name, contents):
     o.put(dbfsid, name, contents)
     return dbfsid
 
-def put_string_filepath(dbo, filepath, contents):
+def put_string_filepath(dbo: Database, filepath: str, contents: bytes) -> int:
     """
-    Stores the file contents (bytes string) at the name/path given.
+    Stores the file contents (bytes string) at the name/path given. Returns the DBFSID of the new file.
     """
     name = filepath[filepath.rfind("/")+1:]
     path = filepath[0:filepath.rfind("/")]
     return put_string(dbo, name, path, contents)
 
-def replace_string(dbo, content, name, path = ""):
+def replace_string(dbo: Database, content: bytes, name: str, path: str = "") -> int:
     """
     Replaces the file contents given as a bytes string in the dbfs
     with the name and path given. If no path is given, looks it
@@ -404,7 +410,7 @@ def replace_string(dbo, content, name, path = ""):
     o.put(r.id, r.name, content)
     return r.id
 
-def get_file(dbo, name, path, saveto):
+def get_file(dbo: Database, name: str, path: str, saveto: str) -> bool:
     """
     Gets DBFS file contents and saves them to the
     filename given. Returns True for success
@@ -412,7 +418,7 @@ def get_file(dbo, name, path, saveto):
     asm3.utils.write_binary_file(saveto, get_string(dbo, name, path))
     return True
 
-def get_file_id(dbo, dbfsid, saveto):
+def get_file_id(dbo: Database, dbfsid: int, saveto: str) -> bool:
     """
     Gets DBFS file contents and saves them to the
     filename given. Returns True for success
@@ -420,13 +426,13 @@ def get_file_id(dbo, dbfsid, saveto):
     asm3.utils.write_binary_file(saveto, get_string_id(dbo, dbfsid))
     return True
 
-def file_exists(dbo, name):
+def file_exists(dbo: Database, name: str) -> bool:
     """
     Return True if a file with name exists in the database.
     """
     return dbo.query_int("SELECT COUNT(*) FROM dbfs WHERE Name = ?", [name]) > 0
 
-def get_files(dbo, name, path, saveto):
+def get_files(dbo: Database, name: str, path: str, saveto: str) -> bool:
     """
     Gets DBFS files for the pattern given in name (use % like db)
     and belonging to path (blank for all paths). saveto is
@@ -443,7 +449,7 @@ def get_files(dbo, name, path, saveto):
         return True
     return False
 
-def _delete(dbo, where):
+def _delete(dbo: Database, where: str) -> None:
     """
     Deletes rows from the DBFS matching where. 
     This the only place where "real" deletion from the table is done.
@@ -458,13 +464,13 @@ def _delete(dbo, where):
     #    o = DBFSStorage(dbo, r.url)
     #    o.delete(r.url)
 
-def delete_path(dbo, path):
+def delete_path(dbo: Database, path: str) -> None:
     """
     Deletes all items matching the path given
     """
     _delete(dbo, "Path LIKE %s" % dbo.sql_value(path))
 
-def delete(dbo, name, path = ""):
+def delete(dbo: Database, name: str, path: str = "") -> None:
     """
     Deletes all items matching the name and path given
     """
@@ -473,7 +479,7 @@ def delete(dbo, name, path = ""):
     else:
         _delete(dbo, "Name=%s" % (dbo.sql_value(name)))
 
-def delete_filepath(dbo, filepath):
+def delete_filepath(dbo: Database, filepath: str) -> None:
     """
     Deletes the dbfs entry for the filepath
     """
@@ -481,13 +487,13 @@ def delete_filepath(dbo, filepath):
     path = filepath[0:filepath.rfind("/")]
     delete(dbo, name, path)
 
-def delete_id(dbo, dbfsid):
+def delete_id(dbo: Database, dbfsid: int) -> None:
     """
     Deletes the dbfs entry for the id
     """
     _delete(dbo, "ID=%d" % dbfsid)
 
-def list_contents(dbo, path):
+def list_contents(dbo: Database, path: str) -> List[str]:
     """
     Returns a list of items in the path given. Directories
     are identifiable by not having a file extension.
@@ -500,7 +506,7 @@ def list_contents(dbo, path):
 
 # End of storage primitives -- everything past here calls functions above
 
-def sanitise_path(path):
+def sanitise_path(path: str) -> str:
     """ Strips disallowed chars from new paths """
     disallowed = (" ", "|", ",", "!", "\"", "'", "$", "%", "^", "*",
         "(", ")", "[", "]", "{", "}", "\\", ":", "@", "?", "+")
@@ -508,13 +514,13 @@ def sanitise_path(path):
         path = path.replace(d, "_")
     return path
 
-def get_name_for_id(dbo, dbfsid):
+def get_name_for_id(dbo: Database, dbfsid: int) -> str:
     """
     Returns the filename of the item with id dbfsid
     """
     return dbo.query_string("SELECT Name FROM dbfs WHERE ID = ?", [dbfsid])
 
-def get_document_repository(dbo):
+def get_document_repository(dbo: Database) -> Results:
     """
     Returns a list of all documents in the /document_repository directory,
     also includes MIMETYPE field for display
@@ -526,7 +532,7 @@ def get_document_repository(dbo):
         r["MIMETYPE"] = mimetype
     return rows
 
-def get_report_images(dbo):
+def get_report_images(dbo: Database) -> Results:
     """
     Returns a list of all extra images in the /reports directory
     """
@@ -534,7 +540,7 @@ def get_report_images(dbo):
         "(LOWER(Name) Like '%.jpg' OR LOWER(Name) Like '%.png' OR LOWER(Name) Like '%.gif') " \
         "AND Path Like '/report%' ORDER BY Path, Name")
 
-def upload_report_image(dbo, fc):
+def upload_report_image(dbo: Database, fc: Any) -> None:
     """
     Attaches an image from a form filechooser object and puts
     it in the /reports directory. 
@@ -549,7 +555,7 @@ def upload_report_image(dbo, fc):
         raise asm3.utils.ASMValidationError("upload_report_image only accepts images.")
     put_string(dbo, filename, "/reports", filedata)
 
-def upload_document_repository(dbo, path, filename, filedata):
+def upload_document_repository(dbo: Database, path: str, filename: str, filedata: bytes) -> None:
     """
     Attaches a document from a form filechooser object and puts
     it in the /document_repository directory. 
@@ -567,7 +573,7 @@ def upload_document_repository(dbo, path, filename, filedata):
         filepath = "/document_repository/%s/%s" % (path, filename)
     put_string_filepath(dbo, filepath, filedata)
 
-def delete_orphaned_media(dbo):
+def delete_orphaned_media(dbo: Database) -> None:
     """
     Removes all dbfs content should have an entry in the media table and doesn't
     """
@@ -583,7 +589,7 @@ def delete_orphaned_media(dbo):
         o.delete(r.url)
     asm3.al.debug("Removed %s orphaned dbfs/media records" % len(rows), "dbfs.delete_orphaned_media", dbo)
 
-def switch_storage(dbo):
+def switch_storage(dbo: Database) -> None:
     """ Goes through all files in dbfs and swaps them into the current storage scheme """
     rows = dbo.query("SELECT ID, Name, Path, URL FROM dbfs WHERE Name LIKE '%.%' ORDER BY ID")
     for i, r in enumerate(rows):

@@ -40,4 +40,5 @@ Results = "List[asm3.dbms.base.ResultRow]"
 PostedData = "asm3.utils.PostedData"
 
 MemcacheClient = "memcache.Client"
+S3Client = "S3.Client"
 Session = "web.session.Session"
