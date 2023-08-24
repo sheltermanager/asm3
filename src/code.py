@@ -1511,6 +1511,7 @@ class login_jsonp(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
+        asm3.al.warn("login_jsonp hit from %s" % self.remote_ip(), "code.login_jsonp", o.dbo)
         self.content_type("text/javascript")
         return "%s({ response: '%s' })" % (o.post["callback"], asm3.users.web_login(o.post, o.session, self.remote_ip(), self.user_agent(), PATH))
 
