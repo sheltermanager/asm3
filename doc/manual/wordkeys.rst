@@ -28,6 +28,8 @@ OrganisationEmail / OrganizationEmail
    The shelter's email address
 Date
     Today's date
+Database
+    The name of the database (or account number if using sheltermanager.com)
 Signature
     A signature:placeholder image for inserting a signature later (default
     150px wide)

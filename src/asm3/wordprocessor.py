@@ -65,6 +65,7 @@ def org_tags(dbo, username):
         "SIGNATURE150"          : '<img src="signature:placeholder" width="150px" />',
         "SIGNATURE200"          : '<img src="signature:placeholder" width="200px" />',
         "SIGNATURE300"          : '<img src="signature:placeholder" width="300px" />',
+        "DATABASE"              : dbo.database,
         "USERNAME"              : username,
         "USERREALNAME"          : realname,
         "USEREMAILADDRESS"      : email,
