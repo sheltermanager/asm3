@@ -44,10 +44,9 @@ version:
 	# Include me in any release target to stamp the 
 	# build date
 	@echo "[version] =========================="
-	sed "s/^VERSION =.*/VERSION = \"`cat VERSION` [`date`]\"/" src/asm3/i18n.py > i18ndt.py
-	sed "s/^BUILD =.*/BUILD = \"`date +%m%d%H%M`\"/" i18ndt.py > i18njs.py
-	rm -f i18ndt.py
-	mv -f i18njs.py src/asm3/i18n.py
+	echo "#!/usr/bin/env python3" > src/asm3/__version__.py
+	echo "VERSION = \"`cat VERSION` [`date`]\"" >> src/asm3/__version__.py
+	echo "BUILD = \"`date +%m%d%H%M%S`\"" >> src/asm3/__version__.py
 	cp changelog src/static/pages/changelog.txt
 
 compat:
@@ -116,7 +115,7 @@ manual:
 
 test: 
 	@echo "[test] ========================="
-	cd src && python3 code.py 5000
+	cd src && python3 main.py 5000
 
 tests:
 	@echo "[tests] ========================"

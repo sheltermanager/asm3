@@ -56,7 +56,7 @@ import asm3.utils
 import asm3.waitinglist
 import asm3.wordprocessor
 
-from asm3.i18n import _, BUILD, translate, get_version, get_display_date_format, \
+from asm3.i18n import _, translate, get_version, get_display_date_format, \
     get_currency_prefix, get_currency_symbol, get_currency_dp, get_currency_radix, \
     get_currency_digit_grouping, get_dst, get_locales, parse_date, python2display, \
     add_minutes, add_days, subtract_days, subtract_months, first_of_month, last_of_month, \
@@ -73,6 +73,8 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SAC_METRICS_URL, \
     SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
     SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL
+
+from asm3.__version__ import BUILD
 
 CACHE_ONE_HOUR = 3600
 CACHE_ONE_DAY = 86400

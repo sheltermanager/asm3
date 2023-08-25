@@ -10,6 +10,7 @@ import asm3.configuration
 import asm3.i18n
 import asm3.utils
 from asm3.sitedefs import BASE_URL, GEO_PROVIDER, GEO_PROVIDER_KEY, GEO_LOOKUP_TIMEOUT, GEO_SLEEP_AFTER, GEO_SMCOM_URL, GEO_SMCOM_ADDRESS_URL
+from asm3.__version__ import VERSION
 
 import json
 import threading
@@ -74,7 +75,7 @@ class GeoProvider(object):
 
     def search(self):
         """ Calls the service, retrieves the data and sets self.response / self.json_response """
-        headers = { "Referer": BASE_URL, "User-Agent": "Animal Shelter Manager %s" % asm3.i18n.VERSION }
+        headers = { "Referer": BASE_URL, "User-Agent": "Animal Shelter Manager %s" % VERSION }
         self.response = asm3.utils.get_url(self.url, headers=headers, timeout=GEO_LOOKUP_TIMEOUT)["response"]
         self.json_response = json.loads(self.response)
 
@@ -233,7 +234,7 @@ def get_address(dbo, postcode, country = ""):
         url = url.replace("{country}", country)
         url = url.replace("{key}", GEO_PROVIDER_KEY)
 
-        headers = { "Referer": BASE_URL, "User-Agent": "Animal Shelter Manager %s" % asm3.i18n.VERSION }
+        headers = { "Referer": BASE_URL, "User-Agent": "Animal Shelter Manager %s" % VERSION }
         response = asm3.utils.get_url(url, headers=headers, timeout=GEO_LOOKUP_TIMEOUT)["response"]
         
         asm3.cachedisk.put(cachekey, dbo.database, v, 86400)
