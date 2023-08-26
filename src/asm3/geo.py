@@ -10,6 +10,7 @@ import asm3.configuration
 import asm3.i18n
 import asm3.utils
 from asm3.sitedefs import BASE_URL, GEO_PROVIDER, GEO_PROVIDER_KEY, GEO_LOOKUP_TIMEOUT, GEO_SLEEP_AFTER, GEO_SMCOM_URL, GEO_SMCOM_ADDRESS_URL
+from asm3.typehints import Database
 from asm3.__version__ import VERSION
 
 import json
@@ -33,7 +34,7 @@ class GeoProvider(object):
     response = ""
     json_response = ""
 
-    def __init__(self, dbo, address, town, county, postcode, country):
+    def __init__(self, dbo: Database, address: str, town: str, county: str, postcode: str, country: str):
         self.dbo = dbo
         self.address = address
         self.town = town
@@ -42,19 +43,19 @@ class GeoProvider(object):
         self.country = country
         self.build_url()
 
-    def first_line(self, s):
+    def first_line(self, s: str) -> str:
         """ Returns just the first line of a string """
         if s.find("\n") == -1: return s
         return s[0:s.find("\n")]
 
-    def address_hash(self):
+    def address_hash(self) -> str:
         """ Produces a hash of the address to include with latlon values """
         addrhash = "%s%s%s%s" % (self.address, self.town, self.county, self.postcode)
         addrhash = addrhash.replace(" ", "").replace(",", "").replace("\n", "")
         if len(addrhash) > 220: addrhash = addrhash[0:220]
         return addrhash
     
-    def build_url(self):
+    def build_url(self) -> None:
         """ Builds the URL """
         street = asm3.utils.encode_uri(self.first_line(self.address))
         address = asm3.utils.encode_uri(self.address)
@@ -73,23 +74,23 @@ class GeoProvider(object):
         self.url = self.url.replace("{account}", self.dbo.database)
         self.url = self.url.replace("{key}", GEO_PROVIDER_KEY)
 
-    def search(self):
+    def search(self) -> None:
         """ Calls the service, retrieves the data and sets self.response / self.json_response """
         headers = { "Referer": BASE_URL, "User-Agent": "Animal Shelter Manager %s" % VERSION }
         self.response = asm3.utils.get_url(self.url, headers=headers, timeout=GEO_LOOKUP_TIMEOUT)["response"]
         self.json_response = json.loads(self.response)
 
-    def parse(self):
+    def parse(self) -> str:
         """ Virtual method, returns latlon value by parsing response/json_response """
         raise NotImplementedError()
 
 class Nominatim(GeoProvider):
     """ Geocoding support from Nominatim """
-    def __init__(self, dbo, address, town, county, postcode, country):
+    def __init__(self, dbo: Database, address: str, town: str, county: str, postcode: str, country: str):
         self.url = GEO_NOMINATIM_URL
         GeoProvider.__init__(self, dbo, address, town, county, postcode, country)
 
-    def parse(self):
+    def parse(self) -> str:
         h = self.address_hash()
         j = self.json_response
         if len(j) == 0:
@@ -105,11 +106,11 @@ class Nominatim(GeoProvider):
 
 class Google(GeoProvider):
     """ Geocoding support from Google """
-    def __init__(self, dbo, address, town, county, postcode, country):
+    def __init__(self, dbo: Database, address: str, town: str, county: str, postcode: str, country: str):
         self.url = GEO_GOOGLE_URL
         GeoProvider.__init__(self, dbo, address, town, county, postcode, country)
 
-    def parse(self):
+    def parse(self) -> str:
         h = self.address_hash()
         j = self.json_response
         if len(j) == 0:
@@ -126,11 +127,11 @@ class Google(GeoProvider):
 
 class Smcom(GeoProvider):
     """ Geocoding support from sheltermanager.com """
-    def __init__(self, dbo, address, town, county, postcode, country):
+    def __init__(self, dbo: Database, address: str, town: str, county: str, postcode: str, country: str):
         self.url = GEO_SMCOM_URL
         GeoProvider.__init__(self, dbo, address, town, county, postcode, country)
 
-    def parse(self):
+    def parse(self) -> str:
         h = self.address_hash()
         j = self.json_response
         if len(j) == 0:
@@ -145,17 +146,17 @@ class Smcom(GeoProvider):
             return "0,0,%s" % h
 
 
-def address_hash(address, town, county, postcode, country):
+def address_hash(address: str, town: str, county: str, postcode: str, country: str) -> str:
     """ Produces a hash of the address to include with latlon values """
     addrhash = "%s%s%s%s%s" % (address, town, county, postcode, country)
     addrhash = addrhash.replace(" ", "").replace(",", "").replace("\n", "")
     if len(addrhash) > 220: addrhash = addrhash[0:220]
     return addrhash
 
-def get_lat_long(dbo, address, town, county, postcode, country = ""):
+def get_lat_long(dbo: Database, address: str, town: str, county: str, postcode: str, country: str = "") -> str:
     """
     Looks up a latitude and longitude from an address using the set geocoding provider 
-    and returns them as lat,long,hash
+    and returns them as a str "lat,long,hash"
     If no results were found, a zero lat and long are returned so that
     we know not to try and look this up again until the address hash changes.
     """
@@ -212,7 +213,7 @@ def get_lat_long(dbo, address, town, county, postcode, country = ""):
     finally:
         lat_long_lock.release()
 
-def get_address(dbo, postcode, country = ""):
+def get_address(dbo: Database, postcode: str, country: str = "") -> str:
     """
     Looks up an address from a postcode and country.
     Currently smcom only as it requires on our postcode lookup service smcom_geo.
@@ -247,8 +248,8 @@ def get_address(dbo, postcode, country = ""):
         asm3.al.error(str(err), "geo.get_postcode", dbo)
         return None
 
-def get_postcode_lookup_available(l):
-    """ Returns True if postcode lookup is available. 
+def get_postcode_lookup_available(l: str) -> bool:
+    """ Returns True if postcode lookup is available for locale l. 
         Only includes countries with postcodes that are specific enough to get a street.
     """
     return GEO_SMCOM_ADDRESS_URL != "" and l in ( 

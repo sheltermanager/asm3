@@ -39,6 +39,8 @@ datetime = "datetime.datetime" # this can be used if the only reason you're pull
 Database = "asm3.dbms.base.Database"
 ResultRow = "asm3.dbms.base.ResultRow"
 Results = "List[asm3.dbms.base.ResultRow]"
+
+PaymentProcessor = "asm3.paymentprocessor.base.PaymentProcessor"
 PostedData = "asm3.utils.PostedData"
 
 MemcacheClient = "memcache.Client"

@@ -10,6 +10,8 @@ import asm3.paymentprocessor.stripeh
 import asm3.paymentprocessor.cardcom
 import asm3.utils
 
+from asm3.typehints import datetime, Database, List, PaymentProcessor, PostedData, ResultRow, Results
+
 import sys
 
 BANK = 1
@@ -42,7 +44,7 @@ ANNUALLY = 6
 ASCENDING = 0
 DESCENDING = 1
 
-def get_boarding_query(dbo):
+def get_boarding_query(dbo: Database) -> str:
     return "SELECT ab.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, " \
@@ -57,7 +59,7 @@ def get_boarding_query(dbo):
         "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = ab.ShelterLocation "
 
-def get_citation_query(dbo):
+def get_citation_query(dbo: Database) -> str:
     return "SELECT oc.ID, oc.CitationTypeID, oc.CitationDate, oc.Comments, ct.CitationName, " \
         "oc.FineAmount, oc.FineDueDate, oc.FinePaidDate, oc.AnimalControlID, " \
         "oc.OwnerID, ti.IncidentName, " \
@@ -69,7 +71,7 @@ def get_citation_query(dbo):
         "LEFT OUTER JOIN animalcontrol ac ON ac.ID = oc.AnimalControlID " \
         "LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID " 
 
-def get_donation_query(dbo):
+def get_donation_query(dbo: Database) -> str:
     return "SELECT od.ID, od.DonationTypeID, od.DonationPaymentID, dt.DonationName, od.Date, od.DateDue, " \
         "od.Donation, od.MovementID, p.PaymentName, od.IsGiftAid, lk.Name AS IsGiftAidName, od.Frequency, " \
         "od.Quantity, od.UnitPrice, " \
@@ -115,7 +117,7 @@ def get_donation_query(dbo):
         "LEFT OUTER JOIN donationtype dt ON dt.ID = od.DonationTypeID " \
         "LEFT OUTER JOIN lksdonationfreq fr ON fr.ID = od.Frequency "
 
-def get_licence_query(dbo):
+def get_licence_query(dbo: Database) -> str:
     return "SELECT ol.ID, ol.LicenceTypeID, ol.IssueDate, ol.ExpiryDate, lt.LicenceTypeName, " \
         "ol.LicenceNumber, ol.LicenceFee, ol.Comments, ol.OwnerID, ol.AnimalID, " \
         "ol.CreatedBy, ol.CreatedDate, ol.LastChangedBy, ol.LastChangedDate, " \
@@ -135,7 +137,7 @@ def get_licence_query(dbo):
         "LEFT OUTER JOIN lksex x ON x.ID = a.Sex " \
         "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID "
 
-def get_voucher_query(dbo):
+def get_voucher_query(dbo: Database) -> str:
     return "SELECT ov.*, v.VoucherName, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.AdditionalFlags, " \
@@ -145,13 +147,13 @@ def get_voucher_query(dbo):
         "LEFT OUTER JOIN owner o ON o.ID = ov.OwnerID " \
         "LEFT OUTER JOIN animal a ON ov.AnimalID = a.ID "
 
-def get_account_code(dbo, accountid):
+def get_account_code(dbo: Database, accountid: int) -> str:
     """
     Returns the code for an accountid
     """
     return dbo.query_string("SELECT Code FROM accounts WHERE ID = ?", [accountid])
 
-def get_account_codes(dbo, exclude = "", onlyactive = True):
+def get_account_codes(dbo: Database, exclude: str = "", onlyactive: bool = True) -> List[str]:
     """
     Returns a list of all account codes in order. 
     exclude: if set, leaves that one out.
@@ -163,7 +165,7 @@ def get_account_codes(dbo, exclude = "", onlyactive = True):
         l.append(a["CODE"])
     return l
 
-def get_account_edit_roles(dbo, accountid):
+def get_account_edit_roles(dbo: Database, accountid: int) -> List[str]:
     """
     Returns a list of edit role ids for this account
     """
@@ -173,13 +175,13 @@ def get_account_edit_roles(dbo, accountid):
         roles.append(str(r.ROLEID))
     return roles
 
-def get_account_id(dbo, code):
+def get_account_id(dbo: Database, code: str) -> int:
     """
     Returns the id for an account code
     """
     return dbo.query_int("SELECT ID FROM accounts WHERE Code = ?", [code])
     
-def get_accounts(dbo, onlyactive = False, onlybank = False, onlyexpense = False, onlyincome = False):
+def get_accounts(dbo: Database, onlyactive: bool = False, onlybank: bool = False, onlyexpense: bool = False, onlyincome: bool = False) -> Results:
     """
     Returns all of the accounts with reconciled/balance figures
     ID, CODE, DESCRIPTION, ACCOUNTTYPE, DONATIONTYPEID, RECONCILED, BALANCE, VIEWROLEIDS, VIEWROLES, EDITROLEIDS, EDITROLES
@@ -248,7 +250,7 @@ def get_accounts(dbo, onlyactive = False, onlybank = False, onlyexpense = False,
         a.editroles = "|".join(editrolenames)
     return accounts
 
-def get_balance_to_date(dbo, accountid, todate, reconciled=BOTH):
+def get_balance_to_date(dbo: Database, accountid: int, todate: datetime, reconciled: int = BOTH) -> int:
     """
     Returns the balance of accountid to todate.
     reconciled: One of RECONCILED, NONRECONCILED or BOTH to indicate the transactions to include in the balance.
@@ -272,7 +274,7 @@ def get_balance_to_date(dbo, accountid, todate, reconciled=BOTH):
     #if r.accounttype == INCOME or r.accounttype == EXPENSE: balance = abs(balance)
     return balance
 
-def get_balance_fromto_date(dbo, accountid, fromdate, todate, reconciled=BOTH):
+def get_balance_fromto_date(dbo: Database, accountid: int, fromdate: datetime, todate: datetime, reconciled: int = BOTH) -> int:
     """
     Returns the balance of accountid from fromdate to todate.
     reconciled: One of RECONCILED, NONRECONCILED or BOTH to indicate the transactions to include in the balance.
@@ -296,7 +298,7 @@ def get_balance_fromto_date(dbo, accountid, fromdate, todate, reconciled=BOTH):
     #if r.accounttype == INCOME or r.accounttype == EXPENSE: balance = abs(balance)
     return balance
 
-def mark_reconciled(dbo, trxid):
+def mark_reconciled(dbo: Database, trxid: int) -> None:
     """
     Marks a transaction reconciled.
     """
@@ -304,7 +306,7 @@ def mark_reconciled(dbo, trxid):
         "Reconciled": 1
     })
 
-def get_transactions(dbo, accountid, datefrom, dateto, reconciled=BOTH):
+def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: datetime, reconciled: int = BOTH) -> Results:
     """
     Gets a list of transactions for the account given, between
     two python dates. PERSONID and PERSONNAME are returned for
@@ -390,35 +392,35 @@ def get_transactions(dbo, accountid, datefrom, dateto, reconciled=BOTH):
             r.balance = balance
     return rows
        
-def get_donation(dbo, did):
+def get_donation(dbo: Database, did: int) -> ResultRow:
     """
     Returns a single donation by id
     """
     return dbo.first_row( dbo.query(get_donation_query(dbo) + "WHERE od.ID = ?", [did]) )
 
-def get_donations_by_ids(dbo, dids):
+def get_donations_by_ids(dbo: Database, dids: List[int]) -> Results:
     """
     Returns multiple donations with a list of ids
     """
     return dbo.query(get_donation_query(dbo) + "WHERE od.ID IN (%s) ORDER BY od.Date" % ",".join(str(x) for x in dids))
 
-def get_movement_donation(dbo, mid):
+def get_movement_donation(dbo: Database, mid: int) -> ResultRow:
     """
     Returns the most recent donation with movement id mid
     """
     return dbo.first_row( dbo.query(get_donation_query(dbo) + "WHERE od.MovementID = ? ORDER BY Date DESC, od.ID DESC", [mid]) )
 
-def get_movement_donations(dbo, mid):
+def get_movement_donations(dbo: Database, mid: int) -> Results:
     """
     Returns all donations for a movement
     """
     return dbo.query(get_donation_query(dbo) + "WHERE od.MovementID = ? ORDER BY Date DESC, od.ID DESC", [mid])
 
-def get_next_receipt_number(dbo):
+def get_next_receipt_number(dbo: Database) -> str:
     """ Returns the next receipt number for the frontend """
     return asm3.utils.padleft( asm3.utils.cache_sequence(dbo, "receipt", "SELECT MAX(ReceiptNumber) FROM ownerdonation"), 8 )
 
-def get_donations(dbo, offset = "m31"):
+def get_donations(dbo: Database, offset: str = "m31") -> Results:
     """
     Returns a recordset of donations
     offset is m for received backwards in days, p for due forwards in days
@@ -434,7 +436,7 @@ def get_donations(dbo, offset = "m31"):
     elif offset.startswith("d"):
         return dbo.query(get_donation_query(dbo) + " WHERE od.Date Is Null AND od.DateDue <= ? ORDER BY od.DateDue", (dbo.today(),))
 
-def get_donations_due_two_dates(dbo, start, end):
+def get_donations_due_two_dates(dbo: Database, start: datetime, end: datetime) -> Results:
     """
     Returns a recordset of due donations between two dates
     ID, DONATIONTYPEID, DONATIONNAME, DATE, DATEDUE, DONATION,
@@ -445,7 +447,7 @@ def get_donations_due_two_dates(dbo, start, end):
         "WHERE od.DateDue >= ? AND od.DateDue <= ? AND od.Date Is Null " \
         "ORDER BY od.DateDue DESC", (start, end))
 
-def get_animal_donations(dbo, aid, sort = ASCENDING):
+def get_animal_donations(dbo: Database, aid: int, sort: int = ASCENDING) -> Results:
     """
     Returns all of the owner donation records for an animal, along with
     some owner and animal info.
@@ -460,7 +462,7 @@ def get_animal_donations(dbo, aid, sort = ASCENDING):
         "WHERE od.AnimalID = ? " \
         "ORDER BY %s" % order, [aid])
 
-def get_person_donations(dbo, oid, sort = ASCENDING):
+def get_person_donations(dbo: Database, oid: int, sort: int = ASCENDING) -> Results:
     """
     Returns all of the owner donation records for an owner, along with some animal info
     ID, DONATIONTYPEID, DONATIONNAME, DATE, DATEDUE, DONATION,
@@ -474,7 +476,7 @@ def get_person_donations(dbo, oid, sort = ASCENDING):
         "WHERE od.OwnerID = ? " \
         "ORDER BY %s" % order, [oid])
 
-def get_boarding(dbo, flt = "active", sort = ASCENDING):
+def get_boarding(dbo: Database, flt: str = "active", sort: int = ASCENDING) -> Results:
     """
     Returns boarding records
     """
@@ -496,7 +498,7 @@ def get_boarding(dbo, flt = "active", sort = ASCENDING):
     return dbo.query(get_boarding_query(dbo) + \
         "WHERE %s ORDER BY %s" % ( where, order))
 
-def get_boarding_due_two_dates(dbo, start, end):
+def get_boarding_due_two_dates(dbo: Database, start: datetime, end: datetime) -> Results:
     """
     Returns a recordset of boarding records that are active between two dates
     """
@@ -504,13 +506,13 @@ def get_boarding_due_two_dates(dbo, start, end):
         "WHERE ab.InDateTime >= ? AND ab.InDateTime <= ? " \
         "ORDER BY ab.InDateTime DESC", (start, end))
 
-def get_boarding_id(dbo, bid):
+def get_boarding_id(dbo: Database, bid: int) -> ResultRow:
     """
     Return the boarding record with ID=bid
     """
     return dbo.first_row(dbo.query(get_boarding_query(dbo) + " WHERE ab.ID = ?", [bid]))
 
-def get_animal_boarding(dbo, aid):
+def get_animal_boarding(dbo: Database, aid: int) -> Results:
     """
     Returns the boarding history for an animal
     """
@@ -518,7 +520,7 @@ def get_animal_boarding(dbo, aid):
         "WHERE ab.AnimalID = ? " \
         "ORDER BY InDateTime", [aid])
 
-def get_person_boarding(dbo, oid):
+def get_person_boarding(dbo: Database, oid: int) -> Results:
     """
     Returns the boarding history for a person
     """
@@ -526,7 +528,7 @@ def get_person_boarding(dbo, oid):
         "WHERE ab.OwnerID = ? " \
         "ORDER BY InDateTime", [oid])
 
-def get_incident_citations(dbo, iid, sort = ASCENDING):
+def get_incident_citations(dbo: Database, iid: int, sort: int = ASCENDING) -> Results:
     """
     Returns all of the citation records for an incident, along with
     some owner info.
@@ -540,7 +542,7 @@ def get_incident_citations(dbo, iid, sort = ASCENDING):
         "WHERE oc.AnimalControlID = ? " \
         "ORDER BY %s" % order, [iid])
 
-def get_person_citations(dbo, oid, sort = ASCENDING):
+def get_person_citations(dbo: Database, oid: int, sort: int = ASCENDING) -> Results:
     """
     Returns all of the citation records for a person, along with
     some owner info.
@@ -554,7 +556,7 @@ def get_person_citations(dbo, oid, sort = ASCENDING):
         "WHERE oc.OwnerID = ? " \
         "ORDER BY %s" % order, [oid])
 
-def get_unpaid_fines(dbo):
+def get_unpaid_fines(dbo: Database) -> Results:
     """
     Returns all of the unpaid fines
     ID, CITATIONTYPEID, CITATIONNAME, CITATIONDATE, FINEDUEDATE, FINEPAIDDATE,
@@ -564,7 +566,7 @@ def get_unpaid_fines(dbo):
         "WHERE oc.FineDueDate Is Not Null AND oc.FineDueDate <= ? AND oc.FinePaidDate Is Null " \
         "ORDER BY oc.CitationDate DESC", [dbo.today()])
 
-def get_animal_licences(dbo, aid, sort = ASCENDING):
+def get_animal_licences(dbo: Database, aid: int, sort: int = ASCENDING) -> Results:
     """
     Returns all of the licence records for an animal, along with
     some owner and animal info.
@@ -578,7 +580,7 @@ def get_animal_licences(dbo, aid, sort = ASCENDING):
         "WHERE ol.AnimalID = ? " \
         "ORDER BY %s" % order, [aid])
 
-def get_person_licences(dbo, oid, sort = ASCENDING):
+def get_person_licences(dbo: Database, oid: int, sort: int = ASCENDING) -> Results:
     """
     Returns all of the licence records for a person, along with
     some owner and animal info.
@@ -592,7 +594,7 @@ def get_person_licences(dbo, oid, sort = ASCENDING):
         "WHERE ol.OwnerID = ? " \
         "ORDER BY %s" % order, [oid])
 
-def get_recent_licences(dbo):
+def get_recent_licences(dbo: Database) -> Results:
     """
     Returns licences issued in the last 30 days
     ID, LICENCETYPEID, LICENCETYPENAME, LICENCENUMBER, ISSUEDATE, EXPIRYDATE,
@@ -602,17 +604,17 @@ def get_recent_licences(dbo):
         "WHERE ol.IssueDate >= ? " \
         "ORDER BY ol.IssueDate DESC", [dbo.today(offset=-30)])
 
-def get_licence_find_simple(dbo, licnum, dummy = 0):
+def get_licence_find_simple(dbo: Database, licnum: str, dummy: int = 0) -> Results:
     return dbo.query(get_licence_query(dbo) + \
         "WHERE UPPER(ol.LicenceNumber) LIKE UPPER(?)", [licnum])
 
-def get_licence(dbo, licenceid):
+def get_licence(dbo: Database, licenceid: int) -> ResultRow:
     """
     Returns a single licence by id
     """
     return dbo.first_row( dbo.query(get_licence_query(dbo) + "WHERE ol.ID = ?", [licenceid]) )
 
-def get_licences(dbo, offset = "i31"):
+def get_licences(dbo: Database, offset: str = "i31") -> Results:
     """
     Returns a recordset of licences 
     offset is i to go backwards on issue date
@@ -626,24 +628,24 @@ def get_licences(dbo, offset = "i31"):
         return dbo.query(get_licence_query(dbo) + " WHERE ol.ExpiryDate >= ? AND ol.ExpiryDate <= ? ORDER BY ol.ExpiryDate DESC", 
             (dbo.today(offsetdays*-1), dbo.today()))
 
-def get_person_vouchers(dbo, personid):
+def get_person_vouchers(dbo: Database, personid: int) -> Results:
     """
     Returns a list of vouchers for a person
     """
     return dbo.query(get_voucher_query(dbo) + \
         "WHERE ov.OwnerID = ? ORDER BY ov.DateIssued", [personid])
 
-def get_voucher(dbo, voucherid):
+def get_voucher(dbo: Database, voucherid: int) -> ResultRow:
     """
     Returns a single voucher record
     """
     return dbo.first_row(dbo.query(get_voucher_query(dbo) + " WHERE ov.ID = ?", [voucherid]))
 
-def get_voucher_find_simple(dbo, vocode, dummy = 0):
+def get_voucher_find_simple(dbo: Database, vocode: str, dummy: int = 0) -> Results:
     return dbo.query(get_voucher_query(dbo) + \
         "WHERE UPPER(ov.VoucherCode) LIKE UPPER(?)", [vocode])
 
-def get_vouchers(dbo, offset = "i31"):
+def get_vouchers(dbo: Database, offset: str = "i31") -> Results:
     """
     Returns a list of vouchers 
     offset is i to go backwards on issue date
@@ -664,10 +666,14 @@ def get_vouchers(dbo, offset = "i31"):
         return dbo.query(get_voucher_query(dbo) + " WHERE ov.DateExpired >= ? AND ov.DateExpired <= ? ORDER BY ov.DateExpired DESC", 
             (dbo.today(), dbo.today(offsetdays)))
 
-def insert_donations_from_form(dbo, username, post, donationdate, force_receive = False, personid = 0, animalid = 0, movementid = 0, ignorezero = True):
+def insert_donations_from_form(dbo: Database, username: str, post: PostedData, 
+                               donationdate: datetime, force_receive: bool = False, 
+                               personid: int = 0, animalid: int = 0, movementid: int = 0, 
+                               ignorezero: bool = True) -> str:
     """
     Used for post handlers with the payments widget where
     multiple payments can be sent.
+    Returns a comma separated string of created IDs.
     """
     l = dbo.locale
     created = []
@@ -711,7 +717,7 @@ def insert_donations_from_form(dbo, username, post, donationdate, force_receive 
         created.append(str(insert_donation_from_form(dbo, username, asm3.utils.PostedData(don_dict, l))))
     return ",".join(created)
 
-def insert_donation_from_form(dbo, username, post):
+def insert_donation_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a payment record from posted form data 
     """
@@ -750,7 +756,7 @@ def insert_donation_from_form(dbo, username, post):
     asm3.movement.update_movement_donation(dbo, post.integer("movement"))
     return donationid
 
-def update_donation_from_form(dbo, username, post):
+def update_donation_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a payment record from posted form data
     """
@@ -790,7 +796,7 @@ def update_donation_from_form(dbo, username, post):
     check_create_next_donation(dbo, username, donationid)
     asm3.movement.update_movement_donation(dbo, post.integer("movement"))
 
-def delete_donation(dbo, username, did):
+def delete_donation(dbo: Database, username: str, did: int) -> None:
     """
     Deletes a payment record
     """
@@ -799,7 +805,8 @@ def delete_donation(dbo, username, did):
     dbo.delete("ownerdonation", did, username)
     asm3.movement.update_movement_donation(dbo, movementid)
 
-def receive_donation(dbo, username, did, chequenumber = "", amount = 0, vat = 0, fee = 0, rawdata = ""):
+def receive_donation(dbo: Database, username: str, did: int, chequenumber: str = "", 
+                     amount: int = 0, vat: int = 0, fee: int = 0, rawdata: str = "") -> None:
     """
     Marks a donation received. If any of the optional parameters are passed, they are updated.
     The monetary amounts are expected to be integer currency amounts, not floats.
@@ -819,7 +826,7 @@ def receive_donation(dbo, username, did, chequenumber = "", amount = 0, vat = 0,
     update_matching_donation_transaction(dbo, username, did)
     check_create_next_donation(dbo, username, did)
 
-def check_create_next_donation(dbo, username, odid):
+def check_create_next_donation(dbo: Database, username: str, odid: int) -> None:
     """
     Checks to see if a donation is now received and the next in 
     a sequence needs to be created for donations with a frequency 
@@ -876,7 +883,7 @@ def check_create_next_donation(dbo, username, odid):
             "Comments":             d.COMMENTS
         }, username)
 
-def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0):
+def update_matching_cost_transaction(dbo: Database, username: str, acid: int, destinationaccount: int = 0) -> None:
     """
     Creates a matching account transaction for a cost or updates
     an existing trx if it already exists
@@ -959,7 +966,7 @@ def update_matching_cost_transaction(dbo, username, acid, destinationaccount = 0
     }, username)
     asm3.al.debug("Trx created with ID %d" % tid, "financial.update_matching_cost_transaction", dbo)
 
-def update_matching_donation_transaction(dbo, username, odid, destinationaccount = 0):
+def update_matching_donation_transaction(dbo: Database, username: str, odid: int, destinationaccount: int = 0) -> None:
     """
     Creates a matching account transaction for a donation/payment or updates
     an existing trx if it already exists
@@ -1090,7 +1097,7 @@ def update_matching_donation_transaction(dbo, username, odid, destinationaccount
         }, username)
         asm3.al.debug("Fee trx created with ID %d" % int(tid), "financial.update_matching_donation_transaction", dbo)
 
-def insert_account_from_costtype(dbo, name, desc):
+def insert_account_from_costtype(dbo: Database, name: str, desc: str) -> int:
     """
     Creates an account from a donation type record
     """
@@ -1105,7 +1112,7 @@ def insert_account_from_costtype(dbo, name, desc):
         "CostTypeID":       0 # ASM2_COMPATIBILITY
     }, "system")
 
-def insert_account_from_donationtype(dbo, name, desc):
+def insert_account_from_donationtype(dbo: Database, name: str, desc: str) -> int:
     """
     Creates an account from a donation type record
     """
@@ -1120,7 +1127,7 @@ def insert_account_from_donationtype(dbo, name, desc):
         "CostTypeID":       0 # ASM2_COMPATIBILITY
     }, "system")
 
-def insert_account_roles(dbo, username, accountid, post):
+def insert_account_roles(dbo: Database, username: str, accountid: int, post: PostedData) -> None:
     """
     accountid:  the account we're setting edit and view roles
     post:       a post object containing viewroles and editroles members
@@ -1149,7 +1156,7 @@ def insert_account_roles(dbo, username, accountid, post):
                 "CanEdit":      1
             }, generateID=False)
 
-def insert_account_from_form(dbo, username, post):
+def insert_account_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates an account from posted form data 
     """
@@ -1173,7 +1180,7 @@ def insert_account_from_form(dbo, username, post):
 
     return accountid
 
-def update_account_from_form(dbo, username, post):
+def update_account_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates an account from posted form data
     """
@@ -1194,7 +1201,7 @@ def update_account_from_form(dbo, username, post):
 
     insert_account_roles(dbo, username, accountid, post)
 
-def delete_account(dbo, username, aid):
+def delete_account(dbo: Database, username: str, aid: int) -> None:
     """
     Deletes an account
     """
@@ -1202,7 +1209,7 @@ def delete_account(dbo, username, aid):
     dbo.delete("accountsrole", "AccountID=%d" % aid)
     dbo.delete("accounts", aid, username)
 
-def insert_trx_from_form(dbo, username, post):
+def insert_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a transaction from posted form data
     """
@@ -1239,7 +1246,7 @@ def insert_trx_from_form(dbo, username, post):
         "OwnerDonationID":      0
     }, username)
 
-def update_trx_from_form(dbo, username, post):
+def update_trx_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Updates a transaction from posted form data
     """
@@ -1273,13 +1280,13 @@ def update_trx_from_form(dbo, username, post):
         "DestinationAccountID": target
     }, username)
 
-def delete_trx(dbo, username, tid):
+def delete_trx(dbo: Database, username: str, tid: int) -> None:
     """
     Deletes a transaction
     """
     dbo.delete("accountstrx", tid, username)
 
-def insert_voucher_from_form(dbo, username, post):
+def insert_voucher_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a voucher record from posted form data 
     """
@@ -1295,7 +1302,7 @@ def insert_voucher_from_form(dbo, username, post):
         "Comments":     post["comments"]
     }, username)
 
-def update_voucher_from_form(dbo, username, post):
+def update_voucher_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a voucher record from posted form data
     """
@@ -1311,13 +1318,13 @@ def update_voucher_from_form(dbo, username, post):
         "Comments":     post["comments"]
     }, username)
 
-def delete_voucher(dbo, username, vid):
+def delete_voucher(dbo: Database, username: str, vid: int) -> None:
     """
     Deletes a voucher record
     """
     dbo.delete("ownervoucher", vid, username)
 
-def insert_boarding_from_form(dbo, username, post):
+def insert_boarding_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a boarding record from posted data 
     """
@@ -1348,7 +1355,7 @@ def insert_boarding_from_form(dbo, username, post):
     asm3.animal.update_animal_status(dbo, post.integer("animal"))
     return boardingid
 
-def update_boarding_from_form(dbo, username, post):
+def update_boarding_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a boarding record from posted data 
     """
@@ -1379,7 +1386,7 @@ def update_boarding_from_form(dbo, username, post):
     # Update animal status to bring the animal to the shelter if it is boarding
     asm3.animal.update_animal_status(dbo, post.integer("animal"))
 
-def delete_boarding(dbo, username, bid):
+def delete_boarding(dbo: Database, username: str, bid: int) -> None:
     """
     Deletes a boarding record
     """
@@ -1387,7 +1394,7 @@ def delete_boarding(dbo, username, bid):
     dbo.delete("animalboarding", bid, username)
     asm3.animal.update_animal_status(dbo, animalid)
 
-def update_location_boarding_today(dbo):
+def update_location_boarding_today(dbo: Database) -> None:
     """
     Checks all boarding records and those that start today to update the location on their animals.
     """
@@ -1397,7 +1404,7 @@ def update_location_boarding_today(dbo):
     for r in rows:
         asm3.animal.update_location_unit(dbo, "system", r.ANIMALID, r.SHELTERLOCATION, r.SHELTERLOCATIONUNIT, returnactivemovement=False)
 
-def insert_citation_from_form(dbo, username, post):
+def insert_citation_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a citation record from posted form data 
     """
@@ -1412,7 +1419,7 @@ def insert_citation_from_form(dbo, username, post):
         "Comments":             post["comments"]
     }, username)
 
-def update_citation_from_form(dbo, username, post):
+def update_citation_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a citation record from posted form data
     """
@@ -1425,13 +1432,13 @@ def update_citation_from_form(dbo, username, post):
         "Comments":             post["comments"]
     }, username)
 
-def delete_citation(dbo, username, cid):
+def delete_citation(dbo: Database, username: str, cid: int) -> None:
     """
     Deletes a citation record
     """
     dbo.delete("ownercitation", cid, username)
 
-def insert_licence_from_form(dbo, username, post):
+def insert_licence_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a licence record from posted form data 
     """
@@ -1452,7 +1459,7 @@ def insert_licence_from_form(dbo, username, post):
         "Comments":         post["comments"]
     }, username)
 
-def update_licence_from_form(dbo, username, post):
+def update_licence_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a licence record from posted form data
     """
@@ -1474,13 +1481,13 @@ def update_licence_from_form(dbo, username, post):
         "Comments":         post["comments"]
     }, username)
 
-def delete_licence(dbo, username, lid):
+def delete_licence(dbo: Database, username: str, lid: int) -> None:
     """
     Deletes a licence record
     """
     dbo.delete("ownerlicence", lid, username)
 
-def get_payment_processor(dbo, name):
+def get_payment_processor(dbo: Database, name: str) -> PaymentProcessor:
     """
     Returns a new payment processor object for name
     """
@@ -1493,13 +1500,14 @@ def get_payment_processor(dbo, name):
     else:
         raise KeyError("No payment processor available for '%s'" % name)
 
-def giftaid_spreadsheet(dbo, path, fromdate, todate):
+def giftaid_spreadsheet(dbo: Database, path: str, fromdate: datetime, todate: datetime) -> bytes:
     """
     Generates an HMRC giftaid spreadsheet in their ODS format. The template
     is stored in src/static/docs/giftaid.ods
     path: The path to the ASM installation
     fromdate: Python date, the date to include donations from
     todate: Python date, the date to include donations to
+    returns the bytes data containing the openoffice spreadsheet (zip) file.
     """
     def housenumber(s):
         """
