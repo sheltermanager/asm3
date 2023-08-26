@@ -481,8 +481,7 @@ def parse_time(d: datetime, t: str) -> datetime:
     if len(tbits) > 0: hour = cint(tbits[0])
     if len(tbits) > 1: minute = cint(tbits[1])
     if len(tbits) > 2: second = cint(tbits[2])
-    t = datetime.time(hour, minute, second)
-    d = d.combine(d, t)
+    d = d.replace(hour=hour, minute=minute, second=second, microsecond=0)
     return d
 
 def remove_time(d: datetime):
@@ -604,8 +603,8 @@ def subtract_months(d: datetime, months: int = 1) -> datetime:
             one_month_earlier -= one_day
         return one_month_earlier
     for dummy in range(0, months):
-        date = subtract_one_month(date)
-    return date
+        d = subtract_one_month(d)
+    return d
     #year, month = divmod(months, 12)
     #if date.month <= month:
     #    year = date.year - 1
