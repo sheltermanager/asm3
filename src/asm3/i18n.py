@@ -1,10 +1,12 @@
 
-import datetime
 import json
 import time
 
+from datetime import datetime, timedelta
+
 # flake8: noqa - we have a lot of locales and this is convenient
 from asm3.locales import *
+from asm3.typehints import Callable, Dict, List, Tuple
 from asm3.__version__ import VERSION
 
 DMY = ( "%d/%m/%Y", "%d/%m/%y" )
@@ -24,12 +26,12 @@ DST_US = "6-203-111"
 DST_UK = "6-L03-L10"
 DST_AU = "6-110-104"
 
-def PLURAL_ENGLISH(n):
+def PLURAL_ENGLISH(n: int) -> int:
     """ gettext plural function for English/Latin languages """
     if n == 1: return 0
     return 1
 
-def PLURAL_HUNGARIAN(n):
+def PLURAL_HUNGARIAN(n: int) -> int:
     """ gettext style plural function for Hungarian 
         Hungarian always uses the singular unless the element appears
         by itself (which it never does for the purposes of ngettext)
@@ -37,13 +39,13 @@ def PLURAL_HUNGARIAN(n):
     """
     return 0
 
-def PLURAL_POLISH(n):
+def PLURAL_POLISH(n: int) -> int:
     """ gettext style plural function for Polish """
     if n == 1: return 0
     if n % 10 >= 2 and n % 10 <= 4 and (n % 100 < 10 or n % 100 >= 20): return 1
     return 2
 
-def PLURAL_SLAVIC(n):
+def PLURAL_SLAVIC(n: int) -> int:
     """ gettext style plural function for Slavic languages,
         Russian, Ukrainian, Belarusian, Serbian, Croatian
     """
@@ -151,10 +153,10 @@ locale_maps = {
     "tr":       ( "Turkish", "Turkey", DDMY, "TL", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", "" )
 }
 
-def _(english, locale = "en"):
+def _(english: str, locale: str = "en") -> str:
     return translate(english, locale)
 
-def real_locale(locale = "en"):
+def real_locale(locale: str = "en") -> str:
     # When translating text strings, treat some locales as pointers 
     # to other locales without the need for a full translation:
     # Our core English locales (with actual differences) are:
@@ -192,7 +194,7 @@ def real_locale(locale = "en"):
         locale = "es"
     return locale
 
-def translate(english, locale = "en"):
+def translate(english: str, locale: str = "en") -> str:
     """
     Returns a translation string for an English phrase in
     the locale given.
@@ -226,7 +228,7 @@ def translate(english, locale = "en"):
     else:
         return lang.val[english]
 
-def ntranslate(number, translations, locale = "en"):
+def ntranslate(number: int, translations: List[str], locale: str = "en") -> str:
     """ Translates a phrase that deals with a number of something
         so the correct plural can be used. 
         number: The number of items
@@ -245,25 +247,25 @@ def ntranslate(number, translations, locale = "en"):
     except Exception as e:
         return e
 
-def get_version():
+def get_version() -> str:
     """
     Returns the version of ASM
     """
     return VERSION
 
-def get_version_number():
+def get_version_number() -> str:
     """
     Returns the version number of ASM
     """
     return VERSION[0:VERSION.find(" ")]
 
-def get_locale_map(locale, index):
+def get_locale_map(locale: str, index: int) -> Dict:
     if locale in locale_maps:
         return locale_maps[locale][index]
     else:
         return locale_maps["en"][index]
 
-def get_locales():
+def get_locales() -> List[Dict]:
     locales = []
     # Build a list of locale, display name
     for k, v in locale_maps.items():
@@ -275,13 +277,13 @@ def get_locales():
     locales = sorted(locales, key=lambda x: x[1])
     return locales
 
-def get_country(locale):
+def get_country(locale: str) -> str:
     return get_locale_map(locale, LM_COUNTRY)
 
-def get_language(locale):
+def get_language(locale: str) -> str:
     return get_locale_map(locale, LM_LANGUAGE)
 
-def get_display_date_format(locale, digitsinyear = 4):
+def get_display_date_format(locale: str, digitsinyear: int = 4) -> str:
     """
     Returns the display date format for a locale
     """
@@ -290,57 +292,57 @@ def get_display_date_format(locale, digitsinyear = 4):
     else:
         return get_locale_map(locale, LM_DATEFORMAT)[1]
 
-def get_currency_symbol(locale):
+def get_currency_symbol(locale: str) -> str:
     """
     Returns the currency symbol for a locale
     """
     return get_locale_map(locale, LM_CURRENCY_SYMBOL)
 
-def get_currency_prefix(locale):
+def get_currency_prefix(locale: str) -> str:
     """
     Returns "p" if the currency symbol goes at the beginning, or "s" for the end
     when displaying.
     """
     return get_locale_map(locale, LM_CURRENCY_POSITION)
 
-def get_currency_dp(locale):
+def get_currency_dp(locale: str) -> int:
     """
     Returns the number of decimal places for a locale when
     displaying currency
     """
     return get_locale_map(locale, LM_CURRENCY_DECIMAL_PLACES)
 
-def get_currency_radix(locale):
+def get_currency_radix(locale: str) -> str:
     """
     Returns the decimal mark symbol
     """
     return get_locale_map(locale, LM_CURRENCY_DECIMAL_MARK)
 
-def get_currency_digit_grouping(locale):
+def get_currency_digit_grouping(locale: str) -> str:
     """
     Returns the character used to separate thousands
     """
     return get_locale_map(locale, LM_CURRENCY_DIGIT_GROUPING)
 
-def get_dst(locale):
+def get_dst(locale: str) -> str:
     """
     Returns the daylight savings time info for locale
     """
     return get_locale_map(locale, LM_DST)
 
-def get_plural_function(locale):
+def get_plural_function(locale: str) -> Callable:
     """
     Returns the function for calculating plurals for this locale
     """
     return get_locale_map(locale, LM_PLURAL_FUNCTION)
 
-def cint(s):
+def cint(s: str) -> int:
     try:
         return int(s)
     except:
         return 0
 
-def format_currency(locale, value, includeSymbol = True):
+def format_currency(locale: str, value: int, includeSymbol: bool = True) -> str:
     """
     Formats a currency value to the correct number of 
     decimal places and returns it as a string
@@ -377,20 +379,20 @@ def format_currency(locale, value, includeSymbol = True):
     s = s.replace("RDX", get_currency_radix(locale))
     return s
 
-def format_currency_no_symbol(locale, value):
+def format_currency_no_symbol(locale: str, value: int) -> str:
     """ 
     Formats a currency value, but leaves off the currency symbol
     """
     return format_currency(locale, value, includeSymbol = False)
 
-def format_time(d, timeformat="%H:%M:%S"):
+def format_time(d: datetime, timeformat: str = "%H:%M:%S") -> str:
     if d is None: return ""
     return time.strftime(timeformat, d.timetuple())
 
-def format_time_now(offset = 0.0):
+def format_time_now(offset: float = 0.0) -> str:
     return format_time(now(offset))
 
-def http_date(dt):
+def http_date(dt: datetime) -> str:
     """
     Formats a UTC python date/time in HTTP (RFC1123) format
     """
@@ -400,7 +402,7 @@ def http_date(dt):
     return "%s, %02d %s %04d %02d:%02d:%02d GMT" % (weekday, dt.day, month,
         dt.year, dt.hour, dt.minute, dt.second)
 
-def python2display(locale, d):
+def python2display(locale: str, d: datetime) -> str:
     """
     Formats a python date as a display string. 
     'd' is a Python date, return value is a display string.
@@ -411,7 +413,7 @@ def python2display(locale, d):
     except:
         return ""
 
-def python2displaytime(locale, d):
+def python2displaytime(locale: str, d: datetime) -> str:
     """
     Formats a python date as a display string with time info (if not midnight).
     'd' is a Python date, return value is a display string with time info.
@@ -426,7 +428,7 @@ def python2displaytime(locale, d):
     except:
         return ""
 
-def python2unix(d):
+def python2unix(d: datetime) -> int:
     """
     Converts a python date to unix.
     """
@@ -435,7 +437,7 @@ def python2unix(d):
     except:
         return 0
 
-def format_date(d, dateformat="%Y-%m-%d"):
+def format_date(d: datetime, dateformat: str = "%Y-%m-%d") -> str:
     """
     Formats a python date to the format given (strftime rules)
     """
@@ -445,34 +447,29 @@ def format_date(d, dateformat="%Y-%m-%d"):
     except:
         return ""
 
-def display2python(locale, d):
+def display2python(locale: str, s: str) -> datetime:
     """
-    Parses a display string back to python format. Can cope with
-    2 or 4 digit years.
-    'd' is a string. return value is the date or None if it
-    could not be parsed.
-    If an ISO date YYYY-MM-DD is passed by mistake, it will cope with that too (handy for posts from html5 date input)
+    Parses a display string back to python format.
+    Can deal with 2 or 4 digit years, as well as accidental passing of ISO dates YYYY-MM-DD
+    's' is the date string. return value is the date or None if it could not be parsed.
     """
-    if d is None: return None
-    if len(d) == 10 and d[4] == "-" and d[7] == "-": return datetime.datetime.strptime(d, "%Y-%m-%d")
-    try:
-        return datetime.datetime.strptime(d, get_display_date_format(locale, 2))
-    except:
-        try:
-            return datetime.datetime.strptime(d, get_display_date_format(locale, 4))
-        except:
-            return None
+    if s is None: return None
+    d = None
+    if len(s) == 10 and s[4] == "-" and s[7] == "-": s = parse_date("%Y-%m-%d", s)
+    if d is None: d = parse_date(get_display_date_format(locale, 2), s)
+    if d is None: d = parse_date(get_display_date_format(locale, 4), s)
+    return d
 
-def parse_date(dateformat, d):
+def parse_date(dateformat: str, s: str) -> datetime:
     """
     Parses a python date from the dateformat given
     """
     try:
-        return datetime.datetime.strptime(d, dateformat)
+        return datetime.strptime(s, dateformat)
     except:
         return None
 
-def parse_time(d, t):
+def parse_time(d: datetime, t: str) -> datetime:
     """
     Parses the time t and combines it with python date d
     """
@@ -488,120 +485,120 @@ def parse_time(d, t):
     d = d.combine(d, t)
     return d
 
-def remove_time(d):
+def remove_time(d: datetime):
     """
     Removes the time component of a date by setting it to midnight
     """
     if d is None: return d
     return d.replace(hour=0, minute=0, second=0, microsecond=0)
 
-def yes_no(l, condition):
+def yes_no(l: str, condition: bool) -> str:
     if condition:
         return _("Yes", l)
     else:
         return _("No", l)
 
-def yes_no_unknown(l, v):
+def yes_no_unknown(l: str, v: int) -> str:
     if v == 0: return _("Yes", l)
     elif v == 1: return _("No", l)
     else: return _("Unknown", l)
 
-def yes_no_unknown_blank(l, v):
+def yes_no_unknown_blank(l: str, v: int) -> str:
     if v == 0: return _("Yes", l)
     elif v == 1: return _("No", l)
     else: return ""
 
-def add_months(date, months = 1):
+def add_months(d: datetime, months: int = 1) -> datetime:
     """
     Adds calendar months to a date, returning a new datetime
     """
-    newmonth = ((( date.month - 1) + months ) % 12 ) + 1
-    newyear  = date.year + ((( date.month - 1) + months ) // 12 )
+    newmonth = ((( d.month - 1) + months ) % 12 ) + 1
+    newyear  = d.year + ((( d.month - 1) + months ) // 12 )
     try:
-        return datetime.datetime( newyear, newmonth, date.day )
+        return datetime( newyear, newmonth, d.day )
     except:
-        return datetime.datetime( newyear, newmonth, 28 )
+        return datetime( newyear, newmonth, 28 )
 
-def add_years(date, years = 1.0):
+def add_years(d: datetime, years: float = 1.0) -> datetime:
     """
     Adds years to a date, returning a new datetime
     """
-    if date is None: return None
-    if date.day == 29 and date.month == 2: return date + datetime.timedelta(days = int(years * 365.0)) # Leap years break calendar years
-    if years == int(years): return date.replace( year = date.year + int(years))
-    return date + datetime.timedelta(days = int(years * 365.0))
+    if d is None: return None
+    if d.day == 29 and d.month == 2: return d + timedelta(days = int(years * 365.0)) # Leap years break calendar years
+    if years == int(years): return d.replace( year = d.year + int(years))
+    return d + timedelta(days = int(years * 365.0))
 
-def add_days(date, nodays = 1):
+def add_days(d: datetime, nodays: int = 1) -> datetime:
     """
     Adds days to a date, returning a new datetime
     """
-    if date is None: return None
-    return date + datetime.timedelta(days = nodays)
+    if d is None: return None
+    return d + timedelta(days = nodays)
 
-def add_hours(date, nohours = 1):
+def add_hours(d: datetime, nohours: int = 1) -> datetime:
     """
     Add hours to date, returning a new datetime
     """
-    if date is None: return None
-    return date + datetime.timedelta(hours = nohours)
+    if d is None: return None
+    return d + timedelta(hours = nohours)
 
-def add_minutes(date, nomins = 1):
+def add_minutes(d: datetime, nomins: int = 1) -> datetime:
     """
     Add mins to date, returning a new datetime
     """
-    if date is None: return None
-    return date + datetime.timedelta(minutes = nomins)
+    if d is None: return None
+    return d + timedelta(minutes = nomins)
 
-def add_seconds(date, nosecs = 1):
+def add_seconds(d: datetime, nosecs: int = 1) -> datetime:
     """
     Add secs to date, returning a new datetime
     """
-    if date is None: return None
-    return date + datetime.timedelta(seconds = nosecs)
+    if d is None: return None
+    return d + timedelta(seconds = nosecs)
 
-def subtract_seconds(date, nosecs = 1):
+def subtract_seconds(d: datetime, nosecs: int = 1) -> datetime:
     """
     Subtract seconds from date, returning a new datetime
     """
-    if date is None: return None
-    return date - datetime.timedelta(seconds = nosecs)
+    if d is None: return None
+    return d - timedelta(seconds = nosecs)
 
-def subtract_minutes(date, nomins = 1):
+def subtract_minutes(d: datetime, nomins: int = 1) -> datetime:
     """
     Subtract minutes from date, returning a new datetime
     """
-    if date is None: return None
-    return date - datetime.timedelta(minutes = nomins)
+    if d is None: return None
+    return d - timedelta(minutes = nomins)
 
-def subtract_hours(date, nohours = 1):
+def subtract_hours(d: datetime, nohours: int = 1) -> datetime:
     """
     Subtract hours from date, returning a new datetime
     """
-    if date is None: return None
-    return date - datetime.timedelta(hours = nohours)
+    if d is None: return None
+    return d - timedelta(hours = nohours)
 
-def subtract_days(date, nodays = 1):
+def subtract_days(d: datetime, nodays: int = 1) -> datetime:
     """
     Subtract days from date, returning a new datetime
     """
-    if date is None: return None
-    return date - datetime.timedelta(days = nodays)
+    if d is None: return None
+    return d - timedelta(days = nodays)
 
-def subtract_years(date, years = 1.0):
+def subtract_years(d: datetime, years: float = 1.0) -> datetime:
     """
     Subtracts years from date, returning a new datetime
     """
-    if date is None: return None
-    if date.day == 29 and date.month == 2: return date - datetime.timedelta(days = int(years * 365.0)) # Leap years break calendar years
-    if years == int(years): return date.replace( year = date.year - int(years)) # Go back a calendar year if it's a whole year
-    return date - datetime.timedelta(days = int(years * 365.0))
+    if d is None: return None
+    if d.day == 29 and d.month == 2: return d - timedelta(days = int(years * 365.0)) # Leap years break calendar years
+    if years == int(years): return d.replace( year = d.year - int(years)) # Go back a calendar year if it's a whole year
+    return d - timedelta(days = int(years * 365.0))
 
-def subtract_months(date, months = 1):
+def subtract_months(d: datetime, months: int = 1) -> datetime:
     """
     Subtracts months from a date. Will not work after 11 months.
     """
-    def subtract_one_month(t):
-        one_day = datetime.timedelta(days=1)
+    def subtract_one_month(t: datetime) -> datetime:
+        one_day = timedelta(days=1)
         one_month_earlier = t - one_day
         while one_month_earlier.month == t.month or one_month_earlier.day > t.day:
             one_month_earlier -= one_day
@@ -618,61 +615,61 @@ def subtract_months(date, months = 1):
     #    month = date.month - month
     #return date.replace(year = year, month = month)
 
-def monday_of_week(date):
+def monday_of_week(d: datetime) -> datetime:
     """
     Returns the monday of the current week of date.
     """
-    if date is None: return None
+    if d is None: return None
     while True:
-        if date.weekday() == 0:
-            return date
-        date = subtract_days(date, 1)
+        if d.weekday() == 0:
+            return d
+        d = subtract_days(d, 1)
 
-def sunday_of_week(date):
+def sunday_of_week(d: datetime) -> datetime:
     """
     Returns the sunday of the current week of date.
     """
-    if date is None: return None
+    if d is None: return None
     while True:
-        if date.weekday() == 6:
-            return date
-        date = add_days(date, 1)
+        if d.weekday() == 6:
+            return d
+        d = add_days(d, 1)
 
-def first_of_month(date):
+def first_of_month(d: datetime) -> datetime:
     """
     Returns the first of the current month of date.
     """
-    return date.replace(day = 1)
+    return d.replace(day = 1)
 
-def first_of_year(date):
+def first_of_year(d: datetime) -> datetime:
     """
     Returns the first of the current year.
     """
-    return date.replace(day = 1, month = 1)
+    return d.replace(day = 1, month = 1)
 
-def last_of_month(date):
+def last_of_month(d: datetime) -> datetime:
     """
     Returns the last of the current month of date.
     """
-    date = add_months(date, 1)
-    date = first_of_month(date)
-    return subtract_days(date, 1)
+    d = add_months(d, 1)
+    d = first_of_month(d)
+    return subtract_days(d, 1)
 
-def last_of_year(date):
+def last_of_year(d: datetime) -> datetime:
     """
     Returns the last of the current year of date.
     """
-    date = add_years(date, 1)
-    date = first_of_year(date)
-    return subtract_days(date, 1)
+    d = add_years(d, 1)
+    d = first_of_year(d)
+    return subtract_days(d, 1)
 
-def after(date1, date2):
+def after(d1: datetime, d2: datetime) -> bool:
     """
     returns true if date1 is after date2
     """
-    return date_diff_days(date1, date2) < 0
+    return date_diff_days(d1, d2) < 0
 
-def date_diff_days(date1, date2):
+def date_diff_days(d1: datetime, d2: datetime) -> int:
     """
     Returns the difference in days between two dates. It's
     assumed that date2 > date1. We aren't using subtraction
@@ -683,16 +680,16 @@ def date_diff_days(date1, date2):
     (datetime) date1
     (datetime) date2
     """
-    if date1 is None or date2 is None: return 0
+    if d1 is None or d2 is None: return 0
     try:
-        ux1 = time.mktime(date1.timetuple())
-        ux2 = time.mktime(date2.timetuple())
+        ux1 = time.mktime(d1.timetuple())
+        ux2 = time.mktime(d2.timetuple())
         delta = int((ux2 - ux1) / 60 / 60 / 24)
         return delta
     except:
         return 0
 
-def date_diff(l, date1, date2, cutoffs = "7|182|365"):
+def date_diff(l: str, d1: datetime, d2: datetime, cutoffs: str = "7|182|365") -> str:
     """
     Returns a string representing the difference between two
     dates. Eg: 6 weeks, 5 months.
@@ -700,10 +697,10 @@ def date_diff(l, date1, date2, cutoffs = "7|182|365"):
     (datetime) date1
     (datetime) date2
     """
-    days = int(date_diff_days(date1, date2))
+    days = int(date_diff_days(d1, d2))
     return format_diff(l, days, cutoffs)
 
-def format_diff(l, days, cutoffs = "7|182|365"):
+def format_diff(l: str , days: int, cutoffs: str = "7|182|365") -> str:
     """
     Returns a formatted diff from a number of days.
     Eg: 6 weeks, 5 months.
@@ -728,7 +725,7 @@ def format_diff(l, days, cutoffs = "7|182|365"):
         return ntranslate(years, [ _("{plural0} year.", l), _("{plural1} years.", l), _("{plural2} years.", l), _("{plural3} years.")], l).replace(".", "") + \
             " " + ntranslate(months, [ _("{plural0} month.", l), _("{plural1} months.", l), _("{plural2} months.", l), _("{plural3} months.")], l)
 
-def format_diff_single(l, days, cutoffs = "7|182|365"):
+def format_diff_single(l: str, days: int, cutoffs: str = "7|182|365") -> str:
     """
     Returns a formatted diff from a number of days, but only ever a single time unit (ie. weeks, months OR years)
     Eg: 6 weeks, 5 months.
@@ -751,7 +748,7 @@ def format_diff_single(l, days, cutoffs = "7|182|365"):
         # Show as years
         return ntranslate(years, [ _("{plural0} year.", l), _("{plural1} years.", l), _("{plural2} years.", l), _("{plural3} years.")], l)
 
-def parse_dst(c):
+def parse_dst(c: str) -> Tuple:
     """
     Parses dst code c and returns values for day of week,
     start offset in month, start month, end offset in month, end month
@@ -759,7 +756,7 @@ def parse_dst(c):
     dow, start, end = c.split("-")
     return (int(dow), start[0], int(start[1:]), end[0], int(end[1:]))
 
-def dst_find_day(dow, x, month, yearoffset=0):
+def dst_find_day(dow: int, x: str, month: int, yearoffset: int = 0) -> datetime:
     """ 
     Finds the xth dow in month this year.
     dow: int day of the week (0 = mon, 6 = sun)
@@ -785,17 +782,17 @@ def dst_find_day(dow, x, month, yearoffset=0):
             d = add_days(d, 1)
     return d
 
-def dst_start_date(l):
+def dst_start_date(l: str) -> datetime:
     """ Calculates the dst start date/time for locale """
     dow, so, sm, dummy, dummy = parse_dst(get_dst(l))
     return dst_find_day( dow, so, sm)
 
-def dst_end_date(l):
+def dst_end_date(l: str) -> datetime:
     """ Calculates the dst end date/time for locale """
     dow, dummy, sm, eo, em = parse_dst(get_dst(l))
     return dst_find_day(dow, eo, em, sm > em and 1 or 0) # set 1 year offset if start month is later than end month
 
-def dst_adjust(l, offset = 0.0):
+def dst_adjust(l: str, offset: float = 0.0) -> int:
     """
     Returns 1 if locale l is currently in daylight savings time.
     offset: Included so that the time now without dst can be calculated first to
@@ -810,20 +807,20 @@ def dst_adjust(l, offset = 0.0):
     if d >= dsts and d <= dste: return 1 # we're in dst
     return 0
 
-def now(offset = 0.0):
+def now(offset: float = 0.0) -> datetime:
     """
     Returns a python date representing now
     offset: A UTC offset to apply in hours
     """
     if offset < 0:
-        return datetime.datetime.now() - datetime.timedelta(hours = abs(offset))
+        return datetime.now() - timedelta(hours = abs(offset))
     else:
-        return datetime.datetime.now() + datetime.timedelta(hours = offset)
+        return datetime.now() + timedelta(hours = offset)
 
-def today():
+def today() -> datetime:
     """
     Returns a python datetime set to today, but with time information at midnight.
     """
-    d = datetime.datetime.now()
-    return datetime.datetime(d.year, d.month, d.day)
+    d = datetime.now()
+    return datetime(d.year, d.month, d.day)
 

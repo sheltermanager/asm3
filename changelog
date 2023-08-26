@@ -1,6 +1,7 @@
 48
 ================
 
+26/08/23 type hints, i18n, fix bug in display2python with bad ISO date
 26/08/23 type hints, financial, geo #1320
 25/08/23 Rename code.py, move BUILD/VERSION into their own module
 23/08/23 Fix NPE when stripping line breaks from bio in adoptable_js
