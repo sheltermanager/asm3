@@ -1027,7 +1027,7 @@ $(function() {
 
             // Show a warning about retiring of the mobile app
             if (asm.mobileapp) {
-                header.show_error('<a href="https://sheltermanager.com/site/en_mobileretire.html">The Android/iOS mobile app is being retired. Please click here for more info.</a>');
+                header.show_error('<a href="https://sheltermanager.com/site/en_mobileretire.html">This app will stop working on 1st November 2023. Please click here for more info.</a>');
             }
 
         },
