@@ -1019,6 +1019,9 @@ def thumbnail_img_src(dbo, row, mode):
             uri += "&date=%s" % row.WEBSITEMEDIADATE.isoformat()
         return uri
 
+# All of the option functions below are redundant once the old mobile
+# interface is removed (mobile.py / session.mobileapp)
+
 def option(name, value = None, selected = False):
     sel = ""
     val = ""

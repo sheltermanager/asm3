@@ -506,11 +506,15 @@ class database(ASMEndpoint):
                 self.content_type("text/plain")
                 self.header("Content-Disposition", "attachment; filename=\"setup.sql\"")
                 return s
+            
+        optionslocales = ""
+        for code, label in get_locales():
+            optionslocales += "<option value=\"" + code + "\">" + label + "</option>"
 
         dbo = asm3.db.get_database()
         if dbo.has_structure():
             raise asm3.utils.ASMPermissionError("Database already created")
-
+        
         s = asm3.html.bare_header("Create your database")
         s += """
             <h2>Create your new ASM database</h2>
@@ -535,7 +539,7 @@ class database(ASMEndpoint):
                 $("#cdbf").submit();
             });
             </script>
-            """ % (asm3.html.options_locales(), LOCALE)
+            """ % (optionslocales, LOCALE)
         s += asm3.html.footer()
         self.content_type("text/html")
         return s
