@@ -10,6 +10,7 @@ tags
 doc/manual/_build
 install/deb/sheltermanager3
 reports/reports.txt
+src/asm3/__version__.py
 src/static/js/bundle
 src/static/js/compat
 src/static/pages/changelog.txt

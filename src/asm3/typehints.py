@@ -30,6 +30,7 @@ import typing
 
 Any = typing.Any
 Callable = typing.Callable
+Generator = typing.Generator
 List = typing.List
 Dict = typing.Dict
 Tuple = typing.Tuple

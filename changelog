@@ -1,6 +1,7 @@
 48
 ================
 
+27/08/23 type hints, dbupdate, remove __version__.py from git
 26/08/23 type hints, i18n, fix bug in display2python with bad ISO date
 26/08/23 type hints, financial, geo #1320
 25/08/23 Rename code.py, move BUILD/VERSION into their own module

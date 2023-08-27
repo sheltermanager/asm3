@@ -113,7 +113,7 @@ manual:
 	scp -C doc/manual/_build/latex/asm3.pdf root@wwwdx.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help.pdf
 	rsync -a doc/manual/_build/html/ root@wwwdx.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help/
 
-test: 
+test: version
 	@echo "[test] ========================="
 	cd src && python3 main.py 5000
 

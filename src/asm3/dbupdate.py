@@ -16,6 +16,7 @@ import asm3.reports
 import asm3.smcom
 import asm3.utils
 from asm3.i18n import _
+from asm3.typehints import Database, Dict, Generator, List, Tuple
 
 import os, sys
 
@@ -119,11 +120,11 @@ VIEWS = ( "v_adoption", "v_animal", "v_animalcontrol", "v_animalfound", "v_anima
     "v_animalwaitinglist", "v_owner", "v_ownercitation", "v_ownerdonation", "v_ownerlicence", 
     "v_ownertraploan", "v_ownervoucher" )
 
-def sql_structure(dbo):
+def sql_structure(dbo: Database) -> str:
     """
     Returns the SQL necessary to create the database for the type specified
     """
-    def table(name, fields, includechange = True, changenullable = False):
+    def table(name: str, fields: Tuple[str], includechange: bool = True, changenullable: bool = False) -> str:
         if includechange:
             cf = (fint("RecordVersion", True),
                 fstr("CreatedBy", changenullable),
@@ -132,23 +133,23 @@ def sql_structure(dbo):
                 fdate("LastChangedDate", changenullable))
             return "%s;\n" % dbo.ddl_add_table(name, ",".join(fields + cf))
         return "%s;\n" % dbo.ddl_add_table(name, ",".join(fields))
-    def index(name, table, fieldlist, unique = False, partial = False):
+    def index(name: str, table: str, fieldlist: Tuple[str], unique: bool = False, partial: bool = False) -> str:
         return "%s;\n" % dbo.ddl_add_index(name, table, fieldlist, unique, partial)
-    def field(name, ftype = dbo.type_integer, nullable = True, pk = False):
+    def field(name: str, ftype: str = dbo.type_integer, nullable: bool = True, pk: bool = False) -> str:
         return dbo.ddl_add_table_column(name, ftype, nullable, pk)
-    def fid():
+    def fid() -> str:
         return field("ID", dbo.type_integer, False, True)
-    def fint(name, nullable = False):
+    def fint(name: str, nullable: bool = False) -> str:
         return field(name, dbo.type_integer, nullable, False)
-    def ffloat(name, nullable = False):
+    def ffloat(name: str, nullable: bool = False) -> str:
         return field(name, dbo.type_float, nullable, False)
-    def fdate(name, nullable = False):
+    def fdate(name: str, nullable: bool = False) -> str:
         return field(name, dbo.type_datetime, nullable, False)
-    def fstr(name, nullable = False):
+    def fstr(name: str, nullable: bool = False) -> str:
         return field(name, dbo.type_shorttext, nullable, False)
-    def flongstr(name, nullable = True):
+    def flongstr(name: str, nullable: bool = True) -> str:
         return field(name, dbo.type_longtext, nullable, False)
-    def fclob(name, nullable = True):
+    def fclob(name: str, nullable: bool = True) -> str:
         return field(name, dbo.type_clob, nullable, False)
 
     sql = ""
@@ -1714,35 +1715,35 @@ def sql_structure(dbo):
         fint("IsRetired", True) ), False)
     return sql
 
-def sql_default_data(dbo, skip_config = False):
+def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     """
-    Returns the SQL for the default data set
+    Returns the SQL for the default data set.
+    skip_config: if set, does not insert default data for tables: configuration, roles, userrole and users.
     """
-    def config(key, value):
+    def config(key: str, value: str) -> str:
         return "INSERT INTO configuration (ItemName, ItemValue) VALUES ('%s', '%s')|=\n" % ( dbo.escape(key), dbo.escape(value) )
-    def lookup1(tablename, fieldname, tid, name):
+    def lookup1(tablename: str, fieldname: str, tid: int, name: str) -> str:
         return "INSERT INTO %s (ID, %s) VALUES (%s, '%s')|=\n" % ( tablename, fieldname, tid, dbo.escape(name) )
-    def lookup2(tablename, fieldname, tid, name):
+    def lookup2(tablename: str, fieldname: str, tid: int, name: str) -> str:
         return "INSERT INTO %s (ID, %s, IsRetired) VALUES (%s, '%s', 0)|=\n" % ( tablename, fieldname, tid, dbo.escape(name) )
-    def lookup2money(tablename, fieldname, tid, name, money = 0):
+    def lookup2money(tablename: str, fieldname: str, tid: int, name: str, money: int = 0) -> str:
         return "INSERT INTO %s (ID, %s, DefaultCost, IsRetired) VALUES (%s, '%s', %d, 0)|=\n" % ( tablename, fieldname, tid, dbo.escape(name), money)
-    def lookup2moneyaccount(tablename, fieldname, tid, name, accountid = 0, money = 0):
+    def lookup2moneyaccount(tablename: str, fieldname: str, tid: int, name: str, accountid: int = 0, money: int = 0) -> str:
         return "INSERT INTO %s (ID, %s, AccountID, DefaultCost, IsRetired) VALUES (%s, '%s', %d, %d, 0)|=\n" % \
             ( tablename, fieldname, tid, dbo.escape(name), accountid, money)
-    def account(tid, code, desc, atype, dtype, ctype):
+    def account(tid: int, code: str, desc: str, atype: int, dtype: int, ctype: int) -> str:
         return "INSERT INTO accounts (ID, Code, Description, Archived, AccountType, CostTypeID, DonationTypeID, RecordVersion, CreatedBy, CreatedDate, LastChangedBy, LastChangedDate) VALUES (%s, '%s', '%s', 0, %s, %s, %s, 0, '%s', %s, '%s', %s)|=\n" % ( tid, dbo.escape(code), dbo.escape(desc), atype, ctype, dtype, 'default', dbo.sql_now(), 'default', dbo.sql_now() ) 
-    def breed(tid, name, petfinder, speciesid):
+    def breed(tid: int, name: str, petfinder: str, speciesid: int) -> str:
         return "INSERT INTO breed (ID, BreedName, BreedDescription, PetFinderBreed, SpeciesID, IsRetired) VALUES (%s, '%s', '', '%s', %s, 0)|=\n" % ( tid, dbo.escape(name), dbo.escape(petfinder), str(speciesid) )
-    def basecolour(tid, name, adoptapet):
+    def basecolour(tid: int, name: str, adoptapet: str) -> str:
         return "INSERT INTO basecolour (ID, BaseColour, BaseColourDescription, AdoptAPetColour, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % (tid, dbo.escape(name), adoptapet)
-    def internallocation(lid, name):
+    def internallocation(lid: int, name: str) -> str:
         return "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units, SiteID, IsRetired) VALUES (%s, '%s', '', '', 1, 0)|=\n" % ( lid, dbo.escape(name) )
-    def role(tid, name, perms):
+    def role(tid: int, name: str, perms: str) -> str:
         return "INSERT INTO role (ID, Rolename, SecurityMap) VALUES (%s, '%s', '%s')|=\n" % (tid, dbo.escape(name), perms)
-
-    def species(tid, name, petfinder):
+    def species(tid: int, name: str, petfinder: str) -> str:
         return "INSERT INTO species (ID, SpeciesName, SpeciesDescription, PetFinderSpecies, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % ( tid, dbo.escape(name), petfinder )
-    def user(tid, username, realname, password, superuser):
+    def user(tid: int, username: str, realname: str, password: str, superuser: bool) -> str:
         return "INSERT INTO users (ID, UserName, RealName, EmailAddress, Password, SuperUser, OwnerID, SecurityMap, IPRestriction, Signature, LocaleOverride, ThemeOverride, SiteID, DisableLogin, LocationFilter, RecordVersion) VALUES (%s,'%s','%s', '', 'plain:%s', %s, 0,'', '', '', '', '', 0, 0, '', 0)|=\n" % (tid, username, realname, password, superuser and 1 or 0)
 
     l = dbo.locale
@@ -2578,7 +2579,7 @@ def sql_default_data(dbo, skip_config = False):
     sql += lookup2money("vaccinationtype", "VaccinationType", 14, _("FECV/FeCoV", l))
     return sql
 
-def install_db_structure(dbo):
+def install_db_structure(dbo: Database) -> None:
     """
     Creates the db structure in the target database
     """
@@ -2588,11 +2589,11 @@ def install_db_structure(dbo):
         if (s.strip() != ""):
             dbo.execute_dbupdate(s.strip())
 
-def install_db_views(dbo):
+def install_db_views(dbo: Database) -> None:
     """
     Installs all the database views.
     """
-    def create_view(viewname, sql):
+    def create_view(viewname: str, sql: str) -> None:
         try:
             dbo.execute_dbupdate( dbo.ddl_drop_view(viewname) )
             dbo.execute_dbupdate( dbo.ddl_add_view(viewname, sql) )
@@ -2618,7 +2619,7 @@ def install_db_views(dbo):
     create_view("v_ownertraploan", asm3.animalcontrol.get_traploan_query(dbo))
     create_view("v_ownervoucher", asm3.financial.get_voucher_query(dbo))
 
-def install_db_sequences(dbo):
+def install_db_sequences(dbo: Database) -> None:
     """
     Installs database sequences if supported and sets their initial values
     """
@@ -2628,16 +2629,16 @@ def install_db_sequences(dbo):
         dbo.execute_dbupdate(dbo.ddl_drop_sequence(table) )
         dbo.execute_dbupdate(dbo.ddl_add_sequence(table, initialvalue) )
 
-def install_db_stored_procedures(dbo):
+def install_db_stored_procedures(dbo: Database) -> None:
     """
     Creates any special stored procedures we need in the target database
     """
     dbo.install_stored_procedures()
 
-def install_default_data(dbo, skip_config = False):
+def install_default_data(dbo: Database, skip_config: bool = False) -> None:
     """
     Installs the default dataset into the database.
-    skip_config: If true, does not generate config data.
+    skip_config: If true, does not insert default data into: configuration, role, userrole, users 
     """
     asm3.al.info("creating default data", "dbupdate.install_default_data", dbo)
     sql = sql_default_data(dbo, skip_config)
@@ -2645,14 +2646,14 @@ def install_default_data(dbo, skip_config = False):
         if s.strip() != "":
             dbo.execute_dbupdate(s.strip())
 
-def install_default_reports(dbo):
+def install_default_reports(dbo: Database) -> None:
     """
     Installs the recommended/default reports
     """
     asm3.al.info("installing recommended reports", "dbupdate.install_default_reports", dbo)
     asm3.reports.install_recommended_smcom_reports(dbo, "install")
 
-def reinstall_default_data(dbo):
+def reinstall_default_data(dbo: Database) -> None:
     """
     Reinstalls all default data for the current locale.  
     """
@@ -2663,9 +2664,10 @@ def reinstall_default_data(dbo):
     install_default_onlineforms(dbo)
     install_default_reports(dbo)
 
-def install_default_onlineforms(dbo, removeFirst = False):
+def install_default_onlineforms(dbo: Database, removeFirst: bool = False) -> None:
     """
-    Installs the default online forms into the database
+    Installs the default online forms into the database.
+    removeFirst: if True, deletes existing online forms first.
     """
     path = dbo.installpath + "media/onlineform/"
     asm3.al.info("creating default online forms", "dbupdate.install_default_onlineforms", dbo)
@@ -2680,9 +2682,10 @@ def install_default_onlineforms(dbo, removeFirst = False):
             except Exception as err:
                 asm3.al.error("error importing form: %s" % str(err), "dbupdate.install_default_onlineformms", dbo)
 
-def install_default_templates(dbo, removeFirst = False):
+def install_default_templates(dbo: Database, removeFirst: bool = False) -> None:
     """
-    Installs the default templates files into the db
+    Installs the default templates files into the db.
+    removeFirst: if True, deletes all from templatedocument/templatehtml first.
     """
     def add_document_template_from_file(show, name, path, filename):
         dbo.insert("templatedocument", {
@@ -2749,7 +2752,7 @@ def install_default_templates(dbo, removeFirst = False):
     add_document_template_from_file("animal", "rspca_transfer_of_ownership.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_ownership.html")
     add_document_template_from_file("animal", "rspca_transfer_of_title.html", "/templates/rspca", path + "media/templates/rspca/rspca_transfer_of_title.html")
 
-def install(dbo):
+def install(dbo: Database) -> None:
     """
     Handles the install of the database
     path: The path to the current directory containing the asm source
@@ -2763,10 +2766,10 @@ def install(dbo):
     install_default_onlineforms(dbo)
     install_default_reports(dbo)
 
-def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = True, \
-        includeData = True, includeNonASM2 = True, includeUsers = True, includeLKS = True, \
-        includeLookups = True, deleteDBV = False, deleteFirst = True, deleteViewSeq = False, \
-        escapeCR = "", uppernames = False, excludeDBFSTemplates=False, wrapTransaction = True):
+def dump(dbo: Database, includeConfig = True, includeDBFS = True, includeCustomReport = True, 
+        includeData = True, includeNonASM2 = True, includeUsers = True, includeLKS = True, 
+        includeLookups = True, deleteDBV = False, deleteFirst = True, deleteViewSeq = False, 
+        escapeCR = "", uppernames = False, excludeDBFSTemplates=False, wrapTransaction = True) -> Generator[str, None, None]:
     """
     Dumps all of the data in the database as DELETE/INSERT statements.
     includeConfig - include the config table
@@ -2815,7 +2818,7 @@ def dump(dbo, includeConfig = True, includeDBFS = True, includeCustomReport = Tr
     if deleteDBV: yield "DELETE FROM configuration WHERE ItemName LIKE 'DBV';\n"
     if wrapTransaction: yield "COMMIT;\n"
 
-def dump_dbfs_base64(dbo):
+def dump_dbfs_base64(dbo: Database) -> Generator[str, None, None]:
     """
     Generator function that dumps the DBFS table, reading every single
     file and including it as old style base64 in the Content column.
@@ -2839,7 +2842,7 @@ def dump_dbfs_base64(dbo):
         yield "INSERT INTO dbfs (ID, Name, Path, URL, Content) VALUES (%d, '%s', '%s', '%s', '%s');\n" % (r["ID"], r["NAME"], r["PATH"], url, content)
         del content
 
-def dump_dbfs_files(dbo):
+def dump_dbfs_files(dbo: Database) -> Generator[str, None, None]:
     """
     Generator function that dumps the DBFS table, reading every single
     file and outputting it to /tmp/dump_dbfs_files. 
@@ -2869,7 +2872,7 @@ def dump_dbfs_files(dbo):
         yield "INSERT INTO dbfs (ID, Name, Path, URL, Content) VALUES (%d, '%s', '%s', '%s', NULL);\n" % (r.ID, r.NAME, r.PATH, url)
         del content
 
-def dump_hsqldb(dbo, includeDBFS = True):
+def dump_hsqldb(dbo: Database, includeDBFS: bool = True) -> Generator[str, None, None]:
     """
     Produces a dump in hsqldb format for use with ASM2
     generator function.
@@ -2885,7 +2888,7 @@ def dump_hsqldb(dbo, includeDBFS = True):
     yield "DELETE FROM configuration WHERE ItemName LIKE 'DatabaseVersion' OR ItemName LIKE 'SMDBLocked';\n"
     yield "INSERT INTO configuration (ItemName, ItemValue) VALUES ('DatabaseVersion', '2870');\n"
 
-def dump_lookups(dbo):
+def dump_lookups(dbo: Database) -> Generator[str, None, None]:
     """
     Dumps only the lookup tables. Useful for smcom where we get people requesting a 
     new account with lookups from another account
@@ -2893,7 +2896,7 @@ def dump_lookups(dbo):
     for x in dump(dbo, includeDBFS = False, includeConfig = False, includeData = False, includeUsers = False, deleteDBV = True, deleteViewSeq = True, wrapTransaction = True):
         yield x
 
-def dump_smcom(dbo):
+def dump_smcom(dbo: Database) -> Generator[str, None, None]:
     """
     Dumps the database in a convenient format for import to sheltermanager.com
     generator function.
@@ -2912,13 +2915,14 @@ def dump_smcom(dbo):
     for x in dump(dbo, includeDBFS = True, includeConfig = False, includeUsers = True, includeLKS = False, deleteDBV = True, deleteViewSeq = True, excludeDBFSTemplates = True, wrapTransaction = True):
         yield x
 
-def dump_merge(dbo, deleteViewSeq = True):
+def dump_merge(dbo: Database, deleteViewSeq: bool = True) -> Generator[str, None, None]:
     """
     Produces a special type of dump - it renumbers the IDs into a higher range 
     so that they can be inserted into another database.
+    deleteViewSeq: if True, deletes the view/seq version from the configuration table after.
     """
     ID_OFFSET = 100000
-    def fix_and_dump(table, fields):
+    def fix_and_dump(table: str, fields: List[str]) -> str:
         rows = dbo.query("SELECT * FROM %s" % table)
         s = []
         for r in rows:
@@ -3000,12 +3004,12 @@ def dump_merge(dbo, deleteViewSeq = True):
     yield fix_and_dump("dbfs", [ "ID", "URL" ])
     if deleteViewSeq: yield "DELETE FROM configuration WHERE ItemName LIKE 'DBViewSeqVersion';\n"
 
-def diagnostic(dbo):
+def diagnostic(dbo: Database) -> Dict[str, int]:
     """
     1. Checks for and removes orphaned records (of some types)
     2. Checks for and fixes animal records with too many web or doc preferred images
     """
-    def orphan(table, linktable, leftfield, rightfield):
+    def orphan(table: str, linktable: str, leftfield: str, rightfield: str) -> int:
         count = dbo.query_int("SELECT COUNT(*) FROM %s LEFT OUTER JOIN %s ON %s = %s " \
             "WHERE %s Is Null" % (table, linktable, leftfield, rightfield, rightfield))
         if count > 0:
@@ -3014,7 +3018,7 @@ def diagnostic(dbo):
                 table, leftfield, leftfield, table, linktable, leftfield, rightfield, rightfield))
         return count
 
-    def mediapref():
+    def mediapref() -> int:
         duplicatepic = 0
         for a in dbo.query("SELECT ID, " \
             "(SELECT COUNT(*) FROM media WHERE LinkID = animal.ID AND LinkTypeID = 0) AS TotalMedia, " \
@@ -3042,7 +3046,7 @@ def diagnostic(dbo):
         "duplicate preferred images": mediapref()
     }
 
-def fix_preferred_photos(dbo):
+def fix_preferred_photos(dbo: Database) -> int:
     """
     Resets the web and doc preferred flags on all photos to the latest one for all media records.
     This is useful in situations where users have borked them by running queries in the past.
@@ -3061,7 +3065,7 @@ def fix_preferred_photos(dbo):
     dbo.execute_many("UPDATE media SET WebsitePhoto=1, DocPhoto=1 WHERE ID=?", batch, override_lock=True) 
     return len(batch)
 
-def replace_html_entities(dbo):
+def replace_html_entities(dbo: Database) -> None:
     """
     Substitutes HTML entities in every text field in the database with their appropriate unicode codepoint.
     Used for the transition between v44 and v45 where we stopped storing unicode as HTML entities and an
@@ -3193,24 +3197,25 @@ def replace_html_entities(dbo):
         asm3.al.info(f"{table} ({len(batch)} rows)", "dbupdate.replace_html_entities", dbo)
     if asm3.smcom.active(): asm3.smcom.vacuum_full(dbo)
 
-def check_for_updates(dbo):
+def check_for_updates(dbo: Database) -> bool:
     """
     Checks to see what version the database is on and whether or
-    not it needs to be upgraded. Returns true if it needs
-    upgrading.
+    not it needs to be upgraded. 
+    Returns true if the database needs upgrading.
     """
     dbv = int(asm3.configuration.dbv(dbo))
     return dbv < LATEST_VERSION
 
-def check_for_view_seq_changes(dbo):
+def check_for_view_seq_changes(dbo: Database) -> bool:
     """
     Checks to see whether we need to recreate our views and
     sequences by looking to see if the current database version is 
-    different. Returns True if we need to update.
+    different. 
+    Returns True if we need to update.
     """
     return asm3.configuration.db_view_seq_version(dbo) != str(LATEST_VERSION)
 
-def reset_db(dbo):
+def reset_db(dbo: Database) -> None:
     """
     Resets a database by removing all data from non-lookup tables.
     """
@@ -3218,7 +3223,7 @@ def reset_db(dbo):
         dbo.execute_dbupdate("DELETE FROM %s" % t)
     install_db_sequences(dbo)
 
-def perform_updates(dbo):
+def perform_updates(dbo: Database) -> None:
     """
     Performs any updates that need to be performed against the 
     database. Returns the new database version.
@@ -3248,25 +3253,25 @@ def perform_updates(dbo):
         # Unlock the database for updates before we leave
         asm3.configuration.db_unlock(dbo)
 
-def add_column(dbo, table, column, coltype):
+def add_column(dbo: Database, table: str, column: str, coltype: str) -> None:
     dbo.execute_dbupdate( dbo.ddl_add_column(table, column, coltype) )
 
-def add_index(dbo, indexname, tablename, fieldname, unique = False, partial = False):
+def add_index(dbo: Database, indexname: str, tablename: str, fieldname: str, unique: bool = False, partial: bool = False) -> None:
     dbo.execute_dbupdate( dbo.ddl_add_index(indexname, tablename, fieldname, unique, partial) )
 
-def drop_column(dbo, table, column):
+def drop_column(dbo: Database, table: str, column: str) -> None:
     dbo.execute_dbupdate( dbo.ddl_drop_column(table, column) )
 
-def drop_index(dbo, indexname, tablename):
+def drop_index(dbo: Database, indexname: str, tablename: str) -> None:
     try:
         dbo.execute_dbupdate( dbo.ddl_drop_index(indexname, tablename) )
     except:
         pass
 
-def modify_column(dbo, table, column, newtype, using = ""):
+def modify_column(dbo: Database, table: str, column: str, newtype: str, using: str = "") -> None:
     dbo.execute_dbupdate( dbo.ddl_modify_column(table, column, newtype, using) )
 
-def column_exists(dbo, table, column):
+def column_exists(dbo: Database, table: str, column: str) -> bool:
     """ Returns True if the column exists for the table given """
     try:
         dbo.query("SELECT %s FROM %s" % (column, table), limit=1)
@@ -3274,7 +3279,7 @@ def column_exists(dbo, table, column):
     except:
         return False
 
-def remove_asm2_compatibility(dbo):
+def remove_asm2_compatibility(dbo: Database) -> None:
     """
     These are fields that we only include for compatibility with ASM2.
     ASM3 doesn't read or write to them any more.
@@ -3290,7 +3295,7 @@ def remove_asm2_compatibility(dbo):
     dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN LastPublishedP911")
     dbo.execute_dbupdate("ALTER TABLE media DROP COLUMN LastPublishedRG")
 
-def update_3000(dbo):
+def update_3000(dbo: Database) -> None:
     path = dbo.installpath
     # NB: We don't keep these things in the dbfs any more, but for the upgrade path, we keep
     # on doing what we did, so that when update 34100 runs, the new tables are created and they get moved.
@@ -3329,7 +3334,7 @@ def update_3000(dbo):
     dbo.execute_dbupdate("CREATE UNIQUE INDEX messages_ID ON messages(ID)")
     add_index(dbo, "messages_Expires", "messages", "Expires")
 
-def update_3001(dbo):
+def update_3001(dbo: Database) -> None:
     dbo.execute_dbupdate("DELETE FROM configuration WHERE ItemName LIKE 'MappingService%'")
     dbo.execute_dbupdate("INSERT INTO configuration VALUES ('%s', '%s')" % ( "MappingServiceLinkURL", "http://maps.google.com/maps?q={0}" ))
     dbo.execute_dbupdate("INSERT INTO configuration VALUES ('%s', '%s')" % ( "MappingServiceEmbeddedURL", "https://maps.googleapis.com/maps/api/staticmap?center={0}&size=250x250&maptype=roadmap&sensor=false"))
@@ -3340,7 +3345,7 @@ def update_3001(dbo):
         dbo.execute_dbupdate("DELETE FROM configuration WHERE ItemName LIKE 'Timezone'")
         dbo.execute_dbupdate("INSERT INTO configuration VALUES ('%s', '%s')" % ( "Timezone", "0" ))
 
-def update_3002(dbo):
+def update_3002(dbo: Database) -> None:
     add_column(dbo, "users", "IPRestriction", dbo.type_longtext)
     dbo.execute_dbupdate("CREATE TABLE role (ID INTEGER NOT NULL PRIMARY KEY, " \
         "Rolename %s NOT NULL, SecurityMap %s NOT NULL)" % (dbo.type_shorttext, dbo.type_longtext))
@@ -3372,15 +3377,15 @@ def update_3002(dbo):
         dbo.execute_dbupdate("INSERT INTO userrole VALUES (%d, %d)" % \
             ( u["ID"], roleid))
 
-def update_3003(dbo):
+def update_3003(dbo: Database) -> None:
     # Extend the length of configuration items
     modify_column(dbo, "configuration", "ItemValue", dbo.type_longtext)
         
-def update_3004(dbo):
+def update_3004(dbo: Database) -> None:
     # Broken, disregard.
     pass
 
-def update_3005(dbo):
+def update_3005(dbo: Database) -> None:
     # 3004 was broken and deleted the mapping service by accident, so we reinstate it
     dbo.execute_dbupdate("DELETE FROM configuration WHERE ItemName LIKE 'MappingService%'")
     dbo.execute_dbupdate("INSERT INTO configuration VALUES ('%s', '%s')" % ( "MappingServiceLinkURL", "http://maps.google.com/maps?q={0}" ))
@@ -3390,21 +3395,21 @@ def update_3005(dbo):
     dbo.execute_dbupdate("INSERT INTO configuration VALUES ('%s', '%s')" % ( "RecordSearchLimit", "1000" ))
     dbo.execute_dbupdate("INSERT INTO configuration VALUES ('%s', '%s')" % ( "SearchSort", "3" ))
 
-def update_3006(dbo):
+def update_3006(dbo: Database) -> None:
     # Add ForName field to messages
     add_column(dbo, "messages", "ForName", dbo.type_shorttext)
     dbo.execute_dbupdate("UPDATE messages SET ForName = '*'")
 
-def update_3007(dbo):
+def update_3007(dbo: Database) -> None:
     # Add default quicklinks
     dbo.execute_dbupdate("DELETE FROM configuration WHERE ItemName Like 'QuicklinksID'")
     dbo.execute_dbupdate("INSERT INTO configuration VALUES ('%s', '%s')" % ( "QuicklinksID", "35,25,33,31,34,19,20"))
 
-def update_3008(dbo):
+def update_3008(dbo: Database) -> None:
     # Add facility for users to override the system locale
     add_column(dbo, "users", "LocaleOverride", dbo.type_shorttext)
 
-def update_3009(dbo):
+def update_3009(dbo: Database) -> None:
     # Create animalfigures table to be updated each night
     sql = "CREATE TABLE animalfigures ( ID INTEGER NOT NULL, " \
         "Month INTEGER NOT NULL, " \
@@ -3455,7 +3460,7 @@ def update_3009(dbo):
     add_index(dbo, "animalfigures_Month", "animalfigures", "Month")
     add_index(dbo, "animalfigures_Year", "animalfigures", "Year")
 
-def update_3010(dbo):
+def update_3010(dbo: Database) -> None:
     # Create person flags table
     sql = "CREATE TABLE lkownerflags ( ID INTEGER NOT NULL, " \
         "Flag %s NOT NULL)" % dbo.type_shorttext
@@ -3483,25 +3488,25 @@ def update_3010(dbo):
         concat = dbo.sql_concat(["AdditionalFlags", "'%s|'" % flag])
         dbo.execute_dbupdate("UPDATE owner SET AdditionalFlags=%s WHERE %s=1" % (concat, field) )
 
-def update_3050(dbo):
+def update_3050(dbo: Database) -> None:
     # Add default cost for vaccinations
     add_column(dbo, "vaccinationtype", "DefaultCost", "INTEGER")
     # Add default adoption fee per species
     add_column(dbo, "species", "AdoptionFee", "INTEGER")
 
-def update_3051(dbo):
+def update_3051(dbo: Database) -> None:
     # Fix incorrect field name from ASM3 initial install (it was listed
     # as TimingRuleNoFrequency instead of TimingRuleFrequency)
     add_column(dbo, "medicalprofile", "TimingRuleFrequency", "INTEGER")
     drop_column(dbo, "medicalprofile", "TimingRuleNoFrequency")
 
-def update_3081(dbo):
+def update_3081(dbo: Database) -> None:
     # Remove AdoptionFee field - it was a stupid idea to have with species
     # put a defaultcost on donation type instead
     drop_column(dbo, "species", "AdoptionFee")
     add_column(dbo, "donationtype", "DefaultCost", "INTEGER")
 
-def update_3091(dbo):
+def update_3091(dbo: Database) -> None:
     # Reinstated map url in 3005 did not use SSL for embedded link
     dbo.execute_dbupdate("DELETE FROM configuration WHERE ItemName LIKE 'MappingService%'")
     dbo.execute_dbupdate("INSERT INTO configuration VALUES ('%s', '%s')" % ( "MappingServiceLinkURL", "http://maps.google.com/maps?q={0}" ))
@@ -3510,11 +3515,11 @@ def update_3091(dbo):
     add_column(dbo, "media", "ExcludeFromPublish", "INTEGER")
     dbo.execute_dbupdate("UPDATE media SET ExcludeFromPublish = 0")
 
-def update_3092(dbo):
+def update_3092(dbo: Database) -> None:
     # Added last publish date for meetapet.com
     add_column(dbo, "media", "LastPublishedMP", dbo.type_datetime)
 
-def update_3093(dbo):
+def update_3093(dbo: Database) -> None:
     # Create animalfiguresannual table to be updated each night
     sql = "CREATE TABLE animalfiguresannual ( ID INTEGER NOT NULL, " \
         "Year INTEGER NOT NULL, " \
@@ -3544,15 +3549,15 @@ def update_3093(dbo):
     add_index(dbo, "animalfiguresannual_SpeciesID", "animalfiguresannual", "SpeciesID")
     add_index(dbo, "animalfiguresannual_Year", "animalfiguresannual", "Year")
 
-def update_3094(dbo):
+def update_3094(dbo: Database) -> None:
     # Added last publish date for helpinglostpets.com
     add_column(dbo, "media", "LastPublishedHLP", dbo.type_datetime)
 
-def update_3110(dbo):
+def update_3110(dbo: Database) -> None:
     # Add PetLinkSentDate
     add_column(dbo, "animal", "PetLinkSentDate", dbo.type_datetime)
 
-def update_3111(dbo):
+def update_3111(dbo: Database) -> None:
     l = dbo.locale
     # New additional field types to indicate location
     dbo.execute_dbupdate("UPDATE lksfieldlink SET LinkType = '%s' WHERE ID = 0" % _("Animal - Additional", l))
@@ -3565,7 +3570,7 @@ def update_3111(dbo):
     dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (7, '%s')" % _("Person - Name and Address", l))
     dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (8, '%s')" % _("Person - Type", l))
 
-def update_3120(dbo):
+def update_3120(dbo: Database) -> None:
     # This stuff only applies to MySQL databases - we have to import a lot of these
     # and if they were created by ASM3 they don't quite match our 2870 upgrade schemas
     # as I accidentally had createdby/lastchangedby fields in 3 tables that shouldn't
@@ -3590,48 +3595,48 @@ def update_3120(dbo):
     if column_exists(dbo, "media", "lastpublished911"):
         dbo.execute_dbupdate("ALTER TABLE media CHANGE COLUMN lastpublished911 lastpublishedp911 DATETIME")
 
-def update_3121(dbo):
+def update_3121(dbo: Database) -> None:
     # Added user email address
     add_column(dbo, "users", "EmailAddress", dbo.type_shorttext)
 
-def update_3122(dbo):
+def update_3122(dbo: Database) -> None:
     # Switch shelter animals quicklink for shelter view
     # This will fail on locked databases, but shouldn't be an issue.
     links = asm3.configuration.quicklinks_id(dbo)
     links = links.replace("35", "40")
     asm3.configuration.quicklinks_id(dbo, links)
 
-def update_3123(dbo):
+def update_3123(dbo: Database) -> None:
     # Add the monthly animal figures total column
     add_column(dbo, "animalfigures", "Total", dbo.type_shorttext)
 
-def update_3200(dbo):
+def update_3200(dbo: Database) -> None:
     # Add the trial adoption fields to the adoption table
     add_column(dbo, "adoption", "IsTrial", "INTEGER")
     add_column(dbo, "adoption", "TrialEndDate", dbo.type_datetime)
     add_index(dbo, "adoption_TrialEndDate", "adoption", "TrialEndDate")
 
-def update_3201(dbo):
+def update_3201(dbo: Database) -> None:
     # Add the has trial adoption denormalised field to the animal table and update it
     add_column(dbo, "animal", "HasTrialAdoption", "INTEGER")
     dbo.execute_dbupdate("UPDATE animal SET HasTrialAdoption = 0")
     dbo.execute_dbupdate("UPDATE adoption SET IsTrial = 0 WHERE IsTrial Is Null")
 
-def update_3202(dbo):
+def update_3202(dbo: Database) -> None:
     # Set default value for HasTrialAdoption
     dbo.execute_dbupdate("UPDATE animal SET HasTrialAdoption = 1 WHERE EXISTS(SELECT ID FROM adoption ad WHERE ad.IsTrial = 1 AND ad.AnimalID = animal.ID)")
 
-def update_3203(dbo):
+def update_3203(dbo: Database) -> None:
     l = dbo.locale
     # Add Trial Adoption movement type
     dbo.execute_dbupdate("INSERT INTO lksmovementtype (ID, MovementType) VALUES (11, ?)", [ _("Trial Adoption", l) ] )
 
-def update_3204(dbo):
+def update_3204(dbo: Database) -> None:
     # Quicklinks format has changed, regenerate them
     links = asm3.configuration.quicklinks_id(dbo)
     asm3.configuration.quicklinks_id(dbo, links)
 
-def update_3210(dbo):
+def update_3210(dbo: Database) -> None:
     # Anyone using MySQL who created their database with the db
     # initialiser here will have some short columns as CLOB
     # wasn't mapped properly
@@ -3640,7 +3645,7 @@ def update_3210(dbo):
         dbo.execute_dbupdate("ALTER TABLE media MODIFY MediaNotes LONGTEXT NOT NULL")
         dbo.execute_dbupdate("ALTER TABLE log MODIFY Comments LONGTEXT NOT NULL")
 
-def update_3211(dbo):
+def update_3211(dbo: Database) -> None:
     # People who upgraded from ASM2 will find that some of their address fields
     # are a bit short - particularly if they are using unicode chars
     fields = [ "OwnerTitle", "OwnerInitials", "OwnerForeNames", "OwnerSurname", 
@@ -3649,7 +3654,7 @@ def update_3211(dbo):
     for f in fields:
         modify_column(dbo, "owner", f, dbo.type_shorttext)
 
-def update_3212(dbo):
+def update_3212(dbo: Database) -> None:
     # Many of our lookup fields are too short for foreign languages
     fields = [ "animaltype.AnimalType", "animaltype.AnimalDescription", "basecolour.BaseColour", "basecolour.BaseColourDescription",
         "breed.BreedName", "breed.BreedDescription", "lkcoattype.CoatType", "costtype.CostTypeName", "costtype.CostTypeDescription",
@@ -3671,7 +3676,7 @@ def update_3212(dbo):
         except Exception as err:
             asm3.al.error("failed extending %s: %s" % (f, str(err)), "dbupdate.update_3212", dbo)
 
-def update_3213(dbo):
+def update_3213(dbo: Database) -> None:
     try:
         # Make displaylocationname and displaylocationstring denormalised fields
         dbo.execute_dbupdate("ALTER TABLE animal ADD DisplayLocationName %s" % dbo.type_shorttext)
@@ -3697,7 +3702,7 @@ def update_3213(dbo):
         "END")
     dbo.execute_dbupdate("UPDATE animal SET DisplayLocationString = DisplayLocationName")
 
-def update_3214(dbo):
+def update_3214(dbo: Database) -> None:
     # More short fields
     fields = [ "diarytaskhead.Name", "diarytaskdetail.Subject", "diarytaskdetail.WhoFor", "lksdonationfreq.Frequency",
         "lksloglink.LinkType", "lksdiarylink.LinkType", "lksfieldlink.LinkType", "lksfieldtype.FieldType",
@@ -3706,7 +3711,7 @@ def update_3214(dbo):
         table, field = f.split(".")
         modify_column(dbo, table, field, dbo.type_shorttext)
 
-def update_3215(dbo):
+def update_3215(dbo: Database) -> None:
     # Rename DisplayLocationString column to just DisplayLocation and ditch DisplayLocationName - it should be calculated
     try:
         dbo.execute_dbupdate("ALTER TABLE animal ADD DisplayLocation %s" % dbo.type_shorttext)
@@ -3722,7 +3727,7 @@ def update_3215(dbo):
     except:
         asm3.al.error("failed removing DisplayLocationName and DisplayLocationString", "dbupdate.update_3215", dbo)
 
-def update_3216(dbo):
+def update_3216(dbo: Database) -> None:
     l = dbo.locale
     # Add the new mediatype field to media and create the link table
     dbo.execute_dbupdate("ALTER TABLE media ADD MediaType INTEGER")
@@ -3734,14 +3739,14 @@ def update_3216(dbo):
     dbo.execute_dbupdate("INSERT INTO lksmediatype (ID, MediaType) VALUES (%d, '%s')" % (1, _("Document Link", l)))
     dbo.execute_dbupdate("INSERT INTO lksmediatype (ID, MediaType) VALUES (%d, '%s')" % (2, _("Video Link", l)))
 
-def update_3217(dbo):
+def update_3217(dbo: Database) -> None:
     # Add asilomar fields for US users
     dbo.execute_dbupdate("ALTER TABLE animal ADD AsilomarIsTransferExternal INTEGER")
     dbo.execute_dbupdate("ALTER TABLE animal ADD AsilomarIntakeCategory INTEGER")
     dbo.execute_dbupdate("ALTER TABLE animal ADD AsilomarOwnerRequestedEuthanasia INTEGER")
     dbo.execute_dbupdate("UPDATE animal SET AsilomarIsTransferExternal = 0, AsilomarIntakeCategory = 0, AsilomarOwnerRequestedEuthanasia = 0")
 
-def update_3220(dbo):
+def update_3220(dbo: Database) -> None:
     # Create animalfiguresasilomar table to be updated each night
     # for US shelters with the option on
     sql = "CREATE TABLE animalfiguresasilomar ( ID INTEGER NOT NULL, " \
@@ -3757,14 +3762,14 @@ def update_3220(dbo):
     add_index(dbo, "animalfiguresasilomar_ID", "animalfiguresasilomar", "ID", True)
     add_index(dbo, "animalfiguresasilomar_Year", "animalfiguresasilomar", "Year")
 
-def update_3221(dbo):
+def update_3221(dbo: Database) -> None:
     # More short fields
     fields = [ "activeuser.UserName", "customreport.Title", "customreport.Category" ]
     for f in fields:
         table, field = f.split(".")
         modify_column(dbo, table, field, dbo.type_shorttext)
 
-def update_3222(dbo):
+def update_3222(dbo: Database) -> None:
     # Person investigation table
     dbo.execute_dbupdate("CREATE TABLE ownerinvestigation ( ID INTEGER NOT NULL, " \
         "OwnerID INTEGER NOT NULL, Date %s NOT NULL, Notes %s NOT NULL, " \
@@ -3774,7 +3779,7 @@ def update_3222(dbo):
     add_index(dbo, "ownerinvestigation_ID", "ownerinvestigation", "ID", True)
     add_index(dbo, "ownerinvestigation_Date", "ownerinvestigation", "Date")
 
-def update_3223(dbo):
+def update_3223(dbo: Database) -> None:
     # PostgreSQL databases have been using VARCHAR(16384) as longtext when
     # they really shouldn't. Let's switch those fields to be TEXT instead.
     if dbo.dbtype != "POSTGRESQL": return
@@ -3795,7 +3800,7 @@ def update_3223(dbo):
         except Exception as err:
             asm3.al.error("failed switching to TEXT %s: %s" % (f, str(err)), "dbupdate.update_3223", dbo)
 
-def update_3224(dbo):
+def update_3224(dbo: Database) -> None:
     # AVG is a reserved keyword in some SQL dialects, change that field
     try:
         if dbo.dbtype == "MYSQL":
@@ -3807,44 +3812,44 @@ def update_3224(dbo):
     except Exception as err:
         asm3.al.error("failed renaming AVG to AVERAGE: %s" % str(err), "dbupdate.update_3224", dbo)
 
-def update_3225(dbo):
+def update_3225(dbo: Database) -> None:
     # Make sure the ADOPTIONFEE mistake is really gone
     dbo.execute_dbupdate("ALTER TABLE species DROP COLUMN AdoptionFee")
 
-def update_3300(dbo):
+def update_3300(dbo: Database) -> None:
     # Add diary comments field
     add_column(dbo, "diary", "Comments", dbo.type_longtext)
 
-def update_3301(dbo):
+def update_3301(dbo: Database) -> None:
     # Add the accountsrole table
     dbo.execute_dbupdate("CREATE TABLE accountsrole (AccountID INTEGER NOT NULL, " \
         "RoleID INTEGER NOT NULL, CanView INTEGER NOT NULL, CanEdit INTEGER NOT NULL)")
     dbo.execute_dbupdate("CREATE UNIQUE INDEX accountsrole_AccountIDRoleID ON accountsrole(AccountID, RoleID)")
 
-def update_3302(dbo):
+def update_3302(dbo: Database) -> None:
     # Add default cost fields to costtype and voucher
     add_column(dbo, "costtype", "DefaultCost", "INTEGER")
     add_column(dbo, "voucher", "DefaultCost", "INTEGER")
 
-def update_3303(dbo):
+def update_3303(dbo: Database) -> None:
     # Add theme override to users
     add_column(dbo, "users", "ThemeOverride", dbo.type_shorttext)
 
-def update_3304(dbo):
+def update_3304(dbo: Database) -> None:
     # Add index to configuration ItemName field
     add_index(dbo, "configuration_ItemName", "configuration", "ItemName")
 
-def update_3305(dbo):
+def update_3305(dbo: Database) -> None:
     # Add IsHold and IsQuarantine fields
     add_column(dbo, "animal", "IsHold", "INTEGER")
     add_column(dbo, "animal", "IsQuarantine", "INTEGER")
     dbo.execute_dbupdate("UPDATE animal SET IsHold = 0, IsQuarantine = 0")
 
-def update_3306(dbo):
+def update_3306(dbo: Database) -> None:
     # Add HoldUntilDate
     add_column(dbo, "animal", "HoldUntilDate", dbo.type_datetime)
 
-def update_3307(dbo):
+def update_3307(dbo: Database) -> None:
     # Create new animaltest tables
     sql = "CREATE TABLE animaltest (ID INTEGER NOT NULL PRIMARY KEY, " \
         "AnimalID INTEGER NOT NULL, " \
@@ -3871,7 +3876,7 @@ def update_3307(dbo):
         "ResultDescription %(long)s)" % { "short": dbo.type_shorttext, "long": dbo.type_longtext }
     dbo.execute_dbupdate(sql)
 
-def update_3308(dbo):
+def update_3308(dbo: Database) -> None:
     # Create initial data for testtype and testresult tables
     if dbo.query_int("SELECT COUNT(*) FROM testtype") > 0: return
     l = dbo.locale
@@ -3882,7 +3887,7 @@ def update_3308(dbo):
     dbo.execute_dbupdate("INSERT INTO testtype (ID, TestName, DefaultCost) VALUES (2, '" + _("FLV", l) + "', 0)")
     dbo.execute_dbupdate("INSERT INTO testtype (ID, TestName, DefaultCost) VALUES (3, '" + _("Heartworm", l) + "', 0)")
 
-def update_3309(dbo):
+def update_3309(dbo: Database) -> None:
     if dbo.query_int("SELECT COUNT(*) FROM animaltest") > 0: return
     fiv = dbo.query("SELECT ID, CombiTestDate, CombiTestResult FROM animal WHERE CombiTested = 1 AND CombiTestDate Is Not Null")
     asm3.al.debug("found %d fiv results to convert" % len(fiv), "update_3309", dbo)
@@ -3933,7 +3938,7 @@ def update_3309(dbo):
         except Exception as err:
             asm3.al.error("hw: " + str(err), "dbupdate.update_3309", dbo)
 
-def update_33010(dbo):
+def update_33010(dbo: Database) -> None:
     # Add new additional field types and locations
     l = dbo.locale
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (7, '" + _("Multi-Lookup", l) + "')")
@@ -3947,7 +3952,7 @@ def update_33010(dbo):
     dbo.execute_dbupdate("INSERT INTO lksfieldlink (ID, LinkType) VALUES (14, '" + _("Waiting List - Details", l) + "')")
     dbo.execute_dbupdate("INSERT INTO lksfieldlink (ID, LinkType) VALUES (15, '" + _("Waiting List - Removal", l) + "')")
 
-def update_33011(dbo):
+def update_33011(dbo: Database) -> None:
     # Add donationpayment table and data
     l = dbo.locale
     sql = "CREATE TABLE donationpayment (ID INTEGER NOT NULL PRIMARY KEY, " \
@@ -3962,12 +3967,12 @@ def update_33011(dbo):
     dbo.execute_dbupdate("ALTER TABLE ownerdonation ADD DonationPaymentID INTEGER")
     dbo.execute_dbupdate("UPDATE ownerdonation SET DonationPaymentID = 1")
 
-def update_33012(dbo):
+def update_33012(dbo: Database) -> None:
     # Add ShelterLocationUnit
     add_column(dbo, "animal", "ShelterLocationUnit", dbo.type_shorttext)
     dbo.execute_dbupdate("UPDATE animal SET ShelterLocationUnit = ''")
 
-def update_33013(dbo):
+def update_33013(dbo: Database) -> None:
     # Add online form tables
     sql = "CREATE TABLE onlineform (ID INTEGER NOT NULL PRIMARY KEY, " \
         "Name %(short)s NOT NULL, " \
@@ -3994,28 +3999,28 @@ def update_33013(dbo):
     dbo.execute_dbupdate(sql)
     add_index(dbo, "onlineformincoming_CollationID", "onlineformincoming", "CollationID")
 
-def update_33014(dbo):
+def update_33014(dbo: Database) -> None:
     # Add a display index field to onlineformfield
     add_column(dbo, "onlineformfield", "DisplayIndex", "INTEGER")
     # Add a label field to onlineformincoming
     add_column(dbo, "onlineformincoming", "Label", dbo.type_shorttext)
 
-def update_33015(dbo):
+def update_33015(dbo: Database) -> None:
     # Add a host field to onlineformincoming
     add_column(dbo, "onlineformincoming", "Host", dbo.type_shorttext)
 
-def update_33016(dbo):
+def update_33016(dbo: Database) -> None:
     # Add a DisplayIndex and Preview field to onlineformincoming
     add_column(dbo, "onlineformincoming", "DisplayIndex", "INTEGER")
     add_column(dbo, "onlineformincoming", "Preview", dbo.type_longtext)
 
-def update_33017(dbo):
+def update_33017(dbo: Database) -> None:
     # Add the customreportrole table
     dbo.execute_dbupdate("CREATE TABLE customreportrole (ReportID INTEGER NOT NULL, " \
         "RoleID INTEGER NOT NULL, CanView INTEGER NOT NULL)")
     dbo.execute_dbupdate("CREATE UNIQUE INDEX customreportrole_ReportIDRoleID ON customreportrole(ReportID, RoleID)")
 
-def update_33018(dbo):
+def update_33018(dbo: Database) -> None:
     l = dbo.locale
     # Add IsPermanentFoster and HasPermanentFoster fields
     add_column(dbo, "adoption", "IsPermanentFoster", "INTEGER")
@@ -4023,12 +4028,12 @@ def update_33018(dbo):
     # Add Permanent Foster movement type
     dbo.execute_dbupdate("INSERT INTO lksmovementtype (ID, MovementType) VALUES (12, ?)",  [ _("Permanent Foster", l)] )
 
-def update_33019(dbo):
+def update_33019(dbo: Database) -> None:
     # Set initial value for those flags
     dbo.execute_dbupdate("UPDATE adoption SET IsPermanentFoster = 0 WHERE IsPermanentFoster Is Null")
     dbo.execute_dbupdate("UPDATE animal SET HasPermanentFoster = 0 WHERE HasPermanentFoster Is Null")
 
-def update_33101(dbo):
+def update_33101(dbo: Database) -> None:
     # Many indexes we should have
     add_index(dbo, "owner_OwnerAddress", "owner", "OwnerAddress")
     add_index(dbo, "owner_OwnerCounty", "owner", "OwnerCounty")
@@ -4071,7 +4076,7 @@ def update_33101(dbo):
     add_index(dbo, "adoption_IsTrial", "adoption", "IsTrial")
     add_index(dbo, "adoption_ReturnedReasonID", "adoption", "ReturnedReasonID")
 
-def update_33102(dbo):
+def update_33102(dbo: Database) -> None:
     # More indexes we should have
     add_index(dbo, "animal_AgeGroup", "animal", "AgeGroup")
     add_index(dbo, "animal_BreedName", "animal", "BreedName")
@@ -4094,31 +4099,31 @@ def update_33102(dbo):
     add_index(dbo, "adoption_ReservationDate", "adoption", "ReservationDate")
     add_index(dbo, "adoption_ReservationCancelledDate", "adoption", "ReservationCancelledDate")
 
-def update_33103(dbo):
+def update_33103(dbo: Database) -> None:
     add_index(dbo, "owner_HomeTelephone", "owner", "HomeTelephone")
     add_index(dbo, "owner_MobileTelephone", "owner", "MobileTelephone")
     add_index(dbo, "owner_WorkTelephone", "owner", "WorkTelephone")
     add_index(dbo, "owner_EmailAddress", "owner", "EmailAddress")
     add_index(dbo, "animal_BroughtInByOwnerID", "animal", "BroughtInByOwnerID")
 
-def update_33104(dbo):
+def update_33104(dbo: Database) -> None:
     # Add LatLong
     add_column(dbo, "owner", "LatLong", dbo.type_shorttext)
 
-def update_33105(dbo):
+def update_33105(dbo: Database) -> None:
     # Add LocationFilter
     add_column(dbo, "users", "LocationFilter", dbo.type_shorttext)
 
-def update_33106(dbo):
+def update_33106(dbo: Database) -> None:
     # Add MatchColour
     add_column(dbo, "owner", "MatchColour", "INTEGER")
     dbo.execute_dbupdate("UPDATE owner SET MatchColour = -1")
 
-def update_33201(dbo):
+def update_33201(dbo: Database) -> None:
     # Add Fee column
     add_column(dbo, "animal", "Fee", "INTEGER")
 
-def update_33202(dbo):
+def update_33202(dbo: Database) -> None:
     # Add the animalpublished table to track what was sent to which
     # publisher and when
     sql = "CREATE TABLE animalpublished (" \
@@ -4149,14 +4154,14 @@ def update_33202(dbo):
     dbo.execute_dbupdate("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) " \
         "SELECT DISTINCT m.LinkID, 'helpinglostpets', m.LastPublishedHLP FROM media m WHERE m.LastPublishedHLP Is Not Null AND m.LinkTypeID = 0 AND m.WebsitePhoto = 1")
 
-def update_33203(dbo):
+def update_33203(dbo: Database) -> None:
     # Assume all already adopted animals with PETtrac UK chips have been sent to them
     dbo.execute_dbupdate("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) " \
         "SELECT a.ID, 'pettracuk', a.ActiveMovementDate FROM animal a " \
         "WHERE ActiveMovementDate Is Not Null " \
         "AND ActiveMovementType = 1 AND IdentichipNumber LIKE '977%'")
 
-def update_33204(dbo):
+def update_33204(dbo: Database) -> None:
     # Remove last published fields added since ASM3 - we're only retaining
     # the ASM2 ones for compatibility and everything else is going to
     # the animalpublished table
@@ -4164,12 +4169,12 @@ def update_33204(dbo):
     drop_column(dbo, "media", "LastPublishedMP")
     drop_column(dbo, "animal", "PetLinkSentDate")
 
-def update_33205(dbo):
+def update_33205(dbo: Database) -> None:
     # Add mandatory column to online form fields
     add_column(dbo, "onlineformfield", "Mandatory", "INTEGER")
     dbo.execute_dbupdate("UPDATE onlineformfield SET Mandatory = 0")
 
-def update_33206(dbo):
+def update_33206(dbo: Database) -> None:
     # Add cost paid date fields
     add_column(dbo, "animalcost", "CostPaidDate", dbo.type_datetime)
     add_column(dbo, "animalmedical", "CostPaidDate", dbo.type_datetime)
@@ -4180,7 +4185,7 @@ def update_33206(dbo):
     add_index(dbo, "animaltest_CostPaidDate", "animaltest", "CostPaidDate")
     add_index(dbo, "animalvaccination_CostPaidDate", "animalvaccination", "CostPaidDate")
 
-def update_33300(dbo):
+def update_33300(dbo: Database) -> None:
     # Add animalcontrol table
     sql = "CREATE TABLE animalcontrol (" \
         "ID INTEGER NOT NULL PRIMARY KEY, " \
@@ -4226,7 +4231,7 @@ def update_33300(dbo):
     add_index(dbo, "animalcontrol_OwnerID", "animalcontrol", "OwnerID")
     add_index(dbo, "animalcontrol_VictimID", "animalcontrol", "VictimID")
 
-def update_33301(dbo):
+def update_33301(dbo: Database) -> None:
     # ownercitation table
     sql = "CREATE TABLE ownercitation (" \
         "ID INTEGER NOT NULL PRIMARY KEY, " \
@@ -4250,7 +4255,7 @@ def update_33301(dbo):
     add_index(dbo, "ownercitation_FineDueDate", "ownercitation", "FineDueDate")
     add_index(dbo, "ownercitation_FinePaidDate", "ownercitation", "FinePaidDate")
 
-def update_33302(dbo):
+def update_33302(dbo: Database) -> None:
     l = dbo.locale
     # Lookup tables
     sql = "CREATE TABLE citationtype (ID INTEGER NOT NULL PRIMARY KEY, " \
@@ -4280,7 +4285,7 @@ def update_33302(dbo):
     dbo.execute_dbupdate("INSERT INTO incidentcompleted VALUES (2, '%s', '')" % _("Animal picked up", l))
     dbo.execute_dbupdate("INSERT INTO incidentcompleted VALUES (3, '%s', '')" % _("Owner given citation", l))
 
-def update_33303(dbo):
+def update_33303(dbo: Database) -> None:
     # Add new incident link types
     l = dbo.locale
     dbo.execute_dbupdate("INSERT INTO lksloglink (ID, LinkType) VALUES (%d, '%s')" % (6, _("Incident", l)))
@@ -4292,7 +4297,7 @@ def update_33303(dbo):
     dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (19, '%s')" % _("Incident - Citation", l))
     dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (20, '%s')" % _("Incident - Additional", l))
 
-def update_33304(dbo):
+def update_33304(dbo: Database) -> None:
     # Add trap loan table
     sql = "CREATE TABLE ownertraploan (" \
         "ID INTEGER NOT NULL PRIMARY KEY, " \
@@ -4316,7 +4321,7 @@ def update_33304(dbo):
     add_index(dbo, "ownertraploan_ReturnDueDate", "ownertraploan", "ReturnDueDate")
     add_index(dbo, "ownertraploan_ReturnDate", "ownertraploan", "ReturnDate")
 
-def update_33305(dbo):
+def update_33305(dbo: Database) -> None:
     # Add traptype lookup
     l = dbo.locale
     sql = "CREATE TABLE traptype (ID INTEGER NOT NULL PRIMARY KEY, " \
@@ -4324,7 +4329,7 @@ def update_33305(dbo):
     dbo.execute_dbupdate(sql)
     dbo.execute_dbupdate("INSERT INTO traptype VALUES (1, '%s', '', 0)" % _("Cat", l))
 
-def update_33306(dbo):
+def update_33306(dbo: Database) -> None:
     # Add licence table
     sql = "CREATE TABLE ownerlicence (" \
         "ID INTEGER NOT NULL PRIMARY KEY, " \
@@ -4349,7 +4354,7 @@ def update_33306(dbo):
     add_index(dbo, "ownerlicence_IssueDate", "ownerlicence", "IssueDate")
     add_index(dbo, "ownerlicence_ExpiryDate", "ownerlicence", "ExpiryDate")
 
-def update_33307(dbo):
+def update_33307(dbo: Database) -> None:
     # Add licencetype lookup
     l = dbo.locale
     sql = "CREATE TABLE licencetype (ID INTEGER NOT NULL PRIMARY KEY, " \
@@ -4360,11 +4365,11 @@ def update_33307(dbo):
     dbo.execute_dbupdate("INSERT INTO licencetype VALUES (3, '%s', '', 0)" % _("Altered Dog - 3 year", l))
     dbo.execute_dbupdate("INSERT INTO licencetype VALUES (4, '%s', '', 0)" % _("Unaltered Dog - 3 year", l))
 
-def update_33308(dbo):
+def update_33308(dbo: Database) -> None:
     # broken
     pass
 
-def update_33309(dbo):
+def update_33309(dbo: Database) -> None:
     # Create animalfiguresmonthlyasilomar table to be updated each night
     # for US shelters with the option on
     sql = "CREATE TABLE animalfiguresmonthlyasilomar ( ID INTEGER NOT NULL, " \
@@ -4382,26 +4387,26 @@ def update_33309(dbo):
     add_index(dbo, "animalfiguresmonthlyasilomar_Year", "animalfiguresmonthlyasilomar", "Year")
     add_index(dbo, "animalfiguresmonthlyasilomar_Month", "animalfiguresmonthlyasilomar", "Month")
 
-def update_33310(dbo):
+def update_33310(dbo: Database) -> None:
     pass # broken
 
-def update_33311(dbo):
+def update_33311(dbo: Database) -> None:
     # Add exclude from bulk email field to owner
     add_column(dbo, "owner", "ExcludeFromBulkEmail", "INTEGER")
     dbo.execute_dbupdate("UPDATE owner SET ExcludeFromBulkEmail = 0")
 
-def update_33312(dbo):
+def update_33312(dbo: Database) -> None:
     # Add header/footer to onlineform fields
     add_column(dbo, "onlineform", "Header", dbo.type_longtext)
     add_column(dbo, "onlineform", "Footer", dbo.type_longtext)
 
-def update_33313(dbo):
+def update_33313(dbo: Database) -> None:
     # onlineformincoming.DisplayIndex should have been an integer,
     # but the new db created it accidentally as a str in some
     # databases - switch it to integer
     modify_column(dbo, "onlineformincoming", "DisplayIndex", "INTEGER", "(DisplayIndex::integer)")
 
-def update_33314(dbo):
+def update_33314(dbo: Database) -> None:
     # Add extra followup and suspect fields to animal control
     add_column(dbo, "animalcontrol", "FollowupDateTime2", dbo.type_datetime)
     add_column(dbo, "animalcontrol", "FollowupDateTime3", dbo.type_datetime)
@@ -4415,17 +4420,17 @@ def update_33314(dbo):
     add_index(dbo, "animalcontrol_Owner3ID", "animalcontrol", "Owner3ID")
     add_index(dbo, "animalcontrol_AnimalID", "animalcontrol", "AnimalID")
 
-def update_33315(dbo):
+def update_33315(dbo: Database) -> None:
     # Add size field to waiting list
     add_column(dbo, "animalwaitinglist", "Size", "INTEGER")
     add_index(dbo, "animalwaitinglist_Size", "animalwaitinglist", "Size")
     dbo.execute_dbupdate("UPDATE animalwaitinglist SET Size = 2")
 
-def update_33316(dbo):
+def update_33316(dbo: Database) -> None:
     # Add emailaddress field to onlineform
     add_column(dbo, "onlineform", "EmailAddress", dbo.type_longtext)
 
-def update_33401(dbo):
+def update_33401(dbo: Database) -> None:
     # Add OwnerType and IsDeceased flags to owner
     add_column(dbo, "owner", "OwnerType", "INTEGER")
     add_column(dbo, "owner", "IsDeceased", "INTEGER")
@@ -4433,7 +4438,7 @@ def update_33401(dbo):
     dbo.execute_dbupdate("UPDATE owner SET OwnerType = 2 WHERE IsShelter = 1")
     dbo.execute_dbupdate("UPDATE owner SET IsDeceased = 0")
 
-def update_33402(dbo):
+def update_33402(dbo: Database) -> None:
     l = dbo.locale
     # Add stock tables
     sql = "CREATE TABLE stocklevel ( ID INTEGER NOT NULL, " \
@@ -4490,7 +4495,7 @@ def update_33402(dbo):
     dbo.execute_dbupdate("INSERT INTO stockusagetype VALUES (6, '%s', '')" % _("Stocktake", l))
     dbo.execute_dbupdate("INSERT INTO stockusagetype VALUES (7, '%s', '')" % _("Wasted", l))
 
-def update_33501(dbo):
+def update_33501(dbo: Database) -> None:
     l = dbo.locale
     add_column(dbo, "animal", "IsPickup", "INTEGER")
     add_column(dbo, "animal", "PickupLocationID", "INTEGER")
@@ -4501,12 +4506,12 @@ def update_33501(dbo):
     dbo.execute_dbupdate(sql)
     dbo.execute_dbupdate("INSERT INTO pickuplocation VALUES (1, '%s', '')" % _("Shelter", l))
 
-def update_33502(dbo):
+def update_33502(dbo: Database) -> None:
     l = dbo.locale
     # Add Transport movement type
     dbo.execute_dbupdate("INSERT INTO lksmovementtype (ID, MovementType) VALUES (13, ?)", [ _("Transport", l) ])
 
-def update_33503(dbo):
+def update_33503(dbo: Database) -> None:
     # Add extra vaccination fields and some missing indexes
     add_column(dbo, "animalvaccination", "DateExpires", dbo.type_datetime)
     add_column(dbo, "animalvaccination", "BatchNumber", dbo.type_shorttext)
@@ -4516,21 +4521,21 @@ def update_33503(dbo):
     add_index(dbo, "animalvaccination_Manufacturer", "animalvaccination", "Manufacturer")
     add_index(dbo, "animaltest_DateRequired", "animaltest", "DateRequired")
 
-def update_33504(dbo):
+def update_33504(dbo: Database) -> None:
     # Add daily email field to reports so they can be emailed to users
     add_column(dbo, "customreport", "DailyEmail", dbo.type_longtext)
     dbo.execute_dbupdate("UPDATE customreport SET DailyEmail = ''")
 
-def update_33505(dbo):
+def update_33505(dbo: Database) -> None:
     # Add daily email hour field to reports
     add_column(dbo, "customreport", "DailyEmailHour", "INTEGER")
     dbo.execute_dbupdate("UPDATE customreport SET DailyEmailHour = -1")
 
-def update_33506(dbo):
+def update_33506(dbo: Database) -> None:
     # Add location units field
     add_column(dbo, "internallocation", "Units", dbo.type_longtext)
 
-def update_33507(dbo):
+def update_33507(dbo: Database) -> None:
     l = dbo.locale
     # Add reservation status
     add_column(dbo, "adoption", "ReservationStatusID", "INTEGER")
@@ -4548,15 +4553,15 @@ def update_33507(dbo):
     dbo.execute_dbupdate("INSERT INTO reservationstatus VALUES (7, '%s', '')" % _("Denied", l))
     dbo.execute_dbupdate("INSERT INTO reservationstatus VALUES (8, '%s', '')" % _("Approved", l))
 
-def update_33508(dbo):
+def update_33508(dbo: Database) -> None:
     # Increase the size of the onlineformfield tooltip as it was short text by mistake
     modify_column(dbo, "onlineformfield", "Tooltip", dbo.type_longtext)
 
-def update_33600(dbo):
+def update_33600(dbo: Database) -> None:
     # Add additionalfield.IsSearchable
     add_column(dbo, "additionalfield", "Searchable", "INTEGER")
 
-def update_33601(dbo):
+def update_33601(dbo: Database) -> None:
     # Add animaltransport table
     sql = "CREATE TABLE animaltransport ( ID INTEGER NOT NULL PRIMARY KEY, " \
         "AnimalID INTEGER NOT NULL, " \
@@ -4603,16 +4608,16 @@ def update_33601(dbo):
     dbo.execute_dbupdate("DELETE FROM adoption WHERE MovementType = 13")
     dbo.execute_dbupdate("DELETE FROM lksmovementtype WHERE ID = 13")
 
-def update_33602(dbo):
+def update_33602(dbo: Database) -> None:
     # Add animalfiguresannual.EntryReasonID
     add_column(dbo, "animalfiguresannual", "EntryReasonID", "INTEGER")
     add_index(dbo, "animalfiguresannual_EntryReasonID", "animalfiguresannual", "EntryReasonID")
 
-def update_33603(dbo):
+def update_33603(dbo: Database) -> None:
     # Add additional.DefaultValue
     add_column(dbo, "additionalfield", "DefaultValue", dbo.type_longtext)
 
-def update_33604(dbo):
+def update_33604(dbo: Database) -> None:
     # Add weight field
     add_column(dbo, "animal", "Weight", dbo.type_float)
     add_index(dbo, "animal_Weight", "animal", "Weight")
@@ -4626,13 +4631,13 @@ def update_33604(dbo):
     dbo.execute_dbupdate("UPDATE animalcontrol SET FollowupComplete = 0, FollowupComplete2 = 0, FollowupComplete3 = 0")
     dbo.execute_dbupdate("UPDATE animal SET Weight = 0")
 
-def update_33605(dbo):
+def update_33605(dbo: Database) -> None:
     # Add accounts archived flag
     add_column(dbo, "accounts", "Archived", "INTEGER")
     add_index(dbo, "accounts_Archived", "accounts", "ARCHIVED")
     dbo.execute_dbupdate("UPDATE accounts SET Archived = 0")
 
-def update_33606(dbo):
+def update_33606(dbo: Database) -> None:
     # Add new transport address fields
     add_column(dbo, "animaltransport", "PickupAddress", dbo.type_shorttext)
     add_column(dbo, "animaltransport", "PickupTown", dbo.type_shorttext)
@@ -4645,7 +4650,7 @@ def update_33606(dbo):
     add_index(dbo, "animaltransport_PickupAddress", "animaltransport", "PickupAddress")
     add_index(dbo, "animaltransport_DropoffAddress", "animaltransport", "DropoffAddress")
 
-def update_33607(dbo):
+def update_33607(dbo: Database) -> None:
     # Copy addresses from any existing transport records to the new fields
     # (only acts on transport records with blank addresses)
     tr = dbo.query("SELECT animaltransport.ID, " \
@@ -4664,13 +4669,13 @@ def update_33607(dbo):
             t["DRA"], t["DRT"], t["DRC"], t["DRP"],
             t["ID"] ))
 
-def update_33608(dbo):
+def update_33608(dbo: Database) -> None:
     # Add pickuplocationid to incidents
     add_column(dbo, "animalcontrol", "PickupLocationID", "INTEGER")
     add_index(dbo, "animalcontrol_PickupLocationID", "animalcontrol", "PickupLocationID")
     dbo.execute_dbupdate("UPDATE animalcontrol SET PickupLocationID = 0")
 
-def update_33609(dbo):
+def update_33609(dbo: Database) -> None:
     l = dbo.locale
     # Add ownerrota table
     sql = "CREATE TABLE ownerrota ( ID INTEGER NOT NULL PRIMARY KEY, " \
@@ -4703,7 +4708,7 @@ def update_33609(dbo):
     dbo.execute_dbupdate("INSERT INTO lksrotatype VALUES (8, ?)", [_("Training", l) ])
     dbo.execute_dbupdate("INSERT INTO lksrotatype VALUES (9, ?)", [_("Unavailable", l) ])
 
-def update_33700(dbo):
+def update_33700(dbo: Database) -> None:
     # Add account.CostTypeID
     add_column(dbo, "accounts", "CostTypeID", "INTEGER")
     add_index(dbo, "accounts_CostTypeID", "accounts", "CostTypeID")
@@ -4714,22 +4719,22 @@ def update_33700(dbo):
     dbo.execute_dbupdate("UPDATE accounts SET CostTypeID = 0")
     dbo.execute_dbupdate("UPDATE accountstrx SET AnimalCostID = 0")
 
-def update_33701(dbo):
+def update_33701(dbo: Database) -> None:
     # If the user has no online forms, install the default set
     if 0 == dbo.query_int("SELECT COUNT(*) FROM onlineform"):
         install_default_onlineforms(dbo)
 
-def update_33702(dbo):
+def update_33702(dbo: Database) -> None:
     # Add media.SignatureHash
     add_column(dbo, "media", "SignatureHash", dbo.type_shorttext)
 
-def update_33703(dbo):
+def update_33703(dbo: Database) -> None:
     # Make stock levels floating point numbers instead
     modify_column(dbo, "stocklevel", "Total", dbo.type_float, "Total::real") 
     modify_column(dbo, "stocklevel", "Balance", dbo.type_float, "Balance::real") 
     modify_column(dbo, "stockusage", "Quantity", dbo.type_float, "Quantity::real") 
 
-def update_33704(dbo):
+def update_33704(dbo: Database) -> None:
     # Add the default animalview template
     path = dbo.installpath
     asm3.dbfs.create_path(dbo, "/internet", "animalview")
@@ -4737,15 +4742,15 @@ def update_33704(dbo):
     asm3.dbfs.put_file(dbo, "foot.html", "/internet/animalview", path + "media/internet/animalview/foot.html")
     asm3.dbfs.put_file(dbo, "head.html", "/internet/animalview", path + "media/internet/animalview/head.html")
 
-def update_33705(dbo):
+def update_33705(dbo: Database) -> None:
     # Fix the animalview template to have OpenGraph meta tags
     asm3.dbfs.replace_string(dbo, asm3.utils.read_text_file(dbo.installpath + "media/internet/animalview/head.html") , "head.html", "/internet/animalview")
 
-def update_33706(dbo):
+def update_33706(dbo: Database) -> None:
     # Add users.Signature
     add_column(dbo, "users", "Signature", dbo.type_longtext)
 
-def update_33707(dbo):
+def update_33707(dbo: Database) -> None:
     # Add animalincident table
     sql = "CREATE TABLE animalcontrolanimal (" \
         "AnimalControlID INTEGER NOT NULL, " \
@@ -4758,11 +4763,11 @@ def update_33707(dbo):
     # Remove the animalid field from animalcontrol
     drop_column(dbo, "animalcontrol", "AnimalID")
 
-def update_33708(dbo):
+def update_33708(dbo: Database) -> None:
     # Add basecolour.AdoptAPetColour
     add_column(dbo, "basecolour", "AdoptAPetColour", dbo.type_shorttext)
 
-def update_33709(dbo):
+def update_33709(dbo: Database) -> None:
     l = dbo.locale
     # Move all rota types above shift up 2 places
     dbo.execute_dbupdate("UPDATE lksrotatype SET ID = ID + 10 WHERE ID > 1")
@@ -4771,7 +4776,7 @@ def update_33709(dbo):
     dbo.execute_dbupdate("INSERT INTO lksrotatype (ID, RotaType) VALUES (2, ?)",  [ _("Overtime", l) ])
     dbo.execute_dbupdate("INSERT INTO lksrotatype (ID, RotaType) VALUES (11, ?)", [ _("Public Holiday", l) ])
 
-def update_33710(dbo):
+def update_33710(dbo: Database) -> None:
     # Turn off forcereupload as it should no longer be needed
     p = dbo.query_string("SELECT ItemValue FROM configuration WHERE ItemName LIKE 'PublisherPresets'")
     s = []
@@ -4779,14 +4784,14 @@ def update_33710(dbo):
         if x != "forcereupload": s.append(x)
     dbo.execute_dbupdate("UPDATE configuration SET ItemValue = '%s' WHERE ItemName LIKE 'PublisherPresets'" % " ".join(s))
 
-def update_33711(dbo):
+def update_33711(dbo: Database) -> None:
     # Add ownerdonation.ReceiptNumber
     add_column(dbo, "ownerdonation", "ReceiptNumber", dbo.type_shorttext)
     add_index(dbo, "ownerdonation_ReceiptNumber", "ownerdonation", "ReceiptNumber")
     # Use ID to prepopulate existing records
     dbo.execute_dbupdate("UPDATE ownerdonation SET ReceiptNumber = %s" % dbo.sql_zero_pad_left("ID", 8))
 
-def update_33712(dbo):
+def update_33712(dbo: Database) -> None:
     # Add ownerdonation Sales Tax/VAT fields
     add_column(dbo, "ownerdonation", "IsVAT", "INTEGER")
     add_column(dbo, "ownerdonation", "VATRate", dbo.type_float)
@@ -4794,7 +4799,7 @@ def update_33712(dbo):
     add_index(dbo, "ownerdonation_IsVAT", "ownerdonation", "IsVAT")
     dbo.execute_dbupdate("UPDATE ownerdonation SET IsVAT=0, VATRate=0, VATAmount=0")
 
-def update_33713(dbo):
+def update_33713(dbo: Database) -> None:
     # Create animal flags table
     sql = "CREATE TABLE lkanimalflags ( ID INTEGER NOT NULL, " \
         "Flag %s NOT NULL)" % dbo.type_shorttext
@@ -4805,21 +4810,21 @@ def update_33713(dbo):
     add_column(dbo, "animal", "IsCourtesy", "INTEGER")
     dbo.execute_dbupdate("UPDATE animal SET IsCourtesy=0, AdditionalFlags=''")
 
-def update_33714(dbo):
+def update_33714(dbo: Database) -> None:
     # ASM3 requires a nonzero value for RecordSearchLimit where ASM2 does not
     dbo.execute_dbupdate("UPDATE configuration SET ItemValue = '1000' WHERE ItemName LIKE 'RecordSearchLimit'")
 
-def update_33715(dbo):
+def update_33715(dbo: Database) -> None:
     # Add owner.FosterCapacity field
     add_column(dbo, "owner", "FosterCapacity", "INTEGER")
     dbo.execute_dbupdate("UPDATE owner SET FosterCapacity=0")
     dbo.execute_dbupdate("UPDATE owner SET FosterCapacity=1 WHERE IsFosterer=1")
 
-def update_33716(dbo):
+def update_33716(dbo: Database) -> None:
     # Switch ui-lightness and smoothness to the new asm replacement theme
     dbo.execute_dbupdate("UPDATE configuration SET itemvalue='asm' WHERE itemvalue = 'smoothness' OR itemvalue = 'ui-lightness'")
 
-def update_33717(dbo):
+def update_33717(dbo: Database) -> None:
     # Add default colour mappings to existing colours if they
     # have not been mapped already
     defmap = {
@@ -4885,13 +4890,13 @@ def update_33717(dbo):
         if c["ID"] in defmap:
             dbo.execute_dbupdate("UPDATE basecolour SET AdoptAPetColour=? WHERE ID=?", [ defmap[c["ID"]], c["ID"] ])
 
-def update_33718(dbo):
+def update_33718(dbo: Database) -> None:
     # Add TotalTimeOnShelter, TotalDaysOnShelter
     add_column(dbo, "animal", "TotalDaysOnShelter", "INTEGER")
     add_column(dbo, "animal", "TotalTimeOnShelter", dbo.type_shorttext)
     dbo.execute_dbupdate("UPDATE animal SET TotalDaysOnShelter=0, TotalTimeOnShelter=''")
 
-def update_33800(dbo):
+def update_33800(dbo: Database) -> None:
     # Add IsRetired field to lookups
     retirablelookups = [ "animaltype", "basecolour", "breed", "citationtype", "costtype", 
         "deathreason", "diet", "donationpayment", "donationtype", "entryreason", "incidentcompleted", 
@@ -4902,7 +4907,7 @@ def update_33800(dbo):
         add_column(dbo, t, "IsRetired", "INTEGER")
         dbo.execute_dbupdate("UPDATE %s SET IsRetired = 0" % t)
 
-def update_33801(dbo):
+def update_33801(dbo: Database) -> None:
     # Add animal.PickupAddress, animalvaccination.AdministeringVetID and animalmedicaltreatment.AdministeringVetID
     add_column(dbo, "animal", "PickupAddress", dbo.type_shorttext)
     add_column(dbo, "animalmedicaltreatment", "AdministeringVetID", "INTEGER")
@@ -4914,19 +4919,19 @@ def update_33801(dbo):
     dbo.execute_dbupdate("UPDATE animalmedicaltreatment SET AdministeringVetID = 0")
     dbo.execute_dbupdate("UPDATE animalvaccination SET AdministeringVetID = 0")
 
-def update_33802(dbo):
+def update_33802(dbo: Database) -> None:
     # Remove the Incident - Citation link from additional fields as it's no longer valid
     dbo.execute_dbupdate("DELETE FROM lksfieldlink WHERE ID = 19")
     # Move PickedUpByOwnerID to BroughtInByOwnerID and remove it
     dbo.execute_dbupdate("UPDATE animal SET BroughtInByOwnerID = PickedUpByOwnerID WHERE BroughtInByOwnerID = 0 AND PickedUpByOwnerID <> 0")
     drop_column(dbo, "animal", "PickedUpByOwnerID")
 
-def update_33803(dbo):
+def update_33803(dbo: Database) -> None:
     # Install new incident information template
     path = dbo.installpath
     asm3.dbfs.put_file(dbo, "incident_information.html", "/templates", path + "media/templates/incident_information.html")
 
-def update_33900(dbo):
+def update_33900(dbo: Database) -> None:
     # Add extra payment fields
     add_column(dbo, "ownerdonation", "Quantity", "INTEGER")
     add_column(dbo, "ownerdonation", "UnitPrice", "INTEGER")
@@ -4934,23 +4939,23 @@ def update_33900(dbo):
     add_index(dbo, "ownerdonation_ChequeNumber", "ownerdonation", "ChequeNumber")
     dbo.execute_dbupdate("UPDATE ownerdonation SET Quantity = 1, UnitPrice = Donation, ChequeNumber = ''")
 
-def update_33901(dbo):
+def update_33901(dbo: Database) -> None:
     # Add audittrail.LinkID field
     add_column(dbo, "audittrail", "LinkID", "INTEGER")
     add_index(dbo, "audittrail_LinkID", "audittrail", "LinkID")
     dbo.execute_dbupdate("UPDATE audittrail SET LinkID = 0")
 
-def update_33902(dbo):
+def update_33902(dbo: Database) -> None:
     # Add asm3.onlineform.EmailSubmitter field
     add_column(dbo, "onlineform", "EmailSubmitter", "INTEGER")
     dbo.execute_dbupdate("UPDATE onlineform SET EmailSubmitter = 1")
 
-def update_33903(dbo):
+def update_33903(dbo: Database) -> None:
     # Add customreport.DailyEmailFrequency
     add_column(dbo, "customreport", "DailyEmailFrequency", "INTEGER")
     dbo.execute_dbupdate("UPDATE customreport SET DailyEmailFrequency = 0")
 
-def update_33904(dbo):
+def update_33904(dbo: Database) -> None:
     # Add ownerlookingfor table
     sql = "CREATE TABLE ownerlookingfor ( " \
         "OwnerID INTEGER NOT NULL, " \
@@ -4992,13 +4997,13 @@ def update_33904(dbo):
     add_index(dbo, "animallostfoundmatch_AnimalFoundID", "animallostfoundmatch", "AnimalFoundID")
     add_index(dbo, "animallostfoundmatch_AnimalID", "animallostfoundmatch", "AnimalID")
 
-def update_33905(dbo):
+def update_33905(dbo: Database) -> None:
     # Add PurchasePrice/SalePrice fields to stocklevel
     add_column(dbo, "stocklevel", "Cost", "INTEGER")
     add_column(dbo, "stocklevel", "UnitPrice", "INTEGER")
     dbo.execute_dbupdate("UPDATE stocklevel SET Cost = 0, UnitPrice = 0")
 
-def update_33906(dbo):
+def update_33906(dbo: Database) -> None:
     l = dbo.locale
     # Add ownerrota.WorkTypeID
     add_column(dbo, "ownerrota", "WorkTypeID", "INTEGER")
@@ -5014,13 +5019,13 @@ def update_33906(dbo):
     dbo.execute_dbupdate("INSERT INTO lkworktype (ID, WorkType) VALUES (?, ?)", [4, _("Reception", l)] )
     dbo.execute_dbupdate("INSERT INTO lkworktype (ID, WorkType) VALUES (?, ?)", [5, _("Office", l)] )
 
-def update_33907(dbo):
+def update_33907(dbo: Database) -> None:
     # Add animaltest.AdministeringVetID
     add_column(dbo, "animaltest", "AdministeringVetID", "INTEGER")
     add_index(dbo, "animaltest_AdministeringVetID", "animaltest", "AdministeringVetID")
     dbo.execute_dbupdate("UPDATE animaltest SET AdministeringVetID = 0")
 
-def update_33908(dbo):
+def update_33908(dbo: Database) -> None:
     # Add site table
     sql = "CREATE TABLE site (ID INTEGER NOT NULL PRIMARY KEY, " \
         "SiteName %s NOT NULL)" % dbo.type_shorttext
@@ -5033,41 +5038,41 @@ def update_33908(dbo):
     add_column(dbo, "users", "SiteID", "INTEGER")
     dbo.execute_dbupdate("UPDATE users SET SiteID = 0")
 
-def update_33909(dbo):
+def update_33909(dbo: Database) -> None:
     # Add adoption coordinator
     add_column(dbo, "animal", "AdoptionCoordinatorID", "INTEGER")
     add_index(dbo, "animal_AdoptionCoordinatorID", "animal", "AdoptionCoordinatorID")
     dbo.execute_dbupdate("UPDATE animal SET AdoptionCoordinatorID = 0")
 
-def update_33911(dbo):
+def update_33911(dbo: Database) -> None:
     # NB: 33910 was broken so moved to 33911 and fixed
     # Extend animalasm3.waitinglist.AnimalDescription
     dbo.execute_dbupdate("DROP VIEW v_animalwaitinglist")
     modify_column(dbo, "animalwaitinglist", "AnimalDescription", dbo.type_longtext)
 
-def update_33912(dbo):
+def update_33912(dbo: Database) -> None:
     # Add EmailConfirmationMessage
     add_column(dbo, "onlineform", "EmailMessage", dbo.type_longtext)
     dbo.execute_dbupdate("UPDATE onlineform SET EmailMessage = ''")
 
-def update_33913(dbo):
+def update_33913(dbo: Database) -> None:
     # Add owner.OwnerCode
     add_column(dbo, "owner", "OwnerCode", dbo.type_shorttext)
     add_index(dbo, "owner_OwnerCode", "owner", "OwnerCode")
     dbo.execute_dbupdate("UPDATE owner o SET OwnerCode = %s" % dbo.sql_concat([ dbo.sql_substring("UPPER(o.OwnerSurname)", 1, 2), dbo.sql_zero_pad_left("o.ID", 6) ]))
 
-def update_33914(dbo):
+def update_33914(dbo: Database) -> None:
     # Add owner.IsAdoptionCoordinator
     add_column(dbo, "owner", "IsAdoptionCoordinator", "INTEGER")
     dbo.execute_dbupdate("UPDATE owner SET IsAdoptionCoordinator = 0")
 
-def update_33915(dbo):
+def update_33915(dbo: Database) -> None:
     # Add the animalcontrolrole table
     dbo.execute_dbupdate("CREATE TABLE animalcontrolrole (AnimalControlID INTEGER NOT NULL, " \
         "RoleID INTEGER NOT NULL, CanView INTEGER NOT NULL, CanEdit INTEGER NOT NULL)")
     dbo.execute_dbupdate("CREATE UNIQUE INDEX animalcontrolrole_AnimalControlIDRoleID ON animalcontrolrole(AnimalControlID, RoleID)")
 
-def update_33916(dbo):
+def update_33916(dbo: Database) -> None:
     # Add SiteID to people and incidents
     add_column(dbo, "owner", "SiteID", "INTEGER")
     add_index(dbo, "owner_SiteID", "owner", "SiteID")
@@ -5076,30 +5081,30 @@ def update_33916(dbo):
     dbo.execute_dbupdate("UPDATE owner SET SiteID = 0")
     dbo.execute_dbupdate("UPDATE animalcontrol SET SiteID = 0")
 
-def update_34000(dbo):
+def update_34000(dbo: Database) -> None:
     # Add missing LostArea and FoundArea fields due to broken schema
     add_column(dbo, "animallostfoundmatch", "LostArea", dbo.type_shorttext)
     add_column(dbo, "animallostfoundmatch", "FoundArea", dbo.type_shorttext)
 
-def update_34001(dbo):
+def update_34001(dbo: Database) -> None:
     # Remove the unique index on LicenceNumber and make it non-unique (optionally enforced by backend code)
     drop_index(dbo, "ownerlicence_LicenceNumber", "ownerlicence")
     add_index(dbo, "ownerlicence_LicenceNumber", "ownerlicence", "LicenceNumber")
 
-def update_34002(dbo):
+def update_34002(dbo: Database) -> None:
     # Add asm3.dbfs.URL field and index
     add_column(dbo, "dbfs", "URL", dbo.type_shorttext)
     add_index(dbo, "dbfs_URL", "dbfs", "URL")
     dbo.execute_dbupdate("UPDATE dbfs SET URL = 'base64:'")
 
-def update_34003(dbo):
+def update_34003(dbo: Database) -> None:
     # Add indexes to animal and owner created for find animal/person
     add_index(dbo, "animal_CreatedBy", "animal", "CreatedBy")
     add_index(dbo, "animal_CreatedDate", "animal", "CreatedDate")
     add_index(dbo, "owner_CreatedBy", "owner", "CreatedBy")
     add_index(dbo, "owner_CreatedDate", "owner", "CreatedDate")
 
-def update_34004(dbo):
+def update_34004(dbo: Database) -> None:
     l = dbo.locale
     # Add the TransportTypeID column
     add_column(dbo, "animaltransport", "TransportTypeID", "INTEGER")
@@ -5116,7 +5121,7 @@ def update_34004(dbo):
     dbo.execute_dbupdate("INSERT INTO transporttype VALUES (3, '%s', '', 0)" % _("Surrender Pickup", l))
     dbo.execute_dbupdate("INSERT INTO transporttype VALUES (4, '%s', '', 0)" % _("Vet Visit", l))
 
-def update_34005(dbo):
+def update_34005(dbo: Database) -> None:
     # Add the publishlog table
     sql = "CREATE TABLE publishlog ( ID INTEGER NOT NULL, " \
         "PublishDateTime %(date)s NOT NULL, " \
@@ -5132,45 +5137,45 @@ def update_34005(dbo):
     asm3.dbfs.delete_path(dbo, "/reports/daily")
     asm3.dbfs.delete(dbo, "asm.news")
 
-def update_34006(dbo):
+def update_34006(dbo: Database) -> None:
     # Set includenonneutered in the publishing presets
     s = asm3.configuration.publisher_presets(dbo)
     s += " includenonneutered"
     dbo.execute_dbupdate("UPDATE configuration SET ItemValue = ? WHERE ItemName = 'PublisherPresets'", [ s ])
 
-def update_34007(dbo):
+def update_34007(dbo: Database) -> None:
     # Add missing indexes to DiedOffShelter / NonShelterAnimal
     add_index(dbo, "animal_DiedOffShelter", "animal", "DiedOffShelter")
     add_index(dbo, "animal_NonShelterAnimal", "animal", "NonShelterAnimal")
 
-def update_34008(dbo):
+def update_34008(dbo: Database) -> None:
     # Remove the old asilomar figures report if it exists
     dbo.execute_dbupdate("DELETE FROM customreport WHERE Title = 'Asilomar Figures'")
     # Remove the asilomar tables as they're no longer needed
     dbo.execute_dbupdate("DROP TABLE animalfiguresasilomar")
     dbo.execute_dbupdate("DROP TABLE animalfiguresmonthlyasilomar")
 
-def update_34009(dbo):
+def update_34009(dbo: Database) -> None:
     # Set includewithoutdescription in the publishing presets
     s = asm3.configuration.publisher_presets(dbo)
     s += " includewithoutdescription"
     dbo.execute_dbupdate("UPDATE configuration SET ItemValue = ? WHERE ItemName = 'PublisherPresets'", [ s ])
 
-def update_34010(dbo):
+def update_34010(dbo: Database) -> None:
     # Add an index on additional.linkid for performance
     add_index(dbo, "additional_LinkID", "additional", "LinkID")
 
-def update_34011(dbo):
+def update_34011(dbo: Database) -> None:
     # Add users.DisableLogin
     add_column(dbo, "users", "DisableLogin", "INTEGER")
     dbo.execute_dbupdate("UPDATE users SET DisableLogin = 0")
 
-def update_34012(dbo):
+def update_34012(dbo: Database) -> None:
     # Add diarytaskdetail.OrderIndex
     add_column(dbo, "diarytaskdetail", "OrderIndex", "INTEGER")
     dbo.execute_dbupdate("UPDATE diarytaskdetail SET OrderIndex = ID")
 
-def update_34013(dbo):
+def update_34013(dbo: Database) -> None:
     # More indexes to speed up get_alerts
     add_index(dbo, "animal_Neutered", "animal", "Neutered")
     add_index(dbo, "owner_IDCheck", "owner", "IDCheck")
@@ -5183,7 +5188,7 @@ def update_34013(dbo):
     add_index(dbo, "owner_IsVolunteer", "owner", "IsVolunteer")
     add_index(dbo, "ownerdonation_DateDue", "ownerdonation", "DateDue")
 
-def update_34014(dbo):
+def update_34014(dbo: Database) -> None:
     # Add a new MediaMimeType column
     add_column(dbo, "media", "MediaMimeType", dbo.type_shorttext)
     add_index(dbo, "media_MediaMimeType", "media", "MediaMimeType")
@@ -5199,7 +5204,7 @@ def update_34014(dbo):
         dbo.execute_dbupdate("UPDATE media SET MediaMimeType = ? WHERE LOWER(MediaName) LIKE ?", (v, k))
     dbo.execute_dbupdate("UPDATE media SET MediaMimeType = 'application/octet-stream' WHERE MediaMimeType Is Null")
 
-def update_34015(dbo):
+def update_34015(dbo: Database) -> None:
     # Add new MediaSize and DBFSID columns
     add_column(dbo, "media", "MediaSize", dbo.type_integer)
     add_column(dbo, "media", "DBFSID", dbo.type_integer)
@@ -5213,7 +5218,7 @@ def update_34015(dbo):
     dbo.execute_dbupdate("UPDATE media SET MediaName = %s WHERE MediaName LIKE '%%_scaled%%'" % dbo.sql_replace("MediaName", "_scaled", ""))
     dbo.execute_dbupdate("UPDATE dbfs SET Name = %s WHERE Name LIKE '%%_scaled%%'" % dbo.sql_replace("Name", "_scaled", ""))
 
-def update_34016(dbo):
+def update_34016(dbo: Database) -> None:
     l = dbo.locale
     # Add JurisdictionID
     add_column(dbo, "owner", "JurisdictionID", dbo.type_integer)
@@ -5229,40 +5234,40 @@ def update_34016(dbo):
     dbo.execute_dbupdate("UPDATE animalcontrol SET JurisdictionID = 0")
     dbo.execute_dbupdate("INSERT INTO jurisdiction VALUES (1, '%s', '', 0)" % _("Local", l))
 
-def update_34017(dbo):
+def update_34017(dbo: Database) -> None:
     # Add extra microchip fields
     add_column(dbo, "animal", "Identichip2Number", dbo.type_shorttext)
     add_column(dbo, "animal", "Identichip2Date", dbo.type_datetime)
     add_index(dbo, "animal_Identichip2Number", "animal", "Identichip2Number")
 
-def update_34018(dbo):
+def update_34018(dbo: Database) -> None:
     # Add ReturnedByOwnerID
     add_column(dbo, "adoption", "ReturnedByOwnerID", dbo.type_integer)
     add_index(dbo, "adoption_ReturnedByOwnerID", "adoption", "ReturnedByOwnerID")
     dbo.execute_dbupdate("UPDATE adoption SET ReturnedByOwnerID = 0")
 
-def update_34019(dbo):
+def update_34019(dbo: Database) -> None:
     # Add NeuteredByVetID
     add_column(dbo, "animal", "NeuteredByVetID", dbo.type_integer)
     add_index(dbo, "animal_NeuteredByVetID", "animal", "NeuteredByVetID")
     dbo.execute_dbupdate("UPDATE animal SET NeuteredByVetID = 0")
 
-def update_34020(dbo):
+def update_34020(dbo: Database) -> None:
     # Add IsNotForRegistration
     add_column(dbo, "animal", "IsNotForRegistration", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE animal SET IsNotForRegistration = 0")
 
-def update_34021(dbo):
+def update_34021(dbo: Database) -> None:
     # Add RetainUntil to expire media on a set date
     add_column(dbo, "media", "RetainUntil", dbo.type_datetime)
     add_index(dbo, "media_RetainUntil", "media", "RetainUntil")
     add_index(dbo, "media_Date", "media", "Date") # seemed to be missing previously
 
-def update_34022(dbo):
+def update_34022(dbo: Database) -> None:
     # Add AgeGroupActiveMovement
     add_column(dbo, "animal", "AgeGroupActiveMovement", dbo.type_shorttext)
 
-def update_34100(dbo):
+def update_34100(dbo: Database) -> None:
     # Add templatehtml table
     fields = ",".join([
         dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
@@ -5313,7 +5318,7 @@ def update_34100(dbo):
             "IsBuiltIn":  1
         }, generateID=False, setOverrideDBLock=True)
 
-def update_34101(dbo):
+def update_34101(dbo: Database) -> None:
     # Add templatedocument table and copy templates from DBFS
     fields = ",".join([
         dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
@@ -5334,7 +5339,7 @@ def update_34101(dbo):
         }, generateID=False, setOverrideDBLock=True)
         nextid += 1
 
-def update_34102(dbo):
+def update_34102(dbo: Database) -> None:
     if asm3.smcom.active():
         # sheltermanager.com only: calculate media file sizes for existing databases
         # ===
@@ -5356,12 +5361,12 @@ def update_34102(dbo):
                 pass # Ignore attempts to read non-existent files
         dbo.execute_many("UPDATE media SET MediaSize = ? WHERE ID = ?", batch, override_lock=True) 
 
-def update_34103(dbo):
+def update_34103(dbo: Database) -> None:
     if asm3.smcom.active():
         # sheltermanager.com only: Final switch over to access old media from S3 instead of filesystem
         dbo.execute_dbupdate("UPDATE dbfs SET url = replace(url, 'file:', 's3:') where url like 'file:%'")
 
-def update_34104(dbo):
+def update_34104(dbo: Database) -> None:
     l = dbo.locale
     # Add owner.GDPRContactOptIn
     add_column(dbo, "owner", "GDPRContactOptIn", dbo.type_shorttext)
@@ -5372,7 +5377,7 @@ def update_34104(dbo):
     dbo.insert("logtype", { "ID": ltid, "LogTypeName": _("GDPR Contact Opt-In", l), "IsRetired": 0 }, setOverrideDBLock=True)
     asm3.configuration.cset(dbo, "GDPRContactChangeLogType", str(ltid), ignoreDBLock=True)
 
-def update_34105(dbo):
+def update_34105(dbo: Database) -> None:
     # Add deletion table
     fields = ",".join([
         dbo.ddl_add_table_column("ID", dbo.type_integer, False),
@@ -5384,7 +5389,7 @@ def update_34105(dbo):
     dbo.execute_dbupdate( dbo.ddl_add_table("deletion", fields) )
     dbo.execute_dbupdate( dbo.ddl_add_index("deletion_IDTablename", "deletion", "ID,Tablename") )
 
-def update_34106(dbo):
+def update_34106(dbo: Database) -> None:
     # Remove recordversion and created/lastchanged columns from role tables - should never have been there
     # and has been erroneously added to these tables for new databases (nullable change is the serious cause)
     for t in ( "accountsrole", "animalcontrolrole", "customreportrole" ):
@@ -5397,7 +5402,7 @@ def update_34106(dbo):
         except:
             pass
 
-def update_34107(dbo):
+def update_34107(dbo: Database) -> None:
     # Add clinic tables
     l = dbo.locale
     fields = ",".join([
@@ -5453,7 +5458,7 @@ def update_34107(dbo):
     dbo.insert("lksclinicstatus", { "ID": 5, "Status": _("Complete", l) }, setOverrideDBLock=True, generateID=False)
     dbo.insert("lksclinicstatus", { "ID": 6, "Status": _("Cancelled", l) }, setOverrideDBLock=True, generateID=False)
 
-def update_34108(dbo):
+def update_34108(dbo: Database) -> None:
     # Install new clinic_invoice template
     dbo.insert("templatedocument", {
         "Name":     "clinic_invoice.html",
@@ -5461,7 +5466,7 @@ def update_34108(dbo):
         "Content":  asm3.utils.base64encode( asm3.utils.read_text_file( dbo.installpath + "media/templates/clinic_invoice.html" ) )
     })
 
-def update_34109(dbo):
+def update_34109(dbo: Database) -> None:
     # Remove recordversion and created/lastchanged columns from ownerlookingfor - should never have been there
     # and has been erroneously added to these tables for new databases (nullable change is the serious cause)
     tables = [ "ownerlookingfor" ]
@@ -5470,28 +5475,28 @@ def update_34109(dbo):
         for c in cols:
             drop_column(dbo, t, c)
 
-def update_34110(dbo):
+def update_34110(dbo: Database) -> None:
     # Add additionalfield.NewRecord
     add_column(dbo, "additionalfield", "NewRecord", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE additionalfield SET NewRecord = Mandatory")
 
-def update_34111(dbo):
+def update_34111(dbo: Database) -> None:
     # Add animalvaccination.GivenBy
     add_column(dbo, "animalvaccination", "GivenBy", dbo.type_shorttext)
     add_index(dbo, "animalvaccination_GivenBy", "animalvaccination", "GivenBy")
     dbo.execute_dbupdate("UPDATE animalvaccination SET GivenBy = LastChangedBy WHERE DateOfVaccination Is Not Null")
 
-def update_34112(dbo):
+def update_34112(dbo: Database) -> None:
     # Add a new time additional field type
     l = dbo.locale
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (10, ?)", [ _("Time", l) ])
 
-def update_34200(dbo):
+def update_34200(dbo: Database) -> None:
     # Add audittrail.ParentLinks
     add_column(dbo, "audittrail", "ParentLinks", dbo.type_shorttext)
     add_index(dbo, "audittrail_ParentLinks", "audittrail", "ParentLinks")
 
-def update_34201(dbo):
+def update_34201(dbo: Database) -> None:
     # Add owner.OwnerCountry, animaltransport.PickupCountry, animaltransport.DropoffCountry
     add_column(dbo, "owner", "OwnerCountry", dbo.type_shorttext)
     add_index(dbo, "owner_OwnerCountry", "owner", "OwnerCountry")
@@ -5500,34 +5505,34 @@ def update_34201(dbo):
     dbo.execute_dbupdate("UPDATE owner SET OwnerCountry=''")
     dbo.execute_dbupdate("UPDATE animaltransport SET PickupCountry='', DropoffCountry=''")
 
-def update_34202(dbo):
+def update_34202(dbo: Database) -> None:
     # Add animaltransport.TransportReference
     add_column(dbo, "animaltransport", "TransportReference", dbo.type_shorttext)
     add_index(dbo, "animaltransport_TransportReference", "animaltransport", "TransportReference")
     dbo.execute_dbupdate("UPDATE animaltransport SET TransportReference=''")
 
-def update_34203(dbo):
+def update_34203(dbo: Database) -> None:
     # Add donationtype.IsVAT
     add_column(dbo, "donationtype", "IsVAT", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE donationtype SET IsVAT = 0")
 
-def update_34204(dbo):
+def update_34204(dbo: Database) -> None:
     # Add ownerdonation.Fee
     add_column(dbo, "ownerdonation", "Fee", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE ownerdonation SET Fee = 0")
 
-def update_34300(dbo):
+def update_34300(dbo: Database) -> None:
     # Add animal.ExtraIDs
     add_column(dbo, "animal", "ExtraIDs", dbo.type_shorttext)
     add_index(dbo, "animal_ExtraIDs", "animal", "ExtraIDs")
     dbo.execute_dbupdate("UPDATE animal SET ExtraIDs = ''")
 
-def update_34301(dbo):
+def update_34301(dbo: Database) -> None:
     # Add onlineformfield.SpeciesID
     add_column(dbo, "onlineformfield", "SpeciesID", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineformfield SET SpeciesID = -1")
 
-def update_34302(dbo):
+def update_34302(dbo: Database) -> None:
     # Add lksynunk
     l = dbo.locale
     sql = "CREATE TABLE lksynunk ( ID INTEGER NOT NULL PRIMARY KEY, " \
@@ -5539,7 +5544,7 @@ def update_34302(dbo):
     dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (5, ?)", [ _("Over 5", l) ])
     dbo.execute_dbupdate("INSERT INTO lksynunk VALUES (12, ?)", [ _("Over 12", l) ])
 
-def update_34303(dbo):
+def update_34303(dbo: Database) -> None:
     # Add lkstransportstatus
     l = dbo.locale
     sql = "CREATE TABLE lkstransportstatus ( ID INTEGER NOT NULL PRIMARY KEY, " \
@@ -5552,7 +5557,7 @@ def update_34303(dbo):
     dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (10, ?)", [ _("Cancelled", l) ])
     dbo.execute_dbupdate("INSERT INTO lkstransportstatus VALUES (11, ?)", [ _("Completed", l) ])
 
-def update_34304(dbo):
+def update_34304(dbo: Database) -> None:
     # Add new ownervoucher columns
     add_column(dbo, "ownervoucher", "AnimalID", dbo.type_integer)
     add_column(dbo, "ownervoucher", "DatePresented", dbo.type_datetime)
@@ -5563,7 +5568,7 @@ def update_34304(dbo):
     # Set the default vouchercode to ID padded to 6 digits
     dbo.execute_dbupdate("UPDATE ownervoucher SET VoucherCode = %s" % dbo.sql_zero_pad_left("ID", 6))
 
-def update_34305(dbo):
+def update_34305(dbo: Database) -> None:
     # Add vaccinationtype.RescheduleDays
     add_column(dbo, "vaccinationtype", "RescheduleDays", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE vaccinationtype SET RescheduleDays = 0 WHERE RescheduleDays Is Null")
@@ -5576,14 +5581,14 @@ def update_34305(dbo):
     add_column(dbo, "animallostfoundmatch", "LostMicrochipNumber", dbo.type_shorttext)
     add_column(dbo, "animallostfoundmatch", "FoundMicrochipNumber", dbo.type_shorttext)
 
-def update_34306(dbo):
+def update_34306(dbo: Database) -> None:
     # Add owner.IsAdopter flag
     add_column(dbo, "owner", "IsAdopter", dbo.type_integer)
     add_index(dbo, "owner_IsAdopter", "owner", "IsAdopter")
     dbo.execute_dbupdate("UPDATE owner SET IsAdopter = (SELECT COUNT(*) FROM adoption WHERE OwnerID = owner.ID AND MovementType=1 AND MovementDate Is Not Null AND ReturnDate Is Null)")
     dbo.execute_dbupdate("UPDATE owner SET IsAdopter = 1 WHERE IsAdopter > 0")
 
-def update_34400(dbo):
+def update_34400(dbo: Database) -> None:
     # Add new lksdonationfreq for fortnightly with ID 2
     # This requires renumbering the existing frequencies up one as there was no spare slot
     if dbo.query_int("SELECT MAX(ID) FROM lksdonationfreq") == 6: return # We already did this
@@ -5595,22 +5600,22 @@ def update_34400(dbo):
     dbo.execute_dbupdate("UPDATE ownerdonation SET Frequency=Frequency+1 WHERE Frequency IN (2,3,4,5)")
     dbo.execute_dbupdate("INSERT INTO lksdonationfreq (ID, Frequency) VALUES (2, ?)", [ _("Fortnightly", l) ])
 
-def update_34401(dbo):
+def update_34401(dbo: Database) -> None:
     # Add ownerdonation.PaymentProcessorData
     add_column(dbo, "ownerdonation", "PaymentProcessorData", dbo.type_longtext)
 
-def update_34402(dbo):
+def update_34402(dbo: Database) -> None:
     # Add media.CreatedDate
     add_column(dbo, "media", "CreatedDate", dbo.type_datetime)
     add_index(dbo, "media_CreatedDate", "media", "CreatedDate")
     dbo.execute_dbupdate("UPDATE media SET CreatedDate=Date")
 
-def update_34403(dbo):
+def update_34403(dbo: Database) -> None:
     # Add onlineformfield.VisibleIf
     add_column(dbo, "onlineformfield", "VisibleIf", dbo.type_shorttext)
     dbo.execute_dbupdate("UPDATE onlineformfield SET VisibleIf=''")
 
-def update_34404(dbo):
+def update_34404(dbo: Database) -> None:
     # Add animal.OwnerID
     add_column(dbo, "animal", "OwnerID", dbo.type_integer)
     add_index(dbo, "animal_OwnerID", "animal", "OwnerID")
@@ -5623,7 +5628,7 @@ def update_34404(dbo):
     # Remove nulls
     dbo.execute_dbupdate("UPDATE animal SET OwnerID = 0 WHERE OwnerID Is Null")
 
-def update_34405(dbo):
+def update_34405(dbo: Database) -> None:
     # Correct payment amounts to gross where sales tax exists.
     # This query only updates the amount if the tax value matches
     # an exclusive of tax calculation.
@@ -5634,12 +5639,12 @@ def update_34405(dbo):
         "WHERE isvat = 1 and vatamount > 0 and vatrate > 0 and vatamount = ((donation / 100.0) * vatrate)" % 
         dbo.sql_concat(["LastChangedBy", "'+dbupdate34405'"]))
 
-def update_34406(dbo):
+def update_34406(dbo: Database) -> None:
     # Remove bloated items from the config table that now live in the disk cache
     dbo.execute_dbupdate("DELETE FROM configuration WHERE ItemName IN " \
         "('ASMNews', 'LookingForReport', 'LookingForLastMatchCount', 'LostFoundReport', 'LostFoundLastMatchCount')")
 
-def update_34407(dbo):
+def update_34407(dbo: Database) -> None:
     # Add animal.JurisdictionID
     add_column(dbo, "animal", "JurisdictionID", dbo.type_integer)
     add_index(dbo, "animal_JurisdictionID", "animal", "JurisdictionID")
@@ -5650,34 +5655,34 @@ def update_34407(dbo):
         "(SELECT JurisdictionID FROM owner WHERE ID = animal.BroughtInByOwnerID) WHERE JurisdictionID Is Null")
     dbo.execute_dbupdate("UPDATE animal SET JurisdictionID = 0 WHERE JurisdictionID Is Null")
 
-def update_34408(dbo):
+def update_34408(dbo: Database) -> None:
     # Add TNR movement type
     l = dbo.locale
     dbo.execute_dbupdate("INSERT INTO lksmovementtype (ID, MovementType) VALUES (13, ?)", [ _("TNR", l) ])
 
-def update_34409(dbo):
+def update_34409(dbo: Database) -> None:
     # Add animalvaccination.RabiesTag
     add_column(dbo, "animalvaccination", "RabiesTag", dbo.type_shorttext)
     add_index(dbo, "animalvaccination_RabiesTag", "animalvaccination", "RabiesTag")
     dbo.execute_update("UPDATE animalvaccination SET RabiesTag='' WHERE RabiesTag Is Null")
 
-def update_34410(dbo):
+def update_34410(dbo: Database) -> None:
     # Add owner.ExtraIDs
     add_column(dbo, "owner", "ExtraIDs", dbo.type_shorttext)
     add_index(dbo, "owner_ExtraIDs", "owner", "ExtraIDs")
     dbo.execute_dbupdate("UPDATE owner SET ExtraIDs = ''")
 
-def update_34411(dbo):
+def update_34411(dbo: Database) -> None:
     # Add animal.PopupWarning
     add_column(dbo, "animal", "PopupWarning", dbo.type_longtext)
     dbo.execute_dbupdate("UPDATE animal SET PopupWarning = ''")
 
-def update_34500(dbo):
+def update_34500(dbo: Database) -> None:
     # Add testtype.RescheduleDays
     add_column(dbo, "testtype", "RescheduleDays", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE testtype SET RescheduleDays = 0 WHERE RescheduleDays Is Null")
 
-def update_34501(dbo):
+def update_34501(dbo: Database) -> None:
     # Add animal.Adoptable
     add_column(dbo, "animal", "Adoptable", dbo.type_integer)
     add_index(dbo, "animal_Adoptable", "animal", "Adoptable")
@@ -5686,33 +5691,33 @@ def update_34501(dbo):
     add_column(dbo, "onlineform", "EmailCoordinator", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineform SET EmailCoordinator = 0")
 
-def update_34502(dbo):
+def update_34502(dbo: Database) -> None:
     # Replace HTML entities in the database with unicode code points now
     # that they are no longer needed.
     if dbo.locale not in ( "en", "en_GB", "en_AU" ):
         replace_html_entities(dbo)
 
-def update_34503(dbo):
+def update_34503(dbo: Database) -> None:
     # add lkworktype.IsRetired
     add_column(dbo, "lkworktype", "IsRetired", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE lkworktype SET IsRetired = 0")
 
-def update_34504(dbo):
+def update_34504(dbo: Database) -> None:
     # add onlineform.AutoProcess
     add_column(dbo, "onlineform", "AutoProcess", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineform SET AutoProcess=0")
 
-def update_34505(dbo):
+def update_34505(dbo: Database) -> None:
     # add extra row for Selective to good with
     l = dbo.locale
     dbo.execute_dbupdate("INSERT INTO lksynun VALUES (3, ?)", [ _("Selective", l) ])
 
-def update_34506(dbo):
+def update_34506(dbo: Database) -> None:
     # add customreport.Revision
     add_column(dbo, "customreport", "Revision", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE customreport SET Revision=0")
 
-def update_34507(dbo):
+def update_34507(dbo: Database) -> None:
     # add costtype.AccountID, donationtype.AccountID
     add_column(dbo, "costtype", "AccountID", dbo.type_integer)
     add_column(dbo, "donationtype", "AccountID", dbo.type_integer)
@@ -5723,7 +5728,7 @@ def update_34507(dbo):
         if a.DONATIONTYPEID is not None and a.DONATIONTYPEID > 0:
             dbo.execute_dbupdate("UPDATE donationtype SET AccountID=? WHERE ID=?", (a.ID, a.DONATIONTYPEID))
 
-def update_34508(dbo):
+def update_34508(dbo: Database) -> None:
     # Replace old JQUI themes with light or dark
     dbo.execute_dbupdate("UPDATE users SET ThemeOverride='asm' WHERE ThemeOverride IN ('base','cupertino'," \
         "'dot-luv','excite-bike','flick','hot-sneaks','humanity','le-frog','overcast','pepper-grinder','redmond'," \
@@ -5731,43 +5736,43 @@ def update_34508(dbo):
     dbo.execute_dbupdate("UPDATE users SET ThemeOverride='asm-dark' WHERE ThemeOverride IN ('black-tie','blitzer'," \
         "'dark-hive','eggplant','mint-choc','trontastic','ui-darkness','vader')")
 
-def update_34509(dbo):
+def update_34509(dbo: Database) -> None:
     # This update broke MYSQL because Show is a reserved word. 
     # it is superceded by update_34511
     # add_column(dbo, "templatedocument", "Show", dbo.type_shorttext)
     # dbo.execute_dbupdate("UPDATE templatedocument SET Show='everywhere'")
     pass
 
-def update_34510(dbo):
+def update_34510(dbo: Database) -> None:
     add_column(dbo, "onlineform", "RetainFor", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineform SET RetainFor=0")
 
-def update_34511(dbo):
+def update_34511(dbo: Database) -> None:
     add_column(dbo, "templatedocument", "ShowAt", dbo.type_shorttext)
     dbo.execute_dbupdate("UPDATE templatedocument SET ShowAt='everywhere'")
 
-def update_34512(dbo):
+def update_34512(dbo: Database) -> None:
     add_column(dbo, "owner", "PopupWarning", dbo.type_longtext)
     add_column(dbo, "owner", "IsDangerous", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE owner SET PopupWarning = '', IsDangerous = 0")
 
-def update_34600(dbo):
+def update_34600(dbo: Database) -> None:
     # Remove the old ASM2 report definitions as they break versioning on them if present
     dbo.execute_dbupdate("DELETE FROM customreport WHERE SQLCommand LIKE '0%'")
 
-def update_34601(dbo):
+def update_34601(dbo: Database) -> None:
     # Add cost per treatment fields
     add_column(dbo, "animalmedical", "CostPerTreatment", dbo.type_integer)
     add_column(dbo, "medicalprofile", "CostPerTreatment", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE animalmedical SET CostPerTreatment=0")
     dbo.execute_dbupdate("UPDATE medicalprofile SET CostPerTreatment=0")
 
-def update_34602(dbo):
+def update_34602(dbo: Database) -> None:
     # Add time fieldtype
     l = dbo.locale
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (10, ?)", [ _("Time", l) ])
 
-def update_34603(dbo):
+def update_34603(dbo: Database) -> None:
     l = dbo.locale
     # create event tables
     dbo.execute_dbupdate("CREATE TABLE event (ID %(int)s NOT NULL PRIMARY KEY, StartDateTime %(date)s, EndDateTime %(date)s, " \
@@ -5786,12 +5791,12 @@ def update_34603(dbo):
     # add events to the additional field links
     dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (21, '%s')" % _("Event - Details", l))
 
-def update_34604(dbo):
+def update_34604(dbo: Database) -> None:
     # add eventid column to movements
     add_column(dbo, "adoption", "EventID", dbo.type_integer)
     add_index(dbo, "adoption_EventID", "adoption", "EventID")
 
-def update_34605(dbo):
+def update_34605(dbo: Database) -> None:
     l = dbo.locale
     # add sponsor flag column, and sponsor/vet as additional field types
     add_column(dbo, "owner", "IsSponsor", dbo.type_integer)
@@ -5800,7 +5805,7 @@ def update_34605(dbo):
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (11, '" + _("Sponsor", l) + "')")
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (12, '" + _("Vet", l) + "')")
 
-def update_34606(dbo):
+def update_34606(dbo: Database) -> None:
     # add location columns to event table
     add_column(dbo, "event", "EventOwnerID", dbo.type_integer)
     add_column(dbo, "event", "EventAddress", dbo.type_shorttext)
@@ -5811,17 +5816,17 @@ def update_34606(dbo):
     add_index(dbo, "event_EventOwnerID", "event", "EventOwnerID")
     add_index(dbo, "event_EventAddress", "event", "EventAddress")
 
-def update_34607(dbo):
+def update_34607(dbo: Database) -> None:
     # add 2FA columns to users table
     add_column(dbo, "users", "EnableTOTP", dbo.type_integer)
     add_column(dbo, "users", "OTPSecret", dbo.type_shorttext)
     dbo.execute_dbupdate("UPDATE users SET EnableTOTP=0, OTPSecret=''")
 
-def update_34608(dbo):
+def update_34608(dbo: Database) -> None:
     # change column eventownerid to nullable
     dbo.execute_dbupdate(dbo.ddl_drop_notnull("event", "EventOwnerID", dbo.type_integer))
 
-def update_34609(dbo):
+def update_34609(dbo: Database) -> None:
     # add animalentry table
     fields = ",".join([
         dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
@@ -5852,12 +5857,12 @@ def update_34609(dbo):
     dbo.execute_dbupdate( dbo.ddl_add_table("animalentry", fields) )
     dbo.execute_dbupdate( dbo.ddl_add_index("animalentry_AnimalID", "animalentry", "AnimalID") )
 
-def update_34611(dbo):
+def update_34611(dbo: Database) -> None:
     # add eventanimal.Comments
     add_column(dbo, "eventanimal", "Comments", dbo.type_longtext)
     dbo.execute_dbupdate(dbo.ddl_drop_notnull("eventanimal", "ArrivalDate", dbo.type_datetime))
 
-def update_34700(dbo):
+def update_34700(dbo: Database) -> None:
     # add outcome table (mainly for string translations, used by v_animal view)
     l = dbo.locale
     fields = ",".join([
@@ -5879,7 +5884,7 @@ def update_34700(dbo):
     dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (18, ?)", [ _("Retailer", l) ])
     dbo.execute_dbupdate("INSERT INTO lksoutcome VALUES (19, ?)", [ _("TNR", l) ])
 
-def update_34701(dbo):
+def update_34701(dbo: Database) -> None:
     # add second contact fields to owner table
     add_column(dbo, "owner", "OwnerTitle2", dbo.type_shorttext)
     add_column(dbo, "owner", "OwnerInitials2", dbo.type_shorttext)
@@ -5897,7 +5902,7 @@ def update_34701(dbo):
     add_index(dbo, "owner_EmailAddress2", "owner", "EmailAddress2")
     dbo.execute_dbupdate("UPDATE owner SET OwnerTitle2='', OwnerInitials2='', OwnerForeNames2='', OwnerSurname2='', WorkTelephone2='', MobileTelephone2='', EmailAddress2=''")
 
-def update_34702(dbo):
+def update_34702(dbo: Database) -> None:
     add_column(dbo, "owner", "DateOfBirth", dbo.type_datetime)
     add_column(dbo, "owner", "DateOfBirth2", dbo.type_datetime)
     add_column(dbo, "owner", "IdentificationNumber", dbo.type_shorttext)
@@ -5907,14 +5912,14 @@ def update_34702(dbo):
     add_index(dbo, "owner_IdentificationNumber2", "owner", "IdentificationNumber2")
     dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber='', IdentificationNumber2='', MatchFlags='' ")
 
-def update_34703(dbo):
+def update_34703(dbo: Database) -> None:
     add_index(dbo, "owner_IdentificationNumber", "owner", "IdentificationNumber")
     add_index(dbo, "owner_IdentificationNumber2", "owner", "IdentificationNumber2")
     dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber='' WHERE IdentificationNumber Is Null") 
     dbo.execute_dbupdate("UPDATE owner SET IdentificationNumber2='' WHERE IdentificationNumber2 Is Null") 
     dbo.execute_dbupdate("UPDATE owner SET MatchFlags='' WHERE MatchFlags Is Null") 
 
-def update_34704(dbo):
+def update_34704(dbo: Database) -> None:
     fields = ",".join([
         dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
         dbo.ddl_add_table_column("AnimalID", dbo.type_integer, False),
@@ -5938,7 +5943,7 @@ def update_34704(dbo):
     dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_InDateTime", "animalboarding", "InDateTime") )
     dbo.execute_dbupdate( dbo.ddl_add_index("animalboarding_OutDateTime", "animalboarding", "OutDateTime") )
 
-def update_34705(dbo):
+def update_34705(dbo: Database) -> None:
     # add movement type to additional fields
     l = dbo.locale
     dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (22, '%s')" % _("Movement - Adoption", l))
@@ -5951,7 +5956,7 @@ def update_34705(dbo):
     dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (29, '%s')" % _("Movement - Retailer", l))
     dbo.execute_dbupdate("INSERT INTO lksfieldlink VALUES (30, '%s')" % _("Movement - Reservation", l))
 
-def update_34706(dbo):
+def update_34706(dbo: Database) -> None:
     # Add animalboarding.BoardingTypeID and table
     l = dbo.locale
     add_column(dbo, "animalboarding", "BoardingTypeID", dbo.type_integer)
@@ -5966,7 +5971,7 @@ def update_34706(dbo):
     dbo.execute_dbupdate( dbo.ddl_add_table("lkboardingtype", fields) )
     dbo.execute_dbupdate("INSERT INTO lkboardingtype VALUES (1, ?, '', 0, 0)", [ _("Boarding", l) ])
 
-def update_34707(dbo):
+def update_34707(dbo: Database) -> None:
     # Add the new animalviewcarousel and slideshow HTML templates
     head = asm3.utils.read_text_file(dbo.installpath + "media/internet/animalviewcarousel/head.html")
     foot = asm3.utils.read_text_file(dbo.installpath + "media/internet/animalviewcarousel/foot.html")
@@ -5989,12 +5994,12 @@ def update_34707(dbo):
         "IsBuiltIn": 0
     })
 
-def update_34708(dbo):
+def update_34708(dbo: Database) -> None:
     # Add onlineform.EmailFosterer
     add_column(dbo, "onlineform", "EmailFosterer", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE onlineform SET EmailFosterer = 0")
 
-def update_34709(dbo):
+def update_34709(dbo: Database) -> None:
     # Add stocklevel.Low
     add_column(dbo, "stocklevel", "Low", dbo.type_float)
     dbo.execute_dbupdate("UPDATE stocklevel SET Low=0")
