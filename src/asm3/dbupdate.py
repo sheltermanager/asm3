@@ -43,7 +43,7 @@ VERSIONS = (
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
-    34706, 34707, 34708, 34709
+    34706, 34707, 34708, 34709, 34800
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1084,6 +1084,7 @@ def sql_structure(dbo: Database) -> str:
         fstr("LicenceTypeName"),
         fstr("LicenceTypeDescription", True),
         fint("DefaultCost", True),
+        fint("RescheduleDays", True),
         fint("IsRetired", True) ), False)
 
     sql += table("lksaccounttype", (
@@ -1481,6 +1482,8 @@ def sql_structure(dbo: Database) -> str:
         fint("LicenceTypeID"),
         fstr("LicenceNumber"),
         fint("LicenceFee", True),
+        fint("Renewed", True),
+        fstr("Token", True),
         fdate("IssueDate"),
         fdate("ExpiryDate"),
         flongstr("Comments", True) ))
@@ -1488,6 +1491,8 @@ def sql_structure(dbo: Database) -> str:
     sql += index("ownerlicence_AnimalID", "ownerlicence", "AnimalID")
     sql += index("ownerlicence_LicenceTypeID", "ownerlicence", "LicenceTypeID")
     sql += index("ownerlicence_LicenceNumber", "ownerlicence", "LicenceNumber")
+    sql += index("ownerlicence_Renewed", "ownerlicence", "Renewed")
+    sql += index("ownerlicence_Token", "ownerlicence", "Token")
     sql += index("ownerlicence_IssueDate", "ownerlicence", "IssueDate")
     sql += index("ownerlicence_ExpiryDate", "ownerlicence", "ExpiryDate")
 
@@ -6007,4 +6012,18 @@ def update_34709(dbo: Database) -> None:
     add_column(dbo, "additionalfield", "Hidden", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE additionalfield SET Hidden=0")
 
+def update_34800(dbo: Database) -> None:
+    # Add ownerlicence.Token and ownerlicence.Renewed
+    add_column(dbo, "ownerlicence", "Token", dbo.type_shorttext)
+    add_column(dbo, "ownerlicence", "Renewed", dbo.type_integer)
+    add_index(dbo, "ownerlicence_Token", "ownerlicence", "Token") 
+    add_index(dbo, "ownerlicence_Renewed", "ownerlicence", "Renewed")
+    add_column(dbo, "licencetype", "RescheduleDays", dbo.type_integer)
+    dbo.execute_dbupdate("UPDATE licencetype SET RescheduleDays=365")
+    dbo.execute_dbupdate("UPDATE ownerlicence SET Renewed = 0")
+    dbo.execute_dbupdate("UPDATE ownerlicence SET Renewed = 1 " \
+        "WHERE EXISTS(SELECT oli.ID FROM ownerlicence oli WHERE oli.LicenceTypeID = ownerlicence.LicenceTypeID "
+        "AND oli.OwnerID = ownerlicence.OwnerID AND oli.AnimalID = ownerlicence.AnimalID AND oli.IssueDate > ownerlicence.IssueDate)")
+    # Use MD5 hashes of the ID for old tokens for speed (we use UUIDs for new ones)
+    dbo.execute_dbupdate("UPDATE ownerlicence SET Token = %s" % (dbo.sql_md5("ID")))
 

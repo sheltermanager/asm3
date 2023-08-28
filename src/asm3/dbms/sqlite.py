@@ -34,6 +34,17 @@ class DatabaseSQLite3(Database):
         SQLite does not support INTERVAL and uses its own built in datetime() function.
         """
         return f"datetime({columnname}, '{sign}{number} {units}')"
+    
+    def sql_md5(self, s):
+        """ 
+        Writes an MD5 function for expression s
+        SQLite does not support MD5, so we use hex() instead. It should still work as long as
+        the values you put into it were unique (same as a hash), it's just not secure or 
+        unpredictable any more but given that SQLite is really intended for dev more than
+        anything it should not matter.
+        """
+        print("WARNING: SQLite does not have MD5() function, hex() is not secure but will work")
+        return "hex(%s)" % s
 
     def sql_regexp_replace(self, fieldexpr, pattern="?", replacestr="?"):
         """ SQLite does not have a regexp replace function. Do nothing but at least warn the user. """

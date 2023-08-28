@@ -120,6 +120,7 @@ def get_donation_query(dbo: Database) -> str:
 def get_licence_query(dbo: Database) -> str:
     return "SELECT ol.ID, ol.LicenceTypeID, ol.IssueDate, ol.ExpiryDate, lt.LicenceTypeName, " \
         "ol.LicenceNumber, ol.LicenceFee, ol.Comments, ol.OwnerID, ol.AnimalID, " \
+        "ol.Renewed, ol.Token, " \
         "ol.CreatedBy, ol.CreatedDate, ol.LastChangedBy, ol.LastChangedDate, " \
         "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, a.Fee, " \
         "a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.SpeciesID, a.HasActiveReserve, " \
@@ -1448,16 +1449,21 @@ def insert_licence_from_form(dbo: Database, username: str, post: PostedData) -> 
     if post.date("issuedate") is None or post.date("expirydate") is None:
         raise asm3.utils.ASMValidationError(asm3.i18n._("Issue date and expiry date must be valid dates.", l))
 
-    return dbo.insert("ownerlicence", {
+    lid = dbo.insert("ownerlicence", {
         "OwnerID":          post.integer("person"),
         "AnimalID":         post.integer("animal"),
         "LicenceTypeID":    post.integer("type"),
         "LicenceNumber":    post["number"],
         "LicenceFee":       post.integer("fee"),
+        "Token":            asm3.utils.uuid_str(),
+        "Renewed":          0,
         "IssueDate":        post.date("issuedate"),
         "ExpiryDate":       post.date("expirydate"),
         "Comments":         post["comments"]
     }, username)
+
+    update_licence_renewed(dbo, username, post.integer("type"), post.integer("person"), post.integer("animal"))
+    return lid
 
 def update_licence_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
@@ -1480,12 +1486,34 @@ def update_licence_from_form(dbo: Database, username: str, post: PostedData) -> 
         "ExpiryDate":       post.date("expirydate"),
         "Comments":         post["comments"]
     }, username)
+    
+    update_licence_renewed(dbo, username, post.integer("type"), post.integer("person"), post.integer("animal"))
+
+def update_licence_renewed(dbo: Database, username: str, typeid: int, personid: int, animalid: int) -> int:
+    """
+    Finds all licences that match the given triplet of typeid, personid and animalid 
+    and marks all but the one with the latest issuedate as renewed.
+    Returns the number of affected rows.
+    """
+    rows = dbo.query("SELECT ID, IssueDate FROM ownerlicence WHERE LicenceTypeID=? AND OwnerID=? AND AnimalID=?", [ typeid, personid, animalid ])
+    if len(rows) == 0: return 0
+    latestissue = rows[0].ISSUEDATE
+    for r in rows:
+        if r.ISSUEDATE > latestissue: latestissue = r.ISSUEDATE
+    for r in rows:
+        dbo.update("ownerlicence", r.ID, {
+            "Renewed": asm3.utils.iif( r.ISSUEDATE < latestissue, 1, 0 )
+        }, username)
+    return len(rows)
 
 def delete_licence(dbo: Database, username: str, lid: int) -> None:
     """
     Deletes a licence record
     """
-    dbo.delete("ownerlicence", lid, username)
+    r = dbo.first_row(dbo.query("SELECT LicenceTypeID, OwnerID, AnimalID FROM ownerlicence WHERE ID=?", [lid]))
+    if r is not None:
+        dbo.delete("ownerlicence", lid, username)
+        update_licence_renewed(dbo, username, r.LICENCETYPEID, r.OWNERID, r.ANIMALID)
 
 def get_payment_processor(dbo: Database, name: str) -> PaymentProcessor:
     """

@@ -936,6 +936,10 @@ class Database(object):
     def sql_limit(self, x):
         """ Writes a limit clause to X items """
         return "LIMIT %s" % x
+    
+    def sql_md5(self, s):
+        """ Writes an MD5 function for expression s """
+        return "MD5(%s)" % s
 
     def sql_regexp_replace(self, fieldexpr, pattern="?", replacestr="?"):
         """ Writes a regexp replace expression that replaces characters matching pattern with replacestr """

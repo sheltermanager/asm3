@@ -54,9 +54,10 @@ $(function() {
                     }
                 },
                 complete: function(row) {
+                    return row.RENEWED == 1;
                 },
                 overdue: function(row) {
-                    return row.EXPIRYDATE && format.date_js(row.EXPIRYDATE) < common.today_no_time();
+                    return row.RENEWED == 0 && row.EXPIRYDATE && format.date_js(row.EXPIRYDATE) < common.today_no_time();
                 },
                 columns: [
                     { field: "LICENCETYPENAME", display: _("Type") },
@@ -94,7 +95,7 @@ $(function() {
                     },
                     { field: "LICENCENUMBER", display: _("License Number") },
                     { field: "LICENCEFEE", display: _("Fee"), formatter: tableform.format_currency },
-                    { field: "ISSUEDATE", display: _("Issued"), formatter: tableform.format_date, initialsort: true, intialsortdirection: "desc" },
+                    { field: "ISSUEDATE", display: _("Issued"), formatter: tableform.format_date, initialsort: true, initialsortdirection: "desc" },
                     { field: "EXPIRYDATE", display: _("Expires"), formatter: tableform.format_date },
                     { field: "COMMENTS", display: _("Comments"), formatter: tableform.format_comments }
                 ]

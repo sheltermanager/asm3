@@ -109,6 +109,15 @@ class DatabasePostgreSQL(Database):
 
     def sql_ilike(self, expr1, expr2 = "?"):
         return "%s ILIKE %s" % (expr1, expr2)
+    
+    def sql_md5(self, s):
+        """ 
+        Writes an MD5 function for expression s.
+        PostgreSQL's MD5 function will only accept strings, so if there is no string literal
+        component to the expression given, assume it is a column name and cast it to text
+        """
+        if s.find("'") == -1: s += "::text"
+        return "MD5(%s)" % s
 
     def sql_regexp_replace(self, fieldexpr, pattern="?", replacestr="?"):
         """ Writes a regexp replace expression that replaces characters matching pattern with replacestr """

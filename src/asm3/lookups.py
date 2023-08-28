@@ -43,7 +43,7 @@ LOOKUP_TABLES = {
     "incidenttype":     (_("Incident Types"), "IncidentName", _("Type"), "IncidentDescription", "add del ret", ("animalcontrol.IncidentTypeID",)),
     "internallocation": (_("Internal Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret units site", ("animal.ShelterLocation",)),
     "jurisdiction":     (_("Jurisdictions"), "JurisdictionName", _("Jurisdiction"), "JurisdictionDescription", "add del ret", ("animal.JurisdictionID", "animalcontrol.JurisdictionID","owner.JurisdictionID")),
-    "licencetype":      (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", "add del ret cost", ("ownerlicence.LicenceTypeID",)),
+    "licencetype":      (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", "add del ret cost sched", ("ownerlicence.LicenceTypeID",)),
     "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", "add del ret", ("log.LogTypeID",)),
     "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", "", ("adoption.MovementType", "animal.ActiveMovementType",)),
     "lksoutcome":       (_("Outcomes"), "Outcome", _("Outcome"), "", "", ""),
@@ -1100,7 +1100,7 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
             "IsRetired":            retired
         }, username, setCreated=False)
         return nid
-    elif lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype" or lookup == "lkboardingtype":
+    elif lookup == "voucher" or lookup == "traptype" or lookup == "citationtype" or lookup == "lkboardingtype":
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
@@ -1108,7 +1108,7 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
             "IsRetired":            retired
         }, username, setCreated=False)
         return nid
-    elif lookup == "testtype" or lookup == "vaccinationtype":
+    elif lookup == "licencetype" or lookup == "testtype" or lookup == "vaccinationtype":
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
@@ -1185,14 +1185,14 @@ def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbree
             "IsVAT":                vat,
             "IsRetired":            retired
         }, username, setLastChanged=False)
-    elif lookup == "voucher" or lookup == "traptype" or lookup == "licencetype" or lookup == "citationtype" or lookup == "lkboardingtype":
+    elif lookup == "voucher" or lookup == "traptype" or lookup == "citationtype" or lookup == "lkboardingtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
             "DefaultCost":          defaultcost,
             "IsRetired":            retired
         }, username, setLastChanged=False)
-    elif lookup == "testtype" or lookup == "vaccinationtype":
+    elif lookup == "licencetype" or lookup == "testtype" or lookup == "vaccinationtype":
         dbo.update(lookup, iid, {
             t[LOOKUP_NAMEFIELD]:    name,
             t[LOOKUP_DESCFIELD]:    desc,
