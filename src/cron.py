@@ -5,6 +5,8 @@ import os, sys
 # Add our modules to the sys.path
 sys.path.append(os.getcwd())
 
+from asm3 import animalcontrol
+from asm3 import additional
 from asm3 import al
 from asm3 import audit
 from asm3 import animal
@@ -18,6 +20,7 @@ from asm3 import diary
 from asm3 import financial
 from asm3 import lostfound
 from asm3 import media
+from asm3 import medical
 from asm3 import movement
 from asm3 import onlineform
 from asm3 import person
@@ -326,6 +329,43 @@ def maint_db_dump_personcsv(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_personcsv: %s" % em, "cron.maint_db_dump_personcsv", dbo, sys.exc_info())
 
+def maint_db_dump_zip(dbo):
+    try:
+        l = dbo.locale
+        dbname = dbo.database
+        if dbname.find("/") != -1: dbname = dbname[dbname.rfind("/")+1:]
+        dbomysql = db.get_dbo("MYSQL")
+        dbopg = db.get_dbo("POSTGRESQL")
+        dbodb2 = db.get_dbo("DB2")
+        dbosqlite = db.get_dbo("SQLITE")
+        PATH = f"/tmp/dbdump_{dbname}"
+        utils.mkdir(PATH)
+        utils.write_text_file(f"{PATH}/dump.sql", utils.generator2str(dbupdate.dump, dbo))
+        utils.write_text_file(f"{PATH}/ddl_sqlite.sql", dbupdate.sql_structure(dbosqlite))
+        utils.write_text_file(f"{PATH}/ddl_mysql.sql", dbupdate.sql_structure(dbomysql))
+        utils.write_text_file(f"{PATH}/ddl_postgresql.sql", dbupdate.sql_structure(dbopg))
+        utils.write_text_file(f"{PATH}/ddl_db2.sql", dbupdate.sql_structure(dbodb2))
+        utils.write_text_file(f"{PATH}/asm2.sql", utils.generator2str(dbupdate.dump_hsqldb, dbo))
+        rows = animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" })
+        additional.append_to_results(dbo, rows, "animal")
+        utils.write_binary_file(f"{PATH}/animal.csv", utils.csv(l, rows))
+        utils.write_binary_file(f"{PATH}/media.csv", utils.csv(l, media.get_media_export(dbo)))
+        utils.write_binary_file(f"{PATH}/medical.csv", utils.csv(l, medical.get_medical_export(dbo)))
+        rows = person.get_person_find_simple(dbo, "", includeStaff=True, includeVolunteers=True)
+        additional.append_to_results(dbo, rows, "person")
+        utils.write_binary_file(f"{PATH}/person.csv", utils.csv(l, rows))
+        rows = animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, "system")
+        additional.append_to_results(dbo, rows, "incident")
+        utils.write_binary_file(f"{PATH}/incident.csv", utils.csv(l, rows))
+        utils.write_binary_file(f"{PATH}/licence.csv", utils.csv(l, financial.get_licence_find_simple(dbo, "")))
+        utils.write_binary_file(f"{PATH}/payment.csv", utils.csv(l, financial.get_donations(dbo, "m10000")))
+        utils.zip_directory(PATH, f"/tmp/{dbname}.zip")
+        utils.rmdir(PATH)
+        print(f"All data files exported to /tmp/{dbname}.zip")
+    except:
+        em = str(sys.exc_info()[0])
+        al.error("FAIL: uncaught error running maint_db_dump_zip: %s" % em, "cron.maint_db_dump_zip", dbo, sys.exc_info())
+
 def maint_db_install(dbo):
     try:
         dbupdate.install(dbo)
@@ -506,6 +546,8 @@ def run(dbo, mode):
         maint_db_dump_merge(dbo)
     elif mode == "maint_db_dump_smcom":
         maint_db_dump_smcom(dbo)
+    elif mode == "maint_db_dump_zip":
+        maint_db_dump_zip(dbo)
     elif mode == "maint_db_dump_animalcsv":
         maint_db_dump_animalcsv(dbo)
     elif mode == "maint_db_dump_personcsv":
@@ -599,6 +641,7 @@ def print_usage():
     print("       maint_db_dump_hsqldb - produce a complete HSQLDB file for ASM2")
     print("       maint_db_dump_lookups - produce an SQL dump of lookup tables only")
     print("       maint_db_dump_smcom - produce an SQL dump for import into sheltermanager.com")
+    print("       maint_db_dump_zip - produce a zip file containing all export/dump files")
     print("       maint_db_fix_preferred_photos - fix/reset preferred flags for all photo media to latest")
     print("       maint_db_install - install structure/data into a new empty database")
     print("       maint_db_reinstall - reinstall default lookup data and templates to current locale")

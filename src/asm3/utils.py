@@ -19,6 +19,7 @@ import os
 import random
 import re
 import requests
+import shutil
 import smtplib
 import string
 import struct
@@ -1020,7 +1021,7 @@ def csv(l, rows, cols = None, includeheader = True, titlecaseheader = False, low
     lowercaseheader: if True lower cases the header row
     renameheader: A comma separated list of find=replace values to rewrite column headers
     """
-    if rows is None or len(rows) == 0: return ""
+    if rows is None or len(rows) == 0: return "\ufeff".encode("utf-8")
     lines = []
     def writerow(row):
         line = []
@@ -1314,12 +1315,19 @@ def put_json(url, json, headers = {}):
     """
     return post_data(url, json, contenttype="application/json", httpmethod="PUT", headers=headers)
 
-
 def urlencode(d):
     """
     URL encodes a dictionary of key/pair values.
     """
     return urllib.parse.urlencode(d)
+
+def zip_directory(path, zipfilepath):
+    """
+    Zips directory in path to a new zipfile zipfilepath
+    """
+    # make_archive adds the extension, so if our zipfilepath includes it, remove it first
+    if zipfilepath.endswith(".zip"): zipfilepath = zipfilepath[0:len(zipfilepath)-4]
+    shutil.make_archive(zipfilepath, "zip", path)
 
 def zip_extract(zipfilename, filename):
     """
@@ -1346,6 +1354,24 @@ def zip_replace(zipfilename, filename, content):
         zf.close()
         zfo.close()
         return zo.getvalue()
+
+def mkdir(path):
+    """
+    Creates a directory.
+    """
+    try:
+        os.mkdir(path)
+    except:
+        pass
+
+def rmdir(path):
+    """
+    Removes a directory including all files inside it.
+    """
+    try:
+        shutil.rmtree(path, ignore_errors=True)
+    except:
+        pass
 
 def read_text_file(name):
     """
