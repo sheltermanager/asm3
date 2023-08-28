@@ -93,7 +93,7 @@ Shelter Inventory at Date (Include trial adoptions)
 ###
 Inventories
 ###
-3200/Any rev06
+3200/Any rev07
 ###
 Historical animal inventory for any date. Treats trial adoptions as still on the shelter.
 ###
@@ -110,7 +110,10 @@ species.SpeciesName,
 BreedName,
 AnimalAge, AgeGroup,
 CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = animal.ID AND MovementType = 2 AND MovementDate <= '$@thedate$' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$'))
-THEN 'Foster' ELSE internallocation.LocationName END AS LocationName,
+THEN 'Foster' 
+WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = animal.ID AND MovementType = 1 AND IsTrial = 1 AND MovementDate <= '$@thedate$' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$'))
+THEN 'Trial Adoption'
+ELSE internallocation.LocationName END AS LocationName,
 lksmovementtype.MovementType AS LatestMovement,
 animal.ActiveMovementDate AS DateLeftShelter,
 owner.OwnerName
@@ -164,7 +167,7 @@ $$BODY<tr>
 <td>$ANIMALNAME</td>
 <td>$ANIMALTYPE</td>
 <td>$BREEDNAME</td>
-<td>$ANIMALAGE ($AGEGROUP)</td>a
+<td>$ANIMALAGE ($AGEGROUP)</td>
 <td>$REASONNAME</td>
 <td>$TIMEONSHELTER</td>
 <td>$LATESTMOVEMENT</td>
