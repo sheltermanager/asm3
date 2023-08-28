@@ -1498,15 +1498,19 @@ def update_licence_renewed(dbo: Database, username: str, typeid: int, personid: 
     and marks all but the one with the latest issuedate as renewed.
     Returns the number of affected rows.
     """
-    rows = dbo.query("SELECT ID, IssueDate FROM ownerlicence WHERE LicenceTypeID=? AND OwnerID=? AND AnimalID=?", [ typeid, personid, animalid ])
+    rows = dbo.query("SELECT ID, AnimalID, OwnerID, IssueDate, Renewed FROM ownerlicence " \
+        "WHERE LicenceTypeID=? AND OwnerID=? AND AnimalID=? ORDER BY IssueDate DESC", \
+        [ typeid, personid, animalid ])
     if len(rows) == 0: return 0
-    latestissue = rows[0].ISSUEDATE
-    for r in rows:
-        if r.ISSUEDATE > latestissue: latestissue = r.ISSUEDATE
-    for r in rows:
-        dbo.update("ownerlicence", r.ID, {
-            "Renewed": asm3.utils.iif( r.ISSUEDATE < latestissue, 1, 0 )
-        }, username)
+    for i, r in enumerate(rows):
+        renewed = 1
+        if i == 0: renewed = 0
+        if r.RENEWED != renewed:
+            dbo.update("ownerlicence", r.ID, { 
+                "AnimalID": r.ANIMALID, # Set animalid/ownerid so that they appear in audit trail
+                "OwnerID": r.OWNERID,
+                "Renewed": renewed 
+            }, username)
     return len(rows)
 
 def delete_licence(dbo: Database, username: str, lid: int) -> None:
