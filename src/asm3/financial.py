@@ -1441,21 +1441,24 @@ def delete_citation(dbo: Database, username: str, cid: int) -> None:
 
 def insert_licence_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
-    Creates a licence record from posted form data 
+    Creates a licence record from posted form data.
+    The renewal token is created here as a base64 encoded UUID. 
+    The = padding is thrown away to save space as we never need to actually 
+    decode the original UUID value, it just has to be unique.
     """
     l = dbo.locale
     if asm3.configuration.unique_licence_numbers(dbo) and 0 != dbo.query_int("SELECT COUNT(*) FROM ownerlicence WHERE LicenceNumber = ?", [post["number"]]):
         raise asm3.utils.ASMValidationError(asm3.i18n._("License number '{0}' has already been issued.", l).format(post["number"]))
     if post.date("issuedate") is None or post.date("expirydate") is None:
         raise asm3.utils.ASMValidationError(asm3.i18n._("Issue date and expiry date must be valid dates.", l))
-
+    token = asm3.utils.uuid_b64().replace("=", "")
     lid = dbo.insert("ownerlicence", {
         "OwnerID":          post.integer("person"),
         "AnimalID":         post.integer("animal"),
         "LicenceTypeID":    post.integer("type"),
         "LicenceNumber":    post["number"],
         "LicenceFee":       post.integer("fee"),
-        "Token":            asm3.utils.uuid_str(),
+        "Token":            token,
         "Renewed":          0,
         "IssueDate":        post.date("issuedate"),
         "ExpiryDate":       post.date("expirydate"),

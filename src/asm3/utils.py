@@ -845,8 +845,12 @@ def base64decode_str(s):
     return rv.decode("utf-8")
 
 def uuid_str():
-    """ Returns a type 4 UUID as a string """
+    """ Returns a type 4 UUID as a 36 char string """
     return str(uuid.uuid4())
+
+def uuid_b64():
+    """ Returns a type 4 UUID as a base64 encoded string (shorter) """
+    return base64encode(uuid.uuid4().bytes)
 
 def pbkdf2_hash_hex(plaintext, salt="", algorithm="sha1", iterations=1000):
     """ Returns a hex pbkdf2 hash of the plaintext given. 
