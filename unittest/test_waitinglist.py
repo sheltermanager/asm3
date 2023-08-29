@@ -34,7 +34,7 @@ class TestWaitingList(unittest.TestCase):
         asm3.waitinglist.get_waitinglist_find_simple(base.get_dbo(), "Test")
 
     def test_get_satellite_counts(self):
-        assert asm3.waitinglist.get_satellite_counts(base.get_dbo(), self.wlid) is not None
+        self.assertIsNotNone(asm3.waitinglist.get_satellite_counts(base.get_dbo(), self.wlid))
 
     def test_auto_remove_waitinglist(self):
         asm3.waitinglist.auto_remove_waitinglist(base.get_dbo())
@@ -44,6 +44,7 @@ class TestWaitingList(unittest.TestCase):
 
     def test_create_animal(self):
         aid = asm3.waitinglist.create_animal(base.get_dbo(), "test", self.wlid)
-        assert aid is not None and aid > 0
+        self.assertIsNotNone(aid)
+        self.assertNotEqual(aid, 0)
         asm3.animal.delete_animal(base.get_dbo(), "test", aid)
 

@@ -36,19 +36,19 @@ class TestClinic(unittest.TestCase):
         asm3.clinic.delete_appointment(base.get_dbo(), "test", self.anid)
 
     def test_get_animal_appointments(self):
-        assert len(asm3.clinic.get_animal_appointments(base.get_dbo(), 1)) > 0
+        self.assertNotEqual(0, len(asm3.clinic.get_animal_appointments(base.get_dbo(), 1)))
 
     def test_get_animal_appointments_due(self):
         asm3.clinic.get_animal_appointments_due(base.get_dbo(), 1, base.today(), base.today() + datetime.timedelta(days=7))
 
     def test_get_person_appointments(self):
-        assert len(asm3.clinic.get_person_appointments(base.get_dbo(), 1)) > 0
+        self.assertNotEqual(0, len(asm3.clinic.get_person_appointments(base.get_dbo(), 1)))
 
     def test_get_appointment(self):
-        assert asm3.clinic.get_appointment(base.get_dbo(), self.anid) is not None
+        self.assertIsNotNone(asm3.clinic.get_appointment(base.get_dbo(), self.anid))
 
     def test_get_appointments_today(self):
-        assert len(asm3.clinic.get_appointments_today(base.get_dbo())) > 0
+        self.assertNotEqual(0, len(asm3.clinic.get_appointments_today(base.get_dbo())))
 
     def test_get_appointments_two_dates(self):
         asm3.clinic.get_appointments_two_dates(base.get_dbo(), "2001-01-01", "2020-01-01")
@@ -58,7 +58,7 @@ class TestClinic(unittest.TestCase):
         asm3.clinic.get_person_appointments(base.get_dbo(), 1)
 
     def test_get_invoice_items(self):
-        assert len(asm3.clinic.get_invoice_items(base.get_dbo(), self.anid)) > 0
+        self.assertNotEqual(0, len(asm3.clinic.get_invoice_items(base.get_dbo(), self.anid)))
 
     def test_appointment_crud(self):
         data = {

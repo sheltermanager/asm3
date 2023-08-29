@@ -57,16 +57,16 @@ class TestEvent(unittest.TestCase):
         asm3.event.get_animals_by_event(base.get_dbo(), self.nid, "notadopted")
 
     def test_get_event(self):
-        assert asm3.event.get_event(base.get_dbo(), self.nid) is not None
+        self.assertIsNotNone(asm3.event.get_event(base.get_dbo(), self.nid))
 
     def test_get_events_by_animal(self):
         asm3.event.get_events_by_animal(base.get_dbo(), 1)
 
     def test_get_events_by_date(self):
-        assert len(asm3.event.get_events_by_date(base.get_dbo(), datetime.datetime(2023, 1, 1, 0, 0, 0))) > 0
+        self.assertNotEqual(0, len(asm3.event.get_events_by_date(base.get_dbo(), datetime.datetime(2023, 1, 1, 0, 0, 0))))
 
     def test_get_event_find_advanced(self):
-        assert len(asm3.event.get_event_find_advanced(base.get_dbo(), { "name": "Testio" })) > 0
+        self.assertNotEqual(0, len(asm3.event.get_event_find_advanced(base.get_dbo(), { "name": "Testio" })))
 
     def test_update_event_animal(self):
         data = {

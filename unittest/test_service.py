@@ -13,9 +13,9 @@ class TestService(unittest.TestCase):
 
     def test_safe_cache_key(self):
         s = asm3.service.safe_cache_key("animal_image", "?animalid=52&cache=bust")
-        assert s.find("cache") == -1
+        self.assertEqual(-1, s.find("cache"))
 
     def test_sign_document_page(self):
-        assert len(asm3.service.sign_document_page(base.get_dbo(), 0, "test@example.com")) > 0
+        self.assertNotEqual(0, len(asm3.service.sign_document_page(base.get_dbo(), 0, "test@example.com")))
 
 

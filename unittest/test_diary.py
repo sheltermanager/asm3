@@ -34,7 +34,7 @@ class TestDiary(unittest.TestCase):
         asm3.diary.get_completed_upto_today(base.get_dbo(), "user")
 
     def test_get_all_upto_today(self):
-        assert len(asm3.diary.get_all_upto_today(base.get_dbo(), "user")) > 0
+        self.assertNotEqual(0, len(asm3.diary.get_all_upto_today(base.get_dbo(), "user")))
 
     def test_get_future(self):
         asm3.diary.get_future(base.get_dbo(), "user")
@@ -64,7 +64,7 @@ class TestDiary(unittest.TestCase):
         asm3.diary.get_diarytask_details(base.get_dbo(), 0)
 
     def test_get_diary(self):
-        assert asm3.diary.get_diary(base.get_dbo(), self.nid) is not None
+        self.assertIsNotNone(asm3.diary.get_diary(base.get_dbo(), self.nid))
 
     def test_get_diaries(self):
         asm3.diary.get_diaries(base.get_dbo(), 0, 0)

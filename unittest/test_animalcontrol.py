@@ -16,7 +16,7 @@ class TestAnimalControl(unittest.TestCase):
         base.execute("DELETE FROM animalcontrol WHERE ID = %d" % self.nid)
 
     def test_get_animalcontrol(self):
-        assert len(asm3.animalcontrol.get_animalcontrol(base.get_dbo(), self.nid)) > 0
+        self.assertNotEquals(0, len(asm3.animalcontrol.get_animalcontrol(base.get_dbo(), self.nid)))
 
     def test_get_animalcontrol_animals(self):
         asm3.animalcontrol.get_animalcontrol_animals(base.get_dbo(), self.nid)
@@ -31,7 +31,7 @@ class TestAnimalControl(unittest.TestCase):
         asm3.animalcontrol.get_animalcontrol_find_simple(base.get_dbo(), "test", "user")
 
     def test_get_animalcontrol_find_advanced(self):
-        assert len(asm3.animalcontrol.get_animalcontrol_find_advanced(base.get_dbo(), { "number": str(self.nid) }, "user")) > 0
+        self.assertNotEquals(0, len(asm3.animalcontrol.get_animalcontrol_find_advanced(base.get_dbo(), { "number": str(self.nid) }, "user")))
 
     def test_get_animalcontrol_satellite_counts(self):
         asm3.animalcontrol.get_animalcontrol_satellite_counts(base.get_dbo(), self.nid)

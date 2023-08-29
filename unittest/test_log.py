@@ -16,7 +16,7 @@ class TestLog(unittest.TestCase):
         asm3.log.delete_log(base.get_dbo(), "test", self.nid)
 
     def test_get_logs(self):
-        assert len(asm3.log.get_logs(base.get_dbo(), 0, 1)) > 0
+        self.assertNotEqual(len(asm3.log.get_logs(base.get_dbo(), 0, 1)), 0)
 
     def test_crud(self):
         data = {

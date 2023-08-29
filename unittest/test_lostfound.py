@@ -51,28 +51,28 @@ class TestLostFound(unittest.TestCase):
         assert asm3.lostfound.get_foundanimal(base.get_dbo(), self.faid) is not None
 
     def test_get_lostanimal_find_simple(self):
-        assert len(asm3.lostfound.get_lostanimal_find_simple(base.get_dbo(), "Test")) > 0
+        self.assertNotEqual(0, len(asm3.lostfound.get_lostanimal_find_simple(base.get_dbo(), "Test")))
 
     def test_get_foundanimal_find_simple(self):
-        assert len(asm3.lostfound.get_foundanimal_find_simple(base.get_dbo(), "Test")) > 0
+        self.assertNotEqual(0, len(asm3.lostfound.get_foundanimal_find_simple(base.get_dbo(), "Test")))
 
     def test_get_lostanimal_find_advanced(self):
-        assert len(asm3.lostfound.get_lostanimal_find_advanced(base.get_dbo(), { "area": "Test" })) > 0
+        self.assertNotEqual(0, len(asm3.lostfound.get_lostanimal_find_advanced(base.get_dbo(), { "area": "Test" })))
 
     def test_get_foundanimal_find_advanced(self):
-        assert len(asm3.lostfound.get_foundanimal_find_advanced(base.get_dbo(), { "area": "Test" })) > 0
+        self.assertNotEqual(0, len(asm3.lostfound.get_foundanimal_find_advanced(base.get_dbo(), { "area": "Test" })))
 
     def test_get_lostanimal_last_days(self):
-        assert len(asm3.lostfound.get_lostanimal_last_days(base.get_dbo())) > 0
+        self.assertNotEqual(0, len(asm3.lostfound.get_lostanimal_last_days(base.get_dbo())))
 
     def test_get_foundanimal_last_days(self):
-        assert len(asm3.lostfound.get_foundanimal_last_days(base.get_dbo())) > 0
+        self.assertNotEqual(0, len(asm3.lostfound.get_foundanimal_last_days(base.get_dbo())))
 
     def test_get_lostanimal_satellite_counts(self):
-        assert len(asm3.lostfound.get_lostanimal_satellite_counts(base.get_dbo(), self.laid)) > 0
+        self.assertNotEqual(0, len(asm3.lostfound.get_lostanimal_satellite_counts(base.get_dbo(), self.laid)))
 
     def test_get_foundanimal_satellite_counts(self):
-        assert len(asm3.lostfound.get_foundanimal_satellite_counts(base.get_dbo(), self.faid)) > 0
+        self.assertNotEqual(0, len(asm3.lostfound.get_foundanimal_satellite_counts(base.get_dbo(), self.faid)))
 
     def test_update_match_report(self):
         asm3.lostfound.update_match_report(base.get_dbo())

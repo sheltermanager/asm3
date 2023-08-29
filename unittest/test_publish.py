@@ -5,6 +5,25 @@ import base
 import asm3.animal
 import asm3.configuration
 import asm3.publishers
+import asm3.publishers.html
+import asm3.publishers.adoptapet
+import asm3.publishers.akcreunite
+import asm3.publishers.anibaseuk
+import asm3.publishers.buddyid
+import asm3.publishers.foundanimals
+import asm3.publishers.helpinglostpets
+import asm3.publishers.homeagain
+import asm3.publishers.maddiesfund
+import asm3.publishers.petcademy
+import asm3.publishers.petfinder
+import asm3.publishers.petlink
+import asm3.publishers.petrescue
+import asm3.publishers.petslocateduk
+import asm3.publishers.pettracuk
+import asm3.publishers.rescuegroups
+import asm3.publishers.sacmetrics
+import asm3.publishers.savourlife
+import asm3.publishers.smarttag
 import asm3.utils
 
 class TestPublish(unittest.TestCase):
@@ -30,10 +49,10 @@ class TestPublish(unittest.TestCase):
     # base
     def test_get_adoption_status(self):
         a = asm3.animal.get_animal(base.get_dbo(), self.nid)
-        assert "Adoptable" == asm3.publishers.base.get_adoption_status(base.get_dbo(), a)
+        self.assertEqual("Adoptable", asm3.publishers.base.get_adoption_status(base.get_dbo(), a))
 
     def test_get_animal_data(self):
-        assert len(asm3.publishers.base.get_animal_data(base.get_dbo())) > 0
+        self.assertNotEqual(0, len(asm3.publishers.base.get_animal_data(base.get_dbo())))
 
     def test_get_microchip_data(self):
         asm3.publishers.base.get_microchip_data(base.get_dbo(), [ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ], "test")
@@ -41,7 +60,7 @@ class TestPublish(unittest.TestCase):
 
     # html 
     def test_get_adoptable_animals(self):
-        assert len(asm3.publishers.html.get_adoptable_animals(base.get_dbo())) > 0
+        self.assertNotEqual(0, len(asm3.publishers.html.get_adoptable_animals(base.get_dbo())))
 
     def test_get_adopted_animals(self):
         asm3.publishers.html.get_adopted_animals(base.get_dbo())
@@ -56,105 +75,105 @@ class TestPublish(unittest.TestCase):
         asm3.publishers.html.get_held_animals(base.get_dbo())
 
     def test_get_animal_view(self):
-        assert len(asm3.publishers.html.get_animal_view(base.get_dbo(), self.nid)) > 0
+        self.assertNotEqual(0, len(asm3.publishers.html.get_animal_view(base.get_dbo(), self.nid)))
 
     def test_get_animal_view_adoptable_js(self):
-        assert len(asm3.publishers.html.get_animal_view_adoptable_js(base.get_dbo())) > 0
+        self.assertNotEqual(0, len(asm3.publishers.html.get_animal_view_adoptable_js(base.get_dbo())))
 
     # adoptapet
     def test_adoptapet(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.adoptapet.AdoptAPetPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.adoptapet.AdoptAPetPublisher(base.get_dbo(), pc).processAnimal(a))
 
     # akcreunite
     def test_akcreunite(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.akcreunite.AKCReunitePublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.akcreunite.AKCReunitePublisher(base.get_dbo(), pc).processAnimal(a))
         asm3.publishers.akcreunite.AKCReunitePublisher(base.get_dbo(), pc).validate(a)
 
     # anibase
     def test_anibase(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.anibaseuk.AnibaseUKPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.anibaseuk.AnibaseUKPublisher(base.get_dbo(), pc).processAnimal(a))
         asm3.publishers.anibaseuk.AnibaseUKPublisher(base.get_dbo(), pc).validate(a)
 
     # buddyid
     def test_buddyid(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.buddyid.BuddyIDPublisher(base.get_dbo(), pc).processAnimal(a, "C00000") is not None
+        self.assertIsNotNone(asm3.publishers.buddyid.BuddyIDPublisher(base.get_dbo(), pc).processAnimal(a, "C00000"))
         asm3.publishers.buddyid.BuddyIDPublisher(base.get_dbo(), pc).validate(a)
 
     # foundanimals
     def test_foundanimals(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.foundanimals.FoundAnimalsPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.foundanimals.FoundAnimalsPublisher(base.get_dbo(), pc).processAnimal(a))
         asm3.publishers.foundanimals.FoundAnimalsPublisher(base.get_dbo(), pc).validate(a, -1000)
 
     # helpinglostpets
     def test_helpinglostpets(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.helpinglostpets.HelpingLostPetsPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.helpinglostpets.HelpingLostPetsPublisher(base.get_dbo(), pc).processAnimal(a))
 
     # homeagain
     def test_homeagain(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.homeagain.HomeAgainPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.homeagain.HomeAgainPublisher(base.get_dbo(), pc).processAnimal(a))
         asm3.publishers.homeagain.HomeAgainPublisher(base.get_dbo(), pc).validate(a)
 
     # maddiesfund
     def test_maddiesfund(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.maddiesfund.MaddiesFundPublisher(base.get_dbo(), pc).getData(214) is not None
-        assert asm3.publishers.maddiesfund.MaddiesFundPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.maddiesfund.MaddiesFundPublisher(base.get_dbo(), pc).getData(214))
+        self.assertIsNotNone(asm3.publishers.maddiesfund.MaddiesFundPublisher(base.get_dbo(), pc).processAnimal(a))
 
     # petcademy
     def test_petcademy(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.petcademy.PetcademyPublisher(base.get_dbo(), pc).getData(214) is not None
-        assert asm3.publishers.petcademy.PetcademyPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.petcademy.PetcademyPublisher(base.get_dbo(), pc).getData(214))
+        self.assertIsNotNone(asm3.publishers.petcademy.PetcademyPublisher(base.get_dbo(), pc).processAnimal(a))
 
     # petfinder
     def test_petfinder(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         pf = asm3.publishers.petfinder.PetFinderPublisher(base.get_dbo(), pc)
-        assert pf.processAnimal(a) is not None
+        self.assertIsNotNone(pf.processAnimal(a))
         b = base.get_dbo().query(pf.pfAnimalQuery())[0]
-        assert pf.processAnimal(b, status="X") is not None
+        self.assertIsNotNone(pf.processAnimal(b, status="X"))
 
     # petlink
     def test_petlink(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.petlink.PetLinkPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.petlink.PetLinkPublisher(base.get_dbo(), pc).processAnimal(a))
         asm3.publishers.petlink.PetLinkPublisher(base.get_dbo(), pc).validate(a, -1000)
 
     # petrescue
     def test_petrescue(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.petrescue.PetRescuePublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.petrescue.PetRescuePublisher(base.get_dbo(), pc).processAnimal(a))
 
     # petslocateduk
     def test_petslocateduk(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.petslocateduk.PetsLocatedUKPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.petslocateduk.PetsLocatedUKPublisher(base.get_dbo(), pc).processAnimal(a))
 
     # pettracuk
     def test_pettracuk(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.pettracuk.PETtracUKPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.pettracuk.PETtracUKPublisher(base.get_dbo(), pc).processAnimal(a))
         asm3.publishers.pettracuk.PETtracUKPublisher(base.get_dbo(), pc).validate(a)
 
     def test_pettracuk_gen_avid_pdf(self):
@@ -199,7 +218,7 @@ class TestPublish(unittest.TestCase):
     def test_rescuegroups(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.rescuegroups.RescueGroupsPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.rescuegroups.RescueGroupsPublisher(base.get_dbo(), pc).processAnimal(a))
 
     # sacmetrics
     def test_sacmetrics(self):
@@ -211,13 +230,13 @@ class TestPublish(unittest.TestCase):
     def test_savourlife(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.savourlife.SavourLifePublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.savourlife.SavourLifePublisher(base.get_dbo(), pc).processAnimal(a))
 
     # smarttag
     def test_smarttag(self):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        assert asm3.publishers.smarttag.SmartTagPublisher(base.get_dbo(), pc).processAnimal(a) is not None
+        self.assertIsNotNone(asm3.publishers.smarttag.SmartTagPublisher(base.get_dbo(), pc).processAnimal(a))
 
     # vetenvoy - redundant and not imported by publish.py any more
     #def test_vetenvoy(self):

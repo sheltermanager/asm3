@@ -30,10 +30,10 @@ class TestStock(unittest.TestCase):
         asm3.stock.delete_stocklevel(base.get_dbo(), "test", self.nid)
 
     def test_get_stocklevel(self):
-        assert None is not asm3.stock.get_stocklevel(base.get_dbo(), self.nid)
+        self.assertIsNotNone(asm3.stock.get_stocklevel(base.get_dbo(), self.nid))
 
     def test_get_stocklevels(self):
-        assert len(asm3.stock.get_stocklevels(base.get_dbo())) > 0
+        self.assertNotEqual(0, len(asm3.stock.get_stocklevels(base.get_dbo())))
 
     def test_get_stocklevels_depleted(self):
         asm3.stock.get_stocklevels_depleted(base.get_dbo())
@@ -42,19 +42,19 @@ class TestStock(unittest.TestCase):
         asm3.stock.get_stocklevels_lowbalance(base.get_dbo())
 
     def test_get_stock_names(self):
-        assert len(asm3.stock.get_stock_names(base.get_dbo())) > 0
+        self.assertNotEqual(0, len(asm3.stock.get_stock_names(base.get_dbo())))
 
     def test_get_last_stock_with_name(self):
         asm3.stock.get_last_stock_with_name(base.get_dbo(), "")
 
     def test_get_stock_items(self):
-        assert len(asm3.stock.get_stock_items(base.get_dbo())) > 0
+        self.assertNotEqual(0, len(asm3.stock.get_stock_items(base.get_dbo())))
 
     def test_get_stock_locations_totals(self):
-        assert len(asm3.stock.get_stock_locations_totals(base.get_dbo())) > 0
+        self.assertNotEqual(0, len(asm3.stock.get_stock_locations_totals(base.get_dbo())))
 
     def test_get_stock_units(self):
-        assert len(asm3.stock.get_stock_units(base.get_dbo())) > 0
+        self.assertNotEqual(0, len(asm3.stock.get_stock_units(base.get_dbo())))
 
     def test_update_stocklevel_from_form(self):
         data = {

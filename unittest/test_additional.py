@@ -27,7 +27,7 @@ class TestAdditional(unittest.TestCase):
         asm3.additional.delete_field(base.get_dbo(), "test", self.nid)
  
     def test_clause_for_linktype(self):
-        assert "0" in asm3.additional.clause_for_linktype("animal")
+        self.assertIn("0", asm3.additional.clause_for_linktype("animal"))
 
     def test_get_additional_fields(self):
         asm3.additional.get_additional_fields(base.get_dbo(), 1, "animal")
@@ -36,10 +36,10 @@ class TestAdditional(unittest.TestCase):
         asm3.additional.get_additional_fields_ids(base.get_dbo(), [], "animal")
 
     def test_get_field_definitions(self):
-        assert len(asm3.additional.get_field_definitions(base.get_dbo(), "animal")) > 0
+        self.assertNotEqual( len(asm3.additional.get_field_definitions(base.get_dbo(), "animal")), 0 )
 
     def test_get_fields(self):
-        assert len(asm3.additional.get_fields(base.get_dbo())) > 0
+        self.assertNotEqual( len(asm3.additional.get_fields(base.get_dbo())), 0) 
 
     def test_insert_field_from_form(self):
         data = {

@@ -24,19 +24,19 @@ class TestPerson(unittest.TestCase):
         asm3.person.delete_person(base.get_dbo(), "test", self.nid)
 
     def test_get_homechecked(self):
-        assert 0 == len(asm3.person.get_homechecked(base.get_dbo(), self.nid))
+        self.assertEqual(0, len(asm3.person.get_homechecked(base.get_dbo(), self.nid)))
 
     def test_get_person(self):
         asm3.person.get_person(base.get_dbo(), self.nid)
 
     def test_get_person_similar(self):
-        assert len(asm3.person.get_person_similar(base.get_dbo(), "", "", "Testing", "Test", "123 street")) > 0
+        self.assertNotEqual(0, len(asm3.person.get_person_similar(base.get_dbo(), "", "", "Testing", "Test", "123 street")))
 
     def test_get_person_name(self):
-        assert "" != asm3.person.get_person_name(base.get_dbo(), self.nid)
+        self.assertNotEqual("", asm3.person.get_person_name(base.get_dbo(), self.nid))
 
     def test_get_person_name_code(self):
-        assert "" != asm3.person.get_person_name_code(base.get_dbo(), self.nid)
+        self.assertNotEqual("", asm3.person.get_person_name_code(base.get_dbo(), self.nid))
 
     def test_get_staff_volunteers(self):
         asm3.person.get_staff_volunteers(base.get_dbo())
@@ -75,10 +75,10 @@ class TestPerson(unittest.TestCase):
         asm3.person.get_investigation(base.get_dbo(), self.nid)
 
     def test_get_person_find_simple(self):
-        assert len(asm3.person.get_person_find_simple(base.get_dbo(), "")) > 0
+        self.assertNotEqual(0, len(asm3.person.get_person_find_simple(base.get_dbo(), "")))
 
     def test_get_person_find_advanced(self):
-        assert len(asm3.person.get_person_find_advanced(base.get_dbo(), {})) >  0
+        self.assertNotEqual(0, len(asm3.person.get_person_find_advanced(base.get_dbo(), {})))
 
     def test_get_rota(self):
         asm3.person.get_rota(base.get_dbo(), base.today(), base.today())
@@ -89,15 +89,15 @@ class TestPerson(unittest.TestCase):
     def test_extra_ids(self):
         p = asm3.person.get_person(base.get_dbo(), self.nid)
         asm3.person.set_extra_id(base.get_dbo(), "user", p, "test", "xxx")
-        assert "xxx" == asm3.person.get_extra_id(base.get_dbo(), p, "test")
+        self.assertEqual("xxx", asm3.person.get_extra_id(base.get_dbo(), p, "test"))
 
     def test_calculate_owner_code(self):
-        assert "TE000005" == asm3.person.calculate_owner_code(5, "test")
-        assert "XX000100" == asm3.person.calculate_owner_code(100, "&#239;Z")
+        self.assertEqual("TE000005", asm3.person.calculate_owner_code(5, "test"))
+        self.assertEqual("XX000100", asm3.person.calculate_owner_code(100, "&#239;Z"))
 
     def test_calculate_owner_name(self):
-        assert "Mr R Robert Robertson" == asm3.person.calculate_owner_name(base.get_dbo(), 1, "Mr", "R", "Robert", "Robertson",
-            "{ownertitle} {ownerinitials} {ownerforenames} {ownersurname}")
+        self.assertEqual("Mr R Robert Robertson", asm3.person.calculate_owner_name(base.get_dbo(), 1, "Mr", "R", "Robert", "Robertson",
+            "{ownertitle} {ownerinitials} {ownerforenames} {ownersurname}"))
 
     def test_update_owner_names(self):
         asm3.person.update_owner_names(base.get_dbo())
@@ -110,11 +110,11 @@ class TestPerson(unittest.TestCase):
 
     def test_merge_gdpr_flags(self):
         s = asm3.person.merge_gdpr_flags(base.get_dbo(), "test", self.nid, "email")
-        assert s.find("email") != -1
+        self.assertNotEqual(s.find("email"), -1)
 
     def test_merge_flags(self):
         s = asm3.person.merge_flags(base.get_dbo(), "test", self.nid, "fosterer")
-        assert s.find("fosterer") != -1
+        self.assertNotEqual(s.find("fosterer"), -1)
 
     def test_merge_person(self):
         data = {
@@ -129,10 +129,10 @@ class TestPerson(unittest.TestCase):
         asm3.person.merge_person(base.get_dbo(), "test", self.nid, mid)
 
     def test_get_person_embedded(self):
-        assert asm3.person.get_person_embedded(base.get_dbo(), self.nid) is not None
+        self.assertIsNotNone(asm3.person.get_person_embedded(base.get_dbo(), self.nid))
 
     def test_embellish_adoption_warnings(self):
-        assert asm3.person.embellish_adoption_warnings(base.get_dbo(), asm3.person.get_person_embedded(base.get_dbo(), self.nid)) is not None
+        self.assertIsNotNone(asm3.person.embellish_adoption_warnings(base.get_dbo(), asm3.person.get_person_embedded(base.get_dbo(), self.nid)))
  
     def test_investigation_crud(self):
         data = {

@@ -11,7 +11,7 @@ class TestFinancial(unittest.TestCase):
         asm3.financial.get_account_code(base.get_dbo(), 0)
 
     def test_get_account_codes(self):
-        assert len(asm3.financial.get_account_codes(base.get_dbo())) > 0
+        self.assertNotEqual(0, len(asm3.financial.get_account_codes(base.get_dbo())))
 
     def test_get_account_edit_roles(self):
         firstac = asm3.financial.get_accounts(base.get_dbo())[0]
@@ -19,10 +19,10 @@ class TestFinancial(unittest.TestCase):
 
     def test_get_account_id(self):
         firstcode = asm3.financial.get_accounts(base.get_dbo())[0]["CODE"]
-        assert 0 != asm3.financial.get_account_id(base.get_dbo(), firstcode)
+        self.assertNotEqual(0, asm3.financial.get_account_id(base.get_dbo(), firstcode))
 
     def test_get_accounts(self):
-        assert len(asm3.financial.get_accounts(base.get_dbo())) > 0
+        self.assertNotEqual(0, len(asm3.financial.get_accounts(base.get_dbo())))
 
     def test_get_balance_to_date(self):
         firstac = asm3.financial.get_accounts(base.get_dbo())[0]
@@ -37,7 +37,7 @@ class TestFinancial(unittest.TestCase):
         asm3.financial.get_transactions(base.get_dbo(), firstac["ID"], base.today(), base.today(), asm3.financial.BOTH)
 
     def test_get_movement_donation(self):
-        assert asm3.financial.get_movement_donation(base.get_dbo(), 1) is None
+        self.assertIsNone(asm3.financial.get_movement_donation(base.get_dbo(), 1))
 
     def test_get_boarding(self):
         asm3.financial.get_boarding(base.get_dbo(), "active")
