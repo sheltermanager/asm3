@@ -123,17 +123,14 @@ const html = {
             "title" : html.title(title),
             "thumbnailclasses": html.animal_link_thumb_classes(a),
             "imgsrc" : html.thumbnail_src(a, "animalthumb") }));
-        var emblems = html.animal_emblems(a, o);
-        s.push(emblems);
-        if (common.count_occurrences(emblems, "title=") >= 3) {
-            s.push("<br />");
-        }
-        if (config.bool("ShelterViewShowCodes")) {
-            s.push('<a href="animal?id=' + a.ID + '">' + a.CODE + '</a><br />');
-        }
-        s.push('<a href="animal?id=' + a.ID + '">' + a.ANIMALNAME + '</a>');
+        let name = a.ANIMALNAME;
+        if (config.bool("ShelterViewShowCodes")) { name = name + ' <span class="asm-shelterview-animalcode">' + a.CODE + '</span>';}
+        s.push('<a class="asm-shelterview-animalname" href="animal?id=' + a.ID + '">' + name + '</a><br style="margin-bottom: 6px" />');
+        s.push(html.animal_emblems(a, o));
         if (o.showselector) {
-            s.push('<br /><input type="checkbox" class="animalselect" data="{id}" title="{title}" />'.replace("{id}", a.ID).replace("{title}", _("Select")));
+            s.push('<br style="margin-bottom: 5px" />' +
+                '<input type="checkbox" class="animalselect" ' +
+                'data="{id}" title="{title}" />'.replace("{id}", a.ID).replace("{title}", _("Select")));
         }
         return s.join("\n");
     },

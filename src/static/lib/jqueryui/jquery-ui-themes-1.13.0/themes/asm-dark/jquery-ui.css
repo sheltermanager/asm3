@@ -59,6 +59,10 @@ input:focus, textarea:focus, select:focus {
     background: #111 !important;
     color: #ddd !important;
 }
+/* Set an appropriate background colour for shelterview animals */
+.asm-shelterview-animal {
+    background-color: #222;
+}
 /* Style the fullcalendar buttons to match our action buttons */
 .fc-button {
     background-image: none;

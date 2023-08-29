@@ -1,6 +1,7 @@
 48
 ================
 
+29/08/23 Minor layout/style tweaks to animal links on home/shelterview
 29/08/23 Refactor all unit tests to use self.assertX instead of assert #1323
 29/08/23 Check for invalid waiting list put on date as well as blank
 28/08/23 New cron task for maint_db_dump_zip 

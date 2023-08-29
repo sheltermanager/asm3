@@ -320,9 +320,9 @@ $.widget("asm.animalchoosermulti", {
 
                 // Load the list of animals
                 $.each(self.rows, function(i, a) {
-                    results.append( '<div class="asm-animalchoosermulti-result">' + 
+                    results.append( '<div class="asm-animalchoosermulti-result asm-shelterview-animal">' + 
                         html.animal_link_thumb(a, { showselector: true, showunit: true, showlocation: true }) +
-                    '</div>' );
+                    '</div> '); // NOTE: Extra space after div to leave a small gap between items
                 });
 
                 // Delegate event handler for the checkboxes

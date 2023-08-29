@@ -476,8 +476,20 @@ select:disabled, input:disabled, textarea:disabled {
     display: inline-block;
     text-align: center;
     border: 1px dotted #ccc;
+    border-radius: 7px;
     margin-top: 3px;
-    padding: 2px;
+    padding: 5px;
+    min-height: 140px;
+}
+
+.asm-shelterview-animalname {
+    font-weight: bold;
+}
+
+.asm-shelterview-animalcode {
+    opacity: 0.7;
+    font-weight: normal;
+    font-size: 0.7rem;
 }
 
 .asm-shelterview-unit { 
