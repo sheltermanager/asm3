@@ -455,7 +455,7 @@ def display2python(locale: str, s: str) -> datetime:
     """
     if s is None: return None
     d = None
-    if len(s) == 10 and s[4] == "-" and s[7] == "-": s = parse_date("%Y-%m-%d", s)
+    if len(s) == 10 and s[4] == "-" and s[7] == "-": d = parse_date("%Y-%m-%d", s)
     if d is None: d = parse_date(get_display_date_format(locale, 2), s)
     if d is None: d = parse_date(get_display_date_format(locale, 4), s)
     return d
