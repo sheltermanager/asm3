@@ -52,11 +52,7 @@ $(function() {
             $.each(controller.rows, function(ir, row) {
                 h.push("<tr>");
                 $.each(animal_find_results.column_names(), function(ic, name) {
-                    // Generate the animal selector
-                    let link = "<span style=\"white-space: nowrap\">";
-                    link += html.animal_emblems(row);
-                    link += " <a id=\"action-" + row.ID + "\" href=\"animal?id=" + row.ID + "\">";
-                    // Show the whole row in red if the animal is deceased
+                    // Style the whole row if the animal is deceased
                     if (row.DECEASEDDATE) { h.push('<td class="asm-search-deceased">'); } else { h.push("<td>"); }
                     let value = "";
                     if (row.hasOwnProperty(name.toUpperCase())) {
@@ -64,9 +60,10 @@ $(function() {
                     }
                     let formatted = animal_find_results.format_column(row, name, value, controller.additional);
                     if (name == "AnimalName") {
-                        // Set the sort so only the name is sorted (no emblems or links)
-                        let sorted = '<span data-sort="' + html.title(formatted)  + '"></span>';
-                        formatted = sorted + link + formatted + "</a></span>";
+                        formatted = '<span style="white-space: nowrap">' +
+                            '<a id="action-' + row.ID + '" href="animal?id="' + row.ID + '">' + formatted + '</a>' +
+                            '<span data-sort="' + html.title(formatted)  + '"></span> ' + 
+                            html.animal_emblems(row) + '</span>';
                     }
                     h.push(formatted);
                     h.push("</td>");

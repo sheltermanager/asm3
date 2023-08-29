@@ -157,11 +157,13 @@ $(function() {
                                     if (row.ANIMALID && row.ANIMALID != "0") {
                                         row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
                                         row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
+                                        row.SHORTCODE = $("#animal").animalchooser("get_selected").SHORTCODE;
                                     }
                                     else {
                                         row.ANIMALID = 0;
                                         row.ANIMALNAME = "";
                                         row.SHELTERCODE = "";
+                                        row.SHORTCODE = "";
                                     }
                                     controller.rows.push(row);
                                     tableform.table_update(table);
@@ -175,6 +177,12 @@ $(function() {
                                 let row = tableform.table_selected_row(table);
                                 tableform.fields_populate_from_json(dialog.fields, row);
                                 licence.type_change();
+                                // Calculate new issue and expiry dates from existing licence
+                                let rescheduledays = common.get_field(controller.licencetypes, $("#type").select("value"), "RESCHEDULEDAYS");
+                                let issuedate = format.date_js(row.EXPIRYDATE);
+                                let expirydate = common.add_days(issuedate, rescheduledays);
+                                $("#issuedate").date("setDate", issuedate);
+                                $("#expirydate").date("setDate", expirydate);
                             }
                         });
                     }
@@ -269,8 +277,8 @@ $(function() {
         },
 
         type_change: function() {
-            let dc = common.get_field(controller.licencetypes, $("#type").select("value"), "DEFAULTCOST");
-            $("#fee").currency("value", dc);
+            let defaultcost = common.get_field(controller.licencetypes, $("#type").select("value"), "DEFAULTCOST");
+            $("#fee").currency("value", defaultcost);
         },
 
         destroy: function() {
