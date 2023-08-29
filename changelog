@@ -1,6 +1,7 @@
 48
 ================
 
+29/08/23 Check for invalid waiting list put on date as well as blank
 28/08/23 New cron task for maint_db_dump_zip 
 28/08/23 Add columns, generate licence renewal token and renewed flag #728
 27/08/23 type hints, dbupdate, remove __version__.py from git #1320

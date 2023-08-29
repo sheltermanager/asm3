@@ -297,7 +297,7 @@ def update_waitinglist_from_form(dbo, post, username):
         raise asm3.utils.ASMValidationError(_("Description cannot be blank", l))
     if post.integer("owner") == 0:
         raise asm3.utils.ASMValidationError(_("Waiting list entries must have a contact", l))
-    if post["dateputon"] == "":
+    if post.date("dateputon") is None:
         raise asm3.utils.ASMValidationError(_("Date put on cannot be blank", l))
 
     dbo.update("animalwaitinglist", wlid, {
@@ -329,7 +329,7 @@ def insert_waitinglist_from_form(dbo, post, username):
         raise asm3.utils.ASMValidationError(_("Description cannot be blank", l))
     if post.integer("owner") == 0:
         raise asm3.utils.ASMValidationError(_("Waiting list entries must have a contact", l))
-    if post["dateputon"] == "":
+    if post.date("dateputon") is None:
         raise asm3.utils.ASMValidationError(_("Date put on cannot be blank", l))
 
     nwlid = dbo.insert("animalwaitinglist", {
