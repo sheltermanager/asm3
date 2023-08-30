@@ -305,6 +305,33 @@ How do I export my data from the system for import somewhere else?
 
 The "Export" button under :menuselection:`Settings --> SQL Interface` allows
 you to export your data in various formats. You can export a number of CSV
-files from different areas of the system for reading via spreadsheets. You can
-also export a database dump for use with either self-hosted ASM3 or our older
-ASM2 desktop software.
+files containing data from different areas of the system for reading via
+spreadsheet software. You can also export a database dump for use with either
+self-hosted ASM3 or our older ASM2 desktop software.
+
+The files/options include:
+
+* dump.sql: A database independent SQL script that contains DELETE and INSERT
+  statements to recreate all of the database tables. By itself, this file can
+  only be used to restore your data in a database that already contains the
+  existing ASM tables. If you want to install your data in a new database, you
+  will have to run one of the DDL files first for your database platform.
+* ddl_mysql.sql: The database schema for MySQL database backends.
+* ddl_postgresql.sql: The database schema for PostgreSQL database backends.
+* ddl_db2.sql: The database schema for IBM DB2 database backends.
+* asm2.sql: A complete HSQLDB database script for use with the ASM2 desktop
+  software.
+* animal.csv: All animal and adopter/movement information for viewing with
+  spreadsheet software.
+* incident.csv: All call/incident information for viewing with spreadsheet
+  software.
+* licence.csv: All animal licence information for viewing with spreadsheet
+  software.
+* media.csv: Information about all media files for viewing with spreadsheet
+  software.
+* medical.csv: All animal medical histories for viewing with spreadsheet
+  software.
+* person.csv: All person information for viewing with spreadsheet software.
+* payment.csv: All payment information for viewing with spreadsheet software.
+
+

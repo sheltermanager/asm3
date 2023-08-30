@@ -382,9 +382,34 @@ generate the figures for.</p>
 <h2>How do I export my data from the system for import somewhere else?<a class="headerlink" href="#how-do-i-export-my-data-from-the-system-for-import-somewhere-else" title="Permalink to this heading">¶</a></h2>
 <p>The “Export” button under <span class="menuselection">Settings ‣ SQL Interface</span> allows
 you to export your data in various formats. You can export a number of CSV
-files from different areas of the system for reading via spreadsheets. You can
-also export a database dump for use with either self-hosted ASM3 or our older
-ASM2 desktop software.</p>
+files containing data from different areas of the system for reading via
+spreadsheet software. You can also export a database dump for use with either
+self-hosted ASM3 or our older ASM2 desktop software.</p>
+<p>The files/options include:</p>
+<ul class="simple">
+<li><p>dump.sql: A database independent SQL script that contains DELETE and INSERT
+statements to recreate all of the database tables. By itself, this file can
+only be used to restore your data in a database that already contains the
+existing ASM tables. If you want to install your data in a new database, you
+will have to run one of the DDL files first for your database platform.</p></li>
+<li><p>ddl_mysql.sql: The database schema for MySQL database backends.</p></li>
+<li><p>ddl_postgresql.sql: The database schema for PostgreSQL database backends.</p></li>
+<li><p>ddl_db2.sql: The database schema for IBM DB2 database backends.</p></li>
+<li><p>asm2.sql: A complete HSQLDB database script for use with the ASM2 desktop
+software.</p></li>
+<li><p>animal.csv: All animal and adopter/movement information for viewing with
+spreadsheet software.</p></li>
+<li><p>incident.csv: All call/incident information for viewing with spreadsheet
+software.</p></li>
+<li><p>licence.csv: All animal licence information for viewing with spreadsheet
+software.</p></li>
+<li><p>media.csv: Information about all media files for viewing with spreadsheet
+software.</p></li>
+<li><p>medical.csv: All animal medical histories for viewing with spreadsheet
+software.</p></li>
+<li><p>person.csv: All person information for viewing with spreadsheet software.</p></li>
+<li><p>payment.csv: All payment information for viewing with spreadsheet software.</p></li>
+</ul>
 </section>
 </section>
 

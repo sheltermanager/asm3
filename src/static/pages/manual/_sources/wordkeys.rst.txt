@@ -28,6 +28,8 @@ OrganisationEmail / OrganizationEmail
    The shelter's email address
 Date
     Today's date
+Database
+    The name of the database (or account number if using sheltermanager.com)
 Signature
     A signature:placeholder image for inserting a signature later (default
     150px wide)
@@ -79,7 +81,9 @@ ShelterCode
 ShortShelterCode
     The shortened version of the shelter code 
 Age
-    The animal's age in readable form (eg: “5 years and 6 months”) 
+    The animal's age in readable form (eg: "6 weeks", “5 years”) 
+AgeYM
+    The animal's age in years and months (eg: “5 years and 6 months”) 
 Description / AnimalComments
     The animal description box. 
 DescriptionAttr
