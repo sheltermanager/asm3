@@ -441,6 +441,7 @@ def get_onlineform_header(dbo):
         "    .asm-onlineform-checkboxlabel { max-width: 400px; display: inline-block; }\n" \
         "    .asm-onlineform-table { margin-left: auto; margin-right: auto }\n" \
         "    textarea { width: 300px; height: 150px; }\n" \
+        "    input[type='text'], select { width: 300px; }\n" \
         "    td, input, textarea, select, label { font-size: 110%; }\n" \
         "    td { padding-bottom: 10px; }\n" \
         "}\n" \
