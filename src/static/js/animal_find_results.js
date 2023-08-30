@@ -61,7 +61,7 @@ $(function() {
                     let formatted = animal_find_results.format_column(row, name, value, controller.additional);
                     if (name == "AnimalName") {
                         formatted = '<span style="white-space: nowrap">' +
-                            '<a id="action-' + row.ID + '" href="animal?id="' + row.ID + '">' + formatted + '</a>' +
+                            '<a id="action-' + row.ID + '" href="animal?id=' + row.ID + '">' + formatted + '</a>' +
                             '<span data-sort="' + html.title(formatted)  + '"></span> ' + 
                             html.animal_emblems(row) + '</span>';
                     }
