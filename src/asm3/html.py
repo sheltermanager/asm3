@@ -13,11 +13,12 @@ from asm3.i18n import _, translate, format_currency, get_locales, now, python2un
 from asm3.sitedefs import QR_IMG_SRC
 from asm3.sitedefs import BASE_URL, LOCALE, ROLLUP_JS, SERVICE_URL
 from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_GRID_CSS, BOOTSTRAP_ICONS_CSS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, HTMLFTP_PUBLISHER_ENABLED, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, QRCODE_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_5_JS
+from asm3.typehints import Any, ColumnList, Database, Dict, List, ResultRow, Results, Session, Tuple
 from asm3.__version__ import BUILD
 
 import os
 
-def css_tag(uri, idattr="", addbuild=False):
+def css_tag(uri: str, idattr: str = "", addbuild: bool = False) -> str:
     """
     Returns a css link tag to a resource.
     """
@@ -25,16 +26,16 @@ def css_tag(uri, idattr="", addbuild=False):
     buildqs = asm3.utils.iif(addbuild, "?b=%s" % BUILD, "")
     return f"<link rel=\"stylesheet\" type=\"text/css\" href=\"{uri}{buildqs}\" {idattr} />\n"
 
-def asm_css_tag(filename):
+def asm_css_tag(filename: str) -> str:
     """
     Returns a path to one of our stylesheets
     """
     return css_tag(f"static/css/{filename}", addbuild=True)
 
-def script_i18n(l):
+def script_i18n(l: str) -> str:
     return f"<script type=\"text/javascript\" src=\"static/js/locales/locale_{real_locale(l)}.js?b={BUILD}\"></script>\n"
 
-def script_tag(uri, idattr="", addbuild=False):
+def script_tag(uri: str, idattr: str = "", addbuild: bool = False) -> str:
     """
     Returns a script tag to a resource.
     """
@@ -42,9 +43,9 @@ def script_tag(uri, idattr="", addbuild=False):
     buildqs = asm3.utils.iif(addbuild, "?b=%s" % BUILD, "")
     return f"<script type=\"text/javascript\" src=\"{uri}{buildqs}\" {idattr}></script>\n"
 
-def asm_script_tag(filename):
+def asm_script_tag(filename: str) -> str:
     """
-    Returns a path to one of our javascript files.
+    Returns a script tag to one of our javascript files.
     If we're in rollup mode and one of our standalone files is requested,
     get it from the compat folder instead so it's still cross-browser compliant and minified.
     """
@@ -54,7 +55,7 @@ def asm_script_tag(filename):
     if ROLLUP_JS and filename in standalone and filename.find("/") == -1: filename = f"compat/{filename}"
     return script_tag(f"static/js/{filename}", addbuild=True)
 
-def asm_script_tags(path):
+def asm_script_tags(path: str) -> str:
     """
     Returns separate script tags for all ASM javascript files.
     """
@@ -75,7 +76,7 @@ def asm_script_tags(path):
         buf.append(asm_script_tag(i))
     return "".join(buf)
 
-def xml(results):
+def xml(results: Results) -> str:
     """
     Takes a list of dictionaries and converts them into
     an XML string. All values are treated as a strings
@@ -98,7 +99,7 @@ def xml(results):
         s += cr
     return '<?xml version="1.0" standalone="yes" ?>\n<xml>\n' + s + '\n</xml>'
 
-def table(results):
+def table(results: Results) -> str:
     """
     Takes a list of dictionaries and converts them into
     an HTML thead and tbody string.
@@ -117,9 +118,9 @@ def table(results):
     s += "</tbody>\n"
     return s
 
-def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config_ts = "0"):
+def bare_header(title: str, theme: str = "asm", locale: str = LOCALE, config_db: str = "asm", config_ts: str = "0") -> str:
     """
-    A bare header with just the script files needed for the program.
+    Returns a bare HTML header with just the script files needed for the program.
     title: The page title
     js: The name of an accompanying js file to load
     theme: A pre-rolled jquery-ui theme
@@ -200,9 +201,10 @@ def bare_header(title, theme = "asm", locale = LOCALE, config_db = "asm", config
                 asm_scripts,
             "bgcol": themebg }
 
-def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, visualaids = True, onlysavewhendirty = False, readonly = False):
+def tinymce_header(title: str, js: str, jswindowprint: bool = True, pdfenabled: bool = True, 
+                   visualaids: bool = True, onlysavewhendirty: bool = False, readonly: bool = False) -> str:
     """
-    Outputs a header for tinymce pages.
+    Outputs an HTML header for tinymce pages.
     js: The name of the script file to load.
     jswindowprint: If true, a hidden iframe with window.print is used for printing (tinymce's default behaviour)
                    If false, a postback is done to redirect to a page containing just the content
@@ -249,9 +251,9 @@ def tinymce_header(title, js, jswindowprint = True, pdfenabled = True, visualaid
            "visualaids": visualaids and "true" or "false",
            "readonly": readonly and "true" or "false"}
 
-def tinymce_print_header(title):
+def tinymce_print_header(title: str) -> str:
     """
-    Outputs a header for printable tinymce pages on mobile devices.
+    Outputs an HTML header for printable tinymce pages on mobile devices.
     """
     return """<!DOCTYPE html>
         <html>
@@ -268,12 +270,15 @@ def tinymce_print_header(title):
     """ % { "title": title,
            "css": asm_css_tag("asm-tinymce.css") }
 
-def tinymce_main(locale, action, recid="", mediaid = "", linktype = "", redirecturl = "", dtid = "", content = ""):
+def tinymce_main(locale: str, action: str, recid: str = "", mediaid: str = "", linktype: str = "", 
+                 redirecturl: str = "", dtid: str = "", content: str = "") -> str:
     """ 
-    Outputs the main body of a tinymce page.
+    Outputs the main body of a tinymce HTML page.
     action: The post target for the controller
-    template: The ID of the template to post back
-    content: The content for the box
+    recid, mediaid, linktype: ID numbers (str) of edited records to post back.
+    redirecturl: where to redirect to after saving the contents
+    dtid: The ID of the template to post back
+    content: The content for the textarea that tinymce will enhance.
     """
     return """
         <form method="post" action="%(action)s">
@@ -301,9 +306,9 @@ def tinymce_main(locale, action, recid="", mediaid = "", linktype = "", redirect
             "redirecturl": redirecturl, 
             "content": content }
 
-def js_page(include, title = "", controller = [], execline = ""):
+def js_page(include: List[str] = [], title: str = "", controller: Dict = {}, execline: str = "") -> str:
     """
-    Returns a page that just runs javascript to get the job done
+    Returns an HTML page that just runs javascript to get the job done
     include: a list of scripts or link tags (asm_script_tag or asm_css_tag calls)
     controller: a global object to be output. will be turned into json
     execline: a single line of javascript to run to start the page if needed
@@ -329,7 +334,7 @@ def js_page(include, title = "", controller = [], execline = ""):
         </body>
         </html>""" % ( title, "\n".join(include), asm3.utils.json(controller), execline )
 
-def mobile_page(l, title, scripts = [], controller = {}, execline = ""):
+def mobile_page(l: str, title: str, scripts: List[str] = [], controller: Dict = {}, execline: str = "") -> str:
     """
     Outputs the boilerplate stuff for mobile pages using bootstrap.
     l: The current locale
@@ -354,7 +359,10 @@ def mobile_page(l, title, scripts = [], controller = {}, execline = ""):
         tags.append(asm_script_tag(s))
     return js_page(tags, title, controller, execline)
 
-def graph_js(l):
+def graph_js(l: str) -> str:
+    """
+    Returns the scripts/css section for a page showing a graph/chart.
+    """
     return """
         %(jquery)s
         %(flot)s
@@ -372,7 +380,10 @@ def graph_js(l):
             "jqueryuicss": css_tag(JQUERY_UI_CSS % { "theme": "asm" })
           }
 
-def map_js():
+def map_js() -> str:
+    """
+    Returns the scripts/css section for a page showing a map.
+    """
     return """
         %(jquery)s
         %(mousetrap)s
@@ -385,7 +396,10 @@ def map_js():
             "common": asm_script_tag("common.js"),
             "commonmap": asm_script_tag("common_map.js")  }
 
-def report_js(l):
+def report_js(l: str) -> str:
+    """
+    Returns the scripts/css for a page showing a report.
+    """
     return """
         %(jqueryuicss)s
         %(jquery)s
@@ -400,19 +414,21 @@ def report_js(l):
             "i18n": script_i18n(l),
             "report_toolbar": asm_script_tag("report_toolbar.js") }
 
-def escape(s):
+def escape(s: str) -> str:
+    """ Escapes ', < and > to HTML entities """
     if s is None: return ""
     s = str(s)
     return s.replace("'", "&apos;").replace("\"", "&quot;").replace(">", "&gt;").replace("<", "&lt;")
 
-def escape_angle(s):
+def escape_angle(s: str) -> str:
+    """ Escapes angle brackets <> to HTML entities """
     if s is None: return ""
     s = str(s)
     return s.replace(">", "&gt;").replace("<", "&lt;")
 
-def header(title, session):
+def header(title: str, session: Session) -> str:
     """
-    The header for html pages.
+    The HTML header for application pages.
     title: The page title
     session: The user session
     compatjs: True if this browser requires compatibility js for older browsers
@@ -420,10 +436,11 @@ def header(title, session):
     s = bare_header(title, session.theme, session.locale, session.dbo.database, session.config_ts)
     return s
 
-def footer():
+def footer() -> str:
+    """ The HTML footer """
     return "\n</body>\n</html>"
 
-def currency(l, v):
+def DELETE_currency(l: str, v: int) -> str:
     """
     Outputs a currency value. If it's negative, it shows in red.
     """
@@ -432,7 +449,7 @@ def currency(l, v):
         s = "<span style=\"color: red\">" + s + "</span>"
     return s
 
-def hidden(eid, value):
+def DELETE_hidden(eid: str, value: str) -> str:
     """
     Outputs a hidden input field
     eid: The id of the input
@@ -440,13 +457,13 @@ def hidden(eid, value):
     """
     return "<input id=\"%s\" value=\"%s\" type=\"hidden\" />\n" % ( eid, str(value) )
 
-def box(margintop=0, padding=5):
+def DELETE_box(margintop: int = 0, padding: int = 5) -> str:
     """
     Outputs a div box container with jquery ui style
     """
     return """<div class="ui-helper-reset centered ui-widget-content ui-corner-all" style="margin-top: %dpx; padding: %dpx;">""" % (margintop, padding)
 
-def heading(title, iscontent = True):
+def DELETE_heading(title: str, iscontent: bool = True) -> str:
     """
     Outputs the heading for a page along with the asm content div
     """
@@ -458,7 +475,7 @@ def heading(title, iscontent = True):
         <div class="ui-helper-reset ui-widget-content ui-corner-bottom" style="padding: 5px;">
         """ % (mid, title)
 
-def footing():
+def DELETE_footing() -> str:
     """
     Outputs the footing for a page to close heading.
     """
@@ -467,7 +484,7 @@ def footing():
     </div>
     """
     
-def script(code):
+def script(code: str) -> str:
     """
     Outputs a script tag with javascript code
     """
@@ -479,7 +496,7 @@ def script(code):
     v = v.replace("\\\\\"", "\\\"")
     return "<script type=\"text/javascript\">\n%s\n</script>\n" % v
 
-def script_json(varname, obj, prefix = "controller."):
+def script_json(varname: str, obj: Any, prefix: str = "controller.") -> str:
     """
     Outputs a script tag with a variable varname containing 
     the object obj.
@@ -487,14 +504,14 @@ def script_json(varname, obj, prefix = "controller."):
     jv = asm3.utils.json(obj)
     return script("var %s%s = %s;" % (prefix, varname, jv))
 
-def script_var(varname, v, prefix = "controller."):
+def script_var(varname: str, v: Any, prefix: str = "controller.") -> str:
     """
     Outputs a script tag with a javascript variable varname
     containing the value v
     """
     return script("var %s%s = %s;" % (prefix, varname, v))
 
-def script_var_str(varname, v, prefix = "controller."):
+def script_var_str(varname: str, v: str, prefix: str = "controller.") -> str:
     """
     Outputs a script tag with a javascript variable varname
     that contains a string value v. Handles escaping
@@ -502,7 +519,7 @@ def script_var_str(varname, v, prefix = "controller."):
     v = "'" + v.replace("'", "\\'").replace("\n", " ") + "'"
     return script_var(varname, v, prefix)
 
-def icon(name, title = ""):
+def icon(name: str, title: str = "") -> str:
     """
     Outputs a span tag containing an icon
     """
@@ -511,7 +528,7 @@ def icon(name, title = ""):
     else:
         return "<span class=\"asm-icon asm-icon-%s\" title=\"%s\"></span>" % (name, escape(title))
 
-def doc_img_src(dbo, row):
+def doc_img_src(dbo: Database, row: ResultRow) -> str:
     """
     Gets the img src attribute/link for a document picture. If the row
     doesn't have doc preferred media, the nopic src is returned instead.
@@ -522,7 +539,7 @@ def doc_img_src(dbo, row):
     else:
         return "image?db=%s&mode=media&id=%s&date=%s" % (dbo.database, row.DOCMEDIAID, row.DOCMEDIADATE.isoformat())
 
-def menu_structure(l, publisherlist, reports, mailmerges):
+def menu_structure(l: str, publisherlist: Dict, reports: List, mailmerges: List) -> Tuple:
     """
     Returns a list of lists representing the main menu structure
     l: The locale
@@ -677,7 +694,7 @@ def menu_structure(l, publisherlist, reports, mailmerges):
         ))
     )
 
-def json_animalfindcolumns(dbo):
+def json_animalfindcolumns(dbo: Database) -> ColumnList:
     l = dbo.locale
     cols = [ 
         ( "AnimalTypeID", _("Animal Type", l) ),
@@ -754,7 +771,7 @@ def json_animalfindcolumns(dbo):
     findcolumns_selectedtofront(cols, asm3.configuration.animal_search_columns(dbo))
     return cols
 
-def json_lookup_tables(l):
+def json_lookup_tables(l: str) -> ColumnList:
     aslist = []
     for k, v in asm3.lookups.LOOKUP_TABLES.items():
         if k.startswith("lks") and not k == "lksize":
@@ -767,7 +784,7 @@ def json_lookup_tables(l):
             aslist.append(( k, translate(v[0], l)))
     return sorted(aslist, key=lambda x: x[1])
 
-def json_personfindcolumns(dbo):
+def json_personfindcolumns(dbo: Database) -> ColumnList:
     l = dbo.locale
     cols = [ 
         ( "CreatedBy", _("Created By", l) ),
@@ -817,7 +834,7 @@ def json_personfindcolumns(dbo):
     findcolumns_selectedtofront(cols, asm3.configuration.person_search_columns(dbo))
     return cols
 
-def json_eventfindcolumns(dbo):
+def json_eventfindcolumns(dbo: Database) -> ColumnList:
     l = dbo.locale
     cols = [ 
         ( "CreatedBy", _("Created By", l) ),
@@ -842,7 +859,7 @@ def json_eventfindcolumns(dbo):
     findcolumns_selectedtofront(cols, asm3.configuration.event_search_columns(dbo))
     return cols
     
-def json_incidentfindcolumns(dbo):
+def json_incidentfindcolumns(dbo: Database) -> ColumnList:
     l = dbo.locale
     cols = [ 
         ( "IncidentType", _("Incident Type", l) ),
@@ -871,7 +888,7 @@ def json_incidentfindcolumns(dbo):
     findcolumns_selectedtofront(cols, asm3.configuration.incident_search_columns(dbo))
     return cols
 
-def json_foundanimalfindcolumns(dbo):
+def json_foundanimalfindcolumns(dbo: Database) -> ColumnList:
     l = dbo.locale
     cols = [ 
         ("LostFoundID", _("Number", l)),
@@ -894,7 +911,7 @@ def json_foundanimalfindcolumns(dbo):
     findcolumns_selectedtofront(cols, asm3.configuration.foundanimal_search_columns(dbo))
     return cols
 
-def json_lostanimalfindcolumns(dbo):
+def json_lostanimalfindcolumns(dbo: Database) -> ColumnList:
     l = dbo.locale
     cols = [ 
         ("LostFoundID", _("Number", l)),
@@ -917,7 +934,7 @@ def json_lostanimalfindcolumns(dbo):
     findcolumns_selectedtofront(cols, asm3.configuration.lostanimal_search_columns(dbo))
     return cols
 
-def json_waitinglistcolumns(dbo):
+def json_waitinglistcolumns(dbo: Database) -> ColumnList:
     l = dbo.locale
     cols = [ 
         ( "Number", _("Number", l) ),
@@ -951,14 +968,14 @@ def json_waitinglistcolumns(dbo):
     findcolumns_selectedtofront(cols, asm3.configuration.waiting_list_view_columns(dbo))
     return cols
 
-def findcolumns_sort(cols):
+def findcolumns_sort(cols: ColumnList) -> ColumnList:
     """
     For options_*findcolumns routines, sorts the list alphabetically
     by display string
     """
     return sorted(cols, key=lambda x: x[1])
 
-def findcolumns_selectedtofront(cols, vals):
+def findcolumns_selectedtofront(cols: ColumnList, vals: str) -> ColumnList:
     """
     For options_*findcolumns routines, moves selected items
     to the beginning of the list in order they appear in
@@ -972,7 +989,7 @@ def findcolumns_selectedtofront(cols, vals):
                 break
     return vals
 
-def qr_animal_img_record_src(animalid, size = "150x150"):
+def qr_animal_img_record_src(animalid: int, size: str = "150x150") -> str:
     """
     Returns an img src attribute for a QR code to an animal's record.
     size is a sizespec eg: 150x150
@@ -980,7 +997,7 @@ def qr_animal_img_record_src(animalid, size = "150x150"):
     url = asm3.utils.encode_uri(f"{BASE_URL}/animal?id={animalid}")
     return QR_IMG_SRC % { "url": url, "size": size }
 
-def qr_animal_img_share_src(dbo, animalid, size = "150x150"):
+def qr_animal_img_share_src(dbo: Database, animalid: int, size: str = "150x150") -> str:
     """
     Returns an img src attribute for a QR code to the public animalview page for the animal.
     size is a sizespec eg: 150x150
@@ -988,7 +1005,7 @@ def qr_animal_img_share_src(dbo, animalid, size = "150x150"):
     url = asm3.utils.encode_uri(f"{SERVICE_URL}?account={dbo.database}&method=animal_view&animalid={animalid}")
     return QR_IMG_SRC % { "url": url, "size": size }
 
-def thumbnail_img_src(dbo, row, mode):
+def thumbnail_img_src(dbo: Database, row: ResultRow, mode: str) -> str:
     """
     Gets the img src attribute for a thumbnail picture. If the row
     doesn't have preferred media, the nopic src is returned instead.
@@ -1021,6 +1038,8 @@ def thumbnail_img_src(dbo, row, mode):
 
 # All of the option functions below are redundant once the old mobile
 # interface is removed (mobile.py / session.mobileapp)
+# Have not bothered adding type hints to code that is to be removed
+# ==================================================================
 
 def option(name, value = None, selected = False):
     sel = ""

@@ -37,6 +37,7 @@ Tuple = typing.Tuple
 
 datetime = "datetime.datetime" # this can be used if the only reason you're pulling datetime in is for type checking
 
+ColumnList = List[Tuple[str, str]]
 Database = "asm3.dbms.base.Database"
 ResultRow = "asm3.dbms.base.ResultRow"
 Results = "List[asm3.dbms.base.ResultRow]"

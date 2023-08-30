@@ -1,6 +1,7 @@
 48
 ================
 
+30/08/23 type hints, html module #1320
 29/08/23 Fix date parsing bug for Sweden caused by refactoring
 29/08/23 Renew licence button now calculates dates correctly #728
 29/08/23 Minor layout/style tweaks to animal links on home/shelterview
