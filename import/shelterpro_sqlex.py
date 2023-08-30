@@ -20,10 +20,8 @@ unpack.sh - put this in the folder with the MDB file:
 #!/bin/sh
 MDB=Database1.mdb
 for t in `mdb-tables $MDB`; do
-    mdb-export $MDB $t > $t.csv
+    mdb-export -b hex $MDB $t > $t.csv
 done
-mdb-export --delimiter=~field~ --row-delimiter=~row~ -Q $MDB image > image.csv
-
 """
 
 PATH = "/home/robin/tmp/asm3_import_data/shelterpro_mg3031"
