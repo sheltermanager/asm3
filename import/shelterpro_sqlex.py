@@ -26,9 +26,9 @@ mdb-export --delimiter=~field~ --row-delimiter=~row~ -Q $MDB image > image.csv
 
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/shelterpro_sh2771"
+PATH = "/home/robin/tmp/asm3_import_data/shelterpro_mg3031"
 
-START_ID = 100
+START_ID = 1000
 
 INCIDENT_IMPORT = True
 LICENCE_IMPORT = True
@@ -232,6 +232,7 @@ if VACCINATION_IMPORT:
         av.Manufacturer = row["VACCMANUFACTURER"]
         av.BatchNumber = row["VACCSERIALNUMBER"]
         av.Comments = "Name: %s, Issue: %s" % (row["VACCDRUGNAME"], row["VACCISSUEDPRTDATE"])
+    del cvacc
 
 # Next, addresses
 for row in caddress:
@@ -275,7 +276,6 @@ for row in cperson:
     o.IsBanned = asm.cint(row["NOADOPT"] == "T" and "1" or "0")
     o.IsFosterer = asm.cint(row["FOSTERS"])
     # o.ExcludeFromBulkEmail = asm.cint(row["MAILINGSAM"]) # Not sure this is correct
-
 
 # Run through the shelter file and create any movements/euthanisation info
 for row in cshelter:
@@ -413,25 +413,22 @@ if LICENCE_IMPORT:
 
 # Image table
 if IMAGE_TABLE_IMPORT:
-    # The image.csv file exported from MDB won't have a valid text encoding because the
-    # imagedata column contains raw file data. We will have to read it as a binary
-    # sequence of bytes and handle it manually. 
-    # Look at the unpack.sh script in shelterpro_ka2700 it uses special row and field
-    # delimiters that are multibyte and easy for us to find:
-    # mdb-export --delimiter=~field~ --row-delimiter=~row~ -Q $MDB image > image.csv
-    bs = b""
-    with open("%s/image.csv" % PATH, "rb") as f:
-        bs = f.read()
-    for row in bs.split(b"~row~"):
-        fields = row.split(b"~field~")
-        if len(fields) < 10: continue
-        timestamp = fields[1] # date of upload
-        eventkey = fields[2].decode("utf-8").strip() # really animalkey
-        if eventkey not in ppa: continue
-        a = ppa[eventkey]
-        imagetype = fields[8] # typically starts "jpg"
-        imagedata = fields[9] # raw binary file data
-        asm.animal_image(a.ID, imagedata) # This handles outputting both media and dbfs
+    # The image.csv file exported from MDB needs to have the -b hex flag parameter
+    # passed to mdb-export so that the file data is hex. 
+    # This allows bytes.fromhex(s) to be used to unpack the data.
+    # Due to the potential size that this file can be, we use the csvreader to
+    # stream it in rather than loading the whole lot into RAM at once
+    import csv
+    csv.field_size_limit(sys.maxsize) # Python has a default field size limit of 128Kb
+    with open("%s/image.csv" % PATH) as f:
+        reader = csv.reader(f)
+        for r in reader:
+            eventkey = r[2]
+            if eventkey not in ppa: continue # bail if we have no animal to link it to
+            a = ppa[eventkey]
+            imagedata = r[9]
+            imagedata = bytes.fromhex(imagedata)
+            asm.animal_image(a.ID, imagedata) # This handles outputting both media and dbfs
 
 # Incidents
 if INCIDENT_IMPORT:

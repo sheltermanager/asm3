@@ -2587,7 +2587,7 @@ class Owner:
             self.OwnerSurname = name[lastspace+1:]
     def __str__(self):
         if self.OwnerName.strip() == "":
-            if self.OwnerForenames.strip() != "" and self.OwnerSurname2.strip() == "":
+            if self.OwnerForeNames.strip() != "" and self.OwnerSurname2.strip() == "":
                 self.OwnerType = 1  # Individual
                 self.OwnerName = "%s %s" % (self.OwnerForeNames, self.OwnerSurname)
             elif self.OwnerSurname2.strip() != "":
