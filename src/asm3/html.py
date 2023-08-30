@@ -9,7 +9,7 @@ import asm3.person
 import asm3.users
 import asm3.utils
 
-from asm3.i18n import _, translate, format_currency, get_locales, now, python2unix, real_locale
+from asm3.i18n import _, translate, get_locales, now, python2unix, real_locale
 from asm3.sitedefs import QR_IMG_SRC
 from asm3.sitedefs import BASE_URL, LOCALE, ROLLUP_JS, SERVICE_URL
 from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_GRID_CSS, BOOTSTRAP_ICONS_CSS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, HTMLFTP_PUBLISHER_ENABLED, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, QRCODE_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_5_JS
@@ -440,50 +440,6 @@ def footer() -> str:
     """ The HTML footer """
     return "\n</body>\n</html>"
 
-def DELETE_currency(l: str, v: int) -> str:
-    """
-    Outputs a currency value. If it's negative, it shows in red.
-    """
-    s = format_currency(l, v)
-    if s.startswith("("):
-        s = "<span style=\"color: red\">" + s + "</span>"
-    return s
-
-def DELETE_hidden(eid: str, value: str) -> str:
-    """
-    Outputs a hidden input field
-    eid: The id of the input
-    value: The value of the input
-    """
-    return "<input id=\"%s\" value=\"%s\" type=\"hidden\" />\n" % ( eid, str(value) )
-
-def DELETE_box(margintop: int = 0, padding: int = 5) -> str:
-    """
-    Outputs a div box container with jquery ui style
-    """
-    return """<div class="ui-helper-reset centered ui-widget-content ui-corner-all" style="margin-top: %dpx; padding: %dpx;">""" % (margintop, padding)
-
-def DELETE_heading(title: str, iscontent: bool = True) -> str:
-    """
-    Outputs the heading for a page along with the asm content div
-    """
-    mid = ""
-    if iscontent: mid = "id=\"asm-content\""
-    return """
-        <div %s class="ui-accordion ui-widget ui-helper-reset ui-accordion-icons">
-        <h3 class="ui-accordion-header ui-helper-reset ui-corner-top ui-state-active centered"><a href="#">%s</a></h3>
-        <div class="ui-helper-reset ui-widget-content ui-corner-bottom" style="padding: 5px;">
-        """ % (mid, title)
-
-def DELETE_footing() -> str:
-    """
-    Outputs the footing for a page to close heading.
-    """
-    return """
-    </div>
-    </div>
-    """
-    
 def script(code: str) -> str:
     """
     Outputs a script tag with javascript code
