@@ -1,6 +1,7 @@
 
 import asm3.i18n
 import asm3.utils
+from asm3.typehints import datetime, Database, PostedData, Results
 
 # Log links
 ANIMAL = 0
@@ -14,7 +15,7 @@ ANIMALCONTROL = 6
 ASCENDING = 0
 DESCENDING = 1
 
-def add_log(dbo, username, linktype, linkid, logtypeid, logtext, logdatetime = None):
+def add_log(dbo: Database, username: str, linktype: int, linkid: int, logtypeid: int, logtext: str, logdatetime: datetime = None) -> int:
     """
     Adds a log entry. If logdatetime is blank, the date/time now is used.
     """
@@ -27,16 +28,16 @@ def add_log(dbo, username, linktype, linkid, logtypeid, logtext, logdatetime = N
         "Comments":         logtext
     }, username)
 
-def add_log_email(dbo, username, linktype, linkid, logtypeid, to, subject, body):
+def add_log_email(dbo: Database, username: str, linktype: int, linkid: int, logtypeid: int, to: str, subject: str, body: str) -> int:
     """
     Adds a log entry for recording a sent email.
     body is converted to plain text if necessary before storing in the log.
     """
     if body.find("<p") != -1: body = asm3.utils.html_to_text(body)
-    add_log(dbo, username, linktype, linkid, logtypeid,
+    return add_log(dbo, username, linktype, linkid, logtypeid,
         "[%s] %s ::\n%s" % ( to, subject, body ))
 
-def get_log_find_simple(dbo, q, limit = 0):
+def get_log_find_simple(dbo: Database, q: str, limit: int = 0) -> Results:
     """
     Searches log notes for the term q
     Will return no results if the search term is less than 4 chars 
@@ -76,7 +77,7 @@ def get_log_find_simple(dbo, q, limit = 0):
         "ORDER BY LastChangedDate DESC"
     return dbo.query(query, [q], limit=limit)
 
-def get_logs(dbo, linktypeid, linkid, logtype = 0, sort = DESCENDING):
+def get_logs(dbo: Database, linktypeid: int, linkid: int, logtype: int = 0, sort: int = DESCENDING) -> Results:
     """
     Gets a list of logs. <= 0 = all types.
     """
@@ -91,7 +92,7 @@ def get_logs(dbo, linktypeid, linkid, logtype = 0, sort = DESCENDING):
         sql += "ORDER BY l.Date DESC"
     return dbo.query(sql)
 
-def insert_log_from_form(dbo, username, linktype, linkid, post):
+def insert_log_from_form(dbo: Database, username: str, linktype: int, linkid: int, post: PostedData) -> int:
     """
     Creates a log from the form data
     username: User creating the diary
@@ -110,7 +111,7 @@ def insert_log_from_form(dbo, username, linktype, linkid, post):
         "Comments":         post["entry"]
     }, username)
 
-def update_log_from_form(dbo, username, post):
+def update_log_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a log from form data
     """
@@ -124,7 +125,7 @@ def update_log_from_form(dbo, username, post):
         "Comments":     post["entry"]
     }, username)
 
-def delete_log(dbo, username, logid):
+def delete_log(dbo: Database, username: str, logid: int) -> None:
     """
     Deletes a log
     """

@@ -1,6 +1,7 @@
 48
 ================
 
+30/08/23 type hints, log, lookup and lostfound modules #1320
 30/08/23 type hints, html module #1320
 29/08/23 Fix date parsing bug for Sweden caused by refactoring
 29/08/23 Renew licence button now calculates dates correctly #728

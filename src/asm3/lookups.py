@@ -3,6 +3,7 @@ import asm3.configuration
 import asm3.financial
 import asm3.utils
 from asm3.i18n import _
+from asm3.typehints import datetime, Database, Results, Tuple
 
 import re
 
@@ -866,7 +867,8 @@ ADOPTAPET_COLOURS = (
     "Albino or Red-Eyed White"
 )
 
-def add_message(dbo, createdby, email, message, forname = "*", priority = 0, expires = None, added = None):
+def add_message(dbo: Database, createdby: str, email: int, message: str, forname: str = "*", 
+                priority: int = 0, expires: datetime = None, added: datetime = None) -> int:
     if added is None: added = dbo.today()
     if expires is None: expires = dbo.today(offset=7)
     l = dbo.locale
@@ -883,106 +885,106 @@ def add_message(dbo, createdby, email, message, forname = "*", priority = 0, exp
         asm3.utils.send_user_email(dbo, createdby, forname, _("Message from {0}", l).format(createdby), message)
     return mid
 
-def delete_message(dbo, mid):
+def delete_message(dbo: Database, mid: int) -> None:
     dbo.delete("messages", mid)
 
-def get_account_types(dbo):
+def get_account_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksaccounttype ORDER BY AccountType")
 
-def get_additionalfield_links(dbo):
+def get_additionalfield_links(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksfieldlink ORDER BY LinkType")
 
-def get_additionalfield_types(dbo):
+def get_additionalfield_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksfieldtype ORDER BY FieldType")
 
-def get_animal_flags(dbo):
+def get_animal_flags(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkanimalflags ORDER BY Flag")
 
-def get_animal_types(dbo):
+def get_animal_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM animaltype ORDER BY AnimalType")
 
-def get_animaltype_name(dbo, aid):
+def get_animaltype_name(dbo: Database, aid: int) -> str:
     if id is None: return ""
     return dbo.query_string("SELECT AnimalType FROM animaltype WHERE ID = ?", [aid])
 
-def get_basecolours(dbo):
+def get_basecolours(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM basecolour ORDER BY BaseColour")
 
-def get_basecolour_name(dbo, cid):
+def get_basecolour_name(dbo: Database, cid: int) -> str:
     if id is None: return ""
     return dbo.query_string("SELECT BaseColour FROM basecolour WHERE ID = ?", [cid])
 
-def get_boarding_types(dbo):
+def get_boarding_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkboardingtype ORDER BY BoardingName")
 
-def get_breeds(dbo):
+def get_breeds(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM breed ORDER BY BreedName")
 
-def get_breeds_by_species(dbo):
+def get_breeds_by_species(dbo: Database) -> Results:
     return dbo.query("SELECT breed.*, species.SpeciesName FROM breed " \
         "LEFT OUTER JOIN species ON breed.SpeciesID = species.ID " \
         "ORDER BY species.SpeciesName, breed.BreedName")
 
-def get_species_for_breed(dbo, bid):
+def get_species_for_breed(dbo: Database, bid: int) -> int:
     return dbo.query_int("SELECT SpeciesID FROM breed WHERE ID=?", [bid])
 
-def get_breed_name(dbo, bid):
+def get_breed_name(dbo: Database, bid: int) -> str:
     if id is None: return ""
     return dbo.query_string("SELECT BreedName FROM breed WHERE ID = ?", [bid])
 
-def get_citation_types(dbo):
+def get_citation_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM citationtype ORDER BY CitationName")
 
-def get_clinic_statuses(dbo):
+def get_clinic_statuses(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksclinicstatus ORDER BY ID")
 
-def get_coattypes(dbo):
+def get_coattypes(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkcoattype ORDER BY CoatType")
 
-def get_costtypes(dbo):
+def get_costtypes(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM costtype ORDER BY CostTypeName")
 
-def get_coattype_name(dbo, cid):
+def get_coattype_name(dbo: Database, cid: int) -> str:
     if id is None: return ""
     return dbo.query_string("SELECT CoatTypeName FROM lkcoattype WHERE ID = ?", [cid])
 
-def get_deathreasons(dbo):
+def get_deathreasons(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM deathreason ORDER BY ReasonName")
 
-def get_deathreason_name(dbo, rid):
+def get_deathreason_name(dbo: Database, rid: int) -> str:
     if id is None: return ""
     return dbo.query_string("SELECT ReasonName FROM deathreason WHERE ID = ?", [rid])
 
-def get_diets(dbo):
+def get_diets(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM diet ORDER BY DietName")
 
-def get_donation_default(dbo, donationtypeid):
+def get_donation_default(dbo: Database, donationtypeid: int) -> int:
     return dbo.query_int("SELECT DefaultCost FROM donationtype WHERE ID = ?", [donationtypeid])
 
-def get_donation_frequencies(dbo):
+def get_donation_frequencies(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksdonationfreq ORDER BY ID")
 
-def get_donation_types(dbo):
+def get_donation_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM donationtype ORDER BY DonationName")
 
-def get_donationtype_name(dbo, did):
+def get_donationtype_name(dbo: Database, did: int) -> str:
     if did is None: return ""
     return dbo.query_string("SELECT DonationName FROM donationtype WHERE ID = ?", [did])
 
-def get_entryreasons(dbo):
+def get_entryreasons(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM entryreason ORDER BY ReasonName")
 
-def get_entryreason_name(dbo, rid):
+def get_entryreason_name(dbo: Database, rid: int) -> str:
     if rid is None: return ""
     return dbo.query_string("SELECT ReasonName FROM entryreason WHERE ID = ?", [rid])
 
-def get_incident_completed_types(dbo):
+def get_incident_completed_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM incidentcompleted ORDER BY CompletedName")
 
-def get_incident_types(dbo):
+def get_incident_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM incidenttype ORDER BY IncidentName")
 
-def get_internal_locations(dbo, locationfilter = "", siteid = 0):
+def get_internal_locations(dbo: Database, locationfilter: str = "", siteid: int = 0) -> Results:
     clauses = []
     if locationfilter != "": clauses.append("ID IN (%s)" % locationfilter)
     if siteid != 0: clauses.append("SiteID = %s" % siteid)
@@ -990,17 +992,17 @@ def get_internal_locations(dbo, locationfilter = "", siteid = 0):
     if c != "": c = "WHERE %s" % c
     return dbo.query("SELECT * FROM internallocation %s ORDER BY LocationName" % c)
 
-def get_internallocation_name(dbo, lid):
+def get_internallocation_name(dbo: Database, lid: int) -> str:
     if lid is None: return ""
     return dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [lid])
 
-def get_jurisdictions(dbo):
+def get_jurisdictions(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM jurisdiction ORDER BY JurisdictionName")
 
-def get_licence_types(dbo):
+def get_licence_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM licencetype ORDER BY LicenceTypeName")
 
-def get_messages(dbo, user, roles, superuser):
+def get_messages(dbo: Database, user: str, roles: str, superuser: int) -> Results:
     """
     Returns a list of messages for the user given.
     user: The user to get messages for
@@ -1023,26 +1025,29 @@ def get_messages(dbo, user, roles, superuser):
             rv.append(m)
     return rv
 
-def get_log_types(dbo):
+def get_log_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM logtype ORDER BY LogTypeName")
 
-def get_logtype_name(dbo, tid):
+def get_logtype_name(dbo: Database, tid: int) -> str:
     if tid is None: return ""
     return dbo.query_string("SELECT LogTypeName FROM logtype WHERE ID = ?", [tid])
 
-def get_theme(theme):
+def get_theme(theme: str) -> Tuple[str, str, str, str]:
     """ Returns a tuple of values code, jq, bg, name for a theme """
     for code, jq, bg, name in VISUAL_THEMES:
         if code == theme:
             return (code, jq, bg, name)
     return ("asm", "asm", "#ffffff", "Light")
 
-def get_lookup(dbo, tablename, namefield):
+def get_lookup(dbo: Database, tablename: str, namefield: str) -> Results:
     if tablename == "breed":
         return dbo.query("SELECT b.*, s.SpeciesName FROM breed b LEFT OUTER JOIN species s ON s.ID = b.SpeciesID ORDER BY b.BreedName")
     return dbo.query("SELECT * FROM %s ORDER BY %s" % ( tablename, namefield ))
 
-def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, accountid=0, defaultcost=0, vat=0, retired=0):
+def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: str = "", 
+                  speciesid: int = 0, pfbreed: str = "", pfspecies: str = "", apcolour: str = "", 
+                  units: str = "", site: int = 1, rescheduledays: int = 0, accountid: int = 0, 
+                  defaultcost: int = 0, vat: int = 0, retired: int = 0) -> int:
     t = LOOKUP_TABLES[lookup]
     nid = 0
     if lookup == "basecolour":
@@ -1077,7 +1082,7 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
         }, username, setCreated=False)
     elif lookup == "costtype":
         # Create a matching account if the option is on and link it
-        if asm3.configuration.create_cost_trx(dbo): 
+        if asm3.configuration.create_cost_trx(dbo):
             accountid = asm3.financial.insert_account_from_costtype(dbo, name, desc)
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
@@ -1089,7 +1094,7 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
         return nid
     elif lookup == "donationtype":
         # Create a matching account if the option is on and link it
-        if asm3.configuration.create_donation_trx(dbo): 
+        if asm3.configuration.create_donation_trx(dbo):
             accountid = asm3.financial.insert_account_from_donationtype(dbo, name, desc)
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,
@@ -1136,7 +1141,10 @@ def insert_lookup(dbo, username, lookup, name, desc="", speciesid=0, pfbreed="",
         else:
             return dbo.insert(lookup, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc }, username, setCreated=False)
 
-def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbreed="", pfspecies="", apcolour="", units="", site=1, rescheduledays=0, accountid=0, defaultcost=0, vat=0, retired=0):
+def update_lookup(dbo: Database, username: str, iid: int, lookup: str, name: str, desc: str = "", 
+                  speciesid: int = 0, pfbreed: str = "", pfspecies: str = "", apcolour: str = "", units: str = "", 
+                  site: int = 1, rescheduledays: int = 0, accountid: int = 0, 
+                  defaultcost: int = 0, vat: int = 0, retired: int = 0) -> None:
     t = LOOKUP_TABLES[lookup]
     if lookup == "basecolour":
         dbo.update("basecolour", iid, { 
@@ -1223,11 +1231,11 @@ def update_lookup(dbo, username, iid, lookup, name, desc="", speciesid=0, pfbree
         else:
             dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: name, t[LOOKUP_DESCFIELD]: desc }, username, setLastChanged=False)
 
-def update_lookup_retired(dbo, username, lookup, iid, retired):
+def update_lookup_retired(dbo: Database, username: str, lookup: str, iid: int, retired: int) -> None:
     """ Updates lookup item with ID=iid, setting IsRetired=retired """
     dbo.update(lookup, iid, { "IsRetired": retired }, username, setLastChanged=False)
 
-def delete_lookup(dbo, username, lookup, iid):
+def delete_lookup(dbo: Database, username: str, lookup: str, iid: int) -> None:
     l = dbo.locale
     t = LOOKUP_TABLES[lookup]
     for fv in t[LOOKUP_FOREIGNKEYS]:
@@ -1236,7 +1244,7 @@ def delete_lookup(dbo, username, lookup, iid):
             raise asm3.utils.ASMValidationError(_("This item is referred to in the database ({0}) and cannot be deleted until it is no longer in use.", l).format(fv))
     dbo.delete(lookup, iid, username)
 
-def get_microchip_manufacturer(l, chipno):
+def get_microchip_manufacturer(l: str, chipno: str) -> str:
     """
     Figures out the microchip manufacturer of chipno. 
     Returns a blank for a blank chip number and does validation for a chip number
@@ -1255,61 +1263,61 @@ def get_microchip_manufacturer(l, chipno):
         return _("Unknown microchip brand", l)
     return mf
 
-def get_movementtype_name(dbo, mid):
+def get_movementtype_name(dbo: Database, mid: int) -> str:
     if mid is None: return ""
     return dbo.query_string("SELECT MovementType FROM lksmovementtype WHERE ID = ?", [mid])
 
-def get_movement_types(dbo):
+def get_movement_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksmovementtype ORDER BY ID")
 
-def get_paymentmethod_name(dbo, pid):
+def get_paymentmethod_name(dbo: Database, pid: int) -> str:
     if pid is None: return ""
     return dbo.query_string("SELECT PaymentName FROM donationpayment WHERE ID = ?", [pid])
 
-def get_payment_methods(dbo):
+def get_payment_methods(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM donationpayment ORDER BY PaymentName")
 
-def get_person_flags(dbo):
+def get_person_flags(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkownerflags ORDER BY Flag")
 
-def get_pickup_locations(dbo):
+def get_pickup_locations(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM pickuplocation ORDER BY LocationName")
 
-def get_posneg(dbo):
+def get_posneg(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksposneg ORDER BY Name")
 
-def get_reservation_statuses(dbo):
+def get_reservation_statuses(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM reservationstatus ORDER BY StatusName")
 
-def get_rota_types(dbo):
+def get_rota_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksrotatype ORDER BY ID")
 
-def get_sex_name(dbo, sid):
+def get_sex_name(dbo: Database, sid: int) -> str:
     if id is None: return ""
     return dbo.query_string("SELECT Sex FROM lksex WHERE ID = ?", [sid])
 
-def get_sexes(dbo):
+def get_sexes(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksex ORDER BY Sex")
 
-def get_sites(dbo):
+def get_sites(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM site ORDER BY SiteName")
 
-def get_site_name(dbo, sid):
+def get_site_name(dbo: Database, sid: int) -> str:
     if sid is None: return ""
     return dbo.query_string("SELECT SiteName FROM site WHERE ID = ?", [sid])
 
-def get_size_name(dbo, sid):
+def get_size_name(dbo: Database, sid: int) -> str:
     if sid is None: return ""
     return dbo.query_string("SELECT Size FROM lksize WHERE ID = ?", [sid])
 
-def get_species(dbo):
+def get_species(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM species ORDER BY SpeciesName")
 
-def get_species_name(dbo, sid):
+def get_species_name(dbo: Database, sid: int) -> str:
     if id is None: return ""
     return dbo.query_string("SELECT SpeciesName FROM species WHERE ID = ?", [sid])
 
-def update_species_id(dbo, find, replace):
+def update_species_id(dbo: Database, find: str, replace: str) -> int:
     """ Changes all instances of speciesid from find to replace """
     cols = [ "animal.SpeciesID", "animalcontrol.SpeciesID", "animalfiguresannual.SpeciesID",
         "animallitter.SpeciesID", "animallostfoundmatch.LostSpeciesID", "animallostfoundmatch.FoundSpeciesID",
@@ -1322,56 +1330,56 @@ def update_species_id(dbo, find, replace):
         affected += dbo.execute(q)
     return affected
 
-def get_sizes(dbo):
+def get_sizes(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksize ORDER BY Size")
 
-def get_stock_locations(dbo):
+def get_stock_locations(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM stocklocation ORDER BY LocationName")
 
-def get_stock_location_name(dbo, slid):
+def get_stock_location_name(dbo: Database, slid: int) -> str:
     if slid is None: return ""
     return dbo.query_string("SELECT LocationName FROM stocklocation WHERE ID = ?", [slid])
 
-def get_stock_usage_types(dbo):
+def get_stock_usage_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM stockusagetype ORDER BY UsageTypeName")
 
-def get_trap_types(dbo):
+def get_trap_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM traptype ORDER BY TrapTypeName")
 
-def get_urgencies(dbo):
+def get_urgencies(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkurgency ORDER BY ID")
 
-def get_urgency_name(dbo, uid):
+def get_urgency_name(dbo: Database, uid: int) -> str:
     if id is None: return ""
     return dbo.query_string("SELECT Urgency FROM lkurgency WHERE ID = ?", [uid])
 
-def get_test_types(dbo):
+def get_test_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM testtype ORDER BY TestName")
 
-def get_test_results(dbo):
+def get_test_results(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM testresult ORDER BY ResultName")
 
-def get_transport_statuses(dbo):
+def get_transport_statuses(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkstransportstatus ORDER BY ID")
 
-def get_transport_types(dbo):
+def get_transport_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM transporttype ORDER BY TransportTypeName")
 
-def get_vaccination_types(dbo):
+def get_vaccination_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM vaccinationtype ORDER BY VaccinationType")
 
-def get_voucher_types(dbo):
+def get_voucher_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM voucher ORDER BY VoucherName")
 
-def get_work_types(dbo):
+def get_work_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lkworktype ORDER BY WorkType")
 
-def get_yesno(dbo):
+def get_yesno(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksyesno ORDER BY Name")
 
-def get_ynun(dbo):
+def get_ynun(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksynun ORDER BY ID")
 
-def get_ynunk(dbo):
+def get_ynunk(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksynunk ORDER BY ID")
 

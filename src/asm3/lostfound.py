@@ -13,6 +13,7 @@ import asm3.reports
 import asm3.utils
 import asm3.waitinglist
 from asm3.i18n import _, date_diff_days, now, subtract_years, python2display
+from asm3.typehints import Database, Dict, List, PostedData, ResultRow, Results
 
 class LostFoundMatch:
     dbo = None
@@ -61,7 +62,7 @@ class LostFoundMatch:
                 self.fcontactname, self.fcontactnumber, self.fareafound, self.fareapostcode, self.fagegroup, self.fsexid, self.fspeciesid, self.fbreedid,
                 self.fdistinguishingfeatures, self.fbasecolourid, self.fdatefound, self.matchpoints)
 
-def get_foundanimal_query(dbo):
+def get_foundanimal_query(dbo: Database) -> str:
     return "SELECT a.*, a.ID AS LFID, s.SpeciesName, b.BreedName, " \
         "c.BaseColour AS BaseColourName, c.AdoptAPetColour, x.Sex AS SexName, " \
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
@@ -81,7 +82,7 @@ def get_foundanimal_query(dbo):
         "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID" % asm3.media.FOUNDANIMAL
 
-def get_lostanimal_query(dbo):
+def get_lostanimal_query(dbo: Database) -> str:
     return "SELECT a.*, a.ID AS LFID, s.SpeciesName, b.BreedName, " \
         "c.BaseColour AS BaseColourName, c.AdoptAPetColour, x.Sex AS SexName, " \
         "o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
@@ -101,19 +102,19 @@ def get_lostanimal_query(dbo):
         "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
         "LEFT OUTER JOIN owner o ON a.OwnerID = o.ID" % asm3.media.LOSTANIMAL
 
-def get_lostanimal(dbo, aid):
+def get_lostanimal(dbo: Database, aid: int) -> ResultRow:
     """
     Returns a lost animal record
     """
     return dbo.first_row( dbo.query(get_lostanimal_query(dbo) + " WHERE a.ID = %d" % int(aid)) )
 
-def get_foundanimal(dbo, aid):
+def get_foundanimal(dbo: Database, aid: int) -> ResultRow:
     """
     Returns a found animal record
     """
     return dbo.first_row( dbo.query(get_foundanimal_query(dbo) + " WHERE a.ID = %d" % int(aid)) )
 
-def get_lostanimal_find_simple(dbo, query = "", limit = 0, siteid = 0):
+def get_lostanimal_find_simple(dbo: Database, query: str = "", limit: int = 0, siteid: int = 0) -> Results:
     """
     Returns rows for simple lost animal searches.
     query: The search criteria
@@ -139,7 +140,7 @@ def get_lostanimal_find_simple(dbo, query = "", limit = 0, siteid = 0):
     sql = "%s WHERE a.ID > 0 %s AND (%s)" % (get_lostanimal_query(dbo), sitefilter, " OR ".join(ss.ors))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_foundanimal_find_simple(dbo, query = "", limit = 0, siteid = 0):
+def get_foundanimal_find_simple(dbo: Database, query: str = "", limit: int = 0, siteid: int = 0) -> Results:
     """
     Returns rows for simple found animal searches.
     query: The search criteria
@@ -165,7 +166,7 @@ def get_foundanimal_find_simple(dbo, query = "", limit = 0, siteid = 0):
     sql = "%s WHERE a.ID > 0 %s AND (%s)" % (get_foundanimal_query(dbo), sitefilter, " OR ".join(ss.ors))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_lostanimal_find_advanced(dbo, criteria, limit = 0, siteid = 0):
+def get_lostanimal_find_advanced(dbo: Database, criteria: Dict[str, str], limit: int = 0, siteid: int = 0) -> Results:
     """
     Returns rows for advanced lost animal searches.
     criteria: A dictionary of criteria
@@ -215,7 +216,7 @@ def get_lostanimal_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     sql = "%s WHERE %s ORDER BY a.ID" % (get_lostanimal_query(dbo), " AND ".join(ss.ands))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_foundanimal_find_advanced(dbo, criteria, limit = 0, siteid = 0):
+def get_foundanimal_find_advanced(dbo: Database, criteria: Dict[str, str], limit: int = 0, siteid: int = 0) -> Results:
     """
     Returns rows for advanced lost animal searches.
     criteria: A dictionary of criteria
@@ -265,19 +266,19 @@ def get_foundanimal_find_advanced(dbo, criteria, limit = 0, siteid = 0):
     sql = "%s WHERE %s ORDER BY a.ID" % (get_foundanimal_query(dbo), " AND ".join(ss.ands))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_lostanimal_last_days(dbo, days = 90):
+def get_lostanimal_last_days(dbo: Database, days: int = 90) -> Results:
     """
     Returns lost animals active for the last X days
     """
     return dbo.query(get_lostanimal_query(dbo) + " WHERE a.DateLost > ? AND a.DateFound Is Null", [dbo.today(offset=days*-1)])
 
-def get_foundanimal_last_days(dbo, days = 90):
+def get_foundanimal_last_days(dbo: Database, days: int = 90) -> Results:
     """
     Returns found animals active for the last X days
     """
     return dbo.query(get_foundanimal_query(dbo) + " WHERE a.DateFound > ? AND a.ReturnToOwnerDate Is Null", [dbo.today(offset=days*-1)])
 
-def get_lostanimal_satellite_counts(dbo, lfid):
+def get_lostanimal_satellite_counts(dbo: Database, lfid: int) -> Results:
     """
     Returns a resultset containing the number of each type of satellite
     record that a lost animal entry has.
@@ -290,7 +291,7 @@ def get_lostanimal_satellite_counts(dbo, lfid):
         % (asm3.media.LOSTANIMAL, asm3.diary.LOSTANIMAL, asm3.log.LOSTANIMAL)
     return dbo.query(sql, [lfid])
 
-def get_foundanimal_satellite_counts(dbo, lfid):
+def get_foundanimal_satellite_counts(dbo: Database, lfid: int) -> Results:
     """
     Returns a resultset containing the number of each type of satellite
     record that a found animal entry has.
@@ -303,10 +304,11 @@ def get_foundanimal_satellite_counts(dbo, lfid):
         % (asm3.media.FOUNDANIMAL, asm3.diary.FOUNDANIMAL, asm3.log.FOUNDANIMAL)
     return dbo.query(sql, [lfid])
 
-def send_email_from_form(dbo, username, post):
+def send_email_from_form(dbo: Database, username: str, post: PostedData) -> bool:
     """
-    Sends an email to a lost/found person from a posted form. Attaches it as
-    a log entry if specified.
+    Sends an email to a lost/found person from a posted form. 
+    Attaches it as a log entry if specified.
+    Returns a bool if the mail sending is successful.
     """
     emailfrom = post["from"]
     emailto = post["to"]
@@ -323,7 +325,7 @@ def send_email_from_form(dbo, username, post):
         asm3.log.add_log_email(dbo, username, post["lfmode"] == "lost" and asm3.log.LOSTANIMAL or asm3.log.FOUNDANIMAL, post.integer("lfid"), logtype, emailto, subject, body)
     return rv
 
-def words(str1, str2, maxpoints):
+def words(str1: str, str2: str, maxpoints: int):
     """
     Evalutes words in string 1 for appearances in string 2
     Returns the number of points for 1 to 2 as a percentage of maxpoints
@@ -340,7 +342,7 @@ def words(str1, str2, maxpoints):
             matches += 1
     return int((float(matches) / float(len(s1words))) * float(maxpoints))
 
-def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
+def match(dbo: Database, lostanimalid: int = 0, foundanimalid: int = 0, animalid: int = 0, limit: int = 0) -> List[LostFoundMatch]:
     """
     Performs a lost and found match by going through all lost animals
     lostanimalid:   Compare this lost animal against all found animals
@@ -556,7 +558,7 @@ def match(dbo, lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
 
     return matches
 
-def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, animalid = 0, limit = 0):
+def match_report(dbo: Database, username: str = "system", lostanimalid: int = 0, foundanimalid: int = 0, animalid: int = 0, limit: int = 0) -> str:
     """
     Generates the match report and returns it as a string
     """
@@ -624,13 +626,13 @@ def match_report(dbo, username = "system", lostanimalid = 0, foundanimalid = 0, 
     h.append(asm3.reports.get_report_footer(dbo, title, username))
     return "\n".join(h)
 
-def lostfound_last_match_count(dbo):
+def lostfound_last_match_count(dbo: Database) -> int:
     """
     Returns the number of lost/found matches from the last run
     """
     return dbo.query_int("SELECT COUNT(*) FROM animallostfoundmatch")
 
-def update_match_report(dbo):
+def update_match_report(dbo: Database) -> str:
     """
     Updates the latest version of the lost/found match report 
     """
@@ -641,19 +643,19 @@ def update_match_report(dbo):
     asm3.cachedisk.put("lostfound_lastmatchcount", dbo.database, count, 86400)
     return "OK %d" % count
 
-def get_lost_person_name(dbo, aid):
+def get_lost_person_name(dbo: Database, aid: int) -> str:
     """
     Returns the contact name for a lost animal
     """
     return dbo.query_string("SELECT o.OwnerName FROM animallost a INNER JOIN owner o ON a.OwnerID = o.ID WHERE a.ID = ?", [aid])
 
-def get_found_person_name(dbo, aid):
+def get_found_person_name(dbo: Database, aid: int) -> str:
     """
     Returns the contact name for a found animal
     """
     return dbo.query_string("SELECT o.OwnerName FROM animalfound a INNER JOIN owner o ON a.OwnerID = o.ID WHERE a.ID = ?", [aid])
 
-def update_lostanimal_from_form(dbo, post, username):
+def update_lostanimal_from_form(dbo: Database, post: PostedData, username: str) -> None:
     """
     Updates a lost animal record from the screen
     data: The webpy data object containing form parameters
@@ -690,7 +692,7 @@ def update_lostanimal_from_form(dbo, post, username):
     asm3.additional.save_values_for_link(dbo, post, username, lfid, "lostanimal")
     asm3.diary.update_link_info(dbo, username, asm3.diary.LOSTANIMAL, lfid)
 
-def insert_lostanimal_from_form(dbo, post, username):
+def insert_lostanimal_from_form(dbo: Database, post: PostedData, username: str) -> int:
     """
     Inserts a new lost animal record from the screen
     data: The webpy data object containing form parameters
@@ -725,7 +727,7 @@ def insert_lostanimal_from_form(dbo, post, username):
 
     return nid
 
-def update_foundanimal_from_form(dbo, post, username):
+def update_foundanimal_from_form(dbo: Database, post: PostedData, username: str) -> None:
     """
     Updates a found animal record from the screen
     post: The webpy data object containing form parameters
@@ -762,7 +764,7 @@ def update_foundanimal_from_form(dbo, post, username):
     asm3.additional.save_values_for_link(dbo, post, username, lfid, "foundanimal")
     asm3.diary.update_link_info(dbo, username, asm3.diary.FOUNDANIMAL, lfid)
 
-def insert_foundanimal_from_form(dbo, post, username):
+def insert_foundanimal_from_form(dbo: Database, post: PostedData, username: str) -> int:
     """
     Inserts a new found animal record from the screen
     data: The webpy data object containing form parameters
@@ -797,7 +799,7 @@ def insert_foundanimal_from_form(dbo, post, username):
 
     return nid
 
-def create_animal_from_found(dbo, username, aid):
+def create_animal_from_found(dbo: Database, username: str, aid: int) -> int:
     """
     Creates an animal record from a found animal with the id given
     """
@@ -829,7 +831,7 @@ def create_animal_from_found(dbo, username, aid):
     nextid, dummy = asm3.animal.insert_animal_from_form(dbo, asm3.utils.PostedData(data, l), username)
     return nextid
 
-def create_waitinglist_from_found(dbo, username, aid):
+def create_waitinglist_from_found(dbo: Database, username: str, aid: int) -> int:
     """
     Creates a waiting list entry from a found animal with the id given
     """
@@ -849,7 +851,7 @@ def create_waitinglist_from_found(dbo, username, aid):
     nextid = asm3.waitinglist.insert_waitinglist_from_form(dbo, asm3.utils.PostedData(data, dbo.locale), username)
     return nextid
 
-def delete_lostanimal(dbo, username, aid):
+def delete_lostanimal(dbo: Database, username: str, aid: int) -> None:
     """
     Deletes a lost animal
     """
@@ -860,7 +862,7 @@ def delete_lostanimal(dbo, username, aid):
     dbo.delete("animallost", aid, username)
     # asm3.dbfs.delete_path(dbo, "/lostanimal/%d" % aid)  # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
-def delete_foundanimal(dbo, username, aid):
+def delete_foundanimal(dbo: Database, username: str, aid: int) -> None:
     """
     Deletes a found animal
     """
