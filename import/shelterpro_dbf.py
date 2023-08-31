@@ -458,9 +458,11 @@ if INCIDENT_IMPORT:
         ac.IncidentCompletedID = 2
         if row["FINALOUTCO"] == "ANIMAL PICKED UP":
             ac.IncidentCompletedID = 2
+        elif row["FINALOUTCOME"] == "ANIMAL NOT FOUND":
+            ac.IncidentCompletedID = 4 # Animal not found
         elif row["FINALOUTCO"] == "OTHER":
-            ac.IncidentCompletedID = 6 # Does not exist in default data
-        ac.IncidentTypeID = 1
+            ac.IncidentCompletedID = 5 # Other
+        ac.IncidentTypeID = 3 # Animals at large
         incidentkey = 0
         if "INCIDENTKE" in row: incidentkey = row["INCIDENTKE"]
         elif "KEY" in row: incidentkey = row["KEY"]

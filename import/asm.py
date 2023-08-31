@@ -2519,6 +2519,8 @@ class Owner:
     WorkTelephone2 = ""
     MobileTelephone2 = ""
     EmailAddress2 = ""
+    DateOfBirth = None
+    DateOfBirth2 = None
     IdentificationNumber = ""
     IdentificationNumber2 = ""
     LatLong = ""
@@ -2625,6 +2627,8 @@ class Owner:
             ( "WorkTelephone2", ds(self.WorkTelephone2) ),
             ( "MobileTelephone2", ds(self.MobileTelephone2) ),
             ( "EmailAddress2", ds(self.EmailAddress2) ),
+            ( "DateOfBirth", dd(self.DateOfBirth) ),
+            ( "DateOfBirth2", dd(self.DateOfBirth2) ),
             ( "IdentificationNumber", ds(self.IdentificationNumber) ),
             ( "IdentificationNumber2", ds(self.IdentificationNumber2) ),
             ( "LatLong", ds(self.LatLong) ),

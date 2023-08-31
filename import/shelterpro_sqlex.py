@@ -8,10 +8,11 @@ this version differs from other shelterpro as some of the fieldnames are full le
 of truncated at 8 chars as with the DBF variants
 
 (requires shelter.csv, animal.csv, person.csv, address.csv, addrlink.csv, license.csv, vacc.csv)
+(optional: license.csv, payments.csv, bite.csv, incident.csv, image.csv)
 
-Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if available.
+Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if IMAGE_FILE_IMPORT is set.
 
-6th Oct, 2014 - 11th February, 2022
+6th Oct, 2014 - 30th August, 2023
 """
 
 """
@@ -28,13 +29,18 @@ PATH = "/home/robin/tmp/asm3_import_data/shelterpro_mg3031"
 
 START_ID = 1000
 
+BITE_IMPORT = True
 INCIDENT_IMPORT = True
-LICENCE_IMPORT = True
+LICENCE_IMPORT = False
 IMAGE_FILE_IMPORT = False
-IMAGE_TABLE_IMPORT = True
+IMAGE_TABLE_IMPORT = False
+PAYMENT_IMPORT = True
 VACCINATION_IMPORT = True
 
 IMPORT_ANIMALS_WITH_NO_NAME = True
+
+FAKE_ADOPTION_ONSHELTER_DAYS = 0        # Animals on shelter longer than this many days will have a fake adoption, 0 to do nothing
+OMIT_ANIMALS_EUTHANISED_DAYS = 365*3    # Omit animals who were euthanised longer than this many days ago, 0 to do nothing
 
 def gettype(animaldes):
     spmap = {
@@ -85,6 +91,7 @@ def getdate(s):
     return asm.getdate_mmddyy(s)
 
 owners = []
+ownerdonations = []
 ownerlicences = []
 logs = []
 movements = []
@@ -108,6 +115,7 @@ if VACCINATION_IMPORT: asm.setid("animalvaccination", START_ID)
 if LICENCE_IMPORT: asm.setid("ownerlicence", START_ID)
 if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: asm.setid("media", START_ID)
 if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: asm.setid("dbfs", START_ID)
+if PAYMENT_IMPORT: asm.setid("ownerdonation", START_ID)
 
 # Remove existing
 print("\\set ON_ERROR_STOP\nBEGIN;")
@@ -118,6 +126,7 @@ print("DELETE FROM owner WHERE ID >= %d AND CreatedBy = 'conversion';" % START_I
 if INCIDENT_IMPORT: print("DELETE FROM animalcontrol WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
 if VACCINATION_IMPORT: print("DELETE FROM animalvaccination WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
 if LICENCE_IMPORT: print("DELETE FROM ownerlicence WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+if PAYMENT_IMPORT: print("DELETE FROM ownerdonation WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
 if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: print("DELETE FROM media WHERE ID >= %d;" % START_ID)
 if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: print("DELETE FROM dbfs WHERE ID >= %d;" % START_ID)
 
@@ -133,18 +142,8 @@ owners.append(uo)
 uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = uo.OwnerSurname
 
-# Load up data files
-caddress = asm.csv_to_list("%s/address.csv" % PATH, uppercasekeys=True, strip=True)
-caddrlink = asm.csv_to_list("%s/addrlink.csv" % PATH, uppercasekeys=True, strip=True)
-canimal = asm.csv_to_list("%s/animal.csv" % PATH, uppercasekeys=True, strip=True)
-clicense = asm.csv_to_list("%s/license.csv" % PATH, uppercasekeys=True, strip=True)
-cperson = asm.csv_to_list("%s/person.csv" % PATH, uppercasekeys=True, strip=True)
-cshelter = asm.csv_to_list("%s/shelter.csv" % PATH, uppercasekeys=True, strip=True)
-cvacc = asm.csv_to_list("%s/vacc.csv" % PATH, uppercasekeys=True, strip=True)
-cincident = asm.csv_to_list("%s/incident.csv" % PATH, uppercasekeys=True, strip=True)
-cnote = asm.csv_to_list("%s/note.csv" % PATH, uppercasekeys=True, strip=True)
-
 # Start with animals
+canimal = asm.csv_to_list("%s/animal.csv" % PATH, uppercasekeys=True, strip=True)
 for row in canimal:
     if not IMPORT_ANIMALS_WITH_NO_NAME and row["PETNAME"].strip() == "": continue
     a = asm.Animal()
@@ -210,6 +209,7 @@ for row in canimal:
 
 # Vaccinations
 if VACCINATION_IMPORT:
+    cvacc = asm.csv_to_list("%s/vacc.csv" % PATH, uppercasekeys=True, strip=True)
     for row in cvacc:
         if row["ANIMALKEY"] not in ppa: continue
         a = ppa[row["ANIMALKEY"]]
@@ -233,6 +233,8 @@ if VACCINATION_IMPORT:
     del cvacc
 
 # Next, addresses
+caddress = asm.csv_to_list("%s/address.csv" % PATH, uppercasekeys=True, strip=True)
+caddrlink = asm.csv_to_list("%s/addrlink.csv" % PATH, uppercasekeys=True, strip=True)
 for row in caddress:
     addresses[row["ADDRESSKEY"]] = {
         "address": "%s %s %s %s" % (row["ADDRESSSTREETNUMBER"], row["ADDRESSSTREETDIR"], row["ADDRESSSTREETNAME"], row["ADDRESSSTREETTYPE"]),
@@ -246,6 +248,7 @@ for row in caddrlink:
     addrlink[row["EVENTKEY"]] = row["ADDRLINKADDRESSKEY"]
 
 # Now do people
+cperson = asm.csv_to_list("%s/person.csv" % PATH, uppercasekeys=True, strip=True)
 for row in cperson:
     o = asm.Owner()
     owners.append(o)
@@ -273,26 +276,49 @@ for row in cperson:
     o.IsMember = asm.cint(row["MEMBER_IND"])
     o.IsBanned = asm.cint(row["NOADOPT"] == "T" and "1" or "0")
     o.IsFosterer = asm.cint(row["FOSTERS"])
+    o.IdentificationNumber = row["DRIV_LIC"]
+    o.DateOfBirth = getdate(row["BIRTH"])
     # o.ExcludeFromBulkEmail = asm.cint(row["MAILINGSAM"]) # Not sure this is correct
 
+if PAYMENT_IMPORT:
+    cpayment = asm.csv_to_list("%s/payments.csv" % PATH, uppercasekeys=True, strip=True)
+    for row in cpayment:
+        if row["PAYMENTPRSN"] not in ppo: continue
+        o = ppo[row["PAYMENTPRSN"]]
+        od = asm.OwnerDonation()
+        od.DonationTypeID = 1
+        od.DonationPaymentID = 1 # Cash - Default
+        if row["PAYMENTMETH"] == "CHECK":
+            od.DonationPaymentID = 2 # Check
+            od.ChequeNumber = row["PAYMENTREF"]
+        elif row["PAYMENTCARDTYPE"] != "": 
+            od.DonationPaymentID = 3 # Credit Card
+        od.Date = getdate(row["PAYMENTDATE"])
+        od.OwnerID = o.ID
+        if row["PAYMENTREVERSALAMOUNT"] != "0":
+            od.Donation = asm.get_currency(row["PAYMENTREVERSALAMOUNT"]) * -1
+        else:
+            od.Donation = asm.get_currency(row["PAYMENTAMOUNT"])
+        comments = "Method/Card Type: %s/%s" % (row["PAYMENTMETH"], row["PAYMENTCARDTYPE"])
+        comments += "\nVerification: " + row["PAYMENTIDVERIFICATION"]
+        od.Comments = comments
+        ownerdonations.append(od)
+
 # Run through the shelter file and create any movements/euthanisation info
+cshelter = asm.csv_to_list("%s/shelter.csv" % PATH, uppercasekeys=True, strip=True)
 for row in cshelter:
-    a = None
-    if row["ANIMALKEY"] in ppa:
-        a = ppa[row["ANIMALKEY"]]
-        arivdate = getdate(row["ARIVDATE"])
+    if row["ANIMALKEY"] not in ppa: continue
+    a = ppa[row["ANIMALKEY"]]
+    arivdate = getdate(row["ARIVDATE"])
+    a.ShortCode = asm.strip(row["ANIMALKEY"])
+    a.ShelterLocationUnit = asm.strip(row["KENNEL"])
+    a.NonShelterAnimal = 0
+    if arivdate is not None:
+        a.DateBroughtIn = arivdate
+        a.LastChangedDate = a.DateBroughtIn
+        a.CreatedDate = a.DateBroughtIn
+        a.generateCode(gettypeletter(a.AnimalTypeID))
         a.ShortCode = asm.strip(row["ANIMALKEY"])
-        a.ShelterLocationUnit = asm.strip(row["KENNEL"])
-        a.NonShelterAnimal = 0
-        if arivdate is not None:
-            a.DateBroughtIn = arivdate
-            a.LastChangedDate = a.DateBroughtIn
-            a.CreatedDate = a.DateBroughtIn
-            a.generateCode(gettypeletter(a.AnimalTypeID))
-            a.ShortCode = asm.strip(row["ANIMALKEY"])
-    else:
-        # Couldn't find an animal record, bail
-        continue
 
     o = None
     if row["OWNERATDISPOSITION"] in ppo:
@@ -362,10 +388,11 @@ for row in cshelter:
         a.Archived = 1
 
     # Euthanized
-    elif row["DISPMETH"] == "EUTHANIZED":
+    elif row["DISPMETH"].startswith("EUTH"):
         a.DeceasedDate = getdate(row["DISPDATE"])
         a.PutToSleep = 1
         a.PTSReasonID = 4 # Sick/Injured
+        if row["DISPMETH"].find("BEHAVIOUR") != -1: a.PTSReasonID = 8 # Biting
         a.Archived = 1
 
     # If the outcome is blank, it's on the shelter
@@ -387,6 +414,7 @@ for row in cshelter:
         movements.append(m)
 
 if LICENCE_IMPORT:
+    clicense = asm.csv_to_list("%s/license.csv" % PATH, uppercasekeys=True, strip=True)
     for row in clicense:
         a = None
         if row["ANIMALKEY"] in ppa:
@@ -430,6 +458,7 @@ if IMAGE_TABLE_IMPORT:
 
 # Incidents
 if INCIDENT_IMPORT:
+    cincident = asm.csv_to_list("%s/incident.csv" % PATH, uppercasekeys=True, strip=True)
     for row in cincident:
         ac = asm.AnimalControl()
         animalcontrol.append(ac)
@@ -448,17 +477,56 @@ if INCIDENT_IMPORT:
             ac.OwnerID = ppo[row["OWNERATORIGINATION"]].ID
         ac.IncidentCompletedID = 2
         if row["FINALOUTCOME"] == "ANIMAL PICKED UP":
-            ac.IncidentCompletedID = 2
+            ac.IncidentCompletedID = 2 # Animal picked up
+        elif row["FINALOUTCOME"] == "ANIMAL NOT FOUND":
+            ac.IncidentCompletedID = 4 # Animal not found
         elif row["FINALOUTCOME"] == "OTHER":
-            ac.IncidentCompletedID = 6 # Does not exist in default data
-        ac.IncidentTypeID = 1
-        comments = "case: %s\n" % row["INCIDENTKEY"]
-        comments += "outcome: %s\n" % row["FINALOUTCOME"]
-        comments += "precinct: %s\n" % row["PRECINCT"]
+            ac.IncidentCompletedID = 5 # Other
+        ac.IncidentTypeID = 3 # Animals at large
+        comments = "Case: %s\n" % row["INCIDENTKEY"]
+        comments += "Outcome: %s\n" % row["FINALOUTCOME"]
+        comments += "Precinct: %s\n" % row["PRECINCT"]
         ac.CallNotes = comments
         ac.Sex = 2
 
+# Incidents
+if BITE_IMPORT:
+    cbite = asm.csv_to_list("%s/bite.csv" % PATH, uppercasekeys=True, strip=True)
+    for row in cbite:
+        if row["BITEINCIDENTKEY"] not in ppi: continue
+        ac = ppi[row["BITEINCIDENTKEY"]]
+        # We don't create new incident records for bites, we just add the
+        # extra info, such as the victim and suspect to the existing incident 
+        # as all bites seem to be an incident in ShelterPro
+        ac = asm.AnimalControl()
+        animalcontrol.append(ac)
+        ac.IncidentTypeID = 5 # Switch incident type to Bite
+        if row["BITEVICTIMKEY"] in ppo:
+            ac.VictimID = ppo[row["BITEVICTIMKEY"]].ID
+        if row["BITEOWNERKEY"] in ppo:
+            biteo = ppo[row["BITEOWNERKEY"]].ID
+            if ac.OwnerID > 0: 
+                ac.Owner2ID = biteo
+            else:
+                ac.OwnerID = biteo
+        comments = "Bite test type: %s\n" % row["BITETESTTYPE"]
+        comments += "Bite test method: %s\n" % row["BITETESTMETHOD"]
+        comments += "Bite test result: %s\n" % row["BITETESTRESULT"]
+        comments += "Bite precinct: %s\n" % row["BITEPRECINCT"]
+        comments += "Bite status: %s\n" % row["BITESTATUS"]
+        if ac.CallNotes == "": ac.CallNotes = comments
+        l = asm.Log()
+        logs.append(l)
+        l.LogTypeID = 3
+        l.LinkID = ac.ID
+        l.LinkType = 6
+        l.Date = getdate(row["BITEDATE"])
+        if l.Date is None:
+            l.Date = asm.now()
+        l.Comments = comments
+
 # Notes as log entries
+cnote = asm.csv_to_list("%s/note.csv" % PATH, uppercasekeys=True, strip=True)
 for row in cnote:
     eventtype = row["EVENTTYPE"]
     eventkey = row["EVENTKEY"]
@@ -493,18 +561,13 @@ for row in cnote:
 
 # Run back through the animals, if we have any that are still
 # on shelter after 2 years, add an adoption to an unknown owner
-for a in animals:
-    if a.Archived == 0 and a.DateBroughtIn < asm.subtract_days(asm.now(), 365*2):
-        m = asm.Movement()
-        m.AnimalID = a.ID
-        m.OwnerID = uo.ID
-        m.MovementType = 1
-        m.MovementDate = a.DateBroughtIn
-        a.Archived = 1
-        a.ActiveMovementID = m.ID
-        a.ActiveMovementDate = a.DateBroughtIn
-        a.ActiveMovementType = 1
-        movements.append(m)
+if FAKE_ADOPTION_ONSHELTER_DAYS > 0:
+    asm.adopt_older_than(animals, movements, uo.ID, FAKE_ADOPTION_ONSHELTER_DAYS)
+
+# One customer asked if we can remove all animals who were euthanised
+# more than 3 years ago.
+if OMIT_ANIMALS_EUTHANISED_DAYS > 0:
+    animals = [a for a in animals if a.PutToSleep == 0 or (a.DeceasedDate and a.PutToSleep == 1 and a.DeceasedDate > asm.subtract_days(asm.now(), OMIT_ANIMALS_EUTHANISED_DAYS)) ]
 
 # Now that everything else is done, output stored records
 for a in animals:
@@ -517,12 +580,14 @@ for l in logs:
     print(l)
 for m in movements:
     print(m)
+for od in ownerdonations:
+    print(od)
 for ol in ownerlicences:
     print(ol)
 for ac in animalcontrol:
     print(ac)
 
-asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements, ownerlicences=ownerlicences, animalcontrol=animalcontrol)
+asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements, ownerdonations=ownerdonations, ownerlicences=ownerlicences, animalcontrol=animalcontrol)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
 print("COMMIT;")
