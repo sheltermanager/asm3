@@ -398,6 +398,8 @@ animal records.
 
 * sourcenumber (Text): Required for all cat and dog listings in Victoria
 
+* picnumber (Text): Required for all livestock listings in Victoria
+
 * rehomingorganisationid (Text): For cats and dogs in NSW, this field OR a
   microchip number OR breederid must be supplied.
 

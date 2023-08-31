@@ -225,6 +225,10 @@ class PetRescuePublisher(AbstractPublisher):
         if "SOURCENUMBER" in an and an.SOURCENUMBER != "":
             source_number = an.SOURCENUMBER
 
+        pic_number = ""
+        if "PICNUMBER" in an and an.PICNUMBER != "":
+            pic_number = an.PICNUMBER
+
         needs_constant_care = False
         if "NEEDSCONSTANTCARE" in an and an.NEEDSCONSTANTCARE != "" and an.NEEDSCONSTANTCARE != "0":
             needs_constant_care = True
@@ -291,6 +295,7 @@ class PetRescuePublisher(AbstractPublisher):
             "species_name":             an.SPECIESNAME,
             "breed_names":              self.get_breed_names(an), # [breed1,breed2] or [breed1]
             "breeder_id":               breeder_id, # mandatory for QLD dogs born after 2017-05-26 or South Aus where bred_in_care_of_group==true after 2018-07-01
+            "pic_number":               pic_number, # mandatory for Victoria livestock (horses etc)
             "source_number":            source_number, # mandatory for Victoria cats and dogs
             "rehoming_organisation_id": rehoming_organisation_id, # required for NSW, this OR microchip or breeder_id is mandatory
             "bred_in_care_of_group":    bred_in_care_of_group, 

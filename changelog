@@ -1,6 +1,7 @@
 48
 ================
 
+31/08/23 Add picnumber field for PetRescue
 30/08/23 type hints, log, lookup and lostfound modules #1320
 30/08/23 type hints, html module #1320
 29/08/23 Fix date parsing bug for Sweden caused by refactoring
