@@ -25,13 +25,22 @@ for t in `mdb-tables $MDB`; do
 done
 """
 
+"""
+These are just notes for where the last customer deleted some lookup values prior to the import.
+Update some values to something sensible.
+-- not found
+UPDATE animalcontrol SET IncidentCompletedID = 29 WHERE IncidentCompletedID = 4;
+-- bite
+UPDATE animalcontrol SET IncidentTypeID = 35 WHERE IncidentTypeID = 5;
+"""
+
 PATH = "/home/robin/tmp/asm3_import_data/shelterpro_mg3031"
 
 START_ID = 1000
 
 BITE_IMPORT = True
 INCIDENT_IMPORT = True
-LICENCE_IMPORT = False
+LICENCE_IMPORT = True
 IMAGE_FILE_IMPORT = False
 IMAGE_TABLE_IMPORT = False
 PAYMENT_IMPORT = True
@@ -118,7 +127,7 @@ if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: asm.setid("dbfs", START_ID)
 if PAYMENT_IMPORT: asm.setid("ownerdonation", START_ID)
 
 # Remove existing
-print("\\set ON_ERROR_STOP\nBEGIN;")
+print("\\set ON_ERROR_STOP\nBEGIN TRANSACTION;")
 print("DELETE FROM adoption WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM animal WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM log WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
@@ -142,7 +151,79 @@ owners.append(uo)
 uo.OwnerSurname = "Unknown Owner"
 uo.OwnerName = uo.OwnerSurname
 
-# Start with animals
+# Addresses
+caddress = asm.csv_to_list("%s/address.csv" % PATH, uppercasekeys=True, strip=True)
+caddrlink = asm.csv_to_list("%s/addrlink.csv" % PATH, uppercasekeys=True, strip=True)
+for row in caddress:
+    addresses[row["ADDRESSKEY"]] = {
+        "address": "%s %s %s %s" % (row["ADDRESSSTREETNUMBER"], row["ADDRESSSTREETDIR"], row["ADDRESSSTREETNAME"], row["ADDRESSSTREETTYPE"]),
+        "city": row["ADDRESSCITY"],
+        "state": row["ADDRESSSTATE"],
+        "zip": row["ADDRESSPOSTAL"]
+    }
+
+# The link between addresses and people
+for row in caddrlink:
+    addrlink[row["EVENTKEY"]] = row["ADDRLINKADDRESSKEY"]
+
+# Now do people
+cperson = asm.csv_to_list("%s/person.csv" % PATH, uppercasekeys=True, strip=True)
+for row in cperson:
+    o = asm.Owner()
+    owners.append(o)
+    ppo[row["PERSONKEY"]] = o
+    o.OwnerForeNames = asm.strip(row["FNAME"]).title()
+    o.OwnerSurname = asm.strip(row["LNAME"]).title()
+    o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
+    # Find the address
+    if row["PERSONKEY"] in addrlink:
+        addrkey = addrlink[row["PERSONKEY"]]
+        if addrkey in addresses:
+            add = addresses[addrkey]
+            o.OwnerAddress = add["address"].replace("  ", " ").title()
+            o.OwnerTown = add["city"].title()
+            o.OwnerCounty = add["state"].upper()
+            o.OwnerPostcode = add["zip"].upper()
+    if asm.strip(row["EMAIL"]) != "(": o.EmailAddress = asm.strip(row["EMAIL"])
+    if row["HOME_PH"] != "0": o.HomeTelephone = asm.strip(row["HOME_PH"])
+    if row["WORK_PH"] != "0": o.WorkTelephone = asm.strip(row["WORK_PH"])
+    if row["THIRD_PH"] != "0": o.MobileTelephone = asm.strip(row["THIRD_PH"])
+    o.IsACO = asm.cint(row["ACO_IND"])
+    o.IsStaff = asm.cint(row["STAFF_IND"])
+    o.IsVolunteer = asm.cint(row["VOL_IND"])
+    o.IsDonor = asm.cint(row["DONOR_IND"])
+    o.IsMember = asm.cint(row["MEMBER_IND"])
+    o.IsBanned = asm.cint(row["NOADOPT"] == "T" and "1" or "0")
+    o.IsFosterer = asm.cint(row["FOSTERS"])
+    o.IdentificationNumber = row["DRIV_LIC"]
+    o.DateOfBirth = getdate(row["BIRTH"])
+    # o.ExcludeFromBulkEmail = asm.cint(row["MAILINGSAM"]) # Not sure this is correct
+
+if PAYMENT_IMPORT:
+    cpayment = asm.csv_to_list("%s/payments.csv" % PATH, uppercasekeys=True, strip=True)
+    for row in cpayment:
+        if row["PAYMENTPRSN"] not in ppo: continue
+        o = ppo[row["PAYMENTPRSN"]]
+        od = asm.OwnerDonation()
+        od.DonationTypeID = 1
+        od.DonationPaymentID = 1 # Cash - Default
+        if row["PAYMENTMETH"] == "CHECK":
+            od.DonationPaymentID = 2 # Check
+            od.ChequeNumber = row["PAYMENTREF"]
+        elif row["PAYMENTCARDTYPE"] != "": 
+            od.DonationPaymentID = 3 # Credit Card
+        od.Date = getdate(row["PAYMENTDATE"])
+        od.OwnerID = o.ID
+        if row["PAYMENTREVERSALAMOUNT"] != "0":
+            od.Donation = asm.get_currency(row["PAYMENTREVERSALAMOUNT"]) * -1
+        else:
+            od.Donation = asm.get_currency(row["PAYMENTAMOUNT"])
+        comments = "Method/Card Type: %s/%s" % (row["PAYMENTMETH"], row["PAYMENTCARDTYPE"])
+        comments += "\nVerification: " + row["PAYMENTIDVERIFICATION"]
+        od.Comments = comments
+        ownerdonations.append(od)
+
+# Animals
 canimal = asm.csv_to_list("%s/animal.csv" % PATH, uppercasekeys=True, strip=True)
 for row in canimal:
     if not IMPORT_ANIMALS_WITH_NO_NAME and row["PETNAME"].strip() == "": continue
@@ -157,7 +238,9 @@ for row in canimal:
     age = row["AGE"].split(" ")[0]
     # TODO: DOB is not always present in these things
     a.DateOfBirth = getdate(row["DOB"])
-    if a.DateOfBirth is None: a.DateOfBirth = getdateage(age, getdate(row["ADDEDDATETIME"]))
+    if a.DateOfBirth is None: 
+        a.DateOfBirth = getdateage(age, getdate(row["ADDEDDATETIME"]))
+        a.EstimatedDOB = 1
     a.DateBroughtIn = getdate(row["ADDEDDATETIME"])
     if a.DateBroughtIn is None:
         a.DateBroughtIn = datetime.datetime.today()    
@@ -174,6 +257,7 @@ for row in canimal:
     a.Size = getsize(asm.strip(row["WEIGHT"]))
     a.BaseColourID = asm.colour_id_for_names(asm.strip(row["FURCOLR1"]), asm.strip(row["FURCOLR2"]))
     a.IdentichipNumber = asm.strip(row["MICROCHIP"])
+    if a.IdentichipNumber != "": a.Identichipped = 1
     comments = "Original breed: " + asm.strip(row["BREED1"]) + "/" + asm.strip(row["CROSSBREED"]) + ", age: " + age
     comments += ",Color: " + asm.strip(row["FURCOLR1"]) + "/" + asm.strip(row["FURCOLR2"])
     comments += ", Coat: " + asm.strip(row["COAT"])
@@ -189,6 +273,10 @@ for row in canimal:
     # Make everything non-shelter until it's in the shelter file
     a.NonShelterAnimal = 1
     a.Archived = 1
+    # If there's an owner, record it
+    if row["PERSOWNR"] in ppo:
+        o = ppo[row["PERSOWNR"]]
+        a.OriginalOwnerID = o.ID
     # Shelterpro records Deceased as Status == 2 as far as we can tell
     if row["STATUS"] == 2:
         a.DeceasedDate = a.DateBroughtIn
@@ -232,77 +320,6 @@ if VACCINATION_IMPORT:
         av.Comments = "Name: %s, Issue: %s" % (row["VACCDRUGNAME"], row["VACCISSUEDPRTDATE"])
     del cvacc
 
-# Next, addresses
-caddress = asm.csv_to_list("%s/address.csv" % PATH, uppercasekeys=True, strip=True)
-caddrlink = asm.csv_to_list("%s/addrlink.csv" % PATH, uppercasekeys=True, strip=True)
-for row in caddress:
-    addresses[row["ADDRESSKEY"]] = {
-        "address": "%s %s %s %s" % (row["ADDRESSSTREETNUMBER"], row["ADDRESSSTREETDIR"], row["ADDRESSSTREETNAME"], row["ADDRESSSTREETTYPE"]),
-        "city": row["ADDRESSCITY"],
-        "state": row["ADDRESSSTATE"],
-        "zip": row["ADDRESSPOSTAL"]
-    }
-
-# The link between addresses and people
-for row in caddrlink:
-    addrlink[row["EVENTKEY"]] = row["ADDRLINKADDRESSKEY"]
-
-# Now do people
-cperson = asm.csv_to_list("%s/person.csv" % PATH, uppercasekeys=True, strip=True)
-for row in cperson:
-    o = asm.Owner()
-    owners.append(o)
-    ppo[row["PERSONKEY"]] = o
-    o.OwnerForeNames = asm.strip(row["FNAME"]).title()
-    o.OwnerSurname = asm.strip(row["LNAME"]).title()
-    o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
-    # Find the address
-    if row["PERSONKEY"] in addrlink:
-        addrkey = addrlink[row["PERSONKEY"]]
-        if addrkey in addresses:
-            add = addresses[addrkey]
-            o.OwnerAddress = add["address"]
-            o.OwnerTown = add["city"]
-            o.OwnerCounty = add["state"]
-            o.OwnerPostcode = add["zip"]
-    if asm.strip(row["EMAIL"]) != "(": o.EmailAddress = asm.strip(row["EMAIL"])
-    if row["HOME_PH"] != 0: o.HomeTelephone = asm.strip(row["HOME_PH"])
-    if row["WORK_PH"] != 0: o.WorkTelephone = asm.strip(row["WORK_PH"])
-    if row["THIRD_PH"] != 0: o.MobileTelephone = asm.strip(row["THIRD_PH"])
-    o.IsACO = asm.cint(row["ACO_IND"])
-    o.IsStaff = asm.cint(row["STAFF_IND"])
-    o.IsVolunteer = asm.cint(row["VOL_IND"])
-    o.IsDonor = asm.cint(row["DONOR_IND"])
-    o.IsMember = asm.cint(row["MEMBER_IND"])
-    o.IsBanned = asm.cint(row["NOADOPT"] == "T" and "1" or "0")
-    o.IsFosterer = asm.cint(row["FOSTERS"])
-    o.IdentificationNumber = row["DRIV_LIC"]
-    o.DateOfBirth = getdate(row["BIRTH"])
-    # o.ExcludeFromBulkEmail = asm.cint(row["MAILINGSAM"]) # Not sure this is correct
-
-if PAYMENT_IMPORT:
-    cpayment = asm.csv_to_list("%s/payments.csv" % PATH, uppercasekeys=True, strip=True)
-    for row in cpayment:
-        if row["PAYMENTPRSN"] not in ppo: continue
-        o = ppo[row["PAYMENTPRSN"]]
-        od = asm.OwnerDonation()
-        od.DonationTypeID = 1
-        od.DonationPaymentID = 1 # Cash - Default
-        if row["PAYMENTMETH"] == "CHECK":
-            od.DonationPaymentID = 2 # Check
-            od.ChequeNumber = row["PAYMENTREF"]
-        elif row["PAYMENTCARDTYPE"] != "": 
-            od.DonationPaymentID = 3 # Credit Card
-        od.Date = getdate(row["PAYMENTDATE"])
-        od.OwnerID = o.ID
-        if row["PAYMENTREVERSALAMOUNT"] != "0":
-            od.Donation = asm.get_currency(row["PAYMENTREVERSALAMOUNT"]) * -1
-        else:
-            od.Donation = asm.get_currency(row["PAYMENTAMOUNT"])
-        comments = "Method/Card Type: %s/%s" % (row["PAYMENTMETH"], row["PAYMENTCARDTYPE"])
-        comments += "\nVerification: " + row["PAYMENTIDVERIFICATION"]
-        od.Comments = comments
-        ownerdonations.append(od)
 
 # Run through the shelter file and create any movements/euthanisation info
 cshelter = asm.csv_to_list("%s/shelter.csv" % PATH, uppercasekeys=True, strip=True)
@@ -498,17 +515,19 @@ if BITE_IMPORT:
         # We don't create new incident records for bites, we just add the
         # extra info, such as the victim and suspect to the existing incident 
         # as all bites seem to be an incident in ShelterPro
-        ac = asm.AnimalControl()
-        animalcontrol.append(ac)
         ac.IncidentTypeID = 5 # Switch incident type to Bite
         if row["BITEVICTIMKEY"] in ppo:
             ac.VictimID = ppo[row["BITEVICTIMKEY"]].ID
+        """
+        # NOTE: Could not find any instance in the data where biteownerkey didn't already match
+        #       the owner from the incident, so the below is not necessary
         if row["BITEOWNERKEY"] in ppo:
             biteo = ppo[row["BITEOWNERKEY"]].ID
             if ac.OwnerID > 0: 
                 ac.Owner2ID = biteo
             else:
                 ac.OwnerID = biteo
+        """
         comments = "Bite test type: %s\n" % row["BITETESTTYPE"]
         comments += "Bite test method: %s\n" % row["BITETESTMETHOD"]
         comments += "Bite test result: %s\n" % row["BITETESTRESULT"]
@@ -540,12 +559,24 @@ for row in cnote:
         logs.append(l)
         l.LogTypeID = 3
         l.LinkID = linkid
-        l.LinkType = 0
+        l.LinkType = 0 # animal
         l.Date = notedate
         if l.Date is None:
             l.Date = asm.now()
         l.Comments = memo
-    elif eventtype in [ "2", "5", "10" ]: # person, case and incident notes
+    elif eventtype in [ "2" ]: # person notes
+        if not eventkey in ppo: continue
+        linkid = ppo[eventkey].ID
+        l = asm.Log()
+        logs.append(l)
+        l.LogTypeID = 3
+        l.LinkID = linkid
+        l.LinkType = 1 # person
+        l.Date = notedate
+        if l.Date is None:
+            l.Date = asm.now()
+        l.Comments = memo
+    elif eventtype in [ "5", "10" ]: # case and incident notes
         if not eventkey in ppi: continue
         linkid = ppi[eventkey].ID
         ppi[eventkey].CallNotes += "\n" + memo
@@ -553,7 +584,7 @@ for row in cnote:
         logs.append(l)
         l.LogTypeID = 3
         l.LinkID = linkid
-        l.LinkType = 6
+        l.LinkType = 6 # animalcontrol
         l.Date = notedate
         if l.Date is None:
             l.Date = asm.now()

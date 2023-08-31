@@ -222,7 +222,9 @@ for row in canimal:
     added = asm.now()
     if "ADDEDDATET" in row and row["ADDEDDATET"] is not None: added = row["ADDEDDATET"]
     if "DOB" in row: a.DateOfBirth = row["DOB"]
-    if a.DateOfBirth is None: a.DateOfBirth = getdateage(age, added)
+    if a.DateOfBirth is None: 
+        a.DateOfBirth = getdateage(age, added)
+        a.EstimatedDOB = 1
     a.DateBroughtIn = added
     a.LastChangedDate = a.DateBroughtIn
     a.CreatedDate = a.DateBroughtIn
@@ -253,7 +255,7 @@ for row in canimal:
     # Make everything non-shelter until it's in the shelter file
     a.NonShelterAnimal = 1
     a.Archived = 1
-    # If the row has an original owner
+    # If the row has an owner
     if row["PERSOWNR"] in ppo:
         o = ppo[row["PERSOWNR"]]
         a.OriginalOwnerID = o.ID
@@ -496,7 +498,19 @@ if NOTE_IMPORT:
             if l.Date is None:
                 l.Date = asm.now()
             l.Comments = memo
-        elif eventtype in [ 2, 5, 10 ]: # person, case and incident notes
+        elif eventtype in [ 2 ]: # person notes
+            if not eventkey in ppo: continue
+            linkid = ppo[eventkey].ID
+            l = asm.Log()
+            logs.append(l)
+            l.LogTypeID = 3
+            l.LinkID = linkid
+            l.LinkType = 1 # person
+            l.Date = notedate
+            if l.Date is None:
+                l.Date = asm.now()
+            l.Comments = memo
+        elif eventtype in [ 5, 10 ]: # case and incident notes
             if not eventkey in ppi: continue
             linkid = ppi[eventkey].ID
             ppi[eventkey].CallNotes += "\n" + memo
