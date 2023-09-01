@@ -891,6 +891,20 @@ def get_alerts(dbo: Database, locationfilter: str = "", siteid: int = 0, visible
                 "alertnevervacc": alertnevervacc, "alertrabies": alertrabies }
     return dbo.query_cache(sql, age=age)
 
+def get_overview(dbo: Database, age: int = 120) -> Results:
+    """
+    Returns the overview figures for the main screen.
+    """
+    sql = "SELECT " \
+        "(SELECT COUNT(*) FROM animal WHERE Archived=0 AND (ActiveMovementType Is Null OR ActiveMovementType = 0)) AS OnShelter, " \
+        "(SELECT COUNT(*) FROM animal WHERE ActiveMovementType=2) AS OnFoster, " \
+        "(SELECT COUNT(*) FROM animal WHERE Archived=0 AND IsHold=1) AS OnHold, " \
+        "(SELECT COUNT(*) FROM animal WHERE Archived=0 AND HasActiveReserve=1) AS Reserved, " \
+        "(SELECT COUNT(*) FROM animal WHERE Archived=0 AND HasTrialAdoption=1) AS TrialAdoption, " \
+        "(SELECT COUNT(*) FROM animal WHERE Adoptable=1) AS Adoptable " \
+        "FROM lksmovementtype WHERE ID=1"
+    return dbo.first_row(dbo.query_cache(sql, age=age))
+
 def get_stats(dbo: Database, age: int = 120) -> Results:
     """
     Returns the stats figures for the main screen.

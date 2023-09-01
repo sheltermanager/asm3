@@ -1347,6 +1347,10 @@ class main(JSONEndpoint):
             if len(alerts) > 0: 
                 alerts[0]["LOOKFOR"] = asm3.cachedisk.get("lookingfor_lastmatchcount", dbo.database)
                 alerts[0]["LOSTFOUND"] = asm3.cachedisk.get("lostfound_lastmatchcount", dbo.database)
+        # Overview
+        overview = {}
+        if asm3.configuration.show_overview_home_page(dbo):
+            overview = asm3.animal.get_overview(dbo, age=age)
         # Stats
         stats = []
         if asm3.configuration.show_stats_home_page(dbo) != "none":
@@ -1381,6 +1385,7 @@ class main(JSONEndpoint):
             "activeusers": activeusers,
             "usersandroles": usersandroles,
             "alerts": alerts,
+            "overview": overview,
             "recent": timeline,
             "stats": stats,
             "animallinks": asm3.animal.get_animals_brief(animallinks),

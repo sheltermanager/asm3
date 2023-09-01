@@ -318,6 +318,7 @@ DEFAULTS = {
     "ShowLookupDataID": "No",
     "ShowSexBorder": "Yes",
     "ShowTimelineHomePage": "Yes", 
+    "ShowOverviewHomePage": "Yes", 
     "ShowStatsHomePage": "thismonth", 
     "ShowFirstTime": "Yes",
     "ShowILOffShelter": "Yes",
@@ -1419,6 +1420,9 @@ def show_gdpr_contact_optin(dbo: Database) -> bool:
 
 def show_lat_long(dbo: Database) -> bool:
     return cboolean(dbo, "ShowLatLong", DEFAULTS["ShowLatLong"] == "Yes")
+
+def show_overview_home_page(dbo: Database) -> str:
+    return cstring(dbo, "ShowOverviewHomePage", DEFAULTS["ShowOverviewHomePage"])
 
 def show_stats_home_page(dbo: Database) -> str:
     return cstring(dbo, "ShowStatsHomePage", DEFAULTS["ShowStatsHomePage"])

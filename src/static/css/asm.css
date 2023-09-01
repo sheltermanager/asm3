@@ -89,6 +89,11 @@ select:disabled, input:disabled, textarea:disabled {
     padding-bottom: 5px;
 }
 
+.bottomdotted { 
+    border-bottom: 1px dotted #999; 
+    margin: 5px; 
+}
+
 .strong {
     font-weight: bold;
 }
@@ -256,6 +261,35 @@ select:disabled, input:disabled, textarea:disabled {
     vertical-align: top;
     width: 49%;
     min-width: 330px;
+}
+
+.asm-main-section {
+    border-radius: 8px;
+    border: 1px dotted #999;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    padding: 5px;
+}
+
+.asm-main-count {
+    display: inline-block;
+    border-radius: 8px;
+    border: 1px solid #999;
+    padding: 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.asm-main-count-no {
+    font-size: 120%;
+    font-weight: bold;
+    text-align: center;
+}
+
+.asm-main-count-text {
+    font-size: 90%;
+    opacity: 0.7;
 }
 
 .asm-main-table { border-collapse: separate; }
@@ -529,7 +563,7 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-timeline-small-date { text-decoration: none; opacity: 0.5; }
 .asm-timeline-large-date { font-weight: bold; font-size: 140%; border-bottom: 1px solid black; }
 .asm-timeline-by { font-size: 80%; font-style: italic; opacity: 0.5; }
-.asm-timeline-item { border-bottom: 1px dotted #555; padding: 10px; }
+.asm-timeline-item { border-bottom: 1px dotted #999; padding: 10; }
 
 /** TABLES ========================== */
 .asm-table { border-collapse: collapse; }
@@ -913,7 +947,7 @@ select:disabled, input:disabled, textarea:disabled {
     width: 100%;
 }
 .asm-underlined-rows td {
-    border-bottom: 1px dotted #bbb;
+    border-bottom: 1px dotted #999;
 }
 
 .asm-toolbar {

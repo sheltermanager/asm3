@@ -670,6 +670,8 @@ for adoption).
 * Show alerts on the home page: Shows alerts about outstanding vaccinations,
   medical treatments, donations, etc.
 
+* Show overview counts on the home page: Shows totals for animals in care.
+
 * Show timeline on the home page: Shows the last 10 things that happened at the
   shelter on the home page (intake, adoptions, euthanasia, etc)
 

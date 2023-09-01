@@ -1132,6 +1132,7 @@ $(function() {
                 '<p>',
                 '<input data="rc:DisableTips" id="disabletips" class="asm-checkbox" type="checkbox" /> <label for="disabletips">' + _("Show tips on the home page") + '</label><br />',
                 '<input data="ShowAlertsHomePage" id="showalerts" class="asm-checkbox" type="checkbox" /> <label for="showalerts">' + _("Show alerts on the home page") + '</label><br />',
+                '<input data="ShowOverviewHomePage" id="showoverview" class="asm-checkbox" type="checkbox" /> <label for="showoverview">' + _("Show overview counts on the home page") + '</label><br />',
                 '<input data="ShowTimelineHomePage" id="showtimeline" class="asm-checkbox" type="checkbox" /> <label for="showtimeline">' + _("Show timeline on the home page") + '</label><br />',
                 '<input data="rc:ShowDeceasedHomePage" id="showhdeceased" class="asm-checkbox" type="checkbox" /> <label for="showhdeceased">' + _("Hide deceased animals from the home page") + '</label><br />',
                 '<input data="rc:ShowFinancialHomePage" id="showhfinancial" class="asm-checkbox" type="checkbox" /> <label for="showhfinancial">' + _("Hide financial stats from the home page") + '</label><br />',
