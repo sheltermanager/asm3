@@ -58,8 +58,8 @@ $(function() {
 
         render_alerts: function() {
             let s = "", alerts;
-            if (!config.bool("ShowAlertsHomePage")) { return; }
-            if (!controller.alerts || controller.alerts.length == 0) { return; }
+            if (!config.bool("ShowAlertsHomePage")) { return ""; }
+            if (!controller.alerts || controller.alerts.length == 0) { return ""; }
             alerts = controller.alerts[0];
             let totalalerts = 0;
             s += '<p class="asm-menu-category">' + _("Alerts") + ' (<span id="totalalerts"></span>)</p>';
@@ -544,8 +544,8 @@ $(function() {
 
         render_stats: function() {
             let s = "", stats, displayname;
-            if (config.str("ShowStatsHomePage") == "none") { return; }
-            if (!controller.stats || controller.stats.length == 0) { return; }
+            if (config.str("ShowStatsHomePage") == "none") { return ""; }
+            if (!controller.stats || controller.stats.length == 0) { return ""; }
             stats = controller.stats[0];
             if (config.str("ShowStatsHomePage") == "today") {
                 displayname = _("Shelter stats (today)");
@@ -654,7 +654,7 @@ $(function() {
 
         render_timeline: function() {
             let h = [];
-            if (!config.bool("ShowTimelineHomePage") || !common.has_permission("va")) { return; }
+            if (!config.bool("ShowTimelineHomePage") || !common.has_permission("va")) { return ""; }
             h.push('<p class="asm-menu-category"><a href="timeline">' + _("Timeline ({0})").replace("{0}", controller.recent.length) + '</a></p><p>');
             $.each(controller.recent, function(i, v) {
                 // Skip this entry if it's for a deceased animal and we aren't showing them
