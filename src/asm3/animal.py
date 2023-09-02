@@ -900,6 +900,7 @@ def get_overview(dbo: Database, age: int = 120) -> Results:
         "(SELECT COUNT(*) FROM animal WHERE ActiveMovementType=2) AS OnFoster, " \
         "(SELECT COUNT(*) FROM animal WHERE Archived=0 AND IsHold=1) AS OnHold, " \
         "(SELECT COUNT(*) FROM animal WHERE Archived=0 AND HasActiveReserve=1) AS Reserved, " \
+        "(SELECT COUNT(*) FROM animal WHERE ActiveMovementType=8) AS Retailer, " \
         "(SELECT COUNT(*) FROM animal WHERE Archived=0 AND HasTrialAdoption=1) AS TrialAdoption, " \
         "(SELECT COUNT(*) FROM animal WHERE Adoptable=1) AS Adoptable " \
         "FROM lksmovementtype WHERE ID=1"

@@ -536,10 +536,11 @@ $(function() {
             };
             oo(controller.overview.ONSHELTER, _("On Shelter"), "shelterview");
             oo(controller.overview.ONFOSTER, _("Fostered"), "move_book_foster");
-            oo(controller.overview.ONHOLD, _("Held"), "search?q=hold");
             oo(controller.overview.ADOPTABLE, _("Adoptable"), "search?q=forpublish");
+            oo(controller.overview.ONHOLD, _("Held"), "search?q=hold");
             oo(controller.overview.RESERVED, _("Reserved"), "move_book_reservation");
-            oo(controller.overview.TRIALADOPTION, _("Trial Adoption"), "move_book_trial_adoption");
+            if (!config.bool("DisableRetailer")) { oo(controller.overview.RETAILER, _("Retailer"), "move_book_retailer"); }
+            if (config.bool("TrialAdoptions")) { oo(controller.overview.TRIALADOPTION, _("Trial Adoption"), "move_book_trial_adoption"); }
             s.push('</div>');
             return s.join("\n");
         },
@@ -789,9 +790,9 @@ $(function() {
             '</span>',
             '</div>', // asm-main-section
             '</div>', // asm-main-column
-            '</div>', // asm-content
+            '</div>', // asm-main-columns
             this.render_active_users(),
-            '</div>'
+            '</div>'  // asm-content
             ];
             return h.join("\n");
         },
