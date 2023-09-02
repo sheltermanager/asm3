@@ -7,22 +7,21 @@ $(function() {
     const main = {
 
         render_active_users: function() {
-            let s = "", loggedin = _("Active users: {0}"), userlist = [];
+            let loggedin = _("Active users: {0}"), userlist = [];
             $.each(controller.activeusers.split(","), function(i, u) {
                 let since = u.split("=")[1], user = u.split("=")[0];
                 userlist.push("<a class='activeuser' title='" + html.title(since) + "' href='#'>" + user + "</a>");
             });
-            s += '<div id="footer">';
-            s += '<div class="asm-footer-users">' + common.substitute(loggedin, { "0": userlist.join(", ")}) + '</div>';
-            s += '<div class="asm-footer-version">';
-            s += common.substitute('<a id="link-about" href="#">{asm} {version} {user}@{org}</a>', {
-                "asm":      _("ASM"),
-                "version":  controller.version.substring(0, controller.version.indexOf(" ")),
-                "user":     asm.user,
-                "org":      config.str("Organisation")});
-            s += '</div>';
-            s += '</div>';
-            return s;
+            return ['<div id="footer">',
+                '<div class="asm-footer-users">' + common.substitute(loggedin, { "0": userlist.join(", ")}) + '</div>',
+                '<div class="asm-footer-version">',
+                common.substitute('<a id="link-about" href="#">{asm} {version} {user}@{org}</a>', {
+                    "asm":      _("ASM"),
+                    "version":  controller.version.substring(0, controller.version.indexOf(" ")),
+                    "user":     asm.user,
+                    "org":      config.str("Organisation")}),
+                '</div>',
+                '</div>'].join("\n");
         },
 
         tip: function() {
@@ -57,14 +56,14 @@ $(function() {
         },
 
         render_alerts: function() {
-            let s = "", alerts;
+            let s = ['<div class="asm-main-section">'], alerts;
             if (!config.bool("ShowAlertsHomePage")) { return ""; }
             if (!controller.alerts || controller.alerts.length == 0) { return ""; }
             alerts = controller.alerts[0];
             let totalalerts = 0;
-            s += '<p class="asm-menu-category">' + _("Alerts") + ' (<span id="totalalerts"></span>)</p>';
+            s.push('<p class="asm-menu-category">' + _("Alerts") + ' (<span id="totalalerts"></span>)</p>');
             const oa = function(url, icon, text) {
-               s += '<p class="bottomdotted"><a href="' + url + '">' + html.icon(icon) + ' ' + text + '</a></p>';
+               s.push('<p class="bottomdotted"><a href="' + url + '">' + html.icon(icon) + ' ' + text + '</a></p>');
             };
             if (alerts.DUEVACC > 0 && common.has_permission("vav")) {
                 totalalerts += alerts.DUEVACC;
@@ -418,11 +417,12 @@ $(function() {
                     ]));
             }
             main.total_alerts = totalalerts;
-            return s;
+            s.push('</div>');
+            return s.join("\n");
         },
 
         render_animal_links: function() {
-            let s = [];
+            let s = ['<div class="asm-main-section">'];
             let linknames = { "recentlychanged": _("Recently Changed"), 
                 "recentlyentered": _("Recently Entered Shelter"),
                 "recentlyadopted": _("Recently Adopted"), 
@@ -442,16 +442,17 @@ $(function() {
                     s.push("</div>");
                 });
             }
+            s.push('</div>');
             return s.join("\n");
         },
 
         render_diary: function() {
-            let s = "";
-            s += '<p class="asm-menu-category"><a href="diary_edit_my">' + common.substitute(_("Diary for {0}"), {"0": asm.user }) + '</a> ';
-            s += '<button id="button-adddiary">' + _("Add a diary note") + '</button>';
-            s += '<button id="button-diarycal">' + _("Calendar view") + '</button></p>';
-            s += '<table class="asm-main-table asm-underlined-rows">';
-            s += '<tbody>';
+            let s = ['<div class="asm-main-section">'];
+            s.push('<p class="asm-menu-category"><a href="diary_edit_my">' + common.substitute(_("Diary for {0}"), {"0": asm.user }) + '</a> ');
+            s.push('<button id="button-adddiary">' + _("Add a diary note") + '</button>');
+            s.push('<button id="button-diarycal">' + _("Calendar view") + '</button></p>');
+            s.push('<table class="asm-main-table asm-underlined-rows">');
+            s.push('<tbody>');
             $.each(controller.diary, function(i, d) {
                 let link = "#";
                 if (d.LINKTYPE == 1) { link = "animal?id=" + d.LINKID; }
@@ -460,78 +461,78 @@ $(function() {
                 if (d.LINKTYPE == 4) { link = "foundanimal?id=" + d.LINKID; }
                 if (d.LINKTYPE == 5) { link = "waitinglist?id=" + d.LINKID; }
                 if (d.LINKTYPE == 7) { link = "incident?id=" + d.LINKID; }
-                s += '<tr title="' + html.title(common.substitute(_("Added by {0} on {1}"), { "0": d.CREATEDBY, "1": format.date(d.CREATEDDATE) })) + '">';
-                s += '<td>' + format.date(d.DIARYDATETIME);
+                s.push('<tr title="' + html.title(common.substitute(_("Added by {0} on {1}"), { "0": d.CREATEDBY, "1": format.date(d.CREATEDDATE) })) + '">');
+                s.push('<td>' + format.date(d.DIARYDATETIME));
                 if (d.DIARYFORNAME != asm.user) {
-                    s += " <i>(" + d.DIARYFORNAME + ")</i>";
+                    s.push(" <i>(" + d.DIARYFORNAME + ")</i>");
                 }
-                s += '</td>';
-                s += '<td style="width: 20%">' + d.SUBJECT + '</td>';
-                s += '<td>';
+                s.push('</td>');
+                s.push('<td style="width: 20%">' + d.SUBJECT + '</td>');
+                s.push('<td>');
                 if (d.LINKINFO != null && d.LINKINFO != "") {
-                    s += '<a href="' + link + '">' + d.LINKINFO + '</a><br />';
+                    s.push('<a href="' + link + '">' + d.LINKINFO + '</a><br />');
                 }
-                s += d.NOTE + '</td></tr>';
+                s.push(d.NOTE + '</td></tr>');
             });
-            s += '</tbody></table>';
-            return s;
+            s.push('</tbody></table>');
+            s.push('</div>');
+            return s.join("\n");
         },
 
         render_messages: function() {
-            let s = "";
-
-            s += '<p class="asm-menu-category">' + _("Message Board") + ' <button id="button-addmessage">' + _("Add Message") + '</button></p>';
-            s += '<table id="asm-messageboard" class="asm-main-table asm-underlined-rows"><tbody>';
-
+            let s = ['<div class="asm-main-section">'];
+            s.push('<p class="asm-menu-category">' + _("Message Board") + ' <button id="button-addmessage">' + _("Add Message") + '</button></p>');
+            s.push('<table id="asm-messageboard" class="asm-main-table asm-underlined-rows"><tbody>');
             $.each(controller.mess, function(i, m) {
-                s += '<tr><td><span style="white-space: nowrap; padding-right: 5px;">';
+                s.push('<tr><td><span style="white-space: nowrap; padding-right: 5px;">');
                 if (m.CREATEDBY == asm.user || m.FORNAME == asm.user || asm.superuser == 1) {
-                    s += '<button class="messagedelete" data="' + m.ID + '">' + _("Delete") + '</button> ';
+                    s.push('<button class="messagedelete" data="' + m.ID + '">' + _("Delete") + '</button> ');
                 }
-                s += '<a href="#" class="activeuser">' + m.CREATEDBY + '</a>';
+                s.push('<a href="#" class="activeuser">' + m.CREATEDBY + '</a>');
                 if (m.FORNAME != "*") {
-                    s += html.icon("right") + m.FORNAME;
+                    s.push(html.icon("right") + m.FORNAME);
                 }
-                s += '</span></td>';
-                s += '<td><span style="white-space: nowrap; padding-right: 5px;">';
+                s.push('</span></td>');
+                s.push('<td><span style="white-space: nowrap; padding-right: 5px;">');
                 if (m.PRIORITY == 1) {
-                    s += '<span class="ui-icon ui-icon-alert" title="' + html.title(_('Important')) + '"></span>';
+                    s.push('<span class="ui-icon ui-icon-alert" title="' + html.title(_('Important')) + '"></span>');
                 }
                 else {
-                    s += '<span class="ui-icon ui-icon-info" title="' + html.title(_('Information')) + '"></span>';
+                    s.push('<span class="ui-icon ui-icon-info" title="' + html.title(_('Information')) + '"></span>');
                 }
-                s += format.date(m.ADDED);
-                s += '</span></td>';
+                s.push(format.date(m.ADDED));
+                s.push('</span></td>');
                 if (m.PRIORITY == 1) {
-                    s += '<td id="mt' + m.ID + '">';
-                    s += '<span class="mtext" style="font-weight: bold !important">' + html.truncate(m.MESSAGE) + '</span>';
-                    s += '<a class="messagetoggle" href="#" data="' + m.ID + '"></a>';
-                    s += '</td>';
+                    s.push('<td id="mt' + m.ID + '">');
+                    s.push('<span class="mtext" style="font-weight: bold !important">' + html.truncate(m.MESSAGE) + '</span>');
+                    s.push('<a class="messagetoggle" href="#" data="' + m.ID + '"></a>');
+                    s.push('</td>');
                 }
                 else {
-                    s += '<td id="mt' + m.ID + '">';
-                    s += '<span class="mtext">' + html.truncate(m.MESSAGE) + '</span>';
-                    s += '<a class="messagetoggle" href="#" data="' + m.ID + '"></a>';
-                    s += '</td>';
+                    s.push('<td id="mt' + m.ID + '">');
+                    s.push('<span class="mtext">' + html.truncate(m.MESSAGE) + '</span>');
+                    s.push('<a class="messagetoggle" href="#" data="' + m.ID + '"></a>');
+                    s.push('</td>');
                 }
             });
-            s += '</tr></tbody></table>';
+            s.push('</tr></tbody></table>');
 
             $.each(controller.mess, function(i, m) {
-                s += '<input id="long' + m.ID + '" type="hidden" value="' + html.title(common.replace_all(m.MESSAGE, "\n", "<br/>")) + '" />';
-                s += '<input id="short' + m.ID + '" type="hidden" value="' + html.title(html.truncate(m.MESSAGE)) + '" />';
+                s.push('<input id="long' + m.ID + '" type="hidden" value="' + html.title(common.replace_all(m.MESSAGE, "\n", "<br/>")) + '" />');
+                s.push('<input id="short' + m.ID + '" type="hidden" value="' + html.title(html.truncate(m.MESSAGE)) + '" />');
             });
-            return s;
+            s.push('</div>');
+            return s.join("\n");
         },
 
         render_overview: function() {
-            let s = "";
-            s += '<p class="asm-menu-category">' + _("Overview") + '</p>';
+            let s = ['<div class="asm-main-section">'];
+            s.push('<p class="asm-menu-category">' + _("Overview") + '</p>');
             const oo = function(n, text, url) {
-                s += '<div class="asm-main-count">' + 
+                s.push('<div class="asm-main-count">' + 
                     '<div class="asm-main-count-no"><a href="' + url + '">' + n + '</a></div>' +
                     '<div class="asm-main-count-text"><a href="' + url + '">' + text + '</a></div>' + 
-                    '</div>';
+                    '</div>');
             };
             oo(controller.overview.ONSHELTER, _("On Shelter"), "shelterview");
             oo(controller.overview.ONFOSTER, _("Fostered"), "move_book_foster");
@@ -539,11 +540,12 @@ $(function() {
             oo(controller.overview.ADOPTABLE, _("Adoptable"), "search?q=forpublish");
             oo(controller.overview.RESERVED, _("Reserved"), "move_book_reservation");
             oo(controller.overview.TRIALADOPTION, _("Trial Adoption"), "move_book_trial_adoption");
-            return s;
+            s.push('</div>');
+            return s.join("\n");
         },
 
         render_stats: function() {
-            let s = "", stats, displayname;
+            let s = ['<div class="asm-main-section">'], stats, displayname;
             if (config.str("ShowStatsHomePage") == "none") { return ""; }
             if (!controller.stats || controller.stats.length == 0) { return ""; }
             stats = controller.stats[0];
@@ -562,9 +564,9 @@ $(function() {
             else if (config.str("ShowStatsHomePage") == "alltime") {
                 displayname = _("Shelter stats (all time)");
             }
-            s += '<p class="asm-menu-category">' + displayname + '</p>';
+            s.push('<p class="asm-menu-category">' + displayname + '</p>');
             const os = function(icon, text) {
-               s += '<p class="bottomdotted">' + html.icon(icon) + ' ' + text + '</p>';
+               s.push('<p class="bottomdotted">' + html.icon(icon) + ' ' + text + '</p>');
             };
             if (stats.ENTERED > 0 && common.has_permission("va")) {
                 os("animal", common.ntranslate(stats.ENTERED, [
@@ -649,11 +651,12 @@ $(function() {
             if (stats.COSTS > 0 && common.has_permission("cvad") && config.bool("ShowFinancialHomePage")) {
                 os("cost", _("{0} incurred in costs").replace("{0}", format.currency(stats.COSTS))); 
             }
-            return s;
+            s.push('</div>');
+            return s.join("\n");
         },
 
         render_timeline: function() {
-            let h = [];
+            let h = ['<div class="asm-main-section">'];
             if (!config.bool("ShowTimelineHomePage") || !common.has_permission("va")) { return ""; }
             h.push('<p class="asm-menu-category"><a href="timeline">' + _("Timeline ({0})").replace("{0}", controller.recent.length) + '</a></p><p>');
             $.each(controller.recent, function(i, v) {
@@ -661,6 +664,7 @@ $(function() {
                 if (!config.bool("ShowDeceasedHomePage") && (v.CATEGORY == "DIED" || v.CATEGORY == "EUTHANISED")) { return; }
                 h.push('<p class="bottomdotted">' + html.event_text(v) + '</p>');
             });
+            h.push('</div>');
             return h.join("\n");
         },
 
@@ -760,18 +764,18 @@ $(function() {
             '</div>',
 
             '<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">',
-            '<div class="asm-main-section">' + this.render_animal_links() + '</div>',
+            this.render_animal_links(),
             '<div class="asm-main-columns">',
             '<div id="asm-main-diary" class="asm-main-column">',
-            '<div class="asm-main-section">' + this.render_overview() + '</div>',
-            '<div class="asm-main-section">' + this.render_diary() + '</div>',
-            controller.diary.length < 3 ? '<div class="asm-main-section">' + this.render_timeline() + '</div>' : "",
+            this.render_overview(),
+            this.render_diary(),
+            controller.diary.length < 3 ? this.render_timeline() : "",
             '</div>',
             '<div class="asm-main-column">',
-            '<div class="asm-main-section">' + this.render_alerts() + '</div>',
-            '<div class="asm-main-section">' + this.render_messages() + '</div>',
-            controller.diary.length >= 3 ? '<div class="asm-main-section">' + this.render_timeline() + '</div>' : "",
-            '<div class="asm-main-section">' + this.render_stats() + '</div>',
+            this.render_alerts(),
+            this.render_messages(),
+            controller.diary.length >= 3 ? this.render_timeline() : "",
+            this.render_stats(),
             '<div class="asm-main-section">',
             '<p class="asm-menu-category">',
             '<a id="newstoggle" href="#">',
@@ -783,9 +787,9 @@ $(function() {
             '<span id="newswrapper" style="display: none">',
             controller.news,
             '</span>',
-            '</div>',
-            '</div>',
-            '</div>',
+            '</div>', // asm-main-section
+            '</div>', // asm-main-column
+            '</div>', // asm-content
             this.render_active_users(),
             '</div>'
             ];

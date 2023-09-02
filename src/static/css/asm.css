@@ -323,10 +323,11 @@ select:disabled, input:disabled, textarea:disabled {
     width: 100%;
     font-size: 80%;
     border-top: 1px solid #aaa;
+    margin-top: 5px;
 }
 .asm-footer-users {
     display: inline-block;
-    width: 50%;
+    width: 49%;
     text-align: left;
 }
 .asm-footer-version {
