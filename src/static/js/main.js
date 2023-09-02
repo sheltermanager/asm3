@@ -526,6 +526,7 @@ $(function() {
         },
 
         render_overview: function() {
+            if (!config.bool("ShowOverviewHomePage")) { return ""; }
             let s = ['<div class="asm-main-section">'];
             s.push('<p class="asm-menu-category">' + _("Overview") + '</p>');
             const oo = function(n, text, url) {
