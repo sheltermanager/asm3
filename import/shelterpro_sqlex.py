@@ -49,7 +49,7 @@ VACCINATION_IMPORT = True
 IMPORT_ANIMALS_WITH_NO_NAME = True
 
 FAKE_ADOPTION_ONSHELTER_DAYS = 0        # Animals on shelter longer than this many days will have a fake adoption, 0 to do nothing
-OMIT_ANIMALS_EUTHANISED_DAYS = 365*3    # Omit animals who were euthanised longer than this many days ago, 0 to do nothing
+OMIT_ANIMALS_EUTHANISED_DAYS = 0        # Omit animals who were euthanised longer than this many days ago, 0 to do nothing
 
 def gettype(animaldes):
     spmap = {
@@ -98,6 +98,22 @@ def getdateage(age, arrivaldate):
 
 def getdate(s):
     return asm.getdate_mmddyy(s)
+
+cusers = None
+def getuser(personkey):
+    global cusers
+    if cusers is None: cusers = asm.csv_to_list("%s/parmuser.csv" % PATH, uppercasekeys=True, strip=True)
+    for row in cusers:
+        if row["PERSONKEY"] == personkey:
+            return "conversion/%s" % row["USERID"]
+    return "conversion"
+
+def setuserfields(row, o):
+    """ If row contains shelterpro user fields, sets them on object o """
+    if "ADDEDBYUSER" in row and row["ADDEDBYUSER"] != "": o.CreatedBy = getuser(row["ADDEDBYUSER"])
+    if "ADDEDDATETIME" in row and row["ADDEDDATETIME"] != "": o.CreatedDate = getdate(row["ADDEDDATETIME"])
+    if "LASTUSERTOSAVE" in row and row["LASTUSERTOSAVE"] != "": o.LastChangedBy = getuser(row["LASTUSERTOSAVE"])
+    if "LASTSAVEDATETIME" in row and row["LASTSAVEDATETIME"] != "": o.LastChangedDate = getdate(row["LASTSAVEDATETIME"])
 
 owners = []
 ownerdonations = []
@@ -198,6 +214,7 @@ for row in cperson:
     o.IdentificationNumber = row["DRIV_LIC"]
     o.DateOfBirth = getdate(row["BIRTH"])
     # o.ExcludeFromBulkEmail = asm.cint(row["MAILINGSAM"]) # Not sure this is correct
+    setuserfields(row, o)
 
 if PAYMENT_IMPORT:
     cpayment = asm.csv_to_list("%s/payments.csv" % PATH, uppercasekeys=True, strip=True)
@@ -221,6 +238,7 @@ if PAYMENT_IMPORT:
         comments = "Method/Card Type: %s/%s" % (row["PAYMENTMETH"], row["PAYMENTCARDTYPE"])
         comments += "\nVerification: " + row["PAYMENTIDVERIFICATION"]
         od.Comments = comments
+        setuserfields(row, od)
         ownerdonations.append(od)
 
 # Animals
@@ -281,6 +299,7 @@ for row in canimal:
     if row["STATUS"] == 2:
         a.DeceasedDate = a.DateBroughtIn
         a.PTSReasonID = 2 # Died
+    setuserfields(row, a)
     # Does this animal have an image? If so, add media/dbfs entries for it
     if IMAGE_FILE_IMPORT:
         imdata = None
@@ -318,6 +337,7 @@ if VACCINATION_IMPORT:
         av.Manufacturer = row["VACCMANUFACTURER"]
         av.BatchNumber = row["VACCSERIALNUMBER"]
         av.Comments = "Name: %s, Issue: %s" % (row["VACCDRUGNAME"], row["VACCISSUEDPRTDATE"])
+        setuserfields(row, av)
     del cvacc
 
 
@@ -336,6 +356,7 @@ for row in cshelter:
         a.CreatedDate = a.DateBroughtIn
         a.generateCode(gettypeletter(a.AnimalTypeID))
         a.ShortCode = asm.strip(row["ANIMALKEY"])
+        setuserfields(row, a)
 
     o = None
     if row["OWNERATDISPOSITION"] in ppo:
@@ -344,11 +365,13 @@ for row in cshelter:
     # Apply other fields
     if row["ARIVREAS"] == "QUARANTINE":
         a.IsQuarantine = 1
+        setuserfields(row, a)
 
     elif row["ARIVREAS"] == "STRAY":
         if a.AnimalTypeID == 2: a.AnimalTypeID = 10
         if a.AnimalTypeID == 11: a.AnimalTypeID = 12
         a.EntryReasonID = 7
+        setuserfields(row, a)
 
     # Adoptions
     if row["DISPMETH"] == "ADOPTED":
@@ -362,6 +385,8 @@ for row in cshelter:
         a.ActiveMovementID = m.ID
         a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 1
+        setuserfields(row, a)
+        setuserfields(row, m)
         movements.append(m)
 
     # Reclaims
@@ -376,6 +401,8 @@ for row in cshelter:
         a.ActiveMovementID = m.ID
         a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementType = 5
+        setuserfields(row, a)
+        setuserfields(row, m)
         movements.append(m)
 
     # Released or Other
@@ -391,18 +418,22 @@ for row in cshelter:
         a.ActiveMovementDate = m.MovementDate
         a.ActiveMovementID = m.ID
         a.ActiveMovementType = 7
+        setuserfields(row, a)
+        setuserfields(row, m)
         movements.append(m)
 
     # Holding
     elif row["DISPMETH"] == "" and row["ANIMSTAT"] == "HOLDING":
         a.IsHold = 1
         a.Archived = 0
+        setuserfields(row, a)
 
     # Deceased
     elif row["DISPMETH"] == "DECEASED":
         a.DeceasedDate = getdate(row["DISPDATE"])
         a.PTSReasonID = 2 # Died
         a.Archived = 1
+        setuserfields(row, a)
 
     # Euthanized
     elif row["DISPMETH"].startswith("EUTH"):
@@ -411,10 +442,12 @@ for row in cshelter:
         a.PTSReasonID = 4 # Sick/Injured
         if row["DISPMETH"].find("BEHAVIOUR") != -1: a.PTSReasonID = 8 # Biting
         a.Archived = 1
+        setuserfields(row, a)
 
     # If the outcome is blank, it's on the shelter
     elif row["DISPMETH"].strip() == "":
         a.Archived = 0
+        setuserfields(row, a)
 
     # It's the name of an organisation that received the animal
     else:
@@ -428,6 +461,8 @@ for row in cshelter:
         a.Archived = 1
         a.ActiveMovementID = m.ID
         a.ActiveMovementType = 3
+        setuserfields(row, a)
+        setuserfields(row, m)
         movements.append(m)
 
 if LICENCE_IMPORT:
@@ -453,6 +488,7 @@ if LICENCE_IMPORT:
             ol.LicenceTypeID = 2 # Unaltered dog
             if a.Neutered == 1:
                 ol.LicenceTypeID = 1 # Altered dog
+            setuserfields(row, ol)
 
 # Image table
 if IMAGE_TABLE_IMPORT:
@@ -505,6 +541,7 @@ if INCIDENT_IMPORT:
         comments += "Precinct: %s\n" % row["PRECINCT"]
         ac.CallNotes = comments
         ac.Sex = 2
+        setuserfields(row, ac)
 
 # Incidents
 if BITE_IMPORT:
@@ -533,7 +570,9 @@ if BITE_IMPORT:
         comments += "Bite test result: %s\n" % row["BITETESTRESULT"]
         comments += "Bite precinct: %s\n" % row["BITEPRECINCT"]
         comments += "Bite status: %s\n" % row["BITESTATUS"]
-        if ac.CallNotes == "": ac.CallNotes = comments
+        if ac.CallNotes == "": 
+            ac.CallNotes = comments
+            setuserfields(row, ac)
         l = asm.Log()
         logs.append(l)
         l.LogTypeID = 3
@@ -543,6 +582,7 @@ if BITE_IMPORT:
         if l.Date is None:
             l.Date = asm.now()
         l.Comments = comments
+        setuserfields(row, l)
 
 # Notes as log entries
 cnote = asm.csv_to_list("%s/note.csv" % PATH, uppercasekeys=True, strip=True)
@@ -564,6 +604,7 @@ for row in cnote:
         if l.Date is None:
             l.Date = asm.now()
         l.Comments = memo
+        setuserfields(row, l)
     elif eventtype in [ "2" ]: # person notes
         if not eventkey in ppo: continue
         linkid = ppo[eventkey].ID
@@ -576,6 +617,7 @@ for row in cnote:
         if l.Date is None:
             l.Date = asm.now()
         l.Comments = memo
+        setuserfields(row, l)
     elif eventtype in [ "5", "10" ]: # case and incident notes
         if not eventkey in ppi: continue
         linkid = ppi[eventkey].ID
@@ -589,6 +631,7 @@ for row in cnote:
         if l.Date is None:
             l.Date = asm.now()
         l.Comments = memo
+        setuserfields(row, l)
 
 # Run back through the animals, if we have any that are still
 # on shelter after 2 years, add an adoption to an unknown owner
