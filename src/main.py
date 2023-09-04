@@ -2524,7 +2524,7 @@ class calendar_events(ASMEndpoint):
         if "p" in ev and self.checkb(asm3.users.VIEW_DONATION):
             for p in asm3.financial.get_donations_due_two_dates(dbo, start, end):
                 sub = "%s - %s" % (p.DONATIONNAME, p.OWNERNAME)
-                tit = "%s - %s %s %s" % (p.DONATIONNAME, p.OWNERNAME, asm3.html.format_currency(l, p.DONATION), p.COMMENTS)
+                tit = "%s - %s %s %s" % (p.DONATIONNAME, p.OWNERNAME, format_currency(l, p.DONATION), p.COMMENTS)
                 events.append({ 
                     "title": sub, 
                     "allDay": True, 
