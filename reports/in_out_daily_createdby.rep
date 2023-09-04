@@ -2,7 +2,7 @@ In/Out Today (with created by/last changed by)
 ###
 Movements
 ###
-3200/Any rev03
+3200/Any rev04
 ###
 All animals entering and leaving the shelter today with how created and last changed the record.
 ###
@@ -124,6 +124,25 @@ INNER JOIN adoption ON adoption.AnimalID = animal.ID
 WHERE adoption.MovementType = 3 AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$CURRENT_DATE$' AND adoption.ReturnDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) AS Location,
+(SELECT OwnerName FROM owner WHERE ID = adoption.OwnerID) AS OwnerName,
+adoption.CreatedBy, adoption.LastChangedBy, adoption.CreatedDate, adoption.LastChangedDate, 
+'Animals Returned From Reclaim' AS CategoryName,
+'Animals In' AS OutOrIn
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 5 AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$CURRENT_DATE$' AND adoption.ReturnDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.ReturnDate AS thedate,
 '' AS Reason,
 animal.ID AS AID,
 ShelterCode,
@@ -140,7 +159,7 @@ adoption.CreatedBy, adoption.LastChangedBy, adoption.CreatedDate, adoption.LastC
 'Animals In' AS OutOrIn
 FROM animal
 INNER JOIN adoption ON adoption.AnimalID = animal.ID
-WHERE adoption.MovementType NOT IN (1, 2, 3) AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$CURRENT_DATE$' AND adoption.ReturnDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
+WHERE adoption.MovementType NOT IN (1, 2, 3, 5) AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$CURRENT_DATE$' AND adoption.ReturnDate <= '$CURRENT_DATE$' AND NonShelterAnimal = 0
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
