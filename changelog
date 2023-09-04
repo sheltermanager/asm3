@@ -1,6 +1,7 @@
 48
 ================
 
+04/09/23 Fix overview counts to exclude non-archived where necessary
 01/09/23 Add overview counts to homepage, tidy up layout
 31/08/23 Add picnumber field for PetRescue
 30/08/23 type hints, log, lookup and lostfound modules #1320
