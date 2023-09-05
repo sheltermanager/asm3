@@ -70,6 +70,10 @@ class PetRescuePublisher(AbstractPublisher):
         contact_email = asm3.configuration.petrescue_email(self.dbo)
         if contact_email == "": contact_email = asm3.configuration.email(self.dbo)
         use_coordinator = asm3.configuration.petrescue_use_coordinator(self.dbo)
+        breederid = asm3.configuration.petrescue_breederid(self.dbo)
+        nswrehomingorganisationid = asm3.configuration.petrescue_nsw_rehoming_org_id(self.dbo)
+        vicsourcenumber = asm3.configuration.petrescue_vic_sourcenumber(self.dbo)
+        vicpicnumber = asm3.configuration.petrescue_vic_picnumber(self.dbo)
         phone_type = asm3.configuration.petrescue_phone_type(self.dbo)
         contact_number = asm3.configuration.petrescue_phone_number(self.dbo)
         if phone_type == "" or phone_type == "org": contact_number = asm3.configuration.organisation_telephone(self.dbo)
@@ -115,7 +119,9 @@ class PetRescuePublisher(AbstractPublisher):
                     self.cleanup()
                     return
       
-                data = self.processAnimal(an, all_desexed, adoptable_in, suburb, state, postcode, contact_name, contact_number, contact_email, all_microchips, use_coordinator)
+                data = self.processAnimal(an, all_desexed, adoptable_in, suburb, state, postcode, 
+                                          contact_name, contact_number, contact_email, all_microchips, use_coordinator,
+                                          nswrehomingorganisationid, breederid, vicpicnumber, vicsourcenumber)
 
                 # PetRescue will insert/update accordingly based on whether remote_id/remote_source exists
                 url = PETRESCUE_URL + "listings"
@@ -190,7 +196,10 @@ class PetRescuePublisher(AbstractPublisher):
 
         self.cleanup()
 
-    def processAnimal(self, an, all_desexed=False, adoptable_in="", suburb="", state="", postcode="", contact_name="", contact_number="", contact_email="", all_microchips=False, use_coordinator=True):
+    def processAnimal(self, an, all_desexed=False, adoptable_in="", 
+                      suburb="", state="", postcode="", contact_name="", contact_number="", contact_email="", 
+                      all_microchips=False, use_coordinator=True,
+                      nswrehomingorganisationid="", breederid="", vicpicnumber="", vicsourcenumber=""):
         """ Processes an animal record and returns a data dictionary to upload as JSON """
         isdog = an.SPECIESID == 1
         iscat = an.SPECIESID == 2
@@ -217,18 +226,6 @@ class PetRescuePublisher(AbstractPublisher):
         if "BESTFEATURE" in an and an.BESTFEATURE != "":
             best_feature = an.BESTFEATURE
 
-        breeder_id = ""
-        if "BREEDERID" in an and an.BREEDERID != "":
-            breeder_id = an.BREEDERID
-
-        source_number = ""
-        if "SOURCENUMBER" in an and an.SOURCENUMBER != "":
-            source_number = an.SOURCENUMBER
-
-        pic_number = ""
-        if "PICNUMBER" in an and an.PICNUMBER != "":
-            pic_number = an.PICNUMBER
-
         needs_constant_care = False
         if "NEEDSCONSTANTCARE" in an and an.NEEDSCONSTANTCARE != "" and an.NEEDSCONSTANTCARE != "0":
             needs_constant_care = True
@@ -240,10 +237,6 @@ class PetRescuePublisher(AbstractPublisher):
         needs_foster = False
         if "NEEDSFOSTER" in an and an.NEEDSFOSTER != "" and an.NEEDSFOSTER != "0":
             needs_foster = True
-
-        rehoming_organisation_id = ""
-        if "REHOMINGORGANISATIONID" in an and an.REHOMINGORGANISATIONID != "":
-            rehoming_organisation_id = an.REHOMINGORGANISATIONID
 
         # Check whether we've been vaccinated, wormed and hw treated
         vaccinated = asm3.medical.get_vaccinated(self.dbo, an.ID)
@@ -294,10 +287,10 @@ class PetRescuePublisher(AbstractPublisher):
             "adoption_fee":             asm3.i18n.format_currency_no_symbol(self.locale, an.FEE),
             "species_name":             an.SPECIESNAME,
             "breed_names":              self.get_breed_names(an), # [breed1,breed2] or [breed1]
-            "breeder_id":               breeder_id, # mandatory for QLD dogs born after 2017-05-26 or South Aus where bred_in_care_of_group==true after 2018-07-01
-            "pic_number":               pic_number, # mandatory for Victoria livestock (horses etc)
-            "source_number":            source_number, # mandatory for Victoria cats and dogs
-            "rehoming_organisation_id": rehoming_organisation_id, # required for NSW, this OR microchip or breeder_id is mandatory
+            "breeder_id":               breederid, # mandatory for QLD dogs born after 2017-05-26 or South Aus where bred_in_care_of_group==true after 2018-07-01
+            "pic_number":               vicpicnumber, # mandatory for Victoria livestock (horses etc)
+            "source_number":            vicsourcenumber, # mandatory for Victoria cats and dogs
+            "rehoming_organisation_id": nswrehomingorganisationid, # required for NSW, this OR microchip or breeder_id is mandatory
             "bred_in_care_of_group":    bred_in_care_of_group, 
             "mix":                      an.CROSSBREED == 1, # true | false
             "date_of_birth":            asm3.i18n.format_date(an.DATEOFBIRTH, "%Y-%m-%d"), # iso

@@ -1217,6 +1217,18 @@ def petrescue_phone_type(dbo: Database) -> str:
 def petrescue_token(dbo: Database) -> str:
     return cstring(dbo, "PetRescueToken")
 
+def petrescue_nsw_rehoming_org_id(dbo: Database) -> str:
+    return cstring(dbo, "PetRescueNSWRehomingOrgID")
+
+def petrescue_breederid(dbo: Database) -> str:
+    return cstring(dbo, "PetRescueBreederID")
+
+def petrescue_vic_sourcenumber(dbo: Database) -> str:
+    return cstring(dbo, "PetRescueVICSourceNumber")
+
+def petrescue_vic_picnumber(dbo: Database) -> str:
+    return cstring(dbo, "PetRescueVICPICNumber")
+
 def petrescue_use_coordinator(dbo: Database) -> bool:
     return cboolean(dbo, "PetRescueUseCoordinator")
 
