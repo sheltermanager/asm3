@@ -40,16 +40,14 @@ START_ID = 1000
 
 BITE_IMPORT = True
 INCIDENT_IMPORT = True
-LICENCE_IMPORT = True
+LICENCE_IMPORT = False
 IMAGE_FILE_IMPORT = False
 IMAGE_TABLE_IMPORT = False
 PAYMENT_IMPORT = True
 VACCINATION_IMPORT = True
 
-IMPORT_ANIMALS_WITH_NO_NAME = True
-
+IMPORT_ANIMALS_WITH_NO_NAME = True      # Some people like these filtered out. They'll come through with name (unknown)
 FAKE_ADOPTION_ONSHELTER_DAYS = 0        # Animals on shelter longer than this many days will have a fake adoption, 0 to do nothing
-OMIT_ANIMALS_EUTHANISED_DAYS = 0        # Omit animals who were euthanised longer than this many days ago, 0 to do nothing
 
 def gettype(animaldes):
     spmap = {
@@ -126,6 +124,7 @@ animalcontrol = []
 
 ppa = {}
 ppo = {}
+ppoid = {}
 ppi = {}
 addresses = {}
 addrlink = {}
@@ -188,6 +187,7 @@ for row in cperson:
     o = asm.Owner()
     owners.append(o)
     ppo[row["PERSONKEY"]] = o
+    ppoid[o.ID] = o
     o.OwnerForeNames = asm.strip(row["FNAME"]).title()
     o.OwnerSurname = asm.strip(row["LNAME"]).title()
     o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
@@ -230,6 +230,7 @@ if PAYMENT_IMPORT:
         elif row["PAYMENTCARDTYPE"] != "": 
             od.DonationPaymentID = 3 # Credit Card
         od.Date = getdate(row["PAYMENTDATE"])
+        if od.Date is None: od.Date = asm.today()
         od.OwnerID = o.ID
         if row["PAYMENTREVERSALAMOUNT"] != "0":
             od.Donation = asm.get_currency(row["PAYMENTREVERSALAMOUNT"]) * -1
@@ -313,32 +314,6 @@ for row in canimal:
             f.close()
         if imdata is not None:
             asm.animal_image(a.ID, imdata)
-
-# Vaccinations
-if VACCINATION_IMPORT:
-    cvacc = asm.csv_to_list("%s/vacc.csv" % PATH, uppercasekeys=True, strip=True)
-    for row in cvacc:
-        if row["ANIMALKEY"] not in ppa: continue
-        a = ppa[row["ANIMALKEY"]]
-        # Each row contains a vaccination
-        av = asm.AnimalVaccination()
-        animalvaccinations.append(av)
-        vaccdate = getdate(row["VACCEFFECTIVEDATE"])
-        if vaccdate is None:
-            vaccdate = a.DateBroughtIn
-        av.AnimalID = a.ID
-        av.VaccinationID = 8
-        if row["VACCTYPE"].find("DHLPP") != -1: av.VaccinationID = 8
-        if row["VACCTYPE"].find("BORDETELLA") != -1: av.VaccinationID = 6
-        if row["VACCTYPE"].find("RABIES") != -1: av.VaccinationID = 4
-        av.DateRequired = vaccdate
-        av.DateOfVaccination = vaccdate
-        av.DateExpires = getdate(row["VACCEXPIRATIONDATE"])
-        av.Manufacturer = row["VACCMANUFACTURER"]
-        av.BatchNumber = row["VACCSERIALNUMBER"]
-        av.Comments = "Name: %s, Issue: %s" % (row["VACCDRUGNAME"], row["VACCISSUEDPRTDATE"])
-        setuserfields(row, av)
-    del cvacc
 
 
 # Run through the shelter file and create any movements/euthanisation info
@@ -490,25 +465,6 @@ if LICENCE_IMPORT:
                 ol.LicenceTypeID = 1 # Altered dog
             setuserfields(row, ol)
 
-# Image table
-if IMAGE_TABLE_IMPORT:
-    # The image.csv file exported from MDB needs to have the -b hex flag parameter
-    # passed to mdb-export so that the file data is hex. 
-    # This allows bytes.fromhex(s) to be used to unpack the data.
-    # Due to the potential size that this file can be, we use the csvreader to
-    # stream it in rather than loading the whole lot into RAM at once
-    import csv
-    csv.field_size_limit(sys.maxsize) # Python has a default field size limit of 128Kb
-    with open("%s/image.csv" % PATH) as f:
-        reader = csv.reader(f)
-        for r in reader:
-            eventkey = r[2]
-            if eventkey not in ppa: continue # bail if we have no animal to link it to
-            a = ppa[eventkey]
-            imagedata = r[9]
-            imagedata = bytes.fromhex(imagedata)
-            asm.animal_image(a.ID, imagedata) # This handles outputting both media and dbfs
-
 # Incidents
 if INCIDENT_IMPORT:
     cincident = asm.csv_to_list("%s/incident.csv" % PATH, uppercasekeys=True, strip=True)
@@ -633,15 +589,55 @@ for row in cnote:
         l.Comments = memo
         setuserfields(row, l)
 
+# Image table
+if IMAGE_TABLE_IMPORT:
+    # The image.csv file exported from MDB needs to have the -b hex flag parameter
+    # passed to mdb-export so that the file data is hex. 
+    # This allows bytes.fromhex(s) to be used to unpack the data.
+    # Due to the potential size that this file can be, we use the csvreader to
+    # stream it in rather than loading the whole lot into RAM at once
+    import csv
+    csv.field_size_limit(sys.maxsize) # Python has a default field size limit of 128Kb
+    with open("%s/image.csv" % PATH) as f:
+        reader = csv.reader(f)
+        for r in reader:
+            eventkey = r[2]
+            if eventkey not in ppa: continue # bail if we have no animal to link it to
+            a = ppa[eventkey]
+            imagedata = r[9]
+            imagedata = bytes.fromhex(imagedata)
+            asm.animal_image(a.ID, imagedata) # This handles outputting both media and dbfs
+
+# Vaccinations
+if VACCINATION_IMPORT:
+    cvacc = asm.csv_to_list("%s/vacc.csv" % PATH, uppercasekeys=True, strip=True)
+    for row in cvacc:
+        if row["ANIMALKEY"] not in ppa: continue
+        a = ppa[row["ANIMALKEY"]]
+        # Each row contains a vaccination
+        av = asm.AnimalVaccination()
+        animalvaccinations.append(av)
+        vaccdate = getdate(row["VACCEFFECTIVEDATE"])
+        if vaccdate is None:
+            vaccdate = a.DateBroughtIn
+        av.AnimalID = a.ID
+        av.VaccinationID = 8
+        if row["VACCTYPE"].find("DHLPP") != -1: av.VaccinationID = 8
+        if row["VACCTYPE"].find("BORDETELLA") != -1: av.VaccinationID = 6
+        if row["VACCTYPE"].find("RABIES") != -1: av.VaccinationID = 4
+        av.DateRequired = vaccdate
+        av.DateOfVaccination = vaccdate
+        av.DateExpires = getdate(row["VACCEXPIRATIONDATE"])
+        av.Manufacturer = row["VACCMANUFACTURER"]
+        av.BatchNumber = row["VACCSERIALNUMBER"]
+        av.Comments = "Name: %s, Issue: %s" % (row["VACCDRUGNAME"], row["VACCISSUEDPRTDATE"])
+        setuserfields(row, av)
+    del cvacc
+
 # Run back through the animals, if we have any that are still
 # on shelter after 2 years, add an adoption to an unknown owner
 if FAKE_ADOPTION_ONSHELTER_DAYS > 0:
     asm.adopt_older_than(animals, movements, uo.ID, FAKE_ADOPTION_ONSHELTER_DAYS)
-
-# One customer asked if we can remove all animals who were euthanised
-# more than 3 years ago.
-if OMIT_ANIMALS_EUTHANISED_DAYS > 0:
-    animals = [a for a in animals if a.PutToSleep == 0 or (a.DeceasedDate and a.PutToSleep == 1 and a.DeceasedDate > asm.subtract_days(asm.now(), OMIT_ANIMALS_EUTHANISED_DAYS)) ]
 
 # Now that everything else is done, output stored records
 for a in animals:
