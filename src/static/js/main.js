@@ -422,7 +422,7 @@ $(function() {
         },
 
         render_animal_links: function() {
-            let s = ['<div class="asm-main-section">'];
+            let s = [];
             let linknames = { "recentlychanged": _("Recently Changed"), 
                 "recentlyentered": _("Recently Entered Shelter"),
                 "recentlyadopted": _("Recently Adopted"), 
@@ -433,6 +433,7 @@ $(function() {
             callout +=  _("Some data on this screen may be up to {0} minutes out of date.").replace("{0}", (controller.age / 60));
             callout += '</span>';
             if (controller.linkmode != "none" && controller.animallinks.length > 0) {
+                s = ['<div class="asm-main-section">'];
                 s.push('<p class="asm-menu-category">' + linknames[controller.linkmode] + ' ' + callout + '</p>');
                 $.each(controller.animallinks, function(i, a) {
                     // Skip this one if the animal is deceased and we aren't showing them
@@ -441,8 +442,8 @@ $(function() {
                     s.push(html.animal_link_thumb(a, { showlocation: true }));
                     s.push("</div>");
                 });
+                s.push('</div>');
             }
-            s.push('</div>');
             return s.join("\n");
         },
 
