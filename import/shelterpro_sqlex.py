@@ -12,7 +12,7 @@ of truncated at 8 chars as with the DBF variants
 
 Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if IMAGE_FILE_IMPORT is set.
 
-6th Oct, 2014 - 30th August, 2023
+6th Oct, 2014 - 5th September, 2023
 """
 
 """
@@ -36,13 +36,13 @@ UPDATE animalcontrol SET IncidentTypeID = 35 WHERE IncidentTypeID = 5;
 
 PATH = "/home/robin/tmp/asm3_import_data/shelterpro_mg3031"
 
-START_ID = 1000
+START_ID = 500
 
 BITE_IMPORT = True
 INCIDENT_IMPORT = True
 LICENCE_IMPORT = False
 IMAGE_FILE_IMPORT = False
-IMAGE_TABLE_IMPORT = False
+IMAGE_TABLE_IMPORT = True
 PAYMENT_IMPORT = True
 VACCINATION_IMPORT = True
 
