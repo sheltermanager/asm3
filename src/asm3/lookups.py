@@ -1093,8 +1093,7 @@ def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: st
         }, username, setCreated=False)
         return nid
     elif lookup == "donationtype":
-        # Create a matching account if the option is on and link it
-        if asm3.configuration.create_donation_trx(dbo):
+        if accountid == 0 and asm3.configuration.create_donation_trx(dbo):
             accountid = asm3.financial.insert_account_from_donationtype(dbo, name, desc)
         nid = dbo.insert(lookup, {
             t[LOOKUP_NAMEFIELD]:    name,

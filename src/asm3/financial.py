@@ -1119,6 +1119,8 @@ def insert_account_from_donationtype(dbo: Database, name: str, desc: str) -> int
     """
     l = dbo.locale
     acode = asm3.i18n._("Income::", l) + name.replace(" ", "")
+    if 0 != dbo.query_int("SELECT ID FROM accounts WHERE Code=?", [acode]):
+        raise asm3.utils.ASMValidationError("Account with code '%s' already exists" % acode)
     return dbo.insert("accounts", {
         "Code":             acode,
         "Archived":         0,
