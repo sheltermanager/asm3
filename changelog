@@ -2,6 +2,7 @@
 ================
 
 06/09/23 Use shorter married format {first1} & {first2} {surname} for couples
+05/09/23 Hide frame around home page animal links if they are hidden
 05/09/23 PetRescue: Move org specific fields to config instead of as additional
 04/09/23 Fix overview counts to exclude non-archived where necessary
 01/09/23 Add overview counts to homepage, tidy up layout

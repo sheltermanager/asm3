@@ -11,6 +11,9 @@ en
 -- SEE INSTRUCTION SECTION BELOW FOR INSTRUCTIONS ON HOW TO CONFIGURE FOR YOUR RESCUE/SHELTER
 --
 -- CHANGES MADE LOG:
+-- 2023-09-05 (13) - Added check for last name on second person for Couples
+-- 2023-09-05 (13) - Modified North, South, East, etc check to only review initial characters
+-- 2023-09-05 (13) - Modified Vaccination Issue. Animal with wrong Vaccination Type to only check non-archived vaccinations.
 --
 -- ******************************************** INSTRUCTIONS **********************************************************
 -- 1.  Clone this report and change name to "Quality Control (Custom) (Version)". MAKE CHANGES TO CLONED VERSION ONLY!
@@ -906,6 +909,7 @@ FROM animal
   INNER JOIN species ON species.ID = animal.SpeciesID
 WHERE date_trunc('day', av.DateOfVaccination) >= $REVIEW_DATE$
   AND ((Species.SpeciesName='Dog' AND v.id NOT IN ($DOGVACCINES$)) OR (Species.SpeciesName='Cat' AND v.id NOT IN ($CATVACCINES$)))
+  AND v.IsRetired = 0
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')  
   
 --Alerts when first character of Vaccination Manufacturer is a numeric.
@@ -1019,6 +1023,17 @@ WHERE $CAPITALIZATION_RULES$ = 'Yes'
        OR (UPPER(ownersurname2) = ownersurname2 AND ownersurname2 <> ''))
    AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%') 
 
+--Checks to see if last name for second person on Couple is blank.  Needed for duplicate person search.  Added 2023-09-05
+UNION SELECT 
+  '<a href="'||$SERVER_URL$||'/person?id='||owner.ID||'" target="_'||$OPEN_IN_TAB$||'">'||owner.OwnerName||'</a>' AS name,
+  owner.ownercode as code,
+  date(owner.LastChangedDate) AS issuedate,
+  '<font color = "Red">Last Name is blank on second person (Couple). Alerts Only Once.</font>' AS issue
+FROM owner
+WHERE ownersurname2 = ''
+  AND ownertype = 3
+  AND date_trunc('day', LastChangedDate) = current_date -1
+
 --Checks for extra spaces in address field.  Extra spaces will cause address searches to not find results.
 UNION SELECT 
   '<a href="'||$SERVER_URL$||'/person?id='||owner.ID||'" target="_'||$OPEN_IN_TAB$||'">'||owner.OwnerName||'</a>' AS name,
@@ -1039,17 +1054,17 @@ UNION SELECT
   '<font color = "Red">Possible address standardization issue (' || owner.owneraddress || ').  North, South, First, etc.  Change to N., S., 1st, if needed. Alerts Only Once.</font>' AS issue
 FROM owner
 where date_trunc('day', LastChangedDate) = current_date -1
-  AND (upper(owneraddress) like '% NORTH %'
-     OR upper(owneraddress) like '% SOUTH %'
-     OR upper(owneraddress) like '% EAST %'
-     OR upper(owneraddress) like '% WEST %'
-     OR upper(owneraddress) like '% HIGHWAY %'
-     OR upper(owneraddress) like '% FIRST %'
-     OR upper(owneraddress) like '% SECOND %'
-     OR upper(owneraddress) like '% THIRD %'
-     OR upper(owneraddress) like '% FOURTH %'
-     OR upper(owneraddress) like '% FIFTH %'
-     OR upper(owneraddress) like '% SIXTH %') 
+  AND (SUBSTR(UPPER(owneraddress),1,12) LIKE '% NORTH %'
+     OR SUBSTR(UPPER(owneraddress),1,12) LIKE '% SOUTH %'
+     OR SUBSTR(UPPER(owneraddress),1,11) LIKE '% EAST %'
+     OR SUBSTR(UPPER(owneraddress),1,11) LIKE '% WEST %'
+     OR SUBSTR(UPPER(owneraddress),1,14) LIKE '% HIGHWAY %'
+     OR SUBSTR(UPPER(owneraddress),1,12) LIKE '% FIRST %'
+     OR SUBSTR(UPPER(owneraddress),1,13) LIKE '% SECOND %'
+     OR SUBSTR(UPPER(owneraddress),1,12) LIKE '% THIRD %'
+     OR SUBSTR(UPPER(owneraddress),1,13) LIKE '% FOURTH %'
+     OR SUBSTR(UPPER(owneraddress),1,12) LIKE '% FIFTH %'
+     OR SUBSTR(UPPER(owneraddress),1,12) LIKE '% SIXTH %')
 
 --Checks for commonly misspelled street names.
 UNION SELECT 
