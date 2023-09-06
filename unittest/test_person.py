@@ -98,6 +98,9 @@ class TestPerson(unittest.TestCase):
     def test_calculate_owner_name(self):
         self.assertEqual("Mr R Robert Robertson", asm3.person.calculate_owner_name(base.get_dbo(), 1, "Mr", "R", "Robert", "Robertson",
             "{ownertitle} {ownerinitials} {ownerforenames} {ownersurname}"))
+        self.assertEqual("Pets Inc", asm3.person.calculate_owner_name(base.get_dbo(), 2, last="Pets Inc"))
+        self.assertEqual("John & Jane Doe", asm3.person.calculate_owner_name(base.get_dbo(), 3, "Mr", "J", "John", "Doe", 
+            "", "", "{ownerforenames1} & {ownerforenames2} {ownersurname}", "Mrs", "J", "Jane", "Doe"))
 
     def test_update_owner_names(self):
         asm3.person.update_owner_names(base.get_dbo())

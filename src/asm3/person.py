@@ -802,7 +802,9 @@ def calculate_owner_code(pid, surname):
         prefix = surname[0:2].upper()
     return "%s%s" % (prefix, asm3.utils.padleft(pid, 6))
 
-def calculate_owner_name(dbo, personclass = 0, title = "", initials = "", first = "", last = "", nameformat = "", coupleformat = "", title2 = "", initials2 = "", first2 = "", last2 = ""):
+def calculate_owner_name(dbo, personclass = 0, title = "", initials = "", first = "", last = "", 
+                         nameformat = "", coupleformat = "", marriedformat = "", 
+                         title2 = "", initials2 = "", first2 = "", last2 = ""):
     """
     Calculates the owner name field based on the current format.
     """
@@ -810,22 +812,34 @@ def calculate_owner_name(dbo, personclass = 0, title = "", initials = "", first 
         return s.replace(f, r or "")
     if nameformat == "": nameformat = asm3.configuration.owner_name_format(dbo)
     if coupleformat == "": coupleformat = asm3.configuration.owner_name_couple_format(dbo)
+    if marriedformat == "": marriedformat = asm3.configuration.owner_name_married_format(dbo)
     # If something went wrong and we have a broken format for any reason, substitute our default
     if nameformat is None or nameformat == "" or nameformat == "null": nameformat = "{ownertitle} {ownerforenames} {ownersurname}"
     nameformat = nameformat.replace("{ownername}", "{ownertitle} {ownerforenames} {ownersurname}") # Compatibility with old versions
     if coupleformat is None or coupleformat == "" or coupleformat == "null": coupleformat = "{ownername1} & {ownername2}"
+    if marriedformat is None or marriedformat == "" or marriedformat == "null": marriedformat = "{ownerforenames1} & {ownerforenames2} {ownersurname}"
     if personclass == 2: # Organisation
         return last 
     elif personclass == 3: # Couple
-        person1 = rp(nameformat, "{ownertitle}", title)
-        person1 = rp(person1, "{ownerinitials}", initials)
-        person1 = rp(person1, "{ownerforenames}", first)
-        person1 = rp(person1, "{ownersurname}", last)
-        person2 = rp(nameformat, "{ownertitle}", title2)
-        person2 = rp(person2, "{ownerinitials}", initials2)
-        person2 = rp(person2, "{ownerforenames}", first2)
-        person2 = rp(person2, "{ownersurname}", last2)
-        return coupleformat.replace("{ownername1}", person1).replace("{ownername2}", person2)
+        if last != last2: # Unmarried - use couple format
+            person1 = rp(nameformat, "{ownertitle}", title)
+            person1 = rp(person1, "{ownerinitials}", initials)
+            person1 = rp(person1, "{ownerforenames}", first)
+            person1 = rp(person1, "{ownersurname}", last)
+            person2 = rp(nameformat, "{ownertitle}", title2)
+            person2 = rp(person2, "{ownerinitials}", initials2)
+            person2 = rp(person2, "{ownerforenames}", first2)
+            person2 = rp(person2, "{ownersurname}", last2)
+            return coupleformat.replace("{ownername1}", person1).replace("{ownername2}", person2)
+        else: # Married - use married format
+            mf = rp(marriedformat, "{ownertitle1}", title)
+            mf = rp(mf, "{ownertitle2}", title2)
+            mf = rp(mf, "{ownerinitials1}", initials)
+            mf = rp(mf, "{ownerinitials2}", initials2)
+            mf = rp(mf, "{ownerforenames1}", first)
+            mf = rp(mf, "{ownerforenames2}", first2)
+            mf = rp(mf, "{ownersurname}", last)
+            return mf
     else: # individual
         person1 = rp(nameformat, "{ownertitle}", title)
         person1 = rp(person1, "{ownerinitials}", initials)
@@ -841,18 +855,19 @@ def update_owner_names(dbo):
     own = dbo.query("SELECT ID, OwnerCode, OwnerType, OwnerTitle, OwnerInitials, OwnerForeNames, OwnerSurname, OwnerTitle2, OwnerInitials2, OwnerForenames2, OwnerSurname2 FROM owner")
     nameformat = asm3.configuration.owner_name_format(dbo)
     coupleformat = asm3.configuration.owner_name_couple_format(dbo)
+    marriedformat = asm3.configuration.owner_name_married_format(dbo)
     asm3.asynctask.set_progress_max(dbo, len(own))
     for o in own:
         if o.ownercode is None or o.ownercode == "":
             dbo.update("owner", o.id, { 
                 "OwnerCode": calculate_owner_code(o.id, o.ownersurname),
                 "OwnerName": calculate_owner_name(dbo, o.ownertype, o.ownertitle, o.ownerinitials, o.ownerforenames, o.ownersurname, \
-                    nameformat, coupleformat, o.ownertitle2, o.ownerinitials2, o.ownerforenames2, o.ownersurname2)
+                    nameformat, coupleformat, marriedformat, o.ownertitle2, o.ownerinitials2, o.ownerforenames2, o.ownersurname2)
             }, setRecordVersion=False, setLastChanged=False, writeAudit=False)
         else:
             dbo.update("owner", o.id, { 
                 "OwnerName": calculate_owner_name(dbo, o.ownertype, o.ownertitle, o.ownerinitials, o.ownerforenames, o.ownersurname, \
-                    nameformat, coupleformat, o.ownertitle2, o.ownerinitials2, o.ownerforenames2, o.ownersurname2)
+                    nameformat, coupleformat, marriedformat, o.ownertitle2, o.ownerinitials2, o.ownerforenames2, o.ownersurname2)
             }, setRecordVersion=False, setLastChanged=False, writeAudit=False)
         asm3.asynctask.increment_progress_value(dbo)
     asm3.al.debug("regenerated %d owner names and codes" % len(own), "person.update_owner_names", dbo)
@@ -872,7 +887,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
         "ID":               pid,
         "OwnerType":        post.integer("ownertype"),
         "OwnerCode":        calculate_owner_code(pid, post["surname"]),
-        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"], "", "", \
+        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"], "", "", "", \
                                 post["title2"], post["initials2"], post["forenames2"], post["surname2"] ),
         "OwnerTitle":       post["title"],
         "OwnerInitials":    post["initials"],
@@ -1004,7 +1019,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
     dbo.update("owner", pid, {
         "OwnerType":        post.integer("ownertype"),
         "OwnerCode":        calculate_owner_code(pid, post["surname"]),
-        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"], "", "", \
+        "OwnerName":        calculate_owner_name(dbo, post.integer("ownertype"), post["title"], post["initials"], post["forenames"], post["surname"], "", "", "", \
                                 post["title2"], post["initials2"], post["forenames2"], post["surname2"] ),
         "OwnerTitle":       post["title"],
         "OwnerInitials":    post["initials"],
@@ -1207,7 +1222,7 @@ def merge_person_details(dbo, username, personid, d, force=False):
     merge("dateofbirth", "DATEOFBIRTH")
     merge("dateofbirth2", "DATEOFBIRTH2")
     merge("comments", "COMMENTS")
-    uv["OwnerName"] = calculate_owner_name(dbo, p.OWNERTYPE, p.OWNERTITLE, p.OWNERINITIALS, p.OWNERFORENAMES, p.OWNERSURNAME, "", "", \
+    uv["OwnerName"] = calculate_owner_name(dbo, p.OWNERTYPE, p.OWNERTITLE, p.OWNERINITIALS, p.OWNERFORENAMES, p.OWNERSURNAME, "", "", "", \
                         p.OWNERTITLE2, p.OWNERINITIALS2, p.OWNERFORENAMES2, p.OWNERSURNAME2)
     dbo.update("owner", personid, uv, username)
 

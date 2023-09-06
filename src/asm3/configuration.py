@@ -275,6 +275,7 @@ DEFAULTS = {
     "OwnerNameCheck": "Yes",
     "OwnerNameFormat": "{ownertitle} {ownerforenames} {ownersurname}",
     "OwnerNameCoupleFormat": "{ownername1} & {ownername2}",
+    "OwnerNameMarriedFormat": "{ownerforenames1} & {ownerforenames2} {ownersurname}",
     "OwnerSearchColumns": "OwnerCode,OwnerName,OwnerSurname," \
         "MembershipNumber,AdditionalFlags,OwnerAddress," \
         "OwnerTown,OwnerCounty,OwnerPostcode,HomeTelephone,WorkTelephone," \
@@ -1186,6 +1187,9 @@ def osm_map_tiles_override(dbo: Database) -> str:
 
 def owner_name_couple_format(dbo: Database) -> str:
     return cstring(dbo, "OwnerNameCoupleFormat", DEFAULTS["OwnerNameCoupleFormat"])
+
+def owner_name_married_format(dbo: Database) -> str:
+    return cstring(dbo, "OwnerNameMarriedFormat", DEFAULTS["OwnerNameMarriedFormat"])
 
 def owner_name_format(dbo: Database) -> str:
     return cstring(dbo, "OwnerNameFormat", DEFAULTS["OwnerNameFormat"])
