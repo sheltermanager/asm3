@@ -8,8 +8,9 @@ import asm3.log
 import asm3.utils
 from asm3.i18n import _
 from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, SERVICE_URL, WATERMARK_FONT_BASEDIRECTORY
+from asm3.typehints import Database, PostedData, ResultRow, Results, Tuple
 
-import datetime
+from datetime import datetime
 import os
 import tempfile
 import zipfile
@@ -29,7 +30,7 @@ MEDIATYPE_VIDEO_LINK = 2
 DEFAULT_RESIZE_SPEC = "1024x1024" # If no valid resize spec is configured, the default to use
 MAX_PDF_PAGES = 50 # Do not scale PDFs with more than this many pages
 
-def mime_type(filename):
+def mime_type(filename: str) -> str:
     """
     Returns the mime type for a file with the given name
     """
@@ -61,16 +62,16 @@ def mime_type(filename):
         return types[ext]
     return "application/octet-stream"
 
-def get_web_preferred_name(dbo, linktype, linkid):
+def get_web_preferred_name(dbo: Database, linktype: int, linkid: int) -> str:
     return dbo.query_string("SELECT MediaName FROM media " \
         "WHERE LinkTypeID = ? AND WebsitePhoto = 1 AND LinkID = ?", (linktype, linkid))
 
-def get_web_preferred(dbo, linktype, linkid):
+def get_web_preferred(dbo: Database, linktype: int, linkid: int) -> ResultRow:
     """ Returns the media record for the web preferred (or None if there isn't one) """
     return dbo.first_row(dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND " \
         "LinkID = ? AND WebsitePhoto = 1", (linktype, linkid)))
 
-def get_media_by_seq(dbo, linktype, linkid, seq):
+def get_media_by_seq(dbo: Database, linktype: int, linkid: int, seq: int) -> ResultRow:
     """ Returns image media by a one-based sequence number. 
         Element 1 is always the preferred.
         None is returned if the item doesn't exist
@@ -85,12 +86,12 @@ def get_media_by_seq(dbo, linktype, linkid, seq):
     else:
         return None
 
-def get_total_seq(dbo, linktype, linkid):
+def get_total_seq(dbo: Database, linktype: int, linkid: int) -> int:
     return dbo.query_int(dbo, "SELECT COUNT(ID) FROM media WHERE LinkTypeID = ? AND LinkID = ? " \
         "AND MediaMimeType = 'image/jpeg' " \
         "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null)", (linktype, linkid))
 
-def set_video_preferred(dbo, username, mid):
+def set_video_preferred(dbo: Database, username: str, mid: int) -> None:
     """
     Makes the media with id the preferred for video in the link
     """
@@ -98,7 +99,7 @@ def set_video_preferred(dbo, username, mid):
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "WebsiteVideo": 0 })
     dbo.update("media", mid, { "WebsiteVideo": 1, "Date": dbo.now() }, username, setLastChanged=False) 
 
-def set_web_preferred(dbo, username, mid):
+def set_web_preferred(dbo: Database, username: str, mid: int) -> None:
     """
     Makes the media with id the preferred for the web in the link
     """
@@ -106,7 +107,7 @@ def set_web_preferred(dbo, username, mid):
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "WebsitePhoto": 0 })
     dbo.update("media", mid, { "WebsitePhoto": 1, "ExcludeFromPublish": 0, "Date": dbo.now() }, username, setLastChanged=False) 
 
-def set_doc_preferred(dbo, username, mid):
+def set_doc_preferred(dbo: Database, username: str, mid: int) -> None:
     """
     Makes the media with id the preferred for docs in the link
     """
@@ -114,7 +115,7 @@ def set_doc_preferred(dbo, username, mid):
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "DocPhoto": 0 })
     dbo.update("media", mid, { "DocPhoto": 1, "Date": dbo.now() }, username, setLastChanged=False) 
 
-def set_excluded(dbo, username, mid, exclude = 1):
+def set_excluded(dbo: Database, username: str, mid: int, exclude: int = 1) -> None:
     """
     Marks the media with id excluded from publishing.
     """
@@ -125,13 +126,13 @@ def set_excluded(dbo, username, mid, exclude = 1):
         d["DocPhoto"] = 0
     dbo.update("media", mid, d, username, setLastChanged=False)
 
-def get_name_for_id(dbo, mid):
+def get_name_for_id(dbo: Database, mid: int) -> str:
     return dbo.query_string("SELECT MediaName FROM media WHERE ID = ?", [mid])
 
-def get_notes_for_id(dbo, mid):
+def get_notes_for_id(dbo: Database, mid: int) -> str:
     return dbo.query_string("SELECT MediaNotes FROM media WHERE ID = ?", [mid])
 
-def get_media_export(dbo):
+def get_media_export(dbo: Database) -> Results:
     """
     Produces a dataset of all media with link info for export
     """
@@ -158,7 +159,7 @@ def get_media_export(dbo):
             m.DBFSNAME = "%s%s" % (m.DBFSID, ext)
     return rows
 
-def get_media_file_data(dbo, mid):
+def get_media_file_data(dbo: Database, mid: int) -> Tuple[datetime, str, bytes]:
     """
     Gets a piece of media by id. Returns None if the media record does not exist.
     id: The media id
@@ -169,7 +170,7 @@ def get_media_file_data(dbo, mid):
     if mm is None: return (None, "", "", "")
     return mm.DATE, mm.MEDIANAME, mm.MEDIAMIMETYPE, asm3.dbfs.get_string_id(dbo, mm.DBFSID)
 
-def get_image_file_data(dbo, mode, iid = "", seq = 0, justdate = False):
+def get_image_file_data(dbo: Database, mode: str, iid: str = "", seq: int = 0, justdate: bool = False) -> Tuple[datetime, bytes]:
     """
     Gets an image
     mode: animal | media | animalthumb | person | personthumb | dbfs
@@ -181,11 +182,11 @@ def get_image_file_data(dbo, mode, iid = "", seq = 0, justdate = False):
     if justdate is False, returns a tuple containing the last modified date and image data
     """
     def nopic():
-        NOPIC_DATE = datetime.datetime(2011, 1, 1)
+        NOPIC_DATE = datetime(2011, 1, 1)
         if justdate: return NOPIC_DATE
         return (NOPIC_DATE, b"NOPIC")
     def thumb_nopic():
-        NOPIC_DATE = datetime.datetime(2011, 1, 1)
+        NOPIC_DATE = datetime(2011, 1, 1)
         if justdate: return NOPIC_DATE
         return (NOPIC_DATE, b"NOPIC")
     def mrec(mm):
@@ -241,7 +242,7 @@ def get_image_file_data(dbo, mode, iid = "", seq = 0, justdate = False):
     else:
         return nopic()
 
-def get_dbfs_path(linkid, linktype):
+def get_dbfs_path(linkid: int, linktype: int) -> str:
     path = "/animal/%d" % int(linkid)
     if linktype == PERSON:
         path = "/owner/%d" % int(linkid)
@@ -255,7 +256,7 @@ def get_dbfs_path(linkid, linktype):
         path = "/animalcontrol/%d" % int(linkid)
     return path
 
-def get_log_from_media_type(x):
+def get_log_from_media_type(x: int) -> int:
     """ Returns the corresponding log type for a media type """
     m = {
         ANIMAL: asm3.log.ANIMAL,
@@ -267,18 +268,18 @@ def get_log_from_media_type(x):
     }
     return m[x]
 
-def get_media(dbo, linktype, linkid):
+def get_media(dbo: Database, linktype: int, linkid: int) -> Results:
     return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ? ORDER BY Date DESC", ( linktype, linkid ))
 
-def get_media_by_id(dbo, mid):
+def get_media_by_id(dbo: Database, mid: int) -> ResultRow:
     return dbo.first_row(dbo.query("SELECT * FROM media WHERE ID = ?", [mid] ))
 
-def get_media_filename(dbo, mid):
+def get_media_filename(dbo: Database, mid: int) -> str:
     """ Constructs a filename from media notes.
         Truncates if notes are too long, removes unsafe punctuation and checks the extension. """
     return _get_media_filename(get_media_by_id(dbo, mid))
 
-def _get_media_filename(m):
+def _get_media_filename(m: ResultRow) -> str:
     """ Constructs a filename from media notes.
         Truncates if notes are too long, removes unsafe punctuation and checks the extension. """
     s = m.MEDIANOTES
@@ -288,7 +289,7 @@ def _get_media_filename(m):
     if not s.endswith(ext): s += ext
     return s
 
-def get_image_media(dbo, linktype, linkid, ignoreexcluded = False):
+def get_image_media(dbo: Database, linktype: int, linkid: int, ignoreexcluded: bool = False) -> Results:
     if not ignoreexcluded:
         return dbo.query("SELECT * FROM media WHERE LinkTypeID = ? AND LinkID = ? " \
             "AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg') ORDER BY media.Date DESC", ( linktype, linkid ))
@@ -296,12 +297,13 @@ def get_image_media(dbo, linktype, linkid, ignoreexcluded = False):
         return dbo.query("SELECT * FROM media WHERE (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
             "AND LinkTypeID = ? AND LinkID = ? AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg') ORDER BY media.Date DESC", ( linktype, linkid ))
 
-def attach_file_from_form(dbo, username, linktype, linkid, post):
+def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: int, post: PostedData) -> int:
     """
     Attaches a media file from the posted form
     data is the web.py data object and should contain
     comments and either the filechooser object, with filename and value 
     OR filedata, filetype and filename parameters (filetype is the MIME type, filedata is base64 encoded contents)
+    Return value is the ID of the newly created media record.
     """
     ext = ""
     filedata = post["filedata"]
@@ -419,9 +421,10 @@ def attach_file_from_form(dbo, username, linktype, linkid, post):
 
     return mediaid
 
-def attach_link_from_form(dbo, username, linktype, linkid, post):
+def attach_link_from_form(dbo: Database, username: str, linktype: int, linkid: int, post: PostedData) -> int:
     """
-    Attaches a link to a web resource from a form
+    Attaches a link to a web resource from a form.
+    Returns the ID of the newly creatd media record.
     """
     existingvid = dbo.query_int("SELECT COUNT(*) FROM media WHERE WebsiteVideo = 1 " \
         "AND LinkID = ? AND LinkTypeID = ?", (linkid, linktype))
@@ -455,7 +458,7 @@ def attach_link_from_form(dbo, username, linktype, linkid, post):
     }, username, setCreated=False)
 
 
-def calc_retainuntil_from_retainfor(dbo, retainfor):
+def calc_retainuntil_from_retainfor(dbo: Database, retainfor: int) -> datetime:
     """ Calculates the retain until date from a retain for in years (0 or None = Indefinitely) """
     retainuntil = None
     retainfor = asm3.utils.cint(retainfor)
@@ -463,7 +466,7 @@ def calc_retainuntil_from_retainfor(dbo, retainfor):
         retainuntil = dbo.today( retainfor * 365 )
     return retainuntil
 
-def check_default_web_doc_pic(dbo, mediaid, linkid, linktype):
+def check_default_web_doc_pic(dbo: Database, mediaid: int, linkid: int, linktype: int) -> None:
     """
     Checks if linkid/type has a default pic for the web or documents. If not,
     sets mediaid to be the default.
@@ -477,7 +480,7 @@ def check_default_web_doc_pic(dbo, mediaid, linkid, linktype):
     if existing_doc == 0:
         dbo.update("media", mediaid, { "DocPhoto": 1 })
 
-def create_blank_document_media(dbo, username, linktype, linkid):
+def create_blank_document_media(dbo: Database, username: str, linktype: int, linkid: int) -> int:
     """
     Creates a new media record for a blank document for the link given.
     linktype: ANIMAL, PERSON, etc
@@ -512,7 +515,8 @@ def create_blank_document_media(dbo, username, linktype, linkid):
     }, username, setCreated=False, generateID=False)
     return mediaid
 
-def create_document_animalperson(dbo, username, animalid, personid, template, content, retainfor=0):
+def create_document_animalperson(dbo: Database, username: str, animalid: int, personid: int, 
+                                 template: str, content: bytes, retainfor: int = 0) -> Tuple[int, int]:
     """
     Creates media records for an animal and a person sharing a document (same DBFS entry).
     The document itself will be stored on the person's path in the DBFS. The name given will
@@ -577,7 +581,7 @@ def create_document_animalperson(dbo, username, animalid, personid, template, co
     asm3.dbfs.rename_file_id(dbo, dbfsid, f"{mediaida}.{mediaidp}.html")
     return (mediaida, mediaidp)
 
-def create_document_media(dbo, username, linktype, linkid, template, content, retainfor=0):
+def create_document_media(dbo: Database, username: str, linktype: int, linkid: int, template: str, content: bytes, retainfor: int = 0) -> int:
     """
     Creates a new media record for a document for the link given.
     linktype: ANIMAL, PERSON, etc
@@ -616,7 +620,7 @@ def create_document_media(dbo, username, linktype, linkid, template, content, re
     }, username, setCreated=False, generateID=False)
     return mediaid
 
-def create_log(dbo, user, mid, logcode = "UK00", message = ""):
+def create_log(dbo: Database, user: str, mid: int, logcode: str = "UK00", message: str = "") -> None:
     """
     Creates a log message related to media
     mid: The media ID
@@ -634,7 +638,7 @@ def create_log(dbo, user, mid, logcode = "UK00", message = ""):
     if 0 == dbo.query_int("SELECT COUNT(*) FROM log WHERE LinkID=? AND LinkType=? AND Comments LIKE ?", [ m.LINKID, linktypeid, f"{logcode}:{m.ID}:%"] ):
         asm3.log.add_log(dbo, user, linktypeid, m.LINKID, logtypeid, f"{logcode}:{m.ID}:{message} - {m.MEDIANOTES}")
 
-def send_signature_request(dbo, username, mid, post):
+def send_signature_request(dbo: Database, username: str, mid: int, post: PostedData) -> None:
     """
     Sends a request for a document to be signed by email. 
     mid: The media id of the document we are requesting a signature for.
@@ -658,7 +662,7 @@ def send_signature_request(dbo, username, mid, post):
     if asm3.configuration.audit_on_send_email(dbo): 
         asm3.audit.email(dbo, username, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], body)
 
-def sign_document(dbo, username, mid, sigurl, signdate, signprefix):
+def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate: datetime, signprefix: str) -> None:
     """
     Signs an HTML document.
     sigurl: An HTML5 data: URL containing an image of the signature
@@ -698,11 +702,11 @@ def sign_document(dbo, username, mid, sigurl, signdate, signprefix):
     content = asm3.utils.str2bytes(content)
     update_file_content(dbo, username, mid, content)
 
-def has_signature(dbo, mid):
+def has_signature(dbo: Database, mid: int) -> bool:
     """ Returns true if a piece of media has a signature """
     return 0 != dbo.query_int("SELECT COUNT(*) FROM media WHERE SignatureHash Is Not Null AND SignatureHash <> '' AND ID = ?", [mid])
 
-def update_file_content(dbo, username, mid, content):
+def update_file_content(dbo: Database, username: str, mid: int, content: bytes) -> None:
     """
     Updates the dbfs content for the file pointed to by media record mid
     content should be a bytes string.
@@ -714,7 +718,7 @@ def update_file_content(dbo, username, mid, content):
     asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, content)
     dbo.update("media", f"DBFSID={m.DBFSID}", { "Date": dbo.now(), "MediaSize": len(content) }, username, setLastChanged=False)
 
-def update_media_from_form(dbo, username, post):
+def update_media_from_form(dbo: Database, username: str, post: PostedData) -> None:
     mediaid = post.integer("mediaid")
     dbo.update("media", mediaid, { 
         "MediaNotes": post["medianotes"],
@@ -724,14 +728,14 @@ def update_media_from_form(dbo, username, post):
         "UpdatedSinceLastPublish": 1
     }, username, setLastChanged=False)
 
-def update_media_link(dbo, username, mediaid, linktypeid, linkid):
+def update_media_link(dbo: Database, username: str, mediaid: int, linktypeid: int, linkid: int) -> None:
     dbo.update("media", mediaid, {
         "LinkID":   linkid,
         "LinkTypeID": linktypeid,
         "Date":     dbo.now()
     }, username, setLastChanged=False)
 
-def delete_media(dbo, username, mid):
+def delete_media(dbo: Database, username: str, mid: int) -> None:
     """
     Deletes a media record from the system.
     """
@@ -751,9 +755,9 @@ def delete_media(dbo, username, mid):
             "ORDER BY ID DESC", (mr.LINKID, mr.LINKTYPEID)))
         if ml: dbo.update("media", ml.ID, { "DocPhoto": 1 })
 
-def convert_media_jpg2pdf(dbo, username, mid):
+def convert_media_jpg2pdf(dbo: Database, username: str, mid: int) -> int:
     """
-    Converts an image into a new PDF file
+    Converts an image into a new PDF file. Returns the new media id. 
     """
     mr = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
     if not mr: raise asm3.utils.ASMError("Record does not exist")
@@ -793,7 +797,7 @@ def convert_media_jpg2pdf(dbo, username, mid):
     }, username, setCreated=False, generateID=False)
     return mediaid
 
-def rotate_media(dbo, username, mid, clockwise = True):
+def rotate_media(dbo: Database, username: str, mid: int, clockwise: bool = True) -> None:
     """
     Rotates an image media record 90 degrees if clockwise is true, or 270 degrees if false
     """
@@ -808,13 +812,13 @@ def rotate_media(dbo, username, mid, clockwise = True):
     update_file_content(dbo, username, mid, imagedata)
     asm3.audit.edit(dbo, username, "media", mid, "", "media id %d rotated, clockwise=%s" % (mid, str(clockwise)))
 
-def watermark_available(dbo):
+def watermark_available(dbo: Database) -> bool:
     """
     Returns true if we can handle watermarking
     """
     return asm3.dbfs.file_exists(dbo, "watermark.png") and os.path.exists(os.path.join(WATERMARK_FONT_BASEDIRECTORY, asm3.configuration.watermark_font_file(dbo)))
 
-def watermark_media(dbo, username, mid):
+def watermark_media(dbo: Database, username: str, mid: int) -> None:
     """
     Watermarks an image with animalname and logo
     """
@@ -831,7 +835,7 @@ def watermark_media(dbo, username, mid):
     update_file_content(dbo, username, mid, imagedata)
     asm3.audit.edit(dbo, username, "media", mid, "", "media id %d watermarked" % (mid))    
 
-def scale_image(imagedata, resizespec):
+def scale_image(imagedata: bytes, resizespec: str) -> bytes:
     """
     Produce a scaled version of an image. 
     imagedata - The image to scale (bytes string)
@@ -860,7 +864,7 @@ def scale_image(imagedata, resizespec):
         asm3.al.error("failed scaling image: %s" % str(err), "media.scale_image")
         return imagedata
 
-def auto_rotate_image(dbo, imagedata):
+def auto_rotate_image(dbo: Database, imagedata: bytes) -> bytes:
     """
     Automatically rotate an image according to the orientation of the
     image in the EXIF data. 
@@ -904,7 +908,7 @@ def auto_rotate_image(dbo, imagedata):
         asm3.al.error("failed rotating/flipping image: %s" % str(err), "media.auto_rotate_image", dbo)
         return imagedata
 
-def rotate_image(imagedata, clockwise = True):
+def rotate_image(imagedata: bytes, clockwise: bool = True) -> bytes:
     """
     Rotate an image. 
     clockwise: Rotate 90 degrees clockwise, if false rotates anticlockwise
@@ -925,7 +929,7 @@ def rotate_image(imagedata, clockwise = True):
         asm3.al.error("failed rotating image: %s" % str(err), "media.rotate_image")
         return imagedata
 
-def remove_expired_media(dbo, years = None, username = "system"):
+def remove_expired_media(dbo: Database, years: int = None, username: str = "system") -> str:
     """
     Removes all media where retainuntil < today
     and document media older than today - remove document media years.
@@ -951,7 +955,7 @@ def remove_expired_media(dbo, years = None, username = "system"):
         asm3.al.debug("removed %d expired document media items (remove after %s years)" % (len(rows), retainyears), "media.remove_expired_media", dbo)
         return "OK %s" % len(rows)
 
-def remove_media_after_exit(dbo, years = None, username = "system"):
+def remove_media_after_exit(dbo: Database, years: int = None, username: str = "system") -> str:
     """
     Removes media where the animal left the shelter or died more than X years ago.
     No longer physically deletes dbfs rows - that should be done manually
@@ -970,7 +974,7 @@ def remove_media_after_exit(dbo, years = None, username = "system"):
         asm3.al.debug("removed %d expired animal media items (remove %s years after exit)" % (affected, years), "media.remove_media_after_exit", dbo)
         return "OK %s" % affected
 
-def scale_image_file(inimage, outimage, resizespec):
+def scale_image_file(inimage: bytes, outimage: bytes, resizespec: str) -> None:
     """
     Scales the given image file from inimage to outimage
     to the size given in resizespec
@@ -990,7 +994,7 @@ def scale_image_file(inimage, outimage, resizespec):
     im.thumbnail(size, Image.ANTIALIAS)
     im.save(outimage, "JPEG")
 
-def scale_pdf(filedata):
+def scale_pdf(filedata: bytes) -> bytes:
     """
     Scales the given PDF filedata down and returns the compressed PDF data.
     """
@@ -1020,7 +1024,7 @@ def scale_pdf(filedata):
         return filedata
     return compressed
 
-def scale_odt(filedata):
+def scale_odt(filedata: bytes) -> bytes:
     """
     Scales an ODT file down by stripping anything starting with the name "Object"
     in the root or in the "ObjectReplacements" folder. Everything in the "Pictures"
@@ -1045,7 +1049,7 @@ def scale_odt(filedata):
     # Return the zip data
     return zo.getvalue()
 
-def scale_pdf_file(inputfile, outputfile):
+def scale_pdf_file(inputfile: str, outputfile: str) -> bool:
     """
     Scale a PDF file using the command line. There are different
     approaches to this and gs, imagemagick and pdftk (among others)
@@ -1068,7 +1072,7 @@ def scale_pdf_file(inputfile, outputfile):
         return False
     return True
    
-def scale_all_animal_images(dbo):
+def scale_all_animal_images(dbo: Database) -> None:
     """
     Goes through all animal images in the database and scales
     them to the current incoming media scaling factor.
@@ -1095,7 +1099,7 @@ def scale_all_animal_images(dbo):
             asm3.al.error("failed scaling image (ID=%s, DBFSID=%s): %s" % (m.ID, m.DBFSID, err), "media.scale_all_animal_images", dbo)
     asm3.al.debug("scaled %d images" % len(mp), "media.scale_all_animal_images", dbo)
 
-def scale_all_odt(dbo):
+def scale_all_odt(dbo: Database) -> None:
     """
     Goes through all odt files attached to records in the database and 
     scales them down (throws away images and objects so only the text remains to save space)
@@ -1117,7 +1121,7 @@ def scale_all_odt(dbo):
             asm3.al.error("failed scaling ODT (ID=%s, DBFSID=%s): %s" % (m.ID, m.DBFSID, err), "media.scale_all_odt", dbo)
     asm3.al.debug("scaled %d of %d odts" % (total, len(mo)), "media.scale_all_odt", dbo)
 
-def scale_all_pdf(dbo):
+def scale_all_pdf(dbo: Database) -> None:
     """
     Goes through all PDFs in the database and attempts to scale them down.
     """
@@ -1137,7 +1141,7 @@ def scale_all_pdf(dbo):
             asm3.al.error("failed scaling PDF (ID=%s, DBFSID=%s): %s" % (m.ID, m.DBFSID, err), "media.scale_all_pdf", dbo)
     asm3.al.debug("scaled %d of %d pdfs" % (total, len(mp)), "media.scale_all_pdf", dbo)
 
-def watermark_font_preview(fontfile):
+def watermark_font_preview(fontfile: str) -> bytes:
     """
     Generate image of preview text for fontname
     """
@@ -1154,7 +1158,7 @@ def watermark_font_preview(fontfile):
     output.close()
     return imagedata
 
-def watermark_with_transparency(dbo, imagedata, animalname):
+def watermark_with_transparency(dbo: Database, imagedata: bytes, animalname: str) -> bytes:
     """
     Watermark the image with animalname and logo. 
     """

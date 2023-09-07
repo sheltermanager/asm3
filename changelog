@@ -1,6 +1,7 @@
 48
 ================
 
+07/09/23 type hints, media #1320
 06/09/23 Throw readable exception if account exists during payment type create
 06/09/23 Do not create new account if specified during payment type create
 06/09/23 Use shorter married format {first1} & {first2} {surname} for couples
