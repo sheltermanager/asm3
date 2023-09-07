@@ -7,7 +7,7 @@ Import script for Shelterpro databases exported from SQL Server to MDB and then 
 this version differs from other shelterpro as some of the fieldnames are full length instead
 of truncated at 8 chars as with the DBF variants
 
-(requires shelter.csv, animal.csv, person.csv, address.csv, addrlink.csv, license.csv, vacc.csv)
+(requires shelter.csv, animal.csv, person.csv, address.csv, addrlink.csv, license.csv, vacc.csv, medical.csv, medicate.csv)
 (optional: license.csv, payments.csv, bite.csv, incident.csv, image.csv)
 
 Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if IMAGE_FILE_IMPORT is set.
@@ -42,8 +42,9 @@ BITE_IMPORT = True
 INCIDENT_IMPORT = True
 LICENCE_IMPORT = False
 IMAGE_FILE_IMPORT = False
-IMAGE_TABLE_IMPORT = True
+IMAGE_TABLE_IMPORT = False
 PAYMENT_IMPORT = True
+MEDICAL_IMPORT = True
 VACCINATION_IMPORT = True
 
 IMPORT_ANIMALS_WITH_NO_NAME = True      # Some people like these filtered out. They'll come through with name (unknown)
@@ -119,6 +120,7 @@ ownerlicences = []
 logs = []
 movements = []
 animals = []
+animalmedicals = []
 animalvaccinations = []
 animalcontrol = []
 
@@ -136,6 +138,9 @@ asm.setid("owner", START_ID)
 asm.setid("log", START_ID)
 
 if VACCINATION_IMPORT: asm.setid("animalvaccination", START_ID)
+if MEDICAL_IMPORT:
+    asm.setid("animalmedical", START_ID)
+    asm.setid("animalmedicaltreatment", START_ID)
 if LICENCE_IMPORT: asm.setid("ownerlicence", START_ID)
 if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: asm.setid("media", START_ID)
 if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: asm.setid("dbfs", START_ID)
@@ -149,6 +154,9 @@ print("DELETE FROM log WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
 print("DELETE FROM owner WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
 if INCIDENT_IMPORT: print("DELETE FROM animalcontrol WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
 if VACCINATION_IMPORT: print("DELETE FROM animalvaccination WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+if MEDICAL_IMPORT:
+    print("DELETE FROM animalmedical WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+    print("DELETE FROM animalmedicaltreatment WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
 if LICENCE_IMPORT: print("DELETE FROM ownerlicence WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
 if PAYMENT_IMPORT: print("DELETE FROM ownerdonation WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
 if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: print("DELETE FROM media WHERE ID >= %d;" % START_ID)
@@ -634,6 +642,26 @@ if VACCINATION_IMPORT:
         setuserfields(row, av)
     del cvacc
 
+if MEDICAL_IMPORT:
+    # medical holds the link back to the animal table, medicate holds the individual treatments
+    # for each medical. since we can't really do multi-treatment easily from here we add each treatment 
+    # as a single medical.
+    cmedical = asm.csv_to_list("%s/medical.csv" % PATH, uppercasekeys=True, strip=True)
+    cmedicate = asm.csv_to_list("%s/medicate.csv" % PATH, uppercasekeys=True, strip=True)
+    ppma = {}
+    for row in cmedical:
+        if row["ANIMALKEY"] in ppa: a = ppa[row["ANIMALKEY"]]
+        ppma[row["MEDICALKEY"]] = a
+    for row in cmedicate:
+        if row["MEDICALKEY"] in ppma: a = ppma[row["MEDICALKEY"]]
+        tname = row["REASON"]
+        if row["DRUGNAME"] != "": tname += " - " + row["DRUGNAME"]
+        dosage = "%s %s %s" % (row["ADMINMETH"], row["DOSAGE"], row["DOSAGEMEASURE"])
+        sdate = getdate(row["DATEADMIN"])
+        if sdate is None: continue
+        note = "%s %s" % (row["LOTNUMBER"], row["SERIALNUMBER"])
+        animalmedicals.append(asm.animal_regimen_single(a.ID, sdate, tname, dosage, note))
+
 # Run back through the animals, if we have any that are still
 # on shelter after 2 years, add an adoption to an unknown owner
 if FAKE_ADOPTION_ONSHELTER_DAYS > 0:
@@ -644,6 +672,8 @@ for a in animals:
     print(a)
 for av in animalvaccinations:
     print(av)
+for am in animalmedicals:
+    print(am)
 for o in owners:
     print(o)
 for l in logs:
@@ -657,7 +687,7 @@ for ol in ownerlicences:
 for ac in animalcontrol:
     print(ac)
 
-asm.stderr_summary(animals=animals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements, ownerdonations=ownerdonations, ownerlicences=ownerlicences, animalcontrol=animalcontrol)
+asm.stderr_summary(animals=animals, animalmedicals=animalmedicals, animalvaccinations=animalvaccinations, logs=logs, owners=owners, movements=movements, ownerdonations=ownerdonations, ownerlicences=ownerlicences, animalcontrol=animalcontrol)
 
 print("DELETE FROM configuration WHERE ItemName LIKE 'DBView%';")
 print("COMMIT;")
