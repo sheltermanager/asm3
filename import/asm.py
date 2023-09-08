@@ -35,6 +35,7 @@ Also has some useful helper functions for reading CSVs and parsing values, eg:
     asm.subtract_days, asm.add_days
     asm.fw (first word)
     asm.iif (inline if, eg: iif(condition, true, false))
+    asm.md5(s)
     asm.spaceleft(s, length)
     asm.spaceright(s, length)
     asm.padleft(s, length)
@@ -1195,6 +1196,20 @@ def type_name_for_id(id):
 def type_from_db(name, default = 2):
     """ Looks up the type in the db when the conversion is run, assign to AnimalTypeID """
     return "COALESCE((SELECT ID FROM animaltype WHERE lower(AnimalType) LIKE lower('%s') LIMIT 1), %d)" % (name.strip(), default)
+
+def md5(s):
+    """
+    Generates an md5 hash of str(s), returning the hash as a hex string
+    """
+    import hashlib
+    m = hashlib.md5()
+    m.update(str(s).encode("utf-8"))
+    return m.hexdigest()
+
+def uuid_b64():
+    """ Returns a type 4 UUID as a base64 encoded str (shorter) """
+    import base64, uuid
+    return base64.b64encode(uuid.uuid4().bytes).decode("utf-8").replace("=", "")
 
 def strip(s):
     """
@@ -2744,6 +2759,8 @@ class OwnerLicence:
     LicenceFee = 0
     IssueDate = None
     ExpiryDate = None
+    Token = ""
+    Renewed = 1
     Comments = ""
     RecordVersion = 0
     CreatedBy = "conversion"
@@ -2754,6 +2771,7 @@ class OwnerLicence:
         self.ID = ID
         if ID == 0: self.ID = getid("ownerlicence")
     def __str__(self):
+        if self.Token == "": self.Token = uuid_b64()
         s = (
             ( "ID", di(self.ID) ),
             ( "OwnerID", di(self.OwnerID) ),
@@ -2763,6 +2781,8 @@ class OwnerLicence:
             ( "LicenceFee", di(self.LicenceFee) ),
             ( "IssueDate", dd(self.IssueDate) ),
             ( "ExpiryDate", dd(self.ExpiryDate) ),
+            ( "Token", ds(self.Token) ),
+            ( "Renewed", di(self.Renewed) ),
             ( "Comments", ds(self.Comments) ),
             ( "RecordVersion", di(self.RecordVersion) ),
             ( "CreatedBy", ds(self.CreatedBy) ),
