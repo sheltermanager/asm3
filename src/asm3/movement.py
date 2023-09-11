@@ -12,6 +12,7 @@ import asm3.person
 import asm3.utils
 
 from asm3.sitedefs import SERVICE_URL
+from asm3.typehints import datetime, Database, List, PostedData, ResultRow, Results
 
 # Valid values for MovementType (0-8 only)
 NO_MOVEMENT = 0
@@ -31,7 +32,7 @@ TRIAL_ADOPTION_TEXT = 11        # ADOPTION + IsTrial=1
 PERMANENT_FOSTER_TEXT = 12      # FOSTER + IsPermanentFoster=1
 TNR_TEXT = 13                   # RELEASED + animal.SpeciesID=2 (Cat)
 
-def get_movement_query(dbo):
+def get_movement_query(dbo: Database) -> str:
     return "SELECT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, " \
@@ -98,7 +99,7 @@ def get_movement_query(dbo):
         "LEFT OUTER JOIN owner r ON m.RetailerID = r.ID " \
         "LEFT OUTER JOIN owner rb ON m.ReturnedByOwnerID = rb.ID " % { "now": dbo.sql_now() }
 
-def get_transport_query(dbo):
+def get_transport_query(dbo: Database) -> str:
     return "SELECT t.*, tt.TransportTypeName, " \
         "d.OwnerName AS DriverOwnerName, p.OwnerName AS PickupOwnerName, dr.OwnerName AS DropoffOwnerName, " \
         "d.OwnerAddress AS DriverOwnerAddress, p.OwnerAddress AS PickupOwnerAddress, dr.OwnerAddress AS DropoffOwnerAddress, " \
@@ -125,7 +126,7 @@ def get_transport_query(dbo):
         "LEFT OUTER JOIN owner p ON t.PickupOwnerID = p.ID " \
         "LEFT OUTER JOIN owner dr ON t.DropoffOwnerID = dr.ID "
 
-def get_movements(dbo, movementtype):
+def get_movements(dbo: Database, movementtype: int) -> Results:
     """
     Gets the list of movements of a particular type 
     (unreturned or returned after today and for animals who aren't deceased)
@@ -137,13 +138,13 @@ def get_movements(dbo, movementtype):
         "ORDER BY m.MovementDate DESC", (movementtype, dbo.today()))
     return asm3.additional.append_to_results(dbo, rows , "movement")
 
-def get_movement(dbo, movementid):
+def get_movement(dbo: Database, movementid: int) -> ResultRow:
     """
     Returns a single movement by id. Returns None if it does not exist.
     """
     return dbo.first_row(dbo.query(get_movement_query(dbo) + " WHERE m.ID = ?", [movementid]))
 
-def get_active_reservations(dbo, age = 0):
+def get_active_reservations(dbo: Database, age: int = 0) -> Results:
     """
     Gets the list of uncancelled reservation movements.
     age: The age of the reservation in days, or 0 for all
@@ -156,22 +157,22 @@ def get_active_reservations(dbo, age = 0):
         " WHERE m.ReservationDate Is Not Null AND m.MovementDate Is Null AND m.MovementType = 0 AND m.ReturnDate Is Null " \
         "AND m.ReservationCancelledDate Is Null ORDER BY m.ReservationDate")
 
-def get_active_transports(dbo):
+def get_active_transports(dbo: Database) -> Results:
     return dbo.query(get_transport_query(dbo) + " WHERE t.Status < 10 OR DropoffDateTime > ? ORDER BY DropoffDateTime", [dbo.today()])
 
-def get_animal_transports(dbo, animalid):
+def get_animal_transports(dbo: Database, animalid: int) -> Results:
     return dbo.query(get_transport_query(dbo) + " WHERE t.AnimalID = ? ORDER BY DropoffDateTime", [animalid])
 
-def get_transport(dbo, transportid):
+def get_transport(dbo: Database, transportid: int) -> Results:
     return dbo.first_row(dbo.query(get_transport_query(dbo) + " WHERE t.ID = ?", [transportid]))
 
-def get_transports_by_ids(dbo, transportids):
+def get_transports_by_ids(dbo: Database, transportids: List[int]) -> Results:
     return dbo.query(get_transport_query(dbo) + "WHERE t.ID IN (%s) ORDER BY DropoffDateTime" % ",".join(str(x) for x in transportids))
 
-def get_transport_two_dates(dbo, start, end): 
+def get_transport_two_dates(dbo: Database, start: datetime, end: datetime) -> Results: 
     return dbo.query(get_transport_query(dbo) + " WHERE t.PickupDateTime >= ? AND t.PickupDateTime <= ? ORDER BY t.PickupDateTime", (start, end))
 
-def get_recent_adoptions(dbo, months = 1):
+def get_recent_adoptions(dbo: Database, months: int = 1) -> Results:
     """
     Returns a list of adoptions in the last "months" months.
     """
@@ -180,7 +181,7 @@ def get_recent_adoptions(dbo, months = 1):
         "AND m.MovementDate > ? " \
         "ORDER BY m.MovementDate DESC", [dbo.today(offset=months*-31)])
 
-def get_recent_nonfosteradoption(dbo, months = 1):
+def get_recent_nonfosteradoption(dbo: Database, months: int = 1) -> Results:
     """
     Returns a list of active movements that aren't reserves,
     fosters, adoptions or transfers in the last "months" months.
@@ -190,7 +191,7 @@ def get_recent_nonfosteradoption(dbo, months = 1):
         "AND m.MovementDate > ? " \
         "ORDER BY m.MovementDate DESC", [dbo.today(offset=months*-31)])
 
-def get_recent_transfers(dbo, months = 1):
+def get_recent_transfers(dbo: Database, months: int = 1) -> Results:
     """
     Returns a list of transfers in the last "months" months.
     """
@@ -199,7 +200,7 @@ def get_recent_transfers(dbo, months = 1):
         "AND m.MovementDate > ? " \
         "ORDER BY m.MovementDate DESC", [dbo.today(offset=months*-31)])
 
-def get_recent_unneutered_adoptions(dbo, months = 1):
+def get_recent_unneutered_adoptions(dbo: Database, months: int = 1) -> Results:
     """
     Returns a list of adoptions in the last "months" months where the
     animal remains unneutered.
@@ -209,7 +210,7 @@ def get_recent_unneutered_adoptions(dbo, months = 1):
         "AND m.MovementDate > ? AND a.Neutered = 0 AND a.SpeciesID IN ( " + asm3.configuration.alert_species_neuter(dbo) + ") " \
         "ORDER BY m.MovementDate DESC" , [dbo.today(offset=months*-31)])
 
-def get_soft_releases(dbo):
+def get_soft_releases(dbo: Database) -> Results:
     """
     Returns a list of soft release movements. 
     """
@@ -217,7 +218,7 @@ def get_soft_releases(dbo):
         "WHERE m.IsTrial = 1 AND m.MovementType = 7 AND (m.ReturnDate Is Null OR m.ReturnDate > ?) " \
         "ORDER BY m.TrialEndDate", [dbo.today()])
 
-def get_trial_adoptions(dbo):
+def get_trial_adoptions(dbo: Database) -> Results:
     """
     Returns a list of trial adoption movements. 
     """
@@ -225,23 +226,24 @@ def get_trial_adoptions(dbo):
         "WHERE m.IsTrial = 1 AND m.MovementType = 1 AND (m.ReturnDate Is Null OR m.ReturnDate > ?) " \
         "ORDER BY m.TrialEndDate", [dbo.today()])
 
-def get_animal_movements(dbo, aid):
+def get_animal_movements(dbo: Database, aid: int) -> Results:
     """
     Gets the list of movements for a particular animal
     """
     rows = dbo.query(get_movement_query(dbo) + " WHERE m.AnimalID = ? ORDER BY ActiveDate DESC", [aid])
     return asm3.additional.append_to_results(dbo, rows, "movement")
 
-def get_person_movements(dbo, pid):
+def get_person_movements(dbo: Database, pid: int) -> Results:
     """
     Gets the list of movements for a particular person
     """
     rows = dbo.query(get_movement_query(dbo) + " WHERE m.OwnerID = ? ORDER BY ActiveDate DESC", [pid])
     return asm3.additional.append_to_results(dbo, rows, "movement")
 
-def validate_movement_form_data(dbo, username, post):
+def validate_movement_form_data(dbo: Database, username: str, post: PostedData) -> None:
     """
-    Verifies that form data is valid for a movement
+    Verifies that form data is valid for a movement. 
+    Throws an appropriate Exception with message if not. Returns no value.
     """
     l = dbo.locale
     movementid = post.integer("movementid")
@@ -403,7 +405,7 @@ def validate_movement_form_data(dbo, username, post):
                 dbo.update("adoption", r.ID, { "ReservationCancelledDate": dbo.today() }, username)
             asm3.al.debug(f"movement is an adoption, cancelling outstanding reserves (ids={cancids}).", "movement.validate_movement_form_data", dbo)
 
-def insert_movement_from_form(dbo, username, post):
+def insert_movement_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a movement record from posted form data 
     """
@@ -459,7 +461,7 @@ def insert_movement_from_form(dbo, username, post):
         asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
     return movementid
 
-def update_movement_from_form(dbo, username, post):
+def update_movement_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a movement record from posted form data
     """
@@ -504,7 +506,7 @@ def update_movement_from_form(dbo, username, post):
         update_movement_donation(dbo, movementid)
         asm3.person.update_adopter_flag(dbo, username, post.integer("person"))
 
-def delete_movement(dbo, username, mid):
+def delete_movement(dbo: Database, username: str, mid: int) -> None:
     """
     Deletes a movement record
     """
@@ -519,7 +521,7 @@ def delete_movement(dbo, username, mid):
         asm3.animal.update_variable_animal_data(dbo, m.ANIMALID)
         asm3.person.update_adopter_flag(dbo, username, m.OWNERID)
 
-def cancel_reservation(dbo, username, movementid):
+def cancel_reservation(dbo: Database, username: str, movementid: int) -> None:
     """
     Cancels the reservation with movementid
     """
@@ -528,7 +530,7 @@ def cancel_reservation(dbo, username, movementid):
         dbo.update("adoption", movementid, { "ReservationCancelledDate": dbo.today() }, username)
         asm3.animal.update_animal_status(dbo, m.ANIMALID)
 
-def return_movement(dbo, movementid, username, animalid = 0, returndate = None):
+def return_movement(dbo: Database, movementid: int, username: str, animalid: int = 0, returndate: datetime = None) -> None:
     """
     Returns a movement with the date given. If animalid is not supplied, it
     will be looked up from the movement given. If returndate is not supplied,
@@ -541,7 +543,7 @@ def return_movement(dbo, movementid, username, animalid = 0, returndate = None):
     asm3.animal.update_animal_status(dbo, animalid)
     asm3.person.update_adopter_flag(dbo, username, personid)
 
-def trial_to_full_adoption(dbo, username, movementid):
+def trial_to_full_adoption(dbo: Database, username: str, movementid: int) -> None:
     """
     Removes the trial flag from movementid
     If the trial end date on the record is blank, sets it to today
@@ -553,7 +555,7 @@ def trial_to_full_adoption(dbo, username, movementid):
     asm3.animal.update_animal_status(dbo, m.ANIMALID)
     asm3.person.update_adopter_flag(dbo, username, m.OWNERID)
 
-def insert_adoption_from_form(dbo, username, post, creating = [], create_payments = True):
+def insert_adoption_from_form(dbo: Database, username: str, post: PostedData, creating: List[int] = [], create_payments: bool = True) -> int:
     """
     Inserts a movement from the workflow adopt an animal screen.
     Returns the new movement id
@@ -663,7 +665,7 @@ def insert_adoption_from_form(dbo, username, post, creating = [], create_payment
         asm3.animal.insert_cost_from_form(dbo, username, asm3.utils.PostedData(boc_dict, l))
     return movementid
 
-def insert_foster_from_form(dbo, username, post):
+def insert_foster_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Inserts a movement from the workflow foster an animal screen.
     Returns the new movement id
@@ -698,7 +700,7 @@ def insert_foster_from_form(dbo, username, post):
     movementid = insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
     return movementid
 
-def insert_reclaim_from_form(dbo, username, post):
+def insert_reclaim_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """f
     Inserts a movement from the workflow adopt an animal screen.
     Returns the new movement id
@@ -761,7 +763,7 @@ def insert_reclaim_from_form(dbo, username, post):
         asm3.animal.insert_cost_from_form(dbo, username, asm3.utils.PostedData(boc_dict, l))
     return movementid
 
-def insert_transfer_from_form(dbo, username, post):
+def insert_transfer_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Inserts a movement from the workflow transfer an animal screen.
     Returns the new movement id
@@ -791,7 +793,7 @@ def insert_transfer_from_form(dbo, username, post):
     movementid = insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
     return movementid
 
-def insert_reserve_for_animal_name(dbo, username, personid, reservationdate, animalname):
+def insert_reserve_for_animal_name(dbo: Database, username: str, personid: int, reservationdate: datetime, animalname: str) -> int:
     """
     Creates a reservation for the animal with animalname to personid.
     animalname can either be just the name of a shelter animal, or it
@@ -821,7 +823,7 @@ def insert_reserve_for_animal_name(dbo, username, personid, reservationdate, ani
     }
     return insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
 
-def insert_reserve_from_form(dbo, username, post):
+def insert_reserve_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Inserts a movement from the workflow reserve an animal screen.
     Returns the new movement id
@@ -850,7 +852,7 @@ def insert_reserve_from_form(dbo, username, post):
     asm3.financial.insert_donations_from_form(dbo, username, post, post["reservationdate"], False, post["person"], post["animal"], movementid) 
     return movementid
 
-def insert_retailer_from_form(dbo, username, post):
+def insert_retailer_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Inserts a retailer from the workflow move to retailer screen.
     Returns the new movement id
@@ -880,7 +882,7 @@ def insert_retailer_from_form(dbo, username, post):
     movementid = insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
     return movementid
 
-def update_movement_donation(dbo, movementid):
+def update_movement_donation(dbo: Database, movementid: int) -> None:
     """
     Goes through all donations attached to a particular movement and updates
     the denormalised movement total.
@@ -889,7 +891,7 @@ def update_movement_donation(dbo, movementid):
     dbo.execute("UPDATE adoption SET Donation = " \
         "(SELECT SUM(Donation) FROM ownerdonation WHERE MovementID = ?) WHERE ID = ?", (movementid, movementid))
 
-def insert_transport_from_form(dbo, username, post):
+def insert_transport_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a transport record from posted form data 
     """
@@ -927,7 +929,7 @@ def insert_transport_from_form(dbo, username, post):
         "Comments":             post["comments"]
     }, username)
 
-def update_transport_from_form(dbo, username, post):
+def update_transport_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a movement record from posted form data
     """
@@ -966,18 +968,18 @@ def update_transport_from_form(dbo, username, post):
         "Comments":             post["comments"]
     }, username)
 
-def update_transport_statuses(dbo, username, ids, newstatus):
+def update_transport_statuses(dbo: Database, username: str, ids: List[int], newstatus: int) -> None:
     """ Updates all transports in list ids to newstatus """
     for i in ids:
         dbo.update("animaltransport", i, { "Status": newstatus }, username)
 
-def delete_transport(dbo, username, tid):
+def delete_transport(dbo: Database, username: str, tid: int) -> None:
     """
     Deletes a transport record
     """
     dbo.delete("animaltransport", tid, username)
 
-def generate_insurance_number(dbo):
+def generate_insurance_number(dbo: Database) -> int:
     """
     Returns the next insurance number in the sequence
     """
@@ -986,7 +988,7 @@ def generate_insurance_number(dbo):
     asm3.configuration.auto_insurance_next(dbo, nextins)
     return ins
 
-def auto_cancel_reservations(dbo):
+def auto_cancel_reservations(dbo: Database) -> None:
     """
     Automatically cancels reservations after the daily amount set
     """
@@ -1001,7 +1003,7 @@ def auto_cancel_reservations(dbo):
         "MovementType = 0 AND ReservationDate < ?", (dbo.today(), dbo.now(), cancelcutoff))
     asm3.al.debug("cancelled %d reservations older than %s days" % (count, cancelafter), "movement.auto_cancel_reservations", dbo)
 
-def send_adoption_checkout(dbo, username, post):
+def send_adoption_checkout(dbo: Database, username: str, post: PostedData) -> None:
     """
     Sets up an adoption checkout cache object and sends the email 
     with the checkout link to the adopter.
@@ -1068,7 +1070,7 @@ def send_adoption_checkout(dbo, username, post):
     if asm3.configuration.audit_on_send_email(dbo): 
         asm3.audit.email(dbo, username, post["from"], post["to"], post["cc"], post["bcc"], post["subject"], body)
 
-def send_movement_emails(dbo, username, post):
+def send_movement_emails(dbo: Database, username: str, post: PostedData) -> bool:
     """
     Sends an email to multiple people from a movement book screen. 
     Attaches it as a log entry to the people with IDs listed in personids if specified
@@ -1089,7 +1091,7 @@ def send_movement_emails(dbo, username, post):
             asm3.log.add_log_email(dbo, username, asm3.log.PERSON, pid, logtype, emailto, subject, body)
     return rv
 
-def send_fosterer_emails(dbo):
+def send_fosterer_emails(dbo: Database) -> None:
     """
     Finds all people on file with at least 1 active foster, then constructs an email 
     containing any info on overdue medical items and items due in the current week. 

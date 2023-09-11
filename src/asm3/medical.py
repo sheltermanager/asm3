@@ -4,6 +4,7 @@ import asm3.animal
 import asm3.configuration
 import asm3.utils
 from asm3.i18n import _, add_days
+from asm3.typehints import datetime, Database, List, PostedData, ResultRow, Results
 
 # Medical treatment rules
 FIXED_LENGTH = 0
@@ -29,7 +30,7 @@ DESCENDING_NAME = 1
 DESCENDING_REQUIRED = 1
 DESCENDING_GIVEN = 2
 
-def get_medicaltreatment_query(dbo):
+def get_medicaltreatment_query(dbo: Database) -> str:
     return "SELECT a.ShelterCode, a.ShortCode, a.AnimalName, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
         "a.DateOfBirth, a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
@@ -102,7 +103,7 @@ def get_medicaltreatment_query(dbo):
                 "numbertreatments": dbo.sql_concat(["(am.TimingRule * am.TotalNumberOfTreatments)", "' treatments'"])
             }
 
-def get_medicalcombined_query(dbo):
+def get_medicalcombined_query(dbo: Database) -> str:
     return "SELECT * FROM (" \
         "SELECT " \
         "a.AnimalName, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
@@ -175,7 +176,7 @@ def get_medicalcombined_query(dbo):
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
         ") dummy " 
 
-def get_test_query(dbo):
+def get_test_query(dbo: Database) -> str:
     return "SELECT at.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
         "a.DateOfBirth, a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
@@ -221,7 +222,7 @@ def get_test_query(dbo):
         "LEFT OUTER JOIN owner adv ON adv.ID = at.AdministeringVetID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
-def get_vaccination_query(dbo):
+def get_vaccination_query(dbo: Database) -> str:
     return "SELECT av.*, a.ShelterCode, a.ShortCode, a.Archived, a.ActiveMovementID, a.ActiveMovementType, a.DeceasedDate, a.AcceptanceNumber, " \
         "a.DateOfBirth, a.Sex, a.HasActiveReserve, a.HasTrialAdoption, a.CrueltyCase, a.NonShelterAnimal, a.ShelterLocation, a.DisplayLocation, " \
         "a.Neutered, a.IsNotAvailableForAdoption, a.IsHold, a.IsQuarantine, " \
@@ -265,7 +266,7 @@ def get_vaccination_query(dbo):
         "LEFT OUTER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation "
 
-def get_vaccinations(dbo, animalid, onlygiven = False, sort = ASCENDING_REQUIRED):
+def get_vaccinations(dbo: Database, animalid: int, onlygiven: bool = False, sort: int = ASCENDING_REQUIRED) -> Results:
     """
     Returns a recordset of vaccinations for an animal:
     VACCINATIONTYPE, DATEREQUIRED, DATEOFVACCINATION, COMMENTS, COST
@@ -281,7 +282,7 @@ def get_vaccinations(dbo, animalid, onlygiven = False, sort = ASCENDING_REQUIRED
         sql += " ORDER BY av.DateRequired DESC"
     return dbo.query(sql)
 
-def get_vaccinated(dbo, animalid):
+def get_vaccinated(dbo: Database, animalid: int) -> bool:
     """
     Returns true if:
         1. The animal has had at least one vaccination given
@@ -293,7 +294,7 @@ def get_vaccinated(dbo, animalid):
         "WHERE AnimalID = ? AND DateOfVaccination Is Null AND DateRequired < ?", (animalid, dbo.today()))
     return outstanding == 0 and given > 0
 
-def get_batch_for_vaccination_types(dbo):
+def get_batch_for_vaccination_types(dbo: Database) -> Results:
     """
     Returns vaccination types and last non-empty batch number and manufacturer 
         we saw for that type in the last month.
@@ -308,7 +309,7 @@ def get_batch_for_vaccination_types(dbo):
         "AND DateOfVaccination Is Not Null AND DateOfVaccination >= ? " \
         "ORDER BY animalvaccination.ID DESC, VaccinationID", [ dbo.today(offset=-31) ], distincton="ID")
 
-def get_regimens(dbo, animalid, onlycomplete = False, onlyactive = False, sort = ASCENDING_REQUIRED):
+def get_regimens(dbo: Database, animalid: int, onlycomplete: bool = False, onlyactive: bool = False, sort: int = ASCENDING_REQUIRED) -> Results:
     """
     Returns a recordset of medical regimens for an animal:
     TREATMENTNAME, COST, COMMENTS, NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS,
@@ -342,7 +343,7 @@ def get_regimens(dbo, animalid, onlycomplete = False, onlyactive = False, sort =
     # Now add our extra named fields
     return embellish_regimen(l, rows)
 
-def get_regimens_treatments(dbo, animalid, sort = DESCENDING_REQUIRED, limit = 0):
+def get_regimens_treatments(dbo: Database, animalid: int, sort: int = DESCENDING_REQUIRED, limit: int = 0) -> Results:
     """
     Returns a recordset of medical regimens and treatments for an animal:
     TREATMENTNAME, COST, COMMENTS, NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS,
@@ -364,7 +365,7 @@ def get_regimens_treatments(dbo, animalid, sort = DESCENDING_REQUIRED, limit = 0
     # Now add our extra named fields
     return embellish_regimen(l, rows)
 
-def get_medical_export(dbo):
+def get_medical_export(dbo: Database) -> Results:
     """
     Produces a dataset of basic animal info with all medical items for export
     """
@@ -403,7 +404,7 @@ def get_medical_export(dbo):
      ") dummy " \
      "ORDER BY DateRequired")
 
-def get_profile(dbo, pfid):
+def get_profile(dbo: Database, pfid: int) -> ResultRow:
     """
     Returns a single medical profile by id.
     TREATMENTNAME, COST, COMMENTS, NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS, DOSAGE,
@@ -412,9 +413,9 @@ def get_profile(dbo, pfid):
     l = dbo.locale
     rows = dbo.query("SELECT m.* FROM medicalprofile m WHERE m.ID = ?", [pfid])
     rows = embellish_regimen(l, rows)
-    return rows[0]
+    return dbo.first_row(rows)
 
-def get_profiles(dbo, sort = ASCENDING_NAME):
+def get_profiles(dbo: Database, sort: int = ASCENDING_NAME) -> Results:
     """
     Returns a recordset of medical profiles:
     TREATMENTNAME, COST, COMMENTS, NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS, DOSAGE,
@@ -430,7 +431,7 @@ def get_profiles(dbo, sort = ASCENDING_NAME):
     # Now add our extra named fields
     return embellish_regimen(l, rows)
 
-def embellish_regimen(l, rows):
+def embellish_regimen(l: str, rows: Results) -> Results:
     """
     Adds the following fields to a resultset containing
     regimen rows:
@@ -493,7 +494,7 @@ def embellish_regimen(l, rows):
             r.NAMEDSTATUS = _("Held", l)
     return rows
 
-def get_tests(dbo, animalid, onlygiven = False, sort = ASCENDING_REQUIRED):
+def get_tests(dbo: Database, animalid: int, onlygiven: bool = False, sort: int = ASCENDING_REQUIRED) -> Results:
     """
     Returns a recordset of tests for an animal:
     TESTNAME, RESULTNAME, DATEREQUIRED, DATEOFTEST, COMMENTS, COST
@@ -509,7 +510,7 @@ def get_tests(dbo, animalid, onlygiven = False, sort = ASCENDING_REQUIRED):
         sql += "ORDER BY at.DateRequired DESC"
     return dbo.query(sql)
 
-def get_vaccinations_outstanding(dbo, offset = "m31", locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_vaccinations_outstanding(dbo: Database, offset: str = "m31", locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
     """
     Returns a recordset of animals awaiting vaccinations:
     offset is m to go backwards, or p to go forwards with a number of days.
@@ -547,7 +548,7 @@ def get_vaccinations_outstanding(dbo, offset = "m31", locationfilter = "", sitei
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY av.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter))
 
-def get_vaccinations_two_dates(dbo, start, end, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_vaccinations_two_dates(dbo: Database, start: datetime, end: datetime, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
     """
     Returns vaccinations due between two dates:
     start, end: dates
@@ -564,7 +565,7 @@ def get_vaccinations_two_dates(dbo, start, end, locationfilter = "", siteid = 0,
         "AND a.DeceasedDate Is Null %s %s " \
         "ORDER BY av.DateRequired, a.AnimalName" % (shelterfilter, locationfilter), (start, end))
 
-def get_vaccinations_expiring_two_dates(dbo, start, end, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_vaccinations_expiring_two_dates(dbo: Database, start: Database, end: Database, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
     """
     Returns vaccinations expiring between two dates. 
     A vacc is only considered truly expired if there isn't another vacc of the 
@@ -586,14 +587,14 @@ def get_vaccinations_expiring_two_dates(dbo, start, end, locationfilter = "", si
         "AND a.DeceasedDate Is Null %s %s " \
         "ORDER BY av.DateExpires, a.AnimalName" % (shelterfilter, locationfilter), (start, end))
 
-def get_vacc_manufacturers(dbo):
+def get_vacc_manufacturers(dbo: Database) -> List[str]:
     rows = dbo.query("SELECT DISTINCT Manufacturer FROM animalvaccination WHERE Manufacturer Is Not Null AND Manufacturer <> '' ORDER BY Manufacturer")
     mf = []
     for r in rows:
         mf.append(r.MANUFACTURER)
     return mf
 
-def get_tests_outstanding(dbo, offset = "m31", locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_tests_outstanding(dbo: Database, offset: str = "m31", locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
     """
     Returns a recordset of animals awaiting tests:
     offset is m to go backwards, or p to go forwards with a number of days.
@@ -617,7 +618,7 @@ def get_tests_outstanding(dbo, offset = "m31", locationfilter = "", siteid = 0, 
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY at.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter))
 
-def get_tests_two_dates(dbo, start, end, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_tests_two_dates(dbo: Database, start: datetime, end: datetime, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
     """
     Returns a recordset of animals awaiting tests between two dates
     start, end: dates
@@ -633,7 +634,7 @@ def get_tests_two_dates(dbo, start, end, locationfilter = "", siteid = 0, visibl
         "AND a.DeceasedDate Is Null %s %s " \
         "ORDER BY at.DateRequired, a.AnimalName" % (shelterfilter, locationfilter), (start, end))
 
-def get_treatments_outstanding(dbo, offset = "m31", locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_treatments_outstanding(dbo: Database, offset: str = "m31", locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
     """
     Returns a recordset of shelter animals awaiting medical treatments:
     offset is m to go backwards, or p to go forwards with a number of days.
@@ -662,7 +663,7 @@ def get_treatments_outstanding(dbo, offset = "m31", locationfilter = "", siteid 
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY amt.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter)))
 
-def get_treatments_two_dates(dbo, start, end, locationfilter = "", siteid = 0, visibleanimalids = ""):
+def get_treatments_two_dates(dbo: Database, start: datetime, end: datetime, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
     """
     Returns a recordset of shelter animals awaiting medical treatments between two dates.
     ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME,
@@ -683,7 +684,7 @@ def get_treatments_two_dates(dbo, start, end, locationfilter = "", siteid = 0, v
         "AND a.DeceasedDate Is Null %s %s " \
         "ORDER BY amt.DateRequired, a.AnimalName" % (shelterfilter, locationfilter), (start, end)))
 
-def get_combined_due(dbo, animalid, start, end):
+def get_combined_due(dbo: Database, animalid: int, start: datetime, end: datetime) -> Results:
     """
     Returns a combined recordset of medical, vacc and test items for animalid
     that are due between start and end.
@@ -729,7 +730,7 @@ def get_combined_due(dbo, animalid, start, end):
         "ORDER BY DateRequired", ( start, end, animalid, start, end, animalid, start, end, animalid ))
     return rows
 
-def update_test_today(dbo, username, testid, resultid):
+def update_test_today(dbo: Database, username: str, testid: int, resultid: int) -> None:
     """
     Marks a test record as performed today. 
     """
@@ -741,7 +742,7 @@ def update_test_today(dbo, username, testid, resultid):
     }, username)
     update_animal_tests(dbo, testid)
 
-def update_vaccination_today(dbo, username, vaccid):
+def update_vaccination_today(dbo: Database, username: str, vaccid: int) -> None:
     """
     Marks a vaccination record as given today. 
     """
@@ -752,7 +753,7 @@ def update_vaccination_today(dbo, username, vaccid):
         "GivenBy":              username
     }, username)
 
-def calculate_given_remaining(dbo, amid):
+def calculate_given_remaining(dbo: Database, amid: int) -> None:
     """
     Calculates the number of treatments given and remaining
     """
@@ -766,7 +767,9 @@ def calculate_given_remaining(dbo, amid):
     if cpt > 0 and given > 0:
         dbo.execute("UPDATE animalmedical SET Cost = ? WHERE ID = ?", [ cpt * given, amid ])
 
-def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", vetid = 0, dateexpires = None, batchnumber = "", manufacturer = "", cost = 0, rabiestag = ""):
+def complete_vaccination(dbo: Database, username: str, vaccinationid: int, newdate: datetime, 
+                         givenby: str = "", vetid: int = 0, dateexpires: datetime = None, 
+                         batchnumber: str = "", manufacturer: str = "", cost: int = 0, rabiestag: str = "") -> None:
     """
     Marks a vaccination given/completed on newdate
     """
@@ -784,7 +787,7 @@ def complete_vaccination(dbo, username, vaccinationid, newdate, givenby = "", ve
     }, username)
     update_rabies_tag(dbo, username, animalid)
 
-def complete_test(dbo, username, testid, newdate, testresult, vetid = 0, cost = 0):
+def complete_test(dbo: Database, username: str, testid: int, newdate: datetime, testresult: int, vetid: int = 0, cost: int = 0) -> None:
     """
     Marks a test performed on newdate with testresult
     """
@@ -798,7 +801,7 @@ def complete_test(dbo, username, testid, newdate, testresult, vetid = 0, cost = 
     }, username)
     update_animal_tests(dbo, testid)
 
-def reschedule_test(dbo, username, testid, newdate, comments):
+def reschedule_test(dbo: Database, username: str, testid: int, newdate: datetime, comments: str) -> None:
     """
     Reschedules a test for a new date, copying data from the existing one.
     Comments are appended on the existing test.
@@ -816,7 +819,7 @@ def reschedule_test(dbo, username, testid, newdate, comments):
         "Cost":                 av.COST
     }, username)
 
-def reschedule_vaccination(dbo, username, vaccinationid, newdate, comments):
+def reschedule_vaccination(dbo: Database, username: str, vaccinationid: int, newdate: datetime, comments: str) -> None:
     """
     Reschedules a vaccination for a new date by copying it.
     Comments are appended to any existing comments on the existing vacc.
@@ -836,7 +839,7 @@ def reschedule_vaccination(dbo, username, vaccinationid, newdate, comments):
         "Comments":             "" 
     }, username)
 
-def update_medical_treatments(dbo, username, amid):
+def update_medical_treatments(dbo: Database, username: str, amid: int) -> None:
     """
     Called on creation of an animalmedical record and after the saving
     of a treatment record. This handles creating the next treatment
@@ -895,7 +898,7 @@ def update_medical_treatments(dbo, username, amid):
         ldg = dbo.query_date("SELECT DateGiven FROM animalmedicaltreatment WHERE AnimalMedicalID=? ORDER BY DateGiven DESC", [amid])
         insert_treatments(dbo, username, amid, ldg, False)
 
-def insert_treatments(dbo, username, amid, requireddate, isstart = True):
+def insert_treatments(dbo: Database, username: str, amid: int, requireddate: datetime, isstart: bool = True) -> datetime:
     """
     Creates new treatment records for the given medical record
     with the required date given. isstart says that the date passed
@@ -935,7 +938,7 @@ def insert_treatments(dbo, username, amid, requireddate, isstart = True):
     calculate_given_remaining(dbo, amid)
     return requireddate
 
-def insert_regimen_from_form(dbo, username, post):
+def insert_regimen_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a regimen record from posted form data
     """
@@ -1015,7 +1018,7 @@ def insert_regimen_from_form(dbo, username, post):
 
     return nregid
 
-def update_regimen_from_form(dbo, username, post):
+def update_regimen_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a regimen record from posted form data
     """
@@ -1040,7 +1043,7 @@ def update_regimen_from_form(dbo, username, post):
 
     update_medical_treatments(dbo, username, post.integer("regimenid"))
 
-def insert_vaccination_from_form(dbo, username, post):
+def insert_vaccination_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a vaccination record from posted form data
     """
@@ -1070,7 +1073,7 @@ def insert_vaccination_from_form(dbo, username, post):
     update_rabies_tag(dbo, username, post.integer("animal"))
     return vaccid
 
-def update_vaccination_from_form(dbo, username, post):
+def update_vaccination_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a vaccination record from posted form data
     """
@@ -1097,7 +1100,7 @@ def update_vaccination_from_form(dbo, username, post):
 
     update_rabies_tag(dbo, username, post.integer("animal"))
 
-def update_rabies_tag(dbo, username, animalid):
+def update_rabies_tag(dbo: Database, username: str, animalid: int) -> None:
     """
     Updates the rabies tag field on an animal record to the
     latest from its vaccinations
@@ -1107,7 +1110,7 @@ def update_rabies_tag(dbo, username, animalid):
         "AND RabiesTag <> '' ORDER BY DateOfVaccination DESC", [animalid])
     if rabiestag != "": dbo.update("animal", animalid, { "RabiesTag": rabiestag }, username)
 
-def insert_test_from_form(dbo, username, post):
+def insert_test_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a test record from posted form data
     """
@@ -1130,7 +1133,7 @@ def insert_test_from_form(dbo, username, post):
     update_animal_tests(dbo, ntestid, "insert")
     return ntestid
 
-def update_test_from_form(dbo, username, post):
+def update_test_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a test record from posted form data
     """
@@ -1153,7 +1156,7 @@ def update_test_from_form(dbo, username, post):
 
     update_animal_tests(dbo, testid, "update")
 
-def update_animal_tests(dbo, testid, action = "insert"):
+def update_animal_tests(dbo: Database, testid: int, action: str = "insert") -> None:
     """
     Checks the test with testid and if it's a FIV, FLV or Heartworm 
     test updates the denormalised animal test fields.
@@ -1191,14 +1194,14 @@ def update_animal_tests(dbo, testid, action = "insert"):
             dbo.execute("UPDATE animal SET HeartwormTested = 0, HeartwormTestDate = Null, HeartwormTestResult = 0 WHERE ID = ?" \
                 " AND HeartwormTestResult = ?", (t.ANIMALID, result))
 
-def delete_regimen(dbo, username, amid):
+def delete_regimen(dbo: Database, username: str, amid: int) -> None:
     """
     Deletes a regimen
     """
     dbo.delete("animalmedicaltreatment", "AnimalMedicalID=%d" % amid, username)
     dbo.delete("animalmedical", amid, username)
 
-def delete_treatment(dbo, username, amtid):
+def delete_treatment(dbo: Database, username: str, amtid: int) -> None:
     """
     Deletes a treatment record
     """
@@ -1211,14 +1214,14 @@ def delete_treatment(dbo, username, amtid):
         calculate_given_remaining(dbo, amid)
         update_medical_treatments(dbo, username, amid)
 
-def delete_test(dbo, username, testid):
+def delete_test(dbo: Database, username: str, testid: int) -> None:
     """
     Deletes a test record
     """
     update_animal_tests(dbo, testid, "delete")
     dbo.delete("animaltest", testid, username)
 
-def delete_vaccination(dbo, username, vaccinationid):
+def delete_vaccination(dbo: Database, username: str, vaccinationid: int) -> None:
     """
     Deletes a vaccination record
     """
@@ -1226,7 +1229,7 @@ def delete_vaccination(dbo, username, vaccinationid):
     dbo.delete("animalvaccination", vaccinationid, username)
     update_rabies_tag(dbo, username, animalid)
 
-def insert_profile_from_form(dbo, username, post):
+def insert_profile_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a profile record from posted form data
     """
@@ -1266,7 +1269,7 @@ def insert_profile_from_form(dbo, username, post):
         "Comments":                 post["comments"]
     }, username)
 
-def update_profile_from_form(dbo, username, post):
+def update_profile_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a profile record from posted form data
     """
@@ -1304,13 +1307,13 @@ def update_profile_from_form(dbo, username, post):
         "Comments":                 post["comments"]
     }, username)
 
-def delete_profile(dbo, username, pfid):
+def delete_profile(dbo: Database, username: str, pfid: int) -> None:
     """
     Deletes a profile
     """
     dbo.delete("medicalprofile", pfid, username)
 
-def update_treatment_today(dbo, username, amtid):
+def update_treatment_today(dbo: Database, username: str, amtid: int) -> None:
     """
     Marks a treatment record as given today. 
     """
@@ -1329,7 +1332,7 @@ def update_treatment_today(dbo, username, amtid):
     # medical record appropriately
     update_medical_treatments(dbo, username, amid)
 
-def update_treatment_given(dbo, username, amtid, newdate, by = "", vetid = 0, comments = ""):
+def update_treatment_given(dbo: Database, username: str, amtid: int, newdate: datetime, by: str = "", vetid: int = 0, comments: str = "") -> None:
     """
     Marks a treatment record as given on newdate, assuming that newdate is valid.
     """
@@ -1350,7 +1353,7 @@ def update_treatment_given(dbo, username, amtid, newdate, by = "", vetid = 0, co
     # medical record appropriately
     update_medical_treatments(dbo, username, amid)
 
-def update_treatment_required(dbo, username, amtid, newdate):
+def update_treatment_required(dbo: Database, username: str, amtid: int, newdate: datetime) -> None:
     """
     Marks a treatment record as required on newdate, assuming
     that newdate is valid.
@@ -1361,7 +1364,7 @@ def update_treatment_required(dbo, username, amtid, newdate):
         "DateRequired":     newdate
     }, username)
 
-def update_vaccination_required(dbo, username, vaccid, newdate):
+def update_vaccination_required(dbo: Database, username: str, vaccid: int, newdate: datetime) -> None:
     """
     Gives a vaccination record a required date of newdate, assuming
     that newdate is valid.

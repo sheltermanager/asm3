@@ -18,6 +18,10 @@ import asm3.stock
 import asm3.users
 import asm3.utils
 
+"""
+THIS MODULE IS DEPRECATED AND WILL BE DELETED SOME TIME AFTER 1ST NOVEMBER 2023
+"""
+
 from asm3.i18n import _, python2display, now, add_days, add_months, add_years, format_currency, format_time
 from asm3.sitedefs import ELECTRONIC_SIGNATURES, JQUERY_MOBILE_CSS, JQUERY_MOBILE_JS, JQUERY_MOBILE_JQUERY_JS
 
