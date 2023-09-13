@@ -1,6 +1,7 @@
 48
 ================
 
+13/09/23 Email upto 3 fosterer/coordinators if multiple reserveanimalname present
 11/09/23 type hints, medica, movement #1320
 07/09/23 type hints, media #1320
 06/09/23 Throw readable exception if account exists during payment type create
