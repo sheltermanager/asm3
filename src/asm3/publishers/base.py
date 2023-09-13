@@ -24,7 +24,8 @@ def quietcallback(x):
     """ ftplib callback that does nothing instead of dumping to stdout """
     pass
 
-def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, recalc_age_groups=True, strip_personal_data=False, publisher_key="", limit=0):
+def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, recalc_age_groups=True, 
+                    strip_personal_data=False, publisher_key="", limit=0):
     """
     Returns a resultset containing the animal info for the criteria given.
     pc: The publish criteria (if None, default is used)
@@ -81,6 +82,16 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
     # Recalculate age groups
     if recalc_age_groups:
         asm3.animal.calc_age_group_rows(dbo, rows)
+    
+    # Generate the sponsor column
+    unitextra = asm3.configuration.unit_extra(dbo).split("&&")
+    if unitextra != "": 
+        for r in rows:
+            if r.ACTIVEMOVEMENTTYPE is not None and r.ACTIVEMOVEMENTTYPE > 0: continue # animal must be in the location
+            r.UNITSPONSOR = ""
+            for ux in unitextra:
+                if asm3.utils.cint(ux[0]) == r.SHELTERLOCATION and ux[1] == r.SHELTERLOCATIONUNIT:
+                    r.UNITSPONSOR = ux[3]
 
     # If bondedAsSingle is on, go through the the set of animals and merge
     # the bonded animals into a single record

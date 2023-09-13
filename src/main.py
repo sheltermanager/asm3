@@ -6647,8 +6647,31 @@ class shelterview(JSONEndpoint):
             "flags": asm3.lookups.get_animal_flags(dbo),
             "fosterers": asm3.person.get_shelterview_fosterers(dbo, o.siteid),
             "locations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
-            "perrow": asm3.configuration.main_screen_animal_link_max(dbo)
+            "perrow": asm3.configuration.main_screen_animal_link_max(dbo),
+            "unitextra": asm3.configuration.unit_extra(dbo)
         }
+
+    def post_editunit(self, o):
+        self.check(asm3.users.MODIFY_LOOKUPS)
+        dbo = o.dbo
+        loc = o.post["location"]
+        unit = o.post["unit"]
+        sponsor = o.post["sponsor"]
+        reserved = o.post["reserved"]
+        nunitextra = []
+        updated = False
+        for x in asm3.configuration.unit_extra(dbo).split("&&"):
+            if x.count("|") < 6: continue
+            uloc, uunit, usponsor, ureserved = x.split("||")
+            if loc == uloc and unit == uunit:
+                usponsor = sponsor
+                ureserved = reserved
+                updated = True
+            nunitextra.append( "||".join([ uloc, uunit, usponsor, ureserved ]))
+        if not updated:
+            nunitextra.append( "||".join([ loc, unit, sponsor, reserved ]))
+        asm3.configuration.unit_extra(dbo, "&&".join(nunitextra))
+        return asm3.configuration.unit_extra(dbo)
 
     def post_movelocation(self, o):
         self.check(asm3.users.CHANGE_ANIMAL)
@@ -6665,7 +6688,7 @@ class shelterview(JSONEndpoint):
         post.data["animal"] = post["animalid"]
         post.data["fosterdate"] = python2display(o.locale, now(o.dbo.timezone))
         return asm3.movement.insert_foster_from_form(o.dbo, o.user, post)
-
+    
 class smcom_my(ASMEndpoint):
     url = "smcom_my"
 

@@ -318,6 +318,7 @@ JSON result looks like this::
            "TOTALDAYSONSHELTER": 3162,
            "TOTALTIMEONSHELTER": "8 years 7 months.",
            "UNIQUECODEID": 0,
+           "UNITSPONSOR": "Mr and Mrs Smith",
            "VACCGIVENCOUNT": 0,
            "VACCOUTSTANDINGCOUNT": 0,
            "WEBSITEIMAGECOUNT": 2,

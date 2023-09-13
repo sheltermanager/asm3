@@ -115,6 +115,8 @@ DisplayLocation
     Either the internal location if the animal is on shelter, a movement
     type/person for animals leaving the shelter or a deceased reason if the
     animal is no longer alive
+UnitSponsor (only available in HTML website templates)
+    Returns the name of the sponsor of the unit the animal is currently in
 CoatType
     The animal's coat type 
 AnimalFlags

@@ -129,7 +129,7 @@ $(function() {
                             boxinner.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
                         }
                     });
-                    // Show the unit as available if there are no animals in it
+                    // Show that unit as available if there are no animals in it
                     if (boxinner.length == 0) { classes += " asm-shelterview-unit-available"; }
                     h.push('<div data-location="' + l.ID + '" data-unit="" class="' + classes + '">');
                     h.push(boxinner.join("\n"));
@@ -148,10 +148,31 @@ $(function() {
                                 boxinner.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));    
                             }
                         });
-                        // Show the unit as available if there are no animals in it
-                        if (boxinner.length == 0) { classes += " asm-shelterview-unit-available"; }
+                        // If there are no animals in this unit, show the background as available or reserved
+                        let [ sponsortext, reservetext ] = shelterview.unit_values(l.ID, u);
+                        if (boxinner.length == 0) {
+                            // Show the unit as reserved if it has a reservation
+                            if (reservetext) {
+                                classes += " asm-shelterview-unit-reserved";
+                            }
+                            else {
+                                classes += " asm-shelterview-unit-available"; 
+                            }
+                        }
                         h.push('<div data-location="' + l.ID + '" data-unit="' + u.replace("\"", "") + '" class="' + classes + '">');
-                        h.push('<div><span class="asm-search-locationunit">' + u + '</span></div>');
+                        h.push('<div class="asm-shelterview-unit-name">' + u );
+                        // Units include a button to edit whether they are reserved or sponsored. Only allow
+                        // editing by users with the "Modify Lookups" permission.
+                        if (common.has_permission("ml")) {
+                            h.push('<a href="#" class="asm-shelterview-unit-button"><span class="ui-icon ui-icon-pencil"></span></a>');
+                        }
+                        h.push('</div>');
+                        if (reservetext) {
+                            h.push('<div style="margin-top: 10px" class="reservetext">' + _("Reserved for {0}").replace("{0}", reservetext) + '</div>');
+                        }
+                        if (sponsortext) {
+                            h.push('<div style="margin-top: 10px" class="sponsortext">' + _("Sponsored by {0}").replace("{0}", sponsortext) + '</div>');
+                        }
                         h.push(boxinner.join("\n"));
                         h.push('</div>');
                     });
@@ -177,7 +198,7 @@ $(function() {
                     });
                     if (badunit.length > 0) {
                         h.push('<div data-location="' + l.ID + '" data-unit="' + _("invalid") + '" class="asm-shelterview-unit">');
-                        h.push('<div><span class="asm-search-locationunit">' + _("invalid") + '</span></div>');
+                        h.push('<div class="asm-shelterview-unit-name">' + _("invalid") + '</div>');
                         h.push(badunit.join("\n"));
                         h.push('</div>');
                     }
@@ -468,6 +489,19 @@ $(function() {
             return empty;
         },
 
+        /** Returns the reserved and sponsor text for locationid and unitname */
+        unit_values: function(locationid, unitname) {
+            let sponsor = "", reserved = "";
+            $.each(controller.unitextra.split("&&"), function(i, ux) {
+                let v = ux.split("||");
+                if (v[0] == locationid && v[1] == unitname) {
+                    sponsor = v[2];
+                    reserved = v[3];
+                }
+            });
+            return [ sponsor, reserved ];
+        },
+
         reload: function() {
             shelterview.switch_view($("#viewmode").select("value"));
         },
@@ -634,8 +668,69 @@ $(function() {
             });
         },
 
+        render_unit_dialog: function() {
+            return [
+                '<div id="dialog-unit" style="display: none" title="' + html.title(_("Edit Unit")) + '">',
+                '<input id="ud-location" type="hidden" value="" />',
+                '<input id="ud-unit" type="hidden" value="" />',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="reserved">' + _("Reserved For") + '</label></td>',
+                '<td><input id="reserved" data="reserved" type="text" class="asm-textbox asm-doubletextbox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="sponsor">' + _("Sponsored By") + '</label></td>',
+                '<td><input id="sponsor" data="sponsor" type="text" class="asm-textbox asm-doubletextbox" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>'
+            ].join("\n");
+        },
+
+        bind_unit_dialog: function() {
+            let unitbuttons = { };
+            unitbuttons[_("Save")] = {
+                text: _("Save"),
+                "class": 'asm-dialog-actionbutton',
+                click: async function() {
+                    validate.reset();
+                    $("#dialog-unit").disable_dialog_buttons();
+                    let newdate = encodeURIComponent($("#newdater").val());
+                    try {
+                        let formdata = {
+                            "mode": "editunit",
+                            "location": $("#ud-location").val(),
+                            "unit": $("#ud-unit").val(),
+                            "sponsor": $("#sponsor").val(),
+                            "reserved": $("#reserved").val()
+                        };
+                        let response = await common.ajax_post("shelterview", formdata);
+                        controller.unitextra = response;
+                        shelterview.switch_view("locationunit");
+                    }
+                    finally {
+                        $("#dialog-unit").dialog("close");
+                        $("#dialog-unit").enable_dialog_buttons();
+                    }
+                }
+            };
+            unitbuttons[_("Cancel")] = function() {
+                $("#dialog-unit").dialog("close");
+            };
+            $("#dialog-unit").dialog({
+                autoOpen: false,
+                width: 550,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.edit_show,
+                hide: dlgfx.edit_hide,
+                buttons: unitbuttons
+            });
+        },
+
         render: function() {
             let h = [];
+            h.push(shelterview.render_unit_dialog());
             h.push('<div id="asm-content" class="ui-helper-reset ui-widget-content ui-corner-all" style="padding: 10px;">');
             h.push('<select id="viewmode" style="float: right;" class="asm-selectbox">');
             h.push(html.shelter_view_options()); 
@@ -649,6 +744,22 @@ $(function() {
         bind: function() {
             $("#viewmode").change(function(e) {
                 shelterview.switch_view($("#viewmode").select("value"));
+            });
+            shelterview.bind_unit_dialog();
+            $("#asm-content").on("click", ".asm-shelterview-unit-button", function() {
+                let p = $(this).parent().parent();
+                $("#ud-location").val( p.attr("data-location") );
+                $("#ud-unit").val( p.attr("data-unit") );
+                $("#sponsor, #reserved").val("");
+                $.each(controller.unitextra.split("&&"), function(i, ux) {
+                    let v = ux.split("||");
+                    if (v[0] == p.attr("data-location") && v[1] == p.attr("data-unit")) {
+                        $("#sponsor").val(v[2]);
+                        $("#reserved").val(v[3]);
+                    }
+                });
+                // TODO: Change title to show unit being edited
+                $("#dialog-unit").dialog("open");
             });
         },
 
@@ -673,6 +784,10 @@ $(function() {
             if (!dview) { dview = config.str("ShelterViewDefault"); }
             $("#viewmode").select("value", dview);
             $("#viewmode").change();
+        },
+
+        destroy: function() {
+            common.widget_destroy("#dialog-unit");
         },
 
         name: "shelterview",

@@ -75,6 +75,10 @@ select:disabled, input:disabled, textarea:disabled {
     text-align: end;
 }
 
+.floatright {
+    float: right;
+}
+
 .nowrap {
     white-space: nowrap;
 }
@@ -538,8 +542,25 @@ select:disabled, input:disabled, textarea:disabled {
     margin: 1px;
 }
 
+.asm-shelterview-unit-name {
+    color: #366575;
+    background-color: #fffaed;
+    border: 1px solid black;
+    padding: 2px;
+    white-space: nowrap;
+}
+
 .asm-shelterview-unit-available {
     background-color: #b2ffb2;
+    color: #000;
+    max-width: 200px;
+}
+
+.asm-shelterview-unit-reserved {
+    background-color: #ea3e69;
+    color: white;
+    font-weight: bold;
+    max-width: 200px;
 }
 
 .asm-shelterview-secondgroup {
