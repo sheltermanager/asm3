@@ -164,7 +164,7 @@ $(function() {
                         // Units include a button to edit whether they are reserved or sponsored. Only allow
                         // editing by users with the "Modify Lookups" permission.
                         if (common.has_permission("ml")) {
-                            h.push('<a href="#" class="asm-shelterview-unit-button"><span class="ui-icon ui-icon-pencil"></span></a>');
+                            h.push('<a href="#" class="asm-shelterview-unit-button floatright"><span class="ui-icon ui-icon-pencil"></span></a>');
                         }
                         h.push('</div>');
                         if (reservetext) {

@@ -547,6 +547,7 @@ select:disabled, input:disabled, textarea:disabled {
     background-color: #fffaed;
     border: 1px solid black;
     padding: 2px;
+    text-align: start;
     white-space: nowrap;
 }
 
