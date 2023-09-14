@@ -161,9 +161,8 @@ $(function() {
                         }
                         h.push('<div data-location="' + l.ID + '" data-unit="' + u.replace("\"", "") + '" class="' + classes + '">');
                         h.push('<div class="asm-shelterview-unit-name">' + u );
-                        // Units include a button to edit whether they are reserved or sponsored. Only allow
-                        // editing by users with the "Modify Lookups" permission.
-                        if (common.has_permission("ml")) {
+                        // Units include a button to edit whether they are reserved or sponsored. 
+                        if (common.has_permission("rsu")) {
                             h.push('<a href="#" class="asm-shelterview-unit-button floatright"><span class="ui-icon ui-icon-pencil"></span></a>');
                         }
                         h.push('</div>');

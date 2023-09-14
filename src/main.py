@@ -6652,7 +6652,7 @@ class shelterview(JSONEndpoint):
         }
 
     def post_editunit(self, o):
-        self.check(asm3.users.MODIFY_LOOKUPS)
+        self.check(asm3.users.RESERVESPONSOR_UNIT)
         dbo = o.dbo
         loc = o.post["location"]
         unit = o.post["unit"]

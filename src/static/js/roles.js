@@ -32,6 +32,7 @@ $(function() {
                 cr("cloa", _("Clone Animals")),
                 cr("ma", _("Merge Animals")),
                 cr("gaf", _("Generate Documents")),
+                cr("rsu", _("Reserve/Sponsor Units")),
                 cl(_("Litters")),
                 cr("all", _("Add Litter")),
                 cr("vll", _("View Litter")),
