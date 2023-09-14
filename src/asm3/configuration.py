@@ -1521,13 +1521,13 @@ def trial_on_shelter(dbo: Database) -> bool:
 def unique_licence_numbers(dbo: Database) -> bool:
     return cboolean(dbo, "UniqueLicenceNumbers", DEFAULTS["UniqueLicenceNumbers"] == "Yes")
 
-def unit_extra(dbo: Database, newval: str = "") -> str:
+def unit_extra(dbo: Database, newval: str = None) -> str:
     """ 
     Extra unit data (sponsor, reserve, etc) is stored as a && separated records with
     || separated values in order of location, unit, sponsor, reserve, eg:
     1||Pen 1||Kelly Sponsor||NewDog&&3||Run 4||James Sponsor||NewCat 
     """
-    if newval != "":
+    if newval is not None:
         cset(dbo, "UnitExtra", newval)
     else:
         return cstring(dbo, "UnitExtra")

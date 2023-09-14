@@ -6672,7 +6672,7 @@ class shelterview(JSONEndpoint):
         if not updated and (sponsor != "" or reserved != ""):
             nunitextra.append( "||".join([ loc, unit, sponsor, reserved ]))
         asm3.configuration.unit_extra(dbo, "&&".join(nunitextra))
-        return asm3.configuration.unit_extra(dbo)
+        return "&&".join(nunitextra)
 
     def post_movelocation(self, o):
         self.check(asm3.users.CHANGE_ANIMAL)
