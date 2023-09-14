@@ -84,15 +84,17 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
         asm3.animal.calc_age_group_rows(dbo, rows)
     
     # Generate the sponsor column
-    unitextra = asm3.configuration.unit_extra(dbo).split("&&")
-    if unitextra != "": 
+    unitextra = asm3.configuration.unit_extra(dbo)
+    if unitextra.strip() != "":
+        uxl = unitextra.split("&&")
         for r in rows:
             if r.ACTIVEMOVEMENTTYPE is not None and r.ACTIVEMOVEMENTTYPE > 0: continue # animal must be in the location
             r.UNITSPONSOR = ""
-            for ux in unitextra.split("||"):
+            for ux in uxl:
                 if ux.count("|") < 6: continue
-                if asm3.utils.cint(ux[0]) == r.SHELTERLOCATION and ux[1] == r.SHELTERLOCATIONUNIT:
-                    r.UNITSPONSOR = ux[3]
+                v = ux.split("||")
+                if asm3.utils.cint(v[0]) == r.SHELTERLOCATION and v[1] == r.SHELTERLOCATIONUNIT:
+                    r.UNITSPONSOR = v[3]
 
     # If bondedAsSingle is on, go through the the set of animals and merge
     # the bonded animals into a single record
