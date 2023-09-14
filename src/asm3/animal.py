@@ -2292,6 +2292,7 @@ def get_units_with_availability(dbo: Database, locationid: int) -> List[str]:
         # Check if the unit is reserved
         if occupant == "":
             for ux in asm3.configuration.unit_extra(dbo).split("&&"):
+                if ux.count("|") < 6: continue
                 v = ux.split("||")
                 if v[0] == str(locationid) and v[1] == uname and v[3] != "":
                     occupant = _("Reserved for {0}", l).replace("{0}", v[3])

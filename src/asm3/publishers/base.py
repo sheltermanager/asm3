@@ -89,7 +89,8 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
         for r in rows:
             if r.ACTIVEMOVEMENTTYPE is not None and r.ACTIVEMOVEMENTTYPE > 0: continue # animal must be in the location
             r.UNITSPONSOR = ""
-            for ux in unitextra:
+            for ux in unitextra.split("||"):
+                if ux.count("|") < 6: continue
                 if asm3.utils.cint(ux[0]) == r.SHELTERLOCATION and ux[1] == r.SHELTERLOCATIONUNIT:
                     r.UNITSPONSOR = ux[3]
 
