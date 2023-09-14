@@ -1,6 +1,7 @@
 48
 ================
 
+14/09/23 Show reserved units in the add/edit animal unit list #1290
 13/09/23 Add UNITSPONSOR attribute to animal data with matching wordkey
 13/09/23 Allow units within a location to be reserved and sponsored #1290
 13/09/23 Email upto 3 fosterer/coordinators if multiple reserveanimalname present

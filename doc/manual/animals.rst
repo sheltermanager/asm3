@@ -4,6 +4,8 @@ Animals
 Shelter View
 ------------
 
+.. image:: images/shelterview.png
+
 The shelter view screen (available from the default quicklinks or under
 :menuselection:`ASM --> Animals --> Shelter View`) gives you an overview of all
 the animals currently on your shelter, broken down by their internal location. 
@@ -15,10 +17,6 @@ to their name.
 
 A dropdown in the upper right corner allows one of many different modes to be
 applied.
-
-The "Location and Unit" mode will show a box for every cage/pen with the
-animals occupying them. If they are unoccupied, they'll be displayed with a
-green highlight. You can drag and drop animals between units in this view.
 
 There are also special modes to show animals in foster homes, either all
 available homes with those with space highlighted (identified by the capacity
@@ -32,10 +30,34 @@ adoption or at a retailer.
 
 A special "status" mode separates animals who are adoptable from those who are
 marked not for adoption, those that are reserved and those that are
-quarantined, held, cruelty cases or other indicators that they cannot leave the
-shelter.
+quarantined, held, cruelty cases or other indicators that they should not leave
+the shelter.
 
-.. image:: images/shelterview.png
+Location and Unit mode
+^^^^^^^^^^^^^^^^^^^^^^
+
+The "Location and Unit" mode will show a box for every unit (units are
+generally, pens, cages, kennels or runs etc) with the animals occupying them.
+If a unit is unoccupied, it will be displayed with a green highlight to show it
+is available. You can drag and drop animals between units in this view to
+move them around.
+
+.. image:: images/shelterview_reserved.png
+
+An edit icon to the right of the unit's name allows you to reserve or sponsor
+a unit. Reserved units appear in red to indicate they are not available. The
+reserve text entered will be shown.
+
+.. image:: images/animal_unit_reserved.png
+
+Units are also shown as reserved when choosing a unit on the animal editing
+screens.
+
+If an animal is in a sponsored unit, the UNITSPONSOR attribute will be set
+to the sponsor text in its data when retrieved via the Service API for your
+website. It will also be available in the $$UNITSPONSOR$$ token for HTML
+publishing templates. This allows you to show the sponsor of a kennel/pen
+with the adoptable animal who is in it.
 
 Find Animal
 -----------

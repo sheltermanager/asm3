@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-09-01 15:30+0000\n"
+"POT-Creation-Date: 2023-09-14 10:05+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -2480,7 +2480,7 @@ msgstr ""
 #: test.js users.js publish_options.js movements.js
 #: common_animalchoosermulti.js onlineform_incoming.js sql.js
 #: common_tableform.js onlineforms.js main.js medical.js accounts_trx.js
-#: diary.js reports.js person_new.js common_personchooser.js
+#: diary.js shelterview.js reports.js person_new.js common_personchooser.js
 #: document_repository.js animal.js document_templates.js report_toolbar.js
 #: common_widgets.js vaccination.js htmltemplates.js media.js person.js
 #: common_animalchooser.js roles.js common.js report_images.js mobile2.js
@@ -11196,6 +11196,14 @@ msgstr ""
 msgid "Reserved"
 msgstr ""
 
+#: shelterview.js
+msgid "Reserved For"
+msgstr ""
+
+#: animal.py shelterview.js
+msgid "Reserved for {0}"
+msgstr ""
+
 #: lostfound_new.js incident_new.js event_new.js waitinglist_new.js
 #: person_new.js animal_new.js
 msgid "Reset"
@@ -11251,8 +11259,8 @@ msgid "Results for '{0}'."
 msgstr ""
 
 #: html.py dbupdate.py movements.js common_animalchoosermulti.js
-#: person_find_results.js animal_find.js move_retailer.js header_edit_header.js
-#: reports.js common_html.js
+#: person_find_results.js animal_find.js main.js move_retailer.js
+#: header_edit_header.js reports.js common_html.js
 msgid "Retailer"
 msgstr ""
 
@@ -11564,8 +11572,8 @@ msgid "Saturday"
 msgstr ""
 
 #: mobile.py test.js publish_options.js lostfound.js onlineforms.js incident.js
-#: medical.js accounts_trx.js event.js reports.js waitinglist.js animal.js
-#: vaccination.js person.js roles.js change_user_settings.js
+#: medical.js accounts_trx.js shelterview.js event.js reports.js waitinglist.js
+#: animal.js vaccination.js person.js roles.js change_user_settings.js
 msgid "Save"
 msgstr ""
 
@@ -12602,6 +12610,14 @@ msgstr ""
 
 #: html.py dbupdate.py header_edit_header.js common_html.js
 msgid "Sponsor"
+msgstr ""
+
+#: shelterview.js
+msgid "Sponsored By"
+msgstr ""
+
+#: shelterview.js
+msgid "Sponsored by {0}"
 msgstr ""
 
 #: dbupdate.py

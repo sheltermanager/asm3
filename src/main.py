@@ -6667,8 +6667,9 @@ class shelterview(JSONEndpoint):
                 usponsor = sponsor
                 ureserved = reserved
                 updated = True
-            nunitextra.append( "||".join([ uloc, uunit, usponsor, ureserved ]))
-        if not updated:
+            if usponsor != "" or ureserved != "":
+                nunitextra.append( "||".join([ uloc, uunit, usponsor, ureserved ]))
+        if not updated and (sponsor != "" or reserved != ""):
             nunitextra.append( "||".join([ loc, unit, sponsor, reserved ]))
         asm3.configuration.unit_extra(dbo, "&&".join(nunitextra))
         return asm3.configuration.unit_extra(dbo)

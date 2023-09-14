@@ -2272,6 +2272,7 @@ def get_units_with_availability(dbo: Database, locationid: int) -> List[str]:
     The layout of each element is unit|occupant
     Blank occupant means a free unit
     """
+    l = dbo.locale
     a = []
     units = dbo.query_string("SELECT Units FROM internallocation WHERE ID = ?", [locationid]).replace("|", ",").split(",")
     animals = dbo.query("SELECT a.AnimalName, a.ShortCode, a.ShelterCode, a.ShelterLocationUnit " \
@@ -2281,11 +2282,20 @@ def get_units_with_availability(dbo: Database, locationid: int) -> List[str]:
         if u == "": continue
         uname = u.strip().replace("'", "`")
         occupant = ""
+        # Check for an animal in the unit
         for n in animals:
             if asm3.utils.nulltostr(n.shelterlocationunit).strip().lower() == uname.strip().lower():
                 if occupant != "": occupant += ", "
                 occupant += useshortcodes and n.shortcode or n.sheltercode
                 occupant += " %s" % n.animalname
+                break
+        # Check if the unit is reserved
+        if occupant == "":
+            for ux in asm3.configuration.unit_extra(dbo).split("&&"):
+                v = ux.split("||")
+                if v[0] == str(locationid) and v[1] == uname and v[3] != "":
+                    occupant = _("Reserved for {0}", l).replace("{0}", v[3])
+                    break
         a.append( "%s|%s" % (uname, occupant) )
     return a
 

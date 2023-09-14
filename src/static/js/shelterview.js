@@ -477,6 +477,11 @@ $(function() {
             return common.get_row(controller.locations, id, "ID");
         },
 
+        /** Returns a location object for the id given */
+        location_name_for_id: function(id) {
+            return common.get_row(controller.locations, id, "ID").LOCATIONNAME;
+        },
+
         /** Returns true if location id has no animals in it */
         location_is_empty: function(id) {
             let empty = true;
@@ -670,7 +675,7 @@ $(function() {
 
         render_unit_dialog: function() {
             return [
-                '<div id="dialog-unit" style="display: none" title="' + html.title(_("Edit Unit")) + '">',
+                '<div id="dialog-unit" style="display: none" title="">',
                 '<input id="ud-location" type="hidden" value="" />',
                 '<input id="ud-unit" type="hidden" value="" />',
                 '<table width="100%">',
@@ -758,8 +763,9 @@ $(function() {
                         $("#reserved").val(v[3]);
                     }
                 });
-                // TODO: Change title to show unit being edited
                 $("#dialog-unit").dialog("open");
+                let title = shelterview.location_name_for_id(p.attr("data-location")) + "::" + p.attr("data-unit");
+                $("#dialog-unit").parent().find(".ui-dialog-title").html(title);
             });
         },
 
