@@ -6653,7 +6653,12 @@ class shelterview(JSONEndpoint):
 
     def post_editunit(self, o):
         self.check(asm3.users.RESERVESPONSOR_UNIT)
-        return asm3.configuration.unit_extra_edit(o.dbo, o.post.integer("location"), o.post["unit"], o.post["sponsor"], o.post["reserved"])
+        locationid = o.post.integer("location")
+        unit = o.post["unit"]
+        sponsor = o.post["sponsor"]
+        reserved = o.post["reserved"]
+        asm3.audit.edit(o.dbo, o.user, "configuration", 0, "", f"update unit: locationid={locationid}, unit={unit}, sponsor={sponsor}, reserved={reserved}")
+        return asm3.configuration.unit_extra_edit(o.dbo, locationid, unit, sponsor, reserved)
 
     def post_movelocation(self, o):
         self.check(asm3.users.CHANGE_ANIMAL)
