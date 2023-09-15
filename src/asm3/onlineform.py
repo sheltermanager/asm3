@@ -83,7 +83,7 @@ AP_CREATEANIMAL_BROUGHTIN = 10
 SPAMBOT_CB = 'termsscb'
 
 # Fields that are added to forms by the system and are not user enterable
-SYSTEM_FIELDS = [ "useragent", "ipaddress", "retainfor", "formreceived", "mergeperson" ]
+SYSTEM_FIELDS = [ "useragent", "ipaddress", "retainfor", "formreceived", "mergeperson", "processed" ]
 
 # Online field names that we recognise and will attempt to map to
 # known fields when importing from submitted forms
@@ -492,7 +492,8 @@ def get_onlineformincoming_formfooter(dbo, collationid):
 def get_onlineformincoming_headers(dbo):
     """ Returns all incoming form posts """
     return dbo.query("SELECT f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview, " \
-        "(SELECT Value FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='mergeperson') AS MergePerson " \
+        "(SELECT Value FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='mergeperson') AS MergePerson, " \
+        "CASE WHEN EXISTS(SELECT Value FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='processed') THEN 1 ELSE 0 END AS Processed " \
         "FROM onlineformincoming f " \
         "GROUP BY f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview " \
         "ORDER BY f.PostedDate")
@@ -604,6 +605,10 @@ def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images
     if strip_script: s = asm3.utils.strip_script_tags(s)
     if strip_style: s = asm3.utils.strip_style_tags(s)
     return s
+
+def get_onlineformincoming_date(dbo, collationid):
+    """ Returns the posted date/time for a collation id """
+    return dbo.query_date("SELECT PostedDate FROM onlineformincoming WHERE CollationID = ? %s" % dbo.sql_limit(1), [collationid])
 
 def get_onlineformincoming_name(dbo, collationid):
     """ Returns the form name for a collation id """
@@ -1190,7 +1195,8 @@ def attach_form(dbo, username, linktype, linkid, collationid):
     and attaches those as images in the media tab of linktype/linkid.
     """
     l = dbo.locale
-    formname = get_onlineformincoming_name(dbo, collationid)
+    fo = dbo.first_row(dbo.query("SELECT * FROM onlineformincoming WHERE CollationID=? %s" % dbo.sql_limit(1), [collationid]))
+    formname = fo.FORMNAME
     animalname, firstname, lastname = get_onlineformincoming_animalperson(dbo, collationid)
     if linktype == asm3.media.ANIMAL and firstname != "":
         formname = "%s - %s %s" % (formname, firstname, lastname)
@@ -1215,6 +1221,24 @@ def attach_form(dbo, username, linktype, linkid, collationid):
             if linktype == 0:
                 d["excludefrompublish"] = "1" # auto exclude images for animals to prevent them going to adoption websites
             asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.utils.PostedData(d, dbo.locale))
+    try:
+        # Add a processed field to the form. This allows the UI to find and indicate previously processed forms
+        pval = "%s,%s" % (linktype, linkid)
+        dbo.insert("onlineformincoming", {
+            "CollationID":      collationid,
+            "FormName":         fo.FORMNAME,
+            "PostedDate":       fo.POSTEDDATE,
+            "Flags":            fo.FLAGS,
+            "FieldName":        "processed",
+            "Label":            "",
+            "DisplayIndex":     0,
+            "Host":             fo.HOST,
+            "Preview":          fo.PREVIEW,
+            "Value":            pval
+        }, generateID=False, setCreated=False)
+    except Exception as err:
+        asm3.al.warn("failed creating processed field, cid=%s, value=%s: %s" % (collationid, pval, err), 
+            "onlineform.attach_form", dbo)
 
 def attach_animalbyname(dbo, username, collationid):
     """

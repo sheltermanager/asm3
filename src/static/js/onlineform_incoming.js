@@ -27,7 +27,7 @@ $(function() {
                     }
                 },
                 complete: function(row) {
-                    if (row.LINK) { return true; }
+                    if (row.LINK || row.PROCESSED) { return true; }
                 },
                 columns: [
                     { field: "FORMNAME", display: _("Name") },
@@ -38,6 +38,9 @@ $(function() {
                         if (row.MERGEPERSON) {
                             let mp = row.MERGEPERSON.split(":");
                             s += html.icon("copy", _("This form will merge with person '{0}'").replace("{0}", mp[1])) + " "; 
+                        }
+                        if (row.PROCESSED) {
+                            s += html.icon("complete", _("This form has been previously processed") + " ");
                         }
                         s += html.truncate(row.PREVIEW); 
                         return s;
@@ -68,7 +71,7 @@ $(function() {
                         await tableform.delete_dialog();
                         let ids=[]; // select the rows so we can use remove_selected to update the table
                         $.each(controller.rows, function(i, v) {
-                            if (v.LINK) { 
+                            if (v.LINK || v.PROCESSED) { 
                                 ids.push(v.COLLATIONID); 
                                 $("[data-id='" + v.COLLATIONID + "']").prop("checked", true);
                             }
@@ -344,21 +347,21 @@ $(function() {
             let bval = "1px solid red";
             if (!enable) { bval = ""; }
             $.each(controller.rows, function(i, v) {
-                if (v.LINK) {
+                if (v.LINK || v.PROCESSED) {
                     $("[data-id='" + v.COLLATIONID + "']").closest("tr").find("td").css({ border: bval });
                 }
             });
         },
 
         /**
-         * Called as the form is destroyed, sends a message to the backend to
-         * remove any processed forms.
+         * Called by the delete processed button, or as the form is destroyed, 
+         * sends a message to the backend to remove any processed forms.
          */
         remove_processed: function() {
             if (config.bool("DontRemoveProcessedForms")) { return; }
             let ids=[];
             $.each(controller.rows, function(i, v) {
-                if (v.LINK) { ids.push(v.COLLATIONID); }
+                if (v.LINK || v.PROCESSED) {  ids.push(v.COLLATIONID); }
             });
             common.ajax_post("onlineform_incoming", "mode=delete&ids=" + ids.join(","));
         },
