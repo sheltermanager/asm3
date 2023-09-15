@@ -40,7 +40,7 @@ $(function() {
                             s += html.icon("copy", _("This form will merge with person '{0}'").replace("{0}", mp[1])) + " "; 
                         }
                         if (row.PROCESSED) {
-                            s += html.icon("complete", _("This form has been previously processed") + " ");
+                            s += html.icon("link", _("This form has been previously processed")) + " ";
                         }
                         s += html.truncate(row.PREVIEW); 
                         return s;
