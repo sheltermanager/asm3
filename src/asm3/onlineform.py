@@ -1202,6 +1202,25 @@ def attach_form(dbo, username, linktype, linkid, collationid):
         formname = "%s - %s %s" % (formname, firstname, lastname)
     elif linktype == asm3.media.PERSON and animalname != "":
         formname = "%s - %s" % (formname, animalname)
+    try:
+        # Add a processed field to the form. This allows the UI to find and indicate previously processed forms
+        # as well as keeping an additive record of what records a form has been attached to.
+        pval = "%s,%s" % (linktype, linkid)
+        dbo.insert("onlineformincoming", {
+            "CollationID":      collationid,
+            "FormName":         fo.FORMNAME,
+            "PostedDate":       fo.POSTEDDATE,
+            "Flags":            fo.FLAGS,
+            "FieldName":        "processed",
+            "Label":            "",
+            "DisplayIndex":     0,
+            "Host":             fo.HOST,
+            "Preview":          fo.PREVIEW,
+            "Value":            pval
+        }, generateID=False, setCreated=False)
+    except Exception as err:
+        asm3.al.warn("failed creating processed field, cid=%s, value=%s: %s" % (collationid, pval, err), 
+            "onlineform.attach_form", dbo)
     formhtml = get_onlineformincoming_html_print(dbo, [collationid,])
     retainfor = get_onlineformincoming_retainfor(dbo, collationid)
     mid = asm3.media.create_document_media(dbo, username, linktype, linkid, formname, formhtml, retainfor)
@@ -1221,24 +1240,6 @@ def attach_form(dbo, username, linktype, linkid, collationid):
             if linktype == 0:
                 d["excludefrompublish"] = "1" # auto exclude images for animals to prevent them going to adoption websites
             asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.utils.PostedData(d, dbo.locale))
-    try:
-        # Add a processed field to the form. This allows the UI to find and indicate previously processed forms
-        pval = "%s,%s" % (linktype, linkid)
-        dbo.insert("onlineformincoming", {
-            "CollationID":      collationid,
-            "FormName":         fo.FORMNAME,
-            "PostedDate":       fo.POSTEDDATE,
-            "Flags":            fo.FLAGS,
-            "FieldName":        "processed",
-            "Label":            "",
-            "DisplayIndex":     0,
-            "Host":             fo.HOST,
-            "Preview":          fo.PREVIEW,
-            "Value":            pval
-        }, generateID=False, setCreated=False)
-    except Exception as err:
-        asm3.al.warn("failed creating processed field, cid=%s, value=%s: %s" % (collationid, pval, err), 
-            "onlineform.attach_form", dbo)
 
 def attach_animalbyname(dbo, username, collationid):
     """
