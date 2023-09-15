@@ -992,6 +992,17 @@ def get_internal_locations(dbo: Database, locationfilter: str = "", siteid: int 
     if c != "": c = "WHERE %s" % c
     return dbo.query("SELECT * FROM internallocation %s ORDER BY LocationName" % c)
 
+def get_internal_locations_counts(dbo: Database, locationfilter: str = "", siteid: int = 0) -> Results:
+    clauses = []
+    if locationfilter != "": clauses.append("ID IN (%s)" % locationfilter)
+    if siteid != 0: clauses.append("SiteID = %s" % siteid)
+    c = " AND ".join(clauses)
+    if c != "": c = "WHERE %s" % c
+    return dbo.query("SELECT *, " \
+        "(SELECT COUNT(*) FROM animal WHERE Archived=0 AND (ActiveMovementType Is Null OR ActiveMovementType=0) AND " \
+            "ShelterLocation=internallocation.ID) AS Total " \
+        "FROM internallocation %s ORDER BY LocationName" % c)
+
 def get_internallocation_name(dbo: Database, lid: int) -> str:
     if lid is None: return ""
     return dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [lid])

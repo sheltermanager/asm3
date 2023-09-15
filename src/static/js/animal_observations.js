@@ -8,12 +8,20 @@ $(function() {
 
         render: function() {
 
+            // Add a new column with totals, remove locations with 0 animals from the list
+            let locs = [];
+            $.each(controller.internallocations, function(i, v) {
+                v.DISPLAY = _("{0} ({1})").replace("{0}", v.LOCATIONNAME).replace("{1}", v.TOTAL);
+                if (v.TOTAL > 0) { locs.push(v); }
+            });
+            controller.internallocations = locs;
+
             let h = [
                 html.content_header(_("Daily Observations")),
                 tableform.buttons_render([
                     { type: "raw", markup: '<button id="button-selectall">' + _("Select all") + '</button>' },
                     { id: "save", icon: "save", tooltip: _("Write observation logs for all selected rows") },
-                    { id: "location", type: "dropdownfilter", options: html.list_to_options(controller.internallocations, "ID", "LOCATIONNAME") }
+                    { id: "location", type: "dropdownfilter", options: html.list_to_options(controller.internallocations, "ID", "DISPLAY") }
                 ]),
                 '<table class="asm-daily-observations">',
             ];

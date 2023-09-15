@@ -2238,7 +2238,7 @@ class animal_observations(JSONEndpoint):
         return { 
             "animals": animals,
             "logtypes": asm3.lookups.get_log_types(dbo), 
-            "internallocations": asm3.lookups.get_internal_locations(dbo)
+            "internallocations": asm3.lookups.get_internal_locations_counts(dbo)
         }
 
     def post_save(self, o):
