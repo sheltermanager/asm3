@@ -86,15 +86,9 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
     # Generate the sponsor column
     unitextra = asm3.configuration.unit_extra(dbo)
     if unitextra.strip() != "":
-        uxl = unitextra.split("&&")
         for r in rows:
             if r.ACTIVEMOVEMENTTYPE is not None and r.ACTIVEMOVEMENTTYPE > 0: continue # animal must be in the location
-            r.UNITSPONSOR = ""
-            for ux in uxl:
-                if ux.count("|") < 6: continue
-                v = ux.split("||")
-                if asm3.utils.cint(v[0]) == r.SHELTERLOCATION and v[1] == r.SHELTERLOCATIONUNIT:
-                    r.UNITSPONSOR = v[3]
+            r.UNITSPONSOR = asm3.configuration.unit_extra_get(dbo, r.SHELTERLOCATION, r.SHELTERLOCATIONUNIT)[0]
 
     # If bondedAsSingle is on, go through the the set of animals and merge
     # the bonded animals into a single record

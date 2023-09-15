@@ -1126,6 +1126,14 @@ The shelter view tab allows the default grouping to be set.
 * Allow drag and drop to move animals between locations: If set, you can drag animal
   thumbnails between locations in shelter view to move them.
 
+* Allow units to be reserved and sponsored: If set, and the user has the appropriate
+  "Reserve/Sponsor Unit" permission, an edit icon will appear to the right of units
+  in "Location and Unit" mode. This edit icon allows a reservation to be placed on
+  a unit so that it appears with a red background and shows as occupied when 
+  adding/editing animals. Any sponsor text will be included with the animal occupying
+  that unit when it is published to your website so that the sponsor of the unit
+  can be shown publicly.
+
 * Show empty locations: If set, headings for all internal locations will be shown, 
   even if there are no animals in them.
 

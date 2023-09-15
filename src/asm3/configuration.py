@@ -308,6 +308,7 @@ DEFAULTS = {
     "ServiceAuthEnabled": "Yes", 
     "ShelterViewDefault": "location",
     "ShelterViewDragDrop": "Yes",
+    "ShelterViewReserves": "Yes", 
     "ShelterViewShowCodes": "No",
     "ShowCostAmount": "Yes",
     "ShowCostPaid": "No",
@@ -1531,6 +1532,44 @@ def unit_extra(dbo: Database, newval: str = None) -> str:
         cset(dbo, "UnitExtra", newval)
     else:
         return cstring(dbo, "UnitExtra")
+    
+def unit_extra_edit(dbo: Database, locationid: int, unit: str, sponsor: str, reserved: str) -> str:
+    """
+    Assigns the reserved and sponsor values to locationid/unit
+    """
+    loc = str(locationid)
+    nunitextra = []
+    updated = False
+    for x in unit_extra(dbo).split("&&"):
+        if x.count("|") < 6: continue
+        v = x.split("||")
+        uloc = v[0]
+        uunit = v[1]
+        usponsor = v[2]
+        ureserved = v[3]
+        if loc == uloc and unit == uunit:
+            usponsor = sponsor
+            ureserved = reserved
+            updated = True
+        if usponsor != "" or ureserved != "":
+            nunitextra.append( "||".join([ uloc, uunit, usponsor, ureserved ]))
+    if not updated and (sponsor != "" or reserved != ""):
+        nunitextra.append( "||".join([ loc, unit, sponsor, reserved ]))
+    unit_extra(dbo, "&&".join(nunitextra))
+    return "&&".join(nunitextra)
+
+def unit_extra_get(dbo: Database, locationid: int, unit: str) -> Tuple[str, str]:
+    """
+    Finds the sponsor and reserved value for locationid/unit. 
+    They are returned in order (sponsor, reserved)
+    If they are not found, empty strings are returned.
+    """
+    for ux in unit_extra(dbo).split("&&"):
+        if ux.count("|") < 6: continue
+        v = ux.split("||")
+        if asm3.utils.cint(v[0]) == locationid and v[1] == unit:
+            return (v[2], v[3])
+    return ("", "")
 
 def update_animal_test_fields(dbo: Database) -> bool:
     return cboolean(dbo, "UpdateAnimalTestFields", DEFAULTS["UpdateAnimalTestFields"] == "Yes")

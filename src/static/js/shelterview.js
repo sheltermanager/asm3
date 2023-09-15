@@ -162,7 +162,7 @@ $(function() {
                         h.push('<div data-location="' + l.ID + '" data-unit="' + u.replace("\"", "") + '" class="' + classes + '">');
                         h.push('<div class="asm-shelterview-unit-name">' + u );
                         // Units include a button to edit whether they are reserved or sponsored. 
-                        if (common.has_permission("rsu")) {
+                        if (config.bool("ShelterViewReserves") && common.has_permission("rsu")) {
                             h.push('<a href="#" class="asm-shelterview-unit-button floatright"><span class="ui-icon ui-icon-pencil"></span></a>');
                         }
                         h.push('</div>');
@@ -693,13 +693,34 @@ $(function() {
 
         bind_unit_dialog: function() {
             let unitbuttons = { };
+            unitbuttons[_("Clear")] = {
+                text: _("Clear"),
+                "class": 'asm-redbutton',
+                click: async function() {
+                    $("#dialog-unit").disable_dialog_buttons();
+                    try {
+                        let formdata = {
+                            "mode": "editunit",
+                            "location": $("#ud-location").val(),
+                            "unit": $("#ud-unit").val(),
+                            "sponsor": "",
+                            "reserved": ""
+                        };
+                        let response = await common.ajax_post("shelterview", formdata);
+                        controller.unitextra = response;
+                        shelterview.switch_view("locationunit");
+                    }
+                    finally {
+                        $("#dialog-unit").dialog("close");
+                        $("#dialog-unit").enable_dialog_buttons();
+                    }
+                }
+            };
             unitbuttons[_("Save")] = {
                 text: _("Save"),
                 "class": 'asm-dialog-actionbutton',
                 click: async function() {
-                    validate.reset();
                     $("#dialog-unit").disable_dialog_buttons();
-                    let newdate = encodeURIComponent($("#newdater").val());
                     try {
                         let formdata = {
                             "mode": "editunit",

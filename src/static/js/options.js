@@ -1521,8 +1521,12 @@ $(function() {
                 '</tr>',
                 '</table>',
                 '<p>',
-                '<input data="ShelterViewDragDrop" type="checkbox" id="shelterviewdragdrop" class="asm-checkbox" type="checkbox" /> <label for="shelterviewdragdrop">' + _("Allow drag and drop to move animals between locations") + '</label><br />',
-                '<input data="ShelterViewShowEmpty" type="checkbox" id="shelterviewempty" class="asm-checkbox" type="checkbox" /> <label for="shelterviewempty">' + _("Show empty locations") + '</label><br />',
+                '<input data="ShelterViewDragDrop" type="checkbox" id="shelterviewdragdrop" class="asm-checkbox" type="checkbox" /> ',
+                    '<label for="shelterviewdragdrop">' + _("Allow drag and drop to move animals between locations") + '</label><br />',
+                '<input data="ShelterViewReserves" type="checkbox" id="shelterviewreserves" class="asm-checkbox" type="checkbox" /> ', 
+                    '<label for="shelterviewreserves">' + _("Allow units to be reserved and sponsored") + '</label><br />',
+                '<input data="ShelterViewShowEmpty" type="checkbox" id="shelterviewempty" class="asm-checkbox" type="checkbox" /> ',
+                    '<label for="shelterviewempty">' + _("Show empty locations") + '</label><br />',
                 '</p>',
                 '</div>'
             ].join("\n");

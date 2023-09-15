@@ -6653,26 +6653,7 @@ class shelterview(JSONEndpoint):
 
     def post_editunit(self, o):
         self.check(asm3.users.RESERVESPONSOR_UNIT)
-        dbo = o.dbo
-        loc = o.post["location"]
-        unit = o.post["unit"]
-        sponsor = o.post["sponsor"]
-        reserved = o.post["reserved"]
-        nunitextra = []
-        updated = False
-        for x in asm3.configuration.unit_extra(dbo).split("&&"):
-            if x.count("|") < 6: continue
-            uloc, uunit, usponsor, ureserved = x.split("||")
-            if loc == uloc and unit == uunit:
-                usponsor = sponsor
-                ureserved = reserved
-                updated = True
-            if usponsor != "" or ureserved != "":
-                nunitextra.append( "||".join([ uloc, uunit, usponsor, ureserved ]))
-        if not updated and (sponsor != "" or reserved != ""):
-            nunitextra.append( "||".join([ loc, unit, sponsor, reserved ]))
-        asm3.configuration.unit_extra(dbo, "&&".join(nunitextra))
-        return "&&".join(nunitextra)
+        return asm3.configuration.unit_extra_edit(o.dbo, o.post.integer("location"), o.post["unit"], o.post["sponsor"], o.post["reserved"])
 
     def post_movelocation(self, o):
         self.check(asm3.users.CHANGE_ANIMAL)
