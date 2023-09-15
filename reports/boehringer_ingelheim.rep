@@ -2,7 +2,7 @@ Boehringer-Ingelheim Adopter List
 ###
 Figures
 ###
-3000/PostgreSQL rev02
+3000/PostgreSQL rev03
 ###
 BI adopter list for export as CSV
 ###
@@ -35,6 +35,7 @@ INNER JOIN adoption m ON m.ID = a.ActiveMovementID
 INNER JOIN owner o ON m.OwnerID = o.ID
 WHERE a.ActiveMovementDate >= '$ASK DATE Adopted between$'
 AND a.ActiveMovementDate <= '$ASK DATE and$'
+AND a.ActiveMovementType = 1
 ORDER BY a.ActiveMovementDate
 ###
 $$HEADER
