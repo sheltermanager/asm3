@@ -31,9 +31,9 @@ def get_waitinglist_query(dbo):
         "FROM animalwaitinglist a " \
         "LEFT OUTER JOIN lksize sz ON sz.ID = a.Size " \
         "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
-        "INNER JOIN species s ON s.ID = a.SpeciesID " \
-        "INNER JOIN owner o ON o.ID = a.OwnerID " \
-        "INNER JOIN lkurgency u ON u.ID = a.Urgency" % asm3.media.WAITINGLIST
+        "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
+        "LEFT OUTER JOIN owner o ON o.ID = a.OwnerID " \
+        "LEFT OUTER JOIN lkurgency u ON u.ID = a.Urgency" % asm3.media.WAITINGLIST
 
 def get_waitinglist_by_id(dbo, wid):
     """

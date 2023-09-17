@@ -1,6 +1,7 @@
 48
 ================
 
+17/09/23 Use outer join from waitinglist to species in case of broken forms
 15/09/23 Audit unit changes #1290
 15/09/23 Online forms: remember previously processed forms between reloads
 15/09/23 Daily observations: Show location counts and hide empty locations #489
