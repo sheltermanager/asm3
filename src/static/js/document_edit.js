@@ -25,7 +25,7 @@ $(function() {
         branding: false,
         content_css: "static/css/asm-tinymce.css?k=" + buildno,
         plugins: [
-            "advlist autolink directionality lists link image charmap print preview",
+            "advlist directionality lists link image charmap print preview",
             "hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen",
             "insertdatetime media nonbreaking save table contextmenu directionality",
             "emoticons template paste textcolor save"
