@@ -16,20 +16,14 @@ import asm3.users
 import asm3.utils
 from asm3.i18n import _, add_days, date_diff_days, format_time, display2python, python2display, subtract_years, now
 from asm3.sitedefs import GEO_BATCH, GEO_LIMIT
+from asm3.typehints import Database, Dict, List, PostedData, ResultRow, Results
 
-import datetime
+from datetime import datetime
 
 ASCENDING = 0
 DESCENDING = 1
 
-def get_homechecked(dbo, personid):
-    """
-    Returns a list of people homechecked by personid
-    """
-    return dbo.query("SELECT ID, OwnerName, DateLastHomeChecked, Comments FROM owner " \
-        "WHERE HomeCheckedBy = ?", [personid])
-
-def get_person_query(dbo):
+def get_person_query(dbo: Database) -> str:
     """
     Returns the SELECT and JOIN commands necessary for selecting
     person rows with resolved lookups.
@@ -63,7 +57,7 @@ def get_person_query(dbo):
         "LEFT OUTER JOIN site si ON o.SiteID = si.ID " \
         "LEFT OUTER JOIN jurisdiction j ON j.ID = o.JurisdictionID " % ( dbo.sql_today(), dbo.sql_today() )
 
-def get_rota_query(dbo):
+def get_rota_query(dbo: Database) -> str:
     """
     Returns the SELECT and JOIN commands necessary for selecting from rota hours
     """
@@ -73,7 +67,7 @@ def get_rota_query(dbo):
         "LEFT OUTER JOIN lkworktype wt ON wt.ID = r.WorkTypeID " \
         "INNER JOIN owner o ON o.ID = r.OwnerID "
 
-def get_person(dbo, personid):
+def get_person(dbo: Database, personid: int) -> ResultRow:
     """
     Returns a complete person row by id, or None if not found
     (int) personid: The person to get
@@ -82,11 +76,11 @@ def get_person(dbo, personid):
     p = embellish_latest_movement(dbo, p)
     return p
 
-def get_person_embedded(dbo, personid):
+def get_person_embedded(dbo: Database, personid: int) -> ResultRow:
     """ Returns a person record for the person chooser widget, uses a read-through cache for performance """
     return dbo.first_row( dbo.query_cache(get_person_query(dbo) + " WHERE o.ID = ?", [personid], age=120) )
 
-def embellish_adoption_warnings(dbo, p):
+def embellish_adoption_warnings(dbo: Database, p: ResultRow) -> ResultRow:
     """ Adds the adoption warning columns to a person record p and returns it """
     warn = dbo.first_row(dbo.query("SELECT (SELECT COUNT(*) FROM ownerinvestigation oi WHERE oi.OwnerID = o.ID) AS Investigation, " \
         "(SELECT COUNT(*) FROM animalcontrol ac WHERE ac.OwnerID = o.ID OR ac.Owner2ID = o.ID OR ac.Owner3ID = o.ID) AS Incident, " \
@@ -105,7 +99,7 @@ def embellish_adoption_warnings(dbo, p):
     p.RESERVEDANIMALIDS = ",".join(reserves)
     return p
 
-def embellish_latest_movement(dbo, p):
+def embellish_latest_movement(dbo: Database, p: ResultRow) -> ResultRow:
     """ Adds the latest movement info to a person record p and returns it.
         The query already does this and 99% of the time it will work fine and makes these columns available
         in v_person for the query builder. BUT if we have a data import where the movements were created out of
@@ -125,7 +119,15 @@ def embellish_latest_movement(dbo, p):
         p.LATESTMOVETYPENAME = lm.LATESTMOVETYPENAME
     return p
 
-def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "", address = "", siteid = 0, checkcouple = False):
+def get_homechecked(dbo: Database, personid: int) -> Results:
+    """
+    Returns a list of people homechecked by personid
+    """
+    return dbo.query("SELECT ID, OwnerName, DateLastHomeChecked, Comments FROM owner " \
+        "WHERE HomeCheckedBy = ?", [personid])
+
+def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname: str = "", forenames: str = "", address: str = "", 
+                       siteid: int = 0, checkcouple: bool = False) -> Results:
     """
     Returns people with similar email, mobile, names and addresses to those supplied.
     If siteid is non-zero, only people with that site will be checked.
@@ -170,13 +172,13 @@ def get_person_similar(dbo, email = "", mobile = "", surname = "", forenames = "
              "LOWER(o.OwnerForeNames2) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames, address))
     return eq + mq + ceq + cmq + per + cper
 
-def get_person_name(dbo, personid):
+def get_person_name(dbo: Database, personid: int) -> str:
     """
     Returns the full person name for an id
     """
     return dbo.query_string("SELECT OwnerName FROM owner WHERE ID = ?", [ asm3.utils.cint(personid) ])
 
-def get_person_name_code(dbo, personid):
+def get_person_name_code(dbo: Database, personid: int) -> str:
     """
     Returns the person name and code for an id
     """
@@ -184,19 +186,19 @@ def get_person_name_code(dbo, personid):
     if r is None: return ""
     return "%s - %s" % (r.OWNERNAME, r.OWNERCODE)
 
-def get_person_name_addresses(dbo):
+def get_person_name_addresses(dbo: Database) -> Results:
     """
     Returns the person name and address for everyone on file
     """
     return dbo.query("SELECT o.ID, o.OwnerName, o.OwnerAddress FROM owner o ORDER BY o.OwnerName")
 
-def get_fosterers(dbo):
+def get_fosterers(dbo: Database) -> Results:
     """
     Returns all fosterers
     """
     return dbo.query(get_person_query(dbo) + " WHERE o.IsFosterer = 1 ORDER BY o.OwnerName")
 
-def get_shelterview_fosterers(dbo, siteid = 0):
+def get_shelterview_fosterers(dbo: Database, siteid: int = 0) -> Results:
     """
     Returns all fosterers with the just the minimum info required for shelterview
     """
@@ -204,7 +206,7 @@ def get_shelterview_fosterers(dbo, siteid = 0):
     if siteid is not None and siteid != 0: sitefilter = "AND o.SiteID = %s" % siteid
     return dbo.query("SELECT o.ID, o.OwnerName, o.FosterCapacity, o.AdditionalFlags FROM owner o WHERE o.IsFosterer = 1 %s ORDER BY o.OwnerName" % sitefilter)
 
-def get_staff_volunteers(dbo, siteid = 0):
+def get_staff_volunteers(dbo: Database, siteid: int = 0) -> Results:
     """
     Returns all staff and volunteers
     """
@@ -212,7 +214,7 @@ def get_staff_volunteers(dbo, siteid = 0):
     if siteid is not None and siteid != 0: sitefilter = "AND o.SiteID = %s" % siteid
     return dbo.query(get_person_query(dbo) + " WHERE o.IsStaff = 1 OR o.IsVolunteer = 1 %s ORDER BY o.IsStaff DESC, o.OwnerSurname, o.OwnerForeNames" % sitefilter)
 
-def get_towns(dbo):
+def get_towns(dbo: Database) -> List[str]:
     """
     Returns a list of all towns
     """
@@ -223,7 +225,7 @@ def get_towns(dbo):
         towns.append(str(r.OWNERTOWN))
     return towns
 
-def get_town_to_county(dbo):
+def get_town_to_county(dbo: Database) -> List[str]:
     """
     Returns a lookup of which county towns belong in
     """
@@ -234,7 +236,7 @@ def get_town_to_county(dbo):
         tc[r.OWNERTOWN] = r.OWNERCOUNTY
     return tc
 
-def get_counties(dbo):
+def get_counties(dbo: Database) -> List[str]:
     """
     Returns a list of counties
     """
@@ -245,7 +247,7 @@ def get_counties(dbo):
         counties.append("%s" % r.OWNERCOUNTY)
     return counties
 
-def get_satellite_counts(dbo, personid):
+def get_satellite_counts(dbo: Database, personid: int) -> Results:
     """
     Returns a resultset containing the number of each type of satellite
     record that a person has.
@@ -279,14 +281,14 @@ def get_satellite_counts(dbo, personid):
         ") AS links " \
         "FROM owner o WHERE o.ID = ?", (asm3.media.PERSON, asm3.diary.PERSON, asm3.log.PERSON, asm3.additional.PERSON_LOOKUP, str(personid), personid))
 
-def get_reserves_without_homechecks(dbo):
+def get_reserves_without_homechecks(dbo: Database) -> Results:
     """
     Returns owners that have a reservation but aren't homechecked
     """
     return dbo.query(get_person_query(dbo) + " INNER JOIN adoption a ON a.OwnerID = o.ID " \
         "WHERE a.MovementType = 0 AND a.ReservationDate Is Not Null AND a.ReservationCancelledDate Is Null AND o.IDCheck = 0")
 
-def get_open_adoption_checkout(dbo, cutoff=7):
+def get_open_adoption_checkout(dbo: Database, cutoff: int = 7) -> Results:
     """
     Returns owners with adoption checkout initiated, but not complete in the last cutoff days
     """
@@ -298,14 +300,14 @@ def get_open_adoption_checkout(dbo, cutoff=7):
         [cutoffdate, cutoffdate, cutoffdate], distincton="ID")
     return dbo.query(get_person_query(dbo) + "WHERE o.ID IN (%s)" % dbo.sql_in(rows))
 
-def get_overdue_donations(dbo):
+def get_overdue_donations(dbo: Database) -> Results:
     """
     Returns owners that have an overdue regular donation
     """
     return dbo.query(get_person_query(dbo) + " INNER JOIN ownerdonation od ON od.OwnerID = o.ID " \
         "WHERE od.Date Is Null AND od.DateDue Is Not Null AND od.DateDue <= ?", [dbo.today()])
 
-def get_signed_requests(dbo, cutoff=7):
+def get_signed_requests(dbo: Database, cutoff: int = 7) -> Results:
     """
     Returns owners that have a fulfilled a signing request in the last cutoff days
     """
@@ -314,7 +316,7 @@ def get_signed_requests(dbo, cutoff=7):
         "WHERE l.LinkType=1 AND l.Date >= ? AND l.Comments LIKE 'ES02%%'", [cutoffdate], distincton="ID")
     return dbo.query(get_person_query(dbo) + "WHERE o.ID IN (%s)" % dbo.sql_in(rows))
 
-def get_unsigned_requests(dbo, cutoff=31):
+def get_unsigned_requests(dbo: Database, cutoff: int = 31) -> Results:
     """
     Returns owners that have more signing requests in the last cutoff days than signed
     """
@@ -326,7 +328,7 @@ def get_unsigned_requests(dbo, cutoff=31):
         [cutoffdate, cutoffdate, cutoffdate], distincton="ID")
     return dbo.query(get_person_query(dbo) + "WHERE o.ID IN (%s)" % dbo.sql_in(rows))
 
-def get_links(dbo, pid):
+def get_links(dbo: Database, pid: int) -> Results:
     """
     Gets a list of all records that link to this person
     """
@@ -550,7 +552,7 @@ def get_links(dbo, pid):
     sql += "ORDER BY DDATE DESC, LINKDISPLAY "
     return dbo.query(sql)
 
-def get_investigation(dbo, personid, sort = ASCENDING):
+def get_investigation(dbo: Database, personid: int, sort: int = ASCENDING) -> Results:
     """
     Returns investigation records for the given person:
     OWNERID, DATE, NOTES
@@ -562,7 +564,8 @@ def get_investigation(dbo, personid, sort = ASCENDING):
         sql += "ORDER BY o.Date DESC"
     return dbo.query(sql, [personid])
 
-def get_person_find_simple(dbo, query, classfilter="all", typefilter="all", includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
+def get_person_find_simple(dbo: Database, query: str, classfilter: str = "all", typefilter: str = "all", 
+                           includeStaff: bool = False, includeVolunteers: bool = False, limit: int = 0, siteid: int = 0) -> Results:
     """
     Returns rows for simple person searches.
     query: The search criteria
@@ -613,7 +616,8 @@ def get_person_find_simple(dbo, query, classfilter="all", typefilter="all", incl
     sql = get_person_query(dbo) + " WHERE (" + " OR ".join(ss.ors) + ")" + cf + dt + " ORDER BY o.OwnerName"
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_person_find_advanced(dbo, criteria, includeStaff = False, includeVolunteers = False, limit = 0, siteid = 0):
+def get_person_find_advanced(dbo: Database, criteria: Dict[str, str], includeStaff: bool = False, includeVolunteers: bool = False, 
+                             limit: int = 0, siteid: int = 0) -> Results:
     """
     Returns rows for advanced person searches.
     criteria: A dictionary of criteria
@@ -707,10 +711,10 @@ def get_person_find_advanced(dbo, criteria, includeStaff = False, includeVolunte
         sql = get_person_query(dbo) + " WHERE " + " AND ".join(ss.ands) + " ORDER BY o.OwnerName"
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_person_rota(dbo, personid):
+def get_person_rota(dbo: Database, personid: int) -> Results:
     return dbo.query(get_rota_query(dbo) + " WHERE r.OwnerID = ? ORDER BY r.StartDateTime DESC", [personid])
 
-def get_rota(dbo, startdate, enddate):
+def get_rota(dbo: Database, startdate: datetime, enddate: datetime) -> Results:
     """ Returns rota records that apply between the two dates given """
     return dbo.query(get_rota_query(dbo) + \
         " WHERE (r.StartDateTime >= ? AND r.StartDateTime < ?)" \
@@ -718,7 +722,7 @@ def get_rota(dbo, startdate, enddate):
         " OR (r.StartDateTime < ? AND r.EndDateTime >= ?) " \
         " ORDER BY r.StartDateTime", (startdate, enddate, startdate, enddate, startdate, startdate))
 
-def clone_rota_week(dbo, username, startdate, newdate, flags):
+def clone_rota_week(dbo: Database, username: str, startdate: datetime, newdate: datetime, flags: str) -> None:
     """ Copies a weeks worth of rota records from startdate to newdate """
     l = dbo.locale
     if startdate is None or newdate is None:
@@ -739,8 +743,8 @@ def clone_rota_week(dbo, username, startdate, newdate, flags):
         ediff = date_diff_days(startdate, r.ENDDATETIME)
         sd = add_days(newdate, sdiff)
         ed = add_days(newdate, ediff)
-        sd = datetime.datetime(sd.year, sd.month, sd.day, r.STARTDATETIME.hour, r.STARTDATETIME.minute, 0)
-        ed = datetime.datetime(ed.year, ed.month, ed.day, r.ENDDATETIME.hour, r.ENDDATETIME.minute, 0)
+        sd = datetime(sd.year, sd.month, sd.day, r.STARTDATETIME.hour, r.STARTDATETIME.minute, 0)
+        ed = datetime(ed.year, ed.month, ed.day, r.ENDDATETIME.hour, r.ENDDATETIME.minute, 0)
         insert_rota_from_form(dbo, username, asm3.utils.PostedData({
             "person":    str(r.OWNERID),
             "startdate": python2display(l, sd),
@@ -752,7 +756,7 @@ def clone_rota_week(dbo, username, startdate, newdate, flags):
             "comments":  r.COMMENTS
         }, l))
 
-def get_extra_id(dbo, p, idtype):
+def get_extra_id(dbo: Database, p: ResultRow, idtype: str) -> str:
     """
     Retrieves a value from the ExtraIDs field, which is stored
     in the form:  key1=value1|key2=value2 ...
@@ -768,7 +772,7 @@ def get_extra_id(dbo, p, idtype):
                     return v
     return None
 
-def set_extra_id(dbo, user, p, idtype, idvalue):
+def set_extra_id(dbo: Database, user: str, p: ResultRow, idtype: str, idvalue: str) -> str:
     """
     Stores a value in the ExtraIDs field for a person, which is stored
     in the form:  key1=value1|key2=value2 ...
@@ -789,7 +793,7 @@ def set_extra_id(dbo, user, p, idtype, idvalue):
     dbo.update("owner", p.ID, { "ExtraIDs": extraids }, user)
     return extraids
 
-def calculate_owner_code(pid, surname):
+def calculate_owner_code(pid: int, surname: str) -> str:
     """
     Calculates the owner code field in the format SU000000
     pid: The person ID
@@ -802,9 +806,10 @@ def calculate_owner_code(pid, surname):
         prefix = surname[0:2].upper()
     return "%s%s" % (prefix, asm3.utils.padleft(pid, 6))
 
-def calculate_owner_name(dbo, personclass = 0, title = "", initials = "", first = "", last = "", 
-                         nameformat = "", coupleformat = "", marriedformat = "", 
-                         title2 = "", initials2 = "", first2 = "", last2 = ""):
+def calculate_owner_name(dbo: Database, personclass: int = 0, 
+                         title: str = "", initials: str = "", first: str = "", last: str = "", 
+                         nameformat: str = "", coupleformat: str = "", marriedformat: str = "", 
+                         title2: str = "", initials2: str = "", first2: str = "", last2: str = "") -> str:
     """
     Calculates the owner name field based on the current format.
     """
@@ -847,7 +852,7 @@ def calculate_owner_name(dbo, personclass = 0, title = "", initials = "", first 
         person1 = rp(person1, "{ownersurname}", last)
         return person1.strip()
 
-def update_owner_names(dbo):
+def update_owner_names(dbo: Database) -> str:
     """
     Regenerates all owner code and name fields based on the current values.
     """
@@ -873,7 +878,7 @@ def update_owner_names(dbo):
     asm3.al.debug("regenerated %d owner names and codes" % len(own), "person.update_owner_names", dbo)
     return "OK %d" % len(own)
 
-def insert_person_from_form(dbo, post, username, geocode=True):
+def insert_person_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> int:
     """
     Creates a new person record from incoming form data
     Returns the ID of the new record
@@ -989,7 +994,7 @@ def insert_person_from_form(dbo, post, username, geocode=True):
 
     return pid
 
-def update_person_from_form(dbo, post, username, geocode=True):
+def update_person_from_form(dbo: Database, post: PostedData, username: str, geocode: bool = True) -> None:
     """
     Updates an existing person record from incoming form data
     """
@@ -1089,7 +1094,7 @@ def update_person_from_form(dbo, post, username, geocode=True):
     # Check/update the geocode for the person's address
     if geocode: update_geocode(dbo, pid, post["latlong"], post["address"], post["town"], post["county"], post["postcode"], post["country"])
 
-def update_remove_flag(dbo, username, personid, flag):
+def update_remove_flag(dbo: Database, username: str, personid: int, flag: str) -> None:
     """
     Removes flag from personid. Does nothing if the person does not have the flag.
     """
@@ -1097,7 +1102,7 @@ def update_remove_flag(dbo, username, personid, flag):
     if flags.find("%s|" % flag) != -1:
         update_flags(dbo, username, personid, flags.replace("%s|" % flag, "").split("|"))
 
-def update_flags(dbo, username, personid, flags):
+def update_flags(dbo: Database, username: str, personid: int, flags: str) -> None:
     """
     Updates the flags on a person record from a list of flags
     """
@@ -1159,7 +1164,7 @@ def update_flags(dbo, username, personid, flags):
         "AdditionalFlags":          flagstr
     }, username)
 
-def update_adopter_flag(dbo, username, personid):
+def update_adopter_flag(dbo: Database, username: str, personid: int) -> None:
     """
     Sets or removes the adopter flag on personid if it has any open adoption movements.
     Only makes the change if necessary to avoid audits/lastchange updates.
@@ -1173,7 +1178,7 @@ def update_adopter_flag(dbo, username, personid):
     elif openadoptions == 0 and hasadopter:
         update_remove_flag(dbo, username, personid, "adopter")
 
-def merge_person_details(dbo, username, personid, d, force=False):
+def merge_person_details(dbo: Database, username: str, personid: int, d: Dict[str, str], force: bool = False) -> None:
     """
     Merges person details in data dictionary d (the same dictionary that
     would be fed to insert_person_from_form and update_person_from_form)
@@ -1226,7 +1231,7 @@ def merge_person_details(dbo, username, personid, d, force=False):
                         p.OWNERTITLE2, p.OWNERINITIALS2, p.OWNERFORENAMES2, p.OWNERSURNAME2)
     dbo.update("owner", personid, uv, username)
 
-def merge_gdpr_flags(dbo, username, personid, flags):
+def merge_gdpr_flags(dbo: Database, username: str, personid: int, flags: str) -> str:
     """
     Merges the delimited string flags with those on personid.gdprcontactoptin
     The original person record is updated and the new list of GDPR flags is returned 
@@ -1243,7 +1248,7 @@ def merge_gdpr_flags(dbo, username, personid, flags):
     dbo.update("owner", personid, v, username)
     return ",".join(fgs)
 
-def merge_flags(dbo, username, personid, flags):
+def merge_flags(dbo: Database, username: str, personid: int, flags: str) -> str:
     """
     Merges the delimited string flags with those on personid
     flags can be delimited with either pipes or commas.
@@ -1264,7 +1269,7 @@ def merge_flags(dbo, username, personid, flags):
     update_flags(dbo, username, personid, merged)
     return "|".join(merged) + "|"
 
-def merge_person(dbo, username, personid, mergepersonid):
+def merge_person(dbo: Database, username: str, personid: int, mergepersonid: int) -> None:
     """
     Reparents all satellite records of mergepersonid onto
     personid, merges any missing flags or details and then 
@@ -1386,7 +1391,7 @@ def merge_person(dbo, username, personid, mergepersonid):
     dbo.delete("owner", mergepersonid, username)
     asm3.audit.move(dbo, username, "owner", personid, "", "Merged owner %d -> %d" % (mergepersonid, personid))
 
-def merge_duplicate_people(dbo, username):
+def merge_duplicate_people(dbo: Database, username: str) -> None:
     """
     Runs through every person in the database and attempts to find other people
     with the same first name, last name and address. If any are found, they are
@@ -1418,7 +1423,7 @@ def merge_duplicate_people(dbo, username):
 
     asm3.al.info("Merged %d duplicate people records" % merged, "person.merge_duplicate_people", dbo)
 
-def update_pass_homecheck(dbo, user, personid, comments):
+def update_pass_homecheck(dbo: Database, user: str, personid: int, comments: str) -> None:
     """
     Marks a person as homechecked and appends any comments supplied to their record.
     """
@@ -1434,11 +1439,13 @@ def update_pass_homecheck(dbo, user, personid, comments):
         com += "\n" + comments
         dbo.update("owner", personid, { "Comments": "%s\n%s" % (com, comments) }, user)
 
-def update_geocode(dbo, personid, latlon="", address="", town="", county="", postcode="", country=""):
+def update_geocode(dbo: Database, personid: int, latlon: str = "", address: str = "", town: str = "", 
+                   county: str = "", postcode: str = "", country: str = "") -> str:
     """
     Looks up the geocode for this person with the address info given.
     If latlon is already set to a value, checks the address hash to see if it
     matches and does not do the geocode if it does.
+    Returns the latlon.
     """
     # If an address hasn't been specified, look it up from the personid given
     if address == "":
@@ -1465,13 +1472,13 @@ def update_geocode(dbo, personid, latlon="", address="", town="", county="", pos
     update_latlong(dbo, personid, latlon)
     return latlon
 
-def update_latlong(dbo, personid, latlong):
+def update_latlong(dbo: Database, personid: int, latlong: str) -> None:
     """
     Updates the latlong field.
     """
     dbo.update("owner", personid, { "LatLong": latlong })
 
-def delete_person(dbo, username, personid):
+def delete_person(dbo: Database, username: str, personid: int) -> None:
     """
     Deletes a person and all its satellite records.
     """
@@ -1509,7 +1516,7 @@ def delete_person(dbo, username, personid):
     dbo.delete("owner", personid, username)
     # asm3.dbfs.delete_path(dbo, "/owner/%d" % personid) # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
-def insert_rota_from_form(dbo, username, post):
+def insert_rota_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a rota record from posted form data
     """
@@ -1522,7 +1529,7 @@ def insert_rota_from_form(dbo, username, post):
         "Comments":         post["comments"]
     }, username)
 
-def update_rota_from_form(dbo, username, post):
+def update_rota_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Updates a rota record from posted form data
     """
@@ -1535,13 +1542,13 @@ def update_rota_from_form(dbo, username, post):
         "Comments":         post["comments"]
     }, username)
 
-def delete_rota(dbo, username, rid):
+def delete_rota(dbo: Database, username: str, rid: int) -> None:
     """
     Deletes the selected rota record
     """
     dbo.delete("ownerrota", rid, username)
 
-def delete_rota_week(dbo, username, startdate):
+def delete_rota_week(dbo: Database, username: str, startdate: datetime) -> None:
     """
     Deletes all rota records beginning at startdate and ending at
     startdate+7
@@ -1550,7 +1557,7 @@ def delete_rota_week(dbo, username, startdate):
     enddate = add_days(startdate, 7)
     dbo.delete("ownerrota", "StartDateTime>=%s AND StartDateTime<=%s" % (dbo.sql_date(startdate), dbo.sql_date(enddate)), username)
 
-def insert_investigation_from_form(dbo, username, post):
+def insert_investigation_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates an investigation record from posted form data
     """
@@ -1560,7 +1567,7 @@ def insert_investigation_from_form(dbo, username, post):
         "Notes":        post["notes"]
     }, username)
 
-def update_investigation_from_form(dbo, username, post):
+def update_investigation_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates an investigation record from posted form data
     """
@@ -1569,16 +1576,17 @@ def update_investigation_from_form(dbo, username, post):
         "Notes":        post["notes"]
     }, username)
 
-def delete_investigation(dbo, username, iid):
+def delete_investigation(dbo: Database, username: str, iid: int) -> None:
     """
     Deletes the selected investigation record
     """
     dbo.delete("ownerinvestigation", iid, username)
 
-def send_email_from_form(dbo, username, post):
+def send_email_from_form(dbo: Database, username: str, post: PostedData) -> bool:
     """
     Sends an email to a person from a posted form. Attaches it as
     a log entry if specified.
+    Passes the return value from send_email (a bool for success)
     """
     emailfrom = post["from"]
     emailto = post["to"]
@@ -1595,7 +1603,7 @@ def send_email_from_form(dbo, username, post):
         asm3.log.add_log_email(dbo, username, asm3.log.PERSON, post.integer("personid"), logtype, emailto, subject, body)
     return rv
 
-def lookingfor_summary(dbo, personid, p = None):
+def lookingfor_summary(dbo: Database, personid: int, p: ResultRow = None) -> str:
     """
     Generates the summary text for the type of animal a person is looking for. 
     personid: The person to generate for OR 
@@ -1643,7 +1651,7 @@ def lookingfor_summary(dbo, personid, p = None):
         summary = ", ".join(x for x in c if x is not None)
     return summary
 
-def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
+def lookingfor_report(dbo: Database, username: str = "system", personid: int = 0, limit: int = 0) -> str:
     """
     Generates the person looking for report
     """
@@ -1803,13 +1811,13 @@ def lookingfor_report(dbo, username = "system", personid = 0, limit = 0):
 
     return "".join(h)
 
-def lookingfor_last_match_count(dbo):
+def lookingfor_last_match_count(dbo: Database) -> int:
     """
     Returns the number of matches the last time lookingfor was run
     """
     return dbo.query_int("SELECT COUNT(*) FROM ownerlookingfor")
 
-def update_check_flags(dbo):
+def update_check_flags(dbo: Database) -> str:
     """
     Goes through all people records and verifies that if they have one of
     the IsX flag columns set that the builtin value is present in the
@@ -1864,7 +1872,7 @@ def update_check_flags(dbo):
     asm3.al.debug("updated %d person flags" % len(batch), "person.update_missing_builtin_flags", dbo)
     return "OK %d" % len(batch)
 
-def update_missing_geocodes(dbo):
+def update_missing_geocodes(dbo: Database) -> None:
     """
     Goes through all people records without geocodes and completes
     the missing ones, using our configured bulk geocoding service.
@@ -1884,7 +1892,7 @@ def update_missing_geocodes(dbo):
     dbo.execute_many("UPDATE owner SET LatLong = ? WHERE ID = ?", batch)
     asm3.al.debug("updated %d person geocodes" % len(batch), "person.update_missing_geocodes", dbo)
 
-def update_lookingfor_report(dbo):
+def update_lookingfor_report(dbo: Database) -> str:
     """
     Updates the latest version of the looking for report in the cache
     """
@@ -1895,7 +1903,7 @@ def update_lookingfor_report(dbo):
     asm3.cachedisk.put("lookingfor_lastmatchcount", dbo.database, count, 86400)
     return "OK %d" % count
 
-def remove_people_only_cancelled_reserve(dbo, years = None, username = "system"):
+def remove_people_only_cancelled_reserve(dbo: Database, years: int = None, username: str = "system") -> str:
     """
     Removes people who only have a cancelled reservation that is older than X years.
     The same rules as anonymising apply in that the person can only exist for the purpose
@@ -1929,7 +1937,7 @@ def remove_people_only_cancelled_reserve(dbo, years = None, username = "system")
     asm3.al.debug("removed %d people with only cancelled reservations (remove after %s years)" % (len(people), years), "people.remove_people_only_cancelled_reserve", dbo)
     return "OK %s" % len(people)
 
-def update_anonymise_personal_data(dbo, years = None, username = "system"):
+def update_anonymise_personal_data(dbo: Database, years: int = None, username: str = "system") -> str:
     """
     Anonymises personal data once the retention period in years is up.
     A cutoff date is calculated from today - retentionyears. If the person was

@@ -18,6 +18,7 @@ import asm3.users
 import asm3.utils
 import asm3.waitinglist
 from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS
+from asm3.typehints import Any, datetime, Database, List, PostedData, ResultRow, Results, Tuple
 
 import web062 as web
 
@@ -125,19 +126,19 @@ AUTOCOMPLETE_MAP = {
     "emailaddress":     "email"
 }
 
-def get_collationid(dbo):
+def get_collationid(dbo: Database) -> int:
     """ Returns the next collation ID value for online forms. """
     return asm3.utils.cache_sequence(dbo, "collation", "SELECT MAX(CollationID) FROM onlineformincoming")
 
-def get_onlineform(dbo, formid):
+def get_onlineform(dbo: Database, formid: int) -> ResultRow:
     """ Returns the online form with ID formid """
     return dbo.first_row(dbo.query("SELECT * FROM onlineform WHERE ID = ?", [formid]))
 
-def get_onlineforms(dbo):
+def get_onlineforms(dbo: Database) -> Results:
     """ Return all online forms """
     return dbo.query("SELECT *, (SELECT COUNT(*) FROM onlineformfield WHERE OnlineFormID = onlineform.ID) AS NumberOfFields FROM onlineform ORDER BY Name")
 
-def get_onlineform_html(dbo, formid, completedocument = True):
+def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = True) -> str:
     """ Get the selected online form as HTML """
     h = []
     l = dbo.locale
@@ -325,7 +326,7 @@ def get_onlineform_html(dbo, formid, completedocument = True):
         h.append(footer.replace("$$TITLE$$", form.NAME))
     return "\n".join(h)
 
-def get_onlineform_json(dbo, formid):
+def get_onlineform_json(dbo: Database, formid: int) -> str:
     """
     Get the selected online form as a JSON document
     """
@@ -341,7 +342,7 @@ def get_onlineform_json(dbo, formid):
     fd["fields"] = ff
     return asm3.utils.json(fd, True)
 
-def import_onlineform_json(dbo, j):
+def import_onlineform_json(dbo: Database, j: str) -> int:
     """
     Imports an online form from a JSON document
     """
@@ -365,8 +366,9 @@ def import_onlineform_json(dbo, j):
             "tooltip": f["tooltip"]
         }
         insert_onlineformfield_from_form(dbo, "import", asm3.utils.PostedData(data, dbo.locale))
+    return fid
 
-def import_onlineform_html(dbo, h):
+def import_onlineform_html(dbo: Database, h: str) -> int:
     """
     Imports an online form from an HTML document
     """
@@ -405,8 +407,9 @@ def import_onlineform_html(dbo, h):
             "tooltip": tooltip
         }
         insert_onlineformfield_from_form(dbo, "import", asm3.utils.PostedData(data, dbo.locale))
+    return fid
 
-def get_onlineform_header(dbo):
+def get_onlineform_header(dbo: Database) -> str:
     header = asm3.template.get_html_template(dbo, "onlineform")[0]
     if header == "": header = "<!DOCTYPE html>\n" \
         "<html>\n" \
@@ -451,27 +454,27 @@ def get_onlineform_header(dbo):
        "    <div id=\"page\">"
     return header
 
-def get_onlineform_footer(dbo):
+def get_onlineform_footer(dbo: Database) -> str:
     footer = asm3.template.get_html_template(dbo, "onlineform")[2]
     if footer == "": footer = "</div>\n</body>\n</html>"
     return footer
 
-def set_onlineform_headerfooter(dbo, head, foot):
+def set_onlineform_headerfooter(dbo: Database, head: str, foot: str) -> None:
     asm3.template.update_html_template(dbo, "", "onlineform", head, "", foot, True)
 
-def get_onlineform_name(dbo, formid):
+def get_onlineform_name(dbo: Database, formid: int) -> str:
     """ Returns the name of a form """
     return dbo.query_string("SELECT Name FROM onlineform WHERE ID = ?", [formid])
 
-def get_onlineformfields(dbo, formid):
+def get_onlineformfields(dbo: Database, formid: int) -> Results:
     """ Return all fields for a form """
     return dbo.query("SELECT * FROM onlineformfield WHERE OnlineFormID = ? ORDER BY DisplayIndex", [formid])
 
-def get_onlineformincoming_formname(dbo, collationid):
+def get_onlineformincoming_formname(dbo: Database, collationid: int) -> str:
     """ Given a collationid, return the form's name """
     return dbo.query_string("SELECT FormName FROM onlineformincoming WHERE CollationID=?", [collationid])
 
-def get_onlineformincoming_formheader(dbo, collationid):
+def get_onlineformincoming_formheader(dbo: Database, collationid: int) -> str:
     """
     Given a collation id for an incoming form, try and find the
     original onlineform header.
@@ -480,7 +483,7 @@ def get_onlineformincoming_formheader(dbo, collationid):
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
         "WHERE oi.CollationID = ?", [collationid])
 
-def get_onlineformincoming_formfooter(dbo, collationid):
+def get_onlineformincoming_formfooter(dbo: Database, collationid: int) -> str:
     """
     Given a collation id for an incoming form, try and find the
     original onlineform footer.
@@ -489,7 +492,7 @@ def get_onlineformincoming_formfooter(dbo, collationid):
         "INNER JOIN onlineformincoming oi ON oi.FormName = o.Name " \
         "WHERE oi.CollationID = ?", [collationid])
 
-def get_onlineformincoming_headers(dbo):
+def get_onlineformincoming_headers(dbo: Database) -> Results:
     """ Returns all incoming form posts """
     return dbo.query("SELECT f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview, " \
         "(SELECT Value FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='mergeperson') AS MergePerson, " \
@@ -498,11 +501,12 @@ def get_onlineformincoming_headers(dbo):
         "GROUP BY f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview " \
         "ORDER BY f.PostedDate")
 
-def get_onlineformincoming_detail(dbo, collationid):
+def get_onlineformincoming_detail(dbo: Database, collationid: int) -> Results:
     """ Returns the detail lines for an incoming post """
     return dbo.query("SELECT * FROM onlineformincoming WHERE CollationID = ? ORDER BY DisplayIndex", [collationid])
 
-def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_images=True, include_system=True):
+def get_onlineformincoming_html(dbo: Database, collationid: int, 
+                                include_raw: bool = True, include_images: bool = True, include_system: bool = True) -> str:
     """ Returns a partial HTML document of the incoming form data fields """
     h = []
     h.append('<table width="100%">')
@@ -538,7 +542,7 @@ def get_onlineformincoming_html(dbo, collationid, include_raw=True, include_imag
     h.append('</table>')
     return "\n".join(h)
 
-def get_onlineformincoming_plain(dbo, collationid):
+def get_onlineformincoming_plain(dbo: Database, collationid: int) -> str:
     """ Returns a plain text fragment of the incoming form data """
     h = []
     for f in get_onlineformincoming_detail(dbo, collationid):
@@ -548,7 +552,7 @@ def get_onlineformincoming_plain(dbo, collationid):
         h.append("%s: %s\n" % (label, f.VALUE))
     return "\n".join(h)
 
-def get_onlineformincoming_csv(dbo, ids):
+def get_onlineformincoming_csv(dbo: Database, ids: List[int]) -> str:
     """
     Returns all the forms with collationid in ids as CSV data.
     The form fields are laid out as columns with each form as a row.
@@ -567,7 +571,9 @@ def get_onlineformincoming_csv(dbo, ids):
         rows.append(row)
     return asm3.utils.csv(dbo.locale, rows, cols)
 
-def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images=True, include_system=True, strip_bgimages=True, strip_script=True, strip_style=True):
+def get_onlineformincoming_html_print(dbo: Database, ids: List[int], 
+                                      include_raw: bool = True, include_images: bool = True, include_system: bool = True, 
+                                      strip_bgimages: bool = True, strip_script: bool = True, strip_style: bool = True) -> str:
     """
     Returns a complete printable version of the online form
     (header/footer wrapped around the html call above)
@@ -606,15 +612,15 @@ def get_onlineformincoming_html_print(dbo, ids, include_raw=True, include_images
     if strip_style: s = asm3.utils.strip_style_tags(s)
     return s
 
-def get_onlineformincoming_date(dbo, collationid):
+def get_onlineformincoming_date(dbo: Database, collationid: int) -> datetime:
     """ Returns the posted date/time for a collation id """
     return dbo.query_date("SELECT PostedDate FROM onlineformincoming WHERE CollationID = ? %s" % dbo.sql_limit(1), [collationid])
 
-def get_onlineformincoming_name(dbo, collationid):
+def get_onlineformincoming_name(dbo: Database, collationid: int) -> str:
     """ Returns the form name for a collation id """
     return dbo.query_string("SELECT FormName FROM onlineformincoming WHERE CollationID = ? %s" % dbo.sql_limit(1), [collationid])
 
-def get_onlineformincoming_animalperson(dbo, collationid):
+def get_onlineformincoming_animalperson(dbo: Database, collationid: int) -> Tuple[str, str, str]:
     """ Returns the animalname, firstname and lastname fields from the form if they are present. Returned as a tuple. """
     animalname = ""
     firstname = ""
@@ -629,11 +635,11 @@ def get_onlineformincoming_animalperson(dbo, collationid):
         if f.startswith("reserveanimalname"): animalname = r.VALUE
     return (animalname, firstname, lastname)
 
-def get_onlineformincoming_retainfor(dbo, collationid):
+def get_onlineformincoming_retainfor(dbo: Database, collationid: int) -> int:
     """ Returns the retain for period for a collation id """
     return dbo.query_int("SELECT Value FROM onlineformincoming WHERE CollationID = ? AND FieldName = 'retainfor' %s" % dbo.sql_limit(1), [collationid])
 
-def get_animal_id_from_field(dbo, name):
+def get_animal_id_from_field(dbo: Database, name: str) -> int:
     """ Used for ADOPTABLE/SHELTER animal fields, gets the ID from the value """
     if name.find("::") != -1:
         animalcode = name.split("::")[1]
@@ -642,7 +648,7 @@ def get_animal_id_from_field(dbo, name):
         aid = dbo.query_int("SELECT ID FROM animal WHERE LOWER(AnimalName) LIKE ? ORDER BY ID DESC", [name.lower()])
     return aid
 
-def insert_onlineform_from_form(dbo, username, post):
+def insert_onlineform_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Create an onlineform record from posted data
     """
@@ -662,7 +668,7 @@ def insert_onlineform_from_form(dbo, username, post):
         "*Description":         post["description"]
     }, username, setCreated=False)
 
-def update_onlineform_from_form(dbo, username, post):
+def update_onlineform_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Update an onlineform record from posted data
     """
@@ -682,14 +688,14 @@ def update_onlineform_from_form(dbo, username, post):
         "*Description":         post["description"]
     }, username, setLastChanged=False)
 
-def delete_onlineform(dbo, username, formid):
+def delete_onlineform(dbo: Database, username: str, formid: int) -> None:
     """
     Deletes the specified onlineform and fields
     """
     dbo.execute("DELETE FROM onlineformfield WHERE OnlineFormID = ?", [formid])
     dbo.delete("onlineform", formid, username)
 
-def reindex_onlineform(dbo, username, formid):
+def reindex_onlineform(dbo: Database, username: str, formid: int) -> None:
     """
     Resets display indexes to space out by 10 using current order
     """
@@ -699,7 +705,7 @@ def reindex_onlineform(dbo, username, formid):
         newindex = (i + 1) * 10
         dbo.execute("UPDATE onlineformfield SET DISPLAYINDEX = ? WHERE OnlineFormID = ? AND ID = ?", [newindex, formid, fields[i]["ID"]])
 
-def clone_onlineform(dbo, username, formid):
+def clone_onlineform(dbo: Database, username: str, formid: int) -> int:
     """
     Clones formid
     """
@@ -719,7 +725,6 @@ def clone_onlineform(dbo, username, formid):
         "*Footer":              f.FOOTER,
         "*Description":         f.DESCRIPTION
     }, username, setCreated=False)
-
     for ff in get_onlineformfields(dbo, formid):
         dbo.insert("onlineformfield", {
             "OnlineFormID":     nfid,
@@ -732,8 +737,9 @@ def clone_onlineform(dbo, username, formid):
             "Lookups":          ff.LOOKUPS,
             "*Tooltip":          ff.TOOLTIP
         })
+    return nfid
 
-def insert_onlineformfield_from_form(dbo, username, post):
+def insert_onlineformfield_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Create an onlineformfield record from posted data
     """
@@ -757,7 +763,7 @@ def insert_onlineformfield_from_form(dbo, username, post):
         "*Tooltip":         post["tooltip"]
     }, username, setCreated=False)
 
-def update_onlineformfield_from_form(dbo, username, post):
+def update_onlineformfield_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Update an onlineformfield record from posted data
     """
@@ -780,13 +786,13 @@ def update_onlineformfield_from_form(dbo, username, post):
         "*Tooltip":         post["tooltip"]
     }, username, setLastChanged=False)
 
-def delete_onlineformfield(dbo, username, fieldid):
+def delete_onlineformfield(dbo: Database, username: str, fieldid: int) -> None:
     """
     Deletes the specified onlineformfield
     """
     dbo.delete("onlineformfield", fieldid, username)
 
-def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
+def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remoteip: str, useragent: str) -> int:
     """
     Create onlineformincoming records from posted data. We 
     create a row for every key/value pair in the posted data
@@ -1106,7 +1112,7 @@ def insert_onlineformincoming_from_form(dbo, post, remoteip, useragent):
 
     return collationid
 
-def delete_onlineformincoming(dbo, username, collationid):
+def delete_onlineformincoming(dbo: Database, username: str, collationid: int) -> None:
     """
     Deletes the specified onlineformincoming set
     """
@@ -1120,7 +1126,7 @@ def delete_onlineformincoming(dbo, username, collationid):
     asm3.audit.insert_deletion(dbo, username, "onlineformincoming", collationid, "", "".join(sql))
     dbo.delete("onlineformincoming", "CollationID=%s" % collationid, username)
 
-def guess_agegroup(dbo, s):
+def guess_agegroup(dbo: Database, s: str) -> str:
     """ Guesses an agegroup, returns the third band (adult by default) if no match is found """
     s = str(s).lower().strip()
     for g in asm3.configuration.age_groups(dbo):
@@ -1128,21 +1134,21 @@ def guess_agegroup(dbo, s):
             return g
     return asm3.configuration.age_group_name(dbo, 3)
 
-def guess_animaltype(dbo, s):
+def guess_animaltype(dbo: Database, s: str) -> int:
     """ Guesses an animal type, returns the default if no match is found """
     s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM animaltype WHERE LOWER(AnimalType) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess
     return asm3.configuration.default_type(dbo)
 
-def guess_breed(dbo, s):
+def guess_breed(dbo: Database, s: str) -> int:
     """ Guesses a breed, returns the default if no match is found """
     s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM breed WHERE LOWER(BreedName) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess
     return asm3.configuration.default_breed(dbo)
 
-def guess_colour(dbo, s):
+def guess_colour(dbo: Database, s: str) -> int:
     """ Guesses a colour, returns the default if no match is found """
     s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM basecolour WHERE LOWER(BaseColour) LIKE ?", ["%s" % s])
@@ -1151,45 +1157,45 @@ def guess_colour(dbo, s):
     if guess != 0: return guess
     return asm3.configuration.default_colour(dbo)
 
-def guess_entryreason(dbo, s):
+def guess_entryreason(dbo: Database, s: str) -> int:
     """ Guesses an entry reason, returns the default if no match is found """
     s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM entryreason WHERE LOWER(ReasonName) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess
     return asm3.configuration.default_entry_reason(dbo)
 
-def guess_sex(dummy, s):
+def guess_sex(dummy: Any, s: str) -> int:
     """ Guesses a sex """
     if s.lower().startswith("m"):
         return 1
     return 0
 
-def guess_size(dbo, s):
+def guess_size(dbo: Database, s: str) -> int:
     """ Guesses a size """
     s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM lksize WHERE LOWER(Size) LIKE ?", ["%%%s%%" % s])
     if guess != 0: return guess
     return asm3.configuration.default_size(dbo)
 
-def guess_species(dbo, s):
+def guess_species(dbo: Database, s: str) -> int:
     """ Guesses a species, returns the default if no match is found """
     s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM species WHERE LOWER(SpeciesName) LIKE ?", [s])
     if guess != 0: return guess
     return asm3.configuration.default_species(dbo)
 
-def guess_transporttype(dbo, s):
+def guess_transporttype(dbo: Database, s: str) -> int:
     """ Guesses a transporttype """
     s = str(s).lower().strip()
     guess = dbo.query_int("SELECT ID FROM transporttype WHERE LOWER(TransportTypeName) LIKE ?", [s])
     if guess != 0: return guess
     return dbo.query_int("SELECT ID FROM transporttype ORDER BY ID")
 
-def truncs(s):
+def truncs(s: str) -> str:
     """ Truncates a string for inserting to short text columns """
     return asm3.utils.truncate(s, 1024)
 
-def attach_form(dbo, username, linktype, linkid, collationid):
+def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collationid: int) -> None:
     """
     Attaches the incoming form to the media tab. Finds any images in the form
     and attaches those as images in the media tab of linktype/linkid.
@@ -1241,7 +1247,7 @@ def attach_form(dbo, username, linktype, linkid, collationid):
                 d["excludefrompublish"] = "1" # auto exclude images for animals to prevent them going to adoption websites
             asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.utils.PostedData(d, dbo.locale))
 
-def attach_animalbyname(dbo, username, collationid):
+def attach_animalbyname(dbo: Database, username: str, collationid: int) -> Tuple[int, int, str]:
     """
     Finds the existing shelter animal with "animalname" and
     attaches the form to it as animal asm3.media.
@@ -1265,19 +1271,19 @@ def attach_animalbyname(dbo, username, collationid):
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
     return (collationid, animalid, asm3.animal.get_animal_namecode(dbo, animalid))
 
-def attach_animal(dbo, username, animalid, collationid):
+def attach_animal(dbo: Database, username: str, animalid: int, collationid: int) -> None:
     """
     Attaches the form to a specific animal
     """
     asm3.onlineform.attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
 
-def attach_person(dbo, username, personid, collationid):
+def attach_person(dbo: Database, username: str, personid: int, collationid: int) -> None:
     """
     Attaches the form to a specific person
     """
     asm3.onlineform.attach_form(dbo, username, asm3.media.PERSON, personid, collationid)
 
-def create_animal(dbo, username, collationid, broughtinby=0):
+def create_animal(dbo: Database, username: str, collationid: int, broughtinby: int = 0) -> Tuple[int, int, str, int]:
     """
     Creates an animal record from the incoming form data with collationid.
     If broughtinby is specified, sets this as the broughtinbyownerid on the animal record.
@@ -1354,7 +1360,7 @@ def create_animal(dbo, username, collationid, broughtinby=0):
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
     return (collationid, animalid, "%s - %s" % (sheltercode, d["animalname"]), status)
 
-def create_person(dbo, username, collationid, merge=True):
+def create_person(dbo: Database, username: str, collationid: int, merge: bool = True) -> Tuple[int, int, str, int]:
     """
     Creates a person record from the incoming form data with collationid.
     if merge is True, will update, find and attach to an existing person instead of creating if one exists.
@@ -1460,7 +1466,7 @@ def create_person(dbo, username, collationid, merge=True):
                 web.ctx.status = "200 OK" # ASMValidationError sets status to 500
     return (collationid, personid, personname, status)
 
-def create_animalcontrol(dbo, username, collationid):
+def create_animalcontrol(dbo: Database, username: str, collationid: int) -> Tuple[int, int, str, int]:
     """
     Creates a animal control/incident record from the incoming form data with 
     collationid.
@@ -1499,7 +1505,7 @@ def create_animalcontrol(dbo, username, collationid):
     display = "%s - %s" % (asm3.utils.padleft(incidentid, 6), asm3.utils.truncate(d["dispatchaddress"], 20))
     return (collationid, incidentid, display, status)
 
-def create_lostanimal(dbo, username, collationid):
+def create_lostanimal(dbo: Database, username: str, collationid: int) -> Tuple[int, int, str, int]:
     """
     Creates a lost animal record from the incoming form data with collationid.
     Also, attaches the form to the lost animal as asm3.media.
@@ -1543,7 +1549,7 @@ def create_lostanimal(dbo, username, collationid):
     attach_form(dbo, username, asm3.media.LOSTANIMAL, lostanimalid, collationid)
     return (collationid, lostanimalid, "%s - %s" % (asm3.utils.padleft(lostanimalid, 6), personname), status)
   
-def create_foundanimal(dbo, username, collationid):
+def create_foundanimal(dbo: Database, username: str, collationid: int) -> Tuple[int, int, str, int]:
     """
     Creates a found animal record from the incoming form data with collationid.
     Also, attaches the form to the found animal as asm3.media.
@@ -1587,7 +1593,7 @@ def create_foundanimal(dbo, username, collationid):
     attach_form(dbo, username, asm3.media.FOUNDANIMAL, foundanimalid, collationid)
     return (collationid, foundanimalid, "%s - %s" % (asm3.utils.padleft(foundanimalid, 6), personname), status)
 
-def create_transport(dbo, username, collationid):
+def create_transport(dbo: Database, username: str, collationid: int) -> Tuple[int, int, str, int]:
     """
     Creates a transport record from the incoming form data with collationid.
     Also, attaches the form to the animal as asm3.media.
@@ -1638,7 +1644,7 @@ def create_transport(dbo, username, collationid):
     attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
     return (collationid, animalid, asm3.animal.get_animal_namecode(dbo, animalid))
 
-def create_waitinglist(dbo, username, collationid):
+def create_waitinglist(dbo: Database, username: str, collationid: int) -> Tuple[int, int, str, int]:
     """
     Creates a waitinglist record from the incoming form data with collationid.
     Also, attaches the form to the waiting list as asm3.media.
@@ -1669,7 +1675,7 @@ def create_waitinglist(dbo, username, collationid):
     attach_form(dbo, username, asm3.media.WAITINGLIST, wlid, collationid)
     return (collationid, wlid, "%s - %s" % (asm3.utils.padleft(wlid, 6), personname), status)
 
-def auto_remove_old_incoming_forms(dbo):
+def auto_remove_old_incoming_forms(dbo: Database) -> None:
     """
     Automatically removes incoming forms older than the daily amount set
     """

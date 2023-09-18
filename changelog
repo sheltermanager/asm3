@@ -1,6 +1,7 @@
 48
 ================
 
+18/09/23 type hints, onlineform, person, publish, reports #1320
 18/09/23 Allow choice of day to send the weekly fosterer email #1191
 18/09/23 Include default medical profiles for exams and surgeries #946
 18/09/23 Fix layout bug to fosterer mode introduced by #1290

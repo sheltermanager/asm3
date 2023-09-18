@@ -13,6 +13,14 @@ import asm3.template
 import asm3.users
 import asm3.utils
 from asm3.sitedefs import BASE_URL, QR_IMG_SRC, URL_REPORTS
+from asm3.typehints import Any, datetime, Database, List, PostedData, ResultRow, Results, Session, Tuple
+
+# ReportParams are a list of the 3 values extracted from report definitions used to ask the user for criteria
+ReportParams = List[Tuple[str, str, str]] # variablename, type, question
+# CriteriaParams are a list of the 4 values extracted from user input of criteria used to run the query for the report
+CriteriaParams = List[Tuple[str, str, str, str]] # variablename, questiontext, substitutionvalue, displayvalue
+# MenuItems are a list of lists for the menu structure
+MenuItems = List[Tuple[str, str, str, str ,str ,str]] # permissions, hotkey, classes, url, icon, text
 
 HEADER = 0
 FOOTER = 1
@@ -65,7 +73,7 @@ RECOMMENDED_REPORTS = [
     "Vaccination Diary (Off Shelter)", "Vaccination Diary (On Shelter)"
 ]
 
-def get_all_report_titles(dbo):
+def get_all_report_titles(dbo: Database):
     """
     Returns a list of titles for every report on the system, does not
     include builtin reports since they don't count for ASM3 (and should be
@@ -73,7 +81,7 @@ def get_all_report_titles(dbo):
     """
     return dbo.query("SELECT ID, Title, Category, Revision FROM customreport WHERE SQLCommand NOT LIKE '0%' ORDER BY Title")
 
-def get_available_reports(dbo, include_with_criteria = True):
+def get_available_reports(dbo: Database, include_with_criteria: bool = True) -> Results:
     """
     Returns a list of reports available for running. The return
     value is a tuple of category, ID and title.
@@ -101,7 +109,7 @@ def get_available_reports(dbo, include_with_criteria = True):
         reps.append(r)
     return reps
 
-def get_available_mailmerges(dbo):
+def get_available_mailmerges(dbo: Database) -> Results:
     """
     Returns a list of mail merges available for running. Return
     value is a tuple of category, ID and title.
@@ -113,7 +121,7 @@ def get_available_mailmerges(dbo):
         reps.append(r)
     return reps
 
-def get_reports(dbo):
+def get_reports(dbo: Database) -> Results:
     """
     Returns a list of all reports on the system, filtering out any of
     the old ASM2 built in reports
@@ -131,20 +139,20 @@ def get_reports(dbo):
         r.VIEWROLES = "|".join(viewrolenames)
     return reps
 
-def get_raw_report_header(dbo):
+def get_raw_report_header(dbo: Database) -> str:
     header, body, footer = asm3.template.get_html_template(dbo, "report")
     if header.strip() == "": header = DEFAULT_REPORT_HEADER
     return header
 
-def get_raw_report_footer(dbo):
+def get_raw_report_footer(dbo: Database) -> str:
     header, body, footer = asm3.template.get_html_template(dbo, "report")
     if footer.strip() == "": footer = DEFAULT_REPORT_FOOTER
     return footer
 
-def set_raw_report_headerfooter(dbo, head, foot):
+def set_raw_report_headerfooter(dbo: Database, head: str, foot: str) -> None:
     asm3.template.update_html_template(dbo, "", "report", head, "", foot, True)
 
-def get_report_header(dbo, title, username):
+def get_report_header(dbo: Database, title: str, username: str) -> str:
     """
     Returns the stock report header
     """
@@ -153,7 +161,7 @@ def get_report_header(dbo, title, username):
     r.user = username
     return r._ReadHeader()
 
-def get_report_footer(dbo, title, username):
+def get_report_footer(dbo: Database, title: str, username: str) -> str:
     """
     Returns the stock report footer
     """
@@ -162,42 +170,41 @@ def get_report_footer(dbo, title, username):
     r.user = username
     return r._ReadFooter()
 
-def get_categories(dbo):
+def get_categories(dbo: Database) -> List[str]:
     cat = dbo.query("SELECT DISTINCT Category FROM customreport ORDER BY Category")
     rv = []
     for c in cat:
         rv.append(c.CATEGORY)
     return rv
 
-def get_title(dbo, customreportid):
+def get_title(dbo: Database, customreportid: int) -> str:
     """
     Returns the title of a custom report from its ID
     """
     return dbo.query_string("SELECT Title FROM customreport WHERE ID = ?", [customreportid])
 
-def get_id(dbo, title):
+def get_id(dbo: Database, title: str) -> int:
     """
     Returns the id of a custom report from its title. 0 if not found.
     """
     return dbo.query_int("SELECT ID FROM customreport WHERE Title LIKE ?", [title.strip()])
 
-def is_mailmerge(dbo, crid):
+def is_mailmerge(dbo: Database, crid: int) -> bool:
     """
     Returns true if the report with crid is a mailmerge
     """
     return dbo.query_string("SELECT HTMLBody FROM customreport WHERE ID = ?", [crid]).startswith("MAIL")
 
-def get_criteria(dbo, customreportid):
+def get_criteria(dbo: Database, customreportid: int) -> ReportParams:
     """
     Returns the criteria list for a report as a list of tuples containing name, type and question
     """
     return Report(dbo).GetParams(customreportid)
 
-def get_criteria_params(dbo, customreportid, post):
+def get_criteria_params(dbo: Database, customreportid: int, post: PostedData) -> CriteriaParams:
     """
     Creates a list of criteria parameters to pass to a report. The post
-    parameter contains the posted form data from a get_criteria_controls
-    form below.
+    parameter contains the posted form data from a report criteria screen.
     """
     crit = Report(dbo).GetParams(customreportid)
     p = []
@@ -243,24 +250,9 @@ def get_criteria_params(dbo, customreportid, post):
             p.append( ( name, asm3.i18n._("Type", l), post[name], asm3.lookups.get_animaltype_name(dbo, post.integer(name) )) )
     return p
 
-def get_criteria_controls(dbo, customreportid, mode = "NORMAL", locationfilter = "", siteid = 0):
+def check_view_permission(session: Session, customreportid: int) -> bool:
     """
-    Renders criteria controls for the selected report as
-    an html form. Returns an empty string for no criteria.
-    mode: NORMAL for the main app, MOBILE for the mobile version
-    locationfilter: A comma separated list of location ids for filtering the internal location list
-    """
-    crit = Report(dbo).GetParams(customreportid)
-    if len(crit) == 0: return ""
-    if mode == "NORMAL":
-        return asm3.html.report_criteria(dbo, crit, locationfilter, siteid)
-    else:
-        return asm3.html.report_criteria_mobile(dbo, crit, locationfilter, siteid)
-
-def check_view_permission(session, customreportid):
-    """
-    Checks that the currently logged in user has permission to
-    view the report with customreportid.
+    Checks that the currently logged in user has permission to view the report with customreportid.
     If they can't, an ASMPermissionError is thrown.
     """
     l = session.locale
@@ -285,7 +277,7 @@ def check_view_permission(session, customreportid):
         return True
     raise asm3.utils.ASMPermissionError(asm3.i18n._("No view permission for this report", l))
 
-def insert_report_from_form(dbo, username, post):
+def insert_report_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a report record from posted form data
     """
@@ -314,7 +306,7 @@ def insert_report_from_form(dbo, username, post):
         dbo.insert("customreportrole", { "ReportID": reportid, "RoleID": rid, "CanView": 1 }, generateID=False, setCreated=False)
     return reportid
 
-def update_report_from_form(dbo, username, post):
+def update_report_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a report record from posted form data
     """
@@ -340,14 +332,14 @@ def update_report_from_form(dbo, username, post):
     for rid in post.integer_list("viewroles"):
         dbo.insert("customreportrole", { "ReportID": reportid, "RoleID": rid, "CanView": 1 }, generateID=False, setCreated=False)
 
-def delete_report(dbo, username, rid):
+def delete_report(dbo: Database, username: str, rid: int) -> None:
     """
     Deletes a report record
     """
     dbo.delete("customreportrole", "ReportID=%d" % rid)
     dbo.delete("customreport", rid, username)
 
-def check_sql(dbo, username, sql):
+def check_sql(dbo: Database, username: str, sql: str) -> str:
     """
     Verifies that report sql works correctly. Returns the SELECT query,
     sanitised and in a ready-to-run state.
@@ -388,14 +380,14 @@ def check_sql(dbo, username, sql):
         raise asm3.utils.ASMValidationError(str(e))
     return sql
 
-def is_valid_query(sql):
+def is_valid_query(sql: str) -> bool:
     """
     Returns true if this is a valid report query.
     """
     sql = strip_sql_comments(sql)
     return sql.lower().strip().startswith("select") or sql.lower().strip().startswith("with")
 
-def strip_sql_comments(sql):
+def strip_sql_comments(sql: str) -> str:
     """
     Removes any single line SQL comments that start with --
     """
@@ -405,7 +397,7 @@ def strip_sql_comments(sql):
             lines.append(x)
     return "\n".join(lines)
 
-def generate_html(dbo, username, sql):
+def generate_html(dbo: Database, username: str, sql: str) -> str:
     """
     Runs the query given and returns some auto-generated HTML to
     output the data in a table.
@@ -422,7 +414,7 @@ def generate_html(dbo, username, sql):
     b += "</tr>\nBODY$$\n\n"
     return h + b + f
 
-def get_smcom_reports_installable(dbo):
+def get_smcom_reports_installable(dbo: Database) -> Results:
     """
     Returns the collection of sheltermanager.com reports available to install
     as a list of dictionaries. Reports not suitable for this database
@@ -432,7 +424,7 @@ def get_smcom_reports_installable(dbo):
     reports = get_smcom_reports(dbo)
     return [ x for x in reports if x.INSTALLABLE ]
 
-def get_smcom_reports_update(dbo):
+def get_smcom_reports_update(dbo: Database) -> Results:
     """
     Returns the collection of sheltermanager.com reports that require an update
     as a list of dictionaries. 
@@ -441,7 +433,7 @@ def get_smcom_reports_update(dbo):
     reports = get_smcom_reports(dbo)
     return [ x for x in reports if x.UPDATE ]
 
-def get_smcom_reports_txt(dbo):
+def get_smcom_reports_txt(dbo: Database) -> str:
     """
     Retrieves the reports.txt file with standard report definitions from sheltermanager.com
     """
@@ -459,7 +451,7 @@ def get_smcom_reports_txt(dbo):
     except Exception as err:
         asm3.al.error("Failed reading reports_txt: %s" % err, "reports.get_smcom_reports_txt", dbo)
 
-def get_smcom_reports(dbo):
+def get_smcom_reports(dbo: Database) -> Results:
     """
     Returns the full collection of sheltermanager.com reports
     as a list of dictionaries. 
@@ -532,7 +524,7 @@ def get_smcom_reports(dbo):
         reports.append(d)
     return reports
 
-def install_smcom_report(dbo, user, r):
+def install_smcom_report(dbo: Database, user: str, r: ResultRow) -> None:
     """
     Installs the sheltermanager.com report r (an item from get_smcom_reports).
     If a report with the same title exists in the database already, deletes it first.
@@ -550,7 +542,7 @@ def install_smcom_report(dbo, user, r):
     insert_report_from_form(dbo, user, asm3.utils.PostedData(data, dbo.locale))
     install_smcom_subreports(dbo, user, r)
 
-def install_smcom_reports(dbo, user, ids):
+def install_smcom_reports(dbo: Database, user: str, ids: Results) -> None :
     """
     Installs the sheltermanager.com reports with the ids given
     ids: List of report id numbers
@@ -560,7 +552,7 @@ def install_smcom_reports(dbo, user, ids):
         if r.ID in ids: 
             install_smcom_report(dbo, user, r)
 
-def install_smcom_subreports(dbo, user, r):
+def install_smcom_subreports(dbo: Database, user: str, r: ResultRow):
     """
     Installs the subreports from smcom report r
     """
@@ -581,7 +573,7 @@ def install_smcom_subreports(dbo, user, r):
             else:
                 break
 
-def install_recommended_smcom_reports(dbo, user):
+def install_recommended_smcom_reports(dbo: Database, user: str) -> None:
     """
     Installs the recommended set of reports from sheltermanger.com
     This is usually called on login if there aren't any reports in the system currently.
@@ -591,7 +583,7 @@ def install_recommended_smcom_reports(dbo, user):
         if r.TITLE in RECOMMENDED_REPORTS: 
             install_smcom_report(dbo, user, r)
 
-def install_smcom_report_file(dbo, user, filename):
+def install_smcom_report_file(dbo: Database, user: str, filename: str) -> None:
     """
     Installs all the reports in an smcom report .txt file.
     If that report is already installed, it will be deleted and reinstalled instead.
@@ -624,7 +616,7 @@ def install_smcom_report_file(dbo, user, filename):
             d.REVISION = asm3.utils.cint(d.DATABASE[revp+3:revp+5])
         install_smcom_report(dbo, user, d)
 
-def update_smcom_reports(dbo, user="system"):
+def update_smcom_reports(dbo: Database, user: str = "system") -> int:
     """
     Finds all reports with available updates and updates them.
     Note that only the SQL, HTML and Revision are updated.
@@ -644,7 +636,7 @@ def update_smcom_reports(dbo, user="system"):
     asm3.al.info(f"updated {updated} reports.", "reports.update_smcom_reports", dbo)
     return updated
 
-def get_reports_menu(dbo, roleids = "", superuser = False):
+def get_reports_menu(dbo: Database, roleids: str = "", superuser: bool = False) -> MenuItems:
     """
     Reads the list of reports and returns them as a list for inserting into
     our menu structure. 
@@ -660,11 +652,11 @@ def get_reports_menu(dbo, roleids = "", superuser = False):
         if superuser or r.VIEWROLEIDS == "" or asm3.utils.list_overlap(r.VIEWROLEIDS.split("|"), roleids.split("|")):
             if r.CATEGORY != lastcat:
                 lastcat = r.CATEGORY
-                rv.append( ["", "", "", "--cat", "", lastcat] )
-            rv.append( [ asm3.users.VIEW_REPORT, "", "", "report?id=%d" % r.ID, "", r.TITLE ] )
+                rv.append( ("", "", "", "--cat", "", lastcat) )
+            rv.append( ( asm3.users.VIEW_REPORT, "", "", "report?id=%d" % r.ID, "", r.TITLE ) )
     return rv
 
-def get_mailmerges_menu(dbo, roleids = "", superuser = False):
+def get_mailmerges_menu(dbo: Database, roleids: str = "", superuser: bool = False) -> MenuItems:
     """
     Reads the list of mail merges and returns them s a list for inserting into
     our menu structure.
@@ -679,12 +671,12 @@ def get_mailmerges_menu(dbo, roleids = "", superuser = False):
     for m in mm:
         if m.CATEGORY != lastcat:
             lastcat = m.CATEGORY
-            mv.append( ["", "", "", "--cat", "", lastcat] )
+            mv.append( ("", "", "", "--cat", "", lastcat) )
         if superuser or m.VIEWROLEIDS == "" or asm3.utils.list_overlap(m.VIEWROLEIDS.split("|"), roleids.split("|")):
-            mv.append( [ asm3.users.MAIL_MERGE, "", "", "mailmerge?id=%d" % m.ID, "", m.TITLE ] )
+            mv.append( ( asm3.users.MAIL_MERGE, "", "", "mailmerge?id=%d" % m.ID, "", m.TITLE ) )
     return mv
 
-def email_daily_reports(dbo, now = None):
+def email_daily_reports(dbo: Database, now: datetime = None) -> None:
     """
     Finds all reports that have addresses set in DailyEmail 
     and no criteria. It will execute each of those reports in 
@@ -734,10 +726,10 @@ def email_daily_reports(dbo, now = None):
             continue
         asm3.utils.send_email(dbo, "", emails, "", "", r.TITLE, body, "html", exceptions=False, retries=3)
 
-def execute_title(dbo, title, username = "system", params = None, toolbar = True):
+def execute_title(dbo: Database, title: str, username: str = "system", params: ReportParams = None, toolbar: bool = True) -> str:
     """
-    Executes a custom report by a match on its title. 'params' is a tuple
-    of parameters. username is the name of the user running the report.
+    Executes a custom report by a match on its title. 'params' is a list of tuples.
+    username is the name of the user running the report.
     if toolbar is True and it's a report we're running, the toolbar will be injected
     into the report document.
     See the Report._SubstituteSQLParameters function for more info.
@@ -749,12 +741,11 @@ def execute_title(dbo, title, username = "system", params = None, toolbar = True
     else:
         return execute(dbo, crid, username, params, toolbar)
 
-def execute(dbo, customreportid, username = "system", params = None, toolbar = True):
+def execute(dbo: Database, customreportid: int, username: str = "system", params: CriteriaParams = None, toolbar: bool = True) -> str:
     """
-    Executes a custom report by its ID. 'params' is a tuple of 
-    parameters. username is the name of the user running the 
-    report. See the Report._SubstituteSQLParameters function for
-    more info. 
+    Executes a custom report by its ID. 'params' is a list of tuples of parameters. 
+    username is the name of the user running the report. 
+    See the Report._SubstituteSQLParameters function for more info. 
     if toolbar is True and it's a report we're running, the toolbar will be injected
     into the report document.
     Return value is a string containing the report as an
@@ -764,7 +755,7 @@ def execute(dbo, customreportid, username = "system", params = None, toolbar = T
     r.toolbar = toolbar
     return r.Execute(customreportid, username, params)
 
-def execute_query(dbo, customreportid, username = "system", params = None):
+def execute_query(dbo: Database, customreportid: int, username: str = "system", params: CriteriaParams = None):
     """
     Executes a custom report query by its ID. 'params' is a tuple of 
     parameters. username is the name of the user running the 
@@ -775,7 +766,7 @@ def execute_query(dbo, customreportid, username = "system", params = None):
     r = Report(dbo)
     return r.ExecuteQuery(customreportid, username, params)
 
-def execute_sql(dbo, title, sql, html, headerfooter = True, username = "system"):
+def execute_sql(dbo: Database, title: str, sql: str, html: str, headerfooter: bool = True, username: str = "system") -> str:
     """
     Executes a sql/html combo as if it were a custom report.
     title: The report title
@@ -822,10 +813,10 @@ class Report:
     toolbar = False
     output = ""
     
-    def __init__(self, dbo):
+    def __init__(self, dbo: Database):
         self.dbo = dbo
 
-    def _ReadReport(self, reportId):
+    def _ReadReport(self, reportId: int) -> bool:
         """
         Reads the report info from the database and populates
         our local class variables.
@@ -847,7 +838,7 @@ class Report:
         self.isSubReport = self.sql.find("PARENTKEY") != -1 or self.sql.find("PARENTARG") != -1
         return True
 
-    def _ReadHeader(self):
+    def _ReadHeader(self) -> str:
         """
         Reads the report header from the DB. If the omitHeaderFooter
         flag is set, returns a basic header, if it's a subreport,
@@ -869,7 +860,7 @@ class Report:
             s = self._SubstituteTemplateHeaderFooter(s)
             return s
 
-    def _ReadFooter(self):
+    def _ReadFooter(self) -> str:
         """
         Reads the report footer from the DB. If the omitHeaderFooter
         flag is set, returns a basic footer, if it's a subreport,
@@ -885,17 +876,17 @@ class Report:
             s = self._SubstituteTemplateHeaderFooter(s)
             return s
 
-    def _Append(self, s):
+    def _Append(self, s: str) -> str:
         self.output += str(s)
         return self.output
 
-    def _p(self, s):
+    def _p(self, s: str) -> str:
         self._Append("<p>%s</p>" % s)
 
-    def _hr(self):
+    def _hr(self) -> str:
         self._Append("<hr />")
 
-    def _ReplaceFields(self, s, k, v):
+    def _ReplaceFields(self, s: str, k: str, v: str) -> str:
         """
         Replaces field tokens in HTML for real fields. 
         Escapes curly braces and dollars for HTML entities as they can blow 
@@ -917,7 +908,7 @@ class Report:
             tok = lc.find("$", tok+1) 
         return s
         
-    def _DisplayValue(self, k, v):
+    def _DisplayValue(self, k: str, v: Any) -> str:
         """
         Returns the display version of any value
         k: fieldname
@@ -937,7 +928,7 @@ class Report:
 
         return str(v)
     
-    def _OutputGroupBlock(self, gd, headfoot, rs):
+    def _OutputGroupBlock(self, gd: GroupDescriptor, headfoot: int, rs: Results) -> str:
         """
         Outputs a group block, 'gd' is the group descriptor,
         'headfoot' is 0 for header, 1 for footer, 'rs' is
@@ -1217,7 +1208,7 @@ class Report:
         # Output the HTML to the report
         self._Append(out)
 
-    def _SubstituteTemplateHeaderFooter(self, s):
+    def _SubstituteTemplateHeaderFooter(self, s: str) -> str:
         """
         Substitutes special tokens in the report template
         header and footer. 's' is the header/footer to
@@ -1244,7 +1235,7 @@ class Report:
         s = s.replace("$$ORGANISATIONTELEPHONE$$", asm3.configuration.organisation_telephone(self.dbo))
         return s
 
-    def _SubstituteHeaderFooter(self, headfoot, text, rs):
+    def _SubstituteHeaderFooter(self, headfoot: int, text: str, rs: Results) -> None:
         """
         Outputs the header and footer blocks, 
         'headfoot' - 0 = main header, 1 = footer
@@ -1259,7 +1250,7 @@ class Report:
         gd.header = text
         self._OutputGroupBlock(gd, headfoot, rs)
 
-    def _SubstituteSQLParameters(self, params):
+    def _SubstituteSQLParameters(self, params: CriteriaParams) -> None:
         """
         Substitutes tokens in the report SQL.
         'params' is expected to be a list of parameters, each
@@ -1360,7 +1351,7 @@ class Report:
         self.sql = s
         # self._p("substituted sql: %s" % self.sql)
 
-    def GetParams(self, reportId):
+    def GetParams(self, reportId: int) -> ReportParams:
         """
         Returns a list of parameters required for a report, 
         with their types
@@ -1413,7 +1404,7 @@ class Report:
 
         return params
 
-    def OutputCriteria(self):
+    def OutputCriteria(self) -> None:
         """
         Outputs a human readable string of any criteria set into the 
         report document.
@@ -1431,7 +1422,7 @@ class Report:
             self._p(self.criteria)
             self._hr()
 
-    def UpdateTables(self):
+    def UpdateTables(self) -> None:
         """
         Checks the query, and if it finds tables of generated data that the report is 
         dependent on, runs the necessary processes to update that table.
@@ -1457,7 +1448,7 @@ class Report:
         if self.sql.find("animalfiguresannual") != -1 and year > 0:
             asm3.animal.update_animal_figures_annual(self.dbo, year)
 
-    def Execute(self, reportId = 0, username = "system", params = None):
+    def Execute(self, reportId: int = 0, username: str = "system", params: CriteriaParams = None) -> str:
         """
         Executes a report
         'reportId' is the ID of the report to run, 'username' is the
@@ -1491,7 +1482,7 @@ class Report:
 
         return self.output
 
-    def ExecuteQuery(self, reportId = 0, username = "system", params = None):
+    def ExecuteQuery(self, reportId: int = 0, username: str = "system", params: CriteriaParams = None) -> Tuple[Results, List[str]]:
         """
         Executes the query portion of a report only and then returns
         the query results and column order.
@@ -1522,7 +1513,7 @@ class Report:
             self._p(e)
         return (rs, cols)
 
-    def _GenerateGraph(self):
+    def _GenerateGraph(self) -> str:
         """
         Does the work of generating a graph. Graph queries have to return rows that
         have two or three columns and obey either of the following patterns:
@@ -1657,7 +1648,7 @@ class Report:
         self._Append(htmlfooter)
         return self.output
 
-    def _GenerateMap(self):
+    def _GenerateMap(self) -> str:
         """
         Does the work of generating a map. Map queries have to return rows that
         have two columns:
@@ -1741,9 +1732,9 @@ class Report:
         self._Append(htmlfooter)
         return self.output
 
-    def _GenerateReport(self):
+    def _GenerateReport(self) -> None:
         """
-        Does the work of generating the report content
+        Does the work of generating the report content, building self.output
         """
 
         # String indexes within report html string to where 

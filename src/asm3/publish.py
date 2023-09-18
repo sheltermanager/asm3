@@ -27,6 +27,7 @@ import asm3.publishers.savourlife
 import asm3.publishers.smarttag
 
 from asm3.publishers.base import PublishCriteria
+from asm3.typehints import Database, Results
 
 import collections
 
@@ -146,7 +147,7 @@ PUBLISHER_LIST["st"] = {
     "sub24hour": False
 }
 
-def delete_old_publish_logs(dbo):
+def delete_old_publish_logs(dbo: Database) -> None:
     """ Deletes all publishing logs older than 3 months """
     KEEP_DAYS = 93
     cutoff = dbo.today(offset=KEEP_DAYS*-1)
@@ -154,15 +155,15 @@ def delete_old_publish_logs(dbo):
     asm3.al.debug("removing %d publishing logs (keep for %d days)." % (count, KEEP_DAYS), "publish.delete_old_publish_logs", dbo)
     dbo.execute("DELETE FROM publishlog WHERE PublishDateTime < ?", [cutoff])
 
-def get_publish_logs(dbo):
+def get_publish_logs(dbo: Database) -> Results:
     """ Returns all publishing logs """
     return dbo.query("SELECT ID, PublishDateTime, Name, Success, Alerts FROM publishlog ORDER BY PublishDateTime DESC")
 
-def get_publish_log(dbo, plid):
+def get_publish_log(dbo: Database, plid: int) -> str:
     """ Returns the log for a publish log ID """
     return dbo.query_string("SELECT LogData FROM publishlog WHERE ID = ?", [plid])
 
-def start_publisher(dbo, code, user = "", newthread = True):
+def start_publisher(dbo: Database, code: str, user: str = "", newthread: bool = True) -> None:
     """ Starts the publisher with code """
     pc = PublishCriteria(asm3.configuration.publisher_presets(dbo))
     p = None
