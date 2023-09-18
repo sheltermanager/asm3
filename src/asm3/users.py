@@ -11,6 +11,7 @@ import asm3.smcom
 import asm3.utils
 
 from asm3.sitedefs import BASE_URL
+from asm3.typehints import Database, PostedData, ResultRow, Results, Session
 
 import os
 import sys
@@ -223,7 +224,7 @@ VIEW_EVENT_ANIMALS              = "vea"
 CHANGE_EVENT_ANIMALS            = "cea"
 LINK_EVENT_MOVEMENT             = "lem"
 
-def check_permission(session, flag, message = ""):
+def check_permission(session: Session, flag: str, message: str = "") -> None:
     """
     Throws an ASMPermissionError if the flag is not in the map
     """
@@ -235,7 +236,7 @@ def check_permission(session, flag, message = ""):
             message = asm3.i18n._("Forbidden", l)
         raise asm3.utils.ASMPermissionError(message)
 
-def check_permission_bool(session, flag):
+def check_permission_bool(session: Session, flag: str) -> bool:
     """
     Returns True if a user has permission to do something
     """
@@ -244,7 +245,7 @@ def check_permission_bool(session, flag):
     if has_security_flag(session.securitymap, flag): return True
     return False
 
-def check_permission_map(l, superuser, securitymap, flag):
+def check_permission_map(l: str, superuser: int, securitymap: str, flag: str) -> None:
     """
     Throws an ASMPermissionError if the flag is not in the map
     """
@@ -252,14 +253,14 @@ def check_permission_map(l, superuser, securitymap, flag):
     if not has_security_flag(securitymap, flag):
         raise asm3.utils.ASMPermissionError(asm3.i18n._("Forbidden", l))
 
-def has_security_flag(securitymap, flag):
+def has_security_flag(securitymap: str, flag: str) -> bool:
     """
     Returns true if the given flag is in the given map
     """
     perms = securitymap.split("*")
     return flag + " " in perms
 
-def add_security_flag(securitymap, flag):
+def add_security_flag(securitymap: str, flag: str) -> str:
     """
     Adds a security flag to a map and returns the new map
     """
@@ -267,7 +268,7 @@ def add_security_flag(securitymap, flag):
         securitymap += flag + " *"
     return securitymap
 
-def authenticate(dbo, username, password):
+def authenticate(dbo: Database, username: str, password: str) -> ResultRow:
     """
     Authenticates whether a username and password are valid.
     Returns None if authentication failed, or a user row
@@ -282,7 +283,7 @@ def authenticate(dbo, username, password):
                 if len(u) == 1: return u[0]
     return None
 
-def authenticate_ip(user, remoteip):
+def authenticate_ip(user: str, remoteip: str) -> bool:
     """
     Tests whether the user's remoteip fits into any IP restriction
     set on the user object.
@@ -329,7 +330,7 @@ def authenticate_ip(user, remoteip):
                 return True
     return False
 
-def hash_password(plaintext, scheme = "pbkdf2"):
+def hash_password(plaintext: str, scheme: str = "pbkdf2") -> str:
     """
     Returns a one-way hash of a password string.
     plaintext: The password to hash
@@ -348,11 +349,11 @@ def hash_password(plaintext, scheme = "pbkdf2"):
         if scheme == "md5java" and h.startswith("0"): h = h[1:]
         return "%s:%s" % (scheme, h)
 
-def verify_password(plaintext, passwordhash):
+def verify_password(plaintext: str, passwordhash: str) -> bool:
     """
-    Verifies whether or not password "plaintext" hashes to the same 
-    value as passwordhash.
+    Verifies whether or not password "plaintext" hashes to the same value as passwordhash.
     Hash scheme is auto detected from passwordhash itself.
+    Returns true for a match.
     """
     if passwordhash.startswith("pbkdf2:"):
         scheme, algorithm, salt, iterations, phash = passwordhash.split(":")
@@ -370,7 +371,7 @@ def verify_password(plaintext, passwordhash):
         if md5java.startswith("0"): md5java = md5java[1:]
         return passwordhash == md5py or passwordhash == md5java
 
-def change_password(dbo, username, oldpassword, newpassword):
+def change_password(dbo: Database, username: str, oldpassword: str, newpassword: str) -> None:
     """
     Changes the password for a user
     """
@@ -379,19 +380,19 @@ def change_password(dbo, username, oldpassword, newpassword):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Password is incorrect.", l))
     dbo.execute("UPDATE users SET Password = ? WHERE UserName LIKE ?", (hash_password(newpassword), username))
 
-def get_real_name(dbo, username):
+def get_real_name(dbo: Database, username: str) -> str:
     """
     Returns a user's real name
     """
     return dbo.query_string("SELECT RealName FROM users WHERE UserName LIKE ?", [username])
 
-def get_roles(dbo):
+def get_roles(dbo: Database) -> Results:
     """
     Returns a list of all system roles
     """
     return dbo.query("SELECT * FROM role ORDER BY Rolename")
 
-def get_roles_ids_for_user(dbo, username):
+def get_roles_ids_for_user(dbo: Database, username: str) -> Results:
     """
     Returns a list of role ids a user is in
     """
@@ -401,7 +402,7 @@ def get_roles_ids_for_user(dbo, username):
         roles.append(r.ROLEID)
     return roles
 
-def get_roles_for_user(dbo, user):
+def get_roles_for_user(dbo: Database, user: str) -> Results:
     """
     Returns a list of roles a user is in
     """
@@ -415,7 +416,7 @@ def get_roles_for_user(dbo, user):
         roles.append(r.ROLENAME)
     return roles
 
-def get_security_map(dbo, userid):
+def get_security_map(dbo: Database, userid: int) -> str:
     """
     Returns the security map for a user by id, which is an aggregate of all
     the roles they have.
@@ -428,7 +429,7 @@ def get_security_map(dbo, userid):
         rv += str(m.SECURITYMAP)
     return rv
 
-def get_site(dbo, username):
+def get_site(dbo: Database, username: str) -> int:
     """
     Returns a user's site or 0 if it doesn't have one.
     If this is being called as part of a CSV import, or incoming form, 
@@ -441,7 +442,7 @@ def get_site(dbo, username):
     except:
         return 0
 
-def get_diary_forlist(dbo):
+def get_diary_forlist(dbo: Database) -> Results:
     """
     Returns a list of all roles, plus users who are valid targets for diary notes
     (ie. have the VIEW_DIARY permission)
@@ -458,7 +459,7 @@ def get_diary_forlist(dbo):
             out.append(u)
     return out
 
-def get_users_and_roles(dbo):
+def get_users_and_roles(dbo: Database) -> Results:
     """
     Returns a single list of all users and roles together, with USERNAME containing the
     name of both roles and users.
@@ -466,7 +467,7 @@ def get_users_and_roles(dbo):
     return dbo.query("SELECT ID, UserName, 0 AS IsRole, SuperUser FROM users " \
         "UNION SELECT ID, Rolename AS UserName, 1 AS IsRole, 0 AS SuperUser FROM role ORDER BY UserName")
 
-def get_users(dbo, user=""):
+def get_users(dbo: Database, user: str = "") -> Results:
     """
     Returns a list of all (or a list with a single) system users and a pipe separated list of their roles
     """
@@ -486,20 +487,20 @@ def get_users(dbo, user=""):
         out.append(u)
     return out
 
-def get_user(dbo, user):
+def get_user(dbo: Database, user: str) -> ResultRow:
     """
     Returns a single user account by name. Returns None if no user account is found.
     """
     return dbo.first_row( get_users(dbo, user) )
 
-def get_active_users(dbo):
+def get_active_users(dbo: Database) -> str:
     """
     Returns a string containing the active/logged in users on the system
     USERNAME, SINCE, MESSAGES
     """
     return asm3.utils.nulltostr(asm3.cachemem.get("activity_%s" % dbo.database))
 
-def is_user_valid(dbo, user):
+def is_user_valid(dbo: Database, user: str) -> bool:
     """
     Returns True if user both exists in the database and does not have DisableLogin set.
     This function is called by ASMEndpoint.is_loggedin for nearly every request
@@ -515,7 +516,7 @@ def is_user_valid(dbo, user):
         asm3.cachemem.put("usernames_%s" % dbo.database, users, 86400)
     return user in users
 
-def logout(session, remoteip = "", useragent = ""):
+def logout(session: Session, remoteip: str = "", useragent: str = "") -> None:
     """
     Logs the user session out
     """
@@ -527,7 +528,7 @@ def logout(session, remoteip = "", useragent = ""):
     except:
         pass
 
-def update_user_activity(dbo, user, timenow = True):
+def update_user_activity(dbo: Database, user: str, timenow: bool = True) -> None:
     """
     If timenow is True, updates this user's last activity time to now.
     If timenow is False, removes this user from the active list.
@@ -558,20 +559,20 @@ def update_user_activity(dbo, user, timenow = True):
         nc.append("%s=%s" % (user, asm3.i18n.format_date(dbo.now(), "%Y-%m-%d %H:%M:%S")))
     asm3.cachemem.put("activity_%s" % dbo.database, ",".join(nc), 3600 * 8)
 
-def get_personid(dbo, user):
+def get_personid(dbo: Database, user: str) -> int:
     """
     Returns the personid for a user or 0 if it doesn't have one
     """
     return dbo.query_int("SELECT OwnerID FROM users WHERE UserName LIKE ?", [user])
 
-def get_location_filter(dbo, user):
+def get_location_filter(dbo: Database, user: str) -> str:
     """
     Returns the location filter (comma separated list of IDs) 
     for a user, or "" if it doesn't have one.
     """
     return dbo.query_string("SELECT LocationFilter FROM users WHERE UserName LIKE ?", [user])
 
-def insert_user_from_form(dbo, username, post):
+def insert_user_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a user record from posted form data. Uses
     the roles key (which should be a comma separated list of
@@ -628,7 +629,8 @@ def insert_user_from_form(dbo, username, post):
 
     return nuserid
 
-def update_user_settings(dbo, username, email = "", realname = "", locale = "", theme = "", signature = "", twofavalidcode = "", twofavalidpassword= ""):
+def update_user_settings(dbo: Database, username: str, email: str = "", realname: str = "", locale: str = "", 
+                         theme: str = "", signature: str = "", twofavalidcode: str = "", twofavalidpassword: str = "") -> None:
     """
     Updates the user account settings for email, name, locale, theme and signature.
     if twofavalidcode is set and valid, EnableTOTP is set to 1
@@ -651,13 +653,13 @@ def update_user_settings(dbo, username, email = "", realname = "", locale = "", 
         "Signature":        signature
     }, username, setLastChanged=False)
 
-def update_user_otp_secret(dbo, userid, secret):
+def update_user_otp_secret(dbo: Database, userid: int, secret: str) -> None:
     """
     Updates the OTP secret for a user account
     """
     dbo.update("users", userid, { "OTPSecret": secret })
 
-def update_user_from_form(dbo, username, post):
+def update_user_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a user record from posted form data
     Uses the roles key (which should be a comma separated list of
@@ -685,7 +687,7 @@ def update_user_from_form(dbo, username, post):
     # Invalidate the cache of usernames
     asm3.cachemem.delete("usernames_%s" % dbo.database)
 
-def delete_user(dbo, username, uid):
+def delete_user(dbo: Database, username: str, uid: int) -> None:
     """
     Deletes the selected user
     """
@@ -694,7 +696,7 @@ def delete_user(dbo, username, uid):
     # Invalidate the cache of usernames
     asm3.cachemem.delete("usernames_%s" % dbo.database)
 
-def insert_role_from_form(dbo, username, post):
+def insert_role_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a role record from posted form data. 
     """
@@ -703,7 +705,7 @@ def insert_role_from_form(dbo, username, post):
         "SecurityMap":  post["securitymap"]
     }, username, setCreated=False)
 
-def update_role_from_form(dbo, username, post):
+def update_role_from_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Updates a role record from posted form data
     """
@@ -712,7 +714,7 @@ def update_role_from_form(dbo, username, post):
         "SecurityMap":  post["securitymap"]
     }, username, setLastChanged=False)
 
-def delete_role(dbo, username, rid):
+def delete_role(dbo: Database, username: str, rid: int) -> None:
     """
     Deletes the selected role. If it's in use, throws an ASMValidationError
     """
@@ -725,14 +727,14 @@ def delete_role(dbo, username, rid):
     dbo.delete("customreportrole", "RoleID=%d" % rid)
     dbo.delete("role", rid, username)
 
-def reset_password(dbo, userid, password):
+def reset_password(dbo: Database, userid: int, password: str) -> None:
     """
     Resets the password for the given user to password.
     Also, clears 2FA from the account.
     """
     dbo.update("users", userid, { "Password": hash_password(password), "EnableTOTP": 0 })
 
-def update_session(dbo, session, username):
+def update_session(dbo: Database, session: Session, username: str) -> None:
     """
     Loads the session data for the username given.
     Triggers reloading of config.js by changing config_ts
@@ -783,7 +785,7 @@ def update_session(dbo, session, username):
         session.visibleanimalids = ",".join(va)
     session.config_ts = asm3.i18n.format_date(asm3.i18n.now(), "%Y%m%d%H%M%S")
 
-def web_login(post, session, remoteip, useragent, path):
+def web_login(post: PostedData, session: Session, remoteip: str, useragent: str, path: str) -> str:
     """
     Performs a login and sets up the user's session.
     NOTE: ASM3 will no longer allow login on ASM2 databases due to update_session above calling
