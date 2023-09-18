@@ -1,6 +1,7 @@
 48
 ================
 
+18/09/23 Fix layout bug to fosterer mode introduced by #1290
 17/09/23 Use outer join from waitinglist to species in case of broken forms
 15/09/23 Audit unit changes #1290
 15/09/23 Online forms: remember previously processed forms between reloads

@@ -262,7 +262,7 @@ $(function() {
                     fh.push(shelterview.render_animal(a, true, a.ACTIVEMOVEMENTTYPE == 2));
                 });
                 if (!capacity) { capacity = 0; }
-                if (nofosters < capacity) { extraclasses = "asm-shelterview-unit-available"; }
+                if (nofosters < capacity) { extraclasses = "asm-shelterview-fosterer-available"; }
                 if (nofosters == 0 && mode == 1) { return; }
                 if (nofosters >= capacity && mode == 2) { return; }
                 h.push('<p class="asm-menu-category"><a href="' + loclink + '">' + 

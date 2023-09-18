@@ -531,6 +531,11 @@ select:disabled, input:disabled, textarea:disabled {
     font-size: 0.7rem;
 }
 
+.asm-shelterview-fosterer-available {
+    background-color: #b2ffb2;
+    color: #000;
+}
+
 .asm-shelterview-unit { 
     display: inline-block;
     min-width: 80px;
