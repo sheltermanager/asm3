@@ -59,4 +59,4 @@ MenuItems = List[Tuple[str, str, str, str ,str ,str]] # permissions, hotkey, cla
 # MenuStructure is a tuple of top level menus with menu items (html.py)
 MenuStructure = Tuple[str, str, str, MenuItems] # permissions, name, text, menuitems
 # ServiceResponse is tuple used by service.py
-ServiceResponse = Tuple[str, int, int, bytes | str] # mimetype, clientcachettl, edgecachettl, content
+ServiceResponse = Tuple[str, int, int, bytes] # mimetype, clientcachettl, edgecachettl, content (str or bytes but | not supported before 3.10)

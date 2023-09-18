@@ -187,14 +187,14 @@ def get_cached_response(cache_key: str, path: str) -> ServiceResponse:
     # asm3.al.debug("GET: %s (%d bytes)" % (cache_key, len(response[3])), "service.get_cached_response")
     return response
 
-def set_cached_response(cache_key: str, path: str, mime: str, clientage: int, serverage: int, content: bytes | str) -> ServiceResponse:
+def set_cached_response(cache_key: str, path: str, mime: str, clientage: int, serverage: int, content: bytes) -> ServiceResponse:
     """ Sets a service call response in the cache and returns it
     methods can use this as a passthrough to return the response.
     cache_key: The constructed cache key from the parameters
     mime: The mime type to return in the response
     clientage: The max-age to set for the client to cache the response (seconds)
     serverage: The ttl for storing in our server cache (seconds)
-    content: The response
+    content: The response (str or bytes)
     """
     response = (mime, clientage, serverage, content)
     if not CACHE_SERVICE_RESPONSES: return response
