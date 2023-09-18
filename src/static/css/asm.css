@@ -534,6 +534,7 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-shelterview-fosterer-available {
     background-color: #b2ffb2;
     color: #000;
+    padding: 7px;
 }
 
 .asm-shelterview-unit { 

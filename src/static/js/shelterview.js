@@ -253,7 +253,7 @@ $(function() {
             let h = [];
             $.each(controller.fosterers, function(ip, p) {
                 // Output the fosterers
-                let loclink = "person_movements?id=" + p.ID, fh = [], nofosters = 0, capacity = p.FOSTERCAPACITY, extraclasses;
+                let loclink = "person_movements?id=" + p.ID, fh = [], nofosters = 0, capacity = p.FOSTERCAPACITY, extraclasses = "";
                 // Find any animals who are with this fosterer
                 $.each(controller.animals, function(ia, a) {
                     // Skip animals not in this location
