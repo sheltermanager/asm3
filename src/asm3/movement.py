@@ -1104,9 +1104,10 @@ def send_fosterer_emails(dbo: Database) -> None:
         asm3.al.debug("FostererEmails configuration option is set to No", "movement.send_fosterer_emails", dbo)
         return
 
-    # Check the day of the week, if it isn't the first day of the week, drop out
-    if dbo.now().weekday() != 0: 
-        asm3.al.debug("now.weekday != 0: no need to send fosterer emails", "movement.send_fosterer_emails", dbo)
+    # Check the day of the week, (default is 0 for monday)
+    sendday = asm3.configuration.fosterer_email_send_day(dbo)
+    if dbo.now().weekday() != sendday:
+        asm3.al.debug(f"now.weekday != {sendday}: no need to send fosterer emails", "movement.send_fosterer_emails", dbo)
         return
 
     # Custom message and reply to if set

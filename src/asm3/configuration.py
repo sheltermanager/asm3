@@ -200,6 +200,7 @@ DEFAULTS = {
     "FosterOnShelter": "Yes",
     "FostererEmails": "No", 
     "FostererEmailOverdueDays": "-30",
+    "FostererEmailSendDay": "0",
     "FostererEmailSkipNoMedical": "No",
     "FoundAnimalSearchColumns": "LostFoundID,Owner,MicrochipNumber,AreaFound,"
         "AreaPostCode,DateFound,AgeGroup,SexName,SpeciesName,BreedName,"
@@ -949,6 +950,9 @@ def flag_change_log_type(dbo: Database) -> int:
 
 def foster_on_shelter(dbo: Database) -> bool:
     return cboolean(dbo, "FosterOnShelter", DEFAULTS["FosterOnShelter"] == "Yes")
+
+def fosterer_email_send_day(dbo: Database) -> int:
+    return cint(dbo, "FostererEmailSendDay", DEFAULTS["FostererEmailSendDay"])
 
 def fosterer_email_overdue_days(dbo: Database) -> int:
     return cint(dbo, "FostererEmailOverdueDays", DEFAULTS["FostererEmailOverdueDays"])
