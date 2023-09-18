@@ -13,14 +13,7 @@ import asm3.template
 import asm3.users
 import asm3.utils
 from asm3.sitedefs import BASE_URL, QR_IMG_SRC, URL_REPORTS
-from asm3.typehints import Any, datetime, Database, List, PostedData, ResultRow, Results, Session, Tuple
-
-# ReportParams are a list of the 3 values extracted from report definitions used to ask the user for criteria
-ReportParams = List[Tuple[str, str, str]] # variablename, type, question
-# CriteriaParams are a list of the 4 values extracted from user input of criteria used to run the query for the report
-CriteriaParams = List[Tuple[str, str, str, str]] # variablename, questiontext, substitutionvalue, displayvalue
-# MenuItems are a list of lists for the menu structure
-MenuItems = List[Tuple[str, str, str, str ,str ,str]] # permissions, hotkey, classes, url, icon, text
+from asm3.typehints import Any, CriteriaParams, datetime, Database, List, MenuItems, PostedData, ReportParams, ResultRow, Results, Session, Tuple
 
 HEADER = 0
 FOOTER = 1

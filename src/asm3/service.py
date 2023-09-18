@@ -29,6 +29,7 @@ from asm3.i18n import _, now, add_seconds, format_time, python2display, subtract
 from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_ICONS_CSS
 from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS
 from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
+from asm3.typehints import Database, PostedData, Results, ServiceResponse
 
 # Service methods that require authentication
 AUTH_METHODS = [
@@ -106,7 +107,7 @@ FLOOD_PROTECT_METHODS = {
     "online_form_post": [ 1, 15, 15 ]
 }
 
-def flood_protect(method, remoteip):
+def flood_protect(method: str, remoteip: str) -> None:
     """ 
     Implements flood protection for methods.
     Keeps a list of timestamps in an in memory cache for the method and IP address.
@@ -149,7 +150,7 @@ def flood_protect(method, remoteip):
             # Update the cache with the new hit and continue
             asm3.cachemem.put(cache_key, v, CACHE_TTL)
 
-def hotlink_protect(method, referer):
+def hotlink_protect(method: str, referer: str) -> None:
     """ Protect a method from having any referer other than the one we set """
     domains = IMAGE_HOTLINKING_ONLY_FROM_DOMAIN.split(",")
     fromhldomain = False
@@ -158,7 +159,7 @@ def hotlink_protect(method, referer):
     if referer != "" and IMAGE_HOTLINKING_ONLY_FROM_DOMAIN != "" and not fromhldomain:
         raise asm3.utils.ASMPermissionError("Hotlinking to %s from %s is forbidden" % (method, referer))
 
-def safe_cache_key(method, qs):
+def safe_cache_key(method: str, qs: str) -> str:
     """ 
     Reads the parameters from querystring and throws away 
     any parameters that are not in CACHE_PROTECT_METHODS for the method.
@@ -176,7 +177,7 @@ def safe_cache_key(method, qs):
         if b[0].lower() in whitelist: out.append(p)
     return "&".join(out)
 
-def get_cached_response(cache_key, path):
+def get_cached_response(cache_key: str, path: str) -> ServiceResponse:
     """ Gets a service call response from the cache based on its key.
     If no entry is found, None is returned.
     """
@@ -186,7 +187,7 @@ def get_cached_response(cache_key, path):
     # asm3.al.debug("GET: %s (%d bytes)" % (cache_key, len(response[3])), "service.get_cached_response")
     return response
 
-def set_cached_response(cache_key, path, mime, clientage, serverage, content):
+def set_cached_response(cache_key: str, path: str, mime: str, clientage: int, serverage: int, content: bytes | str) -> ServiceResponse:
     """ Sets a service call response in the cache and returns it
     methods can use this as a passthrough to return the response.
     cache_key: The constructed cache key from the parameters
@@ -201,7 +202,7 @@ def set_cached_response(cache_key, path, mime, clientage, serverage, content):
     asm3.cachedisk.put(cache_key, path, response, serverage)
     return response
 
-def checkout_adoption_page(dbo, token):
+def checkout_adoption_page(dbo: Database, token: str) -> str:
     """ Outputs a page that generates paperwork, allows an adopter to sign it
         and then pay their adoption fee and an optional donation """
     l = dbo.locale
@@ -241,7 +242,7 @@ def checkout_adoption_page(dbo, token):
     asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["personid"], logtypeid, logmsg)
     return asm3.html.js_page(scripts, _("Adoption Checkout", l), co)
 
-def checkout_adoption_post(dbo, post):
+def checkout_adoption_post(dbo: Database, post: PostedData) -> str:
     """
     Called by the adoption checkout frontend with the document signature and donation amount.
     Handles the document signing, triggers creation of the payment records, etc.
@@ -322,7 +323,7 @@ def checkout_adoption_post(dbo, post):
     url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
     return url
 
-def sign_document_page(dbo, mid, email):
+def sign_document_page(dbo: Database, mid: int, email: str) -> str:
     """ Outputs a page that allows signing of document with media id mid. 
         email is the address to send a copy of the signed document to. """
     l = dbo.locale
@@ -348,7 +349,7 @@ def sign_document_page(dbo, mid, email):
     }
     return asm3.html.js_page(scripts, _("Signing Pad", l), controller)
 
-def strip_personal_data(rows):
+def strip_personal_data(rows: Results) -> Results:
     """ Removes any personal data from animal rows 
         include_current: If False, strips CURRENTOWNER tokens (typically foster for shelter animals)
     """
@@ -358,7 +359,7 @@ def strip_personal_data(rows):
                 r[k] = ""
     return rows
 
-def handler(post, path, remoteip, referer, useragent, querystring):
+def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent: str, querystring: str) -> ServiceResponse:
     """ Handles the various service method types.
     post:        The GET/POST parameters
     path:        The current system path/code.PATH
@@ -366,7 +367,7 @@ def handler(post, path, remoteip, referer, useragent, querystring):
     referer:     The referer HTTP header
     useragent:   The user-agent HTTP header
     querystring: The complete querystring
-    return value is a tuple containing MIME type, max-age, content
+    return value is a tuple containing MIME type, clientcachettl, edgecachettl, content
     """
     # Get service parameters
     account = post["account"]

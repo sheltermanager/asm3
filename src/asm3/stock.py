@@ -1,13 +1,14 @@
 
 import asm3.utils
 from asm3.i18n import _, now, python2display
+from asm3.typehints import datetime, Database, List, PostedData, ResultRow, Results
 
-def get_stocklevel_query(dbo):
+def get_stocklevel_query(dbo: Database) -> str:
     return "SELECT s.*, s.ID AS SLID, l.LocationName AS StockLocationName " \
         "FROM stocklevel s " \
         "INNER JOIN stocklocation l ON s.StockLocationID = l.ID " 
 
-def get_stocklevels(dbo, location = 0):
+def get_stocklevels(dbo: Database, location: int = 0) -> Results:
     """
     Returns a set of stock levels for a location or 0 for all locations.
     """
@@ -15,22 +16,22 @@ def get_stocklevels(dbo, location = 0):
     if location != 0: wc = "AND s.StockLocationID = %d" % location
     return dbo.query("%s WHERE Balance > 0 %s ORDER BY s.StockLocationID, s.Name" % (get_stocklevel_query(dbo), wc))
 
-def get_stocklevels_depleted(dbo):
+def get_stocklevels_depleted(dbo: Database) -> Results:
     """ Returns a set of depleted stock levels """
     return dbo.query("%s WHERE Balance <= 0 ORDER BY s.StockLocationID, s.Name" % (get_stocklevel_query(dbo)))
 
-def get_stocklevels_lowbalance(dbo):
+def get_stocklevels_lowbalance(dbo: Database) -> Results:
     """ Returns a set of low balance stock levels """
     return dbo.query("%s WHERE Balance < Low ORDER BY s.StockLocationID, s.Name" % (get_stocklevel_query(dbo)))
 
-def get_stocklevel(dbo, slid):
+def get_stocklevel(dbo: Database, slid: int) -> ResultRow:
     """
     Returns a single stocklevel record
     """
     if slid is None: return None
     return dbo.first_row(dbo.query(get_stocklevel_query(dbo) + " WHERE s.ID = ?", [slid]))
 
-def get_stock_names(dbo):
+def get_stock_names(dbo: Database) -> List[str]:
     """
     Returns a set of unique stock names for autocomplete.
     """
@@ -40,7 +41,7 @@ def get_stock_names(dbo):
         names.append(r.NAME)
     return names
 
-def get_last_stock_with_name(dbo, name):
+def get_last_stock_with_name(dbo: Database, name: str) -> str:
     """
     Returns the last description, unit and total we saw for stock with name
     """
@@ -49,7 +50,7 @@ def get_last_stock_with_name(dbo, name):
         return "%s|%s|%f" % (r.DESCRIPTION, r.UNITNAME, r.TOTAL)
     return "||"
 
-def get_stock_items(dbo):
+def get_stock_items(dbo: Database) -> Results:
     """
     Returns a set of stock items.
     """
@@ -63,7 +64,7 @@ def get_stock_items(dbo):
             python2display(dbo.locale, r.EXPIRY), r.BALANCE, r.TOTAL, r.LOCATIONNAME)
     return rows
 
-def get_stock_locations_totals(dbo):
+def get_stock_locations_totals(dbo: Database) -> Results:
     """
     Returns a list of all stock locations with the total number of stocked
     items in each.
@@ -75,7 +76,7 @@ def get_stock_locations_totals(dbo):
         "WHERE s.Balance > 0 " \
         "GROUP BY sl.ID, sl.LocationName, sl.LocationDescription ORDER BY sl.LocationName")
 
-def get_stock_units(dbo):
+def get_stock_units(dbo: Database) -> List[str]:
     """
     Returns a set of unique stock units for autocomplete.
     """
@@ -85,7 +86,7 @@ def get_stock_units(dbo):
         names.append(r.UNITNAME)
     return names
 
-def update_stocklevel_from_form(dbo, post, username):
+def update_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> None:
     """
     Updates a stocklevel item from a dialog. The post should include
     the ID of the stocklevel to adjust and a usage record will be
@@ -121,7 +122,7 @@ def update_stocklevel_from_form(dbo, post, username):
     if diff != 0: 
         insert_stockusage(dbo, username, slid, diff, post.date("usagedate"), post.integer("usagetype"), post["comments"])
 
-def insert_stocklevel_from_form(dbo, post, username):
+def insert_stocklevel_from_form(dbo: Database, post: PostedData, username: str) -> int:
     """
     Inserts a stocklevel item from a dialog.
     A usage record will be written, so usage data should be sent too.
@@ -152,14 +153,14 @@ def insert_stocklevel_from_form(dbo, post, username):
     insert_stockusage(dbo, username, nid, post.floating("balance"), post.date("usagedate"), post.integer("usagetype"), post["comments"])
     return nid
 
-def delete_stocklevel(dbo, username, slid):
+def delete_stocklevel(dbo: Database, username: str, slid: int) -> None:
     """
     Deletes a stocklevel record
     """
     dbo.delete("stockusage", "StockLevelID=%d" % slid, username)
     dbo.delete("stocklevel", slid, username)
 
-def insert_stockusage(dbo, username, slid, diff, usagedate, usagetype, comments):
+def insert_stockusage(dbo: Database, username: str, slid: int, diff: float, usagedate: datetime, usagetype: int, comments: str) -> int:
     """
     Inserts a new stock usage record
     """
@@ -172,7 +173,7 @@ def insert_stockusage(dbo, username, slid, diff, usagedate, usagetype, comments)
         "Comments":             comments
     }, username)
 
-def deduct_stocklevel_from_form(dbo, username, post):
+def deduct_stocklevel_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Should include a stocklevel in the post as "item" and 
     stockusage fields. Creates a usage record and deducts
@@ -187,9 +188,9 @@ def deduct_stocklevel_from_form(dbo, username, post):
     curq = dbo.query_float("SELECT Balance FROM stocklevel WHERE ID = ?", [item])
     newq = curq - quantity
     dbo.update("stocklevel", item, { "Balance": newq })
-    insert_stockusage(dbo, username, item, quantity * -1, usagedate, usagetype, comments)
+    return insert_stockusage(dbo, username, item, quantity * -1, usagedate, usagetype, comments)
 
-def stock_take_from_mobile_form(dbo, username, post):
+def stock_take_from_mobile_form(dbo: Database, username: str, post: PostedData) -> None:
     """
     Post should contain sl{ID} values for new balances.
     """

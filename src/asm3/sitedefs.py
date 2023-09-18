@@ -9,11 +9,12 @@ copy it from scripts/asm3.conf.example
 
 # Provides site-wide definitions, reading them from a configuration file
 import codecs, os, sys, json
+from asm3.typehints import Dict
 
 # The map of values loaded from the config file
 cfg = None
 
-def read_config_file():
+def read_config_file() -> None:
     """
     Load the config file into cfg map. Looks for the config file in
     the following places in order:
@@ -45,23 +46,23 @@ def read_config_file():
                 k, v = l.split("=", 1)
                 cfg[k.strip()] = v.strip()
 
-def get_string(k, dv = ""):
+def get_string(k: str, dv: str = "") -> str:
     global cfg
     if cfg is None: read_config_file()
     if k not in cfg: return dv
     return cfg[k]
 
-def get_boolean(k, dv = False):
+def get_boolean(k: str, dv: bool = False) -> bool:
     v = get_string(k)
     if v == "": return dv
     return v == "True" or v == "true"
 
-def get_integer(k, dv = 0):
+def get_integer(k: str, dv: int = 0) -> int:
     v = get_string(k)
     if v == "": return dv
     return int(v)
 
-def get_dict(k, dv = {}):
+def get_dict(k: str, dv: Dict = {}) -> Dict:
     v = get_string(k)
     if v == "": return dv
     return json.loads(v)

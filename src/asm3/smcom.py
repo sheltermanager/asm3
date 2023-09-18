@@ -3,8 +3,9 @@ import asm3.al
 import asm3.cachedisk
 import asm3.db
 from asm3.sitedefs import MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE
+from asm3.typehints import Database, Dict
 
-import datetime
+from datetime import datetime
 import re
 import os, sys
 
@@ -24,13 +25,13 @@ except:
     # sys.stderr.write("warn: no smcom_client\n")
     pass
 
-def active():
+def active() -> bool:
     """
     Returns true if we're sheltermanager.com
     """
     return MULTIPLE_DATABASES and MULTIPLE_DATABASES_TYPE == "smcom"
 
-def get_account(alias):
+def get_account(alias: str) -> Dict:
     """
     Returns the smcom account object for alias/db
     Uses a read through 24 hour cache to save unnecessary calls
@@ -47,7 +48,7 @@ def get_account(alias):
             asm3.cachedisk.put(cachekey, "smcom", a, TTL)
     return a
 
-def get_database_info(alias):
+def get_database_info(alias: str) -> Database:
     """
     Returns the dbo object for a sheltermanager.com account or alias.  
     Also returns a dbo with a database property of "DISABLED" for a 
@@ -88,31 +89,31 @@ def get_database_info(alias):
 
     return dbo
 
-def get_expiry_date(dbo):
+def get_expiry_date(dbo: Database) -> datetime:
     """
     Returns the account expiry date or None for a problem.
     """
     a = get_account(dbo.database)
     try:
-        expiry = datetime.datetime.strptime(a["expiry"], "%Y-%m-%d")
+        expiry = datetime.strptime(a["expiry"], "%Y-%m-%d")
         asm3.al.debug("retrieved account expiry date: %s" % expiry, "smcom.get_expiry_date", dbo)
         return expiry
     except:
         return None
 
-def get_login_url(dbo):
+def get_login_url(dbo: Database) -> str:
     """
     Returns the login url for this account
     """
     return "https://sheltermanager.com/login/%s" % dbo.alias or dbo.database
 
-def get_payments_url():
+def get_payments_url() -> str:
     """
     Returns the url to use for callbacks from payment processors
     """
     return "https://service.sheltermanager.com/asmpayment"
 
-def get_reports():
+def get_reports() -> str:
     """
     Returns the reports.txt file
     """
@@ -120,13 +121,13 @@ def get_reports():
         s = f.read()
     return s
 
-def go_smcom_my(dbo):
+def go_smcom_my(dbo: Database) -> None:
     """
     Goes to the my account page for this database
     """
     raise web.seeother(smcom_client.get_my_url(dbo.database))
 
-def vacuum_full(dbo):
+def vacuum_full(dbo: Database) -> None:
     """ Performs a full vacuum on the database via command line (transaction problems via db.py) """
     os.system("psql -U %s -c \"VACUUM FULL;\"" % dbo.database)
 

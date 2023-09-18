@@ -37,7 +37,6 @@ Tuple = typing.Tuple
 
 datetime = "datetime.datetime" # this can be used if the only reason you're pulling datetime in is for type checking
 
-ColumnList = List[Tuple[str, str]]
 Database = "asm3.dbms.base.Database"
 ResultRow = "asm3.dbms.base.ResultRow"
 Results = "List[asm3.dbms.base.ResultRow]"
@@ -48,3 +47,16 @@ PostedData = "asm3.utils.PostedData"
 MemcacheClient = "memcache.Client"
 S3Client = "S3.Client"
 Session = "web.session.Session"
+
+# ReportParams are a list of the 3 values extracted from report SQL and used to ask the user for criteria (report.py)
+ReportParams = List[Tuple[str, str, str]] # variablename, type, question
+# CriteriaParams are a list of the 4 values extracted from user input of criteria used to run the query for the report (report.py)
+CriteriaParams = List[Tuple[str, str, str, str]] # variablename, questiontext, substitutionvalue, displayvalue
+# List of sortable columns returned by column functions for find screens (html.py)
+ColumnList = List[Tuple[str, str]] # fieldname, displaytext
+# MenuItems are a list of tuples for items in a menu (menu.py, reports.py)
+MenuItems = List[Tuple[str, str, str, str ,str ,str]] # permissions, hotkey, classes, url, icon, text
+# MenuStructure is a tuple of top level menus with menu items (html.py)
+MenuStructure = Tuple[str, str, str, MenuItems] # permissions, name, text, menuitems
+# ServiceResponse is tuple used by service.py
+ServiceResponse = Tuple[str, int, int, bytes | str] # mimetype, clientcachettl, edgecachettl, content
