@@ -1744,6 +1744,11 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
         return "INSERT INTO basecolour (ID, BaseColour, BaseColourDescription, AdoptAPetColour, IsRetired) VALUES (%s, '%s', '', '%s', 0)|=\n" % (tid, dbo.escape(name), adoptapet)
     def internallocation(lid: int, name: str) -> str:
         return "INSERT INTO internallocation (ID, LocationName, LocationDescription, Units, SiteID, IsRetired) VALUES (%s, '%s', '', '', 1, 0)|=\n" % ( lid, dbo.escape(name) )
+    def medicalprofile(pid: int, name: str, dosage: str) -> str:
+        return "INSERT INTO medicalprofile (ID, Comments, Cost, CostPerTreatment, CreatedBy, CreatedDate, Dosage, LastChangedDate, LastChangedBy, " \
+            "ProfileName, RecordVersion, TimingRule, TimingRuleFrequency, TimingRuleNoFrequencies, TotalNumberOfTreatments, " \
+            f"TreatmentName, TreatmentRule) VALUES ({str(pid)}, '', 0, 0, 'system', {dbo.sql_now()}, '{dbo.escape(dosage)}', {dbo.sql_now()}, 'system', " \
+            f"'{dbo.escape(name)}', 0, 0, 0, 0, 1, '{dbo.escape(name)}', 0)|=\n"
     def role(tid: int, name: str, perms: str) -> str:
         return "INSERT INTO role (ID, Rolename, SecurityMap) VALUES (%s, '%s', '%s')|=\n" % (tid, dbo.escape(name), perms)
     def species(tid: int, name: str, petfinder: str) -> str:
@@ -2512,6 +2517,10 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup2("logtype", "LogTypeName", 5, _("Document", l))
     sql += lookup2("logtype", "LogTypeName", 6, _("GDPR Contact Opt-In", l))
     sql += lookup2("logtype", "LogTypeName", 7, _("Daily Observations", l))
+    sql += medicalprofile(1, _("Examination", l), _("N/A"))
+    sql += medicalprofile(2, _("Surgery", l), _("N/A"))
+    sql += medicalprofile(3, _("Deflea", l), _("{0} Pipette", l).format(1))
+    sql += medicalprofile(4, _("Wormer", l), _("{0} Tablet", l).format(1))
     sql += lookup2("pickuplocation", "LocationName", 1, _("Shelter", l))
     sql += lookup2("reservationstatus", "StatusName", 1, _("More Info Needed", l))
     sql += lookup2("reservationstatus", "StatusName", 2, _("Pending Vet Check", l))
