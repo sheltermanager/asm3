@@ -13,14 +13,14 @@ import asm3.publishers.base
 import asm3.users
 import asm3.waitinglist
 from asm3.i18n import _, now
+from asm3.typehints import Database, Results, Session, Tuple
 
 import datetime
 import time
 
 THE_PAST = datetime.datetime(1900,1,1,0,0,0)
 
-def search(dbo, session, q):
-
+def search(dbo: Database, session: Session, q: str) -> Tuple[Results, int, str, str]:
     """
     Performs a database wide search for the term given.
     special tokens:
@@ -51,7 +51,7 @@ def search(dbo, session, q):
     results, timetaken, explain, sortname
     """
     # ar (add results) inner method
-    def ar(rlist, rtype, sortfield):
+    def ar(rlist: Results, rtype: str, sortfield: str) -> None:
         # Return brief records to save bandwidth
         if rtype == "ANIMAL":
             rlist = asm3.animal.get_animals_brief(rlist)
