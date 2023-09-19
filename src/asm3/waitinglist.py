@@ -9,8 +9,9 @@ import asm3.log
 import asm3.media
 import asm3.utils
 from asm3.i18n import _, after, now, python2display, subtract_years, add_days, date_diff
+from asm3.typehints import Database, Dict, PostedData, ResultRow, Results
 
-def get_waitinglist_query(dbo):
+def get_waitinglist_query(dbo: Database) -> str:
     """
     Returns the SELECT and JOIN commands necessary for selecting
     waiting list rows with resolved lookups.
@@ -35,7 +36,7 @@ def get_waitinglist_query(dbo):
         "LEFT OUTER JOIN owner o ON o.ID = a.OwnerID " \
         "LEFT OUTER JOIN lkurgency u ON u.ID = a.Urgency" % asm3.media.WAITINGLIST
 
-def get_waitinglist_by_id(dbo, wid):
+def get_waitinglist_by_id(dbo: Database, wid: int) -> ResultRow:
     """
     Returns a single waitinglist record for the ID given
     """
@@ -50,13 +51,13 @@ def get_waitinglist_by_id(dbo, wid):
     r.TIMEONLIST = date_diff(l, r.DATEPUTONLIST, now(dbo.timezone), asm3.configuration.date_diff_cutoffs(dbo))
     return r
 
-def get_person_name(dbo, wid):
+def get_person_name(dbo: Database, wid: int) -> str:
     """
     Returns the contact name for the waitinglist with id
     """
     return dbo.query_string("SELECT o.OwnerName FROM animalwaitinglist a INNER JOIN owner o ON a.OwnerID = o.ID WHERE a.ID = ?", [wid])
 
-def get_waitinglist_ranks(dbo):
+def get_waitinglist_ranks(dbo: Database) -> Dict[int, int]:
     """
     Returns a dictionary of waiting list IDs with their current ranks.
     """
@@ -83,7 +84,9 @@ def get_waitinglist_ranks(dbo):
         rank += 1
     return ranks
 
-def get_waitinglist(dbo, priorityfloor = 5, species = -1, size = -1, addresscontains = "", includeremoved = 0, namecontains = "", descriptioncontains = "", siteid = 0):
+def get_waitinglist(dbo: Database, priorityfloor: int = 5, species: int = -1, size: int = -1, 
+                    addresscontains: str = "", includeremoved: int = 0, namecontains: str = "", 
+                    descriptioncontains: str = "", siteid: int = 0) -> Results:
     """
     Retrieves the waiting list
     priorityfloor: The lowest urgency to show (1 = urgent, 5 = lowest)
@@ -139,7 +142,7 @@ def get_waitinglist(dbo, priorityfloor = 5, species = -1, size = -1, addresscont
         r.TIMEONLIST = date_diff(l, r.DATEPUTONLIST, now(dbo.timezone), asm3.configuration.date_diff_cutoffs(dbo) )
     return rows
 
-def get_waitinglist_find_simple(dbo, query = "", limit = 0, siteid = 0):
+def get_waitinglist_find_simple(dbo: Database, query: str = "", limit: int = 0, siteid: int = 0) -> Results:
     """
     Returns rows for simple waiting list searches.
     query: The search criteria
@@ -162,7 +165,7 @@ def get_waitinglist_find_simple(dbo, query = "", limit = 0, siteid = 0):
     sql = "%s WHERE a.ID > 0 %s AND (%s) ORDER BY a.ID" % (get_waitinglist_query(dbo), sitefilter, " OR ".join(ss.ors))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_satellite_counts(dbo, wlid):
+def get_satellite_counts(dbo: Database, wlid: int) -> Results:
     """
     Returns a resultset containing the number of each type of satellite
     record that a waitinglist entry has.
@@ -173,7 +176,7 @@ def get_satellite_counts(dbo, wlid):
         "(SELECT COUNT(*) FROM log WHERE log.LinkID = a.ID AND log.LinkType = ?) AS logs " \
         "FROM animalwaitinglist a WHERE a.ID = ?", (asm3.media.WAITINGLIST, asm3.diary.WAITINGLIST, asm3.log.WAITINGLIST, wlid))
 
-def delete_waitinglist(dbo, username, wid):
+def delete_waitinglist(dbo: Database, username: str, wid: int) -> None:
     """
     Deletes a waiting list record
     """
@@ -184,7 +187,7 @@ def delete_waitinglist(dbo, username, wid):
     dbo.delete("animalwaitinglist", wid, username)
     # asm3.dbfs.delete_path(dbo, "/waitinglist/%d" % wid)  # Use maint_db_delete_orphaned_media to remove dbfs later if needed
 
-def send_email_from_form(dbo, username, post):
+def send_email_from_form(dbo: Database, username: str, post: PostedData) -> bool:
     """
     Sends an email to a waiting list person from a posted form. Attaches it as
     a log entry if specified.
@@ -204,13 +207,13 @@ def send_email_from_form(dbo, username, post):
         asm3.log.add_log_email(dbo, username, asm3.log.WAITINGLIST, post.integer("wlid"), logtype, emailto, subject, body)
     return rv
 
-def update_waitinglist_remove(dbo, username, wid):
+def update_waitinglist_remove(dbo: Database, username: str, wid: int) -> None:
     """
     Marks a waiting list record as removed
     """
     dbo.update("animalwaitinglist", wid, { "DateRemovedFromList": dbo.today() }, username)
 
-def update_waitinglist_highlight(dbo, wlid, himode):
+def update_waitinglist_highlight(dbo: Database, wlid: int, himode: int) -> None:
     """
     Toggles a waiting list ID record as highlighted.
     wlid: The waiting list id to toggle
@@ -238,7 +241,7 @@ def update_waitinglist_highlight(dbo, wlid, himode):
         nl.append(wlid + "|" + himode)
     asm3.configuration.waiting_list_highlights(dbo, " ".join(nl))
 
-def auto_remove_waitinglist(dbo):
+def auto_remove_waitinglist(dbo: Database) -> None:
     """
     Finds and automatically marks entries removed that have gone past
     the last contact date + weeks.
@@ -258,7 +261,7 @@ def auto_remove_waitinglist(dbo):
         dbo.execute_many("UPDATE animalwaitinglist SET DateRemovedFromList = ?, " \
             "ReasonForRemoval=? WHERE ID=?", updates)
         
-def auto_update_urgencies(dbo):
+def auto_update_urgencies(dbo: Database) -> None:
     """
     Finds all animals where the next UrgencyUpdateDate field is greater
     than or equal to today and the urgency is larger than High (so we
@@ -282,7 +285,7 @@ def auto_update_urgencies(dbo):
             "Urgency=? " \
             "WHERE ID=? ", updates)
             
-def update_waitinglist_from_form(dbo, post, username):
+def update_waitinglist_from_form(dbo: Database, post: PostedData, username: str) -> None:
     """
     Updates a waiting list record from the screen
     data: The webpy data object containing form parameters
@@ -319,7 +322,7 @@ def update_waitinglist_from_form(dbo, post, username):
     asm3.additional.save_values_for_link(dbo, post, username, wlid, "waitinglist")
     asm3.diary.update_link_info(dbo, username, asm3.diary.WAITINGLIST, wlid)
 
-def insert_waitinglist_from_form(dbo, post, username):
+def insert_waitinglist_from_form(dbo: Database, post: PostedData, username: str) -> int:
     """
     Creates a waiting list record from the screen
     data: The webpy data object containing form parameters
@@ -355,9 +358,10 @@ def insert_waitinglist_from_form(dbo, post, username):
 
     return nwlid
 
-def create_animal(dbo, username, wlid):
+def create_animal(dbo: Database, username: str, wlid: int) -> int:
     """
-    Creates an animal record from a waiting list entry with the id given
+    Creates an animal record from a waiting list entry with the id given.
+    Returns the new animal id. 
     """
     l = dbo.locale
     a = dbo.first_row( dbo.query("SELECT * FROM animalwaitinglist WHERE ID = ?", [wlid]) )

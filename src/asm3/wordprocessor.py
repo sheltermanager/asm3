@@ -21,10 +21,11 @@ import asm3.users
 import asm3.utils
 import asm3.waitinglist
 from asm3.i18n import _, date_diff_days, format_currency, format_currency_no_symbol, format_diff, format_diff_single, format_time, now, python2display, python2displaytime, yes_no
+from asm3.typehints import Database, Dict, List, ResultRow, Results, Tags, Tuple
 
 import zipfile
 
-def org_tags(dbo, username):
+def org_tags(dbo: Database, username: str) -> Tags:
     """
     Generates a list of tags from the organisation and user info
     """
@@ -78,7 +79,7 @@ def org_tags(dbo, username):
     }
     return tags
 
-def additional_yesno(l, af):
+def additional_yesno(l: str, af: ResultRow) -> str:
     """
     Returns the yes/no value for an additional field. If it has a LOOKUPVALUES
     set, we use the value the user set.
@@ -95,7 +96,7 @@ def additional_yesno(l, af):
     else:
         return yes_no(l, af["VALUE"] == "1")
 
-def weight_display(dbo, wv):
+def weight_display(dbo: Database, wv: float) -> str:
     """ formats the weight value wv for display (either kg or lb/oz) """
     kg = asm3.utils.cfloat(wv)
     lbf = asm3.utils.cfloat(wv)
@@ -109,19 +110,19 @@ def weight_display(dbo, wv):
     else:
         return "%s %s" % (kg, _("kg", l))
 
-def br(s):
+def br(s: str) -> str:
     """ Returns s with linebreaks turned to <br/> tags """
     if s is None: return ""
     s = s.replace("\r\n", "<br/>").replace("\n", "<br/>")
     return s
 
-def fw(s):
+def fw(s: str) -> str:
     """ Returns the first word of a string """
     if s is None: return ""
     if s.find(" ") == -1: return s
     return s.split(" ")[0]
 
-def separate_results(rows, f):
+def separate_results(rows: Results, f: str) -> Results:
     """ Given a list of result rows, looks at field f and produces
         a list containing a new list of result rows for each
         unique value of f. 
@@ -139,7 +140,7 @@ def separate_results(rows, f):
         result.append(orows)
     return result
 
-def additional_field_tags(dbo, fields, prefix="", depth=2):
+def additional_field_tags(dbo: Database, fields: Results, prefix: str = "", depth: int = 2) -> Tags:
     """ Process additional fields and returns them as tags
         depth - the level of the recursion for resolving additional person links in an additional person
     """
@@ -161,7 +162,7 @@ def additional_field_tags(dbo, fields, prefix="", depth=2):
         tags[prefix + af["FIELDNAME"].upper()] = val
     return tags
 
-def additional_field_person_tags(dbo, p, prefix, fieldname, depth):
+def additional_field_person_tags(dbo: Database, p: ResultRow, prefix: str, fieldname: str, depth: int) -> Tags:
     """
     Generate a tag dictionary for a person record (person, sponsor, vet)
     p - person record
@@ -210,7 +211,7 @@ def additional_field_person_tags(dbo, p, prefix, fieldname, depth):
         tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "person"), prefix + fieldname, depth - 1))
     return tags
 
-def animal_tags_publisher(dbo, a, includeAdditional=True):
+def animal_tags_publisher(dbo: Database, a: ResultRow, includeAdditional=True) -> Tags:
     """
     Convenience method for getting animal tags when used by a publisher - 
     very little apart from additional fields are required and we can save
@@ -220,9 +221,9 @@ def animal_tags_publisher(dbo, a, includeAdditional=True):
         includeDonations=False, includeFutureOwner=False, includeIsVaccinated=True, includeLitterMates=False, \
         includeLogs=False, includeMedical=False, includeTransport=False)
 
-def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=True, includeDonations=True, \
+def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCosts=True, includeDiet=True, includeDonations=True, \
         includeFutureOwner=True, includeIsVaccinated=True, includeLitterMates=True, includeLogs=True, \
-        includeLicence=True, includeMedical=True, includeTransport=True):
+        includeLicence=True, includeMedical=True, includeTransport=True) -> Tags:
     """
     Generates a list of tags from an animal result (the deep type from calling asm3.animal.get_animal)
     """
@@ -917,7 +918,7 @@ def animal_tags(dbo, a, includeAdditional=True, includeCosts=True, includeDiet=T
 
     return tags
 
-def animalcontrol_tags(dbo, ac):
+def animalcontrol_tags(dbo: Database, ac: ResultRow) -> Tags:
     """
     Generates a list of tags from an animalcontrol incident.
     ac: An animalcontrol incident record
@@ -1057,7 +1058,7 @@ def animalcontrol_tags(dbo, ac):
 
     return tags
 
-def donation_tags(dbo, donations):
+def donation_tags(dbo: Database, donations: Results) -> Tags:
     """
     Generates a list of tags from a donation result.
     donations: a list of donation records
@@ -1151,7 +1152,7 @@ def donation_tags(dbo, donations):
     tags["PAYMENTTOTAL"] = format_currency_no_symbol(l, totals["gross"])
     return tags
 
-def foundanimal_tags(dbo, a):
+def foundanimal_tags(dbo: Database, a: ResultRow) -> Tags:
     """
     Generates a list of tags from a foundanimal result (asm3.lostfound.get_foundanimal)
     """
@@ -1192,7 +1193,7 @@ def foundanimal_tags(dbo, a):
     tags.update(table_tags(dbo, d, asm3.log.get_logs(dbo, asm3.log.FOUNDANIMAL, a["ID"], 0, asm3.log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
     return tags
 
-def lostanimal_tags(dbo, a):
+def lostanimal_tags(dbo: Database, a: ResultRow) -> Tags:
     """
     Generates a list of tags from a lostanimal result (asm3.lostfound.get_lostanimal)
     """
@@ -1233,7 +1234,7 @@ def lostanimal_tags(dbo, a):
     tags.update(table_tags(dbo, d, asm3.log.get_logs(dbo, asm3.log.LOSTANIMAL, a["ID"], 0, asm3.log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
     return tags
 
-def licence_tags(dbo, li):
+def licence_tags(dbo: Database, li: ResultRow) -> Tags:
     """
     Generates a list of tags from a licence result 
     (from anything using asm3.financial.get_licence_query)
@@ -1255,7 +1256,7 @@ def licence_tags(dbo, li):
     }
     return tags
 
-def movement_tags(dbo, m):
+def movement_tags(dbo: Database, m: ResultRow) -> Tags:
     """
     Generates a list of tags from a movement result
     (anything using asm3.movement.get_movement_query)
@@ -1323,7 +1324,7 @@ def movement_tags(dbo, m):
 
     return tags
 
-def clinic_tags(dbo, c):
+def clinic_tags(dbo: Database, c: ResultRow) -> Tags:
     """
     Generates a list of tags from a clinic result (asm3.clinic.get_appointment)
     """
@@ -1358,7 +1359,7 @@ def clinic_tags(dbo, c):
     tags.update(table_tags(dbo, d, asm3.clinic.get_invoice_items(dbo, c.ID)))
     return tags
 
-def person_tags(dbo, p, includeImg=False, includeDonations=False, includeVouchers=False):
+def person_tags(dbo: Database, p: ResultRow, includeImg=False, includeDonations=False, includeVouchers=False) -> Tags:
     """
     Generates a list of tags from a person result (the deep type from
     calling asm3.person.get_person)
@@ -1543,7 +1544,7 @@ def person_tags(dbo, p, includeImg=False, includeDonations=False, includeVoucher
 
     return tags
 
-def transport_tags(dbo, transports):
+def transport_tags(dbo: Database, transports: Results) -> Tags:
     """
     Generates a list of tags from a list of transports.
     transports: a list of transport records
@@ -1612,7 +1613,7 @@ def transport_tags(dbo, transports):
         add_to_tags(str(i+1), t)
     return tags
 
-def voucher_tags(dbo, v):
+def voucher_tags(dbo: Database, v: ResultRow) -> Tags:
     """
     Generates a list of tags from a voucher result 
     (from anything using asm3.financial.get_voucher_query)
@@ -1631,7 +1632,7 @@ def voucher_tags(dbo, v):
     }
     return tags
 
-def waitinglist_tags(dbo, a):
+def waitinglist_tags(dbo: Database, a: ResultRow) -> Tags:
     """
     Generates a list of tags from a waiting list result (asm3.waitinglist.get_waitinglist_by_id)
     """
@@ -1670,7 +1671,7 @@ def waitinglist_tags(dbo, a):
     tags.update(table_tags(dbo, d, asm3.log.get_logs(dbo, asm3.log.WAITINGLIST, a["ID"], 0, asm3.log.ASCENDING), "LOGTYPENAME", "DATE", "DATE"))
     return tags
 
-def event_tags(dbo, e):
+def event_tags(dbo: Database, e: ResultRow) -> Tags:
     """
     Generate a tag dictionary for events
     e - event object that created from asm3.event.get_event
@@ -1701,7 +1702,7 @@ def event_tags(dbo, e):
 
     return tags
 
-def append_tags(tags1, tags2):
+def append_tags(tags1: Tags, tags2: Tags) -> Tags:
     """
     Adds two dictionaries of tags together and returns
     a new dictionary containing both sets.
@@ -1711,7 +1712,7 @@ def append_tags(tags1, tags2):
     tags.update(tags2)
     return tags
 
-def html_table(l, rows, cols):
+def html_table(l: str, rows: Results, cols: List[Tuple[str, str]]):
     """
     Generates an HTML table for TinyMCE from rows, choosing the cols.
     cols is a list of tuples containing the field name from rows and a localised column name for output.
@@ -1743,7 +1744,7 @@ def html_table(l, rows, cols):
     h.append("</table>")
     return "".join(h)
 
-def table_get_value(l, row, k):
+def table_get_value(l: str, row: ResultRow, k: str) -> str:
     """
     Returns row[k], looking for a type prefix in k -
     c: currency, d: date, t: time, y: yesno, f: float dt: date and time
@@ -1766,7 +1767,7 @@ def table_get_value(l, row, k):
         s = str(row[k])
     return s
 
-def table_tags(dbo, d, rows, typefield = "", recentduefield = "", recentgivenfield = ""):
+def table_tags(dbo: Database, d: Tags, rows: Results, typefield: str = "", recentduefield: str = "", recentgivenfield: str = "") -> Tags:
     """
     For a collection of table rows, generates the LAST/DUE/RECENT and indexed tags.
 
@@ -1847,18 +1848,20 @@ def table_tags(dbo, d, rows, typefield = "", recentduefield = "", recentgivenfie
                     tags[k + "RECENT" + t] = table_get_value(l, r, v)
     return tags
 
-def substitute_tags(searchin, tags, escape_html = True, opener = "&lt;&lt;", closer = "&gt;&gt;", crToBr = True):
+def substitute_tags(searchin: str, tags: Tags, escape_html: bool = True, 
+                    opener: str = "&lt;&lt;", closer: str = "&gt;&gt;", crToBr: bool = True) -> str:
     """
     Just to make code more readable as other areas call wordprocessor to build tags and do substitutions
     """
     return asm3.utils.substitute_tags(searchin, tags, escape_html, opener, closer, crToBr)
 
-def substitute_template(dbo, templateid, tags, imdata = None):
+def substitute_template(dbo: Database, templateid: int, tags: Tags, imdata: bytes = None) -> bytes:
     """
     Reads the template specified by id "template" and substitutes
     according to the tags in "tags". Returns the built file.
     imdata is the preferred image for the record and since html uses
     URLs, only applies to ODT templates.
+    Return value can be bytes (for ODT) or str (for HTML)
     """
     templatedata = asm3.template.get_document_template_content(dbo, templateid) # bytes
     templatename = asm3.template.get_document_template_name(dbo, templateid)
@@ -1891,7 +1894,7 @@ def substitute_template(dbo, templateid, tags, imdata = None):
         except Exception as zderr:
             raise asm3.utils.ASMError("Failed generating odt document: %s" % str(zderr))
 
-def extract_mail_tokens(s):
+def extract_mail_tokens(s: str) -> Dict[str, str]:
     """
     Extracts tokens for mail from document content s.
     Mail tokens are {{FROM x}}, {{SUBJECT x}}
@@ -1909,7 +1912,7 @@ def extract_mail_tokens(s):
     d["BODY"] = s
     return d
 
-def generate_animal_doc(dbo, templateid, animalid, username):
+def generate_animal_doc(dbo: Database, templateid: int, animalid: int, username: str) -> bytes:
     """
     Generates an animal document from a template using animal keys and
     (if a currentowner is available) person keys
@@ -1952,7 +1955,7 @@ def generate_animal_doc(dbo, templateid, animalid, username):
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags, imdata)
 
-def generate_animalcontrol_doc(dbo, templateid, acid, username):
+def generate_animalcontrol_doc(dbo: Database, templateid: int, acid: int, username: str) -> bytes:
     """
     Generates an animal control incident document from a template
     templateid: The ID of the template
@@ -1964,7 +1967,7 @@ def generate_animalcontrol_doc(dbo, templateid, acid, username):
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_clinic_doc(dbo, templateid, appointmentid, username):
+def generate_clinic_doc(dbo: Database, templateid: int, appointmentid: int, username: str) -> bytes:
     """
     Generates a clinic document from a template
     templateid: The ID of the template
@@ -1983,7 +1986,7 @@ def generate_clinic_doc(dbo, templateid, appointmentid, username):
         tags = append_tags(tags, person_tags(dbo, p))
     return substitute_template(dbo, templateid, tags)
 
-def generate_person_doc(dbo, templateid, personid, username):
+def generate_person_doc(dbo: Database, templateid: int, personid: int, username: str) -> bytes:
     """
     Generates a person document from a template
     templateid: The ID of the template
@@ -2001,7 +2004,7 @@ def generate_person_doc(dbo, templateid, personid, username):
             tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID)))
     return substitute_template(dbo, templateid, tags, im)
 
-def generate_donation_doc(dbo, templateid, donationids, username):
+def generate_donation_doc(dbo: Database, templateid: int, donationids: List[int], username: str) -> bytes:
     """
     Generates a donation document from a template
     templateid: The ID of the template
@@ -2020,7 +2023,7 @@ def generate_donation_doc(dbo, templateid, donationids, username):
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_foundanimal_doc(dbo, templateid, faid, username):
+def generate_foundanimal_doc(dbo: Database, templateid: int, faid: int, username: str) -> bytes:
     """
     Generates a found animal document from a template
     templateid: The ID of the template
@@ -2034,7 +2037,7 @@ def generate_foundanimal_doc(dbo, templateid, faid, username):
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_lostanimal_doc(dbo, templateid, laid, username):
+def generate_lostanimal_doc(dbo: Database, templateid: int, laid: int, username: str) -> bytes:
     """
     Generates a found animal document from a template
     templateid: The ID of the template
@@ -2048,7 +2051,7 @@ def generate_lostanimal_doc(dbo, templateid, laid, username):
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_licence_doc(dbo, templateid, licenceid, username):
+def generate_licence_doc(dbo: Database, templateid: int, licenceid: int, username: str) -> bytes:
     """
     Generates a licence document from a template
     templateid: The ID of the template
@@ -2064,7 +2067,7 @@ def generate_licence_doc(dbo, templateid, licenceid, username):
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_movement_doc(dbo, templateid, movementid, username):
+def generate_movement_doc(dbo: Database, templateid: int, movementid: int, username: str) -> bytes:
     """
     Generates a movement document from a template
     templateid: The ID of the template
@@ -2083,7 +2086,7 @@ def generate_movement_doc(dbo, templateid, movementid, username):
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_transport_doc(dbo, templateid, transportids, username):
+def generate_transport_doc(dbo: Database, templateid: int, transportids: int, username: str) -> bytes:
     """
     Generates a transport document from a template
     templateid: The ID of the template
@@ -2096,7 +2099,7 @@ def generate_transport_doc(dbo, templateid, transportids, username):
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_voucher_doc(dbo, templateid, voucherid, username):
+def generate_voucher_doc(dbo: Database, templateid: int, voucherid: int, username: str) -> bytes:
     """
     Generates a voucher document from a template
     templateid: The ID of the template
@@ -2112,7 +2115,7 @@ def generate_voucher_doc(dbo, templateid, voucherid, username):
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_waitinglist_doc(dbo, templateid, wlid, username):
+def generate_waitinglist_doc(dbo: Database, templateid: int, wlid: int, username: str) -> bytes:
     """
     Generates a waiting list document from a template
     templateid: The ID of the template
