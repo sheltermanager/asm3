@@ -1,7 +1,8 @@
 48
 ================
 
-19/09/23 type hints, full dbms package #1320
+19/09/23 type hints, paymentprocessor package #1320
+19/09/23 type hints, dbms package #1320
 19/09/23 type hints, waitinglist, wordprocessor #1320
 19/09/23 Fix CC and BCC tokens in email templates for adoption checkout
 18/09/23 Disable autolink plugin for document templates

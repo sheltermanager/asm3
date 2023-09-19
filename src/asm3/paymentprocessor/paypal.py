@@ -7,6 +7,7 @@ import asm3.utils
 from .base import PaymentProcessor, ProcessorError, PayRefError, AlreadyReceivedError
 
 from asm3.sitedefs import BASE_URL, PAYPAL_VALIDATE_IPN_URL
+from asm3.typehints import Database
 
 class IncompleteStatusError(ProcessorError):
     pass
@@ -16,10 +17,10 @@ class InvalidIPNError(ProcessorError):
 class PayPal(PaymentProcessor):
     """ PayPal provider """
 
-    def __init__(self, dbo):
+    def __init__(self, dbo: Database) -> None:
         PaymentProcessor.__init__(self, dbo, "paypal")        
 
-    def checkoutPage(self, payref, return_url = "",  item_description = ""):
+    def checkoutPage(self, payref: str, return_url: str = "",  item_description: str = "") -> str:
         """ 
         Method to return the provider's checkout page 
         payref: The payments we are charging for (str OWNERCODE-RECEIPTNUMBER)
@@ -74,7 +75,7 @@ class PayPal(PaymentProcessor):
             '</script>' \
             '</body></html>' % "".join(paypalform)
 
-    def receive(self, rawdata, validate_ipn = True):
+    def receive(self, rawdata: str, validate_ipn: bool = True) -> None:
         """ 
         Method to be called by the provider via an endpoint on receipt of payment.
         validate: Whether or not to skip validation of the IPN - useful for testing

@@ -7,6 +7,7 @@ import asm3.utils
 from .base import PaymentProcessor, ProcessorError, PayRefError, AlreadyReceivedError
 
 from asm3.sitedefs import BASE_URL
+from asm3.typehints import Database
 
 STRIPE_API_VERSION = "2018-08-23"
 
@@ -15,11 +16,11 @@ class IncorrectEventError(ProcessorError):
 
 class Stripe(PaymentProcessor):
     """ Stripe provider """
-    def __init__(self, dbo):
+    def __init__(self, dbo: Database):
 
         PaymentProcessor.__init__(self, dbo, "stripe")
 
-    def checkoutPage(self, payref, return_url = "",  item_description = ""):
+    def checkoutPage(self, payref: str, return_url: str = "",  item_description: str = "") -> str:
         """ 
         Method to return the provider's checkout page 
         payref: The payments we are charging for (str OWNERCODE-RECEIPTNUMBER)
@@ -105,7 +106,7 @@ class Stripe(PaymentProcessor):
         </html>""" % (asm3.configuration.stripe_key(self.dbo), session.id)
         return s
 
-    def receive(self, rawdata):
+    def receive(self, rawdata: str) -> None:
         """ 
         Method to be called by the provider via an endpoint on receipt of payment.
         validate: Whether or not to skip validation of the IPN - useful for testing

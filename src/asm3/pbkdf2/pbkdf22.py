@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# This module is for Python 2 and now redundant
 """
     pbkdf2
     ~~~~~~

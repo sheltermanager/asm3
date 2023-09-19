@@ -1,6 +1,7 @@
 
 import asm3.financial
 import asm3.utils
+from asm3.typehints import Database, Results
 
 class ProcessorError(Exception):
     pass
@@ -11,14 +12,14 @@ class AlreadyReceivedError(ProcessorError):
 
 class PaymentProcessor(object):
     """ Abstract class that encapsulates payment processor functionality """
-    dbo = None
-    name = ""
+    dbo: Database = None
+    name: str = ""
 
-    def __init__(self, dbo, name):
+    def __init__(self, dbo: Database, name: str):
         self.dbo = dbo
         self.name = name
 
-    def checkoutPage(self, payref, return_url = "", item_description = ""):
+    def checkoutPage(self, payref: str, return_url: str = "", item_description: str = "") -> str:
         """ 
         Method to return the provider's checkout page 
         payref: The payments we are charging for (str OWNERCODE-RECEIPTNUMBER)
@@ -27,7 +28,7 @@ class PaymentProcessor(object):
         """
         raise NotImplementedError()
 
-    def receive(self, rawdata):
+    def receive(self, rawdata: str) -> None:
         """ 
         Method to be called by the provider via an endpoint on receipt of payment.
         rawdata is a str containing the data in whatever format we get from the provider for parsing.
@@ -35,38 +36,43 @@ class PaymentProcessor(object):
         """
         raise NotImplementedError()
 
-    def getDataParam(self, data, p):
+    def getDataParam(self, data: str, p: str) -> str:
         """ Returns a URL encoded parameter p from data (str). """
         for b in data.split("&"):
             if b.startswith(p):
                 return b.split("=")[1]
         return ""
 
-    def getDataParamF(self, data, p):
+    def getDataParamF(self, data: str, p: str) -> float:
         """ Returns a data parameter as a float """
         return asm3.utils.cfloat(self.getDataParam(data, p))
 
-    def getDataParamC(self, data, p):
+    def getDataParamC(self, data: str, p: str) -> int:
         """ Returns a data parameter as a currency integer """
         return asm3.utils.cint( asm3.utils.cfloat(self.getDataParam(data, p)) * 100 )
 
-    def getPayments(self, payref):
+    def getPayments(self, payref: str) -> Results:
         """ Returns the list of payment records for payref (largest first) """
         receiptnumber = self.getReceiptNumber(payref)
         return self.dbo.query(asm3.financial.get_donation_query(self.dbo) + " WHERE od.ReceiptNumber=? AND od.Date Is Null ORDER BY od.Donation DESC", [receiptnumber])
 
-    def getReceiptNumber(self, payref):
+    def getReceiptNumber(self, payref: str) -> str:
         """ Extracts the receipt number from a payref """
         return payref.split("-")[1]
 
-    def isPaymentReceived(self, payref):
+    def isPaymentReceived(self, payref: str) -> bool:
         """ Returns False if the payment(s) comprising payref have not been received """
         receiptnumber = self.getReceiptNumber(payref)
         return 0 == self.dbo.query_int("select count(*) from ownerdonation where receiptnumber=? and date is null", [receiptnumber])
 
-    def markPaymentReceived(self, payref, trxid, received, vat, fee, rawdata):
+    def markPaymentReceived(self, payref: str, trxid: str, received: int, vat: int, fee: int, rawdata: str) -> None:
         """ 
         Marks all payments in payref received.
+        trxid: Transaction ID from the payment service (for ChequeNumber column)
+        received (int): The gross amount received
+        vat (int): Any vat/tax amount
+        fee (int): The transaction fee aount charged
+        rawdata (str): The raw data from the payment service.
         The fee is only applied to the first payment if there are multiple payments in the payref.
         It is expected that received, vat and fee are all integer currency amounts in whole pence.
         """
@@ -79,7 +85,7 @@ class PaymentProcessor(object):
                 fee=asm3.utils.iif(i==0 and fee>0, fee, 0),
                 rawdata=rawdata )
 
-    def validatePaymentReference(self, payref):
+    def validatePaymentReference(self, payref: str) -> bool:
         """
         Checks that payref is valid
         Payment references should start with a person code, followed by a dash, then the receipt number.

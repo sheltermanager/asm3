@@ -6,28 +6,28 @@ from asm3.al import debug as asm_debug
 from .base import PaymentProcessor, ProcessorError, PayRefError, AlreadyReceivedError
 
 from asm3.sitedefs import BASE_URL
+from asm3.typehints import Database, Dict, Generator, Results
 
 class Cardcom(PaymentProcessor):
     """Cardcom provider http://kb.cardcom.co.il/article/AA-00402/0/"""
 
-    def __init__(self, dbo):
+    def __init__(self, dbo: Database) -> None:
         PaymentProcessor.__init__(self, dbo, "cardcom")
         self.paymentmethodmapping = asm3.utils.json_parse(asm3.configuration.cardcom_paymentmethodmapping(self.dbo))
         self.paymenttypemapping = asm3.utils.json_parse(asm3.configuration.cardcom_paymenttypemapping(self.dbo))
 
-
-    def map_item_or_default(self, item, mapdict):
+    def map_item_or_default(self, item: str, mapdict: Dict) -> str:
         asm_debug(f"item: {item}")
         asm_debug(f"mapdict: {mapdict}")
         return mapdict[str(item)] if str(item) in mapdict else mapdict["default"]
 
-    def map_method(self, method):
+    def map_method(self, method: str) -> str:
         return self.map_item_or_default(method, self.paymentmethodmapping)
 
-    def map_type(self, payment_type):
+    def map_type(self, payment_type: str) -> str:
         return self.map_item_or_default(payment_type, self.paymenttypemapping)
 
-    def getReceiptInfo(self, records, total_charge_sum):
+    def getReceiptInfo(self, records: Results, total_charge_sum: str) -> Dict:
         methods = []
         payment_types = []
         references = []
@@ -75,8 +75,7 @@ class Cardcom(PaymentProcessor):
             data["receiptfields"] = receiptfields
         return data
 
-
-    def getInvoiceItems(self, records):
+    def getInvoiceItems(self, records: Results) -> Generator[Dict, None, None]:
         for index, record in enumerate(records, start=1):
             description = record.DONATIONNAME
             price = round(record.DONATION, 2)
@@ -86,11 +85,13 @@ class Cardcom(PaymentProcessor):
             yield {"InvoiceLines%d.Quantity" % index: 1}
             yield {"InvoiceLines%d.Price" % index: price} 
 
-    def tokenCharge(self, payref, item_description = "", installments = 1):
+    def tokenCharge(self, payref: str, item_description: str = "", installments: int = 1) -> None:
         payments = self.getPayments(payref)
-        total_charge_sum = sum(
-            round(r.DONATION, 2) + (r.VATAMOUNT if r.VATAMOUNT > 0 else 0) for r in payments # add VAT for consistency with other payment providers
-        ) / 100.0
+        total_charge_sum = 0.0
+        for r in payments:
+            total_charge_sum += round(r.DONATION, 2)
+            if r.VATAMOUNT: total_charge_sum += r.VATAMOUNT # add VAT for consistency with other ayment providers
+        total_charge_sum = total_charge_sum / 100.0
         client_reference_id = "%s-%s" % (self.dbo.database, payref) # prefix database to payref 
         OwnerID = payments[0].OWNERID
         p = asm3.person.get_person(self.dbo, OwnerID)
@@ -153,7 +154,7 @@ class Cardcom(PaymentProcessor):
             raise Exception(_("Token charge does not support this payment method."))
 
 
-    def checkoutPage(self, payref, return_url="", item_description=""):
+    def checkoutPage(self, payref: str, return_url: str = "", item_description: str = "") -> str:
         try:
             url = self.checkoutUrl(payref, return_url, item_description)
             return """<DOCTYPE html>
@@ -171,7 +172,7 @@ class Cardcom(PaymentProcessor):
                 <body>%s</body>
                 </html>""" % err
 
-    def checkoutUrl(self, payref, return_url="", item_description=""):
+    def checkoutUrl(self, payref: str, return_url: str = "", item_description: str = "") -> str:
         asm_debug("%s %s %s" % (payref, return_url, item_description), "cardcom.checkoutUrl", self.dbo)
         payments = self.getPayments(payref)
         total_charge_sum = sum(
@@ -279,9 +280,7 @@ class Cardcom(PaymentProcessor):
             asm_debug(f"receiptinfo: {receiptinfo}")
             raise Exception(f"Cardcom error: {cardcom_reply['Description']}")
 
-
-
-    def receive(self, rawdata):
+    def receive(self, rawdata: str) -> None:
         asm_debug(rawdata, "cardcom.receive", self.dbo)
         # make request to retrieve more information on the transaction
         params = asm3.utils.parse_qs(rawdata)
@@ -367,5 +366,3 @@ class Cardcom(PaymentProcessor):
             InvoiceResponseCode = results.get("InvoiceResponseCode")
             if InvoiceResponseCode != "0":
                 asm3.al.error("Invoice not created for %s. Response code: %s" % (payref, InvoiceResponseCode), "cardcom.receive", self.dbo)
-
-        return
