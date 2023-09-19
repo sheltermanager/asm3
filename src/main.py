@@ -4855,6 +4855,8 @@ class move_adopt(JSONEndpoint):
                 "feetypeid":    post["feetypeid"],
                 "from":         tokens["FROM"] or asm3.configuration.email(dbo),
                 "to":           post["emailaddress"],
+                "cc":           tokens["CC"] or "",
+                "bcc":          tokens["BCC"] or "",
                 "subject":      tokens["SUBJECT"] or _("Adoption Checkout", l),
                 "body":         tokens["BODY"]
             }

@@ -1,6 +1,7 @@
 48
 ================
 
+19/09/23 Fix CC and BCC tokens in email templates for adoption checkout
 18/09/23 Disable autolink plugin for document templates
 18/09/23 type hints, users, utils #1320
 18/09/23 type hints, service, sitedefs, smcom, stock, template #1320
