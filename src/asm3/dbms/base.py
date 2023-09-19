@@ -11,6 +11,7 @@ import sys
 import time
 
 from asm3.sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES
+from asm3.typehints import Any, Dict, Generator, List, Tuple
 
 class ResultRow(dict):
     """
@@ -18,25 +19,25 @@ class ResultRow(dict):
     in addition to `obj['foo']`. 
     It's also case insensitive as dbms tend to be on column names.
     """
-    def copy(self):
+    def copy(self) -> Any:
         return ResultRow(dict.copy(self))
 
-    def __getattr__(self, key):
+    def __getattr__(self, key: str) -> Any:
         try:
             return self[key.upper()]
         except KeyError as k:
             raise AttributeError(k)
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key: str, value: Any) -> None:
         self[key.upper()] = value
 
-    def __delattr__(self, key):
+    def __delattr__(self, key: str) -> None:
         try:
             del self[key.upper()]
         except KeyError as k:
             raise AttributeError(k)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<ResultRow ' + dict.__repr__(self) + '>'
 
 class QueryBuilder(object):
@@ -51,18 +52,18 @@ class QueryBuilder(object):
 
     dbo.query(qb.sql(), qb.params())
     """
-    sselect = ""
-    sfrom = ""
-    sjoins = ""
-    swhere = ""
-    sorderby = ""
-    values = []
-    dbo = None
+    sselect: str = ""
+    sfrom: str = ""
+    sjoins: str = ""
+    swhere: str = ""
+    sorderby: str = ""
+    values: List = []
+    dbo: Any = None
     
-    def __init__(self, dbo):
+    def __init__(self, dbo: Any):
         self.dbo = dbo
     
-    def select(self, s, fromclause = ""):
+    def select(self, s: str, fromclause: str = "") -> None:
         if s.lower().startswith("select"):
             self.sselect = s
         else:
@@ -70,13 +71,13 @@ class QueryBuilder(object):
         if fromclause != "":
             self.sfrom = " FROM %s " % fromclause
     
-    def innerjoin(self, table, cond):
+    def innerjoin(self, table: str, cond: str) -> None:
         self.sjoins += "INNER JOIN %s ON %s " % (table, cond)
     
-    def leftjoin(self, table, cond):
+    def leftjoin(self, table: str, cond: str) -> None:
         self.sjoins += "LEFT OUTER JOIN %s ON %s " % (table, cond)
     
-    def where(self, k, v = "", cond = "and", operator = "="):
+    def where(self, k: str, v: Any = "", cond: str = "and", operator: str = "=") -> None:
         """ If only one param is given, it is treated as a clause by itself """
         if self.swhere != "":
             self.swhere += " %s " % cond
@@ -88,16 +89,16 @@ class QueryBuilder(object):
             self.swhere += "%s %s ? " % (k, operator)
             self.values.append(v)
     
-    def like(self, k, v, cond = "and"):
+    def like(self, k: str, v: str, cond: str = "and") -> None:
         self.where("LOWER(%s)" % k, "%%%s%%" % v.lower(), cond, "LIKE")
     
-    def orderby(self, s):
+    def orderby(self, s: str) -> None:
         self.sorderby = " ORDER BY %s" % s
     
-    def sql(self):
+    def sql(self) -> str:
         return self.sselect + " " + self.sfrom + self.sjoins + self.swhere + self.sorderby
     
-    def params(self):
+    def params(self) -> List:
         return self.values
 
 class Database(object):
@@ -132,11 +133,11 @@ class Database(object):
     type_integer = "INTEGER"
     type_float = "REAL"
 
-    def connect(self):
+    def connect(self) -> Any:
         """ Virtual: Connect to the database and return the connection """
         raise NotImplementedError()
 
-    def cursor_open(self):
+    def cursor_open(self) -> Tuple[Any, Any]:
         """ Returns a tuple containing an open connection and cursor.
             If the dbo object contains an active connection, we'll just use
             that to get a cursor to save time.
@@ -149,7 +150,7 @@ class Database(object):
             s = c.cursor()
         return c, s
 
-    def cursor_close(self, c, s):
+    def cursor_close(self, c: Any, s: Any) -> None:
         """ Closes a connection and cursor pair. If self.connection exists, then
             c must be it, so don't close it. Connection caching in this object
             is done by processes called via cron.py as they do not use pooling.
@@ -164,53 +165,53 @@ class Database(object):
             except:
                 pass
 
-    def ddl_add_column(self, table, column, coltype):
+    def ddl_add_column(self, table: str, column: str, coltype: str) -> str:
         return "ALTER TABLE %s ADD %s %s" % (table, column, coltype)
 
-    def ddl_add_index(self, name, table, column, unique = False, partial = False):
+    def ddl_add_index(self, name: str, table: str, column: str, unique: bool = False, partial: bool = False) -> str:
         u = ""
         if unique: u = "UNIQUE "
         return "CREATE %sINDEX %s ON %s (%s)" % (u, name, table, column)
 
-    def ddl_add_sequence(self, table, startat):
+    def ddl_add_sequence(self, table: str, startat: int) -> str:
         return "" # Not all RDBMSes support sequences so don't do anything by default
 
-    def ddl_add_table(self, name, fieldblock):
+    def ddl_add_table(self, name: str, fieldblock: str) -> str:
         return "CREATE TABLE %s (%s)" % (name, fieldblock)
 
-    def ddl_add_table_column(self, name, coltype, nullable = True, pk = False):
+    def ddl_add_table_column(self, name: str, coltype: str, nullable: bool = True, pk: bool = False) -> str:
         nullstr = "NOT NULL"
         if nullable: nullstr = "NULL"
         pkstr = ""
         if pk: pkstr = " PRIMARY KEY"
         return "%s %s %s%s" % ( name, coltype, nullstr, pkstr )
 
-    def ddl_add_view(self, name, sql):
+    def ddl_add_view(self, name: str, sql: str) -> str:
         return "CREATE VIEW %s AS %s" % (name, sql)
 
-    def ddl_drop_column(self, table, column):
+    def ddl_drop_column(self, table: str, column: str) -> str:
         return "ALTER TABLE %s DROP COLUMN %s" % (table, column)
 
-    def ddl_drop_index(self, name, table):
+    def ddl_drop_index(self, name: str, table: str) -> str:
         return "DROP INDEX %s" % name
 
-    def ddl_drop_notnull(self, table, column, existingtype):
+    def ddl_drop_notnull(self, table: str, column: str, existingtype: str) -> str:
         return "" # Not all providers support this
 
-    def ddl_drop_sequence(self, table):
+    def ddl_drop_sequence(self, table: str) -> str:
         return "" # Not all RDBMSes support sequences so don't do anything by default
 
-    def ddl_drop_view(self, name):
+    def ddl_drop_view(self, name: str) -> str:
         return "DROP VIEW IF EXISTS %s" % name
 
-    def ddl_modify_column(self, table, column, newtype, using = ""):
+    def ddl_modify_column(self, table: str, column: str, newtype: str, using: str = "") -> str:
         return "" # Not all providers support this
 
-    def encode_str_before_write(self, values):
+    def encode_str_before_write(self, values: Dict) -> Dict:
         """ Fix and encode/decode any string values before storing them in the database.
             string column names with an asterisk will not do XSS escaping.
         """
-        def transform(s):
+        def transform(s: Any) -> Any:
             """ Transforms values going into the database """
             if s is None: return ""
             s = s.replace("`", "&bt;") # Encode backticks as they're going to become apostrophes
@@ -232,7 +233,7 @@ class Database(object):
                 values[k] = "%s" % v
         return values
 
-    def encode_str_after_read(self, v):
+    def encode_str_after_read(self, v: Any) -> Any:
         """
         Encodes any string values returned by a query result.
         If v is a str, re-encodes it as an ascii str with HTML entities
@@ -256,7 +257,7 @@ class Database(object):
             asm3.al.error(str(err), "Database.encode_str_after_read", self, sys.exc_info())
             raise err
 
-    def escape(self, s):
+    def escape(self, s: str) -> str:
         """ Makes a string value safe for database queries
             If available, dbms implementations should override this and use whatever 
             is available in the driver.
@@ -266,11 +267,11 @@ class Database(object):
         s = s.replace("'", "`")
         return s
 
-    def escape_xss(self, s):
+    def escape_xss(self, s: str) -> str:
         """ XSS escapes a string """
         return s.replace("<", "&lt;").replace(">", "&gt;")
 
-    def execute(self, sql, params=None, override_lock=False):
+    def execute(self, sql: str, params: List = None, override_lock: bool = False) -> int:
         """
             Runs the action query given and returns rows affected
             override_lock: if this is set to False and dbo.locked = True,
@@ -308,14 +309,14 @@ class Database(object):
             except:
                 pass
 
-    def execute_dbupdate(self, sql, params=None):
+    def execute_dbupdate(self, sql: str, params: List = None) -> int:
         """
         Runs an action query for a dbupdate script (sets override_lock
         to True so we don't forget)
         """
         return self.execute(sql, params=params, override_lock=True)
 
-    def execute_many(self, sql, params=(), override_lock=False):
+    def execute_many(self, sql: str, params: List = (), override_lock: bool = False) -> int:
         """
             Runs the action query given with a list of tuples that contain
             substitution parameters. Eg:
@@ -351,19 +352,19 @@ class Database(object):
             except:
                 pass
 
-    def first_row(self, rows, valueIfEmpty=None):
+    def first_row(self, rows: List[ResultRow], valueIfEmpty: Any = None) -> ResultRow:
         """ Returns the first row in rows or valueIfEmpty if rows has no elements """
         if len(rows) == 0: return valueIfEmpty
         return rows[0]
 
-    def get_id(self, table):
+    def get_id(self, table: str) -> int:
         """ Returns the next ID for a table """
         nextid = self.get_id_cache(table)
         self.update_asm2_primarykey(table, nextid)
         asm3.al.debug("get_id: %s -> %d (cache_pk)" % (table, nextid), "Database.get_id", self)
         return nextid
 
-    def get_id_cache(self, table):
+    def get_id_cache(self, table: str) -> int:
         """ Returns the next ID for a table using an in-memory cache. """
         cache_key = "%s_pk_%s" % (self.database, table)
         id = asm3.cachemem.increment(cache_key)
@@ -372,14 +373,14 @@ class Database(object):
             asm3.cachemem.put(cache_key, id, 86400)
         return id
 
-    def get_id_max(self, table):
+    def get_id_max(self, table: str) -> int:
         """ Returns the next ID for a table using MAX(ID) """
         return self.query_int("SELECT MAX(ID) FROM %s" % table) + 1
 
-    def get_query_builder(self):
+    def get_query_builder(self) -> Any:
         return QueryBuilder(self)
 
-    def get_recordversion(self):
+    def get_recordversion(self) -> int:
         """
         Returns an integer representation of now for use in the RecordVersion
         column for optimistic locks.
@@ -390,7 +391,7 @@ class Database(object):
         i += d.second
         return i
 
-    def has_structure(self):
+    def has_structure(self) -> bool:
         """ Returns True if the current DB has an animal table """
         try:
             self.execute("select count(*) from animal")
@@ -398,7 +399,9 @@ class Database(object):
         except:
             return False
 
-    def insert(self, table, values, user="", generateID=True, setOverrideDBLock=False, setRecordVersion=True, setCreated=True, writeAudit=True):
+    def insert(self, table: str, values: Dict, user: str = "", generateID: bool = True, 
+               setOverrideDBLock: bool = False, setRecordVersion: bool = True, 
+               setCreated: bool = True, writeAudit: bool = True) -> int:
         """ Inserts a row into a table.
             table: The table to insert into
             values: A dict of column names with values
@@ -427,7 +430,9 @@ class Database(object):
             asm3.audit.create(self, user, table, iid, asm3.audit.get_parent_links(values, table), asm3.audit.dump_row(self, table, iid))
         return iid
 
-    def update(self, table, where, values, user="", setOverrideDBLock=False, setRecordVersion=True, setLastChanged=True, writeAudit=True):
+    def update(self, table: str, where: str, values: Dict, user: str = "", 
+               setOverrideDBLock: bool = False, setRecordVersion: bool = True, 
+               setLastChanged: bool = True, writeAudit: bool = True) -> int:
         """ Updates a row in a table.
             table: The table to update
             where: Either a where clause or an int ID value for ID=where
@@ -456,7 +461,7 @@ class Database(object):
             asm3.audit.edit(self, user, table, iid, asm3.audit.get_parent_links(values, table), asm3.audit.map_diff(preaudit, postaudit, asm3.audit.get_readable_fields_for_table(table)))
         return rows_affected
 
-    def delete(self, table, where, user="", writeAudit=True, writeDeletion=True):
+    def delete(self, table: str, where: str, user: str = "", writeAudit: bool = True, writeDeletion: bool = True) -> int:
         """ Deletes row ID=iid from table 
             table: The table to delete from
             where: Either a where clause or an int ID value for ID=where
@@ -473,11 +478,11 @@ class Database(object):
             asm3.audit.insert_deletions(self, user, table, where)
         return self.execute("DELETE FROM %s WHERE %s" % (table, where))
 
-    def install_stored_procedures(self):
+    def install_stored_procedures(self) -> None:
         """ Install any supporting stored procedures (typically for reports) needed for this backend """
         pass
 
-    def _log_sql(self, sql, params):
+    def _log_sql(self, sql: str, params: List) -> None:
         """ If outputting statements to a log is enabled, write the statement
             substitutes any parameters """
         if DB_EXEC_LOG == "":
@@ -488,7 +493,7 @@ class Database(object):
         with open(DB_EXEC_LOG.replace("{database}", self.database), "a", encoding="utf-8") as f:
             f.write("-- %s\n%s;\n" % (self.now(), sql))
 
-    def now(self, timenow=True, offset=0, settime=""):
+    def now(self, timenow: bool = True, offset: int = 0, settime: str = "") -> datetime.datetime:
         """ Returns now as a Python date, adjusted for the database timezone.
             timenow: if True, includes the current time
             offset:  Add this many days to now (negative values supported)
@@ -508,14 +513,14 @@ class Database(object):
             d = d.replace(hour = asm3.utils.cint(timebits[0]), minute = asm3.utils.cint(timebits[1]), second = asm3.utils.cint(timebits[2]), microsecond = 0)
         return d
 
-    def today(self, offset=0, settime=""):
+    def today(self, offset: int = 0, settime: str = "") -> datetime.datetime:
         """ Returns today at midnight
             offset:  Add this many days to now (negative values supported) 
             settime: A time in HH:MM:SS format to set
         """
         return self.now(timenow=False, offset=offset, settime=settime)
 
-    def optimistic_check(self, table, tid, version):
+    def optimistic_check(self, table: str, tid: int, version: int) -> bool:
         """ Verifies that the record with ID tid in table still has
         RecordVersion = version.
         If not, returns False otherwise True
@@ -525,7 +530,7 @@ class Database(object):
         if version < 0: return True
         return version == self.query_int("SELECT RecordVersion FROM %s WHERE ID = %d" % (table, tid))
 
-    def query(self, sql, params=None, limit=0, distincton=""):
+    def query(self, sql: str, params: List = None, limit: int = 0, distincton: str = "") -> List[ResultRow]:
         """ Runs the query given and returns the resultset as a list of ResultRow objects. 
             All fieldnames are uppercased when returned.
             params: tuple of parameters for the query
@@ -590,7 +595,7 @@ class Database(object):
             except:
                 pass
 
-    def query_cache(self, sql, params=None, age=60, limit=0, distincton=""):
+    def query_cache(self, sql: str, params: List = None, age: int = 60, limit: int = 0, distincton: str = "") -> List[ResultRow]:
         """
         Runs the query given and caches the result
         for age seconds. If there's already a valid cached
@@ -608,7 +613,7 @@ class Database(object):
         asm3.cachedisk.put(cache_key, self.database, results, age)
         return results
 
-    def query_columns(self, sql, params=None):
+    def query_columns(self, sql: str, params: List = None) -> List[str]:
         """
             Runs the query given and returns the column names as
             a list in the order they appeared in the query
@@ -638,7 +643,7 @@ class Database(object):
             except:
                 pass
 
-    def query_explain(self, sql, params=None):
+    def query_explain(self, sql: str, params: List = None) -> str:
         """
         Runs an EXPLAIN query
         """
@@ -650,7 +655,7 @@ class Database(object):
             o.append(r[0])
         return "\n".join(o)
 
-    def query_generator(self, sql, params=None):
+    def query_generator(self, sql: str, params: List = None) -> Generator[ResultRow, None, None]:
         """ Runs the query given and returns the resultset as a list of dictionaries. 
             All fieldnames are uppercased when returned. 
             generator function version that uses a forward cursor.
@@ -688,7 +693,7 @@ class Database(object):
             except:
                 pass
 
-    def query_named_params(self, sql, params, age=0):
+    def query_named_params(self, sql: str, params: List, age: int = 0) -> List[ResultRow]:
         """ Allows use of :named :params in a query (must terminate with space, comma or right parentheses). params should be a dict. 
             if age is not zero, uses query_cache instead.
         """
@@ -715,11 +720,11 @@ class Database(object):
         else:
             return self.query_cache(sql, values, age=age)
 
-    def query_row(self, table, iid):
+    def query_row(self, table: str, iid: int) -> List[ResultRow]:
         """ Returns the complete table row with ID=iid """
         return self.query("SELECT * FROM %s WHERE ID=%s" % (table, iid))
 
-    def query_to_insert_sql(self, sql, table, escapeCR = ""):
+    def query_to_insert_sql(self, sql: str, table: str, escapeCR: str = "") -> Generator[str, None, None]:
         """
         Generator function that Writes an INSERT query for the list of rows 
         returned by running sql (a list containing dictionaries)
@@ -728,7 +733,7 @@ class Database(object):
         for r in self.query_generator(sql):
             yield self.row_to_insert_sql(table, r, escapeCR)
 
-    def query_tuple(self, sql, params=None, limit=0):
+    def query_tuple(self, sql: str, params: List = None, limit: int = 0) -> Tuple[Tuple]:
         """ Runs the query given and returns the resultset
             as a tuple of tuples.
         """
@@ -757,7 +762,7 @@ class Database(object):
             except:
                 pass
 
-    def query_tuple_columns(self, sql, params=None, limit=0):
+    def query_tuple_columns(self, sql: str, params: List = None, limit: int = 0) -> Tuple[Tuple, List[str]]:
         """ Runs the query given and returns the resultset
             as a grid of tuples and a list of columnames
         """
@@ -790,7 +795,7 @@ class Database(object):
             except:
                 pass
 
-    def query_int(self, sql, params=None):
+    def query_int(self, sql: str, params: List = None) -> int:
         """ Runs a query and returns the first item from the first column as an integer """
         r = self.query_tuple(sql, params=params)
         try:
@@ -799,7 +804,7 @@ class Database(object):
         except:
             return int(0)
 
-    def query_float(self, sql, params=None):
+    def query_float(self, sql: str, params: List = None) -> float:
         """ Runs a query and returns the first item from the first column as a float """
         r = self.query_tuple(sql, params=params)
         try:
@@ -808,7 +813,7 @@ class Database(object):
         except:
             return float(0)
 
-    def query_list(self, sql, params=None):
+    def query_list(self, sql: str, params: List = None) -> List:
         """ Runs a query and returns the first column of all rows as a list """
         rows = self.query_tuple(sql, params=params)
         l = []
@@ -816,7 +821,7 @@ class Database(object):
             l.append(r[0])
         return l
 
-    def query_string(self, sql, params=None):
+    def query_string(self, sql: str, params: List = None) -> str:
         """ Runs a query and returns the first item from the first column as a string """
         r = self.query_tuple(sql, params=params)
         try:
@@ -825,7 +830,7 @@ class Database(object):
         except:
             return ""
 
-    def query_date(self, sql, params=None):
+    def query_date(self, sql: str, params: List = None) -> datetime.datetime:
         """ Runs a query and returns the first item from the first column as a date """
         r = self.query_tuple(sql, params=params)
         try:
@@ -834,7 +839,7 @@ class Database(object):
         except:
             return None
 
-    def row_to_insert_sql(self, table, r, escapeCR = ""):
+    def row_to_insert_sql(self, table: str, r: ResultRow, escapeCR: str = "") -> str:
         """
         function that Writes an INSERT query for a result row
         """
@@ -848,7 +853,7 @@ class Database(object):
         donefields = True
         return "INSERT INTO %s (%s) VALUES (%s);\n" % (table, ",".join(fields), ",".join(values))
 
-    def split_queries(self, sql):
+    def split_queries(self, sql: str) -> List[str]:
         """
         Splits semi-colon separated queries in a single
         string into a list and returns them for execution.
@@ -871,27 +876,27 @@ class Database(object):
             x += 1
         return queries
 
-    def sql_atoi(self, fieldexpr):
+    def sql_atoi(self, fieldexpr: str) -> str:
         """ Removes all but the numbers from fieldexpr """
         return self.sql_regexp_replace(fieldexpr, r"[^0123456789]", "")
 
-    def sql_cast(self, expr, newtype):
+    def sql_cast(self, expr: str, newtype: str) -> str:
         """ Writes a database independent cast for expr to newtype """
         return "CAST(%s AS %s)" % (expr, newtype)
 
-    def sql_cast_char(self, expr):
+    def sql_cast_char(self, expr: str) -> str:
         """ Writes a database independent cast for expr to a char """
         return self.sql_cast(expr, "TEXT")
 
-    def sql_char_length(self, item):
+    def sql_char_length(self, item: str) -> str:
         """ Writes a database independent char length """
         return "LENGTH(%s)" % item
 
-    def sql_concat(self, items):
+    def sql_concat(self, items: List[str]) -> str:
         """ Writes concat for a list of items """
         return " || ".join(items)
 
-    def sql_date(self, d, wrapParens=True, includeTime=True):
+    def sql_date(self, d: datetime.datetime, wrapParens: bool = True, includeTime: bool = True) -> str:
         """ Writes a Python date in SQL form """
         if d is None: return "NULL"
         s = "%04d-%02d-%02d %02d:%02d:%02d" % ( d.year, d.month, d.day, d.hour, d.minute, d.second )
@@ -900,18 +905,18 @@ class Database(object):
         if wrapParens: return "'%s'" % s
         return s
 
-    def sql_greatest(self, items):
+    def sql_greatest(self, items: List[str]) -> str:
         """ Writes greatest for a list of items """
         return "GREATEST(%s)" % ",".join(items)
 
-    def sql_ilike(self, expr1, expr2 = "?"):
+    def sql_ilike(self, expr1: str, expr2: str = "?") -> str:
         """ Writes the SQL for an insensitive like comparison, 
             eg: sql_ilike("field", "?")    ==     LOWER(field) LIKE ? 
             requires expr2 to be lower case if it is a string literal.
         """
         return f"LOWER({expr1}) LIKE {expr2}"
 
-    def sql_in(self, results, columnname = "ID"):
+    def sql_in(self, results: List[ResultRow], columnname: str = "ID") -> str:
         """ Writes a SQL IN clause using columnname for each row in the results, return value does not include parentheses, eg: 1,2 """
         ins = []
         for r in results:
@@ -919,49 +924,49 @@ class Database(object):
         if len(ins) == 0: ins.append("-999") # insert a dummy value that will never match anything so the clause is always valid
         return "%s" % ",".join(ins)
 
-    def sql_interval(self, columnname, number, sign="+", units="months"):
+    def sql_interval(self, columnname: str, number: int, sign: str = "+", units: str = "months") -> str:
         """
         Used to add or a subtract a period to/from a date column 
         """
         return f"{columnname} {sign} INTERVAL '{number} {units}'"
 
-    def sql_placeholders(self, l):
+    def sql_placeholders(self, l: List):
         """ Writes enough ? placeholders for items in l """
         return ",".join('?'*len(l))
 
-    def sql_now(self, wrapParens=True, includeTime=True):
+    def sql_now(self, wrapParens: bool = True, includeTime: bool = True) -> str:
         """ Writes now as an SQL date """
         return self.sql_date(self.now(), wrapParens=wrapParens, includeTime=includeTime)
 
-    def sql_limit(self, x):
+    def sql_limit(self, x: int) -> str:
         """ Writes a limit clause to X items """
         return "LIMIT %s" % x
     
-    def sql_md5(self, s):
+    def sql_md5(self, s: str) -> str:
         """ Writes an MD5 function for expression s """
         return "MD5(%s)" % s
 
-    def sql_regexp_replace(self, fieldexpr, pattern="?", replacestr="?"):
+    def sql_regexp_replace(self, fieldexpr: str, pattern: str = "?", replacestr: str = "?") -> str:
         """ Writes a regexp replace expression that replaces characters matching pattern with replacestr """
         if pattern != "?": pattern = "'%s'" % pattern
         if replacestr != "?": replacestr = "'%s'" % self.escape(replacestr)
         return "REGEXP_REPLACE(%s, %s, %s)" % (fieldexpr, pattern, replacestr)
 
-    def sql_replace(self, fieldexpr, findstr="?", replacestr="?"):
+    def sql_replace(self, fieldexpr: str, findstr: str = "?", replacestr: str = "?") -> str:
         """ Writes a replace expression that finds findstr in fieldexpr, replacing with replacestr """
         if findstr != "?": findstr = "'%s'" % self.escape(findstr)
         if replacestr != "?": replacestr = "'%s'" % self.escape(replacestr)
         return "REPLACE(%s, %s, %s)" % (fieldexpr, findstr, replacestr)
 
-    def sql_substring(self, fieldexpr, pos, chars):
+    def sql_substring(self, fieldexpr: str, pos: str, chars: str) -> str:
         """ SQL substring function from pos for chars """
         return "SUBSTR(%s, %s, %s)" % (fieldexpr, pos, chars)
 
-    def sql_today(self, wrapParens=True, includeTime=True):
+    def sql_today(self, wrapParens: bool = True, includeTime: bool = True) -> str:
         """ Writes today as an SQL date """
         return self.sql_date(self.today(), wrapParens=wrapParens, includeTime=includeTime)
 
-    def sql_value(self, v):
+    def sql_value(self, v: Any) -> str:
         """ Given a value v, writes it as an SQL parameter value """
         if v is None:
             return "null"
@@ -972,11 +977,11 @@ class Database(object):
         else:
             return str(v)
 
-    def sql_zero_pad_left(self, fieldexpr, digits):
+    def sql_zero_pad_left(self, fieldexpr: str, digits: int) -> str:
         """ Writes a function that zero pads an expression with zeroes to digits """
         return fieldexpr
 
-    def stats(self):
+    def stats(self) -> ResultRow:
         return self.first_row(self.query("select " \
             "(select count(*) from animal where archived=0) as shelteranimals, " \
             "(select count(*) from animal) as totalanimals, " \
@@ -990,13 +995,13 @@ class Database(object):
             "(select count(*) from media where mediamimetype='application/pdf') as totalpdf, " \
             "(select sum(mediasize) / 1024.0 / 1024.0 from media where mediamimetype='application/pdf') as pdfsize "))
 
-    def switch_param_placeholder(self, sql):
+    def switch_param_placeholder(self, sql: str) -> str:
         """ Swaps the ? token in the sql for the usual Python DBAPI placeholder of %s 
             override if your DB driver wants another char.
         """
         return sql.replace("?", "%s")
 
-    def update_asm2_primarykey(self, table, nextid):
+    def update_asm2_primarykey(self, table: str, nextid: int) -> None:
         """
         Update the ASM2 primary key table.
         """
@@ -1007,10 +1012,10 @@ class Database(object):
         except:
             pass
 
-    def vacuum(self, tablename = ""):
+    def vacuum(self, tablename: str = "") -> None:
         pass # implement in derived classes
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Database->locale=%s:dbtype=%s:host=%s:port=%d:db=%s:user=%s:timeout=%s" % ( self.locale, self.dbtype, self.host, self.port, self.database, self.username, self.timeout )
 
 
