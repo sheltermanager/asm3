@@ -958,7 +958,7 @@ class Database(object):
         if replacestr != "?": replacestr = "'%s'" % self.escape(replacestr)
         return "REPLACE(%s, %s, %s)" % (fieldexpr, findstr, replacestr)
 
-    def sql_substring(self, fieldexpr: str, pos: str, chars: str) -> str:
+    def sql_substring(self, fieldexpr: str, pos: int, chars: int) -> str:
         """ SQL substring function from pos for chars """
         return "SUBSTR(%s, %s, %s)" % (fieldexpr, pos, chars)
 

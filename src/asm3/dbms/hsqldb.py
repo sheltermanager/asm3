@@ -9,20 +9,19 @@ class DatabaseHSQLDB(Database):
     type_integer = "INTEGER"
     type_float = "DOUBLE"
    
-    def connect(self):
+    def connect(self) -> None:
         # We can't connect to HSQL databases from Python. This class exists
         # for dumping data in HSQLDB format.
         pass
 
-    def ddl_add_table(self, name, fieldblock):
+    def ddl_add_table(self, name: str, fieldblock: str) -> str:
         return "DROP TABLE %s IF EXISTS;\nCREATE MEMORY TABLE %s (%s)" % (name, name, fieldblock)
 
-    def ddl_add_table_column(self, name, coltype, nullable = True, pk = False):
+    def ddl_add_table_column(self, name: str, coltype: str, nullable: bool = True, pk: bool = False) -> str:
         nullstr = "NOT NULL"
         if nullable: nullstr = "NULL"
         pkstr = ""
         if pk: pkstr = " PRIMARY KEY"
         name = name.upper()
         return "%s %s %s%s" % ( name, coltype, nullstr, pkstr )
-
 
