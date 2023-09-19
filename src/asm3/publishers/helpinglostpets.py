@@ -5,6 +5,7 @@ import asm3.lostfound
 
 from .base import FTPPublisher
 from asm3.sitedefs import HELPINGLOSTPETS_FTP_HOST
+from asm3.typehints import Database, PublishCriteria, ResultRow
 
 import os
 import sys
@@ -13,7 +14,7 @@ class HelpingLostPetsPublisher(FTPPublisher):
     """
     Handles publishing to helpinglostpets.com
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         l = dbo.locale
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
@@ -24,7 +25,7 @@ class HelpingLostPetsPublisher(FTPPublisher):
             asm3.configuration.helpinglostpets_password(dbo))
         self.initLog("helpinglostpets", asm3.i18n._("HelpingLostPets Publisher", l))
 
-    def hlpYesNo(self, condition):
+    def hlpYesNo(self, condition: bool) -> str:
         """
         Returns a CSV entry for yes or no based on the condition
         """
@@ -33,7 +34,7 @@ class HelpingLostPetsPublisher(FTPPublisher):
         else:
             return "\"No\""
 
-    def run(self):
+    def run(self) -> None:
         
         if self.isPublisherExecuting(): return
         self.updatePublisherProgress(0)
@@ -124,7 +125,7 @@ class HelpingLostPetsPublisher(FTPPublisher):
         self.saveLog()
         self.setPublisherComplete()
 
-    def processFoundAnimal(self, an, shelterid=""):
+    def processFoundAnimal(self, an: ResultRow, shelterid: str = "") -> str:
         """
         Processes a found animal and returns a CSV line
         """
@@ -173,7 +174,7 @@ class HelpingLostPetsPublisher(FTPPublisher):
         line.append("\"%s\"" % asm3.i18n.python2unix(an["LASTCHANGEDDATE"]))
         return ",".join(line)
 
-    def processAnimal(self, an, shelterid=""):
+    def processAnimal(self, an: ResultRow, shelterid: str = "") -> str:
         """ Process an animal record and return a CSV line """
         line = []
         # OrgID

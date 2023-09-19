@@ -5,6 +5,7 @@ import asm3.medical
 
 from .base import FTPPublisher
 from asm3.sitedefs import ADOPTAPET_FTP_HOST
+from asm3.typehints import Database, PublishCriteria, ResultRow
 
 import os
 import sys
@@ -13,7 +14,7 @@ class AdoptAPetPublisher(FTPPublisher):
     """
     Handles publishing to AdoptAPet.com
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.forceReupload = False
         publishCriteria.checkSocket = True
@@ -24,7 +25,7 @@ class AdoptAPetPublisher(FTPPublisher):
             asm3.configuration.adoptapet_password(dbo))
         self.initLog("adoptapet", "AdoptAPet Publisher")
 
-    def apYesNo(self, condition):
+    def apYesNo(self, condition: bool) -> str:
         """
         Returns a CSV entry for yes or no based on the condition
         """
@@ -33,7 +34,7 @@ class AdoptAPetPublisher(FTPPublisher):
         else:
             return "\"0\""
 
-    def apYesNoUnknown(self, ourval):
+    def apYesNoUnknown(self, ourval: int) -> str:
         """
         Returns a CSV entry for yes or no based on our yes/no/unknown.
         In our scheme 0 = yes, 1 = no, 2 = unknown
@@ -46,7 +47,7 @@ class AdoptAPetPublisher(FTPPublisher):
         else:
             return "\"\""
 
-    def apHairLength(self, a):
+    def apHairLength(self, a: ResultRow) -> str:
         """
         Returns a valid hair length entry for adoptapet.
         For species "Cat", values are "Short", "Medium" or "Long"
@@ -69,7 +70,7 @@ class AdoptAPetPublisher(FTPPublisher):
             return "Short"
         return ""
 
-    def apMapFile(self, includecolours):
+    def apMapFile(self, includecolours: bool) -> str:
         breedmap = "Appenzell Mountain Dog=Shepherd (Unknown Type)\n" \
             "Australian Cattle Dog/Blue Heeler=Australian Cattle Dog\n" \
             "Belgian Shepherd Dog Sheepdog=Belgian Shepherd\n" \
@@ -278,7 +279,7 @@ class AdoptAPetPublisher(FTPPublisher):
 
         return defmap
 
-    def apYouTubeURL(self, u):
+    def apYouTubeURL(self, u: str) -> str:
         """
         Returns a YouTube URL in the format adoptapet want - https://www.youtube.com/watch?v=X
         returns a blank if u is not a youtube URL
@@ -294,7 +295,7 @@ class AdoptAPetPublisher(FTPPublisher):
             return ""
         return "https://www.youtube.com/watch?v=%s" % watch
 
-    def run(self):
+    def run(self) -> None:
         
         self.log("AdoptAPetPublisher starting...")
 
@@ -399,7 +400,7 @@ class AdoptAPetPublisher(FTPPublisher):
         self.log(mapfile)
         self.cleanup()
 
-    def processAnimal(self, an):
+    def processAnimal(self, an: ResultRow) -> str:
         """
         Builds a line for the CSV file from an animal and returns it.
         """

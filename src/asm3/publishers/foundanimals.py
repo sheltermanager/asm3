@@ -5,6 +5,7 @@ import asm3.utils
 
 from .base import FTPPublisher, get_microchip_data
 from asm3.sitedefs import FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANIMALS_FTP_PASSWORD
+from asm3.typehints import Database, PublishCriteria, ResultRow
 
 import os, sys
 
@@ -16,14 +17,14 @@ class FoundAnimalsPublisher(FTPPublisher):
     """
     Handles publishing to foundanimals (now 24pet/foundanimals)
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             FOUNDANIMALS_FTP_HOST, FOUNDANIMALS_FTP_USER, FOUNDANIMALS_FTP_PASSWORD, ftptls=True)
         self.initLog("foundanimals", "FoundAnimals/24Pet Publisher")
 
-    def run(self):
+    def run(self) -> None:
         
         if self.isPublisherExecuting(): return
         self.updatePublisherProgress(0)
@@ -128,7 +129,7 @@ class FoundAnimalsPublisher(FTPPublisher):
         self.log(header + "\n".join(csv))
         self.cleanup()
 
-    def processAnimal(self, an, org="", email=""):
+    def processAnimal(self, an: ResultRow, org: str = "", email: str = "") -> str:
         """
         Return an animal as a line of the CSV to be submitted
         """
@@ -184,7 +185,7 @@ class FoundAnimalsPublisher(FTPPublisher):
         line.append("\"%s\"" % email)
         return self.csvLine(line)
 
-    def validate(self, an, cutoffdays):
+    def validate(self, an: ResultRow, cutoffdays: int) -> bool:
         """ Validate an animal record is ok to send.
             an: The record
             cutoffdays: Negative number of days to check against service date

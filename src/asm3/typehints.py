@@ -43,6 +43,7 @@ Results = "List[asm3.dbms.base.ResultRow]"
 
 PaymentProcessor = "asm3.paymentprocessor.base.PaymentProcessor"
 PostedData = "asm3.utils.PostedData"
+PublishCriteria = "asm3.publishers.base.PublishCriteria"
 
 MemcacheClient = "memcache.Client"
 S3Client = "S3.Client"

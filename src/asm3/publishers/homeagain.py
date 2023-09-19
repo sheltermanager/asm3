@@ -6,6 +6,7 @@ import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
 from asm3.sitedefs import HOMEAGAIN_BASE_URL
+from asm3.typehints import Database, Dict, PublishCriteria, ResultRow
 
 import sys
 
@@ -13,21 +14,21 @@ class HomeAgainPublisher(AbstractPublisher):
     """
     Handles updating HomeAgain animal microchips
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("homeagain", "HomeAgain Publisher")
         self.microchipPatterns = [ '985' ]
 
-    def getHeader(self, headers, header):
+    def getHeader(self, headers: Dict, header: str) -> str:
         """ Returns a header from the headers list of a get_url call """
         for h in headers:
             if h.startswith(header):
                 return h.strip()
         return ""
 
-    def get_homeagain_species(self, asmspeciesid):
+    def get_homeagain_species(self, asmspeciesid: int) -> str:
         SPECIES_MAP = {
             1:  "Canine",
             2:  "Feline",
@@ -56,7 +57,7 @@ class HomeAgainPublisher(AbstractPublisher):
             return SPECIES_MAP[asmspeciesid]
         return "Miscellaneous"
 
-    def run(self):
+    def run(self) -> None:
        
         self.log(self.publisherName + " starting...")
 
@@ -152,7 +153,7 @@ class HomeAgainPublisher(AbstractPublisher):
         self.saveLog()
         self.setPublisherComplete()
 
-    def processAnimal(self, an, userid=""):
+    def processAnimal(self, an: ResultRow, userid: str = "") -> str:
         """ Returns a VetXML document from an animal """
         def xe(s): 
             if s is None: return ""
@@ -213,7 +214,7 @@ class HomeAgainPublisher(AbstractPublisher):
             '<Authorisation>true</Authorisation>' \
             '</MicrochipRegistration>'
 
-    def validate(self, an):
+    def validate(self, an: ResultRow) -> bool:
         """ Validates an animal record is ok to send """
         # Validate certain items aren't blank so we aren't registering bogus data
         if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":

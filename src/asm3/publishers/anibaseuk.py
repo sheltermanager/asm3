@@ -5,6 +5,7 @@ import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
 from asm3.sitedefs import ANIBASE_BASE_URL, ANIBASE_API_USER, ANIBASE_API_KEY
+from asm3.typehints import Database, PublishCriteria, ResultRow
 
 import sys
 
@@ -13,13 +14,13 @@ class AnibaseUKPublisher(AbstractPublisher):
     Handles updating UK Identichip microchips with the Anibase web service
     (which uses VetXML)
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("anibaseuk", "Anibase UK Publisher")
 
-    def get_vetxml_species(self, asmspeciesid):
+    def get_vetxml_species(self, asmspeciesid: int) -> str:
         SPECIES_MAP = {
             1:  "Canine",
             2:  "Feline",
@@ -48,7 +49,7 @@ class AnibaseUKPublisher(AbstractPublisher):
             return SPECIES_MAP[asmspeciesid]
         return "Miscellaneous"
 
-    def run(self):
+    def run(self) -> None:
 
         self.log(self.publisherName + " starting...")
 
@@ -146,10 +147,10 @@ class AnibaseUKPublisher(AbstractPublisher):
         self.saveLog()
         self.setPublisherComplete()
 
-    def processAnimal(self, an, practiceid="", pinno=""):
+    def processAnimal(self, an: ResultRow, practiceid: str = "", pinno: str = "") -> str:
         """ Generates a VetXML document (str) from the animal """
 
-        def xe(s): 
+        def xe(s: str) -> str: 
             if s is None: return ""
             return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
@@ -206,7 +207,7 @@ class AnibaseUKPublisher(AbstractPublisher):
             '<Authorisation>true</Authorisation>' \
             '</MicrochipRegistration>'
 
-    def validate(self, an):
+    def validate(self, an: ResultRow) -> bool:
         """ Validates that an animal record is ok """
         if asm3.utils.nulltostr(an.CURRENTOWNERADDRESS).strip() == "":
             self.logError("Address for the new owner is blank, cannot process")

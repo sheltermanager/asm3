@@ -6,6 +6,7 @@ import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
 from asm3.sitedefs import AKC_REUNITE_BASE_URL, AKC_REUNITE_USER, AKC_REUNITE_PASSWORD
+from asm3.typehints import Database, PublishCriteria, ResultRow
 
 import sys
 
@@ -13,20 +14,20 @@ class AKCReunitePublisher(AbstractPublisher):
     """
     Handles updating AKC Reunite animal microchips
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("akcreunite", "AKC Reunite Publisher")
         self.microchipPatterns = ['0006', '0007', '956', '9910010']
 
-    def get_akc_species(self, asmspeciesid):
+    def get_akc_species(self, asmspeciesid: int) -> str:
         if asmspeciesid == 1: return "DOG"
         elif asmspeciesid == 2: return "CAT"
         else: 
             return "OTHR"
 
-    def run(self):
+    def run(self) -> None:
        
         self.log(self.publisherName + " starting...")
 
@@ -141,7 +142,7 @@ class AKCReunitePublisher(AbstractPublisher):
         self.saveLog()
         self.setPublisherComplete()
 
-    def processAnimal(self, an, enrollmentsourceid="", orgname="", orgtel="", orgemail="", orgaddress="", orgtown="", orgcounty="", orgpostcode=""):
+    def processAnimal(self, an: ResultRow, enrollmentsourceid="", orgname="", orgtel="", orgemail="", orgaddress="", orgtown="", orgcounty="", orgpostcode="") -> str:
         """ Returns a JSON document from an animal """
         reccountry = an.CURRENTOWNERCOUNTRY
         if reccountry is None or reccountry == "": reccountry = "USA"
@@ -200,7 +201,7 @@ class AKCReunitePublisher(AbstractPublisher):
             o["primaryContact"]["firstName"] = "org"
         return asm3.utils.json(o)
 
-    def validate(self, an):
+    def validate(self, an: ResultRow) -> bool:
         """ Validates an animal record is ok to send """
         # Validate certain items aren't blank so we aren't registering bogus data
         if asm3.utils.nulltostr(an.CURRENTOWNERADDRESS).strip() == "":

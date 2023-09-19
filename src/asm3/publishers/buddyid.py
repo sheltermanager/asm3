@@ -7,6 +7,7 @@ import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
 from asm3.sitedefs import BUDDYID_BASE_URL, BUDDYID_EMAIL, BUDDYID_PASSWORD
+from asm3.typehints import Database, PublishCriteria, ResultRow
 
 import sys
 
@@ -17,12 +18,12 @@ class BuddyIDPublisher(AbstractPublisher):
     """
     Handles microchip registrations to buddyid.com
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("buddyid", "BuddyID Publisher")
 
-    def run(self):
+    def run(self) -> None:
         
         self.log("BuddyIDPublisher starting...")
 
@@ -139,7 +140,7 @@ class BuddyIDPublisher(AbstractPublisher):
 
         self.cleanup()
 
-    def processAnimal(self, an, provider_code):
+    def processAnimal(self, an: ResultRow, provider_code: str) -> str:
         """ Processes an animal record and returns a data dictionary for upload as JSON """
         d = {}
         d["account"] = { "emailAddress": an.CURRENTOWNEREMAILADDRESS }
@@ -176,7 +177,7 @@ class BuddyIDPublisher(AbstractPublisher):
         d["providerCode"] = provider_code
         return d
 
-    def validate(self, an):
+    def validate(self, an: ResultRow) -> bool:
         """ Validates an animal record is ok to send """
         # Validate certain items aren't blank so we aren't registering bogus data
         if asm3.utils.nulltostr(an.CURRENTOWNERADDRESS).strip() == "":

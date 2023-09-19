@@ -11,6 +11,7 @@ import asm3.movement
 import asm3.utils
 import asm3.wordprocessor
 from asm3.sitedefs import SERVICE_URL, FTP_CONNECTION_TIMEOUT
+from asm3.typehints import Any, datetime, Database, List, ResultRow, Results
 
 import ftplib
 import glob
@@ -20,12 +21,165 @@ import sys
 import tempfile
 import threading
 
-def quietcallback(x):
-    """ ftplib callback that does nothing instead of dumping to stdout """
+def quietcallback(x: Any) -> None:
+    """ ftplib callback that does nothing instead of dumping messages to stdout """
     pass
 
-def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, recalc_age_groups=True, 
-                    strip_personal_data=False, publisher_key="", limit=0):
+class PublishCriteria(object):
+    """
+    Class containing publishing criteria. Has functions to 
+    convert to and from a command line string
+    """
+    includeCaseAnimals = False
+    includeNonNeutered = False
+    includeNonMicrochipped = False
+    includeReservedAnimals = False
+    includeRetailerAnimals = False
+    includeFosterAnimals = False
+    includeQuarantine = False
+    includeTrial = False
+    includeHold = False
+    includeWithoutDescription = False
+    includeWithoutImage = False
+    includeColours = False
+    bondedAsSingle = False
+    clearExisting = False
+    uploadAllImages = False
+    uploadDirectly = False
+    forceReupload = False
+    noImportFile = False # If a 3rd party has a seperate import disable upload
+    generateJavascriptDB = False
+    thumbnails = False
+    thumbnailSize = "70x70"
+    checkSocket = False
+    order = 1 # 0 = Ascending entry, 1 = Descending entry, 2 = Ascending name
+    excludeUnderWeeks = 12
+    animalsPerPage = 10
+    htmlByChildAdult = False # True if html pages should be prefixed baby/adult_ and split
+    childAdultSplit=26 # Number of weeks before an animal is treated as an adult by the child adult publisher
+    htmlBySpecies = False # True if html pages should be output with species name and possibly split by age
+    htmlByType = False # True if html pages should be output with type name
+    outputAdopted = False # True if html publisher should output an adopted.html page
+    outputAdoptedDays = 30 # The number of days to go back when considering adopted animals
+    outputDeceased = False # True if html publisher should output a deceased.html page
+    outputForms = False # True if html publisher should output a forms.html page
+    outputRSS = False # True if html publisher should output an rss.xml page
+    style = "."
+    extension = "html"
+    scaleImages = "" # A resize spec or old values of: 1 = None, 2 = 320x200, 3=640x480, 4=800x600, 5=1024x768, 6=300x300, 7=95x95
+    internalLocations = [] # List of either location IDs, or LIKE comparisons
+    publishDirectory = None # None = use temp directory for publishing
+    ignoreLock = False # Force the publisher to run even if another publisher is running
+
+    def get_int(self, s: str) -> int:
+        """
+        Returns the val portion of key=val as an int
+        """
+        return asm3.utils.cint(s.split("=")[1])
+
+    def get_str(self, s: str) -> str:
+        """
+        Returns the val portion of key=val as a string
+        """
+        return s.split("=")[1]
+
+    def __init__(self, fromstring: str = "") -> None:
+        """
+        Initialises the publishing criteria from a string if given
+        """
+        if fromstring == "": return
+        for s in fromstring.split(" "):
+            if s == "includecase": self.includeCaseAnimals = True
+            if s == "includenonneutered": self.includeNonNeutered = True
+            if s == "includenonmicrochip": self.includeNonMicrochipped = True
+            if s == "includereserved": self.includeReservedAnimals = True
+            if s == "includeretailer": self.includeRetailerAnimals = True
+            if s == "includefosters": self.includeFosterAnimals = True
+            if s == "includehold": self.includeHold = True
+            if s == "includequarantine": self.includeQuarantine = True
+            if s == "includetrial": self.includeTrial = True
+            if s == "includewithoutdescription": self.includeWithoutDescription = True
+            if s == "includewithoutimage": self.includeWithoutImage = True
+            if s == "includecolours": self.includeColours = True
+            if s == "bondedassingle": self.bondedAsSingle = True
+            if s == "noimportfile": self.noImportFile = True
+            if s == "clearexisting": self.clearExisting = True
+            if s == "uploadall": self.uploadAllImages = True
+            if s == "forcereupload": self.forceReupload = True
+            if s == "generatejavascriptdb": self.generateJavascriptDB = True
+            if s == "thumbnails": self.thumbnails = True
+            if s == "checksocket": self.checkSocket = True
+            if s == "uploaddirectly": self.uploadDirectly = True
+            if s == "htmlbychildadult": self.htmlByChildAdult = True
+            if s == "htmlbyspecies": self.htmlBySpecies = True
+            if s == "htmlbytype": self.htmlByType = True
+            if s == "outputadopted": self.outputAdopted = True
+            if s == "outputdeceased": self.outputDeceased = True
+            if s == "outputforms": self.outputForms = True
+            if s == "outputrss": self.outputRSS = True
+            if s.startswith("outputadopteddays"): self.outputAdoptedDays = self.get_int(s)
+            if s.startswith("order"): self.order = self.get_int(s)
+            if s.startswith("excludeunder"): self.excludeUnderWeeks = self.get_int(s)
+            if s.startswith("animalsperpage"): self.animalsPerPage = self.get_int(s)
+            if s.startswith("style"): self.style = self.get_str(s)
+            if s.startswith("extension"): self.extension = self.get_str(s)
+            if s.startswith("scaleimages"): self.scaleImages = self.get_str(s)
+            if s.startswith("thumbnailsize"): self.thumbnailSize = self.get_str(s)
+            if s.startswith("includelocations") and len(self.get_str(s)) > 0 and self.get_str(s) != "null": self.internalLocations = self.get_str(s).split(",")
+            if s.startswith("publishdirectory"): self.publishDirectory = self.get_str(s)
+            if s.startswith("childadultsplit"): self.childAdultSplit = self.get_int(s)
+
+    def __str__(self) -> str:
+        """
+        Returns a string representation of the criteria (which corresponds
+        exactly to an ASM 2.x command line string to a publisher and is how
+        we store the defaults in the database)
+        """
+        s = ""
+        if self.includeCaseAnimals: s += " includecase"
+        if self.includeNonNeutered: s += " includenonneutered"
+        if self.includeNonMicrochipped: s += " includenonmicrochip"
+        if self.includeReservedAnimals: s += " includereserved"
+        if self.includeRetailerAnimals: s += " includeretailer"
+        if self.includeFosterAnimals: s += " includefosters"
+        if self.includeHold: s += " includehold"
+        if self.includeQuarantine: s += " includequarantine"
+        if self.includeTrial: s += " includetrial"
+        if self.includeWithoutDescription: s += " includewithoutdescription"
+        if self.includeWithoutImage: s += " includewithoutimage"
+        if self.includeColours: s += " includecolours"
+        if self.bondedAsSingle: s += " bondedassingle"
+        if self.noImportFile: s += " noimportfile"
+        if self.clearExisting: s += " clearexisting"
+        if self.uploadAllImages: s += " uploadall"
+        if self.forceReupload: s += " forcereupload"
+        if self.generateJavascriptDB: s += " generatejavascriptdb"
+        if self.thumbnails: s += " thumbnails"
+        if self.checkSocket: s += " checksocket"
+        if self.uploadDirectly: s += " uploaddirectly"
+        if self.htmlBySpecies: s += " htmlbyspecies"
+        if self.htmlByType: s += " htmlbytype"
+        if self.htmlByChildAdult: s += " htmlbychildadult"
+        if self.outputAdopted: s += " outputadopted"
+        if self.outputDeceased: s += " outputdeceased"
+        if self.outputForms: s += " outputforms"
+        if self.outputRSS: s += " outputrss"
+        s += " order=" + str(self.order)
+        s += " excludeunder=" + str(self.excludeUnderWeeks)
+        s += " animalsperpage=" + str(self.animalsPerPage)
+        s += " style=" + str(self.style)
+        s += " extension=" + str(self.extension)
+        s += " scaleimages=" + str(self.scaleImages)
+        s += " thumbnailsize=" + str(self.thumbnailSize)
+        s += " childadultsplit=" + str(self.childAdultSplit)
+        s += " outputadopteddays=" + str(self.outputAdoptedDays)
+        if len(self.internalLocations) > 0: s += " includelocations=" + ",".join(self.internalLocations)
+        if self.publishDirectory is not None: s += " publishdirectory=" + self.publishDirectory
+        return s.strip()
+
+def get_animal_data(dbo: Database, pc: PublishCriteria = None, animalid: int = 0, 
+                    include_additional_fields: bool = False, recalc_age_groups: bool = True, strip_personal_data: bool = False, 
+                    publisher_key: str = "", limit: int = 0) -> Results:
     """
     Returns a resultset containing the animal info for the criteria given.
     pc: The publish criteria (if None, default is used)
@@ -153,7 +307,7 @@ def get_animal_data(dbo, pc=None, animalid=0, include_additional_fields=False, r
 
     return rows
 
-def get_animal_data_query(dbo, pc, animalid=0, publisher_key=""):
+def get_animal_data_query(dbo: Database, pc: PublishCriteria, animalid: int = 0, publisher_key: str = "") -> str:
     """
     Generate the adoptable animal query.
     publisher_key is used to generate an exclusion to remove animals who have 
@@ -208,7 +362,8 @@ def get_animal_data_query(dbo, pc, animalid=0, publisher_key=""):
     sql += " AND (" + " OR ".join(moveor) + ")) ORDER BY a.ID"
     return sql
 
-def get_microchip_data(dbo, patterns, publishername, allowintake = True, organisation_email = ""):
+def get_microchip_data(dbo: Database, patterns: List[str], publishername: str, 
+                       allowintake: bool = True, organisation_email: str = "") -> Results:
     """
     Returns a list of animals with unpublished microchips.
     patterns:      A list of either microchip prefixes or SQL clauses to OR together
@@ -305,7 +460,8 @@ def get_microchip_data(dbo, patterns, publishername, allowintake = True, organis
 
     return rows + extras
 
-def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", registerfrom = None, allowintake = True):
+def get_microchip_data_query(dbo: Database, patterns: List[str], publishername: str, movementtypes: str = "1", 
+                             registerfrom: datetime = None, allowintake: bool = True) -> str:
     """
     Generates a query for unpublished microchips.
     It does this by looking for animals who have microchips matching the pattern where
@@ -370,7 +526,7 @@ def get_microchip_data_query(dbo, patterns, publishername, movementtypes = "1", 
     sql = asm3.animal.get_animal_query(dbo) + where
     return sql
 
-def get_adoption_status(dbo, a):
+def get_adoption_status(dbo: Database, a: ResultRow) -> str:
     """
     Returns a string representing the animal's current adoption 
     status.
@@ -384,9 +540,9 @@ def get_adoption_status(dbo, a):
     if is_animal_adoptable(dbo, a): return asm3.i18n._("Adoptable", l)
     return asm3.i18n._("Not available for adoption", l)
 
-def is_animal_adoptable(dbo, a):
+def is_animal_adoptable(dbo: Database, a: ResultRow) -> bool:
     """
-    Returns true if the animal a is adoptable. This should match exactly the code in common.js / html.is_animal_adoptable
+    Returns True if the animal a is adoptable. This should match exactly the code in common.js / html.is_animal_adoptable
     """
     p = PublishCriteria(asm3.configuration.publisher_presets(dbo))
     if a.ISCOURTESY == 1: return True
@@ -414,158 +570,6 @@ def is_animal_adoptable(dbo, a):
     if len(p.internalLocations) > 0 and a.ACTIVEMOVEMENTTYPE is None and str(a.SHELTERLOCATION) not in p.internalLocations: return False
     return True
 
-class PublishCriteria(object):
-    """
-    Class containing publishing criteria. Has functions to 
-    convert to and from a command line string
-    """
-    includeCaseAnimals = False
-    includeNonNeutered = False
-    includeNonMicrochipped = False
-    includeReservedAnimals = False
-    includeRetailerAnimals = False
-    includeFosterAnimals = False
-    includeQuarantine = False
-    includeTrial = False
-    includeHold = False
-    includeWithoutDescription = False
-    includeWithoutImage = False
-    includeColours = False
-    bondedAsSingle = False
-    clearExisting = False
-    uploadAllImages = False
-    uploadDirectly = False
-    forceReupload = False
-    noImportFile = False # If a 3rd party has a seperate import disable upload
-    generateJavascriptDB = False
-    thumbnails = False
-    thumbnailSize = "70x70"
-    checkSocket = False
-    order = 1 # 0 = Ascending entry, 1 = Descending entry, 2 = Ascending name
-    excludeUnderWeeks = 12
-    animalsPerPage = 10
-    htmlByChildAdult = False # True if html pages should be prefixed baby/adult_ and split
-    childAdultSplit=26 # Number of weeks before an animal is treated as an adult by the child adult publisher
-    htmlBySpecies = False # True if html pages should be output with species name and possibly split by age
-    htmlByType = False # True if html pages should be output with type name
-    outputAdopted = False # True if html publisher should output an adopted.html page
-    outputAdoptedDays = 30 # The number of days to go back when considering adopted animals
-    outputDeceased = False # True if html publisher should output a deceased.html page
-    outputForms = False # True if html publisher should output a forms.html page
-    outputRSS = False # True if html publisher should output an rss.xml page
-    style = "."
-    extension = "html"
-    scaleImages = "" # A resize spec or old values of: 1 = None, 2 = 320x200, 3=640x480, 4=800x600, 5=1024x768, 6=300x300, 7=95x95
-    internalLocations = [] # List of either location IDs, or LIKE comparisons
-    publishDirectory = None # None = use temp directory for publishing
-    ignoreLock = False # Force the publisher to run even if another publisher is running
-
-    def get_int(self, s):
-        """
-        Returns the val portion of key=val as an int
-        """
-        return asm3.utils.cint(s.split("=")[1])
-
-    def get_str(self, s):
-        """
-        Returns the val portion of key=val as a string
-        """
-        return s.split("=")[1]
-
-    def __init__(self, fromstring = ""):
-        """
-        Initialises the publishing criteria from a string if given
-        """
-        if fromstring == "": return
-        for s in fromstring.split(" "):
-            if s == "includecase": self.includeCaseAnimals = True
-            if s == "includenonneutered": self.includeNonNeutered = True
-            if s == "includenonmicrochip": self.includeNonMicrochipped = True
-            if s == "includereserved": self.includeReservedAnimals = True
-            if s == "includeretailer": self.includeRetailerAnimals = True
-            if s == "includefosters": self.includeFosterAnimals = True
-            if s == "includehold": self.includeHold = True
-            if s == "includequarantine": self.includeQuarantine = True
-            if s == "includetrial": self.includeTrial = True
-            if s == "includewithoutdescription": self.includeWithoutDescription = True
-            if s == "includewithoutimage": self.includeWithoutImage = True
-            if s == "includecolours": self.includeColours = True
-            if s == "bondedassingle": self.bondedAsSingle = True
-            if s == "noimportfile": self.noImportFile = True
-            if s == "clearexisting": self.clearExisting = True
-            if s == "uploadall": self.uploadAllImages = True
-            if s == "forcereupload": self.forceReupload = True
-            if s == "generatejavascriptdb": self.generateJavascriptDB = True
-            if s == "thumbnails": self.thumbnails = True
-            if s == "checksocket": self.checkSocket = True
-            if s == "uploaddirectly": self.uploadDirectly = True
-            if s == "htmlbychildadult": self.htmlByChildAdult = True
-            if s == "htmlbyspecies": self.htmlBySpecies = True
-            if s == "htmlbytype": self.htmlByType = True
-            if s == "outputadopted": self.outputAdopted = True
-            if s == "outputdeceased": self.outputDeceased = True
-            if s == "outputforms": self.outputForms = True
-            if s == "outputrss": self.outputRSS = True
-            if s.startswith("outputadopteddays"): self.outputAdoptedDays = self.get_int(s)
-            if s.startswith("order"): self.order = self.get_int(s)
-            if s.startswith("excludeunder"): self.excludeUnderWeeks = self.get_int(s)
-            if s.startswith("animalsperpage"): self.animalsPerPage = self.get_int(s)
-            if s.startswith("style"): self.style = self.get_str(s)
-            if s.startswith("extension"): self.extension = self.get_str(s)
-            if s.startswith("scaleimages"): self.scaleImages = self.get_str(s)
-            if s.startswith("thumbnailsize"): self.thumbnailSize = self.get_str(s)
-            if s.startswith("includelocations") and len(self.get_str(s)) > 0 and self.get_str(s) != "null": self.internalLocations = self.get_str(s).split(",")
-            if s.startswith("publishdirectory"): self.publishDirectory = self.get_str(s)
-            if s.startswith("childadultsplit"): self.childAdultSplit = self.get_int(s)
-
-    def __str__(self):
-        """
-        Returns a string representation of the criteria (which corresponds
-        exactly to an ASM 2.x command line string to a publisher and is how
-        we store the defaults in the database)
-        """
-        s = ""
-        if self.includeCaseAnimals: s += " includecase"
-        if self.includeNonNeutered: s += " includenonneutered"
-        if self.includeNonMicrochipped: s += " includenonmicrochip"
-        if self.includeReservedAnimals: s += " includereserved"
-        if self.includeRetailerAnimals: s += " includeretailer"
-        if self.includeFosterAnimals: s += " includefosters"
-        if self.includeHold: s += " includehold"
-        if self.includeQuarantine: s += " includequarantine"
-        if self.includeTrial: s += " includetrial"
-        if self.includeWithoutDescription: s += " includewithoutdescription"
-        if self.includeWithoutImage: s += " includewithoutimage"
-        if self.includeColours: s += " includecolours"
-        if self.bondedAsSingle: s += " bondedassingle"
-        if self.noImportFile: s += " noimportfile"
-        if self.clearExisting: s += " clearexisting"
-        if self.uploadAllImages: s += " uploadall"
-        if self.forceReupload: s += " forcereupload"
-        if self.generateJavascriptDB: s += " generatejavascriptdb"
-        if self.thumbnails: s += " thumbnails"
-        if self.checkSocket: s += " checksocket"
-        if self.uploadDirectly: s += " uploaddirectly"
-        if self.htmlBySpecies: s += " htmlbyspecies"
-        if self.htmlByType: s += " htmlbytype"
-        if self.htmlByChildAdult: s += " htmlbychildadult"
-        if self.outputAdopted: s += " outputadopted"
-        if self.outputDeceased: s += " outputdeceased"
-        if self.outputForms: s += " outputforms"
-        if self.outputRSS: s += " outputrss"
-        s += " order=" + str(self.order)
-        s += " excludeunder=" + str(self.excludeUnderWeeks)
-        s += " animalsperpage=" + str(self.animalsPerPage)
-        s += " style=" + str(self.style)
-        s += " extension=" + str(self.extension)
-        s += " scaleimages=" + str(self.scaleImages)
-        s += " thumbnailsize=" + str(self.thumbnailSize)
-        s += " childadultsplit=" + str(self.childAdultSplit)
-        s += " outputadopteddays=" + str(self.outputAdoptedDays)
-        if len(self.internalLocations) > 0: s += " includelocations=" + ",".join(self.internalLocations)
-        if self.publishDirectory is not None: s += " publishdirectory=" + self.publishDirectory
-        return s.strip()
-
 class AbstractPublisher(threading.Thread):
     """
     Base class for all publishers
@@ -584,14 +588,14 @@ class AbstractPublisher(threading.Thread):
     lastError = ""
     logBuffer = []
 
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         threading.Thread.__init__(self)
         self.dbo = dbo
         self.locale = asm3.configuration.locale(dbo)
         self.pc = publishCriteria
         self.makePublishDirectory()
 
-    def checkMappedSpecies(self):
+    def checkMappedSpecies(self) -> bool:
         """
         Returns True if all shelter animal species have been mapped for publishers.
         """
@@ -599,7 +603,7 @@ class AbstractPublisher(threading.Thread):
             "WHERE ID IN (SELECT SpeciesID FROM animal WHERE Archived=0) " \
             "AND (PetFinderSpecies Is Null OR PetFinderSpecies = '')")
 
-    def checkMappedBreeds(self):
+    def checkMappedBreeds(self) -> bool:
         """
         Returns True if all shelter animal breeds have been mapped for publishers
         """
@@ -607,7 +611,7 @@ class AbstractPublisher(threading.Thread):
             "WHERE ID IN (SELECT BreedID FROM animal WHERE Archived=0 UNION SELECT Breed2ID FROM animal WHERE Archived=0) " \
             "AND (PetFinderBreed Is Null OR PetFinderBreed = '')")
 
-    def checkMappedColours(self):
+    def checkMappedColours(self) -> bool:
         """
         Returns True if all shelter animal colours have been mapped for publishers
         """
@@ -615,7 +619,7 @@ class AbstractPublisher(threading.Thread):
             "WHERE ID IN (SELECT BaseColourID FROM animal WHERE Archived=0) AND " \
             "(AdoptAPetColour Is Null OR AdoptAPetColour = '')")
 
-    def csvLine(self, items):
+    def csvLine(self, items: List[str]) -> str:
         """
         Takes a list of CSV line items and returns them as a comma 
         separated string, appropriately quoted and escaped.
@@ -633,7 +637,7 @@ class AbstractPublisher(threading.Thread):
             l.append("\"%s\"" % i)
         return ",".join(l)
 
-    def getPhotoUrls(self, animalid):
+    def getPhotoUrls(self, animalid: int) -> List[str]:
         """
         Returns a list of photo URLs for animalid. The preferred is always first.
         """
@@ -646,7 +650,7 @@ class AbstractPublisher(threading.Thread):
             photo_urls.append("%s?account=%s&method=media_image&mediaid=%s&ts=%s" % (SERVICE_URL, self.dbo.database, m.ID, asm3.i18n.python2unix(m.DATE)))
         return photo_urls
 
-    def getPublisherBreed(self, an, b1or2 = 1):
+    def getPublisherBreed(self, an: ResultRow, b1or2: int = 1) -> str:
         """
         Encapsulates logic for reading publisher breed fields.
         an: The animal row
@@ -681,7 +685,7 @@ class AbstractPublisher(threading.Thread):
             return ""
         return publisherbreed
 
-    def isPublisherExecuting(self):
+    def isPublisherExecuting(self) -> bool:
         """
         Returns True if a publisher is already currently running against
         this database. If the ignoreLock publishCriteria option has been
@@ -690,7 +694,7 @@ class AbstractPublisher(threading.Thread):
         if self.pc.ignoreLock: return False
         return asm3.asynctask.is_task_running(self.dbo)
 
-    def updatePublisherProgress(self, progress):
+    def updatePublisherProgress(self, progress: int) -> None:
         """
         Updates the publisher progress in the database
         """
@@ -698,7 +702,7 @@ class AbstractPublisher(threading.Thread):
         asm3.asynctask.set_progress_max(self.dbo, 100)
         asm3.asynctask.set_progress_value(self.dbo, progress)
 
-    def replaceMDBTokens(self, dbo, s):
+    def replaceMDBTokens(self, dbo: Database, s: str) -> str:
         """
         Replace MULTIPLE_DATABASE tokens in the string given (redundant)
         """
@@ -707,27 +711,27 @@ class AbstractPublisher(threading.Thread):
         s = s.replace("{username}", dbo.username)
         return s
 
-    def replaceAnimalTags(self, a, s):
+    def replaceAnimalTags(self, a: ResultRow, s: str) -> str:
         """
         Replace any $$Tag$$ tags in s, using animal a
         """
         tags = asm3.wordprocessor.animal_tags_publisher(self.dbo, a)
         return asm3.wordprocessor.substitute_tags(s, tags, True, "$$", "$$", crToBr = False)
 
-    def resetPublisherProgress(self):
+    def resetPublisherProgress(self) -> None:
         """
         Resets the publisher progress and stops blocking for other 
         publishers
         """
         asm3.asynctask.reset(self.dbo)
 
-    def setPublisherComplete(self):
+    def setPublisherComplete(self) -> None:
         """
         Mark the current publisher as complete
         """
         asm3.asynctask.set_progress_value(self.dbo, 100)
 
-    def getProgress(self, i, n):
+    def getProgress(self, i: int, n: int) -> int:
         """
         Returns a progress percentage
         i: Current position
@@ -735,19 +739,19 @@ class AbstractPublisher(threading.Thread):
         """
         return int((float(i) / float(n)) * 100)
 
-    def shouldStopPublishing(self):
+    def shouldStopPublishing(self) -> bool:
         """
         Returns True if we need to stop publishing
         """
         return asm3.asynctask.get_cancel(self.dbo)
 
-    def setStartPublishing(self):
+    def setStartPublishing(self) -> None:
         """
         Clears the stop publishing flag so we can carry on publishing.
         """
         asm3.asynctask.set_cancel(self.dbo, False)
 
-    def setLastError(self, msg, log_error=True):
+    def setLastError(self, msg: str, log_error: bool = True) -> None:
         """
         Sets the last error message and clears the publisher lock
         """
@@ -756,14 +760,14 @@ class AbstractPublisher(threading.Thread):
         if msg != "" and log_error: self.logError(self.lastError)
         self.resetPublisherProgress()
 
-    def cleanup(self, save_log=True):
+    def cleanup(self, save_log: bool = True) -> None:
         """
         Call when the publisher has completed to tidy up.
         """
         if save_log: self.saveLog()
         self.setPublisherComplete()
 
-    def makePublishDirectory(self):
+    def makePublishDirectory(self) -> None:
         """
         Creates a temporary publish directory if one isn't set, or uses
         the one set in the criteria.
@@ -795,14 +799,14 @@ class AbstractPublisher(threading.Thread):
         self.tempPublishDir = True
         self.publishDir = tempfile.mkdtemp()
 
-    def deletePublishDirectory(self):
+    def deletePublishDirectory(self) -> None:
         """
         Removes the publish directory if it was temporary
         """
         if self.tempPublishDir:
             shutil.rmtree(self.publishDir, True)
 
-    def replaceSmartQuotes(self, s):
+    def replaceSmartQuotes(self, s: str) -> str:
         """
         Replaces well known "smart" quotes/points with ASCII characters (mainly aimed at smartquotes)
         """
@@ -831,7 +835,7 @@ class AbstractPublisher(threading.Thread):
             s = s.replace(k, v)
         return s
 
-    def getLocaleForCountry(self, c):
+    def getLocaleForCountry(self, c: str) -> str:
         """
         Some third party sites only accept a locale in their country field rather than
         a name. This is most common in the US where some shelters have dealings with
@@ -851,7 +855,7 @@ class AbstractPublisher(threading.Thread):
                 return c2l[k]
         return "US" # Fall back to US if no match
 
-    def getDescription(self, an, crToBr = False, crToHE = False, crToLF = True, replaceSmart = False):
+    def getDescription(self, an: ResultRow, crToBr = False, crToHE = False, crToLF = True, replaceSmart = False) -> str:
         """
         Returns the description/bio for an asm3.animal.
         an: The animal record
@@ -883,13 +887,13 @@ class AbstractPublisher(threading.Thread):
         notes = notes.replace("\"", "\"\"")
         return notes
 
-    def getLastPublishedDate(self, animalid):
+    def getLastPublishedDate(self, animalid: int) -> datetime:
         """
         Returns the last date animalid was sent to the current publisher
         """
         return self.dbo.query_date("SELECT SentDate FROM animalpublished WHERE AnimalID = ? AND PublishedTo = ?", (animalid, self.publisherKey))
 
-    def isChangedSinceLastPublish(self):
+    def isChangedSinceLastPublish(self) -> bool:
         """
         Returns True if there have been relevant changes since the last time this publisher ran. 
         Publishers can use this call to decide to do nothing if there have been no changes.
@@ -906,7 +910,7 @@ class AbstractPublisher(threading.Thread):
             { "lp": self.dbo.sql_value(lastpublished) })
         return len(changes) > 0
 
-    def markAnimalPublished(self, animalid, datevalue = None, extra = ""):
+    def markAnimalPublished(self, animalid: int, datevalue: datetime = None, extra: str = "") -> None:
         """
         Marks an animal published at the current date/time for this publisher
         animalid:    The animal id to update
@@ -921,7 +925,7 @@ class AbstractPublisher(threading.Thread):
             "Extra":        extra
         }, generateID=False)
 
-    def markAnimalFirstPublished(self, animalid):
+    def markAnimalFirstPublished(self, animalid: int) -> None:
         """
         Marks an animal as published to a special "first" publisher - but only if it 
         hasn't been already. This allows the Publishing History to show not only the last
@@ -936,13 +940,13 @@ class AbstractPublisher(threading.Thread):
                 "SentDate":     self.dbo.now()
             }, generateID=False)
 
-    def markAnimalUnpublished(self, animalid):
+    def markAnimalUnpublished(self, animalid: int) -> None:
         """
         Marks an animal as not published for the current publisher
         """
         self.dbo.delete("animalpublished", "AnimalID=%d AND PublishedTo='%s'" % (animalid, self.publisherKey))
 
-    def markAnimalsPublished(self, animals, first=False):
+    def markAnimalsPublished(self, animals: Results, first: bool = False) -> None:
         """
         Marks all animals in the set as published at the current date/time
         for the current publisher.
@@ -963,7 +967,7 @@ class AbstractPublisher(threading.Thread):
         self.dbo.execute("DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
         self.dbo.execute_many("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate) VALUES (?,?,?)", batch)
 
-    def markAnimalsPublishFailed(self, animals):
+    def markAnimalsPublishFailed(self, animals: Results) -> None:
         """
         Marks all animals in the set as published at the current date/time
         for the current publisher but with an extra failure message
@@ -983,18 +987,18 @@ class AbstractPublisher(threading.Thread):
         self.dbo.execute("DELETE FROM animalpublished WHERE PublishedTo = '%s' AND AnimalID IN (%s)" % (self.publisherKey, ",".join(inclause)))
         self.dbo.execute_many("INSERT INTO animalpublished (AnimalID, PublishedTo, SentDate, Extra) VALUES (?,?,?,?)", batch)
 
-    def getMatchingAnimals(self, includeAdditionalFields=False):
+    def getMatchingAnimals(self, includeAdditionalFields: bool = False) -> Results:
         a = get_animal_data(self.dbo, self.pc, include_additional_fields=includeAdditionalFields, publisher_key=self.publisherKey)
         self.log("Got %d matching animals for publishing." % len(a))
         return a
 
-    def saveFile(self, path, contents):
+    def saveFile(self, path: str, contents: str) -> None:
         try:
             asm3.utils.write_text_file(path, contents)
         except Exception as err:
             self.logError(str(err), sys.exc_info())
 
-    def initLog(self, publisherKey, publisherName):
+    def initLog(self, publisherKey: str, publisherName: str) -> None:
         """
         Initialises the log 
         """
@@ -1003,13 +1007,13 @@ class AbstractPublisher(threading.Thread):
         self.publisherName = publisherName
         self.logBuffer = []
 
-    def log(self, msg):
+    def log(self, msg: str) -> None:
         """
         Logs a message
         """
         self.logBuffer.append(msg)
 
-    def logError(self, msg, ie=None):
+    def logError(self, msg: str, ie: Any = None) -> None:
         """
         Logs a message to our logger and dumps a stacktrace.
         ie = error info object from sys.exc_info() if available
@@ -1018,11 +1022,11 @@ class AbstractPublisher(threading.Thread):
         asm3.al.error(msg, self.publisherName, self.dbo, ie)
         self.alerts += 1
 
-    def logSearch(self, needle):
+    def logSearch(self, needle: str) -> str:
         """ Does a find on logBuffer """
         return "\n".join(self.logBuffer).find(needle)
 
-    def logSuccess(self, msg):
+    def logSuccess(self, msg: str) -> None:
         """
         Logs a success message to our logger
         """
@@ -1030,7 +1034,7 @@ class AbstractPublisher(threading.Thread):
         asm3.al.info(msg, self.publisherName, self.dbo)
         self.successes += 1
 
-    def saveLog(self):
+    def saveLog(self) -> None:
         """
         Saves the log to the publishlog table
         """
@@ -1042,13 +1046,13 @@ class AbstractPublisher(threading.Thread):
             "*LogData":              "\n".join(self.logBuffer)
         })
 
-    def isImage(self, path):
+    def isImage(self, path: str) -> bool:
         """
         Returns True if the path given has a valid image extension
         """
         return path.lower().endswith("jpg") or path.lower().endswith("jpeg")
 
-    def generateThumbnail(self, image, thumbnail):
+    def generateThumbnail(self, image: str, thumbnail: str) -> None:
         """
         Generates a thumbnail 
         image: Path to the image to generate a thumbnail from
@@ -1060,7 +1064,7 @@ class AbstractPublisher(threading.Thread):
         except Exception as err:
             self.logError("Failed scaling thumbnail: %s" % err, sys.exc_info())
 
-    def scaleImage(self, image, scalesize):
+    def scaleImage(self, image: bytes, scalesize: str) -> None:
         """
         Scales an image. scalesize is the scaleImage publish criteria and
         can either be a resize spec, or it can be one of our old ASM2
@@ -1105,7 +1109,9 @@ class FTPPublisher(AbstractPublisher):
     passive = True
     existingImageList = None
 
-    def __init__(self, dbo, publishCriteria, ftphost, ftpuser, ftppassword, ftptls = False, ftpport = 21, ftproot = "", passive = True):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria, 
+                 ftphost: str, ftpuser: str, ftppassword: str, ftptls: bool = False, 
+                 ftpport: int = 21, ftproot: str = "", passive: bool = True) -> None:
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.ftphost = ftphost
         self.ftpuser = ftpuser
@@ -1115,7 +1121,7 @@ class FTPPublisher(AbstractPublisher):
         self.ftptls = ftptls
         self.passive = passive
 
-    def unxssPass(self, s):
+    def unxssPass(self, s: str) -> str:
         """
         Passwords stored in the config table are subject to XSS escaping, so
         any >, < or & in the password will have been escaped - turn them back again.
@@ -1128,7 +1134,7 @@ class FTPPublisher(AbstractPublisher):
         s = s.strip()
         return s
 
-    def openFTPSocket(self):
+    def openFTPSocket(self) -> bool:
         """
         Opens an FTP socket to the server and changes to the
         root FTP directory. Returns True if all was well or
@@ -1157,14 +1163,14 @@ class FTPPublisher(AbstractPublisher):
             self.logError("Failed opening FTP socket (%s->%s): %s" % (self.dbo.database, self.ftphost, err), sys.exc_info())
             return False
 
-    def closeFTPSocket(self):
+    def closeFTPSocket(self) -> None:
         if not self.pc.uploadDirectly: return
         try:
             self.socket.quit()
         except:
             pass
 
-    def reconnectFTPSocket(self):
+    def reconnectFTPSocket(self) -> None:
         """
         Reconnects to the FTP server, changing back to the current directory.
         """
@@ -1173,7 +1179,7 @@ class FTPPublisher(AbstractPublisher):
         if not self.currentDir == "":
             self.chdir(self.currentDir)
 
-    def checkFTPSocket(self):
+    def checkFTPSocket(self) -> None:
         """
         Called before each upload if publishCriteria.checkSocket is
         set to true. It verifies that the socket is still active
@@ -1187,7 +1193,7 @@ class FTPPublisher(AbstractPublisher):
             self.log("Dead socket (%s), reconnecting" % err)
             self.reconnectFTPSocket()
 
-    def upload(self, filename):
+    def upload(self, filename: str) -> None:
         """
         Uploads a file to the current FTP directory. If a full path
         is given, this throws it away and just uses the name with
@@ -1208,14 +1214,14 @@ class FTPPublisher(AbstractPublisher):
             self.log("reconnecting FTP socket to reset state")
             self.reconnectFTPSocket()
 
-    def lsdir(self):
+    def lsdir(self) -> List[str]:
         if not self.pc.uploadDirectly: return []
         try:
             return self.socket.nlst()
         except Exception as err:
             self.logError("list: %s" % err)
 
-    def mkdir(self, newdir):
+    def mkdir(self, newdir: str) -> None:
         if not self.pc.uploadDirectly: return
         self.log("FTP mkdir %s" % newdir)
         try:
@@ -1223,7 +1229,7 @@ class FTPPublisher(AbstractPublisher):
         except Exception as err:
             self.log("mkdir %s: already exists (%s)" % (newdir, err))
 
-    def chdir(self, newdir, fromroot):
+    def chdir(self, newdir: str, fromroot: str) -> bool:
         """ Changes FTP folder. 
             newdir: The folder to change into
             fromroot: The path to this folder from the root for recovery/reconnection
@@ -1238,13 +1244,13 @@ class FTPPublisher(AbstractPublisher):
             self.logError("chdir %s: %s" % (newdir, err), sys.exc_info())
             return False
 
-    def delete(self, filename):
+    def delete(self, filename: str) -> None:
         try:
             self.socket.delete(filename)
         except Exception as err:
             self.log("delete %s: %s" % (filename, err))
 
-    def clearExistingHTML(self):
+    def clearExistingHTML(self) -> None:
         try:
             oldfiles = glob.glob(os.path.join(self.publishDir, "*." + self.pc.extension))
             for f in oldfiles:
@@ -1259,7 +1265,7 @@ class FTPPublisher(AbstractPublisher):
         except Exception as err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
 
-    def clearExistingImages(self):
+    def clearExistingImages(self) -> None:
         try:
             oldfiles = glob.glob(os.path.join(self.publishDir, "*.jpg"))
             for f in oldfiles:
@@ -1273,7 +1279,7 @@ class FTPPublisher(AbstractPublisher):
         except Exception as err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
 
-    def clearUnusedFTPImages(self, animals):
+    def clearUnusedFTPImages(self, animals: Results) -> None:
         """ given a set of animals, removes images from the current FTP folder that do not
             start with a sheltercode that is in the list of animals """
         sheltercodes = [x.SHELTERCODE for x in animals]
@@ -1289,7 +1295,7 @@ class FTPPublisher(AbstractPublisher):
         except Exception as err:
             self.logError("warning: failed deleting from FTP server: %s" % err, sys.exc_info())
 
-    def cleanup(self, save_log=True):
+    def cleanup(self, save_log: bool = True) -> None:
         """
         Call when the publisher has completed to tidy up.
         """
@@ -1298,7 +1304,7 @@ class FTPPublisher(AbstractPublisher):
         if save_log: self.saveLog()
         self.setPublisherComplete()
 
-    def uploadImage(self, a, mediaid, medianame, imagename):
+    def uploadImage(self, a: ResultRow, mediaid: int, medianame: str, imagename: str) -> None:
         """
         Retrieves image with mediaid from the DBFS to the publish
         folder and uploads it via FTP with imagename
@@ -1336,7 +1342,7 @@ class FTPPublisher(AbstractPublisher):
             self.logError("Failed uploading image %s: %s" % (medianame, err), sys.exc_info())
             return 0
 
-    def uploadImages(self, a, copyWithMediaIDAsName = False, limit = 0):
+    def uploadImages(self, a: ResultRow, copyWithMediaIDAsName: bool = False, limit: int = 0) -> None:
         """
         Uploads all the images for an animal as sheltercode-X.jpg if
         upload all is on, or just sheltercode.jpg if upload all is off.
