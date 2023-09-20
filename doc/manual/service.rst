@@ -556,16 +556,16 @@ they appear in the filters line is also used to output that piece of
 information below the animal's name in the list::
 
     <script>
-    asm3_adoptable_filters = "sex breed agegroup size species goodwith where";
+    asm3_adoptable_filters = "sex breed agegroup size species goodwith where site";
     </script>
     <div id="asm3-adoptables" />
     <script src="http://localhost:5000/service?method=animal_view_adoptable_js"></script>
 
-The "goodwith" and "where" filters are special in that they do not augment the
-description of the animal. The "goodwith" filter allows the user to filter for
-animals who are good with dogs, cats or children. The where filter allows them
-to filter for animals who are either in the shelter, fostered or listed as a
-courtesy for someone else.
+The "goodwith", "where" and "site" filters are special in that they do not
+augment the description of the animal. The "goodwith" filter allows the user to
+filter for animals who are good with dogs, cats or children. The where filter
+allows them to filter for animals who are either in the shelter, fostered or
+listed as a courtesy for someone else.
 
 Sort
 ^^^^

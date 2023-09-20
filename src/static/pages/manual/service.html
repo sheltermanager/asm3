@@ -669,17 +669,17 @@ them all, include the following asm3_adoptable_filters line. The order in which
 they appear in the filters line is also used to output that piece of
 information below the animal’s name in the list:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">script</span><span class="o">&gt;</span>
-<span class="n">asm3_adoptable_filters</span> <span class="o">=</span> <span class="s2">&quot;sex breed agegroup size species goodwith where&quot;</span><span class="p">;</span>
+<span class="n">asm3_adoptable_filters</span> <span class="o">=</span> <span class="s2">&quot;sex breed agegroup size species goodwith where site&quot;</span><span class="p">;</span>
 <span class="o">&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">div</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;asm3-adoptables&quot;</span> <span class="o">/&gt;</span>
 <span class="o">&lt;</span><span class="n">script</span> <span class="n">src</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/service?method=animal_view_adoptable_js&quot;</span><span class="o">&gt;&lt;/</span><span class="n">script</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>The “goodwith” and “where” filters are special in that they do not augment the
-description of the animal. The “goodwith” filter allows the user to filter for
-animals who are good with dogs, cats or children. The where filter allows them
-to filter for animals who are either in the shelter, fostered or listed as a
-courtesy for someone else.</p>
+<p>The “goodwith”, “where” and “site” filters are special in that they do not
+augment the description of the animal. The “goodwith” filter allows the user to
+filter for animals who are good with dogs, cats or children. The where filter
+allows them to filter for animals who are either in the shelter, fostered or
+listed as a courtesy for someone else.</p>
 </section>
 <section id="sort">
 <h3>Sort<a class="headerlink" href="#sort" title="Permalink to this heading">¶</a></h3>
