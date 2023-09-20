@@ -11,7 +11,7 @@
     var adoptables = "{TOKEN_ADOPTABLES}";
     var account = "{TOKEN_ACCOUNT}";
     var baseurl = "{TOKEN_BASE_URL}";
-    var all_filters = "agegroup sex breed size species goodwith where";
+    var all_filters = "agegroup sex breed size species goodwith where site";
 
     var active_filters = "agegroup sex species";
     if (typeof asm3_adoptable_filters !== 'undefined') {
@@ -142,6 +142,7 @@
 
     var filter_template = [
         '<div id="asm3-adoptable-filters" class="asm3-filters" style="display: block; text-align: center; padding: 5px">',
+            '<select id="asm3-select-site">{siteoptions}</select> ',
             '<select id="asm3-select-species">{speciesoptions}</select> ',
             '<select id="asm3-select-breed">{breedoptions}</select> ',
             '<select id="asm3-select-agegroup">{ageoptions}</select> ',
@@ -185,6 +186,7 @@
         var hostdiv = document.getElementById("asm3-adoptable-list"), 
             h = [],
             c = 0,
+            selsite = document.getElementById("asm3-select-site").value,
             selspecies = document.getElementById("asm3-select-species").value,
             selbreed = document.getElementById("asm3-select-breed").value,
             selagegroup = document.getElementById("asm3-select-agegroup").value,
@@ -195,6 +197,7 @@
 
         adoptables.forEach(function(item, index, arr) {
 
+            if (selsite && item.SITEID != selsite) { return; }
             if (selspecies && item.SPECIESID != selspecies) { return; }
             if (selbreed && item.BREEDNAME != decode(selbreed)) { return; }
             if (selagegroup && decode(item.AGEGROUP) != decode(selagegroup)) { return; }
@@ -232,6 +235,7 @@
                 isreservedclass: (item.HASACTIVERESERVE == 1 ? "asm3-adoptable-reserved" : ""),
                 mediadate: item.WEBSITEMEDIADATE,
                 sex: spanwrap("sex", translate(item.SEXNAME)),
+                site: "",
                 size: spanwrap("size", translate(item.SIZENAME)),
                 species: spanwrap("species", translate(item.SPECIESNAME)),
                 style: style,
@@ -286,6 +290,7 @@
         if (!hostdiv) { alert("#asm3-adoptables not present"); return; }
 
         hostdiv.innerHTML = substitute(filter_template, {
+            siteoptions: construct_options("(any site)", "SITEID", "SITENAME"),
             speciesoptions: construct_options("(any species)", "SPECIESID", "SPECIESNAME"),
             breedoptions: construct_options("(any breed)", "BREEDNAME", "BREEDNAME"),
             ageoptions: construct_options("(any age)", "AGEGROUP", "AGEGROUP"),
@@ -303,6 +308,7 @@
         }
         render_adoptables();
 
+        document.getElementById("asm3-select-site").addEventListener("change", render_adoptables);
         document.getElementById("asm3-select-species").addEventListener("change", render_adoptables);
         document.getElementById("asm3-select-breed").addEventListener("change", render_adoptables);
         document.getElementById("asm3-select-agegroup").addEventListener("change", render_adoptables);
