@@ -27,8 +27,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    if (row.COMMENTS.indexOf("ES0") == 0) { return; } // Do not allow editing electronic signature related logs
-                    if (row.COMMENTS.indexOf("AC0") == 0) { return; } // Do not allow editing adoption checkout related logs
+                    if (log.is_system_msg(row)) { return; } // Don't allow editing of system log messages
                     tableform.fields_populate_from_json(dialog.fields, row);
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
@@ -43,7 +42,7 @@ $(function() {
                     }
                 },
                 complete: function(row) {
-                    return row.COMMENTS.indexOf("ES0") == 0 || row.COMMENTS.indexOf("AC0") == 0;
+                    return log.is_system_msg(row);
                 },
                 columns: [
                     { field: "LOGTYPENAME", display: _("Type") },
@@ -99,6 +98,11 @@ $(function() {
             this.dialog = dialog;
             this.buttons = buttons;
             this.table = table;
+        },
+
+        /** Returns true if this is a system log message */
+        is_system_msg: function(row) {
+            return row.COMMENTS.length > 3 && row.COMMENTS.match(/^ES0|AC0|AF0|LC0|CA0?\:/);
         },
 
         set_extra_fields: function(row) {

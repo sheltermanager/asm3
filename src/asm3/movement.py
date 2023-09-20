@@ -10,6 +10,7 @@ import asm3.medical
 import asm3.i18n
 import asm3.person
 import asm3.utils
+import asm3.wordprocessor
 
 from asm3.sitedefs import SERVICE_URL
 from asm3.typehints import datetime, Database, List, PostedData, ResultRow, Results
@@ -1090,6 +1091,40 @@ def send_movement_emails(dbo: Database, username: str, post: PostedData) -> bool
         for pid in post.integer_list("personids"):
             asm3.log.add_log_email(dbo, username, asm3.log.PERSON, pid, logtype, emailto, subject, body)
     return rv
+
+def send_adoption_followup_emails(dbo: Database, user = "system") -> None:
+    """
+    Finds all people who adopted an animal X (configurable) days ago and sends them 
+    a followup email using the configured template.
+    """
+    l = dbo.locale
+    if not asm3.configuration.email_adopter_followup(dbo): 
+        asm3.al.debug("EmailAdopterFollowup option set to No", "movement.send_adoption_followup_emails", dbo)
+        return
+    
+    followupdays = asm3.configuration.email_adopter_followup_days(dbo)
+    dtid = asm3.configuration.email_adopter_followup_template(dbo)
+    asm3.al.debug(f"adopter followup: {followupdays} days, email template {dtid}", "movement.send_adoption_followup_emails", dbo)
+
+    movements = dbo.query_list("SELECT ID FROM adoption " \
+        "INNER JOIN animal ON animal.ID = adoption.AnimalID " \
+        "INNER JOIN owner ON owner.ID = adoption.OwnerID " \
+        "WHERE adoption.MovementType=1 AND adoption.MovementDate=? AND " \
+        "animal.DeceasedDate Is Null AND adoption.ReturnDate Is Null ORDER BY ID")
+
+    fromadd = asm3.configuration.email(dbo)
+    for m in movements:
+        body = asm3.wordprocessor.generate_movement_doc(dbo, dtid, m.ID, user)
+        mt = asm3.wordprocessor.extract_mail_tokens(body)
+        cc = mt["CC"] or ""
+        bcc = mt["BCC"] or ""
+        subject = mt["SUBJECT"] or asm3.i18n._("Adoption Followup", l)
+        asm3.utils.send_email(dbo, fromadd, m.EMAILADDRESS, cc, bcc, subject, body, "html")
+        if asm3.configuration.audit_on_send_email(dbo): 
+            asm3.audit.email(dbo, user, fromadd, m.EMAILADDRESS, cc, bcc, subject, body)
+        asm3.log.add_log(dbo, user, asm3.log.PERSON, m.OWNERID, asm3.configuration.system_log_type(dbo), f"AF01:{m.ID}")
+
+    asm3.al.info(f"Sent {len(movements)} adopter followup emails.", "movement.send_adoption_followup_emails", dbo)
 
 def send_fosterer_emails(dbo: Database) -> None:
     """

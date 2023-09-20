@@ -163,6 +163,9 @@ DEFAULTS = {
     "DonationOnMoveReserve": "Yes",
     "DontShowRabies": "Yes",
     "DontShowSize": "No",
+    "EmailAdopterFollowup": "No",
+    "EmailAdopterFollowupDays": "14",
+    "EmailAdopterFollowupTemplate": "0",
     "EmailDiaryNotes": "Yes", 
     "EmailDiaryOnChange": "No",
     "EmailDiaryOnComplete": "No",
@@ -926,6 +929,15 @@ def dont_show_size(dbo: Database) -> bool:
 
 def email(dbo: Database) -> str:
     return cstring(dbo, "EmailAddress")
+
+def email_adopter_followup(dbo: Database) -> bool:
+    return cboolean(dbo, "EmailAdopterFollowup", DEFAULTS["EmailAdopterFollowup"] == "Yes")
+
+def email_adopter_followup_days(dbo: Database) -> int:
+    return cint(dbo, "EmailAdopterFollowupDays", DEFAULTS["EmailAdopterFollowupDays"])
+
+def email_adopter_followup_template(dbo: Database) -> int:
+    return cint(dbo, "EmailAdopterFollowupTemplate", DEFAULTS["EmailAdopterFollowupTemplate"])
 
 def email_diary_notes(dbo: Database) -> bool:
     return cboolean(dbo, "EmailDiaryNotes", DEFAULTS["EmailDiaryNotes"] == "Yes")
