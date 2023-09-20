@@ -498,7 +498,7 @@ it will send.
   been added or changed in the last 24 hours, that month's data will be sent.
   An event date is one of intake, return, death or movement.
 
-.. warn:: Like the SAC reports, this publisher relies on the default species from the default database. If you have deleted the original species and recreated them, you will need to contact sheltermanager.com support for assistance.
+.. warning:: Like the SAC reports, this publisher relies on the default species from the default database. If you have deleted the original species and recreated them, you will need to contact sheltermanager.com support for assistance.
 
 petslocated.com
 ---------------
