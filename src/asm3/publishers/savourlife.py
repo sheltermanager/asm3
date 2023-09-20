@@ -7,7 +7,7 @@ import asm3.utils
 
 from .base import AbstractPublisher
 from asm3.sitedefs import SAVOURLIFE_URL
-# from asm3.sitedefs import SAVOURLIFE_API_KEY - is this actually needed any more?
+from asm3.typehints import Database, Dict, PublishCriteria, ResultRow
 
 import sys
 
@@ -19,7 +19,7 @@ class SavourLifePublisher(AbstractPublisher):
     Handles publishing to savourlife.com.au
     Note: They ONLY deal with dogs.
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         publishCriteria.bondedAsSingle = True
@@ -27,7 +27,7 @@ class SavourLifePublisher(AbstractPublisher):
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("savourlife", "SavourLife Publisher")
 
-    def get_breed_id(self, breedname, crossbreed = False):
+    def get_breed_id(self, breedname: str, crossbreed: bool = False) -> int:
         """
         Returns a savourlife breed for a given breedname
         """
@@ -40,7 +40,7 @@ class SavourLifePublisher(AbstractPublisher):
         self.log("'%s' is not a valid SavourLife breed, using default 'Cross Breed'" % breedname)
         return 305
 
-    def get_state(self, s):
+    def get_state(self, s: str) -> str:
         """
         Returns an Australian state abbreviation or empty string if a state name could not be found in s.
         If s is already a 2 or 3 letter code, we just return it.
@@ -63,7 +63,7 @@ class SavourLifePublisher(AbstractPublisher):
                     return k
         return ""
 
-    def good_with(self, x):
+    def good_with(self, x: int) -> str:
         """
         Translates our good with fields Selective/Unknown/No/Yes to SOL's NULL/False/True
         """
@@ -72,19 +72,19 @@ class SavourLifePublisher(AbstractPublisher):
         elif x == 3: return True # selective
         else: return None # unknown or other
 
-    def good_with_over5(self, x):
+    def good_with_over5(self, x: int) -> bool:
         """ Calculates good with children over 5 """
         if x == 0 or x == 5: return True # Yes or Over 5
         if x == 2: return None # Unknown
         return False
 
-    def good_with_under5(self, x):
+    def good_with_under5(self, x: int) -> bool:
         """ Calculates good with children under 5 """
         if x == 0: return True # Yes
         if x == 2: return None # Unknown
         return False
 
-    def run(self):
+    def run(self) -> None:
         
         self.log("SavourLifePublisher starting...")
 
@@ -290,7 +290,7 @@ class SavourLifePublisher(AbstractPublisher):
 
         self.cleanup()
 
-    def processAnimal(self, an, dogid="", postcode="", state="", suburb="", token="", radius=0, interstate=False, all_microchips=False, hold=False):
+    def processAnimal(self, an: ResultRow, dogid="", postcode="", state="", suburb="", token="", radius=0, interstate=False, all_microchips=False, hold=False) -> Dict:
         """ Processes an animal record and returns a data dictionary for upload as JSON """
         # Size is 10 = small, 20 = medium, 30 = large, 40 = x large
         size = ""

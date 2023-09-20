@@ -6,6 +6,7 @@ import asm3.utils
 
 from .base import AbstractPublisher
 from asm3.sitedefs import SAC_METRICS_URL, SAC_METRICS_API_KEY
+from asm3.typehints import Database, Dict, List, PublishCriteria, Tuple
 
 import sys
 
@@ -16,13 +17,13 @@ class SACMetricsPublisher(AbstractPublisher):
     Unlike other publishers, has no processAnimal function and does not markAnimalPublished
     since the data we are sending is aggregate stats rather than individual line level data.
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("shelteranimalscount", "ShelterAnimalsCount Publisher")
 
-    def analyseMonths(self):
+    def analyseMonths(self) -> List[Tuple[int, int]]:
         """
         Construct and return the list of months that we are going to run for.
         months are a list of tuples of month, year as integers. 
@@ -77,7 +78,7 @@ class SACMetricsPublisher(AbstractPublisher):
             months.append(m2t(mo))
         return months
 
-    def run(self):
+    def run(self) -> None:
         
         self.log("SACMetricsPublisher starting...")
 
@@ -117,7 +118,7 @@ class SACMetricsPublisher(AbstractPublisher):
 
         self.cleanup()
 
-    def putData(self, data):
+    def putData(self, data: Dict) -> None:
         """ Sends the data (obj tree) to SAC """
         try:
             url = SAC_METRICS_URL 
@@ -136,7 +137,7 @@ class SACMetricsPublisher(AbstractPublisher):
         except Exception as err:
             self.logError("Failed processing period: year=%s, month=%s, species=%s '%s'" % (year, month, speciesname, err), sys.exc_info())
 
-    def processStats(self, month, year, speciesname, externalId=""):
+    def processStats(self, month: int, year: int, speciesname: str, externalId: str = "") -> Dict:
         """ Given a month, year and a key from SAC_SPECIES, produces the list of 
             SAC Metrics for that combination and returns an object representation
             of the JSON document that will fulfil SAC metricsDataDto

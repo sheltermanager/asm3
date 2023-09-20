@@ -7,6 +7,7 @@ import asm3.utils
 
 from .base import FTPPublisher
 from asm3.sitedefs import PETSLOCATED_FTP_HOST, PETSLOCATED_FTP_USER, PETSLOCATED_FTP_PASSWORD
+from asm3.typehints import Any, datetime, Database, PublishCriteria, ResultRow
 
 import os
 import sys
@@ -16,7 +17,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
     """
     Handles publishing to petslocated.com in the UK
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         publishCriteria.checkSocket = True
@@ -26,7 +27,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
             PETSLOCATED_FTP_HOST, PETSLOCATED_FTP_USER, PETSLOCATED_FTP_PASSWORD)
         self.initLog("petslocated", "PetsLocated UK Publisher")
 
-    def plcAge(self, agegroup):
+    def plcAge(self, agegroup: str) -> str:
         if agegroup is None: return "Older"
         if agegroup == "Baby": return "Very Young"
         elif agegroup.startswith("Young"): return "Young"
@@ -34,7 +35,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
         else:
             return "Older"
 
-    def plcAgeYears(self, agegroup = "", dob = None):
+    def plcAgeYears(self, agegroup: str = "", dob: datetime = None) -> str:
         """
         Returns an age in years as a float/string from either an agegroup
         or a date of birth.
@@ -48,12 +49,16 @@ class PetsLocatedUKPublisher(FTPPublisher):
             if years == 0: years = 1
         return "%0.1f" % years
 
-    def plcChipChecked(self, chipped):
+    def plcChipChecked(self, chipped: int) -> int:
         if chipped == 1:
             return 2
         return 3
 
-    def plcNeutered(self, neutered):
+    def plcNeutered(self, neutered: Any) -> str:
+        """ 
+        Handles neuter/spay from a comments field or the neutered column depending 
+        on whether the source is animallost or animal
+        """
         if asm3.utils.is_str(neutered):
             if neutered.find("payed") != -1 or neutered.find("eutered") != -1:
                 return "y"
@@ -63,7 +68,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
             return "n"
         return "u"
 
-    def plcPostcode(self, postcode1, postcode2 = "", postcode3 = ""):
+    def plcPostcode(self, postcode1: str, postcode2: str = "", postcode3: str = "") -> str:
         """ Returns the postcode prefix of the first non-blank value given """
         postcode = postcode1
         if postcode is None or postcode == "": postcode = postcode2
@@ -71,12 +76,12 @@ class PetsLocatedUKPublisher(FTPPublisher):
         if postcode.find(" ") == -1: return postcode
         return postcode[0:postcode.find(" ")]
 
-    def plcSex(self, sexID):
+    def plcSex(self, sexID: int) -> str:
         if sexID == 0: return "f"
         if sexID == 1: return "m"
         return "u"
 
-    def plcHairType(self, an):
+    def plcHairType(self, an: ResultRow) -> str:
         HAIRLESS = [ "Bird", "Reptile", "Fish", "Snake", "Hedgehog", "Tortoise", "Terrapin", 
             "Lizard", "Chicken", "Owl", "Cockatiel", "Goose", "Goldfish" ]
         # Dogs
@@ -96,7 +101,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
         else:
             return "Short"
 
-    def plcColour(self, s):
+    def plcColour(self, s: str) -> str:
         colourmap = {
             "Black": "Mainly/All Black",
             "Black - with Tan, Yellow or Fawn": "Mainly/All Black",
@@ -210,7 +215,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
         if s in colourmap: return colourmap[s]
         return "Black"
 
-    def plcSpecies(self, s, ps):
+    def plcSpecies(self, s: str, ps: str) -> str:
         speciesmap = {
             "Barnyard": "Goat", 
             "Bird": "Bird", 
@@ -237,7 +242,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
         if ps in speciesmap: return speciesmap[ps]
         return "Cat"
 
-    def run(self):
+    def run(self) -> None:
         
         if self.isPublisherExecuting(): return
         self.updatePublisherProgress(0)
@@ -380,7 +385,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
         self.saveLog()
         self.setPublisherComplete()
 
-    def processLostAnimal(self, an, customerid=""):
+    def processLostAnimal(self, an: ResultRow, customerid: str = "") -> str:
         """ Process a lost animal record and return a CSV line """
         line = []
         # customerurn
@@ -439,7 +444,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
         line.append("\"%s\"" % self.plcAgeYears(agegroup=an["AGEGROUP"]))
         return self.csvLine(line)
 
-    def processFoundAnimal(self, an, customerid=""):
+    def processFoundAnimal(self, an: ResultRow, customerid: str = "") -> str:
         """ Process a found animal record and return a CSV line """
         line = []
         # customerurn
@@ -498,7 +503,7 @@ class PetsLocatedUKPublisher(FTPPublisher):
         line.append("\"%s\"" % self.plcAgeYears(agegroup=an["AGEGROUP"]))
         return self.csvLine(line)
 
-    def processAnimal(self, an, customerid=""):
+    def processAnimal(self, an: ResultRow, customerid: str = "") -> str:
         """ Process an animal record and return a CSV line """
         line = []
         # customerurn

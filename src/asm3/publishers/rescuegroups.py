@@ -5,6 +5,7 @@ import asm3.medical
 
 from .base import FTPPublisher
 from asm3.sitedefs import RESCUEGROUPS_FTP_HOST
+from asm3.typehints import Database, PublishCriteria, ResultRow
 
 import os
 import sys
@@ -15,7 +16,7 @@ class RescueGroupsPublisher(FTPPublisher):
     Handles publishing to PetAdoptionPortal.com/RescueGroups.org
     Note: RG only accept Active FTP connections
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         publishCriteria.checkSocket = True
@@ -27,7 +28,7 @@ class RescueGroupsPublisher(FTPPublisher):
             asm3.configuration.rescuegroups_password(dbo), passive=False)
         self.initLog("rescuegroups", "RescueGroups Publisher")
 
-    def rgYesNo(self, condition):
+    def rgYesNo(self, condition: bool) -> str:
         """
         Returns a CSV entry for yes or no based on the condition
         """
@@ -36,7 +37,7 @@ class RescueGroupsPublisher(FTPPublisher):
         else:
             return "No"
 
-    def rgYesNoBlank(self, v):
+    def rgYesNoBlank(self, v: int) -> str:
         """
         Returns 0 == Yes, 1 == No, 2 or 3 == Empty string
         """
@@ -44,7 +45,7 @@ class RescueGroupsPublisher(FTPPublisher):
         elif v == 1: return "No"
         else: return ""
 
-    def run(self):
+    def run(self) -> None:
         
         self.log("RescueGroupsPublisher starting...")
 
@@ -141,7 +142,7 @@ class RescueGroupsPublisher(FTPPublisher):
         self.log(header + "\n".join(csv))
         self.cleanup()
 
-    def processAnimal(self, an, totalimages=0, shelterid=""):
+    def processAnimal(self, an: ResultRow, totalimages: int = 0, shelterid: str = "") -> str:
         """ Process an animal and return a CSV line. totalimages = the number of images we uploaded for this animal """
         line = []
         # orgID

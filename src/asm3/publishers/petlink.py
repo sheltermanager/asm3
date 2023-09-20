@@ -5,6 +5,7 @@ import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
 from asm3.sitedefs import PETLINK_BASE_URL
+from asm3.typehints import Database, PublishCriteria, ResultRow
 
 import sys
 
@@ -18,13 +19,13 @@ class PetLinkPublisher(AbstractPublisher):
     """
     Handles publishing of updated microchip info to PetLink.net
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("petlink", "PetLink Publisher")
 
-    def plYesNo(self, condition):
+    def plYesNo(self, condition: bool) -> str:
         """
         Returns yes or no for a condition.
         """
@@ -33,7 +34,7 @@ class PetLinkPublisher(AbstractPublisher):
         else:
             return "n"
 
-    def plBreed(self, breedname, speciesname, iscross):
+    def plBreed(self, breedname: str, speciesname: str, iscross: int) -> str:
         """
         Returns a PetLink breed of either the breed name,
         "Mixed Breed" if iscross == 1 or "Other" if the species
@@ -45,7 +46,7 @@ class PetLinkPublisher(AbstractPublisher):
             return "Mixed Breed"
         return breedname
 
-    def run(self):
+    def run(self) -> None:
         
         self.log("PetLinkPublisher starting...")
 
@@ -220,7 +221,7 @@ class PetLinkPublisher(AbstractPublisher):
 
         self.cleanup()
 
-    def processAnimal(self, an):
+    def processAnimal(self, an: ResultRow) -> str:
         """ Process an animal record and return a CSV line """
         
         email = asm3.utils.nulltostr(an.CURRENTOWNEREMAILADDRESS).strip()
@@ -295,12 +296,11 @@ class PetLinkPublisher(AbstractPublisher):
         line.append(an.BASECOLOURNAME)
         return self.csvLine(line)
 
-    def validate(self, an, cutoffdays):
+    def validate(self, an: ResultRow, cutoffdays: int) -> bool:
         """ Validate an animal record is ok to send.
             an: The record
             cutoffdays: Negative number of days to check against service date
         """
-
         # If the microchip number isn't 15 digits, skip it
         if len(an.IDENTICHIPNUMBER.strip()) != 15:
             self.logError("Chip number failed validation (%s not 15 digits), skipping." % an.IDENTICHIPNUMBER)

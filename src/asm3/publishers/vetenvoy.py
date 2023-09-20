@@ -10,6 +10,7 @@ import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
 from asm3.sitedefs import VETENVOY_US_VENDOR_USERID, VETENVOY_US_VENDOR_PASSWORD, VETENVOY_US_HOMEAGAIN_RECIPIENTID, VETENVOY_US_AKC_REUNITE_RECIPIENTID, VETENVOY_US_BASE_URL, VETENVOY_US_SYSTEM_ID
+from asm3.typehints import Database, List, PostedData, PublishCriteria, ResultRow, Tuple
 
 import re
 import sys
@@ -19,7 +20,8 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
     Handles updating animal microchips via recipients of
     the VetEnvoy system in the US
     """
-    def __init__(self, dbo, publishCriteria, publisherName, publisherKey, recipientId, microchipPatterns):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria, 
+                 publisherName: str, publisherKey: str, recipientId: str, microchipPatterns: List[str]) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
@@ -27,14 +29,14 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
         self.recipientId = recipientId
         self.microchipPatterns = microchipPatterns
 
-    def getHeader(self, headers, header):
+    def getHeader(self, headers: List[str], header: str) -> str:
         """ Returns a header from the headers list of a get_url call """
         for h in headers:
             if h.startswith(header):
                 return h.strip()
         return ""
 
-    def get_vetenvoy_species(self, asmspeciesid):
+    def get_vetenvoy_species(self, asmspeciesid: int) -> str:
         SPECIES_MAP = {
             1:  "Canine",
             2:  "Feline",
@@ -63,7 +65,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             return SPECIES_MAP[asmspeciesid]
         return "Miscellaneous"
 
-    def run(self):
+    def run(self) -> None:
        
         self.log(self.publisherName + " starting...")
 
@@ -180,7 +182,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
         self.saveLog()
         self.setPublisherComplete()
 
-    def processAnimal(self, an, userid=""):
+    def processAnimal(self, an: ResultRow, userid: str = "") -> str:
         """ Returns an VetXML document from an animal """
         def xe(s): 
             if s is None: return ""
@@ -239,7 +241,7 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
             '<Authorisation>true</Authorisation>' \
             '</MicrochipRegistration>'
 
-    def validate(self, an):
+    def validate(self, an: ResultRow) -> bool:
         """ Validates an animal record is ok to send """
         # Validate certain items aren't blank so we aren't registering bogus data
         if asm3.utils.nulltostr(an["CURRENTOWNERADDRESS"]).strip() == "":
@@ -262,13 +264,13 @@ class VetEnvoyUSMicrochipPublisher(AbstractPublisher):
         return True
 
     @staticmethod
-    def signup(dbo, post):
+    def signup(dbo, post: PostedData) -> Tuple[str, str]:
         """
         Handle automatically signing up for VetEnvoy's services.
         Return value on success is a tuple of userid, userpassword
         Errors are thrown to the caller
         """
-        def xe(s): 
+        def xe(s: str) -> str: 
             if s is None: return ""
             return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         x = '<?xml version="1.0" encoding="UTF-8"?>\n' \
@@ -335,27 +337,25 @@ class AllVetEnvoyPublisher(AbstractPublisher):
     homeagain = None
     akcreunite = None
 
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         self.homeagain = VEHomeAgainPublisher(dbo, publishCriteria)
         self.akcreunite = VEAKCReunitePublisher(dbo, publishCriteria)
 
-    def run(self):
+    def run(self) -> None:
         self.homeagain.run()
         self.akcreunite.run()
 
 class VEHomeAgainPublisher(VetEnvoyUSMicrochipPublisher):
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         if not asm3.configuration.vetenvoy_homeagain_enabled(dbo): return
         VetEnvoyUSMicrochipPublisher.__init__(self, dbo, publishCriteria, "HomeAgain Publisher", "homeagain", VETENVOY_US_HOMEAGAIN_RECIPIENTID, 
             ['985',])
 
 class VEAKCReunitePublisher(VetEnvoyUSMicrochipPublisher):
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         if not asm3.configuration.vetenvoy_akcreunite_enabled(dbo): return
         VetEnvoyUSMicrochipPublisher.__init__(self, dbo, publishCriteria, "AKC Reunite Publisher", "akcreunite", VETENVOY_US_AKC_REUNITE_RECIPIENTID, 
             ['0006', '0007', '956', '9910010'])
-
-
 

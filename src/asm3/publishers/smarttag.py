@@ -5,6 +5,7 @@ import asm3.utils
 
 from .base import FTPPublisher, get_microchip_data
 from asm3.sitedefs import SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD
+from asm3.typehints import Database, PublishCriteria, ResultRow
 
 import os
 import sys
@@ -15,14 +16,14 @@ class SmartTagPublisher(FTPPublisher):
     """
     Handles publishing to SmartTag PETID
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             SMARTTAG_FTP_HOST, SMARTTAG_FTP_USER, SMARTTAG_FTP_PASSWORD)
         self.initLog("smarttag", "SmartTag Publisher")
 
-    def stYesNo(self, condition):
+    def stYesNo(self, condition: bool) -> str:
         """
         Returns a CSV entry for yes or no based on the condition
         """
@@ -31,7 +32,7 @@ class SmartTagPublisher(FTPPublisher):
         else:
             return "\"N\""
 
-    def stIsSmartTagPrefix(self, chipno):
+    def stIsSmartTagPrefix(self, chipno: str) -> bool:
         """
         Returns true if this is a smart tag chip prefix
         """
@@ -40,7 +41,7 @@ class SmartTagPublisher(FTPPublisher):
                 return True
         return False
 
-    def run(self):
+    def run(self) -> None:
         
         if self.isPublisherExecuting(): return
         self.updatePublisherProgress(0)
@@ -121,7 +122,7 @@ class SmartTagPublisher(FTPPublisher):
         self.log(header + "\n".join(csv))
         self.cleanup()
 
-    def processAnimal(self, an, shelterid=""):
+    def processAnimal(self, an: ResultRow, shelterid: str = "") -> str:
         """ Process an animal record and return a CSV line """
         reccountry = an.CURRENTOWNERCOUNTRY
         if reccountry is None or reccountry == "": reccountry = "USA"

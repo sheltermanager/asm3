@@ -12,12 +12,13 @@ import asm3.wordprocessor
 
 from .base import FTPPublisher, PublishCriteria, get_animal_data, is_animal_adoptable
 from asm3.sitedefs import BASE_URL, SERVICE_URL
+from asm3.typehints import Database, ResultRow, Results
 
 import math
 import os
 import sys
 
-def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0, locationid=0, underweeks=0, overweeks=0):
+def get_adoptable_animals(dbo: Database, style="", speciesid=0, animaltypeid=0, locationid=0, underweeks=0, overweeks=0) -> str:
     """ Returns a page of adoptable animals.
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
@@ -30,7 +31,7 @@ def get_adoptable_animals(dbo, style="", speciesid=0, animaltypeid=0, locationid
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid, locationid=locationid, \
         underweeks=underweeks, overweeks=overweeks)
 
-def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=0, orderby="adopted_desc"):
+def get_adopted_animals(dbo: Database, daysadopted=0, style="", speciesid=0, animaltypeid=0, orderby="adopted_desc") -> str:
     """ Returns a page of adopted animals.
     daysadopted: The number of days the animals have been adopted
     style: The HTML publishing template to use
@@ -46,7 +47,7 @@ def get_adopted_animals(dbo, daysadopted=0, style="", speciesid=0, animaltypeid=
         "ORDER BY %s" % orderby, [ dbo.today(daysadopted * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypeid=0, orderby="deceased_desc"):
+def get_deceased_animals(dbo: Database, daysdeceased=0, style="", speciesid=0, animaltypeid=0, orderby="deceased_desc") -> str:
     """ Returns a page of deceased animals.
     daysdeceased: The number of days the animals have been deceased
     style: The HTML publishing template to use
@@ -61,7 +62,7 @@ def get_deceased_animals(dbo, daysdeceased=0, style="", speciesid=0, animaltypei
         "ORDER BY %s" % orderby, [ dbo.today(daysdeceased * -1)] )
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def get_flagged_animals(dbo, style="", speciesid=0, animaltypeid=0, flag="", allanimals=0, orderby="entered_desc"):
+def get_flagged_animals(dbo: Database, style="", speciesid=0, animaltypeid=0, flag="", allanimals=0, orderby="entered_desc") -> str:
     """ Returns a page of animals with a particular flag.
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
@@ -78,7 +79,7 @@ def get_flagged_animals(dbo, style="", speciesid=0, animaltypeid=0, flag="", all
         limit = asm3.configuration.record_search_limit(dbo))
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def get_held_animals(dbo, style="", speciesid=0, animaltypeid=0, orderby="entered_desc"):
+def get_held_animals(dbo: Database, style="", speciesid=0, animaltypeid=0, orderby="entered_desc") -> str:
     """ Returns a page of currently held animals.
     style: The HTML publishing template to use
     speciesid: 0 for all species, or a specific one
@@ -91,7 +92,7 @@ def get_held_animals(dbo, style="", speciesid=0, animaltypeid=0, orderby="entere
         "ORDER BY %s" % orderby)
     return animals_to_page(dbo, animals, style=style, speciesid=speciesid, animaltypeid=animaltypeid)
 
-def get_orderby_const(c):
+def get_orderby_const(c: str) -> str:
     """
     Returns an ORDER BY clause for a given constant
     Used by the methods above that are called by the html_X_animals service methods.
@@ -122,7 +123,7 @@ def get_orderby_const(c):
         return CLAUSES[c]
     return "a.DateBroughtIn"
 
-def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locationid=0, underweeks=0, overweeks=0):
+def animals_to_page(dbo: Database, animals: Results, style="", speciesid=0, animaltypeid=0, locationid=0, underweeks=0, overweeks=0) -> str:
     """ Returns a page of animals.
     animals: A resultset containing animal records
     style: The HTML publishing template to use
@@ -177,7 +178,7 @@ def animals_to_page(dbo, animals, style="", speciesid=0, animaltypeid=0, locatio
         bodies.append(asm3.wordprocessor.substitute_tags(body, tags, True, "$$", "$$"))
     return "%s\n%s\n%s" % (head,"\n".join(bodies), foot)
     
-def get_animal_view(dbo, animalid, style="animalview"):
+def get_animal_view(dbo: Database, animalid: int, style="animalview") -> str:
     """ Constructs the animal view page to the animalview (or another specified) style/template. """
     a = dbo.first_row(get_animal_data(dbo, animalid=animalid, include_additional_fields=True, strip_personal_data=False))
     # The animal is adoptable, use the specified template
@@ -214,7 +215,7 @@ def get_animal_view(dbo, animalid, style="animalview"):
     s = asm3.wordprocessor.substitute_tags(s, tags, True, "$$", "$$")
     return s
 
-def get_animal_view_adoptable_html(dbo):
+def get_animal_view_adoptable_html(dbo: Database) -> str:
     """ Returns an HTML wrapper around get_animal_view_adoptable_js - uses
         a template called animalviewadoptable if it exists. 
     """
@@ -240,7 +241,7 @@ def get_animal_view_adoptable_html(dbo):
     body = body.replace("$$ADOPTABLEJSURL$$", "%s?method=animal_view_adoptable_js&account=%s" % (SERVICE_URL, dbo.database))
     return "%s\n%s\n%s" % (head, body, foot)
 
-def get_animal_view_adoptable_js(dbo):
+def get_animal_view_adoptable_js(dbo: Database) -> str:
     """ Returns js that outputs adoptable animals into a host div """
     js = asm3.utils.read_text_file("%s/static/js/animal_view_adoptable.js" % dbo.installpath)
     # Retrieve the animals, update bio to convert line breaks to break tags
@@ -255,7 +256,7 @@ def get_animal_view_adoptable_js(dbo):
     js = js.replace("\"{TOKEN_ADOPTABLES}\"", asm3.utils.json(rows))
     return js
 
-def get_animal_view_template(dbo):
+def get_animal_view_template(dbo: Database) -> str:
     """ Returns a tuple of the header, body and footer for the animalview template """
     head, body, foot = asm3.template.get_html_template(dbo, "animalview")
     if head == "":
@@ -273,7 +274,7 @@ class HTMLPublisher(FTPPublisher):
     totalAnimals = 0
     user = "cron"
 
-    def __init__(self, dbo, publishCriteria, user):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria, user: str) -> None:
         l = dbo.locale
         FTPPublisher.__init__(self, dbo, publishCriteria, 
             asm3.configuration.ftp_host(dbo), asm3.configuration.ftp_user(dbo), asm3.configuration.ftp_password(dbo),
@@ -281,13 +282,13 @@ class HTMLPublisher(FTPPublisher):
         self.user = user
         self.initLog("html", asm3.i18n._("HTML/FTP Publisher", l))
 
-    def escapePageName(self, s):
+    def escapePageName(self, s: str) -> str:
         suppress = [ " ", "(", ")", "/", "\\", "!", "?", "*" ]
         for x in suppress:
             s = s.replace(x, "_")
         return s
 
-    def getHeader(self):
+    def getHeader(self) -> str:
         header, body, footer = asm3.template.get_html_template(self.dbo, self.pc.style)
         if header == "":
             header = """<!DOCTYPE html>
@@ -302,13 +303,13 @@ class HTMLPublisher(FTPPublisher):
             """
         return header
 
-    def getFooter(self):
+    def getFooter(self) -> str:
         header, body, footer = asm3.template.get_html_template(self.dbo, self.pc.style)
         if footer == "":
             footer = "</table></body></html>"
         return footer
 
-    def getBody(self):
+    def getBody(self) -> str:
         header, body, footer = asm3.template.get_html_template(self.dbo, self.pc.style)
         if body == "":
             body = "<tr><td><img height=200 width=320 src=$$IMAGE$$></td>" \
@@ -317,7 +318,7 @@ class HTMLPublisher(FTPPublisher):
                 "<b>Details</b><br><br>$$WebMediaNotes$$<hr></td></tr>"
         return body
 
-    def substituteHFTag(self, searchin, page, user, title = ""):
+    def substituteHFTag(self, searchin: str, page: str, user: str, title: str = "") -> str:
         """
         Substitutes special header and footer tokens in searchin. page
         contains the current page number.
@@ -344,7 +345,7 @@ class HTMLPublisher(FTPPublisher):
         output = output.replace("$$ORGEMAIL$$", asm3.configuration.email(self.dbo))
         return output
 
-    def substituteBodyTags(self, searchin, a):
+    def substituteBodyTags(self, searchin: str, a: ResultRow) -> str:
         """
         Substitutes any tags in the body for animal data
         """
@@ -360,7 +361,7 @@ class HTMLPublisher(FTPPublisher):
         output = asm3.wordprocessor.substitute_tags(searchin, tags, True, "$$", "$$")
         return output
 
-    def writeJavaScript(self, animals):
+    def writeJavaScript(self, animals: Results) -> str:
         # Remove original owner and other sensitive info from javascript database
         # before saving it
         for a in animals:
@@ -376,7 +377,7 @@ class HTMLPublisher(FTPPublisher):
             self.upload("db.js")
             self.log("Uploaded javascript database.")
 
-    def run(self):
+    def run(self) -> None:
         self.setLastError("")
         if self.isPublisherExecuting(): return
         self.updatePublisherProgress(0)
@@ -398,7 +399,7 @@ class HTMLPublisher(FTPPublisher):
         self.cleanup()
         self.resetPublisherProgress()
 
-    def executeAdoptedPage(self):
+    def executeAdoptedPage(self) -> None:
         """
         Generates and uploads the page of recently adopted animals
         """
@@ -464,7 +465,7 @@ class HTMLPublisher(FTPPublisher):
             self.upload(thisPageName)
             self.log("Uploaded page: %s" % thisPageName)
 
-    def executeDeceasedPage(self):
+    def executeDeceasedPage(self) -> None:
         """
         Generates and uploads the page of recently deceased animals
         """
@@ -530,7 +531,7 @@ class HTMLPublisher(FTPPublisher):
             self.upload(thisPageName)
             self.log("Uploaded page: %s" % thisPageName)
 
-    def executeFormsPage(self):
+    def executeFormsPage(self) -> None:
         """
         Generates and uploads the page of online forms
         """
@@ -563,7 +564,7 @@ class HTMLPublisher(FTPPublisher):
             self.upload(thisPageName)
             self.log("Uploaded page: %s" % thisPageName)
 
-    def executeAgeSpecies(self, user, childadult = True, species = True):
+    def executeAgeSpecies(self, user: str, childadult: bool = True, species: bool = True) -> None:
         """
         Publisher that puts animals on pages by age and species
         childadult: True if we should split up pages by animals under/over 6 months 
@@ -683,7 +684,7 @@ class HTMLPublisher(FTPPublisher):
                 self.upload(self.escapePageName(k))
                 self.log("Uploaded page: %s" % k)
 
-    def executePages(self):
+    def executePages(self) -> None:
         """
         Publisher based on assigning animals to pages.
         """
@@ -809,7 +810,7 @@ class HTMLPublisher(FTPPublisher):
         if self.pc.generateJavascriptDB:
             self.writeJavaScript(animals)
 
-    def executeRSS(self):
+    def executeRSS(self) -> None:
         """
         Generates and uploads the rss.xml page
         """
@@ -891,7 +892,7 @@ class HTMLPublisher(FTPPublisher):
             self.upload(thisPageName)
             self.log("Uploaded page: %s" % thisPageName)
 
-    def executeType(self, user):
+    def executeType(self, user: str) -> None:
         """
         Publisher that puts animals on pages by type
         """

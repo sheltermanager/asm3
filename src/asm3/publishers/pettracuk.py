@@ -6,6 +6,7 @@ import asm3.utils
 
 from .base import AbstractPublisher, get_microchip_data
 from asm3.sitedefs import PETTRAC_UK_POST_URL
+from asm3.typehints import Database, Dict, PublishCriteria, ResultRow
 
 import sys
 
@@ -13,16 +14,17 @@ class PETtracUKPublisher(AbstractPublisher):
     """
     Handles updating animal microchips with AVID PETtrac UK
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("pettracuk", "PETtrac UK Publisher")
 
-    def reregistrationPDF(self, fields, sig, realname, orgname, orgaddress, orgtown, orgcounty, orgpostcode):
+    def reregistrationPDF(self, fields: Dict, sig: str, realname: str, 
+                          orgname: str, orgaddress: str, orgtown: str, orgcounty: str, orgpostcode: str) -> bytes:
         """
         Generates a reregistration PDF document containing the authorised user's
-        electronic signature.
+        electronic signature (sig is data uri)
         """
         gender = fields["petgender"]
         if gender == "M": gender = "Male"
@@ -54,7 +56,7 @@ class PETtracUKPublisher(AbstractPublisher):
             "provided with additional information.</p>\n"
         return asm3.utils.html_to_pdf(self.dbo, h)
 
-    def run(self):
+    def run(self) -> None:
         
         self.log("PETtrac UK Publisher starting...")
 
@@ -166,7 +168,7 @@ class PETtracUKPublisher(AbstractPublisher):
         self.saveLog()
         self.setPublisherComplete()
 
-    def processAnimal(self, an, orgname="", orgserial="", orgpostcode="", orgpassword="", registeroverseas=False, overseasorigin=""):
+    def processAnimal(self, an: ResultRow, orgname="", orgserial="", orgpostcode="", orgpassword="", registeroverseas=False, overseasorigin="") -> Dict:
         """ Generate a dictionary of data to post from an animal record """
         # Sort out breed
         breed = an["BREEDNAME"]
@@ -222,7 +224,7 @@ class PETtracUKPublisher(AbstractPublisher):
 
         return fields
 
-    def validate(self, an):
+    def validate(self, an: ResultRow) -> bool:
         """ Validate an animal record is ok to send """
         # Validate certain items aren't blank so we aren't registering bogus data
         if asm3.utils.nulltostr(an.CURRENTOWNERADDRESS).strip() == "":

@@ -74,6 +74,8 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
     SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL
 
+from asm3.typehints import Any, Dict, Generator, List, ResultRow, Session
+
 from asm3.__version__ import BUILD
 
 CACHE_ONE_HOUR = 3600
@@ -93,19 +95,19 @@ def session_manager():
         A session manager that uses either an in-memory dictionary or memcache
         (if available).
         """
-        def __contains__(self, key):
+        def __contains__(self, key: str) -> bool:
             rv = asm3.cachemem.get(key) is not None
             if SESSION_DEBUG: asm3.al.debug("contains(%s)=%s" % (key, rv), "MemCacheStore.__contains__")
             return rv
-        def __getitem__(self, key):
+        def __getitem__(self, key: str) -> Any:
             rv = asm3.cachemem.get(key)
             if SESSION_DEBUG: asm3.al.debug("getitem(%s)=%s" % (key, rv), "MemCacheStore.__getitem__")
             return rv
-        def __setitem__(self, key, value):
+        def __setitem__(self, key: str, value: Any) -> Any:
             rv = asm3.cachemem.put(key, value, web.config.session_parameters["timeout"])
             if SESSION_DEBUG: asm3.al.debug("setitem(%s, %s)=%s" % (key, value, rv), "MemCacheStore.__setitem__")
             return rv
-        def __delitem__(self, key):
+        def __delitem__(self, key: str) -> Any:
             rv = asm3.cachemem.delete(key)
             if SESSION_DEBUG: asm3.al.debug("delitem(%s)=%s" % (key, rv), "MemCacheStore.__delitem__")
             return rv
@@ -127,7 +129,7 @@ def session_manager():
         sess = asm3.utils.websession
     return sess
 
-def asm_404():
+def asm_404() -> str:
     """
     Custom 404 page
     """
@@ -160,9 +162,10 @@ def asm_404():
     session.no_cookie = True
     return web.notfound(s)
 
-def asm_500_email():
+def asm_500_email() -> Any:
     """
     Custom 500 error page that sends emails to the site admin
+    (web.InternalError)
     """
     asm3.utils.send_error_email()
     s = """
@@ -199,7 +202,7 @@ def asm_500_email():
     web.header("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0") # Never cache 500 errors
     return web.internalerror(s)
 
-def emergency_notice():
+def emergency_notice() -> str:
     """
     Returns emergency notice text if any is set.
     """
@@ -209,7 +212,7 @@ def emergency_notice():
             return s
     return ""
 
-def generate_routes():
+def generate_routes() -> List[str]:
     """ Extract the url property from all classes and construct the route list """
     g = globals().copy()
     for name, obj in g.items():
@@ -236,7 +239,7 @@ class ASMEndpoint(object):
     data = None            # Request data posted to this endpoint as bytes or str if data_encoding is set
     data_encoding = None   # codec to use for decoding of posted data to str (None to not decode)
 
-    def _params(self):
+    def _params(self) -> None:
         l = session.locale
         if l is None:
             l = LOCALE
@@ -251,7 +254,7 @@ class ASMEndpoint(object):
             siteid = session.siteid, locationfilter = session.locationfilter, staffid = session.staffid,
             visibleanimalids = session.visibleanimalids )
 
-    def check(self, permissions):
+    def check(self, permissions: Any) -> None:
         """ Check logged in and permissions (which can be a single permission string or a list/tuple) """
         if not self.session_cookie:
             session.send_cookie = False # Stop the session object calling setcookie
@@ -263,23 +266,23 @@ class ASMEndpoint(object):
             for p in permissions:
                 asm3.users.check_permission(session, p)
 
-    def checkb(self, permissions):
+    def checkb(self, permissions: Any) -> bool:
         """ Check logged in and a single permission, returning a boolean """
         if self.check_logged_in:
             self.check_loggedin(session, web, self.login_url)
         return asm3.users.check_permission_bool(session, permissions)
 
-    def check_animal(self, a):
+    def check_animal(self, a: ResultRow) -> None:
         """ Checks whether the animal we're about to look at is viewable by the user """
         if not asm3.animal.is_animal_in_location_filter(a, session.locationfilter, session.siteid, session.visibleanimalids):
             raise asm3.utils.ASMPermissionError("animal not in location filter/site")
 
-    def check_locked_db(self):
+    def check_locked_db(self) -> None:
         if session.dbo and session.dbo.locked: 
             l = session.locale
             raise asm3.utils.ASMPermissionError(_("This database is locked.", l))
 
-    def check_loggedin(self, session, web, loginpage = "login"):
+    def check_loggedin(self, session: Session, web: Any, loginpage = "login") -> None:
         """
         Checks if we have a logged in user and if not, redirects to
         the login page
@@ -293,7 +296,7 @@ class ASMEndpoint(object):
             # update the last user activity if logged in
             asm3.users.update_user_activity(session.dbo, session.user)
 
-    def check_mode(self, mode):
+    def check_mode(self, mode: str) -> bool:
         """
         Verify that the value given for mode is valid. Valid mode
         values are between 2 and 30 chars in length and contain only
@@ -305,11 +308,11 @@ class ASMEndpoint(object):
                 return False
         return True
 
-    def content(self, o):
+    def content(self, o) -> str:
         """ Virtual function: override to get the content """
         return ""
 
-    def cache_control(self, client_ttl = 0, cache_ttl = 0):
+    def cache_control(self, client_ttl = 0, cache_ttl = 0) -> None:
         """ Sends a cache control header.
         client_ttl: The max-age to send for the client
         cache_ttl:  The s-maxage to send for an edge cache
@@ -321,11 +324,11 @@ class ASMEndpoint(object):
         else:
             self.header("Cache-Control", "public, max-age=%s, s-maxage=%s" % (client_ttl, cache_ttl))
 
-    def content_type(self, ct):
+    def content_type(self, ct: str) -> None:
         """ Sends a content-type header """
         self.header("Content-Type", ct)
 
-    def data_param(self, p):
+    def data_param(self, p: str) -> str:
         """ Returns a URL encoded parameter from the data stream.
             This is useful for some services where they send data in
             odd encodings (eg: PayPal use cp1252) and we can't use 
@@ -335,22 +338,22 @@ class ASMEndpoint(object):
                 return b.split("=")[1]
         return ""
 
-    def get_cookie(self, s):
+    def get_cookie(self, s: str) -> str:
         """ Returns the value of cookie s. Returns None if it does not exist. """
         try:
             return web.cookies().get(s)
         except:
             return None
 
-    def set_cookie(self, name, value, ttl):
+    def set_cookie(self, name: str, value: str, ttl: int) -> None:
         """ Sets a cookie value """
         web.setcookie(name, value, expires=ttl, secure=SESSION_SECURE_COOKIE, httponly=True)
 
-    def header(self, key, value):
+    def header(self, key: str, value: str) -> None:
         """ Set the response header key to value """
         web.header(key, value)
 
-    def is_loggedin(self, session):
+    def is_loggedin(self, session: Session) -> bool:
         """
         Returns true if the user is logged in and the user is valid 
         (ie. has not been deleted or had login disabled)
@@ -361,33 +364,33 @@ class ASMEndpoint(object):
         if session.dbo is None: return False
         return asm3.users.is_user_valid(session.dbo, session.user)
 
-    def notfound(self):
-        """ Returns a 404 """
+    def notfound(self) -> Any:
+        """ Returns a 404 (web.NotFound) """
         raise web.notfound()
 
-    def post_all(self, o):
+    def post_all(self, o) -> str:
         """ Virtual function: override to handle postback """
         return ""
 
-    def query(self):
+    def query(self) -> str:
         """ Returns the request query string """
         return web.ctx.query
 
-    def redirect(self, route):
+    def redirect(self, route: str) -> None:
         """ Redirect to another route 
             Uses BASE_URL if a relative route is given to help CDNs. """
         if not route.startswith("http"): route = "%s/%s" % (BASE_URL, route)
         raise web.seeother(route)
 
-    def referer(self):
+    def referer(self) -> str:
         """ Returns the referer request header """
         return web.ctx.env.get("HTTP_REFERER", "")
 
-    def reload_config(self):
+    def reload_config(self) -> None:
         """ Reloads items in the session based on database values, invalidates config.js so client reloads it """
         asm3.users.update_session(session.dbo, session, session.user)
 
-    def remote_ip(self):
+    def remote_ip(self) -> str:
         """ Gets the IP address of the requester, taking account of reverse proxies """
         remoteip = web.ctx['ip']
         if "HTTP_X_FORWARDED_FOR" in web.ctx.env:
@@ -396,15 +399,15 @@ class ASMEndpoint(object):
                 remoteip = xf
         return remoteip
 
-    def user_agent(self):
+    def user_agent(self) -> str:
         """ Returns the user agent request header """
         return web.ctx.env.get("HTTP_USER_AGENT", "")
 
-    def GET(self):
+    def GET(self) -> str:
         self.check(self.get_permissions)
         return self.content(self._params())
 
-    def POST(self):
+    def POST(self) -> str:
         """ Handle a POST, deal with permissions and locked databases """
         if self.check_logged_in:
             self.check_locked_db()
@@ -421,7 +424,7 @@ class ASMEndpoint(object):
 
 class GeneratorEndpoint(ASMEndpoint):
     """Base class for endpoints that use generators for their content """
-    def GET(self):
+    def GET(self) -> Generator[str, None, None]:
         self.check(self.get_permissions)
         if LARGE_FILES_CHUNKED: 
             self.header("Transfer-Encoding", "chunked")
@@ -433,11 +436,11 @@ class JSONEndpoint(ASMEndpoint):
     js_module = ""         # The javascript module to start (can be omitted if same as url)
     url = ""               # The route/url to this target
 
-    def controller(self, o):
+    def controller(self, o) -> Dict:
         """ Virtual function to be overridden - return controller as a dict """
         return {}
 
-    def GET(self):
+    def GET(self) -> str:
         """ Handle a GET, deal with permissions, session and JSON responses """
         self.check(self.get_permissions)
         o = self._params()

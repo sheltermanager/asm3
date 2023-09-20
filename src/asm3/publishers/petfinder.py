@@ -5,6 +5,7 @@ import asm3.medical
 
 from .base import FTPPublisher
 from asm3.sitedefs import PETFINDER_FTP_HOST, PETFINDER_SEND_PHOTOS_BY_FTP
+from asm3.typehints import datetime, Database, List, PublishCriteria, ResultRow, Results
 
 import os
 import sys
@@ -13,7 +14,7 @@ class PetFinderPublisher(FTPPublisher):
     """
     Handles publishing to PetFinder.com
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.forceReupload = True
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
@@ -25,7 +26,7 @@ class PetFinderPublisher(FTPPublisher):
             asm3.configuration.petfinder_password(dbo))
         self.initLog("petfinder", "PetFinder Publisher")
 
-    def pfAnimalQuery(self):
+    def pfAnimalQuery(self) -> str:
         return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.BreedID, a.Breed2ID, a.CrossBreed, a.Sex, a.Size, a.DateOfBirth, a.MostRecentEntryDate, a.Fee, " \
             "b1.BreedName AS BreedName1, b2.BreedName AS BreedName2, " \
             "b1.PetFinderBreed, b2.PetFinderBreed AS PetFinderBreed2, s.PetFinderSpecies, er.ReasonName AS EntryReasonName, " \
@@ -37,11 +38,11 @@ class PetFinderPublisher(FTPPublisher):
             "INNER JOIN species s ON a.SpeciesID = s.ID " \
             "INNER JOIN entryreason er ON a.EntryReasonID = er.ID "
 
-    def pfDate(self, d):
+    def pfDate(self, d: datetime) -> str:
         """ Returns a CSV entry for a date in YYYY-MM-DD """
         return "\"%s\"" % asm3.i18n.format_date(d, "%Y-%m-%d")
 
-    def pfYesNo(self, condition):
+    def pfYesNo(self, condition: bool) -> str:
         """
         Returns a CSV entry for yes or no based on the condition
         """
@@ -50,7 +51,7 @@ class PetFinderPublisher(FTPPublisher):
         else:
             return "\"\""
 
-    def pfNotGoodWith(self, v):
+    def pfNotGoodWith(self, v: int) -> str:
         """
         Returns a CSV entry for yes, no, unknown based on the value.
         In our scheme v is one of Yes=0, No=1, Unknown=2, Selective=3
@@ -63,7 +64,7 @@ class PetFinderPublisher(FTPPublisher):
         else:
             return "\"0\""
 
-    def pfImageUrl(self, urls, index):
+    def pfImageUrl(self, urls: List[str], index: int) -> str:
         """
         Returns image URL index from urls, returning an empty string if it does not exist.
         """
@@ -72,7 +73,7 @@ class PetFinderPublisher(FTPPublisher):
         except IndexError:
             return ""
 
-    def pfRecordIn(self, animals, aid):
+    def pfRecordIn(self, animals: Results, aid: int) -> bool:
         """
         Returns true if aid exists in the ID field of all the rows in animals.
         """
@@ -81,7 +82,7 @@ class PetFinderPublisher(FTPPublisher):
                 return True
         return False
 
-    def run(self):
+    def run(self) -> None:
 
         self.log("PetFinderPublisher starting...")
 
@@ -225,7 +226,7 @@ class PetFinderPublisher(FTPPublisher):
         self.log("\n".join(csv))
         self.cleanup()
 
-    def processAnimal(self, an, agebands = [ 182, 730, 3285 ], status = "A", hide_size = False):
+    def processAnimal(self, an: ResultRow, agebands: List[int] = [ 182, 730, 3285 ], status: str = "A", hide_size: bool = False) -> str:
         """ Processes an animal and returns a CSV line """
         primary_color = ""
         secondary_color = ""
@@ -354,13 +355,14 @@ class PetFinderPublisher(FTPPublisher):
         line.append("")
         return self.csvLine(line)
 
-    def clearListings(self):
+    def clearListings(self) -> str:
         """
         We've had many issues in the past caused by people sending the wrong images and
         then finding they can't update them. This process sends a blank file to PetFinder
         to remove all the existing listings (so any existing images are forgotten). It
         then touches the access date on all the publishable images for adoptable animals
         so that PetFinder will get a new URL for them and download them again.
+        The return value is the publishing log.
         """
                 
         self.log("PetFinderPublisher clearing listings ...")

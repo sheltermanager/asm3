@@ -30,10 +30,11 @@ from asm3 import utils
 from asm3 import waitinglist
 from asm3.sitedefs import LOCALE, TIMEZONE, MULTIPLE_DATABASES, MULTIPLE_DATABASES_TYPE, MULTIPLE_DATABASES_MAP
 from asm3.sitedefs import HTMLFTP_PUBLISHER_ENABLED
+from asm3.typehints import Callable, Database
 
 import time
 
-def ttask(fn, dbo):
+def ttask(fn: Callable, dbo: Database) -> None:
     """ Runs a function and times how long it takes """
     x = time.time()
     fn(dbo)
@@ -43,7 +44,7 @@ def ttask(fn, dbo):
     else:
         al.debug("complete in %0.2f sec" % elapsed, fn.__name__, dbo)
 
-def daily(dbo):
+def daily(dbo: Database):
     """
     Tasks to run once each day before users login for the day.
     """
@@ -143,7 +144,7 @@ def daily(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: running batch tasks: %s" % em, "cron.daily", dbo, sys.exc_info())
 
-def reports_email(dbo):
+def reports_email(dbo: Database):
     """
     Batch email reports
     """
@@ -154,7 +155,7 @@ def reports_email(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: running daily email of reports_email: %s" % em, "cron.reports_email", dbo, sys.exc_info())
 
-def publish_3pty(dbo):
+def publish_3pty(dbo: Database):
     try:
         publishers = configuration.publishers_enabled(dbo)
         freq = configuration.publisher_sub24_frequency(dbo)
@@ -169,7 +170,7 @@ def publish_3pty(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running third party publishers: %s" % em, "cron.publish_3pty", dbo, sys.exc_info())
 
-def publish_3pty_sub24(dbo):
+def publish_3pty_sub24(dbo: Database):
     try:
         publishers = configuration.publishers_enabled(dbo)
         freq = configuration.publisher_sub24_frequency(dbo)
@@ -188,7 +189,7 @@ def publish_3pty_sub24(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running sub24 third party publishers: %s" % em, "cron.publish_3pty_sub24", dbo, sys.exc_info())
 
-def publish_html(dbo):
+def publish_html(dbo: Database):
     try :
         if HTMLFTP_PUBLISHER_ENABLED and configuration.publishers_enabled(dbo).find("html") != -1:
             publish.start_publisher(dbo, "html", user="system", newthread=False)
@@ -196,7 +197,7 @@ def publish_html(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running html publisher: %s" % em, "cron.publish_html", dbo, sys.exc_info())
 
-def maint_import_report(dbo):
+def maint_import_report(dbo: Database):
     try:
         extreports.install_smcom_report_file(dbo, "system", os.environ["ASM3_REPORT"])
         print("OK")
@@ -205,28 +206,28 @@ def maint_import_report(dbo):
         print(em) # This one is designed to be run from the command line rather than cron
         al.error("FAIL: uncaught error running import report: %s" % em, "cron.maint_import_report", dbo, sys.exc_info())
 
-def maint_recode_all(dbo):
+def maint_recode_all(dbo: Database):
     try:
         animal.maintenance_reassign_all_codes(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_recode_all: %s" % em, "cron.maint_recode_all", dbo, sys.exc_info())
 
-def maint_variable_data(dbo):
+def maint_variable_data(dbo: Database):
     try:
         animal.update_all_variable_animal_data(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_variable_data: %s" % em, "cron.maint_variable_data", dbo, sys.exc_info())
 
-def maint_recode_shelter(dbo):
+def maint_recode_shelter(dbo: Database):
     try:
         animal.maintenance_reassign_shelter_codes(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_recode_shelter: %s" % em, "cron.maint_recode_shelter", dbo, sys.exc_info())
 
-def maint_animal_figures(dbo):
+def maint_animal_figures(dbo: Database):
     try:
         animal.update_all_animal_statuses(dbo)
         animal.update_all_variable_animal_data(dbo)
@@ -235,14 +236,14 @@ def maint_animal_figures(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_animal_figures: %s" % em, "cron.maint_animal_figures", dbo, sys.exc_info())
 
-def maint_animal_figures_annual(dbo):
+def maint_animal_figures_annual(dbo: Database):
     try:
         animal.maintenance_animal_figures(dbo, includeMonths = False, includeAnnual = True)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_animal_figures_annual: %s" % em, "cron.maint_animal_figures_annual", dbo, sys.exc_info())
 
-def maint_db_diagnostic(dbo):
+def maint_db_diagnostic(dbo: Database):
     try:
         d = dbupdate.diagnostic(dbo)
         for k, v in d.items():
@@ -251,7 +252,7 @@ def maint_db_diagnostic(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_diagnostic: %s" % em, "cron.maint_db_diagnostic", dbo, sys.exc_info())
 
-def maint_db_fix_preferred_photos(dbo):
+def maint_db_fix_preferred_photos(dbo: Database):
     try:
         d = dbupdate.fix_preferred_photos(dbo)
         print("Fixed %d" % d)
@@ -259,7 +260,7 @@ def maint_db_fix_preferred_photos(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_fix_preferred_photos: %s" % em, "cron.maint_db_fix_preferred_photos", dbo, sys.exc_info())
 
-def maint_db_dump(dbo):
+def maint_db_dump(dbo: Database):
     try:
         for x in dbupdate.dump(dbo):
             print(x)
@@ -267,7 +268,7 @@ def maint_db_dump(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump: %s" % em, "cron.maint_db_dump", dbo, sys.exc_info())
 
-def maint_db_dump_hsqldb(dbo):
+def maint_db_dump_hsqldb(dbo: Database):
     try:
         for x in dbupdate.dump_hsqldb(dbo):
             print(x)
@@ -275,7 +276,7 @@ def maint_db_dump_hsqldb(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_hsqldb: %s" % em, "cron.maint_db_dump_hsqldb", dbo, sys.exc_info())
 
-def maint_db_dump_dbfs_base64(dbo):
+def maint_db_dump_dbfs_base64(dbo: Database):
     try:
         for x in dbupdate.dump_dbfs_base64(dbo):
             print(x)
@@ -283,7 +284,7 @@ def maint_db_dump_dbfs_base64(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_dbfs_base64: %s" % em, "cron.maint_db_dump_dbfs_base64", dbo, sys.exc_info())
 
-def maint_db_dump_dbfs_files(dbo):
+def maint_db_dump_dbfs_files(dbo: Database):
     try:
         for x in dbupdate.dump_dbfs_files(dbo):
             print(x)
@@ -291,7 +292,7 @@ def maint_db_dump_dbfs_files(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_dbfs_files: %s" % em, "cron.maint_db_dump_dbfs_files", dbo, sys.exc_info())
 
-def maint_db_dump_lookups(dbo):
+def maint_db_dump_lookups(dbo: Database):
     try:
         for x in dbupdate.dump_lookups(dbo):
             print(x)
@@ -299,7 +300,7 @@ def maint_db_dump_lookups(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_lookups: %s" % em, "cron.maint_db_dump_lookups", dbo, sys.exc_info())
 
-def maint_db_dump_merge(dbo):
+def maint_db_dump_merge(dbo: Database):
     try:
         for x in dbupdate.dump_merge(dbo):
             print(x)
@@ -307,7 +308,7 @@ def maint_db_dump_merge(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_merge: %s" % em, "cron.maint_db_dump_merge", dbo, sys.exc_info())
 
-def maint_db_dump_smcom(dbo):
+def maint_db_dump_smcom(dbo: Database):
     try:
         for x in dbupdate.dump_smcom(dbo):
             print(x)
@@ -315,21 +316,21 @@ def maint_db_dump_smcom(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_smcom: %s" % em, "cron.maint_db_dump_smcom", dbo, sys.exc_info())
 
-def maint_db_dump_animalcsv(dbo):
+def maint_db_dump_animalcsv(dbo: Database):
     try:
         print(utils.bytes2str(utils.csv(dbo.locale, animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "includedeceased": "true", "includenonshelter": "true" }))))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_animalcsv: %s" % em, "cron.maint_db_dump_animalcsv", dbo, sys.exc_info())
 
-def maint_db_dump_personcsv(dbo):
+def maint_db_dump_personcsv(dbo: Database):
     try:
         print(utils.bytes2str(utils.csv(dbo.locale, person.get_person_find_simple(dbo, "", classfilter="all", includeStaff=True, includeVolunteers=True, limit=0))))
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_personcsv: %s" % em, "cron.maint_db_dump_personcsv", dbo, sys.exc_info())
 
-def maint_db_dump_zip(dbo):
+def maint_db_dump_zip(dbo: Database):
     try:
         l = dbo.locale
         dbname = dbo.database
@@ -366,56 +367,56 @@ def maint_db_dump_zip(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_dump_zip: %s" % em, "cron.maint_db_dump_zip", dbo, sys.exc_info())
 
-def maint_db_install(dbo):
+def maint_db_install(dbo: Database):
     try:
         dbupdate.install(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_install: %s" % em, "cron.maint_db_install", dbo, sys.exc_info())
 
-def maint_db_reinstall(dbo):
+def maint_db_reinstall(dbo: Database):
     try:
         dbupdate.reinstall_default_data(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_reinstall: %s" % em, "cron.maint_db_reinstall", dbo, sys.exc_info())
 
-def maint_db_reinstall_default_templates(dbo):
+def maint_db_reinstall_default_templates(dbo: Database):
     try:
         dbupdate.install_default_templates(dbo, True)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_reinstall_default_templates: %s" % em, "cron.maint_db_reinstall_default_templates", dbo, sys.exc_info())
 
-def maint_db_reinstall_default_onlineforms(dbo):
+def maint_db_reinstall_default_onlineforms(dbo: Database):
     try:
         dbupdate.install_default_onlineforms(dbo, True)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_reinstall_default_onlineforms: %s" % em, "cron.maint_db_reinstall_default_onlineforms", dbo, sys.exc_info())
 
-def maint_db_replace_html_entities(dbo):
+def maint_db_replace_html_entities(dbo: Database):
     try:
         dbupdate.replace_html_entities(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_replace_html_entities: %s" % em, "cron.maint_db_replace_html_entities", dbo, sys.exc_info())
 
-def maint_db_reset(dbo):
+def maint_db_reset(dbo: Database):
     try:
         dbupdate.reset_db(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_reset: %s" % em, "cron.maint_db_reset", dbo, sys.exc_info())
 
-def maint_db_delete_orphaned_media(dbo):
+def maint_db_delete_orphaned_media(dbo: Database):
     try:
         dbfs.delete_orphaned_media(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_db_delete_orphaned_media: %s" % em, "cron.maint_db_delete_orphaned_media", dbo, sys.exc_info())
 
-def maint_db_update(dbo):
+def maint_db_update(dbo: Database):
     """
     Check and run any outstanding database updates
     """
@@ -438,49 +439,49 @@ def maint_db_update(dbo):
         em = str(sys.exc_info()[0])
         al.error("FAIL: running db updates: %s" % em, "cron.maint_db_update", dbo, sys.exc_info())
 
-def maint_deduplicate_people(dbo):
+def maint_deduplicate_people(dbo: Database):
     try:
         person.merge_duplicate_people(dbo, "cron")
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_deduplicate_people: %s" % em, "cron.maint_deduplicate_people", dbo, sys.exc_info())
 
-def maint_disk_cache(dbo):
+def maint_disk_cache(dbo: Database):
     try:
         cachedisk.remove_expired(dbo.database)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running remove_expired: %s" % em, "cron.maint_disk_cache", dbo, sys.exc_info())
 
-def maint_scale_animal_images(dbo):
+def maint_scale_animal_images(dbo: Database):
     try:
         media.scale_all_animal_images(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_scale_animal_images: %s" % em, "cron.maint_scale_animal_images", dbo, sys.exc_info())
 
-def maint_scale_odts(dbo):
+def maint_scale_odts(dbo: Database):
     try:
         media.scale_all_odt(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_scale_odts: %s" % em, "cron.maint_scale_odts", dbo, sys.exc_info())
 
-def maint_scale_pdfs(dbo):
+def maint_scale_pdfs(dbo: Database):
     try:
         media.scale_all_pdf(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_scale_pdfs: %s" % em, "cron.maint_scale_pdfs", dbo, sys.exc_info())
 
-def maint_switch_dbfs_storage(dbo):
+def maint_switch_dbfs_storage(dbo: Database):
     try:
         dbfs.switch_storage(dbo)
     except:
         em = str(sys.exc_info()[0])
         al.error("FAIL: uncaught error running maint_dbfs_switch_storage: %s" % em, "cron.maint_switch_dbfs_storage", dbo, sys.exc_info())
 
-def run(dbo, mode):
+def run(dbo: Database, mode: str) -> None:
     # If the task is maint_db_install, then there won't be a 
     # locale or timezone to read
     x = time.time()
@@ -578,31 +579,30 @@ def run(dbo, mode):
     elapsed = time.time() - x
     al.info("end %s: elapsed %0.2f secs" % (mode, elapsed), "cron.run", dbo)
 
-def run_all_map_databases(mode):
+def run_all_map_databases(mode: str) -> None:
     for alias in MULTIPLE_DATABASES_MAP.keys():
         dbo = db.get_database(alias)
         dbo.timeout = 0
         dbo.connection = dbo.connect()
         run(dbo, mode)
 
-def run_default_database(mode):
+def run_default_database(mode: str) -> None:
     dbo = db.get_database()
     dbo.timeout = 0
     dbo.connection = dbo.connect()
     run(dbo, mode)
 
-def run_alias(mode, alias):
+def run_alias(mode: str, alias: str) -> None:
     dbo = db.get_database(alias)
     dbo.alias = alias
     if dbo.database == "FAIL":
         print("Invalid database alias '%s'" % (alias))
-        return
     else:
         dbo.timeout = 0
         dbo.connection = dbo.connect()
         run(dbo, mode)
 
-def run_override_database(mode, dbtype, host, port, username, password, database, alias):
+def run_override_database(mode: str, dbtype: str, host: str, port: int, username: str, password: str, database: str, alias: str) -> None:
     dbo = db.get_dbo(dbtype)
     dbo.dbtype = dbtype
     dbo.host = host
@@ -615,7 +615,7 @@ def run_override_database(mode, dbtype, host, port, username, password, database
     dbo.connection = dbo.connect()
     run(dbo, mode)
 
-def print_usage():
+def print_usage() -> None:
     print("Usage: cron.py mode [alias]")
     print("")
     print("           alias is a database alias to find info from. If none is given")

@@ -9,6 +9,7 @@ import asm3.utils
 
 from .base import FTPPublisher
 from asm3.sitedefs import PETCADEMY_FTP_HOST, PETCADEMY_FTP_USER, PETCADEMY_FTP_PASSWORD, SERVICE_URL
+from asm3.typehints import datetime, Database, PublishCriteria, ResultRow, Results
 
 import os, sys
 
@@ -16,24 +17,24 @@ class PetcademyPublisher(FTPPublisher):
     """
     Handles updating recent adoptions with Petcademy via their API
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         FTPPublisher.__init__(self, dbo, publishCriteria,
             PETCADEMY_FTP_HOST, PETCADEMY_FTP_USER, 
             PETCADEMY_FTP_PASSWORD, ftptls=True)
         self.initLog("petcademy", "Petcademy Publisher")
 
-    def getDate(self, d):
+    def getDate(self, d: datetime) -> str:
         """ Returns a date in their preferred format of mm/dd/yyyy """
         return asm3.i18n.format_date(d, "%m/%d/%Y")
 
-    def getEmail(self, s):
+    def getEmail(self, s: str) -> str:
         """ Returns only the first email if more than one is specified """
         if s is None: return ""
         if s.strip() == "": return ""
         return s.split(",")[0].strip()
 
-    def getPetStatus(self, an):
+    def getPetStatus(self, an: ResultRow) -> str:
         """ Returns the pet status - Deceased, Active (on shelter), Inactive (foster/adopted) """
         if an["DECEASEDDATE"] is not None:
             return "Deceased"
@@ -42,7 +43,7 @@ class PetcademyPublisher(FTPPublisher):
         else:
             return "Inactive"
 
-    def getEventType(self, an):
+    def getEventType(self, an: ResultRow) -> str:
         """ Returns the relationship type - adopted, fostered or blank for on shelter """
         if an["ACTIVEMOVEMENTTYPE"] == 1:
             return "Adoption"
@@ -51,7 +52,7 @@ class PetcademyPublisher(FTPPublisher):
         else:
             return ""
 
-    def getData(self, periodindays):
+    def getData(self, periodindays: int) -> Results:
         """ Returns the animal data for periodindays """
         # Send all fosters and adoptions for the period that haven't been sent since they last had a change.
         # (we use lastchangeddate instead of sent date because Petcademy want an update when a number of key
@@ -78,7 +79,7 @@ class PetcademyPublisher(FTPPublisher):
 
         return animals
 
-    def run(self):
+    def run(self) -> None:
         
         self.log("Petcademy Publisher starting...")
 
@@ -151,7 +152,7 @@ class PetcademyPublisher(FTPPublisher):
         self.log("\n".join(csv))
         self.cleanup()
 
-    def processAnimal(self, an):
+    def processAnimal(self, an: ResultRow) -> str:
         """ Builds a CSV row """
         # FirstName,Lastname,EmailAddress,Street,City,State,Zipcode,ContactNumber,
         # EmailOptOut,PetID,PetName,PetSpecies,PetSex,Breed,DateofBirth,Color,

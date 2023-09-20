@@ -9,6 +9,7 @@ import asm3.utils
 
 from .base import AbstractPublisher
 from asm3.sitedefs import MADDIES_FUND_TOKEN_URL, MADDIES_FUND_UPLOAD_URL, SERVICE_URL
+from asm3.typehints import datetime, Database, Dict, PublishCriteria, ResultRow, Results
 
 import sys
 
@@ -16,13 +17,13 @@ class MaddiesFundPublisher(AbstractPublisher):
     """
     Handles updating recent adoptions with Maddies Fund via their API
     """
-    def __init__(self, dbo, publishCriteria):
+    def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         publishCriteria.uploadDirectly = True
         publishCriteria.thumbnails = False
         AbstractPublisher.__init__(self, dbo, publishCriteria)
         self.initLog("maddiesfund", "Maddies Fund Publisher")
 
-    def getAge(self, dob, speciesid):
+    def getAge(self, dob: datetime, speciesid: int) -> int:
         """ Returns an age banding based on date of birth and species """
         # Kitten (0-8 weeks) = 1, Kitten/Juvenile (9 weeks- 5 months) = 2, Adult Cat (6 months - 8 years) =3,
         # Senior Cat (9 years) = 4, Puppy (0-8 weeks) = 5, Puppy/Juvenile (9 weeks 11-months) =6, Adult Dog (1
@@ -44,17 +45,17 @@ class MaddiesFundPublisher(AbstractPublisher):
             else: age = 8
         return age
 
-    def getDate(self, d):
+    def getDate(self, d: datetime) -> str:
         """ Returns a date in their preferred format of mm/dd/yyyy """
         return asm3.i18n.format_date(d, "%m/%d/%Y")
 
-    def getEmail(self, s):
+    def getEmail(self, s: str) -> str:
         """ Returns only the first email if more than one is specified """
         if s is None: return ""
         if s.strip() == "": return ""
         return s.split(",")[0].strip()
 
-    def getPetStatus(self, an):
+    def getPetStatus(self, an: ResultRow) -> str:
         """ Returns the pet status - Deceased, Active (on shelter), Inactive (foster/adopted) """
         if an["DECEASEDDATE"] is not None:
             return "Deceased"
@@ -63,7 +64,7 @@ class MaddiesFundPublisher(AbstractPublisher):
         else:
             return "Inactive"
 
-    def getRelationshipType(self, an):
+    def getRelationshipType(self, an: ResultRow) -> str:
         """ Returns the relationship type - adopted, fostered or blank for on shelter """
         if an["ACTIVEMOVEMENTTYPE"] == 1:
             return "Adoption"
@@ -72,7 +73,7 @@ class MaddiesFundPublisher(AbstractPublisher):
         else:
             return ""
 
-    def getData(self, periodindays):
+    def getData(self, periodindays: int) -> Results:
         """ Returns the animal data for periodindays """
         # Send all fosters and adoptions for the period that haven't been sent since they last had a change.
         # (we use lastchangeddate instead of sent date because MPA want an update when a number of key
@@ -104,7 +105,7 @@ class MaddiesFundPublisher(AbstractPublisher):
         animals += self.dbo.query(sql, distincton="ID")
         return animals
 
-    def run(self):
+    def run(self) -> None:
         
         self.log("Maddies Fund Publisher starting...")
 
@@ -196,7 +197,7 @@ class MaddiesFundPublisher(AbstractPublisher):
 
         self.cleanup()
 
-    def processAnimal(self, an, organisation=""):
+    def processAnimal(self, an: ResultRow, organisation: str = "") -> Dict:
         """ Builds an adoption object (dict) containing the adopter and animal """
         a = {
             "PetID": an["ID"],
