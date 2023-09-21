@@ -250,14 +250,33 @@ $(function() {
 
         bind_headfoot: function() {
             let headfootbuttons = {};
-            headfootbuttons[_("Save")] = async function() {
-                try {
-                    let formdata = "mode=headfoot&" + $(".headfoot").toPOST();
-                    await common.ajax_post("onlineforms", formdata);
-                    header.show_info(_("Updated."));
+            headfootbuttons[_("Revert")] = {
+                text: _("Revert to default"),
+                "class": 'asm-redbutton',
+                click: async function() {
+                    let formdata = "mode=headfoot&header=&footer=";
+                    try {
+                        await common.ajax_post("onlineforms", formdata);                    
+                        header.show_info(_("Updated."));
+                        common.route_reload(); 
+                    }
+                    finally {
+                        $("#dialog-headfoot").dialog("close");
+                    }
                 }
-                finally {
-                    $("#dialog-headfoot").dialog("close");
+            };
+            headfootbuttons[_("Save")] = {
+                text: _("Save"),
+                "class": 'asm-dialog-actionbutton',
+                click: async function() {
+                    try {
+                        let formdata = "mode=headfoot&" + $(".headfoot").toPOST();
+                        await common.ajax_post("onlineforms", formdata);
+                        header.show_info(_("Updated."));
+                    }
+                    finally {
+                        $("#dialog-headfoot").dialog("close");
+                    }
                 }
             };
             headfootbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
