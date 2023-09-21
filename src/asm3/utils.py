@@ -6,7 +6,7 @@ import asm3.i18n
 import asm3.users
 
 from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, DISK_CACHE, MULTIPLE_DATABASES, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
-from asm3.typehints import Any, Callable, Database, Dict, List, Results, Tuple
+from asm3.typehints import bytes_or_str, Any, Callable, Database, Dict, List, Results, Tuple, Union
 
 import web062 as web
 
@@ -719,7 +719,7 @@ def unixtime() -> float:
     """ Returns Unix time (seconds since epoch 01/01/1970) """
     return time.time()
 
-def padleft(num: Any, digits: int) -> str:
+def padleft(num: Union[float, int], digits: int) -> str:
     """
     leftpads a number to digits
     """
@@ -729,7 +729,7 @@ def padleft(num: Any, digits: int) -> str:
     nr = digits - len(s)
     return zeroes[0:nr] + s
 
-def padright(num: Any, digits: int) -> str:
+def padright(num: Union[float, int], digits: int) -> str:
     """
     rightpads a number to digits
     """
@@ -799,14 +799,14 @@ def strip_punctuation(s: str) -> str:
     """
     return ''.join(ch for ch in s if ch not in string.punctuation)
 
-def decode_html(s: Any) -> str:
+def decode_html(s: str) -> str:
     """
     Decodes HTML entities in s and turns them into unicode.
     """
     if s is None: return ""
     return unescape(s)
 
-def encode_html(s: Any) -> str:
+def encode_html(s: bytes_or_str) -> str:
     """
     Accepts str or utf-8 bytes
     returns str with HTML entities instead of unicode code points
@@ -815,7 +815,7 @@ def encode_html(s: Any) -> str:
     if is_bytes(s): s = bytes2str(s)
     return s.encode("ascii", "xmlcharrefreplace").decode("ascii") 
 
-def encode_uri(s: Any) -> str:
+def encode_uri(s: bytes_or_str) -> str:
     """
     Encodes unicode codepoints in a str as URI encoding
     """

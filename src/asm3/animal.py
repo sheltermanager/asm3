@@ -36,9 +36,11 @@ def get_animal_query(dbo: Database) -> str:
         "ba1.AnimalName AS BondedAnimal1Name, " \
         "ba1.ShelterCode AS BondedAnimal1Code, " \
         "ba1.Archived AS BondedAnimal1Archived, " \
+        "ba1.IdentichipNumber AS BondedAnimal1IdentichipNumber, " \
         "ba2.AnimalName AS BondedAnimal2Name, " \
         "ba2.ShelterCode AS BondedAnimal2Code, " \
         "ba2.Archived AS BondedAnimal2Archived, " \
+        "ba2.IdentichipNumber AS BondedAnimal2IdentichipNumber, " \
         "bc.BaseColour AS BaseColourName, " \
         "bc.AdoptAPetColour, " \
         "sp.SpeciesName AS SpeciesName, " \

@@ -166,8 +166,19 @@ BondedAnimal2Name
     The name of the second animal this animal is bonded to
 BondedAnimal2Code
     The code of the second animal this animal is bonded to
+BondedAnimal1Microchip
+    The microchip number of the first animal this animal is bonded to
+BondedAnimal2Microchip
+    The microchip number of the second animal this animal is bonded to
 BondedNames
-    returns the full name with bonds eg: AnimalName / BondedAnimal1Name / BondedAnimal2Name
+    returns the name with bonds eg: AnimalName / BondedAnimal1Name /
+    BondedAnimal2Name
+BondedCodes
+    returns the codes with bonds eg: ShelterCode / BondedAnimal1Code /
+    BondedAnimal2Code
+BondedMicrochips
+    returns all microchip numbers eg: MicrochipNumber / BondedAnimal1Microchip
+    / BondedAnimal2Microchip
 Fee
     The animal's adoption fee if you are using per-animal adoption fees
 LicenceNumber / LicenseNumber

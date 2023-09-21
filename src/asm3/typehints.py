@@ -33,7 +33,11 @@ Callable = typing.Callable
 Generator = typing.Generator
 List = typing.List
 Dict = typing.Dict
+Optional = typing.Optional
 Tuple = typing.Tuple
+Union = typing.Union
+
+bytes_or_str = Union[bytes, str]
 
 datetime = "datetime.datetime" # this can be used if the only reason you're pulling datetime in is for type checking
 

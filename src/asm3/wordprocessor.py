@@ -21,7 +21,7 @@ import asm3.users
 import asm3.utils
 import asm3.waitinglist
 from asm3.i18n import _, date_diff_days, format_currency, format_currency_no_symbol, format_diff, format_diff_single, format_time, now, python2display, python2displaytime, yes_no
-from asm3.typehints import Database, Dict, List, ResultRow, Results, Tags, Tuple
+from asm3.typehints import bytes_or_str, Database, Dict, List, ResultRow, Results, Tags, Tuple
 
 import zipfile
 
@@ -253,14 +253,22 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
         displayage = a["AGEGROUP"]
         estimate = _("estimate", l)
 
-    # make a list of names for the BONDEDNAMES token
+    # make a list of names for the BONDEDNAMES, BONDEDCODES and BONDEDMICROCHIPS tokens
     bondednames = [ a["ANIMALNAME"] ]
     if a["BONDEDANIMAL1NAME"]: bondednames.append(a["BONDEDANIMAL1NAME"])
     if a["BONDEDANIMAL2NAME"]: bondednames.append(a["BONDEDANIMAL2NAME"])
+    bondedcodes = [ a["SHELTERCODE"] ]
+    if a["BONDEDANIMAL1CODE"]: bondedcodes.append(a["BONDEDANIMAL1CODE"])
+    if a["BONDEDANIMAL2CODE"]: bondedcodes.append(a["BONDEDANIMAL2CODE"])
+    bondedmicrochips = [ a["IDENTICHIPNUMBER"] ]
+    if a["BONDEDANIMAL1IDENTICHIPNUMBER"]: bondedmicrochips.append(a["BONDEDANIMAL1IDENTICHIPNUMBER"])
+    if a["BONDEDANIMAL2IDENTICHIPNUMBER"]: bondedmicrochips.append(a["BONDEDANIMAL2IDENTICHIPNUMBER"])
 
     tags = { 
         "ANIMALNAME"            : a["ANIMALNAME"],
         "BONDEDNAMES"           : " / ".join(bondednames),
+        "BONDEDCODES"           : " / ".join(bondedcodes),
+        "BONDEDMICROCHIPS"      : " / ".join(bondedmicrochips),
         "ANIMALTYPENAME"        : a["ANIMALTYPENAME"],
         "BASECOLOURNAME"        : a["BASECOLOURNAME"],
         "BASECOLORNAME"         : a["BASECOLOURNAME"],
@@ -373,8 +381,10 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
         "BROUGHTINBYJURISDICTION" : a["BROUGHTINBYJURISDICTION"],
         "BONDEDANIMAL1NAME"     : a["BONDEDANIMAL1NAME"],
         "BONDEDANIMAL1CODE"     : a["BONDEDANIMAL1CODE"],
+        "BONDEDANIMAL1MICROCHIP": a["BONDEDANIMAL1IDENTICHIPNUMBER"],
         "BONDEDANIMAL2NAME"     : a["BONDEDANIMAL2NAME"],
         "BONDEDANIMAL2CODE"     : a["BONDEDANIMAL2CODE"],
+        "BONDEDANIMAL2MICROCHIP": a["BONDEDANIMAL2IDENTICHIPNUMBER"],
         "NAMEOFOWNERSVET"       : a["OWNERSVETNAME"],
         "NAMEOFCURRENTVET"      : a["CURRENTVETNAME"],
         "HASSPECIALNEEDS"       : a["HASSPECIALNEEDSNAME"],
@@ -1855,7 +1865,7 @@ def substitute_tags(searchin: str, tags: Tags, escape_html: bool = True,
     """
     return asm3.utils.substitute_tags(searchin, tags, escape_html, opener, closer, crToBr)
 
-def substitute_template(dbo: Database, templateid: int, tags: Tags, imdata: bytes = None) -> bytes:
+def substitute_template(dbo: Database, templateid: int, tags: Tags, imdata: bytes = None) -> bytes_or_str:
     """
     Reads the template specified by id "template" and substitutes
     according to the tags in "tags". Returns the built file.
@@ -1912,7 +1922,7 @@ def extract_mail_tokens(s: str) -> Dict[str, str]:
     d["BODY"] = s
     return d
 
-def generate_animal_doc(dbo: Database, templateid: int, animalid: int, username: str) -> bytes:
+def generate_animal_doc(dbo: Database, templateid: int, animalid: int, username: str) -> bytes_or_str:
     """
     Generates an animal document from a template using animal keys and
     (if a currentowner is available) person keys
@@ -1955,7 +1965,7 @@ def generate_animal_doc(dbo: Database, templateid: int, animalid: int, username:
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags, imdata)
 
-def generate_animalcontrol_doc(dbo: Database, templateid: int, acid: int, username: str) -> bytes:
+def generate_animalcontrol_doc(dbo: Database, templateid: int, acid: int, username: str) -> bytes_or_str:
     """
     Generates an animal control incident document from a template
     templateid: The ID of the template
@@ -1967,7 +1977,7 @@ def generate_animalcontrol_doc(dbo: Database, templateid: int, acid: int, userna
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_clinic_doc(dbo: Database, templateid: int, appointmentid: int, username: str) -> bytes:
+def generate_clinic_doc(dbo: Database, templateid: int, appointmentid: int, username: str) -> bytes_or_str:
     """
     Generates a clinic document from a template
     templateid: The ID of the template
@@ -1986,7 +1996,7 @@ def generate_clinic_doc(dbo: Database, templateid: int, appointmentid: int, user
         tags = append_tags(tags, person_tags(dbo, p))
     return substitute_template(dbo, templateid, tags)
 
-def generate_person_doc(dbo: Database, templateid: int, personid: int, username: str) -> bytes:
+def generate_person_doc(dbo: Database, templateid: int, personid: int, username: str) -> bytes_or_str:
     """
     Generates a person document from a template
     templateid: The ID of the template
@@ -2004,7 +2014,7 @@ def generate_person_doc(dbo: Database, templateid: int, personid: int, username:
             tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID)))
     return substitute_template(dbo, templateid, tags, im)
 
-def generate_donation_doc(dbo: Database, templateid: int, donationids: List[int], username: str) -> bytes:
+def generate_donation_doc(dbo: Database, templateid: int, donationids: List[int], username: str) -> bytes_or_str:
     """
     Generates a donation document from a template
     templateid: The ID of the template
@@ -2023,7 +2033,7 @@ def generate_donation_doc(dbo: Database, templateid: int, donationids: List[int]
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_foundanimal_doc(dbo: Database, templateid: int, faid: int, username: str) -> bytes:
+def generate_foundanimal_doc(dbo: Database, templateid: int, faid: int, username: str) -> bytes_or_str:
     """
     Generates a found animal document from a template
     templateid: The ID of the template
@@ -2037,7 +2047,7 @@ def generate_foundanimal_doc(dbo: Database, templateid: int, faid: int, username
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_lostanimal_doc(dbo: Database, templateid: int, laid: int, username: str) -> bytes:
+def generate_lostanimal_doc(dbo: Database, templateid: int, laid: int, username: str) -> bytes_or_str:
     """
     Generates a found animal document from a template
     templateid: The ID of the template
@@ -2051,7 +2061,7 @@ def generate_lostanimal_doc(dbo: Database, templateid: int, laid: int, username:
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_licence_doc(dbo: Database, templateid: int, licenceid: int, username: str) -> bytes:
+def generate_licence_doc(dbo: Database, templateid: int, licenceid: int, username: str) -> bytes_or_str:
     """
     Generates a licence document from a template
     templateid: The ID of the template
@@ -2067,7 +2077,7 @@ def generate_licence_doc(dbo: Database, templateid: int, licenceid: int, usernam
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_movement_doc(dbo: Database, templateid: int, movementid: int, username: str) -> bytes:
+def generate_movement_doc(dbo: Database, templateid: int, movementid: int, username: str) -> bytes_or_str:
     """
     Generates a movement document from a template
     templateid: The ID of the template
@@ -2086,7 +2096,7 @@ def generate_movement_doc(dbo: Database, templateid: int, movementid: int, usern
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_transport_doc(dbo: Database, templateid: int, transportids: int, username: str) -> bytes:
+def generate_transport_doc(dbo: Database, templateid: int, transportids: int, username: str) -> bytes_or_str:
     """
     Generates a transport document from a template
     templateid: The ID of the template
@@ -2099,7 +2109,7 @@ def generate_transport_doc(dbo: Database, templateid: int, transportids: int, us
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_voucher_doc(dbo: Database, templateid: int, voucherid: int, username: str) -> bytes:
+def generate_voucher_doc(dbo: Database, templateid: int, voucherid: int, username: str) -> bytes_or_str:
     """
     Generates a voucher document from a template
     templateid: The ID of the template
@@ -2115,7 +2125,7 @@ def generate_voucher_doc(dbo: Database, templateid: int, voucherid: int, usernam
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 
-def generate_waitinglist_doc(dbo: Database, templateid: int, wlid: int, username: str) -> bytes:
+def generate_waitinglist_doc(dbo: Database, templateid: int, wlid: int, username: str) -> bytes_or_str:
     """
     Generates a waiting list document from a template
     templateid: The ID of the template
