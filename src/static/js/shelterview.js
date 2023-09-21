@@ -114,6 +114,9 @@ $(function() {
          */
         render_units_available: function() {
             let h = [];
+            const is_on_shelter = function(a) {
+                return a.HASACTIVEBOARDING == 1 || a.ACTIVEMOVEMENTID == 0;
+            };
             $.each(controller.locations, function(il, l) {
                 // If the location is empty and this one is retired, stop now
                 if (shelterview.location_is_empty(l.ID) && l.ISRETIRED && l.ISRETIRED == 1) { return; }
@@ -125,7 +128,7 @@ $(function() {
                 if (!common.trim(common.nulltostr(l.UNITS))) { 
                     let boxinner = [], classes = "unitdroptarget asm-shelterview-unit";
                     $.each(controller.animals, function(ia, a) {
-                        if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATION == l.ID) {
+                        if (a.SHELTERLOCATION == l.ID && is_on_shelter(a)) {
                             boxinner.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));
                         }
                     });
@@ -144,7 +147,7 @@ $(function() {
                         // Find all animals in this unit and construct the inner
                         let boxinner = [], classes = "unitdroptarget asm-shelterview-unit";
                         $.each(controller.animals, function(ia, a) {
-                            if (a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATION == l.ID && a.SHELTERLOCATIONUNIT == u) {
+                            if (a.SHELTERLOCATION == l.ID && a.SHELTERLOCATIONUNIT == u && is_on_shelter(a)) {
                                 boxinner.push(shelterview.render_animal(a, false, !a.ACTIVEMOVEMENTTYPE && a.ARCHIVED == 0));    
                             }
                         });
@@ -186,7 +189,7 @@ $(function() {
                         let validunit = false;
                         $.each(l.UNITS.split(","), function(iu, u) {
                             u = common.trim(u);
-                            if (u && a.ACTIVEMOVEMENTID == 0 && a.SHELTERLOCATIONUNIT == u) {
+                            if (a.SHELTERLOCATIONUNIT == u && is_on_shelter(a)) {
                                 validunit = true;
                                 return false;
                             }
