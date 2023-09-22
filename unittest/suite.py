@@ -7,6 +7,7 @@ import test_additional
 import test_animalcontrol
 import test_animalname
 import test_animal
+import test_automail
 import test_clinic
 import test_csvimport
 import test_dbfs
@@ -44,6 +45,7 @@ fullsuite = [
     lt(test_animalcontrol),
     lt(test_animalname),
     lt(test_animal),
+    lt(test_automail),
     lt(test_clinic),
     lt(test_csvimport),
     lt(test_dbfs),
