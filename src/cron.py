@@ -5,6 +5,7 @@ import os, sys
 # Add our modules to the sys.path
 sys.path.append(os.getcwd())
 
+from asm3 import automail
 from asm3 import animalcontrol
 from asm3 import additional
 from asm3 import al
@@ -137,8 +138,8 @@ def daily(dbo: Database):
         # Email any reports set to run with batch
         ttask(extreports.email_daily_reports, dbo)
 
-        # Send fosterer medical reports
-        ttask(movement.send_fosterer_emails, dbo)
+        # Send automated person emails
+        ttask(automail.send_all, dbo)
 
     except:
         em = str(sys.exc_info()[0])

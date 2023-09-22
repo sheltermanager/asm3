@@ -6,32 +6,18 @@ $(function() {
 
     const move_adopt = {
 
-        infobox: function(id, s) {
-            return '<div id="' + id + '" class="ui-state-highlight ui-corner-all" ' +
-                'style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">' +
-                '<p class="centered"><span class="ui-icon ui-icon-info"></span>' + s + '</p>' + 
-                '</div>';
-        },
-
-        warnbox: function(id, s) {
-            return '<div id="' + id + '" class="ui-state-error ui-corner-all" ' +
-                'style="margin-top: 5px; padding: 0 .7em; width: 60%; margin-left: auto; margin-right: auto">' +
-                '<p class="centered"><span class="ui-icon ui-icon-alert"></span>' + s + '</p>' + 
-                '</div>';
-        },
-
         render: function() {
             return [
                 '<div id="asm-content">',
                 '<input id="movementid" type="hidden" />',
                 html.content_header(_("Adopt an animal"), true),
-                this.warnbox("bonddisplay", '<span id="bonddata"></span>'),
-                this.infobox("fosterinfo", _("This animal is currently fostered, it will be automatically returned first.")),
-                this.infobox("retailerinfo", _("This animal is currently at a retailer, it will be automatically returned first.")),
-                this.infobox("reserveinfo", _("This animal has active reservations, they will be cancelled.")),
-                this.infobox("feeinfo", '<span class="subtext"></span>'),
-                this.warnbox("animalwarn", '<span id="awarntext"></span>'),
-                this.warnbox("ownerwarn", '<span id="warntext"></span>'),
+                html.warn('<span id="bonddata"></span>', "bonddisplay"),
+                html.info(_("This animal is currently fostered, it will be automatically returned first."), "fosterinfo"),
+                html.info(_("This animal is currently at a retailer, it will be automatically returned first."), "retailerinfo"),
+                html.info(_("This animal has active reservations, they will be cancelled."), "reserveinfo"),
+                html.info('<span class="subtext"></span>', "feeinfo"),
+                html.info('<span id="awarntext"></span>', "animalwarn"),
+                html.info('<span id="warntext"></span>', "ownerwarn"),
                 tableform.fields_render([
                     { post_field: "animal", label: _("Animal"), type: "animal" },
                     { post_field: "person", label: _("New Owner"), type: "person" },
@@ -51,7 +37,7 @@ $(function() {
                 html.content_footer(),
                 '<div id="payment"></div>',
                 html.content_header(_("Boarding Cost"), true),
-                this.infobox("costdisplay", "<span id=\"costdata\"></span>"),
+                html.info("<span id=\"costdata\"></span>", "costdisplay"),
                 '<input id="costamount" data="costamount" type="hidden" />',
                 '<input id="costtype" data="costtype" type="hidden" />',
                 tableform.fields_render([

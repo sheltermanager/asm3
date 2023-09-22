@@ -808,9 +808,10 @@ const html = {
      * icon: info (default, jquery ui icon)
      * padding: (default 5px)
      * margintop: (default not set)
+     * maxwidth: (default 900px)
      */
     textbar: function(s, o) {
-        let containerid = "", display = "", state = "highlight", icon = "info", padding = "", margintop = "", maxwidth = "";
+        let containerid = "", display = "", state = "highlight", icon = "info", padding = "", margintop = "", maxwidth = "max-width: 900px;";
         if (!o) { o = {}; }
         if (!o.padding) { o.padding = "5px"; }
         if (o.id) { containerid = 'id="' + o.id + '"'; }
@@ -821,11 +822,11 @@ const html = {
         if (o.margintop) { margintop = "margin-top: " + o.margintop + ";"; }
         if (o.maxwidth) { maxwidth = "max-width: " + o.maxwidth + ";"; }
         return [
-            "<div class=\"ui-widget\" " + containerid + " style=\"margin-left: auto; margin-right: auto; " + margintop + display + maxwidth + "\">",
-            "<div class=\"ui-state-" + state + " ui-corner-all\" style=\"" + padding + "\"><p>",
-            "<span class=\"ui-icon ui-icon-" + icon + "\"></span>",
+            '<div class="ui-widget" ' + containerid + ' style="margin-left: auto; margin-right: auto; ' + margintop + display + maxwidth + '">',
+            '<div class="ui-state-' + state + ' ui-corner-all" style="' + padding + '"><p>',
+            '<span class="ui-icon ui-icon-' + icon + '"></span>',
             s,
-            "</p></div></div>"
+            '</p></div></div>'
         ].join("\n");
        
     },

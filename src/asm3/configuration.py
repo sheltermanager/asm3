@@ -166,10 +166,16 @@ DEFAULTS = {
     "EmailAdopterFollowup": "No",
     "EmailAdopterFollowupDays": "14",
     "EmailAdopterFollowupTemplate": "0",
+    "EmailClinicReminder": "No",
+    "EmailClinicReminderDays": "2",
+    "EmailClinicReminderTemplate": "0",
     "EmailDiaryNotes": "Yes", 
     "EmailDiaryOnChange": "No",
     "EmailDiaryOnComplete": "No",
     "EmailEmptyReports": "Yes",
+    "EmailLicenceReminder": "No",
+    "EmailLicenceReminderDays": "30",
+    "EmailLicenceReminderTemplate": "0",
     "EmailMessages": "Yes", 
     "EmblemAdoptable": "Yes",
     "EmblemAlwaysLocation": "No",
@@ -939,6 +945,15 @@ def email_adopter_followup_days(dbo: Database) -> int:
 def email_adopter_followup_template(dbo: Database) -> int:
     return cint(dbo, "EmailAdopterFollowupTemplate", DEFAULTS["EmailAdopterFollowupTemplate"])
 
+def email_clinic_reminder(dbo: Database) -> bool:
+    return cboolean(dbo, "EmailClinicReminder", DEFAULTS["EmailClinicReminder"] == "Yes")
+
+def email_clinic_reminder_days(dbo: Database) -> int:
+    return cint(dbo, "EmailClinicReminderDays", DEFAULTS["EmailClinicReminderDays"])
+
+def email_clinic_reminder_template(dbo: Database) -> int:
+    return cint(dbo, "EmailClinicReminderTemplate", DEFAULTS["EmailClinicReminderTemplate"])
+
 def email_diary_notes(dbo: Database) -> bool:
     return cboolean(dbo, "EmailDiaryNotes", DEFAULTS["EmailDiaryNotes"] == "Yes")
 
@@ -950,6 +965,15 @@ def email_diary_on_complete(dbo: Database) -> bool:
 
 def email_empty_reports(dbo: Database) -> bool:
     return cboolean(dbo, "EmailEmptyReports", DEFAULTS["EmailEmptyReports"] == "Yes")
+
+def email_licence_reminder(dbo: Database) -> bool:
+    return cboolean(dbo, "EmailLicenceReminder", DEFAULTS["EmailLicenceReminder"] == "Yes")
+
+def email_licence_reminder_days(dbo: Database) -> int:
+    return cint(dbo, "EmailLicenceReminderDays", DEFAULTS["EmailLicenceReminderDays"])
+
+def email_licence_reminder_template(dbo: Database) -> int:
+    return cint(dbo, "EmailLicenceReminderTemplate", DEFAULTS["EmailLicenceReminderTemplate"])
 
 def email_messages(dbo: Database) -> bool:
     return cboolean(dbo, "EmailMessages", DEFAULTS["EmailMessages"] == "Yes")

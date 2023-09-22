@@ -5587,6 +5587,8 @@ class options(JSONEndpoint):
             "species": asm3.lookups.get_species(dbo),
             "themes": asm3.lookups.VISUAL_THEMES,
             "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesclinic": asm3.template.get_document_templates(dbo, "clinic"),
+            "templateslicence": asm3.template.get_document_templates(dbo, "licence"),
             "testtypes": asm3.lookups.get_test_types(dbo),
             "types": asm3.lookups.get_animal_types(dbo),
             "urgencies": asm3.lookups.get_urgencies(dbo),

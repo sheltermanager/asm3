@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-09-14 10:13+0000\n"
+"POT-Creation-Date: 2023-09-22 14:50+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -894,6 +894,10 @@ msgstr ""
 msgid "Adoption Fee"
 msgstr ""
 
+#: automail.py
+msgid "Adoption Followup"
+msgstr ""
+
 #: movements.js
 msgid "Adoption checkout for {0}"
 msgstr ""
@@ -1244,6 +1248,10 @@ msgstr ""
 
 #: options.js
 msgid "Allow reservations to be created that are not linked to an animal"
+msgstr ""
+
+#: options.js
+msgid "Allow units to be reserved and sponsored"
 msgstr ""
 
 #: options.js
@@ -2938,8 +2946,8 @@ msgid "Class"
 msgstr ""
 
 #: onlineform.py common_animalchoosermulti.js service_checkout_adoption.js
-#: service_sign_document.js common_personchooser.js media.js mobile_sign.js
-#: common_animalchooser.js common.js
+#: shelterview.js service_sign_document.js common_personchooser.js media.js
+#: mobile_sign.js common_animalchooser.js common.js
 msgid "Clear"
 msgstr ""
 
@@ -2957,6 +2965,10 @@ msgstr ""
 
 #: clinic_invoice.js
 msgid "Clinic Invoice - {0}"
+msgstr ""
+
+#: automail.py
+msgid "Clinic Reminder"
 msgstr ""
 
 #: lookups.py
@@ -3795,6 +3807,10 @@ msgstr ""
 msgid "Day Pivot"
 msgstr ""
 
+#: options.js
+msgid "Days"
+msgstr ""
+
 #: html.py
 msgid "Days On Shelter"
 msgstr ""
@@ -3942,6 +3958,10 @@ msgstr ""
 
 #: options.js
 msgid "Defaults formats for code and shortcode are TYYYYNNN and NNT"
+msgstr ""
+
+#: dbupdate.py
+msgid "Deflea"
 msgstr ""
 
 #: traploan.js clinic_invoice.js lookups.js clinic_appointment.js test.js
@@ -5353,6 +5373,10 @@ msgstr ""
 msgid "Every day"
 msgstr ""
 
+#: dbupdate.py
+msgid "Examination"
+msgstr ""
+
 #: options.js
 msgid "Exclude animals by flags"
 msgstr ""
@@ -6048,7 +6072,7 @@ msgstr ""
 msgid "Fostered between two dates"
 msgstr ""
 
-#: movement.py
+#: automail.py
 msgid "Fostered to {0} since {1}"
 msgstr ""
 
@@ -6065,7 +6089,7 @@ msgstr ""
 msgid "Fosterer (Space Available)"
 msgstr ""
 
-#: movement.py
+#: automail.py
 msgid "Fosterer Medical Report"
 msgstr ""
 
@@ -6161,7 +6185,7 @@ msgstr ""
 msgid "Fri"
 msgstr ""
 
-#: reports.js calendarview.js clinic_calendar.js common.js
+#: reports.js calendarview.js clinic_calendar.js common.js options.js
 msgid "Friday"
 msgstr ""
 
@@ -7736,6 +7760,10 @@ msgstr ""
 msgid "License Number"
 msgstr ""
 
+#: automail.py
+msgid "License Renewal"
+msgstr ""
+
 #: lookups.py
 msgid "License Types"
 msgstr ""
@@ -8806,6 +8834,10 @@ msgstr ""
 msgid "N (Non-Shelter Animal)"
 msgstr ""
 
+#: dbupdate.py
+msgid "N/A"
+msgstr ""
+
 #: options.js
 msgid "NNN or NN = number unique for this type of animal for this year"
 msgstr ""
@@ -9649,7 +9681,7 @@ msgstr ""
 msgid "Overdue"
 msgstr ""
 
-#: movement.py
+#: automail.py
 msgid "Overdue medical items"
 msgstr ""
 
@@ -10833,6 +10865,16 @@ msgstr ""
 msgid "Remember me on this device"
 msgstr ""
 
+#: options.js
+msgid "Reminder Emails"
+msgstr ""
+
+#: options.js
+msgid ""
+"Reminder emails can be automatically sent to groups of people a number of "
+"days before or after a key event."
+msgstr ""
+
 #: waitinglist.js
 msgid "Removal"
 msgstr ""
@@ -11400,6 +11442,14 @@ msgstr ""
 msgid "Reupload animal images every time"
 msgstr ""
 
+#: onlineforms.js reports.js
+msgid "Revert"
+msgstr ""
+
+#: onlineforms.js reports.js
+msgid "Revert to default"
+msgstr ""
+
 #: service_checkout_adoption.js
 msgid "Review"
 msgstr ""
@@ -11571,7 +11621,7 @@ msgstr ""
 msgid "Satin"
 msgstr ""
 
-#: reports.js calendarview.js clinic_calendar.js common.js
+#: reports.js calendarview.js clinic_calendar.js common.js options.js
 msgid "Saturday"
 msgstr ""
 
@@ -11784,6 +11834,18 @@ msgid "Send a checkout email to the adopter"
 msgstr ""
 
 #: options.js
+msgid "Send a followup email to new adopters after days"
+msgstr ""
+
+#: options.js
+msgid "Send a reminder email to people with clinic appointments in days"
+msgstr ""
+
+#: options.js
+msgid "Send a reminder email to people with licenses expiring in days"
+msgstr ""
+
+#: options.js
 msgid ""
 "Send a weekly email to fosterers with medical information about their "
 "animals"
@@ -11823,6 +11885,10 @@ msgstr ""
 
 #: move_adopt.js
 msgid "Send the checkout email to the adopter"
+msgstr ""
+
+#: options.js
+msgid "Send the email on"
 msgstr ""
 
 #: report_toolbar.js
@@ -12894,6 +12960,10 @@ msgid ""
 "ShelterLocation=2'"
 msgstr ""
 
+#: dbupdate.py
+msgid "Surgery"
+msgstr ""
+
 #: person_find_results.js
 msgid "Surname"
 msgstr ""
@@ -13058,7 +13128,7 @@ msgstr ""
 msgid "Telephone Bills"
 msgstr ""
 
-#: mailmerge.js document_templates.js common_widgets.js
+#: mailmerge.js document_templates.js common_widgets.js options.js
 msgid "Template"
 msgstr ""
 
@@ -13655,6 +13725,10 @@ msgid ""
 msgstr ""
 
 #: onlineform_incoming.js
+msgid "This form has been previously processed"
+msgstr ""
+
+#: onlineform_incoming.js
 msgid "This form will merge with person '{0}'"
 msgstr ""
 
@@ -13917,7 +13991,7 @@ msgstr ""
 msgid "Thumbnail size"
 msgstr ""
 
-#: reports.js calendarview.js clinic_calendar.js common.js
+#: reports.js calendarview.js clinic_calendar.js common.js options.js
 msgid "Thursday"
 msgstr ""
 
@@ -14290,7 +14364,7 @@ msgstr ""
 msgid "Tue"
 msgstr ""
 
-#: reports.js calendarview.js clinic_calendar.js common.js
+#: reports.js calendarview.js clinic_calendar.js common.js options.js
 msgid "Tuesday"
 msgstr ""
 
@@ -14461,11 +14535,11 @@ msgstr ""
 msgid "Up for adoption"
 msgstr ""
 
-#: movement.py
+#: automail.py
 msgid "Upcoming clinic appointments"
 msgstr ""
 
-#: movement.py
+#: automail.py
 msgid "Upcoming medical items"
 msgstr ""
 
@@ -15051,11 +15125,11 @@ msgstr ""
 msgid "Vouchers"
 msgstr ""
 
-#: movement.py
+#: automail.py
 msgid "WARNING: This animal has not been microchipped"
 msgstr ""
 
-#: movement.py
+#: automail.py
 msgid "WARNING: This animal is over 6 months old and has not been neutered/spayed"
 msgstr ""
 
@@ -15252,7 +15326,7 @@ msgstr ""
 msgid "Wed"
 msgstr ""
 
-#: reports.js calendarview.js clinic_calendar.js common.js
+#: reports.js calendarview.js clinic_calendar.js common.js options.js
 msgid "Wednesday"
 msgstr ""
 
@@ -15519,6 +15593,10 @@ msgstr ""
 
 #: lookups.py
 msgid "Work Types"
+msgstr ""
+
+#: dbupdate.py
+msgid "Wormer"
 msgstr ""
 
 #: animal_observations.js
@@ -15806,6 +15884,10 @@ msgstr ""
 msgid "{0} (under {1} months)"
 msgstr ""
 
+#: animal_observations.js
+msgid "{0} ({1})"
+msgstr ""
+
 #: boarding.js
 msgid "{0} - {1} ({2} days at {3})"
 msgstr ""
@@ -15822,6 +15904,14 @@ msgstr ""
 
 #: lostfound.py
 msgid "{0} - {1} {2} ({3}), contact {4} ({5}) - lost in {6}, postcode {7}, on {8}"
+msgstr ""
+
+#: dbupdate.py
+msgid "{0} Pipette"
+msgstr ""
+
+#: dbupdate.py
+msgid "{0} Tablet"
 msgstr ""
 
 #: animal_bulk.js
@@ -15922,7 +16012,7 @@ msgstr ""
 msgid "{0} {1} aged {2}"
 msgstr ""
 
-#: movement.py search.js mobile2.js
+#: automail.py search.js mobile2.js
 msgid "{0} {1} {2} aged {3}"
 msgstr ""
 

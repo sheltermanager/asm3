@@ -970,6 +970,28 @@ Quicklinks can be configured here and shown on the home page and optionally
 all screens (at the cost of some vertical space). Quicklinks allow you to
 quickly get to some of ASM's screens without having to open the menus.
 
+Reminder Emails
+---------------
+
+Reminder emails can be configured to be sent to people before or after certain events and
+interactions with the shelter. In all cases, a number of days and an email template can be chosen. 
+
+* Send a followup email to new adopters after days: This option will
+  automatically send a followup email to people who recently adopted an animal.
+  The system will make sure the animal is not dead or returned before sending
+  the email. The template must be suitable for movement data.
+
+* Send a reminder email to people with clinic appointments in days: This option
+  will automatically send a reminder email to everyone who has a clinic
+  appointment in the number of days chosen. The template chosen must be
+  suitable for clinic data.
+
+* Send a reminder email to people with licenses expiring in days: This option
+  will automatically send a reminder email to everyone with an expiring license
+  in the number of days entered. The template chosen must be suitable for
+  license data. A forthcoming expansion to this area will allow inclusion of a
+  renewal link to allow the license holder to renew and pay online.
+
 Remove
 ------
 
