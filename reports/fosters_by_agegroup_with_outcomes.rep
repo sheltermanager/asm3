@@ -2,7 +2,7 @@ Fosters by Date and Age Group with Outcomes
 ###
 Movements
 ###
-Any rev01
+Any rev02
 ###
 Foster animals between two dates with their final outcomes, grouped by age group at intake
 ###
@@ -25,7 +25,7 @@ INNER JOIN species s ON a.SpeciesID = s.ID
 LEFT OUTER JOIN lksmovementtype mt ON a.ActiveMovementType = mt.ID
 LEFT OUTER JOIN adoption ma ON ma.ID = a.ActiveMovementID
 LEFT OUTER JOIN owner no ON no.ID = ma.OwnerID
-WHERE m.MovementType = 2 AND a.ActiveMovementType <> 2 AND m.MovementDate >= '$ASK DATE Enter from date$' AND m.MovementDate <= '$ASK DATE Enter to date$'
+WHERE m.MovementType = 2 AND m.MovementDate >= '$ASK DATE Enter from date$' AND m.MovementDate <= '$ASK DATE Enter to date$'
 ORDER BY s.SpeciesName, a.AgeGroup, m.MovementDate
 ###
 $$HEADER
