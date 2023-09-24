@@ -27,7 +27,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
-                    if (log.is_system_msg(row)) { return; } // Don't allow editing of system log messages
+                    if (log.is_system_message(row)) { return; } // Don't allow editing of system log messages
                     tableform.fields_populate_from_json(dialog.fields, row);
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
@@ -42,7 +42,7 @@ $(function() {
                     }
                 },
                 complete: function(row) {
-                    return log.is_system_msg(row);
+                    return log.is_system_message(row);
                 },
                 columns: [
                     { field: "LOGTYPENAME", display: _("Type") },
@@ -101,8 +101,15 @@ $(function() {
         },
 
         /** Returns true if this is a system log message */
-        is_system_msg: function(row) {
-            return row.COMMENTS.length > 3 && row.COMMENTS.match(/^ES0|AC0|AF0|LC0|CA0?\:/);
+        is_system_message: function(row) {
+            let prefixes = [ "ES0", "AC0", "AF0", "LC0", "CA0"], rv = false;
+            $.each(prefixes, function(i, p) {
+                if (row.COMMENTS.indexOf(p) == 0 && row.COMMENTS.indexOf(":") == 4) {
+                    rv = true;
+                    return false;
+                }
+            });
+            return rv;
         },
 
         set_extra_fields: function(row) {

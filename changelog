@@ -1,6 +1,7 @@
 48
 ================
 
+24/09/23 system log message refactoring to fix re bug
 22/09/23 Automated emails for adopter followup, licence/clinic reminders #1322
 21/09/23 Revert button for online form/report header/footer editing #1330
 21/09/23 Fix for boarding shelter animals not appearing in location/unit mode
