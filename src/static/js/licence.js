@@ -22,6 +22,7 @@ $(function() {
                     { json_field: "LICENCEFEE", post_field: "fee", label: _("Fee"), type: "currency" },
                     { json_field: "ISSUEDATE", post_field: "issuedate", label: _("Issued"), type: "date", validation: "notblank", defaultval: new Date() },
                     { json_field: "EXPIRYDATE", post_field: "expirydate", label: _("Expires"), type: "date", validation: "notblank" },
+                    { json_field: "RENEWED", post_field: "renewed", label: _("Renewed"), type: "check" },
                     { json_field: "COMMENTS", post_field: "comments", label: _("Comments"), type: "textarea" }
                 ]
             };
@@ -30,6 +31,7 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "ID",
                 edit: async function(row) {
+                    $("#renewed").closest("tr").toggle(row.ANIMALID == 0); // Only allow editing of renewed flag for licenses with no animals
                     await tableform.dialog_show_edit(dialog, row);
                     tableform.fields_update_row(dialog.fields, row);
                     row.LICENCETYPENAME = common.get_field(controller.licencetypes, row.LICENCETYPEID, "LICENCETYPENAME");
@@ -121,7 +123,7 @@ $(function() {
                                     tableform.fields_update_row(dialog.fields, row);
                                     row.LICENCETYPENAME = common.get_field(controller.licencetypes, row.LICENCETYPEID, "LICENCETYPENAME");
                                     row.OWNERNAME = $("#person").personchooser("get_selected").OWNERNAME;
-                                    if (row.ANIMALID && row.ANIMALID != "0") {
+                                    if (row.ANIMALID && row.ANIMALID != 0) {
                                         row.ANIMALNAME = $("#animal").animalchooser("get_selected").ANIMALNAME;
                                         row.SHELTERCODE = $("#animal").animalchooser("get_selected").SHELTERCODE;
                                         row.SHORTCODE = $("#animal").animalchooser("get_selected").SHORTCODE;
@@ -139,7 +141,10 @@ $(function() {
                                     tableform.dialog_enable_buttons();
                                 }
                              },
-                             onload: licence.type_change
+                             onload: function() {
+                                licence.type_change();
+                                $("#renewed").closest("tr").hide();
+                             }
                          });
                      }
                  },
@@ -183,6 +188,7 @@ $(function() {
                                 let expirydate = common.add_days(issuedate, rescheduledays);
                                 $("#issuedate").date("setDate", issuedate);
                                 $("#expirydate").date("setDate", expirydate);
+                                $("#renewed").closest("tr").hide();
                             }
                         });
                     }
