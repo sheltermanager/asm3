@@ -2,7 +2,7 @@ Licenses expiring between two dates
 ###
 Animal Control
 ###
-33307/Any rev02
+34800/Any rev03
 ###
 Licenses that expire between the two dates given and have not been renewed and the animal is still alive
 ###
@@ -22,7 +22,7 @@ LEFT OUTER JOIN animal a ON a.ID = ol.AnimalID
 WHERE ol.ExpiryDate >= '$ASK DATE Enter the from date$'
 AND ol.ExpiryDate <= '$ASK DATE Enter the to date$' AND a.DeceasedDate Is Null
 AND (ol.AnimalID = 0 OR a.DeceasedDate Is Null)
-AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE ID <> ol.ID AND OwnerID=o.ID AND AnimalID=a.ID AND ExpiryDate > '$CURRENT_DATE$')
+AND ol.Renewed = 0
 ORDER BY ol.ExpiryDate
 ###
 $$HEADER
