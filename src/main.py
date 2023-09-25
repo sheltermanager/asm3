@@ -3350,13 +3350,6 @@ class document_templates(JSONEndpoint):
     def post_create(self, o):
         return asm3.template.create_document_template(o.dbo, o.user, o.post["template"], show = o.post["show"])
 
-    def post_createodt(self, o):
-        post = o.post
-        fn = post.filename()
-        if post["path"] != "": fn = post["path"] + "/" + fn
-        asm3.template.create_document_template(o.dbo, o.user, fn, ".odt", post.filedata(), show = o.post["odtshow"])
-        self.redirect("document_templates")
-
     def post_clone(self, o):
         for t in o.post.integer_list("ids"):
             return asm3.template.clone_document_template(o.dbo, o.user, t, o.post["template"])
@@ -3367,6 +3360,15 @@ class document_templates(JSONEndpoint):
 
     def post_rename(self, o):
         asm3.template.rename_document_template(o.dbo, o.user, o.post.integer("dtid"), o.post["newname"])
+
+    def post_upload(self, o):
+        post = o.post
+        fname = post.filename()
+        ext = fname[fname.rfind("."):]
+        if ext not in (".html", ".odt"): raise asm3.utils.ASMValidationError("Document template files must be .html or .odt")
+        if post["path"] != "": fname = post["path"] + "/" + fname
+        asm3.template.create_document_template(o.dbo, o.user, fname, ext, post.filedata(), show = o.post["uploadshow"])
+        self.redirect("document_templates")
 
     def post_show(self, o):
         for t in o.post.integer_list("ids"):
