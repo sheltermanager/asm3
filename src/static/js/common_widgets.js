@@ -309,10 +309,25 @@ $.fn.alphanumber = function() {
 };
 
 // Textbox that should only contain integer numbers
+// data-min and data-max attributes can be used to contain the lower/upper bound
 $.fn.intnumber = function() {
     const allowed = new RegExp("[0-9\\-]");
     this.each(function() {
         disable_autocomplete($(this));
+        if ($(this).attr("data-min")) {
+            $(this).blur(function(e) {
+                if (format.to_int($(this).val()) < format.to_int($(this).attr("data-min"))) {
+                    $(this).val($(this).attr("data-min"));
+                }
+            });
+        }
+        if ($(this).attr("data-max")) {
+            $(this).blur(function(e) {
+                if (format.to_int($(this).val()) > format.to_int($(this).attr("data-max"))) {
+                    $(this).val($(this).attr("data-max"));
+                }
+            });
+        }
         $(this).keypress(function(e) {
             let k = e.charCode || e.keyCode;
             let ch = String.fromCharCode(k);

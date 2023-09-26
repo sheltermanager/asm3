@@ -998,6 +998,7 @@ const tableform = {
      *        height/width/margintop: "css expr",
      *        validation: "notblank|notzero|validemail",
      *        maxlength: (omit or number of chars limit for text/textarea),
+     *        min|max: min/max number for number and intnumber fields
      *        classes: "extraclass anotherone",
      *        date_onlydays: "0,1,2,3,4,5,6" (for datepicker fields, only allow days to be selected monday-sunday)
      *        date_nofuture: true|false, (for datepicker fields)
@@ -1217,7 +1218,9 @@ const tableform = {
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                if (v.readonly) { d += " data-noedit=\"true\" "; }
+                if (v.min) { d += "data-min=\"" + v.min + "\" " ;}
+                if (v.max) { d += "data-max=\"" + v.max + "\" " ;}
+                if (v.readonly) { d += "data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += "/>";
@@ -1230,7 +1233,9 @@ const tableform = {
                 if (v.halfsize) { d += " asm-halftextbox"; }
                 d += "\" ";
                 d += "data-json=\"" + v.json_field + "\" data-post=\"" + v.post_field + "\" ";
-                if (v.readonly) { d += " data-noedit=\"true\" "; }
+                if (v.min) { d += "data-min=\"" + v.min + "\" " ;}
+                if (v.max) { d += "data-max=\"" + v.max + "\" " ;}
+                if (v.readonly) { d += "data-noedit=\"true\" "; }
                 if (v.validation) { d += "data-validation=\"" + v.validation + "\" "; }
                 if (v.tooltip) { d += "title=\"" + html.title(v.tooltip) + "\""; }
                 d += "/>";
