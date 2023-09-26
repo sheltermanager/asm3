@@ -135,17 +135,21 @@ $(function() {
 
         bind_rename_dialog: function() {
             let renamebuttons = { };
-            renamebuttons[_("Rename")] = async function() {
-                validate.reset();
-                if (!validate.notblank([ "newname" ])) { return; }
-                $("#dialog-rename").disable_dialog_buttons();
-                let dtid = tableform.table_ids(document_templates.table).split(",")[0];
-                let newname = $("#newname").val();
-                await common.ajax_post("document_templates", "mode=rename&newname=" + encodeURIComponent(newname) + "&dtid=" + dtid);
-                $("#dialog-rename").enable_dialog_buttons();
-                $("#dialog-rename").dialog("close");
-                tableform.table_selected_row(document_templates.table).NAME = newname;
-                tableform.table_update(document_templates.table);
+            renamebuttons[_("Rename")] = {
+                text: _("Rename"),
+                "class": 'asm-dialog-actionbutton',
+                click: async function() {
+                    validate.reset();
+                    if (!validate.notblank([ "newname" ])) { return; }
+                    $("#dialog-rename").disable_dialog_buttons();
+                    let dtid = tableform.table_ids(document_templates.table).split(",")[0];
+                    let newname = $("#newname").val();
+                    await common.ajax_post("document_templates", "mode=rename&newname=" + encodeURIComponent(newname) + "&dtid=" + dtid);
+                    $("#dialog-rename").enable_dialog_buttons();
+                    $("#dialog-rename").dialog("close");
+                    tableform.table_selected_row(document_templates.table).NAME = newname;
+                    tableform.table_update(document_templates.table);
+                }
             };
             renamebuttons[_("Cancel")] = function() {
                 $("#dialog-rename").dialog("close");
