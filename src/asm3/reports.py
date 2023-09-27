@@ -450,9 +450,10 @@ def get_smcom_reports(dbo: Database) -> Results:
     as a list of dictionaries. 
     DATABASE string format is "VERSION/DBNAME [omitheader] [omitcriteria] [rev00]"
     INSTALLABLE will be True if the report can be installed in this database.
+    INSTALLED will be True if the report is already installed in this database.
     UPDATE will be True if the report is already installed in this database and is older than the last revision.
-           (NB: the category as well as title has to match, so people can protect their copies by changing category)
-    [ { TITLE, CATEGORY, DATABASE, DESCRIPTION, LOCALE, SQL, HTML, SUBREPORTS, INSTALLABLE, REVISION, UPDATE} ]
+        (NB: the category as well as title has to match, so people can protect their copies by changing category)
+    [ { TITLE, CATEGORY, DATABASE, DESCRIPTION, LOCALE, SQL, HTML, SUBREPORTS, INSTALLABLE, INSTALLED, REVISION, UPDATE} ]
     """
     l = dbo.locale
     s = get_smcom_reports_txt(dbo)
@@ -505,8 +506,8 @@ def get_smcom_reports(dbo: Database) -> Results:
         d.SUBREPORTS = ""
         if len(b) == 8: 
             d.SUBREPORTS = b[7].strip()
-        d.INSTALLABLE = not builtin(d.SQL) and not installed(d.TITLE) \
-            and database_ok(d.DATABASE) and version_ok(d.DATABASE)
+        d.INSTALLABLE = not builtin(d.SQL) and database_ok(d.DATABASE) and version_ok(d.DATABASE)
+        d.INSTALLED = installed(d.TITLE)
         d.CUSTOMREPORTID = customreportid(d.TITLE)
         d.REVISION = 0
         revp = d.DATABASE.find("rev")

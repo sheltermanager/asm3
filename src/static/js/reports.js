@@ -786,6 +786,7 @@ $(function() {
                 show: dlgfx.add_show,
                 hide: dlgfx.add_hide
             });
+            /* Removed as it is not helpful now there are 700+ reports #1332
             $("#button-checkall")
                 .button({ icons: { primary: "ui-icon-check" }})
                 .click(function() {
@@ -793,6 +794,8 @@ $(function() {
                     $("#table-smcom td").addClass("ui-state-highlight");
                     $("#button-install").button("enable");
                 });
+            */
+            $("#button-checkall").hide();
 
             $("#button-checkrecommended")
                 .button({ icons: { primary: "ui-icon-check" }})
@@ -800,7 +803,7 @@ $(function() {
                     $("#table-smcom .smcom-title").each(function() {
                         let td = $(this);
                         $.each(controller.recommended, function(i, v) {
-                            if (td.text() == v) {
+                            if (td.text() == v && !td.parent().find("input").prop("disabled")) {
                                 td.parent().find("input").attr("checked", true);
                                 td.parent().find("td").addClass("ui-state-highlight");
                                 $("#button-install").button("enable");
@@ -1010,9 +1013,14 @@ $(function() {
                 let result = await common.ajax_post("reports", formdata);
                 let h = [];
                 $.each(jQuery.parseJSON(result), function(i, r) {
-                    h.push('<tr><td><span style="white-space: nowrap">');
-                    h.push('<input type="checkbox" class="asm-checkbox" data="' + r.ID + '" id="r' + r.ID + 
-                        '" title="' + _("Select") + '" /> <label for="r' + r.ID + '">' + r.TYPE + '</label></span>');
+                    let extraclasses = "";
+                    if (r.INSTALLED) { extraclasses = "asm-completerow"}
+                    h.push('<tr class="' + extraclasses + '"><td>');
+                    h.push('<span style="white-space: nowrap">');
+                    h.push('<input type="checkbox" class="asm-checkbox" data="' + r.ID + '" id="r' + r.ID + '" title="' + _("Select") + '" '); 
+                    if (r.INSTALLED) h.push('disabled="disabled" ');
+                    h.push('/> '); 
+                    h.push('<label for="r' + r.ID + '">' + r.TYPE + '</label></span>');
                     h.push('<td class="smcom-title">' + r.TITLE + '</td>');
                     h.push('<td class="smcom-category">' + r.CATEGORY + '</td>');
                     h.push('<td class="smcom-locale">' + r.LOCALE + '</td>');
