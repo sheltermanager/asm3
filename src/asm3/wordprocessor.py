@@ -211,6 +211,33 @@ def additional_field_person_tags(dbo: Database, p: ResultRow, prefix: str, field
         tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, p["ID"], "person"), prefix + fieldname, depth - 1))
     return tags
 
+def animal_emblem(dbo: Database, flag: str) -> str:
+    """
+    Returns a str containing the emblem for flag if it has one or an empty string if not.
+    """
+    for i in range(1, 21):
+        if asm3.configuration.cstring(dbo, f"EmblemsCustomFlag{i}") == flag and asm3.configuration.cstring(dbo, f"EmblemsCustomCond{i}") == "has":
+            return asm3.configuration.cstring(dbo, f"EmblemsCustomValue{i}")
+    return ""
+
+def animal_flags(dbo: Database, flags: str, include_emblems: bool = False, emblems_only: bool = False, exclude_noemblems: bool = False) -> str:
+    """
+    Returns a str containing either a readable list of flags
+    include_emblems: Precede each flag by its configured emblem if one is set
+    emblems_only: Only output the emblem and not the flag name
+    exclude_noemblems: Only include flags that have emblems
+    """
+    s = []
+    for f in flags.split("|"):
+        if f.strip() == "": continue
+        emblem = animal_emblem(dbo, f)
+        if exclude_noemblems and emblem == "": continue
+        x = ""
+        if include_emblems: x = emblem + " "
+        if not emblems_only: x += f
+        s.append(x)
+    return ", ".join(s)
+
 def animal_tags_publisher(dbo: Database, a: ResultRow, includeAdditional=True) -> Tags:
     """
     Convenience method for getting animal tags when used by a publisher - 
@@ -509,7 +536,11 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
         "WEIGHT"                : asm3.utils.nulltostr(a["WEIGHT"]),
         "DISPLAYWEIGHT"         : weight_display(dbo, a["WEIGHT"]),
         "SPECIESNAME"           : a["SPECIESNAME"],
-        "ANIMALFLAGS"           : asm3.utils.nulltostr(a["ADDITIONALFLAGS"]).replace("|", ", "),
+        "ANIMALFLAGS"           : animal_flags(dbo, a["ADDITIONALFLAGS"]),
+        "ANIMALFLAGSEMBLEMS"    : animal_flags(dbo, a["ADDITIONALFLAGS"], include_emblems=True),
+        "ANIMALFLAGSEMBLEMSX"   : animal_flags(dbo, a["ADDITIONALFLAGS"], include_emblems=True, exclude_noemblems=True),
+        "ANIMALFLAGSEMBLEMSONLY": animal_flags(dbo, a["ADDITIONALFLAGS"], include_emblems=True, emblems_only=True),
+        "ANIMALFLAGSEMBLEMSONLYX": animal_flags(dbo, a["ADDITIONALFLAGS"], include_emblems=True, emblems_only=True, exclude_noemblems=True),
         "ANIMALCOMMENTS"        : a["ANIMALCOMMENTS"],
         "ANIMALCOMMENTSBR"      : a["ANIMALCOMMENTS"],
         "DESCRIPTION"           : a["ANIMALCOMMENTS"],
