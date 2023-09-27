@@ -1,0 +1,758 @@
+{
+    "name": "Health Check",
+    "description": "",
+    "header": "",
+    "footer": "",
+    "fields": [
+        {
+            "name": "animalname",
+            "label": "Animal Name",
+            "type": "SHELTERANIMAL",
+            "mandatory": true,
+            "index": 10,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "species",
+            "label": "Species",
+            "type": "SPECIES",
+            "mandatory": true,
+            "index": 15,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "breed",
+            "label": "Breed",
+            "type": "BREED",
+            "mandatory": true,
+            "index": 20,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "colour",
+            "label": "Colour",
+            "type": "COLOUR",
+            "mandatory": true,
+            "index": 30,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "sex",
+            "label": "Sex",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 35,
+            "visibleif": "",
+            "lookups": "|Male|Female",
+            "tooltip": ""
+        },
+        {
+            "name": "microchip",
+            "label": "Microchip Number",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 40,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "dateofassesment",
+            "label": "Date of this Assessment",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 50,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "examrecord",
+            "label": "Examination Record",
+            "type": "RAWMARKUP",
+            "mandatory": true,
+            "index": 60,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3><center>Examination Record<\/h3>"
+        },
+        {
+            "name": "lefteye",
+            "label": "Left Eye",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 80,
+            "visibleif": "",
+            "lookups": "|Normal|Discharging|Injured/abnormal",
+            "tooltip": ""
+        },
+        {
+            "name": "righteye",
+            "label": "Right Eye",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 90,
+            "visibleif": "",
+            "lookups": "|Normal|Discharging|Injured/abnormal",
+            "tooltip": ""
+        },
+        {
+            "name": "eyecomments",
+            "label": "Comments",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 100,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "eyevet",
+            "label": "Vet attenion required?",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 110,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "eyesection",
+            "label": "line 1",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 111,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<hr>"
+        },
+        {
+            "name": "leftearflap",
+            "label": "Left Ear Flap",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 130,
+            "visibleif": "",
+            "lookups": "|Normal|Thickened|Balding",
+            "tooltip": ""
+        },
+        {
+            "name": "Leftearcanal",
+            "label": "Left Ear Canal",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 140,
+            "visibleif": "",
+            "lookups": "|Clean|Discharge/debris|Narrowed",
+            "tooltip": ""
+        },
+        {
+            "name": "rightearflap",
+            "label": "Right Ear Flap",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 150,
+            "visibleif": "",
+            "lookups": "|Normal|Thickened|Balding",
+            "tooltip": ""
+        },
+        {
+            "name": "rightearcanal",
+            "label": "Right Ear Canal",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 160,
+            "visibleif": "",
+            "lookups": "|Clean|Discharge/debris|Narrowed",
+            "tooltip": ""
+        },
+        {
+            "name": "earcomments",
+            "label": "Comments",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 170,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "earvet",
+            "label": "Vet attention required?",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 180,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "earsection",
+            "label": "earsection",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 181,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<hr>"
+        },
+        {
+            "name": "nose/nostrils",
+            "label": "Nose/nostrils",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 190,
+            "visibleif": "",
+            "lookups": "|Moist|Scaly/dry|Discharging",
+            "tooltip": ""
+        },
+        {
+            "name": "teeth",
+            "label": "Teeth",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 210,
+            "visibleif": "",
+            "lookups": "|Clean|Unclean|Fractures",
+            "tooltip": ""
+        },
+        {
+            "name": "gums",
+            "label": "Gums",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 220,
+            "visibleif": "",
+            "lookups": "|Normal|Reddened|Pale|Injured",
+            "tooltip": ""
+        },
+        {
+            "name": "tongue",
+            "label": "Tongue",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 230,
+            "visibleif": "",
+            "lookups": "|Normal|Ulcerated|Injured",
+            "tooltip": ""
+        },
+        {
+            "name": "mouthcomments",
+            "label": "Comments",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 240,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "mouthvet",
+            "label": "Vet attention required?",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 250,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "mouthsection",
+            "label": "mouthsection",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 251,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<hr>"
+        },
+        {
+            "name": "chest",
+            "label": "Chest",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 260,
+            "visibleif": "",
+            "lookups": "|Normal|Other",
+            "tooltip": ""
+        },
+        {
+            "name": "abdomen",
+            "label": "Abdomen",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 270,
+            "visibleif": "",
+            "lookups": "|Normal|Distended|Other",
+            "tooltip": ""
+        },
+        {
+            "name": "testicles",
+            "label": "Testicles",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 280,
+            "visibleif": "sex=Male",
+            "lookups": "|Entire|Castrated|Left undescended|Right undescended",
+            "tooltip": ""
+        },
+        {
+            "name": "vulva",
+            "label": "Vulva",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 290,
+            "visibleif": "sex=Female",
+            "lookups": "Normal|Swollen|Discharge|In season",
+            "tooltip": ""
+        },
+        {
+            "name": "bodycomments",
+            "label": "Comments",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 300,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "bodyvet",
+            "label": "Vet attention required?",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 310,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "bodysection",
+            "label": "bodysection",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 311,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<hr>"
+        },
+        {
+            "name": "anus",
+            "label": "Anus",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 320,
+            "visibleif": "",
+            "lookups": "|Normal|Swollen|Injured/abnormal",
+            "tooltip": ""
+        },
+        {
+            "name": "anuscomments",
+            "label": "Comments",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 330,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "anusvet",
+            "label": "Vet attention required?",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 340,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "anussection",
+            "label": "anussection",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 341,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<hr>"
+        },
+        {
+            "name": "tail",
+            "label": "Tail",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 350,
+            "visibleif": "",
+            "lookups": "|Normal|Abnormal|Injured/abnormal",
+            "tooltip": ""
+        },
+        {
+            "name": "tailcomments",
+            "label": "Comments",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 360,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "tailvet",
+            "label": "Vet attention required?",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 370,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "tailsection",
+            "label": "tailsection",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 371,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<hr>"
+        },
+        {
+            "name": "coat",
+            "label": "Coat",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 380,
+            "visibleif": "",
+            "lookups": "Normal|Dull|Greasy|Alopecia|Fleas|Lice|Ticks",
+            "tooltip": ""
+        },
+        {
+            "name": "skin",
+            "label": "Skin",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 390,
+            "visibleif": "",
+            "lookups": "Normal|Scabs|Scaly|Cuts/scratches",
+            "tooltip": ""
+        },
+        {
+            "name": "bodycondition",
+            "label": "Body condition",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 400,
+            "visibleif": "",
+            "lookups": "|Very thin|Thin|Normal|Overweight|Obese",
+            "tooltip": ""
+        },
+        {
+            "name": "bodcomments",
+            "label": "Comments",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 410,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "bodvet",
+            "label": "Vet attention required?",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 420,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "bodsection",
+            "label": "bodsection",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 430,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<hr>"
+        },
+        {
+            "name": "leftwing",
+            "label": "Left wing",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 440,
+            "visibleif": "species=Bird",
+            "lookups": "|Sound|Lame|Injured/abnormal",
+            "tooltip": ""
+        },
+        {
+            "name": "rightwing",
+            "label": "Right wing",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 450,
+            "visibleif": "species=Bird",
+            "lookups": "|Sound|Lame|Injured/abnormal",
+            "tooltip": ""
+        },
+        {
+            "name": "leftleg",
+            "label": "Left leg",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 460,
+            "visibleif": "species=Bird",
+            "lookups": "|Sound|Lame|Injured/abnormal",
+            "tooltip": ""
+        },
+        {
+            "name": "rightleg",
+            "label": "Right leg",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 470,
+            "visibleif": "species=Bird",
+            "lookups": "|Sound|Lame|Injured/abnormal",
+            "tooltip": ""
+        },
+        {
+            "name": "frontleftleg",
+            "label": "Front left leg",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 480,
+            "visibleif": "species!Bird",
+            "lookups": "|Sound|Lame|Injured/abnormal",
+            "tooltip": ""
+        },
+        {
+            "name": "frontrightleg",
+            "label": "Front right leg",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 490,
+            "visibleif": "species!Bird",
+            "lookups": "|Sound|Lame|Injured/abnormal",
+            "tooltip": ""
+        },
+        {
+            "name": "rearleftleg",
+            "label": "Rear left leg",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 500,
+            "visibleif": "species!Bird",
+            "lookups": "|Sound|Lame|Injured/abnormal",
+            "tooltip": ""
+        },
+        {
+            "name": "rearrightleg",
+            "label": "Rear right leg",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 510,
+            "visibleif": "species!Bird",
+            "lookups": "|Sound|Lame|Injured/abnormal",
+            "tooltip": ""
+        },
+        {
+            "name": "legcomments",
+            "label": "Comments",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 520,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "legvet",
+            "label": "Vet attention required?",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 530,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "legsection",
+            "label": "legsection",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 540,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<hr>"
+        },
+        {
+            "name": "frontleftfoot",
+            "label": "Front left foot",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 550,
+            "visibleif": "species!Bird",
+            "lookups": "|Normal|Sore|Injured|Trimming required",
+            "tooltip": ""
+        },
+        {
+            "name": "rightfoot",
+            "label": "Front right foot",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 560,
+            "visibleif": "species!Bird",
+            "lookups": "|Normal|Sore|Injured|Trimming required",
+            "tooltip": ""
+        },
+        {
+            "name": "rearleftfoot",
+            "label": "Rear left foot",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 570,
+            "visibleif": "species!Bird",
+            "lookups": "|Normal|Sore|Injured|Trimming required",
+            "tooltip": ""
+        },
+        {
+            "name": "rearrightfoot",
+            "label": "Rear right foot",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 580,
+            "visibleif": "species!Bird",
+            "lookups": "|Normal|Sore|Injured|Trimming required",
+            "tooltip": ""
+        },
+        {
+            "name": "birdleftfoot",
+            "label": "Left foot",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 590,
+            "visibleif": "species=Bird",
+            "lookups": "",
+            "tooltip": "|Normal|Sore|Injured|Trimming required"
+        },
+        {
+            "name": "birdrightfoot",
+            "label": "Right foot",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 600,
+            "visibleif": "species=Bird",
+            "lookups": "|Normal|Sore|Injured|Trimming required",
+            "tooltip": ""
+        },
+        {
+            "name": "feetcomments",
+            "label": "Comments",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 610,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "feetvet",
+            "label": "Vet attention required?",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 620,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "footsection",
+            "label": "footsection",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 630,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<hr>"
+        },
+        {
+            "name": "weight",
+            "label": "Weight",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 640,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "carriedoutby",
+            "label": "carriedoutby",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 650,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Health Check Carried Out By<\/h3>"
+        },
+        {
+            "name": "name",
+            "label": "Name",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 660,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "position",
+            "label": "Position",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 670,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "signature",
+            "label": "Signature",
+            "type": "SIGNATURE",
+            "mandatory": true,
+            "index": 680,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "appointment",
+            "label": "Vet appointment made for",
+            "type": "LOOKUP",
+            "mandatory": false,
+            "index": 690,
+            "visibleif": "",
+            "lookups": "|Treatment|Routine check-up",
+            "tooltip": ""
+        },
+        {
+            "name": "ondate",
+            "label": "On date",
+            "type": "DATE",
+            "mandatory": false,
+            "index": 700,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        }
+    ]
+}

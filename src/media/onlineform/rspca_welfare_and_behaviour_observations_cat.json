@@ -1,0 +1,858 @@
+{
+    "name": "Welfare and Behaviour Observations: Cat",
+    "description": "",
+    "header": "",
+    "footer": "",
+    "fields": [
+        {
+            "name": "animalname",
+            "label": "Animal's Name",
+            "type": "SHELTERANIMAL",
+            "mandatory": true,
+            "index": 10,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "TailsNumber",
+            "label": "Tails Number",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 20,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "touched",
+            "label": "Handling/Examination",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 30,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Handling/Examination<\/h3>\n<h4>Is the cat sensitive to any areas of its body being touched?<\/h4>"
+        },
+        {
+            "name": "sensitiveareas",
+            "label": "Is sensitive to touch in these areas",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 40,
+            "visibleif": "",
+            "lookups": "None|Ears|Nose|Back|Belly|Tail|Front legs|Back legs",
+            "tooltip": ""
+        },
+        {
+            "name": "reactions",
+            "label": "Notable Reactions",
+            "type": "RAWMARKUP",
+            "mandatory": true,
+            "index": 50,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Any notable reactions to<\/h3>"
+        },
+        {
+            "name": "restraining",
+            "label": "Restraining",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 60,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "pickingup",
+            "label": "Picking up",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 70,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "restraineq",
+            "label": "Restraining equipment needed?",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 80,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "medical",
+            "label": "Any medical conditions that could affect behaviour?",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 90,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "sensitivedate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 100,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "sensitiveinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 110,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "newsurroundings",
+            "label": "Reaction to new surroundings",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 120,
+            "visibleif": "",
+            "lookups": "|Generally relaxed|Finds it stressful",
+            "tooltip": ""
+        },
+        {
+            "name": "surroundingscomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 130,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "surroundingsdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 140,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "surroundingsinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 150,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "inaccommodation",
+            "label": "Observations of cat while undisturbed in accommodation",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 160,
+            "visibleif": "",
+            "lookups": "Alert|Relaxed|Stressed|Frustrated",
+            "tooltip": ""
+        },
+        {
+            "name": "accommodationcomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 170,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "accommodationdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 180,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "accommodationinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 190,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "whenapproached",
+            "label": "Reaction when approached and spoken to",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 200,
+            "visibleif": "",
+            "lookups": "|Positive response|Negative response|Disinterested|Aggressive",
+            "tooltip": ""
+        },
+        {
+            "name": "approchedcomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 210,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "approacheddate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 220,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "approachedinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 230,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "whenstroked",
+            "label": "Reaction to being stroked",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 240,
+            "visibleif": "",
+            "lookups": "Enjoys and responds|Unsure|Tolerates|Fearful|Aggressive",
+            "tooltip": ""
+        },
+        {
+            "name": "strokedcomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 250,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "strokeddate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 260,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "strokedinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 270,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "groomingreaction",
+            "label": "Reaction to grooming",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 280,
+            "visibleif": "",
+            "lookups": "Enjoys|Tolerates|Fearful/Scared|Aggressive|Unsure",
+            "tooltip": ""
+        },
+        {
+            "name": "groomingcomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 290,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "groomingdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 300,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "groominginitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 310,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "pickedupreaction",
+            "label": "Reaction to being picked up",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 320,
+            "visibleif": "",
+            "lookups": "|Likes to be held|Tolerates|Tries to get away|Cannot pick up",
+            "tooltip": ""
+        },
+        {
+            "name": "pickedupcomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 330,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "pickedupdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 340,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "pickedupinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 350,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "newpeople",
+            "label": "Reaction to new people",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 360,
+            "visibleif": "",
+            "lookups": "|Actively interacts|Unsure|Fearful|Aggressive",
+            "tooltip": ""
+        },
+        {
+            "name": "newpeoplecomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 370,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "newpeopledate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 380,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "newpeopleinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 390,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "activitylevels",
+            "label": "Activity/Play levels",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 400,
+            "visibleif": "",
+            "lookups": "|High|Medium|Low",
+            "tooltip": ""
+        },
+        {
+            "name": "useoftoys",
+            "label": "Use of toys",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 410,
+            "visibleif": "",
+            "lookups": "|Plays with toys|Scared/Fearful of toys|Does not play with toys",
+            "tooltip": ""
+        },
+        {
+            "name": "toyscomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 420,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "toysdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 430,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "toysinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 440,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "belongings",
+            "label": "Reaction to touching cats belongings e.g. blankets, toys, bowls",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 450,
+            "visibleif": "",
+            "lookups": "|Not bothered|Aggressive",
+            "tooltip": ""
+        },
+        {
+            "name": "belongingscomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 460,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "belongingsdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 470,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "belongingsinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 480,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "otherobservations",
+            "label": "Other observations",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 490,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Other observations, comments or notes<\/h3>"
+        },
+        {
+            "name": "catflap",
+            "label": "Can the cat use a catflap?",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 500,
+            "visibleif": "",
+            "lookups": "|Yes|No|Don't know",
+            "tooltip": ""
+        },
+        {
+            "name": "notablecomments",
+            "label": "Notable comments include: reaction to travelling, carriers, litter tray use, prone to spraying, etc",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 510,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "notabledate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 520,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "notableinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 530,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "animalhistory",
+            "label": "Animal History",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 540,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Animal's History<\/h3>\n<h4>Refer to the animal history form that should have come in with the cat<\/h4>"
+        },
+        {
+            "name": "livedwithcats",
+            "label": "Has the cat lived with other cats?",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 550,
+            "visibleif": "",
+            "lookups": "|Yes|No|Not known",
+            "tooltip": ""
+        },
+        {
+            "name": "livedwithcatsdetails",
+            "label": "Any details?",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 560,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "livedwithdogs",
+            "label": "Has the cat lived with dogs?",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 570,
+            "visibleif": "",
+            "lookups": "|Yes|No|Not known",
+            "tooltip": ""
+        },
+        {
+            "name": "livedwithdogsdetails",
+            "label": "Any details?",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 580,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "livedwithchildren",
+            "label": "Has the cat lived with children?",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 590,
+            "visibleif": "",
+            "lookups": "|Yes|No|Not known",
+            "tooltip": ""
+        },
+        {
+            "name": "detailsofages",
+            "label": "Any details of ages?",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 600,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "catsinrspca",
+            "label": "Experience of other cats while in RSPCA care",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 610,
+            "visibleif": "",
+            "lookups": "|Positive interest|Relaxed|Avoidance|Aggressive",
+            "tooltip": ""
+        },
+        {
+            "name": "rspcacomments",
+            "label": "Other Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 620,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "welfaretext",
+            "label": "Welfare doc text",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 630,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<p>Use this form in conjunction with the Welfare, enrichment and behaviour action plan form; where you can document enrichment needed to improve the welfare and behaviour of the cat whilst in RSPCA care.<\/p>"
+        },
+        {
+            "name": "overallreport",
+            "label": "Overall report",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 640,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h2>Overall Report and Recommendations<\/h2>"
+        },
+        {
+            "name": "animalsname",
+            "label": "Animal's Name",
+            "type": "SHELTERANIMAL",
+            "mandatory": true,
+            "index": 650,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "foradoption",
+            "label": "For Adoption",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 660,
+            "visibleif": "",
+            "lookups": "Yes|No|Green|Amber|Red",
+            "tooltip": ""
+        },
+        {
+            "name": "adoptioninitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 670,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "redreasons",
+            "label": "Animal to remain on Red, please write reasons",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 680,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "observationdetails",
+            "label": "Observation details",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 690,
+            "visibleif": "",
+            "lookups": "Children of 16 years and over|Children of 11 years and over|Children of 7 years and over|Children of 5 years and over|Suitable for children under 5 years of age|Suitable to live with a friendly dog|Must go with another cat or a specific cat|Suitable with cats (in general)",
+            "tooltip": ""
+        },
+        {
+            "name": "decisionreasons",
+            "label": "Decision Reasons",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 700,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "homerecs",
+            "label": "recomendations",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 710,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Re-Homing Recommendations<\/h3>"
+        },
+        {
+            "name": "recommendations",
+            "label": "Type of home",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 720,
+            "visibleif": "",
+            "lookups": "|Quiet/Steady|Standard|Farm/Rural",
+            "tooltip": ""
+        },
+        {
+            "name": "ownertype",
+            "label": "Type of owner",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 730,
+            "visibleif": "",
+            "lookups": "|First time cat owner|Some experience of cats|Experienced cat owner",
+            "tooltip": ""
+        },
+        {
+            "name": "typeofcat",
+            "label": "Type of cat",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 740,
+            "visibleif": "",
+            "lookups": "|Indoor cat only|Both indoor and outdoor cat (not an indoor only cat)|Outdoor cat only",
+            "tooltip": ""
+        },
+        {
+            "name": "enviropref",
+            "label": "Environmental preference",
+            "type": "LOOKUP",
+            "mandatory": false,
+            "index": 750,
+            "visibleif": "",
+            "lookups": "|I couldn't live in a flat|I could live in a flat providing I have access to outdoors easily. Must be ground floor",
+            "tooltip": ""
+        },
+        {
+            "name": "personality",
+            "label": "Personality",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 760,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Personality<\/h3>"
+        },
+        {
+            "name": "describeme",
+            "label": "How would you describe me?",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 770,
+            "visibleif": "",
+            "lookups": "I'm independent: I like to do my own thing|I'm a shy cat: I'll need time to settle|I'm a golden oldie|I love a cat nap|I love company and would like you to be around most of the day|I'm full of energy and love to play|I love fuss and attention/sitting on your knee",
+            "tooltip": ""
+        },
+        {
+            "name": "rehomingcomments",
+            "label": "Rehoming Comments",
+            "type": "NOTES",
+            "mandatory": true,
+            "index": 780,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "observations",
+            "label": "Observations",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 790,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Observations<\/h3>"
+        },
+        {
+            "name": "completeby",
+            "label": "Observations Completed By",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 800,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "obsdonebydate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 810,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "specialistchecked",
+            "label": "Specialist Checked",
+            "type": "SIGNATURE",
+            "mandatory": true,
+            "index": 820,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "specialistdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 830,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "managerchecked",
+            "label": "Supervisor/Manager Checked",
+            "type": "SIGNATURE",
+            "mandatory": true,
+            "index": 840,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "managerdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 850,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        }
+    ]
+}

@@ -1,0 +1,1038 @@
+{
+    "name": "Welfare and Behaviour Observations: Dog",
+    "description": "",
+    "header": "",
+    "footer": "",
+    "fields": [
+        {
+            "name": "animalname",
+            "label": "Animal's Name",
+            "type": "SHELTERANIMAL",
+            "mandatory": true,
+            "index": 10,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "TailsNumber",
+            "label": "Tails Number",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 20,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "touched",
+            "label": "Handling/Examination",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 30,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Handling/Examination<\/h3>\n<h4>Is the dog sensitive to any areas of its body being touched?<\/h4>"
+        },
+        {
+            "name": "sensitiveareas",
+            "label": "Is sensitive to touch in these areas",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 40,
+            "visibleif": "",
+            "lookups": "None|Ears|Nose|Back|Belly|Tail|Feet|Front legs|Back legs",
+            "tooltip": ""
+        },
+        {
+            "name": "reactions",
+            "label": "Notable Reactions",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 50,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Any notable reactions to<\/h3>"
+        },
+        {
+            "name": "Collar",
+            "label": "Holding Collar",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 60,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "pickingup",
+            "label": "Picking up",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 70,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "restraining",
+            "label": "Restraining",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 80,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "muzzle",
+            "label": "Muzzle advised? (and reason)",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 90,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "medical",
+            "label": "Any medical conditions that could affect behaviour?",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 100,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "sensitivedate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 110,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "sensitiveinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 120,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "newsurroundings",
+            "label": "Reaction to new surroundings",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 130,
+            "visibleif": "",
+            "lookups": "|Generally relaxed|Finds it stressful",
+            "tooltip": ""
+        },
+        {
+            "name": "surroundingscomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 140,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "surroundingsdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 150,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "surroundingsinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 160,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "inkennel",
+            "label": "Reaction to being put back in kennel",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 170,
+            "visibleif": "",
+            "lookups": "|Relaxed|Hesitant/needs coaxing|Fearful|Aggressive",
+            "tooltip": ""
+        },
+        {
+            "name": "kennelcomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 180,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "kenneldate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 190,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "kennelinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 200,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "foodandfeeding",
+            "label": "Reaction to food and feeding",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 210,
+            "visibleif": "",
+            "lookups": "|Relaxed|Enthusiastic|Fearful|Aggressive",
+            "tooltip": ""
+        },
+        {
+            "name": "foodcomments",
+            "label": "Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 220,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "fooddate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 230,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "foodinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 240,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "accomodation",
+            "label": "Observation of dog whilst undisturbed in accomodation",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 250,
+            "visibleif": "",
+            "lookups": "|Relaxed|Stressed|Frustrated",
+            "tooltip": ""
+        },
+        {
+            "name": "accomodationcomments",
+            "label": "Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 260,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "acccomodationdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 270,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "accomodationinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 280,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "whenapproached",
+            "label": "Reaction when approached and spoken to",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 290,
+            "visibleif": "",
+            "lookups": "|Positive response|Negative response|Disinterested|Aggressive",
+            "tooltip": ""
+        },
+        {
+            "name": "approchedcomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 300,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "approacheddate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 310,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "approachedinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 320,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "whenstroked",
+            "label": "Reaction to being stroked",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 330,
+            "visibleif": "",
+            "lookups": "Enjoys and responds|Unsure|Tolerates|Fearful|Aggressive",
+            "tooltip": ""
+        },
+        {
+            "name": "strokedcomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 340,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "strokeddate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 350,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "strokedinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 360,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "groomingreaction",
+            "label": "Reaction to grooming",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 370,
+            "visibleif": "",
+            "lookups": "|Enjoys|Tolerates|Fearful/Scared|Aggressive",
+            "tooltip": ""
+        },
+        {
+            "name": "groomingcomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 380,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "groomingdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 390,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "groominginitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 400,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "interaction",
+            "label": "Interaction with other dogs",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 410,
+            "visibleif": "",
+            "lookups": "|Friendly/Playful|Nervous/Fearful|Aggressive|Uninterested",
+            "tooltip": ""
+        },
+        {
+            "name": "interactioncomments",
+            "label": "Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 420,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "interactiondate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 430,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "interactioninitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 440,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "newpeople",
+            "label": "Reaction to new people",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 450,
+            "visibleif": "",
+            "lookups": "|Friendly/Interested|Nervous/Fearful|Aggressive|Unintersted",
+            "tooltip": ""
+        },
+        {
+            "name": "newpeoplecomments",
+            "label": "General Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 460,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "newpeopledate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 470,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "newpeopleinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 480,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "basiccommands",
+            "label": "Basic commmands",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 490,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h4>Basic commands, training and walking behaviours<\/h4>\n<p>Tick if able to reliably perform behaviour and note commands used if different from below.<\/p>"
+        },
+        {
+            "name": "commands",
+            "label": "Commands",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 500,
+            "visibleif": "",
+            "lookups": "Sit|Down|Stay/wait|Come (recall)|Heel|Knows own name",
+            "tooltip": ""
+        },
+        {
+            "name": "walking",
+            "label": "Walking behaviour",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 510,
+            "visibleif": "",
+            "lookups": "|Walks well on lead|Pulls slightly on lead|Pulls a lot on lead (note if difficult to control)",
+            "tooltip": ""
+        },
+        {
+            "name": "mouthsgrabs",
+            "label": "Mouths/grabs lead/walker",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 520,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "training",
+            "label": "Training",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 530,
+            "visibleif": "",
+            "lookups": "|Responds well to training|Short attention span/gets frustrated|Not interested in training",
+            "tooltip": ""
+        },
+        {
+            "name": "walkingcomments",
+            "label": "Comments and additional commands learnt (e.g. paw, hi-five etc.)",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 540,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "walkingdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 550,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "walkinginitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 560,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "playbehaviour",
+            "label": "Activity/Play levels",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 570,
+            "visibleif": "",
+            "lookups": "|High|Medium|Low",
+            "tooltip": "<h4>Play behaviours exhibited<\/h4>"
+        },
+        {
+            "name": "playswithtoys",
+            "label": "Plays with toys",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 580,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "toysoncommand",
+            "label": "Gives up toys on command",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 590,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "mouths",
+            "label": "Mouths",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 600,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "favouritetoy",
+            "label": "Favourite toy",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 610,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "toyobscomments",
+            "label": "General Comments",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 620,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h4>Other observations/comments/notes<\/h4>"
+        },
+        {
+            "name": "noteobscomments",
+            "label": "Notable comments include: reaction to traveling and everyday objects (e.g. bikes,vacuum cleaners, cars etc.)",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 630,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "toysdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": false,
+            "index": 640,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "toysinitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 650,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "overallrecs",
+            "label": "Overall recomendations",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 660,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h2>Overall Rehoming Recommendations<\/h2>"
+        },
+        {
+            "name": "animalsname",
+            "label": "Animal's Name",
+            "type": "SHELTERANIMAL",
+            "mandatory": false,
+            "index": 670,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "foradoption",
+            "label": "For Adoption",
+            "type": "LOOKUP_MULTI",
+            "mandatory": false,
+            "index": 680,
+            "visibleif": "",
+            "lookups": "Yes|No|Green|Amber|Red",
+            "tooltip": ""
+        },
+        {
+            "name": "adoptioninitials",
+            "label": "Initials",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 690,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "redreasons",
+            "label": "Animal to remain on Red, please write reasons",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 700,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "observationdetails",
+            "label": "Observation details",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 710,
+            "visibleif": "",
+            "lookups": "Suitable for children of 16 years and above|Suitable for children of 11 years and above|Suitable for children of 7 years and above|Suitable for children of 5 years and above|Suitable for children of 5 years and below|Suitable with other dogs|Suitable with cats|",
+            "tooltip": ""
+        },
+        {
+            "name": "othernimals",
+            "label": "Suitable with other animals",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 720,
+            "visibleif": "",
+            "lookups": "Suitable with rabbits|Suitable with rabbits if secure|Suitable with other smalls and birds|Suitable with other animals and bird if secure|Unknown",
+            "tooltip": ""
+        },
+        {
+            "name": "decisionreasons",
+            "label": "Decision Reasons",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 730,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "homerecs",
+            "label": "recomendations",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 740,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Re-Homing Recommendations<\/h3>"
+        },
+        {
+            "name": "maxhours",
+            "label": "Maximum hours to be left",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 750,
+            "visibleif": "",
+            "lookups": "|1-2|3-4|4-5|5-6|7-8|Not at all",
+            "tooltip": ""
+        },
+        {
+            "name": "homealone",
+            "label": "Home Alone",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 760,
+            "visibleif": "",
+            "lookups": "|I can be left for short periods|I need teaching that it is ok to be left alone|I need someone with me most of the time",
+            "tooltip": ""
+        },
+        {
+            "name": "traingreq",
+            "label": "Amount of training or any training aids required",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 770,
+            "visibleif": "",
+            "lookups": "Weekly classes essential/recommended|Be consistent with training and house rules| DAP diffuser highly recommended|Head collar and or muzzle essential with adoption|Indoor dog crate essential with adoption|May need a dog behaviourist",
+            "tooltip": ""
+        },
+        {
+            "name": "play",
+            "label": "Play",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 780,
+            "visibleif": "",
+            "lookups": "I love food and treats|I love fuss and attention|I need to learn how to play|I love toys and games",
+            "tooltip": ""
+        },
+        {
+            "name": "heightfence",
+            "label": "Height of fencing",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 790,
+            "visibleif": "",
+            "lookups": "|Under 3 feet|3-4 feet|4-5 feet|5-6 feet|Must be over 6 feet|Possibly farm or rural home",
+            "tooltip": ""
+        },
+        {
+            "name": "fencereason",
+            "label": "Reason for fence height",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 800,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "typehome",
+            "label": "Type of home",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 810,
+            "visibleif": "",
+            "lookups": "|Quiet|Typical|Busy",
+            "tooltip": ""
+        },
+        {
+            "name": "activity",
+            "label": "Activity levels",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 820,
+            "visibleif": "",
+            "lookups": "|Limited|Standard|Active|Very Active|Working",
+            "tooltip": ""
+        },
+        {
+            "name": "ownertype",
+            "label": "Type of owner",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 830,
+            "visibleif": "",
+            "lookups": "|First time dog owner|Some experience of owning a dog|Experienced dog owner|Owner needs experience of this breed",
+            "tooltip": ""
+        },
+        {
+            "name": "personality",
+            "label": "Personality",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 840,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Personality<\/h3>"
+        },
+        {
+            "name": "describeme",
+            "label": "How would you describe me - select the ones that describe me best",
+            "type": "LOOKUP_MULTI",
+            "mandatory": true,
+            "index": 850,
+            "visibleif": "",
+            "lookups": "I'm always on the go|I love to snooze|I am young at heart|I like to play with toys and enjoy games|I am quiet but full of love|I am a bright spark|Big and strong|I am very nervous and need time to make friends",
+            "tooltip": ""
+        },
+        {
+            "name": "rehomingcomments",
+            "label": "Comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 860,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "observations",
+            "label": "Observations",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 870,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Observations<\/h3>"
+        },
+        {
+            "name": "completeby",
+            "label": "Observations Completed By",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 880,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "obsdonebydate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": false,
+            "index": 890,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "specialistchecked",
+            "label": "Specialist Checked",
+            "type": "SIGNATURE",
+            "mandatory": false,
+            "index": 900,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "specialistdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": false,
+            "index": 910,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "managerchecked",
+            "label": "Supervisor/Manager Checked",
+            "type": "SIGNATURE",
+            "mandatory": false,
+            "index": 920,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "managerdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": false,
+            "index": 930,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "overallrehomerec",
+            "label": "Overall rehome rec",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 940,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Overall Rehoming Recomendations<\/h3>\n\n<p>The observation is your recommendations for rehoming, if you would like to downgrade the age of the previous observation for the ages of children, you must write the information in the box below to support these changes.<\/p>"
+        },
+        {
+            "name": "downgradecomments",
+            "label": "Reason for change",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 950,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "printname",
+            "label": "Name",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 960,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "printdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": false,
+            "index": 970,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "specialistname",
+            "label": "Specialist name",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 980,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "specialdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": false,
+            "index": 990,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "behave/ops",
+            "label": "Behaviourist/Ops manager",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 1000,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "behaveopsdate",
+            "label": "Date",
+            "type": "DATE",
+            "mandatory": false,
+            "index": 1010,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "guiderehome",
+            "label": "guide for rehoming",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 1015,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Guide for rehoming<\/h3>"
+        },
+        {
+            "name": "typeofhome",
+            "label": "Type of home",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 1020,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Type of Home<\/h3>\n<p>Quiet<br>\nLimited visitors<br>\nHigh percentage of calm periods in the day<\/p>\n<p>Typical<br>\nRegular visitors (not daily)<br>\nSome periods of calm<\/p>\n<p>Busy<br>Daily visitors to the home and in high volume<\/p>\n<h3>Activity Levels<\/h3>\n<p>Limited<br>\nCalm home<br>\nSmall walks on offer, be able to offer 20-30 minutes of walking per day<\/p>\n<p>Standard<br>\nAverage walks on offer, be able to offer 30-60 minutes of walking twice a day<\/p>\n<p>Active<br>\nWill offer 60-90 minutes walking time twice a day<br>\nWill go to training classes, other activities like agility or flyball etc<\/p>\n<p>Very Active<br>\nExtensive exercise on offer, 120 minutes plus twice a day<br>\nWill go to training classes, other activities like agility or flyball etc<br>\nActive walking holidays etc<\/p>\n<p>Working home<br>\nTo use natural working breed instincts<br>\nExtensive exercise and training, an example of this would be a police dog, working either day or night<\/p>"
+        }
+    ]
+}

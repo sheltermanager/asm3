@@ -1,0 +1,398 @@
+{
+    "name": "Home Visitor's Record Form - Dog/Puppy",
+    "description": "",
+    "header": "",
+    "footer": "",
+    "fields": [
+        {
+            "name": "visitorsname",
+            "label": "Home visitors name",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 10,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "branch",
+            "label": "Branch",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 20,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "visitortelno",
+            "label": "Tel no",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 30,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "visitdate",
+            "label": "Date of visit",
+            "type": "DATE",
+            "mandatory": true,
+            "index": 40,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "animaldetails",
+            "label": "Animal Details",
+            "type": "RAWMARKUP",
+            "mandatory": false,
+            "index": 45,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Animal Details<\/h3>"
+        },
+        {
+            "name": "pleasetick",
+            "label": "Please tick as appropriate",
+            "type": "CHECKBOXGROUP",
+            "mandatory": true,
+            "index": 50,
+            "visibleif": "",
+            "lookups": "Dog|Puppy",
+            "tooltip": ""
+        },
+        {
+            "name": "centreref",
+            "label": "Centre ref no",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 60,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "animalname",
+            "label": "Animal name",
+            "type": "SHELTERANIMAL",
+            "mandatory": true,
+            "index": 70,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "breed",
+            "label": "Breed",
+            "type": "BREED",
+            "mandatory": true,
+            "index": 80,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "sex",
+            "label": "Sex",
+            "type": "LOOKUP",
+            "mandatory": true,
+            "index": 90,
+            "visibleif": "",
+            "lookups": "|Male|Female",
+            "tooltip": ""
+        },
+        {
+            "name": "age",
+            "label": "Age",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 100,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "entryreason",
+            "label": "Reason for entry to animal centre",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 120,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "adoptersdetails",
+            "label": "Adopters Details",
+            "type": "RAWMARKUP",
+            "mandatory": true,
+            "index": 125,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": "<h3>Adopters Details<\/h3>"
+        },
+        {
+            "name": "forenames",
+            "label": "Adopters forename",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 130,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "surname",
+            "label": "Adopters surname",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 140,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "prevadopt",
+            "label": "RSPCA previous adopter",
+            "type": "CHECKBOXGROUP",
+            "mandatory": true,
+            "index": 150,
+            "visibleif": "",
+            "lookups": "Yes|No",
+            "tooltip": ""
+        },
+        {
+            "name": "address",
+            "label": "Address",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 160,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "town",
+            "label": "Town",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 170,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "county",
+            "label": "County",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 180,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "postcode",
+            "label": "Post code",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 190,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "hometelephone",
+            "label": "Tel/Fax no",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 200,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "whyadopt",
+            "label": "Why do they want to adopt dog/puppy?",
+            "type": "NOTES",
+            "mandatory": true,
+            "index": 210,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "accomtype",
+            "label": "Accommodation type",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 220,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "alladopters",
+            "label": "Do all adopters live at this address",
+            "type": "CHECKBOXGROUP",
+            "mandatory": true,
+            "index": 230,
+            "visibleif": "",
+            "lookups": "Yes|No",
+            "tooltip": ""
+        },
+        {
+            "name": "noofadults",
+            "label": "Number of adults",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 240,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "noofchildren",
+            "label": "Number of children",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 250,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "agesofchildren",
+            "label": "Ages of children",
+            "type": "TEXT",
+            "mandatory": false,
+            "index": 260,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "allpresent",
+            "label": "Are all the members of the household present",
+            "type": "YESNO",
+            "mandatory": true,
+            "index": 270,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "worktime",
+            "label": "Working time arrangements for adopters",
+            "type": "NOTES",
+            "mandatory": true,
+            "index": 280,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "daytime",
+            "label": "Daytime responsibility for the cat/kitten lies with",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 290,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "garden",
+            "label": "Garden facilities",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 300,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "fencing",
+            "label": "Fencing type",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 305,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "fenceheight",
+            "label": "Height at lowest point",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 307,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "sleep",
+            "label": "Where will the dog sleep at night",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 310,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "sleepday",
+            "label": "and during the day",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 315,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "otherpets",
+            "label": "Other pets living in the household",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 320,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "vet",
+            "label": "Veterinary surgeon",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 330,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "vettel",
+            "label": "Tel no",
+            "type": "TEXT",
+            "mandatory": true,
+            "index": 340,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        },
+        {
+            "name": "othercom",
+            "label": "Other comments",
+            "type": "NOTES",
+            "mandatory": false,
+            "index": 350,
+            "visibleif": "",
+            "lookups": "",
+            "tooltip": ""
+        }
+    ]
+}
