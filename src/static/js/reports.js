@@ -790,7 +790,7 @@ $(function() {
             $("#button-checkall")
                 .button({ icons: { primary: "ui-icon-check" }})
                 .click(function() {
-                    $("#table-smcom input:visible").attr("checked", true);
+                    $("#table-smcom input:visible").prop("checked", true);
                     $("#table-smcom td").addClass("ui-state-highlight");
                     $("#button-install").button("enable");
                 });
@@ -804,7 +804,7 @@ $(function() {
                         let td = $(this);
                         $.each(controller.recommended, function(i, v) {
                             if (td.text() == v && !td.parent().find("input").prop("disabled")) {
-                                td.parent().find("input").attr("checked", true);
+                                td.parent().find("input").prop("checked", true);
                                 td.parent().find("td").addClass("ui-state-highlight");
                                 $("#button-install").button("enable");
                             }
