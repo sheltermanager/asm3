@@ -1014,7 +1014,7 @@ $(function() {
                 let h = [];
                 $.each(jQuery.parseJSON(result), function(i, r) {
                     let extraclasses = "";
-                    if (r.INSTALLED) { extraclasses = "asm-completerow"}
+                    if (r.INSTALLED) { extraclasses = "asm-completerow"; }
                     h.push('<tr class="' + extraclasses + '"><td>');
                     h.push('<span style="white-space: nowrap">');
                     h.push('<input type="checkbox" class="asm-checkbox" data="' + r.ID + '" id="r' + r.ID + '" title="' + _("Select") + '" '); 

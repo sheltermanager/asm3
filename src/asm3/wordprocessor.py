@@ -220,6 +220,23 @@ def animal_emblem(dbo: Database, flag: str) -> str:
             return asm3.configuration.cstring(dbo, f"EmblemsCustomValue{i}")
     return ""
 
+def animal_flag_name(l: str, f: str) -> str:
+    """
+    Translates built in animal flags to something readable.
+    l: locale to use for translated strings
+    f: flag name to check
+    """
+    translations = {
+        "courtesy":         _("Courtesy Listing", l),
+        "crueltycase":      _("Cruelty Case", l),
+        "nonshelter":       _("Non-Shelter"),
+        "notforadoption":   _("Not For Adoption", l),
+        "notforregistration": _("Do Not Register Microchip", l),
+        "quarantine":       _("Quarantine", l)
+    }
+    if f in translations: return translations[f]
+    return f
+
 def animal_flags(dbo: Database, flags: str, include_emblems: bool = False, emblems_only: bool = False, exclude_noemblems: bool = False) -> str:
     """
     Returns a str containing either a readable list of flags
@@ -232,6 +249,7 @@ def animal_flags(dbo: Database, flags: str, include_emblems: bool = False, emble
         if f.strip() == "": continue
         emblem = animal_emblem(dbo, f)
         if exclude_noemblems and emblem == "": continue
+        f = animal_flag_name(dbo.locale, f)
         x = ""
         if include_emblems: x = emblem + " "
         if not emblems_only: x += f
