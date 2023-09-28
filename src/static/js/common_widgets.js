@@ -70,6 +70,7 @@ $.fn.fromJSON = function(row) {
         else if (n.hasClass("asm-bsmselect")) {
             n.children().prop("selected", false);
             $.each(String(row[f]).split(/[|,]+/), function(mi, mv) {
+                if (!mv) { return; }
                 n.find("[value='" + mv + "']").prop("selected", true);
             });
             n.change();

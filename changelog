@@ -1,6 +1,7 @@
 48
 ================
 
+28/09/23 Fix fromJSON to not assign blanks in multi-select #1333
 27/09/23 New flag wordkeys: AnimalFlagsEmblems/Only/X #1329
 27/09/23 Browse smcom: show installed reports in list, remove select all #1332
 26/09/23 Restrict new stock records to creating a max of 100 level records
