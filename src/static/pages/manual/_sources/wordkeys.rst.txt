@@ -121,6 +121,15 @@ CoatType
     The animal's coat type 
 AnimalFlags
     A list of the flags assigned to an animal, separated by commas.
+AnimalFlagsEmblems
+    Like AnimalFlags, but if you have assigned a custom emblem to a flag,
+    outputs that emblem before the flag name
+AnimalFlagsEmblemsX
+    Like AnimalFlagsEmblems but excludes flags with no emblem
+AnimalFlagsEmblemsOnly
+    Like AnimalFlagsEmblems, but only outputs the emblem and not the flag name
+AnimalFlagsEmblemsOnlyX
+    Like AnimalFlagsEmblemsOnly but only excludes flags with no emblem
 AnimalCreatedBy
     The user who created the animal record (AnimalCreatedByName for full user
     name) 
