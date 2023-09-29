@@ -127,11 +127,12 @@ def get_homechecked(dbo: Database, personid: int) -> Results:
         "WHERE HomeCheckedBy = ?", [personid])
 
 def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname: str = "", forenames: str = "", address: str = "", 
-                       siteid: int = 0, checkcouple: bool = False) -> Results:
+                       siteid: int = 0, checkcouple: bool = False, checkmobilehome: bool = False) -> Results:
     """
     Returns people with similar email, mobile, names and addresses to those supplied.
     If siteid is non-zero, only people with that site will be checked.
     If checkcouple is True, the second contact fields will also be checked.
+    If checkmobilehome is True, the mobile number given will be checked against the home telephone too.
     """
     # Consider the first word rather than first address line - typically house
     # number/name and unlikely to be the same for different people
@@ -158,6 +159,9 @@ def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname
     if forenames != "%" and mobile != "" and asm3.utils.atoi(mobile) > 9999: # at least 5 digits to constitute a valid number
         atoimp = dbo.sql_atoi("o.MobileTelephone")
         mq = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} {atoimp} LIKE ? AND LOWER(o.OwnerForeNames) LIKE ?", [asm3.utils.digits_only(mobile), forenames])
+        if checkmobilehome:
+            atoihp = dbo.sql_atoi("o.HomeTelephone")
+            mq += dbo.query(get_person_query(dbo) + f" WHERE {siteclause} {atoihp} LIKE ? AND LOWER(o.OwnerForeNames) LIKE ?", [asm3.utils.digits_only(mobile), forenames])
     if forenames != "%" and surname != "" and address != "%":
         per = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} LOWER(o.OwnerSurname) LIKE ? AND " \
          "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?", (surname, forenames, address))
