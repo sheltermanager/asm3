@@ -1,0 +1,57 @@
+View PDFs attached between two dates
+###
+Maintenance
+###
+Any rev01
+###
+List all PDFs added to the system between two dates in descending order of age with links
+###
+en
+###
+SELECT
+m.LinkID AS RecordID, 
+m.ID AS MediaID,
+CASE 
+WHEN m.LinkTypeID = 0 THEN (SELECT REPLACE(REPLACE('{0} - {1}', '{0}', AnimalName), '{1}', ShelterCode) FROM animal WHERE ID = m.LinkID) 
+WHEN m.LinkTypeID = 3 THEN (SELECT OwnerName FROM owner WHERE ID = m.LinkID)
+WHEN m.LinkTypeID = 1 THEN REPLACE('Lost Animal {0}', '{0}', CAST(m.LinkID AS VARCHAR(10)))
+WHEN m.LinkTypeID = 2 THEN REPLACE('Found Animal {0}', '{0}', CAST(m.LinkID AS VARCHAR(10)))
+WHEN m.LinkTypeID = 5 THEN REPLACE('Waiting List {0}', '{0}', CAST(m.LinkID AS VARCHAR(10)))
+WHEN m.LinkTypeID = 6 THEN REPLACE('Incident {0}', '{0}', CAST(m.LinkID AS VARCHAR(10)))
+END AS Display,
+CASE 
+WHEN m.LinkTypeID = 0 THEN REPLACE('animal?id={0}', '{0}', CAST(m.LinkID AS VARCHAR(10)))
+WHEN m.LinkTypeID = 3 THEN REPLACE('person?id={0}', '{0}', CAST(m.LinkID AS VARCHAR(10)))
+WHEN m.LinkTypeID = 1 THEN REPLACE('lostanimal?id={0}', '{0}', CAST(m.LinkID AS VARCHAR(10)))
+WHEN m.LinkTypeID = 2 THEN REPLACE('foundanimal?id={0}', '{0}', CAST(m.LinkID AS VARCHAR(10)))
+WHEN m.LinkTypeID = 5 THEN REPLACE('waitinglist?id={0}', '{0}', CAST(m.LinkID AS VARCHAR(10)))
+WHEN m.LinkTypeID = 6 THEN REPLACE('incident?id={0}', '{0}', CAST(m.LinkID AS VARCHAR(10)))
+END AS Url,
+m.Date,
+m.MediaName,
+m.MediaNotes
+FROM media m
+WHERE m.MediaName LIKE '%.pdf'
+AND m.Date >= '$ASK DATE Enter from date$' AND m.Date <= '$ASK DATE Enter to date$'
+ORDER BY m.Date DESC
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Record</th>
+<th>Date</th>
+<th>Link</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a href="$URL">$DISPLAY</a></td>
+<td>$DATE</td>
+<td><a target="_blank" href="media?id=$MEDIAID">$MEDIANOTES</a></td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
