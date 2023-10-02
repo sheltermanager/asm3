@@ -34,6 +34,10 @@ adoptable by ASM's internet publishers.
   choose an age limit on animals that appear. By default, the system excludes
   animals less than 1 year old (52 weeks). 
 
+* Exclude animals with more than X active reservations: This allows you to
+  automatically stop an animal being published after it has received a set
+  number of applications/reservations.
+
 * Include animals in the following locations: Select the locations to include
   adoptable animals from. If none are selected, all locations will be used.
 

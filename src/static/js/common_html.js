@@ -14,6 +14,7 @@ const html = {
     is_animal_adoptable: function(a) {
         var p = config.str("PublisherPresets"),
             exwks = format.to_int(common.url_param(p.replace(/ /g, "&"), "excludeunder")),
+            exrsv = format.to_int(common.url_param(p.replace(/ /g, "&"), "excludereserves")),
             locs = common.url_param(p.replace(/ /g, "&"), "includelocations");
         if (a.ISCOURTESY == 1) { return [ true, _("Courtesy Listing") ]; }
         if (a.ISNOTAVAILABLEFORADOPTION == 1) { return [ false, _("Not for adoption flag set") ]; }
@@ -52,6 +53,11 @@ const html = {
             if (common.add_days(format.date_js(a.DATEOFBIRTH), (exwks * 7)) > new Date()) { 
                 return [ false, _("Under {0} weeks old").replace("{0}", exwks) ]; 
             } 
+        }
+        if (exrsv) {
+            if (a.ACTIVERESERVATIONS > exrsv) {
+                return [ false, _("More than {0} active reservations").replace("{0}", exrsv) ];
+            }
         }
         if (locs && locs != "null" && !a.ACTIVEMOVEMENTTYPE) {
             var inloc = false;

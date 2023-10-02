@@ -54,6 +54,7 @@ class PublishCriteria(object):
     checkSocket = False
     order = 1 # 0 = Ascending entry, 1 = Descending entry, 2 = Ascending name
     excludeUnderWeeks = 12
+    excludeReserves = 0
     animalsPerPage = 10
     htmlByChildAdult = False # True if html pages should be prefixed baby/adult_ and split
     childAdultSplit=26 # Number of weeks before an animal is treated as an adult by the child adult publisher
@@ -120,6 +121,7 @@ class PublishCriteria(object):
             if s.startswith("outputadopteddays"): self.outputAdoptedDays = self.get_int(s)
             if s.startswith("order"): self.order = self.get_int(s)
             if s.startswith("excludeunder"): self.excludeUnderWeeks = self.get_int(s)
+            if s.startswith("excludereserves"): self.excludeReserves = self.get_int(s)
             if s.startswith("animalsperpage"): self.animalsPerPage = self.get_int(s)
             if s.startswith("style"): self.style = self.get_str(s)
             if s.startswith("extension"): self.extension = self.get_str(s)
@@ -166,6 +168,7 @@ class PublishCriteria(object):
         if self.outputRSS: s += " outputrss"
         s += " order=" + str(self.order)
         s += " excludeunder=" + str(self.excludeUnderWeeks)
+        s += " excludereserves=" + str(self.excludeReserves)
         s += " animalsperpage=" + str(self.animalsPerPage)
         s += " style=" + str(self.style)
         s += " extension=" + str(self.extension)
@@ -337,6 +340,9 @@ def get_animal_data_query(dbo: Database, pc: PublishCriteria, animalid: int = 0,
         sql += " AND a.HasTrialAdoption = 0"
     if publisher_key != "":
         sql += " AND LOWER(a.AdditionalFlags) NOT LIKE LOWER('%%Exclude from %s|%%')" % publisher_key
+    # Doesn't have too many active reserves
+    if pc.excludeReserves > 0:
+        sql += " AND (SELECT COUNT(*) FROM adoption WHERE AnimalID = a.ID AND MovementType = 0 AND ReservationCancelledDate Is Null) <= %s" % pc.excludeReserves
     # Make sure animal is old enough
     sql += " AND a.DateOfBirth <= " + dbo.sql_value(dbo.today(offset = pc.excludeUnderWeeks * -7))
     # Filter out dead and unadoptable animals
@@ -567,6 +573,7 @@ def is_animal_adoptable(dbo: Database, a: ResultRow) -> bool:
     if not p.includeWithoutDescription and asm3.configuration.publisher_use_comments(dbo) and a.ANIMALCOMMENTS == "": return False
     if not p.includeWithoutDescription and not asm3.configuration.publisher_use_comments(dbo) and a.WEBSITEMEDIANOTES == "": return False
     if p.excludeUnderWeeks > 0 and asm3.i18n.add_days(a.DATEOFBIRTH, 7 * p.excludeUnderWeeks) > dbo.today(): return False
+    if p.excludeReserves > 0 and a.ACTIVERESERVATIONS > p.excludeReservations: return False
     if len(p.internalLocations) > 0 and a.ACTIVEMOVEMENTTYPE is None and str(a.SHELTERLOCATION) not in p.internalLocations: return False
     return True
 

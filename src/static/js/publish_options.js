@@ -129,6 +129,11 @@ $(function() {
                 _("weeks") + '</td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="excludereserves">' + _("Exclude animals with more than") + '</label></td>',
+                '<td><input id="excludereserves" class="asm-numberbox asm-textbox asm-halftextbox preset" data="excludereserves" data-max="50" data-min="0" />',
+                _("active reservations") + '</td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="locations">' + _("Include animals in the following locations"),
                 '<span id="callout-locations" class="asm-callout">',
                 _("If you don't select any locations, publishers will include animals in all locations."),
@@ -1301,7 +1306,7 @@ $(function() {
                     if (bo == o) { $("[data='" + bo + "']").select("value", "1"); }
                 });
                 // Deal with key/value pairs
-                $.each( [ "order", "excludeunder", "animalsperpage", "limit", "style", "extension",
+                $.each( [ "order", "excludeunder", "excludereserves", "animalsperpage", "limit", "style", "extension",
                     "scaleimages", "thumbnailsize", "includelocations", "ftproot", "publishdirectory", 
                     "childadultsplit", "outputadopteddays" ],
                 function(vi, vo) {

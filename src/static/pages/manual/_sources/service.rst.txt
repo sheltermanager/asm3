@@ -61,6 +61,7 @@ JSON result looks like this::
            "ACTIVEMOVEMENTTRIALENDDATE": null,
            "ACTIVEMOVEMENTTYPE": null,
            "ACTIVEMOVEMENTTYPENAME": null,
+           "ACTIVERESERVATIONS": 3,
            "ADDITIONALFLAGS": "|",
            "ADOPTAPETCOLOUR": "Black",
            "ADOPTIONCOORDINATOREMAILADDRESS": null,

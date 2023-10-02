@@ -231,6 +231,7 @@ def get_animal_query(dbo: Database) -> str:
         "vid.MediaName AS WebsiteVideoURL, " \
         "vid.MediaNotes AS WebsiteVideoNotes, " \
         "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
+        "(SELECT COUNT(*) FROM adoption WHERE AnimalID = a.ID AND MovementType = 0 AND ReservationCancelledDate Is Null) AS ActiveReservations, " \
         "(SELECT COUNT(*) FROM media WHERE MediaMimeType = 'image/jpeg' AND Date >= %(twodaysago)s AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages, " \
         "CASE WHEN EXISTS(SELECT amt.DateRequired FROM animalmedicaltreatment amt INNER JOIN animalmedical am ON am.ID=amt.AnimalMedicalID WHERE amt.AnimalID=a.ID AND amt.DateRequired <= %(today)s AND amt.DateGiven Is Null AND am.Status=0) THEN 1 ELSE 0 END AS HasOutstandingMedical, " \
         "CASE WHEN ab.ID Is Not Null THEN 1 ELSE 0 END AS HasActiveBoarding, " \
@@ -431,6 +432,7 @@ def get_animals_brief(animals: Results) -> Results:
             "ACCEPTANCENUMBER": a["ACCEPTANCENUMBER"],
             "ACTIVEMOVEMENTID": a["ACTIVEMOVEMENTID"],
             "ACTIVEMOVEMENTTYPE": a["ACTIVEMOVEMENTTYPE"],
+            "ACTIVERESERVATIONS": a["ACTIVERESERVATIONS"],
             "ADDITIONALFLAGS": a["ADDITIONALFLAGS"],
             "ADOPTIONCOORDINATORID": a["ADOPTIONCOORDINATORID"],
             "ADOPTIONCOORDINATORNAME": a["ADOPTIONCOORDINATORNAME"],

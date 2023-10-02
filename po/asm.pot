@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-10-02 09:45+0000\n"
+"POT-Creation-Date: 2023-10-02 10:24+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -5393,6 +5393,10 @@ msgstr ""
 msgid "Exclude animals who are aged under"
 msgstr ""
 
+#: publish_options.js
+msgid "Exclude animals with more than"
+msgstr ""
+
 #: html.py mobile.py header_edit_header.js common_html.js
 msgid "Exclude from bulk email"
 msgstr ""
@@ -8643,6 +8647,10 @@ msgstr ""
 
 #: mobile.py
 msgid "More diary notes"
+msgstr ""
+
+#: common_html.js
+msgid "More than {0} active reservations"
 msgstr ""
 
 #: dbupdate.py
@@ -15759,6 +15767,10 @@ msgstr ""
 
 #: options.js
 msgid "[None]"
+msgstr ""
+
+#: publish_options.js
+msgid "active reservations"
 msgstr ""
 
 #: publish_options.js
