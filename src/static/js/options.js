@@ -1624,6 +1624,7 @@ $(function() {
                 '<input data="HideTownCounty" id="towncounty" class="asm-checkbox" type="checkbox" /> <label for="towncounty">' + _("Remove the city/state fields from person details") + '</label><br />',
                 '<input data="HideCountry" id="hcountry" class="asm-checkbox" type="checkbox" /> <label for="hcountry">' + _("Remove the country field from person details") + '</label><br />',
                 '<input data="HidePersonDateOfBirth" id="hpdob" class="asm-checkbox" type="checkbox" /> <label for="hpdob">' + _("Remove the date of birth field from person details") + '</label><br />',
+                '<input data="HideHomeWorkPhone" id="hidehwphone" class="asm-checkbox" type="checkbox" /> <label for="hidehwphone">' + _("Remove the home and work telephone number fields from person details") + '</label><br />',
                 '<input data="HideHomeCheckedNoFlag" id="hhomechecked" class="asm-checkbox" type="checkbox" /> <label for="hhomechecked">' + _("Remove the homechecked/by fields from person type according to the homechecked flag") + '</label><br />',
                 '<input data="HideIDNumber" id="hidnumber" class="asm-checkbox" type="checkbox" /> <label for="hidnumber">' + _("Remove the identification number field from person details") + '</label><br />',
                 '<input data="DontShowInsurance" id="insuranceno" class="asm-checkbox" type="checkbox" /> <label for="insuranceno">' + _("Remove the insurance number field from the movement screens") + '</label><br />',

@@ -142,11 +142,11 @@ $.widget("asm.personchooser", {
             '<td><label>' + _("Address") + '</label></td>',
             '<td><textarea class="asm-textareafixed chooser personchooser-address" data="address" rows="3"></textarea></td>',
             '</tr>',
-            '<tr>',
+            '<tr class="personchooser-towncountyrow">',
             '<td><label>' + _("City") + '</label></td>',
             '<td><input class="asm-textbox chooser personchooser-town" maxlength="100" data="town" type="text" /></td>',
             '</tr>',
-            '<tr>',
+            '<tr class="personchooser-towncountyrow">',
             '<td><label>' + _("State") + '</label></td>',
             '<td>',
             common.iif(config.bool("USStateCodes"),
@@ -165,11 +165,11 @@ $.widget("asm.personchooser", {
             '<td><label>' + _("Country") + '</label></td>',
             '<td><input class="asm-textbox chooser personchooser-country" data="country" type="text" /></td>',
             '</tr>',
-            '<tr>',
+            '<tr class="personchooser-homeworkphonerow">',
             '<td><label>' + _("Home Phone") + '</label></td>',
             '<td><input class="asm-textbox asm-phone chooser" data="hometelephone" type="text" /></td>',
             '</tr>',
-            '<tr>',
+            '<tr class="personchooser-homeworkphonerow">',
             '<td><label>' + _("Work Phone") + '</label></td>',
             '<td><input class="asm-textbox asm-phone chooser" data="worktelephone" type="text" />',
             '<input class="asm-textbox asm-phone chooser tag-couple" data="worktelephone2" type="text" /></td>',
@@ -270,6 +270,14 @@ $.widget("asm.personchooser", {
         // Hide country if option set
         if (config.bool("HideCountry")) {
             dialogadd.find(".personchooser-countryrow").hide();
+        }
+
+        if (config.bool("HideTownCounty")) {
+            dialogadd.find(".personchooser-towncountyrow").hide();
+        }
+
+        if (config.bool("HideHomeWorkPhone")) {
+            dialogadd.find(".personchooser-homeworkphonerow").hide();
         }
 
         // Hide GDPR if option not on

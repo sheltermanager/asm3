@@ -77,11 +77,11 @@ $(function() {
                 '<td><label for="country">' + _("Country") + '</label></td>',
                 '<td><input class="asm-textbox newform" id="country" data="country" type="text" /></td>',
                 '</tr>',
-                '<tr>',
+                '<tr class="homeworkphone">',
                 '<td><label for="hometelephone">' + _("Home Phone") + '</label></td>',
                 '<td><input class="asm-textbox asm-phone newform" id="hometelephone" data="hometelephone" type="text" /></td>',
                 '</tr>',
-                '<tr>',
+                '<tr class="homeworkphone">',
                 '<td><label for="worktelephone">' + _("Work Phone") + '</label></td>',
                 '<td><input class="asm-textbox asm-phone newform" id="worktelephone" data="worktelephone" type="text" />',
                 '<input class="asm-textbox asm-phone newform tag-couple" id="worktelephone2" data="worktelephone2" type="text" /></td>',
@@ -274,16 +274,11 @@ $(function() {
             // Load the person flag options
             html.person_flag_options(null, controller.flags, $("#flags"));
 
-            if (config.bool("HideTownCounty")) {
-                $(".towncounty").hide();
-            }
-
+            $(".towncounty").toggle( !config.bool("HideTownCounty")); 
+            $(".homeworkphone").toggle( !config.bool("HideHomeWorkPhone"));
             $("#countryrow").toggle( !config.bool("HideCountry") );
-
             $("#dateofbirthrow").toggle( !config.bool("HidePersonDateOfBirth") );
-
             $("#idnumberrow").toggle( !config.bool("HideIDNumber") );
-
             $("#gdprcontactoptinrow").toggle( config.bool("ShowGDPRContactOptIn") );
 
             if (config.bool("DisableAnimalControl")) {

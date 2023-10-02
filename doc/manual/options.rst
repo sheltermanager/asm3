@@ -1054,6 +1054,9 @@ People
   hide the country field from person addresses. This option is on by default 
   since most shelters only deal with one country.
 
+* Remove the home and work telephone fields from person details: Setting this option
+  will hide the home and work telephone fields from person records. 
+
 * Remove the homechecked/by fields from person type according to the homechecked 
   flag: This option is on by default and will hide the homechecked by and date
   fields from the person type slider if they don't have the homechecked flag.

@@ -96,13 +96,13 @@ $(function() {
                 '<input type="text" id="surname2" data-json="OWNERSURNAME2" data-post="surname2" maxlength="100" class="asm-textbox tag-couple" />',
                 '</td>',
                 '</tr>',
-                '<tr>',
+                '<tr class="homeworkphone">',
                 '<td><label for="hometelephone">' + _("Home Phone") + '</label></td>',
                 '<td>',
                 '<input type="text" id="hometelephone" data-json="HOMETELEPHONE" data-post="hometelephone" class="asm-textbox asm-phone" />',
                 '</td>',
                 '</tr>',
-                '<tr>',
+                '<tr class="homeworkphone">',
                 '<td><label for="worktelephone">' + _("Work Phone") + '</label></td>',
                 '<td class="nowrap">',
                 '<input type="text" id="worktelephone" data-json="WORKTELEPHONE" data-post="worktelephone" class="asm-textbox asm-phone" />',
@@ -606,6 +606,7 @@ $(function() {
 
             // CONFIG ===========================
             $(".towncounty").toggle( !config.bool("HideTownCounty") );
+            $(".homeworkphone").toggle( !config.bool("HideHomeWorkPhone") );
             $("#countryrow").toggle( !config.bool("HideCountry") );
             $("#latlongrow").toggle( config.bool("ShowLatLong") );
             $("#siterow").toggle( config.bool("MultiSiteEnabled") );

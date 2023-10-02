@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-09-25 14:09+0000\n"
+"POT-Creation-Date: 2023-10-02 09:45+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3349,7 +3349,7 @@ msgstr ""
 msgid "Couple"
 msgstr ""
 
-#: html.py header_edit_header.js common_html.js options.js
+#: html.py wordprocessor.py header_edit_header.js common_html.js options.js
 msgid "Courtesy Listing"
 msgstr ""
 
@@ -3551,8 +3551,8 @@ msgstr ""
 msgid "Crossbreed"
 msgstr ""
 
-#: html.py shelterview.js header_edit_header.js reports.js common_html.js
-#: options.js
+#: html.py wordprocessor.py shelterview.js header_edit_header.js reports.js
+#: common_html.js options.js
 msgid "Cruelty Case"
 msgstr ""
 
@@ -4413,7 +4413,7 @@ msgstr ""
 msgid "Do Not Publish"
 msgstr ""
 
-#: html.py animal_bulk.js common_html.js
+#: html.py wordprocessor.py animal_bulk.js common_html.js
 msgid "Do Not Register Microchip"
 msgstr ""
 
@@ -9197,7 +9197,8 @@ msgstr ""
 msgid "Noise"
 msgstr ""
 
-#: html.py header_edit_header.js animal_new.js common_html.js options.js
+#: html.py wordprocessor.py header_edit_header.js animal_new.js common_html.js
+#: options.js
 msgid "Non-Shelter"
 msgstr ""
 
@@ -9261,8 +9262,8 @@ msgstr ""
 msgid "Not Available for Adoption"
 msgstr ""
 
-#: html.py shelterview.js header_edit_header.js animal_bulk.js common_html.js
-#: options.js
+#: html.py wordprocessor.py shelterview.js header_edit_header.js animal_bulk.js
+#: common_html.js options.js
 msgid "Not For Adoption"
 msgstr ""
 
@@ -10500,8 +10501,8 @@ msgstr ""
 msgid "Quantity"
 msgstr ""
 
-#: html.py animal_find_results.js shelterview.js header_edit_header.js
-#: reports.js common_html.js options.js
+#: html.py wordprocessor.py animal_find_results.js shelterview.js
+#: header_edit_header.js reports.js common_html.js options.js
 msgid "Quarantine"
 msgstr ""
 
@@ -11037,6 +11038,10 @@ msgstr ""
 
 #: options.js
 msgid "Remove the heartworm test fields from animal health details"
+msgstr ""
+
+#: options.js
+msgid "Remove the home and work telephone number fields from person details"
 msgstr ""
 
 #: options.js
@@ -13395,7 +13400,7 @@ msgid "The movement number '{0}' is not unique."
 msgstr ""
 
 #: stocklevel.js
-msgid "The number of stock records to create"
+msgid "The number of stock records to create (containers)"
 msgstr ""
 
 #: options.js
