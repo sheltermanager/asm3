@@ -130,7 +130,8 @@ const html = {
             "thumbnailclasses": html.animal_link_thumb_classes(a),
             "imgsrc" : html.thumbnail_src(a, "animalthumb") }));
         let name = a.ANIMALNAME;
-        if (config.bool("ShelterViewShowCodes")) { name = name + ' <span class="asm-shelterview-animalcode">' + a.CODE + '</span>';}
+        if (config.bool("ShelterViewShowCodes")) { name = name + ' <span class="asm-shelterview-animalcode">' +
+            (config.bool("UseShortShelterCodes") ? a.SHORTCODE : a.SHELTERCODE) + '</span>';}
         s.push('<a class="asm-shelterview-animalname" href="animal?id=' + a.ID + '">' + name + '</a><br style="margin-bottom: 6px" />');
         s.push(html.animal_emblems(a, o));
         if (o.showselector) {
