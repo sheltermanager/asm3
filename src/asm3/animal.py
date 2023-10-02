@@ -2370,7 +2370,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
         year = 0
         if sheltercode.strip() == "":
             raise asm3.utils.ASMValidationError(_("You must supply a code.", l))
-        if 0 != dbo.query_int("SELECT COUNT(ID) FROM animal WHERE ShelterCode = ?", [sheltercode]):
+        if 0 != dbo.query_int("SELECT COUNT(ID) FROM animal WHERE LOWER(ShelterCode) = LOWER(?)", [sheltercode]):
             raise asm3.utils.ASMValidationError(_("This code has already been used.", l))
     else:
         # Generate a new code
