@@ -11,6 +11,7 @@ $(function() {
         { "ID": 19, "NAME": _("Email") },
         { "ID": 10, "NAME": _("Date") },
         { "ID": 16, "NAME": _("Time") },
+        { "ID": 20, "NAME": _("Number") },
         { "ID": 2, "NAME": _("Notes") },
         { "ID": 3, "NAME": _("Lookup") },
         { "ID": 14, "NAME": _("Lookup (Multiple Select)") },

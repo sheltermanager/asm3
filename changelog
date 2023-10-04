@@ -1,6 +1,7 @@
 48
 ================
 
+04/10/23 Online forms: Number field type (validation only) #969
 04/10/23 Option to default to all on find incident #1334
 04/10/23 PetRescue: Option to only send coordinator's email address
 04/10/23 Bug fix for documents where flags is null #1329
