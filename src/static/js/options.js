@@ -1122,6 +1122,8 @@ $(function() {
                 '<input data="AdvancedFindAnimalOnShelter" id="advancedfindanimalos" type="checkbox" class="asm-checkbox" /> <label for="advancedfindanimalos">' + _("Advanced find animal screen defaults to on shelter") + '</label>',
                 '<br />',
                 '<input data="AdvancedFindOwner" id="advancedfindperson" type="checkbox" class="asm-checkbox" /> <label for="advancedfindperson">' + _("Default to advanced find person screen") + '</label>',
+                '<br />',
+                '<input data="AdvancedFindIncidentIncomplete" id="aficomplete" type="checkbox" class="asm-checkbox" /> <label for="aficomplete">' + _("Find an incident screen defaults to incomplete incidents") + '</label>',
                 '</p>',
                 '</div>'
             ].join("\n");

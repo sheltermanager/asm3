@@ -12,6 +12,7 @@ from asm3.typehints import Any, Database, Dict, List, PostedData, Tuple
 # still get shown correctly in the options screens.
 DEFAULTS = {
     "AdvancedFindAnimalOnShelter": "Yes",
+    "AdvancedFindIncidentIncomplete": "Yes",
     "AgeGroup1": "0.5",
     "AgeGroup1Name": "Baby",
     "AgeGroup2": "2",

@@ -221,6 +221,15 @@ $(function() {
 
         },
 
+        sync: function() {
+            if (config.bool("AdvancedFindIncidentIncomplete")) {
+                $("#filter").select("value", "incomplete");
+            }
+            else {
+                $("#filter").select("value", "");
+            }
+        },
+
         name: "incident_find",
         animation: "criteria",
         autofocus: "#number",
