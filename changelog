@@ -1,6 +1,7 @@
 48
 ================
 
+04/10/23 PetRescue: Option to only send coordinator's email address
 04/10/23 Bug fix for documents where flags is null #1329
 02/10/23 Manual code check for new animals, make case insensitive
 02/10/23 Fix bug with display of short codes on Home/Shelterview

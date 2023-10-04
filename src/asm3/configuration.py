@@ -1275,7 +1275,7 @@ def petrescue_vic_picnumber(dbo: Database) -> str:
     return cstring(dbo, "PetRescueVICPICNumber")
 
 def petrescue_use_coordinator(dbo: Database) -> bool:
-    return cboolean(dbo, "PetRescueUseCoordinator")
+    return cint(dbo, "PetRescueUseCoordinator")
 
 def pdf_inline(dbo: Database) -> bool:
     return cboolean(dbo, "PDFInline", DEFAULTS["PDFInline"] == "Yes")

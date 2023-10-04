@@ -681,8 +681,11 @@ $(function() {
                 'Use the adoption coordinator\'s contact information instead of the options above if the animal has an adoption coordinator assigned.',
                 '</span>',
                 '</td>',
-                '<td><select id="usecoord" class="asm-selectbox cfg" data="PetRescueUseCoordinator">',
-                '<option>No</option><option>Yes</option></select></td>',
+                '<td><select id="usecoord" class="asm-selectbox asm-doubleselectbox cfg" data="PetRescueUseCoordinator">',
+                '<option value="0">No</option>',
+                '<option value="1">Use coordinator\'s phone number and email address</option>',
+                '<option value="2">Use coordinator\'s email address only</option>',
+                '</select></td>',
                 '</tr>',
                 '</table>',
                 '</div>'
