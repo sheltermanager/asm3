@@ -376,6 +376,18 @@ and indicate this to PetRescue via the following rules:
 * If the animal has a medical treatment containing the words "heart" and
   "worm" in the last 6 months, the heartworm treated flag is set.
 
+Contact Info
+^^^^^^^^^^^^
+
+By default, the contact info for the shelter from the options page will be
+used. You can optionally override the email address and set a contact phone
+number if you wish.
+
+If you enable the option to use the adoption coordinator's contact information,
+this overrides the contact email and contact phone number options and will
+supply the phone number and email address of the adoption coordinator for
+each pet.
+
 Extra fields
 ^^^^^^^^^^^^
 
