@@ -306,7 +306,7 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
     bondedcodes = [ a["SHELTERCODE"] ]
     if a["BONDEDANIMAL1CODE"]: bondedcodes.append(a["BONDEDANIMAL1CODE"])
     if a["BONDEDANIMAL2CODE"]: bondedcodes.append(a["BONDEDANIMAL2CODE"])
-    bondedmicrochips = [ a["IDENTICHIPNUMBER"] ]
+    bondedmicrochips = [ asm3.utils.nulltostr(a["IDENTICHIPNUMBER"]) ]
     if a["BONDEDANIMAL1IDENTICHIPNUMBER"]: bondedmicrochips.append(a["BONDEDANIMAL1IDENTICHIPNUMBER"])
     if a["BONDEDANIMAL2IDENTICHIPNUMBER"]: bondedmicrochips.append(a["BONDEDANIMAL2IDENTICHIPNUMBER"])
 
