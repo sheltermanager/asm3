@@ -12,6 +12,7 @@ from asm3.typehints import Any, Database, Dict, List, PostedData, Tuple
 # still get shown correctly in the options screens.
 DEFAULTS = {
     "AdvancedFindAnimalOnShelter": "Yes",
+    "AdvancedFindIncidentIncomplete": "Yes",
     "AgeGroup1": "0.5",
     "AgeGroup1Name": "Baby",
     "AgeGroup2": "2",
@@ -1275,7 +1276,7 @@ def petrescue_vic_picnumber(dbo: Database) -> str:
     return cstring(dbo, "PetRescueVICPICNumber")
 
 def petrescue_use_coordinator(dbo: Database) -> bool:
-    return cboolean(dbo, "PetRescueUseCoordinator")
+    return cint(dbo, "PetRescueUseCoordinator")
 
 def pdf_inline(dbo: Database) -> bool:
     return cboolean(dbo, "PDFInline", DEFAULTS["PDFInline"] == "Yes")

@@ -201,6 +201,22 @@ $(document).ready(function() {
         return rv;
     };
 
+    const validate_number = function() {
+        let rv = true;
+        $(".asm-onlineform-number").each(function() {
+            let v = $(this).val();
+            if (v) {
+                if (isNaN(v) || isNaN(parseFloat(v))) {
+                    alert("Number is not valid.");
+                    $(this).focus();
+                    rv = false;
+                    return false;
+                }
+            }
+        });
+        return rv;
+    };
+
     // Validate HTML5 required input fields 
     // (only does anything for browsers that don't support html5 required)
     const validate_required = function() {
@@ -407,6 +423,7 @@ $(document).ready(function() {
         if (!validate_dates()) { enable(); return false; }
         if (!validate_times()) { enable(); return false; }
         if (!validate_email()) { enable(); return false; }
+        if (!validate_number()) { enable(); return false; }
         if (!validate_required()) { enable(); return false; }
         if (!validate_images()) { enable(); return false; }
         if (html5_required && !$("form")[0].checkValidity()) { 

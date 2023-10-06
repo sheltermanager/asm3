@@ -1,6 +1,13 @@
 48
 ================
 
+04/10/23 Online forms: Number field type (validation only) #969
+04/10/23 Option to default to all on find incident #1334
+04/10/23 PetRescue: Option to only send coordinator's email address
+04/10/23 Bug fix for documents where flags is null #1329
+02/10/23 Manual code check for new animals, make case insensitive
+02/10/23 Fix bug with display of short codes on Home/Shelterview
+02/10/23 lksize should still be non-editable for English speakers
 02/10/23 Option to make not for adoption with more than X active reserves #1335
 02/10/23 Option to remove home and work telephone numbers #1328
 29/09/23 Reinstate mobile->home number check when adding new people

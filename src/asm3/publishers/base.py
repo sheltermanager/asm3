@@ -573,7 +573,7 @@ def is_animal_adoptable(dbo: Database, a: ResultRow) -> bool:
     if not p.includeWithoutDescription and asm3.configuration.publisher_use_comments(dbo) and a.ANIMALCOMMENTS == "": return False
     if not p.includeWithoutDescription and not asm3.configuration.publisher_use_comments(dbo) and a.WEBSITEMEDIANOTES == "": return False
     if p.excludeUnderWeeks > 0 and asm3.i18n.add_days(a.DATEOFBIRTH, 7 * p.excludeUnderWeeks) > dbo.today(): return False
-    if p.excludeReserves > 0 and a.ACTIVERESERVATIONS > p.excludeReservations: return False
+    if p.excludeReserves > 0 and a.ACTIVERESERVATIONS > p.excludeReserves: return False
     if len(p.internalLocations) > 0 and a.ACTIVEMOVEMENTTYPE is None and str(a.SHELTERLOCATION) not in p.internalLocations: return False
     return True
 

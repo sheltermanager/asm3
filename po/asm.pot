@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-10-02 10:24+0000\n"
+"POT-Creation-Date: 2023-10-04 13:23+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -5786,6 +5786,10 @@ msgstr ""
 
 #: header.js
 msgid "Find an incident"
+msgstr ""
+
+#: options.js
+msgid "Find an incident screen defaults to incomplete incidents"
 msgstr ""
 
 #: html.py header.js common_animalchooser.js

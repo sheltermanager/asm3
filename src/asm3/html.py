@@ -730,7 +730,7 @@ def json_animalfindcolumns(dbo: Database) -> ColumnList:
 def json_lookup_tables(l: str) -> ColumnList:
     aslist = []
     for k, v in asm3.lookups.LOOKUP_TABLES.items():
-        if k.startswith("lks") and not k == "lksize":
+        if k.startswith("lks"):
             # static tables only appear in non-English locales
             # for translation purposes and to stop people messing 
             # with things and breaking them

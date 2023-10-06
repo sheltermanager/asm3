@@ -239,11 +239,12 @@ def animal_flag_name(l: str, f: str) -> str:
 
 def animal_flags(dbo: Database, flags: str, include_emblems: bool = False, emblems_only: bool = False, exclude_noemblems: bool = False) -> str:
     """
-    Returns a str containing either a readable list of flags
+    Returns a str containing a readable list of flags
     include_emblems: Precede each flag by its configured emblem if one is set
     emblems_only: Only output the emblem and not the flag name
     exclude_noemblems: Only include flags that have emblems
     """
+    if flags is None: return ""
     s = []
     for f in flags.split("|"):
         if f.strip() == "": continue

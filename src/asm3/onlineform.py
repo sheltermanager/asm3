@@ -42,6 +42,7 @@ FIELDTYPE_TIME = 16
 FIELDTYPE_IMAGE = 17
 FIELDTYPE_CHECKBOXGROUP = 18
 FIELDTYPE_EMAIL = 19
+FIELDTYPE_NUMBER = 20
 
 # Types as used in JSON representations
 FIELDTYPE_MAP = {
@@ -215,6 +216,8 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
                 (fid, cname, required, fid, f.LABEL))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
             h.append('<input class="asm-onlineform-text" type="text" id="%s" name="%s" title="%s" %s %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), autocomplete, requiredtext))
+        elif f.FIELDTYPE == FIELDTYPE_NUMBER:
+            h.append('<input class="asm-onlineform-number" type="text" id="%s" name="%s" title="%s" %s %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_EMAIL:
             h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" title="%s" %s %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_DATE:
