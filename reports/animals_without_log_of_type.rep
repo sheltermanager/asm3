@@ -1,0 +1,52 @@
+Animals without log of type
+###
+Auditing
+###
+Any rev01
+###
+Animals without a selected log type between two dates
+###
+en
+###
+SELECT animal.AnimalName, animal.ShelterCode, s.Speciesname, animal.ShelterLocation, animal.DisplayLocation, il.LocationName 
+FROM animal
+INNER JOIN species s ON s.ID = animal.SpeciesID
+INNER JOIN internallocation il ON il.ID = animal.ShelterLocation
+WHERE NOT EXISTS (SELECT ID FROM log WHERE LogTypeID=$ASK LOGTYPE$ AND LinkID=animal.ID AND LinkType = 0
+AND log.date >= '$ASK DATE Enter the from date$'
+AND log.date <= '$ASK DATE Enter the to date$ 23:59:59')
+AND ActiveMovementID = 0 AND Archived = 0
+ORDER BY il.LocationName, animal.DisplayLocation;
+###
+$$HEADER
+HEADER$$
+$$GROUP_LocationName
+$$HEAD
+<h2>$LOCATIONNAME</h2>
+$$FOOT
+<p>Total $LOCATIONNAME: {COUNT.LocationName}</p>
+GROUP$$
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SPECIESNAME</h2>
+<table border="1">
+<tr>
+<th>ANIMALNAME</th>
+<th>SHELTERCODE</th>
+<th>DISPLAYLOCATION</th>
+</tr>
+$$FOOT
+</table>
+GROUP$$
+$$BODY
+<tr>
+<td>$ANIMALNAME</td>
+<td>$SHELTERCODE</td>
+<td>$DISPLAYLOCATION</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<p>Total: {COUNT.ANIMALNAME}</p>
+FOOTER$$
