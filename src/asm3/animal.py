@@ -111,6 +111,7 @@ def get_animal_query(dbo: Database) -> str:
         "co.WorkTelephone AS CurrentOwnerWorkTelephone, " \
         "co.MobileTelephone AS CurrentOwnerMobileTelephone, " \
         "co.EmailAddress AS CurrentOwnerEmailAddress, " \
+        "co.EmailAddress2 AS CurrentOwnerEmailAddress2, " \
         "co.IdentificationNumber AS CurrentOwnerIDNumber, " \
         "co.ExcludeFromBulkEmail AS CurrentOwnerExcludeEmail, " \
         "co.LatLong AS CurrentOwnerLatLong, " \

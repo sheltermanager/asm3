@@ -1656,6 +1656,9 @@ $(function() {
                 if (controller.animal && controller.animal.CURRENTOWNEREMAILADDRESS) { 
                     toaddresses.push(controller.animal.CURRENTOWNEREMAILADDRESS);
                 }
+                if (controller.animal && controller.animal.CURRENTOWNEREMAILADDRESS2) { 
+                    toaddresses.push(controller.animal.CURRENTOWNEREMAILADDRESS2);
+                }
                 if (controller.animal && controller.animal.CURRENTVETEMAILADDRESS) { 
                     toaddresses.push(controller.animal.CURRENTVETEMAILADDRESS);
                 }
