@@ -1007,29 +1007,26 @@ $.widget("asm.emailform", {
         }
         fromaddresses = fromaddresses.concat(config.str("EmailFromAddresses").split(","));
         toaddresses = toaddresses.concat(config.str("EmailToAddresses").split(","));
+        const add_address = function(n, s) {
+            // build a list of valid existing addresses in the textbox (n: node) so far, then add the new one (s: String)
+            let existing = [], xs = String(n.val());
+            $.each(xs.split(","), function(i, v) {
+                if (validate.email(v) && common.trim(v) != s) { existing.push(common.trim(v)); }
+            });
+            existing.push(s);
+            n.val(existing.join(", "));
+        };
         $("#em-from").autocomplete({source: fromaddresses});
         $("#em-from").autocomplete("widget").css("z-index", 1000);
         $("#em-to").autocomplete({source: toaddresses});
         $("#em-to").autocomplete("widget").css("z-index", 1000);
+        $("#em-to").on("autocompleteselect", function(event, ui) { add_address($("#em-to"), ui.item.value); return false; });
         $("#em-cc").autocomplete({source: toaddresses});
         $("#em-cc").autocomplete("widget").css("z-index", 1000);
-        $("#em-cc").on("autocompleteselect", function(event, ui) {
-            let xv = String($("#em-cc").val());
-            if (xv.length > 0) { xv += ", "; }
-            xv += ui.item.value;
-            $("#em-cc").val(xv);
-            return false;
-        });
+        $("#em-cc").on("autocompleteselect", function(event, ui) { add_address($("#em-cc"), ui.item.value); return false; });
         $("#em-bcc").autocomplete({source: toaddresses});
         $("#em-bcc").autocomplete("widget").css("z-index", 1000);
-        $("#em-bcc").on("autocompleteselect", function(event, ui) {
-            let xv = String($("#em-bcc").val());
-            if (xv.length > 0) { xv += ", "; }
-            xv += ui.item.value;
-            $("#em-bcc").val(xv);
-            return false;
-        });
-
+        $("#em-bcc").on("autocompleteselect", function(event, ui) { add_address($("#em-bcc"), ui.item.value); return false; });
         $("#em-from, #em-to, #em-cc, #em-bcc").bind("focus", function() {
             $(this).autocomplete("search", "@");
         });
