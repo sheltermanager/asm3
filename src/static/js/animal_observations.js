@@ -56,7 +56,7 @@ $(function() {
                 if (a.ACTIVEMOVEMENTTYPE) { return; }
                 h.push('<tr data-animalid="' + a.ID + '" data-locationid="' + a.SHELTERLOCATION + '" style="display: none">');
                 h.push('<td><input type="checkbox" class="asm-checkbox selector" /> ');
-                h.push(html.animal_link(a, { emblemsright: true }));
+                h.push(html.animal_link(a, { emblemsright: true, newtab: true }));
                 h.push('</td>');
                 h.push('<td>' + common.nulltostr(a.SHELTERLOCATIONUNIT) + '</td>');
                 $.each(colnames, function(i, c) {

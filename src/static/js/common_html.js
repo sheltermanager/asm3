@@ -87,16 +87,21 @@ const html = {
      * o: Options to pass on to animal_emblems
      * o.noemblems: Don't show the emblems
      * o.emblemsright: Show the emblems to the right of the link
+     * o.newtab: Force the link to open in a new tab (target="_blank") - 
+     *           NOTE: There is an option that adds this to all hrefs to animal links via the DOM
      */
     animal_link: function(a, o) {
-        var s = "", e = "", animalid = a.ANIMALID || a.ID;
+        var s = "", e = "", target = "", animalid = a.ANIMALID || a.ID;
         if (o && o.noemblems) { 
             e = ""; 
         } 
         else { 
             e = html.animal_emblems(a, o) + " "; 
         }
-        s = '<a class="asm-embed-name" href="animal?id=' + animalid + '">' + a.ANIMALNAME + ' - ' + 
+        if (o && o.newtab) {
+            target = 'target="_blank"';
+        }
+        s = '<a class="asm-embed-name" ' + target + ' href="animal?id=' + animalid + '">' + a.ANIMALNAME + ' - ' + 
             (config.bool("UseShortShelterCodes") ? a.SHORTCODE : a.SHELTERCODE) + '</a>';
         if (!o || (o && o.emblemsright)) {
             s += ' ' + e;
