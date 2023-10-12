@@ -21,7 +21,7 @@ $(function() {
                 '<li class="localeau haspetrescue"><a href="#tab-petrescue">PetRescue</a></li>', 
                 '<li class="localeau hassavourlife"><a href="#tab-savourlife">SavourLife</a></li>', 
                 '<li class="localeus"><a href="#tab-rescuegroups">RescueGroups</a></li>',
-                '<li class="localeus hassac"><a href="#tab-sac">ShelterAnimalsCount</a></li>',
+                '<li class="localeus localeca hassac"><a href="#tab-sac">ShelterAnimalsCount</a></li>',
                 '<li class="localegb"><a href="#tab-pettrac">AVID UK Microchips</a></li>',
                 '<li class="localegb"><a href="#tab-anibase">Identibase UK Microchips</a></li>',
                 '<li class="localeus hasakcreunite"><a href="#tab-akcreunite">AKC Reunite Microchips</a></li>',
