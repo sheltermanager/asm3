@@ -1,10 +1,10 @@
-Medical, Vaccination and Test Diary
+Medical, Vaccination and Test Diary (off-shelter)
 ###
 Diary
 ###
-33012/Any rev03
+33012/Any rev01
 ###
-The medical, vaccination and test diary for today in one report
+The medical, vaccination and test diary for today for off-shelter animals in one report
 ###
 en
 ###
@@ -24,7 +24,7 @@ INNER JOIN animalmedical am ON a.ID = am.AnimalID
 INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
 WHERE amt.DateGiven Is Null 
 AND amt.DateRequired <= '$CURRENT_DATE$'
-AND a.Archived = 0
+AND a.Archived = 1 AND a.DeceasedDate Is Null
 
 UNION SELECT
 'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
@@ -38,7 +38,7 @@ INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
 WHERE av.DateOfVaccination Is Null
 AND av.DateRequired <= '$CURRENT_DATE$'
-AND a.Archived = 0
+AND a.Archived = 1 AND a.DeceasedDate Is Null
 
 UNION SELECT
 'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
@@ -52,7 +52,7 @@ INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN testtype tt ON at.TestTypeID = tt.ID
 WHERE at.DateOfTest Is Null
 AND at.DateRequired <= '$CURRENT_DATE$'
-AND a.Archived = 0
+AND a.Archived = 1 AND a.DeceasedDate Is Null
 
 ) dummy
 ORDER BY DateRequired
@@ -89,13 +89,13 @@ $$FOOTER
 </table>
 FOOTER$$
 &&&
-Medical, Vaccination and Test Diary (next week)
+Medical, Vaccination and Test Diary (off-shelter, next week)
 ###
 Diary
 ###
-33012/Any rev02
+33012/Any rev01
 ###
-The medical, vaccination and test diary for the next 7 days.
+The medical, vaccination and test diary for off-shelter animals for the next 7 days.
 ###
 en
 ###
@@ -115,7 +115,7 @@ INNER JOIN animalmedical am ON a.ID = am.AnimalID
 INNER JOIN animalmedicaltreatment amt ON amt.AnimalMedicalID = am.ID
 WHERE amt.DateGiven Is Null 
 AND amt.DateRequired <= '$CURRENT_DATE+7$'
-AND a.Archived = 0
+AND a.Archived = 1 AND a.DeceasedDate Is Null
 
 UNION SELECT
 'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
@@ -129,7 +129,7 @@ INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN vaccinationtype v ON av.VaccinationID = v.ID
 WHERE av.DateOfVaccination Is Null
 AND av.DateRequired <= '$CURRENT_DATE+7$'
-AND a.Archived = 0
+AND a.Archived = 1 AND a.DeceasedDate Is Null
 
 UNION SELECT
 'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, 
@@ -143,7 +143,7 @@ INNER JOIN species sp ON sp.ID = a.SpeciesID
 INNER JOIN testtype tt ON at.TestTypeID = tt.ID
 WHERE at.DateOfTest Is Null
 AND at.DateRequired <= '$CURRENT_DATE+7$'
-AND a.Archived = 0
+AND a.Archived = 1 AND a.DeceasedDate Is Null
 
 ) dummy
 ORDER BY DateRequired
