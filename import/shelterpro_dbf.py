@@ -432,11 +432,7 @@ if PICTURE_IMPORT:
         if not row["ANIMALKEY"] in ppa:
             continue
         a = ppa[row["ANIMALKEY"]]
-        imdata = None
-        if os.path.exists(PATH + "/images/%s.jpg" % row["IMAGEKEY"]):
-            f = open(PATH + "/images/%s.jpg" % row["IMAGEKEY"], "rb")
-            imdata = f.read()
-            f.close()
+        imdata = asm.load_image_from_file(PATH + "/images/%s.jpg" % row["IMAGEKEY"])
         if imdata is not None:
             asm.animal_image(a.ID, imdata)
 

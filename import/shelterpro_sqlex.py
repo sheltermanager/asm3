@@ -311,18 +311,9 @@ for row in canimal:
     setuserfields(row, a)
     # Does this animal have an image? If so, add media/dbfs entries for it
     if IMAGE_FILE_IMPORT:
-        imdata = None
-        if os.path.exists(PATH + "/images/%s.jpg" % row["ANIMALKEY"]):
-            f = open(PATH + "/images/%s.jpg" % row["ANIMALKEY"], "rb")
-            imdata = f.read()
-            f.close()
-        elif os.path.exists(PATH + "/images/%s.JPG" % row["ANIMALKEY"]):
-            f = open(PATH + "/images/%s.JPG" % row["ANIMALKEY"], "rb")
-            imdata = f.read()
-            f.close()
+        imdata = asm.load_image_from_file(PATH + "/images/%s.jpg", case_sensitive=False)
         if imdata is not None:
             asm.animal_image(a.ID, imdata)
-
 
 # Run through the shelter file and create any movements/euthanisation info
 cshelter = asm.csv_to_list("%s/shelter.csv" % PATH, uppercasekeys=True, strip=True)

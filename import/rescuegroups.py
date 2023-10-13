@@ -28,10 +28,8 @@ PATH = "/home/robin/tmp/asm3_import_data/rg_cf3099"
 
 DEFAULT_BREED = 261 # default to dsh
 
-IMPORT_PICTURES = True 
-# To resolve URLs from the "Picture X" field of imports.
-#RG_IMG_LINK = "https://cdn.rescuegroups.org/3735/pictures/animals/{first5}/{animalid}/{name}" 
-RG_IMG_LINK = "https://cdn.rescuegroups.org{name}"
+IMPORT_PICTURES = False 
+RG_IMG_LINK = "https://cdn.rescuegroups.org{name}" # To resolve URLs from the "Picture X" field of imports.
 
 animals = []
 owners = []
@@ -40,6 +38,7 @@ movements = []
 
 ppa = {}
 ppo = {}
+ppocid = {}
 
 asm.setid("adoption", 100)
 asm.setid("animal", 100)
@@ -55,21 +54,11 @@ def getdate(s):
 def getimage(name, a):
     """
     Retrieves the image with name and outputs the SQL for it. 
-    Will try to find a local file first, then fall back to grabbing from RG.
     """
     if not IMPORT_PICTURES: return
     if name is None or name.strip() == "": return
-    # Check for locally saved photo first
-    fname = name
-    if fname.rfind("/") != -1: fname = fname[fname.rfind("/")+1:]
-    imdata = asm.load_image_from_file("%s/%s" % (PATH, fname))
-    if imdata is not None: 
-        asm.animal_image(a.ID, imdata)
-        return
-    # Try online
     rganimalid = a.ShortCode[2:] # remove RG prefix to get original animal ID
     picurl = RG_IMG_LINK
-    picurl = picurl.replace("{first5}", rganimalid[0:5])
     picurl = picurl.replace("{animalid}", rganimalid)
     picurl = picurl.replace("{name}", name)
     imdata = asm.load_image_from_url(picurl)
@@ -99,6 +88,33 @@ print("DELETE FROM ownerdonation WHERE ID >= 100;")
 if IMPORT_PICTURES:
     print("DELETE FROM media WHERE ID >= 100;")
     print("DELETE FROM dbfs WHERE ID >= 300;")
+
+if os.path.exists("%s/Contacts.csv" % PATH):
+    for d in asm.csv_to_list("%s/Contacts.csv" % PATH):
+        # Each row contains a person
+        o = asm.Owner()
+        owners.append(o)
+        o.OwnerForeNames = d["First Name"].strip()
+        o.OwnerSurname = d["Last Name"].strip()
+        o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
+        o.OwnerAddress = d["Address"]
+        o.OwnerTown = d["City"]
+        o.OwnerCounty = d["State"]
+        if "Zipcode" in d: o.OwnerPostcode = d["Zipcode"]
+        if "Zip/Postal Code" in d: o.OwnerPostcode = d["Zip/Postal Code"]
+        o.EmailAddress = d["Email"]
+        o.HomeTelephone = d["Phone (Home)"]
+        o.WorkTelephone = d["Phone (Home)"]
+        o.MobileTelephone = d["Phone (Cell)"]
+        o.Comments = d["Comment"]
+        if "Groups" in d:
+            if d["Groups"].find("Do Not Adopt") != -1: o.IsBanned = 1
+            if d["Groups"].find("Other Rescue") != -1: o.IsShelter = 1
+            if d["Groups"].find("Caretaker/Foster") != -1: o.IsFosterer = 1
+            if d["Groups"].find("Volunteer") != -1: o.IsVolunteer = 1
+            if d["Groups"].find("Microchip Clinic") != -1: o.IsVet = 1
+        ppo[o.OwnerName] = o
+        ppocid[d["Contact ID"]] = o
 
 acsv = asm.csv_to_list("%s/Animals.csv" % PATH)
 for i, d in enumerate(acsv):
@@ -204,8 +220,22 @@ for i, d in enumerate(acsv):
     if "Internal ID" in d and "Location" in d: a.HiddenAnimalDetails += ", internal: " + d["Internal ID"] + ", location: " + d["Location"]
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
+    # If there's a fosterer, add the fosterer movement
+    if "Foster ID" in d and d["Foster ID"] in ppocid: 
+        o = ppocid[d["Foster ID"]]
+        o.IsFosterer = 1
+        m = asm.Movement()
+        m.AnimalID = a.ID
+        m.OwnerID = o.ID
+        m.MovementType = 2
+        m.MovementDate = a.DateBroughtIn
+        a.ActiveMovementID = m.ID
+        a.ActiveMovementDate = m.MovementDate
+        a.ActiveMovementType = 2
+        a.LastChangedDate = m.MovementDate
+        movements.append(m)
     # If the animal is adopted and we don't have an adoptions file, mark it to an unknown owner
-    if status == "Adopted" and not os.path.exists("%s/Adoptions.csv" % PATH):
+    if status == "Adopted" and not asm.file_exists("%s/Adoptions.csv" % PATH):
         m = asm.Movement()
         movements.append(m)
         m.OwnerID = uo.ID
@@ -246,32 +276,6 @@ for i, d in enumerate(acsv):
     if "Picture 2" in d: getimage(d["Picture 2"], a)
     if "Picture 3" in d: getimage(d["Picture 3"], a)
     if "Picture 4" in d: getimage(d["Picture 4"], a)
-
-if os.path.exists("%s/Contacts.csv" % PATH):
-    for d in asm.csv_to_list("%s/Contacts.csv" % PATH):
-        # Each row contains a person
-        o = asm.Owner()
-        owners.append(o)
-        o.OwnerForeNames = d["First Name"].strip()
-        o.OwnerSurname = d["Last Name"].strip()
-        o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
-        o.OwnerAddress = d["Address"]
-        o.OwnerTown = d["City"]
-        o.OwnerCounty = d["State"]
-        if "Zipcode" in d: o.OwnerPostcode = d["Zipcode"]
-        if "Zip/Postal Code" in d: o.OwnerPostcode = d["Zip/Postal Code"]
-        o.EmailAddress = d["Email"]
-        o.HomeTelephone = d["Phone (Home)"]
-        o.WorkTelephone = d["Phone (Home)"]
-        o.MobileTelephone = d["Phone (Cell)"]
-        o.Comments = d["Comment"]
-        if "Groups" in d:
-            if d["Groups"].find("Do Not Adopt") != -1: o.IsBanned = 1
-            if d["Groups"].find("Other Rescue") != -1: o.IsShelter = 1
-            if d["Groups"].find("Caretaker/Foster") != -1: o.IsFosterer = 1
-            if d["Groups"].find("Volunteer") != -1: o.IsVolunteer = 1
-            if d["Groups"].find("Microchip Clinic") != -1: o.IsVet = 1
-        ppo[o.OwnerName] = o
 
 if os.path.exists("%s/Adoptions.csv" % PATH):
     for d in asm.csv_to_list("%s/Adoptions.csv" % PATH):

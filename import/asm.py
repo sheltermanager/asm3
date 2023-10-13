@@ -1654,14 +1654,28 @@ def load_image_from_file(fpath, case_sensitive = True):
     except:
         return None
 
-def load_image_from_url(imageurl):
-    return load_file_from_url(imageurl)
+def load_image_from_url(imageurl, cache=True):
+    return load_file_from_url(imageurl, cache=cache)
 
-def load_file_from_url(url):
+def load_file_from_url(url, cache=True):
+    """
+    Returns a file from a URL. If cache == True, will remember the URL in /tmp/import_cache/
+    so that repeated calls do not go back to the origin.
+    """
     try:
         sys.stderr.write("GET %s\n" % url)
+        if not os.path.exists("/tmp/import_cache"):
+            os.mkdir("/tmp/import_cache")
+        cachename = "/tmp/import_cache/%s" % md5(url)
+        if cache and os.path.exists(cachename):
+            sys.stderr.write("(retrieved from %s)\n" % cachename)
+            with open(cachename, "rb") as f:
+                return f.read()
         filedata = urllib2.urlopen(url).read()
         sys.stderr.write("200 OK %s\n" % url)
+        if cache:
+            with open(cachename, "wb") as f:
+                f.write(filedata)
     except Exception as err:
         sys.stderr.write(str(err) + "\n")
         return None
