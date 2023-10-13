@@ -964,14 +964,24 @@ def csvimport_paypal(dbo: Database, csvdata: bytes, donationtypeid: int, donatio
     Returns an HTML error report.
     """
     def v(r, n, n2 = "", n3 = "", n4 = "", n5 = ""):
-        """ Read values n(x) from a dictionary r depending on which is present, 
-            if none are present empty string is returned """
+        """ 
+        Read values n(x) from a dictionary r depending on which is present, 
+        if none are present empty string is returned 
+        """
         if n in r: return r[n]
         if n2 != "" and n2 in r: return r[n2]
         if n3 != "" and n3 in r: return r[n3]
         if n4 != "" and n4 in r: return r[n4]
         if n5 != "" and n5 in r: return r[n5]
         return ""
+    
+    def curr(s):
+        """
+        Takes the currency string s from a PayPal CSV and return it as an SM int/currency value.
+        Can cope with . or , as the decimal marker. Negative amounts will remain negative.
+        """
+        s = s.replace(",", ".")
+        return asm3.utils.cint(asm3.utils.cfloat(s) * 100) 
 
     if user == "":
         user = "import"
@@ -1060,9 +1070,9 @@ def csvimport_paypal(dbo: Database, csvdata: bytes, donationtypeid: int, donatio
             sdonationtypeid = str(donationtypeid)
 
         # Donation info
-        gross = asm3.utils.cint(asm3.utils.cfloat(v(r, "Gross")) * 100) 
-        net = asm3.utils.cint(asm3.utils.cfloat(v(r, "Net")) * 100) 
-        fee = abs(asm3.utils.cint(asm3.utils.cfloat(v(r, "Fee")) * 100)) # Fee is a negative amount
+        gross = curr(v(r, "Gross"))
+        net = curr(v(r, "Net"))
+        fee = abs(curr(v(r, "Fee"))) # Fee is a negative amount 
         if net > gross: gross = net # I've seen PayPal files where net/gross are the wrong way around
         if personid != 0 and net > 0:
             pdate = asm3.i18n.display2python(dbo.locale, v(r, "Date")) # parse the date (we do this to fix 2 digit years, which I've also seen)

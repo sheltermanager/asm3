@@ -1,6 +1,7 @@
 48
 ================
 
+13/10/23 Handle decimal commas in PayPal activity CSV files
 13/10/23 Bug fix for multiple mergeperson values in an incoming form
 12/10/23 Force daily obs animal links to open in a new tab #489
 12/10/23 Make SAC configuration available to Canadian shelters
