@@ -498,7 +498,7 @@ def get_onlineformincoming_formfooter(dbo: Database, collationid: int) -> str:
 def get_onlineformincoming_headers(dbo: Database) -> Results:
     """ Returns all incoming form posts """
     return dbo.query("SELECT f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview, " \
-        "(SELECT Value FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='mergeperson') AS MergePerson, " \
+        "(SELECT MAX(Value) FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='mergeperson') AS MergePerson, " \
         "CASE WHEN EXISTS(SELECT Value FROM onlineformincoming WHERE CollationID=f.CollationID AND FieldName='processed') THEN 1 ELSE 0 END AS Processed " \
         "FROM onlineformincoming f " \
         "GROUP BY f.CollationID, f.FormName, f.PostedDate, f.Host, f.Preview " \
