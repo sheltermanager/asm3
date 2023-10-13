@@ -5,26 +5,18 @@ import asm, os
 """
 Import module to read from rescuegroups CSV export.
 
-This is done with Reports, then Animals (All Fields) for adoptable and adopted, etc.
-It produces an Animals.csv file.
-If you use Animals->Exports, you can do a manual export for PetFinder that puts all
-your images on their FTP server to pick up.
+Need to create the Animals.csv, Contacts.csv and Adoptions.csv files.
 
-If RG are running slow, a custom report can be made with the following fields:
+This is done with Reports, then "Create a Custom Report", choose all of the fields
+(139) from the Animal section. This is the only way to get all rows as their built
+in Animals (All Fields) report now requires you to choose a status.
+Choose "Run Report", then while it's running click "Export Data", then "Export Report" 
+which will give you Animals.csv
 
-Animal ID, Internal ID, Status, Species, Name, Created, Last Updated, 
-General Age, Mixed, Sex, Primary Breed, Secondary Breed, Color (General), 
-Declawed, Special Needs, Altered, Housetrained, OK with Cats, OK with Kids, OK with Cats, 
-Microchip Number, Description, Location, Summary, Picture 1
+Do the same again, but this time for all Contact fields (33).
 
-Will also import data from RG All Contacts report, called Contacts.csv:
-
-Address, Comment, Email, First Name, Last Name, Phone (Cell), Phone (Home)
-
-If you have the RG report called "Adoptions", you need to include Animal ID and Last Name/First Name
-for the importer to process those adoptions. These fields are expected:
-
-Animal ID, Date, First Name, Last Name, Fee Paid
+Then again for Adoption fields (12), but also include from the Adopters section the
+First Name and Last Name fields, as well as Animal ID from the animals section.
 
 I think if people haven't paid for their "Data Management Service" they aren't allowed to
 run any reports. This export will also work with CSVs extracted from Animals->Animal List,
@@ -32,14 +24,14 @@ change the View to Export and then hit Export as CSV.
 
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/rg_bs3053"
+PATH = "/home/robin/tmp/asm3_import_data/rg_cf3099"
 
 DEFAULT_BREED = 261 # default to dsh
-PETFINDER_ID = "" # Shouldn't be needed if Picture 1 is present
-IMPORT_PICTURES = False 
 
-#RG_AWS_PREFIX = "https://s3.amazonaws.com/filestore.rescuegroups.org" # To resolve URLs from the "Picture 1" field of imports
-RG_AWS_PREFIX = "https://cdn.rescuegroups.org" # To resolve URLs from the "Picture 1" field of imports
+IMPORT_PICTURES = True 
+# To resolve URLs from the "Picture X" field of imports.
+#RG_IMG_LINK = "https://cdn.rescuegroups.org/3735/pictures/animals/{first5}/{animalid}/{name}" 
+RG_IMG_LINK = "https://cdn.rescuegroups.org{name}"
 
 animals = []
 owners = []
@@ -59,6 +51,30 @@ if IMPORT_PICTURES:
 
 def getdate(s):
     return asm.getdate_mmddyyyy(s)
+
+def getimage(name, a):
+    """
+    Retrieves the image with name and outputs the SQL for it. 
+    Will try to find a local file first, then fall back to grabbing from RG.
+    """
+    if not IMPORT_PICTURES: return
+    if name is None or name.strip() == "": return
+    # Check for locally saved photo first
+    fname = name
+    if fname.rfind("/") != -1: fname = fname[fname.rfind("/")+1:]
+    imdata = asm.load_image_from_file("%s/%s" % (PATH, fname))
+    if imdata is not None: 
+        asm.animal_image(a.ID, imdata)
+        return
+    # Try online
+    rganimalid = a.ShortCode[2:] # remove RG prefix to get original animal ID
+    picurl = RG_IMG_LINK
+    picurl = picurl.replace("{first5}", rganimalid[0:5])
+    picurl = picurl.replace("{animalid}", rganimalid)
+    picurl = picurl.replace("{name}", name)
+    imdata = asm.load_image_from_url(picurl)
+    if imdata is not None:
+        asm.animal_image(a.ID, imdata)
 
 def size_id_for_name(name):
     return {
@@ -83,11 +99,9 @@ print("DELETE FROM ownerdonation WHERE ID >= 100;")
 if IMPORT_PICTURES:
     print("DELETE FROM media WHERE ID >= 100;")
     print("DELETE FROM dbfs WHERE ID >= 300;")
-pfpage = ""
-if PETFINDER_ID != "":
-    pfpage = asm.petfinder_get_adoptable(PETFINDER_ID)
 
-for d in asm.csv_to_list("%s/Animals.csv" % PATH):
+animals = asm.csv_to_list("%s/Animals.csv" % PATH)
+for i, d in enumerate(animals):
     if d["Status"] == "Deleted": continue
     if d["Animal ID"] == "Animal ID": continue # skip repeated headers
     a = asm.Animal()
@@ -226,22 +240,12 @@ for d in asm.csv_to_list("%s/Animals.csv" % PATH):
         a.PTSReasonID = 4 # Sick
         a.Archived = 1
 
-    # Now do the dbfs and media inserts for a photo if one is available
-    if IMPORT_PICTURES and "Picture 1" in d and d["Picture 1"] != "":
-        pic1 = d["Picture 1"]
-        picurl = "%s/%s" % (RG_AWS_PREFIX, pic1)
-        # Check for locally saved photo first
-        if pic1.rfind("/") != -1: pic1 = pic1[pic1.rfind("/")+1:]
-        imdata = asm.load_image_from_file("%s/%s" % (PATH, pic1))
-        if imdata is not None:
-            asm.animal_image(a.ID, imdata)
-        # Try online
-        imdata = asm.load_image_from_url(picurl)
-        if imdata is not None:
-            asm.animal_image(a.ID, imdata)
-        # Try PetFinder
-        if a.Archived == 0 and imdata is None and pfpage != "":
-            asm.petfinder_image(pfpage, a.ID, a.AnimalName)
+    # Now do the dbfs and media inserts for photos if available
+    if IMPORT_PICTURES: asm.stderr(f"retrieving pictures ({i+1} of {len(animals)})")
+    if "Picture 1" in d: getimage(d["Picture 1"], a)
+    if "Picture 2" in d: getimage(d["Picture 2"], a)
+    if "Picture 3" in d: getimage(d["Picture 3"], a)
+    if "Picture 4" in d: getimage(d["Picture 4"], a)
 
 if os.path.exists("%s/Contacts.csv" % PATH):
     for d in asm.csv_to_list("%s/Contacts.csv" % PATH):
@@ -285,14 +289,14 @@ if os.path.exists("%s/Adoptions.csv" % PATH):
             m.AnimalID = a.ID
             m.OwnerID = o.ID
             m.MovementType = 1
-            m.MovementDate = getdate(d["Adopted Date"])
+            m.MovementDate = getdate(d["Date"])
             a.Archived = 1
             a.ActiveMovementID = m.ID
             a.ActiveMovementDate = m.MovementDate
             a.ActiveMovementType = 1
             a.LastChangedDate = m.MovementDate
             movements.append(m)
-            fee = asm.get_currency(d["Adoption Fee"])
+            fee = asm.get_currency(d["Fee Paid"])
             if fee > 0:
                 od = asm.OwnerDonation()
                 od.DonationTypeID = 1
