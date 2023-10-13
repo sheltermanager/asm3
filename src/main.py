@@ -4697,7 +4697,8 @@ class maint_undelete(JSONEndpoint):
     get_permissions = asm3.users.USE_SQL_INTERFACE
 
     def controller(self, o):
-        d = asm3.audit.get_deletions(o.dbo)
+        offset = o.post.integer("offset")
+        d = asm3.audit.get_deletions(o.dbo, offset)
         asm3.al.debug("got %d deleted top level records" % len(d), "code.undelete", o.dbo)
         return { "rows": d }
 

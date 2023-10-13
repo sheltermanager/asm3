@@ -127,11 +127,14 @@ def delete_rows(dbo: Database, username: str, tablename: str, condition: str) ->
         # otherwise, stuff all the deleted rows into one delete action
         action(dbo, DELETE, username, tablename, 0, "", str(rows))
 
-def get_deletions(dbo: Database) -> Results:
-    """ Returns all available records for undeleting """
+def get_deletions(dbo: Database, days: int = 0) -> Results:
+    """ Returns records deleted in last days for undeleting """
+    datefilter = ""
+    if days > 0:
+        datefilter = " AND Date >= %s " % dbo.sql_date(dbo.today(offset = -1 * days))
     rows = dbo.query("SELECT ID, TableName, DeletedBy, Date, IDList FROM deletion WHERE TableName IN " \
         "('animal', 'animalcontrol', 'animalfound', 'animallost', 'customreport', 'onlineformincoming', " \
-        "'owner', 'templatedocument', 'templatehtml', 'waitinglist')")
+        f"'owner', 'templatedocument', 'templatehtml', 'waitinglist') {datefilter}")
     for r in rows:
         r["KEY"] = "%s:%s" % (r.TABLENAME, r.ID)
     return rows

@@ -36,6 +36,13 @@ $(function() {
                         header.show_info("Restored.");
                      } 
                 },
+                { id: "offset", type: "dropdownfilter",
+                     options: [ "9999|(all time)", "7|Last week", "14|Last fortnight", "21|Last 3 weeks", "31|Last month",
+                        "62|Last 2 months", "93|Last 3 months" ],
+                     click: function(selval) {
+                        common.route("maint_undelete?offset=" + selval);
+                     }
+                },
                 { id: "bulk", type: "dropdownfilter", 
                     options: [ "(select)", "animal", "animalcontrol", "animallost", "animalfound", "customreport", 
                         "onlineformincoming", "owner", "templatedocument", "templatehtml", "waitinglist" ],
@@ -97,6 +104,13 @@ $(function() {
             tableform.table_bind(this.table, this.buttons);
         },
 
+        sync: function() {
+            // If an offset is given in the querystring, update the select
+            if (common.querystring_param("offset")) {
+                $("#offset").select("value", common.querystring_param("offset"));
+            }
+        },
+
         destroy: function() {
         },
 
@@ -104,7 +118,7 @@ $(function() {
         animation: "options",
         title: function() { return _("Undelete"); },
         routes: {
-            "maint_undelete": function() { common.module_start("maint_undelete"); }
+            "maint_undelete": function() { common.module_loadandstart("maint_undelete", "maint_undelete?" + this.rawqs); }
         }
 
     };
