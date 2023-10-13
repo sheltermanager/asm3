@@ -100,8 +100,8 @@ if IMPORT_PICTURES:
     print("DELETE FROM media WHERE ID >= 100;")
     print("DELETE FROM dbfs WHERE ID >= 300;")
 
-animals = asm.csv_to_list("%s/Animals.csv" % PATH)
-for i, d in enumerate(animals):
+acsv = asm.csv_to_list("%s/Animals.csv" % PATH)
+for i, d in enumerate(acsv):
     if d["Status"] == "Deleted": continue
     if d["Animal ID"] == "Animal ID": continue # skip repeated headers
     a = asm.Animal()
@@ -241,7 +241,7 @@ for i, d in enumerate(animals):
         a.Archived = 1
 
     # Now do the dbfs and media inserts for photos if available
-    if IMPORT_PICTURES: asm.stderr(f"retrieving pictures ({i+1} of {len(animals)})")
+    if IMPORT_PICTURES: asm.stderr(f"retrieving pictures ({i+1} of {len(acsv)})")
     if "Picture 1" in d: getimage(d["Picture 1"], a)
     if "Picture 2" in d: getimage(d["Picture 2"], a)
     if "Picture 3" in d: getimage(d["Picture 3"], a)
