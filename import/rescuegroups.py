@@ -57,9 +57,7 @@ def getimage(name, a):
     """
     if not IMPORT_PICTURES: return
     if name is None or name.strip() == "": return
-    rganimalid = a.ShortCode[2:] # remove RG prefix to get original animal ID
     picurl = RG_IMG_LINK
-    picurl = picurl.replace("{animalid}", rganimalid)
     picurl = picurl.replace("{name}", name)
     imdata = asm.load_image_from_url(picurl)
     if imdata is not None:
@@ -132,7 +130,8 @@ for i, d in enumerate(acsv):
     a.SpeciesID = asm.species_id_for_name(d["Species"])
     if "Animal ID" in d:
         a.ShortCode = "RG%s" % d["Animal ID"]
-        a.ShelterCode = "%s %s" % (a.ShortCode, a.ID)
+        a.ShelterCode = "RG%s %s" % (d["Animal ID"], a.ID)
+        if "Rescue ID" in d: a.ShortCode = d["Rescue ID"]
         ppa[d["Animal ID"]] = a
     else:
         a.generateCode()
