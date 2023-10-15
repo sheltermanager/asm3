@@ -132,6 +132,10 @@ class PetRescuePublisher(AbstractPublisher):
 
                 if r["status"] != 200:
                     self.logError("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
+                    # Update animalpublished for this animal with the error code so that it's visible in the UI
+                    # that we tried and what the error was.
+                    errormsg = str(r["response"])
+                    self.markAnimalPublished(an.ID, extra = errormsg)
                 else:
                     self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                     self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
