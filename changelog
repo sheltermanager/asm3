@@ -1,6 +1,8 @@
 48
 ================
 
+16/10/23 Online forms: Use pattern match for shelter/adoptable animal params
+16/10/23 When creating reserves from form, reserve to all bonded animals
 16/10/23 Similar check: add space to house number to stop 5 matching 50 etc
 16/10/23 Add a document button/type to medical tab/book #1336
 15/10/23 PetRescue: Show error responses in publishing history slider

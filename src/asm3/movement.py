@@ -794,13 +794,14 @@ def insert_transfer_from_form(dbo: Database, username: str, post: PostedData) ->
     movementid = insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
     return movementid
 
-def insert_reserve_for_animal_name(dbo: Database, username: str, personid: int, reservationdate: datetime, animalname: str) -> int:
+def insert_reserve_for_animal_name(dbo: Database, username: str, personid: int, reservationdate: datetime, animalname: str) -> List[int]:
     """
     Creates a reservation for the animal with animalname to personid.
     animalname can either be just the name of a shelter animal, or it
     can be in the form name::code. If a code is present, that will be
-    used to locate the asm3.animal.
+    used to locate the animal.
     If the person is banned from adopting animals, an exception is raised.
+    If the animal is bonded to other animals, a reserve is placed on the bonded animals too.
     """
     l = dbo.locale
     if animalname.find("::") != -1:
@@ -812,17 +813,23 @@ def insert_reserve_for_animal_name(dbo: Database, username: str, personid: int, 
         raise asm3.utils.ASMValidationError("owner %s is banned from adopting animals - not creating reserve")
     if aid == 0 and not asm3.configuration.movement_person_only_reserves(dbo): 
         raise asm3.utils.ASMValidationError("could not find an animal for '%s', will not create person only reserve" % animalname)
-    move_dict = {
-        "person"                : str(personid),
-        "animal"                : str(aid),
-        "reservationdate"       : asm3.i18n.python2display(l, reservationdate),
-        "reservationtime"       : asm3.i18n.format_time(reservationdate),
-        "reservationstatus"     : asm3.configuration.default_reservation_status(dbo),
-        "movementdate"          : "",
-        "type"                  : str(NO_MOVEMENT),
-        "returncategory"        : asm3.configuration.default_return_reason(dbo)
-    }
-    return insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
+    bonded = dbo.first_row(dbo.query("SELECT BondedAnimal1ID, BondedAnimal2ID FROM animal WHERE ID=?", [aid]))
+    aids = ( aid, bonded.BONDEDANIMAL1ID, bonded.BONDEDANIMAL2ID )
+    moveids = []
+    for animalid in aids:
+        if animalid is None or animalid == 0: continue
+        move_dict = {
+            "person"                : str(personid),
+            "animal"                : str(animalid),
+            "reservationdate"       : asm3.i18n.python2display(l, reservationdate),
+            "reservationtime"       : asm3.i18n.format_time(reservationdate),
+            "reservationstatus"     : asm3.configuration.default_reservation_status(dbo),
+            "movementdate"          : "",
+            "type"                  : str(NO_MOVEMENT),
+            "returncategory"        : asm3.configuration.default_return_reason(dbo)
+        }
+        moveids.append(insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l)))
+    return moveids
 
 def insert_reserve_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
