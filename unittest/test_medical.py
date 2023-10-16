@@ -22,8 +22,14 @@ class TestMedical(unittest.TestCase):
     def test_get_batch_for_vaccination_types(self):
         asm3.medical.get_batch_for_vaccination_types(base.get_dbo())
 
+    def test_get_regimen_id(self):
+        asm3.medical.get_regimen_id(base.get_dbo(), 1)
+
     def test_get_regimens(self):
         asm3.medical.get_regimens(base.get_dbo(), 1)
+
+    def test_get_regimens_ids(self):
+        asm3.medical.get_regimens_ids(base.get_dbo(), [1])
 
     def test_get_regimens_treatments(self):
         asm3.medical.get_regimens_treatments(base.get_dbo(), 1)

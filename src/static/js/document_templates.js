@@ -17,6 +17,7 @@ $(function() {
             { VALUE: "licence", DISPLAY: _("Licenses") },
             { VALUE: "lostanimal", DISPLAY: _("Lost Animals") },
             { VALUE: "mailmerge", DISPLAY: _("Mail") },
+            { VALUE: "medical", DISPLAY: _("Medical") },
             { VALUE: "movement", DISPLAY: _("Movements") },
             { VALUE: "payment", DISPLAY: _("Payments") },
             { VALUE: "person", DISPLAY: _("People") },

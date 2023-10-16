@@ -649,13 +649,21 @@ TestAdministeringVetPostcode / TestAdministeringVetZipcode
 TestAdministeringVetEmail
     The email address of the vet who administered the test
 
-
 Medical Keys
 ------------
 
-You must use a qualifier suffix to access these records.
+If you are creating a document from the animal record, then you must
+use a qualifier suffix to access these records. 
 
 .. note:: For medical regimens, the Recent keyword only looks for those with a status of Completed, while the Due keyword only looks for those with a status of Active.
+
+However, if you create a document from the medical tab of an animal record
+(or medical book), you can select multiple medical regimens 
+before creating the document and access the information by suffixing a number
+to the end of the keys listed below (eg: MedicalName1, MedicalStartDate2).
+
+Optionally, you can omit the numeric suffix to access the first selected
+medical regimen.
 
 MedicalName
     The name of the medical treatment 
@@ -683,7 +691,6 @@ MedicalCost
     The cost of this medical regimen
 MedicalComments
     The medical comments 
-
 
 Payment Keys
 ------------

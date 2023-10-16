@@ -215,6 +215,8 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
+                { id: "document", text: _("Document"), icon: "document", enabled: "multi", perm: "gaf", 
+                    tooltip: _("Generate document from this regimen"), type: "buttonmenu" },
                 { id: "given", text: _("Give"), icon: "complete", enabled: "multi", perm: "bcam", 
                     tooltip: _("Mark treatments given"),
                     click: function() {
@@ -290,6 +292,10 @@ $(function() {
             s += tableform.dialog_render(this.dialog);
             s += medical.render_givendialog();
             s += medical.render_requireddialog();
+            s += '<div id="button-document-body" class="asm-menu-body">' +
+                '<ul class="asm-menu-list">' +
+                edit_header.template_list(controller.templates, "MEDICAL", 0) +
+                '</ul></div>';
             if (controller.animal) {
                 s += edit_header.animal_edit_header(controller.animal, "medical", controller.tabcounts);
             }
@@ -735,6 +741,20 @@ $(function() {
             $("#timingrulenofrequencies").change(medical.change_values);
             $("#treatmentrule").change(medical.change_values);
             $("#totalnumberoftreatments").change(medical.change_values);
+
+            // Add click handlers to templates
+            $(".templatelink").click(function() {
+                // Update the href as it is clicked so default browser behaviour
+                // continues on to open the link in a new window
+                let template_name = $(this).attr("data");
+                let ids = tableform.table_ids(medical.table);
+                // Only the regimen ID is needed, and id is in the form regimenid_treatmentid
+                let regimenids = [];
+                $.each(ids.split(","), function(i, v) {
+                    if (v && v.indexOf("_") != -1) { regimenids.push( v.split("_")[0] ); }
+                });
+                $(this).prop("href", "document_gen?linktype=MEDICAL&id=" + regimenids.join(",") + "&dtid=" + template_name);
+            });
 
             if (controller.newmed == 1) {
                 this.new_medical();

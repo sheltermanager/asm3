@@ -2160,6 +2160,7 @@ class animal_medical(JSONEndpoint):
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
             "stockitems": asm3.stock.get_stock_items(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "medical"),
             "users": asm3.users.get_users(dbo),
             "animal": a
         }
@@ -3024,6 +3025,10 @@ class document_gen(ASMEndpoint):
             loglinktype = asm3.log.PERSON
             logid = asm3.financial.get_licence(dbo, post.integer("id"))["OWNERID"]
             content = asm3.wordprocessor.generate_licence_doc(dbo, dtid, post.integer("id"), o.user)
+        elif linktype == "MEDICAL":
+            loglinktype = asm3.log.ANIMAL
+            logid = asm3.medical.get_regimen_id(dbo, post.integer_list("id")[0])["ANIMALID"]
+            content = asm3.wordprocessor.generate_medical_doc(dbo, dtid, post.integer_list("id"), o.user)
         elif linktype == "MOVEMENT":
             loglinktype = asm3.log.PERSON
             logid = asm3.movement.get_movement(dbo, post.integer("id"))["OWNERID"]
@@ -3084,22 +3089,6 @@ class document_gen(ASMEndpoint):
                 tempname = "%s - %s" % (tempname, asm3.animal.get_animal_namecode(dbo, animalid))
                 asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
                 self.redirect("animal_media?id=%d" % animalid)
-        elif linktype == "FOUNDANIMAL":
-            tempname += " - " + asm3.utils.padleft(recid, 6)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.FOUNDANIMAL, recid, tempname, post["document"])
-            self.redirect("foundanimal_media?id=%d" % recid)
-        elif linktype == "LOSTANIMAL":
-            tempname += " - " + asm3.utils.padleft(recid, 6)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.LOSTANIMAL, recid, tempname, post["document"])
-            self.redirect("lostanimal_media?id=%d" % recid)
-        elif linktype == "PERSON":
-            tempname += " - " + asm3.person.get_person_name(dbo, recid)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, recid, tempname, post["document"])
-            self.redirect("person_media?id=%d" % recid)
-        elif linktype == "WAITINGLIST":
-            tempname += " - " + asm3.utils.padleft(recid, 6)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.WAITINGLIST, recid, tempname, post["document"])
-            self.redirect("waitinglist_media?id=%d" % recid)
         elif linktype == "DONATION":
             d = asm3.financial.get_donations_by_ids(dbo, post.integer_list("recid"))
             if len(d) == 0:
@@ -3108,6 +3097,30 @@ class document_gen(ASMEndpoint):
             tempname += " - " + asm3.person.get_person_name(dbo, ownerid)
             asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
             self.redirect("person_media?id=%d" % ownerid)
+        elif linktype == "FOUNDANIMAL":
+            tempname += " - " + asm3.utils.padleft(recid, 6)
+            asm3.media.create_document_media(dbo, o.user, asm3.media.FOUNDANIMAL, recid, tempname, post["document"])
+            self.redirect("foundanimal_media?id=%d" % recid)
+        elif linktype == "LOSTANIMAL":
+            tempname += " - " + asm3.utils.padleft(recid, 6)
+            asm3.media.create_document_media(dbo, o.user, asm3.media.LOSTANIMAL, recid, tempname, post["document"])
+            self.redirect("lostanimal_media?id=%d" % recid)
+        elif linktype == "MEDICAL":
+            d = asm3.medical.get_regimens_ids(dbo, post.integer_list("recid"))
+            if len(d) == 0:
+                raise asm3.utils.ASMValidationError("list '%s' does not contain valid ids" % recid)
+            animalid = d[0]["ANIMALID"]
+            tempname += " - " + asm3.animal.get_animal_name(dbo, animalid)
+            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMALID, animalid, tempname, post["document"])
+            self.redirect("animal_media?id=%d" % animalid)
+        elif linktype == "PERSON":
+            tempname += " - " + asm3.person.get_person_name(dbo, recid)
+            asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, recid, tempname, post["document"])
+            self.redirect("person_media?id=%d" % recid)
+        elif linktype == "WAITINGLIST":
+            tempname += " - " + asm3.utils.padleft(recid, 6)
+            asm3.media.create_document_media(dbo, o.user, asm3.media.WAITINGLIST, recid, tempname, post["document"])
+            self.redirect("waitinglist_media?id=%d" % recid)
         elif linktype == "TRANSPORT":
             t = asm3.movement.get_transports_by_ids(dbo, post.integer_list("recid"))
             if len(t) == 0:
@@ -4741,6 +4754,7 @@ class medical(JSONEndpoint):
             "name": "medical",
             "stockitems": asm3.stock.get_stock_items(dbo),
             "stockusagetypes": asm3.lookups.get_stock_usage_types(dbo),
+            "templates": asm3.template.get_document_templates(dbo, "medical"),
             "users": asm3.users.get_users(dbo)
         }
 

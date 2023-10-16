@@ -1316,6 +1316,38 @@ def licence_tags(dbo: Database, li: ResultRow) -> Tags:
     }
     return tags
 
+def medical_tags(dbo: Database, medicals: Results) -> Tags:
+    """
+    Generates a list of tags from a medical regimens result.
+    medicals: a list of medical regimen records
+    """
+    l = dbo.locale
+    tags = {}
+    def add_to_tags(i, m): 
+        x = { 
+            "MEDICALID"+i               : str(m["ID"]),
+            "MEDICALNAME"+i             : m["TREATMENTNAME"],
+            "MEDICALCOMMENTS"+i         : m["COMMENTS"],
+            "MEDICALFREQUENCY"+i        : m["NAMEDFREQUENCY"],
+            "MEDICALNUMBEROFTREATMENTS"+i: m["NAMEDNUMBEROFTREATMENTS"],
+            "MEDICALSTATUS"+i           : m["NAMEDSTATUS"],
+            "MEDICALDOSAGE"+i           : m["DOSAGE"],
+            "MEDICALSTARTDATE"+i        : python2display(l, m["STARTDATE"]),
+            "MEDICALTREATMENTSGIVEN"+i  : str(m["TREATMENTSGIVEN"]),
+            "MEDICALTREATMENTSREMAINING"+i: str(m["TREATMENTSREMAINING"]),
+            "MEDICALNEXTTREATMENTDUE"+i : python2display(l, m["NEXTTREATMENTDUE"]),
+            "MEDICALLASTTREATMENTGIVEN"+i: str(m["LASTTREATMENTGIVEN"]),
+            "MEDICALLASTTREATMENTCOMMENTS"+i: m["LASTTREATMENTCOMMENTS"],
+            "MEDICALCOST"+i             : format_currency_no_symbol(l, m["COST"])
+        }
+        tags.update(x)
+    # Add a copy of the medical tags without an index for compatibility
+    if len(medicals) > 0:
+        add_to_tags("", medicals[0]) 
+    for i, d in enumerate(medicals):
+        add_to_tags(str(i+1), d)
+    return tags
+
 def movement_tags(dbo: Database, m: ResultRow) -> Tags:
     """
     Generates a list of tags from a movement result
@@ -2124,6 +2156,23 @@ def generate_licence_doc(dbo: Database, templateid: int, licenceid: int, usernam
     if l.ANIMALID is not None and l.ANIMALID != 0:
         tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, l.ANIMALID), includeLicence=False))
     tags = append_tags(tags, licence_tags(dbo, l))
+    tags = append_tags(tags, org_tags(dbo, username))
+    return substitute_template(dbo, templateid, tags)
+
+def generate_medical_doc(dbo: Database, templateid: int, medicalids: List[int], username: str) -> bytes_or_str:
+    """
+    Generates a donation document from a template
+    templateid: The ID of the template
+    medicalids: A list of ids to generate for
+    """
+    meds = asm3.medical.get_regimens_ids(dbo, medicalids)
+    tags = {}
+    if len(meds) == 0: 
+        raise asm3.utils.ASMValidationError("%s does not contain any valid medical IDs" % medicalids)
+    m = meds[0]
+    if m.ANIMALID is not None and m.ANIMALID != 0:
+        tags = append_tags(tags, animal_tags(dbo, asm3.animal.get_animal(dbo, m.ANIMALID), includeMedical=False))
+    tags = append_tags(tags, medical_tags(dbo, meds))
     tags = append_tags(tags, org_tags(dbo, username))
     return substitute_template(dbo, templateid, tags)
 

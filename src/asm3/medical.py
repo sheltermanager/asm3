@@ -343,6 +343,38 @@ def get_regimens(dbo: Database, animalid: int, onlycomplete: bool = False, onlya
     # Now add our extra named fields
     return embellish_regimen(l, rows)
 
+def get_regimen_id(dbo: Database, medicalid: int) -> ResultRow:
+    """
+    Returns a single medical regimen from its id.
+    """
+    return dbo.first_row(get_regimens_ids(dbo, [medicalid]))
+
+def get_regimens_ids(dbo: Database, ids: List[int]) -> Results:
+    """
+    Returns a recordset of medical regimens for a list of medical ids:
+    TREATMENTNAME, COST, COMMENTS, NAMEDFREQUENCY, NAMEDNUMBEROFTREATMENTS,
+    NAMEDSTATUS, DOSAGE, STARTDATE, TREATMENTSGIVEN, TREATMENTSREMAINING,
+    TIMINGRULE, TIMINGRULEFREQUENCY, TIMINGRULENOFREQUENCIES, TREATMENTRULE
+    TOTALNUMBEROFTREATMENTS, NEXTTREATMENTDUE, LASTTREATMENTGIVEN
+    """
+    l = dbo.locale
+    idin = ",".join([ str(x) for x in ids ])
+    limit1 = dbo.sql_limit(1)
+    sql = "SELECT am.*, " \
+        "(SELECT amt.DateRequired FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Null " \
+        f"ORDER BY amt.DateRequired DESC {limit1}) AS NextTreatmentDue, " \
+        "(SELECT amt.DateGiven FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
+        f"ORDER BY amt.DateGiven DESC {limit1}) AS LastTreatmentGiven, " \
+        "(SELECT amt.Comments FROM animalmedicaltreatment amt WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
+        f"ORDER BY amt.DateGiven DESC {limit1}) AS LastTreatmentComments, " \
+        "(SELECT adv.OwnerName FROM animalmedicaltreatment amt INNER JOIN owner adv ON adv.ID=amt.AdministeringVetID " \
+        "WHERE amt.AnimalMedicalID = am.ID AND amt.DateGiven Is Not Null " \
+        f"ORDER BY amt.DateGiven DESC {limit1}) AS LastTreatmentVetName " \
+        f"FROM animalmedical am WHERE am.ID IN ({idin}) ORDER BY am.ID"
+    rows = dbo.query(sql)
+    # Now add our extra named fields
+    return embellish_regimen(l, rows)
+
 def get_regimens_treatments(dbo: Database, animalid: int, sort: int = DESCENDING_REQUIRED, limit: int = 0) -> Results:
     """
     Returns a recordset of medical regimens and treatments for an animal:
