@@ -54,6 +54,9 @@ class TestOnlineForm(unittest.TestCase):
         asm3.onlineform.delete_onlineform(base.get_dbo(), "test", self.nformid)
         asm3.onlineform.delete_onlineformincoming(base.get_dbo(), "test", self.collationid)
 
+    def test_get_animal_id_from_field(self):
+        asm3.onlineform.get_animal_id_from_field(base.get_dbo(), "Test::Test")
+
     def test_get_onlineform(self):
         self.assertIsNotNone(asm3.onlineform.get_onlineform(base.get_dbo(), self.nformid))
 

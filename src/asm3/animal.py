@@ -1637,6 +1637,18 @@ def set_extra_id(dbo: Database, user: str, a: ResultRow, idtype: str, idvalue: s
     dbo.update("animal", a.ID, { "ExtraIDs": extraids }, user)
     return extraids
 
+def get_animal_id_and_bonds(dbo: Database, animalid: int) -> List[int]:
+    """
+    Returns a list containing animalid and the ids of other animals that
+    animalid is bonded to.
+    """
+    animalids = [ animalid ]
+    bonded = dbo.first_row(dbo.query("SELECT BondedAnimalID, BondedAnimal2ID FROM animal WHERE ID=?", [animalid]))
+    if bonded is None: return animalids
+    if bonded.BONDEDANIMALID is not None and bonded.BONDEDANIMALID > 0: animalids.append(bonded.BONDEDANIMALID)
+    if bonded.BONDEDANIMAL2ID is not None and bonded.BONDEDANIMAL2ID > 0: animalids.append(bonded.BONDEDANIMAL2ID)
+    return animalids
+
 def get_animal_namecode(dbo: Database, animalid: int) -> str:
     """
     Returns an animal's name and code or an empty

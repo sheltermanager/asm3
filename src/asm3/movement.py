@@ -794,33 +794,22 @@ def insert_transfer_from_form(dbo: Database, username: str, post: PostedData) ->
     movementid = insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, l))
     return movementid
 
-def insert_reserve_for_animal_name(dbo: Database, username: str, personid: int, reservationdate: datetime, animalname: str) -> List[int]:
+def insert_reserve(dbo: Database, username: str, personid: int, animalid: int, reservationdate: datetime) -> List[int]:
     """
-    Creates a reservation for the animal with animalname to personid.
-    animalname can either be just the name of a shelter animal, or it
-    can be in the form name::code. If a code is present, that will be
-    used to locate the animal.
+    Creates a reservation for the animalid to personid.
     If the person is banned from adopting animals, an exception is raised.
     If the animal is bonded to other animals, a reserve is placed on the bonded animals too.
     """
     l = dbo.locale
-    if animalname.find("::") != -1:
-        animalcode = animalname.split("::")[1]
-        aid = dbo.query_int("SELECT ID FROM animal WHERE ShelterCode = ? ORDER BY ID DESC", [animalcode])
-    else:
-        aid = dbo.query_int("SELECT ID FROM animal WHERE LOWER(AnimalName) LIKE ? ORDER BY ID DESC", [animalname.lower()])
     if 1 == dbo.query_int("SELECT IsBanned FROM owner WHERE ID=?", [personid]):
         raise asm3.utils.ASMValidationError("owner %s is banned from adopting animals - not creating reserve")
-    if aid == 0 and not asm3.configuration.movement_person_only_reserves(dbo): 
-        raise asm3.utils.ASMValidationError("could not find an animal for '%s', will not create person only reserve" % animalname)
-    bonded = dbo.first_row(dbo.query("SELECT BondedAnimalID, BondedAnimal2ID FROM animal WHERE ID=?", [aid]))
-    aids = ( aid, bonded.BONDEDANIMALID, bonded.BONDEDANIMAL2ID )
+    if animalid == 0 and not asm3.configuration.movement_person_only_reserves(dbo): 
+        raise asm3.utils.ASMValidationError("no animal given, option is off to create person only reserves")
     moveids = []
-    for animalid in aids:
-        if animalid is None or animalid == 0: continue
+    for aid in asm3.animal.get_animal_id_and_bonds(dbo, animalid):
         move_dict = {
             "person"                : str(personid),
-            "animal"                : str(animalid),
+            "animal"                : str(aid),
             "reservationdate"       : asm3.i18n.python2display(l, reservationdate),
             "reservationtime"       : asm3.i18n.format_time(reservationdate),
             "reservationstatus"     : asm3.configuration.default_reservation_status(dbo),

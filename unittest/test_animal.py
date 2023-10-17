@@ -66,6 +66,7 @@ class TestAnimal(unittest.TestCase):
 
     def test_get_fields(self):
         self.assertTrue(asm3.animal.get_is_on_shelter(base.get_dbo(), self.nid))
+        self.assertTrue(asm3.animal.get_animal_id_and_bonds(base.get_dbo(), self.nid)[0] == self.nid)
         asm3.animal.get_comments(base.get_dbo(), self.nid)
         asm3.animal.get_date_of_birth(base.get_dbo(), self.nid)
         asm3.animal.get_days_on_shelter(base.get_dbo(), self.nid)

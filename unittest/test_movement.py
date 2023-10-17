@@ -43,6 +43,18 @@ class TestMovement(unittest.TestCase):
     def test_get_transport_two_dates(self):
         asm3.movement.get_transport_two_dates(base.get_dbo(), base.today(), base.today())
 
+    def test_insert_reserve(self):
+        data = {
+            "animalname": "Testio",
+            "estimatedage": "1",
+            "animaltype": "1",
+            "entryreason": "1",
+            "species": "1"
+        }
+        post = asm3.utils.PostedData(data, "en")
+        aid, code = asm3.animal.insert_animal_from_form(base.get_dbo(), post, "test")
+        asm3.movement.insert_reserve(base.get_dbo(), "test", 1, aid, base.today() )
+
     def test_movement_crud(self):
         data = {
             "animalname": "Testio",

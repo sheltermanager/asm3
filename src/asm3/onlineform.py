@@ -1255,6 +1255,7 @@ def attach_animalbyname(dbo: Database, username: str, collationid: int) -> Tuple
     Finds the existing shelter animal with "animalname" and
     attaches the form to it as animal asm3.media.
     Return value is a tuple of collationid, animalid, animal code/name
+    If the animal is bonded, attaches the form to the bonded animals too. 
     """
     l = dbo.locale
     fields = get_onlineformincoming_detail(dbo, collationid)
@@ -1271,14 +1272,16 @@ def attach_animalbyname(dbo: Database, username: str, collationid: int) -> Tuple
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to attach to a shelter animal record (need an animal name).", l))
     if animalid == 0:
         raise asm3.utils.ASMValidationError(asm3.i18n._("Could not find animal with name '{0}'", l).format(animalname))
-    attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
+    for aid in asm3.animal.get_animal_id_and_bonds(dbo, animalid):
+        attach_form(dbo, username, asm3.media.ANIMAL, aid, collationid)
     return (collationid, animalid, asm3.animal.get_animal_namecode(dbo, animalid))
 
 def attach_animal(dbo: Database, username: str, animalid: int, collationid: int) -> None:
     """
-    Attaches the form to a specific animal
+    Attaches the form to a specific animal. If the animal is bonded, attaches to those as well.
     """
-    asm3.onlineform.attach_form(dbo, username, asm3.media.ANIMAL, animalid, collationid)
+    for aid in asm3.animal.get_animal_id_and_bonds(dbo, animalid):
+        asm3.onlineform.attach_form(dbo, username, asm3.media.ANIMAL, aid, collationid)
 
 def attach_person(dbo: Database, username: str, personid: int, collationid: int) -> None:
     """
@@ -1463,7 +1466,7 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
         # a reservation if there's no value.
         if k == "reserveanimalname" or (k.startswith("reserveanimalname") and v != ""):
             try:
-                asm3.movement.insert_reserve_for_animal_name(dbo, username, personid, formreceived, v)
+                asm3.movement.insert_reserve(dbo, username, personid, get_animal_id_from_field(v), formreceived)
             except Exception as err:
                 asm3.al.warn("could not create reservation for %d on %s (%s)" % (personid, v, err), "create_person", dbo)
                 web.ctx.status = "200 OK" # ASMValidationError sets status to 500
