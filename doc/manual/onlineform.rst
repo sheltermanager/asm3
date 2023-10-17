@@ -185,10 +185,12 @@ data, or explicitly attach the form to existing records.
   form to them as media.
 
 * Attach Animal: Prompts for a single animal record and attaches a copy of the
-  form to them as media.
+  form to them as media. If the animal is bonded, attaches to the bonded
+  animals too.
 
-* Attach Animal (via animalname): Attaches the form to a single animal
-  record based on the animalname field in the form itself.
+* Attach Animal (via animalname): Attaches the form to a single animal record
+  based on the animalname field in the form itself. If the animal is bonded,
+  attaches to the bonded animals too.
 
 * Create Animal: Searches for an animal record matching the code field on the 
   form if present. If a match is found, the form is attached to that animal,
@@ -204,6 +206,8 @@ data, or explicitly attach the form to existing records.
   new person record is created. If a “reserveanimalname” field was found on the
   form as well, a reservation to the matching animal is created to the person
   (these can be all viewed under :menuselection:`Move --> Reservation Book`).
+  If the animal was bonded, reservations will be created for the bonded
+  animals too.
 
 * Create Lost Animal: Runs through the same steps as Person so needs enough
   information to create/find a person as well. “description” and “arealost”

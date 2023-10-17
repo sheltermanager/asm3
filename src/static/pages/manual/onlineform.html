@@ -271,9 +271,11 @@ data, or explicitly attach the form to existing records.</p>
 <li><p>Attach Person: Prompts for a single person record and attaches a copy of the
 form to them as media.</p></li>
 <li><p>Attach Animal: Prompts for a single animal record and attaches a copy of the
-form to them as media.</p></li>
-<li><p>Attach Animal (via animalname): Attaches the form to a single animal
-record based on the animalname field in the form itself.</p></li>
+form to them as media. If the animal is bonded, attaches to the bonded
+animals too.</p></li>
+<li><p>Attach Animal (via animalname): Attaches the form to a single animal record
+based on the animalname field in the form itself. If the animal is bonded,
+attaches to the bonded animals too.</p></li>
 <li><p>Create Animal: Searches for an animal record matching the code field on the
 form if present. If a match is found, the form is attached to that animal,
 otherwise a new animal record is created. While you can use the Species
@@ -286,7 +288,9 @@ if present, or the firstname, lastname and address fields on the form. If a
 match is found, the form is attached to that person. If no match is found, a
 new person record is created. If a “reserveanimalname” field was found on the
 form as well, a reservation to the matching animal is created to the person
-(these can be all viewed under <span class="menuselection">Move ‣ Reservation Book</span>).</p></li>
+(these can be all viewed under <span class="menuselection">Move ‣ Reservation Book</span>).
+If the animal was bonded, reservations will be created for the bonded
+animals too.</p></li>
 <li><p>Create Lost Animal: Runs through the same steps as Person so needs enough
 information to create/find a person as well. “description” and “arealost”
 fields are the minimum required to create the lost animal record.</p></li>
