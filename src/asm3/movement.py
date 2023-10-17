@@ -813,8 +813,8 @@ def insert_reserve_for_animal_name(dbo: Database, username: str, personid: int, 
         raise asm3.utils.ASMValidationError("owner %s is banned from adopting animals - not creating reserve")
     if aid == 0 and not asm3.configuration.movement_person_only_reserves(dbo): 
         raise asm3.utils.ASMValidationError("could not find an animal for '%s', will not create person only reserve" % animalname)
-    bonded = dbo.first_row(dbo.query("SELECT BondedAnimal1ID, BondedAnimal2ID FROM animal WHERE ID=?", [aid]))
-    aids = ( aid, bonded.BONDEDANIMAL1ID, bonded.BONDEDANIMAL2ID )
+    bonded = dbo.first_row(dbo.query("SELECT BondedAnimalID, BondedAnimal2ID FROM animal WHERE ID=?", [aid]))
+    aids = ( aid, bonded.BONDEDANIMALID, bonded.BONDEDANIMAL2ID )
     moveids = []
     for animalid in aids:
         if animalid is None or animalid == 0: continue
