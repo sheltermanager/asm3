@@ -185,19 +185,40 @@ When adopting animals out, the system uses this information to track owners who
 have brought animals into the shelter previously and to warn staff before
 adopting animals to them. 
 
-The bonded with fields allow you to specify upto two animals that this animal
-can be bonded to. Bonding checks that when the animal is adopted, it is adopted
-with its bonded partner(s). 
-
-Most importantly, the right hand side of the screen contains the animals
-original date of entry to the shelter. This date is used when generating animal
-figures and auditing reports. 
+The right hand side of the screen contains the animals original date of entry
+to the shelter. This date is used when generating animal figures and auditing
+reports.  
 
 If you are using a US locale, you will also see Asilomar categories. These
 allow ASM to generate Asilomar figures for your shelter. Asilomar statistics
 are a standardised way of calculating euthanasia figures for animal shelters
 across the US. More information on them can be found here:
 http://www.asilomaraccords.org/
+
+Entry - Bonded Animals
+^^^^^^^^^^^^^^^^^^^^^^
+
+The bonded with fields allow you to specify upto two animals that this animal
+can be bonded to. Bonding an animal to other animals has the following effects:
+
+* If the option is on under :menuselection:`Publishing --> Set Publishing
+  Options` to merge bonded animals into a single record, then only a single
+  record will be displayed via the website tools or sent to adoptable 3rd party
+  websites. The name shown will be a combination of all the bonded animal
+  names, but the rest of the data including description and photos will be from
+  this first animal.
+
+* When the animal is adopted via the :menuselection:`Move --> Adopt an animal`
+  screen, a warning will be shown and an adoption movement to the same person
+  will be created on all bonded animals at the same time.
+
+* When an online form is received that refers to this animal in a reserveanimalname
+  field and "Create Person" is used, reservations will be created for all bonded
+  animals as well as this one. 
+
+* When an online form is received that refers to this animal in an animalname
+  or reserveanimalnamefield and "Attach Animal" is used, the form will be
+  attached to this animal and the bonded animals automatically too.
 
 Entry History
 ^^^^^^^^^^^^^
