@@ -3164,7 +3164,7 @@ class document_gen(ASMEndpoint):
                 asm3.media.create_document_media(dbo, o.user, asm3.media.PERSON, ownerid, tempname, post["document"])
             elif animalid: 
                 asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
-            self.redirect("person_media?id=%d" % ownerid)
+            self.redirect("animal_media?id=%d" % animalid)
         else:
             raise asm3.utils.ASMValidationError("Linktype '%s' is invalid, cannot save" % linktype)
 
