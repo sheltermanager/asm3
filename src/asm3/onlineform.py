@@ -1466,7 +1466,7 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
         # a reservation if there's no value.
         if k == "reserveanimalname" or (k.startswith("reserveanimalname") and v != ""):
             try:
-                asm3.movement.insert_reserve(dbo, username, personid, get_animal_id_from_field(v), formreceived)
+                asm3.movement.insert_reserve(dbo, username, personid, get_animal_id_from_field(dbo, v), formreceived)
             except Exception as err:
                 asm3.al.warn("could not create reservation for %d on %s (%s)" % (personid, v, err), "create_person", dbo)
                 web.ctx.status = "200 OK" # ASMValidationError sets status to 500

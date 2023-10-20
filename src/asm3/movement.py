@@ -805,6 +805,7 @@ def insert_reserve(dbo: Database, username: str, personid: int, animalid: int, r
         raise asm3.utils.ASMValidationError("owner %s is banned from adopting animals - not creating reserve")
     if animalid == 0 and not asm3.configuration.movement_person_only_reserves(dbo): 
         raise asm3.utils.ASMValidationError("no animal given, option is off to create person only reserves")
+    if reservationdate is None: reservationdate = dbo.now()
     moveids = []
     for aid in asm3.animal.get_animal_id_and_bonds(dbo, animalid):
         move_dict = {
