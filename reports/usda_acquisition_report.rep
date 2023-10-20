@@ -2,7 +2,7 @@ USDA Acquisition Report
 ###
 Figures
 ###
-34702/Any rev04
+34702/Any rev05
 ###
 Animals entering between two dates with their final outcomes for completing the USDA acquisitions form/APHIS Form 7005, Nov 2020. 
 ###
@@ -12,7 +12,7 @@ SELECT
 a.AnimalName, a.ShelterCode, a.DateOfBirth, s.SpeciesName, 
 a.BreedName, bo.OwnerName, a.DateBroughtIn, 
 a.NeuteredDate, a.IdentichipNumber, a.AnimalAge, a.Weight, a.Markings, 
-(SELECT BaseColour FROM basecolour WHERE ID = a.BaseColour AS Color, a.TattooNumber, 
+(SELECT BaseColour FROM basecolour WHERE ID = a.BaseColourID) AS Color, a.TattooNumber, 
 (SELECT Sex FROM lksex WHERE ID = a.Sex) AS Sex, 
 a.DeceasedDate, a.ActiveMovementDate,
 CASE WHEN a.PutToSleep = 1 THEN 'Euthanized' ELSE '' END AS Euthanized,
