@@ -4855,13 +4855,13 @@ class move_adopt(JSONEndpoint):
         checkout = o.post.boolean("checkoutcreate")
         paperwork = o.post.boolean("sigpaperwork")
         if checkout and post.integer("templateid") == 0:
-            raise asm3.utils.ValidationError("No template given for checkout")
+            raise asm3.utils.ASMValidationError("No template given for checkout")
         if checkout and post.integer("emailtemplateid") == 0:
-            raise asm3.utils.ValidationError("No email template given for checkout email")
+            raise asm3.utils.ASMValidationError("No email template given for checkout email")
         if paperwork and post.integer("sigtemplateid")== 0:
-            raise asm3.utils.ValidationError("No template given for paperwork")
+            raise asm3.utils.ASMValidationError("No template given for paperwork")
         if paperwork and post.integer("sigemailtemplateid") == 0:
-            raise asm3.utils.ValidationError("No email template given for request signature email")
+            raise asm3.utils.ASMValidationError("No email template given for request signature email")
         movementid = asm3.movement.insert_adoption_from_form(dbo, o.user, post, create_payments = not checkout)
         if checkout:
             l = o.dbo.locale
