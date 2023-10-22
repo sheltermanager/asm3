@@ -629,6 +629,10 @@ $(function() {
                 .then(function() {
                     header.hide_loading();
                     common.route_reload(); 
+                })
+                .fail(function() {
+                    header.show_error("Failed to process image data");
+                    header.hide_loading();
                 });
         },
 

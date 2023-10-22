@@ -1,6 +1,6 @@
 /*global $, console, performance, jQuery, FileReader, Mousetrap, Path */
 /*global alert, asm, schema, atob, btoa, header, _, escape, unescape, navigator */
-/*global common, config, dlgfx, format */
+/*global common, config, dlgfx, format, log */
 /*global html: true */
 
 "use strict";
@@ -1022,10 +1022,15 @@ const html = {
             img.src = e.target.result;
         };
         reader.onerror = function(e) {
+            log.error("error accessing img data");
             deferred.reject(reader.error.message);
         };
         img.onload = function() {
             deferred.resolve(img);
+        };
+        img.onerror = function(e) {
+            log.error("error loading data into img, corrupted file or unsupported file format eg: HEIC?");
+            deferred.reject();
         };
         reader.readAsDataURL(file);
         return deferred.promise();

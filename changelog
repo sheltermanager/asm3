@@ -1,6 +1,7 @@
 48
 ================
 
+22/10/23 Show error for corrupted or incompatible files when attaching media
 20/10/23 Fix bug creating reserves from online forms
 20/10/23 Applying templates to baby animals, do not adjust overdue to today
 17/10/23 Online forms: attach animal attaches to bonded animals too
