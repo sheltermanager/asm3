@@ -613,6 +613,20 @@ $(function() {
                             ".ID AND AdditionalFieldID=" + v.substring(4) + " AND Value='1') THEN '" +
                             _("Yes") + "' ELSE '" + _("No") + "' END AS " + v);
                     }
+                    else if (v.indexOf("afa_") == 0) {
+                        // Animal link additional fields
+                        o.push("(SELECT animal.AnimalName FROM additional " + 
+                            "INNER JOIN animal ON animal.ID = CAST(additional.Value AS INTEGER) " +
+                            "WHERE LinkID=v_" + $("#qbtype").val() + ".ID AND " +
+                            "AdditionalFieldID=" + v.substring(4) + ") AS " + v);
+                    }
+                    else if (v.indexOf("afp_") == 0) {
+                        // Person link additional fields
+                        o.push("(SELECT owner.OwnerName FROM additional " + 
+                            "INNER JOIN owner ON owner.ID = CAST(additional.Value AS INTEGER) " +
+                            "WHERE LinkID=v_" + $("#qbtype").val() + ".ID AND " +
+                            "AdditionalFieldID=" + v.substring(4) + ") AS " + v);
+                    }
                     else if (v.indexOf("af_") == 0) {
                         o.push("(SELECT Value FROM additional WHERE LinkID=v_" + $("#qbtype").val() + 
                             ".ID AND AdditionalFieldID=" + v.substring(3) + ") AS " + v);
@@ -928,6 +942,13 @@ $(function() {
                         if (v.FIELDTYPE == 0) {
                             f.push("afc_" + v.ID + "|" + v.FIELDNAME); // Yes/No (checkbox 1/0)
                         }
+                        else if (v.FIELDTYPE == 8) {
+                            f.push("afa_" + v.ID + "|" + v.FIELDNAME); // Animal link (contains animal ID)
+                        }
+                        else if (v.FIELDTYPE == 9 || v.FIELDTYPE == 11 || v.FIELDTYPE ==  12) {
+                            f.push("afp_" + v.ID + "|" + v.FIELDNAME); // Person link (contains person ID)
+                        }
+
                         else {
                             f.push("af_" + v.ID + "|" + v.FIELDNAME); 
                         }
