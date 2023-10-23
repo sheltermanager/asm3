@@ -21,6 +21,7 @@ def send_all(dbo: Database) -> None:
     """
     adopter_followup(dbo)
     clinic_reminder(dbo)
+    due_payment(dbo)
     fosterer_weekly(dbo)
     licence_reminder(dbo)
 
@@ -122,6 +123,36 @@ def clinic_reminder(dbo: Database, user = "system") -> None:
         _send_email_from_template(dbo, r.EMAILADDRESS, asm3.i18n._("Clinic Reminder", l), body, loglinkid=r.OWNERID, logmsg=f"CR01:{r.ID}")
 
     asm3.al.info(f"Sent {len(rows)} clinic reminder emails.", "automail.clinic_reminder", dbo)
+
+def _due_payment_query(dbo: Database, cutoff: datetime) -> Results:
+    return dbo.query("SELECT od.ID, od.OwnerID, o.EmailAddress " \
+        "FROM ownerdonation od " \
+        "INNER JOIN owner o ON o.ID = od.OwnerID " \
+        "WHERE od.Date Is Null AND od.DueDate = ? " \
+        "ORDER BY od.ID", [cutoff])
+
+def due_payment(dbo: Database, user = "system") -> None:
+    """
+    Finds all people who have a payment due in X days and sends
+    them a reminder email using the configured template.
+    """
+    l = dbo.locale
+    if not asm3.configuration.email_due_payment(dbo):
+        asm3.al.debug("EmailDuePayment option set to No", "automail.due_payment", dbo)
+        return
+
+    days = asm3.configuration.email_due_payment_days(dbo)
+    cutoff = dbo.today(offset = days)
+    dtid = asm3.configuration.email_due_payment_template(dbo)
+    asm3.al.debug(f"due payment: {days} days, email template {dtid}", "automail.due_payment", dbo)
+    if not _valid_template(dtid): return
+
+    rows = _due_payment_query(dbo, cutoff)
+    for r in rows:
+        body = asm3.wordprocessor.generate_donation_doc(dbo, dtid, [ r.ID ], user)
+        _send_email_from_template(dbo, r.EMAILADDRESS, asm3.i18n._("Payment Due", l), body, loglinkid=r.OWNERID, logmsg=f"DP01:{r.ID}")
+
+    asm3.al.info(f"Sent {len(rows)} due payment emails.", "automail.due_payment", dbo)
 
 def _fosterer_weekly_activefosterers(dbo: Database):
     return dbo.query("SELECT ID, OwnerName, EmailAddress FROM owner " \

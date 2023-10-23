@@ -986,6 +986,11 @@ interactions with the shelter. In all cases, a number of days and an email templ
   appointment in the number of days chosen. The template chosen must be
   suitable for clinic data.
 
+* Send a reminder email to people with due payments in days: This option
+  will automatically send a reminder email to everyone who has a non-received payment
+  with a due date in the number of days chosen. The template chosen must be
+  suitable to receive payment data.
+
 * Send a reminder email to people with licenses expiring in days: This option
   will automatically send a reminder email to everyone with an expiring license
   in the number of days entered. The template chosen must be suitable for

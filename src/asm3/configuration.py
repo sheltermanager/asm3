@@ -173,6 +173,9 @@ DEFAULTS = {
     "EmailDiaryNotes": "Yes", 
     "EmailDiaryOnChange": "No",
     "EmailDiaryOnComplete": "No",
+    "EmailDuePayment": "No",
+    "EmailDuePaymentDays": "7",
+    "EmailDuePaymentTemplate": "0",
     "EmailEmptyReports": "Yes",
     "EmailLicenceReminder": "No",
     "EmailLicenceReminderDays": "30",
@@ -963,6 +966,15 @@ def email_diary_on_change(dbo: Database) -> bool:
 
 def email_diary_on_complete(dbo: Database) -> bool:
     return cboolean(dbo, "EmailDiaryOnComplete", DEFAULTS["EmailDiaryOnComplete"] == "Yes")
+
+def email_due_payment(dbo: Database) -> bool:
+    return cboolean(dbo, "EmailDuePayment", DEFAULTS["EmailDuePayment"] == "Yes")
+
+def email_due_payment_days(dbo: Database) -> int:
+    return cint(dbo, "EmailDuePaymentDays", DEFAULTS["EmailDuePaymentDays"])
+
+def email_due_payment_template(dbo: Database) -> int:
+    return cint(dbo, "EmailDuePaymentTemplate", DEFAULTS["EmailDuePaymentTemplate"])
 
 def email_empty_reports(dbo: Database) -> bool:
     return cboolean(dbo, "EmailEmptyReports", DEFAULTS["EmailEmptyReports"] == "Yes")

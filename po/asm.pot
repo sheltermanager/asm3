@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2023-10-04 13:23+0000\n"
+"POT-Creation-Date: 2023-10-23 09:38+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -4444,7 +4444,8 @@ msgid "Doberman Pinscher"
 msgstr ""
 
 #: dbupdate.py clinic_appointment.js licence.js movements.js lostfound.js
-#: incident.js waitinglist.js transport.js animal.js person.js vouchers.js
+#: incident.js medical.js waitinglist.js transport.js animal.js person.js
+#: vouchers.js
 msgid "Document"
 msgstr ""
 
@@ -6328,6 +6329,10 @@ msgstr ""
 
 #: donations.js
 msgid "Generate document from this payment"
+msgstr ""
+
+#: medical.js
+msgid "Generate document from this regimen"
 msgstr ""
 
 #: transport.js
@@ -8396,8 +8401,8 @@ msgstr ""
 msgid "Media notes contain"
 msgstr ""
 
-#: html.py mobile.py header_edit_header.js reports.js calendarview.js roles.js
-#: options.js mobile2.js
+#: html.py mobile.py header_edit_header.js reports.js calendarview.js
+#: document_templates.js roles.js options.js mobile2.js
 msgid "Medical"
 msgstr ""
 
@@ -9368,8 +9373,8 @@ msgstr ""
 #: html.py mobile.py dbupdate.py lostfound.py traploan.js incident_find.js
 #: waitinglist_results.js licence_renewal.js person_find_results.js
 #: lostfound.js incident.js boarding.js incident_find_results.js waitinglist.js
-#: lostfound_find_results.js animal.js animal_new.js lostfound_find.js
-#: mobile2.js
+#: lostfound_find_results.js animal.js animal_new.js onlineform.js
+#: lostfound_find.js mobile2.js
 msgid "Number"
 msgstr ""
 
@@ -9845,6 +9850,10 @@ msgstr ""
 
 #: donations.js
 msgid "Payment Book"
+msgstr ""
+
+#: automail.py
+msgid "Payment Due"
 msgstr ""
 
 #: accounts_trx.js
@@ -11872,6 +11881,10 @@ msgstr ""
 
 #: options.js
 msgid "Send a reminder email to people with licenses expiring in X days"
+msgstr ""
+
+#: options.js
+msgid "Send a reminder email to people with payments due in X days"
 msgstr ""
 
 #: options.js
