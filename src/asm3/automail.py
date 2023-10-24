@@ -128,7 +128,7 @@ def _due_payment_query(dbo: Database, cutoff: datetime) -> Results:
     return dbo.query("SELECT od.ID, od.OwnerID, o.EmailAddress " \
         "FROM ownerdonation od " \
         "INNER JOIN owner o ON o.ID = od.OwnerID " \
-        "WHERE od.Date Is Null AND od.DueDate = ? " \
+        "WHERE od.Date Is Null AND od.DateDue = ? " \
         "ORDER BY od.ID", [cutoff])
 
 def due_payment(dbo: Database, user = "system") -> None:
