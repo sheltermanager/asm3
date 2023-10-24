@@ -84,7 +84,7 @@ def adopter_followup(dbo: Database, user = "system") -> None:
     cutoff = dbo.today(offset = days*-1)
     dtid = asm3.configuration.email_adopter_followup_template(dbo)
     asm3.al.debug(f"adopter followup: {days} days, email template {dtid}", "automail.adopter_followup", dbo)
-    if not _valid_template(dtid): return
+    if not _valid_template(dbo, dtid): return
 
     rows = _adopter_followup_query(dbo, cutoff)
     for r in rows:
@@ -115,7 +115,7 @@ def clinic_reminder(dbo: Database, user = "system") -> None:
     cutoff = dbo.today(offset = days)
     dtid = asm3.configuration.email_clinic_reminder_template(dbo)
     asm3.al.debug(f"clinic reminder: {days} days, email template {dtid}", "automail.clinic_reminder", dbo)
-    if not _valid_template(dtid): return
+    if not _valid_template(dbo, dtid): return
 
     rows = _clinic_reminder_query(dbo, cutoff)
     for r in rows:
@@ -145,7 +145,7 @@ def due_payment(dbo: Database, user = "system") -> None:
     cutoff = dbo.today(offset = days)
     dtid = asm3.configuration.email_due_payment_template(dbo)
     asm3.al.debug(f"due payment: {days} days, email template {dtid}", "automail.due_payment", dbo)
-    if not _valid_template(dtid): return
+    if not _valid_template(dbo, dtid): return
 
     rows = _due_payment_query(dbo, cutoff)
     for r in rows:
@@ -289,7 +289,7 @@ def licence_reminder(dbo: Database, user = "system") -> None:
     cutoff = dbo.today(offset = days)
     dtid = asm3.configuration.email_licence_reminder_template(dbo)
     asm3.al.debug(f"licence reminder: {days} days, email template {dtid}", "automail.licence_reminder", dbo)
-    if not _valid_template(dtid): return
+    if not _valid_template(dbo, dtid): return
 
     rows = _licence_reminder_query(dbo, cutoff)
     for r in rows:
