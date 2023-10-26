@@ -111,6 +111,8 @@ LocationDescription
     The description field from the animal's internal location
 LocationUnit
     The location unit (eg, pen or cage number)
+LocationSite
+    The site the location is at
 DisplayLocation
     Either the internal location if the animal is on shelter, a movement
     type/person for animals leaving the shelter or a deceased reason if the

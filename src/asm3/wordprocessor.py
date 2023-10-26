@@ -323,6 +323,7 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
         "LOCATIONNAME"          : a["SHELTERLOCATIONNAME"],
         "LOCATIONDESCRIPTION"   : a["SHELTERLOCATIONDESCRIPTION"],
         "LOCATIONUNIT"          : a["SHELTERLOCATIONUNIT"],
+        "LOCATIONSITE"          : a["SITENAME"],
         "DISPLAYLOCATION"       : a["DISPLAYLOCATION"],
         "UNITSPONSOR"           : "UNITSPONSOR" in a and a["UNITSPONSOR"] or "",
         "COATTYPE"              : a["COATTYPENAME"],
