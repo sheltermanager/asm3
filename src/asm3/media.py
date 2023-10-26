@@ -360,8 +360,14 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
         msg = "upload of media type pdf is disabled"
         asm3.al.error(msg, "media.attach_file_from_form", dbo)
         raise asm3.utils.ASMValidationError(msg)
+    
+    # Is it a picture, is it valid?
+    if ispicture and not verify_image(filedata):
+        msg = "image data uploaded is not a valid image"
+        asm3.al.error(msg, "media.attach_file_from_form", dbo)
+        raise asm3.utils.ASMValidationError(msg)
 
-    # Is it a picture?
+    # Is it a picture? Was it already rotated and scaled by the browser?
     if ispicture and not transformed:
         # Autorotate it to match the EXIF orientation
         filedata = auto_rotate_image(dbo, filedata)
@@ -863,6 +869,18 @@ def scale_image(imagedata: bytes, resizespec: str) -> bytes:
     except Exception as err:
         asm3.al.error("failed scaling image: %s" % str(err), "media.scale_image")
         return imagedata
+    
+def verify_image(imagedata: bytes) -> bool:
+    """
+    Loads an image to validate whether imagedata contains a valid image.
+    """
+    try:
+        file_data = asm3.utils.bytesio(imagedata)
+        im = Image.open(file_data)
+        return True
+    except Exception as err:
+        asm3.al.error("failed verifying image: %s" % str(err), "media.verify_image")
+        return False
 
 def auto_rotate_image(dbo: Database, imagedata: bytes) -> bytes:
     """

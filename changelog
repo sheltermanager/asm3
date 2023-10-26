@@ -1,6 +1,7 @@
 48
 ================
 
+26/10/23 Verify that imagedata received is a valid image before doing anything
 24/10/23 Fix template_valid bug that stopped reminder emails being sent #1322
 23/10/23 Automated emails for due payments #1338
 22/10/23 Querybuilder: output names instead of IDs on additional animal/person links
