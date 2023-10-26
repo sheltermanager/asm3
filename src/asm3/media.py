@@ -876,7 +876,7 @@ def verify_image(imagedata: bytes) -> bool:
     """
     try:
         file_data = asm3.utils.bytesio(imagedata)
-        im = Image.open(file_data)
+        Image.open(file_data)
         return True
     except Exception as err:
         asm3.al.error("failed verifying image: %s" % str(err), "media.verify_image")
