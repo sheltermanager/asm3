@@ -155,8 +155,8 @@ def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname
     forenamesclause = ""
     forenamesclause2 = ""
     if checkforenames: 
-        forenamesclause = " AND LOWER(o.OwnerForeNames) LIKE %s" % dbo.sql_value(forenames)
-        forenamesclause2 = " AND LOWER(o.OwnerForeNames2) LIKE %s" % dbo.sql_value(forenames)
+        forenamesclause = " LOWER(o.OwnerForeNames) LIKE %s AND " % dbo.sql_value(forenames)
+        forenamesclause2 = " LOWER(o.OwnerForeNames2) LIKE %s AND " % dbo.sql_value(forenames)
     surname = surname.replace("'", "`").lower().strip()
     email = email.replace("'", "`").lower().strip()
     eq = []
