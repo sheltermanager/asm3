@@ -5983,7 +5983,7 @@ class person_embed(ASMEndpoint):
         address = post["address"]
         email = post["emailaddress"]
         mobile = post["mobiletelephone"]
-        p = asm3.person.get_person_similar(dbo, email, mobile, surname, forenames, address, siteid=o.siteid, checkcouple=True, checkmobilehome=True)
+        p = asm3.person.get_person_similar(dbo, email, mobile, surname, forenames, address, siteid=o.siteid, checkcouple=True, checkforenames=False, checkmobilehome=True)
         if len(p) == 0:
             asm3.al.debug("No similar people found for %s, %s, %s, %s, %s" % (email, mobile, surname, forenames, address), "code.person_embed", dbo)
         else:

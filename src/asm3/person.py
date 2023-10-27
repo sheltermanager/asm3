@@ -127,11 +127,12 @@ def get_homechecked(dbo: Database, personid: int) -> Results:
         "WHERE HomeCheckedBy = ?", [personid])
 
 def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname: str = "", forenames: str = "", address: str = "", 
-                       siteid: int = 0, checkcouple: bool = False, checkmobilehome: bool = False) -> Results:
+                       siteid: int = 0, checkcouple: bool = False, checkmobilehome: bool = False, checkforenames: bool = True) -> Results:
     """
     Returns people with similar email, mobile, names and addresses to those supplied.
     If siteid is non-zero, only people with that site will be checked.
     If checkcouple is True, the second contact fields will also be checked.
+    If checkforenames is True, the forenames must also match in order for email or mobile phone to match.
     If checkmobilehome is True, the mobile number given will be checked against the home telephone too.
     """
     siteclause = ""
@@ -151,6 +152,11 @@ def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname
     forenames = forenames.replace("'", "`").lower().strip()
     if forenames.find(" ") != -1: forenames = forenames[0:forenames.find(" ")]
     forenames += "%"
+    forenamesclause = ""
+    forenamesclause2 = ""
+    if checkforenames: 
+        forenamesclause = " AND LOWER(o.OwnerForeNames) LIKE %s" % dbo.sql_value(forenames)
+        forenamesclause2 = " AND LOWER(o.OwnerForeNames2) LIKE %s" % dbo.sql_value(forenames)
     surname = surname.replace("'", "`").lower().strip()
     email = email.replace("'", "`").lower().strip()
     eq = []
@@ -159,23 +165,23 @@ def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname
     ceq = []
     per = []
     cper = []
-    if forenames != "%" and email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
-        eq = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} LOWER(o.EmailAddress) LIKE ? AND LOWER(o.OwnerForeNames) LIKE ?", [email, forenames])
-    if forenames != "%" and mobile != "" and asm3.utils.atoi(mobile) > 9999: # at least 5 digits to constitute a valid number
+    if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
+        eq = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} {forenamesclause} LOWER(o.EmailAddress) LIKE ?", [email])
+    if mobile != "" and asm3.utils.atoi(mobile) > 9999: # at least 5 digits to constitute a valid number
         atoimp = dbo.sql_atoi("o.MobileTelephone")
-        mq = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} {atoimp} LIKE ? AND LOWER(o.OwnerForeNames) LIKE ?", [asm3.utils.digits_only(mobile), forenames])
+        mq = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} {forenamesclause} {atoimp} LIKE ?", [asm3.utils.digits_only(mobile)])
         if checkmobilehome:
             atoihp = dbo.sql_atoi("o.HomeTelephone")
-            mq += dbo.query(get_person_query(dbo) + f" WHERE {siteclause} {atoihp} LIKE ? AND LOWER(o.OwnerForeNames) LIKE ?", [asm3.utils.digits_only(mobile), forenames])
+            mq += dbo.query(get_person_query(dbo) + f" WHERE {siteclause} {forenamesclause} {atoihp} LIKE ?", [asm3.utils.digits_only(mobile)])
     if forenames != "%" and surname != "" and address != "%":
         per = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} LOWER(o.OwnerSurname) LIKE ? AND " \
          "LOWER(o.OwnerForeNames) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?", (surname, forenames, address))
     if checkcouple:
-        if forenames != "%" and email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
-            ceq = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} LOWER(o.EmailAddress2) LIKE ? AND LOWER(o.OwnerForeNames2) LIKE ?", [email, forenames])
-        if forenames != "%" and mobile != "" and asm3.utils.atoi(mobile) > 9999: # at least 5 digits to constitute a valid number
+        if email != "" and email.find("@") != -1 and email.find(".") != -1 and len(email) > 6:
+            ceq = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} {forenamesclause2} LOWER(o.EmailAddress2) LIKE ?", [email])
+        if mobile != "" and asm3.utils.atoi(mobile) > 9999: # at least 5 digits to constitute a valid number
             atoimp2 = dbo.sql_atoi("o.MobileTelephone2")
-            cmq = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} {atoimp2} LIKE ? AND LOWER(o.OwnerForeNames2) LIKE ?", [asm3.utils.digits_only(mobile), forenames])
+            cmq = dbo.query(get_person_query(dbo) + f" WHERE {siteclause} {forenamesclause2} {atoimp2} LIKE ?", [asm3.utils.digits_only(mobile)])
         if forenames != "%" and surname != "" and address != "%":
             cper = dbo.query(get_person_query(dbo) + " WHERE %s LOWER(o.OwnerSurname2) LIKE ? AND " \
              "LOWER(o.OwnerForeNames2) LIKE ? AND LOWER(o.OwnerAddress) LIKE ?" % siteclause, (surname, forenames, address))
