@@ -628,7 +628,6 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, loca
         ss.ands.append(get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids))
     ss.add_str_pair("microchip", "a.IdentichipNumber", "a.Identichip2Number")
     ss.add_str("tattoo", "a.TattooNumber")
-    ss.add_str("rabiestag", "a.RabiesTag")
     ss.add_str("pickupaddress", "a.PickupAddress")
     ss.add_id("sex", "a.Sex")
     ss.add_id("size", "a.Size")
@@ -662,6 +661,13 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, loca
         ss.add_str("agegroup", "a.AgeGroup")
     ss.add_date("outbetweenfrom", "outbetweento", "a.ActiveMovementDate")
     ss.add_str("createdby", "a.CreatedBy")
+
+    if post["rabiestag"] != "":
+        ilike = dbo.sql_ilike("a.RabiesTag", "?")
+        ilike2 = dbo.sql_ilike("animalvaccination.RabiesTag", "?")
+        ss.ands.append(f"({ilike} OR EXISTS (SELECT ID FROM animalvaccination WHERE {ilike2} AND AnimalID = a.ID))")
+        ss.values.append("%%%s%%" % post["rabiestag"].lower( ))
+        ss.values.append("%%%s%%" % post["rabiestag"].lower( ))
 
     if post["agedbetweenfrom"] != "" and post["agedbetweento"] != "":
         ss.ands.append("a.DateOfBirth >= ? AND a.DateOfBirth <= ?")
