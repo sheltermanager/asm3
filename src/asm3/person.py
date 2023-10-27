@@ -150,6 +150,7 @@ def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname
     if asm3.utils.is_numeric(address): address += " "
     address += "%"
     forenames = forenames.replace("'", "`").lower().strip()
+    forenames += "%%"
     if forenames.find(" ") != -1: forenames = forenames[0:forenames.find(" ")]
     forenamesclause = ""
     forenamesclause2 = ""
