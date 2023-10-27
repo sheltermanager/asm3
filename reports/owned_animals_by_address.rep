@@ -1,0 +1,65 @@
+Owned animals by Address
+###
+People
+###
+34404/Any rev01
+###
+List of animal and owner information by selected street name
+###
+en
+###
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, a.BreedName, a.AnimalAge, s.SpeciesName, sx.Sex, sz.Size, 
+o.OwnerName, o.OwnerAddress, o.ID AS OID,
+o.OwnerTown, o.OwnerCounty,
+o.OwnerPostcode, o.EmailAddress, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN lksex sx ON sx.ID = a.Sex
+INNER JOIN lksize sz ON sz.ID = a.Size
+INNER JOIN owner o ON o.ID = a.OwnerID
+WHERE o.OwnerAddress LIKE '%$ASK STRING Street Name$%'
+ORDER BY o.OwnerAddress, o.OwnerName
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Animal Name</th>
+<th>Shelter Code</th>
+<th>Breed</th>
+<th>Species</th>
+<th>Size</th>
+<th>Sex</th> 
+<th>Animal Age</th>  
+<th>Owner Name</th>
+<th>Address</th>
+<th>Town</th>
+<th>County</th>
+<th>Post Code</th>
+<th>Email</th>
+<th>Phone</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
+<td>$SHELTERCODE</td>
+<td>$BREEDNAME</td>
+<td>$SPECIESNAME</td>
+<td>$SIZE</td>  
+<td>$SEX</td>
+<td>$ANIMALAGE</td>  
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a></td>
+<td>$OWNERADDRESS</td>
+<td>$OWNERTOWN</td>
+<td>$OWNERCOUNTY</td>
+<td>$OWNERPOSTCODE</td>
+<td>$EMAILADDRESS</td>
+<td>H: $HOMETELEPHONE W: $WORKTELEPHONE C: $MOBILETELEPHONE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<p>Total: {COUNT.ANIMALNAME}</p>
+FOOTER$$
