@@ -31,7 +31,7 @@ class TestPerson(unittest.TestCase):
 
     def test_get_person_similar(self):
         self.assertNotEqual(0, len(asm3.person.get_person_similar(base.get_dbo(), "", "", "Testing", "Test", "123 street")))
-        self.assertNotEqual(0, asm3.person.get_person_similar(base.get_dbo(), "", "", "Testing", "Test", "123 street", checkcouple=True, checkmobilehome=True, checkforenames=False, siteid=1))
+        self.assertEqual(0, len(asm3.person.get_person_similar(base.get_dbo(), "test@test.com", "012345678", "Testing", "Test", "123 street", checkcouple=True, checkmobilehome=True, checkforenames=False, siteid=1)))
 
     def test_get_person_name(self):
         self.assertNotEqual("", asm3.person.get_person_name(base.get_dbo(), self.nid))
