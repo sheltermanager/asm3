@@ -156,6 +156,7 @@ $(function() {
                 "IsVet":  _("Vet"),
                 "IsGiftAid":  _("GiftAid"),
                 "AdditionalFlags": _("Flags"),
+                "FosterCapacity": _("Foster Capacity"), 
                 "LookingForSummary": _("Looking For"),
                 "HomeCheckAreas":  _("Areas"),
                 "DateLastHomeChecked":  _("Homechecked"),
@@ -182,7 +183,7 @@ $(function() {
             const DATE_FIELDS = [ "CreatedDate", "MembershipExpiryDate", "DateLastHomeChecked" ];
             const STRING_FIELDS = [ "CreatedBy", "OwnerTitle", "OwnerInitials", "OwnerForenames", "OwnerSurname",
                 "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", "OwnerPostcode",
-                "HomeTelephone", "WorkTelephone", "MobileTelephone", "EmailAddress",
+                "HomeTelephone", "WorkTelephone", "MobileTelephone", "EmailAddress", "FosterCapacity",
                 "MembershipNumber", "HomeCheckAreas", "LookingForSummary" ];
             const COMMENT_FIELDS = [ "Comments" ];
             const YES_NO_FIELDS = [ "IDCheck", "IsBanned", "IsVolunteer", "IsHomeChecker", 

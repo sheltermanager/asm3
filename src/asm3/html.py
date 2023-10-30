@@ -777,6 +777,7 @@ def json_personfindcolumns(dbo: Database) -> ColumnList:
         ( "IsVet", _("Vet", l) ),
         ( "IsGiftAid", _("GiftAid", l) ),
         ( "AdditionalFlags", _("Flags", l) ),
+        ( "FosterCapacity", _("Foster Capacity", l) ),
         ( "LookingForSummary", _("Looking For", l) ),
         ( "HomeCheckAreas", _("Homecheck Areas", l) ),
         ( "DateLastHomeChecked", _("Homecheck Date", l) ),
