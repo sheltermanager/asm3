@@ -5,7 +5,6 @@
 ASM_PATH={{ asm_path }}
 ASM_DATA={{ asm_data }}
 
-BACKUP_CNF=/etc/cron.daily/backup.d/asm.cnf
 BACKUP_DIR=/srv/backups/asm
 
 DB_HOST={{ asm_db.host }}
@@ -31,9 +30,9 @@ today=`date +%F`
 
 # Dump the database
 {% if   asm_db.type == 'POSTGRESQL' %}
-PGPASSFILE=$BACKUP_CNF pg_dump -w -U $DB_USER -h $DB_HOST -d $DB_NAME -p $DB_PORT > $ASM_DATA/$DB_NAME.sql
+sudo -u postgres pg_dump > $DB_NAME > $ASM_DATA/$DB_NAME.sql
 {% elif asm_db.type == 'MYSQL' %}
-mysqldump --defaults-extra-file=$BACKUP_CNF $DB_NAME > $ASM_DATA/$DB_NAME.sql
+mysqldump --defaults-extra-file=/etc/mysql/debian $DB_NAME > $ASM_DATA/$DB_NAME.sql
 {% endif %}
 
 cd $ASM_DATA

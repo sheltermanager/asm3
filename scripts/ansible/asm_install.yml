@@ -106,15 +106,4 @@
           - "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}/templates/asm/cron.sh"
           - "{{ inventory_dir }}/group_vars/asm/templates/cron.sh"
           - "{{  playbook_dir }}/templates/cron.sh"
-
-    - name: "Configure backup credentials"
-      template:
-        src: "{{ lookup('first_found', paths ) }}"
-        dest: "/etc/cron.daily/backup.d/asm.cnf"
-        mode: "0600"
-      vars:
-        paths:
-          - "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}/templates/asm/backup.cnf"
-          - "{{ inventory_dir }}/group_vars/asm/templates/backup.cnf"
-          - "{{  playbook_dir }}/templates/backup.cnf"
 ...
