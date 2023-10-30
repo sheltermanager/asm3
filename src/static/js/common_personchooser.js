@@ -524,16 +524,7 @@ $.widget("asm.personchooser", {
                 let people = jQuery.parseJSON(data);
                 let rec = people[0];
                 self.element.val(rec.ID);
-                let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + 
-                    rec.OWNERNAME + " - " + rec.OWNERCODE + "</a></span>";
-                if (self.options.mode == "full") {
-                    disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + 
-                        "<br/>" + rec.OWNERPOSTCODE + 
-                        (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") +
-                        "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + 
-                        "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
-                }
-                display.html(disp);
+                display.html(self.render_display(rec));
                 node.find(".personchooser-banned").val(rec.ISBANNED);
                 node.find(".personchooser-idcheck").val(rec.IDCHECK);
                 node.find(".personchooser-postcode").val(rec.OWNERPOSTCODE);
@@ -588,16 +579,7 @@ $.widget("asm.personchooser", {
                     let rec = people[$(this).attr("data")];
                     self.element.val(rec.ID);
                     self.options.rec = rec;
-                    let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + 
-                        "\">" + rec.OWNERNAME + " - " + rec.OWNERCODE + "</a></span>";
-                    if (self.options.mode == "full") {
-                        disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + 
-                            rec.OWNERPOSTCODE + 
-                            (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") +
-                            "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + 
-                            rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
-                    }
-                    display.html(disp);
+                    display.html(self.render_display(rec));
                     node.find(".personchooser-banned").val(rec.ISBANNED);
                     node.find(".personchooser-idcheck").val(rec.IDCHECK);
                     node.find(".personchooser-postcode").val(rec.OWNERPOSTCODE);
@@ -619,6 +601,26 @@ $.widget("asm.personchooser", {
                 log.error(response);
             }
         });
+    },
+
+    /**
+     * Returns a string containing the html content for the display element.
+     * @param rec The person record.
+     */
+    render_display: function(rec) {
+        let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"person?id=" + rec.ID + "\">" + 
+            rec.OWNERNAME + " - " + rec.OWNERCODE + "</a></span>";
+        if (rec.POPUPWARNING) {
+            disp += " " + html.icon("warning", rec.POPUPWARNING);
+        }
+        if (this.options.mode == "full") {
+            disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + 
+                "<br/>" + rec.OWNERPOSTCODE + 
+                (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") +
+                "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + 
+                "<br/>" + rec.MOBILETELEPHONE + "<br/>" + rec.EMAILADDRESS;
+        }
+        return disp;
     },
 
     /**
