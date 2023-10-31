@@ -11,8 +11,8 @@ $(function() {
                 rows: controller.rows,
                 idcolumn: "COLLATIONID",
                 edit: async function(row) {
-                    if (asm.mobileapp) {
-                        // Open in a new page on the mobile app rather than a dialog
+                    if (asm.mobileapp || common.browser_is.mobile) {
+                        // Open in a new page on mobile rather than a dialog
                         common.route("onlineform_incoming_print?ids=" + row.COLLATIONID, true);
                         return;
                     }
