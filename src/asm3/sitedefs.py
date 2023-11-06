@@ -338,6 +338,9 @@ MANUAL_FAQ_URL = get_string("manual_faq_url", "static/pages/manual/faq.html")
 MANUAL_PDF_URL = get_string("manual_pdf_url", "")
 MANUAL_VIDEO_URL = get_string("manual_video_url", "")
 
+# The file containing names to be used by the random name function
+RANDOM_NAME_FILE = get_string("random_name_file", os.path.dirname(os.path.abspath(__file__)) + os.sep + ".." + os.sep + "static" + os.sep + "pages" + os.sep + "names.txt")
+
 SMCOM_PAYMENT_LINK = get_string("smcom_payment_link", "")
 SMCOM_LOGIN_URL = get_string("smcom_login_url", "")
 
