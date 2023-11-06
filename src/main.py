@@ -939,6 +939,9 @@ class mobile(ASMEndpoint):
     login_url = "mobile_login"
 
     def content(self, o):
+        # this endpoint will be deprecated at some point probably replaced by mobile2
+        if o.session.mobileapp:
+            self.redirect("https://sheltermanager.com/site/en_mobileretire.html")
         self.content_type("text/html")
         return asm3.mobile.page(o.dbo, o.session, o.user)
 

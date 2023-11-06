@@ -1050,9 +1050,9 @@ $(function() {
             // Set the total alerts
             $("#totalalerts").text( main.total_alerts );
 
-            // Show a warning about retiring of the mobile app
+            // Redirect to the page about the retiring of the mobile app
             if (asm.mobileapp) {
-                header.show_error('<a href="https://sheltermanager.com/site/en_mobileretire.html">This app will stop working on 1st November 2023. Please click here for more info.</a>');
+                window.location = "https://sheltermanager.com/site/en_mobileretire.html";
             }
 
         },
