@@ -3841,7 +3841,7 @@ msgstr "Niveau de zoom par défaut lors de la conversion de documents en PDF"
 
 #: options.js
 msgid "Defaults"
-msgstr "Par défaut"
+msgstr "Valeurs par défaut"
 
 #: options.js
 msgid "Defaults formats for code and shortcode are TYYYYNNN and NNT"
@@ -4238,7 +4238,7 @@ msgstr "ACO expédié"
 
 #: options.js
 msgid "Display"
-msgstr "Afficher"
+msgstr "Affichage"
 
 #: onlineform.js additional.js
 msgid "Display Index"
@@ -4269,7 +4269,7 @@ msgid ""
 "Do not send an email if there are no medical items due for animals in the "
 "care of this fosterer"
 msgstr ""
-"N'envoyez pas d'e-mail s'il n'y a pas d'articles médicaux dus pour les "
+"Ne pas envoyer d'e-mail s'il n'y a pas d'échéances médicales pour les "
 "animaux confiés à cette famille d'accueil"
 
 #: onlineforms.js
@@ -5514,7 +5514,7 @@ msgstr "Trouver un contact"
 
 #: options.js
 msgid "Find Screens"
-msgstr "Ecrans des trouvés"
+msgstr "Écrans de recherches"
 
 #: html.py configuration.py header.js
 msgid "Find a found animal"
@@ -5945,7 +5945,7 @@ msgstr "Autre (entrée)"
 
 #: options.js
 msgid "From address book"
-msgstr "Du carnet d'adresses"
+msgstr "Liste d'autres expéditeurs"
 
 #: movement.py
 msgid "From retailer is only valid on adoption movements."
@@ -6448,7 +6448,7 @@ msgstr "Surligner"
 #: options.js
 msgid "Highlight unadopted reservations after"
 msgstr ""
-"Mettre en surbrillance les réservations d'animaux pas encore adoptées après"
+"Mettre en surbrillance les réservations sans adoption après"
 
 #: dbupdate.py
 msgid "Himalayan"
@@ -9793,27 +9793,27 @@ msgstr "Points pour avoir été trouvé dans les 2 semaines suivant la perte"
 
 #: options.js
 msgid "Points for matching age group"
-msgstr "Points pour le groupe d'âge correspondant"
+msgstr "Points pour correspondance du groupe d'âge"
 
 #: options.js
 msgid "Points for matching breed"
-msgstr "Points pour la race correspondante"
+msgstr "Points pour correspondance de la race"
 
 #: options.js
 msgid "Points for matching color"
-msgstr "Points pour la couleur correspondante"
+msgstr "Points pour correspondance de la couleur"
 
 #: options.js
 msgid "Points for matching features"
-msgstr "Points pour les traits correspondants"
+msgstr "Points pour correspondance des traits"
 
 #: options.js
 msgid "Points for matching lost/found area"
-msgstr "Points pour correspondre à la zone perdue / trouvée"
+msgstr "Points pour correspondance de la zone perdue/trouvée"
 
 #: options.js
 msgid "Points for matching microchip"
-msgstr "Points pour une identification qui correspond"
+msgstr "Points pour correspondance de la puce"
 
 #: options.js
 msgid "Points for matching sex"
@@ -9821,15 +9821,15 @@ msgstr "Points pour correspondance du sexe"
 
 #: options.js
 msgid "Points for matching species"
-msgstr "Points pour l'appariement des espèces"
+msgstr "Points pour correspondance de l'espèce"
 
 #: options.js
 msgid "Points for matching zipcode"
-msgstr "Points pour faire correspondre le code postal"
+msgstr "Points pour correspondance du code postal"
 
 #: options.js
 msgid "Points required to appear on match report"
-msgstr "Points requis pour apparaître sur le rapport de match"
+msgstr "Points nécessaires pour apparaître dans le rapport"
 
 #: dbupdate.py
 msgid "Polish"
@@ -10700,7 +10700,7 @@ msgstr "Renouveler la licence"
 #: options.js
 msgid "Replies to the fosterer email should go to"
 msgstr ""
-"Les réponses à l'e-mail envoyé aux familles d'accueil doivent être renvoyées "
+"Les réponses à l'e-mail envoyé aux familles d'accueil doivent être adressées "
 "à"
 
 #: reports.py common_html.js reports.js
@@ -13306,8 +13306,8 @@ msgid ""
 "This many years after creation of a person record, the name, address and "
 "telephone data will be anonymized."
 msgstr ""
-"Ces nombreuses années après la création d'un dossier de personne, le nom, "
-"l'adresse et les données téléphoniques seront anonymisés."
+"Nombre d'années après la création d'un dossier de personne après lesquelles "
+"le nom, l'adresse et les données téléphoniques seront anonymisés."
 
 #: options.js
 msgid "This month"
@@ -13690,7 +13690,7 @@ msgstr ""
 
 #: options.js
 msgid "To address book"
-msgstr "Vers le carnet d'adresses"
+msgstr "Liste d'autres destinataires"
 
 #: header.js
 msgid "To continue using ASM, please renew {0}"
@@ -14282,7 +14282,7 @@ msgstr "Utiliser TLS"
 
 #: options.js
 msgid "Use a single breed field"
-msgstr "Utilisez un seul champ de race"
+msgstr "Utiliser un seul champ de race"
 
 #: publish_options.js
 msgid "Use animal description"
@@ -14971,7 +14971,7 @@ msgid ""
 "When I set a new GDPR Opt-In contact option, make a note of it in the log "
 "with this type"
 msgstr ""
-"Lorsque je définis une nouvelle option de contact Opt-In GDPR, notez-la dans "
+"Lorsque je définis une nouvelle option de contact Opt-In RGPD, la noter dans "
 "le journal avec ce type"
 
 #: options.js
@@ -15024,8 +15024,8 @@ msgid ""
 "When entering vaccinations, default the last batch number and manufacturer "
 "for that type"
 msgstr ""
-"Lors de la saisie des vaccinations, définissez par défaut le dernier numéro "
-"de lot et le dernier fabricant pour ce type"
+"Lors de la saisie des vaccinations, pré-remplir les derniers numéro "
+"de lot et fabricant de ce type"
 
 #: options.js
 msgid "When matching lost animals, include shelter animals"
