@@ -1,6 +1,7 @@
 48
 ================
 
+06/10/23 Use https for future references to deb repository
 06/10/23 Trigger mobile app retired page #1096
 30/10/23 Add FosterCapacity as an available column to find person #1341
 30/10/23 personchooser: Show warning icon if the person has a warning #1339
