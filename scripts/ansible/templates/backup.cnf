@@ -1,7 +1,0 @@
-{% if asm_db.type=='POSTGRESQL' %}
-{{ asm_db.host }}:{{ asm_db.port }}:{{ asm_db.name }}:{{ asm_db.user }}:{{ asm_db.pass|replace(":", "\\:") }}
-{% elif asm_db.type=='MYSQL' %}
-[mysqldump]
-user={{ asm_db.user }}
-password={{ asm_db.pass }}
-{% endif %}
