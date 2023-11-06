@@ -106,6 +106,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^578077", "name": "AVID Friendchip Norway", "locales": "nb" },
     { "length": 15, "regex": r"^578094", "name": "AVID Friendchip Norway", "locales": "nb" },
     { "length": 15, "regex": r"^578097", "name": "AVID Friendchip Norway", "locales": "nb" },
+    { "length": 15, "regex": r"^6200982", "name": "MSD Animal Health", "locales": "" },
     { "length": 15, "regex": r"^688", "name": "Serbia", "locales": "" },
     { "length": 15, "regex": r"^752", "name": "Trovan Sweden", "locales": "" },
     { "length": 15, "regex": r"^900008", "name": "Orthana Intertrade", "locales": "" },
