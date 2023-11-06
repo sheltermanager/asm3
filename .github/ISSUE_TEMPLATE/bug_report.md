@@ -11,7 +11,7 @@ assignees: ''
 
 If you are a sheltermanager.com customer needing support, please email help@sheltermanager.com
 
-If you are an open source user needing help, please use the forum at https://sheltermanager.com/site/en_forum.html
+If you are an open source user needing help, please use the discussions link above at https://github.com/sheltermanager.com/asm3/discussions
 
 ----------------------------------------------------
 
