@@ -16,15 +16,15 @@ with open("/home/robin/Downloads/20230819_muut_backup.json", "r") as f:
 
 d = json.loads(s)
 
-print("<!DOCTYPE html>" \
-    "<html>" \
-    "<head>" \
-    "<meta charset=\"utf-8\">" \
-    "<style>" \
-    "* { font-family: sans-serif }" \
-    "</style>" \
-    "</head>" \
-    "<body>")
+print("<!DOCTYPE html>\n" \
+    "<html>\n" \
+    "<head>\n" \
+    "<meta charset=\"utf-8\">\n" \
+    "<style>\n" \
+    "* { font-family: sans-serif }\n" \
+    "</style>\n" \
+    "</head>\n" \
+    "<body>\n")
 print("<h1>Forum Archive</h1>")
 print("<p>Below are all the posts from the sheltermanager forum that was previously hosted on muut.com. As of 6th November 2023, we have switched to github discussions.</p>")
 print("<p>Use the find facility in your browser (usually CTRL+F) to search this page.</p>")
