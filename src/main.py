@@ -1230,7 +1230,7 @@ class mobile_report(ASMEndpoint):
         asm3.al.debug("got criteria (%s), executing report %d" % (str(post.data), crid), "code.report", dbo)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         if asm3.configuration.audit_on_view_report(dbo):
-            asm3.audit.view_report(dbo, o.user, title, str(post.data))
+            asm3.audit.view_report(dbo, o.user, crid, title, str(post.data))
         s = asm3.reports.execute(dbo, crid, o.user, p)
         return s
 
@@ -6394,7 +6394,7 @@ class report(ASMEndpoint):
         asm3.al.debug("got criteria (%s), executing report %d %s" % (str(post.data), crid, title), "code.report", dbo)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         if asm3.configuration.audit_on_view_report(dbo):
-            asm3.audit.view_report(dbo, o.user, title, str(post.data))
+            asm3.audit.view_report(dbo, o.user, crid, title, str(post.data))
         s = asm3.reports.execute(dbo, crid, o.user, p)
         return s
 

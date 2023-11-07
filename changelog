@@ -1,6 +1,7 @@
 48
 ================
 
+07/10/23 Set report ID in LinkID when auditing a report being viewed
 07/10/23 QueryBuilder: support waiting list reports #1357
 06/10/23 Use an overridable sitedef/file to store random names #1356
 06/10/23 Use https for future references to deb repository

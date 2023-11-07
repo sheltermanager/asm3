@@ -190,8 +190,8 @@ def logout(dbo: Database, username: str, remoteip: str = "", useragent: str = ""
 def view_record(dbo: Database, username: str, tablename: str, linkid: int, description: str) -> None:
     action(dbo, VIEW_RECORD, username, tablename, linkid, "", description)
 
-def view_report(dbo: Database, username: str, reportname: str, criteria: str) -> None:
-    action(dbo, VIEW_REPORT, username, "customreport", 0, "", "%s - %s" % (reportname, criteria))
+def view_report(dbo: Database, username: str, reportid: int, reportname: str, criteria: str) -> None:
+    action(dbo, VIEW_REPORT, username, "customreport", reportid, "", "%s - %s" % (reportname, criteria))
 
 def email(dbo: Database, username: str, fromadd: str, toadd: str, ccadd: str, bccadd: str, subject: str, body: str) -> None:
     action(dbo, EMAIL, username, "email", 0, "", "from: %s, to: %s, cc: %s, bcc: %s, subject: %s - %s" % (fromadd, toadd, ccadd, bccadd, subject, body))
