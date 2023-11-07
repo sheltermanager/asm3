@@ -6562,6 +6562,7 @@ class reports(JSONEndpoint):
             "sizes": asm3.lookups.get_sizes(dbo),
             "species": asm3.lookups.get_species(dbo),
             "testtypes": asm3.lookups.get_test_types(dbo),
+            "urgencies": asm3.lookups.get_urgencies(dbo),
             "vaccinationtypes": asm3.lookups.get_vaccination_types(dbo),
             "rows": reports
         }
