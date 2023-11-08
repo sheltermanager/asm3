@@ -359,6 +359,10 @@ def check_sql(dbo: Database, username: str, sql: str) -> str:
             sub = "2001"
         elif token.startswith("ASK DATE") or token.startswith("CURRENT_DATE") or token in COMMON_DATE_TOKENS:
             sub = "2001-01-01"
+        elif token == "":
+            # an empty token means $$ was used, it can be used to quote strings in Postgres - leave it alone
+            i = sql.find("$", end+1)
+            continue
         else:
             sub = "0"
         sql = sql[0:i] + sub + sql[end+1:]
@@ -1338,6 +1342,11 @@ class Report:
                 for p in params:
                     if p[0] == token:
                         value = p[2]
+            # empty token - so $$ entered, used for quoting strings in postgres
+            # - skip replacing the token and leave it alone
+            if token == "":
+                sp = s.find("$", ep+1)
+                continue
             # Do the replace
             s = s[0:sp] + value + s[ep+1:]
             # Next token
