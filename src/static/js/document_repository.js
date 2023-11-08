@@ -88,7 +88,7 @@ $(function() {
                 },
                 { type: "raw", markup: '<div class="asm-mediadroptarget"><p>' + _("Drop files here...") + '</p></div>',
                     hideif: function() { 
-                        return common.browser_is.mobile || asm.mobileapp;
+                        return common.browser_is.mobile;
                     }},
             ];
             this.dialog = dialog;

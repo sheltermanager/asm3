@@ -777,7 +777,7 @@ const tableform = {
         };
 
         var dw = dialog.width || "auto";
-        if (asm.mobileapp || common.browser_is.mobile) {
+        if (common.browser_is.mobile) {
             dw = dialog.width || 1024;
             dw = Math.min(dw, $(window).width());
         }
@@ -917,7 +917,7 @@ const tableform = {
         };
 
         var dw = dialog.width || "auto";
-        if (asm.mobileapp || common.browser_is.mobile) {
+        if (common.browser_is.mobile) {
             dw = dialog.width || 1024;
             dw = Math.min(dw, $(window).width());
         }

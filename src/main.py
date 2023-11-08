@@ -458,7 +458,7 @@ class JSONEndpoint(ASMEndpoint):
             nonce = asm3.utils.uuid_str()
             # CSP is not applied to users of the mobile app as we still have users with
             # older iPads on iOS/Safari 9 that only supports CSP1
-            if CONTENT_SECURITY_POLICY != "" and not o.session.mobileapp:
+            if CONTENT_SECURITY_POLICY != "":
                 self.header("Content-Security-Policy", CONTENT_SECURITY_POLICY % { "nonce": nonce })
             return "%(header)s\n" \
                 "<script nonce='%(nonce)s'>\n" \
@@ -693,7 +693,6 @@ class configjs(ASMEndpoint):
             "mapproviderkey": mapproviderkey,
             "osmmaptiles": osmmaptiles,
             "hascustomlogo": asm3.dbfs.file_exists(dbo, "logo.jpg"),
-            "mobileapp": o.session.mobileapp,
             "fontfiles": asm3.configuration.watermark_get_valid_font_files(),
             "config": asm3.configuration.get_map(dbo),
             "menustructure": asm3.html.menu_structure(o.locale, 
@@ -1292,8 +1291,7 @@ class mobile_sign(ASMEndpoint):
             "ids": ids,
             "count": len(names),
             "names": ", ".join(names),
-            "preview": "\n<hr/>\n".join(preview),
-            "mobileapp": o.session.mobileapp
+            "preview": "\n<hr/>\n".join(preview)
         }
         return asm3.html.mobile_page(l, _("Signing Pad", l), [ "mobile_sign.js" ], c)
 
@@ -1306,6 +1304,8 @@ class main(JSONEndpoint):
     url = "main"
 
     def controller(self, o):
+        if o.session.mobileapp:
+            self.redirect("https://sheltermanager.com/site/en_mobileretire.html")
         dbo = o.dbo
         # If a b (build) parameter was passed to indicate the client wants to
         # get the latest js files, invalidate the config so that the

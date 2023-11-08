@@ -1050,11 +1050,6 @@ $(function() {
             // Set the total alerts
             $("#totalalerts").text( main.total_alerts );
 
-            // Redirect to the page about the retiring of the mobile app
-            if (asm.mobileapp) {
-                window.location = "https://sheltermanager.com/site/en_mobileretire.html";
-            }
-
         },
 
         destroy: function() {

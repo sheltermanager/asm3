@@ -156,7 +156,7 @@ $(function() {
                 { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
                 { type: "raw", markup: '<div class="asm-mediadroptarget mode-table"><p>' + _("Drop files here...") + '</p></div>',
                     hideif: function() { 
-                        return common.browser_is.mobile || asm.mobileapp; 
+                        return common.browser_is.mobile;
                     }},
                 { id: "viewmode", text: "", icon: "batch", enabled: "always", tooltip: _("Toggle table/icon view") }
             ];

@@ -598,11 +598,6 @@ header = {
             $("#asm-chusersettings, #asm-chpassword").hide();
         }
 
-        // Hide the logout link if we're in the mobile app
-        if (asm.mobileapp) {
-            $("#asm-logout").hide();
-        }
-
         // If the database is locked, show it
         if (config.has() && config.bool("SMDBLocked")) {
             $("#asm-topline-locked").fadeIn().delay(20000).slideUp();

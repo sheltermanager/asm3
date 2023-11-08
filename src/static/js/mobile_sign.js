@@ -123,8 +123,6 @@ $(document).ready(function() {
         $("#review").slideDown();
     });
 
-    if (controller.mobileapp) { $("#sig-logout").hide(); }
-
     $("#waiting-container").toggle(controller.count == 0);
     $("#signing-container").toggle(controller.count != 0);
 
