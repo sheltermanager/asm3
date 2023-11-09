@@ -1143,7 +1143,7 @@ class mobile_login(ASMEndpoint):
                 asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "code.login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
-                    self.redirect("mobile")
+                    self.redirect("mobile2")
                     return
         # Do we have base64 encoded credentials?
         if o.post["b"] != "":
@@ -1154,7 +1154,7 @@ class mobile_login(ASMEndpoint):
                 asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "code.login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
-                    self.redirect("main")
+                    self.redirect("mobile2")
                     return
         self.content_type("text/html")
         c = {
