@@ -1142,6 +1142,17 @@ class mobile_login(ASMEndpoint):
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
                     self.redirect("mobile")
                     return
+        # Do we have base64 encoded credentials?
+        if o.post["b"] != "":
+            cred = asm3.utils.base64decode_str(o.post["b"])
+            if cred and cred.find("|") != -1:
+                database, username, password = cred.split("|")
+                rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
+                asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "code.login")
+                user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
+                if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
+                    self.redirect("main")
+                    return
         self.content_type("text/html")
         c = {
             "smcom": asm3.smcom.active(),
@@ -1452,6 +1463,18 @@ class login(ASMEndpoint):
                 database, username, password = cred.split("|")
                 rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
                 asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "code.login")
+                user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
+                if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
+                    self.redirect("main")
+                    return
+
+        # Do we have base64 encoded credentials?
+        if post["b"] != "":
+            cred = asm3.utils.base64decode_str(post["b"])
+            if cred and cred.find("|") != -1:
+                database, username, password, otp = cred.split("|")
+                rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password, "onetimepass": otp }, LOCALE)
+                asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "code.login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
                     self.redirect("main")

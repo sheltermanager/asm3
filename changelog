@@ -1,6 +1,7 @@
 48
 ================
 
+09/10/23 Can pass credentials as b64 token for login from other services
 08/10/23 Refactor out UI mobileapp handling, use server redirects for now #1096
 08/10/23 Leave $$ alone in report SQL as Postgres uses it for quoting strings
 07/10/23 Set report ID in LinkID when auditing a report being viewed
