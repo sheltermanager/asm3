@@ -1149,8 +1149,8 @@ class mobile_login(ASMEndpoint):
         if o.post["b"] != "":
             cred = asm3.utils.base64decode_str(o.post["b"])
             if cred and cred.find("|") != -1:
-                database, username, password = cred.split("|")
-                rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
+                database, username, password, rememberme = cred.split("|")
+                rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password, "rememberme": rememberme }, LOCALE)
                 asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "code.login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
@@ -1478,8 +1478,8 @@ class login(ASMEndpoint):
         if post["b"] != "":
             cred = asm3.utils.base64decode_str(post["b"])
             if cred and cred.find("|") != -1:
-                database, username, password = cred.split("|")
-                rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
+                database, username, password, rememberme = cred.split("|")
+                rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password, "rememberme": rememberme }, LOCALE)
                 asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "code.login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
