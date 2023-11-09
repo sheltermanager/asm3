@@ -1130,6 +1130,9 @@ class mobile_login(ASMEndpoint):
         if not MULTIPLE_DATABASES:
             dbo = asm3.db.get_database()
             o.locale = asm3.configuration.locale(dbo)
+        database = o.post["smaccount"]
+        username = o.post["username"]
+        password = o.post["password"]
         # Do we have a remember me token?
         rmtoken = self.get_cookie("asm_remember_me")
         if rmtoken:
@@ -1159,9 +1162,9 @@ class mobile_login(ASMEndpoint):
             "smcomloginurl": SMCOM_LOGIN_URL,
             "multipledatabases": MULTIPLE_DATABASES,
             "target": o.post["target"],
-            "smaccount": o.post["smaccount"],
-            "username": o.post["username"],
-            "password": o.post["password"]
+            "smaccount": database,
+            "username": username,
+            "password": password
         }
         return asm3.html.mobile_page(l, _("Login"), [ "mobile_login.js" ], c)
 
@@ -1428,6 +1431,9 @@ class login(ASMEndpoint):
         post = o.post
         has_animals = True
         custom_splash = False
+        database = post["smaccount"]
+        username = post["username"]
+        password = post["password"]
 
         # Filter out Internet Explorer altogether.
         ua = self.user_agent()
@@ -1472,8 +1478,8 @@ class login(ASMEndpoint):
         if post["b"] != "":
             cred = asm3.utils.base64decode_str(post["b"])
             if cred and cred.find("|") != -1:
-                database, username, password, otp = cred.split("|")
-                rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password, "onetimepass": otp }, LOCALE)
+                database, username, password = cred.split("|")
+                rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
                 asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "code.login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
@@ -1488,9 +1494,9 @@ class login(ASMEndpoint):
              "hasanimals": has_animals,
              "customsplash": custom_splash,
              "emergencynotice": emergency_notice(),
-             "smaccount": post["smaccount"],
-             "husername": post["username"],
-             "hpassword": post["password"],
+             "smaccount": database, 
+             "husername": username,
+             "hpassword": password,
              "baseurl": BASE_URL,
              "smcomloginurl": SMCOM_LOGIN_URL,
              "nologconnection": post["nologconnection"],
