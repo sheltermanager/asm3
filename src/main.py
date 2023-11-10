@@ -1153,7 +1153,7 @@ class mobile_login(ASMEndpoint):
                 rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password, "rememberme": rememberme }, LOCALE)
                 asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "code.login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
-                if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
+                if user not in ( "FAIL", "DISABLED", "WRONGSERVER", "ASK2FA" ):
                     self.redirect("mobile2")
                     return
         self.content_type("text/html")
@@ -1482,7 +1482,7 @@ class login(ASMEndpoint):
                 rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password, "rememberme": rememberme }, LOCALE)
                 asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "code.login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
-                if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
+                if user not in ( "FAIL", "DISABLED", "WRONGSERVER", "ASK2FA" ):
                     self.redirect("main")
                     return
 
