@@ -3990,9 +3990,49 @@ def update_all_variable_animal_data(dbo: Database) -> str:
     asm3.al.debug("updated variable data for %d animals (locale %s)" % (len(animals), l), "animal.update_all_variable_animal_data", dbo)
     return "OK %d" % len(animals)
 
+def update_foster_variable_animal_data(dbo: Database) -> str:
+    """
+    Updates variable animal data for all foster animals.
+    This wouldn't do anything if foster on shelter is true, so explicitly looks for off-shelter fostered.
+    """
+    l = dbo.locale
+    
+    animalupdatebatch = []
+
+    # Load age group bands now to save repeated looped lookups
+    bands = asm3.configuration.age_group_bands(dbo)
+
+    # Relevant on shelter animal fields
+    animals = dbo.query("SELECT ID, DateBroughtIn, DeceasedDate, DiedOffShelter, Archived, ActiveMovementDate, " \
+        "MostRecentEntryDate, DateOfBirth FROM animal WHERE Archived = 1 AND ActiveMovementType = 2")
+
+    # Get a single lookup of movement histories for our on shelter animals
+    movements = dbo.query("SELECT ad.AnimalID, ad.MovementDate, ad.ReturnDate " \
+        "FROM animal a " \
+        "INNER JOIN adoption ad ON a.ID = ad.AnimalID " \
+        "WHERE a.Archived = 0 AND ad.MovementType NOT IN (2,8) " \
+        "AND ad.MovementDate Is Not Null AND ad.ReturnDate Is Not Null " \
+        "ORDER BY a.ID")
+
+    for a in animals:
+        update_variable_animal_data(dbo, a.id, a, animalupdatebatch, bands, movements)
+
+    dbo.execute_many("UPDATE animal SET " \
+        "TimeOnShelter = ?, " \
+        "AgeGroup = ?, " \
+        "AgeGroupActiveMovement = ?, " \
+        "AnimalAge = ?, " \
+        "DaysOnShelter = ?, " \
+        "TotalTimeOnShelter = ?, " \
+        "TotalDaysOnShelter = ? " \
+        "WHERE ID = ?", animalupdatebatch)
+
+    asm3.al.debug("updated variable data for %d animals (locale %s)" % (len(animals), l), "animal.update_foster_variable_animal_data", dbo)
+    return "OK %d" % len(animals)
+
 def update_on_shelter_variable_animal_data(dbo: Database) -> str:
     """
-    Updates variable animal data for all shelter animals.
+    Updates variable animal data for all shelter and foster animals.
     """
     l = dbo.locale
     

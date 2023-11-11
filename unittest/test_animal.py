@@ -280,6 +280,12 @@ class TestAnimal(unittest.TestCase):
         base.execute("DELETE FROM configuration WHERE ItemName LIKE 'VariableAnimalDataUpdated'")
         asm3.animal.update_all_variable_animal_data(base.get_dbo())
 
+    def test_update_foster_variable_animal_data(self):
+        asm3.animal.update_foster_variable_animal_data(base.get_dbo())
+
+    def test_update_on_shelter_variable_animal_data(self):
+        asm3.animal.update_on_shelter_variable_animal_data(base.get_dbo())
+
     def test_update_all_animal_statuses(self):
         asm3.animal.update_all_animal_statuses(base.get_dbo())
 
