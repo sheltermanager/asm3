@@ -106,7 +106,7 @@ def embellish_latest_movement(dbo: Database, p: ResultRow) -> ResultRow:
         order, MAX(ID) will fail and return the wrong movement. """
     if p is None: return p
     lm = dbo.first_row(dbo.query("SELECT m.ID AS LatestMoveAnimalID, a.ID AS LatestMoveAnimalID, a.AnimalName AS LatestMoveAnimalName, " \
-        "a.ShelterCode AS LatestMoveShelterCode, mt.MovementType AS LatestMoveTypeName " \
+        "a.ShelterCode AS LatestMoveShelterCode, a.DeceasedDate AS LatestMoveDeceasedDate, mt.MovementType AS LatestMoveTypeName " \
         "FROM adoption m "
         "INNER JOIN animal a ON m.AnimalID = a.ID " \
         "INNER JOIN lksmovementtype mt ON mt.ID = m.MovementType " \
@@ -116,6 +116,7 @@ def embellish_latest_movement(dbo: Database, p: ResultRow) -> ResultRow:
         p.LATESTMOVEANIMALID = lm.LATESTMOVEANIMALID
         p.LATESTMOVEANIMALNAME = lm.LATESTMOVEANIMALNAME
         p.LATESTMOVESHELTERCODE = lm.LATESTMOVESHELTERCODE
+        p.LATESTMOVEDECEASEDDATE = lm.LATESTMOVEDECEASEDDATE
         p.LATESTMOVETYPENAME = lm.LATESTMOVETYPENAME
     return p
 

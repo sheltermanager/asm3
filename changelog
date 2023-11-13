@@ -1,15 +1,16 @@
 48
 ================
 
-11/10/23 Update ages/times for foster animals as part of the batch
-09/10/23 Can pass credentials as b64 token for login from other services
-08/10/23 Refactor out UI mobileapp handling, use server redirects for now #1096
-08/10/23 Leave $$ alone in report SQL as Postgres uses it for quoting strings
-07/10/23 Set report ID in LinkID when auditing a report being viewed
-07/10/23 QueryBuilder: support waiting list reports #1357
-06/10/23 Use an overridable sitedef/file to store random names #1356
-06/10/23 Use https for future references to deb repository
-06/10/23 Trigger mobile app retired page #1096
+13/11/23 Update latest movement deceased date on person records #1360
+11/11/23 Update ages/times for foster animals as part of the batch
+09/11/23 Can pass credentials as b64 token for login from other services
+08/11/23 Refactor out UI mobileapp handling, use server redirects for now #1096
+08/11/23 Leave $$ alone in report SQL as Postgres uses it for quoting strings
+07/11/23 Set report ID in LinkID when auditing a report being viewed
+07/11/23 QueryBuilder: support waiting list reports #1357
+06/11/23 Use an overridable sitedef/file to store random names #1356
+06/11/23 Use https for future references to deb repository
+06/11/23 Trigger mobile app retired page #1096
 30/10/23 Add FosterCapacity as an available column to find person #1341
 30/10/23 personchooser: Show warning icon if the person has a warning #1339
 27/10/23 Advanced find animal: search historic vacc rabies tags #947
