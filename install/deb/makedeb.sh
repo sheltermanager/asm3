@@ -74,7 +74,7 @@ Description: Web-based management solution for animal shelters and sanctuaries
 # Generate the sheltermanager3.cron.daily script
 echo "#!/bin/sh
 cd /usr/lib/sheltermanager3
-python3 cron.py all
+python3 cron.py all 2>/dev/null
 " > sheltermanager3/etc/cron.daily/sheltermanager3
 chmod +x sheltermanager3/etc/cron.daily/sheltermanager3
 
