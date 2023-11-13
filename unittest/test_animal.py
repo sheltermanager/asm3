@@ -78,6 +78,7 @@ class TestAnimal(unittest.TestCase):
         asm3.animal.get_code(base.get_dbo(), self.nid)
         asm3.animal.get_short_code(base.get_dbo(), self.nid)
         asm3.animal.get_shelter_code(base.get_dbo(), self.nid)
+        asm3.animal.get_animal_name(base.get_dbo(), self.nid)
         asm3.animal.get_animal_namecode(base.get_dbo(), self.nid)
         self.assertNotEqual(0, len(asm3.animal.get_recent_changes(base.get_dbo())))
         self.assertNotEqual(0, len(asm3.animal.get_shelter_animals(base.get_dbo())))

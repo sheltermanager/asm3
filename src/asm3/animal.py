@@ -1655,6 +1655,10 @@ def get_animal_id_and_bonds(dbo: Database, animalid: int) -> List[int]:
     if bonded.BONDEDANIMAL2ID is not None and bonded.BONDEDANIMAL2ID > 0: animalids.append(bonded.BONDEDANIMAL2ID)
     return animalids
 
+def get_animal_name(dbo: Database, animalid: int) -> str:
+    """ Returns an animal's name alone or empty string if the id is not valid """
+    return dbo.query_string("SELECT AnimalName FROM animal WHERE ID = ?", [asm3.utils.cint(animalid)])
+
 def get_animal_namecode(dbo: Database, animalid: int) -> str:
     """
     Returns an animal's name and code or an empty
