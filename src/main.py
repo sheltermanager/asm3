@@ -591,7 +591,7 @@ class image(ASMEndpoint):
             # Log them and rethrow an error that won't end up in our unhandled error box
             msg = str(err)
             if hasattr(err, "msg"): msg = err.msg # Our custom exceptions like DBFSError, ASMError, etc all have a msg attribute
-            asm3.al.error(msg, "code.image", o.dbo, sys.exc_info())
+            asm3.al.error(msg, "main.image", o.dbo, sys.exc_info())
             raise asm3.utils.ASMError("failure retrieving image")
 
         if imagedata != b"NOPIC":
@@ -714,7 +714,7 @@ class csperror(ASMEndpoint):
     user_activity = False
 
     def post_all(self, o):
-        asm3.al.error(str(self.data), "code.csperror", o.dbo)
+        asm3.al.error(str(self.data), "main.csperror", o.dbo)
         if EMAIL_ERRORS:
             asm3.utils.send_email(o.dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", "CSP violation", str(self.data), "plain", exceptions=False, bulk=True)
 
@@ -733,7 +733,7 @@ class jserror(ASMEndpoint):
         emailsubject = "%s @ %s" % (post["user"], post["account"])
         emailbody = "%s:\n\n%s\n\nUA: %s\nIP: %s" % (post["msg"], post["stack"], self.user_agent(), self.remote_ip())
         logmess = "%s@%s: %s %s" % (post["user"], post["account"], post["msg"], post["stack"])
-        asm3.al.error(logmess, "code.jserror", dbo)
+        asm3.al.error(logmess, "main.jserror", dbo)
         if EMAIL_ERRORS:
             asm3.utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", emailsubject, emailbody, "plain", exceptions=False, bulk=True)
 
@@ -748,7 +748,7 @@ class custom_logo(ASMEndpoint):
             self.cache_control(CACHE_ONE_DAY, 120)
             return asm3.dbfs.get_string_filepath(dbo, "/reports/logo.jpg")
         except Exception as err:
-            asm3.al.error("%s" % str(err), "code.custom_logo", dbo)
+            asm3.al.error("%s" % str(err), "main.custom_logo", dbo)
             return ""
 
 class custom_splash(ASMEndpoint):
@@ -762,7 +762,7 @@ class custom_splash(ASMEndpoint):
             self.cache_control(CACHE_ONE_DAY, 120)
             return asm3.dbfs.get_string_filepath(dbo, "/reports/splash.jpg")
         except Exception as err:
-            asm3.al.error("%s" % str(err), "code.custom_splash", dbo)
+            asm3.al.error("%s" % str(err), "main.custom_splash", dbo)
             return ""
 
 class media(ASMEndpoint):
@@ -951,7 +951,7 @@ class mobile2(ASMEndpoint):
     def content(self, o):
         dbo = o.dbo
         animals = asm3.animal.get_shelterview_animals(dbo, o.locationfilter, o.siteid, o.visibleanimalids)
-        asm3.al.debug("mobile2 for '%s' (%s animals)" % (o.user, len(animals)), "code.mobile2", dbo)
+        asm3.al.debug("mobile2 for '%s' (%s animals)" % (o.user, len(animals)), "main.mobile2", dbo)
         c = {
             "animals":      animals,
             "reports":      asm3.reports.get_available_reports(dbo),
@@ -1140,18 +1140,22 @@ class mobile_login(ASMEndpoint):
             if cred and cred.find("|") != -1:
                 database, username, password = cred.split("|")
                 rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
-                asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "code.login")
+                asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "main.mobile_login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
                     self.redirect("mobile2")
                     return
         # Do we have base64 encoded credentials?
         if o.post["b"] != "":
-            cred = asm3.utils.base64decode_str(o.post["b"])
+            cred = ""
+            try:
+                cred = asm3.utils.base64decode_str(o.post["b"])
+            except Exception as err:
+                asm3.al.error("failed decoding base64 credentials: %s (%s)" % (o.post["b"], err), "main.mobile_login")
             if cred and cred.find("|") != -1:
                 database, username, password, rememberme = cred.split("|")
                 rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password, "rememberme": rememberme }, LOCALE)
-                asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "code.login")
+                asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "main.mobile_login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER", "ASK2FA" ):
                     self.redirect("mobile2")
@@ -1240,7 +1244,7 @@ class mobile_report(ASMEndpoint):
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
         if len(crit) != 0 and post["hascriteria"] == "": self.redirect("mobile_report_criteria?id=%s" % post.integer("id"))
         title = asm3.reports.get_title(dbo, crid)
-        asm3.al.debug("got criteria (%s), executing report %d" % (str(post.data), crid), "code.report", dbo)
+        asm3.al.debug("got criteria (%s), executing report %d" % (str(post.data), crid), "main.report", dbo)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         if asm3.configuration.audit_on_view_report(dbo):
             asm3.audit.view_report(dbo, o.user, crid, title, str(post.data))
@@ -1262,7 +1266,7 @@ class mobile_report_criteria(ASMEndpoint):
             for name, rtype, question in crit:
                 if rtype == c: return True
             return False
-        asm3.al.debug("building criteria form for report %d %s" % (crid, title), "code.mobile_report", dbo)
+        asm3.al.debug("building criteria form for report %d %s" % (crid, title), "main.mobile_report", dbo)
         c = {
             "crid":         crid,
             "criteria":     crit,
@@ -1391,7 +1395,7 @@ class main(JSONEndpoint):
             dm = asm3.diary.get_uncompleted_upto_today(dbo, "", includecreatedby=False, offset=-365)
         else:
             dm = asm3.diary.get_uncompleted_upto_today(dbo, o.user, includecreatedby=False, offset=-365)
-        asm3.al.debug("main for '%s', %d diary notes, %d messages" % (o.user, len(dm), len(mess)), "code.main", dbo)
+        asm3.al.debug("main for '%s', %d diary notes, %d messages" % (o.user, len(dm), len(mess)), "main.main", dbo)
         return {
             "age": age,
             "showwelcome": showwelcome,
@@ -1468,7 +1472,7 @@ class login(ASMEndpoint):
             if cred and cred.find("|") != -1:
                 database, username, password = cred.split("|")
                 rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
-                asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "code.login")
+                asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "main.login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
                     self.redirect("main")
@@ -1476,11 +1480,15 @@ class login(ASMEndpoint):
 
         # Do we have base64 encoded credentials?
         if post["b"] != "":
-            cred = asm3.utils.base64decode_str(post["b"])
+            cred = ""
+            try:
+                cred = asm3.utils.base64decode_str(post["b"])
+            except Exception as err:
+                asm3.al.error("failed decoding base64 credentials: %s (%s)" % (post["b"], err), "main.login")
             if cred and cred.find("|") != -1:
                 database, username, password, rememberme = cred.split("|")
                 rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password, "rememberme": rememberme }, LOCALE)
-                asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "code.login")
+                asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "main.login")
                 user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER", "ASK2FA" ):
                     self.redirect("main")
@@ -1527,16 +1535,16 @@ class login(ASMEndpoint):
     def post_reset(self, o):
         dbo = asm3.db.get_database(o.post["database"])
         if dbo.database in asm3.db.ERROR_VALUES: return "FAIL"
-        asm3.al.info("password reset request from %s for %s:%s" % (self.remote_ip(), o.post["database"], o.post["username"]), "code.login", dbo)
+        asm3.al.info("password reset request from %s for %s:%s" % (self.remote_ip(), o.post["database"], o.post["username"]), "main.login", dbo)
         l = dbo.locale
         # This cannot be used to reset the SM master password
         if asm3.smcom.active() and o.post["username"].lower() == dbo.database:
-            asm3.al.error("failed password reset: master user %s cannot be reset here" % o.post["username"], "code.login", dbo)
+            asm3.al.error("failed password reset: master user %s cannot be reset here" % o.post["username"], "main.login", dbo)
             return "MASTER"
         # Find the user id and email address for the username given
         user = dbo.first_row(dbo.query("SELECT ID, EmailAddress, DisableLogin FROM users WHERE LOWER(UserName) LIKE ?", [o.post["username"].lower()]))
         if not user or not user.EMAILADDRESS or user.DISABLELOGIN == 1: 
-            asm3.al.error("failed password reset: user %s is disabled, does not exist or have an email address" % o.post["username"], "code.login", dbo)
+            asm3.al.error("failed password reset: user %s is disabled, does not exist or have an email address" % o.post["username"], "main.login", dbo)
             return "NOEMAIL"
         # Generate a random cache key for this reset
         cache_key = asm3.utils.uuid_str()
@@ -1557,7 +1565,7 @@ class login_jsonp(ASMEndpoint):
     check_logged_in = False
 
     def content(self, o):
-        asm3.al.warn("login_jsonp hit from %s" % self.remote_ip(), "code.login_jsonp", o.dbo)
+        asm3.al.warn("login_jsonp hit from %s" % self.remote_ip(), "main.login_jsonp", o.dbo)
         self.content_type("text/javascript")
         return "%s({ response: '%s' })" % (o.post["callback"], asm3.users.web_login(o.post, o.session, self.remote_ip(), self.user_agent(), PATH))
 
@@ -1590,7 +1598,7 @@ class reset_password(ASMEndpoint):
         l = dbo.locale
         newpass = asm3.animalname.get_random_single_word_name()
         asm3.users.reset_password(dbo, rinfo["userid"], newpass)
-        asm3.al.info("reset password for %s to %s" % (rinfo["username"], newpass), "code.reset_password", dbo)
+        asm3.al.info("reset password for %s to %s" % (rinfo["username"], newpass), "main.reset_password", dbo)
         asm3.utils.send_email(dbo, asm3.configuration.email(dbo), rinfo["email"], "", "", 
             _("Reset password request", l),
             _("The ASM password for {0} has been reset to:", l).format(rinfo["username"]) + 
@@ -1607,7 +1615,7 @@ class accounts(JSONEndpoint):
             accounts = asm3.financial.get_accounts(dbo)
         else:
             accounts = asm3.financial.get_accounts(dbo, onlyactive=True)
-        asm3.al.debug("got %d accounts" % len(accounts), "code.accounts", dbo)
+        asm3.al.debug("got %d accounts" % len(accounts), "main.accounts", dbo)
         return {
             "accounttypes": asm3.lookups.get_account_types(dbo),
             "costtypes": asm3.lookups.get_costtypes(dbo),
@@ -1661,7 +1669,7 @@ class accounts_trx(JSONEndpoint):
         transactions = asm3.financial.get_transactions(dbo, post.integer("accountid"), fromdate, todate, post.integer("recfilter"))
         accountcode = asm3.financial.get_account_code(dbo, post.integer("accountid"))
         accounteditroles = asm3.financial.get_account_edit_roles(dbo, post.integer("accountid"))
-        asm3.al.debug("got %d trx for %s <-> %s" % (len(transactions), str(fromdate), str(todate)), "code.accounts_trx", dbo)
+        asm3.al.debug("got %d trx for %s <-> %s" % (len(transactions), str(fromdate), str(todate)), "main.accounts_trx", dbo)
         return {
             "rows": transactions,
             "codes": "|".join(asm3.financial.get_account_codes(dbo, accountcode)),
@@ -1697,7 +1705,7 @@ class additional(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         fields = asm3.additional.get_fields(dbo)
-        asm3.al.debug("got %d additional field definitions" % len(fields), "code.additional", dbo)
+        asm3.al.debug("got %d additional field definitions" % len(fields), "main.additional", dbo)
         return {
             "rows": fields,
             "fieldtypes": asm3.lookups.get_additionalfield_types(dbo),
@@ -1730,7 +1738,7 @@ class animal(JSONEndpoint):
         self.check_animal(a)
         recname = "%s %s" % (a.CODE, a.ANIMALNAME)
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animal", a["ID"], recname)
-        asm3.al.debug("opened animal %s" % recname, "code.animal", dbo)
+        asm3.al.debug("opened animal %s" % recname, "main.animal", dbo)
         return {
             "animal": a,
             "activelitters": asm3.animal.get_active_litters_brief(dbo),
@@ -1828,7 +1836,7 @@ class animal_boarding(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         rows = asm3.financial.get_animal_boarding(dbo, animalid)
-        asm3.al.debug("got %d animal boarding records" % (len(rows)), "code.animal_boarding", dbo)
+        asm3.al.debug("got %d animal boarding records" % (len(rows)), "main.animal_boarding", dbo)
         return {
             "name": "animal_boarding",
             "animal": a,
@@ -1878,7 +1886,7 @@ class animal_clinic(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         rows = asm3.clinic.get_animal_appointments(dbo, animalid)
-        asm3.al.debug("got %d appointments for animal %s %s" % (len(rows), a.CODE, a.ANIMALNAME), "code.animal_clinic", dbo)
+        asm3.al.debug("got %d appointments for animal %s %s" % (len(rows), a.CODE, a.ANIMALNAME), "main.animal_clinic", dbo)
         return {
             "name": self.url,
             "animal": a,
@@ -1902,7 +1910,7 @@ class animal_costs(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         cost = asm3.animal.get_costs(dbo, animalid)
-        asm3.al.debug("got %d costs for animal %s %s" % (len(cost), a["CODE"], a["ANIMALNAME"]), "code.animal_costs", dbo)
+        asm3.al.debug("got %d costs for animal %s %s" % (len(cost), a["CODE"], a["ANIMALNAME"]), "main.animal_costs", dbo)
         return {
             "rows": cost,
             "animal": a,
@@ -1942,7 +1950,7 @@ class animal_diary(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         diaries = asm3.diary.get_diaries(dbo, asm3.diary.ANIMAL, animalid)
-        asm3.al.debug("got %d notes for animal %s %s" % (len(diaries), a["CODE"], a["ANIMALNAME"]), "code.animal_diary", dbo)
+        asm3.al.debug("got %d notes for animal %s %s" % (len(diaries), a["CODE"], a["ANIMALNAME"]), "main.animal_diary", dbo)
         return {
             "rows": diaries,
             "animal": a,
@@ -1965,7 +1973,7 @@ class animal_diet(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         diet = asm3.animal.get_diets(dbo, animalid)
-        asm3.al.debug("got %d diets for animal %s %s" % (len(diet), a["CODE"], a["ANIMALNAME"]), "code.animal_diet", dbo)
+        asm3.al.debug("got %d diets for animal %s %s" % (len(diet), a["CODE"], a["ANIMALNAME"]), "main.animal_diet", dbo)
         return {
             "rows": diet,
             "animal": a,
@@ -1998,7 +2006,7 @@ class animal_donations(JSONEndpoint):
         if a is None: raise web.notfound()
         self.check_animal(a)
         donations = asm3.financial.get_animal_donations(dbo, animalid)
-        asm3.al.debug("got %d donations for animal %s %s" % (len(donations), a["CODE"], a["ANIMALNAME"]), "code.animal_donations", dbo)
+        asm3.al.debug("got %d donations for animal %s %s" % (len(donations), a["CODE"], a["ANIMALNAME"]), "main.animal_donations", dbo)
         return {
             "rows": donations,
             "animal": a,
@@ -2021,7 +2029,7 @@ class animal_embed(ASMEndpoint):
         self.content_type("application/json")
         q = o.post["q"]
         rows = asm3.animal.get_animal_find_simple(o.dbo, q, classfilter=o.post["filter"], limit=100, locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
-        asm3.al.debug("got %d results for '%s'" % (len(rows), self.query()), "code.animal_embed", o.dbo)
+        asm3.al.debug("got %d results for '%s'" % (len(rows), self.query()), "main.animal_embed", o.dbo)
         return asm3.utils.json(rows)
 
     def post_multiselect(self, o):
@@ -2042,10 +2050,10 @@ class animal_embed(ASMEndpoint):
         animalid = o.post.integer("id")
         a = asm3.animal.get_animal(dbo, animalid)
         if a is None:
-            asm3.al.error("get animal by id %d found no records." % animalid, "code.animal_embed", dbo)
+            asm3.al.error("get animal by id %d found no records." % animalid, "main.animal_embed", dbo)
             self.notfound()
         else:
-            asm3.al.debug("got animal %s %s by id" % (a["CODE"], a["ANIMALNAME"]), "code.animal_embed", dbo)
+            asm3.al.debug("got animal %s %s by id" % (a["CODE"], a["ANIMALNAME"]), "main.animal_embed", dbo)
             return asm3.utils.json((a,))
 
 class animal_find(JSONEndpoint):
@@ -2071,7 +2079,7 @@ class animal_find(JSONEndpoint):
             "colours": asm3.lookups.get_basecolours(dbo),
             "users": asm3.users.get_users(dbo)
         }
-        asm3.al.debug("loaded lookups for find animal", "code.animal_find", dbo)
+        asm3.al.debug("loaded lookups for find animal", "main.animal_find", dbo)
         return c
 
 class animal_find_results(JSONEndpoint):
@@ -2089,7 +2097,7 @@ class animal_find_results(JSONEndpoint):
         add = None
         if len(results) > 0: 
             add = asm3.additional.get_additional_fields_ids(dbo, results, "animal")
-        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "code.animal_find_results", dbo)
+        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "main.animal_find_results", dbo)
         return {
             "rows": results,
             "additional": add,
@@ -2107,7 +2115,7 @@ class animal_licence(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         licences = asm3.financial.get_animal_licences(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d licences" % len(licences), "code.animal_licence", dbo)
+        asm3.al.debug("got %d licences" % len(licences), "main.animal_licence", dbo)
         return {
             "name": "animal_licence",
             "rows": licences,
@@ -2130,7 +2138,7 @@ class animal_log(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         logs = asm3.log.get_logs(dbo, asm3.log.ANIMAL, o.post.integer("id"), logfilter)
-        asm3.al.debug("got %d logs for animal %s %s" % (len(logs), a["CODE"], a["ANIMALNAME"]), "code.animal_log", dbo)
+        asm3.al.debug("got %d logs for animal %s %s" % (len(logs), a["CODE"], a["ANIMALNAME"]), "main.animal_log", dbo)
         return {
             "name": "animal_log",
             "linkid": o.post.integer("id"),
@@ -2153,7 +2161,7 @@ class animal_media(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         m = asm3.media.get_media(dbo, asm3.media.ANIMAL, o.post.integer("id"))
-        asm3.al.debug("got %d media entries for animal %s %s" % (len(m), a["CODE"], a["ANIMALNAME"]), "code.animal_media", dbo)
+        asm3.al.debug("got %d media entries for animal %s %s" % (len(m), a["CODE"], a["ANIMALNAME"]), "main.animal_media", dbo)
         return {
             "media": m,
             "animal": a,
@@ -2183,7 +2191,7 @@ class animal_medical(JSONEndpoint):
         limit = asm3.configuration.medical_item_display_limit(dbo)
         med = asm3.medical.get_regimens_treatments(dbo, o.post.integer("id"), limit=limit)
         profiles = asm3.medical.get_profiles(dbo)
-        asm3.al.debug("got %d medical entries for animal %s %s" % (len(med), a["CODE"], a["ANIMALNAME"]), "code.animal_medical", dbo)
+        asm3.al.debug("got %d medical entries for animal %s %s" % (len(med), a["CODE"], a["ANIMALNAME"]), "main.animal_medical", dbo)
         return {
             "profiles": profiles,
             "rows": med,
@@ -2208,7 +2216,7 @@ class animal_movements(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         movements = asm3.movement.get_animal_movements(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d movements for animal %s %s" % (len(movements), a["CODE"], a["ANIMALNAME"]), "code.animal_movements", dbo)
+        asm3.al.debug("got %d movements for animal %s %s" % (len(movements), a["CODE"], a["ANIMALNAME"]), "main.animal_movements", dbo)
         return {
             "rows": movements,
             "animal": a,
@@ -2246,7 +2254,7 @@ class animal_new(JSONEndpoint):
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "sizes": asm3.lookups.get_sizes(dbo)
         }
-        asm3.al.debug("loaded lookups for new animal", "code.animal_new", dbo)
+        asm3.al.debug("loaded lookups for new animal", "main.animal_new", dbo)
         return c
 
     def post_save(self, o):
@@ -2256,7 +2264,7 @@ class animal_new(JSONEndpoint):
 
     def post_recentnamecheck(self, o):
         rows = asm3.animal.get_recent_with_name(o.dbo, o.post["animalname"])
-        asm3.al.debug("recent names found %d rows for '%s'" % (len(rows), o.post["animalname"]), "code.animal_new.recentnamecheck", o.dbo)
+        asm3.al.debug("recent names found %d rows for '%s'" % (len(rows), o.post["animalname"]), "main.animal_new.recentnamecheck", o.dbo)
         if len(rows) > 0:
             return "|".join((str(rows[0]["ANIMALID"]), rows[0]["SHELTERCODE"], rows[0]["ANIMALNAME"]))
 
@@ -2270,7 +2278,7 @@ class animal_observations(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         animals = asm3.animal.get_shelterview_animals(dbo, o.locationfilter, o.siteid, o.visibleanimalids)
-        asm3.al.debug("got %d shelter animals" % len(animals), "code.animal_observations", dbo)
+        asm3.al.debug("got %d shelter animals" % len(animals), "main.animal_observations", dbo)
         return { 
             "animals": animals,
             "logtypes": asm3.lookups.get_log_types(dbo), 
@@ -2297,7 +2305,7 @@ class animal_test(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         test = asm3.medical.get_tests(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d tests" % len(test), "code.animal_test", dbo)
+        asm3.al.debug("got %d tests" % len(test), "main.animal_test", dbo)
         return {
             "name": "animal_test",
             "animal": a,
@@ -2320,7 +2328,7 @@ class animal_transport(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         transports = asm3.movement.get_animal_transports(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d transports" % len(transports), "code.animal_transport", dbo)
+        asm3.al.debug("got %d transports" % len(transports), "main.animal_transport", dbo)
         return {
             "name": "animal_transport",
             "animal": a,
@@ -2342,7 +2350,7 @@ class animal_vaccination(JSONEndpoint):
         if a is None: self.notfound()
         self.check_animal(a)
         vacc = asm3.medical.get_vaccinations(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d vaccinations" % len(vacc), "code.vaccination", dbo)
+        asm3.al.debug("got %d vaccinations" % len(vacc), "main.vaccination", dbo)
         return {
             "name": "animal_vaccination",
             "animal": a,
@@ -2422,7 +2430,7 @@ class boarding(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         rows = asm3.financial.get_boarding(dbo, o.post["filter"])
-        asm3.al.debug("got %d boarding records" % (len(rows)), "code.boarding", dbo)
+        asm3.al.debug("got %d boarding records" % (len(rows)), "main.boarding", dbo)
         return {
             "name": "boarding",
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
@@ -2605,7 +2613,7 @@ class calendar_events(ASMEndpoint):
                     "tooltip": tit, 
                     "icon": "traploan",
                     "link": "person_traploan?id=%s" % l.OWNERID})
-        asm3.al.debug("calendarview found %d events (%s->%s)" % (len(events), start, end), "code.calendarview", dbo)
+        asm3.al.debug("calendarview found %d events (%s->%s)" % (len(events), start, end), "main.calendarview", dbo)
         self.content_type("application/json")
         return asm3.utils.json(events)
 
@@ -2613,7 +2621,7 @@ class change_password(JSONEndpoint):
     url = "change_password"
 
     def controller(self, o):
-        asm3.al.debug("%s change password screen" % o.user, "code.change_password", o.dbo)
+        asm3.al.debug("%s change password screen" % o.user, "main.change_password", o.dbo)
         return {
             "ismaster": asm3.smcom.active() and o.dbo.database == o.user,
             "username": o.user
@@ -2622,17 +2630,17 @@ class change_password(JSONEndpoint):
     def post_all(self, o):
         oldpass = o.post["oldpassword"]
         newpass = o.post["newpassword"]
-        asm3.al.debug("%s changed password" % (o.user), "code.change_password", o.dbo)
+        asm3.al.debug("%s changed password" % (o.user), "main.change_password", o.dbo)
         asm3.users.change_password(o.dbo, o.user, oldpass, newpass)
 
 class change_user_settings(JSONEndpoint):
     url = "change_user_settings"
 
     def controller(self, o):
-        asm3.al.debug("%s change user settings screen" % o.user, "code.change_user_settings", o.dbo)
+        asm3.al.debug("%s change user settings screen" % o.user, "main.change_user_settings", o.dbo)
         u = asm3.users.get_user(o.dbo, o.user)
         if not u.OTPSECRET:
-            asm3.al.debug("missing otp secret for user %s, generating" % o.user, "code.change_user_settings", o.dbo)
+            asm3.al.debug("missing otp secret for user %s, generating" % o.user, "main.change_user_settings", o.dbo)
             secret = asm3.utils.otp_secret()
             u.OTPSECRET = secret
             asm3.users.update_user_otp_secret(o.dbo, u.ID, secret)
@@ -2654,7 +2662,7 @@ class change_user_settings(JSONEndpoint):
         quicklinks = post["quicklinks"]
         twofavalidcode = post["twofavalidcode"]
         twofavalidpassword = post["twofavalidpassword"]
-        asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, quicklinks=%s, twofacode=%s, twofapass=%s" % (o.user, theme, locale, realname, email, quicklinks, twofavalidcode, twofavalidpassword), "code.change_password", o.dbo)
+        asm3.al.debug("%s changed settings: theme=%s, locale=%s, realname=%s, email=%s, quicklinks=%s, twofacode=%s, twofapass=%s" % (o.user, theme, locale, realname, email, quicklinks, twofavalidcode, twofavalidpassword), "main.change_password", o.dbo)
         asm3.users.update_user_settings(o.dbo, o.user, email, realname, locale, theme, signature, twofavalidcode, twofavalidpassword)
         # If the user's quicklinks are the same as the global ones, set to a blank instead
         if quicklinks == asm3.configuration.quicklinks_id(o.dbo):
@@ -2672,7 +2680,7 @@ class citations(JSONEndpoint):
         # this screen only supports one mode at present - unpaid fines
         # if o.post["filter"] == "unpaid" or o.post["filter"] == "":
         citations = asm3.financial.get_unpaid_fines(o.dbo)
-        asm3.al.debug("got %d citations" % len(citations), "code.citations", o.dbo)
+        asm3.al.debug("got %d citations" % len(citations), "main.citations", o.dbo)
         return {
             "name": "citations",
             "rows": citations,
@@ -2746,7 +2754,7 @@ class clinic_invoice(JSONEndpoint):
         appointment = asm3.clinic.get_appointment(dbo, appointmentid)
         if appointment is None: self.notfound()
         rows = asm3.clinic.get_invoice_items(dbo, appointmentid)
-        asm3.al.debug("got %d invoice items for appointment %d" % (len(rows), appointmentid), "code.clinic_invoice", dbo)
+        asm3.al.debug("got %d invoice items for appointment %d" % (len(rows), appointmentid), "main.clinic_invoice", dbo)
         return {
             "appointment": appointment,
             "appointmentid": appointmentid,
@@ -2776,7 +2784,7 @@ class clinic_consultingroom(JSONEndpoint):
         sf = o.post.integer("filter")
         if o.post["filter"] == "": sf = -1
         rows = asm3.clinic.get_appointments_today(dbo, statusfilter = sf, userfilter = o.user, siteid = o.siteid)
-        asm3.al.debug("got %d appointments" % (len(rows)), "code.clinic_consultingroom", dbo)
+        asm3.al.debug("got %d appointments" % (len(rows)), "main.clinic_consultingroom", dbo)
         return {
             "name": self.url,
             "filter": sf,
@@ -2798,7 +2806,7 @@ class clinic_waitingroom(JSONEndpoint):
         sf = o.post.integer("filter")
         if o.post["filter"] == "": sf = -1
         rows = asm3.clinic.get_appointments_today(dbo, statusfilter = sf, siteid = o.siteid)
-        asm3.al.debug("got %d appointments" % (len(rows)), "code.clinic_waitingroom", dbo)
+        asm3.al.debug("got %d appointments" % (len(rows)), "main.clinic_waitingroom", dbo)
         return {
             "name": self.url,
             "filter": sf,
@@ -2922,7 +2930,7 @@ class diary_edit(JSONEndpoint):
             diaries = asm3.diary.get_future(dbo)
         elif dfilter == "all":
             diaries = asm3.diary.get_all_upto_today(dbo)
-        asm3.al.debug("got %d diaries, filter was %s" % (len(diaries), dfilter), "code.diary_edit", dbo)
+        asm3.al.debug("got %d diaries, filter was %s" % (len(diaries), dfilter), "main.diary_edit", dbo)
         return {
             "rows": diaries,
             "newnote": o.post.integer("newnote") == 1,
@@ -2949,7 +2957,7 @@ class diary_edit_my(JSONEndpoint):
             diaries = asm3.diary.get_future(dbo, userfilter)
         elif dfilter == "all":
             diaries = asm3.diary.get_all_upto_today(dbo, userfilter)
-        asm3.al.debug("got %d diaries (%s), filter was %s" % (len(diaries), userfilter, dfilter), "code.diary_edit_my", dbo)
+        asm3.al.debug("got %d diaries (%s), filter was %s" % (len(diaries), userfilter, dfilter), "main.diary_edit_my", dbo)
         return {
             "rows": diaries,
             "newnote": o.post.integer("newnote") == 1,
@@ -2969,7 +2977,7 @@ class diarytask(JSONEndpoint):
         taskid = o.post.integer("taskid")
         taskname = asm3.diary.get_diarytask_name(dbo, taskid)
         diarytaskdetail = asm3.diary.get_diarytask_details(dbo, taskid)
-        asm3.al.debug("got %d diary task details" % len(diarytaskdetail), "code.diarytask", dbo)
+        asm3.al.debug("got %d diary task details" % len(diarytaskdetail), "main.diarytask", dbo)
         return {
             "rows": diarytaskdetail,
             "taskid": taskid,
@@ -2999,7 +3007,7 @@ class diarytasks(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         diarytaskhead = asm3.diary.get_diarytasks(dbo)
-        asm3.al.debug("got %d diary tasks" % len(diarytaskhead), "code.diarytasks", dbo)
+        asm3.al.debug("got %d diary tasks" % len(diarytaskhead), "main.diarytasks", dbo)
         return {
             "rows": diarytaskhead
         }
@@ -3027,7 +3035,7 @@ class document_gen(ASMEndpoint):
         templatename = asm3.template.get_document_template_name(dbo, dtid)
         title = templatename
         loglinktype = asm3.log.ANIMAL
-        asm3.al.debug("generating %s document for %d, template '%s'" % (linktype, post.integer("id"), templatename), "code.document_gen", dbo)
+        asm3.al.debug("generating %s document for %d, template '%s'" % (linktype, post.integer("id"), templatename), "main.document_gen", dbo)
         logid = post.integer("id")
         if linktype == "ANIMAL" or linktype == "":
             loglinktype = asm3.log.ANIMAL
@@ -3244,7 +3252,7 @@ class document_template_edit(ASMEndpoint):
         templatename = asm3.template.get_document_template_name(dbo, dtid)
         if templatename == "": self.notfound()
         title = templatename
-        asm3.al.debug("editing %s" % templatename, "code.document_template_edit", dbo)
+        asm3.al.debug("editing %s" % templatename, "main.document_template_edit", dbo)
         if templatename.endswith(".html"):
             content = asm3.utils.escape_tinymce(asm3.template.get_document_template_content(dbo, dtid))
             self.content_type("text/html")
@@ -3286,7 +3294,7 @@ class document_media_edit(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         lastmod, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, post.integer("id"))
-        asm3.al.debug("editing media %d" % post.integer("id"), "code.document_media_edit", dbo)
+        asm3.al.debug("editing media %d" % post.integer("id"), "main.document_media_edit", dbo)
         title = medianame
         self.content_type("text/html")
         return asm3.html.tinymce_header(title, "document_edit.js", jswindowprint=asm3.configuration.js_window_print(dbo), \
@@ -3320,7 +3328,7 @@ class document_repository(JSONEndpoint):
 
     def controller(self, o):
         documents = asm3.dbfs.get_document_repository(o.dbo)
-        asm3.al.debug("got %d documents in repository" % len(documents), "code.document_repository", o.dbo)
+        asm3.al.debug("got %d documents in repository" % len(documents), "main.document_repository", o.dbo)
         return { 
             "rows": documents,
             "templates": asm3.template.get_document_templates(o.dbo, "email")
@@ -3387,7 +3395,7 @@ class document_templates(JSONEndpoint):
 
     def controller(self, o):
         templates = asm3.template.get_document_templates(o.dbo)
-        asm3.al.debug("got %d document templates" % len(templates), "code.document_templates", o.dbo)
+        asm3.al.debug("got %d document templates" % len(templates), "main.document_templates", o.dbo)
         return {
             "rows": templates
         }
@@ -3429,7 +3437,7 @@ class donation(JSONEndpoint):
         offset = o.post["offset"]
         if offset == "": offset = "m0"
         donations = asm3.financial.get_donations(dbo, offset)
-        asm3.al.debug("got %d donations" % (len(donations)), "code.donation", dbo)
+        asm3.al.debug("got %d donations" % (len(donations)), "main.donation", dbo)
         return {
             "name": "donation",
             "donationtypes": asm3.lookups.get_donation_types(dbo),
@@ -3530,7 +3538,7 @@ class donation_receive(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        asm3.al.debug("receiving donation", "code.donation_receive", dbo)
+        asm3.al.debug("receiving donation", "main.donation_receive", dbo)
         return {
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
@@ -3549,7 +3557,7 @@ class event(JSONEndpoint):
         dbo = o.dbo
         e = asm3.event.get_event(dbo, o.post.integer("id"))
         if e is None: self.notfound()
-        asm3.al.debug("opened event %s" % "recname", "code.event", dbo)
+        asm3.al.debug("opened event %s" % "recname", "main.event", dbo)
         return {
             "event": e,
             "additional": asm3.additional.get_additional_fields(dbo, e["ID"], "event")
@@ -3574,7 +3582,7 @@ class event_animals(JSONEndpoint):
         if e is None: self.notfound()
         queryfilter = o.post["filter"]
         ea = asm3.event.get_animals_by_event(dbo, event_id, queryfilter)
-        asm3.al.debug("opened event animals %s" % event_id, "code.event_animals", dbo)
+        asm3.al.debug("opened event animals %s" % event_id, "main.event_animals", dbo)
         return {
             "rows": ea,
             "name": "event_animals",
@@ -3628,7 +3636,7 @@ class event_find_results(JSONEndpoint):
         add = None
         if len(results) > 0: 
             add = asm3.additional.get_additional_fields_ids(o.dbo, results, "event")
-        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "code.event_find_results", o.dbo)
+        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "main.event_find_results", o.dbo)
         return {
             "additional": add,
             "rows": results
@@ -3641,7 +3649,7 @@ class event_new(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        asm3.al.debug("add event", "code.event_new", dbo)
+        asm3.al.debug("add event", "main.event_new", dbo)
         return {
             "additional": asm3.additional.get_additional_fields(dbo, 0, "event")
         }
@@ -3660,7 +3668,7 @@ class foundanimal(JSONEndpoint):
         if a is None: self.notfound()
         recname = "%s %s %s" % (a.AGEGROUP, a.SPECIESNAME, a.OWNERNAME)
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animalfound", a["ID"], recname)
-        asm3.al.debug("open found animal %s" % recname, "code.foundanimal", dbo)
+        asm3.al.debug("open found animal %s" % recname, "main.foundanimal", dbo)
         return {
             "animal": a,
             "name": "foundanimal",
@@ -3707,7 +3715,7 @@ class foundanimal_diary(JSONEndpoint):
         a = asm3.lostfound.get_foundanimal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         diaries = asm3.diary.get_diaries(dbo, asm3.diary.FOUNDANIMAL, o.post.integer("id"))
-        asm3.al.debug("got %d diaries for found animal %s %s %s" % (len(diaries), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal_diary", dbo)
+        asm3.al.debug("got %d diaries for found animal %s %s %s" % (len(diaries), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "main.foundanimal_diary", dbo)
         return {
             "rows": diaries,
             "animal": a,
@@ -3747,7 +3755,7 @@ class foundanimal_find_results(JSONEndpoint):
         add = None
         if len(results) > 0: 
             add = asm3.additional.get_additional_fields_ids(dbo, results, "foundanimal")
-        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "code.foundanimal_find_results", dbo)
+        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "main.foundanimal_find_results", dbo)
         return {
             "additional": add,
             "rows": results,
@@ -3787,7 +3795,7 @@ class foundanimal_media(JSONEndpoint):
         a = asm3.lostfound.get_foundanimal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         m = asm3.media.get_media(dbo, asm3.media.FOUNDANIMAL, o.post.integer("id"))
-        asm3.al.debug("got %d media for found animal %s %s %s" % (len(m), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal_media", dbo)
+        asm3.al.debug("got %d media for found animal %s %s %s" % (len(m), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "main.foundanimal_media", dbo)
         return {
             "media": m,
             "animal": a,
@@ -3834,7 +3842,7 @@ class giftaid_hmrc_spreadsheet(JSONEndpoint):
     def post_all(self, o):
         fromdate = o.post["fromdate"]
         todate = o.post["todate"]
-        asm3.al.debug("generating HMRC giftaid spreadsheet for %s -> %s" % (fromdate, todate), "code.giftaid_hmrc_spreadsheet", o.dbo)
+        asm3.al.debug("generating HMRC giftaid spreadsheet for %s -> %s" % (fromdate, todate), "main.giftaid_hmrc_spreadsheet", o.dbo)
         self.content_type("application/vnd.oasis.opendocument.spreadsheet")
         self.cache_control(0)
         self.header("Content-Disposition", "attachment; filename=\"giftaid.ods\"")
@@ -3847,7 +3855,7 @@ class htmltemplates(JSONEndpoint):
 
     def controller(self, o):
         templates = asm3.template.get_html_templates(o.dbo)
-        asm3.al.debug("editing %d html templates" % len(templates), "code.htmltemplates", o.dbo)
+        asm3.al.debug("editing %d html templates" % len(templates), "main.htmltemplates", o.dbo)
         return {
             "rows": templates
         }
@@ -3895,7 +3903,7 @@ class incident(JSONEndpoint):
                 a.DISPATCHLATLONG, a.DISPATCHADDRESS, a.DISPATCHTOWN, a.DISPATCHCOUNTY, a.DISPATCHPOSTCODE)
         recname = "%s %s %s" % (a.ACID, a.INCIDENTNAME, python2display(o.locale, a.INCIDENTDATETIME))
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animalcontrol", a["ID"], recname)
-        asm3.al.debug("open incident %s" % recname, "code.incident", dbo)
+        asm3.al.debug("open incident %s" % recname, "main.incident", dbo)
         return {
             "agegroups": asm3.configuration.age_groups(dbo),
             "additional": asm3.additional.get_additional_fields(dbo, a["ACID"], "incident"),
@@ -3950,7 +3958,7 @@ class incident_citations(JSONEndpoint):
         a = asm3.animalcontrol.get_animalcontrol(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         citations = asm3.financial.get_incident_citations(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d citations" % len(citations), "code.incident_citations", dbo)
+        asm3.al.debug("got %d citations" % len(citations), "main.incident_citations", dbo)
         return {
             "name": "incident_citations",
             "rows": citations,
@@ -3987,7 +3995,7 @@ class incident_find_results(JSONEndpoint):
         add = None
         if len(results) > 0: 
             add = asm3.additional.get_additional_fields_ids(o.dbo, results, "incident")
-        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "code.incident_find_results", o.dbo)
+        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "main.incident_find_results", o.dbo)
         return {
             "additional": add,
             "rows": results
@@ -4003,7 +4011,7 @@ class incident_diary(JSONEndpoint):
         a = asm3.animalcontrol.get_animalcontrol(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         diaries = asm3.diary.get_diaries(dbo, asm3.diary.ANIMALCONTROL, o.post.integer("id"))
-        asm3.al.debug("got %d diaries" % len(diaries), "code.incident_diary", dbo)
+        asm3.al.debug("got %d diaries" % len(diaries), "main.incident_diary", dbo)
         return {
             "rows": diaries,
             "incident": a,
@@ -4026,7 +4034,7 @@ class incident_log(JSONEndpoint):
         logfilter = o.post.integer("filter")
         if logfilter == 0: logfilter = asm3.configuration.default_log_filter(dbo)
         logs = asm3.log.get_logs(dbo, asm3.log.ANIMALCONTROL, o.post.integer("id"), logfilter)
-        asm3.al.debug("got %d logs" % len(logs), "code.incident_log", dbo)
+        asm3.al.debug("got %d logs" % len(logs), "main.incident_log", dbo)
         return {
             "name": "incident_log",
             "linkid": o.post.integer("id"),
@@ -4045,7 +4053,7 @@ class incident_map(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user)
-        asm3.al.debug("incident map, %d active" % (len(rows)), "code.incident_map", dbo)
+        asm3.al.debug("incident map, %d active" % (len(rows)), "main.incident_map", dbo)
         return {
             "rows": rows
         }
@@ -4060,7 +4068,7 @@ class incident_media(JSONEndpoint):
         a = asm3.animalcontrol.get_animalcontrol(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         m = asm3.media.get_media(dbo, asm3.media.ANIMALCONTROL, o.post.integer("id"))
-        asm3.al.debug("got %d media" % len(m), "code.incident_media", dbo)
+        asm3.al.debug("got %d media" % len(m), "main.incident_media", dbo)
         return {
             "media": m,
             "incident": a,
@@ -4083,7 +4091,7 @@ class incident_new(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        asm3.al.debug("add incident", "code.incident_new", dbo)
+        asm3.al.debug("add incident", "main.incident_new", dbo)
         return {
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
@@ -4110,7 +4118,7 @@ class licence(JSONEndpoint):
         offset = o.post["offset"]
         if offset == "": offset = "i31"
         licences = asm3.financial.get_licences(dbo, offset)
-        asm3.al.debug("got %d licences" % len(licences), "code.licence", dbo)
+        asm3.al.debug("got %d licences" % len(licences), "main.licence", dbo)
         return {
             "name": "licence",
             "rows": licences,
@@ -4138,7 +4146,7 @@ class licence_renewal(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        asm3.al.debug("renewing licence", "code.licence_renewal", dbo)
+        asm3.al.debug("renewing licence", "main.licence_renewal", dbo)
         return {
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "licencetypes": asm3.lookups.get_licence_types(dbo),
@@ -4163,7 +4171,7 @@ class litters(JSONEndpoint):
         else:
             litters = asm3.animal.get_litters(dbo, offset)
         littermates = asm3.animal.get_litter_animals(dbo, litters)
-        asm3.al.debug("got %d litters" % len(litters), "code.litters", dbo)
+        asm3.al.debug("got %d litters" % len(litters), "main.litters", dbo)
         return {
             "rows": litters,
             "littermates": littermates,
@@ -4238,7 +4246,7 @@ class lookups(JSONEndpoint):
         table[2] = translate(table[2], l)
         modifiers = table[4].split(" ")
         rows = asm3.lookups.get_lookup(dbo, tablename, table[1])
-        asm3.al.debug("edit lookups for %s, got %d rows" % (tablename, len(rows)), "code.lookups", dbo)
+        asm3.al.debug("edit lookups for %s, got %d rows" % (tablename, len(rows)), "main.lookups", dbo)
         return {
             "rows": rows,
             "adoptapetcolours": asm3.lookups.ADOPTAPET_COLOURS,
@@ -4301,7 +4309,7 @@ class lostanimal(JSONEndpoint):
         if a is None: self.notfound()
         recname = "%s %s %s" % (a.AGEGROUP, a.SPECIESNAME, a.OWNERNAME)
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animallost", a["ID"], recname)
-        asm3.al.debug("open lost animal %s" % recname, "code.foundanimal", dbo)
+        asm3.al.debug("open lost animal %s" % recname, "main.foundanimal", dbo)
         return {
             "animal": a,
             "name": "lostanimal",
@@ -4340,7 +4348,7 @@ class lostanimal_diary(JSONEndpoint):
         a = asm3.lostfound.get_lostanimal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         diaries = asm3.diary.get_diaries(dbo, asm3.diary.LOSTANIMAL, o.post.integer("id"))
-        asm3.al.debug("got %d diaries for lost animal %s %s %s" % (len(diaries), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal_diary", dbo)
+        asm3.al.debug("got %d diaries for lost animal %s %s %s" % (len(diaries), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "main.foundanimal_diary", dbo)
         return {
             "rows": diaries,
             "animal": a,
@@ -4380,7 +4388,7 @@ class lostanimal_find_results(JSONEndpoint):
         add = None
         if len(results) > 0: 
             add = asm3.additional.get_additional_fields_ids(dbo, results, "lostanimal")
-        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "code.lostanimal_find_results", dbo)
+        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "main.lostanimal_find_results", dbo)
         return {
             "additional": add,
             "rows": results,
@@ -4420,7 +4428,7 @@ class lostanimal_media(JSONEndpoint):
         a = asm3.lostfound.get_lostanimal(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         m = asm3.media.get_media(dbo, asm3.media.LOSTANIMAL, o.post.integer("id"))
-        asm3.al.debug("got %d media for lost animal %s %s %s" % (len(m), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "code.foundanimal_media", dbo)
+        asm3.al.debug("got %d media for lost animal %s %s %s" % (len(m), a["AGEGROUP"], a["SPECIESNAME"], a["OWNERNAME"]), "main.foundanimal_media", dbo)
         return {
             "media": m,
             "animal": a,
@@ -4471,10 +4479,10 @@ class lostfound_match(ASMEndpoint):
         self.cache_control(0)
         # If no parameters have been given, use the cached daily copy of the match report
         if lostanimalid == 0 and foundanimalid == 0 and animalid == 0:
-            asm3.al.debug("no parameters given, using cached report", "code.lostfound_match", dbo)
+            asm3.al.debug("no parameters given, using cached report", "main.lostfound_match", dbo)
             return asm3.cachedisk.get("lostfound_report", dbo.database)
         else:
-            asm3.al.debug("match lost=%d, found=%d, animal=%d" % (lostanimalid, foundanimalid, animalid), "code.lostfound_match", dbo)
+            asm3.al.debug("match lost=%d, found=%d, animal=%d" % (lostanimalid, foundanimalid, animalid), "main.lostfound_match", dbo)
             return asm3.lostfound.match_report(dbo, o.user, lostanimalid, foundanimalid, animalid)
 
 class mailmerge(JSONEndpoint):
@@ -4500,12 +4508,12 @@ class mailmerge(JSONEndpoint):
         title = asm3.reports.get_title(dbo, crid)
         # If this mail merge takes criteria and none were supplied, go to the criteria screen to get them
         if len(crit) != 0 and post["hascriteria"] == "": self.redirect("report_criteria?id=%s&target=mailmerge" % crid)
-        asm3.al.debug("entering mail merge selection mode for %d" % post.integer("id"), "code.mailmerge", dbo)
+        asm3.al.debug("entering mail merge selection mode for %d" % post.integer("id"), "main.mailmerge", dbo)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
         if rows is None: rows = []
         numemails = len(self.recipients(rows))
-        asm3.al.debug("got merge rows (%d items, %d email addresses)" % (len(rows), numemails), "code.mailmerge", dbo)
+        asm3.al.debug("got merge rows (%d items, %d email addresses)" % (len(rows), numemails), "main.mailmerge", dbo)
         # construct a list of field tokens for the email helper
         fields = []
         if len(rows) > 0:
@@ -4601,7 +4609,7 @@ class mailmerge(JSONEndpoint):
         mergeparams = ""
         if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
-        asm3.al.debug("returning preview rows for %d [%s]" % (post.integer("mergereport"), post["mergetitle"]), "code.mailmerge", dbo)
+        asm3.al.debug("returning preview rows for %d [%s]" % (post.integer("mergereport"), post["mergetitle"]), "main.mailmerge", dbo)
         return asm3.utils.json(rows)
 
     def post_recipients(self, o):
@@ -4744,7 +4752,7 @@ class maint_undelete(JSONEndpoint):
     def controller(self, o):
         offset = o.post.integer("offset")
         d = asm3.audit.get_deletions(o.dbo, offset)
-        asm3.al.debug("got %d deleted top level records" % len(d), "code.undelete", o.dbo)
+        asm3.al.debug("got %d deleted top level records" % len(d), "main.undelete", o.dbo)
         return { "rows": d }
 
     def post_view(self, o):
@@ -4777,7 +4785,7 @@ class medical(JSONEndpoint):
         if offset == "": offset = "m365"
         med = asm3.medical.get_treatments_outstanding(dbo, offset, o.locationfilter, o.siteid, o.visibleanimalids)
         profiles = asm3.medical.get_profiles(dbo)
-        asm3.al.debug("got %d medical treatments" % len(med), "code.medical", dbo)
+        asm3.al.debug("got %d medical treatments" % len(med), "main.medical", dbo)
         return {
             "profiles": profiles,
             "rows": med,
@@ -4846,7 +4854,7 @@ class medicalprofile(JSONEndpoint):
 
     def controller(self, o):
         med = asm3.medical.get_profiles(o.dbo)
-        asm3.al.debug("got %d medical profiles" % len(med), "code.medical_profile", o.dbo)
+        asm3.al.debug("got %d medical profiles" % len(med), "main.medical_profile", o.dbo)
         return {
             "rows": med
         }
@@ -4962,7 +4970,7 @@ class move_book_foster(JSONEndpoint):
         dbo = o.dbo
         movements = asm3.movement.get_movements(dbo, asm3.movement.FOSTER)
         movements = asm3.animal.remove_nonvisible_animals(movements, o.visibleanimalids)
-        asm3.al.debug("got %d movements" % len(movements), "code.move_book_foster", dbo)
+        asm3.al.debug("got %d movements" % len(movements), "main.move_book_foster", dbo)
         return {
             "name": "move_book_foster",
             "rows": movements,
@@ -4982,7 +4990,7 @@ class move_book_recent_adoption(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_recent_adoptions(dbo)
-        asm3.al.debug("got %d movements" % len(movements), "code.move_book_recent_adoption", dbo)
+        asm3.al.debug("got %d movements" % len(movements), "main.move_book_recent_adoption", dbo)
         return {
             "name": "move_book_recent_adoption",
             "rows": movements,
@@ -5003,7 +5011,7 @@ class move_book_recent_other(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_recent_nonfosteradoption(dbo)
-        asm3.al.debug("got %d movements" % len(movements), "code.move_book_recent_other", dbo)
+        asm3.al.debug("got %d movements" % len(movements), "main.move_book_recent_other", dbo)
         return {
             "name": "move_book_recent_other",
             "rows": movements,
@@ -5023,7 +5031,7 @@ class move_book_recent_transfer(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_recent_transfers(dbo)
-        asm3.al.debug("got %d movements" % len(movements), "code.move_book_recent_transfer", dbo)
+        asm3.al.debug("got %d movements" % len(movements), "main.move_book_recent_transfer", dbo)
         return {
             "name": "move_book_recent_transfer",
             "rows": movements,
@@ -5043,7 +5051,7 @@ class move_book_reservation(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_active_reservations(dbo)
-        asm3.al.debug("got %d movements" % len(movements), "code.move_book_reservation", dbo)
+        asm3.al.debug("got %d movements" % len(movements), "main.move_book_reservation", dbo)
         return {
             "name": "move_book_reservation",
             "rows": movements,
@@ -5064,7 +5072,7 @@ class move_book_retailer(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_movements(dbo, asm3.movement.RETAILER)
-        asm3.al.debug("got %d movements" % len(movements), "code.move_book_retailer", dbo)
+        asm3.al.debug("got %d movements" % len(movements), "main.move_book_retailer", dbo)
         return {
             "name": "move_book_retailer",
             "rows": movements,
@@ -5085,7 +5093,7 @@ class move_book_soft_release(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_soft_releases(dbo)
-        asm3.al.debug("got %d movements" % len(movements), "code.move_book_soft_release", dbo)
+        asm3.al.debug("got %d movements" % len(movements), "main.move_book_soft_release", dbo)
         return {
             "name": "move_book_soft_release",
             "rows": movements,
@@ -5104,7 +5112,7 @@ class move_book_trial_adoption(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_trial_adoptions(dbo)
-        asm3.al.debug("got %d movements" % len(movements), "code.move_book_trial_adoption", dbo)
+        asm3.al.debug("got %d movements" % len(movements), "main.move_book_trial_adoption", dbo)
         return {
             "name": "move_book_trial_adoption",
             "rows": movements,
@@ -5124,7 +5132,7 @@ class move_book_unneutered(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_recent_unneutered_adoptions(dbo)
-        asm3.al.debug("got %d movements" % len(movements), "code.move_book_unneutered", dbo)
+        asm3.al.debug("got %d movements" % len(movements), "main.move_book_unneutered", dbo)
         return {
             "name": "move_book_unneutered",
             "rows": movements,
@@ -5160,7 +5168,7 @@ class move_donations(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         donations = asm3.financial.get_movement_donations(dbo, o.post["id"])
-        asm3.al.debug("got %d donations for movement %s" % (len(donations), o.post["id"]), "code.move_donations", dbo)
+        asm3.al.debug("got %d donations for movement %s" % (len(donations), o.post["id"]), "main.move_donations", dbo)
         return {
             "message": o.post["message"],
             "id": o.post["id"],
@@ -5331,7 +5339,7 @@ class onlineform_incoming(JSONEndpoint):
 
     def controller(self, o):
         headers = asm3.onlineform.get_onlineformincoming_headers(o.dbo)
-        asm3.al.debug("got %d submitted headers" % len(headers), "code.onlineform_incoming", o.dbo)
+        asm3.al.debug("got %d submitted headers" % len(headers), "main.onlineform_incoming", o.dbo)
         return {
             "rows": headers
         }
@@ -5504,7 +5512,7 @@ class onlineform(JSONEndpoint):
         for r in asm3.additional.get_fields(dbo):
             addf.append(f"additional{r.FIELDNAME}")
         title = _("Online Form: {0}", l).format(formname)
-        asm3.al.debug("got %d online form fields" % len(fields), "code.onlineform", dbo)
+        asm3.al.debug("got %d online form fields" % len(fields), "main.onlineform", dbo)
         return {
             "rows": fields,
             "formid": formid,
@@ -5534,7 +5542,7 @@ class onlineforms(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         onlineforms = asm3.onlineform.get_onlineforms(dbo)
-        asm3.al.debug("got %d online forms" % len(onlineforms), "code.onlineforms", dbo)
+        asm3.al.debug("got %d online forms" % len(onlineforms), "main.onlineforms", dbo)
         return {
             "rows": onlineforms,
             "flags": asm3.lookups.get_person_flags(dbo),
@@ -5645,7 +5653,7 @@ class options(JSONEndpoint):
             "vaccinationtypes": asm3.lookups.get_vaccination_types(dbo),
             "waitinglistcolumns": asm3.html.json_waitinglistcolumns(dbo)
         }
-        asm3.al.debug("lookups loaded", "code.options", dbo)
+        asm3.al.debug("lookups loaded", "main.options", dbo)
         return c
 
     def post_save(self, o):
@@ -5671,8 +5679,8 @@ class pp_cardcom(ASMEndpoint):
 
     def content(self, o):
         asm3.al.debug("in pp_cardcom_content")
-        asm3.al.debug(o.post, "code.pp_cardcom")
-        asm3.al.debug(self.query(), "code.pp_cardcom")
+        asm3.al.debug(o.post, "main.pp_cardcom")
+        asm3.al.debug(self.query(), "main.pp_cardcom")
 
         querystring = self.query()
         if querystring.startswith("?"):
@@ -5683,7 +5691,7 @@ class pp_cardcom(ASMEndpoint):
         dbname = client_reference_id[0:client_reference_id.find("-")]
         dbo = asm3.db.get_database(dbname)
         if dbo.database in asm3.db.ERROR_VALUES:
-            asm3.al.error("invalid database '%s'" % dbname, "code.pp_cardcom")
+            asm3.al.error("invalid database '%s'" % dbname, "main.pp_cardcom")
             return
         try:
             dbo.locale = asm3.configuration.locale(dbo)
@@ -5709,11 +5717,11 @@ class pp_paypal(ASMEndpoint):
     data_encoding = "cp1252"
 
     def post_all(self, o):
-        asm3.al.debug(o.data, "code.pp_paypal")
+        asm3.al.debug(o.data, "main.pp_paypal")
         dbname = self.data_param("custom")
         dbo = asm3.db.get_database(dbname)
         if dbo.database in asm3.db.ERROR_VALUES:
-            asm3.al.error("invalid database '%s'" % dbname, "code.pp_paypal")
+            asm3.al.error("invalid database '%s'" % dbname, "main.pp_paypal")
             return
         try:
             dbo.locale = asm3.configuration.locale(dbo)
@@ -5738,20 +5746,20 @@ class pp_stripe(ASMEndpoint):
     data_encoding = "utf-8"
 
     def post_all(self, o):
-        asm3.al.debug(o.data, "code.pp_stripe")
+        asm3.al.debug(o.data, "main.pp_stripe")
         try:
             j = asm3.utils.json_parse(o.data)
             if "client_reference_id" not in j["data"]["object"]:
-                asm3.al.error("client_reference_id missing, this is not an ASM requested payment", "code.pp_stripe")
+                asm3.al.error("client_reference_id missing, this is not an ASM requested payment", "main.pp_stripe")
                 return # OK 200, this payment notification is not for us
             client_reference_id = j["data"]["object"]["client_reference_id"]
             dbname = client_reference_id[0:client_reference_id.find("-")]
             dbo = asm3.db.get_database(dbname)
             if dbo.database in asm3.db.ERROR_VALUES:
-                asm3.al.error("invalid database '%s'" % dbname, "code.pp_stripe")
+                asm3.al.error("invalid database '%s'" % dbname, "main.pp_stripe")
                 return # OK 200, we can't do anything with this
         except Exception as e:
-            asm3.al.error("failed extracting dbname from client_reference_id: %s" % e, "code.pp_stripe")
+            asm3.al.error("failed extracting dbname from client_reference_id: %s" % e, "main.pp_stripe")
             return
 
         try:
@@ -5786,7 +5794,7 @@ class person(JSONEndpoint):
         if upid != 0 and upid == p.id:
             raise asm3.utils.ASMPermissionError("cannot view user staff record")
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "owner", p.ID, p.OWNERNAME)
-        asm3.al.debug("opened person '%s'" % p.OWNERNAME, "code.person", dbo)
+        asm3.al.debug("opened person '%s'" % p.OWNERNAME, "main.person", dbo)
         return {
             "additional": asm3.additional.get_additional_fields(dbo, p.id, "person"),
             "animalflags": asm3.lookups.get_animal_flags(dbo),
@@ -5842,7 +5850,7 @@ class person_boarding(JSONEndpoint):
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
         rows = asm3.financial.get_person_boarding(dbo, p.ID)
-        asm3.al.debug("got %d person boarding records" % (len(rows)), "code.person_boarding", dbo)
+        asm3.al.debug("got %d person boarding records" % (len(rows)), "main.person_boarding", dbo)
         return {
             "name": "person_boarding",
             "person": p,
@@ -5865,7 +5873,7 @@ class person_citations(JSONEndpoint):
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
         citations = asm3.financial.get_person_citations(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d citations" % len(citations), "code.incident_citations", dbo)
+        asm3.al.debug("got %d citations" % len(citations), "main.incident_citations", dbo)
         return {
             "name": "person_citations",
             "rows": citations,
@@ -5885,7 +5893,7 @@ class person_clinic(JSONEndpoint):
         p = asm3.person.get_person(dbo, personid)
         if p is None: self.notfound()
         rows = asm3.clinic.get_person_appointments(dbo, personid)
-        asm3.al.debug("got %d appointments for person %s" % (len(rows), p.OWNERNAME), "code.person_clinic", dbo)
+        asm3.al.debug("got %d appointments for person %s" % (len(rows), p.OWNERNAME), "main.person_clinic", dbo)
         return {
             "name": self.url,
             "person": p,
@@ -5908,7 +5916,7 @@ class person_diary(JSONEndpoint):
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
         diaries = asm3.diary.get_diaries(dbo, asm3.diary.PERSON, o.post.integer("id"))
-        asm3.al.debug("got %d diaries" % len(diaries), "code.person_diary", dbo)
+        asm3.al.debug("got %d diaries" % len(diaries), "main.person_diary", dbo)
         return {
             "rows": diaries,
             "person": p,
@@ -5970,7 +5978,7 @@ class person_embed(ASMEndpoint):
         rows = asm3.person.get_person_find_simple(o.dbo, q, classfilter=o.post["filter"], typefilter=o.post["type"], \
             includeStaff=self.checkb(asm3.users.VIEW_STAFF), \
             includeVolunteers=self.checkb(asm3.users.VIEW_VOLUNTEER), limit=100, siteid=o.siteid)
-        asm3.al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "code.person_embed", o.dbo)
+        asm3.al.debug("find '%s' got %d rows" % (self.query(), len(rows)), "main.person_embed", o.dbo)
         return asm3.utils.json(rows)
 
     def post_id(self, o):
@@ -5981,7 +5989,7 @@ class person_embed(ASMEndpoint):
         pid = o.post.integer("id")
         p = asm3.person.get_person_embedded(dbo, pid)
         if not p:
-            asm3.al.error("get person by id %d found no records." % pid, "code.person_embed", dbo)
+            asm3.al.error("get person by id %d found no records." % pid, "main.person_embed", dbo)
             raise web.notfound()
         else:
             return asm3.utils.json((p,))
@@ -5994,7 +6002,7 @@ class person_embed(ASMEndpoint):
         pid = o.post.integer("id")
         p = asm3.person.get_person_embedded(dbo, pid)
         if not p:
-            asm3.al.error("get person by id %d found no records." % pid, "code.person_embed", dbo)
+            asm3.al.error("get person by id %d found no records." % pid, "main.person_embed", dbo)
             raise web.notfound()
         else:
             asm3.person.embellish_adoption_warnings(dbo, p)
@@ -6017,16 +6025,16 @@ class person_embed(ASMEndpoint):
         mobile = post["mobiletelephone"]
         p = asm3.person.get_person_similar(dbo, email, mobile, surname, forenames, address, siteid=o.siteid, checkcouple=True, checkforenames=False, checkmobilehome=True)
         if len(p) == 0:
-            asm3.al.debug("No similar people found for %s, %s, %s, %s, %s" % (email, mobile, surname, forenames, address), "code.person_embed", dbo)
+            asm3.al.debug("No similar people found for %s, %s, %s, %s, %s" % (email, mobile, surname, forenames, address), "main.person_embed", dbo)
         else:
-            asm3.al.debug("found similar people for %s, %s, %s, %s, %s: got %d records" % (email, mobile, surname, forenames, address, len(p)), "code.person_embed", dbo)
+            asm3.al.debug("found similar people for %s, %s, %s, %s, %s: got %d records" % (email, mobile, surname, forenames, address, len(p)), "main.person_embed", dbo)
         return asm3.utils.json(p)
 
     def post_add(self, o):
         self.check(asm3.users.ADD_PERSON)
         self.content_type("application/json")
         dbo = o.dbo
-        asm3.al.debug("add new person", "code.person_embed", dbo)
+        asm3.al.debug("add new person", "main.person_embed", dbo)
         pid = asm3.person.insert_person_from_form(dbo, o.post, o.user)
         p = asm3.person.get_person(dbo, pid)
         return asm3.utils.json((p,))
@@ -6038,7 +6046,7 @@ class person_find(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         flags = asm3.lookups.get_person_flags(dbo)
-        asm3.al.debug("lookups loaded", "code.person_find", dbo)
+        asm3.al.debug("lookups loaded", "main.person_find", dbo)
         return {
             "additionalfields": asm3.additional.get_additional_fields(dbo, 0, "person"),
             "flags": flags,
@@ -6066,7 +6074,7 @@ class person_find_results(JSONEndpoint):
         add = None
         if len(results) > 0: 
             add = asm3.additional.get_additional_fields_ids(dbo, results, "person")
-        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "code.person_find_results", dbo)
+        asm3.al.debug("found %d results for %s" % (len(results), self.query()), "main.person_find_results", dbo)
         return {
             "rows": results,
             "additional": add
@@ -6081,7 +6089,7 @@ class person_investigation(JSONEndpoint):
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
         investigation = asm3.person.get_investigation(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d investigation records for person %s" % (len(investigation), p["OWNERNAME"]), "code.person_investigation", dbo)
+        asm3.al.debug("got %d investigation records for person %s" % (len(investigation), p["OWNERNAME"]), "main.person_investigation", dbo)
         return {
             "rows": investigation,
             "person": p,
@@ -6111,7 +6119,7 @@ class person_licence(JSONEndpoint):
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
         licences = asm3.financial.get_person_licences(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d licences" % len(licences), "code.person_licence", dbo)
+        asm3.al.debug("got %d licences" % len(licences), "main.person_licence", dbo)
         return {
             "name": "person_licence",
             "rows": licences,
@@ -6164,7 +6172,7 @@ class person_links(JSONEndpoint):
         links = asm3.person.get_links(dbo, o.post.integer("id"))
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
-        asm3.al.debug("got %d person links" % len(links), "code.person_links", dbo)
+        asm3.al.debug("got %d person links" % len(links), "main.person_links", dbo)
         return {
             "links": links,
             "person": p,
@@ -6181,7 +6189,7 @@ class person_media(JSONEndpoint):
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
         m = asm3.media.get_media(dbo, asm3.media.PERSON, o.post.integer("id"))
-        asm3.al.debug("got %d media" % len(m), "code.person_media", dbo)
+        asm3.al.debug("got %d media" % len(m), "main.person_media", dbo)
         return {
             "media": m,
             "person": p,
@@ -6207,7 +6215,7 @@ class person_movements(JSONEndpoint):
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
         movements = asm3.movement.get_person_movements(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d movements" % len(movements), "code.person_movements", dbo)
+        asm3.al.debug("got %d movements" % len(movements), "main.person_movements", dbo)
         return {
             "name": "person_movements",
             "rows": movements,
@@ -6230,7 +6238,7 @@ class person_new(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        asm3.al.debug("add person", "code.person_new", dbo)
+        asm3.al.debug("add person", "main.person_new", dbo)
         return {
             "towns": asm3.person.get_towns(dbo),
             "counties": asm3.person.get_counties(dbo),
@@ -6255,7 +6263,7 @@ class person_rota(JSONEndpoint):
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
         rota = asm3.person.get_person_rota(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d rota items" % len(rota), "code.person_rota", dbo)
+        asm3.al.debug("got %d rota items" % len(rota), "main.person_rota", dbo)
         return {
             "name": "person_rota",
             "rows": rota,
@@ -6288,7 +6296,7 @@ class person_traploan(JSONEndpoint):
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
         traploans = asm3.animalcontrol.get_person_traploans(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d trap loans" % len(traploans), "code.person_traploan", dbo)
+        asm3.al.debug("got %d trap loans" % len(traploans), "main.person_traploan", dbo)
         return {
             "name": "person_traploan",
             "rows": traploans,
@@ -6307,7 +6315,7 @@ class person_vouchers(JSONEndpoint):
         p = asm3.person.get_person(dbo, o.post.integer("id"))
         if p is None: self.notfound()
         vouchers = asm3.financial.get_person_vouchers(dbo, o.post.integer("id"))
-        asm3.al.debug("got %d person vouchers" % len(vouchers), "code.person_vouchers", dbo)
+        asm3.al.debug("got %d person vouchers" % len(vouchers), "main.person_vouchers", dbo)
         return {
             "name": "person_vouchers",
             "rows": vouchers,
@@ -6325,11 +6333,11 @@ class publish(JSONEndpoint):
         dbo = o.dbo
         mode = o.post["mode"]
         failed = False
-        asm3.al.debug("publish started for mode %s" % mode, "code.publish", dbo)
+        asm3.al.debug("publish started for mode %s" % mode, "main.publish", dbo)
         # If a publisher is already running and we have a mode, mark
         # a failure starting
         if asm3.asynctask.is_task_running(dbo):
-            asm3.al.debug("publish already running, not starting new publish", "code.publish", dbo)
+            asm3.al.debug("publish already running, not starting new publish", "main.publish", dbo)
         else:
             # If a publishing mode is requested, start that publisher
             # running on a background thread
@@ -6348,7 +6356,7 @@ class publish_logs(JSONEndpoint):
 
     def controller(self, o):
         logs = asm3.publish.get_publish_logs(o.dbo)
-        asm3.al.debug("viewing %d publishing logs" % len(logs), "code.publish_logs", o.dbo)
+        asm3.al.debug("viewing %d publishing logs" % len(logs), "main.publish_logs", o.dbo)
         return {
             "rows": logs
         }
@@ -6358,7 +6366,7 @@ class publish_log_view(ASMEndpoint):
     get_permissions = asm3.users.USE_INTERNET_PUBLISHER
 
     def content(self, o):
-        asm3.al.debug("viewing log file %s" % o.post["view"], "code.publish_logs", o.dbo)
+        asm3.al.debug("viewing log file %s" % o.post["view"], "main.publish_logs", o.dbo)
         self.cache_control(CACHE_ONE_WEEK) # log files never change
         self.content_type("text/plain")
         self.header("Content-Disposition", "inline; filename=\"%s\"" % o.post["view"])
@@ -6393,7 +6401,7 @@ class publish_options(JSONEndpoint):
             "styles": asm3.template.get_html_template_names(dbo),
             "users": asm3.users.get_users(dbo)
         }
-        asm3.al.debug("loaded lookups", "code.publish_options", dbo)
+        asm3.al.debug("loaded lookups", "main.publish_options", dbo)
         return c
 
     def post_save(self, o):
@@ -6420,7 +6428,7 @@ class report(ASMEndpoint):
         # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
         if len(crit) != 0 and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report" % post.integer("id"))
         title = asm3.reports.get_title(dbo, crid)
-        asm3.al.debug("got criteria (%s), executing report %d %s" % (str(post.data), crid, title), "code.report", dbo)
+        asm3.al.debug("got criteria (%s), executing report %d %s" % (str(post.data), crid, title), "main.report", dbo)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         if asm3.configuration.audit_on_view_report(dbo):
             asm3.audit.view_report(dbo, o.user, crid, title, str(post.data))
@@ -6436,7 +6444,7 @@ class report_criteria(JSONEndpoint):
         post = o.post
         title = asm3.reports.get_title(o.dbo, post.integer("id"))
         crit = asm3.reports.get_criteria(dbo, post.integer("id"))
-        asm3.al.debug("building report criteria form for report %d %s" % (post.integer("id"), title), "code.report_criteria", dbo)
+        asm3.al.debug("building report criteria form for report %d %s" % (post.integer("id"), title), "main.report_criteria", dbo)
         def has_criteria(c):
             for name, rtype, question in crit:
                 if rtype == c: return True
@@ -6467,7 +6475,7 @@ class report_export(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         reports = asm3.reports.get_available_reports(dbo)
-        asm3.al.debug("exporting %d reports" % len(reports), "code.report_export", dbo)
+        asm3.al.debug("exporting %d reports" % len(reports), "main.report_export", dbo)
         return {
             "rows": reports
         }
@@ -6545,7 +6553,7 @@ class report_images(JSONEndpoint):
     
     def controller(self, o):
         images = asm3.dbfs.get_report_images(o.dbo)
-        asm3.al.debug("got %d extra images" % len(images), "code.report_images", o.dbo)
+        asm3.al.debug("got %d extra images" % len(images), "main.report_images", o.dbo)
         return { "rows": images }
 
     def post_create(self, o):
@@ -6570,7 +6578,7 @@ class reports(JSONEndpoint):
         reports = asm3.reports.get_reports(dbo)
         header = asm3.reports.get_raw_report_header(dbo)
         footer = asm3.reports.get_raw_report_footer(dbo)
-        asm3.al.debug("editing %d reports" % len(reports), "code.reports", dbo)
+        asm3.al.debug("editing %d reports" % len(reports), "main.reports", dbo)
         return {
             "categories": "|".join(asm3.reports.get_categories(dbo)),
             "recommended": asm3.reports.RECOMMENDED_REPORTS,
@@ -6640,7 +6648,7 @@ class roles(JSONEndpoint):
 
     def controller(self, o):
         roles = asm3.users.get_roles(o.dbo)
-        asm3.al.debug("editing %d roles" % len(roles), "code.roles", o.dbo)
+        asm3.al.debug("editing %d roles" % len(roles), "main.roles", o.dbo)
         return { "rows": roles }
 
     def post_create(self, o):
@@ -6661,7 +6669,7 @@ class search(JSONEndpoint):
         results, timetaken, explain, sortname = asm3.search.search(o.dbo, o.session, q)
         is_large_db = ""
         if o.dbo.is_large_db: is_large_db = " (indexed only)"
-        asm3.al.debug("searched for '%s', got %d results in %s, sorted %s %s" % (q, len(results), timetaken, sortname, is_large_db), "code.search", o.dbo)
+        asm3.al.debug("searched for '%s', got %d results in %s, sorted %s %s" % (q, len(results), timetaken, sortname, is_large_db), "main.search", o.dbo)
         return {
             "q": q,
             "results": results,
@@ -6698,7 +6706,7 @@ class shelterview(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         animals = asm3.animal.get_shelterview_animals(dbo, o.locationfilter, o.siteid, o.visibleanimalids)
-        asm3.al.debug("got %d animals for shelterview" % (len(animals)), "code.shelterview", dbo)
+        asm3.al.debug("got %d animals for shelterview" % (len(animals)), "main.shelterview", dbo)
         return {
             "animals": asm3.animal.get_animals_brief(animals),
             "flags": asm3.lookups.get_animal_flags(dbo),
@@ -6745,7 +6753,7 @@ class sql(JSONEndpoint):
     post_permissions = asm3.users.USE_SQL_INTERFACE
 
     def controller(self, o):
-        asm3.al.debug("%s opened SQL interface" % o.user, "code.sql", o.dbo)
+        asm3.al.debug("%s opened SQL interface" % o.user, "main.sql", o.dbo)
         return {}
 
     def post_exec(self, o):
@@ -6781,7 +6789,7 @@ class sql(JSONEndpoint):
                 if q == "": continue
                 q = self.substitute_report_tokens(dbo, user, q)
                 ql = q.lower()
-                asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
+                asm3.al.info("%s query: %s" % (user, q), "main.sql", dbo)
                 if ql.startswith("select") or ql.startswith("show") or ql.startswith("with"):
                     return asm3.html.table(dbo.query(q))
                 elif ql.startswith("insert"):
@@ -6792,7 +6800,7 @@ class sql(JSONEndpoint):
             asm3.configuration.db_view_seq_version(dbo, "0")
             return _("{0} rows affected.", l).format(rowsaffected)
         except Exception as err:
-            asm3.al.error("%s" % str(err), "code.sql", dbo)
+            asm3.al.error("%s" % str(err), "main.sql", dbo)
             raise asm3.utils.ASMValidationError(str(err))
 
     def exec_sql_from_file(self, dbo, user, sql):
@@ -6803,7 +6811,7 @@ class sql(JSONEndpoint):
                 if q == "": continue
                 q = self.substitute_report_tokens(dbo, user, q)
                 ql = q.lower()
-                asm3.al.info("%s query: %s" % (user, q), "code.sql", dbo)
+                asm3.al.info("%s query: %s" % (user, q), "main.sql", dbo)
                 if ql.startswith("select") or ql.startswith("show") or ql.startswith("with"):
                     output.append(str(dbo.query(q)))
                 else:
@@ -6811,7 +6819,7 @@ class sql(JSONEndpoint):
                     rowsaffected = dbo.execute(q)
                     output.append(_("{0} rows affected.", l).format(rowsaffected))
             except Exception as err:
-                asm3.al.error("%s" % str(err), "code.sql", dbo)
+                asm3.al.error("%s" % str(err), "main.sql", dbo)
                 output.append("ERROR: %s" % str(err))
         asm3.configuration.db_view_seq_version(dbo, "0")
         return "\n\n".join(output)
@@ -6847,29 +6855,29 @@ class sql_dump(ASMEndpoint):
         mode = o.post["mode"]
         self.content_type("text/plain")
         if mode == "dumpsql":
-            asm3.al.info("%s executed SQL database dump" % o.user, "code.sql", dbo)
+            asm3.al.info("%s executed SQL database dump" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
             return asm3.dbupdate.dump(dbo) # generator
         if mode == "dumpsqlmedia":
-            asm3.al.info("%s executed SQL database dump (base64/media)" % o.user, "code.sql", dbo)
+            asm3.al.info("%s executed SQL database dump (base64/media)" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"media.sql\"")
             return asm3.dbupdate.dump_dbfs_base64(dbo) # generator
         if mode == "dumpddlmysql":
-            asm3.al.info("%s executed DDL dump MySQL" % o.user, "code.sql", dbo)
+            asm3.al.info("%s executed DDL dump MySQL" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_mysql.sql\"")
             dbo2 = asm3.db.get_dbo("MYSQL")
             dbo2.locale = dbo.locale
             return asm3.dbupdate.sql_structure(dbo2)
             return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddlpostgres":
-            asm3.al.info("%s executed DDL dump PostgreSQL" % o.user, "code.sql", dbo)
+            asm3.al.info("%s executed DDL dump PostgreSQL" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_postgresql.sql\"")
             dbo2 = asm3.db.get_dbo("POSTGRESQL")
             dbo2.locale = dbo.locale
             return asm3.dbupdate.sql_structure(dbo2)
             return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddldb2":
-            asm3.al.info("%s executed DDL dump DB2" % o.user, "code.sql", dbo)
+            asm3.al.info("%s executed DDL dump DB2" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"ddl_db2.sql\"")
             dbo2 = asm3.db.get_dbo("DB2")
             dbo2.locale = dbo.locale
@@ -6877,46 +6885,46 @@ class sql_dump(ASMEndpoint):
             return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         elif mode == "dumpsqlasm2":
             # ASM2_COMPATIBILITY
-            asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB)" % o.user, "code.sql", dbo)
+            asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB)" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
             return asm3.dbupdate.dump_hsqldb(dbo) # generator
         elif mode == "dumpsqlasm2nomedia":
             # ASM2_COMPATIBILITY
-            asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB, without media)" % o.user, "code.sql", dbo)
+            asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB, without media)" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
             return asm3.dbupdate.dump_hsqldb(dbo, includeDBFS = False) # generator
         elif mode == "animalcsv":
-            asm3.al.debug("%s executed CSV animal dump" % o.user, "code.sql", dbo)
+            asm3.al.debug("%s executed CSV animal dump" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"animal.csv\"")
             rows = asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" })
             asm3.additional.append_to_results(dbo, rows, "animal")
             return asm3.utils.csv(l, rows)
         elif mode == "mediacsv":
-            asm3.al.debug("%s executed CSV media dump" % o.user, "code.sql", dbo)
+            asm3.al.debug("%s executed CSV media dump" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"media.csv\"")
             return asm3.utils.csv(l, asm3.media.get_media_export(dbo))
         elif mode == "medicalcsv":
-            asm3.al.debug("%s executed CSV medical dump" % o.user, "code.sql", dbo)
+            asm3.al.debug("%s executed CSV medical dump" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"medical.csv\"")
             return asm3.utils.csv(l, asm3.medical.get_medical_export(dbo))
         elif mode == "personcsv":
-            asm3.al.debug("%s executed CSV person dump" % o.user, "code.sql", dbo)
+            asm3.al.debug("%s executed CSV person dump" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"person.csv\"")
             rows = asm3.person.get_person_find_simple(dbo, "", includeStaff=True, includeVolunteers=True)
             asm3.additional.append_to_results(dbo, rows, "person")
             return asm3.utils.csv(l, rows)
         elif mode == "incidentcsv":
-            asm3.al.debug("%s executed CSV incident dump" % o.user, "code.sql", dbo)
+            asm3.al.debug("%s executed CSV incident dump" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"incident.csv\"")
             rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, o.user)
             asm3.additional.append_to_results(dbo, rows, "incident")
             return asm3.utils.csv(l, rows)
         elif mode == "licencecsv":
-            asm3.al.debug("%s executed CSV licence dump" % o.user, "code.sql", dbo)
+            asm3.al.debug("%s executed CSV licence dump" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"licence.csv\"")
             return asm3.utils.csv(l, asm3.financial.get_licence_find_simple(dbo, ""))
         elif mode == "paymentcsv":
-            asm3.al.debug("%s executed CSV payment dump" % o.user, "code.sql", dbo)
+            asm3.al.debug("%s executed CSV payment dump" % o.user, "main.sql", dbo)
             self.header("Content-Disposition", "attachment; filename=\"payment.csv\"")
             return asm3.utils.csv(l, asm3.financial.get_donations(dbo, "m10000"))
 
@@ -6929,7 +6937,7 @@ class staff_rota(JSONEndpoint):
         startdate = o.post.date("start")
         if startdate is None: startdate = monday_of_week(dbo.today())
         rota = asm3.person.get_rota(dbo, startdate, add_days(startdate, 7))
-        asm3.al.debug("got %d rota items" % len(rota), "code.staff_rota", dbo)
+        asm3.al.debug("got %d rota items" % len(rota), "main.staff_rota", dbo)
         return {
             "name": "staff_rota",
             "rows": rota,
@@ -6979,7 +6987,7 @@ class stocklevel(JSONEndpoint):
             levels = asm3.stock.get_stocklevels_lowbalance(dbo)
         else:
             levels = asm3.stock.get_stocklevels(dbo, o.post.integer("viewlocation"))
-        asm3.al.debug("got %d stock levels" % len(levels), "code.stocklevel", dbo)
+        asm3.al.debug("got %d stock levels" % len(levels), "main.stocklevel", dbo)
         return {
             "stocklocations": asm3.lookups.get_stock_locations(dbo),
             "stocknames": "|".join(asm3.stock.get_stock_names(dbo)),
@@ -7017,7 +7025,7 @@ class systemusers(JSONEndpoint):
         dbo = o.dbo
         user = asm3.users.get_users(dbo)
         roles = asm3.users.get_roles(dbo)
-        asm3.al.debug("editing %d system users" % len(user), "code.systemusers", dbo)
+        asm3.al.debug("editing %d system users" % len(user), "main.systemusers", dbo)
         return {
             "rows": user,
             "roles": roles,
@@ -7064,7 +7072,7 @@ class test(JSONEndpoint):
         offset = o.post["offset"]
         if offset == "": offset = "m365"
         test = asm3.medical.get_tests_outstanding(dbo, offset, o.locationfilter, o.siteid, o.visibleanimalids)
-        asm3.al.debug("got %d tests" % len(test), "code.test", dbo)
+        asm3.al.debug("got %d tests" % len(test), "main.test", dbo)
         return {
             "name": "test",
             "newtest": o.post.integer("newtest") == 1,
@@ -7116,7 +7124,7 @@ class timeline(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         evts = asm3.animal.get_timeline(dbo, 500)
-        asm3.al.debug("timeline events, run by %s, got %d events" % (o.user, len(evts)), "code.timeline", dbo)
+        asm3.al.debug("timeline events, run by %s, got %d events" % (o.user, len(evts)), "main.timeline", dbo)
         return {
             "recent": evts,
             "resultcount": len(evts)
@@ -7129,7 +7137,7 @@ class transport(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         transports = asm3.movement.get_active_transports(dbo)
-        asm3.al.debug("got %d transports" % len(transports), "code.transport", dbo)
+        asm3.al.debug("got %d transports" % len(transports), "main.transport", dbo)
         return {
             "name": "transport",
             "statuses": asm3.lookups.get_transport_statuses(dbo),
@@ -7173,7 +7181,7 @@ class traploan(JSONEndpoint):
             traploans = asm3.animalcontrol.get_active_traploans(dbo)
         else:
             traploans = asm3.animalcontrol.get_returned_traploans(dbo, offset)
-        asm3.al.debug("got %d trap loans" % len(traploans), "code.traploan", dbo)
+        asm3.al.debug("got %d trap loans" % len(traploans), "main.traploan", dbo)
         return {
             "name": "traploan",
             "rows": traploans,
@@ -7202,7 +7210,7 @@ class vaccination(JSONEndpoint):
         offset = o.post["offset"]
         if offset == "": offset = "m365"
         vacc = asm3.medical.get_vaccinations_outstanding(dbo, offset, o.locationfilter, o.siteid, o.visibleanimalids)
-        asm3.al.debug("got %d vaccinations" % len(vacc), "code.vaccination", dbo)
+        asm3.al.debug("got %d vaccinations" % len(vacc), "main.vaccination", dbo)
         return {
             "name": "vaccination",
             "newvacc": o.post.integer("newvacc") == 1,
@@ -7270,7 +7278,7 @@ class voucher(JSONEndpoint):
         offset = o.post["offset"]
         if offset == "": offset = "i31"
         vouchers = asm3.financial.get_vouchers(dbo, offset)
-        asm3.al.debug("got %d vouchers for %s" % (len(vouchers), offset), "code.person_vouchers", dbo)
+        asm3.al.debug("got %d vouchers for %s" % (len(vouchers), offset), "main.person_vouchers", dbo)
         return {
             "name": "voucher",
             "rows": vouchers,
@@ -7301,7 +7309,7 @@ class waitinglist(JSONEndpoint):
         if a is None: self.notfound()
         recname = "%s %s" % (a.OWNERNAME, a.SPECIESNAME)
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animalwaitinglist", a["ID"], recname)
-        asm3.al.debug("opened waiting list %s" % recname, "code.waitinglist", dbo)
+        asm3.al.debug("opened waiting list %s" % recname, "main.waitinglist", dbo)
         return {
             "animal": a,
             "additional": asm3.additional.get_additional_fields(dbo, a["ID"], "waitinglist"),
@@ -7341,7 +7349,7 @@ class waitinglist_diary(JSONEndpoint):
         a = asm3.waitinglist.get_waitinglist_by_id(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         diaries = asm3.diary.get_diaries(dbo, asm3.diary.WAITINGLIST, o.post.integer("id"))
-        asm3.al.debug("got %d diaries" % len(diaries), "code.waitinglist_diary", dbo)
+        asm3.al.debug("got %d diaries" % len(diaries), "main.waitinglist_diary", dbo)
         return {
             "rows": diaries,
             "animal": a,
@@ -7364,7 +7372,7 @@ class waitinglist_log(JSONEndpoint):
         a = asm3.waitinglist.get_waitinglist_by_id(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         logs = asm3.log.get_logs(dbo, asm3.log.WAITINGLIST, o.post.integer("id"), logfilter)
-        asm3.al.debug("got %d logs" % len(logs), "code.waitinglist_diary", dbo)
+        asm3.al.debug("got %d logs" % len(logs), "main.waitinglist_diary", dbo)
         return {
             "name": "waitinglist_log",
             "linkid": o.post.integer("id"),
@@ -7386,7 +7394,7 @@ class waitinglist_media(JSONEndpoint):
         a = asm3.waitinglist.get_waitinglist_by_id(dbo, o.post.integer("id"))
         if a is None: self.notfound()
         m = asm3.media.get_media(dbo, asm3.media.WAITINGLIST, o.post.integer("id"))
-        asm3.al.debug("got %d media" % len(m), "code.waitinglist_media", dbo)
+        asm3.al.debug("got %d media" % len(m), "main.waitinglist_media", dbo)
         return {
             "media": m,
             "animal": a,
@@ -7434,7 +7442,7 @@ class waitinglist_results(JSONEndpoint):
         add = None
         if len(rows) > 0: 
             add = asm3.additional.get_additional_fields_ids(dbo, rows, "waitinglist")
-        asm3.al.debug("found %d results" % (len(rows)), "code.waitinglist_results", dbo)
+        asm3.al.debug("found %d results" % (len(rows)), "main.waitinglist_results", dbo)
         return {
             "rows": rows,
             "additional": add, 

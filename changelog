@@ -1,6 +1,7 @@
 48
 ================
 
+15/11/23 Catch and log bad base64 encoded credentials
 13/11/23 Update latest movement deceased date on person records #1360
 11/11/23 Update ages/times for foster animals as part of the batch
 09/11/23 Can pass credentials as b64 token for login from other services
