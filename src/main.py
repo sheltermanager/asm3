@@ -3143,7 +3143,7 @@ class document_gen(ASMEndpoint):
                 raise asm3.utils.ASMValidationError("list '%s' does not contain valid ids" % recid)
             animalid = d[0]["ANIMALID"]
             tempname += " - " + asm3.animal.get_animal_name(dbo, animalid)
-            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMALID, animalid, tempname, post["document"])
+            asm3.media.create_document_media(dbo, o.user, asm3.media.ANIMAL, animalid, tempname, post["document"])
             self.redirect("animal_media?id=%d" % animalid)
         elif linktype == "PERSON":
             tempname += " - " + asm3.person.get_person_name(dbo, recid)
