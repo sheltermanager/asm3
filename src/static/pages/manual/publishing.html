@@ -299,17 +299,33 @@ still, it’s best to leave this at No Scaling.</p></li>
 </div>
 <section id="included-templates">
 <h3>Included templates<a class="headerlink" href="#included-templates" title="Permalink to this heading">¶</a></h3>
-<p>ASM comes with a number of site templates – plain, rss, littlebox and sm.com.</p>
+<p>ASM comes with a number of website templates out of the box. As well as working
+with static HTML building, they can also be used with the template parameter to
+various html service methods (eg: html_adoptable_animals)</p>
 <ul class="simple">
-<li><p>plain produces very simple HTML output - just the animal’s picture and a few
+<li><p>plain: produces very simple HTML output - just the animal’s picture and a few
 details in a list.</p></li>
-<li><p>rss produces XML output for interpreting by an RSS feed reader.</p></li>
-<li><p>sm.com uses CSS hover elements and javascript to do image substitution for
+<li><p>rss: produces XML output for interpreting by an RSS feed reader.</p></li>
+<li><p>sm.com: uses CSS hover elements and javascript to do image substitution for
 icons and other tricks.</p></li>
-<li><p>littlebox is also more advanced, using CSS overlays and popups.</p></li>
-<li><p>responsive uses relative sizings to work equally well on mobile devices. It
+<li><p>littlebox: a more advanced template that shows a screen of thumbnails with
+a clickable popup for each animal, using CSS overlays.</p></li>
+<li><p>responsive: uses relative sizings to work equally well on mobile devices. It
 is not dissimilar to plain, but also features the ability to click an
 animal’s photo for more information.</p></li>
+<li><p>slideshow: loads the images of all animals into a rotating carousel, producing
+a slideshow of all adoptable animals. This template is very useful if you
+want to display it full screen on a TV in reception, etc.</p></li>
+<li><p>animalview: Used for displaying one animal generally. This is the default target of
+the animal_view service method and is the target for thumbnails injected by
+the javascript include code snippet (which loads the javascript from the
+animal_view_adoptable_js service method).</p></li>
+<li><p>animalviewcarousel: Just like animalview, but has a rotating carousel/slideshow
+of images for that animal.</p></li>
+<li><p>animalviewadoptable: This is the template used by the animal_view_adoptable_html
+service method, which injects the animal_view_adoptable_js service call into
+a page. It is useful for creating a page of thumbnails to link to for users
+who cannot edit their websites to include the javascript code snippet.</p></li>
 </ul>
 <p>You can edit these templates under <span class="menuselection">Publishing ‣ Edit HTML
 Publishing Templates</span> and add your own new ones if desired. Templates are made
