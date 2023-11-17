@@ -940,7 +940,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         rows = asm3.person.get_person_similar(dbo, email=emailaddress, mobile=mobile, surname=lastname, forenames=firstname, address=address)
         if len(rows) > 0:
             sp = rows[0]
-            mergeperson = "%s: %s [%s]" % (sp.ID, sp.OWNERNAME, sp.ADDITIONALFLAGS)
+            mergeperson = "%s: %s [%s]" % (sp.ID, sp.OWNERNAME, asm3.person.calc_readable_flags(sp.ADDITIONALFLAGS))
             # Do the insert
             try:
                 dbo.insert("onlineformincoming", {

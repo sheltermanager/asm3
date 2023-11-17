@@ -1285,6 +1285,19 @@ def merge_flags(dbo: Database, username: str, personid: int, flags: str) -> str:
     update_flags(dbo, username, personid, merged)
     return "|".join(merged) + "|"
 
+def calc_readable_flags(flags: str) -> str:
+    """
+    Given the ADDITIONALFLAGS field, returns a readable/comma separated list
+    """
+    fgs = []
+    if flags is None or flags == "": 
+        return ""
+    elif flags.find("|") != -1: 
+        fgs = flags.split("|")
+    elif flags.find(",") != -1: 
+        fgs = flags.split(",")
+    return ", ".join(set([x for x in fgs if x != ""]))
+
 def merge_person(dbo: Database, username: str, personid: int, mergepersonid: int) -> None:
     """
     Reparents all satellite records of mergepersonid onto
