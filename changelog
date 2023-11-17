@@ -1,6 +1,7 @@
 48
 ================
 
+17/11/23 Handle "not_found" when removing a PetRescue listing #1346
 17/11/23 Include the merge person flags in online forms #1358
 15/11/23 Catch and log bad base64 encoded credentials
 13/11/23 Update latest movement deceased date on person records #1360

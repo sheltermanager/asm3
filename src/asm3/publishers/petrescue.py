@@ -183,10 +183,9 @@ class PetRescuePublisher(AbstractPublisher):
                     self.log("Sending PATCH to %s to update existing listing: %s" % (url, jsondata))
                     r = asm3.utils.patch_json(url, jsondata, headers=headers)
 
-                    if r["status"] == 200:
+                    if r["status"] == 200 or (r["status"] == 401 and r["response"].find("not_found") != -1):
                         self.log("HTTP %d, headers: %s, response: %s" % (r["status"], r["headers"], r["response"]))
                         self.logSuccess("%s - %s: Marked with new status %s" % (an.SHELTERCODE, an.ANIMALNAME, status))
-
                         # Update animalpublished for this animal with the status we just sent in the Extra field
                         # so that it can be picked up next time.
                         self.markAnimalPublished(an.ID, extra = status)
