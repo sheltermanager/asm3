@@ -232,9 +232,9 @@ $(document).ready(function() {
                     '<a class="nav-link" href="main">' + _("Desktop/Tablet UI"),
                     '</a>',
                 '</li>',
-                '<li class="nav-item">',
-                    '<a class="nav-link text-danger" href="mobile">Old Mobile UI</a>',
-                '</li>',
+                //'<li class="nav-item">',
+                //    '<a class="nav-link text-danger" href="mobile">Old Mobile UI</a>',
+                //'</li>',
 
                 '<li class="nav-item">',
                     '<a class="nav-link" href="mobile_logout">' + _("Logout"),
@@ -1433,6 +1433,8 @@ $(document).ready(function() {
         if (!config.bool("ShowDeceasedHomePage") && (v.CATEGORY == "DIED" || v.CATEGORY == "EUTHANISED")) { return; }
         tl.push(html.event_text(v, { includedate: true }) + '<br/>');
     });
+
+    tl.push('<br><a class="nav-link text-danger" href="mobile">Switch to old Mobile UI</a>');
     $("#content-home").html(tl.join("\n"));
     $("#content-home").show();
 

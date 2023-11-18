@@ -1,6 +1,7 @@
 48
 ================
 
+18/11/23 Switch to old UI outside mobile2 menu for < Safari 11 users
 17/11/23 Handle "not_found" when removing a PetRescue listing #1346
 17/11/23 Include the merge person flags in online forms #1358
 15/11/23 Catch and log bad base64 encoded credentials
