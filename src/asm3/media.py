@@ -655,8 +655,10 @@ def send_signature_request(dbo: Database, username: str, mid: int, post: PostedD
     emailadd = post["to"]
     body = post["body"]
     m = get_media_by_id(dbo, mid)
-    if m is None: raise asm3.utils.ASMValidationError("cannot find media with ID %s" % mid)
-    if m.MEDIAMIMETYPE != "text/html": raise asm3.utils.ASMError("invalid mime type for document signing %s" % m.MEDIAMIMETYPE)
+    if m is None: 
+        raise asm3.utils.ASMValidationError("cannot find media with ID %s" % mid)
+    if m.MEDIAMIMETYPE != "text/html": 
+        raise asm3.utils.ASMValidationError("invalid mime type for document signing %s" % m.MEDIAMIMETYPE)
     token = asm3.utils.md5_hash_hex("%s%s" % (m.ID, m.LINKID))
     url = "%s?account=%s&method=sign_document&email=%s&formid=%d&token=%s" % (SERVICE_URL, dbo.database, asm3.utils.strip_email_address(emailadd).replace("@", "%40"), mid, token)
     body = asm3.utils.replace_url_token(body, url, m.MEDIANOTES)
@@ -678,10 +680,12 @@ def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate:
     asm3.al.debug("signing document %s for %s" % (mid, username), "media.sign_document", dbo)
     SIG_PLACEHOLDER = "signature:placeholder"
     m = dbo.first_row(dbo.query("SELECT * FROM media WHERE ID=?", [mid]))
+    if m is None:  
+        raise asm3.utils.ASMValidationError("cannot find media with ID %s" % mid)
     # Is this an HTML document?
     if m.MEDIAMIMETYPE != "text/html":
-        asm3.al.error("document %s is not HTML" % mid, "media.sign_document", dbo)
-        raise asm3.utils.ASMValidationError("Cannot sign a non-HTML document")
+        asm3.al.error("document %s is not HTML (%s)" % (mid, m.MEDIAMIMETYPE), "media.sign_document", dbo)
+        raise asm3.utils.ASMValidationError("invalid mime type for document signing %s" % m.MEDIAMIMETYPE)
     # Has this document already been signed? 
     if m.SIGNATUREHASH:
         asm3.al.error("document %s has already been signed" % mid, "media.sign_document", dbo)
