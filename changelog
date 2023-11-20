@@ -1,6 +1,7 @@
 48
 ================
 
+20/11/23 Use intake date instead of today when cloning from templates 
 18/11/23 Switch to old UI outside mobile2 menu for < Safari 11 users
 17/11/23 Handle "not_found" when removing a PetRescue listing #1346
 17/11/23 Include the merge person flags in online forms #1358

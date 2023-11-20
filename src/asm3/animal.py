@@ -3395,7 +3395,7 @@ def clone_from_template(dbo: Database, username: str, animalid: int, datebrought
         applying that offset to the base date on the new record.
         Normally the template date and new record date are datebroughtin, but if
         this template is set to operate on DOB, then dateofbirth is used instead.
-        If the calculated date is before today, today is returned instead (not for baby/DOB queries)
+        If the calculated date is before the intake date, intake date is returned instead.
         """
         dayoffset = date_diff_days(templatedate, d)
         if dayoffset < 0:
@@ -3403,7 +3403,7 @@ def clone_from_template(dbo: Database, username: str, animalid: int, datebrought
         else:
             adjdate = add_days(newrecorddate, dayoffset)
         adjdate = adjdate.replace(hour=0, minute=0, second=0, microsecond=0) # throw away any time info that might have been on the original date
-        if not isbaby and adjdate < dbo.today(): adjdate = dbo.today()
+        if adjdate < datebroughtin: adjdate = datebroughtin
         return dbo.sql_date(adjdate)
     # Only set flags on the new record if they are set on the template - just copying them
     # meant that we were clearing defaults if they were set for not for adoption etc.
