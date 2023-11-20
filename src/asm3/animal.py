@@ -3363,14 +3363,12 @@ def clone_from_template(dbo: Database, username: str, animalid: int, datebrought
     ]
     queries = adultqueries
     # If this is a baby animal as defined by its age, use the babyqueries to look for a template
-    isbaby = False
     babymonths = asm3.configuration.annual_figures_baby_months(dbo)
     babydays = babymonths * 30.5
     # 12 * 30.5 = 366 so it's one day out for a year
     if babymonths == 12: babydays = 365
     if date_diff_days(dob, dbo.today()) < babydays:
         queries = babyqueries
-        isbaby = True
     # Use our queries to find a potential template
     for q in queries:
         cloneanimalid = dbo.query_int(q)
