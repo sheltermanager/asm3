@@ -954,7 +954,7 @@ $(function() {
         render_petcademy: function() {
             return [
                 '<div id="tab-petcademy">',
-                html.info('Signup at <a href="https://petcademy.typeform.com/to/PTTM44">https://petcademy.typeform.com/to/PTTM44</a>'),
+                html.info('Signup at <a href="https://petcademy.org/rescues-and-shelters/">https://petcademy.org/rescues-and-shelters/</a>'),
                 '<p><input id="enabledpc" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledpc">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
