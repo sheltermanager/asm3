@@ -91,7 +91,7 @@ AND od.DateDue <= '$ASK DATE and$'
 AND od.Date Is Null 
 AND od.DonationTypeID = $ASK DONATIONTYPE$
 GROUP BY o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
-o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
+o.HomeTelephone, o.WorkTelephone, o.EmailAddress, o.EmailAddress2, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate
 ORDER BY o.OwnerSurname
 ###
