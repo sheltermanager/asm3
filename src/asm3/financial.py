@@ -1336,7 +1336,7 @@ def insert_boarding_from_form(dbo: Database, username: str, post: PostedData) ->
     if None is post.date("indate") or None is post.date("outdate"):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Boarding records must have valid check in and out dates.", l))
     if post.date("indate") > post.date("outdate"):
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Check out date cannot be later than check in date.", l))
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Check in date cannot be later than check out date.", l))
 
     boardingid = dbo.insert("animalboarding", {
         "AnimalID":         post.integer("animal"),
@@ -1367,7 +1367,7 @@ def update_boarding_from_form(dbo: Database, username: str, post: PostedData) ->
     if None is post.date("indate") or None is post.date("outdate"):
         raise asm3.utils.ASMValidationError(asm3.i18n._("Boarding records must have valid check in and out dates.", l))
     if post.date("indate") > post.date("outdate"):
-        raise asm3.utils.ASMValidationError(asm3.i18n._("Check out date cannot be later than check in date.", l))
+        raise asm3.utils.ASMValidationError(asm3.i18n._("Check in date cannot be later than check out date.", l))
 
     dbo.update("animalboarding", post.integer("boardingid"), {
         "AnimalID":         post.integer("animal"),
