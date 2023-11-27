@@ -940,7 +940,7 @@ class mobile(ASMEndpoint):
     def content(self, o):
         # this endpoint will be deprecated at some point probably replaced by mobile2
         if o.session.mobileapp:
-            self.redirect("https://sheltermanager.com/site/en_mobileretire.html")
+            self.redirect(f"https://sheltermanager.com/site/en_mobileretire.html?k={BUILD}")
         self.content_type("text/html")
         return asm3.mobile.page(o.dbo, o.session, o.user)
 
@@ -1323,7 +1323,7 @@ class main(JSONEndpoint):
 
     def controller(self, o):
         if o.session.mobileapp:
-            self.redirect("https://sheltermanager.com/site/en_mobileretire.html")
+            self.redirect(f"https://sheltermanager.com/site/en_mobileretire.html?k={BUILD}")
         dbo = o.dbo
         # If a b (build) parameter was passed to indicate the client wants to
         # get the latest js files, invalidate the config so that the
