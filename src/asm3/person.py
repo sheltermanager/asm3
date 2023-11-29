@@ -1296,7 +1296,9 @@ def calc_readable_flags(flags: str) -> str:
         fgs = flags.split("|")
     elif flags.find(",") != -1: 
         fgs = flags.split(",")
-    return ", ".join(set([x for x in fgs if x != ""]))
+    return ", ".join(list(dict.fromkeys( [x for x in fgs if x != "" ] )))
+    # set produces unordered results, where dictionaries from python3.7 onwards retain the order
+    # return ", ".join(set([x for x in fgs if x != ""]))
 
 def merge_person(dbo: Database, username: str, personid: int, mergepersonid: int) -> None:
     """
