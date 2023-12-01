@@ -954,16 +954,25 @@ $(function() {
                 defaultemail = controller.person.EMAILADDRESS;
                 defaultname = controller.person.OWNERNAME;
             }
+            // Use the future owner if the animal has a future adoption
+            if (controller.animal && controller.animal.FUTUREOWNEREMAILADDRESS) {
+                defaultemail = controller.animal.FUTUREOWNEREMAILADDRESS;
+                defaultname = controller.animal.FUTUREOWNERNAME;
+            } 
             // Use the latest reservation/person if the animal is on shelter/foster and a reserve is available
             else if (controller.animal && controller.animal.ARCHIVED == 0 && controller.animal.RESERVEDOWNEREMAILADDRESS) {
                 defaultemail = controller.animal.RESERVEDOWNEREMAILADDRESS;
                 defaultname = controller.animal.RESERVEDOWNERNAME;
             }
+            // Otherwise person from the active movement
             else if (controller.animal && controller.animal.CURRENTOWNEREMAILADDRESS) {
                 defaultemail = controller.animal.CURRENTOWNEREMAILADDRESS;
                 defaultname = controller.animal.CURRENTOWNERNAME;
             }
             // Other useful email addresses for animals
+            if (controller.animal && controller.animal.FUTUREOWNEREMAILADDRESS) { 
+                toaddresses.push(controller.animal.FUTUREOWNEREMAILADDRESS);
+            }
             if (controller.animal && controller.animal.RESERVEDOWNEREMAILADDRESS) { 
                 toaddresses.push(controller.animal.RESERVEDOWNEREMAILADDRESS);
             }

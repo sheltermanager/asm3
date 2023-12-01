@@ -232,6 +232,8 @@ def get_animal_query(dbo: Database) -> str:
         "vid.MediaName AS WebsiteVideoURL, " \
         "vid.MediaNotes AS WebsiteVideoNotes, " \
         "CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = a.ID AND MovementType = 1 AND MovementDate > %(today)s) THEN 1 ELSE 0 END AS HasFutureAdoption, " \
+        "fo.OwnerName AS FutureOwnerName, " \
+        "fo.EmailAddress AS FutureOwnerEmailAddress, " \
         "(SELECT COUNT(*) FROM adoption WHERE AnimalID = a.ID AND MovementType = 0 AND ReservationCancelledDate Is Null) AS ActiveReservations, " \
         "(SELECT COUNT(*) FROM media WHERE MediaMimeType = 'image/jpeg' AND Date >= %(twodaysago)s AND LinkID = a.ID AND LinkTypeID = 0) AS RecentlyChangedImages, " \
         "CASE WHEN EXISTS(SELECT amt.DateRequired FROM animalmedicaltreatment amt INNER JOIN animalmedical am ON am.ID=amt.AnimalMedicalID WHERE amt.AnimalID=a.ID AND amt.DateRequired <= %(today)s AND amt.DateGiven Is Null AND am.Status=0) THEN 1 ELSE 0 END AS HasOutstandingMedical, " \
@@ -311,6 +313,8 @@ def get_animal_query(dbo: Database) -> str:
         "LEFT OUTER JOIN adoption ar ON ar.ID = (SELECT MAX(sar.ID) FROM adoption sar WHERE sar.AnimalID = a.ID AND sar.MovementType = 0 AND sar.MovementDate Is Null AND sar.ReservationDate Is Not Null AND sar.ReservationCancelledDate Is Null) " \
         "LEFT OUTER JOIN reservationstatus ars ON ars.ID = ar.ReservationStatusID " \
         "LEFT OUTER JOIN owner ro ON ro.ID = ar.OwnerID " \
+        "LEFT OUTER JOIN adoption fa ON fa.ID = (SELECT MAX(far.ID) FROM adoption far WHERE far.AnimalID = a.ID AND far.MovementType = 1 AND far.MovementDate Is Not Null AND far.MovementDate > %(today)s AND far.ReturnDate Is Null) " \
+        "LEFT OUTER JOIN owner fo ON fo.ID = fa.OwnerID " \
         "LEFT OUTER JOIN jurisdiction rj ON rj.ID = ro.JurisdictionID " % {
             "today": dbo.sql_today(),
             "twodaysago":  dbo.sql_date(dbo.today(offset=-2))
