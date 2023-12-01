@@ -1,6 +1,7 @@
 48
 ================
 
+01/12/23 Fix error generating report HTML with no columns
 01/12/23 Use future owner email address when emailing from animal/media
 29/11/23 Fix bug when using > reserves is on and calculating status #1335
 21/11/23 Change Petcademy signup URL
