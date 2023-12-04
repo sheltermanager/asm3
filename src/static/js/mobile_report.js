@@ -77,6 +77,47 @@ $(document).ready(function() {
                 '<select class="form-control animalflags" id="report-' + name + '" name="' + name + '">' +
                 '</select></div>');
         }
+        else if (rtype == "DONATIONTYPE" || rtype == "PAYMENTTYPE") {
+            h.push('<div class="mb-3">' + 
+                '<label for="report-' + name + '" class="form-label">' + _("Payment Type") + '</label>' +
+                '<select class="form-control" id="report-' + name + '" name="' + name + '">' +
+                html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME") + 
+                '</select></div>');
+        }
+        else if (rtype == "ENTRYCATEGORY") {
+            h.push('<div class="mb-3">' + 
+                '<label for="report-' + name + '" class="form-label">' + _("Entry Category") + '</label>' +
+                '<select class="form-control" id="report-' + name + '" name="' + name + '">' +
+                html.list_to_options(controller.entryreasons, "ID", "REASONNAME") + 
+                '</select></div>');
+        }
+        else if (rtype == "LITTER") {
+            h.push('<div class="mb-3">' + 
+                '<label for="report-' + name + '" class="form-label">' + _("Litter") + '</label>' +
+                '<select class="form-control" id="report-' + name + '" name="' + name + '" ' + multiple + '>' +
+                html.list_to_options(controller.litters, "value", "label") + '</select></div>');
+        }
+        else if (rtype == "LOCATION") {
+            h.push('<div class="mb-3">' + 
+                '<label for="report-' + name + '" class="form-label">' + _("Location") + '</label>' +
+                '<select class="form-control" id="report-' + name + '" name="' + name + '">' +
+                html.list_to_options(controller.locations, "ID", "LOCATIONNAME") + 
+                '</select></div>');
+        }
+        else if (rtype == "LOGTYPE") {
+            h.push('<div class="mb-3">' + 
+                '<label for="report-' + name + '" class="form-label">' + _("Log Type") + '</label>' +
+                '<select class="form-control" id="report-' + name + '" name="' + name + '">' +
+                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + 
+                '</select></div>');
+        }
+        else if (rtype == "PAYMENTMETHOD" || rtype == "PAYMENTTYPE") {
+            h.push('<div class="mb-3">' + 
+                '<label for="report-' + name + '" class="form-label">' + _("Payment Method") + '</label>' +
+                '<select class="form-control" id="report-' + name + '" name="' + name + '">' +
+                html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME") + 
+                '</select></div>');
+        }
         else if (rtype == "PERSONFLAG") {
             h.push('<div class="mb-3">' + 
                 '<label for="report-' + name + '" class="form-label">' + _("Flag") + '</label>' +
@@ -89,58 +130,24 @@ $(document).ready(function() {
                 '<select class="form-control" id="report-' + name + '" name="' + name + '">' +
                 html.list_to_options(controller.people, "ID", "OWNERNAME++OWNERADDRESS") + '</select></div>');
         }
-        else if (rtype == "DONATIONTYPE" || rtype == "PAYMENTTYPE") {
-            h.push('<div class="mb-3">' + 
-                '<label for="report-' + name + '" class="form-label">' + _("Payment Type") + '</label>' +
-                '<select class="form-control animalflags" id="report-' + name + '" name="' + name + '">' +
-                html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME") + 
-                '</select></div>');
-        }
-        else if (rtype == "LITTER") {
-            h.push('<div class="mb-3">' + 
-                '<label for="report-' + name + '" class="form-label">' + _("Litter") + '</label>' +
-                '<select class="form-control" id="report-' + name + '" name="' + name + '" ' + multiple + '>' +
-                html.list_to_options(controller.litters, "value", "label") + '</select></div>');
-        }
-        else if (rtype == "LOCATION") {
-            h.push('<div class="mb-3">' + 
-                '<label for="report-' + name + '" class="form-label">' + _("Location") + '</label>' +
-                '<select class="form-control animalflags" id="report-' + name + '" name="' + name + '">' +
-                html.list_to_options(controller.locations, "ID", "LOCATIONNAME") + 
-                '</select></div>');
-        }
-        else if (rtype == "LOGTYPE") {
-            h.push('<div class="mb-3">' + 
-                '<label for="report-' + name + '" class="form-label">' + _("Log Type") + '</label>' +
-                '<select class="form-control animalflags" id="report-' + name + '" name="' + name + '">' +
-                html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME") + 
-                '</select></div>');
-        }
-        else if (rtype == "PAYMENTMETHOD" || rtype == "PAYMENTTYPE") {
-            h.push('<div class="mb-3">' + 
-                '<label for="report-' + name + '" class="form-label">' + _("Payment Method") + '</label>' +
-                '<select class="form-control animalflags" id="report-' + name + '" name="' + name + '">' +
-                html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME") + 
-                '</select></div>');
-        }
         else if (rtype == "SITE") {
             h.push('<div class="mb-3">' + 
                 '<label for="report-' + name + '" class="form-label">' + _("Site") + '</label>' +
-                '<select class="form-control animalflags" id="report-' + name + '" name="' + name + '">' +
+                '<select class="form-control" id="report-' + name + '" name="' + name + '">' +
                 html.list_to_options(controller.sites, "ID", "SITENAME") + 
                 '</select></div>');
         }
         else if (rtype == "SPECIES") {
             h.push('<div class="mb-3">' + 
                 '<label for="report-' + name + '" class="form-label">' + _("Species") + '</label>' +
-                '<select class="form-control animalflags" id="report-' + name + '" name="' + name + '">' +
+                '<select class="form-control" id="report-' + name + '" name="' + name + '">' +
                 html.list_to_options(controller.species, "ID", "SPECIESNAME") + 
                 '</select></div>');
         }
         else if (rtype == "TYPE") {
             h.push('<div class="mb-3">' + 
                 '<label for="report-' + name + '" class="form-label">' + _("Type") + '</label>' +
-                '<select class="form-control animalflags" id="report-' + name + '" name="' + name + '">' +
+                '<select class="form-control" id="report-' + name + '" name="' + name + '">' +
                 html.list_to_options(controller.types, "ID", "ANIMALTYPE") + 
                 '</select></div>');
         }

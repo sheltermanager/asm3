@@ -63,6 +63,7 @@ $(function() {
                     .replace("{0}", _("Altered between"))
                     .replace("{1}", _("and")) ],
                 [ _("Ask the user for a color"), "askcolor", "BaseColourName LIKE '%$ASK STRING Color$%'" ],
+                [ _("Ask the user for an entry category"), "askentry", "EntryReasonID=$ASK ENTRYCATEGORY$" ],
                 [ _("Ask the user for a flag"), "askflag", "AdditionalFlags LIKE '%$ASK ANIMALFLAG$%'" ],
                 [ _("Ask the user for a location"), "asklocation", "ShelterLocation=$ASK LOCATION$" ],
                 [ _("Ask the user for a species"), "askspecies", "SpeciesID=$ASK SPECIES$" ],

@@ -72,26 +72,21 @@ $(function() {
                         '<select class="asm-selectbox animalflags" id="report-' + name + '" data-post="' + name + '"></select>' +
                         '</td></tr>');
                 }
-                else if (rtype == "PERSONFLAG") {
-                    h.push('<tr>' + 
-                        '<td>' + _("Flag") + '</td>' +
-                        '<td>' +
-                        '<select class="asm-selectbox personflags" id="report-' + name + '" data-post="' + name + '"></select>' +
-                        '</td></tr>');
-                }
-                else if (rtype == "PERSON") {
-                    h.push('<tr>' +
-                        '<td>' + _("Person") + '</td>' +
-                        '<td>' +
-                        '<input class="asm-personchooser" id="report-' + name + '" data-post="' + name + '" type="hidden" />' +
-                        '</td></tr>');
-                }
                 else if (rtype == "DONATIONTYPE" || rtype == "PAYMENTTYPE") {
                     h.push('<tr>' + 
                         '<td>' + _("Payment Type") + '</td>' +
                         '<td>' +
                         '<select class="asm-selectbox" id="report-' + name + '" data-post="' + name + '">' + 
                         html.list_to_options(controller.donationtypes, "ID", "DONATIONNAME") +
+                        '</select>' +
+                        '</td></tr>');
+                }
+                else if (rtype == "ENTRYCATEGORY") {
+                    h.push('<tr>' + 
+                        '<td>' + _("Entry Category") + '</td>' +
+                        '<td>' +
+                        '<select class="asm-selectbox" id="report-' + name + '" data-post="' + name + '">' + 
+                        html.list_to_options(controller.entryreasons, "ID", "REASONNAME") +
                         '</select>' +
                         '</td></tr>');
                 }
@@ -129,6 +124,20 @@ $(function() {
                         '<select class="asm-selectbox" id="report-' + name + '" data-post="' + name + '">' + 
                         html.list_to_options(controller.paymentmethods, "ID", "PAYMENTNAME") +
                         '</select>' +
+                        '</td></tr>');
+                }
+                else if (rtype == "PERSONFLAG") {
+                    h.push('<tr>' + 
+                        '<td>' + _("Flag") + '</td>' +
+                        '<td>' +
+                        '<select class="asm-selectbox personflags" id="report-' + name + '" data-post="' + name + '"></select>' +
+                        '</td></tr>');
+                }
+                else if (rtype == "PERSON") {
+                    h.push('<tr>' +
+                        '<td>' + _("Person") + '</td>' +
+                        '<td>' +
+                        '<input class="asm-personchooser" id="report-' + name + '" data-post="' + name + '" type="hidden" />' +
                         '</td></tr>');
                 }
                 else if (rtype == "SITE") {

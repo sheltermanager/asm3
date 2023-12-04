@@ -198,6 +198,8 @@ def get_criteria_params(dbo: Database, customreportid: int, post: PostedData) ->
     """
     Creates a list of criteria parameters to pass to a report. The post
     parameter contains the posted form data from a report criteria screen.
+    These correspond to supporting values used in these locations:
+        report_criteria.js, mobile_report.js, main.py/report_criteria, main.py/mobile_report_criteria
     """
     crit = Report(dbo).GetParams(customreportid)
     p = []
@@ -225,20 +227,22 @@ def get_criteria_params(dbo: Database, customreportid: int, post: PostedData) ->
             p.append( ( name, asm3.i18n._("Flag", l), post[name], post[name] ) )
         elif rtype == "DONATIONTYPE" or rtype == "PAYMENTTYPE":
             p.append( ( name, asm3.i18n._("Payment Type", l), post[name], asm3.lookups.get_donationtype_name(dbo, post.integer(name) )) )
+        elif rtype == "ENTRYCATEGORY":
+            p.append( ( name, asm3.i18n._("Entry Category", l), post[name], asm3.lookups.get_entryreason_name(dbo, post.integer(name) )) )
+        elif rtype == "LITTER":
+            p.append( ( name, asm3.i18n._("Litter", l), post[name], post[name]) )
+        elif rtype == "LOCATION":
+            p.append( ( name, asm3.i18n._("Location", l), post[name], asm3.lookups.get_internallocation_name(dbo, post.integer(name) )) )
+        elif rtype == "LOGTYPE":
+            p.append( ( name, asm3.i18n._("Log Type", l), post[name], asm3.lookups.get_logtype_name(dbo, post.integer(name) )) )
         elif rtype == "PAYMENTMETHOD":
             p.append( ( name, asm3.i18n._("Payment Method", l), post[name], asm3.lookups.get_paymentmethod_name(dbo, post.integer(name) )) )
         elif rtype == "PERSON":
             p.append( ( name, asm3.i18n._("Person", l), post[name], asm3.person.get_person_name(dbo, post[name])) )
         elif rtype == "PERSONFLAG":
             p.append( ( name, asm3.i18n._("Flag", l), post[name], post[name] ) )
-        elif rtype == "LITTER":
-            p.append( ( name, asm3.i18n._("Litter", l), post[name], post[name]) )
         elif rtype == "SPECIES":
             p.append( ( name, asm3.i18n._("Species", l), post[name], asm3.lookups.get_species_name(dbo, post.integer(name) )) )
-        elif rtype == "LOCATION":
-            p.append( ( name, asm3.i18n._("Location", l), post[name], asm3.lookups.get_internallocation_name(dbo, post.integer(name) )) )
-        elif rtype == "LOGTYPE":
-            p.append( ( name, asm3.i18n._("Log Type", l), post[name], asm3.lookups.get_logtype_name(dbo, post.integer(name) )) )
         elif rtype == "TYPE":
             p.append( ( name, asm3.i18n._("Type", l), post[name], asm3.lookups.get_animaltype_name(dbo, post.integer(name) )) )
     return p
