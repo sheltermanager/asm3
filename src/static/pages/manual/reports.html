@@ -257,34 +257,6 @@ generation time. The basic syntax is this:</p>
 containing the message and the user is given an ASM date control to use to
 select the date. The value substituted is the date selected by the user in
 SQL string format appropriate for the database you are using.</p></li>
-<li><p>$ASK ANIMAL$ - requests a shelter animal. The value substituted is the animal ID.</p></li>
-<li><p>$ASK FSANIMAL$ - requests a foster animal. The value substituted is the
-animal ID.</p></li>
-<li><p>$ASK ALLANIMAL$ - requests any animal. The value substituted is the animal ID.</p></li>
-<li><p>$ASK ANIMALS$ - requests one or more shelter animals. The value substituted
-is a comma separated list of animal IDs, useful for putting in an IN clause
-(eg: AnimalID IN ($ASK ANIMALS$))</p></li>
-<li><p>$ASK ANIMALFLAG$ - requests an animal flag.</p></li>
-<li><p>$ASK PERSON$ - requests an person. The value substituted is the person ID.</p></li>
-<li><p>$ASK PERSONFLAG$ - requests a person flag.</p></li>
-<li><p>$ASK LITTER$ - requests a litter identifier. A popup displays a list of the
-recent, active litters on the system. The value returned is the litter ID as
-a string.</p></li>
-<li><p>$ASK SPECIES$ - requests a species from the user. A popup is displayed
-containing a dropdown of all species on the system.</p></li>
-<li><p>$ASK LOCATION$ - requests an internal location from the user in the same
-manner as $ASK SPECIES$</p></li>
-<li><p>$ASK VOUCHER$ - requests a voucher from the user in the same manner as $ASK
-SPECIES$</p></li>
-<li><p>$ASK DIET$ - requests a diet from the user in the same manner as $ASK
-SPECIES$</p></li>
-<li><p>$ASK PAYMENTMETHOD$ - requests a payment method.</p></li>
-<li><p>$ASK PAYMENTTYPE$ - requests a payment/donation type from the user in the
-same manner as $ASK SPECIES$</p></li>
-<li><p>$ASK LOGTYPE$ - requests a log type from the user in the same manner as $ASK
-SPECIES$</p></li>
-<li><p>$ASK TYPE$ - requests an animal type from the user in the same manner as $ASK
-SPECIES$</p></li>
 <li><p>$ASK LOOKUP message|value1,value2,value3$ - requests one from a selection of
 fixed lookup values from the user.</p></li>
 <li><p>$ASK NUMBER message$ - requests a numeric value from the user. A box is
@@ -294,6 +266,27 @@ number is entered. The value returned is the number.</p></li>
 <li><p>$ASK STRING message$ - requests a string value from the user (eg: Name,
 Address, etc.). A box is popped up containing the message and the user is
 given a text box to enter the string in. The value substituted is the string.</p></li>
+<li><p>$ASK ANIMAL$ - requests a shelter animal. The value substituted is the animal ID.</p></li>
+<li><p>$ASK FSANIMAL$ - requests a foster animal. The value substituted is the
+animal ID.</p></li>
+<li><p>$ASK ALLANIMAL$ - requests any animal. The value substituted is the animal ID.</p></li>
+<li><p>$ASK ANIMALS$ - requests one or more shelter animals. The value substituted
+is a comma separated list of animal IDs, useful for putting in an IN clause
+(eg: AnimalID IN ($ASK ANIMALS$))</p></li>
+<li><p>$ASK ANIMALFLAG$ - requests an animal flag.</p></li>
+<li><p>$ASK ENTRYCATEGORY - requests an entry reason/category from the user.</p></li>
+<li><p>$ASK LITTER$ - requests a litter identifier. A popup displays a list of the
+recent, active litters on the system. The value returned is the litter ID as
+a string.</p></li>
+<li><p>$ASK LOCATION$ - requests an internal location from the user.</p></li>
+<li><p>$ASK LOGTYPE$ - requests a log type from the user.</p></li>
+<li><p>$ASK PAYMENTMETHOD$ - requests a payment method.</p></li>
+<li><p>$ASK PAYMENTTYPE$ - requests a payment/donation type from the user.</p></li>
+<li><p>$ASK PERSON$ - requests a person. The value substituted is the person ID.</p></li>
+<li><p>$ASK PERSONFLAG$ - requests a person flag.</p></li>
+<li><p>$ASK SPECIES$ - requests a species from the user. A popup is displayed
+containing a dropdown of all species on the system.</p></li>
+<li><p>$ASK TYPE$ - requests an animal type from the user.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

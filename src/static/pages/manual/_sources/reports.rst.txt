@@ -173,6 +173,18 @@ The types are outlined below:
   select the date. The value substituted is the date selected by the user in
   SQL string format appropriate for the database you are using.
 
+* $ASK LOOKUP message|value1,value2,value3$ - requests one from a selection of 
+  fixed lookup values from the user.
+
+* $ASK NUMBER message$ - requests a numeric value from the user. A box is
+  popped up containing the message and the user is given a standard text box to
+  enter the number in. They will not be allowed to continue until a valid
+  number is entered. The value returned is the number. 
+
+* $ASK STRING message$ - requests a string value from the user (eg: Name,
+  Address, etc.). A box is popped up containing the message and the user is
+  given a text box to enter the string in. The value substituted is the string. 
+
 * $ASK ANIMAL$ - requests a shelter animal. The value substituted is the animal ID. 
 
 * $ASK FSANIMAL$ - requests a foster animal. The value substituted is the
@@ -186,48 +198,28 @@ The types are outlined below:
 
 * $ASK ANIMALFLAG$ - requests an animal flag.
 
-* $ASK PERSON$ - requests an person. The value substituted is the person ID. 
-
-* $ASK PERSONFLAG$ - requests a person flag.
+* $ASK ENTRYCATEGORY - requests an entry reason/category from the user.
 
 * $ASK LITTER$ - requests a litter identifier. A popup displays a list of the
   recent, active litters on the system. The value returned is the litter ID as
   a string. 
 
-* $ASK SPECIES$ - requests a species from the user. A popup is displayed
-  containing a dropdown of all species on the system.
+* $ASK LOCATION$ - requests an internal location from the user.
 
-* $ASK LOCATION$ - requests an internal location from the user in the same
-  manner as $ASK SPECIES$ 
-
-* $ASK VOUCHER$ - requests a voucher from the user in the same manner as $ASK
-  SPECIES$ 
-
-* $ASK DIET$ - requests a diet from the user in the same manner as $ASK
-  SPECIES$ 
+* $ASK LOGTYPE$ - requests a log type from the user.
 
 * $ASK PAYMENTMETHOD$ - requests a payment method. 
 
-* $ASK PAYMENTTYPE$ - requests a payment/donation type from the user in the
-  same manner as $ASK SPECIES$
+* $ASK PAYMENTTYPE$ - requests a payment/donation type from the user.
 
-* $ASK LOGTYPE$ - requests a log type from the user in the same manner as $ASK
-  SPECIES$
+* $ASK PERSON$ - requests a person. The value substituted is the person ID. 
 
-* $ASK TYPE$ - requests an animal type from the user in the same manner as $ASK
-  SPECIES$ 
+* $ASK PERSONFLAG$ - requests a person flag.
 
-* $ASK LOOKUP message|value1,value2,value3$ - requests one from a selection of 
-  fixed lookup values from the user.
+* $ASK SPECIES$ - requests a species from the user. A popup is displayed
+  containing a dropdown of all species on the system.
 
-* $ASK NUMBER message$ - requests a numeric value from the user. A box is
-  popped up containing the message and the user is given a standard text box to
-  enter the number in. They will not be allowed to continue until a valid
-  number is entered. The value returned is the number. 
-
-* $ASK STRING message$ - requests a string value from the user (eg: Name,
-  Address, etc.). A box is popped up containing the message and the user is
-  given a text box to enter the string in. The value substituted is the string. 
+* $ASK TYPE$ - requests an animal type from the user.
 
 .. note:: ANIMAL, FSANIMAL and ALLANIMAL are identical in the desktop interface. They produce different choices in the mobile interface.
 
