@@ -1,0 +1,24 @@
+Active Fosters Map
+###
+Maps
+###
+34703/Any rev01
+###
+Map of locations displaying active fosters
+###
+en
+###
+SELECT 
+o.LatLong,
+'<a href="person?id=', o.ID, '">', o.OwnerName, '</a><br />',
+o.OwnerAddress, '<br>', 
+'<a target="_blank" href="animal?id=', a.ID, '">', a.AnimalName, a.ShelterCode,'</a>', ' (', lksmovementtype.MovementType, ')'
+FROM adoption ad
+INNER JOIN animal a ON ad.AnimalID = a.ID
+INNER JOIN owner o ON ad.OwnerID = o.ID
+INNER JOIN lksmovementtype ON lksmovementtype.ID = ad.MovementType
+WHERE ad.MovementType = 2 AND DeceasedDate Is Null AND ReturnDate Is Null 
+AND o.LatLong is not null AND o.LatLong <> ''
+ORDER BY OwnerName
+###
+MAP
