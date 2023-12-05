@@ -69,7 +69,8 @@ $(function() {
                         if (row.SEARCHABLE == 1) { o.push(_("Searchable")); }
                         if (row.HIDDEN == 1) { o.push(_("Hidden")); }
                         return o.join(", ");
-                    }}
+                    }},
+                    { field: "RECORDCOUNT", display: _("Records") }
                 ]
             };
 
@@ -84,6 +85,7 @@ $(function() {
                             tableform.fields_update_row(dialog.fields, row);
                             row.FIELDTYPENAME = common.get_field(controller.fieldtypes, row.FIELDTYPE, "FIELDTYPE");
                             row.LINKTYPENAME = common.get_field(controller.linktypes, row.LINKTYPE, "LINKTYPE");
+                            row.RECORDCOUNT = 0;
                             controller.rows.push(row);
                             tableform.table_update(table);
                             tableform.dialog_close();  

@@ -196,7 +196,8 @@ def get_fields(dbo: Database) -> Results:
     """
     return dbo.query("SELECT a.*, ft.FieldType AS FieldTypeName, " \
         "lt.LinkType AS LinkTypeName, m.Name AS MandatoryName, " \
-        "n.Name AS NewRecordName " \
+        "n.Name AS NewRecordName, " \
+        "(SELECT COUNT(*) FROM additional WHERE AdditionalFieldID=a.ID) AS RecordCount " \
         "FROM additionalfield a " \
         "INNER JOIN lksfieldtype ft ON ft.ID = a.FieldType " \
         "INNER JOIN lksfieldlink lt ON lt.ID = a.LinkType " \
