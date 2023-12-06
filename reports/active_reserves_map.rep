@@ -1,18 +1,18 @@
-Fosters and Reserves Map
+Active Reserves Map
 ###
 Maps
 ###
-34703/Any rev02
+34703/Any rev03
 ###
-Map of locations displaying reserves and active fosters.
+Map of locations displaying active reserves fosters.
 ###
 en
 ###
 SELECT 
 o.LatLong,
-'<a target="blank" href="person?id=', '">', o.OwnerName, '</a><br>',
+'<a target="_blank" href="person?id=', o.ID, '">', o.OwnerName, '</a><br>',
 o.OwnerAddress, '<br>', 
-'<a target="_blank" href="animal?id=', a.AnimalName,' - ', a.ShelterCode, '</a>', ' (', lksmovementtype.MovementType ')'
+'<a target="_blank" href="animal?id=', a.ID, '">', a.AnimalName, a.ShelterCode,'</a>'
 FROM adoption ad
 INNER JOIN animal a ON ad.AnimalID = a.ID
 INNER JOIN owner o ON ad.OwnerID = o.ID
@@ -20,7 +20,7 @@ INNER JOIN lksmovementtype ON lksmovementtype.ID = ad.MovementType
 WHERE ad.ReservationDate Is Not Null 
 AND ad.ReservationCancelledDate Is Null
 AND ad.MovementType = 0
-OR ad.MovementType = 2 AND DeceasedDate Is Null AND ReturnDate Is Null 
+AND DeceasedDate Is Null AND ReturnDate Is Null 
 AND o.LatLong is not null AND o.LatLong <> ''
 ORDER BY OwnerName
 ###
