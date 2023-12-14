@@ -458,7 +458,7 @@ def get_links(dbo: Database, pid: int) -> Results:
         "WHERE CurrentVetID = %d " % (linkdisplay, animalextra, int(pid))
     # Altering Vet
     sql += "UNION SELECT 'AV' AS TYPE, " \
-        "'' AS TYPEDISPLAY, a.DateBroughtIn AS DDATE, a.ID AS LINKID, " \
+        "'' AS TYPEDISPLAY, a.NeuteredDate AS DDATE, a.ID AS LINKID, " \
         "%s AS LINKDISPLAY, " \
         "%s AS FIELD2, " \
         "CASE WHEN a.DeceasedDate Is Not Null THEN 'D' ELSE '' END AS DMOD " \
@@ -467,7 +467,7 @@ def get_links(dbo: Database, pid: int) -> Results:
         "INNER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN deathreason dr ON dr.ID = a.PTSReasonID " \
-        "WHERE NeuteredByVetID = %d " % (linkdisplay, animalextra, int(pid))
+        "WHERE NeuteredByVetID = %d AND NeuteredDate Is Not Null " % (linkdisplay, animalextra, int(pid))
     # Waiting List
     sql += "UNION SELECT 'WL' AS TYPE, " \
         "'' AS TYPEDISPLAY, a.DatePutOnList AS DDATE, a.ID AS LINKID, " \
