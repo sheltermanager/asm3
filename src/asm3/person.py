@@ -1992,23 +1992,23 @@ def update_anonymise_personal_data(dbo: Database, years: int = None, username: s
         asm3.al.debug("set to retain personal data indefinitely, abandoning.", "person.update_anonymise_personal_data", dbo)
         return
     cutoff = dbo.today(offset = -365 * retainyears)
-    affected = dbo.execute("UPDATE owner SET OwnerTitle = '', OwnerInitials = '', OwnerForeNames = '', " \
-        "OwnerSurname = ?, OwnerName = ?, OwnerAddress = '', EmailAddress = '', " \
-        "HomeTelephone = '', WorkTelephone = '', MobileTelephone = '', " \
-        "LastChangedDate = ?, LastChangedBy = ? " \
-        "WHERE OwnerSurname <> ? AND CreatedDate <= ? " \
+    affected = dbo.execute_named_params("UPDATE owner SET OwnerTitle = '', OwnerInitials = '', OwnerForeNames = '', " \
+        "OwnerSurname = :anonymised, OwnerSurname2 = :anonymised, OwnerName = :anonymised, OwnerAddress = '', EmailAddress = '', " \
+        "HomeTelephone = '', WorkTelephone = '', MobileTelephone = '', EmailAddress2 = '', WorkTelephone2 = '', MobileTelephone2 = '', " \
+        "LastChangedDate = :now, LastChangedBy = :username " \
+        "WHERE OwnerSurname <> :anonymised AND CreatedDate <= :cutoff " \
         "AND IsACO=0 AND IsAdoptionCoordinator=0 AND IsRetailer=0 AND IsHomeChecker=0 AND IsMember=0 AND IsDriver=0 " \
         f"AND IsShelter=0 AND IsFosterer=0 AND IsStaff=0 AND IsVet=0 AND IsVolunteer=0 {adopterclause} " \
-        "AND NOT EXISTS(SELECT ID FROM animal WHERE (OriginalOwnerID = owner.ID OR BroughtInByOwnerID = owner.ID) AND DateBroughtIn > ?) " \
-        "AND NOT EXISTS(SELECT ID FROM animalboarding WHERE OwnerID = owner.ID AND OutDateTime > ?) " \
-        "AND NOT EXISTS(SELECT ID FROM animalcontrol WHERE (CallerID = owner.ID OR VictimID = owner.ID OR OwnerID = owner.ID OR Owner2ID = owner.ID OR Owner3ID = owner.ID) AND IncidentDateTime > ?) " \
-        "AND NOT EXISTS(SELECT ID FROM clinicappointment WHERE OwnerID = owner.ID AND DateTime > ?) " \
-        "AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date > ?) " \
-        "AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID = owner.ID AND IssueDate > ?) " \
-        "AND NOT EXISTS(SELECT ID FROM ownervoucher WHERE OwnerID = owner.ID AND DateIssued > ?) " \
-        "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementDate > ?) " \
-        "AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = owner.ID AND LinkType = 1 AND Date > ?) ", 
-        ( anonymised, anonymised, dbo.now(), username, anonymised, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff, cutoff ))
+        "AND NOT EXISTS(SELECT ID FROM animal WHERE (OriginalOwnerID = owner.ID OR BroughtInByOwnerID = owner.ID) AND DateBroughtIn > :cutoff) " \
+        "AND NOT EXISTS(SELECT ID FROM animalboarding WHERE OwnerID = owner.ID AND OutDateTime > :cutoff) " \
+        "AND NOT EXISTS(SELECT ID FROM animalcontrol WHERE (CallerID = owner.ID OR VictimID = owner.ID OR OwnerID = owner.ID OR Owner2ID = owner.ID OR Owner3ID = owner.ID) AND IncidentDateTime > :cutoff) " \
+        "AND NOT EXISTS(SELECT ID FROM clinicappointment WHERE OwnerID = owner.ID AND DateTime > :cutoff) " \
+        "AND NOT EXISTS(SELECT ID FROM ownerdonation WHERE OwnerID = owner.ID AND Date > :cutoff) " \
+        "AND NOT EXISTS(SELECT ID FROM ownerlicence WHERE OwnerID = owner.ID AND IssueDate > :cutoff) " \
+        "AND NOT EXISTS(SELECT ID FROM ownervoucher WHERE OwnerID = owner.ID AND DateIssued > :cutoff) " \
+        "AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = owner.ID AND MovementDate > :cutoff) " \
+        "AND NOT EXISTS(SELECT ID FROM log WHERE LinkID = owner.ID AND LinkType = 1 AND Date > :cutoff) ", 
+        { "anonymised": anonymised, "now": dbo.now(), "username": username, "cutoff": cutoff })
     asm3.al.debug("anonymised %s expired person records outside of retention period (%s years)." % (affected, retainyears), "person.update_anonymise_personal_data", dbo)
     return "OK %d" % affected
 

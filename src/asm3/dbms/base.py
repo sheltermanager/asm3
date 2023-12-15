@@ -309,6 +309,13 @@ class Database(object):
             except:
                 pass
 
+    def execute_named_params(self, sql: str, params: Dict) -> int:
+        """
+        Runs an action query with :named :params
+        """
+        sql, values = self._named_params(sql, params)
+        return self.execute(sql, values)
+
     def execute_dbupdate(self, sql: str, params: List = None) -> int:
         """
         Runs an action query for a dbupdate script (sets override_lock
@@ -492,6 +499,33 @@ class Database(object):
                 sql = sql.replace("%s", self.sql_value(p), 1)
         with open(DB_EXEC_LOG.replace("{database}", self.database), "a", encoding="utf-8") as f:
             f.write("-- %s\n%s;\n" % (self.now(), sql))
+
+    def _named_params(self, sql: str, params: Dict) -> Tuple[str, List]:
+        """ Unpacks :named :params in a query (must terminate with space, comma or right parentheses). 
+            params should be a dict. 
+            Returns the sql query with values replaced by ? and a new list of parameters.
+        """
+        def lowest(*args):
+            r = 99999
+            for z in args:
+                if z != -1 and z < r:
+                    r = z
+            return r
+        x = 0
+        values = []
+        while True:
+            if sql[x:x+1] == ":":
+                # Use the next space, comma or ) as separator
+                y = lowest(sql.find(" ", x), sql.find(",", x), sql.find(")", x))
+                pname = sql[x+1:y]
+                sql = sql[0:x] + "?" + sql[y:]
+                values.append(params[pname])
+                x = y
+            x += 1
+            if x >= len(sql): break
+        print(sql)
+        print(str(values))
+        return (sql, values)
 
     def now(self, timenow: bool = True, offset: int = 0, settime: str = "") -> datetime.datetime:
         """ Returns now as a Python date, adjusted for the database timezone.
@@ -693,28 +727,11 @@ class Database(object):
             except:
                 pass
 
-    def query_named_params(self, sql: str, params: List, age: int = 0) -> List[ResultRow]:
+    def query_named_params(self, sql: str, params: Dict, age: int = 0) -> List[ResultRow]:
         """ Allows use of :named :params in a query (must terminate with space, comma or right parentheses). params should be a dict. 
             if age is not zero, uses query_cache instead.
         """
-        def lowest(*args):
-            r = 99999
-            for z in args:
-                if z != -1 and z < r:
-                    r = z
-            return r
-        x = 0
-        values = []
-        while True:
-            if sql[x:x+1] == ":":
-                # Use the next space, comma or ) as separator
-                y = lowest(sql.find(" ", x), sql.find(",", x), sql.find(")", x))
-                pname = sql[x+1:y]
-                sql = sql[0:x] + "?" + sql[y:]
-                values.append(params[pname])
-                x = y
-            x += 1
-            if x >= len(sql): break
+        sql, values = self._named_params(sql, params)
         if age == 0:
             return self.query(sql, values)
         else:
