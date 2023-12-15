@@ -1,6 +1,7 @@
 48
 ================
 
+15/12/13 Add CoordinatorFirstname/CoordinatorLastname wordkeys #1379
 15/12/13 Allow TO token in email templates #1383
 15/12/13 Anonymise couple fields #1385
 14/12/13 Show altered date on altering vet person links

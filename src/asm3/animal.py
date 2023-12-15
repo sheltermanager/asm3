@@ -147,6 +147,8 @@ def get_animal_query(dbo: Database) -> str:
         "ar.ReservationDate AS ReservationDate, " \
         "ars.StatusName AS ReservationStatusName, " \
         "ao.OwnerName AS AdoptionCoordinatorName, " \
+        "ao.OwnerForeNames AS AdoptionCoordinatorForenames, " \
+        "ao.OwnerSurname AS AdoptionCoordinatorSurname, " \
         "ao.HomeTelephone AS AdoptionCoordinatorHomeTelephone, " \
         "ao.WorkTelephone AS AdoptionCoordinatorWorkTelephone, " \
         "ao.MobileTelephone AS AdoptionCoordinatorMobileTelephone, " \

@@ -254,6 +254,10 @@ AnimalJurisdiction
     The animal's jurisdiction
 CoordinatorName
     The name of the adoption coordinator
+CoordinatorFirstname / CoordinatorForeNames
+    The first name(s) of the adoption coordinator 
+CoordinatorLastname / CoordinatorSurname
+    The last name of the adoption coordinator 
 CoordinatorHomePhone
     The home phone number of the adoption coordinator
 CoordinatorWorkPhone

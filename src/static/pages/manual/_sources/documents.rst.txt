@@ -93,9 +93,12 @@ by using the {{SUBJECT}} token with custom text or a word key, see :ref:`wordkey
 
 The following tokens can also be used to add email addresses to the template::
 
+  {{TO example@email.com}}
   {{FROM example@email.com}}
   {{CC example@email.com}}
   {{BCC example@email.com}}
+
+Note that the TO token will be ignored if you are using this template with a mail merge.
 
 More than one email address can be included by adding the address seperated by a comma::
 
