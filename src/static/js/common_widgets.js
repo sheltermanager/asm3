@@ -935,6 +935,7 @@ $.widget("asm.emailform", {
             header.show_loading(_("Loading..."));
             common.ajax_post("document_gen", formdata, function(response) {
                 let j = jQuery.parseJSON(response);
+                if (j.TO) { $("#em-to").val(j.TO); }
                 if (j.SUBJECT) { $("#em-subject").val(j.SUBJECT); }
                 if (j.FROM) { $("#em-from").val(j.FROM); }
                 if (j.CC) { $("#em-cc").val(j.CC); }

@@ -1991,6 +1991,7 @@ def extract_mail_tokens(s: str) -> Dict[str, str]:
     """
     Extracts tokens for mail from document content s.
     Mail tokens are {{FROM x}}, {{SUBJECT x}}
+    {{TO x}} can also be used, but is ignored and stripped by mailmerges
     This process should be run on the output after generating a document so that all
     wordkeys in the mail tokens have been substituted.
     Returns a dictionary containing any found tokens and the body with the tokens removed.
@@ -1998,7 +1999,7 @@ def extract_mail_tokens(s: str) -> Dict[str, str]:
     if s is None: s = ""
     if asm3.utils.is_bytes(s): s = asm3.utils.bytes2str(s)
     results = asm3.utils.regex_multi(r"\{\{(.+?) (.+?)\}\}",  s)
-    d = { "FROM": None, "CC": None, "BCC": None, "SUBJECT": None, "BODY": None }
+    d = { "TO": None, "FROM": None, "CC": None, "BCC": None, "SUBJECT": None, "BODY": None }
     for k, v in results:
         d[k] = v
     s = asm3.utils.regex_delete(r"\{\{(.+?)\}\}", s)
