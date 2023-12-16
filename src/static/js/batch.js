@@ -20,6 +20,7 @@ $(function() {
                 '<option value="genallpos">' + _("Recalculate ALL animal locations") + '</option>',
                 '<option value="genallvariable">' + _("Recalculate ALL animal ages/times") + '</option>',
                 '<option value="genallbreeds">' + _("Recalculate ALL animal breed names") + '</option>',
+                '<option value="genlitters">' + _("Recalculate active litter counts") + '</option>',
                 '<option value="gendiarylinkinfo">' + _("Regenerate diary link info for incomplete notes") + '</option>',
                 '<option value="genlookingfor">' + _("Regenerate 'Person looking for' report") + '</option>',
                 '<option value="genownername">' + _("Regenerate person names in selected format") + '</option>',
