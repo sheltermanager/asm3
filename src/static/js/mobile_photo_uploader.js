@@ -101,6 +101,7 @@ $(document).ready(function() {
                 success: function() {
                     $("#spinner").hide();
                     $("#check").show();
+                    $("input[type='file']").val(""); // clear down file inputs so the same file can be chosen again if the user wants
                 }
             });
         }, false);
