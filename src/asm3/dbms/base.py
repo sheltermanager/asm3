@@ -523,8 +523,6 @@ class Database(object):
                 x = y
             x += 1
             if x >= len(sql): break
-        print(sql)
-        print(str(values))
         return (sql, values)
 
     def now(self, timenow: bool = True, offset: int = 0, settime: str = "") -> datetime.datetime:
