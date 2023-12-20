@@ -77,7 +77,7 @@ $VAR from DATE Reservations cancelled between $
 $VAR to DATE and $
 
 SELECT ShelterCode, AnimalName, DateBroughtIn, ReservationDate, 
-adoption.Comments, 
+adoption.Comments, adoption.ReservationCancelledDate, 
 species.SpeciesName,
 animaltype.AnimalType AS theType,
 animal.BreedName,
@@ -85,10 +85,10 @@ no.OwnerName, no.OwnerAddress,
 no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
 FROM adoption
-INNER JOIN animal ON adoption.AnimalID = animal.ID
+LEFT OUTER JOIN animal ON adoption.AnimalID = animal.ID
 INNER JOIN owner no ON adoption.OwnerID = no.ID
-INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
-INNER JOIN species ON species.ID = animal.SpeciesID
+LEFT OUTER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
+LEFT OUTER JOIN species ON species.ID = animal.SpeciesID
 WHERE MovementType = 0 AND ReservationCancelledDate Is Not Null
 AND ReservationCancelledDate >= '$@from$' AND ReservationCancelledDate <= '$@to$' ORDER BY ReservationCancelledDate
 ###
