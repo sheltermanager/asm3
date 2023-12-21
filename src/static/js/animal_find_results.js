@@ -274,8 +274,9 @@ $(function() {
             }
             else if ( name == "ShelterCode") { 
                 // Explicitly set the sort because codes can sometimes look like dates
-                // and trigger different sorting rules.
-                rv = '<span data-sort="' + html.title(row.CODE) + '">' + row.CODE + '</span>';
+                // and trigger different sorting rules. We prefix them all with an X
+                // so that they force an alphanumeric rather than numeric sort
+                rv = '<span data-sort="X' + html.title(row.CODE) + '">' + row.CODE + '</span>';
             }
             else if ( name == "IdentichipNumber") { rv = common.nulltostr(row.IDENTICHIPNUMBER) + " " + common.nulltostr(row.IDENTICHIP2NUMBER); }
             else if ($.inArray(name, DATE_FIELDS) > -1) {
