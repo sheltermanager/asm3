@@ -1,6 +1,7 @@
 48
 ================
 
+21/12/23 Prevent animal find results accidentally treating shelter codes as dates
 19/12/13 Fix webkit bug in mobile photo uploader when same photo is chosen again
 16/12/13 Batch screen option to recalculate litter counts
 15/12/13 Add CoordinatorFirstname/CoordinatorLastname wordkeys #1379
