@@ -56,9 +56,8 @@ Alerts
 .. image:: images/incident_alerts.png
 
 The animal control module will raise alerts for unpaid fines, calls that have
-not yet resulted in dispatch (remove the call date and time to remove the
-alert), calls that do not have a completion date and code, incidents that are
-due for followup today and traps due for return.
+not yet resulted in dispatch, calls that do not have a completion date and code, 
+incidents that are due for followup today and traps due for return.
 
 Map of active incidents
 -----------------------
