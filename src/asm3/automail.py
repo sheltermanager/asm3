@@ -204,8 +204,6 @@ def fosterer_weekly(dbo: Database, user = "system") -> None:
     activefosterers = _fosterer_weekly_activefosterers(dbo)
     asm3.al.debug("%d active fosterers found" % len(activefosterers), "automail.fosterer_weekly", dbo)
 
-    def p(l, s):
-        l.append("<p>%s</p>" % s)
     def pb(l, s):
         l.append("<p><b>%s</b></p>" % s)
     def br(l, s):
