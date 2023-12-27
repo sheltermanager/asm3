@@ -301,7 +301,7 @@ class PetRescuePublisher(AbstractPublisher):
             "mix":                      an.CROSSBREED == 1, # true | false
             "date_of_birth":            asm3.i18n.format_date(an.DATEOFBIRTH, "%Y-%m-%d"), # iso
             "gender":                   an.SEXNAME.lower(), # male | female
-            "personality":              self.getDescription(an, replaceSmart=True), # 20-4000 chars of free type
+            "personality":              self.getDescription(an), # 20-4000 chars of free type
             "best_feature":             best_feature, # 25 chars free type, defaults to "Looking for love" requires BESTFEATURE additional field
             "location_postcode":        location_postcode, # shelter/fosterer postcode
             "location_state_abbr":      location_state_abbr, # shelter/fosterer state

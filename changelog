@@ -1,6 +1,7 @@
 48
 ================
 
+27/12/23 PetRescue: stop translating smart quotes, remove doubling of double quotes
 21/12/23 animal find results using a numeric sort on shelter codes with no letters #1387
 19/12/13 Fix webkit bug in mobile photo uploader when same photo is chosen again
 16/12/13 Batch screen option to recalculate litter counts

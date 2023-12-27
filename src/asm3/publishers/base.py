@@ -818,25 +818,25 @@ class AbstractPublisher(threading.Thread):
         Replaces well known "smart" quotes/points with ASCII characters (mainly aimed at smartquotes)
         """
         ENTITIES = {
-            "\u00b4":  "'", # spacing acute
-            "\u2013": "-", # endash
+            "\u00b4": "'",  # spacing acute
+            "\u2013": "-",  # endash
             "\u2014": "--", # emdash
-            "\u2018": "'", # left single quote
-            "\u2019": "'", # right single quote
-            "\u201a": ",", # single low quote (comma)
+            "\u2018": "'",  # left single quote
+            "\u2019": "'",  # right single quote
+            "\u201a": ",",  # single low quote (comma)
             "\u201c": "\"", # left double quotes
             "\u201d": "\"", # right double quotes
             "\u201e": ",,", # double low quote (comma comma)
-            "\u2022": "*", # bullet
-            "\u2026": "...", # ellipsis
-            "\u2032": "'", # prime (stopwatch)
+            "\u2022": "*",  # bullet
+            "\u2026": "...",# ellipsis
+            "\u2032": "'",  # prime (stopwatch)
             "\u2033": "\"", # double prime,
-            "\u2713": "/", # check
-            "\u2714": "/", # heavy check
-            "\u2715": "x", # multiplication x
-            "\u2716": "x", # heavy multiplication x
-            "\u2717": "x", # ballot x
-            "\u2718": "x"  # heavy ballot x
+            "\u2713": "/",  # check
+            "\u2714": "/",  # heavy check
+            "\u2715": "x",  # multiplication x
+            "\u2716": "x",  # heavy multiplication x
+            "\u2717": "x",  # ballot x
+            "\u2718": "x"   # heavy ballot x
         }
         for k, v in ENTITIES.items():
             s = s.replace(k, v)
@@ -890,8 +890,8 @@ class AbstractPublisher(threading.Thread):
         # Smart quotes and apostrophes
         if replaceSmart:
             notes = self.replaceSmartQuotes(notes)
-        # Escape speechmarks
-        notes = notes.replace("\"", "\"\"")
+        # Escape speechmarks - disabled 27/12/2023, why were we doing this? Where is a double double-quote the escape method?
+        # notes = notes.replace("\"", "\"\"")
         return notes
 
     def getLastPublishedDate(self, animalid: int) -> datetime:
