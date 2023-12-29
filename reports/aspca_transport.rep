@@ -2,7 +2,7 @@ ASPCA: Transport Manifest
 ###
 Transport
 ###
-34202/PostgreSQL rev03
+34202/PostgreSQL rev04
 ###
 Export to CSV for values you can copy into the ASPCA transport manifest spreadsheet
 ###
@@ -30,12 +30,12 @@ $CONST FLEA4='%Tick%'$
 $CONST FLEA5='%Tick%'$
 $CONST WORM1='Strongid%'$
 $CONST WORM2='Panacur%'$
-$CONST WORM3='worm%'$
+$CONST WORM3='Pyrantel%'$
 $CONST WORM4='%worm%'$
 $CONST WORM5='%worm%'$
 $CONST OTHERW1='Marqui%'$
 $CONST OTHERW2='Drontal%'$
-$CONST OTHERW3='Pyrantel%'$
+$CONST OTHERW3='Ponazuril%'$
 $CONST OTHERW4='Drontal%'$
 $CONST OTHERW5='Drontal%'$
 
