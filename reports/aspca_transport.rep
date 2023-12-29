@@ -2,7 +2,7 @@ ASPCA: Transport Manifest
 ###
 Transport
 ###
-34202/PostgreSQL rev02
+34202/PostgreSQL rev03
 ###
 Export to CSV for values you can copy into the ASPCA transport manifest spreadsheet
 ###
@@ -62,23 +62,23 @@ a.DateBroughtIn AS "Date in",
 c.BaseColour AS "Color(s), Pattern, etc.",
 
 (SELECT vt.VaccinationType FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
-WHERE av.AnimalID = a.ID AND (vt.VaccinationType LIKE $VACC1$ OR vt.VaccinationType LIKE $VACC2$
+WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND (vt.VaccinationType LIKE $VACC1$ OR vt.VaccinationType LIKE $VACC2$
 OR vt.VaccinationType LIKE $VACC3$ OR vt.VaccinationType LIKE $VACC4$ OR vt.VaccinationType LIKE $VACC5$) 
 ORDER BY DateOfVaccination DESC LIMIT 1) || ' ' ||
 (SELECT TO_CHAR(av.DateOfVaccination, 'MM/DD/YYYY') FROM animalvaccination av 
 INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
-WHERE av.AnimalID = a.ID AND (vt.VaccinationType LIKE $VACC1$ OR vt.VaccinationType LIKE $VACC2$
+WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND (vt.VaccinationType LIKE $VACC1$ OR vt.VaccinationType LIKE $VACC2$
 OR vt.VaccinationType LIKE $VACC3$ OR vt.VaccinationType LIKE $VACC4$ OR vt.VaccinationType LIKE $VACC5$) 
 ORDER BY DateOfVaccination DESC LIMIT 1) AS "DA2PPV, FVRCP, etc.",
 
 (SELECT av.DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
-WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE $BORDETELLA$ LIMIT 1) AS "Bordetella Date",
+WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND vt.VaccinationType LIKE $BORDETELLA$ LIMIT 1) AS "Bordetella Date",
 
 (SELECT av.DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
-WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE $LEPTO$ LIMIT 1) AS "Lepto Date",
+WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND vt.VaccinationType LIKE $LEPTO$ LIMIT 1) AS "Lepto Date",
 
 (SELECT av.DateOfVaccination FROM animalvaccination av INNER JOIN vaccinationtype vt ON vt.ID = av.VaccinationID
-WHERE av.AnimalID = a.ID AND vt.VaccinationType LIKE $RABIES$ LIMIT 1) AS "Rabies Date",
+WHERE DateOfVaccination Is Not Null AND av.AnimalID = a.ID AND vt.VaccinationType LIKE $RABIES$ LIMIT 1) AS "Rabies Date",
 
 CASE 
 WHEN a.SpeciesID=1 THEN 'Observation' 
