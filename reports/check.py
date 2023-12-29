@@ -108,8 +108,8 @@ def parse_reports(data):
             with open("zzz_check.sql", "w") as f:
                 f.write(substitute(sql))
             checked += 1
-            os.system("scp -q zzz_check.sql root@eur04bdx.sheltermanager.com:/root/")
-            os.system("ssh root@eur04bdx.sheltermanager.com \"psql -q -U robin -f zzz_check.sql > /dev/null && rm -f zzz_check.sql\"")
+            os.system("scp -q zzz_check.sql root@eur05ddx.sheltermanager.com:/root/")
+            os.system("ssh root@eur05ddx.sheltermanager.com \"psql -q -U robin -f zzz_check.sql > /dev/null && rm -f zzz_check.sql\"")
             os.system("rm -f zzz_check.sql")
         else:
             if SHOWNONEXEC:
