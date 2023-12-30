@@ -54,7 +54,8 @@ $(function() {
                     { json_field: "LOOKUPS", post_field: "lookups", label: _("Lookups"), type: "textarea" }, 
                     { json_field: "SPECIESID", post_field: "species", label: _("Species"), type: "select", options: {
                         valuefield: "ID", displayfield: "SPECIESNAME", rows: species } }, 
-                    { json_field: "TOOLTIP", post_field: "tooltip", label: _("Tooltip"), type: "textarea" }
+                    { json_field: "TOOLTIP", post_field: "tooltip", label: _("Additional"), type: "textarea", 
+                      callout: _("Additional text to be shown with the label to help the user complete this form field") }
                 ]
             };
 
@@ -154,7 +155,7 @@ $(function() {
                 $("#tooltip").closest("tr").find("label").html(_("Flags"));
             }
             else {
-                $("#tooltip").closest("tr").find("label").html(_("Tooltip"));
+                $("#tooltip").closest("tr").find("label").html(_("Additional"));
             }
         },
 

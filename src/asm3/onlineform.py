@@ -195,7 +195,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
         if f.MANDATORY == 1: 
             required = "required=\"required\""
             requiredtext = "required=\"required\" pattern=\".*\\S+.*\""
-            requiredspan = '<span class="asm-onlineform-required" style="color: #ff0000; float: right;">*</span>'
+            requiredspan = '<span class="asm-onlineform-required" style="color: #ff0000;">*</span>'
         if f.FIELDTYPE == FIELDTYPE_RAWMARKUP:
             h.append('<td class="asm-onlineform-td asm-onlineform-raw" colspan="2">')
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
@@ -204,36 +204,37 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             # Add label and cell wrapper if it's not raw markup or a checkbox
             h.append('<td class="asm-onlineform-td">')
             h.append('<label for="%s">%s %s</label>' % ( fid, f.LABEL, requiredspan ))
+            if f.TOOLTIP: h.append('<span class="asm-onlineform-tooltip">%s</span>' % f.TOOLTIP)
             h.append('</td>')
             h.append('<td class="asm-onlineform-td">')
         if f.FIELDTYPE == FIELDTYPE_YESNO:
-            h.append('<select class="asm-onlineform-yesno" id="%s" name="%s" %s title="%s">' \
+            h.append('<select class="asm-onlineform-yesno" id="%s" name="%s" %s>' \
                 '<option value=""></option><option>%s</option><option>%s</option></select>' % \
-                ( fid, cname, asm3.utils.iif(required != "", required, ""), asm3.utils.nulltostr(f.TOOLTIP), asm3.i18n._("No", l), asm3.i18n._("Yes", l)))
+                ( fid, cname, asm3.utils.iif(required != "", required, ""), asm3.i18n._("No", l), asm3.i18n._("Yes", l)))
         elif f.FIELDTYPE == FIELDTYPE_CHECKBOX:
             h.append('<input class="asm-onlineform-check" type="checkbox" id="%s" name="%s" %s /> ' \
                 '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label>' % \
                 (fid, cname, required, fid, f.LABEL))
         elif f.FIELDTYPE == FIELDTYPE_TEXT:
-            h.append('<input class="asm-onlineform-text" type="text" id="%s" name="%s" title="%s" %s %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), autocomplete, requiredtext))
+            h.append('<input class="asm-onlineform-text" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_NUMBER:
-            h.append('<input class="asm-onlineform-number" type="text" id="%s" name="%s" title="%s" %s %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), autocomplete, requiredtext))
+            h.append('<input class="asm-onlineform-number" type="text" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_EMAIL:
-            h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" title="%s" %s %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), autocomplete, requiredtext))
+            h.append('<input class="asm-onlineform-email" type="email" id="%s" name="%s" %s %s />' % ( fid, cname, autocomplete, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_DATE:
-            h.append('<input class="asm-onlineform-date" type="text" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+            h.append('<input class="asm-onlineform-date" type="text" id="%s" name="%s" %s />' % ( fid, cname, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_TIME:
-            h.append('<input class="asm-onlineform-time" type="text" id="%s" name="%s" title="%s" %s />' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+            h.append('<input class="asm-onlineform-time" type="text" id="%s" name="%s" %s />' % ( fid, cname, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_NOTES:
-            h.append('<textarea class="asm-onlineform-notes" id="%s" name="%s" title="%s" %s></textarea>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), requiredtext))
+            h.append('<textarea class="asm-onlineform-notes" id="%s" name="%s" %s></textarea>' % ( fid, cname, requiredtext))
         elif f.FIELDTYPE == FIELDTYPE_LOOKUP:
-            h.append('<select class="asm-onlineform-lookup" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
+            h.append('<select class="asm-onlineform-lookup" id="%s" name="%s" %s>' % ( fid, cname, required))
             for lv in asm3.utils.nulltostr(f["LOOKUPS"]).split("|"):
                 h.append('<option>%s</option>' % lv)
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_LOOKUP_MULTI:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
-            h.append('<select class="asm-onlineform-lookupmulti" multiple="multiple" data-name="%s" data-required="%s" title="%s">' % ( cname, asm3.utils.iif(required != "", "required", ""), asm3.utils.nulltostr(f.TOOLTIP)))
+            h.append('<select class="asm-onlineform-lookupmulti" multiple="multiple" data-name="%s" data-required="%s" title="" >' % ( cname, asm3.utils.iif(required != "", "required", "")))
             for lv in asm3.utils.nulltostr(f.LOOKUPS).split("|"):
                 h.append('<option>%s</option>' % lv)
             h.append('</select>')
@@ -254,7 +255,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
                     '<label class="asm-onlineform-checkboxlabel" for="%s">%s</label><br />' % (rid, lv, rname, rid, lv))
             h.append('</div>')
         elif f.FIELDTYPE == FIELDTYPE_SHELTERANIMAL:
-            h.append('<select class="asm-onlineform-shelteranimal" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
+            h.append('<select class="asm-onlineform-shelteranimal" id="%s" name="%s" %s>' % ( fid, cname, required))
             h.append('<option value=""></option>')
             rs = asm3.animal.get_animals_on_shelter_namecode(dbo)
             rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
@@ -264,7 +265,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
                     { "name": a.ANIMALNAME, "code": a.SHELTERCODE, "species": a.SPECIESNAME})
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_ADOPTABLEANIMAL:
-            h.append('<select class="asm-onlineform-adoptableanimal" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
+            h.append('<select class="asm-onlineform-adoptableanimal" id="%s" name="%s" %s>' % ( fid, cname, required))
             h.append('<option value=""></option>')
             pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(dbo))
             rs = asm3.publishers.base.get_animal_data(dbo, pc, include_additional_fields = True)
@@ -276,7 +277,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_GDPR_CONTACT_OPTIN:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
-            h.append('<select class="asm-onlineform-gdprcontactoptin asm-onlineform-lookupmulti" multiple="multiple" id="%s" data-name="%s" data-required="%s" title="%s">' % ( fid, cname, asm3.utils.iif(required != "", "required", ""), asm3.utils.nulltostr(f.TOOLTIP)))
+            h.append('<select class="asm-onlineform-gdprcontactoptin asm-onlineform-lookupmulti" multiple="multiple" id="%s" data-name="%s" data-required="%s" title="">' % ( fid, cname, asm3.utils.iif(required != "", "required", "")))
             h.append('<option value="declined">%s</option>' % asm3.i18n._("Declined", l))
             h.append('<option value="email">%s</option>' % asm3.i18n._("Email", l))
             h.append('<option value="post">%s</option>' % asm3.i18n._("Post", l))
@@ -284,21 +285,21 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             h.append('<option value="phone">%s</option>' % asm3.i18n._("Phone", l))
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_COLOUR:
-            h.append('<select class="asm-onlineform-colour" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
+            h.append('<select class="asm-onlineform-colour" id="%s" name="%s" %s>' % ( fid, cname, required))
             h.append('<option value=""></option>')
             for l in asm3.lookups.get_basecolours(dbo):
                 if l.ISRETIRED != 1:
                     h.append('<option>%s</option>' % l.BASECOLOUR)
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_BREED:
-            h.append('<select class="asm-onlineform-breed" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
+            h.append('<select class="asm-onlineform-breed" id="%s" name="%s" %s>' % ( fid, cname, required))
             h.append('<option value=""></option>')
             for l in asm3.lookups.get_breeds(dbo):
                 if l.ISRETIRED != 1:
                     h.append('<option>%s</option>' % l.BREEDNAME)
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_SPECIES:
-            h.append('<select class="asm-onlineform-species" id="%s" name="%s" title="%s" %s>' % ( fid, cname, asm3.utils.nulltostr(f.TOOLTIP), required))
+            h.append('<select class="asm-onlineform-species" id="%s" name="%s" %s>' % ( fid, cname, required))
             h.append('<option value=""></option>')
             for l in asm3.lookups.get_species(dbo):
                 if l.ISRETIRED != 1:
@@ -424,6 +425,7 @@ def get_onlineform_header(dbo: Database) -> str:
         "<style>\n" \
         "input:focus, textarea:focus, select:focus { box-shadow: 0 0 5px #3a87cd; border: 1px solid #3a87cd; }\n" \
         ".asm-onlineform-title, .asm-onlineform-description { text-align: center; }\n" \
+        ".asm-onlineform-tooltip { display: block; font-size: 75%; overflow-wrap: anywhere; hyphens: auto; }\n" \
         "input, textarea, select { border: 1px solid #aaa; }\n" \
         "input[type='submit'] { padding: 10px; cursor: pointer; }\n" \
         "/* phones and smaller devices */\n" \
@@ -433,7 +435,7 @@ def get_onlineform_header(dbo: Database) -> str:
         "    h2 { font-size: 200%; }\n" \
         "    .asm-onlineform-table td { display: block; width: 100%; margin-bottom: 20px; }\n" \
         "    label, input[type='file'], input[type='text'], input[type='email'], select, textarea { width: 97%; padding: 5px; }\n" \
-        "    label { word-wrap: anywhere; }\n" \
+        "    label { overflow-wrap: anywhere; hypens: auto; }\n" \
         "    input[type='checkbox'] { float: left; width: auto; position: relative; top: 10px }\n" \
         "    input[type='submit'] { background-color: #2CBBBB; border: 1px solid #27A0A0; color: #fff; padding: 20px; }\n" \
         "}\n" \
