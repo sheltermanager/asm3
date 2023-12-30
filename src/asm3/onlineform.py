@@ -1128,10 +1128,10 @@ def delete_onlineformincoming(dbo: Database, username: str, collationid: int) ->
     sql = []
     values = {}
     preview = ""
-    processed = "!!Unprocessed!!"
+    processed = "-Unprocessed-"
     for r in rows:
         if preview == "" and r.PREVIEW != "": preview = r.PREVIEW
-        if r.FIELDNAME == "processed": processed = "**Processed**"
+        if r.FIELDNAME == "processed": processed = "=Processed="
         values[r.FIELDNAME] = asm3.utils.strip_html_tags(r.VALUE)
         sql.append(dbo.row_to_insert_sql("onlineformincoming", r))
     asm3.audit.insert_deletion(dbo, username, "onlineformincoming", collationid, "", "".join(sql))

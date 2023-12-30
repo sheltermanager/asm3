@@ -1,18 +1,18 @@
-Audit Trail: Deletions by Date
+Audit Trail: Deleted Unprocessed Online Forms
 ###
 Auditing
 ###
-2721/Any rev01
+34800/Any rev01
 ###
-All record deletions between two dates, grouped by user.
+All unprocessed online forms that were deleted between two dates, grouped by user.
 ###
 en
 ###
 SELECT AuditDate, UserName, TableName, Description
 FROM audittrail
-WHERE
-Action = 2 AND
-AuditDate >= '$ASK DATE Enter the from date$' AND AuditDate <= '$ASK DATE Enter the to date$ 23:59:59'
+WHERE Action = 2 
+AND AuditDate >= '$ASK DATE Enter the from date$' AND AuditDate <= '$ASK DATE Enter the to date$ 23:59:59'
+AND Description LIKE '-Unprocessed%'
 ORDER BY UserName, AuditDate
 ###
 $$HEADER
@@ -24,7 +24,6 @@ $$HEAD
 <table>
 <tr>
 <td><b>Date</b></td>
-<td><b>Table</b></td>
 <td></td>
 </tr>
 $$FOOT
@@ -34,7 +33,6 @@ GROUP$$
 $$BODY
 <tr>
 <td>$AUDITDATE</td>
-<td>$TABLENAME</td>
 <td>$DESCRIPTION</td>
 </tr>
 BODY$$
