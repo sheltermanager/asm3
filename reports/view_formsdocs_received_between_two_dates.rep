@@ -1,10 +1,10 @@
-View online forms received between two dates
+View forms/documents attached between two dates
 ###
 Maintenance
 ###
-Any rev01
+Any rev04
 ###
-List all submitted HTML online forms added to the system between two dates with links (requires locking of online forms)
+List all documents and submitted HTML forms added to the system between two dates with links
 ###
 en
 ###
@@ -24,7 +24,7 @@ m.MediaNotes
 FROM media m
 WHERE m.MediaName LIKE '%.html'
 AND m.Date >= '$ASK DATE Enter from date$' AND m.Date <= '$ASK DATE Enter to date$'
-AND m.SignatureHash LIKE 'onlineform:%'
+AND LOWER(m.MediaNotes) LIKE LOWER('%$ASK STRING Partial form name (leave blank for all)$%')
 ORDER BY m.Date
 ###
 $$HEADER
