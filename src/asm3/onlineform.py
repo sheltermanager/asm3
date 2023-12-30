@@ -1121,15 +1121,22 @@ def delete_onlineformincoming(dbo: Database, username: str, collationid: int) ->
     """
     Deletes the specified onlineformincoming set
     """
-    # Write an entry to the deletions table for the incoming form rows
+    # Write an entry to the deletions and audit table for all the incoming form rows as one
     # This is a special case because onlineformincoming does not have an ID field, 
-    # so the generic deletions handling in dbms.base.delete cannot do it.
-    rows = dbo.query("SELECT * FROM onlineformincoming WHERE CollationID=%s" % collationid)
+    # so the generic deletions handling in audit.delete_rows and dbms.base.delete cannot do it.
+    rows = dbo.query("SELECT * FROM onlineformincoming WHERE CollationID=%s ORDER BY DisplayIndex" % collationid)
     sql = []
+    values = {}
+    preview = ""
+    processed = "!!Unprocessed!!"
     for r in rows:
+        if preview == "" and r.PREVIEW != "": preview = r.PREVIEW
+        if r.FIELDNAME == "processed": processed = "**Processed**"
+        values[r.FIELDNAME] = asm3.utils.strip_html_tags(r.VALUE)
         sql.append(dbo.row_to_insert_sql("onlineformincoming", r))
     asm3.audit.insert_deletion(dbo, username, "onlineformincoming", collationid, "", "".join(sql))
-    dbo.delete("onlineformincoming", "CollationID=%s" % collationid, username)
+    asm3.audit.delete(dbo, username, "onlineformincoming", collationid, "", "%s %s %s" % (processed, preview, values))
+    dbo.delete("onlineformincoming", "CollationID=%s" % collationid, username, writeAudit=False, writeDeletion=False)
 
 def guess_agegroup(dbo: Database, s: str) -> str:
     """ Guesses an agegroup, returns the third band (adult by default) if no match is found """
