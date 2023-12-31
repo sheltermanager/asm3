@@ -737,7 +737,7 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, loca
             afid = asm3.utils.atoi(k)
             ilike = dbo.sql_ilike("Value", "?")
             ss.ands.append(f"EXISTS (SELECT Value FROM additional WHERE LinkID=a.ID AND AdditionalFieldID={afid} AND {ilike})")
-            ss.values.append( "%%%s%%" % v.lower() )
+            ss.values.append( "%%%s%%" % v.strip().lower() )
 
     where = ""
     if len(ss.ands) > 0: where = "WHERE " + " AND ".join(ss.ands)

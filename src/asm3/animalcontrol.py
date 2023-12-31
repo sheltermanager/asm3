@@ -229,7 +229,7 @@ def get_animalcontrol_find_advanced(dbo: Database, criteria: dict, username: str
             afid = asm3.utils.atoi(k)
             ilike = dbo.sql_ilike("Value", "?")
             ss.ands.append(f"EXISTS (SELECT Value FROM additional WHERE LinkID=ac.ID AND AdditionalFieldID={afid} AND {ilike})")
-            ss.values.append( "%%%s%%" % v.lower() )
+            ss.values.append( "%%%s%%" % v.strip().lower() )
 
     sql = "%s WHERE %s ORDER BY ac.ID DESC" % (get_animalcontrol_query(dbo), " AND ".join(ss.ands))
     return reduce_find_results(dbo, username, dbo.query(sql, ss.values, limit=limit, distincton="ID"))

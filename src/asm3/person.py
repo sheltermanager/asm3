@@ -719,7 +719,7 @@ def get_person_find_advanced(dbo: Database, criteria: Dict[str, str], includeSta
             afid = asm3.utils.atoi(k)
             ilike = dbo.sql_ilike("Value", "?")
             ss.ands.append(f"EXISTS (SELECT Value FROM additional WHERE LinkID=o.ID AND AdditionalFieldID={afid} AND {ilike})")
-            ss.values.append( "%%%s%%" % v.lower() )
+            ss.values.append( "%%%s%%" % v.strip().lower() )
 
     if len(ss.ands) == 0:
         sql = get_person_query(dbo) + " ORDER BY o.OwnerName"

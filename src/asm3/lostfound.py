@@ -212,7 +212,7 @@ def get_lostanimal_find_advanced(dbo: Database, criteria: Dict[str, str], limit:
             afid = asm3.utils.atoi(k)
             ilike = dbo.sql_ilike("Value", "?")
             ss.ands.append(f"EXISTS (SELECT Value FROM additional WHERE LinkID=a.ID AND AdditionalFieldID={afid} AND {ilike})")
-            ss.values.append( "%%%s%%" % v.lower() )
+            ss.values.append( "%%%s%%" % v.strip().lower() )
     sql = "%s WHERE %s ORDER BY a.ID" % (get_lostanimal_query(dbo), " AND ".join(ss.ands))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
@@ -262,7 +262,7 @@ def get_foundanimal_find_advanced(dbo: Database, criteria: Dict[str, str], limit
             afid = asm3.utils.atoi(k)
             ilike = dbo.sql_ilike("Value", "?")
             ss.ands.append(f"EXISTS (SELECT Value FROM additional WHERE LinkID=a.ID AND AdditionalFieldID={afid} AND {ilike})")
-            ss.values.append( "%%%s%%" % v.lower() )
+            ss.values.append( "%%%s%%" % v.strip().lower() )
     sql = "%s WHERE %s ORDER BY a.ID" % (get_foundanimal_query(dbo), " AND ".join(ss.ands))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
