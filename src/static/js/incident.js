@@ -168,7 +168,7 @@ $(function() {
                 '<tr>',
                 '<td><label for="dispatchedaco">' + _("Dispatched ACO") + '</label></td>',
                 '<td><select id="dispatchedaco" data-json="DISPATCHEDACO" data-post="dispatchedaco" class="asm-bsmselect" multiple="multiple">',
-                html.list_to_options(controller.users, "USERNAME", "USERNAME"),
+                html.list_to_options(controller.acos, "USERNAME", "USERNAME"),
                 '</td>',
                 '</tr>',
                 '<tr>',

@@ -63,6 +63,7 @@ $(function() {
                 cl(_("Clinic")),
                 cr("acl", _("Add Clinic Appointment")),
                 cr("vcl", _("View Clinic Appointment")),
+                cr("vcrc", _("View Consulting Room")),
                 cr("ccl", _("Change Clinic Apointment")),
                 cr("dcl", _("Delete Clinic Appointment")),
                 cl(_("Diets")),

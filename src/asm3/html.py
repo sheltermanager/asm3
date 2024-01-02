@@ -598,7 +598,7 @@ def menu_structure(l: str, publisherlist: Dict, reports: MenuItems, mailmerges: 
             ( "", "", "tagclinic", "--break", "", "" ),
             (asm3.users.VIEW_CLINIC, "", "tagclinic", "--cat", "asm-icon-health", _("Clinic", l) ),
             (asm3.users.VIEW_CLINIC, "", "tagclinic", "clinic_waitingroom", "asm-icon-person", _("Waiting Room", l) ),
-            (asm3.users.VIEW_CLINIC, "", "tagclinic", "clinic_consultingroom", "asm-icon-users", _("Consulting Room", l) ),
+            (asm3.users.VIEW_CONSULTING_ROOM, "", "tagclinic", "clinic_consultingroom", "asm-icon-users", _("Consulting Room", l) ),
             (asm3.users.VIEW_CLINIC, "", "tagclinic", "clinic_calendar", "asm-icon-diary", _("Clinic Calendar", l) ),
         )),
         ("", "financial", _("Financial", l), (

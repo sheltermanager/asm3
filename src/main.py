@@ -1894,7 +1894,7 @@ class animal_clinic(JSONEndpoint):
             "clinicstatuses": asm3.lookups.get_clinic_statuses(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
-            "forlist": asm3.users.get_users(dbo),
+            "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "rows": rows,
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "tabcounts": asm3.animal.get_satellite_counts(dbo, animalid)[0]
@@ -2746,7 +2746,7 @@ class clinic_calendar(JSONEndpoint):
 
     def controller(self, o):
         return {
-            "forlist": asm3.users.get_users(o.dbo)
+            "forlist": asm3.users.get_users_with_permission(o.dbo, asm3.users.VIEW_CONSULTING_ROOM)
         }
 
 class clinic_invoice(JSONEndpoint):
@@ -2796,7 +2796,7 @@ class clinic_consultingroom(JSONEndpoint):
             "clinicstatuses": asm3.lookups.get_clinic_statuses(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
-            "forlist": asm3.users.get_users(dbo),
+            "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "rows": rows
         }
@@ -2818,7 +2818,7 @@ class clinic_waitingroom(JSONEndpoint):
             "clinicstatuses": asm3.lookups.get_clinic_statuses(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
-            "forlist": asm3.users.get_users(dbo),
+            "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "rows": rows
         }
@@ -3910,6 +3910,7 @@ class incident(JSONEndpoint):
         if asm3.configuration.audit_on_view_record(dbo): asm3.audit.view_record(dbo, o.user, "animalcontrol", a["ID"], recname)
         asm3.al.debug("open incident %s" % recname, "main.incident", dbo)
         return {
+            "acos": asm3.users.get_users_with_permission(dbo, asm3.users.DISPATCH_INCIDENT),
             "agegroups": asm3.configuration.age_groups(dbo),
             "additional": asm3.additional.get_additional_fields(dbo, a["ACID"], "incident"),
             "audit": self.checkb(asm3.users.VIEW_AUDIT_TRAIL) and asm3.audit.get_audit_for_link(dbo, "animalcontrol", a["ACID"]) or [],
@@ -5906,7 +5907,7 @@ class person_clinic(JSONEndpoint):
             "clinicstatuses": asm3.lookups.get_clinic_statuses(dbo),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
-            "forlist": asm3.users.get_users(dbo),
+            "forlist": asm3.users.get_users_with_permission(dbo, asm3.users.VIEW_CONSULTING_ROOM),
             "templates": asm3.template.get_document_templates(dbo, "clinic"),
             "rows": rows
         }

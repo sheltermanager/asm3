@@ -40,6 +40,7 @@ DELETE_BOARDING                 = "dbi"
 
 ADD_CLINIC                      = "acl"
 VIEW_CLINIC                     = "vcl"
+VIEW_CONSULTING_ROOM            = "vcrc"
 CHANGE_CLINIC                   = "ccl"
 DELETE_CLINIC                   = "dcl"
 
@@ -485,6 +486,30 @@ def get_users(dbo: Database, user: str = "") -> Results:
         u.ROLEIDS = "|".join(roleids)
         u.ROLES = "|".join(rolenames)
         out.append(u)
+    return out
+
+def get_users_with_permission(dbo: Database, perm: str) -> Results:
+    """
+    Returns a list of all system users and a pipe separated list of their roles.
+    Only returns users who have the permission perm.
+    """
+    users = dbo.query("SELECT * FROM users ORDER BY UserName")
+    roles = dbo.query("SELECT ur.*, r.RoleName, r.SecurityMap FROM userrole ur INNER JOIN role r ON ur.RoleID = r.ID")
+    out = []
+    for u in users:
+        roleids = []
+        rolenames = []
+        hasperm = u.SUPERUSER == 1
+        for r in roles:
+            if r.USERID == u.ID:
+                roleids.append(str(r.ROLEID))
+                rolenames.append(str(r.ROLENAME))
+                if has_security_flag(r.SECURITYMAP, perm): 
+                    hasperm = True
+        u.ROLEIDS = "|".join(roleids)
+        u.ROLES = "|".join(rolenames)
+        if hasperm:
+            out.append(u)
     return out
 
 def get_user(dbo: Database, user: str) -> ResultRow:
