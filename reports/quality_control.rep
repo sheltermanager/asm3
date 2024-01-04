@@ -14,6 +14,7 @@ en
 -- 2023-09-05 (13) - Added check for last name on second person for Couples
 -- 2023-09-05 (13) - Modified North, South, East, etc check to only review initial characters
 -- 2023-09-05 (13) - Modified Vaccination Issue. Animal with wrong Vaccination Type to only check non-archived vaccinations.
+-- 2024-01-04 (14) - Bug fix to HW_FOLLOWUP that was missing old due dates.
 --
 -- ******************************************** INSTRUCTIONS **********************************************************
 -- 1.  Clone this report and change name to "Quality Control (Custom) (Version)". MAKE CHANGES TO CLONED VERSION ONLY!
@@ -712,13 +713,16 @@ UNION SELECT
 FROM animal
   INNER JOIN species ON species.ID = animal.SpeciesID
   LEFT OUTER JOIN owner cw ON cw.ID = animal.adoptioncoordinatorID
+  INNER JOIN animaltest ON animaltest.animalid = animal.ID
 WHERE $HW_FOLLOWUP$ = 'Yes'
   AND animal.DeceasedDate IS NULL
   AND (animal.archived=0 OR animal.activemovementtype IN (1,11))
   AND animal.HeartwormTestResult = 2
   AND Species.SpeciesName = 'Dog'
-  AND animal.HeartwormTestDate < CURRENT_DATE - INTERVAL '1 year'
-  AND NOT EXISTS(SELECT animaltest.testtypeid FROM animaltest WHERE animaltest.AnimalID = animal.ID AND animaltest.TestTypeID IN ($HW_TEST_IDS$) and animaltest.DATEOFTEST is null)     
+  AND ((animaltest.TestTypeID IN ($HW_TEST_IDS$) and animaltest.DateRequired < CURRENT_DATE AND animaltest.DATEOFTEST is null)
+       OR
+      (animal.HeartwormTestDate < CURRENT_DATE - INTERVAL '1 year'
+  AND NOT EXISTS(SELECT animaltest.testtypeid FROM animaltest WHERE animaltest.AnimalID = animal.ID AND animaltest.TestTypeID IN ($HW_TEST_IDS$) and animaltest.DATEOFTEST is null)))
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%') 
 
 --Alerts if a three month old cat hasn't been FIV Tested.
