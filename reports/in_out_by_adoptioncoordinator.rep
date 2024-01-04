@@ -2,7 +2,7 @@ In/Out by Adoption Coordinator
 ###
 Movements
 ###
-3200/Any rev04
+3200/Any rev05
 ###
 The In/Out report, but broken down by adoption coordinator with totals.
 ###
@@ -349,7 +349,7 @@ adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonS
 
 UNION ALL SELECT DeceasedDate AS thedate,
 '' AS Reason,
-animal.ID AS AID,
+(SELECT ReasonName FROM deathreason WHERE ID = animal.PTSReasonID) AS Reason,
 ShelterCode,
 IdentichipNumber,
 AnimalName,

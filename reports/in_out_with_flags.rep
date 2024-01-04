@@ -2,7 +2,7 @@ In/Out with Flags
 ###
 Movements
 ###
-33713/Any rev04
+33713/Any rev05
 ###
 All animals entering and leaving the shelter over a period including flags.
 ###
@@ -346,7 +346,7 @@ WHERE adoption.MovementType = 7 AND SpeciesID = 2 AND
 adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonShelterAnimal = 0
 
 UNION ALL SELECT DeceasedDate AS thedate,
-'' AS Reason,
+(SELECT ReasonName FROM deathreason WHERE ID = animal.PTSReasonID) AS Reason,
 animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
