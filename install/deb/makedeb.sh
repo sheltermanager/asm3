@@ -27,7 +27,7 @@ cp ../../README.md sheltermanager3/usr/share/doc/sheltermanager3
 cp ../../scripts/asm3.conf.example sheltermanager3/etc/asm3.conf
 
 # Add apache config
-echo "WSGIScriptAlias /asm3 /usr/lib/sheltermanager3/code.py/
+echo "WSGIScriptAlias /asm3 /usr/lib/sheltermanager3/main.py/
 Alias /asm3/static /usr/lib/sheltermanager3/static
 <Directory /usr/lib/sheltermanager3>
     Require all granted
