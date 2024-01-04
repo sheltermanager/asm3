@@ -2,14 +2,14 @@ Average Time On Shelter By Size and Species
 ###
 Statistics
 ###
-33018/PostgreSQL rev01
+33018/PostgreSQL rev02
 ###
 Average time spent on shelter for all animals by size and species for a date range.
 ###
 en
 ###
 SELECT
-species.SpeciesName
+species.SpeciesName,
 lksize.Size,
 CAST(AVG(DaysOnShelter) AS INTEGER) AS avtimeonshelter
 FROM animal
