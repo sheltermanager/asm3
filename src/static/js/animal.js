@@ -967,7 +967,7 @@ $(function() {
             if ($('#breed2 option').length == 0) {
                 $('#breed2').append("<option value='0'>"+$('#species option:selected').text()+"</option>");
             }
-            if ($("#crossbreed").is(":checked") ||
+            if (controller.animal.CROSSBREED == 1 ||
                 (common.array_in($("#species").val(), config.str("CrossbreedSpecies").split(",")) && !config.bool("UseSingleBreedField"))) {
                 $("#secondbreedrow").show();
             }
