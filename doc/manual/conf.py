@@ -45,7 +45,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'ASM'
-copyright = u'2023, Sheltermanager, Ltd'
+copyright = u'2024, Sheltermanager, Ltd'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
