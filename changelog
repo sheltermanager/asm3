@@ -1,6 +1,7 @@
 48
 ================
 
+04/01/24 Restrict second breed to a configurable list of species #1390
 02/01/24 Only allow clinic appointments for people with view consulting room #1389
 02/01/24 Only allow incidents dispatch ACOs to be chosen with dispatch perm #1108
 31/12/23 Strip whitespace from additional/lookup fields when doing advanced find

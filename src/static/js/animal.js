@@ -967,6 +967,14 @@ $(function() {
             if ($('#breed2 option').length == 0) {
                 $('#breed2').append("<option value='0'>"+$('#species option:selected').text()+"</option>");
             }
+            if ($("#crossbreed").is(":checked") ||
+                (common.array_in($("#species").val(), config.str("CrossbreedSpecies").split(",")) && !config.bool("UseSingleBreedField"))) {
+                $("#secondbreedrow").show();
+            }
+            else {
+                $("#secondbreedrow").hide();
+                $("#crossbreed").prop("checked", false);
+            }
         },
 
         // Update the units available for the selected location

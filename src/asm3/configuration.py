@@ -126,6 +126,7 @@ DEFAULTS = {
     "CreateBoardingCostOnAdoption": "Yes",
     "CreateCostTrx": "No",
     "CreateDonationTrx": "Yes",
+    "CrossbreedSpecies": "1",
     "CodingFormat": "TYYYYNNN",
     "CurrencyCode": "USD",
     "ShortCodingFormat": "NNT",

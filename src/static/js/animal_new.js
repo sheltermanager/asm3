@@ -446,6 +446,7 @@ $(function() {
 
         /* Update the breed selects to only show the breeds for the selected species.
          * If no breeds are available the species will be displayed.
+         * If the species is not in the list of CrossbreedSpecies, hides the crossbreed/second species.
          * */
         update_breed_select: function() {
             $('optgroup', $('#breed1')).remove();
@@ -457,7 +458,7 @@ $(function() {
                 }
             });
 
-            if($('#breed1 option').length == 0) {
+            if ($('#breed1 option').length == 0) {
                 $('#breed1').append("<option value='0'>"+$('#species option:selected').text()+"</option>");
             }
 
@@ -469,8 +470,18 @@ $(function() {
                     $(this).remove();
                 }
             });
+
             if ($('#breed2 option').length == 0) {
                 $('#breed2').append("<option value='0'>"+$('#species option:selected').text()+"</option>");
+            }
+
+            if ($("#crossbreed").is(":checked") ||
+                (common.array_in($("#species").val(), config.str("CrossbreedSpecies").split(",")) && !config.bool("UseSingleBreedField"))) {
+                $("#crossbreedcol, #secondbreedcol").show();
+            }
+            else {
+                $("#crossbreedcol, #secondbreedcol").hide();
+                $("#crossbreed").prop("checked", false);
             }
         },
 
@@ -658,8 +669,7 @@ $(function() {
             if (!config.bool("AddAnimalsShowTransferIn")) { $("#transferinrow").hide(); }
             if (!config.bool("AddAnimalsShowWeight")) { $("#kilosrow, #poundsrow").hide(); }
             if (config.bool("UseSingleBreedField")) {
-                $("#crossbreedcol").hide();
-                $("#secondbreedcol").hide();
+                $("#crossbreedcol, #secondbreedcol").hide();
             }
             if (config.bool("DisableShortCodesControl")) {
                 $("#shortcode").hide();
