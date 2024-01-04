@@ -121,6 +121,10 @@ choose some extra fields for the new animal screen.
   allows for two breed fields and a crossbreed indicator so that mixed breed
   type animals can be recorded (this is typical for US shelters). 
 
+* OR only show the second breed field for these species of animals: If the
+  "use a single breed field for animals" option is not enabled, restrict
+  display of the second breed field to only these species of animals. 
+
 * Show the color field: Allow entry of a specific colour
 
 * Show the adoption fee field: Allow entry of an adoption fee
