@@ -104,7 +104,7 @@ As of version 44, the package will also include a site file
 /etc/apache2/sites-available/asm3.conf with the following content:
 
 ```
-WSGIScriptAlias /asm3 /usr/lib/sheltermanager3/code.py/
+WSGIScriptAlias /asm3 /usr/lib/sheltermanager3/main.py/
 Alias /asm3/static /usr/lib/sheltermanager3/static
 <Directory /usr/lib/sheltermanager3>
     Require all granted
