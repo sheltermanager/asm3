@@ -126,7 +126,15 @@ $(function() {
                 html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
                 '</select>',
                 '</td>',
-                '<td></td>', // EMPTY
+                '<td class="sitecol">',
+                '<label for="site">' + _("Site") + '</label>',
+                '</td>',
+                '<td class="sitecol">',
+                '<select id="site" data="site" class="asm-selectbox">',
+                '<option value="-1">' + _("(all)") + '</option>',
+                html.list_to_options(controller.sites, "ID", "SITENAME"),
+                '</select>',
+                '</td>', 
                 '<tr>',
                 '<td>',
                 '<label for="comments">' + _("Comments contain") + '</label>',
@@ -203,6 +211,8 @@ $(function() {
 
             $("#asm-search-selector-advanced").click(function() {
                 advanced_mode();
+                let showsite = config.bool("MultiSiteEnabled") && asm.siteid;
+                $("#sitecol").toggle(showsite);
             });
 
             // Load the person flag options

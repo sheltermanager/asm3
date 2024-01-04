@@ -6057,6 +6057,7 @@ class person_find(JSONEndpoint):
             "additionalfields": asm3.additional.get_additional_fields(dbo, 0, "person"),
             "flags": flags,
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
+            "sites": asm3.lookups.get_sites(dbo),
             "users": asm3.users.get_users(dbo)
         }
 

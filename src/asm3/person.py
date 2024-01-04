@@ -647,6 +647,7 @@ def get_person_find_advanced(dbo: Database, criteria: Dict[str, str], includeSta
        postcode - string partial pattern
        phone - string partial pattern
        jurisdiction - -1 for all or jurisdiction
+       site - -1 for all or site
        homecheck - string partial pattern
        comments - string partial pattern
        email - string partial pattern
@@ -667,6 +668,7 @@ def get_person_find_advanced(dbo: Database, criteria: Dict[str, str], includeSta
     ss.add_str("postcode", "o.OwnerPostcode")
     ss.add_phone_quintuplet("phone", "o.HomeTelephone", "o.WorkTelephone", "o.MobileTelephone", "o.WorkTelephone2", "o.MobileTelephone2")
     ss.add_id("jurisdiction", "o.JurisdictionID")
+    ss.add_id("site", "o.SiteID")
     ss.add_str_pair("email", "o.EmailAddress", "o.EmailAddress2")
     ss.add_words("homecheck", "o.HomeCheckAreas")
     ss.add_words("comments", "o.Comments")
