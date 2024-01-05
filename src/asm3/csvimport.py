@@ -27,7 +27,7 @@ VALID_FIELDS = [
     "ANIMALPICKUPLOCATION", "ANIMALPICKUPADDRESS", "ANIMALSPECIES", "ANIMALAGE", 
     "ANIMALDECEASEDDATE", "ANIMALDECEASEDREASON", "ANIMALDECEASEDNOTES", "ANIMALEUTHANIZED", 
     "ANIMALCOMMENTS", "ANIMALDESCRIPTION", "ANIMALMARKINGS", "ANIMALNEUTERED", "ANIMALNEUTEREDDATE", "ANIMALMICROCHIP", "ANIMALMICROCHIPDATE", 
-    "ANIMALENTRYDATE", "ANIMALENTRYCATEGORY", "ANIMALFLAGS",
+    "ANIMALENTRYDATE", "ANIMALENTRYCATEGORY", "ANIMALENTRYTYPE", "ANIMALFLAGS",
     "ANIMALREASONFORENTRY", "ANIMALHIDDENDETAILS", "ANIMALNOTFORADOPTION", "ANIMALNONSHELTER", "ANIMALTRANSFER",
     "ANIMALGOODWITHCATS", "ANIMALGOODWITHDOGS", "ANIMALGOODWITHKIDS", 
     "ANIMALHOUSETRAINED", "ANIMALHEALTHPROBLEMS", "ANIMALIMAGE",
@@ -432,6 +432,9 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             a["pickupaddress"] = gks(row, "ANIMALPICKUPADDRESS")
             if a["pickupaddress"] != "":
                 a["pickedup"] = "on"
+            a["entrytype"] = gkl(dbo, row, "ANIMALENTRYTYPE", "lksentrytype", "AnimalEntryType", False)
+            if a["entrytype"] == "0":
+                a["entrytype"] = str(asm3.configuration.default_entry_type(dbo))
             a["entryreason"] = gkl(dbo, row, "ANIMALENTRYCATEGORY", "entryreason", "ReasonName", createmissinglookups)
             if a["entryreason"] == "0":
                 a["entryreason"] = str(asm3.configuration.default_entry_reason(dbo))
@@ -1329,6 +1332,7 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
         row["ANIMALMARKINGS"] = a["MARKINGS"]
         row["ANIMALREASONFORENTRY"] = a["REASONFORENTRY"]
         row["ANIMALENTRYCATEGORY"] = a["ENTRYREASONNAME"]
+        row["ANIMALENTRYTYPE"] = a["ENTRYTYPENAME"]
         row["ANIMALJURISDICTION"] = a["JURISDICTIONNAME"]
         row["ANIMALPICKUPLOCATION"] = asm3.utils.iif(a["ISPICKUP"] == 1, a["PICKUPLOCATIONNAME"], "")
         row["ANIMALPICKUPADDRESS"] = a["PICKUPADDRESS"]

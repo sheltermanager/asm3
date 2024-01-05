@@ -688,6 +688,7 @@ def json_animalfindcolumns(dbo: Database) -> ColumnList:
         ( "ReasonNO", _("Reason Not From Owner", l) ),
         ( "DateBroughtIn", _("Date Brought In", l) ),
         ( "EntryReasonID", _("Entry Reason Category", l) ),
+        ( "EntryTypeID", _("Entry Type", l) ),
         ( "HealthProblems", _("Health Problems", l) ),
         ( "ActiveDietName", _("Diet", l) ),
         ( "PTSReason", _("Death Comments", l) ),

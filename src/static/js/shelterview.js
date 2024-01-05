@@ -535,6 +535,9 @@ $(function() {
             else if (viewmode == "entrycategory") {
                 this.render_view("ENTRYREASONNAME", "", "ENTRYREASONNAME,ANIMALNAME", false, false);
             }
+            else if (viewmode == "entrytype") {
+                this.render_view("ENTRYTYPENAME", "ENTRYREASONNAME", "ENTRYTYPENAME,ENTRYREASONNAME,ANIMALNAME", false, false);
+            }
             else if (viewmode == "flags") {
                 this.render_flags();
             }

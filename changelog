@@ -1,6 +1,7 @@
 48
 ================
 
+05/01/24 Add animal.EntryTypeID and remove IsTransfer from screens #1378
 05/01/24 Fix Firefox SameSite warning on session cookie
 05/01/24 Handle localStorage security errors in iOS
 04/01/24 Person site search #1377

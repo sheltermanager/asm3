@@ -158,10 +158,7 @@ class SACMetricsPublisher(AbstractPublisher):
             "broughtinm5": dbo.sql_interval("DateBroughtIn", sign="-", number=5, units="months"),
             "deceasedm5": dbo.sql_interval("DeceasedDate", sign="-", number=5, units="months"),
             "returnedm5": dbo.sql_interval("ReturnDate", sign="-", number=5, units="months"),
-            "movementm5": dbo.sql_interval("MovementDate", sign="-", number=5, units="months"),
-            "stray": asm3.configuration.sac_stray_category(dbo) or "-1", # turn no config into -1, which will never match an entry reason
-            "surrender": asm3.configuration.sac_surrender_category(dbo) or "-1",
-            "tnr": asm3.configuration.sac_tnr_category(dbo) or "-1"
+            "movementm5": dbo.sql_interval("MovementDate", sign="-", number=5, units="months")
         }
         sql = SAC_SPECIES_QUERY.format(**tokens)
         r = self.dbo.first_row(self.dbo.query(sql))
@@ -338,7 +335,7 @@ AND (DeceasedDate Is Null OR DeceasedDate > {to})) AS EndingOnFoster,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE EntryReasonID IN ({stray}) AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryTypeID = 2 
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth < {broughtinm5}
@@ -346,14 +343,14 @@ AND NonShelterAnimal = 0) AS AdultStray,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE EntryReasonID IN ({stray}) AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryTypeID = 2
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth >= {broughtinm5}
 AND NonShelterAnimal = 0) AS JuniorStray,
 
 (SELECT COUNT(*) FROM animal
-WHERE EntryReasonID IN ({surrender}) AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryTypeID = 1
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
@@ -361,7 +358,7 @@ AND DateOfBirth < {broughtinm5}
 AND NonShelterAnimal = 0) AS AdultSurrender,
 
 (SELECT COUNT(*) FROM animal 
-WHERE EntryReasonID IN ({surrender}) AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryTypeID = 1
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
@@ -369,7 +366,7 @@ AND DateOfBirth >= {broughtinm5}
 AND NonShelterAnimal = 0) AS JuniorSurrender,
 
 (SELECT COUNT(*) FROM animal
-WHERE IsTransfer = 1 AND CrueltyCase = 0
+WHERE EntryTypeID = 3
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
@@ -378,7 +375,7 @@ AND DateOfBirth < {broughtinm5}
 AND NonShelterAnimal = 0) AS AdultTransferInState,
 
 (SELECT COUNT(*) FROM animal 
-WHERE IsTransfer = 1 AND CrueltyCase = 0
+WHERE EntryTypeID = 3
 AND (animal.BroughtInByOwnerID = 0 OR (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) = 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
@@ -387,7 +384,7 @@ AND DateOfBirth >= {broughtinm5}
 AND NonShelterAnimal = 0) AS JuniorTransferInState,
 
 (SELECT COUNT(*) FROM animal
-WHERE IsTransfer = 1 AND CrueltyCase = 0
+WHERE EntryTypeID = 3
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
@@ -396,7 +393,7 @@ AND DateOfBirth < {broughtinm5}
 AND NonShelterAnimal = 0) AS AdultTransferOutState,
 
 (SELECT COUNT(*) FROM animal 
-WHERE IsTransfer = 1 AND CrueltyCase = 0
+WHERE EntryTypeID = 3
 AND (animal.BroughtInByOwnerID <> 0 AND (SELECT OwnerCounty FROM owner WHERE ID = animal.BroughtInByOwnerID) <> 
 (SELECT ItemValue FROM configuration WHERE ItemName = 'OrganisationCounty'))
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
@@ -405,7 +402,7 @@ AND DateOfBirth >= {broughtinm5}
 AND NonShelterAnimal = 0) AS JuniorTransferOutState,
 
 (SELECT COUNT(*) FROM animal
-WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryTypeID = 1
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
@@ -413,7 +410,7 @@ AND DateOfBirth < {broughtinm5}
 AND NonShelterAnimal = 0) AS AdultRequestedEuth,
 
 (SELECT COUNT(*) FROM animal 
-WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryTypeID = 1
 AND AsilomarOwnerRequestedEuthanasia = 1
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
@@ -421,21 +418,21 @@ AND DateOfBirth >= {broughtinm5}
 AND NonShelterAnimal = 0) AS JuniorRequestedEuth,
 
 (SELECT COUNT(*) FROM animal
-WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
+WHERE EntryTypeID = 7
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth < {broughtinm5} 
 AND NonShelterAnimal = 0) AS AdultImpound,
 
 (SELECT COUNT(*) FROM animal 
-WHERE OriginalOwnerID > 0 AND IsTransfer = 0 AND CrueltyCase = 1
+WHERE EntryTypeID = 7
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth >= {broughtinm5} 
 AND NonShelterAnimal = 0) AS JuniorImpound,
 
 (SELECT COUNT(*) FROM animal
-WHERE EntryReasonID NOT IN ({surrender}) AND EntryReasonID NOT IN ({stray}) AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryTypeID NOT IN (1,2,3,7)
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
@@ -443,7 +440,7 @@ AND DateOfBirth < {broughtinm5}
 AND NonShelterAnimal = 0) AS AdultOtherIntake,
 
 (SELECT COUNT(*) FROM animal 
-WHERE EntryReasonID NOT IN ({surrender}) AND EntryReasonID NOT IN ({stray}) AND IsTransfer = 0 AND CrueltyCase = 0
+WHERE EntryTypeID NOT IN (1,2,3,7)
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
@@ -556,7 +553,7 @@ AND NonShelterAnimal = 0) AS JuniorTransferOutOutState,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7 AND EntryReasonID NOT IN ({tnr})
+WHERE MovementType = 7 AND EntryTypeID <> 4
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth < {movementm5} 
@@ -564,7 +561,7 @@ AND NonShelterAnimal = 0) AS AdultReturnToField,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7 AND EntryReasonID NOT IN ({tnr})
+WHERE MovementType = 7 AND EntryTypeID <> 4
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth >= {movementm5} 
@@ -572,7 +569,6 @@ AND NonShelterAnimal = 0) AS JuniorReturnToField,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
@@ -581,7 +577,6 @@ AND NonShelterAnimal = 0) AS AdultLostInCare,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE MovementType IN (4, 6)
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
@@ -590,7 +585,7 @@ AND NonShelterAnimal = 0) AS JuniorLostInCare,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7 AND EntryReasonID IN ({tnr})
+WHERE MovementType = 7 AND EntryTypeID = 4
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth < {movementm5} 
@@ -598,7 +593,7 @@ AND NonShelterAnimal = 0) AS AdultOtherLive,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN adoption ON animal.ID = adoption.AnimalID 
-WHERE MovementType = 7 AND EntryReasonID IN ({tnr})
+WHERE MovementType = 7 AND EntryTypeID = 4
 AND MovementDate >= {from} AND MovementDate <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth >= {movementm5} 

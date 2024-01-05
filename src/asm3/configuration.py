@@ -31,6 +31,7 @@ DEFAULTS = {
     "AddAnimalsShowCoordinator": "No",
     "AddAnimalsShowDateBroughtIn": "Yes",
     "AddAnimalsShowEntryCategory": "Yes",
+    "AddAnimalsShowEntryType": "Yes",
     "AddAnimalsShowFosterer": "Yes",
     "AddAnimalsShowHold": "Yes",
     "AddAnimalsShowLocation": "Yes",
@@ -81,6 +82,7 @@ DEFAULTS = {
     "AFDefaultDonationType": "1",
     "AFDefaultPaymentMethod": "1",
     "AFDefaultEntryReason": "4",
+    "AFDefaultEntryType": "1",
     "AFDefaultLocation": "1",
     "AFDefaultLogFilter": "-1",
     "AFDefaultLogType": "1",
@@ -862,6 +864,9 @@ def default_donation_type(dbo: Database) -> int:
 
 def default_entry_reason(dbo: Database) -> int:
     return cint(dbo, "AFDefaultEntryReason", 4)
+
+def default_entry_type(dbo: Database) -> int:
+    return cint(dbo, "AFDefaultEntryType", 1)
 
 def default_incident(dbo: Database) -> int:
     return cint(dbo, "DefaultIncidentType", 1)

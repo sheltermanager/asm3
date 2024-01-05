@@ -154,6 +154,7 @@ def get_animal_query(dbo: Database) -> str:
         "ao.MobileTelephone AS AdoptionCoordinatorMobileTelephone, " \
         "ao.EmailAddress AS AdoptionCoordinatorEmailAddress, " \
         "er.ReasonName AS EntryReasonName, " \
+        "et.EntryTypeName AS EntryTypeName, " \
         "dr.ReasonName AS PTSReasonName, " \
         "il.LocationName AS ShelterLocationName, " \
         "il.LocationDescription AS ShelterLocationDescription, " \
@@ -281,6 +282,7 @@ def get_animal_query(dbo: Database) -> str:
         "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
         "LEFT OUTER JOIN lksize sz ON sz.ID = a.Size " \
         "LEFT OUTER JOIN entryreason er ON er.ID = a.EntryReasonID " \
+        "LEFT OUTER JOIN lksentrytype et ON et.ID = a.EntryTypeID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN site se ON se.ID = il.SiteID " \
         "LEFT OUTER JOIN pickuplocation pl ON pl.ID = a.PickupLocationID " \
@@ -325,6 +327,7 @@ def get_animal_query(dbo: Database) -> str:
 def get_animal_entry_query(dbo: Database) -> str:
     return "SELECT ae.*, " \
         "e.ReasonName AS EntryReasonName, " \
+        "t.EntryTypeName AS EntryTypeName, " \
         "j.JurisdictionName, " \
         "pl.LocationName AS PickupLocationName, " \
         "oo.OwnerName AS OriginalOwnerName, " \
@@ -356,6 +359,7 @@ def get_animal_entry_query(dbo: Database) -> str:
         "ac.MobileTelephone AS CoordinatorOwnerMobilePhone " \
         "FROM animalentry ae " \
         "LEFT OUTER JOIN entryreason e ON e.ID = ae.EntryReasonID " \
+        "LEFT OUTER JOIN lksentrytype t ON t.ID = ae.EntryTypeID " \
         "LEFT OUTER JOIN jurisdiction j ON j.ID = ae.JurisdictionID " \
         "LEFT OUTER JOIN pickuplocation pl ON pl.ID = ae.PickupLocationID " \
         "LEFT OUTER JOIN owner oo ON oo.ID = ae.OriginalOwnerID " \
@@ -465,6 +469,7 @@ def get_animals_brief(animals: Results) -> Results:
             "DECEASEDDATE": a["DECEASEDDATE"],
             "DISPLAYLOCATIONNAME": a["DISPLAYLOCATIONNAME"],
             "ENTRYREASONNAME": a["ENTRYREASONNAME"],
+            "ENTRYTYPENAME": a["ENTRYTYPENAME"],
             "FLVRESULT": a["FLVRESULT"],
             "HASACTIVEBOARDING": a["HASACTIVEBOARDING"],
             "HASACTIVERESERVE": a["HASACTIVERESERVE"],
@@ -590,6 +595,8 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, loca
        tattoo - string partial pattern
        insuranceno - string partial pattern
        rabiestag - string partial pattern
+       entryreason - -1 for all entry reasons or ID
+       entrytype - -1 for all entry types or ID
        pickuplocation - -1 for all pickup locations or ID
        pickupaddress - string partial pattern
        jurisdiction - -1 for all jurisdictions or ID
@@ -641,6 +648,7 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, loca
     ss.add_id("colour", "a.BaseColourID")
     ss.add_id("diet", "adi.DietID")
     ss.add_id("entryreason", "a.EntryReasonID")
+    ss.add_id("entrytype", "a.EntryTypeID")
     ss.add_id("pickuplocation", "a.PickupLocationID")
     ss.add_id("jurisdiction", "a.JurisdictionID")
     ss.add_str("sheltercode", "a.ShelterCode")
@@ -1837,6 +1845,7 @@ def insert_animal_entry(dbo: Database, username: str, animalid: int) -> int:
         "ShortCode":                a.SHORTCODE,
         "EntryDate":                entrydate,
         "EntryReasonID":            a.ENTRYREASONID,
+        "EntryTypeID":              a.ENTRYTYPEID,
         "AdoptionCoordinatorID":    a.ADOPTIONCOORDINATORID,
         "BroughtInByOwnerID":       a.BROUGHTINBYOWNERID,
         "OriginalOwnerID":          a.ORIGINALOWNERID,
@@ -1873,6 +1882,7 @@ def insert_animal_entry(dbo: Database, username: str, animalid: int) -> int:
         "YearCodeID":           year,
         # NOTE: DateBroughtIn is never touched, 
         # MostRecentEntryDate is updated by update_animal_status before this code ever runs
+        "EntryTypeID":          1, # Usually a return of some type so default to surrender
         "EntryReasonID":        entryreasonid,
         "AdoptionCoordinatorID": 0,
         "BroughtInByOwnerID":   broughtinbyownerid,
@@ -2514,6 +2524,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
         "NeuteredByVetID":  post.integer("neuteringvet"),
         "Declawed":         post.boolean("declawed"),
         # ASM2_COMPATIBILITY
+        "IsTransfer":       asm3.utils.iif(post.integer("entrytype") == 3, 1, 0),
         "HeartwormTested":  0,
         "HeartwormTestDate": None,
         "HeartwormTestResult": unknown,
@@ -2537,7 +2548,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
         "ReasonNO":         "",
         "ReasonForEntry":   post["reasonforentry"],
         "EntryReasonID":    post.integer("entryreason"),
-        "IsTransfer":       post.boolean("transferin"),
+        "EntryTypeID":      post.integer("entrytype"),
         "IsPickup":         post.boolean("pickedup"),
         "PickupLocationID": post.integer("pickuplocation"),
         "PickupAddress":    post["pickupaddress"],
@@ -2763,6 +2774,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
         "NeuteredByVetID":      post.integer("neuteringvet"),
         "Declawed":             post.boolean("declawed"),
         # ASM2_COMPATIBILITY
+        "IsTransfer":           asm3.utils.iif(post.integer("entrytype") == 3, 1, 0),
         "HeartwormTested":      post.boolean("heartwormtested"),
         "HeartwormTestDate":    post.date("heartwormtestdate"),
         "HeartwormTestResult":  post.integer("heartwormtestresult"),
@@ -2788,6 +2800,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
         "ReasonNO":             post["reasonnotfromowner"],
         "ReasonForEntry":       post["reasonforentry"],
         "EntryReasonID":        post.integer("entryreason"),
+        "EntryTypeID":          post.integer("entrytype"),
         "IsHold":               post.boolean("hold"),
         "HoldUntilDate":        post.date("holduntil"),
         "IsTransfer":           post.boolean("transferin"),

@@ -40,6 +40,7 @@ LOOKUP_TABLES = {
     "donationpayment":  (_("Payment Methods"), "PaymentName", _("Type"), "PaymentDescription", "add del ret", ("ownerdonation.DonationPaymentID",)),
     "donationtype":     (_("Payment Types"), "DonationName", _("Type"), "DonationDescription", "add del ret cost vat acc", ("ownerdonation.DonationTypeID", "accounts.DonationTypeID")),
     "entryreason":      (_("Entry Reasons"), "ReasonName", _("Reason"), "ReasonDescription", "add del ret", ("animal.EntryReasonID", "adoption.ReturnedReasonID") ),
+    "lksentrytype":     (_("Entry Types"), "EntryTypeName", _("Type"), "", "", ("animal.EntryTypeID", "animalentry.EntryTypeID") ),
     "incidentcompleted":(_("Incident Completed Types"), "CompletedName", _("Completed Type"), "CompletedDescription", "add del ret", ("animalcontrol.IncidentCompletedID",)),
     "incidenttype":     (_("Incident Types"), "IncidentName", _("Type"), "IncidentDescription", "add del ret", ("animalcontrol.IncidentTypeID",)),
     "internallocation": (_("Internal Locations"), "LocationName", _("Location"), "LocationDescription", "add del ret units site", ("animal.ShelterLocation",)),
@@ -978,6 +979,9 @@ def get_entryreasons(dbo: Database) -> Results:
 def get_entryreason_name(dbo: Database, rid: int) -> str:
     if rid is None: return ""
     return dbo.query_string("SELECT ReasonName FROM entryreason WHERE ID = ?", [rid])
+
+def get_entry_types(dbo: Database) -> Results:
+    return dbo.query("SELECT * FROM lksentrytype ORDER BY EntryTypeName")
 
 def get_incident_completed_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM incidentcompleted ORDER BY CompletedName")

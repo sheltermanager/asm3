@@ -29,13 +29,15 @@ class PetFinderPublisher(FTPPublisher):
     def pfAnimalQuery(self) -> str:
         return "SELECT a.ID, a.ShelterCode, a.AnimalName, a.BreedID, a.Breed2ID, a.CrossBreed, a.Sex, a.Size, a.DateOfBirth, a.MostRecentEntryDate, a.Fee, " \
             "b1.BreedName AS BreedName1, b2.BreedName AS BreedName2, " \
-            "b1.PetFinderBreed, b2.PetFinderBreed AS PetFinderBreed2, s.PetFinderSpecies, er.ReasonName AS EntryReasonName, " \
+            "b1.PetFinderBreed, b2.PetFinderBreed AS PetFinderBreed2, s.PetFinderSpecies, " \
+            "a.EntryTypeID, et.EntryTypeName AS EntryTypeName, er.ReasonName AS EntryReasonName, " \
             "a.AnimalComments, a.AnimalComments AS WebsiteMediaNotes, a.IsNotAvailableForAdoption, " \
             "a.Neutered, a.IsGoodWithDogs, a.IsGoodWithCats, a.IsGoodWithChildren, a.IsHouseTrained, a.IsCourtesy, a.Declawed, a.CrueltyCase, a.HasSpecialNeeds " \
             "FROM animal a " \
             "INNER JOIN breed b1 ON a.BreedID = b1.ID " \
             "INNER JOIN breed b2 ON a.Breed2ID = b2.ID " \
             "INNER JOIN species s ON a.SpeciesID = s.ID " \
+            "INNER JOIN lksentrytype et ON a.EntryTypeID = et.ID " \
             "INNER JOIN entryreason er ON a.EntryReasonID = er.ID "
 
     def pfDate(self, d: datetime) -> str:
@@ -197,7 +199,7 @@ class PetFinderPublisher(FTPPublisher):
 
         # Is the option to send strays on?
         if asm3.configuration.petfinder_send_strays(self.dbo):
-            rows = self.dbo.query("%s WHERE a.Archived=0 AND a.HasPermanentFoster=0 AND a.HasTrialAdoption=0 AND er.ReasonName LIKE '%%Stray%%'" % self.pfAnimalQuery())
+            rows = self.dbo.query("%s WHERE a.Archived=0 AND a.HasPermanentFoster=0 AND a.HasTrialAdoption=0 AND a.EntryTypeID=2" % self.pfAnimalQuery())
             for an in rows:
                 if self.pfRecordIn(animals, an.ID): continue # do not re-send adoptable animals
                 csv.append( self.processAnimal(an, agebands, status = "F", hide_size = hide_size) )
@@ -207,7 +209,7 @@ class PetFinderPublisher(FTPPublisher):
             rows = self.dbo.query("%s WHERE a.Archived=0 AND a.IsHold=1" % self.pfAnimalQuery())
             for an in rows:
                 if self.pfRecordIn(animals, an.ID): continue # do not re-send adoptable animals
-                if an.ENTRYREASONNAME.find("Stray") != -1: continue # we already sent this animal as a stray above
+                # TODO: Do we need to exclude animals we just sent as strays?
                 csv.append( self.processAnimal(an, agebands, status = "H", hide_size = hide_size ) )
 
         # Is the option to send previous adoptions on?

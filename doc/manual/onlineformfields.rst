@@ -45,6 +45,8 @@ description
     The description for the lost, found or waiting list animal
 entryreason
     The entry category for an animal. ASM will try and guess this from the entry reasons lookup values in the database.
+entrytype
+    The entry type for an animal. ASM will try and guess this from the fixed list of entry types, Surrender, Stray, Transfer In, etc.
 reason
     The reason the person is putting their animal on the waiting list (or reason for entry notes if creating an animal)
 type

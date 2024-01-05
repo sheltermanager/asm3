@@ -101,7 +101,7 @@ FORM_FIELDS = [
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
     "animalname", "reserveanimalname",
-    "code", "microchip", "age", "dateofbirth", "entryreason", "markings", "comments", "hiddencomments", 
+    "code", "microchip", "age", "dateofbirth", "entryreason", "entrytype", "markings", "comments", "hiddencomments", 
     "type", "breed1", "breed2", "color", "sex", "neutered", "weight", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
@@ -1176,6 +1176,13 @@ def guess_entryreason(dbo: Database, s: str) -> int:
     if guess != 0: return guess
     return asm3.configuration.default_entry_reason(dbo)
 
+def guess_entrytype(dbo: Database, s: str) -> int:
+    """ Guesses an entry type, returns the default if no match is found """
+    s = str(s).lower().strip()
+    guess = dbo.query_int("SELECT ID FROM lksentrytype WHERE LOWER(EntryTypeName) LIKE ?", ["%%%s%%" % s])
+    if guess != 0: return guess
+    return asm3.configuration.default_entry_type(dbo)
+
 def guess_sex(dummy: Any, s: str) -> int:
     """ Guesses a sex """
     if s.lower().startswith("m"):
@@ -1329,6 +1336,7 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         if f.FIELDNAME == "hiddencomments": d["hiddenanimaldetails"] = f.VALUE
         if f.FIELDNAME == "reason": d["reasonforentry"] = f.VALUE
         if f.FIELDNAME == "entryreason": d["entryreason"] = str(guess_entryreason(dbo, f.VALUE))
+        if f.FIELDNAME == "entrytype": d["entrytype"] = str(guess_entrytype(dbo, f.VALUE))
         if f.FIELDNAME == "type": d["animaltype"] = str(guess_animaltype(dbo, f.VALUE))
         if f.FIELDNAME == "species": d["species"] = str(guess_species(dbo, f.VALUE))
         if f.FIELDNAME == "breed1": d["breed1"] = str(guess_breed(dbo, f.VALUE))

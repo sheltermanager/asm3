@@ -2236,6 +2236,7 @@ class Animal:
     ReasonNO = ""
     DateBroughtIn = today()
     EntryReasonID = 1
+    EntryTypeID = 1
     HealthProblems = ""
     PutToSleep = 0
     PTSReason = ""
@@ -2377,6 +2378,7 @@ class Animal:
             ( "ReasonNO", ds(self.ReasonNO) ),
             ( "DateBroughtIn", dd(self.DateBroughtIn) ),
             ( "EntryReasonID", di(self.EntryReasonID) ),
+            ( "EntryTypeID", di(self.EntryTypeID) ),
             ( "AsilomarIsTransferExternal", di(0) ),
             ( "AsilomarIntakeCategory", di(0) ),
             ( "AsilomarOwnerRequestedEuthanasia", di(0) ),

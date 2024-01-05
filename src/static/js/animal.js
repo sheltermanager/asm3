@@ -287,6 +287,12 @@ $(function() {
                 '<input id="timebroughtin" data-json="DATEBROUGHTIN" data-post="timebroughtin" class="asm-textbox asm-timebox" />',
                 '</td>',
                 '</tr>',
+                '<tr id="entrytyperow">',
+                '<td><label for="entrytype">' + _("Entry Type") + '</label></td>',
+                '<td><select id="entrytype" data-json="ENTRYTYPEID" data-post="entrytype" class="asm-selectbox">',
+                html.list_to_options(controller.entrytypes, "ID", "ENTRYTYPENAME"),
+                '</select></td>',
+                '</tr>',
                 '<tr id="entryreasonrow">',
                 '<td><label for="entryreason">' + _("Entry Category") + '</label></td>',
                 '<td><select id="entryreason" data-json="ENTRYREASONID" data-post="entryreason" class="asm-selectbox">',
@@ -307,13 +313,6 @@ $(function() {
                 '<td><select id="jurisdiction" data-json="JURISDICTIONID" data-post="jurisdiction" class="asm-selectbox">',
                 html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
                 '</select></td>',
-                '</tr>',
-                '<tr id="transferinrow">',
-                '<td></td>',
-                '<td>',
-                '<input class="asm-checkbox" type="checkbox" id="transferin" data-json="ISTRANSFER" data-post="transferin" />',
-                '<label for="transferin">' + _("Transfer In") + '</label>',
-                '</td>',
                 '</tr>',
                 '<tr class="asilomar">',
                 '<td></td>',
@@ -416,12 +415,12 @@ $(function() {
                 '<thead>',
                 '<tr>',
                 '<th>' + _("Date") + '</th>',
+                '<th>' + _("Type") + '</th>',
                 '<th>' + _("Code") + '</th>',
                 '<th>' + _("Category") + '</th>',
                 '<th>' + _("Coordinator") + '</th>',
                 '<th>' + _("By") + '</th>',
                 '<th>' + _("Owner") + '</th>',
-                '<th>' + _("Transfer In") + '</th>',
                 '<th>' + _("Hold") + '</th>',
                 '<th>' + _("Pickup") + '</th>',
                 '<th class="asilomar">' + _("Asilomar") + '</th>',
@@ -435,12 +434,12 @@ $(function() {
                 h.push('<td><span class="nowrap">');
                 h.push('<button type="button" class="deleteentryhistory" data-id="' + v.ID + '">' + _("Delete") + '</button>');
                 h.push(format.date(v.ENTRYDATE) + '</span></td>');
+                h.push('<td>' + v.ENTRYTYPENAME + (v.ASILOMARISTRANSFEREXTERNAL == 1 ? _('External') : '') + '</td>');
                 h.push('<td>' + v.SHELTERCODE + '</td>');
                 h.push('<td>' + v.ENTRYREASONNAME + '</td>');
                 h.push('<td>' + html.person_link(v.ADOPTIONCOORDINATORID, v.COORDINATOROWNERNAME) + '</td>');
                 h.push('<td>' + html.person_link(v.BROUGHTINBYOWNERID, v.BROUGHTINBYOWNERNAME) + '</td>');
                 h.push('<td>' + html.person_link(v.ORIGINALOWNERID, v.ORIGINALOWNERNAME) + '</td>');
-                h.push('<td>' + (v.ISTRANSFER == 1 ? _('Yes') : '') + ' ' + (v.ASILOMARISTRANSFEREXTERNAL == 1 ? _('External') : '') + '</td>');
                 h.push('<td>' + format.date(v.HOLDUNTILDATE) + '</td>');
                 h.push('<td>' + (v.ISPICKUP == 1 ? v.PICKUPLOCATIONNAME + ' ' + v.PICKUPADDRESS : '') + '</td>');
                 h.push('<td class="asilomar">' + asilomar_categories[v.ASILOMARINTAKECATEGORY] + '</td>');
@@ -1067,7 +1066,7 @@ $(function() {
                 $("label[for='broughtinby']").html(_("Picked Up By")); 
                 $("#broughtinby").personchooser("set_filter", "aco");
             }
-            else if ($("#transferin").is(":checked")) { 
+            else if ($("#entrytype").val() == 3) { 
                 $("label[for='broughtinby']").html(_("Transferred From")); 
                 $("#broughtinby").personchooser("set_filter", "shelter");
             }
@@ -1109,7 +1108,7 @@ $(function() {
             }
 
             // If the animal is non-shelter, don't show the location, 
-            // transfer/pickup, brought in by owner, bonded with, reasons or asilomar
+            // pickup, brought in by owner, bonded with, type, reasons or asilomar
             if ($("#flags option[value='nonshelter']").is(":selected")) {
                 $("#lastlocation").hide();
                 $("#locationrow").hide();
@@ -1120,7 +1119,6 @@ $(function() {
                     $("#datebroughtinrow").hide();
                     $("#timebroughtinrow").hide();
                 } 
-                $("#transferinrow").hide();
                 $("#pickeduprow").hide();
                 $("#holdrow").hide();
                 $("#coordinatorrow").hide();
@@ -1130,6 +1128,7 @@ $(function() {
                 $("#bondedwith1row").hide();
                 $("#bondedwith2row").hide();
                 $("#entryreasonrow").hide();
+                $("#entrytyperow").hide();
                 $("#reasonforentryrow").hide();
                 $("#reasonnotfromownerrow").hide();
                 $(".asilomar").hide();
@@ -1574,13 +1573,13 @@ $(function() {
             $("#deceaseddate").change(animal.enable_widgets);
             $("#healthproblems").change(animal.enable_widgets);
             $("#specialneeds").change(animal.enable_widgets);
+            $("#entrytype").change(animal.enable_widgets);
             $("#litterid").keyup(animal.enable_widgets);
             $("#microchipnumber").keyup(animal.enable_widgets);
             $("#microchipnumber2").keyup(animal.enable_widgets);
             $("#microchipdate").change(animal.enable_widgets);
             $("#microchipdate2").change(animal.enable_widgets);
             $("#pickedup").click(animal.enable_widgets).keyup(animal.enable_widgets);
-            $("#transferin").click(animal.enable_widgets).keyup(animal.enable_widgets);
             $("#crossbreed").click(animal.enable_widgets).keyup(animal.enable_widgets);
             $("#species").click(animal.enable_widgets).keyup(animal.enable_widgets);
 

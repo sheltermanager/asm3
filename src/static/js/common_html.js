@@ -678,6 +678,7 @@ const html = {
             '<option value="agegrouplitter">' + _("Age Group and Litter") + '</option>',
             '<option value="color">' + _("Color") + '</option>',
             '<option value="entrycategory">' + _("Entry Category") + '</option>',
+            '<option value="entrytype">' + _("Entry Type") + '</option>',
             '<option value="flags">' + _("Flags") + '</option>',
             '<option value="fosterer">' + _("Fosterer") + '</option>',
             '<option value="fostereractive">' + _("Fosterer (Active Only)") + '</option>',

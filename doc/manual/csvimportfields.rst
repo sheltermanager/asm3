@@ -122,6 +122,8 @@ ANIMALENTRYDATE
     The date the animal entered the shelter (date brought in). Today's date will be used if this column is not present or the value is blank.
 ANIMALENTRYCATEGORY
     The animal's entry category, which should correspond to an entry category in your database.
+ANIMALENTRYTYPE
+    The animal's entry type, which should be one of the fixed entry types, Surrender, Stray, Transfer In, etc.
 ANIMALREASONFORENTRY
     Free text, notes on the reason the animal entered the shelter.
 ANIMALDECEASEDDATE

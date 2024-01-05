@@ -158,6 +158,7 @@ $(function() {
                 "ReasonNO":  _("Reason Not From Owner"),
                 "DateBroughtIn":  _("Brought In"),
                 "EntryReasonID":  _("Entry Reason"),
+                "EntryTypeID":  _("Entry Type"),
                 "HealthProblems":  _("Health Problems"),
                 "ActiveDietName": _("Diet"),
                 "PTSReason":  _("Euthanized"),
@@ -231,6 +232,7 @@ $(function() {
             else if ( name == "CoatType") { rv = row.COATTYPENAME; }
             else if ( name == "Sex") { rv = row.SEXNAME; }
             else if ( name == "EntryReasonID") { rv = row.ENTRYREASONNAME; }
+            else if ( name == "EntryTypeID") { rv = row.ENTRYTYPENAME; }
             else if ( name == "PickupLocationID") { rv = row.PICKUPLOCATIONNAME; }
             else if ( name == "JurisdictionID") { rv = row.JURISDICTIONNAME; }
             else if ( name == "PTSReasonID") { rv = row.DECEASEDDATE ? row.PTSREASONNAME : ""; }

@@ -43,7 +43,7 @@ VERSIONS = (
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
-    34706, 34707, 34708, 34709, 34800
+    34706, 34707, 34708, 34709, 34800, 34801
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -60,10 +60,9 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
     "entryreason", "event", "eventanimal", "incidentcompleted", "incidenttype", "internallocation", 
     "jurisdiction", "licencetype", "lkanimalflags", "lkboardingtype", "lkcoattype",
-    "lkownerflags", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksex", 
-    "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", 
-    "lksoutcome", "lksposneg", "lksrotatype", 
-    "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", 
+    "lkownerflags", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype",
+    "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", 
+    "lksoutcome", "lksposneg", "lksrotatype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", 
     "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
@@ -317,6 +316,7 @@ def sql_structure(dbo: Database) -> str:
         flongstr("ReasonForEntry"),
         flongstr("ReasonNO"),
         fdate("DateBroughtIn"),
+        fint("EntryTypeID"),
         fint("EntryReasonID"),
         fint("AsilomarIsTransferExternal", True),
         fint("AsilomarIntakeCategory", True),
@@ -331,7 +331,7 @@ def sql_structure(dbo: Database) -> str:
         fint("PTSReasonID"),
         fint("IsCourtesy", True),
         fint("IsDOA"),
-        fint("IsTransfer"),
+        fint("IsTransfer"), # ASM2_COMPATIBILITY
         fint("IsGoodWithCats"),
         fint("IsGoodWithDogs"),
         fint("IsGoodWithChildren"),
@@ -397,6 +397,7 @@ def sql_structure(dbo: Database) -> str:
     sql += index("animal_DeceasedDate", "animal", "DeceasedDate")
     sql += index("animal_DiedOffShelter", "animal", "DiedOffShelter")
     sql += index("animal_EntryReasonID", "animal", "EntryReasonID")
+    sql += index("animal_EntryTypeID", "animal", "EntryTypeID")
     sql += index("animal_IdentichipNumber", "animal", "IdentichipNumber")
     sql += index("animal_Identichip2Number", "animal", "Identichip2Number")
     sql += index("animal_JurisdictionID", "animal", "JurisdictionID")
@@ -541,6 +542,7 @@ def sql_structure(dbo: Database) -> str:
         fstr("ShelterCode"),
         fstr("ShortCode"),
         fdate("EntryDate"),
+        fint("EntryTypeID"),
         fint("EntryReasonID"),
         fint("AdoptionCoordinatorID", True),
         fint("BroughtInByOwnerID", True),
@@ -1135,6 +1137,9 @@ def sql_structure(dbo: Database) -> str:
 
     sql += table("lksdonationfreq", (
         fid(), fstr("Frequency") ), False)
+
+    sql += table("lksentrytype", (
+        fid(), fstr("EntryTypeName") ), False)
 
     sql += table("lksloglink", (
         fid(), fstr("LinkType") ), False)
@@ -2303,7 +2308,7 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup2("entryreason", "ReasonName", 3, _("Biting", l))
     sql += lookup2("entryreason", "ReasonName", 4, _("Unable to Cope", l))
     sql += lookup2("entryreason", "ReasonName", 5, _("Unsuitable Accomodation", l))
-    sql += lookup2("entryreason", "ReasonName", 6, _("Died", l))
+    sql += lookup2("entryreason", "ReasonName", 6, _("Death of Owner", l))
     sql += lookup2("entryreason", "ReasonName", 7, _("Stray", l))
     sql += lookup2("entryreason", "ReasonName", 8, _("Sick/Injured", l))
     sql += lookup2("entryreason", "ReasonName", 9, _("Unable to Afford", l))
@@ -2405,6 +2410,13 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup1("lksdonationfreq", "Frequency", 4, _("Quarterly", l))
     sql += lookup1("lksdonationfreq", "Frequency", 5, _("Half-Yearly", l))
     sql += lookup1("lksdonationfreq", "Frequency", 6, _("Annually", l))
+    sql += lookup1("lksentrytype", "EntryTypeName", 1, _("Surrender", l))
+    sql += lookup1("lksentrytype", "EntryTypeName", 2, _("Stray", l))
+    sql += lookup1("lksentrytype", "EntryTypeName", 3, _("Transfer In", l))
+    sql += lookup1("lksentrytype", "EntryTypeName", 4, _("TNR", l))
+    sql += lookup1("lksentrytype", "EntryTypeName", 5, _("Born in care", l))
+    sql += lookup1("lksentrytype", "EntryTypeName", 6, _("Wildlife", l))
+    sql += lookup1("lksentrytype", "EntryTypeName", 7, _("Seized", l))
     sql += lookup1("lksfieldlink", "LinkType", 0, _("Animal - Additional", l))
     sql += lookup1("lksfieldlink", "LinkType", 2, _("Animal - Details", l))
     sql += lookup1("lksfieldlink", "LinkType", 3, _("Animal - Notes", l))
@@ -6038,3 +6050,32 @@ def update_34800(dbo: Database) -> None:
     # Use MD5 hashes of the ID for old tokens for speed (we use UUIDs for new ones)
     dbo.execute_dbupdate("UPDATE ownerlicence SET Token = %s" % (dbo.sql_md5("ID")))
 
+def update_34801(dbo: Database) -> None:
+    l = dbo.locale
+    # Add animal.EntryTypeID and lksentrytype
+    add_column(dbo, "animal", "EntryTypeID", dbo.type_integer)
+    add_index(dbo, "animal_EntryTypeID", "animal", "EntryTypeID")
+    add_column(dbo, "animalentry", "EntryTypeID", dbo.type_integer)
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("EntryTypeName", dbo.type_shorttext, False),
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("lksentrytype", fields) )
+    dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (1, ?)", [ _("Surrender", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (2, ?)", [ _("Stray", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (3, ?)", [ _("Transfer In", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (4, ?)", [ _("TNR", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (5, ?)", [ _("Born in care", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (6, ?)", [ _("Wildlife", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (7, ?)", [ _("Seized", l) ])
+    # Set the default value for animal.EntryTypeID based on existing data
+    strayid = dbo.query_int("SELECT ID FROM entryreason WHERE LOWER(ReasonName) LIKE '%stray%'")
+    tnrid = dbo.query_int("SELECT ID FROM entryreason WHERE LOWER(ReasonName) LIKE '%tnr%'")
+    dbo.execute_dbupdate("UPDATE animal SET EntryTypeID = 0")
+    dbo.execute_dbupdate("UPDATE animalentry SET EntryTypeID = 0")
+    dbo.execute_dbupdate("UPDATE animal SET EntryTypeID=3 WHERE IsTransfer=1")
+    dbo.execute_dbupdate("UPDATE animal SET EntryTypeID=7 WHERE CrueltyCase=1")
+    if strayid > 0: dbo.execute_dbupdate("UPDATE animal SET EntryTypeID=2 WHERE EntryReasonID=%s AND NonShelterAnimal=0 AND EntryTypeID=0" % strayid)
+    if tnrid > 0: dbo.execute_dbupdate("UPDATE animal SET EntryTypeID=4 WHERE EntryReasonID=%s AND NonShelterAnimal=0 AND EntryTypeID=0" % tnrid)
+    dbo.execute_dbupdate("UPDATE animal SET EntryTypeID=5 WHERE DateBroughtIn=DateOfBirth AND NonShelterAnimal=0 AND EntryTypeID=0")
+    dbo.execute_dbupdate("UPDATE animal SET EntryTypeID=1 WHERE NonShelterAnimal=0 AND EntryTypeID=0")

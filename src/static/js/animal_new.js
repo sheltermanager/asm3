@@ -28,16 +28,6 @@ $(function() {
                 '</span>',
                 '</td>',
                 '</tr>',
-                '<tr id="transferinrow">',
-                '<td></td>',
-                '<td>',
-                '<input class="asm-checkbox" type="checkbox" id="transferin" data-json="ISTRANSFER" data-post="transferin" />',
-                '<label for="transferin">' + _("Transfer In") + '</label>',
-                '<span id="callout-transfer" class="asm-callout">',
-                _("This animal was transferred from another shelter"),
-                '</span>',
-                '</td>',
-                '</tr>',
                 '<tr id="holdrow">',
                 '<td></td>',
                 '<td>',
@@ -265,6 +255,14 @@ $(function() {
                 '<input id="litterid" data="litterid" class="asm-textbox" />',
                 '</td>',
                 '</tr>',
+                '<tr id="entrytyperow">',
+                '<td><label for="entrytype">' + _("Entry Type") + '</label></td>',
+                '<td>',
+                '<select id="entrytype" data="entrytype" class="asm-selectbox">',
+                html.list_to_options(controller.entrytypes, "ID", "ENTRYTYPENAME"), 
+                '</select>',
+                '</td>',
+                '</tr>',
                 '<tr id="entryreasonrow">',
                 '<td><label for="entryreason">' + _("Entry Category") + '</label></td>',
                 '<td><select id="entryreason" data="entryreason" class="asm-selectbox">',
@@ -410,15 +408,15 @@ $(function() {
                     animal_new.set_nonsheltertype_once = true;
                     $("#animaltype").select("value", config.integer("AFNonShelterType")); 
                 }
-                $("#holdrow, #locationrow, #locationunitrow, #fostererrow, #coordinatorrow, #litterrow, #entryreasonrow, #broughtinbyrow, #originalownerrow, #feerow, #transferinrow").fadeOut();
+                $("#holdrow, #locationrow, #locationunitrow, #fostererrow, #coordinatorrow, #litterrow, #entryreasonrow, #entrytyperow, #broughtinbyrow, #originalownerrow, #feerow").fadeOut();
             }
             else {
                 $("#nsownerrow").fadeOut();
                 if (config.bool("AddAnimalsShowAcceptance")) { $("#litterrow").fadeIn(); }
-                if (config.bool("AddAnimalsShowTransferIn")) { $("#transferinrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowBroughtInBy")) { $("#broughtinbyrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowOriginalOwner")) { $("#originalownerrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowEntryType")) { $("#entrytyperow").fadeIn(); }
                 if (config.bool("AddAnimalsShowFee")) { $("#feerow").fadeIn(); }
                 if (config.bool("AddAnimalsShowFosterer")) { $("#fostererrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowCoordinator")) { $("#coordinatorrow").fadeIn(); }
@@ -431,8 +429,8 @@ $(function() {
             $("#jurisdictionrow").hide();
             if (config.bool("AddAnimalsShowJurisdiction")) { $("#jurisdictionrow").show(); }
 
-            // If transfer in is available and ticked, changed the broughtinby label
-            if (config.bool("AddAnimalsShowTransferIn") && $("#transferin").is(":checked")) { 
+            // If entry type is available and set to transfer, change the broughtinby label
+            if (config.bool("AddAnimalsShowEntryType") && $("#entrytype").val() == 3) { 
                 $("label[for='broughtinby']").html(_("Transferred From")); 
                 $("#broughtinby").personchooser("set_filter", "shelter");
             }
@@ -440,7 +438,6 @@ $(function() {
                 $("label[for='broughtinby']").html(_("Brought In By")); 
                 $("#broughtinby").personchooser("set_filter", "all");
             }
-
     
         },
 
@@ -524,6 +521,7 @@ $(function() {
             $("#basecolour").select("value", config.str("AFDefaultColour"));
             $("#coattype").select("value", config.str("AFDefaultCoatType"));
             $("#entryreason").select("value", config.str("AFDefaultEntryReason"));
+            $("#entrytype").select("value", config.str("AFDefaultEntryType"));
             $("#internallocation").select("value", config.str("AFDefaultLocation"));
             $("#jurisdiction").select("value", config.str("DefaultJurisdiction"));
             $("#size").select("value", config.str("AFDefaultSize"));
@@ -665,7 +663,6 @@ $(function() {
             if (!config.bool("AddAnimalsShowSize")) { $("#sizerow").hide(); }
             if (!config.bool("AddAnimalsShowTattoo")) { $("#tattoorow").hide(); }
             if (!config.bool("AddAnimalsShowTimeBroughtIn")) { $("#timebroughtinrow").hide(); }
-            if (!config.bool("AddAnimalsShowTransferIn")) { $("#transferinrow").hide(); }
             if (!config.bool("AddAnimalsShowWeight")) { $("#kilosrow, #poundsrow").hide(); }
             if (config.bool("UseSingleBreedField")) {
                 $("#crossbreedcol, #secondbreedcol").hide();
@@ -737,7 +734,7 @@ $(function() {
             $("#internallocation").change(animal_new.update_units);
             $("#crossbreed").change(animal_new.enable_widgets);
             $("#nonshelter").change(animal_new.enable_widgets);
-            $("#transferin").change(animal_new.enable_widgets);
+            $("#entrytype").change(animal_new.enable_widgets);
             $("#hold").change(animal_new.enable_widgets);
             $("#holduntil").change(animal_new.enable_widgets);
             animal_new.enable_widgets();
