@@ -55,6 +55,20 @@ arksurrcode = {
     "TMA":  18, # Too many animals
     "TR":   14  # Trapped
 }
+arkentrytype = {
+    "ABN":  8, # Abandoned
+    "ALP":  1,  # Allergies
+    "BAS":  5, # Born in Shelter
+    "BIT":  7,  # Biting
+    "MOV":  1,  # Moving
+    "NOT":  1,  # No Time
+    "RAB":  7,  # Rabies Observation
+    "STR":  2,  # Stray
+    "SUR":  1, # Surrender
+    "SZR":  7, # Seized
+    "TMA":  1, # Too many animals
+    "TR":   4  # Trapped
+}
 
 # death reasons
 arkasiout = {
@@ -146,9 +160,12 @@ for d in asm.read_dbf("%s/ANIMALS.DBF" % PATH):
         a.SpeciesID = asm.species_id_for_name(d["BREED"])
         a.AnimalTypeID = 13 # Miscellaneous
     a.EntryReasonID = 7 # Default to stray
+    a.EntryTypeID = 2
     if d["SURR_CODE"] != "":
         if d["SURR_CODE"] in arksurrcode:
             a.EntryReasonID = arksurrcode[d["SURR_CODE"]]
+        if d["SURR_CODE"] in arkentrytype:
+            a.EntryTypeID = arkentrytype[d["SURR_CODE"]]
     if d["SURR_ID"] != "":
         if d["SURR_ID"] in ppo:
             a.BroughtInByOwnerID = ppo[d["SURR_ID"]].ID

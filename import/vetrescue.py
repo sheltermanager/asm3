@@ -178,11 +178,14 @@ for d in asm.csv_to_list(f"{PATH}/Animal.csv"):
     if a.DateOfBirth is None: a.DateOfBirth = asm.subtract_days(a.DateBroughtIn, 365)
     a.CreatedDate = a.DateBroughtIn
     a.LastChangedDate = a.DateBroughtIn
+    a.EntryReasonID = 17 # Surrender
     if d["EntryReason"].find("Transfer") != -1:
         a.IsTransfer = 1
-    a.EntryReasonID = 17 # Surrender
-    if d["EntryReason"] == "Stray": a.EntryReasonID = 7 # Stray
-    if a.IsTransfer == 1: a.EntryReasonID = 15 # Transfer from other shelter
+        a.EntryReasonID = 15 # Transfer from other shelter
+        a.EntryTypeID = 3
+    elif d["EntryReason"] == "Stray": 
+        a.EntryReasonID = 7 # Stray
+        a.EntryTypeID = 2
     a.generateCode()
     a.ShortCode = d["PetRef"]
     a.IdentichipNumber = d["IdNum"].strip()

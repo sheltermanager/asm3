@@ -69,6 +69,7 @@ for d in asm.csv_to_list("%s/ANIMALS.csv" % PATH):
         if d["SURR_CODE"] == "STR":
             a.AnimalTypeID = 10
             a.EntryReasonID = 11
+            a.EntryTypeID = 2
         else:
             a.AnimalTypeID = 2
     elif d["SPECIES"] == "F":
@@ -77,6 +78,7 @@ for d in asm.csv_to_list("%s/ANIMALS.csv" % PATH):
         if d["SURR_CODE"] == "STR":
             a.EntryReasonID = 11
             a.AnimalTypeID = 12
+            a.EntryTypeID = 2
         else:
             a.AnimalTypeID = 11
     if d["SURR_ID"] != "":

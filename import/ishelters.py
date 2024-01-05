@@ -42,6 +42,22 @@ def getentryreason(s):
             return v
     return 11
 
+def getentrytype(s):
+    er = {
+        "Surrendered": 1,
+        "Dumped": 8,
+        "Return": 1,
+        "Abandoned": 8,
+        "Stray": 2,
+        "Impound": 7,
+        "Animal Control": 7,
+        "Born": 5
+    }
+    for k, v in er.items():
+        if s.find(k) != -1:
+            return v
+    return 1
+
 # --- START OF CONVERSION ---
 print("\\set ON_ERROR_STOP\nBEGIN;")
 
@@ -178,6 +194,7 @@ for row in asm.csv_to_list(PATH + "checkins.csv", encoding="cp1252"):
         a.OriginalOwnerID = ppo[row["Previous Owner Id"]].ID
     a.ReasonForEntry = "%s: %s %s %s" % (row["Type of Check-In"], row["Reason for Surrender"], row["General Comments"], row["Hidden Comments"])
     a.EntryReasonID = getentryreason(row["Type of Check-In"])
+    a.EntryTypeID = getentrytype(row["Type of Check-In"])
 
 # adoptions.csv
 for row in asm.csv_to_list(PATH + "adoptions.csv", encoding="cp1252"):

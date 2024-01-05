@@ -69,6 +69,7 @@ for row in canimals:
     a.EntryReasonID = 11
     if row["Source (Current)"] == "Stray":
         a.EntryReasonID = 7
+        a.EntryTypeID = 2
     comments = "Original Type: " + typecol
     comments += "\nOriginal Breed: " + breedcol + "/" + breed2col
     comments += "\nOriginal Colour: " + row["Color"] + "/" + row["Second Color"]

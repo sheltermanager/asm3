@@ -97,9 +97,15 @@ for d in reversed(data):
     a.HouseTrained = asm.iif(d["Housebroken"] == "Yes", 0, 2)
     a.Archived = 0
     a.EntryReasonID = 1
-    if d["Intake Type"] == "Born In-House": a.EntryReasonID = 13
-    if d["Intake Type"] == "Pet Pulled" or d["Intake Type"] == "Rescue Transfer" or d["Intake Type"] == "Shelter Transfer": a.EntryReasonID = 15
-    if d["Intake Type"] == "Abandoned" or d["Intake Type"] == "Voluntary Surrender": a.EntryReasonID = 11
+    if d["Intake Type"] == "Born In-House": 
+        a.EntryReasonID = 13
+        a.EntryTypeID = 5
+    if d["Intake Type"] == "Pet Pulled" or d["Intake Type"] == "Rescue Transfer" or d["Intake Type"] == "Shelter Transfer": 
+        a.EntryReasonID = 15
+        a.EntryTypeID = 3
+    if d["Intake Type"] == "Abandoned" or d["Intake Type"] == "Voluntary Surrender": 
+        a.EntryReasonID = 11
+        a.EntryTypeID = 1
     a.BreedID = asm.breed_id_for_name(d["Primary Breed"])
     a.Breed2ID = a.BreedID
     a.BreedName = asm.breed_name_for_id(a.BreedID)

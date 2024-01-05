@@ -111,7 +111,10 @@ for row in cdisp:
     a.Neutered = row["ALTERED"] == "Y" and 1 or 0
     a.NeuteredDate = (row["ALTEREDATINTAKE"] == "N" and a.Neutered == 1) and a.DateBroughtIn or None
     a.EntryReasonID = 7 # Stray
-    if row["INTAKE"].startswith("Owner"): a.EntryReasonID = 17 # Owner
+    a.EntryTypeID = 2
+    if row["INTAKE"].startswith("Owner"): 
+        a.EntryReasonID = 17 # Owner
+        a.EntryTypeID = 1
     a.ReasonForEntry = "%s %s %s" % (row["INTAKE"], row["INTAKE REASON"], row["INTAKE LOCATION"])
     a.IsNotAvailableForAdoption = 0
     a.ShelterLocation = asm.location_id_for_name(row["INTAKE LOCATION"])

@@ -323,6 +323,7 @@ for row in asm.csv_to_list(PATH + "dbo_tblAnimal.csv"):
     a.EntryReasonID = 11
     if row["circumstance"].find("Stray"):
         a.EntryReasonID = 7
+        a.EntryTypeID = 2
     comments = "Original Type: " + typecol
     comments += "\nOriginal Breed: " + breedcol + "/" + breed2col
     comments += "\nOriginal Colour: " + row["Colour"] + "/" + row["SecondaryColour"]

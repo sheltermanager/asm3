@@ -227,8 +227,10 @@ for d in sorted(asm.csv_to_list(PATH + "Animal_Admissions.csv"), key=lambda k: g
         a.IsTransfer = 1
     if d["AdmissionReason"] == "Stray or Abandoned":
         a.EntryReasonID = 7 # Stray
+        a.EntryTypeID = 2
     else:
         a.EntryReasonID = 17 # Surrender
+        a.EntryTypeID = 1
     if d["BroughtInByContactId"] in ppoid:
         a.BroughtInByOwnerID = ppoid[d["BroughtInByContactId"]]
     a.HiddenAnimalDetails += "\nadmission reason: " + d["AdmissionReason"] + "\nhand in reason: " + d["HandInReason"]

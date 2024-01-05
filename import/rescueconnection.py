@@ -90,12 +90,16 @@ for d in asm.csv_to_list(ANIMALS, strip=True, remove_non_ascii=True):
     ec = d["Entry Category"].strip().lower()
     if ec.startswith("stray"):
         a.EntryReasonID = 7
+        a.EntryTypeID = 2
     elif ec.startswith("surrender"):
         a.EntryReasonID = 17
+        a.EntryTypeID = 1
     elif ec.startswith("born"):
         a.EntryReasonID = 13
+        a.EntryTypeID = 5
     elif ec.startswith("transfer"):
         a.EntryReasonID = 15
+        a.EntryTypeID = 3
         a.TransferIn = 1
     a.ReasonForEntry = d["Source/origin"]
     a.AnimalComments = d["Full description"]

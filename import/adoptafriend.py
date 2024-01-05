@@ -239,9 +239,11 @@ for row in asm.csv_to_list(PATH + "record.csv", strip=True):
     a.EntryReasonID = 17 # Surrender
     if origin.startswith("Stray"):
         a.EntryReasonID = 7
+        a.EntryTypeID = 2
     elif origin.startswith("Transfer"):
         a.EntryReasonID = 15
         a.IsTransfer = 1
+        a.EntryTypeID = 3
     elif origin.startswith("Euthan"):
         a.DeceasedDate = a.DateBroughtIn
         a.PTSReason = origin

@@ -139,7 +139,10 @@ for row in db.query("select animals.*, intake.Comments as IntakeComments, intake
         a.AnimalTypeID = 11
     a.ReasonForEntry = "%s. %s" % (ecode, row.IntakeComments)
     a.EntryReasonID = 7 # Stray
-    if ecode.startswith("O"): a.EntryReasonID = 17 # Owner
+    a.EntryTypeID = 2
+    if ecode.startswith("O"): 
+        a.EntryReasonID = 17 # Owner
+        a.EntryTypeID = 1
     asm.breed_ids(a, row.Breed1, row.Breed2)
     a.BaseColourID = asm.colour_id_for_name(row.Color, firstWordOnly=True)
     a.Sex = asm.getsex_mf(row.Sex)

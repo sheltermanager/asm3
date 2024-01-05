@@ -217,16 +217,20 @@ for d in asm.csv_to_list("%s/intake.csv" % PATH):
     if intaketype == "Transfer In":
         a.IsTransfer = 1
         a.EntryReasonID = 15
+        a.EntryTypeID = 3
         a.BroughtInByOwnerID = linkperson
     elif intaketype == "Stray":
         a.EntryReasonID = 7
+        a.EntryTypeID = 2
         a.BroughtInByOwnerID = linkperson
     elif intaketype == "Surrender":
         a.EntryReasonID = 17 
+        a.EntryTypeID = 1
         a.OriginalOwnerID = linkperson
         a.BroughtInByOwnerID = linkperson
     elif intaketype == "Return":
         a.EntryReasonID = 17 # Surrender
+        a.EntryTypeID = 1
         a.OriginalOwnerID = linkperson
         a.BroughtInByOwnerID = linkperson
     elif intaketype == "Service In":
@@ -236,6 +240,7 @@ for d in asm.csv_to_list("%s/intake.csv" % PATH):
         a.BroughtInByOwnerID = linkperson
     else:
         a.EntryReasonID = 17 # Surrender
+        a.EntryTypeID = 1
         a.OriginalOwnerID = linkperson
         a.BroughtInByOwnerID = linkperson
     a.ReasonForEntry = "%s / %s" % ( intaketype, subtype )

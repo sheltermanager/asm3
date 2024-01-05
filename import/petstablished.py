@@ -124,9 +124,14 @@ for d in sorted(asm.csv_to_list(PATH + "/animals.csv"), key=lambda k: getdate(k[
         a.HouseTrained = 0
 
         a.EntryReasonID = 17 # Surrender
-        if d["Type of Intake"] == "Stray At Large": a.EntryReasonID = 7 # Stray
-        if d["Type of Intake"] == "Transferred In": a.EntryReasonID = 15 # Transfer from other shelter
-        if d["Type of Intake"] == "Relinquished By Owner": a.EntryReasonID = 17 # Surrender
+        if d["Type of Intake"] == "Stray At Large": 
+            a.EntryReasonID = 7 # Stray
+            a.EntryTypeID = 2
+        if d["Type of Intake"] == "Transferred In": 
+            a.EntryReasonID = 15 # Transfer from other shelter
+            a.EntryTypeID = 3
+        if d["Type of Intake"] == "Relinquished By Owner": 
+            a.EntryReasonID = 17 # Surrender
     
         a.AnimalComments = d["Internal Notes"].replace("<p>", "").replace("</p>", "")
         a.HiddenAnimalDetails = d["Additional Comments"]

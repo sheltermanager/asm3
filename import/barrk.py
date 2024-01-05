@@ -203,12 +203,16 @@ for d in reversed(asm.csv_to_list("%s/animals.csv" % PATH)):
     if intaketype.find("Transfer In") != -1:
         a.IsTransfer = 1
         a.EntryReasonID = 15
+        a.EntryTypeID = 3
     elif intaketype.find("Stray") != -1:
         a.EntryReasonID = 7
+        a.EntryTypeID = 2
     elif intaketype.find("Surrender") != -1 or intaketype.find("Return") != -1:
         a.EntryReasonID = 17 
+        a.EntryTypeID = 1
     else:
         a.EntryReasonID = 15 # Stray
+        a.EntryTypeID = 2
     a.Fee = asm.cint(d["adoption_fees_amount"]) * 100
     a.HiddenAnimalDetails = "Breed: %s / %s, Color: %s / %s\nIntake Location: %s" % (primary, secondary, color, d["color_secondary"], d["intake_location"])
     if d["foster_tag"] != "": a.HiddenAnimalDetails += "\nFoster Tag: %s" % d["foster_tag"]

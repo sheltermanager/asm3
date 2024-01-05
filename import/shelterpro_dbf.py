@@ -323,6 +323,7 @@ if SHELTER_IMPORT:
             if a.AnimalTypeID == 2: a.AnimalTypeID = 10
             if a.AnimalTypeID == 11: a.AnimalTypeID = 12
             a.EntryReasonID = 7
+            a.EntryTypeID = 2
 
         # Adoptions
         if dispmeth == "ADOPTED":

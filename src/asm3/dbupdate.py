@@ -2417,6 +2417,7 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup1("lksentrytype", "EntryTypeName", 5, _("Born in care", l))
     sql += lookup1("lksentrytype", "EntryTypeName", 6, _("Wildlife", l))
     sql += lookup1("lksentrytype", "EntryTypeName", 7, _("Seized", l))
+    sql += lookup1("lksentrytype", "EntryTypeName", 8, _("Abandoned", l))
     sql += lookup1("lksfieldlink", "LinkType", 0, _("Animal - Additional", l))
     sql += lookup1("lksfieldlink", "LinkType", 2, _("Animal - Details", l))
     sql += lookup1("lksfieldlink", "LinkType", 3, _("Animal - Notes", l))
@@ -6068,6 +6069,7 @@ def update_34801(dbo: Database) -> None:
     dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (5, ?)", [ _("Born in care", l) ])
     dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (6, ?)", [ _("Wildlife", l) ])
     dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (7, ?)", [ _("Seized", l) ])
+    dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (8, ?)", [ _("Abandoned", l) ])
     # Set the default value for animal.EntryTypeID based on existing data
     strayid = dbo.query_int("SELECT ID FROM entryreason WHERE LOWER(ReasonName) LIKE '%stray%'")
     tnrid = dbo.query_int("SELECT ID FROM entryreason WHERE LOWER(ReasonName) LIKE '%tnr%'")

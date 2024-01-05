@@ -190,8 +190,12 @@ for d in sorted(asm.csv_to_list(INTAKE_FILENAME), key=lambda k: getdate(k["Intak
         a.Size = 2
         a.Neutered = d["Altered"] == "Yes" and 1 or 0
         a.EntryReasonID = 17 # Surrender
-        if d["Intake Type"] == "Stray": a.EntryReasonID = 7 # Stray
-        if d["Intake Type"] == "Transfer In": a.EntryReasonID = 15 # Transfer from other shelter
+        if d["Intake Type"] == "Stray": 
+            a.EntryReasonID = 7 # Stray
+            a.EntryTypeID = 2
+        if d["Intake Type"] == "Transfer In": 
+            a.EntryReasonID = 15 # Transfer from other shelter
+            a.EntryTypeID = 3
         a.ReasonForEntry = d["Reason"]
         if "Microchip Issue Date" in d: a.IdentichipDate = getdate(d["Microchip Issue Date"])
         if "Microchip Number" in d: a.IdentichipNumber = d["Microchip Number"]
