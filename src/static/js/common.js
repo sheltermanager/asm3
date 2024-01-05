@@ -189,17 +189,28 @@ const common = {
      * if the value is not set or local storage not available.
      */
     local_get: function(name) {
-        if (typeof(Storage) === "undefined") { return ""; }
-        if (localStorage[name]) { return localStorage[name]; }
-        return "";
+        try {
+            if (typeof(Storage) === "undefined") { return ""; }
+            if (localStorage[name]) { return localStorage[name]; }
+            return "";
+        }
+        catch (ex) {
+            log.warn("local_get: failed accessing localStorage: " + ex);
+            return "";
+        }
     },
 
     /**
      * Sets a value in HTML5 local storage. Value must be a string.
      */
     local_set: function(name, value) {
-        if (typeof(Storage) !== "undefined") {
-            localStorage[name] = value;
+        try {
+            if (typeof(Storage) !== "undefined") {
+                localStorage[name] = value;
+            }
+        }
+        catch (ex) {
+            log.warn("local_set: failed accessing localStorage: " + ex);
         }
     },
 
@@ -211,7 +222,9 @@ const common = {
             try {
                 localStorage.removeItem(name); 
             }
-            catch (ex) {}
+            catch (ex) {
+                log.warn("local_delete: failed accessing localStorage: " + ex);
+            }
         }
     },
 

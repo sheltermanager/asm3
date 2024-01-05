@@ -1,6 +1,8 @@
 48
 ================
 
+05/01/24 Fix Firefox SameSite warning on session cookie
+05/01/24 Handle localStorage security errors in iOS
 04/01/24 Person site search #1377
 04/01/24 Restrict second breed to a configurable list of species #1390
 02/01/24 Only allow clinic appointments for people with view consulting room #1389
