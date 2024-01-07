@@ -314,12 +314,20 @@ $(function() {
                 html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
                 '</select></td>',
                 '</tr>',
+                '<tr id="transferinrow">',
+                '<td></td>',
+                '<td>',
+                '<input class="asm-checkbox" type="checkbox" id="transferin" data-json="ISTRANSFER" />',
+                '<label for="transferin">' + _("Transfer In") + '</label>',
+                '</td>',
+                '</tr>',
                 '<tr class="asilomar">',
                 '<td></td>',
                 '<td>',
-                '<input class="asm-checkbox" type="checkbox" id="asilomartransferexternal" data-json="ASILOMARISTRANSFEREXTERNAL" data-post="asilomartransferexternal" title=',
-                '"' + html.title("This animal was transferred in from outside the community/coalition") + '" />',
-                '<label for="asilomartransferexternal">' + "Outside community/coalition" + '</label>',
+                '<input class="asm-checkbox" type="checkbox" id="asilomartransferexternal" data-json="ASILOMARISTRANSFEREXTERNAL" data-post="asilomartransferexternal" />',
+                '<label for="asilomartransferexternal">Outside community/coalition ',
+                '<span id="asilomartx-callout" class="asm-callout">This animal was transferred in from outside the community/coalition</span>',
+                '</label>',
                 '</td>',
                 '</tr>',
                 '<tr id="pickeduprow">',
@@ -1129,9 +1137,20 @@ $(function() {
                 $("#bondedwith2row").hide();
                 $("#entryreasonrow").hide();
                 $("#entrytyperow").hide();
+                $("#transferinrow").hide();
                 $("#reasonforentryrow").hide();
                 $("#reasonnotfromownerrow").hide();
                 $(".asilomar").hide();
+            }
+
+            // If we're hiding the entry type field and transfer in is selected, choose
+            // the correct entry type (since transfer in is not actually saved and the
+            // backend sets ISTRANSFER based on ENTRYTYPEID==3)
+            if (config.bool("DontShowEntryType") && $("#transferin").is(":checked")) {
+                $("#entrytype").select("value", "3");
+            }
+            else if (config.bool("DontShowEntryType")) {
+                $("#entrytype").val(config.integer("AFDefaultEntryType"));
             }
 
             // If the animal is actively boarding right now, show the location fields
@@ -1244,6 +1263,14 @@ $(function() {
             if (config.bool("DontShowAdoptionFee")) { $("#feerow").hide(); }
             if (config.bool("DontShowAdoptionCoordinator")) { $("#coordinatorrow").hide(); }
             if (config.bool("DontShowCoatType")) { $("#coattyperow").hide(); }
+            if (config.bool("DontShowEntryType")) { 
+                $("#entrytyperow").hide(); 
+                $("#transferinrow").show(); 
+            } 
+            else { 
+                $("#entrytyperow").show();
+                $("#transferinrow").hide(); 
+            }
             if (config.bool("DontShowJurisdiction")) { $("#jurisdictionrow").hide(); }
             if (config.bool("DontShowSize")) { $("#sizerow").hide(); }
             if (config.bool("DontShowWeight")) { $("#kilosrow, #poundsrow").hide(); }
@@ -1564,24 +1591,25 @@ $(function() {
             $("#hold").click(hold_change).keyup(hold_change);
 
             // Controls that update the screen when changed
-            $("#microchipped").click(animal.enable_widgets).keyup(animal.enable_widgets);
-            $("#tattoo").click(animal.enable_widgets).keyup(animal.enable_widgets);
-            $("#smarttag").click(animal.enable_widgets).keyup(animal.enable_widgets);
-            $("#neutered").click(animal.enable_widgets).keyup(animal.enable_widgets);
-            $("#fivltested").click(animal.enable_widgets).keyup(animal.enable_widgets);
-            $("#heartwormtested").click(animal.enable_widgets).keyup(animal.enable_widgets);
+            $("#microchipped").change(animal.enable_widgets);
+            $("#tattoo").change(animal.enable_widgets);
+            $("#smarttag").change(animal.enable_widgets);
+            $("#neutered").change(animal.enable_widgets);
+            $("#fivltested").change(animal.enable_widgets);
+            $("#heartwormtested").change(animal.enable_widgets);
             $("#deceaseddate").change(animal.enable_widgets);
             $("#healthproblems").change(animal.enable_widgets);
             $("#specialneeds").change(animal.enable_widgets);
             $("#entrytype").change(animal.enable_widgets);
+            $("#transferin").change(animal.enable_widgets);
             $("#litterid").keyup(animal.enable_widgets);
             $("#microchipnumber").keyup(animal.enable_widgets);
             $("#microchipnumber2").keyup(animal.enable_widgets);
             $("#microchipdate").change(animal.enable_widgets);
             $("#microchipdate2").change(animal.enable_widgets);
-            $("#pickedup").click(animal.enable_widgets).keyup(animal.enable_widgets);
-            $("#crossbreed").click(animal.enable_widgets).keyup(animal.enable_widgets);
-            $("#species").click(animal.enable_widgets).keyup(animal.enable_widgets);
+            $("#pickedup").change(animal.enable_widgets);
+            $("#crossbreed").change(animal.enable_widgets);
+            $("#species").change(animal.enable_widgets);
 
             validate.save = async function(callback) {
                 if (!animal.validation()) { header.hide_loading(); return; }

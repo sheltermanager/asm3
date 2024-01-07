@@ -28,6 +28,15 @@ $(function() {
                 '</span>',
                 '</td>',
                 '</tr>',
+                '<tr id="transferinrow">',
+                '<td></td>',
+                '<td>',
+                '<span style="white-space: nowrap">',
+                '<input class="asm-checkbox" type="checkbox" id="transferin" />',
+                '<label for="transferin">' + _("Transfer In") + '</label>',
+                '</span>',
+                '</td>',
+                '</tr>',
                 '<tr id="holdrow">',
                 '<td></td>',
                 '<td>',
@@ -408,7 +417,7 @@ $(function() {
                     animal_new.set_nonsheltertype_once = true;
                     $("#animaltype").select("value", config.integer("AFNonShelterType")); 
                 }
-                $("#holdrow, #locationrow, #locationunitrow, #fostererrow, #coordinatorrow, #litterrow, #entryreasonrow, #entrytyperow, #broughtinbyrow, #originalownerrow, #feerow").fadeOut();
+                $("#holdrow, #locationrow, #locationunitrow, #fostererrow, #coordinatorrow, #litterrow, #entryreasonrow, #entrytyperow, #transferinrow, #broughtinbyrow, #originalownerrow, #feerow").fadeOut();
             }
             else {
                 $("#nsownerrow").fadeOut();
@@ -416,7 +425,12 @@ $(function() {
                 if (config.bool("AddAnimalsShowBroughtInBy")) { $("#broughtinbyrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowOriginalOwner")) { $("#originalownerrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").fadeIn(); }
-                if (config.bool("AddAnimalsShowEntryType")) { $("#entrytyperow").fadeIn(); }
+                if (config.bool("AddAnimalsShowEntryType")) { 
+                    $("#entrytyperow").fadeIn(); $("#transferinrow").fadeOut(); 
+                }
+                else {
+                    $("#entrytyperow").fadeOut(); $("#transferinrow").fadeIn();
+                }
                 if (config.bool("AddAnimalsShowFee")) { $("#feerow").fadeIn(); }
                 if (config.bool("AddAnimalsShowFosterer")) { $("#fostererrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowCoordinator")) { $("#coordinatorrow").fadeIn(); }
@@ -429,8 +443,15 @@ $(function() {
             $("#jurisdictionrow").hide();
             if (config.bool("AddAnimalsShowJurisdiction")) { $("#jurisdictionrow").show(); }
 
+            // If transfer in is available and ticked, change the broughtinby label and
+            // set the entry type
+            if (!config.bool("AddAnimalsShowEntryType") && $("#transferin").is(":checked")) {
+                $("label[for='broughtinby']").html(_("Transferred From")); 
+                $("#broughtinby").personchooser("set_filter", "shelter");
+                $("#entrytype").select("value", 3);
+            }
             // If entry type is available and set to transfer, change the broughtinby label
-            if (config.bool("AddAnimalsShowEntryType") && $("#entrytype").val() == 3) { 
+            else if (config.bool("AddAnimalsShowEntryType") && $("#entrytype").val() == 3) { 
                 $("label[for='broughtinby']").html(_("Transferred From")); 
                 $("#broughtinby").personchooser("set_filter", "shelter");
             }
@@ -734,6 +755,7 @@ $(function() {
             $("#internallocation").change(animal_new.update_units);
             $("#crossbreed").change(animal_new.enable_widgets);
             $("#nonshelter").change(animal_new.enable_widgets);
+            $("#transferin").change(animal_new.enable_widgets);
             $("#entrytype").change(animal_new.enable_widgets);
             $("#hold").change(animal_new.enable_widgets);
             $("#holduntil").change(animal_new.enable_widgets);

@@ -2803,7 +2803,6 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
         "EntryTypeID":          post.integer("entrytype"),
         "IsHold":               post.boolean("hold"),
         "HoldUntilDate":        post.date("holduntil"),
-        "IsTransfer":           post.boolean("transferin"),
         "IsPickup":             post.boolean("pickedup"),
         "PickupLocationID":     post.integer("pickuplocation"),
         "PickupAddress":        post["pickupaddress"],
