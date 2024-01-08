@@ -33,11 +33,6 @@ db_username = robin
 db_password = robin
 db_name = asm
 
-# If you want to maintain compatibility with an ASM2 client
-# accessing your database, setting this will have ASM3
-# update the primarykey table that ASM2 needs
-db_has_asm2_pk_table = false
-
 # Time out queries that take longer than this (ms) to run
 db_timeout = 0
 
