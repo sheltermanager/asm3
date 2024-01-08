@@ -10,7 +10,7 @@ import datetime
 import sys
 import time
 
-from asm3.sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_HAS_ASM2_PK_TABLE, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES
+from asm3.sitedefs import DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_EXEC_LOG, DB_EXPLAIN_QUERIES, DB_TIME_QUERIES, DB_TIME_LOG_OVER, DB_TIMEOUT, CACHE_COMMON_QUERIES
 from asm3.typehints import Any, Dict, Generator, List, Tuple
 
 class ResultRow(dict):
@@ -121,7 +121,6 @@ class Database(object):
     installpath = ""
     locked = False
 
-    has_asm2_pk_table = DB_HAS_ASM2_PK_TABLE
     is_large_db = False
     timeout = DB_TIMEOUT
     connection = None
@@ -366,23 +365,44 @@ class Database(object):
 
     def get_id(self, table: str) -> int:
         """ Returns the next ID for a table """
-        nextid = self.get_id_cache(table)
-        self.update_asm2_primarykey(table, nextid)
+        nextid = self.get_id_cache_pk(table)
         asm3.al.debug("get_id: %s -> %d (cache_pk)" % (table, nextid), "Database.get_id", self)
         return nextid
 
-    def get_id_cache(self, table: str) -> int:
-        """ Returns the next ID for a table using an in-memory cache. """
+    def get_id_cache(self, table: str, idcol: str = "ID") -> int:
+        """ Returns the next ID for a table using an in-memory cache, backed by the highest ID in the table (deprecated) """
         cache_key = "%s_pk_%s" % (self.database, table)
         id = asm3.cachemem.increment(cache_key)
         if id is None:
-            id = self.get_id_max(table)
+            id = self.get_id_max(table, idcol)
             asm3.cachemem.put(cache_key, id, 86400)
         return id
+    
+    def get_id_cache_pk(self, table: str, idcol: str = "ID") -> int:
+        """ Returns the next ID for a table using an in-memory cache backed by the primarykey table.
+            Useful for making arbitrary sequences. 
+            Currently used by payment receipt numbers, online form collation IDs) 
+        """
+        cache_key = "%s_pkt_%s" % (self.database, table)
+        id = asm3.cachemem.increment(cache_key)
+        if id is None:
+            id = self.get_id_pk(table)
+            if id == 1: id = self.get_id_max(table, idcol) # no pk entry, use table ID
+            asm3.cachemem.put(cache_key, id, 86400)
+        self.update_primarykey(table, id)
+        return id
 
-    def get_id_max(self, table: str) -> int:
-        """ Returns the next ID for a table using MAX(ID) """
-        return self.query_int("SELECT MAX(ID) FROM %s" % table) + 1
+    def get_id_max(self, table: str, idcol: str = "ID") -> int:
+        """ Returns the next ID for a table using MAX(idfield).
+            If idfield is a query instead of a column name, executes it instead. """
+        if idcol.startswith("SELECT"):
+            return self.query_int(idcol) + 1
+        else:
+            return self.query_int("SELECT MAX(%s) FROM %s" % (idcol, table)) + 1
+    
+    def get_id_pk(self, table: str) -> int:
+        """ Returns the next ID for table from the primarykey table """
+        return self.query_int("SELECT NextID FROM primarykey WHERE TableName = ?", [table]) + 1
 
     def get_query_builder(self) -> Any:
         return QueryBuilder(self)
@@ -1016,14 +1036,14 @@ class Database(object):
         """
         return sql.replace("?", "%s")
 
-    def update_asm2_primarykey(self, table: str, nextid: int) -> None:
+    def update_primarykey(self, table: str, nextid: int) -> None:
         """
-        Update the ASM2 primary key table.
+        Update the primary key table.
         """
-        if not self.has_asm2_pk_table: return
         try:
-            self.execute("DELETE FROM primarykey WHERE TableName = ?", [table] )
-            self.execute("INSERT INTO primarykey (TableName, NextID) VALUES (?, ?)", (table, nextid))
+            c = self.execute("UPDATE primarykey SET NextID = ? WHERE TableName = ?", [nextid, table] )
+            if c == 0:
+                self.execute("INSERT INTO primarykey (TableName, NextID) VALUES (?, ?)", (table, nextid))
         except:
             pass
 

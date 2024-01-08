@@ -43,7 +43,7 @@ VERSIONS = (
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
-    34706, 34707, 34708, 34709, 34800, 34801
+    34706, 34707, 34708, 34709, 34800, 34801, 34802
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -6081,3 +6081,8 @@ def update_34801(dbo: Database) -> None:
     if tnrid > 0: dbo.execute_dbupdate("UPDATE animal SET EntryTypeID=4 WHERE EntryReasonID=%s AND NonShelterAnimal=0 AND EntryTypeID=0" % tnrid)
     dbo.execute_dbupdate("UPDATE animal SET EntryTypeID=5 WHERE DateBroughtIn=DateOfBirth AND NonShelterAnimal=0 AND EntryTypeID=0")
     dbo.execute_dbupdate("UPDATE animal SET EntryTypeID=1 WHERE NonShelterAnimal=0 AND EntryTypeID=0")
+
+def update_34802(dbo: Database) -> None:
+    # Switching to use primarykey/cache combo for receipt numbers and online forms, and
+    # possibly for future PK depending on performance. Clear any old junk out.
+    dbo.execute_dbupdate("DELETE FROM primarykey")

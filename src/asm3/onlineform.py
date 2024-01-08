@@ -129,7 +129,7 @@ AUTOCOMPLETE_MAP = {
 
 def get_collationid(dbo: Database) -> int:
     """ Returns the next collation ID value for online forms. """
-    return asm3.utils.cache_sequence(dbo, "collation", "SELECT MAX(CollationID) FROM onlineformincoming")
+    return dbo.get_id_cache_pk("collationid", "SELECT MAX(CollationID) FROM onlineformincoming")
 
 def get_onlineform(dbo: Database, formid: int) -> ResultRow:
     """ Returns the online form with ID formid """

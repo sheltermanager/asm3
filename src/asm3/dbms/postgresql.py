@@ -63,7 +63,8 @@ class DatabasePostgreSQL(Database):
         """ Returns the next ID for a table using Postgres sequences
         """
         nextid = self.query_int("SELECT nextval('seq_%s')" % table)
-        self.update_asm2_primarykey(table, nextid)
+        # No point copying the sequence to the pk table like we used to
+        # self.update_primarykey(table, nextid) 
         asm3.al.debug("get_id: %s -> %d (sequence)" % (table, nextid), "DatabasePostgreSQL.get_id", self)
         return nextid
 

@@ -137,10 +137,10 @@ $(function() {
                     else {
                         $("#sql-results").fadeOut();
                         if (result != "") {
-                            header.show_info(result);
+                            header.show_info(result, 10000);
                         }
                         else {
-                            header.show_info(_("No results."));
+                            header.show_info(_("No results."), 10000);
                         }
                     }
                 }

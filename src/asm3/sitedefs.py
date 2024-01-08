@@ -105,11 +105,6 @@ DB_USERNAME = get_string("db_username", "robin")
 DB_PASSWORD = get_string("db_password", "robin")
 DB_NAME = get_string("db_name", "asm")
 
-# If you want to maintain compatibility with an ASM2 client
-# accessing your database, setting this will have ASM3
-# update the primarykey table that ASM2 needs
-DB_HAS_ASM2_PK_TABLE = get_boolean("db_has_asm2_pk_table", False)
-
 # If set, all calls to db.execute will be logged to the file
 # named. Use {database} to substitute database name.
 DB_EXEC_LOG = get_string("db_exec_log")
