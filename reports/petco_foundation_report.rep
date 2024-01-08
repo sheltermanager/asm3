@@ -2,7 +2,7 @@ Petco Foundation Report
 ###
 Figures
 ###
-33600/Any rev06
+34801/Any rev07
 ###
 Annual figures for Petco Foundation grants
 ###
@@ -130,12 +130,11 @@ WHEN a.SpeciesID = 1 THEN 'Dogs'
 WHEN a.SpeciesID = 2 THEN 'Cats' 
 ELSE 'Other' END AS AgeGroup,
 1 AS AllSources,
-CASE WHEN IsTransfer = 1 THEN 1 ELSE 0 END AS Transfers, 
-CASE WHEN IsTransfer = 0 AND ReasonName LIKE '%Surrender%' THEN 1 ELSE 0 END AS OwnerSurrender,
-CASE WHEN IsTransfer = 0 AND ReasonName LIKE '%Stray%' THEN 1 ELSE 0 END AS Stray,
-CASE WHEN IsTransfer = 0 AND ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%Stray%' THEN 1 ELSE 0 END AS OtherSources
+CASE WHEN EntryTypeID = 3 THEN 1 ELSE 0 END AS Transfers, 
+CASE WHEN EntryTypeID = 1 THEN 1 ELSE 0 END AS OwnerSurrender,
+CASE WHEN EntryTypeID = 2 THEN 1 ELSE 0 END AS Stray,
+CASE WHEN EntryTypeID NOT IN (1,2,3) THEN 1 ELSE 0 END AS OtherSources
 FROM animal a
-INNER JOIN entryreason er ON er.ID = a.EntryReasonID
 WHERE DateBroughtIn >= '$PARENTARG1$' AND DateBroughtIn <= '$PARENTARG2$'
 AND NonShelterAnimal = 0
 UNION ALL 
@@ -318,7 +317,6 @@ CASE WHEN NonShelterAnimal = 0 AND NOT EXISTS(SELECT MovementDate FROM adoption 
 CASE WHEN NonShelterAnimal = 1 AND NOT EXISTS(SELECT MovementDate FROM adoption WHERE MovementType = 7 AND AnimalID = a.ID AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') THEN 1 ELSE 0 END AS PublicAnimal,
 CASE WHEN SpeciesID = 2 AND NonShelterAnimal = 0 AND EXISTS(SELECT MovementDate FROM adoption WHERE MovementType = 7 AND AnimalID = a.ID AND MovementDate >= '$PARENTARG1$' AND MovementDate <= '$PARENTARG2$') THEN 1 ELSE 0 END AS TNR
 FROM animal a 
-INNER JOIN entryreason er ON er.ID = a.EntryReasonID
 WHERE Neutered = 1 AND NeuteredDate >= '$PARENTARG1$' AND NeuteredDate <= '$PARENTARG2$'
 ORDER BY AgeGroup
 +++

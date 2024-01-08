@@ -2,7 +2,7 @@ ASPCA: Aggregate Report
 ###
 Figures
 ###
-33600/PostgreSQL rev03
+34801/PostgreSQL rev04
 ###
 Monthly figures for ASPCA initatives such as northern tier grants
 ###
@@ -114,18 +114,17 @@ WHEN a.SpeciesID = 2 THEN 'Feline neonates' END AS AgeGroup,
 CASE WHEN DateBroughtIn >= '$PARENTARG1$' OR 
   EXISTS(SELECT MovementDate FROM adoption WHERE ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND MovementType = 1 AND AnimalID = a.ID)
   THEN 1 ELSE 0 END AS AllSources,
-CASE WHEN (DateBroughtIn >= '$PARENTARG1$' AND ReasonName LIKE '%Surrender%') OR 
+CASE WHEN (DateBroughtIn >= '$PARENTARG1$' AND EntryTypeID = 1) OR 
   EXISTS(SELECT MovementDate FROM adoption WHERE ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND MovementType = 1 AND AnimalID = a.ID AND MovementDate <= ReturnDate - INTERVAL '30 days')
   THEN 1 ELSE 0 END AS OwnerSurrender,
-CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND ReasonName LIKE '%Stray%' THEN 1 ELSE 0 END AS Stray,
+CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND EntryTypeID = 2 THEN 1 ELSE 0 END AS Stray,
 CASE WHEN 
   EXISTS(SELECT MovementDate FROM adoption WHERE ReturnDate >= '$PARENTARG1$' AND ReturnDate <= '$PARENTARG2$' AND MovementType = 1 AND AnimalID = a.ID AND MovementDate > ReturnDate - INTERVAL '30 days') 
   THEN 1 ELSE 0 END AS Return30Days,
-CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND ReasonName LIKE '%Died%' AND IsDOA = 1 THEN 1 ELSE 0 END AS DOA,
-CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND ReasonName LIKE '%Born%' THEN 1 ELSE 0 END AS BornInCare,
-CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND ReasonName NOT LIKE '%Surrender%' AND ReasonName NOT LIKE '%Stray%' AND ReasonName NOT LIKE '%Died%' AND ReasonName NOT LIKE '%Born%' THEN 1 ELSE 0 END AS OtherSources
+CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND IsDOA = 1 THEN 1 ELSE 0 END AS DOA,
+CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND EntryTypeID = 5 THEN 1 ELSE 0 END AS BornInCare,
+CASE WHEN DateBroughtIn >= '$PARENTARG1$' AND EntryTypeID NOT IN (1, 2, 5) AND IsDOA = 0 THEN 1 ELSE 0 END AS OtherSources
 FROM animal a
-INNER JOIN entryreason er ON er.ID = a.EntryReasonID
 WHERE MostRecentEntryDate >= '$PARENTARG1$' AND MostRecentEntryDate <= '$PARENTARG2$' AND IsTransfer = 0
 AND NonShelterAnimal = 0
 AND SpeciesID IN (1, 2)

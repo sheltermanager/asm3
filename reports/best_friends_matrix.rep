@@ -2,7 +2,7 @@ Best Friends: Data Matrix
 ###
 Figures
 ###
-33600/PostgreSQL rev10
+34801/PostgreSQL rev11
 ###
 Information needed to complete the Best Friends NMHP monthly data matrix.
 ###
@@ -87,32 +87,28 @@ AND (DeceasedDate Is Null OR DeceasedDate > '$@to$')) AS JuniorCatEnding,
 
 
 (SELECT COUNT(*) FROM animal
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Stray%'
+WHERE EntryTypeID = 2
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS AdultDogStray,
 
 (SELECT COUNT(*) FROM animal 
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Stray%'
+WHERE EntryTypeID = 2
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS JuniorDogStray,
 
 (SELECT COUNT(*) FROM animal
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Stray%'
+WHERE EntryTypeID = 2
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
 AND NonShelterAnimal = 0) AS AdultCatStray,
 
 (SELECT COUNT(*) FROM animal 
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Stray%'
+WHERE EntryTypeID = 2
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -121,7 +117,7 @@ AND NonShelterAnimal = 0) AS JuniorCatStray,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Transfer%Municipal%'
+WHERE EntryTypeID = 3 AND ReasonName ILIKE '%Municipal%'
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
@@ -129,7 +125,7 @@ AND NonShelterAnimal = 0) AS AdultDogTransferMunicipal,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Transfer%Municipal%'
+WHERE EntryTypeID = 3 AND ReasonName ILIKE '%Municipal%'
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -137,7 +133,7 @@ AND NonShelterAnimal = 0) AS JuniorDogTransferMunicipal,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Transfer%Municipal%'
+WHERE EntryTypeID = 3 AND ReasonName ILIKE '%Municipal%'
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
@@ -145,7 +141,7 @@ AND NonShelterAnimal = 0) AS AdultCatTransferMunicipal,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Transfer%Municipal%'
+WHERE EntryTypeID = 3 AND ReasonName ILIKE '%Municipal%'
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -155,7 +151,7 @@ AND NonShelterAnimal = 0) AS JuniorCatTransferMunicipal,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Transfer%Other%'
+WHERE EntryTypeID = 3 AND NOT ReasonName ILIKE '%Municipal%'
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
@@ -163,7 +159,7 @@ AND NonShelterAnimal = 0) AS AdultDogTransferOther,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Transfer%Other%'
+WHERE EntryTypeID = 3 AND NOT ReasonName ILIKE '%Municipal%'
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -171,7 +167,7 @@ AND NonShelterAnimal = 0) AS JuniorDogTransferOther,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Transfer%Other%'
+WHERE EntryTypeID = 3 AND NOT ReasonName ILIKE '%Municipal%'
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
@@ -179,7 +175,7 @@ AND NonShelterAnimal = 0) AS AdultCatTransferOther,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Transfer%Other%'
+WHERE EntryTypeID = 3 AND NOT ReasonName ILIKE '%Municipal%'
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -226,8 +222,7 @@ AND NonShelterAnimal = 0) AS JuniorCatRequestedEuth,
 
 
 (SELECT COUNT(*) FROM animal
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Surrender%'
+WHERE EntryTypeID = 1
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -235,8 +230,7 @@ AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
 AND NonShelterAnimal = 0) AS AdultDogSurrender,
 
 (SELECT COUNT(*) FROM animal 
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Surrender%'
+WHERE EntryTypeID = 1
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -244,8 +238,7 @@ AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months'
 AND NonShelterAnimal = 0) AS JuniorDogSurrender,
 
 (SELECT COUNT(*) FROM animal
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Surrender%'
+WHERE EntryTypeID = 1
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -253,8 +246,7 @@ AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
 AND NonShelterAnimal = 0) AS AdultCatSurrender,
 
 (SELECT COUNT(*) FROM animal 
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName LIKE '%Surrender%'
+WHERE EntryTypeID = 1
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -264,8 +256,7 @@ AND NonShelterAnimal = 0) AS JuniorCatSurrender,
 
 
 (SELECT COUNT(*) FROM animal
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName NOT LIKE '%Surrender%' AND  ReasonName NOT LIKE '%Transfer%Shelter%' AND ReasonName NOT LIKE '%Transfer%Municipal%' AND ReasonName NOT LIKE '%Stray%'
+WHERE EntryTypeID NOT IN (1,2,3)
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -273,8 +264,7 @@ AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
 AND NonShelterAnimal = 0) AS AdultDogOtherIntake,
 
 (SELECT COUNT(*) FROM animal 
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName NOT LIKE '%Surrender%' AND  ReasonName NOT LIKE '%Transfer%Shelter%' AND ReasonName NOT LIKE '%Transfer%Municipal%' AND ReasonName NOT LIKE '%Stray%'
+WHERE EntryTypeID NOT IN (1,2,3)
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
@@ -282,8 +272,7 @@ AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months'
 AND NonShelterAnimal = 0) AS JuniorDogOtherIntake,
 
 (SELECT COUNT(*) FROM animal
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName NOT LIKE '%Surrender%' AND  ReasonName NOT LIKE '%Transfer%Shelter%' AND ReasonName NOT LIKE '%Transfer%Municipal%' AND ReasonName NOT LIKE '%Stray%'
+WHERE EntryTypeID NOT IN (1,2,3)
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -291,8 +280,7 @@ AND DateOfBirth < DateBroughtIn - INTERVAL '5 months'
 AND NonShelterAnimal = 0) AS AdultCatOtherIntake,
 
 (SELECT COUNT(*) FROM animal 
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE ReasonName NOT LIKE '%Surrender%' AND  ReasonName NOT LIKE '%Transfer%Shelter%' AND ReasonName NOT LIKE '%Transfer%Municipal%' AND ReasonName NOT LIKE '%Stray%'
+WHERE EntryTypeID NOT IN (1,2,3)
 AND AsilomarOwnerRequestedEuthanasia = 0
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
@@ -723,36 +711,32 @@ AND DateOfBirth >= NeuteredDate - INTERVAL '5 months') AS JuniorCatNeuterLowCost
 
 
 (SELECT COUNT(*) FROM animal
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
-AND (ReasonName LIKE '%Trap%' OR ReasonName LIKE '%TNR%')
+AND EntryTypeID = 4
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
 AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth < NeuteredDate - INTERVAL '5 months') AS AdultDogTNR,
 
 (SELECT COUNT(*) FROM animal
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
-AND (ReasonName LIKE '%Trap%' OR ReasonName LIKE '%TNR%')
+AND EntryTypeID = 4
 AND NonShelterAnimal = 0
 AND SpeciesID = 1
 AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth >= NeuteredDate - INTERVAL '5 months') AS JuniorDogTNR,
 
 (SELECT COUNT(*) FROM animal
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
-AND (ReasonName LIKE '%Trap%' OR ReasonName LIKE '%TNR%')
+AND EntryTypeID = 4
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
 AND NeuteredDate >= MostRecentEntryDate
 AND DateOfBirth < NeuteredDate - INTERVAL '5 months') AS AdultCatTNR,
 
 (SELECT COUNT(*) FROM animal
-INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE Neutered = 1 AND NeuteredDate >= '$@from$' AND NeuteredDate <= '$@to$'
-AND (ReasonName LIKE '%Trap%' OR ReasonName LIKE '%TNR%')
+AND EntryTypeID = 4
 AND NonShelterAnimal = 0
 AND SpeciesID = 2
 AND NeuteredDate >= MostRecentEntryDate
