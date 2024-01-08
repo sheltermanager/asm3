@@ -3,6 +3,15 @@
 $(function() {
 
     "use strict";
+
+    /** Sets a value in HTML5 local storage. Value must be a string. */
+    const local_set = function(name, value) {
+        try {
+            if (typeof(Storage) !== "undefined") {
+                localStorage[name] = value;
+            }
+        } catch (ex) {}
+    };
    
     let is_mobile = navigator.userAgent.match(/Android|iPhone|iPad|Kindle/i);
     let rw_toolbar = "save pdf print | undo redo | fontselect fontsizeselect | bold italic underline forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent pagebreak | link image";
@@ -101,14 +110,18 @@ $(function() {
                 });
             }, 1000);
 
-            // When the tab key is pressed, insert some fixed width spaces
-            // instead of tabbing to the next field (which doesn't exist).
             ed.on("keydown", function(evt) {
+                
+                // When the tab key is pressed, insert some fixed width spaces
+                // instead of tabbing to the next field (which doesn't exist).
                 if (evt.keyCode == 9){
                     ed.execCommand('mceInsertContent', false, '&emsp;&emsp;');
                     evt.preventDefault();
                     return false;
                 }
+
+                // reset the inactivity/auto-logout counter when a key is pressed
+                local_set("inactive_mins", "0");
             });
 
             setTimeout(function() {

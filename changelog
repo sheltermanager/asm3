@@ -1,6 +1,7 @@
 48
 ================
 
+08/01/24 Key presses in documents/templates should reset inactivity #1399
 07/01/24 SavourLife: fix extra whitespace in breed names
 07/01/24 Disabling entry type brings back transfer in box #1378
 05/01/24 Fix converters to set EntryTypeID, add Abandoned type #1378
