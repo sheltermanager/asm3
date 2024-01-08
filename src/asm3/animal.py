@@ -3132,6 +3132,7 @@ def clone_animal(dbo: Database, username: str, animalid: int) -> int:
         "ReasonNO":         a.reasonno,
         "DateBroughtIn":    a.datebroughtin,
         "EntryReasonID":    a.entryreasonid,
+        "EntryTypeID":      a.entrytypeid,
         "AsilomarIsTransferExternal": a.asilomaristransferexternal,
         "AsilomarIntakeCategory": a.asilomarintakecategory,
         "AsilomarOwnerRequestedEuthanasia": a.asilomarownerrequestedeuthanasia,
