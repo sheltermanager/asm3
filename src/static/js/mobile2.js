@@ -605,7 +605,7 @@ $(document).ready(function() {
            
             aci("entry", _("Entry"), [
                 i(_("Date Brought In"), format.date(a.DATEBROUGHTIN)),
-                i(_("Transfer"), a.ISTRANSFERNAME),
+                i(_("Entry Type"), a.ENTRYTYPENAME),
                 i(_("Entry Category"), a.ENTRYREASONNAME),
                 i(_("Entry Reason"), a.REASONFORENTRY),
                 common.has_permission("vo") ? i(_("Original Owner"), a.ORIGINALOWNERNAME) : "",
