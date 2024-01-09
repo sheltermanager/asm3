@@ -1,6 +1,7 @@
 48
 ================
 
+09/01/24 Clear img link parse results between each PDF generation
 09/01/24 Remove unsupported "Insert Template" in TinyMCE
 09/01/24 Calendar: diary items open correct screen and edit click note #1401
 08/01/24 Persist collation IDs and receipt numbers #1397

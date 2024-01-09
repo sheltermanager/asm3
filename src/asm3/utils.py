@@ -407,6 +407,10 @@ class ImgSrcHTMLParser(HTMLParser):
     """
     links: List[str] = []
 
+    def __init__(self) -> None:
+        HTMLParser.__init__(self)
+        self.links = []
+
     def handle_starttag(self, tag: str, attrs: Dict[str, str]) -> None:
         if tag == "img":
             for k, v in attrs:
