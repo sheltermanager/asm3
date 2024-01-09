@@ -2485,8 +2485,10 @@ class calendar_events(ASMEndpoint):
         if "d" in ev and self.checkb(asm3.users.VIEW_DIARY):
             # Show all diary notes on the calendar if the user chose to see all
             # on the home page, or they have permission to view all notes
+            diarylink = "diary_edit_my"
             if asm3.configuration.all_diary_home_page(dbo) or self.checkb(asm3.users.EDIT_ALL_DIARY_NOTES):
                 user = ""
+                diarylink = "diary_edit"
             for d in asm3.diary.get_between_two_dates(dbo, user, start, end):
                 allday = False
                 # If the diary time is midnight, assume all day instead
@@ -2499,7 +2501,7 @@ class calendar_events(ASMEndpoint):
                     "end": add_minutes(d.DIARYDATETIME, 60),
                     "tooltip": "%s %s %s" % (d["SUBJECT"], d["LINKINFO"], d["NOTE"]), 
                     "icon": "diary",
-                    "link": "diary_edit_my" })
+                    "link": f"{diarylink}?id={d.ID}" })
         if "v" in ev and self.checkb(asm3.users.VIEW_VACCINATION):
             for v in asm3.medical.get_vaccinations_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
                 sub = "%s - %s" % (v.VACCINATIONTYPE, v.ANIMALNAME)

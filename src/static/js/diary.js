@@ -285,11 +285,16 @@ $(function() {
 
         sync: function() {
             // If a filter is given in the querystring, update the select
-            if (common.current_url().indexOf("filter=") != -1) {
-                let filterurl = common.current_url().substring(common.current_url().indexOf("filter=")+7);
-                $("#filter").select("value", filterurl);
+            let url_filter = common.querystring_param("filter");
+            if (url_filter) {
+                $("#filter").select("value", url_filter);
             }
-
+            // If an id is given in the querystring, edit that item
+            let url_id = common.querystring_param("id");
+            if (url_id) {
+                let row = common.get_row(controller.rows, url_id, "ID");
+                if (row) { this.table.edit(row); }
+            }
             if (controller.newnote) {
                 diary.new_note();
             }
