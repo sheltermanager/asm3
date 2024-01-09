@@ -37,7 +37,7 @@ $(function() {
             "advlist directionality lists link image charmap print preview",
             "hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen",
             "insertdatetime media nonbreaking save table contextmenu directionality",
-            "emoticons template paste textcolor save"
+            "emoticons paste textcolor save"
             ],
         toolbar1: readonly ? ro_toolbar : rw_toolbar,
         contextmenu: "", // allow the browser's default context menu for copy/paste
