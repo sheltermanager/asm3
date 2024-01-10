@@ -950,6 +950,24 @@ def escape_tinymce(content: str) -> str:
     c = c.replace(">", "&gt;")
     return c
 
+def qr_datauri(data: str, sizespec: str = "150x150") -> str:
+    """
+    Generates a QR code for data and returns it as a data-uri
+    """
+    import qrcode
+    ws, hs = sizespec.split("x")
+    w = int(ws)
+    h = int(hs)
+    size = w, w
+    if h > w: size = h, h
+    img = qrcode.make(data)
+    img.thumbnail(size)
+    output = asm3.utils.bytesio()
+    img.save(output, "PNG")
+    pngdata = output.getvalue()
+    output.close()
+    return "data:image/png;base64," + base64encode(pngdata)
+
 def csv_parse(s: str) -> List[Dict]:
     """
     Reads CSV data from a unicode string "s" 
@@ -1477,8 +1495,6 @@ def html_to_pdf_cmd(dbo: Database, htmldata: str) -> bytes:
     htmldata = re.sub(r'<iframe.*>', '', htmldata, flags=re.I)
     htmldata = re.sub(r'<link.*>', '', htmldata, flags=re.I)
     htmldata = strip_script_tags(htmldata)
-    # Fix up any google QR codes where a protocol-less URI has been used
-    htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
     # Switch relative document uris to absolute service based calls
     htmldata = fix_relative_document_uris(dbo, htmldata)
     # Use temp files
@@ -1542,8 +1558,6 @@ def html_to_pdf_pisa(dbo: Database, htmldata: str) -> bytes:
     htmldata = re.sub(r'<iframe.*>', '', htmldata, flags=re.I)
     htmldata = re.sub(r'<link.*>', '', htmldata, flags=re.I)
     htmldata = strip_script_tags(htmldata)
-    # Fix up any google QR codes where a protocol-less URI has been used
-    htmldata = htmldata.replace("\"//chart.googleapis.com", "\"http://chart.googleapis.com")
     # Switch relative document uris to absolute service based calls
     htmldata = fix_relative_document_uris(dbo, htmldata)
     # Do the conversion

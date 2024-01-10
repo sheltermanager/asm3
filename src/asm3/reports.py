@@ -12,7 +12,7 @@ import asm3.person
 import asm3.template
 import asm3.users
 import asm3.utils
-from asm3.sitedefs import BASE_URL, QR_IMG_SRC, URL_REPORTS
+from asm3.sitedefs import BASE_URL, URL_REPORTS
 from asm3.typehints import Any, CriteriaParams, datetime, Database, List, MenuItems, PostedData, ReportParams, ResultRow, Results, Session, Tuple
 
 HEADER = 0
@@ -1160,7 +1160,7 @@ class Report:
                 size = "150x150"
                 if len(fields) > 2: size = fields[2]
                 url = BASE_URL + "/animal?id=%s" % animalid
-                value = QR_IMG_SRC % { "url": url, "size": size }
+                value = asm3.utils.qr_datauri(url, size) 
 
             # {SUBREPORT.[title].[parentField]} - embed a subreport
             if key.lower().startswith("subreport."):
@@ -2043,7 +2043,7 @@ class Report:
                     size = "150x150"
                     if len(fields) > 2: size = fields[2]
                     url = BASE_URL + "/animal?id=%s" % animalid
-                    value = QR_IMG_SRC % { "url": url, "size": size }
+                    value = asm3.utils.qr_datauri(url, size)
 
                 # {SUBREPORT.[title].[parentField]} - embed a subreport
                 if key.lower().startswith("subreport."):

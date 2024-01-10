@@ -16,18 +16,19 @@ install all the software you need to run ASM. If you are using the
 sheltermanager3 deb package it already has dependencies set for these and will
 install them for you.
 
-* apt-get install make python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2
+* apt-get install make python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2 python3-memcache
 
 Extra, non-mandatory packages:
 
-* apt-get install python3-memcache memcached (for multiprocess sessions)
 * apt-get install imagemagick (for scaling/compressing PDFs to save on storage)
 * apt-get install wkhtmltopdf (for creating PDFs from HTML document templates)
 * apt-get install python3-xhtml2pdf (pure Python lib for creating PDFs from HTML document templates)
 * apt-get install python3-reportlab (for creating mailing label PDFs)
 * apt-get install python3-requests (needed for HTTP comms to other publishing services)
 * apt-get install python3-boto3 (needed for Amazon S3 media storage)
-* pip/pip3 install stripe (for requesting payments via Stripe)
+* apt-get install python3-openpyxl (needed for exporting reports to Excel)
+* apt-get install python3-qrcode (needed for generating QR codes in document templates and reports)
+* apt-get install python3-stripe (for requesting payments via Stripe)
 
 Packages necessary for building, static checkers, installers and manuals:
 

@@ -209,9 +209,6 @@ IMAGE_HOTLINKING_ONLY_FROM_DOMAIN = get_string("image_hotlinking_only_from_domai
 # dumps of large databases.
 LARGE_FILES_CHUNKED = get_boolean("large_files_chunked", True)
 
-# QR code provider. "url" and "size" tokens will be substituted
-QR_IMG_SRC = get_string("qr_img_src", "//chart.googleapis.com/chart?cht=qr&chl=%(url)s&chs=%(size)s")
-
 # Whether to resize incoming images
 RESIZE_IMAGES_DURING_ATTACH = get_boolean("resize_images_during_attach", True)
 RESIZE_IMAGES_SPEC = get_string("resize_images_spec", "1024x1024")

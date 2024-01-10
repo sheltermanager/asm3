@@ -92,9 +92,6 @@ image_hotlinking_only_from_domain =
 # dumps of large databases.
 large_files_chunked = true
 
-# QR code provider. "url" and "size" tokens will be substituted
-qr_img_src = //chart.googleapis.com/chart?cht=qr&chl=%(url)s&chs=%(size)s
-
 # Whether to resize incoming images
 resize_images_during_attach = true
 resize_images_spec = 1024x1024

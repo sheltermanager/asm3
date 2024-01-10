@@ -126,6 +126,7 @@ deps:
 	@echo "[deps] ========================="
 	apt-get install python3 python3-cheroot python3-pil python3-mysqldb python3-psycopg2
 	apt-get install python3-memcache python3-requests python3-reportlab python3-xhtml2pdf
+	apt-get install python3-qrcode python3-openpyxl
 	apt-get install python3-boto3 python3-stripe
 	apt-get install python3-sphinx python3-sphinx-rtd-theme texlive-latex-base texlive-latex-extra latexmk
 	apt-get install exuberant-ctags flake8 imagemagick wkhtmltopdf nodejs npm memcached
