@@ -984,6 +984,21 @@ $(function() {
             }
         },
 
+        // Set the entry type based on the other field values if it has been disabled
+        update_entry_type: function() {
+            if (!config.bool("DontShowEntryType")) { return; }
+            let reasonname = common.get_field(controller.entryreasons, $("#entryreason").select("value"), "REASONNAME").toLowerCase();
+            let entrytype = 1; //surrender
+            if ($("#dateofbirth").val() == $("#datebroughtin").val()) { entrytype = 5; } // born in shelter
+            else if ($("#crueltycase").is(":checked")) { entrytype = 7; } // seized
+            else if ($("#transferin").is(":checked")) { entrytype = 3; } // transfer in
+            else if (reasonname.indexOf("stray") != -1) { entrytype = 2; } // stray
+            else if (reasonname.indexOf("tnr") != -1) { entrytype = 4; } // tnr
+            else if (reasonname.indexOf("wildlife") != -1) { entrytype = 6; } // wildlife
+            else if (reasonname.indexOf("abandoned") != -1) { entrytype = 8; } // abandoned
+            $("#entrytype").select("value", entrytype);
+        },
+
         // Update the units available for the selected location
         update_units: async function() {
             const response = await common.ajax_post("animal_new", "mode=units&locationid=" + $("#location").val());
@@ -1141,16 +1156,6 @@ $(function() {
                 $("#reasonforentryrow").hide();
                 $("#reasonnotfromownerrow").hide();
                 $(".asilomar").hide();
-            }
-
-            // If we're hiding the entry type field and transfer in is selected, choose
-            // the correct entry type (since transfer in is not actually saved and the
-            // backend sets ISTRANSFER based on ENTRYTYPEID==3)
-            if (config.bool("DontShowEntryType") && $("#transferin").is(":checked")) {
-                $("#entrytype").select("value", "3");
-            }
-            else if (config.bool("DontShowEntryType")) {
-                $("#entrytype").val(config.integer("AFDefaultEntryType"));
             }
 
             // If the animal is actively boarding right now, show the location fields
@@ -1496,6 +1501,11 @@ $(function() {
             // Changing the species updates the breed list
             $('#species').change(function() {
                 animal.update_breed_list();
+            });
+
+            // Changing various fields that guess the entry category
+            $("#entryreason, #transferin, #datebroughtin, #dateofbirth").change(function() {
+                animal.update_entry_type();
             });
 
             // Changing the location updates the unit autocomplete and clears the unit

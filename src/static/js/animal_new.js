@@ -443,12 +443,10 @@ $(function() {
             $("#jurisdictionrow").hide();
             if (config.bool("AddAnimalsShowJurisdiction")) { $("#jurisdictionrow").show(); }
 
-            // If transfer in is available and ticked, change the broughtinby label and
-            // set the entry type
+            // If transfer in is available and ticked, change the broughtinby label
             if (!config.bool("AddAnimalsShowEntryType") && $("#transferin").is(":checked")) {
                 $("label[for='broughtinby']").html(_("Transferred From")); 
                 $("#broughtinby").personchooser("set_filter", "shelter");
-                $("#entrytype").select("value", 3);
             }
             // If entry type is available and set to transfer, change the broughtinby label
             else if (config.bool("AddAnimalsShowEntryType") && $("#entrytype").val() == 3) { 
@@ -500,6 +498,21 @@ $(function() {
                 $("#crossbreedcol, #secondbreedcol").hide();
                 $("#crossbreed").prop("checked", false);
             }
+        },
+
+        // Set the entry type based on the other field values if it has been disabled
+        update_entry_type: function() {
+            if (config.bool("AddAnimalShowEntryType")) { return; }
+            let reasonname = common.get_field(controller.entryreasons, $("#entryreason").select("value"), "REASONNAME").toLowerCase();
+            let entrytype = 1; //surrender
+            if ($("#dateofbirth").val() == $("#datebroughtin").val()) { entrytype = 5; } // born in shelter
+            else if ($("#crueltycase").is(":checked")) { entrytype = 7; } // seized
+            else if ($("#transferin").is(":checked")) { entrytype = 3; } // transfer in
+            else if (reasonname.indexOf("stray") != -1) { entrytype = 2; } // stray
+            else if (reasonname.indexOf("tnr") != -1) { entrytype = 4; } // tnr
+            else if (reasonname.indexOf("wildlife") != -1) { entrytype = 6; } // wildlife
+            else if (reasonname.indexOf("abandoned") != -1) { entrytype = 8; } // abandoned
+            $("#entrytype").select("value", entrytype);
         },
 
         // Update the units available for the selected location
@@ -706,6 +719,11 @@ $(function() {
             // Changing species updates the breed list
             $('#species').change(function() {
                 animal_new.update_breed_select();
+            });
+
+            // Changing various fields that guess the entry category
+            $("#entryreason, #transferin, #datebroughtin, #dateofbirth").change(function() {
+                animal_new.update_entry_type();
             });
 
             // Litter autocomplete
