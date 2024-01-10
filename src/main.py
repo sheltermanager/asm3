@@ -69,7 +69,7 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, HTMLFTP_PUBLISHER_ENABLED, \
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
     MAP_PROVIDER_KEY, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
-    PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, QR_IMG_SRC, \
+    PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, \
     RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SAC_METRICS_URL, \
     SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
     SMCOM_LOGIN_URL, SMCOM_PAYMENT_LINK, PAYPAL_VALIDATE_IPN_URL
@@ -1509,7 +1509,6 @@ class login(ASMEndpoint):
              "baseurl": BASE_URL,
              "smcomloginurl": SMCOM_LOGIN_URL,
              "nologconnection": post["nologconnection"],
-             "qrimg": QR_IMG_SRC,
              "target": post["target"]
         }
         nonce = asm3.utils.uuid_str()
@@ -6542,6 +6541,35 @@ class report_export_email(ASMEndpoint):
         content = asm3.reports.execute(dbo, crid, o.user, p)
         asm3.utils.send_email(dbo, asm3.configuration.email(dbo), email, "", "", title, content, "html")
         self.redirect("report%s" % self.query() + "&sent=1")
+
+class report_export_excel(ASMEndpoint):
+    url = "report_export_excel"
+    get_permissions = asm3.users.EXPORT_REPORT
+
+    def content(self, o):
+        dbo = o.dbo
+        post = o.post
+        crid = post.integer("id")
+        crit = asm3.reports.get_criteria(dbo, crid)
+        # If this report takes criteria and none were supplied, go to the criteria screen instead to get them
+        if len(crit) != 0 and post["hascriteria"] == "": self.redirect("report_criteria?id=%d&target=report_export_excel" % crid)
+        # Make sure this user has a role that can view the report
+        asm3.reports.check_view_permission(o.session, crid)
+        title = asm3.reports.get_title(dbo, crid)
+        filename = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()
+        p = asm3.reports.get_criteria_params(dbo, crid, post)
+        rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
+        titlecaseheader = cols is not None and "TITLECASEHEADER" in cols
+        lowercaseheader = cols is not None and "LOWERCASEHEADER" in cols
+        renameheader = ""
+        if cols is not None and "RENAMEHEADER" in cols and len(rows) > 0:
+            renameheader = rows[0].RENAMEHEADER
+        self.content_type("application/vnd.ms-excel")
+        # non-latin1 chars in HTTP headers cause errors in web.py - encode any unicode chars as HTML entities
+        # then look for them and use the report ID if any are found.
+        if asm3.utils.encode_html(filename).find("&#") != -1: filename = str(crid) 
+        self.header("Content-Disposition", f"attachment; filename=\"{filename}.xlsx\"")
+        return asm3.utils.excel(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, lowercaseheader=lowercaseheader, renameheader=renameheader)
 
 class report_export_pdf(ASMEndpoint):
     url = "report_export_pdf"

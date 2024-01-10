@@ -1,7 +1,8 @@
 48
 ================
 
-10/01/24 Generate QR codes internally instead of using Google
+10/01/24 Add Excel export for reports #1403
+10/01/24 Generate QR codes internally instead of using Google #1402
 10/01/24 If entry type is disabled for add/edit, guess from other fields #1378
 09/01/24 Clear img link parse results between each PDF generation
 09/01/24 Remove unsupported "Insert Template" in TinyMCE

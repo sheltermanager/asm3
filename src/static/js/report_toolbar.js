@@ -22,6 +22,7 @@ $(function() {
         '<button id="button-print">' + _("Print") + '</button>',
         '<button id="button-email">' + _("Email") + '</button>',
         '<button id="button-csv">' + _ ("CSV") + '</button>',
+        '<button id="button-excel">' + _ ("Excel") + '</button>',
         '<button id="button-pdf">' + _("PDF") + '</button>',
         '</div>'
     ].join("\n");
@@ -67,6 +68,13 @@ $(function() {
         text: true
     }).click(function() {
         window.location = "report_export_csv?" + qs();
+    });
+
+    $("#button-excel").button({
+        icons: { primary: "ui-icon-note" },
+        text: true
+    }).click(function() {
+        window.location = "report_export_excel?" + qs();
     });
 
     $("#button-pdf").button({

@@ -1021,8 +1021,7 @@ def csv(l: str, rows: Results, cols: List[str] = None, includeheader: bool = Tru
         titlecaseheader: bool = False, lowercaseheader: bool = False, renameheader: str = "") -> str:
     """
     Creates a CSV file from a set of resultset rows. If cols has been 
-    supplied as a list of strings, fields will be output in that
-    order.
+    supplied as a list of strings, fields will be output in that order.
     The file is constructed as a list of unicode strings and returned as a utf-8 encoded byte string.
     l:  locale (used for formatting currencies and dates)
     rows: list of dict result rows
@@ -1088,6 +1087,72 @@ def csv(l: str, rows: Results, cols: List[str] = None, includeheader: bool = Tru
         writerow(rd)
     # Manually include a UTF-8 BOM to prevent Excel mangling files
     return ("\ufeff" + "\n".join(lines)).encode("utf-8")
+
+def excel(l: str, rows: Results, cols: List[str] = None, includeheader: bool = True, 
+        titlecaseheader: bool = False, lowercaseheader: bool = False, renameheader: str = "") -> str:
+    """
+    Creates an Excel sheet from a set of resultset rows. If cols has been 
+    supplied as a list of strings, fields will be output in that order.
+    The file is constructed as a list of unicode strings and returned as a utf-8 encoded byte string.
+    l:  locale (used for formatting currencies and dates)
+    rows: list of dict result rows
+    cols: list of column headings, if None uses the result column names
+    includeheader: if True writes the header row
+    titlecaseheader: if True title cases the header row
+    lowercaseheader: if True lower cases the header row
+    renameheader: A comma separated list of find=replace values to rewrite column headers
+    """
+    from openpyxl import Workbook
+    wb = Workbook()
+    ws = wb.active
+    def writerow(rowdata: List[Any], rownumber: int, isheader: bool = False):
+        """ Outputs the cells for a row. isheader can be used for formatting in future """
+        for i, r in enumerate(rowdata, 1):
+            ws.cell(row=rownumber, column=i, value=r)
+    if cols is None:
+        cols = []
+        for k in rows[0].keys():
+            cols.append(k)
+        cols = sorted(cols)
+    if includeheader:
+        outputcols = cols
+        if titlecaseheader: 
+            outputcols = [ c.title() for c in cols ]
+        if lowercaseheader:
+            outputcols = [ c.lower() for c in cols ]
+        if renameheader != "":
+            rout = []
+            for c in outputcols: # can rewrite cols we just titlecased
+                match = False
+                for rh in renameheader.split(","):
+                    find, replace = rh.split("=")
+                    if c == find:
+                        rout.append(replace)
+                        match = True
+                        break
+                if not match:
+                    rout.append(c)
+            outputcols = rout
+        writerow(outputcols, 1, True)
+    for rownumber, r in enumerate(rows, 2):
+        rd = []
+        for c in cols:
+            if c not in r: continue # skip if this row doesn't have the column
+            if is_currency(c):
+                rd.append(r[c] / 100)
+            elif is_date(r[c]):
+                rd.append(r[c])
+            elif is_str(r[c]):
+                rd.append(r[c])
+            else:
+                rd.append(r[c])
+        writerow(rd, rownumber)
+    # Return the excel data as a byte string
+    with tempfile.NamedTemporaryFile() as f:
+        wb.save(f.name)
+        f.seek(0)
+        data = f.read()
+    return data
 
 def fix_relative_document_uris(dbo: Database, s: str) -> str:
     """
