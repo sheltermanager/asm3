@@ -1139,7 +1139,7 @@ def excel(l: str, rows: Results, cols: List[str] = None, includeheader: bool = T
         for c in cols:
             if c not in r: continue # skip if this row doesn't have the column
             if is_currency(c):
-                rd.append(r[c] / 100)
+                rd.append(cint(r[c]) / 100.0)
             elif is_date(r[c]):
                 rd.append(r[c])
             elif is_str(r[c]):
