@@ -574,7 +574,7 @@ UNION SELECT
 FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE animal.DateBroughtIn > current_date - 3
-  AMD animal.archived = 0
+  AND animal.archived = 0
   AND animal.nonshelteranimal = 0
   AND NOT animal.originalownerid = 0
   AND animal.istransfer = 0
