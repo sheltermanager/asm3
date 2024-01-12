@@ -51,23 +51,24 @@ You can embed directives in your document to give some hints to the PDF engine.
 These should take the form of HTML comments, embedded in <!-- and -->, and can
 be inserted by going to Tools->Source Code in the document editor::
 
-    <!-- pdf papersize a4 --> 
+    <div><!-- pdf papersize a4 --></div>
     
 To set the papersize to a4. Other options are a3, a5 and letter::
 
-    <!-- pdf papersize exact 89mmx36mm end -->
+    <div><!-- pdf papersize exact 89mmx36mm end --></div>
 
 To set the papersize to an exact measurement (in this case 89mm x 36mm
 width x height, which is the size used by the Dymo 450 label printer)::
 
-    <!-- pdf orientation landscape --> 
+    <div><!-- pdf orientation landscape --></div>
 
 To set the orientation to landscape. Portrait is the default but can be
-explicitly set too.
+explicitly set too. Note that setting an orientation will override any 
+papersize exact directive.
 
 Use the margins directive to set the PDF margins::
 
-    <!-- pdf margins 2cm 2cm 1cm 1cm end -->
+    <div><!-- pdf margins 2cm 2cm 1cm 1cm end --></div>
 
 Margins are in the order top, bottom, left then right.
 
@@ -75,13 +76,13 @@ The PDF engine will scale the document to fit the page horizontally based on the
 widest element in it. Use the zoom directive to override this behaviour and
 specify a scaling amount (this sets a zoom CSS value on the body element)::
 
-    <!-- pdf zoom 130% end -->
+    <div><!-- pdf zoom 130% end --></div>
 
 Most of these options are to wkhtmltopdf, a PDF renderer based on webkit (the
 engine used by the Chrome and Safari web browsers). An alternative, simpler PDF
 engine can also be used by specifying::
 
-   <!-- pdf renderer pisa -->
+   <div><!-- pdf renderer pisa --></div>
 
 Email Tokens in Document Templates
 ----------------------------------

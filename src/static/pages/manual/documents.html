@@ -148,35 +148,36 @@ installed.</p>
 <p>You can embed directives in your document to give some hints to the PDF engine.
 These should take the form of HTML comments, embedded in &lt;!– and –&gt;, and can
 be inserted by going to Tools-&gt;Source Code in the document editor:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf papersize a4 --&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;div&gt;&lt;!-- pdf papersize a4 --&gt;&lt;/div&gt;
 </pre></div>
 </div>
 <p>To set the papersize to a4. Other options are a3, a5 and letter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf papersize exact 89mmx36mm end --&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;div&gt;&lt;!-- pdf papersize exact 89mmx36mm end --&gt;&lt;/div&gt;
 </pre></div>
 </div>
 <p>To set the papersize to an exact measurement (in this case 89mm x 36mm
 width x height, which is the size used by the Dymo 450 label printer):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf orientation landscape --&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;div&gt;&lt;!-- pdf orientation landscape --&gt;&lt;/div&gt;
 </pre></div>
 </div>
 <p>To set the orientation to landscape. Portrait is the default but can be
-explicitly set too.</p>
+explicitly set too. Note that setting an orientation will override any
+papersize exact directive.</p>
 <p>Use the margins directive to set the PDF margins:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf margins 2cm 2cm 1cm 1cm end --&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;div&gt;&lt;!-- pdf margins 2cm 2cm 1cm 1cm end --&gt;&lt;/div&gt;
 </pre></div>
 </div>
 <p>Margins are in the order top, bottom, left then right.</p>
 <p>The PDF engine will scale the document to fit the page horizontally based on the
 widest element in it. Use the zoom directive to override this behaviour and
 specify a scaling amount (this sets a zoom CSS value on the body element):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf zoom 130% end --&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;div&gt;&lt;!-- pdf zoom 130% end --&gt;&lt;/div&gt;
 </pre></div>
 </div>
 <p>Most of these options are to wkhtmltopdf, a PDF renderer based on webkit (the
 engine used by the Chrome and Safari web browsers). An alternative, simpler PDF
 engine can also be used by specifying:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- pdf renderer pisa --&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;div&gt;&lt;!-- pdf renderer pisa --&gt;&lt;/div&gt;
 </pre></div>
 </div>
 </section>
