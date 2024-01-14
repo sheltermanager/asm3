@@ -772,7 +772,7 @@ def update_test_today(dbo: Database, username: str, testid: int, resultid: int) 
         "DateOfTest":   dbo.today(),
         "TestResultID": resultid
     }, username)
-    update_animal_tests(dbo, testid)
+    update_animal_tests(dbo, username, testid)
 
 def update_vaccination_today(dbo: Database, username: str, vaccid: int) -> None:
     """
@@ -831,7 +831,7 @@ def complete_test(dbo: Database, username: str, testid: int, newdate: datetime, 
         "TestResultID":         testresult,
         "AdministeringVetID":   vetid
     }, username)
-    update_animal_tests(dbo, testid)
+    update_animal_tests(dbo, username, testid)
 
 def reschedule_test(dbo: Database, username: str, testid: int, newdate: datetime, comments: str) -> None:
     """
@@ -1162,7 +1162,7 @@ def insert_test_from_form(dbo: Database, username: str, post: PostedData) -> int
         "Comments":         post["comments"]
     }, username)
 
-    update_animal_tests(dbo, ntestid, "insert")
+    update_animal_tests(dbo, username, ntestid, "insert")
     return ntestid
 
 def update_test_from_form(dbo: Database, username: str, post: PostedData) -> None:
@@ -1186,9 +1186,9 @@ def update_test_from_form(dbo: Database, username: str, post: PostedData) -> Non
         "Comments":         post["comments"]
     }, username)
 
-    update_animal_tests(dbo, testid, "update")
+    update_animal_tests(dbo, username, testid, "update")
 
-def update_animal_tests(dbo: Database, testid: int, action: str = "insert") -> None:
+def update_animal_tests(dbo: Database, username: str, testid: int, action: str = "insert") -> None:
     """
     Checks the test with testid and if it's a FIV, FLV or Heartworm 
     test updates the denormalised animal test fields.
@@ -1210,21 +1210,20 @@ def update_animal_tests(dbo: Database, testid: int, action: str = "insert") -> N
     # an insert or update operation
     if action == "insert" or action == "update":
         if t.TESTNAME.find("FIV") != -1: 
-            dbo.execute("UPDATE animal SET CombiTested = 1, CombiTestDate = ?, CombiTestResult = ? WHERE ID = ?", (t.DATEOFTEST, result, t.ANIMALID))
+            dbo.update("animal", t.ANIMALID, { "CombiTested": 1, "CombiTestDate": t.DATEOFTEST, "CombiTestResult": result }, username)
         if t.TESTNAME.find("FLV") != -1 or t.TESTNAME.find("FeLV") != -1: 
-            dbo.execute("UPDATE animal SET CombiTested = 1, CombiTestDate = ?, FLVResult = ? WHERE ID = ?", (t.DATEOFTEST, result, t.ANIMALID))
+            dbo.update("animal", t.ANIMALID, { "CombiTested": 1, "CombiTestDate": t.DATEOFTEST, "FLVResult": result }, username)
         if t.TESTNAME.find("eartworm") != -1: 
-            dbo.execute("UPDATE animal SET HeartwormTested = 1, HeartwormTestDate = ?, HeartwormTestResult = ? WHERE ID = ?", (t.DATEOFTEST, result, t.ANIMALID))
+            dbo.update("animal", t.ANIMALID, { "HeartwormTested": 1, "HeartwormTestDate": t.DATEOFTEST, "HeartwormTestResult": result }, username)
     # If we were deleting a test, check if it's for one of our standard
     # tests and if the test result was the same, reset it back to unknown
     elif action == "delete":
         if t.TESTNAME.find("FIV") != -1:
-            dbo.execute("UPDATE animal SET CombiTestResult = 0 WHERE ID = ? AND CombiTestResult = ?", (t.ANIMALID, result))
+            dbo.update("animal", t.ANIMALID, { "CombiTestResult": 0 }, username)
         if t.TESTNAME.find("FLV") != -1 or t.TESTNAME.find("FeLV") != -1:
-            dbo.execute("UPDATE animal SET FLVResult = 0 WHERE ID = ? AND FLVResult = ?", (t.ANIMALID, result))
+            dbo.update("animal", t.ANIMALID, { "FLVResult": 0 }, username)
         if t.TESTNAME.find("eartworm") != -1:
-            dbo.execute("UPDATE animal SET HeartwormTested = 0, HeartwormTestDate = Null, HeartwormTestResult = 0 WHERE ID = ?" \
-                " AND HeartwormTestResult = ?", (t.ANIMALID, result))
+            dbo.update("animal", t.ANIMALID, { "HeartwormTested": 0, "HeartwormTestDate": None, "HeartwormTestResult": 0 }, username)
 
 def delete_regimen(dbo: Database, username: str, amid: int) -> None:
     """
@@ -1250,7 +1249,7 @@ def delete_test(dbo: Database, username: str, testid: int) -> None:
     """
     Deletes a test record
     """
-    update_animal_tests(dbo, testid, "delete")
+    update_animal_tests(dbo, username, testid, "delete")
     dbo.delete("animaltest", testid, username)
 
 def delete_vaccination(dbo: Database, username: str, vaccinationid: int) -> None:
