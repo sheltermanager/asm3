@@ -257,6 +257,7 @@ You can run the following script at :menuselection:`Settings --> SQL Interface`
 to remove everything imported by anyone after the 1st January, 2017::
 
     DELETE FROM animal WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
+    DELETE FROM animalcost WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
     DELETE FROM animalvaccination WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
     DELETE FROM animalmedical WHERE CreatedBy = 'import%' AND CreatedDate > '2017-01-01';
     DELETE FROM animalmedicaltreatment WHERE CreatedBy LIKE 'import%' AND CreatedDate > '2017-01-01';
