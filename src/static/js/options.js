@@ -1414,6 +1414,9 @@ $(function() {
                 '<input data="OnlineFormDeleteOnProcess" id="deleteonprocess" class="asm-checkbox" type="checkbox" /> <label for="deleteonprocess">' + _("Remove forms immediately when I process them") + '</label><br/>',
                 '<input data="rc:DontRemoveProcessedForms" id="removeprocessedforms" class="asm-checkbox" type="checkbox" /> <label for="removeprocessedforms">' + _("Remove processed forms when I leave the incoming forms screens") + '</label><br/>',
                 '<input data="AutoHashProcessedForms" id="hashprocessedforms" class="asm-checkbox" type="checkbox" /> <label for="hashprocessedforms">' + _("When storing processed forms as media, apply tamper proofing and make them read only") + '</label><br/>',
+                '<input data="OnlineFormSpamHoneyTrap" id="spamhoneytrap" class="asm-checkbox" type="checkbox" /> <label for="spamhoneytrap">' + _("Spambot protection: Invisible checkbox") + '</label><br/>',
+                '<input data="OnlineFormSpamUACheck" id="spamuacheck" class="asm-checkbox" type="checkbox" /> <label for="spamuacheck">' + _("Spambot protection: UserAgent check") + '</label><br/>',
+                '<input data="OnlineFormSpamFirstnameMixCase" id="spamfirstname" class="asm-checkbox" type="checkbox" /> <label for="spamfirstname">' + _("Spambot protection: First name mixed case") + '</label><br/>',
                 '</p>',
                 '</div>'
             ].join("\n");

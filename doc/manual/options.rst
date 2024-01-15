@@ -924,6 +924,25 @@ Online Forms
   recorded. This prevents anyone from editing form submissions after they have been
   stored.
 
+There are a number of options for protection forms from spambots. If any of
+these options are enabled and triggered by a form submission, the submitter
+will see the thank you screen and think it has worked, but the form will be
+silently dropped so that you do not have to delete it from the queue.
+
+* Spambot protection: Invisible checkbox: Sometimes called a honey trap, forms will
+  add an extra invisible checkbox that only bots can see. If the box is ticked, we
+  know the submission has been filled in by a bot.
+
+* Spambot protection: Useragent check: Web browsers all have comment elements to the
+  useragent string they use to identify themselves. This option will reject the form
+  if we don't recognise the submission as coming from a browser.
+
+* Spambot protection: First name mixed case: The firstname field on a form (if
+  present) should only really contain one upper case character per name and
+  it's unusual for there to be more than two first names. Bots tend to autofill
+  fields with random junk like YxoOopoUoyuVV - this option will reject form
+  submissions where the first name has too many upper case characters.
+
 .. _paymentprocessors:
 
 Payment Processors

@@ -1,6 +1,7 @@
 48
 ================
 
+15/01/24 Show the onlineform spambot options so they can be disabled
 15/01/24 Fix clause for On Shelter (no foster) on query builder
 14/01/24 Audit changes to FIV/L/Heartworm triggered by test tab
 10/01/24 Add Excel export for reports #1403
