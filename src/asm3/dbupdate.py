@@ -43,7 +43,7 @@ VERSIONS = (
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
-    34706, 34707, 34708, 34709, 34800, 34801, 34802
+    34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -52,7 +52,7 @@ LATEST_VERSION = VERSIONS[-1]
 TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalfield",
     "adoption", "animal", "animalboarding", "animalcontrol", "animalcontrolanimal", "animalcontrolrole", "animalcost",
     "animaldiet", "animalentry", "animalfigures", "animalfiguresannual",  
-    "animalfound", "animalcontrolanimal", "animallitter", "animallost", "animallostfoundmatch", 
+    "animalfound", "animalcontrolanimal", "animallitter", "animallocation", "animallost", "animallostfoundmatch", 
     "animalmedical", "animalmedicaltreatment", "animalname", "animalpublished", 
     "animaltype", "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
     "basecolour", "breed", "citationtype", "clinicappointment", "clinicinvoiceitem", "configuration", 
@@ -93,7 +93,7 @@ TABLES_NO_ID_COLUMN = ( "accountsrole", "additional", "audittrail", "animalcontr
 # to determine which tables to delete data from
 TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption", 
     "animal", "animalboarding", "animalcontrol", "animalcontrolanimal","animalcontrolrole", 
-    "animallostfoundmatch", "animalpublished", 
+    "animallocation", "animallostfoundmatch", "animalpublished", 
     "animalcost", "animaldiet", "animalentry", "animalfigures", "animalfiguresannual", 
     "animalfound", "animallitter", "animallost", "animalmedical", "animalmedicaltreatment", "animalname",
     "animaltest", "animaltransport", "animalvaccination", "animalwaitinglist", "audittrail", 
@@ -631,6 +631,20 @@ def sql_structure(dbo: Database) -> str:
         fdate("InvalidDate", True),
         fint("NumberInLitter"),
         flongstr("Comments")), True, True)
+    
+    sql += table("animallocation", (
+        fid(),
+        fint("AnimalID"),
+        fdate("Date"),
+        fint("FromLocationID"),
+        fstr("FromUnit"), 
+        fint("ToLocationID"),
+        fstr("ToUnit"), 
+        fstr("By"),
+        fstr("Description")), False)
+    sql += index("animallocation_AnimalID", "animallocation", "AnimalID")
+    sql += index("animallocation_FromLocationID", "animallocation", "FromLocationID")
+    sql += index("animallocation_ToLocationID", "animallocation", "ToLocationID")
 
     sql += table("animallost", (
         fid(),
@@ -6086,3 +6100,21 @@ def update_34802(dbo: Database) -> None:
     # Switching to use primarykey/cache combo for receipt numbers and online forms, and
     # possibly for future PK depending on performance. Clear any old junk out.
     dbo.execute_dbupdate("DELETE FROM primarykey")
+
+def update_34803(dbo: Database) -> None:
+    # Add animallocation table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("AnimalID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("Date", dbo.type_datetime, False),
+        dbo.ddl_add_table_column("FromLocationID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("FromUnit", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("ToLocationID", dbo.type_integer, False),
+        dbo.ddl_add_table_column("ToUnit", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("By", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("Description", dbo.type_shorttext, False)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("animallocation", fields) )
+    add_index(dbo, "animallocation_AnimalID", "animallocation", "AnimalID") 
+    add_index(dbo, "animallocation_FromLocationID", "animallocation", "FromLocationID") 
+    add_index(dbo, "animallocation_ToLocationID", "animallocation", "ToLocationID") 

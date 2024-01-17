@@ -2474,12 +2474,8 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
         if lsite != usite:
             shelterlocation = dbo.query_int("SELECT ID FROM internallocation WHERE SiteID=? ORDER BY ID", [usite])
 
-    # If the option is on, write an initial record for the internal location
-    if asm3.configuration.location_change_log(dbo):
-        newlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [shelterlocation])
-        if post["unit"] != "": newlocation += "-" + post["unit"]
-        asm3.log.add_log(dbo, username, asm3.log.ANIMAL, nextid, asm3.configuration.location_change_log_type(dbo), 
-            _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, post["animalname"], "*", newlocation))
+    # Record the initial location 
+    insert_animallocation(dbo, username, nextid, post["animalname"], sheltercode, 0, "*", shelterlocation, post["unit"])
 
     dbo.insert("animal", {
         "ID":               nextid,
@@ -2667,19 +2663,8 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
     # Look up the row pre-change so that we can see if any log messages need to be triggered
     prerow = dbo.first_row(dbo.query("SELECT DeceasedDate, ShelterLocation, ShelterLocationUnit, Weight, IsHold, AdditionalFlags FROM animal WHERE ID=?", [aid]))
 
-    # If the option is on and the internal location or unit has changed, log it
-    if asm3.configuration.location_change_log(dbo):
-        oldlocid = prerow.shelterlocation
-        oldlocunit = prerow.shelterlocationunit
-        if post.integer("location") != oldlocid or post["unit"] != oldlocunit:
-            oldlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [oldlocid])
-            if oldlocunit is not None and oldlocunit != "":
-                oldlocation += "-" + oldlocunit
-            newlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [post.integer("location")])
-            if post["unit"] != "":
-                newlocation += "-" + post["unit"]
-            asm3.log.add_log(dbo, username, asm3.log.ANIMAL, aid, asm3.configuration.location_change_log_type(dbo), 
-                _("{0} {1}: Moved from {2} to {3}", l).format(post["sheltercode"], post["animalname"], oldlocation, newlocation))
+    # Record the location if it has changed
+    insert_animallocation(dbo, username, aid, post["animalname"], post["sheltercode"], prerow.shelterlocation, prerow.shelterlocationunit, post.integer("location"), post["unit"])
 
     # If the option is on and the hold status has changed, log it
     if asm3.configuration.hold_change_log(dbo):
@@ -3032,6 +3017,36 @@ def update_diary_linkinfo(dbo: Database, animalid: int, a: ResultRow = None, dia
     else:
         dbo.execute("UPDATE diary SET LinkInfo = ? WHERE LinkType = ? AND LinkID = ?", (diaryloc, asm3.diary.ANIMAL, animalid))
 
+def insert_animallocation(dbo: Database, username: str, animalid: int, animalname: str, sheltercode: str, 
+                          fromid: int, fromunit: str, toid: int, tounit: str) -> int:
+    """
+    Adds a new entry to the animallocation table when an animal changes internal location.
+    Also handles writing to the log if the option is on.
+    """
+    l = dbo.locale
+    # If the location hasn't changed, don't do anything
+    if fromid == toid and fromunit == tounit: return
+    fromlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [fromid])
+    tolocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [toid])
+    if fromunit is not None and fromunit != "":
+        fromlocation += "-" + fromunit
+    if tounit is not None and tounit != "":
+        tolocation += "-" + tounit
+    msg = _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, animalname, fromlocation, tolocation)
+    alid = dbo.insert("animallocation", {
+        "AnimalID":         animalid,
+        "Date":             dbo.now(),
+        "FromLocationID":   fromid,
+        "FromUnit":         fromunit,
+        "ToLocationID":     toid,
+        "ToUnit":           tounit,
+        "By":               username,
+        "Description":      msg
+    }, username, setCreated = False)
+    if asm3.configuration.location_change_log(dbo):
+        asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.location_change_log_type(dbo), msg)
+    return alid
+
 def update_location_unit(dbo: Database, username: str, animalid: int, newlocationid: int, newunit: str = "", returnactivemovement: bool = True) -> None:
     """
     Updates the shelterlocation and shelterlocationunit fields of the animal given.
@@ -3039,24 +3054,11 @@ def update_location_unit(dbo: Database, username: str, animalid: int, newlocatio
     means that the animal should be on shelter rather than with a fosterer, etc.
     If the animal has an activemovement, it will be returned before the location is changed.
     """
-    # If the option is on and the internal location has changed, log it
-    l = dbo.locale
-    if asm3.configuration.location_change_log(dbo):
-        oldloc = dbo.first_row( dbo.query("SELECT ShelterCode, AnimalName, ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=?", [animalid]) )
-        if oldloc:
-            animalname = oldloc.animalname
-            sheltercode = oldloc.sheltercode
-            oldlocid = oldloc.shelterlocation
-            oldlocunit = oldloc.shelterlocationunit
-            if newlocationid != oldlocid or newunit != oldlocunit:
-                oldlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [oldlocid])
-                if oldlocunit is not None and oldlocunit != "":
-                    oldlocation += "-" + oldlocunit
-                newlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [newlocationid])
-                if newunit != "":
-                    newlocation += "-" + newunit
-                asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, asm3.configuration.location_change_log_type(dbo), 
-                    _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, animalname, oldlocation, newlocation))
+    # Record the internal location change if necessary
+    oldloc = dbo.first_row( dbo.query("SELECT ShelterCode, AnimalName, ShelterLocation, ShelterLocationUnit FROM animal WHERE ID=?", [animalid]) )
+    if oldloc:
+        insert_animallocation(dbo, username, animalid, oldloc.animalname, oldloc.sheltercode, 
+                              oldloc.shelterlocation, oldloc.shelterlocationunit, newlocationid, newunit)
     # If this animal has an active movement at today's date or older, return it first
     # (the date check is to make sure we don't accidentally return future adoptions)
     if returnactivemovement:

@@ -1,6 +1,7 @@
 48
 ================
 
+17/01/24 Add animallocation table to record history #1408
 17/01/24 Accounts screen: button to reconcile all trx for account #1410
 15/01/24 Show the onlineform spambot options so they can be disabled
 15/01/24 Fix clause for On Shelter (no foster) on query builder
