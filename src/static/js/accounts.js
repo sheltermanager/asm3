@@ -106,6 +106,13 @@ $(function() {
                         tableform.table_update(table);
                     } 
                 },
+                { id: "reconcile", text: _("Reconcile"), icon: "transactions", enabled: "multi", perm: "ctrx",
+                    click: async function() {
+                        let ids = tableform.table_ids(table);
+                        await common.ajax_post("accounts", "mode=reconcile&ids=" + ids);
+                        common.route_reload();
+                    }
+                },
                 { id: "offset", type: "dropdownfilter", 
                     options: [ "active|" + _("Only active accounts"), "all|" + _("All accounts") ],
                     click: function(selval) {

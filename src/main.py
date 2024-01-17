@@ -1637,6 +1637,11 @@ class accounts(JSONEndpoint):
         for aid in o.post.integer_list("ids"):
             asm3.financial.delete_account(o.dbo, o.user, aid)
 
+    def post_reconcile(self, o):
+        self.check(asm3.users.CHANGE_TRANSACTIONS)
+        for aid in o.post.integer_list("ids"):
+            asm3.financial.mark_account_reconciled(o.dbo, o.user, aid)
+
 class accounts_trx(JSONEndpoint):
     url = "accounts_trx"
     get_permissions = asm3.users.VIEW_ACCOUNT
@@ -1696,7 +1701,7 @@ class accounts_trx(JSONEndpoint):
     def post_reconcile(self, o):
         self.check(asm3.users.CHANGE_TRANSACTIONS)
         for tid in o.post.integer_list("ids"):
-            asm3.financial.mark_reconciled(o.dbo, tid)
+            asm3.financial.mark_trx_reconciled(o.dbo, o.user, tid)
 
 class additional(JSONEndpoint):
     url = "additional"

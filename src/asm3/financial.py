@@ -299,13 +299,23 @@ def get_balance_fromto_date(dbo: Database, accountid: int, fromdate: datetime, t
     #if r.accounttype == INCOME or r.accounttype == EXPENSE: balance = abs(balance)
     return balance
 
-def mark_reconciled(dbo: Database, trxid: int) -> None:
+def mark_trx_reconciled(dbo: Database, username: str, trxid: int) -> None:
     """
     Marks a transaction reconciled.
     """
     dbo.update("accountstrx", trxid, {
         "Reconciled": 1
+    }, username, setLastChanged = False)
+
+def mark_account_reconciled(dbo: Database, username: str, acid: int) -> None:
+    """
+    Marks all transactions in an account reconciled
+    """
+    code = dbo.query_string("SELECT Code FROM accounts WHERE ID = ?", [acid])
+    dbo.update("accountstrx", f"SourceAccountID={acid} OR DestinationAccountID={acid}", {
+        "Reconciled": 1
     })
+    asm3.audit.edit(dbo, username, "accounts", acid, "", f"reconciled all trx for {acid}: {code}")
 
 def get_transactions(dbo: Database, accountid: int, datefrom: datetime, dateto: datetime, reconciled: int = BOTH) -> Results:
     """
