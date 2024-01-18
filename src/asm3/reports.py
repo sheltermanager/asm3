@@ -405,15 +405,15 @@ def generate_html(dbo: Database, username: str, sql: str) -> str:
     """
     sql = check_sql(dbo, username, sql)
     rs, cols = dbo.query_tuple_columns(sql)
-    h = "$$HEADER\n<table border=\"1\">\n<tr>\n"
+    h = "$$HEADER\n<table border=\"1\">\n<thead>\n<tr>\n"
     b = "$$BODY\n<tr>\n"
     f = "$$FOOTER\n</table>\nFOOTER$$\n"
     if len(cols) > 0:
-        f = "$$FOOTER\n</table>\n<p>Total: {COUNT.%s}</p>\nFOOTER$$\n" % cols[0].upper()
+        f = "$$FOOTER\n</tbody>\n</table>\n<p>Total: {COUNT.%s}</p>\nFOOTER$$\n" % cols[0].upper()
     for c in cols:
         h += "<th>%s</th>\n" % c
         b += "<td>$%s</td>\n" % c.upper()
-    h += "</tr>\nHEADER$$\n\n"
+    h += "</tr>\n</thead>\n<tbody>\nHEADER$$\n\n"
     b += "</tr>\nBODY$$\n\n"
     return h + b + f
 
