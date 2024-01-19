@@ -845,6 +845,19 @@ def uuid_b64() -> str:
     """ Returns a type 4 UUID as a base64 encoded string (shorter) """
     return base64encode(uuid.uuid4().bytes)
 
+def epoch_b32() -> str:
+    """
+    Generate a unique(ish) number based on base36 encoding of the epoch.
+    This is good for getting a pretty unique, but short value.
+    """
+    number = int(time.time())
+    alphabet, base36 = ['0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', '']
+    while number:
+        number, i = divmod(number, 36)
+        base36 = alphabet[i] + base36
+    return base36
+
+
 def pbkdf2_hash_hex(plaintext: str, salt: str = "", algorithm: str = "sha1", iterations: int = 1000) -> str:
     """ Returns a hex pbkdf2 hash of the plaintext given. 
         If salt is not given, a random salt is generated.

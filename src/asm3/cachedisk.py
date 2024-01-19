@@ -102,8 +102,7 @@ def increment(key: str, path: str, ttl: int) -> int:
 
 def get(key: str, path: str, expectedtype: Any = None) -> Any:
     """
-    Retrieves a value from our disk cache. Returns None if the
-    value is not found or has expired.
+    Retrieves a value from our disk cache. Returns None if the value is not found or has expired.
     expectedtype: A type if one is expected. This was added due to an MD5 collision
     that caused an image to be read as a config dictionary, which wiped out someone's
     config and caused all the database updates to be re-run.
