@@ -117,7 +117,7 @@ class PetFinderPublisher(FTPPublisher):
         cik = self.pfGetCacheInvalidationKeys()
         adoptable_ids = set([a.ID for a in animals])
         # Remove anyone from the dict who is not adoptable
-        for k, v in cik.copy():
+        for k, v in cik.copy().items():
             if k not in adoptable_ids:
                 del cik[k]
         # Add any new animals to the list and generate a key for them

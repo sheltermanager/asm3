@@ -146,7 +146,9 @@ class TestPublish(unittest.TestCase):
         pc = asm3.publishers.base.PublishCriteria()
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         pf = asm3.publishers.petfinder.PetFinderPublisher(base.get_dbo(), pc)
-        pf.pfUpdateCacheInvalidationKeys(pf.getMatchingAnimals())
+        cikv = asm3.dbms.base.ResultRow()
+        cikv["ID"] = 1
+        pf.pfUpdateCacheInvalidationKeys([cikv])
         self.assertIsNotNone(pf.processAnimal(a))
         b = base.get_dbo().query(pf.pfAnimalQuery())[0]
         self.assertIsNotNone(pf.processAnimal(b, status="X"))
