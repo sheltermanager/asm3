@@ -516,11 +516,7 @@ sheltermanager.com account number. This is so they can tie your organisation
 to the incoming data.
 
 Next, go to :menuselection:`Publish --> Set Publishing Options -->
-ShelterAnimalsCount` and configure the entry categories in your database that
-represent Stray, Surrender and TNR. It is likely you will only have one for
-Stray and TNR, but may have many entry categories that correspond to a
-surrender. There is no config for transfers as we use the "Transfer In" tickbox
-on the animal's record to determine that. 
+ShelterAnimalsCount` and check the "Enabled" box. 
 
 Like the other publishers, shelteranimalscount will run automatically overnight
 to send updates and does not require any interaction.
