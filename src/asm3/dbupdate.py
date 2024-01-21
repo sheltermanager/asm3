@@ -107,7 +107,7 @@ TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "br
     "costtype", "deathreason", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", 
     "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
     "licencetype", "lkanimalflags", "lkboardingtype", "lkcoattype", "lkownerflags", "lksaccounttype", "lksclinicstatus", 
-    "lksdiarylink", "lksdonationfreq", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", 
+    "lksdiarylink", "lksdonationfreq", "lksentrytype", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", 
     "lksmedialink", "lksmediatype", "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", "lksyesno", 
     "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", "logtype", "medicalprofile", 
     "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", "stocklocation", 
