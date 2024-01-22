@@ -170,6 +170,7 @@ DEFAULTS = {
     "EmailAdopterFollowup": "No",
     "EmailAdopterFollowupDays": "14",
     "EmailAdopterFollowupTemplate": "0",
+    "EmailAdopterFollowupSpecies": "1,2",
     "EmailClinicReminder": "No",
     "EmailClinicReminderDays": "2",
     "EmailClinicReminderTemplate": "0",
@@ -951,6 +952,9 @@ def email_adopter_followup(dbo: Database) -> bool:
 
 def email_adopter_followup_days(dbo: Database) -> int:
     return cint(dbo, "EmailAdopterFollowupDays", DEFAULTS["EmailAdopterFollowupDays"])
+
+def email_adopter_followup_species(dbo: Database) -> str:
+    return cstring(dbo, "EmailAdopterFollowupSpecies", DEFAULTS["EmailAdopterFollowupSpecies"])
 
 def email_adopter_followup_template(dbo: Database) -> int:
     return cint(dbo, "EmailAdopterFollowupTemplate", DEFAULTS["EmailAdopterFollowupTemplate"])

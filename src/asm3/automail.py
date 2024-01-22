@@ -62,12 +62,15 @@ def _valid_template(dbo: Database, dtid: int) -> bool:
     return True
 
 def _adopter_followup_query(dbo: Database, cutoff: datetime) -> Results:
+    followupspecies = asm3.configuration.email_adopter_followup_species(dbo)
     return dbo.query("SELECT m.ID, m.OwnerID, o.EmailAddress " \
         "FROM adoption m " \
         "INNER JOIN animal a ON a.ID = m.AnimalID " \
         "INNER JOIN owner o ON o.ID = m.OwnerID " \
         "WHERE m.MovementType=1 AND m.MovementDate=? AND " \
-        "a.DeceasedDate Is Null AND m.ReturnDate Is Null ORDER BY m.ID", [ cutoff ])
+        "a.DeceasedDate Is Null AND m.ReturnDate Is Null AND " \
+        f"a.SpeciesID IN ({followupspecies}) " \
+        "ORDER BY m.ID", [ cutoff ])
 
 def adopter_followup(dbo: Database, user = "system") -> None:
     """

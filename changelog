@@ -1,6 +1,7 @@
 48
 ================
 
+22/01/24 Adopter followup emails: option to restrict species #1417
 22/01/24 Use reply address as from when SMTP settings overidden #1418
 19/01/24 Use photo url invalidation keys to work around PF bug #1415
 18/01/24 Include thead and tbody elements when generating report HTML
