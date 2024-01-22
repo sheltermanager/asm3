@@ -357,9 +357,17 @@ class PetFinderPublisher(FTPPublisher):
         # Mix
         line.append(self.pfYesNo(an.CROSSBREED == 1))
         # photo1-6
-        if PETFINDER_SEND_PHOTOS_BY_FTP or status == "X":
+        if PETFINDER_SEND_PHOTOS_BY_FTP:
             # Send blanks for the 6 images if we already sent them by FTP
             line.append("")
+            line.append("")
+            line.append("")
+            line.append("")
+            line.append("")
+            line.append("")
+        elif status == "X":
+            # Only send the preferred image for adopted animals
+            line.append(self.getPhotoUrl(an.ID))
             line.append("")
             line.append("")
             line.append("")

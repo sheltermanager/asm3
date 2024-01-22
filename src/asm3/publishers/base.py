@@ -643,6 +643,12 @@ class AbstractPublisher(threading.Thread):
             # Add quoting
             l.append("\"%s\"" % i)
         return ",".join(l)
+    
+    def getPhotoUrl(self, animalid: int) -> str:
+        """
+        Returns the URL for the preferred photo for animalid.
+        """
+        return f"{SERVICE_URL}?account={self.dbo.database}&method=animal_image&animalid={animalid}"
 
     def getPhotoUrls(self, animalid: int) -> List[str]:
         """
@@ -654,7 +660,8 @@ class AbstractPublisher(threading.Thread):
             "AND (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
             "ORDER BY WebsitePhoto DESC, ID", [animalid])
         for m in photos:
-            photo_urls.append("%s?account=%s&method=media_image&mediaid=%s&ts=%s" % (SERVICE_URL, self.dbo.database, m.ID, asm3.i18n.python2unix(m.DATE)))
+            ts = asm3.i18n.python2unix(m.DATE)
+            photo_urls.append(f"{SERVICE_URL}?account={self.dbo.database}&method=media_image&mediaid={m.ID}&ts={ts}")
         return photo_urls
 
     def getPublisherBreed(self, an: ResultRow, b1or2: int = 1) -> str:
