@@ -1895,12 +1895,15 @@ def send_email(dbo: Database, replyadd: str, toadd: str, ccadd: str = "", bccadd
         body = fix_relative_document_uris(dbo, body)
 
     # Build the from address
-    # If we have an SMTPOverride, use the from address the user configured.
-    # Otherwise, use the sitedef to construct the from address
+    # If we have an SMTPOverride, use the replyadd as from instead.
+    # If we don't have a reply address, use the from address the user configured.
     fromadd = ""
     if asm3.configuration.smtp_override(dbo):
-        fromadd = asm3.configuration.email(dbo)
+        fromadd = replyadd
+        if fromadd is None or fromadd == "":
+            fromadd = asm3.configuration.email(dbo)
     else:
+        # Otherwise, use the sitedef to construct the from address
         fromadd = FROM_ADDRESS
         fromadd = fromadd.replace("{organisation}", asm3.configuration.organisation(dbo))
         fromadd = fromadd.replace("{alias}", dbo.alias)
