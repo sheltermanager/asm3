@@ -1336,6 +1336,9 @@ def petfinder_hide_unaltered(dbo: Database) -> bool:
 def petfinder_send_adopted(dbo: Database) -> bool:
     return cboolean(dbo, "PetFinderSendAdopted", False)
 
+def petfinder_send_adopted_photo(dbo: Database) -> bool:
+    return cboolean(dbo, "PetFinderSendAdoptedPhoto", False)
+
 def petfinder_send_holds(dbo: Database) -> bool:
     return cboolean(dbo, "PetFinderSendHolds", False)
 

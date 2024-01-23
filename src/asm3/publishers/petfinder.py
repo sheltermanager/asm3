@@ -283,9 +283,10 @@ class PetFinderPublisher(FTPPublisher):
             # Unlike stray/holds (which are on shelter and likely to be not for adoption), 
             # we can choose to omit adopted animals who have the "Do Not Publish" flag on their record.
             rows = self.dbo.query("%s WHERE a.Archived=1 AND a.ActiveMovementType=1 AND a.IsNotAvailableForAdoption=0" % self.pfAnimalQuery())
+            adopted_photo = asm3.configuration.petfinder_send_adopted_photo(self.dbo)
             adoptedcikeys = self.pfUpdateCacheInvalidationKeys(rows, CK_ADOPTED_ANIMALS)
             for an in rows:
-                csv.append( self.processAnimal(an, agebands, status = "X", hide_size = hide_size, cikeys = adoptedcikeys ) )
+                csv.append( self.processAnimal(an, agebands, status = "X", hide_size = hide_size, adopted_photo = adopted_photo, cikeys = adoptedcikeys ) )
         else:
             self.pfRemoveCacheInvalidationKeys(CK_ADOPTED_ANIMALS)
 
@@ -300,7 +301,7 @@ class PetFinderPublisher(FTPPublisher):
         self.cleanup()
 
     def processAnimal(self, an: ResultRow, agebands: List[int] = [ 182, 730, 3285 ], status: str = "A", 
-                      hide_size: bool = False, cikeys: CacheInvalidationKeys = {}) -> str:
+                      hide_size: bool = False, adopted_photo: bool = False, cikeys: CacheInvalidationKeys = {}) -> str:
         """ Processes an animal and returns a CSV line """
         primary_color = ""
         secondary_color = ""
@@ -389,8 +390,16 @@ class PetFinderPublisher(FTPPublisher):
             line.append("")
             line.append("")
             line.append("")
-        elif status in ("F", "H", "X"):
-            # Only send the preferred image for adopted, stray and held animals
+        elif status in ("F", "H"):
+            # Only send the preferred image for stray and held animals
+            line.append(self.pfImageUrl(an.ID, [ self.getPhotoUrl(an.ID) ], 0, cikeys))
+            line.append("")
+            line.append("")
+            line.append("")
+            line.append("")
+            line.append("")
+        elif status == "X" and adopted_photo:
+            # Only send the preferred image for adopted animals if the option is on
             line.append(self.pfImageUrl(an.ID, [ self.getPhotoUrl(an.ID) ], 0, cikeys))
             line.append("")
             line.append("")
