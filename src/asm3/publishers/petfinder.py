@@ -133,6 +133,12 @@ class PetFinderPublisher(FTPPublisher):
         # Persist the dictionary
         asm3.cachedisk.put(cachekey, self.dbo.database, cik, 86400*7)
         return cik
+    
+    def pfRemoveCacheInvalidationKeys(self, cachekey: str = CK_STRAY_ANIMALS) -> None:
+        """
+        Clears an invalidation key cache - used when we stop sending animals of a particular type.
+        """
+        asm3.cachedisk.delete(cachekey, self.dbo.database)
 
     def run(self) -> None:
 
@@ -258,6 +264,8 @@ class PetFinderPublisher(FTPPublisher):
             for an in rows:
                 if self.pfRecordIn(animals, an.ID): continue # do not re-send adoptable animals
                 csv.append( self.processAnimal(an, agebands, status = "F", hide_size = hide_size, cikeys = straycikeys) )
+        else:
+            self.pfRemoveCacheInvalidationKeys(CK_STRAY_ANIMALS)
 
         # Is the option to send holds on?
         if asm3.configuration.petfinder_send_holds(self.dbo):
@@ -267,13 +275,19 @@ class PetFinderPublisher(FTPPublisher):
                 if self.pfRecordIn(animals, an.ID): continue # do not re-send adoptable animals
                 # TODO: Do we need to exclude animals we just sent as strays?
                 csv.append( self.processAnimal(an, agebands, status = "H", hide_size = hide_size, cikeys = heldcikeys ) )
+        else:
+            self.pfRemoveCacheInvalidationKeys(CK_HELD_ANIMALS)
 
         # Is the option to send previous adoptions on?
         if asm3.configuration.petfinder_send_adopted(self.dbo):
-            rows = self.dbo.query("%s WHERE a.Archived=1 AND a.ActiveMovementType=1" % self.pfAnimalQuery())
+            # Unlike stray/holds (which are on shelter and likely to be not for adoption), 
+            # we can choose to omit adopted animals who have the "Do Not Publish" flag on their record.
+            rows = self.dbo.query("%s WHERE a.Archived=1 AND a.ActiveMovementType=1 AND a.IsNotAvailableForAdoption=0" % self.pfAnimalQuery())
             adoptedcikeys = self.pfUpdateCacheInvalidationKeys(rows, CK_ADOPTED_ANIMALS)
             for an in rows:
                 csv.append( self.processAnimal(an, agebands, status = "X", hide_size = hide_size, cikeys = adoptedcikeys ) )
+        else:
+            self.pfRemoveCacheInvalidationKeys(CK_ADOPTED_ANIMALS)
 
         # Upload the datafile
         self.chdir("..", "import")
