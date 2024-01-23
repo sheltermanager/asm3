@@ -284,7 +284,7 @@ class PetFinderPublisher(FTPPublisher):
         if asm3.configuration.petfinder_send_adopted(self.dbo):
             # Unlike stray/holds (which are on shelter and likely to be not for adoption), 
             # we can choose to omit adopted animals who have the "Do Not Publish" flag on their record.
-            rows = self.dbo.query("%s WHERE a.Archived=1 AND a.ActiveMovementType=1 AND a.IsNotAvailableForAdoption=0" % self.pfAnimalQuery())
+            rows = self.dbo.query("%s WHERE a.Archived=1 AND a.ActiveMovementType=1 AND a.IsNotAvailableForAdoption=0 ORDER BY a.ActiveMovementDate DESC" % self.pfAnimalQuery())
             adopted_photo = asm3.configuration.petfinder_send_adopted_photo(self.dbo)
             adoptedcikeys = self.pfUpdateCacheInvalidationKeys(rows, CK_ADOPTED_ANIMALS)
             for an in rows:

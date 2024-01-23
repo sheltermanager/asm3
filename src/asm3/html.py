@@ -98,10 +98,11 @@ def xml(results: Results) -> str:
         s += cr
     return '<?xml version="1.0" standalone="yes" ?>\n<xml>\n' + s + '\n</xml>'
 
-def table(results: Results) -> str:
+def table(results: Results, xssProtect = True) -> str:
     """
     Takes a list of dictionaries and converts them into
     an HTML thead and tbody string.
+    xssProtect: escape angle brackets if true
     """
     if len(results) == 0: return ""
     s = "<thead>\n<tr>\n"
@@ -112,7 +113,10 @@ def table(results: Results) -> str:
     for row in results:
         s += "<tr>"
         for c in cols:
-            s += "<td>%s</td>\n" % str(row[c])
+            if xssProtect:
+                s += "<td>%s</td>\n" % escape_angle(str(row[c]))
+            else:
+                s += "<td>%s</td>\n" % str(row[c])
         s += "</tr>"
     s += "</tbody>\n"
     return s
