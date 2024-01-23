@@ -1,7 +1,7 @@
 48
 ================
 
-22/01/24 Send preferred/single photo for adopted/X animals to PetFinder
+22/01/24 Send 1 photo for F/H/X PetFinder animals, use url cache invalidation
 22/01/24 Adopter followup emails: option to restrict species #1417
 22/01/24 Use reply address as from when SMTP settings overidden #1418
 19/01/24 Use photo url invalidation keys to work around PF bug #1415
