@@ -264,6 +264,7 @@ class PetFinderPublisher(FTPPublisher):
             for an in rows:
                 if self.pfRecordIn(animals, an.ID): continue # do not re-send adoptable animals
                 csv.append( self.processAnimal(an, agebands, status = "F", hide_size = hide_size, cikeys = straycikeys) )
+            self.log(f"Added {len(rows)} strays with status 'F'")
         else:
             self.pfRemoveCacheInvalidationKeys(CK_STRAY_ANIMALS)
 
@@ -275,6 +276,7 @@ class PetFinderPublisher(FTPPublisher):
                 if self.pfRecordIn(animals, an.ID): continue # do not re-send adoptable animals
                 # TODO: Do we need to exclude animals we just sent as strays?
                 csv.append( self.processAnimal(an, agebands, status = "H", hide_size = hide_size, cikeys = heldcikeys ) )
+            self.log(f"Added {len(rows)} held animals with status 'H'")
         else:
             self.pfRemoveCacheInvalidationKeys(CK_HELD_ANIMALS)
 
@@ -287,6 +289,9 @@ class PetFinderPublisher(FTPPublisher):
             adoptedcikeys = self.pfUpdateCacheInvalidationKeys(rows, CK_ADOPTED_ANIMALS)
             for an in rows:
                 csv.append( self.processAnimal(an, agebands, status = "X", hide_size = hide_size, adopted_photo = adopted_photo, cikeys = adoptedcikeys ) )
+            photoincluded = ""
+            if adopted_photo: photoincluded = "(photo included)"
+            self.log(f"Added {len(rows)} previously animals {photoincluded} with status 'X'")
         else:
             self.pfRemoveCacheInvalidationKeys(CK_ADOPTED_ANIMALS)
 
