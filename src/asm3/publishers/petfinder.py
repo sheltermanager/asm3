@@ -81,7 +81,7 @@ class PetFinderPublisher(FTPPublisher):
         try:
             key = ""
             if animalid in cikeys: 
-                key = "&key=%s" % self.cikeys[animalid]
+                key = "&key=%s" % cikeys[animalid]
             return "%s%s" % (urls[index], key)
         except IndexError:
             return ""
