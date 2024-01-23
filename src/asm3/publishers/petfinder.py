@@ -246,7 +246,7 @@ class PetFinderPublisher(FTPPublisher):
                     self.log("%s is unaltered and petfinder_hide_unaltered == true" % an["ANIMALNAME"])
                     continue
 
-                csv.append( self.processAnimal(an, agebands, hide_size = hide_size, cacheinvalidationkeys = adoptablecikeys) )
+                csv.append( self.processAnimal(an, agebands, hide_size = hide_size, cikeys = adoptablecikeys) )
 
                 # Mark success in the log
                 self.logSuccess("Processed: %s: %s (%d of %d)" % ( an["SHELTERCODE"], an["ANIMALNAME"], anCount, len(animals)))
