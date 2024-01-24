@@ -3024,13 +3024,16 @@ def insert_animallocation(dbo: Database, username: str, animalid: int, animalnam
     Also handles writing to the log if the option is on.
     """
     l = dbo.locale
+    # Squash nulls. Shouldn't really get these, but old ASM2 imports can sometimes have them
+    if fromunit is None: fromunit = ""
+    if tounit is None: tounit = ""
     # If the location hasn't changed, don't do anything
     if fromid == toid and fromunit == tounit: return
     fromlocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [fromid])
     tolocation = dbo.query_string("SELECT LocationName FROM internallocation WHERE ID = ?", [toid])
-    if fromunit is not None and fromunit != "":
+    if fromunit != "":
         fromlocation += "-" + fromunit
-    if tounit is not None and tounit != "":
+    if tounit != "":
         tolocation += "-" + tounit
     msg = _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, animalname, fromlocation, tolocation)
     alid = dbo.insert("animallocation", {
