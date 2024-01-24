@@ -82,7 +82,9 @@ header = {
         60: ["event_new", "asm-icon-event-add", _("Add a new event")],
         61: ["animal_observations", "asm-icon-animal", _("Daily Observations")],
         62: ["boarding", "asm-icon-boarding", _("Boarding book")],
-        63: ["calendarview?ev=b", "asm-icon-calendar", _("Boarding calendar")]
+        63: ["calendarview?ev=b", "asm-icon-calendar", _("Boarding calendar")],
+        64: ["clinic_consultingroom", "asm-icon-users", _("Consulting Room")],
+        65: ["clinic_waitingroom", "asm-icon-person", _("Waiting Room")]
     },
 
     show_error: function(text, duration) {
