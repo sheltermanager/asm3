@@ -303,6 +303,12 @@ $(function() {
                 '</td>',
                 '<td><input id="plowneremail" type="text" class="asm-textbox cfg" data="PetLinkOwnerEmail" /></td>',
                 '</tr>',
+                '<tr>',
+                '<td><label for="plregisterall">Register</label></td>',
+                '<td><select id="plregisterall" class="asm-selectbox cfg" data="PetLinkRegisterAll">',
+                '<option value="No">PetLink pre-paid microchips (98102*)</option>',
+                '<option value="Yes">ALL microchips (9*)</option>',
+                '</tr>',
                 '</table>',
                 '</div>'
             ].join("\n");

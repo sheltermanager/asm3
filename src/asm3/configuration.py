@@ -298,6 +298,11 @@ DEFAULTS = {
         "MembershipNumber,AdditionalFlags,OwnerAddress," \
         "OwnerTown,OwnerCounty,OwnerPostcode,HomeTelephone,WorkTelephone," \
         "MobileTelephone,EmailAddress",
+    "PetFinderSendStrays": "No",
+    "PetFinderSendHolds": "No",
+    "PetFinderSendAdopted": "No",
+    "PetFinderSendAdoptedPhoto": "No",
+    "PetLinkRegisterAll": "No",
     "PetsLocatedIncludeShelter": "No",
     "PetsLocatedAnimalFlag": "",
     "PicturesInBooks": "Yes",
@@ -1376,6 +1381,9 @@ def petlink_owner_email(dbo: Database) -> str:
 
 def petlink_password(dbo: Database) -> str:
     return cstring(dbo, "PetLinkPassword")
+
+def petlink_register_all(dbo: Database) -> bool:
+    return cboolean(dbo, "PetLinkRegisterAll")
 
 def petrescue_user(dbo: Database) -> str:
     return cstring(dbo, "PetRescueFTPUser")

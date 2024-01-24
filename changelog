@@ -1,6 +1,7 @@
 48
 ================
 
+24/01/24 PetLink: Option to register chips from any manufacturer
 24/01/24 Add missing quicklinks for consulting/waiting room
 24/01/24 Fix bug with assigning additional fields to reservations
 24/01/24 Invalidate payment to trx mappings if [None] is selected either side

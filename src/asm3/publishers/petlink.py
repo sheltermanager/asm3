@@ -63,7 +63,11 @@ class PetLinkPublisher(AbstractPublisher):
             self.setLastError("No PetLink login has been set.")
             return
 
-        animals = get_microchip_data(self.dbo, ['98102',], "petlink", organisation_email = plowneremail)
+        chipprefix = ["98102"]
+        if asm3.configuration.petlink_register_all(self.dbo):
+            chipprefix = ["9"]
+
+        animals = get_microchip_data(self.dbo, chipprefix, "petlink", organisation_email = plowneremail)
         if len(animals) == 0:
             self.setLastError("No animals found to publish.")
             return

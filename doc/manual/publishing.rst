@@ -640,6 +640,10 @@ adopted and sends their information and new owner info to PetLink to update
 their records. If an animal is returned and adopted out again later, ASM will
 automatically update PetLink again.
 
+There is an option in the configuration to send 15 digit microchips from all
+US manufacturers (anything starting with a 9) to PetLink if you have enabled
+this in your account with them.
+
 SmartTag
 --------
 
