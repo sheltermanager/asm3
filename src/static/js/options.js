@@ -1853,7 +1853,7 @@ $(function() {
                 let mappings = "";
                 $(".donmap").each(function() {
                     let mapname = $(this).val();
-                    let idx = t.attr("data-idx");
+                    let idx = $(this).attr("data-idx");
                     let mapvalue = $("#mapac" + idx).val();
                     if (mapname && mapname != "-1" && mapvalue && mapvalue != "-1") {
                         if (mappings != "") { mappings += ","; }
