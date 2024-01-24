@@ -925,6 +925,8 @@ def donation_account_mappings(dbo: Database) -> Dict[str, str]:
     cm = cstring(dbo, "DonationAccountMappings")
     sm = cm.split(",")
     for x in sm:
+        if x.find("-1") != -1:
+            continue # if name or value is -1, then the mapping is not valid
         if x.find("=") != -1:
             bt = x.split("=")
             donationtypeid = bt[0]

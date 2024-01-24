@@ -1852,11 +1852,12 @@ $(function() {
             const get_donation_mappings = function() {
                 let mappings = "";
                 $(".donmap").each(function() {
-                    let t = $(this);
+                    let mapname = $(this).val();
                     let idx = t.attr("data-idx");
-                    if (t.val() != "" && t.val() != "0" && t.val() != "-1") {
+                    let mapvalue = $("#mapac" + idx).val();
+                    if (mapname && mapname != "-1" && mapvalue && mapvalue != "-1") {
                         if (mappings != "") { mappings += ","; }
-                        mappings += t.val() + "=" + $("#mapac" + idx).val();
+                        mappings += mapname + "=" + mapvalue;
                     }
                 });
                 return encodeURIComponent(mappings);

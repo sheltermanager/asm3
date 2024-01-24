@@ -1,6 +1,7 @@
 48
 ================
 
+24/01/24 Invalidate payment to trx mappings if [None] is selected either side
 24/01/24 Squash null units when writing to animallocation (ASM2 data fix)
 23/01/24 Escape raw HTML in query interface results
 22/01/24 PetFinder: Option to send a photo for adopted animals
