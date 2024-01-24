@@ -1,6 +1,7 @@
 48
 ================
 
+24/01/24 Fix bug with assigning additional fields to reservations
 24/01/24 Invalidate payment to trx mappings if [None] is selected either side
 24/01/24 Squash null units when writing to animallocation (ASM2 data fix)
 23/01/24 Escape raw HTML in query interface results

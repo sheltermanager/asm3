@@ -150,13 +150,16 @@ def get_active_reservations(dbo: Database, age: int = 0) -> Results:
     Gets the list of uncancelled reservation movements.
     age: The age of the reservation in days, or 0 for all
     """
+    rows = []
     if age > 0:
-        return dbo.query(get_movement_query(dbo) + \
+        rows = dbo.query(get_movement_query(dbo) + \
             " WHERE m.ReservationDate Is Not Null AND m.MovementDate Is Null AND m.MovementType = 0 AND m.ReturnDate Is Null " \
             "AND m.ReservationCancelledDate Is Null AND m.ReservationDate <= ? ORDER BY m.ReservationDate", [dbo.today(offset=age*-1)])
-    return dbo.query(get_movement_query(dbo) + \
-        " WHERE m.ReservationDate Is Not Null AND m.MovementDate Is Null AND m.MovementType = 0 AND m.ReturnDate Is Null " \
-        "AND m.ReservationCancelledDate Is Null ORDER BY m.ReservationDate")
+    else:
+        rows = dbo.query(get_movement_query(dbo) + \
+            " WHERE m.ReservationDate Is Not Null AND m.MovementDate Is Null AND m.MovementType = 0 AND m.ReturnDate Is Null " \
+            "AND m.ReservationCancelledDate Is Null ORDER BY m.ReservationDate")
+    return asm3.additional.append_to_results(dbo, rows , "movement")
 
 def get_active_transports(dbo: Database) -> Results:
     return dbo.query(get_transport_query(dbo) + " WHERE t.Status < 10 OR DropoffDateTime > ? ORDER BY DropoffDateTime", [dbo.today()])

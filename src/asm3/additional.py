@@ -48,9 +48,9 @@ EVENT_IN = "21"
 FOUNDANIMAL_IN = "11, 12"
 INCIDENT_IN = "16, 17, 18, 19, 20"
 LOSTANIMAL_IN = "9, 10"
+MOVEMENT_IN = '22, 23, 24, 25, 26, 27, 28, 29, 30'
 PERSON_IN = "1, 7, 8"
 WAITINGLIST_IN = "13, 14, 15"
-MOVEMENT_IN = '22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33'
 
 # Movement mapping 
 
@@ -211,18 +211,18 @@ def append_to_results(dbo: Database, rows: Results, linktype: str = "animal") ->
     Requires an ID column in the rows.
     """
     for r in rows:
-        add = get_additional_fields(dbo, r.id, linktype)
+        add = get_additional_fields(dbo, r.ID, linktype)
         for af in add:
-            tn = af.fieldname.upper()
+            tn = af.FIELDNAME.upper()
             if tn.find("&") != -1:
                 # We've got unicode chars for the tag name - not allowed
-                r["ADD" + str(af.id)] = af.value
+                r["ADD" + str(af.id)] = af.VALUE
             elif tn in r:
                 # This key already exists - do not allow a collision. 
                 # This happened where a user named a field ID and it broke animal_view_adoptable_js
-                r["ADD%s" % tn] = af.value
+                r["ADD%s" % tn] = af.VALUE
             else:
-                r[tn] = af.value
+                r[tn] = af.VALUE
     return rows
 
 def insert_field_from_form(dbo: Database, username: str, post: PostedData) -> int:
