@@ -1224,47 +1224,73 @@ def generator2file(outfile: str, fn: Callable, *args: Any) -> None:
             f.write(x)
 
 def substitute_tags(searchin: str, tags: Dict[str, str], escape_html: bool = True, 
-                    opener: str = "&lt;&lt;", closer: str = "&gt;&gt;", crToBr: bool = True) -> str:
+                    opener: str = "&lt;&lt;", closer: str = "&gt;&gt;", 
+                    cr_to_br: bool = True, remove_unmatched = True) -> str:
     """
     Substitutes the dictionary of tags in "tags" for any found in "searchin". 
     opener and closer: denote the start/end of a tag,
     escape_html: if true, then <, > and & are turned into HTML entities
-    crToBr: if true, replace line breaks in values with HTML br tags
+    cr_to_br: if true, replace line breaks in values with HTML br tags
+    remove_unmatched: 
+        True: replaces everything between any opener and closer
+            with an empty string. This can cause HTML and XML documents to be malformed
+            if there are tags that start in the data and end outside it.
+            It performs very well though because it assumes only the tag is between
+            the opener and closer. It does not have to iterate the tags collection to test.
+        False: Only finds/replaces the tag between the opener and closer, keeping
+            anything around the tag intact, and leaving the tag if it did not match.
+            This can be a visual indicator that the tag was entered wrong.
+            It does not perform as well because it has to iterate the tag collection
+            every time a tag is found.
     """
+    def _get_value(v):
+        """ Does any processing needed on tag value v """
+        v = str(v)
+        # Escape <>& unless the replacement value is an
+        # image, URL or already contains HTML entities
+        if escape_html and \
+            not v.lower().startswith("<img") and \
+            not v.lower().find("&#") != -1 and \
+            not v.lower().find("/>") != -1 and \
+            not v.lower().startswith("<table") and \
+            not v.lower().startswith("http") and \
+            not v.lower().startswith("image?"):
+            v = v.replace("&", "&amp;")
+            v = v.replace("<", "&lt;")
+            v = v.replace(">", "&gt;")
+        # Switch linebreaks if requested
+        if cr_to_br: 
+            v = v.replace("\r\n", "<br>")
+            v = v.replace("\n", "<br>")
+        return v
     if not escape_html:
         opener = opener.replace("&lt;", "<").replace("&gt;", ">")
         closer = closer.replace("&lt;", "<").replace("&gt;", ">")
-
     s = searchin
     sp = s.find(opener)
     while sp != -1:
         ep = s.find(closer, sp + len(opener))
-        if ep != -1:
+        if ep != -1 and remove_unmatched:
             matchtag = s[sp + len(opener):ep].upper()
             newval = ""
-            if matchtag in tags:
-                newval = str(tags[matchtag])
-                # Escape <>& unless the replacement value is an
-                # image, URL or already contains HTML entities
-                if escape_html and \
-                    not newval.lower().startswith("<img") and \
-                    not newval.lower().find("&#") != -1 and \
-                    not newval.lower().find("/>") != -1 and \
-                    not newval.lower().startswith("<table") and \
-                    not newval.lower().startswith("http") and \
-                    not newval.lower().startswith("image?"):
-                    newval = newval.replace("&", "&amp;")
-                    newval = newval.replace("<", "&lt;")
-                    newval = newval.replace(">", "&gt;")
-                # Switch linebreaks if requested
-                if crToBr: 
-                    newval = newval.replace("\r\n", "<br>")
-                    newval = newval.replace("\n", "<br>")
+            if matchtag in tags: newval = _get_value(tags[matchtag])
             s = "%s%s%s" % ( s[0:sp], newval, s[ep + len(closer):] )
-            sp = s.find(opener, sp)
+        elif ep != -1 and not remove_unmatched:
+            tagstr = s[sp + len(opener):ep]
+            #print("start %s, end %s, '%s'" % (sp, ep, tagstr))
+            for tag, v in tags.items():
+                i = -1
+                if tagstr.upper().endswith(tag): i = len(tagstr) - len(tag)
+                if i == -1: i = tagstr.upper().find(f">{tag}<")
+                if i != -1:
+                    tagstr = tagstr[:i] + _get_value(v) + tagstr[i + len(tag):]
+                    #print("found tag '%s' at %s, new sub value: '%s'" % (tag, i, tagstr))
+                    break
+            s = "%s%s%s" % ( s[0:sp], tagstr, s[ep + len(closer):] )
         else:
             # No end marker for this tag, stop processing
             break
+        sp = s.find(opener, sp)
     return s
 
 def md5_hash_hex(s: str) -> str:

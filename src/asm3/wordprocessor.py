@@ -1943,14 +1943,22 @@ def table_tags(dbo: Database, d: Tags, rows: Results, typefield: str = "", recen
                 t = t.upper().replace(" ", "").replace("/", "")
                 for k, v in d.items():
                     tags[k + "RECENT" + t] = table_get_value(l, r, v)
+
+    # Include blank indexed tags up to 20
+    for x in range(len(rows)+1, 20):
+        for k, v in d.items():
+            tags[k + str(x)] = ""
+            tags[k + "LAST" + str(x)] = ""
+
     return tags
 
 def substitute_tags(searchin: str, tags: Tags, escape_html: bool = True, 
-                    opener: str = "&lt;&lt;", closer: str = "&gt;&gt;", crToBr: bool = True) -> str:
+                    opener: str = "&lt;&lt;", closer: str = "&gt;&gt;", 
+                    cr_to_br: bool = True, remove_unmatched = True) -> str:
     """
     Just to make code more readable as other areas call wordprocessor to build tags and do substitutions
     """
-    return asm3.utils.substitute_tags(searchin, tags, escape_html, opener, closer, crToBr)
+    return asm3.utils.substitute_tags(searchin, tags, escape_html, opener, closer, cr_to_br, remove_unmatched)
 
 def substitute_template(dbo: Database, templateid: int, tags: Tags, imdata: bytes = None) -> bytes_or_str:
     """
@@ -1972,7 +1980,7 @@ def substitute_template(dbo: Database, templateid: int, tags: Tags, imdata: byte
             zf = zipfile.ZipFile(odt, "r")
             # Load the content.xml file and substitute the tags
             content = asm3.utils.bytes2str(zf.open("content.xml").read())
-            content = substitute_tags(content, tags, crToBr=False)
+            content = substitute_tags(content, tags, cr_to_br=False, remove_unmatched=False)
             # Write the replacement file
             zo = asm3.utils.bytesio()
             zfo = zipfile.ZipFile(zo, "w", zipfile.ZIP_DEFLATED)
