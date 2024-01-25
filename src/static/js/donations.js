@@ -161,6 +161,8 @@ $(function() {
                             },
                             onload: function() {
                                 donations.create_semaphore = true;
+                                // Editing can hide the destination account field - show it if the option is on
+                                $("#destaccount").closest("tr").toggle(config.bool("DonationTrxOverride"));
                                 $("#animal").animalchooser("clear");
                                 $("#person").personchooser("clear");
                                 if (controller.animal) {
