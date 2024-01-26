@@ -502,12 +502,14 @@ $(function() {
 
         // Set the entry type based on the other field values if it has been disabled
         update_entry_type: function() {
-            if (config.bool("AddAnimalShowEntryType")) { return; }
+            if (config.bool("AddAnimalsShowEntryType")) { return; }
             let reasonname = common.get_field(controller.entryreasons, $("#entryreason").select("value"), "REASONNAME").toLowerCase();
             let entrytype = 1; //surrender
             if ($("#dateofbirth").val() == $("#datebroughtin").val()) { entrytype = 5; } // born in shelter
             else if ($("#crueltycase").is(":checked")) { entrytype = 7; } // seized
             else if ($("#transferin").is(":checked")) { entrytype = 3; } // transfer in
+            else if (reasonname.indexOf("transfer") != -1) { entrytype = 3; } // transfer in
+            else if (reasonname.indexOf("born") != -1) { entrytype = 5; } // born in shelter
             else if (reasonname.indexOf("stray") != -1) { entrytype = 2; } // stray
             else if (reasonname.indexOf("tnr") != -1) { entrytype = 4; } // tnr
             else if (reasonname.indexOf("wildlife") != -1) { entrytype = 6; } // wildlife

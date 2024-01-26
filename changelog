@@ -1,6 +1,7 @@
 48
 ================
 
+26/01/24 Fix add animal/entry category setting type when visible #1378
 25/01/24 Fix for OpenOffice tags appearing in token content #1422
 25/01/24 Fix bug where deposit account could remain hidden in payment book
 24/01/24 PetLink: Option to register chips from any manufacturer
