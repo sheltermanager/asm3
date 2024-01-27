@@ -1280,8 +1280,12 @@ def substitute_tags(searchin: str, tags: Dict[str, str], escape_html: bool = Tru
             #print("start %s, end %s, '%s'" % (sp, ep, tagstr))
             for tag, v in tags.items():
                 i = -1
-                if tagstr.upper().endswith(tag): i = len(tagstr) - len(tag)
-                if i == -1: i = tagstr.upper().find(f">{tag}<")
+                if tagstr.upper() == tag: 
+                    i = 0
+                elif tagstr.upper().endswith(f">{tag}"): 
+                    i = len(tagstr) - len(tag)
+                elif tagstr.upper().find(f">{tag}<") != -1: 
+                    i = tagstr.upper().find(f">{tag}<")
                 if i != -1:
                     tagstr = tagstr[:i] + _get_value(v) + tagstr[i + len(tag):]
                     #print("found tag '%s' at %s, new sub value: '%s'" % (tag, i, tagstr))
