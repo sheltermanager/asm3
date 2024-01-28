@@ -2080,7 +2080,7 @@ def send_bulk_email(dbo: Database, replyadd: str, subject: str, body: str, rows:
     """
     def do_send():
         for r in rows:
-            ssubject = substitute_tags(subject, r, False, opener = "<<", closer = ">>", crToBr = False)
+            ssubject = substitute_tags(subject, r, False, opener = "<<", closer = ">>", cr_to_br = False)
             sbody = substitute_tags(body, r)
             toadd = r["EMAILADDRESS"]
             if toadd is None or toadd.strip() == "": continue

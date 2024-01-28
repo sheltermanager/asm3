@@ -730,7 +730,7 @@ class AbstractPublisher(threading.Thread):
         Replace any $$Tag$$ tags in s, using animal a
         """
         tags = asm3.wordprocessor.animal_tags_publisher(self.dbo, a)
-        return asm3.wordprocessor.substitute_tags(s, tags, True, "$$", "$$", crToBr = False)
+        return asm3.wordprocessor.substitute_tags(s, tags, True, "$$", "$$", cr_to_br = False)
 
     def resetPublisherProgress(self) -> None:
         """
