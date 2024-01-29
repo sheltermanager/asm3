@@ -716,7 +716,7 @@ class csperror(ASMEndpoint):
     def post_all(self, o):
         asm3.al.error(str(self.data), "main.csperror", o.dbo)
         if EMAIL_ERRORS:
-            asm3.utils.send_email(o.dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", "CSP violation", str(self.data), "plain", exceptions=False, bulk=True)
+            asm3.utils.send_email(o.dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", "CSP violation", str(self.data), "plain", exceptions=False, bulk=True, fromoverride=False)
 
 class jserror(ASMEndpoint):
     """
@@ -735,7 +735,7 @@ class jserror(ASMEndpoint):
         logmess = "%s@%s: %s %s" % (post["user"], post["account"], post["msg"], post["stack"])
         asm3.al.error(logmess, "main.jserror", dbo)
         if EMAIL_ERRORS:
-            asm3.utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", emailsubject, emailbody, "plain", exceptions=False, bulk=True)
+            asm3.utils.send_email(dbo, ADMIN_EMAIL, ADMIN_EMAIL, "", "", emailsubject, emailbody, "plain", exceptions=False, bulk=True, fromoverride=False)
 
 class custom_logo(ASMEndpoint):
     url = "custom_logo"

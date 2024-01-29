@@ -1846,7 +1846,8 @@ def strip_email_address(s: str) -> str:
 def send_email(dbo: Database, replyadd: str, toadd: str, ccadd: str = "", bccadd: str = "", 
                subject: str = "", body: str = "", contenttype: str = "plain", 
                attachments: List[Tuple[str, str, bytes]] = [], 
-               exceptions: bool = True, bulk: bool = False, retries: int = 1) -> bool:
+               exceptions: bool = True, bulk: bool = False, 
+               fromoverride: bool = True, retries: int = 1) -> bool:
     """
     Sends an email.
     replyadd is a single email address and controls the Reply-To header
@@ -1860,6 +1861,10 @@ def send_email(dbo: Database, replyadd: str, toadd: str, ccadd: str = "", bccadd
     exceptions: If True, throws exceptions due to sending problems
     bulk: If True, set the Precedence: Bulk header 
           (indicates message type and attempts to stop backscatter)
+    fromoverride: If True, allows the FROM header to be overridden with
+          the reply address - assuming both configuration options to
+          do that are on. If False, the FROM header cannot be overridden
+          (useful if the reply address is going to be one you don't own)
     retries: If >1, the number of times to wait and retry if an 
           SMTP error occurs (incompatible with exceptions = True)
 
@@ -1932,10 +1937,10 @@ def send_email(dbo: Database, replyadd: str, toadd: str, ccadd: str = "", bccadd
     fromadd = fromadd.replace(",", "") # commas blow up address parsing
 
     # If we have an SMTPOverride, and the option to use the reply
-    # address as From is on, use the replyadd as from instead.
-    # If we don't have a reply address, use the from address the user configured.
-    if asm3.configuration.smtp_override(dbo) and asm3.configuration.smtp_reply_as_from(dbo):
+    # address as FROM header is on, do that.
+    if fromoverride and asm3.configuration.smtp_override(dbo) and asm3.configuration.smtp_reply_as_from(dbo):
         fromadd = replyadd
+        # Defend against reply address being blank
         if fromadd is None or fromadd == "":
             fromadd = asm3.configuration.email(dbo)
 

@@ -1,6 +1,7 @@
 48
 ================
 
+29/01/24 Do not allow reply to override FROM on form notifications #1418
 29/01/24 Global/default BCC option #1304
 29/01/24 Allow user to default their email as from/reply #1424
 29/01/24 Put use of "reply as from" on an option #1418

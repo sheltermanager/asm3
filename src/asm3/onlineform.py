@@ -1037,8 +1037,10 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         if replyto == "": replyto = asm3.configuration.email(dbo)
         # NOTE: We send emails to shelter contacts as bulk=True to try and prevent
         # backscatter since most shelter emails have some kind of autoresponder
+        # NOTE: Since the reply address will be the submitter, we do not allow it
+        # to ever override the FROM header
         asm3.utils.send_email(dbo, replyto, formdef.emailaddress, "", "", 
-            subject, formdata, "html", images, exceptions=False, bulk=True)
+            subject, formdata, "html", images, exceptions=False, bulk=True, fromoverride=False)
 
     # Was the option set to email the adoption coordinator linked to animalname?
     if formdef.emailcoordinator == 1 and animalname != "":
