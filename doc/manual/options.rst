@@ -637,13 +637,21 @@ Email
 -----
 
 Configure the email address used as the FROM address when sending from ASM. You
-can also configure autocomplete items for the from, to and cc address boxes.
+can also configure autocomplete items for the from, to and cc address boxes
+as well as default BCC address if you want to copy all emails somewhere else.
 
 (sheltermanager.com only) You can override the use of smtp.sheltermanager.com
 and use your own SMTP server to send email if you wish. This is an advanced
 option for experienced users, if you do not understand what you are doing, do
 not enable the option to use your own SMTP server as you will likely break
 the email sending functionality for your database.
+
+ASM normally uses the email address configured in this tab in the FROM header,
+with whatever the user puts in the From field as the Reply-To header. There is
+an option available here (sheltermanager.com only) to use the
+reply address as the FROM address. Just be aware that this can cause relay
+failures or messages to be classified as spam if the user attempts to send from
+an address that you do not own the domain for.
 
 Find Screens
 ------------
