@@ -989,6 +989,7 @@ $.widget("asm.emailform", {
         let conf_org = html.decode(config.str("Organisation").replace(",", ""));
         let conf_email = config.str("EmailAddress");
         let org_email = conf_org + " <" + conf_email + ">";
+        let bcc_email = config.str("EmailBCC");
         $("#em-from").val(conf_email);
         fromaddresses.push(conf_email);
         fromaddresses.push(org_email);
@@ -998,6 +999,9 @@ $.widget("asm.emailform", {
             if (config.bool(asm.user + "_EmailDefault")) {
                 $("#em-from").val(asm.useremail);
             }
+        }
+        if (bcc_email) {
+            $("#em-bcc").val(bcc_email);
         }
         if (o.toaddresses) {
             toaddresses = toaddresses.concat(o.toaddresses);
