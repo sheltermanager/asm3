@@ -90,6 +90,14 @@ $(function() {
                     '</td>',
                 '</tr>',
                 '<tr>',
+                    '<td></td>',
+                    '<td>',
+                    '<input id="emaildefault" data="emaildefault" class="asm-checkbox" type="checkbox" /> ',
+                    '<label for="emaildefault">' + _("Make this the default reply address when I send email") + '</label>',
+                    '</td>',
+                '</tr>',
+
+                '<tr>',
                     '<td>',
                     '<label for="systemtheme">' + _("Visual Theme") + '</label>',
                     '</td>',
@@ -267,6 +275,8 @@ $(function() {
             $("#quicklinksid").change();
             let usersv = config.str(asm.user + "_ShelterView");
             $("#shelterview").select("value", usersv);
+            let emaildefault = config.bool(asm.user + "_EmailDefault");
+            $("#emaildefault").prop("checked", emaildefault);
             if (controller.sigtype != "touch") { 
                 $("#signature").closest("tr").hide(); 
             }

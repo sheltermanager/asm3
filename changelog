@@ -1,6 +1,7 @@
 48
 ================
 
+29/01/24 Allow user to default their email as from/reply #1424
 29/01/24 Put use of "reply as from" on an option #1418
 28/01/24 Fix bulk email bug caused by tag refactoring/param change #1422
 26/01/24 Fix add animal/entry category setting type when visible #1378

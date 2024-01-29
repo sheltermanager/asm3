@@ -2684,6 +2684,7 @@ class change_user_settings(JSONEndpoint):
         else:
             asm3.configuration.cset(o.dbo, "%s_QuicklinksID" % o.user, quicklinks)
         asm3.configuration.cset(o.dbo, "%s_ShelterView" % o.user, post["shelterview"])
+        asm3.configuration.cset(o.dbo, "%s_EmailDefault" % o.user, asm3.utils.iif(post.boolean("emaildefault"), "Yes", "No"))
         self.reload_config()
 
 class citations(JSONEndpoint):

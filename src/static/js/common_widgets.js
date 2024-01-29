@@ -995,6 +995,9 @@ $.widget("asm.emailform", {
         if (asm.useremail) {
             fromaddresses.push(asm.useremail);
             fromaddresses.push(html.decode(asm.userreal) + " <" + asm.useremail + ">");
+            if (config.bool(asm.user + "_EmailDefault")) {
+                $("#em-from").val(asm.useremail);
+            }
         }
         if (o.toaddresses) {
             toaddresses = toaddresses.concat(o.toaddresses);

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-01-29 09:55+0000\n"
+"POT-Creation-Date: 2024-01-29 10:18+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -8273,6 +8273,10 @@ msgstr ""
 
 #: media.js
 msgid "Make this the default image when creating documents"
+msgstr ""
+
+#: change_user_settings.js
+msgid "Make this the default reply address when I send email"
 msgstr ""
 
 #: dbupdate.py
