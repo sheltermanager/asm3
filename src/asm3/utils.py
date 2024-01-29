@@ -1936,13 +1936,13 @@ def send_email(dbo: Database, replyadd: str, toadd: str, ccadd: str = "", bccadd
     fromadd = fromadd.replace("{database}", dbo.database)
     fromadd = fromadd.replace(",", "") # commas blow up address parsing
 
-    # If we have an SMTPOverride, and the option to use the reply
-    # address as FROM header is on, do that.
-    if fromoverride and asm3.configuration.smtp_override(dbo) and asm3.configuration.smtp_reply_as_from(dbo):
-        fromadd = replyadd
-        # Defend against reply address being blank
-        if fromadd is None or fromadd == "":
-            fromadd = asm3.configuration.email(dbo)
+    # If we have an SMTPOverride, set the from header to the main email instead
+    if asm3.configuration.smtp_override(dbo):
+        fromadd = asm3.configuration.email(dbo)
+        # If the option is on to use the reply address as FROM header is on, and
+        # the caller says it's ok, do that.
+        if fromoverride and asm3.configuration.smtp_reply_as_from(dbo) and replyadd != "":
+            fromadd = replyadd
 
     # Make sure we have a reply address and check for any problems, such as unclosed address
     if replyadd is None or replyadd == "":

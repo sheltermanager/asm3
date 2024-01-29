@@ -1077,7 +1077,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         # Remove any line breaks from the list of addresses, this has caused malformed headers before
         emailsubmissionto = emailsubmissionto.replace("\n", "")
         asm3.utils.send_email(dbo, replyto, emailsubmissionto, "", "", 
-            subject, formdata, "html", images, exceptions=False)
+            subject, formdata, "html", images, exceptions=False, fromoverride=False)
 
     # Does this form have an option set to autoprocess it? If not, stop now
     if formdef.autoprocess is None or formdef.autoprocess == AP_NO: return collationid
