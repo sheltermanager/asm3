@@ -1924,21 +1924,20 @@ def send_email(dbo: Database, replyadd: str, toadd: str, ccadd: str = "", bccadd
     if contenttype == "html":
         body = fix_relative_document_uris(dbo, body)
 
-    # Build the from address
-    # If we have an SMTPOverride, use the replyadd as from instead.
+    # Use the sitedef to construct the from address
+    fromadd = FROM_ADDRESS
+    fromadd = fromadd.replace("{organisation}", asm3.configuration.organisation(dbo))
+    fromadd = fromadd.replace("{alias}", dbo.alias)
+    fromadd = fromadd.replace("{database}", dbo.database)
+    fromadd = fromadd.replace(",", "") # commas blow up address parsing
+
+    # If we have an SMTPOverride, and the option to use the reply
+    # address as From is on, use the replyadd as from instead.
     # If we don't have a reply address, use the from address the user configured.
-    fromadd = ""
-    if asm3.configuration.smtp_override(dbo):
+    if asm3.configuration.smtp_override(dbo) and asm3.configuration.smtp_reply_as_from(dbo):
         fromadd = replyadd
         if fromadd is None or fromadd == "":
             fromadd = asm3.configuration.email(dbo)
-    else:
-        # Otherwise, use the sitedef to construct the from address
-        fromadd = FROM_ADDRESS
-        fromadd = fromadd.replace("{organisation}", asm3.configuration.organisation(dbo))
-        fromadd = fromadd.replace("{alias}", dbo.alias)
-        fromadd = fromadd.replace("{database}", dbo.database)
-        fromadd = fromadd.replace(",", "") # commas blow up address parsing
 
     # Make sure we have a reply address and check for any problems, such as unclosed address
     if replyadd is None or replyadd == "":

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-01-22 10:01+0000\n"
+"POT-Creation-Date: 2024-01-29 09:55+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1259,6 +1259,12 @@ msgstr ""
 
 #: options.js
 msgid "Allow reservations to be created that are not linked to an animal"
+msgstr ""
+
+#: options.js
+msgid ""
+"Allow the user to override the From header. Emails will fail if you try to "
+"send email from a domain you do not own."
 msgstr ""
 
 #: options.js
@@ -3225,7 +3231,7 @@ msgstr ""
 msgid "Confirmed"
 msgstr ""
 
-#: html.py
+#: html.py header.js
 msgid "Consulting Room"
 msgstr ""
 
@@ -12057,6 +12063,10 @@ msgstr ""
 msgid "Set publishing options"
 msgstr ""
 
+#: options.js
+msgid "Set the FROM header from the email dialog"
+msgstr ""
+
 #: waitinglist.js
 msgid "Set this to 0 to never automatically remove."
 msgstr ""
@@ -15297,7 +15307,7 @@ msgstr ""
 msgid "Waiting List: {0}"
 msgstr ""
 
-#: html.py clinic_appointment.js
+#: html.py header.js clinic_appointment.js
 msgid "Waiting Room"
 msgstr ""
 

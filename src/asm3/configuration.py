@@ -354,6 +354,7 @@ DEFAULTS = {
     "ShowWeightUnitsInLog": "Yes",
     "SMTPOverride": "No",
     "SMTPPort": "25",
+    "SMTPReplyAsFrom": "No",
     "SoftReleases": "No",
     "SoftReleaseOnShelter": "No",
     "StickyTableHeaders": "Yes",
@@ -1543,6 +1544,9 @@ def smdb_locked(dbo: Database) -> bool:
 
 def smtp_override(dbo: Database) -> bool:
     return cboolean(dbo, "SMTPOverride", DEFAULTS["SMTPOverride"] == "Yes")
+
+def smtp_reply_as_from(dbo: Database) -> bool:
+    return cboolean(dbo, "SMTPReplyAsFrom", DEFAULTS["SMTPReplyAsFrom"] == "Yes")
 
 def smtp_server(dbo: Database) -> str:
     return cstring(dbo, "SMTPServer")
