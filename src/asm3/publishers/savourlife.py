@@ -311,16 +311,16 @@ class SavourLifePublisher(AbstractPublisher):
         # It's unlikely that there will be an enquirynumber while the animal is still adoptable
         # but it's possible so we check it here just in case.
         enquirynumber = None
-        if "ENQUIRYNUMBER" in an and an.ENQUIRYNUMBER != "":
+        if "ENQUIRYNUMBER" in an and an.ENQUIRYNUMBER:
             enquirynumber = an.ENQUIRYNUMBER
 
         needs_foster = False
-        if "NEEDSFOSTER" in an and an.NEEDSFOSTER != "" and an.NEEDSFOSTER != "0":
+        if "NEEDSFOSTER" in an and an.NEEDSFOSTER and an.NEEDSFOSTER != "0":
             needs_foster = True
 
         # We have a config option for interstate adoptable. If this DB has an additional
         # field for interstateadoptable on the animal with a value then we use that instead:
-        if "INTERSTATEADOPTABLE" in an and an.INTERSTATEADOPTABLE != "":
+        if "INTERSTATEADOPTABLE" in an and an.INTERSTATEADOPTABLE:
             interstate = an.INTERSTATEADOPTABLE != "0"
 
         # Check whether we've been vaccinated, wormed and hw treated

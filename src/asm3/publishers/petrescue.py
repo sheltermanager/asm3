@@ -227,19 +227,19 @@ class PetRescuePublisher(AbstractPublisher):
         else: origin = "community_cat"
 
         best_feature = "Looking for love"
-        if "BESTFEATURE" in an and an.BESTFEATURE != "":
+        if "BESTFEATURE" in an and an.BESTFEATURE:
             best_feature = an.BESTFEATURE
 
         needs_constant_care = False
-        if "NEEDSCONSTANTCARE" in an and an.NEEDSCONSTANTCARE != "" and an.NEEDSCONSTANTCARE != "0":
+        if "NEEDSCONSTANTCARE" in an and an.NEEDSCONSTANTCARE and an.NEEDSCONSTANTCARE != "0":
             needs_constant_care = True
 
         bred_in_care_of_group = False
-        if "BREDINCAREOFGROUP" in an and an.BREDINCAREOFGROUP != "" and an.BREDINCAREOFGROUP != "0":
+        if "BREDINCAREOFGROUP" in an and an.BREDINCAREOFGROUP and an.BREDINCAREOFGROUP != "0":
             bred_in_care_of_group = True
 
         needs_foster = False
-        if "NEEDSFOSTER" in an and an.NEEDSFOSTER != "" and an.NEEDSFOSTER != "0":
+        if "NEEDSFOSTER" in an and an.NEEDSFOSTER and an.NEEDSFOSTER != "0":
             needs_foster = True
 
         # Check whether we've been vaccinated, wormed and hw treated
