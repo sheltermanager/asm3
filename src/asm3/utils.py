@@ -19,7 +19,6 @@ import json as extjson
 import os
 import random
 import re
-import requests
 import shutil
 import smtplib
 import string
@@ -43,6 +42,9 @@ from email.mime.multipart import MIMEMultipart
 from email.header import Header
 from email.utils import make_msgid, formatdate
 import email.encoders as Encoders
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.response import HTTPResponse
 
 # Global reference to the Python websession. This is used to allow
 # debug mode with webpy by keeping a global single copy of the
@@ -458,6 +460,14 @@ class PlainTextWriterHTMLParser(HTMLParser):
             self.olcount += 1
         else:
             self.s.append(data.strip())
+
+class FileAdapter(HTTPAdapter):
+    """ Absolutely mental, but we have to have this so that requests is capable of parsing file:// urls 
+        Why it doesn't do this out of the box I have no idea.
+    """
+    def send(self, request, *args, **kwargs):
+        resp = HTTPResponse(body=open(request.url[7:], 'rb'), status=200, preload_content=False)
+        return self.build_response(request, resp)
 
 def is_bytes(f: Any) -> bool:
     """ Returns true if the f is a bytes string """
@@ -1342,7 +1352,9 @@ def get_url(url: str, headers: Dict = {}, cookies: Dict = {}, timeout: float = N
     # requests timeout is seconds/float, but some may call this with integer ms instead so convert
     if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
     try:
-        r = requests.get(url, headers = headers, cookies=cookies, timeout=timeout, params=params)
+        rsession = requests.Session()
+        rsession.mount('file://', FileAdapter()) # necessary for file:// urls to work
+        r = rsession.get(url, headers = headers, cookies=cookies, timeout=timeout, params=params)
     except Exception as err:
         if exceptions: raise err
         return { "status": 599, "response": str(err), "cookies": {}, "headers": {}, "requestheaders": {}, "requestbody": "" }
@@ -1357,7 +1369,9 @@ def get_url_bytes(url: str, headers: Dict = {}, cookies: Dict = {}, timeout: flo
     # requests timeout is seconds/float, but some may call this with integer ms instead so convert
     if timeout is not None and timeout > 1000: timeout = timeout / 1000.0
     try:
-        r = requests.get(url, headers=headers, cookies=cookies, timeout=timeout, allow_redirects=True, stream=True)
+        rsession = requests.Session()
+        rsession.mount('file://', FileAdapter()) # necessary for file:// urls to work
+        r = rsession.get(url, headers=headers, cookies=cookies, timeout=timeout, allow_redirects=True, stream=True)
     except Exception as err:
         if exceptions: raise err
         return { "status": 599, "response": str(err), "cookies": {}, "headers": {}, "requestheaders": {}, "requestbody": "" }

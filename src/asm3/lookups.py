@@ -1,9 +1,11 @@
 
+import asm3.cachedisk
 import asm3.configuration
 import asm3.financial
 import asm3.utils
 from asm3.i18n import _
-from asm3.typehints import datetime, Database, Results, Tuple
+from asm3.sitedefs import URL_MICROCHIP_PREFIXES
+from asm3.typehints import datetime, Database, Dict, List, Results, Tuple
 
 import re
 
@@ -79,116 +81,6 @@ LOOKUP_NAMELABEL = 2
 LOOKUP_DESCFIELD = 3
 LOOKUP_MODIFIERS = 4
 LOOKUP_FOREIGNKEYS = 5
-
-# Database of microchip manufacturer prefixes. locales is a space separated list of
-# locales the pattern is valid for (blank is all locales)
-# This list is evaluated in order, so entries with more specificity (ie. a locale and longer pattern)
-# should be placed first as the first match is returned.
-MICROCHIP_MANUFACTURERS = [
-    { "length": 16, "regex": r"^AVID", "name": "AVID", "locales": "" },
-    { "length": 14, "regex": r"^TR", "name": "AKC Reunite", "locales": "" },
-    { "length": 9,  "regex": r"^\d+$", "name": "AVID", "locales": "" },
-    { "length": 11, "regex": r"^\d{3}\*\d{3}\*\d{3}", "name": "AVID", "locales": "" },
-    { "length": 11, "regex": r"^\d{3}\-\d{3}\-\d{3}", "name": "AVID", "locales": "" },
-    { "length": 10, "regex": r"^0A1", "name": "24PetWatch", "locales": "" },
-    { "length": 10, "regex": r"^0A0", "name": "Microchip ID", "locales": "" },
-    { "length": 10, "regex": r"^0D0D", "name": "Banfield", "locales": "" },
-    { "length": 10, "regex": r"^000", "name": "Trovan", "locales": "en_AU" },
-    { "length": 10, "regex": r"^000", "name": "AKC Reunite", "locales": "en" },
-    { "length": 10, "regex": r"^0C0", "name": "M4S ID", "locales": "" },
-    { "length": 10, "regex": r"^1\d+A", "name": "AVID", "locales": "" }, 
-    { "length": 10, "regex": r"^4", "name": "HomeAgain", "locales": "" }, 
-    { "length": 10, "regex": r"^7E1", "name": "Microchip ID", "locales": "" }, 
-    { "length": 10, "regex": r"^9A1", "name": "24PetWatch", "locales": "" }, 
-    { "length": 15, "regex": r"^250", "name": "I-CAD", "locales": ""},
-    { "length": 15, "regex": r"^360981", "name": "Novartis", "locales": "" },
-    { "length": 15, "regex": r"^5080941", "name": "Felixcan", "locales": "en_MZ" },
-    { "length": 15, "regex": r"^578098", "name": "Kruuse Norge", "locales": "nb" },
-    { "length": 15, "regex": r"^578077", "name": "AVID Friendchip Norway", "locales": "nb" },
-    { "length": 15, "regex": r"^578094", "name": "AVID Friendchip Norway", "locales": "nb" },
-    { "length": 15, "regex": r"^578097", "name": "AVID Friendchip Norway", "locales": "nb" },
-    { "length": 15, "regex": r"^6200982", "name": "MSD Animal Health", "locales": "" },
-    { "length": 15, "regex": r"^688", "name": "Serbia", "locales": "" },
-    { "length": 15, "regex": r"^752", "name": "Trovan Sweden", "locales": "" },
-    { "length": 15, "regex": r"^900008", "name": "Orthana Intertrade", "locales": "" },
-    { "length": 15, "regex": r"^900023", "name": "Asian Information Technology", "locales": "" },
-    { "length": 15, "regex": r"^900026", "name": "DT Japan", "locales": "" },
-    { "length": 15, "regex": r"^900042", "name": "Royal Tag", "locales": "" },
-    { "length": 15, "regex": r"^900074", "name": "SmartTag", "locales": "" },
-    { "length": 15, "regex": r"^900079", "name": "PetLog", "locales": "en_GB" },
-    { "length": 15, "regex": r"^900085", "name": "Petstablished", "locales": "" },
-    { "length": 15, "regex": r"^900088", "name": "Insprovet", "locales": "" },
-    { "length": 15, "regex": r"^900108", "name": "Viaguard", "locales": "" },
-    { "length": 15, "regex": r"^900111", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^900113", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^900115", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^900118", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^900128", "name": "Gepe-Geimuplast", "locales": "" },
-    { "length": 15, "regex": r"^900138", "name": "ID-Ology", "locales": "" },
-    { "length": 15, "regex": r"^900139", "name": "SmartTag", "locales": "" },
-    { "length": 15, "regex": r"^900164", "name": "Save This Life", "locales": "" },
-    { "length": 15, "regex": r"^900182", "name": "Petlog", "locales": "" },
-    { "length": 15, "regex": r"^900141", "name": "SmartTag", "locales": "" },
-    { "length": 15, "regex": r"^90026", "name": "4D Technology/Petsafe", "locales": "" },
-    { "length": 15, "regex": r"^900", "name": "BCDS", "locales": "" },
-    { "length": 15, "regex": r"^9010202", "name": "Absonutrix Sale Thailand", "locales": "en_TH th" },
-    { "length": 15, "regex": r"^911002", "name": "911PetChip", "locales": "en" },
-    { "length": 15, "regex": r"^933", "name": "Buddy ID", "locales": "" },
-    { "length": 15, "regex": r"^939", "name": "M4S ID", "locales": "" },
-    { "length": 15, "regex": r"^9410000", "name": "24PetWatch", "locales": "" },
-    { "length": 15, "regex": r"^941", "name": "Felixcan", "locales": "" },
-    { "length": 15, "regex": r"^943", "name": "BCDS", "locales": "" },
-    { "length": 15, "regex": r"^945", "name": "BCDS", "locales": "" },
-    { "length": 15, "regex": r"^952", "name": "M4S ID", "locales": "" },
-    { "length": 15, "regex": r"^953010002", "name": "Back Home", "locales": "en_AU" },
-    { "length": 15, "regex": r"^953010006", "name": "Central Animal Records", "locales": "en_AU" },
-    { "length": 15, "regex": r"^95301", "name": "Australasian Animal Registry", "locales": "en_AU" },
-    { "length": 15, "regex": r"^953", "name": "Virbac", "locales": "en_AU en_NZ" },
-    { "length": 15, "regex": r"^953", "name": "PetLog", "locales": "en_GB" },
-    { "length": 15, "regex": r"^955", "name": "Biolog-ID", "locales": "" },
-    { "length": 15, "regex": r"^956", "name": "AKC Reunite", "locales": "en" },
-    { "length": 15, "regex": r"^956", "name": "Trovan", "locales": "" },
-    { "length": 15, "regex": r"^965", "name": "4D Technology/Petsafe", "locales": "" },
-    { "length": 15, "regex": r"^960011", "name": "PetProtect", "locales": "" },
-    { "length": 15, "regex": r"^965", "name": "Buddy ID", "locales": "en" },
-    { "length": 15, "regex": r"^965", "name": "Microchip ID", "locales": "" },
-    { "length": 15, "regex": r"^966", "name": "Petlog", "locales": "" },
-    { "length": 15, "regex": r"^967", "name": "Rfdynamics", "locales": "" },
-    { "length": 15, "regex": r"^968", "name": "BCDS", "locales": "en_AU" },
-    { "length": 15, "regex": r"^968", "name": "AKC CAR", "locales": "" },
-    { "length": 15, "regex": r"^972055", "name": "Anibase/Identichip", "locales": "en_GB" },
-    { "length": 15, "regex": r"^972", "name": "Planet ID", "locales": "" },
-    { "length": 15, "regex": r"^977", "name": "AVID", "locales": "" },
-    { "length": 15, "regex": r"^978102", "name": "Anibase/Identichip", "locales": "en_GB" },
-    { "length": 15, "regex": r"^978", "name": "Virbac/Back Home", "locales": "en_AU" },
-    { "length": 15, "regex": r"^978", "name": "Global-ident Connect", "locales": "en_NZ" },
-    { "length": 15, "regex": r"^978", "name": "Chevillot/Back Home", "locales": "" },
-    { "length": 15, "regex": r"^980000", "name": "Agrident", "locales": "" },
-    { "length": 15, "regex": r"^98101", "name": "DataMARS/Banfield", "locales": "" },
-    { "length": 15, "regex": r"^98102", "name": "DataMARS/PetLink", "locales": "" },
-    { "length": 15, "regex": r"^98103", "name": "DataMARS/PetLink", "locales": "" },
-    { "length": 15, "regex": r"^981", "name": "Novartis", "locales": "en_AU" },
-    { "length": 15, "regex": r"^981", "name": "DataMARS/Bayer ResQ", "locales": "" },
-    { "length": 15, "regex": r"^982009", "name": "Allflex", "locales": "" },
-    { "length": 15, "regex": r"^982", "name": "24PetWatch", "locales": "" },
-    { "length": 15, "regex": r"^984", "name": "Nedap", "locales": "" },
-    { "length": 15, "regex": r"^985170", "name": "HomeAgain Test Chip", "locales": "en" },
-    { "length": 15, "regex": r"^9851", "name": "Anibase/Identichip", "locales": "en_GB" },
-    { "length": 15, "regex": r"^985", "name": "Lifechip", "locales": "en_AU" },
-    { "length": 15, "regex": r"^985", "name": "HomeAgain", "locales": "" },
-    { "length": 15, "regex": r"^9861", "name": "Anibase/Identichip", "locales": "en_GB" },
-    { "length": 15, "regex": r"^987", "name": "SmartTag", "locales": "" },
-    { "length": 15, "regex": r"^9900000", "name": "nanoChip", "locales": "" },
-    { "length": 15, "regex": r"^9910030", "name": "Absonutrix Sale Thailand", "locales": "en_TH th" },
-    { "length": 15, "regex": r"^9910010", "name": "HomeSafe", "locales": "en_AU" },
-    { "length": 15, "regex": r"^991001911", "name": "911PetChip", "locales": "en" },
-    { "length": 15, "regex": r"^9910010", "name": "AKC Reunite", "locales": "en" },
-    { "length": 15, "regex": r"^9910030", "name": "PEEVA", "locales": "en" },
-    { "length": 15, "regex": r"^9910030", "name": "Allflex", "locales": "en_AU" },
-    { "length": 15, "regex": r"^9910039", "name": "911PetChip", "locales": "en" },
-    { "length": 15, "regex": r"^992", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^999", "name": "Transponder Test", "locales": ""}
-]
 
 # Currency codes used by payment processors when accepting payments
 CURRENCIES = [
@@ -1268,16 +1160,48 @@ def get_microchip_manufacturer(l: str, chipno: str) -> str:
     """
     mf = None
     if chipno is None or chipno == "": return ""
-    for m in MICROCHIP_MANUFACTURERS:
-        if len(chipno) == m["length"] and re.compile(m["regex"]).match(chipno):
-            if m["locales"] == "" or l in m["locales"].split(" "):
-                mf = m["name"]
+    for prefix in get_microchip_prefixes():
+        if len(chipno) == prefix["length"] and re.compile(prefix["regex"]).match(chipno):
+            if prefix["locale"] == "" or l in prefix["locale"].split(" "):
+                mf = prefix["name"]
                 break
     if mf is None and (len(chipno) != 9 and len(chipno) != 10 and len(chipno) != 15):
         return _("Invalid microchip number length", l)
     if mf is None:
         return _("Unknown microchip brand", l)
     return mf
+
+def get_microchip_prefixes() -> List[Dict[str, str]]:
+    """ Returns the chipprefixes.txt file from the server as a dictionary with elements length, regex, name, locale.
+        This file is in the format:
+        LENGTH | REGEX | NAME | LOCALES 
+        Whitespace between the pipes will be suppressed. The locales element is optional,
+        with an empty string making the prefix applied to all locales.
+        Eg: 
+        15 | ^956     | AVID | en en_US
+        15 | ^98102   | DataMARS
+    """
+    try:
+        CACHE_TTL = 3600
+        s = asm3.cachedisk.get("chipprefixes", "chipprefixes")
+        if s is None:
+            s = asm3.utils.get_url(URL_MICROCHIP_PREFIXES)["response"]
+            asm3.cachedisk.put("chipprefixes", "chipprefixes", s, CACHE_TTL)
+        asm3.al.debug("read chipprefixes.txt (%s bytes)" % len(s), "lookups.get_microchip_prefixes")
+        prefixes = []
+        for p in s.split("\n"):
+            if p.startswith("#"): continue
+            m = p.split("|")
+            if len(m) < 3: continue
+            clen = m[0].strip()
+            cregex = m[1].strip()
+            cname = m[2].strip()
+            clocale = ""
+            if len(m) == 4: clocale = m[3].strip()
+            prefixes.append( { "length": asm3.utils.cint(clen), "regex": cregex, "name": cname, "locales": clocale  })
+        return prefixes
+    except Exception as err:
+        asm3.al.error("Failed reading chipprefixes.txt: %s" % err, "lookups.get_microchip_prefixes")
 
 def get_movementtype_name(dbo: Database, mid: int) -> str:
     if mid is None: return ""

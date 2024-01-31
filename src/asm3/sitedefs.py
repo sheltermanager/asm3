@@ -128,6 +128,7 @@ DB_TIMEOUT = get_integer("db_timeout", 0)
 # URLs for ASM services
 URL_NEWS = get_string("url_news", "https://sheltermanager.com/repo/asm_news.html")
 URL_REPORTS = get_string("url_reports", "https://sheltermanager.com/repo/reports.txt")
+URL_MICROCHIP_PREFIXES = get_string("url_microchip_prefixes", "https://sheltermanager.com/repo/chipprefixes.txt")
 
 # Deployment type, wsgi or fcgi
 DEPLOYMENT_TYPE = get_string("deployment_type", "wsgi")

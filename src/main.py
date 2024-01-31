@@ -680,7 +680,7 @@ class configjs(ASMEndpoint):
             "manualpdf": MANUAL_PDF_URL,
             "manualfaq": MANUAL_FAQ_URL,
             "manualvideo": MANUAL_VIDEO_URL,
-            "microchipmanufacturers": asm3.lookups.MICROCHIP_MANUFACTURERS,
+            "microchipmanufacturers": asm3.lookups.get_microchip_prefixes(),
             "smcom": asm3.smcom.active(),
             "smcomexpiry": expirydate,
             "smcomexpirydisplay": expirydatedisplay,
