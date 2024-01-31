@@ -17,96 +17,96 @@
 10 | ^000                 | Trovan | en_AU
 10 | ^000                 | AKC Reunite | en
 10 | ^0C0                 | M4S ID
-    { "length": 10, "regex": r"^1\d+A", "name": "AVID", "locales": "" }, 
-    { "length": 10, "regex": r"^4", "name": "HomeAgain", "locales": "" }, 
-    { "length": 10, "regex": r"^7E1", "name": "Microchip ID", "locales": "" }, 
-    { "length": 10, "regex": r"^9A1", "name": "24PetWatch", "locales": "" }, 
-    { "length": 15, "regex": r"^250", "name": "I-CAD", "locales": ""},
-    { "length": 15, "regex": r"^360981", "name": "Novartis", "locales": "" },
-    { "length": 15, "regex": r"^5080941", "name": "Felixcan", "locales": "en_MZ" },
-    { "length": 15, "regex": r"^578098", "name": "Kruuse Norge", "locales": "nb" },
-    { "length": 15, "regex": r"^578077", "name": "AVID Friendchip Norway", "locales": "nb" },
-    { "length": 15, "regex": r"^578094", "name": "AVID Friendchip Norway", "locales": "nb" },
-    { "length": 15, "regex": r"^578097", "name": "AVID Friendchip Norway", "locales": "nb" },
-    { "length": 15, "regex": r"^6200982", "name": "MSD Animal Health", "locales": "" },
-    { "length": 15, "regex": r"^688", "name": "Serbia", "locales": "" },
-    { "length": 15, "regex": r"^752", "name": "Trovan Sweden", "locales": "" },
-    { "length": 15, "regex": r"^900008", "name": "Orthana Intertrade", "locales": "" },
-    { "length": 15, "regex": r"^900023", "name": "Asian Information Technology", "locales": "" },
-    { "length": 15, "regex": r"^900026", "name": "DT Japan", "locales": "" },
-    { "length": 15, "regex": r"^900042", "name": "Royal Tag", "locales": "" },
-    { "length": 15, "regex": r"^900074", "name": "SmartTag", "locales": "" },
-    { "length": 15, "regex": r"^900079", "name": "PetLog", "locales": "en_GB" },
-    { "length": 15, "regex": r"^900085", "name": "Petstablished", "locales": "" },
-    { "length": 15, "regex": r"^900088", "name": "Insprovet", "locales": "" },
-    { "length": 15, "regex": r"^900108", "name": "Viaguard", "locales": "" },
-    { "length": 15, "regex": r"^900111", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^900113", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^900115", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^900118", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^900128", "name": "Gepe-Geimuplast", "locales": "" },
-    { "length": 15, "regex": r"^900138", "name": "ID-Ology", "locales": "" },
-    { "length": 15, "regex": r"^900139", "name": "SmartTag", "locales": "" },
-    { "length": 15, "regex": r"^900164", "name": "Save This Life", "locales": "" },
-    { "length": 15, "regex": r"^900182", "name": "Petlog", "locales": "" },
-    { "length": 15, "regex": r"^900141", "name": "SmartTag", "locales": "" },
-    { "length": 15, "regex": r"^90026", "name": "4D Technology/Petsafe", "locales": "" },
-    { "length": 15, "regex": r"^900", "name": "BCDS", "locales": "" },
-    { "length": 15, "regex": r"^9010202", "name": "Absonutrix Sale Thailand", "locales": "en_TH th" },
-    { "length": 15, "regex": r"^911002", "name": "911PetChip", "locales": "en" },
-    { "length": 15, "regex": r"^933", "name": "Buddy ID", "locales": "" },
-    { "length": 15, "regex": r"^939", "name": "M4S ID", "locales": "" },
-    { "length": 15, "regex": r"^9410000", "name": "24PetWatch", "locales": "" },
-    { "length": 15, "regex": r"^941", "name": "Felixcan", "locales": "" },
-    { "length": 15, "regex": r"^943", "name": "BCDS", "locales": "" },
-    { "length": 15, "regex": r"^945", "name": "BCDS", "locales": "" },
-    { "length": 15, "regex": r"^952", "name": "M4S ID", "locales": "" },
-    { "length": 15, "regex": r"^953010002", "name": "Back Home", "locales": "en_AU" },
-    { "length": 15, "regex": r"^953010006", "name": "Central Animal Records", "locales": "en_AU" },
-    { "length": 15, "regex": r"^95301", "name": "Australasian Animal Registry", "locales": "en_AU" },
-    { "length": 15, "regex": r"^953", "name": "Virbac", "locales": "en_AU en_NZ" },
-    { "length": 15, "regex": r"^953", "name": "PetLog", "locales": "en_GB" },
-    { "length": 15, "regex": r"^955", "name": "Biolog-ID", "locales": "" },
-    { "length": 15, "regex": r"^956", "name": "AKC Reunite", "locales": "en" },
-    { "length": 15, "regex": r"^956", "name": "Trovan", "locales": "" },
-    { "length": 15, "regex": r"^965", "name": "4D Technology/Petsafe", "locales": "" },
-    { "length": 15, "regex": r"^960011", "name": "PetProtect", "locales": "" },
-    { "length": 15, "regex": r"^965", "name": "Buddy ID", "locales": "en" },
-    { "length": 15, "regex": r"^965", "name": "Microchip ID", "locales": "" },
-    { "length": 15, "regex": r"^966", "name": "Petlog", "locales": "" },
-    { "length": 15, "regex": r"^967", "name": "Rfdynamics", "locales": "" },
-    { "length": 15, "regex": r"^968", "name": "BCDS", "locales": "en_AU" },
-    { "length": 15, "regex": r"^968", "name": "AKC CAR", "locales": "" },
-    { "length": 15, "regex": r"^972055", "name": "Anibase/Identichip", "locales": "en_GB" },
-    { "length": 15, "regex": r"^972", "name": "Planet ID", "locales": "" },
-    { "length": 15, "regex": r"^977", "name": "AVID", "locales": "" },
-    { "length": 15, "regex": r"^978102", "name": "Anibase/Identichip", "locales": "en_GB" },
-    { "length": 15, "regex": r"^978", "name": "Virbac/Back Home", "locales": "en_AU" },
-    { "length": 15, "regex": r"^978", "name": "Global-ident Connect", "locales": "en_NZ" },
-    { "length": 15, "regex": r"^978", "name": "Chevillot/Back Home", "locales": "" },
-    { "length": 15, "regex": r"^980000", "name": "Agrident", "locales": "" },
-    { "length": 15, "regex": r"^98101", "name": "DataMARS/Banfield", "locales": "" },
-    { "length": 15, "regex": r"^98102", "name": "DataMARS/PetLink", "locales": "" },
-    { "length": 15, "regex": r"^98103", "name": "DataMARS/PetLink", "locales": "" },
-    { "length": 15, "regex": r"^981", "name": "Novartis", "locales": "en_AU" },
-    { "length": 15, "regex": r"^981", "name": "DataMARS/Bayer ResQ", "locales": "" },
-    { "length": 15, "regex": r"^982009", "name": "Allflex", "locales": "" },
-    { "length": 15, "regex": r"^982", "name": "24PetWatch", "locales": "" },
-    { "length": 15, "regex": r"^984", "name": "Nedap", "locales": "" },
-    { "length": 15, "regex": r"^985170", "name": "HomeAgain Test Chip", "locales": "en" },
-    { "length": 15, "regex": r"^9851", "name": "Anibase/Identichip", "locales": "en_GB" },
-    { "length": 15, "regex": r"^985", "name": "Lifechip", "locales": "en_AU" },
-    { "length": 15, "regex": r"^985", "name": "HomeAgain", "locales": "" },
-    { "length": 15, "regex": r"^9861", "name": "Anibase/Identichip", "locales": "en_GB" },
-    { "length": 15, "regex": r"^987", "name": "SmartTag", "locales": "" },
-    { "length": 15, "regex": r"^9900000", "name": "nanoChip", "locales": "" },
-    { "length": 15, "regex": r"^9910030", "name": "Absonutrix Sale Thailand", "locales": "en_TH th" },
-    { "length": 15, "regex": r"^9910010", "name": "HomeSafe", "locales": "en_AU" },
-    { "length": 15, "regex": r"^991001911", "name": "911PetChip", "locales": "en" },
-    { "length": 15, "regex": r"^9910010", "name": "AKC Reunite", "locales": "en" },
-    { "length": 15, "regex": r"^9910030", "name": "PEEVA", "locales": "en" },
-    { "length": 15, "regex": r"^9910030", "name": "Allflex", "locales": "en_AU" },
-    { "length": 15, "regex": r"^9910039", "name": "911PetChip", "locales": "en" },
-    { "length": 15, "regex": r"^992", "name": "International Pet Registry", "locales": "" },
-    { "length": 15, "regex": r"^999", "name": "Transponder Test", "locales": ""}
+10 | ^1\d+A               | AVID 
+10 | ^4                   | HomeAgain 
+10 | ^7E1                 | Microchip ID 
+10 | ^9A1                 | 24PetWatch 
+15 | ^250                 | I-CAD
+15 | ^360981              | Novartis
+15 | ^5080941             | Felixcan | en_MZ
+15 | ^578098              | Kruuse Norge | nb
+15 | ^578077              | AVID Friendchip Norway | nb
+15 | ^578094              | AVID Friendchip Norway | nb
+15 | ^578097              | AVID Friendchip Norway | nb
+15 | ^6200982             | MSD Animal Health
+15 | ^688                 | Serbia
+15 | ^752                 | Trovan Sweden
+15 | ^900008              | Orthana Intertrade
+15 | ^900023              | Asian Information Technology
+15 | ^900026              | DT Japan
+15 | ^900042              | Royal Tag
+15 | ^900074              | SmartTag
+15 | ^900079              | PetLog | en_GB
+15 | ^900085              | Petstablished
+15 | ^900088              | Insprovet
+15 | ^900108              | Viaguard
+15 | ^900111              | International Pet Registry
+15 | ^900113              | International Pet Registry
+15 | ^900115              | International Pet Registry
+15 | ^900118              | International Pet Registry
+15 | ^900128              | Gepe-Geimuplast
+15 | ^900138              | ID-Ology
+15 | ^900139              | SmartTag
+15 | ^900164              | Save This Life
+15 | ^900182              | Petlog
+15 | ^900141              | SmartTag
+15 | ^90026               | 4D Technology/Petsafe
+15 | ^900"                | BCDS
+15 | ^9010202             | Absonutrix Sale Thailand | en_TH
+15 | ^911002              | 911PetChip | en
+15 | ^933                 | Buddy ID
+15 | ^939                 | M4S ID
+15 | ^9410000             | 24PetWatch
+15 | ^941                 | Felixcan
+15 | ^943                 | BCDS
+15 | ^945                 | BCDS
+15 | ^952                 | M4S ID
+15 | ^953010002           | Back Home | en_AU
+15 | ^953010006           | Central Animal Records | en_AU
+15 | ^95301               | Australasian Animal Registry | en_AU
+15 | ^953                 | Virbac | en_AU en_NZ
+15 | ^953                 | PetLog | en_GB
+15 | ^955                 | Biolog-ID
+15 | ^956                 | AKC Reunite | en
+15 | ^956                 | Trovan
+15 | ^965                 | 4D Technology/Petsafe
+15 | ^960011              | PetProtect
+15 | ^965                 | Buddy ID | en
+15 | ^965                 | Microchip ID                       
+15 | ^966                 | Petlog
+15 | ^967                 | Rfdynamics
+15 | ^968                 | BCDS en_AU
+15 | ^968                 | AKC CAR
+15 | ^972055              | Anibase/Identichip | en_GB
+15 | ^972                 | Planet ID
+15 | ^977                 | AVID
+15 | ^978102              | Anibase/Identichip | en_GB
+15 | ^978                 | Virbac/Back Home | en_AU
+15 | ^978                 | Global-ident Connect | en_NZ
+15 | ^978                 | Chevillot/Back Home
+15 | ^980000              | Agrident
+15 | ^98101               | DataMARS/Banfield
+15 | ^98102               | DataMARS/PetLink
+15 | ^98103               | DataMARS/PetLink
+15 | ^981                 | Novartis | en_AU
+15 | ^981                 | DataMARS/Bayer ResQ
+15 | ^982009              | Allflex
+15 | ^982                 | 24PetWatch
+15 | ^984                 | Nedap
+15 | ^985170              | HomeAgain Test Chip | en
+15 | ^9851                | Anibase/Identichip | en_GB
+15 | ^985                 | Lifechip | en_AU
+15 | ^985                 | HomeAgain
+15 | ^9861                | Anibase/Identichip | en_GB
+15 | ^987                 | SmartTag
+15 | ^9900000             | nanoChip
+15 | ^9910030             | Absonutrix Sale Thailand | en_TH th
+15 | ^9910010             | HomeSafe | en_AU
+15 | ^991001911           | 911PetChip | en
+15 | ^9910010             | AKC Reunite | en
+15 | ^9910030             | PEEVA | en
+15 | ^9910030             | Allflex | en_AU
+15 | ^9910039             | 911PetChip | en
+15 | ^992                 | International Pet Registry
+15 | ^999                 | Transponder Test
 ]
