@@ -1083,12 +1083,13 @@ MembershipNumber
     The person's membership number
 MembershipExpiryDate 
     The date this person's membership with the shelter expires
-DocumentImgLink
+PersonDocumentImgLink
     An <img> tag containing a link to the person's preferred document image.
     The image will be 200px high. You can also suffix a pixel height in
     increments of 100 upto 500px if you would like the image to be larger, eg:
-    <<DocumentImgLink300>>, <<DocumentImgLink400>>, <<DocumentImgLink500>>
-DocumentImgSrc
+    <Person<DocumentImgLink300>>, <<PersonDocumentImgLink400>>,
+    <<PersonDocumentImgLink500>>
+PersonDocumentImgSrc
     Just the src attribute value for an image link to the preferred document image.
 
 Citation Keys

@@ -1,6 +1,7 @@
 48
 ================
 
+31/01/24 Use <<PersonDocumentImg*>> tokens to avoid collisions #1426
 30/01/24 SavourLife/PetRescue: fix bug with null additional fields
 29/01/24 Do not allow reply to override FROM on form notifications #1418
 29/01/24 Global/default BCC option #1304

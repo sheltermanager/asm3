@@ -1540,12 +1540,12 @@ def person_tags(dbo: Database, p: ResultRow, includeImg=False, includeDonations=
     }
 
     if includeImg:
-        tags["DOCUMENTIMGSRC"] = asm3.html.doc_img_src(dbo, p)
-        tags["DOCUMENTIMGLINK"] = "<img height=\"200\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
-        tags["DOCUMENTIMGLINK200"] = "<img height=\"200\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
-        tags["DOCUMENTIMGLINK300"] = "<img height=\"300\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
-        tags["DOCUMENTIMGLINK400"] = "<img height=\"400\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
-        tags["DOCUMENTIMGLINK500"] = "<img height=\"500\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
+        tags["PERSONDOCUMENTIMGSRC"] = asm3.html.doc_img_src(dbo, p)
+        tags["PERSONDOCUMENTIMGLINK"] = "<img height=\"200\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
+        tags["PERSONDOCUMENTIMGLINK200"] = "<img height=\"200\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
+        tags["PERSONDOCUMENTIMGLINK300"] = "<img height=\"300\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
+        tags["PERSONDOCUMENTIMGLINK400"] = "<img height=\"400\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
+        tags["PERSONDOCUMENTIMGLINK500"] = "<img height=\"500\" src=\"" + asm3.html.doc_img_src(dbo, p) + "\" >"
 
     # Donations
     if includeDonations:
