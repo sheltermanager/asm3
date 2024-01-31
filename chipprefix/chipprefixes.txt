@@ -4,7 +4,7 @@
 # Whitespace between the pipes will be trimmed after reading.
 # The locales element is optional, with an empty string making the prefix applied to all locales.
 # Multiple locales should be separated by a space.
-# Lines without at least 3 pipe separators are ignored.
+# Lines without at least 2 pipe separators are ignored.
 
 16 | ^AVID                | AVID
 14 | ^TR                  | AKC Reunite 
@@ -109,4 +109,3 @@
 15 | ^9910039             | 911PetChip | en
 15 | ^992                 | International Pet Registry
 15 | ^999                 | Transponder Test
-]
