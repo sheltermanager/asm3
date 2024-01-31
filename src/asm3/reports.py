@@ -441,13 +441,11 @@ def get_smcom_reports_txt(dbo: Database) -> str:
     Retrieves the reports.txt file with standard report definitions from sheltermanager.com
     """
     try:
-        if asm3.smcom.active():
-            s = asm3.smcom.get_reports()
-        else:
-            REPORTS_CACHE_TTL = 86400
-            s = asm3.cachedisk.get("reports", "reports")
-            if s is None:
-                s = asm3.utils.get_url(URL_REPORTS)["response"]
+        REPORTS_CACHE_TTL = 86400
+        s = asm3.cachedisk.get("reports", "reports")
+        if s is None:
+            s = asm3.utils.get_url(URL_REPORTS)["response"]
+            if not URL_REPORTS.startswith("file:"):
                 asm3.cachedisk.put("reports", "reports", s, REPORTS_CACHE_TTL)
         asm3.al.debug("read reports.txt (%s bytes)" % len(s), "reports.get_smcom_reports_txt", dbo)
         return s

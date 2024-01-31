@@ -113,6 +113,16 @@ manual:
 	scp -C doc/manual/_build/latex/asm3.pdf root@wwwdx.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help.pdf
 	rsync -a doc/manual/_build/html/ root@wwwdx.sheltermanager.com:/var/www/sheltermanager.com/repo/asm3_help/
 
+chipprefixes:
+	@echo "[reports] ========================="
+	cd chipprefix && ./update_www.sh
+	cd chipprefix && ./update_prefixes_all_db_hosts.sh
+
+reports:
+	@echo "[reports] ========================="
+	cd reports && ./update_www.sh
+	cd reports && ./update_reports_all_db_hosts.sh
+
 test: version
 	@echo "[test] ========================="
 	cd src && python3 main.py 5000

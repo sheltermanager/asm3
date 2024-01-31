@@ -113,14 +113,6 @@ def get_payments_url() -> str:
     """
     return "https://service.sheltermanager.com/asmpayment"
 
-def get_reports() -> str:
-    """
-    Returns the reports.txt file
-    """
-    with open("/root/asmdb/reports.txt", "r", encoding="utf-8") as f:
-        s = f.read()
-    return s
-
 def go_smcom_my(dbo: Database) -> None:
     """
     Goes to the my account page for this database
