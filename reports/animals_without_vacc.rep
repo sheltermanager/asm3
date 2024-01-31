@@ -2,13 +2,13 @@ Animals without a vaccination of type
 ###
 Medical
 ###
-Any/3215 rev01
+Any/3215 rev02
 ###
 Shelter animals who don't have a vaccination of a particular type
 ###
 en
 ###
-SELECT a.ShelterCode, a.AnimalName, s.SpeciesName, a.BreedName, a.AnimalAge, a.DisplayLocation, a.MostRecentEntryDate
+SELECT a.ShelterCode, a.ID AS AID, a.AnimalName, s.SpeciesName, a.BreedName, a.AnimalAge, a.DisplayLocation, a.MostRecentEntryDate
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 LEFT OUTER JOIN lksmovementtype mt ON mt.ID = a.ActiveMovementType
@@ -37,12 +37,12 @@ HEADER$$
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SPECIESNAME</td>
 <td>$BREEDNAME</td>
 <td>$ANIMALAGE</td>
 <td>$DISPLAYLOCATION</td>
-<td>$DATEBROUGHTIN</td>
+<td>$MOSTRECENTENTRYDATE</td>
 </tr>
 BODY$$
 
