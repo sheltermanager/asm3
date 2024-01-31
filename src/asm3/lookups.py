@@ -141,6 +141,7 @@ MICROCHIP_MANUFACTURERS = [
     { "length": 15, "regex": r"^945", "name": "BCDS", "locales": "" },
     { "length": 15, "regex": r"^952", "name": "M4S ID", "locales": "" },
     { "length": 15, "regex": r"^953010002", "name": "Back Home", "locales": "en_AU" },
+    { "length": 15, "regex": r"^953010006", "name": "Central Animal Records", "locales": "en_AU" },
     { "length": 15, "regex": r"^95301", "name": "Australasian Animal Registry", "locales": "en_AU" },
     { "length": 15, "regex": r"^953", "name": "Virbac", "locales": "en_AU en_NZ" },
     { "length": 15, "regex": r"^953", "name": "PetLog", "locales": "en_GB" },
