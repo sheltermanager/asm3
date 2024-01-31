@@ -1,4 +1,4 @@
-/*global $, _, common, asm, header */
+/*global $, _, common, asm, config, header */
 /*global microchip: true */
 
 "use strict";
@@ -17,6 +17,7 @@ const microchip = {
     manufacturer: function(selnumber, selbrand) {
         var m, n = $(selnumber).val();
         if (!n) { $(selbrand).fadeOut(); return; }
+        if (config.bool("DontShowMicrochipSupplier")) { $(selbrand).fadeOut(); return; }
         $.each(asm.microchipmanufacturers, function(i, v) {
             if (n.length == v.length && new RegExp(v.regex).test(n)) {
                 if (v.locales == "" || common.array_in(asm.locale, v.locales.split(" "))) {

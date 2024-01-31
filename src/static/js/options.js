@@ -1690,6 +1690,7 @@ $(function() {
                 '<input data="DontShowSize" id="size" class="asm-checkbox" type="checkbox" /> <label for="size">' + _("Remove the size field from animal details") + '</label><br />',
                 '<input data="DontShowWeight" id="weight" class="asm-checkbox" type="checkbox" /> <label for="weight">' + _("Remove the weight field from animal details") + '</label><br />',
                 '<input data="DontShowMicrochip" id="microchip" class="asm-checkbox" type="checkbox" /> <label for="microchip">' + _("Remove the microchip fields from animal identification details") + '</label><br />',
+                '<input data="DontShowMicrochipSupplier" id="microchipmf" class="asm-checkbox" type="checkbox" /> <label for="microchipmf">' + _("Remove the microchip supplier info from animal identification details") + '</label><br />',
                 '<input data="DontShowTattoo" id="tattoo" class="asm-checkbox" type="checkbox" /> <label for="tattoo">' + _("Remove the tattoo fields from animal identification details") + '</label><br />',
                 '<input data="DontShowNeutered" id="neutered" class="asm-checkbox" type="checkbox" /> <label for="neutered">' + _("Remove the neutered fields from animal health details") + '</label><br />',
                 '<input data="DontShowDeclawed" id="declawed" class="asm-checkbox" type="checkbox" /> <label for="declawed">' + _("Remove the declawed box from animal health details") + '</label><br />',

@@ -1182,7 +1182,7 @@ def get_microchip_prefixes() -> List[Dict[str, str]]:
         15 | ^98102   | DataMARS
     """
     try:
-        CACHE_TTL = 3600
+        CACHE_TTL = 1800
         s = asm3.cachedisk.get("chipprefixes", "chipprefixes")
         if s is None:
             s = asm3.utils.get_url(URL_MICROCHIP_PREFIXES)["response"]
