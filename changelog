@@ -1,7 +1,7 @@
 48
 ================
 
-31/01/24 Add check a chip with CAR in Australia
+01/02/24 Refactor chip checking to backend service, support petaddress.com.au
 31/01/24 Option to hide microchip supplier #1427
 31/01/24 Move chip prefix database out of code to a shared file #1427
 31/01/24 Use <<PersonDocumentImg*>> tokens to avoid collisions #1426
