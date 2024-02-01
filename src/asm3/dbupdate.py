@@ -6102,7 +6102,7 @@ def update_34802(dbo: Database) -> None:
     # possibly for future PK depending on performance. Clear any old junk out.
     dbo.execute_dbupdate("DELETE FROM primarykey")
 
-def update_34803, 34804(dbo: Database) -> None:
+def update_34803(dbo: Database) -> None:
     # Add animallocation table
     fields = ",".join([
         dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
@@ -6122,5 +6122,5 @@ def update_34803, 34804(dbo: Database) -> None:
 
 def update_34804(dbo: Database) -> None:
     l = dbo.locale
-    # add sponsor flag column, and sponsor/vet as additional field types
+    # add adoption coordinator as additional field types
     dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (13, '" + _("Adoption Coordinator", l) + "')")
