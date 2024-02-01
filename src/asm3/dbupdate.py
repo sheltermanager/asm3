@@ -43,7 +43,7 @@ VERSIONS = (
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
-    34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803
+    34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -2476,6 +2476,7 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup1("lksfieldtype", "FieldType", 10, _("Time", l))
     sql += lookup1("lksfieldtype", "FieldType", 11, _("Sponsor", l))
     sql += lookup1("lksfieldtype", "FieldType", 12, _("Vet"))
+    sql += lookup1("lksfieldtype", "FieldType", 13, _("Adoption Coordinator"))
     sql += lookup1("lksloglink", "LinkType", 0, _("Animal", l))
     sql += lookup1("lksloglink", "LinkType", 1, _("Owner", l))
     sql += lookup1("lksloglink", "LinkType", 2, _("Lost Animal", l))
@@ -6101,7 +6102,7 @@ def update_34802(dbo: Database) -> None:
     # possibly for future PK depending on performance. Clear any old junk out.
     dbo.execute_dbupdate("DELETE FROM primarykey")
 
-def update_34803(dbo: Database) -> None:
+def update_34803, 34804(dbo: Database) -> None:
     # Add animallocation table
     fields = ",".join([
         dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
@@ -6118,3 +6119,8 @@ def update_34803(dbo: Database) -> None:
     add_index(dbo, "animallocation_AnimalID", "animallocation", "AnimalID") 
     add_index(dbo, "animallocation_FromLocationID", "animallocation", "FromLocationID") 
     add_index(dbo, "animallocation_ToLocationID", "animallocation", "ToLocationID") 
+
+def update_34804(dbo: Database) -> None:
+    l = dbo.locale
+    # add sponsor flag column, and sponsor/vet as additional field types
+    dbo.execute_dbupdate("INSERT INTO lksfieldtype (ID, FieldType) VALUES (13, '" + _("Adoption Coordinator", l) + "')")
