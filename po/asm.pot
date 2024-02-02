@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-02-02 09:23+0000\n"
+"POT-Creation-Date: 2024-02-02 15:29+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -887,7 +887,7 @@ msgstr ""
 msgid "Adoption Checkout"
 msgstr ""
 
-#: html.py common_html.js person_links.js animal_bulk.js reports.js
+#: html.py dbupdate.py common_html.js person_links.js animal_bulk.js reports.js
 #: header_edit_header.js animal_new.js animal.js
 msgid "Adoption Coordinator"
 msgstr ""
