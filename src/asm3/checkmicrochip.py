@@ -100,14 +100,19 @@ class PetAddressComAu(ChipCheckService):
         asm3.al.info("results: %s" % self.results, "PetAddressComAu.search", self.dbo)
         return self.results
 
+LOCALE_MAP = {
+    "en":    [ "aaha.org", AAHAOrg ],
+    "en_AU": [ "petaddress.com.au", PetAddressComAu ],
+    "en_GB": [ "checkachip.com", CheckAChipCom ]
+}
+
 def check(dbo: Database, locale: str, chipnumber: str) -> ChipCheckResults:
     """
     Check a microchip, choosing the appropriate service based on the locale.
     dbo is actually optional and can be passed as None when testing, the purpose of it being here is for logging.
     """
-    if locale == "en":
-        return AAHAOrg(dbo).search(chipnumber)
-    elif locale == "en_GB":
-        return CheckAChipCom(dbo).search(chipnumber)
-    elif locale == "en_AU":
-        return PetAddressComAu(dbo).search(chipnumber)
+    if len(chipnumber) != 15 or not asm3.utils.is_numeric(chipnumber):
+        raise asm3.utils.ASMValidationError("Microchip numbers must be 15 characters and only contain digits")
+    if locale in LOCALE_MAP:
+        return { "name": LOCALE_MAP[locale][0], "results": LOCALE_MAP[locale][1](dbo).search(chipnumber) }
+

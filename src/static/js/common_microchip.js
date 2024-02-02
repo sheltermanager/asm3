@@ -38,12 +38,11 @@ const microchip = {
 
     is_check_available: function(chipnumber) {
         if (chipnumber.length != 15 && chipnumber.length != 10 && chipnumber.length != 9) { return false; }
-        return asm.locale == "en" || asm.locale == "en_AU" || asm.locale == "en_GB";
+        return asm.locale == "en" || asm.locale == "en_GB";
     },
 
     check_site_name: function() {
         if (asm.locale == "en") { return _("Check {0}").replace("{0}", "www.aaha.org"); }
-        else if (asm.locale == "en_AU") { return _("Check {0}").replace("{0}", "car.animalrecords.com.au"); }
         else if (asm.locale == "en_GB") { return _("Check {0}").replace("{0}", "www.checkachip.com"); }
         return "";
     },
@@ -52,6 +51,8 @@ const microchip = {
      * is registered.
      */
     check: function(chipnumber) {
+        // TODO: AJAX call to the backend to run checkmicrochip.check and 
+        // show a popup dialog with the results or an error
         // USA - use AAHA
         if (asm.locale == "en") {
             header.show_loading(_("Loading..."));
@@ -72,7 +73,6 @@ const microchip = {
                 '</form>');
             $("#pa").submit();
             */
-            window.location = "https://car.animalrecords.com.au/public/chip_tag_search?utf8=%E2%9C%93&chip_tag=" + chipnumber;
         }
         // UK - use checkachip.com
         else if (asm.locale == "en_GB") {
