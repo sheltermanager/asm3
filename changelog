@@ -1,6 +1,7 @@
 48
 ================
 
+02/02/24 Add coordinator person additional field type (Saggi Neuemann) #1428
 02/02/24 Animal templates: Do not copy nonshelter in additionalflags
 02/02/24 DocumentImgThumbLink/Src using web instead of doc preferred
 02/02/24 Show a different message on login for IP failure
