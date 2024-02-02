@@ -1,6 +1,8 @@
 48
 ================
 
+02/02/24 DocumentImgThumbLink/Src using web instead of doc preferred
+02/02/24 Show a different message on login for IP failure
 01/02/24 Refactor chip checking to backend service, support petaddress.com.au
 31/01/24 Option to hide microchip supplier #1427
 31/01/24 Move chip prefix database out of code to a shared file #1427
