@@ -14,6 +14,7 @@ $(function() {
             this.mode = mode;
             return [
                 '<div id="emailform"></div>',
+                microchip.render_checkresults_dialog(),
                 '<div id="button-document-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
                 edit_header.template_list(controller.templates, ( mode == "lost" ? "LOSTANIMAL" : "FOUNDANIMAL" ), controller.animal.ID),

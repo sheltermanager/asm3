@@ -6,6 +6,7 @@ Since we're using parsing/scraping some of these functions may be brittle.
 """
 
 import asm3.al
+import asm3.cachemem
 import asm3.utils
 from asm3.typehints import ChipCheckResults, Database
 
@@ -35,8 +36,6 @@ class AAHAOrg(ChipCheckService):
     def search(self, chipnumber: str) -> ChipCheckResults:
         headers = { "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0" }
         page = asm3.utils.get_url(f"https://www.aaha.org/your-pet/pet-microchip-lookup/microchip-search/?microchip_id={chipnumber}", headers=headers, timeout = 20)
-        #with open("/tmp/aaha.txt", "w") as f:
-        #    f.write(page["response"])
         asm3.al.debug("got response from aaha.org (%s bytes)" % len(page["response"]), "AAHAOrg.search", self.dbo)
         self.results = []
         tree = etree.HTML(page["response"])
@@ -110,9 +109,16 @@ def check(dbo: Database, locale: str, chipnumber: str) -> ChipCheckResults:
     """
     Check a microchip, choosing the appropriate service based on the locale.
     dbo is actually optional and can be passed as None when testing, the purpose of it being here is for logging.
+    Uses a read-through memory cache.
     """
+    cachekey = f"cac_{chipnumber}"
+    TTL = 86400
     if len(chipnumber) != 15 or not asm3.utils.is_numeric(chipnumber):
         raise asm3.utils.ASMValidationError("Microchip numbers must be 15 characters and only contain digits")
+    results = asm3.cachemem.get(cachekey)
+    if results is not None:
+        return results
     if locale in LOCALE_MAP:
-        return { "name": LOCALE_MAP[locale][0], "results": LOCALE_MAP[locale][1](dbo).search(chipnumber) }
-
+        results = { "name": LOCALE_MAP[locale][0], "results": LOCALE_MAP[locale][1](dbo).search(chipnumber) }
+        asm3.cachemem.put(cachekey, results, TTL)
+        return results

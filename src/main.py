@@ -18,6 +18,7 @@ import asm3.asynctask
 import asm3.audit
 import asm3.cachedisk
 import asm3.cachemem
+import asm3.checkmicrochip
 import asm3.clinic
 import asm3.configuration
 import asm3.csvimport
@@ -1790,6 +1791,9 @@ class animal(JSONEndpoint):
     def post_email(self, o):
         self.check(asm3.users.EMAIL_PERSON)
         asm3.animal.send_email_from_form(o.dbo, o.user, o.post)
+
+    def post_checkchip(self, o):
+        return asm3.utils.json(asm3.checkmicrochip.check(o.dbo, o.locale, o.post["n"]))
 
     def post_gencode(self, o):
         post = o.post
