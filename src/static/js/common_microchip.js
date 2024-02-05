@@ -59,14 +59,20 @@ const microchip = {
         $.each(results.results, function(i, v) {
             h.push('<a target="_blank" href="' + v[0] + '">' + v[1] + '</a><br>');
         });
+        if (results.results.length == 0) {
+            h.push('<p>' + _("No results.") + '</p>');
+        }
         $("#chipcheck-number").text(chipnumber);
+        $("#chipcheck-service").html(results.name);
         $("#chipcheck-results").html(h.join("\n"));
         await tableform.show_okcancel_dialog("#dialog-chipcheck", _("Ok"), { hidecancel: true });
     },
 
     render_checkresults_dialog: function() {
         return '<div id="dialog-chipcheck" style="display: none" title="' + html.title(_("Check Microchip")) + '">' +
-            html.info(_("Chip registry results for {0}").replace("{0}", '<span id="chipcheck-number"></span>')) +
-            '<p id="chipcheck-results"></p></div>';
+            html.info(_("{0} results for {1}")
+                .replace("{0}", '<span id="chipcheck-service"></span>')
+                .replace("{1}", '<span id="chipcheck-number"></span>')) +
+                '<p id="chipcheck-results"></p></div>';
     }
 };

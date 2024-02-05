@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-02-05 10:23+0000\n"
+"POT-Creation-Date: 2024-02-05 10:46+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -2927,10 +2927,6 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Chinese Foo Dog"
-msgstr ""
-
-#: common_microchip.js
-msgid "Chip registry results for {0}"
 msgstr ""
 
 #: dbupdate.py
@@ -9250,7 +9246,7 @@ msgstr ""
 msgid "No results found."
 msgstr ""
 
-#: sql.js
+#: common_microchip.js sql.js
 msgid "No results."
 msgstr ""
 
@@ -16133,6 +16129,10 @@ msgstr ""
 msgid ""
 "{0} records displayed, use the 'Medical History' report to see all records "
 "for this animal."
+msgstr ""
+
+#: common_microchip.js
+msgid "{0} results for {1}"
 msgstr ""
 
 #: sql.js
