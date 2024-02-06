@@ -3420,6 +3420,7 @@ def clone_from_template(dbo: Database, username: str, animalid: int, datebrought
         this template is set to operate on DOB, then dateofbirth is used instead.
         If the calculated date is before the intake date, intake date is returned instead.
         """
+        if d is None: return None
         dayoffset = date_diff_days(templatedate, d)
         if dayoffset < 0:
             adjdate = subtract_days(newrecorddate, dayoffset)
@@ -3428,26 +3429,21 @@ def clone_from_template(dbo: Database, username: str, animalid: int, datebrought
         adjdate = adjdate.replace(hour=0, minute=0, second=0, microsecond=0) # throw away any time info that might have been on the original date
         if adjdate < datebroughtin: adjdate = datebroughtin
         return dbo.sql_date(adjdate)
-    # Only set flags on the new record if they are set on the template - just copying them
-    # meant that we were clearing defaults if they were set for not for adoption etc.
-    if copyfrom.isnotavailableforadoption == 1: dbo.update("animal", animalid, { "IsNotAvailableForAdoption": 1 })
-    if copyfrom.isnotforregistration == 1: dbo.update("animal", animalid, { "IsNotForRegistration": 1 })
-    # If the animal is held, calculate the hold until date
-    if copyfrom.ishold == 1: 
-        p = { "IsHold": 1 }
-        # If there's a holduntildate on the template, adjust and use that 
-        if copyfrom.holduntildate is not None: 
-            p["HoldUntilDate"] = adjust_date(copyfrom.holduntildate)
-        else:
-            # Use the hold for X days configuration option instead
-            p["HoldUntilDate"] = add_days(templatedate, asm3.configuration.auto_remove_hold_days(dbo))
-        dbo.update("animal", animalid, p)
-    if copyfrom.additionalflags and copyfrom.additionalflags != "": dbo.update("animal", animalid, { "AdditionalFlags": copyfrom.additionalflags })
-    dbo.update("animal", animalid, {
+    # Copy the flags from the template to the new record. Do not include the non-shelter flag
+    newflags = [ x for x in copyfrom.additionalflags.split("|") if x != "nonshelter" ]
+    update_flags(dbo, username, animalid, newflags)
+    # Deal with other selected animal fields from the template
+    p = {
         "Fee":                      copyfrom.fee,
         "CurrentVetID":             copyfrom.currentvetid,
-        "AnimalComments":           copyfrom.animalcomments
-    }, username)
+        "AnimalComments":           copyfrom.animalcomments,
+        "IsHold":                   copyfrom.ishold,
+        "HoldUntilDate":            adjust_date(copyfrom.holduntildate)
+    }
+    if copyfrom.ishold == 1 and copyfrom.holduntildate is None: 
+        # Use the hold for X days configuration option if there's no hold until date
+        p["HoldUntilDate"] = add_days(templatedate, asm3.configuration.auto_remove_hold_days(dbo))
+    dbo.update("animal", animalid, p)
     # Additional Fields (don't include newrecord ones or ones with default values as they are already set by the new animal screen)
     for af in dbo.query("SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
         "WHERE af.NewRecord <> 1 AND af.DefaultValue = '' AND a.LinkID = %d AND a.LinkType IN (%s)" % (cloneanimalid, asm3.additional.ANIMAL_IN)):

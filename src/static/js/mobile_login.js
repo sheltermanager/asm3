@@ -87,6 +87,11 @@ $(document).ready(function() {
                     $("#btn-login").prop("disabled", false);
                     show_dlg("Error", _("Invalid username or password."));
                 }
+                else if (response == "BADIP") {
+                    $("#spinner").hide();
+                    $("#btn-login").prop("disabled", false);
+                    show_dlg("Error", _("Login not allowed from this IP address."));
+                }
                 else if (response == "DISABLED") {
                     $("#spinner").hide();
                     $("#btn-login").prop("disabled", false);

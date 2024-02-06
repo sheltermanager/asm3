@@ -879,6 +879,7 @@ $(function() {
                 _("Select an animal to merge into this record. The selected animal will be removed, and their movements, diary notes, log entries, etc. will be reattached to this record."),
                 '</p>',
                 '</div>',
+                microchip.render_checkresults_dialog(),
                 html.capture_autofocus(),
                 '<table width="100%">',
                 '<tr>',

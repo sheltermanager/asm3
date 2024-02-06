@@ -32,6 +32,7 @@ additional = {
     TIME: 10,
     PERSON_SPONSOR: 11,
     PERSON_VET: 12,
+    PERSON_ADOPTIONCOORDINATOR: 13,
 
     /**
      * Renders and lays out additional fields from data from the backend 
@@ -149,7 +150,7 @@ additional = {
                     element.animalchooser("clear", false);
                     element.animalchooser("loadbyid", fieldval);
                 }
-                else if (f.FIELDTYPE == additional.PERSON_LOOKUP || f.FIELDTYPE == additional.PERSON_SPONSOR || f.FIELDTYPE == additional.PERSON_VET) {
+                else if (f.FIELDTYPE == additional.PERSON_LOOKUP || f.FIELDTYPE == additional.PERSON_SPONSOR || f.FIELDTYPE == additional.PERSON_VET || f.FIELDTYPE == additional.PERSON_ADOPTIONCOORDINATOR) {
                     element.personchooser("clear", false);
                     element.personchooser("loadbyid", fieldval);
                 }
@@ -218,7 +219,7 @@ additional = {
      * Returns true if the additional field type t is a person ID
      */
     is_person_type: function(t) {
-        return t == additional.PERSON_LOOKUP || t == additional.PERSON_SPONSOR || t == additional.PERSON_VET;
+        return t == additional.PERSON_LOOKUP || t == additional.PERSON_SPONSOR || t == additional.PERSON_VET || t == additional.PERSON_ADOPTIONCOORDINATOR;
     },
 
 
@@ -337,6 +338,9 @@ additional = {
                     else if (f.FIELDTYPE == additional.PERSON_VET) {
                         row[f.FIELDNAME.toUpperCase()] = element.val();
                     }
+                    else if (f.FIELDTYPE == additional.PERSON_ADOPTIONCOORDINATOR) {
+                        row[f.FIELDNAME.toUpperCase()] = element.val();
+                    }
                 }
             }
         });
@@ -383,6 +387,9 @@ additional = {
                         return_string += "&" + fid + '=' + element.val();
                     }
                     else if (f.FIELDTYPE == additional.PERSON_VET) {
+                        return_string += "&" + fid + '=' + element.val();
+                    }
+                    else if (f.FIELDTYPE == additional.PERSON_ADOPTIONCOORDINATOR) {
                         return_string += "&" + fid + '=' + element.val();
                     }
                 }
@@ -512,6 +519,12 @@ additional = {
             fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
             fh.push('value="' + html.title(fieldval) + '" data-filter="vet"/></td>');
         }
+        else if (f.FIELDTYPE == additional.PERSON_ADOPTIONCOORDINATOR) {
+            fh.push(td1open + fieldlabel + '</td>' + td2open);
+            fh.push('<input ' + fieldattr + ' type="hidden" class="asm-personchooser ' + classes + '" data-post="' + postattr + '" ');
+            fh.push('value="' + html.title(fieldval) + '" data-filter="coordinator"/></td>');
+        }
+
         return fh.join("\n");
     },
 

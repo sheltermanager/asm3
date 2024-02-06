@@ -55,6 +55,8 @@ Session = "web.session.Session"
 
 # ReportParams are a list of the 3 values extracted from report SQL and used to ask the user for criteria (report.py)
 ReportParams = List[Tuple[str, str, str]] # variablename, type, question
+# ChipCheckResults are a list of the tuples containing href and text of a chip registry website (checkmicrochip.py)
+ChipCheckResults = List[Tuple[str, str]]
 # CriteriaParams are a list of the 4 values extracted from user input of criteria used to run the query for the report (report.py)
 CriteriaParams = List[Tuple[str, str, str, str]] # variablename, questiontext, substitutionvalue, displayvalue
 # List of sortable columns returned by column functions for find screens (html.py)

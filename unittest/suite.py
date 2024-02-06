@@ -8,6 +8,7 @@ import test_animalcontrol
 import test_animalname
 import test_animal
 import test_automail
+import test_checkmicrochip
 import test_clinic
 import test_csvimport
 import test_dbfs
@@ -46,6 +47,7 @@ fullsuite = [
     lt(test_animalname),
     lt(test_animal),
     lt(test_automail),
+    lt(test_checkmicrochip),
     lt(test_clinic),
     lt(test_csvimport),
     lt(test_dbfs),
@@ -77,7 +79,7 @@ fullsuite = [
 ]
 
 # Running a single suite of tests
-#fullsuite = [ lt(test_event) ]
+# fullsuite = [ lt(test_checkmicrochip) ]
 
 if __name__ == "__main__":
     base.reset_db()

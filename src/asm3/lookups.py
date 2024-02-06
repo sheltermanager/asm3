@@ -1162,7 +1162,7 @@ def get_microchip_manufacturer(l: str, chipno: str) -> str:
     if chipno is None or chipno == "": return ""
     for prefix in get_microchip_prefixes():
         if len(chipno) == prefix["length"] and re.compile(prefix["regex"]).match(chipno):
-            if prefix["locale"] == "" or l in prefix["locale"].split(" "):
+            if prefix["locales"] == "" or l in prefix["locales"].split(" "):
                 mf = prefix["name"]
                 break
     if mf is None and (len(chipno) != 9 and len(chipno) != 10 and len(chipno) != 15):

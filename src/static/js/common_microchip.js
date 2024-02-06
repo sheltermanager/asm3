@@ -43,7 +43,7 @@ const microchip = {
 
     check_site_name: function() {
         if (asm.locale == "en") { return _("Check {0}").replace("{0}", "www.aaha.org"); }
-        else if (asm.locale == "en_AU") { return _("Check {0}").replace("{0}", "car.animalrecords.com.au"); }
+        else if (asm.locale == "en_AU") { return _("Check {0}").replace("{0}", "www.petaddress.com.au"); }
         else if (asm.locale == "en_GB") { return _("Check {0}").replace("{0}", "www.checkachip.com"); }
         return "";
     },
@@ -51,40 +51,28 @@ const microchip = {
     /* Calls out to chip checking services for the user's locale so they can find out where a chip
      * is registered.
      */
-    check: function(chipnumber) {
-        // USA - use AAHA
-        if (asm.locale == "en") {
-            header.show_loading(_("Loading..."));
-            window.location = "https://www.aaha.org/your-pet/pet-microchip-lookup/microchip-search/?microchip_id=" + chipnumber + "&AllowNonAlphaNumberic=0";
+    check: async function(chipnumber) {
+        header.show_loading(_("Loading..."));
+        let data = await common.ajax_post("animal", "mode=checkchip&n=" + chipnumber);
+        let results = JSON.parse(data);
+        let h = [];
+        $.each(results.results, function(i, v) {
+            h.push('<a target="_blank" href="' + v[0] + '">' + v[1] + '</a><br>');
+        });
+        if (results.results.length == 0) {
+            h.push('<p>' + _("No results.") + '</p>');
         }
-        // AU - use car.animalrecords.com.au
-        else if (asm.locale == "en_AU") {
-            header.show_loading(_("Loading..."));
-            /*
-            // Doesn't work - CORS forbids browser retreiving petaddress.com.au page
-            // to extract viewstate values.
-            $("body").append(
-                '<form id="pa" method="post" action="http://www.petaddress.com.au/">' +
-                '<input type="hidden" name="txtNumber" value="' + chipnumber + '">' +
-                '<input type="hidden" name="_VIEWSTATE" value="' + '' + '">' +
-                '<input type="hidden" name="_VIEWSTATEGENERATOR" value="' + '' + '">' +
-                '<input type="hidden" name="_EVENTVALIDATION" value="' + '' + '">' +
-                '</form>');
-            $("#pa").submit();
-            */
-            window.location = "https://car.animalrecords.com.au/public/chip_tag_search?utf8=%E2%9C%93&chip_tag=" + chipnumber;
-        }
-        // UK - use checkachip.com
-        else if (asm.locale == "en_GB") {
-            header.show_loading(_("Loading..."));
-            $("body").append(
-                '<form id="cac" method="post" action="https://www.checkachip.com/microchipsearch/">' +
-                '<input type="hidden" name="microchip_number" value="' + chipnumber + '">' +
-                '<input type="hidden" name="are_you" value="no">' + 
-                '<input type="hidden" name="phone_number" value="">' + 
-                '</form>');
-            $("#cac").submit();
-        }
-    }
+        $("#chipcheck-number").text(chipnumber);
+        $("#chipcheck-service").html(results.name);
+        $("#chipcheck-results").html(h.join("\n"));
+        await tableform.show_okcancel_dialog("#dialog-chipcheck", _("Ok"), { hidecancel: true });
+    },
 
+    render_checkresults_dialog: function() {
+        return '<div id="dialog-chipcheck" style="display: none" title="' + html.title(_("Check Microchip")) + '">' +
+            html.info(_("{0} results for {1}")
+                .replace("{0}", '<span id="chipcheck-service"></span>')
+                .replace("{1}", '<span id="chipcheck-number"></span>')) +
+                '<p id="chipcheck-results"></p></div>';
+    }
 };

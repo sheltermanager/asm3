@@ -844,15 +844,15 @@ def web_login(post: PostedData, session: Session, remoteip: str, useragent: str,
     if user is None:
         asm3.al.error("database:%s username:%s password:%s failed authentication from %s [%s]" % (database, username, password, remoteip, useragent), "users.web_login", dbo)
         return "FAIL"
-
-    if not authenticate_ip(user, remoteip):
-        asm3.al.error("user %s from %s [%s] failed ip restriction check '%s'" % (username, remoteip, useragent, user.IPRESTRICTION), "users.web_login", dbo)
-        return "FAIL"
-
+    
     # Check if this user has been disabled from logging in
     if "DISABLELOGIN" in user and user.DISABLELOGIN == 1:
         asm3.al.error("user %s from %s [%s] failed as account has logins disabled" % (username, remoteip, useragent), "users.web_login", dbo)
         return "FAIL"
+
+    if not authenticate_ip(user, remoteip):
+        asm3.al.error("user %s from %s [%s] failed ip restriction check '%s'" % (username, remoteip, useragent, user.IPRESTRICTION), "users.web_login", dbo)
+        return "BADIP"
 
     # If the user has 2FA enabled, check it
     if "ENABLETOTP" in user and "OTPSECRET" in user and user.ENABLETOTP == 1:

@@ -62,6 +62,14 @@ const login = {
                     '</p>',
                 '</div>',
             '</div>',
+            '<div class="centered asm-login-badip" style="display: none">',
+                '<div class="ui-state-error">',
+                    '<p>',
+                        '<span class="ui-icon ui-icon-alert"></span>',
+                        _("Login not allowed from this IP address."),
+                    '</p>',
+                '</div>',
+            '</div>',
             '<div class="centered asm-bad2fa" style="display: none">',
                 '<div class="ui-state-error">',
                     '<p>',
@@ -195,7 +203,7 @@ const login = {
             data: formdata,
             success: function(data) {
                 $("#loginspinner").fadeOut();
-                if (String(data).indexOf("FAIL") != -1) {
+                if (data == "FAIL") {
                     $(".asm-login-fail").fadeIn("slow").delay(3000).fadeOut("slow");
                     $("input#username").focus();
                     $("#loginbutton").button("enable");
@@ -206,23 +214,29 @@ const login = {
                         $("#resetpassword").fadeIn();
                     }
                 }
-                else if (String(data).indexOf("DISABLED") != -1) {
+                else if (data == "BADIP") {
+                    $(".asm-login-badip").fadeIn("slow").delay(3000).fadeOut("slow");
+                    $("input#username").focus();
+                    $("#loginbutton").button("enable");
+                    $("input#password").val(""); 
+                }
+                else if (data == "DISABLED") {
                     $(".asm-login-disabled").fadeIn("slow").delay(3000).fadeOut("slow");
                     $("input#username").focus();
                     $("input#password").val(""); 
                     $("#loginbutton").button("enable");
                 }
-                else if (String(data).indexOf("WRONGSERVER") != -1) {
+                else if (data == "WRONGSERVER") {
                     // This is smcom specific - if the database is not on this
                     // server, go back to the main login screen to prompt for an account
                     window.location = controller.smcomloginurl;
                 }
-                else if (String(data).indexOf("ASK2FA") != -1) {
+                else if (data == "ASK2FA") {
                     $(".2fa").fadeIn();
                     $("input#onetimepass").focus();
                     $("#loginbutton").button("enable");
                 }
-                else if (String(data).indexOf("BAD2FA") != -1) {
+                else if (data == "BAD2FA") {
                     $(".asm-bad2fa").fadeIn("slow").delay(3000).fadeOut("slow");
                     $("input#onetimepass").focus();
                     $("#loginbutton").button("enable");
