@@ -2616,7 +2616,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
     # Only do it if this animal is a shelter animal or if the override is on to force
     # templates for non-shelter animals.
     if not post.boolean("nonshelter") or asm3.configuration.templates_for_nonshelter(dbo):
-        clone_from_template(dbo, username, nextid, datebroughtin, dob, post.integer("animaltype"), post.integer("species"))
+        clone_from_template(dbo, username, nextid, datebroughtin, dob, post.integer("animaltype"), post.integer("species"), post.boolean("nonshelter"))
 
     return (nextid, get_code(dbo, nextid))
 
@@ -3361,7 +3361,7 @@ def clone_animal(dbo: Database, username: str, animalid: int) -> int:
     update_variable_animal_data(dbo, nid)
     return nid
 
-def clone_from_template(dbo: Database, username: str, animalid: int, datebroughtin: datetime, dob: datetime, animaltypeid: int, speciesid: int) -> None:
+def clone_from_template(dbo: Database, username: str, animalid: int, datebroughtin: datetime, dob: datetime, animaltypeid: int, speciesid: int, nonshelter: int) -> None:
     """
     Tries to locate a non-shelter animal called "TemplateType" with animaltypeid,
     if it doesn't find one, it looks for a non-shelter animal called "TemplateSpecies"
@@ -3429,8 +3429,13 @@ def clone_from_template(dbo: Database, username: str, animalid: int, datebrought
         adjdate = adjdate.replace(hour=0, minute=0, second=0, microsecond=0) # throw away any time info that might have been on the original date
         if adjdate < datebroughtin: adjdate = datebroughtin
         return dbo.sql_date(adjdate)
-    # Copy the flags from the template to the new record. Do not include the non-shelter flag
+    # Copy the flags from the template to the new record. Do not copy the non-shelter flag
+    # from the template as templates generally only apply to shelter animals.
     newflags = [ x for x in copyfrom.additionalflags.split("|") if x != "nonshelter" ]
+    # If the animal we are applying the template is actually non-shelter 
+    # (can only happen if the hidden option TemplatesForNonShelter == Yes has been manually set)
+    # then we re-add the non-shelter flag.
+    if nonshelter == 1: newflags.append("nonshelter")
     update_flags(dbo, username, animalid, newflags)
     # Deal with other selected animal fields from the template
     p = {
