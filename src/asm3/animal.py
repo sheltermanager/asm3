@@ -3428,7 +3428,7 @@ def clone_from_template(dbo: Database, username: str, animalid: int, datebrought
             adjdate = add_days(newrecorddate, dayoffset)
         adjdate = adjdate.replace(hour=0, minute=0, second=0, microsecond=0) # throw away any time info that might have been on the original date
         if adjdate < datebroughtin: adjdate = datebroughtin
-        return dbo.sql_date(adjdate)
+        return adjdate
     # Copy the flags from the template to the new record. Do not copy the non-shelter flag
     # from the template as templates generally only apply to shelter animals.
     newflags = [ x for x in copyfrom.additionalflags.split("|") if x != "nonshelter" ]
