@@ -810,7 +810,7 @@ def update_session(dbo: Database, session: Session, username: str) -> None:
         session.visibleanimalids = ",".join(va)
     session.config_ts = asm3.i18n.format_date(asm3.i18n.now(), "%Y%m%d%H%M%S")
 
-def web_login(post: PostedData, session: Session, remoteip: str, useragent: str, path: str) -> str:
+def web_login(post: PostedData, session: Session, remoteip: str, useragent: str, path: str, use2fa: bool = True) -> str:
     """
     Performs a login and sets up the user's session.
     NOTE: ASM3 will no longer allow login on ASM2 databases due to update_session above calling
@@ -855,7 +855,7 @@ def web_login(post: PostedData, session: Session, remoteip: str, useragent: str,
         return "BADIP"
 
     # If the user has 2FA enabled, check it
-    if "ENABLETOTP" in user and "OTPSECRET" in user and user.ENABLETOTP == 1:
+    if use2fa and "ENABLETOTP" in user and "OTPSECRET" in user and user.ENABLETOTP == 1:
         if onetimepass == "":
             asm3.al.debug("user %s has 2FA enabled and no code has been given" % username, "users.web_login", dbo)
             return "ASK2FA"

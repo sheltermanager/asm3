@@ -1142,7 +1142,7 @@ class mobile_login(ASMEndpoint):
                 database, username, password = cred.split("|")
                 rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
                 asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "main.mobile_login")
-                user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
+                user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH, use2fa = False)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
                     self.redirect("mobile2")
                     return
@@ -1475,7 +1475,7 @@ class login(ASMEndpoint):
                 database, username, password = cred.split("|")
                 rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
                 asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "main.login")
-                user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH)
+                user = asm3.users.web_login(rpost, session, self.remote_ip(), self.user_agent(), PATH, use2fa = False)
                 if user not in ( "FAIL", "DISABLED", "WRONGSERVER" ):
                     self.redirect("main")
                     return

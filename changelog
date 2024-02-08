@@ -1,6 +1,7 @@
 48
 ================
 
+08/02/24 "remember me" token with 2FA causing redirect loop #1433
 08/02/24 Fix clone_from_template removing holds
 07/02/24 Fix clone_from_template being broken on non-postgres databases
 05/02/24 Add unified check-a-chip dialog with read-through cache #1430
