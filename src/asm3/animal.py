@@ -3441,13 +3441,15 @@ def clone_from_template(dbo: Database, username: str, animalid: int, datebrought
     p = {
         "Fee":                      copyfrom.fee,
         "CurrentVetID":             copyfrom.currentvetid,
-        "AnimalComments":           copyfrom.animalcomments,
-        "IsHold":                   copyfrom.ishold,
-        "HoldUntilDate":            adjust_date(copyfrom.holduntildate)
+        "AnimalComments":           copyfrom.animalcomments
     }
-    if copyfrom.ishold == 1 and copyfrom.holduntildate is None: 
-        # Use the hold for X days configuration option if there's no hold until date
-        p["HoldUntilDate"] = add_days(templatedate, asm3.configuration.auto_remove_hold_days(dbo))
+    if copyfrom.ishold == 1:
+        p["IsHold"] = 1
+        if copyfrom.holduntildate is not None:
+            p["HoldUntilDate"] = adjust_date(copyfrom.holduntildate)
+        else:
+            # Use the hold for X days configuration option if there's no hold until date
+            p["HoldUntilDate"] = add_days(templatedate, asm3.configuration.auto_remove_hold_days(dbo))
     dbo.update("animal", animalid, p)
     # Additional Fields (don't include newrecord ones or ones with default values as they are already set by the new animal screen)
     for af in dbo.query("SELECT a.* FROM additional a INNER JOIN additionalfield af ON af.ID = a.AdditionalFieldID " \
