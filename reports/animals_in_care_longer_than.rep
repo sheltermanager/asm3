@@ -1,0 +1,54 @@
+Animals in care longer a selected number of weeks
+###
+Figures
+###
+Any rev01
+###
+Animals in care longer than a selected number of weeks grouped by species
+###
+en
+###
+SELECT a.AnimalName, a.ShelterCode, a.id AS AID, t.AnimalType, a.DisplayLocation,
+s.SpeciesName, a.MostRecentEntryDate, a.AnimalAge, a.BreedName, a.TimeOnShelter
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+WHERE a.Archived = 0 AND DaysOnShelter / 7 > '$ASK NUMBER Minimum weeks in care$' 
+ORDER BY s.SpeciesName, a.MostRecentEntryDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Code</th>
+<th>Type</th>
+<th>Breed</th>
+<th>Age</th>
+<th>Location</th>
+<th>Entry Date</th>
+<th>Time On Shelter</th>
+</tr>
+$$FOOT
+</table>
+<h2>Total $SpeciesName: {COUNT.SpeciesName}</h2>
+GROUP$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALTYPE</td>
+<td>$BREEDNAME</td>
+<td>$ANIMALAGE</td>
+<td>$DISPLAYLOCATION</td>
+<td>$MOSTRECENTENTRYDATE</td>
+<td>$TIMEONSHELTER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
