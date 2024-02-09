@@ -177,6 +177,13 @@ DBFS_S3_MIGRATE_ACCESS_KEY_ID = get_string("dbfs_s3_migrate_access_key_id", "")
 DBFS_S3_MIGRATE_SECRET_ACCESS_KEY = get_string("dbfs_s3_migrate_secret_access_key", "")
 DBFS_S3_MIGRATE_ENDPOINT_URL = get_string("dbfs_s3_migrate_endpoint_url", "")
 
+# If a backup S3 bucket can provider is set, all files sent to the S3 service
+# above will also be sent to this one too to maintain a synchronised backup.
+DBFS_S3_BACKUP_BUCKET = get_string("dbfs_s3_backup_bucket", "")
+DBFS_S3_BACKUP_ACCESS_KEY_ID = get_string("dbfs_s3_backup_access_key_id", "")
+DBFS_S3_BACKUP_SECRET_ACCESS_KEY = get_string("dbfs_s3_backup_secret_access_key", "")
+DBFS_S3_BACKUP_ENDPOINT_URL = get_string("dbfs_s3_backup_endpoint_url", "")
+
 # The directory to use to cache elements on disk. Must already exist
 # as the application will not attempt to create it.
 DISK_CACHE = get_string("disk_cache", "/tmp/asm_disk_cache")
