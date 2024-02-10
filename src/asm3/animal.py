@@ -3436,6 +3436,8 @@ def clone_from_template(dbo: Database, username: str, animalid: int, datebrought
     # (can only happen if the hidden option TemplatesForNonShelter == Yes has been manually set)
     # then we re-add the non-shelter flag.
     if nonshelter == 1: newflags.append("nonshelter")
+    # If the option has been turned on to make new animals not for adoption, set that too
+    if asm3.configuration.auto_not_for_adoption(dbo): newflags.append("notforadoption")
     update_flags(dbo, username, animalid, newflags)
     # Deal with other selected animal fields from the template
     p = {

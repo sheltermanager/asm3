@@ -1,6 +1,7 @@
 48
 ================
 
+10/02/24 Fix clone_from_template overriding auto not for adoption option
 09/02/24 Support for backup S3 provider #1423
 08/02/24 "remember me" token with 2FA causing redirect loop #1433
 08/02/24 Fix clone_from_template removing holds
