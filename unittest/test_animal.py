@@ -195,7 +195,7 @@ class TestAnimal(unittest.TestCase):
         asm3.animal.delete_animal(base.get_dbo(), "test", nid)
 
     def test_clone_from_template(self):
-        asm3.animal.clone_from_template(base.get_dbo(), "test", self.nid, base.today(), base.today(), 1, 1)
+        asm3.animal.clone_from_template(base.get_dbo(), "test", self.nid, base.today(), base.today(), 1, 1, 0)
 
     def test_merge_animal(self):
         cid = asm3.animal.clone_animal(base.get_dbo(), "test", self.nid)
