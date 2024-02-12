@@ -44,7 +44,7 @@ $.widget("asm.animalchooser", {
             '<div class="animalchooser-find" style="display: none" title="' + html.title(_("Find animal")) + '">',
             '<input type="text" class="asm-textbox" />',
             '<button>' + _("Search") + '</button>',
-            '<img style="height: 16px" src="static/images/wait/rolling_3a87cd.svg" />',
+            '<img class="animalchooser-spinner" style="height: 16px" src="static/images/wait/rolling_3a87cd.svg" />',
             '<table width="100%">',
             '<thead>',
                 '<tr class="ui-widget-header">',
@@ -79,7 +79,7 @@ $.widget("asm.animalchooser", {
         acbuttons[_("Cancel")] = function() { $(this).dialog("close"); };
         dialog.dialog({
             autoOpen: false,
-            height: 400,
+            height: 500,
             width: 800,
             modal: true,
             dialogClass: "dialogshadow",
@@ -90,7 +90,7 @@ $.widget("asm.animalchooser", {
         dialog.find("table").table({ sticky_header: false });
         dialog.find("input").keydown(function(event) { if (event.keyCode == 13) { self.find(); return false; }});
         dialog.find("button").button().click(function() { self.find(); });
-        dialog.find("img").hide();
+        dialog.find(".animalchooser-spinner").hide();
         // Bind the find button
         node.find(".animalchooser-link-find")
             .button({ icons: { primary: "ui-icon-search" }, text: false })
@@ -166,7 +166,7 @@ $.widget("asm.animalchooser", {
     find: function() {
         var self = this;
         var dialog = this.options.dialog, node = this.options.node;
-        dialog.find("img").show();
+        dialog.find(".animalchooser-spinner").show();
         dialog.find("button").button("disable");
         var formdata = "mode=find&filter=" + encodeURIComponent(this.options.filter) + "&q=" + encodeURIComponent(dialog.find("input").val());
         $.ajax({
@@ -180,8 +180,9 @@ $.widget("asm.animalchooser", {
                 // Create the table content from the results
                 $.each(animal, function(i, a) {
                     h += "<tr>";
-                    h += "<td>" + html.animal_emblems(a, {showlocation: true}) + "</td>";
-                    h += "<td><a href=\"#\" data=\"" + i + "\">" + a.ANIMALNAME + "</a></td>";
+                    //h += "<td>" + html.animal_emblems(a, {showlocation: true}) + "</td>";
+                    h += "<td><a href=\"#\" data=\"" + i + "\">" + html.animal_thumb(a) + "</a></td>";
+                    h += "<td><a href=\"#\" data=\"" + i + "\">" + a.ANIMALNAME + "</a><br>" + html.animal_emblems(a, {showlocation: true}) + "</td>";
                     h += "<td>" + a.CODE + "</td>";
                     h += "<td>" + a.IDENTICHIPNUMBER + "</td>";
                     h += "<td>" + a.ANIMALTYPENAME + "</td>";
@@ -212,13 +213,13 @@ $.widget("asm.animalchooser", {
                 });
                 // Force the table to update itself and remove the spinner
                 dialog.find("table").trigger("update");
-                dialog.find("img").hide();
+                dialog.find(".animalchooser-spinner").hide();
                 dialog.find("button").button("enable");
             },
             error: function(jqxhr, textstatus, response) {
                 dialog.dialog("close");
                 log.error(response);
-                dialog.find("img").hide();
+                dialog.find(".animalchooser-spinner").hide();
                 dialog.find("button").button("enable");
             }
         });

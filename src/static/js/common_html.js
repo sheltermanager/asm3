@@ -151,9 +151,8 @@ const html = {
      * Renders a bare animal link thumbnail (just the thumbnail surrounded by a link to the record)
      */
     animal_link_thumb_bare: function(a) {
-        var animalid = a.ANIMALID || a.ID,
-            classes = html.animal_link_thumb_classes(a); 
-        return '<a href="animal?id=' + animalid + '"><img src=' + html.thumbnail_src(a, "animalthumb") + ' class="' + classes + '" /></a>';
+        var animalid = a.ANIMALID || a.ID;
+        return '<a href="animal?id=' + animalid + '">' + html.animal_thumb(a) + '</a>';
     },
 
     /**
@@ -162,6 +161,13 @@ const html = {
     animal_link_thumb_classes: function(a) {
         var sxc = (a.SEX == 0 ? "asm-thumbnail-female" : (a.SEX == 1 ? "asm-thumbnail-male" : ""));
         return "asm-thumbnail thumbnailshadow " + (config.bool("ShowSexBorder") ? sxc : "");
+    },
+
+    /**
+     * Renders the animal thumbnail
+     */
+    animal_thumb: function(a) {
+        return '<img src=' + html.thumbnail_src(a, "animalthumb") + ' class="' + html.animal_link_thumb_classes(a) + '" />';
     },
 
     /**
