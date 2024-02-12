@@ -50,6 +50,7 @@
 15 | ^900164              | Save This Life
 15 | ^900182              | Petlog
 15 | ^900141              | SmartTag
+15 | ^900235              | Fi Nano  
 15 | ^90026               | 4D Technology/Petsafe
 15 | ^900"                | BCDS
 15 | ^9010202             | Absonutrix Sale Thailand | en_TH
