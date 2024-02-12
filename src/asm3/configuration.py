@@ -383,6 +383,7 @@ DEFAULTS = {
         "HomeTelephone,EmailAddress,DatePutOnList,TimeOnList," \
         "DateRemovedFromList,Urgency,SpeciesID,Size,AnimalDescription",
     "WaitingListDefaultUrgency": "3",
+    "WaitingListDefaultRemovalWeeks": "0",
     "WaitingListUrgencyUpdatePeriod": "14",
     "WaitingListUseMultipleHighlights": "No",
     "WarnACTypeChange": "Yes",
@@ -1668,6 +1669,9 @@ def vetenvoy_akcreunite_enabled(dbo: Database) -> bool:
 
 def waiting_list_default_urgency(dbo: Database) -> int:
     return cint(dbo, "WaitingListDefaultUrgency", DEFAULTS["WaitingListDefaultUrgency"])
+
+def waiting_list_default_removal_weeks(dbo: Database) -> int:
+    return cint(dbo, "WaitingListDefaultRemovalWeeks", DEFAULTS["WaitingListDefaultRemovalWeeks"])
 
 def waiting_list_rank_by_species(dbo: Database) -> bool:
     return cboolean(dbo, "WaitingListRankBySpecies")

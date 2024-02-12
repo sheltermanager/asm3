@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-02-05 10:46+0000\n"
+"POT-Creation-Date: 2024-02-12 10:36+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3953,6 +3953,10 @@ msgstr ""
 
 #: media.js
 msgid "Default image for this record and the web"
+msgstr ""
+
+#: options.js
+msgid "Default removal after weeks without contact"
 msgstr ""
 
 #: options.js
@@ -12095,6 +12099,10 @@ msgstr ""
 
 #: waitinglist.js
 msgid "Set this to 0 to never automatically remove."
+msgstr ""
+
+#: options.js
+msgid "Set to 0 to never auto remove."
 msgstr ""
 
 #: options.js

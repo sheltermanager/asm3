@@ -1,4 +1,4 @@
-/*global $, _, common, asm, config, header */
+/*global $, _, common, asm, config, header, html, tableform */
 /*global microchip: true */
 
 "use strict";

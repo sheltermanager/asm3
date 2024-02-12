@@ -345,7 +345,7 @@ def insert_waitinglist_from_form(dbo: Database, post: PostedData, username: str)
         "CanAffordDonation":        post.boolean("canafforddonation"),
         "Urgency":                  post.integer("urgency"),
         "DateRemovedFromList":      post.date("dateremoved"),
-        "AutoRemovePolicy":         post.integer("autoremovepolicy"),
+        "AutoRemovePolicy":         asm3.configuration.waiting_list_default_removal_weeks(dbo),
         "DateOfLastOwnerContact":   post.date("dateoflastownercontact"),
         "ReasonForRemoval":         post["reasonforremoval"],
         "Comments":                 post["comments"],
