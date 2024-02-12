@@ -118,8 +118,8 @@ chipprefixes:
 	cd chipprefix && ./update_www.sh
 	cd chipprefix && ./update_prefixes_all_db_hosts.sh
 
-reports:
-	@echo "[reports] ========================="
+smcomreports:
+	@echo "[smcomreports] ========================="
 	cd reports && ./update_www.sh
 	cd reports && ./update_reports_all_db_hosts.sh
 

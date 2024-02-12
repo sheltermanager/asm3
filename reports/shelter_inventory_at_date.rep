@@ -2,16 +2,17 @@ Shelter Inventory at Date
 ###
 Inventories
 ###
-Any rev06
+34083/Any rev07
 ###
 Historical animal inventory for any date.
 ###
 en
 ###
 $VAR thedate DATE Inventory at date$
-SELECT 
-ShelterCode, 
-IdentichipNumber, 
+SELECT
+animal.ID AS AID,
+ShelterCode,
+IdentichipNumber,
 AnimalName,
 entryreason.ReasonName,
 TimeOnShelter,
@@ -19,24 +20,30 @@ animaltype.AnimalType,
 species.SpeciesName,
 BreedName,
 AnimalAge, AgeGroup,
-CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = animal.ID AND MovementType = 2 AND MovementDate <= '$@thedate$' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$'))
-THEN 'Foster' ELSE internallocation.LocationName END AS LocationName,
+CASE
+WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = animal.ID AND MovementType = 2 AND MovementDate <= '$@thedate$' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$')) THEN 'Foster'
+WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = animal.ID AND MovementType = 1 AND IsTrial = 1 AND MovementDate <= '$@thedate$' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$')) THEN 'Trial Adoption'
+WHEN animallocation.ToLocationID IS NOT NULL THEN internallocation.LocationName || ' ' || animallocation.ToUnit 
+ELSE 
+(SELECT LocationName FROM internallocation WHERE ID = animal.ShelterLocation) || ' ' || animal.ShelterLocationUnit
+END AS LocationName,
 lksmovementtype.MovementType AS LatestMovement,
 animal.ActiveMovementDate AS DateLeftShelter,
 owner.OwnerName
-FROM animal 
+FROM animal
+LEFT OUTER JOIN animallocation ON animallocation.ID = (SELECT MAX(ID) FROM animallocation WHERE AnimalID = animal.ID AND animallocation.Date <= '$@thedate$')
 LEFT OUTER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
 LEFT OUTER JOIN entryreason ON animal.EntryReasonID = entryreason.ID
 LEFT OUTER JOIN species ON species.ID = animal.SpeciesID
-LEFT OUTER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
+LEFT OUTER JOIN internallocation ON internallocation.ID = animallocation.ToLocationID
 LEFT OUTER JOIN lksmovementtype ON lksmovementtype.ID = animal.ActiveMovementType
 LEFT OUTER JOIN adoption ON adoption.ID = animal.ActiveMovementID
 LEFT OUTER JOIN owner ON owner.ID = adoption.OwnerID
 WHERE
 NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@thedate$ 23:59:59' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
 AND DateBroughtIn <= '$@thedate$ 23:59:59'
-AND NonShelterAnimal = 0 
-AND (DeceasedDate Is Null OR DeceasedDate > '$@thedate$ 23:59:59') 
+AND NonShelterAnimal = 0
+AND (DeceasedDate Is Null OR DeceasedDate > '$@thedate$ 23:59:59')
 ORDER BY LocationName, SpeciesName
 ###
 $$HEADER
@@ -72,7 +79,7 @@ GROUP$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$IDENTICHIPNUMBER</td>
 <td>$ANIMALTYPE</td>
 <td>$BREEDNAME</td>
@@ -88,179 +95,3 @@ BODY$$
 $$FOOTER
 <h2>Total Animals: {COUNT.LocationName}</h2>
 FOOTER$$
-&&&
-Shelter Inventory at Date (Include trial adoptions)
-###
-Inventories
-###
-3200/Any rev07
-###
-Historical animal inventory for any date. Treats trial adoptions as still on the shelter.
-###
-en
-###
-$VAR thedate DATE Inventory at date$
-SELECT 
-ShelterCode, 
-AnimalName,
-entryreason.ReasonName,
-TimeOnShelter,
-animaltype.AnimalType,
-species.SpeciesName,
-BreedName,
-AnimalAge, AgeGroup,
-CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = animal.ID AND MovementType = 2 AND MovementDate <= '$@thedate$' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$'))
-THEN 'Foster' 
-WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = animal.ID AND MovementType = 1 AND IsTrial = 1 AND MovementDate <= '$@thedate$' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$'))
-THEN 'Trial Adoption'
-ELSE internallocation.LocationName END AS LocationName,
-lksmovementtype.MovementType AS LatestMovement,
-animal.ActiveMovementDate AS DateLeftShelter,
-owner.OwnerName
-FROM animal 
-LEFT OUTER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
-LEFT OUTER JOIN entryreason ON animal.EntryReasonID = entryreason.ID
-LEFT OUTER JOIN species ON species.ID = animal.SpeciesID
-LEFT OUTER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
-LEFT OUTER JOIN lksmovementtype ON lksmovementtype.ID = animal.ActiveMovementType
-LEFT OUTER JOIN adoption ON adoption.ID = animal.ActiveMovementID
-LEFT OUTER JOIN owner ON owner.ID = adoption.OwnerID
-WHERE
-NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@thedate$ 23:59:59' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID AND IsTrial=0)
-AND DateBroughtIn <= '$@thedate$ 23:59:59'
-AND NonShelterAnimal = 0 
-AND (DeceasedDate Is Null OR DeceasedDate > '$@thedate$ 23:59:59') 
-ORDER BY LocationName, SpeciesName
-###
-$$HEADER
-HEADER$$
-
-$$GROUP_LocationName
-$$HEAD
-<h2>$LOCATIONNAME</h2>
-$$FOOT
-<p>Total $LOCATIONNAME: {COUNT.LocationName}</p>
-GROUP$$
-
-$$GROUP_SpeciesName
-$$HEAD
-<h2>$SPECIESNAME</h2>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Age</b></td>
-<td><b>Entry</b></td>
-<td><b>Time On Shelter</b></td>
-<td><b>Last Movement</b></td>
-<td><b>Left Shelter</b></td>
-<td><b>To</b></td>
-</tr>
-$$FOOT
-</table>
-<p>Total $SPECIESNAME: {COUNT.SpeciesName}</p>
-GROUP$$
-
-$$BODY<tr>
-<td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
-<td>$ANIMALTYPE</td>
-<td>$BREEDNAME</td>
-<td>$ANIMALAGE ($AGEGROUP)</td>
-<td>$REASONNAME</td>
-<td>$TIMEONSHELTER</td>
-<td>$LATESTMOVEMENT</td>
-<td>$DATELEFTSHELTER</td>
-<td>$OWNERNAME</td>
-</tr>
-BODY$$
-
-$$FOOTER
-<h2>Total Animals: {COUNT.LocationName}</h2>
-FOOTER$$
-&&&
-Shelter Inventory at Date by Species
-###
-Inventories
-###
-Any rev03
-###
-Historical animal inventory for any date by species
-###
-en
-###
-$VAR thedate DATE Inventory at date$
-SELECT 
-ShelterCode, 
-IdentichipNumber, 
-AnimalName,
-entryreason.ReasonName,
-TimeOnShelter,
-animaltype.AnimalType,
-species.SpeciesName,
-BreedName,
-AnimalAge, AgeGroup,
-CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = animal.ID AND MovementType = 2 AND MovementDate <= '$@thedate$' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$'))
-THEN 'Foster' ELSE internallocation.LocationName END AS LocationName,
-lksmovementtype.MovementType AS LatestMovement,
-animal.ActiveMovementDate AS DateLeftShelter,
-owner.OwnerName
-FROM animal 
-LEFT OUTER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
-LEFT OUTER JOIN entryreason ON animal.EntryReasonID = entryreason.ID
-LEFT OUTER JOIN species ON species.ID = animal.SpeciesID
-LEFT OUTER JOIN internallocation ON internallocation.ID = animal.ShelterLocation
-LEFT OUTER JOIN lksmovementtype ON lksmovementtype.ID = animal.ActiveMovementType
-LEFT OUTER JOIN adoption ON adoption.ID = animal.ActiveMovementID
-LEFT OUTER JOIN owner ON owner.ID = adoption.OwnerID
-WHERE
-NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@thedate$ 23:59:59' AND (ReturnDate Is Null OR ReturnDate > '$@thedate$') AND MovementType NOT IN (2,8) AND AnimalID = animal.ID)
-AND DateBroughtIn <= '$@thedate$ 23:59:59'
-AND NonShelterAnimal = 0 
-AND (DeceasedDate Is Null OR DeceasedDate > '$@thedate$ 23:59:59') 
-ORDER BY SpeciesName
-###
-$$HEADER
-HEADER$$
-
-$$GROUP_SpeciesName
-$$HEAD
-<h2>$SPECIESNAME</h2>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Microchip</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Age</b></td>
-<td><b>Entry</b></td>
-<td><b>Time On Shelter</b></td>
-<td><b>Last Movement</b></td>
-<td><b>Left Shelter</b></td>
-<td><b>To</b></td>
-</tr>
-$$FOOT
-</table>
-<h2>Total $SPECIESNAME: {COUNT.SpeciesName}</h2>
-GROUP$$
-
-$$BODY<tr>
-<td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
-<td>$IDENTICHIPNUMBER</td>
-<td>$ANIMALTYPE</td>
-<td>$BREEDNAME</td>
-<td>$ANIMALAGE ($AGEGROUP)</td>
-<td>$REASONNAME</td>
-<td>$TIMEONSHELTER</td>
-<td>$LATESTMOVEMENT</td>
-<td>$DATELEFTSHELTER</td>
-<td>$OWNERNAME</td>
-</tr>
-BODY$$
-
-$$FOOTER
-<h2>Total Animals: {COUNT.LocationName}</h2>
-FOOTER$$
-
