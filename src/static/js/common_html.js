@@ -152,7 +152,7 @@ const html = {
      */
     animal_link_thumb_bare: function(a) {
         var animalid = a.ANIMALID || a.ID;
-        return '<a href="animal?id=' + animalid + '">' + html.animal_thumb(a) + '</a>';
+        return '<a href="animal?id=' + animalid + '">' + html.animal_thumb(a, {}) + '</a>';
     },
 
     /**
