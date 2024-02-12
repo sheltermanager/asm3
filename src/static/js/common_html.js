@@ -967,6 +967,14 @@ const html = {
         return h.join("\n");
     },
 
+    /**
+     * Swap line breaks \n for <br> tags
+     */
+    lf_to_br: function(s) {
+        if (!s) { return ""; }
+        return String(s).replace(/\n/g, "<br />");
+    },
+
     data_url_to_array_buffer: function(url) {
         var bytestring = window.atob(url.split(",")[1]);
         var bytes = new Uint8Array(bytestring.length);

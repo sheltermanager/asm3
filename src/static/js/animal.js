@@ -871,7 +871,7 @@ $(function() {
                 '</div>',
                 '<div id="emailform"></div>',
                 '<div id="dialog-popupwarning" style="display: none" title="' + html.title(_("Warning")) + '">',
-                '<p>' + html.error(common.nulltostr(controller.animal.POPUPWARNING).replace(/\n/g, "<br />")) + '</p>',
+                '<p>' + html.error(html.lf_to_br(controller.animal.POPUPWARNING)) + '</p>',
                 '</div>',
                 '<div id="dialog-merge" style="display: none" title="' + html.title(_("Select animal to merge")) + '">',
                 '<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em">',
