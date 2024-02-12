@@ -181,7 +181,7 @@ $.widget("asm.animalchooser", {
                 $.each(animal, function(i, a) {
                     h += "<tr>";
                     //h += "<td>" + html.animal_emblems(a, {showlocation: true}) + "</td>";
-                    h += "<td><a href=\"#\" data=\"" + i + "\">" + html.animal_thumb(a) + "</a></td>";
+                    h += "<td><a href=\"#\" data=\"" + i + "\">" + html.animal_thumb(a, { style: "cursor: pointer;" }) + "</a></td>";
                     h += "<td><a href=\"#\" data=\"" + i + "\">" + a.ANIMALNAME + "</a><br>" + html.animal_emblems(a, {showlocation: true}) + "</td>";
                     h += "<td>" + a.CODE + "</td>";
                     h += "<td>" + a.IDENTICHIPNUMBER + "</td>";

@@ -164,10 +164,13 @@ const html = {
     },
 
     /**
-     * Renders the animal thumbnail
+     * Renders the animal thumbnail.
+     * o: options object, style to set a style attribute for the img.
      */
-    animal_thumb: function(a) {
-        return '<img src=' + html.thumbnail_src(a, "animalthumb") + ' class="' + html.animal_link_thumb_classes(a) + '" />';
+    animal_thumb: function(a, o) {
+        let style = "";
+        if (o.style) { style = 'style="' + o.style + '"'; }
+        return '<img ' + style + ' src=' + html.thumbnail_src(a, "animalthumb") + ' class="' + html.animal_link_thumb_classes(a) + '" />';
     },
 
     /**
