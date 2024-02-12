@@ -63,8 +63,6 @@
 15 | ^945                 | BCDS
 15 | ^952                 | M4S ID
 15 | ^953010002           | Back Home | en_AU
-15 | ^953010006           | Central Animal Records | en_AU
-15 | ^95301               | Australasian Animal Registry | en_AU
 15 | ^953                 | Virbac | en_AU en_NZ
 15 | ^953                 | PetLog | en_GB
 15 | ^955                 | Biolog-ID
