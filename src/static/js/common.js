@@ -597,7 +597,8 @@ const common = {
                 "&msg=" + encodeURIComponent(msg) + 
                 "&stack=" + encodeURIComponent(String(e.stack))
             );
-            alert(msg + "\n" + e.stack);
+            // If user clicks OK, reloads /main to apply any database updates, reload config.js, etc.
+            if (confirm(msg + "\n" + e.stack)) { window.location = "main"; }
         };
 
         // do we already have one running? If so, try to unload it first

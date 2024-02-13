@@ -1847,7 +1847,6 @@ $(function() {
 
             // If a popup warning has been set, display it
             animal.show_popup_warning();
-
         },
 
         destroy: function() {
