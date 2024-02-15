@@ -37,11 +37,11 @@ There were some file encoding errors, that I corrected with vim by using :set fi
 
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/barrk_rh2756"
+PATH = "/home/robin/tmp/asm3_import_data/barrk_sm3142"
 
 DEFAULT_BREED = 442 # default to mixed breed
 START_ID = 100
-FETCH_MEDIA = False
+FETCH_MEDIA = True
 
 animals = []
 animalmedicals = []
@@ -267,16 +267,14 @@ if asm.file_exists("%s/vet_visits.csv" % PATH):
 
 if FETCH_MEDIA and asm.file_exists("%s/documents.csv" % PATH):
     for d in asm.csv_to_list("%s/documents.csv" % PATH):
-        if d["attachment_type"] == "Animal":
+        if d["attachment_type"] == "Animal" and d["attachment_id"] in ppa:
             a = ppa[d["attachment_id"]]
-            if a is None: continue
             url = d["url"]
             filename = url[url.rfind("/")+1:]
             data = asm.load_file_from_url(url)
             asm.media_file(0, a.ID, filename, data)
-        elif d["attachment_type"] == "Person":
+        elif d["attachment_type"] == "Person" and d["attachment_id"] in ppo:
             o = ppo[d["attachment_id"]]
-            if o is None: continue
             url = d["url"]
             filename = url[url.rfind("/")+1:]
             data = asm.load_file_from_url(url)
