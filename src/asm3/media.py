@@ -8,7 +8,7 @@ import asm3.log
 import asm3.utils
 from asm3.i18n import _
 from asm3.sitedefs import RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SCALE_PDF_DURING_ATTACH, SCALE_PDF_CMD, SERVICE_URL, WATERMARK_FONT_BASEDIRECTORY
-from asm3.typehints import Database, PostedData, ResultRow, Results, Tuple
+from asm3.typehints import Database, Dict, PostedData, ResultRow, Results, Tuple
 
 from datetime import datetime
 import os
@@ -690,6 +690,19 @@ def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate:
     if m.SIGNATUREHASH:
         asm3.al.error("document %s has already been signed" % mid, "media.sign_document", dbo)
         raise asm3.utils.ASMValidationError("Document is already signed")
+    try:
+        # Verify that sigurl contains valid base64 data
+        b64data = sigurl[sigurl.find(",")+1:]
+        imgdata = asm3.utils.base64decode(b64data)
+        # Verify that the data is a valid image and contains fewer
+        # white pixels than a set amount
+        whitepx, totalpx = image_pixel_count_white(imgdata)
+        if totalpx - whitepx < 1200:
+            asm3.al.error(f"white pixels={whitepx}, total={totalpx}: difference < 1200", "media.sign_document", dbo)
+            raise Exception("White pixel ratio too high")
+    except Exception as err:
+        asm3.al.error("signature data is not valid: %s" % err, "media.sign_document", dbo)
+        raise asm3.utils.ASMValidationError("Signature data is not valid")
     # Does the document have a signing placeholder image? If so, replace it
     content = asm3.utils.bytes2str(asm3.dbfs.get_string_id(dbo, m.DBFSID))
     if content.find(SIG_PLACEHOLDER) != -1:
@@ -845,6 +858,37 @@ def watermark_media(dbo: Database, username: str, mid: int) -> None:
     update_file_content(dbo, username, mid, imagedata)
     asm3.audit.edit(dbo, username, "media", mid, "", "media id %d watermarked" % (mid))    
 
+def image_pixel_count_colours(imagedata: bytes) -> Tuple[int, Dict]:
+    """
+    Counts the different coloured pixels in the image represented by imagedata.
+    Returns a Tuple of total pixels, followed by a dict of RGB values and their counts within the image.
+    """
+    file_data = asm3.utils.bytesio(imagedata)
+    im = Image.open(file_data)
+    cc = {}
+    width, height = im.size
+    rgb_image = im.convert('RGB')
+    # iterate through each pixel in the image and keep a count per unique color
+    for x in range(width):
+        for y in range(height):
+            rgb = rgb_image.getpixel((x, y))
+            if rgb in cc:
+                cc[rgb] += 1
+            else:
+                cc[rgb] = 1
+    return (width * height, cc)
+
+def image_pixel_count_white(imagedata: bytes) -> Tuple[int, int]:
+    """
+    Counts the number of white pixels in imagedata.
+    Returns a tuple of white pixels vs total pixels.
+    """
+    totalpixels, cc = image_pixel_count_colours(imagedata)
+    for k, v in cc.items():
+        if k == (255, 255, 255):
+            return (v, totalpixels)
+    return (0, totalpixels)
+
 def scale_image(imagedata: bytes, resizespec: str) -> bytes:
     """
     Produce a scaled version of an image. 
@@ -885,7 +929,7 @@ def verify_image(imagedata: bytes) -> bool:
     except Exception as err:
         asm3.al.error("failed verifying image: %s" % str(err), "media.verify_image")
         return False
-
+    
 def auto_rotate_image(dbo: Database, imagedata: bytes) -> bytes:
     """
     Automatically rotate an image according to the orientation of the
