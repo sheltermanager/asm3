@@ -1663,6 +1663,8 @@ def load_file_from_url(url, cache=True):
     so that repeated calls do not go back to the origin.
     """
     try:
+        if url.startswith("//"): 
+            url = "https:%s" % url
         sys.stderr.write("GET %s\n" % url)
         if not os.path.exists("/tmp/import_cache"):
             os.mkdir("/tmp/import_cache")
