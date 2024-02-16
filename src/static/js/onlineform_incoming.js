@@ -111,7 +111,7 @@ $(function() {
                     '<li id="button-attachanimalbyname" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("animal-find") + ' ' + _("Animal (via animalname field)") + '</a></li>',
                     '<li id="button-attachanimalnomedia" class="asm-menu-item"><a '
-                        + '" href="#">' + html.icon("animal-find") + ' ' + _("Animal (via animalname, no media)") + '</a></li>',
+                        + '" href="#">' + html.icon("animal-find") + ' ' + _("Animal (via animalname field, no media)") + '</a></li>',
                 '</ul>',
                 '</div>',
                 '<div id="button-create-body" class="asm-menu-body">',
