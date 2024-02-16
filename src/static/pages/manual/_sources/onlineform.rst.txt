@@ -192,6 +192,10 @@ data, or explicitly attach the form to existing records.
   based on the animalname field in the form itself. If the animal is bonded,
   attaches to the bonded animals too.
 
+* Attach Animal (via animalname, no media): Works the same as the option
+  above, but if form contains images or documents that the submitter has uploaded, 
+  they will not be added to the media tab of the animal.
+
 * Create Animal: Searches for an animal record matching the code field on the 
   form if present. If a match is found, the form is attached to that animal,
   otherwise a new animal record is created. While you can use the Species
@@ -199,6 +203,15 @@ data, or explicitly attach the form to existing records.
   use your own lookup lists containing subsets of these items for users
   to choose from. When creating animals, the animalname and one of dateofbirth
   or age are mandatory.
+
+* Create Animal (non-shelter with owner): Performs a create animal as described
+  above. This version assumes that the fields are present to create a person
+  as well, and links that person to the animal as its owner, setting the non-shelter
+  flag on the new animal.
+
+* Create Animal (with brought in person): Performs a create animal as described
+  above. This version assumes that the fields are present to create a person
+  as well, and links that person to the new animal in the "Brought In By" field.
 
 * Create Person: Searches for a person record matching either the email address
   if present, or the firstname, lastname and address fields on the form. If a
