@@ -695,7 +695,10 @@ def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate:
         b64data = sigurl[sigurl.find(",")+1:]
         imgdata = asm3.utils.base64decode(b64data)
         # Verify that the data is a valid image and contains fewer
-        # white pixels than a set amount
+        # white pixels than a set amount.
+        # The normal sized image is 10000 total pixes and the guide line is about 900px
+        # We require at least 300 pixels to have been drawn on to qualify as a signature
+        # as this is one drawn line of less than about an inch on screen.
         whitepx, totalpx = image_pixel_count_white(imgdata)
         if totalpx - whitepx < 1200:
             asm3.al.error(f"white pixels={whitepx}, total={totalpx}: difference < 1200", "media.sign_document", dbo)
