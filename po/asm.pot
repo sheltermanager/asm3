@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-02-12 10:36+0000\n"
+"POT-Creation-Date: 2024-02-16 09:41+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1416,6 +1416,10 @@ msgstr ""
 
 #: move_deceased.js
 msgid "Animal '{0}' successfully marked deceased."
+msgstr ""
+
+#: onlineform_incoming.js
+msgid "Animal (non-shelter with owner)"
 msgstr ""
 
 #: licence.js licence_renewal.js donation_receive.js vouchers.js
@@ -3473,6 +3477,10 @@ msgstr ""
 
 #: onlineforms.js
 msgid "Create animal and person (link via brought in)"
+msgstr ""
+
+#: onlineforms.js
+msgid "Create animal and person (non-shelter with owner)"
 msgstr ""
 
 #: options.js

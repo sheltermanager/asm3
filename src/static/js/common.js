@@ -1,5 +1,5 @@
 /*global $, console, performance, jQuery, FileReader, Mousetrap, Path */
-/*global alert, atob, btoa, header, _, escape, unescape, navigator */
+/*global alert, atob, btoa, confirm, header, _, escape, unescape, navigator */
 /*global asm, schema, validate */
 /*global consts: true, common: true, config: true, controller: true, dlgfx: true, format: true, log: true */
 

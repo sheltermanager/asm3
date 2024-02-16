@@ -116,6 +116,8 @@ $(function() {
                 '<ul class="asm-menu-list">',
                     '<li id="button-animal" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("animal-add") + ' ' + _("Animal") + '</a></li>',
+                    '<li id="button-animalnonshelter" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("animal-add") + ' ' + _("Animal (non-shelter with owner)") + '</a></li>',
                     '<li id="button-animalbroughtin" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("animal-add") + ' ' + _("Animal (with brought in person)") + '</a></li>',
                     '<li id="button-person" class="asm-menu-item"><a '
@@ -154,6 +156,9 @@ $(function() {
             });
             $("#button-animalbroughtin").click(function() {
                 onlineform_incoming.create_record("animalbroughtin", "animal");
+            });
+            $("#button-animalnonshelter").click(function() {
+                onlineform_incoming.create_record("animalnonshelter", "animal");
             });
             $("#button-person").click(function() {
                 onlineform_incoming.create_record("person", "person");

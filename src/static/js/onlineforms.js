@@ -18,6 +18,7 @@ $(function() {
             { ID: 9, NAME: _("Attach animal then create person") },
             { ID: 2, NAME: _("Create animal") },
             { ID: 10, NAME: _("Create animal and person (link via brought in)") },
+            { ID: 11, NAME: _("Create animal and person (non-shelter with owner)") },
             { ID: 3, NAME: _("Create person") },
             { ID: 4, NAME: _("Create lost animal") },
             { ID: 5, NAME: _("Create found animal") },

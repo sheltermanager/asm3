@@ -5421,6 +5421,18 @@ class onlineform_incoming(JSONEndpoint):
             rv.append("%d|%d|%s|%s" % (collationid, animalid, animalname, status))
             if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
         return "^$".join(rv)
+    
+    def post_animalnonshelter(self, o):
+        self.check(asm3.users.ADD_ANIMAL)
+        self.check(asm3.users.ADD_PERSON)
+        user = "form/%s" % o.user
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, personid, personname, status = asm3.onlineform.create_person(o.dbo, user, pid)
+            collationid, animalid, animalname, status = asm3.onlineform.create_animal(o.dbo, user, pid, nsowner=personid)
+            rv.append("%d|%d|%s|%s" % (collationid, animalid, animalname, status))
+            if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, user, collationid)
+        return "^$".join(rv)
 
     def post_person(self, o):
         self.check(asm3.users.ADD_PERSON)

@@ -1,6 +1,7 @@
 48
 ================
 
+16/02/24 Create->Animal (non-shelter with owner) form option #1131
 12/02/24 Waiting list: option to set default removal in weeks #1416
 12/02/24 Show a thumbnail in the animal chooser dialog
 10/02/24 Fix clone_from_template overriding auto not for adoption option

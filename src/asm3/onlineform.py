@@ -80,6 +80,7 @@ AP_CREATETRANSPORT = 7
 AP_CREATEWAITINGLIST = 8
 AP_ATTACHANIMAL_CREATEPERSON = 9 
 AP_CREATEANIMAL_BROUGHTIN = 10
+AP_CREATEANIMAL_NONSHELTER = 11
 
 # The name of an extra checkbox inserted to trap spambots
 SPAMBOT_CB = 'termsscb'
@@ -1100,6 +1101,9 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         elif formdef.autoprocess == AP_CREATEANIMAL_BROUGHTIN:
             collationid, personid, personname, status = create_person(dbo, "autoprocess", collationid)
             create_animal(dbo, "autoprocess", collationid, broughtinby=personid)
+        elif formdef.autoprocess == AP_CREATEANIMAL_NONSHELTER:
+            collationid, personid, personname, status = create_person(dbo, "autoprocess", collationid)
+            create_animal(dbo, "autoprocess", collationid, nsowner=personid)
         elif formdef.autoprocess == AP_CREATELOSTANIMAL:
             create_lostanimal(dbo, "autoprocess", collationid)
         elif formdef.autoprocess == AP_CREATEFOUNDANIMAL:
@@ -1307,10 +1311,11 @@ def attach_person(dbo: Database, username: str, personid: int, collationid: int)
     """
     asm3.onlineform.attach_form(dbo, username, asm3.media.PERSON, personid, collationid)
 
-def create_animal(dbo: Database, username: str, collationid: int, broughtinby: int = 0) -> Tuple[int, int, str, int]:
+def create_animal(dbo: Database, username: str, collationid: int, broughtinby: int = 0, nsowner: int = 0) -> Tuple[int, int, str, int]:
     """
     Creates an animal record from the incoming form data with collationid.
     If broughtinby is specified, sets this as the broughtinbyownerid on the animal record.
+    If nsowner is specified, sets this as the ownerid and originalownerid on the record and makes it nonshelter.
     Also, attaches the form to the animal as media.
     The return value is a tuple of collationid, animalid, sheltercode - animalname, status
     status is 0 for created, 1 for updated existing
@@ -1322,6 +1327,9 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
     fields = get_onlineformincoming_detail(dbo, collationid)
     # formreceived = asm3.i18n.python2display(l, dbo.now())
     d = { "estimatedage": "", "dateofbirth": "", "broughtinby": str(broughtinby) }
+    if nsowner != 0:
+        d["nonshelter"] = "on"
+        d["nsowner"] = str(nsowner)
     for f in fields:
         if f.FIELDNAME == "animalname": d["animalname"] = truncs(f.VALUE)
         if f.FIELDNAME == "code": 
