@@ -1093,8 +1093,10 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
         elif formdef.autoprocess == AP_ATTACHANIMAL_CREATEPERSON:
             try:
                 # If we fail to attach the animal (eg: because one wasn't specified)
-                # we still need to continue and create the person
-                attach_animalbyname(dbo, "autoprocess", collationid)
+                # we still need to continue and create the person.
+                # Assume if we are attaching to an animal while creating a person that
+                # media in the form is for the person.
+                attach_animalbyname(dbo, "autoprocess", collationid, attachmedia=False)
             except asm3.utils.ASMValidationError as aterr:
                 asm3.al.error("%s" % aterr.getMsg(), "autoprocess", dbo)
             create_person(dbo, "autoprocess", collationid)
@@ -1220,10 +1222,11 @@ def truncs(s: str) -> str:
     """ Truncates a string for inserting to short text columns """
     return asm3.utils.truncate(s, 1024)
 
-def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collationid: int) -> None:
+def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collationid: int, attachmedia: bool = True) -> None:
     """
-    Attaches the incoming form to the media tab. Finds any images in the form
-    and attaches those as images in the media tab of linktype/linkid.
+    Attaches the incoming form to the media tab. 
+    attachmedia: if True, finds any images in the form and attaches 
+                 those as images in the media tab of linktype/linkid.
     """
     l = dbo.locale
     fo = dbo.first_row(dbo.query("SELECT * FROM onlineformincoming WHERE CollationID=? %s" % dbo.sql_limit(1), [collationid]))
@@ -1259,20 +1262,21 @@ def attach_form(dbo: Database, username: str, linktype: int, linkid: int, collat
         dtstr = "%s %s" % (asm3.i18n.python2display(l, dbo.now()), asm3.i18n.format_time(dbo.now()))
         asm3.media.sign_document(dbo, username, mid, "", \
             asm3.i18n._("Processed by {0} on {1}", l).format(username, dtstr), "onlineform")
-    fields = get_onlineformincoming_detail(dbo, collationid)
-    for f in fields:
-        if f.VALUE.startswith("data:image/jpeg"):
-            d = {
-                "retainfor":    str(retainfor),
-                "filename":     "image.jpg",
-                "filetype":     "image/jpeg",
-                "filedata":     f.VALUE
-            }
-            if linktype == 0:
-                d["excludefrompublish"] = "1" # auto exclude images for animals to prevent them going to adoption websites
-            asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.utils.PostedData(d, dbo.locale))
+    if attachmedia:
+        fields = get_onlineformincoming_detail(dbo, collationid)
+        for f in fields:
+            if f.VALUE.startswith("data:image/jpeg"):
+                d = {
+                    "retainfor":    str(retainfor),
+                    "filename":     "image.jpg",
+                    "filetype":     "image/jpeg",
+                    "filedata":     f.VALUE
+                }
+                if linktype == 0:
+                    d["excludefrompublish"] = "1" # auto exclude images for animals to prevent them going to adoption websites
+                asm3.media.attach_file_from_form(dbo, username, linktype, linkid, asm3.utils.PostedData(d, dbo.locale))
 
-def attach_animalbyname(dbo: Database, username: str, collationid: int) -> Tuple[int, int, str]:
+def attach_animalbyname(dbo: Database, username: str, collationid: int, attachmedia: bool = True) -> Tuple[int, int, str]:
     """
     Finds the existing shelter animal with "animalname" and
     attaches the form to it as animal asm3.media.
@@ -1295,7 +1299,7 @@ def attach_animalbyname(dbo: Database, username: str, collationid: int) -> Tuple
     if animalid == 0:
         raise asm3.utils.ASMValidationError(asm3.i18n._("Could not find animal with name '{0}'", l).format(animalname))
     for aid in asm3.animal.get_animal_id_and_bonds(dbo, animalid):
-        attach_form(dbo, username, asm3.media.ANIMAL, aid, collationid)
+        attach_form(dbo, username, asm3.media.ANIMAL, aid, collationid, attachmedia=attachmedia)
     return (collationid, animalid, asm3.animal.get_animal_namecode(dbo, animalid))
 
 def attach_animal(dbo: Database, username: str, animalid: int, collationid: int) -> None:

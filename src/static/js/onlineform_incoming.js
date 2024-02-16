@@ -110,6 +110,8 @@ $(function() {
                         + '" href="#">' + html.icon("animal-find") + ' ' + _("Animal") + '</a></li>',
                     '<li id="button-attachanimalbyname" class="asm-menu-item"><a '
                         + '" href="#">' + html.icon("animal-find") + ' ' + _("Animal (via animalname field)") + '</a></li>',
+                    '<li id="button-attachanimalnomedia" class="asm-menu-item"><a '
+                        + '" href="#">' + html.icon("animal-find") + ' ' + _("Animal (via animalname, no media)") + '</a></li>',
                 '</ul>',
                 '</div>',
                 '<div id="button-create-body" class="asm-menu-body">',
@@ -150,6 +152,9 @@ $(function() {
             });
             $("#button-attachanimalbyname").click(function() {
                 onlineform_incoming.create_record("attachanimalbyname", "animal");
+            });
+            $("#button-attachanimalnomedia").click(function() {
+                onlineform_incoming.create_record("attachanimalnomedia", "animal");
             });
             $("#button-animal").click(function() {
                 onlineform_incoming.create_record("animal", "animal");

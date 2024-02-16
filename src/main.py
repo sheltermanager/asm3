@@ -5391,6 +5391,15 @@ class onlineform_incoming(JSONEndpoint):
         if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, o.user, collationid)
         return "^$".join(rv)
 
+    def post_attachanimalnomedia(self, o):
+        self.check(asm3.users.ADD_MEDIA)
+        rv = []
+        for pid in o.post.integer_list("ids"):
+            collationid, animalid, animalname = asm3.onlineform.attach_animalbyname(o.dbo, o.user, pid, attachmedia=False)
+            rv.append("%d|%d|%s" % (collationid, animalid, animalname))
+        if asm3.configuration.onlineform_delete_on_process(o.dbo): asm3.onlineform.delete_onlineformincoming(o.dbo, o.user, collationid)
+        return "^$".join(rv)
+
     def post_attachperson(self, o):
         self.check(asm3.users.ADD_MEDIA)
         dbo = o.dbo

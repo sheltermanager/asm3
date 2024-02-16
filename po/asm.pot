@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-02-16 09:41+0000\n"
+"POT-Creation-Date: 2024-02-16 09:53+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1428,6 +1428,10 @@ msgstr ""
 
 #: onlineform_incoming.js
 msgid "Animal (via animalname field)"
+msgstr ""
+
+#: onlineform_incoming.js
+msgid "Animal (via animalname, no media)"
 msgstr ""
 
 #: onlineform_incoming.js
