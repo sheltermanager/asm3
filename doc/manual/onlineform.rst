@@ -222,6 +222,13 @@ data, or explicitly attach the form to existing records.
   If the animal was bonded, reservations will be created for the bonded
   animals too.
 
+* Create Person (no merge existing): Similar to create person above, but does
+  no checks to see if the person already exists and always creates a new
+  person. This is useful if the icon is showing to indicate that a matching
+  person has been found, but the matching person indicated is incorrect.
+  This can happen when children apply on behalf of their parents or other
+  scenarios where the contact info may point to the wrong person.
+
 * Create Lost Animal: Runs through the same steps as Person so needs enough
   information to create/find a person as well. “description” and “arealost”
   fields are the minimum required to create the lost animal record.
