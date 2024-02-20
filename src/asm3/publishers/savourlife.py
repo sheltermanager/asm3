@@ -377,13 +377,14 @@ class SavourLifePublisher(AbstractPublisher):
             "Code":                     an.SHELTERCODE,
             "IsMale":                   an.SEX == 1,
             "RequirementOtherDogs":     self.good_with(an.ISGOODWITHDOGS),
+            #"RequirementOtherAnimals":  self.good_with(an.ISGOODWITHDOGS) and self.good_with(an.ISGOODWITHCATS),
             "RequirementOtherAnimals":  None,
             "RequirementOtherCats":     self.good_with(an.ISGOODWITHCATS),
             "RequirementKidsOver5":     self.good_with_over5(an.ISGOODWITHCHILDREN), 
             "RequirementKidsUnder5":    self.good_with_under5(an.ISGOODWITHCHILDREN),
             "SpecialNeeds":             "",
             "MedicalIssues":            self.replaceSmartQuotes(an.HEALTHPROBLEMS),
-            "InterstateAdoptionAvaliable": interstate, # NB: This attribute is deliberately spelled wrong due to mispelling at SL side
+            "InterstateAdoptionAvaliable": interstate, # NOTE: This attribute is deliberately spelled wrong due to mispelling at SL side
             "DistanceRestriction":      asm3.utils.iif(radius == 0, None, radius),
             "FosterCareRequired":       needs_foster,
             "BondedPair":               an.BONDEDANIMALID is not None and an.BONDEDANIMALID > 0,
