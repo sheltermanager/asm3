@@ -192,8 +192,7 @@ reports.
 If you are using a US locale, you will also see Asilomar categories. These
 allow ASM to generate Asilomar figures for your shelter. Asilomar statistics
 are a standardised way of calculating euthanasia figures for animal shelters
-across the US. More information on them can be found here:
-http://www.asilomaraccords.org/
+across the US. 
 
 Entry - Bonded Animals
 ^^^^^^^^^^^^^^^^^^^^^^
