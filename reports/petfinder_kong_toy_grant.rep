@@ -1,0 +1,59 @@
+PetFinder: Kong Toy Grant Program
+###
+Figures
+###
+3000/Any rev01
+###
+Information needed to complete the PetFinder Kong Toy Grant.
+###
+en
+###
+$VAR year NUMBER Enter the year to use for historic data (eg: 2023)$
+
+SELECT 
+
+'$@year$' AS Year,
+
+(SELECT ROUND(AVG(DaysOnShelter)) 
+FROM animal 
+WHERE NonShelterAnimal=0 AND SpeciesID = 1 
+AND DateBroughtIn > '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31 23:59:59') AS LengthOfStay,
+
+(SELECT COUNT(*) 
+FROM animal
+WHERE NonShelterAnimal=0 AND SpeciesID = 1
+AND DateBroughtIn > '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31 23:59:59') AS NumberOfDogsBenefit,
+
+(SELECT COUNT(*) / 12
+FROM animal
+WHERE NonShelterAnimal=0 AND SpeciesID = 1 
+AND DateBroughtIn > '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31 23:59:59') AS MonthlyIntake,
+
+(SELECT COUNT(*) / 12
+FROM animal
+WHERE NonShelterAnimal=0 AND SpeciesID = 1 
+AND ActiveMovementType = 1 AND Archived = 1
+AND ActiveMovementDate > '$@year$-01-01' AND ActiveMovementDate <= '$@year$-12-31 23:59:59') AS MonthlyAdoption
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<p><b>Length of stay</b><br>
+Provide the average number of days adoptable pets stay in your care: <b>$LengthOfStay</b><br>
+<i>(calculated as the average days on shelter for all adoptable dogs in $Year)</i></p>
+
+<p><b>Number of dogs benefit</b><br>
+The number of dogs who will benefit from the toys in the coming year: <b>$NumberOfDogsBenefit</b><br>
+<i>(calculated as total dog intakes for $Year)</i></p>
+
+<p><b>Monthly Intake: $MonthlyIntake</b><br>
+<i>(calculated as the average of all monthly dog intakes in $Year)</i></p>
+
+<p><b>Monthly Adoption: $MonthlyAdoption</b><br>
+<i>(calculated as the average of all monthly dog adoptions in $Year)</i></p>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+
