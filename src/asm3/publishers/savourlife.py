@@ -377,7 +377,6 @@ class SavourLifePublisher(AbstractPublisher):
             "Code":                     an.SHELTERCODE,
             "IsMale":                   an.SEX == 1,
             "RequirementOtherDogs":     self.good_with(an.ISGOODWITHDOGS),
-            #"RequirementOtherAnimals":  self.good_with(an.ISGOODWITHDOGS) and self.good_with(an.ISGOODWITHCATS),
             "RequirementOtherAnimals":  None,
             "RequirementOtherCats":     self.good_with(an.ISGOODWITHCATS),
             "RequirementKidsOver5":     self.good_with_over5(an.ISGOODWITHCHILDREN), 
