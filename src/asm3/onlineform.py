@@ -262,20 +262,20 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
             for a in rs:
                 if f.SPECIESID and f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
-                h.append('<option value="%(name)s::%(code)s">%(name)s (%(species)s - %(code)s)</option>' % \
-                    { "name": a.ANIMALNAME, "code": a.SHELTERCODE, "species": a.SPECIESNAME})
+                h.append(f'<option data-id="{a.ID}" value="{a.ANIMALNAME}::{a.SHELTERCODE}">{a.ANIMALNAME} ({a.SPECIESNAME} - {a.SHELTERCODE})</option>')
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_ADOPTABLEANIMAL:
             h.append('<select class="asm-onlineform-adoptableanimal" id="%s" name="%s" %s>' % ( fid, cname, required))
-            h.append('<option value=""></option>')
+            h.append('<option data-id="" value=""></option>')
             pc = asm3.publishers.base.PublishCriteria(asm3.configuration.publisher_presets(dbo))
             rs = asm3.publishers.base.get_animal_data(dbo, pc, include_additional_fields = True)
             rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
             for a in rs:
                 if f.SPECIESID and f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
-                h.append('<option value="%(name)s::%(code)s">%(name)s (%(species)s - %(code)s)</option>' % \
-                    { "name": a.ANIMALNAME, "code": a.SHELTERCODE, "species": a.SPECIESNAME})
+                h.append(f'<option data-id="{a.ID}" value="{a.ANIMALNAME}::{a.SHELTERCODE}">{a.ANIMALNAME} ({a.SPECIESNAME} - {a.SHELTERCODE})</option>')
             h.append('</select>')
+            h.append('<img class="asm-onlineform-thumbnail" ' \
+                ' style="vertical-align: middle; height: 150px; width: 150px; object-fit: contain; display: block; display: none">')
         elif f.FIELDTYPE == FIELDTYPE_GDPR_CONTACT_OPTIN:
             h.append('<input type="hidden" name="%s" value="" />' % cname)
             h.append('<select class="asm-onlineform-gdprcontactoptin asm-onlineform-lookupmulti" multiple="multiple" id="%s" data-name="%s" data-required="%s" title="">' % ( fid, cname, asm3.utils.iif(required != "", "required", "")))

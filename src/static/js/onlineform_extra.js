@@ -324,6 +324,16 @@ $(document).ready(function() {
         return o.join(" ");
     };
 
+    // Updates the thumbnail image when changing an adoptable animal dropdown
+    const update_thumbnail = function(n) {
+        let aid = n.find("option:selected").attr("data-id");
+        let im = n.parent().find("img");
+        if (!aid) { im.hide(); return; }
+        let url = $("form").attr("action") + "?method=animal_image&account=" + $("input[name='account']").val() + "&animalid=" + aid;
+        im.prop("src", url);
+        im.show();
+    };
+
     const upper_fields = [ "postcode", "zipcode", "areapostcode", "areazipcode", 
         "dropoffpostcode", "dropoffzipcode", "pickuppostcode", "pickupzipcode",
         "dispatchpostcode", "dispatchzipcode" ];
@@ -389,6 +399,13 @@ $(document).ready(function() {
         $(this).change(function(e) {
             process_image($(this));
         });
+    });
+
+    // Show a thumbnail for adoptable animals
+    $(".asm-onlineform-adoptableanimal").each(function() {
+       $(this).change(function(e) {
+            update_thumbnail($(this));
+       });
     });
 
     // Check for any querystring parameters given and see if we need to set
