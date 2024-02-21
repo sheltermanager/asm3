@@ -2,7 +2,7 @@ PetFinder: Kong Toy Grant Program
 ###
 Figures
 ###
-3000/Any rev01
+3000/Any rev02
 ###
 Information needed to complete the PetFinder Kong Toy Grant.
 ###
@@ -16,7 +16,7 @@ SELECT
 
 (SELECT ROUND(AVG(DaysOnShelter)) 
 FROM animal 
-WHERE NonShelterAnimal=0 AND SpeciesID = 1 
+WHERE NonShelterAnimal=0 AND SpeciesID = 1 AND HasPermanentFoster = 0 AND DaysOnShelter > 0
 AND DateBroughtIn > '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31 23:59:59') AS LengthOfStay,
 
 (SELECT COUNT(*) 
