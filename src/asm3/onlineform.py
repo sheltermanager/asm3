@@ -1334,6 +1334,8 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
     if nsowner != 0:
         d["nonshelter"] = "on"
         d["nsowner"] = str(nsowner)
+    breed1 = ""
+    breed2 = ""
     for f in fields:
         if f.FIELDNAME == "animalname": d["animalname"] = truncs(f.VALUE)
         if f.FIELDNAME == "code": 
@@ -1353,8 +1355,12 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         if f.FIELDNAME == "entrytype": d["entrytype"] = str(guess_entrytype(dbo, f.VALUE))
         if f.FIELDNAME == "type": d["animaltype"] = str(guess_animaltype(dbo, f.VALUE))
         if f.FIELDNAME == "species": d["species"] = str(guess_species(dbo, f.VALUE))
-        if f.FIELDNAME == "breed1": d["breed1"] = str(guess_breed(dbo, f.VALUE))
-        if f.FIELDNAME == "breed2": d["breed2"] = str(guess_breed(dbo, f.VALUE))
+        if f.FIELDNAME == "breed1": 
+            breed1 = f.VALUE
+            d["breed1"] = str(guess_breed(dbo, f.VALUE))
+        if f.FIELDNAME == "breed2": 
+            breed2 = f.VALUE
+            d["breed2"] = str(guess_breed(dbo, f.VALUE))
         if f.FIELDNAME == "color": d["basecolour"] = str(guess_colour(dbo, f.VALUE))
         if f.FIELDNAME == "colour": d["basecolour"] = str(guess_colour(dbo, f.VALUE))
         if f.FIELDNAME == "sex": d["sex"] = str(guess_sex(dbo, f.VALUE))
@@ -1366,6 +1372,10 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         # For wildlife rescues, breed might be the thing people recognise over species (eg: corvid vs crow, magpie)
         if "species" not in d and "breed1" in d:
             d["species"] = str(asm3.lookups.get_species_for_breed(dbo, asm3.utils.cint(d["breed1"])))
+    # Set the crossbreed based on the incoming breed values
+    d["crossbreed"] = "0"
+    if breed1 != breed2 and breed2.strip() != "": d["crossbreed"] = "1"
+    if d["crossbreed"] == "0": d["breed2"] = d["breed1"]
     # Have we got enough info to create the animal record? We need a name at a minimum
     if "animalname" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an animal record (need animalname).", l))
