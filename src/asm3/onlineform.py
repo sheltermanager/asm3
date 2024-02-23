@@ -17,7 +17,8 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
-from asm3.sitedefs import BASE_URL, ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS
+from asm3.sitedefs import BASE_URL, SERVICE_URL
+from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, SIGNATURE_JS, TIMEPICKER_CSS, TIMEPICKER_JS
 from asm3.typehints import Any, datetime, Database, List, PostedData, ResultRow, Results, Tuple
 
 import web062 as web
@@ -455,9 +456,13 @@ def get_onlineform_header(dbo: Database) -> str:
         "    td { padding-bottom: 10px; }\n" \
         "}\n" \
        "</style>\n" \
+       "<script>\n" \
+       "function logohide() { document.getElementById('logo').style.display = 'none'; }\n" \
+       "</script>\n" \
        "</head>\n" \
        "<body>\n" \
-       "    <div id=\"page\">"
+       "    <div id=\"page\">\n" \
+       f"        <p style=\"text-align: center\"><img id=\"logo\" onerror=\"javascript:logohide()\" style=\"height: 150px\" src=\"{SERVICE_URL}?account={dbo.database}&method=dbfs_image&title=logo.jpg\" /></p>" 
     return header
 
 def get_onlineform_footer(dbo: Database) -> str:
