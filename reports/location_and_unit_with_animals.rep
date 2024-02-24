@@ -1,0 +1,48 @@
+Location and Units with Animals
+###
+Inventories
+###
+33506/PostgreSQL rev01
+###
+Shows locations and units with the occupants names
+###
+en
+###
+SELECT a.AnimalName, a.id AS AID, a.ShelterCode, il.LocationName, il.Unit AS TheUnit,
+CASE WHEN a.AnimalName IS NULL THEN '1' ELSE '0' END AS Unoccupied,
+CASE WHEN a.AnimalName IS NOT NULL THEN '1' ELSE '0' END AS Occupied
+FROM (SELECT ID, LocationName, regexp_split_to_table(Units, '[,]') AS Unit FROM internallocation ORDER BY locationname) AS il
+LEFT OUTER JOIN animal a ON a.ShelterLocation = il.ID 
+AND TRIM(a.ShelterLocationUnit) = TRIM(il.unit) 
+AND a.Archived = 0 AND a.ActiveMovementID = 0
+ORDER BY LocationName, Unit;
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_LocationName
+$$HEAD
+<h2>$LocationName</h2>
+<table border="1">
+<tr>
+<th>Location</th>
+<th>Unit</th>
+<th>Name</th>
+<th>Shelter Code</th>
+</tr>
+$$FOOT
+</table> 
+<p><b>Unoccupied at $LocationName: {SUM.Unoccupied.ROUND.2}, Occupied at $LocationName: {SUM.Occupied.ROUND.2}, Percentage Occupied : {PCT.Occupied.1.ROUND.2}%</b></p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$LOCATIONNAME</td>
+<td>$THEUNIT</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
+<td>$SHELTERCODE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
