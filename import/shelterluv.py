@@ -206,7 +206,7 @@ for d in asm.csv_to_list("%s/intake.csv" % PATH):
     if "Intake From Name" in d and d["Intake From Name"] != "" and d["Intake From Name"] in ppo:
         linkperson = ppo[d["Intake From Name"]].ID
     # Age
-    if "Age (Months)" in d:
+    if "Age (Months)" in d and a.DateBroughtIn == a.DateOfBirth:
         a.DateOfBirth = asm.subtract_days(a.DateBroughtIn, 30 * asm.atoi(asm.cint(d["Age (Months)"])))
     # Location
     if "Location" in d and d["Location"] != "":
