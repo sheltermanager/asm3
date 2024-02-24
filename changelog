@@ -1,6 +1,7 @@
 48
 ================
 
+24/02/24 Escape animal names in option/value attribute of online forms
 23/02/24 Include basic logo as part of default online form template #1342
 21/02/24 Display a thumbnail for adoptable animals in online forms #1420
 21/02/24 Set crossbreed when creating animals from online forms #1443

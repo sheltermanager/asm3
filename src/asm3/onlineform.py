@@ -263,7 +263,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
             for a in rs:
                 if f.SPECIESID and f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
-                h.append(f'<option data-id="{a.ID}" value="{a.ANIMALNAME}::{a.SHELTERCODE}">{a.ANIMALNAME} ({a.SPECIESNAME} - {a.SHELTERCODE})</option>')
+                h.append(f'<option data-id="{a.ID}" value="{asm3.html.escape(a.ANIMALNAME)}::{a.SHELTERCODE}">{a.ANIMALNAME} ({a.SPECIESNAME} - {a.SHELTERCODE})</option>')
             h.append('</select>')
         elif f.FIELDTYPE == FIELDTYPE_ADOPTABLEANIMAL:
             h.append('<select class="asm-onlineform-adoptableanimal" id="%s" name="%s" %s>' % ( fid, cname, required))
@@ -273,7 +273,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
             rs = sorted(rs, key=lambda k: k["ANIMALNAME"])
             for a in rs:
                 if f.SPECIESID and f.SPECIESID > 0 and a.SPECIESID != f.SPECIESID: continue
-                h.append(f'<option data-id="{a.ID}" value="{a.ANIMALNAME}::{a.SHELTERCODE}">{a.ANIMALNAME} ({a.SPECIESNAME} - {a.SHELTERCODE})</option>')
+                h.append(f'<option data-id="{a.ID}" value="{asm3.html.escape(a.ANIMALNAME)}::{a.SHELTERCODE}">{a.ANIMALNAME} ({a.SPECIESNAME} - {a.SHELTERCODE})</option>')
             h.append('</select>')
             h.append('<img class="asm-onlineform-thumbnail" ' \
                 ' style="vertical-align: middle; height: 150px; width: 150px; object-fit: contain; display: block; display: none">')
