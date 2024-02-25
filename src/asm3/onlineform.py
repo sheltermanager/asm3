@@ -1380,7 +1380,7 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
     # Set the crossbreed based on the incoming breed values
     d["crossbreed"] = "0"
     if breed1 != breed2 and breed2.strip() != "": d["crossbreed"] = "1"
-    if d["crossbreed"] == "0": d["breed2"] = d["breed1"]
+    if d["crossbreed"] == "0" and "breed1" in d and "breed2" in d: d["breed2"] = d["breed1"]
     # Have we got enough info to create the animal record? We need a name at a minimum
     if "animalname" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an animal record (need animalname).", l))
