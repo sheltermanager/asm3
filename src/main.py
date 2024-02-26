@@ -816,6 +816,7 @@ class media(ASMEndpoint):
         subject = [ post["subject"] ]
         linktypeid = 0
         linkid = 0
+        # handle attaching selected media files
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
             filename = asm3.media._get_media_filename(m)
@@ -829,6 +830,12 @@ class media(ASMEndpoint):
                 content = asm3.utils.str2bytes(content)
             attachments.append(( filename, m.MEDIAMIMETYPE, content ))
             subject.append(filename)
+        # handle attaching selected repository documents
+        for drid in post.integer_list("docrepo"):
+            content = asm3.dbfs.get_string_id(dbo, drid)
+            filename = asm3.dbfs.get_name_for_id(dbo, drid)
+            mimetype = asm3.media.mime_type(filename)
+            attachments.append(( filename, mimetype, content))
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if asm3.configuration.audit_on_send_email(dbo): 
             asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
@@ -846,6 +853,7 @@ class media(ASMEndpoint):
         subject = [ post["subject"] ]
         linktypeid = 0
         linkid = 0
+        # handle converting/attaching selected media files
         for mid in post.integer_list("ids"):
             m = asm3.media.get_media_by_id(dbo, mid)
             if m is None: self.notfound()
@@ -857,6 +865,12 @@ class media(ASMEndpoint):
             filename = asm3.media._get_media_filename(m).replace(".html", ".pdf")
             attachments.append(( filename, "application/pdf", contentpdf ))
             subject.append(filename)
+        # handle attaching selected repository documents
+        for drid in post.integer_list("docrepo"):
+            content = asm3.dbfs.get_string_id(dbo, drid)
+            filename = asm3.dbfs.get_name_for_id(dbo, drid)
+            mimetype = asm3.media.mime_type(filename)
+            attachments.append(( filename, mimetype, content))
         asm3.utils.send_email(dbo, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"], "html", attachments)
         if asm3.configuration.audit_on_send_email(dbo): 
             asm3.audit.email(dbo, o.user, post["from"], emailadd, post["cc"], post["bcc"], post["subject"], post["body"])
@@ -2178,6 +2192,7 @@ class animal_media(JSONEndpoint):
             "animal": a,
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
             "canwatermark": True and asm3.media.watermark_available(dbo),
+            "documentrepository": asm3.dbfs.get_document_repository(o.dbo),
             "showpreferred": True,
             "linkid": o.post.integer("id"),
             "linktypeid": asm3.media.ANIMAL,

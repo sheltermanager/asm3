@@ -872,6 +872,13 @@ $.widget("asm.emailform", {
             '<td><label for="em-attachments">' + _("Attachments") + '</label></td>',
             '<td><span id="em-attachments" data="attachments" type="text" class="strong"></span></td>',
             '</tr>',
+            '<tr id="em-docreporow">',
+            '<td><label for="em-docrepo">' + _("Document Repository") + '</label></td>',
+            '<td>',
+            '<select id="em-docrepo" data="docrepo" multiple="multiple" class="asm-bsmselect" title="' + _("Select") + '">',
+            '</select>',
+            '</td>',
+            '</tr>',
             '<tr>',
             '<td></td>',
             '<td><input id="em-addtolog" data="addtolog" type="checkbox"',
@@ -892,6 +899,15 @@ $.widget("asm.emailform", {
             '</div>'
         ].join("\n"));
         $("#em-body").richtextarea();
+        $("#em-docrepo").asmSelect({
+            animate: true,
+            sortable: true,
+            removeLabel: '<strong>&times;</strong>',
+            listClass: 'bsmList-custom',  
+            listItemClass: 'bsmListItem-custom',
+            listItemLabelClass: 'bsmListItemLabel-custom',
+            removeClass: 'bsmListItemRemove-custom'
+        });
         let b = {}; 
         b[_("Send")] = {
             text: _("Send"),
@@ -1012,6 +1028,14 @@ $.widget("asm.emailform", {
         }
         else {
             $("#em-attachmentrow").hide();
+        }
+        if (o.documentrepository) {
+            $("#em-docrepo").html(html.list_to_options(o.documentrepository, "ID", "NAME"));
+            $("#em-docrepo").change();
+            $("#em-docreporow").show();
+        }
+        else {
+            $("#em-docreporow").hide();
         }
         fromaddresses = fromaddresses.concat(config.str("EmailFromAddresses").split(","));
         toaddresses = toaddresses.concat(config.str("EmailToAddresses").split(","));
