@@ -96,7 +96,7 @@ $(function() {
                     if (rows.length > 0 && all_of_type("text/html") && !rows[0].SIGNATUREHASH) {
                         $("#button-sign").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
                     }
-                    // Move is allowed as long as we have at least 1 row selected
+                    // Move/Copy is allowed as long as we have at least 1 row selected
                     if (rows.length > 0) {
                         $("#button-move").removeClass("ui-state-disabled").removeClass("ui-button-disabled");
                     }
@@ -152,7 +152,7 @@ $(function() {
                 { id: "emailpdf", text: _("Email PDF"), icon: "pdf", enabled: "multi", perm: "emo", tooltip: _("Email a copy of the selected HTML documents as PDFs") },
                 { id: "image", text: _("Image"), type: "buttonmenu", icon: "image", perm: "cam" },
                 { id: "sign", text: _("Sign"), type: "buttonmenu", icon: "signature" },
-                { id: "move", text: _("Move"), type: "buttonmenu", icon: "copy" },
+                { id: "move", text: _("Move/Copy"), type: "buttonmenu", icon: "copy" },
                 { id: "video", icon: "video", enabled: "one", perm: "cam", tooltip: _("Default video link") },
                 { type: "raw", markup: '<div class="asm-mediadroptarget mode-table"><p>' + _("Drop files here...") + '</p></div>',
                     hideif: function() { 
@@ -235,6 +235,24 @@ $(function() {
                 '</table>',
                 '</div>',
 
+                '<div id="dialog-copyanimal" style="display: none" title="' + html.title(_("Copy to an animal")) + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="copyanimal">' + _("Animal") + '</label></td>',
+                '<td><input type="hidden" class="asm-animalchooser" id="copyanimal" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>',
+
+                '<div id="dialog-copyperson" style="display: none" title="' + html.title(_("Copy to a person")) + '">',
+                '<table width="100%">',
+                '<tr>',
+                '<td><label for="copyperson">' + _("Person") + '</label></td>',
+                '<td><input type="hidden" class="asm-personchooser" id="copyperson" /></td>',
+                '</tr>',
+                '</table>',
+                '</div>',
+
                 '<div id="dialog-moveanimal" style="display: none" title="' + html.title(_("Move to an animal")) + '">',
                 '<table width="100%">',
                 '<tr>',
@@ -268,6 +286,10 @@ $(function() {
 
                 '<div id="button-move-body" class="asm-menu-body">',
                 '<ul class="asm-menu-list">',
+                    '<li id="button-copyanimal" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("animal") + ' ' + _("Copy to an animal") + '</a></li>',
+                    '<li id="button-copyperson" class="asm-menu-item"><a '
+                        + ' href="#">' + html.icon("person") + ' ' + _("Copy to a person") + '</a></li>',
                     '<li id="button-moveanimal" class="asm-menu-item"><a '
                         + ' href="#">' + html.icon("animal") + ' ' + _("Move to an animal") + '</a></li>',
                     '<li id="button-moveperson" class="asm-menu-item"><a '
@@ -799,6 +821,31 @@ $(function() {
                 buttons: signbuttons
             });
 
+            let copyanimalbuttons = {};
+            copyanimalbuttons[_("Copy")] = {
+                text: _("Copy"),
+                "class": 'asm-dialog-actionbutton',
+                click: function() {
+                    if (!validate.notblank([ "copyanimal" ])) { return; }
+                    let formdata = "mode=copyanimal&animalid=" + $("#copyanimal").val() + "&ids=" + tableform.table_ids(media.table);
+                    media.ajax(formdata);
+                    common.route_reload();
+                }
+            };
+            copyanimalbuttons[_("Cancel")] = function() {
+                $("#dialog-copyanimal").dialog("close");
+            };
+
+            $("#dialog-copyanimal").dialog({
+                autoOpen: false,
+                width: 450,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.add_show,
+                hide: dlgfx.add_hide,
+                buttons: copyanimalbuttons
+            });
+
             let moveanimalbuttons = {};
             moveanimalbuttons[_("Move")] = {
                 text: _("Move"),
@@ -822,6 +869,31 @@ $(function() {
                 show: dlgfx.add_show,
                 hide: dlgfx.add_hide,
                 buttons: moveanimalbuttons
+            });
+
+            let copypersonbuttons = {};
+            copypersonbuttons[_("Copy")] = {
+                text: _("Copy"),
+                "class": 'asm-dialog-actionbutton',
+                click: function() {
+                    if (!validate.notblank([ "copyperson" ])) { return; }
+                    let formdata = "mode=copyperson&personid=" + $("#copyperson").val() + "&ids=" + tableform.table_ids(media.table);
+                    media.ajax(formdata);
+                    common.route_reload();
+                }
+            };
+            copypersonbuttons[_("Cancel")] = function() {
+                $("#dialog-copyperson").dialog("close");
+            };
+
+            $("#dialog-copyperson").dialog({
+                autoOpen: false,
+                width: 450,
+                modal: true,
+                dialogClass: "dialogshadow",
+                show: dlgfx.add_show,
+                hide: dlgfx.add_hide,
+                buttons: copypersonbuttons
             });
 
             let movepersonbuttons = {};
@@ -1082,6 +1154,16 @@ $(function() {
                 $("#dialog-moveperson").dialog("open");
             });
 
+            $("#button-copyanimal").click(function() {
+                $("#button-move").asmmenu("hide_all");
+                $("#dialog-copyanimal").dialog("open");
+            });
+
+            $("#button-copyperson").click(function() {
+                $("#button-move").asmmenu("hide_all");
+                $("#dialog-copyperson").dialog("open");
+            });
+
         },
 
         new_link: function() {
@@ -1155,6 +1237,8 @@ $(function() {
             common.widget_destroy("#dialog-add");
             common.widget_destroy("#dialog-addlink");
             common.widget_destroy("#dialog-sign");
+            common.widget_destroy("#dialog-copyanimal");
+            common.widget_destroy("#dialog-copyperson");
             common.widget_destroy("#dialog-moveanimal");
             common.widget_destroy("#dialog-moveperson");
             common.widget_destroy("#emailform");

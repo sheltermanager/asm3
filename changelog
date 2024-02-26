@@ -1,6 +1,7 @@
 48
 ================
 
+26/02/24 Ability to copy media to other records #1258
 26/02/24 Allow doc repo files to be attached when emailing media #1434
 25/02/24 Fix bug processing animal forms with no breed #1443
 24/02/24 Escape animal names in option/value attribute of online forms

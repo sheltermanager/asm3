@@ -755,7 +755,35 @@ def update_media_from_form(dbo: Database, username: str, post: PostedData) -> No
         "UpdatedSinceLastPublish": 1
     }, username, setLastChanged=False)
 
+def clone_media(dbo: Database, username: str, mediaid: int, linktypeid: int, linkid: int) -> None:
+    """ Clones a media record with a new link """
+    m = get_media_by_id(dbo, mediaid)
+    nextid = dbo.get_id("media")
+    return dbo.insert("media", {
+        "ID":                   nextid,
+        "DBFSID":               m.DBFSID,
+        "MediaSize":            m.MEDIASIZE,
+        "MediaName":            m.MEDIANAME,
+        "MediaMimeType":        m.MEDIAMIMETYPE,
+        "MediaType":            m.MEDIATYPE,
+        "MediaNotes":           m.MEDIANOTES,
+        "WebsitePhoto":         0,
+        "WebsiteVideo":         0,
+        "DocPhoto":             0,
+        "ExcludeFromPublish":   0,
+        # ASM2_COMPATIBILITY
+        "NewSinceLastPublish":  0,
+        "UpdatedSinceLastPublish": 0,
+        # ASM2_COMPATIBILITY
+        "LinkID":               linkid,
+        "LinkTypeID":           linktypeid,
+        "Date":                 dbo.now(),
+        "CreatedDate":          dbo.now(),
+        "RetainUntil":          m.RETAINUNTIL
+    }, username, setCreated=False, generateID=False)
+
 def update_media_link(dbo: Database, username: str, mediaid: int, linktypeid: int, linkid: int) -> None:
+    """ Updates the media with id to have a new link """
     dbo.update("media", mediaid, {
         "LinkID":   linkid,
         "LinkTypeID": linktypeid,

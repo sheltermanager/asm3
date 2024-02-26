@@ -580,7 +580,7 @@ def upload_document_repository(dbo: Database, path: str, filename: str, filedata
 
 def delete_orphaned_media(dbo: Database) -> None:
     """
-    Removes all dbfs content should have an entry in the media table and doesn't
+    Removes all dbfs content that should have an entry in the media table and doesn't
     """
     where = "WHERE " \
         "(Path LIKE '/animal%' OR Path LIKE '/owner%' OR Path LIKE '/lostanimal%' OR Path LIKE '/foundanimal%' " \

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-02-26 10:30+0000\n"
+"POT-Creation-Date: 2024-02-26 11:13+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3294,6 +3294,10 @@ msgstr ""
 msgid "Coordinator"
 msgstr ""
 
+#: media.js
+msgid "Copy"
+msgstr ""
+
 #: document_repository.js report_images.js
 msgid ""
 "Copy absolute service URL to the clipboard (for external use in web pages "
@@ -3324,6 +3328,14 @@ msgstr ""
 
 #: report_images.js
 msgid "Copy relative URL to the clipboard (for use with documents and reports)"
+msgstr ""
+
+#: media.js
+msgid "Copy to a person"
+msgstr ""
+
+#: media.js
+msgid "Copy to an animal"
 msgstr ""
 
 #: dbupdate.py
@@ -8788,6 +8800,10 @@ msgstr ""
 
 #: media.js
 msgid "Move to an animal"
+msgstr ""
+
+#: media.js
+msgid "Move/Copy"
 msgstr ""
 
 #: waitinglist.py
