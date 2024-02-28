@@ -462,7 +462,7 @@ def get_onlineform_header(dbo: Database) -> str:
        "</head>\n" \
        "<body>\n" \
        "    <div id=\"page\">\n" \
-       f"        <p style=\"text-align: center\"><img id=\"logo\" onerror=\"javascript:logohide()\" style=\"height: 150px\" src=\"{SERVICE_URL}?account={dbo.database}&method=dbfs_image&title=logo.jpg\" /></p>" 
+       f"        <p style=\"text-align: center\"><img id=\"logo\" onerror=\"javascript:logohide()\" style=\"height: 150px\" src=\"{SERVICE_URL}?account={dbo.database}&method=dbfs_image&title=splash.jpg\" /></p>" 
     return header
 
 def get_onlineform_footer(dbo: Database) -> str:
