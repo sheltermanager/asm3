@@ -314,6 +314,12 @@ If ANIMALBREED2 is not set, the animal is assumed to be a purebreed of
 ANIMALBREED1. If ANIMALBREED2 is set and is different from ANIMALBREED1, then
 the crossbreed flag will be set on the resulting animal.
 
+When importing animals and people, ASM will check the database for animals
+with the same ANIMALCODE and people with the same name/address or email/cell 
+phone to find duplicates. Certain fields (see :ref:`csvimportfields`) will
+be updated if an existing record is found and a new record will not be 
+created. 
+
 If the “Create missing lookup values” option is on, and the file contains a
 value that is not present in the database (for example, if you have “Goldfish”
 in the ANIMALSPECIES column, but it isn't a species in your database), then it
@@ -323,13 +329,6 @@ If the “Clear tables before importing” option is on, ASM will remove all dat
 from the animal, person, movement and donation tables before doing the import.
 This delete cannot be undone, so exercise caution when using this option as you
 can wipe out your entire database!
-
-If the “Merge duplicate records” option is on, then before importing people
-records from the fields prefixed with PERSON or ORIGINALOWNER, ASM will check
-the person database for anyone with the same name and address. If the person
-already exists, it will not be created again. Similarly, if ANIMALCODE has been
-specified and an animal record with that code already exists in the database,
-it will not be created again.
 
 Import a PayPal CSV file
 ------------------------
