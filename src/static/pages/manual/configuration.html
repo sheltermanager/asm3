@@ -378,6 +378,11 @@ today’s date as a last resort.</p>
 <p>If ANIMALBREED2 is not set, the animal is assumed to be a purebreed of
 ANIMALBREED1. If ANIMALBREED2 is set and is different from ANIMALBREED1, then
 the crossbreed flag will be set on the resulting animal.</p>
+<p>When importing animals and people, ASM will check the database for animals
+with the same ANIMALCODE and people with the same name/address or email/cell
+phone to find duplicates. Certain fields (see <a class="reference internal" href="csvimportfields.html#csvimportfields"><span class="std std-ref">Appendix: CSV file import fields</span></a>) will
+be updated if an existing record is found and a new record will not be
+created.</p>
 <p>If the “Create missing lookup values” option is on, and the file contains a
 value that is not present in the database (for example, if you have “Goldfish”
 in the ANIMALSPECIES column, but it isn’t a species in your database), then it
@@ -386,12 +391,6 @@ will be created during the import and the animal linked to it.</p>
 from the animal, person, movement and donation tables before doing the import.
 This delete cannot be undone, so exercise caution when using this option as you
 can wipe out your entire database!</p>
-<p>If the “Merge duplicate records” option is on, then before importing people
-records from the fields prefixed with PERSON or ORIGINALOWNER, ASM will check
-the person database for anyone with the same name and address. If the person
-already exists, it will not be created again. Similarly, if ANIMALCODE has been
-specified and an animal record with that code already exists in the database,
-it will not be created again.</p>
 </section>
 <section id="import-a-paypal-csv-file">
 <h2>Import a PayPal CSV file<a class="headerlink" href="#import-a-paypal-csv-file" title="Permalink to this heading">¶</a></h2>

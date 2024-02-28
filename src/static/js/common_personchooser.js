@@ -705,15 +705,37 @@ $.widget("asm.personchooser", {
      * on file. If we do, calls show_siilar to popup the
      * confirmation dialog
      */
-    check_similar: function() {
+    check_similar: async function() {
         let self = this, dialogadd = this.options.dialogadd, dialogsimilar = this.options.dialogsimilar;
         let formdata = "mode=similar&" + dialogadd.find("input[data='emailaddress'], input[data='mobiletelephone'], input[data='surname'], input[data='forenames'], textarea[data='address']").toPOST();
-        $.ajax({
-            type: "POST",
-            url:  "person_embed",
-            data: formdata,
-            dataType: "text",
-            success: function(result) {
+        let homephone = dialogadd.find("input[data='hometelephone']").val();
+        let result = await common.ajax_post("person_embed", formdata);
+        let people = jQuery.parseJSON(result);
+        let rec = people[0];
+        if (rec) {
+            let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"#\">" + rec.OWNERNAME + "</a></span>";
+            if (self.options.mode == "full") {
+                disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + 
+                    (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") + 
+                    "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + 
+                    " " + common.nulltostr(rec.MOBILETELEPHONE2) + "<br/>" + rec.EMAILADDRESS + " " + common.nulltostr(rec.EMAILADDRESS2);
+            }
+            dialogsimilar.find(".similar-person").html(disp);
+            // When the user clicks the name of the similar person,
+            // select it for the field instead
+            dialogsimilar.find(".asm-embed-name").click(function() {
+                self.loadbyid(rec.ID);
+                dialogsimilar.dialog("close");
+                dialogadd.dialog("close");
+                return false;
+            });
+            self.show_similar();
+        }
+        else {
+            // Do a second check just in case the user put a cell phone number in the home phone field
+            if (homephone) {
+                formdata = "mode=similar&mobiletelephone=" + homephone + "&" + dialogadd.find("input[data='emailaddress'], input[data='surname'], input[data='forenames'], textarea[data='address']").toPOST();
+                result = await common.ajax_post("person_embed", formdata);
                 let people = jQuery.parseJSON(result);
                 let rec = people[0];
                 if (rec === undefined) {
@@ -738,11 +760,8 @@ $.widget("asm.personchooser", {
                     });
                     self.show_similar();
                 }
-            },
-            error: function(jqxhr, textstatus, response) {
-                log.error(response);
             }
-        });
+        }
     },
 
     clear: function(fireclearedevent) {

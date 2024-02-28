@@ -2896,9 +2896,11 @@ class csvimport(JSONEndpoint):
         l = o.locale
         asm3.asynctask.function_task(o.dbo, _("Import a CSV file", l), asm3.csvimport.csvimport, 
             o.dbo, o.post.filedata(), o.post["encoding"], o.user, 
-            o.post.boolean("createmissinglookups") == 1, o.post.boolean("cleartables") == 1, 
-            o.post.boolean("checkduplicates") == 1, o.post.boolean("prefixanimalcodes") == 1,
-            o.post.boolean("entrytoday") == 1)
+            createmissinglookups = o.post.boolean("createmissinglookups") == 1, 
+            cleartables = o.post.boolean("cleartables") == 1, 
+            checkduplicates = True,
+            prefixanimalcodes = o.post.boolean("prefixanimalcodes") == 1,
+            entrytoday = o.post.boolean("entrytoday") == 1)
         self.redirect("task")
 
 class csvimport_paypal(JSONEndpoint):
