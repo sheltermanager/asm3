@@ -2465,9 +2465,11 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
     # Handle deceased date and doa being set via entry type
     deceaseddate = post.date("deceaseddate")
     deadonarrival = post.integer("deadonarrival")
+    deathcategory = post.integer("deathcategory")
     if post.integer("entrytype") == 9:
         deceaseddate = dbo.today()
         deadonarrival = 1
+        deathcategory = asm3.configuration.default_death_reason(dbo)
 
     # If this user is in a site, make sure that the location
     # chosen is in their site. If it isn't, override the location
@@ -2571,7 +2573,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
         "CurrentVetID":     post.integer("currentvet",0),
         "OwnersVetID":      0,
         "DeceasedDate":     deceaseddate,
-        "PTSReasonID":      post.integer("deathcategory"),
+        "PTSReasonID":      deathcategory,
         "PutToSleep":       post.boolean("puttosleep"),
         "IsDOA":            deadonarrival, 
         "DiedOffShelter":   0,
