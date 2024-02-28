@@ -990,7 +990,8 @@ $(function() {
             if (!config.bool("DontShowEntryType")) { return; }
             let reasonname = common.get_field(controller.entryreasons, $("#entryreason").select("value"), "REASONNAME").toLowerCase();
             let entrytype = 1; //surrender
-            if ($("#dateofbirth").val() == $("#datebroughtin").val()) { entrytype = 5; } // born in shelter
+            if ($("#deadonarrival").is(":checked")) { entrytype = 9; } // dead on arrival
+            else if ($("#dateofbirth").val() == $("#datebroughtin").val()) { entrytype = 5; } // born in shelter
             else if ($("#crueltycase").is(":checked")) { entrytype = 7; } // seized
             else if ($("#transferin").is(":checked")) { entrytype = 3; } // transfer in
             else if (reasonname.indexOf("transfer") != -1) { entrytype = 3; } // transfer in
@@ -1507,7 +1508,7 @@ $(function() {
             });
 
             // Changing various fields that guess the entry category
-            $("#entryreason, #transferin, #datebroughtin, #dateofbirth").change(function() {
+            $("#entryreason, #transferin, #datebroughtin, #dateofbirth, #deadonarrival").change(function() {
                 animal.update_entry_type();
             });
 

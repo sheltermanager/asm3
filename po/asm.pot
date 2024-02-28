@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-02-26 11:13+0000\n"
+"POT-Creation-Date: 2024-02-28 09:48+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3886,7 +3886,7 @@ msgstr ""
 msgid "Dead animal"
 msgstr ""
 
-#: animal.js move_deceased.js
+#: dbupdate.py animal.js move_deceased.js
 msgid "Dead on arrival"
 msgstr ""
 
