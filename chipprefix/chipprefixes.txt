@@ -50,10 +50,13 @@
 15 | ^900164              | Save This Life
 15 | ^900182              | Petlog
 15 | ^900141              | SmartTag
+15 | ^900219              | Absonutrix Sale Thailand | en_TH th
 15 | ^900235              | Fi Nano  
 15 | ^90026               | 4D Technology/Petsafe
+15 | ^9010                | Absonutrix Sale Thailand | en_TH th
+15 | ^9001                | Absonutrix Sale Thailand | en_TH th
+15 | ^9000                | Absonutrix Sale Thailand | en_TH th
 15 | ^900"                | BCDS
-15 | ^9010202             | Absonutrix Sale Thailand | en_TH
 15 | ^911002              | 911PetChip | en
 15 | ^933                 | Buddy ID
 15 | ^939                 | M4S ID
@@ -99,12 +102,12 @@
 15 | ^9861                | Anibase/Identichip | en_GB
 15 | ^987                 | SmartTag
 15 | ^9900000             | nanoChip
-15 | ^9910030             | Absonutrix Sale Thailand | en_TH th
 15 | ^9910010             | HomeSafe | en_AU
 15 | ^991001911           | 911PetChip | en
 15 | ^9910010             | AKC Reunite | en
 15 | ^9910030             | PEEVA | en
 15 | ^9910030             | Allflex | en_AU
 15 | ^9910039             | 911PetChip | en
+15 | ^9910                | Absonutrix Sale Thailand | en_TH th
 15 | ^992                 | International Pet Registry
 15 | ^999                 | Transponder Test
