@@ -1418,10 +1418,12 @@ def csvexport_animals(dbo: Database, dataset: str, animalids: str = "", where: s
                         row["ANIMALIMAGE"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.database, m["ID"])
                     elif m["MEDIANAME"].endswith(".pdf"):
                         row["ANIMALPDFNAME"] = m["MEDIANOTES"]
+                        if row["ANIMALPDFNAME"].strip() == "": row["ANIMALPDFNAME"] = "doc.pdf"
                         #row["ANIMALPDFDATA"] = "data:application/pdf;base64,%s" % asm3.utils.base64encode(mdata)
                         row["ANIMALPDFDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.database, m["ID"])
                     elif m["MEDIANAME"].endswith(".html"):
                         row["ANIMALHTMLNAME"] = m["MEDIANOTES"]
+                        if row["ANIMALHTMLNAME"].strip() == "": row["ANIMALHTMLNAME"] = "doc.html"
                         #row["ANIMALHTMLDATA"] = "data:text/html;base64,%s" % asm3.utils.base64encode(mdata)
                         row["ANIMALHTMLDATA"] = "%s?account=%s&method=media_file&mediaid=%s" % (SERVICE_URL, dbo.database, m["ID"])
                     out.write(tocsv(row))

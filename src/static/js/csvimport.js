@@ -34,10 +34,10 @@ $(function() {
                 '</div>',
                 '<p>',
                 '<input id="checkduplicates" name="checkduplicates" type="checkbox" data-x="checkduplicatesexplain" /> ',
-                '<label for="checkduplicates">' + _("Merge duplicate records") + '</label>',
+                '<label for="checkduplicates">' + _("Merge with existing records") + '</label>',
                 '</p>',
-                '<div id="checkduplicatesexplain" style="display: none">',
-                html.info(_("People or animal records that already exist in the database will not be imported again and movement/payment data will be attached to the existing records instead.")),
+                '<div id="checkduplicatesexplain">',
+                html.info(_("People or animal records that already exist in the database will not be imported again and related data will be attached to the existing records instead.")),
                 '</div>',
                 '<p>',
                 '<input id="prefixanimalcodes" name="prefixanimalcodes" type="checkbox" data-x="prefixanimalcodesexplain" /> ',
@@ -89,7 +89,7 @@ $(function() {
                 $("#import").button("disable");
                 $("#csvform").submit();
             });
-            $("input[type='checkbox']").click(function() {
+            $("input[type='checkbox']").change(function() {
                 if ($(this).prop("checked")) {
                     $("#" + $(this).attr("data-x")).fadeIn();
                 }
@@ -99,6 +99,10 @@ $(function() {
             });
             // Do not show the clear down option for large databases
             $("#cleartablesp").toggle(!controller.islargedb);
+        },
+
+        sync: function() {
+            $("#checkduplicates").prop("checked", true);
         },
 
         name: "csvimport",
