@@ -1,6 +1,7 @@
 48
 ================
 
+28/02/24 Check home phone for a similar cell in embedded add person
 28/02/24 Handle exporting animal CSV PDF with no name
 28/02/24 Remove confusing "merge duplicates" from csvimport
 28/02/24 Add "Dead On Arrival" entry type and behaviour #1448
