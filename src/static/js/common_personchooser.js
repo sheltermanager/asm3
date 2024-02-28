@@ -708,7 +708,7 @@ $.widget("asm.personchooser", {
     check_similar: async function() {
         let self = this, dialogadd = this.options.dialogadd, dialogsimilar = this.options.dialogsimilar;
         let formdata = "mode=similar&" + dialogadd.find("input[data='emailaddress'], input[data='mobiletelephone'], input[data='surname'], input[data='forenames'], textarea[data='address']").toPOST();
-        let homephone = dialogadd.find("input[data='hometelephone']");
+        let homephone = dialogadd.find("input[data='hometelephone']").val();
         let result = await common.ajax_post("person_embed", formdata);
         let people = jQuery.parseJSON(result);
         let rec = people[0];
@@ -734,7 +734,7 @@ $.widget("asm.personchooser", {
         else {
             // Do a second check just in case the user put a cell phone number in the home phone field
             if (homephone) {
-                formdata = "mode=similar&mobiletelephone=" + homephone + "&" + dialogadd.find("input[data='emailaddress'], input[data='mobiletelephone'], input[data='surname'], input[data='forenames'], textarea[data='address']").toPOST();
+                formdata = "mode=similar&mobiletelephone=" + homephone + "&" + dialogadd.find("input[data='emailaddress'], input[data='surname'], input[data='forenames'], textarea[data='address']").toPOST();
                 result = await common.ajax_post("person_embed", formdata);
                 let people = jQuery.parseJSON(result);
                 let rec = people[0];
