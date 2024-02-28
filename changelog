@@ -2,7 +2,7 @@
 ================
 
 28/02/24 Handle exporting animal CSV PDF with no name
-28/02/24 Better csvimport merge duplicate text and enable by default
+28/02/24 Remove confusing "merge duplicates" from csvimport
 28/02/24 Add "Dead On Arrival" entry type and behaviour #1448
 26/02/24 Ability to copy media to other records #1258
 26/02/24 Allow doc repo files to be attached when emailing media #1434

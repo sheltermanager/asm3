@@ -33,13 +33,6 @@ $(function() {
                 html.info(_("Any animal types, species, breeds, colors, locations, etc. in the CSV file that aren't already in the database will be created during the import.")),
                 '</div>',
                 '<p>',
-                '<input id="checkduplicates" name="checkduplicates" type="checkbox" data-x="checkduplicatesexplain" /> ',
-                '<label for="checkduplicates">' + _("Merge with existing records") + '</label>',
-                '</p>',
-                '<div id="checkduplicatesexplain">',
-                html.info(_("People or animal records that already exist in the database will not be imported again and related data will be attached to the existing records instead.")),
-                '</div>',
-                '<p>',
                 '<input id="prefixanimalcodes" name="prefixanimalcodes" type="checkbox" data-x="prefixanimalcodesexplain" /> ',
                 '<label for="prefixanimalcodes">' + _("Prefix animal codes") + '</label>',
                 '</p>',
@@ -102,7 +95,6 @@ $(function() {
         },
 
         sync: function() {
-            $("#checkduplicates").prop("checked", true);
         },
 
         name: "csvimport",

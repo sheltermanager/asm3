@@ -241,12 +241,15 @@ def row_error(errors: List, rowtype: str, rowno: int, row: Dict, e: Any, dbo: Da
 
 def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: str = "", 
               createmissinglookups: bool = False, cleartables: bool = False, 
-              checkduplicates: bool = False, prefixanimalcodes: bool = False, 
+              checkduplicates: bool = True, prefixanimalcodes: bool = False, 
               entrytoday: bool = False, htmlresults: bool = True) -> str:
     """
     Imports csvdata (bytes string, encoded with encoding)
     createmissinglookups: If a lookup value is given that's not in our data, add it
     cleartables: Clear down the animal, owner and adoption tables before import
+    checkduplicates: Try to attach to existing records if they exist, there is no scenario really
+        where this should be false, unless you want to force new records but have no ability to
+        attach extra records to these imported ones.
     prefixanimalcodes: Add a prefix to shelter codes to avoid clashes with the existing records
     entrytoday: Set ANIMALENTRYDATE to today - useful for importing animals being transferred in
     htmlresults: Return the results as an HTML table. If false, returns a JSON document
