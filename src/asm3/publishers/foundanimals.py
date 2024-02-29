@@ -136,53 +136,54 @@ class FoundAnimalsPublisher(FTPPublisher):
         line = []
         servicedate = an["ACTIVEMOVEMENTDATE"] or an["MOSTRECENTENTRYDATE"]
         if an["NONSHELTERANIMAL"] == 1: servicedate = an["IDENTICHIPDATE"]
+        address = self.splitAddress(an.CURRENTOWNERADDRESS)
 
         # First Name
-        line.append("\"%s\"" % an["CURRENTOWNERFORENAMES"])
+        line.append(an.CURRENTOWNERFORENAMES)
         # Last Name
-        line.append("\"%s\"" % an["CURRENTOWNERSURNAME"])
+        line.append(an.CURRENTOWNERSURNAME)
         # Email Address
-        line.append("\"%s\"" % an["CURRENTOWNEREMAILADDRESS"])
+        line.append(an.CURRENTOWNEREMAILADDRESS)
         # Address 1
-        line.append("\"%s\"" % an["CURRENTOWNERADDRESS"])
+        line.append(address["line1"])
         # Address 2
-        line.append("\"\"")
+        line.append(address["line2"])
         # City
-        line.append("\"%s\"" % an["CURRENTOWNERTOWN"])
+        line.append(an.CURRENTOWNERTOWN)
         # State
-        line.append("\"%s\"" % an["CURRENTOWNERCOUNTY"])
+        line.append(an.CURRENTOWNERCOUNTY)
         # Zip Code
-        line.append("\"%s\"" % an["CURRENTOWNERPOSTCODE"])
+        line.append(an.CURRENTOWNERPOSTCODE)
         # Home Phone
-        line.append("\"%s\"" % an["CURRENTOWNERHOMETELEPHONE"])
+        line.append(an.CURRENTOWNERHOMETELEPHONE)
         # Work Phone
-        line.append("\"%s\"" % an["CURRENTOWNERWORKTELEPHONE"])
+        line.append(an.CURRENTOWNERWORKTELEPHONE)
         # Cell Phone
-        line.append("\"%s\"" % an["CURRENTOWNERMOBILETELEPHONE"])
+        line.append(an.CURRENTOWNERMOBILETELEPHONE)
         # Pet Name
-        line.append("\"%s\"" % an["ANIMALNAME"])
+        line.append(an.ANIMALNAME)
         # Microchip Number
-        line.append("\"%s\"" % an["IDENTICHIPNUMBER"])
+        line.append(an.IDENTICHIPNUMBER)
         # Service Date
-        line.append("\"%s\"" % asm3.i18n.format_date(servicedate, "%m/%d/%Y"))
+        line.append(asm3.i18n.format_date(servicedate, "%m/%d/%Y"))
         # Date of Birth
-        line.append("\"%s\"" % asm3.i18n.format_date(an["DATEOFBIRTH"], "%m/%d/%Y"))
+        line.append(asm3.i18n.format_date(an.DATEOFBIRTH, "%m/%d/%Y"))
         # Species
-        line.append("\"%s\"" % an["PETFINDERSPECIES"])
+        line.append(an.PETFINDERSPECIES)
         # Sex
-        line.append("\"%s\"" % an["SEXNAME"])
+        line.append(an.SEXNAME)
         # Spayed/Neutered
-        line.append("\"%s\"" % asm3.utils.iif(an["NEUTERED"] == 1, "Yes", "No"))
+        line.append(asm3.utils.iif(an.NEUTERED == 1, "Yes", "No"))
         # Primary Breed
-        line.append("\"%s\"" % an["PETFINDERBREED"])
+        line.append(an.PETFINDERBREED)
         # Secondary Breed
-        line.append("\"%s\"" % an["PETFINDERBREED2"])
+        line.append(an.PETFINDERBREED2)
         # Color
-        line.append("\"%s\"" % an["BASECOLOURNAME"])
+        line.append(an.BASECOLOURNAME)
         # Implanting Organization
-        line.append("\"%s\"" % org)
+        line.append(org)
         # Rescue Group Email
-        line.append("\"%s\"" % email)
+        line.append(email)
         return self.csvLine(line)
 
     def validate(self, an: ResultRow, cutoffdays: int) -> bool:

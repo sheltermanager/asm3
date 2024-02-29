@@ -1,6 +1,8 @@
 48
 ================
 
+29/02/24 Split addresses into line1/2/csv for chip registries that need it
+29/02/24 Cat TNRs were being excluded from annual figures 
 28/02/24 Check home phone for a similar cell in embedded add person
 28/02/24 Handle exporting animal CSV PDF with no name
 28/02/24 Remove confusing "merge duplicates" from csvimport

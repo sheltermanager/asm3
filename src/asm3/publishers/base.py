@@ -11,7 +11,7 @@ import asm3.movement
 import asm3.utils
 import asm3.wordprocessor
 from asm3.sitedefs import SERVICE_URL, FTP_CONNECTION_TIMEOUT
-from asm3.typehints import Any, datetime, Database, List, ResultRow, Results
+from asm3.typehints import Any, datetime, Database, Dict, List, ResultRow, Results
 
 import ftplib
 import glob
@@ -780,6 +780,22 @@ class AbstractPublisher(threading.Thread):
         """
         if save_log: self.saveLog()
         self.setPublisherComplete()
+
+    def splitAddress(self, address: str) -> Dict[str, str]:
+        """
+        Splits the OWNERADDRESS column and returns a dict of address elements.
+        """
+        o = { "houseno": "", "streetname": "", "line1": "", "line2": "", "csv": ""}
+        if address is None: address = ""
+        o["csv"] = address.replace("\n", ", ")
+        b = address.split("\n")
+        if len(b) > 0: o["line1"] = b[0]
+        if len(b) > 1: o["line2"] = b[1]
+        b = o["line1"].split(" ", 1)
+        if len(b) == 2 and asm3.utils.is_numeric(b[0]):
+            o["houseno"] = b[0]
+            o["streetname"] = b[1]
+        return o
 
     def makePublishDirectory(self) -> None:
         """

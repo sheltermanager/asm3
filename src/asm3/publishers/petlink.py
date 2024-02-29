@@ -232,8 +232,7 @@ class PetLinkPublisher(AbstractPublisher):
         homephone = asm3.utils.nulltostr(an.CURRENTOWNERHOMETELEPHONE).strip()
         workphone = asm3.utils.nulltostr(an.CURRENTOWNERWORKTELEPHONE).strip()
         mobilephone = asm3.utils.nulltostr(an.CURRENTOWNERMOBILETELEPHONE).strip()
-        address = asm3.utils.nulltostr(an.CURRENTOWNERADDRESS).strip()
-        address = address.replace("\n", " ") # petlink have issues with quoted line breaks in CSV files
+        address = self.splitAddress(an.CURRENTOWNERADDRESS)
 
         # Get the non-blank phone number and strip it of non-numeric data
         phone = homephone or mobilephone or workphone
@@ -263,7 +262,7 @@ class PetLinkPublisher(AbstractPublisher):
         # LastName
         line.append(an.CURRENTOWNERSURNAME)
         # Address
-        line.append(address)
+        line.append(address["csv"])
         # City
         line.append(an.CURRENTOWNERTOWN)
         # State

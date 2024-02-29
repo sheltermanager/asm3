@@ -156,6 +156,7 @@ class AnibaseUKPublisher(AbstractPublisher):
 
         implantdate = ""
         if an["IDENTICHIPDATE"] is not None: implantdate = asm3.i18n.format_date(an["IDENTICHIPDATE"], "%d/%m/%Y")
+        address = self.splitAddress(an.CURRENTOWNERADDRESS)
 
         # Construct the XML document
         return '<?xml version="1.0" encoding="UTF-8"?>\n' \
@@ -171,7 +172,7 @@ class AnibaseUKPublisher(AbstractPublisher):
             ' <Forenames>' + xe(an["CURRENTOWNERFORENAMES"]) + '</Forenames>' \
             ' <Surname>' + xe(an["CURRENTOWNERSURNAME"]) + '</Surname>' \
             ' <Address>' \
-            '  <Line1>'+ xe(an["CURRENTOWNERADDRESS"]) + '</Line1>' \
+            '  <Line1>'+ xe(address["csv"]) + '</Line1>' \
             '  <LineOther>'+ xe(an["CURRENTOWNERTOWN"]) + '</LineOther>' \
             '  <PostalCode>' + xe(an["CURRENTOWNERPOSTCODE"]) + '</PostalCode>' \
             '  <County_State>'+ xe(an["CURRENTOWNERCOUNTY"]) + '</County_State>' \

@@ -126,6 +126,7 @@ class SmartTagPublisher(FTPPublisher):
         """ Process an animal record and return a CSV line """
         reccountry = an.CURRENTOWNERCOUNTRY
         if reccountry is None or reccountry == "": reccountry = "USA"
+        address = self.splitAddress(an.CURRENTOWNERADDRESS)
         line = []
         # accountid
         line.append("\"%s\"" % shelterid)
@@ -155,10 +156,6 @@ class SmartTagPublisher(FTPPublisher):
         line.append("\"\"")
         # feecollected
         line.append("\"\"")
-        # owner related stuff
-        address = an["CURRENTOWNERADDRESS"]
-        houseno = asm3.utils.address_house_number(address)
-        streetname = asm3.utils.address_street_name(address)
         # ownerfname
         line.append("\"%s\"" % an["CURRENTOWNERFORENAMES"])
         # ownermname
@@ -166,11 +163,11 @@ class SmartTagPublisher(FTPPublisher):
         #ownerlname
         line.append("\"%s\"" % an["CURRENTOWNERSURNAME"])
         # addressstreetnumber
-        line.append("\"%s\"" % houseno)
+        line.append(address["houseno"])
         # addressstreetdir
         line.append("\"\"")
         # addressstreetname
-        line.append("\"%s\"" % streetname)
+        line.append(address["streetname"])
         # addressstreettype
         line.append("\"\"")
         # addresscity

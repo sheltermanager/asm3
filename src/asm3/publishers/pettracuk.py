@@ -185,6 +185,8 @@ class PETtracUKPublisher(AbstractPublisher):
         elif species.find("Reptile") != -1: species = "Reptilian"
         else: species = "Other"
 
+        address = self.splitAddress(an.CURRENTOWNERADDRESS)
+
         # Build the animal POST data
         fields = {
             "orgpostcode": orgpostcode,
@@ -197,7 +199,7 @@ class PETtracUKPublisher(AbstractPublisher):
             "prefix": an["CURRENTOWNERTITLE"],
             "surname": an["CURRENTOWNERSURNAME"],
             "firstname": an["CURRENTOWNERFORENAMES"],
-            "address1": an["CURRENTOWNERADDRESS"],
+            "address1": address["line1"],
             "city": an["CURRENTOWNERTOWN"],
             "county": an["CURRENTOWNERCOUNTY"],
             "postcode": an["CURRENTOWNERPOSTCODE"],

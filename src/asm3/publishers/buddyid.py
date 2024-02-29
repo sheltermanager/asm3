@@ -143,13 +143,14 @@ class BuddyIDPublisher(AbstractPublisher):
     def processAnimal(self, an: ResultRow, provider_code: str) -> str:
         """ Processes an animal record and returns a data dictionary for upload as JSON """
         d = {}
+        address = self.splitAddress(an.CURRENTOWNERADDRESS)
         d["account"] = { "emailAddress": an.CURRENTOWNEREMAILADDRESS }
         d["primaryContact"] = {
             "nameFirst": an.CURRENTOWNERFORENAMES,
             "nameLast": an.CURRENTOWNERSURNAME,
             "address": {
-                "streetLine1": an.CURRENTOWNERADDRESS,
-                "streetLine2": "",
+                "streetLine1": address["line1"],
+                "streetLine2": address["line2"],
                 "city": an.CURRENTOWNERTOWN,
                 "stateProvince": an.CURRENTOWNERCOUNTY,
                 "postalCode": an.CURRENTOWNERPOSTCODE,

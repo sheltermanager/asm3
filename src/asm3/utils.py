@@ -634,38 +634,6 @@ def parse_qs(s: str) -> Dict[str, str]:
     """ Given a querystring, parses it and returns a dict of elements """
     return dict(urllib.parse.parse_qsl(s))
 
-def address_first_line(address: str) -> str:
-    """
-    Returns the first line of an address
-    """
-    if address is None: return ""
-    bits = address.split("\n")
-    if len(bits) > 0:
-        return bits[0]
-    return ""
-
-def address_house_number(address: str) -> str:
-    """
-    Returns the house number from an address
-    """
-    fl = address_first_line(address)
-    if fl == "": return ""
-    bits = fl.split(" ")
-    if is_numeric(bits[0]):
-        return bits[0]
-    return ""
-
-def address_street_name(address: str) -> str:
-    """
-    Returns the street name from an address line
-    """
-    fl = address_first_line(address)
-    if fl == "": return ""
-    bits = fl.split(" ", 1)
-    if len(bits) == 2:
-        return bits[1]
-    return ""
-
 def rss(inner: str, title: str, link: str, description: str) -> str:
     """ Renders an RSS document """
     return '<?xml version="1.0" encoding="UTF-8"?>' \

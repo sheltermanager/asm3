@@ -162,6 +162,7 @@ class HomeAgainPublisher(AbstractPublisher):
         if reccountry is None or reccountry == "": reccountry = "USA"
         forenames = an.CURRENTOWNERFORENAMES
         if forenames is None or forenames == "": forenames = "org" # organisation
+        address = self.splitAddress(an.CURRENTOWNERADDRESS)
         return '<?xml version="1.0" encoding="UTF-8"?>\n' \
             '<MicrochipRegistration ' \
             'version="1.32" ' \
@@ -178,7 +179,7 @@ class HomeAgainPublisher(AbstractPublisher):
             ' <Forenames>' + xe(forenames) + '</Forenames>' \
             ' <Surname>' + xe(an["CURRENTOWNERSURNAME"]) + '</Surname>' \
             ' <Address>' \
-            '  <Line1>'+ xe(an["CURRENTOWNERADDRESS"]) + '</Line1>' \
+            '  <Line1>'+ xe(address["csv"]) + '</Line1>' \
             '  <TownCity>'+ xe(an["CURRENTOWNERTOWN"]) + '</TownCity>' \
             '  <County_State>'+ xe(an["CURRENTOWNERCOUNTY"]) + '</County_State>' \
             '  <PostalCode>' + xe(an["CURRENTOWNERPOSTCODE"]) + '</PostalCode>' \
