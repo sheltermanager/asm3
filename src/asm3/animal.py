@@ -5299,7 +5299,8 @@ def update_animal_figures_annual(dbo: Database, year: int = 0) -> str:
     group = _("Intakes {0}", l).format(year)
     for sp in allspecies:
         exclude_tnr = ""
-        if sp["ID"] == 2: exclude_tnr = "AND NOT EXISTS(SELECT ID FROM adoption WHERE AnimalID=a.ID AND MovementType=7)"
+        # Not sure why we were doing this - it means TNR intakes were excluded for no reason that makes any sense
+        # if sp["ID"] == 2: exclude_tnr = "AND NOT EXISTS(SELECT ID FROM adoption WHERE AnimalID=a.ID AND MovementType=7)"
         species_line("SELECT a.DateBroughtIn AS TheDate, a.DateOfBirth AS DOB, " \
             "COUNT(a.ID) AS Total FROM animal a WHERE " \
             "a.SpeciesID = %d AND a.DateBroughtIn >= %s AND a.DateBroughtIn <= %s " \
