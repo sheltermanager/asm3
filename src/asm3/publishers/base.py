@@ -787,6 +787,7 @@ class AbstractPublisher(threading.Thread):
         """
         o = { "houseno": "", "streetname": "", "line1": "", "line2": "", "csv": ""}
         if address is None: address = ""
+        address = address.strip()
         o["csv"] = address.replace("\n", ", ")
         b = address.split("\n")
         if len(b) > 0: o["line1"] = b[0]
