@@ -707,12 +707,14 @@ $.widget("asm.personchooser", {
      */
     check_similar: async function() {
         let self = this, dialogadd = this.options.dialogadd, dialogsimilar = this.options.dialogsimilar;
+        let matchfound = false;
         let formdata = "mode=similar&" + dialogadd.find("input[data='emailaddress'], input[data='mobiletelephone'], input[data='surname'], input[data='forenames'], textarea[data='address']").toPOST();
         let homephone = dialogadd.find("input[data='hometelephone']").val();
         let result = await common.ajax_post("person_embed", formdata);
         let people = jQuery.parseJSON(result);
         let rec = people[0];
         if (rec) {
+            matchfound = true;
             let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"#\">" + rec.OWNERNAME + "</a></span>";
             if (self.options.mode == "full") {
                 disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + 
@@ -731,37 +733,34 @@ $.widget("asm.personchooser", {
             });
             self.show_similar();
         }
-        else {
-            // Do a second check just in case the user put a cell phone number in the home phone field
-            if (homephone) {
-                formdata = "mode=similar&mobiletelephone=" + homephone + "&" + dialogadd.find("input[data='emailaddress'], input[data='surname'], input[data='forenames'], textarea[data='address']").toPOST();
-                result = await common.ajax_post("person_embed", formdata);
-                let people = jQuery.parseJSON(result);
-                let rec = people[0];
-                if (rec === undefined) {
-                    self.add_person();
+        // Do a second check just in case the user put a cell phone number in the home phone field
+        else if (homephone) {
+            formdata = "mode=similar&mobiletelephone=" + homephone + "&" + dialogadd.find("input[data='emailaddress'], input[data='surname'], input[data='forenames'], textarea[data='address']").toPOST();
+            result = await common.ajax_post("person_embed", formdata);
+            let people = jQuery.parseJSON(result);
+            let rec = people[0];
+            if (rec) {
+                matchfound = true;
+                let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"#\">" + rec.OWNERNAME + "</a></span>";
+                if (self.options.mode == "full") {
+                    disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + 
+                        (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") + 
+                        "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + 
+                        " " + common.nulltostr(rec.MOBILETELEPHONE2) + "<br/>" + rec.EMAILADDRESS + " " + common.nulltostr(rec.EMAILADDRESS2);
                 }
-                else {
-                    let disp = "<span class=\"justlink\"><a class=\"asm-embed-name\" href=\"#\">" + rec.OWNERNAME + "</a></span>";
-                    if (self.options.mode == "full") {
-                        disp += "<br/>" + rec.OWNERADDRESS + "<br/>" + rec.OWNERTOWN + "<br/>" + rec.OWNERCOUNTY + "<br/>" + rec.OWNERPOSTCODE + 
-                            (!config.bool("HideCountry") ? "<br/>" + rec.OWNERCOUNTRY : "") + 
-                            "<br/>" + rec.HOMETELEPHONE + "<br/>" + rec.WORKTELEPHONE + "<br/>" + rec.MOBILETELEPHONE + 
-                            " " + common.nulltostr(rec.MOBILETELEPHONE2) + "<br/>" + rec.EMAILADDRESS + " " + common.nulltostr(rec.EMAILADDRESS2);
-                    }
-                    dialogsimilar.find(".similar-person").html(disp);
-                    // When the user clicks the name of the similar person,
-                    // select it for the field instead
-                    dialogsimilar.find(".asm-embed-name").click(function() {
-                        self.loadbyid(rec.ID);
-                        dialogsimilar.dialog("close");
-                        dialogadd.dialog("close");
-                        return false;
-                    });
-                    self.show_similar();
-                }
+                dialogsimilar.find(".similar-person").html(disp);
+                // When the user clicks the name of the similar person,
+                // select it for the field instead
+                dialogsimilar.find(".asm-embed-name").click(function() {
+                    self.loadbyid(rec.ID);
+                    dialogsimilar.dialog("close");
+                    dialogadd.dialog("close");
+                    return false;
+                });
+                self.show_similar();
             }
         }
+        if (!matchfound) { self.add_person(); }
     },
 
     clear: function(fireclearedevent) {
