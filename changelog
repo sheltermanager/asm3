@@ -1,6 +1,7 @@
 48
 ================
 
+29/02/24 Sort homecheck history by date desc
 29/02/24 Entry type field not hiding correctly for non-shelter animals
 29/02/24 Split addresses into line1/2/csv for chip registries that need it
 29/02/24 Cat TNRs were being excluded from annual figures 

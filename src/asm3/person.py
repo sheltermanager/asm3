@@ -125,7 +125,7 @@ def get_homechecked(dbo: Database, personid: int) -> Results:
     Returns a list of people homechecked by personid
     """
     return dbo.query("SELECT ID, OwnerName, DateLastHomeChecked, Comments FROM owner " \
-        "WHERE HomeCheckedBy = ?", [personid])
+        "WHERE HomeCheckedBy = ? ORDER BY DateLastHomeChecked DESC", [personid])
 
 def get_person_similar(dbo: Database, email: str = "", mobile: str = "", surname: str = "", forenames: str = "", address: str = "", 
                        siteid: int = 0, checkcouple: bool = False, checkmobilehome: bool = False, checkforenames: bool = True) -> Results:
