@@ -316,7 +316,7 @@ def sql_structure(dbo: Database) -> str:
         flongstr("ReasonForEntry"),
         flongstr("ReasonNO"),
         fdate("DateBroughtIn"),
-        fint("EntryTypeID"),
+        fint("EntryTypeID", True),
         fint("EntryReasonID"),
         fint("AsilomarIsTransferExternal", True),
         fint("AsilomarIntakeCategory", True),
