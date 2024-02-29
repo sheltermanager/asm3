@@ -1103,7 +1103,7 @@ $(function() {
             }
 
             // Change the Original Owner text if this record is non-shelter
-            if ($("#flags option[value='nonshelter']").is(":selected")) {
+            if (controller.animal.NONSHELTERANIMAL == 1) {
                 $("label[for='originalowner']").html(_("Owner"));
             }
             else {
@@ -1136,7 +1136,7 @@ $(function() {
 
             // If the animal is non-shelter, don't show the location, 
             // pickup, brought in by owner, bonded with, type, reasons or asilomar
-            if ($("#flags option[value='nonshelter']").is(":selected")) {
+            if (controller.animal.NONSHELTERANIMAL == 1) {
                 $("#lastlocation").hide();
                 $("#locationrow").hide();
                 $("#locationunitrow").hide();
@@ -1167,13 +1167,6 @@ $(function() {
                 $("#lastlocation").hide();
                 $("#locationrow").show();
                 $("#locationunitrow").show();
-            }
-
-            // Still show the owner requested euth field for non-shelter animals
-            if (asm.locale == "en" && !config.bool("DisableAsilomar") &&
-                ($("#species").select("value") == 1 || $("#species").select("value") == 2) &&
-                $("#flags option[value='nonshelter']").is(":selected")) {
-                $(".ownereuth").show();
             }
 
             // If the animal has an exit movement, show the owner field
@@ -1272,13 +1265,17 @@ $(function() {
             if (config.bool("DontShowAdoptionFee")) { $("#feerow").hide(); }
             if (config.bool("DontShowAdoptionCoordinator")) { $("#coordinatorrow").hide(); }
             if (config.bool("DontShowCoatType")) { $("#coattyperow").hide(); }
-            if (config.bool("DontShowEntryType")) { 
-                $("#entrytyperow").hide(); 
-                $("#transferinrow").show(); 
-            } 
-            else { 
-                $("#entrytyperow").show();
-                $("#transferinrow").hide(); 
+            // entry type/transfer in are hidden for non-shelter animals anyway, so only show
+            // either if this isn't a non-shelter animal
+            if (controller.animal.NONSHELTERANIMAL == 0) {
+                if (config.bool("DontShowEntryType")) {
+                    $("#entrytyperow").hide(); 
+                    $("#transferinrow").show(); 
+                } 
+                else { 
+                    $("#entrytyperow").show();
+                    $("#transferinrow").hide(); 
+                }
             }
             if (config.bool("DontShowJurisdiction")) { $("#jurisdictionrow").hide(); }
             if (config.bool("DontShowSize")) { $("#sizerow").hide(); }
