@@ -217,6 +217,11 @@ IMAGE_HOTLINKING_ONLY_FROM_DOMAIN = get_string("image_hotlinking_only_from_domai
 # dumps of large databases.
 LARGE_FILES_CHUNKED = get_boolean("large_files_chunked", True)
 
+# Maximum size a document template can be. Anything over this and the
+# user has probably copied/pasted an image as a data-uri and it will cause
+# tinymce to break and the doc to fail to load. Default 2M
+MAX_DOCUMENT_TEMPLATE_SIZE = get_integer("max_document_template_size", 2097152)
+
 # Whether to resize incoming images
 RESIZE_IMAGES_DURING_ATTACH = get_boolean("resize_images_during_attach", True)
 RESIZE_IMAGES_SPEC = get_string("resize_images_spec", "1024x1024")

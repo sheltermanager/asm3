@@ -69,7 +69,7 @@ from asm3.sitedefs import AUTORELOAD, BASE_URL, CONTENT_SECURITY_POLICY, DEPLOYM
     LEAFLET_CSS, LEAFLET_JS, MULTIPLE_DATABASES, \
     ADMIN_EMAIL, EMAIL_ERRORS, MADDIES_FUND_TOKEN_URL, HTMLFTP_PUBLISHER_ENABLED, \
     MANUAL_HTML_URL, MANUAL_PDF_URL, MANUAL_FAQ_URL, MANUAL_VIDEO_URL, MAP_LINK, MAP_PROVIDER, \
-    MAP_PROVIDER_KEY, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
+    MAP_PROVIDER_KEY, MAX_DOCUMENT_TEMPLATE_SIZE, OSM_MAP_TILES, FOUNDANIMALS_FTP_USER, PETCADEMY_FTP_HOST, \
     PETLINK_BASE_URL, PETRESCUE_URL, PETSLOCATED_FTP_USER, \
     RESIZE_IMAGES_DURING_ATTACH, RESIZE_IMAGES_SPEC, SAC_METRICS_URL, \
     SAVOURLIFE_URL, SERVICE_URL, SESSION_SECURE_COOKIE, SESSION_DEBUG, SHARE_BUTTON, SMARTTAG_FTP_USER, \
@@ -3314,6 +3314,9 @@ class document_template_edit(ASMEndpoint):
     def post_save(self, o):
         dbo = o.dbo
         post = o.post
+        sz = len(post["document"])
+        if sz > MAX_DOCUMENT_TEMPLATE_SIZE:
+            raise asm3.utils.ASMValidationError(f"Error: {sz} > {MAX_DOCUMENT_TEMPLATE_SIZE}. Use extra images instead of pasting images.")
         dtid = post.integer("dtid")
         asm3.template.update_document_template_content(dbo, o.user, dtid, post["document"])
         self.redirect("document_templates")

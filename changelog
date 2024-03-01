@@ -1,6 +1,7 @@
 48
 ================
 
+01/03/24 Add max filesize limit for document templates #1449
 29/02/24 Include reclaim return counts on annual figures
 29/02/24 Sort homecheck history by date desc
 29/02/24 Entry type field not hiding correctly for non-shelter animals
