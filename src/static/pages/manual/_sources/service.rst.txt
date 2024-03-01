@@ -695,7 +695,7 @@ show a list of adoptable animals. It looks for an HTML template called
 "animalviewadoptable" and falls back to a basic internal template if it does
 not exist::
 
-    http://localhost:5000/service?method=&animal_view_adoptable_html
+    http://localhost:5000/service?method=animal_view_adoptable_html
 
 csv_import
 ----------
