@@ -692,7 +692,7 @@ animal_view_adoptable_html
 
 Returns a complete HTML document that references animal_view_adoptable_js to
 show a list of adoptable animals. It looks for an HTML template called
-"animalviewadoptables" and falls back to a basic internal template if it does
+"animalviewadoptable" and falls back to a basic internal template if it does
 not exist::
 
     http://localhost:5000/service?method=&animal_view_adoptable_html
