@@ -18,7 +18,8 @@ MatchExpires,
 MatchAgeFrom, 
 MatchAgeTo, 
 (SELECT AnimalType FROM animaltype WHERE ID = MatchAnimalType) AS AnimalType,
-(SELECT SpeciesName FROM species WHERE ID =MatchSpecies) AS Species, 
+(SELECT SpeciesName FROM species WHERE ID =MatchSpecies) AS Species,
+(SELECT BaseColour FROM basecolour WHERE ID =MatchColour) AS Color, 
 (SELECT BreedName FROM breed WHERE ID = MatchBreed) AS Breed, 
 (SELECT BreedName FROM breed WHERE ID = MatchBreed2) AS OrBreed, 
 (SELECT Name FROM lksynun WHERE ID = MatchGoodWithCats) AS GoodWithCats, 
@@ -41,6 +42,7 @@ $$HEADER
 <td><b>To</b></td>
 <td><b>Type</b></td>
 <td><b>Species</b></td>
+<td><b>Color</b></td>
 <td><b>Breed</b></td>
 <td><b>or</b></td>
 <td><b>Good with cats</b></td>
@@ -66,6 +68,7 @@ $EMAILADDRESS $HOMETELEPHONE $MOBILETELEPHONE</td>
 <td>$MATCHAGETO</td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIES</td>
+<td>$COLOR</td>
 <td>$BREED</td>
 <td>$ORBREED</td>
 <td>$GOODWITHCATS</td>
