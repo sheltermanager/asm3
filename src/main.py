@@ -893,7 +893,7 @@ class media(ASMEndpoint):
     def post_copyanimal(self, o):
         self.check(asm3.users.ADD_MEDIA)
         for mid in o.post.integer_list("ids"):
-            asm3.media.update_media_link(o.dbo, o.user, mid, asm3.media.ANIMAL, o.post.integer("animalid"))
+            asm3.media.clone_media(o.dbo, o.user, mid, asm3.media.ANIMAL, o.post.integer("animalid"))
 
     def post_copyperson(self, o):
         self.check(asm3.users.ADD_MEDIA)
@@ -903,7 +903,7 @@ class media(ASMEndpoint):
     def post_moveanimal(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
         for mid in o.post.integer_list("ids"):
-            asm3.media.clone_media(o.dbo, o.user, mid, asm3.media.ANIMAL, o.post.integer("animalid"))
+            asm3.media.update_media_link(o.dbo, o.user, mid, asm3.media.ANIMAL, o.post.integer("animalid"))
 
     def post_moveperson(self, o):
         self.check(asm3.users.CHANGE_MEDIA)
