@@ -2894,13 +2894,14 @@ class csvimport(JSONEndpoint):
 
     def post_all(self, o):
         l = o.locale
+        # NOTE: Can't use named arguments when passing function parameters
         asm3.asynctask.function_task(o.dbo, _("Import a CSV file", l), asm3.csvimport.csvimport, 
             o.dbo, o.post.filedata(), o.post["encoding"], o.user, 
-            createmissinglookups = o.post.boolean("createmissinglookups") == 1, 
-            cleartables = o.post.boolean("cleartables") == 1, 
-            checkduplicates = True,
-            prefixanimalcodes = o.post.boolean("prefixanimalcodes") == 1,
-            entrytoday = o.post.boolean("entrytoday") == 1)
+            o.post.boolean("createmissinglookups") == 1, 
+            o.post.boolean("cleartables") == 1, 
+            True,
+            o.post.boolean("prefixanimalcodes") == 1,
+            o.post.boolean("entrytoday") == 1)
         self.redirect("task")
 
 class csvimport_paypal(JSONEndpoint):
