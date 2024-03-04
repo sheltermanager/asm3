@@ -823,7 +823,7 @@ $(function() {
                 else if (p == "akcreunite") { t = html.icon("microchip") + " Microchip registered with AKC Reunite"; }
                 else if (p == "buddyid") { t = html.icon("microchip") + " Microchip registered with BuddyID"; }
                 else if (p == "homeagain") { t = html.icon("microchip") + " Microchip registered with HomeAgain"; }
-                else if (p == "foundanimals") { t = html.icon("microchip") + " Microchip registered with FoundAnimals"; }
+                else if (p == "foundanimals") { t = html.icon("microchip") + " Microchip registered with Found/24Pet"; }
 
                 else if (p == "shareweb") { t = html.icon("web") + " " + _("Shared weblink"); }
                 else if (p == "shareemail") { t = html.icon("email") + " " + _("Shared email"); }
