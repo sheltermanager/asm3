@@ -147,7 +147,9 @@ $(function(){
                             tableform.table_update(table);
                         } 
                     },
-                    { id: "animalendactivefoster", text: _("End active foster"), tooltip: _("Set current foster movement return date to event start or current time, whichever is later"), enabled: "multi", perm: "cea",
+                    { id: "animalendactivefoster", text: _("End active foster"), icon: "movement", 
+                        tooltip: _("Set current foster movement return date to event start or current time, whichever is later"), 
+                        enabled: "multi", perm: "cea",
                         click: async function() {
                             await tableform.show_okcancel_dialog("#dialog-endactivefoster", _("Ok"));
                             tableform.buttons_default_state(buttons);

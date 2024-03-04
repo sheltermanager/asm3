@@ -147,11 +147,11 @@ $(function(){
 
         },
 
-        enable_widgets: function(){
+        enable_widgets: function() {
 
-        // SECURITY =============================================================
             if (!common.has_permission("ce")) { $("#button-save").hide(); }
             if (!common.has_permission("de")) { $("#button-delete").hide(); }
+            $("#countryrow").toggle( !config.bool("HideCountry") );
 
         },
 

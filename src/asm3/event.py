@@ -106,6 +106,14 @@ def get_events_html(dbo: Database, count: int = 10, template: str = "events"):
         b = b.replace("$$DESCRIPTION$$", evt.EVENTDESCRIPTION)
         b = b.replace("$$STARTDATE$$", asm3.i18n.python2displaytime(l, evt.STARTDATETIME))
         b = b.replace("$$ENDDATE$$", asm3.i18n.python2displaytime(l, evt.ENDDATETIME))
+        b = b.replace("$$ADDRESS$$", evt.EVENTADDRESS)
+        b = b.replace("$$TOWN$$", evt.EVENTTOWN)
+        b = b.replace("$$CITY$$", evt.EVENTTOWN)
+        b = b.replace("$$COUNTY$$", evt.EVENTCOUNTY)
+        b = b.replace("$$STATE$$", evt.EVENTCOUNTY)
+        b = b.replace("$$ZIPCODE$$", evt.EVENTPOSTCODE)
+        b = b.replace("$$POSTCODE$$", evt.EVENTPOSTCODE)
+        b = b.replace("$$COUNTRY$$", evt.EVENTCOUNTRY)
         bodies.append(b)
     return header + "\n".join(bodies) + footer
 

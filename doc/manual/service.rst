@@ -875,6 +875,16 @@ $$STARTDATE$$
     The start date/time. 
 $$ENDDATE$$
     The end date/time.
+$$ADDRESS$$
+    The event address.
+$$CITY$$ / $$TOWN$$
+    The event city (town for non-US).
+$$STATE$$ / $$COUNTY$$
+    The event state (county/region for non-US).
+$$ZIPCODE$$ / $$POSTCODE$$
+    The event zip/postal code.
+$$COUNTRY
+    The event country.
 
 A "count" parameter can be passed to return the most recent X events (default 10)
 and a "template" parameter can set the name of the template to use.
