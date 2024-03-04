@@ -207,8 +207,6 @@ DEFAULTS = {
     "EmblemTrialAdoption": "Yes",
     "EmblemUnneutered": "Yes",
     "EventSearchColumns": "StartDateTime,EndDateTime,EventName,EventOwnerName,EventAddress,EventTown",
-    "EventExcludeAnimalsWithFlags": "",
-    "EventExcludeAnimalsInLocations": "",
     "FancyTooltips": "No",
     "FirstDayOfWeek": "1",
     "FlagChangeLog": "Yes",
@@ -1317,12 +1315,6 @@ def pdf_zoom(dbo: Database) -> int:
 
 def person_search_columns(dbo: Database) -> str:
     return cstring(dbo, "OwnerSearchColumns", DEFAULTS["OwnerSearchColumns"])
-
-def event_excludeanimalswithflags(dbo: Database) -> str:
-    return cstring(dbo, "EventExcludeAnimalsWithFlags", DEFAULTS["EventExcludeAnimalsWithFlags"])
-
-def event_excludeanimalswithlocations(dbo: Database) -> str:
-    return cstring(dbo, "EventExcludeAnimalsInLocations", DEFAULTS["EventExcludeAnimalsInLocations"])
 
 def event_search_columns(dbo: Database) -> str:
     return cstring(dbo, "EventSearchColumns", DEFAULTS["EventSearchColumns"])

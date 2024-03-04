@@ -95,7 +95,6 @@ $(function() {
                 '<li><a href="#tab-display">' + _("Display") + '</a></li>',
                 '<li><a href="#tab-documents">' + _("Documents") + '</a></li>',
                 '<li><a href="#tab-email">' + _("Email") + '</a></li>',
-                '<li><a href="#tab-events">' + _("Events") + '</a></li>',
                 '<li><a href="#tab-findscreens">' + _("Find Screens") + '</a></li>',
                 '<li><a href="#tab-homepage">' + _("Home page") + '</a></li>',
                 '<li><a href="#tab-insurance">' + _("Insurance") + '</a></li>',
@@ -1060,29 +1059,6 @@ $(function() {
             ].join("\n");
         },
 
-        render_events: function() {
-            return [
-                '<div id="tab-events">',
-                '<table>',
-                '<tr>',
-                '<td><label for="excludeanimalsbyflags">' + _("Exclude animals by flags") + '</label></td>',
-                '<td><select id="excludeanimalsbyflags" class="asm-bsmselect" data="EventExcludeAnimalsWithFlags" multiple="multiple">',
-                html.list_to_options(controller.animalflags, "FLAG", "FLAG"),
-                '</select>',
-                '</td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="excludeanimalsbylocations">' + _("Exclude animals by locations") + '</label></td>',
-                '<td>',
-                '<select id="excludeanimalsbylocations" class="asm-bsmselect" data="EventExcludeAnimalsInLocations" multiple="multiple">',
-                html.list_to_options(controller.locations, "ID", "LOCATIONNAME"),
-                '</select>',
-                '</tr>',
-                '</table>',
-                '</div>',
-            ].join("\n");
-        },
-
         render_findscreens: function() {
             return [
                 '<div id="tab-findscreens">',
@@ -1848,7 +1824,6 @@ $(function() {
                 this.render_display(),
                 this.render_documents(),
                 this.render_email(),
-                this.render_events(),
                 this.render_findscreens(),
                 this.render_homepage(),
                 this.render_insurance(),
