@@ -865,8 +865,16 @@ Returns a complete HTML document of shelter fundraising/adoption events
 from :menuselection:`ASM --> Events --> Edit Events`
 
 Looks for an HTML template called "events" to use. A basic template will be 
-used if the template does not exist. The template should include the tokens
-$$NAME$$ and $$DESCRIPTION$$ to include those elements from the event.
+used if the template does not exist. The template can include the following tokens:
+
+$$NAME$$ 
+    The name of the event.
+$$DESCRIPTION$$
+    The event description. Note that this value is editable HTML from the screen.
+$$STARTDATE$$
+    The start date/time. 
+$$ENDDATE$$
+    The end date/time.
 
 A "count" parameter can be passed to return the most recent X events (default 10)
 and a "template" parameter can set the name of the template to use.

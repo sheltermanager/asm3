@@ -1,4 +1,5 @@
 import asm3.additional
+import asm3.i18n
 import asm3.movement
 import asm3.template
 
@@ -88,6 +89,7 @@ def get_events_html(dbo: Database, count: int = 10, template: str = "events"):
     """
     Return an HTML document of the most recent count events and using the given template.
     """
+    l = dbo.locale
     header, body, footer = asm3.template.get_html_template(dbo, template)
     if header == "":
         header = "<!DOCTYPE html>\n<html>\n<head>\n<meta charset='utf-8'>\n</head>\n<body>\n"
@@ -102,6 +104,8 @@ def get_events_html(dbo: Database, count: int = 10, template: str = "events"):
         b = body
         b = b.replace("$$NAME$$", evt.EVENTNAME)
         b = b.replace("$$DESCRIPTION$$", evt.EVENTDESCRIPTION)
+        b = b.replace("$$STARTDATE$$", asm3.i18n.python2displaytime(l, evt.STARTDATETIME))
+        b = b.replace("$$ENDDATE$$", asm3.i18n.python2displaytime(l, evt.ENDDATETIME))
         bodies.append(b)
     return header + "\n".join(bodies) + footer
 
