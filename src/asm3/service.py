@@ -15,6 +15,7 @@ import asm3.configuration
 import asm3.db
 import asm3.dbfs
 import asm3.dbupdate
+import asm3.event
 import asm3.html
 import asm3.media
 import asm3.lostfound
@@ -67,6 +68,7 @@ CACHE_PROTECT_METHODS = {
     "html_adoptable_animals": [ "speciesid", "animaltypeid", "locationid", "template", "underweeks", "overweeks" ],
     "html_adopted_animals": [ "days", "template", "speciesid", "animaltypeid", "order" ],
     "html_deceased_animals": [ "days", "template", "speciesid", "animaltypeid", "order" ],
+    "html_events": [ "count", "template" ],
     "html_flagged_animals": [ "template", "speciesid", "animaltypeid", "flag", "all", "order" ],
     "html_held_animals": [ "template", "speciesid", "animaltypeid", "order" ],
     "json_adoptable_animals": [ "sensitive" ],
@@ -503,20 +505,21 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             imagedata = asm3.dbfs.get_string(dbo, title)
         return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, imagedata)
 
-    elif method =="document_repository":
-        return set_cached_response(cache_key, account, asm3.media.mime_type(asm3.dbfs.get_name_for_id(dbo, mediaid)), 86400, 86400, asm3.dbfs.get_string_id(dbo, mediaid))
-
-    elif method =="extra_image":
+    elif method == "document_repository":
+        return set_cached_response(cache_key, account, asm3.media.mime_type(asm3.dbfs.get_name_for_id(dbo, mediaid)), 86400, 86400, 
+            asm3.dbfs.get_string_id(dbo, mediaid))
+    
+    elif method == "extra_image":
         hotlink_protect("extra_image", referer)
         return set_cached_response(cache_key, account, "image/jpeg", 86400, 86400, asm3.dbfs.get_string(dbo, title, "/reports"))
 
-    elif method =="media_image":
+    elif method == "media_image":
         hotlink_protect("media_image", referer)
         lastmodified, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, mediaid)
         if medianame == "": return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
         return set_cached_response(cache_key, account, mimetype, 86400, 86400, filedata)
 
-    elif method =="media_file":
+    elif method == "media_file":
         lastmodified, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, mediaid)
         if medianame == "": return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
         return set_cached_response(cache_key, account, mimetype, 86400, 86400, filedata)
@@ -546,6 +549,10 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         return set_cached_response(cache_key, account, "text/html", 10800, 1800, \
             asm3.publishers.html.get_deceased_animals(dbo, daysdeceased=post.integer("days"), style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), orderby=post["order"]))
+    
+    elif method == "html_events":
+        return set_cached_response(cache_key, account, "text/html", 3600, 3600, 
+            asm3.event.get_events_html(dbo, post.integer("count"), template=post["template"]))
 
     elif method == "html_flagged_animals":
         if post["flag"] == "":

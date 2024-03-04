@@ -1,5 +1,6 @@
 import asm3.additional
 import asm3.movement
+import asm3.template
 
 from asm3.i18n import _
 from asm3.typehints import datetime, Database, PostedData, ResultRow, Results
@@ -44,6 +45,12 @@ def get_event(dbo: Database, eventid: int) -> ResultRow:
     """
     return dbo.first_row(dbo.query(get_event_query(dbo) + "WHERE ev.ID = ?", [eventid]))
 
+def get_events(dbo: Database, count: int = 0) -> ResultRow:
+    """
+    Returns the most recent count events.
+    """
+    return dbo.query(get_event_query(dbo) + " ORDER BY StartDateTime DESC", limit=count)
+
 def get_events_by_animal(dbo: Database, animalid: int) -> Results:
     """
     Returns all events for animalid
@@ -76,6 +83,27 @@ def get_events_by_date(dbo: Database, date: datetime) -> Results:
     Returns all events that match date
     """
     return dbo.query(get_event_query(dbo) + "WHERE (ev.StartDateTime <= ? AND ? <= ev.EndDateTime) ORDER BY ev.StartDateTime", [date, date])
+
+def get_events_html(dbo: Database, count: int = 10, template: str = "events"):
+    """
+    Return an HTML document of the most recent count events and using the given template.
+    """
+    header, body, footer = asm3.template.get_html_template(dbo, template)
+    if header == "":
+        header = "<!DOCTYPE html>\n<html>\n<head>\n<meta charset='utf-8'>\n</head>\n<body>\n"
+        body = "<h2>$$NAME$$</h2>\n$$DESCRIPTION$$\n"
+        footer = "</body>\n</html>"
+    # Substitute the header and footer tags
+    org_tags = asm3.wordprocessor.org_tags(dbo, "system")
+    header = asm3.wordprocessor.substitute_tags(header, org_tags, True, "$$", "$$")
+    footer = asm3.wordprocessor.substitute_tags(footer, org_tags, True, "$$", "$$")
+    bodies = []
+    for evt in get_events(dbo, count):
+        b = body
+        b = b.replace("$$NAME$$", evt.EVENTNAME)
+        b = b.replace("$$DESCRIPTION$$", evt.EVENTDESCRIPTION)
+        bodies.append(b)
+    return header + "\n".join(bodies) + footer
 
 def insert_event_from_form(dbo: Database, post: PostedData, username: str) -> int:
     l = dbo.locale

@@ -856,6 +856,25 @@ days::
     http://localhost:5000/service?method=html_deceased_animals&template=littlebox&speciesid=1&days=60
     http://localhost:5000/service?method=html_deceased_animals&order=deceased_desc
 
+html_events
+-----------
+
+.. rubric:: Cache time: 1 hour
+
+Returns a complete HTML document of shelter fundraising/adoption events
+from :menuselection:`ASM --> Events --> Edit Events`
+
+Looks for an HTML template called "events" to use. A basic template will be 
+used if the template does not exist. The template should include the tokens
+$$NAME$$ and $$DESCRIPTION$$ to include those elements from the event.
+
+A "count" parameter can be passed to return the most recent X events (default 10)
+and a "template" parameter can set the name of the template to use.
+
+This is useful for including a page of events on your website::
+
+    http://localhost:5000/service?method=html_events&template=events&count=20
+
 html_flagged_animals
 ----------------------
 
