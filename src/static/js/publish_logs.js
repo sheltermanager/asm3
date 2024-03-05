@@ -22,7 +22,7 @@ $(function() {
             "petslocateduk":    "petslocated.co.uk",
             "pettracuk":        "AVID PETtrac",
             "rescuegroups":     "rescuegroups.org",
-            "sacmetrics":       "shelteranimalscount.org",
+            "shelteranimalscount": "shelteranimalscount.org",
             "savourlife":       "savour-life.com.au",
             "smarttag":         "Smart Tag"
         },
