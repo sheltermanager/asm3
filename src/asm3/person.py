@@ -1544,7 +1544,7 @@ def delete_person(dbo: Database, username: str, personid: int) -> None:
     dbo.delete("diary", "LinkID=%d AND LinkType=%d" % (personid, asm3.diary.PERSON), username)
     dbo.delete("log", "LinkID=%d AND LinkType=%d" % (personid, asm3.log.PERSON), username)
     dbo.execute("DELETE FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (personid, asm3.additional.PERSON_IN))
-    for t in [ "adoption", "clinicappointment", "ownercitation", "ownerdonation", "ownerlicence", "ownertraploan", "ownervoucher" ]:
+    for t in [ "adoption", "clinicappointment", "ownercitation", "ownerdonation", "ownerinvestigation", "ownerlicence", "ownerrota", "ownertraploan", "ownervoucher" ]:
         dbo.delete(t, "OwnerID=%d" % personid, username)
     dbo.delete("owner", personid, username)
     # asm3.dbfs.delete_path(dbo, "/owner/%d" % personid) # Use maint_db_delete_orphaned_media to remove dbfs later if needed
