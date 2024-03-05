@@ -16,6 +16,7 @@ Contents:
    animalcontrol
    boarding
    clinic
+   events
    lostandfound
    waitinglist
    generaldiary

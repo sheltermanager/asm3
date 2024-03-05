@@ -739,7 +739,7 @@ you can pass those too just like with html_report::
     http://localhost:5000/service?method=csv_report&username=user&password=letmein&title=Detailed+Shelter+Inventory
 
 json_mail and json_report
------------------------
+-------------------------
 
 .. rubric:: Cache time: 10 minutes
 
