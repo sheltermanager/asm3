@@ -1064,6 +1064,10 @@ System
   screens. The "View Roles" control allows a user to specify exactly which
   users can see the incident.
 
+* Remove the event management functionality from menus and screens: If your
+  shelter does not hold events, setting this option will remove the systems
+  event screens from the menu and adoption movement screen.
+
 * Remove the rota functionality from menus: Setting this option removes
   the staff rota from the menu and person screens.
 
