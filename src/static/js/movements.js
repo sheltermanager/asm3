@@ -959,8 +959,7 @@ $(function() {
         /** Populates the event dropdown with dates within certain range
             (event start <= movement date <= event end)  */
         populate_event_dates: async function(row) {
-            if (!row) { log.error("movements.populate_event_dates: row is null"); }
-            let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val() + "&eventid=" + row.EVENTID);
+            let result = await common.ajax_post("movement", "mode=eventlink&movementdate=" + $("#movementdate").val());
             let dates = jQuery.parseJSON(result);
             let dates_range = "";
             let loc = [];
@@ -975,7 +974,6 @@ $(function() {
                 loc = [v.EVENTADDRESS, v.EVENTTOWN, v.EVENTCOUNTY, v.EVENTCOUNTRY].filter(Boolean).join(", ");
                 $("#event").append("<option value='" + v.ID + "'>" + dates_range + " " + v.EVENTNAME + " " + loc + "</option>");
             });
-            $("#event").val(row.EVENTID);
         },
 
         destroy: function() {

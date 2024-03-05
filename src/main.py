@@ -5381,10 +5381,7 @@ class movement(JSONEndpoint):
         
     def post_eventlink(self, o):
         self.check(asm3.users.LINK_EVENT_MOVEMENT)
-        if o.post.integer("eventid") > 0:
-            e = [ asm3.event.get_event(o.dbo, o.post.integer("eventid")) ]
-        else:
-            e = asm3.event.get_events_by_date(o.dbo, o.post.date("movementdate"))
+        e = asm3.event.get_events_by_date(o.dbo, o.post.date("movementdate"))
         return asm3.utils.json(e)
 
 class onlineform_incoming(JSONEndpoint):
