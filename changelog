@@ -1,6 +1,7 @@
 48
 ================
 
+05/03/24 Translate publisher names on publishing logs screen
 04/03/24 Update name of FoundAnimals -> Found/24Pet in publishing history
 04/03/24 Add html_events service call and docs #940
 03/03/24 Fix csv import fault caused by use of named args
