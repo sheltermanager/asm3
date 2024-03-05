@@ -36,7 +36,8 @@ $(function() {
                 },
                 columns: [
                     { field: "NAME", display: _("Publisher"), formatter: function(row) {
-                        return publish_logs.PUBLISHER_NAMES[row.NAME] || row.NAME;
+                        let name = publish_logs.PUBLISHER_NAMES[row.NAME] || row.NAME;
+                        return '<a target="_blank" href="publish_log_view?view=' + row.ID + '">' + name + '</a>';
                     }},
                     { field: "PUBLISHDATETIME", display: _("Date"), formatter: tableform.format_datetime, initialsort: true, initialsortdirection: "desc" },
                     { field: "SUCCESS", display: _("Success") },
