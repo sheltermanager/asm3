@@ -739,7 +739,7 @@ you can pass those too just like with html_report::
     http://localhost:5000/service?method=csv_report&username=user&password=letmein&title=Detailed+Shelter+Inventory
 
 json_mail and json_report
------------------------
+-------------------------
 
 .. rubric:: Cache time: 10 minutes
 
@@ -855,6 +855,43 @@ days::
  
     http://localhost:5000/service?method=html_deceased_animals&template=littlebox&speciesid=1&days=60
     http://localhost:5000/service?method=html_deceased_animals&order=deceased_desc
+
+html_events
+-----------
+
+.. rubric:: Cache time: 1 hour
+
+Returns a complete HTML document of shelter fundraising/adoption events
+from :menuselection:`ASM --> Events --> Edit Events`
+
+Looks for an HTML template called "events" to use. A basic template will be 
+used if the template does not exist. The template can include the following tokens:
+
+$$NAME$$ 
+    The name of the event.
+$$DESCRIPTION$$
+    The event description. Note that this value is editable HTML from the screen.
+$$STARTDATE$$
+    The start date/time. 
+$$ENDDATE$$
+    The end date/time.
+$$ADDRESS$$
+    The event address.
+$$CITY$$ / $$TOWN$$
+    The event city (town for non-US).
+$$STATE$$ / $$COUNTY$$
+    The event state (county/region for non-US).
+$$ZIPCODE$$ / $$POSTCODE$$
+    The event zip/postal code.
+$$COUNTRY
+    The event country.
+
+A "count" parameter can be passed to return the most recent X events (default 10)
+and a "template" parameter can set the name of the template to use.
+
+This is useful for including a page of events on your website::
+
+    http://localhost:5000/service?method=html_events&template=events&count=20
 
 html_flagged_animals
 ----------------------

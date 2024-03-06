@@ -54,6 +54,7 @@
 <li class="toctree-l1"><a class="reference internal" href="animalcontrol.html">Animal Control</a></li>
 <li class="toctree-l1"><a class="reference internal" href="boarding.html">Boarding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="clinic.html">Clinic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="events.html">Events</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lostandfound.html">Lost and Found</a></li>
 <li class="toctree-l1"><a class="reference internal" href="waitinglist.html">Waiting List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generaldiary.html">General Diary</a></li>
@@ -89,6 +90,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#html-adoptable-animals">html_adoptable_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-adopted-animals">html_adopted_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-deceased-animals">html_deceased_animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#html-events">html_events</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-flagged-animals">html_flagged_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-held-animals">html_held_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-report">html_report</a></li>
@@ -934,6 +936,40 @@ go back. If you do not set it, the default is animals deceased in the last 30
 days:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_deceased_animals&amp;template=littlebox&amp;speciesid=1&amp;days=60
 http://localhost:5000/service?method=html_deceased_animals&amp;order=deceased_desc
+</pre></div>
+</div>
+</section>
+<section id="html-events">
+<h2>html_events<a class="headerlink" href="#html-events" title="Permalink to this heading">¶</a></h2>
+<p class="rubric">Cache time: 1 hour</p>
+<p>Returns a complete HTML document of shelter fundraising/adoption events
+from <span class="menuselection">ASM ‣ Events ‣ Edit Events</span></p>
+<p>Looks for an HTML template called “events” to use. A basic template will be
+used if the template does not exist. The template can include the following tokens:</p>
+<dl class="simple">
+<dt>$$NAME$$</dt><dd><p>The name of the event.</p>
+</dd>
+<dt>$$DESCRIPTION$$</dt><dd><p>The event description. Note that this value is editable HTML from the screen.</p>
+</dd>
+<dt>$$STARTDATE$$</dt><dd><p>The start date/time.</p>
+</dd>
+<dt>$$ENDDATE$$</dt><dd><p>The end date/time.</p>
+</dd>
+<dt>$$ADDRESS$$</dt><dd><p>The event address.</p>
+</dd>
+<dt>$$CITY$$ / $$TOWN$$</dt><dd><p>The event city (town for non-US).</p>
+</dd>
+<dt>$$STATE$$ / $$COUNTY$$</dt><dd><p>The event state (county/region for non-US).</p>
+</dd>
+<dt>$$ZIPCODE$$ / $$POSTCODE$$</dt><dd><p>The event zip/postal code.</p>
+</dd>
+<dt>$$COUNTRY</dt><dd><p>The event country.</p>
+</dd>
+</dl>
+<p>A “count” parameter can be passed to return the most recent X events (default 10)
+and a “template” parameter can set the name of the template to use.</p>
+<p>This is useful for including a page of events on your website:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_events&amp;template=events&amp;count=20
 </pre></div>
 </div>
 </section>

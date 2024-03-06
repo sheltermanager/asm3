@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lost and Found &mdash; ASM 48u documentation</title>
+  <title>Events &mdash; ASM 48u documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   
@@ -17,8 +17,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Waiting List" href="waitinglist.html" />
-    <link rel="prev" title="Events" href="events.html" /> 
+    <link rel="next" title="Lost and Found" href="lostandfound.html" />
+    <link rel="prev" title="Clinic" href="clinic.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -54,12 +54,12 @@
 <li class="toctree-l1"><a class="reference internal" href="animalcontrol.html">Animal Control</a></li>
 <li class="toctree-l1"><a class="reference internal" href="boarding.html">Boarding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="clinic.html">Clinic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="events.html">Events</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Lost and Found</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#matching-lost-and-found">Matching Lost and Found</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#scoring">Scoring</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Events</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#adoption-events">Adoption Events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#event-website-integration">Event Website Integration</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="lostandfound.html">Lost and Found</a></li>
 <li class="toctree-l1"><a class="reference internal" href="waitinglist.html">Waiting List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generaldiary.html">General Diary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="accounts.html">Accounts</a></li>
@@ -97,9 +97,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Lost and Found</li>
+      <li class="breadcrumb-item active">Events</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/lostandfound.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/events.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -107,87 +107,29 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="lost-and-found">
-<h1>Lost and Found<a class="headerlink" href="#lost-and-found" title="Permalink to this heading">¶</a></h1>
-<p>Animal Shelter Manager also provides a database of lost and found animals. This
-is ideal for shelters who maintain lost and found records, where members of the
-public phone up to report their animal lost.</p>
-<img alt="_images/find_lostanimal.png" src="_images/find_lostanimal.png" />
-<p>The Find Lost Animal screen works just like the other find screens within
-Animal Shelter Manager; you enter criteria at the top, run the search and
-results appear at the bottom. You can filter lost animals by a number of
-criteria, including species, area in which they were lost and lost between two
-dates.</p>
-<p>You can open the Find Lost Animal screen by navigating to
-<em>ASM-&gt;Find Lost Animal</em>.</p>
-<img alt="_images/lostanimal_details.png" src="_images/lostanimal_details.png" />
-<p>As with other Animal Shelter Manager screens, the Lost Animal screen is divided
-into tabs. Lost Animals may also have media attached, as with regular Animal
-records.</p>
-<p>The screen has its own toolbar, from which you can delete the current record,
-save your changes and perform a match computation just for the current lost
-animal.</p>
-<p>The found animal screens are identical to the lost animal screens. The only
-difference is that certain fields have the reverse meaning (ie. Found date
-instead of lost date).</p>
-<section id="matching-lost-and-found">
-<h2>Matching Lost and Found<a class="headerlink" href="#matching-lost-and-found" title="Permalink to this heading">¶</a></h2>
-<p>Once you have your databases of lost and found animals, Animal Shelter Manager
-provides facilities to run a match and attempt to work out if any of the
-animals reported found could tie up to those reported lost.</p>
-<p>To view the previous results of matching, go to <em>ASM-&gt;Match Lost and Found
-Animals</em>.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Note that because this report can take a while to run if you have a lot of records, ASM will run it overnight as part of its batch processes. It may therefore take upto 24 hours for changes to be reflected.</p>
-</div>
-<p>If you run the Match by pressing the Match button on any lost, found or shelter
-animal, the report will be rerun immediately for that animal and you will see
-live data. You do not have to wait for this to update, only the main match
-report for all animals runs overnight.</p>
+  <section id="events">
+<h1>Events<a class="headerlink" href="#events" title="Permalink to this heading">¶</a></h1>
+<p>ASM allows you to create events such as fundraisers and adoption drives.
+You can create and search for events in the events section of the ASM menu.</p>
+<img alt="_images/event_menu.png" src="_images/event_menu.png" />
+<section id="adoption-events">
+<h2>Adoption Events<a class="headerlink" href="#adoption-events" title="Permalink to this heading">¶</a></h2>
+<p>Animals can be added to events and a count kept of completed adoptions by
+linking the adoption movements to the event.</p>
+<img alt="_images/event_adoption.png" src="_images/event_adoption.png" />
+<img alt="_images/event_adoption_count.png" src="_images/event_adoption_count.png" />
+<p>Active foster movements can be ended by selecting animals and clicking the
+“End active foster” button. This enters the event start date as the return date
+on the selected animals foster movements.</p>
+<img alt="_images/event_end_foster.png" src="_images/event_end_foster.png" />
+<p>At the end of the event, the list can be filtered to display the animals with
+foster movements that were ended for the event that now need to be fostered again.</p>
+<img alt="_images/event_needs_foster.png" src="_images/event_needs_foster.png" />
 </section>
-<section id="scoring">
-<h2>Scoring<a class="headerlink" href="#scoring" title="Permalink to this heading">¶</a></h2>
-<p>ASM uses a heuristic scoring algorithm to determine how close the match is
-between the lost and found animal (or similar shelter animal, which it will
-also check for if the option is set).</p>
-<p>Where the system compares two user defined pieces of text (eg. Distinguishing
-features), the system will represent the final score as the number of words
-from the lost animal field that appeared in the found animal field, expressed
-as a fraction of the total points available for that field.</p>
-<p>For example, suppose I had a lost animal with “white paws, bell” for the
-distinguishing features. If there was a found animal with features “white paws,
-torn ear and a bell”, that would constitute a 100% match on that particular
-field because every single word from the lost animal field appeared in the
-found animal field.</p>
-<p>If I had a found animal with “white paws, no collar” for the distinguishing
-features, that would constitute a 66% match, because the match was 2/3 words.</p>
-<p>By default, the system scores lost/found matches in this manner (all of these
-point values and how many points are required to appear can be changed in
-<em>Settings-&gt;Options</em></p>
-<ul class="simple">
-<li><p>5 points - Same Species (note, if the species is not the same, any potential
-match will be abandoned regardless of whether other fields are a match -
-while reporters might not be good at observing the breed, age or sex of an
-animal, they should not have a problem with species!)</p></li>
-<li><p>5 points - Same colour</p></li>
-<li><p>5 points - Same age group</p></li>
-<li><p>5 points - Same breed</p></li>
-<li><p>5 points - proportional match based on words of Area Lost/Found (ie 5 points
-maximum for 100% match of all words in Area Lost being present in Area Found)</p></li>
-<li><p>5 points - Postcode match</p></li>
-<li><p>5 points - proportional match based on words of Distinguishing Features</p></li>
-<li><p>5 points - Same Colour</p></li>
-<li><p>5 points - Found within 2 weeks of being lost</p></li>
-</ul>
-<p>It therefore follows that 45 points is a 100% overall match.</p>
-<p>Because some of the found animal fields are not present for animals on the
-shelter, the following comparisons are used:</p>
-<ul class="simple">
-<li><p>Date Brought In is used as Date Found</p></li>
-<li><p>Original Owner address is used for area found</p></li>
-<li><p>Original Owner postcode is used for Postcode area found.</p></li>
-</ul>
+<section id="event-website-integration">
+<h2>Event Website Integration<a class="headerlink" href="#event-website-integration" title="Permalink to this heading">¶</a></h2>
+<p>Event information can be added to your website using the html_events
+service call, for more information on this please see <a class="reference internal" href="service.html#serviceapi"><span class="std std-ref">Service API</span></a></p>
 </section>
 </section>
 
@@ -195,8 +137,8 @@ shelter, the following comparisons are used:</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="events.html" class="btn btn-neutral float-left" title="Events" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="waitinglist.html" class="btn btn-neutral float-right" title="Waiting List" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="clinic.html" class="btn btn-neutral float-left" title="Clinic" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="lostandfound.html" class="btn btn-neutral float-right" title="Lost and Found" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
