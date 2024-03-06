@@ -65,7 +65,7 @@ class PetLinkPublisher(AbstractPublisher):
 
         chipprefix = ["98102"]
         if asm3.configuration.petlink_register_all(self.dbo):
-            chipprefix = ["9"]
+            chipprefix = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
         animals = get_microchip_data(self.dbo, chipprefix, "petlink", organisation_email = plowneremail)
         if len(animals) == 0:

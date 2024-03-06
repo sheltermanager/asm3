@@ -307,7 +307,7 @@ $(function() {
                 '<td><label for="plregisterall">Register</label></td>',
                 '<td><select id="plregisterall" class="asm-selectbox cfg" data="PetLinkRegisterAll">',
                 '<option value="No">PetLink pre-paid microchips (98102*)</option>',
-                '<option value="Yes">ALL microchips (9*)</option>',
+                '<option value="Yes">ALL microchips (*)</option>',
                 '</tr>',
                 '</table>',
                 '</div>'
