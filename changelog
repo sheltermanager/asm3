@@ -1,6 +1,8 @@
 48
 ================
 
+07/03/24 Fix back button bug when logging in from a link with credentials
+07/03/24 Fix back button bug for first link after home page
 07/03/24 Trim credentials when performing FTP logins
 06/03/24 PetLink accept all should include 9/10 digit chips too
 05/03/24 Remove rota records when removing people

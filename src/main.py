@@ -1538,7 +1538,9 @@ class login(ASMEndpoint):
         }
         nonce = asm3.utils.uuid_str()
         s += '<script nonce="%s">\ncontroller = %s;\n' % (nonce, asm3.utils.json(c))
-        s += '$(document).ready(function() { $("body").append(login.render()); login.bind(); });\n</script>'
+        s += '$(document).ready(function() { $("body").append(login.render()); login.bind(); });\n'
+        s += 'window.onunload = function() {}; \n' # invalidate Firefox bfcache as login page hides elements after transition to main
+        s += '</script>'
         s += asm3.html.footer()
         self.content_type("text/html")
         self.header("X-Frame-Options", "SAMEORIGIN")

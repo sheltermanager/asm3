@@ -34,7 +34,8 @@ var Path = {
         'popState': function(event){
             // RRT: 2015-05-23 if no state is passed, this is Safari and 
             // popState has been fired during page load - ignore it
-            if (!event.state) { return; }
+            // RRT: 2024-03-07 Safari no longer does this and it was breaking the first history item
+            //if (!event.state) { return; }
             //var initialPop = !Path.history.initial.popped && location.href == Path.history.initial.URL;
             //Path.history.initial.popped = true;
             //if(initialPop) return;
