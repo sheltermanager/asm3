@@ -1144,8 +1144,8 @@ class FTPPublisher(AbstractPublisher):
                  ftphost: str, ftpuser: str, ftppassword: str, ftptls: bool = False, 
                  ftpport: int = 21, ftproot: str = "", passive: bool = True) -> None:
         AbstractPublisher.__init__(self, dbo, publishCriteria)
-        self.ftphost = ftphost
-        self.ftpuser = ftpuser
+        self.ftphost = ftphost.strip()
+        self.ftpuser = ftpuser.strip()
         self.ftppassword = self.unxssPass(ftppassword)
         self.ftpport = ftpport
         self.ftproot = ftproot
@@ -1172,7 +1172,7 @@ class FTPPublisher(AbstractPublisher):
         uploading is disabled.
         """
         if not self.pc.uploadDirectly: return True
-        if self.ftphost.strip() == "": raise ValueError("No FTP host set")
+        if self.ftphost == "": raise ValueError("No FTP host set")
         self.log("Connecting to %s as %s" % (self.ftphost, self.ftpuser))
         
         try:
