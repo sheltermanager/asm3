@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-02-01 13:04+0000\n"
-"PO-Revision-Date: 2024-02-01 13:08+0200\n"
+"POT-Creation-Date: 2024-03-10 14:12+0000\n"
+"PO-Revision-Date: 2024-03-10 14:21+0200\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -894,8 +894,8 @@ msgstr "אימוץ"
 msgid "Adoption Checkout"
 msgstr "אימוץ עצמי"
 
-#: html.py animal_new.js animal.js header_edit_header.js common_html.js
-#: animal_bulk.js person_links.js reports.js
+#: dbupdate.py html.py animal_new.js animal.js header_edit_header.js
+#: common_html.js animal_bulk.js person_links.js reports.js
 msgid "Adoption Coordinator"
 msgstr "יועץ אימוץ"
 
@@ -1428,6 +1428,10 @@ msgstr "חיה ׳{0}׳ נוצרה עם קוד {1}"
 msgid "Animal '{0}' successfully marked deceased."
 msgstr "חיה ׳{0}׳ סומנה מתה."
 
+#: onlineform_incoming.js
+msgid "Animal (non-shelter with owner)"
+msgstr "חיה (אינה של המקלט עם בעלים)"
+
 #: licence_renewal.js donation_receive.js vouchers.js licence.js
 msgid "Animal (optional)"
 msgstr "חיה (לא חובה)"
@@ -1435,6 +1439,10 @@ msgstr "חיה (לא חובה)"
 #: onlineform_incoming.js
 msgid "Animal (via animalname field)"
 msgstr "חיה (לפי שדה שם חיה)"
+
+#: onlineform_incoming.js
+msgid "Animal (via animalname field, no media)"
+msgstr "חיה (לפי שדה שם חיה, ללא תמונה)"
 
 #: onlineform_incoming.js
 msgid "Animal (with brought in person)"
@@ -2877,6 +2885,10 @@ msgstr "תאריך קבלה"
 msgid "Check License"
 msgstr "בדוק רשיון"
 
+#: common_microchip.js
+msgid "Check Microchip"
+msgstr "בדוק שבב"
+
 #: common_widgets.js donations.js
 msgid "Check No"
 msgstr "מספר צ׳ק"
@@ -3015,6 +3027,10 @@ msgstr "נקה"
 #: change_user_settings.js
 msgid "Clear and sign again"
 msgstr "נקה וחתום שוב"
+
+#: main.py
+msgid "Click here to pay"
+msgstr "לחץ כאן לתשלום"
 
 #: html.py header_edit_header.js roles.js calendarview.js document_templates.js
 msgid "Clinic"
@@ -3311,6 +3327,10 @@ msgstr "קונהאונד"
 msgid "Coordinator"
 msgstr "מתאם"
 
+#: media.js
+msgid "Copy"
+msgstr "העתק"
+
 #: document_repository.js report_images.js
 msgid ""
 "Copy absolute service URL to the clipboard (for external use in web pages "
@@ -3343,6 +3363,14 @@ msgstr "העתק כתובות נמענים ללוח העריכה"
 #: report_images.js
 msgid "Copy relative URL to the clipboard (for use with documents and reports)"
 msgstr "העתק כתובת יחסית ללוח העריכה (לשימוש במסמכים ודוחות)"
+
+#: media.js
+msgid "Copy to a person"
+msgstr "העתק לאדם"
+
+#: media.js
+msgid "Copy to an animal"
+msgstr "העתק לחיה"
 
 #: dbupdate.py
 msgid "Corded"
@@ -3500,6 +3528,10 @@ msgstr "צור חיה"
 #: onlineforms.js
 msgid "Create animal and person (link via brought in)"
 msgstr "צור חיה ואדם (קשר דרך שדה הובא למקלט על ידי)"
+
+#: onlineforms.js
+msgid "Create animal and person (non-shelter with owner)"
+msgstr "צור חיה ואדם (חיה שאינה של המקלט עם בעלים)"
 
 #: options.js
 msgid "Create boarding cost record when animal is adopted"
@@ -3887,7 +3919,7 @@ msgstr "מת עם ההגעה"
 msgid "Dead animal"
 msgstr "חיה מתה"
 
-#: animal.js move_deceased.js
+#: dbupdate.py animal.js move_deceased.js
 msgid "Dead on arrival"
 msgstr "מת עם ההגעה"
 
@@ -3979,6 +4011,10 @@ msgstr "תמונת ברירת מחדל למסמכים"
 #: media.js
 msgid "Default image for this record and the web"
 msgstr "תמונת ברירת מחדל לרשומה זו ולאינטרנט"
+
+#: options.js
+msgid "Default removal after weeks without contact"
+msgstr "ברירת מחדל להסרה אחרי מספר שבועות ללא יצירת קשר"
 
 #: options.js
 msgid "Default source account for costs"
@@ -4517,7 +4553,7 @@ msgstr "מסמך"
 msgid "Document Link"
 msgstr "לינק למסמך"
 
-#: html.py document_repository.js roles.js
+#: html.py document_repository.js roles.js common_widgets.js
 msgid "Document Repository"
 msgstr "מאגר מסמכים"
 
@@ -5447,7 +5483,7 @@ msgstr "יש למלא תאריך סיום לאירוע."
 msgid "Event successfully created"
 msgstr "אירוע נוצר בהצלחה"
 
-#: html.py animal.js options.js roles.js
+#: html.py animal.js roles.js
 msgid "Events"
 msgstr "אירועים"
 
@@ -5458,14 +5494,6 @@ msgstr "כל יום"
 #: dbupdate.py
 msgid "Examination"
 msgstr "בדיקה"
-
-#: options.js
-msgid "Exclude animals by flags"
-msgstr "אין לכלול חיות עם התגיות"
-
-#: options.js
-msgid "Exclude animals by locations"
-msgstr "אין לכלול חיות במיקומים"
 
 #: publish_options.js
 msgid "Exclude animals who are aged under"
@@ -8143,6 +8171,10 @@ msgstr "הערה נוספה בהצלחה."
 msgid "Login"
 msgstr "כניסה"
 
+#: login.js mobile_login.js
+msgid "Login not allowed from this IP address."
+msgstr "הכניסה אינה מותרת מכתובת IP זו."
+
 #: mobile.py mobile_sign.js common_html.js header.js mobile2.js
 msgid "Logout"
 msgstr "התנתק"
@@ -8597,10 +8629,6 @@ msgstr "מזג אדם אחר לרשומה זו"
 msgid "Merge bonded animals into a single record"
 msgstr "מזג חיות קשורות לרשומת פרסום אחת"
 
-#: csvimport.js
-msgid "Merge duplicate records"
-msgstr "מזג רשומות כפולות"
-
 #: main.js
 msgid "Message"
 msgstr "הודעה"
@@ -8815,6 +8843,10 @@ msgstr "העבר לאדם"
 #: media.js
 msgid "Move to an animal"
 msgstr "העבר לחיה"
+
+#: media.js
+msgid "Move/Copy"
+msgstr "הזז/העתק"
 
 #: waitinglist.py
 msgid "Moved to animal record {0}"
@@ -9287,7 +9319,7 @@ msgstr "אין מפרסמים פעילים."
 msgid "No results found."
 msgstr "לא נמצאו תוצאות."
 
-#: sql.js
+#: common_microchip.js sql.js
 msgid "No results."
 msgstr "אין תוצאות."
 
@@ -9523,7 +9555,7 @@ msgstr "משרד"
 msgid "Offset from left edge of the image"
 msgstr "אופסט מהקצה השמאלי של התמונה"
 
-#: animal.js person.js event_animals.js
+#: animal.js person.js common_microchip.js event_animals.js
 msgid "Ok"
 msgstr "אישור"
 
@@ -10091,15 +10123,6 @@ msgstr "אנשים שמחפשים"
 #: search.py
 msgid "People matching '{0}'."
 msgstr "אנשים שמתאימים ל '{0}'."
-
-#: csvimport.js
-msgid ""
-"People or animal records that already exist in the database will not be "
-"imported again and movement/payment data will be attached to the existing "
-"records instead."
-msgstr ""
-"רשומות אנשים וחיות שכבר קיימות בבסיס הנתונים לא יובאו שוב ונתוני תנועות "
-"ותשלומים יצורפו לרשומות הקיימות במקום."
 
 #: search.py
 msgid "People with active reservations, but no homecheck has been done."
@@ -11232,6 +11255,10 @@ msgid "Remove the microchip fields from animal identification details"
 msgstr "הסר שדה שבב מפרטי זיהוי של החיות"
 
 #: options.js
+msgid "Remove the microchip supplier info from animal identification details"
+msgstr "הסר שדה יצרן שבב מפרטי זיהוי של החיות"
+
+#: options.js
 msgid "Remove the neutered fields from animal health details"
 msgstr "הסר שדות העיקור מהפרטים הרפואיים של החיות"
 
@@ -11618,8 +11645,12 @@ msgid "Returning"
 msgstr "חוזר מאומנה"
 
 #: animal.py
-msgid "Returns {0}"
-msgstr "החזרות {0}"
+msgid "Returns (Adoption) {0}"
+msgstr "החזרות (מאימוצים) {0}"
+
+#: animal.py
+msgid "Returns (Reclaim) {0}"
+msgstr "החזרות (לבעלים) {0}"
 
 #: publish_options.js
 msgid "Reupload animal images every time"
@@ -11933,8 +11964,9 @@ msgstr "נתפס"
 
 #: diary.js common_html.js media.js diarytasks.js accounts_trx.js
 #: common_animalchoosermulti.js roles.js accounts.js users.js boarding.js
-#: onlineforms.js clinic_appointment.js common_personchooser.js common.js
-#: reports.js event_animals.js common_tableform.js
+#: onlineforms.js clinic_appointment.js common_widgets.js
+#: common_personchooser.js common.js reports.js event_animals.js
+#: common_tableform.js
 msgid "Select"
 msgstr "בחירה"
 
@@ -12155,6 +12187,10 @@ msgstr "שנה את ה-FROM header במסך שליחת מייל"
 #: waitinglist.js
 msgid "Set this to 0 to never automatically remove."
 msgstr "קבע ערך זה ל־0 כדי שלא תתבצע עוד הסרה אוטומטית."
+
+#: options.js
+msgid "Set to 0 to never auto remove."
+msgstr "קבע ערך זה ל־0 כדי שלא תתבצע הסרה אוטומטית."
 
 #: options.js
 msgid "Set to 0 to never update urgencies."
@@ -12812,15 +12848,15 @@ msgstr "רועה דרום רוסי"
 
 #: options.js
 msgid "Spambot protection: First name mixed case"
-msgstr ""
+msgstr "‫Spambot protection: First name mixed case"
 
 #: options.js
 msgid "Spambot protection: Invisible checkbox"
-msgstr ""
+msgstr "‫Spambot protection: Invisible checkbox"
 
 #: options.js
 msgid "Spambot protection: UserAgent check"
-msgstr ""
+msgstr "‫Spambot protection: UserAgent check"
 
 #: dbupdate.py
 msgid "Spaniel"
@@ -16282,6 +16318,10 @@ msgid ""
 msgstr ""
 "{0} רשומות מוצגות. השתמש בדוח היסטוריה רפואית כדי לצפות בכל הרשומות לחיה זו."
 
+#: common_microchip.js
+msgid "{0} results for {1}"
+msgstr "{0} תוצאות ל {1}"
+
 #: sql.js
 msgid "{0} results."
 msgstr "{0} תוצאות."
@@ -17296,6 +17336,23 @@ msgstr "{plural3} שבועות."
 #: i18n.py
 msgid "{plural3} years."
 msgstr "{plural3} שנים."
+
+#~ msgid "Exclude animals by flags"
+#~ msgstr "אין לכלול חיות עם התגיות"
+
+#~ msgid "Exclude animals by locations"
+#~ msgstr "אין לכלול חיות במיקומים"
+
+#~ msgid "Merge duplicate records"
+#~ msgstr "מזג רשומות כפולות"
+
+#~ msgid ""
+#~ "People or animal records that already exist in the database will not be "
+#~ "imported again and movement/payment data will be attached to the existing "
+#~ "records instead."
+#~ msgstr ""
+#~ "רשומות אנשים וחיות שכבר קיימות בבסיס הנתונים לא יובאו שוב ונתוני תנועות "
+#~ "ותשלומים יצורפו לרשומות הקיימות במקום."
 
 #~ msgid "Show the transfer in field"
 #~ msgstr "הצגת שדה הועבר ממקלט אחר"
