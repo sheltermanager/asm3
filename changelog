@@ -1,6 +1,7 @@
 48
 ================
 
+11/03/24 Use English text for payment links instead of ref (Saggi) #1450
 07/03/24 Fix back button bug when logging in from a link with credentials
 07/03/24 Fix back button bug for first link after home page
 07/03/24 Trim credentials when performing FTP logins

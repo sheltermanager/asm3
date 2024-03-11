@@ -3551,6 +3551,7 @@ class donation(JSONEndpoint):
     def post_emailrequest(self, o):
         self.check(asm3.users.EMAIL_PERSON)
         dbo = o.dbo
+        l = o.locale
         post = o.post
         emailadd = post["to"]
         body = post["body"]
@@ -3562,7 +3563,7 @@ class donation(JSONEndpoint):
             "title": post["subject"] 
         }
         url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
-        body = asm3.utils.replace_url_token(body, url, _("Click here to pay"))
+        body = asm3.utils.replace_url_token(body, url, _("Click here to pay", l))
         if post.boolean("addtolog"):
             asm3.log.add_log_email(dbo, o.user, asm3.log.PERSON, post.integer("person"), post.integer("logtype"), 
                 emailadd, post["subject"], body)
