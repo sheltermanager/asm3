@@ -829,7 +829,6 @@ $(function() {
                     if (!validate.notblank([ "copyanimal" ])) { return; }
                     let formdata = "mode=copyanimal&animalid=" + $("#copyanimal").val() + "&ids=" + tableform.table_ids(media.table);
                     media.ajax(formdata);
-                    common.route_reload();
                 }
             };
             copyanimalbuttons[_("Cancel")] = function() {
@@ -854,7 +853,6 @@ $(function() {
                     if (!validate.notblank([ "moveanimal" ])) { return; }
                     let formdata = "mode=moveanimal&animalid=" + $("#moveanimal").val() + "&ids=" + tableform.table_ids(media.table);
                     media.ajax(formdata);
-                    common.route_reload();
                 }
             };
             moveanimalbuttons[_("Cancel")] = function() {
@@ -879,7 +877,6 @@ $(function() {
                     if (!validate.notblank([ "copyperson" ])) { return; }
                     let formdata = "mode=copyperson&personid=" + $("#copyperson").val() + "&ids=" + tableform.table_ids(media.table);
                     media.ajax(formdata);
-                    common.route_reload();
                 }
             };
             copypersonbuttons[_("Cancel")] = function() {
@@ -904,7 +901,6 @@ $(function() {
                     if (!validate.notblank([ "moveperson" ])) { return; }
                     let formdata = "mode=moveperson&personid=" + $("#moveperson").val() + "&ids=" + tableform.table_ids(media.table);
                     media.ajax(formdata);
-                    common.route_reload();
                 }
             };
             movepersonbuttons[_("Cancel")] = function() {
@@ -1122,6 +1118,7 @@ $(function() {
                     logtypes: controller.logtypes,
                     message: _("Please use the links below to electronically sign these documents.")
                 });
+                return false;
             });
 
             $("#button-signscreen").click(function() {
