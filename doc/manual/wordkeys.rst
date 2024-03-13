@@ -1191,6 +1191,8 @@ IncidentLog instead of just Log.
 
 IncidentNumber
     The unique incident number
+IncidentCode
+    The incident code
 IncidentDate
     The date of the incident
 IncidentTime

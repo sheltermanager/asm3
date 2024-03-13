@@ -991,6 +991,7 @@ def animalcontrol_tags(dbo: Database, ac: ResultRow) -> Tags:
     l = dbo.locale
     tags = {
         "INCIDENTNUMBER":       asm3.utils.padleft(ac["ACID"], 6),
+        "INCIDENTCODE":         ac["INCIDENTCODE"],
         "INCIDENTDATE":         python2display(l, ac["INCIDENTDATETIME"]),
         "INCIDENTTIME":         format_time(ac["INCIDENTDATETIME"], "%H:%M"),
         "INCIDENTTYPENAME":     asm3.utils.nulltostr(ac["INCIDENTNAME"]),
