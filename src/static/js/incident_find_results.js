@@ -122,6 +122,7 @@ $(function() {
 
         column_label: function(name, add) {
             let labels = {
+                "IncidentCode": _("Code"),
                 "IncidentType": _("Incident Type"),
                 "IncidentNumber": _("Number"),
                 "IncidentDateTime":  _("Incident Date/Time"),
@@ -161,7 +162,8 @@ $(function() {
         format_column: function(row, name, value, add) {
             const DATE_FIELDS = [ "FollowupDateTime", "CompletedDate" ],
             DATETIME_FIELDS = [ "IncidentDateTime", "DispatchDateTime", "RespondedDateTime" ],
-            STRING_FIELDS = [ "DispatchedACO", "DispatchAddress", "DispatchTown", "DispatchPostcode", "JurisdictionName", "LocationName", "CompletedName" ];
+            STRING_FIELDS = [ "DispatchedACO", "DispatchAddress", "DispatchTown", "DispatchPostcode", 
+                "IncidentCode", "JurisdictionName", "LocationName", "CompletedName" ];
             let rv = "";
             if (name == "IncidentNumber") {
               rv  = format.padleft(row.ID, 6);

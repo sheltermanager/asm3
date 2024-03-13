@@ -251,6 +251,9 @@ or other letters) will not be substituted and will be retained in generated
 codes. For example, the format NNN:21:T will produce 001:21:D for the first dog
 of the year. 
 
+There is also an option on this screen to set codes for animal control incidents,
+with a limited subset of these values (YYYY, MM, DD, XXX, OOO, UUUU).
+
 * Manually enter codes (do not generate): This option tells ASM that you don't
   want it to generate any codes. A code field will appear on the add animal
   screen and apart from enforcing that codes are unique, ASM will do nothing

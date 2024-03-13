@@ -43,7 +43,7 @@ VERSIONS = (
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
-    34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805
+    34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -443,6 +443,7 @@ def sql_structure(dbo: Database) -> str:
 
     sql += table("animalcontrol", (
         fid(),
+        fstr("IncidentCode", True),
         fdate("IncidentDateTime"),
         fint("IncidentTypeID"),
         fdate("CallDateTime", True),
@@ -477,6 +478,7 @@ def sql_structure(dbo: Database) -> str:
         fint("SpeciesID", True),
         fint("Sex", True),
         fstr("AgeGroup", True) ))
+    sql += index("animalcontrol_IncidentCode", "animalcontrol", "IncidentCode")
     sql += index("animalcontrol_IncidentDateTime", "animalcontrol", "IncidentDateTime")
     sql += index("animalcontrol_IncidentTypeID", "animalcontrol", "IncidentTypeID")
     sql += index("animalcontrol_CallDateTime", "animalcontrol", "CallDateTime")
@@ -6130,3 +6132,12 @@ def update_34805(dbo: Database) -> None:
     l = dbo.locale
     # add DOA entry type
     dbo.execute_dbupdate("INSERT INTO lksentrytype (ID, EntryTypeName) VALUES (9, '" + _("Dead on arrival", l) + "')")
+
+def update_34806(dbo: Database) -> None:
+    # Add IncidentCode column
+    add_column(dbo, "animalcontrol", "IncidentCode", dbo.type_shorttext)
+    add_index(dbo, "animalcontrol_IncidentCode", "animalcontrol", "IncidentCode")
+    batch = []
+    for r in dbo.query("SELECT ID FROM animalcontrol"):
+        batch.append([ asm3.utils.padleft(r.ID, 6), r.ID ])
+    dbo.execute_many("UPDATE animalcontrol SET IncidentCode = ? WHERE ID = ?", batch, override_lock=True) 

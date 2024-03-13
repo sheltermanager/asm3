@@ -418,10 +418,7 @@ $(function() {
         },
 
         render_animalcodes: function() {
-            return [
-                '<div id="tab-animalcodes">',
-                html.info(
-                    _("Code format tokens:") + '<br />' +
+            const animalcodelegend = _("Code format tokens:") + '<br />' +
                     _("T = first letter of animal type") + '<br />' +
                     _("TT = first and second letter of animal type") + '<br />' + 
                     _("E = first letter of animal entry category") + '<br />' +
@@ -435,15 +432,35 @@ $(function() {
                     _("XXX or XX = number unique for this year") + '<br />' +
                     _("OOO or OO = number unique for this month") + '<br />' +
                     _("NNN or NN = number unique for this type of animal for this year") + '<br />' +
-                    _("Defaults formats for code and shortcode are TYYYYNNN and NNT")),
+                    _("Defaults formats for code and shortcode are TYYYYNNN and NNT");
+            const incidentcodelegend = _("Code format tokens:") + '<br />' +
+                    _("YY or YYYY = current year") + '<br />' +
+                    _("MM = current month") + '<br />' +
+                    _("DD = current day") + '<br />' + 
+                    _("UUUUUUUUUU or UUUU = unique number") + '<br />' +
+                    _("XXX or XX = number unique for this year") + '<br />' +
+                    _("OOO or OO = number unique for this month") + '<br />' +
+                    _("Defaults formats for incident codes are YYMM-XXX");
+            return [
+                '<div id="tab-animalcodes">',
                 '<table>',
                 '<tr>',
-                '<td><label for="codeformat">' + _("Animal code format") + '</label></td>',
+                '<td><label for="codeformat">' + _("Animal code format") + '</label>',
+                '<span id="codeformat-callout" class="asm-callout">' + animalcodelegend + '</span>',
+                '</td>',
                 '<td><input data="CodingFormat" id="codeformat" type="text" class="asm-textbox" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="shortformat">' + _("Animal shortcode format") + '</label></td>',
+                '<td><label for="shortformat">' + _("Animal shortcode format") + '</label>',
+                '<span id="shortcodeformat-callout" class="asm-callout">' + animalcodelegend + '</span>',
+                '</td>',
                 '<td><input data="ShortCodingFormat" id="shortformat" type="text" class="asm-textbox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="incidentcodeformat">' + _("Incident code format") + '</label>',
+                '<span id="incidentcodeformat-callout" class="asm-callout">' + incidentcodelegend + '</span>',
+                '</td>',
+                '<td><input data="IncidentCodingFormat" id="incidentcodeformat" type="text" class="asm-textbox" /></td>',
                 '</tr>',
                 '</table>',
                 '<p>',

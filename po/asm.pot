@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-03-11 09:23+0000\n"
+"POT-Creation-Date: 2024-03-13 11:11+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3095,9 +3095,10 @@ msgstr ""
 msgid "Cocker Spaniel"
 msgstr ""
 
-#: html.py mobile.py person.py wordprocessor.py animal_find.js accounts.js
-#: animal_find_results.js common_personchooser.js animal.js animal_new.js
-#: person.js common_animalchooser.js vouchers.js mobile2.js
+#: html.py mobile.py person.py wordprocessor.py incident_find.js animal_find.js
+#: accounts.js incident.js animal_find_results.js incident_find_results.js
+#: common_personchooser.js animal.js animal_new.js person.js
+#: common_animalchooser.js vouchers.js mobile2.js
 msgid "Code"
 msgstr ""
 
@@ -4033,6 +4034,10 @@ msgstr ""
 
 #: options.js
 msgid "Defaults formats for code and shortcode are TYYYYNNN and NNT"
+msgstr ""
+
+#: options.js
+msgid "Defaults formats for incident codes are YYMM-XXX"
 msgstr ""
 
 #: dbupdate.py
@@ -7195,6 +7200,10 @@ msgstr ""
 
 #: reports.js
 msgid "Incident between two dates"
+msgstr ""
+
+#: options.js
+msgid "Incident code format"
 msgstr ""
 
 #: animalcontrol.py incident.js

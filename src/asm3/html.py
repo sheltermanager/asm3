@@ -823,6 +823,7 @@ def json_eventfindcolumns(dbo: Database) -> ColumnList:
 def json_incidentfindcolumns(dbo: Database) -> ColumnList:
     l = dbo.locale
     cols = [ 
+        ( "IncidentCode", _("Code", l) ),
         ( "IncidentType", _("Incident Type", l) ),
         ( "IncidentNumber", _("Incident Number", l) ),
         ( "IncidentDateTime", _("Incident Date/Time", l) ),

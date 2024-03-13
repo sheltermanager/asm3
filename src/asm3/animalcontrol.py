@@ -144,8 +144,8 @@ def get_animalcontrol_find_simple(dbo: Database, query: str = "", username: str 
         ss.ors.append("ac.IncidentDateTime > %s AND ac.CompletedDate Is Null %s" % (dbo.sql_date(dbo.today(offset=-30)), sitefilter))
     else:
         if asm3.utils.is_numeric(query): ss.add_field_value("ac.ID", asm3.utils.cint(query))
-        ss.add_fields([ "co.OwnerName", "ti.IncidentName", "ac.DispatchAddress", "ac.DispatchPostcode", "o1.OwnerName", 
-            "o2.OwnerName", "o3.OwnerName", "vo.OwnerName" ])
+        ss.add_fields([ "ac.IncidentCode", "co.OwnerName", "ti.IncidentName", "ac.DispatchAddress", "ac.DispatchPostcode", 
+            "o1.OwnerName", "o2.OwnerName", "o3.OwnerName", "vo.OwnerName" ])
         ss.add_clause(u"EXISTS(SELECT ad.Value FROM additional ad " \
             "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
             "WHERE ad.LinkID=ac.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % (asm3.additional.INCIDENT_IN))
@@ -158,6 +158,7 @@ def get_animalcontrol_find_advanced(dbo: Database, criteria: dict, username: str
     """
     Returns rows for advanced animal control searches.
     criteria: A dictionary of criteria
+       code - string partial pattern
        number - string partial pattern
        callername - string partial pattern
        victimname - string partial pattern
@@ -194,6 +195,7 @@ def get_animalcontrol_find_advanced(dbo: Database, criteria: dict, username: str
     ss.ands.append("ac.ID > 0")
     if siteid != 0: ss.ands.append("(ac.SiteID = 0 OR ac.SiteID = %d)" % siteid)
     ss.add_id("number", "ac.ID")
+    ss.add_str("code", "ac.IncidentCode")
     ss.add_str("callername", "co.OwnerName")
     ss.add_str("victimname", "vo.OwnerName")
     ss.add_str("callerphone", "co.HomeTelephone")
@@ -275,6 +277,117 @@ def reduce_find_results(dbo: Database, username: str, rows: Results) -> Results:
         if rok:
             results.append(r)
     return results
+
+def calc_incident_code(dbo: Database, acid: int, incidentdate: datetime) -> str:
+    """
+    Generates a new incident code to the format/scheme. 
+    Form tokens include:
+    YYYY - 4 digit incident year
+    YY   - 2 digit incident year
+    MM   - 2 digit incident month
+    DD   - 2 digit incident day
+    UUUUUUUUUU - 10 digit padded unique number
+    UUUUUU - 6 digit padded unique number
+    UUUU - 4 digit padded unique number
+    XXX  - 3 digit padded next incident for the year
+    XX   - unpadded next incident for the year
+    OOO  - 3 digit padded next incident for the month
+    OO   - unpadded next incident for the month
+    """
+    def substitute_tokens(fmt: str, year: int, month: int) -> str:
+        """
+        Produces a code by switching tokens in the code format fmt.
+        The format is parsed to left to right, testing for tokens. Anything
+        not recognised as a token is added. Anything preceded by a backslash is added.
+        """
+        code = []
+        x = 0
+        while x < len(fmt):
+            # Add the next character if we encounter a backslash to effectively escape it
+            if fmt[x:x+1] == "\\":
+                x += 1
+                code.append(fmt[x:x+1])
+                x += 1
+            elif fmt[x:x+4] == "YYYY": 
+                code.append("%04d" % incidentdate.year)
+                x += 4
+            elif fmt[x:x+2] == "YY":   
+                code.append("%02d" % (int(incidentdate.year) - 2000))
+                x += 2
+            elif fmt[x:x+2] == "MM":   
+                code.append("%02d" % incidentdate.month)
+                x += 2
+            elif fmt[x:x+2] == "DD":   
+                code.append("%02d" % incidentdate.day)
+                x += 2
+            elif fmt[x:x+10] == "UUUUUUUUUU": 
+                code.append("%010d" % acid)
+                x += 10
+            elif fmt[x:x+6] == "UUUUUUUUUU": 
+                code.append("%06d" % acid)
+                x += 6
+            elif fmt[x:x+4] == "UUUU": 
+                code.append("%04d" % acid)
+                x += 4
+            elif fmt[x:x+3] == "XXX":  
+                code.append("%03d" % year)
+                x += 3
+            elif fmt[x:x+2] == "XX":   
+                code.append(str(year))
+                x += 2
+            elif fmt[x:x+3] == "OOO":  
+                code.append("%03d" % month)
+                x += 3
+            elif fmt[x:x+2] == "OO":   
+                code.append(str(month))
+                x += 2
+            else:
+                code.append(fmt[x:x+1])
+                x += 1
+        return "".join(code)
+
+    if incidentdate is None:
+        incidentdate = dbo.today()
+
+    codeformat = asm3.configuration.incident_coding_format(dbo)
+    beginningofyear = datetime(incidentdate.year, 1, 1, 0, 0, 0)
+    endofyear = datetime(incidentdate.year, 12, 31, 23, 59, 59)
+    beginningofmonth = asm3.i18n.first_of_month(incidentdate)
+    endofmonth = asm3.i18n.last_of_month(incidentdate)
+    highestyear = 0
+    highestmonth = 0
+
+    # If our code uses X, calculate the highest code seen this year
+    if codeformat.find("X") != -1:
+        highestyear = dbo.query_int("SELECT COUNT(ID) FROM animalcontrol WHERE " \
+            "IncidentDateTime >= ? AND " \
+            "IncidentDateTime <= ?", (beginningofyear, endofyear))
+        highestyear += 1
+
+    # If our code uses O, calculate the highest code seen this month
+    if codeformat.find("O") != -1:
+        highestmonth = dbo.query_int("SELECT COUNT(ID) FROM animalcontrol WHERE " \
+            "IncidentDateTime >= ? AND " \
+            "IncidentDateTime <= ?", (beginningofmonth, endofmonth))
+        highestmonth += 1
+
+    unique = False
+    code = ""
+    while not unique:
+
+        # Generate the codes
+        code = substitute_tokens(codeformat, highestyear, highestmonth)
+
+        # Verify the code is unique
+        unique = 0 == dbo.query_int("SELECT COUNT(*) FROM animalcontrol WHERE IncidentCode LIKE ?", [code])
+
+        # If it's not, increment and try again
+        if not unique:
+            if codeformat.find("X") != -1: highestyear += 1
+            if codeformat.find("O") != -1: highestmonth += 1
+
+    asm3.al.debug("incidentcode: code=%s, incidentdate %s" % (code, incidentdate), "animalcontrol.calc_incident_code", dbo)
+    return code
 
 def check_view_permission(dbo: Database, username: str, session: Session, acid: int) -> bool:
     """
@@ -437,6 +550,7 @@ def update_animalcontrol_from_form(dbo: Database, post: PostedData, username: st
         raise asm3.utils.ASMValidationError(_("Incident date cannot be blank", l))
 
     dbo.update("animalcontrol", acid, {
+        "IncidentCode":         post["incidentcode"],
         "IncidentDateTime":     post.datetime("incidentdate", "incidenttime"),
         "IncidentTypeID":       post.integer("incidenttype"),
         "CallDateTime":         post.datetime("calldate", "calltime"),
@@ -531,7 +645,10 @@ def insert_animalcontrol_from_form(dbo: Database, post: PostedData, username: st
     if post.date("incidentdate") is None:
         raise asm3.utils.ASMValidationError(_("Incident date cannot be blank", l))
 
-    nid = dbo.insert("animalcontrol", {
+    nid = dbo.get_id("animalcontrol")
+    dbo.insert("animalcontrol", {
+        "ID":                   nid,
+        "IncidentCode":         calc_incident_code(dbo, nid, post.datetime("incidentdate", "incidenttime")),
         "IncidentDateTime":     post.datetime("incidentdate", "incidenttime"),
         "IncidentTypeID":       post.integer("incidenttype"),
         "CallDateTime":         post.datetime("calldate", "calltime"),
@@ -565,7 +682,7 @@ def insert_animalcontrol_from_form(dbo: Database, post: PostedData, username: st
         "SpeciesID":            post.integer("species"),
         "Sex":                  post.integer("sex"),
         "AgeGroup":             post["agegroup"]
-    }, username)
+    }, username, generateID=False)
 
     asm3.additional.save_values_for_link(dbo, post, username, nid, "incident", True)
     update_animalcontrol_roles(dbo, nid, post.integer_list("viewroles"), post.integer_list("editroles"))

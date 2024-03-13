@@ -232,6 +232,7 @@ DEFAULTS = {
     "HideLookingFor": "No",
     "HoldChangeLog": "Yes",
     "HoldChangeLogType": "3",
+    "IncidentCodingFormat": "YYMM-XXX",
     "IncidentPermissions": "No",
     "IncidentSearchColumns": "IncidentNumber,IncidentType,IncidentDateTime,"
         "DispatchAddress,DispatchTown,DispatchPostcode,JurisdictionName,"
@@ -1103,6 +1104,9 @@ def include_incomplete_medical_doc(dbo: Database) -> bool:
 
 def include_off_shelter_medical(dbo: Database) -> bool:
     return cboolean(dbo, "IncludeOffShelterMedical", DEFAULTS["IncludeOffShelterMedical"] == "Yes")
+
+def incident_coding_format(dbo: Database) -> str:
+    return cstring(dbo, "IncidentCodingFormat", DEFAULTS["IncidentCodingFormat"])
 
 def js_injection(dbo: Database) -> str:
     return cstring(dbo, "JSInjection")
