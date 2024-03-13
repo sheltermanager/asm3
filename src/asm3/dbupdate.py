@@ -6147,5 +6147,5 @@ def update_34807(dbo: Database) -> None:
     # Add IsRetired to animal and person flags
     add_column(dbo, "lkanimalflags", "IsRetired", dbo.type_integer)
     add_column(dbo, "lkownerflags", "IsRetired", dbo.type_integer)
-    dbo.execute_update("UPDATE lkanimalflags SET IsRetired=0")
-    dbo.execute_update("UPDATE lkownerflags SET IsRetired=0")
+    dbo.execute_dbupdate("UPDATE lkanimalflags SET IsRetired=0")
+    dbo.execute_dbupdate("UPDATE lkownerflags SET IsRetired=0")
