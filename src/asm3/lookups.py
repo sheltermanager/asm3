@@ -28,7 +28,7 @@ import re
 #   vat - has an IsVAT column (donationtype)
 LOOKUP_TABLES = {
     "lksaccounttype":   (_("Account Types"), "AccountType", _("Type"), "", "", ("accounts.AccountType",)),
-    "lkanimalflags":    (_("Animal Flags"), "Flag", _("Flag"), "", "add del", ""),
+    "lkanimalflags":    (_("Animal Flags"), "Flag", _("Flag"), "", "add del ret", ""),
     "animaltype":       (_("Animal Types"), "AnimalType", _("Type"), "AnimalDescription", "add del ret", ("animal.AnimalTypeID",)),
     "basecolour":       (_("Colors"), "BaseColour", _("Color"), "BaseColourDescription", "add del ret pubcol", ("animal.BaseColourID", "animallost.BaseColourID", "animalfound.BaseColourID")),
     "lkboardingtype":   (_("Boarding Types"), "BoardingName", _("Boarding Type"), "BoardingDescription", "add del ret cost", ("animalboarding.BoardingTypeID",)),
@@ -51,7 +51,7 @@ LOOKUP_TABLES = {
     "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", "add del ret", ("log.LogTypeID",)),
     "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", "", ("adoption.MovementType", "animal.ActiveMovementType",)),
     "lksoutcome":       (_("Outcomes"), "Outcome", _("Outcome"), "", "", ""),
-    "lkownerflags":     (_("Person Flags"), "Flag", _("Flag"), "", "add del", ""),
+    "lkownerflags":     (_("Person Flags"), "Flag", _("Flag"), "", "add del ret", ""),
     "lksrotatype":      (_("Rota Types"), "RotaType", _("Type"), "", "", ("ownerrota.RotaTypeID",)),
     "lksex":            (_("Sexes"), "Sex", _("Sex"), "", "", ("animal.Sex", "animallost.Sex", "animalfound.Sex")),
     "lksize":           (_("Sizes"), "Size", _("Size"), "", "", ("animal.Size",)),
@@ -792,8 +792,32 @@ def get_additionalfield_links(dbo: Database) -> Results:
 def get_additionalfield_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM lksfieldtype ORDER BY FieldType")
 
-def get_animal_flags(dbo: Database) -> Results:
-    return dbo.query("SELECT * FROM lkanimalflags ORDER BY Flag")
+def _merge_db_flags(dbflags: Results, flags: str = "") -> Results:
+    """
+    Given a list of flag results from the database, adds any that are not present from
+    the pipe separated list of flags from an ADDITIONALFLAGS column.
+    The built in lower-case flags are ignored.
+    """
+    BUILTINS = [ "aco", "adopter", "banned", "coordinator", "dangerous", "deceased", "donor", "driver", 
+        "excludefrombulkemail", "fosterer", "giftaid", "homechecked", "homechecker", "member", "padopter", 
+        "retailer", "shelter", "staff", "sponsor", "vet", "volunteer", 
+        "courtesy", "crueltycase", "nonshelter", "notforadoption", "notforregistration", "quarantine" ]
+    if flags is None or flags == "" or flags == "|": return dbflags
+    out = dbflags.copy()
+    for f in flags.split("|"):
+        f = f.strip()
+        if f == "": continue
+        if f in BUILTINS: continue
+        match = False
+        for r in dbflags:
+            if r.FLAG == f: match = True
+        if not match:
+            out.append({ "FLAG": f, "ISRETIRED": 0 })
+    return out
+
+def get_animal_flags(dbo: Database, flags: str = "") -> Results:
+    dbflags = dbo.query("SELECT * FROM lkanimalflags WHERE IsRetired=0 ORDER BY Flag")
+    return _merge_db_flags(dbflags, flags)
 
 def get_animal_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM animaltype ORDER BY AnimalType")
@@ -1034,7 +1058,8 @@ def insert_lookup(dbo: Database, username: str, lookup: str, name: str, desc: st
         name = name.replace(",", " ").replace("|", " ").replace("'", " ") # Remove bad chars
         name = asm3.utils.strip_duplicate_spaces(name) # Strip dup spaces Bad   Flag->Bad Flag
         return dbo.insert(lookup, {
-            t[LOOKUP_NAMEFIELD]:    name
+            t[LOOKUP_NAMEFIELD]:    name,
+            "IsRetired":            retired
         }, username, setCreated=False)
     elif t[LOOKUP_DESCFIELD] == "":
         # No description
@@ -1120,7 +1145,7 @@ def update_lookup(dbo: Database, username: str, iid: int, lookup: str, name: str
         oldflag = dbo.query_string("SELECT Flag FROM %s WHERE ID = ?" % lookup, [iid])
         newflag = name.replace(",", " ").replace("|", " ").replace("'", " ") # Remove bad chars
         newflag = asm3.utils.strip_duplicate_spaces(newflag) # Strip dup spaces Bad   Flag->Bad Flag
-        dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: newflag }, username, setLastChanged=False)
+        dbo.update(lookup, iid, { t[LOOKUP_NAMEFIELD]: newflag, "IsRetired": retired }, username, setLastChanged=False)
         # Update the text in flags fields where appropriate
         if lookup == "lkownerflags":
             dbo.execute("UPDATE owner SET AdditionalFlags = %s WHERE AdditionalFlags LIKE ?" % dbo.sql_replace("AdditionalFlags"), (oldflag, newflag, "%%%s%%" % oldflag))
@@ -1218,8 +1243,9 @@ def get_paymentmethod_name(dbo: Database, pid: int) -> str:
 def get_payment_methods(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM donationpayment ORDER BY PaymentName")
 
-def get_person_flags(dbo: Database) -> Results:
-    return dbo.query("SELECT * FROM lkownerflags ORDER BY Flag")
+def get_person_flags(dbo: Database, flags: str = "") -> Results:
+    dbflags = dbo.query("SELECT * FROM lkownerflags WHERE IsRetired=0 ORDER BY Flag")
+    return _merge_db_flags(dbflags, flags)
 
 def get_pickup_locations(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM pickuplocation ORDER BY LocationName")

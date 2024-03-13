@@ -1,6 +1,7 @@
 48
 ================
 
+13/03/24 Ability to retire animal and person flags #1388
 13/03/24 Add IncidentCode and auto generation/formats #52
 12/03/24 Fix bug where request sign by email reloaded
 11/03/24 Use English text for payment links instead of ref (Saggi) #1450

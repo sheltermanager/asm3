@@ -43,7 +43,8 @@ VERSIONS = (
     34409, 34410, 34411, 34500, 34501, 34502, 34503, 34504, 34505, 34506, 34507,
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
-    34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806
+    34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
+    34807
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1109,10 +1110,10 @@ def sql_structure(dbo: Database) -> str:
         fid(), fstr("AccountType") ), False)
 
     sql += table("lkanimalflags", (
-        fid(), fstr("Flag") ), False)
+        fid(), fstr("Flag"), fint("IsRetired", True) ), False)
 
     sql += table("lkownerflags", (
-        fid(), fstr("Flag") ), False)
+        fid(), fstr("Flag"), fint("IsRetired", True) ), False)
 
     sql += table("lkboardingtype", (
         fid(),
@@ -6141,3 +6142,10 @@ def update_34806(dbo: Database) -> None:
     for r in dbo.query("SELECT ID FROM animalcontrol"):
         batch.append([ asm3.utils.padleft(r.ID, 6), r.ID ])
     dbo.execute_many("UPDATE animalcontrol SET IncidentCode = ? WHERE ID = ?", batch, override_lock=True) 
+
+def update_34807(dbo: Database) -> None:
+    # Add IsRetired to animal and person flags
+    add_column(dbo, "lkanimalflags", "IsRetired", dbo.type_integer)
+    add_column(dbo, "lkownerflags", "IsRetired", dbo.type_integer)
+    dbo.execute_update("UPDATE lkanimalflags SET IsRetired=0")
+    dbo.execute_update("UPDATE lkownerflags SET IsRetired=0")
