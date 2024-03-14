@@ -305,7 +305,7 @@ class PetLinkPublisher(AbstractPublisher):
             cutoffdays: Negative number of days to check against service date
         """
         # If the microchip number isn't 15 digits, skip it
-        if len(an.IDENTICHIPNUMBER.strip()) != 15:
+        if not asm3.configuration.petlink_register_all(self.dbo) and len(an.IDENTICHIPNUMBER.strip()) != 15:
             self.logError("Chip number failed validation (%s not 15 digits), skipping." % an.IDENTICHIPNUMBER)
             return VALIDATE_NO
 

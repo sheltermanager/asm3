@@ -1,6 +1,7 @@
 48
 ================
 
+14/03/24 PetLink: Disable 15 digit validation rule when registering all
 13/03/24 Ability to retire animal and person flags #1388
 13/03/24 Add IncidentCode and auto generation/formats #52
 12/03/24 Fix bug where request sign by email reloaded
