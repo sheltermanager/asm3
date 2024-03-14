@@ -20,7 +20,7 @@ DESCENDING = 1
 def get_clinic_appointment_query(dbo: Database) -> str:
     return "SELECT ca.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, " \
-        "cs.Status AS ClinicStatusName, " \
+        "cs.Status AS ClinicStatusName, ct.ClinicTypeName, " \
         "a.ShelterCode, a.ShortCode, a.AnimalAge, a.AgeGroup, a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.HasActiveReserve, " \
         "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.ActiveMovementType, a.Archived, a.IsNotAvailableForAdoption, " \
@@ -29,6 +29,7 @@ def get_clinic_appointment_query(dbo: Database) -> str:
         "sx.Sex, s.SpeciesName " \
         "FROM clinicappointment ca " \
         "LEFT OUTER JOIN lksclinicstatus cs ON cs.ID = ca.Status " \
+        "LEFT OUTER JOIN lkclinictype ct ON ct.ID = ca.ClinicTypeID " \
         "LEFT OUTER JOIN animal a ON ca.AnimalID = a.ID " \
         "LEFT OUTER JOIN internallocation il ON a.ShelterLocation = il.ID " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
@@ -123,6 +124,7 @@ def insert_appointment_from_form(dbo: Database, username: str, post: PostedData)
     return dbo.insert("clinicappointment", {
         "AnimalID":             post.integer("personanimal") or post.integer("animal"),
         "OwnerID":              post.integer("person"),
+        "ClinicTypeID":         post.integer("type"),
         "ApptFor":              post["for"],
         "DateTime":             post.datetime("apptdate", "appttime"),
         "Status":               post.integer("status"),
@@ -149,6 +151,7 @@ def update_appointment_from_form(dbo: Database, username: str, post: PostedData)
     dbo.update("clinicappointment", post.integer("appointmentid"), {
         "AnimalID":             post.integer("personanimal") or post.integer("animal"),
         "OwnerID":              post.integer("person"),
+        "ClinicTypeID":         post.integer("type"),
         "ApptFor":              post["for"],
         "DateTime":             post.datetime("apptdate", "appttime"),
         "Status":               post.integer("status"),

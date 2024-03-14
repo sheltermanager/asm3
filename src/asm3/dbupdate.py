@@ -44,7 +44,7 @@ VERSIONS = (
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
-    34807
+    34807, 34808
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -60,7 +60,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "costtype", "customreport", "customreportrole", "dbfs", "deathreason", "deletion", "diary", 
     "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
     "entryreason", "event", "eventanimal", "incidentcompleted", "incidenttype", "internallocation", 
-    "jurisdiction", "licencetype", "lkanimalflags", "lkboardingtype", "lkcoattype",
+    "jurisdiction", "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype",
     "lkownerflags", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype",
     "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", 
     "lksoutcome", "lksposneg", "lksrotatype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", 
@@ -107,7 +107,7 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
 TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
     "costtype", "deathreason", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", 
     "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
-    "licencetype", "lkanimalflags", "lkboardingtype", "lkcoattype", "lkownerflags", "lksaccounttype", "lksclinicstatus", 
+    "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype", "lkownerflags", "lksaccounttype", "lksclinicstatus", 
     "lksdiarylink", "lksdonationfreq", "lksentrytype", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", 
     "lksmedialink", "lksmediatype", "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", "lksyesno", 
     "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", "logtype", "medicalprofile", 
@@ -911,6 +911,7 @@ def sql_structure(dbo: Database) -> str:
         fdate("ArrivedDateTime", True),
         fdate("WithVetDateTime", True),
         fdate("CompletedDateTime", True),
+        fint("ClinicTypeID", True),
         flongstr("ReasonForAppointment", True),
         flongstr("Comments", True),
         fint("Amount"),
@@ -921,6 +922,7 @@ def sql_structure(dbo: Database) -> str:
     sql += index("clinicappointment_OwnerID", "clinicappointment", "OwnerID")
     sql += index("clinicappointment_Status", "clinicappointment", "Status")
     sql += index("clinicappointment_ApptFor", "clinicappointment", "ApptFor")
+    sql += index("clinicappointment_ClinicTypeID", "clinicappointment", "ClinicTypeID")
 
     sql += table("clinicinvoiceitem", (
         fid(),
@@ -1120,6 +1122,12 @@ def sql_structure(dbo: Database) -> str:
         fstr("BoardingName"),
         fstr("BoardingDescription", True),
         fint("DefaultCost", True),
+        fint("IsRetired", True) ), False)
+
+    sql += table("lkclinictype", (
+        fid(),
+        fstr("ClinicTypeName"),
+        fstr("ClinicTypeDescripton", True),
         fint("IsRetired", True) ), False)
 
     sql += table("lksclinicstatus", (
@@ -2367,6 +2375,10 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup1("lksize", "Size", 2, _("Medium", l))
     sql += lookup1("lksize", "Size", 3, _("Small", l))
     sql += lookup2money("lkboardingtype", "BoardingName", 1, _("Boarding", l))
+    sql += lookup2("lkclinictype", "ClinicTypeName", 1, _("Consultation", l))
+    sql += lookup2("lkclinictype", "ClinicTypeName", 2, _("Followup", l))
+    sql += lookup2("lkclinictype", "ClinicTypeName", 3, _("Prescription", l))
+    sql += lookup2("lkclinictype", "ClinicTypeName", 4, _("Surgery", l))
     sql += lookup1("lkcoattype", "CoatType", 0, _("Short", l))
     sql += lookup1("lkcoattype", "CoatType", 1, _("Long", l))
     sql += lookup1("lkcoattype", "CoatType", 2, _("Rough", l))
@@ -6149,3 +6161,21 @@ def update_34807(dbo: Database) -> None:
     add_column(dbo, "lkownerflags", "IsRetired", dbo.type_integer)
     dbo.execute_dbupdate("UPDATE lkanimalflags SET IsRetired=0")
     dbo.execute_dbupdate("UPDATE lkownerflags SET IsRetired=0")
+
+def update_34808(dbo: Database) -> None:
+    l = dbo.locale
+    # Add clinictype table and field to clinicappointment
+    add_column(dbo, "clinicappointment", "ClinicTypeID", dbo.type_integer)
+    add_index(dbo, "clinicappointment_ClinicTypeID", "clinicappointment", "ClinicTypeID")
+    dbo.execute_dbupdate("UPDATE clinicappointment SET ClinicTypeID=1")
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("ClinicTypeName", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("ClinicTypeDescription", dbo.type_shorttext, True),
+        dbo.ddl_add_table_column("IsRetired", dbo.type_integer, True)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("lkclinictype", fields) )
+    dbo.execute_dbupdate("INSERT INTO lkclinictype VALUES (1, ?, '', 0)", [ _("Consultation", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkclinictype VALUES (2, ?, '', 0)", [ _("Followup", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkclinictype VALUES (3, ?, '', 0)", [ _("Prescription", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkclinictype VALUES (4, ?, '', 0)", [ _("Surgery", l) ])
