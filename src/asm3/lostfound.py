@@ -266,17 +266,23 @@ def get_foundanimal_find_advanced(dbo: Database, criteria: Dict[str, str], limit
     sql = "%s WHERE %s ORDER BY a.ID" % (get_foundanimal_query(dbo), " AND ".join(ss.ands))
     return dbo.query(sql, ss.values, limit=limit, distincton="ID")
 
-def get_lostanimal_last_days(dbo: Database, days: int = 90) -> Results:
+def get_lostanimal_last_days(dbo: Database, days: int = 90, include_additional_fields: bool = True) -> Results:
     """
     Returns lost animals active for the last X days
     """
-    return dbo.query(get_lostanimal_query(dbo) + " WHERE a.DateLost > ? AND a.DateFound Is Null", [dbo.today(offset=days*-1)])
+    rows = dbo.query(get_lostanimal_query(dbo) + " WHERE a.DateLost > ? AND a.DateFound Is Null", [dbo.today(offset=days*-1)])
+    if include_additional_fields: 
+        rows = asm3.additional.append_to_results(dbo, rows, "lostanimal")
+    return rows
 
-def get_foundanimal_last_days(dbo: Database, days: int = 90) -> Results:
+def get_foundanimal_last_days(dbo: Database, days: int = 90, include_additional_fields: bool = True) -> Results:
     """
     Returns found animals active for the last X days
     """
-    return dbo.query(get_foundanimal_query(dbo) + " WHERE a.DateFound > ? AND a.ReturnToOwnerDate Is Null", [dbo.today(offset=days*-1)])
+    rows = dbo.query(get_foundanimal_query(dbo) + " WHERE a.DateFound > ? AND a.ReturnToOwnerDate Is Null", [dbo.today(offset=days*-1)])
+    if include_additional_fields: 
+        rows = asm3.additional.append_to_results(dbo, rows, "foundanimal")
+    return rows
 
 def get_lostanimal_satellite_counts(dbo: Database, lfid: int) -> Results:
     """
