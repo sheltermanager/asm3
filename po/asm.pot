@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-03-14 11:36+0000\n"
+"POT-Creation-Date: 2024-03-14 11:44+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -1669,6 +1669,10 @@ msgstr ""
 msgid "Appointment"
 msgstr ""
 
+#: lookups.py
+msgid "Appointment Type"
+msgstr ""
+
 #: clinic.py
 msgid "Appointment date must be a valid date"
 msgstr ""
@@ -3028,10 +3032,6 @@ msgstr ""
 
 #: lookups.py
 msgid "Clinic Statuses"
-msgstr ""
-
-#: lookups.py
-msgid "Clinic Type"
 msgstr ""
 
 #: htmltemplates.js document_templates.js transport.js staff_rota.js reports.js
