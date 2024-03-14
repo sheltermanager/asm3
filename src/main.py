@@ -2597,11 +2597,11 @@ class calendar_events(ASMEndpoint):
             for c in asm3.clinic.get_appointments_two_dates(dbo, start, end, o.post["apptfor"], o.siteid):
                 if c.OWNERNAME is not None:
                     sub = "%s - %s" % (c.OWNERNAME, c.ANIMALNAME)
-                    tit = "%s - %s (%s) %s" % (c.OWNERNAME, c.ANIMALNAME, c.APPTFOR, c.REASONFORAPPOINTMENT)
+                    tit = "%s - %s (%s) %s: %s" % (c.OWNERNAME, c.ANIMALNAME, c.APPTFOR, c.CLINICTYPENAME, c.REASONFORAPPOINTMENT)
                     link = "person_clinic?id=%s" % c.OWNERID
                 else:
                     sub = "%s" % c.ANIMALNAME
-                    tit = "%s (%s) %s" % (c.ANIMALNAME, c.APPTFOR, c.REASONFORAPPOINTMENT)
+                    tit = "%s (%s) %s: %s" % (c.ANIMALNAME, c.APPTFOR, c.CLINICTYPENAME, c.REASONFORAPPOINTMENT)
                     link = "animal_clinic?id=%s" % c.ANIMALID
                 events.append({ 
                     "title": sub, 
