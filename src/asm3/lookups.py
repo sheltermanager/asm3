@@ -32,7 +32,7 @@ LOOKUP_TABLES = {
     "animaltype":       (_("Animal Types"), "AnimalType", _("Type"), "AnimalDescription", "add del ret", ("animal.AnimalTypeID",)),
     "basecolour":       (_("Colors"), "BaseColour", _("Color"), "BaseColourDescription", "add del ret pubcol", ("animal.BaseColourID", "animallost.BaseColourID", "animalfound.BaseColourID")),
     "lkboardingtype":   (_("Boarding Types"), "BoardingName", _("Boarding Type"), "BoardingDescription", "add del ret cost", ("animalboarding.BoardingTypeID",)),
-    "lkclinictype":     (_("Clinic Types"), "ClinicTypeName", _("Clinic Type"), "ClinicTypeDescription", "add del ret", ("clinicappointment.ClinicTypeID",)),
+    "lkclinictype":     (_("Clinic Appointment Types"), "ClinicTypeName", _("Clinic Type"), "ClinicTypeDescription", "add del ret", ("clinicappointment.ClinicTypeID",)),
     "breed":            (_("Breeds"), "BreedName", _("Breed"), "BreedDescription", "add del ret species pubbreed", ("animal.BreedID", "animal.Breed2ID", "animallost.BreedID", "animalfound.BreedID")),
     "lkcoattype":       (_("Coat Types"), "CoatType", _("Coat Type"), "", "add del", ("animal.CoatType",)),
     "citationtype":     (_("Citation Types"), "CitationName", _("Citation Type"), "CitationDescription", "add del ret cost", ("ownercitation.CitationTypeID",)),
