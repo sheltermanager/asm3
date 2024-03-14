@@ -113,8 +113,8 @@ def check(dbo: Database, locale: str, chipnumber: str) -> ChipCheckResults:
     """
     cachekey = f"cac_{chipnumber}"
     TTL = 86400
-    if len(chipnumber) != 15 or not asm3.utils.is_numeric(chipnumber):
-        raise asm3.utils.ASMValidationError("Microchip numbers must be 15 characters and only contain digits")
+    if (len(chipnumber) != 15 and len(chipnumber) != 9 and len(chipnumber) != 10):
+        raise asm3.utils.ASMValidationError("Microchip numbers must be 9, 10 or 15 characters")
     results = asm3.cachemem.get(cachekey)
     if results is not None:
         return results
