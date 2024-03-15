@@ -176,6 +176,7 @@ $(function() {
                         },
                         onload: function() {
                             $("#status").select("value", "0");
+                            $("#type").select("value", config.str("AFDefaultClinicType"));
                             if (config.bool("VATEnabled")) {
                                 $("#vat").prop("checked", true);
                                 $("#vatrate").val(config.number("VATRate"));

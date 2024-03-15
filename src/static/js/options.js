@@ -828,6 +828,7 @@ $(function() {
             };
             const items = [
                 ddrop("defaultbreed", _("Breed"), "AFDefaultBreed", html.list_to_options(controller.breeds, "ID", "BREEDNAME")),
+                ddrop("defaultclinictype", _("Clinic Appointment"), "AFDefaultClinicType", html.list_to_options(controller.clinictypes, "ID", "CLINICTYPENAME")),
                 ddrop("defaultcoattype", _("Coat Type"), "AFDefaultCoatType", html.list_to_options(controller.coattypes, "ID", "COATTYPE")),
                 ddrop("defaultcolour", _("Color"), "AFDefaultColour", html.list_to_options(controller.colours, "ID", "BASECOLOUR")),
                 ddrop("defaultdeath", _("Death Reason"), "AFDefaultDeathReason", html.list_to_options(controller.deathreasons, "ID", "REASONNAME")),

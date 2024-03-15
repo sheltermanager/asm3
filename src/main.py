@@ -5696,6 +5696,7 @@ class options(JSONEndpoint):
             "animalfindcolumns": asm3.html.json_animalfindcolumns(dbo),
             "animalflags": asm3.lookups.get_animal_flags(dbo),
             "breeds": asm3.lookups.get_breeds(dbo),
+            "clinictypes": asm3.lookups.get_clinic_types(dbo),
             "coattypes": asm3.lookups.get_coattypes(dbo),
             "colours": asm3.lookups.get_basecolours(dbo),
             "costtypes": asm3.lookups.get_costtypes(dbo),

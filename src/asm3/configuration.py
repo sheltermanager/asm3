@@ -76,6 +76,7 @@ DEFAULTS = {
     "AutoRemovePeopleCRYears": "0",
     "AFDefaultBreed": "221",
     "AFDefaultCoatType": "0",
+    "AFDefaultClinicType": "1",
     "AFDefaultColour": "1",
     "AFDefaultDeathReason": "1",
     "AFDefaultDiaryPerson": "",
