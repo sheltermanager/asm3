@@ -802,12 +802,17 @@ def insert_reserve(dbo: Database, username: str, personid: int, animalid: int, r
     Creates a reservation for the animalid to personid.
     If the person is banned from adopting animals, an exception is raised.
     If the animal is bonded to other animals, a reserve is placed on the bonded animals too.
+    If an open reservation already exists for this animal/person combo, does nothing.
     """
     l = dbo.locale
     if 1 == dbo.query_int("SELECT IsBanned FROM owner WHERE ID=?", [personid]):
         raise asm3.utils.ASMValidationError("owner %s is banned from adopting animals - not creating reserve")
     if animalid == 0 and not asm3.configuration.movement_person_only_reserves(dbo): 
         raise asm3.utils.ASMValidationError("no animal given, option is off to create person only reserves")
+    exq = "SELECT COUNT(*) FROM adoption WHERE AnimalID=? AND OwnerID=? AND ReservationDate Is Not Null " \
+        "AND ReservationCancelledDate Is Null AND MovementType=0"
+    if dbo.query_int(exq, [animalid, personid]) > 0:
+        raise asm3.utils.ASMValidationError("a reservation for this person and animal already exists")
     if reservationdate is None: reservationdate = dbo.now()
     moveids = []
     for aid in asm3.animal.get_animal_id_and_bonds(dbo, animalid):

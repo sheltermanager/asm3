@@ -1,6 +1,7 @@
 48
 ================
 
+18/03/24 Online form: Do not create extra reserves for the same animal/owner combo
 14/03/24 Include additional fields with service json/xml_lost/found_animals
 14/03/24 clinic appointment types #1317
 14/03/24 Microchip registry checks should accept 9+10 digit too
