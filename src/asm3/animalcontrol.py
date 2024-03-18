@@ -718,6 +718,58 @@ def insert_animalcontrol(dbo: Database, username: str) -> int:
     }
     return insert_animalcontrol_from_form(dbo, asm3.utils.PostedData(d, dbo.locale), username)
 
+def clone_animalcontrol(dbo: Database, username: str, acid: int) -> int:
+    """
+    Clones animal control record acid. Returns the ID of the new record.
+    """
+    l = dbo.locale
+    ac = get_animalcontrol(dbo, acid)
+    nid = dbo.get_id("animalcontrol")
+    dbo.insert("animalcontrol", {
+        "ID":                   nid,
+        "IncidentCode":         calc_incident_code(dbo, nid, ac.INCIDENTDATETIME),
+        "IncidentDateTime":     ac.INCIDENTDATETIME,
+        "IncidentTypeID":       ac.INCIDENTTYPEID,
+        "CallDateTime":         ac.CALLDATETIME,
+        "CallNotes":            ac.CALLNOTES,
+        "CallTaker":            ac.CALLTAKER,
+        "CallerID":             ac.CALLERID,
+        "VictimID":             ac.VICTIMID,
+        "DispatchAddress":      ac.DISPATCHADDRESS,
+        "DispatchTown":         ac.DISPATCHTOWN,
+        "DispatchCounty":       ac.DISPATCHCOUNTY,
+        "DispatchPostcode":     ac.DISPATCHPOSTCODE,
+        "JurisdictionID":       ac.JURISDICTIONID,
+        "PickupLocationID":     ac.PICKUPLOCATIONID,
+        "DispatchLatLong":      ac.DISPATCHLATLONG,
+        "DispatchedACO":        ac.DISPATCHEDACO,
+        "DispatchDateTime":     ac.DISPATCHDATETIME,
+        "RespondedDateTime":    ac.RESPONDEDDATETIME,
+        "FollowupDateTime":     ac.FOLLOWUPDATETIME,
+        "FollowupComplete":     ac.FOLLOWUPCOMPLETE,
+        "FollowupDateTime2":    ac.FOLLOWUPDATETIME2,
+        "FollowupComplete2":    ac.FOLLOWUPCOMPLETE2,
+        "FollowupDateTime3":    ac.FOLLOWUPDATETIME3,
+        "FollowupComplete3":    ac.FOLLOWUPCOMPLETE3,
+        "CompletedDate":        ac.COMPLETEDDATE,
+        "IncidentCompletedID":  ac.INCIDENTCOMPLETEDID,
+        "SiteID":               ac.SITEID,
+        "OwnerID":              ac.OWNERID,
+        "Owner2ID":             ac.OWNER2ID,
+        "Owner3ID":             ac.OWNER3ID,
+        "AnimalDescription":    ac.ANIMALDESCRIPTION,
+        "SpeciesID":            ac.SPECIESID,
+        "Sex":                  ac.SEX,
+        "AgeGroup":             ac.AGEGROUP
+    }, username, generateID=False)
+
+    # Additional Fields
+    for af in dbo.query("SELECT * FROM additional WHERE LinkID = %d AND LinkType IN (%s)" % (acid, asm3.additional.INCIDENT_IN)):
+        asm3.additional.insert_additional(dbo, af.linktype, nid, af.additionalfieldid, af.value)
+
+    # TODO: roles?
+    return nid
+
 def insert_traploan_from_form(dbo: Database, username: str, post: PostedData) -> int:
     """
     Creates a traploan record from posted form data 

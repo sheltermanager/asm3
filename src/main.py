@@ -3990,6 +3990,11 @@ class incident(JSONEndpoint):
         self.check(asm3.users.DELETE_INCIDENT)
         asm3.animalcontrol.delete_animalcontrol(o.dbo, o.user, o.post.integer("id"))
 
+    def post_clone(self, o):
+        self.check(asm3.users.ADD_INCIDENT)
+        nid = asm3.animalcontrol.clone_animalcontrol(o.dbo, o.user, o.post.integer("id"))
+        return str(nid)
+
     def post_latlong(self, o):
         self.check(asm3.users.CHANGE_INCIDENT)
         asm3.animalcontrol.update_dispatch_latlong(o.dbo, o.post.integer("incidentid"), o.post["latlong"])

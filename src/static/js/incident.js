@@ -320,6 +320,9 @@ $(function() {
                 edit_header.template_list(controller.templates, "ANIMALCONTROL", controller.incident.ID),
                 '</ul>',
                 '</div>',
+                '<div id="dialog-clone-confirm" style="display: none" title="' + html.title(_("Clone")) + '">',
+                '<p><span class="ui-icon ui-icon-alert"></span> ' + _("Clone this incident?") + '</p>',
+                '</div>',
                 '<div id="emailform"></div>',
                 '<div id="dialog-linkanimal" style="display: none" title="' + html.title(_("Link an animal")) + '">',
                 '<table width="100%">',
@@ -332,6 +335,7 @@ $(function() {
                 edit_header.incident_edit_header(controller.incident, "details", controller.tabcounts),
                 tableform.buttons_render([
                     { id: "save", text: _("Save"), icon: "save", tooltip: _("Save this incident") },
+                    { id: "clone", text: _("Clone"), icon: "copy", tooltip: _("Clone this incident") },
                     { id: "delete", text: _("Delete"), icon: "delete", tooltip: _("Delete this incident") },
                     //{ id: "toanimal", text: _("Create Animal"), icon: "animal-add", tooltip: _("Create a new animal from this incident") }
                     { id: "document", text: _("Document"), type: "buttonmenu", icon: "document", tooltip: _("Generate a document from this incident") },
@@ -364,6 +368,7 @@ $(function() {
             }
 
             if (!common.has_permission("caci")) { $("#button-save").hide(); }
+            if (!common.has_permission("aaci")) { $("#button-clone").hide(); }
             if (!common.has_permission("aa")) { $("#button-toanimal").hide(); }
             if (!common.has_permission("daci")) { $("#button-delete").hide(); }
             if (!common.has_permission("gaf")) { $("#button-document").hide(); }
@@ -481,6 +486,15 @@ $(function() {
                 validate.save(function() {
                     common.route_reload();
                 });
+            });
+
+            $("#button-clone").button().click(async function() {
+                await tableform.show_okcancel_dialog("#dialog-clone-confirm", _("Clone"));
+                let formdata = "mode=clone&id=" + controller.incident.ID;
+                header.show_loading(_("Cloning..."));
+                let response = await common.ajax_post("incident", formdata);
+                header.hide_loading();
+                common.route("incident?id=" + response + "&cloned=true"); 
             });
 
             $("#button-toanimal").button().click(async function() {
@@ -627,6 +641,7 @@ $(function() {
             common.widget_destroy("#victim", "personchooser");
             common.widget_destroy("#emailform");
             common.widget_destroy("#dialog-linkanimal");
+            common.widget_destroy("#dialog-clone-confirm");
             common.widget_destroy("#emailbody", "richtextarea");
         },
 

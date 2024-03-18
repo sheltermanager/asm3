@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-03-15 09:31+0000\n"
+"POT-Creation-Date: 2024-03-18 10:17+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -3038,8 +3038,8 @@ msgstr ""
 msgid "Clinic Statuses"
 msgstr ""
 
-#: onlineforms.js reports.js transport.js animal.js document_templates.js
-#: htmltemplates.js stocklevel.js roles.js staff_rota.js
+#: onlineforms.js incident.js reports.js transport.js animal.js
+#: document_templates.js htmltemplates.js stocklevel.js roles.js staff_rota.js
 msgid "Clone"
 msgstr ""
 
@@ -3059,7 +3059,15 @@ msgstr ""
 msgid "Clone this animal?"
 msgstr ""
 
-#: animal.js
+#: incident.js
+msgid "Clone this incident"
+msgstr ""
+
+#: incident.js
+msgid "Clone this incident?"
+msgstr ""
+
+#: incident.js animal.js
 msgid "Cloning..."
 msgstr ""
 

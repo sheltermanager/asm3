@@ -21,7 +21,7 @@ class TestAnimalControl(unittest.TestCase):
     def test_get_animalcontrol_animals(self):
         asm3.animalcontrol.get_animalcontrol_animals(base.get_dbo(), self.nid)
 
-    def test_get_aniamlcontrol_for_animal(self):
+    def test_get_animalcontrol_for_animal(self):
         asm3.animalcontrol.get_animalcontrol_for_animal(base.get_dbo(), 0)
 
     def test_get_followup_two_dates(self):
@@ -70,6 +70,9 @@ class TestAnimalControl(unittest.TestCase):
         }
         post = asm3.utils.PostedData(data, "en")
         asm3.animalcontrol.update_animalcontrol_from_form(base.get_dbo(), post, "test", geocode=False)
+
+    def test_clone_animalcontrol(self):
+        self.assertNotEqual(0, asm3.animalcontrol.clone_animalcontrol(base.get_dbo(), "test", self.nid))
 
     def test_insert_traploan_from_form(self):
         data = {
