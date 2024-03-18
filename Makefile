@@ -39,6 +39,7 @@ clean:
 	rm -rf src/asm3/pbkdf2/__pycache__
 	rm -f src/asm3/publishers/*.pyc
 	rm -rf src/asm3/publishers/__pycache__
+	rm -f scripts/schema/schema.db
 
 version:
 	# Include me in any release target to stamp the 
