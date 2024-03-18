@@ -131,7 +131,7 @@ edit_header = {
         }
         let mother = "";
         if (a.MOTHERID) {
-            mother = '<tr><td>' + _("Mother") + ':</td><td><b><a href="animal?id=' + a.MOTHERID + '">' + a.MOTHERCODE + ' - ' + a.MOTHERNAME + '</a></b></td></tr>';
+            mother = '<tr><td>' + _("Mother") + ':</td><td><b><a href="animal?id=' + a.MOTHERID + '">' + a.MOTHERNAME + ' - ' + a.MOTHERCODE + '</a></b></td></tr>';
         }
         let chipinfo = "";
         if (a.IDENTICHIPPED == 1) {

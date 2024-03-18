@@ -425,14 +425,14 @@ def embellish_mother(dbo: Database, a: ResultRow) -> ResultRow:
     MOTHERID, MOTHERCODE, MOTHERNAME
     """
     if a is None: return
-    l = dbo.first_row(dbo.query("SELECT a.ID, a.ShelterCode, a.AnimalName " \
+    l = dbo.first_row(dbo.query("SELECT a.ID, a.ShelterCode, a.ShortCode, a.AnimalName " \
         "FROM animal a " \
         "INNER JOIN animallitter al ON al.ParentAnimalID = a.ID " \
         "WHERE al.AcceptanceNumber = ? " \
         "ORDER BY al.ID DESC", [a.ACCEPTANCENUMBER]))
     if l is not None:
         a.MOTHERID = l.ID
-        a.MOTHERCODE = l.SHELTERCODE
+        a.MOTHERCODE = asm3.configuration.use_short_shelter_codes(dbo) and l.SHORTCODE or l.SHELTERCODE
         a.MOTHERNAME = l.ANIMALNAME
     else:
         a.MOTHERID = 0
