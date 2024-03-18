@@ -406,6 +406,7 @@ def get_animal(dbo: Database, animalid: int) -> ResultRow:
     if animalid is None or animalid == 0: return None
     a = dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ID = ?", [animalid]) )
     calc_ages(dbo, [a])
+    embellish_mother(dbo, a)
     return a
 
 def get_animal_sheltercode(dbo: Database, code: str) -> ResultRow:
@@ -415,6 +416,28 @@ def get_animal_sheltercode(dbo: Database, code: str) -> ResultRow:
     if code is None or code == "": return None
     a = dbo.first_row( dbo.query(get_animal_query(dbo) + " WHERE a.ShelterCode = ?", [code]) )
     calc_ages(dbo, [a])
+    embellish_mother(dbo, a)
+    return a
+
+def embellish_mother(dbo: Database, a: ResultRow) -> ResultRow:
+    """
+    Adds the following litter-related fields to an animal result.
+    MOTHERID, MOTHERCODE, MOTHERNAME
+    """
+    if a is None: return
+    l = dbo.first_row(dbo.query("SELECT a.ID, a.ShelterCode, a.AnimalName " \
+        "FROM animal a " \
+        "INNER JOIN animallitter al ON al.ParentAnimalID = a.ID " \
+        "WHERE al.AcceptanceNumber = ? " \
+        "ORDER BY al.ID DESC", [a.ACCEPTANCENUMBER]))
+    if l is not None:
+        a.MOTHERID = l.ID
+        a.MOTHERCODE = l.SHELTERCODE
+        a.MOTHERNAME = l.ANIMALNAME
+    else:
+        a.MOTHERID = 0
+        a.MOTHERCODE = ""
+        a.MOTHERNAME = ""
     return a
 
 def get_animals_ids(dbo: Database, sort: str, q: str, limit: int = 5, cachetime: int = 60) -> Results:

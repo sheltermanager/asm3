@@ -722,7 +722,6 @@ def clone_animalcontrol(dbo: Database, username: str, acid: int) -> int:
     """
     Clones animal control record acid. Returns the ID of the new record.
     """
-    l = dbo.locale
     ac = get_animalcontrol(dbo, acid)
     nid = dbo.get_id("animalcontrol")
     dbo.insert("animalcontrol", {

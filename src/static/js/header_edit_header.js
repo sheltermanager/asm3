@@ -129,6 +129,10 @@ edit_header = {
         if (a.ADOPTIONCOORDINATORID) {
             coordinator = '<tr><td>' + _("Adoption Coordinator") + ':</td><td><b>' + html.person_link(a.ADOPTIONCOORDINATORID, a.ADOPTIONCOORDINATORNAME) + '</b></td></tr>';
         }
+        let mother = "";
+        if (a.MOTHERID) {
+            mother = '<tr><td>' + _("Mother") + ':</td><td><b><a href="animal?id=' + a.MOTHERID + '">' + a.MOTHERCODE + ' - ' + a.MOTHERNAME + '</a></b></td></tr>';
+        }
         let chipinfo = "";
         if (a.IDENTICHIPPED == 1) {
             chipinfo = '<tr><td>' + _("Microchip") + ':</td><td><b>' + a.IDENTICHIPNUMBER + " " + common.nulltostr(a.IDENTICHIP2NUMBER) + '</b></td></tr>';
@@ -186,6 +190,7 @@ edit_header = {
             '<tr>',
             '<td id="hloc">' + _("Location") + ':</td><td><b>' + displaylocation + '</b></td>',
             '</tr>',
+            mother,
             coordinator,
             animalcontrol,
             chipinfo,
