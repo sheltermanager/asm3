@@ -1,6 +1,7 @@
 48
 ================
 
+19/03/24 csvimport: Allow importing of non-ascii chars
 18/03/24 Show mother info in banner for baby animals #836
 18/03/24 Clone animal control incident #1101
 18/03/24 Online form: Do not create extra reserves for the same animal/owner combo

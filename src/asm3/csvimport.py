@@ -75,7 +75,7 @@ def gks(m: Dict, f: str) -> str:
     """ reads field f from map m, returning a string. 
         string is empty if key not present """
     if f not in m: return ""
-    return str(asm3.utils.strip_non_ascii(m[f]))
+    return str(m[f])
 
 def gkd(dbo: Database, m: Dict, f: str, usetoday: bool = False) -> datetime:
     """ reads field f from map m, returning a display date. 
