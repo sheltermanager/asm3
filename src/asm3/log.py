@@ -119,8 +119,14 @@ def update_log_from_form(dbo: Database, username: str, post: PostedData) -> None
     if post.date("logdate") is None:
         raise asm3.utils.ASMValidationError(asm3.i18n._("Log date must be a valid date", l))
 
-    dbo.update("log", post.integer("logid"), {
+    # Set the linktype/id again so that it appears on the audit trail of the parent record
+    logid = post.integer("logid") 
+    r = dbo.first_row(dbo.query("SELECT LinkType, LinkID FROM log WHERE ID=?", [logid]))
+
+    dbo.update("log", logid, {
         "LogTypeID":    post.integer("type"),
+        "LinkType":     r.LINKTYPE,
+        "LinkID":       r.LINKID,
         "Date":         post.datetime("logdate", "logtime"),
         "Comments":     post["entry"]
     }, username)
