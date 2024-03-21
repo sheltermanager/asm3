@@ -2,7 +2,7 @@ Expired licenses in the last year
 ###
 Animal Control
 ###
-34800/Any rev03
+34800/Any rev04
 ###
 People on file with expired licenses in the last year and no renewal, where the animal is still alive
 ###
@@ -11,7 +11,7 @@ en
 SELECT
 ol.LicenceNumber,
 lt.LicenceTypeName,
-o.OwnerName, a.AnimalName,
+o.OwnerName, o.ID AS OID, a.AnimalName, a.ID AS AID,
 ol.IssueDate, ol.ExpiryDate, ol.Comments
 FROM ownerlicence ol
 INNER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID
@@ -39,8 +39,8 @@ $$BODY
 <tr>
 <td>$LICENCENUMBER</td>
 <td>$LICENCETYPENAME</td>
-<td>$OWNERNAME</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a></td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ISSUEDATE</td>
 <td>$EXPIRYDATE</td>
 <td>$COMMENTS</td>
@@ -55,7 +55,7 @@ Expired licenses in the last year by animal
 ###
 Animal Control
 ###
-33307/Any rev02
+33307/Any rev03
 ###
 Animals on file where their latest license has expired in the last year
 ###
@@ -64,7 +64,7 @@ en
 SELECT
 ol.LicenceNumber,
 lt.LicenceTypeName,
-o.OwnerName, a.AnimalName,
+o.OwnerName, o.ID AS OID, a.AnimalName, a.ID AS AID,
 ol.IssueDate, ol.ExpiryDate, ol.Comments
 FROM animal a
 INNER JOIN ownerlicence ol ON ol.AnimalID = a.ID AND ol.ID = (SELECT ID FROM ownerlicence WHERE AnimalID = a.ID ORDER BY ExpiryDate DESC LIMIT 1)
@@ -91,8 +91,8 @@ $$BODY
 <tr>
 <td>$LICENCENUMBER</td>
 <td>$LICENCETYPENAME</td>
-<td>$OWNERNAME</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="person_licence?id=$OID">$OWNERNAME</a></td>
+<td><a target="_blank" href="animal_licence?id=$AID">$ANIMALNAME</a></td>
 <td>$ISSUEDATE</td>
 <td>$EXPIRYDATE</td>
 <td>$COMMENTS</td>
@@ -102,4 +102,3 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
-

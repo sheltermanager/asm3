@@ -2,18 +2,20 @@ Print Incident Record
 ###
 Animal Control
 ###
-34021/Any rev06
+34806/Any rev07
 ###
 A complete printout of an incident record.
 ###
 en
 ###
 SELECT
-ac.ID AS IncidentNumber, ac.IncidentDateTime, ti.IncidentName, co.OwnerName AS CallerName, co.HomeTelephone, co.WorkTelephone, co.MobileTelephone,
-ac.CallTaker, ac.CallDateTime, ac.CallNotes,
+ac.ID AS IncidentNumber, ac.IncidentDateTime, ti.IncidentName, co.OwnerName AS CallerName, co.ID AS COID,
+co.HomeTelephone, co.WorkTelephone, co.MobileTelephone,
+ac.CallTaker, ac.CallDateTime, ac.CallNotes, ac.IncidentCode,
 ac.CallNotes AS CallNotesN2BR,
-vo.OwnerName AS VictimName, vo.OwnerAddress AS VictimAddress,
-o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3,
+vo.OwnerName AS VictimName, vo.OwnerAddress AS VictimAddress, vo.ID AS VOID,
+o1.OwnerName AS OwnerName1, o1.ID AS ONEOID, o2.OwnerName AS OwnerName2, o2.ID AS TWOOID, o3.OwnerName AS OwnerName3,
+o3.ID AS THREEOID,
 o1.OwnerAddress AS OwnerAddress1, o2.OwnerAddress AS OwnerAddress2, o3.OwnerAddress AS OwnerAddress3,
 ac.DispatchAddress, ac.DispatchTown, ac.DispatchCounty, ac.DispatchPostcode, ac.DispatchedACO,
 ac.DispatchDateTime, ac.CompletedDate, ci.CompletedName,
@@ -29,16 +31,19 @@ LEFT OUTER JOIN owner o3 ON o3.ID = ac.Owner3ID
 LEFT OUTER JOIN owner vo ON vo.ID = ac.VictimID
 LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
 LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID
-WHERE ac.ID = $ASK NUMBER Enter the incident number$
+WHERE ac.ID = '$ASK NUMBER Enter the incident number$'
+OR ac.IncidentCode = '$ASK STRING or incident code$'
 ###
 $$HEADER
 HEADER$$
 
 $$BODY
-<h2>$INCIDENTNAME - $OWNERNAME1</h2>
+<h2>$INCIDENTNAME - <a target="_blank" href="person?id=$ONEOID">$OWNERNAME1</a></h2>
 <table border="1">
 <tr>
-<td>Number</td><td><b>$INCIDENTNUMBER</b></td>
+<td>Number</td><td><b><a target="_blank" href="incident?id=$INCIDENTNUMBER">$INCIDENTNUMBER</a></b></td>
+</tr><tr>
+<td>Incident Code</td><td><b><a target="_blank" href="incident?id=$INCIDENTNUMBER">$INCIDENTCODE</a></b></td>
 </tr><tr>
 <td>Date/Time</td><td>$INCIDENTDATETIME</td>
 </tr><tr>
@@ -52,9 +57,9 @@ $$BODY
 </tr><tr>
 <td>Taken By</td><td>$CALLTAKER</td>
 </tr><tr>
-<td>Caller</td><td>$CALLERNAME<br/>$HOMETELEPHONE</td>
+<td>Caller</td><td><a target="_blank" href="person?id=$COID">$CALLERNAME</a><br/>$HOMETELEPHONE</td>
 </tr><tr>
-<td>Victim</td><td>$VICTIMNAME<br/>$VICTIMADDRESS</td>
+<td>Victim</td><td><a target="_blank" href="person?id=$VOID">$VICTIMNAME</a><br/>$VICTIMADDRESS</td>
 </tr>
 </table>
 
@@ -82,11 +87,11 @@ $$BODY
 
 <table border="1">
 <tr>
-<td>Suspect 1</td><td>$OWNERNAME1<br />$OWNERADDRESS1</td>
+<td>Suspect 1</td><td><a target="_blank" href="person?id=$ONEOID">$OWNERNAME1</a><br />$OWNERADDRESS1</td>
 </tr><tr>
-<td>Suspect 2</td><td>$OWNERNAME2<br />$OWNERADDRESS2</td>
+<td>Suspect 2</td><td><a target="_blank" href="person?id=$TWOOID">$OWNERNAME2</a><br />$OWNERADDRESS2</td>
 </tr><tr>
-<td>Suspect 3</td><td>$OWNERNAME3<br />$OWNERADDRESS3</td>
+<td>Suspect 3</td><td><a target="_blank" href="person?id=$THREEOID">$OWNERNAME3</a><br />$OWNERADDRESS3</td>
 </tr>
 </table>
 
@@ -129,7 +134,7 @@ FOOTER$$
 ###
 SUBREPORT_IncidentPrintLinkedAnimals
 +++
-SELECT a.AnimalName, a.ShelterCode, a.ShortCode,
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, a.ShortCode,
 s.SpeciesName, t.AnimalType, a.BreedName, a.AnimalAge
 FROM animal a
 INNER JOIN animalcontrolanimal aca ON aca.AnimalID = a.ID
@@ -142,7 +147,7 @@ $$HEADER
 <tr><th>Name</th><th>Code</th><th>Type</th><th>Species</th><th>Breed</th><th>Age</th></tr>
 HEADER$$
 $$BODY
-<tr><td>$ANIMALNAME</td><td>$SHELTERCODE</td><td>$ANIMALTYPE</td><td>$SPECIESNAME</td><td>$BREEDNAME</td><td>$ANIMALAGE</td></tr>
+<tr><td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td><td>$SHELTERCODE</td><td>$ANIMALTYPE</td><td>$SPECIESNAME</td><td>$BREEDNAME</td><td>$ANIMALAGE</td></tr>
 BODY$$
 $$FOOTER
 </table>

@@ -2,14 +2,14 @@ Equipment currently on loan
 ###
 Animal Control
 ###
-33307/Any rev01
+33307/Any rev02
 ###
 Equipment that is currently loaned out
 ###
 en
 ###
 SELECT
-ot.LoanDate, tt.TrapTypeName, ot.TrapNumber, o.OwnerName, ot.DepositAmount, 
+ot.LoanDate, tt.TrapTypeName, ot.TrapNumber, o.OwnerName, o.ID AS OID, ot.DepositAmount, 
 ot.ReturnDueDate, ot.Comments
 FROM ownertraploan ot
 INNER JOIN traptype tt ON tt.ID = ot.TrapTypeID
@@ -35,7 +35,7 @@ $$BODY
 <td>$LOANDATE</td>
 <td>$TRAPTYPENAME</td>
 <td>$TRAPNUMBER</td>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person_traploan?id=$OID">$OWNERNAME</a></td>
 <td>$DEPOSITAMOUNT</td>
 <td>$RETURNDUEDATE</td>
 <td>$COMMENTS</td>
@@ -45,4 +45,3 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
-

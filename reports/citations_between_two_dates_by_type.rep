@@ -2,16 +2,17 @@ Citations issued between two dates by type
 ###
 Animal Control
 ###
-33307/Any rev01
+34806/Any rev02
 ###
 Citations issued between two dates by type with fine totals
 ###
 en
 ###
 SELECT
-oc.CitationDate, ct.CitationName, o.OwnerName,
+oc.CitationDate, ct.CitationName, ac.ID AS IID, o.OwnerName, o.ID AS OID, ac.IncidentCode, 
 oc.FineDueDate, oc.FinePaidDate, oc.FineAmount
 FROM ownercitation oc
+INNER JOIN animalcontrol ac ON ac.ID = oc.AnimalControlID
 INNER JOIN citationtype ct ON ct.ID = oc.CitationTypeID
 INNER JOIN owner o ON o.ID = oc.OwnerID 
 WHERE oc.CitationDate >= '$ASK DATE Enter the from date$'
@@ -27,6 +28,7 @@ $$HEAD
 <table border="1">
 <tr>
 <th>Date</th>
+<th>Incident Code</th>
 <th>Person</th>
 <th>Fine</th>
 <th>Due</th>
@@ -47,7 +49,8 @@ GROUP$$
 $$BODY
 <tr>
 <td>$CITATIONDATE</td>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="incident_citations?id=$IID">$INCIDENTCODE</a></td>
+<td><a target="_blank" href="person_citations?id=$OID">$OWNERNAME</a></td>
 <td>$FINEAMOUNT</td>
 <td>$FINEDUEDATE</td>
 <td>$FINEPAIDDATE</td>

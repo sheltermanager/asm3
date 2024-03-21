@@ -2,7 +2,7 @@ Licenses expiring between two dates
 ###
 Animal Control
 ###
-34800/Any rev03
+34800/Any rev04
 ###
 Licenses that expire between the two dates given and have not been renewed and the animal is still alive
 ###
@@ -11,9 +11,9 @@ en
 SELECT
 ol.LicenceNumber,
 lt.LicenceTypeName,
-ol.OwnerID, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
+ol.OwnerID, o.OwnerName, o.ID AS OID, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
 o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress,
-a.AnimalName,
+a.AnimalName, a.ID AS AID,
 ol.IssueDate, ol.ExpiryDate, ol.Comments
 FROM ownerlicence ol
 INNER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID
@@ -42,14 +42,14 @@ $$BODY
 <tr>
 <td>$LICENCENUMBER</td>
 <td>$LICENCETYPENAME</td>
-<td><a target="_blank" href="person?id=$OWNERID">$OwnerName</a><br/>
+<td><a target="_blank" href="person_licence?id=$OID">$OWNERNAME</a><br/>
 $OwnerAddress<br/>
 $OwnerTown<br/>
 $OwnerCounty<br/>
 $OwnerPostcode<br/>
 $EmailAddress<br/>
 H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal_licence?id=$AID">$ANIMALNAME</a></td>
 <td>$ISSUEDATE</td>
 <td>$EXPIRYDATE</td>
 <td>$COMMENTS</td>

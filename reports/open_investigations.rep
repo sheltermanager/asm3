@@ -2,13 +2,13 @@ Open Investigations
 ###
 Animal Control
 ###
-3222/Any rev01
+3222/Any rev02
 ###
 Shows all open investigations (no note that starts "Closed")
 ###
 en
 ###
-SELECT o.*, oi.Date, oi.Notes
+SELECT o.*, oi.Date, oi.Notes, o.ID AS OID
 FROM owner o
 INNER JOIN ownerinvestigation oi ON oi.OwnerID = o.ID
 WHERE
@@ -17,7 +17,7 @@ ORDER BY o.OwnerName, oi.Date DESC
 ###
 $$GROUP_OwnerName
 $$HEAD
-<h2>$OWNERNAME</h2>
+<h2><a target="_blank" href="person_investigation?id=$OID">$OWNERNAME</a></h2>
 <p>$OWNERADDRESS $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE. $COMMENTS</p>
 <table border="1">
 $$FOOT
@@ -36,4 +36,3 @@ BODY$$
 
 $$FOOTER
 FOOTER$$
-

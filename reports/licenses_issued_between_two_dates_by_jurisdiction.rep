@@ -2,7 +2,7 @@ Licenses issued between two dates by jurisdiction
 ###
 Animal Control
 ###
-34016/Any rev02
+34016/Any rev03
 ###
 Licenses that were issued between the two dates given by jurisdiction
 ###
@@ -12,8 +12,8 @@ SELECT
 ol.LicenceNumber,
 lt.LicenceTypeName,
 j.JurisdictionName, 
-a.AnimalName,
-ol.OwnerID, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
+a.AnimalName, a.ID AS AID,
+ol.OwnerID, o.OwnerName, o.ID AS OID, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
 o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress,
 ol.IssueDate, ol.ExpiryDate, ol.Comments
 FROM ownerlicence ol
@@ -50,14 +50,14 @@ $$BODY
 <tr>
 <td>$LICENCENUMBER</td>
 <td>$LICENCETYPENAME</td>
-<td><a target="_blank" href="person?id=$OWNERID">$OwnerName</a><br/>
+<td><a target="_blank" href="person_licence?id=$OID">$OWNERNAME</a><br/>
 $OwnerAddress<br/>
 $OwnerTown<br/>
 $OwnerCounty<br/>
 $OwnerPostcode<br/>
 $EmailAddress<br/>
 H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal_licence?id=$AID">$ANIMALNAME</a></td>
 <td>$ISSUEDATE</td>
 <td>$EXPIRYDATE</td>
 <td>$COMMENTS</td>

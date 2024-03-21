@@ -2,17 +2,19 @@ Incidents in need of followup today
 ###
 Animal Control
 ###
-33307/Any rev01
+34806/Any rev02
 ###
 Incidents that require following up today
 ###
 en
 ###
 SELECT 
-ac.IncidentDateTime, ti.IncidentName, co.OwnerName AS CallerName, co.HomeTelephone, co.WorkTelephone, co.MobileTelephone,
+ac.IncidentDateTime, ti.IncidentName, co.OwnerName AS CallerName, co.ID AS COID, 
+co.HomeTelephone, co.WorkTelephone, co.MobileTelephone,
 ac.FollowupDateTime AS FD1, ac.FollowupDateTime2 AS FD2, ac.FollowupDateTime3 AS FD3, 
-ac.CallDateTime, ac.CallNotes, vo.OwnerName AS VictimName, 
-o1.OwnerName AS OwnerName1, o2.OwnerName AS OwnerName2, o3.OwnerName AS OwnerName3, 
+ac.CallDateTime, ac.CallNotes, ac.IncidentCode, ac.ID AS IID, vo.OwnerName AS VictimName, vo.ID AS VOID, 
+o1.OwnerName AS OwnerName1, o1.ID AS ONEOID, o2.OwnerName AS OwnerName2, o2.ID AS TWOOID, 
+o3.OwnerName AS OwnerName3, o3.ID AS THREEOID, 
 ac.DispatchAddress, ac.DispatchTown, ac.DispatchCounty, ac.DispatchPostcode, ac.DispatchedACO,
 ac.DispatchDateTime, ac.RespondedDateTime, ac.CompletedDate, ci.CompletedName
 FROM animalcontrol ac
@@ -38,6 +40,7 @@ $$HEAD
 <table border="1">
 <tr>
 <th>Date</th>
+<th>Incident Code</th>
 <th>Followup</th>
 <th>Caller</th>
 <th>Notes</th>
@@ -56,11 +59,14 @@ GROUP$$
 $$BODY
 <tr>
 <td>$INCIDENTDATETIME</td>
+<td><a target="_blank" href="incident?id=$IID">$INCIDENTCODE</a></td>
 <td>$FD1 $FD2 $FD3</td>
-<td>$CALLERNAME<br/>H:$HOMETELEPHONE W:$WORKTELEPHONE C:$MOBILETELEPHONE</td>
+<td><a target="_blank" href="person?id=$COID">$CALLERNAME</a><br/>H:$HOMETELEPHONE W:$WORKTELEPHONE C:$MOBILETELEPHONE</td>
 <td>$CALLNOTES</td>
-<td>$VICTIMNAME</td>
-<td>$OWNERNAME1 $OWNERNAME2 $OWNERNAME3</td>
+<td><a target="_blank" href="person?id=$VOID">$VICTIMNAME</a></td>
+<td><a target="_blank" href="person?id=$ONEOID">$OWNERNAME1</a>
+<a target="_blank" href="person?id=$TWOOID">$OWNERNAME2</a>
+<a target="_blank" href="person?id=$THREEOID">$OWNERNAME3</a></td>
 <td>$DISPATCHADDRESS<br/>$DISPATCHTOWN<br/>$DISPATCHCOUNTY $DISPATCHPOSTCODE</td>
 <td>$DISPATCHDATETIME $DISPATCHEDACO</td>
 <td>$RESPONDEDDATETIME</td>
