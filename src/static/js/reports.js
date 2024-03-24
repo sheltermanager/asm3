@@ -642,6 +642,11 @@ $(function() {
                             "WHERE LinkID=v_" + $("#qbtype").val() + ".ID AND " +
                             "AdditionalFieldID=" + v.substring(4) + ") AS " + v);
                     }
+                    else if (v.indexOf("moneyaf_") == 0) {
+                        // Money additional fields
+                        o.push("(SELECT Value FROM additional WHERE LinkID=v_" + $("#qbtype").val() + 
+                            ".ID AND AdditionalFieldID=" + v.substring(8) + ") AS " + v);
+                    }
                     else if (v.indexOf("af_") == 0) {
                         o.push("(SELECT Value FROM additional WHERE LinkID=v_" + $("#qbtype").val() + 
                             ".ID AND AdditionalFieldID=" + v.substring(3) + ") AS " + v);
@@ -984,6 +989,9 @@ $(function() {
                         // expansion into different query types later
                         if (v.FIELDTYPE == 0) {
                             f.push("afc_" + v.ID + "|" + v.FIELDNAME); // Yes/No (checkbox 1/0)
+                        }
+                        else if (v.FIELDTYPE == 5) {
+                            f.push("moneyaf_" + v.ID + "|" + v.FIELDNAME); // Money (whole pence)
                         }
                         else if (v.FIELDTYPE == 8) {
                             f.push("afa_" + v.ID + "|" + v.FIELDNAME); // Animal link (contains animal ID)
