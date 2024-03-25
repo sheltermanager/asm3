@@ -101,6 +101,7 @@ locale_maps = {
     "en_MZ":    ( "English", "Mozambique", DMY, "MT", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", ".", "" ),
     "en_NA":    ( "English", "Namibia", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", ""),
     "en_PH":    ( "English", "Philippines", MDY, "&#x20b1;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
+    "en_PT":    ( "English", "Portugal", HDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "en_QA":    ( "English", "Qatar", DMY, "QR", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
     "en_RO":    ( "English", "Romania", DMY, "lei", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", ".", DST_UK ),
     "en_RO2":    ( "English", f"Romania {EURO}0.00", DMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", ".", DST_UK ),
@@ -166,7 +167,7 @@ def real_locale(locale: str = "en") -> str:
     #   en_GB (UK)
     if locale in ("en_AE", "en_BE", "en_BG", "en_BM", "en_BQ", "en_CH", "en_CN", "en_CY", "en_ES", 
         "en_HK", "en_ID", "en_IE", "en_IN", "en_JP", "en_KE", "en_KH", "en_LB", "en_LU", "en_LV",
-        "en_MU", "en_MY", "en_MZ", "en_NA", "en_PH", "en_QA", "en_RO", "en_RO2", "en_TH", 
+        "en_MU", "en_MY", "en_MZ", "en_NA", "en_PH", "en_PT", "en_QA", "en_RO", "en_RO2", "en_TH", 
         "en_TW", "en_TW2", "en_TZ", "en_VN", "en_ZA", "en_ZW"):
         locale = "en_GB"
     if locale in ("en_AW", "en_BH", "en_CO", "en_CR", "en_KW", "en_KY", "en_IL", "en_LB", 
