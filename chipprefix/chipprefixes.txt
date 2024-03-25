@@ -28,7 +28,15 @@
 15 | ^578077              | AVID Friendchip Norway | nb
 15 | ^578094              | AVID Friendchip Norway | nb
 15 | ^578097              | AVID Friendchip Norway | nb
-15 | ^6200982             | MSD Animal Health
+15 | ^6200900             | Dinazoo
+15 | ^6200941             | Gardipet 
+15 | ^6200953             | Propecuária
+15 | ^62009631            | AnimallTAG Europa LDA | en_PT en
+15 | ^6200978             | Plurivet
+15 | ^6200982             | Plurivet 
+15 | ^6200981             | Virbac            |
+15 | ^6200985             | Campifarma
+15 | ^6200991             | Medinfar-Sorológico             
 15 | ^688                 | Serbia
 15 | ^752                 | Trovan Sweden
 15 | ^900008              | Orthana Intertrade
@@ -54,23 +62,28 @@
 15 | ^900235              | Fi Nano  
 15 | ^90026               | 4D Technology/Petsafe
 15 | ^9010                | Absonutrix Sale Thailand | en_TH th
+15 | ^900182              | Dinazoo | en_PT pt
 15 | ^9001                | Absonutrix Sale Thailand | en_TH th
 15 | ^9000                | Absonutrix Sale Thailand | en_TH th
 15 | ^900"                | BCDS
 15 | ^911002              | 911PetChip | en
 15 | ^933                 | Buddy ID
+15 | ^938                 | Disgan | en_PT pt
 15 | ^939                 | M4S ID
 15 | ^9410000             | 24PetWatch
 15 | ^941                 | Felixcan
+15 | ^941                 | Gardipet | en_PT pt
 15 | ^943                 | BCDS
 15 | ^945                 | BCDS
 15 | ^952                 | M4S ID
 15 | ^953010002           | Back Home | en_AU
 15 | ^953                 | Virbac | en_AU en_NZ
 15 | ^953                 | PetLog | en_GB
+15 | ^953                 | Propecuária | en_PT pt
 15 | ^955                 | Biolog-ID
 15 | ^956                 | AKC Reunite | en
 15 | ^956                 | Trovan
+15 | ^958                 | 3N Active Card Lda | en_PT pt
 15 | ^965                 | 4D Technology/Petsafe
 15 | ^960011              | PetProtect
 15 | ^965                 | Buddy ID | en
@@ -86,7 +99,9 @@
 15 | ^978                 | Virbac/Back Home | en_AU
 15 | ^978                 | Global-ident Connect | en_NZ
 15 | ^978                 | Chevillot/Back Home
+15 | ^978                 | Plurivet | en_PT pt
 15 | ^980000              | Agrident
+15 | ^900085              | Medinfar-Sorológico | en_PT pt
 15 | ^98101               | DataMARS/Banfield
 15 | ^98102               | DataMARS/PetLink
 15 | ^98103               | DataMARS/PetLink
@@ -105,6 +120,7 @@
 15 | ^9910010             | HomeSafe | en_AU
 15 | ^991001911           | 911PetChip | en
 15 | ^9910010             | AKC Reunite | en
+15 | ^991001              | Medinfar-Sorológico | en_PT pt
 15 | ^9910030             | PEEVA | en
 15 | ^9910030             | Allflex | en_AU
 15 | ^9910039             | 911PetChip | en
