@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sheltermanager\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-03-10 14:12+0000\n"
-"PO-Revision-Date: 2024-03-10 14:21+0200\n"
+"POT-Creation-Date: 2024-03-26 17:06+0000\n"
+"PO-Revision-Date: 2024-03-26 17:08+0200\n"
 "Last-Translator: Saggi <s@elephx.com>\n"
 "Language-Team: Hebrew <http://3.127.98.227/projects/asm/asm3/he/>\n"
 "Language: he\n"
@@ -1687,6 +1687,10 @@ msgstr "סיאמי ראש תפוח"
 msgid "Appointment"
 msgstr "תור"
 
+#: lookups.py
+msgid "Appointment Type"
+msgstr "סוג תור"
+
 #: clinic.py
 msgid "Appointment date must be a valid date"
 msgstr "תאריך תור אינו חוקי"
@@ -3036,6 +3040,14 @@ msgstr "לחץ כאן לתשלום"
 msgid "Clinic"
 msgstr "מרפאה"
 
+#: options.js
+msgid "Clinic Appointment"
+msgstr "תור למרפאה"
+
+#: lookups.py
+msgid "Clinic Appointment Types"
+msgstr "סוגי תורים למרפאה"
+
 #: html.py header.js clinic_calendar.js
 msgid "Clinic Calendar"
 msgstr "יומן מרפאה"
@@ -3052,8 +3064,8 @@ msgstr "תזכורת מרפאה"
 msgid "Clinic Statuses"
 msgstr "סטטוס קליניקה"
 
-#: staff_rota.js stocklevel.js animal.js roles.js transport.js htmltemplates.js
-#: onlineforms.js reports.js document_templates.js
+#: incident.js staff_rota.js stocklevel.js animal.js roles.js transport.js
+#: htmltemplates.js onlineforms.js reports.js document_templates.js
 msgid "Clone"
 msgstr "שכפל"
 
@@ -3073,7 +3085,15 @@ msgstr "שכפל סידור עבודה של שבוע זה לשבוע אחר"
 msgid "Clone this animal?"
 msgstr "שכפל חיה זו?"
 
-#: animal.js
+#: incident.js
+msgid "Clone this incident"
+msgstr "שכפל תקרית זו"
+
+#: incident.js
+msgid "Clone this incident?"
+msgstr "שכפל תקרית זו?"
+
+#: incident.js animal.js
 msgid "Cloning..."
 msgstr "משכפל..."
 
@@ -3121,9 +3141,10 @@ msgstr "קקדו"
 msgid "Cocker Spaniel"
 msgstr "קוקר ספניאל"
 
-#: person.py wordprocessor.py html.py mobile.py animal_new.js animal.js
-#: animal_find_results.js accounts.js person.js common_animalchooser.js
-#: common_personchooser.js animal_find.js vouchers.js mobile2.js
+#: person.py wordprocessor.py html.py mobile.py incident.js animal_new.js
+#: animal.js animal_find_results.js accounts.js incident_find_results.js
+#: person.js common_animalchooser.js common_personchooser.js animal_find.js
+#: vouchers.js incident_find.js mobile2.js
 msgid "Code"
 msgstr "קוד"
 
@@ -3285,6 +3306,10 @@ msgstr "הודעת אישור"
 #: dbupdate.py transport.js
 msgid "Confirmed"
 msgstr "מאושר"
+
+#: dbupdate.py
+msgid "Consultation"
+msgstr "ייעוץ"
 
 #: html.py header.js
 msgid "Consulting Room"
@@ -4063,6 +4088,10 @@ msgstr "ברירות מחדל"
 #: options.js
 msgid "Defaults formats for code and shortcode are TYYYYNNN and NNT"
 msgstr "פורמט ברירת מחדל לקוד וקוד מקוצר הם TYYYYNNN ו NNT"
+
+#: options.js
+msgid "Defaults formats for incident codes are YYMM-XXX"
+msgstr "פורמט ברירת מחדל לקוד תקרית הוא YYMM-XXX"
 
 #: dbupdate.py
 msgid "Deflea"
@@ -6085,7 +6114,7 @@ msgstr "ארנב פלמי ענק"
 msgid "Florida White"
 msgstr "ארנב לבן"
 
-#: header_edit_header.js
+#: dbupdate.py header_edit_header.js
 msgid "Followup"
 msgstr "מעקב"
 
@@ -7242,6 +7271,10 @@ msgstr "תקרית בין"
 msgid "Incident between two dates"
 msgstr "תקרית בין"
 
+#: options.js
+msgid "Incident code format"
+msgstr "פורמט קוד תקרית"
+
 #: animalcontrol.py incident.js
 msgid "Incident date cannot be blank"
 msgstr "יש למלא תאריך תקרית"
@@ -7813,6 +7846,10 @@ msgstr "שבוע אחרון"
 #: header_edit_header.js common_tableform.js
 msgid "Last changed by {0} on {1}"
 msgstr "שונה לאחרונה ע״י {0} ב {1}"
+
+#: header_edit_header.js
+msgid "Last entered shelter"
+msgstr "נכנס למקלט לאחרונה"
 
 #: person_new.js person.js common_personchooser.js mobile2.js
 msgid "Last name"
@@ -8812,7 +8849,7 @@ msgstr "לפי תאריך עדכון בסדר יורד"
 msgid "Most relevant"
 msgstr "לפי רלוונטיות"
 
-#: litters.js
+#: header_edit_header.js litters.js
 msgid "Mother"
 msgstr "אם"
 
@@ -10478,6 +10515,10 @@ msgstr "השטחים והמבנים של המקלט"
 #: dbupdate.py
 msgid "Presa Canario"
 msgstr "דוגו קאנריו"
+
+#: dbupdate.py
+msgid "Prescription"
+msgstr "מרשם"
 
 #: main.js
 msgid "Press F11 in HTML or SQL code editing boxes to edit in fullscreen mode"
@@ -14706,10 +14747,10 @@ msgstr "אימות דו-גורמי (2FA)"
 #: diarytasks.js document_repository.js animal_bulk.js animal_find_results.js
 #: options.js movements.js citations.js onlineform.js licence_renewal.js
 #: accounts.js transport.js log.js users.js mailmerge.js person.js boarding.js
-#: mobile_report.js common_animalchooser.js animal_costs.js common_widgets.js
-#: animal_find.js vouchers.js report_criteria.js licence.js person_links.js
-#: csvimport_stripe.js vaccination.js donations.js mobile2.js reports.js
-#: animal_diet.js
+#: mobile_report.js clinic_appointment.js common_animalchooser.js
+#: animal_costs.js common_widgets.js animal_find.js vouchers.js
+#: report_criteria.js licence.js person_links.js csvimport_stripe.js
+#: vaccination.js donations.js mobile2.js reports.js animal_diet.js
 msgid "Type"
 msgstr "סוג"
 
