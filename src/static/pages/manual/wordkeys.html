@@ -92,6 +92,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#payment-keys">Payment Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#transport-keys">Transport Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cost-keys">Cost Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diary-keys">Diary Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#diet-keys">Diet Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#log-keys">Log Keys</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#movement-keys">Movement Keys</a></li>
@@ -1029,9 +1030,27 @@ the transport tab or book:</p>
 </dd>
 </dl>
 </section>
+<section id="diary-keys">
+<h2>Diary Keys<a class="headerlink" href="#diary-keys" title="Permalink to this heading">¶</a></h2>
+<p>You must use a qualifier suffix to access the records (animal only).</p>
+<dl class="simple">
+<dt>DiaryDate</dt><dd><p>The date/time of the diary note</p>
+</dd>
+<dt>DiaryCompleted</dt><dd><p>The date the diary note was completed</p>
+</dd>
+<dt>DiaryFor</dt><dd><p>Who the diary note is for</p>
+</dd>
+<dt>DiarySubject</dt><dd><p>The diary subject</p>
+</dd>
+<dt>DiaryNote</dt><dd><p>The diary note text</p>
+</dd>
+<dt>DiaryComments</dt><dd><p>Any comments added to the diary note</p>
+</dd>
+</dl>
+</section>
 <section id="diet-keys">
 <h2>Diet Keys<a class="headerlink" href="#diet-keys" title="Permalink to this heading">¶</a></h2>
-<p>You must use a qualifier suffix to access these records.</p>
+<p>You must use a qualifier suffix to access these records (animal only).</p>
 <dl class="simple">
 <dt>DietName</dt><dd><p>The name of the diet</p>
 </dd>
@@ -1328,6 +1347,8 @@ on a single incident. Log keys are available for incidents, but prefixed with
 IncidentLog instead of just Log.</p>
 <dl class="simple">
 <dt>IncidentNumber</dt><dd><p>The unique incident number</p>
+</dd>
+<dt>IncidentCode</dt><dd><p>The incident code</p>
 </dd>
 <dt>IncidentDate</dt><dd><p>The date of the incident</p>
 </dd>

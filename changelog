@@ -1,6 +1,7 @@
 48
 ================
 
+27/03/24 Wordkeys to add animal diary notes to templates #1453
 25/03/24 Add en_PT locale
 24/03/24 Query builder: alias money fields correctly for formatting
 21/03/24 Fix log audit messages not appearing on parent record

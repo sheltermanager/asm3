@@ -263,13 +263,13 @@ def animal_tags_publisher(dbo: Database, a: ResultRow, includeAdditional=True) -
     very little apart from additional fields are required and we can save
     database calls for each asm3.animal.
     """
-    return animal_tags(dbo, a, includeAdditional=includeAdditional, includeCosts=False, includeDiet=True, \
-        includeDonations=False, includeFutureOwner=False, includeIsVaccinated=True, includeLitterMates=False, \
+    return animal_tags(dbo, a, includeAdditional=includeAdditional, includeCosts=False, includeDiary=False, 
+        includeDiet=True, includeDonations=False, includeFutureOwner=False, includeIsVaccinated=True, includeLitterMates=False, 
         includeLogs=False, includeMedical=False, includeTransport=False)
 
-def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCosts=True, includeDiet=True, includeDonations=True, \
-        includeFutureOwner=True, includeIsVaccinated=True, includeLitterMates=True, includeLogs=True, \
-        includeLicence=True, includeMedical=True, includeTransport=True) -> Tags:
+def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCosts=True, includeDiary=True, 
+        includeDiet=True, includeDonations=True, includeFutureOwner=True, includeIsVaccinated=True, 
+        includeLitterMates=True, includeLogs=True, includeLicence=True, includeMedical=True, includeTransport=True) -> Tags:
     """
     Generates a list of tags from an animal result (the deep type from calling asm3.animal.get_animal)
     """
@@ -815,6 +815,18 @@ def animal_tags(dbo: Database, a: ResultRow, includeAdditional=True, includeCost
             ( "NEXTTREATMENTDUE", _("Due", l)),
             ( "COMMENTS", _("Comments", l)) 
         ))
+
+    # Diary
+    if includeDiary:
+        d = {
+            "DIARYDATE":                "d:DIARYDATETIME",
+            "DIARYCOMPLETED":           "d:DATECOMPLETED",
+            "DIARYFOR":                 "DIARYFORNAME",
+            "DIARYSUBJECT":             "SUBJECT",
+            "DIARYNOTE":                "NOTE",
+            "DIARYCOMMENTS":            "COMMENTS"
+        }
+        tags.update(table_tags(dbo, d, asm3.diary.get_diaries(dbo, asm3.diary.ANIMAL, a["ID"]), "DIARYFORNAME", "DIARYDATETIME", "DATECOMPLETED"))
 
     # Diet
     if includeDiet:

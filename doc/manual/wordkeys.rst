@@ -896,10 +896,28 @@ CurrentBoardingCost
 TotalCosts
     The total of CurrentBoardingCost and all the Total Cost fields.
 
+Diary Keys
+----------
+
+You must use a qualifier suffix to access the records (animal only).
+
+DiaryDate
+    The date/time of the diary note
+DiaryCompleted
+    The date the diary note was completed
+DiaryFor
+    Who the diary note is for
+DiarySubject
+    The diary subject
+DiaryNote
+    The diary note text
+DiaryComments
+    Any comments added to the diary note
+
 Diet Keys
 ---------
 
-You must use a qualifier suffix to access these records.
+You must use a qualifier suffix to access these records (animal only).
 
 DietName
     The name of the diet 
