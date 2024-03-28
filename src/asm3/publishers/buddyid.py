@@ -189,10 +189,6 @@ class BuddyIDPublisher(AbstractPublisher):
             self.logError("Postal code for the new owner is blank, cannot process")
             return False
 
-        if an.IDENTICHIPDATE is None:
-            self.logError("Microchip date cannot be blank, cannot process")
-            return False
-
         # Make sure the length is actually suitable
         if not len(an.IDENTICHIPNUMBER) in (9, 10, 15):
             self.logError("Microchip length is not 9, 10 or 15, cannot process")
