@@ -2851,6 +2851,10 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
     # Update any diary notes linked to this animal
     update_diary_linkinfo(dbo, aid)
 
+    # If this animal is part of a litter, update its counts
+    if post["litterid"] != "":
+        update_litter_count(dbo, post["litterid"])
+
 def update_flags(dbo: Database, username: str, animalid: int, flags: List[str]) -> None:
     """
     Updates the animal flags from a list of flags
@@ -3891,10 +3895,7 @@ def insert_litter_from_form(dbo: Database, username: str, post: PostedData) -> i
     for i in post.integer_list("animals"):
         dbo.update("animal", i, { "AcceptanceNumber": post["litterref"] })
 
-    # Only done as part of the overnight batch now as it generated too many
-    # support calls from people that like to enter the litter before the animals.
-    # update_active_litters(dbo)
-
+    update_litter_count(dbo, post["litterref"])
     return nid
 
 def update_litter_from_form(dbo: Database, username: str, post: PostedData) -> None:
@@ -3906,16 +3907,25 @@ def update_litter_from_form(dbo: Database, username: str, post: PostedData) -> N
         "SpeciesID":        post.integer("species"),
         "Date":             post.date("startdate"),
         "AcceptanceNumber": post["litterref"],
-        "CachedAnimalsLeft": 0,
         "InvalidDate":      post.date("expirydate"),
         "NumberInLitter":   post.integer("numberinlitter"),
         "Comments":         post["comments"],
         "RecordVersion":    dbo.get_recordversion()
     }, username, setLastChanged = False)
 
-    # Only done as part of the overnight batch now as it generated too many
-    # support calls from people that like to enter the litter before the animals.
-    # update_active_litters(dbo) 
+    update_litter_count(dbo, post.integer("litterref"))
+
+def update_litter_count(dbo: Database, litterref: str) -> None:
+    """
+    Updates the CachedAnimalsLeft field for litterref
+    """
+    l = dbo.first_row(dbo.query("SELECT l.*, " \
+        "(SELECT COUNT(*) FROM animal a WHERE a.Archived = 0 " \
+        "AND a.AcceptanceNumber Like l.AcceptanceNumber AND a.DateOfBirth >= ?) AS dbcount " \
+        "FROM animallitter l " \
+        "WHERE l.AcceptanceNumber LIKE ?", ( subtract_months(dbo.today(), 6), litterref )))
+    if l is not None:
+        dbo.execute("UPDATE animallitter SET CachedAnimalsLeft=? WHERE AcceptanceNumber LIKE ?", [l.dbcount, litterref])
 
 def delete_litter(dbo: Database, username: str, lid: int) -> None:
     """
