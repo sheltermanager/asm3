@@ -2,16 +2,16 @@ Print Animal Record (for adopters)
 ###
 Auditing
 ###
-34018/Any rev05
+34018/Any rev06
 ###
 A complete printout of an animal record for giving to adopters.
 ###
 en
 ###
 SELECT a.ID AS AnimalID, a.*,
-oo.OwnerName AS ooname, oo.OwnerAddress AS ooaddress, oo.OwnerPostcode AS oopostcode, oo.HomeTelephone AS ootel, oo.EmailAddress AS ooemail,
-bi.OwnerName AS biname, bi.OwnerAddress AS biaddress, bi.OwnerPostcode AS bipostcode, bi.HomeTelephone AS bitel, bi.EmailAddress AS biemail,
-cv.OwnerName AS cvname, cv.OwnerAddress AS cvaddress, cv.OwnerPostcode AS cvpostcode, cv.HomeTelephone AS cvtel, cv.EmailAddress AS cvemail,
+oo.OwnerName AS ooname, oo.ID AS OID, oo.OwnerAddress AS ooaddress, oo.OwnerPostcode AS oopostcode, oo.HomeTelephone AS ootel, oo.EmailAddress AS ooemail,
+bi.OwnerName AS biname, bi.ID AS BID, bi.OwnerAddress AS biaddress, bi.OwnerPostcode AS bipostcode, bi.HomeTelephone AS bitel, bi.EmailAddress AS biemail,
+cv.OwnerName AS cvname, cv.ID AS CID, cv.OwnerAddress AS cvaddress, cv.OwnerPostcode AS cvpostcode, cv.HomeTelephone AS cvtel, cv.EmailAddress AS cvemail,
 av.OwnerName AS avname, 
 lksize.size,
 entryreason.reasonname AS entryreasonname,
@@ -67,7 +67,7 @@ $$HEADER
 HEADER$$
 
 $$BODY
-<h2>$ANIMALNAME</h2>
+<h2><a target="_blank" href="animal?id=$AnimalID">$ANIMALNAME</a></h2>
 <table cellpadding="5">
 <tr>
 <td><img height="150px" src="{IMAGE.$ANIMALID}" /></td><td><img src="{QR.$ANIMALID}" /></td>
@@ -124,7 +124,7 @@ $$BODY
 <tr>
 <td>Special Needs</td><td>$YSPECIALNEEDS</td><td>Health Problems</td><td>$HEALTHPROBLEMS</td>
 </tr><tr>
-<td>Rabies Tag</td><td>$RABIESTAG</td><td>Vet</td><td>$CVNAME<br />$CVADDRESS<br />$CVPOSTCODE<br />$CVTEL<br />$CVEMAIL</td>
+<td>Rabies Tag</td><td>$RABIESTAG</td><td>Vet</td><td><a target="_blank" href="person?id=$CID">$CVNAME</a><br />$CVADDRESS<br />$CVPOSTCODE<br />$CVTEL<br />$CVEMAIL</td>
 </tr>
 </table>
 

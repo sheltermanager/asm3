@@ -2,7 +2,7 @@ Adopted Non-Neutered/Spayed Animals
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Adopted shelter animals that have not been neutered/spayed with vaccination details.
 ###
@@ -10,7 +10,8 @@ en
 ###
 SELECT
 animal.ShelterCode,
-animal.AnimalName,
+animal.AnimalName, 
+animal.ID AS AID,
 lksex.Sex,
 animaltype.AnimalType,
 species.SpeciesName,
@@ -19,6 +20,7 @@ animal.AcceptanceNumber,
 lksmovementtype.MovementType,
 animal.ActiveMovementDate,
 owner.OwnerName,
+owner.ID AS OID,
 owner.OwnerAddress,
 owner.OwnerTown,
 owner.OwnerCounty,
@@ -46,8 +48,8 @@ $$GROUP_ShelterCode
 $$HEAD
 
 <hr />
-<p><b>$SHELTERCODE $ANIMALNAME</b>, $SEX $ANIMALTYPE/$SPECIESNAME born $DATEOFBIRTH <br />
-$MOVEMENTTYPE on $ACTIVEMOVEMENTDATE to $OWNERNAME, $OWNERADDRESS $OWNERTOWN $OWNERCOUNTY, $OWNERPOSTCODE (tel $HOMETELEPHONE)</p>
+<p><b>$SHELTERCODE <a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></b>, $SEX $ANIMALTYPE/$SPECIESNAME born $DATEOFBIRTH <br />
+$MOVEMENTTYPE on $ACTIVEMOVEMENTDATE to <a target="_blank" href="person?id=$OID">$OWNERNAME</a>, $OWNERADDRESS $OWNERTOWN $OWNERCOUNTY, $OWNERPOSTCODE (tel $HOMETELEPHONE)</p>
 <table>
 $$FOOT
 </table>

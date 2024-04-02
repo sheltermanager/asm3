@@ -2,7 +2,7 @@ Birthday List (On Shelter)
 ###
 Auditing
 ###
-MySQL rev01
+MySQL rev02
 ###
 Shelter animals with birthdays in the selected month.
 ###
@@ -13,7 +13,7 @@ $VAR monthno NUMBER Enter the month (1 for January, 12 for December)$
 SELECT animal.DateOfBirth, 
 animal.ShelterCode,
 internallocation.LocationName,
-animal.AnimalName,
+animal.AnimalName, animal.ID AS AID,
 species.SpeciesName
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
@@ -33,7 +33,7 @@ HEADER$$
 
 $$BODY<tr>
 <td>$DATEOFBIRTH</td>
-<td>$ANIMALNAME ($SPECIESNAME, $SHELTERCODE)</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> ($SPECIESNAME, $SHELTERCODE)</td>
 <td>$LOCATIONNAME</td>
 </tr>
 BODY$$
@@ -46,7 +46,7 @@ Birthday List (On Shelter)
 ###
 Auditing
 ###
-PostgreSQL rev01
+PostgreSQL rev02
 ###
 Shelter animals with birthdays in the selected month.
 ###
@@ -57,7 +57,7 @@ $VAR monthno NUMBER Enter the month (1 for January, 12 for December)$
 SELECT animal.DateOfBirth, 
 animal.ShelterCode,
 internallocation.LocationName,
-animal.AnimalName,
+animal.AnimalName, animal.ID AS AID,
 species.SpeciesName
 FROM animal
 INNER JOIN species ON species.ID = animal.SpeciesID
@@ -77,7 +77,7 @@ HEADER$$
 
 $$BODY<tr>
 <td>$DATEOFBIRTH</td>
-<td>$ANIMALNAME ($SPECIESNAME, $SHELTERCODE)</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> ($SPECIESNAME, $SHELTERCODE)</td>
 <td>$LOCATIONNAME</td>
 </tr>
 BODY$$

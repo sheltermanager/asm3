@@ -2,13 +2,16 @@ Animals with an estimated date of birth (off shelter)
 ###
 Auditing
 ###
-3300/Any rev01
+3300/Any rev02
 ###
 Displays animals off shelter with an estimated date of birth by date brought in
 ###
 en
 ###
-SELECT animal.animalname, animal.dateofbirth, animal. displaylocation AS location, species. speciesname, breed. breedname 
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT animal.animalname, animal.ID AS AID, animal.dateofbirth, animal. displaylocation AS location, species. speciesname, breed. breedname 
 FROM animal
 INNER JOIN breed
 ON animal. breedid=breed. id 
@@ -38,7 +41,7 @@ GROUP$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SPECIESNAME</td>
 <td>$BREEDNAME</td>
 <td>$LOCATION</td>

@@ -2,7 +2,7 @@ Permanent Fosters
 ###
 Auditing
 ###
-33018/Any rev02
+33018/Any rev03
 ###
 Permanent fosters with health/vaccination information
 ###
@@ -11,7 +11,8 @@ en
 SELECT
 OwnerName AS FosteredTo,
 OwnerAddress, HomeTelephone, MobileTelephone, EmailAddress, 
-ShelterCode, AnimalName,
+ShelterCode, AnimalName, animal.ID AS AID, owner.ID AS OID, 
+animal.BroughtInByOwnerID AS BOID,
 (SELECT Sex FROM lksex WHERE ID = animal.Sex) AS Sex,
 (SELECT BaseColour FROM basecolour WHERE ID = animal.BaseColourID) AS Colour,
 BreedName,
@@ -43,7 +44,7 @@ HEADER$$
 
 $$GROUP_FosteredTo
 $$HEAD
-<h2>$FOSTEREDTO</h2>
+<h2><a target="_blank" href="person?id=$OID">$FOSTEREDTO</a></h2>
 <p><i>$OWNERADDRESS</i>, E: $EMAILADDRESS, H: $HOMETELEPHONE, C: $MOBILETELEPHONE</p>
 <hr />
 $$FOOT
@@ -57,7 +58,7 @@ $$BODY
 <td>$SHELTERCODE</td>
 </tr><tr>
 <td><b>Name:</b></td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 </tr><tr>
 <td><b>Sex:</b></td>
 <td>$SEX</td>
@@ -81,7 +82,7 @@ $$BODY
 <td>$HEARTWORMTESTED $HEARTWORMTESTDATE $HEARTWORMTESTRESULT</td>
 </tr><tr>
 <td><b>Brought In:</b></td>
-<td>$DATEBROUGHTIN by $BROUGHTINBY</td>
+<td>$DATEBROUGHTIN by <a target="_blank" href="person?id=$BOID">$BROUGHTINBY</a></td>
 </tr><tr>
 <td><b>Reason:</b></td>
 <td>$ENTRYREASON</td>
@@ -102,5 +103,3 @@ BODY$$
 $$FOOTER
 <p>Total animals on permanent foster: {COUNT.ShelterCode}</p>
 FOOTER$$
-
-

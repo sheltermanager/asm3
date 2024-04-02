@@ -2,7 +2,7 @@ Shelter animals with flag
 ###
 Auditing
 ###
-33713/Any rev02
+33713/Any rev03
 ###
 Shelter animals with a particular flag.
 ###
@@ -10,7 +10,7 @@ en
 ###
 $VAR flag ANIMALFLAG$
 
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, a.DisplayLocation, a.AdditionalFlags
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, a.DisplayLocation, a.AdditionalFlags
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 WHERE a.Archived = 0 AND a.AdditionalFlags LIKE '%$@flag$|%' 
@@ -29,7 +29,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
 <td>$DISPLAYLOCATION</td>
@@ -45,7 +45,7 @@ Non-shelter animals with flag
 ###
 Auditing
 ###
-33713/Any rev02
+33713/Any rev03
 ###
 Non-shelter animals with a particular flag.
 ###
@@ -53,7 +53,7 @@ en
 ###
 $VAR flag ANIMALFLAG$
 
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, a.AdditionalFlags,
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, a.AdditionalFlags,
 o.ID AS OwnerID, 
 o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.EmailAddress, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone
@@ -76,7 +76,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
 <td><a target="_blank" href="person?id=$OWNERID">$OwnerName</a><br/>

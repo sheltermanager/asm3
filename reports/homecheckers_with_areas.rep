@@ -2,13 +2,13 @@ Homecheckers with Areas
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 All people flagged as homecheckers with the areas in which they are willing to do checks.
 ###
 en
 ###
-SELECT OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone, HomecheckAreas, EmailAddress
+SELECT OwnerName, ID AS OID, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, HomeTelephone, MobileTelephone, HomecheckAreas, EmailAddress
 FROM owner
 WHERE IsHomeChecker = 1
 ORDER BY OwnerName
@@ -23,7 +23,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td><b>$OWNERNAME</b><br />
+<td><b><a target="_blank" href="person?id=$OID">$OWNERNAME</a></b><br />
 $OWNERADDRESS<br />
 $OWNERTOWN<br />
 $OWNERCOUNTY<br />

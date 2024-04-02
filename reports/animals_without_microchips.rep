@@ -2,13 +2,13 @@ Non-Microchipped Animals
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Shelter animals without microchip information.
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, i.LocationName
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, i.LocationName
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
@@ -27,7 +27,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
 <td>$LOCATIONNAME</td>
@@ -37,4 +37,3 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
-

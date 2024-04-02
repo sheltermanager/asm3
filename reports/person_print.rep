@@ -2,7 +2,7 @@ Print Person Record
 ###
 Auditing
 ###
-34702/Any rev02
+34702/Any rev03
 ###
 A complete printout of a person record.
 ###
@@ -27,7 +27,7 @@ $$HEADER
 HEADER$$
 
 $$BODY
-<h2>$OWNERNAME</h2>
+<h2><a target="_blank" href="person?id=$PersonID">$OWNERNAME</a></h2>
 <table>
 </tr>
 <td>Address</td><td><b>$OWNERADDRESS</b></td><td>Home</td><td>$HOMETELEPHONE</td>

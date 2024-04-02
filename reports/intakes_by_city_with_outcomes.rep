@@ -2,7 +2,7 @@ Intakes by Brought In By City with Outcomes
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Animals entering between two dates that were brought in from a particular city with their final outcomes
 ###
@@ -12,7 +12,7 @@ SELECT
 a.AnimalName, a.ID AS AID, a.ShelterCode, a.DateOfBirth, s.SpeciesName, atp.AnimalType, 
 a.BreedName, e.ReasonName, o.OwnerName, a.DateBroughtIn, m.MovementDate,
 a.NeuteredDate, a.IdentichipNumber, 
-bo.OwnerName AS BroughtInOwner, bo.OwnerTown AS BroughtInCity, bo.OwnerAddress AS BroughtInAddress, bo.OwnerPostcode AS BroughtInPostcode,
+bo.OwnerName AS BroughtInOwner, bo.ID AS BOID, bo.OwnerTown AS BroughtInCity, bo.OwnerAddress AS BroughtInAddress, bo.OwnerPostcode AS BroughtInPostcode,
 CASE WHEN a.DeceasedDate Is Not Null AND PutToSleep = 0 AND IsDOA = 0 THEN 'Died' 
 WHEN a.DeceasedDate Is Not Null AND IsDOA = 1 THEN 'DOA' 
 WHEN a.DeceasedDate Is Not Null AND PutToSleep = 1 THEN 'Euthanasia' 
@@ -68,7 +68,7 @@ $$BODY
 <td>$IDENTICHIPNUMBER</td>
 <td>$DATEOFBIRTH</td>
 <td>$REASONNAME : $DATEBROUGHTIN</td>
-<td><i>$BROUGHTINOWNER</i><br/>
+<td><i><a target="_blank" href="person?id=$BOID">$BROUGHTINOWNER</a></i><br/>
 $BROUGHTINADDRESS $BROUGHTINCITY $BROUGHTINPOSTCODE</td>
 <td>$NEUTEREDDATE</td>
 <td>$OUTCOMENAME : $OUTCOMEQUALIFIER $OUTCOMEDATE</td>
@@ -82,7 +82,7 @@ Intakes by Original Owner City with Outcomes
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Animals entering between two dates where the original owner is from a particular city with their final outcomes
 ###
@@ -92,7 +92,7 @@ SELECT
 a.AnimalName, a.ID AS AID, a.ShelterCode, a.DateOfBirth, s.SpeciesName, atp.AnimalType, 
 a.BreedName, e.ReasonName, o.OwnerName, a.DateBroughtIn, m.MovementDate,
 a.NeuteredDate, a.IdentichipNumber, 
-oo.OwnerName AS OriginalOwnerName, oo.OwnerTown AS OriginalOwnerCity, oo.OwnerAddress AS OriginalOwnerAddress, oo.OwnerPostcode AS OriginalOwnerPostcode,
+oo.OwnerName AS OriginalOwnerName, o.ID AS OOID, oo.OwnerTown AS OriginalOwnerCity, oo.OwnerAddress AS OriginalOwnerAddress, oo.OwnerPostcode AS OriginalOwnerPostcode,
 CASE WHEN a.DeceasedDate Is Not Null AND PutToSleep = 0 AND IsDOA = 0 THEN 'Died' 
 WHEN a.DeceasedDate Is Not Null AND IsDOA = 1 THEN 'DOA' 
 WHEN a.DeceasedDate Is Not Null AND PutToSleep = 1 THEN 'Euthanasia' 
@@ -148,7 +148,7 @@ $$BODY
 <td>$IDENTICHIPNUMBER</td>
 <td>$DATEOFBIRTH</td>
 <td>$REASONNAME : $DATEBROUGHTIN</td>
-<td><i>$ORIGINALOWNERNAME</i><br/>
+<td><i><a target="_blank" href="person?id=$OOID">$ORIGINALOWNERNAME</a></i><br/>
 $ORIGINALOWNERADDRESS $ORIGINALOWNERCITY $ORIGINALOWNERPOSTCODE</td>
 <td>$NEUTEREDDATE</td>
 <td>$OUTCOMENAME : $OUTCOMEQUALIFIER $OUTCOMEDATE</td>

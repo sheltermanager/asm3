@@ -2,13 +2,13 @@ Animals without log of type
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Animals without a selected log type between two dates
 ###
 en
 ###
-SELECT animal.AnimalName, animal.ShelterCode, s.Speciesname, animal.ShelterLocation, animal.DisplayLocation, il.LocationName 
+SELECT animal.AnimalName, animal.ID AS AID, animal.ShelterCode, s.Speciesname, animal.ShelterLocation, animal.DisplayLocation, il.LocationName 
 FROM animal
 INNER JOIN species s ON s.ID = animal.SpeciesID
 INNER JOIN internallocation il ON il.ID = animal.ShelterLocation
@@ -40,7 +40,7 @@ $$FOOT
 GROUP$$
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$DISPLAYLOCATION</td>
 </tr>

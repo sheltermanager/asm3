@@ -2,7 +2,7 @@ Birthday List (Adopted)
 ###
 Auditing
 ###
-MySQL rev01
+MySQL rev02
 ###
 Owners who adopted animals with birthdays in the selected month.
 ###
@@ -10,7 +10,7 @@ en
 ###
 $VAR monthno NUMBER Enter the month (1 for January, 12 for December)$
 
-SELECT owner.OwnerName, 
+SELECT owner.OwnerName, owner.ID AS OID,
 owner.OwnerAddress, 
 owner.OwnerTown, 
 owner.OwnerCounty, 
@@ -18,7 +18,7 @@ owner.OwnerPostcode,
 owner.EmailAddress,
 animal.DateOfBirth, 
 animal.ShelterCode,
-animal.AnimalName,
+animal.AnimalName, animal.ID AS AID,
 species.SpeciesName,
 adoption.MovementDate AS AdoptionDate
 FROM adoption
@@ -41,7 +41,7 @@ $$HEADER
 HEADER$$
 
 $$BODY<tr>
-<td><i>$OWNERNAME</i><br/>
+<td><i><a target="_blank" href="person?id=$OID">$OWNERNAME</a></i><br/>
 $OWNERADDRESS<br/>
 $OWNERTOWN<br/>
 $OWNERCOUNTY<br/>
@@ -49,7 +49,7 @@ $OWNERPOSTCODE<br/>
 <i>$EMAILADDRESS</i>
 </td>
 <td>$DATEOFBIRTH</td>
-<td>$ANIMALNAME ($SPECIESNAME, $SHELTERCODE)</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> ($SPECIESNAME, $SHELTERCODE)</td>
 <td>$ADOPTIONDATE</td>
 </tr>
 BODY$$
@@ -62,7 +62,7 @@ Birthday List (Adopted)
 ###
 Auditing
 ###
-PostgreSQL rev01
+PostgreSQL rev02
 ###
 Owners who adopted animals with birthdays in the selected month.
 ###
@@ -70,7 +70,7 @@ en
 ###
 $VAR monthno NUMBER Enter the month (1 for January, 12 for December)$
 
-SELECT owner.OwnerName, 
+SELECT owner.OwnerName, owner.ID AS OID, 
 owner.OwnerAddress, 
 owner.OwnerTown, 
 owner.OwnerCounty, 
@@ -78,7 +78,7 @@ owner.OwnerPostcode,
 owner.EmailAddress,
 animal.DateOfBirth, 
 animal.ShelterCode,
-animal.AnimalName,
+animal.AnimalName, animal.ID AS AID,
 species.SpeciesName,
 adoption.MovementDate AS AdoptionDate
 FROM adoption
@@ -101,7 +101,7 @@ $$HEADER
 HEADER$$
 
 $$BODY<tr>
-<td><i>$OWNERNAME</i><br/>
+<td><i><a target="_blank" href="person?id=$OID">$OWNERNAME</a></i><br/>
 $OWNERADDRESS<br/>
 $OWNERTOWN<br/>
 $OWNERCOUNTY<br/>
@@ -109,7 +109,7 @@ $OWNERPOSTCODE<br/>
 <i>$EMAILADDRESS</i>
 </td>
 <td>$DATEOFBIRTH</td>
-<td>$ANIMALNAME ($SPECIESNAME, $SHELTERCODE)</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> ($SPECIESNAME, $SHELTERCODE)</td>
 <td>$ADOPTIONDATE</td>
 </tr>
 BODY$$

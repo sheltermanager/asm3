@@ -2,7 +2,7 @@ Reserves without Homechecks
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 All owners with active reservations on animals who have not been homechecked.
 ###
@@ -10,11 +10,11 @@ en
 ###
 SELECT 
 ad.ReservationDate,
-o.OwnerName, o.OwnerAddress, 
+o.OwnerName, o.ID AS OID, o.OwnerAddress, 
 o.OwnerTown, o.OwnerCounty, 
 o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress,
-a.AnimalName, a.ShelterCode
+a.AnimalName, a.ID AS AID, a.ShelterCode
 FROM adoption ad
 INNER JOIN animal a ON ad.AnimalID = a.ID
 INNER JOIN owner o ON ad.OwnerID = o.ID
@@ -36,7 +36,7 @@ HEADER$$
 $$BODY
 <tr>
 <td>$RESERVATIONDATE</td>
-<td><b>$OWNERNAME</b><br />
+<td><b><a target="_blank" href="person?id=$OID">$OWNERNAME</a></b><br />
 $OWNERADDRESS<br />
 $OWNERTOWN<br />
 $OWNERCOUNTY<br />
@@ -45,7 +45,7 @@ $HOMETELEPHONE
 $WORKTELEPHONE
 $MOBILETELEPHONE<br />
 $EMAILADDRESS</td>
-<td>$ANIMALNAME - 
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> - 
 $SHELTERCODE</td>
 </tr>
 BODY$$

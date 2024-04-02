@@ -8,7 +8,7 @@ Animals entering the shelter between two dates identifying whether they were neu
 ###
 en
 ###
-SELECT a.MostRecentEntryDate, a.ShelterCode, a.AnimalName, ay.AnimalType, s.SpeciesName, 
+SELECT a.MostRecentEntryDate, a.ShelterCode, a.AnimalName, a.ID AS AID, ay.AnimalType, s.SpeciesName, 
 CASE WHEN a.Neutered = 1 THEN 'Yes' ELSE 'No' END AS Neutered, a.NeuteredDate, a.ActiveMovementDate,
 CASE 
 WHEN a.Archived = 1 AND a.NeuteredDate >= a.DateBroughtIn AND a.NeuteredDate  <= a.ActiveMovementDate THEN 'Yes' 
@@ -41,7 +41,7 @@ $$BODY
 <tr>
 <td>$MOSTRECENTENTRYDATE</td>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
 <td>$NEUTERED $NEUTEREDDATE $OWNERNAME</td>

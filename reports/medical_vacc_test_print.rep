@@ -2,7 +2,7 @@ Print Medical, Vaccination and Test History
 ###
 Auditing
 ###
-34004/Any rev02
+34004/Any rev03
 ###
 The combined medical, vaccination and test history for an animal
 ###
@@ -15,7 +15,7 @@ SELECT
 'Medical' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, a.Weight, 
 t.AnimalType, s.SpeciesName, il.LocationName, 
 am.TreatmentName, '' AS ResultName, am.Dosage, amt.TreatmentNumber, 
-amt.TotalTreatments, amt.DateRequired, amt.DateGiven, am.Comments, o.ownername, o.membershipnumber
+amt.TotalTreatments, amt.DateRequired, amt.DateGiven, am.Comments, o.ownername, o.ID AS OID, o.membershipnumber
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
@@ -28,7 +28,7 @@ UNION SELECT
 'Vaccination' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, a.Weight, 
 t.AnimalType, sp.SpeciesName, il.LocationName, 
 v.VaccinationType AS TreatmentName, '' AS ResultName, '1' AS Dosage, '1' AS TreatmentNumber,
-'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.Comments, o.ownername, o.membershipnumber
+'1' AS TotalTreatments, av.DateRequired, av.DateOfVaccination AS DateGiven, av.Comments, o.ownername, o.ID AS OID, o.membershipnumber
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animalvaccination av ON a.ID = av.AnimalID
@@ -41,7 +41,7 @@ UNION SELECT
 'Test' AS mtype, a.ShelterCode, a.AnimalName, a.ID AS AID, a.Weight, 
 t.AnimalType, sp.SpeciesName, il.LocationName, 
 tt.TestName AS TreatmentName, tr.ResultName, '1' AS Dosage, '1' AS TreatmentNumber,
-'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, at.Comments, o.ownername, o.membershipnumber
+'1' AS TotalTreatments, at.DateRequired, at.DateOfTest AS DateGiven, at.Comments, o.ownername, o.ID AS OID, o.membershipnumber
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN animaltest at ON a.ID = at.AnimalID
@@ -78,7 +78,7 @@ $$BODY<tr>
 <td>$DATEREQUIRED</td>
 <td>$DATEGIVEN</td>
 <td>$RESULTNAME</td>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a></td>
 <td>$MEMBERSHIPNUMBER</td>
 <td>$COMMENTS</td>
 </tr>
