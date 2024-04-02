@@ -250,7 +250,7 @@ $(function() {
                 '<label for="jurisdiction">' + _("Jurisdiction") + '</label>',
                 '</td>',
                 '<td>',
-                '<select id="jurisdiction" data="jursidiction" class="asm-selectbox">',
+                '<select id="jurisdiction" data="jurisdiction" class="asm-selectbox">',
                 '<option value="-1">' + _("(all)") + '</option>',
                 html.list_to_options(controller.jurisdictions, "ID", "JURISDICTIONNAME"),
                 '</select>',
