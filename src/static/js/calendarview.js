@@ -98,6 +98,14 @@ $(function() {
                     if (event.tooltip) { 
                         element.prop("title", html.decode(event.tooltip)); 
                     }
+                    if (event.fgcol) {
+                        element.css("color", event.fgcol);
+                        listtitle.css("color", event.fgcol);
+                    }
+                    if (event.bgcol) {
+                        element.css("background-color", event.bgcol);
+                        element.css("border-color", event.bgcol);
+                    }
                     if (event.link) { 
                         title.wrap('<a style="color: #fff" href="' + event.link + '"></a>');
                         listtitle.prop("href", event.link);
