@@ -2,13 +2,13 @@ Animals already microchipped on arrival
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Animals who came to the shelter already microchipped.
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, 
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, 
 a.DateBroughtIn, a.IdentichipNumber
 FROM animal a
 LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -30,7 +30,7 @@ HEADER$$
 $$BODY
 <tr>
 <td>$DATEBROUGHTIN</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
 <td>$IDENTICHIPNUMBER</td>
@@ -41,4 +41,3 @@ $$FOOTER
 </table>
 <h2>Total already microchipped: {COUNT.AnimalName}</h2>
 FOOTER$$
-

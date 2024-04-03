@@ -2,7 +2,7 @@ Neuter/Spay Details by Species
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Details for animals entering the shelter between two dates identifying their initial and final spay/neuter state by species
 ###
@@ -14,7 +14,7 @@ $VAR to DATE and$
 SELECT * FROM (
 
 SELECT a.DateBroughtIn, a.ShelterCode, s.SpeciesName, a.Neutered, a.NeuteredDate, 
-ty.AnimalType, er.ReasonName, a.ActiveMovementDate, a.AnimalName, 
+ty.AnimalType, er.ReasonName, a.ActiveMovementDate, a.AnimalName, a.ID AS AID, 
 CASE WHEN a.Neutered = 1 THEN 'Yes' ELSE 'No' END AS NeuteredName,
 'NOT neutered/spayed on Arrival' AS Category
 FROM animal a
@@ -25,7 +25,7 @@ WHERE a.DateBroughtIn >= '$@from$' AND a.DateBroughtIn <= '$@to$'
 AND ((a.Neutered = 0) OR (a.Neutered = 1 AND a.NeuteredDate >= a.DateBroughtIn))
 
 UNION SELECT a.DateBroughtIn, a.ShelterCode, s.SpeciesName, a.Neutered, a.NeuteredDate, 
-ty.AnimalType, er.ReasonName, a.ActiveMovementDate, a.AnimalName, 
+ty.AnimalType, er.ReasonName, a.ActiveMovementDate, a.AnimalName, a.ID AS AID, 
 CASE WHEN a.Neutered = 1 THEN 'Yes' ELSE 'No' END AS NeuteredName,
 'Neutered/spayed on Arrival' AS Category
 FROM animal a
@@ -36,7 +36,7 @@ WHERE a.DateBroughtIn >= '$@from$' AND a.DateBroughtIn <= '$@to$'
 AND a.Neutered = 1 AND (a.NeuteredDate Is Null OR a.NeuteredDate < a.DateBroughtIn)
 
 UNION SELECT a.DateBroughtIn, a.ShelterCode, s.SpeciesName, a.Neutered, a.NeuteredDate, 
-ty.AnimalType, er.ReasonName, a.ActiveMovementDate, a.AnimalName, 
+ty.AnimalType, er.ReasonName, a.ActiveMovementDate, a.AnimalName, a.ID AS AID, 
 CASE WHEN a.Neutered = 1 THEN 'Yes' ELSE 'No' END AS NeuteredName,
 'Neutered/spayed on Adoption' AS Category
 FROM animal a
@@ -49,7 +49,7 @@ AND a.Neutered = 1 AND a.NeuteredDate Is Not Null
 AND a.NeuteredDate >= a.DateBroughtIn AND a.NeuteredDate <= a.ActiveMovementDate
 
 UNION SELECT a.DateBroughtIn, a.ShelterCode, s.SpeciesName, a.Neutered, a.NeuteredDate, 
-ty.AnimalType, er.ReasonName, a.ActiveMovementDate, a.AnimalName, 
+ty.AnimalType, er.ReasonName, a.ActiveMovementDate, a.AnimalName, a.ID AS AID, 
 CASE WHEN a.Neutered = 1 THEN 'Yes' ELSE 'No' END AS NeuteredName,
 'NOT neutered/spayed on Adoption' AS Category
 FROM animal a
@@ -61,7 +61,6 @@ AND a.Archived = 1 AND a.ActiveMovementType = 1 AND a.Neutered = 0
 
 ) dummy
 ORDER BY Category, SpeciesName
-
 ###
 $$HEADER
 HEADER$$
@@ -99,7 +98,7 @@ $$BODY
 <tr>
 <td>$DATEBROUGHTIN</td>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$REASONNAME</td>
 <td>$NEUTEREDNAME $NEUTEREDDATE</td>
@@ -110,4 +109,3 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
-

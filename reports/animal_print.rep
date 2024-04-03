@@ -2,16 +2,16 @@ Print Animal Record
 ###
 Auditing
 ###
-34111/Any rev07
+34111/Any rev08
 ###
 A complete printout of an animal record.
 ###
 en
 ###
 SELECT a.ID AS AnimalID, a.*,
-oo.OwnerName AS ooname, oo.OwnerAddress AS ooaddress, oo.OwnerPostcode AS oopostcode, oo.HomeTelephone AS ootel, oo.EmailAddress AS ooemail,
-bi.OwnerName AS biname, bi.OwnerAddress AS biaddress, bi.OwnerPostcode AS bipostcode, bi.HomeTelephone AS bitel, bi.EmailAddress AS biemail,
-cv.OwnerName AS cvname, cv.OwnerAddress AS cvaddress, cv.OwnerPostcode AS cvpostcode, cv.HomeTelephone AS cvtel, cv.EmailAddress AS cvemail,
+oo.OwnerName AS ooname, oo.ID AS OID, oo.OwnerAddress AS ooaddress, oo.OwnerPostcode AS oopostcode, oo.HomeTelephone AS ootel, oo.EmailAddress AS ooemail,
+bi.OwnerName AS biname, bi.ID AS BID, bi.OwnerAddress AS biaddress, bi.OwnerPostcode AS bipostcode, bi.HomeTelephone AS bitel, bi.EmailAddress AS biemail,
+cv.OwnerName AS cvname, cv.ID AS CID, cv.OwnerAddress AS cvaddress, cv.OwnerPostcode AS cvpostcode, cv.HomeTelephone AS cvtel, cv.EmailAddress AS cvemail,
 av.OwnerName AS avname,
 lksize.size,
 entryreason.reasonname AS entryreasonname,
@@ -67,7 +67,7 @@ $$HEADER
 HEADER$$
 
 $$BODY
-<h2>$ANIMALNAME</h2>
+<h2><a target="_blank" href="animal?id=$AnimalID">$ANIMALNAME</a></h2>
 <table cellpadding="5">
 <tr>
 <td><img height="150px" src="{IMAGE.$ANIMALID}" /></td><td><img src="{QR.$ANIMALID}" /></td>
@@ -110,8 +110,8 @@ $$BODY
 
 <table cellpadding="5">
 <tr>
-<td>Original Owner</td><td>$OONAME<br />$OOADDRESS<br />$OOPOSTCODE<br />$OOTEL<br />$OOEMAIL</td>
-<td>Brought In By</td><td>$BINAME<br />$BIADDRESS<br />$BIPOSTCODE<br />$BITEL<br />$BIEMAIL</td>
+<td>Original Owner</td><td><a target="_blank" href="person?id=$OID">$OONAME</a><br />$OOADDRESS<br />$OOPOSTCODE<br />$OOTEL<br />$OOEMAIL</td>
+<td>Brought In By</td><td><a target="_blank" href="person?id=$BID">$BINAME</a><br />$BIADDRESS<br />$BIPOSTCODE<br />$BITEL<br />$BIEMAIL</td>
 </tr><tr>
 <td>Reason not by owner</td><td>$REASONNO</td><td>Entry Reason</td><td>$REASONFORENTRY</td>
 </tr><tr>
@@ -127,7 +127,7 @@ $$BODY
 <tr>
 <td>Special Needs</td><td>$YSPECIALNEEDS</td><td>Health Problems</td><td>$HEALTHPROBLEMS</td>
 </tr><tr>
-<td>Rabies Tag</td><td>$RABIESTAG</td><td>Vet</td><td>$CVNAME<br />$CVADDRESS<br />$CVPOSTCODE<br />$CVTEL<br />$CVEMAIL</td>
+<td>Rabies Tag</td><td>$RABIESTAG</td><td>Vet</td><td><a target="_blank" href="person?id=$CID">$CVNAME</a><br />$CVADDRESS<br />$CVPOSTCODE<br />$CVTEL<br />$CVEMAIL</td>
 </tr>
 </table>
 

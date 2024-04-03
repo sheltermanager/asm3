@@ -2,13 +2,13 @@ Non-Neutered/Spayed Animals Aged Over 6 Months (On Shelter)
 ###
 Auditing
 ###
-Any rev03
+Any rev04
 ###
 Shelter animals aged over 6 months who have not been neutered/spayed.
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, i.LocationName, s.Sex, p.SpeciesName
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, i.LocationName, s.Sex, p.SpeciesName
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species p ON p.ID = a.SpeciesID
@@ -32,7 +32,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
@@ -49,13 +49,13 @@ Non-Neutered/Spayed Animals Aged Over 6 Months (all)
 ###
 Auditing
 ###
-Any rev03
+Any rev04
 ###
 All animals aged over 6 months who have not been neutered/spayed.
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, i.LocationName, s.Sex, p.SpeciesName
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, i.LocationName, s.Sex, p.SpeciesName
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species p ON p.ID = a.SpeciesID
@@ -79,7 +79,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>

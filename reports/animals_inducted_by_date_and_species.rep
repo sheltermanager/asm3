@@ -2,7 +2,7 @@ Animals Inducted by Date and Species
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Animals entering the shelter between two dates with their original owner info, broken down by species.
 ###
@@ -11,12 +11,12 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ShelterCode, AnimalName, DateBroughtIn,
+SELECT ShelterCode, animal.ID AS AID, AnimalName, DateBroughtIn,
 TimeOnShelter,
 animaltype.AnimalType AS theType,
 species.SpeciesName,
-oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode,
-bb.OwnerName AS BBName, bb.OwnerAddress AS BBAddress, bb.OwnerTown AS BBTown,
+oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.ID AS OOID, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode,
+bb.OwnerName AS BBName, bb.OwnerAddress AS BBAddress, bb.ID AS BBID, bb.OwnerTown AS BBTown,
 bb.OwnerCounty AS BBCounty, bb.OwnerPostcode AS BBPostcode
 FROM animal
 INNER JOIN animaltype ON animaltype.ID = animal.AnimalTypeID
@@ -51,16 +51,16 @@ GROUP$$
 $$BODY
 <tr>
 <td>$ShelterCode</td>
-<td>$AnimalName</td>
+<td><a target="_blank" href="animal?id=$AID">$AnimalName</a></td>
 <td>$theType</td>
 <td>$DateBroughtIn</td>
-<td><i>$BBName</i><br />
+<td><i><a target="_blank" href="person?id=$BBID">$BBName</a></i><br />
 $BBAddress<br />
 $BBTown<br />
 $BBCounty<br />
 $BBPostcode
 </td>
-<td><i>$OOName</i><br />
+<td><i><a target="_blank" href="person?id=$OOID">$OOName</a></i><br />
 $OOAddress<br />
 $OOTown<br />
 $OOCounty<br />
@@ -74,5 +74,4 @@ $$FOOTER
 </table>
 <h2>Total animals: {COUNT.SHELTERCODE}</h2>
 FOOTER$$
-
 

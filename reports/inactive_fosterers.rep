@@ -2,14 +2,14 @@ Inactive Fosterers
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Foster homes that are not currently caring for any animals.
 ###
 en
 ###
 SELECT DISTINCT 
-OwnerName, OwnerAddress, HomeTelephone, MobileTelephone,
+OwnerName, ID AS OID, OwnerAddress, HomeTelephone, MobileTelephone,
 (SELECT MAX(ReturnDate) FROM adoption WHERE MovementType = 2
 AND OwnerID = owner.ID) AS LastFostered
 FROM owner
@@ -26,7 +26,7 @@ $$HEADER
 HEADER$$
 
 $$BODY
-<h2>$OWNERNAME</h2>
+<h2><a target="_blank" href="person?id=$OID">$OWNERNAME</a></h2>
 <p><i>$OWNERADDRESS</i>, Phone: $HOMETELEPHONE, Mobile: $MOBILETELEPHONE, Last Fostered: $LASTFOSTERED</p>
 <hr />
 BODY$$
@@ -34,5 +34,3 @@ BODY$$
 $$FOOTER
 <p>Total available foster homes: {COUNT.OwnerName}</p>
 FOOTER$$
-
-

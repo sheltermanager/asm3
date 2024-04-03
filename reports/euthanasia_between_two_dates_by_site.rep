@@ -2,7 +2,7 @@ Euthanasia between two dates by site
 ###
 Auditing
 ###
-33908/Any rev01
+33908/Any rev02
 ###
 All animals who were put to sleep between two dates with details, broken down by site
 ###
@@ -10,6 +10,7 @@ en
 ###
 SELECT a.ShelterCode, 
 a.AnimalName, 
+a.ID AS AID,
 a.MostRecentEntryDate,
 a.DeceasedDate,
 a.IdentichipNumber,
@@ -64,7 +65,7 @@ $$BODY
 <tr>
 <td>$deceaseddate</td>
 <td>$sheltercode</td>
-<td>$animalname</td>
+<td><a target="_blank" href="animal?id=$AID">$animalname</a></td>
 <td>$identichipnumber</td>
 <td>$animaltype ($sex $breedname $speciesname)</td>
 <td>$animalage</td>

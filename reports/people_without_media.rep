@@ -2,13 +2,13 @@ Fosterers Without Media
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Fosterers without any attached media.
 ###
 en
 ###
-SELECT o.OwnerCode, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.AdditionalFlags
+SELECT o.OwnerCode, o.OwnerName, o.ID AS OID, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.AdditionalFlags
 FROM owner o
 WHERE o.IsFosterer= 1 AND 
 0 = (SELECT COUNT(ID) FROM media m WHERE m.LinkID = o.ID AND m.LinkTypeID = 3)
@@ -28,7 +28,7 @@ HEADER$$
 $$BODY
 <tr>
 <td>$OWNERCODE</td>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a></td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE</td>
 <td>$EMAILADDRESS</td>
@@ -44,13 +44,13 @@ Staff Without Media
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Staff without any attached media.
 ###
 en
 ###
-SELECT o.OwnerCode, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.AdditionalFlags
+SELECT o.OwnerCode, o.OwnerName, o.ID AS OID, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.AdditionalFlags
 FROM owner o
 WHERE o.IsStaff= 1 AND 
 0 = (SELECT COUNT(ID) FROM media m WHERE m.LinkID = o.ID AND m.LinkTypeID = 3)
@@ -70,7 +70,7 @@ HEADER$$
 $$BODY
 <tr>
 <td>$OWNERCODE</td>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a></td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE</td>
 <td>$EMAILADDRESS</td>
@@ -86,13 +86,13 @@ Volunteers Without Media
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Volunteers without any attached media.
 ###
 en
 ###
-SELECT o.OwnerCode, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.AdditionalFlags
+SELECT o.OwnerCode, o.OwnerName, o.ID AS OID, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.EmailAddress, o.AdditionalFlags
 FROM owner o
 WHERE o.IsVolunteer= 1 AND 
 0 = (SELECT COUNT(ID) FROM media m WHERE m.LinkID = o.ID AND m.LinkTypeID = 3)
@@ -112,7 +112,7 @@ HEADER$$
 $$BODY
 <tr>
 <td>$OWNERCODE</td>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a></td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE</td>
 <td>$EMAILADDRESS</td>

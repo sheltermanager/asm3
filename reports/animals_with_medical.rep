@@ -2,13 +2,13 @@ Animals with a medical treatment
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Shelter animals who have a medical regimen with a particular name
 ###
 en
 ###
-SELECT a.ShelterCode, a.AnimalName,
+SELECT a.ShelterCode, a.AnimalName, a.ID AS AID,
 s.SpeciesName, a.BreedName, a.AnimalAge,
 CASE WHEN a.ActiveMovementID > 0 THEN fo.OwnerName ELSE il.LocationName END AS Location,
 a.DateBroughtIn
@@ -38,7 +38,7 @@ HEADER$$
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SPECIESNAME</td>
 <td>$BREEDNAME</td>
 <td>$ANIMALAGE</td>

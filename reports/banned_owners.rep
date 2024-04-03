@@ -2,13 +2,13 @@ Banned Owners
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Owners banned from adopting animals.
 ###
 en
 ###
-SELECT ownername, owneraddress, ownertown, ownercounty, ownerpostcode, comments, lastchangeddate
+SELECT ownername, ID AS OID, owneraddress, ownertown, ownercounty, ownerpostcode, comments, lastchangeddate
 FROM owner 
 WHERE isbanned = 1
 ORDER BY ownersurname, ownerforenames
@@ -20,7 +20,7 @@ HEADER$$
 $$BODY
 <tr>
 <td>
-<b>$OWNERNAME</b><br/>
+<b><a target="_blank" href="person?id=$OID">$OWNERNAME</a></b><br/>
 $OWNERADDRESS<br/>
 $OWNERTOWN $OWNERCOUNTY<br/>
 $OWNERPOSTCODE
@@ -44,13 +44,13 @@ Banned Owners between two dates
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Owners banned from adopting animals between two dates (last changed).
 ###
 en
 ###
-SELECT ownername, owneraddress, ownertown, ownercounty, ownerpostcode, comments, lastchangeddate
+SELECT ownername, ID AS OID, owneraddress, ownertown, ownercounty, ownerpostcode, comments, lastchangeddate
 FROM owner 
 WHERE isbanned = 1 
 AND LastChangedDate >= '$ASK DATE Enter the from date$' 
@@ -64,7 +64,7 @@ HEADER$$
 $$BODY
 <tr>
 <td>
-<b>$OWNERNAME</b><br/>
+<b><a target="_blank" href="person?id=$OID">$OWNERNAME</a></b><br/>
 $OWNERADDRESS<br/>
 $OWNERTOWN $OWNERCOUNTY<br/>
 $OWNERPOSTCODE
@@ -83,4 +83,3 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
-

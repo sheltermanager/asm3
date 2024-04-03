@@ -75,20 +75,20 @@ Fosters by Date and Fosterer with Outcomes
 ###
 Auditing
 ###
-Any rev04
+Any rev05
 ###
 Foster animals between two dates with their final outcomes by fosterer
 ###
 en
 ###
 SELECT
-a.AnimalName, a.ShelterCode, a.DateOfBirth,
-e.ReasonName, o.OwnerName, m.MovementDate, m.ReturnDate, 
+a.AnimalName, a.ID AS AID, a.ShelterCode, a.DateOfBirth,
+e.ReasonName, o.OwnerName, o.ID AS OID, m.MovementDate, m.ReturnDate, 
 o.OwnerAddress AS FostererAddress, o.MobileTelephone AS FostererPhone, o.EmailAddress AS FostererEmail,
 a.NeuteredDate,
 CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType > 0 THEN mt.MovementType ELSE 'None' END AS OutcomeName,
 CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate,
-no.OwnerName AS OutcomePerson, no.OwnerAddress AS OutcomeAddress, no.OwnerTown AS OutcomeTown, no.OwnerCounty AS OutcomeCounty,
+no.OwnerName AS OutcomePerson, no.ID AS OOID, no.OwnerAddress AS OutcomeAddress, no.OwnerTown AS OutcomeTown, no.OwnerCounty AS OutcomeCounty,
 no.OwnerPostcode AS OutcomePostcode, no.HomeTelephone AS OutcomeHomeTelephone, no.WorkTelephone AS OutcomeWorkTelephone,
 no.MobileTelephone AS OutcomeMobileTelephone, no.EmailAddress AS OutcomeEmail
 FROM animal a
@@ -106,7 +106,7 @@ HEADER$$
 
 $$GROUP_OwnerName
 $$HEAD
-<h2>$OwnerName</h2>
+<h2><a target="_blank" href="person?id=$OID">$OwnerName</a></h2>
 <p>$FostererAddress, $FostererPhone $FostererEmail</p>
 <table border="1">
 <tr>
@@ -128,7 +128,7 @@ GROUP$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$DATEOFBIRTH</td>
 <td>$REASONNAME</td>
@@ -137,7 +137,7 @@ $$BODY
 <td>$NEUTEREDDATE</td>
 <td>$OUTCOMENAME</td>
 <td>$OUTCOMEDATE</td>
-<td><b>$OUTCOMEPERSON</b><br/>
+<td><b><a target="_blank" href="person?id=$OOID">$OUTCOMEPERSON</a></b><br/>
 $OUTCOMEADDRESS<br/>
 $OUTCOMETOWN $OUTCOMECOUNTY $OUTCOMEPOSTCODE<br/>
 $OUTCOMEHOMETELEPHONE $OUTCOMEWORKTELEPHONE $OUTCOMEMOBILETELEPHONE

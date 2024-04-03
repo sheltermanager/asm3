@@ -2,13 +2,13 @@ Animals without a description
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Shelter animals who do not have a description
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, a.AnimalAge, a.DisplayLocation
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, a.AnimalAge, a.DisplayLocation
 FROM animal a
 WHERE a.Archived = 0 AND (a.AnimalComments Is Null OR a.AnimalComments = '') 
 ORDER BY a.AnimalName
@@ -25,7 +25,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALAGE</td>
 <td>$DISPLAYLOCATION</td>
@@ -35,4 +35,3 @@ BODY$$
 $$FOOTER
 </table>
 FOOTER$$
-

@@ -2,7 +2,7 @@ Monthly Intakes By Species
 ###
 Movement Charts
 ###
-3000/MySQL rev01
+3000/MySQL rev02
 ###
 The number of intakes per month, broken down by species.
 ###
@@ -15,6 +15,7 @@ COUNT(a.ID) AS total
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 WHERE YEAR(a.DateBroughtIn) = $ASK STRING Which year to display for?$
+AND a.NonShelterAnimal = 0
 GROUP BY s.SpeciesName, MONTH(a.DateBroughtIn)
 ###
 GRAPH BARS
@@ -23,7 +24,7 @@ Monthly Intakes By Species
 ###
 Movement Charts
 ###
-3000/PostgreSQL rev01
+3000/PostgreSQL rev02
 ###
 The number of intakes per month, broken down by species.
 ###
@@ -36,6 +37,7 @@ COUNT(a.ID) AS total
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
 WHERE CAST(EXTRACT(YEAR FROM a.DateBroughtIn) AS INTEGER) = $ASK STRING Which year to display for?$
+AND a.NonShelterAnimal = 0
 GROUP BY s.SpeciesName, EXTRACT(MONTH FROM a.DateBroughtIn)
 ###
 GRAPH BARS

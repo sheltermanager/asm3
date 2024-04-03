@@ -2,14 +2,15 @@ Declawed Cats
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 All declawed cats on the shelter.
 ###
 en
 ###
 SELECT a.ShelterCode, 
-a.AnimalName, 
+a.AnimalName,
+a.ID AS AID,
 a.MostRecentEntryDate,
 a.IdentichipNumber,
 a.AnimalAge,
@@ -50,7 +51,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$sheltercode</td>
-<td>$animalname</td>
+<td><a target="_blank" href="animal?id=$AID">$animalname</a></td>
 <td>$animaltype</td>
 <td>$identichipnumber</td>
 <td>$animalage</td>

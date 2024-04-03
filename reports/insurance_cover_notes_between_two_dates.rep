@@ -2,7 +2,7 @@ Insurance Cover Notes between two dates
 ###	
 Movements
 ###
-34004/Any rev01
+34004/Any rev02
 ###
 Insurance cover notes issued between two dates
 ###
@@ -11,13 +11,13 @@ en
 $VAR from DATE Adopted between$
 $VAR to DATE and$
 
-SELECT ShelterCode, AnimalName, MostRecentEntryDate, MovementDate, InsuranceNumber,
+SELECT ShelterCode, AnimalName, animal.ID AS AID, MostRecentEntryDate, MovementDate, InsuranceNumber,
 species.SpeciesName, animal.TimeOnShelter, animal.DaysOnShelter, animal.IdentichipNumber,
 animaltype.AnimalType AS theType,
 animal.BreedName,
-oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode, 
+oo.OwnerName AS OOName, oo.ID AS OID, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode, 
 oo.EmailAddress AS OOEmail,
-no.OwnerName, no.OwnerAddress,
+no.OwnerName, no.ID AS NID, no.OwnerAddress,
 no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
 FROM adoption
@@ -46,21 +46,14 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$theType</td>
 <td>$BreedName</td>
 <td>$IdentichipNumber</td>
 <td>$MostRecentEntryDate</td>
 <td>$TimeOnShelter ($DaysOnShelter days)</td>
-<td><i>$OOName</i><br/>
-$OOAddress<br/>
-$OOTown<br/>
-$OOCounty<br/>
-$OOPostcode<br/>
-$OOEmail</td>
-<td>$MOVEMENTDATE</td>
-<td><i>$OwnerName</i><br/>
+<td><i><a target="_blank" href="person?id=$OID">$OOName</a></i><br/>
 $OwnerAddress<br/>
 $OwnerTown<br/>
 $OwnerCounty<br/>

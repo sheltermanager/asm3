@@ -2,13 +2,13 @@ Cats with FIV/L
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Shelter cats who have tested positive for FIV or FLV
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, a.AnimalAge, i.LocationName,
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, a.AnimalAge, i.LocationName,
 a.CombiTestDate,
 CASE WHEN a.CombiTestResult = 2 AND a.FLVResult = 2 THEN 'FIV+ FLV+'
 WHEN a.CombiTestResult = 2 THEN 'FIV+'
@@ -34,7 +34,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALAGE</td>
 <td>$LOCATIONNAME</td>
@@ -51,13 +51,13 @@ Cats testing positive for FIV/L between two dates
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Shelter cats who have tested positive for FIV or FLV
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, a.AnimalAge, i.LocationName,
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, a.AnimalAge, i.LocationName,
 a.CombiTestDate,
 CASE WHEN a.CombiTestResult = 2 AND a.FLVResult = 2 THEN 'FIV+ FLV+'
 WHEN a.CombiTestResult = 2 THEN 'FIV+'
@@ -83,7 +83,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALAGE</td>
 <td>$LOCATIONNAME</td>

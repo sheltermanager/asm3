@@ -2,13 +2,13 @@ Non-Neutered/Spayed Shelter Animals Born After
 ###
 Auditing
 ###
-Any rev03
+Any rev04
 ###
 Non-neutered/spayed animals born after a certain date
 ###
 en
 ###
-SELECT ShelterCode, AnimalName,
+SELECT ShelterCode, AnimalName, animal.ID AS AID,
 internallocation.LocationName, animaltype.AnimalType,
 species.SpeciesName, AnimalAge, lksex.Sex
 FROM animal
@@ -34,7 +34,7 @@ HEADER$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$LOCATIONNAME</td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>

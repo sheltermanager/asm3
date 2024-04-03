@@ -2,7 +2,7 @@ Intakes by Species, Age Group and Sex with Outcomes
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Animals entering between two dates by species, age group and sex with their final outcomes
 ###
@@ -11,7 +11,7 @@ en
 SELECT
 a.AnimalName, a.ID AS AID, a.ShelterCode, a.DateOfBirth, s.SpeciesName, atp.AnimalType, 
 a.BreedName, e.ReasonName, o.OwnerName, a.DateBroughtIn, m.MovementDate,
-a.NeuteredDate, a.IdentichipNumber, oo.OwnerName AS OriginalOwner,
+a.NeuteredDate, a.IdentichipNumber, oo.OwnerName AS OriginalOwner, oo.ID As OID,
 a.AgeGroup, x.Sex,
 CASE WHEN a.DeceasedDate Is Not Null AND PutToSleep = 0 AND IsDOA = 0 THEN 'Died' 
 WHEN a.DeceasedDate Is Not Null AND IsDOA = 1 THEN 'DOA' 
@@ -76,7 +76,7 @@ $$BODY
 <td>$ANIMALTYPE / $BREEDNAME / $SPECIESNAME</td>
 <td>$IDENTICHIPNUMBER</td>
 <td>$DATEOFBIRTH</td>
-<td>$REASONNAME : $ORIGINALOWNER $DATEBROUGHTIN</td>
+<td>$REASONNAME : <a target="_blank" href="person?id=$OID">$ORIGINALOWNER</a> $DATEBROUGHTIN</td>
 <td>$NEUTEREDDATE</td>
 <td>$OUTCOMENAME : $OUTCOMEQUALIFIER $OUTCOMEDATE</td>
 </tr>

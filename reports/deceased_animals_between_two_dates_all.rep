@@ -2,7 +2,7 @@ Deceased animals between two dates (include off-shelter)
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 All animals who died between two dates with details
 ###
@@ -10,6 +10,7 @@ en
 ###
 SELECT a.ShelterCode, 
 a.AnimalName, 
+a.ID AS AID,
 a.MostRecentEntryDate,
 a.DeceasedDate,
 a.IdentichipNumber,
@@ -52,7 +53,7 @@ $$BODY
 <tr>
 <td>$deceaseddate</td>
 <td>$sheltercode</td>
-<td>$animalname</td>
+<td><a target="_blank" href="animal?id=$AID">$animalname</a></td>
 <td>$identichipnumber</td>
 <td>$animaltype ($sex $breedname $speciesname)</td>
 <td>$animalage</td>
@@ -72,14 +73,14 @@ Deceased animals between two dates with pictures (include off-shelter)
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 All animals who died between two dates with details and pictures
 ###
 en
 ###
 SELECT a.ID, a.ShelterCode, 
-a.AnimalName, 
+a.AnimalName, a.ID AS AID, 
 a.MostRecentEntryDate,
 a.DeceasedDate,
 a.IdentichipNumber,
@@ -123,7 +124,7 @@ $$BODY
 <tr>
 <td>$deceaseddate</td>
 <td>$sheltercode</td>
-<td>$animalname</td>
+<td><a target="_blank" href="animal?id=$AID">$animalname</a></td>
 <td>$identichipnumber</td>
 <td>$animaltype ($sex $breedname $speciesname)</td>
 <td>$animalage</td>
