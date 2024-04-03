@@ -11,7 +11,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, Quantity, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName, ownerdonation.ReceiptNumber, 
 ownerdonation.ChequeNumber, ownerdonation.Comments,
