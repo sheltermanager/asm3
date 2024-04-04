@@ -24,7 +24,6 @@ m.MediaNotes
 FROM media m
 WHERE m.MediaName LIKE '%.html'
 AND m.Date >= '$CURRENT_DATE$'
-AND LOWER(m.MediaNotes) LIKE LOWER('%$ASK STRING Partial form name (leave blank for all)$%')
 ORDER BY m.Date
 ###
 $$HEADER
