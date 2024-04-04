@@ -2,14 +2,14 @@ Test Diary (On Shelter)
 ###
 Diary
 ###
-33012/Any rev02
+33012/Any rev03
 ###
 Tests required to date for shelter animals.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation, 
+a.ShelterCode, a.ID AS AID, a.AnimalName, t.AnimalType, a.DisplayLocation, 
 tt.TestName, at.DateRequired, at.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -34,7 +34,7 @@ HEADER$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$DISPLAYLOCATION</td>
 <td>$TESTNAME</td>
@@ -51,14 +51,14 @@ Test Diary (On Shelter, Date Range)
 ###
 Diary
 ###
-3309/Any rev02
+3309/Any rev03
 ###
 Tests required between two dates for shelter animals.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation, 
+a.ShelterCode, a.AnimalName, a.ID AS AID, t.AnimalType, a.DisplayLocation, 
 tt.TestName, at.DateRequired, at.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -84,7 +84,7 @@ HEADER$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$DISPLAYLOCATION</td>
 <td>$TESTNAME</td>
@@ -101,14 +101,14 @@ Test Diary (On Shelter by Location)
 ###
 Diary
 ###
-33012/Any rev01
+33012/Any rev02
 ###
 Tests required to date for shelter animals, grouped by location.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, a.DisplayLocation, 
+a.ShelterCode, a.AnimalName, a.ID AS AID, t.AnimalType, a.DisplayLocation, 
 tt.TestName, at.DateRequired, at.Comments
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -140,7 +140,7 @@ GROUP$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$TESTNAME</td>
 <td>$DATEREQUIRED</td>
