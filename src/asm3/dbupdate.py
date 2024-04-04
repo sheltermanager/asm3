@@ -2316,7 +2316,7 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup2("deathreason", "ReasonName", 8, _("Biting", l))
     sql += lookup2("diet", "DietName", 1, _("Standard", l))
     sql += lookup2("donationpayment", "PaymentName", 1, _("Cash", l))
-    sql += lookup2("donationpayment", "PaymentName", 2, _("Cheque", l))
+    sql += lookup2("donationpayment", "PaymentName", 2, _("Check", l))
     sql += lookup2("donationpayment", "PaymentName", 3, _("Credit Card", l))
     sql += lookup2("donationpayment", "PaymentName", 4, _("Debit Card", l))
     sql += lookup2("donationpayment", "PaymentName", 5, _("PayPal", l))
@@ -4021,7 +4021,7 @@ def update_33011(dbo: Database) -> None:
         "PaymentDescription %(long)s ) " % { "short": dbo.type_shorttext, "long": dbo.type_longtext }
     dbo.execute_dbupdate(sql)
     dbo.execute_dbupdate("INSERT INTO donationpayment (ID, PaymentName) VALUES (1, '" + _("Cash", l) + "')")
-    dbo.execute_dbupdate("INSERT INTO donationpayment (ID, PaymentName) VALUES (2, '" + _("Cheque", l) + "')")
+    dbo.execute_dbupdate("INSERT INTO donationpayment (ID, PaymentName) VALUES (2, '" + _("Check", l) + "')")
     dbo.execute_dbupdate("INSERT INTO donationpayment (ID, PaymentName) VALUES (3, '" + _("Credit Card", l) + "')")
     dbo.execute_dbupdate("INSERT INTO donationpayment (ID, PaymentName) VALUES (4, '" + _("Debit Card", l) + "')")
     # Add donationpaymentid field to donations
