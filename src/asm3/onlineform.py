@@ -83,8 +83,8 @@ AP_ATTACHANIMAL_CREATEPERSON = 9
 AP_CREATEANIMAL_BROUGHTIN = 10
 AP_CREATEANIMAL_NONSHELTER = 11
 
-# The name of an extra checkbox inserted to trap spambots
-SPAMBOT_CB = 'termsscb'
+# The name of an extra text field inserted to trap spambots
+SPAMBOT_TXT = 'a_emailaddress'
 
 # Fields that are added to forms by the system and are not user enterable
 SYSTEM_FIELDS = [ "useragent", "ipaddress", "retainfor", "formreceived", "mergeperson", "processed" ]
@@ -323,7 +323,7 @@ def get_onlineform_html(dbo: Database, formid: int, completedocument: bool = Tru
     h.append('<style>')
     h.append('.scb { display: none; }')
     h.append('</style>')
-    h.append('<p class="scb"><input name="' + SPAMBOT_CB + '" type="checkbox" /></p>')
+    h.append(f'<p class="scb"><label for="{SPAMBOT_TXT}"></label><input type="text" id="{SPAMBOT_TXT}" name="{SPAMBOT_TXT}" autocomplete="off" /></p>')
     h.append('<p style="text-align: center"><input type="submit" value="%s" /></p>' % asm3.i18n._("Submit", l))
     h.append('</form>')
     if completedocument:
@@ -814,7 +814,7 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
 
     # Check our spambot checkbox/honey trap
     if asm3.configuration.onlineform_spam_honeytrap(dbo):
-        if post.boolean(SPAMBOT_CB): 
+        if post[SPAMBOT_TXT] != "": 
             asm3.al.error("blocked spambot (honeytrap): %s" % post.data, "insert_onlineformincoming_from_form", dbo)
             return
 
@@ -835,18 +835,21 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
             if k.startswith("firstname") or k.startswith("forenames"):
                 lc = 0
                 uc = 0
+                sp = 0
                 for x in v:
                     if x.isupper():
                         uc += 1
-                    elif x != " ":
+                    elif x == " ":
+                        sp += 1
+                    else:
                         lc += 1
-                if lc >= 2 and uc >= 2 and v.find(" ") == -1:
+                if lc >= 2 and uc >= 2 and sp == 0:
                     asm3.al.error("blocked spambot (firstname=%s, uc=%s, lc=%s): %s" % (v, uc, lc, post.data), "insert_onlineformincoming_from_form", dbo)
                     return
 
     collationid = get_collationid(dbo)
 
-    IGNORE_FIELDS = [ SPAMBOT_CB, "formname", "flags", "redirect", "account", "filechooser", "method" ]
+    IGNORE_FIELDS = [ SPAMBOT_TXT, "formname", "flags", "redirect", "account", "filechooser", "method" ]
     l = dbo.locale
     formname = post["formname"]
     posteddate = dbo.now()

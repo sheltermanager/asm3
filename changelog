@@ -1,7 +1,7 @@
 48
 ================
 
-04/03/24 Tune first name spambot protection
+04/03/24 Online form: change spam honeypot and first name parameters
 02/03/24 Support fgcol/bgcol in calendar events for future use
 02/03/24 Typo in advanced search/jurisdiction field name
 29/03/24 Recalculate litter count for each edit of the litter/animal
