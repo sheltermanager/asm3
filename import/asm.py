@@ -1965,6 +1965,7 @@ class DonationType:
 
 class AnimalControl:
     ID = 0
+    IncidentCode = ""
     IncidentDateTime = None
     IncidentTypeID = 1
     CallDateTime = None
@@ -2007,8 +2008,11 @@ class AnimalControl:
         self.ID = ID
         if ID == 0: self.ID = getid("animalcontrol")
     def __str__(self):
+        if self.IncidentCode.strip() == "": 
+            self.IncidentCode = padleft(self.ID, 6)
         s = (
             ( "ID", di(self.ID) ),
+            ( "IncidentCode", ds(self.IncidentCode) ),
             ( "IncidentDateTime", ddt(self.IncidentDateTime) ),
             ( "IncidentTypeID", di(self.IncidentTypeID) ),
             ( "CallDateTime", ddt(self.CallDateTime) ),
@@ -2574,6 +2578,7 @@ class Owner:
     IsVet = 0
     IsGiftAid = 0
     IsDeceased = 0
+    IsSponsor = 0
     ExcludeFromBulkEmail = 0
     GDPRContactOptIn = ""
     HomeCheckAreas = ""
@@ -2682,6 +2687,7 @@ class Owner:
             ( "IsVet", di(self.IsVet) ),
             ( "IsGiftAid", di(self.IsGiftAid) ),
             ( "IsDeceased", di(self.IsDeceased) ),
+            ( "IsSponsor", di(self.IsSponsor) ),
             ( "ExcludeFromBulkEmail", di(self.ExcludeFromBulkEmail) ),
             ( "GDPRContactOptIn", ds(self.GDPRContactOptIn) ),
             ( "HomeCheckAreas", ds(self.HomeCheckAreas) ),
