@@ -1,0 +1,38 @@
+Inactive Fosterers by selected city
+###
+People
+###
+Any rev01
+###
+en
+###
+Foster homes by selected city that are not currently caring for any animals.
+###
+SELECT DISTINCT 
+OwnerName, ID AS OID, OwnerAddress, OwnerTown, HomeTelephone, MobileTelephone,
+EmailAddress,
+(SELECT MAX(ReturnDate) FROM adoption WHERE MovementType = 2
+AND OwnerID = owner.ID) AS LastFostered
+FROM owner
+WHERE IsFosterer = 1
+AND LOWER(owner.OwnerTown) LIKE LOWER('%$ASK STRING Partial city name (leave blank for all)$%')
+AND NOT EXISTS(
+    SELECT ID FROM adoption 
+    WHERE OwnerID = owner.ID AND MovementType = 2
+    AND MovementDate < '$CURRENT_DATE$'
+    AND (ReturnDate Is Null OR ReturnDate > '$CURRENT_DATE$')
+)
+ORDER BY OwnerName
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<h2><a target="_blank" href="person?id=$OID">$OWNERNAME</a></h2>
+<p><i>$OWNERADDRESS, $OWNERTOWN</i>, Email: $EMAILADDRESS, Phone: $HOMETELEPHONE, Mobile: $MOBILETELEPHONE, Last Fostered: $LASTFOSTERED</p>
+<hr />
+BODY$$
+
+$$FOOTER
+<p>Total available foster homes: {COUNT.OwnerName}</p>
+FOOTER$$
