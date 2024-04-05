@@ -2,14 +2,14 @@ Vaccination Print
 ###
 Auditing
 ###
-34111/Any rev01
+34111/Any rev02
 ###
 Vaccinations for a selected shelter animal.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
+a.ShelterCode, a.AnimalName, a.ID AS AID, t.AnimalType, il.LocationName,
 v.VaccinationType, av.DateRequired,
 CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE av.GivenBy END AS GivenBy,
 av.DateOfVaccination, av.DateExpires, av.Comments
@@ -23,7 +23,7 @@ WHERE a.ID = $ASK ANIMAL$
 ORDER BY av.DateOfVaccination
 ###
 $$HEADER
-<h2>Vaccinations for $SHELTERCODE - $ANIMALNAME</h2>
+<h2>Vaccinations for $SHELTERCODE - <a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></h2>
 <table border=1><tr>
 <td><b>Vaccination Type</b></td>
 <td><b>Required</b></td>

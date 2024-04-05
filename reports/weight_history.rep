@@ -2,14 +2,14 @@ Weight History
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Weight history for the selected animal.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, a.BreedName, a.AnimalAge, 
+a.ShelterCode, a.AnimalName, a.ID AS AID, a.BreedName, a.AnimalAge, 
 t.AnimalType, s.SpeciesName, sx.Sex, 
 il.LocationName, l.Date, l.Comments
 FROM animal a
@@ -22,7 +22,8 @@ WHERE a.ID = $ASK ANIMAL$ AND l.LogTypeID = 4
 ORDER BY l.Date DESC
 ###
 $$HEADER
-<h2>$SHELTERCODE - $ANIMALNAME ($SEX $BREEDNAME $SPECIESNAME aged $ANIMALAGE) </h2>
+<h2>$SHELTERCODE - <a target="_blank" href="animal?id=$AID">$ANIMALNAME</a>
+ ($SEX $BREEDNAME $SPECIESNAME aged $ANIMALAGE) </h2>
 <table border=1><tr>
 <td><b>Date</b></td>
 <td><b>Weight</b></td>
@@ -43,14 +44,14 @@ Weight History (Shelter Animals)
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Weight history for all shelter animals.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, a.BreedName, a.AnimalAge, 
+a.ShelterCode, a.AnimalName, a.ID AS AID, a.BreedName, a.AnimalAge, 
 t.AnimalType, s.SpeciesName, sx.Sex, 
 il.LocationName, l.Date, l.Comments
 FROM animal a
@@ -67,7 +68,8 @@ HEADER$$
 
 $$GROUP_AnimalName
 $$HEAD
-<h2>$SHELTERCODE - $ANIMALNAME ($SEX $BREEDNAME $SPECIESNAME aged $ANIMALAGE) </h2>
+<h2>$SHELTERCODE - <a target="_blank" href="animal?id=$AID">$ANIMALNAME</a>
+ ($SEX $BREEDNAME $SPECIESNAME aged $ANIMALAGE) </h2>
 <table border=1><tr>
 <td><b>Date</b></td>
 <td><b>Weight</b></td>

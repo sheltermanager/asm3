@@ -2,14 +2,14 @@ Test Print
 ###
 Auditing
 ###
-3309/Any rev02
+3309/Any rev03
 ###
 Tests for a selected shelter animal.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, t.AnimalType, il.LocationName,
+a.ShelterCode, a.ID AS AID, a.AnimalName, t.AnimalType, il.LocationName,
 tt.TestName, av.DateRequired,
 av.DateOfTest, tr.ResultName, av.Comments
 FROM animal a
@@ -22,7 +22,7 @@ WHERE a.ID = $ASK ANIMAL$
 ORDER BY av.DateOfTest
 ###
 $$HEADER
-<h2>Tests for $SHELTERCODE - $ANIMALNAME</h2>
+<h2>Tests for $SHELTERCODE - <a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></h2>
 <table border=1><tr>
 <td><b>Test Type</b></td>
 <td><b>Required</b></td>
@@ -35,7 +35,7 @@ HEADER$$
 $$BODY<tr>
 <td>$TESTNAME</td>
 <td>$DATEREQUIRED</td>
-<td>$DATEOFVACCINATION</td>
+<td>$DATEOFTEST</td>
 <td>$RESULTNAME</td>
 <td>$COMMENTS</td>
 </tr>

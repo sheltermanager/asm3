@@ -6,16 +6,18 @@ sys.path.insert(0, "..")
 import asm, os
 
 """
-Import module for Access DB for stayawhile shelter.
+Import module for Access DB for stayawhile shelter jm3202
 
 Last updated 3rd Apr, 2024
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/stayawhile"
+PATH = "/home/robin/tmp/asm3_import_data/jm3202_access"
 
 DEFAULT_BREED = 261 # default to dsh
 DATE_FORMAT = "MDY" # Normally MDY
 START_ID = 100
+
+NO_DATE = asm.parse_date("2020-01-01", "%Y-%m-%d")
 
 animals = []
 owners = []
@@ -78,13 +80,15 @@ for d in asm.csv_to_list("%s/cat names import.csv" % PATH):
     a.AnimalName = d["Cat Name"].title()
     broughtin = getdate(d["Arrival or Return Date"])
     dob = getdate(d["Birth Date"])
-    if broughtin is None: broughtin = asm.today()
+    if broughtin is None: 
+        broughtin = NO_DATE
     if dob is None: 
         a.EstimatedDOB = 1
         dob = broughtin
     a.DateOfBirth = dob
     a.DateBroughtIn = broughtin
     a.CreatedDate = broughtin
+    a.LastChangedDate = broughtin
     a.Sex = 1
     if d["Sex"].startswith("F"):
         a.Sex = 0
@@ -122,9 +126,14 @@ for d in asm.csv_to_list("%s/Adoptions.csv" % PATH):
     m.OwnerID = o.ID
     m.MovementType = 1
     m.MovementDate = getdate(d["Date of Adoption"])
+    if m.MovementDate is None: 
+        m.MovementDate = getdate(d["Date of Birth"])
+    if m.MovementDate is None:
+        m.MovementDate = NO_DATE
     a.ActiveMovementID = m.ID
     a.ActiveMovementDate = m.MovementDate
-    a.ActiveMovementType = 2
+    a.ActiveMovementType = 1
+    a.Archived = 1
     a.CreatedDate = m.MovementDate
     a.LastChangedDate = m.MovementDate
     movements.append(m)
@@ -144,9 +153,11 @@ for d in asm.csv_to_list("%s/Donations.csv" % PATH):
     od.DonationPaymentID = 1 # Cash - Default
     if d["Form of Donation"] == "Check":
         od.DonationPaymentID = 2
+    od.Donation = asm.get_currency(d["Amount of Donation"])
     od.ChequeNumber = d["Check Number"]
     od.Date = getdate(d["Date of Donation"])
-    if od.Date is None: od.Date = asm.today()
+    if od.Date is None: 
+        od.Date = NO_DATE
     od.Comments = "Category: %s\n\n%s" % ( d["Category of Donation"], d["Comment for Other"])
     ownerdonations.append(od)
 
@@ -162,6 +173,7 @@ for d in asm.csv_to_list("%s/Sponsors.csv" % PATH):
     od.Date = a.DateBroughtIn
     od.Comments = "Sponsor link"
     ownerdonations.append(od)
+    o.IsSponsor = 1
 
 # Allow shelter animals to have their chips registered
 for a in animals:

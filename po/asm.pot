@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-04-05 11:43+0000\n"
+"POT-Creation-Date: 2024-04-05 11:44+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -2853,7 +2853,7 @@ msgstr ""
 msgid "Chartreux"
 msgstr ""
 
-#: mobile.py reports.js mobile2.js
+#: mobile.py dbupdate.py reports.js mobile2.js
 msgid "Check"
 msgstr ""
 
@@ -2903,10 +2903,6 @@ msgstr ""
 
 #: options.js
 msgid "Checkout"
-msgstr ""
-
-#: dbupdate.py
-msgid "Cheque"
 msgstr ""
 
 #: cardcom.py
@@ -7110,6 +7106,10 @@ msgstr ""
 
 #: boarding.js
 msgid "In Date"
+msgstr ""
+
+#: dbupdate.py
+msgid "In Memory Of"
 msgstr ""
 
 #: animal.py
