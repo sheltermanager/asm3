@@ -625,6 +625,18 @@ def get_licence(dbo: Database, licenceid: int) -> ResultRow:
     """
     return dbo.first_row( dbo.query(get_licence_query(dbo) + "WHERE ol.ID = ?", [licenceid]) )
 
+def get_licence_token(dbo: Database, token: str) -> ResultRow:
+    """
+    Returns a single licence by renewal token
+    """
+    return dbo.first_row( dbo.query(get_licence_query(dbo) + "WHERE ol.Token = ?", [token]) )
+
+def get_licence_fee(dbo: Database, licencetypeid: int) -> int:
+    """
+    Returns the licence fee amount from the selected licence type
+    """
+    return dbo.query_int("SELECT DefaultCost FROM licencetype WHERE ID=?", [licencetypeid])
+
 def get_licences(dbo: Database, offset: str = "i31") -> Results:
     """
     Returns a recordset of licences 

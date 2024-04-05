@@ -1115,6 +1115,9 @@ def js_injection(dbo: Database) -> str:
 def js_window_print(dbo: Database) -> bool:
     return cboolean(dbo, "JSWindowPrint", DEFAULTS["JSWindowPrint"] == "Yes")
 
+def licence_checkout_feeid(dbo: Database) -> int:
+    return cint(dbo, "LicenceCheckoutFeeID")
+
 def locale(dbo: Database) -> str:
     return cstring(dbo, "Locale", LOCALE)
 

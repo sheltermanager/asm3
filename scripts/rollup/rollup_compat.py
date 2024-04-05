@@ -17,7 +17,8 @@ jsfiles = [ "common.js", "common_validate.js", "common_html.js", "common_map.js"
 
 exclude = [ "animal_view_adoptable.js", "document_edit.js", 
     "mobile.js", "mobile2.js", "mobile_login.js", "mobile_photo_uploader.js", "mobile_report.js", "mobile_sign.js", 
-    "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
+    "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js", 
+    "service_checkout_licence.js" ]
 
 exclude += [ "rollup.js", "rollup_compat.js" ]
 

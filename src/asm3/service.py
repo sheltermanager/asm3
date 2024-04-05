@@ -16,6 +16,7 @@ import asm3.db
 import asm3.dbfs
 import asm3.dbupdate
 import asm3.event
+import asm3.financial
 import asm3.html
 import asm3.media
 import asm3.lostfound
@@ -26,7 +27,7 @@ import asm3.publishers.html
 import asm3.reports
 import asm3.users
 import asm3.utils
-from asm3.i18n import _, now, add_seconds, format_time, python2display, subtract_seconds
+from asm3.i18n import _, now, add_seconds, format_currency, format_time, python2display, subtract_seconds
 from asm3.sitedefs import BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_ICONS_CSS
 from asm3.sitedefs import JQUERY_JS, JQUERY_UI_JS, SIGNATURE_JS
 from asm3.sitedefs import BASE_URL, SERVICE_URL, MULTIPLE_DATABASES, CACHE_SERVICE_RESPONSES, IMAGE_HOTLINKING_ONLY_FROM_DOMAIN
@@ -56,6 +57,7 @@ CACHE_PROTECT_METHODS = {
     "animal_view_adoptable_html": [],
     "checkout": [ "processor", "payref" ],
     # "checkout_adoption" - write method
+    # "checkout_licence" - write method
     # "csv_import" - write method
     # "csv_mail", "csv_report" - custom params
     "dbfs_image": [ "title" ],
@@ -325,6 +327,93 @@ def checkout_adoption_post(dbo: Database, post: PostedData) -> str:
     url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
     return url
 
+def checkout_licence_page(dbo: Database, token: str) -> str:
+    """ Outputs a page that allows a licence holder to confirm and pay
+        for their licence renewal """ 
+    l = dbo.locale
+    scripts = [ 
+        asm3.html.script_tag(JQUERY_JS),
+        asm3.html.script_tag(JQUERY_UI_JS),
+        asm3.html.script_tag(BOOTSTRAP_JS),
+        asm3.html.script_tag(SIGNATURE_JS),
+        asm3.html.css_tag(BOOTSTRAP_CSS),
+        asm3.html.css_tag(BOOTSTRAP_ICONS_CSS),
+        asm3.html.script_i18n(dbo.locale),
+        asm3.html.asm_script_tag("service_checkout_licence.js") 
+    ]
+    co = asm3.cachedisk.get(token, dbo.database)
+    if co is None:
+        li = asm3.financial.get_licence_token(dbo, token)
+        if li is None:
+            raise asm3.utils.ASMError("invalid token")
+        if li.RENEWED == 1:
+            raise asm3.utils.ASMError("license already renewed")
+        co["row"] = li
+        co["licencenumber"] = li.LICENCENUMBER
+        co["animalname"] = li.ANIMALNAME
+        co["animalid"] = li.ANIMALID
+        co["ownercode"] = li.OWNERCODE
+        co["ownerid"] = li.OWNERID
+        co["database"] = dbo.database
+        co["paymentfeeid"] = 0
+        co["newfee"] = asm3.financial.get_licence_fee(li.LICENCETYPEID)
+        co["formatfee"] = format_currency(co["newfee"])
+        asm3.cachedisk.put(token, dbo.database, co, 86400 * 2)
+    # Record that the checkout was accessed in the log
+    logtypeid = asm3.configuration.system_log_type(dbo)
+    logmsg = "LC01:%s" % co["licencenumber"]
+    asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["ownerid"], logtypeid, logmsg)
+    return asm3.html.js_page(scripts, _("License Checkout", l), co)
+
+def checkout_licence_post(dbo: Database, post: PostedData) -> str:
+    """
+    Called by the licence checkout frontend with the renewal amount.
+    Triggers creation of the payment records, etc.
+    Returns the URL needed to redirect to the payment processor to complete payment.
+    """
+    l = dbo.locale
+    co = asm3.cachedisk.get(post["token"], dbo.database)
+    if co is None:
+        raise asm3.utils.ASMError("invalid token")
+    # Create the due payment record if it hasn't been done already, along with a receipt/payref
+    if co["paymentfeeid"] == 0:
+        co["feetypeid"] = asm3.configuration.licence_checkout_feeid(dbo)
+        co["processor"] = asm3.configuration.adoption_checkout_processor(dbo)
+        co["receiptnumber"] = asm3.financial.get_next_receipt_number(dbo) # Both go on the same receipt
+        co["payref"] = "%s-%s" % (co["ownercode"], co["receiptnumber"])
+        # Renewal Fee
+        co["paymentfeeid"] = asm3.financial.insert_donation_from_form(dbo, "checkout", asm3.utils.PostedData({
+            "person":       str(co["ownerid"]),
+            "animal":       str(co["animalid"]),
+            "movement":     "0",
+            "type":         co["feetypeid"], 
+            "payment":      asm3.configuration.adoption_checkout_payment_method(dbo),
+            "amount":       co["newfee"],
+            "due":          python2display(l, dbo.now()),
+            "receiptnumber": co["receiptnumber"],
+            "giftaid":      str("0")
+        }, l))
+        # Update the cache entry
+        asm3.cachedisk.put(post["token"], dbo.database, co, 86400 * 2)
+    # Record that the checkout was completed in the log
+    logtypeid = asm3.configuration.system_log_type(dbo)
+    logmsg = "LC02:%s:%s" % ( co["licencenumber"], co["newfee"] )
+    asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["ownerid"], logtypeid, logmsg)
+    # TODO: We need to set the renewed flag on the existing licence and create the new one
+    # problem is, we should only do it when the payment has actually been received, which
+    # means some kind of callback mechanism from paymentprocessor.receive. How to implement?
+    # Construct the payment checkout URL
+    title = _("{0}: License renewal fee", l)
+    params = { 
+        "account": dbo.database, 
+        "method": "checkout",
+        "processor": co["paymentprocessor"],
+        "payref": co["payref"],
+        "title": title.format(co["animalname"])
+    }
+    url = "%s?%s" % (SERVICE_URL, asm3.utils.urlencode(params))
+    return url
+
 def sign_document_page(dbo: Database, mid: int, email: str) -> str:
     """ Outputs a page that allows signing of document with media id mid. 
         email is the address to send a copy of the signed document to. """
@@ -489,6 +578,14 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             return set_cached_response(cache_key, account, "text/html", 120, 120, checkout_adoption_page(dbo, post["token"]))
         else:
             return ("text/plain", 0, 0, checkout_adoption_post(dbo, post))
+        
+    elif method == "checkout_licence":
+        if post["token"] == "":
+            raise asm3.utils.ASMError("method checkout_licence requires a valid token")
+        elif post["action"] == "":
+            return set_cached_response(cache_key, account, "text/html", 120, 120, checkout_licence_page(dbo, post["token"]))
+        else:
+            return ("text/plain", 0, 0, checkout_licence_post(dbo, post))
 
     elif method == "csv_import":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.IMPORT_CSV_FILE)
