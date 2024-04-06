@@ -1,6 +1,7 @@
 48
 ================
 
+06/04/24 Fix bad layout of deceased checkboxes
 06/04/24 Asilomar fields should always appear for US locales (owner req euth)
 05/04/24 Licence renewal checkout screen #728
 04/04/24 Online form: change spam honeypot and first name parameters
