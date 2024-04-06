@@ -1063,7 +1063,7 @@ $(function() {
             }
 
             // If we're a US shelter and this is a cat or a dog, show the asilomar categories
-            if (asm.locale == "en" && !config.bool("DisableAsilomar") &&
+            if (asm.locale == "en") &&
                 ($("#species").select("value") == 1 || $("#species").select("value") == 2) ) {
                 $(".asilomar").show();
             }
