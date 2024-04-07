@@ -658,7 +658,7 @@ $(function() {
         render_checkout: function() {
             return [
                 '<div id="tab-checkout">',
-                '<p class="asm-header">' + _("Adoption Checkout"),
+                '<p class="asm-header">' + _("Checkout"),
                 '<span id="callout-adcheckout" class="asm-callout">' + _("This feature allows you to email an adopter to have them sign their adoption paperwork, pay the adoption fee and make an optional donation.") + '</span>',
                 '</p>',
                 '<table>',
