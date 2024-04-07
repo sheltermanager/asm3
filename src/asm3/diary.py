@@ -228,7 +228,9 @@ def get_animal_tasks(dbo: Database) -> Results:
         "WHEN EXISTS(SELECT dtd.* FROM diarytaskdetail dtd WHERE " \
         "DiaryTaskHeadID = dth.ID AND dtd.DayPivot = 9999) THEN 1 " \
         "ELSE 0 END AS NEEDSDATE " \
-        "FROM diarytaskhead dth WHERE dth.RecordType = %d" % ANIMAL_TASK)
+        "FROM diarytaskhead dth " \
+        "WHERE dth.RecordType = ? " \
+        "ORDER BY dth.Name", [ANIMAL_TASK])
 
 def get_person_tasks(dbo: Database) -> Results:
     """
@@ -238,7 +240,9 @@ def get_person_tasks(dbo: Database) -> Results:
         "WHEN EXISTS(SELECT dtd.* FROM diarytaskdetail dtd WHERE " \
         "DiaryTaskHeadID = dth.ID AND dtd.DayPivot = 9999) THEN 1 " \
         "ELSE 0 END AS NEEDSDATE " \
-        "FROM diarytaskhead dth WHERE dth.RecordType = %d" % PERSON_TASK)
+        "FROM diarytaskhead dth " \
+        "WHERE dth.RecordType = ? " \
+        "ORDER BY dth.Name", [PERSON_TASK])
 
 def get_diarytasks(dbo: Database) -> Results:
     """
