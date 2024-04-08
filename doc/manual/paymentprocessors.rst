@@ -195,4 +195,31 @@ process again from the movement tab/book.
 License checkout
 ----------------
 
-TBA
+The license checkout feature allows members of the public to renew and pay for 
+their license online in a similar manner to the adoption checkout. Note that 
+the first license for any animal/person combination must be created manually
+(or via an online form).
+
+This is a much simpler workflow than the adoption checkout in that they are
+shown a thumbnail (if available) for the animal they are renewing the license
+for, along with some info on the animal and the renewal cost that they are
+about to pay. 
+
+They can then confirm that they wish to renew and will be taken off to the
+configured checkout payment processor to take the payment.
+
+Once the payment is complete and received the system will do the following:
+
+* Flag the existing license as renewed
+* Create a new license of the same type as the renewed license. 
+* The issue date of the new license will be set to expiry date + 1 day of the old license. 
+* The expiry date will be set to the issue date + the reschedule period for the license type.
+* The fee will be set to the amount the person just paid (cost from the licence type)
+
+License reminder emails can be configured to be sent out a set number of days
+prior to the expiry of a license under :menuselection:`Settings --> Options -->
+Reminder Emails`.  
+
+You can use the token/wordkey <<LicenceRenewLink>> or <<LicenceRenewSrc>> in
+your email template to include a clickable link to take the person to the checkout
+to pay and renew.

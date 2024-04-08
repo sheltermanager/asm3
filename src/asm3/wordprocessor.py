@@ -20,7 +20,9 @@ import asm3.template
 import asm3.users
 import asm3.utils
 import asm3.waitinglist
+
 from asm3.i18n import _, date_diff_days, format_currency, format_currency_no_symbol, format_diff, format_diff_single, format_time, now, python2display, python2displaytime, yes_no
+from asm3.sitedefs import SERVICE_URL
 from asm3.typehints import bytes_or_str, Database, Dict, List, ResultRow, Results, Tags, Tuple
 
 import zipfile
@@ -1318,6 +1320,7 @@ def licence_tags(dbo: Database, li: ResultRow) -> Tags:
     (from anything using asm3.financial.get_licence_query)
     """
     l = dbo.locale
+    renew_url = f"{SERVICE_URL}?account={dbo.database}&method=checkout_licence&token={li.TOKEN}"
     tags = {
         "LICENCETYPENAME":      li["LICENCETYPENAME"],
         "LICENCENUMBER":        li["LICENCENUMBER"],
@@ -1325,12 +1328,16 @@ def licence_tags(dbo: Database, li: ResultRow) -> Tags:
         "LICENCEISSUED":        python2display(l, li["ISSUEDATE"]),
         "LICENCEEXPIRES":       python2display(l, li["EXPIRYDATE"]),
         "LICENCECOMMENTS":      li["COMMENTS"],
+        "LICENCERENEWLINK":     '<a href="%s">%s</a>' % ( renew_url, _("Pay and renew license") ),
+        "LICENCERENEWSRC":      renew_url,
         "LICENSETYPENAME":      li["LICENCETYPENAME"],
         "LICENSENUMBER":        li["LICENCENUMBER"],
         "LICENSEFEE":           format_currency_no_symbol(l, li["LICENCEFEE"]),
         "LICENSEISSUED":        python2display(l, li["ISSUEDATE"]),
         "LICENSEEXPIRES":       python2display(l, li["EXPIRYDATE"]),
-        "LICENSECOMMENTS":      li["COMMENTS"]
+        "LICENSECOMMENTS":      li["COMMENTS"],
+        "LICENSERENEWLINK":     '<a href="%s">%s</a>' % ( renew_url, _("Pay and renew license") ),
+        "LICENSERENEWSRC":      renew_url
     }
     return tags
 
