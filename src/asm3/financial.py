@@ -625,6 +625,18 @@ def get_licence(dbo: Database, licenceid: int) -> ResultRow:
     """
     return dbo.first_row( dbo.query(get_licence_query(dbo) + "WHERE ol.ID = ?", [licenceid]) )
 
+def get_licence_token(dbo: Database, token: str) -> ResultRow:
+    """
+    Returns a single licence by renewal token
+    """
+    return dbo.first_row( dbo.query(get_licence_query(dbo) + "WHERE ol.Token = ?", [token]) )
+
+def get_licence_fee(dbo: Database, licencetypeid: int) -> int:
+    """
+    Returns the licence fee amount from the selected licence type
+    """
+    return dbo.query_int("SELECT DefaultCost FROM licencetype WHERE ID=?", [licencetypeid])
+
 def get_licences(dbo: Database, offset: str = "i31") -> Results:
     """
     Returns a recordset of licences 
@@ -638,6 +650,13 @@ def get_licences(dbo: Database, offset: str = "i31") -> Results:
     if offset.startswith("e"):
         return dbo.query(get_licence_query(dbo) + " WHERE ol.ExpiryDate >= ? AND ol.ExpiryDate <= ? ORDER BY ol.ExpiryDate DESC", 
             (dbo.today(offsetdays*-1), dbo.today()))
+    
+def get_licences_payref(dbo: Database, payref: str) -> Results:
+    """
+    Returns licenses that are paid for by payref (used by paymentprocessor code 
+    to renew licences on receipt of payment)
+    """
+    return dbo.query(get_licence_query(dbo) + " WHERE ol.PaymentReference = ?", [payref])
 
 def get_person_vouchers(dbo: Database, personid: int) -> Results:
     """
@@ -1472,6 +1491,7 @@ def insert_licence_from_form(dbo: Database, username: str, post: PostedData) -> 
         "LicenceFee":       post.integer("fee"),
         "Token":            token,
         "Renewed":          0,
+        "PaymentReference": "",
         "IssueDate":        post.date("issuedate"),
         "ExpiryDate":       post.date("expirydate"),
         "Comments":         post["comments"]
@@ -1528,6 +1548,32 @@ def update_licence_renewed(dbo: Database, username: str, typeid: int, personid: 
                 "Renewed": renewed 
             }, username)
     return len(rows)
+
+def renew_licence_payref(dbo: Database, payref: str) -> None:
+    """
+    Finds the licences paid for by payref and marks them renewed.
+    For each licence, it creates a new licence with an issued date of last expiry + 1 day.
+    The fee will be the default cost from the licence type.
+    """
+    for r in dbo.query(get_licence_query() + " WHERE PaymentReference = ?", [payref]):
+        dbo.update("ownerlicence", r.ID, { "Renewed": 1 }, "system")
+        token = asm3.utils.uuid_b64().replace("=", "")
+        lt = dbo.first_row(dbo.query("SELECT DefaultCost, RescheduleDays FROM licencetype WHERE ID=?", [r.LICENCETYPEID]))
+        issuedate = asm3.i18n.add_days(r.EXPIRYDATE, 1)
+        expirydate = asm3.i18n.add_days(issuedate, lt.RESCHEDULEDAYS)
+        dbo.insert("ownerlicence", {
+            "OwnerID":          r.OWNERID,
+            "AnimalID":         r.ANIMALID,
+            "LicenceTypeID":    r.LICENCETYPEID,
+            "LicenceNumber":    r.LICENCENUMBER,
+            "LicenceFee":       lt.DEFAULTCOST,
+            "Token":            token,
+            "Renewed":          0,
+            "PaymentReference": "",
+            "IssueDate":        issuedate,
+            "ExpiryDate":       expirydate,
+            "Comments":         r.COMMENTS
+        }, "system")
 
 def delete_licence(dbo: Database, username: str, lid: int) -> None:
     """

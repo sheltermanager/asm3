@@ -44,7 +44,7 @@ VERSIONS = (
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
-    34807, 34808
+    34807, 34808, 34809
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1514,6 +1514,7 @@ def sql_structure(dbo: Database) -> str:
         fint("LicenceFee", True),
         fint("Renewed", True),
         fstr("Token", True),
+        fstr("PaymentReference", True),
         fdate("IssueDate"),
         fdate("ExpiryDate"),
         flongstr("Comments", True) ))
@@ -1523,6 +1524,7 @@ def sql_structure(dbo: Database) -> str:
     sql += index("ownerlicence_LicenceNumber", "ownerlicence", "LicenceNumber")
     sql += index("ownerlicence_Renewed", "ownerlicence", "Renewed")
     sql += index("ownerlicence_Token", "ownerlicence", "Token")
+    sql += index("ownerlicence_PaymentReference", "ownerlicence", "PaymentReference")
     sql += index("ownerlicence_IssueDate", "ownerlicence", "IssueDate")
     sql += index("ownerlicence_ExpiryDate", "ownerlicence", "ExpiryDate")
 
@@ -1815,23 +1817,26 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += account(3, _("Income::WaitingList", l), _("Waiting list donations", l), 5, 3, 0)
     sql += account(4, _("Income::EntryDonation", l), _("Donations for animals entering the shelter", l), 5, 4, 0)
     sql += account(5, _("Income::Sponsorship", l), _("Sponsorship donations", l), 5, 5, 0)
-    sql += account(6, _("Income::Shop", l), _("Income from an on-site shop", l), 5, 0, 0)
-    sql += account(7, _("Income::Interest", l), _("Bank account interest", l), 5, 0, 0)
-    sql += account(8, _("Income::OpeningBalances", l), _("Opening balances", l), 5, 0, 0)
-    sql += account(9, _("Bank::Current", l), _("Bank current account", l), 1, 0, 0)
-    sql += account(10, _("Bank::Deposit", l), _("Bank deposit account", l), 1, 0, 0)
-    sql += account(11, _("Bank::Savings", l), _("Bank savings account", l), 1, 0, 0)
-    sql += account(12, _("Asset::Premises", l), _("Premises", l), 8, 0, 0)
-    sql += account(13, _("Expenses::Phone", l), _("Telephone Bills", l), 4, 0, 0)
-    sql += account(14, _("Expenses::Electricity", l), _("Electricity Bills", l), 4, 0, 0)
-    sql += account(15, _("Expenses::Water", l), _("Water Bills", l), 4, 0, 0)
-    sql += account(16, _("Expenses::Gas", l), _("Gas Bills", l), 4, 0, 0)
-    sql += account(17, _("Expenses::Postage", l), _("Postage costs", l), 4, 0, 0)
-    sql += account(18, _("Expenses::Stationary", l), _("Stationary costs", l), 4, 0, 0)
-    sql += account(19, _("Expenses::Food", l), _("Animal food costs", l), 4, 0, 0)
-    sql += account(20, _("Expenses::Board", l), _("Animal board costs", l), 4, 0, 1)
-    sql += account(21, _("Expenses::TransactionFee", l), _("Transaction fees", l), 4, 0, 0)
-    sql += account(22, _("Income::SalesTax", l), _("Sales Tax", l), 5, 0, 0)
+    sql += account(7, _("Income::BoardingFee", l), _("Boarding fees", l), 5, 7, 0)
+    sql += account(8, _("Income::InMemoryOf", l), _("In Memory Of donations", l), 5, 8, 0)
+    sql += account(9, _("Income::LicenseFee", l), _("License fees", l), 5, 9, 0)
+    sql += account(10, _("Income::SalesTax", l), _("Sales Tax", l), 5, 0, 0)
+    sql += account(20, _("Income::Shop", l), _("Income from an on-site shop", l), 5, 0, 0)
+    sql += account(21, _("Income::Interest", l), _("Bank account interest", l), 5, 0, 0)
+    sql += account(22, _("Income::OpeningBalances", l), _("Opening balances", l), 5, 0, 0)
+    sql += account(30, _("Bank::Current", l), _("Bank current account", l), 1, 0, 0)
+    sql += account(31, _("Bank::Deposit", l), _("Bank deposit account", l), 1, 0, 0)
+    sql += account(32, _("Bank::Savings", l), _("Bank savings account", l), 1, 0, 0)
+    sql += account(33, _("Asset::Premises", l), _("Premises", l), 8, 0, 0)
+    sql += account(40, _("Expenses::Phone", l), _("Telephone Bills", l), 4, 0, 0)
+    sql += account(41, _("Expenses::Electricity", l), _("Electricity Bills", l), 4, 0, 0)
+    sql += account(42, _("Expenses::Water", l), _("Water Bills", l), 4, 0, 0)
+    sql += account(43, _("Expenses::Gas", l), _("Gas Bills", l), 4, 0, 0)
+    sql += account(44, _("Expenses::Postage", l), _("Postage costs", l), 4, 0, 0)
+    sql += account(45, _("Expenses::Stationary", l), _("Stationary costs", l), 4, 0, 0)
+    sql += account(46, _("Expenses::Food", l), _("Animal food costs", l), 4, 0, 0)
+    sql += account(47, _("Expenses::Board", l), _("Animal board costs", l), 4, 0, 1)
+    sql += account(48, _("Expenses::TransactionFee", l), _("Transaction fees", l), 4, 0, 0)
     sql += lookup2("animaltype", "AnimalType", 2, _("D (Dog)", l))
     sql += lookup2("animaltype", "AnimalType", 10, _("A (Stray Dog)", l))
     sql += lookup2("animaltype", "AnimalType", 11, _("U (Unwanted Cat)", l))
@@ -2327,8 +2332,9 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup2moneyaccount("donationtype", "DonationName", 4, _("Entry Donation", l), 4)
     sql += lookup2moneyaccount("donationtype", "DonationName", 5, _("Animal Sponsorship", l), 5)
     sql += lookup2moneyaccount("donationtype", "DonationName", 6, _("In-Kind Donation", l))
-    sql += lookup2moneyaccount("donationtype", "DonationName", 7, _("Boarding Fee", l))
-    sql += lookup2moneyaccount("donationtype", "DonationName", 8, _("In Memory Of", l))
+    sql += lookup2moneyaccount("donationtype", "DonationName", 7, _("Boarding Fee", l), 7)
+    sql += lookup2moneyaccount("donationtype", "DonationName", 8, _("In Memory Of", l), 8)
+    sql += lookup2moneyaccount("donationtype", "DonationName", 9, _("License Fee", l), 9)
     sql += lookup2("entryreason", "ReasonName", 1, _("Marriage/Relationship split", l))
     sql += lookup2("entryreason", "ReasonName", 2, _("Allergies", l))
     sql += lookup2("entryreason", "ReasonName", 3, _("Biting", l))
@@ -6180,3 +6186,9 @@ def update_34808(dbo: Database) -> None:
     dbo.execute_dbupdate("INSERT INTO lkclinictype VALUES (2, ?, '', 0)", [ _("Followup", l) ])
     dbo.execute_dbupdate("INSERT INTO lkclinictype VALUES (3, ?, '', 0)", [ _("Prescription", l) ])
     dbo.execute_dbupdate("INSERT INTO lkclinictype VALUES (4, ?, '', 0)", [ _("Surgery", l) ])
+
+def update_34809(dbo: Database) -> None:
+    # Add ownerlicence.PaymentReference
+    add_column(dbo, "ownerlicence", "PaymentReference", dbo.type_shorttext)
+    add_index(dbo, "ownerlicence_PaymentReference", "ownerlicence", "PaymentReference") 
+    dbo.execute_dbupdate("UPDATE ownerlicence SET PaymentReference = ''")

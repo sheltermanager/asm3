@@ -1,9 +1,16 @@
 48
 ================
 
-04/03/24 Online form: change spam honeypot and first name parameters
-02/03/24 Support fgcol/bgcol in calendar events for future use
-02/03/24 Typo in advanced search/jurisdiction field name
+08/03/24 Fix bug with forward slashes in litter references
+08/03/24 Licence renewal update from received payments #728
+07/04/24 Fix default payment types to account mappings in new databases
+07/04/24 Sort diary task dropdown alphanumerically
+06/04/24 Fix bad layout of deceased checkboxes, move owner req to entry
+06/04/24 Asilomar fields should always appear for US locales
+05/04/24 Licence renewal checkout screen #728
+04/04/24 Online form: change spam honeypot and first name parameters
+02/04/24 Support fgcol/bgcol in calendar events for future use
+02/04/24 Typo in advanced search/jurisdiction field name
 29/03/24 Recalculate litter count for each edit of the litter/animal
 28/03/24 Remove implant date as hard requirement for AKC/BuddyID
 27/03/24 Wordkeys to add animal diary notes to templates #1453

@@ -143,13 +143,7 @@ for d in asm.csv_to_list("%s/Donations.csv" % PATH):
     o = ppo[d["Supporter ID"]]
     od = asm.OwnerDonation()
     od.OwnerID = o.ID
-    od.DonationTypeID = 1 # General donation
-    if d["Category of Donation"] == "Memory of" or d["Category of Donation"] == "Honor of":
-        od.DonationTypeID = 1
-    if d["Category of Donation"] == "Adoption":
-        od.DonationTypeID = 2
-    if d["Category of Donation"] == "Sponsor":
-        od.DonationTypeID = 5
+    od.DonationTypeID = asm.donationtype_from_db(d["Category of Donation"], 1) # look up payment type in db
     od.DonationPaymentID = 1 # Cash - Default
     if d["Form of Donation"] == "Check":
         od.DonationPaymentID = 2
@@ -158,7 +152,7 @@ for d in asm.csv_to_list("%s/Donations.csv" % PATH):
     od.Date = getdate(d["Date of Donation"])
     if od.Date is None: 
         od.Date = NO_DATE
-    od.Comments = "Category: %s\n\n%s" % ( d["Category of Donation"], d["Comment for Other"])
+    od.Comments = d["Comment for Other"]
     ownerdonations.append(od)
 
 for d in asm.csv_to_list("%s/Sponsors.csv" % PATH):

@@ -2,7 +2,7 @@ Payment Breakdown By Date with Type and Method Totals
 ###
 Financial
 ###
-34204/Any rev01
+34204/Any rev02
 ###
 All payments in a given date period, with payment types, methods and totals
 ###
@@ -26,16 +26,20 @@ ORDER BY ownerdonation.Date, donationtype.DonationName, donationpayment.PaymentN
 $$HEADER
 
 <table border="1">
+<thead>
 <tr>
-<td><b>Date</b></td>
-<td><b>Payee Information</b></td>
-<td><b>Payment Method</b></td>  
-<td><b>Check Number</b></td>
-<td><b>Amount</b></td>
-<td><b>Payment Type</b></td>
-<td><b>Comments</b></td>
-HEADER$$
+<th><b>Date</b></th>
+<th><b>Payee Information</b></th>
+<th><b>Payment Method</b></th>  
+<th><b>Check Number</b></th>
+<th><b>Amount</b></th>
+<th><b>Payment Type</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
+HEADER$$
+  
 $$BODY
 <tr>
 <td>$date</td>
@@ -50,7 +54,9 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
+
 <h2>Total: {SUM.AMT}</h2>
 
 <div style='display:inline-block;'>
@@ -64,73 +70,4 @@ $$FOOTER
 </div>
 </div>
 <p>&nbsp;</p>
-FOOTER$$
-###
-SUBREPORT_PaymentTypeTotals
-+++
-SELECT donationtype.DonationName, SUM(od.Donation) AS MoneyAmount, COUNT(od.Donation) AS NumberOfPayments
-FROM ownerdonation od
-INNER JOIN donationpayment ON donationpayment.ID = od.DonationPaymentID
-INNER JOIN donationtype ON donationtype.ID = od.DonationTypeID 
-WHERE od.Date BETWEEN '$PARENTARG1$' AND '$PARENTARG2$' 
-GROUP BY donationtype.donationname
-+++
-$$HEADER
-<table border="1">
-<thead>
-<tr>
-<th>Payment Type</th>
-<th>Number of Payments</th> 
-<th>Amount</th>
-</tr>
-</thead>
-<tbody>
-HEADER$$
-
-$$BODY
-<tr>
-<td>$DONATIONNAME</td>
-<td>$NUMBEROFPAYMENTS</td>
-<td>$MONEYAMOUNT</td>
-</tr>
-BODY$$
-
-$$FOOTER
-</tbody>
-</table>
-FOOTER$$
-+++
-SUBREPORT_PaymentMethodTotals
-+++
-SELECT donationpayment.PaymentName, SUM(od.Donation) AS MoneyAmount, 
-COUNT(od.Donation) AS NumberOfPayments
-FROM ownerdonation od
-INNER JOIN donationpayment ON donationpayment.ID = od.DonationPaymentID
-INNER JOIN donationtype ON donationtype.ID = od.DonationTypeID 
-WHERE od.Date >= '$PARENTARG1$' AND od.Date <= '$PARENTARG2$' 
-GROUP BY donationpayment.PaymentName
-+++
-$$HEADER
-<table border="1">
-<thead>
-<tr>
-<th>Payment Method</th>
-<th>Number of Payments</th> 
-<th>Amount</th>
-</tr>
-</thead>
-<tbody>
-HEADER$$
-
-$$BODY
-<tr>
-<td>$PAYMENTNAME</td>
-<td>$NUMBEROFPAYMENTS</td>
-<td>$MONEYAMOUNT</td>
-</tr>
-BODY$$
-
-$$FOOTER
-</tbody>
-</table>
 FOOTER$$
