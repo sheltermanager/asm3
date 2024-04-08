@@ -1491,6 +1491,7 @@ def insert_licence_from_form(dbo: Database, username: str, post: PostedData) -> 
         "LicenceFee":       post.integer("fee"),
         "Token":            token,
         "Renewed":          0,
+        "PaymentReference": "",
         "IssueDate":        post.date("issuedate"),
         "ExpiryDate":       post.date("expirydate"),
         "Comments":         post["comments"]
@@ -1568,6 +1569,7 @@ def renew_licence_payref(dbo: Database, payref: str) -> None:
             "LicenceFee":       lt.DEFAULTCOST,
             "Token":            token,
             "Renewed":          0,
+            "PaymentReference": "",
             "IssueDate":        issuedate,
             "ExpiryDate":       expirydate,
             "Comments":         r.COMMENTS
