@@ -30,7 +30,7 @@ $(document).ready(function() {
         '</div>',
 
         '<div id="pane-review" class="container text-center">',
-        '<h2 class="mt-3">' + _("Review") + ' (1/3)</h2>',
+        '<h2 class="mt-3">' + _("Renew License") + '</h2>',
         '<div class="mb-3">',
             '<img src="service?account=' + controller.database + '&method=animal_image&animalid=' + controller.row.ANIMALID + 
                 '" style="width: 100%; max-width: 300px" />',

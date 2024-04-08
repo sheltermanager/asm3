@@ -348,7 +348,9 @@ def checkout_licence_page(dbo: Database, token: str) -> str:
             raise asm3.utils.ASMError("invalid token")
         if li.RENEWED == 1:
             raise asm3.utils.ASMError("license already renewed")
+        co = {}
         co["row"] = li
+        co["token"] = token
         co["licencenumber"] = li.LICENCENUMBER
         co["animalname"] = li.ANIMALNAME
         co["animalid"] = li.ANIMALID
@@ -356,8 +358,8 @@ def checkout_licence_page(dbo: Database, token: str) -> str:
         co["ownerid"] = li.OWNERID
         co["database"] = dbo.database
         co["paymentfeeid"] = 0
-        co["newfee"] = asm3.financial.get_licence_fee(li.LICENCETYPEID)
-        co["formatfee"] = format_currency(co["newfee"])
+        co["newfee"] = asm3.financial.get_licence_fee(dbo, li.LICENCETYPEID)
+        co["formatfee"] = format_currency(dbo.locale, co["newfee"])
         asm3.cachedisk.put(token, dbo.database, co, 86400 * 2)
     # Record that the checkout was accessed in the log
     logtypeid = asm3.configuration.system_log_type(dbo)
@@ -406,7 +408,7 @@ def checkout_licence_post(dbo: Database, post: PostedData) -> str:
     params = { 
         "account": dbo.database, 
         "method": "checkout",
-        "processor": co["paymentprocessor"],
+        "processor": co["processor"],
         "payref": co["payref"],
         "title": title.format(co["animalname"])
     }
