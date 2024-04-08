@@ -1555,13 +1555,13 @@ def renew_licence_payref(dbo: Database, payref: str) -> None:
     For each licence, it creates a new licence with an issued date of last expiry + 1 day.
     The fee will be the default cost from the licence type.
     """
-    for r in dbo.query(get_licence_query() + " WHERE PaymentReference = ?", [payref]):
+    for r in dbo.query(get_licence_query(dbo) + " WHERE PaymentReference = ?", [payref]):
         asm3.al.debug(f"renewing licence {r.ID} ({r.LICENCENUMBER}) from payref {payref}", "financial.renew_licence_payref", dbo)
         dbo.update("ownerlicence", r.ID, { "Renewed": 1 }, "system")
         token = asm3.utils.uuid_b64().replace("=", "")
         lt = dbo.first_row(dbo.query("SELECT DefaultCost, RescheduleDays FROM licencetype WHERE ID=?", [r.LICENCETYPEID]))
         issuedate = asm3.i18n.add_days(r.EXPIRYDATE, 1)
-        expirydate = asm3.i18n.add_days(issuedate, lt.RESCHEDULEDAYS)
+        expirydate = asm3.i18n.add_days(issuedate, lt.RESCHEDULEDAYS or 365) # default to a year if there's no rescheduledays
         dbo.insert("ownerlicence", {
             "OwnerID":          r.OWNERID,
             "AnimalID":         r.ANIMALID,

@@ -26,6 +26,7 @@ class TestLog(unittest.TestCase):
         }
         post = asm3.utils.PostedData(data, "en")
         nid = asm3.log.insert_log_from_form(base.get_dbo(), "test", 0, 1, post)
+        post["logid"] = str(nid)
         asm3.log.update_log_from_form(base.get_dbo(), "test", post)
         asm3.log.delete_log(base.get_dbo(), "test", nid)
 

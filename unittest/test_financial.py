@@ -196,6 +196,22 @@ class TestFinancial(unittest.TestCase):
         asm3.financial.update_licence_from_form(base.get_dbo(), "test", post)
         asm3.financial.delete_licence(base.get_dbo(), "test", lid)
 
+    def test_renew_licence_payref(self):
+        data = {
+            "person": "1",
+            "animal": "1",
+            "type": "1",
+            "number": "LICENCE",
+            "fee": "1000",
+            "issuedate": base.today_display(),
+            "expirydate": base.today_display()
+        }
+        post = asm3.utils.PostedData(data, "en")
+        lid = asm3.financial.insert_licence_from_form(base.get_dbo(), "test", post)
+        base.execute(f"UPDATE ownerlicence SET PaymentReference='PAYREF' WHERE ID={lid}")
+        asm3.financial.renew_licence_payref(base.get_dbo(), "PAYREF")
+        asm3.financial.delete_licence(base.get_dbo(), "test", lid)
+
     def test_giftaid_spreadsheet(self):
         asm3.financial.giftaid_spreadsheet(base.get_dbo(), "%s/../src/" % base.PATH, base.today(), base.today())
 
