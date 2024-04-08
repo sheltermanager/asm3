@@ -28,15 +28,18 @@
 15 | ^578077              | AVID Friendchip Norway | nb
 15 | ^578094              | AVID Friendchip Norway | nb
 15 | ^578097              | AVID Friendchip Norway | nb
+15 | ^6200001             | Maria João Gavina Alves da Conceição
 15 | ^6200900             | Dinazoo
 15 | ^6200941             | Gardipet 
 15 | ^6200953             | Propecuária
-15 | ^62009631            | AnimallTAG Europa LDA | en_PT en
-15 | ^6200978             | Plurivet
-15 | ^6200982             | Plurivet 
+15 | ^62009631            | AnimallTAG Europa LDA 
+15 | ^6200978             | MSD – Animal Health,Lda
+15 | ^6200982             | MSD – Animal Health,Lda
 15 | ^6200981             | Virbac            |
 15 | ^6200985             | Campifarma
-15 | ^6200991             | Medinfar-Sorológico             
+15 | ^6200991             | Medinfar-Sorológico    
+15 | ^62009920            | Campifarma  
+15 | ^62009921            | Campifarma        
 15 | ^688                 | Serbia
 15 | ^752                 | Trovan Sweden
 15 | ^900008              | Orthana Intertrade

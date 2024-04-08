@@ -2,7 +2,7 @@ Print Account
 ###
 Accounts
 ###
-2720/Any rev02
+2720/Any rev03
 ###
 Prints all transactions between two dates for an account (balance calculates from 0 = from)
 ###
@@ -34,6 +34,7 @@ ORDER BY TrxDate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>R</th>
@@ -43,6 +44,8 @@ $$HEADER
 <th>Credit</th>
 <th>Balance</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -58,5 +61,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

@@ -2,7 +2,7 @@ Active Fosters (Brief)
 ###
 Movements
 ###
-Any rev04
+Any rev05
 ###
 Active fosters, showing one foster per line.
 ###
@@ -25,6 +25,7 @@ ORDER BY FosteredTo
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Fosterer</th>
 <th>Contact</th>
@@ -36,6 +37,8 @@ $$HEADER
 <th>Date Of Birth</th>
 <th>Foster Started</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -56,6 +59,7 @@ M: $MOBILETELEPHONE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -63,7 +67,7 @@ Active Fosters (Brief, by State)
 ###
 Movements
 ###
-Any rev04
+Any rev05
 ###
 Active fosters, showing one foster per line and grouped by state.
 ###
@@ -91,6 +95,7 @@ $$GROUP_OwnerCounty
 $$HEAD
 <h2>$OwnerCounty</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Fosterer</th>
 <th>Contact</th>
@@ -102,7 +107,10 @@ $$HEAD
 <th>Date Of Birth</th>
 <th>Foster Started</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h2>Total $OwnerCounty: {COUNT.FosteredTo}</h2>
 GROUP$$

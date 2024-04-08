@@ -2,7 +2,7 @@ Active Foster Homes at Date by Species
 ###
 Movements
 ###
-33715/Any rev02
+33715/Any rev03
 ###
 The number of active foster homes on a given date by species, including capacity count
 ###
@@ -24,11 +24,14 @@ GROUP BY SpeciesName
 ###
 $$HEADER
 <table>
+<thead>
 <tr>
 <th>Species</th>
 <th>Active Foster Homes</th>
 <th>Capacity of Homes</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -40,6 +43,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <p>Total active foster homes: <b>{SUM.TotalHomes.0}</b></p>
 FOOTER$$

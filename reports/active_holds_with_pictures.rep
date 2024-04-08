@@ -2,7 +2,7 @@ Active holds with pictures
 ###
 Inventories
 ###
-3305/Any rev02
+3305/Any rev03
 ###
 Current holds with thumbnails for each animal.
 ###
@@ -37,6 +37,7 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1" width="100%">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -52,7 +53,10 @@ $$HEAD
 <th>Hold Expires</th>
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SPECIESNAME: {COUNT.ANIMALID}</p>
 GROUP$$
