@@ -1556,6 +1556,7 @@ def renew_licence_payref(dbo: Database, payref: str) -> None:
     The fee will be the default cost from the licence type.
     """
     for r in dbo.query(get_licence_query() + " WHERE PaymentReference = ?", [payref]):
+        asm3.al.debug(f"renewing licence {r.ID} ({r.LICENCENUMBER}) from payref {payref}", "financial.renew_licence_payref", dbo)
         dbo.update("ownerlicence", r.ID, { "Renewed": 1 }, "system")
         token = asm3.utils.uuid_b64().replace("=", "")
         lt = dbo.first_row(dbo.query("SELECT DefaultCost, RescheduleDays FROM licencetype WHERE ID=?", [r.LICENCETYPEID]))
