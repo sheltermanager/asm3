@@ -29,13 +29,13 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '<tr>',
-                '<td colspan="2">',
-                '<label for="puttosleep">' + _("Euthanized") + '</label>',
+                '<td></td>',
+                '<td>',
                 '<input class="asm-checkbox" type="checkbox" id="puttosleep" data-json="PUTTOSLEEP" data-post="puttosleep" />',
-                '<label for="deadonarrival">' + _("Dead on arrival") + '</label>',
+                '<label for="puttosleep">' + _("Euthanized") + '</label>',
+                '<br>',
                 '<input class="asm-checkbox" type="checkbox" id="deadonarrival" data-json="ISDOA" data-post="deadonarrival" />',
-                '<label for="asilomarownerrequested" class="asilomar ownereuth">' + "Owner requested euthanasia" + '</label>',
-                '<input class="asm-checkbox asilomar ownereuth" type="checkbox" id="asilomarownerrequested" data-json="ASILOMAROWNERREQUESTEDEUTHANASIA" data-post="asilomarownerrequested" />',
+                '<label for="deadonarrival">' + _("Dead on arrival") + '</label>',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -324,9 +324,15 @@ $(function() {
                 '<tr class="asilomar">',
                 '<td></td>',
                 '<td>',
+                '<input class="asm-checkbox asilomar ownereuth" type="checkbox" id="asilomarownerrequested" data-json="ASILOMAROWNERREQUESTEDEUTHANASIA" data-post="asilomarownerrequested" />',
+                '<label for="asilomarownerrequested" class="asilomar ownereuth">' + "Owner requested euthanasia" + '</label>',
+                '</td>',
+                '</tr>',
+                '<tr class="asilomar">',
+                '<td></td>',
+                '<td>',
                 '<input class="asm-checkbox" type="checkbox" id="asilomartransferexternal" data-json="ASILOMARISTRANSFEREXTERNAL" data-post="asilomartransferexternal" />',
-                '<label for="asilomartransferexternal">Outside community/coalition ',
-                '<span id="asilomartx-callout" class="asm-callout">This animal was transferred in from outside the community/coalition</span>',
+                '<label for="asilomartransferexternal">Transfer from outside community/coalition ',
                 '</label>',
                 '</td>',
                 '</tr>',
@@ -1063,8 +1069,7 @@ $(function() {
             }
 
             // If we're a US shelter and this is a cat or a dog, show the asilomar categories
-            if (asm.locale == "en" && !config.bool("DisableAsilomar") &&
-                ($("#species").select("value") == 1 || $("#species").select("value") == 2) ) {
+            if ((asm.locale == "en") && ($("#species").select("value") == 1 || $("#species").select("value") == 2)) {
                 $(".asilomar").show();
             }
             else {

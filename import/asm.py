@@ -211,12 +211,14 @@ def good_with(s):
 
 def get_currency(s):
     if s is None: return 0
-    if type(s) == int or type(s) == float: return int(s * 100)
+    if type(s) == int or type(s) == float: 
+        return int(round((s * 100.0)))
     if s.strip() == "": return 0
     s = s.replace("$", "")
     s = s.replace("&nbsp;", "")
     try:
-        return int(float(s) * 100)
+        # NOTE: use of round() avoids floating point errors, eg: 80.85 * 100 = 8084.99999999
+        return int(round(float(s) * 100.0))
     except:
         return 0
 

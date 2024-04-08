@@ -658,7 +658,7 @@ $(function() {
         render_checkout: function() {
             return [
                 '<div id="tab-checkout">',
-                '<p class="asm-header">' + _("Adoption Checkout"),
+                '<p class="asm-header">' + _("Checkout"),
                 '<span id="callout-adcheckout" class="asm-callout">' + _("This feature allows you to email an adopter to have them sign their adoption paperwork, pay the adoption fee and make an optional donation.") + '</span>',
                 '</p>',
                 '<table>',
@@ -1685,7 +1685,7 @@ $(function() {
 
                 '<p class="asm-header">' + _("Animals") + '</p>',
                 '<p>',
-                '<input data="DisableAsilomar" id="disableasilomar" class="asm-checkbox us" type="checkbox" /> <label for="disableasilomar" class="us">Remove the asilomar fields from the entry/deceased sections</label><br class="us" />',
+                //'<input data="DisableAsilomar" id="disableasilomar" class="asm-checkbox us" type="checkbox" /> <label for="disableasilomar" class="us">Remove the asilomar fields from the entry/deceased sections</label><br class="us" />',
                 '<input data="DisableEntryHistory" id="disableentryhistory" class="asm-checkbox" type="checkbox" /> <label for="disableentryhistory">' + _("Remove the entry history section from animal records") + '</label><br />',
                 '<input data="DontShowEntryType" id="entrytype" class="asm-checkbox" type="checkbox" /> <label for="entrytype">' + _("Remove the entry type field from animal entry details") + '</label><br />',
                 '<input data="DontShowCoatType" id="coattype" class="asm-checkbox" type="checkbox" /> <label for="coattype">' + _("Remove the coat type field from animal details") + '</label><br />',

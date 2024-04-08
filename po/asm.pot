@@ -883,7 +883,7 @@ msgstr ""
 msgid "Adoption"
 msgstr ""
 
-#: main.py service.py movement.py options.js move_adopt.js
+#: main.py service.py movement.py move_adopt.js
 msgid "Adoption Checkout"
 msgstr ""
 
@@ -2183,6 +2183,10 @@ msgstr ""
 
 #: options.js
 msgid "Boarding cost type"
+msgstr ""
+
+#: dbupdate.py
+msgid "Boarding fees"
 msgstr ""
 
 #: options.js
@@ -7112,6 +7116,10 @@ msgstr ""
 msgid "In Memory Of"
 msgstr ""
 
+#: dbupdate.py
+msgid "In Memory Of donations"
+msgstr ""
+
 #: animal.py
 msgid "In SubTotal"
 msgstr ""
@@ -7375,6 +7383,10 @@ msgid "Income::Adoption"
 msgstr ""
 
 #: dbupdate.py
+msgid "Income::BoardingFee"
+msgstr ""
+
+#: dbupdate.py
 msgid "Income::Donation"
 msgstr ""
 
@@ -7383,7 +7395,15 @@ msgid "Income::EntryDonation"
 msgstr ""
 
 #: dbupdate.py
+msgid "Income::InMemoryOf"
+msgstr ""
+
+#: dbupdate.py
 msgid "Income::Interest"
+msgstr ""
+
+#: dbupdate.py
+msgid "Income::LicenseFee"
 msgstr ""
 
 #: dbupdate.py
@@ -7890,7 +7910,7 @@ msgstr ""
 msgid "License Checkout"
 msgstr ""
 
-#: service_checkout_licence.js
+#: dbupdate.py service_checkout_licence.js
 msgid "License Fee"
 msgstr ""
 
@@ -7908,6 +7928,10 @@ msgstr ""
 
 #: options.js
 msgid "License fee payment type"
+msgstr ""
+
+#: dbupdate.py
+msgid "License fees"
 msgstr ""
 
 #: financial.py
