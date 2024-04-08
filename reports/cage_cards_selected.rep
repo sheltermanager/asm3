@@ -2,7 +2,7 @@ Cage Cards (selected)
 ###
 Inventories
 ###
-34302/Any omitcriteria omitheaderfooter rev02
+34302/Any omitcriteria omitheaderfooter rev03
 ###
 Animal cage cards with images for multiple selected animals.
 ###
@@ -77,7 +77,7 @@ $$BODY
 <table width="700" border="1">
 
 <tr>
-<td width="350" colspan="2">Name:<br /><font size="10">$animalname</font></td>
+<td width="350" colspan="2">Name:<br /><font size="10"><a target="_blank" href="animal?id=$AnimalID">$animalname</a></font></td>
 <td width="350" colspan="2"><font size="5">Code: <b>$sheltercode</b></font><br />
 <font size="3">Location: <b>$thelocation</b></font></td>
 </tr>

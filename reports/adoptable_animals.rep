@@ -2,7 +2,7 @@ Adoptable Animals
 ###
 Inventories
 ###
-34501/Any rev02
+34501/Any rev03
 ###
 List of adoptable animals with thumbnails.
 ###
@@ -61,7 +61,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AnimalID">$ANIMALNAME</a></td>
 <td>$BREEDNAME</td>
 <td>$SIZENAME</td>
 <td>$SEXNAME / $NEUTEREDNAME</td>

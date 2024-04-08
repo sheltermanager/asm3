@@ -2,7 +2,7 @@ Cage Card (litter)
 ###
 Inventories
 ###
-34302/Any omitcriteria omitheaderfooter rev01
+34302/Any omitcriteria omitheaderfooter rev02
 ###
 A cage card for all animals in a litter.
 ###
@@ -92,7 +92,7 @@ GROUP$$
 $$BODY
 <div class="card">
 <img height="200" src="{IMAGE.$ANIMALID}" /> <br>
-  NAME: $animalname <br>
+  NAME: <a target="_blank" href="animal?id=$AnimalID">$animalname</a> <br>
   MICROCHIP: <b>$identichipnumber</b> <br>
   SEX: $thesex <br>
   MARKINGS: $markings

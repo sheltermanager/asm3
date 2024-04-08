@@ -2,7 +2,7 @@ Active holds with pictures
 ###
 Inventories
 ###
-3305/Any rev01
+3305/Any rev02
 ###
 Current holds with thumbnails for each animal.
 ###
@@ -10,7 +10,7 @@ en
 ###
 SELECT
 a.ShelterCode,
-a.AnimalName,
+a.AnimalName, a.ID AS AID,
 a.BreedName,
 (SELECT Size FROM lksize WHERE ID = a.Size) AS aSize,
 (SELECT Sex FROM lksex WHERE ID = a.Sex) AS aSex,
@@ -60,7 +60,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$BREEDNAME</td>
 <td>$ASIZE</td>
 <td>$ASEX / $ANEUTERED</td>

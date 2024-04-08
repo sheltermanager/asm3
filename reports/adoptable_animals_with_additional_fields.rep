@@ -2,13 +2,13 @@ Adoptable Animals with Additional Fields
 ###
 Inventories
 ###
-34501/Any rev04
+34501/Any rev05
 ###
 List of adoptable animals with thumbnails.
 ###
 en
 ###
-SELECT a.ID, a.AnimalName, a.ShelterCode, a.AnimalAge, a.DisplayLocation, t.AnimalType, s.SpeciesName,
+SELECT a.ID AS AID, a.AnimalName, a.ShelterCode, a.AnimalAge, a.DisplayLocation, t.AnimalType, s.SpeciesName,
 a.BreedName, a.MostRecentEntryDate, aff.FieldLabel, aff.FieldName, af.Value
 FROM animal a
 LEFT OUTER JOIN additional af ON af.LinkID = a.ID
@@ -23,12 +23,12 @@ HEADER$$
 
 $$GROUP_AnimalName
 $$HEAD
-<h2>$ShelterCode - $AnimalName</h2>
+<h2>$ShelterCode - <a target="_blank" href="animal?id=$AID">$AnimalName</a></h2>
 <p>$BreedName $SpeciesName ($AnimalType), aged $AnimalAge, intake $MostRecentEntryDate, located at $DisplayLocation</p>
 <table border="0">
 <tr>
   <td>
-    <a target="_blank" href="{IMAGE.$ID}"><img border="0" src="{IMAGE.$ID"} width="100" /></a>
+    <a target="_blank" href="{IMAGE.$AID}"><img border="0" src="{IMAGE.$AID"} width="100" /></a>
   </td>
   <td>
     <table border="1">
