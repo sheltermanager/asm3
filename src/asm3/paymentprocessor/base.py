@@ -75,6 +75,7 @@ class PaymentProcessor(object):
         rawdata (str): The raw data from the payment service.
         The fee is only applied to the first payment if there are multiple payments in the payref.
         It is expected that received, vat and fee are all integer currency amounts in whole pence.
+        If there are licenses waiting to renew on this payment, handles calling out to that functionality too.
         """
         receiptnumber = self.getReceiptNumber(payref)
         rows = self.dbo.query("select donation, id from ownerdonation where receiptnumber=?", [receiptnumber])
@@ -84,6 +85,7 @@ class PaymentProcessor(object):
                 chequenumber=trxid,
                 fee=asm3.utils.iif(i==0 and fee>0, fee, 0),
                 rawdata=rawdata )
+            asm3.financial.renew_licence_payref(self.dbo, payref)
 
     def validatePaymentReference(self, payref: str) -> bool:
         """

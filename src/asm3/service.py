@@ -381,6 +381,9 @@ def checkout_licence_post(dbo: Database, post: PostedData) -> str:
         co["processor"] = asm3.configuration.adoption_checkout_processor(dbo)
         co["receiptnumber"] = asm3.financial.get_next_receipt_number(dbo) # Both go on the same receipt
         co["payref"] = "%s-%s" % (co["ownercode"], co["receiptnumber"])
+        # Link this payment reference to the licence so that when payment is received,
+        # we can update the licence and create the next one in the sequence
+        dbo.update("ownerlicence", co["row"].ID, { "PaymentReference": co["payref"] }, "system")
         # Renewal Fee
         co["paymentfeeid"] = asm3.financial.insert_donation_from_form(dbo, "checkout", asm3.utils.PostedData({
             "person":       str(co["ownerid"]),
@@ -399,10 +402,6 @@ def checkout_licence_post(dbo: Database, post: PostedData) -> str:
     logtypeid = asm3.configuration.system_log_type(dbo)
     logmsg = "LC02:%s:%s" % ( co["licencenumber"], co["newfee"] )
     asm3.log.add_log(dbo, "system", asm3.log.PERSON, co["ownerid"], logtypeid, logmsg)
-    # TODO: We need to set the renewed flag on the existing licence and create the new one
-    # problem is, we should only do it when the payment has actually been received, which
-    # means some kind of callback mechanism from paymentprocessor.receive. How to implement?
-    # Construct the payment checkout URL
     title = _("{0}: License renewal fee", l)
     params = { 
         "account": dbo.database, 
