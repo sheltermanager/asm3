@@ -3919,13 +3919,14 @@ def update_litter_count(dbo: Database, litterref: str) -> None:
     """
     Updates the CachedAnimalsLeft field for litterref
     """
+    litterref = str(litterref)
     l = dbo.first_row(dbo.query("SELECT l.*, " \
         "(SELECT COUNT(*) FROM animal a WHERE a.Archived = 0 " \
-        "AND a.AcceptanceNumber Like l.AcceptanceNumber AND a.DateOfBirth >= ?) AS dbcount " \
+        "AND a.AcceptanceNumber = l.AcceptanceNumber AND a.DateOfBirth >= ?) AS dbcount " \
         "FROM animallitter l " \
-        "WHERE l.AcceptanceNumber LIKE ?", ( subtract_months(dbo.today(), 6), litterref )))
+        "WHERE l.AcceptanceNumber = ?", ( subtract_months(dbo.today(), 6), litterref )))
     if l is not None:
-        dbo.execute("UPDATE animallitter SET CachedAnimalsLeft=? WHERE AcceptanceNumber LIKE ?", [l.dbcount, litterref])
+        dbo.execute("UPDATE animallitter SET CachedAnimalsLeft=? WHERE AcceptanceNumber = ?", [l.dbcount, litterref])
 
 def delete_litter(dbo: Database, username: str, lid: int) -> None:
     """

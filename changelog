@@ -1,6 +1,7 @@
 48
 ================
 
+08/03/24 Fix bug with forward slashes in litter references
 08/03/24 Licence renewal update from received payments #728
 07/04/24 Fix default payment types to account mappings in new databases
 07/04/24 Sort diary task dropdown alphanumerically
