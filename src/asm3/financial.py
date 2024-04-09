@@ -2,6 +2,7 @@
 import asm3.al
 import asm3.audit
 import asm3.animal
+import asm3.cachedisk
 import asm3.configuration
 import asm3.i18n
 import asm3.movement
@@ -1575,6 +1576,8 @@ def renew_licence_payref(dbo: Database, payref: str) -> None:
             "ExpiryDate":       expirydate,
             "Comments":         r.COMMENTS
         }, "system")
+        # Remove the cached checkout info
+        asm3.cachedisk.delete(r.TOKEN, dbo.database)
 
 def delete_licence(dbo: Database, username: str, lid: int) -> None:
     """
