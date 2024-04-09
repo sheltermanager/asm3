@@ -1158,9 +1158,11 @@ Licence Keys
 ------------
 
 Licence keys are only available for documents generated for a single licence
-under the licence tab or licencing book. Keys for the person purchasing the
-licence are also present and if the licence is linked to an animal, animal
-keys are also present.
+under the licence tab or licencing book (or for licence reminder emails as
+configured under :menuselection:`Settings --> Options --> Reminder Emails`). 
+
+Keys for the person purchasing the licence are also present and if the licence
+is linked to an animal, animal keys are also present.
 
 .. note:: You can use "Licence" or "License" when accessing these keys - either will work.
 
@@ -1176,6 +1178,10 @@ LicenceExpires
     The date the licence expires
 LicenceComments
     Any comments from the licence record
+LicenceRenewLink
+    A clickable link to "pay and renew this licence". Links to the licence checkout.
+LicenceRenewSrc
+    The link target only for renewing so that you can build your own link
 
 Voucher Keys
 ------------

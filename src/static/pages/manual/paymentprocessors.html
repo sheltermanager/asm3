@@ -262,7 +262,30 @@ process again from the movement tab/book.</p>
 </section>
 <section id="license-checkout">
 <h2>License checkout<a class="headerlink" href="#license-checkout" title="Permalink to this heading">¶</a></h2>
-<p>TBA</p>
+<p>The license checkout feature allows members of the public to renew and pay for
+their license online in a similar manner to the adoption checkout. Note that
+the first license for any animal/person combination must be created manually
+(or via an online form).</p>
+<p>This is a much simpler workflow than the adoption checkout in that they are
+shown a thumbnail (if available) for the animal they are renewing the license
+for, along with some info on the animal and the renewal cost that they are
+about to pay.</p>
+<p>They can then confirm that they wish to renew and will be taken off to the
+configured checkout payment processor to take the payment.</p>
+<p>Once the payment is complete and received the system will do the following:</p>
+<ul class="simple">
+<li><p>Flag the existing license as renewed</p></li>
+<li><p>Create a new license of the same type as the renewed license.</p></li>
+<li><p>The issue date of the new license will be set to expiry date + 1 day of the old license.</p></li>
+<li><p>The expiry date will be set to the issue date + the reschedule period for the license type.</p></li>
+<li><p>The fee will be set to the amount the person just paid (cost from the licence type)</p></li>
+</ul>
+<p>License reminder emails can be configured to be sent out a set number of days
+prior to the expiry of a license under <span class="menuselection">Settings ‣ Options ‣
+Reminder Emails</span>.</p>
+<p>You can use the token/wordkey &lt;&lt;LicenceRenewLink&gt;&gt; or &lt;&lt;LicenceRenewSrc&gt;&gt; in
+your email template to include a clickable link to take the person to the checkout
+to pay and renew.</p>
 </section>
 </section>
 
