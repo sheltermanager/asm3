@@ -205,6 +205,29 @@ $(function() {
                 },
                 { id: "document", text: _("Document"), icon: "document", enabled: "one", perm: "gaf", 
                     tooltip: _("Generate document from this license"), type: "buttonmenu" },
+                { id: "checkout", text: _("Checkout"), icon: "email", enabled: "one", perm: "emo",
+                    tooltip: _("Send a checkout email to the license holder"),
+                    hideif: function() {
+                        return config.str("AdoptionCheckoutProcessor") == "" || !config.integer("LicenceCheckoutFeeID");
+                    },
+                    click: function() {
+                        let row = tableform.table_selected_row(table);
+                        let link = controller.baselink + row.TOKEN;
+                        link = '<a href="' + link + '">' + link + '</a>';
+                        $("#emailform").emailform("show", {
+                            title: _("Email link to license checkout"),
+                            post: "licence",
+                            formdata: "mode=email&personid=" + row.OWNERID,
+                            name: row.OWNERNAME,
+                            email: row.EMAILADDRESS,
+                            subject: _("License checkout for {0}").replace("{0}", row.ANIMALNAME),
+                            licenceid: row.ID,
+                            templates: controller.templatesemail,
+                            logtypes: controller.logtypes,
+                            message: _("Please use the link below to renew your license.") + '<br><br>' + link
+                        });
+                    }
+                },
                 { id: "offset", type: "dropdownfilter", 
                     options: [ "i7|" + _("Issued in the last week"), 
                         "i31|" + _("Issued in the last month"), 
@@ -234,6 +257,7 @@ $(function() {
                 '<ul class="asm-menu-list">' +
                 edit_header.template_list(controller.templates, "LICENCE", 0) +
                 '</ul></div>';
+            s += '<div id="emailform"></div>';
             if (controller.name.indexOf("person_") == 0) {
                 s += edit_header.person_edit_header(controller.person, "licence", controller.tabcounts);
             }
@@ -251,6 +275,7 @@ $(function() {
 
         bind: function() {
             $(".asm-tabbar").asmtabs();
+            $("#emailform").emailform();
             $("#type").change(licence.type_change);
 
             // Add click handlers to templates
@@ -290,6 +315,7 @@ $(function() {
         destroy: function() {
             common.widget_destroy("#person");
             common.widget_destroy("#animal");
+            common.widget_destroy("#emailform");
             tableform.dialog_destroy();
         },
 

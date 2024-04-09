@@ -38,6 +38,9 @@ class Stripe(PaymentProcessor):
             #if r.VATRATE > 0: vatrate = r.VATRATE
             paymenttypes.append(r.DONATIONNAME)
 
+        zp = self._checkForZeroPaymentPage(payref, totalamount)
+        if zp != "": return zp
+
         item_description = item_description or ", ".join(paymenttypes)
         client_reference_id = "%s-%s" % (self.dbo.database, payref) # prefix database to payref 
 

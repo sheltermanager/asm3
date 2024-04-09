@@ -212,7 +212,7 @@ Once the payment is complete and received the system will do the following:
 
 * Flag the existing license as renewed
 * Create a new license of the same type as the renewed license. 
-* The issue date of the new license will be set to expiry date + 1 day of the old license. 
+* The issue date of the new license will be set to expiry date of the old license. 
 * The expiry date will be set to the issue date + the reschedule period for the license type.
 * The fee will be set to the amount the person just paid (cost from the licence type)
 

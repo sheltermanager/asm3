@@ -36,6 +36,30 @@ class PaymentProcessor(object):
         """
         raise NotImplementedError()
 
+    def _checkForZeroPaymentPage(self, payref: str, totalamount: int) -> str:
+        """ 
+        Should be called by implementations of checkoutPage.
+        If the total amount to be paid is 0, calls markPaymentReceived instead 
+        and returns some text instead of the checkoutPage.
+        This is useful for testing scenarios where payments are to be
+        received without having to use full test harnesses from the payment processor -
+        just make your payment $0.
+        Otherwise, an empty string is returned.
+        """
+        if totalamount == 0:
+            self.markPaymentReceived(payref, "ZEROPAYMENT", 0, 0, 0, "ZERO PAYMENT NO CALL MADE")
+            return "<!DOCTYPE html>\n" \
+                "<html>\n" \
+                "<head>\n" \
+                "<title>Zero payment</title>\n" \
+                "</head>\n" \
+                "<body>\n" \
+                "<h1>Zero payment</h1>\n" \
+                "<p>Payment is for 0, marking as received without calling processor.</p\n>" \
+                "</body>\n" \
+                "</html>"
+        return ""
+
     def getDataParam(self, data: str, p: str) -> str:
         """ Returns a URL encoded parameter p from data (str). """
         for b in data.split("&"):

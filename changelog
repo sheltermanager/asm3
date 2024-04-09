@@ -1,6 +1,8 @@
 48
 ================
 
+09/03/24 Automatically receive payments for $0 #463
+09/03/24 Add email checkout to licence screens #728
 08/03/24 Add LicenceRenewLink/LicenceRenewSrc wordkeys #728
 08/03/24 Fix bug with forward slashes in litter references
 08/03/24 Licence renewal update from received payments #728

@@ -130,7 +130,7 @@ def get_licence_query(dbo: Database) -> str:
         "x.Sex, s.SpeciesName, " \
         "o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, o.OwnerCode, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
-        "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone " \
+        "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress " \
         "FROM ownerlicence ol " \
         "LEFT OUTER JOIN licencetype lt ON lt.ID = ol.LicenceTypeID " \
         "LEFT OUTER JOIN owner o ON o.ID = ol.OwnerID " \
@@ -1552,7 +1552,7 @@ def update_licence_renewed(dbo: Database, username: str, typeid: int, personid: 
 def renew_licence_payref(dbo: Database, payref: str) -> None:
     """
     Finds the licences paid for by payref and marks them renewed.
-    For each licence, it creates a new licence with an issued date of last expiry + 1 day.
+    For each licence, it creates a new licence with an issued date of last expiry.
     The fee will be the default cost from the licence type.
     """
     for r in dbo.query(get_licence_query(dbo) + " WHERE PaymentReference = ?", [payref]):
@@ -1560,7 +1560,7 @@ def renew_licence_payref(dbo: Database, payref: str) -> None:
         dbo.update("ownerlicence", r.ID, { "Renewed": 1 }, "system")
         token = asm3.utils.uuid_b64().replace("=", "")
         lt = dbo.first_row(dbo.query("SELECT DefaultCost, RescheduleDays FROM licencetype WHERE ID=?", [r.LICENCETYPEID]))
-        issuedate = asm3.i18n.add_days(r.EXPIRYDATE, 1)
+        issuedate = r.EXPIRYDATE
         expirydate = asm3.i18n.add_days(issuedate, lt.RESCHEDULEDAYS or 365) # default to a year if there's no rescheduledays
         dbo.insert("ownerlicence", {
             "OwnerID":          r.OWNERID,

@@ -945,6 +945,7 @@ $.widget("asm.emailform", {
             let o = self.options.o;
             let formdata = "mode=emailtemplate&dtid=" + $("#em-template").val();
             if (o.animalcontrolid) { formdata += "&animalcontrolid=" + o.animalcontrolid; }
+            if (o.licenceid) { formdata += "&licenceid=" + o.licenceid; }
             if (o.donationids) { formdata += "&donationids=" + o.donationids; }
             if (o.personid) { formdata += "&personid=" + o.personid; }
             if (o.animalid) { formdata += "&animalid=" + o.animalid; }

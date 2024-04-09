@@ -38,6 +38,9 @@ class PayPal(PaymentProcessor):
             if r.VATRATE > 0: vatrate = r.VATRATE
             paymenttypes.append(r.DONATIONNAME)
 
+        zp = self._checkForZeroPaymentPage(payref, totalamount)
+        if zp != "": return zp
+
         if item_description == "": item_description = ", ".join(paymenttypes)
         if return_url == "": return_url = "%s/static/pages/payment_success.html" % BASE_URL
 

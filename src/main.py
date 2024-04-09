@@ -2158,6 +2158,7 @@ class animal_licence(JSONEndpoint):
             "name": "animal_licence",
             "rows": licences,
             "animal": a,
+            "baselink": f"{SERVICE_URL}?account={dbo.database}&method=checkout_licence&token=",
             "templates": asm3.template.get_document_templates(dbo, "licence"),
             "tabcounts": asm3.animal.get_satellite_counts(dbo, a["ID"])[0],
             "licencetypes": asm3.lookups.get_licence_types(dbo)
@@ -3271,6 +3272,8 @@ class document_gen(ASMEndpoint):
             content = asm3.wordprocessor.generate_animal_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalid"), o.user)
         elif o.post.integer("animalcontrolid") != 0:
             content = asm3.wordprocessor.generate_animalcontrol_doc(o.dbo, o.post.integer("dtid"), o.post.integer("animalcontrolid"), o.user)
+        elif o.post.integer("licenceid") != 0:
+            content = asm3.wordprocessor.generate_licence_doc(o.dbo, o.post.integer("dtid"), o.post.integer("licenceid"), o.user)
         else:
             content = asm3.template.get_document_template_content(o.dbo, o.post.integer("dtid"))
         tokens = asm3.wordprocessor.extract_mail_tokens(content)
@@ -4186,6 +4189,7 @@ class licence(JSONEndpoint):
         return {
             "name": "licence",
             "rows": licences,
+            "baselink": f"{SERVICE_URL}?account={dbo.database}&method=checkout_licence&token=",
             "templates": asm3.template.get_document_templates(dbo, "licence"),
             "licencetypes": asm3.lookups.get_licence_types(dbo)
         }
@@ -4202,6 +4206,10 @@ class licence(JSONEndpoint):
         self.check(asm3.users.DELETE_LICENCE)
         for lid in o.post.integer_list("ids"):
             asm3.financial.delete_licence(o.dbo, o.user, lid)
+
+    def post_email(self, o):
+        self.check(asm3.users.EMAIL_PERSON)
+        asm3.person.send_email_from_form(o.dbo, o.user, o.post)
 
 class licence_renewal(JSONEndpoint):
     url = "licence_renewal"
@@ -6211,6 +6219,7 @@ class person_licence(JSONEndpoint):
             "name": "person_licence",
             "rows": licences,
             "person": p,
+            "baselink": f"{SERVICE_URL}?account={dbo.database}&method=checkout_licence&token=",
             "templates": asm3.template.get_document_templates(dbo, "licence"),
             "tabcounts": asm3.person.get_satellite_counts(dbo, p["ID"])[0],
             "licencetypes": asm3.lookups.get_licence_types(dbo)
