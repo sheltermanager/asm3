@@ -1,11 +1,12 @@
 48
 ================
 
-09/03/24 Automatically receive payments for $0 #463
-09/03/24 Add email checkout to licence screens #728
-08/03/24 Add LicenceRenewLink/LicenceRenewSrc wordkeys #728
-08/03/24 Fix bug with forward slashes in litter references
-08/03/24 Licence renewal update from received payments #728
+10/04/24 Add en_NP (Nepalese) locale
+09/04/24 Automatically receive payments for $0 #463
+09/04/24 Add email checkout to licence screens #728
+08/04/24 Add LicenceRenewLink/LicenceRenewSrc wordkeys #728
+08/04/24 Fix bug with forward slashes in litter references
+08/04/24 Licence renewal update from received payments #728
 07/04/24 Fix default payment types to account mappings in new databases
 07/04/24 Sort diary task dropdown alphanumerically
 06/04/24 Fix bad layout of deceased checkboxes, move owner req to entry

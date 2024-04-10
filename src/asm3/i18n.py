@@ -100,6 +100,7 @@ locale_maps = {
     "en_MX":    ( "English", "Mexico", DMY, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", "6-104-L10" ),
     "en_MZ":    ( "English", "Mozambique", DMY, "MT", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", ".", "" ),
     "en_NA":    ( "English", "Namibia", YMD, DOLLAR, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", ""),
+    "en_NP":    ( "English", "Nepal", YMD, "&#8377;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
     "en_PH":    ( "English", "Philippines", MDY, "&#x20b1;", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
     "en_PT":    ( "English", "Portugal", HDMY, EURO, PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ",", " ", DST_UK ),
     "en_QA":    ( "English", "Qatar", DMY, "QR", PLURAL_ENGLISH, CURRENCY_PREFIX, 2, ".", ",", ""),
