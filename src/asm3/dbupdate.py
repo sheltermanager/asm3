@@ -6198,4 +6198,4 @@ def update_34810(dbo: Database) -> None:
     l = dbo.locale
     # Add entry type for owner requested euth and set it from the old field
     dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (10, ?)", [ _("Owner requested euthanasia", l) ])
-    dbo.execute_dbupdate("UPDATE animal SET EntryTypeID=10 WHERE AsilomarOwnerRequestedEuthanasia=1 AND PutToSleep=1")
+    dbo.execute_dbupdate("UPDATE animal SET EntryTypeID=10 WHERE AsilomarOwnerRequestedEuthanasia=1")

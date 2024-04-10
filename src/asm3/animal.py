@@ -2589,7 +2589,7 @@ def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> i
         "DateBroughtIn":    datebroughtin,
         "AsilomarIntakeCategory": 0,
         "AsilomarIsTransferExternal": 0,
-        "AsilomarOwnerRequestedEuthanasia": 0,
+        "AsilomarOwnerRequestedEuthanasia": asm3.utils.iif(post.integer("entrytype") == 10, 1, 0),
         "HealthProblems":   post["healthproblems"],
         "HasSpecialNeeds":  post.boolean("specialneeds"),
         "RabiesTag":        "",
