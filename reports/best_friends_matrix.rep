@@ -2,7 +2,7 @@ Best Friends: Data Matrix
 ###
 Figures
 ###
-34801/PostgreSQL rev11
+34810/PostgreSQL rev12
 ###
 Information needed to complete the Best Friends NMHP monthly data matrix.
 ###
@@ -185,8 +185,7 @@ AND NonShelterAnimal = 0) AS JuniorCatTransferOther,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0
-AND AsilomarOwnerRequestedEuthanasia = 1
+WHERE EntryTypeID = 10
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
@@ -194,8 +193,7 @@ AND NonShelterAnimal = 0) AS AdultDogRequestedEuth,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0
-AND AsilomarOwnerRequestedEuthanasia = 1
+WHERE EntryTypeID = 10
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 1
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 
@@ -203,8 +201,7 @@ AND NonShelterAnimal = 0) AS JuniorDogRequestedEuth,
 
 (SELECT COUNT(*) FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0
-AND AsilomarOwnerRequestedEuthanasia = 1
+WHERE EntryTypeID = 10
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth < DateBroughtIn - INTERVAL '5 months' 
@@ -212,8 +209,7 @@ AND NonShelterAnimal = 0) AS AdultCatRequestedEuth,
 
 (SELECT COUNT(*) FROM animal 
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE OriginalOwnerID > 0
-AND AsilomarOwnerRequestedEuthanasia = 1
+WHERE EntryTypeID = 10
 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' 
 AND SpeciesID = 2
 AND DateOfBirth >= DateBroughtIn - INTERVAL '5 months' 

@@ -402,16 +402,14 @@ AND DateOfBirth >= {broughtinm5}
 AND NonShelterAnimal = 0) AS JuniorTransferOutState,
 
 (SELECT COUNT(*) FROM animal
-WHERE EntryTypeID = 1
-AND AsilomarOwnerRequestedEuthanasia = 1
+WHERE EntryTypeID = 10
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth < {broughtinm5} 
 AND NonShelterAnimal = 0) AS AdultRequestedEuth,
 
 (SELECT COUNT(*) FROM animal 
-WHERE EntryTypeID = 1
-AND AsilomarOwnerRequestedEuthanasia = 1
+WHERE EntryTypeID = 10
 AND DateBroughtIn >= {from} AND DateBroughtIn <= {to} 
 AND SpeciesID IN ({specieslist})
 AND DateOfBirth >= {broughtinm5} 

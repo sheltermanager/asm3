@@ -2,7 +2,7 @@ shelteranimalscount.org Animal-Level Data Pilot
 ###
 Figures
 ###
-33600/PostgreSQL rev01
+34810/PostgreSQL rev02
 ###
 When run from Export Reports as CSV, produces a file containing data for the shelteranimalscount.org animal-level data pilot study.
 ###
@@ -27,8 +27,8 @@ CASE WHEN a.NeuteredDate Is Not Null THEN 'Altered in care' ELSE 'Altered at int
 CASE WHEN a.Declawed = 0 THEN 'No' ELSE 'Yes' END AS Declawed,
 a.BreedName AS Breed,
 to_char(a.DateBroughtIn, 'MM/DD/YYYY') AS "Intake Date",
-(SELECT ReasonName FROM entryreason WHERE ID=a.EntryReasonID) AS "Intake Type",
-'' AS "Intake subtype",
+(SELECT EntryTypeName FROM lksentrytype WHERE ID=a.EntryTypeID) AS "Intake Type",
+(SELECT ReasonName FROM entryreason WHERE ID=a.EntryReasonID) AS "Intake subtype",
 CASE WHEN a.IsTransfer=1 THEN (SELECT OwnerName FROM owner WHERE ID=a.BroughtInByOwnerID) ELSE '' END AS "Transfer source",
 (SELECT BaseColour FROM basecolour WHERE ID=a.BaseColourID) AS "Coat Color/Pattern",
 CASE WHEN a.IsNotAvailableForAdoption=0 AND a.Archived=0 AND a.ActiveMovementType=0 THEN 'Available' 

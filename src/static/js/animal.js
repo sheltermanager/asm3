@@ -324,13 +324,6 @@ $(function() {
                 '<tr class="asilomar">',
                 '<td></td>',
                 '<td>',
-                '<input class="asm-checkbox asilomar ownereuth" type="checkbox" id="asilomarownerrequested" data-json="ASILOMAROWNERREQUESTEDEUTHANASIA" data-post="asilomarownerrequested" />',
-                '<label for="asilomarownerrequested" class="asilomar ownereuth">' + "Owner requested euthanasia" + '</label>',
-                '</td>',
-                '</tr>',
-                '<tr class="asilomar">',
-                '<td></td>',
-                '<td>',
                 '<input class="asm-checkbox" type="checkbox" id="asilomartransferexternal" data-json="ASILOMARISTRANSFEREXTERNAL" data-post="asilomartransferexternal" />',
                 '<label for="asilomartransferexternal">Transfer from outside community/coalition ',
                 '</label>',
@@ -1069,7 +1062,9 @@ $(function() {
             }
 
             // If we're a US shelter and this is a cat or a dog, show the asilomar categories
-            if ((asm.locale == "en") && ($("#species").select("value") == 1 || $("#species").select("value") == 2)) {
+            if (!config.bool("DisableAsilomar") &&
+                (asm.locale == "en") &&
+                ($("#species").select("value") == 1 || $("#species").select("value") == 2)) {
                 $(".asilomar").show();
             }
             else {

@@ -2827,7 +2827,7 @@ def update_animal_from_form(dbo: Database, post: PostedData, username: str) -> N
         "DateBroughtIn":        post.datetime("datebroughtin", "timebroughtin"),
         "AsilomarIntakeCategory": post.integer("asilomarintakecategory"),
         "AsilomarIsTransferExternal": post.boolean("asilomartransferexternal"),
-        "AsilomarOwnerRequestedEuthanasia": post.boolean("asilomarownerrequested"),
+        "AsilomarOwnerRequestedEuthanasia": asm3.utils.iif(post.integer("entrytype") == 10, 1, 0),
         "HealthProblems":       post["healthproblems"],
         "HasSpecialNeeds":      post.boolean("specialneeds"),
         "RabiesTag":            post["rabiestag"],

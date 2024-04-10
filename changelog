@@ -1,6 +1,7 @@
 48
 ================
 
+10/04/24 Hide owner requested euth box, use entry type instead #1460
 10/04/24 Add en_NP (Nepalese) locale
 09/04/24 Automatically receive payments for $0 #463
 09/04/24 Add email checkout to licence screens #728

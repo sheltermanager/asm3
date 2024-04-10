@@ -44,7 +44,7 @@ VERSIONS = (
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
-    34807, 34808, 34809
+    34807, 34808, 34809, 34810
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -2455,6 +2455,7 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup1("lksentrytype", "EntryTypeName", 7, _("Seized", l))
     sql += lookup1("lksentrytype", "EntryTypeName", 8, _("Abandoned", l))
     sql += lookup1("lksentrytype", "EntryTypeName", 9, _("Dead on arrival", l))
+    sql += lookup1("lksentrytype", "EntryTypeName", 10, _("Owner requested euthanasia", l))
     sql += lookup1("lksfieldlink", "LinkType", 0, _("Animal - Additional", l))
     sql += lookup1("lksfieldlink", "LinkType", 2, _("Animal - Details", l))
     sql += lookup1("lksfieldlink", "LinkType", 3, _("Animal - Notes", l))
@@ -6192,3 +6193,9 @@ def update_34809(dbo: Database) -> None:
     add_column(dbo, "ownerlicence", "PaymentReference", dbo.type_shorttext)
     add_index(dbo, "ownerlicence_PaymentReference", "ownerlicence", "PaymentReference") 
     dbo.execute_dbupdate("UPDATE ownerlicence SET PaymentReference = ''")
+
+def update_34810(dbo: Database) -> None:
+    l = dbo.locale
+    # Add entry type for owner requested euth and set it from the old field
+    dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (10, ?)", [ _("Owner requested euthanasia", l) ])
+    dbo.execute_dbupdate("UPDATE animal SET EntryTypeID=10 WHERE AsilomarOwnerRequestedEuthanasia=1 AND PutToSleep=1")
