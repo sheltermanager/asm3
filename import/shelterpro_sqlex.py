@@ -34,15 +34,15 @@ UPDATE animalcontrol SET IncidentCompletedID = 29 WHERE IncidentCompletedID = 4;
 UPDATE animalcontrol SET IncidentTypeID = 35 WHERE IncidentTypeID = 5;
 """
 
-PATH = "/home/robin/tmp/asm3_import_data/shelterpro_mg3031"
+PATH = "/home/robin/tmp/asm3_import_data/shelterpro_fw3159"
 
 START_ID = 500
 
 BITE_IMPORT = True
 INCIDENT_IMPORT = True
-LICENCE_IMPORT = False
+LICENCE_IMPORT = True
 IMAGE_FILE_IMPORT = False
-IMAGE_TABLE_IMPORT = False
+IMAGE_TABLE_IMPORT = True
 PAYMENT_IMPORT = True
 MEDICAL_IMPORT = True
 VACCINATION_IMPORT = True
