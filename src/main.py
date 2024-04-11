@@ -2523,6 +2523,7 @@ class calendar_events(ASMEndpoint):
             # Show all diary notes on the calendar if the user chose to see all
             # on the home page, or they have permission to view all notes
             diarylink = "diary_edit_my"
+            diaryfilter = "uncompleted"
             if asm3.configuration.all_diary_home_page(dbo) or self.checkb(asm3.users.EDIT_ALL_DIARY_NOTES):
                 user = ""
                 diarylink = "diary_edit"
@@ -2531,6 +2532,11 @@ class calendar_events(ASMEndpoint):
                 # If the diary time is midnight, assume all day instead
                 if d.DIARYDATETIME.hour == 0 and d.DIARYDATETIME.minute == 0:
                     allday = True
+                # If the diary has been completed, change the filter to completed
+                if d.DIARYDATETIME > dbo.now():
+                    diaryfilter = "future"
+                if d.DATECOMPLETED is not None:
+                    diaryfilter = "completed"
                 events.append({ 
                     "title": d.SUBJECT, 
                     "allDay": allday, 
@@ -2538,7 +2544,7 @@ class calendar_events(ASMEndpoint):
                     "end": add_minutes(d.DIARYDATETIME, 60),
                     "tooltip": "%s %s %s" % (d["SUBJECT"], d["LINKINFO"], d["NOTE"]), 
                     "icon": "diary",
-                    "link": f"{diarylink}?id={d.ID}" })
+                    "link": f"{diarylink}?id={d.ID}&filter={diaryfilter}" })
         if "v" in ev and self.checkb(asm3.users.VIEW_VACCINATION):
             for v in asm3.medical.get_vaccinations_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
                 sub = "%s - %s" % (v.VACCINATIONTYPE, v.ANIMALNAME)
