@@ -134,9 +134,12 @@ def animals_to_page(dbo: Database, animals: Results, style="", speciesid=0, anim
     overweeks: Only return animals aged over weeks, 0 = ignore
     """
     # Get the specified template
-    head, body, foot = asm3.template.get_html_template(dbo, style)
-    if head == "":
+    if style == "":
         head, body, foot = get_animal_view_template(dbo)
+    else:
+        head, body, foot = asm3.template.get_html_template(dbo, style)
+        if head == "":
+            raise asm3.utils.ASMError(f"template {style} does not exist")
     # Substitute the header and footer tags
     org_tags = asm3.wordprocessor.org_tags(dbo, "system")
     head = asm3.wordprocessor.substitute_tags(head, org_tags, True, "$$", "$$")

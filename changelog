@@ -1,6 +1,7 @@
 48
 ================
 
+11/04/24 Throw an error when a template does not exist instead of animalview
 11/04/24 When viewing diary notes from the calendar choose the right filter
 10/04/24 Hide owner requested euth box, use entry type instead #1460
 10/04/24 Add en_NP (Nepalese) locale
