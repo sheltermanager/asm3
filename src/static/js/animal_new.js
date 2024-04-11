@@ -461,8 +461,8 @@ $(function() {
         },
 
         /* Update the breed selects to only show the breeds for the selected species.
-         * If no breeds are available the species will be displayed.
          * If the species is not in the list of CrossbreedSpecies, hides the crossbreed/second species.
+         * If there are no breeds for the species, includes a blank option with ID 0
          * */
         update_breed_select: function() {
             $('optgroup', $('#breed1')).remove();
@@ -475,7 +475,8 @@ $(function() {
             });
 
             if ($('#breed1 option').length == 0) {
-                $('#breed1').append("<option value='0'>"+$('#species option:selected').text()+"</option>");
+                $('#breed1').append("<option value='0'></option>");
+                //$('#breed1').append("<option value='0'>"+$('#species option:selected').text()+"</option>");
             }
 
             $('optgroup', $('#breed2')).remove();
@@ -488,7 +489,7 @@ $(function() {
             });
 
             if ($('#breed2 option').length == 0) {
-                $('#breed2').append("<option value='0'>"+$('#species option:selected').text()+"</option>");
+                $('#breed2').append("<option value='0'></option>");
             }
 
             if (common.array_in($("#species").val(), config.str("CrossbreedSpecies").split(",")) && !config.bool("UseSingleBreedField")) {
