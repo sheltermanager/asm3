@@ -2,7 +2,7 @@ Quality Control
 ###
 Auditing
 ###
-34702/PostgreSQL rev13
+34702/PostgreSQL rev14
 ###
 [Karen Waldroff] QC report, checks for common keying mistakes like adopting to rescues instead of transfers, bad state codes, etc. Customization Required.
 ###
@@ -15,6 +15,10 @@ en
 -- 2024-01-04 (13) - #A041. Bug fix to HW_FOLLOWUP that was missing old due dates.
 -- 2024-01-10 (13) - Added new $USE_ENTRY_TYPE$ CONST, added SQL identification numbers, #A024, A046, A047, AO48, AO49 modified to add USE_ENTRY_TYPE check, 
 -- 2014-01-10 (13) - AO24, AO25, A032, A033 modified to only report for 3 days, Added #A057, A058, A059 for use with new Entry Type.
+-- 2014-04-12 (14) - A011, A012, A014 modified for Asilomar changes; A020 added mediasize check; A024 added EntryType check and changed to 1 day, A025 changed to 1 day,
+--                   A032 added EntryType Check and changed to 1 day, A033 changed to 1 day, A041 changed to LEFT OUTER JOIN animaltest and added ActiveMovementDate check,
+--                   Added A060, P025 added USA check, P033 added 1 day check and alerts only once. CURRENT_DATE changed to '$CURRENT_DATE$' in all.
+--                   Removed REQUESTED_EUTH and ASILOMAR CONSTs.
 --
 -- ******************************************** INSTRUCTIONS **********************************************************
 -- 1.  Clone this report and change name to "Quality Control (Custom) (Version)". MAKE CHANGES TO CLONED VERSION ONLY!
@@ -48,8 +52,6 @@ $CONST TRANSFER_IN_IDS=15,16$ -- If you do have a 'Transfer In' Entry Reason cat
 $CONST DOA_DEATH_REASON_ID=1$ -- If you have a 'Dead On arrival' Death Reason, enter the ID here. (Settings > Lookup data > Death Reasons)
 $CONST EUTH_DEATH_REASON_IDS=3,5,6,7,8$ -- IDs of Death Reasons that should only be used with Euthanasia.  (Settings > Lookup data > Death Reasons)
 $CONST NONEUTH_DEATH_REASON_IDS=1,2$ -- IDs of Death Reasons that should NOT be used with Euthanasia.  (Settings > Lookup data > Death Reasons)
-$CONST REQUESTED_EUTH=5$ -- ID of 'Requested' Death Reason/Category if you have one.  If not, enter 0.  (Settings > Lookup data > Death Reasons)
-$CONST ASILOMAR='Yes'$ -- Enter 'Yes' you utilize the 'Owner requsted euthanasia' checkbox OR enter 'No' if you use the 'Euthanized' checkbox along with a Death Category/Reason similar to 'Requested' when recording a Requested Euthanisia.
 $CONST ACO_ASSIGN='Yes'$ -- Do you wish to be alerted when an ACO is NOT assigned to an Incident?
 $CONST USE_LITTERS='Yes'$ -- Do you create Litters under ASM > Edit litters?  Yes or No.
 $CONST MICROCHIP='Adoption'$ -- Do you microchip your pets upon Adoption, Alter, or None.
@@ -123,7 +125,7 @@ FROM animal
   INNER JOIN owner on owner.id = adoption.ownerid
   LEFT OUTER JOIN owner cw ON cw.ID = animal.adoptioncoordinatorID
 WHERE animal.nonshelteranimal = 0
-  AND date_trunc('day', animal.LastChangedDate) = current_date -1
+  AND date_trunc('day', animal.LastChangedDate) = '$CURRENT_DATE-1$'
   AND adoption.movementtype = 1
   AND (owner.AdditionalFlags LIKE 'shelter|%' OR owner.AdditionalFlags  LIKE '%|shelter|%')
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
@@ -139,7 +141,7 @@ UNION SELECT
 FROM ownerdonation od
   LEFT OUTER JOIN owner o ON od.OwnerID = o.ID
   INNER JOIN animal ON od.AnimalID = animal.ID
-WHERE date_trunc('day', animal.LastChangedDate) = current_date -1
+WHERE date_trunc('day', animal.LastChangedDate) = '$CURRENT_DATE-1$'
   AND od.donationtypeid in ($ADOPTION_IDS$)
   AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = od.ownerid OR ReturnedByOwnerID = od.ownerid)
 
@@ -184,7 +186,7 @@ UNION SELECT
 FROM animal
 WHERE NULLIF(regexp_replace('$NON_SHELTER_ANIMALTYPE_IDS$', '\D','','g'), '')::numeric > 0
   AND animal.animalname NOT LIKE 'Template%'
-  AND date_trunc('day', LastChangedDate) = current_date -1
+  AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
   AND ((animal.NonShelterAnimal = 0 AND animal.animaltypeid IN ($NON_SHELTER_ANIMALTYPE_IDS$))
   OR
   (animal.NonShelterAnimal = 1 AND animal.animaltypeid NOT IN ($NON_SHELTER_ANIMALTYPE_IDS$)))
@@ -196,7 +198,7 @@ UNION SELECT
   date(animal.LastChangedDate) AS issuedate,
   '<font color = "Red">Breed issue (Possible). Abyssinian or Affenpinscher selected. Alerts Only Once. (A007)</font>' AS issue
 FROM animal
-WHERE date_trunc('day', LastChangedDate) = current_date -1
+WHERE date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
   AND (BreedName like '%Abyssinian%' OR BreedName like '%Affenpinscher%')
   AND animal.animalname NOT LIKE 'Template%'
 
@@ -241,7 +243,7 @@ WHERE $DOA_DEATH_REASON_ID$ > 0
 
 --#A011. Euthanasia check box not selected.  Added 8/12/21
 UNION SELECT
-  '<a href="'||$SERVER_URL$||'/animal?id='||animal.ID||'" target="_'||$OPEN_IN_TAB$||'">'||animal.AnimalName||'</a>' AS Name,
+  '<a href="'||$SERVER_URL$||'/animal?id='||animal.ID||'" target="_'||$OPEN_IN_TAB$||'">'||animal.AnimalName||'</a>' AS name,
   animal.sheltercode as code,
   date(animal.LastChangedDate) as issuedate,
     'Death issue.  <i>Euthanized</i> Checkbox needs to be selected. (A011)' AS issue
@@ -249,20 +251,21 @@ FROM animal
 WHERE animal.LastChangedDate >= $REVIEW_DATE$
   AND PutToSleep = 0
   AND DECEASEDDATE is not null
-  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%') 
-  AND (($ASILOMAR$='No' AND PTSReasonID IN ($EUTH_DEATH_REASON_IDS$))
-	OR
-      ($ASILOMAR$='Yes' AND PTSReasonID IN ($EUTH_DEATH_REASON_IDS$) AND PTSReasonID NOT IN ($REQUESTED_EUTH$) AND AsilomarOwnerRequestedEuthanasia = 0))  
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+  AND PTSReasonID IN ($EUTH_DEATH_REASON_IDS$)
+  --AND (($ASILOMAR$='No' AND PTSReasonID IN ($EUTH_DEATH_REASON_IDS$))
+  --	OR
+  --    ($ASILOMAR$='Yes' AND PTSReasonID IN ($EUTH_DEATH_REASON_IDS$) AND PTSReasonID NOT IN ($REQUESTED_EUTH$) AND AsilomarOwnerRequestedEuthanasia = 0))  
 
 --#A012. Invalid death reason with euthanasia check box selected. Added 8/12/21
 UNION SELECT
-  '<a href="'||$SERVER_URL$||'/animal?id='||animal.ID||'" target="_'||$OPEN_IN_TAB$||'">'||animal.AnimalName||'</a>' AS Name,
+  '<a href="'||$SERVER_URL$||'/animal?id='||animal.ID||'" target="_'||$OPEN_IN_TAB$||'">'||animal.AnimalName||'</a>' AS name,
   animal.sheltercode as code,
   date(animal.LastChangedDate) as issuedate,
   'Death issue.  Invalid Death Reason for selected <i>Euthanized</i> box. (A012)' AS issue
 FROM animal
 WHERE animal.LastChangedDate >= $REVIEW_DATE$
-  AND (animal.PutToSleep = 1 OR AsilomarOwnerRequestedEuthanasia = 1)
+  AND animal.PutToSleep = 1
   AND animal.PTSReasonID IN ($NONEUTH_DEATH_REASON_IDS$)
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%') 
 
@@ -278,20 +281,20 @@ WHERE (puttosleep = 1 OR diedoffshelter = 1 OR isdoa = 1)
   AND deceaseddate IS NULL
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
---#A014. Euthanasia check box not selected.  Added 6/9/2023
-UNION SELECT
-  '<a href="'||$SERVER_URL$||'/animal?id='||animal.ID||'" target="_'||$OPEN_IN_TAB$||'">'||animal.AnimalName||'</a>' AS Name,
-  animal.sheltercode as code,
-  date(animal.LastChangedDate) as issuedate,
-    'Death issue.  <i>Owner requested euthanasia</i> Checkbox needs to be selected. (A014)' AS issue
-FROM animal
-WHERE animal.LastChangedDate >= $REVIEW_DATE$
-  AND $ASILOMAR$='Yes'
-  AND PutToSleep = 0
-  AND PTSReasonID in ($REQUESTED_EUTH$)
-  AND AsilomarOwnerRequestedEuthanasia = 0
-  AND DECEASEDDATE is not null
-  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')   
+--#A014. Euthanasia check box not selected.  Added 6/9/2023. 4/11/2024 No longer needed with new "Owner requested euthanasia" Entry Type
+--UNION SELECT
+--  '<a href="'||$SERVER_URL$||'/animal?id='||animal.ID||'" target="_'||$OPEN_IN_TAB$||'">'||animal.AnimalName||'</a>' AS Name,
+--  animal.sheltercode as code,
+--  date(animal.LastChangedDate) as issuedate,
+--    'Death issue.  <i>Owner requested euthanasia</i> Checkbox needs to be selected. (A014)' AS issue
+--FROM animal
+--WHERE animal.LastChangedDate >= $REVIEW_DATE$
+--  AND $ASILOMAR$='Yes'
+--  AND PutToSleep = 0
+--  AND PTSReasonID in ($REQUESTED_EUTH$)
+--  AND AsilomarOwnerRequestedEuthanasia = 0
+--  AND DECEASEDDATE is not null
+--  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')   
 
 --#A015. Reports when AC Incident Completion Time is not entered.
 UNION SELECT 
@@ -316,7 +319,7 @@ LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
 LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID
 WHERE  ac.IncidentCompletedID = 0
   AND CompletedDate Is Not Null  
-  AND date_trunc('day', ac.LastChangedDate) = current_date -1  
+  AND date_trunc('day', ac.LastChangedDate) = '$CURRENT_DATE-1$'  
 
 --#A017. Reports when AC Incident doesn't have an officer Assigned.
 UNION SELECT 
@@ -329,7 +332,7 @@ FROM animalcontrol ac
 LEFT OUTER JOIN incidenttype ti ON ti.ID = ac.IncidentTypeID
 LEFT OUTER JOIN incidentcompleted ci ON ci.ID = ac.IncidentCompletedID
 WHERE $ACO_ASSIGN$ = 'Yes'
-  AND date_trunc('day', ac.IncidentDateTime) = current_date -1
+  AND date_trunc('day', ac.IncidentDateTime) = '$CURRENT_DATE-1$'
   AND ac.DispatchedACO = ''
   AND ac.CompletedDate IS NULL
   
@@ -354,7 +357,7 @@ UNION SELECT
 FROM animal
 INNER JOIN animallitter ON animallitter.AcceptanceNumber = animal.acceptancenumber
 WHERE animal.NONSHELTERANIMAL = 0 
-  AND date_trunc('day', animallitter.Date) = current_date -1
+  AND date_trunc('day', animallitter.Date) = '$CURRENT_DATE-1$'
   AND animal.archived = 0
   AND date(animal.DateBroughtIn) <> date(animallitter.Date)
   AND animal.id <> animallitter.ParentAnimalID
@@ -374,6 +377,7 @@ UNION SELECT
   'Media Issue.  Rename document or delete blank <i>New document</i>. (A020)' AS issue
 FROM media
 WHERE medianotes = 'New document'
+  AND MEDIASIZE = 0
   AND media.createddate >= $REVIEW_DATE$
 
 --#A021. Alerts when adopted and marked microchip, but no microchip number entered.
@@ -388,7 +392,7 @@ WHERE $MICROCHIP$ = 'Yes'
   AND animal.Identichipped = 1 
   AND animal.Identichipnumber = ''
   AND NOT animal.ActiveMovementType = 5
-  AND animal.activemovementdate > current_date - 3
+  AND animal.activemovementdate > '$CURRENT_DATE-3$'
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --#A022. Alerts when an animal is adopted or altered, but hasn't been microchipped.
@@ -399,7 +403,7 @@ UNION SELECT
   'Microchip issue.  Not Microchipped. <font color = "Red">Alerts for 3 days.</font> (A022)' AS issue 
 FROM animal
 INNER JOIN Species ON Species.ID = animal.SpeciesID
-WHERE animal.LastChangedDate > current_date - 3
+WHERE animal.LastChangedDate > '$CURRENT_DATE-3$'
   AND animal.deceaseddate IS NULL
   AND animal.NONSHELTERANIMAL = 0
   AND animal.Identichipped = 0
@@ -429,14 +433,14 @@ UNION SELECT
   '<a href="'||$SERVER_URL$||'/animal?id='||animal.ID||'" target="_'||$OPEN_IN_TAB$||'">'||animal.AnimalName||'</a>' AS Name,
   animal.sheltercode AS code,
   date(animal.LastChangedDate) AS issuedate,
-  'No Owner in <i>Original Owner</i> field in Entry section even though designated owner surrender type in Entry Category. <font color="red">Alerts for 3 days.</font> (A024)' AS issue
+  '<font color="red">No Owner in <i>Original Owner</i> field in Entry section even though designated owner surrender type in Entry Category or Entry Type. Alerts Only Once. (A024)</font>' AS issue
 FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE $USE_ENTRY_TYPE$ = 'No'
-  AND animal.DateBroughtIn > current_date - 3
+  AND animal.DateBroughtIn = '$CURRENT_DATE-1$'
   AND animal.archived=0
   AND animal.originalownerid = 0
-  AND animal.entryreasonid IN ($OS_ENTRY_IDS$)
+  AND (animal.entryreasonid IN ($OS_ENTRY_IDS$) OR animal.entrytypeID = 1)
   AND animal.istransfer = 0
   AND animal.reasonno = '' -- make sure a Reason not from owner wasn't entered
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
@@ -447,10 +451,10 @@ UNION SELECT
   '<a href="'||$SERVER_URL$||'/animal?id='||animal.ID||'" target="_'||$OPEN_IN_TAB$||'">'||animal.AnimalName||'</a>' AS Name,
   animal.sheltercode AS code,
   date(animal.LastChangedDate) AS issuedate,
-  'No Owner in <i>Original Owner</i> field in Entry section even though designated an owner surrender Animal Type. <font color="red">Alerts for 3 days.</font> (A025)' AS issue
+  '<font color="red">No Owner in <i>Original Owner</i> field in Entry section even though designated an owner surrender Animal Type. Alerts Only Once. (A025)</font>' AS issue
 FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE animal.DateBroughtIn > current_date - 3
+WHERE animal.DateBroughtIn = '$CURRENT_DATE-1$'
   AND animal.archived=0
   AND animal.originalownerid = 0
   AND animal.animaltypeid IN ($OS_TYPE_IDS$)
@@ -479,7 +483,7 @@ UNION SELECT
   date(animal.LastChangedDate) AS issuedate,
   '<font color = "Red"><i>Non-Shelter</i> Flag added to animal with an active movement. Alerts Only Once. (A027)</font>' AS issue
 FROM animal
-WHERE date_trunc('day', LastChangedDate) = current_date -1
+WHERE date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
   AND nonshelteranimal = 1 
   AND activemovementtype > 0
 
@@ -558,7 +562,7 @@ UNION SELECT
    '<font color = "Red"><i>Owner</i> field in Details Section has changed.  Be sure that this was not changed instead of creating a Movement.  This should only be used when an <b>adopter</b> re-homes an animal and you do not wish to track that Movement. Alerts Only Once. (A031)</font>' AS issue
 FROM animal
 INNER JOIN adoption ON adoption.id = animal.activemovementid
-WHERE date_trunc('day', animal.LASTCHANGEDDATE) = current_date -1
+WHERE date_trunc('day', animal.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'
   AND animal.ownerid <> adoption.ownerid
   AND adoption.MovementType = 1
   AND adoption.istrial = 0
@@ -570,16 +574,16 @@ UNION SELECT
   '<a href="'||$SERVER_URL$||'/animal?id='||animal.ID||'" target="_'||$OPEN_IN_TAB$||'">'||animal.AnimalName||'</a>' AS Name,
   animal.sheltercode AS code,
   date(animal.LastChangedDate) AS issuedate,
-  'Person in <i>Original Owner</i> field in Entry section even though designated as a non-owned Entry Category. <font color="red">Alerts for 3 days.</font> (A032)' AS issue 
+  '<font color="red">Person in <i>Original Owner</i> field in Entry section even though designated as a non-owned Entry Category or Entry Type. Alerts Only Once. (A032)</font>' AS issue 
 FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE animal.DateBroughtIn > current_date - 3
+WHERE animal.DateBroughtIn = '$CURRENT_DATE-1$'
   AND animal.archived = 0
   AND animal.nonshelteranimal = 0
   AND NOT animal.originalownerid = 0
   AND animal.istransfer = 0
   AND animal.IsPickup = 0
-  AND animal.entryreasonid IN ($NON_OS_ENTRY_IDS$)
+  AND (animal.entryreasonid IN ($NON_OS_ENTRY_IDS$) OR animal.entrytypeID <> 1)
   AND animal.reasonno = '' -- make sure a Reason not from owner wasn't entered
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
@@ -588,10 +592,10 @@ UNION SELECT
   '<a href="'||$SERVER_URL$||'/animal?id='||animal.ID||'" target="_'||$OPEN_IN_TAB$||'">'||animal.AnimalName||'</a>' AS Name,
   animal.sheltercode AS code,
   date(animal.LastChangedDate) AS issuedate,
-  'Person in <i>Original Owner</i> field in Entry section even though designated as a non-owned Animal Type. <font color="red">Alerts for 3 days.</font> (A033)' AS issue 
+  '<font color="red">Person in <i>Original Owner</i> field in Entry section even though designated as a non-owned Animal Type. Alerts Only Once. (A033)</font>' AS issue 
 FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
-WHERE animal.DateBroughtIn > current_date - 3
+WHERE animal.DateBroughtIn = '$CURRENT_DATE-1$'
   AND animal.archived = 0
   AND animal.nonshelteranimal = 0
   AND NOT animal.originalownerid = 0
@@ -608,7 +612,7 @@ UNION SELECT
   current_date AS issuedate,
       '<font color = "Red">Please review Publishing > View publishing logs > for error. Alerts Only Once. (A034)</font>' AS issue
 FROM publishlog
-WHERE date_trunc('day', publishlog.publishdatetime) = current_date
+WHERE date_trunc('day', publishlog.publishdatetime) = '$CURRENT_DATE$'
   AND ALERTS > 0
   AND LOGDATA NOT LIKE '%Got 0 matching animals for publishing%'
 
@@ -703,7 +707,7 @@ FROM animal
 WHERE $HW_TEST$ = 'Yes'
   AND animal.deceaseddate IS NULL
   AND animal.activemovementtype = 1
-  AND animal.activemovementdate > current_date - 3
+  AND animal.activemovementdate > '$CURRENT_DATE-3$'
   AND EXTRACT(days FROM animal.datebroughtin - animal.dateofbirth) > 180
   AND animal.heartwormtested = 0
   AND Species.SpeciesName = 'Dog'
@@ -719,17 +723,17 @@ UNION SELECT
 FROM animal
   INNER JOIN species ON species.ID = animal.SpeciesID
   LEFT OUTER JOIN owner cw ON cw.ID = animal.adoptioncoordinatorID
-  INNER JOIN animaltest ON animaltest.animalid = animal.ID
+  LEFT OUTER JOIN animaltest ON animaltest.animalid = animal.ID
 WHERE $HW_FOLLOWUP$ = 'Yes'
   AND animal.DeceasedDate IS NULL
-  AND (animal.archived=0 OR animal.activemovementtype IN (1,11))
+  AND (animal.archived=0 OR (animal.activemovementtype IN (1,11) AND animal.ActiveMovementDate > '$CURRENT_DATE-730$'))
   AND animal.HeartwormTestResult = 2
   AND Species.SpeciesName = 'Dog'
   AND ((animaltest.TestTypeID IN ($HW_TEST_IDS$) and animaltest.DateRequired < CURRENT_DATE AND animaltest.DATEOFTEST is null)
        OR
       (animal.HeartwormTestDate < CURRENT_DATE - INTERVAL '1 year'
   AND NOT EXISTS(SELECT animaltest.testtypeid FROM animaltest WHERE animaltest.AnimalID = animal.ID AND animaltest.TestTypeID IN ($HW_TEST_IDS$) and animaltest.DATEOFTEST is null)))
-  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%') 
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')  
 
 --#A042. Alerts if a three month old cat hasn't been FIV Tested.
 UNION SELECT
@@ -745,7 +749,7 @@ WHERE $FIV_TEST$ = 'Yes'
   AND Species.SpeciesName = 'Cat'
   AND EXTRACT(days FROM current_date - animal.dateofbirth) >= $FIV_DAYS_OLD$
   AND animal.combitested = 0
-    AND (animal.IsHold = 0 or animal.HoldUntilDate < current_date)
+    AND (animal.IsHold = 0 or animal.HoldUntilDate < '$CURRENT_DATE$')
   AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
   
 --#A043. Two-part check for FIV/FLV Test
@@ -794,7 +798,7 @@ FROM animal
 WHERE $FIV_TEST$ = 'Yes'
   AND animal.deceaseddate IS NULL
   AND animal.activemovementtype = 1
-  AND animal.activemovementdate > current_date - 3
+  AND animal.activemovementdate > '$CURRENT_DATE-3$'
   AND EXTRACT(days FROM animal.datebroughtin - animal.dateofbirth) > 60
   AND animal.CombiTested = 0
   AND Species.SpeciesName = 'Cat'
@@ -810,7 +814,7 @@ UNION SELECT
 FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE $USE_ENTRY_TYPE$ = 'No'
-  AND animal.DateBroughtIn > current_date - 3
+  AND animal.DateBroughtIn > '$CURRENT_DATE-3$'
   AND animal.nonshelteranimal = 0
   AND animal.broughtinbyownerid = 0
   AND (animal.istransfer = 1 OR animal.EntryReasonID IN ($TRANSFER_IN_IDS$))
@@ -826,7 +830,7 @@ UNION SELECT
 FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 INNER JOIN owner on owner.id = animal.broughtinbyownerid
-WHERE date_trunc('day', animal.DateBroughtIn) = current_date -1
+WHERE date_trunc('day', animal.DateBroughtIn) = '$CURRENT_DATE-1$'
   AND animal.nonshelteranimal = 0
   AND animal.broughtinbyownerid <> 0
   AND NOT (owner.AdditionalFlags LIKE 'shelter|%' OR owner.AdditionalFlags  LIKE '%|shelter|%' OR owner.AdditionalFlags LIKE 'vet|%' OR owner.AdditionalFlags LIKE '%|vet|%')
@@ -843,7 +847,7 @@ FROM animal
    INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE $TRANSFER_IN_CATEGORY$ = 'Yes'
   AND $USE_ENTRY_TYPE$ = 'No'
-  AND date_trunc('day', animal.DateBroughtIn) = current_date -1
+  AND date_trunc('day', animal.DateBroughtIn) = '$CURRENT_DATE-1$'
   AND animal.nonshelteranimal = 0
   AND animal.archived = 0
   AND animal.istransfer = 0
@@ -860,7 +864,7 @@ FROM animal
   INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE $TRANSFER_IN_CATEGORY$ = 'Yes'
   AND $USE_ENTRY_TYPE$ = 'No'
-  AND date_trunc('day', animal.DateBroughtIn) = current_date -1
+  AND date_trunc('day', animal.DateBroughtIn) = '$CURRENT_DATE-1$'
   AND animal.archived = 0
   AND animal.nonshelteranimal = 0
   AND animal.istransfer = 1
@@ -879,7 +883,7 @@ FROM animal
   INNER JOIN adoption on adoption.id = animal.activemovementid
   INNER JOIN owner on owner.id = adoption.ownerid
   LEFT OUTER JOIN owner cw ON cw.ID = animal.adoptioncoordinatorID
-WHERE date_trunc('day', animal.LastChangedDate) = current_date -1
+WHERE date_trunc('day', animal.LastChangedDate) = '$CURRENT_DATE-1$'
   AND animal.nonshelteranimal = 0
   AND adoption.movementtype = 3
   AND NOT (owner.AdditionalFlags LIKE 'shelter|%' OR owner.AdditionalFlags  LIKE '%|shelter|%')
@@ -909,7 +913,7 @@ INNER JOIN adoption ON adoption.ID = animal.activemovementID
 WHERE animal.deceaseddate IS NULL
   AND animal.activemovementtype = 1
   AND adoption.ISTRIAL = 1
-  AND adoption.trialenddate < current_date
+  AND adoption.trialenddate < '$CURRENT_DATE$'
 
 --#A053. Compares vaccination types with species type. 
 UNION SELECT 
@@ -935,7 +939,7 @@ UNION SELECT
 FROM animal
 INNER JOIN animalvaccination ON animalvaccination.animalid = animal.id
 WHERE substring(animalvaccination.Manufacturer,1,1) in ('0','1','2','3','4','5','6','7','8','9')
-  AND date_trunc('day', animalvaccination.DateOfVaccination) = current_date - 1
+  AND date_trunc('day', animalvaccination.DateOfVaccination) = '$CURRENT_DATE-1$'
 
 --#A055. Checks to see if Rabies Tag is missing.  Added 8/12/2021
 UNION SELECT
@@ -949,7 +953,7 @@ WHERE $RECORD_RABIES_NUM$ = 'Yes'
   AND animalvaccination.vaccinationid IN ($RABIES_IDS$)
   AND animalvaccination.DateofVaccination IS NOT NULL
   AND animalvaccination.RabiesTag = ''
-  AND date_trunc('day', animalvaccination.DateOfVaccination) = current_date - 1
+  AND date_trunc('day', animalvaccination.DateOfVaccination) = '$CURRENT_DATE-1$'
   AND animal.nonshelteranimal = 0
   
 --#A056. Checks to see if required vaccination is missing.  Added 6/30/2023
@@ -978,7 +982,7 @@ UNION SELECT
 FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE $USE_ENTRY_TYPE$ = 'Yes'
-  AND date_trunc('day', animal.DateBroughtIn) > current_date -3
+  AND date_trunc('day', animal.DateBroughtIn) > '$CURRENT_DATE-3$'
   AND animal.archived=0
   AND animal.originalownerid = 0
   AND animal.entrytypeid = 1
@@ -994,7 +998,7 @@ UNION SELECT
 FROM animal
 INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE $USE_ENTRY_TYPE$ = 'Yes'
-  AND date_trunc('day', animal.DateBroughtIn) > current_date -3
+  AND date_trunc('day', animal.DateBroughtIn) > '$CURRENT_DATE-3$'
   AND animal.nonshelteranimal = 0
   AND animal.broughtinbyownerid = 0
   AND animal.entrytypeid = 3
@@ -1010,12 +1014,24 @@ FROM animal
    INNER JOIN entryreason ON entryreason.ID = animal.EntryReasonID
 WHERE $TRANSFER_IN_CATEGORY$ = 'Yes'
   AND $USE_ENTRY_TYPE$ = 'Yes'
-  AND date_trunc('day', animal.DateBroughtIn) = current_date -1
+  AND date_trunc('day', animal.DateBroughtIn) = '$CURRENT_DATE-1$'
   AND animal.nonshelteranimal = 0
   AND animal.archived = 0
   AND animal.entrytypeid <> 3
   AND animal.entryreasonid IN ($TRANSFER_IN_IDS$)
-  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%') 
+  AND NOT (animal.AdditionalFlags LIKE 'Ignore Issues|%' OR animal.AdditionalFlags  LIKE '%|Ignore Issues|%')
+
+--#A060. DOA Entry Type selected without DOA checkbox.  Added 4/12/24
+UNION SELECT
+  '<a href="'||$SERVER_URL$||'/animal?id='||animal.ID||'" target="_'||$OPEN_IN_TAB$||'">'||animal.AnimalName||'</a>' AS name,
+  animal.sheltercode as code,
+  date(animal.LastChangedDate) as issuedate,
+    'Death issue.  <i>Dead on arrival</i> Entry Type and DOA Checkbox should match. (A060)' AS issue
+FROM animal
+WHERE animal.LastChangedDate >= $REVIEW_DATE$
+  AND DECEASEDDATE is not null
+  AND (animal.IsDOA = 1 AND animal.EntryTypeID <> 9
+  OR animal.IsDOA = 0 AND animal.EntryTypeID = 9)
 
 --****************************************************************************************************************************************************************************************
 --***  PERSON SECTION  *******************************************************************************************************************************************************************
@@ -1029,7 +1045,7 @@ UNION SELECT
   date(owner.LastChangedDate) AS issuedate,
  '<font color = "red">Banned Person without <i>Exclude from bulk mailings</i> Flag.  Alerts Only Once. (P001)</font>' AS issue  
 FROM owner
-WHERE date_trunc('day', LastChangedDate) = current_date -1
+WHERE date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
   AND isbanned = 1
   AND excludefrombulkemail = 0
 
@@ -1042,7 +1058,7 @@ UNION SELECT
 FROM owner
 WHERE ownerforenames = ''
   AND ownertype = 1
-  AND date_trunc('day', LastChangedDate) = current_date -1
+  AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
 
 --#P003. Checks to see if there is a firstname on an Organization Record. 
 UNION SELECT 
@@ -1053,7 +1069,7 @@ UNION SELECT
 FROM owner
 WHERE ownerforenames <> ''
   AND ownertype = 2
-  AND date_trunc('day', LastChangedDate) = current_date -1
+  AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
 
 --#P004. Checks for ownercodes that start with XX, which means last name field is missing.
   UNION SELECT 
@@ -1063,7 +1079,7 @@ WHERE ownerforenames <> ''
   '<font color = "Red">Possible invalid Last Name or Organization Name. Alerts Only Once. (P004)</font>' AS issue
 FROM owner
 WHERE ownercode like 'XX%'
-  AND date_trunc('day', LastChangedDate) = current_date -1
+  AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
   
 --#P005. Checks for Capitalization issues in first and last name fields.
 UNION SELECT 
@@ -1073,7 +1089,7 @@ UNION SELECT
   '<font color = "Red">Capitalization issue in name field. Alerts Only Once. (P005)</font>' AS issue
 FROM owner
 WHERE $CAPITALIZATION_RULES$ = 'Yes'
-  AND date_trunc('day', LastChangedDate) = current_date -1
+  AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
   AND ((LOWER(ownerforenames) = ownerforenames AND ownerforenames <> '')
        OR (UPPER(ownerforenames) = ownerforenames AND ownerforenames <> '')
        OR (LOWER(ownerforenames2) = ownerforenames2 AND ownerforenames2 <> '')
@@ -1093,7 +1109,7 @@ UNION SELECT
 FROM owner
 WHERE ownersurname2 = ''
   AND ownertype = 3
-  AND date_trunc('day', LastChangedDate) = current_date -1
+  AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
 
 --#P007. Checks for extra spaces in address field.  Extra spaces will cause address searches to not find results.
 UNION SELECT 
@@ -1103,7 +1119,7 @@ UNION SELECT
   '<font color = "Red">Extra spaces in address field. Alerts Only Once. (P007)</font>' AS issue
 FROM owner
 WHERE SUBSTR(owner.owneraddress,1,8) like '%  %'
-AND date_trunc('day', LastChangedDate) = current_date -1
+AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
 AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --#P008. This alert shows if North, South, East, West, etc.
@@ -1114,7 +1130,7 @@ UNION SELECT
   current_date -1 AS issuedate,
   '<font color = "Red">Possible address standardization issue (' || owner.owneraddress || ').  North, South, First, etc.  Change to N., S., 1st, if needed. Alerts Only Once. (P008)</font>' AS issue
 FROM owner
-where date_trunc('day', LastChangedDate) = current_date -1
+where date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
   AND (SUBSTR(UPPER(owneraddress),1,12) LIKE '% NORTH %'
      OR SUBSTR(UPPER(owneraddress),1,12) LIKE '% SOUTH %'
      OR SUBSTR(UPPER(owneraddress),1,11) LIKE '% EAST %'
@@ -1135,7 +1151,7 @@ UNION SELECT
   '<font color="red">Street name misspelled. Alerts Only Once. (P009)</font>' AS issue
 FROM owner
 WHERE split_part(trim(regexp_replace(owner.owneraddress, '[^[:alpha:]\s]', '', 'g')),' ',1) IN ($COMMON_STREET_MISSPELLINGS$)
-  AND date_trunc('day', LastChangedDate) = current_date -1
+  AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
  AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')  
   
 --#P010. Checks for cities entered in ALL upper or lower case.  
@@ -1168,7 +1184,7 @@ UNION SELECT
   '<font color = "Red">Possible city issue.  Comma in City field. Alerts Only Once. (P012)</font>' AS issue
 FROM owner
 WHERE ownertown LIKE '%,%'
-AND date_trunc('day', LastChangedDate) = current_date -1
+AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
 
 --#P013. Checks for invalid state abbreviations.  Ignores State check if there is data in the Country
 --field.
@@ -1192,7 +1208,7 @@ UNION SELECT
  '<font color="red">Zipcode missing. Alters Only Once. (P014)</font>' AS issue
 FROM owner
 WHERE $COUNTRY$ = 'USA'
-  AND date_trunc('day', LastChangedDate) = current_date -1
+  AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
   AND NOT owner.OwnerAddress = '' 
   AND NOT owner.OwnerTown = '' 
   AND NOT owner.OwnerCounty = '' 
@@ -1206,7 +1222,7 @@ UNION SELECT
   date(owner.LastChangedDate) AS issuedate,
   '<font color="red">Zipcode invalid. Alters Only Once. (P015)</font>' AS issue
 FROM owner
-WHERE date_trunc('day', owner.LastChangedDate) = current_date -1
+WHERE date_trunc('day', owner.LastChangedDate) = '$CURRENT_DATE-1$'
   AND owner.ownerpostcode <>  ''
   AND (($COUNTRY$ = 'USA'
     AND owner.OwnerCounty = $STATE_ABBREVIATION$
@@ -1223,7 +1239,7 @@ UNION SELECT
   '<font color="red">Zipcode length invalid. Alters Only Once. (P016)</font>' AS issue
 FROM owner
 WHERE $COUNTRY$ = 'USA'
-  AND date_trunc('day', LastChangedDate) = current_date -1
+  AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
   AND ownerpostcode <>  '' 
   AND LENGTH(ownerpostcode) not in (5,10)
   AND ownerpostcode < 'a' -- Only look at numbers.
@@ -1237,7 +1253,7 @@ UNION SELECT
   '<font color="red">Country or Country capitalization invalid. Alters Only Once. (P017)</font>' AS issue
 FROM owner
 WHERE ownercountry <> ''
-  AND date_trunc('day', owner.LastChangedDate) = current_date -1
+  AND date_trunc('day', owner.LastChangedDate) = '$CURRENT_DATE-1$'
  AND (lower(ownercountry) = ownercountry
  OR ownercountry in ($COMMON_COUNTRY_MISSPELLINGS$))
 
@@ -1261,7 +1277,7 @@ WHERE (($COUNTRY$ = 'USA'
     OR LENGTH(NULLIF(regexp_replace(mobiletelephone, '\D','','g'), '')) NOT IN ($PHONE_DIGITS$)
     OR LENGTH(NULLIF(regexp_replace(mobiletelephone2, '\D','','g'), '')) NOT IN ($PHONE_DIGITS$))
     AND (hometelephone NOT LIKE '%/%' AND mobiletelephone NOT LIKE '%/%' AND mobiletelephone2 NOT LIKE '%/%')))
-  AND date_trunc('day', owner.LastChangedDate) = current_date -1
+  AND date_trunc('day', owner.LastChangedDate) = '$CURRENT_DATE-1$'
   AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
 
 --#P019. This strips out all characters and then alerts if phone number is 11 characters and the first character 
@@ -1273,7 +1289,7 @@ UNION SELECT
  '<font color="red">Phone number invalid.  If 11 digits, should begin with <i>1</i>. Alters Only Once. (P019)</font>' AS issue 
 FROM owner
 WHERE $COUNTRY$ = 'USA'
-  AND date_trunc('day', LastChangedDate) = current_date -1
+  AND date_trunc('day', LastChangedDate) = '$CURRENT_DATE-1$'
   AND ((LENGTH(NULLIF(regexp_replace(hometelephone, '\D','','g'), '')) = 11 AND SUBSTRING(regexp_replace(hometelephone, '\D','','g'),1,1) <> '1')
   OR (LENGTH(NULLIF(regexp_replace(mobiletelephone, '\D','','g'), '')) = 11 AND SUBSTRING(regexp_replace(mobiletelephone, '\D','','g'),1,1) <> '1')
   OR (LENGTH(NULLIF(regexp_replace(mobiletelephone2, '\D','','g'), '')) = 11 AND SUBSTRING(regexp_replace(mobiletelephone2, '\D','','g'),1,1) <> '1'))
@@ -1287,7 +1303,7 @@ UNION SELECT
   current_date -1 AS issuedate,
   '<font color = "Red">Phone number duplication - (' || ow.ownercode || ').  Alerts Only Once. (P020)</font>' AS issue
 FROM owner o, owner ow
-WHERE date_trunc('day', o.LASTCHANGEDDATE)  = current_date -1
+WHERE date_trunc('day', o.LASTCHANGEDDATE)  = '$CURRENT_DATE-1$'
   AND o.id <> ow.id
 AND ((regexp_replace(o.hometelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.hometelephone, '\D','','g'),$PHONE_DIGITS$) LIKE RIGHT(regexp_replace(ow.hometelephone, '\D','','g'),$PHONE_DIGITS$) AND ow.hometelephone <> '')
    OR (regexp_replace(o.hometelephone, '\D','','g') <> '' AND RIGHT(regexp_replace(o.hometelephone, '\D','','g'),$PHONE_DIGITS$) LIKE RIGHT(regexp_replace(ow.mobiletelephone, '\D','','g'),$PHONE_DIGITS$) AND ow.mobiletelephone <> '')
@@ -1307,7 +1323,7 @@ UNION SELECT
 FROM owner
 WHERE (((owner.EmailAddress NOT LIKE '%@%' OR owner.EmailAddress NOT LIKE '%.%') AND owner.EmailAddress <> '')
   OR ((owner.EmailAddress2 NOT LIKE '%@%' OR owner.EmailAddress2 NOT LIKE '%.%') AND owner.EmailAddress2 <> ''))
-  AND date_trunc('day', owner.CreatedDate) = current_date -1
+  AND date_trunc('day', owner.CreatedDate) = '$CURRENT_DATE-1$'
 
 --#P022. This alert compares the email of records that were modified the day before with emails
 --in the database.  Updated 4/23/2023 to search on 2nd contact email.
@@ -1317,7 +1333,7 @@ UNION SELECT
    current_date -1 AS issuedate,
  '<font color = "Red">Email address duplication (' || ow.ownercode || ').  Alerts Only Once. (P022)</font>' AS issue
 FROM owner o, owner ow
-WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
+WHERE date_trunc('day', o.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'
 AND o.ID <> ow.ID
 AND ((o.emailaddress <> '' AND lower(o.emailaddress) LIKE lower(ow.emailaddress))
       OR (o.emailaddress <> '' AND lower(o.emailaddress) LIKE lower(ow.emailaddress2))
@@ -1331,7 +1347,7 @@ UNION SELECT
   date(owner.LastChangedDate) as issuedate,
  '<font color = "Red">Email address in wrong field (Possible).  Alerts Only Once. (P023)</font>' AS issue
 FROM owner
-WHERE date_trunc('day', owner.LASTCHANGEDDATE) = current_date -1
+WHERE date_trunc('day', owner.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'
   AND (owner.hometelephone LIKE '%@%' 
   OR owner.mobiletelephone LIKE '%@%'
   OR owner.worktelephone LIKE '%@%' 
@@ -1346,7 +1362,7 @@ UNION SELECT
   date(owner.LastChangedDate) as issuedate,
   '<font color = "Red">Email domain invalid (Possible). Alerts Only Once. (P024)</font>' AS issue
 FROM owner
-WHERE date_trunc('day', owner.LASTCHANGEDDATE) = current_date -1                 
+WHERE date_trunc('day', owner.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'                 
   AND ((owner.OwnerType = 3
         AND owner.EmailAddress2 <> ''
         AND lower(regexp_replace(owner.EmailAddress2, '.+\.(.+)', '\1')) NOT IN ($DOMAINS$))
@@ -1361,7 +1377,8 @@ UNION SELECT
   date(owner.LastChangedDate) AS issuedate,
  '<font color = "Red">Invalid character (such as ‘ or -).  Type over and re-Save. Alerts Only Once.  (P025)</font>' AS issue  
 FROM owner
-WHERE date_trunc('day', owner.LASTCHANGEDDATE) = current_date -1
+WHERE $COUNTRY$ = 'USA'
+  AND date_trunc('day', owner.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'
   AND (ownerforenames like '%&#%' OR ownerforenames2 like '%&#%' 
   OR ownersurname like '%&#%' OR ownersurname2 like '%&#%'
   OR owneraddress like '%&#%' OR ownertown like '%&#%'
@@ -1378,7 +1395,7 @@ WHERE date_trunc('day', owner.LASTCHANGEDDATE) = current_date -1
 --  INNER JOIN owner ON owner.ID = ol.OwnerID
 --WHERE (extract(days from ol.ExpiryDate - ol.ISSUEDATE) < 335
 --  OR ol.ExpiryDate < ol.ISSUEDATE)
---  AND date_trunc('day', ol.IssueDate) = current_date -1
+--  AND date_trunc('day', ol.IssueDate) = '$CURRENT_DATE-1$'
 
 --#P027. This looks at the comments field of citation to see if the different ordinance numbers have
 --been entered.  This allows for reporting of individual ordinance violations if needed.
@@ -1391,7 +1408,7 @@ FROM ownercitation oc
 INNER JOIN citationtype ct ON ct.ID = oc.CitationTypeID
 INNER JOIN owner ON owner.ID = oc.OwnerID 
 WHERE $CITATION_NUMBERS$ = 'Yes'
-  AND date_trunc('day', oc.CreatedDate) = current_date -1 
+  AND date_trunc('day', oc.CreatedDate) = '$CURRENT_DATE-1$' 
   AND oc.comments = ''
 
  --#P028. If person designated as Member, checks for membership expiration date.
@@ -1413,7 +1430,7 @@ UNION SELECT DISTINCT
   '<font color = "Red">Online form attached to existing Person record. Compare the data in the First and Last Name fields with the data on the NEW online form.  When ASM finds a cell phone or email match, it ONLY updates the address, phone, and email info. Alerts Only Once. (P029)</font>' AS issue
 FROM owner o
 INNER JOIN media m ON m.linkid = o.ID
-WHERE  date_trunc('day', m.date) = current_date -1
+WHERE  date_trunc('day', m.date) = '$CURRENT_DATE-1$'
   AND m.medianotes NOT LIKE '%.html%'
   AND m.MediaMimeType = 'text/html'
   AND m.linktypeid = 3
@@ -1427,7 +1444,7 @@ UNION SELECT DISTINCT
   date(o.LastChangedDate) as issuedate,
   '<font color = "Red">Person record added but NOT LINKED to any records and has no Flags.  Alerts Only Once. (P030)</font>' AS issue
 FROM owner o
-WHERE date_trunc('day', o.createddate) = current_date - 1
+WHERE date_trunc('day', o.createddate) = '$CURRENT_DATE-1$'
 AND (o.additionalflags = '|' OR o.additionalflags = '')
 AND NOT EXISTS(SELECT ID FROM adoption WHERE OwnerID = o.ID OR ReturnedByOwnerID = o.ID)
 AND NOT EXISTS(SELECT ID FROM animal WHERE OriginalOwnerID = o.ID OR BroughtInByOwnerID = o.ID OR OwnerID = o.ID OR CurrentVetID = o.ID OR OwnersVetID = o.ID 
@@ -1463,7 +1480,7 @@ UNION SELECT
   date(o.LastChangedDate) as issuedate,
  '<font color = "Red">Possible duplicate Person record - (' || ow.ownercode || ').  Partial address and last or first name match. Alerts Only Once. (P031)</font>' AS issue
 FROM owner o, owner ow
-where date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
+where date_trunc('day', o.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'
 AND LOWER(REGEXP_REPLACE(ow.owneraddress, '[^0-9A-Za-z]', '','g')) LIKE SUBSTR(LOWER(REGEXP_REPLACE(o.owneraddress, '[^0-9A-Za-z]', '','g')),1,8) || '%'
 AND o.owneraddress <> ''
 AND ((LOWER(o.ownersurname) = LOWER(ow.ownersurname) AND ow.ownersurname <> '')
@@ -1484,7 +1501,7 @@ UNION SELECT
   date(o.LastChangedDate) AS issuedate,
   '<font color = "Red">Possible duplicate Person record - (' || ow.ownercode || ').  First and Last Name Match. Alerts Only Once. (P032)</font>' AS issue
 FROM owner o, owner ow
-WHERE date_trunc('day', o.LASTCHANGEDDATE) = current_date -1
+WHERE date_trunc('day', o.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'
   AND o.id <> ow.id
   AND ((LOWER(o.ownersurname) = LOWER(ow.ownersurname) AND (LOWER(o.ownerforenames) = LOWER(ow.ownerforenames) AND ow.ownerforenames <> ''))
    OR (LOWER(o.ownersurname) = LOWER(ow.ownersurname2) AND (LOWER(o.ownerforenames) = LOWER(ow.ownerforenames2) AND ow.ownerforenames2 <> ''))
@@ -1500,6 +1517,7 @@ UNION SELECT
   'ID Number duplicate (' ||  ow.ownercode || '). (P033)' as issue
 FROM owner o, owner ow
 WHERE o.id <> ow.id
+AND date_trunc('day', o.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'
 AND ((o.identificationnumber <> '' AND regexp_replace(o.IdentificationNumber, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber, '\D','','g') AND ow.IdentificationNumber <> '')
       OR (o.identificationnumber <> '' AND regexp_replace(o.IdentificationNumber, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber2, '\D','','g') AND ow.IdentificationNumber2 <> '')
       OR (o.identificationnumber2 <> '' AND regexp_replace(o.IdentificationNumber2, '\D','','g') LIKE regexp_replace(ow.IdentificationNumber, '\D','','g') AND ow.IdentificationNumber <> '')
@@ -1514,7 +1532,7 @@ UNION SELECT
  '<font color = "Red">Owner Class of <i>Couple</i> was used. Since this is an AC agency who assigns Citations/Incidents, using <i>Couple</i> might not be best practice.  Alerts Only Once. (P034)</font>' AS issue
 FROM owner
 WHERE $COUPLE_WARN$ = 'Yes'
-  AND date_trunc('day', owner.LASTCHANGEDDATE) = current_date -1
+  AND date_trunc('day', owner.LASTCHANGEDDATE) = '$CURRENT_DATE-1$'
   AND owner.ownertype = 3
   
 --#P035. This will alert when a voucher is created without an animal attached.
@@ -1528,7 +1546,7 @@ INNER JOIN voucher ON voucher.ID = ownervoucher.VoucherID
 INNER JOIN owner ON owner.ID = ownervoucher.OwnerID
 WHERE $VOUCHER_ANIMAL$ = 'Yes'
   AND ownervoucher.AnimalID = 0
-  AND date_trunc('day', ownervoucher.DateIssued) = current_date -1
+  AND date_trunc('day', ownervoucher.DateIssued) = '$CURRENT_DATE-1$'
 
 --****************************************************************************************************************************************************************************************
 --***  LOCAL SYSTEM ONLY  ****************************************************************************************************************************************************************
@@ -1542,11 +1560,12 @@ UNION SELECT
   date(owner.LastChangedDate) AS issuedate,
  '<font color = "Red">Area code invalid. Alerts Only Once.</font>' AS issue   
 FROM owner
-WHERE (SUBSTRING(regexp_replace(hometelephone, '\D','','g'),1,3) IN ('510','497','807') --CUSTOMIZATION REQUIRED HERE
+WHERE $COUNTRY$ = 'USA'
+  AND (SUBSTRING(regexp_replace(hometelephone, '\D','','g'),1,3) IN ('510','497','807') --CUSTOMIZATION REQUIRED HERE
   OR SUBSTRING(regexp_replace(worktelephone, '\D','','g'),1,3) IN ('510','497','807') --CUSTOMIZATION REQUIRED HERE
   OR SUBSTRING(regexp_replace(mobiletelephone, '\D','','g'),1,3) IN ('510','497','807') --CUSTOMIZATION REQUIRED HERE
   OR SUBSTRING(regexp_replace(mobiletelephone2, '\D','','g'),1,3) IN ('510','497','807')) --CUSTOMIZATION REQUIRED HERE
-  AND date_trunc('day', owner.LASTCHANGEDDATE)  = current_date -1
+  AND date_trunc('day', owner.LASTCHANGEDDATE)  = '$CURRENT_DATE-1$'
   AND NOT (owner.AdditionalFlags LIKE 'Ignore Issues|%' OR owner.AdditionalFlags  LIKE '%|Ignore Issues|%')
    
 ) dummy
