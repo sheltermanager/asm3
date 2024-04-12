@@ -337,9 +337,10 @@ $(function() {
          * url:  The url to link to the target created record
          */
         create_record: async function(mode, target) {
+            $("#button-attach").asmmenu("hide_all");
             header.hide_error();
             header.show_loading(_("Creating..."));
-            let table = onlineform_incoming.table, ids = tableform.table_ids(table);
+            let table = onlineform_incoming.table, buttons = onlineform_incoming.buttons, ids = tableform.table_ids(table);
             try {
                 let result = await common.ajax_post("onlineform_incoming", "mode=" + mode + "&ids=" + ids);
                 let selrows = tableform.table_selected_rows(table);
@@ -358,6 +359,7 @@ $(function() {
                     });
                 });
                 tableform.table_update(table);
+                tableform.table_update_buttons(table, buttons);
             }
             finally {
                 header.hide_loading();
