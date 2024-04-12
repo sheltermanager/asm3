@@ -146,45 +146,59 @@ $(function() {
         bind_buttonmenus: function() {
             $("#button-attachperson").click(function() {
                 $("#dialog-attach-person").dialog("open");
+                return false;
             });
             $("#button-attachanimal").click(function() {
                 $("#dialog-attach-animal").dialog("open");
+                return false;
             });
             $("#button-attachanimalbyname").click(function() {
                 onlineform_incoming.create_record("attachanimalbyname", "animal");
+                return false;
             });
             $("#button-attachanimalnomedia").click(function() {
                 onlineform_incoming.create_record("attachanimalnomedia", "animal");
+                return false;
             });
             $("#button-animal").click(function() {
                 onlineform_incoming.create_record("animal", "animal");
+                return false;
             });
             $("#button-animalbroughtin").click(function() {
                 onlineform_incoming.create_record("animalbroughtin", "animal");
+                return false;
             });
             $("#button-animalnonshelter").click(function() {
                 onlineform_incoming.create_record("animalnonshelter", "animal");
+                return false;
             });
             $("#button-person").click(function() {
                 onlineform_incoming.create_record("person", "person");
+                return false;
             });
             $("#button-person-nm").click(function() {
                 onlineform_incoming.create_record("personnomerge", "person");
+                return false;
             });
             $("#button-lostanimal").click(function() {
                 onlineform_incoming.create_record("lostanimal", "lostanimal");
+                return false;
             });
             $("#button-foundanimal").click(function() {
                 onlineform_incoming.create_record("foundanimal", "foundanimal");
+                return false;
             });
             $("#button-incident").click(function() {
                 onlineform_incoming.create_record("incident", "incident");
+                return false;
             });
             $("#button-transport").click(function() {
                 onlineform_incoming.create_record("transport", "animal_transport");
+                return false;
             });
             $("#button-waitinglist").click(function() {
                 onlineform_incoming.create_record("waitinglist", "waitinglist");
+                return false;
             });
         },
 
