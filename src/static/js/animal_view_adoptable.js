@@ -253,6 +253,7 @@
     };
 
     var render_iframe = function() {
+        var hostdiv = document.getElementById("asm3-adoptables");
         var overlay = document.createElement('div');
         overlay.innerHTML = substitute(overlay_template, { "iframe_position": iframe_position, "iframe_height": iframe_height, "iframe_bgcolor": iframe_bgcolor });
         document.body.appendChild(overlay);
@@ -263,7 +264,6 @@
             e.preventDefault();
         });
         var i, 
-            links = document.getElementsByClassName("asm3-adoptable-link"),
             link_handler = function(e) {
                 document.getElementById("asm3-adoptable-iframe").src = this.href;
                 document.getElementById("asm3-adoptable-iframe-overlay").style.display = "block";
@@ -272,13 +272,20 @@
                 e.preventDefault();
             },
             popstate_handler = function(e) {
+                // NOTE: The loading of animalview into the iframe causes a new entry in the
+                // history stack. There is nothing we can do about this. The first back
+                // causes the iframe page to unload back to about:blank, the second then
+                // hits our history state here allowing us to close the iframe.
                 if (e.state != "close") { return; }
                 document.getElementById("asm3-adoptable-iframe").src = "about:blank";
                 document.getElementById("asm3-adoptable-iframe-overlay").style.display = "none";
             };
-        for (i = 0; i < links.length; i++) {
-            links[i].addEventListener("click", link_handler);
-        }
+        hostdiv.addEventListener("click", function(e) {
+            var link = e.target.closest(".asm3-adoptable-link");
+            if (link) {
+                link_handler.call(link, e);
+            }
+        });
         if (iframe_back) { 
             window.addEventListener("popstate", popstate_handler);
         }
