@@ -947,7 +947,25 @@ order within the SQL. If you run the report within the ASM frontend you will
 see the parameters it requires in the address bar::
 
     http://localhost:5000/service?method=html_report&username=user&password=letmein&title=Detailed+Shelter+Inventory
-   
+
+html_stray_animals
+----------------------
+
+.. rubric:: Cache time: 30 minutes
+
+Returns a complete HTML document containing an HTML page of current stray animals.
+
+An "order" parameter can be passed to indicate the sort order (see
+html_adopted_animals). The default is entered date descending.
+
+You can pass an HTML template name in an optional "template" parameter (leaving
+it off will cause animalview to be used). It is also possible to pass
+speciesid=X or animaltypeid=X parameters to only output animals of that species
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats::
+
+    http://localhost:5000/service?method=html_stray_animals&template=littlebox&speciesid=1&order=holduntildate_desc
+    http://localhost:5000/service?method=html_stray_animals
+
 json_adoptable_animal and xml_adoptable_animal
 ----------------------------------------------
 
@@ -990,7 +1008,7 @@ json_held_animals and xml_held_animals
 Returns a dataset containing all animals currently held. The method
 determines whether the format returned is JSON or XML::
 
-    http://localhost:5000/service?method=xml_adoptable_animals&username=user&password=letmein
+    http://localhost:5000/service?method=json_held_animals&username=user&password=letmein
 
 json_recent_adoptions and xml_recent_adoptions
 ----------------------------------------------
@@ -1029,6 +1047,16 @@ information of fosterers and surrenders) will be stripped from the results. If
 you wish them to be included, pass an extra sensitive=1 parameter::
 
     http://localhost:5000/service?method=xml_shelter_animals&username=user&password=letmein&sensitive=1
+
+json_stray_animals and xml_stray_animals
+--------------------------------------
+
+.. rubric:: Cache time: 1 hour 
+
+Returns a dataset containing all stray animals in the care of the shelter. The method
+determines whether the format returned is JSON or XML::
+
+    http://localhost:5000/service?method=json_stray_animals&username=user&password=letmein
 
 media_file
 ----------

@@ -94,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#html-flagged-animals">html_flagged_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-held-animals">html_held_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#html-report">html_report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#html-stray-animals">html_stray_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animal-and-xml-adoptable-animal">json_adoptable_animal and xml_adoptable_animal</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-adoptable-animals-and-xml-adoptable-animals">json_adoptable_animals and xml_adoptable_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-lost-animals-xml-lost-animals-json-found-animals-xml-found-animals">json_lost_animals, xml_lost_animals, json_found_animals, xml_found_animals</a></li>
@@ -101,6 +102,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#json-recent-adoptions-and-xml-recent-adoptions">json_recent_adoptions and xml_recent_adoptions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-recent-changes-and-xml-recent-changes">json_recent_changes and xml_recent_changes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#json-shelter-animals-and-xml-shelter-animals">json_shelter_animals and xml_shelter_animals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#json-stray-animals-and-xml-stray-animals">json_stray_animals and xml_stray_animals</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#media-file">media_file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#online-form-html-and-online-form-json">online_form_html and online_form_json</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rss-timeline">rss_timeline</a></li>
@@ -1020,6 +1022,21 @@ see the parameters it requires in the address bar:</p>
 </pre></div>
 </div>
 </section>
+<section id="html-stray-animals">
+<h2>html_stray_animals<a class="headerlink" href="#html-stray-animals" title="Permalink to this heading">¶</a></h2>
+<p class="rubric">Cache time: 30 minutes</p>
+<p>Returns a complete HTML document containing an HTML page of current stray animals.</p>
+<p>An “order” parameter can be passed to indicate the sort order (see
+html_adopted_animals). The default is entered date descending.</p>
+<p>You can pass an HTML template name in an optional “template” parameter (leaving
+it off will cause animalview to be used). It is also possible to pass
+speciesid=X or animaltypeid=X parameters to only output animals of that species
+and type. In the default dataset, speciesid=1 is Dogs and speciesid=2 is cats:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=html_stray_animals&amp;template=littlebox&amp;speciesid=1&amp;order=holduntildate_desc
+http://localhost:5000/service?method=html_stray_animals
+</pre></div>
+</div>
+</section>
 <section id="json-adoptable-animal-and-xml-adoptable-animal">
 <h2>json_adoptable_animal and xml_adoptable_animal<a class="headerlink" href="#json-adoptable-animal-and-xml-adoptable-animal" title="Permalink to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
@@ -1058,7 +1075,7 @@ is JSON or XML:</p>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing all animals currently held. The method
 determines whether the format returned is JSON or XML:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_adoptable_animals&amp;username=user&amp;password=letmein
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=json_held_animals&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
 </section>
@@ -1093,6 +1110,15 @@ The method determines whether the format returned is JSON or XML:</p>
 information of fosterers and surrenders) will be stripped from the results. If
 you wish them to be included, pass an extra sensitive=1 parameter:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=xml_shelter_animals&amp;username=user&amp;password=letmein&amp;sensitive=1
+</pre></div>
+</div>
+</section>
+<section id="json-stray-animals-and-xml-stray-animals">
+<h2>json_stray_animals and xml_stray_animals<a class="headerlink" href="#json-stray-animals-and-xml-stray-animals" title="Permalink to this heading">¶</a></h2>
+<p class="rubric">Cache time: 1 hour</p>
+<p>Returns a dataset containing all stray animals in the care of the shelter. The method
+determines whether the format returned is JSON or XML:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=json_stray_animals&amp;username=user&amp;password=letmein
 </pre></div>
 </div>
 </section>
