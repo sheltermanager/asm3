@@ -36,7 +36,7 @@ UPDATE animalcontrol SET IncidentTypeID = 35 WHERE IncidentTypeID = 5;
 
 PATH = "/home/robin/tmp/asm3_import_data/shelterpro_fw3159"
 
-START_ID = 500
+START_ID = 3000
 
 BITE_IMPORT = True
 INCIDENT_IMPORT = True
@@ -48,7 +48,8 @@ MEDICAL_IMPORT = True
 VACCINATION_IMPORT = True
 
 IMPORT_ANIMALS_WITH_NO_NAME = True      # Some people like these filtered out. They'll come through with name (unknown)
-FAKE_ADOPTION_ONSHELTER_DAYS = 0        # Animals on shelter longer than this many days will have a fake adoption, 0 to do nothing
+IMPORT_INCIDENTS_WITH_NO_DATE = False   # rather than ending up with a timeline full of closed incidents, filter them out
+FAKE_ADOPTION_ONSHELTER_DAYS = 0        # Animals on shelter longer than this many days will have a fake adoption, -1 to do nothing
 
 def gettype(animaldes):
     spmap = {
@@ -474,7 +475,7 @@ if INCIDENT_IMPORT:
         ppi[row["INCIDENTKEY"]] = ac
         calldate = getdate(row["DATETIMEASSIGNED"])
         if calldate is None: calldate = getdate(row["DATETIMEORIGINATION"])
-        if calldate is None: calldate = asm.now()
+        if not IMPORT_INCIDENTS_WITH_NO_DATE and calldate is None: continue # If we've got no date, don't bother
         ac.CallDateTime = calldate
         ac.IncidentDateTime = calldate
         ac.DispatchDateTime = calldate
@@ -656,7 +657,7 @@ if MEDICAL_IMPORT:
 
 # Run back through the animals, if we have any that are still
 # on shelter after 2 years, add an adoption to an unknown owner
-if FAKE_ADOPTION_ONSHELTER_DAYS > 0:
+if FAKE_ADOPTION_ONSHELTER_DAYS >= 0:
     asm.adopt_older_than(animals, movements, uo.ID, FAKE_ADOPTION_ONSHELTER_DAYS)
 
 # Now that everything else is done, output stored records
