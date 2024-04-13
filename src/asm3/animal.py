@@ -846,6 +846,12 @@ def get_animals_recently_deceased(dbo: Database) -> Results:
         "AND a.NonShelterAnimal = 0 AND a.DiedOffShelter = 0 " \
         "AND a.DeceasedDate > ?", [dbo.today(offset=-30)])
 
+def get_animals_stray(dbo: Database) -> Results:
+    """
+    Returns all shelter animals who are strays
+    """
+    return dbo.query(get_animal_query(dbo) + " WHERE a.EntryTypeID = 2 AND a.Archived = 0 ORDER BY DateBroughtIn")
+
 def get_alerts(dbo: Database, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "", age: int = 120) -> Results:
     """
     Returns the alert totals for the main screen.

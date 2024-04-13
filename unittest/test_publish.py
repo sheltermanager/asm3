@@ -74,6 +74,9 @@ class TestPublish(unittest.TestCase):
     def test_get_held_animals(self):
         asm3.publishers.html.get_held_animals(base.get_dbo())
 
+    def test_get_stray_animals(self):
+        asm3.publishers.html.get_stray_animals(base.get_dbo())
+
     def test_get_animal_view(self):
         self.assertNotEqual(0, len(asm3.publishers.html.get_animal_view(base.get_dbo(), self.nid)))
 

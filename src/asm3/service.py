@@ -37,15 +37,16 @@ from asm3.typehints import Database, PostedData, Results, ServiceResponse
 AUTH_METHODS = [
     "csv_import", "csv_mail", "csv_report", 
     "json_report", "jsonp_report", "json_mail", "jsonp_mail",
-    "html_report", "rss_timeline", "upload_animal_image", "xml_adoptable_animal", 
-    "json_adoptable_animal", "xml_adoptable_animals", "json_adoptable_animals", 
-    "jsonp_adoptable_animals", "xml_found_animals", "json_found_animals", 
-    "jsonp_found_animals", "xml_held_animals", "json_held_animals", 
-    "jsonp_held_animals", "xml_lost_animals", "json_lost_animals", 
-    "jsonp_lost_animals", "xml_recent_adoptions", "json_recent_adoptions", 
-    "jsonp_recent_adoptions", "xml_shelter_animals", "json_shelter_animals", 
-    "jsonp_shelter_animals", "xml_recent_changes", "json_recent_changes", 
-    "jsonp_recent_changes"
+    "html_report", "rss_timeline", "upload_animal_image", 
+    "xml_adoptable_animal", "json_adoptable_animal", 
+    "xml_adoptable_animals", "json_adoptable_animals", "jsonp_adoptable_animals", 
+    "xml_found_animals", "json_found_animals", "jsonp_found_animals", 
+    "xml_held_animals", "json_held_animals", "jsonp_held_animals", 
+    "xml_lost_animals", "json_lost_animals", "jsonp_lost_animals", 
+    "xml_recent_adoptions", "json_recent_adoptions", "jsonp_recent_adoptions", 
+    "xml_recent_changes", "json_recent_changes", "jsonp_recent_changes", 
+    "xml_shelter_animals", "json_shelter_animals", "jsonp_shelter_animals", 
+    "xml_stray_animals", "json_stray_animals"
 ]
 
 # These are service methods that are defended against cache busting
@@ -73,6 +74,7 @@ CACHE_PROTECT_METHODS = {
     "html_events": [ "count", "template" ],
     "html_flagged_animals": [ "template", "speciesid", "animaltypeid", "flag", "all", "order" ],
     "html_held_animals": [ "template", "speciesid", "animaltypeid", "order" ],
+    "html_stray_animals": [ "template", "speciesid", "animaltypeid", "order" ],
     "json_adoptable_animals": [ "sensitive" ],
     "json_adoptable_animals_xp": [],
     "xml_adoptable_animal": [ "animalid" ],
@@ -89,6 +91,8 @@ CACHE_PROTECT_METHODS = {
     "xml_recent_changes": [],
     "json_shelter_animals": [ "sensitive" ],
     "xml_shelter_animals": [ "sensitive" ],
+    "json_stray_animals": [],
+    "xml_stray_animals": [],
     "rss_timeline": [],
     "online_form_html": [ "formid" ],
     "online_form_json": [ "formid" ]
@@ -665,6 +669,11 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         return set_cached_response(cache_key, account, "text/html", 1800, 1800, \
             asm3.publishers.html.get_held_animals(dbo, style=post["template"], \
                 speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), orderby=post["order"]))
+    
+    elif method == "html_stray_animals":
+        return set_cached_response(cache_key, account, "text/html", 1800, 1800, \
+            asm3.publishers.html.get_stray_animals(dbo, style=post["template"], \
+                speciesid=post.integer("speciesid"), animaltypeid=post.integer("animaltypeid"), orderby=post["order"]))
 
     elif method == "json_adoptable_animals_xp":
         rs = strip_personal_data(asm3.publishers.base.get_animal_data(dbo, None, include_additional_fields = True))
@@ -819,6 +828,16 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         sa = asm3.animal.get_shelter_animals(dbo)
         if strip_personal: sa = strip_personal_data(sa)
         return set_cached_response(cache_key, account, "application/xml", 3600, 3600, asm3.html.xml(sa))
+    
+    elif method == "json_stray_animals":
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
+        rs = asm3.animal.get_animals_stray(dbo)
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.utils.json(rs))
+
+    elif method == "xml_stray_animals":
+        asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
+        rs = asm3.animal.get_animals_stray(dbo)
+        return set_cached_response(cache_key, account, "application/json", 3600, 3600, asm3.html.xml(rs))
 
     elif method == "rss_timeline":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
