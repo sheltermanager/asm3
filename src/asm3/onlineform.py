@@ -102,7 +102,7 @@ FORM_FIELDS = [
     "excludefrombulkemail", "gdprcontactoptin",
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
-    "animalname", "reserveanimalname",
+    "animalname", "animalname2", "animalname3", "reserveanimalname", "reserveanimalname2", "reserveanimalname3",
     "code", "microchip", "age", "dateofbirth", "entryreason", "entrytype", "markings", "comments", "hiddencomments", 
     "type", "breed1", "breed2", "color", "sex", "neutered", "weight", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
