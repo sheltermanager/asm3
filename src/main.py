@@ -5140,7 +5140,8 @@ class move_book_reservation(JSONEndpoint):
             "movementtypes_additionalfieldtypes": asm3.additional.MOVEMENT_MAPPING,
             "reservationstatuses": asm3.lookups.get_reservation_statuses(dbo),
             "returncategories": asm3.lookups.get_entryreasons(dbo),
-            "templates": asm3.template.get_document_templates(dbo, "movement")
+            "templates": asm3.template.get_document_templates(dbo, "movement"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email")
         }
 
 class move_book_retailer(JSONEndpoint):

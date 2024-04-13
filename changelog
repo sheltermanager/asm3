@@ -1,6 +1,7 @@
 48
 ================
 
+13/04/24 Email templates not loading on reservation book
 12/04/24 Prevent screen reloading when processing any incoming forms
 12/04/24 adoptable_js: choosing a filter breaks iframes
 11/04/24 If there are no breeds, show a blank instead of species name
