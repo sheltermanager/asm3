@@ -48,7 +48,7 @@ MEDICAL_IMPORT = True
 VACCINATION_IMPORT = True
 
 IMPORT_ANIMALS_WITH_NO_NAME = True      # Some people like these filtered out. They'll come through with name (unknown)
-IMPORT_INCIDENTS_WITH_NO_DATE = True    # rather than ending up with a timeline full of closed incidents on conversion day, filter them out
+IMPORT_INCIDENTS_WITH_NO_DATE = False   # rather than ending up with a timeline full of closed incidents on conversion day, filter them out
 FAKE_ADOPTION_ONSHELTER_DAYS = 0        # Animals on shelter longer than this many days will have a fake adoption, -1 to do nothing
 
 def gettype(animaldes):
@@ -470,15 +470,15 @@ if LICENCE_IMPORT:
 if INCIDENT_IMPORT:
     cincident = asm.csv_to_list("%s/incident.csv" % PATH, uppercasekeys=True, strip=True)
     for row in cincident:
+        calldate = getdate(row["DATETIMEASSIGNED"]) or getdate(row["DATETIMEORIGINATION"])
+        if calldate is None: 
+            if IMPORT_INCIDENTS_WITH_NO_DATE: 
+                calldate = asm.today()
+            else:
+                continue
         ac = asm.AnimalControl()
         animalcontrol.append(ac)
         ppi[row["INCIDENTKEY"]] = ac
-        calldate = getdate(row["DATETIMEASSIGNED"])
-        if calldate is None: calldate = getdate(row["DATETIMEORIGINATION"])
-        if not IMPORT_INCIDENTS_WITH_NO_DATE and calldate is None: 
-            continue
-        else:
-            calldate = asm.now()
         ac.CallDateTime = calldate
         ac.IncidentDateTime = calldate
         ac.DispatchDateTime = calldate
