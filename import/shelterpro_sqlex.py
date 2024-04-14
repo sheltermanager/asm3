@@ -12,7 +12,7 @@ of truncated at 8 chars as with the DBF variants
 
 Will also look in PATH/images/ANIMALKEY.[jpg|JPG] for animal photos if IMAGE_FILE_IMPORT is set.
 
-6th Oct, 2014 - 5th September, 2023
+6th Oct, 2014 - 14th April, 2024
 """
 
 """
@@ -36,19 +36,19 @@ UPDATE animalcontrol SET IncidentTypeID = 35 WHERE IncidentTypeID = 5;
 
 PATH = "/home/robin/tmp/asm3_import_data/shelterpro_fw3159"
 
-START_ID = 3000
+START_ID = 50000
 
 BITE_IMPORT = True
 INCIDENT_IMPORT = True
 LICENCE_IMPORT = True
 IMAGE_FILE_IMPORT = False
-IMAGE_TABLE_IMPORT = True
+IMAGE_TABLE_IMPORT = False
 PAYMENT_IMPORT = True
 MEDICAL_IMPORT = True
 VACCINATION_IMPORT = True
 
 IMPORT_ANIMALS_WITH_NO_NAME = True      # Some people like these filtered out. They'll come through with name (unknown)
-IMPORT_INCIDENTS_WITH_NO_DATE = False   # rather than ending up with a timeline full of closed incidents, filter them out
+IMPORT_INCIDENTS_WITH_NO_DATE = True    # rather than ending up with a timeline full of closed incidents on conversion day, filter them out
 FAKE_ADOPTION_ONSHELTER_DAYS = 0        # Animals on shelter longer than this many days will have a fake adoption, -1 to do nothing
 
 def gettype(animaldes):
@@ -149,17 +149,17 @@ if PAYMENT_IMPORT: asm.setid("ownerdonation", START_ID)
 
 # Remove existing
 print("\\set ON_ERROR_STOP\nBEGIN TRANSACTION;")
-print("DELETE FROM adoption WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
-print("DELETE FROM animal WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
-print("DELETE FROM log WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
-print("DELETE FROM owner WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
-if INCIDENT_IMPORT: print("DELETE FROM animalcontrol WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
-if VACCINATION_IMPORT: print("DELETE FROM animalvaccination WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+print("DELETE FROM adoption WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
+print("DELETE FROM animal WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
+print("DELETE FROM log WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
+print("DELETE FROM owner WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
+if INCIDENT_IMPORT: print("DELETE FROM animalcontrol WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
+if VACCINATION_IMPORT: print("DELETE FROM animalvaccination WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
 if MEDICAL_IMPORT:
-    print("DELETE FROM animalmedical WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
-    print("DELETE FROM animalmedicaltreatment WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
-if LICENCE_IMPORT: print("DELETE FROM ownerlicence WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
-if PAYMENT_IMPORT: print("DELETE FROM ownerdonation WHERE ID >= %d AND CreatedBy = 'conversion';" % START_ID)
+    print("DELETE FROM animalmedical WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
+    print("DELETE FROM animalmedicaltreatment WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
+if LICENCE_IMPORT: print("DELETE FROM ownerlicence WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
+if PAYMENT_IMPORT: print("DELETE FROM ownerdonation WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
 if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: print("DELETE FROM media WHERE ID >= %d;" % START_ID)
 if IMAGE_FILE_IMPORT or IMAGE_TABLE_IMPORT: print("DELETE FROM dbfs WHERE ID >= %d;" % START_ID)
 
@@ -475,7 +475,10 @@ if INCIDENT_IMPORT:
         ppi[row["INCIDENTKEY"]] = ac
         calldate = getdate(row["DATETIMEASSIGNED"])
         if calldate is None: calldate = getdate(row["DATETIMEORIGINATION"])
-        if not IMPORT_INCIDENTS_WITH_NO_DATE and calldate is None: continue # If we've got no date, don't bother
+        if not IMPORT_INCIDENTS_WITH_NO_DATE and calldate is None: 
+            continue
+        else:
+            calldate = asm.now()
         ac.CallDateTime = calldate
         ac.IncidentDateTime = calldate
         ac.DispatchDateTime = calldate
