@@ -198,7 +198,7 @@ for row in cperson:
     ppo[row["PERSONKEY"]] = o
     ppoid[o.ID] = o
     if row["NAME"] != "" and (row["FNAME"] == "" and row["LNAME"] == ""):
-        o.OwnerSurname = row["NAME"]
+        o.OwnerSurname = row["NAME"].title()
         o.OwnerName = o.OwnerSurname
         o.OwnerType = 2 # Organization
     else:
