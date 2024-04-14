@@ -197,9 +197,14 @@ for row in cperson:
     owners.append(o)
     ppo[row["PERSONKEY"]] = o
     ppoid[o.ID] = o
-    o.OwnerForeNames = asm.strip(row["FNAME"]).title()
-    o.OwnerSurname = asm.strip(row["LNAME"]).title()
-    o.OwnerName = o.OwnerTitle + " " + o.OwnerForeNames + " " + o.OwnerSurname
+    if row["NAME"] != "" and (row["FNAME"] == "" and row["LNAME"] == ""):
+        o.OwnerSurname = row["NAME"]
+        o.OwnerName = o.OwnerSurname
+        o.OwnerType = 2 # Organization
+    else:
+        o.OwnerForeNames = asm.strip(row["FNAME"]).title()
+        o.OwnerSurname = asm.strip(row["LNAME"]).title()
+        o.OwnerName = o.OwnerForeNames + " " + o.OwnerSurname
     # Find the address
     if row["PERSONKEY"] in addrlink:
         addrkey = addrlink[row["PERSONKEY"]]
