@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-04-09 12:52+0000\n"
+"POT-Creation-Date: 2024-04-14 14:54+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -9661,6 +9661,10 @@ msgstr ""
 msgid "One-Off"
 msgstr ""
 
+#: onlineform.py
+msgid "Online Form"
+msgstr ""
+
 #: main.py onlineform.js
 msgid "Online Form: {0}"
 msgstr ""
@@ -9900,6 +9904,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Owner given citation"
+msgstr ""
+
+#: dbupdate.py
+msgid "Owner requested euthanasia"
 msgstr ""
 
 #: animal_bulk.js animal.js

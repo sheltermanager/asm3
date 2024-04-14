@@ -1,6 +1,7 @@
 48
 ================
 
+14/04/24 Update all English translations, fix bug with missing form name
 13/04/24 Add html/json/xml_stray_animals service calls
 13/04/24 Email templates not loading on reservation book
 12/04/24 Prevent screen reloading when processing any incoming forms
