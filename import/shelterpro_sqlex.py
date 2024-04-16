@@ -334,8 +334,6 @@ for row in cshelter:
     a.NonShelterAnimal = 0
     if arivdate is not None:
         a.DateBroughtIn = arivdate
-        a.LastChangedDate = a.DateBroughtIn
-        a.CreatedDate = a.DateBroughtIn
         a.generateCode(gettypeletter(a.AnimalTypeID))
         a.ShortCode = asm.strip(row["ANIMALKEY"])
         setuserfields(row, a)
