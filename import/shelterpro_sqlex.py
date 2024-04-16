@@ -153,7 +153,9 @@ print("DELETE FROM adoption WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" %
 print("DELETE FROM animal WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
 print("DELETE FROM log WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
 print("DELETE FROM owner WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
-if INCIDENT_IMPORT: print("DELETE FROM animalcontrol WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
+if INCIDENT_IMPORT: 
+    print("DELETE FROM animalcontrol WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
+    print("DELETE FROM animalcontrolanimal WHERE AnimalControlID >= %d;" % START_ID)
 if VACCINATION_IMPORT: print("DELETE FROM animalvaccination WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
 if MEDICAL_IMPORT:
     print("DELETE FROM animalmedical WHERE ID >= %d AND CreatedBy LIKE 'conversion%%';" % START_ID)
