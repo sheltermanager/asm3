@@ -1050,6 +1050,9 @@ def incidenttype_from_db(name, default = 1):
     """ Looks up the type in the db when the conversion is run, assign to IncidentTypeID """
     return "COALESCE((SELECT ID FROM incidenttype WHERE lower(IncidentName) LIKE lower(%s) LIMIT 1), %d)" % (ds(name.strip()), default)
 
+def incident_animal(incidentid, animalid):
+    print(f"INSERT INTO animalcontrolanimal (AnimalControlID, AnimalID) VALUES ({incidentid}, {animalid});")
+
 def jurisdiction_id_for_name(name, createIfNotExist = True):
     global jurisdictions
     if name.strip() == "": return 1
