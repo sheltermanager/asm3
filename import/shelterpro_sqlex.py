@@ -511,7 +511,7 @@ if INCIDENT_IMPORT:
         setuserfields(row, ac)
     animlink = asm.csv_to_list("%s/animlink.csv" % PATH, uppercasekeys=True, strip=True)
     for row in animlink:
-        if row["EVENTTYPE"] == 10:
+        if row["EVENTTYPE"] == "10":
             if row["ANIMALKEY"] not in ppa: continue
             if row["EVENTKEY"] not in ppi: continue
             ac = ppi[row["EVENTKEY"]]
