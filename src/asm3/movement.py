@@ -139,7 +139,7 @@ def get_movement(dbo: Database, movementid: int) -> ResultRow:
     """
     return dbo.first_row(dbo.query(get_movement_query(dbo) + " WHERE m.ID = ?", [movementid]))
 
-def get_movements_two_dates(dbo: Database, fromdate: datetime, todate: datetime, movementtype: int = -1):
+def get_movements_two_dates(dbo: Database, fromdate: datetime, todate: datetime, movementtype: int = -1, limit: int = 0):
     """
     Return all movements of movementtype between two dates.
     If movementtype == -1, all movement types are returned.
@@ -150,7 +150,7 @@ def get_movements_two_dates(dbo: Database, fromdate: datetime, todate: datetime,
         f"WHERE {typeclause}" \
         "m.MovementDate >= ? AND m.MovementDate <= ? " \
         "AND a.DeceasedDate Is Null " \
-        "ORDER BY m.MovementDate DESC", (fromdate, todate))
+        "ORDER BY m.MovementDate DESC", (fromdate, todate), limit=limit)
     return rows
 
 def get_active_movements(dbo: Database, movementtype: int) -> Results:

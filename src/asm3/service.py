@@ -637,7 +637,8 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_PERSON)
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
-            rs = asm3.movement.get_movements_two_dates(dbo, post.date("fromdate"), post.date("todate"), asm3.movement.ADOPTION)
+            rs = asm3.movement.get_movements_two_dates(dbo, post.date("fromdate"), post.date("todate"), 
+                movementtype = asm3.movement.ADOPTION, limit = asm3.configuration.record_search_limit(dbo))
             return set_cached_response(cache_key, account, "application/json", 1800, 1800, asm3.utils.json(rs))
         
     elif method == "xml_adopted_animals":
@@ -648,7 +649,8 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_PERSON)
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
-            rs = asm3.movement.get_movements_two_dates(dbo, post.date("fromdate"), post.date("todate"), asm3.movement.ADOPTION)
+            rs = asm3.movement.get_movements_two_dates(dbo, post.date("fromdate"), post.date("todate"), 
+                movementtype = asm3.movement.ADOPTION, limit = asm3.configuration.record_search_limit(dbo))
             return set_cached_response(cache_key, account, "application/xml", 1800, 1800, asm3.html.xml(rs))
 
     elif method == "json_adoptable_animal":
