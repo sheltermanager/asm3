@@ -634,8 +634,6 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             asm3.al.error("json_adopted_animals failed, %s/%s not valid dates" % (post["fromdate"], post["todate"]), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid fromdate/todate values")
         else:
-            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
-            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_PERSON)
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
             rs = asm3.movement.get_movements_two_dates(dbo, post.date("fromdate"), post.date("todate"), 
                 movementtype = asm3.movement.ADOPTION, limit = asm3.configuration.record_search_limit(dbo))
@@ -646,8 +644,6 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
             asm3.al.error("xml_adopted_animals failed, %s/%s not valid dates" % (post["fromdate"], post["todate"]), "service.handler", dbo)
             return ("text/plain", 0, 0, "ERROR: Invalid fromdate/todate values")
         else:
-            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
-            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_PERSON)
             asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
             rs = asm3.movement.get_movements_two_dates(dbo, post.date("fromdate"), post.date("todate"), 
                 movementtype = asm3.movement.ADOPTION, limit = asm3.configuration.record_search_limit(dbo))

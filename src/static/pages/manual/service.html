@@ -163,7 +163,8 @@ can POST the parameters too if you prefer.</p>
 <ul class="simple">
 <li><p>account: If this is a sheltermanager.com service call, the user’s account
 number. Can be omitted for other installations.</p></li>
-<li><p>username: A valid ASM user.</p></li>
+<li><p>username: A valid ASM user. For the majority of calls, this user must
+have the “View Animal” permission.</p></li>
 <li><p>password: A valid ASM password. From a security standpoint, it’s better to
 create at least one ASM user dedicated to calling the service to assist with
 audit trails and to lock it down so an attacker with the URL cannot change
@@ -1068,6 +1069,7 @@ determines whether the format returned is JSON or XML:</p>
 “fromdate” and “todate” parameters. The dates themselves should be formatted
 for the current database locale (eg: M/D/Y for US locales, D/M/Y for European,
 Y/M/D for some Asian locales, etc).</p>
+<p>Note that the “View Movement” permission is required to call this method.</p>
 <p>The method name determines whether the format returned is JSON or XML:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=json_adopted_animals&amp;username=user&amp;password=letmein&amp;fromdate=01/01/2020&amp;todate=12/31/2021
 </pre></div>

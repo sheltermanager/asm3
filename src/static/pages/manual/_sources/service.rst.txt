@@ -22,7 +22,8 @@ The service requires the following parameters:
 * account: If this is a sheltermanager.com service call, the user's account
   number. Can be omitted for other installations.
 
-* username: A valid ASM user.
+* username: A valid ASM user. For the majority of calls, this user must
+  have the "View Animal" permission.
 
 * password: A valid ASM password. From a security standpoint, it's better to
   create at least one ASM user dedicated to calling the service to assist with
@@ -998,6 +999,8 @@ Returns a dataset containing animals adopted between two dates as passed in the
 "fromdate" and "todate" parameters. The dates themselves should be formatted
 for the current database locale (eg: M/D/Y for US locales, D/M/Y for European,
 Y/M/D for some Asian locales, etc).
+
+Note that the "View Movement" permission is required to call this method.
 
 The method name determines whether the format returned is JSON or XML::
 
