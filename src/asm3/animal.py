@@ -4477,8 +4477,8 @@ def update_animal_status(dbo: Database, animalid: int, a: ResultRow = None, move
     if a.nonshelteranimal == 1 and a.deceaseddate:
         diedoffshelter = True
 
-    # Override the onshelter flag if the animal is actively boarding right now
-    if a.hasactiveboarding == 1:
+    # Override the onshelter flag if the animal is actively boarding right now and not dead
+    if a.hasactiveboarding == 1 and not a.deceaseddate:
         onshelter = True
 
     # Calculate location and qualified display location
