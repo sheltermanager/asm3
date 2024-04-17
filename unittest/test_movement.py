@@ -7,8 +7,8 @@ import asm3.utils
 
 class TestMovement(unittest.TestCase):
 
-    def test_get_movements(self):
-        asm3.movement.get_movements(base.get_dbo(), 2)
+    def test_get_active_movements(self):
+        asm3.movement.get_active_movements(base.get_dbo(), 2)
  
     def test_get_active_reservations(self):
         asm3.movement.get_active_reservations(base.get_dbo())
@@ -39,6 +39,9 @@ class TestMovement(unittest.TestCase):
 
     def test_get_person_movements(self):
         asm3.movement.get_person_movements(base.get_dbo(), 1)
+
+    def test_get_movements_two_dates(self):
+        asm3.movement.get_movements_two_dates(base.get_dbo(), base.today(), base.today())
 
     def test_get_transport_two_dates(self):
         asm3.movement.get_transport_two_dates(base.get_dbo(), base.today(), base.today())

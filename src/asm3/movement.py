@@ -36,17 +36,19 @@ TNR_TEXT = 13                   # RELEASED + animal.SpeciesID=2 (Cat)
 def get_movement_query(dbo: Database) -> str:
     return "SELECT m.*, o.OwnerTitle, o.OwnerInitials, o.OwnerSurname, o.OwnerForenames, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
-        "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, " \
+        "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.AdditionalFlags AS OwnerFlags, " \
         "rs.StatusName AS ReservationStatusName, " \
         "a.ShelterCode, a.ShortCode, a.AnimalAge, a.DateOfBirth, a.AgeGroup, a.Fee, " \
         "a.AnimalName, a.BreedName, a.Neutered, a.DeceasedDate, a.SpeciesID, a.HasActiveReserve, " \
         "a.HasTrialAdoption, a.IsHold, a.IsQuarantine, a.HoldUntilDate, a.CrueltyCase, a.NonShelterAnimal, " \
         "a.ActiveMovementType, a.Archived, a.DaysOnShelter, a.IsNotAvailableForAdoption, " \
         "a.CombiTestResult, a.FLVResult, a.HeartwormTestResult, a.Identichipped, a.IdentichipNumber, " \
+        "a.AcceptanceNumber AS LitterID, a.Weight, sz.Size, " \
+        "er.ReasonName AS EntryReasonName, et.EntryTypeName, " \
         "il.LocationName AS ShelterLocationName, a.ShelterLocationUnit, " \
         "r.OwnerName AS RetailerName, " \
         "ma.MediaName AS WebsiteMediaName, ma.Date AS WebsiteMediaDate, " \
-        "a.Sex, s.SpeciesName, rr.ReasonName AS ReturnedReasonName, " \
+        "a.Sex, bc.BaseColour, s.SpeciesName, rr.ReasonName AS ReturnedReasonName, " \
         "CASE WHEN m.MovementType = 0 AND m.MovementDate Is Null THEN " \
         "m.ReservationDate ELSE m.MovementDate END AS ActiveDate, " \
         "CASE WHEN m.EventID > 0 THEN 1 ELSE 0 END AS IsEventLinked, " \
@@ -88,13 +90,17 @@ def get_movement_query(dbo: Database) -> str:
         "LEFT OUTER JOIN lksmovementtype l ON l.ID = m.MovementType " \
         "LEFT OUTER JOIN animal a ON m.AnimalID = a.ID " \
         "LEFT OUTER JOIN adoption ad ON a.ActiveMovementID = ad.ID " \
+        "LEFT OUTER JOIN basecolour bc ON a.BaseColourID = bc.ID " \
         "LEFT OUTER JOIN owner co ON co.ID = ad.OwnerID " \
         "LEFT OUTER JOIN owner ac ON ac.ID = a.AdoptionCoordinatorID " \
         "LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation " \
         "LEFT OUTER JOIN media ma ON ma.LinkID = a.ID AND ma.LinkTypeID = 0 AND ma.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN entryreason er ON a.EntryReasonID = er.ID " \
+        "LEFT OUTER JOIN lksentrytype et ON a.EntryTypeID = et.ID " \
         "LEFT OUTER JOIN entryreason rr ON m.ReturnedReasonID = rr.ID " \
         "LEFT OUTER JOIN species s ON a.SpeciesID = s.ID " \
         "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
+        "LEFT OUTER JOIN lksize sz ON sz.ID = a.Size " \
         "LEFT OUTER JOIN owner o ON m.OwnerID = o.ID " \
         "LEFT OUTER JOIN owner hc ON hc.ID = o.HomeCheckedBy " \
         "LEFT OUTER JOIN owner r ON m.RetailerID = r.ID " \
@@ -127,10 +133,31 @@ def get_transport_query(dbo: Database) -> str:
         "LEFT OUTER JOIN owner p ON t.PickupOwnerID = p.ID " \
         "LEFT OUTER JOIN owner dr ON t.DropoffOwnerID = dr.ID "
 
-def get_movements(dbo: Database, movementtype: int) -> Results:
+def get_movement(dbo: Database, movementid: int) -> ResultRow:
     """
-    Gets the list of movements of a particular type 
+    Returns a single movement by id. Returns None if it does not exist.
+    """
+    return dbo.first_row(dbo.query(get_movement_query(dbo) + " WHERE m.ID = ?", [movementid]))
+
+def get_movements_two_dates(dbo: Database, fromdate: datetime, todate: datetime, movementtype: int = -1):
+    """
+    Return all movements of movementtype between two dates.
+    If movementtype == -1, all movement types are returned.
+    """
+    typeclause = ""
+    if movementtype > -1: typeclause = f"m.MovementType = {movementtype} AND "
+    rows = dbo.query(get_movement_query(dbo) + \
+        f"WHERE {typeclause}" \
+        "m.MovementDate >= ? AND m.MovementDate <= ? " \
+        "AND a.DeceasedDate Is Null " \
+        "ORDER BY m.MovementDate DESC", (fromdate, todate))
+    return rows
+
+def get_active_movements(dbo: Database, movementtype: int) -> Results:
+    """
+    Gets the list of active movements of a particular type 
     (unreturned or returned after today and for animals who aren't deceased)
+    Includes additional fields linked to movements.
     """
     rows = dbo.query(get_movement_query(dbo) + \
         "WHERE m.MovementType = ? AND " \
@@ -138,12 +165,6 @@ def get_movements(dbo: Database, movementtype: int) -> Results:
         "AND a.DeceasedDate Is Null " \
         "ORDER BY m.MovementDate DESC", (movementtype, dbo.today()))
     return asm3.additional.append_to_results(dbo, rows , "movement")
-
-def get_movement(dbo: Database, movementid: int) -> ResultRow:
-    """
-    Returns a single movement by id. Returns None if it does not exist.
-    """
-    return dbo.first_row(dbo.query(get_movement_query(dbo) + " WHERE m.ID = ?", [movementid]))
 
 def get_active_reservations(dbo: Database, age: int = 0) -> Results:
     """

@@ -989,6 +989,20 @@ determines whether the format returned is JSON or XML::
 
     http://localhost:5000/service?method=xml_adoptable_animals&username=user&password=letmein
 
+json_adopted_animals and xml_adopted_animals
+--------------------------------------------
+
+.. rubric:: Cache time: 30 minutes
+
+Returns a dataset containing animals adopted between two dates as passed in the
+"fromdate" and "todate" parameters. The dates themselves should be formatted
+for the current database locale (eg: M/D/Y for US locales, D/M/Y for European,
+Y/M/D for some Asian locales, etc).
+
+The method name determines whether the format returned is JSON or XML::
+
+    http://localhost:5000/service?method=json_adopted_animals&username=user&password=letmein&fromdate=01/01/2020&todate=12/31/2021
+
 json_lost_animals, xml_lost_animals, json_found_animals, xml_found_animals
 --------------------------------------------------------------------------
 

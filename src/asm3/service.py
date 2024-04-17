@@ -40,6 +40,7 @@ AUTH_METHODS = [
     "html_report", "rss_timeline", "upload_animal_image", 
     "xml_adoptable_animal", "json_adoptable_animal", 
     "xml_adoptable_animals", "json_adoptable_animals", "jsonp_adoptable_animals", 
+    "xml_adopted_animals", "json_adopted_animals", 
     "xml_found_animals", "json_found_animals", "jsonp_found_animals", 
     "xml_held_animals", "json_held_animals", "jsonp_held_animals", 
     "xml_lost_animals", "json_lost_animals", "jsonp_lost_animals", 
@@ -79,6 +80,8 @@ CACHE_PROTECT_METHODS = {
     "json_adoptable_animals_xp": [],
     "xml_adoptable_animal": [ "animalid" ],
     "xml_adoptable_animals": [ "sensitive" ],
+    "json_adopted_animals": [ "fromdate", "todate" ],
+    "xml_adopted_animals": [ "fromdate", "todate" ],
     "json_found_animals": [],
     "xml_found_animals": [],
     "json_held_animals": [],
@@ -625,6 +628,28 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
         lastmodified, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, mediaid)
         if medianame == "": return ("text/plain", 0, 0, "ERROR: Invalid mediaid")
         return set_cached_response(cache_key, account, mimetype, 86400, 86400, filedata)
+    
+    elif method == "json_adopted_animals":
+        if post.date("fromdate") is None or post.date("todate") is None:
+            asm3.al.error("json_adopted_animals failed, %s/%s not valid dates" % (post["fromdate"], post["todate"]), "service.handler", dbo)
+            return ("text/plain", 0, 0, "ERROR: Invalid fromdate/todate values")
+        else:
+            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
+            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_PERSON)
+            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
+            rs = asm3.movement.get_movements_two_dates(dbo, post.date("fromdate"), post.date("todate"), asm3.movement.ADOPTION)
+            return set_cached_response(cache_key, account, "application/json", 1800, 1800, asm3.utils.json(rs))
+        
+    elif method == "xml_adopted_animals":
+        if post.date("fromdate") is None or post.date("todate") is None:
+            asm3.al.error("xml_adopted_animals failed, %s/%s not valid dates" % (post["fromdate"], post["todate"]), "service.handler", dbo)
+            return ("text/plain", 0, 0, "ERROR: Invalid fromdate/todate values")
+        else:
+            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_ANIMAL)
+            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_PERSON)
+            asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.VIEW_MOVEMENT)
+            rs = asm3.movement.get_movements_two_dates(dbo, post.date("fromdate"), post.date("todate"), asm3.movement.ADOPTION)
+            return set_cached_response(cache_key, account, "application/xml", 1800, 1800, asm3.html.xml(rs))
 
     elif method == "json_adoptable_animal":
         if asm3.utils.cint(animalid) == 0:

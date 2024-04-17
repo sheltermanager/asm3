@@ -5047,7 +5047,7 @@ class move_book_foster(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        movements = asm3.movement.get_movements(dbo, asm3.movement.FOSTER)
+        movements = asm3.movement.get_active_movements(dbo, asm3.movement.FOSTER)
         movements = asm3.animal.remove_nonvisible_animals(movements, o.visibleanimalids)
         asm3.al.debug("got %d movements" % len(movements), "main.move_book_foster", dbo)
         return {
@@ -5151,7 +5151,7 @@ class move_book_retailer(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        movements = asm3.movement.get_movements(dbo, asm3.movement.RETAILER)
+        movements = asm3.movement.get_active_movements(dbo, asm3.movement.RETAILER)
         asm3.al.debug("got %d movements" % len(movements), "main.move_book_retailer", dbo)
         return {
             "name": "move_book_retailer",
