@@ -1879,7 +1879,8 @@ def update_check_flags(dbo: Database) -> str:
         "fosterer": "IsFosterer",
         "retailer": "IsRetailer",
         "vet": "IsVet",
-        "giftaid": "IsGiftAid"
+        "giftaid": "IsGiftAid",
+        "sponsor": "IsSponsor"
     }
     people = dbo.query("SELECT ID, AdditionalFlags, ExcludeFromBulkEmail, IDCheck, IsBanned, IsDangerous, IsVolunteer, " \
         "IsHomeChecker, IsMember, IsAdopter, IsAdoptionCoordinator, IsDonor, IsDriver, " \
