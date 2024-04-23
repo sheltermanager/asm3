@@ -2327,6 +2327,8 @@ class Animal:
             self.MostRecentEntryDate = self.DateBroughtIn
         if self.IdentichipNumber is None:
             self.IdentichipNumber = ""
+        if self.NonShelterAnimal == 1 and self.OriginalOwnerID > 0 and self.OwnerID == 0:
+            self.OwnerID = self.OriginalOwnerID
         s = (
             ( "ID", di(self.ID) ),
             ( "AnimalTypeID", di(self.AnimalTypeID) ),
