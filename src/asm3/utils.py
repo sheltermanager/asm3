@@ -1122,7 +1122,16 @@ def excel(l: str, rows: Results, cols: List[str] = None, includeheader: bool = T
             if is_currency(c):
                 rd.append(cint(r[c]) / 100.0)
             elif is_date(r[c]):
-                rd.append(r[c])
+                timeportion = "00:00:00"
+                dateportion = ""
+                try:
+                    dateportion = asm3.i18n.python2display(l, r[c])
+                    timeportion = asm3.i18n.format_time(r[c])
+                except:
+                    pass # Don't stop the show for bad dates/times
+                if timeportion != "00:00:00": # include time if non-midnight
+                    dateportion = "%s %s" % (dateportion, timeportion)
+                rd.append(dateportion)
             elif is_str(r[c]):
                 rd.append(r[c])
             else:
