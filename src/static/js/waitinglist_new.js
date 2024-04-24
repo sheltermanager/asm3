@@ -65,7 +65,7 @@ $(function() {
                 '</tr>',
                 '<tr>',
                 '<td>',
-                '<label for="dateofbirth">' + _("Date of birth") + '</label></td>',
+                '<label for="dateofbirth">' + _("Date of Birth") + '</label></td>',
                 '<td><input type="text" id="dateofbirth" data="dateofbirth" class="asm-textbox asm-datebox" />',
                 '</td>',
                 '</tr>',

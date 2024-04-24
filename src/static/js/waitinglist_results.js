@@ -267,7 +267,7 @@ $(function() {
                 "Sex": _("Sex"),
                 "Size": _("Size"),
                 "Neutered": _("Altered"),
-                "DateOfBirth": _("Date Of Birth"),
+                "DateOfBirth": _("Date of Birth"),
                 "DatePutOnList": _("Date Put On"),
                 "TimeOnList": _("Time On List"),
                 "OwnerName": _("Name"),
