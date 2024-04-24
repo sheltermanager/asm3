@@ -1711,12 +1711,19 @@ def create_waitinglist(dbo: Database, username: str, collationid: int) -> Tuple[
     d["dateputon"] = asm3.i18n.python2display(l, dbo.now())
     d["urgency"] = str(asm3.configuration.waiting_list_default_urgency(dbo))
     for f in fields:
+        if f.FIELDNAME == "animalname": d["animalname"] = f.VALUE
+        if f.FIELDNAME == "dateofbirth": d["dateofbirth"] = f.VALUE
+        if f.FIELDNAME == "microchip": d["microchip"] = truncs(f.VALUE)
+        if f.FIELDNAME == "breed1": d["breed"] = guess_breed(dbo, f.VALUE)
+        if f.FIELDNAME == "neutered" and (f.VALUE == "Yes" or f.VALUE == "on"): d["neutered"] = "on"
+        if f.FIELDNAME == "sex": d["sex"] = guess_sex(dbo, f.VALUE)
         if f.FIELDNAME == "size": d["size"] = guess_size(dbo, f.VALUE)
         if f.FIELDNAME == "species": d["species"] = guess_species(dbo, f.VALUE)
         if f.FIELDNAME == "description": d["description"] = f.VALUE
         if f.FIELDNAME == "reason": d["reasonforwantingtopart"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
+    if "breed1" not in d: d["breed"] = guess_breed(dbo, "nomatchesusedefault")
     if "size" not in d: d["size"] = guess_size(dbo, "nomatchesusedefault")
     if "species" not in d: d["species"] = guess_species(dbo, "nomatchesusedefault")
     # Have we got enough info to create the waiting list record? We need a description
