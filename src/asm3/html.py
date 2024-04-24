@@ -64,7 +64,8 @@ def asm_script_tags(path: str) -> str:
         "header_additional.js", "header_edit_header.js" ]
     standalone = [ "animal_view_adoptable.js", "document_edit.js", 
         "mobile.js", "mobile2.js", "mobile_login.js", "mobile_photo_uploader.js", "mobile_report.js", "mobile_sign.js", 
-        "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js" ]
+        "onlineform_extra.js", "report_toolbar.js", "service_sign_document.js", "service_checkout_adoption.js",
+        "service_checkout_licence.js" ]
     # Read our available js files and append them to this list, not including ones
     # we've explicitly added above (since they are in correct load order)
     # or those we should exclude because they are standalone files
