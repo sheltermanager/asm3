@@ -262,8 +262,12 @@ $(function() {
                 "Number": _("Number"),
                 "CreatedBy": _("Created By"),
                 "Rank": _("Rank"),
+                "BreedID":  ("Breed"),
                 "SpeciesID": _("Species"),
+                "Sex": _("Sex"),
                 "Size": _("Size"),
+                "Neutered": _("Altered"),
+                "DateOfBirth": _("Date Of Birth"),
                 "DatePutOnList": _("Date Put On"),
                 "TimeOnList": _("Time On List"),
                 "OwnerName": _("Name"),
@@ -275,8 +279,11 @@ $(function() {
                 "WorkTelephone": _("Work Phone"),
                 "MobileTelephone": _("Cell Phone"),
                 "EmailAddress": _("Email"),
+                "AnimalName": _("AnimalName"),
                 "AnimalDescription": _("Description"),
+                "MicrochipNumber": _("Microchip Number"),
                 "ReasonForWantingToPart": _("Reason"),
+                "WaitingListRemovalID": _("Removal Category"),
                 "CanAffordDonation": _("Donation?"),
                 "Urgency": _("Urgency"),
                 "DateRemovedFromList": _("Removed"),
@@ -301,18 +308,28 @@ $(function() {
          * add: The additional row results
          */
         format_column: function(row, name, value, add) {
-            const DATE_FIELDS = [ "DatePutOnList", "DateRemovedFromList" ];
-            const STRING_FIELDS = [ "CreatedBy", "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", 
+            const DATE_FIELDS = [ "DateOfBirth", "DatePutOnList", "DateRemovedFromList" ];
+            const STRING_FIELDS = [ "AnimalName", "MicrochipNumber", "CreatedBy", 
+                    "OwnerName", "OwnerAddress", "OwnerTown", "OwnerCounty", 
                     "OwnerPostcode", "HomeTelephone", "WorkTelephone", "MobileTelephone", 
                     "EmailAddress", "Rank", "TimeOnList" ];
             const COMMENT_FIELDS = [ "AnimalDescription", "ReasonForWantingToPart", "ReasonForRemoval", "Comments" ];
-            const YES_NO_FIELDS = [ "CanAffordDonation" ];
+            const YES_NO_FIELDS = [ "CanAffordDonation", "Neutered" ];
             let rv = "";
             if (name == "Number") {
                 rv = format.padleft(row.ID, 6);
             }
+            else if (name == "BreedID") {
+                rv = row.BREEDNAME;
+            }
+            else if (name == "WaitingListRemovalID") {
+                rv = row.WaitingListRemovalName;
+            }
             else if (name == "SpeciesID") {
                 rv = row.SPECIESNAME;
+            }
+            else if (name == "Sex") {
+                rv = row.SEXNAME;
             }
             else if (name == "Size") {
                 rv = row.SIZENAME;

@@ -904,7 +904,10 @@ def json_waitinglistcolumns(dbo: Database) -> ColumnList:
         ( "CreatedBy", _("Created By", l) ),
         ( "Rank", _("Rank", l) ),
         ( "SpeciesID", _("Species", l) ),
+        ( "BreedID", _("Breed", l) ),
+        ( "Sex", _("Sex", l) ),
         ( "Size", _("Size", l) ),
+        ( "DateOfBirth", _("Date Of Birth", l) ),
         ( "DatePutOnList", _("Date Put On", l) ),
         ( "TimeOnList", _("Time On List", l) ),
         ( "OwnerName", _("Name", l) ),
@@ -916,12 +919,15 @@ def json_waitinglistcolumns(dbo: Database) -> ColumnList:
         ( "WorkTelephone", _("Work", l) ),
         ( "MobileTelephone", _("Cell", l) ),
         ( "EmailAddress", _("Email", l) ),
+        ( "MicrochipNumber", _("Microchip", l) ),
+        ( "AnimalName", _("Name", l) ),
         ( "AnimalDescription", _("Description", l) ),
         ( "ReasonForWantingToPart", _("Reason", l) ),
         ( "CanAffordDonation", _("Donation?", l) ),
         ( "Urgency", _("Urgency", l) ),
         ( "DateRemovedFromList", _("Date Removed", l) ),
         ( "ReasonForRemoval", _("Removal Reason", l) ),
+        ( "WaitingListRemovalID", _("Removal Category", l) ),
         ( "Comments", _("Comments") )
         ]
     fd = asm3.additional.get_field_definitions(dbo, "waitinglist")

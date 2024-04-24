@@ -1,4 +1,4 @@
-/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, tableform, validate */
+/*global $, jQuery, _, asm, additional, common, config, controller, dlgfx, edit_header, format, header, html, microchip, tableform, validate */
 
 $(function() {
 
@@ -47,6 +47,30 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="breed">' + _("Breed") + '</label></td>',
+                '<td nowrap="nowrap">',
+                '<select id="breed" data-json="BREEDID" data-post="breed" class="asm-selectbox">',
+                html.list_to_options_breeds(controller.breeds),
+                '</select>',
+                '<select id="breedp" data="breedp" class="asm-selectbox" style="display:none;">',
+                html.list_to_options_breeds(controller.breeds),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="sex">' + _("Sex") + '</label></td>',
+                '<td nowrap="nowrap">',
+                '<select id="sex" data-json="SEX" data-post="sex" class="asm-selectbox">',
+                html.list_to_options(controller.sexes, "ID", "SEX"),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td></td>',
+                '<td><input type="checkbox" id="neutered" data-post="neutered" data-json="NEUTERED" class="asm-checkbox" />',
+                '<label for="neutered">' + _("Altered") + '</label></td>',
+                '</tr>',
+                '<tr>',
                 '<td><label for="size">' + _("Size") + '</label></td>',
                 '<td nowrap="nowrap">',
                 '<select id="size" data-json="SIZE" data-post="size" class="asm-selectbox">',
@@ -57,21 +81,41 @@ $(function() {
                 '<tr>',
                 '<td>',
                 '<label for="dateputon">' + _("Date put on") + '</label></td>',
-                '<td><input type="text" id="dateputon" data-json="DATEPUTONLIST" data-post="dateputon" class="asm-textbox asm-datebox" title="' + html.title(_("The date this animal was put on the waiting list")) + '" />',
+                '<td><input type="text" id="dateputon" data-json="DATEPUTONLIST" data-post="dateputon" class="asm-textbox asm-datebox" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td>',
-                '<label for="description">' + _("Description") + '</label></td>',
-                '<td><textarea id="description" data-json="ANIMALDESCRIPTION" data-post="description" rows="8" maxlength="255" class="asm-textarea" title="',
-                html.title(_("A description or other information about the animal")) + '"></textarea></td>',
+                '<label for="dateofbirth">' + _("Date of birth") + '</label></td>',
+                '<td><input type="text" id="dateofbirth" data-json="DATEOFBIRTH" data-post="dateofbirth" class="asm-textbox asm-datebox" />',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="animalname">' + _("Name") + '</label></td>',
+                '<td><input id="animalname" data-post="animalname" data-json="ANIMALNAME" type="text" class="asm-textbox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="microchip">' + _("Microchip") + '</label></td>',
+                '<td><input id="microchip" data-json="MICROCHIPNUMBER" data-post="microchip" type="text" maxlength="15" class="asm-textbox" />',
+                ' <span id="microchipbrand"></span> <button id="button-microchipcheck">' + microchip.check_site_name() + '</button>',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td>',
-                '<label for="reasonforwantingtopart">' + _("Entry reason") + '</label></td>',
-                '<td><textarea id="reasonforwaitingtopart" data-json="REASONFORWANTINGTOPART" data-post="reasonforwantingtopart" rows="5" class="asm-textarea" ',
-                'title="' + _("The reason the owner wants to part with the animal") + '"></textarea></td>',
+                '<label for="description">' + _("Description") + '</label>',
+                '<span id="callout-description" class="asm-callout">' + _("A description or other information about the animal") + '</span>',
+                '</td>',
+                '<td>',
+                '<textarea id="description" data-json="ANIMALDESCRIPTION" data-post="description" rows="3" maxlength="255" class="asm-textarea"></textarea>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td>',
+                '<label for="reasonforwantingtopart">' + _("Entry reason") + '</label>', 
+                '<span id="callout-reasonforwantingtopart" class="asm-callout">' + _("The reason the owner wants to part with the animal") + '</span>',
+                '</td>',
+                '<td>',
+                '<textarea id="reasonforwantingtopart" data-json="REASONFORWANTINGTOPART" data-post="reasonforwantingtopart" rows="3" class="asm-textarea"></textarea>',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -80,8 +124,9 @@ $(function() {
                 '<td class="asm-nested-table-td">',
                 '<table width="100%" class="additionaltarget" data="to14">',
                 '<tr>',
-                '<td><label for="canafforddonation">' + _("Can afford donation?") + '</label></td>',
-                '<td><input type="checkbox" id="canafforddonation" data-json="CANAFFORDDONATION" data-post="canafforddonation" class="asm-checkbox" title="' + html.title(_("Will this owner give a donation?")) + '" /></td>',
+                '<td></td>',
+                '<td><input type="checkbox" id="canafforddonation" data-json="CANAFFORDDONATION" data-post="canafforddonation" class="asm-checkbox" />',
+                '<label for="canafforddonation">' + _("Can afford donation?") + '</label></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="urgency">' + _("Urgency") + '</label></td>',
@@ -112,8 +157,7 @@ $(function() {
                 '<table width="100%" class="additionaltarget" data="to15">',
                 '<tr>',
                 '<td><label for="dateoflastownercontact">' + _("Date of last owner contact") + '</label></td>',
-                '<td><input type="text" id="dateoflastownercontact" data-json="DATEOFLASTOWNERCONTACT" data-post="dateoflastownercontact" class="asm-textbox asm-datebox" ',
-                'title="' + html.title(_("The date the owner last contacted the shelter")) + '" /> </td>',
+                '<td><input type="text" id="dateoflastownercontact" data-json="DATEOFLASTOWNERCONTACT" data-post="dateoflastownercontact" class="asm-textbox asm-datebox" /></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="autoremovepolicy">' + _("Automatically remove") + '</label>',
@@ -130,9 +174,19 @@ $(function() {
                 'title="' + html.title(_("The date this animal was removed from the waiting list")) + '" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="reasonforremoval">' + _("Removal reason") + '</label></td>',
-                '<td><textarea id="reasonforremoval" data-json="REASONFORREMOVAL" data-post="reasonforremoval" rows="5" class="asm-textarea" ',
-                'title="' + html.title(_("The reason this animal was removed from the waiting list")) + '"></textarea></td>',
+                '<td><label for="waitinglistremoval">' + _("Removal category") + '</label></td>',
+                '<td nowrap="nowrap">',
+                '<select id="waitinglistremoval" data-json="WAITINGLISTREMOVALID" data-post="waitinglistremoval" class="asm-selectbox">',
+                html.list_to_options(controller.waitinglistremovals, "ID", "REMOVALNAME"),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="reasonforremoval">' + _("Removal reason") + '</label>',
+                '</td>',
+                '<td>',
+                '<textarea id="reasonforremoval" data-json="REASONFORREMOVAL" data-post="reasonforremoval" rows="5" class="asm-textarea"></textarea>',
+                '</td>',
                 '</tr>',
                 '</table>',
                 '</div>',
@@ -154,6 +208,13 @@ $(function() {
             if (an.find(".additional").length == 0) {
                 ac.hide(); an.hide();
             }
+
+            // Show the microchip manufacturer
+            microchip.manufacturer("#microchip", "#microchipbrand");
+
+            // Show the microchip check button
+            $("#button-microchipcheck").hide();
+            if (microchip.is_check_available($("#microchip").val())) { $("#button-microchipcheck").show(); }
 
             if (!common.has_permission("cwl")) { $("#button-save").hide(); }
             if (!common.has_permission("aa")) { $("#button-toanimal").hide(); }
@@ -231,6 +292,13 @@ $(function() {
                 waitinglist.current_person = rec;
             });
 
+            $('#species').change(function() {
+                waitinglist.updatebreedselect();
+            });
+
+            // Handlers for when on-screen fields are edited
+            $("#microchip").change(waitinglist.enable_widgets);
+
             // Email dialog for sending emails
             $("#emailform").emailform();
 
@@ -254,6 +322,10 @@ $(function() {
                 });
             });
 
+            $("#button-microchipcheck")
+                .button({ icons: { primary: "ui-icon-search" }, text: false })
+                .click(function() { microchip.check($("#microchip").val()); });
+
             $("#button-toanimal").button().click(async function() {
                 $("#button-toanimal").button("disable");
                 let formdata = "mode=toanimal&id=" + $("#waitinglistid").val();
@@ -272,6 +344,18 @@ $(function() {
 
         },
 
+        // Only show the breeds for the selected species
+        updatebreedselect: function() {
+            $('optgroup', $('#breed')).remove();
+            $('#breedp optgroup').clone().appendTo($('#breed'));
+
+            $('#breed').children().each(function(){
+                if($(this).attr('id') != 'ngp-'+$('#species').val()){
+                    $(this).remove();
+                }
+            });
+        },
+
         sync: function() {
 
             // Load the data into the controls for the screen
@@ -282,6 +366,10 @@ $(function() {
 
             // Update on-screen fields from the data and display the screen
             waitinglist.enable_widgets();
+
+            // Filter the breed select to match the loaded species
+            waitinglist.updatebreedselect();
+            $("#breed").fromJSON(controller.animal);
 
             // Dirty handling
             validate.bind_dirty([ "waitinglist_" ]);

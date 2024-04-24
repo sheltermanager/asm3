@@ -17,7 +17,8 @@ def get_waitinglist_query(dbo: Database) -> str:
     waiting list rows with resolved lookups.
     """
     return "SELECT a.*, a.ID AS WLID, " \
-        "s.SpeciesName AS SpeciesName, sz.Size AS SizeName, " \
+        "s.SpeciesName AS SpeciesName, sz.Size AS SizeName, sx.Sex AS SexName, " \
+        "b.BreedName, wr.RemovalName AS WaitingListRemovalName, " \
         "o.OwnerName, o.OwnerSurname, o.OwnerForeNames, o.OwnerTitle, o.OwnerInitials, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, " \
@@ -30,11 +31,14 @@ def get_waitinglist_query(dbo: Database) -> str:
         "web.Date AS WebsiteMediaDate, " \
         "web.MediaNotes AS WebsiteMediaNotes " \
         "FROM animalwaitinglist a " \
+        "LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex " \
         "LEFT OUTER JOIN lksize sz ON sz.ID = a.Size " \
-        "LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = %d AND web.WebsitePhoto = 1 " \
+        f"LEFT OUTER JOIN media web ON web.LinkID = a.ID AND web.LinkTypeID = {asm3.media.WAITINGLIST} AND web.WebsitePhoto = 1 " \
+        "LEFT OUTER JOIN breed b ON b.ID = a.BreedID " \
         "LEFT OUTER JOIN species s ON s.ID = a.SpeciesID " \
         "LEFT OUTER JOIN owner o ON o.ID = a.OwnerID " \
-        "LEFT OUTER JOIN lkurgency u ON u.ID = a.Urgency" % asm3.media.WAITINGLIST
+        "LEFT OUTER JOIN lkurgency u ON u.ID = a.Urgency " \
+        "LEFT OUTER JOIN lkwaitinglistremoval wr ON wr.ID = a.WaitingListRemovalID "
 
 def get_waitinglist_by_id(dbo: Database, wid: int) -> ResultRow:
     """
@@ -157,6 +161,8 @@ def get_waitinglist_find_simple(dbo: Database, query: str = "", limit: int = 0, 
         return get_waitinglist(dbo)
     if asm3.utils.is_numeric(query): ss.add_field_value("a.ID", asm3.utils.cint(query))
     ss.add_field("o.OwnerName")
+    ss.add_field("a.AnimalName")
+    ss.add_field("a.MicrochipNumber")
     ss.add_clause("EXISTS(SELECT ad.Value FROM additional ad " \
         "INNER JOIN additionalfield af ON af.ID = ad.AdditionalFieldID AND af.Searchable = 1 " \
         "WHERE ad.LinkID=a.ID AND ad.LinkType IN (%s) AND LOWER(ad.Value) LIKE ?)" % asm3.additional.WAITINGLIST_IN)
@@ -304,15 +310,22 @@ def update_waitinglist_from_form(dbo: Database, post: PostedData, username: str)
         raise asm3.utils.ASMValidationError(_("Date put on cannot be blank", l))
 
     dbo.update("animalwaitinglist", wlid, {
+        "BreedID":                  post.integer("breed"),
         "SpeciesID":                post.integer("species"),
+        "Sex":                      post.integer("sex"),
+        "Neutered":                 post.boolean("neutered"),
         "Size":                     post.integer("size"),
+        "DateOfBirth":              post.date("dateofbirth"),
         "DatePutOnList":            post.date("dateputon"),
         "OwnerID":                  post.integer("owner"),
+        "AnimalName":               post["animalname"],
         "AnimalDescription":        post["description"],
+        "MicrochipNumber":          post["microchip"],
         "ReasonForWantingToPart":   post["reasonforwantingtopart"],
         "CanAffordDonation":        post.boolean("canafforddonation"),
         "Urgency":                  post.integer("urgency"),
         "DateRemovedFromList":      post.date("dateremoved"),
+        "WaitingListRemovalID":     post.integer("waitinglistremoval"),
         "AutoRemovePolicy":         post.integer("autoremovepolicy"),
         "DateOfLastOwnerContact":   post.date("dateoflastownercontact"),
         "ReasonForRemoval":         post["reasonforremoval"],
@@ -336,15 +349,22 @@ def insert_waitinglist_from_form(dbo: Database, post: PostedData, username: str)
         raise asm3.utils.ASMValidationError(_("Date put on cannot be blank", l))
 
     nwlid = dbo.insert("animalwaitinglist", {
+        "BreedID":                  post.integer("breed"),
         "SpeciesID":                post.integer("species"),
+        "Sex":                      post.integer("sex"),
+        "Neutered":                 post.boolean("neutered"),
         "Size":                     post.integer("size"),
+        "DateOfBirth":              post.date("dateofbirth"),
         "DatePutOnList":            post.date("dateputon"),
         "OwnerID":                  post.integer("owner"),
+        "AnimalName":               post["animalname"],
         "AnimalDescription":        post["description"],
+        "MicrochipNumber":          post["microchip"],
         "ReasonForWantingToPart":   post["reasonforwantingtopart"],
         "CanAffordDonation":        post.boolean("canafforddonation"),
         "Urgency":                  post.integer("urgency"),
         "DateRemovedFromList":      post.date("dateremoved"),
+        "WaitingListRemovalID":     post.integer("waitinglistremoval"),
         "AutoRemovePolicy":         asm3.configuration.waiting_list_default_removal_weeks(dbo),
         "DateOfLastOwnerContact":   post.date("dateoflastownercontact"),
         "ReasonForRemoval":         post["reasonforremoval"],
@@ -367,21 +387,24 @@ def create_animal(dbo: Database, username: str, wlid: int) -> int:
     a = dbo.first_row( dbo.query("SELECT * FROM animalwaitinglist WHERE ID = ?", [wlid]) )
     
     data = {
-        "animalname":           _("Waiting List {0}", l).format(wlid),
-        "markings":             str(a["ANIMALDESCRIPTION"]),
-        "reasonforentry":       str(a["REASONFORWANTINGTOPART"]),
-        "species":              str(a["SPECIESID"]),
-        "hiddenanimaldetails":  str(a["COMMENTS"]),
-        "broughtinby":          str(a["OWNERID"]),
-        "originalowner":        str(a["OWNERID"]),
+        "animalname":           a.ANIMALNAME or _("Waiting List {0}", l).format(wlid),
+        "markings":             str(a.ANIMALDESCRIPTION),
+        "reasonforentry":       str(a.REASONFORWANTINGTOPART),
+        "species":              str(a.SPECIESID),
+        "hiddenanimaldetails":  str(a.COMMENTS),
+        "broughtinby":          str(a.OWNERID),
+        "originalowner":        str(a.OWNERID),
         "animaltype":           asm3.configuration.default_type(dbo),
         "entryreason":          asm3.configuration.default_entry_reason(dbo),
-        "breed1":               asm3.configuration.default_breed(dbo),
-        "breed2":               asm3.configuration.default_breed(dbo),
+        "breed1":               a.BREEDID or asm3.configuration.default_breed(dbo),
+        "breed2":               a.BREEDID or asm3.configuration.default_breed(dbo),
         "basecolour":           asm3.configuration.default_colour(dbo),
-        "size":                 asm3.configuration.default_size(dbo),
+        "sex":                  str(a.SEX),
+        "size":                 str(a.SIZE),
+        "neutered":             str(a.NEUTERED),
+        "microchipnumber":      a.MICROCHIPNUMBER,
         "internallocation":     asm3.configuration.default_location(dbo),
-        "dateofbirth":          python2display(l, subtract_years(now(dbo.timezone))),
+        "dateofbirth":          python2display(l, a.DATEOFBIRTH or subtract_years(now(dbo.timezone))),
         "estimateddob":         "1"
     }
     # If we aren't showing the time brought in, set it to midnight

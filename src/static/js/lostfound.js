@@ -341,8 +341,6 @@ $(function() {
         },
 
         // Only show the breeds for the selected species
-        // If the species has no breeds the species name is shown
-        // again.
         updatebreedselect: function() {
             $('optgroup', $('#breed')).remove();
             $('#breedp optgroup').clone().appendTo($('#breed'));
@@ -352,9 +350,6 @@ $(function() {
                     $(this).remove();
                 }
             });
-            if($('#breed option').length == 0) {
-                $('#breed').append("<option value='1'>"+$('#species option:selected').text()+"</option>");
-            }
         },
 
         sync: function() {

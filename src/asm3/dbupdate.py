@@ -44,7 +44,7 @@ VERSIONS = (
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
-    34807, 34808, 34809, 34810
+    34807, 34808, 34809, 34810, 34811
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -63,7 +63,8 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "jurisdiction", "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype",
     "lkownerflags", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype",
     "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", 
-    "lksoutcome", "lksposneg", "lksrotatype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", 
+    "lksoutcome", "lksposneg", "lksrotatype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
+    "lkwaitinglistremoval", "lkworktype", 
     "log", "logtype", "media", "medicalprofile", "messages", "onlineform", 
     "onlineformfield", "onlineformincoming", "owner", "ownercitation", "ownerdonation", "ownerinvestigation", 
     "ownerlicence", "ownerlookingfor", "ownerrota", "ownertraploan", "ownervoucher", "pickuplocation", "publishlog", 
@@ -107,12 +108,13 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
 TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
     "costtype", "deathreason", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", 
     "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
-    "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype", "lkownerflags", "lksaccounttype", "lksclinicstatus", 
-    "lksdiarylink", "lksdonationfreq", "lksentrytype", "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", 
-    "lksmedialink", "lksmediatype", "lksmovementtype", "lksoutcome", "lksposneg", "lksrotatype", "lksyesno", 
-    "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", "lkworktype", "logtype", "medicalprofile", 
-    "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", "stocklocation", 
-    "stockusagetype", "species", "templatedocument", "templatehtml", "testtype", "testresult", 
+    "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype", "lkownerflags", 
+    "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype", "lksex", "lksfieldlink", 
+    "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksoutcome", 
+    "lksposneg", "lksrotatype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
+    "lkwaitinglistremoval", "lkworktype", 
+    "logtype", "medicalprofile", "onlineform", "onlineformfield", "pickuplocation", "reservationstatus", "site", 
+    "stocklocation", "stockusagetype", "species", "templatedocument", "templatehtml", "testtype", "testresult", 
     "transporttype", "traptype", "vaccinationtype", "voucher" )
 
 VIEWS = ( "v_adoption", "v_animal", "v_animalcontrol", "v_animalfound", "v_animallost", 
@@ -843,14 +845,21 @@ def sql_structure(dbo: Database) -> str:
     sql += table("animalwaitinglist", (
         fid(),
         fint("SpeciesID"),
+        fint("BreedID", True),
+        fint("Neutered", True),
+        fint("Sex", True),
         fint("Size", True),
+        fdate("DateOfBirth", True),
         fdate("DatePutOnList"),
         fint("OwnerID"),
+        fstr("AnimalName", True),
         flongstr("AnimalDescription"),
+        fstr("MicrochipNumber", True),
         flongstr("ReasonForWantingToPart"),
         fint("CanAffordDonation"),
         fint("Urgency"),
         fdate("DateRemovedFromList", True),
+        fint("WaitingListRemovalID", True),
         fint("AutoRemovePolicy"),
         fdate("DateOfLastOwnerContact", True),
         flongstr("ReasonForRemoval"),
@@ -858,6 +867,8 @@ def sql_structure(dbo: Database) -> str:
         fdate("UrgencyUpdateDate", True),
         fdate("UrgencyLastUpdatedDate", True) ))
     sql += index("animalwaitinglist_AnimalDescription", "animalwaitinglist", "AnimalDescription", partial = True)
+    sql += index("animalwaitinglist_AnimalName", "animalwaitinglist", "AnimalName")
+    sql += index("animalwaitinglist_MicrochipNumber", "animalwaitinglist", "MicrochipNumber")
     sql += index("animalwaitinglist_OwnerID", "animalwaitinglist", "OwnerID")
     sql += index("animalwaitinglist_SpeciesID", "animalwaitinglist", "SpeciesID")
     sql += index("animalwaitinglist_Size", "animalwaitinglist", "Size")
@@ -1193,6 +1204,9 @@ def sql_structure(dbo: Database) -> str:
 
     sql += table("lksposneg", (
         fid(), fstr("Name") ), False)
+
+    sql += table("lkwaitinglistremoval", (
+        fid(), fstr("RemovalName") ), False)
 
     sql += table("lkworktype", (
         fid(), fstr("WorkType"),
@@ -2557,6 +2571,10 @@ def sql_default_data(dbo: Database, skip_config: bool = False) -> str:
     sql += lookup1("lkurgency", "Urgency", 3, _("Medium", l))
     sql += lookup1("lkurgency", "Urgency", 4, _("Low", l))
     sql += lookup1("lkurgency", "Urgency", 5, _("Lowest", l))
+    sql += lookup1("lkwaitinglistremoval", "RemovalName", 1, _("Entered shelter", l))
+    sql += lookup1("lkwaitinglistremoval", "RemovalName", 2, _("Owner kept", l))
+    sql += lookup1("lkwaitinglistremoval", "RemovalName", 3, _("Owner took to another shelter", l))
+    sql += lookup1("lkwaitinglistremoval", "RemovalName", 4, _("Unknown", l))
     sql += lookup1("lkworktype", "WorkType", 1, _("General", l))
     sql += lookup1("lkworktype", "WorkType", 2, _("Kennel", l))
     sql += lookup1("lkworktype", "WorkType", 3, _("Cattery", l))
@@ -6199,3 +6217,26 @@ def update_34810(dbo: Database) -> None:
     # Add entry type for owner requested euth and set it from the old field
     dbo.execute_dbupdate("INSERT INTO lksentrytype VALUES (10, ?)", [ _("Owner requested euthanasia", l) ])
     dbo.execute_dbupdate("UPDATE animal SET EntryTypeID=10 WHERE AsilomarOwnerRequestedEuthanasia=1")
+
+def update_34811(dbo: Database) -> None:
+    l = dbo.locale
+    # Add new fields to animalwaitinglist
+    add_column(dbo, "animalwaitinglist", "BreedID", dbo.type_integer)
+    add_column(dbo, "animalwaitinglist", "DateOfBirth", dbo.type_datetime)
+    add_column(dbo, "animalwaitinglist", "Sex", dbo.type_integer)
+    add_column(dbo, "animalwaitinglist", "Neutered", dbo.type_integer)
+    add_column(dbo, "animalwaitinglist", "MicrochipNumber", dbo.type_shorttext)
+    add_column(dbo, "animalwaitinglist", "AnimalName", dbo.type_shorttext)
+    add_column(dbo, "animalwaitinglist", "WaitingListRemovalID", dbo.type_integer)
+    add_index(dbo, "animalwaitinglist_AnimalName", "animalwaitinglist", "AnimalName")
+    add_index(dbo, "animalwaitinglist_MicrochipNumber", "animalwaitinglist", "MicrochipNumber")
+    dbo.execute_dbupdate("UPDATE animalwaitinglist SET BreedID=0, Sex=2, Neutered=0, MicrochipNumber='', AnimalName='', WaitingListRemovalID=0")
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("RemovalName", dbo.type_shorttext, False),
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("lkwaitinglistremoval", fields) )
+    dbo.execute_dbupdate("INSERT INTO lkwaitinglistremoval VALUES (1, ?)", [ _("Entered shelter", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkwaitinglistremoval VALUES (2, ?)", [ _("Owner kept", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkwaitinglistremoval VALUES (3, ?)", [ _("Owner took to another shelter", l) ])
+    dbo.execute_dbupdate("INSERT INTO lkwaitinglistremoval VALUES (4, ?)", [ _("Unknown", l) ])

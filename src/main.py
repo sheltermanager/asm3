@@ -7448,13 +7448,16 @@ class waitinglist(JSONEndpoint):
             "animal": a,
             "additional": asm3.additional.get_additional_fields(dbo, a["ID"], "waitinglist"),
             "audit": self.checkb(asm3.users.VIEW_AUDIT_TRAIL) and asm3.audit.get_audit_for_link(dbo, "animalwaitinglist", a["ID"]) or [],
+            "breeds": asm3.lookups.get_breeds_by_species(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
+            "sexes": asm3.lookups.get_sexes(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
             "species": asm3.lookups.get_species(dbo),
             "urgencies": asm3.lookups.get_urgencies(dbo),
             "templates": asm3.template.get_document_templates(dbo, "waitinglist"),
             "templatesemail": asm3.template.get_document_templates(dbo, "email"),
-            "tabcounts": asm3.waitinglist.get_satellite_counts(dbo, a["ID"])[0]
+            "tabcounts": asm3.waitinglist.get_satellite_counts(dbo, a["ID"])[0],
+            "waitinglistremovals": asm3.lookups.get_waitinglist_removals(dbo)
         }
 
     def post_save(self, o):
@@ -7553,10 +7556,13 @@ class waitinglist_new(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         return {
-            "species": asm3.lookups.get_species(dbo),
             "additional": asm3.additional.get_additional_fields(dbo, 0, "waitinglist"),
+            "breeds": asm3.lookups.get_breeds_by_species(dbo),
+            "sexes": asm3.lookups.get_sexes(dbo),
+            "species": asm3.lookups.get_species(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
-            "urgencies": asm3.lookups.get_urgencies(dbo)
+            "urgencies": asm3.lookups.get_urgencies(dbo),
+            "waitinglistremovals": asm3.lookups.get_waitinglist_removals(dbo),
         }
 
     def post_all(self, o):

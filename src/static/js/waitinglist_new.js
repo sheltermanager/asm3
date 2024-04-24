@@ -22,29 +22,71 @@ $(function() {
                 '</td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="size">' + _("Size") + '</label></td>',
+                '<td><label for="breed">' + _("Breed") + '</label></td>',
                 '<td nowrap="nowrap">',
-                '<select id="size" data-json="SIZE" data-post="size" class="asm-selectbox">',
-                html.list_to_options(controller.sizes, "ID", "SIZE"),
+                '<select id="breed" data="breed" class="asm-selectbox">',
+                html.list_to_options_breeds(controller.breeds),
+                '</select>',
+                '<select id="breedp" data="breedp" class="asm-selectbox" style="display:none;">',
+                html.list_to_options_breeds(controller.breeds),
                 '</select>',
                 '</td>',
                 '</tr>',
                 '<tr>',
+                '<td><label for="sex">' + _("Sex") + '</label></td>',
+                '<td nowrap="nowrap">',
+                '<select id="sex" data="sex" class="asm-selectbox">',
+                html.list_to_options(controller.sexes, "ID", "SEX"),
+                '</select>',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<td></td>',
+                '<td><input type="checkbox" id="neutered" data="neutered" class="asm-checkbox" />',
+                '<label for="neutered">' + _("Altered") + '</label></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="size">' + _("Size") + '</label></td>',
+                '<td nowrap="nowrap">',
+                '<select id="size" data="size" class="asm-selectbox">',
+                html.list_to_options(controller.sizes, "ID", "SIZE"),
+                '</select>',
+                '</td>',
+                '</tr>',
                 '<td>',
                 '<label for="dateputon">' + _("Date put on") + '</label></td>',
-                '<td><input type="text" id="dateputon" data="dateputon" class="asm-textbox asm-datebox" title="' + html.title(_("The date this animal was put on the waiting list")) + '" />',
+                '<td><input type="text" id="dateputon" data="dateputon" class="asm-textbox asm-datebox" />',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td>',
-                '<label for="description">' + _("Description") + '</label></td>',
-                '<td><textarea id="description" data="description" rows="8" class="asm-textareafixed" maxlength="255" title="' + html.title(_("A description or other information about the animal")) + '"></textarea></td>',
+                '<label for="dateofbirth">' + _("Date of birth") + '</label></td>',
+                '<td><input type="text" id="dateofbirth" data="dateofbirth" class="asm-textbox asm-datebox" />',
+                '</td>',
+                '</tr>',
+                '<tr>',
+                '<tr>',
+                '<td><label for="animalname">' + _("Name") + '</label></td>',
+                '<td><input id="animalname" data="animalname" type="text" class="asm-textbox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td><label for="microchip">' + _("Microchip") + '</label></td>',
+                '<td><input id="microchip" data="microchip" type="text" maxlength="15" class="asm-textbox" /></td>',
+                '</tr>',
+                '<tr>',
+                '<td>',
+                '<label for="description">' + _("Description") + '</label>',
+                '<span id="callout-description" class="asm-callout">' + _("A description or other information about the animal") + '</span>',
+                '</td>',
+                '<td><textarea id="description" data="description" rows="3" class="asm-textareafixed" maxlength="255"></textarea></td>',
                 '</td>',
                 '</tr>',
                 '<tr>',
                 '<td>',
-                '<label for="reasonforwantingtopart">' + _("Entry reason") + '</label></td>',
-                '<td><textarea id="reasonforwantingtopart" data="reasonforwantingtopart" rows="5" class="asm-textareafixed" title="' + html.title(_("The reason the owner wants to part with the animal")) + '"></textarea></td>',
+                '<label for="reasonforwantingtopart">' + _("Entry reason") + '</label>',
+                '<span id="callout-reasonforwantingtopart" class="asm-callout">' + _("The reason the owner wants to part with the animal") + '</span>',
+                '</td>',
+                '<td><textarea id="reasonforwantingtopart" data="reasonforwantingtopart" rows="3" class="asm-textareafixed" ></textarea></td>',
                 '</td>',
                 '</tr>',
                 '</table>',
@@ -52,8 +94,9 @@ $(function() {
                 '<td valign="top">',
                 '<table>',
                 '<tr>',
-                '<td><label for="canafforddonation">' + _("Can afford donation?") + '</label></td>',
-                '<td><input type="checkbox" id="canafforddonation" data="canafforddonation" class="asm-checkbox" title="' + html.title(_("Will this owner give a donation?")) + '" /></td>',
+                '<td></td>',
+                '<td><input type="checkbox" id="canafforddonation" data="canafforddonation" class="asm-checkbox" />',
+                '<label for="canafforddonation">' + _("Can afford donation?") + '</label></td>',
                 '</tr>',
                 '<tr>',
                 '<td><label for="urgency">' + _("Urgency") + '</label></td>',
@@ -86,6 +129,18 @@ $(function() {
                 '</div>',
                 html.content_footer()
             ].join("\n");
+        },
+
+        update_breed_select: function() {
+            // Only show the breeds for the selected species
+            // If the species has no breeds the species is shown
+            $('optgroup', $('#breed')).remove();
+            $('#breedp optgroup').clone().appendTo($('#breed'));
+            $('#breed').children().each(function(){
+                if($(this).attr('id') != 'ngp-'+$('#species').val()){
+                    $(this).remove();
+                }
+            });
         },
 
         bind: function() {
@@ -145,6 +200,10 @@ $(function() {
                 }
             };
 
+            $('#species').change(function() {
+                waitinglist_new.update_breed_select();
+            });
+
             // Buttons
             $("#add").button().click(function() {
                 add_waiting_list("add");
@@ -169,7 +228,9 @@ $(function() {
 
             // Set select box default values
             $("#species").val(config.str("AFDefaultSpecies"));
+            waitinglist_new.update_breed_select();
             $("#size").val(config.str("AFDefaultSize"));
+            $("#sex").val("2");
             $("#urgency").val(config.str("WaitingListDefaultUrgency"));
 
             // Default dates
