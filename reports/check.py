@@ -25,6 +25,7 @@ SHOWNONEXEC = "SHOWNONEXEC" in os.environ and os.environ["SHOWNONEXEC"]
 FORCENONEXEC = "FORCENONEXEC" in os.environ and os.environ["FORCENONEXEC"]
 EXECPOSTGRES = "EXECPOSTGRES" in os.environ and os.environ["EXECPOSTGRES"]
 
+errors = 0
 checked = 0
 total = 0
 
@@ -68,6 +69,7 @@ def validate_html(html):
     return etree.parse(StringIO(html), _html_parser)
 
 def check_html(h):
+    global errors
     def get_section(startpattern, endpattern, nth=1):
         ss = h.find(startpattern)
         es = h.find(endpattern, ss)
@@ -101,11 +103,13 @@ def check_html(h):
     try:
         validate_html(doc)
     except Exception as e:
+        errors += 1
         print("\nHTML VALIDATION FAILED: %s" % e)
 
 def parse_reports(data):
     global checked
     global total
+    global errors
     reports = data.split("&&&")
     for rep in reports:
         total += 1
@@ -127,6 +131,7 @@ def parse_reports(data):
                 checked += 1
                 db.query(substitute(sql))
             except Exception as err:
+                errors += 1
                 print(f"\nQUERY FAILED: {err}\n")
                 print(sql)
             if len(html) > 0 and html.find("<") != -1:
@@ -150,6 +155,7 @@ def parse_reports(data):
                             checked += 1
                             db.query(substitute(sql))
                         except Exception as err:
+                            errors += 1
                             print(f"\nQUERY FAILED: {err}\n")
                             print(sql)
                         if len(html) > 0 and html.find("<") != -1:
@@ -178,4 +184,4 @@ for f in sys.argv:
         with open(f, "r") as h:
             parse_reports(h.read())
 
-print(f"\nChecked {checked} / {total} reports.")
+print(f"\nChecked {checked} / {total} reports. {errors} errors.")
