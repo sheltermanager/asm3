@@ -49,15 +49,14 @@ $$BODY
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
 <td>$LOCATIONNAME</td>
-<td><b>$OWNERNAME</b><br />
-$OWNERADDRESS<br />
-$OWNERTOWN</br />
-$OWNERCOUNTY<br />
+<td><b>$OWNERNAME</b><br/>
+$OWNERADDRESS<br/>
+$OWNERTOWN<br/>
+$OWNERCOUNTY<br/>
 $OWNERPOSTCODE</td>
 </tr>
 BODY$$
 
 $$FOOTER
-</table>
 <h3>Grand Total: {COUNT.ShelterCode}</h3>
 FOOTER$$
