@@ -1195,6 +1195,8 @@ VoucherTypeName
    The type of voucher
 VoucherCode
    The voucher's unique code
+VoucherVetName
+   The vet or other organisation the voucher can be redeemed with
 VoucherValue
    The amount the voucher can be redeemed for if appropriate
 VoucherIssued
