@@ -1364,7 +1364,7 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         if f.FIELDNAME == "entrytype": d["entrytype"] = str(guess_entrytype(dbo, f.VALUE))
         if f.FIELDNAME == "type": d["animaltype"] = str(guess_animaltype(dbo, f.VALUE))
         if f.FIELDNAME == "species": d["species"] = str(guess_species(dbo, f.VALUE))
-        if f.FIELDNAME == "breed1": 
+        if f.FIELDNAME == "breed" or f.FIELDNAME == "breed1": 
             breed1 = f.VALUE
             d["breed1"] = str(guess_breed(dbo, f.VALUE))
         if f.FIELDNAME == "breed2": 
@@ -1714,6 +1714,7 @@ def create_waitinglist(dbo: Database, username: str, collationid: int) -> Tuple[
         if f.FIELDNAME == "animalname": d["animalname"] = f.VALUE
         if f.FIELDNAME == "dateofbirth": d["dateofbirth"] = f.VALUE
         if f.FIELDNAME == "microchip": d["microchip"] = truncs(f.VALUE)
+        if f.FIELDNAME == "breed": d["breed"] = guess_breed(dbo, f.VALUE)
         if f.FIELDNAME == "breed1": d["breed"] = guess_breed(dbo, f.VALUE)
         if f.FIELDNAME == "neutered" and (f.VALUE == "Yes" or f.VALUE == "on"): d["neutered"] = "on"
         if f.FIELDNAME == "sex": d["sex"] = guess_sex(dbo, f.VALUE)
@@ -1723,7 +1724,7 @@ def create_waitinglist(dbo: Database, username: str, collationid: int) -> Tuple[
         if f.FIELDNAME == "reason": d["reasonforwantingtopart"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
-    if "breed1" not in d: d["breed"] = guess_breed(dbo, "nomatchesusedefault")
+    if "breed" not in d and "breed1" not in d: d["breed"] = guess_breed(dbo, "nomatchesusedefault")
     if "size" not in d: d["size"] = guess_size(dbo, "nomatchesusedefault")
     if "species" not in d: d["species"] = guess_species(dbo, "nomatchesusedefault")
     # Have we got enough info to create the waiting list record? We need a description
