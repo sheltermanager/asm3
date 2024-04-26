@@ -1377,10 +1377,11 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         if f.FIELDNAME == "neutered" and (f.VALUE == "Yes" or f.VALUE == "on"): d["neutered"] = "on"
         if f.FIELDNAME == "weight" and asm3.utils.is_numeric(f.VALUE): d["weight"] = f.VALUE
         if f.FIELDNAME.startswith("additional"): d[f.FIELDNAME] = f.VALUE
-        # If the form has a breed, but no species, use the species from that breed
-        # For wildlife rescues, breed might be the thing people recognise over species (eg: corvid vs crow, magpie)
-        if "species" not in d and "breed1" in d:
-            d["species"] = str(asm3.lookups.get_species_for_breed(dbo, asm3.utils.cint(d["breed1"])))
+    # If the form has a breed, but no species, use the species from that breed
+    # For wildlife rescues, breed might be the thing people recognise over species (eg: corvid vs crow, magpie)
+    if "species" not in d and "breed1" in d:
+        d["species"] = str(asm3.lookups.get_species_for_breed(dbo, asm3.utils.cint(d["breed1"])))
+    if "size" not in d: d["size"] = guess_size(dbo, "nomatchesusedefault")
     # Set the crossbreed based on the incoming breed values
     d["crossbreed"] = "0"
     if breed1 != breed2 and breed2.strip() != "": d["crossbreed"] = "1"
