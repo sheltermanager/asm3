@@ -2,7 +2,7 @@ Animals Not Heartworm Tested
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Shelter animals who have not been heartworm tested. Only considers dogs.
 ###
@@ -17,12 +17,15 @@ ORDER BY a.DateOfBirth
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
 <th>Age</th>
 <th>Location</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -35,5 +38,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

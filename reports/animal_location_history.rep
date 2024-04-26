@@ -2,7 +2,7 @@ Animal Location History
 ###
 Auditing
 ###
-34004/Any rev02
+34004/Any rev03
 ###
 Combined transport, movement and internal location history for an animal.
 ###
@@ -73,12 +73,16 @@ $$GROUP_AnimalName
 $$HEAD
 <h2><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> - $SHELTERCODE</h2>
 <table border=1>
+<thead>
 <tr>
-<td><b>Date</b></td>
-<td><b>Type</b></td>
-<td><b>New Location</b></td>
+<th><b>Date</b></th>
+<th><b>Type</b></th>
+<th><b>New Location</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 GROUP$$
 

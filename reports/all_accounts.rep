@@ -2,7 +2,7 @@ All Accounts
 ###
 Accounts
 ###
-Any rev02
+Any rev03
 ###
 All financial accounts on file in a format suitable for export
 ###
@@ -15,12 +15,15 @@ ORDER BY a.AccountType, a.Code
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>ID</th>
 <th>Code</th>
 <th>Description</th>
 <th>Type</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -33,6 +36,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

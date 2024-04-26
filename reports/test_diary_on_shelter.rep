@@ -2,7 +2,7 @@ Test Diary (On Shelter)
 ###
 Diary
 ###
-33012/Any rev03
+33012/Any rev04
 ###
 Tests required to date for shelter animals.
 ###
@@ -133,7 +133,7 @@ $$HEAD
 <td><b>Required</b></td>
 <td><b>Comments</b></td>
 </tr>
-$FOOT
+$$FOOT
 </table>
 <p>Total $DisplayLocation: {COUNT.SHELTERCODE}</p>
 GROUP$$

@@ -2,7 +2,7 @@ Shelter Inventory with Health Problems
 ###
 Inventories
 ###
-Any rev02
+Any rev03
 ###
 Shelter animals, broken down by species/location with health problems.
 ###
@@ -64,7 +64,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 <h2>Total animals on shelter: {COUNT.ShelterCode}</h2>
 FOOTER$$
 

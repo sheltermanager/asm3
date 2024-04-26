@@ -2,7 +2,7 @@ Annual Figures (by species)
 ###
 Figures
 ###
-3093/Any rev02
+3093/Any rev03
 ###
 Animal movements on and off the shelter over an annual period.
 ###
@@ -20,6 +20,7 @@ $$GROUP_GroupHeading
 $$HEAD
 <h2>$GROUPHEADING</h2>
 <table border="1">
+<thead>
 <tr>
 <th></th>
 <th>Jan</th>
@@ -36,6 +37,8 @@ $$HEAD
 <th>Dec</th>
 <th>Total</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td>
@@ -53,6 +56,7 @@ $$FOOT
 <td><b>{SUM.M12.0}</b></td>
 <td><b>{SUM.Total.0}</b></td>
 </tr>
+</tbody>
 </table>
 GROUP$$
 
@@ -82,7 +86,7 @@ Annual Figures (by type)
 ###
 Figures
 ###
-3093/Any rev02
+3093/Any rev03
 ###
 Animal movements on and off the shelter over an annual period by type.
 ###
@@ -100,6 +104,7 @@ $$GROUP_GroupHeading
 $$HEAD
 <h2>$GROUPHEADING</h2>
 <table border="1">
+<thead>
 <tr>
 <th></th>
 <th>Jan</th>
@@ -116,6 +121,8 @@ $$HEAD
 <th>Dec</th>
 <th>Total</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td>
@@ -133,6 +140,7 @@ $$FOOT
 <td><b>{SUM.M12.0}</b></td>
 <td><b>{SUM.Total.0}</b></td>
 </tr>
+</tbody>
 </table>
 GROUP$$
 
@@ -162,7 +170,7 @@ Annual Figures (by entry category)
 ###
 Figures
 ###
-33602/Any rev02
+33602/Any rev03
 ###
 Animal movements on and off the shelter over an annual period by entry category.
 ###
@@ -180,6 +188,7 @@ $$GROUP_GroupHeading
 $$HEAD
 <h2>$GROUPHEADING</h2>
 <table border="1">
+<thead>
 <tr>
 <th></th>
 <th>Jan</th>
@@ -196,6 +205,8 @@ $$HEAD
 <th>Dec</th>
 <th>Total</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td>
@@ -213,6 +224,7 @@ $$FOOT
 <td><b>{SUM.M12.0}</b></td>
 <td><b>{SUM.Total.0}</b></td>
 </tr>
+</tbody>
 </table>
 GROUP$$
 

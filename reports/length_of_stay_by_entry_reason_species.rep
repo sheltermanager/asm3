@@ -2,7 +2,7 @@ Length of Stay by Entry Reason and Species
 ###
 Statistics
 ###
-33018/Any rev01
+33018/Any rev02
 ###
 Shows time on shelter by entry reason and species for animals entering the shelter between two dates
 ###
@@ -27,7 +27,6 @@ $$GROUP_ReasonName
 $$HEAD
 <h2>$ReasonName</h2>
 $$FOOT
-</table>
 <p>Total $ReasonName: {COUNT.ReasonName}, Average: {AVG.DaysOnShelter.2} days</p>
 GROUP$$
 
@@ -35,6 +34,7 @@ $$GROUP_SpeciesName
 $$HEAD
 <h3>$SpeciesName</h3>
 <table border="1">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -43,7 +43,10 @@ $$HEAD
 <th>Left</th>
 <th>Days In Care</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $ReasonName / $SpeciesName: {COUNT.ReasonName}, Average: {AVG.DaysOnShelter.2} days</p>
 GROUP$$

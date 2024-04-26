@@ -2,15 +2,15 @@ Fosters by Coordinator with Outcomes
 ###
 Movements
 ###
-PostgreSQL rev01
+PostgreSQL rev02
 ###
 Foster animals between two dates with their final outcomes grouped by adoption coordinator
 ###
 en
 ###
 SELECT
-a.AnimalName, a.ShelterCode, a.DateOfBirth,
-e.ReasonName, o.OwnerName, m.MovementDate, m.ReturnDate, 
+a.AnimalName, a.ID AS AID, a.ShelterCode, a.DateOfBirth,
+e.ReasonName, o.OwnerName, o.ID AS OID, m.MovementDate, m.ReturnDate, 
 o.OwnerAddress AS FostererAddress, o.MobileTelephone AS FostererPhone, o.EmailAddress AS FostererEmail,
 EXTRACT(DAY FROM m.ReturnDate - m.MovementDate)::integer AS DaysOnFoster,
 age(m.MovementDate, m.ReturnDate)::text AS TimeOnFoster,
@@ -18,7 +18,7 @@ a.NeuteredDate,
 (SELECT OwnerName FROM owner WHERE owner.ID = a.AdoptionCoordinatorID) AS CoordinatorName,
 CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType > 0 THEN mt.MovementType ELSE 'None' END AS OutcomeName,
 CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate,
-no.OwnerName AS OutcomePerson, no.OwnerAddress AS OutcomeAddress, no.OwnerTown AS OutcomeTown, no.OwnerCounty AS OutcomeCounty,
+no.OwnerName AS OutcomePerson, no.ID AS NOID, no.OwnerAddress AS OutcomeAddress, no.OwnerTown AS OutcomeTown, no.OwnerCounty AS OutcomeCounty,
 no.OwnerPostcode AS OutcomePostcode, no.HomeTelephone AS OutcomeHomeTelephone, no.WorkTelephone AS OutcomeWorkTelephone,
 no.MobileTelephone AS OutcomeMobileTelephone, no.EmailAddress AS OutcomeEmail
 FROM animal a
@@ -38,6 +38,7 @@ $$GROUP_CoordinatorName
 $$HEAD
 <h2>$CoordinatorName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Animal</th>
 <th>Code</th>
@@ -52,6 +53,8 @@ $$HEAD
 <th>Outcome date</th>
 <th>Outcome person</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td>
@@ -67,17 +70,18 @@ $$FOOT
 <td></td>
 <td></td>
 </tr>
+</tbody>
 </table>
 <h3>Total $CoordinatorName: {COUNT.AnimalName}</h3>
 GROUP$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$DATEOFBIRTH</td>
 <td>$REASONNAME</td>
-<td><b>$OWNERNAME</b><br/>
+<td><b><a target="_blank" href="person?id=$OID">$OWNERNAME</a></b><br/>
 $FostererAddress, $FostererPhone $FostererEmail
 </td>
 <td>$MOVEMENTDATE</td>
@@ -86,7 +90,7 @@ $FostererAddress, $FostererPhone $FostererEmail
 <td>$NEUTEREDDATE</td>
 <td>$OUTCOMENAME</td>
 <td>$OUTCOMEDATE</td>
-<td><b>$OUTCOMEPERSON</b><br/>
+<td><b><a target="_blank" href="person?id=$NOID">$OUTCOMEPERSON</a></b><br/>
 $OUTCOMEADDRESS<br/>
 $OUTCOMETOWN $OUTCOMECOUNTY $OUTCOMEPOSTCODE<br/>
 $OUTCOMEHOMETELEPHONE $OUTCOMEWORKTELEPHONE $OUTCOMEMOBILETELEPHONE

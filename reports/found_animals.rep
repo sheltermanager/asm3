@@ -2,14 +2,14 @@ Found Animals (all)
 ###
 Lost and Found
 ###
-Any rev01
+Any rev02
 ###
 All found animals on file.
 ###
 en
 ###
 SELECT at.SpeciesName, s.Sex, b.BreedName, 
-c.BaseColour, o.OwnerName, o.OwnerAddress, o.HomeTelephone, o.WorkTelephone, 
+c.BaseColour, o.OwnerName, o.ID AS OID, o.OwnerAddress, o.HomeTelephone, o.WorkTelephone, 
 o.MobileTelephone, a.DateReported, a.DateFound,
 a.AgeGroup, a.DistFeat, a.AreaFound, a.AreaPostcode, a.Comments
 FROM animalfound a
@@ -22,20 +22,24 @@ WHERE a.ReturnToOwnerDate Is Null
 ORDER BY DateFound
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Species</b></td>
-<td><b>Sex</b></td>
-<td><b>Breed</b></td>
-<td><b>Colour</b></td>
-<td><b>Owner</b></td>
-<td><b>Reported</b></td>
-<td><b>Found</b></td>
-<td><b>Age</b></td>
-<td><b>Markings</b></td>
-<td><b>Area</b></td>
-<td><b>Postcode</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Species</b></th>
+<th><b>Sex</b></th>
+<th><b>Breed</b></th>
+<th><b>Colour</b></th>
+<th><b>Owner</b></th>
+<th><b>Reported</b></th>
+<th><b>Found</b></th>
+<th><b>Age</b></th>
+<th><b>Markings</b></th>
+<th><b>Area</b></th>
+<th><b>Postcode</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -43,7 +47,7 @@ $$BODY<tr>
 <td>$Sex</td>
 <td>$BreedName</td>
 <td>$BaseColour</td>
-<td><b>$OwnerName</b><br />
+<td><b><a target="_blank" href="person?id=$OID">$OwnerName</a></b><br />
 $OwnerAddress<br />
 $HomeTelephone<br />
 $WorkTelephone<br />
@@ -59,6 +63,7 @@ $MobileTelephone</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

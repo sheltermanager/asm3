@@ -2,7 +2,7 @@ In/Out with Payments
 ###
 Movements
 ###
-3200/Any rev04
+3200/Any rev05
 ###
 The In/Out report, but includes payments.
 ###
@@ -416,6 +416,5 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 

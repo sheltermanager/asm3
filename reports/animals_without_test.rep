@@ -2,7 +2,7 @@ Animals without a test of type
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Shelter animals who don't have a test of a particular type
 ###
@@ -27,6 +27,7 @@ ORDER BY a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -36,6 +37,8 @@ $$HEADER
 <th>Location</th>
 <th>Entered Shelter</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -51,5 +54,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

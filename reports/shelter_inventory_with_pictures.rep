@@ -2,7 +2,7 @@ Shelter Inventory with Pictures
 ###
 Inventories
 ###
-Any rev01
+Any rev02
 ###
 Shelter inventory by location/species with thumbnails for each animal.
 ###
@@ -41,7 +41,7 @@ HEADER$$
 
 $$GROUP_LocationName
 $$HEAD
-<h1>$LocationName</h2>
+<h2>$LocationName</h2>
 $$FOOT
 <p>Total $LOCATIONNAME: {COUNT.ANIMALID}</p>
 GROUP$$

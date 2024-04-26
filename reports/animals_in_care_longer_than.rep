@@ -2,13 +2,13 @@ Animals in care longer a selected number of weeks
 ###
 Figures
 ###
-Any rev01
+Any rev02
 ###
 Animals in care longer than a selected number of weeks grouped by species
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, a.id AS AID, t.AnimalType, a.DisplayLocation,
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, a.ID AS AID, t.AnimalType, a.DisplayLocation,
 s.SpeciesName, a.MostRecentEntryDate, a.AnimalAge, a.BreedName, a.TimeOnShelter
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
@@ -22,6 +22,7 @@ HEADER$$
 $$GROUP_SpeciesName
 $$HEAD
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -32,7 +33,10 @@ $$HEAD
 <th>Entry Date</th>
 <th>Time On Shelter</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h2>Total $SpeciesName: {COUNT.SpeciesName}</h2>
 GROUP$$

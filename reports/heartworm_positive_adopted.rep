@@ -2,7 +2,7 @@ Heartworm Positive Adoptions by Date
 ###
 Movements
 ###
-Any rev02
+Any rev03
 ###
 Heartworm positive animals adopted between two dates 
 ###
@@ -10,6 +10,7 @@ en
 ###
 SELECT a.ShelterCode, 
 a.AnimalName, 
+a.ID AS AID,
 a.MostRecentEntryDate,
 a.IdentichipNumber,
 a.AnimalAge,
@@ -19,7 +20,7 @@ sx.Sex,
 t.AnimalType,
 s.SpeciesName,
 a.ActiveMovementDate,
-o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.OwnerName, o.ID AS OID, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -39,18 +40,23 @@ HEADER$$
 $$GROUP_SpeciesName
 $$HEAD
 <h3>$SpeciesName</h3>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Microchip</b></td>
-<td><b>Age</b></td>
-<td><b>Breed</b></td>
-<td><b>Sex</b></td>
-<td><b>Date Adopted</b></td>
-<td><b>Adopter</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Microchip</b></th>
+<th><b>Age</b></th>
+<th><b>Breed</b></th>
+<th><b>Sex</b></th>
+<th><b>Date Adopted</b></th>
+<th><b>Adopter</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SpeciesName: {COUNT.SpeciesName}</p>
 GROUP$$
@@ -58,14 +64,14 @@ GROUP$$
 $$BODY
 <tr>
 <td>$sheltercode</td>
-<td>$animalname</td>
+<td><a target="_blank" href="animal?id=$AID">$animalname</a></td>
 <td>$animaltype</td>
 <td>$identichipnumber</td>
 <td>$animalage</td>
 <td>$breedname</td>
 <td>$sex</td>
 <td>$activemovementdate</td>
-<td><b>$ownername</b><br/>$owneraddress<br/>$ownertown<br/>$ownercounty $ownerpostcode<br/>
+<td><b><a target="_blank" href="person?id=$OID">$ownername</a></b><br/>$owneraddress<br/>$ownertown<br/>$ownercounty $ownerpostcode<br/>
 H: $hometelephone C: $mobiletelephone<br/>
 <i>$emailaddress</i></td>
 </tr>

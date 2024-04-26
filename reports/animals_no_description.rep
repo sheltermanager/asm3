@@ -2,7 +2,7 @@ Animals without a description
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Shelter animals who do not have a description
 ###
@@ -15,12 +15,15 @@ ORDER BY a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
 <th>Age</th>
 <th>Location</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -33,5 +36,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

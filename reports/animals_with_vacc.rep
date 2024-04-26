@@ -2,14 +2,14 @@ Animals with a recent vaccination of type
 ###
 Medical
 ###
-3215/Any rev01
+3215/Any rev02
 ###
 Shelter animals who have received a vaccination of a particular type since they last entered the shelter.
 ###
 en
 ###
 $VAR vt STRING Vaccination type$
-SELECT a.ShelterCode, a.AnimalName, s.SpeciesName, a.BreedName, a.AnimalAge, a.DisplayLocation, a.MostRecentEntryDate,
+SELECT a.ShelterCode, a.AnimalName, a.ID AS AID, s.SpeciesName, a.BreedName, a.AnimalAge, a.DisplayLocation, a.MostRecentEntryDate,
 (SELECT DateOfVaccination FROM animalvaccination 
     INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID 
     AND UPPER(vaccinationtype.VaccinationType) LIKE UPPER('%$@vt$%') 
@@ -28,6 +28,7 @@ ORDER BY a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -38,12 +39,14 @@ $$HEADER
 <th>Entered Shelter</th>
 <th>Last Given</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SPECIESNAME</td>
 <td>$BREEDNAME</td>
 <td>$ANIMALAGE</td>
@@ -54,5 +57,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

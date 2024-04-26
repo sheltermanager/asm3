@@ -2,7 +2,7 @@ DAFM Equine Rescue Figures
 ###
 Figures
 ###
-33306/PostgreSQL rev03
+33306/PostgreSQL rev04
 ###
 Equine rescue figures for the Irish DAFM, selected by intake date
 ###
@@ -23,7 +23,7 @@ CASE WHEN a.ActiveMovementType IN (1,2) THEN (SELECT LicenceNumber FROM ownerlic
 CASE WHEN a.ActiveMovementType IN (1,2) THEN a.ActiveMovementDate ELSE NULL END AS RehomingDate,
 a.DeceasedDate,
 (SELECT OwnerName FROM owner INNER JOIN additional af ON asm_to_integer(af.Value) = owner.ID INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID WHERE af.LinkID = a.ID AND aff.FieldName = 'Knackery') AS Knackery,
-a.AnimalName,
+a.AnimalName, a.ID AS AID,
 s.SpeciesName, a.BreedName
 FROM animal a
 LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation
@@ -42,6 +42,7 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Microchip</th>
 <th>UELN</th>
@@ -54,7 +55,10 @@ $$HEAD
 <th>Knackery</th>
 <th>Animal</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $Speciesname: {COUNT.SpeciesName}</p>
 GROUP$$
@@ -70,7 +74,7 @@ $$BODY
 <td>$REHOMINGDATE</td>
 <td>$DECEASEDDATE</td>
 <td>$KNACKERY</td>
-<td>$ANIMALNAME ($BREEDNAME $SPECIESNAME)</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> ($BREEDNAME $SPECIESNAME)</td>
 </tr>
 BODY$$
 
@@ -81,7 +85,7 @@ DAFM Equine Rescue Figures (by rehoming date)
 ###
 Figures
 ###
-33306/PostgreSQL rev01
+33306/PostgreSQL rev02
 ###
 Equine rescue figures for the Irish DAFM, selected by rehoming date
 ###
@@ -102,7 +106,7 @@ CASE WHEN a.ActiveMovementType IN (1,2) THEN (SELECT LicenceNumber FROM ownerlic
 CASE WHEN a.ActiveMovementType IN (1,2) THEN a.ActiveMovementDate ELSE NULL END AS RehomingDate,
 a.DeceasedDate,
 (SELECT OwnerName FROM owner INNER JOIN additional af ON asm_to_integer(af.Value) = owner.ID INNER JOIN additionalfield aff ON aff.ID = af.AdditionalFieldID WHERE af.LinkID = a.ID AND aff.FieldName = 'Knackery') AS Knackery,
-a.AnimalName,
+a.AnimalName, a.ID AS AID,
 s.SpeciesName, a.BreedName
 FROM animal a
 LEFT OUTER JOIN internallocation il ON il.ID = a.ShelterLocation
@@ -121,6 +125,7 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Microchip</th>
 <th>UELN</th>
@@ -133,7 +138,10 @@ $$HEAD
 <th>Knackery</th>
 <th>Animal</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $Speciesname: {COUNT.SpeciesName}</p>
 GROUP$$
@@ -149,7 +157,7 @@ $$BODY
 <td>$REHOMINGDATE</td>
 <td>$DECEASEDDATE</td>
 <td>$KNACKERY</td>
-<td>$ANIMALNAME ($BREEDNAME $SPECIESNAME)</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> ($BREEDNAME $SPECIESNAME)</td>
 </tr>
 BODY$$
 

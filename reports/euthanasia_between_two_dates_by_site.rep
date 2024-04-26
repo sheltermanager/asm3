@@ -2,7 +2,7 @@ Euthanasia between two dates by site
 ###
 Auditing
 ###
-33908/Any rev02
+33908/Any rev03
 ###
 All animals who were put to sleep between two dates with details, broken down by site
 ###
@@ -44,19 +44,23 @@ $$GROUP_SiteName
 $$HEAD
 <h2>$SiteName</h2>
 <table border=1>
+<thead>
 <tr>
-<td><b>Date of Death</b></td>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Microchip</b></td>
-<td><b>Type</b></td>
-<td><b>Age</b></td>
-<td><b>Drug</b></td>
-<td><b>Intake Date</b></td>
-<td><b>Days On Shelter</b></td>
-<td><b>Reason</b></td>
+<th><b>Date of Death</b></th>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Microchip</b></th>
+<th><b>Type</b></th>
+<th><b>Age</b></th>
+<th><b>Drug</b></th>
+<th><b>Intake Date</b></th>
+<th><b>Days On Shelter</b></th>
+<th><b>Reason</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SiteName: {COUNT.SHELTERCODE}</p>
 GROUP$$
@@ -77,6 +81,5 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 <p>Total deaths: {COUNT.ShelterCode}</p>
 FOOTER$$

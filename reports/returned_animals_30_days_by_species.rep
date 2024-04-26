@@ -2,7 +2,7 @@ Animals Returned within 30 days by Species
 ###
 Returns
 ###
-PostgreSQL rev01
+PostgreSQL rev02
 ###
 Animals returned within 30 days where the return was processed between a date range, grouped by species.
 ###
@@ -49,7 +49,7 @@ $$FOOT
 <td></td>
 <td></td>
 <td></td>
-<td>Avg: {AVG.DaysAdopted.2}</th>
+<td>Avg: {AVG.DaysAdopted.2}</td>
 <td></td>
 <td></td>
 </tr>

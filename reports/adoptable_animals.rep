@@ -2,7 +2,7 @@ Adoptable Animals
 ###
 Inventories
 ###
-34501/Any rev03
+34501/Any rev04
 ###
 List of adoptable animals with thumbnails.
 ###
@@ -39,6 +39,7 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1" width="100%">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -53,7 +54,10 @@ $$HEAD
 <th>Picture</th>
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SpeciesName: {COUNT.ANIMALID}</p>
 GROUP$$
@@ -78,7 +82,6 @@ Kids: $ISGOODWITHCHILDRENNAME</td>
 BODY$$
 
 $$FOOTER
-</table>
 <p>Total: {COUNT.ANIMALID}</p>
 FOOTER$$
 

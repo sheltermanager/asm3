@@ -2,7 +2,7 @@ Site Non-Neutered/Spayed Adopted Animals
 ###
 Site
 ###
-33908/Any rev01
+33908/Any rev02
 ###
 Adopted animals who have not been neutered/spayed for the current site (requires multi-site capability).
 ###
@@ -49,7 +49,7 @@ $$BODY
 <td><b>$OWNERNAME</b><br/>
 $OWNERADDRESS<br />
 $OWNERTOWN<br />
-$OWNERCOUNTY $OWNERPOSTCODE</br />
+$OWNERCOUNTY $OWNERPOSTCODE<br />
 H: $HOMETELEPHONE
 W: $WORKTELEPHONE
 M: $MOBILETELEPHONE

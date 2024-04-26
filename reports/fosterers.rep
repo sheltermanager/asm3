@@ -2,7 +2,7 @@ All Fosterers Info
 ###
 Auditing
 ###
-3000/PostgreSQL rev02
+3000/PostgreSQL rev03
 ###
 All fosterers with contact info and notes
 ###
@@ -22,6 +22,7 @@ ORDER BY OwnerName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Fosterer</th>
 <th>Contact</th>
@@ -30,6 +31,8 @@ $$HEADER
 <th>Fosters</th>
 <th></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -48,5 +51,6 @@ E: $EMAILADDRESS</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

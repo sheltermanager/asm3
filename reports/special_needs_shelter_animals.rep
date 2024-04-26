@@ -2,7 +2,7 @@ Shelter animals with special needs
 ###
 Medical
 ###
-Any rev01
+Any rev02
 ###
 Shelter animals, broken down by species/location with special needs.
 ###
@@ -71,7 +71,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 <p>Total: {COUNT.ShelterCode}</p>
 FOOTER$$
 

@@ -2,7 +2,7 @@ Died in Care Reasons by Species and Date
 ###
 Statistics
 ###
-Any rev01
+Any rev02
 ###
 Died in care reasons for animals (not euthanasia), grouped by species and between two dates.
 ###
@@ -23,11 +23,16 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 
-<table border=1><tr>
-<td><b>Reason</b></td>
-<td><b></b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Reason</b></th>
+<th><b></b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 
 <p><b>Total for $SpeciesName: {SUM.Total.0}</b></p>
@@ -40,7 +45,6 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 
 

@@ -2,7 +2,7 @@ Animal Entry Reasons by Species and Date
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 Number of animals of each species who entered the shelter for each entry category.
 ###
@@ -42,7 +42,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 
 

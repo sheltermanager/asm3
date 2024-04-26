@@ -2,13 +2,13 @@ Expired Trial Adoptions
 ###
 Movements
 ###
-3200/Any rev01
+3200/Any rev02
 ###
 Trial adoptions that have already expired, or expire today
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, sx.Sex, a.BreedName, a.AnimalAge, s.SpeciesName, atp.AnimalType, ad.MovementDate, ad.TrialEndDate, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, sx.Sex, a.BreedName, a.AnimalAge, s.SpeciesName, atp.AnimalType, ad.MovementDate, ad.TrialEndDate, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
 FROM animal a
 INNER JOIN adoption ad ON ad.AnimalID = a.ID
 INNER JOIN owner o ON o.ID = ad.OwnerID
@@ -20,6 +20,7 @@ ORDER BY ad.TrialEndDate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Animal</th>
 <th>Type</th>
@@ -27,12 +28,14 @@ $$HEADER
 <th>Trial Ends</th>
 <th>Adopter</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
 <td><b>$SHELTERCODE - 
-$ANIMALNAME</b><br/>
+<a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></b><br/>
 $SEX $BREEDNAME $SPECIESNAME aged $ANIMALAGE</td>
 <td>$ANIMALTYPE</td>
 <td>$MOVEMENTDATE</td>
@@ -47,5 +50,6 @@ $HOMETELEPHONE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

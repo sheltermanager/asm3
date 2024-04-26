@@ -2,7 +2,7 @@ Microchip Registration
 ###
 Microchip
 ###
-2730/Any rev02
+2730/Any rev03
 ###
 Owner, microchip and animal information for all animals adopted between two dates
 ###
@@ -33,6 +33,7 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -46,7 +47,10 @@ $$HEAD
 <th>Age</th>
 <th>Adopted</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h2>Total $SpeciesName: {COUNT.SPECIESNAME}</h2>
 GROUP$$

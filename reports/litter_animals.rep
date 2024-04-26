@@ -2,7 +2,7 @@ Litter Animals
 ###
 Litters
 ###
-2732/Any rev01
+2732/Any rev02
 ###
 Animals in the selected litter.
 ###
@@ -48,5 +48,4 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$

@@ -2,7 +2,7 @@ Waiting List
 ###
 Waiting List
 ###
-2732/Any rev01
+2732/Any rev02
 ###
 Animals who are active on the waiting list.
 ###
@@ -87,7 +87,7 @@ $$BODY<tr>
 <td>$DATEPUTONLIST</td>
 <td>$SPECIESNAME</td>
 <td>$ANIMALDESCRIPTION</td>
-<td><img src="image?mode=media&id=$MediaID" width="70px" /></td>
+<td><img src="image?mode=media&amp;id=$MediaID" width="70px" /></td>
 <td><b>$OWNERNAME</b><br>
 $OWNERADDRESS<br>
 $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br>

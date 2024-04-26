@@ -2,7 +2,7 @@ Vaccinations administered between two dates by vet
 ###
 Medical
 ###
-34409/Any rev02
+34409/Any rev03
 ###
 List of all vaccinations administered between two dates grouped by vet
 ###
@@ -49,7 +49,7 @@ $$FOOT
 <td></td>
 <td></td>
 <td></td>
-<td><b> {SUM.Cost}<b/></td>
+<td><b> {SUM.Cost}</b></td>
 </tr>
 
 </table>
@@ -74,5 +74,4 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$

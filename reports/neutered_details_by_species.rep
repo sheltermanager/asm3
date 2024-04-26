@@ -2,7 +2,7 @@ Neuter/Spay Details by Species
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Details for animals entering the shelter between two dates identifying their initial and final spay/neuter state by species
 ###
@@ -107,5 +107,4 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$

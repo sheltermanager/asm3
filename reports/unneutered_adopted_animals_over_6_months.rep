@@ -2,7 +2,7 @@ Non-Neutered/Spayed Adopted Animals aged over 6 months
 ###
 Movements
 ###
-Any rev05
+Any rev06
 ###
 Adopted animals over the age of 6 months who have not been neutered/spayed.
 ###
@@ -50,7 +50,7 @@ $$BODY
 <td><b>$OWNERNAME</b><br/>
 $OWNERADDRESS<br />
 $OWNERTOWN<br />
-$OWNERCOUNTY $OWNERPOSTCODE</br />
+$OWNERCOUNTY $OWNERPOSTCODE<br />
 H: $HOMETELEPHONE
 W: $WORKTELEPHONE
 M: $MOBILETELEPHONE

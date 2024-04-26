@@ -2,7 +2,7 @@ Non-shelter animals euthanised between two dates
 ###
 Statistics
 ###
-Any rev02
+Any rev03
 ###
 All non-shelter animals that were euthanised between two dates, broken down by species
 ###
@@ -41,7 +41,6 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 
 

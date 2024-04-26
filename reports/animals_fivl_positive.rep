@@ -2,7 +2,7 @@ Cats with FIV/L
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Shelter cats who have tested positive for FIV or FLV
 ###
@@ -22,6 +22,7 @@ ORDER BY a.DateOfBirth
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -30,6 +31,8 @@ $$HEADER
 <th>Date Tested</th>
 <th>Result</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -44,6 +47,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -51,7 +55,7 @@ Cats testing positive for FIV/L between two dates
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Shelter cats who have tested positive for FIV or FLV
 ###
@@ -71,6 +75,7 @@ ORDER BY a.DateOfBirth
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -79,6 +84,8 @@ $$HEADER
 <th>Date Tested</th>
 <th>Result</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -93,6 +100,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

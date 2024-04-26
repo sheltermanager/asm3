@@ -2,7 +2,7 @@ Animal Exit Reasons by Species and Date
 ###
 Movements
 ###
-Any rev01
+Any rev02
 ###
 Number of animals of each species who exited the shelter for each outcome.
 ###
@@ -43,7 +43,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 
 

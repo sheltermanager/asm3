@@ -2,7 +2,7 @@ Adoptions by Date with Litter Reference
 ###
 Movements
 ###
-33201/Any rev01
+33201/Any rev02
 ###
 Adoptions between two dates with the names/addresses of original owners and adopters and the litter reference
 ###
@@ -11,13 +11,14 @@ en
 $VAR from DATE Adopted between$
 $VAR to DATE and$
 
-SELECT ShelterCode, AnimalName, MostRecentEntryDate, MovementDate, 
+SELECT ShelterCode, AnimalName, animal.ID AS AID, MostRecentEntryDate, MovementDate, 
 species.SpeciesName, animal.TimeOnShelter, animal.DaysOnShelter,
 animaltype.AnimalType AS theType,
 animal.BreedName,
-oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode, 
+oo.OwnerName AS OOName, oo.ID AS OOID, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode, 
 oo.EmailAddress AS OOEmail,
 no.OwnerName, no.OwnerAddress,
+no.ID AS OID,
 no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone, animal.DateOfBirth, Fee, AcceptanceNumber
 FROM adoption
@@ -30,28 +31,33 @@ WHERE MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$'
 ORDER BY AcceptanceNumber, MovementDate
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Entered Shelter</b></td>
-<td><b>Time On Shelter</b></td>
-<td><b>Came From</b></td>
-<td><b>Litter Ref</b></td>
-<td><b>Adoption Date</b></td>
-<td><b>Adopted To</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Entered Shelter</b></th>
+<th><b>Time On Shelter</b></th>
+<th><b>Came From</b></th>
+<th><b>Litter Ref</b></th>
+<th><b>Adoption Date</b></th>
+<th><b>Adopted To</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
-$$BODY<tr>
+$$BODY
+<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$theType</td>
 <td>$BreedName</td>
 <td>$MostRecentEntryDate</td>
 <td>$TimeOnShelter ($DaysOnShelter days)</td>
-<td><i>$OOName</i><br/>
+<td><i><a target="_blank" href="person?id=$OOID">$OOName</a></i><br/>
 $OOAddress<br/>
 $OOTown<br/>
 $OOCounty<br/>
@@ -59,7 +65,7 @@ $OOPostcode<br/>
 $OOEmail</td>
 <td>$ACCEPTANCENUMBER</td>
 <td>$MOVEMENTDATE</td>
-<td><i>$OwnerName</i><br/>
+<td><i><a target="_blank" href="person?id=$OID">$OwnerName</a></i><br/>
 $OwnerAddress<br/>
 $OwnerTown<br/>
 $OwnerCounty<br/>
@@ -81,6 +87,7 @@ $$FOOTER
 <td></td>
 <td></td>
 </tr>
+</tbody>
 </table>
 <h2>Total adoptions: {COUNT.SHELTERCODE}</h2>
 FOOTER$$

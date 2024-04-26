@@ -2,7 +2,7 @@ Tests carried out between two dates
 ###		
 Medical
 ###
-34004/Any rev02
+34004/Any rev03
 ###
 List of all tests carried out between two dates
 ###
@@ -51,7 +51,7 @@ $$FOOT
 <td></td>
 <td></td>
 <td></td>
-<td><b> {SUM.Cost}<b/></td>
+<td><b> {SUM.Cost}</b></td>
 </tr>
 </table>
 <p>Total $TestName: {COUNT.TestName}</p>
@@ -73,6 +73,5 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 <h3>Total: {COUNT.TestName} (Cost {SUM.Cost})</h3>
 FOOTER$$

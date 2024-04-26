@@ -2,7 +2,7 @@ Adoption Return Reasons by Species and Date
 ###
 Statistics
 ###
-Any rev02
+Any rev03
 ###
 Adoption return reasons for animals, grouped by species and between two dates.
 ###
@@ -43,7 +43,6 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 
 

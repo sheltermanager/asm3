@@ -2,7 +2,7 @@ Incidents for animal
 ###
 Animal Control
 ###
-34806/Any rev02
+34806/Any rev03
 ###
 All incidents for a selected animal.
 ###
@@ -38,7 +38,7 @@ $$HEAD
 <table border="1">
 <tr>
 <th>Date</th>
-<th>Incident Code</td>
+<th>Incident Code</th>
 <th>Caller</th>
 <th>Notes</th>
 <th>Victim</th>

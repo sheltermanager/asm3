@@ -2,7 +2,7 @@ Adoptions by postcode
 ###
 Movements
 ###
-34004/Any rev01
+34004/Any rev02
 ###
 Adoptions between two dates with the names/addresses of adopters, broken down by postcode.
 ###
@@ -11,11 +11,11 @@ en
 $VAR from DATE Adoption between$
 $VAR to DATE and$
 
-SELECT ShelterCode, AnimalName, MostRecentEntryDate, MovementDate, 
+SELECT ShelterCode, AnimalName, animal.ID AS AID, MostRecentEntryDate, MovementDate, 
 species.SpeciesName, animal.TimeOnShelter, animal.DaysOnShelter, animal.IdentichipNumber,
 animaltype.AnimalType AS theType,
 animal.BreedName,
-no.OwnerName, no.OwnerAddress,
+no.OwnerName, no.ID AS OID, no.OwnerAddress,
 no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
 FROM adoption
@@ -32,32 +32,37 @@ HEADER$$
 $$GROUP_OwnerPostcode
 $$HEAD
 <h2>$OwnerPostcode</h2>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Microchip</b></td>
-<td><b>Entered Shelter</b></td>
-<td><b>Time On Shelter</b></td>
-<td><b>Adoption Date</b></td>
-<td><b>Adopted To</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Microchip</b></th>
+<th><b>Entered Shelter</b></th>
+<th><b>Time On Shelter</b></th>
+<th><b>Adoption Date</b></th>
+<th><b>Adopted To</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h2>Total adoptions in postcode $OwnerPostcode: {COUNT.OwnerPostcode}</h2>
 GROUP$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$theType</td>
 <td>$BreedName</td>
 <td>$IdentichipNumber</td>
 <td>$MostRecentEntryDate</td>
 <td>$TimeOnShelter ($DaysOnShelter days)</td>
 <td>$MOVEMENTDATE</td>
-<td><i>$OwnerName</i><br/>
+<td><i><a target="_blank" href="person?id=$OID">$OWNERNAME</a></i><br/>
 $OwnerAddress<br/>
 $OwnerTown<br/>
 $OwnerCounty<br/>

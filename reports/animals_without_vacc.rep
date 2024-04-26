@@ -2,7 +2,7 @@ Animals without a vaccination of type
 ###
 Medical
 ###
-Any/3215 rev02
+Any/3215 rev03
 ###
 Shelter animals who don't have a vaccination of a particular type
 ###
@@ -23,6 +23,7 @@ ORDER BY a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -32,6 +33,8 @@ $$HEADER
 <th>Location</th>
 <th>Entered Shelter</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -47,5 +50,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

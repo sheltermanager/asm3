@@ -2,7 +2,7 @@ Holds Expired between two dates
 ###
 Inventories
 ###
-3305/Any rev01
+3305/Any rev02
 ###
 Holds that expired between two dates with thumbnails for each animal.
 ###
@@ -13,6 +13,7 @@ $VAR to DATE and$
 SELECT
 a.ShelterCode,
 a.AnimalName,
+a.ID AS AID,
 a.BreedName,
 (SELECT Size FROM lksize WHERE ID = a.Size) AS aSize,
 (SELECT Sex FROM lksex WHERE ID = a.Sex) AS aSex,
@@ -39,6 +40,7 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1" width="100%">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -54,7 +56,10 @@ $$HEAD
 <th>Hold Expired</th>
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SPECIESNAME: {COUNT.ANIMALID}</p>
 GROUP$$
@@ -62,7 +67,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$BREEDNAME</td>
 <td>$ASIZE</td>
 <td>$ASEX / $ANEUTERED</td>

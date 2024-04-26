@@ -2,7 +2,7 @@ DBFS Metadata Spreadsheet
 ###
 Maintenance
 ###
-Any rev02
+Any rev03
 ###
 Show information about all media files in the DBFS. Useful when you have an extract with ID filenames.
 ###
@@ -38,12 +38,15 @@ ORDER BY m.Date DESC
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>View in ASM</th>
 <th>Notes</th>
 <th>DBFS Name</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -56,5 +59,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

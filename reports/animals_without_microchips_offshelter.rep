@@ -2,13 +2,13 @@ Off-Shelter Non-Microchipped Animals
 ###
 Movements
 ###
-Any rev01
+Any rev02
 ###
 Off-shelter animals without microchip information.
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, mt.MovementType,
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, mt.MovementType,
 o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
 o.HomeTelephone, o.MobileTelephone, a.ActiveMovementDate
 FROM animal a
@@ -22,6 +22,7 @@ ORDER BY a.ActiveMovementDate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Name</th>
@@ -30,12 +31,14 @@ $$HEADER
 <th>Movement</th>
 <th>Person</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
 <td>$ACTIVEMOVEMENTDATE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
 <td>$MOVEMENTTYPE</td>
@@ -48,6 +51,7 @@ H: $HOMETELEPHONE, C: $MOBILETELEPHONE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

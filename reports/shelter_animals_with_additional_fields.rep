@@ -2,7 +2,7 @@ Shelter Animals with Additional Fields
 ###
 Inventories
 ###
-34302/Any rev03
+34302/Any rev04
 ###
 List of shelter animals with additional field values.
 ###
@@ -28,7 +28,7 @@ $$HEAD
 <table border="0">
 <tr>
   <td>
-    <a target="_blank" href="{IMAGE.$ID}"><img border="0" src="{IMAGE.$ID"} width="100" /></a>
+    <a target="_blank" href="{IMAGE.$ID}"><img border="0" src="{IMAGE.$ID}" width="100" /></a>
   </td>
   <td>
     <table border="1">

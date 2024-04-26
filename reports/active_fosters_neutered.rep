@@ -2,7 +2,7 @@ Active Fosters (Altered/neutered)
 ###
 Movements
 ###
-Any rev03
+Any rev04
 ###
 Active fosters who have been altered/neutered.
 ###
@@ -55,7 +55,7 @@ GROUP$$
 $$BODY
 <table>
 <tr>
-<td><b>Code:</td>
+<td><b>Code:</b></td>
 <td>$SHELTERCODE</td>
 </tr><tr>
 <td><b>Name:</b></td>

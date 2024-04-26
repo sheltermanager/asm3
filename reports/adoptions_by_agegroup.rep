@@ -2,7 +2,7 @@ Adoptions by Age Group
 ###
 Movements
 ###
-34022/Any rev01
+34022/Any rev02
 ###
 Number of adoptions between two dates of animals of a certain age group.
 ###
@@ -21,11 +21,15 @@ GROUP BY SpeciesName, AgeGroupActiveMovement
 ORDER BY SpeciesName, AgeGroupActiveMovement
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Species</b></td>
-<td><b>Group</b></td>
-<td><b>No. Adoptions</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Species</b></th>
+<th><b>Group</b></th>
+<th><b>No. Adoptions</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -36,5 +40,6 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

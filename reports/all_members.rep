@@ -2,13 +2,13 @@ All Members
 ###
 People
 ###
-34104/Any rev01
+34104/Any rev02
 ###
 Person info for all members on file.
 ###
 en
 ###
-SELECT DISTINCT o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+SELECT DISTINCT o.OwnerName,o.ID AS OID, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
 o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,
 o.OwnerSurname, o.MembershipExpiryDate, o.AdditionalFlags, o.GDPRContactOptIn
 FROM owner o
@@ -17,6 +17,7 @@ ORDER BY o.OwnerName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Address</th>
@@ -31,11 +32,13 @@ $$HEADER
 <th>GDPR Contact</th>
 <th>Membership Expiry</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a></td>
 <td>$OWNERADDRESS</td>
 <td>$OWNERTOWN</td>
 <td>$OWNERCOUNTY</td>
@@ -51,6 +54,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <h2>Total members: {COUNT.OWNERNAME}</h2>
 FOOTER$$

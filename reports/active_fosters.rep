@@ -2,7 +2,7 @@ Active Fosters
 ###
 Movements
 ###
-Any rev03
+Any rev04
 ###
 Active fosters with health/vaccination information
 ###
@@ -53,7 +53,7 @@ GROUP$$
 $$BODY
 <table>
 <tr>
-<td><b>Code:</td>
+<td><b>Code:</b></td>
 <td>$SHELTERCODE</td>
 </tr><tr>
 <td><b>Name:</b></td>

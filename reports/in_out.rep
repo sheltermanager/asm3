@@ -2,7 +2,7 @@ In/Out
 ###
 Movements
 ###
-3200/Any rev05
+3200/Any rev06
 ###
 All animals entering and leaving the shelter over a period.
 ###
@@ -431,6 +431,5 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 

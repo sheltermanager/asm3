@@ -2,7 +2,7 @@ Average Time On Shelter By Size for Species
 ###
 Statistics
 ###
-33018/PostgreSQL rev01
+33018/PostgreSQL rev02
 ###
 Average time spent on shelter for all animals by size for one species and a date range.
 ###
@@ -21,10 +21,13 @@ ORDER BY avtimeonshelter DESC
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Size</th>
 <th>Average Days On Shelter</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -35,6 +38,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

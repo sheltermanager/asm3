@@ -2,7 +2,7 @@ Animal Intake by Species and Age Group
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Animals entering the shelter between two dates with their original owner info, broken down by age group and species
 ###
@@ -41,16 +41,20 @@ $$GROUP_AgeGroup
 $$HEAD
 <h3>$AgeGroup</h3>
 <table border=1>
+<thead>
 <tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Brought In</b></td>
-<td><b>By</b></td>
-<td><b>Owner</b></td>
-<td><b>Time On Shelter</b></td>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Brought In</b></th>
+<th><b>By</b></th>
+<th><b>Owner</b></th>
+<th><b>Time On Shelter</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $AgeGroup: {COUNT.ShelterCode}</p>
 GROUP$$
@@ -78,7 +82,6 @@ $OOPostcode
 BODY$$
 
 $$FOOTER
-</table>
 <h2>Total animals: {COUNT.SHELTERCODE}</h2>
 FOOTER$$
 &&&
@@ -86,7 +89,7 @@ Animal Intake by Type and Age Group
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Animals entering the shelter between two dates with their original owner info, broken down by age group and type
 ###
@@ -125,16 +128,20 @@ $$GROUP_AgeGroup
 $$HEAD
 <h3>$AgeGroup</h3>
 <table border=1>
+<thead>
 <tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Species</b></td>
-<td><b>Brought In</b></td>
-<td><b>By</b></td>
-<td><b>Owner</b></td>
-<td><b>Time On Shelter</b></td>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Species</b></th>
+<th><b>Brought In</b></th>
+<th><b>By</b></th>
+<th><b>Owner</b></th>
+<th><b>Time On Shelter</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $AgeGroup: {COUNT.ShelterCode}</p>
 GROUP$$
@@ -162,6 +169,5 @@ $OOPostcode
 BODY$$
 
 $$FOOTER
-</table>
 <h2>Total animals: {COUNT.SHELTERCODE}</h2>
 FOOTER$$

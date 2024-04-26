@@ -2,7 +2,7 @@ Litters by mothers
 ###
 Litters
 ###
-34004/Any rev01
+34004/Any rev02
 ###
 Litters entering the shelter between two dates grouped on the mother animal
 ###
@@ -60,6 +60,5 @@ $$BODY
 </tr>
 BODY$$
 $$FOOTER
-</table>
 <p><b>Total Offspring: {COUNT.NUMBERINLITTER.0}</b></p>
 FOOTER$$

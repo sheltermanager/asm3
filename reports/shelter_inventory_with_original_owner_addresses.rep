@@ -2,7 +2,7 @@ Shelter Inventory with Original Owner Addresses
 ###
 Inventories
 ###
-Any rev01
+Any rev02
 ###
 Shelter animals, broken down by species/location with original owner addresses.
 ###
@@ -70,7 +70,6 @@ $OOPostcode
 BODY$$
 
 $$FOOTER
-</table>
 <h2>Total animals on shelter: {SQL.SELECT COUNT(*) FROM animal WHERE Archived = 0}</h2>
 FOOTER$$
 

@@ -2,7 +2,7 @@ In/Out Today (with created by/last changed by)
 ###
 Movements
 ###
-3200/Any rev05
+3200/Any rev06
 ###
 All animals entering and leaving the shelter today with how created and last changed the record.
 ###
@@ -451,6 +451,5 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 

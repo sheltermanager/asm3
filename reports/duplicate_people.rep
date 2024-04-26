@@ -2,7 +2,7 @@ Duplicate People
 ###
 Statistics
 ###
-Any rev01
+Any rev02
 ###
 People in the system with the same name and address
 ###
@@ -16,11 +16,14 @@ ORDER BY COUNT(OwnerName)
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Addresses</th>
 <th>Occurrences</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -32,6 +35,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

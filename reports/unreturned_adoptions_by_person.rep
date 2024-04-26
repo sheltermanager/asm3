@@ -2,7 +2,7 @@ Unreturned Adoptions by Person
 ###
 Movements
 ###
-Any rev03
+Any rev04
 ###
 Unreturned adoptions between two dates by adopter with original owner addresses.
 ###
@@ -72,14 +72,13 @@ $OOEmail</td>
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 &&&
 Unreturned Multiple Adoptions by Person
 ###
 Movements
 ###
-Any rev02
+Any rev03
 ###
 Unreturned adoptions between two dates by adopter with original owner addresses, where the person adopted more than one animal
 ###
@@ -147,6 +146,5 @@ $OOEmail</td>
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 

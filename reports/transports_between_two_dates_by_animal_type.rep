@@ -2,7 +2,7 @@ Transports between two dates by animal type
 ###
 Transport
 ###
-34004/Any rev01
+34004/Any rev02
 ###
 Transports between two dates grouped by animal type
 ###
@@ -67,10 +67,9 @@ $$BODY
 <td>$STATUSNAME</td>
 <td>$MILES</td>
 <td>$COST</td>
-<td>$COMMENTS</td></tr>
+<td>$COMMENTS</td>
 </tr>
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$

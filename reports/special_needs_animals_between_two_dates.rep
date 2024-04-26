@@ -2,7 +2,7 @@ Special needs animals between two dates
 ###
 Medical
 ###
-Any rev01
+Any rev02
 ###
 Animals with special needs who entered the shelter between two dates.
 ###
@@ -64,7 +64,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 <p>Total: {COUNT.ShelterCode}</p>
 FOOTER$$
 

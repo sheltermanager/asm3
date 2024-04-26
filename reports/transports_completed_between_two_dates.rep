@@ -2,7 +2,7 @@ Transports completed between two dates
 ###
 Transport
 ###
-34004/Any rev01
+34004/Any rev02
 ###
 Transports completed between two dates
 ###
@@ -59,7 +59,7 @@ $$BODY
 <td>$STATUSNAME</td>
 <td>$MILES</td>
 <td>$COST</td>
-<td>$COMMENTS</td></tr>
+<td>$COMMENTS</td>
 </tr>
 BODY$$
 

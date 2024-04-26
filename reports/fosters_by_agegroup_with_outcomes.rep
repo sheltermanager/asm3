@@ -2,19 +2,19 @@ Fosters by Date and Age Group with Outcomes
 ###
 Movements
 ###
-Any rev02
+Any rev03
 ###
 Foster animals between two dates with their final outcomes, grouped by age group at intake
 ###
 en
 ###
 SELECT
-a.AnimalName, a.ShelterCode, a.DateOfBirth, a.AgeGroup,
-e.ReasonName, o.OwnerName, m.MovementDate, s.SpeciesName,
+a.AnimalName, a.ID AS AID, a.ShelterCode, a.DateOfBirth, a.AgeGroup,
+e.ReasonName, o.OwnerName, o.ID AS OID, m.MovementDate, s.SpeciesName,
 a.NeuteredDate,
 CASE WHEN a.DeceasedDate Is Not Null THEN 'Died' WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType > 0 THEN mt.MovementType ELSE 'None' END AS OutcomeName,
 CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementDate Is Not Null AND a.ActiveMovementType = 1 THEN a.ActiveMovementDate ELSE Null END AS OutcomeDate,
-no.OwnerName AS OutcomePerson, no.OwnerAddress AS OutcomeAddress, no.OwnerTown AS OutcomeTown, no.OwnerCounty AS OutcomeCounty,
+no.OwnerName AS OutcomePerson, no.ID AS NOID, no.OwnerAddress AS OutcomeAddress, no.OwnerTown AS OutcomeTown, no.OwnerCounty AS OutcomeCounty,
 no.OwnerPostcode AS OutcomePostcode, no.HomeTelephone AS OutcomeHomeTelephone, no.WorkTelephone AS OutcomeWorkTelephone,
 no.MobileTelephone AS OutcomeMobileTelephone, no.EmailAddress AS OutcomeEmail
 FROM animal a
@@ -40,6 +40,7 @@ $$GROUP_AgeGroup
 $$HEAD
 <h2>$AgeGroup $SpeciesName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Animal</th>
 <th>Code</th>
@@ -52,23 +53,26 @@ $$HEAD
 <th>Outcome date</th>
 <th>Outcome person</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h2>Total $AgeGroup $SpeciesName: {COUNT.AgeGroup}</h2>
 GROUP$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$DATEOFBIRTH</td>
 <td>$REASONNAME</td>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a></td>
 <td>$MOVEMENTDATE</td>
 <td>$NEUTEREDDATE</td>
 <td>$OUTCOMENAME</td>
 <td>$OUTCOMEDATE</td>
-<td><b>$OUTCOMEPERSON</b><br/>
+<td><b><a target="_blank" href="person?id=$NOID">$OUTCOMEPERSON</a></b><br/>
 $OUTCOMEADDRESS<br/>
 $OUTCOMETOWN $OUTCOMECOUNTY $OUTCOMEPOSTCODE<br/>
 $OUTCOMEHOMETELEPHONE $OUTCOMEWORKTELEPHONE $OUTCOMEMOBILETELEPHONE

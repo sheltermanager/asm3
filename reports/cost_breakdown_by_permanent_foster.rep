@@ -2,7 +2,7 @@ Cost Breakdown by Permanent Fosters
 ###
 Financial
 ###
-34601/Any rev03
+34601/Any rev04
 ###
 Costs between two dates, broken down by permanent foster animals.
 ###
@@ -16,6 +16,7 @@ SELECT * FROM (
 SELECT 
 animalcost.CostDate AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalcost.CostAmount AS amt,
@@ -31,6 +32,7 @@ AND HasPermanentFoster=1
 UNION ALL SELECT
 animal.DateBroughtIn AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animal.DailyBoardingCost * animal.DaysOnShelter AS amt,
@@ -45,6 +47,7 @@ AND HasPermanentFoster=1
 UNION ALL SELECT
 animalvaccination.DateOfVaccination AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalvaccination.Cost AS amt,
@@ -60,6 +63,7 @@ AND HasPermanentFoster=1
 UNION ALL SELECT
 animaltest.DateOfTest AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltest.Cost AS amt,
@@ -75,6 +79,7 @@ AND HasPermanentFoster=1
 UNION ALL SELECT
 animalmedicaltreatment.DateGiven AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalmedical.CostPerTreatment AS amt,
@@ -90,6 +95,7 @@ AND HasPermanentFoster=1
 UNION ALL SELECT
 animaltransport.PickupDateTime AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltransport.Cost AS amt,
@@ -110,13 +116,18 @@ HEADER$$
 
 $$GROUP_code
 $$HEAD
-<h2>$code - $name ($speciesname)</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Amount</b></td>
-<td><b>Description</b></td>
+<h2>$code - <a target="_blank" href="animal?id=$AID">$NAME</a> ($speciesname)</h2>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Amount</b></th>
+<th><b>Description</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $code - $name <b>{SUM.AMT.2}</b></p>
 GROUP$$

@@ -2,7 +2,7 @@ Cost Breakdown by Amount
 ###
 Financial
 ###
-34601/Any rev02
+34601/Any rev03
 ###
 Animals costs between two dates in descending order of size.
 ###
@@ -16,6 +16,7 @@ SELECT *, COALESCE(med, null, 0, med) + COALESCE(vacc, null, 0, vacc) + COALESCE
 SELECT 
 ShelterCode,
 AnimalName,
+a.ID AS AID,
 SpeciesName,
 
 (SELECT 
@@ -77,17 +78,21 @@ WHERE cost > 0 OR med > 0 OR vacc > 0 OR board > 0 OR test > 0 OR trans > 0
 ORDER BY amount DESC
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Animal</b></td>
-<td><b>Species</b></td>
-<td><b>Cost</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Animal</b></th>
+<th><b>Species</b></th>
+<th><b>Cost</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SPECIESNAME</td>
 <td>$AMOUNT</td>
 </tr>
@@ -99,6 +104,7 @@ $$FOOTER
 <td></td>
 <td></td>
 <td>{SUM.AMOUNT.2}</td>
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -120,6 +126,7 @@ SELECT *, COALESCE(med, null, 0, med) + COALESCE(vacc, null, 0, vacc) + COALESCE
 SELECT 
 ShelterCode,
 AnimalName,
+a.ID AS AID,
 SpeciesName,
 
 (SELECT 
@@ -172,17 +179,21 @@ WHERE cost > 0 OR med > 0 OR vacc > 0 OR board > 0
 ORDER BY amount DESC
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Animal</b></td>
-<td><b>Species</b></td>
-<td><b>Cost</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Animal</b></th>
+<th><b>Species</b></th>
+<th><b>Cost</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SPECIESNAME</td>
 <td>$AMOUNT</td>
 </tr>
@@ -194,6 +205,7 @@ $$FOOTER
 <td></td>
 <td></td>
 <td>{SUM.AMOUNT.2}</td>
+</tbody>
 </table>
 FOOTER$$
 

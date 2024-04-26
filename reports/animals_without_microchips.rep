@@ -2,7 +2,7 @@ Non-Microchipped Animals
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Shelter animals without microchip information.
 ###
@@ -17,12 +17,15 @@ ORDER BY t.AnimalType, a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
 <th>Type</th>
 <th>Location</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -35,5 +38,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

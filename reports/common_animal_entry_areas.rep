@@ -2,7 +2,7 @@ Common Animal Entry Areas
 ###
 Statistics
 ###
-MySQL rev02
+MySQL rev03
 ###
 The most common areas which animals enter the shelter from.
 ###
@@ -28,9 +28,12 @@ ORDER BY Total DESC
 $$HEADER
 <table border="1">
 <tr>
+<thead>
 <th>Area</th>
 <th>Total</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -41,6 +44,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 
@@ -49,7 +53,7 @@ Common Animal Entry Areas
 ###
 Statistics
 ###
-PostgreSQL rev02
+PostgreSQL rev03
 ###
 The most common areas which animals enter the shelter from.
 ###
@@ -76,10 +80,13 @@ ORDER BY Total DESC
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Area</th>
 <th>Total</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -90,6 +97,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 
@@ -98,7 +106,7 @@ Common Animal Entry Areas by Type
 ###
 Statistics
 ###
-PostgreSQL rev01
+PostgreSQL rev02
 ###
 The most common areas which animals enter the shelter from, split by type.
 ###
@@ -128,11 +136,14 @@ ORDER BY Total DESC
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Type</th>
 <th>Area</th>
 <th>Total</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -144,6 +155,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 
@@ -152,7 +164,7 @@ Common Animal Entry Areas by Species
 ###
 Statistics
 ###
-PostgreSQL rev01
+PostgreSQL rev02
 ###
 The most common areas which animals enter the shelter from, split by species.
 ###
@@ -182,11 +194,14 @@ ORDER BY Total DESC
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Species</th>
 <th>Area</th>
 <th>Total</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -198,5 +213,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

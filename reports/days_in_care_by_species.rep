@@ -2,7 +2,7 @@ Days in care by species
 ###
 Statistics
 ###
-2870/Any rev01
+2870/Any rev02
 ###
 Total days on shelter for all species/animals arriving after a date
 ###
@@ -17,12 +17,15 @@ ORDER BY s.SpeciesName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Species</th>
 <th>Total Animals</th>
 <th>Average Days in Care</th>
 <th>Total Days in Care</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -41,6 +44,7 @@ $$FOOTER
 <td></td>
 <td><b>{SUM.DAYSINCARE.0}</b></td>
 </tr>
+</tbody>
 </table>
 FOOTER$$
 

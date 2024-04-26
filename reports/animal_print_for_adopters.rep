@@ -2,7 +2,7 @@ Print Animal Record (for adopters)
 ###
 Auditing
 ###
-34018/Any rev06
+34018/Any rev07
 ###
 A complete printout of an animal record for giving to adopters.
 ###
@@ -75,7 +75,7 @@ $$BODY
 </table>
 
 <table cellpadding="5">
-</tr>
+<tr>
 <td>Code</td><td><b>$SHELTERCODE</b></td><td></td><td><b>On shelter for $TIMEONSHELTER</b></td>
 </tr><tr>
 <td>Size</td><td>$SIZE</td><td>Litter ID</td><td>$ACCEPTANCENUMBER</td>
@@ -382,7 +382,7 @@ $$HEADER
 <tr><th>Due</th><th>Received</th><th>Name</th><th>Receipt</th><th>Amount</th><th>Type</th><th>Comments</th></tr>
 HEADER$$
 $$BODY
-<tr><td>$DUEDATE</td><td>$DATE</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS</br />$OWNERPOSTCODE<br />$HOMETELEPHONE<br />$EMAILADDRESS</td>
+<tr><td>$DUEDATE</td><td>$DATE</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS<br />$OWNERPOSTCODE<br />$HOMETELEPHONE<br />$EMAILADDRESS</td>
 <td>$ODID</td><td>$DONATION</td><td>$DNAME</td><td>$COMMENTS</td></tr>
 BODY$$
 $$FOOTER

@@ -2,7 +2,7 @@ Print Incident Record
 ###
 Animal Control
 ###
-34806/Any rev07
+34806/Any rev08
 ###
 A complete printout of an incident record.
 ###
@@ -168,7 +168,7 @@ $$HEADER
 <tr><th>Date</th><th>Type</th><th>Fine</th><th>Paid</th><th>Person</th><th>Comments</th></tr>
 HEADER$$
 $$BODY
-<tr><td>$CITATIONDATE</td><td>$CITATIONNAME</td><td>$FINEAMOUNT $FINEDUEDATE</td><td>$FINEPAIDDATE</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS</br />$OWNERPOSTCODE<br />$HOMETELEPHONE<br />$EMAILADDRESS</td><td>$COMMENTS</td></tr>
+<tr><td>$CITATIONDATE</td><td>$CITATIONNAME</td><td>$FINEAMOUNT $FINEDUEDATE</td><td>$FINEPAIDDATE</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS<br />$OWNERPOSTCODE<br />$HOMETELEPHONE<br />$EMAILADDRESS</td><td>$COMMENTS</td></tr>
 BODY$$
 $$FOOTER
 </table>

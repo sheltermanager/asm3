@@ -2,7 +2,7 @@ Adoptions by Date with no License
 ###
 Animal Control
 ###
-Any rev02
+Any rev03
 ###
 Adoptions between two dates where the dog has no license on file.
 ###
@@ -34,17 +34,21 @@ AND animal.SpeciesID = 1
 ORDER BY MovementDate
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Microchip</b></td>
-<td><b>Entered Shelter</b></td>
-<td><b>Time On Shelter</b></td>
-<td><b>Adoption Date</b></td>
-<td><b>Adopted To</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Microchip</b></th>
+<th><b>Entered Shelter</b></th>
+<th><b>Time On Shelter</b></th>
+<th><b>Adoption Date</b></th>
+<th><b>Adopted To</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -67,6 +71,7 @@ H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <h2>Total unlicensed adoptions: {COUNT.SHELTERCODE}</h2>
 FOOTER$$

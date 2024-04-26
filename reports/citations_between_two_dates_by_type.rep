@@ -2,7 +2,7 @@ Citations issued between two dates by type
 ###
 Animal Control
 ###
-34806/Any rev02
+34806/Any rev03
 ###
 Citations issued between two dates by type with fine totals
 ###
@@ -26,6 +26,7 @@ $$GROUP_CitationName
 $$HEAD
 <h2>$CITATIONNAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Incident Code</th>
@@ -34,6 +35,8 @@ $$HEAD
 <th>Due</th>
 <th>Paid</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td>
@@ -42,6 +45,7 @@ $$FOOT
 <td></td>
 <td></td>
 </tr>
+</tbody>
 </table>
 <h2>Total $CITATIONNAME: {COUNT.CITATIONNAME}</h2>
 GROUP$$

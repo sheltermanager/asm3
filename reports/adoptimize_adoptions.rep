@@ -2,7 +2,7 @@ Adoptimize Adoptions List
 ###
 Figures
 ###
-3000/Any rev01
+3000/Any rev02
 ###
 Adoptions between two dates in the format required by Adoptimize.
 ###
@@ -11,6 +11,7 @@ en
 SELECT
 m.MovementDate,
 a.AnimalName,
+a.ID AS AID,
 s.SpeciesName,
 a.BreedName,
 x.Sex,
@@ -30,6 +31,7 @@ ORDER BY m.MovementDate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Date of Adoption</th>
 <th>Pet Name</th>
@@ -41,12 +43,14 @@ $$HEADER
 <th>Adopter Email</th>
 <th>Adopter Phone</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
 <td>$MOVEMENTDATE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SPECIESNAME</td>
 <td>$BREEDNAME</td>
 <td>$SEX</td>
@@ -58,6 +62,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

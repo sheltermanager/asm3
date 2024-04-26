@@ -2,7 +2,7 @@ Cost Breakdown by Animal (no daily boarding)
 ###
 Financial
 ###
-34601/Any rev01
+34601/Any rev02
 ###
 Costs between two dates, broken down by animal, does not include the daily boarding calculation for shelter animals.
 ###
@@ -16,6 +16,7 @@ SELECT * FROM (
 SELECT 
 animalcost.CostDate AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalcost.CostAmount AS amt,
@@ -31,6 +32,7 @@ WHERE CostDate >= '$@from$' AND CostDate <= '$@to$'
 UNION ALL SELECT
 animalvaccination.DateOfVaccination AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalvaccination.Cost AS amt,
@@ -46,6 +48,7 @@ WHERE DateOfVaccination >= '$@from$' AND DateOfVaccination <= '$@to$'
 UNION ALL SELECT
 animaltest.DateOfTest AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltest.Cost AS amt,
@@ -61,6 +64,7 @@ WHERE DateOfTest >= '$@from$' AND DateOfTest <= '$@to$'
 UNION ALL SELECT
 animalmedicaltreatment.DateGiven AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalmedical.CostPerTreatment AS amt,
@@ -76,6 +80,7 @@ WHERE DateGiven >= '$@from$' AND DateGiven <= '$@to$'
 UNION ALL SELECT
 animaltransport.PickupDateTime AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltransport.Cost AS amt,
@@ -96,15 +101,20 @@ HEADER$$
 
 $$GROUP_code
 $$HEAD
-<h2>$code - $name ($speciesname)</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Amount</b></td>
-<td><b>Description</b></td>
+<h2>$code - <a target="_blank" href="animal?id=$AID">$NAME</a> ($speciesname)</h2>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Amount</b></th>
+<th><b>Description</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
-<p>Total $code - $name <b>{SUM.AMT.2}</b></p>
+<p>Total $code - $NAME <b>{SUM.AMT.2}</b></p>
 GROUP$$
 
 $$BODY<tr>

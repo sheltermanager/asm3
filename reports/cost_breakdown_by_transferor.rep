@@ -2,7 +2,7 @@ Cost Breakdown by Transferor
 ###
 Financial
 ###
-34601/Any rev03
+34601/Any rev04
 ###
 Animal costs between two dates, grouped by the transferor (only includes transfers in)
 ###
@@ -16,6 +16,7 @@ SELECT * FROM (
 SELECT 
 animalcost.CostDate AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltype.AnimalType AS animaltypename,
@@ -35,6 +36,7 @@ AND IsTransfer = 1
 UNION ALL SELECT
 animal.DateBroughtIn AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltype.AnimalType AS animaltypename,
@@ -53,6 +55,7 @@ AND IsTransfer = 1
 UNION ALL SELECT
 animalvaccination.DateOfVaccination AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltype.AnimalType AS animaltypename,
@@ -72,6 +75,7 @@ AND IsTransfer = 1
 UNION ALL SELECT
 animaltest.DateOfTest AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltype.AnimalType AS animaltypename,
@@ -91,6 +95,7 @@ AND IsTransfer = 1
 UNION ALL SELECT
 animalmedicaltreatment.DateGiven AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltype.AnimalType AS animaltypename,
@@ -110,6 +115,7 @@ AND IsTransfer = 1
 UNION ALL SELECT
 animaltransport.PickupDateTime AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltype.AnimalType AS animaltypename,
@@ -134,22 +140,28 @@ HEADER$$
 $$GROUP_OwnerName
 $$HEAD
 <h2>$OwnerName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Name</b></td>
-<td><b>Code</b></td>
-<td><b>Species</b></td>
-<td><b>Amount</b></td>
-<td><b>Description</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Name</b></th>
+<th><b>Code</b></th>
+<th><b>Species</b></th>
+<th><b>Amount</b></th>
+<th><b>Description</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $OwnerName: <b>{SUM.AMT.2}</b></p>
 GROUP$$
 
-$$BODY<tr>
+$$BODY
+<tr>
 <td>$DATE</td>
-<td>$NAME</td>
+<td><a target="_blank" href="animal?id=$AID">$NAME</a></td>
 <td>$CODE</td>
 <td>$SPECIESNAME</td>
 <td>$AMT</td>

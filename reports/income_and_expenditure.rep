@@ -2,7 +2,7 @@ Income and Expenditure
 ###
 Accounts
 ###
-2720/Any rev01
+2720/Any rev02
 ###
 Income and expenses over a period (profit and loss).
 ###
@@ -44,7 +44,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 &&&
 Income Breakdown Chart

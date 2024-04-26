@@ -2,7 +2,7 @@ Medical treatment summary between two dates
 ###
 Medical
 ###
-34004/Any rev01
+34004/Any rev02
 ###
 A summary of medical treatments given between two dates
 ###
@@ -26,7 +26,7 @@ HEADER$$
 $$GROUP_TreatmentName
 $$HEAD
 $$FOOT
-<p>Total $TreatmentName: <b>{COUNT.TreatmentName}</b>, Cost: <b>{SUM.Cost}<b/></p>
+<p>Total $TreatmentName: <b>{COUNT.TreatmentName}</b>, Cost: <b>{SUM.Cost}</b></p>
 GROUP$$
 HEADER$$
 
@@ -34,6 +34,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
-<h2>Total treatments: <b>{COUNT.TreatmentName}</b>, Cost: <b>{SUM.Cost}<b/></h2>
+<h2>Total treatments: <b>{COUNT.TreatmentName}</b>, Cost: <b>{SUM.Cost}</b></h2>
 FOOTER$$
 

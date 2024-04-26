@@ -2,7 +2,7 @@ Print Animal Record
 ###
 Auditing
 ###
-34111/Any rev08
+34111/Any rev09
 ###
 A complete printout of an animal record.
 ###
@@ -75,7 +75,7 @@ $$BODY
 </table>
 
 <table cellpadding="5">
-</tr>
+<tr>
 <td>Code</td><td><b>$SHELTERCODE</b></td><td></td><td><b>On shelter for $TIMEONSHELTER</b></td>
 </tr><tr>
 <td>Size</td><td>$SIZE</td><td>Litter ID</td><td>$ACCEPTANCENUMBER</td>
@@ -586,7 +586,7 @@ $$HEADER
 <tr><th>Due</th><th>Received</th><th>Name</th><th>Receipt</th><th>Amount</th><th>Type</th><th>Comments</th></tr>
 HEADER$$
 $$BODY
-<tr><td>$DUEDATE</td><td>$DATE</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS</br />$OWNERPOSTCODE<br />$HOMETELEPHONE<br />$EMAILADDRESS</td>
+<tr><td>$DUEDATE</td><td>$DATE</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS<br />$OWNERPOSTCODE<br />$HOMETELEPHONE<br />$EMAILADDRESS</td>
 <td>$ODID</td><td>$DONATION</td><td>$DNAME</td><td>$COMMENTS</td></tr>
 BODY$$
 $$FOOTER
@@ -656,7 +656,7 @@ $$HEADER
 <tr><th>Number</th><th>Owner</th><th>Reservation</th><th>Cancelled</th><th>Movement</th><th>Type</th><th>Returned</th><th>Reason</th><th>Comments</th></tr>
 HEADER$$
 $$BODY
-<tr><td>$ADOPTIONNUMBER</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS</br />$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br />H: $HOMETELEPHONE<br />M: $MOBILETELEPHONE<br />$EMAILADDRESS</td>
+<tr><td>$ADOPTIONNUMBER</td><td><b>$OWNERNAME</b><br />$OWNERADDRESS<br />$OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE<br />H: $HOMETELEPHONE<br />M: $MOBILETELEPHONE<br />$EMAILADDRESS</td>
 <td>$RESERVATIONDATE</td><td>$RESERVATIONCANCELLEDDATE</td><td>$MOVEMENTDATE</td><td>$MOVEMENTTYPE</td><td>$RETURNDATE $RETURNEDBY</td><td>$RETURNEDREASONNAME $REASONFORRETURN</td><td>$COMMENTS</td></tr>
 BODY$$
 $$FOOTER

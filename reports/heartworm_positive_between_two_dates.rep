@@ -2,7 +2,7 @@ Heartworm positive animals between two dates
 ###
 Medical
 ###
-Any rev01
+Any rev02
 ###
 All animals testing positive for heartworm between two dates.
 ###
@@ -10,6 +10,7 @@ en
 ###
 SELECT a.ShelterCode, 
 a.AnimalName, 
+a.ID AS AID,
 a.MostRecentEntryDate,
 a.IdentichipNumber,
 a.AnimalAge,
@@ -34,19 +35,24 @@ HEADER$$
 $$GROUP_SpeciesName
 $$HEAD
 <h3>$SpeciesName</h3>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Microchip</b></td>
-<td><b>Age</b></td>
-<td><b>Breed</b></td>
-<td><b>Sex</b></td>
-<td><b>Intake Date</b></td>
-<td><b>Time On Shelter</b></td>
-<td><b>Date Tested</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Microchip</b></th>
+<th><b>Age</b></th>
+<th><b>Breed</b></th>
+<th><b>Sex</b></th>
+<th><b>Intake Date</b></th>
+<th><b>Time On Shelter</b></th>
+<th><b>Date Tested</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SpeciesName: {COUNT.SpeciesName}</p>
 GROUP$$
@@ -54,7 +60,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$sheltercode</td>
-<td>$animalname</td>
+<td><a target="_blank" href="animal?id=$AID">$animalname</a></td>
 <td>$animaltype</td>
 <td>$identichipnumber</td>
 <td>$animalage</td>

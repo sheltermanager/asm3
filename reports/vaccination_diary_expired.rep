@@ -2,7 +2,7 @@ Vaccinations Expiring between two dates
 ###
 Diary
 ###
-33503/Any rev03
+33503/Any rev04
 ###
 Vaccinations expiring between two dates
 ###
@@ -41,8 +41,7 @@ $$BODY<tr>
 <td>$SHELTERCODE</td>
 <td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
-<td>
-<b><a target="_blank" href="person?id=$OID">$OWNERNAME</a><br/>
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a><br/>
 $OWNERADDRESS<br/>
 $OWNERTOWN<br/>
 $OWNERCOUNTY $OWNERPOSTCODE<br/>

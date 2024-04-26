@@ -2,7 +2,7 @@ Unpaid Costs by Date
 ###
 Financial
 ###
-33601/Any rev02
+33601/Any rev03
 ###
 Unpaid animal costs between two dates.
 ###
@@ -16,6 +16,7 @@ SELECT * FROM (
 SELECT 
 animalcost.CostDate AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalcost.CostAmount AS amt,
@@ -31,6 +32,7 @@ AND CostDate >= '$@from$' AND CostDate <= '$@to$'
 UNION ALL SELECT
 animalvaccination.DateOfVaccination AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalvaccination.Cost AS amt,
@@ -46,6 +48,7 @@ AND DateOfVaccination >= '$@from$' AND DateOfVaccination <= '$@to$'
 UNION ALL SELECT
 animaltest.DateOfTest AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltest.Cost AS amt,
@@ -61,6 +64,7 @@ AND DateOfTest >= '$@from$' AND DateOfTest <= '$@to$'
 UNION ALL SELECT
 animalmedical.StartDate AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalmedical.Cost AS amt,
@@ -75,6 +79,7 @@ AND StartDate >= '$@from$' AND StartDate <= '$@to$'
 UNION ALL SELECT
 animaltransport.PickupDateTime AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltransport.Cost AS amt,
@@ -89,19 +94,24 @@ WHERE PickupDateTime >= '$@from$' AND PickupDateTime <= '$@to$'
 ) dummy ORDER BY date DESC
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Name</b></td>
-<td><b>Code</b></td>
-<td><b>Species</b></td>
-<td><b>Amount</b></td>
-<td><b>Description</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Name</b></th>
+<th><b>Code</b></th>
+<th><b>Species</b></th>
+<th><b>Amount</b></th>
+<th><b>Description</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
-$$BODY<tr>
+$$BODY
+<tr>
 <td>$DATE</td>
-<td>$NAME</td>
+<td><a target="_blank" href="animal?id=$AID">$NAME</a></td>
 <td>$CODE</td>
 <td>$SPECIESNAME</td>
 <td>$AMT</td>
@@ -120,6 +130,7 @@ $$FOOTER
 <td><b>{SUM.AMT.2}</b></td>
 <td></td>
 </tr>
+</tbody>
 </table>
 FOOTER$$
 

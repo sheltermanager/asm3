@@ -2,7 +2,7 @@ In/Out for Flag
 ###
 Movements
 ###
-33713/Any rev05
+33713/Any rev06
 ###
 All animals entering and leaving the shelter over a period with a particular flag
 ###
@@ -454,6 +454,5 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 

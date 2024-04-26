@@ -2,7 +2,7 @@ Average Time On Waiting List
 ###
 Statistics
 ###
-MySQL rev01
+MySQL rev02
 ###
 Average time animals spend on the waiting list for each year.
 ###
@@ -17,10 +17,14 @@ GROUP BY YEAR(DatePutOnList)
 ORDER BY AVG(DATEDIFF(DateRemovedFromList,DatePutOnList)) DESC
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Year</b></td>
-<td><b>Average Time On List (days)</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Year</b></th>
+<th><b>Average Time On List (days)</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -30,6 +34,7 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 
@@ -38,7 +43,7 @@ Average Time On Waiting List
 ###
 Statistics
 ###
-PostgreSQL rev01
+PostgreSQL rev02
 ###
 Average time animals spend on the waiting list for each year.
 ###
@@ -53,10 +58,14 @@ GROUP BY EXTRACT(YEAR FROM DatePutOnList)
 ORDER BY CAST(AVG(EXTRACT(DAY FROM DateRemovedFromList - DatePutOnList)) AS INTEGER) DESC
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Year</b></td>
-<td><b>Average Time On List (days)</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Year</b></th>
+<th><b>Average Time On List (days)</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -66,6 +75,7 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

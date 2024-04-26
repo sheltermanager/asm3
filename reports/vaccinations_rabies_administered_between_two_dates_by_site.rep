@@ -2,7 +2,7 @@ Rabies vaccinations administered between two dates by site
 ###
 Medical
 ###
-34409/Any rev02
+34409/Any rev03
 ###
 List of all rabies vaccinations administered between two dates, broken down by site
 ###
@@ -63,7 +63,7 @@ $$FOOT
 <td></td>
 <td></td>
 <td></td>
-<td><b> {SUM.Cost}<b/></td>
+<td><b> {SUM.Cost}</b></td>
 </tr>
 </table>
 <p><b>Total $SiteName $VaccinationType: {COUNT.VaccinationType}</b></p>
@@ -87,7 +87,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 <h3>Total: {COUNT.VaccinationType}</h3>
 FOOTER$$
 

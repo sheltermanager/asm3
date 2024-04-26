@@ -2,7 +2,7 @@ Cats Not FIV/L Tested
 ###
 Medical
 ###
-3215/Any rev01
+3215/Any rev02
 ###
 Shelter cats who have not been FIV/L tested.
 ###
@@ -17,12 +17,15 @@ ORDER BY a.DateOfBirth
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
 <th>Age</th>
 <th>Location</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -35,6 +38,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -42,13 +46,13 @@ Cats Not FIV/L Tested (over 6 months)
 ###
 Medical
 ###
-3215/Any rev01
+3215/Any rev02
 ###
 Shelter cats aged over 6 months who have not been FIV/L tested.
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, a.AnimalAge, a.DisplayLocation, i.LocationName
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, a.AnimalAge, a.DisplayLocation, i.LocationName
 FROM animal a
 INNER JOIN internallocation i ON i.ID = a.ShelterLocation
 INNER JOIN species s ON s.ID = a.SpeciesID
@@ -58,17 +62,20 @@ ORDER BY a.DateOfBirth
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
 <th>Age</th>
 <th>Location</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALAGE</td>
 <td>$DISPLAYLOCATION</td>
@@ -76,6 +83,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

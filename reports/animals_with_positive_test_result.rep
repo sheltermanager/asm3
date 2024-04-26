@@ -2,13 +2,13 @@ Shelter animals with positive test result
 ###
 Medical
 ###
-3307/Any rev01
+3307/Any rev02
 ###
 Shelter animals who have tested positive for something
 ###
 en
 ###
-SELECT a.ShelterCode, a.AnimalName,
+SELECT a.ShelterCode, a.AnimalName, a.ID AS AID,
 s.SpeciesName, a.BreedName, a.AnimalAge,
 a.DisplayLocation,
 a.DateBroughtIn,
@@ -27,6 +27,7 @@ ORDER BY a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -37,12 +38,14 @@ $$HEADER
 <th>Entered Shelter</th>
 <th>Positive for</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SPECIESNAME</td>
 <td>$BREEDNAME</td>
 <td>$ANIMALAGE</td>
@@ -53,6 +56,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -60,13 +64,13 @@ Animals with positive test result
 ###
 Medical
 ###
-3307/Any rev01
+3307/Any rev02
 ###
 All animals who have tested positive for something
 ###
 en
 ###
-SELECT a.ShelterCode, a.AnimalName,
+SELECT a.ShelterCode, a.AnimalName, a.ID AS AID,
 s.SpeciesName, a.BreedName, a.AnimalAge,
 a.DisplayLocation,
 a.DateBroughtIn,
@@ -86,6 +90,7 @@ ORDER BY a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -96,12 +101,14 @@ $$HEADER
 <th>Entered Shelter</th>
 <th>Positive for</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SPECIESNAME</td>
 <td>$BREEDNAME</td>
 <td>$ANIMALAGE</td>
@@ -112,5 +119,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

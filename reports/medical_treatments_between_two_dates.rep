@@ -2,7 +2,7 @@ Medical treatments between two dates
 ###
 Medical
 ###
-34004/Any rev03
+34004/Any rev04
 ###
 List of medical treatments given between two dates
 ###
@@ -51,11 +51,9 @@ $$FOOT
 <td></td>
 <td></td>
 <td></td>
-<td><b> {SUM.Cost}<b/></td>
+<td><b> {SUM.Cost}</b></td>
 </tr>
-
 </table>
-
 GROUP$$
 HEADER$$
 
@@ -75,6 +73,5 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 <h3>Total: {SUM.Cost}</h3>
 FOOTER$$

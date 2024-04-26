@@ -2,7 +2,7 @@ Animals with a medical treatment
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Shelter animals who have a medical regimen with a particular name
 ###
@@ -24,6 +24,7 @@ ORDER BY a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -33,6 +34,8 @@ $$HEADER
 <th>Location</th>
 <th>Entered Shelter</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -48,5 +51,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

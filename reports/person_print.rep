@@ -2,7 +2,7 @@ Print Person Record
 ###
 Auditing
 ###
-34702/Any rev03
+34702/Any rev04
 ###
 A complete printout of a person record.
 ###
@@ -29,7 +29,7 @@ HEADER$$
 $$BODY
 <h2><a target="_blank" href="person?id=$PersonID">$OWNERNAME</a></h2>
 <table>
-</tr>
+<tr>
 <td>Address</td><td><b>$OWNERADDRESS</b></td><td>Home</td><td>$HOMETELEPHONE</td>
 </tr><tr>
 <td></td><td>$OWNERTOWN</td><td>Work</td><td>$WORKTELEPHONE $WORKTELEPHONE2</td>
@@ -51,7 +51,7 @@ $$BODY
 <h2>Looking For</h2>
 
 <table>
-</tr>
+<tr>
 <td>Added</td><td><b>$MATCHADDED</b></td><td>Expires</td><td>$MATCHEXPIRES</td>
 </tr><tr>
 <td>Aged between</td><td><b>$MATCHAGEFROM</b></td><td>and</td><td>$MATCHAGETO</td>

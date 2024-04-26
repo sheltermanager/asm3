@@ -2,13 +2,13 @@ Microchips implanted between two dates
 ###
 Medical
 ###
-3000/Any rev01
+3000/Any rev02
 ###
 Shelter animals implanted with microchips between two dates
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, a.DisplayLocation, a.IdentichipNumber, a.IdentichipDate
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, a.DisplayLocation, a.IdentichipNumber, a.IdentichipDate
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 WHERE a.Identichipped = 1 
@@ -17,6 +17,7 @@ ORDER BY a.IdentichipDate, t.AnimalType, a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Name</th>
@@ -25,12 +26,14 @@ $$HEADER
 <th>Location</th>
 <th>Number</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
 <td>$IDENTICHIPDATE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
 <td>$DISPLAYLOCATION</td>
@@ -39,6 +42,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <h2>Total microchips implanted: {COUNT.ANIMALNAME}</h2>
 FOOTER$$
@@ -47,13 +51,13 @@ Microchips implanted between two dates by species
 ###
 Medical
 ###
-3000/Any rev01
+3000/Any rev02
 ###
 Shelter animals implanted with microchips between two dates by species
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, s.SpeciesName, a.DisplayLocation, a.IdentichipNumber, a.IdentichipDate
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, s.SpeciesName, a.DisplayLocation, a.IdentichipNumber, a.IdentichipDate
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
@@ -68,6 +72,7 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Name</th>
@@ -76,14 +81,18 @@ $$HEAD
 <th>Location</th>
 <th>Number</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
+</table>
 <h2>Total $SPECIESNAME microchips implanted: {COUNT.ANIMALNAME}</h2>
 GROUP$$
 
 $$BODY
 <tr>
 <td>$IDENTICHIPDATE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
 <td>$DISPLAYLOCATION</td>
@@ -98,13 +107,13 @@ Microchips implanted between two dates by type
 ###
 Medical
 ###
-3000/Any rev01
+3000/Any rev02
 ###
 Shelter animals implanted with microchips between two dates by type
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, s.SpeciesName, a.DisplayLocation, a.IdentichipNumber, a.IdentichipDate
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, s.SpeciesName, a.DisplayLocation, a.IdentichipNumber, a.IdentichipDate
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
 INNER JOIN species s ON s.ID = a.SpeciesID
@@ -119,6 +128,7 @@ $$GROUP_AnimalType
 $$HEAD
 <h2>$AnimalType</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Name</th>
@@ -127,14 +137,18 @@ $$HEAD
 <th>Location</th>
 <th>Number</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
+</table>
 <h2>Total $ANIMALTYPE microchips implanted: {COUNT.ANIMALNAME}</h2>
 GROUP$$
 
 $$BODY
 <tr>
 <td>$IDENTICHIPDATE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$SPECIESNAME</td>
 <td>$DISPLAYLOCATION</td>

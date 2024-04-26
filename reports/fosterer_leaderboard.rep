@@ -2,7 +2,7 @@ Fosterer Leaderboard
 ###
 Statistics
 ###
-Any rev01
+Any rev02
 ###
 Show foster counts for all fosterers with most fosters at the top.
 ###
@@ -17,10 +17,13 @@ ORDER BY TotalFosters DESC, OwnerName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Fosterer</th>
 <th>Animals Fostered</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -35,5 +38,6 @@ $OWNERTOWN, $OWNERCOUNTY $OWNERPOSTCODE<br/>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

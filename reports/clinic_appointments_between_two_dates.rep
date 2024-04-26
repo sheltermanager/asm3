@@ -2,7 +2,7 @@ Appointments between two dates
 ###
 Clinic
 ###
-34808/Any rev02
+34808/Any rev03
 ###
 All clinic appointments scheduled between two dates
 ###
@@ -21,6 +21,7 @@ ORDER BY c.DateTime
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Appointment</th>
 <th>Appointment Type</th> 
@@ -31,6 +32,8 @@ $$HEADER
 <th>Status</th>
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -50,5 +53,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

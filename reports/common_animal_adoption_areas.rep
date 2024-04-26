@@ -2,7 +2,7 @@ Common Animal Adoption Areas
 ###
 Statistics
 ###
-MySQL rev01
+MySQL rev02
 ###
 The most common areas which animals are adopted to.
 ###
@@ -28,10 +28,13 @@ ORDER BY Total DESC
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Area</th>
 <th>Total</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -42,6 +45,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 
@@ -78,10 +82,13 @@ ORDER BY Total DESC
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Area</th>
 <th>Total</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -92,5 +99,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

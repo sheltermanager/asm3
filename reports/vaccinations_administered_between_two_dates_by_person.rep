@@ -2,7 +2,7 @@ Vaccinations administered between two dates by person
 ###
 Medical
 ###
-34409/Any rev01
+34409/Any rev02
 ###
 List of all vaccinations administered between two dates grouped by the person who administered it
 ###
@@ -60,7 +60,7 @@ $$FOOT
 <td></td>
 <td></td>
 <td></td>
-<td><b> {SUM.Cost}<b/></td>
+<td><b> {SUM.Cost}</b></td>
 </tr>
 
 </table>
@@ -85,5 +85,4 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$

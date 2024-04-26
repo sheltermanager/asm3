@@ -2,7 +2,7 @@ Adoptions 30 days ago
 ###
 Movements
 ###
-Any rev01
+Any rev02
 ###
 Unnretured adoptions from 30 days ago. Meant to be emailed regularly for checking in.
 ###
@@ -28,18 +28,22 @@ LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
 WHERE MovementType = 1 AND MovementDate = '$CURRENT_DATE-30$' ORDER BY AnimalName
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Microchip</b></td>
-<td><b>Entered Shelter</b></td>
-<td><b>Time On Shelter</b></td>
-<td><b>Came From</b></td>
-<td><b>Adoption Date</b></td>
-<td><b>Adopted To</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Microchip</b></th>
+<th><b>Entered Shelter</b></th>
+<th><b>Time On Shelter</b></th>
+<th><b>Came From</b></th>
+<th><b>Adoption Date</b></th>
+<th><b>Adopted To</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -79,6 +83,7 @@ $$FOOTER
 <td></td>
 <td></td>
 </tr>
+</tbody>
 </table>
 <h2>Total adoptions: {COUNT.SHELTERCODE}</h2>
 FOOTER$$

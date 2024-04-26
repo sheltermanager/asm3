@@ -2,13 +2,13 @@ Deaths Between two Dates by Category
 ###
 Statistics
 ###
-Any rev01
+Any rev02
 ###
 All shelter animal deaths between two dates, broken down by category
 ###
 en
 ###
-SELECT a.DeceasedDate, a.AnimalName, a.ShelterCode, dr.ReasonName, s.SpeciesName, a.PTSReason
+SELECT a.DeceasedDate, a.AnimalName, a.ID As AID, a.ShelterCode, dr.ReasonName, s.SpeciesName, a.PTSReason
 FROM animal a 
 INNER JOIN deathreason dr ON dr.ID = a.PTSReasonID
 INNER JOIN species s ON a.SpeciesID = s.ID
@@ -22,14 +22,19 @@ $$GROUP_ReasonName
 $$HEAD
 <h2>$ReasonName</h2>
 
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Species</b></td>
-<td><b>Notes</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Species</b></th>
+<th><b>Notes</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 
 <p><b>Total for $ReasonName: {COUNT.AnimalName}</b></p>
@@ -38,14 +43,13 @@ GROUP$$
 $$BODY<tr>
 <td>$DeceasedDate</td>
 <td>$ShelterCode</td>
-<td>$AnimalName</td>
+<td><a target="_blank" href="animal?id=$AID">$AnimalName</a></td>
 <td>$SpeciesName</td>
 <td>$PTSReason</td>
 </tr>
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 
 

@@ -2,7 +2,7 @@ Animals without log of type
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Animals without a selected log type between two dates
 ###
@@ -30,12 +30,16 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SPECIESNAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>ANIMALNAME</th>
 <th>SHELTERCODE</th>
 <th>DISPLAYLOCATION</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 GROUP$$
 $$BODY
@@ -47,6 +51,5 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 <p>Total: {COUNT.ANIMALNAME}</p>
 FOOTER$$

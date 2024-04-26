@@ -2,7 +2,7 @@ Health problems search
 ###
 Medical
 ###
-Any rev01
+Any rev02
 ###
 Animals entering between two dates where the health problems field contains a string
 ###
@@ -22,6 +22,7 @@ ORDER BY DateBroughtIn
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Intake</th>
 <th>Code</th>
@@ -35,13 +36,15 @@ $$HEADER
 <th>Location</th>
 <th>Photo</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
 <td>$DATEBROUGHTIN</td>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$ID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPENAME</td>
 <td>$BREEDNAME</td>
 <td>$IDENTICHIPNUMBER</td>
@@ -54,6 +57,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <h2>Total animals: {COUNT.ID}</h2>
 FOOTER$$

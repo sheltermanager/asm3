@@ -2,7 +2,7 @@ Declawed Cats
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 All declawed cats on the shelter.
 ###
@@ -33,17 +33,22 @@ HEADER$$
 $$GROUP_LocationName
 $$HEAD
 <h2>$LocationName</h2>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Microchip</b></td>
-<td><b>Age</b></td>
-<td><b>Breed</b></td>
-<td><b>Sex</b></td>
-<td><b>Date Entered Shelter</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Microchip</b></th>
+<th><b>Age</b></th>
+<th><b>Breed</b></th>
+<th><b>Sex</b></th>
+<th><b>Date Entered Shelter</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Total $LocationName: {COUNT.LocationName}</b></p>
 GROUP$$

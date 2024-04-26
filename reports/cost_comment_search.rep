@@ -2,7 +2,7 @@ Cost Comment Search
 ###
 Financial
 ###
-33601/Any rev02
+33601/Any rev03
 ###
 Search the comments of costs, medicals and vaccinations
 ###
@@ -15,6 +15,7 @@ SELECT * FROM (
 SELECT 
 animalcost.CostDate AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalcost.CostAmount AS amt,
@@ -30,6 +31,7 @@ WHERE animalcost.Description LIKE '%$@stext$%'
 UNION ALL SELECT
 animalvaccination.DateOfVaccination AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalvaccination.Cost AS amt,
@@ -45,6 +47,7 @@ WHERE animalvaccination.Comments LIKE '%$@stext$%'
 UNION ALL SELECT
 animaltest.DateOfTest AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltest.Cost AS amt,
@@ -60,6 +63,7 @@ WHERE animaltest.Comments LIKE '%$@stext$%'
 UNION ALL SELECT
 animalmedical.StartDate AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animalmedical.Cost AS amt,
@@ -74,6 +78,7 @@ WHERE animalmedical.Comments LIKE '%$@stext$%'
 UNION ALL SELECT
 animaltransport.PickupDateTime AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 species.SpeciesName AS speciesname,
 animaltransport.Cost AS amt,
@@ -88,22 +93,27 @@ WHERE animaltransport.Comments LIKE '%$@stext$%'
 ) dummy ORDER BY date DESC
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Type</b></td>
-<td><b>Date</b></td>
-<td><b>Name</b></td>
-<td><b>Code</b></td>
-<td><b>Species</b></td>
-<td><b>Amount</b></td>
-<td><b>Description</b></td>
-<td></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Type</b></th>
+<th><b>Date</b></th>
+<th><b>Name</b></th>
+<th><b>Code</b></th>
+<th><b>Species</b></th>
+<th><b>Amount</b></th>
+<th><b>Description</b></th>
+<th></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
-$$BODY<tr>
+$$BODY
+<tr>
 <td>$CTYPE</td>
 <td>$DATE</td>
-<td>$NAME</td>
+<td><a target="_blank" href="animal?id=$AID">$NAME</a></td>
 <td>$CODE</td>
 <td>$SPECIESNAME</td>
 <td>$AMT</td>
@@ -123,6 +133,7 @@ $$FOOTER
 <td></td>
 <td></td>
 </tr>
+</tbody>
 </table>
 FOOTER$$
 

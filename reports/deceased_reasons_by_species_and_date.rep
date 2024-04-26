@@ -2,7 +2,7 @@ Deceased Reasons by Species and Date
 ###
 Statistics
 ###
-Any rev01
+Any rev02
 ###
 Deceased reasons for shelter animals, grouped by species and between two dates.
 ###
@@ -22,11 +22,16 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 
-<table border=1><tr>
-<td><b>Reason</b></td>
-<td><b></b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Reason</b></th>
+<th><b></b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 
 <p><b>Total for $SpeciesName: {SUM.Total.0}</b></p>
@@ -39,14 +44,13 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 &&&
 Deceased Reasons by Species, Entry Category and Date
 ###
 Statistics
 ###
-Any rev01
+Any rev02
 ###
 Deceased reasons for shelter animals, grouped by species and entry category between two dates.
 ###
@@ -73,11 +77,16 @@ GROUP$$
 $$GROUP_EntryCategory
 $$HEAD
 <h3>$EntryCategory</h3>
-<table border=1><tr>
-<td><b>Reason</b></td>
-<td><b></b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Reason</b></th>
+<th><b></b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Total for $SpeciesName $EntryCategory: {SUM.Total.0}</b></p>
 GROUP$$
@@ -90,7 +99,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 
 

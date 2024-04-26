@@ -2,7 +2,7 @@ Gift Aid Claim
 ###
 Financial
 ###
-2707/Any rev01
+2707/Any rev02
 ###
 Donors with donations qualifying for gift aid between two dates.
 ###
@@ -24,18 +24,22 @@ GROUP BY owner.ID, OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcod
 ORDER BY LastDate
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Last Donation</b></td>
-<td><b>Name</b></td>
-<td><b>Address</b></td>
-<td><b>Telephone</b></td>
-<td><b>Donated</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Last Donation</b></th>
+<th><b>Name</b></th>
+<th><b>Address</b></th>
+<th><b>Telephone</b></th>
+<th><b>Donated</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
 <td>$LASTDATE</td>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
 <td>$OWNERADDRESS<br/>
 $OWNERTOWN<br/>
 $OWNERCOUNTY<br/>
@@ -47,6 +51,7 @@ $OWNERPOSTCODE<br/>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <p>Total qualifying for gift aid in period: <b>{SUM.AMOUNT.2}</b></p>
 FOOTER$$

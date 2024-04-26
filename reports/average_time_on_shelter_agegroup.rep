@@ -2,7 +2,7 @@ Average Time On Shelter By Date and Age Group
 ###
 Statistics
 ###
-33018/Any rev01
+33018/Any rev02
 ###
 Average time spent on shelter for all animals by age group and date.
 ###
@@ -20,10 +20,13 @@ ORDER BY avtimeonshelter DESC
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Age Group</th>
 <th>Average Days On Shelter</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -34,6 +37,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

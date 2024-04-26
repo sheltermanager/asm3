@@ -2,7 +2,7 @@ Average Time On Shelter By Year
 ###
 Statistics
 ###
-2721/HSQLDB rev01
+2721/HSQLDB rev02
 ###
 Average time spent on shelter for all animals by year.
 ###
@@ -18,10 +18,14 @@ GROUP BY YEAR(DateBroughtIn)
 ORDER BY AVG(DaysOnShelter) DESC
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Year</b></td>
-<td><b>AverageTime On Shelter (days)</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Year</b></th>
+<th><b>AverageTime On Shelter (days)</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -31,6 +35,7 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -38,7 +43,7 @@ Average Time On Shelter By Year
 ###
 Statistics
 ###
-33018/MySQL rev01
+33018/MySQL rev02
 ###
 Average time spent on shelter for all animals by year.
 ###
@@ -54,19 +59,25 @@ GROUP BY YEAR(DateBroughtIn)
 ORDER BY AVG(DaysOnShelter) DESC
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Year</b></td>
-<td><b>AverageTime On Shelter (days)</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Year</b></th>
+<th><b>AverageTime On Shelter (days)</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
-$$BODY<tr>
+$$BODY
+<tr>
 <td>$BIYEAR</td>
 <td>$AVTIMEONSHELTER</td>
 </tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -74,7 +85,7 @@ Average Time On Shelter By Year
 ###
 Statistics
 ###
-33018/PostgreSQL rev01
+33018/PostgreSQL rev02
 ###
 Average time spent on shelter for all animals by year.
 ###
@@ -90,10 +101,14 @@ GROUP BY EXTRACT(YEAR FROM DateBroughtIn)
 ORDER BY CAST(AVG(DaysOnShelter) AS INTEGER) DESC
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Year</b></td>
-<td><b>AverageTime On Shelter (days)</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Year</b></th>
+<th><b>AverageTime On Shelter (days)</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -103,5 +118,6 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

@@ -2,7 +2,7 @@ Adoptions by Date with Payments
 ###
 Movements
 ###
-Any rev02
+Any rev03
 ###
 Adoptions between two dates with payment info.
 ###
@@ -35,21 +35,25 @@ LEFT OUTER JOIN owner oo ON animal.OriginalOwnerID = oo.ID
 WHERE MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' ORDER BY MovementDate
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Microchip</b></td>
-<td><b>Entered Shelter</b></td>
-<td><b>Time On Shelter</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Microchip</b></th>
+<th><b>Entered Shelter</b></th>
+<th><b>Time On Shelter</b></th>
 <!-- <td><b>Came From</b></td> -->
-<td><b>Adoption Date</b></td>
-<td><b>Adopted To</b></td>
-<td><b>Payment Type</b></td>
-<td><b>Method</b></td>
-<td><b>Amount</b></td>
+<th><b>Adoption Date</b></th>
+<th><b>Adopted To</b></th>
+<th><b>Payment Type</b></th>
+<th><b>Method</b></th>
+<th><b>Amount</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -97,6 +101,7 @@ $$FOOTER
 <td></td>
 <td>{SUM.Donation.2}</td>
 </tr>
+</tbody>
 </table>
 <h2>Total adoptions: {COUNT.SHELTERCODE}</h2>
 FOOTER$$

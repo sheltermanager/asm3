@@ -2,7 +2,7 @@ Animals with an estimated date of birth (on shelter)
 ###
 Auditing
 ###
-3300/Any rev02
+3300/Any rev03
 ###
 Displays animals on shelter with an estimated date of birth by date brought in
 ###
@@ -26,14 +26,19 @@ HEADER$$
 $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
-<table border=1><tr>
+<table border=1>
+<thead>
+<tr>
 <th>ANIMALNAME</th>
 <th>SPECIESNAME</th>
 <th>BREEDNAME</th>
 <th>LOCATION</th>
 <th>DATEOFBIRTH</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total: {COUNT.ShelterCode}</p>
 GROUP$$

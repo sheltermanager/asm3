@@ -2,7 +2,7 @@ User Activity Report
 ###
 Auditing
 ###
-3309/Any rev02
+3309/Any rev03
 ###
 Changes/additions made by all system users between two dates.
 ###
@@ -241,7 +241,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
-</table>
 FOOTER$$
 
 

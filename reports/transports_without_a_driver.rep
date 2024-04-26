@@ -2,7 +2,7 @@ Transports without a driver
 ###
 Transport
 ###
-34004/Any rev01
+34004/Any rev02
 ###
 Incomplete transports with no driver assigned
 ###
@@ -59,7 +59,7 @@ $$BODY
 <td>$STATUSNAME</td>
 <td>$MILES</td>
 <td>$COST</td>
-<td>$COMMENTS</td></tr>
+<td>$COMMENTS</td>
 </tr>
 BODY$$
 

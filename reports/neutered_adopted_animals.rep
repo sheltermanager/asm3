@@ -2,7 +2,7 @@ Neutered/Spayed Adopted Animals
 ###
 Movements
 ###
-Any rev02
+Any rev03
 ###
 Adopted animals who were neutered/spayed.
 ###
@@ -48,7 +48,7 @@ $$BODY
 <td><b>$OWNERNAME</b><br/>
 $OWNERADDRESS<br />
 $OWNERTOWN<br />
-$OWNERCOUNTY $OWNERPOSTCODE</br />
+$OWNERCOUNTY $OWNERPOSTCODE<br />
 H: $HOMETELEPHONE
 W: $WORKTELEPHONE
 M: $MOBILETELEPHONE

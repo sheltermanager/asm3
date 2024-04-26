@@ -2,7 +2,7 @@ Non-Neutered/Spayed Transferred Animals
 ###
 Auditing
 ###
-Any rev04
+Any rev05
 ###
 Transferred animals who have not been neutered/spayed.
 ###
@@ -49,7 +49,7 @@ $$BODY
 <td><b><a target="_blank" href="person?id=$OID">$OWNERNAME</a></b><br/>
 $OWNERADDRESS<br />
 $OWNERTOWN<br />
-$OWNERCOUNTY $OWNERPOSTCODE</br />
+$OWNERCOUNTY $OWNERPOSTCODE<br />
 H: $HOMETELEPHONE
 W: $WORKTELEPHONE
 M: $MOBILETELEPHONE

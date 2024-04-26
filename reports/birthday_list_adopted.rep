@@ -2,7 +2,7 @@ Birthday List (Adopted)
 ###
 Auditing
 ###
-MySQL rev02
+MySQL rev03
 ###
 Owners who adopted animals with birthdays in the selected month.
 ###
@@ -32,12 +32,16 @@ AND MONTH(animal.DateOfBirth) = $@monthno$
 ORDER BY DAY(animal.DateOfBirth)
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Owner</b></td>
-<td><b>Date of birth</b></td>
-<td><b>Animal</b></td>
-<td><b>Adopted</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Owner</b></th>
+<th><b>Date of birth</b></th>
+<th><b>Animal</b></th>
+<th><b>Adopted</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -55,6 +59,7 @@ $OWNERPOSTCODE<br/>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -62,7 +67,7 @@ Birthday List (Adopted)
 ###
 Auditing
 ###
-PostgreSQL rev02
+PostgreSQL rev03
 ###
 Owners who adopted animals with birthdays in the selected month.
 ###
@@ -92,12 +97,16 @@ AND EXTRACT(MONTH FROM animal.DateOfBirth)::INTEGER = $@monthno$
 ORDER BY EXTRACT(DAY FROM animal.DateOfBirth)::INTEGER
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Owner</b></td>
-<td><b>Date of birth</b></td>
-<td><b>Animal</b></td>
-<td><b>Adopted</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Owner</b></th>
+<th><b>Date of birth</b></th>
+<th><b>Animal</b></th>
+<th><b>Adopted</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -115,5 +124,6 @@ $OWNERPOSTCODE<br/>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

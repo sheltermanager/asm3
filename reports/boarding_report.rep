@@ -2,7 +2,7 @@ Boarding Report by Location
 ###
 Boarding
 ###
-Any rev01
+Any rev02
 ###
 Boarding animals entering between two dates with their leaving date, broken down by location.
 ###
@@ -34,6 +34,7 @@ $$GROUP_LocationName
 $$HEAD
 <h2>$LOCATIONNAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -44,7 +45,10 @@ $$HEAD
 <th>Entered</th>
 <th>Leaving</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $LOCATIONNAME: {COUNT.LOCATIONNAME}</p>
 GROUP$$

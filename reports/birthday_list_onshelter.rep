@@ -2,7 +2,7 @@ Birthday List (On Shelter)
 ###
 Auditing
 ###
-MySQL rev02
+MySQL rev03
 ###
 Shelter animals with birthdays in the selected month.
 ###
@@ -24,11 +24,15 @@ AND MONTH(animal.DateOfBirth) = $@monthno$
 ORDER BY DAY(animal.DateOfBirth)
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Date of birth</b></td>
-<td><b>Animal</b></td>
-<td><b>Location</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date of birth</b></th>
+<th><b>Animal</b></th>
+<th><b>Location</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -39,6 +43,7 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -46,7 +51,7 @@ Birthday List (On Shelter)
 ###
 Auditing
 ###
-PostgreSQL rev02
+PostgreSQL rev03
 ###
 Shelter animals with birthdays in the selected month.
 ###
@@ -68,11 +73,15 @@ AND EXTRACT(MONTH FROM animal.DateOfBirth)::INTEGER = $@monthno$
 ORDER BY EXTRACT(DAY FROM animal.DateOfBirth)::INTEGER
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Date of birth</b></td>
-<td><b>Animal</b></td>
-<td><b>Location</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date of birth</b></th>
+<th><b>Animal</b></th>
+<th><b>Location</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -83,6 +92,7 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 
