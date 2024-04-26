@@ -1,7 +1,7 @@
 48
 ================
 
-26/04/24 onlineform/create_animal should set default type/species/size/colour
+26/04/24 onlineform/create_animal should set default breed/type/species/size/colour
 26/04/24 Add vet field to vouchers #1464
 26/04/24 Include hold ends and transports in timeline #1465
 24/04/24 Set new waiting list fields from online forms #656

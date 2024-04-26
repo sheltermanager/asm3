@@ -1381,8 +1381,8 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
     # For wildlife rescues, breed might be the thing people recognise over species (eg: corvid vs crow, magpie)
     if "species" not in d and "breed1" in d:
         d["species"] = str(asm3.lookups.get_species_for_breed(dbo, asm3.utils.cint(d["breed1"])))
-    if "species" not in d:
-        d["species"] = guess_species(dbo, "nomatchesusedefault")
+    if "species" not in d: d["species"] = str(guess_species(dbo, "nomatchesusedefault"))
+    if "breed1" not in d: d["breed1"] = str(guess_breed(dbo, "nomatchesusedefault"))
     if "entryreason" not in d: d["entryreason"] = str(guess_entryreason(dbo, "nomatchesusedefault"))
     if "entrytype" not in d: d["entrytype"] = str(guess_entrytype(dbo, "nomatchesusedefault"))
     if "basecolour" not in d: d["basecolour"] = str(guess_colour(dbo, "nomatchesusedefault"))
