@@ -143,10 +143,14 @@ def get_voucher_query(dbo: Database) -> str:
     return "SELECT ov.*, v.VoucherName, o.OwnerName, " \
         "o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, " \
         "o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.AdditionalFlags, " \
+        "vo.OwnerName AS VetName, " \
+        "vo.OwnerAddress AS VetAddress, vo.OwnerTown AS VetTown, vo.OwnerCounty AS VetCounty, vo.OwnerPostcode AS VetPostcode, " \
+        "vo.WorkTelephone AS VetTelephone, vo.EmailAddress AS VetEmailAddress, " \
         "a.AnimalName, a.ShelterCode, a.ShortCode " \
         "FROM ownervoucher ov " \
         "LEFT OUTER JOIN voucher v ON v.ID = ov.VoucherID " \
         "LEFT OUTER JOIN owner o ON o.ID = ov.OwnerID " \
+        "LEFT OUTER JOIN owner vo ON vo.ID = ov.VetID " \
         "LEFT OUTER JOIN animal a ON ov.AnimalID = a.ID "
 
 def get_account_code(dbo: Database, accountid: int) -> str:
@@ -1331,6 +1335,7 @@ def insert_voucher_from_form(dbo: Database, username: str, post: PostedData) -> 
         "DateIssued":   post.date("issued"),
         "DateExpired":  post.date("expires"),
         "DatePresented": post.date("presented"),
+        "VetID":        post.integer("vet"),
         "Value":        post.integer("amount"),
         "Comments":     post["comments"]
     }, username)
@@ -1347,6 +1352,7 @@ def update_voucher_from_form(dbo: Database, username: str, post: PostedData) -> 
         "DateIssued":   post.date("issued"),
         "DateExpired":  post.date("expires"),
         "DatePresented": post.date("presented"),
+        "VetID":        post.integer("vet"),
         "Value":        post.integer("amount"),
         "Comments":     post["comments"]
     }, username)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-04-26 09:39+0000\n"
+"POT-Creation-Date: 2024-04-26 10:07+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -15154,8 +15154,12 @@ msgid "Very Large"
 msgstr ""
 
 #: html.py wordprocessor.py dbupdate.py test.js person_find_results.js
-#: header_edit_header.js reports.js common_html.js
+#: header_edit_header.js reports.js vouchers.js common_html.js
 msgid "Vet"
+msgstr ""
+
+#: vouchers.js
+msgid "Vet (optional)"
 msgstr ""
 
 #: dbupdate.py

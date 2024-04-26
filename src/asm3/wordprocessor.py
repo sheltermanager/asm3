@@ -1603,6 +1603,7 @@ def person_tags(dbo: Database, p: ResultRow, includeImg=False, includeDonations=
         d = {
             "VOUCHERANIMALNAME":    "ANIMALNAME",
             "VOUCHERSHELTERCODE":   "SHELTERCODE",
+            "VOUCHERVETNAME":       "VETNAME",
             "VOUCHERTYPENAME":      "VOUCHERNAME",
             "VOUCHERCODE":          "VOUCHERCODE",
             "VOUCHERVALUE":         "c:VALUE",
@@ -1739,6 +1740,7 @@ def voucher_tags(dbo: Database, v: ResultRow) -> Tags:
     tags = {
         "VOUCHERANIMALNAME":    v["ANIMALNAME"],
         "VOUCHERSHELTERCODE":   v["SHELTERCODE"],
+        "VOUCHERVETNAME":       v["VETNAME"],
         "VOUCHERTYPENAME":      v["VOUCHERNAME"],
         "VOUCHERCODE":          v["VOUCHERCODE"],
         "VOUCHERVALUE":         format_currency_no_symbol(l, v["VALUE"]),

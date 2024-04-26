@@ -17,6 +17,7 @@ $(function() {
                 fields: [
                     { json_field: "OWNERID", post_field: "person", label: _("Person"), type: "person", validation: "notzero" },
                     { json_field: "ANIMALID", post_field: "animal", label: _("Animal (optional)"), type: "animal" },
+                    { json_field: "VETID", post_field: "vet", label: _("Vet (optional)"), type: "person", personfilter: "vet" },
                     { json_field: "VOUCHERID", post_field: "type", label: _("Type"), type: "select", options: { displayfield: "VOUCHERNAME", valuefield: "ID", rows: controller.vouchertypes }},
                     { json_field: "VOUCHERCODE", post_field: "vouchercode", label: _("Code"), type: "text", validation: "notblank",
                         callout: _("Specify a unique code to identify this voucher") },
@@ -52,16 +53,18 @@ $(function() {
                 columns: [
                     { field: "VOUCHERNAME", display: _("Type") },
                     { field: "VOUCHERCODE", display: _("Code") },
+                    { field: "VETID", display: _("Vet"), formatter: function(row) {
+                        if (!row.VETID) { return ""; }
+                        return html.person_link(row.VETID, row.VETNAME);
+                    }},
                     { field: "DATEISSUED", display: _("Issued"), initialsort: true, initialsortdirection: "desc", formatter: tableform.format_date },
                     { field: "DATEEXPIRED", display: _("Expires"), formatter: tableform.format_date },
                     { field: "DATEPRESENTED", display: _("Redeemed"), formatter: tableform.format_date },
                     { field: "VALUE", display: _("Amount"), formatter: tableform.format_currency },
                     { field: "PERSON", display: _("Person"),
                         formatter: function(row) {
-                            if (row.OWNERID) {
-                                return html.person_link(row.OWNERID, row.OWNERNAME);
-                            }
-                            return "";
+                            if (!row.OWNERID) { return ""; }
+                            return html.person_link(row.OWNERID, row.OWNERNAME);
                         },
                         hideif: function(row) {
                             return controller.name.indexOf("person_") != -1;
@@ -178,6 +181,9 @@ $(function() {
                 row.WORKTELEPHONE = vouchers.lastperson.WORKTELEPHONE;
                 row.MOBILETELEPHONE = vouchers.lastperson.MOBILETELEPHONE;
             }
+            if (vouchers.lastvet) {
+                row.VETNAME = vouchers.lastvet.OWNERNAME;
+            }
             row.VOUCHERNAME = common.get_field(controller.vouchertypes, row.VOUCHERID, "VOUCHERNAME");
         },
 
@@ -234,6 +240,14 @@ $(function() {
                 vouchers.lastperson = rec;
             });
 
+            $("#vet").personchooser().bind("personchooserchange", function(event, rec) {
+                vouchers.lastvet = rec;
+            });
+
+            $("#vet").personchooser().bind("personchooserloaded", function(event, rec) {
+                vouchers.lastvet = rec;
+            });
+
             $("#type").change(vouchers.vouchertype_change);
 
             // Generate code button
@@ -264,9 +278,11 @@ $(function() {
         destroy: function() {
             common.widget_destroy("#animal");
             common.widget_destroy("#person");
+            common.widget_destroy("#vet");
             tableform.dialog_destroy();
             this.lastanimal = null;
             this.lastperson = null;
+            this.lastvet = null;
         },
 
         vouchertype_change: function() {

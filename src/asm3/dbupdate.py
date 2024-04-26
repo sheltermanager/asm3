@@ -44,7 +44,7 @@ VERSIONS = (
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
-    34807, 34808, 34809, 34810, 34811
+    34807, 34808, 34809, 34810, 34811, 34812
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1581,6 +1581,7 @@ def sql_structure(dbo: Database) -> str:
         fdate("DateIssued"),
         fdate("DateExpired"),
         fdate("DatePresented", True),
+        fint("VetID", True),
         fint("Value"),
         flongstr("Comments", True) ))
     sql += index("ownervoucher_AnimalID", "ownervoucher", "AnimalID")
@@ -1589,6 +1590,7 @@ def sql_structure(dbo: Database) -> str:
     sql += index("ownervoucher_VoucherCode", "ownervoucher", "VoucherCode")
     sql += index("ownervoucher_DateExpired", "ownervoucher", "DateExpired")
     sql += index("ownervoucher_DatePresented", "ownervoucher", "DatePresented")
+    sql += index("ownervoucher_VetID", "ownervoucher", "VetID")
 
     sql += table("pickuplocation", (
         fid(),
@@ -6240,3 +6242,8 @@ def update_34811(dbo: Database) -> None:
     dbo.execute_dbupdate("INSERT INTO lkwaitinglistremoval VALUES (2, ?)", [ _("Owner kept", l) ])
     dbo.execute_dbupdate("INSERT INTO lkwaitinglistremoval VALUES (3, ?)", [ _("Owner took to another shelter", l) ])
     dbo.execute_dbupdate("INSERT INTO lkwaitinglistremoval VALUES (4, ?)", [ _("Unknown", l) ])
+
+def update_34812(dbo: Database) -> None:
+    # Add ownervoucher.VetID
+    add_column(dbo, "ownervoucher", "VetID", dbo.type_integer)
+    add_index(dbo, "ownervoucher_VetID", "ownervoucher", "VetID")
