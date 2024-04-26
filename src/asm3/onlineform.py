@@ -1356,7 +1356,7 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         if f.FIELDNAME == "markings": d["markings"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
         if f.FIELDNAME == "microchip": 
-            d["microchipped"] = "1"
+            d["microchipped"] = "on"
             d["microchipnumber"] = truncs(f.VALUE)
         if f.FIELDNAME == "hiddencomments": d["hiddenanimaldetails"] = f.VALUE
         if f.FIELDNAME == "reason": d["reasonforentry"] = f.VALUE
