@@ -1033,8 +1033,7 @@ def embellish_timeline(l: str, rows: Results) -> Results:
           "MEDICAL": ( _("{0} {1}: received {2}", l), "medical" ),
           "INCIDENTOPEN": ( _("{0}: opened {1}", l), "call" ),
           "INCIDENTCLOSE": ( _("{0}: closed {1} ({2})", l), "call" ),
-          "TRANSPORTPICKUP": ( _("{0} {1}: transport pickup ({2})", l), "transport" ),
-          "TRANSPORTDROPOFF": ( _("{0} {1}: transport dropoff ({2})", l), "transport" ),
+          "TRANSPORT": ( _("{0} {1}: transport ({2})", l), "transport" ),
           "LOST": ( _("{2}: lost in {1}: {0}", l), "animal-lost" ),
           "FOUND": ( _("{2}: found in {1}: {0}", l), "animal-found" ),
           "WAITINGLIST": ( _("{0}: waiting list - {1}", l), "waitinglist" )
@@ -1217,16 +1216,11 @@ def get_timeline(dbo: Database, limit: int = 500, age: int = 120) -> Results:
             "INNER JOIN incidenttype ON incidenttype.ID = animalcontrol.IncidentTypeID " \
             "INNER JOIN incidentcompleted ON incidentcompleted.ID = animalcontrol.IncidentCompletedID " \
             "ORDER BY CompletedDate DESC, animalcontrol.ID",
-        "SELECT 'animal_transport' AS LinkTarget, 'TRANSPORTPICKUP' AS Category, PickupDateTime AS EventDate, animal.ID, " \
+        "SELECT 'animal_transport' AS LinkTarget, 'TRANSPORT' AS Category, PickupDateTime AS EventDate, animal.ID, " \
             "ShelterCode AS Text1, AnimalName AS Text2, TransportTypeName AS Text3, animaltransport.LastChangedBy FROM animaltransport " \
             "INNER JOIN transporttype ON transporttype.ID = animaltransport.TransportTypeID " \
             "INNER JOIN animal ON animaltransport.AnimalID = animal.ID " \
             "ORDER BY PickupDateTime DESC, animal.ID",
-        "SELECT 'animal_transport' AS LinkTarget, 'TRANSPORTDROPOFF' AS Category, DropoffDateTime AS EventDate, animal.ID, " \
-            "ShelterCode AS Text1, AnimalName AS Text2, TransportTypeName AS Text3, animaltransport.LastChangedBy FROM animaltransport " \
-            "INNER JOIN transporttype ON transporttype.ID = animaltransport.TransportTypeID " \
-            "INNER JOIN animal ON animaltransport.AnimalID = animal.ID " \
-            "ORDER BY DropoffDateTime DESC, animal.ID",
         "SELECT 'lostanimal' AS LinkTarget, 'LOST' AS Category, DateLost AS EventDate, animallost.ID, " \
             "DistFeat AS Text1, AreaLost AS Text2, SpeciesName AS Text3, LastChangedBy FROM animallost " \
             "INNER JOIN species ON animallost.AnimalTypeID = species.ID " \
