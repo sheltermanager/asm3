@@ -17,7 +17,7 @@ tt.testname, v.cost, tr.resultname, v.comments, v.dateoftest
 FROM animaltest v
 INNER JOIN animal a ON a.id=v.animalid
 LEFT OUTER JOIN species s ON a.speciesid=s.id
-LEFT OUTER JOIN lksex x ON x.Sex = a.Sex
+LEFT OUTER JOIN lksex x ON x.ID = a.Sex
 LEFT OUTER JOIN owner o ON o.id=v.administeringvetid
 INNER JOIN testresult tr ON tr.id=v.testresultid
 INNER JOIN testtype tt ON tt.id=v.testtypeid
