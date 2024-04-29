@@ -3096,7 +3096,7 @@ def insert_animallocation(dbo: Database, username: str, animalid: int, animalnam
         "FromUnit":         fromunit,
         "ToLocationID":     toid,
         "ToUnit":           tounit,
-        "By":               username,
+        "MovedBy":          username,
         "Description":      msg
     }, username, setCreated = False)
     if asm3.configuration.location_change_log(dbo):

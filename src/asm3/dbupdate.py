@@ -44,7 +44,7 @@ VERSIONS = (
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
-    34807, 34808, 34809, 34810, 34811, 34812
+    34807, 34808, 34809, 34810, 34811, 34812, 34813
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -645,7 +645,7 @@ def sql_structure(dbo: Database) -> str:
         fstr("FromUnit"), 
         fint("ToLocationID"),
         fstr("ToUnit"), 
-        fstr("By"),
+        fstr("MovedBy"),
         fstr("Description")), False)
     sql += index("animallocation_AnimalID", "animallocation", "AnimalID")
     sql += index("animallocation_FromLocationID", "animallocation", "FromLocationID")
@@ -3802,7 +3802,7 @@ def update_3214(dbo: Database) -> None:
 def update_3215(dbo: Database) -> None:
     # Rename DisplayLocationString column to just DisplayLocation and ditch DisplayLocationName - it should be calculated
     try:
-        dbo.execute_dbupdate("ALTER TABLE animal ADD DisplayLocation %s" % dbo.type_shorttext)
+        add_column(dbo, "animal", "DisplayLocation", dbo.type_shorttext)
     except:
         asm3.al.error("failed creating animal.DisplayLocation.", "dbupdate.update_3215", dbo)
     try:
@@ -3810,8 +3810,8 @@ def update_3215(dbo: Database) -> None:
     except:
         asm3.al.error("failed copying DisplayLocationString->DisplayLocation", "dbupdate.update_3215", dbo)
     try:
-        dbo.execute_dbupdate("ALTER TABLE animal DROP COLUMN DisplayLocationName")
-        dbo.execute_dbupdate("ALTER TABLE animal DROP COLUMN DisplayLocationString")
+        drop_column(dbo, "animal", "DisplayLocationName")
+        drop_column(dbo, "animal", "DisplayLocationString")
     except:
         asm3.al.error("failed removing DisplayLocationName and DisplayLocationString", "dbupdate.update_3215", dbo)
 
@@ -6247,3 +6247,9 @@ def update_34812(dbo: Database) -> None:
     # Add ownervoucher.VetID
     add_column(dbo, "ownervoucher", "VetID", dbo.type_integer)
     add_index(dbo, "ownervoucher_VetID", "ownervoucher", "VetID")
+
+def update_34813(dbo: Database) -> None:
+    # rename animallocation.By to animallocation.MovedBy (By is a MySQL reserved word)
+    add_column(dbo, "animallocation", "MovedBy", dbo.type_shorttext)
+    dbo.execute_dbupdate("UPDATE animallocation SET MovedBy=By")
+    drop_column(dbo, "animallocation", "By")

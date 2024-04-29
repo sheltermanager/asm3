@@ -30,11 +30,12 @@ class DatabaseMySQL(Database):
         return c, s
 
     def ddl_add_index(self, name: str, table: str, column: str, unique: bool = False, partial: bool = False) -> str:
+        """ Overridden to allow partial index support """
         u = ""
         if unique: u = "UNIQUE "
         if partial: column = "%s(255)" % column
         return "CREATE %sINDEX %s ON %s (%s)" % (u, name, table, column)
-
+    
     def ddl_drop_index(self, name: str, table: str) -> str:
         return "DROP INDEX %s ON %s" % (name, table)
 

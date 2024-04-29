@@ -52,7 +52,7 @@ copyright = u'2024, Sheltermanager, Ltd'
 # built documents.
 #
 # The short X.Y version.
-version = '48u'
+version = '48'
 # The full version, including alpha/beta/rc tags.
 release = '48u'
 
