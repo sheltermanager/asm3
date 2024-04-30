@@ -2,7 +2,7 @@ Hills Science Diet Adopter List
 ###
 Figures
 ###
-3000/Any rev03
+3000/Any rev04
 ###
 The Hills Science Diet adopter list for exporting as a CSV file.
 ###
@@ -39,6 +39,7 @@ ORDER BY m.MovementDate
 $$HEADER
 <p>Use <a href="report_export">Settings-&gt;Export Reports as CSV</a> to save this data to a file for sending to Hills.</p>
 <table border="1">
+<thead>
 <tr>
 <th>SAP</th>
 <th>ADOPTIONDATE</th>
@@ -58,6 +59,8 @@ $$HEADER
 <th>ADOPTIONLOCATION</th>
 <th>RETAILPARTNER</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -83,6 +86,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&

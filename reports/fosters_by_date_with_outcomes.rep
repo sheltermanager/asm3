@@ -2,7 +2,7 @@ Fosters by Date with Outcomes
 ###
 Movements
 ###
-Any rev04
+Any rev05
 ###
 Foster animals between two dates with their final outcomes
 ###
@@ -73,6 +73,8 @@ BODY$$
 $$FOOTER
 </tbody>
 </table>
+<h2>Total Fosters: {COUNT.SHELTERCODE}</h2>
+<h2> Total Animals: {COUNT.SHELTERCODE.DISTINCT}</h2>
 FOOTER$$
 &&&
 Fosters by Date and Fosterer with Outcomes

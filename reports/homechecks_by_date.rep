@@ -2,7 +2,7 @@ Homechecks by Date
 ###
 Movements
 ###
-Any rev02
+Any rev03
 ###
 All people who were homechecked between two dates.
 ###
@@ -23,11 +23,15 @@ $$GROUP_HomecheckerName
 $$HEAD
 <h2>$HomecheckerName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Person</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total homechecks carried out by $HomecheckerName: {COUNT.OWNERNAME}</p>
 GROUP$$

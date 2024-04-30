@@ -2,7 +2,7 @@ Intake by Brought In Owner
 ###
 Figures
 ###
-Any rev01
+Any rev02
 ###
 Animals brought in by a particular owner between two dates
 ###
@@ -17,6 +17,7 @@ SELECT DateBroughtIn AS thedate,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
+animal.ID AS AID,
 t.AnimalType,
 sp.SpeciesName,
 AnimalAge,
@@ -39,26 +40,31 @@ HEADER$$
 $$GROUP_OwnerName
 $$HEAD
 <h2>$OwnerName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Name</b></td>
-<td><b>Code</b></td>
-<td><b>Reason</b></td>
-<td><b>Chip</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Age</b></td>
-<td><b>Sex</b></td>
-<td><b>Location</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Name</b></th>
+<th><b>Code</b></th>
+<th><b>Reason</b></th>
+<th><b>Chip</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Age</b></th>
+<th><b>Sex</b></th>
+<th><b>Location</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 GROUP$$
 
 $$BODY
 <tr>
 <td>$thedate</td>
-<td>$animalname</td>
+<td><a target="_blank" href="animal?id=$AID">$animalname</a></td>
 <td>$sheltercode</td>
 <td>$reason</td>
 <td>$identichipnumber</td>

@@ -2,7 +2,7 @@ In/Out by Entry Type
 ###
 Movements
 ###
-34801/Any rev01
+34801/Any rev02
 ###
 The In/Out report, but broken down by species and entry type with totals.
 ###
@@ -403,20 +403,25 @@ GROUP$$
 $$GROUP_EntryType
 $$HEAD
 <h2>$EntryType</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Species</b></td>
-<td><b>Code</b></td>
-<td><b>Microchip</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Age</b></td>
-<td><b>Sex</b></td>
-<td><b>Location</b></td>
-<td><b>Owner</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Species</b></th>
+<th><b>Code</b></th>
+<th><b>Microchip</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Age</b></th>
+<th><b>Sex</b></th>
+<th><b>Location</b></th>
+<th><b>Owner</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h2>Total $EntryType: {COUNT.thedate}</h2>
 GROUP$$

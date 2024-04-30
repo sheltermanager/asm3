@@ -2,7 +2,7 @@ Homecheckers with Areas
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 All people flagged as homecheckers with the areas in which they are willing to do checks.
 ###
@@ -15,10 +15,13 @@ ORDER BY OwnerName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Person</th>
 <th>Areas</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -36,5 +39,6 @@ C: $MOBILETELEPHONE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

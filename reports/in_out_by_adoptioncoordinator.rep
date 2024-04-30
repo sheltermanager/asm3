@@ -2,7 +2,7 @@ In/Out by Adoption Coordinator
 ###
 Movements
 ###
-3200/Any rev05
+3200/Any rev06
 ###
 The In/Out report, but broken down by adoption coordinator with totals.
 ###
@@ -348,8 +348,8 @@ adoption.MovementDate >= '$@from$' AND adoption.MovementDate <= '$@to$' AND NonS
 
 
 UNION ALL SELECT DeceasedDate AS thedate,
-'' AS Reason,
 (SELECT ReasonName FROM deathreason WHERE ID = animal.PTSReasonID) AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -425,20 +425,25 @@ GROUP$$
 $$GROUP_AdoptionCoordinator
 $$HEAD
 <h2>$AdoptionCoordinator</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Reason</b></td>
-<td><b>Code</b></td>
-<td><b>Microchip</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Age</b></td>
-<td><b>Sex</b></td>
-<td><b>Location</b></td>
-<td><b>Owner</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Reason</b></th>
+<th><b>Code</b></th>
+<th><b>Microchip</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Age</b></th>
+<th><b>Sex</b></th>
+<th><b>Location</b></th>
+<th><b>Owner</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h2>Total $AdoptionCoordinator: {COUNT.thedate}</h2>
 GROUP$$
@@ -448,8 +453,8 @@ $$BODY<tr>
 <td>$REASON</td>
 <td>$SHELTERCODE</td>
 <td>$IDENTICHIPNUMBER</td>
-<td>$ANIMALNAME</td>
 <td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
+<td>$ANIMALTYPENAME</td>
 <td>$SPECIESNAME</td>
 <td>$ANIMALAGE</td>
 <td>$SEXNAME</td>
