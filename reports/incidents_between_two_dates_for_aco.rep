@@ -2,7 +2,7 @@ Incidents between two dates for ACO
 ###
 Animal Control
 ###
-34806/Any rev02
+34806/Any rev03
 ###
 Incidents between two dates for a single ACO
 ###
@@ -33,6 +33,7 @@ ORDER BY ac.CallDateTime
 $$HEADER
 <h2>$DispatchedACO</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Incident Code</th>
@@ -45,6 +46,8 @@ $$HEADER
 <th>Responded</th>
 <th>Completed</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -65,6 +68,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <h2>Total $DispatchedACO: {COUNT.DISPATCHEDACO}</h2>
 FOOTER$$

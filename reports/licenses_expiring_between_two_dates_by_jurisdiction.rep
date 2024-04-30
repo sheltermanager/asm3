@@ -2,7 +2,7 @@ Licenses expiring between two dates by jurisdiction
 ###
 Animal Control
 ###
-34800/Any rev04
+34800/Any rev05
 ###
 Licenses that expire between the two dates given by jurisdiction, excludes people with renewed licenses and deceased animals
 ###
@@ -32,6 +32,7 @@ $$GROUP_JurisdictionName
 $$HEAD
 <h2>$JurisdictionName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Number</th>
 <th>Type</th>
@@ -41,7 +42,10 @@ $$HEAD
 <th>Expires</th>
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $JurisdictionName: {COUNT.JurisdictionName}</p>
 GROUP$$

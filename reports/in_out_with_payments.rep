@@ -2,7 +2,7 @@ In/Out with Payments
 ###
 Movements
 ###
-3200/Any rev05
+3200/Any rev06
 ###
 The In/Out report, but includes payments.
 ###
@@ -380,21 +380,26 @@ GROUP$$
 $$GROUP_CategoryName
 $$HEAD
 <h2>$CategoryName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Reason</b></td>
-<td><b>Code</b></td>
-<td><b>Microchip</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Age</b></td>
-<td><b>Sex</b></td>
-<td><b>Location</b></td>
-<td><b>Owner</b></td>
-<td><b>Payment</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Reason</b></th>
+<th><b>Code</b></th>
+<th><b>Microchip</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Age</b></th>
+<th><b>Sex</b></th>
+<th><b>Location</b></th>
+<th><b>Owner</b></th>
+<th><b>Payment</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h2>Total $CategoryName: {COUNT.thedate} ({SUM.donation.2})</h2>
 GROUP$$

@@ -2,7 +2,7 @@ Intakes by Date with Outcomes
 ###
 Auditing
 ###
-Any rev03
+Any rev04
 ###
 Animals entering between two dates with their final outcomes
 ###
@@ -36,6 +36,7 @@ ORDER BY a.DateBroughtIn
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -46,6 +47,8 @@ $$HEADER
 <th>Altered</th>
 <th>Outcome</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -62,5 +65,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

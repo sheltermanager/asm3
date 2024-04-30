@@ -2,7 +2,7 @@ Intake of Breed by Location with Outcomes
 ###
 Auditing
 ###
-33501/Any rev03
+33501/Any rev04
 ###
 Animals of breed entering between two dates with their final outcomes, broken down by location
 ###
@@ -43,6 +43,7 @@ $$GROUP_LocationName
 $$HEAD
 <h2>$LOCATIONNAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -53,7 +54,10 @@ $$HEAD
 <th>Altered</th>
 <th>Outcome</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $LOCATIONNAME: {COUNT.LOCATIONNAME}</p>
 GROUP$$

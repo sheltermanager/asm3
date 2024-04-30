@@ -2,7 +2,7 @@ Incidents between two dates by ACO
 ###
 Animal Control
 ###
-34806/Any rev04
+34806/Any rev05
 ###
 Incidents between two dates broken down by ACO
 ###
@@ -36,6 +36,7 @@ $$GROUP_UserName
 $$HEAD
 <h2>$UserName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Incident Code</th>
@@ -49,7 +50,10 @@ $$HEAD
 <th>Responded</th>
 <th>Completed</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>    
 </table>
 <h2>Total $UserName: {COUNT.USERNAME}</h2>
 GROUP$$

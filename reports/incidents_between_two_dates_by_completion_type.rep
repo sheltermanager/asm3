@@ -2,7 +2,7 @@ Incidents between two dates by completion type
 ###
 Animal Control
 ###
-34806/Any rev02
+34806/Any rev03
 ###
 Incidents between two dates broken down by completion type
 ###
@@ -35,6 +35,7 @@ $$GROUP_CompletedName
 $$HEAD
 <h2>$COMPLETEDNAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Incident Code</th>
@@ -48,7 +49,10 @@ $$HEAD
 <th>Responded</th>
 <th>Completed</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h2>Total $COMPLETEDNAME: {COUNT.COMPLETEDNAME}</h2>
 GROUP$$

@@ -2,16 +2,17 @@ Litters between two dates
 ###
 Litters
 ###
-34004/Any rev03
+34004/Any rev04
 ###
 Litters entering the shelter between two dates 
 ###
 en
 ###
-SELECT a.ShelterCode, a.AnimalName, a.Weight, a.Markings,
+SELECT a.ShelterCode, a.AnimalName, a.ID As AID, a.Weight, a.Markings,
 t.AnimalType, s.SpeciesName, ma.BreedName, lk.Sex, bc.BaseColour,
 l.AcceptanceNumber, l.NumberInLitter, l.Comments, 
-ma.AnimalName AS MotherAnimalName
+ma.AnimalName AS MotherAnimalName,
+ma.ID AS MAID
 FROM animallitter l 
 LEFT JOIN animal ma ON ma.ID = l.parentAnimalID
 LEFT JOIN animal a ON a.AcceptanceNumber = l.AcceptanceNumber
@@ -28,9 +29,10 @@ HEADER$$
 
 $$GROUP_AcceptanceNumber
 $$HEAD
-<h2>$MOTHERANIMALNAME</h2>
+<h2><a target="_blank" href="animal?id=$MAID">$MOTHERANIMALNAME</a></h2>
 <h3>$SHELTERCODE $BREEDNAME $SPECIESNAME</h3>
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Shelter Code</th>
@@ -41,7 +43,10 @@ $$HEAD
 <th>Weight</th> 
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Litter Total: {COUNT.NUMBERINLITTER.0}</b></p>
 GROUP$$
@@ -49,7 +54,7 @@ HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ACCEPTANCENUMBER</td>
 <td>$SEX</td>

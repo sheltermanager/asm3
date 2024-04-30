@@ -2,7 +2,7 @@ Expired licenses in the last year
 ###
 Animal Control
 ###
-34800/Any rev04
+34800/Any rev05
 ###
 People on file with expired licenses in the last year and no renewal, where the animal is still alive
 ###
@@ -24,6 +24,7 @@ ORDER BY ol.ExpiryDate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Number</th>
 <th>Type</th>
@@ -33,6 +34,8 @@ $$HEADER
 <th>Expires</th>
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -48,6 +51,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -55,7 +59,7 @@ Expired licenses in the last year by animal
 ###
 Animal Control
 ###
-33307/Any rev03
+33307/Any rev04
 ###
 Animals on file where their latest license has expired in the last year
 ###
@@ -76,6 +80,7 @@ ORDER BY a.AnimalName, ol.ExpiryDate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Number</th>
 <th>Type</th>
@@ -85,6 +90,8 @@ $$HEADER
 <th>Expires</th>
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -100,5 +107,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

@@ -2,17 +2,17 @@ Length of Stay by Fosterer
 ###
 Statistics
 ###
-33018/Any rev01
+33018/Any rev02
 ###
 Shows time on shelter by foster home for animals fostered between two dates
 ###
 en
 ###
 SELECT
-a.AnimalName, a.ShelterCode,
+a.AnimalName, a.ShelterCode, a.ID AS AID,
 s.SpeciesName, e.ReasonName, a.BreedName,
 a.DateBroughtIn, a.TimeOnShelter, a.DaysOnShelter, a.AnimalAge, 
-o.OwnerName, o.OwnerAddress, o.HomeTelephone, o.MobileTelephone, o.EmailAddress,
+o.OwnerName, o.ID AS OID, o.OwnerAddress, o.HomeTelephone, o.MobileTelephone, o.EmailAddress,
 CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementType = 2 THEN Null ELSE a.ActiveMovementDate END AS DateExit
 FROM adoption m
 INNER JOIN animal a ON m.AnimalID = a.ID
@@ -29,9 +29,10 @@ HEADER$$
 
 $$GROUP_OwnerName
 $$HEAD
-<h2>$OwnerName</h2>
+<h2><a target="_blank" href="person?id=$OID">$OwnerName</a></h2>
 <p>$OwnerAddress $HomeTelephone $MobileTelephone $EmailAddress</p>
 <table border="1">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -41,7 +42,10 @@ $$HEAD
 <th>Left</th>
 <th>Days In Care</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $OwnerName: {COUNT.OwnerName}, Average: {AVG.DaysOnShelter.2} days</p>
 GROUP$$
@@ -49,7 +53,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALAGE</td>
 <td>$REASONNAME</td>
 <td>$DATEBROUGHTIN</td>

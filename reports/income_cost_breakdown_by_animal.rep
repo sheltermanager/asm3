@@ -2,7 +2,7 @@ Income vs Cost Breakdown by Animal
 ###
 Financial
 ###
-33601/Any rev01
+33601/Any rev02
 ###
 Income and animal costs between two dates, grouped by animal.
 ###
@@ -270,12 +270,17 @@ HEADER$$
 $$GROUP_Name
 $$HEAD
 <h2>$Name - $Code ($SpeciesName)</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Amount</b></td>
-<td><b>Description</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Amount</b></th>
+<th><b>Description</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $speciesname: <b>{SUM.AMT.2}</b></p>
 GROUP$$

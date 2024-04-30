@@ -2,7 +2,7 @@ Income vs Cost Breakdown by Breed
 ###
 Financial
 ###
-33601/Any rev01
+33601/Any rev02
 ###
 Income and animal costs between two dates, grouped by breed.
 ###
@@ -16,6 +16,7 @@ SELECT * FROM (
 SELECT
 ownerdonation.Date AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 animal.BreedName,
 species.SpeciesName AS speciesname,
@@ -32,6 +33,7 @@ AND ownerdonation.Donation > 0
 UNION SELECT 
 animalcost.CostDate AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 animal.BreedName,
 species.SpeciesName AS speciesname,
@@ -48,6 +50,7 @@ AND animalcost.CostAmount > 0
 UNION SELECT
 animal.DateBroughtIn AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 animal.BreedName,
 species.SpeciesName AS speciesname,
@@ -62,6 +65,7 @@ AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$'
 UNION SELECT
 animalvaccination.DateOfVaccination AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 animal.BreedName,
 species.SpeciesName AS speciesname,
@@ -78,6 +82,7 @@ AND animalvaccination.Cost > 0
 UNION SELECT
 animaltest.DateOfTest AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 animal.BreedName,
 species.SpeciesName AS speciesname,
@@ -94,6 +99,7 @@ AND animaltest.Cost > 0
 UNION SELECT
 animalmedical.StartDate AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 animal.BreedName,
 species.SpeciesName AS speciesname,
@@ -109,6 +115,7 @@ AND animalmedical.Cost > 0
 UNION SELECT
 animaltransport.PickupDateTime AS date,
 animal.AnimalName AS name,
+animal.ID AS AID,
 animal.ShelterCode AS code,
 animal.BreedName,
 species.SpeciesName AS speciesname,
@@ -130,22 +137,27 @@ HEADER$$
 $$GROUP_BreedName
 $$HEAD
 <h2>$BreedName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Name</b></td>
-<td><b>Code</b></td>
-<td><b>Species</b></td>
-<td><b>Amount</b></td>
-<td><b>Description</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Name</b></th>
+<th><b>Code</b></th>
+<th><b>Species</b></th>
+<th><b>Amount</b></th>
+<th><b>Description</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $BreedName: <b>{SUM.AMT.2}</b></p>
 GROUP$$
 
 $$BODY<tr>
 <td>$DATE</td>
-<td>$NAME</td>
+<td><a target="_blank" href="animal?id=$AID">$NAME</a></td>
 <td>$CODE</td>
 <td>$SPECIESNAME</td>
 <td>$AMT</td>

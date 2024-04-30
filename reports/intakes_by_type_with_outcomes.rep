@@ -2,7 +2,7 @@ Intakes by Type with Outcomes
 ###
 Auditing
 ###
-Any rev03
+Any rev04
 ###
 Animals entering between two dates by type with their final outcomes
 ###
@@ -41,6 +41,7 @@ HEADER$$
 $$GROUP_AnimalType
 $$HEAD
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -51,7 +52,10 @@ $$HEAD
 <th>Altered</th>
 <th>Outcome</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $AnimalType: {COUNT.AnimalType}</p>
 GROUP$$

@@ -2,7 +2,7 @@ Intakes by Species and Entry Category with Outcomes
 ###
 Auditing
 ###
-Any rev03
+Any rev04
 ###
 Animals entering between two dates by species and entry category with their final outcomes
 ###
@@ -48,6 +48,7 @@ GROUP$$
 $$GROUP_ReasonName
 $$HEAD
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -58,7 +59,10 @@ $$HEAD
 <th>Altered</th>
 <th>Outcome</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SpeciesName $ReasonName: {COUNT.ReasonName}</p>
 GROUP$$

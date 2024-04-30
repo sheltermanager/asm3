@@ -2,7 +2,7 @@ Intakes by Species with Outcomes
 ###
 Auditing
 ###
-Any rev03
+Any rev04
 ###
 Animals entering between two dates by species with their final outcomes
 ###
@@ -41,6 +41,7 @@ HEADER$$
 $$GROUP_SpeciesName
 $$HEAD
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -51,7 +52,10 @@ $$HEAD
 <th>Altered</th>
 <th>Outcome</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SpeciesName: {COUNT.SpeciesName}</p>
 GROUP$$

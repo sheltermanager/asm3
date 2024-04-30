@@ -2,14 +2,14 @@ Length of Stay by Species (Fostered Only)
 ###
 Statistics
 ###
-33018/Any rev01
+33018/Any rev02
 ###
 Shows time on shelter by species for animals entering the shelter between two dates who were in a foster home (ignores permanent).
 ###
 en
 ###
 SELECT
-a.AnimalName, a.ShelterCode,
+a.AnimalName, a.ShelterCode, a.ID AS AID,
 s.SpeciesName, e.ReasonName,
 a.DateBroughtIn, a.TimeOnShelter, a.DaysOnShelter, a.AnimalAge, 
 CASE WHEN a.DeceasedDate Is Not Null THEN a.DeceasedDate WHEN a.ActiveMovementType = 2 THEN Null ELSE a.ActiveMovementDate END AS DateExit
@@ -28,6 +28,7 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -37,7 +38,10 @@ $$HEAD
 <th>Left</th>
 <th>Days In Care</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SpeciesName: {COUNT.SpeciesName}, Average: {AVG.DaysOnShelter.2} days</p>
 GROUP$$
@@ -45,7 +49,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALAGE</td>
 <td>$REASONNAME</td>
 <td>$DATEBROUGHTIN</td>

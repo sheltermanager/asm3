@@ -2,13 +2,13 @@ Litter Animals
 ###
 Litters
 ###
-2732/Any rev02
+2732/Any rev03
 ###
 Animals in the selected litter.
 ###
 en
 ###
-SELECT a.ShelterCode, a.AnimalName,
+SELECT a.ShelterCode, a.AnimalName, a.ID AS AID,
 t.AnimalType, s.SpeciesName, a.BreedName,
 l.AcceptanceNumber, l.NumberInLitter, l.Comments, l.CachedAnimalsLeft
 FROM animallitter l 
@@ -25,14 +25,19 @@ $$GROUP_AcceptanceNumber
 $$HEAD
 <h2>$ACCEPTANCENUMBER</h2>
 <p>$COMMENTS</p>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Breed</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Breed</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total remaining in litter: $CACHEDANIMALSLEFT of $NUMBERINLITTER</p>
 GROUP$$
@@ -40,7 +45,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
 <td>$BREEDNAME</td>

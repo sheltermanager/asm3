@@ -2,13 +2,13 @@ Litters and Mothers
 ###
 Litters
 ###
-2732/Any rev01
+2732/Any rev02
 ###
 Litters entering the shelter between two dates with mother information.
 ###
 en
 ###
-SELECT a.ShelterCode, a.AnimalName, l.Date,
+SELECT a.ShelterCode, a.ID AS AID, a.AnimalName, l.Date,
 t.AnimalType, s.SpeciesName, a.BreedName,
 l.AcceptanceNumber, l.NumberInLitter, l.Comments
 FROM animallitter l 
@@ -23,7 +23,7 @@ $$HEADER
 HEADER$$
 
 $$BODY
-<h2>$ANIMALNAME - $SHELTERCODE, $BREEDNAME $SPECIESNAME</h2>
+<h2><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> - $SHELTERCODE, $BREEDNAME $SPECIESNAME</h2>
 <p>$ACCEPTANCENUMBER, $DATE, Offspring: $NUMBERINLITTER, $COMMENTS</p>
 <hr />
 BODY$$

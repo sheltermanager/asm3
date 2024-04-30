@@ -2,7 +2,7 @@ Incidents between two dates for type
 ###
 Animal Control
 ###
-34806/Any rev02
+34806/Any rev03
 ###
 Incidents between two dates for a single incident type
 ###
@@ -37,6 +37,7 @@ $$GROUP_IncidentName
 $$HEAD
 <h2>$INCIDENTNAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Incident Code</th>
@@ -49,7 +50,10 @@ $$HEAD
 <th>Responded</th>
 <th>Completed</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h2>Total $INCIDENTNAME: {COUNT.INCIDENTNAME}</h2>
 GROUP$$

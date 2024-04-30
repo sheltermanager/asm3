@@ -2,14 +2,14 @@ Length of Stay by Species (Shelter Only)
 ###
 Statistics
 ###
-33018/Any rev01
+33018/Any rev02
 ###
 Shows time on shelter by species for current shelter animals
 ###
 en
 ###
 SELECT
-a.AnimalName, a.ShelterCode,
+a.AnimalName, a.ShelterCode, a.ID AS AID,
 s.SpeciesName, e.ReasonName,
 a.DateBroughtIn, a.TimeOnShelter, a.DaysOnShelter, a.AnimalAge
 FROM animal a
@@ -25,6 +25,7 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -33,7 +34,10 @@ $$HEAD
 <th>Entered</th>
 <th>Days In Care</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SpeciesName: {COUNT.SpeciesName}, Average: {AVG.DaysOnShelter.2} days</p>
 GROUP$$
@@ -41,7 +45,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALAGE</td>
 <td>$REASONNAME</td>
 <td>$DATEBROUGHTIN</td>

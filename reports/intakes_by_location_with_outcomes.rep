@@ -2,7 +2,7 @@ Intakes by Location with Outcomes
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Animals entering between two dates with their final outcomes, broken down by location
 ###
@@ -42,6 +42,7 @@ $$GROUP_LocationName
 $$HEAD
 <h2>$LOCATIONNAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -52,7 +53,10 @@ $$HEAD
 <th>Altered</th>
 <th>Outcome</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $LOCATIONNAME: {COUNT.LOCATIONNAME}</p>
 GROUP$$

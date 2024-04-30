@@ -2,7 +2,7 @@ Licenses issued between two dates
 ###
 Animal Control
 ###
-33307/Any rev02
+33307/Any rev03
 ###
 Licenses that were issued between the two dates given
 ###
@@ -25,6 +25,7 @@ ORDER BY ol.IssueDate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Number</th>
 <th>Type</th>
@@ -34,6 +35,8 @@ $$HEADER
 <th>Expires</th>
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -55,5 +58,6 @@ H: $HOMETELEPHONE, W: $WORKTELEPHONE, C: $MOBILETELEPHONE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

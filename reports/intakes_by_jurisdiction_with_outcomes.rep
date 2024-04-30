@@ -2,7 +2,7 @@ Intakes by Jurisdiction with Outcomes
 ###
 Auditing
 ###
-34407/Any rev03
+34407/Any rev04
 ###
 Animals entering between two dates with their final outcomes, broken down by jurisdiction
 ###
@@ -43,6 +43,7 @@ $$GROUP_JurisdictionName
 $$HEAD
 <h2>$JURISDICTIONNAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -53,7 +54,10 @@ $$HEAD
 <th>Altered</th>
 <th>Outcome</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $JURISDICTIONNAME: {COUNT.JURISDICTIONNAME}</p>
 GROUP$$

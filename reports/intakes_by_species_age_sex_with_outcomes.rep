@@ -2,7 +2,7 @@ Intakes by Species, Age Group and Sex with Outcomes
 ###
 Auditing
 ###
-Any rev03
+Any rev04
 ###
 Animals entering between two dates by species, age group and sex with their final outcomes
 ###
@@ -54,6 +54,7 @@ $$GROUP_Sex
 $$HEAD
 <h2>$SpeciesName $AgeGroup $Sex</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -64,7 +65,10 @@ $$HEAD
 <th>Altered</th>
 <th>Outcome</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SpeciesName $AgeGroup $Sex: {COUNT.ReasonName}</p>
 GROUP$$

@@ -2,7 +2,7 @@ Juveniles Not Part Of A Litter
 ###
 Litters
 ###
-Any rev01
+Any rev02
 ###
 Animals aged under 6 months who are not part of a litter.
 ###
@@ -17,12 +17,15 @@ ORDER BY t.AnimalType, a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
 <th>Type</th>
 <th>Location</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -35,6 +38,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

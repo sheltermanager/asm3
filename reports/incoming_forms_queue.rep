@@ -2,7 +2,7 @@ Incoming forms queue
 ###
 Forms
 ###
-33313/Any rev01
+33313/Any rev02
 ###
 All received forms currently waiting to be processed.
 ###
@@ -14,12 +14,15 @@ ORDER BY posteddate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Received</th>
 <th>Name</th>
 <th>From</th>
 <th>Preview</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -32,6 +35,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

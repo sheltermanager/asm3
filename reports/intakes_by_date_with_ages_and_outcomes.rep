@@ -2,7 +2,7 @@ Intakes by Date with Ages and Outcomes
 ###
 Auditing
 ###
-2870/PostgreSQL rev04
+2870/PostgreSQL rev05
 ###
 Animals entering between two dates with their age at intake and final outcomes
 ###
@@ -40,6 +40,7 @@ ORDER BY a.DateBroughtIn
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -52,6 +53,8 @@ $$HEADER
 <th>Outcome</th>
 <th>Age at Outcome</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -70,5 +73,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

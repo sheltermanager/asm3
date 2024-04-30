@@ -2,7 +2,7 @@ License comment search
 ###
 Animal Control
 ###
-33307/Any rev01
+33307/Any rev02
 ###
 Search the comments of issued licenses
 ###
@@ -22,6 +22,7 @@ ORDER BY ol.IssueDate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Number</th>
 <th>Type</th>
@@ -31,6 +32,8 @@ $$HEADER
 <th>Expires</th>
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -46,5 +49,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
