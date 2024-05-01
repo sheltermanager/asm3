@@ -921,7 +921,7 @@ def json_waitinglistcolumns(dbo: Database) -> ColumnList:
         ( "MobileTelephone", _("Cell", l) ),
         ( "EmailAddress", _("Email", l) ),
         ( "MicrochipNumber", _("Microchip", l) ),
-        ( "AnimalName", _("Name", l) ),
+        ( "AnimalName", _("Animal Name", l) ),
         ( "AnimalDescription", _("Description", l) ),
         ( "ReasonForWantingToPart", _("Reason", l) ),
         ( "CanAffordDonation", _("Donation?", l) ),

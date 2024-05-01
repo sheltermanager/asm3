@@ -279,7 +279,7 @@ $(function() {
                 "WorkTelephone": _("Work Phone"),
                 "MobileTelephone": _("Cell Phone"),
                 "EmailAddress": _("Email"),
-                "AnimalName": _("AnimalName"),
+                "AnimalName": _("Animal Name"),
                 "AnimalDescription": _("Description"),
                 "MicrochipNumber": _("Microchip Number"),
                 "ReasonForWantingToPart": _("Reason"),
