@@ -2,7 +2,7 @@ Logs search
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 All logs between two dates with particular text
 ###
@@ -32,13 +32,17 @@ $$GROUP_LOGTYPENAME
 $$HEAD
 <h2>$LOGTYPENAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>By</th>
 <th>Link</th>
 <th></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 GROUP$$
 

@@ -2,7 +2,7 @@ Long Term Animals on a Selected Date
 ###
 Figures
 ###
-Any rev01
+Any rev02
 ###
 Animals on shelter 6 months or more on a selected date
 ###
@@ -13,6 +13,7 @@ SELECT
 ShelterCode, 
 IdentichipNumber, 
 AnimalName,
+animal.ID AS AID,
 entryreason.ReasonName,
 TimeOnShelter,
 animaltype.AnimalType,
@@ -23,7 +24,7 @@ CASE WHEN EXISTS(SELECT ID FROM adoption WHERE AnimalID = animal.ID AND Movement
 THEN 'Foster' ELSE internallocation.LocationName END AS LocationName,
 lksmovementtype.MovementType AS LatestMovement,
 animal.ActiveMovementDate AS DateLeftShelter,
-owner.OwnerName
+owner.ID AS OID, owner.OwnerName
 FROM animal 
 LEFT OUTER JOIN animaltype ON animal.AnimalTypeID = animaltype.ID
 LEFT OUTER JOIN entryreason ON animal.EntryReasonID = entryreason.ID
@@ -53,27 +54,32 @@ GROUP$$
 $$GROUP_SpeciesName
 $$HEAD
 <h2>$SPECIESNAME</h2>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Microchip</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Age</b></td>
-<td><b>Entry</b></td>
-<td><b>Time On Shelter</b></td>
-<td><b>Last Movement</b></td>
-<td><b>Left Shelter</b></td>
-<td><b>To</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Microchip</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Age</b></th>
+<th><b>Entry</b></th>
+<th><b>Time On Shelter</b></th>
+<th><b>Last Movement</b></th>
+<th><b>Left Shelter</b></th>
+<th><b>To</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SPECIESNAME: {COUNT.SpeciesName}</p>
 GROUP$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$IDENTICHIPNUMBER</td>
 <td>$ANIMALTYPE</td>
 <td>$BREEDNAME</td>
@@ -82,7 +88,7 @@ $$BODY<tr>
 <td>$TIMEONSHELTER</td>
 <td>$LATESTMOVEMENT</td>
 <td>$DATELEFTSHELTER</td>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a></td>
 </tr>
 BODY$$
 

@@ -2,13 +2,13 @@ Long Term Animals
 ###
 Figures
 ###
-3215/Any rev03
+3215/Any rev04
 ###
 Animals who have been on the shelter longer than 6 months.
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, a.DisplayLocation,
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, a.DisplayLocation,
 s.SpeciesName, a.MostRecentEntryDate, a.AnimalAge, a.BreedName, a.TimeOnShelter
 FROM animal a
 INNER JOIN species s ON s.ID = a.SpeciesID
@@ -18,6 +18,7 @@ ORDER BY a.MostRecentEntryDate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -29,11 +30,13 @@ $$HEADER
 <th>Entry Date</th>
 <th>Time On Shelter</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
@@ -46,6 +49,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

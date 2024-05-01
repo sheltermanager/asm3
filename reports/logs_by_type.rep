@@ -2,7 +2,7 @@ Logs between two dates by type
 ###
 Auditing
 ###
-Any rev01
+Any rev02
 ###
 All logs between two dates by type.
 ###
@@ -31,13 +31,17 @@ $$GROUP_LOGTYPENAME
 $$HEAD
 <h2>$LOGTYPENAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>By</th>
 <th>Link</th>
 <th></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Total $LOGTYPENAME: {COUNT.LOGTYPENAME}</b></p>
 GROUP$$

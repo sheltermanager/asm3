@@ -2,7 +2,7 @@ Medical Diary between two dates
 ###
 Diary
 ###
-33012/Any rev04
+33012/Any rev05
 ###
 Generates the medical diary for treatments falling due between two dates.
 ###
@@ -25,19 +25,23 @@ AND a.Archived = 0
 ORDER BY amt.DateRequired 
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Internal Loc</b></td>
-<td><b>Therapy</b></td>
-<td><b>Dosage</b></td>
-<td><b>Number</b></td>
-<td><b>Date Required</b></td>
-<td><b>Regimen Comments</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Internal Loc</b></th>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>Number</b></th>
+<th><b>Date Required</b></th>
+<th><b>Regimen Comments</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -56,6 +60,7 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -63,7 +68,7 @@ Medical Diary between two dates by animal
 ###
 Diary
 ###
-33012/Any rev04
+33012/Any rev05
 ###
 Generates the medical diary for treatments falling due between two dates by animal.
 ###
@@ -91,20 +96,25 @@ HEADER$$
 $$GROUP_ShelterCode
 $$HEAD
 <h2>$ShelterCode - $AnimalName</h2>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Internal Loc</b></td>
-<td><b>Therapy</b></td>
-<td><b>Dosage</b></td>
-<td><b>Number</b></td>
-<td><b>Date Required</b></td>
-<td><b>Regimen Comments</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Internal Loc</b></th>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>Number</b></th>
+<th><b>Date Required</b></th>
+<th><b>Regimen Comments</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 GROUP$$
 
