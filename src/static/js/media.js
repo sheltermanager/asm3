@@ -1144,21 +1144,25 @@ $(function() {
             $("#button-moveanimal").click(function() {
                 $("#button-move").asmmenu("hide_all");
                 $("#dialog-moveanimal").dialog("open");
+                return false;
             });
 
             $("#button-moveperson").click(function() {
                 $("#button-move").asmmenu("hide_all");
                 $("#dialog-moveperson").dialog("open");
+                return false;
             });
 
             $("#button-copyanimal").click(function() {
                 $("#button-move").asmmenu("hide_all");
                 $("#dialog-copyanimal").dialog("open");
+                return false;
             });
 
             $("#button-copyperson").click(function() {
                 $("#button-move").asmmenu("hide_all");
                 $("#dialog-copyperson").dialog("open");
+                return false;
             });
 
         },
