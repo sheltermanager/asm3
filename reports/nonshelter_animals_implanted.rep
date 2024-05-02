@@ -2,7 +2,7 @@ Non-shelter animals chipped between two dates
 ###
 Medical
 ###
-Any rev01
+Any rev02
 ###
 Non-shelter animals implanted with microchips between two dates.
 ###
@@ -20,6 +20,7 @@ ORDER BY a.IdentichipDate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Animal</th>
@@ -29,6 +30,8 @@ $$HEADER
 <th>Number</th>
 <th>Owner</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -47,5 +50,6 @@ $HOMETELEPHONE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

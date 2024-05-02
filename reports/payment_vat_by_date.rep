@@ -2,7 +2,7 @@ Sales Tax Breakdown By Date
 ###
 Financial
 ###
-33712/Any rev01
+33712/Any rev02
 ###
 All payments by type for a given date period, with sales tax totals.
 ###
@@ -11,7 +11,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName,
 ownerdonation.VATRate, ownerdonation.VATAmount
@@ -28,15 +28,20 @@ HEADER$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Person</b></td>
-<td><b>Method</b></td>
-<td><b>Amount</b></td>
-<td><b>Tax Rate</b></td>
-<td><b>Sales Tax</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Person</b></th>
+<th><b>Method</b></th>
+<th><b>Amount</b></th>
+<th><b>Tax Rate</b></th>
+<th><b>Sales Tax</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Total $DonationName: {SUM.amt.2}</b></p>
 <p><b>Sales Tax Total $DonationName: {SUM.vatamount.2}</b></p>
@@ -46,7 +51,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$date</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$paymentname</td>
 <td>$amt</td>
 <td>$vatrate</td>
@@ -62,7 +67,7 @@ VAT Breakdown By Date
 ###
 Financial
 ###
-33712/Any rev01
+33712/Any rev02
 ###
 All payments by type for a given date period, with VAT totals.
 ###
@@ -71,7 +76,7 @@ en_GB
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, owner.ID AS OID,
 Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName,
 ownerdonation.VATRate, ownerdonation.VATAmount
@@ -88,15 +93,20 @@ HEADER$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Person</b></td>
-<td><b>Method</b></td>
-<td><b>Amount</b></td>
-<td><b>VAT Rate</b></td>
-<td><b>VAT</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Person</b></th>
+<th><b>Method</b></th>
+<th><b>Amount</b></th>
+<th><b>VAT Rate</b></th>
+<th><b>VAT</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Total $DonationName: {SUM.amt.2}</b></p>
 <p><b>VAT Total $DonationName: {SUM.vatamount.2}</b></p>
@@ -106,7 +116,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$date</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$paymentname</td>
 <td>$amt</td>
 <td>$vatrate</td>
@@ -122,7 +132,7 @@ GST Breakdown By Date
 ###
 Financial
 ###
-33712/Any rev01
+33712/Any rev02
 ###
 All payments by type for a given date period, with GST totals.
 ###
@@ -131,7 +141,7 @@ en_AU
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName,
 ownerdonation.VATRate, ownerdonation.VATAmount
@@ -148,15 +158,20 @@ HEADER$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Person</b></td>
-<td><b>Method</b></td>
-<td><b>Amount</b></td>
-<td><b>GST Rate</b></td>
-<td><b>GST</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Person</b></th>
+<th><b>Method</b></th>
+<th><b>Amount</b></th>
+<th><b>GST Rate</b></th>
+<th><b>GST</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Total $DonationName: {SUM.amt.2}</b></p>
 <p><b>GST Total $DonationName: {SUM.vatamount.2}</b></p>
@@ -166,7 +181,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$date</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$paymentname</td>
 <td>$amt</td>
 <td>$vatrate</td>
@@ -181,7 +196,7 @@ Sales Tax Breakdown By Method
 ###
 Financial
 ###
-33712/Any rev01
+33712/Any rev02
 ###
 All payments by method for a given date period, with sales tax totals.
 ###
@@ -190,7 +205,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName,
 ownerdonation.VATRate, ownerdonation.VATAmount
@@ -207,15 +222,20 @@ HEADER$$
 $$GROUP_PaymentName
 $$HEAD
 <h2>$PaymentName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Person</b></td>
-<td><b>Type</b></td>
-<td><b>Amount</b></td>
-<td><b>Tax Rate</b></td>
-<td><b>Sales Tax</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Person</b></th>
+<th><b>Type</b></th>
+<th><b>Amount</b></th>
+<th><b>Tax Rate</b></th>
+<th><b>Sales Tax</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Total $PaymentName: {SUM.amt.2}</b></p>
 <p><b>Sales Tax Total $PaymentName: {SUM.vatamount.2}</b></p>
@@ -225,7 +245,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$date</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$DonationName</td>
 <td>$amt</td>
 <td>$vatrate</td>
@@ -240,7 +260,7 @@ VAT Breakdown By Method
 ###
 Financial
 ###
-33712/Any rev01
+33712/Any rev02
 ###
 All payments by method for a given date period, with VAT totals.
 ###
@@ -249,7 +269,7 @@ en_GB
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName,
 ownerdonation.VATRate, ownerdonation.VATAmount
@@ -266,15 +286,20 @@ HEADER$$
 $$GROUP_PaymentName
 $$HEAD
 <h2>$PaymentName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Person</b></td>
-<td><b>Type</b></td>
-<td><b>Amount</b></td>
-<td><b>VAT Rate</b></td>
-<td><b>VAT</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Person</b></th>
+<th><b>Type</b></th>
+<th><b>Amount</b></th>
+<th><b>VAT Rate</b></th>
+<th><b>VAT</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Total $PaymentName: {SUM.amt.2}</b></p>
 <p><b>VAT Total $PaymentName: {SUM.vatamount.2}</b></p>
@@ -284,7 +309,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$date</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$DonationName</td>
 <td>$amt</td>
 <td>$vatrate</td>
@@ -299,7 +324,7 @@ GST Breakdown By Method
 ###
 Financial
 ###
-33712/Any rev01
+33712/Any rev02
 ###
 All payments by method for a given date period, with GST totals.
 ###
@@ -308,7 +333,7 @@ en_AU
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
 owner.OwnerPostcode, donationpayment.PaymentName,
 ownerdonation.VATRate, ownerdonation.VATAmount
@@ -325,15 +350,20 @@ HEADER$$
 $$GROUP_PaymentName
 $$HEAD
 <h2>$PaymentName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Person</b></td>
-<td><b>Type</b></td>
-<td><b>Amount</b></td>
-<td><b>GST Rate</b></td>
-<td><b>GST</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Person</b></th>
+<th><b>Type</b></th>
+<th><b>Amount</b></th>
+<th><b>GST Rate</b></th>
+<th><b>GST</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Total $PaymentName: {SUM.amt.2}</b></p>
 <p><b>GST Total $PaymentName: {SUM.vatamount.2}</b></p>
@@ -343,7 +373,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$date</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$DonationName</td>
 <td>$amt</td>
 <td>$vatrate</td>

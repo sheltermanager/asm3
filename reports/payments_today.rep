@@ -8,7 +8,7 @@ All payments by type for the current day
 ###
 en
 ###
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
@@ -26,17 +26,22 @@ HEADER$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Person</b></td>
-<td><b>Method</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Person</b></th>
+<th><b>Method</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Gross $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$ 
@@ -45,7 +50,7 @@ $$BODY
 <tr>
 <td>$date</td>
 <td>$receiptnumber</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$paymentname</td>
 <td>$amt</td>
 <td>$vatamount</td>
@@ -62,13 +67,13 @@ Payments in the last week
 ###
 Financial
 ###
-34204/Any rev01
+34204/Any rev02
 ###
 All payments by type for the last 7 days
 ###
 en
 ###
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
@@ -86,17 +91,22 @@ HEADER$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Person</b></td>
-<td><b>Method</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Person</b></th>
+<th><b>Method</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Gross $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$ 
@@ -105,7 +115,7 @@ $$BODY
 <tr>
 <td>$date</td>
 <td>$receiptnumber</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$paymentname</td>
 <td>$amt</td>
 <td>$vatamount</td>

@@ -2,13 +2,13 @@ NSW Government Figures (16D)
 ###
 Figures
 ###
-Any rev01
+Any rev02
 ###
 Annual New South Wales government figures report
 ###
 en_AU
 ###
-SELECT a.IdentichipNumber AS Microchip,
+SELECT a.IdentichipNumber AS Microchip, a.ID AS AID,
 a.AnimalName,
 a.BreedName || ', ' || bc.BaseColour AS Description,
 a.DateBroughtIn AS ArrivalDate,
@@ -37,6 +37,7 @@ ORDER BY DateBroughtIn
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Microchip No</th>
 <th>Name</th>
@@ -48,12 +49,14 @@ $$HEADER
 <th>Carer</th>
 <th>Outcome</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
 <td>$MICROCHIP</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$DESCRIPTION</td>
 <td>$ARRIVALDATE</td>
 <td>$EXITDATE</td>
@@ -65,5 +68,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

@@ -2,7 +2,7 @@ Medical Print
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Medical information for a selected shelter animal.
 ###
@@ -25,15 +25,19 @@ ORDER BY amt.DateRequired
 ###
 $$HEADER
 <h2>Treatments for $SHELTERCODE - <a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></h2>
-<table border=1><tr>
-<td><b>Therapy</b></td>
-<td><b>Dosage</b></td>
-<td><b>Number</b></td>
-<td><b>Required</b></td>
-<td><b>Given</b></td>
-<td><b>Regimen Comments</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>Number</b></th>
+<th><b>Required</b></th>
+<th><b>Given</b></th>
+<th><b>Regimen Comments</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -48,5 +52,6 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

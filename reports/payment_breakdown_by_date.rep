@@ -2,7 +2,7 @@ Payment Breakdown By Date
 ###
 Financial
 ###
-34204/Any rev01
+34204/Any rev02
 ###
 All payments by type for a given date period, with totals.
 ###
@@ -11,7 +11,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
@@ -29,17 +29,22 @@ HEADER$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Person</b></td>
-<td><b>Method</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Person</b></th>
+<th><b>Method</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Gross $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$ 
@@ -48,7 +53,7 @@ $$BODY
 <tr>
 <td>$date</td>
 <td>$receiptnumber</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$paymentname</td>
 <td>$amt</td>
 <td>$vatamount</td>
@@ -66,7 +71,7 @@ Payment Breakdown By Date (no movements)
 ###
 Financial
 ###
-34204/Any rev01
+34204/Any rev02
 ###
 All payments by type for a given date period that are not linked to a movement, with totals.
 ###
@@ -75,7 +80,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
@@ -93,17 +98,22 @@ HEADER$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Person</b></td>
-<td><b>Method</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Person</b></th>
+<th><b>Method</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Gross $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$ 
@@ -112,7 +122,7 @@ $$BODY
 <tr>
 <td>$date</td>
 <td>$receiptnumber</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$paymentname</td>
 <td>$amt</td>
 <td>$vatamount</td>
@@ -130,7 +140,7 @@ Payment Breakdown By Date (regular payments only)
 ###
 Financial
 ###
-34204/Any rev01
+34204/Any rev02
 ###
 Regular payments (frequency other than one-off) by type for a given date period, with totals.
 ###
@@ -139,7 +149,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
@@ -159,18 +169,23 @@ HEADER$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Person</b></td>
-<td><b>Method</b></td>
-<td><b>Frequency</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Person</b></th>
+<th><b>Method</b></th>
+<th><b>Frequency</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Gross $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$ 
@@ -179,7 +194,7 @@ $$BODY
 <tr>
 <td>$date</td>
 <td>$receiptnumber</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$paymentname</td>
 <td>$frequency</td>
 <td>$amt</td>
@@ -198,7 +213,7 @@ Payment Breakdown By Method
 ###
 Financial
 ###
-34204/Any rev01
+34204/Any rev02
 ###
 All payments by method for a given date period, with totals.
 ###
@@ -207,7 +222,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
@@ -225,17 +240,22 @@ HEADER$$
 $$GROUP_PaymentName
 $$HEAD
 <h2>$PaymentName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Person</b></td>
-<td><b>Type</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Person</b></th>
+<th><b>Type</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Gross $PaymentName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$ 
@@ -244,7 +264,7 @@ $$BODY
 <tr>
 <td>$date</td>
 <td>$receiptnumber</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$donationname</td>
 <td>$amt</td>
 <td>$vatamount</td>
@@ -262,7 +282,7 @@ Payment Breakdown By Type and Method
 ###
 Financial
 ###
-34204/Any rev01
+34204/Any rev02
 ###
 All payments by method for a given date period, with totals.
 ###
@@ -271,7 +291,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
@@ -297,17 +317,22 @@ GROUP$$
 $$GROUP_PaymentName
 $$HEAD
 <h3>$PaymentName</h3>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Person</b></td>
-<td><b>Type</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Person</b></th>
+<th><b>Type</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Gross $PaymentName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$ 
@@ -316,7 +341,7 @@ $$BODY
 <tr>
 <td>$date</td>
 <td>$receiptnumber</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$donationname</td>
 <td>$amt</td>
 <td>$vatamount</td>
@@ -334,7 +359,7 @@ Payment Breakdown By Date (Surname)
 ###
 Financial
 ###
-34204/Any rev01
+34204/Any rev02
 ###
 All payments for a given date period, with total, ordered by person surname.
 ###
@@ -343,7 +368,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
@@ -356,24 +381,28 @@ WHERE ownerdonation.Date BETWEEN '$@from$' AND '$@to$'
 ORDER BY owner.OwnerSurname, ownerdonation.Date
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Person</b></td>
-<td><b>Type</b></td>
-<td><b>Method</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Person</b></th>
+<th><b>Type</b></th>
+<th><b>Method</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
 <td>$date</td>
 <td>$receiptnumber</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$donationname</td>
 <td>$paymentname</td>
 <td>$amt</td>
@@ -384,6 +413,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <h2>Total Gross: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</h2>
 FOOTER$$
@@ -393,7 +423,7 @@ Payment Breakdown By Date with Addresses
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 Produces a list of all payments by type for a given date period, with totals and addresses.
 ###
@@ -402,7 +432,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
@@ -421,17 +451,22 @@ HEADER$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Person</b></td>
-<td><b>Method</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Person</b></th>
+<th><b>Method</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Gross $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$ 
@@ -440,7 +475,7 @@ $$BODY
 <tr>
 <td>$date</td>
 <td>$receiptnumber</td>
-<td><b>$ownername</b><br />
+<td><b><a target="_blank" href="person?id=$OID">$ownername</a></b><br />
 $owneraddress<br />
 $ownertown<br />
 $ownercounty<br />
@@ -463,7 +498,7 @@ Payment Breakdown by Date and User
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 All payments by type for a given date period, with totals, broken down by the entering user.
 ###
@@ -472,7 +507,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, ownerdonation.CreatedBy,
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, ownerdonation.CreatedBy,
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
@@ -497,17 +532,22 @@ GROUP$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Person</b></td>
-<td><b>Method</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Person</b></th>
+<th><b>Method</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Gross $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$ 
@@ -516,7 +556,7 @@ $$BODY
 <tr>
 <td>$date</td>
 <td>$receiptnumber</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$paymentname</td>
 <td>$amt</td>
 <td>$vatamount</td>
@@ -534,7 +574,7 @@ Payment Breakdown By Person
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 All payments by type and person for a given date period, with totals.
 ###
@@ -543,7 +583,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
@@ -561,7 +601,7 @@ HEADER$$
 
 $$GROUP_OwnerName
 $$HEAD
-<h2>$OwnerName, $OwnerAddress $OwnerTown $OwnerCounty $OwnerPostcode</h2>
+<h2><a target="_blank" href="person?id=$OID">$OwnerName</a>, $OwnerAddress $OwnerTown $OwnerCounty $OwnerPostcode</h2>
 <p>H: $HomeTelephone, W: $WorkTelephone, C: $MobileTelephone, E: $EmailAddress</p>
 $$FOOT
 <p><b>Gross $OwnerName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
@@ -570,17 +610,22 @@ GROUP$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Person</b></td>
-<td><b>Method</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Person</b></th>
+<th><b>Method</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Gross $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$ 
@@ -607,7 +652,7 @@ Payment Breakdown for Person
 ###
 Financial
 ###
-34204/Any rev03
+34204/Any rev04
 ###
 All payments by type for a single person with totals.
 ###
@@ -616,7 +661,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT ownerdonation.Date, ownerdonation.DateDue, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, ownerdonation.DateDue, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, ownerdonation.Fee, ownerdonation.ChequeNumber, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
@@ -634,7 +679,7 @@ HEADER$$
 
 $$GROUP_OwnerName
 $$HEAD
-<h2>$OwnerName, $OwnerAddress $OwnerTown $OwnerCounty $OwnerPostcode</h2>
+<h2><a target="_blank" href="person?id=$OID">$OwnerName</a>, $OwnerAddress $OwnerTown $OwnerCounty $OwnerPostcode</h2>
 <p>H: $HomeTelephone, W: $WorkTelephone, C: $MobileTelephone, E: $EmailAddress</p>
 $$FOOT
 <p><b>Gross $OwnerName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
@@ -643,19 +688,24 @@ GROUP$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Due</b></td>
-<td><b>Received</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Check</b></td>
-<td><b>Person</b></td>
-<td><b>Method</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Due</b></th>
+<th><b>Received</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Check</b></th>
+<th><b>Person</b></th>
+<th><b>Method</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Gross $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$ 
@@ -684,7 +734,7 @@ Payment Breakdown By Person with Flag
 ###
 Financial
 ###
-34204/Any rev02
+34204/Any rev03
 ###
 All payments by type and person for a given date period, with totals, filtered by person flag.
 ###
@@ -694,7 +744,7 @@ $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 $VAR flag PERSONFLAG$
 
-SELECT ownerdonation.Date, owner.OwnerName, donationtype.DonationName, 
+SELECT ownerdonation.Date, owner.OwnerName, owner.ID AS OID, donationtype.DonationName, 
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
 ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown, owner.OwnerCounty, 
@@ -712,7 +762,7 @@ HEADER$$
 
 $$GROUP_OwnerName
 $$HEAD
-<h2>$OwnerName, $OwnerAddress $OwnerTown $OwnerCounty $OwnerPostcode</h2>
+<h2><a target="_blank" href="person?id=$OID">$OwnerName</a>, $OwnerAddress $OwnerTown $OwnerCounty $OwnerPostcode</h2>
 <p>H: $HomeTelephone, W: $WorkTelephone, C: $MobileTelephone, E: $EmailAddress</p>
 $$FOOT
 <p><b>Gross $OwnerName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
@@ -721,17 +771,22 @@ GROUP$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Person</b></td>
-<td><b>Method</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Person</b></th>
+<th><b>Method</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Gross $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$ 
@@ -758,7 +813,7 @@ Payment Breakdown By Person with Addresses
 ###
 Financial
 ###
-33011/Any rev01
+33011/Any rev02
 ###
 Produces a list of all payments, totalled by person for a given date period, with addresses.
 ###
@@ -767,7 +822,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT owner.OwnerName, 
+SELECT owner.OwnerName, owner.ID AS OID, 
 SUM(ownerdonation.Donation) AS amt, owner.OwnerAddress, owner.OwnerTown, 
 owner.OwnerCounty, owner.OwnerPostcode, owner.HomeTelephone, owner.WorkTelephone, 
 owner.MobileTelephone, owner.EmailAddress
@@ -780,15 +835,19 @@ owner.MobileTelephone, owner.EmailAddress
 ORDER BY owner.OwnerName
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Person</b></td>
-<td><b>Total</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Person</b></th>
+<th><b>Total</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
-<td><b>$ownername</b><br />
+<td><b><a target="_blank" href="person?id=$OID">$ownername</a></b><br />
 $owneraddress<br />
 $ownertown<br />
 $ownercounty $ownerpostcode<br />
@@ -798,6 +857,7 @@ H: $hometelephone, C: $mobiletelephone, E: $emailaddress</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <p><b>Total Payments: {SUM.amt.2}</b></p>
 FOOTER$$
@@ -807,7 +867,7 @@ Payment Breakdown By Date with Addresses and Animal Info
 ###
 Financial
 ###
-34204/Any rev01
+34204/Any rev02
 ###
 Produces a list of all payments for a given date period, with addresses and adopted animal info where applicable
 ###
@@ -816,7 +876,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT owner.OwnerName, 
+SELECT owner.OwnerName, owner.ID AS OID, 
 ownerdonation.Date, 
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
@@ -824,7 +884,7 @@ ownerdonation.VatAmount, owner.OwnerAddress, owner.OwnerTown,
 owner.OwnerCounty, owner.OwnerPostcode, owner.EmailAddress, 
 owner.HomeTelephone, owner.WorkTelephone, owner.MobileTelephone, 
 donationtype.DonationName,
-lksex.Sex, species.SpeciesName, animal.AnimalName, animal.AnimalAge,
+lksex.Sex, species.SpeciesName, animal.AnimalName, animal.ID AS AID, animal.AnimalAge,
 animal.ShelterCode, donationpayment.PaymentName, ownerdonation.ReceiptNumber
 FROM ownerdonation
 INNER JOIN owner ON ownerdonation.OwnerID = owner.ID 
@@ -842,18 +902,23 @@ HEADER$$
 $$GROUP_DonationName
 $$HEAD
 <h2>$DonationName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Receipt No</b></td>
-<td><b>Person</b></td>
-<td><b>Animal</b></td>
-<td><b>Method</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Receipt No</b></th>
+<th><b>Person</b></th>
+<th><b>Animal</b></th>
+<th><b>Method</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Gross $DonationName: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</b></p>
 GROUP$$ 
@@ -862,12 +927,12 @@ $$BODY
 <tr>
 <td>$date</td>
 <td>$receiptnumber</td>
-<td><b>$ownername</b><br />
+<td><b><a target="_blank" href="person?id=$OID">$ownername</a></b><br />
 $owneraddress<br />
 $ownertown<br />
 $ownercounty $ownerpostcode<br/>
 H: $hometelephone W: $worktelephone C: $mobiletelephone E: <i>$emailaddress</i></td>
-<td><b>$animalname</b> ($sheltercode)<br />
+<td><b><a target="_blank" href="animal?id=$AID">$animalname</a></b> ($sheltercode)<br />
 $sex $speciesname aged $animalage
 </td>
 <td>$paymentname</td>
@@ -887,7 +952,7 @@ Payment Breakdown By Receipt Number
 ###
 Financial
 ###
-34204/Any rev01
+34204/Any rev02
 ###
 All payments by type for a range of receipt numbers with totals.
 ###
@@ -896,7 +961,7 @@ en
 $VAR from NUMBER Enter earliest receipt number$
 $VAR to NUMBER Enter latest receipt number$
 
-SELECT ownerdonation.Date, ownerdonation.DateDue, owner.OwnerName, 
+SELECT ownerdonation.Date, ownerdonation.DateDue, owner.OwnerName, owner.ID AS OID,
 donationtype.DonationName, ownerdonation.ReceiptNumber as receipt,
 Donation AS amt, ownerdonation.Fee, 
 Donation - COALESCE(VatAmount, 0) - COALESCE(ownerdonation.Fee, 0) AS MoneyNet,
@@ -910,18 +975,22 @@ WHERE CAST(ownerdonation.ReceiptNumber AS INTEGER) >= $@from$ AND CAST(ownerdona
 ORDER BY ownerdonation.ID
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Receipt</b></td>
-<td><b>Due</b></td>
-<td><b>Received</b></td>
-<td><b>Person</b></td>
-<td><b>Type</b></td>
-<td><b>Method</b></td>
-<td><b>Gross</b></td>
-<td><b>Tax</b></td>
-<td><b>Fee</b></td>
-<td><b>Net</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Receipt</b></th>
+<th><b>Due</b></th>
+<th><b>Received</b></th>
+<th><b>Person</b></th>
+<th><b>Type</b></th>
+<th><b>Method</b></th>
+<th><b>Gross</b></th>
+<th><b>Tax</b></th>
+<th><b>Fee</b></th>
+<th><b>Net</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -929,7 +998,7 @@ $$BODY
 <td>$receipt</td>
 <td>$datedue</td>
 <td>$date</td>
-<td>$ownername</td>
+<td><a target="_blank" href="person?id=$OID">$ownername</a></td>
 <td>$donationname</td>
 <td>$paymentname</td>
 <td>$amt</td>
@@ -940,6 +1009,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <h2>Total Gross: {SUM.amt.2} (Tax: {SUM.vatamount.2}, Fee: {SUM.fee.2}, Net: {SUM.moneynet.2})</h2>
 FOOTER$$

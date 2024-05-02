@@ -2,7 +2,7 @@ Medical, Vaccination and Test Diary
 ###
 Diary
 ###
-33012/Any rev03
+33012/Any rev04
 ###
 The medical, vaccination and test diary for today in one report
 ###
@@ -59,17 +59,21 @@ ORDER BY DateRequired
 
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Animal</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Location</b></td>
-<td><b>Therapy</b></td>
-<td><b>Dosage</b></td>
-<td><b>Number</b></td>
-<td><b>Date Required</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Animal</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Location</b></th>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>Number</b></th>
+<th><b>Date Required</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -86,6 +90,7 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -93,7 +98,7 @@ Medical, Vaccination and Test Diary (next week)
 ###
 Diary
 ###
-33012/Any rev02
+33012/Any rev03
 ###
 The medical, vaccination and test diary for the next 7 days.
 ###
@@ -150,17 +155,21 @@ ORDER BY DateRequired
 
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Animal</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Location</b></td>
-<td><b>Therapy</b></td>
-<td><b>Dosage</b></td>
-<td><b>Number</b></td>
-<td><b>Date Required</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Animal</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Location</b></th>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>Number</b></th>
+<th><b>Date Required</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -177,5 +186,6 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

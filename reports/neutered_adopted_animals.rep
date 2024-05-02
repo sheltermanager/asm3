@@ -2,13 +2,13 @@ Neutered/Spayed Adopted Animals
 ###
 Movements
 ###
-Any rev03
+Any rev04
 ###
 Adopted animals who were neutered/spayed.
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, s.Sex, ad.MovementDate,
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, s.Sex, ad.MovementDate,
 o.OwnerName, o.OwnerAddress, O.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
 o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, a.AnimalAge, p.SpeciesName
 FROM animal a
@@ -24,6 +24,7 @@ ORDER BY ad.MovementDate, t.AnimalType, a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -34,11 +35,13 @@ $$HEADER
 <th>Adopted</th>
 <th>By</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$SPECIESNAME</td>
 <td>$ANIMALTYPE</td>
@@ -58,6 +61,7 @@ E: $EMAILADDRESS
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <h2>Total animals: {COUNT.ANIMALNAME}</h2>
 FOOTER$$

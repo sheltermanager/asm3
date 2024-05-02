@@ -2,7 +2,7 @@ Monthly days on shelter by species
 ###
 Statistics
 ###
-3123/PostgreSQL rev01
+3123/PostgreSQL rev02
 ###
 Total of all days spent on shelter for each species for a calendar month.
 ###
@@ -22,10 +22,13 @@ ORDER BY SpeciesName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Species</th>
 <th>Total Days On Shelter</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -36,6 +39,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

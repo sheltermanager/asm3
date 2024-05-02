@@ -2,7 +2,7 @@ People added or updated between two dates
 ###
 People
 ###
-Any rev02
+Any rev03
 ###
 People records added to the system or updated between two dates
 ###
@@ -19,6 +19,7 @@ ORDER BY CreatedDate DESC, LastChangedDate DESC
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Added</th>
 <th>Code</th>
@@ -29,6 +30,8 @@ $$HEADER
 <th>GDPR</th>
 <th>Flags</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -46,6 +49,7 @@ $OWNERTOWN $OWNERCOUNTY $OWNERPOSTCODE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <p>{COUNT.OWNERNAME} person records added/changed.</p>
 FOOTER$$

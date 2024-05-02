@@ -2,7 +2,7 @@ Non-shelter animal medical treatments due between two dates
 ###
 Medical
 ###
-33503/Any rev01
+33503/Any rev02
 ###
 Non-shelter animal vaccinations, treatments and tests administered between two dates
 ###
@@ -67,17 +67,21 @@ ORDER BY DateRequired
 
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Animal</b></td>
-<td><b>Species</b></td>
-<td><b>Breed</b></td>
-<td><b>Owner</b></td>
-<td><b>Therapy</b></td>
-<td><b>Dosage</b></td>
-<td><b>Number</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Animal</b></th>
+<th><b>Species</b></th>
+<th><b>Breed</b></th>
+<th><b>Owner</b></th>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>Number</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -97,6 +101,7 @@ $HOMETELEPHONE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -104,7 +109,7 @@ Non-shelter animal medical treatments given between two dates
 ###
 Medical
 ###
-33503/Any
+33503/Any rev01
 ###
 Non-shelter animal vaccinations, treatments and tests administered between two dates
 ###
@@ -169,17 +174,21 @@ ORDER BY DateGiven
 
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Animal</b></td>
-<td><b>Species</b></td>
-<td><b>Breed</b></td>
-<td><b>Owner</b></td>
-<td><b>Therapy</b></td>
-<td><b>Dosage</b></td>
-<td><b>Number</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Animal</b></th>
+<th><b>Species</b></th>
+<th><b>Breed</b></th>
+<th><b>Owner</b></th>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>Number</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -199,5 +208,6 @@ $HOMETELEPHONE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

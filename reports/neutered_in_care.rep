@@ -2,7 +2,7 @@ Neutered In Care
 ###
 Auditing
 ###
-34019/Any rev01
+34019/Any rev02
 ###
 Animals entering the shelter between two dates identifying whether they were neutered in the care of the shelter
 ###
@@ -25,6 +25,7 @@ ORDER BY a.MostRecentEntryDate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Entered</th>
 <th>Code</th>
@@ -35,6 +36,8 @@ $$HEADER
 <th>Left</th>
 <th>Neutered in care?</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -51,5 +54,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

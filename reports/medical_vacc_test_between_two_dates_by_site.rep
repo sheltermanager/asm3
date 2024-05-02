@@ -2,7 +2,7 @@ Medical, Vaccination and Tests due between two dates by site
 ###
 Medical
 ###
-33908/Any rev01
+33908/Any rev02
 ###
 Medical, vaccination and tests due between two dates in one report and broken down by site
 ###
@@ -75,18 +75,23 @@ HEADER$$
 $$GROUP_SiteName
 $$HEAD
 <h2>$SiteName</h2>
-<table border=1><tr>
-<td><b>Animal</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Internal Loc</b></td>
-<td><b>Therapy</b></td>
-<td><b>Dosage</b></td>
-<td><b>Number</b></td>
-<td><b>Date Required</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Animal</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Internal Loc</b></th>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>Number</b></th>
+<th><b>Date Required</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SiteName: {COUNT.SHELTERCODE}</p>
 GROUP$$
@@ -112,7 +117,7 @@ Medical, Vaccination and Tests given between two dates by site
 ###
 Medical
 ###
-33908/Any rev01
+33908/Any rev02
 ###
 Medical, vaccination and tests given to shelter animals between two dates in one report, broken down by site
 ###
@@ -186,19 +191,24 @@ HEADER$$
 $$GROUP_SiteName
 $$HEAD
 <h2>$SiteName</h2>
-<table border=1><tr>
-<td><b>Animal</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Location</b></td>
-<td><b>Therapy</b></td>
-<td><b>Dosage</b></td>
-<td><b>Number</b></td>
-<td><b>Date Given</b></td>
-<td><b>By</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Animal</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Location</b></th>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>Number</b></th>
+<th><b>Date Given</b></th>
+<th><b>By</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SiteName: {COUNT.SHELTERCODE}</p>
 GROUP$$

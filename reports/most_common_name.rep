@@ -2,7 +2,7 @@ Most Common Name
 ###
 Statistics
 ###
-Any rev01
+Any rev02
 ###
 The most common animal names.
 ###
@@ -17,10 +17,13 @@ ORDER BY COUNT(AnimalName)
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Occurrences</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -31,6 +34,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

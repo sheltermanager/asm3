@@ -2,7 +2,7 @@ Non-shelter animals neutered/spayed between two dates
 ###
 Medical
 ###
-Any rev01
+Any rev02
 ###
 Non-shelter animals neutered/spayed between two dates.
 ###
@@ -20,6 +20,7 @@ ORDER BY a.NeuteredDate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Animal</th>
@@ -28,6 +29,8 @@ $$HEADER
 <th>DOB</th>
 <th>Owner</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -45,5 +48,6 @@ $HOMETELEPHONE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

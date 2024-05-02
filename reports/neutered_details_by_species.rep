@@ -2,7 +2,7 @@ Neuter/Spay Details by Species
 ###
 Auditing
 ###
-Any rev03
+Any rev04
 ###
 Details for animals entering the shelter between two dates identifying their initial and final spay/neuter state by species
 ###
@@ -77,6 +77,7 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Entered</th>
 <th>Code</th>
@@ -86,7 +87,10 @@ $$HEAD
 <th>Neutered/Spayed</th>
 <th>Adopted</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h2>$SpeciesName $Category: {COUNT.SpeciesName}</h2>
 GROUP$$

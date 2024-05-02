@@ -2,7 +2,7 @@ Medical, Vaccination and Tests due between two dates
 ###
 Medical
 ###
-3309/Any rev01
+3309/Any rev02
 ###
 Medical, vaccination and tests due between two dates in one report
 ###
@@ -64,17 +64,21 @@ ORDER BY DateRequired, DisplayLocation
 
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Animal</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Internal Loc</b></td>
-<td><b>Therapy</b></td>
-<td><b>Dosage</b></td>
-<td><b>Number</b></td>
-<td><b>Date Required</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Animal</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Internal Loc</b></th>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>Number</b></th>
+<th><b>Date Required</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -91,6 +95,7 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -98,7 +103,7 @@ Medical, Vaccination and Tests given between two dates
 ###
 Medical
 ###
-3309/Any rev01
+3309/Any rev02
 ###
 Medical, vaccination and tests given to shelter animals between two dates in one report
 ###
@@ -158,18 +163,22 @@ ORDER BY DateGiven
 
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Animal</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Location</b></td>
-<td><b>Therapy</b></td>
-<td><b>Dosage</b></td>
-<td><b>Number</b></td>
-<td><b>Date Given</b></td>
-<td><b>By</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Animal</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Location</b></th>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>Number</b></th>
+<th><b>Date Given</b></th>
+<th><b>By</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -187,5 +196,6 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

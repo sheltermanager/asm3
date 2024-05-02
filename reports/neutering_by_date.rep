@@ -2,14 +2,14 @@ Neutering by Date
 ###
 Medical
 ###
-34019/PostgreSQL rev02
+34019/PostgreSQL rev03
 ###
 All animals neutered/spayed between two dates.
 ###
 en
 ###
 SELECT ShelterCode, AnimalName, ay.AnimalType, s.SpeciesName, 
-NeuteredDate, AnimalComments, x.Sex, nv.OwnerName,
+NeuteredDate, AnimalComments, x.Sex, nv.OwnerName, animal.ID AS AID, nv.ID AS OID,
 age(NeuteredDate, animal.DateOfBirth)::varchar AS AgeAtNeutering
 FROM animal
 INNER JOIN lksex x ON x.ID = animal.Sex 
@@ -33,17 +33,22 @@ GROUP$$
 $$GROUP_Sex
 $$HEAD
 <h3>$Sex</h3>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>At Age</b></td>
-<td><b>Date</b></td>
-<td><b>By</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>At Age</b></th>
+<th><b>Date</b></th>
+<th><b>By</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h3>Total $Sex $SpeciesName: {COUNT.ShelterCode}</h3>
 GROUP$$
@@ -51,12 +56,12 @@ GROUP$$
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
 <td>$AGEATNEUTERING</td>
 <td>$NEUTEREDDATE</td>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a></td>
 <td>$ANIMALCOMMENTS</td>
 </tr>
 BODY$$
@@ -69,14 +74,14 @@ Neutering by Date
 ###
 Medical
 ###
-34019/MySQL/SQLite rev01
+34019/MySQL/SQLite rev02
 ###
 All animals neutered/spayed between two dates.
 ###
 en
 ###
-SELECT ShelterCode, AnimalName, ay.AnimalType, s.SpeciesName, 
-NeuteredDate, AnimalComments, x.Sex, nv.OwnerName
+SELECT ShelterCode, AnimalName, animal.ID AS AID, ay.AnimalType, s.SpeciesName, 
+NeuteredDate, AnimalComments, x.Sex, nv.OwnerName, nv.ID AS OID
 FROM animal
 INNER JOIN lksex x ON x.ID = animal.Sex 
 INNER JOIN animaltype ay ON ay.ID = animal.AnimalTypeID
@@ -99,16 +104,21 @@ GROUP$$
 $$GROUP_Sex
 $$HEAD
 <h3>$Sex</h3>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Date</b></td>
-<td><b>By</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Date</b></th>
+<th><b>By</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h3>Total $Sex $SpeciesName: {COUNT.ShelterCode}</h3>
 GROUP$$
@@ -116,11 +126,11 @@ GROUP$$
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
 <td>$NEUTEREDDATE</td>
-<td>$OWNERNAME</td>
+<td><a target="_blank" href="person?id=$OID">$OWNERNAME</a></td>
 <td>$ANIMALCOMMENTS</td>
 </tr>
 BODY$$

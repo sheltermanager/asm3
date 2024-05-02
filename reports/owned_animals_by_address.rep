@@ -2,7 +2,7 @@ Owned animals by Address
 ###
 People
 ###
-34404/Any rev01
+34404/Any rev02
 ###
 List of animal and owner information by selected street name
 ###
@@ -22,6 +22,7 @@ ORDER BY o.OwnerAddress, o.OwnerName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Animal Name</th>
 <th>Shelter Code</th>
@@ -38,6 +39,8 @@ $$HEADER
 <th>Email</th>
 <th>Phone</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -60,6 +63,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <p>Total: {COUNT.ANIMALNAME}</p>
 FOOTER$$

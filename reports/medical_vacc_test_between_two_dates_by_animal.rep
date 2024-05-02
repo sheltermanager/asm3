@@ -2,7 +2,7 @@ Medical, Vaccination and Tests given between two dates by animal
 ###
 Medical
 ###
-3309/Any rev01
+3309/Any rev02
 ###
 Medical, vaccination and tests given to shelter animals between two dates in one report by animal
 ###
@@ -67,18 +67,23 @@ HEADER$$
 $$GROUP_AnimalName
 $$HEAD
 <h2>$ShelterCode - $AnimalName</h2>
-<table border=1><tr>
-<td><b>Animal</b></td>
-<td><b>Type</b></td>
-<td><b>Location</b></td>
-<td><b>Therapy</b></td>
-<td><b>Dosage</b></td>
-<td><b>Number</b></td>
-<td><b>Date Given</b></td>
-<td><b>By</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Animal</b></th>
+<th><b>Type</b></th>
+<th><b>Location</b></th>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>Number</b></th>
+<th><b>Date Given</b></th>
+<th><b>By</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $AnimalName: {COUNT.AnimalName}</p>
 GROUP$$

@@ -2,7 +2,7 @@ Medical treatments between two dates
 ###
 Medical
 ###
-34004/Any rev04
+34004/Any rev05
 ###
 List of medical treatments given between two dates
 ###
@@ -28,6 +28,7 @@ $$GROUP_TreatmentName
 $$HEAD
 <h2>$TreatmentName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Animal</th>
 <th>Species</th>
@@ -40,6 +41,8 @@ $$HEAD
 <th>DateGiven</th>
 <th>Cost</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td>
@@ -53,6 +56,7 @@ $$FOOT
 <td></td>
 <td><b> {SUM.Cost}</b></td>
 </tr>
+</tbody>
 </table>
 GROUP$$
 HEADER$$

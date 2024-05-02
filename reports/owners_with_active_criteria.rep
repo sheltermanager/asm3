@@ -2,14 +2,14 @@ Owners with Active Criteria
 ###
 Owners
 ###
-Any rev02
+Any rev03
 ###
 All owners on file with completed "Looking For" information
 ###
 en
 ###
 SELECT OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, 
-EmailAddress, HomeTelephone, MobileTelephone, 
+EmailAddress, HomeTelephone, MobileTelephone, owner.ID AS OID, 
 (SELECT Name FROM lksyesno WHERE ID = MatchActive) AS Active, 
 MatchAdded, 
 MatchExpires, 
@@ -32,29 +32,34 @@ WHERE MatchActive = 1
 ORDER BY OwnerName
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Owner</b></td>
-<td><b>Added</b></td>
-<td><b>Expires</b></td>
-<td><b>Sex</b></td>
-<td><b>Size</b></td>
-<td><b>Aged From</b></td>
-<td><b>To</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Color</b></td>
-<td><b>Breed</b></td>
-<td><b>or</b></td>
-<td><b>Good with cats</b></td>
-<td><b>Good with dogs</b></td>
-<td><b>Good with children</b></td>
-<td><b>Housetrained</b></td>
-<td><b>Comments contain</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Owner</b></th>
+<th><b>Added</b></th>
+<th><b>Expires</b></th>
+<th><b>Sex</b></th>
+<th><b>Size</b></th>
+<th><b>Aged From</b></th>
+<th><b>To</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Color</b></th>
+<th><b>Breed</b></th>
+<th><b>or</b></th>
+<th><b>Good with cats</b></th>
+<th><b>Good with dogs</b></th>
+<th><b>Good with children</b></th>
+<th><b>Housetrained</b></th>
+<th><b>Comments contain</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
-$$BODY<tr>
-<td><b>$OWNERNAME</b><br/>
+$$BODY
+<tr>
+<td><b><a target="_blank" href="person?id=$OID">$OWNERNAME</a></b><br/>
 $OWNERADDRESS 
 $OWNERTOWN 
 $OWNERCOUNTY 
@@ -80,5 +85,6 @@ $EMAILADDRESS $HOMETELEPHONE $MOBILETELEPHONE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

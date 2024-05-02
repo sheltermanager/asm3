@@ -2,13 +2,13 @@ Non-shelter animals euthanised between two dates
 ###
 Statistics
 ###
-Any rev03
+Any rev04
 ###
 All non-shelter animals that were euthanised between two dates, broken down by species
 ###
 en
 ###
-SELECT a.DeceasedDate, a.AnimalName, a.ShelterCode, s.SpeciesName, a.PTSReason
+SELECT a.DeceasedDate, a.AnimalName, a.ShelterCode, s.SpeciesName, a.PTSReason, a.ID AS AID
 FROM animal a 
 INNER JOIN species s ON a.SpeciesID = s.ID
 WHERE DeceasedDate >= '$ASK DATE Enter date from$' AND DeceasedDate <= '$ASK DATE Enter date to$' AND DiedOffShelter = 0 AND NonShelterAnimal = 1 AND PutToSleep = 1
@@ -20,13 +20,18 @@ HEADER$$
 $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Notes</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Notes</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 
 <p><b>Total for $SpeciesName: {COUNT.AnimalName}</b></p>
@@ -35,7 +40,7 @@ GROUP$$
 $$BODY<tr>
 <td>$DeceasedDate</td>
 <td>$ShelterCode</td>
-<td>$AnimalName</td>
+<td><a target="_blank" href="animal?id=$AID">$AnimalName</a></td>
 <td>$PTSReason</td>
 </tr>
 BODY$$

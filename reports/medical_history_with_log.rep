@@ -2,7 +2,7 @@ Medical History with Log
 ###
 Medical
 ###
-3309/Any rev02
+3309/Any rev03
 ###
 Medical regimens, vaccinations, tests, neuter/spay and microchip implants with logs for an animal
 ###
@@ -108,14 +108,19 @@ HEADER$$
 $$GROUP_AnimalName 
 $$HEAD
 <h2><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> - $ShelterCode ($AnimalType / $SpeciesName - $DisplayLocation)</h2>
-<table border=1><tr>
-<td><b>Started</b></td>
-<td><b>Therapy</b></td>
-<td><b>Dosage</b></td>
-<td><b>G / R</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Started</b></th>
+<th><b>Therapy</b></th>
+<th><b>Dosage</b></th>
+<th><b>G / R</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 GROUP$$
 
