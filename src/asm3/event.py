@@ -8,7 +8,7 @@ from asm3.typehints import datetime, Database, PostedData, ResultRow, Results
 
 def get_event_query(dbo: Database) -> str:
     return "SELECT ev.*, owner.OwnerName AS EventOwnerName, " \
-        "(SELECT COUNT(*) FROM adoption a WHERE a.EventID = ev.ID) AS adoptions " \
+        "(SELECT COUNT(*) FROM adoption a WHERE a.EventID = ev.ID AND a.MovementType = 1) AS adoptions " \
         "FROM event ev " \
         "LEFT OUTER JOIN owner ON ev.EventOwnerID = owner.ID "
 
