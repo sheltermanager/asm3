@@ -342,7 +342,7 @@ def check_sql(dbo: Database, username: str, sql: str) -> str:
     sanitised and in a ready-to-run state.
     If there is a problem with the query, an ASMValidationError is raised
     """
-    COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@thedate", "@dt" )
+    COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@osfrom", "@osto", "@osatdate", "@thedate", "@dt" )
     # Clean up and substitute some tags
     sql = sql.replace("$USER$", username)
     # Subtitute CONST tokens

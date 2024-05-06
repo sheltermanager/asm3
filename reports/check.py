@@ -30,7 +30,7 @@ checked = 0
 total = 0
 
 def substitute(sql):
-    COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@dt", "@thedate" )
+    COMMON_DATE_TOKENS = ( "CURRENT_DATE", "@from", "@to", "@osfrom", "@osto", "@osatdate", "@dt", "@thedate" )
     # Clean up and substitute some tags
     sql = sql.replace("$USER$", "dummy")
     # Subtitute CONST tokens
