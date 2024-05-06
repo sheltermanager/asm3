@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-05-01 14:22+0000\n"
+"POT-Creation-Date: 2024-05-06 10:30+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -9632,7 +9632,23 @@ msgid "On shelter"
 msgstr ""
 
 #: reports.js
+msgid "On shelter (at date)"
+msgstr ""
+
+#: reports.js
+msgid "On shelter (between two dates)"
+msgstr ""
+
+#: reports.js
 msgid "On shelter (no fosters)"
+msgstr ""
+
+#: reports.js
+msgid "On shelter at date"
+msgstr ""
+
+#: reports.js
+msgid "On shelter between"
 msgstr ""
 
 #: main.py
@@ -16293,6 +16309,14 @@ msgstr ""
 msgid "{0} selected"
 msgstr ""
 
+#: reports.js
+msgid "{0} test performed date"
+msgstr ""
+
+#: reports.js
+msgid "{0} test result"
+msgstr ""
+
 #: medical.py
 msgid "{0} treatments every {1} days"
 msgstr ""
@@ -16311,6 +16335,10 @@ msgstr ""
 
 #: medical.py
 msgid "{0} treatments every {1} years"
+msgstr ""
+
+#: reports.js
+msgid "{0} vaccination given date"
 msgstr ""
 
 #: lookups.js
