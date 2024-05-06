@@ -1016,8 +1016,9 @@ $(function() {
                 // Outputs criteria into the dropdown. l is the list of criteria reports.qb_x_criteria
                 let crit = [];
                 $.each(l, function(i, v) {
-                    let [ display, value, sql ] = v;
-                    crit.push( value + "|" + display + (sql.indexOf("$ASK") != -1 ? " *" : "") );
+                    let [ display, value, sql ] = v, hasask = "";
+                    if (sql.indexOf("$ASK") != -1 || sql.indexOf("$@") != -1) { hasask = " *"; }
+                    crit.push( value + "|" + display + hasask );
                 });
                 return crit;
             };
