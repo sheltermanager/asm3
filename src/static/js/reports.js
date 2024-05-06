@@ -128,10 +128,20 @@ $(function() {
                 [ _("No tattoo"), "nottattoo", "Tattoo=0" ],
                 [ _("Reclaimed"), "reclaimed", "ActiveMovementDate Is Not Null AND ActiveMovementType=5" ],
                 [ _("Reserved"), "reserved", "HasActiveReserve=1" ],
-                [ _("On shelter"), "onshelter", "Archived=0" ],
-                [ _("On shelter (no fosters)"), "onshelternf", "Archived=0 AND (ActiveMovementType Is Null OR ActiveMovementType=0)" ],
                 [ _("On foster"), "onfoster", "ActiveMovementType=2 AND HasPermanentFoster=0" ],
                 [ _("On permanent foster"), "onpfoster", "ActiveMovementType=2 AND HasPermanentFoster=1" ],
+                [ _("On shelter"), "onshelter", "Archived=0" ],
+                [ _("On shelter (no fosters)"), "onshelternf", "Archived=0 AND (ActiveMovementType Is Null OR ActiveMovementType=0)" ],
+                [ _("On shelter (at date)"), "osatdate", 
+                    "NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@osatdate$ 23:59:59' AND (ReturnDate Is Null OR ReturnDate > '$@osatdate$') AND MovementType NOT IN (2,8) AND AnimalID = v_animal.ID) " +
+                    "AND DateBroughtIn <= '$@osatdate$ 23:59:59' " +
+                    "AND NonShelterAnimal = 0 " + 
+                    "AND (DeceasedDate Is Null OR DeceasedDate > '$@osatdate$ 23:59:59') " ],
+                [ _("On shelter (between two dates)"), "ostwodates", 
+                    "NOT EXISTS (SELECT MovementDate FROM adoption WHERE MovementDate <= '$@osfrom$ 23:59:59' AND (ReturnDate Is Null OR ReturnDate > '$@osfrom$') AND MovementType NOT IN (2,8) AND AnimalID = v_animal.ID) " +
+                    "AND DateBroughtIn <= '$@osto$ 23:59:59' " +
+                    "AND NonShelterAnimal = 0 " + 
+                    "AND (DeceasedDate Is Null OR DeceasedDate > '$@osfrom$ 23:59:59') " ],
                 [ _("On trial adoption"), "trialadoption", "ActiveMovementType=1 AND HasTrialAdoption=1" ],
                 [ _("Pickup"), "pickup", "IsPickup=1" ],
                 [ _("Quarantine"), "quarantine", "IsQuarantine=1" ],
@@ -618,8 +628,7 @@ $(function() {
 
         bind_query_builder: function() {
             const expand_additional = function(l) {
-                // Expands additional fields af_ID in a list into subqueries
-                // aliased as af_ID
+                // Expands our fake fields that require subqueries (additional fields, some animal medical info, etc)
                 let o = [];
                 $.each(l, function(i, v) {
                     if (v.indexOf("afc_") == 0) {
@@ -648,12 +657,46 @@ $(function() {
                             ".ID AND AdditionalFieldID=" + v.substring(8) + ") AS " + v);
                     }
                     else if (v.indexOf("af_") == 0) {
+                        // Any other additional fields
                         o.push("(SELECT Value FROM additional WHERE LinkID=v_" + $("#qbtype").val() + 
                             ".ID AND AdditionalFieldID=" + v.substring(3) + ") AS " + v);
+                    }
+                    else if (v.indexOf("testdate_") == 0) {
+                        // Date test given
+                        o.push("(SELECT DateOfTest FROM animaltest WHERE animaltest.ID = " +
+                        "(SELECT MAX(ID) FROM animaltest WHERE DateOfTest Is Not Null AND AnimalID=v_animal.ID " + 
+                        "AND TestTypeID=" + v.substring(9) + ")) AS " + v);
+                    }
+                    else if (v.indexOf("testresult_") == 0) {
+                        // Test result
+                        o.push("(SELECT ResultName FROM animaltest INNER JOIN testresult ON testresult.ID=animaltest.TestResultID " + 
+                        "WHERE animaltest.ID = " +
+                        "(SELECT MAX(ID) FROM animaltest WHERE DateOfTest Is Not Null AND AnimalID=v_animal.ID " + 
+                        "AND TestTypeID=" + v.substring(11) + ")) AS " + v);
+                    }
+                    else if (v.indexOf("vaccdate_") == 0) {
+                        // Date vacc given
+                        o.push("(SELECT DateOfVaccination FROM animalvaccination WHERE animalvaccination.ID = " +
+                        "(SELECT MAX(ID) FROM animalvaccination WHERE DateOfVaccination Is Not Null AND AnimalID=v_animal.ID " + 
+                        "AND VaccinationID=" + v.substring(9) + ")) AS " + v);
                     }
                     else { o.push(v); }
                 });
                 return o;
+            };
+            const expand_var_tokens = function(s) {
+                // If any tokens are found for special criteria that require VAR tokens, add them
+                let tokens = [];
+                if (s.indexOf("$@osatdate$") != -1) {
+                    tokens.push("$VAR osatdate DATE " + _("On shelter at date") + "$")
+                }
+                if (s.indexOf("$@osfrom$") != -1) {
+                    tokens.push("$VAR osfrom DATE " + _("On shelter between") + "$")
+                }
+                if (s.indexOf("$@osto$") != -1) {
+                    tokens.push("$VAR osto DATE " + _("and") + "$")
+                }
+                return s + "\n\n" + tokens.join("\n");
             };
             let qbbuttons = {};
             qbbuttons[_("Update")] = function() {
@@ -670,6 +713,7 @@ $(function() {
                 });
                 if (critout.length > 0) { q += "\nWHERE \n " + critout.join("\n AND "); }
                 if ($("#qbsort").val().length > 0) { q += "\nORDER BY \n " + $("#qbsort").val().join(",\n "); }
+                q = expand_var_tokens(q);
                 $("#sql").sqleditor("value", q);
                 $(this).dialog("close");
             };
@@ -1007,8 +1051,20 @@ $(function() {
                 });
                 return f;
             };
+            const get_animal_medical = function() {
+                // Returns a list of extra animal medical values for the fields dropdown
+                let f = [];
+                $.each(controller.testtypes, function(i, v) {
+                    f.push("testdate_" + v.ID + "|" + _("{0} test performed date").replace("{0}", v.TESTNAME));
+                    f.push("testresult_" + v.ID + "|" + _("{0} test result").replace("{0}", v.TESTNAME));
+                });
+                $.each(controller.vaccinationtypes, function(i, v) {
+                    f.push("vaccdate_" + v.ID + "|" + _("{0} vaccination given date").replace("{0}", v.VACCINATIONTYPE));
+                });
+                return f;
+            };
             if (type == "animal") {
-                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_animal").concat(get_additional(type))));
+                $("#qbfields").html(html.list_to_options(common.get_table_columns("v_animal").concat(get_additional(type)).concat(get_animal_medical())));
                 $("#qbsort").html(html.list_to_options(common.get_table_columns("v_animal").concat(get_additional(type))));
                 $("#qbcriteria").html(html.list_to_options(build_criteria(reports.qb_animal_criteria)));
                 $("#qbfields").change();

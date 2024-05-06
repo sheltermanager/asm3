@@ -1,6 +1,8 @@
 49
 ================
 
+06/05/24 Query builder: animal queries can include test and vacc dates
+06/05/24 Query builder: On shelter at date/between two dates criteria
 02/05/24 Fix for copy/move media dialog not appearing immediately after attach
 01/05/24 Show "Animal Name" in waiting list table header instead of ambiguous Name
 
