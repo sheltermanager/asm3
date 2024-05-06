@@ -2,7 +2,7 @@ People Looking For
 ###
 Owners
 ###
-33904/Any rev01
+33904/Any rev02
 ###
 All person looking for matches.
 ###
@@ -10,8 +10,8 @@ en
 ###
 SELECT 
 o.OwnerName, o.OwnerAddress, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.MatchAdded, 
-ol.MatchSummary,
-a.ShelterCode, a.AnimalName, a.AnimalAge, 
+ol.MatchSummary, o.ID AS OID,
+a.ShelterCode, a.AnimalName, a.AnimalAge, a.ID AS AID,
 (SELECT Sex FROM lksex WHERE ID = a.Sex) AS Sex,
 (SELECT Size FROM lksize WHERE ID = a.Size) AS Size,
 (SELECT BaseColour FROM basecolour WHERE ID = a.BaseColourID) AS Color,
@@ -33,10 +33,11 @@ HEADER$$
 
 $$GROUP_OwnerName
 $$HEAD
-<h1>$OwnerName ($OwnerAddress) $HomeTelephone $WorkTelephone $MobileTelephone</h1>
+<h1><a target="_blank" href="person?id=$OID">$OwnerName</a> ($OwnerAddress) $HomeTelephone $WorkTelephone $MobileTelephone</h1>
 <p>(Since $MatchAdded, looking for: $MatchSummary)</p>
 <hr/>
 <table border="1">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -52,14 +53,17 @@ $$HEAD
 <th>Housetrained</th>
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 GROUP$$
 
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALAGE</td>
 <td>$SEX</td>
 <td>$SIZE</td>

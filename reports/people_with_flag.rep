@@ -2,7 +2,7 @@ People with Flag
 ###
 People
 ###
-33716/Any rev01
+33716/Any rev02
 ###
 Person info for all people with the selected person flag.
 ###
@@ -18,6 +18,7 @@ ORDER BY o.OwnerSurname
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -26,6 +27,8 @@ $$HEADER
 <th>Phone</th>
 <th>Email</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -42,6 +45,7 @@ $OWNERCOUNTY $OWNERPOSTCODE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -49,7 +53,7 @@ People with Flag (created after date)
 ###
 People
 ###
-33716/Any rev01
+33716/Any rev02
 ###
 Person info for all people with the selected person flag where the record was added after a selected date
 ###
@@ -67,6 +71,7 @@ ORDER BY o.OwnerSurname
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -75,6 +80,8 @@ $$HEADER
 <th>Phone</th>
 <th>Email</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -91,6 +98,7 @@ $OWNERCOUNTY $OWNERPOSTCODE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -98,7 +106,7 @@ People without Flag
 ###
 People
 ###
-33716/Any rev01
+33716/Any rev02
 ###
 Person info for all people without the selected person flag.
 ###
@@ -114,6 +122,7 @@ ORDER BY o.OwnerSurname
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -122,6 +131,8 @@ $$HEADER
 <th>Phone</th>
 <th>Email</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -138,6 +149,7 @@ $OWNERCOUNTY $OWNERPOSTCODE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -145,7 +157,7 @@ People with 2 Flags (AND)
 ###
 People
 ###
-33716/Any rev01
+33716/Any rev02
 ###
 Person info for all people with all of the selected two person flags.
 ###
@@ -164,6 +176,7 @@ ORDER BY o.OwnerSurname
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -172,6 +185,8 @@ $$HEADER
 <th>Phone</th>
 <th>Email</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -188,6 +203,7 @@ $OWNERCOUNTY $OWNERPOSTCODE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -195,7 +211,7 @@ People with 3 Flags (AND)
 ###
 People
 ###
-33716/Any rev01
+33716/Any rev02
 ###
 Person info for all people with all of the selected three person flags.
 ###
@@ -216,6 +232,7 @@ ORDER BY o.OwnerSurname
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -224,6 +241,8 @@ $$HEADER
 <th>Phone</th>
 <th>Email</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -240,6 +259,7 @@ $OWNERCOUNTY $OWNERPOSTCODE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -247,7 +267,7 @@ People with 2 Flags (OR)
 ###
 People
 ###
-33716/Any rev01
+33716/Any rev02
 ###
 Person info for all people with either of the selected two person flags.
 ###
@@ -266,6 +286,7 @@ ORDER BY o.OwnerSurname
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -274,6 +295,8 @@ $$HEADER
 <th>Phone</th>
 <th>Email</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -290,6 +313,7 @@ $OWNERCOUNTY $OWNERPOSTCODE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -297,7 +321,7 @@ People with 3 Flags (OR)
 ###
 People
 ###
-33716/Any rev01
+33716/Any rev02
 ###
 Person info for all people with any of the selected three person flags.
 ###
@@ -318,6 +342,7 @@ ORDER BY o.OwnerSurname
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -326,6 +351,8 @@ $$HEADER
 <th>Phone</th>
 <th>Email</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -342,6 +369,7 @@ $OWNERCOUNTY $OWNERPOSTCODE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -349,7 +377,7 @@ People with 2 Flags (AND NOT)
 ###
 People
 ###
-33716/Any rev01
+33716/Any rev02
 ###
 Person info for all people with the first flag, but not the second flag.
 ###
@@ -368,6 +396,7 @@ ORDER BY o.OwnerSurname
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -376,6 +405,8 @@ $$HEADER
 <th>Phone</th>
 <th>Email</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -392,5 +423,6 @@ $OWNERCOUNTY $OWNERPOSTCODE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
