@@ -688,13 +688,13 @@ $(function() {
                 // If any tokens are found for special criteria that require VAR tokens, add them
                 let tokens = [];
                 if (s.indexOf("$@osatdate$") != -1) {
-                    tokens.push("$VAR osatdate DATE " + _("On shelter at date") + "$")
+                    tokens.push("$VAR osatdate DATE " + _("On shelter at date") + "$");
                 }
                 if (s.indexOf("$@osfrom$") != -1) {
-                    tokens.push("$VAR osfrom DATE " + _("On shelter between") + "$")
+                    tokens.push("$VAR osfrom DATE " + _("On shelter between") + "$");
                 }
                 if (s.indexOf("$@osto$") != -1) {
-                    tokens.push("$VAR osto DATE " + _("and") + "$")
+                    tokens.push("$VAR osto DATE " + _("and") + "$");
                 }
                 return s + "\n\n" + tokens.join("\n");
             };
