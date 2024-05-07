@@ -974,7 +974,7 @@ class Report:
                 # rounding
                 roundto = 2
                 if len(fields) > 2:
-                    roundto = asm3.utils.cint(fields[2])
+                    roundto = abs(asm3.utils.cint(fields[2]))
 
                 total = 0.0
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
@@ -1011,7 +1011,7 @@ class Report:
                 # rounding
                 roundto = 2
                 if len(fields) > 2:
-                    roundto = asm3.utils.cint(fields[2])
+                    roundto = abs(asm3.utils.cint(fields[2]))
 
                 total = 0.0
                 num = 0
@@ -1038,7 +1038,7 @@ class Report:
                 # rounding
                 roundto = 2
                 if len(fields) > 3:
-                    roundto = asm3.utils.cint(fields[3])
+                    roundto = abs(asm3.utils.cint(fields[3]))
 
                 matched = 0
                 for i in range(gd.lastGroupStartPosition, gd.lastGroupEndPosition + 1):
