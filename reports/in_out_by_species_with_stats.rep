@@ -2,7 +2,7 @@ In/Out by Species with Transports and Spay/Neuters
 ###
 Movements
 ###
-3200/Any rev06
+3200/Any rev07
 ###
 The In/Out report, but broken down by species with totals and extra stats for transports and spay/neuters.
 ###
@@ -104,9 +104,9 @@ WHERE adoption.MovementType = 2 AND adoption.MovementDate Is Not Null AND adopti
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
-animal.ID AS AID,
 AnimalName,
 (SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
 (SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
@@ -122,9 +122,9 @@ WHERE adoption.MovementType = 3 AND adoption.MovementDate Is Not Null AND adopti
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
-animal.ID AS AID,
 AnimalName,
 (SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
 (SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
