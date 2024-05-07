@@ -44,7 +44,7 @@ VERSIONS = (
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
-    34807, 34808, 34809, 34810, 34811, 34812, 34813
+    34807, 34808, 34809, 34810, 34811, 34812, 34813, 34900
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -1138,7 +1138,7 @@ def sql_structure(dbo: Database) -> str:
     sql += table("lkclinictype", (
         fid(),
         fstr("ClinicTypeName"),
-        fstr("ClinicTypeDescripton", True),
+        fstr("ClinicTypeDescription", True),
         fint("IsRetired", True) ), False)
 
     sql += table("lksclinicstatus", (
@@ -6253,3 +6253,10 @@ def update_34813(dbo: Database) -> None:
     add_column(dbo, "animallocation", "MovedBy", dbo.type_shorttext)
     dbo.execute_dbupdate("UPDATE animallocation SET MovedBy=By")
     drop_column(dbo, "animallocation", "By")
+
+def update_34900(dbo: Database) -> None:
+    # ClinicTypeDescription was mispelled in the create code above (but not the update for existing databases) 
+    # as ClinicTypeDescripton - fix this.
+    add_column(dbo, "lkclinictype", "ClinicTypeDescription", dbo.type_longtext)
+    drop_column(dbo, "lkclinictype", "ClinicTypeDescripton")
+
