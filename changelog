@@ -1,6 +1,7 @@
 49
 ================
 
+08/05/24 Only complete the incomplete diary notes on animal death, instead of all
 07/05/24 Reports: cope with being given a negative number for rounding digits
 07/05/24 ClinicTypeDescription field mispelled as ClinicTypeDescripton in new dbs
 06/05/24 Query builder: animal queries can include test and vacc dates

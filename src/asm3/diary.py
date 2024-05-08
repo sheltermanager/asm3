@@ -196,29 +196,41 @@ def complete_diary_note(dbo: Database, username: str, diaryid: int) -> None:
     """
     Marks a diary note completed as of right now
     """
+    row = get_diary(dbo, diaryid)
+    # Re-set the link fields so that the completion date is audited properly
     dbo.update("diary", diaryid, {
-        "DateCompleted": dbo.today()
+        "DateCompleted": dbo.today(),
+        "LinkType": row.LINKTYPE,
+        "LinkID": row.LINKID
     }, username)
     email_note_on_complete(dbo, get_diary(dbo, diaryid), username)
 
 def complete_diary_notes_for_animal(dbo: Database, username: str, animalid: int) -> None:
     """
-    Marks all diary notes for an animal complete.
+    Marks all incomplete diary notes for an animal complete.
     """
-    dbo.update("diary", "LinkType=%d AND LinkID=%d" % (ANIMAL, animalid), {
-        "DateCompleted": dbo.today()
-    }, username)
-    for n in dbo.query("SELECT ID FROM diary WHERE LinkType=%d AND LinkID=%d" % (ANIMAL, animalid)):
-        email_note_on_complete(dbo, get_diary(dbo, n.id), username)
+    rows = dbo.query("SELECT * FROM diary WHERE LinkType=? AND LinkID=? AND DateCompleted Is Null", (ANIMAL, animalid))
+    for r in rows:
+        # Re-set the link fields so that the completion date is audited properly
+        dbo.update("diary", r.ID, {
+            "DateCompleted": dbo.today(),
+            "LinkType": r.LINKTYPE,
+            "LinkID": r.LINKID
+        }, username)
+        email_note_on_complete(dbo, r, username)
 
 def rediarise_diary_note(dbo: Database, username: str, diaryid: int, newdate: datetime) -> None:
     """
     Moves a diary note on to the date supplied (newdate is a python date)
     """
+    row = get_diary(dbo, diaryid)
+    # Re-set the link fields so that the completion date is audited properly
     dbo.update("diary", diaryid, {
-        "DiaryDateTime": newdate
+        "DiaryDateTime": newdate,
+        "LinkType": row.LINKTYPE,
+        "LinkID": row.LINKID
     }, username)
-    email_note_on_change(dbo, get_diary(dbo, diaryid), username)
+    email_note_on_change(dbo, row, username)
 
 def get_animal_tasks(dbo: Database) -> Results:
     """
