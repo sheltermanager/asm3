@@ -2,13 +2,13 @@ Reserved animals by popularity
 ###
 Movements
 ###
-34004/Any rev01
+34004/Any rev02
 ###
 Displays details of current reserved animals with number of times reserved
 ###
 en
 ###
-SELECT animal.animalname, animal.sheltercode, animal.dateofbirth, animal.animalage, animal.displaylocation AS location, species.speciesname, breed.breedname, 
+SELECT animal.animalname, animal.ID AS AID, animal.sheltercode, animal.dateofbirth, animal.animalage, animal.displaylocation AS location, species.speciesname, breed.breedname, 
 (SELECT COUNT(*) FROM adoption WHERE ReservationDate Is Not Null AND AnimalID = animal.ID) AS TotalReserves
 FROM animal
 INNER JOIN breed ON animal.breedid=breed.id 
@@ -19,6 +19,7 @@ ORDER BY TotalReserves DESC
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -28,11 +29,13 @@ $$HEADER
 <th>Breed</th>
 <th>Times reserved</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$DATEOFBIRTH ($ANIMALAGE)</td>
 <td>$LOCATION</td>
@@ -43,6 +46,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

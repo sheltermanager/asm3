@@ -2,13 +2,13 @@ Retailer Inventory
 ###
 Retailers
 ###
-Any rev01
+Any rev02
 ###
 Animals currently at retailers.
 ###
 en
 ###
-SELECT a.AnimalName, t.AnimalType, a.ShelterCode, 
+SELECT a.AnimalName, a.ID AS AID, t.AnimalType, a.ShelterCode, 
 ad.MovementDate, r.OwnerName 
 FROM adoption ad
 INNER JOIN animal a ON a.ID = ad.AnimalID
@@ -27,20 +27,24 @@ $$GROUP_OWNERNAME
 $$HEAD
 <h2>$OWNERNAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Animal</th>
 <th>Code</th>
 <th>Type</th>
 <th>Date</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total animals at $OWNERNAME: <b>{COUNT.SHELTERCODE}</b></p>
 GROUP$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
 <td>$MOVEMENTDATE</td>

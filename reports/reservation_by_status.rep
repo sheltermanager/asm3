@@ -2,22 +2,22 @@ Reservations between two dates by status
 ###
 Movements
 ###
-33909/Any rev03
+33909/Any rev04
 ###
 All reservations between two dates.
 ###
 en
 ###
-SELECT ShelterCode, AnimalName, DateBroughtIn, ReservationDate, ReservationCancelledDate, 
+SELECT ShelterCode, AnimalName, animal.ID AS AID, DateBroughtIn, ReservationDate, ReservationCancelledDate, 
 adoption.Comments, 
 species.SpeciesName,
 reservationstatus.StatusName,
 animaltype.AnimalType AS theType,
 animal.BreedName,
-no.OwnerName, no.OwnerAddress,
+no.OwnerName, no.OwnerAddress, no.ID AS OID,
 no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone,
-co.OwnerName AS CoordinatorName
+co.OwnerName AS CoordinatorName, co.ID AS COID 
 FROM adoption
 INNER JOIN owner no ON adoption.OwnerID = no.ID
 LEFT OUTER JOIN animal ON adoption.AnimalID = animal.ID
@@ -34,33 +34,38 @@ HEADER$$
 $$GROUP_StatusName
 $$HEAD
 <h2>$StatusName</h2>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Entered Shelter</b></td>
-<td><b>Coordinator</b></td>
-<td><b>Reserved On</b></td>
-<td><b>Cancelled</b></td>
-<td><b>Reserved By</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Entered Shelter</b></th>
+<th><b>Coordinator</b></th>
+<th><b>Reserved On</b></th>
+<th><b>Cancelled</b></th>
+<th><b>Reserved By</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $StatusName: {COUNT.StatusName}</p>
 GROUP$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$theType</td>
 <td>$BreedName</td>
 <td>$DateBroughtIn</td>
-<td>$CoordinatorName</td>
+<td><a target="_blank" href="person?id=$COID">$CoordinatorName</a></td>
 <td>$RESERVATIONDATE</td>
 <td>$RESERVATIONCANCELLEDDATE</td>
-<td><i>$OwnerName</i><br/>
+<td><i><a target="_blank" href="person?id=$OID">$OwnerName</a></i><br/>
 $OwnerAddress<br/>
 $OwnerTown<br/>
 $OwnerCounty<br/>

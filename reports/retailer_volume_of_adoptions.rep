@@ -2,14 +2,14 @@ Volume Of Adoptions Per Retailer
 ###
 Retailers
 ###
-Any rev01
+Any rev02
 ###
 Animals adopted and payments from each retailer between two dates.
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, ad.Donation AS amt,
-ad.MovementDate, r.OwnerName AS RetailerName, o.OwnerName AS AdopterName
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, ad.Donation AS amt,
+ad.MovementDate, r.OwnerName AS RetailerName, r.ID AS ROID, o.OwnerName AS AdopterName, o.ID AS OID
 FROM adoption ad
 INNER JOIN animal a ON a.ID = ad.AnimalID
 INNER JOIN owner o ON o.ID = ad.OwnerID
@@ -26,15 +26,19 @@ HEADER$$
 
 $$GROUP_RETAILERNAME
 $$HEAD
-<h2>$RETAILERNAME</h2>
+<h2><a target="_blank" href="person?id=$ROID">$RETAILERNAME</a></h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Animal</th>
 <th>Payment</th>
 <th>Adopter</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>$RETAILERNAME total adoptions: <b>{COUNT.AMT}</b> <br />
 $RETAILERNAME total payments: <b>{SUM.AMT.2}</b></p>
@@ -43,9 +47,9 @@ GROUP$$
 $$BODY
 <tr>
 <td>$MOVEMENTDATE</td>
-<td>$ANIMALNAME - $SHELTERCODE</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a> - $SHELTERCODE</td>
 <td>$AMT</td>
-<td>$ADOPTERNAME</td>
+<td><a target="_blank" href="person?id=$OID">$ADOPTERNAME</a></td>
 </tr>
 BODY$$
 

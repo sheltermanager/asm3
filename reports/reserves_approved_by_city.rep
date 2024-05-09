@@ -2,18 +2,18 @@ Approved Reservations by City
 ###
 Movements
 ###
-33507/Any rev02
+33507/Any rev03
 ###
 Active reservations the name/address of the potential owner, grouped by city
 ###
 en
 ###
-SELECT ShelterCode, AnimalName, DateBroughtIn, ReservationDate, 
+SELECT ShelterCode, AnimalName, animal.ID AS AID, DateBroughtIn, ReservationDate, 
 adoption.Comments, 
 species.SpeciesName,
 animaltype.AnimalType AS theType,
 animal.BreedName,
-no.OwnerName, no.OwnerAddress,
+no.OwnerName, no.OwnerAddress, no.ID AS OID,
 no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
 FROM adoption
@@ -32,29 +32,34 @@ HEADER$$
 $$GROUP_OwnerTown
 $$HEAD
 <h2>$OWNERTOWN</h2>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Entered Shelter</b></td>
-<td><b>Reservation Date</b></td>
-<td><b>Reserved By</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Entered Shelter</b></th>
+<th><b>Reservation Date</b></th>
+<th><b>Reserved By</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $OwnerTown: {COUNT.OwnerTown}</p>
 GROUP$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$theType</td>
 <td>$BreedName</td>
 <td>$DateBroughtIn</td>
 <td>$RESERVATIONDATE</td>
-<td><i>$OwnerName</i><br/>
+<td><i><a target="_blank" href="person?id=$OID">$OWNERNAME</a></i><br/>
 $OwnerAddress<br/>
 $OwnerTown<br/>
 $OwnerCounty<br/>

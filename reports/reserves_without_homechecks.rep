@@ -2,7 +2,7 @@ Reserves without Homechecks
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 All owners with active reservations on animals who have not been homechecked.
 ###
@@ -26,11 +26,14 @@ ORDER BY OwnerName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Reserved On</th>
 <th>Person</th>
 <th>Animal</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -51,5 +54,6 @@ $SHELTERCODE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
