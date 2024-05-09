@@ -325,6 +325,21 @@ class ASMEndpoint(object):
         else:
             self.header("Cache-Control", "public, max-age=%s, s-maxage=%s" % (client_ttl, cache_ttl))
 
+    def content_disposition(self, disp: str = "inline", filename: str = "", extension: str = "", default: str = "filename") -> None:
+        """ 
+        Sends a Content-Disposition header
+        disp: inline or attachment
+        filename: the filename portion without extension
+        extension: The extension to add to the filename. If extension is "", assume it has already been added to filename
+        default: If there are no latin1 chars in the filename, use this name instead
+        """
+        filename = asm3.utils.strip_non_ascii(filename).strip()
+        filename = filename.replace(" ", "_").replace("\"", "").replace("'", "").replace("\\", "").replace("/", "").lower()
+        if filename == "": filename = default
+        if extension != "": filename = "%s.%s" % (filename, extension)
+        disposition = f"{disp}; filename={filename}"
+        self.header("Content-Disposition", disposition)
+
     def content_type(self, ct: str) -> None:
         """ Sends a content-type header """
         self.header("Content-Type", ct)
@@ -508,7 +523,7 @@ class database(ASMEndpoint):
                 s += asm3.dbupdate.sql_structure(dbo)
                 s += asm3.dbupdate.sql_default_data(dbo).replace("|=", ";")
                 self.content_type("text/plain")
-                self.header("Content-Disposition", "attachment; filename=\"setup.sql\"")
+                self.content_disposition("attachment", "setup.sql")
                 return s
             
         optionslocales = ""
@@ -772,7 +787,7 @@ class media(ASMEndpoint):
     def content(self, o):
         lastmod, medianame, mimetype, filedata = asm3.media.get_media_file_data(o.dbo, o.post.integer("id"))
         self.content_type(mimetype)
-        self.header("Content-Disposition", "inline; filename=\"%s\"" % medianame)
+        self.content_disposition("inline", medianame)
         self.cache_control(CACHE_ONE_DAY)
         asm3.al.debug("%s %s (%s bytes)" % (medianame, mimetype, len(filedata)), "media.content", o.dbo)
         return filedata
@@ -2886,7 +2901,7 @@ class csvexport_animals(ASMEndpoint):
         # If we're retrieving an already saved export, serve it.
         if o.post["get"] != "":
             self.content_type("text/csv")
-            self.header("Content-Disposition", "attachment; filename=export.csv")
+            self.content_disposition("attachment", "export.csv")
             v = asm3.cachedisk.get(o.post["get"], o.dbo.database)
             if v is None: self.notfound()
             return v
@@ -3154,7 +3169,7 @@ class document_gen(ASMEndpoint):
                     dtid=dtid, content=asm3.utils.escape_tinymce(content))
         elif templatename.endswith(".odt"):
             self.content_type("application/vnd.oasis.opendocument.text")
-            self.header("Content-Disposition", "attach; filename=\"%s\"" % templatename)
+            self.content_disposition("attachment", templatename)
             self.cache_control(0)
             return content
 
@@ -3289,9 +3304,9 @@ class document_gen(ASMEndpoint):
         self.check(asm3.users.VIEW_MEDIA)
         dbo = o.dbo
         post = o.post
-        disposition = asm3.configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
+        disp = asm3.configuration.pdf_inline(dbo) and "inline" or "attachment"
         self.content_type("application/pdf")
-        self.header("Content-Disposition", disposition)
+        self.content_disposition(disp, "doc.pdf")
         return asm3.utils.html_to_pdf(dbo, post["document"])
 
     def post_print(self, o):
@@ -3339,9 +3354,9 @@ class document_template_edit(ASMEndpoint):
     def post_pdf(self, o):
         dbo = o.dbo
         post = o.post
-        disposition = asm3.configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
+        disp = asm3.configuration.pdf_inline(dbo) and "inline" or "attachment"
         self.content_type("application/pdf")
-        self.header("Content-Disposition", disposition)
+        self.content_disposition(disp, "doc.pdf")
         return asm3.utils.html_to_pdf(dbo, post["document"])
 
     def post_print(self, o):
@@ -3375,9 +3390,9 @@ class document_media_edit(ASMEndpoint):
     def post_pdf(self, o):
         self.check(asm3.users.VIEW_MEDIA)
         dbo = o.dbo
-        disposition = asm3.configuration.pdf_inline(dbo) and "inline; filename=\"doc.pdf\"" or "attachment; filename=\"doc.pdf\""
+        disp = asm3.configuration.pdf_inline(dbo) and "inline" or "attachment"
         self.content_type("application/pdf")
-        self.header("Content-Disposition", disposition)
+        self.content_disposition(disp, "doc.pdf")
         return asm3.utils.html_to_pdf(dbo, o.post["document"])
 
     def post_print(self, o):
@@ -3449,7 +3464,7 @@ class document_repository_file(ASMEndpoint):
             disp = "attachment"
             if mimetype == "application/pdf": disp = "inline" # Try to show PDFs in place
             self.content_type(mimetype)
-            self.header("Content-Disposition", "%s; filename=\"%s\"" % (disp, name))
+            self.content_disposition(disp, name)
             return asm3.dbfs.get_string_id(o.dbo, o.post.integer("dbfsid"))
 
 class document_templates(JSONEndpoint):
@@ -3910,8 +3925,8 @@ class giftaid_hmrc_spreadsheet(JSONEndpoint):
         todate = o.post["todate"]
         asm3.al.debug("generating HMRC giftaid spreadsheet for %s -> %s" % (fromdate, todate), "main.giftaid_hmrc_spreadsheet", o.dbo)
         self.content_type("application/vnd.oasis.opendocument.spreadsheet")
+        self.content_disposition("attachment", "giftaid.ods")
         self.cache_control(0)
-        self.header("Content-Disposition", "attachment; filename=\"giftaid.ods\"")
         return asm3.financial.giftaid_spreadsheet(o.dbo, PATH, o.post.date("fromdate"), o.post.date("todate"))
 
 class htmltemplates(JSONEndpoint):
@@ -4662,9 +4677,9 @@ class mailmerge(JSONEndpoint):
         mergeparams = ""
         if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
+        disp = asm3.configuration.pdf_inline(dbo) and "inline" or "attachment"
+        self.content_disposition(disp, post["mergetitle"], "pdf", "labels.pdf" )
         self.content_type("application/pdf")
-        disposition = asm3.configuration.pdf_inline(dbo) and "inline; filename=%s" or "attachment; filename=%s"
-        self.header("Content-Disposition", disposition % post["mergetitle"] + ".pdf")
         return asm3.utils.generate_label_pdf(dbo, o.locale, rows, post["papersize"], post["units"], post["fontpt"], 
             post.floating("hpitch"), post.floating("vpitch"), 
             post.floating("width"), post.floating("height"), 
@@ -4677,8 +4692,8 @@ class mailmerge(JSONEndpoint):
         mergeparams = ""
         if post["mergeparams"] != "": mergeparams = asm3.utils.json_parse(post["mergeparams"])
         rows, cols = asm3.reports.execute_query(dbo, post.integer("mergereport"), o.user, mergeparams)
+        self.content_disposition("attachment", post["mergetitle"], "csv", "download.csv")
         self.content_type("text/csv")
-        self.header("Content-Disposition", "attachment; filename=" + post["mergetitle"] + ".csv")
         includeheader = 1 == post.boolean("includeheader")
         return asm3.utils.csv(o.locale, rows, cols, includeheader)
 
@@ -6473,7 +6488,7 @@ class publish_log_view(ASMEndpoint):
         asm3.al.debug("viewing log file %s" % o.post["view"], "main.publish_logs", o.dbo)
         self.cache_control(CACHE_ONE_WEEK) # log files never change
         self.content_type("text/plain")
-        self.header("Content-Disposition", "inline; filename=\"%s\"" % o.post["view"])
+        self.content_disposition("inline", o.post["view"], "txt", "log.txt")
         return asm3.publish.get_publish_log(o.dbo, o.post.integer("view"))
 
 class publish_options(JSONEndpoint):
@@ -6599,7 +6614,6 @@ class report_export_csv(ASMEndpoint):
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
         title = asm3.reports.get_title(dbo, crid)
-        filename = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
         titlecaseheader = cols is not None and "TITLECASEHEADER" in cols
@@ -6608,10 +6622,7 @@ class report_export_csv(ASMEndpoint):
         if cols is not None and "RENAMEHEADER" in cols and len(rows) > 0:
             renameheader = rows[0].RENAMEHEADER
         self.content_type("text/csv")
-        # non-latin1 chars in HTTP headers cause errors in web.py - encode any unicode chars as HTML entities
-        # then look for them and use the report ID if any are found.
-        if asm3.utils.encode_html(filename).find("&#") != -1: filename = str(crid) 
-        self.header("Content-Disposition", f"attachment; filename=\"{filename}.csv\"")
+        self.content_disposition("attachment", title, "csv", "report.csv")
         return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, lowercaseheader=lowercaseheader, renameheader=renameheader)
 
 class report_export_email(ASMEndpoint):
@@ -6648,7 +6659,6 @@ class report_export_excel(ASMEndpoint):
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
         title = asm3.reports.get_title(dbo, crid)
-        filename = title.replace(" ", "_").replace("\"", "").replace("'", "").lower()
         p = asm3.reports.get_criteria_params(dbo, crid, post)
         rows, cols = asm3.reports.execute_query(dbo, crid, o.user, p)
         titlecaseheader = cols is not None and "TITLECASEHEADER" in cols
@@ -6657,10 +6667,7 @@ class report_export_excel(ASMEndpoint):
         if cols is not None and "RENAMEHEADER" in cols and len(rows) > 0:
             renameheader = rows[0].RENAMEHEADER
         self.content_type("application/vnd.ms-excel")
-        # non-latin1 chars in HTTP headers cause errors in web.py - encode any unicode chars as HTML entities
-        # then look for them and use the report ID if any are found.
-        if asm3.utils.encode_html(filename).find("&#") != -1: filename = str(crid) 
-        self.header("Content-Disposition", f"attachment; filename=\"{filename}.xlsx\"")
+        self.content_disposition("attachment", title, "xlsx", "report.xlsx")
         return asm3.utils.excel(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, lowercaseheader=lowercaseheader, renameheader=renameheader)
 
 class report_export_pdf(ASMEndpoint):
@@ -6677,9 +6684,9 @@ class report_export_pdf(ASMEndpoint):
         # Make sure this user has a role that can view the report
         asm3.reports.check_view_permission(o.session, crid)
         p = asm3.reports.get_criteria_params(dbo, crid, post)
-        disposition = asm3.configuration.pdf_inline(dbo) and "inline; filename=\"report.pdf\"" or "attachment; filename=\"report.pdf\""
+        disp = asm3.configuration.pdf_inline(dbo) and "inline" or "attachment"
         self.content_type("application/pdf")
-        self.header("Content-Disposition", disposition)
+        self.content_disposition(disp, "report.pdf")
         return asm3.utils.html_to_pdf(dbo, asm3.reports.execute(dbo, crid, o.user, p))
 
 class report_images(JSONEndpoint):
@@ -6990,29 +6997,29 @@ class sql_dump(ASMEndpoint):
         self.content_type("text/plain")
         if mode == "dumpsql":
             asm3.al.info("%s executed SQL database dump" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"dump.sql\"")
+            self.content_disposition("attachment", "dump.sql")
             return asm3.dbupdate.dump(dbo) # generator
         if mode == "dumpsqlmedia":
             asm3.al.info("%s executed SQL database dump (base64/media)" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"media.sql\"")
+            self.content_disposition("attachment", "media.sql")
             return asm3.dbupdate.dump_dbfs_base64(dbo) # generator
         if mode == "dumpddlmysql":
             asm3.al.info("%s executed DDL dump MySQL" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"ddl_mysql.sql\"")
+            self.content_disposition("attachment", "ddl_mysql.sql")
             dbo2 = asm3.db.get_dbo("MYSQL")
             dbo2.locale = dbo.locale
             return asm3.dbupdate.sql_structure(dbo2)
             return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddlpostgres":
             asm3.al.info("%s executed DDL dump PostgreSQL" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"ddl_postgresql.sql\"")
+            self.content_disposition("attachment", "ddl_postgresql.sql")
             dbo2 = asm3.db.get_dbo("POSTGRESQL")
             dbo2.locale = dbo.locale
             return asm3.dbupdate.sql_structure(dbo2)
             return asm3.dbupdate.sql_default_data(dbo2).replace("|=", ";")
         if mode == "dumpddldb2":
             asm3.al.info("%s executed DDL dump DB2" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"ddl_db2.sql\"")
+            self.content_disposition("attachment", "ddl_db2.sql")
             dbo2 = asm3.db.get_dbo("DB2")
             dbo2.locale = dbo.locale
             return asm3.dbupdate.sql_structure(dbo2)
@@ -7020,46 +7027,46 @@ class sql_dump(ASMEndpoint):
         elif mode == "dumpsqlasm2":
             # ASM2_COMPATIBILITY
             asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB)" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
+            self.content_disposition("attachment", "asm2.sql")
             return asm3.dbupdate.dump_hsqldb(dbo) # generator
         elif mode == "dumpsqlasm2nomedia":
             # ASM2_COMPATIBILITY
             asm3.al.info("%s executed SQL database dump (ASM2 HSQLDB, without media)" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"asm2.sql\"")
+            self.content_disposition("attachment", "asm2.sql")
             return asm3.dbupdate.dump_hsqldb(dbo, includeDBFS = False) # generator
         elif mode == "animalcsv":
             asm3.al.debug("%s executed CSV animal dump" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"animal.csv\"")
+            self.content_disposition("attachment", "animal.csv")
             rows = asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" })
             asm3.additional.append_to_results(dbo, rows, "animal")
             return asm3.utils.csv(l, rows)
         elif mode == "mediacsv":
             asm3.al.debug("%s executed CSV media dump" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"media.csv\"")
+            self.content_disposition("attachment", "media.csv")
             return asm3.utils.csv(l, asm3.media.get_media_export(dbo))
         elif mode == "medicalcsv":
             asm3.al.debug("%s executed CSV medical dump" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"medical.csv\"")
+            self.content_disposition("attachment", "medical.csv")
             return asm3.utils.csv(l, asm3.medical.get_medical_export(dbo))
         elif mode == "personcsv":
             asm3.al.debug("%s executed CSV person dump" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"person.csv\"")
+            self.content_disposition("attachment", "person.csv")
             rows = asm3.person.get_person_find_simple(dbo, "", includeStaff=True, includeVolunteers=True)
             asm3.additional.append_to_results(dbo, rows, "person")
             return asm3.utils.csv(l, rows)
         elif mode == "incidentcsv":
             asm3.al.debug("%s executed CSV incident dump" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"incident.csv\"")
+            self.content_disposition("attachment", "incident.csv")
             rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, o.user)
             asm3.additional.append_to_results(dbo, rows, "incident")
             return asm3.utils.csv(l, rows)
         elif mode == "licencecsv":
             asm3.al.debug("%s executed CSV licence dump" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"licence.csv\"")
+            self.content_disposition("attachment", "licence.csv")
             return asm3.utils.csv(l, asm3.financial.get_licence_find_simple(dbo, ""))
         elif mode == "paymentcsv":
             asm3.al.debug("%s executed CSV payment dump" % o.user, "main.sql", dbo)
-            self.header("Content-Disposition", "attachment; filename=\"payment.csv\"")
+            self.content_disposition("attachment", "payment.csv")
             return asm3.utils.csv(l, asm3.financial.get_donations(dbo, "m10000"))
 
 class staff_rota(JSONEndpoint):
