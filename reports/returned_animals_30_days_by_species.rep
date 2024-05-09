@@ -2,13 +2,13 @@ Animals Returned within 30 days by Species
 ###
 Returns
 ###
-PostgreSQL rev02
+PostgreSQL rev03
 ###
 Animals returned within 30 days where the return was processed between a date range, grouped by species.
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, s.SpeciesName, i.LocationName,
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, s.SpeciesName, i.LocationName,
 ad.MovementDate, ad.ReturnDate, ad.ReasonForReturn, rr.ReasonName,
 EXTRACT(DAY FROM ad.ReturnDate - ad.MovementDate)::integer AS DaysAdopted
 FROM adoption ad
@@ -30,6 +30,7 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -41,6 +42,8 @@ $$HEAD
 <th>Reason</th>
 <th>Category</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td>
@@ -53,13 +56,14 @@ $$FOOT
 <td></td>
 <td></td>
 </tr>
+</tbody>
 </table>
 <p>Total $SPECIESNAME: {COUNT.SpeciesName}</p>
 GROUP$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
 <td>$LOCATIONNAME</td>

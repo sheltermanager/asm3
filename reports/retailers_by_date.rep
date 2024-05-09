@@ -2,7 +2,7 @@ Retailer Movements by Date
 ###
 Retailers
 ###
-PostgreSQL rev01
+PostgreSQL rev02
 ###
 Retailer movements between two dates with average time at retailer
 ###
@@ -11,13 +11,13 @@ en
 $VAR from DATE Out between$
 $VAR to DATE and$
 
-SELECT ShelterCode, AnimalName, MostRecentEntryDate, MovementDate, ReturnDate, 
+SELECT ShelterCode, AnimalName, animal.ID AS AID, MostRecentEntryDate, MovementDate, ReturnDate, 
 species.SpeciesName, animal.DaysOnShelter, animal.IdentichipNumber,
 animaltype.AnimalType AS theType,
 animal.BreedName,
 age(ReturnDate, MovementDate) AS TimeAtRetailer,
 extract(day from ReturnDate - MovementDate)::integer AS DaysAtRetailer,
-no.OwnerName, no.OwnerAddress,
+no.OwnerName, no.OwnerAddress, no.ID AS OID,
 no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
 FROM adoption
@@ -33,18 +33,22 @@ HEADER$$
 
 $$GROUP_OwnerName
 $$HEAD
-<h2>$OwnerName</h2>
+<h2><a target="_blank" href="person?id=$OID">$OWNERNAME</a></h2>
 <p>$OwnerAddress, $OwnerTown $OwnerCounty $OwnerPostcode: <i>$HomeTelephone $WorkTelephone $MobileTelephone $EmailAddress</i></p>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Microchip</b></td>
-<td><b>Sent to Retailer</b></td>
-<td><b>Returned from Retailer</b></td>
-<td><b>Time at Retailer</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Microchip</b></th>
+<th><b>Sent to Retailer</b></th>
+<th><b>Returned from Retailer</b></th>
+<th><b>Time at Retailer</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td>
@@ -56,6 +60,7 @@ $$FOOT
 <td></td>
 <td>Average: {AVG.DaysAtRetailer.2} days</td>
 </tr>
+</tbody>
 </table>
 <h2>Total $OwnerName: {COUNT.SHELTERCODE}</h2>
 GROUP$$
@@ -63,7 +68,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$theType</td>
 <td>$BreedName</td>
 <td>$IdentichipNumber</td>

@@ -2,7 +2,7 @@ RSPCA: Length of stay of animals currently in care (detailed)
 ###
 Figures
 ###
-2721/Any rev01
+2721/Any rev02
 ###
 Shows banded time on shelter by species for animals on the shelter at a date. Used for completing the UK RSPCA figures spreadsheet
 ###
@@ -10,7 +10,7 @@ en_GB
 ###
 $VAR thedate DATE Select month end date$
 SELECT
-a.AnimalName, a.Sheltercode, s.SpeciesName,
+a.AnimalName, a.ID AS AID, a.Sheltercode, s.SpeciesName,
 CASE WHEN a.DaysOnShelter < 91 THEN '0-3 Months'
 WHEN a.DaysOnShelter >= 91 AND a.DaysOnShelter < 182 THEN '4-6 Months'
 ELSE 'Over 6 months' END AS BandOnShelter,
@@ -51,7 +51,7 @@ $$FOOT
 GROUP$$
 
 $$BODY
-$SHELTERCODE - $ANIMALNAME<br/>
+$SHELTERCODE - <a target="_blank" href="animal?id=$AID">$ANIMALNAME</a><br/>
 BODY$$
 
 $$FOOTER

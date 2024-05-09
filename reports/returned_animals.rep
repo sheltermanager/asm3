@@ -2,7 +2,7 @@ Returned Animals
 ###
 Returns
 ###
-Any rev02
+Any rev03
 ###
 Animals returned within a date range.
 ###
@@ -26,6 +26,7 @@ ORDER BY ad.ReturnDate, a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -39,6 +40,8 @@ $$HEADER
 <th>Reason</th>
 <th>Category</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -61,6 +64,7 @@ $HOMETELEPHONE $MOBILETELEPHONE <i>$EMAILADDRESS</i></td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <h2>Total returns: {COUNT.ANIMALNAME}</h2>
 FOOTER$$
