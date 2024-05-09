@@ -1,6 +1,7 @@
 49
 ================
 
+09/05/24 Add English (Turkey) locale
 09/05/24 Fix bug with mailing label PDF and unicode chars in the filename
 08/05/24 Only complete the incomplete diary notes on animal death, instead of all
 07/05/24 Reports: cope with being given a negative number for rounding digits
