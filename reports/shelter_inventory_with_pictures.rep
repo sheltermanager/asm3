@@ -2,7 +2,7 @@ Shelter Inventory with Pictures
 ###
 Inventories
 ###
-Any rev02
+Any rev03
 ###
 Shelter inventory by location/species with thumbnails for each animal.
 ###
@@ -19,7 +19,7 @@ a.BreedName,
 a.AnimalAge,
 a.TimeOnShelter,
 CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' WHEN a.ActiveMovementType = 8 THEN 'Retailer' WHEN a.ActiveMovementType = 1 THEN 'Trial Adoption' ELSE l.LocationName END AS LocationName,
-OwnerName, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, EmailAddress, MobileTelephone,  
+OwnerName, o.ID AS OID, OwnerAddress, OwnerTown, OwnerCounty, OwnerPostcode, EmailAddress, MobileTelephone,  
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithCats) AS aGoodWithCats,
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithDogs) AS aGoodWithDogs,
 (SELECT Name FROM lksynun WHERE ID = a.IsGoodWithChildren) AS aGoodWithKids,
@@ -50,6 +50,7 @@ $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
 <table border="1" width="100%">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -65,7 +66,10 @@ $$HEAD
 <th>Picture</th>
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SPECIESNAME at $LOCATIONNAME: {COUNT.ANIMALID}</p>
 GROUP$$
@@ -73,14 +77,14 @@ GROUP$$
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$animalid">$ANIMALNAME</a></td>
 <td>$IDENTICHIPNUMBER</td>
 <td>$BREEDNAME</td>
 <td>$ASIZE</td>
 <td>$ASEX / $ANEUTERED</td>
 <td>$ANIMALAGE</td>
 <td>$TIMEONSHELTER</td>
-<td>$LOCATIONNAME <b>$OWNERNAME</b><br/>
+<td>$LOCATIONNAME <b><a target="_blank" href="person?id=$OID">$OWNERNAME</a></b><br/>
 $OWNERADDRESS<br/>$OWNERTOWN<br/> $OWNERCOUNTY $OWNERPOSTCODE<br/>$EMAILADDRESS $MOBILETELEPHONE</td>
 <td>Cats: $AGOODWITHCATS<br/>
 Dogs: $AGOODWITHDOGS<br/>

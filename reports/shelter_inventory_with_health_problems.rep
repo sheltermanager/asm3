@@ -2,13 +2,13 @@ Shelter Inventory with Health Problems
 ###
 Inventories
 ###
-Any rev03
+Any rev04
 ###
 Shelter animals, broken down by species/location with health problems.
 ###
 en
 ###
-SELECT a.ShelterCode, a.AnimalName, a.DateBroughtIn,
+SELECT a.ShelterCode, a.AnimalName, a.ID AS AID, a.DateBroughtIn,
 a.TimeOnShelter,
 y.AnimalType AS theType,
 s.SpeciesName,
@@ -37,16 +37,20 @@ $$GROUP_SpeciesName
 $$HEAD
 <h3>$SpeciesName</h3>
 <table border=1>
+<thead>
 <tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Brought In</b></td>
-<td><b>Time On Shelter</b></td>
-<td><b>Health Problems</b></td>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Brought In</b></th>
+<th><b>Time On Shelter</b></th>
+<th><b>Health Problems</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SpeciesName: {COUNT.ShelterCode}</p>
 GROUP$$
@@ -54,7 +58,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$ShelterCode</td>
-<td>$AnimalName</td>
+<td><a target="_blank" href="animal?id=$AID">$AnimalName</a></td>
 <td>$theType</td>
 <td>$BreedName</td>
 <td>$DateBroughtIn</td>

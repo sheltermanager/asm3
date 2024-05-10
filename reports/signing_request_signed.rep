@@ -2,7 +2,7 @@ Document signatures received
 ###
 Auditing
 ###
-33702/Any rev01
+33702/Any rev02
 ###
 All emailed electronic document signing requests between two dates that have been signed
 ###
@@ -31,13 +31,17 @@ $$GROUP_LOGTYPENAME
 $$HEAD
 <h2>$LOGTYPENAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>By</th>
 <th>Link</th>
 <th></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 GROUP$$
 

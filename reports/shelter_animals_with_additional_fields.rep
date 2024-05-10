@@ -2,7 +2,7 @@ Shelter Animals with Additional Fields
 ###
 Inventories
 ###
-34302/Any rev04
+34302/Any rev05
 ###
 List of shelter animals with additional field values.
 ###
@@ -23,7 +23,7 @@ HEADER$$
 
 $$GROUP_AnimalName
 $$HEAD
-<h2>$ShelterCode - $AnimalName</h2>
+<h2><a target="_blank" href="animal?id=$ID">$ShelterCode - $Animalname</a></h2>
 <p>$BreedName $SpeciesName ($AnimalType), aged $AnimalAge, intake $MostRecentEntryDate, located at $DisplayLocation</p>
 <table border="0">
 <tr>

@@ -2,7 +2,7 @@ Detailed Shelter Inventory (with units)
 ###
 Inventories
 ###
-33012/Any rev01
+33012/Any rev02
 ###
 Detailed current shelter inventory, with breed and microchip details and location units.
 ###
@@ -10,6 +10,7 @@ en
 ###
 SELECT a.ShelterCode, 
 a.AnimalName, 
+a.ID AS AID,
 a.MostRecentEntryDate,
 a.IdentichipNumber,
 a.AnimalAge,
@@ -34,19 +35,24 @@ HEADER$$
 $$GROUP_LocationName
 $$HEAD
 <h2>$LocationName</h2>
-<table border=1><tr>
-<td><b>Unit</b></td>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Microchip</b></td>
-<td><b>Type</b></td>
-<td><b>Age</b></td>
-<td><b>Breed</b></td>
-<td><b>Sex</b></td>
-<td><b>Date Entered Shelter</b></td>
-<td><b>Time On Shelter</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Unit</b></th>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Microchip</b></th>
+<th><b>Type</b></th>
+<th><b>Age</b></th>
+<th><b>Breed</b></th>
+<th><b>Sex</b></th>
+<th><b>Date Entered Shelter</b></th>
+<th><b>Time On Shelter</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>Total $LocationName: {COUNT.LocationName}</b></p>
 GROUP$$
@@ -55,7 +61,7 @@ $$BODY
 <tr>
 <td>$shelterlocationunit</td>
 <td>$sheltercode</td>
-<td>$animalname</td>
+<td><a target="_blank" href="animal?id=$AID">$animalname</a></td>
 <td>$identichipnumber</td>
 <td>$animaltype</td>
 <td>$animalage</td>

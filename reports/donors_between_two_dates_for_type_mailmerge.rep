@@ -2,7 +2,7 @@ Donors between two dates for type
 ###
 Financial
 ###
-34703/Any rev01
+34703/Any rev02
 ###
 Donors between two dates for payment types
 ###
@@ -13,7 +13,7 @@ owner.OwnerTown, owner.OwnerCounty, owner.OwnerPostcode, owner.EmailAddress, ani
 animal.ShelterCode, animal.BreedName 
 FROM owner
 INNER JOIN ownerdonation ON owner.ID = ownerdonation.ownerID
-INNER JOIN animal ON ownerdonation.animalID = animal.ID
+LEFT OUTER JOIN animal ON ownerdonation.animalID = animal.ID
 WHERE ownerdonation.donationtypeid = $ASK PAYMENTTYPE$ 
 AND ownerdonation.date >= '$ASK DATE Payments received between$'
 AND ownerdonation.date <= '$ASK DATE and$'  

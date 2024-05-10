@@ -2,7 +2,7 @@ Shelter View by Location
 ###
 Inventories
 ###
-34302/Any rev02
+34302/Any rev03
 ###
 A printable version of shelter view, broken down by location and species.
 ###
@@ -57,7 +57,7 @@ GROUP$$
 $$BODY
 <div style="display: inline-block; text-align: center">
 <a href="{IMAGE.$ANIMALID}"><img border="0" src="{IMAGE.$ANIMALID}" height="75" /></a><br/>
-$ANIMALNAME
+<a target="_blank" href="animal?id=$animalid">$ANIMALNAME</a>
 </div>
 BODY$$
 

@@ -2,19 +2,19 @@ Shelter Inventory with Original Owner Addresses
 ###
 Inventories
 ###
-Any rev02
+Any rev03
 ###
 Shelter animals, broken down by species/location with original owner addresses.
 ###
 en
 ###
-SELECT a.ShelterCode, a.AnimalName, a.DateBroughtIn,
+SELECT a.ShelterCode, a.AnimalName, a.ID As AID, a.DateBroughtIn,
 a.TimeOnShelter,
 y.AnimalType AS theType,
 s.SpeciesName,
 a.BreedName,
 CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE i.LocationName END AS LocationName,
-oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode
+oo.OwnerName AS OOName, oo.ID AS OID, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode
 FROM animal a
 LEFT OUTER JOIN animaltype y ON y.ID = a.AnimalTypeID
 LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
@@ -38,16 +38,20 @@ $$GROUP_SpeciesName
 $$HEAD
 <h3>$SpeciesName</h3>
 <table border=1>
+<thead>
 <tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Brought In</b></td>
-<td><b>By</b></td>
-<td><b>Time On Shelter</b></td>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Brought In</b></th>
+<th><b>By</b></th>
+<th><b>Time On Shelter</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SpeciesName: {COUNT.ShelterCode}</p>
 GROUP$$
@@ -55,11 +59,11 @@ GROUP$$
 $$BODY
 <tr>
 <td>$ShelterCode</td>
-<td>$AnimalName</td>
+<td><a target="_blank" href="animal?id=$AID">$AnimalName</a></td>
 <td>$theType</td>
 <td>$BreedName</td>
 <td>$DateBroughtIn</td>
-<td><i>$OOName</i><br />
+<td><i><a target="_blank" href="person?id=$OID">$OOName</a></i><br />
 $OOAddress<br />
 $OOTown<br />
 $OOCounty<br />
