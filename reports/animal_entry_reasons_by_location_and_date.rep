@@ -2,7 +2,7 @@ Animal Entry Reasons by Location and Date
 ###
 Auditing
 ###
-Any rev02
+Any rev03
 ###
 Number of animals who entered the shelter for each entry category broken down by location.
 ###
@@ -19,7 +19,15 @@ INNER JOIN entryreason e ON e.ID = a.EntryReasonID
 WHERE 
 DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' AND NonShelterAnimal = 0
 GROUP BY s.SpeciesName, il.LocationName, e.ReasonName
-ORDER BY s.SpeciesName, il.LocationName, e.ReasonName
+UNION SELECT COUNT (*) AS TotalEntry, e.ReasonName, il.LocationName, s.SpeciesName 
+FROM adoption m
+INNER JOIN animal a ON a.ID = m.AnimalID
+INNER JOIN species s ON s.ID = a.SpeciesID
+INNER JOIN internallocation il ON il.ID = a.ShelterLocation
+INNER JOIN entryreason e ON e.ID = m.ReturnedReasonID
+WHERE ReturnDate >= '$@from$' AND ReturnDate <= '$@to$'
+GROUP BY s.SpeciesName, il.LocationName, e.ReasonName
+ORDER BY SpeciesName, ReasonName
 ###
 $$HEADER
 HEADER$$

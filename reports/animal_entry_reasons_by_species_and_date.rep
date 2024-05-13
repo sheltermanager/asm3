@@ -18,13 +18,14 @@ INNER JOIN entryreason e ON e.ID = a.EntryReasonID
 WHERE 
 DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$' AND NonShelterAnimal = 0
 GROUP BY s.SpeciesName, e.ReasonName
-UNION SELECT COUNT (*) AS TotalEntry, mt.MovementType, s.SpeciesName 
+UNION SELECT COUNT (*) AS TotalEntry, e.ReasonName, s.SpeciesName 
 FROM adoption m
 INNER JOIN animal a ON a.ID = m.AnimalID
 INNER JOIN species s ON s.ID = a.SpeciesID
-INNER JOIN lksmovementtype mt ON mt.ID = m.MovementType
-GROUP BY s.SpeciesName, mt.MovementType
-ORDER BY s.SpeciesName, e.ReasonName
+INNER JOIN entryreason e ON e.ID = m.ReturnedReasonID
+WHERE ReturnDate >= '$@from$' AND ReturnDate <= '$@to$'
+GROUP BY s.SpeciesName, e.ReasonName
+ORDER BY SpeciesName, ReasonName
 ###
 $$HEADER
 HEADER$$
