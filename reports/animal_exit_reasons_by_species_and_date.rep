@@ -2,7 +2,7 @@ Animal Exit Reasons by Species and Date
 ###
 Movements
 ###
-Any rev02
+Any rev03
 ###
 Number of animals of each species who exited the shelter for each outcome.
 ###
@@ -11,7 +11,7 @@ en
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT COUNT(a.ID) AS TotalEntry, t.MovementType, s.SpeciesName
+SELECT COUNT(a.ID) AS Exited, t.MovementType, s.SpeciesName
 FROM adoption m
 INNER JOIN animal a ON m.AnimalID = a.ID
 INNER JOIN species s ON s.ID = a.SpeciesID
@@ -19,7 +19,19 @@ INNER JOIN lksmovementtype t ON t.ID = m.MovementType
 WHERE 
 MovementDate >= '$@from$' AND MovementDate <= '$@to$' AND NonShelterAnimal = 0
 GROUP BY s.SpeciesName, t.MovementType
-ORDER BY s.SpeciesName, t.MovementType
+UNION SELECT COUNT(a.ID) AS Exited, 'Died' AS MovementType, s.SpeciesName
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+WHERE DeceasedDate Is Not Null AND DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$' 
+AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND PutToSleep = 0
+GROUP BY s.SpeciesName, MovementType
+UNION SELECT COUNT(a.ID) AS Exited, 'Euthanized' AS MovementType, s.SpeciesName
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+WHERE DeceasedDate Is Not Null AND DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$' 
+AND DiedOffShelter = 0 AND NonShelterAnimal = 0 AND PutToSleep = 1
+GROUP BY s.SpeciesName, MovementType
+ORDER BY SpeciesName, MovementType
 ###
 $$HEADER
 HEADER$$
@@ -30,7 +42,7 @@ $$HEAD
 <table border="0">
 $$FOOT
 <tr>
-<td><b>Total for $SpeciesName:</b></td> <td><b>{SUM.TOTALENTRY.0}</b></td>
+<td><b>Total for $SpeciesName:</b></td> <td><b>{SUM.EXITED.0}</b></td>
 </tr>
 </table>
 GROUP$$
@@ -38,7 +50,7 @@ GROUP$$
 $$BODY
 <tr>
 <td>$MOVEMENTTYPE:</td>
-<td>$TOTALENTRY</td>
+<td>$EXITED</td>
 </tr>
 BODY$$
 
