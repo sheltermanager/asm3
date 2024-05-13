@@ -2,7 +2,7 @@ Time With Fosterer
 ###
 Movements
 ###
-PostgreSQL rev01
+PostgreSQL rev02
 ###
 All foster movements for a specific fosterer between two dates with total in days
 ###
@@ -34,6 +34,7 @@ $$HEAD
 <h2><a target="_blank" href="person?id=$OID">$OWNERNAME</a></h2>
 <p>Address: $FostererAddress <br> Phone: $FostererPhone <br> Email: $FostererEmail</p>
 <table border="1">
+<thead>
 <tr>
 <th>Animal</th>
 <th>Shelter Code</th>
@@ -44,7 +45,10 @@ $$HEAD
 <th>Foster Ended</th>
 <th>Days In Foster</th>  
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total Days Fostered: {SUM.DAYSINFOSTER.0}</p>
 GROUP$$

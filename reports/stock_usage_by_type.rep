@@ -2,7 +2,7 @@ Stock Usage by Type and Date
 ###
 Stock Control
 ###
-33402/Any rev01
+33402/Any rev02
 ###
 Stock usage between two dates broken down by type
 ###
@@ -28,6 +28,7 @@ $$GROUP_UsageTypeName
 $$HEAD
 <h2>$USAGETYPENAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Location</th>
@@ -39,7 +40,11 @@ $$HEAD
 <th>Units</th>
 <th>Value</th>
 <th>Comments</th>
+</tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h3>Total $USAGETYPENAME: {COUNT.QUANTITY} (Value {SUM.MoneyUsageCost})</h3>
 GROUP$$

@@ -2,14 +2,14 @@ Site Non-Neutered/Spayed Adopted Animals
 ###
 Site
 ###
-33908/Any rev02
+33908/Any rev03
 ###
 Adopted animals who have not been neutered/spayed for the current site (requires multi-site capability).
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, t.AnimalType, s.Sex, ad.MovementDate,
-o.OwnerName, o.OwnerAddress, O.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, s.Sex, ad.MovementDate,
+o.OwnerName, o.ID AS OID, o.OwnerAddress, O.OwnerTown, o.OwnerCounty, o.OwnerPostcode,
 o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, a.AnimalAge, p.SpeciesName
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -25,6 +25,7 @@ ORDER BY ad.MovementDate, t.AnimalType, a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -35,18 +36,20 @@ $$HEADER
 <th>Adopted</th>
 <th>By</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$SPECIESNAME</td>
 <td>$ANIMALTYPE</td>
 <td>$SEX</td>
 <td>$ANIMALAGE</td>
 <td>$MOVEMENTDATE</td>
-<td><b>$OWNERNAME</b><br/>
+<td><b><a target="_blank" href="person?id=$OID">$OWNERNAME</a></b><br/>
 $OWNERADDRESS<br />
 $OWNERTOWN<br />
 $OWNERCOUNTY $OWNERPOSTCODE<br />
@@ -59,6 +62,7 @@ E: $EMAILADDRESS
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

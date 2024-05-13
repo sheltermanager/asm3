@@ -2,7 +2,7 @@ Stock Usage by Name and Date
 ###
 Stock Control
 ###
-33402/Any rev01
+33402/Any rev02
 ###
 Stock usage between two dates broken down by name
 ###
@@ -28,6 +28,7 @@ $$GROUP_Name
 $$HEAD
 <h2>$NAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Type</th>
@@ -39,7 +40,11 @@ $$HEAD
 <th>Units</th>
 <th>Value</th>
 <th>Comments</th>
+</tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h3>Total $NAME: {SUM.QUANTITY} (Value {SUM.MONEYUSAGECOST})</h3>
 

@@ -2,7 +2,7 @@ Site In/Out
 ###
 Site
 ###
-33908/Any rev02
+33908/Any rev03
 ###
 All animals entering and leaving the site over a period (requires multi-site capability).
 ###
@@ -16,6 +16,7 @@ SELECT * FROM
 
 SELECT DateBroughtIn AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -33,6 +34,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT DateBroughtIn AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -50,6 +52,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -68,6 +71,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -86,6 +90,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
 CASE WHEN DeceasedDate Is Null OR DeceasedDate > adoption.ReturnDate THEN 'Foster Return' ELSE 'Died On Foster' END AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -104,6 +109,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
 (SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -122,6 +128,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT adoption.ReturnDate AS thedate,
 '' AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -140,6 +147,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -159,6 +167,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -178,6 +187,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -197,6 +207,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -216,6 +227,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -235,6 +247,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -255,6 +268,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -274,6 +288,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT adoption.MovementDate AS thedate,
 '' AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -293,6 +308,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT DeceasedDate AS thedate,
 '' AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -310,6 +326,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT DeceasedDate AS thedate,
 (SELECT ReasonName FROM deathreason WHERE ID = animal.PTSReasonID) AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -327,6 +344,7 @@ AND $SITE$ = (SELECT SiteID FROM internallocation WHERE ID = animal.ShelterLocat
 
 UNION ALL SELECT DeceasedDate AS thedate,
 (SELECT ReasonName FROM deathreason WHERE ID = animal.PTSReasonID) AS Reason,
+animal.ID AS AID,
 ShelterCode,
 IdentichipNumber,
 AnimalName,
@@ -359,20 +377,25 @@ GROUP$$
 $$GROUP_CategoryName
 $$HEAD
 <h2>$CategoryName</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Reason</b></td>
-<td><b>Code</b></td>
-<td><b>Microchip</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Age</b></td>
-<td><b>Sex</b></td>
-<td><b>Location</b></td>
-<td><b>Owner</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Reason</b></th>
+<th><b>Code</b></th>
+<th><b>Microchip</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Age</b></th>
+<th><b>Sex</b></th>
+<th><b>Location</b></th>
+<th><b>Owner</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h2>Total $CategoryName: {COUNT.thedate}</h2>
 GROUP$$
@@ -382,7 +405,7 @@ $$BODY<tr>
 <td>$REASON</td>
 <td>$SHELTERCODE</td>
 <td>$IDENTICHIPNUMBER</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPENAME</td>
 <td>$SPECIESNAME</td>
 <td>$ANIMALAGE</td>

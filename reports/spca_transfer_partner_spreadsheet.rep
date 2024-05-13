@@ -2,7 +2,7 @@ SPCA Transfer Partner Spreadsheet
 ###
 Movements
 ###
-2870/Any rev01
+2870/Any rev02
 ###
 Sheet of transfer movements between two dates to complete the SPCA transfer request spreadsheet.
 ###
@@ -48,6 +48,7 @@ $$HEADER
 <h3>$$ORGANISATION$$</h3>
 <p>$$ORGANISATIONADDRESS$$ $$ORGANISATIONCITY$$ $$ORGANISATIONSTATE$$ $$ORGANISATIONZIPCODE$$ $$ORGANISATIONTELEPHONE$$</p>
 <table border="1">
+<thead>
 <tr>
 <th>Animal #</th>
 <th>Accepted for Transfer</th>
@@ -68,6 +69,8 @@ $$HEADER
 <th>Notes</th>
 <th>SPCA Use Only</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -94,6 +97,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 
