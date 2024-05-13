@@ -197,7 +197,9 @@ data, or explicitly attach the form to existing records.
   they will not be added to the media tab of the animal.
 
 * Create Animal: Searches for an animal record matching the code field on the 
-  form if present. If a match is found, the form is attached to that animal,
+  form if present, or the animalname if a dropdown of Shelter or Adoptable Animal
+  was used (which has the code present in the name). 
+  If a match is found, the form is attached to that animal,
   otherwise a new animal record is created. While you can use the Species
   and Breed field types with the breed1/breed2/color fields, you can also
   use your own lookup lists containing subsets of these items for users

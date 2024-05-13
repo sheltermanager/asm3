@@ -1395,6 +1395,14 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
     # Have we got enough info to create the animal record? We need a name at a minimum
     if "animalname" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an animal record (need animalname).", l))
+    # If animalname contains a code (because it was chosen from a dropdown)
+    # separate the code and name and use them
+    if d["animalname"].find("::") != -1:
+        name, code = d["animalname"].split("::", 1)
+        d["animalname"] = name
+        d["code"] = code
+        d["sheltercode"] = code
+        d["shortcode"] = code
     # If a code has not been supplied and manual codes are turned on, 
     # generate one from the date and time to prevent record creation failing.
     if "code" not in d and asm3.configuration.manual_codes(dbo):
