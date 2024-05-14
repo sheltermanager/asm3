@@ -2,7 +2,7 @@ User Activity Report
 ###
 Auditing
 ###
-3309/Any rev03
+3309/Any rev04
 ###
 Changes/additions made by all system users between two dates.
 ###
@@ -223,12 +223,17 @@ HEADER$$
 $$GROUP_TheUser
 $$HEAD
 <h2>$TheUser</h2>
-<table border=1><tr>
-<td><b>Date</b></td>
-<td><b>Item</b></td>
-<td><b>Type</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Date</b></th>
+<th><b>Item</b></th>
+<th><b>Type</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 GROUP$$
 

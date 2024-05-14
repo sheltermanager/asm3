@@ -2,7 +2,7 @@ Vaccinations Expiring between two dates
 ###
 Diary
 ###
-33503/Any rev04
+33503/Any rev05
 ###
 Vaccinations expiring between two dates
 ###
@@ -26,15 +26,19 @@ AND NOT EXISTS(SELECT ID FROM animalvaccination WHERE AnimalID=a.ID AND Vaccinat
 ORDER BY av.DateExpires
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Location</b></td>
-<td><b>Vaccination Type</b></td>
-<td><b>Expires</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Location</b></th>
+<th><b>Vaccination Type</b></th>
+<th><b>Expires</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -54,6 +58,7 @@ H:$HOMETELEPHONE W:$WORKTELEPHONE C:$MOBILETELEPHONE
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -61,7 +66,7 @@ Vaccinations Expiring between two dates (shelter only)
 ###
 Diary
 ###
-33503/Any rev03
+33503/Any rev04
 ###
 Vaccinations expiring between two dates for shelter animals only.
 ###
@@ -81,18 +86,23 @@ AND a.Archived = 0
 ORDER BY av.DateExpires
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Location</b></td>
-<td><b>Vaccination Type</b></td>
-<td><b>Expires</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Location</b></th>
+<th><b>Vaccination Type</b></th>
+<th><b>Expires</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
-$$BODY<tr>
+$$BODY
+<tr>
 <td>$SHELTERCODE</td>
 <td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
@@ -104,5 +114,6 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

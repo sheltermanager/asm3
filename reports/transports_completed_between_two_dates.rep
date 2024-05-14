@@ -2,17 +2,17 @@ Transports completed between two dates
 ###
 Transport
 ###
-34004/Any rev02
+34004/Any rev03
 ###
 Transports completed between two dates
 ###
 en
 ###
 SELECT t.*, 
-d.OwnerName AS DriverName, d.OwnerAddress AS DriverAddress, d.OwnerTown AS DriverTown, d.OwnerCounty AS DriverCounty, d.OwnerPostcode AS DriverPostcode, d.HomeTelephone AS DriverTelephone, 
-p.OwnerName AS PickupName, t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode,
-dr.OwnerName AS DropoffName, t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode,
-a.AnimalName, a.ShelterCode, s.SpeciesName, a.BreedName,
+d.OwnerName AS DriverName, d.ID AS DID, d.OwnerAddress AS DriverAddress, d.OwnerTown AS DriverTown, d.OwnerCounty AS DriverCounty, d.OwnerPostcode AS DriverPostcode, d.HomeTelephone AS DriverTelephone, 
+p.OwnerName AS PickupName, p.ID AS PID, t.PickupAddress, t.PickupTown, t.PickupCounty, t.PickupPostcode,
+dr.OwnerName AS DropoffName, dr.ID AS DRID, t.DropoffAddress, t.DropoffTown, t.DropoffCounty, t.DropoffPostcode,
+a.AnimalName, a.ID AS AID, a.ShelterCode, s.SpeciesName, a.BreedName,
 tt.TransportTypeName AS TransportType,
 CASE WHEN t.Status = 1 THEN 'New' 
 WHEN t.Status = 2 THEN 'Confirmed'
@@ -32,6 +32,7 @@ ORDER BY t.DropoffDateTime
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Animal</th>
 <th>Type</th>
@@ -45,16 +46,18 @@ $$HEADER
 <th>Cost</th>
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
-<td>$ANIMALNAME - $SHELTERCODE ($BREEDNAME $SPECIESNAME)</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME - $SHELTERCODE</a> ($BREEDNAME $SPECIESNAME)</td>
 <td>$TRANSPORTTYPE</td>
-<td>$DRIVERNAME<br/>$DRIVERADDRESS<br/>$DRIVERTOWN $DRIVERCOUNTY $DRIVERPOSTCODE</td>
-<td>$PICKUPNAME<br/>$PICKUPADDRESS<br/>$PICKUPTOWN $PICKUPCOUNTY $PICKUPPOSTCODE</td>
+<td><a target="_blank" href="person?id=$DID">$DRIVERNAME</a><br/>$DRIVERADDRESS<br/>$DRIVERTOWN $DRIVERCOUNTY $DRIVERPOSTCODE</td>
+<td><a target="_blank" href="person?id=$PID">$PICKUPNAME</a><br/>$PICKUPADDRESS<br/>$PICKUPTOWN $PICKUPCOUNTY $PICKUPPOSTCODE</td>
 <td>$PICKUPDATETIME</td>
-<td>$DROPOFFNAME<br/>$DROPOFFADDRESS<br/>$DROPOFFTOWN $DROPOFFCOUNTY $DROPOFFPOSTCODE</td>
+<td><a target="_blank" href="person?id=$DRID">$DROPOFFNAME</a><br/>$DROPOFFADDRESS<br/>$DROPOFFTOWN $DROPOFFCOUNTY $DROPOFFPOSTCODE</td>
 <td>$DROPOFFDATETIME</td>
 <td>$STATUSNAME</td>
 <td>$MILES</td>
@@ -64,5 +67,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

@@ -2,14 +2,14 @@ Transfers In
 ###
 Movements
 ###
-Any rev01
+Any rev02
 ###
 Animals transferred into the shelter between two dates by transferor.
 ###
 en
 ###
-SELECT a.DateBroughtIn, a.AnimalName, a.ShelterCode, t.AnimalType, 
-s.SpeciesName, i.LocationName, bi.OwnerName, bi.OwnerAddress, bi.OwnerTown,
+SELECT a.DateBroughtIn, a.AnimalName, a.ID AS AID, a.ShelterCode, t.AnimalType, 
+s.SpeciesName, i.LocationName, bi.OwnerName, bi.ID AS OID, bi.OwnerAddress, bi.OwnerTown,
 bi.OwnerCounty, bi.OwnerPostCode
 FROM animal a
 INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
@@ -25,8 +25,9 @@ HEADER$$
 
 $$GROUP_OwnerName
 $$HEAD
-<h2>$OwnerName</h2>
+<h2><a target="_blank" href="person?id=$OID">$OWNERNAME</a></h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Name</th>
@@ -36,7 +37,10 @@ $$HEAD
 <th>Location</th>
 <th>From</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table> 
 <p>Total $OwnerName: {COUNT.ShelterCode}</p>
 GROUP$$
@@ -44,12 +48,12 @@ GROUP$$
 $$BODY
 <tr>
 <td>$DATEBROUGHTIN</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$SHELTERCODE</td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
 <td>$LOCATIONNAME</td>
-<td><b>$OWNERNAME</b><br/>
+<td><b><a target="_blank" href="person?id=$OID">$OWNERNAME</a></b><br/>
 $OWNERADDRESS<br/>
 $OWNERTOWN<br/>
 $OWNERCOUNTY<br/>

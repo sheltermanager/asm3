@@ -2,7 +2,7 @@ Unreturned equipment due between two dates
 ###
 Animal Control
 ###
-33307/Any rev02
+33307/Any rev03
 ###
 Unreturned loaned equipment due back between two dates
 ###
@@ -21,6 +21,7 @@ ORDER BY ot.LoanDate, tt.TrapTypeName, ot.TrapNumber
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Loaned</th>
 <th>Type</th>
@@ -30,6 +31,8 @@ $$HEADER
 <th>Due Back</th>
 <th>Comments</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -45,5 +48,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

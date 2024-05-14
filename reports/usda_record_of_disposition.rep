@@ -2,7 +2,7 @@ USDA Record of Disposition of Dogs and Cats
 ###
 Figures
 ###
-Any rev01
+Any rev02
 ###
 Information for completing the USDA record of dispositions for dogs and cats
 ###
@@ -16,7 +16,7 @@ species.SpeciesName, animal.TimeOnShelter, animal.DaysOnShelter, animal.Identich
 animaltype.AnimalType AS theType, lksex.Sex, animal.Markings, lksize.Size, animal.DateOfBirth,
 animal.BreedName, basecolour.BaseColour, lksmovementtype.MovementType, 
 animal.ID AS AID, lkcoattype.CoatType, animal.Weight,
-no.OwnerName, no.OwnerAddress,
+no.OwnerName, no.ID AS OID, no.OwnerAddress,
 no.OwnerTown, no.OwnerCounty,
 no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
 FROM adoption
@@ -38,23 +38,28 @@ HEADER$$
 $$GROUP_OwnerName
 $$HEAD
 <h2>$OwnerName</h2>
-<table border=1><tr>
-<td><b>Identification Number <sup>*A</sup></b></td>
-<td><b>Name</b></td>
-<td><b>Species <sup>*B/C</sup></b></td>
-<td><b>Sex <sup>*B/C</sup></b></td>
-<td><b>Date of Birth <sup>*D</sup></b></td>
-<td><b>Weight <sup>*E</sup></b></td>
-<td><b>Breed <sup>*F</sup></b></td>
-<td><b>Size <sup>*G</sup></b></td>
-<td><b>Coat Type <sup>*G</sup></b></td>
-<td><b>Colour <sup>*G</sup></b></td>
-<td><b>Markings <sup>*G</sup></b></td>
-<td><b>Disposition Date</b></td>
-<td><b>Disposition Type</b></td>
-<td><b>Name and Address</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Identification Number <sup>*A</sup></b></th>
+<th><b>Name</b></th>
+<th><b>Species <sup>*B/C</sup></b></th>
+<th><b>Sex <sup>*B/C</sup></b></th>
+<th><b>Date of Birth <sup>*D</sup></b></th>
+<th><b>Weight <sup>*E</sup></b></th>
+<th><b>Breed <sup>*F</sup></b></th>
+<th><b>Size <sup>*G</sup></b></th>
+<th><b>Coat Type <sup>*G</sup></b></th>
+<th><b>Colour <sup>*G</sup></b></th>
+<th><b>Markings <sup>*G</sup></b></th>
+<th><b>Disposition Date</b></th>
+<th><b>Disposition Type</b></th>
+<th><b>Name and Address</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h2>Total to $OwnerName: {COUNT.OwnerName}</h2>
 GROUP$$
@@ -73,7 +78,7 @@ $$BODY<tr>
 <td>$MARKINGS</td>
 <td>$MOVEMENTDATE</td>
 <td>$MOVEMENTTYPE</td>
-<td><i>$OwnerName</i><br/>
+<td><i><a target="_blank" href="person?id=$OID">$OWNERNAME</a></i><br/>
 $OwnerAddress<br/>
 $OwnerTown<br/>
 $OwnerCounty<br/>

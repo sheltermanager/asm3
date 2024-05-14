@@ -2,7 +2,7 @@ Vaccination Diary (On Shelter by Species)
 ###
 Diary
 ###
-33012/Any rev02
+33012/Any rev03
 ###
 Vaccinations required to date for shelter animals, broken down by species.
 ###
@@ -27,15 +27,20 @@ HEADER$$
 $$GROUP_SpeciesName
 $$HEAD
 <h2>$SpeciesName</h2>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Vaccination Type</b></td>
-<td><b>Required</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Vaccination Type</b></th>
+<th><b>Required</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 GROUP$$
 
@@ -56,7 +61,7 @@ Vaccination Diary (On Shelter by Species, Date Range)
 ###
 Diary
 ###
-33012/Any rev02
+33012/Any rev03
 ###
 Vaccinations required between two dates for shelter animals, broken down by species.
 ###
@@ -82,15 +87,20 @@ HEADER$$
 $$GROUP_SpeciesName
 $$HEAD
 <h2>$SPECIESNAME</h2>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Vaccination Type</b></td>
-<td><b>Required</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Vaccination Type</b></th>
+<th><b>Required</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 GROUP$$
 

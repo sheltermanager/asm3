@@ -2,7 +2,7 @@ Non-Neutered/Spayed Transferred Animals
 ###
 Auditing
 ###
-Any rev05
+Any rev06
 ###
 Transferred animals who have not been neutered/spayed.
 ###
@@ -25,6 +25,7 @@ ORDER BY ad.MovementDate, t.AnimalType, a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -35,6 +36,8 @@ $$HEADER
 <th>Transferred</th>
 <th>To</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -59,5 +62,6 @@ E: $EMAILADDRESS
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
