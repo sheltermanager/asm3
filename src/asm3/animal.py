@@ -5388,15 +5388,6 @@ def update_animal_figures_annual(dbo: Database, year: int = 0) -> str:
             "GROUP BY ad.ReturnDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
             sp["ID"], sp["SPECIESNAME"], "SP_RETURNADOPT", group, 40, showbabies, babymonths)
         
-    group = _("Returns (Adoption) {0}", l).format(year)
-    for sp in allspecies:
-        species_line("SELECT ad.ReturnDate AS TheDate, a.DateOfBirth AS DOB, " \
-            "COUNT(ad.ID) AS Total FROM animal a INNER JOIN adoption ad ON ad.AnimalID = a.ID WHERE " \
-            "a.SpeciesID = %d AND ad.ReturnDate Is Not Null AND ad.ReturnDate >= %s AND ad.ReturnDate <= %s " \
-            "AND a.NonShelterAnimal = 0 AND ad.MovementType = 1 AND ad.IsTrial = 0 " \
-            "GROUP BY ad.ReturnDate, a.DateOfBirth" % (int(sp["ID"]), firstofyear, lastofyear),
-            sp["ID"], sp["SPECIESNAME"], "SP_RETURNADOPT", group, 40, showbabies, babymonths)
-        
     group = _("Returns (Reclaim) {0}", l).format(year)
     for sp in allspecies:
         species_line("SELECT ad.ReturnDate AS TheDate, a.DateOfBirth AS DOB, " \
