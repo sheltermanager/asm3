@@ -1416,6 +1416,8 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         d["sheltercode"] = gencode
         d["shortcode"] = gencode
         sheltercode = gencode
+    # Test if an animal with this code already exists and merge any
+    # details/additional fields if it does
     if "code" in d and d["code"] != "":
         sheltercode = d["code"]
         similar = asm3.animal.get_animal_sheltercode(dbo, d["code"])
@@ -1426,7 +1428,7 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
             asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, animalid, "animal")
             # Overwrite fields that are present and have a value
             asm3.animal.merge_animal_details(dbo, username, animalid, d, force=True)
-    # Create the animal record if we didn't find one
+    # Create the new animal record if we didn't find one
     if animalid == 0:
         # Set some default values that the form couldn't set
         d["internallocation"] = asm3.configuration.default_location(dbo)
