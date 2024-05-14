@@ -1068,7 +1068,9 @@ def remove_media_after_exit(dbo: Database, years: int = None, username: str = "s
     if enabled and exityears > 0:
         cutoff = dbo.today(offset = exityears * -365)
         animals = dbo.query_list("SELECT ID FROM animal WHERE Archived=1 AND (ActiveMovementDate < ? OR DeceasedDate < ?)", (cutoff, cutoff))
-        affected = dbo.delete("media", "LinkType=0 AND LinkID IN (%s)" % ",".join(animals), username) 
+        affected = 0
+        if len(animals) > 0:
+            affected = dbo.delete("media", "LinkType=0 AND LinkID IN (%s)" % ",".join(animals), username) 
         asm3.al.debug("removed %d expired animal media items (remove %s years after exit)" % (affected, years), "media.remove_media_after_exit", dbo)
         return "OK %s" % affected
 
