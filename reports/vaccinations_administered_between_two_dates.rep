@@ -2,7 +2,7 @@ Vaccinations administered between two dates
 ###
 Medical
 ###
-34409/Any rev04
+34409/Any rev05
 ###
 List of all vaccinations administered between two dates
 ###
@@ -26,6 +26,7 @@ $$GROUP_VaccinationType
 $$HEAD
 <h2>$VaccinationType</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Animal</th>
 <th>Breed</th>
@@ -40,6 +41,8 @@ $$HEAD
 <th>Rabies Tag</th>
 <th>Cost</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td> 
@@ -55,6 +58,7 @@ $$FOOT
 <td></td>
 <td><b> {SUM.Cost}</b></td>
 </tr>
+</tbody>
 </table>
 <p><b>Total $VaccinationType: {COUNT.VaccinationType}</b></p>
 GROUP$$
@@ -84,7 +88,7 @@ Vaccinations administered between two dates (on shelter)
 ###
 Medical
 ###
-34409/Any rev04
+34409/Any rev05
 ###
 List of all vaccinations administered between two dates for current shelter animals.
 ###
@@ -108,6 +112,7 @@ $$GROUP_VaccinationType
 $$HEAD
 <h2>$VaccinationType</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Animal</th>
 <th>Breed</th>
@@ -122,6 +127,8 @@ $$HEAD
 <th>Rabies Tag</th>
 <th>Cost</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td> 
@@ -137,6 +144,7 @@ $$FOOT
 <td></td>
 <td><b> {SUM.Cost}</b></td>
 </tr>
+</tbody>
 </table>
 <p><b>Total $VaccinationType: {COUNT.VaccinationType}</b></p>
 GROUP$$
@@ -166,7 +174,7 @@ Vaccinations of type administered between two dates
 ###
 Medical
 ###
-34409/Any rev04
+34409/Any rev05
 ###
 List of all vaccinations of a type administered between two dates
 ###
@@ -192,6 +200,7 @@ $$GROUP_VaccinationType
 $$HEAD
 <h2>$VaccinationType</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Animal</th>
 <th>Breed</th>
@@ -206,6 +215,8 @@ $$HEAD
 <th>Rabies Tag</th>
 <th>Cost</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td> 
@@ -221,6 +232,7 @@ $$FOOT
 <td></td>
 <td><b> {SUM.Cost}</b></td>
 </tr>
+</tbody>
 </table>
 <p><b>Total $VaccinationType: {COUNT.VaccinationType}</b></p>
 GROUP$$

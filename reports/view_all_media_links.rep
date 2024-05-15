@@ -2,7 +2,7 @@ View all media links
 ###
 Maintenance
 ###
-Any rev02
+Any rev03
 ###
 List all video and document links added to the system in descending order of age
 ###
@@ -36,11 +36,14 @@ ORDER BY m.Date DESC
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Record</th>
 <th>Date</th>
 <th>Link</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -52,5 +55,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

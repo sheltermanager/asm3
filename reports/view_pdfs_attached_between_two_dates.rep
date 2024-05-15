@@ -2,7 +2,7 @@ View PDFs attached between two dates
 ###
 Maintenance
 ###
-Any rev01
+Any rev02
 ###
 List all PDFs added to the system between two dates in descending order of age with links
 ###
@@ -37,11 +37,14 @@ ORDER BY m.Date DESC
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Record</th>
 <th>Date</th>
 <th>Link</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -53,5 +56,6 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

@@ -2,14 +2,14 @@ Weight Loss (shelter animals, last 3)
 ###
 Statistics
 ###
-PostgreSQL/3215 rev04
+PostgreSQL/3215 rev05
 ###
 All shelter animals where the current weight is lower than the last 3 readings.
 ###
 en
 ###
 SELECT
-a.ShelterCode, a.AnimalName, a.AnimalAge, 
+a.ShelterCode, a.AnimalName, a.ID AS AID, a.AnimalAge, 
 t.AnimalType, s.SpeciesName, a.BreedName, sx.Sex, a.DisplayLocation, a.Weight, 
 (SELECT string_agg(TO_CHAR(Date, 'YYYY-MM-DD') || ': ' || Comments, '<br/>') FROM (SELECT Date, Comments FROM log WHERE LogTypeID=4 AND LinkID=a.ID AND LinkType=0 ORDER BY Date DESC LIMIT 3 OFFSET 1) dummy) AS Last3
 FROM animal a
@@ -22,6 +22,7 @@ ORDER BY s.SpeciesName, a.DisplayLocation, a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -34,12 +35,14 @@ $$HEADER
 <th>Weight</th>
 <th>Last 3 Weights</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALAGE</td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
@@ -52,6 +55,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <p>Total: {COUNT.SHELTERCODE}</p>
 FOOTER$$
