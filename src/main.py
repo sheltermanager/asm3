@@ -1914,6 +1914,7 @@ class animal_bulk(JSONEndpoint):
             "autolitters": asm3.animal.get_active_litters_brief(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
+            "forlist": asm3.users.get_diary_forlist(dbo),
             "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
             "logtypes": asm3.lookups.get_log_types(dbo),
             "movementtypes": asm3.lookups.get_movement_types(dbo)

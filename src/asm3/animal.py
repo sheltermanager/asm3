@@ -2981,6 +2981,13 @@ def update_animals_from_form(dbo: Database, username: str, post: PostedData) -> 
                 newflags = a.additionalflags.replace(fs, "")
                 dbo.update("animal", a["ID"], { "AdditionalFlags": newflags })
                 aud.append("AdditionalFlags %s --> %s" % (a.additionalflags, newflags))
+    if post["diaryfor"] != "" and post.date("diarydate") is not None and post["diarysubject"] != "":
+        for animalid in post.integer_list("animals"):
+            asm3.diary.insert_diary(dbo, username, asm3.diary.ANIMAL, animalid, post.datetime("diarydate", "diarytime"), 
+                post["diaryfor"], post["diarysubject"], post["diarynotes"])
+    if post.integer("logtype") != -1:
+        for animalid in post.integer_list("animals"):
+            asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, post.integer("logtype"), post["lognotes"], post.date("logdate") )
     if post.integer("movementtype") != -1:
         default_return_reason = asm3.configuration.default_return_reason(dbo)
         for animalid in post.integer_list("animals"):
@@ -3004,9 +3011,6 @@ def update_animals_from_form(dbo: Database, username: str, post: PostedData) -> 
                 move_dict["reservationstatus"] = asm3.configuration.default_reservation_status(dbo)
                 move_dict["reservationdate"] = post["movementdate"]
             asm3.movement.insert_movement_from_form(dbo, username, asm3.utils.PostedData(move_dict, dbo.locale))
-    if post.integer("logtype") != -1:
-        for animalid in post.integer_list("animals"):
-            asm3.log.add_log(dbo, username, asm3.log.ANIMAL, animalid, post.integer("logtype"), post["lognotes"], post.date("logdate") )
     # Record the user as making the last change to this record and create audit records for the changes
     dbo.execute("UPDATE animal SET LastChangedBy = %s, LastChangedDate = %s WHERE ID IN (%s)" % (dbo.sql_value(username), dbo.sql_now(), post["animals"]))
     if len(aud) > 0:
