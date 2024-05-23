@@ -1,6 +1,7 @@
 49
 ================
 
+23/05/24 Query builder: Treat additional field 0 as no value as well as empty string
 23/05/24 Bulk change animals: create diary notes #1472
 20/05/24 Option to choose married couple name format
 14/05/24 Prevent invalid queries when there is no expired media

@@ -741,34 +741,34 @@ $(function() {
                 if (common.array_in(v.LINKTYPE, ADDITIONAL_ANIMAL)) { 
                     reports.qb_animal_criteria.push(
                         [_("Additional field {0} has a value").replace("{0}", v.FIELDNAME), "af" + v.ID,
-                            "EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_animal.ID AND Value<>'')" ]);
+                            "EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_animal.ID AND Value<>'' AND Value<>'0')" ]);
                 }
                 if (common.array_in(v.LINKTYPE, ADDITIONAL_WAITINGLIST)) { 
                     reports.qb_waitinglist_criteria.push(
                         [_("Additional field {0} has a value").replace("{0}", v.FIELDNAME), "af" + v.ID,
-                            "EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_animalwaitinglist.ID AND Value<>'')" ]);
+                            "EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_animalwaitinglist.ID AND Value<>'' AND Value<>'0')" ]);
                 }
                 if (common.array_in(v.LINKTYPE, ADDITIONAL_PERSON)) { 
                     reports.qb_person_criteria.push(
                         [_("Additional field {0} has a value").replace("{0}", v.FIELDNAME), "af" + v.ID,
-                            "EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_owner.ID AND Value<>'')" ]);
+                            "EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_owner.ID AND Value<>'' AND Value<>'0')" ]);
                 }
             });
             $.each(controller.additionalfields, function(i, v) {
                 if (common.array_in(v.LINKTYPE, ADDITIONAL_ANIMAL)) { 
                     reports.qb_animal_criteria.push(
                         [_("Additional field {0} is blank").replace("{0}", v.FIELDNAME), "naf" + v.ID,
-                            "NOT EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_animal.ID AND Value<>'')" ]);
+                            "NOT EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_animal.ID AND Value<>'' AND Value<>'0')" ]);
                 }
                 if (common.array_in(v.LINKTYPE, ADDITIONAL_WAITINGLIST)) { 
                     reports.qb_waitinglist_criteria.push(
                         [_("Additional field {0} is blank").replace("{0}", v.FIELDNAME), "naf" + v.ID,
-                            "NOT EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_animalwaitinglist.ID AND Value<>'')" ]);
+                            "NOT EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_animalwaitinglist.ID AND Value<>'' AND Value<>'0')" ]);
                 }
                 if (common.array_in(v.LINKTYPE, ADDITIONAL_PERSON)) { 
                     reports.qb_person_criteria.push(
                         [_("Additional field {0} is blank").replace("{0}", v.FIELDNAME), "naf" + v.ID,
-                            "NOT EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_owner.ID AND Value<>'')" ]);
+                            "NOT EXISTS(SELECT Value FROM additional WHERE AdditionalFieldID=" + v.ID + " AND LinkID=v_owner.ID AND Value<>'' AND Value<>'0')" ]);
                 }
             });
             $.each(controller.entryreasons, function(i, v) {
