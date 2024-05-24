@@ -24,7 +24,7 @@ class TestPerson(unittest.TestCase):
         asm3.person.delete_person(base.get_dbo(), "test", self.nid)
 
     def test_calc_readable_flags(self):
-        self.assertEquals("a, b", asm3.person.calc_readable_flags("|a|b|"))
+        self.assertEqual("a, b", asm3.person.calc_readable_flags("|a|b|"))
 
     def test_get_homechecked(self):
         self.assertEqual(0, len(asm3.person.get_homechecked(base.get_dbo(), self.nid)))
