@@ -621,7 +621,7 @@ def json(obj: Any, readable: bool = False) -> str:
     Takes a python object and serializes it to JSON.
     None objects are turned into "null"
     datetime objects are turned into string isoformat for use with js Date.
-    This function switches </ for <\/ in output to prevent HTML tags in any content
+    This function switches </ for <\\/ in output to prevent HTML tags in any content
         from breaking out of a script tag.
     readable: If True, line breaks and padding are added to make it human-readable
     """
@@ -724,7 +724,7 @@ def strip_duplicate_spaces(s: str) -> str:
     Removes duplicate spaces from a string and strips, eg: ' Bad   Flag' becomes 'Bad Flag'
     """
     if s is None: return ""
-    return " ".join(re.split("\s+", s)).strip()
+    return " ".join(re.split(r"\s+", s)).strip()
 
 def strip_html_tags(s: str) -> str:
     """
@@ -1814,7 +1814,7 @@ def is_smcom_smtp(dbo: Database) -> bool:
 
 def is_valid_email_address(s: str) -> bool:
     """ Returns True if s is a valid email address """
-    regex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
+    regex = r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
     return (re.search(regex, s) is not None)
 
 def parse_email_address(s: str) -> Tuple[str, str]:
