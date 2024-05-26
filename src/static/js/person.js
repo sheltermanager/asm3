@@ -801,7 +801,7 @@ $(function() {
                     email: email,
                     logtypes: controller.logtypes,
                     personid: controller.person.ID,
-                    templates: controller.templates
+                    templates: controller.templatesemail
                 });
             });
 

@@ -1,6 +1,7 @@
 49
 ================
 
+26/05/24 Email person should use email rather than person templates
 24/05/24 Fix bad regex escapes after updating to Python 3.12 on dev machines
 23/05/24 Query builder: Treat additional field 0 as no value as well as empty string
 23/05/24 Bulk change animals: create diary notes #1472

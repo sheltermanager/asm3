@@ -5933,6 +5933,7 @@ class person(JSONEndpoint):
             "towncounties": asm3.person.get_town_to_county(dbo),
             "tabcounts": asm3.person.get_satellite_counts(dbo, p.id)[0],
             "templates": asm3.template.get_document_templates(dbo, "person"),
+            "templatesemail": asm3.template.get_document_templates(dbo, "email"),
             "person": p
         }
 
