@@ -69,7 +69,6 @@ def email_note_on_change(dbo: Database, n: ResultRow, username: str) -> None:
     Emails the recipients of a diary note n with the note content
     username the user triggering the send by adding/updating a diary
     """
-    if not asm3.configuration.email_diary_on_change(dbo): return
     if n is None: return
     l = dbo.locale
     allusers = asm3.users.get_users(dbo)
@@ -95,7 +94,6 @@ def email_note_on_complete(dbo: Database, n: ResultRow, username: str) -> None:
     Emails the creator of a diary note n with the note's content 
     username the user triggering the send by completing a diary
     """
-    if not asm3.configuration.email_diary_on_complete(dbo): return
     if n is None: return
     l = dbo.locale
     allusers = asm3.users.get_users(dbo)
@@ -203,7 +201,8 @@ def complete_diary_note(dbo: Database, username: str, diaryid: int) -> None:
         "LinkType": row.LINKTYPE,
         "LinkID": row.LINKID
     }, username)
-    email_note_on_complete(dbo, get_diary(dbo, diaryid), username)
+    if asm3.configuration.email_diary_on_complete(dbo):
+        email_note_on_complete(dbo, get_diary(dbo, diaryid), username)
 
 def complete_diary_notes_for_animal(dbo: Database, username: str, animalid: int) -> None:
     """
@@ -217,7 +216,8 @@ def complete_diary_notes_for_animal(dbo: Database, username: str, animalid: int)
             "LinkType": r.LINKTYPE,
             "LinkID": r.LINKID
         }, username)
-        email_note_on_complete(dbo, r, username)
+        if asm3.configuration.email_diary_on_complete(dbo):
+            email_note_on_complete(dbo, r, username)
 
 def rediarise_diary_note(dbo: Database, username: str, diaryid: int, newdate: datetime) -> None:
     """
@@ -378,10 +378,11 @@ def insert_diary_from_form(dbo: Database, username: str, linktypeid: int, linkid
         "DateCompleted":    post.date("completed")
     }, username)
 
-    email_note_on_change(dbo, get_diary(dbo, diaryid), username)
+    if post.boolean("emailnow"): 
+        email_note_on_change(dbo, get_diary(dbo, diaryid), username)
     return diaryid
 
-def insert_diary(dbo: Database, username: str, linktypeid: int, linkid: int, diarydate: datetime, diaryfor: str, subject: str, note: str) -> int:
+def insert_diary(dbo: Database, username: str, linktypeid: int, linkid: int, diarydate: datetime, diaryfor: str, subject: str, note: str, emailnow: bool = False) -> int:
     """
     Creates a diary note from the form data
     username: User creating the diary
@@ -404,7 +405,8 @@ def insert_diary(dbo: Database, username: str, linktypeid: int, linkid: int, dia
         "Note":             note
     }, username)
 
-    email_note_on_change(dbo, get_diary(dbo, diaryid), username)
+    if asm3.configuration.email_diary_on_change(dbo): 
+        email_note_on_change(dbo, get_diary(dbo, diaryid), username)
     return diaryid
 
 def update_diary_from_form(dbo: Database, username: str, post: PostedData) -> None:
@@ -436,9 +438,11 @@ def update_diary_from_form(dbo: Database, username: str, post: PostedData) -> No
     }, username)
 
     if post.date("completed") is None:
-        email_note_on_change(dbo, get_diary(dbo, diaryid), username)
+        if post.boolean("emailnow"): 
+            email_note_on_change(dbo, get_diary(dbo, diaryid), username)
     else:
-        email_note_on_complete(dbo, get_diary(dbo, diaryid), username)
+        if asm3.configuration.email_diary_on_complete(dbo):
+            email_note_on_complete(dbo, get_diary(dbo, diaryid), username)
 
 def execute_diary_task(dbo: Database, username: str, tasktype: int, taskid: int, linkid: int, selecteddate: datetime) -> None:
     """

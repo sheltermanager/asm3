@@ -2,7 +2,7 @@ Vaccinations administered between two dates by person
 ###
 Medical
 ###
-34409/Any rev02
+34409/Any rev03
 ###
 List of all vaccinations administered between two dates grouped by the person who administered it
 ###
@@ -37,6 +37,7 @@ $$GROUP_PersonName
 $$HEAD
 <h2>$PersonName $LicenceNumber</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Animal</th>
 <th>Breed</th>
@@ -49,6 +50,8 @@ $$HEAD
 <th>Rabies Tag</th>
 <th>Cost</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td>
@@ -62,7 +65,7 @@ $$FOOT
 <td></td>
 <td><b> {SUM.Cost}</b></td>
 </tr>
-
+</tbody>
 </table>
 <p>Total vaccinations $PersonName: {COUNT.sheltercode}</p>
 GROUP$$

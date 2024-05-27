@@ -91,10 +91,10 @@ $$HEADER
 <th>Cat</th>
 </tr>
 </thead>
+<tbody>
 HEADER$$
 
 $$BODY
-<tbody>
 <tr>
 <td>in care at the establishment, or in foster care, on $FROMDATE</td>
 <td>$DogBeginning</td>
@@ -120,10 +120,10 @@ $$BODY
 <td>$DogRehomed</td>
 <td>$CatRehomed</td>
 </tr>
-</tbody>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

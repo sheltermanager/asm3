@@ -2,7 +2,7 @@ Vaccination Diary (On Shelter)
 ###
 Diary
 ###
-33012/Any rev03
+33012/Any rev04
 ###
 Vaccinations required to date for shelter animals.
 ###
@@ -21,15 +21,19 @@ AND a.Archived = 0
 ORDER BY av.DateRequired
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Location</b></td>
-<td><b>Vaccination Type</b></td>
-<td><b>Required</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Location</b></th>
+<th><b>Vaccination Type</b></th>
+<th><b>Required</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -44,6 +48,7 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -51,7 +56,7 @@ Vaccination Diary (On Shelter, Date Range)
 ###
 Diary
 ###
-3215/Any rev03
+3215/Any rev04
 ###
 Vaccinations required between two dates for shelter animals.
 ###
@@ -71,15 +76,19 @@ AND a.Archived = 0
 ORDER BY av.DateRequired
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Location</b></td>
-<td><b>Vaccination Type</b></td>
-<td><b>Required</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Location</b></th>
+<th><b>Vaccination Type</b></th>
+<th><b>Required</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -94,5 +103,6 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

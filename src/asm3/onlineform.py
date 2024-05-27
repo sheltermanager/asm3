@@ -1395,6 +1395,11 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
     # Have we got enough info to create the animal record? We need a name at a minimum
     if "animalname" not in d:
         raise asm3.utils.ASMValidationError(asm3.i18n._("There is not enough information in the form to create an animal record (need animalname).", l))
+    # Are date of birth and age blank? Assume an age of 1.0 if they are
+    if d["dateofbirth"] == "" and d["estimatedage"] == "": d["estimatedage"] = "1.0"
+    sheltercode = ""
+    status = 0 # default: created new record
+    animalid = 0
     # If animalname contains a code (because it was chosen from a dropdown)
     # separate the code and name and use them
     if d["animalname"].find("::") != -1:
@@ -1403,18 +1408,18 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
         d["code"] = code
         d["sheltercode"] = code
         d["shortcode"] = code
+        sheltercode = code
     # If a code has not been supplied and manual codes are turned on, 
     # generate one from the date and time to prevent record creation failing.
     if "code" not in d and asm3.configuration.manual_codes(dbo):
         gencode = "OF%s" % asm3.i18n.format_date(dbo.now(), "%y%m%d%H%M%S")
         d["sheltercode"] = gencode
         d["shortcode"] = gencode
-    # Are date of birth and age blank? Assume an age of 1.0 if they are
-    if d["dateofbirth"] == "" and d["estimatedage"] == "": d["estimatedage"] = "1.0"
-    status = 0 # default: created new record
-    # Does this animal code already exist?
-    animalid = 0
+        sheltercode = gencode
+    # Test if an animal with this code already exists and merge any
+    # details/additional fields if it does
     if "code" in d and d["code"] != "":
+        sheltercode = d["code"]
         similar = asm3.animal.get_animal_sheltercode(dbo, d["code"])
         if similar is not None:
             status = 1 # updated existing record
@@ -1423,7 +1428,7 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
             asm3.additional.merge_values_for_link(dbo, asm3.utils.PostedData(d, dbo.locale), username, animalid, "animal")
             # Overwrite fields that are present and have a value
             asm3.animal.merge_animal_details(dbo, username, animalid, d, force=True)
-    # Create the animal record if we didn't find one
+    # Create the new animal record if we didn't find one
     if animalid == 0:
         # Set some default values that the form couldn't set
         d["internallocation"] = asm3.configuration.default_location(dbo)

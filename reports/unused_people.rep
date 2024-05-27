@@ -2,7 +2,7 @@ Unused Person Records
 ###
 Auditing
 ###
-34108/Any rev01
+34108/Any rev02
 ###
 People who are not linked to other records in any capacity (have no movements, are not surrenderers, suspects, etc, etc).
 ###
@@ -39,6 +39,7 @@ ORDER BY o.OwnerName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Address</th>
@@ -48,6 +49,8 @@ $$HEADER
 <th>Email</th>
 <th>Flags</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -64,6 +67,7 @@ $OWNERTOWN, $OWNERCOUNTY $OWNERPOSTCODE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

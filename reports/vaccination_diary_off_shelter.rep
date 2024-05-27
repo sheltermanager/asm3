@@ -2,7 +2,7 @@ Vaccination Diary (Off Shelter)
 ###
 Diary
 ###
-Any rev02
+Any rev03
 ###
 Vaccinations required to date for animals not on the shelter.
 ###
@@ -26,15 +26,19 @@ AND a.Archived = 1
 ORDER BY av.DateRequired
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Location</b></td>
-<td><b>Vaccination Type</b></td>
-<td><b>Required</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Location</b></th>
+<th><b>Vaccination Type</b></th>
+<th><b>Required</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -58,5 +62,6 @@ $MOBILETELEPHONE
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

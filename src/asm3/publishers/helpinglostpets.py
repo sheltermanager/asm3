@@ -161,8 +161,8 @@ class HelpingLostPetsPublisher(FTPPublisher):
         notes = notes.replace("\r", "<br />")
         notes = notes.replace("\n", "<br />")
         notes = notes.replace("\"", "&ldquo;")
-        notes = notes.replace("\'", "&lsquo;")
-        notes = notes.replace("\`", "&lsquo;")
+        notes = notes.replace("'", "&lsquo;")
+        notes = notes.replace("`", "&lsquo;")
         line.append("\"%s\"" % notes)
         # Photo
         line.append("\"\"")

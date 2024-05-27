@@ -2,13 +2,13 @@ Successful Trial Adoptions
 ###
 Movements
 ###
-3200/Any rev01
+3200/Any rev02
 ###
 Trial adoptions that resulted in successful rehoming between two dates (adoptions with trial end date)
 ###
 en
 ###
-SELECT a.AnimalName, a.ShelterCode, sx.Sex, a.BreedName, a.AnimalAge, s.SpeciesName, atp.AnimalType, ad.MovementDate, ad.TrialEndDate, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
+SELECT a.AnimalName, a.ID AS AID, a.ShelterCode, sx.Sex, a.BreedName, a.AnimalAge, s.SpeciesName, atp.AnimalType, ad.MovementDate, ad.TrialEndDate, o.OwnerName, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone
 FROM animal a
 INNER JOIN adoption ad ON ad.AnimalID = a.ID
 INNER JOIN owner o ON o.ID = ad.OwnerID
@@ -21,6 +21,7 @@ ORDER BY ad.MovementDate
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Animal</th>
 <th>Type</th>
@@ -28,12 +29,14 @@ $$HEADER
 <th>Trial Ended</th>
 <th>Adopter</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
 <td><b>$SHELTERCODE - 
-$ANIMALNAME</b><br/>
+<a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></b><br/>
 $SEX $BREEDNAME $SPECIESNAME aged $ANIMALAGE</td>
 <td>$ANIMALTYPE</td>
 <td>$MOVEMENTDATE</td>
@@ -48,6 +51,7 @@ $HOMETELEPHONE</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <p>Total successful trial adoptions: {COUNT.SHELTERCODE}</p>
 FOOTER$$

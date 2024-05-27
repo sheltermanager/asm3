@@ -2,7 +2,7 @@ Shelter Animals with Warnings
 ###
 Inventories
 ###
-34411/Any rev01
+34411/Any rev02
 ###
 Detailed current shelter inventory of animals with warnings.
 ###
@@ -42,19 +42,24 @@ GROUP$$
 $$GROUP_SpeciesName
 $$HEAD
 <h3>$SpeciesName</h3>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Microchip</b></td>
-<td><b>Age</b></td>
-<td><b>Breed</b></td>
-<td><b>Sex</b></td>
-<td><b>Entered Shelter</b></td>
-<td><b>Time On Shelter</b></td>
-<td><b>Warning</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Microchip</b></th>
+<th><b>Age</b></th>
+<th><b>Breed</b></th>
+<th><b>Sex</b></th>
+<th><b>Entered Shelter</b></th>
+<th><b>Time On Shelter</b></th>
+<th><b>Warning</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SpeciesName: {COUNT.SpeciesName}</p>
 GROUP$$

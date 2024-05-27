@@ -2,13 +2,13 @@ Vouchers Expiring by Date
 ###
 Financial
 ###
-34304/Any rev01
+34304/Any rev02
 ###
 Vouchers expiring between two dates.
 ###
 en
 ###
-SELECT o.OwnerName, v.VoucherName, 
+SELECT o.OwnerName, o.ID AS OID,  v.VoucherName, 
 o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.MobileTelephone,
 ov.ID AS VoucherNumber, ov.VoucherCode, 
 ov.DateIssued, ov.DateExpired, ov.Value AS Amount,
@@ -26,16 +26,21 @@ HEADER$$
 $$GROUP_VoucherName
 $$HEAD
 <h2>$VoucherName</h2>
-<table border=1><tr>
-<td><b>Number</b></td>
-<td><b>Code</b></td>
-<td><b>Owner</b></td>
-<td><b>Issued</b></td>
-<td><b>Expires</b></td>
-<td><b>Value</b></td>
-<td><b>Comments</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Number</b></th>
+<th><b>Code</b></th>
+<th><b>Owner</b></th>
+<th><b>Issued</b></th>
+<th><b>Expires</b></th>
+<th><b>Value</b></th>
+<th><b>Comments</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p><b>{COUNT.VoucherName}</b> vouchers, value <b>{SUM.Amount.2}</b></p>
 GROUP$$
@@ -43,7 +48,7 @@ GROUP$$
 $$BODY<tr>
 <td>$VOUCHERNUMBER</td>
 <td>$VOUCHERCODE</td>
-<td><b>$OWNERNAME</b><br/>
+<td><b><a target="_blank" href="person?id=$OID">$OWNERNAME</a></b><br/>
 $OWNERADDRESS<br/>
 $OWNERTOWN<br/>
 $OWNERCOUNTY<br/>

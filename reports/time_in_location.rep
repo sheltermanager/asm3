@@ -2,7 +2,7 @@ Time in Location
 ###
 Statistics
 ###
-3200/PostgreSQL rev01
+3200/PostgreSQL rev02
 ###
 Shows the time spent in a given internal location by animals who entered the shelter between two dates
 ###
@@ -13,7 +13,7 @@ $VAR to DATE and$
 $VAR loc STRING Enter partial location name$
 
 SELECT
-a.AnimalName, a.ShelterCode,
+a.AnimalName, a.ID AS AID, a.ShelterCode,
 s.SpeciesName, t.AnimalType,
 
 COALESCE((SELECT date FROM log WHERE LinkID = a.ID AND Comments LIKE '%Moved% to $@loc$%' ORDER BY date DESC LIMIT 1), DateBroughtIn) AS StartDate,
@@ -36,6 +36,7 @@ ORDER BY a.DateBroughtIn
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
@@ -45,12 +46,14 @@ $$HEADER
 <th>Left</th>
 <th>Time In Location</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
 <tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$SPECIESNAME</td>
 <td>$STARTDATE</td>
@@ -60,6 +63,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <p>Total: {COUNT.BreedName}, Average: {AVG.DaysInLocation.2} days</p>
 FOOTER$$

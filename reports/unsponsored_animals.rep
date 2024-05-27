@@ -2,7 +2,7 @@ Shelter Animals without a Sponsor
 ###
 Financial
 ###
-Any rev01
+Any rev02
 ###
 Shelter animals without a sponsor (no payments of type animal sponsorship)
 ###
@@ -11,6 +11,7 @@ en
 SELECT 
 ShelterCode, 
 AnimalName,
+animal.ID AS AID,
 TimeOnShelter,
 animaltype.AnimalType,
 species.SpeciesName,
@@ -40,22 +41,27 @@ GROUP$$
 $$GROUP_SpeciesName
 $$HEAD
 <h2>$SPECIESNAME</h2>
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Age</b></td>
-<td><b>Time On Shelter</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Age</b></th>
+<th><b>Time On Shelter</b></th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <p>Total $SPECIESNAME: {COUNT.SpeciesName}</p>
 GROUP$$
 
 $$BODY<tr>
 <td>$SHELTERCODE</td>
-<td>$ANIMALNAME</td>
+<td><a target="_blank" href="animal?id=$AID">$ANIMALNAME</a></td>
 <td>$ANIMALTYPE</td>
 <td>$BREEDNAME</td>
 <td>$ANIMALAGE ($AGEGROUP)</td>

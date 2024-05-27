@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-05-06 10:30+0000\n"
+"POT-Creation-Date: 2024-05-27 10:05+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -394,7 +394,7 @@ msgstr ""
 msgid "Add Cost"
 msgstr ""
 
-#: mobile.py roles.js
+#: mobile.py animal_bulk.js roles.js
 msgid "Add Diary"
 msgstr ""
 
@@ -5133,6 +5133,10 @@ msgstr ""
 msgid "Email these credentials to the user"
 msgstr ""
 
+#: diary.js
+msgid "Email this note to recipients now"
+msgstr ""
+
 #: lostfound.js waitinglist.js person.js
 msgid "Email this person"
 msgstr ""
@@ -6031,6 +6035,10 @@ msgstr ""
 
 #: dbupdate.py
 msgid "Finnish Spitz"
+msgstr ""
+
+#: options.js
+msgid "First & First Last"
 msgstr ""
 
 #: options.js
@@ -7839,6 +7847,10 @@ msgstr ""
 
 #: options.js
 msgid "Last, First"
+msgstr ""
+
+#: options.js
+msgid "Last, First & First"
 msgstr ""
 
 #: maint_latency.js
@@ -13234,7 +13246,8 @@ msgstr ""
 msgid "SubTotal"
 msgstr ""
 
-#: mobile.py diarytask.js mailmerge.js diary.js common_widgets.js
+#: mobile.py diarytask.js mailmerge.js diary.js animal_bulk.js
+#: common_widgets.js
 msgid "Subject"
 msgstr ""
 

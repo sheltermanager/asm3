@@ -2,7 +2,7 @@ View forms/documents attached between two dates
 ###
 Maintenance
 ###
-Any rev04
+Any rev05
 ###
 List all documents and submitted HTML forms added to the system between two dates with links
 ###
@@ -29,11 +29,14 @@ ORDER BY m.Date
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Record</th>
 <th>Date</th>
 <th>Link</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -45,6 +48,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <p>Total: {COUNT.LINKDISPLAY}</p>
 FOOTER$$

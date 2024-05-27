@@ -2,7 +2,7 @@ Unpaid fines
 ###
 Animal Control
 ###
-33307/Any rev02
+33307/Any rev03
 ###
 All unpaid fines with totals
 ###
@@ -24,6 +24,7 @@ $$GROUP_CitationName
 $$HEAD
 <h2>$CITATIONNAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Date</th>
 <th>Person</th>
@@ -31,6 +32,8 @@ $$HEAD
 <th>Due</th>
 <th>Paid</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td>
@@ -39,6 +42,7 @@ $$FOOT
 <td></td>
 <td></td>
 </tr>
+</tbody>
 </table>
 <h2>Total $CITATIONNAME: {COUNT.CITATIONNAME}</h2>
 GROUP$$

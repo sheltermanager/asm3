@@ -2,7 +2,7 @@ Unused Stock expiring between two dates
 ###
 Stock Control
 ###
-33402/Any rev01 
+33402/Any rev02
 ###
 All stocks expiring between two dates, broken down by location
 ###
@@ -24,6 +24,7 @@ $$GROUP_LocationName
 $$HEAD
 <h2>$LOCATIONNAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Description</th>
@@ -32,7 +33,11 @@ $$HEAD
 <th>Total</th>
 <th>Balance</th>
 <th>Units</th>
+</tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h3>Total $LOCATIONNAME: {COUNT.QUANTITY}</h3>
 GROUP$$

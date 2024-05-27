@@ -2,7 +2,7 @@ Current Stock Levels
 ###
 Stock Control
 ###
-33905/Any rev01
+33905/Any rev02
 ###
 All current stocks held, broken down by location
 ###
@@ -23,6 +23,7 @@ $$GROUP_LocationName
 $$HEAD
 <h2>$LOCATIONNAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Description</th>
@@ -35,6 +36,9 @@ $$HEAD
 <th>Units</th>
 <th>Unit Price</th>
 <th>Value</th>
+</tr>
+</thead>
+<tbody>
 $$FOOT
 <tr>
 <td></td>
@@ -49,6 +53,7 @@ $$FOOT
 <td></td>
 <td><b>{SUM.MONEYVALUE}</b></td>
 </tr>
+</tbody>
 </table>
 <h3>Total $LOCATIONNAME: {COUNT.QUANTITY}</h3>
 GROUP$$
@@ -76,7 +81,7 @@ Stock Levels at Date
 ###
 Stock Control
 ###
-33402/Any rev01
+33402/Any rev02
 ###
 All stock levels as they were at a particular date, broken down by location
 ###
@@ -99,6 +104,7 @@ $$GROUP_LocationName
 $$HEAD
 <h2>$LOCATIONNAME</h2>
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Description</th>
@@ -108,7 +114,11 @@ $$HEAD
 <th>Total</th>
 <th>Balance</th>
 <th>Units</th>
+</tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 <h3>Total $LOCATIONNAME: {COUNT.QUANTITY}</h3>
 GROUP$$

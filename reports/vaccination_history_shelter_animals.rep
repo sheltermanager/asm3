@@ -2,13 +2,13 @@ Vaccination History for all Shelter Animals
 ###
 Medical
 ###
-33503/Any rev01
+33503/Any rev02
 ###
 List of all vaccinations administered to current shelter animals by species and animal
 ###
 en
 ###
-SELECT animal.animalname || ' - ' || animal.sheltercode as namecode, species.speciesname,
+SELECT animal.animalname || ' - ' || animal.sheltercode as namecode, species.speciesname, animal.ID AS AID,
 vaccinationtype.vaccinationtype, animalvaccination.daterequired, animalvaccination.dateofvaccination, 
 animalvaccination.dateexpires, animalvaccination.batchnumber, animalvaccination.manufacturer, animalvaccination.cost, 
 animal.breedname, animal.displaylocation, animal.animalage
@@ -30,8 +30,9 @@ GROUP$$
 
 $$GROUP_NameCode
 $$HEAD
-<p><b>$NameCode</b> $breedname $speciesname aged $animalage $displaylocation</p>
+<p><b><a target="_blank" href="animal?id=$AID">$NameCode</a></b> $breedname $speciesname aged $animalage $displaylocation</p>
 <table border="1">
+<thead>
 <tr>
 <th>Type</th>
 <th>Due</th>
@@ -41,7 +42,10 @@ $$HEAD
 <th>Manufacturer</th>
 <th>Cost</th>
 </tr>
+</thead>
+<tbody>
 $$FOOT
+</tbody>
 </table>
 GROUP$$
 HEADER$$

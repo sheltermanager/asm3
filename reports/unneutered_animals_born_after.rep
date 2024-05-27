@@ -2,7 +2,7 @@ Non-Neutered/Spayed Shelter Animals Born After
 ###
 Auditing
 ###
-Any rev04
+Any rev05
 ###
 Non-neutered/spayed animals born after a certain date
 ###
@@ -21,15 +21,19 @@ AND SpeciesID IN (1,2)
 AND animal.DateOfBirth >= '$ASK DATE Animals born after$'
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Location</b></td>
-<td><b>Type</b></td>
-<td><b>Species</b></td>
-<td><b>Age</b></td>
-<td><b>Sex</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Location</b></th>
+<th><b>Type</b></th>
+<th><b>Species</b></th>
+<th><b>Age</b></th>
+<th><b>Sex</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -44,5 +48,6 @@ $$BODY<tr>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$

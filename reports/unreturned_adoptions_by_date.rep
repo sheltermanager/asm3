@@ -2,7 +2,7 @@ Unreturned Adoptions by Date
 ###
 Movements
 ###
-Any rev03
+Any rev04
 ###
 Unreturned adoptions between two dates with the names/addresses of original owners and adopters.
 ###
@@ -32,18 +32,22 @@ AND ReturnDate Is Null
 ORDER BY MovementDate
 ###
 $$HEADER
-<table border=1><tr>
-<td><b>Code</b></td>
-<td><b>Name</b></td>
-<td><b>Type</b></td>
-<td><b>Breed</b></td>
-<td><b>Microchip</b></td>
-<td><b>Entered Shelter</b></td>
-<td><b>Deceased</b></td>
-<td><b>Came From</b></td>
-<td><b>Adoption Date</b></td>
-<td><b>Adopted To</b></td>
+<table border=1>
+<thead>
+<tr>
+<th><b>Code</b></th>
+<th><b>Name</b></th>
+<th><b>Type</b></th>
+<th><b>Breed</b></th>
+<th><b>Microchip</b></th>
+<th><b>Entered Shelter</b></th>
+<th><b>Deceased</b></th>
+<th><b>Came From</b></th>
+<th><b>Adoption Date</b></th>
+<th><b>Adopted To</b></th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY<tr>
@@ -72,6 +76,7 @@ $HomeTelephone $MobileTelephone</td>
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <h2>Total: {COUNT.Sheltercode} unreturned adoptions</h2>
 FOOTER$$

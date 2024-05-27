@@ -2,7 +2,7 @@ Non-Neutered/Spayed Animals Aged Over 6 Months (On Shelter)
 ###
 Auditing
 ###
-Any rev04
+Any rev05
 ###
 Shelter animals aged over 6 months who have not been neutered/spayed.
 ###
@@ -20,6 +20,7 @@ ORDER BY t.AnimalType, a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -28,6 +29,8 @@ $$HEADER
 <th>Sex</th>
 <th>Location</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -42,6 +45,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 &&&
@@ -49,7 +53,7 @@ Non-Neutered/Spayed Animals Aged Over 6 Months (all)
 ###
 Auditing
 ###
-Any rev04
+Any rev05
 ###
 All animals aged over 6 months who have not been neutered/spayed.
 ###
@@ -67,6 +71,7 @@ ORDER BY t.AnimalType, a.AnimalName
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Name</th>
 <th>Code</th>
@@ -75,6 +80,8 @@ $$HEADER
 <th>Sex</th>
 <th>Location</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -89,6 +96,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 FOOTER$$
 

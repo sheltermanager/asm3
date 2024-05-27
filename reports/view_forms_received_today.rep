@@ -2,7 +2,7 @@ View forms/documents attached received today
 ###
 Maintenance
 ###
-Any rev01
+Any rev02
 ###
 List all documents and submitted HTML forms added to the system today with links
 ###
@@ -28,11 +28,14 @@ ORDER BY m.Date
 ###
 $$HEADER
 <table border="1">
+<thead>
 <tr>
 <th>Record</th>
 <th>Date</th>
 <th>Link</th>
 </tr>
+</thead>
+<tbody>
 HEADER$$
 
 $$BODY
@@ -44,6 +47,7 @@ $$BODY
 BODY$$
 
 $$FOOTER
+</tbody>
 </table>
 <p>Total: {COUNT.LINKDISPLAY}</p>
 FOOTER$$
