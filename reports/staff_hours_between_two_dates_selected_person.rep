@@ -1,18 +1,18 @@
-Hours worked between two dates by work type and person
+Hours Worked between Two Dates for Selected Person
 ###
 Rota
 ###
-33609/PostgreSQL rev02
+33609/PostgreSQL rev01
 ###
-All shifts/overtime worked between two dates by work type and person
+All shifts/overtime worked between two dates for selected person
 ###
 en
 ###
 $VAR from DATE Enter from date$
 $VAR to DATE Enter to date$
 
-SELECT o.OwnerName, wt.WorkType, 
-ort.StartDateTime, ort.EndDateTime, ort.Comments, rt.RotaType,
+SELECT o.OwnerName,
+ort.StartDateTime, ort.EndDateTime, ort.Comments, rt.RotaType, wt.WorkType, 
 EXTRACT(HOUR FROM EndDateTime - StartDateTime)::real + (EXTRACT(MINUTE FROM EndDateTime - StartDateTime)::real / 60)  AS hours,
 EXTRACT(DAY FROM EndDateTime - StartDateTime)::integer  AS days
 FROM ownerrota ort
@@ -20,8 +20,8 @@ INNER JOIN owner o ON o.ID = ort.OwnerID
 INNER JOIN lksrotatype rt ON rt.ID = ort.RotaTypeID
 INNER JOIN lkworktype wt ON wt.ID = ort.WorkTypeID
 WHERE ort.StartDateTime >= '$@from$' AND ort.EndDateTime <= '$@to$ 23:59:59'
-AND ort.RotaTypeID < 10
-ORDER BY wt.WorkType, o.OwnerName, ort.StartDateTime
+AND ort.RotaTypeID < 10 AND o.ID = $ASK PERSON$
+ORDER BY o.OwnerName, rt.RotaType, ort.StartDateTime
 ###
 $$HEADER
 HEADER$$
@@ -65,4 +65,3 @@ BODY$$
 
 $$FOOTER
 FOOTER$$
-
