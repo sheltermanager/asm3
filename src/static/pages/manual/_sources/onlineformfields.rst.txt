@@ -43,6 +43,8 @@ comments
     The comments field for the animal (for historical reasons, comments populates the animal's description field), person, lost, found or waiting list animal
 description
     The description for the lost, found or waiting list animal
+healthproblems
+    The health problems field for the animal
 entryreason
     The entry category for an animal. ASM will try and guess this from the entry reasons lookup values in the database.
 entrytype
@@ -57,6 +59,8 @@ breed1 / breed2
     The breed of the animal. ASM will try and guess one of it's lookup values (or use the Breed field type to limit to them). If this form has no species field and you are creating an animal from it, the form engine will use the species linked to breed1.
 breed
     For compatibility, breed can be used interchangeably with breed1
+age
+    The age of the animal in years. Fractional years can be used, eg: 1.5
 agegroup
     The age group of the animal. Again, ASM will try and guess one if it's internal values.
 color / colour

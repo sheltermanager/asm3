@@ -232,7 +232,7 @@ def row_error(errors: List, rowtype: str, rowno: int, row: Dict, e: Any, dbo: Da
     exinfo: execution info for logging
     """
     errmsg = str(e)
-    if type(e) == asm3.utils.ASMValidationError: errmsg = e.getMsg()
+    if isinstance(e, asm3.utils.ASMValidationError): errmsg = e.getMsg()
     # If ANIMALIMAGE contains a data-uri, squash it for legibility
     if "ANIMALIMAGE" in row and row["ANIMALIMAGE"].startswith("data"):
         row["ANIMALIMAGE"] = "data:,"

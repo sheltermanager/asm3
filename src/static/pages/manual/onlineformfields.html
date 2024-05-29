@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Appendix: Online Form import fields &mdash; ASM 49u documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+  
+        <script src="_static/documentation_options.js?v=1fe27ac2"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -104,7 +103,7 @@
            <div itemprop="articleBody">
              
   <section id="appendix-online-form-import-fields">
-<span id="onlineformfields"></span><h1>Appendix: Online Form import fields<a class="headerlink" href="#appendix-online-form-import-fields" title="Permalink to this heading">¶</a></h1>
+<span id="onlineformfields"></span><h1>Appendix: Online Form import fields<a class="headerlink" href="#appendix-online-form-import-fields" title="Link to this heading">¶</a></h1>
 <p>ASM will recognise fields with the following names when receiving incoming
 online form submissions. These can be used to create person, lost animal, found
 animal, incident and waiting list records as well as attach to existing
@@ -145,6 +144,8 @@ Person fields suffixed with 2 update the second person for couple records</p>
 </dd>
 <dt>description</dt><dd><p>The description for the lost, found or waiting list animal</p>
 </dd>
+<dt>healthproblems</dt><dd><p>The health problems field for the animal</p>
+</dd>
 <dt>entryreason</dt><dd><p>The entry category for an animal. ASM will try and guess this from the entry reasons lookup values in the database.</p>
 </dd>
 <dt>entrytype</dt><dd><p>The entry type for an animal. ASM will try and guess this from the fixed list of entry types, Surrender, Stray, Transfer In, etc.</p>
@@ -158,6 +159,8 @@ Person fields suffixed with 2 update the second person for couple records</p>
 <dt>breed1 / breed2</dt><dd><p>The breed of the animal. ASM will try and guess one of it’s lookup values (or use the Breed field type to limit to them). If this form has no species field and you are creating an animal from it, the form engine will use the species linked to breed1.</p>
 </dd>
 <dt>breed</dt><dd><p>For compatibility, breed can be used interchangeably with breed1</p>
+</dd>
+<dt>age</dt><dd><p>The age of the animal in years. Fractional years can be used, eg: 1.5</p>
 </dd>
 <dt>agegroup</dt><dd><p>The age group of the animal. Again, ASM will try and guess one if it’s internal values.</p>
 </dd>

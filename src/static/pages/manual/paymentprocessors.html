@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Payment Processors &mdash; ASM 49u documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+  
+        <script src="_static/documentation_options.js?v=1fe27ac2"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -115,14 +114,14 @@
            <div itemprop="articleBody">
              
   <section id="payment-processors">
-<h1>Payment Processors<a class="headerlink" href="#payment-processors" title="Permalink to this heading">¶</a></h1>
+<h1>Payment Processors<a class="headerlink" href="#payment-processors" title="Link to this heading">¶</a></h1>
 <p>ASM can request due payments from customers via a payment processor. Currently,
 support is available for PayPal, Stripe and Cardcom (Israel only).</p>
 <p>For details on configuring payment processors from the options screen at
 <span class="menuselection">Settings ‣ Options ‣ Payment Processors</span>, see
 <a class="reference internal" href="options.html#paymentprocessors"><span class="std std-ref">Payment Processors</span></a></p>
 <section id="requesting-a-payment">
-<h2>Requesting a payment<a class="headerlink" href="#requesting-a-payment" title="Permalink to this heading">¶</a></h2>
+<h2>Requesting a payment<a class="headerlink" href="#requesting-a-payment" title="Link to this heading">¶</a></h2>
 <p>To request a payment from a customer, first create that payment in either the
 payment tab for a person or animal, or <span class="menuselection">Financial ‣ Payment Book</span></p>
 <p>Your payment should have a due date, but no received date.</p>
@@ -161,7 +160,7 @@ send it to the expense account.</p>
 <img alt="_images/processor_5_recpay.png" src="_images/processor_5_recpay.png" />
 </section>
 <section id="requesting-fulfilment-of-multiple-payments">
-<h2>Requesting fulfilment of multiple payments<a class="headerlink" href="#requesting-fulfilment-of-multiple-payments" title="Permalink to this heading">¶</a></h2>
+<h2>Requesting fulfilment of multiple payments<a class="headerlink" href="#requesting-fulfilment-of-multiple-payments" title="Link to this heading">¶</a></h2>
 <p>Payment requests are linked to receipt numbers rather than individual payments.</p>
 <p>While most payments will have their own receipt numbers, it is also possible to
 create multiple due payments on the same receipt number by using the
@@ -175,7 +174,7 @@ payments with the same receipt number will also be included and added to the
 payment total requested.</p>
 </section>
 <section id="adoption-checkout">
-<h2>Adoption checkout<a class="headerlink" href="#adoption-checkout" title="Permalink to this heading">¶</a></h2>
+<h2>Adoption checkout<a class="headerlink" href="#adoption-checkout" title="Link to this heading">¶</a></h2>
 <p>The adoption checkout feature allows an adopter to complete the adoption process
 on their mobile device. It allows them to view and sign their adoption paperwork,
 make an optional donation and then sends them off to your chosen payment processor
@@ -188,7 +187,7 @@ handle the payments, the document template you want to use to create the adoptio
 paperwork, the payment method to use when creating payments and the payment types
 to use when recording the adoption fee and donation.</p>
 <section id="initiating">
-<h3>Initiating<a class="headerlink" href="#initiating" title="Permalink to this heading">¶</a></h3>
+<h3>Initiating<a class="headerlink" href="#initiating" title="Link to this heading">¶</a></h3>
 <img alt="_images/adoption_checkout_start.png" src="_images/adoption_checkout_start.png" />
 <p>Checkout is initiated from the movement tab of the person or animal (or the
 reservation or “recently adopted” books). It can be done from either a
@@ -203,7 +202,7 @@ write ad-hoc content.</p>
 <p>A link will be added below your email message that links to the checkout system.</p>
 </section>
 <section id="checkout-link">
-<h3>Checkout Link<a class="headerlink" href="#checkout-link" title="Permalink to this heading">¶</a></h3>
+<h3>Checkout Link<a class="headerlink" href="#checkout-link" title="Link to this heading">¶</a></h3>
 <p>The adopter follows the link in the email on their mobile device (tablets and desktops
 can also be used, it is not limited in any way to just mobiles).</p>
 <p>At this point the system creates the adoption paperwork on the animal and person
@@ -243,7 +242,7 @@ adopter will be redirected to the success URL you configured under the payment
 processor options.</p>
 </section>
 <section id="incomplete-payments">
-<h3>Incomplete payments<a class="headerlink" href="#incomplete-payments" title="Permalink to this heading">¶</a></h3>
+<h3>Incomplete payments<a class="headerlink" href="#incomplete-payments" title="Link to this heading">¶</a></h3>
 <p>If the adopter does not complete their payment at this point, the payment records
 are left outstanding in the system.</p>
 <p>If the adopter returns to the checkout by following the link again, or
@@ -261,7 +260,7 @@ process again from the movement tab/book.</p>
 </section>
 </section>
 <section id="license-checkout">
-<h2>License checkout<a class="headerlink" href="#license-checkout" title="Permalink to this heading">¶</a></h2>
+<h2>License checkout<a class="headerlink" href="#license-checkout" title="Link to this heading">¶</a></h2>
 <p>The license checkout feature allows members of the public to renew and pay for
 their license online in a similar manner to the adoption checkout. Note that
 the first license for any animal/person combination must be created manually

@@ -103,7 +103,7 @@ FORM_FIELDS = [
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
     "animalname", "animalname2", "animalname3", "reserveanimalname", "reserveanimalname2", "reserveanimalname3",
-    "code", "microchip", "age", "dateofbirth", "entryreason", "entrytype", "markings", "comments", "hiddencomments", 
+    "code", "microchip", "age", "dateofbirth", "entryreason", "entrytype", "markings", "comments", "hiddencomments", "healthproblems", 
     "type", "breed1", "breed2", "color", "sex", "neutered", "weight", 
     "callnotes", "dispatchaddress", "dispatchcity", "dispatchstate", "dispatchzipcode", "transporttype", 
     "pickupaddress", "pickuptown", "pickupcity", "pickupcounty", "pickupstate", "pickuppostcode", "pickupzipcode", "pickupcountry", "pickupdate", "pickuptime",
@@ -1359,6 +1359,7 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
             d["microchipped"] = "on"
             d["microchipnumber"] = truncs(f.VALUE)
         if f.FIELDNAME == "hiddencomments": d["hiddenanimaldetails"] = f.VALUE
+        if f.FIELDNAME == "healthproblems": d["healthproblems"] = f.VALUE
         if f.FIELDNAME == "reason": d["reasonforentry"] = f.VALUE
         if f.FIELDNAME == "entryreason": d["entryreason"] = str(guess_entryreason(dbo, f.VALUE))
         if f.FIELDNAME == "entrytype": d["entrytype"] = str(guess_entrytype(dbo, f.VALUE))

@@ -64,7 +64,7 @@ def logmsg(mtype: str, msg: str, location: str, dbo: Any):
     # If we have a dbo, prepend the database name to the message
     if dbo is not None:
         dbname = ""
-        if type(dbo) == str: 
+        if isinstance(dbo, str):
             dbname = dbo
         else: 
             dbname = dbo.database

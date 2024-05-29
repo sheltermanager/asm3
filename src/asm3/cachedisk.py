@@ -122,7 +122,7 @@ def get(key: str, path: str, expectedtype: Any = None) -> Any:
             return None
 
         # Is the value of the type we're expecting?
-        if expectedtype is not None and type(o["value"]) != expectedtype:
+        if expectedtype is not None and not isinstance(o["value"], expectedtype):
             return None
 
         return o["value"]

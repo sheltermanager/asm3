@@ -603,7 +603,7 @@ def json_handler(obj: Any) -> str:
         return "null"
     elif hasattr(obj, "isoformat"):
         return obj.isoformat()
-    elif type(obj) == datetime.timedelta:
+    elif isinstance(obj, datetime.timedelta):
         hours, remain = divmod(obj.seconds, 3600)
         minutes, seconds = divmod(remain, 60)
         return "%02d:%02d:%02d" % (hours, minutes, seconds)

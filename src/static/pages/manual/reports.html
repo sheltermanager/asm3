@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reports &mdash; ASM 49u documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+  
+        <script src="_static/documentation_options.js?v=1fe27ac2"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -121,7 +120,7 @@
            <div itemprop="articleBody">
              
   <section id="reports">
-<h1>Reports<a class="headerlink" href="#reports" title="Permalink to this heading">¶</a></h1>
+<h1>Reports<a class="headerlink" href="#reports" title="Link to this heading">¶</a></h1>
 <p>Animal Shelter Manager offers some highly detailed reporting facilities that
 fall broadly into the following categories.</p>
 <p>All reports are accessed from the Reports top level-menu. By default, ASM does
@@ -173,7 +172,7 @@ shelter over the selected year.</p></li>
 returned to the shelter over the selected year.</p></li>
 </ul>
 <section id="customising-reports">
-<h2>Customising Reports<a class="headerlink" href="#customising-reports" title="Permalink to this heading">¶</a></h2>
+<h2>Customising Reports<a class="headerlink" href="#customising-reports" title="Link to this heading">¶</a></h2>
 <p>In addition to the stock reports provided by the sheltermanager.com repository,
 it is possible to create your own, using a simple language called “SQL” (short
 for “Structured Query Language”). SQL is a language for retrieving and
@@ -197,7 +196,7 @@ press <kbd class="kbd docutils literal notranslate">F11</kbd>, will allow you to
 <p>For some excellent beginner tutorials on both SQL and HTML, see
 www.w3schools.com</p>
 <section id="sql-keys">
-<h3>SQL Keys<a class="headerlink" href="#sql-keys" title="Permalink to this heading">¶</a></h3>
+<h3>SQL Keys<a class="headerlink" href="#sql-keys" title="Link to this heading">¶</a></h3>
 <p>What happens if you want to create a report that needs to request specific
 information from the user before running - eg: To filter between two dates, or
 only show animals of a particular species, etc?</p>
@@ -242,7 +241,7 @@ column data to HTML &lt;br&gt; tags so that they show on the report.</p></li>
 </ul>
 </section>
 <section id="ask">
-<h3>ASK<a class="headerlink" href="#ask" title="Permalink to this heading">¶</a></h3>
+<h3>ASK<a class="headerlink" href="#ask" title="Link to this heading">¶</a></h3>
 <p>Ask is quite a detailed key, which requests information from the user at
 generation time. The basic syntax is this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ASK [TYPE] [Message]$
@@ -295,7 +294,7 @@ containing a dropdown of all species on the system.</p></li>
 </div>
 </section>
 <section id="var">
-<h3>VAR<a class="headerlink" href="#var" title="Permalink to this heading">¶</a></h3>
+<h3>VAR<a class="headerlink" href="#var" title="Link to this heading">¶</a></h3>
 <p>VAR works just like ASK, the only difference is that instead of substituting
 the value into the SQL, it stores it to a variable name. You can then
 substitute the variable multiple times in your SQL:</p>
@@ -315,7 +314,7 @@ WHERE SpeciesID=$@species$ AND DateBroughtIn &gt;= &#39;$@broughtinafter$&#39;
 </div>
 </section>
 <section id="const">
-<h3>CONST<a class="headerlink" href="#const" title="Permalink to this heading">¶</a></h3>
+<h3>CONST<a class="headerlink" href="#const" title="Link to this heading">¶</a></h3>
 <p>CONST allows you to declare a constant value for later use in your query:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CONST name=value$
 </pre></div>
@@ -331,7 +330,7 @@ SELECT AnimalName FROM animal WHERE ActiveMovementType = $MOVEADOPT$
 </div>
 </section>
 <section id="report-grouping-and-calculation">
-<h3>Report Grouping and Calculation<a class="headerlink" href="#report-grouping-and-calculation" title="Permalink to this heading">¶</a></h3>
+<h3>Report Grouping and Calculation<a class="headerlink" href="#report-grouping-and-calculation" title="Link to this heading">¶</a></h3>
 <p>In addition, ASM allows you to do a number of transformations to the output
 HTML. You define a number of “blocks” to your reports. Anyone who has used a
 reporting tool (eg: Microsoft Access or Crystal) will recognise these.</p>
@@ -450,12 +449,12 @@ FOOTER$$
 </section>
 </section>
 <section id="charts">
-<h2>Charts<a class="headerlink" href="#charts" title="Permalink to this heading">¶</a></h2>
+<h2>Charts<a class="headerlink" href="#charts" title="Link to this heading">¶</a></h2>
 <img alt="_images/reports_chart.png" src="_images/reports_chart.png" />
 <p>Charts work just like the reports. The difference is that instead of generating HTML, you just  choose a chart type from the type dropdown.</p>
 <p>ASM will dissect the results of the query in the following way to generate a graph, depending on whether your query returns two or three columns.</p>
 <section id="two-column-variant">
-<h3>Two column variant<a class="headerlink" href="#two-column-variant" title="Permalink to this heading">¶</a></h3>
+<h3>Two column variant<a class="headerlink" href="#two-column-variant" title="Link to this heading">¶</a></h3>
 <ol class="arabic simple">
 <li><p>Each row in your result data becomes a point on the X axis</p></li>
 <li><p>The first column in each row is assumed to contain the name used for the
@@ -506,7 +505,7 @@ the X axis:</p>
 </div>
 </section>
 <section id="three-column-variant">
-<h3>Three column variant<a class="headerlink" href="#three-column-variant" title="Permalink to this heading">¶</a></h3>
+<h3>Three column variant<a class="headerlink" href="#three-column-variant" title="Link to this heading">¶</a></h3>
 <ol class="arabic simple">
 <li><p>Each row in your result data becomes a point on the X axis</p></li>
 <li><p>The first column in each row is assumed to contain the name used for a
@@ -531,7 +530,7 @@ GROUP BY i.LocationName, MONTH(ad.MovementDate)
 </section>
 </section>
 <section id="maps">
-<h2>Maps<a class="headerlink" href="#maps" title="Permalink to this heading">¶</a></h2>
+<h2>Maps<a class="headerlink" href="#maps" title="Link to this heading">¶</a></h2>
 <p>Maps are just like the reports. The difference is that instead of generating
 HTML, they will output map markers from a LatLong field.</p>
 <p>ASM expects map queries to return a resultset containing at least two columns. The first
@@ -555,7 +554,7 @@ link to the person record when the marker is clicked:</p>
 </div>
 </section>
 <section id="automatic-updating-of-repository-reports">
-<h2>Automatic updating of repository reports<a class="headerlink" href="#automatic-updating-of-repository-reports" title="Permalink to this heading">¶</a></h2>
+<h2>Automatic updating of repository reports<a class="headerlink" href="#automatic-updating-of-repository-reports" title="Link to this heading">¶</a></h2>
 <p>When you install a report from the repository, some reports have a revision
 number. This number will be shown in the list on the reports editing screen
 next to the report’s title.</p>

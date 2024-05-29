@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Service API &mdash; ASM 49u documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=86f27845" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+  
+        <script src="_static/documentation_options.js?v=1fe27ac2"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -147,7 +146,7 @@
            <div itemprop="articleBody">
              
   <section id="service-api">
-<span id="serviceapi"></span><h1>Service API<a class="headerlink" href="#service-api" title="Permalink to this heading">¶</a></h1>
+<span id="serviceapi"></span><h1>Service API<a class="headerlink" href="#service-api" title="Link to this heading">¶</a></h1>
 <p>ASM includes a service API that you can call from other software via HTTP. To
 call the API you construct a URL to the service controller. The service
 controller is /service, so if you are accessing a local ASM from your local
@@ -174,7 +173,7 @@ your data or view anything you don’t want them to.</p></li>
 called.</p></li>
 </ul>
 <section id="animal-datasets">
-<h2>Animal Datasets<a class="headerlink" href="#animal-datasets" title="Permalink to this heading">¶</a></h2>
+<h2>Animal Datasets<a class="headerlink" href="#animal-datasets" title="Link to this heading">¶</a></h2>
 <p>Many of the json and xml service calls return a dataset of animals, a sample animal
 JSON result looks like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
@@ -474,7 +473,7 @@ JSON result looks like this:</p>
 </div>
 </section>
 <section id="animal-image">
-<h2>animal_image<a class="headerlink" href="#animal-image" title="Permalink to this heading">¶</a></h2>
+<h2>animal_image<a class="headerlink" href="#animal-image" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns an animal’s preferred image. Send the id of the animal:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_image&amp;animalid=520&amp;seq=1
@@ -488,7 +487,7 @@ included in animal records (which contains the number of images an animal has)
 to programatically grab all the images for a particular animal.</p>
 </section>
 <section id="animal-thumbnail">
-<h2>animal_thumbnail<a class="headerlink" href="#animal-thumbnail" title="Permalink to this heading">¶</a></h2>
+<h2>animal_thumbnail<a class="headerlink" href="#animal-thumbnail" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 day</p>
 <p>Returns an animal’s preferred image as a thumbnail. Send the id of the animal:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=animal_thumbnail&amp;animalid=520
@@ -499,7 +498,7 @@ to programatically grab all the images for a particular animal.</p>
 size under <span class="menuselection">Publishing -&gt; Set Publishing Options -&gt; All Publishers</span></p>
 </section>
 <section id="animal-view">
-<h2>animal_view<a class="headerlink" href="#animal-view" title="Permalink to this heading">¶</a></h2>
+<h2>animal_view<a class="headerlink" href="#animal-view" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
 <p>Returns a webpage with information for one adoptable animal, constructed from the
 animalview HTML publishing template (editable at <span class="menuselection">Publishing -&gt;
@@ -519,7 +518,7 @@ than animalview:</p>
 </div>
 </section>
 <section id="animal-view-adoptable-js">
-<h2>animal_view_adoptable_js<a class="headerlink" href="#animal-view-adoptable-js" title="Permalink to this heading">¶</a></h2>
+<h2>animal_view_adoptable_js<a class="headerlink" href="#animal-view-adoptable-js" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
 <p>Returns a javascript file that when executed injects thumbnails of all
 adoptable animals into the page with links to the animal_view service call. It
@@ -545,7 +544,7 @@ found, a popup error message will appear.</p>
 </pre></div>
 </div>
 <section id="css-and-styles">
-<h3>CSS and Styles<a class="headerlink" href="#css-and-styles" title="Permalink to this heading">¶</a></h3>
+<h3>CSS and Styles<a class="headerlink" href="#css-and-styles" title="Link to this heading">¶</a></h3>
 <p>The adoptable_js output is unstyled - just a thumbnail with a name/link below
 and two lines of brief text containing some basic information about the animal.
 You can style this information by adding CSS to your stylesheets for the
@@ -609,7 +608,7 @@ animals with reservations, try this:</p>
 </div>
 </section>
 <section id="thumbnail-size">
-<h3>Thumbnail Size<a class="headerlink" href="#thumbnail-size" title="Permalink to this heading">¶</a></h3>
+<h3>Thumbnail Size<a class="headerlink" href="#thumbnail-size" title="Link to this heading">¶</a></h3>
 <p>By default, animal thumbnails will be displayed at the default system size
 (150px), which can be set up to a maximum of 300px in the options at
 <span class="menuselection">Publishing -&gt; Set Publishing Options -&gt; All Publishers</span></p>
@@ -628,7 +627,7 @@ constrain them to the size you prefer:</p>
 </div>
 </section>
 <section id="translations">
-<h3>Translations<a class="headerlink" href="#translations" title="Permalink to this heading">¶</a></h3>
+<h3>Translations<a class="headerlink" href="#translations" title="Link to this heading">¶</a></h3>
 <p>It’s possible to translate any of the text output by the adoptable list on the
 fly. By default, it only uses text from your database values so they will match
 the language of your database.</p>
@@ -652,7 +651,7 @@ species) to all as well as the no results and CLOSE link text:</p>
 </div>
 </section>
 <section id="filters">
-<h3>Filters<a class="headerlink" href="#filters" title="Permalink to this heading">¶</a></h3>
+<h3>Filters<a class="headerlink" href="#filters" title="Link to this heading">¶</a></h3>
 <p>You can also add a filter callback, which allows you to implement your own
 filter based on other elements in the page. The callback receives the complete
 animal record and must return true if the record is to be included in the list
@@ -689,7 +688,7 @@ allows them to filter for animals who are either in the shelter, fostered or
 listed as a courtesy for someone else.</p>
 </section>
 <section id="sort">
-<h3>Sort<a class="headerlink" href="#sort" title="Permalink to this heading">¶</a></h3>
+<h3>Sort<a class="headerlink" href="#sort" title="Link to this heading">¶</a></h3>
 <p>You can choose the sort order by setting an asm3_adoptable_sort variable. The default is
 ANIMALNAME, but another useful value is -DAYSONSHELTER to output animals based on how
 long they’ve been on shelter with the longest first. Preceding the sort field with a
@@ -713,7 +712,7 @@ adoptable animals to be output in a random order:</p>
 </div>
 </section>
 <section id="style">
-<h3>Style<a class="headerlink" href="#style" title="Permalink to this heading">¶</a></h3>
+<h3>Style<a class="headerlink" href="#style" title="Link to this heading">¶</a></h3>
 <p>You can choose the template that will be passed to the animal_view call when an animal’s
 adoptable profile is viewed. By default, this value is “animalview” to use the template
 with that name, but it can be overridden:</p>
@@ -726,7 +725,7 @@ with that name, but it can be overridden:</p>
 </div>
 </section>
 <section id="extra-content">
-<h3>Extra Content<a class="headerlink" href="#extra-content" title="Permalink to this heading">¶</a></h3>
+<h3>Extra Content<a class="headerlink" href="#extra-content" title="Link to this heading">¶</a></h3>
 <p>It’s also possible to add an extra content callback, which adoptable_js calls
 for every animal it outputs. For example, to add the animal’s bio below the
 thumbnail and basic info:</p>
@@ -745,7 +744,7 @@ content callback to output and format any data from the animal’s record in the
 way you want and override the default behaviour.</p>
 </section>
 <section id="limit">
-<h3>Limit<a class="headerlink" href="#limit" title="Permalink to this heading">¶</a></h3>
+<h3>Limit<a class="headerlink" href="#limit" title="Link to this heading">¶</a></h3>
 <p>You can limit the number of animals rendered by the adoptable_js output. This
 is useful if you want to only show a limited number of animals - eg: If this
 call is on the home page of your website and you’d like to show some featured
@@ -763,7 +762,7 @@ shelter the longest:</p>
 </div>
 </section>
 <section id="popup-iframe">
-<h3>Popup iFrame<a class="headerlink" href="#popup-iframe" title="Permalink to this heading">¶</a></h3>
+<h3>Popup iFrame<a class="headerlink" href="#popup-iframe" title="Link to this heading">¶</a></h3>
 <p>By default, clicking on an animal thumbnail or link will load the target
 animalview page in a new browser tab. However, the system can also load the
 page in a floating iframe so that viewing adoptable animals does not leave your
@@ -802,7 +801,7 @@ iframes.</p>
 </section>
 </section>
 <section id="animal-view-adoptable-html">
-<h2>animal_view_adoptable_html<a class="headerlink" href="#animal-view-adoptable-html" title="Permalink to this heading">¶</a></h2>
+<h2>animal_view_adoptable_html<a class="headerlink" href="#animal-view-adoptable-html" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
 <p>Returns a complete HTML document that references animal_view_adoptable_js to
 show a list of adoptable animals. It looks for an HTML template called
@@ -813,7 +812,7 @@ not exist:</p>
 </div>
 </section>
 <section id="csv-import">
-<h2>csv_import<a class="headerlink" href="#csv-import" title="Permalink to this heading">¶</a></h2>
+<h2>csv_import<a class="headerlink" href="#csv-import" title="Link to this heading">¶</a></h2>
 <p>The CSV import endpoint can be used to send CSV data to the system. GET or POST
 can be used and it accepts the following parameters:</p>
 <ul class="simple">
@@ -840,7 +839,7 @@ the CSV data and details of errors from any rows that failed to be imported:</p>
 </div>
 </section>
 <section id="csv-mail-and-csv-report">
-<h2>csv_mail and csv_report<a class="headerlink" href="#csv-mail-and-csv-report" title="Permalink to this heading">¶</a></h2>
+<h2>csv_mail and csv_report<a class="headerlink" href="#csv-mail-and-csv-report" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
 <p>Returns a CSV file containing a mail merge or report. Pass the name of the mail
 merge/report in the title attribute and if the merge requires any parameters,
@@ -850,7 +849,7 @@ you can pass those too just like with html_report:</p>
 </div>
 </section>
 <section id="json-mail-and-json-report">
-<h2>json_mail and json_report<a class="headerlink" href="#json-mail-and-json-report" title="Permalink to this heading">¶</a></h2>
+<h2>json_mail and json_report<a class="headerlink" href="#json-mail-and-json-report" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
 <p>Returns a dataset containing a mail merge or report. Pass the name of the mail
 merge/report in the title attribute and if the merge requires any parameters,
@@ -860,7 +859,7 @@ you can pass those too just like with html_report:</p>
 </div>
 </section>
 <section id="extra-image">
-<h2>extra_image<a class="headerlink" href="#extra-image" title="Permalink to this heading">¶</a></h2>
+<h2>extra_image<a class="headerlink" href="#extra-image" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 day</p>
 <p>Returns an extra image (see <span class="menuselection">Settings ‣ Reports ‣ Extra
 Images</span>).  Pass the name of the image in the title parameter:</p>
@@ -869,7 +868,7 @@ Images</span>).  Pass the name of the image in the title parameter:</p>
 </div>
 </section>
 <section id="html-adoptable-animals">
-<h2>html_adoptable_animals<a class="headerlink" href="#html-adoptable-animals" title="Permalink to this heading">¶</a></h2>
+<h2>html_adoptable_animals<a class="headerlink" href="#html-adoptable-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
 <p>Returns a complete HTML document containing an HTML page of adoptable animals.</p>
 <p>You can pass an HTML template name in an optional “template” parameter (leaving
@@ -894,7 +893,7 @@ http://localhost:5000/service?method=html_adoptable_animals
 </div>
 </section>
 <section id="html-adopted-animals">
-<h2>html_adopted_animals<a class="headerlink" href="#html-adopted-animals" title="Permalink to this heading">¶</a></h2>
+<h2>html_adopted_animals<a class="headerlink" href="#html-adopted-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
 <p>Returns a complete HTML document containing an HTML page of recently adopted
 animals.</p>
@@ -925,7 +924,7 @@ http://localhost:5000/service?method=html_adopted_animals&amp;order=adopted_asc
 </div>
 </section>
 <section id="html-deceased-animals">
-<h2>html_deceased_animals<a class="headerlink" href="#html-deceased-animals" title="Permalink to this heading">¶</a></h2>
+<h2>html_deceased_animals<a class="headerlink" href="#html-deceased-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
 <p>Returns a complete HTML document containing an HTML page of recently deceased
 animals.</p>
@@ -944,7 +943,7 @@ http://localhost:5000/service?method=html_deceased_animals&amp;order=deceased_de
 </div>
 </section>
 <section id="html-events">
-<h2>html_events<a class="headerlink" href="#html-events" title="Permalink to this heading">¶</a></h2>
+<h2>html_events<a class="headerlink" href="#html-events" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns a complete HTML document of shelter fundraising/adoption events
 from <span class="menuselection">ASM ‣ Events ‣ Edit Events</span></p>
@@ -978,7 +977,7 @@ and a “template” parameter can set the name of the template to use.</p>
 </div>
 </section>
 <section id="html-flagged-animals">
-<h2>html_flagged_animals<a class="headerlink" href="#html-flagged-animals" title="Permalink to this heading">¶</a></h2>
+<h2>html_flagged_animals<a class="headerlink" href="#html-flagged-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
 <p>Returns a complete HTML document containing an HTML page of shelter animals
 that have a particular flag.</p>
@@ -998,7 +997,7 @@ http://localhost:5000/service?method=html_flagged_animals&amp;flag=At+Risk&amp;o
 </div>
 </section>
 <section id="html-held-animals">
-<h2>html_held_animals<a class="headerlink" href="#html-held-animals" title="Permalink to this heading">¶</a></h2>
+<h2>html_held_animals<a class="headerlink" href="#html-held-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
 <p>Returns a complete HTML document containing an HTML page of current held animals.</p>
 <p>An “order” parameter can be passed to indicate the sort order (see
@@ -1013,7 +1012,7 @@ http://localhost:5000/service?method=html_held_animals
 </div>
 </section>
 <section id="html-report">
-<h2>html_report<a class="headerlink" href="#html-report" title="Permalink to this heading">¶</a></h2>
+<h2>html_report<a class="headerlink" href="#html-report" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
 <p>Returns an HTML document containing a report. Pass the name of the report in
 the title attribute. If the report requires any parameters, you can pass those
@@ -1025,7 +1024,7 @@ see the parameters it requires in the address bar:</p>
 </div>
 </section>
 <section id="html-stray-animals">
-<h2>html_stray_animals<a class="headerlink" href="#html-stray-animals" title="Permalink to this heading">¶</a></h2>
+<h2>html_stray_animals<a class="headerlink" href="#html-stray-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
 <p>Returns a complete HTML document containing an HTML page of current stray animals.</p>
 <p>An “order” parameter can be passed to indicate the sort order (see
@@ -1040,7 +1039,7 @@ http://localhost:5000/service?method=html_stray_animals
 </div>
 </section>
 <section id="json-adoptable-animal-and-xml-adoptable-animal">
-<h2>json_adoptable_animal and xml_adoptable_animal<a class="headerlink" href="#json-adoptable-animal-and-xml-adoptable-animal" title="Permalink to this heading">¶</a></h2>
+<h2>json_adoptable_animal and xml_adoptable_animal<a class="headerlink" href="#json-adoptable-animal-and-xml-adoptable-animal" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing a single animal record from the list of animals
 available for adoption. The method determines whether the format returned is
@@ -1054,7 +1053,7 @@ JSON or XML:</p>
 </div>
 </section>
 <section id="json-adoptable-animals-and-xml-adoptable-animals">
-<h2>json_adoptable_animals and xml_adoptable_animals<a class="headerlink" href="#json-adoptable-animals-and-xml-adoptable-animals" title="Permalink to this heading">¶</a></h2>
+<h2>json_adoptable_animals and xml_adoptable_animals<a class="headerlink" href="#json-adoptable-animals-and-xml-adoptable-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 10 minutes</p>
 <p>Returns a dataset containing all animals available for adoption. The method
 determines whether the format returned is JSON or XML:</p>
@@ -1063,7 +1062,7 @@ determines whether the format returned is JSON or XML:</p>
 </div>
 </section>
 <section id="json-adopted-animals-and-xml-adopted-animals">
-<h2>json_adopted_animals and xml_adopted_animals<a class="headerlink" href="#json-adopted-animals-and-xml-adopted-animals" title="Permalink to this heading">¶</a></h2>
+<h2>json_adopted_animals and xml_adopted_animals<a class="headerlink" href="#json-adopted-animals-and-xml-adopted-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
 <p>Returns a dataset containing animals adopted between two dates as passed in the
 “fromdate” and “todate” parameters. The dates themselves should be formatted
@@ -1076,7 +1075,7 @@ Y/M/D for some Asian locales, etc).</p>
 </div>
 </section>
 <section id="json-lost-animals-xml-lost-animals-json-found-animals-xml-found-animals">
-<h2>json_lost_animals, xml_lost_animals, json_found_animals, xml_found_animals<a class="headerlink" href="#json-lost-animals-xml-lost-animals-json-found-animals-xml-found-animals" title="Permalink to this heading">¶</a></h2>
+<h2>json_lost_animals, xml_lost_animals, json_found_animals, xml_found_animals<a class="headerlink" href="#json-lost-animals-xml-lost-animals-json-found-animals-xml-found-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing all lost or found animals reported in the last 90
 days that are still active.  The method determines whether the format returned
@@ -1086,7 +1085,7 @@ is JSON or XML:</p>
 </div>
 </section>
 <section id="json-held-animals-and-xml-held-animals">
-<h2>json_held_animals and xml_held_animals<a class="headerlink" href="#json-held-animals-and-xml-held-animals" title="Permalink to this heading">¶</a></h2>
+<h2>json_held_animals and xml_held_animals<a class="headerlink" href="#json-held-animals-and-xml-held-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing all animals currently held. The method
 determines whether the format returned is JSON or XML:</p>
@@ -1095,7 +1094,7 @@ determines whether the format returned is JSON or XML:</p>
 </div>
 </section>
 <section id="json-recent-adoptions-and-xml-recent-adoptions">
-<h2>json_recent_adoptions and xml_recent_adoptions<a class="headerlink" href="#json-recent-adoptions-and-xml-recent-adoptions" title="Permalink to this heading">¶</a></h2>
+<h2>json_recent_adoptions and xml_recent_adoptions<a class="headerlink" href="#json-recent-adoptions-and-xml-recent-adoptions" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing all recently adopted animals with their new owner
 information. The method name determines whether the format returned is JSON or
@@ -1105,7 +1104,7 @@ XML:</p>
 </div>
 </section>
 <section id="json-recent-changes-and-xml-recent-changes">
-<h2>json_recent_changes and xml_recent_changes<a class="headerlink" href="#json-recent-changes-and-xml-recent-changes" title="Permalink to this heading">¶</a></h2>
+<h2>json_recent_changes and xml_recent_changes<a class="headerlink" href="#json-recent-changes-and-xml-recent-changes" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing all animals who have been modified in the last
 month. The method determines whether the format returned is JSON or XML:</p>
@@ -1114,7 +1113,7 @@ month. The method determines whether the format returned is JSON or XML:</p>
 </div>
 </section>
 <section id="json-shelter-animals-and-xml-shelter-animals">
-<h2>json_shelter_animals and xml_shelter_animals<a class="headerlink" href="#json-shelter-animals-and-xml-shelter-animals" title="Permalink to this heading">¶</a></h2>
+<h2>json_shelter_animals and xml_shelter_animals<a class="headerlink" href="#json-shelter-animals-and-xml-shelter-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing all animals currently in the care of the shelter.
 The method determines whether the format returned is JSON or XML:</p>
@@ -1129,7 +1128,7 @@ you wish them to be included, pass an extra sensitive=1 parameter:</p>
 </div>
 </section>
 <section id="json-stray-animals-and-xml-stray-animals">
-<h2>json_stray_animals and xml_stray_animals<a class="headerlink" href="#json-stray-animals-and-xml-stray-animals" title="Permalink to this heading">¶</a></h2>
+<h2>json_stray_animals and xml_stray_animals<a class="headerlink" href="#json-stray-animals-and-xml-stray-animals" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns a dataset containing all stray animals in the care of the shelter. The method
 determines whether the format returned is JSON or XML:</p>
@@ -1138,7 +1137,7 @@ determines whether the format returned is JSON or XML:</p>
 </div>
 </section>
 <section id="media-file">
-<h2>media_file<a class="headerlink" href="#media-file" title="Permalink to this heading">¶</a></h2>
+<h2>media_file<a class="headerlink" href="#media-file" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 day</p>
 <p>Responds with media file data for the mediaid given. The content type is set to
 the correct MIME type for the data:</p>
@@ -1147,7 +1146,7 @@ the correct MIME type for the data:</p>
 </div>
 </section>
 <section id="online-form-html-and-online-form-json">
-<h2>online_form_html and online_form_json<a class="headerlink" href="#online-form-html-and-online-form-json" title="Permalink to this heading">¶</a></h2>
+<h2>online_form_html and online_form_json<a class="headerlink" href="#online-form-html-and-online-form-json" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 30 minutes</p>
 <p>Responds with the online form HTML or JSON for the id given.</p>
 <blockquote>
@@ -1155,7 +1154,7 @@ the correct MIME type for the data:</p>
 </div></blockquote>
 </section>
 <section id="rss-timeline">
-<h2>rss_timeline<a class="headerlink" href="#rss-timeline" title="Permalink to this heading">¶</a></h2>
+<h2>rss_timeline<a class="headerlink" href="#rss-timeline" title="Link to this heading">¶</a></h2>
 <p class="rubric">Cache time: 1 hour</p>
 <p>Returns an RSS feed of the timeline for use with feed aggregators:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://localhost:5000/service?method=rss_timeline&amp;username=user&amp;password=letmein
