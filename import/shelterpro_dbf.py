@@ -298,6 +298,9 @@ if SHELTER_IMPORT:
             a.ShortCode = asm.strip(row["ANIMALKEY"])
             a.ShelterLocationUnit = asm.strip(row["KENNEL"])
             a.NonShelterAnimal = 0
+            a.OriginalOwnerID = 0 
+            if row["PERSPREVOWNR"] in ppo:
+                a.OriginalOwnerID = ppo[row["PERSPREVOWNR"]]
             if arivdate is not None:
                 a.DateBroughtIn = arivdate
                 a.LastChangedDate = a.DateBroughtIn
