@@ -334,7 +334,7 @@ class ASMEndpoint(object):
         default: If there are no latin1 chars in the filename, use this name instead
         """
         filename = asm3.utils.strip_non_ascii(filename).strip()
-        filename = filename.replace(" ", "_").replace("\"", "").replace("'", "").replace("\\", "").replace("/", "").lower()
+        filename = filename.replace(" ", "_").replace(",", "_").replace("\"", "").replace("'", "").replace("\\", "").replace("/", "").lower()
         if filename == "": filename = default
         if extension != "": filename = "%s.%s" % (filename, extension)
         disposition = f"{disp}; filename={filename}"
