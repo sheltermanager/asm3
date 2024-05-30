@@ -386,6 +386,9 @@ $(function() {
                 finally {
                     $("#dialog-given").dialog("close");
                     $("#dialog-given").enable_dialog_buttons();
+                    if (controller.name == "animal_test") {
+                        common.route_reload();
+                    }
                 }
             };
             givenbuttons[_("Cancel")] = function() {
