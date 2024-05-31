@@ -170,7 +170,7 @@ class RescueGroupsPublisher(FTPPublisher):
         # Sex
         line.append("\"%s\"" % an["SEXNAME"])
         # Mixed
-        line.append("\"%s\"" % self.rgYesNo(an["CROSSBREED"] == 1))
+        line.append("\"%s\"" % self.rgYesNo(self.isCrossBreed(an)))
         # dogs (good with)
         line.append("\"%s\"" % self.rgYesNoBlank(an["ISGOODWITHDOGS"]))
         # cats (good with)

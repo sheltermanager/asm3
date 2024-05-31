@@ -298,7 +298,7 @@ class PetRescuePublisher(AbstractPublisher):
             "source_number":            vicsourcenumber, # mandatory for Victoria cats and dogs
             "rehoming_organisation_id": nswrehomingorganisationid, # required for NSW, this OR microchip or breeder_id is mandatory
             "bred_in_care_of_group":    bred_in_care_of_group, 
-            "mix":                      an.CROSSBREED == 1, # true | false
+            "mix":                      self.isCrossBreed(an), # true | false
             "date_of_birth":            asm3.i18n.format_date(an.DATEOFBIRTH, "%Y-%m-%d"), # iso
             "gender":                   an.SEXNAME.lower(), # male | female
             "personality":              self.getDescription(an), # 20-4000 chars of free type

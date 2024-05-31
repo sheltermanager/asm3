@@ -1022,6 +1022,13 @@ class AbstractPublisher(threading.Thread):
         a = get_animal_data(self.dbo, self.pc, include_additional_fields=includeAdditionalFields, publisher_key=self.publisherKey)
         self.log("Got %d matching animals for publishing." % len(a))
         return a
+    
+    def isCrossBreed(self, a: ResultRow) -> bool:
+        """ Returns True if the animal a is a crossbreed. """
+        cross = a.CROSSBREED == 0 
+        # DLH, DMH, DSH cats are always crossbreed
+        if a.CROSSBREED == 0 and a.SPECIESID == 2 and a.BREEDID in (243, 252, 261): cross = True
+        return cross
 
     def saveFile(self, path: str, contents: str) -> None:
         try:
