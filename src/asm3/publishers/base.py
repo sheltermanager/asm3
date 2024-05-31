@@ -1025,9 +1025,9 @@ class AbstractPublisher(threading.Thread):
     
     def isCrossBreed(self, a: ResultRow) -> bool:
         """ Returns True if the animal a is a crossbreed. """
-        cross = a.CROSSBREED == 0 
-        # DLH, DMH, DSH cats are always crossbreed
-        if a.CROSSBREED == 0 and a.SPECIESID == 2 and a.BREEDID in (243, 252, 261): cross = True
+        cross = a.CROSSBREED == 0
+        if a.BREEDID in asm3.configuration.publish_as_crossbreed(self.dbo):
+            cross = True
         return cross
 
     def saveFile(self, path: str, contents: str) -> None:

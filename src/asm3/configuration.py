@@ -309,6 +309,7 @@ DEFAULTS = {
     "PicturesInBooksClinic": "No",
     "PDFInline": "Yes",
     "PDFZoom": "100",
+    "PublishAsCrossbreed": "243,252,261,442",
     "PublisherUseComments": "Yes",
     "PublisherPresets": "includefosters excludeunder=12",
     "PublisherSub24Frequency": "0",
@@ -430,6 +431,17 @@ def cint(dbo, key: str, default: int = 0) -> int:
         return int(v)
     except:
         return int(0)
+
+def cintlist(dbo, key: str, default: str = "") -> List[int]:
+    s = cstring(dbo, key, default)
+    l = []
+    for v in s.split(","):
+        if v != "": 
+            try:
+                l.append(int(v))
+            except:
+                pass
+    return l
 
 def cfloat(dbo, key: str, default: float = 0.0) -> float:
     defstring = str(default)
@@ -1413,6 +1425,9 @@ def petslocated_includeshelter(dbo: Database) -> bool:
 
 def petslocated_animalflag(dbo: Database) -> str:
     return cstring(dbo, "PetsLocatedAnimalFlag", DEFAULTS["PetsLocatedAnimalFlag"])
+
+def publish_as_crossbreed(dbo: Database) -> List[int]:
+    return cintlist(dbo, "PublishAsCrossbreed", DEFAULTS["PublishAsCrossbreed"])
 
 def publisher_use_comments(dbo: Database) -> bool:
     return cboolean(dbo, "PublisherUseComments", DEFAULTS["PublisherUseComments"] == "Yes")

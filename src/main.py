@@ -6501,6 +6501,7 @@ class publish_options(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         c = {
+            "breeds": asm3.lookups.get_breeds(dbo),
             "locations": asm3.lookups.get_internal_locations(dbo),
             "flags": asm3.lookups.get_animal_flags(dbo),
             "hasakcreunite": AKC_REUNITE_BASE_URL != "",

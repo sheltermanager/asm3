@@ -1,7 +1,7 @@
 49
 ================
 
-31/05/24 When publishing, never send DLH, DMH, DSH cats as purebred
+31/05/24 Publishing option to allow some breeds to be always sent as crossbreed/mix
 30/05/24 Reload animal test tab after perform/give like vaccinations
 30/05/24 Filter commas in content-disposition filenames (fixes Edge bug)
 29/05/24 Add onlineform import field for healthproblems
