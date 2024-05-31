@@ -4696,7 +4696,7 @@ class mailmerge(JSONEndpoint):
         self.content_disposition("attachment", post["mergetitle"], "csv", "download.csv")
         self.content_type("text/csv")
         includeheader = 1 == post.boolean("includeheader")
-        return asm3.utils.csv(o.locale, rows, cols, includeheader)
+        return asm3.utils.csv_generator(o.locale, rows, cols, includeheader)
 
     def post_preview(self, o):
         dbo = o.dbo
@@ -6626,7 +6626,7 @@ class report_export_csv(ASMEndpoint):
             renameheader = rows[0].RENAMEHEADER
         self.content_type("text/csv")
         self.content_disposition("attachment", title, "csv", "report.csv")
-        return asm3.utils.csv(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, lowercaseheader=lowercaseheader, renameheader=renameheader)
+        return asm3.utils.csv_generator(o.locale, rows, cols, includeheader=True, titlecaseheader=titlecaseheader, lowercaseheader=lowercaseheader, renameheader=renameheader)
 
 class report_export_email(ASMEndpoint):
     url = "report_export_email"
@@ -7042,35 +7042,35 @@ class sql_dump(ASMEndpoint):
             self.content_disposition("attachment", "animal.csv")
             rows = asm3.animal.get_animal_find_advanced(dbo, { "logicallocation" : "all", "filter" : "includedeceased,includenonshelter" })
             asm3.additional.append_to_results(dbo, rows, "animal")
-            return asm3.utils.csv(l, rows)
+            return asm3.utils.csv_generator(l, rows)
         elif mode == "mediacsv":
             asm3.al.debug("%s executed CSV media dump" % o.user, "main.sql", dbo)
             self.content_disposition("attachment", "media.csv")
-            return asm3.utils.csv(l, asm3.media.get_media_export(dbo))
+            return asm3.utils.csv_generator(l, asm3.media.get_media_export(dbo))
         elif mode == "medicalcsv":
             asm3.al.debug("%s executed CSV medical dump" % o.user, "main.sql", dbo)
             self.content_disposition("attachment", "medical.csv")
-            return asm3.utils.csv(l, asm3.medical.get_medical_export(dbo))
+            return asm3.utils.csv_generator(l, asm3.medical.get_medical_export(dbo))
         elif mode == "personcsv":
             asm3.al.debug("%s executed CSV person dump" % o.user, "main.sql", dbo)
             self.content_disposition("attachment", "person.csv")
             rows = asm3.person.get_person_find_simple(dbo, "", includeStaff=True, includeVolunteers=True)
             asm3.additional.append_to_results(dbo, rows, "person")
-            return asm3.utils.csv(l, rows)
+            return asm3.utils.csv_generator(l, rows)
         elif mode == "incidentcsv":
             asm3.al.debug("%s executed CSV incident dump" % o.user, "main.sql", dbo)
             self.content_disposition("attachment", "incident.csv")
             rows = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter" : "" }, o.user)
             asm3.additional.append_to_results(dbo, rows, "incident")
-            return asm3.utils.csv(l, rows)
+            return asm3.utils.csv_generator(l, rows)
         elif mode == "licencecsv":
             asm3.al.debug("%s executed CSV licence dump" % o.user, "main.sql", dbo)
             self.content_disposition("attachment", "licence.csv")
-            return asm3.utils.csv(l, asm3.financial.get_licence_find_simple(dbo, ""))
+            return asm3.utils.csv_generator(l, asm3.financial.get_licence_find_simple(dbo, ""))
         elif mode == "paymentcsv":
             asm3.al.debug("%s executed CSV payment dump" % o.user, "main.sql", dbo)
             self.content_disposition("attachment", "payment.csv")
-            return asm3.utils.csv(l, asm3.financial.get_donations(dbo, "m10000"))
+            return asm3.utils.csv_generator(l, asm3.financial.get_donations(dbo, "m10000"))
 
 class staff_rota(JSONEndpoint):
     url = "staff_rota"

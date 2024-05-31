@@ -6,7 +6,7 @@ import asm3.i18n
 import asm3.users
 
 from asm3.sitedefs import ADMIN_EMAIL, BASE_URL, DISK_CACHE, MULTIPLE_DATABASES, SMTP_SERVER, FROM_ADDRESS, HTML_TO_PDF, URL_NEWS
-from asm3.typehints import bytes_or_str, Any, Callable, Database, Dict, List, Results, Tuple, Union
+from asm3.typehints import bytes_or_str, Any, Callable, Database, Dict, Generator, List, Results, Tuple, Union
 
 import web062 as web
 
@@ -999,11 +999,11 @@ def csv_parse(s: str) -> List[Dict]:
     return rows
 
 def csv(l: str, rows: Results, cols: List[str] = None, includeheader: bool = True, 
-        titlecaseheader: bool = False, lowercaseheader: bool = False, renameheader: str = "") -> str:
+        titlecaseheader: bool = False, lowercaseheader: bool = False, renameheader: str = "") -> bytes:
     """
     Creates a CSV file from a set of resultset rows. If cols has been 
     supplied as a list of strings, fields will be output in that order.
-    The file is constructed as a list of unicode strings and returned as a utf-8 encoded byte string.
+    The file is returned as a utf-8 encoded byte string.
     l:  locale (used for formatting currencies and dates)
     rows: list of dict result rows
     cols: list of column headings, if None uses the result column names
@@ -1012,13 +1012,32 @@ def csv(l: str, rows: Results, cols: List[str] = None, includeheader: bool = Tru
     lowercaseheader: if True lower cases the header row
     renameheader: A comma separated list of find=replace values to rewrite column headers
     """
-    if rows is None or len(rows) == 0: return "\ufeff".encode("utf-8")
-    lines = []
+    buffer = []
+    for x in csv_generator(l, rows, cols, includeheader, titlecaseheader, lowercaseheader, renameheader):
+        buffer.append(x)
+    return "".join(buffer).encode("utf-8")
+
+def csv_generator(l: str, rows: Results, cols: List[str] = None, includeheader: bool = True, 
+        titlecaseheader: bool = False, lowercaseheader: bool = False, renameheader: str = "") -> Generator[str, None, None]:
+    """
+    Creates a CSV file from a set of resultset rows. If cols has been 
+    supplied as a list of strings, fields will be output in that order.
+    The file is returned as unicode. It is upto the caller to encode data appropriately. 
+    If this generator function is the return value from an endpoint, web.py will handle encoding as utf-8.
+    l:  locale (used for formatting currencies and dates)
+    rows: list of dict result rows
+    cols: list of column headings, if None uses the result column names
+    includeheader: if True writes the header row
+    titlecaseheader: if True title cases the header row
+    lowercaseheader: if True lower cases the header row
+    renameheader: A comma separated list of find=replace values to rewrite column headers
+    """
+    yield "\ufeff" # UTF-8 BOM, Excel can mangle CSV files without it
     def writerow(row):
         line = []
         for r in row:
             line.append("\"%s\"" % r)
-        lines.append(",".join(line))
+        return ",".join(line) + "\n"
     if cols is None:
         cols = []
         for k in rows[0].keys():
@@ -1043,7 +1062,7 @@ def csv(l: str, rows: Results, cols: List[str] = None, includeheader: bool = Tru
                 if not match:
                     rout.append(c)
             outputcols = rout
-        writerow(outputcols)
+        yield writerow(outputcols)
     for r in rows:
         rd = []
         for c in cols:
@@ -1065,9 +1084,7 @@ def csv(l: str, rows: Results, cols: List[str] = None, includeheader: bool = Tru
                 rd.append(r[c].replace("\"", "''")) # Escape any double quotes in strings
             else:
                 rd.append(r[c])
-        writerow(rd)
-    # Manually include a UTF-8 BOM to prevent Excel mangling files
-    return ("\ufeff" + "\n".join(lines)).encode("utf-8")
+        yield writerow(rd)
 
 def excel(l: str, rows: Results, cols: List[str] = None, includeheader: bool = True, 
         titlecaseheader: bool = False, lowercaseheader: bool = False, renameheader: str = "") -> str:
