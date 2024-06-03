@@ -99,6 +99,7 @@ FORM_FIELDS = [
     "town", "city", "county", "state", "postcode", "zipcode", "country", "hometelephone", 
     "worktelephone", "worktelephone2", "mobiletelephone", "mobiletelephone2", "celltelephone", "celltelephone2", 
     "emailaddress", "emailaddress2", "idnumber", "idnumber2", "dateofbirth", "dateofbirth2",
+    "dateofbirthanimal", "dateofbirthperson", "dateofbirthperson2",
     "excludefrombulkemail", "gdprcontactoptin",
     "description", "reason", "size", "species", "breed", "agegroup", "color", "colour", 
     "datelost", "datefound", "arealost", "areafound", "areapostcode", "areazipcode", "microchip",
@@ -1351,11 +1352,11 @@ def create_animal(dbo: Database, username: str, collationid: int, broughtinby: i
             d["code"] = truncs(f.VALUE)
             d["sheltercode"] = truncs(f.VALUE)
             d["shortcode"] = truncs(f.VALUE)
-        if f.FIELDNAME == "dateofbirth": d["dateofbirth"] = f.VALUE
+        if f.FIELDNAME == "dateofbirth" or f.FIELDNAME == "dateofbirthanimal": d["dateofbirth"] = f.VALUE
         if f.FIELDNAME == "age": d["estimatedage"] = f.VALUE
         if f.FIELDNAME == "markings": d["markings"] = f.VALUE
         if f.FIELDNAME == "comments": d["comments"] = f.VALUE
-        if f.FIELDNAME == "microchip": 
+        if f.FIELDNAME == "microchip" and truncs(f.VALUE).strip() != "": 
             d["microchipped"] = "on"
             d["microchipnumber"] = truncs(f.VALUE)
         if f.FIELDNAME == "hiddencomments": d["hiddenanimaldetails"] = f.VALUE
@@ -1481,8 +1482,8 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
         if f.FIELDNAME == "emailaddress2": d["emailaddress2"] = truncs(f.VALUE)
         if f.FIELDNAME == "idnumber": d["idnumber"] = truncs(f.VALUE)
         if f.FIELDNAME == "idnumber2": d["idnumber2"] = truncs(f.VALUE)
-        if f.FIELDNAME == "dateofbirth": d["dateofbirth"] = f.VALUE
-        if f.FIELDNAME == "dateofbirth2": d["dateofbirth2"] = f.VALUE
+        if f.FIELDNAME == "dateofbirth" or "dateofbirthperson": d["dateofbirth"] = f.VALUE
+        if f.FIELDNAME == "dateofbirth2" or "dateofbirthperson2": d["dateofbirth2"] = f.VALUE
         if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != asm3.i18n._("No", l): 
             flags += ",excludefrombulkemail"
         if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = truncs(f.VALUE)

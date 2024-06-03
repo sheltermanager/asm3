@@ -1,6 +1,8 @@
 49
 ================
 
+03/06/24 Only set microchipped flag for online forms if a microchip contains value
+03/06/24 Add dateofbirthanimal/dateofbirthperson/dateofbirthperson2 online form fields
 31/05/24 Add utils.csv_generator for exporting as chunked data
 31/05/24 Publishing option to allow some breeds to be always sent as crossbreed/mix
 30/05/24 Reload animal test tab after perform/give like vaccinations
