@@ -34,6 +34,10 @@ mobiletelephone / celltelephone / mobiletelephone2 / celltelephone2
 emailaddress / emailaddress2
     The person's email address
 dateofbirth / dateofbirth2
+    The person or animal's date of birth
+dateofbirthanimal
+    The animal's date of birth
+dateofbirthperson /dateofbirthperson2
     The person's date of birth
 idnumber / idnumber2
     The person's ID number (passport, driving license, national ID card, etc)
