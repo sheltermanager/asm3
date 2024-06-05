@@ -3092,6 +3092,8 @@ def insert_animallocation(dbo: Database, username: str, animalid: int, animalnam
         fromlocation += "-" + fromunit
     if tounit != "":
         tolocation += "-" + tounit
+    prevlocationid = dbo.query_int("SELECT ID FROM animallocation WHERE AnimalID=? " \
+        "AND ToLocationID=? AND ToUnit=? ORDER BY Date DESC", [ animalid, fromid, fromunit])
     msg = _("{0} {1}: Moved from {2} to {3}", l).format(sheltercode, animalname, fromlocation, tolocation)
     alid = dbo.insert("animallocation", {
         "AnimalID":         animalid,
@@ -3100,6 +3102,7 @@ def insert_animallocation(dbo: Database, username: str, animalid: int, animalnam
         "FromUnit":         fromunit,
         "ToLocationID":     toid,
         "ToUnit":           tounit,
+        "PrevAnimalLocationID": prevlocationid,
         "MovedBy":          username,
         "Description":      msg
     }, username, setCreated = False)

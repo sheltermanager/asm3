@@ -1,6 +1,7 @@
 49
 ================
 
+05/06/24 Add animallocation.PrevAnimalLocationID to assist with reporting
 05/06/24 Add {QRS} report token for embeddeding a QR code to the animalview page 
 03/06/24 Only set microchipped flag for online forms if a microchip contains value
 03/06/24 Add dateofbirthanimal/dateofbirthperson/dateofbirthperson2 online form fields

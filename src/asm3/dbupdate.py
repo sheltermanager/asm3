@@ -44,7 +44,7 @@ VERSIONS = (
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
-    34807, 34808, 34809, 34810, 34811, 34812, 34813, 34900
+    34807, 34808, 34809, 34810, 34811, 34812, 34813, 34900, 34901
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -645,11 +645,13 @@ def sql_structure(dbo: Database) -> str:
         fstr("FromUnit"), 
         fint("ToLocationID"),
         fstr("ToUnit"), 
+        fint("PrevAnimalLocationID", True),
         fstr("MovedBy"),
         fstr("Description")), False)
     sql += index("animallocation_AnimalID", "animallocation", "AnimalID")
     sql += index("animallocation_FromLocationID", "animallocation", "FromLocationID")
     sql += index("animallocation_ToLocationID", "animallocation", "ToLocationID")
+    sql += index("animallocation_PrevAnimalLocationID", "animallocation", "PrevAnimalLocationID")
 
     sql += table("animallost", (
         fid(),
@@ -6260,3 +6262,22 @@ def update_34900(dbo: Database) -> None:
     add_column(dbo, "lkclinictype", "ClinicTypeDescription", dbo.type_longtext)
     drop_column(dbo, "lkclinictype", "ClinicTypeDescripton")
 
+def update_34901(dbo: Database) -> None:
+    # Add animallocation.PrevAnimalLocationID
+    add_column(dbo, "animallocation", "PrevAnimalLocationID", dbo.type_integer)
+    add_index(dbo, "animallocation_PrevAnimalLocationID", "animallocation", "PrevAnimalLocationID")
+    # Default the previous location record to 0
+    dbo.execute_dbupdate("UPDATE animallocation SET PrevAnimalLocationID = 0")
+    # Calculate the previous location record for each existing location record
+    batch = []
+    rows = dbo.query("SELECT ID, AnimalID, FromLocationID, ToLocationID, FromUnit, ToUnit FROM animallocation ORDER BY Date DESC")
+    for i, r in enumerate(rows):
+        # Iterate the rows after this one, which will have lower dates because we ordered date desc
+        for x in range(i, len(rows)):
+            # If this is the row previous to this one (ie. moved from this one to the current row r)
+            # then set the PrevAnimalLocationID
+            if rows[x].ANIMALID == r.ANIMALID and rows[x].TOLOCATIONID == r.FROMLOCATIONID and rows[x].TOUNIT == r.FROMUNIT:
+                batch.append( (rows[x].ID, r.ID) )
+                break
+    # Run the batch update
+    dbo.execute_many("UPDATE animallocation SET PrevAnimalLocationID=? WHERE ID=?", batch, override_lock=True)
