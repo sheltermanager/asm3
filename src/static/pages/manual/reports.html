@@ -383,10 +383,13 @@ is invalid, or the animal doesn’t have a preferred image the default system
 nopic.jpg file is used instead.</p></li>
 <li><p>{CHIPMANUFACTURER.&lt;chipno&gt;} - (also valid in $$BODY) Returns the name of
 the microchip manufacturer of the given chip number.</p></li>
-<li><p>{QR.&lt;animalid&gt;[.size]} – (also valid in $$BODY) Returns a URL to the google
-charting api to generate a QR code with a link to this animal’s record for
-mobile devices. If size is not set, then 150x150 is used. Eg:
-{QR.$ID.200x200}</p></li>
+<li><p>{QR.&lt;animalid&gt;[.size]} – (also valid in $$BODY) embeds a QR code with a
+link to this animal’s record for mobile devices. If size is not set,
+then 150x150 is used. Eg: {QR.$ID.200x200}</p></li>
+<li><p>{QRS.&lt;animalid&gt;[.size]} – (also valid in $$BODY) embeds a QR code with a
+link to this animal’s adoptable page via the animal_view service call
+(the animalview template is used to display the page). If size is not set,
+then 150x150 is used. Eg: {QR.$ID.200x200}</p></li>
 <li><p>{LAST.&lt;field&gt;} - Returns the last value for a given field in a group</p></li>
 <li><p>{PCT.&lt;field&gt;.&lt;value&gt;[.round]} - Returns the percentage of rows in the group
 where field &lt;field&gt; matches value &lt;value&gt;. Optionally, you can specify a

@@ -12,7 +12,7 @@ import asm3.person
 import asm3.template
 import asm3.users
 import asm3.utils
-from asm3.sitedefs import BASE_URL, URL_REPORTS
+from asm3.sitedefs import BASE_URL, SERVICE_URL, URL_REPORTS
 from asm3.typehints import Any, CriteriaParams, datetime, Database, List, MenuItems, PostedData, ReportParams, ResultRow, Results, Session, Tuple
 
 HEADER = 0
@@ -1148,8 +1148,7 @@ class Report:
                 chipno = fields[1]
                 value = asm3.lookups.get_microchip_manufacturer(self.dbo.locale, chipno)
 
-            # {QR.animalid[.size]} - substitutes a link to the
-            # google charting api to generate a QR code that
+            # {QR.animalid[.size]} - inserts a QR code that
             # links back to an animal's record.
             if key.lower().startswith("qr."):
                 valid = True
@@ -1158,6 +1157,17 @@ class Report:
                 size = "150x150"
                 if len(fields) > 2: size = fields[2]
                 url = BASE_URL + "/animal?id=%s" % animalid
+                value = asm3.utils.qr_datauri(url, size) 
+
+            # {QRS.animalid[.size]} - inserts a QR code that
+            # links to the animal's adoptable page
+            if key.lower().startswith("qrs."):
+                valid = True
+                fields = key.lower().split(".")
+                animalid = fields[1]
+                size = "150x150"
+                if len(fields) > 2: size = fields[2]
+                url = f"{SERVICE_URL}?account={self.dbo.database}&method=animal_view&animalid={animalid}"
                 value = asm3.utils.qr_datauri(url, size) 
 
             # {SUBREPORT.[title].[parentField]} - embed a subreport
@@ -2026,8 +2036,7 @@ class Report:
                     chipno = fields[1]
                     value = asm3.lookups.get_microchip_manufacturer(self.dbo.locale, chipno)
 
-                # {QR.animalid[.size]} - substitutes a link to the
-                # google charting api to generate a QR code that
+                # {QR.animalid[.size]} - inserts a QR code that
                 # links back to an animal's record.
                 if key.lower().startswith("qr."):
                     valid = True
@@ -2042,6 +2051,22 @@ class Report:
                     if len(fields) > 2: size = fields[2]
                     url = BASE_URL + "/animal?id=%s" % animalid
                     value = asm3.utils.qr_datauri(url, size)
+
+                # {QRS.animalid[.size]} - inserts a QR code that
+                # links to the animal's adoptable page
+                if key.lower().startswith("qrs."):
+                    valid = True
+                    fields = key.lower().split(".")
+                    if len(fields) < 2:
+                        self._p("Invalid QRS tag, requires 2 components: %s" % key)
+                        valid = False
+                        startkey = tempbody.find("{", startkey+1)
+                        continue
+                    animalid = fields[1]
+                    size = "150x150"
+                    if len(fields) > 2: size = fields[2]
+                    url = f"{SERVICE_URL}?account={self.dbo.database}&method=animal_view&animalid={animalid}"
+                    value = asm3.utils.qr_datauri(url, size) 
 
                 # {SUBREPORT.[title].[parentField]} - embed a subreport
                 if key.lower().startswith("subreport."):

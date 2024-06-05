@@ -328,10 +328,14 @@ $$FOOT blocks and the main $$FOOTER block. These are:
 * {CHIPMANUFACTURER.<chipno>} - (also valid in $$BODY) Returns the name of
   the microchip manufacturer of the given chip number.
 
-* {QR.<animalid>[.size]} – (also valid in $$BODY) Returns a URL to the google
-  charting api to generate a QR code with a link to this animal's record for
-  mobile devices. If size is not set, then 150x150 is used. Eg:
-  {QR.$ID.200x200}
+* {QR.<animalid>[.size]} – (also valid in $$BODY) embeds a QR code with a 
+  link to this animal's record for mobile devices. If size is not set, 
+  then 150x150 is used. Eg: {QR.$ID.200x200}
+
+* {QRS.<animalid>[.size]} – (also valid in $$BODY) embeds a QR code with a 
+  link to this animal's adoptable page via the animal_view service call
+  (the animalview template is used to display the page). If size is not set, 
+  then 150x150 is used. Eg: {QR.$ID.200x200}
 
 * {LAST.<field>} - Returns the last value for a given field in a group 
 
