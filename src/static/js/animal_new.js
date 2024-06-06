@@ -417,12 +417,14 @@ $(function() {
                     animal_new.set_nonsheltertype_once = true;
                     $("#animaltype").select("value", config.integer("AFNonShelterType")); 
                 }
-                $("#holdrow, #locationrow, #locationunitrow, #fostererrow, #coordinatorrow, #litterrow, #entryreasonrow, #entrytyperow, #transferinrow, #broughtinbyrow, #originalownerrow, #feerow").fadeOut();
+                $("#holdrow, #locationrow, #locationunitrow, #fostererrow, #coordinatorrow, #litterrow, #entryreasonrow, #entrytyperow, #transferinrow, #datebroughtinrow, #timebroughtinrow, #broughtinbyrow, #originalownerrow, #pickuprow, #feerow").fadeOut();
             }
             else {
                 $("#nsownerrow").fadeOut();
                 if (config.bool("AddAnimalsShowAcceptance")) { $("#litterrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowBroughtInBy")) { $("#broughtinbyrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowDateBroughtIn")) { $("#datebroughtinrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowTimeBroughtIn")) { $("#timebroughtinrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowOriginalOwner")) { $("#originalownerrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowEntryCategory")) { $("#entryreasonrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowEntryType")) { 
@@ -437,6 +439,7 @@ $(function() {
                 if (config.bool("AddAnimalsShowHold")) { $("#holdrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowLocation")) { $("#locationrow").fadeIn(); }
                 if (config.bool("AddAnimalsShowLocationUnit")) { $("#locationunitrow").fadeIn(); }
+                if (config.bool("AddAnimalsShowPickup")) { $("#pickuprow").fadeIn(); }
             }
 
             // Fields that apply to both shelter and non-shelter animals based on config
