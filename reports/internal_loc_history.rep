@@ -18,7 +18,7 @@ ORDER BY il.LocationName, l.ToUnit, Date
 $$HEADER
 HEADER$$
 
-$$GROUP_AnimalName
+$$GROUP_LocationName
 $$HEAD
 <h2>$LocationName</h2>
 <table border=1>
@@ -67,7 +67,7 @@ ORDER BY il.LocationName, l.ToUnit, Date
 $$HEADER
 HEADER$$
 
-$$GROUP_AnimalName
+$$GROUP_LocationName
 $$HEAD
 <h2>$LocationName</h2>
 <table border=1>
