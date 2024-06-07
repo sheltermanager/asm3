@@ -1,0 +1,99 @@
+Internal Location History
+###
+Auditing
+###
+34901/Any rev01
+###
+Internal location changes for all animals between two dates.
+###
+en
+###
+SELECT l.Date, l.ToUnit, il.LocationName, l.AnimalID, a.ShelterCode, a.AnimalName
+FROM animallocation l
+INNER JOIN internallocation il ON il.ID = l.ToLocationID
+INNER JOIN animal a ON a.ID = l.AnimalID 
+WHERE Date >= '$ASK DATE Location changes between$' AND Date <= '$ASK DATE and$' 
+ORDER BY il.LocationName, l.ToUnit, Date
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_AnimalName
+$$HEAD
+<h2>$LocationName</h2>
+<table border=1>
+<thead>
+<tr>
+<th>Unit</th>
+<th>Date</th>
+<th>Animal</th>
+</tr>
+</thead>
+<tbody>
+$$FOOT
+</tbody>
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$TOUNIT</td>
+<td>$DATE</td>
+<td><a target="_blank" href="animal?id=$ANIMALID">$ANIMALNAME</a> - $SHELTERCODE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+&&&
+Internal Location History with Days in Location
+###
+Auditing
+###
+34901/PostgreSQL rev01
+###
+Internal location changes for all animals between two dates, includes time 
+###
+en
+###
+SELECT l.Date, l.ToUnit, il.LocationName, l.AnimalID, a.ShelterCode, a.AnimalName,
+EXTRACT(DAY FROM (SELECT ii.Date FROM animallocation ii WHERE ii.PrevAnimalLocationID = l.ID) - l.Date)::integer AS Days
+FROM animallocation l
+INNER JOIN internallocation il ON il.ID = l.ToLocationID
+INNER JOIN animal a ON a.ID = l.AnimalID 
+WHERE Date >= '$ASK DATE Location changes between$' AND Date <= '$ASK DATE and$' 
+ORDER BY il.LocationName, l.ToUnit, Date
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_AnimalName
+$$HEAD
+<h2>$LocationName</h2>
+<table border=1>
+<thead>
+<tr>
+<th>Unit</th>
+<th>Date</th>
+<th>Animal</th>
+<th>Days in location</th>
+</tr>
+</thead>
+<tbody>
+$$FOOT
+</tbody>
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$TOUNIT</td>
+<td>$DATE</td>
+<td><a target="_blank" href="animal?id=$ANIMALID">$ANIMALNAME</a> - $SHELTERCODE</td>
+<td>$DAYS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+
