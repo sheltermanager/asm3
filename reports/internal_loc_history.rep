@@ -57,7 +57,7 @@ Internal location changes for all animals between two dates, includes time
 en
 ###
 SELECT l.Date, l.ToUnit, il.LocationName, l.AnimalID, a.ShelterCode, a.AnimalName,
-EXTRACT(DAY FROM (SELECT ii.Date FROM animallocation ii WHERE ii.PrevAnimalLocationID = l.ID) - l.Date)::integer AS Days
+EXTRACT(DAY FROM COALESCE((SELECT ii.Date FROM animallocation ii WHERE ii.PrevAnimalLocationID = l.ID), CURRENT_DATE) - l.Date)::integer AS Days
 FROM animallocation l
 INNER JOIN internallocation il ON il.ID = l.ToLocationID
 INNER JOIN animal a ON a.ID = l.AnimalID 
