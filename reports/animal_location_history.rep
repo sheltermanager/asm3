@@ -2,7 +2,7 @@ Animal Location History
 ###
 Auditing
 ###
-34004/Any rev03
+34803/Any rev04
 ###
 Combined transport, movement and internal location history for an animal.
 ###
@@ -13,13 +13,14 @@ SELECT * FROM
 (
 
 SELECT
-a.ID AS AID, a.AnimalName, a.ShelterCode,
-'Intake' AS RecordType,
-a.DateBroughtIn AS Date,
+a.ID, a.AnimalName, a.ShelterCode,
+'Internal Location' AS RecordType,
+l.Date,
 il.LocationName
-FROM animal a
-INNER JOIN internallocation il ON il.ID = a.ShelterLocation
-WHERE a.ID = $@an$
+FROM animallocation l
+INNER JOIN animal a ON a.ID = l.AnimalID
+INNER JOIN internallocation il ON il.ID = l.ToLocationID
+WHERE l.AnimalID = $@an$
 
 UNION SELECT
 a.ID, a.AnimalName, a.ShelterCode, 
@@ -52,16 +53,6 @@ FROM animaltransport at
 INNER JOIN transporttype t ON t.ID = at.TransportTypeID
 INNER JOIN animal a ON at.AnimalID = a.ID
 WHERE at.AnimalID = $@an$
-
-UNION SELECT
-a.ID, a.AnimalName, a.ShelterCode, 
-'Log - ' || lt.LogTypeName AS RecordType,
-l.Date,
-l.Comments AS LocationName
-FROM log l
-INNER JOIN animal a ON l.LinkID = a.ID
-INNER JOIN logtype lt ON lt.ID = l.LogTypeID
-WHERE l.LinkID = $@an$ AND l.LinkType = 0 AND l.Comments LIKE '%Moved from%' 
 
 ) dummy
 ORDER BY AnimalName, Date
