@@ -72,6 +72,7 @@ class AdoptAPetPublisher(FTPPublisher):
 
     def apMapFile(self, includecolours: bool) -> str:
         breedmap = "Appenzell Mountain Dog=Shepherd (Unknown Type)\n" \
+            "American Bully=Bull Terrier\n" \
             "Australian Cattle Dog/Blue Heeler=Australian Cattle Dog\n" \
             "Belgian Shepherd Dog Sheepdog=Belgian Shepherd\n" \
             "Belgian Shepherd Tervuren=Belgian Tervuren\n" \

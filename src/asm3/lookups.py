@@ -133,6 +133,7 @@ PETFINDER_BREEDS = (
     "Akita",
     "Alaskan Malamute",
     "American Bulldog",
+    "American Bully",
     "American Eskimo Dog",
     "American Staffordshire Terrier",
     "American Water Spaniel",
