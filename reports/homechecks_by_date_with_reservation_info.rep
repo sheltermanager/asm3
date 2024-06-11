@@ -1,0 +1,72 @@
+Homechecks performed between two dates with reserve animal 
+###
+Movements
+###
+2870/PostgreSQL rev01
+###
+Homechecks performed between two dates with reserve animal and dates
+###
+en
+###
+SELECT o.OwnerName, o.ID, o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, 
+o.HomeTelephone, o.MobileTelephone, o.EmailAddress, o.DateLastHomeChecked,
+a.AnimalName, a.ShelterCode, adoption.ReservationDate, ho.OwnerName AS HomecheckerName, ho.ID AS HOID,
+EXTRACT(DAY FROM o.DateLastHomechecked - adoption.ReservationDate )::integer AS days
+FROM owner o
+LEFT OUTER JOIN owner ho ON ho.ID = o.HomeCheckedBy
+LEFT OUTER JOIN adoption ON adoption.ID = (SELECT MAX(ID) FROM adoption 
+WHERE OwnerID = o.ID AND MovementType = 0)
+LEFT OUTER JOIN animal a ON adoption.AnimalID = a.ID
+WHERE o.DateLastHomeChecked >= '$ASK DATE Homechecks between$' 
+AND o.DateLastHomeChecked <= '$ASK DATE and $'
+AND o.IDCheck = 1
+ORDER BY HomecheckerName, o.DateLastHomeChecked, o.OwnerName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_HomecheckerName
+$$HEAD
+<h2><b><a target="_blank" href="person?id=$HOID">$HOMECHECKERNAME</a></b></h2>
+<table border="1">
+<thead>
+<tr>
+<th>Person</th>
+<th>Reservation Date</th>
+<th>Homechecked Date</th>
+<th>Days in Between</th>
+<th>Reserved Animal</th>
+</tr>
+</thead>
+<tbody>
+$$FOOT
+<td></td>
+<td></td>
+<td></td>
+<td>Avg: {AVG.Days.0}</td> 
+<td></td> 
+</tbody>
+</table>
+<p>Total homechecks carried out by $HOMECHECKERNAME: {COUNT.OWNERNAME}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td><b><a target="_blank" href="person?id=$ID">$OWNERNAME</a></b><br />
+$OWNERADDRESS<br />
+$OWNERTOWN<br />
+$OWNERCOUNTY $OWNERPOSTCODE<br />
+<i>E: $EMAILADDRESS</i>
+H: $HOMETELEPHONE 
+C: $MOBILETELEPHONE</td>
+<td>$RESERVATIONDATE</td>
+<td>$DATELASTHOMECHECKED</td>
+<td>$DAYS</td>
+<td><b><a target="_blank" href="animal?id=$AID">$ANIMALNAME $SHELTERCODE</a></b></td>
+</tr>
+BODY$$
+
+$$FOOTER
+<h3>Total homecheks performed:{COUNT.OWNERNAME}</h3>
+<h3>Average overall days between reservation and homecheck: {AVG.Days.0}</h3>
+FOOTER$$
