@@ -581,6 +581,8 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                         create_additional_fields(dbo, row, errors, rowno, "ORIGINALOWNERADDITIONAL", "person", originalownerid)
                     if "transferin" in a and a["transferin"] == "on":
                         a["broughtinby"] = str(originalownerid) # set original owner as transferor for transfers in
+                    elif "nonshelter" in a and a["nonshelter"] == "on": # set nsowner for non-shelter animals
+                        a["nsowner"] = str(originalownerid)
                     else:
                         a["originalowner"] = str(originalownerid)
                 except Exception as e:

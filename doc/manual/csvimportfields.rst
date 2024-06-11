@@ -241,7 +241,7 @@ MOVEMENTRETURNDATE
 MOVEMENTCOMMENTS
     Any comments for the movement
 ORIGINALOWNERTITLE
-    If we have original owner info for the animal, the person's title.
+    If we have original owner info for the animal, the person's title. If the animal has been marked as non-shelter, the ORIGINALOWNER will become the animal's owner.
 ORIGINALOWNERINITIALS
     Original owner's initials.
 ORIGINALOWNERFIRSTNAME
