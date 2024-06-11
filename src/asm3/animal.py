@@ -95,6 +95,7 @@ def get_animal_query(dbo: Database) -> str:
         "oo.EmailAddress AS OriginalOwnerEmailAddress, " \
         "oo.IdentificationNumber AS OriginalOwnerIDNumber, " \
         "oo.LatLong AS OriginalOwnerLatLong, " \
+        "oo.PopupWarning AS OriginalOwnerPopupWarning, " \
         "oj.JurisdictionName AS OriginalOwnerJurisdiction, " \
         "co.ID AS CurrentOwnerID, " \
         "co.OwnerName AS CurrentOwnerName, " \
@@ -114,6 +115,8 @@ def get_animal_query(dbo: Database) -> str:
         "co.EmailAddress2 AS CurrentOwnerEmailAddress2, " \
         "co.IdentificationNumber AS CurrentOwnerIDNumber, " \
         "co.ExcludeFromBulkEmail AS CurrentOwnerExcludeEmail, " \
+        "co.Comments AS CurrentOwnerComments, " \
+        "co.PopupWarning AS CurrentOwnerPopupWarning, " \
         "co.LatLong AS CurrentOwnerLatLong, " \
         "cj.JurisdictionName AS CurrentOwnerJurisdiction, " \
         "bo.OwnerName AS BroughtInByOwnerName, " \

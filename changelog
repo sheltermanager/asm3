@@ -1,6 +1,7 @@
 49
 ================
 
+11/06/24 Add ANIMALWARNING, PERSONWARNING, ORIGINALOWNERWARNING csv columns
 11/06/24 Set owner from originalowner when importing non-shelter animals from csv
 10/06/24 Add American Bully publisher breed for PetFinder
 06/06/24 Add new animal: Pickup/datebroughtin not being hidden for non-shelter

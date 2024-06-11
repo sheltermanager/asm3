@@ -15,7 +15,7 @@ exist in the CSV data and have a value for that row.
 
 These fields are:
 
-* ANIMALCOMMENTS / ANIMALDESCRIPTION
+* ANIMALCOMMENTS / ANIMALDESCRIPTION / ANIMALWARNING
 * ANIMALDECEASEDDATE
 * ANIMALDECEASEDNOTES
 * ANIMALDECEASEDREASON
@@ -102,6 +102,8 @@ ANIMALMARKINGS
     Some comments for the animal's markings field.
 ANIMALHEALTHPROBLEMS
     Some comments for the animal's health problems field.
+ANIMALWARNING
+    A popup warning to display when viewing the animal record.
 ANIMALNEUTERED
     Y/N to indicate yes/no
 ANIMALNEUTEREDDATE
@@ -266,6 +268,8 @@ ORIGINALOWNERCELLPHONE
     The original owner's mobile phone.
 ORIGINALOWNEREMAIL
     The original owner's email.
+ORIGINALOWNERWARNING
+    A popup warning to display when viewing the original owner record.
 ORIGINALOWNERFLAGS
     This column can be used to set any other person flags on the original owner. Flags should be comma separated with no extra spaces. Built in flags are their lower case English names, eg: banned,aco,homechecked,homechecker,excludefrombulkemail
     Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag
@@ -320,6 +324,8 @@ PERSONFLAGS
     Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag
 PERSONCOMMENTS
     Any comments to go with the person record.
+PERSONWARNING
+    A popup warning to display when viewing the person record.
 PERSONMATCHACTIVE
     Y or 1 in this column indicates the person is looking for an animal. If this field is not set to Y or 1, the other PERSONMATCH columns are ignored for this row.
 PERSONMATCHADDED

@@ -116,7 +116,7 @@ that will be overwritten on the existing animal from the CSV data if those colum
 exist in the CSV data and have a value for that row.</p>
 <p>These fields are:</p>
 <ul class="simple">
-<li><p>ANIMALCOMMENTS / ANIMALDESCRIPTION</p></li>
+<li><p>ANIMALCOMMENTS / ANIMALDESCRIPTION / ANIMALWARNING</p></li>
 <li><p>ANIMALDECEASEDDATE</p></li>
 <li><p>ANIMALDECEASEDNOTES</p></li>
 <li><p>ANIMALDECEASEDREASON</p></li>
@@ -201,6 +201,8 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
 <dt>ANIMALMARKINGS</dt><dd><p>Some comments for the animal’s markings field.</p>
 </dd>
 <dt>ANIMALHEALTHPROBLEMS</dt><dd><p>Some comments for the animal’s health problems field.</p>
+</dd>
+<dt>ANIMALWARNING</dt><dd><p>A popup warning to display when viewing the animal record.</p>
 </dd>
 <dt>ANIMALNEUTERED</dt><dd><p>Y/N to indicate yes/no</p>
 </dd>
@@ -366,6 +368,8 @@ crueltycase, notforadoption, notforregistration, nonshelter, quarantine</p>
 </dd>
 <dt>ORIGINALOWNEREMAIL</dt><dd><p>The original owner’s email.</p>
 </dd>
+<dt>ORIGINALOWNERWARNING</dt><dd><p>A popup warning to display when viewing the original owner record.</p>
+</dd>
 <dt>ORIGINALOWNERFLAGS</dt><dd><p>This column can be used to set any other person flags on the original owner. Flags should be comma separated with no extra spaces. Built in flags are their lower case English names, eg: banned,aco,homechecked,homechecker,excludefrombulkemail
 Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag</p>
 </dd>
@@ -419,6 +423,8 @@ Additional flags that you have added to the system should exactly match their fl
 Additional flags that you have added to the system should exactly match their flag names as they appear on the person screens, eg: banned,Fundraising Flag 1,Custom Flag</p>
 </dd>
 <dt>PERSONCOMMENTS</dt><dd><p>Any comments to go with the person record.</p>
+</dd>
+<dt>PERSONWARNING</dt><dd><p>A popup warning to display when viewing the person record.</p>
 </dd>
 <dt>PERSONMATCHACTIVE</dt><dd><p>Y or 1 in this column indicates the person is looking for an animal. If this field is not set to Y or 1, the other PERSONMATCH columns are ignored for this row.</p>
 </dd>
