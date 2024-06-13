@@ -347,13 +347,11 @@ $(function() {
         updatebreedselect: function() {
             $('optgroup', $('#breed')).remove();
             $('#breedp optgroup').clone().appendTo($('#breed'));
-
             $('#breed').children().each(function(){
                 if($(this).attr('id') != 'ngp-'+$('#species').val()){
                     $(this).remove();
                 }
             });
-            $("#breed").select("removeRetiredOptions");
         },
 
         sync: function() {

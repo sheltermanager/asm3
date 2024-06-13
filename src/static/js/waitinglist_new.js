@@ -140,7 +140,6 @@ $(function() {
                     $(this).remove();
                 }
             });
-            $("#breed").select("removeRetiredOptions");
         },
 
         bind: function() {
@@ -228,8 +227,8 @@ $(function() {
 
             // Set select box default values
             $("#species").val(config.str("AFDefaultSpecies"));
-            $("#breed").val(config.str("AFDefaultBreed"));
             waitinglist_new.update_breed_select();
+            $("#breed").val(config.str("AFDefaultBreed"));
             $("#size").val(config.str("AFDefaultSize"));
             $("#sex").val("2");
             $("#urgency").val(config.str("WaitingListDefaultUrgency"));
@@ -240,7 +239,7 @@ $(function() {
             $("#dateputon").val(format.date(new Date()));
 
             // Remove any retired lookups from the lists
-            $(".asm-selectbox").select("removeRetiredOptions");
+            $(".asm-selectbox").select("removeRetiredOptions", "all");
 
         },
 
