@@ -133,7 +133,6 @@ $(function() {
 
         update_breed_select: function() {
             // Only show the breeds for the selected species
-            // If the species has no breeds the species is shown
             $('optgroup', $('#breed')).remove();
             $('#breedp optgroup').clone().appendTo($('#breed'));
             $('#breed').children().each(function(){
@@ -141,6 +140,7 @@ $(function() {
                     $(this).remove();
                 }
             });
+            $("#breed").select("removeRetiredOptions");
         },
 
         bind: function() {
@@ -228,6 +228,7 @@ $(function() {
 
             // Set select box default values
             $("#species").val(config.str("AFDefaultSpecies"));
+            $("#breed").val(config.str("AFDefaultBreed"));
             waitinglist_new.update_breed_select();
             $("#size").val(config.str("AFDefaultSize"));
             $("#sex").val("2");

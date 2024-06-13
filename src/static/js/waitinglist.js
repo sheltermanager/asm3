@@ -353,6 +353,7 @@ $(function() {
                     $(this).remove();
                 }
             });
+            $("#breed").select("removeRetiredOptions");
         },
 
         sync: function() {
