@@ -73,8 +73,7 @@
 15 | ^933                 | Buddy ID
 15 | ^938                 | Disgan | en_PT pt
 15 | ^939                 | M4S ID
-15 | ^9410000             | 24PetWatch
-15 | ^941                 | Felixcan
+15 | ^941                 | 24PetWatch
 15 | ^941                 | Gardipet | en_PT pt
 15 | ^943                 | BCDS
 15 | ^945                 | BCDS
