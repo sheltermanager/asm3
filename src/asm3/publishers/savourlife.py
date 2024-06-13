@@ -31,11 +31,14 @@ class SavourLifePublisher(AbstractPublisher):
         """
         Returns a savourlife breed for a given breedname
         """
-        breed = asm3.utils.nulltostr(breedname)
+        breed = asm3.utils.nulltostr(breedname).lower()
+        breed = " ".join(breed.split()) # this suppresses whitespace, eg: "    foo    bar" becomes "foo bar"
         if crossbreed:
             breed = "%s cross" % breed
         for k, v in DOG_BREEDS.items():
-            if v.lower().strip() == breed.lower():
+            v = v.lower()
+            v = " ".join(v.split()) # suppress whitespace
+            if v == breed:
                 return int(k)
         self.log("'%s' is not a valid SavourLife breed, using default 'Cross Breed'" % breedname)
         return 305
