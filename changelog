@@ -1,6 +1,8 @@
 49
 ================
 
+15/06/24 Fix bug: change user settings removing signature on subsequent saves
+15/06/24 Fix bug: email address being blanked by chooser on options screen
 13/06/24 Make sure default breed is applied to new waiting list entries
 13/06/24 Work around broken breeds in SavourLife list by suppressing whitespace
 11/06/24 Add ANIMALWARNING, PERSONWARNING, ORIGINALOWNERWARNING csv columns

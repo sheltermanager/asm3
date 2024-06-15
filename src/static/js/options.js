@@ -1895,7 +1895,7 @@ $(function() {
             $("#button-save").button().click(async function() {
                 $("#button-save").button("disable");
                 validate.dirty(false);
-                let formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").toPOST(true);
+                let formdata = "mode=save&" + $("input, select, textarea, .asm-richtextarea").not(".chooser").toPOST(true);
                 formdata += "&DonationAccountMappings=" + get_donation_mappings();
                 header.show_loading(_("Saving..."));
                 await common.ajax_post("options", formdata);

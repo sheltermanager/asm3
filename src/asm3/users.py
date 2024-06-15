@@ -661,22 +661,23 @@ def update_user_settings(dbo: Database, username: str, email: str = "", realname
     if twofavalidcode is set and valid, EnableTOTP is set to 1
     if twofavalidpassword is set and valid, EnableTOTP is set to 0
     """
-    user = dbo.first_row(dbo.query("SELECT ID, Password, OTPSecret, EnableTOTP FROM users WHERE Username = ?", [username]))
-    enabletotp = user.ENABLETOTP
-    if twofavalidcode != "" and twofavalidcode == str(asm3.utils.totp(user.OTPSECRET)):
-        asm3.al.debug("%s: valid 2fa code given, enabling 2FA/TOTP" % user, "users.update_user_settings", dbo)
-        enabletotp = 1
-    elif twofavalidpassword != "" and verify_password(twofavalidpassword, user.PASSWORD):
-        asm3.al.debug("%s: valid password given, disabling 2FA/TOTP" % user, "users.update_user_settings", dbo)
-        enabletotp = 0
-    dbo.update("users", user.ID, {
+    values = {
         "RealName":         realname,
         "EmailAddress":     email,
         "ThemeOverride":    theme,
-        "LocaleOverride":   locale,
-        "EnableTOTP":       enabletotp,
-        "Signature":        signature
-    }, username, setLastChanged=False)
+        "LocaleOverride":   locale
+    }
+    user = dbo.first_row(dbo.query("SELECT ID, Password, OTPSecret, EnableTOTP FROM users WHERE Username = ?", [username]))
+    if twofavalidcode != "" and twofavalidcode == str(asm3.utils.totp(user.OTPSECRET)):
+        asm3.al.debug(f"{user}: valid 2fa code given, enabling 2FA/TOTP", "users.update_user_settings", dbo)
+        values["EnableTOTP"] = 1
+    elif twofavalidpassword != "" and verify_password(twofavalidpassword, user.PASSWORD):
+        asm3.al.debug(f"{user}: valid password given, disabling 2FA/TOTP", "users.update_user_settings", dbo)
+        values["EnableTOTP"] = 0
+    if signature != "":
+        asm3.al.debug(f"{user}: updated signature given", "users.update_user_settings", dbo)
+        values["Signature"] = signature
+    dbo.update("users", user.ID, values, username, setLastChanged=False)
 
 def update_user_otp_secret(dbo: Database, userid: int, secret: str) -> None:
     """
