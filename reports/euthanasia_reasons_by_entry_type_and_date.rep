@@ -1,0 +1,48 @@
+Euthanasia Reasons by Entry Type and Date
+###
+Statistics
+###
+34801/Any rev01
+###
+Euthanasia reasons for animals, grouped by entry types and between two dates.
+###
+en
+###
+SELECT ReasonName, EntryTypeName, COUNT(PTSReasonID) AS Total FROM animal 
+INNER JOIN deathreason ON deathreason.ID = PTSReasonID
+INNER JOIN lksentrytype ON lksentrytype.ID  = animal.EntryTypeID
+WHERE DeceasedDate >= '$ASK DATE Enter date from$' AND DeceasedDate <= '$ASK DATE Enter date to$'
+AND PutToSleep = 1 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0
+GROUP BY EntryTypeName, ReasonName
+ORDER BY EntryTypeName, ReasonName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_EntryTypeName
+$$HEAD
+<h2>$EntryTypeName</h2>
+
+<table border=1>
+<thead>
+<tr>
+<th><b>Reason</b></th>
+<th><b></b></th>
+</tr>
+</thead>
+<tbody>
+$$FOOT
+</tbody>
+</table>
+
+<p><b>Total for $EntryTypeName: {SUM.Total.0}</b></p>
+GROUP$$
+
+$$BODY<tr>
+<td>$ReasonName</td>
+<td>$Total</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$
