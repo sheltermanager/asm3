@@ -1482,8 +1482,8 @@ def create_person(dbo: Database, username: str, collationid: int, merge: bool = 
         if f.FIELDNAME == "emailaddress2": d["emailaddress2"] = truncs(f.VALUE)
         if f.FIELDNAME == "idnumber": d["idnumber"] = truncs(f.VALUE)
         if f.FIELDNAME == "idnumber2": d["idnumber2"] = truncs(f.VALUE)
-        if f.FIELDNAME == "dateofbirth" or "dateofbirthperson": d["dateofbirth"] = f.VALUE
-        if f.FIELDNAME == "dateofbirth2" or "dateofbirthperson2": d["dateofbirth2"] = f.VALUE
+        if f.FIELDNAME == "dateofbirth" or f.FIELDNAME =="dateofbirthperson": d["dateofbirth"] = f.VALUE
+        if f.FIELDNAME == "dateofbirth2" or f.FIELDNAME =="dateofbirthperson2": d["dateofbirth2"] = f.VALUE
         if f.FIELDNAME == "excludefrombulkemail" and f.VALUE != "" and f.VALUE != asm3.i18n._("No", l): 
             flags += ",excludefrombulkemail"
         if f.FIELDNAME == "gdprcontactoptin": d["gdprcontactoptin"] = truncs(f.VALUE)
