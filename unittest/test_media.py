@@ -21,7 +21,7 @@ class TestMedia(unittest.TestCase):
         data = f.read()
         f.close()
         post = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": "data:image/jpeg;base64,%s" % asm3.utils.base64encode(data) }, "en")
-        asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.ANIMAL, nid, post)
+        asm3.media.attach_file_from_form(base.get_dbo(), "test", asm3.media.ANIMAL, nid, asm3.media.MEDIASOURCE_ATTACHFILE, post)
         asm3.animal.delete_animal(base.get_dbo(), "test", nid)
  
     def test_remove_expired_media(self):
