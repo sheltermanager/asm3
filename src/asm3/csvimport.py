@@ -643,15 +643,15 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 # If we have some image data, add it to the animal
                 if len(imagedata) > 0:
                     imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
-                    asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, imagepost)
+                    asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_CSVIMPORT, imagepost)
                 # If we have some PDF data, add that to the animal
                 if len(pdfdata) > 0:
                     pdfpost = asm3.utils.PostedData({ "filename": pdfname, "filetype": "application/pdf", "filedata": pdfdata }, dbo.locale)
-                    asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, pdfpost)
+                    asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_CSVIMPORT, pdfpost)
                 # If we have some HTML data, add that to the animal
                 if len(htmldata) > 0:
                     htmlpost = asm3.utils.PostedData({ "filename": htmlname, "filetype": "text/html", "filedata": htmldata }, dbo.locale)
-                    asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, htmlpost)
+                    asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_CSVIMPORT, htmlpost)
             except Exception as e:
                 row_error(errors, "animal", rowno, row, e, dbo, sys.exc_info())
 
@@ -778,11 +778,11 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
                 # If we have some image data, add it to the person
                 if len(imagedata) > 0:
                     imagepost = asm3.utils.PostedData({ "filename": "image.jpg", "filetype": "image/jpeg", "filedata": imagedata }, dbo.locale)
-                    asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, imagepost)
+                    asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, asm3.media.MEDIASOURCE_CSVIMPORT, imagepost)
                 # If we have some PDF data, add that to the person
                 if len(pdfdata) > 0:
                     pdfpost = asm3.utils.PostedData({ "filename": pdfname, "filetype": "application/pdf", "filedata": pdfdata }, dbo.locale)
-                    asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, pdfpost)
+                    asm3.media.attach_file_from_form(dbo, user, asm3.media.PERSON, personid, asm3.media.MEDIASOURCE_CSVIMPORT, pdfpost)
             except Exception as e:
                 row_error(errors, "person", rowno, row, e, dbo, sys.exc_info())
 

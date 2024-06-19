@@ -874,7 +874,7 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
 
     elif method == "upload_animal_image":
         asm3.users.check_permission_map(l, user.SUPERUSER, securitymap, asm3.users.ADD_MEDIA)
-        asm3.media.attach_file_from_form(dbo, username, asm3.media.ANIMAL, int(animalid), post)
+        asm3.media.attach_file_from_form(dbo, username, asm3.media.ANIMAL, int(animalid), asm3.media.MEDIASOURCE_SERVICEUPLOAD, post)
         return ("text/plain", 0, 0, "OK")
 
     elif method == "online_form_html":

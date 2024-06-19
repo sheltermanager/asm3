@@ -685,7 +685,7 @@ def handler(session, post):
     elif mode == "uai":
         pc(asm3.users.ADD_MEDIA)
         # Upload an animal image
-        asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, post)
+        asm3.media.attach_file_from_form(dbo, user, asm3.media.ANIMAL, animalid, asm3.media.MEDIASOURCE_MOBILEUI, post)
         return "GO mobile_post?posttype=va&id=%d&success=true" % animalid
 
     elif mode == "aas":

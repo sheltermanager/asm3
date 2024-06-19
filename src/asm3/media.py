@@ -23,6 +23,14 @@ PERSON = 3
 WAITINGLIST = 5
 ANIMALCONTROL = 6
 
+MEDIASOURCE_ATTACHFILE = 1
+MEDIASOURCE_DRAGNDROP = 2
+MEDIASOURCE_MOBILEUI = 3
+MEDIASOURCE_ONLINEFORM = 4
+MEDIASOURCE_DOCUMENT = 5
+MEDIASOURCE_CSVIMPORT = 6
+MEDIASOURCE_SERVICEUPLOAD = 7
+
 MEDIATYPE_FILE = 0
 MEDIATYPE_DOCUMENT_LINK = 1
 MEDIATYPE_VIDEO_LINK = 2
@@ -297,7 +305,7 @@ def get_image_media(dbo: Database, linktype: int, linkid: int, ignoreexcluded: b
         return dbo.query("SELECT * FROM media WHERE (ExcludeFromPublish = 0 OR ExcludeFromPublish Is Null) " \
             "AND LinkTypeID = ? AND LinkID = ? AND (LOWER(MediaName) Like '%%.jpg' OR LOWER(MediaName) Like '%%.jpeg') ORDER BY media.Date DESC", ( linktype, linkid ))
 
-def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: int, post: PostedData) -> int:
+def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: int, sourceid: int, post: PostedData) -> int:
     """
     Attaches a media file from the posted form
     data is the web.py data object and should contain
@@ -401,6 +409,8 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
     dbo.insert("media", {
         "ID":                   mediaid,
         "DBFSID":               dbfsid,
+        "MediaSource":          sourceid,
+        "MediaFlags":           "",
         "MediaSize":            len(filedata),
         "MediaName":            medianame,
         "MediaMimeType":        mime_type(medianame),

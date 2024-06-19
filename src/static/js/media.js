@@ -465,7 +465,7 @@ $(function() {
             let i = 0, promises = [];
             header.show_loading(_("Uploading..."));
             for (i = 0; i < files.length; i += 1) {
-                promises.push(media.attach_file(files[i])); 
+                promises.push(media.attach_file(files[i], 2)); 
             }
             $.when.apply(this, promises).then(function() {
                 header.hide_loading();
@@ -478,7 +478,7 @@ $(function() {
          * If the file is an image, scales it down and rotates it first.
          * returns a promise.
          */
-        attach_file: function(file, retainfor, comments) {
+        attach_file: function(file, sourceid, retainfor, comments) {
 
             let deferred = $.Deferred();
 
@@ -536,6 +536,7 @@ $(function() {
                         let formdata = "mode=create&transformed=1&" +
                             "linkid=" + controller.linkid + 
                             "&linktypeid=" + controller.linktypeid + 
+                            "&sourceid=" + sourceid +
                             "&comments=" + encodeURIComponent(comments) + 
                             "&retainfor=" + encodeURIComponent(retainfor) + 
                             "&filename=" + encodeURIComponent(file.name) +
@@ -559,6 +560,7 @@ $(function() {
                         let formdata = "mode=create&" +
                             "linkid=" + controller.linkid + 
                             "&linktypeid=" + controller.linktypeid + 
+                            "&sourceid=" + sourceid + 
                             "&comments=" + encodeURIComponent(comments) + 
                             "&filename=" + encodeURIComponent(file.name) +
                             "&filetype=" + encodeURIComponent(file.type) + 
@@ -656,7 +658,7 @@ $(function() {
 
             // Attach the file with the HTML5 APIs
             header.show_loading(_("Uploading..."));
-            media.attach_file(selectedfile, $("#retainfor").val(), $("#addcomments").val())
+            media.attach_file(selectedfile, 1, $("#retainfor").val(), $("#addcomments").val())
                 .then(function() {
                     header.hide_loading();
                     common.route_reload(); 

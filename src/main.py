@@ -796,7 +796,8 @@ class media(ASMEndpoint):
         self.check(asm3.users.ADD_MEDIA)
         linkid = o.post.integer("linkid")
         linktypeid = o.post.integer("linktypeid")
-        asm3.media.attach_file_from_form(o.dbo, o.user, linktypeid, linkid, o.post)
+        sourceid = o.post.integer("sourceid")
+        asm3.media.attach_file_from_form(o.dbo, o.user, linktypeid, linkid, sourceid, o.post)
         self.redirect("%s?id=%d" % (o.post["controller"], linkid))
 
     def post_createdoc(self, o):
@@ -1241,7 +1242,7 @@ class mobile_photo_upload(ASMEndpoint):
         return asm3.html.mobile_page(l, _("Photo Uploader", l), [ "mobile_photo_uploader.js" ], c)
 
     def post_all(self, o):
-        mid = asm3.media.attach_file_from_form(o.dbo, o.user, asm3.media.ANIMAL, o.post.integer("animalid"), o.post)
+        mid = asm3.media.attach_file_from_form(o.dbo, o.user, asm3.media.ANIMAL, o.post.integer("animalid"), asm3.media.MEDIASOURCE_MOBILEUI, o.post)
         if o.post["type"] == "paperwork":
             asm3.media.convert_media_jpg2pdf(o.dbo, o.user, mid)
             asm3.media.delete_media(o.dbo, o.user, mid)

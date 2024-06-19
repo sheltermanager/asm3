@@ -1234,6 +1234,8 @@ def sql_structure(dbo: Database) -> str:
         fid(),
         fint("DBFSID", True),
         fint("MediaSize", True),
+        fint("MediaSource", True),
+        fstr("MediaFlags", True),
         fint("MediaType", True),
         fstr("MediaName"),
         fstr("MediaMimeType", True),
@@ -1256,10 +1258,11 @@ def sql_structure(dbo: Database) -> str:
         fint("LinkTypeID"),
         fint("RecordVersion", True),
         fdate("Date"),
-        fdate("CreatedDate", True),
-        fdate("RetainUntil", True) ), False)
+        fdate("RetainUntil", True) ), True, True)
     sql += index("media_DBFSID", "media", "DBFSID")
+    sql += index("media_MediaFlags", "media", "MediaFlags")
     sql += index("media_MediaMimeType", "media", "MediaMimeType")
+    sql += index("media_MediaSource", "media", "MediaSource")
     sql += index("media_LinkID", "media", "LinkID")
     sql += index("media_LinkTypeID", "media", "LinkTypeID")
     sql += index("media_WebsitePhoto", "media", "WebsitePhoto")
@@ -6281,3 +6284,22 @@ def update_34901(dbo: Database) -> None:
                 break
     # Run the batch update
     dbo.execute_many("UPDATE animallocation SET PrevAnimalLocationID=? WHERE ID=?", batch, override_lock=True)
+
+def update_34902(dbo: Database) -> None:
+    # Add extra audit fields to media table to match other tables
+    # (CreatedDate already existed from update 34402)
+    add_column(dbo, "media", "CreatedBy", dbo.type_shorttext)
+    add_column(dbo, "media", "LastChangedBy", dbo.type_shorttext)
+    add_column(dbo, "media", "LastChangedDate", dbo.type_datetime)
+    # Add MediaSource column to identify where media came from
+    add_column(dbo, "media", "MediaSource", dbo.type_integer)
+    add_index(dbo, "media_MediaSource", "media", "MediaSource")
+    # 0 = attach file, 4 = online form, 5 = document template
+    dbo.execute_dbupdate("UPDATE media SET MediaSource = CASE " \
+        "WHEN SignatureHash LIKE 'online%' THEN 4 " \
+        "WHEN MediaName LIKE '%.html' THEN 5 " \
+        "ELSE 0 END")
+    # Add MediaFlags column to allow users to tag media
+    add_column(dbo, "media", "MediaFlags", dbo.type_shorttext)
+    add_index(dbo, "media_MediaFlags", "media", "MediaFlags")
+    dbo.execute_dbupdate("UPDATE media SET MediaFlags = ''")
