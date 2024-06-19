@@ -1259,7 +1259,6 @@ def sql_structure(dbo: Database) -> str:
         # ASM2_COMPATIBILITY
         fint("LinkID"),
         fint("LinkTypeID"),
-        fint("RecordVersion", True),
         fdate("Date"),
         fdate("RetainUntil", True) ), True, True)
     sql += index("media_DBFSID", "media", "DBFSID")
