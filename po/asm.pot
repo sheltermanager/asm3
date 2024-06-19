@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-05-31 10:09+0000\n"
+"POT-Creation-Date: 2024-06-19 10:45+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -12744,6 +12744,18 @@ msgstr ""
 
 #: service.py
 msgid "Signed Document"
+msgstr ""
+
+#: media.js
+msgid "Signed on mobile signing pad"
+msgstr ""
+
+#: media.js
+msgid "Signed on screen"
+msgstr ""
+
+#: media.js
+msgid "Signed via email"
 msgstr ""
 
 #: service_sign_document.js mobile_sign.js

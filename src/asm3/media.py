@@ -719,12 +719,17 @@ def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate:
         if sigurl != "": sig += '<p><img src="' + sigurl + '" /></p>\n'
         sig += "<p>%s</p>\n" % signdate
         content += sig
-    # Create a hash of the contents and set it with all media records pointing to this DBFSID
+    # Create a hash of the contents and set it on all media records pointing to this DBFSID
     # (this gracefully handles animal/person media doc entries that point to the same DBFS file)
-    dbo.update("media", f"DBFSID={m.DBFSID}", { 
-        "SignatureHash": "%s:%s" % (signprefix, asm3.utils.md5_hash_hex(content)), 
-        "Date": dbo.now() 
-    }, username, setLastChanged=False)
+    for r in dbo.query("SELECT ID, LinkID, LinkTypeID FROM media WHERE DBFSID=?", [m.DBFSID]):
+        # NOTE: We re-set linkid/linktypeid in the update query 
+        # so that this update shows in the audit trail UI for the linked record.
+        dbo.update("media", r.ID, {
+            "LinkID": m.LINKID,
+            "LinkTypeID": m.LINKTYPEID, 
+            "SignatureHash": "%s:%s" % (signprefix, asm3.utils.md5_hash_hex(content)), 
+            "Date": dbo.now() 
+        }, username, setLastChanged=False)
     # Update the dbfs contents
     content = asm3.utils.str2bytes(content)
     update_file_content(dbo, username, mid, content)
