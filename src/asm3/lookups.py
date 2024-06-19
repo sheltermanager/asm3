@@ -50,6 +50,7 @@ LOOKUP_TABLES = {
     "jurisdiction":     (_("Jurisdictions"), "JurisdictionName", _("Jurisdiction"), "JurisdictionDescription", "add del ret", ("animal.JurisdictionID", "animalcontrol.JurisdictionID","owner.JurisdictionID")),
     "licencetype":      (_("License Types"), "LicenceTypeName", _("Type"), "LicenceTypeDescription", "add del ret cost sched", ("ownerlicence.LicenceTypeID",)),
     "logtype":          (_("Log Types"), "LogTypeName", _("Type"), "LogTypeDescription", "add del ret", ("log.LogTypeID",)),
+    #"lkmediaflags":     (_("Media Flags"), "Flag", _("Flag"), "", "add del ret", ""),
     "lksmovementtype":  (_("Movement Types"), "MovementType", _("Type"), "", "", ("adoption.MovementType", "animal.ActiveMovementType",)),
     "lksoutcome":       (_("Outcomes"), "Outcome", _("Outcome"), "", "", ""),
     "lkownerflags":     (_("Person Flags"), "Flag", _("Flag"), "", "add del ret", ""),
