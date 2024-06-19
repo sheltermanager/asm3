@@ -416,6 +416,15 @@ $(function() {
                 if (m.SIGNATUREHASH.indexOf("onlineform") == 0) {
                     mod_out("locked", _("Locked"));
                 }
+                else if (m.SIGNATUREHASH.indexOf("signscreen") == 0) {
+                    mod_out("signature", _("Signed on media tab"));
+                }
+                else if (m.SIGNATUREHASH.indexOf("signmobile") == 0) {
+                    mod_out("signature", _("Signed on mobile signing pad"));
+                }
+                else if (m.SIGNATUREHASH.indexOf("signemail") == 0) {
+                    mod_out("signature", _("Signed via email"));
+                }
                 else {
                     mod_out("signature", _("Signed"));
                 }

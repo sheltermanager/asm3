@@ -1,6 +1,7 @@
 49
 ================
 
+19/06/24 Indicate in signing icon tooltip how the document was signed
 18/06/24 Bug: online forms setting person dateofbirth to none every time
 15/06/24 Bug: change user settings removing signature on subsequent saves
 15/06/24 Bug: email address being blanked by chooser on options screen
