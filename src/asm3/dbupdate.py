@@ -44,7 +44,7 @@ VERSIONS = (
     34508, 34509, 34510, 34511, 34512, 34600, 34601, 34602, 34603, 34604, 34605,
     34606, 34607, 34608, 34609, 34611, 34700, 34701, 34702, 34703, 34704, 34705,
     34706, 34707, 34708, 34709, 34800, 34801, 34802, 34803, 34804, 34805, 34806,
-    34807, 34808, 34809, 34810, 34811, 34812, 34813, 34900, 34901
+    34807, 34808, 34809, 34810, 34811, 34812, 34813, 34900, 34901, 34902
 )
 
 LATEST_VERSION = VERSIONS[-1]
@@ -60,7 +60,7 @@ TABLES = ( "accounts", "accountsrole", "accountstrx", "additional", "additionalf
     "costtype", "customreport", "customreportrole", "dbfs", "deathreason", "deletion", "diary", 
     "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", "donationtype", 
     "entryreason", "event", "eventanimal", "incidentcompleted", "incidenttype", "internallocation", 
-    "jurisdiction", "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype",
+    "jurisdiction", "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype", "lkmediaflags", 
     "lkownerflags", "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype",
     "lksex", "lksfieldlink", "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", 
     "lksoutcome", "lksposneg", "lksrotatype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
@@ -108,7 +108,7 @@ TABLES_DATA = ( "accountsrole", "accountstrx", "additional", "adoption",
 TABLES_LOOKUP = ( "accounts", "additionalfield", "animaltype", "basecolour", "breed", "citationtype", 
     "costtype", "deathreason", "diarytaskdetail", "diarytaskhead", "diet", "donationpayment", 
     "donationtype", "entryreason", "incidentcompleted", "incidenttype", "internallocation", "jurisdiction", 
-    "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype", "lkownerflags", 
+    "licencetype", "lkanimalflags", "lkboardingtype", "lkclinictype", "lkcoattype", "lkmediaflags", "lkownerflags", 
     "lksaccounttype", "lksclinicstatus", "lksdiarylink", "lksdonationfreq", "lksentrytype", "lksex", "lksfieldlink", 
     "lksfieldtype", "lksize", "lksloglink", "lksmedialink", "lksmediatype", "lksmovementtype", "lksoutcome", 
     "lksposneg", "lksrotatype", "lksyesno", "lksynun", "lksynunk", "lkstransportstatus", "lkurgency", 
@@ -1125,6 +1125,9 @@ def sql_structure(dbo: Database) -> str:
         fid(), fstr("AccountType") ), False)
 
     sql += table("lkanimalflags", (
+        fid(), fstr("Flag"), fint("IsRetired", True) ), False)
+
+    sql += table("lkmediaflags", (
         fid(), fstr("Flag"), fint("IsRetired", True) ), False)
 
     sql += table("lkownerflags", (
@@ -6240,7 +6243,7 @@ def update_34811(dbo: Database) -> None:
     dbo.execute_dbupdate("UPDATE animalwaitinglist SET BreedID=0, Sex=2, Neutered=0, MicrochipNumber='', AnimalName='', WaitingListRemovalID=0")
     fields = ",".join([
         dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
-        dbo.ddl_add_table_column("RemovalName", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("RemovalName", dbo.type_shorttext, False)
     ])
     dbo.execute_dbupdate( dbo.ddl_add_table("lkwaitinglistremoval", fields) )
     dbo.execute_dbupdate("INSERT INTO lkwaitinglistremoval VALUES (1, ?)", [ _("Entered shelter", l) ])
@@ -6303,3 +6306,10 @@ def update_34902(dbo: Database) -> None:
     add_column(dbo, "media", "MediaFlags", dbo.type_shorttext)
     add_index(dbo, "media_MediaFlags", "media", "MediaFlags")
     dbo.execute_dbupdate("UPDATE media SET MediaFlags = ''")
+    # Add lkmediaflags table
+    fields = ",".join([
+        dbo.ddl_add_table_column("ID", dbo.type_integer, False, pk=True),
+        dbo.ddl_add_table_column("Flag", dbo.type_shorttext, False),
+        dbo.ddl_add_table_column("IsRetired", dbo.type_integer, True)
+    ])
+    dbo.execute_dbupdate( dbo.ddl_add_table("lkmediaflags", fields) )
