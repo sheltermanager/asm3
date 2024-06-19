@@ -30,6 +30,8 @@ MEDIASOURCE_ONLINEFORM = 4
 MEDIASOURCE_DOCUMENT = 5
 MEDIASOURCE_CSVIMPORT = 6
 MEDIASOURCE_SERVICEUPLOAD = 7
+MEDIASOURCE_JPG2PDF = 8
+MEDIASOURCE_CLONE = 9
 
 MEDIATYPE_FILE = 0
 MEDIATYPE_DOCUMENT_LINK = 1
@@ -105,7 +107,7 @@ def set_video_preferred(dbo: Database, username: str, mid: int) -> None:
     """
     link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "WebsiteVideo": 0 })
-    dbo.update("media", mid, { "WebsiteVideo": 1, "Date": dbo.now() }, username, setLastChanged=False) 
+    dbo.update("media", mid, { "WebsiteVideo": 1, "Date": dbo.now() }, username) 
 
 def set_web_preferred(dbo: Database, username: str, mid: int) -> None:
     """
@@ -113,7 +115,7 @@ def set_web_preferred(dbo: Database, username: str, mid: int) -> None:
     """
     link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "WebsitePhoto": 0 })
-    dbo.update("media", mid, { "WebsitePhoto": 1, "ExcludeFromPublish": 0, "Date": dbo.now() }, username, setLastChanged=False) 
+    dbo.update("media", mid, { "WebsitePhoto": 1, "ExcludeFromPublish": 0, "Date": dbo.now() }, username) 
 
 def set_doc_preferred(dbo: Database, username: str, mid: int) -> None:
     """
@@ -121,7 +123,7 @@ def set_doc_preferred(dbo: Database, username: str, mid: int) -> None:
     """
     link = dbo.first_row(dbo.query("SELECT LinkID, LinkTypeID FROM media WHERE ID = ?", [mid]))
     dbo.update("media", "LinkID=%d AND LinkTypeID=%d" % (link.LINKID, link.LINKTYPEID), { "DocPhoto": 0 })
-    dbo.update("media", mid, { "DocPhoto": 1, "Date": dbo.now() }, username, setLastChanged=False) 
+    dbo.update("media", mid, { "DocPhoto": 1, "Date": dbo.now() }, username) 
 
 def set_excluded(dbo: Database, username: str, mid: int, exclude: int = 1) -> None:
     """
@@ -132,7 +134,7 @@ def set_excluded(dbo: Database, username: str, mid: int, exclude: int = 1) -> No
     if exclude == 1:
         d["WebsitePhoto"] = 0
         d["DocPhoto"] = 0
-    dbo.update("media", mid, d, username, setLastChanged=False)
+    dbo.update("media", mid, d, username)
 
 def get_name_for_id(dbo: Database, mid: int) -> str:
     return dbo.query_string("SELECT MediaName FROM media WHERE ID = ?", [mid])
@@ -429,7 +431,7 @@ def attach_file_from_form(dbo: Database, username: str, linktype: int, linkid: i
         "Date":                 dbo.now(),
         "CreatedDate":          dbo.now(),
         "RetainUntil":          retainuntil
-    }, username, setCreated=False, generateID=False)
+    }, username, generateID=False)
 
     # Verify this record has a web/doc default if we aren't excluding it from publishing
     if ispicture and excludefrompublish == 0:
@@ -454,6 +456,8 @@ def attach_link_from_form(dbo: Database, username: str, linktype: int, linkid: i
     return dbo.insert("media", {
         "DBFSID":               0,
         "MediaSize":            0,
+        "MediaSource":          MEDIASOURCE_ATTACHFILE,
+        "MediaFlags":           "",
         "MediaName":            url,
         "MediaMimeType":        "text/url",
         "MediaType":            post.integer("linktype"),
@@ -471,7 +475,7 @@ def attach_link_from_form(dbo: Database, username: str, linktype: int, linkid: i
         "Date":                 dbo.now(),
         "CreatedDate":          dbo.now(),
         "RetainUntil":          None
-    }, username, setCreated=False)
+    }, username)
 
 
 def calc_retainuntil_from_retainfor(dbo: Database, retainfor: int) -> datetime:
@@ -511,6 +515,8 @@ def create_blank_document_media(dbo: Database, username: str, linktype: int, lin
         "ID":                   mediaid,
         "DBFSID":               dbfsid,
         "MediaSize":            0,
+        "MediaSource":          MEDIASOURCE_DOCUMENT,
+        "MediaFlags":           "",
         "MediaName":            "%d.html" % mediaid,
         "MediaMimeType":        "text/html",
         "MediaType":            0,
@@ -528,7 +534,7 @@ def create_blank_document_media(dbo: Database, username: str, linktype: int, lin
         "Date":                 dbo.now(),
         "CreatedDate":          dbo.now(),
         "RetainUntil":          None
-    }, username, setCreated=False, generateID=False)
+    }, username, generateID=False)
     return mediaid
 
 def create_document_animalperson(dbo: Database, username: str, animalid: int, personid: int, 
@@ -553,6 +559,8 @@ def create_document_animalperson(dbo: Database, username: str, animalid: int, pe
         "ID":                   mediaida,
         "DBFSID":               dbfsid,
         "MediaSize":            len(content),
+        "MediaSource":          MEDIASOURCE_DOCUMENT,
+        "MediaFlags":           "",
         "MediaName":            "%d.html" % mediaida,
         "MediaMimeType":        "text/html",
         "MediaType":            0,
@@ -570,12 +578,14 @@ def create_document_animalperson(dbo: Database, username: str, animalid: int, pe
         "Date":                 dbo.now(),
         "CreatedDate":          dbo.now(),
         "RetainUntil":          retainuntil
-    }, username, setCreated=False, generateID=False)
+    }, username, generateID=False)
     mediaidp = dbo.get_id("media")
     dbo.insert("media", {
         "ID":                   mediaidp,
         "DBFSID":               dbfsid,
         "MediaSize":            len(content),
+        "MediaSource":          MEDIASOURCE_DOCUMENT,
+        "MediaFlags":           "",
         "MediaName":            "%d.html" % mediaidp,
         "MediaMimeType":        "text/html",
         "MediaType":            0,
@@ -593,7 +603,7 @@ def create_document_animalperson(dbo: Database, username: str, animalid: int, pe
         "Date":                 dbo.now(),
         "CreatedDate":          dbo.now(),
         "RetainUntil":          retainuntil
-    }, username, setCreated=False, generateID=False)
+    }, username, generateID=False)
     asm3.dbfs.rename_file_id(dbo, dbfsid, f"{mediaida}.{mediaidp}.html")
     return (mediaida, mediaidp)
 
@@ -616,6 +626,8 @@ def create_document_media(dbo: Database, username: str, linktype: int, linkid: i
         "ID":                   mediaid,
         "DBFSID":               dbfsid,
         "MediaSize":            len(content),
+        "MediaSource":          MEDIASOURCE_DOCUMENT,
+        "MediaFlags":           "",
         "MediaName":            "%d.html" % mediaid,
         "MediaMimeType":        "text/html",
         "MediaType":            0,
@@ -633,7 +645,7 @@ def create_document_media(dbo: Database, username: str, linktype: int, linkid: i
         "Date":                 dbo.now(),
         "CreatedDate":          dbo.now(),
         "RetainUntil":          retainuntil
-    }, username, setCreated=False, generateID=False)
+    }, username, generateID=False)
     return mediaid
 
 def create_log(dbo: Database, user: str, mid: int, logcode: str = "UK00", message: str = "") -> None:
@@ -739,7 +751,7 @@ def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate:
             "LinkTypeID": m.LINKTYPEID, 
             "SignatureHash": "%s:%s" % (signprefix, asm3.utils.md5_hash_hex(content)), 
             "Date": dbo.now() 
-        }, username, setLastChanged=False)
+        }, username)
     # Update the dbfs contents
     content = asm3.utils.str2bytes(content)
     update_file_content(dbo, username, mid, content)
@@ -758,7 +770,7 @@ def update_file_content(dbo: Database, username: str, mid: int, content: bytes) 
     if m is None: raise IOError("media id %s does not exist" % mid)
     if m.DBFSID == 0: raise IOError("cannot update contents of DBFSID 0")
     asm3.dbfs.put_string_id(dbo, m.DBFSID, m.MEDIANAME, content)
-    dbo.update("media", f"DBFSID={m.DBFSID}", { "Date": dbo.now(), "MediaSize": len(content) }, username, setLastChanged=False)
+    dbo.update("media", f"DBFSID={m.DBFSID}", { "Date": dbo.now(), "MediaSize": len(content) }, username)
 
 def update_media_from_form(dbo: Database, username: str, post: PostedData) -> None:
     mediaid = post.integer("mediaid")
@@ -768,7 +780,7 @@ def update_media_from_form(dbo: Database, username: str, post: PostedData) -> No
         "Date":       dbo.now(),
         # ASM2_COMPATIBILITY
         "UpdatedSinceLastPublish": 1
-    }, username, setLastChanged=False)
+    }, username)
 
 def clone_media(dbo: Database, username: str, mediaid: int, linktypeid: int, linkid: int) -> None:
     """ Clones a media record with a new link """
@@ -778,6 +790,8 @@ def clone_media(dbo: Database, username: str, mediaid: int, linktypeid: int, lin
         "ID":                   nextid,
         "DBFSID":               m.DBFSID,
         "MediaSize":            m.MEDIASIZE,
+        "MediaSource":          MEDIASOURCE_CLONE,
+        "MediaFlags":           m.MEDIAFLAGS,
         "MediaName":            m.MEDIANAME,
         "MediaMimeType":        m.MEDIAMIMETYPE,
         "MediaType":            m.MEDIATYPE,
@@ -795,7 +809,7 @@ def clone_media(dbo: Database, username: str, mediaid: int, linktypeid: int, lin
         "Date":                 dbo.now(),
         "CreatedDate":          dbo.now(),
         "RetainUntil":          m.RETAINUNTIL
-    }, username, setCreated=False, generateID=False)
+    }, username, generateID=False)
 
 def update_media_link(dbo: Database, username: str, mediaid: int, linktypeid: int, linkid: int) -> None:
     """ Updates the media with id to have a new link """
@@ -803,7 +817,7 @@ def update_media_link(dbo: Database, username: str, mediaid: int, linktypeid: in
         "LinkID":   linkid,
         "LinkTypeID": linktypeid,
         "Date":     dbo.now()
-    }, username, setLastChanged=False)
+    }, username)
 
 def delete_media(dbo: Database, username: str, mid: int) -> None:
     """
@@ -847,6 +861,8 @@ def convert_media_jpg2pdf(dbo: Database, username: str, mid: int) -> int:
         "ID":                   mediaid,
         "DBFSID":               dbfsid,
         "MediaSize":            len(pdfdata),
+        "MediaSource":          MEDIASOURCE_JPG2PDF,
+        "MediaFlags":           "",
         "MediaName":            name,
         "MediaMimeType":        "application/pdf",
         "MediaType":            0,
@@ -864,7 +880,7 @@ def convert_media_jpg2pdf(dbo: Database, username: str, mid: int) -> int:
         "Date":                 dbo.now(),
         "CreatedDate":          dbo.now(),
         "RetainUntil":          mr.RETAINUNTIL
-    }, username, setCreated=False, generateID=False)
+    }, username, generateID=False)
     return mediaid
 
 def rotate_media(dbo: Database, username: str, mid: int, clockwise: bool = True) -> None:

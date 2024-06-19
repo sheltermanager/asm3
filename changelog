@@ -1,6 +1,7 @@
 49
 ================
 
+19/06/24 Add audit fields to media table and update them correctly #1471
 19/06/24 Add media.MediaSource column to identify how media was uploaded #1295
 19/06/24 Audit the hash/signing of documents in linked records audit trail
 19/06/24 Indicate in signing icon tooltip how the document was signed
