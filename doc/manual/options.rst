@@ -952,7 +952,10 @@ silently dropped so that you do not have to delete it from the queue.
   present) should only really contain one upper case character per name and
   it's unusual for there to be more than two first names. Bots tend to autofill
   fields with random junk like YxoOopoUoyuVV - this option will reject form
-  submissions where the first name has too many upper case characters.
+  submissions where the first name has too many upper case characters. It will
+  also check and reject if the first name is only upper case or lower case characters,
+  or if it finds something that looks like an email address containing . and @ - this
+  is also something that spambots do.
 
 .. _paymentprocessors:
 

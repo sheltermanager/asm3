@@ -823,12 +823,12 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
     # had a few bots that identified as python-requests, etc.
     if asm3.configuration.onlineform_spam_ua_check(dbo):
         if not useragent.strip().startswith("Mozilla"):
-            asm3.al.error("blocked spambot (ua=%s): %s" % (useragent, post.data), "insert_onlineformincoming_from_form", dbo)
+            asm3.al.error("blocked spambot (bad ua: %s): %s" % (useragent, post.data), "insert_onlineformincoming_from_form", dbo)
             return
 
     # Look for junk in firstname. A lot of bot submitted junk is just random upper and lower case letters. 
     # If we have 2 or more upper and lower case letters in the firstname and no spaces, it's very likely bot junk.
-    # We have javascript that title cases name fields, so a mix of cases also indicates the form has been filled out by
+    # We have javascript that title cases name fields, so a mix of cases, or all one case also indicates the form has been filled out by
     # an automated process instead of a browser.
     # This test does nothing if there's no firstname field in the form.
     if asm3.configuration.onlineform_spam_firstname_mixcase(dbo):
@@ -845,7 +845,16 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                     else:
                         lc += 1
                 if lc >= 2 and uc >= 2 and sp == 0:
-                    asm3.al.error("blocked spambot (firstname=%s, uc=%s, lc=%s): %s" % (v, uc, lc, post.data), "insert_onlineformincoming_from_form", dbo)
+                    asm3.al.error("blocked spambot (mixed caps, firstname=%s, uc=%s, lc=%s, sp=%s): %s" % (v, uc, lc, sp, post.data), "insert_onlineformincoming_from_form", dbo)
+                    return
+                if lc > 0 and uc == 0:
+                    asm3.al.error("blocked spambot (lower case only, firstname=%s, uc=%s, lc=%s): %s" % (v, uc, lc, post.data), "insert_onlineformincoming_from_form", dbo)
+                    return
+                if lc == 0 and uc > 0:
+                    asm3.al.error("blocked spambot (upper case only, firstname=%s, uc=%s, lc=%s): %s" % (v, uc, lc, post.data), "insert_onlineformincoming_from_form", dbo)
+                    return
+                if v.find("@") != -1 and v.find(".") != -1:
+                    asm3.al.error("blocked spambot (email in firstname, firstname=%s): %s" % (v, post.data), "insert_onlineformincoming_from_form", dbo)
                     return
 
     collationid = get_collationid(dbo)
