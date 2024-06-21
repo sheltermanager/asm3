@@ -98,7 +98,7 @@ class PetFBIPublisher(FTPPublisher):
                     return
 
                 # Upload one image for this animal
-                self.uploadImage(an, an["WEBSITEMEDIANAME"], an["SHELTERCODE"] + ".jpg")
+                self.uploadImage(an, an["WEBSITEMEDIAID"], an["WEBSITEMEDIANAME"], an["SHELTERCODE"] + ".jpg")
 
                 csv.append( self.processAnimal(an, shelterid) )
 

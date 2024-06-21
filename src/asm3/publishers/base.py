@@ -1132,6 +1132,17 @@ class AbstractPublisher(threading.Thread):
         except Exception as err:
             self.logError("Failed scaling image: %s" % err, sys.exc_info())
 
+class FTP_TLS_REUSE(ftplib.FTP_TLS):
+    """A subclass of FTP_TLS that forces reuse of the socket that already did
+       TLS. Needed for some instances of vsftpd """
+    def ntransfercmd(self, cmd, rest=None):
+        conn, size = ftplib.FTP.ntransfercmd(self, cmd, rest)
+        if self._prot_p:
+            conn = self.context.wrap_socket(conn,
+                                            server_hostname=self.host,
+                                            session=self.sock.session)  # this is the fix
+        return conn, size
+
 class FTPPublisher(AbstractPublisher):
     """
     Base class for publishers that rely on FTP
@@ -1185,7 +1196,7 @@ class FTPPublisher(AbstractPublisher):
         try:
             # open it and login
             if self.ftptls:
-                self.socket = ftplib.FTP_TLS(host=self.ftphost, timeout=FTP_CONNECTION_TIMEOUT)
+                self.socket = FTP_TLS_REUSE(host=self.ftphost, timeout=FTP_CONNECTION_TIMEOUT)
             else:
                 self.socket = ftplib.FTP(host=self.ftphost, timeout=FTP_CONNECTION_TIMEOUT)
             self.socket.login(self.ftpuser, self.ftppassword)
