@@ -4,15 +4,15 @@ import asm3.i18n
 import asm3.lostfound
 
 from .base import FTPPublisher
-from asm3.sitedefs import HELPINGLOSTPETS_FTP_HOST
+from asm3.sitedefs import PETFBI_FTP_HOST
 from asm3.typehints import Database, PublishCriteria, ResultRow
 
 import os
 import sys
 
-class HelpingLostPetsPublisher(FTPPublisher):
+class PetFBIPublisher(FTPPublisher):
     """
-    Handles publishing to helpinglostpets.com
+    Handles publishing to petfbi.org
     """
     def __init__(self, dbo: Database, publishCriteria: PublishCriteria) -> None:
         l = dbo.locale
@@ -21,11 +21,11 @@ class HelpingLostPetsPublisher(FTPPublisher):
         publishCriteria.checkSocket = True
         publishCriteria.scaleImages = 1
         FTPPublisher.__init__(self, dbo, publishCriteria, 
-            HELPINGLOSTPETS_FTP_HOST, asm3.configuration.helpinglostpets_user(dbo), 
-            asm3.configuration.helpinglostpets_password(dbo))
-        self.initLog("helpinglostpets", asm3.i18n._("HelpingLostPets Publisher", l))
+            PETFBI_FTP_HOST, asm3.configuration.petfbi_user(dbo), 
+            asm3.configuration.petfbi_password(dbo), ftptls=True)
+        self.initLog("petfbi", asm3.i18n._("PetFBI Publisher", l))
 
-    def hlpYesNo(self, condition: bool) -> str:
+    def fbiYesNo(self, condition: bool) -> str:
         """
         Returns a CSV entry for yes or no based on the condition
         """
@@ -41,9 +41,9 @@ class HelpingLostPetsPublisher(FTPPublisher):
         self.setLastError("")
         self.setStartPublishing()
 
-        shelterid = asm3.configuration.helpinglostpets_orgid(self.dbo)
+        shelterid = asm3.configuration.petfbi_orgid(self.dbo)
         if shelterid == "":
-            self.setLastError("No helpinglostpets.com organisation ID has been set.")
+            self.setLastError("No petfbi.org organisation ID has been set.")
             return
         foundanimals = asm3.lostfound.get_foundanimal_find_simple(self.dbo)
         animals = self.getMatchingAnimals()
@@ -55,7 +55,7 @@ class HelpingLostPetsPublisher(FTPPublisher):
         if not self.openFTPSocket(): 
             self.setLastError("Failed opening FTP socket.")
             if self.logSearch("530 Login") != -1:
-                self.log("Found 530 Login incorrect: disabling HelpingLostPets publisher.")
+                self.log("Found 530 Login incorrect: disabling PetFBI publisher.")
                 asm3.configuration.publishers_enabled_disable(self.dbo, "hlp")
             self.cleanup()
             return
@@ -206,7 +206,7 @@ class HelpingLostPetsPublisher(FTPPublisher):
         else: agename = "Senior"
         line.append("\"%s\"" % agename)
         # Altered
-        line.append("%s" % self.hlpYesNo(an["NEUTERED"] == 1))
+        line.append("%s" % self.fbiYesNo(an["NEUTERED"] == 1))
         # Size, one of Small, Medium or Large or X-Large
         ansize = "Medium"
         if an["SIZE"] == 0 : ansize = "X-Large"
@@ -215,7 +215,7 @@ class HelpingLostPetsPublisher(FTPPublisher):
         elif an["SIZE"] == 3: ansize = "Small"
         line.append("\"%s\"" % ansize)
         # ZipPostal
-        line.append("\"%s\"" % asm3.configuration.helpinglostpets_postal(self.dbo))
+        line.append("\"%s\"" % asm3.configuration.organisation_postcode(self.dbo))
         # Description
         line.append("\"%s\"" % self.getDescription(an, True))
         # Photo

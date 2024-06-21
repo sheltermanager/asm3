@@ -1372,17 +1372,14 @@ def petfinder_user(dbo: Database) -> str:
 def petfinder_password(dbo: Database) -> str:
     return cstring(dbo, "PetFinderFTPPassword")
 
-def helpinglostpets_orgid(dbo: Database) -> str:
-    return cstring(dbo, "HelpingLostPetsOrgID")
+def petfbi_orgid(dbo: Database) -> str:
+    return cstring(dbo, "PetFBIOrgID")
 
-def helpinglostpets_user(dbo: Database) -> str:
-    return cstring(dbo, "HelpingLostPetsFTPUser")
+def petfbi_user(dbo: Database) -> str:
+    return cstring(dbo, "PetFBIFTPUser")
 
-def helpinglostpets_password(dbo: Database) -> str:
-    return cstring(dbo, "HelpingLostPetsFTPPassword")
-
-def helpinglostpets_postal(dbo: Database) -> str:
-    return cstring(dbo, "HelpingLostPetsPostal")
+def petfbi_password(dbo: Database) -> str:
+    return cstring(dbo, "PetFBIFTPPassword")
 
 def petlink_cutoff_days(dbo: Database) -> int:
     return cint(dbo, "PetLinkCutoffDays")

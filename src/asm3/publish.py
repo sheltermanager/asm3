@@ -12,7 +12,7 @@ import asm3.publishers.anibaseuk
 import asm3.publishers.buddyid
 import asm3.publishers.foundanimals
 import asm3.publishers.homeagain
-import asm3.publishers.helpinglostpets
+import asm3.publishers.petfbi
 import asm3.publishers.html
 import asm3.publishers.maddiesfund
 import asm3.publishers.petcademy 
@@ -44,10 +44,10 @@ PUBLISHER_LIST["ap"] = {
     "locales":  "en en_CA fr_CA en_MX es_MX",
     "sub24hour": True
 }
-PUBLISHER_LIST["hlp"] = {
-    "label":    "Publish to HelpingLostPets.com",
-    "class":    asm3.publishers.helpinglostpets.HelpingLostPetsPublisher,
-    "locales":  "",
+PUBLISHER_LIST["fbi"] = {
+    "label":    "Publish to PetFBI.org",
+    "class":    asm3.publishers.petfbi.PetFBIPublisher,
+    "locales":  "en",
     "sub24hour": False
 }
 PUBLISHER_LIST["mf"] = {

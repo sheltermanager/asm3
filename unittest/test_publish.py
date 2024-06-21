@@ -11,10 +11,10 @@ import asm3.publishers.akcreunite
 import asm3.publishers.anibaseuk
 import asm3.publishers.buddyid
 import asm3.publishers.foundanimals
-import asm3.publishers.helpinglostpets
 import asm3.publishers.homeagain
 import asm3.publishers.maddiesfund
 import asm3.publishers.petcademy
+import asm3.publishers.petfbi
 import asm3.publishers.petfinder
 import asm3.publishers.petlink
 import asm3.publishers.petrescue
@@ -117,12 +117,6 @@ class TestPublish(unittest.TestCase):
         self.assertIsNotNone(asm3.publishers.foundanimals.FoundAnimalsPublisher(base.get_dbo(), pc).processAnimal(a))
         asm3.publishers.foundanimals.FoundAnimalsPublisher(base.get_dbo(), pc).validate(a, -1000)
 
-    # helpinglostpets
-    def test_helpinglostpets(self):
-        pc = asm3.publishers.base.PublishCriteria()
-        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
-        self.assertIsNotNone(asm3.publishers.helpinglostpets.HelpingLostPetsPublisher(base.get_dbo(), pc).processAnimal(a))
-
     # homeagain
     def test_homeagain(self):
         pc = asm3.publishers.base.PublishCriteria()
@@ -143,6 +137,12 @@ class TestPublish(unittest.TestCase):
         a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
         self.assertIsNotNone(asm3.publishers.petcademy.PetcademyPublisher(base.get_dbo(), pc).getData(214))
         self.assertIsNotNone(asm3.publishers.petcademy.PetcademyPublisher(base.get_dbo(), pc).processAnimal(a))
+
+    # petfbi
+    def test_petfbi(self):
+        pc = asm3.publishers.base.PublishCriteria()
+        a = asm3.publishers.base.get_animal_data(base.get_dbo())[0]
+        self.assertIsNotNone(asm3.publishers.petfbi.PetFBIPublisher(base.get_dbo(), pc).processAnimal(a))
 
     # petfinder
     def test_petfinder(self):

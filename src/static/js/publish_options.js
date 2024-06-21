@@ -13,7 +13,7 @@ $(function() {
                 '<li><a href="#tab-allpublishers">' + _("All Publishers") + '</a></li>',
                 '<li class="hashtmlftp"><a href="#tab-htmlftp">' + _("HTML/FTP Publisher") + '</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-adoptapet">AdoptAPet</a></li>',
-                '<li><a href="#tab-helpinglostpets">HelpingLostPets</a></li>',
+                '<li><a href="#tab-petfbi">PetFBI</a></li>',
                 '<li class="english hasmaddiesfund"><a href="#tab-maddiesfund">Maddie\'s Fund</a></li>',
                 '<li class="english haspetcademy"><a href="#tab-petcademy">Petcademy</a></li>',
                 '<li class="localeus localeca localemx"><a href="#tab-petfinder">PetFinder</a></li>',
@@ -239,7 +239,7 @@ $(function() {
             return [
                 '<div id="tab-pettrac">',
                 html.info('These settings are for registering microchips with new owner information to the AVID PETtrac UK database. <br/>' + 
-                    'Find out more at <a href="http://www.pettrac.co.uk">www.pettrac.co.uk</a>'),
+                    'Find out more at <a target="_blank" href="http://www.pettrac.co.uk">www.pettrac.co.uk</a>'),
                 '<p><input id="enabledptuk" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledptuk">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
@@ -288,7 +288,7 @@ $(function() {
             return [
                 '<div id="tab-petlink">',
                 html.info('These settings are for uploading new owner information to the PetLink/DataMARS microchip database.<br />' +
-                    'Find out more at <a href="http://www.petlink.net/us/">www.petlink.net</a>'),
+                    'Find out more at <a target="_blank" href="http://www.petlink.net/us/">www.petlink.net</a>'),
                 '<p><input id="enabledpl" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledpl">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
@@ -322,7 +322,7 @@ $(function() {
         render_petslocated: function() {
             return [
                 '<div id="tab-petslocated">',
-                html.info('Signup at <a href="http://www.petslocated.com">www.petslocated.com</a>'),
+                html.info('Signup at <a target="_blank" href="http://www.petslocated.com">www.petslocated.com</a>'),
                 '<p><input id="enabledpcuk" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledpcuk">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
@@ -550,7 +550,7 @@ $(function() {
         render_petfinder: function() {
             return [
                 '<div id="tab-petfinder">',
-                html.info('Signup at <a href="http://www.petfinder.com/register/">www.petfinder.com/register/</a>'),
+                html.info('Signup at <a target="_blank" href="http://www.petfinder.com/register/">www.petfinder.com/register/</a>'),
                 '<p><input id="enabledpf" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledpf">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
@@ -599,7 +599,7 @@ $(function() {
         render_petrescue: function() {
             return [
                 '<div id="tab-petrescue">',
-                html.info('Signup at <a href="http://petrescue.com.au">petrescue.com.au</a>'),
+                html.info('Signup at <a target="_blank" href="http://petrescue.com.au">petrescue.com.au</a>'),
                 '<p><input id="enabledpr" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledpr">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
@@ -713,7 +713,7 @@ $(function() {
         render_sac: function() {
             return [
                 '<div id="tab-sac">',
-                html.info('Signup at <a href="http://shelteranimalscount.org">shelteranimalscount.org</a><br>' + 
+                html.info('Signup at <a target="_blank" href="http://shelteranimalscount.org">shelteranimalscount.org</a><br>' + 
                     'You will need to give SAC your account number of "' + asm.useraccount + '" in order for them to accept uploads from you.'),
                 '<p><input id="enabledsac" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledsac">' + _("Enabled") + '</label></p>',
                 '</div>'
@@ -723,7 +723,7 @@ $(function() {
         render_savourlife: function() {
             return [
                 '<div id="tab-savourlife">',
-                html.info('Signup at <a href="http://savourlife.com.au">savour-life.com.au</a>'),
+                html.info('Signup at <a target="_blank" href="http://savourlife.com.au">savour-life.com.au</a>'),
                 '<p><input id="enabledsl" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledsl">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
@@ -771,7 +771,7 @@ $(function() {
                 '<div id="tab-rescuegroups">',
                 html.info('RescueGroups offer a service called Pet Adoption Portal that allows you to upload adoptable animals ' +
                     'to them for republishing on to many other sites. Find out more at ' +
-                    '<a href="http://www.rescuegroups.org/services/pet-adoption-portal/">www.rescuegroups.org</a>'),
+                    '<a target="_blank" href="http://www.rescuegroups.org/services/pet-adoption-portal/">www.rescuegroups.org</a>'),
                 '<p><input id="enabledrg" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledrg">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
@@ -790,7 +790,7 @@ $(function() {
         render_adoptapet: function() {
             return [
                 '<div id="tab-adoptapet">',
-                html.info('Signup at <a href="http://www.adoptapet.com">www.adoptapet.com</a>.<br />' +
+                html.info('Signup at <a target="_blank" href="http://www.adoptapet.com">www.adoptapet.com</a>.<br />' +
                     'Use the Shelter/Rescue menu after logging in to adoptapet to manage/setup your autoupload account for ASM'),
                 '<p><input id="enabledap" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledap">' + _("Enabled") + '</label></p>',
                 '<table>',
@@ -825,7 +825,7 @@ $(function() {
             return [
                 '<div id="tab-anibase">',
                 html.info('These settings are for uploading new owner information to the Identibase/Anibase UK microchip database. <br/>' + 
-                    'Find out more at <a href="http://www.animalcare.co.uk">www.animalcare.co.uk</a>'),
+                    'Find out more at <a target="_blank" href="http://www.animalcare.co.uk">www.animalcare.co.uk</a>'),
                 '<p><input id="enabledabuk" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledabuk">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr style="display: none">', // We hide this for now as it isn't needed apparently and a blank is fine
@@ -887,7 +887,7 @@ $(function() {
         render_foundanimals: function() {
             return [
                 '<div id="tab-foundanimals">',
-                html.info('Find out more at <a href="http://www.my24pet.com">www.my24pet.com</a><br/>' +
+                html.info('Find out more at <a target="_blank" href="http://www.my24pet.com">www.my24pet.com</a><br/>' +
                     'Contact clientcare@pethealthinc.com to get a folder for automatic batch registrations of microchips.'),
                 '<p><input id="enabledfa" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledfa">' + _("Enabled") + '</label></p>',
                 '<table>',
@@ -914,7 +914,7 @@ $(function() {
         render_homeagain: function() {
             return [
                 '<div id="tab-homeagain">',
-                html.info('Signup at <a href="http://homeagain.4act.com">http://homeagain.4act.com</a> or contact HomeAgain Customer Service on <a href="tel:1-800-341-5785">(800) 341-5785</a> for more information.'),
+                html.info('Signup at <a target="_blank" href="http://homeagain.4act.com">http://homeagain.4act.com</a> or contact HomeAgain Customer Service on <a target="_blank" href="tel:1-800-341-5785">(800) 341-5785</a> for more information.'),
                 '<p><input id="enabledha" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledha">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
@@ -933,7 +933,7 @@ $(function() {
         render_maddiesfund: function() {
             return [
                 '<div id="tab-maddiesfund">',
-                html.info('Signup at <a href="http://www.maddiesfund.org/mpa.htm">http://www.maddiesfund.org/mpa.htm</a>'),
+                html.info('Signup at <a target="_blank" href="http://www.maddiesfund.org/mpa.htm">http://www.maddiesfund.org/mpa.htm</a>'),
                 '<p><input id="enabledmf" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledmf">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
@@ -952,7 +952,7 @@ $(function() {
         render_petcademy: function() {
             return [
                 '<div id="tab-petcademy">',
-                html.info('Signup at <a href="https://petcademy.org/rescues-and-shelters/">https://petcademy.org/rescues-and-shelters/</a>'),
+                html.info('Signup at <a target="_blank" href="https://petcademy.org/rescues-and-shelters/">https://petcademy.org/rescues-and-shelters/</a>'),
                 '<p><input id="enabledpc" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledpc">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
@@ -964,27 +964,23 @@ $(function() {
             ].join("\n");
         },
 
-        render_helpinglostpets: function() {
+        render_petfbi: function() {
             return [
-                '<div id="tab-helpinglostpets">',
-                html.info('Signup at <a href="http://www.helpinglostpets.com">www.helpinglostpets.com</a>'),
-                '<p><input id="enabledhlp" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledhlp">' + _("Enabled") + '</label></p>',
+                '<div id="tab-petfbi">',
+                html.info('Signup at <a target="_blank" href="https://www.petfbi.org">www.petfbi.org</a>'),
+                '<p><input id="enabledfbi" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledfbi">' + _("Enabled") + '</label></p>',
                 '<table>',
                 '<tr>',
-                '<td><label for="hlpftpuser">HelpingLostPets FTP username</label></td>',
-                '<td><input id="hlpftpuser" type="text" class="asm-textbox cfg" data="HelpingLostPetsFTPUser" /></td>',
+                '<td><label for="fbiftpuser">PetFBI FTP username</label></td>',
+                '<td><input id="fbiftpuser" type="text" class="asm-textbox cfg" data="PetFBIFTPUser" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="hlpftppass">HelpingLostPets FTP password</label></td>',
-                '<td><input id="hlpftppass" type="text" class="asm-textbox cfg" data="HelpingLostPetsFTPPassword" /></td>',
+                '<td><label for="fbiftppass">PetFBI FTP password</label></td>',
+                '<td><input id="fbiftppass" type="text" class="asm-textbox cfg" data="PetFBIFTPPassword" /></td>',
                 '</tr>',
                 '<tr>',
-                '<td><label for="hlporgid">HelpingLostPets Organisation ID</label></td>',
-                '<td><input id="hlporgid" type="text" class="asm-textbox cfg" data="HelpingLostPetsOrgID" /></td>',
-                '</tr>',
-                '<tr>',
-                '<td><label for="hlppostal">Postal/Zip Code of your shelter</label></td>',
-                '<td><input id="hlppostal" type="text" class="asm-textbox cfg" data="HelpingLostPetsPostal" /></td>',
+                '<td><label for="fbiorgid">PetFBI Organisation ID</label></td>',
+                '<td><input id="fbiorgid" type="text" class="asm-textbox cfg" data="PetFBIOrgID" /></td>',
                 '</tr>',
                 '</table>',
                 '</div>'
@@ -994,7 +990,7 @@ $(function() {
         render_smarttag: function() {
             return [
                 '<div id="tab-smarttag">',
-                html.info('Find out more at <a href="http://www.idtag.com">www.idtag.com</a><br/>' +
+                html.info('Find out more at <a target="_blank" href="http://www.idtag.com">www.idtag.com</a><br/>' +
                     'Contact SmartTag to get your account ID for automatic registration of chips and tags ' +
                     '212-868-2559 x136 (Mike Cotti) or email mikec@idtag.com'),
                 '<p><input id="enabledst" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledst">' + _("Enabled") + '</label></p>',
@@ -1068,9 +1064,9 @@ $(function() {
             return [
                 '<div id="tab-vetenvoy">',
                 html.info('VetEnvoy allow ASM to automatically register microchips provided by HomeAgain and AKC Reunite<br />' +
-                    'Find out more at <a href="http://www.vetenvoy.com">www.vetenvoy.com</a>, ' +
-                    '<a href="http://www.homeagain.com">www.homeagain.com</a> and ' +
-                    '<a href="http://www.akcreunite.org">www.akcreunite.org</a>'),
+                    'Find out more at <a target=_"blank" href="http://www.vetenvoy.com">www.vetenvoy.com</a>, ' +
+                    '<a target="_blank" href="http://www.homeagain.com">www.homeagain.com</a> and ' +
+                    '<a target="_blank" href="http://www.akcreunite.org">www.akcreunite.org</a>'),
                 '<p><button id="button-vesignup">Signup for VetEnvoy</button></p>',
                 '<p><input id="enabledve" type="checkbox" class="asm-checkbox enablecheck" /><label for="enabledve">' + _("Enabled") + '</label></p>',
                 '<table>',
@@ -1125,7 +1121,7 @@ $(function() {
                 this.render_homeagain(),
                 this.render_maddiesfund(),
                 this.render_petcademy(),
-                this.render_helpinglostpets(),
+                this.render_petfbi(),
                 this.render_smarttag(),
                 this.render_vetenvoy(),
                 '</div>',
