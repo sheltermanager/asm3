@@ -292,22 +292,22 @@ This means you can then grab it from their FTP server and edit it yourself if
 you wish to change any mappings, then put it back again. This is generally only
 necessary for users who want to send colour information.
 
-helpinglostpets.com
--------------------
-
-ASM can send data to www.helpinglostpets.com, a map-based website that
-publishes adoptable and found animals. Your ASM found data will also be
-published as well as adoptable animals. You will need an organisation ID, FTP
-username and password and to enter the postal/zipcode of your shelter.
-
-Helpinglostpets.com is global and can accept data from shelters in any country.
-
 maddiesfund.org / Maddie's Pet Assistant
 ----------------------------------------
 
 ASM can send data to Maddie's Fund/MPA - an application to provide information
 and interactive help to fosterers, adopters and other caregivers. Basic data on
 the animal and contact information for the adopter/fosterer is sent.
+
+petfbi.org
+-------------------
+
+ASM can send data to www.petfbi.org, a map-based website that
+publishes adoptable and found animals. Your ASM found animal data will also be
+published as well as adoptable animals. You will need an organisation ID, FTP
+username and password and to enter the postal/zipcode of your shelter.
+
+petfbi.org works with shelters in the US and Canada.
 
 petfinder.com
 -------------
