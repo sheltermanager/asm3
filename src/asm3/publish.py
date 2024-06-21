@@ -47,7 +47,7 @@ PUBLISHER_LIST["ap"] = {
 PUBLISHER_LIST["fbi"] = {
     "label":    "Publish to PetFBI.org",
     "class":    asm3.publishers.petfbi.PetFBIPublisher,
-    "locales":  "en",
+    "locales":  "en en_CA",
     "sub24hour": False
 }
 PUBLISHER_LIST["mf"] = {
