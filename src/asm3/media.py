@@ -747,8 +747,8 @@ def sign_document(dbo: Database, username: str, mid: int, sigurl: str, signdate:
         # NOTE: We re-set linkid/linktypeid in the update query 
         # so that this update shows in the audit trail UI for the linked record.
         dbo.update("media", r.ID, {
-            "LinkID": m.LINKID,
-            "LinkTypeID": m.LINKTYPEID, 
+            "LinkID": r.LINKID,
+            "LinkTypeID": r.LINKTYPEID, 
             "SignatureHash": "%s:%s" % (signprefix, asm3.utils.md5_hash_hex(content)), 
             "Date": dbo.now() 
         }, username)

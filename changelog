@@ -1,6 +1,7 @@
 49
 ================
 
+22/06/24 Bug: sign document moving both copies to one record #1471
 21/06/24 Rename and resurrect HelpingLostPets.com as PetFBI.org
 20/06/24 Extra spambot protections to first name field (lcase/ucase/email)
 19/06/24 Add audit fields to media table and update them correctly #1471
