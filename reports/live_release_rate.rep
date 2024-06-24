@@ -13,7 +13,8 @@ $VAR to DATE Enter to date$
 $VAR sp SPECIES$
 
 SELECT t.LiveOutcomes, t.EscapedStolen, t.Died, t.Euthanised, 
-    ROUND(t.LiveOutcomes / (t.LiveOutcomes + t.EscapedStolen + t.Died + t.Euthanised) * 100, 2) AS LivePercentage 
+	t.LiveOutcomes + t.EscapedStolen + t.Died + t.Euthanised AS AllOutcomes,
+    ROUND(t.LiveOutcomes / (t.LiveOutcomes + t.EscapedStolen + t.Died + t.Euthanised + 0.00) * 100.0) AS LivePercentage 
 
 FROM (
 
@@ -30,7 +31,7 @@ HEADER$$
 
 $$BODY
 <p><b>$LiveOutcomes</b> live outcomes (<b>$LivePercentage %</b> saved)<br>
-($EscapedStolen escaped/stolen, $Died died in care, $Euthanised euthanised)</p>
+($EscapedStolen escaped/stolen, $Died died in care, $Euthanised euthanised, $AllOutcomes total outcomes)</p>
 BODY$$
 
 $$FOOTER
