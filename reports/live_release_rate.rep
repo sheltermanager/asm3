@@ -1,0 +1,38 @@
+Live Outcomes / Save Rate % between two dates
+###
+Figures
+###
+3000/Any rev01
+###
+The number of live releases between two dates, along with a save rate percentage.
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+$VAR sp SPECIES$
+
+SELECT t.LiveOutcomes, t.EscapedStolen, t.Died, t.Euthanised, 
+    ROUND(t.LiveOutcomes / (t.LiveOutcomes + t.EscapedStolen + t.Died + t.Euthanised) * 100, 2) AS LivePercentage 
+
+FROM (
+
+SELECT 
+(SELECT COUNT(*) FROM adoption WHERE MovementType IN (1,3,5,7) AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' AND EXISTS(SELECT SpeciesID FROM animal WHERE ID = adoption.AnimalID AND SpeciesID=$@sp$)) AS LiveOutcomes,
+(SELECT COUNT(*) FROM adoption WHERE MovementType IN (4,6) AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' AND EXISTS(SELECT SpeciesID FROM animal WHERE ID = adoption.AnimalID AND SpeciesID=$@sp$)) AS EscapedStolen,
+(SELECT COUNT(*) FROM animal WHERE SpeciesID=$@sp$ AND PutToSleep = 0 AND DiedOffShelter = 0 AND DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$') AS Died,
+(SELECT COUNT(*) FROM animal WHERE SpeciesID=$@sp$ AND PutToSleep = 1 AND DiedOffShelter = 0 AND DeceasedDate >= '$@from$' AND DeceasedDate <= '$@to$') AS Euthanised
+
+) t
+###
+$$HEADER
+HEADER$$
+
+$$BODY
+<p><b>$LiveOutcomes</b> live outcomes (<b>$LivePercentage %</b> saved)<br>
+($EscapedStolen escaped/stolen, $Died died in care, $Euthanised euthanised)</p>
+BODY$$
+
+$$FOOTER
+FOOTER$$
+
