@@ -2,7 +2,7 @@ Quickbooks Export (Accounts)
 ###
 Accounts
 ###
-2720/Any rev02
+2720/Any rev03
 ###
 Financial accounts, exportable to CSV for QuickBooks
 ###
@@ -10,8 +10,8 @@ en
 ###
 SELECT aty.AccountType AS ACCOUNT_TYPE, a.ID AS ACCOUNT_NUMBER, a.Code AS ACCOUNT_NAME,
 a.Description AS DESCRIPTION, '' AS BANK_ACCT_NO_CARD_NO_NOTE,
-((SELECT SUM(t.Amount) FROM accountstrx t WHERE t.trxDate <= '$CURRENT_DATE$' AND t.DestinationAccountID = a.ID) -
-(SELECT SUM(t.Amount) FROM accountstrx t WHERE t.trxDate <= '$CURRENT_DATE$' AND t.SourceAccountID = a.ID)) / 100.0 AS OPENING_BALANCE,
+((SELECT COALESCE(SUM(t.Amount), 0) FROM accountstrx t WHERE t.trxDate <= '$CURRENT_DATE$' AND t.DestinationAccountID = a.ID) -
+(SELECT COALESCE(SUM(t.Amount), 0) FROM accountstrx t WHERE t.trxDate <= '$CURRENT_DATE$' AND t.SourceAccountID = a.ID)) / 100.0 AS OPENING_BALANCE,
 CURRENT_DATE AS AS_OF__MM_DD_YYYY,
 '' AS REMIND_ME_TO_ORDER_CHECKS, '' AS TRACK_REIMBURSED_EXPENSES, '' AS INCOME_ACCOUNT_FOR_REIMB_EXPENSES,
 'No' AS ACCOUNT_IS_INACTIVE
