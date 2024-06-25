@@ -435,7 +435,7 @@ def csvimport(dbo: Database, csvdata: bytes, encoding: str = "utf-8-sig", user: 
             a["pickupaddress"] = gks(row, "ANIMALPICKUPADDRESS")
             if a["pickupaddress"] != "":
                 a["pickedup"] = "on"
-            a["entrytype"] = gkl(dbo, row, "ANIMALENTRYTYPE", "lksentrytype", "AnimalEntryType", False)
+            a["entrytype"] = gkl(dbo, row, "ANIMALENTRYTYPE", "lksentrytype", "EntryTypeName", False)
             if a["entrytype"] == "0":
                 a["entrytype"] = str(asm3.configuration.default_entry_type(dbo))
             a["entryreason"] = gkl(dbo, row, "ANIMALENTRYCATEGORY", "entryreason", "ReasonName", createmissinglookups)
