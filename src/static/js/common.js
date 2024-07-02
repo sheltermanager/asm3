@@ -1276,13 +1276,17 @@ const config = {
     },
 
     integer: function(key) {
-        var s = this.str(key);
-        return parseInt(s, 10);
+        let s = this.str(key);
+        let i = parseInt(s, 10);
+        if (isNaN(i)) { return 0; }
+        return i;
     },
 
     number: function(key) {
-        var s = this.str(key);
-        return parseFloat(s);
+        let s = this.str(key);
+        let f = parseFloat(s);
+        if (isNaN(f)) { return 0; }
+        return f;
     },
 
     currency: function(key) {

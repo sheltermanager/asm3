@@ -554,7 +554,10 @@ $(function() {
                             controller.name.indexOf("move_book_recent_adoption") != -1 ||
                             controller.name.indexOf("move_book_recent_other") != -1 ||
                             controller.name.indexOf("move_book_recent_transfer") != -1 ||
-                            config.str("AdoptionCheckoutProcessor") == "";
+                            config.str("AdoptionCheckoutProcessor") == "" ||
+                            config.integer("AdoptionCheckoutDonationID") == 0 ||
+                            config.integer("AdoptionCheckoutPaymentMethod") == 0 ||
+                            config.integer("AdoptionCheckoutTemplateID") == 0;
                     },
                     click: function() {
                         let row = tableform.table_selected_row(table);
