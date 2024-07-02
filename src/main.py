@@ -3375,11 +3375,12 @@ class document_media_edit(ASMEndpoint):
         dbo = o.dbo
         post = o.post
         lastmod, medianame, mimetype, filedata = asm3.media.get_media_file_data(dbo, post.integer("id"))
+        readonly = asm3.media.has_signature(dbo, post.integer("id"))
         asm3.al.debug("editing media %d" % post.integer("id"), "main.document_media_edit", dbo)
         title = medianame
         self.content_type("text/html")
         return asm3.html.tinymce_header(title, "document_edit.js", jswindowprint=asm3.configuration.js_window_print(dbo), \
-            onlysavewhendirty=False, readonly=asm3.media.has_signature(dbo, post.integer("id"))) + \
+            visualaids=not readonly, onlysavewhendirty=False, readonly=readonly) + \
             asm3.html.tinymce_main(dbo.locale, "document_media_edit", mediaid=post.integer("id"), redirecturl=post["redirecturl"], \
                 content=asm3.utils.escape_tinymce(filedata))
 
