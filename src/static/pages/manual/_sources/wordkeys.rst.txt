@@ -997,6 +997,8 @@ ReturnedByMobilePhone
     Returner's cell/mobile phone number
 ReturnedByEmail 
     Returner's email address
+ReturnedBy Additional Fields
+    Additional fields on the original owner can be accessed via ReturnedByFIELDNAME
 AdoptionDate
     The date of the adoption (if this is an adoption, alias for MovementDate)
 FosteredDate

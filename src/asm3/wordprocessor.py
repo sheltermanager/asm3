@@ -1426,6 +1426,9 @@ def movement_tags(dbo: Database, m: ResultRow) -> Tags:
         "TRANSFERDATE":                 asm3.utils.iif(m["MOVEMENTTYPE"] == asm3.movement.TRANSFER, python2display(l, m["MOVEMENTDATE"]), ""),
         "TRIALENDDATE":                 asm3.utils.iif(m["MOVEMENTTYPE"] == asm3.movement.ADOPTION, python2display(l, m["TRIALENDDATE"]), "")
     }
+
+    tags.update(additional_field_tags(dbo, asm3.additional.get_additional_fields(dbo, m["RETURNEDBYOWNERID"], "person"), "RETURNEDBY"))
+
     dons = asm3.financial.get_movement_donations(dbo, m["ID"])
     tags["MOVEMENTPAYMENTS"] = html_table(l, dons, (
         ( "DATE", _("Date", l) ),
