@@ -2038,6 +2038,7 @@ def extract_mail_tokens(s: str) -> Dict[str, str]:
     results = asm3.utils.regex_multi(r"\{\{(.+?) (.+?)\}\}",  s)
     d = { "TO": None, "FROM": None, "CC": None, "BCC": None, "SUBJECT": None, "BODY": None }
     for k, v in results:
+        v = v.replace("&nbsp;", " ") # TinyMCE can insert spaces as non-breaking, which will end up in headers
         d[k] = v
     s = asm3.utils.regex_delete(r"\{\{(.+?)\}\}", s)
     d["BODY"] = s

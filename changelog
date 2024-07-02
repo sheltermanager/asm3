@@ -1,6 +1,7 @@
 49
 ================
 
+02/07/24 Replace &nbsp; in email headers when extracting from template
 02/07/24 Hide visual aids when viewing signed documents #1491
 02/07/24 Hide checkout button if template/paytype/method not set
 02/07/24 Add ReturnedBy[AdditionalField] support to movement docs #1493
