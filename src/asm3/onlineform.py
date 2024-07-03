@@ -847,12 +847,6 @@ def insert_onlineformincoming_from_form(dbo: Database, post: PostedData, remotei
                 if lc >= 2 and uc >= 2 and sp == 0:
                     asm3.al.error("blocked spambot (mixed caps, firstname=%s, uc=%s, lc=%s, sp=%s): %s" % (v, uc, lc, sp, post.data), "insert_onlineformincoming_from_form", dbo)
                     return
-                if lc > 0 and uc == 0:
-                    asm3.al.error("blocked spambot (lower case only, firstname=%s, uc=%s, lc=%s): %s" % (v, uc, lc, post.data), "insert_onlineformincoming_from_form", dbo)
-                    return
-                if lc == 0 and uc > 0:
-                    asm3.al.error("blocked spambot (upper case only, firstname=%s, uc=%s, lc=%s): %s" % (v, uc, lc, post.data), "insert_onlineformincoming_from_form", dbo)
-                    return
                 if v.find("@") != -1 and v.find(".") != -1:
                     asm3.al.error("blocked spambot (email in firstname, firstname=%s): %s" % (v, post.data), "insert_onlineformincoming_from_form", dbo)
                     return
