@@ -153,7 +153,7 @@ CURRENTVETINITIALS
 CURRENTVETFIRSTNAME
     The vet's first name(s).
 CURRENTVETLASTNAME
-    The vet's last name. This column being present and having data in it determines whether or not the importer will consider the animal as having current vet info.
+    The vet's last name. This column being present and having data in it determines whether or not the importer will consider the animal as having current vet info. If ANIMALNEUTEREDDATE is included in the file along with CURRENTVET info, then the neutering vet will be copied from the current vet info.
 CURRENTVETADDRESS
     Vet's address.
 CURRENTVETCITY

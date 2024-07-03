@@ -3772,6 +3772,7 @@ def merge_animal_details(dbo: Database, username: str, animalid: int, d: dict, f
     if "microchipnumber" in d and "IDENTICHIPNUMBER" in uv and d["microchipnumber"] == uv["IDENTICHIPNUMBER"]: uv["IDENTICHIPPED"] = 1
     if "neutered" in d and d["neutered"] == "on" and a.NEUTERED == 0: uv["NEUTERED"] = 1
     merge_date("neutereddate", "NEUTEREDDATE")
+    merge_int("neuteringvet", "NEUTEREDBYVETID")
     merge_date("dateofbirth", "DATEOFBIRTH")
     merge_date("deceaseddate", "DECEASEDDATE")
     merge_bool("puttosleep", "PUTTOSLEEP")
