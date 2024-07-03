@@ -603,6 +603,7 @@ select:disabled, input:disabled, textarea:disabled {
 .asm-completerow { opacity: 0.5; zoom: 1;}
 .asm-overduerow { font-style: italic; color: #ff0000; }
 .asm-warningrow { color: #ff0000; }
+.asm-smallertext {font-size: 80%; }
 #tableform-select-all, #tableform-toggle-filter { float: left; margin-top: -4px; }
 #tableform .filtered { display: none !important; } /* also applied by .tablesorter .filtered css but without !important does not work for elements that have changed display */
 

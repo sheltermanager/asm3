@@ -351,6 +351,24 @@ const html = {
         return warn;
     },
 
+    /** Returns the animal weight in a readable form with its measurement */
+    animal_weight: function(row) {
+        let rv = "";
+        if (config.bool("ShowWeightInLbs")) {
+            let kg = format.to_float(row.WEIGHT),
+                lb = format.to_int(row.WEIGHT),
+                oz = (kg - lb) * 16.0;
+            rv = lb + " lb, " + oz + " oz";
+        }
+        else if (config.bool("ShowWeightInLbsFraction")) {
+            rv = row.WEIGHT + " lb";
+        }
+        else {
+            rv = row.WEIGHT + " kg";
+        }
+        return rv;
+    },
+
     /** 
      * Renders a shelter timeline event described in e. Events should have
      * the following attributes:

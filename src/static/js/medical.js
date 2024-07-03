@@ -109,7 +109,9 @@ $(function() {
                     },
                     { field: "ANIMAL", display: _("Animal"), 
                         formatter: function(row) {
-                            return html.animal_link(row, { noemblems: controller.name == "animal_medical" });
+                            let h = html.animal_link(row, { noemblems: controller.name == "animal_medical" });
+                            if (row.WEIGHT && row.WEIGHT > 0) { h += '<br><span class="asm-smallertext">' + html.animal_weight(row) + '</span>'; }
+                            return h;
                         },
                         hideif: function(row) {
                             // Don't show for animal records

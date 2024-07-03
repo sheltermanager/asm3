@@ -261,18 +261,7 @@ $(function() {
             }
             else if ( name == "Size") { rv = row.SIZENAME; }
             else if ( name == "Weight") { 
-                if (config.bool("ShowWeightInLbs")) {
-                    let kg = format.to_float(row.WEIGHT),
-                        lb = format.to_int(row.WEIGHT),
-                        oz = (kg - lb) * 16.0;
-                    rv = lb + " lb, " + oz + " oz";
-                }
-                else if (config.bool("ShowWeightInLbsFraction")) {
-                    rv = row.WEIGHT + " lb";
-                }
-                else {
-                    rv = row.WEIGHT + " kg";
-                }
+                rv = html.animal_weight(row);
             }
             else if ( name == "ShelterCode") { 
                 // Explicitly set the sort because codes can sometimes look like dates

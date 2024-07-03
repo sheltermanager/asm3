@@ -1,6 +1,7 @@
 49
 ================
 
+03/07/24 Include weight next to the animal in the medical book #1498
 03/07/24 Stop all lower/upper case triggering spambot behaviour
 02/07/24 Replace &nbsp; in email headers when extracting from template
 02/07/24 Hide visual aids when viewing signed documents #1491
