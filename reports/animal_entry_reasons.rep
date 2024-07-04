@@ -2,7 +2,7 @@ Animal Entry Reasons
 ###
 Movement Charts
 ###
-Any rev02
+Any rev03
 ###
 Animals entering the shelter between two dates, broken down by entry reason.
 ###
@@ -20,6 +20,7 @@ UNION SELECT e.ReasonName, COUNT (*) AS Entered
 FROM adoption m
 INNER JOIN entryreason e ON e.ID = m.ReturnedReasonID
 WHERE ReturnDate >= '$@from$' AND ReturnDate <= '$@to$'
+MovementType NOT IN (2,8)
 GROUP BY e.ReasonName
 ORDER BY ReasonName
 ###
