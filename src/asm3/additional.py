@@ -117,7 +117,7 @@ def is_person_fieldtype(fieldtype: int) -> bool:
     """ Returns true if the field type given is a person """
     return fieldtype in (PERSON_LOOKUP, PERSON_SPONSOR, PERSON_VET, PERSON_ADOPTIONCOORDINATOR)
 
-def get_additional_fields(dbo: Database, linkid: int, linktype: str = "animal", linktypeid: int = -1):
+def get_additional_fields(dbo: Database, linkid: int, linktype: str = "animal", linktypeid: int = -1) -> Results:
     """
     Returns a list of additional fields for the link
     the list contains all the fields from additionalfield and additional,
@@ -125,6 +125,7 @@ def get_additional_fields(dbo: Database, linkid: int, linktype: str = "animal", 
     TOOLTIP.  If there isn't an appropriate additional row for the animal, null
     values will be returned for all fields.
     """
+    if linkid is None: return []
     if linktypeid != -1:
         inclause = f"({linktypeid})"
     else:
