@@ -286,6 +286,8 @@ BroughtInByEmail
     The email address of the person who brought the animal in
 BroughtInByJurisdiction
     The jurisdiction of the person who brought the animal in
+BroughtInByIDNumber
+    The identification number (driving licence, passport, etc) of the person who brought the animal in
 BroughtInBy Additional Fields
     Additional fields on the brought in by person can be accessed via BroughtInByFIELDNAME
 OriginalOwnerAddress
@@ -997,6 +999,8 @@ ReturnedByMobilePhone
     Returner's cell/mobile phone number
 ReturnedByEmail 
     Returner's email address
+ReturnedByIDNumber
+    The identification number (driving licence, passport, etc) of the person who returned the animal
 ReturnedBy Additional Fields
     Additional fields on the original owner can be accessed via ReturnedByFIELDNAME
 AdoptionDate

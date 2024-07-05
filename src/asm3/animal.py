@@ -129,6 +129,7 @@ def get_animal_query(dbo: Database) -> str:
         "bo.MobileTelephone AS BroughtInByMobileTelephone, " \
         "bo.EmailAddress AS BroughtInByEmailAddress, " \
         "bo.LatLong AS BroughtInByLatLong, " \
+        "bo.IdentificationNumber AS BroughtInByIDNumber, " \
         "bj.JurisdictionName AS BroughtInByJurisdiction, " \
         "ro.ID AS ReservedOwnerID, " \
         "ro.OwnerName AS ReservedOwnerName, " \

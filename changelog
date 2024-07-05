@@ -1,6 +1,7 @@
 49
 ================
 
+05/07/24 Add BroughtInByIDNumber and ReturnedByIDNumber #1493
 05/07/24 FTP chdir did not work when reconnecting after a socket failure
 03/07/24 csvimport: Copy current vet to neutering vet if neutereddate set #1492
 03/07/24 Include weight next to the animal in the medical book #1498

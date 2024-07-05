@@ -83,6 +83,7 @@ def get_movement_query(dbo: Database) -> str:
         "rb.OwnerPostcode AS ReturnedByOwnerPostcode, rb.HomeTelephone AS ReturnedByHomeTelephone, " \
         "rb.WorkTelephone AS ReturnedByWorkTelephone, rb.MobileTelephone AS ReturnedByMobileTelephone, " \
         "rb.EmailAddress AS ReturnedByEmailAddress, " \
+        "rb.IdentificationNumber AS ReturnedByIDNumber, " \
         "a.AdoptionCoordinatorID, ac.OwnerName AS AdoptionCoordinatorName, " \
         "o.HomeCheckedBy AS HomeCheckedByID, hc.OwnerName AS HomeCheckedByName, o.DateLastHomeChecked " \
         "FROM adoption m " \
