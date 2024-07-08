@@ -1178,7 +1178,7 @@ class mobile_login(ASMEndpoint):
         rmtoken = self.get_cookie("asm_remember_me")
         if rmtoken:
             cred = asm3.cachemem.get(rmtoken)
-            if cred and cred.find("|") != -1:
+            if cred and cred.find("|") != -1 and cred.count("|") == 2:
                 database, username, password = cred.split("|")
                 rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
                 asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "main.mobile_login")
@@ -1193,7 +1193,7 @@ class mobile_login(ASMEndpoint):
                 cred = asm3.utils.base64decode_str(o.post["b"])
             except Exception as err:
                 asm3.al.error("failed decoding base64 credentials: %s (%s)" % (o.post["b"], err), "main.mobile_login")
-            if cred and cred.find("|") != -1:
+            if cred and cred.find("|") != -1 and cred.count("|") == 3:
                 database, username, password, rememberme = cred.split("|")
                 rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password, "rememberme": rememberme }, LOCALE)
                 asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "main.mobile_login")
@@ -1511,7 +1511,7 @@ class login(ASMEndpoint):
         rmtoken = self.get_cookie("asm_remember_me")
         if rmtoken:
             cred = asm3.cachemem.get(rmtoken)
-            if cred and cred.find("|") != -1:
+            if cred and cred.find("|") != -1 and cred.count("|") == 2:
                 database, username, password = cred.split("|")
                 rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password }, LOCALE)
                 asm3.al.info("attempting auth with remember me token for %s/%s" % (database, username), "main.login")
@@ -1527,7 +1527,7 @@ class login(ASMEndpoint):
                 cred = asm3.utils.base64decode_str(post["b"])
             except Exception as err:
                 asm3.al.error("failed decoding base64 credentials: %s (%s)" % (post["b"], err), "main.login")
-            if cred and cred.find("|") != -1:
+            if cred and cred.find("|") != -1 and cred.count("|") == 3:
                 database, username, password, rememberme = cred.split("|")
                 rpost = asm3.utils.PostedData({ "database": database, "username": username, "password": password, "rememberme": rememberme }, LOCALE)
                 asm3.al.info("attempting auth with base64 token for %s/%s" % (database, username), "main.login")
