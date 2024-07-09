@@ -1025,7 +1025,7 @@ class AbstractPublisher(threading.Thread):
     
     def isCrossBreed(self, a: ResultRow) -> bool:
         """ Returns True if the animal a is a crossbreed. """
-        cross = a.CROSSBREED == 0
+        cross = a.CROSSBREED == 1
         if a.BREEDID in asm3.configuration.publish_as_crossbreed(self.dbo):
             cross = True
         return cross

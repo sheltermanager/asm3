@@ -1,6 +1,7 @@
 49
 ================
 
+09/07/24 Bad reverse logic in publisher isCrossBreed
 08/07/24 Defend against invalid remember me tokens
 05/07/24 Add BroughtInByIDNumber and ReturnedByIDNumber #1493
 05/07/24 FTP chdir did not work when reconnecting after a socket failure
