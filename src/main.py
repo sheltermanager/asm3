@@ -996,9 +996,9 @@ class mobile2(ASMEndpoint):
         c = {
             "animals":      animals,
             "reports":      asm3.reports.get_available_reports(dbo),
-            "vaccinations": asm3.medical.get_vaccinations_outstanding(dbo),
-            "tests":        asm3.medical.get_tests_outstanding(dbo),
-            "medicals":     asm3.medical.get_treatments_outstanding(dbo),
+            "vaccinations": asm3.medical.get_vaccinations_outstanding(dbo, "m31", o.locationfilter, o.siteid, o.visibleanimalids),
+            "tests":        asm3.medical.get_tests_outstanding(dbo, "m31", o.locationfilter, o.siteid, o.visibleanimalids),
+            "medicals":     asm3.medical.get_treatments_outstanding(dbo, "m31", o.locationfilter, o.siteid, o.visibleanimalids),
             "diaries":      asm3.diary.get_uncompleted_upto_today(dbo, o.user),
             "rsvhomecheck": asm3.person.get_reserves_without_homechecks(dbo),
             "messages":     asm3.lookups.get_messages(dbo, session.user, session.roles, session.superuser),

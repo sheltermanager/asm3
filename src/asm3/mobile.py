@@ -214,9 +214,9 @@ def page(dbo, session, username):
     nsa = asm3.animal.get_number_animals_on_shelter_now(dbo)
     osa = nsa > 0
     ar = asm3.reports.get_available_reports(dbo)
-    vacc = asm3.medical.get_vaccinations_outstanding(dbo)
-    test = asm3.medical.get_tests_outstanding(dbo)
-    med = asm3.medical.get_treatments_outstanding(dbo)
+    vacc = asm3.medical.get_vaccinations_outstanding(dbo, "m31", session.locationfilter, session.siteid, session.visibleanimalids)
+    test = asm3.medical.get_tests_outstanding(dbo, "m31", session.locationfilter, session.siteid, session.visibleanimalids)
+    med = asm3.medical.get_treatments_outstanding(dbo, "m31", session.locationfilter, session.siteid, session.visibleanimalids)
     dia = asm3.diary.get_uncompleted_upto_today(dbo, username)
     hck = asm3.person.get_reserves_without_homechecks(dbo)
     mess = asm3.lookups.get_messages(dbo, session.user, session.roles, session.superuser)
