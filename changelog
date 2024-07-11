@@ -1,6 +1,7 @@
 49
 ================
 
+11/07/24 Respect locationfilter/sites in mobile photo uploader
 11/07/24 Respect locationfilter/sites for outstanding medicals in both mobile UIs
 09/07/24 Hide shelter view modes that show person names if missing permission #1502
 09/07/24 Bad reverse logic in publisher isCrossBreed

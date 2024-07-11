@@ -1236,8 +1236,15 @@ class mobile_photo_upload(ASMEndpoint):
         dbo = o.dbo
         l = o.locale
         self.content_type("text/html")
+        animalsos = asm3.animal.get_animals_on_shelter_namecode(dbo, remove_units=True, 
+            locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
+        # Only include recently adopted animals if the user either has no location filter, or
+        # has a location filter that includes adopted animals
+        animalsra = []
+        if o.locationfilter != "" and o.locationfilter.find("-1") == -1:
+            animalsra = asm3.animal.get_animals_adopted_namecode(dbo, remove_adopter=True)
         c = {
-            "animals": asm3.animal.get_animals_on_shelter_namecode(dbo, remove_units=True) + asm3.animal.get_animals_adopted_namecode(dbo, remove_adopter=True)
+            "animals":  animalsos + animalsra
         }
         return asm3.html.mobile_page(l, _("Photo Uploader", l), [ "mobile_photo_uploader.js" ], c)
 

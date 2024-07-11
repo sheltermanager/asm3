@@ -1741,18 +1741,22 @@ def get_animals_namecode(dbo: Database) -> Results:
     return dbo.query("SELECT ID, AnimalName, ShelterCode, ShortCode " \
         "FROM animal ORDER BY AnimalName, ShelterCode")
 
-def get_animals_on_shelter_namecode(dbo: Database, remove_units: bool = False, remove_fosterer: bool = False) -> Results:
+def get_animals_on_shelter_namecode(dbo: Database, remove_units: bool = False, remove_fosterer: bool = False,
+                                    locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
     """
     Returns a resultset containing the ID, Name, Code and DisplayLocation of all shelter animals.
     remove_units: Strip location units from DisplayLocation
     remove_fosterer: Strip fosterer from DisplayLocation
     """
+    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
     rows = dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesID, SpeciesName, ActiveMovementType, DisplayLocation, " \
         "CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN ShortCode ELSE ShelterCode END AS Code " \
         "FROM animal " \
         "LEFT OUTER JOIN species ON species.ID = animal.SpeciesID " \
-        "WHERE Archived = 0 ORDER BY AnimalName, ShelterCode")
+        "WHERE Archived = 0 " \
+        f"{locationfilter}" \
+        "ORDER BY AnimalName, ShelterCode")
     for r in rows:
         if r.DISPLAYLOCATION is None: r.DISPLAYLOCATION = ""
         if remove_units and r.ACTIVEMOVEMENTTYPE != 2 and r.DISPLAYLOCATION.find("::") != -1: r.DISPLAYLOCATION = r.DISPLAYLOCATION[:r.DISPLAYLOCATION.find("::")]
