@@ -1437,7 +1437,7 @@ $(document).ready(function() {
     $.each(controller.timeline, function(i, v) {
         // Skip this entry if it's for a deceased animal and we aren't showing them
         if (!config.bool("ShowDeceasedHomePage") && (v.CATEGORY == "DIED" || v.CATEGORY == "EUTHANISED")) { return; }
-        tl.push(html.event_text(v, { includedate: true }) + '<br/>');
+        tl.push(html.event_text(v, { includedate: true, includeicon: true }) + '<br/>');
     });
     tl.push('</div></div></div>');
     let hp = [

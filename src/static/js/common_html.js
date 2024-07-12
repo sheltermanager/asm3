@@ -388,10 +388,10 @@ const html = {
             o = { includedate: true, includetime: false, includelink: true, includeicon: true };
         }
         if (o.includedate) {
-            h += '<span class="asm-timeline-small-date">' + format.date(e.EVENTDATE) + '</span> ';
+            h += '<span class="asm-timeline-small-date fw-bold">' + format.date(e.EVENTDATE) + '</span> ';
         }
         if (o.includetime) {
-            h += '<span class="asm-timeline-time">' + format.time(e.EVENTDATE) + '</span>' ;
+            h += '<span class="asm-timeline-time text-muted">' + format.time(e.EVENTDATE) + '</span>' ;
         }
         if (o.includelink) {
             h += ' <a href="' + e.LINKTARGET + '?id=' + e.ID + '">';
@@ -400,7 +400,7 @@ const html = {
             h += html.icon(e.ICON) + ' ';
         }
         h += e.DESCRIPTION;
-        h += '</a> <span class="asm-timeline-by">(' + e.LASTCHANGEDBY + ')</span>';
+        h += '</a> <span class="asm-timeline-by text-muted">(' + e.LASTCHANGEDBY + ')</span>';
         return h;
     },
 

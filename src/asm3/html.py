@@ -356,7 +356,9 @@ def mobile_page(l: str, title: str, scripts: List[str] = [], controller: Dict = 
         script_tag(MOUSETRAP_JS),
         script_tag(SIGNATURE_JS),
         css_tag(BOOTSTRAP_CSS),
+        css_tag(BOOTSTRAP_CSS),
         css_tag(BOOTSTRAP_ICONS_CSS),
+        asm_css_tag("asm-icon.css"),
         script_tag("config.js?ts=%s" % python2unix(now())),
         script_i18n(l)
     ]
