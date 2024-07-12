@@ -1425,17 +1425,28 @@ $(document).ready(function() {
     }
 
     // Home page
+    // Timeline
     let tl = [
-        '<h2 class="mt-3">' + _("Timeline ({0})").replace("{0}", controller.timeline.length) + '</h2>'
+        '<div class="col-sm">',
+            '<div class="card shadow-sm mt-3">',
+                '<div class="card-header">',
+                _("Timeline ({0})").replace("{0}", controller.timeline.length),
+                '</div>',
+                '<div class="card-body">'
     ];
     $.each(controller.timeline, function(i, v) {
         // Skip this entry if it's for a deceased animal and we aren't showing them
         if (!config.bool("ShowDeceasedHomePage") && (v.CATEGORY == "DIED" || v.CATEGORY == "EUTHANISED")) { return; }
         tl.push(html.event_text(v, { includedate: true }) + '<br/>');
     });
-
-    tl.push('<br><a class="nav-link text-danger" href="mobile">Switch to old Mobile UI</a>');
-    $("#content-home").html(tl.join("\n"));
+    tl.push('</div></div></div>');
+    let hp = [
+        '<div class="row">',
+        config.bool("ShowTimelineHomePage") && common.has_permission("va") ? tl.join("\n") : "",
+        '<p class="mt-3"><a class="nav-link btn btn-danger text-white" href="mobile">Switch to old Mobile UI</a></p>',
+        '</div>'
+    ];
+    $("#content-home").html(hp.join("\n"));
     $("#content-home").show();
 
     // Load reports
