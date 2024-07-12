@@ -124,7 +124,8 @@ def session_manager():
     sess = None
     if asm3.utils.websession is None:
         sess = web.session.Session(app, MemCacheStore(), initializer={"user" : None, "dbo" : None, "locale" : None, 
-            "searches" : [], "siteid": None, "locationfilter": None, "staffid": None, "visibleanimalids": "" })
+            "roles": None, "securitymap": None, "superuser": None, "searches" : [], "staffid": None, 
+            "siteid": None, "locationfilter": None,  "visibleanimalids": "", "lf": None  })
         asm3.utils.websession = sess
     else:
         sess = asm3.utils.websession
@@ -251,9 +252,10 @@ class ASMEndpoint(object):
             if self.data_encoding: self.data = asm3.utils.bytes2str(self.data, encoding=self.data_encoding)
         except Exception as err:
             asm3.al.error("Failed unpacking params: %s" % str(err), "ASMEndpoint._params", session.dbo, sys.exc_info())
-        return web.utils.storage( data=self.data, post=post, dbo=session.dbo, locale=l, user=session.user, session=session, \
-            siteid = session.siteid, locationfilter = session.locationfilter, staffid = session.staffid,
-            visibleanimalids = session.visibleanimalids )
+        return web.utils.storage( data=self.data, post=post, dbo=session.dbo, locale=l, user=session.user, session=session,
+            staffid = session.staffid, roles = session.roles, superuser = session.superuser, securitymap = session.securitymap, 
+            siteid = session.siteid, locationfilter = session.locationfilter, visibleanimalids = session.visibleanimalids,
+            lf = asm3.animal.LocationFilter(session.locationfilter, session.siteid, session.visibleanimalids))
 
     def check(self, permissions: Any) -> None:
         """ Check logged in and permissions (which can be a single permission string or a list/tuple) """
@@ -275,7 +277,8 @@ class ASMEndpoint(object):
 
     def check_animal(self, a: ResultRow) -> None:
         """ Checks whether the animal we're about to look at is viewable by the user """
-        if not asm3.animal.is_animal_in_location_filter(a, session.locationfilter, session.siteid, session.visibleanimalids):
+        lf = asm3.animal.LocationFilter(session.locationfilter, session.siteid, session.visibleanimalids)
+        if not lf.match(a):
             raise asm3.utils.ASMPermissionError("animal not in location filter/site")
 
     def check_locked_db(self) -> None:
@@ -983,7 +986,7 @@ class mobile(ASMEndpoint):
         if o.session.mobileapp:
             self.redirect(f"https://sheltermanager.com/site/en_mobileretire.html?k={BUILD}")
         self.content_type("text/html")
-        return asm3.mobile.page(o.dbo, o.session, o.user)
+        return asm3.mobile.page(o.dbo, o, o.user)
 
 class mobile2(ASMEndpoint):
     url = "mobile2"
@@ -991,21 +994,21 @@ class mobile2(ASMEndpoint):
 
     def content(self, o):
         dbo = o.dbo
-        animals = asm3.animal.get_shelterview_animals(dbo, o.locationfilter, o.siteid, o.visibleanimalids)
+        animals = asm3.animal.get_shelterview_animals(dbo, o.lf)
         asm3.al.debug("mobile2 for '%s' (%s animals)" % (o.user, len(animals)), "main.mobile2", dbo)
         c = {
             "animals":      animals,
             "reports":      asm3.reports.get_available_reports(dbo),
-            "vaccinations": asm3.medical.get_vaccinations_outstanding(dbo, "m31", o.locationfilter, o.siteid, o.visibleanimalids),
-            "tests":        asm3.medical.get_tests_outstanding(dbo, "m31", o.locationfilter, o.siteid, o.visibleanimalids),
-            "medicals":     asm3.medical.get_treatments_outstanding(dbo, "m31", o.locationfilter, o.siteid, o.visibleanimalids),
+            "vaccinations": asm3.medical.get_vaccinations_outstanding(dbo, "m31", o.lf),
+            "tests":        asm3.medical.get_tests_outstanding(dbo, "m31", o.lf),
+            "medicals":     asm3.medical.get_treatments_outstanding(dbo, "m31", o.lf),
             "diaries":      asm3.diary.get_uncompleted_upto_today(dbo, o.user),
             "rsvhomecheck": asm3.person.get_reserves_without_homechecks(dbo),
             "messages":     asm3.lookups.get_messages(dbo, session.user, session.roles, session.superuser),
             "testresults":  asm3.lookups.get_test_results(dbo),
             "stocklocations": asm3.stock.get_stock_locations_totals(dbo),
-            "incidentsmy":  asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "incomplete" }, o.user),
-            "incidentsundispatched": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "undispatched" }, o.user),
+            "incidentsmy":  asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": o.user, "filter": "incomplete" }, o.user),
+            "incidentsundispatched": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": o.user, "filter": "undispatched" }, o.user),
             "incidentsincomplete": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, o.user),
             "incidentsfollowup": asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" }, o.user),
             "maplink":      MAP_LINK,
@@ -1014,7 +1017,7 @@ class mobile2(ASMEndpoint):
             "colours":      asm3.lookups.get_basecolours(dbo),
             "completedtypes": asm3.lookups.get_incident_completed_types(dbo),
             "incidenttypes": asm3.lookups.get_incident_types(dbo),
-            "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "logtypes":     asm3.lookups.get_log_types(dbo),
             "sexes":        asm3.lookups.get_sexes(dbo),
             "sizes":        asm3.lookups.get_sizes(dbo),
@@ -1236,8 +1239,7 @@ class mobile_photo_upload(ASMEndpoint):
         dbo = o.dbo
         l = o.locale
         self.content_type("text/html")
-        animalsos = asm3.animal.get_animals_on_shelter_namecode(dbo, remove_units=True, 
-            locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
+        animalsos = asm3.animal.get_animals_on_shelter_namecode(dbo, remove_units=True, lf=o.lf)
         # Only include recently adopted animals if the user either has no location filter, or
         # has a location filter that includes adopted animals
         animalsra = []
@@ -1328,7 +1330,7 @@ class mobile_report_criteria(ASMEndpoint):
         if has_criteria("DONATIONTYPE") or has_criteria("PAYMENTTYPE"): c["donationtypes"] = asm3.lookups.get_donation_types(dbo)
         if has_criteria("ENTRYCATEGORY"): c["entryreasons"] = asm3.lookups.get_entryreasons(dbo)
         if has_criteria("LITTER"): c["litters"] = asm3.animal.get_active_litters_brief(dbo)
-        if has_criteria("LOCATION"): c["locations"] = asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid)
+        if has_criteria("LOCATION"): c["locations"] = asm3.lookups.get_internal_locations(dbo, o.lf)
         if has_criteria("LOGTYPE"): c["logtypes"] = asm3.lookups.get_log_types(dbo)
         if has_criteria("PAYMENTMETHOD") or has_criteria("PAYMENTTYPE"): c["paymentmethods"] = asm3.lookups.get_payment_methods(dbo)
         if has_criteria("PERSON"): c["people"] = asm3.person.get_person_name_addresses(dbo)
@@ -1402,21 +1404,21 @@ class main(JSONEndpoint):
         linkmax = asm3.configuration.main_screen_animal_link_max(dbo)
         animallinks = []
         if linkmode == "adoptable":
-            animallinks = asm3.animal.get_links_adoptable(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
+            animallinks = asm3.animal.get_links_adoptable(dbo, o, linkmax, age)
         elif linkmode == "longestonshelter":
-            animallinks = asm3.animal.get_links_longest_on_shelter(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
+            animallinks = asm3.animal.get_links_longest_on_shelter(dbo, o, linkmax, age)
         elif linkmode == "recentlyadopted":
-            animallinks = asm3.animal.get_links_recently_adopted(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
+            animallinks = asm3.animal.get_links_recently_adopted(dbo, o, linkmax, age)
         elif linkmode == "recentlychanged":
-            animallinks = asm3.animal.get_links_recently_changed(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
+            animallinks = asm3.animal.get_links_recently_changed(dbo, o, linkmax, age)
         elif linkmode == "recentlyentered":
-            animallinks = asm3.animal.get_links_recently_entered(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
+            animallinks = asm3.animal.get_links_recently_entered(dbo, o, linkmax, age)
         elif linkmode == "recentlyfostered":
-            animallinks = asm3.animal.get_links_recently_fostered(dbo, linkmax, o.locationfilter, o.siteid, o.visibleanimalids, age)
+            animallinks = asm3.animal.get_links_recently_fostered(dbo, o, linkmax, age)
         # Alerts
         alerts = []
         if asm3.configuration.show_alerts_home_page(dbo):
-            alerts = asm3.animal.get_alerts(dbo, o.locationfilter, o.siteid, o.visibleanimalids, age=age)
+            alerts = asm3.animal.get_alerts(dbo, o.lf, age=age)
             if len(alerts) > 0: 
                 alerts[0]["LOOKFOR"] = asm3.cachedisk.get("lookingfor_lastmatchcount", dbo.database)
                 alerts[0]["LOSTFOUND"] = asm3.cachedisk.get("lostfound_lastmatchcount", dbo.database)
@@ -1811,7 +1813,7 @@ class animal(JSONEndpoint):
             "events": asm3.event.get_events_by_animal(dbo, a.ID),
             "flags": asm3.lookups.get_animal_flags(dbo, a.ADDITIONALFLAGS),
             "incidents": asm3.animalcontrol.get_animalcontrol_for_animal(dbo, a.ID),
-            "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "logtypes": asm3.lookups.get_log_types(dbo),
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
@@ -1900,7 +1902,7 @@ class animal_boarding(JSONEndpoint):
             "name": "animal_boarding",
             "animal": a,
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
-            "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "rows": rows,
@@ -1923,7 +1925,7 @@ class animal_bulk(JSONEndpoint):
             "flags": asm3.lookups.get_animal_flags(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "forlist": asm3.users.get_diary_forlist(dbo),
-            "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "logtypes": asm3.lookups.get_log_types(dbo),
             "movementtypes": asm3.lookups.get_movement_types(dbo)
         }
@@ -2089,15 +2091,15 @@ class animal_embed(ASMEndpoint):
     def post_find(self, o):
         self.content_type("application/json")
         q = o.post["q"]
-        rows = asm3.animal.get_animal_find_simple(o.dbo, q, classfilter=o.post["filter"], limit=100, locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
+        rows = asm3.animal.get_animal_find_simple(o.dbo, q, classfilter=o.post["filter"], limit=100, lf=o.lf)
         asm3.al.debug("got %d results for '%s'" % (len(rows), self.query()), "main.animal_embed", o.dbo)
         return asm3.utils.json(rows)
 
     def post_multiselect(self, o):
         self.content_type("application/json")
         dbo = o.dbo
-        rows = asm3.animal.get_animal_find_simple(dbo, "", classfilter="all", limit=asm3.configuration.record_search_limit(dbo), locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
-        locations = asm3.lookups.get_internal_locations(dbo)
+        rows = asm3.animal.get_animal_find_simple(dbo, "", classfilter="all", limit=asm3.configuration.record_search_limit(dbo), lf=o.lf)
+        locations = asm3.lookups.get_internal_locations(dbo, o.lf)
         species = asm3.lookups.get_species(dbo)
         litters = asm3.animal.get_litters(dbo)
         flags = asm3.lookups.get_animal_flags(dbo)
@@ -2134,7 +2136,7 @@ class animal_find(JSONEndpoint):
             "sexes": asm3.lookups.get_sexes(dbo),
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "entrytypes": asm3.lookups.get_entry_types(dbo),
-            "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "sizes": asm3.lookups.get_sizes(dbo),
@@ -2153,9 +2155,9 @@ class animal_find_results(JSONEndpoint):
         q = o.post["q"]
         mode = o.post["mode"]
         if mode == "SIMPLE":
-            results = asm3.animal.get_animal_find_simple(dbo, q, classfilter="all", limit=asm3.configuration.record_search_limit(dbo), locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
+            results = asm3.animal.get_animal_find_simple(dbo, q, classfilter="all", limit=asm3.configuration.record_search_limit(dbo), lf=o.lf)
         else:
-            results = asm3.animal.get_animal_find_advanced(dbo, o.post.data, limit=asm3.configuration.record_search_limit(dbo), locationfilter=o.locationfilter, siteid=o.siteid, visibleanimalids=o.visibleanimalids)
+            results = asm3.animal.get_animal_find_advanced(dbo, o.post.data, limit=asm3.configuration.record_search_limit(dbo), lf=o.lf)
         add = None
         if len(results) > 0: 
             add = asm3.additional.get_additional_fields_ids(dbo, results, "animal")
@@ -2315,7 +2317,7 @@ class animal_new(JSONEndpoint):
             "entryreasons": asm3.lookups.get_entryreasons(dbo),
             "entrytypes": asm3.lookups.get_entry_types(dbo),
             "jurisdictions": asm3.lookups.get_jurisdictions(dbo),
-            "internallocations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "pickuplocations": asm3.lookups.get_pickup_locations(dbo),
             "sizes": asm3.lookups.get_sizes(dbo)
         }
@@ -2342,12 +2344,12 @@ class animal_observations(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        animals = asm3.animal.get_shelterview_animals(dbo, o.locationfilter, o.siteid, o.visibleanimalids)
+        animals = asm3.animal.get_shelterview_animals(dbo, o.lf)
         asm3.al.debug("got %d shelter animals" % len(animals), "main.animal_observations", dbo)
         return { 
             "animals": animals,
             "logtypes": asm3.lookups.get_log_types(dbo), 
-            "internallocations": asm3.lookups.get_internal_locations_counts(dbo)
+            "internallocations": asm3.lookups.get_internal_locations_counts(dbo, o.lf)
         }
 
     def post_save(self, o):
@@ -2503,7 +2505,7 @@ class boarding(JSONEndpoint):
         return {
             "name": "boarding",
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
-            "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "rows": rows,
@@ -5073,7 +5075,7 @@ class move_book_foster(JSONEndpoint):
     def controller(self, o):
         dbo = o.dbo
         movements = asm3.movement.get_active_movements(dbo, asm3.movement.FOSTER)
-        movements = asm3.animal.remove_nonvisible_animals(movements, o.visibleanimalids)
+        movements = o.lf.reduce(movements)
         asm3.al.debug("got %d movements" % len(movements), "main.move_book_foster", dbo)
         return {
             "name": "move_book_foster",
@@ -5981,7 +5983,7 @@ class person_boarding(JSONEndpoint):
             "name": "person_boarding",
             "person": p,
             "boardingtypes": asm3.lookups.get_boarding_types(dbo),
-            "internallocations": asm3.lookups.get_internal_locations(dbo),
+            "internallocations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "donationtypes": asm3.lookups.get_donation_types(dbo),
             "paymentmethods": asm3.lookups.get_payment_methods(dbo),
             "rows": rows,
@@ -6590,7 +6592,7 @@ class report_criteria(JSONEndpoint):
         if has_criteria("DONATIONTYPE") or has_criteria("PAYMENTTYPE"): c["donationtypes"] = asm3.lookups.get_donation_types(dbo)
         if has_criteria("ENTRYCATEGORY"): c["entryreasons"] = asm3.lookups.get_entryreasons(dbo)
         if has_criteria("LITTER"): c["litters"] = asm3.animal.get_active_litters_brief(dbo)
-        if has_criteria("LOCATION"): c["locations"] = asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid)
+        if has_criteria("LOCATION"): c["locations"] = asm3.lookups.get_internal_locations(dbo, o.lf)
         if has_criteria("LOGTYPE"): c["logtypes"] = asm3.lookups.get_log_types(dbo)
         if has_criteria("PAYMENTMETHOD") or has_criteria("PAYMENTTYPE"): c["paymentmethods"] = asm3.lookups.get_payment_methods(dbo)
         if has_criteria("PERSON"): c["people"] = asm3.person.get_person_name_addresses(dbo)
@@ -6819,7 +6821,7 @@ class search(JSONEndpoint):
     
     def controller(self, o):
         q = o.post["q"]
-        results, timetaken, explain, sortname = asm3.search.search(o.dbo, o.session, q)
+        results, timetaken, explain, sortname = asm3.search.search(o.dbo, o, q)
         is_large_db = ""
         if o.dbo.is_large_db: is_large_db = " (indexed only)"
         asm3.al.debug("searched for '%s', got %d results in %s, sorted %s %s" % (q, len(results), timetaken, sortname, is_large_db), "main.search", o.dbo)
@@ -6858,13 +6860,13 @@ class shelterview(JSONEndpoint):
 
     def controller(self, o):
         dbo = o.dbo
-        animals = asm3.animal.get_shelterview_animals(dbo, o.locationfilter, o.siteid, o.visibleanimalids)
+        animals = asm3.animal.get_shelterview_animals(dbo, o.lf)
         asm3.al.debug("got %d animals for shelterview" % (len(animals)), "main.shelterview", dbo)
         return {
             "animals": asm3.animal.get_animals_brief(animals),
             "flags": asm3.lookups.get_animal_flags(dbo),
             "fosterers": asm3.person.get_shelterview_fosterers(dbo, o.siteid),
-            "locations": asm3.lookups.get_internal_locations(dbo, o.locationfilter, o.siteid),
+            "locations": asm3.lookups.get_internal_locations(dbo, o.lf),
             "perrow": asm3.configuration.main_screen_animal_link_max(dbo),
             "unitextra": asm3.configuration.unit_extra(dbo)
         }

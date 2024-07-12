@@ -5,7 +5,7 @@ import asm3.financial
 import asm3.utils
 from asm3.i18n import _
 from asm3.sitedefs import URL_MICROCHIP_PREFIXES
-from asm3.typehints import datetime, Database, Dict, List, Results, Tuple
+from asm3.typehints import datetime, Database, Dict, List, LocationFilter, Results, Tuple
 
 import re
 
@@ -913,18 +913,18 @@ def get_incident_completed_types(dbo: Database) -> Results:
 def get_incident_types(dbo: Database) -> Results:
     return dbo.query("SELECT * FROM incidenttype ORDER BY IncidentName")
 
-def get_internal_locations(dbo: Database, locationfilter: str = "", siteid: int = 0) -> Results:
+def get_internal_locations(dbo: Database, lf: LocationFilter = None) -> Results:
     clauses = []
-    if locationfilter != "": clauses.append("ID IN (%s)" % locationfilter)
-    if siteid != 0: clauses.append("SiteID = %s" % siteid)
+    if lf is not None and lf.locationfilter != "": clauses.append("ID IN (%s)" % lf.locationfilter)
+    if lf is not None and lf.siteid != 0: clauses.append("SiteID = %s" % lf.siteid)
     c = " AND ".join(clauses)
     if c != "": c = "WHERE %s" % c
     return dbo.query("SELECT * FROM internallocation %s ORDER BY LocationName" % c)
 
-def get_internal_locations_counts(dbo: Database, locationfilter: str = "", siteid: int = 0) -> Results:
+def get_internal_locations_counts(dbo: Database, lf: LocationFilter = None) -> Results:
     clauses = []
-    if locationfilter != "": clauses.append("ID IN (%s)" % locationfilter)
-    if siteid != 0: clauses.append("SiteID = %s" % siteid)
+    if lf is not None and lf.locationfilter != "": clauses.append("ID IN (%s)" % lf.locationfilter)
+    if lf is not None and lf.siteid != 0: clauses.append("SiteID = %s" % lf.siteid)
     c = " AND ".join(clauses)
     if c != "": c = "WHERE %s" % c
     return dbo.query("SELECT *, " \

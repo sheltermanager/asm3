@@ -4,7 +4,7 @@ import asm3.animal
 import asm3.configuration
 import asm3.utils
 from asm3.i18n import _, add_days
-from asm3.typehints import datetime, Database, List, PostedData, ResultRow, Results
+from asm3.typehints import datetime, Database, List, LocationFilter, PostedData, ResultRow, Results
 
 # Medical treatment rules
 FIXED_LENGTH = 0
@@ -542,7 +542,7 @@ def get_tests(dbo: Database, animalid: int, onlygiven: bool = False, sort: int =
         sql += "ORDER BY at.DateRequired DESC"
     return dbo.query(sql)
 
-def get_vaccinations_outstanding(dbo: Database, offset: str = "m31", locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
+def get_vaccinations_outstanding(dbo: Database, offset: str = "m31", lf: LocationFilter = None) -> Results:
     """
     Returns a recordset of animals awaiting vaccinations:
     offset is m to go backwards, or p to go forwards with a number of days.
@@ -571,7 +571,8 @@ def get_vaccinations_outstanding(dbo: Database, offset: str = "m31", locationfil
             "AND av2.AnimalID = av.AnimalID AND av2.VaccinationID = av.VaccinationID " \
             "AND av2.ID <> av.ID AND av2.DateRequired >= av.DateOfVaccination)" \
                 % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offset=offsetdays)))
-    locationfilter = asm3.animal.get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
     shelterfilter = ""
     if not asm3.configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
@@ -580,14 +581,15 @@ def get_vaccinations_outstanding(dbo: Database, offset: str = "m31", locationfil
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY av.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter))
 
-def get_vaccinations_two_dates(dbo: Database, start: datetime, end: datetime, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
+def get_vaccinations_two_dates(dbo: Database, start: datetime, end: datetime, lf: LocationFilter = None) -> Results:
     """
     Returns vaccinations due between two dates:
     start, end: dates
     locationfilter, siteid: restrictions on visible locations/site
     ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFVACCINATION, COMMENTS, VACCINATIONTYPE, VACCINATIONID
     """
-    locationfilter = asm3.animal.get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
     shelterfilter = ""
     if not asm3.configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
@@ -597,7 +599,7 @@ def get_vaccinations_two_dates(dbo: Database, start: datetime, end: datetime, lo
         "AND a.DeceasedDate Is Null %s %s " \
         "ORDER BY av.DateRequired, a.AnimalName" % (shelterfilter, locationfilter), (start, end))
 
-def get_vaccinations_expiring_two_dates(dbo: Database, start: Database, end: Database, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
+def get_vaccinations_expiring_two_dates(dbo: Database, start: Database, end: Database, lf: LocationFilter = None) -> Results:
     """
     Returns vaccinations expiring between two dates. 
     A vacc is only considered truly expired if there isn't another vacc of the 
@@ -606,7 +608,8 @@ def get_vaccinations_expiring_two_dates(dbo: Database, start: Database, end: Dat
     locationfilter, siteid: restrictions on visible locations/site
     ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFVACCINATION, COMMENTS, VACCINATIONTYPE, VACCINATIONID
     """
-    locationfilter = asm3.animal.get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
     shelterfilter = ""
     if not asm3.configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
@@ -626,7 +629,7 @@ def get_vacc_manufacturers(dbo: Database) -> List[str]:
         mf.append(r.MANUFACTURER)
     return mf
 
-def get_tests_outstanding(dbo: Database, offset: str = "m31", locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
+def get_tests_outstanding(dbo: Database, offset: str = "m31", lf: LocationFilter = None) -> Results:
     """
     Returns a recordset of animals awaiting tests:
     offset is m to go backwards, or p to go forwards with a number of days.
@@ -641,7 +644,8 @@ def get_tests_outstanding(dbo: Database, offset: str = "m31", locationfilter: st
         ec = " AND at.DateRequired >= %s AND at.DateRequired <= %s AND at.DateOfTest Is Null" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offset=offsetdays)))
     if offset.startswith("g"):
         ec = " AND at.DateOfTest >= %s AND at.DateOfTest <= %s" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
-    locationfilter = asm3.animal.get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
     shelterfilter = ""
     if not asm3.configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
@@ -650,13 +654,14 @@ def get_tests_outstanding(dbo: Database, offset: str = "m31", locationfilter: st
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY at.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter))
 
-def get_tests_two_dates(dbo: Database, start: datetime, end: datetime, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
+def get_tests_two_dates(dbo: Database, start: datetime, end: datetime, lf: LocationFilter = None) -> Results:
     """
     Returns a recordset of animals awaiting tests between two dates
     start, end: dates
     ID, ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME, DATEREQUIRED, DATEOFTEST, COMMENTS, TESTNAME, RESULTNAME, TESTTYPEID
     """
-    locationfilter = asm3.animal.get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
     shelterfilter = ""
     if not asm3.configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
@@ -666,7 +671,7 @@ def get_tests_two_dates(dbo: Database, start: datetime, end: datetime, locationf
         "AND a.DeceasedDate Is Null %s %s " \
         "ORDER BY at.DateRequired, a.AnimalName" % (shelterfilter, locationfilter), (start, end))
 
-def get_treatments_outstanding(dbo: Database, offset: str = "m31", locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
+def get_treatments_outstanding(dbo: Database, offset: str = "m31", lf: LocationFilter = None) -> Results:
     """
     Returns a recordset of shelter animals awaiting medical treatments:
     offset is m to go backwards, or p to go forwards with a number of days.
@@ -686,7 +691,8 @@ def get_treatments_outstanding(dbo: Database, offset: str = "m31", locationfilte
         ec = " AND amt.DateRequired >= %s AND amt.DateRequired <= %s AND amt.DateGiven Is Null AND am.Status=0" % (dbo.sql_date(dbo.today()), dbo.sql_date(dbo.today(offset=offsetdays)))
     if offset.startswith("g"):
         ec = " AND amt.DateGiven >= %s AND amt.DateGiven <= %s" % (dbo.sql_date(dbo.today(offset=offsetdays*-1)), dbo.sql_date(dbo.today()))
-    locationfilter = asm3.animal.get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
     shelterfilter = ""
     if not asm3.configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"
@@ -695,7 +701,7 @@ def get_treatments_outstanding(dbo: Database, offset: str = "m31", locationfilte
         "AND a.DeceasedDate Is Null %s %s %s " \
         "ORDER BY amt.DateRequired, a.AnimalName" % (shelterfilter, ec, locationfilter)))
 
-def get_treatments_two_dates(dbo: Database, start: datetime, end: datetime, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
+def get_treatments_two_dates(dbo: Database, start: datetime, end: datetime, lf: LocationFilter = None) -> Results:
     """
     Returns a recordset of shelter animals awaiting medical treatments between two dates.
     ANIMALID, SHELTERCODE, ANIMALNAME, LOCATIONNAME, WEBSITEMEDIANAME,
@@ -705,7 +711,8 @@ def get_treatments_two_dates(dbo: Database, start: datetime, end: datetime, loca
     TOTALNUMBEROFTREATMENTS, DATEREQUIRED, DATEGIVEN, TREATMENTCOMMENTS,
     TREATMENTNUMBER, TOTALTREATMENTS, GIVENBY, REGIMENID, TREATMENTID
     """
-    locationfilter = asm3.animal.get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
     shelterfilter = ""
     if not asm3.configuration.include_off_shelter_medical(dbo):
         shelterfilter = " AND (a.Archived = 0 OR a.ActiveMovementType = 2)"

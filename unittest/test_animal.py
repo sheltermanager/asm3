@@ -305,31 +305,31 @@ class TestAnimal(unittest.TestCase):
     def test_update_animal_check_bonds(self):
         asm3.animal.update_animal_check_bonds(base.get_dbo(), self.nid)
 
-    def test_is_animal_in_location_filter(self):
+    def test_location_filter_match(self):
         a = asm3.animal.get_animal(base.get_dbo(), self.nid)
         a.siteid = 2 # site test
-        self.assertTrue(asm3.animal.is_animal_in_location_filter(a, "", 2, ""))
-        self.assertFalse(asm3.animal.is_animal_in_location_filter(a, "", 3, ""))
+        self.assertTrue(asm3.animal.LocationFilter("", 2, "").match(a))
+        self.assertFalse(asm3.animal.LocationFilter("", 3, "").match(a))
         a.activemovementtype = None
         a.shelterlocation = 3 # shelter locations
-        self.assertTrue(asm3.animal.is_animal_in_location_filter(a, "3", 0, ""))
-        self.assertFalse(asm3.animal.is_animal_in_location_filter(a, "4", 0, ""))
+        self.assertTrue(asm3.animal.LocationFilter("3", 0, "").match(a))
+        self.assertFalse(asm3.animal.LocationFilter("4", 0, "").match(a))
         a.activemovementtype = 1 # trials
-        self.assertTrue(asm3.animal.is_animal_in_location_filter(a, "-1", 0, ""))
-        self.assertFalse(asm3.animal.is_animal_in_location_filter(a, "-2", 0, ""))
+        self.assertTrue(asm3.animal.LocationFilter("-1", 0, "").match(a))
+        self.assertFalse(asm3.animal.LocationFilter("-2", 0, "").match(a))
         a.activemovementtype = 2 # fosters
-        self.assertTrue(asm3.animal.is_animal_in_location_filter(a, "-2", 0, ""))
-        self.assertFalse(asm3.animal.is_animal_in_location_filter(a, "-1", 0, ""))
+        self.assertTrue(asm3.animal.LocationFilter("-2", 0, "").match(a))
+        self.assertFalse(asm3.animal.LocationFilter("-1", 0, "").match(a))
         a.activemovementtype = 8 # retailers
-        self.assertTrue(asm3.animal.is_animal_in_location_filter(a, "-8", 0, ""))
-        self.assertFalse(asm3.animal.is_animal_in_location_filter(a, "-2", 0, ""))
+        self.assertTrue(asm3.animal.LocationFilter("-8", 0, "").match(a))
+        self.assertFalse(asm3.animal.LocationFilter("-2", 0, "").match(a))
         a.activemovementtype = None
         a.nonshelteranimal = 1 # nonshelters
-        self.assertTrue(asm3.animal.is_animal_in_location_filter(a, "-9", 0, ""))
-        self.assertFalse(asm3.animal.is_animal_in_location_filter(a, "-1", 0, ""))
+        self.assertTrue(asm3.animal.LocationFilter("-9", 0, "").match(a))
+        self.assertFalse(asm3.animal.LocationFilter("-1", 0, "").match(a))
         # visible animals like "my fosters"
-        self.assertTrue(asm3.animal.is_animal_in_location_filter(a, "-12", 0, str(self.nid)))
-        self.assertFalse(asm3.animal.is_animal_in_location_filter(a, "-12", 0, ""))
+        self.assertTrue(asm3.animal.LocationFilter("-12", 0, str(self.nid)).match(a))
+        self.assertFalse(asm3.animal.LocationFilter("-12", 0, "").match(a))
 
     def test_get_number(self):
         self.assertNotEqual(0, asm3.animal.get_number_animals_on_shelter(base.get_dbo(), base.today(), 1))

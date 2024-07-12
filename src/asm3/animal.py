@@ -27,6 +27,138 @@ from random import choice
 ASCENDING = 0
 DESCENDING = 1
 
+class LocationFilter(object):
+    locationfilter = ""
+    siteid = 0
+    visibleanimalids = ""
+    
+    def __init__(self, locationfilter: str, siteid: int, visibleanimalids: str):
+        self.locationfilter = locationfilter
+        self.siteid = siteid
+        self.visibleanimalids = visibleanimalids
+    
+    def clause(self, tablequalifier: str = "", 
+            whereprefix: bool = False, andprefix: bool = False, andsuffix: bool = False) -> str:
+        """
+        Returns a where clause that excludes animals not in the locationfilter
+        locationfilter: comma separated list of internallocation IDs and special values
+            -1: animals on a trial/full adoption
+            -2: animals in a foster home
+            -3: animals transferred away
+            -4: animals escaped
+            -5: animals reclaimed
+            -6: animals stolen
+            -7: animals released to wild/tnr
+            -8: animals in a retailer
+            -9: non-shelter animals (excluded from this functionality)
+            -12: has set visibleanimalids for "My fosters"
+            -13: has set visibleanimalids for "My coordinated animals"
+            -21: died on shelter
+            -22: doa
+            -23: euthanised
+            -24: died off shelter
+        siteid: The animal's site, as linked to internallocation
+        visibleanimalids: comma separated list of animal ids this user is allowed to view (-12 must be present in filter)
+        tablequalifier: The animal table name in the query
+        """
+        locationfilter = self.locationfilter
+        siteid = self.siteid
+        visibleanimalids = self.visibleanimalids
+        if locationfilter == "" and siteid == 0 and visibleanimalids == "": return ""
+        if tablequalifier == "": tablequalifier = "animal"
+        clauses = []
+        if locationfilter != "":
+            internallocs = []
+            movetypes = []
+            locs = locationfilter.split(",")
+            # Extract movement types and internal locations from the filter first
+            for l in locs:
+                if l in ( "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8"):
+                    movetypes.append(l.replace("-", ""))
+                elif l.find("-") == -1:
+                    internallocs.append(l)
+            # Internal locations
+            if len(internallocs) > 0:
+                clauses.append(f'({tablequalifier}.Archived=0 AND {tablequalifier}.ShelterLocation IN ({",".join(internallocs)}))') 
+            # Active movement types
+            if len(movetypes) > 0:
+                clauses.append(f'{tablequalifier}.ActiveMovementType IN ({",".join(movetypes)})')
+            # Non-shelter
+            if "-9" in locs:
+                clauses.append(f"{tablequalifier}.NonShelterAnimal=1")
+            # My Fosters, My Coordinated Animals
+            if "-12" in locs or "-13" in locs:
+                if visibleanimalids == "": visibleanimalids = "0"
+                clauses.append(f"{tablequalifier}.ID IN ({visibleanimalids})")
+            # Died on shelter
+            if "-21" in locs:
+                clauses.append(f"({tablequalifier}.DeceasedDate Is Not Null AND {tablequalifier}.PutToSleep=0 AND {tablequalifier}.IsDOA=0 AND {tablequalifier}.DiedOffShelter=0)")
+            # DOA
+            if "-22" in locs:
+                clauses.append(f"({tablequalifier}.DeceasedDate Is Not Null AND {tablequalifier}.PutToSleep=0 AND {tablequalifier}.IsDOA=1 AND {tablequalifier}.DiedOffShelter=0)")
+            # Euthanised
+            if "-23" in locs:
+                clauses.append(f"({tablequalifier}.DeceasedDate Is Not Null AND {tablequalifier}.PutToSleep=1 AND {tablequalifier}.IsDOA=0 AND {tablequalifier}.DiedOffShelter=0)")
+            # Died Off Shelter
+            if "-24" in locs:
+                clauses.append(f"({tablequalifier}.DeceasedDate Is Not Null AND {tablequalifier}.DiedOffShelter=1)")
+        if siteid != 0:
+            clauses.append("il.SiteID = %s" % siteid)
+        c = "(" + " OR ".join(clauses) + ")"
+        # If we've got nothing left by this point, don't add a prefix/suffix/where
+        if c == "": return ""
+        if andprefix:
+            c = " AND %s" % c
+        if andsuffix:
+            c = "%s AND " % c
+        if whereprefix:
+            c = " WHERE %s" % c
+        return c
+
+    def __contains__(self, key: ResultRow) -> bool:
+        return self.match(key)
+
+    def match(self, a: ResultRow) -> bool:
+        """
+        Returns True if the animal a matches the locationfilter
+        """
+        locationfilter = self.locationfilter
+        siteid = self.siteid
+        visibleanimalids = self.visibleanimalids
+        if locationfilter == "" and siteid == 0: return True
+        if siteid != 0:
+            if a.siteid == 0 or a.siteid == siteid: return True
+        if locationfilter != "":
+            locs = locationfilter.split(",")
+            if a.activemovementtype == 1 and "-1" in locs: return True 
+            if a.activemovementtype == 2 and "-2" in locs: return True
+            if a.activemovementtype == 3 and "-3" in locs: return True
+            if a.activemovementtype == 4 and "-4" in locs: return True
+            if a.activemovementtype == 5 and "-5" in locs: return True
+            if a.activemovementtype == 6 and "-6" in locs: return True
+            if a.activemovementtype == 7 and "-7" in locs: return True
+            if a.activemovementtype == 8 and "-8" in locs: return True
+            if a.nonshelteranimal == 1 and "-9" in locs: return True
+            if a.deceaseddate and a.isdoa == 0 and a.puttosleep == 0 and a.diedoffshelter == 0 and "-21" in locs: return True
+            if a.deceaseddate and a.isdoa == 1 and a.puttosleep == 0 and a.diedoffshelter == 0 and "-22" in locs: return True
+            if a.deceaseddate and a.isdoa == 0 and a.puttosleep == 1 and a.diedoffshelter == 0 and "-23" in locs: return True
+            if a.deceaseddate and a.diedoffshelter == 1 and "-24" in locs: return True
+            if a.archived == 0 and str(a.shelterlocation) in locs: return True
+        if visibleanimalids != "":
+            if str(a.ID) in visibleanimalids.split(","): return True
+        return False
+
+    def reduce(self, rows: Results, animalidcolumn: str = "ANIMALID") -> Results:
+        """
+        Given a resultset of rows, removes all rows that are no present in visibleanimalids.
+        """
+        if self.visibleanimalids == "": return rows
+        rowsout = []
+        for r in rows:
+            if str(r[animalidcolumn]) in self.visibleanimalids.split(","):
+                rowsout.append(r)
+        return rowsout
+
 def get_animal_query(dbo: Database) -> str:
     """
     Returns a select for animal rows with resolved lookups
@@ -549,7 +681,7 @@ def get_animals_brief(animals: Results) -> Results:
         })
     return r
 
-def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", limit: int = 0, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
+def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", limit: int = 0, lf: LocationFilter = None) -> Results:
     """
     Returns rows for simple animal searches.
     query: The search criteria
@@ -559,7 +691,8 @@ def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", 
     # If no query has been given and we have a filter of shelter or all, 
     # do an on-shelter search instead
     if query == "" and (classfilter == "all" or classfilter == "shelter"):
-        locationfilter = get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+        locationfilter = ""
+        if lf is not None: locationfilter = lf.clause(tablequalifier="a", andprefix=True)
         sql = "%s WHERE a.Archived=0 %s ORDER BY a.AnimalName" % (get_animal_query(dbo), locationfilter)
         return calc_ages(dbo, dbo.query(sql, limit=limit, distincton="ID"))
     ss = asm3.utils.SimpleSearchBuilder(dbo, query)
@@ -579,16 +712,18 @@ def get_animal_find_simple(dbo: Database, query: str, classfilter: str = "all", 
         classfilter = "a.Sex = 0 AND "
     else:
         classfilter = ""
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(tablequalifier="a", andsuffix=True)
     sql = "%s WHERE %s %s (%s) ORDER BY a.Archived, a.AnimalName" % ( \
         get_animal_query(dbo),
         classfilter,
-        get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids, andsuffix=True),
+        locationfilter,
         " OR ".join(ss.ors))
     rows = dbo.query(sql, ss.values, limit=limit, distincton="ID")
     rows = calc_ages(dbo, rows)
     return rows
 
-def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
+def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, lf: LocationFilter = None) -> Results:
     """
     Returns rows for advanced animal searches.
     criteria: A dictionary of criteria
@@ -655,7 +790,6 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, loca
             notforregistration
             quarantine
         af_X - additional field with ID X
-    locationfilter: IN clause of locations to search
     """
     post = asm3.utils.PostedData(criteria, dbo.locale)
     ss = asm3.utils.AdvancedSearchBuilder(dbo, post)
@@ -665,8 +799,8 @@ def get_animal_find_advanced(dbo: Database, criteria: dict, limit: int = 0, loca
     ss.add_id_pair("breedid", "a.BreedID", "a.Breed2ID")
     ss.add_id("shelterlocation", "a.ShelterLocation")
     # If we have a location filter and no location has been given, use the filter
-    if locationfilter != "" and post.integer("shelterlocation") == -1:
-        ss.ands.append(get_location_filter_clause(locationfilter=locationfilter, tablequalifier="a", siteid=siteid, visibleanimalids=visibleanimalids))
+    if lf is not None and lf.locationfilter != "" and post.integer("shelterlocation") == -1:
+        ss.ands.append(lf.clause())
     ss.add_str_pair("microchip", "a.IdentichipNumber", "a.Identichip2Number")
     ss.add_str("tattoo", "a.TattooNumber")
     ss.add_str("pickupaddress", "a.PickupAddress")
@@ -856,7 +990,7 @@ def get_animals_stray(dbo: Database) -> Results:
     """
     return dbo.query(get_animal_query(dbo) + " WHERE a.EntryTypeID = 2 AND a.Archived = 0 ORDER BY DateBroughtIn")
 
-def get_alerts(dbo: Database, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "", age: int = 120) -> Results:
+def get_alerts(dbo: Database, lf: LocationFilter = None, age: int = 120) -> Results:
     """
     Returns the alert totals for the main screen.
     """
@@ -867,7 +1001,8 @@ def get_alerts(dbo: Database, locationfilter: str = "", siteid: int = 0, visible
     today = dbo.sql_date(dbo.today())
     tomorrow = dbo.sql_date(dbo.today(offset=1))
     endoftoday = dbo.sql_date(dbo.today(settime="23:59:59"))
-    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(andprefix=True)
     shelterfilter = ""
     longterm = asm3.configuration.long_term_days(dbo)
     alertchip = asm3.configuration.alert_species_microchip(dbo)
@@ -1742,13 +1877,14 @@ def get_animals_namecode(dbo: Database) -> Results:
         "FROM animal ORDER BY AnimalName, ShelterCode")
 
 def get_animals_on_shelter_namecode(dbo: Database, remove_units: bool = False, remove_fosterer: bool = False,
-                                    locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
+                                    lf: LocationFilter = None) -> Results:
     """
     Returns a resultset containing the ID, Name, Code and DisplayLocation of all shelter animals.
     remove_units: Strip location units from DisplayLocation
     remove_fosterer: Strip fosterer from DisplayLocation
     """
-    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(andprefix=True)
     rows = dbo.query("SELECT animal.ID, AnimalName, ShelterCode, ShortCode, SpeciesID, SpeciesName, ActiveMovementType, DisplayLocation, " \
         "CASE WHEN EXISTS(SELECT ItemValue FROM configuration WHERE ItemName Like 'UseShortShelterCodes' AND ItemValue = 'Yes') " \
         "THEN ShortCode ELSE ShelterCode END AS Code " \
@@ -1978,174 +2114,65 @@ def get_returned_exit_movements(dbo: Database, animalid: int) -> Results:
         "MovementDate Is Not Null AND ReturnDate Is Not Null " \
         "ORDER BY MovementDate DESC", [animalid])
 
-def get_links_adoptable(dbo: Database, limit: int = 5, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "", cachetime: int = 120) -> Results:
+def get_links_adoptable(dbo: Database, lf: LocationFilter = None, limit: int = 5, cachetime: int = 120) -> Results:
     """
     Returns link info for animals who are adoptable
     """
-    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(andprefix=True)
     return get_animals_ids(dbo, "a.AnimalName", 
         "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Adoptable = 1 %s ORDER BY AnimalName" % \
         locationfilter, limit=limit, cachetime=cachetime)
 
-def get_links_recently_adopted(dbo: Database, limit: int = 5, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "", cachetime: int = 120) -> Results:
+def get_links_recently_adopted(dbo: Database, lf: LocationFilter = None, limit: int = 5, cachetime: int = 120) -> Results:
     """
     Returns link info for animals who were recently adopted
     """
-    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(andprefix=True)
     return get_animals_ids(dbo, "a.ActiveMovementDate DESC", 
         "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 1 %s ORDER BY ActiveMovementDate DESC" % \
         locationfilter, limit=limit, cachetime=cachetime)
 
-def get_links_recently_fostered(dbo: Database, limit: int = 5, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "", cachetime: int = 120) -> Results:
+def get_links_recently_fostered(dbo: Database, lf: LocationFilter = None, limit: int = 5, cachetime: int = 120) -> Results:
     """
     Returns link info for animals who were recently fostered
     """
-    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(andprefix=True)
     return get_animals_ids(dbo, "a.ActiveMovementDate DESC", 
         "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE ActiveMovementType = 2 %s ORDER BY ActiveMovementDate DESC" % \
         locationfilter, limit=limit, cachetime=cachetime)
 
-def get_links_recently_changed(dbo: Database, limit: int = 5, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "", cachetime: int = 120) -> Results:
+def get_links_recently_changed(dbo: Database, lf: LocationFilter = None, limit: int = 5, cachetime: int = 120) -> Results:
     """
     Returns link info for animals who have recently been changed.
     """
-    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, whereprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(whereprefix=True)
     return get_animals_ids(dbo, "a.LastChangedDate DESC", 
         "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation %s ORDER BY LastChangedDate DESC" % \
         locationfilter, limit=limit, cachetime=cachetime)
 
-def get_links_recently_entered(dbo: Database, limit: int = 5, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "", cachetime: int = 120) -> Results:
+def get_links_recently_entered(dbo: Database, lf: LocationFilter = None, limit: int = 5, cachetime: int = 120) -> Results:
     """
     Returns link info for animals who recently entered the shelter.
     """
-    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(andprefix=True)
     return get_animals_ids(dbo, "a.MostRecentEntryDate DESC", 
         "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate DESC" % \
         locationfilter, limit=limit, cachetime=cachetime)
 
-def get_links_longest_on_shelter(dbo: Database, limit: int = 5, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "", cachetime: int = 120) -> Results:
+def get_links_longest_on_shelter(dbo: Database, lf: LocationFilter = None, limit: int = 5, cachetime: int = 120) -> Results:
     """
     Returns link info for animals who have been on the shelter the longest
     """
-    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(andprefix=True)
     return get_animals_ids(dbo, "a.MostRecentEntryDate", 
         "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = ShelterLocation WHERE Archived = 0 %s ORDER BY MostRecentEntryDate" % \
         locationfilter, limit=limit, cachetime=cachetime)
-
-def get_location_filter_clause(locationfilter: str = "", tablequalifier: str = "", siteid: int = 0, visibleanimalids: str = "", 
-                               whereprefix: bool = False, andprefix: bool = False, andsuffix: bool = False) -> str:
-    """
-    Returns a where clause that excludes animals not in the locationfilter
-    locationfilter: comma separated list of internallocation IDs and special values
-        -1: animals on a trial/full adoption
-        -2: animals in a foster home
-        -3: animals transferred away
-        -4: animals escaped
-        -5: animals reclaimed
-        -6: animals stolen
-        -7: animals released to wild/tnr
-        -8: animals in a retailer
-        -9: non-shelter animals (excluded from this functionality)
-        -12: has set visibleanimalids for "My fosters"
-        -13: has set visibleanimalids for "My coordinated animals"
-        -21: died on shelter
-        -22: doa
-        -23: euthanised
-        -24: died off shelter
-    tablequalifier: The animal table name
-    siteid: The animal's site, as linked to internallocation
-    visibleanimalids: comma separated list of animal ids this user is allowed to view (-12 must be present in filter)
-    """
-    # Don't do anything if there's no filter
-    if locationfilter == "" and siteid == 0 and visibleanimalids == "": return ""
-    if tablequalifier == "": tablequalifier = "animal"
-    clauses = []
-    if locationfilter != "":
-        internallocs = []
-        movetypes = []
-        locs = locationfilter.split(",")
-        # Extract movement types and internal locations from the filter first
-        for l in locs:
-            if l in ( "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8"):
-                movetypes.append(l.replace("-", ""))
-            elif l.find("-") == -1:
-                internallocs.append(l)
-        # Internal locations
-        if len(internallocs) > 0:
-            clauses.append(f'({tablequalifier}.Archived=0 AND {tablequalifier}.ShelterLocation IN ({",".join(internallocs)}))') 
-        # Active movement types
-        if len(movetypes) > 0:
-            clauses.append(f'{tablequalifier}.ActiveMovementType IN ({",".join(movetypes)})')
-        # Non-shelter
-        if "-9" in locs:
-            clauses.append(f"{tablequalifier}.NonShelterAnimal=1")
-        # My Fosters, My Coordinated Animals
-        if "-12" in locs or "-13" in locs:
-            if visibleanimalids == "": visibleanimalids = "0"
-            clauses.append(f"{tablequalifier}.ID IN ({visibleanimalids})")
-        # Died on shelter
-        if "-21" in locs:
-            clauses.append(f"({tablequalifier}.DeceasedDate Is Not Null AND {tablequalifier}.PutToSleep=0 AND {tablequalifier}.IsDOA=0 AND {tablequalifier}.DiedOffShelter=0)")
-        # DOA
-        if "-22" in locs:
-            clauses.append(f"({tablequalifier}.DeceasedDate Is Not Null AND {tablequalifier}.PutToSleep=0 AND {tablequalifier}.IsDOA=1 AND {tablequalifier}.DiedOffShelter=0)")
-        # Euthanised
-        if "-23" in locs:
-            clauses.append(f"({tablequalifier}.DeceasedDate Is Not Null AND {tablequalifier}.PutToSleep=1 AND {tablequalifier}.IsDOA=0 AND {tablequalifier}.DiedOffShelter=0)")
-        # Died Off Shelter
-        if "-24" in locs:
-            clauses.append(f"({tablequalifier}.DeceasedDate Is Not Null AND {tablequalifier}.DiedOffShelter=1)")
-    if siteid != 0:
-        clauses.append("il.SiteID = %s" % siteid)
-    c = "(" + " OR ".join(clauses) + ")"
-    # If we've got nothing left by this point, don't add a prefix/suffix/where
-    if c == "": return ""
-    if andprefix:
-        c = " AND %s" % c
-    if andsuffix:
-        c = "%s AND " % c
-    if whereprefix:
-        c = " WHERE %s" % c
-    print(c)
-    return c
-
-def is_animal_in_location_filter(a: ResultRow, locationfilter: str, siteid: int = 0, visibleanimalids: str = "") -> bool:
-    """
-    Returns True if the animal a is included in the locationfilter or site given
-    """
-    if locationfilter == "" and siteid == 0: return True
-    if siteid != 0:
-        if a.siteid == 0 or a.siteid == siteid: return True
-    if locationfilter != "":
-        locs = locationfilter.split(",")
-        if a.activemovementtype == 1 and "-1" in locs: return True 
-        if a.activemovementtype == 2 and "-2" in locs: return True
-        if a.activemovementtype == 3 and "-3" in locs: return True
-        if a.activemovementtype == 4 and "-4" in locs: return True
-        if a.activemovementtype == 5 and "-5" in locs: return True
-        if a.activemovementtype == 6 and "-6" in locs: return True
-        if a.activemovementtype == 7 and "-7" in locs: return True
-        if a.activemovementtype == 8 and "-8" in locs: return True
-        if a.nonshelteranimal == 1 and "-9" in locs: return True
-        if a.deceaseddate and a.isdoa == 0 and a.puttosleep == 0 and a.diedoffshelter == 0 and "-21" in locs: return True
-        if a.deceaseddate and a.isdoa == 1 and a.puttosleep == 0 and a.diedoffshelter == 0 and "-22" in locs: return True
-        if a.deceaseddate and a.isdoa == 0 and a.puttosleep == 1 and a.diedoffshelter == 0 and "-23" in locs: return True
-        if a.deceaseddate and a.diedoffshelter == 1 and "-24" in locs: return True
-        if a.archived == 0 and str(a.shelterlocation) in locs: return True
-    if visibleanimalids != "":
-        if str(a.ID) in visibleanimalids.split(","): return True
-    return False
-
-def remove_nonvisible_animals(rows: Results, visibleanimalids: str, animalidcolumn: str = "ANIMALID") -> Results:
-    """
-    Given a resultset of rows, removes all rows that are no present in visibleanimalids.
-    """
-    if visibleanimalids == "": return rows
-    rowsout = []
-    for r in rows:
-        if str(r[animalidcolumn]) in visibleanimalids.split(","):
-            rowsout.append(r)
-    return rowsout
 
 def get_number_animals_on_file(dbo: Database) -> int:
     """
@@ -2412,14 +2439,17 @@ def delete_publish_history(dbo: Database, animalid: int, service: str) -> None:
     """
     dbo.execute("DELETE FROM animalpublished WHERE AnimalID = ? AND PublishedTo = ?", (animalid, service))
 
-def get_shelterview_animals(dbo: Database, locationfilter: str = "", siteid: int = 0, visibleanimalids: str = "") -> Results:
+def get_shelterview_animals(dbo: Database, lf: LocationFilter = None) -> Results:
     """
     Returns all available animals for shelterview.
     Age groups are recalculated to today for display.
     """
     limit = asm3.configuration.record_search_limit(dbo)
-    locationfilter = get_location_filter_clause(locationfilter=locationfilter, siteid=siteid, visibleanimalids=visibleanimalids, andprefix=True)
-    animals = get_animals_ids(dbo, "a.AnimalName", "SELECT animal.ID FROM animal LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation WHERE Archived = 0 %s ORDER BY HasPermanentFoster, animal.ID DESC" % locationfilter, limit=limit)
+    locationfilter = ""
+    if lf is not None: locationfilter = lf.clause(andprefix=True)
+    animals = get_animals_ids(dbo, "a.AnimalName", "SELECT animal.ID FROM animal " \
+        "LEFT OUTER JOIN internallocation il ON il.ID = animal.ShelterLocation " \
+        f"WHERE Archived = 0 {locationfilter} ORDER BY HasPermanentFoster, animal.ID DESC", limit=limit)
     return calc_age_group_rows(dbo, animals)
 
 def insert_animal_from_form(dbo: Database, post: PostedData, username: str) -> int:

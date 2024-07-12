@@ -45,6 +45,7 @@ Database = "asm3.dbms.base.Database"
 ResultRow = "asm3.dbms.base.ResultRow"
 Results = "List[asm3.dbms.base.ResultRow]"
 
+LocationFilter = "asm3.animal.LocationFilter"
 PaymentProcessor = "asm3.paymentprocessor.base.PaymentProcessor"
 PostedData = "asm3.utils.PostedData"
 PublishCriteria = "asm3.publishers.base.PublishCriteria"
@@ -61,6 +62,8 @@ ChipCheckResults = List[Tuple[str, str]]
 CriteriaParams = List[Tuple[str, str, str, str]] # variablename, questiontext, substitutionvalue, displayvalue
 # List of sortable columns returned by column functions for find screens (html.py)
 ColumnList = List[Tuple[str, str]] # fieldname, displaytext
+# EndpointParams are the params passed to our endpoints, they mirror Session but have extra items like a LocationFilter
+EndpointParams = "web.utils.storage"
 # MenuItems are a list of tuples for items in a menu (menu.py, reports.py)
 MenuItems = List[Tuple[str, str, str, str ,str ,str]] # permissions, hotkey, classes, url, icon, text
 # MenuStructure is a tuple of top level menus with menu items (html.py)

@@ -205,7 +205,7 @@ def person_flags(fl):
         if f != "": s.append(f)
     return ", ".join(s)
 
-def page(dbo, session, username):
+def page(dbo, o, username):
     """
     Generates the main mobile web page
     dbo: Database info
@@ -214,35 +214,35 @@ def page(dbo, session, username):
     nsa = asm3.animal.get_number_animals_on_shelter_now(dbo)
     osa = nsa > 0
     ar = asm3.reports.get_available_reports(dbo)
-    vacc = asm3.medical.get_vaccinations_outstanding(dbo, "m31", session.locationfilter, session.siteid, session.visibleanimalids)
-    test = asm3.medical.get_tests_outstanding(dbo, "m31", session.locationfilter, session.siteid, session.visibleanimalids)
-    med = asm3.medical.get_treatments_outstanding(dbo, "m31", session.locationfilter, session.siteid, session.visibleanimalids)
+    vacc = asm3.medical.get_vaccinations_outstanding(dbo, "m31", o.lf)
+    test = asm3.medical.get_tests_outstanding(dbo, "m31", o.lf)
+    med = asm3.medical.get_treatments_outstanding(dbo, "m31", o.lf)
     dia = asm3.diary.get_uncompleted_upto_today(dbo, username)
     hck = asm3.person.get_reserves_without_homechecks(dbo)
-    mess = asm3.lookups.get_messages(dbo, session.user, session.roles, session.superuser)
+    mess = asm3.lookups.get_messages(dbo, o.user, o.roles, o.superuser)
     testresults = asm3.lookups.get_test_results(dbo)
     stl = asm3.stock.get_stock_locations_totals(dbo)
-    inmy = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "incomplete" }, username)
-    inun = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": session.user, "filter": "undispatched" }, username)
+    inmy = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": o.user, "filter": "incomplete" }, username)
+    inun = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": o.user, "filter": "undispatched" }, username)
     inop = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "incomplete" }, username)
     infp = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "filter": "requirefollowup" }, username)
     homelink = jqm_link("mobile", _("Home", l), "home", "ui-btn-right", "b")
     h = []
 
     def pb(p):
-        return asm3.users.check_permission_bool(session, p)
+        return asm3.users.check_permission_bool(o, p)
 
     h.append(header(l))
 
     logoutlink = ""
-    if not session.mobileapp: 
+    if not o.session.mobileapp: 
         logoutlink = jqm_link("mobile_logout", _("Logout", l), "delete", "ui-btn-right", "b", ajax="false")
 
     h.append(jqm_page_header("home", "%s : %s" % (username, _("ASM", l)), logoutlink , False))
     items = []
     if asm3.configuration.smdb_locked(dbo):
         items.append(jqm_listitem(_("This database is locked and in read-only mode. You cannot add, change or delete records.", l)))
-    if session.mobileapp:
+    if o.session.mobileapp:
         items.append(jqm_listitem('<a href="https://sheltermanager.com/site/en_mobileretire.html">This app will stop working on 1st November 2023. Please click here for more info.</a>'))
     items.append(jqm_listitem_link("#messages", _("Messages", l), "message", len(mess)))
     if len(ar) > 0 and pb(asm3.users.VIEW_REPORT):

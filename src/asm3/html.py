@@ -12,7 +12,7 @@ import asm3.utils
 from asm3.i18n import _, translate, get_locales, now, python2unix, real_locale
 from asm3.sitedefs import BASE_URL, LOCALE, ROLLUP_JS, SERVICE_URL
 from asm3.sitedefs import ASMSELECT_CSS, ASMSELECT_JS, BASE64_JS, BOOTSTRAP_JS, BOOTSTRAP_CSS, BOOTSTRAP_GRID_CSS, BOOTSTRAP_ICONS_CSS, CODEMIRROR_CSS, CODEMIRROR_JS, CODEMIRROR_BASE, FLOT_JS, FLOT_PIE_JS, FULLCALENDAR_JS, FULLCALENDAR_CSS, HTMLFTP_PUBLISHER_ENABLED, JQUERY_JS, JQUERY_UI_JS, JQUERY_UI_CSS, MOMENT_JS, MOUSETRAP_JS, PATH_JS, QRCODE_JS, SIGNATURE_JS, TABLESORTER_CSS, TABLESORTER_JS, TABLESORTER_WIDGETS_JS, TIMEPICKER_CSS, TIMEPICKER_JS, TINYMCE_5_JS
-from asm3.typehints import Any, ColumnList, Database, Dict, List, MenuItems, MenuStructure, ResultRow, Results, Session
+from asm3.typehints import Any, ColumnList, Database, Dict, List, LocationFilter, MenuItems, MenuStructure, ResultRow, Results, Session
 from asm3.__version__ import BUILD
 
 import os
@@ -1125,8 +1125,8 @@ def options_entryreasons(dbo, includeAll = False, selected = -1, includeRetired 
 def options_incident_types(dbo, includeAll = False, selected = -1, includeRetired = False):
     return options(dbo.locale, asm3.lookups.get_incident_types(dbo), "INCIDENTNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
-def options_internal_locations(dbo, includeAll = False, selected = -1, locationfilter = "", siteid = 0, includeRetired = False):
-    return options(dbo.locale, asm3.lookups.get_internal_locations(dbo, locationfilter, siteid), "LOCATIONNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
+def options_internal_locations(dbo, includeAll = False, selected = -1, lf: LocationFilter = None, siteid = 0, includeRetired = False):
+    return options(dbo.locale, asm3.lookups.get_internal_locations(dbo, lf), "LOCATIONNAME", includeAll=includeAll, selected=selected, includeRetired=includeRetired)
 
 def options_litters(dbo, includeAll = False, selected = "-1"):
     l = dbo.locale
