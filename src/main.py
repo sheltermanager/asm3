@@ -125,7 +125,7 @@ def session_manager():
     if asm3.utils.websession is None:
         sess = web.session.Session(app, MemCacheStore(), initializer={"user" : None, "dbo" : None, "locale" : None, 
             "roles": None, "securitymap": None, "superuser": None, "searches" : [], "staffid": None, 
-            "siteid": None, "locationfilter": None,  "visibleanimalids": "", "lf": None  })
+            "siteid": None, "locationfilter": None,  "visibleanimalids": "" })
         asm3.utils.websession = sess
     else:
         sess = asm3.utils.websession
@@ -253,8 +253,7 @@ class ASMEndpoint(object):
         except Exception as err:
             asm3.al.error("Failed unpacking params: %s" % str(err), "ASMEndpoint._params", session.dbo, sys.exc_info())
         return web.utils.storage( data=self.data, post=post, dbo=session.dbo, locale=l, user=session.user, session=session,
-            staffid = session.staffid, roles = session.roles, superuser = session.superuser, securitymap = session.securitymap, 
-            siteid = session.siteid, locationfilter = session.locationfilter, visibleanimalids = session.visibleanimalids,
+            staffid = session.staffid, siteid = session.siteid,
             lf = asm3.animal.LocationFilter(session.locationfilter, session.siteid, session.visibleanimalids))
 
     def check(self, permissions: Any) -> None:
@@ -691,8 +690,8 @@ class configjs(ASMEndpoint):
             "currencydigitgrouping": get_currency_digit_grouping(o.locale),
             "securitymap": o.session.securitymap,
             "superuser": o.session.superuser,
-            "locationfilter": o.locationfilter,
-            "siteid": o.siteid,
+            "locationfilter": o.session.locationfilter,
+            "siteid": o.session.siteid,
             "roles": o.session.roles,
             "roleids": o.session.roleids,
             "manualhtml": MANUAL_HTML_URL,
@@ -1243,7 +1242,7 @@ class mobile_photo_upload(ASMEndpoint):
         # Only include recently adopted animals if the user either has no location filter, or
         # has a location filter that includes adopted animals
         animalsra = []
-        if o.locationfilter != "" and o.locationfilter.find("-1") == -1:
+        if o.lf is not None and o.lf.locationfilter != "" and o.lf.locationfilter.find("-1") == -1:
             animalsra = asm3.animal.get_animals_adopted_namecode(dbo, remove_adopter=True)
         c = {
             "animals":  animalsos + animalsra
@@ -1262,7 +1261,7 @@ class mobile_post(ASMEndpoint):
     login_url = "mobile_login"
 
     def handle(self, o):
-        s = asm3.mobile.handler(o.session, o.post)
+        s = asm3.mobile.handler(o, o.post)
         if s is None:
             raise asm3.utils.ASMValidationError("mobile handler failed.")
         elif s.startswith("GO "):
@@ -1404,17 +1403,17 @@ class main(JSONEndpoint):
         linkmax = asm3.configuration.main_screen_animal_link_max(dbo)
         animallinks = []
         if linkmode == "adoptable":
-            animallinks = asm3.animal.get_links_adoptable(dbo, o, linkmax, age)
+            animallinks = asm3.animal.get_links_adoptable(dbo, o.lf, linkmax, age)
         elif linkmode == "longestonshelter":
-            animallinks = asm3.animal.get_links_longest_on_shelter(dbo, o, linkmax, age)
+            animallinks = asm3.animal.get_links_longest_on_shelter(dbo, o.lf, linkmax, age)
         elif linkmode == "recentlyadopted":
-            animallinks = asm3.animal.get_links_recently_adopted(dbo, o, linkmax, age)
+            animallinks = asm3.animal.get_links_recently_adopted(dbo, o.lf, linkmax, age)
         elif linkmode == "recentlychanged":
-            animallinks = asm3.animal.get_links_recently_changed(dbo, o, linkmax, age)
+            animallinks = asm3.animal.get_links_recently_changed(dbo, o.lf, linkmax, age)
         elif linkmode == "recentlyentered":
-            animallinks = asm3.animal.get_links_recently_entered(dbo, o, linkmax, age)
+            animallinks = asm3.animal.get_links_recently_entered(dbo, o.lf, linkmax, age)
         elif linkmode == "recentlyfostered":
-            animallinks = asm3.animal.get_links_recently_fostered(dbo, o, linkmax, age)
+            animallinks = asm3.animal.get_links_recently_fostered(dbo, o.lf, linkmax, age)
         # Alerts
         alerts = []
         if asm3.configuration.show_alerts_home_page(dbo):
@@ -2572,7 +2571,7 @@ class calendar_events(ASMEndpoint):
                     "icon": "diary",
                     "link": f"{diarylink}?id={d.ID}&filter={diaryfilter}" })
         if "v" in ev and self.checkb(asm3.users.VIEW_VACCINATION):
-            for v in asm3.medical.get_vaccinations_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
+            for v in asm3.medical.get_vaccinations_two_dates(dbo, start, end, o.lf):
                 sub = "%s - %s" % (v.VACCINATIONTYPE, v.ANIMALNAME)
                 tit = "%s - %s %s (%s) %s" % (v.VACCINATIONTYPE, v.SHELTERCODE, v.ANIMALNAME, v.DISPLAYLOCATIONNAME, v.COMMENTS)
                 events.append({ 
@@ -2582,7 +2581,7 @@ class calendar_events(ASMEndpoint):
                     "tooltip": tit, 
                     "icon": "vaccination",
                     "link": "animal_vaccination?id=%s" % v.ANIMALID })
-            for v in asm3.medical.get_vaccinations_expiring_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
+            for v in asm3.medical.get_vaccinations_expiring_two_dates(dbo, start, end, o.lf):
                 sub = "%s - %s" % (v.VACCINATIONTYPE, v.ANIMALNAME)
                 tit = "%s - %s %s (%s) %s" % (v.VACCINATIONTYPE, v.SHELTERCODE, v.ANIMALNAME, v.DISPLAYLOCATIONNAME, v.COMMENTS)
                 events.append({ 
@@ -2593,7 +2592,7 @@ class calendar_events(ASMEndpoint):
                     "icon": "vaccination",
                     "link": "animal_vaccination?id=%s" % v.ANIMALID })
         if "m" in ev and self.checkb(asm3.users.VIEW_MEDICAL):
-            for m in asm3.medical.get_treatments_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
+            for m in asm3.medical.get_treatments_two_dates(dbo, start, end, o.lf):
                 sub = "%s - %s" % (m.TREATMENTNAME, m.ANIMALNAME)
                 tit = "%s - %s %s (%s) %s %s" % (m.TREATMENTNAME, m.SHELTERCODE, m.ANIMALNAME, m.DISPLAYLOCATIONNAME, m.DOSAGE, m.COMMENTS)
                 events.append({ 
@@ -2604,7 +2603,7 @@ class calendar_events(ASMEndpoint):
                     "icon": "medical",
                     "link": "animal_medical?id=%s" % m.ANIMALID })
         if "t" in ev and self.checkb(asm3.users.VIEW_TEST):
-            for t in asm3.medical.get_tests_two_dates(dbo, start, end, o.locationfilter, o.siteid, o.visibleanimalids):
+            for t in asm3.medical.get_tests_two_dates(dbo, start, end, o.lf):
                 sub = "%s - %s" % (t.TESTNAME, t.ANIMALNAME)
                 tit = "%s - %s %s (%s) %s" % (t.TESTNAME, t.SHELTERCODE, t.ANIMALNAME, t.DISPLAYLOCATIONNAME, t.COMMENTS)
                 events.append({ 
@@ -4889,7 +4888,7 @@ class medical(JSONEndpoint):
         dbo = o.dbo
         offset = o.post["offset"]
         if offset == "": offset = "m365"
-        med = asm3.medical.get_treatments_outstanding(dbo, offset, o.locationfilter, o.siteid, o.visibleanimalids)
+        med = asm3.medical.get_treatments_outstanding(dbo, offset, o.lf)
         profiles = asm3.medical.get_profiles(dbo)
         asm3.al.debug("got %d medical treatments" % len(med), "main.medical", dbo)
         return {
@@ -7226,7 +7225,7 @@ class test(JSONEndpoint):
         dbo = o.dbo
         offset = o.post["offset"]
         if offset == "": offset = "m365"
-        test = asm3.medical.get_tests_outstanding(dbo, offset, o.locationfilter, o.siteid, o.visibleanimalids)
+        test = asm3.medical.get_tests_outstanding(dbo, offset, o.lf)
         asm3.al.debug("got %d tests" % len(test), "main.test", dbo)
         return {
             "name": "test",
@@ -7364,7 +7363,7 @@ class vaccination(JSONEndpoint):
         dbo = o.dbo
         offset = o.post["offset"]
         if offset == "": offset = "m365"
-        vacc = asm3.medical.get_vaccinations_outstanding(dbo, offset, o.locationfilter, o.siteid, o.visibleanimalids)
+        vacc = asm3.medical.get_vaccinations_outstanding(dbo, offset, o.lf)
         asm3.al.debug("got %d vaccinations" % len(vacc), "main.vaccination", dbo)
         return {
             "name": "vaccination",

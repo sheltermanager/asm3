@@ -219,7 +219,7 @@ def page(dbo, o, username):
     med = asm3.medical.get_treatments_outstanding(dbo, "m31", o.lf)
     dia = asm3.diary.get_uncompleted_upto_today(dbo, username)
     hck = asm3.person.get_reserves_without_homechecks(dbo)
-    mess = asm3.lookups.get_messages(dbo, o.user, o.roles, o.superuser)
+    mess = asm3.lookups.get_messages(dbo, o.user, o.session.roles, o.session.superuser)
     testresults = asm3.lookups.get_test_results(dbo)
     stl = asm3.stock.get_stock_locations_totals(dbo)
     inmy = asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": o.user, "filter": "incomplete" }, username)
@@ -230,7 +230,7 @@ def page(dbo, o, username):
     h = []
 
     def pb(p):
-        return asm3.users.check_permission_bool(o, p)
+        return asm3.users.check_permission_bool(o.session, p)
 
     h.append(header(l))
 
@@ -574,24 +574,22 @@ def page_incidents(l, homelink, inc, pageid = "inmy", pagetitle = ""):
     h.append(jqm_page_footer())
     return h
 
-def handler(session, post):
+def handler(o, post):
     """
     Handles posts from the frontend. Depending on the type we either
     return more HTML for the javascript to inject, or GO URL to have
     the controller redirect to URL
     """
-    l = session.locale
-    user = session.user
-    locationfilter = session.locationfilter
-    siteid = session.siteid
-    dbo = session.dbo
+    l = o.locale
+    user = o.user
+    dbo = o.dbo
     homelink = "<a href='mobile' data-ajax='false' class='ui-btn-right' data-icon='home' data-theme='b'>%s</a>" % _("Home", l)
     mode = post["posttype"]
     pid = post.integer("id")
     animalid = post.integer("animalid")
 
     def pc(p):
-        asm3.users.check_permission(session, p)
+        asm3.users.check_permission(o.session, p)
 
     if mode == "vacc":
         # We're vaccinating an animal
@@ -672,7 +670,7 @@ def handler(session, post):
         alin = []
         h.append(header(l))
         h.append(jqm_page_header("", _("Shelter Animals", l), homelink))
-        an = asm3.animal.get_animal_find_simple(dbo, "", locationfilter=locationfilter, siteid=siteid)
+        an = asm3.animal.get_animal_find_simple(dbo, "", o.lf)
         for a in an:
             alin.append(jqm_listitem_link("mobile_post?posttype=va&id=%d" % a["ID"],
                 "%s - %s (%s %s %s) %s" % (a["CODE"], a["ANIMALNAME"], a["SEXNAME"], a["BREEDNAME"], a["SPECIESNAME"], a["IDENTICHIPNUMBER"]),
@@ -717,8 +715,8 @@ def handler(session, post):
         matches = []
         if q.strip() != "": 
             matches = asm3.person.get_person_find_simple(dbo, q, classfilter="all", \
-                includeStaff=asm3.users.check_permission_bool(session, asm3.users.VIEW_STAFF), \
-                includeVolunteers=asm3.users.check_permission_bool(session, asm3.users.VIEW_VOLUNTEER), limit=100, siteid=siteid)
+                includeStaff=asm3.users.check_permission_bool(o.session, asm3.users.VIEW_STAFF), \
+                includeVolunteers=asm3.users.check_permission_bool(o.session, asm3.users.VIEW_VOLUNTEER), limit=100, siteid=o.siteid)
         h = []
         alin = []
         h.append(header(l))
@@ -750,7 +748,7 @@ def handler(session, post):
         test = asm3.medical.get_tests(dbo, pid)
         med = asm3.medical.get_regimens(dbo, pid)
         logs = asm3.log.get_logs(dbo, asm3.log.ANIMAL, pid)
-        return handler_viewanimal(session, l, dbo, a, af, diet, vacc, test, med, logs, homelink, post)
+        return handler_viewanimal(o.session, l, dbo, a, af, diet, vacc, test, med, logs, homelink, post)
 
     elif mode == "vinc":
         # Display a page containing the selected incident by id
@@ -760,7 +758,7 @@ def handler(session, post):
         cit = asm3.financial.get_incident_citations(dbo, pid)
         dia = asm3.diary.get_diaries(dbo, asm3.diary.ANIMALCONTROL, pid)
         logs = asm3.log.get_logs(dbo, asm3.log.ANIMALCONTROL, pid)
-        return handler_viewincident(session, l, dbo, a, amls, cit, dia, logs, homelink, post)
+        return handler_viewincident(o.session, l, dbo, a, amls, cit, dia, logs, homelink, post)
 
     elif mode == "vinccomp":
         # Mark the incident with pid completed with type=ct
@@ -796,7 +794,7 @@ def handler(session, post):
         lic = asm3.financial.get_person_licences(dbo, pid)
         links = asm3.person.get_links(dbo, pid)
         logs = asm3.log.get_logs(dbo, asm3.log.PERSON, pid)
-        return handler_viewperson(session, l, dbo, p, af, cit, dia, lic, links, logs, homelink, post)
+        return handler_viewperson(o.session, l, dbo, p, af, cit, dia, lic, links, logs, homelink, post)
 
     elif mode == "st":
         # Display a page to adjust stock levels for id

@@ -102,6 +102,10 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
                 if r["SORTON"] is None and sortfield.endswith("DATE"): r["SORTON"] = THE_PAST
             results.append(r)
 
+    def cp(p):
+        """ Shorthand for checking permissions """
+        return asm3.users.check_permission_bool(o.session, p)
+
     l = dbo.locale
 
     # start the clock
@@ -250,10 +254,10 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
         sortdir = "d"
         sortname = _("Most relevant", l)
 
-    viewperson = asm3.users.check_permission_bool(o, asm3.users.VIEW_PERSON)
-    viewanimal = asm3.users.check_permission_bool(o, asm3.users.VIEW_ANIMAL)
-    viewstaff = asm3.users.check_permission_bool(o, asm3.users.VIEW_STAFF)
-    viewvolunteer = asm3.users.check_permission_bool(o, asm3.users.VIEW_VOLUNTEER)
+    viewperson = cp(asm3.users.VIEW_PERSON)
+    viewanimal = cp(asm3.users.VIEW_ANIMAL)
+    viewstaff = cp(asm3.users.VIEW_STAFF)
+    viewvolunteer = cp(asm3.users.VIEW_VOLUNTEER)
     user = o.user
     siteid = o.siteid
 
@@ -411,12 +415,12 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
 
     elif q == "activelost":
         explain = _("Lost animals reported in the last 30 days.", l)
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_LOST_ANIMAL):
+        if cp(asm3.users.VIEW_LOST_ANIMAL):
             ar(asm3.lostfound.get_lostanimal_find_simple(dbo, "", limit=limit, siteid=siteid), "LOSTANIMAL", lasort)
 
     elif q == "activefound":
         explain = _("Found animals reported in the last 30 days.", l)
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_FOUND_ANIMAL):
+        if cp(asm3.users.VIEW_FOUND_ANIMAL):
             ar(asm3.lostfound.get_foundanimal_find_simple(dbo, "", limit=limit, siteid=siteid), "FOUNDANIMAL", fasort)
 
     elif q.startswith("a:") or q.startswith("animal:"):
@@ -428,7 +432,7 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
     elif q.startswith("ac:") or q.startswith("animalcontrol:"):
         q = q[q.find(":")+1:].strip()
         explain = _("Animal control incidents matching '{0}'.", l).format(q)
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_INCIDENT):
+        if cp(asm3.users.VIEW_INCIDENT):
             ar( asm3.animalcontrol.get_animalcontrol_find_simple(dbo, q, user, limit=limit, siteid=siteid), "ANIMALCONTROL", acsort )
 
     elif q.startswith("p:") or q.startswith("person:"):
@@ -440,59 +444,59 @@ def search(dbo: Database, o: EndpointParams, q: str) -> Tuple[Results, int, str,
     elif q.startswith("wl:") or q.startswith("waitinglist:"):
         q = q[q.find(":")+1:].strip()
         explain = _("Waiting list entries matching '{0}'.", l).format(q)
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_WAITING_LIST):
+        if cp(asm3.users.VIEW_WAITING_LIST):
             ar( asm3.waitinglist.get_waitinglist_find_simple(dbo, q, limit=limit, siteid=siteid), "WAITINGLIST", wlsort )
 
     elif q.startswith("la:") or q.startswith("lostanimal:"):
         q = q[q.find(":")+1:].strip()
         explain = _("Lost animal entries matching '{0}'.", l).format(q)
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_LOST_ANIMAL):
+        if cp(asm3.users.VIEW_LOST_ANIMAL):
             ar( asm3.lostfound.get_lostanimal_find_simple(dbo, q, limit=limit, siteid=siteid), "LOSTANIMAL", lasort )
 
     elif q.startswith("fa:") or q.startswith("foundanimal:"):
         q = q[q.find(":")+1:].strip()
         explain = _("Found animal entries matching '{0}'.", l).format(q)
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_FOUND_ANIMAL):
+        if cp(asm3.users.VIEW_FOUND_ANIMAL):
             ar( asm3.lostfound.get_foundanimal_find_simple(dbo, q, limit=limit, siteid=siteid), "FOUNDANIMAL", fasort )
 
     elif q.startswith("li:") or q.startswith("license:"):
         q = q[q.find(":")+1:].strip()
         explain = _("License numbers matching '{0}'.", l).format(q)
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_LICENCE):
+        if cp(asm3.users.VIEW_LICENCE):
             ar( asm3.financial.get_licence_find_simple(dbo, q, limit), "LICENCE", lisort )
 
     elif q.startswith("lo:") or q.startswith("log:"):
         q = q[q.find(":")+1:].strip()
         explain = _("Logs matching '{0}'.", l).format(q)
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_LOG):
+        if cp(asm3.users.VIEW_LOG):
             ar( asm3.log.get_log_find_simple(dbo, q, limit), "LOG", losort )
 
     elif q.startswith("vo:") or q.startswith("voucher:"):
         q = q[q.find(":")+1:].strip()
         explain = _("Voucher codes matching '{0}'.", l).format(q)
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_VOUCHER):
+        if cp(asm3.users.VIEW_VOUCHER):
             ar( asm3.financial.get_voucher_find_simple(dbo, q, limit), "VOUCHER", vosort )
 
     # No special tokens, search everything and collate
     else:
         if viewanimal:
             ar( asm3.animal.get_animal_find_simple(dbo, q, limit=limit, lf=o.lf), "ANIMAL", animalsort )
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_INCIDENT):
+        if cp(asm3.users.VIEW_INCIDENT):
             ar( asm3.animalcontrol.get_animalcontrol_find_simple(dbo, q, user, limit=limit, siteid=siteid), "ANIMALCONTROL", acsort )
         if viewperson:
             ar( asm3.person.get_person_find_simple(dbo, q, includeStaff=viewstaff, includeVolunteers=viewvolunteer, limit=limit, siteid=siteid), "PERSON", personsort )
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_WAITING_LIST):
+        if cp(asm3.users.VIEW_WAITING_LIST):
             ar( asm3.waitinglist.get_waitinglist_find_simple(dbo, q, limit=limit, siteid=siteid), "WAITINGLIST", wlsort )
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_LOST_ANIMAL):
+        if cp(asm3.users.VIEW_LOST_ANIMAL):
             ar( asm3.lostfound.get_lostanimal_find_simple(dbo, q, limit=limit, siteid=siteid), "LOSTANIMAL", lasort )
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_FOUND_ANIMAL):
+        if cp(asm3.users.VIEW_FOUND_ANIMAL):
             ar( asm3.lostfound.get_foundanimal_find_simple(dbo, q, limit=limit, siteid=siteid), "FOUNDANIMAL", fasort )
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_LICENCE):
+        if cp(asm3.users.VIEW_LICENCE):
             ar( asm3.financial.get_licence_find_simple(dbo, q, limit), "LICENCE", lisort )
         # This pollutes search results too much, only allow log search with explicit lo:
-        #if asm3.users.check_permission_bool(session, asm3.users.VIEW_LOG):
+        #if cp(asm3.users.VIEW_LOG):
         #    ar( asm3.log.get_log_find_simple(dbo, q, limit=100), "LOG", losort )
-        if asm3.users.check_permission_bool(o, asm3.users.VIEW_VOUCHER):
+        if cp(asm3.users.VIEW_VOUCHER):
             ar( asm3.financial.get_voucher_find_simple(dbo, q, limit), "VOUCHER", vosort)
         explain = _("Results for '{0}'.", l).format(q)
 
