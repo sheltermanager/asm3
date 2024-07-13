@@ -936,6 +936,17 @@ $(document).ready(function() {
         });
     };
 
+    // Renders the messages given into the list
+    const render_messages = function(messages) {
+        $("#hp-messages .list-group").empty();
+        $.each(messages, function(i, v) {
+            let h = '<div class="list-group-item">' +
+                '<h5>' + format.date(v.ADDED) + ' ' + v.CREATEDBY + ' &#8594; ' + v.FORNAME + '</h5>' + 
+                '<small>' + v.MESSAGE + '</small>';
+            $("#hp-messages .list-group").append(h);
+        });
+    };
+
     // Returns the HTML for rendering a person record
     const render_person = async function(p, selector) {
         const i = function(label, value) {
@@ -1467,14 +1478,7 @@ $(document).ready(function() {
         });
     });
 
-    // Load messages 
-    $("#content-messages .list-group").empty();
-    $.each(controller.messages, function(i, v) {
-        let h = '<div class="list-group-item">' +
-            '<h5>' + format.date(v.ADDED) + ' ' + v.CREATEDBY + ' &#8594; ' + v.FORNAME + '</h5>' + 
-            '<small>' + v.MESSAGE + '</small>';
-        $("#hp-messages .list-group").append(h);
-    });
+    render_messages(controller.messages);
 
     $("#addmessage").click(function() {
         if (!$("#messagebody").val()) {
@@ -1486,8 +1490,11 @@ $(document).ready(function() {
             "for": $("#messagefor").val(),
             "body": $("#messagebody").val()
         };
-        ajax_post(formdata, function() {
-            window.location.reload();
+        $("#addmessage .spinner-border").show();
+        ajax_post(formdata, function(response) {
+            render_messages(jQuery.parseJSON(response));
+            $("#messagebody").val("");
+            $("#addmessage .spinner-border").hide();
         });
     });
 

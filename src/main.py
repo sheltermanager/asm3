@@ -1003,7 +1003,7 @@ class mobile2(ASMEndpoint):
             "medicals":     asm3.medical.get_treatments_outstanding(dbo, "m31", o.lf),
             "diaries":      asm3.diary.get_uncompleted_upto_today(dbo, o.user),
             "rsvhomecheck": asm3.person.get_reserves_without_homechecks(dbo),
-            "messages":     asm3.lookups.get_messages(dbo, session.user, session.roles, session.superuser),
+            "messages":     asm3.lookups.get_messages(dbo, o.user, o.session.roles, o.session.superuser),
             "testresults":  asm3.lookups.get_test_results(dbo),
             "stocklocations": asm3.stock.get_stock_locations_totals(dbo),
             "incidentsmy":  asm3.animalcontrol.get_animalcontrol_find_advanced(dbo, { "dispatchedaco": o.user, "filter": "incomplete" }, o.user),
@@ -1040,6 +1040,8 @@ class mobile2(ASMEndpoint):
 
     def post_addmessage(self, o):
         asm3.lookups.add_message(o.dbo, o.user, asm3.configuration.email_messages(o.dbo) and 1 or 0, o.post["body"], o.post["for"])
+        messages = asm3.lookups.get_messages(o.dbo, o.user, o.session.roles, o.session.superuser)
+        return asm3.utils.json(messages)
 
     def post_checklicence(self, o):
         self.check(asm3.users.VIEW_LICENCE)
