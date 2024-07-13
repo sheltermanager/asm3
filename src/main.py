@@ -1023,6 +1023,7 @@ class mobile2(ASMEndpoint):
             "smdblocked":   asm3.configuration.smdb_locked(dbo),
             "species":      asm3.lookups.get_species(dbo),
             "timeline":     asm3.animal.get_timeline(dbo, 30, age=300),
+            "usersandroles": asm3.users.get_users_and_roles(dbo),
             "user":         o.user,
             "locale":       o.locale
         }
@@ -1036,6 +1037,9 @@ class mobile2(ASMEndpoint):
     def post_addlog(self, o):
         self.check(asm3.users.ADD_LOG)
         asm3.log.add_log(o.dbo, o.user, o.post.integer("linktypeid"), o.post.integer("linkid"), o.post.integer("type"), o.post["comments"])
+
+    def post_addmessage(self, o):
+        asm3.lookups.add_message(o.dbo, o.user, asm3.configuration.email_messages(o.dbo) and 1 or 0, o.post["body"], o.post["for"])
 
     def post_checklicence(self, o):
         self.check(asm3.users.VIEW_LICENCE)

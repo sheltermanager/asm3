@@ -242,8 +242,8 @@ def page(dbo, o, username):
     items = []
     if asm3.configuration.smdb_locked(dbo):
         items.append(jqm_listitem(_("This database is locked and in read-only mode. You cannot add, change or delete records.", l)))
-    if o.session.mobileapp:
-        items.append(jqm_listitem('<a href="https://sheltermanager.com/site/en_mobileretire.html">This app will stop working on 1st November 2023. Please click here for more info.</a>'))
+    if asm3.smcom.active():
+        items.append(jqm_listitem('This UI is deprecated and will disappear on 1st November 2024.'))
     items.append(jqm_listitem_link("#messages", _("Messages", l), "message", len(mess)))
     if len(ar) > 0 and pb(asm3.users.VIEW_REPORT):
         items.append(jqm_listitem_link("#reports", _("Generate Report", l), "report"))

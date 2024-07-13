@@ -39,6 +39,40 @@ $(document).ready(function() {
         });
     };
 
+    /** Helper to output a bootstrap form control 
+     * options in o:
+     *      id: id and data attribute
+     *      label: label text
+     *      buttonid: id of the button for attaching click events (also triggers adding the button)
+     *      buttonicon: icon for the button
+     *      buttontext: any text to show on the button
+     *      buttonclasses: classes for the button
+     *      inputclasses: extra classes for the input
+     *      readony: true if the control should be read only
+    */
+    const form_input = function(o) {
+        o.readonlystr = "";
+        o.buttonstr = "";
+        if (o.readonly) { o.readonlystr = ' readonly="readonly" '; }
+        if (o.buttonid) {
+            if (!o.buttonicon) { o.buttonicon = ""; }
+            if (o.buttonicon) { o.buttonicon = '<i class="bi bi-' + o.buttonicon + '"></i>'; }
+            if (!o.buttontext) { o.buttontext = ""; }
+            if (!o.buttonclasses) { o.buttonclasses = "btn-secondary"; }
+            o.buttonstr = '<div class="input-group-append">' + 
+                '<a id="{buttonid}" class="btn {buttonclasses}" href="#">{buttonicon}{buttontext}</a>' + 
+                '</div>';
+            o.buttonstr = common.substitute(o.buttonstr, o);
+        }
+        let h = '<div class="form-group">\n' +
+            '<label for="{id}">{label}</label>\n' + 
+            '<div class="input-group">\n' +
+                '<input type="text" class="form-control ctl {inputclasses}" id="{id}" data="{id}" {readonlystr} />\n' +
+                '{buttonstr}' + 
+            '</div></div>';
+        return common.substitute(h, o); 
+    };
+
     let h = [
         '<div class="modal fade" id="errordlg" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="errortitle" aria-hidden="true">',
             '<div class="modal-dialog">',
@@ -78,7 +112,7 @@ $(document).ready(function() {
                     '</div>',
                     '<div class="modal-body">',
                         '<span id="administertext"></span>',
-                        '<select id="administerresult" class="form-control">' + html.list_to_options(controller.testresults, "ID", "RESULTNAME") + '</select>',
+                        '<select id="administerresult" class="form-select">' + html.list_to_options(controller.testresults, "ID", "RESULTNAME") + '</select>',
                     '</div>',
                     '<div class="modal-footer">',
                         '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' + _("Cancel") + '</button>',
@@ -110,11 +144,6 @@ $(document).ready(function() {
                 '</button>',
                 '<div class="collapse navbar-collapse" id="navbar-content">',
                 '<ul class="navbar-nav me-auto mb-2 mb-lg-0">',
-                '<li id="messages-nav" class="nav-item">',
-                    '<a class="nav-link internal-link" data-link="messages" href="#">' + _("Messages"),
-                        '<span class="badge bg-primary rounded-pill">' + controller.messages.length + '</span>',
-                    '</a>',
-                '</li>',
                 '<li class="nav-item">',
                     '<a class="nav-link internal-link" data-link="reports" href="#">' + _("Generate Report"),
                     '</a>',
@@ -126,131 +155,162 @@ $(document).ready(function() {
                 '<li class="nav-item dropdown">',
                     '<a class="nav-link dropdown-toggle" href="#" id="dropdown-animals" role="button" data-bs-toggle="dropdown" aria-expanded="false">',
                     _("Animals") + '</a>',
-                    '<ul class="dropdown-menu shadow-sm" aria-labelledby="dropdown-animals">',
-                        /*'<li class="dropdown-item">',
-                            '<a class="nav-link internal-link" data-link="addanimal" href="#">' + _("Add Animal") + '</a>',
-                        '</li>',*/
-                        '<li class="dropdown-item">',
-                            '<a class="nav-link" href="mobile_photo_upload">' + _("Photo Uploader"),
-                            '</a>',
-                        '</li>',
-                        '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link internal-link" data-link="shelteranimals" href="#">' + _("Shelter Animals"),
-                                '<span class="badge bg-primary rounded-pill">' + controller.animals.length + '</span>',
-                            '</a>',
-                        '</li>',
-                        '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link internal-link" data-link="vaccinate" href="#">' + _("Vaccinate Animal"),
-                                '<span class="badge bg-primary rounded-pill">' + controller.vaccinations.length + '</span>',
-                            '</a>',
-                        '</li>',
-                        '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link internal-link" data-link="test" href="#">' + _("Test Animal"),
-                                '<span class="badge bg-primary rounded-pill">' + controller.tests.length + '</span>',
-                            '</a>',
-                        '</li>',
-                        '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link internal-link" data-link="medicate" href="#">' + _("Medicate Animal"),
-                                '<span class="badge bg-primary rounded-pill">' + controller.medicals.length + '</span>',
-                            '</a>',
-                        '</li>',
-                    '</ul>',
+                    '<div class="dropdown-menu shadow-sm" aria-labelledby="dropdown-animals">',
+                        /*
+                        '<a class="dropdown-item internal-link" data-link="addanimal" href="#">',
+                            '<span class="asm-icon asm-icon-animal-add"></span>',
+                            _("Add Animal"),
+                        '</a>',
+                        */
+                        '<a class="dropdown-item" href="mobile_photo_upload">',
+                            '<span class="asm-icon asm-icon-image"></span>',
+                            _("Photo Uploader"),
+                        '</a>',
+                        '<a class="dropdown-item hideifzero internal-link" data-link="shelteranimals" href="#">',
+                            '<span class="asm-icon asm-icon-animal"></span>',
+                            _("Shelter Animals"),
+                            '<span class="badge bg-primary rounded-pill">' + controller.animals.length + '</span>',
+                        '</a>',
+                        '<a class="dropdown-item hideifzero internal-link" data-link="vaccinate" href="#">',
+                            '<span class="asm-icon asm-icon-vaccination"></span>',
+                            _("Vaccinate Animal"),
+                            '<span class="badge bg-primary rounded-pill">' + controller.vaccinations.length + '</span>',
+                        '</a>',
+                        '<a class="dropdown-item hideifzero internal-link" data-link="test" href="#">',
+                            '<span class="asm-icon asm-icon-test"></span>',
+                            _("Test Animal"),
+                            '<span class="badge bg-primary rounded-pill">' + controller.tests.length + '</span>',
+                        '</a>',
+                        '<a class="dropdown-item hideifzero internal-link" data-link="medicate" href="#">',
+                            '<span class="asm-icon asm-icon-medical"></span>',
+                            _("Medicate Animal"),
+                            '<span class="badge bg-primary rounded-pill">' + controller.medicals.length + '</span>',
+                        '</a>',
+                    '</div>',
                 '</li>',
                 '<li class="nav-item dropdown animalcontrol">',
                     '<a class="nav-link dropdown-toggle" href="#" id="dropdown-incidents" role="button" data-bs-toggle="dropdown" aria-expanded="false">',
                     _("Animal Control") + '</a>',
-                    '<ul class="dropdown-menu shadow-sm" aria-labelledby="dropdown-incidents">',
-                        /*'<li class="dropdown-item">',
-                            '<a class="nav-link" href="#">' + _("Add Call") + '</a>',
-                        '</li>',*/
-                        '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link internal-link" data-link="myincidents" href="#">' + _("My Incidents"),
-                                '<span class="badge bg-primary rounded-pill">' + controller.incidentsmy.length + '</span>',
-                            '</a>',
-                        '</li>',
-                        '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link internal-link" data-link="unincidents" href="#">' + _("My Undispatched Incidents"),
-                                '<span class="badge bg-primary rounded-pill">' + controller.incidentsundispatched.length + '</span>',
-                            '</a>',
-                        '</li>',
-                        '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link internal-link" data-link="opincidents" href="#">' + _("Open Incidents"),
-                                '<span class="badge bg-primary rounded-pill">' + controller.incidentsincomplete.length + '</span>',
-                            '</a>',
-                        '</li>',
-                        '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link internal-link" data-link="flincidents" href="#">' + _("Incidents Requiring Followup"),
-                                '<span class="badge bg-primary rounded-pill">' + controller.incidentsfollowup.length + '</span>',
-                            '</a>',
-                        '</li>',
-                        '<li class="dropdown-item">',
-                            '<a class="nav-link internal-link" data-link="checklicence" href="#">' + _("Check License") + '</a>',
-                        '</li>',
-                    '</ul>',
+                    '<div class="dropdown-menu shadow-sm" aria-labelledby="dropdown-incidents">',
+                        // '<a class="dropdown-item" href="#">' + _("Add Call") + '</a>',
+                        '<a class="dropdown-item hideifzero internal-link" data-link="myincidents" href="#">',
+                            '<span class="asm-icon asm-icon-call"></span>',
+                            _("My Incidents"),
+                            '<span class="badge bg-primary rounded-pill">' + controller.incidentsmy.length + '</span>',
+                        '</a>',
+                        '<a class="dropdown-item hideifzero internal-link" data-link="unincidents" href="#">',
+                            '<span class="asm-icon asm-icon-call"></span>',
+                            _("My Undispatched Incidents"),
+                            '<span class="badge bg-primary rounded-pill">' + controller.incidentsundispatched.length + '</span>',
+                        '</a>',
+                        '<a class="dropdown-item hideifzero internal-link" data-link="opincidents" href="#">',
+                            '<span class="asm-icon asm-icon-call"></span>',
+                            _("Open Incidents"),
+                            '<span class="badge bg-primary rounded-pill">' + controller.incidentsincomplete.length + '</span>',
+                        '</a>',
+                        '<a class="dropdown-item hideifzero internal-link" data-link="flincidents" href="#">',
+                            '<span class="asm-icon asm-icon-call"></span>',
+                            _("Incidents Requiring Followup"),
+                            '<span class="badge bg-primary rounded-pill">' + controller.incidentsfollowup.length + '</span>',
+                        '</a>',
+                        '<a class="dropdown-item internal-link" data-link="checklicence" href="#">',
+                            '<span class="asm-icon asm-icon-licence"></span>',
+                            _("Check License"),
+                        '</a>',
+                    '</div>',
                 '</li>',
                 '<li class="nav-item dropdown">',
                     '<a class="nav-link dropdown-toggle" href="#" id="dropdown-diary" role="button" data-bs-toggle="dropdown" aria-expanded="false">',
                     _("Diary") + '</a>',
-                    '<ul class="dropdown-menu shadow-sm" aria-labelledby="dropdown-diary">',
-                        //'<li class="dropdown-item">',
-                        //    '<a class="nav-link" href="#">' + _("New Task") + '</a>',
-                        //'</li>',
-                        '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link internal-link" data-link="completediary" href="#">' + _("Complete Tasks"),
-                                '<span class="badge bg-primary rounded-pill">' + controller.diaries.length + '</span>',
-                            '</a>',
-                        '</li>',
-                    '</ul>',
+                    '<div class="dropdown-menu shadow-sm" aria-labelledby="dropdown-diary">',
+                        // '<a class="dropdown-item" href="#">' + _("New Task") + '</a>',
+                        '<a class="dropdown-item hideifzero internal-link" data-link="completediary" href="#">',
+                            '<span class="asm-icon asm-icon-diary"></span>',
+                            _("Complete Tasks"),
+                            '<span class="badge bg-primary rounded-pill">' + controller.diaries.length + '</span>',
+                        '</a>',
+                    '</div>',
                 '</li>',
                 '<li class="nav-item dropdown">',
                     '<a class="nav-link dropdown-toggle" href="#" id="dropdown-financial" role="button" data-bs-toggle="dropdown" aria-expanded="false">',
                     _("Financial") + '</a>',
-                    '<ul class="dropdown-menu shadow-sm" aria-labelledby="dropdown-financial">',
-                        '<li class="dropdown-item hideifzero">',
-                            '<a id="stocktake-nav" class="nav-link internal-link" data-link="stocklocations" href="#">' + _("Stock Take"),
-                                '<span class="badge bg-primary rounded-pill">' + controller.stocklocations.length + '</span>',
-                            '</a>',
-                        '</li>',
-                    '</ul>',
+                    '<div class="dropdown-menu shadow-sm" aria-labelledby="dropdown-financial">',
+                        '<a id="stocktake-nav" class="dropdown-item hideifzero internal-link" data-link="stocklocations" href="#">',
+                            '<span class="asm-icon asm-icon-stock"></span>',
+                            _("Stock Take"),
+                            '<span class="badge bg-primary rounded-pill">' + controller.stocklocations.length + '</span>',
+                        '</a>',
+                    '</div>',
                 '</li>',
                 '<li class="nav-item dropdown">',
                     '<a class="nav-link dropdown-toggle" href="#" id="dropdown-person" role="button" data-bs-toggle="dropdown" aria-expanded="false">',
                     _("Person") + '</a>',
-                    '<ul class="dropdown-menu shadow-sm" aria-labelledby="dropdown-person">',
-                        '<li class="dropdown-item">',
-                            '<a class="nav-link internal-link" data-link="findperson" href="#">' + _("Find Person"),
-                            '</a>',
-                        '</li>',
-                        '<li class="dropdown-item hideifzero">',
-                            '<a class="nav-link internal-link" data-link="performhomecheck" href="#">' + _("Perform Homecheck"),
-                                '<span class="badge bg-primary rounded-pill">' + controller.rsvhomecheck.length + '</span>',
-                            '</a>',
-                        '</li>',
-                    '</ul>',
+                    '<div class="dropdown-menu shadow-sm" aria-labelledby="dropdown-person">',
+                        '<a class="dropdown-item internal-link" data-link="findperson" href="#">', 
+                            '<span class="asm-icon asm-icon-person-find"></span>',
+                            _("Find Person"),
+                        '</a>',
+                        '<a class="dropdown-item hideifzero internal-link" data-link="performhomecheck" href="#">',
+                            '<span class="asm-icon asm-icon-person"></span>',
+                            _("Perform Homecheck"),
+                            '<span class="badge bg-primary rounded-pill">' + controller.rsvhomecheck.length + '</span>',
+                        '</a>',
+                    '</div>',
                 '</li>',
                 '<li class="nav-item">',
-                    '<a class="nav-link" href="main">' + _("Desktop/Tablet UI"),
-                    '</a>',
+                    '<a class="nav-link" href="main">' + _("Desktop/Tablet UI") + '</a>',
                 '</li>',
-                //'<li class="nav-item">',
-                //    '<a class="nav-link text-danger" href="mobile">Old Mobile UI</a>',
-                //'</li>',
-
                 '<li class="nav-item">',
-                    '<a class="nav-link" href="mobile_logout">' + _("Logout"),
-                    '</a>',
+                    '<a class="nav-link" href="mobile_logout">' + _("Logout") + '</a>',
                 '</li>',
                 '</ul>',
             '</div>',
         '</nav>',
 
         '<div id="content-home" class="container" style="display: none">',
-        '</div>',
-
-        '<div id="content-messages" class="container" style="display: none">',
-        '<h2 class="mt-3">' + _("Messages") + '</h2>',
-        '<div class="list-group">',
-        '</div>',
+            '<div class="row">',
+                // Messages
+                '<div id="hp-messages" class="col-sm">',
+                    '<div class="card shadow-sm mt-3">',
+                        '<div class="card-header">' + _("Messages"), 
+                        '<span class="badge bg-primary rounded-pill">' + controller.messages.length + '</span>',
+                        '</div>',
+                        '<div class="card-body">',
+                            '<div class="list-group">',
+                            '</div>',
+                        '</div>',
+                        '<div class="card-footer">',
+                            '<div class="mb-1">',
+                                '<select class="form-select" id="messagefor" name="messagefor">',
+                                '<option value="*">' + _("(everyone)") + '</option>',
+                                html.list_to_options(controller.usersandroles, "USERNAME", "USERNAME"),
+                                '</select>',
+                            '</div>',
+                            '<div class="mb-1">',
+                                '<input type="text" placeholder="' + _("Message") + '" class="form-control" id="messagebody" name="messagebody">',
+                            '</div>',
+                            '<div class="d-grid gap-2">',
+                                '<button type="button" class="btn btn-primary" id="addmessage"><i class="bi bi-plus-square"></i> ',
+                                    _("Add Message"),
+                                    '<span class="spinner-border spinner-border-sm" style="display: none"></span>',
+                                '</button>',
+                            '</div>',
+                        '</div>',
+                    '</div>',
+                '</div>',
+                // Timeline
+                '<div id="hp-timeline" class="col-sm">',
+                    '<div class="card shadow-sm mt-3">',
+                        '<div class="card-header">',
+                        _("Timeline ({0})").replace("{0}", controller.timeline.length),
+                        '</div>',
+                        '<div class="card-body">',
+                        '</div>',
+                    '</div>',
+                '</div>',
+            '</div>',
+            // TODO: remove when interface is gone
+            '<p class="mt-3"><button id="oldui" class="btn btn-outline-danger" type="button">Switch to old Mobile UI</button></p>',
         '</div>',
 
         '<div id="content-reports" class="container" style="display: none">',
@@ -259,7 +319,6 @@ $(document).ready(function() {
         '</div>',
         '</div>',
 
-        /*
         '<div id="content-addanimal" class="container" style="display: none">',
         '<h2 class="mt-3">' + _("Add Animal") + '</h2>',
         '<form method="post" action="' + post_handler + '">',
@@ -278,43 +337,43 @@ $(document).ready(function() {
         '</div>',
         '<div class="mb-3">',
             '<label for="sex" class="form-label">' + _("Sex") + '</label>',
-            '<select class="form-control" name="sex" id="sex">',
+            '<select class="form-select" name="sex" id="sex">',
             html.list_to_options(controller.sexes, "ID", "SEX"),
             '</select>',
         '</div>',
         '<div class="mb-3">',
             '<label for="animaltype" class="form-label">' + _("Type") + '</label>',
-            '<select class="form-control" name="animaltype" id="animaltype">',
+            '<select class="form-select" name="animaltype" id="animaltype">',
             html.list_to_options(controller.animaltypes, "ID", "ANIMALTYPE"),
             '</select>',
         '</div>',
         '<div class="mb-3">',
             '<label for="species" class="form-label">' + _("Species") + '</label>',
-            '<select class="form-control" name="species" id="species">',
+            '<select class="form-select" name="species" id="species">',
             html.list_to_options(controller.species, "ID", "SPECIESNAME"),
             '</select>',
         '</div>',
         '<div class="mb-3">',
             '<label for="breed1" class="form-label">' + _("Breed") + '</label>',
-            '<select class="form-control" name="breed1" id="breed1">',
+            '<select class="form-select" name="breed1" id="breed1">',
             html.list_to_options_breeds(controller.breeds),
             '</select>',
         '</div>',
         '<div class="mb-3">',
             '<label for="basecolour" class="form-label">' + _("Color") + '</label>',
-            '<select class="form-control" name="basecolour" id="basecolour">',
+            '<select class="form-select" name="basecolour" id="basecolour">',
             html.list_to_options(controller.colours, "ID", "BASECOLOUR"),
             '</select>',
         '</div>',
         '<div class="mb-3">',
             '<label for="size" class="form-label">' + _("Size") + '</label>',
-            '<select class="form-control" name="size" id="size">',
+            '<select class="form-select" name="size" id="size">',
             html.list_to_options(controller.sizes, "ID", "SIZE"),
             '</select>',
         '</div>',
         '<div class="mb-3">',
             '<label for="internallocation" class="form-label">' + _("Location") + '</label>',
-            '<select class="form-control" name="internallocation" id="internallocation">',
+            '<select class="form-select" name="internallocation" id="internallocation">',
             html.list_to_options(controller.internallocations, "ID", "LOCATIONNAME"),
             '</select>',
         '</div>',
@@ -322,11 +381,15 @@ $(document).ready(function() {
             '<label for="unit" class="form-label">' + _("Unit") + '</label>',
             '<input type="text" class="form-control" id="unit" name="unit">',
         '</div>',
-        '<div class="d-flex justify-content-center pb-2"><button id="btn-addanimal-submit" type="submit" class="btn btn-primary">' + _("Create") + 
-        '<div class="spinner-border spinner-border-sm" style="display: none"></div></button></div>',
+        '<div class="d-flex justify-content-center pb-2">',
+        '<button id="btn-addanimal-submit" type="submit" class="btn btn-primary">',
+            '<i class="bi bi-plus-square"></i>',
+            _("Create"), 
+            '<span class="spinner-border spinner-border-sm" style="display: none"></span>',
+        '</button>',
+        '</div>',
         '</form>',
         '</div>',
-        */
 
         '<div id="content-shelteranimals" class="container" style="display: none">',
         '<h2 class="mt-3">' + _("Shelter Animals") + '</h2>',
@@ -507,7 +570,7 @@ $(document).ready(function() {
         return [
             '<div class="mb-3">',
                 '<label for="logtype" class="form-label">' + _("Log Type") + '</label>',
-                '<select class="form-control" id="logtype" name="logtypeid">',
+                '<select class="form-select" id="logtype" name="logtypeid">',
                 html.list_to_options(controller.logtypes, "ID", "LOGTYPENAME"),
                 '</select>',
             '</div>',
@@ -732,7 +795,7 @@ $(document).ready(function() {
         // Inline buttons for completing, dispatching and responding, either the date or a button
         let comptp = dt(ac.COMPLETEDATE) + ' ' + ac.COMPLETEDNAME;
         if (!ac.COMPLETEDDATE && common.has_permission("caci")) {
-            comptp = '<select class="form-control complete"><option value=""></option>' + html.list_to_options(controller.completedtypes, "ID", "COMPLETEDNAME") + '</select>';
+            comptp = '<select class="form-select complete"><option value=""></option>' + html.list_to_options(controller.completedtypes, "ID", "COMPLETEDNAME") + '</select>';
             comptp += '<button type="button" data-id="' + ac.ID + '" disabled="disabled" class="complete btn btn-primary"><i class="bi-calendar-check"></i> ' + _("Complete");
             comptp += ' <div class="spinner-border spinner-border-sm" style="display: none"></div></button>';
         }
@@ -1369,7 +1432,7 @@ $(document).ready(function() {
             let j = jQuery.parseJSON(response);
             let usage = '<div class="mb-3">' +
                 '<label for="usagetype" class="form-label">' + _("Usage Type") + '</label>' +
-                '<select class="form-control" id="usagetype" name="usage">' +
+                '<select class="form-select" id="usagetype" name="usage">' +
                 html.list_to_options(j.usagetypes, "ID", "USAGETYPENAME") +
                 '</select>' +
                 '</div>';
@@ -1410,11 +1473,23 @@ $(document).ready(function() {
         let h = '<div class="list-group-item">' +
             '<h5>' + format.date(v.ADDED) + ' ' + v.CREATEDBY + ' &#8594; ' + v.FORNAME + '</h5>' + 
             '<small>' + v.MESSAGE + '</small>';
-        $("#content-messages .list-group").append(h);
+        $("#hp-messages .list-group").append(h);
     });
 
-    // Hide messages menu item if there are no messages
-    $("#messages-nav").toggle( controller.messages.length > 0 );
+    $("#addmessage").click(function() {
+        if (!$("#messagebody").val()) {
+            show_error(_("Error"), _("Message body must be supplied"));
+            return;
+        }
+        let formdata = {
+            "mode": "addmessage",
+            "for": $("#messagefor").val(),
+            "body": $("#messagebody").val()
+        };
+        ajax_post(formdata, function() {
+            window.location.reload();
+        });
+    });
 
     // Hide animal control menu if the functionality is disabled
     $(".animalcontrol").toggle( !config.bool("DisableAnimalControl") );
@@ -1424,29 +1499,16 @@ $(document).ready(function() {
         $("#stocktake-nav").hide();
     }
 
-    // Home page
     // Timeline
-    let tl = [
-        '<div class="col-sm">',
-            '<div class="card shadow-sm mt-3">',
-                '<div class="card-header">',
-                _("Timeline ({0})").replace("{0}", controller.timeline.length),
-                '</div>',
-                '<div class="card-body">'
-    ];
+    let tl = [];
     $.each(controller.timeline, function(i, v) {
         // Skip this entry if it's for a deceased animal and we aren't showing them
         if (!config.bool("ShowDeceasedHomePage") && (v.CATEGORY == "DIED" || v.CATEGORY == "EUTHANISED")) { return; }
         tl.push(html.event_text(v, { includedate: true, includeicon: true }) + '<br/>');
     });
-    tl.push('</div></div></div>');
-    let hp = [
-        '<div class="row">',
-        config.bool("ShowTimelineHomePage") && common.has_permission("va") ? tl.join("\n") : "",
-        '<p class="mt-3"><a class="nav-link btn btn-danger text-white" href="mobile">Switch to old Mobile UI</a></p>',
-        '</div>'
-    ];
-    $("#content-home").html(hp.join("\n"));
+    if (config.bool("ShowTimelineHomePage") && common.has_permission("va")) {
+        $("#hp-timeline .card-body").html(tl.join("\n"));
+    }
     $("#content-home").show();
 
     // Load reports
@@ -1471,6 +1533,11 @@ $(document).ready(function() {
     });
     reps.push("</div></div></div></div>"); // close final list-group, accordion-body, collapse, accordion-item
     $("#content-reports .list-group").html(reps.join("\n"));
+
+    // Switch to oldui
+    $("#oldui").click(function() {
+        window.location = "mobile";
+    });
 
     document.title = controller.user + ": " + _("ASM");
 
