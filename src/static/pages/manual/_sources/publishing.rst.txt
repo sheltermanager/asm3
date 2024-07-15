@@ -497,6 +497,9 @@ records.
   adopters with the adopted animal and qualify them for free food from
   SavourLife.
 
+* medicalissues (Text): Any information you want to pass to SavourLife about
+  medical issues the animal has.
+
 * needsfoster (Yes/No): Indicates that foster care is required for the animal.
 
 * interstateadoptable (Yes/No): Overrides the global interstate adoptable value on

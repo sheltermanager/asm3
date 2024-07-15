@@ -241,13 +241,7 @@ $(document).ready(function() {
                             '<div class="card shadow-sm mt-3">',
                                 '<div class="card-header">' + _("Messages"), 
                                 '<span class="badge bg-primary rounded-pill">' + controller.messages.length + '</span>',
-                                '</div>',
-                                '<div class="card-body">',
-                                    '<div class="list-group">',
-                                    '</div>',
-                                '</div>',
-                                '<div class="card-footer">',
-                                    '<div class="mb-1">',
+                                    '<div class="mt-2 mb-1">',
                                         '<select class="form-select" id="messagefor" name="messagefor">',
                                         '<option value="*">' + _("(everyone)") + '</option>',
                                         html.list_to_options(controller.usersandroles, "USERNAME", "USERNAME"),
@@ -263,6 +257,12 @@ $(document).ready(function() {
                                         '</button>',
                                     '</div>',
                                 '</div>',
+                                '<div class="card-body">',
+                                    '<div class="list-group">',
+                                    '</div>',
+                                '</div>',
+                                //'<div class="card-footer">',
+                                //'</div>',
                             '</div>',
                         '</div>',
                         // Timeline
@@ -325,6 +325,9 @@ $(document).ready(function() {
                     '<select class="form-select" name="breed1" id="breed1">',
                     html.list_to_options_breeds(controller.breeds),
                     '</select>',
+                    '<select id="breedp" data="breedp" style="display:none;">',
+                    html.list_to_options_breeds(controller.breeds),
+                    '</select>',
                 '</div>',
                 '<div class="mb-3">',
                     '<label for="basecolour" class="form-label">' + _("Color") + '</label>',
@@ -346,7 +349,8 @@ $(document).ready(function() {
                 '</div>',
                 '<div class="mb-3">',
                     '<label for="unit" class="form-label">' + _("Unit") + '</label>',
-                    '<input type="text" class="form-control" id="unit" name="unit">',
+                    '<select class="form-select" id="unit" name="unit">',
+                    '</select>',
                 '</div>',
                 '<div class="d-flex justify-content-center pb-2">',
                 '<button id="btn-addanimal-submit" type="submit" class="btn btn-primary">',
@@ -931,8 +935,10 @@ $(document).ready(function() {
         render_messages: function(messages) {
             $("#hp-messages .list-group").empty();
             $.each(messages, function(i, v) {
+                let forname = v.FORNAME;
+                if (forname == "*") { forname = _("(everyone)"); }
                 let h = '<div class="list-group-item">' +
-                    '<h5>' + format.date(v.ADDED) + ' ' + v.CREATEDBY + ' &#8594; ' + v.FORNAME + '</h5>' + 
+                    '<h5>' + format.date(v.ADDED) + ' ' + v.CREATEDBY + ' &#8594; ' + forname + '</h5>' + 
                     '<small>' + v.MESSAGE + '</small>';
                 $("#hp-messages .list-group").append(h);
             });
@@ -1080,6 +1086,32 @@ $(document).ready(function() {
             $("#content-person").show();
         },
 
+        update_breed_select: function() {
+            // Only show the breeds for the selected species
+            $('optgroup', $('#breed1')).remove();
+            $('#breedp optgroup').clone().appendTo($('#breed1'));
+            $('#breed1').children().each(function(){
+                if($(this).attr('id') != 'ngp-'+$('#species').val()){
+                    $(this).remove();
+                }
+            });
+        },
+
+        update_units: async function() {
+            let opts = ['<option value=""></option>'];
+            $("#unit").empty();
+            const response = await common.ajax_post("animal_new", "mode=units&locationid=" + $("#internallocation").val());
+            $.each(html.decode(response).split("&&"), function(i, v) {
+                let [unit, desc] = v.split("|");
+                if (!unit) { return false; }
+                if (!desc) { desc = _("(available)"); }
+                opts.push('<option value="' + html.title(unit) + '">' + unit +
+                    ' : ' + desc + '</option>');
+            });
+            $("#unit").html(opts.join("\n")).change();
+
+        },
+
         bind: function() {
 
             // Delegate handler for internal links
@@ -1120,6 +1152,16 @@ $(document).ready(function() {
                 if (a) { 
                     mobile.render_animal(a, "#content-animal");
                 }
+            });
+
+            // When the location is changed on the add animal screen, update the list of units
+            $("#internallocation").change(function() {
+                mobile.update_units();
+            });
+
+            // When species is changed on the add animal screen, update the breeds
+            $("#species").change(function() {
+                mobile.update_breed_select();
             });
 
             // Handle clicking an animal to medicate and showing a popup dialog to confirm
@@ -1374,6 +1416,12 @@ $(document).ready(function() {
                     $("#addmessage .spinner-border").hide();
                 });
             });
+
+            // Hide the timeline if disabled or no permission
+            if (!config.bool("ShowTimelineHomePage") || !common.has_permission("va")) {
+                $("#hp-timeline").hide();
+            }
+
         },
 
         sync: function() {
@@ -1476,17 +1524,14 @@ $(document).ready(function() {
                 $("#content-performhomecheck .list-group").append(h);
             });
 
-            // Timeline
+            // Load Timeline
             let tl = [];
             $.each(controller.timeline, function(i, v) {
                 // Skip this entry if it's for a deceased animal and we aren't showing them
                 if (!config.bool("ShowDeceasedHomePage") && (v.CATEGORY == "DIED" || v.CATEGORY == "EUTHANISED")) { return; }
                 tl.push(html.event_text(v, { includedate: true, includeicon: true }) + '<br/>');
             });
-            if (config.bool("ShowTimelineHomePage") && common.has_permission("va")) {
-                $("#hp-timeline .card-body").html(tl.join("\n"));
-            }
-            $("#content-home").show();
+            $("#hp-timeline .card-body").html(tl.join("\n"));
 
             // Load reports
             $("#content-reports .list-group").empty();
@@ -1514,11 +1559,12 @@ $(document).ready(function() {
             // Initialise add animal screen
             $("#age").val(config.str("DefaultAnimalAge"));
             $("#animaltype").val(config.str("AFDefaultType"));
-            $("#species").val(config.str("AFDefaultSpecies"));
-            $("#breed1").val(config.str("AFDefaultBreed"));
             $("#basecolour").val(config.str("AFDefaultColour"));
             $("#internallocation").val(config.str("AFDefaultLocation"));
-            $("#unit").val("");
+            mobile.update_units();
+            $("#species").val(config.str("AFDefaultSpecies"));
+            mobile.update_breed_select();
+            $("#breed1").val(config.str("AFDefaultBreed"));
             $("#size").val(config.str("AFDefaultSize"));
             $("#sheltercode").closest("div").toggle(config.bool("ManualCodes"));
         
@@ -1542,6 +1588,9 @@ $(document).ready(function() {
                     mobile.show_error(_("Error"), _("Animal {0} is not on shelter.").replace("{0}", animalid));
                 }
             }
+
+            // Show the dashboard/homepage
+            $("#content-home").show();
 
             document.title = controller.user + ": " + _("ASM");
         }
