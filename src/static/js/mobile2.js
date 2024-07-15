@@ -105,6 +105,7 @@ $(document).ready(function() {
                         '</div>',
                     '</div>',
                 '</div>',
+
                 mobile.render_nav(),
 
                 '<div id="content-home" class="container" style="display: none">',
@@ -1498,6 +1499,17 @@ $(document).ready(function() {
             if (config.bool("DisableStockControl")) {
                 $("#stocktake-nav").hide();
             }
+
+            // Hide all dropdown menus that don't have any visible items
+            $("nav .dropdown-menu").each(function() {
+                let t = $(this), visibleitems = 0;
+                $.each(t.find(".dropdown-item"), function() {
+                    if ($(this).css("display") != "none") { visibleitems++; }
+                });
+                if (visibleitems == 0) {
+                    t.closest(".dropdown").hide();
+                }
+            });
 
             // Load list of animals to medicate
             $("#content-medicate .list-group").empty();
