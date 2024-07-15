@@ -949,7 +949,7 @@ def get_messages(dbo: Database, user: str, roles: str, superuser: int) -> Result
     roles: A pipe separated list of roles the user is in (session.roles)
     superuser: 1 if the user is a superuser
     """
-    messages = dbo.query("SELECT * FROM messages WHERE Expires >= ? ORDER BY Added DESC", [dbo.today()])
+    messages = dbo.query("SELECT * FROM messages WHERE Expires >= ? ORDER BY ID DESC", [dbo.today()])
     rv = []
     # Add messages our user can see
     for m in messages:
