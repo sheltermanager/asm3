@@ -733,9 +733,9 @@ def clone_onlineform(dbo: Database, username: str, formid: int) -> int:
         "EmailAddress":         f.EMAILADDRESS,
         "EmailSubmitter":       f.EMAILSUBMITTER,
         "*EmailMessage":        f.EMAILMESSAGE,
-        "*Header":              f.HEADER,
-        "*Footer":              f.FOOTER,
-        "*Description":         f.DESCRIPTION
+        "*Header":              asm3.utils.nulltostr(f.HEADER),
+        "*Footer":              asm3.utils.nulltostr(f.FOOTER),
+        "*Description":         asm3.utils.nulltostr(f.DESCRIPTION)
     }, username, setCreated=False)
     for ff in get_onlineformfields(dbo, formid):
         dbo.insert("onlineformfield", {
@@ -747,7 +747,7 @@ def clone_onlineform(dbo: Database, username: str, formid: int) -> int:
             "Mandatory":        ff.MANDATORY,
             "VisibleIf":        ff.VISIBLEIF,
             "Lookups":          ff.LOOKUPS,
-            "*Tooltip":          ff.TOOLTIP
+            "*Tooltip":         asm3.utils.nulltostr(ff.TOOLTIP)
         })
     return nfid
 
