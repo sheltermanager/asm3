@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ASM3\n"
 "Report-Msgid-Bugs-To: robin@sheltermanager.com\n"
-"POT-Creation-Date: 2024-06-21 10:27+0000\n"
+"POT-Creation-Date: 2024-07-15 10:42+0000\n"
 "Last-Translator: Robin Rawson-Tetley <robin@sheltermanager.com>\n"
 "Language-Team: en <robin@sheltermanager.com>\n"
 "Language: en\n"
@@ -65,7 +65,7 @@ msgstr ""
 msgid "(depleted)"
 msgstr ""
 
-#: html.py main.js clinic_calendar.js
+#: html.py main.js clinic_calendar.js mobile2.js
 msgid "(everyone)"
 msgstr ""
 
@@ -458,7 +458,7 @@ msgstr ""
 msgid "Add Medical Records"
 msgstr ""
 
-#: mobile.py main.js
+#: mobile.py main.js mobile2.js
 msgid "Add Message"
 msgstr ""
 
@@ -1603,6 +1603,10 @@ msgstr ""
 
 #: options.js
 msgid "Animal shortcode format"
+msgstr ""
+
+#: mobile2.js
+msgid "Animal {0} is not on shelter."
 msgstr ""
 
 #: html.py reports.py test.js report_criteria.js incident.js medical.js
@@ -5421,6 +5425,10 @@ msgstr ""
 msgid "Equipment loans"
 msgstr ""
 
+#: mobile2.js
+msgid "Error"
+msgstr ""
+
 #: mobile_login.js
 msgid "Error contacting server."
 msgstr ""
@@ -8687,12 +8695,16 @@ msgstr ""
 msgid "Merge bonded animals into a single record"
 msgstr ""
 
-#: main.js
+#: main.js mobile2.js
 msgid "Message"
 msgstr ""
 
 #: main.js
 msgid "Message Board"
+msgstr ""
+
+#: mobile2.js
+msgid "Message body must be supplied"
 msgstr ""
 
 #: lookups.py

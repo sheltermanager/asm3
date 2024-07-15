@@ -1,6 +1,7 @@
 49
 ================
 
+15/07/24 Enable add animal screen for mobile users #1505
 15/07/24 SavourLife: use additional "medicalissues" instead of health problems
 13/07/24 Improve mobile layout, add icons, reinstate add message #1505
 12/07/24 Refactoring of locationfilter code to use encapsulated object
