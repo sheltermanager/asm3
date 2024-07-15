@@ -258,6 +258,7 @@ def has_security_flag(securitymap: str, flag: str) -> bool:
     """
     Returns true if the given flag is in the given map
     """
+    if securitymap is None: return False
     perms = securitymap.split("*")
     return flag + " " in perms
 
