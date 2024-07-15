@@ -597,6 +597,8 @@ def get_onlineformincoming_html_print(dbo: Database, ids: List[int],
     strip_style: Remove any style tags from the form
     strip_bgimages: Remove any background-image CSS directives from the form
     """
+    if len(ids) == 0:
+        raise asm3.utils.ASMValidationError("no ids given")
     title = get_onlineformincoming_formname(dbo, ids[0])
     header = get_onlineform_header(dbo)
     header = header.replace("$$TITLE$$", title)
