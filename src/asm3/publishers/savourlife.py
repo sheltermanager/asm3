@@ -321,6 +321,10 @@ class SavourLifePublisher(AbstractPublisher):
         if "NEEDSFOSTER" in an and an.NEEDSFOSTER and an.NEEDSFOSTER != "0":
             needs_foster = True
 
+        medical_issues = ""
+        if "MEDICALISSUES" in an and an.MEDICALISSUES:
+            medical_issues = an.MEDICALISSUES
+
         # We have a config option for interstate adoptable. If this DB has an additional
         # field for interstateadoptable on the animal with a value then we use that instead:
         if "INTERSTATEADOPTABLE" in an and an.INTERSTATEADOPTABLE:
@@ -385,7 +389,7 @@ class SavourLifePublisher(AbstractPublisher):
             "RequirementKidsOver5":     self.good_with_over5(an.ISGOODWITHCHILDREN), 
             "RequirementKidsUnder5":    self.good_with_under5(an.ISGOODWITHCHILDREN),
             "SpecialNeeds":             "",
-            "MedicalIssues":            self.replaceSmartQuotes(an.HEALTHPROBLEMS),
+            "MedicalIssues":            self.replaceSmartQuotes(medical_issues),
             "InterstateAdoptionAvaliable": interstate, # NOTE: This attribute is deliberately spelled wrong due to mispelling at SL side
             "DistanceRestriction":      asm3.utils.iif(radius == 0, None, radius),
             "FosterCareRequired":       needs_foster,
