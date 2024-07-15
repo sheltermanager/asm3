@@ -1478,7 +1478,7 @@ $(document).ready(function() {
 
             // Hide all nav elements with permissions if the user does not have that permission
             $("nav a").each(function() {
-                let t = $(this), perm = t.attr("data-perm")
+                let t = $(this), perm = t.attr("data-perm");
                 if (perm && !common.has_permission(perm)) {
                     t.hide();
                 }
