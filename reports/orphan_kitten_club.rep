@@ -69,4 +69,31 @@ AND DeceasedDate >= '$@year$-01-01' AND DeceasedDate <= '$@year$-12-31 23:59:59'
 AND PutToSleep = 0 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0
 AND DateBroughtIn - DateofBirth <= INTERVAL '8 weeks') AS DiedInCare
 ###
+$$HEADER
+HEADER$$
 
+$$BODY
+<p><b>Please provide your 2023 intake and live release rate for kittens (under 6 months) and cats (over 6 months)</b><br>
+<i>(calculated as kittens under and over 6 months old at intake with live outomces within $Year)</i></p>
+<p>Intakes under 6 months: <b>$IntakeUnder6</b> - Live release rate: <b>$ReleaseUnder6</b></p> 
+<p>Intakes over 6 months: <b>$IntakeOver6</b> - Live release rate: <b>$ReleaseOver6</b></p>
+
+<p><b>Describe your work with 0-4 week old kittens and the number of these kittens helped in 2023: $NumberOfKittensBenefit4</b><br>
+<i>(calculated as total kittens under 4 weeks at intake for $Year)</i></p>
+
+<p><b>Describe your work with 4-8 week old kittens and the number of these kittens helped in 2023: $NumberOfKittensBenefit8</b><br>
+<i>(calculated as total kittens between 4 and 8 weeks at intake for $Year)</i></p>
+
+<p><b>How many kittens under 8 weeks old were euthanized versus died in care?</b></p>
+
+<p>Euthanized: <b>$Euthanised</b></p>
+<i>(Calculated as kittens under 8 weeks old at intake with deceased date within $Year with euthanized checkbox)</i>  
+
+<p>Died in care: <b>$DiedInCare</b></p> 
+<i>(Calculated as kittens under 8 weeks old at intake with deceased date within $Year without euthanized checkbox)</i>  
+
+
+BODY$$
+
+$$FOOTER
+FOOTER$$
