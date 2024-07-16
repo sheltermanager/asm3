@@ -1550,7 +1550,7 @@ $(document).ready(function() {
                 let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
                     '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
                     '<h5 class="mb-1">' + v.ANIMALNAME + ' - ' + v.SHELTERCODE + '</h5>' +
-                    '<small>(' + v.VACCINATIONTYPE + ', ' + format.date(v.DATEREQUIRED) + ') ' + mobile.displaylocation(v) + '</small>' +
+                    '<small>(' + v.VACCINATIONTYPE + ', ' + format.date(v.DATEREQUIRED) + ') ' + mobile.display_location(v) + '</small>' +
                     '</a>';
                 $("#content-vaccinate .list-group").append(h);
             });
