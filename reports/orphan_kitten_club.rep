@@ -1,0 +1,72 @@
+Orphan Kitten Club Partner Application
+###
+Figures
+###
+3000/PostgreSQL rev01
+###
+Information needed to complete the Orphan Kitten Club/Might Cats grant application.
+###
+en
+###
+$VAR year NUMBER Enter the year to use for historic data (eg: 2023)$
+
+SELECT 
+
+'$@year$' AS Year,
+
+(SELECT COUNT(*) 
+FROM animal
+WHERE NonShelterAnimal=0 AND SpeciesID = 2 
+AND DateBroughtIn > '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31 23:59:59' 
+AND DateBroughtIn - DateofBirth < INTERVAL '6 months') AS IntakeUnder6,
+
+(SELECT COUNT(*)
+FROM adoption 
+INNER JOIN animal ON animal.ID = adoption.AnimalID 
+WHERE NonShelterAnimal=0 AND SpeciesID = 2 
+AND MovementType IN (1, 3, 5, 7) 
+AND MovementDate > '$@year$-01-01' AND MovementDate <= '$@year$-12-31 23:59:59'
+AND DateBroughtIn - DateofBirth < INTERVAL '6 months') AS ReleaseUnder6,
+
+(SELECT COUNT(*) 
+FROM animal
+WHERE NonShelterAnimal=0 AND SpeciesID = 2 
+AND DateBroughtIn > '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31 23:59:59' 
+AND DateBroughtIn - DateofBirth >= INTERVAL '6 months') AS IntakeOver6,
+
+(SELECT COUNT(*)
+FROM adoption
+INNER JOIN animal ON animal.ID = adoption.AnimalID
+WHERE NonShelterAnimal=0 AND SpeciesID = 2
+AND MovementType IN (1, 3, 5, 7) 
+AND MovementDate > '$@year$-01-01' AND ActiveMovementDate <= '$@year$-12-31 23:59:59'
+AND DateBroughtIn - DateofBirth >= INTERVAL '6 months') AS ReleaseOver6,
+
+(SELECT COUNT(*) 
+FROM animal
+WHERE NonShelterAnimal=0 AND SpeciesID = 2
+AND DateBroughtIn > '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31 23:59:59' 
+AND DateBroughtIn - DateofBirth <= INTERVAL '4 weeks') AS NumberOfKittensBenefit4,
+
+(SELECT COUNT(*) 
+FROM animal
+WHERE NonShelterAnimal=0 AND SpeciesID = 2
+AND DateBroughtIn > '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31 23:59:59' 
+AND DateBroughtIn - DateofBirth >= INTERVAL '4 weeks' 
+AND DateBroughtIn - DateofBirth <= INTERVAL '8 weeks') AS NumberOfKittensBenefit8,
+
+(SELECT COUNT(*) 
+FROM animal
+WHERE NonShelterAnimal=0 AND SpeciesID = 2
+AND DeceasedDate >= '$@year$-01-01' AND DeceasedDate <= '$@year$-12-31 23:59:59' 
+AND DiedOffShelter = 0 AND PutToSleep = 1
+AND DateBroughtIn - DateofBirth <= INTERVAL '8 weeks') AS Euthanised,
+
+(SELECT COUNT(*) 
+FROM animal
+WHERE NonShelterAnimal=0 AND SpeciesID = 2
+AND DeceasedDate >= '$@year$-01-01' AND DeceasedDate <= '$@year$-12-31 23:59:59' 
+AND PutToSleep = 0 AND NonShelterAnimal = 0 AND DiedOffShelter = 0 AND IsDOA = 0
+AND DateBroughtIn - DateofBirth <= INTERVAL '8 weeks') AS DiedInCare
+###
+
