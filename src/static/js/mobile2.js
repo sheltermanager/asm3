@@ -41,6 +41,17 @@ $(document).ready(function() {
             });
         },
 
+        /* Outputs the displaylocation for an animal. If the user does not have permission to view
+            person records and the animal has left on an active movement to a person, only show the
+            active movement and remove the person name */
+        display_location: function(a) {
+            let displaylocation = a.DISPLAYLOCATION;
+            if (a.ACTIVEMOVEMENTTYPE > 0 && !common.has_permission("vo") && displaylocation.indexOf("::") != -1) { 
+                displaylocation = displaylocation.substring(0, displaylocation.indexOf("::"));
+            }
+            return displaylocation;
+        },
+
         render: function() {
             return [
                 '<div class="modal fade" id="errordlg" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="errortitle" aria-hidden="true">',
@@ -627,7 +638,7 @@ $(document).ready(function() {
                     i(_("Status"), adoptable ? '<span class="text-success">' + _("Available for adoption") + '</span>' : 
                         '<span class="text-danger">' + _("Not available for adoption") + " (" + adoptreason + ")</span>"),
                     i(_("Type"), a.ANIMALTYPENAME),
-                    i(_("Location"), a.DISPLAYLOCATION),
+                    i(_("Location"), mobile.display_location(a)),
                     i(_("Color"), a.BASECOLOURNAME),
                     i(_("Coat Type"), a.COATTYPENAME),
                     i(_("Size"), a.SIZENAME),
@@ -1099,7 +1110,7 @@ $(document).ready(function() {
                 let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
                     '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
                     '<h5 class="mb-1">' + v.ANIMALNAME + ' - ' + v.CODE + '</h5>' +
-                    '<small>(' + v.SEXNAME + ' ' + v.BREEDNAME + ' ' + v.SPECIESNAME + ')<br/>' + v.IDENTICHIPNUMBER + ' ' + v.DISPLAYLOCATION + '</small>' +
+                    '<small>(' + v.SEXNAME + ' ' + v.BREEDNAME + ' ' + v.SPECIESNAME + ')<br/>' + v.IDENTICHIPNUMBER + ' ' + mobile.display_location(v) + '</small>' +
                     '</a>';
                 $("#content-shelteranimals .list-group").append(h);
             });
@@ -1517,7 +1528,7 @@ $(document).ready(function() {
                 let h = '<a href="#" data-id="' + v.TREATMENTID + '" class="list-group-item list-group-item-action">' +
                     '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
                     '<h5 class="mb-1">' + v.ANIMALNAME + ' - ' + v.SHELTERCODE + '</h5>' +
-                    '<small>(' + v.TREATMENTNAME + ', ' + format.date(v.DATEREQUIRED) + ') ' + v.DISPLAYLOCATION + '</small>' +
+                    '<small>(' + v.TREATMENTNAME + ', ' + format.date(v.DATEREQUIRED) + ') ' + mobile.display_location(v) + '</small>' +
                     '</a>';
                 $("#content-medicate .list-group").append(h);
             });
@@ -1528,7 +1539,7 @@ $(document).ready(function() {
                 let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
                     '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
                     '<h5 class="mb-1">' + v.ANIMALNAME + ' - ' + v.SHELTERCODE + '</h5>' +
-                    '<small>(' + v.TESTNAME + ', ' + format.date(v.DATEREQUIRED) + ') ' + v.DISPLAYLOCATION + '</small>' +
+                    '<small>(' + v.TESTNAME + ', ' + format.date(v.DATEREQUIRED) + ') ' + mobile.display_location(v) + '</small>' +
                     '</a>';
                 $("#content-test .list-group").append(h);
             });
@@ -1539,7 +1550,7 @@ $(document).ready(function() {
                 let h = '<a href="#" data-id="' + v.ID + '" class="list-group-item list-group-item-action">' +
                     '<img style="float: right" height="75px" src="' + html.thumbnail_src(v, "animalthumb") + '">' + 
                     '<h5 class="mb-1">' + v.ANIMALNAME + ' - ' + v.SHELTERCODE + '</h5>' +
-                    '<small>(' + v.VACCINATIONTYPE + ', ' + format.date(v.DATEREQUIRED) + ') ' + v.DISPLAYLOCATION + '</small>' +
+                    '<small>(' + v.VACCINATIONTYPE + ', ' + format.date(v.DATEREQUIRED) + ') ' + mobile.displaylocation(v) + '</small>' +
                     '</a>';
                 $("#content-vaccinate .list-group").append(h);
             });
