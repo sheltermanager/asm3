@@ -18,8 +18,15 @@ SELECT
 FROM animal
 WHERE NonShelterAnimal=0 AND SpeciesID = 2 
 AND DateBroughtIn > '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31 23:59:59' 
-AND DateBroughtIn - DateofBirth < INTERVAL '6 months') AS IntakeUnder6,
-
+AND DateBroughtIn - DateofBirth < INTERVAL '6 months')+
+(SELECT COUNT(*)
+FROM adoption
+INNER JOIN animal ON animal.ID = adoption.AnimalID
+WHERE ReturnDate IS NOT NULL 
+AND MovementType Not IN (2, 8)
+AND ReturnDate > '$@year$-01-01' AND ReturnDate <= '$@year$-12-31 23:59:59'
+AND ReturnDate - DateOfBirth < INTERVAL '6 months') AS IntakeUnder6,
+ 
 (SELECT COUNT(*)
 FROM adoption 
 INNER JOIN animal ON animal.ID = adoption.AnimalID 
@@ -32,7 +39,14 @@ AND DateBroughtIn - DateofBirth < INTERVAL '6 months') AS ReleaseUnder6,
 FROM animal
 WHERE NonShelterAnimal=0 AND SpeciesID = 2 
 AND DateBroughtIn > '$@year$-01-01' AND DateBroughtIn <= '$@year$-12-31 23:59:59' 
-AND DateBroughtIn - DateofBirth >= INTERVAL '6 months') AS IntakeOver6,
+AND DateBroughtIn - DateofBirth >= INTERVAL '6 months')+
+(SELECT COUNT(*)
+FROM adoption
+INNER JOIN animal ON animal.ID = adoption.AnimalID
+WHERE ReturnDate IS NOT NULL 
+AND MovementType Not IN (2, 8)
+AND ReturnDate > '$@year$-01-01' AND ReturnDate <= '$@year$-12-31 23:59:59'
+AND ReturnDate - DateOfBirth > INTERVAL '6 months') AS IntakeOver6,
 
 (SELECT COUNT(*)
 FROM adoption
