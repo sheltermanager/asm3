@@ -451,10 +451,11 @@ def sign_document_page(dbo: Database, mid: int, email: str) -> str:
 def strip_personal_data(rows: Results) -> Results:
     """ Removes any personal data from animal and movement rows 
     """
+    prefixes = ( "OWNER", "CURRENTOWNER", "ORIGINALOWNER", "BROUGHTINBY", "RESERVEDOWNER", "EMAILADDRESS" )
     for r in rows:
         for k in r.keys():
-            if k.startswith("OWNER") or k.startswith("CURRENTOWNER") or k.startswith("ORIGINALOWNER") or k.startswith("BROUGHTINBY") or k.startswith("RESERVEDOWNER"):
-                r[k] = ""
+            for x in prefixes:
+                if k.startswith(x): r[k] = ""
     return rows
 
 def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent: str, querystring: str) -> ServiceResponse:
@@ -539,8 +540,9 @@ def handler(post: PostedData, path: str, remoteip: str, referer: str, useragent:
 
     # If the user does not have VIEW_PERSON permissions, force stripping of personal info from 
     # methods that support it
-    if asm3.users.check_permission_map_bool(user.SUPERUSER, securitymap, asm3.users.VIEW_PERSON):
-        strip_personal = True
+    if user is not None and user.SUPERUSER is not None:
+        if not asm3.users.check_permission_map_bool(user.SUPERUSER, securitymap, asm3.users.VIEW_PERSON):
+            strip_personal = True
 
     if method =="animal_image":
         hotlink_protect("animal_image", referer)
